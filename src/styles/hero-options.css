@@ -11,7 +11,7 @@
     linear-gradient(180deg, #f3f4fc 0%, #eaeefb 55%, #eef1fc 100%); }
 .ho * { box-sizing: border-box; }
 .ho .nav { display: flex; align-items: center; gap: 10px; max-width: 1180px; width: 100%; margin: 0 auto; padding: 24px 40px; }
-.ho .nav svg { width: 34px; height: 34px; display: block; }
+.ho .nav .ho-logo { width: 34px; height: 34px; display: block; border-radius: 50%; }
 .ho .wordmark { font-family: var(--font-brand); font-weight: 700; font-size: 25px; line-height: 1; background: var(--bai-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; letter-spacing: -.01em; }
 .ho main { flex: 1; max-width: 1180px; width: 100%; margin: 0 auto; padding: 18px 40px 64px; }
 .ho .eyebrow { font-family: var(--font-ui); font-weight: 600; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: #3d7bff; margin: 0 0 10px; }

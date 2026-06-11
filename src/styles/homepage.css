@@ -156,6 +156,9 @@
 
 /* ---------------------------------------------------- FOOTER */
 .bai-home .foot{border-top:1px solid var(--bai-divider);padding:30px 0;text-align:center;}
+.bai-home .foot-brand{display:flex;align-items:center;justify-content:center;gap:9px;margin-bottom:12px;}
+.bai-home .foot-brand img{width:30px;height:30px;border-radius:50%;display:block;}
+.bai-home .foot-wordmark{font-family:var(--font-brand);font-weight:700;font-size:20px;line-height:1;background:var(--bai-gradient);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;letter-spacing:-.01em;}
 .bai-home .foot p{font-family:var(--font-ui);font-size:12px;color:var(--fg-4);margin:0;}
 
 /* ---------------------------------------------------- RESPONSIVE */

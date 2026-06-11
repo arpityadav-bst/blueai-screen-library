@@ -1,4 +1,5 @@
 import '@/styles/hero-options.css'
+import { Wordmark } from '@/components/Wordmark'
 
 // Hero design-review chooser — the 3 directions with schematic previews + UX pros/cons.
 // Links the live heroes via full-page <a> (each route loads its own scoped CSS, so this
@@ -9,12 +10,9 @@ export default function HeroOptionsPage() {
   return (
     <div className="ho">
       <nav className="nav">
-        <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="BlueAI">
-          <rect width="32" height="32" rx="16" fill="url(#bm-g)" />
-          <path d="M16 6C16 11.5228 20.4772 16 26 16C20.4772 16 16 20.4772 16 26C16 20.4772 11.5228 16 6 16C11.5228 16 16 11.5228 16 6Z" fill="white" />
-          <defs><linearGradient id="bm-g" x1="32" y1="16" x2="0" y2="16" gradientUnits="userSpaceOnUse"><stop stopColor="#7B4CFF" /><stop offset="1" stopColor="#0EA4C5" /></linearGradient></defs>
-        </svg>
-        <span className="wordmark">BlueAI</span>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img className="ho-logo" src="/blueai-icon-RzIisCsb.png" alt="BlueAI" width={32} height={32} />
+        <Wordmark size={25} />
       </nav>
 
       <main>

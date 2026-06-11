@@ -1,5 +1,6 @@
 // Showcases the blueai-modern in-panel components on the DS tokens. Light theme.
 import { HeroNav } from '@/components/hero/HeroNav'
+import { Wordmark } from '@/components/Wordmark'
 
 function Card({ id, title, children }: { id?: string; title: string; children: React.ReactNode }) {
   return (
@@ -95,7 +96,7 @@ export function ComponentsSection() {
       <Card id="header" title="Panel header — 294×46">
         <div className="flex w-[294px] max-w-full items-center gap-2.5 rounded-field border border-divider bg-canvas px-3 py-2">
           <svg viewBox="0 0 24 24" className="size-4 text-ink-muted" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
-          <span className="bai-wordmark text-[15px]">BlueAI</span>
+          <Wordmark size={15} />
           <span className="ml-auto inline-flex items-center gap-1 text-sm font-semibold"><Spark /><span className="text-gradient">4.9k</span></span>
         </div>
       </Card>

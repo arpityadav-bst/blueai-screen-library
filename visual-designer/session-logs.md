@@ -3,6 +3,33 @@
 
 ---
 
+## Session 2 — 2026-06-11 — Deployed to GitHub + Vercel; 2 prod build fixes; full audit
+**Mode:** active (deploy + bug-fix + audit pass)
+
+**Shipped:**
+- **Deployed blueAI like WSUP** — GitHub `arpityadav-bst/blueai-screen-library` (public) + Vercel
+  `blueai-screen-library.vercel.app`, git-connected auto-deploy (same Vercel team as WSUP). See
+  project-insights → Deployment.
+- **Fix 1 (build):** the 3 legacy scenes' `init(v?: object)` helper failed the prod `next build`
+  typecheck (passed in dev) — typed it `TargetAndTransition`. Caught only by Vercel's strict TS.
+- **Fix 2 (prod-only CSS):** Stage hero heading + agent-scene text rendered CENTER on Vercel, LEFT
+  in dev. Root cause: production CSS chunking leaked hero-cards.css's generic `.hero{text-align:center}`
+  onto `/hero/stage`; `.hero-right` inherited it. Guarded with `.hero-right{text-align:left}`
+  (own-declaration → order/chunk-independent). Verified on the live bundle.
+
+**designer_caught_count:** 1 — the Vercel text-align mismatch (a prod-only bug dev never showed).
+
+**Audit (this session):** promoted the full 2026-06-10 build-session scratchpad (~20 entries) + the
+S2 fixes → taste rules 14–18, knowledge-base (Spotlight + Motion/framer + CSS-architecture + mobile
++ token/layout hygiene + Components), decisions.md (6 rows), project-insights (CSS-arch finding +
+Deployment). **Entered Phase 2** (Confirmed-correction era). Scratchpad wiped. Build green (no code
+change since the verified-green build after Fix 2).
+
+**Watching next session:** scope the hero stylesheets under unique root classes (the proper CSS-leak
+fix — the named recurring category); retune hero motion timing vs the original.
+
+---
+
 ## Session 1 — 2026-06-10 — Project bootstrapped + full marketing site built
 Bootstrap: notebook created this session (first blueAI touch). Taste seeded from the
 Claude-design export's designer-authored DS README.

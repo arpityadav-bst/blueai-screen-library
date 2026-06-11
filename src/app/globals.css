@@ -140,7 +140,9 @@
   .bai-caption { font-family: var(--font-ui); font-weight: 400; font-size: 10px; line-height: var(--line-normal); color: var(--bai-ink-body); }
   .bai-eyebrow { font-family: var(--font-display); font-weight: 400; font-size: 10px; line-height: var(--line-body); letter-spacing: var(--track-eyebrow); color: var(--bai-ink-muted); }
   .bai-section-label { font-family: var(--font-display); font-weight: 600; font-size: 10px; line-height: var(--line-body); letter-spacing: 0.12em; text-transform: uppercase; color: var(--bai-ink-muted); }
-  .bai-wordmark { font-family: var(--font-brand); font-weight: 700; font-size: 18.46px; line-height: var(--line-tight); color: var(--bai-ink-heading); }
+  /* Canonical wordmark — the full primary gradient (iris→cyan) clipped across ALL of "BlueAI",
+     left to right. One source of truth; render via the <Wordmark/> component. */
+  .bai-wordmark { font-family: var(--font-brand); font-weight: 700; font-size: 18.46px; line-height: var(--line-tight); letter-spacing: -0.01em; white-space: nowrap; background: var(--bai-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; }
   .bai-count   { font-family: var(--font-display); font-weight: 700; font-size: 14px; line-height: var(--line-tight); background: var(--bai-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; }
 
   /* Inline gradient text — the "BlueAI" / "BlueStacks AI" highlights in headings. */

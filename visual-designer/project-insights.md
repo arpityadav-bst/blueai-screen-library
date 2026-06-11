@@ -1,5 +1,5 @@
 # blueAI — Project Insights
-Last updated: 2026-06-10 (session 1 — initial build)
+Last updated: 2026-06-11 (S2 audit — +Deployment section, CSS-arch prod-chunking finding)
 
 > Architecture, domain, asset rules, and conventions specific to the blueAI replica.
 > Facts a developer/designer needs that aren't taste.
@@ -15,8 +15,9 @@ Last updated: 2026-06-10 (session 1 — initial build)
   the hero agent animations).
 
 ## Routes (S1 — restructured: the style guide is the default address during the design phase)
-- `/` — **redirects to `/style-guide`** (the default address points at the DS while a hero
-  direction is being chosen; when one is finalized, `/` will render that hero instead).
+- `/` — **Screen Library index** (`app/page.tsx`) — the handoff directory (like WSUP's); links to
+  every page (SEO homepage · hero-options · the 3 hero variants · style guide) as bordered rows via
+  full-page `<a>`. Light DS wash + `<Wordmark/>`. Replaced the old redirect-to-style-guide (S2).
 - `/style-guide` — the DS reference, **WSUP-style sidebar architecture**: left grouped nav
   (Foundations · Components · Pages) with scroll-to + scroll-spy active highlight; scrollable
   main. The "Pages" group links the homepage (hero-options) + the 3 heroes. blueai-modern + PM.
@@ -53,6 +54,15 @@ The export's `hero-cards.js` branches per agent on which markup is present:
   loaded); `tailwind.config.ts` maps utilities (`bg-iris`, `text-ink-heading`,
   `bg-bai-gradient`…) onto those vars. Marketing sections use a scoped CSS layer
   (`src/styles/homepage.css`) rather than pure Tailwind — deliberate, for fidelity/speed.
+- **⚠️ The scoped-by-route mitigation is INCOMPLETE in production (S2 finding).** It holds in
+  dev (CSS injected in import order) but the prod bundle chunked hero-cards.css's generic
+  `.hero{text-align:center}` onto the `/hero/stage` route → the Stage heading/scene centered on
+  Vercel, left in dev. Patched with an own-declaration guard (`.hero-right{text-align:left}`);
+  the PROPER fix — **DONE (S2)** — scoped each variant stylesheet under a unique root class
+  `.v-stage`/`.v-cards`/`.v-original` (on each page wrapper), via the idempotent
+  `.scripts/scope-css.js` postcss transform. Built bundle verified to have ZERO unscoped generic
+  hero rules → cross-route leaks now structurally impossible (also closed the `.hero` padding leak
+  + the Stage-Original `.cv-trend` bug). See `knowledge-base.md` → "CSS architecture".
 
 ## Assets
 - Real product PNGs (feature previews) + logo + sparkle in `public/` (copied from the
@@ -86,8 +96,20 @@ marketing site; FILL gaps from blueai-pm; on a real contradiction take the more 
   BCX/"BlueStacks Credits" currency, two-line empty states) are the reference for any future
   blueAI **app** surfaces → `design-source/blueai-pm/`.
 
+## Deployment (S2 — 2026-06-11)
+- **GitHub:** `arpityadav-bst/blueai-screen-library` (public). Branch `main`. `.gitignore`
+  mirrors WSUP's (ignores `node_modules`, `.next`, `.vercel`, `__preview/`). Full repo (incl.
+  `design-source/`, ~48MB) — designer chose "everything as-is".
+- **Vercel:** project `blueai-screen-library` in team `arpityadav-1136s-projects` (same as WSUP),
+  **git-connected → every push to `main` auto-deploys.** Prod URL `blueai-screen-library.vercel.app`
+  (`/` 307→`/style-guide` by design). Build = `next build` (Next auto-detected). No env vars.
+- **Workflow:** push to `main` → Vercel rebuilds. Always run `npx next build` locally first —
+  strict TS + the prod CSS bundle catch things `next dev` doesn't.
+
 ## Known / flagged
-- `design-source/FIX-LATER.md` — designer's parked polish items for the Recommended hero.
+- ✅ CSS-leak fix DONE (S2) — the 3 hero stylesheets are scoped under `.v-*`; the leak class
+  (text-align + `.hero` padding + the Stage-Original `.cv-trend`) is structurally closed.
 - Hero motion timing is a first-pass approximation of the original GSAP — retune on review.
+- `design-source/FIX-LATER.md` — the parked Recommended-hero polish items were resolved before S2.
 - Full blueai-modern DS zip ("BlueAI Modern.zip" in Downloads) holds deeper preview
   cards + the in-app panel ui-kit if we extend the /style-guide later.

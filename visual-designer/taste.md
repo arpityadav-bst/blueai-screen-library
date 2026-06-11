@@ -1,5 +1,5 @@
 # blueAI — Taste
-Last updated: 2026-06-10 (session 1 — seeded from the designer-authored blueai-modern DS README; build session)
+Last updated: 2026-06-11 (S2 audit — promoted rules 14–18 from the build-session scratchpad + the prod text-align fix; Phase 2 entered)
 
 > blueAI's design *language* — how it should feel — so VDA can design new blueAI
 > surfaces from instinct. Seeded from the Claude-design export's DS README (which is a
@@ -91,7 +91,45 @@ springy bounces) — "a utility assistant, not a toy."
     `rgba(95,70,255,…)` CTA shadow again) + brand-sm + Tailwind sm/md/lg/xl. Reach for a token,
     not an arbitrary value.
 
+## Codified taste rules (added S2 — promoted from the 2026-06-10 build session + S2 fixes)
+
+14. **Text wrapping is a hierarchy decision — never let it happen by accident.** Default:
+    size the font/container so text fits ONE line; don't accept a wrap unless there's
+    genuinely no room (or the designer asks). When a wrap is unavoidable it must break
+    SEMANTICALLY — headings & short marketing lines use `text-wrap: balance` (equalizes line
+    length, good for 2–3-word display type); body/sentences use `text-wrap: pretty` and break
+    at the FULL STOP (or next-best clause), never mid-phrase. Corollaries: never cap body
+    width far below its container (`max-width:48ch` on a 560px pane forced an early mid-phrase
+    break — wrap needs the REAL available width); and to keep a sentence whole, glue its words
+    with ` ` (nbsp; prefer the visible JS escape). *(Designer corrected `balance`→`pretty`
+    for body — `balance` split "submits it / for you" mid-phrase.)*
+
+15. **Equal padding on all sides is the default; flag the special cases.** And never let a
+    trailing margin on the LAST child double-count the container's bottom padding — a card at
+    `padding:22px` whose last child also had `margin-bottom:18px` read 40px at the bottom vs
+    22px on the sides. Zero the trailing margin; let the container's padding own the gap.
+
+16. **Optical sizing over box sizing; shared chrome is identical across variants.** Icons
+    sharing one px box can still look unequal (a glyph with more internal padding reads
+    smaller) — size to the GLYPH, not the box (the Reddit nav icon needed 23px beside others
+    at 21px). And any chrome shared across variants (the hero nav) is ONE component, byte-
+    identical everywhere — "navigation should reflect on all options."
+
+17. **For highlight/hover emphasis, prefer ELEVATION over a tint OVERLAY.** A translucent
+    gradient veil over an active card dulls the TEXT contrast too. Lift the card (shadow +
+    position) and keep the surface clean — never veil content you still need to read.
+
+18. **Demo a shape/radius on a representative element, not a square.** A "pill" radius swatch
+    on a 56×56 square renders as a circle — indistinguishable from the circle swatch. Demo
+    pill/stadium radii on a WIDE element so the radius reads as what it is. Generalizes: any
+    token swatch must use a shape that actually exercises the token.
+
+> Motion (framer-motion) gotchas, the spotlight-animation pattern, the production CSS-chunking
+> leak, and mobile/layout rules from this session are TECHNICAL and live in `knowledge-base.md`.
+
 ## Open corrections log
-*(Phase 1 seed — no designer corrections yet. The designer flagged "a few things aren't
-right" on the Recommended hero (parked in `design-source/FIX-LATER.md`); enumerate +
-promote here when reviewed. Future corrections accumulate here.)*
+*S2 (2026-06-11) — first substantive correction cycle PROMOTED. The parked Recommended-hero
+items were resolved before this session; the 2026-06-10 build-session corrections + the S2
+prod text-align fix are now promoted into rules 11–18 above + `decisions.md` + `knowledge-base.md`.
+No OPEN corrections pending. The Recommended hero's prod/dev parity is fixed (see KB
+"production CSS chunking can leak generic class rules"). Future corrections accumulate here.*

@@ -6,6 +6,7 @@ import { HeroNav, HeroArrow, HeroCta } from './HeroNav'
 import { CareerLegacy } from './scenes/CareerLegacy'
 import { CreatorLegacy } from './scenes/CreatorLegacy'
 import { FinanceLegacy } from './scenes/FinanceLegacy'
+import { MarketsLegacy } from './scenes/MarketsLegacy'
 
 // 3-Cards hero direction: centered headline + 3 agent cards side by side. SPOTLIGHT loop —
 // only the highlighted card runs its scene (from scratch); the other two sit at their resting
@@ -16,8 +17,9 @@ const CARDS = [
   { key: 'career', icon: '💼', label: 'Career', title: 'Auto apply to jobs with an agent that does the clicking', Scene: CareerLegacy },
   { key: 'creator', icon: '🎬', label: 'Creator', title: 'A faceless video creator agent for YouTube', Scene: CreatorLegacy },
   { key: 'finance', icon: '📈', label: 'Finance', title: 'An AI trading agent that runs live market analysis', Scene: FinanceLegacy },
+  { key: 'markets', icon: '🎯', label: 'Markets', title: 'A prediction market agent that watches the odds', Scene: MarketsLegacy },
 ]
-const DWELL = [4200, 4400, 4800] // ms per card — each ≥ its scene length + a read beat
+const DWELL = [4200, 4400, 4800, 4600] // ms per card — each ≥ its scene length + a read beat
 
 export function HeroCards() {
   const [active, setActive] = useState(0)
@@ -38,7 +40,7 @@ export function HeroCards() {
       <HeroNav />
       <main className="hero">
         <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.42, delay: 0.1, ease: EASE }}>
-          <div className="pill-live"><span className="dot" /><span>3 Agents Live Now</span></div>
+          <div className="pill-live"><span className="dot" /><span>4 Agents Live Now</span></div>
         </motion.div>
         <motion.h1 className="headline" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.15, ease: EASE }}>Your AI worker for getting things done.</motion.h1>
         <motion.p className="subhead" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2, ease: EASE }}>Hand off everyday tasks, reduce app switching, and keep work moving with BlueAI. Watch a real agent work, then build your own.</motion.p>

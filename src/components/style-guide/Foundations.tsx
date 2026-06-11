@@ -1,5 +1,6 @@
 // Foundations sections for the style guide — Colors · Type · Spacing/Radius/Elevation.
 // Each is an id'd <section> so the sidebar can scroll-to + scroll-spy highlight.
+import { Wordmark } from '@/components/Wordmark'
 
 function Swatch({ name, value, cls }: { name: string; value: string; cls: string }) {
   return (
@@ -66,7 +67,7 @@ export function Foundations() {
           <p className="bai-caption">Caption — 10 / 400</p>
           <p className="bai-eyebrow">Eyebrow — 10, +0.10em tracking</p>
           <p className="bai-section-label">Section label — 10 / 600 uppercase</p>
-          <p className="bai-wordmark">BlueAI — wordmark (Bricolage 700)</p>
+          <p className="bai-body text-ink-muted"><Wordmark size={20} /> — wordmark (Bricolage 700)</p>
           <p className="bai-count">4.9k — gradient count</p>
           <p className="font-head text-3xl font-semibold tracking-tight-3 text-ink-display">Space Grotesk — marketing display</p>
         </div>

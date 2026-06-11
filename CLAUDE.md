@@ -44,7 +44,8 @@ operates on stale memory of blueAI's design system. The reading IS the reset.
 - **Design-only:** no real backend; the agent demos are scripted/animated, not live.
 - **Source:** a Claude-design HTML/CSS export in `design-source/homepage-rework/` (ported
   to Next + Tailwind). Full DS extras in "BlueAI Modern.zip" (Downloads) if extending.
-- **Routes:** `/` (Stage, Recommended) · `/hero/stage-original` · `/hero/3-cards` ·
+- **Routes:** `/` (Screen Library index — links to every page) · `/seo` (SEO homepage) ·
+  `/hero/stage` (★ Stage, Recommended) · `/hero/stage-original` · `/hero/3-cards` ·
   `/hero-options` (chooser) · `/style-guide`.
 - **Two animation paths:** Stage = RICH multi-scene; Stage Original + 3 Cards = LEGACY
   single-scene (shared scenes). Motion is framer-motion, phase-driven. See

@@ -13,12 +13,18 @@
     radial-gradient(1100px 620px at 50% -8%, rgba(123,76,255,.10), transparent 60%),
     radial-gradient(900px 600px at 88% 12%, rgba(14,164,197,.08), transparent 55%),
     linear-gradient(180deg, #f3f4fc 0%, #eaeefb 55%, #eef1fc 100%);
-  min-height: 100vh; overflow-x: hidden; --nav-pad-y: 26px; }
+  min-height: 100vh; overflow-x: hidden; --nav-pad-y: 26px; --bai-content: 1440px; }
 
 /* NAV → shared in hero-nav.css (imported by <HeroNav/>). Only --nav-pad-y differs (set on .hero-page above). */
 
-/* HERO (centered) */
-.v-cards .hero { max-width: var(--hero-w); margin: 0 auto; padding: 34px 40px 90px; text-align: center; }
+/* Wide "live-site" layout for the 4-card row: --bai-content is set to 1440 on .v-cards (above) so
+   nav + hero + the homepage body all widen TOGETHER (no width step). The nav then opts into
+   FULL-BLEED so the header spans the viewport like the live site (logo at the far edge). */
+.v-cards .nav { max-width: none; }
+
+/* HERO (centered) — cards band widened to 1600 so 4 cards get ~362px each (≥320). Decoupled
+   from --hero-w/--bai-content (which keeps the homepage body below at a saner 1440 measure). */
+.v-cards .hero { max-width: 1600px; margin: 0 auto; padding: 34px 40px 90px; text-align: center; }
 .v-cards .pill-live { display: inline-flex; align-items: center; gap: 9px; background: rgba(255,255,255,.7); border: 1px solid var(--bai-divider); border-radius: var(--radius-pill); padding: 8px 16px 8px 14px; box-shadow: var(--shadow-float); backdrop-filter: blur(6px); }
 .v-cards .pill-live .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); animation: livePulse 2s var(--ease-out) infinite; }
 .v-cards .pill-live span { font-family: var(--font-ui); font-weight: 600; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--fg-2); }
@@ -33,8 +39,8 @@
 .v-cards .cta:hover .arrow { transform: translateX(3px); }
 
 /* CARDS */
-.v-cards .agents { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 64px; align-items: stretch; }
-.v-cards .card { position: relative; top: 0; text-align: left; background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-radius: 22px; padding: 22px; display: flex; flex-direction: column; box-shadow: 0 1px 2px rgba(8,10,31,.04); cursor: pointer; transition: box-shadow .4s var(--ease-out), border-color .4s var(--ease-out), top .3s var(--ease-out); }
+.v-cards .agents { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; margin-top: 64px; align-items: stretch; }
+.v-cards .card { position: relative; top: 0; min-width: 0; text-align: left; background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-radius: 22px; padding: 22px; display: flex; flex-direction: column; box-shadow: 0 1px 2px rgba(8,10,31,.04); cursor: pointer; transition: box-shadow .4s var(--ease-out), border-color .4s var(--ease-out), top .3s var(--ease-out); }
 /* active card LIFTS (via `top`, not transform — transform is owned by framer's entrance y). bg stays clean white = full text contrast. */
 .v-cards .card.is-active { top: -8px; border-color: rgba(123,76,255,.35); box-shadow: 0 26px 52px -22px rgba(95,70,255,.42), 0 6px 16px -8px rgba(8,10,31,.12); }
 .v-cards .card.is-dim { opacity: .62; }
@@ -43,6 +49,7 @@
 .v-cards .icon-career { background: linear-gradient(160deg, #e7e3ff, #dfe6ff); }
 .v-cards .icon-creator { background: linear-gradient(160deg, #ffe1f3, #f3e2ff); }
 .v-cards .icon-finance { background: linear-gradient(160deg, #dcf6e6, #e6f7ec); }
+.v-cards .icon-markets { background: linear-gradient(160deg, #dbe7ff, #e7ecff); }
 .v-cards .see-tag { display: inline-flex; align-items: center; gap: 6px; margin-left: auto; flex: none; white-space: nowrap; cursor: pointer; background: none; border: none; }
 .v-cards .see-tag span { font-family: var(--font-ui); font-weight: 600; font-size: 14px; color: #2f6dff; }
 .v-cards .see-tag svg { width: 16px; height: 16px; color: #2f6dff; transition: transform .18s var(--ease-out); }
@@ -94,6 +101,27 @@
 .v-cards .fn-port .v { font-family: var(--font-mono); font-weight: 600; font-size: 17px; color: var(--slate-900); letter-spacing: -.02em; }
 .v-cards .fn-port .d { font-family: var(--font-mono); font-weight: 500; font-size: 11px; color: #0f7a3b; }
 
+/* ---------- MARKETS (legacy) ---------- */
+.v-cards .mk-watch { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; background: #fff; border: 1px solid var(--bai-divider); border-radius: var(--radius-pill); padding: 4px 10px; margin-bottom: 12px; }
+.v-cards .mk-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); flex: none; }
+.v-cards .mk-watch-t { font-family: var(--font-ui); font-weight: 600; font-size: 10.5px; color: var(--slate-900); white-space: nowrap; }
+.v-cards .mk-src { font-family: var(--font-ui); font-weight: 600; font-size: 8.5px; color: #2f6dff; text-transform: uppercase; letter-spacing: .05em; }
+.v-cards .mk-odds { display: flex; flex-direction: column; gap: 9px; }
+.v-cards .mk-row { display: flex; align-items: center; gap: 8px; }
+.v-cards .mk-name { font-family: var(--font-ui); font-weight: 600; font-size: 11px; color: var(--fg-2); width: 56px; flex: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.v-cards .mk-track { flex: 1; height: 8px; border-radius: 4px; background: #e7ebf5; overflow: hidden; }
+.v-cards .mk-fill { display: block; height: 100%; width: 100%; border-radius: 4px; transform-origin: left center; background: linear-gradient(90deg, #7da0ff, #2f6dff); }
+.v-cards .mk-pct { font-family: var(--font-mono); font-weight: 600; font-size: 10.5px; color: var(--slate-900); width: 42px; text-align: right; flex: none; letter-spacing: -.02em; }
+.v-cards .mk-pct.is-up { color: #0f7a3b; }
+.v-cards .mk-alert { margin-top: auto; display: flex; align-items: center; gap: 7px; background: rgba(47,109,255,.08); border: 1px solid rgba(47,109,255,.2); border-radius: 8px; padding: 6px 9px; }
+.v-cards .mk-env { width: 20px; height: 20px; border-radius: 6px; background: #fff; border: 1px solid rgba(47,109,255,.25); display: flex; align-items: center; justify-content: center; flex: none; }
+.v-cards .mk-env svg { width: 11px; height: 11px; color: #2f6dff; }
+.v-cards .mk-alert-t { font-family: var(--font-ui); font-weight: 600; font-size: 11px; color: #2454c9; line-height: 1.2; }
+
+@media (max-width: 1440px) and (min-width: 921px) {
+  /* below ~1440 the 4-across row would push cards under 320 → drop to a 2×2 grid instead */
+  .v-cards .agents { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 860px; margin-left: auto; margin-right: auto; }
+}
 @media (max-width: 920px) {
   /* .nav-links hidden via hero-nav.css */
   .v-cards .agents { grid-template-columns: 1fr; gap: 18px; max-width: 480px; margin-left: auto; margin-right: auto; }

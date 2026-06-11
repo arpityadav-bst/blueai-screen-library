@@ -38,3 +38,8 @@ __preview/
 
 # local dev utilities (screenshot scripts, debug outputs)
 .scripts/
+
+.vercel
+
+# PM reference mock (kept local — a 4.3MB screenshot, not a site asset)
+public/screencapture-*.png

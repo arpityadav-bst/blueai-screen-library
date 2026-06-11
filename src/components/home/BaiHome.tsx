@@ -1,4 +1,5 @@
 import '@/styles/homepage.css'
+import { Wordmark } from '@/components/Wordmark'
 import { FeatureRows } from './FeatureRows'
 import { AllSkills } from './AllSkills'
 import { DownloadCta } from './DownloadCta'
@@ -51,6 +52,11 @@ export function BaiHome() {
 
       <footer className="foot">
         <div className="wrap">
+          <div className="foot-brand">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/blueai-icon-RzIisCsb.png" alt="" width={30} height={30} />
+            <Wordmark size={20} />
+          </div>
           <p>© 2026 BlueStacks names and logos are registered trademarks of now.gg, Inc.</p>
         </div>
       </footer>

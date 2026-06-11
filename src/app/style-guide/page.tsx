@@ -7,17 +7,11 @@ import { PmComponentsB } from '@/components/style-guide/PmComponentsB'
 
 // /style-guide — WSUP-style architecture: a left sidebar (grouped section nav with
 // scroll-to + scroll-spy) + scrollable main. blueai-modern DS + PM supplement. Light theme.
-// `/` redirects here. The "Pages" group links the homepage (hero-options) + the 3 heroes.
+// DS-only — page navigation lives on the root Screen Library index (`/`).
 const NAV: { group: string; items: [string, string][] }[] = [
   { group: 'Foundations', items: [['colors', 'Colors'], ['type', 'Type scale'], ['scales', 'Spacing · Radius · Elevation']] },
   { group: 'Components', items: [['hero-nav', 'Marketing nav'], ['buttons', 'Buttons'], ['status', 'Status badges'], ['pill-badges', 'Pill badges'], ['pills', 'Suggested pills'], ['feature-cards', 'Feature cards'], ['bubbles', 'Message bubbles'], ['composer', 'Composer'], ['header', 'Panel header']] },
   { group: 'App components (PM)', items: [['app-cards', 'Cards'], ['app-overview', 'Overview cards'], ['app-inputs', 'Inputs & forms'], ['app-nav', 'Navigation'], ['app-credits', 'Credits'], ['app-icons', 'Icons']] },
-]
-const PAGES: [string, string][] = [
-  ['/hero-options', 'Homepage (hero options)'],
-  ['/hero/stage', 'Hero · Stage ★'],
-  ['/hero/stage-original', 'Hero · Stage Original'],
-  ['/hero/3-cards', 'Hero · 3 Cards'],
 ]
 const SECTION_IDS = NAV.flatMap((g) => g.items.map(([id]) => id))
 const FLAT_ITEMS = NAV.flatMap((g) => g.items) // [id, label][] — flattened for the mobile chip nav
@@ -66,10 +60,6 @@ export default function StyleGuide() {
             {label}
           </button>
         ))}
-        <span className="mx-0.5 h-4 w-px shrink-0 bg-divider" aria-hidden />
-        {PAGES.map(([href, label]) => (
-          <a key={href} href={href} className="shrink-0 whitespace-nowrap rounded-pill border border-divider px-3 py-1.5 text-xs font-medium text-ink-muted">{label}</a>
-        ))}
       </nav>
 
       {/* ── sidebar (desktop only — on mobile it would eat the screen; content scrolls normally) ── */}
@@ -91,12 +81,6 @@ export default function StyleGuide() {
               ))}
             </div>
           ))}
-          <div className="mb-4">
-            <p className="px-2 pb-1.5 text-2xs font-semibold uppercase tracking-wide text-ink-muted">Pages</p>
-            {PAGES.map(([href, label]) => (
-              <a key={href} href={href} className="block rounded-card px-2 py-1.5 text-sm text-ink-body transition-colors hover:bg-surface hover:text-iris">{label}</a>
-            ))}
-          </div>
         </nav>
         <div className="px-5 pb-7 text-2xs leading-relaxed text-ink-muted">blueai-modern + PM<br />Design tokens</div>
       </aside>

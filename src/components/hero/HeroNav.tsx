@@ -1,6 +1,7 @@
 'use client'
 import '@/styles/hero-nav.css'
 import { motion } from 'framer-motion'
+import { Wordmark } from '@/components/Wordmark'
 
 // Shared hero nav: animated BlueAI logomark + wordmark · links · social icons.
 // THE single source of truth for the marketing header — used by all three hero
@@ -11,13 +12,10 @@ export function HeroNav() {
     <nav className="nav">
       <div className="brand">
         <motion.span className="nav-logomark" style={{ display: 'flex', width: 34, height: 34 }} initial={{ opacity: 0, scale: 0.4, rotate: -22 }} animate={{ opacity: 1, scale: 1, rotate: 0 }} transition={{ duration: 0.5, ease: 'backOut' }}>
-          <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="BlueAI">
-            <rect width="32" height="32" rx="16" fill="url(#bm-g)" />
-            <path d="M16 6C16 11.5228 20.4772 16 26 16C20.4772 16 16 20.4772 16 26C16 20.4772 11.5228 16 6 16C11.5228 16 16 11.5228 16 6Z" fill="white" />
-            <defs><linearGradient id="bm-g" x1="32" y1="16" x2="0" y2="16" gradientUnits="userSpaceOnUse"><stop stopColor="#7B4CFF" /><stop offset="1" stopColor="#0EA4C5" /></linearGradient></defs>
-          </svg>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/blueai-icon-RzIisCsb.png" alt="BlueAI" width={34} height={34} />
         </motion.span>
-        <span className="wordmark">BlueAI</span>
+        <Wordmark size={25} />
       </div>
       <div className="nav-right">
         <div className="nav-links"><a href="#">Social Rewards</a><a href="#">Developer</a><a href="#">Try Skills</a></div>
