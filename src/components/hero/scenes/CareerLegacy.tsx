@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion, type TargetAndTransition } from 'framer-motion'
 
 // CAREER — legacy single-scene (3-Cards + Stage Original): job card drops in → 3
 // fields fill → submit pulse + ripple → "Applied ✓ 24". Renders the .stage contents;
@@ -14,7 +14,7 @@ export function CareerLegacy({ active = true }: { active?: boolean }) {
   // active: replay from scratch (0 → FINAL). inactive: sit at the FINAL (completed) state.
   useEffect(() => { if (!active) return; setPhase(0); const t = STEPS.map((ms, k) => setTimeout(() => setPhase(k + 1), ms)); return () => t.forEach(clearTimeout) }, [active])
   // inactive cards mount straight at the final state (initial=false) — no entrance replay on hand-off
-  const init = (v?: object) => (active ? v : false)
+  const init = (v?: TargetAndTransition) => (active ? v : false)
   return (
     <>
       <motion.div className="cr-job" initial={init({ y: -14, opacity: 0 })} animate={{ y: phase >= 1 ? 0 : -14, opacity: phase >= 1 ? 1 : 0 }} transition={{ duration: 0.45, ease: EASE }}>

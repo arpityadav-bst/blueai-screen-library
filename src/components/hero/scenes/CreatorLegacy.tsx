@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion, type TargetAndTransition } from 'framer-motion'
 import { useCountUp } from '../useCountUp'
 
 // CREATOR — legacy single-scene: "Trending" pops → 3 script lines draw → 3 storyboard
@@ -16,7 +16,7 @@ export function CreatorLegacy({ active = true }: { active?: boolean }) {
   const views = useCountUp(12400, phase >= 5, { duration: 1000, instant: !active })
   const viewsTxt = views >= 1000 ? (views / 1000).toFixed(1) + 'K' : String(views)
   // inactive cards mount straight at the final state (initial=false) — no entrance replay on hand-off
-  const init = (v?: object) => (active ? v : false)
+  const init = (v?: TargetAndTransition) => (active ? v : false)
   return (
     <>
       <motion.div className="cv-trend" initial={init({ opacity: 0, y: -10, scale: 0.85 })} animate={{ opacity: phase >= 1 ? 1 : 0, y: phase >= 1 ? 0 : -10, scale: phase >= 1 ? 1 : 0.85 }} transition={{ duration: 0.4, ease: 'backOut' }}>▲ Trending</motion.div>

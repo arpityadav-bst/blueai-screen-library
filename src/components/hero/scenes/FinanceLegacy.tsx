@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion, type TargetAndTransition } from 'framer-motion'
 import { useCountUp } from '../useCountUp'
 
 // FINANCE — legacy single-scene: tickers + sweep → chart line draws + area fills →
@@ -21,7 +21,7 @@ export function FinanceLegacy({ big = false, active = true }: { big?: boolean; a
   const areaD = big ? 'M4 72 L40 62 L80 68 L120 46 L160 52 L200 28 L240 34 L276 12 L276 96 L4 96 Z' : 'M4 46 L40 40 L80 44 L120 30 L160 34 L200 18 L240 22 L276 8 L276 62 L4 62 Z'
   const lineD = big ? 'M4 72 L40 62 L80 68 L120 46 L160 52 L200 28 L240 34 L276 12' : 'M4 46 L40 40 L80 44 L120 30 L160 34 L200 18 L240 22 L276 8'
   // inactive cards mount straight at the final state (initial=false) — no entrance replay on hand-off
-  const init = (v?: object) => (active ? v : false)
+  const init = (v?: TargetAndTransition) => (active ? v : false)
   return (
     <>
       <div className="fn-tickers">
