@@ -20,7 +20,7 @@
 .v-seo .seo-orb-iris { background: radial-gradient(circle at center, rgba(123,76,255,.55), transparent 68%); }
 .v-seo .seo-orb-cyan { background: radial-gradient(circle at center, rgba(14,164,197,.5), transparent 68%); }
 .v-seo .seo-orb-blue { background: radial-gradient(circle at center, rgba(47,109,255,.42), transparent 68%); }
-.v-seo .seo-spark-bg { position: absolute; left: 50%; top: 40%; width: 34vw; max-width: 440px; height: auto; color: rgba(123,76,255,.06); will-change: transform; }
+.v-seo .seo-spark-bg { position: absolute; left: 50%; top: 40%; width: 34vw; max-width: 440px; height: auto; color: rgba(123,76,255,.038); will-change: transform; }
 /* content sits above the backdrop (nav is already z-50) */
 .v-seo main, .v-seo .seo-footer { position: relative; z-index: 1; }
 
@@ -184,14 +184,15 @@ html:has(.v-seo) { scroll-behavior: smooth; }
 /* ---- FAQ ---- */
 /* FAQ rows span the full section width (dividers edge-to-edge, +/− at the right) like every other
    band; only the ANSWER text keeps a reading measure (capped on .seo-faq-a p below). */
-.v-seo .seo-faq-list { margin-top: 30px; border-top: 1px solid var(--bai-divider); }
+.v-seo .seo-faq-list { margin-top: 30px; background: rgba(255,255,255,.82); backdrop-filter: blur(12px); border: 1px solid var(--bai-divider); border-radius: 18px; padding: 0 30px; box-shadow: 0 1px 2px rgba(8,10,31,.04); }
 .v-seo .seo-faq-item { border-bottom: 1px solid var(--bai-divider); }
-.v-seo .seo-faq-q { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 16px; background: none; border: none; cursor: pointer; text-align: left; padding: 20px 4px; font-family: var(--font-head); font-weight: 600; font-size: clamp(16px,1.3vw,18.5px); letter-spacing: -.01em; color: var(--seo-slate); }
+.v-seo .seo-faq-item:last-child { border-bottom: none; }
+.v-seo .seo-faq-q { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 16px; background: none; border: none; cursor: pointer; text-align: left; padding: 20px 0; font-family: var(--font-head); font-weight: 600; font-size: clamp(16px,1.3vw,18.5px); letter-spacing: -.01em; color: var(--seo-slate); }
 .v-seo .seo-faq-pm { font-family: var(--font-ui); font-weight: 400; font-size: 22px; color: var(--seo-blue); flex: none; line-height: 1; }
 .v-seo .seo-faq-a { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .3s var(--ease-out); }
 .v-seo .seo-faq-item.is-open .seo-faq-a { grid-template-rows: 1fr; }
 .v-seo .seo-faq-a-inner { overflow: hidden; }
-.v-seo .seo-faq-a p { font-family: var(--font-ui); font-size: 15.5px; line-height: 1.6; color: var(--fg-4); margin: 0 4px 22px; max-width: 70ch; }
+.v-seo .seo-faq-a p { font-family: var(--font-ui); font-size: 15.5px; line-height: 1.6; color: var(--fg-4); margin: 0 0 22px; max-width: 70ch; }
 
 /* ---- CTA close ---- */
 .v-seo .seo-close { position: relative; overflow: hidden; border-radius: 28px; padding: clamp(48px,6vw,80px) 32px; text-align: center; background: linear-gradient(120deg, #1f3df0 0%, #2f6dff 55%, #3d7bff 100%); box-shadow: 0 40px 80px -36px rgba(31,61,240,.6); }

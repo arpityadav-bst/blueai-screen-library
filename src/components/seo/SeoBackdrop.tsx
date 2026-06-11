@@ -19,7 +19,7 @@ export function SeoBackdrop() {
   const o3x = useTransform(p, [0, 0.5, 1], v(['16vw', '44vw', '24vw']))
   const o3y = useTransform(p, [0, 1], v(['62vh', '28vh']))
   // sparkle — slow rotation + a gentle scale "breath"
-  const rot = useTransform(p, [0, 1], reduce ? [0, 0] : [0, 65])
+  const rot = useTransform(p, [0, 1], reduce ? [0, 0] : [0, 720]) // ~2 full turns across the scroll — reads as "working"
   const scl = useTransform(p, [0, 0.5, 1], reduce ? [1, 1, 1] : [0.85, 1.12, 0.92])
 
   return (
