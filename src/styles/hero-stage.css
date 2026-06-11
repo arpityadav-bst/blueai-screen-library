@@ -45,7 +45,13 @@
 .cta:hover .arrow { transform: translateX(3px); }
 
 /* ---- RIGHT: pill + thumbnails above the dominant stage ---- */
-.hero-right { display: flex; flex-direction: column; min-height: 0; }
+/* text-align:left is explicit (not inherited): the sibling hero stylesheets
+   (hero-cards.css / hero-stage-original.css) declare a generic `.hero{text-align:center}`
+   at the same single-class specificity. In the production CSS bundle those load
+   together and order isn't guaranteed, so center can win on `.hero` and the
+   heading + scene (which live here) inherit it. An own declaration on .hero-right
+   beats any inherited value, order-independently — keeps the Stage left-aligned. */
+.hero-right { display: flex; flex-direction: column; min-height: 0; text-align: left; }
 .pill-live { align-self: flex-start; display: inline-flex; align-items: center; gap: 9px;
   background: rgba(255,255,255,.7); border: 1px solid var(--bai-divider);
   border-radius: var(--radius-pill); padding: 6px 14px 6px 12px; box-shadow: var(--shadow-float);
