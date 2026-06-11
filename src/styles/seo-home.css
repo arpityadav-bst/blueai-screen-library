@@ -14,12 +14,13 @@
     linear-gradient(180deg, #f5f6fd 0%, #eef1fb 100%);
   min-height: 100vh; overflow-x: hidden; color: var(--seo-slate);
   --green: #16a34a; --green-bg: rgba(22,163,74,.10);
-  --seo-w: 1640px; } /* one shared content width: nav, hero + every section band align to this */
+  --seo-w: 1640px;        /* wide / full-bleed-ish — the nav only */
+  --seo-content: 1280px; } /* contained content column — hero + every section band + footer align to this */
 
 /* shared bits */
 .v-seo .seo-wordmark { font-family: var(--font-brand); font-weight: 700; font-size: 22px; letter-spacing: -.01em; color: var(--seo-slate); }
 .v-seo .seo-wordmark em { font-style: normal; background: var(--bai-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; }
-.v-seo .seo-wrap { max-width: var(--seo-w); margin: 0 auto; padding: 0 48px; }
+.v-seo .seo-wrap { max-width: var(--seo-content); margin: 0 auto; padding: 0 48px; }
 .v-seo .seo-eyebrow { display: block; font-family: var(--font-ui); font-weight: 700; font-size: 12.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--seo-blue); }
 .v-seo .seo-h2 { font-family: var(--font-head); font-weight: 600; font-size: clamp(28px, 3vw, 40px); line-height: 1.1; letter-spacing: -.03em; color: var(--seo-slate); text-wrap: balance; margin: 12px 0 0; }
 .v-seo .seo-sub { font-family: var(--font-ui); font-size: clamp(15px,1.2vw,18px); color: var(--fg-4); line-height: 1.55; margin: 14px 0 0; max-width: 60ch; }
@@ -47,7 +48,7 @@ html:has(.v-seo) { scroll-behavior: smooth; }
 .v-seo .seo-nav-cta:hover { transform: translateY(-2px); box-shadow: var(--bai-shadow-cta-hover); }
 
 /* ---- HERO ---- */
-.v-seo .seo-hero { max-width: var(--seo-w); margin: 0 auto; padding: clamp(48px,6vw,84px) 48px clamp(56px,7vw,96px); display: grid; grid-template-columns: 1fr 0.94fr; gap: 56px; align-items: center; }
+.v-seo .seo-hero { max-width: var(--seo-content); margin: 0 auto; padding: clamp(48px,6vw,84px) 48px clamp(56px,7vw,96px); display: grid; grid-template-columns: 1fr 0.94fr; gap: 56px; align-items: center; }
 .v-seo .seo-hero-text { display: flex; flex-direction: column; align-items: flex-start; }
 .v-seo .seo-h1 { font-family: var(--font-head); font-weight: 600; font-size: clamp(40px, 4.6vw, 62px); line-height: 1.04; letter-spacing: -.035em; color: var(--seo-slate); text-wrap: balance; margin: 16px 0 0; }
 .v-seo .seo-grad { background: var(--bai-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; }
