@@ -6,7 +6,7 @@ import { BaiHome } from '@/components/home/BaiHome'
 // once the designer finalizes this direction.
 export default function StageHeroPage() {
   return (
-    <div className="hero-page">
+    <div className="hero-page v-stage">
       <HeroStage />
       <BaiHome />
     </div>
