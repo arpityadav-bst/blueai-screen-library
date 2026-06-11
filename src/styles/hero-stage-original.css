@@ -1,0 +1,135 @@
+/* ============================================================================
+   BlueAI Hero — Stage Original. Ported from "BlueAI Hero - Stage Original.html".
+   Centered headline + CTA on top; below, a big center stage (one agent at a time,
+   LEGACY animation) + a vertical thumbnail rail. Framer drives motion. Self-contained
+   :root locals + the BIG legacy scene sizing (shared markup with 3-Cards, bigger here).
+   ============================================================================ */
+:root {
+  --green: #16a34a; --green-bg: rgba(22,163,74,.10);
+  --font-head: 'Space Grotesk', var(--font-display);
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --slate-900: #0f172a; --hero-w: var(--bai-content);
+}
+.hero-page { background:
+    radial-gradient(1100px 620px at 18% -8%, rgba(123,76,255,.10), transparent 60%),
+    radial-gradient(900px 600px at 92% 8%, rgba(14,164,197,.10), transparent 55%),
+    linear-gradient(180deg, #f3f4fc 0%, #eaeefb 55%, #eef1fc 100%);
+  min-height: 100vh; overflow-x: hidden; --nav-pad-y: 22px; }
+
+/* NAV → shared in hero-nav.css (imported by <HeroNav/>). Only --nav-pad-y differs (set on .hero-page above).
+   The .nav { flex:none } in the min-width:921 block below is a Stage-Original layout override (100vh flex column). */
+
+/* HERO (centered, then showcase) */
+.hero { max-width: var(--hero-w); width: 100%; margin: 0 auto; padding: 12px 40px 0; text-align: center; } /* width:100% so the flex-item hero fills to its max-width (auto margins alone would shrink-wrap it) */
+.pill-live { display: inline-flex; align-self: flex-start; flex: none; align-items: center; gap: 9px; background: rgba(255,255,255,.7); border: 1px solid var(--bai-divider); border-radius: var(--radius-pill); padding: 7px 15px 7px 13px; box-shadow: var(--shadow-float); backdrop-filter: blur(6px); }
+.pill-live .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); animation: livePulse 2s var(--ease-out) infinite; }
+.pill-live span { font-family: var(--font-ui); font-weight: 600; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--fg-2); }
+@keyframes livePulse { 0% { box-shadow: 0 0 0 0 rgba(22,163,74,.45); } 70% { box-shadow: 0 0 0 7px rgba(22,163,74,0); } 100% { box-shadow: 0 0 0 0 rgba(22,163,74,0); } }
+.headline { font-family: var(--font-head); font-weight: 600; letter-spacing: -.03em; font-size: clamp(44px, 4.6vw, 58px); line-height: 1.05; color: var(--slate-900); text-wrap: balance; margin: 0; }
+.subhead { font-family: var(--font-ui); font-weight: 400; color: var(--fg-4); font-size: clamp(16px, 1.3vw, 19px); line-height: 1.55; max-width: 620px; margin: 18px auto 0; text-wrap: balance; }
+.cta { display: inline-flex; align-items: center; gap: 9px; margin-top: 24px; height: 52px; padding: 0 28px; border: none; cursor: pointer; border-radius: var(--radius-pill); background: var(--bai-cta-gradient); color: #fff; font-family: var(--font-ui); font-weight: 600; font-size: 18px; white-space: nowrap; box-shadow: var(--bai-shadow-cta); transition: transform .18s var(--ease-out), box-shadow .18s var(--ease-out); }
+.cta:hover { transform: translateY(-2px); box-shadow: var(--bai-shadow-cta-hover); }
+.cta:active { transform: translateY(0) scale(.98); }
+.cta .spark { width: 18px; height: 18px; display: block; }
+.cta .arrow { width: 18px; height: 18px; transition: transform .18s var(--ease-out); }
+.cta:hover .arrow { transform: translateX(3px); }
+
+/* SHOWCASE (stage + rail) */
+.showcase { display: grid; grid-template-columns: 1.62fr 1fr; gap: 18px; margin-top: 30px; text-align: left; align-items: stretch; }
+.stage-main { position: relative; background: var(--bai-canvas); border: 1px solid rgba(123,76,255,.30); border-radius: 24px; overflow: hidden; height: clamp(384px, 52vh, 468px); box-shadow: 0 26px 56px -24px rgba(95,70,255,.42), 0 4px 14px -6px rgba(8,10,31,.08); }
+.stage-main::before { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 0; background: linear-gradient(180deg, rgba(123,76,255,.05), rgba(14,164,197,.035)); }
+.pane { position: absolute; inset: 0; z-index: 1; padding: 22px 26px; display: flex; flex-direction: column; }
+.pane-top { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.icon-tile { width: 48px; height: 48px; border-radius: 13px; display: flex; align-items: center; justify-content: center; font-size: 24px; line-height: 1; flex: none; }
+.icon-career { background: linear-gradient(160deg, #e7e3ff, #dfe6ff); }
+.icon-creator { background: linear-gradient(160deg, #ffe1f3, #f3e2ff); }
+.icon-finance { background: linear-gradient(160deg, #dcf6e6, #e6f7ec); }
+.eyebrow { font-family: var(--font-ui); font-weight: 600; font-size: 12px; letter-spacing: .13em; text-transform: uppercase; color: #3d7bff; }
+.see-tag { display: inline-flex; align-items: center; gap: 6px; margin-left: auto; flex: none; white-space: nowrap; cursor: pointer; background: none; border: none; }
+.see-tag span { font-family: var(--font-ui); font-weight: 600; font-size: 14px; color: #2f6dff; }
+.see-tag svg { width: 16px; height: 16px; color: #2f6dff; transition: transform .18s var(--ease-out); }
+.pane:hover .see-tag svg { transform: translateX(3px); }
+.pane-title { font-family: var(--font-head); font-weight: 600; font-size: 22px; line-height: 1.1; letter-spacing: -.03em; color: var(--slate-900); text-wrap: balance; margin: 0 0 6px; }
+.pane-desc { font-family: var(--font-ui); font-weight: 400; font-size: 14.5px; line-height: 1.45; color: var(--fg-4); margin: 0 0 12px; text-wrap: pretty; } /* use the full available pane width (was a too-narrow 48ch cap that forced mid-phrase breaks). text-wrap:pretty + &nbsp;-glued trailing sentence in the copy → the break lands on the full stop when a sentence fits, else the best clause point. */
+.stage { position: relative; flex: 1; min-height: 148px; background: var(--bai-surface); border: 1px solid var(--bai-divider); border-radius: 16px; padding: 18px; overflow: hidden; }
+
+/* RAIL */
+.rail { display: flex; flex-direction: column; gap: 12px; }
+.thumb { position: relative; flex: 1; text-align: left; background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-radius: 16px; padding: 13px 14px 14px; cursor: pointer; display: flex; flex-direction: column; gap: 6px; overflow: hidden; box-shadow: 0 1px 2px rgba(8,10,31,.04); transition: transform .35s var(--ease-out), box-shadow .35s var(--ease-out), border-color .35s var(--ease-out); }
+.thumb-top { display: flex; align-items: center; gap: 10px; }
+.thumb-icon { width: 38px; height: 38px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex: none; }
+.thumb-eyebrow { font-family: var(--font-ui); font-weight: 600; font-size: 10.5px; letter-spacing: .13em; text-transform: uppercase; color: #3d7bff; }
+.thumb-title { font-family: var(--font-head); font-weight: 600; font-size: 13.5px; line-height: 1.18; letter-spacing: -.02em; color: var(--slate-900); text-wrap: balance; margin: 0; }
+.thumb.is-dim { opacity: .6; }
+.thumb.is-dim:hover { opacity: .85; }
+.thumb.is-active { border-color: rgba(123,76,255,.45); box-shadow: 0 16px 34px -18px rgba(95,70,255,.5); transform: translateY(-1px); }
+.thumb-progress { position: absolute; left: 0; bottom: 0; height: 3px; width: 100%; transform: scaleX(0); transform-origin: left center; background: var(--bai-gradient); opacity: 0; }
+.thumb.is-active .thumb-progress { opacity: 1; }
+
+/* ---------- CAREER (legacy, big) ---------- */
+.cr-job { display: flex; align-items: center; gap: 11px; background: #fff; border: 1px solid var(--bai-divider); border-radius: 11px; padding: 9px 12px; margin-bottom: 14px; }
+.cr-logo { width: 34px; height: 34px; border-radius: 9px; background: linear-gradient(150deg, #7B4CFF, #0EA4C5); color: #fff; font-family: var(--font-head); font-weight: 700; font-size: 16px; display: flex; align-items: center; justify-content: center; flex: none; }
+.cr-job .t { font-family: var(--font-ui); font-weight: 600; font-size: 14px; color: var(--slate-900); line-height: 1.2; }
+.cr-job .s { font-family: var(--font-ui); font-size: 12px; color: var(--fg-4); line-height: 1.3; }
+.cr-form { display: flex; flex-direction: column; gap: 10px; }
+.cr-row { display: flex; align-items: center; gap: 11px; }
+.cr-lbl { font-family: var(--font-ui); font-size: 12px; color: var(--fg-4); width: 58px; flex: none; }
+.cr-track { flex: 1; height: 11px; border-radius: 6px; background: #e7ebf5; overflow: hidden; }
+.cr-fill { display: block; height: 100%; width: 100%; border-radius: 6px; transform-origin: left center; background: linear-gradient(90deg, #c9d3ee, #aab9e6); }
+.cr-submit { position: absolute; left: 18px; right: 18px; bottom: 18px; height: 40px; border: none; cursor: default; border-radius: 11px; background: linear-gradient(105deg, #1a90ff, #7B4CFF); color: #fff; font-family: var(--font-ui); font-weight: 600; font-size: 14px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.cr-ripple { position: absolute; left: 50%; bottom: 20px; width: 170px; height: 170px; border-radius: 50%; background: rgba(255,255,255,.6); pointer-events: none; }
+.cr-applied { position: absolute; left: 18px; right: 18px; bottom: 18px; height: 40px; border-radius: 11px; background: var(--green-bg); color: #0f7a3b; font-family: var(--font-ui); font-weight: 600; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 6px; }
+
+/* ---------- CREATOR (legacy, big) ---------- */
+.cv-trend { display: inline-flex; align-items: center; gap: 6px; background: #fff; border: 1px solid var(--bai-divider); border-radius: var(--radius-pill); padding: 6px 13px; font-family: var(--font-ui); font-weight: 600; font-size: 13px; color: #c2418a; margin-bottom: 15px; }
+.cv-script { display: flex; flex-direction: column; gap: 9px; margin-bottom: 17px; }
+.cv-line { height: 10px; border-radius: 5px; background: linear-gradient(90deg, #d7c4e8, #c9d3ee); transform-origin: left center; }
+.cv-line.l1 { width: 92%; } .cv-line.l2 { width: 74%; } .cv-line.l3 { width: 84%; }
+.cv-board { display: flex; gap: 11px; }
+.cv-frame { position: relative; flex: 1; height: 60px; border-radius: 10px; background: #fff; border: 1px solid var(--bai-divider); overflow: hidden; }
+.cv-frame::before { content: ""; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(123,76,255,.14), rgba(14,164,197,.12)); }
+.cv-play { position: absolute; inset: 0; margin: auto; width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,.92); display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(8,10,31,.18); } /* center without transform — motion.span scale would override translate-centering */
+.cv-play svg { width: 14px; height: 14px; color: #1B1E38; margin-left: 1px; }
+.cv-views { position: absolute; left: 18px; bottom: 16px; font-family: var(--font-ui); font-weight: 600; font-size: 13px; color: var(--fg-3); display: flex; align-items: center; gap: 6px; }
+.cv-views svg { width: 13px; height: 13px; color: #c2418a; }
+
+/* ---------- FINANCE (legacy, big) ---------- */
+.fn-tickers { position: relative; display: flex; gap: 9px; margin-bottom: 14px; overflow: hidden; border-radius: 9px; }
+.fn-tick { flex: 1; background: #fff; border: 1px solid var(--bai-divider); border-radius: 9px; padding: 7px 10px; }
+.fn-tick .sym { font-family: var(--font-mono); font-weight: 600; font-size: 13px; color: var(--slate-900); letter-spacing: -.02em; }
+.fn-tick .pct { font-family: var(--font-mono); font-weight: 500; font-size: 11px; }
+.fn-tick .pct.up { color: #0f7a3b; } .fn-tick .pct.dn { color: #d6455d; }
+.fn-sweep { position: absolute; top: 0; bottom: 0; width: 60px; pointer-events: none; background: linear-gradient(90deg, transparent, rgba(123,76,255,.30), transparent); }
+.fn-chartwrap { position: relative; height: 96px; }
+.fn-chart { width: 100%; height: 96px; display: block; overflow: visible; }
+.fn-line { fill: none; stroke: url(#fn-grad); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.fn-marker { position: absolute; font-family: var(--font-mono); font-weight: 600; font-size: 12px; color: #fff; background: #0f7a3b; border-radius: var(--radius-pill); padding: 4px 11px; left: 58%; top: 10px; box-shadow: 0 3px 8px rgba(15,122,59,.4); }
+.fn-marker::after { content: ""; position: absolute; left: 16px; top: 100%; width: 7px; height: 7px; border-radius: 50%; background: #0f7a3b; margin-top: 3px; }
+.fn-port { position: absolute; left: 18px; bottom: 14px; display: flex; align-items: baseline; gap: 8px; }
+.fn-port .v { font-family: var(--font-mono); font-weight: 600; font-size: 23px; color: var(--slate-900); letter-spacing: -.02em; }
+.fn-port .d { font-family: var(--font-mono); font-weight: 500; font-size: 13px; color: #0f7a3b; }
+
+/* responsive */
+@media (min-width: 921px) {
+  .hero-screen { height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+  .nav { flex: none; width: 100%; }
+  .hero { flex: 1; min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding-top: 0; padding-bottom: clamp(14px, 2.4vh, 30px); }
+  .hero .headline { width: min(780px, 100%); }
+  .hero .subhead { width: min(620px, 100%); }
+  .hero .showcase { align-self: stretch; width: 100%; }
+}
+@media (max-width: 920px) {
+  /* .nav-links hidden via hero-nav.css */
+  .showcase { grid-template-columns: 1fr; gap: 16px; margin-top: 28px; }
+  .stage-main { height: 490px; } /* taller — the mobile title+desc are taller, so the fixed stage was crushing the scene → "Applied" footer overlapped the form. Give the scene room. */
+  .pane { padding: 18px 18px; }
+  .pane-title { font-size: 21px; }
+  .pane-desc { font-size: 13.5px; }
+  .rail { flex-direction: row; flex-wrap: wrap; }
+  .rail .pill-live { width: 100%; justify-content: center; } /* full row above the thumb row */
+  .thumb { align-items: center; }
+  .thumb-top { flex-direction: column; align-items: center; gap: 5px; } /* icon over label → label gets full thumb width, no "CARE…" clipping */
+  .thumb-eyebrow { text-align: center; }
+  .thumb-title { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .pill-live .dot { animation: none; } }

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Plus Jakarta Sans', sans-serif; background: #fff; padding: 16px; display: flex; gap: 16px; }
+  .col { flex: 1; }
+  .section { background: #fff; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; }
+  .section + .section { margin-top: 10px; }
+  .chip { display: inline-flex; align-items: center; gap: 4px; background: #E0E7FF; color: #4F46E5; border-radius: 999px; padding: 2px 10px; font-size: 12px; font-weight: 500; margin-bottom: 8px; }
+  .title { font-size: 20px; font-weight: 700; color: #111827; margin-bottom: 6px; }
+  .body-text { font-size: 14px; color: #4B5563; line-height: 1.5; margin-bottom: 12px; }
+  .btn { display: inline-flex; align-items: center; gap: 6px; background: #fff; border: 1px solid #C7D2FE; border-radius: 8px; padding: 8px 16px; font-size: 14px; font-weight: 600; color: #4F46E5; cursor: pointer; }
+  .gradient-band { background: linear-gradient(to bottom right, #4F46E5, #9333EA); border-radius: 10px; padding: 16px; color: #fff; }
+  .gradient-band h2 { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+  .gradient-band p { font-size: 13px; color: rgba(255,255,255,0.8); line-height: 1.4; }
+  .cyan { color: #67E8F9; }
+</style></head>
+<body>
+  <div class="col">
+    <div class="section">
+      <div class="chip">
+        <svg width="12" height="12" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+        Active
+      </div>
+      <div class="title">coin-collector</div>
+      <div class="body-text">Automatically collects in-game coins in Whiteout Survival every cycle.</div>
+      <button class="btn">View Details</button>
+    </div>
+    <div class="section" style="margin-top:10px;">
+      <div style="font-size:10px; font-weight:700; color:#9CA3AF; letter-spacing:0.05em; text-transform:uppercase; margin-bottom:6px;">Quick Access</div>
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <div style="display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border:1px solid #E2E8F0; border-radius:8px; cursor:pointer;">
+          <div style="font-size:14px; font-weight:600; color:#111827;">Wallet</div>
+          <svg width="16" height="16" fill="none" stroke="#9CA3AF" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </div>
+        <div style="display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border:1px solid #E2E8F0; border-radius:8px; cursor:pointer;">
+          <div style="font-size:14px; font-weight:600; color:#111827;">Profile</div>
+          <svg width="16" height="16" fill="none" stroke="#9CA3AF" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="gradient-band">
+      <h2>Execute Android Tasks Through <span class="cyan">Natural Language</span> Commands</h2>
+      <p>Control your BlueStacks App Player with the power of AI. Just describe what you want to do.</p>
+      <button style="margin-top:12px; background:#fff; border:none; border-radius:8px; padding:8px 18px; font-size:13px; font-weight:600; color:#4F46E5; cursor:pointer; display:flex; align-items:center; gap:6px;">Submit Task <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></button>
+    </div>
+    <div class="section" style="margin-top:10px;">
+      <div style="font-size:11px; color:#6B7280; margin-bottom:3px;">Hello, Alex</div>
+      <div style="font-size:13px; color:#374151; line-height:1.5;">I'm BlueAI, your AI assistant for BlueStacks App Player. I can help you control apps and perform tasks inside BlueStacks using natural language.</div>
+    </div>
+  </div>
+</body></html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Plus Jakarta Sans', sans-serif; background: #fff; padding: 16px; }
+  .grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 8px; }
+  .swatch { border-radius: 8px; height: 64px; }
+  .label { font-size: 10px; font-weight: 600; color: #374151; margin-top: 4px; }
+  .hex { font-size: 9px; color: #6B7280; }
+  .section-label { font-size: 10px; font-weight: 700; color: #9CA3AF; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; margin-top: 12px; }
+  .section-label:first-child { margin-top: 0; }
+  .row { display: flex; gap: 8px; }
+  .col { flex: 1; }
+</style></head>
+<body>
+  <div class="section-label">Brand</div>
+  <div class="row">
+    <div class="col">
+      <div class="swatch" style="background: linear-gradient(to right, #0EA4C5, #7B4CFF);"></div>
+      <div class="label">Brand Gradient</div>
+      <div class="hex">#0EA4C5 → #7B4CFF</div>
+    </div>
+    <div class="col">
+      <div class="swatch" style="background: #1990FF;"></div>
+      <div class="label">Accent</div>
+      <div class="hex">#1990FF</div>
+    </div>
+    <div class="col">
+      <div class="swatch" style="background: #4F46E5;"></div>
+      <div class="label">Indigo 600</div>
+      <div class="hex">#4F46E5</div>
+    </div>
+    <div class="col">
+      <div class="swatch" style="background: #9333EA;"></div>
+      <div class="label">Purple 600</div>
+      <div class="hex">#9333EA</div>
+    </div>
+    <div class="col">
+      <div class="swatch" style="background: #E0E7FF;"></div>
+      <div class="label">Indigo 100</div>
+      <div class="hex">#E0E7FF</div>
+    </div>
+    <div class="col">
+      <div class="swatch" style="background: #EEF2FF;"></div>
+      <div class="label">Indigo 50</div>
+      <div class="hex">#EEF2FF</div>
+    </div>
+    <div class="col">
+      <div class="swatch" style="background: #0EA4C5;"></div>
+      <div class="label">Cyan Brand</div>
+      <div class="hex">#0EA4C5</div>
+    </div>
+    <div class="col">
+      <div class="swatch" style="background: #7B4CFF;"></div>
+      <div class="label">Purple Brand</div>
+      <div class="hex">#7B4CFF</div>
+    </div>
+  </div>
+
+  <div class="section-label">Neutrals</div>
+  <div class="row">
+    <div class="col"><div class="swatch" style="background:#111827; border: 1px solid #E5E7EB;"></div><div class="label">Gray 900</div><div class="hex">#111827</div></div>
+    <div class="col"><div class="swatch" style="background:#4B5563;"></div><div class="label">Gray 600</div><div class="hex">#4B5563</div></div>
+    <div class="col"><div class="swatch" style="background:#6B7280;"></div><div class="label">Gray 500</div><div class="hex">#6B7280</div></div>
+    <div class="col"><div class="swatch" style="background:#9CA3AF;"></div><div class="label">Gray 400</div><div class="hex">#9CA3AF</div></div>
+    <div class="col"><div class="swatch" style="background:#E2E8F0; border: 1px solid #E5E7EB;"></div><div class="label">Slate 200</div><div class="hex">#E2E8F0</div></div>
+    <div class="col"><div class="swatch" style="background:#F3F4F6; border: 1px solid #E5E7EB;"></div><div class="label">Gray 100</div><div class="hex">#F3F4F6</div></div>
+    <div class="col"><div class="swatch" style="background:#F9FAFB; border: 1px solid #E5E7EB;"></div><div class="label">Gray 50</div><div class="hex">#F9FAFB</div></div>
+    <div class="col"><div class="swatch" style="background:#FFFFFF; border: 1px solid #E5E7EB;"></div><div class="label">White</div><div class="hex">#FFFFFF</div></div>
+  </div>
+</body></html>

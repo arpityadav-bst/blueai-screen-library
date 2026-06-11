@@ -1,0 +1,245 @@
+/* ==========================================================================
+   BlueAI Design System — colors, type, spacing, radii, shadows
+   Source: BlueAI.fig · node 1:942 "New UX"
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Bricolage+Grotesque:wght@700&display=swap');
+
+:root {
+  /* ----- BRAND ACCENTS (only ever appear together as a gradient) --------- */
+  --bai-iris:     rgb(123, 76, 255);      /* #7B4CFF */
+  --bai-cyan:     rgb(14, 164, 197);      /* #0EA4C5 */
+  --bai-iris-2:   rgb(151, 71, 255);      /* #9747FF — used once, outer frame stroke */
+
+  --bai-gradient:       linear-gradient(to bottom right, var(--bai-iris) 0%, var(--bai-cyan) 99%);
+  --bai-gradient-wash:  linear-gradient(to bottom right, rgba(123,76,255,.10) 0%, rgba(14,164,197,.10) 99%);
+  --bai-gradient-wash-hover: linear-gradient(to bottom right, rgba(123,76,255,.18) 0%, rgba(14,164,197,.18) 99%);
+
+  /* ----- NEUTRAL RAMP (cool, slight blue cast) --------------------------- */
+  --bai-ink-display:   rgb(8, 10, 31);    /* #080A1F — display titles */
+  --bai-ink-heading:   rgb(27, 30, 56);   /* #1B1E38 — headings, active icon */
+  --bai-ink-body:      rgb(43, 46, 76);   /* #2B2E4C — body dark */
+  --bai-ink-body-2:    rgb(55, 58, 88);   /* #373A58 — body */
+  --bai-ink-muted:     rgb(67, 70, 100);  /* #434664 — secondary text, eyebrows */
+  --bai-stroke:        rgb(182, 184, 204);/* #B6B8CC — borders, disabled icons */
+  --bai-stroke-warm:   rgb(182, 184, 205);/* #B6B8CD — card strokes */
+  --bai-divider:       rgb(223, 228, 238);/* #DFE4EE — header/panel dividers */
+  --bai-surface:       rgb(247, 250, 255);/* #F7FAFF — card / tinted surface */
+  --bai-canvas:        rgb(255, 255, 255);/* white — panel canvas */
+
+  /* Legacy blue (appears once in overrideFill of a default button; not a brand primary) */
+  --bai-legacy-blue:   rgb(26, 144, 255);
+
+  /* ----- SEMANTIC ROLES -------------------------------------------------- */
+  --fg-1: var(--bai-ink-display);     /* highest-contrast text */
+  --fg-2: var(--bai-ink-heading);
+  --fg-3: var(--bai-ink-body);
+  --fg-4: var(--bai-ink-muted);
+  --fg-disabled: var(--bai-stroke);
+  --bg-canvas: var(--bai-canvas);
+  --bg-surface: var(--bai-surface);
+  --border-hairline: var(--bai-stroke-warm);
+  --border-divider: var(--bai-divider);
+
+  /* ----- TYPE ------------------------------------------------------------ */
+  --font-display: 'SF Pro Display', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-ui:      'SF Pro', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-brand:   'Bricolage Grotesque', 'Inter', sans-serif;
+
+  /* Raw scale — tuned for 294px panel */
+  --type-2xl:   28px;
+  --type-xl:    24px;
+  --type-lg:    20px;
+  --type-h3:    17px;
+  --type-h4:    15px;
+  --type-h5:    13px;
+  --type-md:    16px;
+  --type-base:  14px;
+  --type-sm:    12px;
+  --type-11:    11px;
+  --type-xs:    10px;
+
+  --line-tight:  1;
+  --line-normal: 1.4;
+  --line-body:   1.6;
+
+  --track-eyebrow: 0.10em; /* 10% letter-spacing on the lowercase eyebrows */
+
+  /* ----- SPACING (panel-native; 4pt baseline) --------------------------- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 10px;
+  --space-4: 12px;
+  --space-5: 16px;
+  --space-6: 20px;
+  --space-7: 32px;
+  --space-8: 36px;
+
+  /* ----- RADII ---------------------------------------------------------- */
+  --radius-sm:    8px;   /* feature cards, logo tile */
+  --radius-md:   12px;   /* composer */
+  --radius-pill: 128px;  /* chips, suggested actions */
+  --radius-circle: 9999px;
+  --radius-bubble-sent: 12px 12px 0 12px;
+  --radius-bubble-recv: 12px 12px 12px 0;
+
+  /* ----- BORDERS -------------------------------------------------------- */
+  --border-card: 0.5px solid var(--bai-stroke-warm);
+  --border-composer: 0.5px solid var(--bai-stroke);
+  --border-header: 1px solid var(--bai-divider);
+
+  /* ----- SHADOWS (minimal — system is border-driven) -------------------- */
+  --shadow-none: none;
+  --shadow-float: 0 4px 16px -4px rgba(8, 10, 31, 0.08), 0 1px 2px rgba(8, 10, 31, 0.04);
+  --shadow-overlay: 0 12px 32px -8px rgba(8, 10, 31, 0.16);
+
+  /* ----- MOTION --------------------------------------------------------- */
+  --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --dur-fast: 120ms;
+  --dur-base: 180ms;
+  --dur-slow: 240ms;
+}
+
+/* ==========================================================================
+   Semantic typography classes — maps to Figma text styles
+   ========================================================================== */
+
+.bai-hero {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--type-2xl);           /* 28 */
+  line-height: var(--line-tight);
+  color: var(--fg-1);
+  letter-spacing: -0.02em;
+}
+
+.bai-display,
+.bai-h1 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--type-xl);            /* 24 */
+  line-height: var(--line-tight);
+  color: var(--fg-1);
+  letter-spacing: -0.015em;
+}
+
+.bai-h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--type-lg);            /* 20 */
+  line-height: var(--line-tight);
+  color: var(--fg-1);
+  letter-spacing: -0.01em;
+}
+
+.bai-h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--type-h3);            /* 17 */
+  line-height: 1.2;
+  color: var(--fg-1);
+}
+
+.bai-h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--type-h4);            /* 15 */
+  line-height: 1.2;
+  color: var(--fg-1);
+}
+
+.bai-h5 {
+  font-family: var(--font-ui);
+  font-weight: 600;
+  font-size: var(--type-h5);            /* 13 */
+  line-height: 1.2;
+  color: var(--fg-2);
+}
+
+.bai-body-lg {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--type-md);            /* 16 */
+  line-height: var(--line-body);
+  color: var(--fg-4);
+}
+
+.bai-body {
+  font-family: var(--font-ui);
+  font-weight: 400;
+  font-size: var(--type-base);          /* 14 */
+  line-height: var(--line-body);
+  color: var(--fg-3);
+}
+
+.bai-body-sm {
+  font-family: var(--font-ui);
+  font-weight: 400;
+  font-size: var(--type-sm);            /* 12 */
+  line-height: var(--line-body);
+  color: var(--fg-3);
+}
+
+.bai-ui,
+.bai-label {
+  font-family: var(--font-ui);
+  font-weight: 500;
+  font-size: var(--type-sm);            /* 12 */
+  line-height: var(--line-tight);
+  color: var(--fg-2);
+}
+
+.bai-label-sm {
+  font-family: var(--font-ui);
+  font-weight: 500;
+  font-size: var(--type-11);            /* 11 */
+  line-height: var(--line-tight);
+  color: var(--fg-3);
+}
+
+.bai-caption {
+  font-family: var(--font-ui);
+  font-weight: 400;
+  font-size: var(--type-xs);            /* 10 */
+  line-height: var(--line-normal);
+  color: var(--fg-3);
+}
+
+.bai-eyebrow {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--type-xs);
+  line-height: var(--line-body);
+  letter-spacing: var(--track-eyebrow);
+  color: var(--fg-4);
+}
+
+.bai-section-label {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--type-xs);            /* 10 */
+  line-height: var(--line-body);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fg-4);
+}
+
+.bai-wordmark {
+  font-family: var(--font-brand);
+  font-weight: 700;
+  font-size: 18.46px;
+  line-height: var(--line-tight);
+  color: var(--fg-2);
+}
+
+.bai-count {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--type-base);
+  line-height: var(--line-tight);
+  background: var(--bai-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}

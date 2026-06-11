@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BlueAI Hero — 3 Directions</title>
+<link rel="stylesheet" href="assets/colors_and_type.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&display=swap">
+<style>
+  :root{--font-head:'Space Grotesk',var(--font-display);--slate-900:#0f172a;}
+  *{box-sizing:border-box;}
+  html,body{margin:0;}
+  body{font-family:var(--font-ui);color:var(--fg-1);min-height:100vh;
+    background:
+      radial-gradient(1100px 620px at 18% -8%, rgba(123,76,255,.10), transparent 60%),
+      radial-gradient(900px 600px at 92% 8%, rgba(14,164,197,.10), transparent 55%),
+      linear-gradient(180deg,#f3f4fc 0%, #eaeefb 55%, #eef1fc 100%);
+    -webkit-font-smoothing:antialiased;display:flex;flex-direction:column;}
+  .nav{display:flex;align-items:center;gap:10px;max-width:1180px;width:100%;margin:0 auto;padding:24px 40px;}
+  .nav svg{width:34px;height:34px;display:block;}
+  .wordmark{font-family:var(--font-brand);font-weight:700;font-size:25px;line-height:1;
+    background:var(--bai-gradient);-webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;letter-spacing:-.01em;}
+  main{flex:1;max-width:1180px;width:100%;margin:0 auto;padding:18px 40px 64px;}
+  .eyebrow{font-family:var(--font-ui);font-weight:600;font-size:12px;letter-spacing:.14em;
+    text-transform:uppercase;color:#3d7bff;margin:0 0 10px;}
+  h1{font-family:var(--font-head);font-weight:600;letter-spacing:-.03em;font-size:clamp(34px,4vw,48px);
+    line-height:1.05;color:var(--slate-900);margin:0;text-wrap:balance;}
+  .lede{font-family:var(--font-ui);color:var(--fg-4);font-size:18px;line-height:1.55;max-width:60ch;margin:16px 0 40px;}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+  .opt{display:flex;flex-direction:column;text-decoration:none;background:var(--bai-canvas);
+    border:1px solid var(--bai-divider);border-radius:20px;overflow:hidden;
+    box-shadow:0 1px 2px rgba(8,10,31,.04);transition:transform .2s var(--ease-out),box-shadow .2s var(--ease-out),border-color .2s var(--ease-out);}
+  .opt:hover{transform:translateY(-3px);border-color:rgba(123,76,255,.35);
+    box-shadow:0 24px 50px -24px rgba(95,70,255,.45);}
+  .thumb{position:relative;height:172px;border-bottom:1px solid var(--bai-divider);overflow:hidden;
+    background:linear-gradient(180deg,#fbfbff,#f1f3fd);}
+  .num{position:absolute;top:12px;left:12px;width:26px;height:26px;border-radius:8px;
+    background:var(--bai-gradient);color:#fff;font-family:var(--font-head);font-weight:700;font-size:13px;
+    display:flex;align-items:center;justify-content:center;z-index:2;}
+  /* schematic previews */
+  .sk{position:absolute;inset:0;padding:20px 18px;display:flex;gap:8px;}
+  .sk .blk{background:#fff;border:1px solid var(--bai-divider);border-radius:7px;}
+  .sk .ln{background:linear-gradient(90deg,#d7ddf2,#e6eafa);border-radius:3px;height:7px;}
+  .sk .g{background:linear-gradient(135deg,rgba(123,76,255,.16),rgba(14,164,197,.14));}
+  /* opt1: left text col + right (stage + thumb row) */
+  .sk1{flex-direction:row;}
+  .sk1 .col{flex:.8;display:flex;flex-direction:column;justify-content:center;gap:7px;}
+  .sk1 .col .ln.a{width:80%;height:11px;} .sk1 .col .ln.b{width:95%;} .sk1 .col .ln.c{width:60%;}
+  .sk1 .col .btn{width:54%;height:16px;border-radius:8px;background:var(--bai-gradient);margin-top:4px;}
+  .sk1 .right{flex:1.1;display:flex;flex-direction:column;gap:7px;}
+  .sk1 .row{display:flex;gap:6px;} .sk1 .row .blk{flex:1;height:18px;}
+  .sk1 .stage{flex:1;}
+  /* opt2: centered + 3 cards row */
+  .sk2{flex-direction:column;align-items:center;justify-content:center;gap:7px;}
+  .sk2 .ln.t{width:55%;height:11px;} .sk2 .ln.s{width:40%;}
+  .sk2 .btn{width:30%;height:15px;border-radius:8px;background:var(--bai-gradient);margin-bottom:3px;}
+  .sk2 .cards{display:flex;gap:7px;width:100%;margin-top:3px;} .sk2 .cards .blk{flex:1;height:44px;}
+  /* opt3: centered + big stage left + thumb cards right */
+  .sk3{flex-direction:column;gap:7px;}
+  .sk3 .top{display:flex;flex-direction:column;align-items:center;gap:5px;}
+  .sk3 .top .ln.t{width:50%;height:10px;} .sk3 .top .btn{width:26%;height:13px;border-radius:7px;background:var(--bai-gradient);}
+  .sk3 .body{display:flex;gap:7px;flex:1;} .sk3 .body .stage{flex:1.4;} .sk3 .body .rail{flex:1;display:flex;flex-direction:column;gap:6px;} .sk3 .body .rail .blk{flex:1;}
+  .meta{padding:18px 18px 20px;display:flex;flex-direction:column;gap:8px;flex:1;}
+  .meta h2{font-family:var(--font-head);font-weight:600;font-size:18px;letter-spacing:-.02em;color:var(--slate-900);margin:0;}
+  .meta p{font-family:var(--font-ui);font-size:13.5px;line-height:1.45;color:var(--fg-4);margin:0;}
+  .why{font-family:var(--font-ui);font-size:12.5px;line-height:1.45;color:var(--fg-3);margin:0;
+    padding-top:10px;border-top:1px solid var(--bai-divider);}
+  .why b{color:var(--slate-900);font-weight:600;}
+  .ux{display:flex;flex-direction:column;gap:8px;margin:0;padding-top:11px;border-top:1px solid var(--bai-divider);}
+  .ux .r{display:flex;gap:8px;font-family:var(--font-ui);font-size:12.5px;line-height:1.4;color:var(--fg-3);}
+  .ux .mk{flex:none;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;margin-top:1px;}
+  .ux .pro .mk{background:rgba(22,163,74,.14);color:#0f7a3b;}
+  .ux .con .mk{background:rgba(100,116,139,.16);color:#64748b;}
+  .ux b{color:var(--slate-900);font-weight:600;}
+  .open{display:inline-flex;align-items:center;gap:7px;font-family:var(--font-ui);font-weight:600;font-size:14px;color:#2f6dff;margin-top:auto;padding-top:6px;}
+  .open svg{width:16px;height:16px;transition:transform .18s var(--ease-out);}
+  .opt:hover .open svg{transform:translateX(3px);}
+  /* recommended treatment */
+  .opt.is-rec{border-color:rgba(123,76,255,.55);box-shadow:0 20px 46px -22px rgba(95,70,255,.5);}
+  .rec{position:absolute;top:12px;right:12px;z-index:2;display:inline-flex;align-items:center;gap:5px;
+    background:var(--bai-gradient);color:#fff;font-family:var(--font-ui);font-weight:600;font-size:10px;
+    letter-spacing:.08em;text-transform:uppercase;padding:5px 10px;border-radius:var(--radius-pill);
+    box-shadow:0 6px 16px -6px rgba(95,70,255,.6);}
+  @media (max-width:860px){.grid{grid-template-columns:1fr;max-width:460px;margin:0 auto;}}
+</style>
+</head>
+<body>
+  <nav class="nav">
+    <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="BlueAI">
+      <rect width="32" height="32" rx="16" fill="url(#bm-g)"></rect>
+      <path d="M16 6C16 11.5228 20.4772 16 26 16C20.4772 16 16 20.4772 16 26C16 20.4772 11.5228 16 6 16C11.5228 16 16 11.5228 16 6Z" fill="white"></path>
+      <defs><linearGradient id="bm-g" x1="32" y1="16" x2="0" y2="16" gradientUnits="userSpaceOnUse"><stop stop-color="#7B4CFF"></stop><stop offset="1" stop-color="#0EA4C5"></stop></linearGradient></defs>
+    </svg>
+    <span class="wordmark">BlueAI</span>
+  </nav>
+
+  <main>
+    <p class="eyebrow">Hero — Design Review</p>
+    <h1>Three directions for the agent hero.</h1>
+    <p class="lede">All three share the brand, layout grid, and the same three live-agent animations (Career, Creator, Finance). They differ in how the agents are showcased — open any to see it run. We've flagged the strongest for UX and click-through below.</p>
+
+    <div class="grid">
+
+      <a class="opt" href="BlueAI Hero - 3 Cards.html">
+        <div class="thumb">
+          <span class="num">1</span>
+          <div class="sk sk2">
+            <span class="btn"></span><span class="ln t"></span><span class="ln s"></span>
+            <div class="cards"><span class="blk g"></span><span class="blk g"></span><span class="blk g"></span></div>
+          </div>
+        </div>
+        <div class="meta">
+          <h2>Three Cards</h2>
+          <p>Centered headline and CTA, with three equal agent cards that play side by side.</p>
+          <div class="ux">
+            <div class="r pro"><span class="mk">✓</span><span><b>Shows breadth instantly</b> — users grasp there are three distinct agents in one look.</span></div>
+            <div class="r con"><span class="mk">✕</span><span><b>Attention splits three ways.</b> Each demo is small and hard to read, and the CTA competes with three cards — no single, clear thing to do.</span></div>
+          </div>
+          <span class="open">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </div>
+      </a>
+
+      <a class="opt" href="BlueAI Hero - Stage Original.html">
+        <div class="thumb">
+          <span class="num">2</span>
+          <div class="sk sk3">
+            <div class="top"><span class="btn"></span><span class="ln t"></span></div>
+            <div class="body"><span class="blk stage g"></span><div class="rail"><span class="blk"></span><span class="blk"></span><span class="blk"></span></div></div>
+          </div>
+        </div>
+        <div class="meta">
+          <h2>Stage + Thumbnails <span style="color:var(--fg-4);font-weight:500;">(original)</span></h2>
+          <p>Centered headline and CTA stacked on top, with one big agent stage and a thumbnail rail below.</p>
+          <div class="ux">
+            <div class="r pro"><span class="mk">✓</span><span><b>One large, legible demo</b> — the agent's process is easy to follow at full size.</span></div>
+            <div class="r con"><span class="mk">✕</span><span><b>Proof sits below the fold.</b> The stacked headline pushes the live demo down, and on shorter screens the CTA scrolls out of view.</span></div>
+          </div>
+          <span class="open">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </div>
+      </a>
+
+      <a class="opt is-rec" href="BlueAI Hero - Stage.html">
+        <div class="thumb">
+          <span class="num">3</span>
+          <span class="rec">★ Recommended</span>
+          <div class="sk sk1">
+            <div class="col"><span class="ln a"></span><span class="ln b"></span><span class="ln c"></span><span class="btn"></span></div>
+            <div class="right"><div class="row"><span class="blk"></span><span class="blk"></span><span class="blk"></span></div><span class="blk stage g"></span></div>
+          </div>
+        </div>
+        <div class="meta">
+          <h2>Stage + Thumbnails</h2>
+          <p>Message on the left; on the right the agent thumbnails sit above one dominant stage that plays in place.</p>
+          <div class="ux">
+            <div class="r pro"><span class="mk">✓</span><span><b>Value + proof on one screen.</b> Headline, CTA and a large live demo are visible together at the top — and the Download button never leaves the viewport.</span></div>
+            <div class="r pro"><span class="mk">✓</span><span><b>One agent at a time</b> stays readable, and the thumbnails make the next agent an obvious tap — interaction that pulls users in.</span></div>
+            <div class="r con"><span class="mk">✕</span><span>Only one agent shows at once — the other two are a tap (or a 5s cycle) away.</span></div>
+          </div>
+          <span class="open">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </div>
+      </a>
+
+    </div>
+  </main>
+</body>
+</html>

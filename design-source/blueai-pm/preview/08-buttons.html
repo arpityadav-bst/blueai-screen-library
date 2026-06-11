@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Plus Jakarta Sans', sans-serif; background: #fff; padding: 16px; }
+  .row { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+  .label { font-size: 10px; font-weight: 700; color: #9CA3AF; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; border-radius: 8px; font-family: inherit; font-weight: 500; font-size: 14px; padding: 10px 20px; cursor: pointer; border: none; transition: all 200ms; min-width: 8ch; }
+  .btn-sm { padding: 7px 14px; font-size: 13px; }
+  .primary { background: #1990FF; color: #fff; }
+  .secondary { border: 1px solid #D1D5DB; background: transparent; color: #111827; padding: 7px 20px; }
+  .success { border: 1px solid #10B981; background: transparent; color: #047857; padding: 7px 20px; }
+  .danger { border: 1px solid #F43F5E; background: transparent; color: #BE123C; padding: 7px 20px; }
+  .gradient { background: linear-gradient(to right, #4F46E5, #9333EA); color: #fff; border-radius: 8px; padding: 10px 24px; font-weight: 600; }
+  .loading { background: #1990FF; color: #fff; }
+  .disabled { background: #1990FF; color: #fff; opacity: 0.5; cursor: not-allowed; }
+  .spinner { width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3); border-right-color: #fff; border-radius: 50%; display: inline-block; animation: spin 0.6s linear infinite; flex-shrink: 0; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .pill { border-radius: 9999px; border: 1px solid #E5E7EB; background: #fff; color: #374151; font-size: 13px; padding: 6px 14px; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+  .send-btn { width: 32px; height: 32px; border-radius: 50%; background: #1990FF; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+</style></head>
+<body>
+  <div class="label">Primary · Secondary · Variants</div>
+  <div class="row">
+    <button class="btn primary">Submit Task</button>
+    <button class="btn secondary">Cancel</button>
+    <button class="btn success">Accept Job</button>
+    <button class="btn danger">Decline Job</button>
+    <button class="btn gradient">Subscribe to Prime</button>
+  </div>
+  <div class="label">States · Sizes</div>
+  <div class="row">
+    <button class="btn primary">+ New</button>
+    <button class="btn primary btn-sm">+ New</button>
+    <button class="btn loading"><span class="spinner"></span></button>
+    <button class="btn disabled" disabled>Saving...</button>
+    <button class="btn secondary btn-sm">More Info</button>
+    <button class="btn success btn-sm">Start</button>
+    <button class="btn danger btn-sm">Stop</button>
+  </div>
+  <div class="label">Special — Pill &amp; Send</div>
+  <div class="row">
+    <button class="pill">
+      <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+      Start New Chat
+    </button>
+    <button class="pill">Schedule Task</button>
+    <div class="send-btn">
+      <svg width="16" height="16" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+    </div>
+    <button class="btn" style="background: linear-gradient(to right,#0EA4C5,#7B4CFF); color:#fff; border-radius:8px; padding:10px 24px; font-weight:600; border:none;">Sign In</button>
+  </div>
+</body></html>

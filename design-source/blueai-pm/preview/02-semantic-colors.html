@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Plus Jakarta Sans', sans-serif; background: #fff; padding: 16px; }
+  .row { display: flex; gap: 8px; margin-bottom: 8px; }
+  .swatch-group { flex: 1; display: flex; gap: 4px; flex-direction: column; }
+  .swatch { border-radius: 6px; height: 40px; display: flex; align-items: center; justify-content: center; }
+  .swatch-row { display: flex; gap: 4px; }
+  .chip { border-radius: 4px; height: 36px; flex: 1; }
+  .label { font-size: 10px; font-weight: 700; color: #6B7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+  .semantic-row { display: flex; gap: 8px; }
+  .sem { flex: 1; }
+  .badge { display: inline-flex; align-items: center; border-radius: 4px; padding: 1px 7px; font-size: 11px; font-weight: 600; }
+</style></head>
+<body>
+  <div class="semantic-row">
+    <div class="sem">
+      <div class="label">Success</div>
+      <div class="swatch-row">
+        <div class="chip" style="background:#DCFCE7;"></div>
+        <div class="chip" style="background:#BBF7D0;"></div>
+        <div class="chip" style="background:#22C55E;"></div>
+        <div class="chip" style="background:#15803D;"></div>
+      </div>
+      <div style="margin-top:6px; display:flex; gap:4px;">
+        <span class="badge" style="background:#DCFCE7; color:#166534;">accepted</span>
+        <span class="badge" style="background:#BBF7D0; color:#14532D;">completed</span>
+      </div>
+    </div>
+    <div class="sem">
+      <div class="label">Warning</div>
+      <div class="swatch-row">
+        <div class="chip" style="background:#FEF3C7;"></div>
+        <div class="chip" style="background:#FDE68A;"></div>
+        <div class="chip" style="background:#D97706;"></div>
+        <div class="chip" style="background:#92400E;"></div>
+      </div>
+      <div style="margin-top:6px; display:flex; gap:4px;">
+        <span class="badge" style="background:#FEF9C3; color:#92400E;">assigned</span>
+        <span class="badge" style="background:#FEF3C7; color:#B45309;">low credits</span>
+      </div>
+    </div>
+    <div class="sem">
+      <div class="label">Danger</div>
+      <div class="swatch-row">
+        <div class="chip" style="background:#FEE2E2;"></div>
+        <div class="chip" style="background:#FECACA;"></div>
+        <div class="chip" style="background:#EF4444;"></div>
+        <div class="chip" style="background:#991B1B;"></div>
+      </div>
+      <div style="margin-top:6px; display:flex; gap:4px;">
+        <span class="badge" style="background:#FEE2E2; color:#991B1B;">declined</span>
+        <span class="badge" style="background:#FECACA; color:#7F1D1D;">failed</span>
+      </div>
+    </div>
+    <div class="sem">
+      <div class="label">Info / In-Progress</div>
+      <div class="swatch-row">
+        <div class="chip" style="background:#DBEAFE;"></div>
+        <div class="chip" style="background:#93C5FD;"></div>
+        <div class="chip" style="background:#3B82F6;"></div>
+        <div class="chip" style="background:#1E40AF;"></div>
+      </div>
+      <div style="margin-top:6px; display:flex; gap:4px;">
+        <span class="badge" style="background:#DBEAFE; color:#1E40AF;">in-progress</span>
+      </div>
+    </div>
+    <div class="sem">
+      <div class="label">Schedule / Jobs</div>
+      <div class="swatch-row">
+        <div class="chip" style="background:#F3E8FF;"></div>
+        <div class="chip" style="background:#A855F7;"></div>
+        <div class="chip" style="background:#FFEDD5;"></div>
+        <div class="chip" style="background:#F97316;"></div>
+      </div>
+      <div style="margin-top:6px; display:flex; gap:4px;">
+        <span class="badge" style="background:#F3E8FF; color:#7C3AED;">scheduled</span>
+        <span class="badge" style="background:#FFEDD5; color:#EA580C;">jobs</span>
+      </div>
+    </div>
+  </div>
+</body></html>

@@ -1,0 +1,525 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BlueAI — Hero (Stage)</title>
+<link rel="stylesheet" href="assets/colors_and_type.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="assets/homepage-sections.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+  :root{
+    --green:#16a34a;
+    --green-bg:rgba(22,163,74,.10);
+    --font-head:'Space Grotesk', var(--font-display);
+    --font-mono:'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    --slate-900:#0f172a;
+    --hero-w:1180px;
+    --period:3.5s;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;}
+  body{
+    font-family:var(--font-ui);color:var(--fg-1);
+    background:
+      radial-gradient(1100px 620px at 50% -8%, rgba(123,76,255,.10), transparent 60%),
+      radial-gradient(900px 600px at 88% 12%, rgba(14,164,197,.08), transparent 55%),
+      linear-gradient(180deg,#f3f4fc 0%, #eaeefb 55%, #eef1fc 100%);
+    min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden;
+  }
+
+  /* ----------------------------------------------------------------- NAV */
+  .nav{display:flex;align-items:center;justify-content:space-between;max-width:1320px;margin:0 auto;padding:16px 40px;}
+  .brand{display:flex;align-items:center;gap:10px;}
+  .brand svg{display:block;width:34px;height:34px;}
+  .wordmark{font-family:var(--font-brand);font-weight:700;font-size:25px;line-height:1;
+    background:var(--bai-gradient);-webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;color:transparent;letter-spacing:-.01em;}
+  .nav-right{display:flex;align-items:center;gap:34px;}
+  .nav-links{display:flex;align-items:center;gap:34px;}
+  .nav-links a{font-family:var(--font-ui);font-weight:500;font-size:16px;color:var(--fg-3);
+    text-decoration:none;transition:color .15s var(--ease-out);}
+  .nav-links a:hover{color:var(--fg-1);}
+  .nav-sep{width:1px;height:22px;background:var(--bai-divider);}
+  .nav-social{display:flex;align-items:center;gap:18px;}
+  .nav-social a{color:var(--bai-stroke);display:flex;transition:color .15s var(--ease-out);}
+  .nav-social a:hover{color:var(--fg-2);}
+  .nav-social svg{width:21px;height:21px;display:block;}
+
+  /* --------------------------------------------------------------- HERO */
+  .hero{max-width:var(--hero-w);margin:0 auto;padding:12px 40px 0;text-align:center;}
+  .pill-live{display:inline-flex;align-items:center;gap:9px;background:rgba(255,255,255,.7);
+    border:1px solid var(--bai-divider);border-radius:var(--radius-pill);padding:7px 15px 7px 13px;
+    box-shadow:var(--shadow-float);backdrop-filter:blur(6px);}
+  .rail .pill-live{align-self:flex-start;flex:none;}
+  .pill-live .dot{width:8px;height:8px;border-radius:50%;background:var(--green);
+    animation:livePulse 2s var(--ease-out) infinite;}
+  .pill-live span{font-family:var(--font-ui);font-weight:600;font-size:12px;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--fg-2);}
+  @keyframes livePulse{0%{box-shadow:0 0 0 0 rgba(22,163,74,.45);}70%{box-shadow:0 0 0 7px rgba(22,163,74,0);}100%{box-shadow:0 0 0 0 rgba(22,163,74,0);}}
+
+  .headline{font-family:var(--font-head);font-weight:600;letter-spacing:-.03em;
+    font-size:clamp(44px,4.6vw,58px);line-height:1.05;color:var(--slate-900);
+    text-wrap:balance;margin:0;}
+  .subhead{font-family:var(--font-ui);font-weight:400;color:var(--fg-4);
+    font-size:clamp(16px,1.3vw,19px);line-height:1.55;max-width:620px;margin:18px auto 0;}
+
+  .cta{display:inline-flex;align-items:center;gap:9px;margin-top:24px;height:52px;padding:0 28px;
+    border:none;cursor:pointer;border-radius:var(--radius-pill);
+    background:linear-gradient(105deg,#1a90ff 0%, #6b53ff 55%, #7B4CFF 100%);
+    color:#fff;font-family:var(--font-ui);font-weight:600;font-size:18px;white-space:nowrap;
+    box-shadow:0 10px 26px -8px rgba(95,70,255,.55);
+    transition:transform .18s var(--ease-out), box-shadow .18s var(--ease-out);}
+  .cta:hover{transform:translateY(-2px);box-shadow:0 16px 32px -8px rgba(95,70,255,.6);}
+  .cta:active{transform:translateY(0) scale(.98);}
+  .cta .spark{width:18px;height:18px;display:block;}
+  .cta .arrow{width:18px;height:18px;transition:transform .18s var(--ease-out);}
+  .cta:hover .arrow{transform:translateX(3px);}
+
+  /* ---------------------------------------------------- SHOWCASE (stage + rail) */
+  .showcase{display:grid;grid-template-columns:1.62fr 1fr;gap:18px;margin-top:30px;text-align:left;align-items:stretch;}
+
+  /* the big center stage panel — FIXED height so it never reflows between agents */
+  .stage-main{position:relative;background:var(--bai-canvas);border:1px solid rgba(123,76,255,.30);
+    border-radius:24px;overflow:hidden;height:clamp(384px,52vh,468px);
+    box-shadow:0 26px 56px -24px rgba(95,70,255,.42), 0 4px 14px -6px rgba(8,10,31,.08);}
+  .stage-main::before{content:"";position:absolute;inset:0;pointer-events:none;z-index:0;
+    background:linear-gradient(180deg, rgba(123,76,255,.05), rgba(14,164,197,.035));}
+  /* every pane is stacked absolutely so swaps cross-fade with no layout shift */
+  .pane{position:absolute;inset:0;z-index:1;padding:22px 26px;display:flex;flex-direction:column;
+    opacity:0;pointer-events:none;}
+  .pane.is-active{pointer-events:auto;}
+  .pane-top{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+  .icon-tile{width:48px;height:48px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:24px;line-height:1;flex:none;}
+  .icon-career{background:linear-gradient(160deg,#e7e3ff,#dfe6ff);}
+  .icon-creator{background:linear-gradient(160deg,#ffe1f3,#f3e2ff);}
+  .icon-finance{background:linear-gradient(160deg,#dcf6e6,#e6f7ec);}
+  .eyebrow{font-family:var(--font-ui);font-weight:600;font-size:12px;letter-spacing:.13em;
+    text-transform:uppercase;color:#3d7bff;}
+  .see-tag{display:inline-flex;align-items:center;gap:6px;margin-left:auto;flex:none;white-space:nowrap;cursor:pointer;}
+  .see-tag span{font-family:var(--font-ui);font-weight:600;font-size:14px;color:#2f6dff;}
+  .see-tag svg{width:16px;height:16px;color:#2f6dff;transition:transform .18s var(--ease-out);}
+  .pane:hover .see-tag svg{transform:translateX(3px);}
+  .thumb-see{display:inline-flex;align-items:center;margin-left:auto;color:#2f6dff;flex:none;}
+  .thumb-see svg{width:16px;height:16px;transition:transform .18s var(--ease-out);}
+  .thumb:hover .thumb-see svg,.thumb.is-active .thumb-see svg{transform:translateX(2px);}
+  .pane-title{font-family:var(--font-head);font-weight:600;font-size:26px;line-height:1.1;
+    letter-spacing:-.03em;color:var(--slate-900);text-wrap:balance;margin:0 0 6px;}
+  .pane-desc{font-family:var(--font-ui);font-weight:400;font-size:14.5px;line-height:1.45;
+    color:var(--fg-4);margin:0 0 12px;max-width:48ch;}
+  .see-link{display:inline-flex;align-items:center;gap:7px;margin-top:12px;
+    font-family:var(--font-ui);font-weight:600;font-size:15px;color:#2f6dff;text-decoration:none;width:fit-content;}
+  .see-link svg{width:16px;height:16px;transition:transform .18s var(--ease-out);}
+  .pane:hover .see-link svg{transform:translateX(3px);}
+
+  /* big stage (the inner animation) — flex-fills the fixed panel height */
+  .stage{position:relative;flex:1;min-height:148px;background:var(--bai-surface);border:1px solid var(--bai-divider);
+    border-radius:16px;padding:18px;overflow:hidden;}
+
+  /* --------- the selectable rail --------- */
+  .rail{display:flex;flex-direction:column;gap:12px;}
+  .thumb{position:relative;flex:1;text-align:left;background:var(--bai-canvas);
+    border:1px solid var(--bai-divider);border-radius:16px;padding:13px 14px 14px;cursor:pointer;
+    display:flex;flex-direction:column;gap:6px;overflow:hidden;
+    box-shadow:0 1px 2px rgba(8,10,31,.04);
+    transition:transform .35s var(--ease-out), box-shadow .35s var(--ease-out), border-color .35s var(--ease-out);}
+  .thumb-top{display:flex;align-items:center;gap:10px;}
+  .thumb-icon{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;flex:none;}
+  .thumb .live-tag{margin-left:auto;padding:4px 9px;}
+  .thumb .live-tag span{font-size:10px;}
+  .thumb-title{font-family:var(--font-head);font-weight:600;font-size:15.5px;line-height:1.18;
+    letter-spacing:-.02em;color:var(--slate-900);text-wrap:balance;margin:0;}
+  .thumb-eyebrow{font-family:var(--font-ui);font-weight:600;font-size:10.5px;letter-spacing:.13em;
+    text-transform:uppercase;color:#3d7bff;}
+  .thumb.is-dim{opacity:.6;}
+  .thumb.is-dim:hover{opacity:.85;}
+  .thumb.is-active{border-color:rgba(123,76,255,.45);
+    box-shadow:0 16px 34px -18px rgba(95,70,255,.5);transform:translateY(-1px);}
+  .thumb-progress{position:absolute;left:0;bottom:0;height:3px;width:100%;transform:scaleX(0);
+    transform-origin:left center;background:var(--bai-gradient);opacity:0;}
+  .thumb.is-active .thumb-progress{opacity:1;}
+
+  /* ============ INNER STAGE ANIMATIONS (shared with 3-card version) ============ */
+  /* ---------- CAREER ---------- */
+  .cr-job{display:flex;align-items:center;gap:11px;background:#fff;border:1px solid var(--bai-divider);
+    border-radius:11px;padding:9px 12px;margin-bottom:14px;}
+  .cr-logo{width:34px;height:34px;border-radius:9px;background:linear-gradient(150deg,#7B4CFF,#0EA4C5);
+    color:#fff;font-family:var(--font-head);font-weight:700;font-size:16px;display:flex;align-items:center;justify-content:center;flex:none;}
+  .cr-job .t{font-family:var(--font-ui);font-weight:600;font-size:14px;color:var(--slate-900);line-height:1.2;}
+  .cr-job .s{font-family:var(--font-ui);font-size:12px;color:var(--fg-4);line-height:1.3;}
+  .cr-form{display:flex;flex-direction:column;gap:10px;}
+  .cr-row{display:flex;align-items:center;gap:11px;}
+  .cr-lbl{font-family:var(--font-ui);font-size:12px;color:var(--fg-4);width:58px;flex:none;}
+  .cr-track{flex:1;height:11px;border-radius:6px;background:#e7ebf5;overflow:hidden;}
+  .cr-fill{display:block;height:100%;width:100%;border-radius:6px;transform-origin:left center;
+    background:linear-gradient(90deg,#c9d3ee,#aab9e6);}
+  .cr-submit{position:absolute;left:18px;right:18px;bottom:18px;height:40px;border:none;cursor:default;
+    border-radius:11px;background:linear-gradient(105deg,#1a90ff,#7B4CFF);color:#fff;
+    font-family:var(--font-ui);font-weight:600;font-size:14px;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+  .cr-ripple{position:absolute;left:50%;bottom:20px;width:170px;height:170px;border-radius:50%;
+    background:rgba(255,255,255,.6);pointer-events:none;}
+  .cr-applied{position:absolute;left:18px;right:18px;bottom:18px;height:40px;border-radius:11px;
+    background:var(--green-bg);color:#0f7a3b;font-family:var(--font-ui);font-weight:600;font-size:14px;
+    display:flex;align-items:center;justify-content:center;gap:6px;opacity:0;}
+
+  /* ---------- CREATOR ---------- */
+  .cv-trend{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--bai-divider);
+    border-radius:var(--radius-pill);padding:6px 13px;font-family:var(--font-ui);font-weight:600;
+    font-size:13px;color:#c2418a;margin-bottom:15px;}
+  .cv-script{display:flex;flex-direction:column;gap:9px;margin-bottom:17px;}
+  .cv-line{height:10px;border-radius:5px;background:linear-gradient(90deg,#d7c4e8,#c9d3ee);transform-origin:left center;}
+  .cv-line.l1{width:92%;} .cv-line.l2{width:74%;} .cv-line.l3{width:84%;}
+  .cv-board{display:flex;gap:11px;}
+  .cv-frame{position:relative;flex:1;height:60px;border-radius:10px;background:#fff;border:1px solid var(--bai-divider);overflow:hidden;}
+  .cv-frame::before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(123,76,255,.14),rgba(14,164,197,.12));}
+  .cv-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:32px;height:32px;
+    border-radius:50%;background:rgba(255,255,255,.92);display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(8,10,31,.18);}
+  .cv-play svg{width:14px;height:14px;color:#1B1E38;margin-left:1px;}
+  .cv-views{position:absolute;left:18px;bottom:16px;font-family:var(--font-ui);font-weight:600;font-size:13px;
+    color:var(--fg-3);display:flex;align-items:center;gap:6px;}
+  .cv-views svg{width:13px;height:13px;color:#c2418a;}
+
+  /* ---------- FINANCE ---------- */
+  .fn-tickers{position:relative;display:flex;gap:9px;margin-bottom:14px;overflow:hidden;border-radius:9px;}
+  .fn-tick{flex:1;background:#fff;border:1px solid var(--bai-divider);border-radius:9px;padding:7px 10px;}
+  .fn-tick .sym{font-family:var(--font-mono);font-weight:600;font-size:13px;color:var(--slate-900);letter-spacing:-.02em;}
+  .fn-tick .pct{font-family:var(--font-mono);font-weight:500;font-size:11px;}
+  .fn-tick .pct.up{color:#0f7a3b;} .fn-tick .pct.dn{color:#d6455d;}
+  .fn-sweep{position:absolute;top:0;bottom:0;width:60px;pointer-events:none;
+    background:linear-gradient(90deg,transparent,rgba(123,76,255,.30),transparent);}
+  .fn-chartwrap{position:relative;height:96px;}
+  .fn-chart{width:100%;height:96px;display:block;overflow:visible;}
+  .fn-line{fill:none;stroke:url(#fn-grad);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+  .fn-marker{position:absolute;font-family:var(--font-mono);font-weight:600;font-size:12px;color:#fff;
+    background:#0f7a3b;border-radius:var(--radius-pill);padding:4px 11px;left:58%;top:10px;box-shadow:0 3px 8px rgba(15,122,59,.4);}
+  .fn-marker::after{content:"";position:absolute;left:16px;top:100%;width:7px;height:7px;border-radius:50%;background:#0f7a3b;margin-top:3px;}
+  .fn-port{position:absolute;left:18px;bottom:14px;display:flex;align-items:baseline;gap:8px;}
+  .fn-port .v{font-family:var(--font-mono);font-weight:600;font-size:23px;color:var(--slate-900);letter-spacing:-.02em;}
+  .fn-port .d{font-family:var(--font-mono);font-weight:500;font-size:13px;color:#0f7a3b;}
+
+  /* --------------------------------------------------------------- entry init */
+  .js-anim .nav-logomark,
+  .js-anim .pill-live,
+  .js-anim .headline,
+  .js-anim .subhead,
+  .js-anim .cta,
+  .js-anim .stage-main,
+  .js-anim .thumb{opacity:0;}
+
+  /* --------------------------------------------------------------- responsive */
+  /* DESKTOP: whole hero fits in one viewport, no scroll */
+  @media (min-width:921px){
+    .hero-screen{height:100vh;overflow:hidden;display:flex;flex-direction:column;}
+    .nav{flex:none;width:100%;}
+    .hero{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;
+      justify-content:center;padding-top:0;padding-bottom:clamp(14px,2.4vh,30px);}
+    .hero .headline{width:min(780px,100%);}
+    .hero .subhead{width:min(620px,100%);}
+    .hero .showcase{align-self:stretch;width:100%;}
+  }
+  /* MOBILE / tablet: stack, allow scroll */
+  @media (max-width:920px){
+    .nav-links{display:none;}
+    .showcase{grid-template-columns:1fr;gap:16px;margin-top:28px;}
+    .rail{flex-direction:row;}
+    .thumb-title{display:none;}
+    .pane-title{font-size:24px;}
+  }
+  @media (prefers-reduced-motion: reduce){ .pill-live .dot{animation:none;} }
+</style>
+</head>
+<body class="js-anim">
+
+  <!-- ===================================================== NAV -->
+  <div class="hero-screen">
+  <nav class="nav">
+    <div class="brand">
+      <span class="nav-logomark">
+        <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="BlueAI">
+          <rect width="32" height="32" rx="16" fill="url(#bm-g)"></rect>
+          <path class="bm-spark" d="M16 6C16 11.5228 20.4772 16 26 16C20.4772 16 16 20.4772 16 26C16 20.4772 11.5228 16 6 16C11.5228 16 16 11.5228 16 6Z" fill="white"></path>
+          <defs><linearGradient id="bm-g" x1="32" y1="16" x2="0" y2="16" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#7B4CFF"></stop><stop offset="1" stop-color="#0EA4C5"></stop>
+          </linearGradient></defs>
+        </svg>
+      </span>
+      <span class="wordmark">BlueAI</span>
+    </div>
+    <div class="nav-right">
+      <div class="nav-links">
+        <a href="#">Social Rewards</a><a href="#">Developer</a><a href="#">Try Skills</a>
+      </div>
+      <div class="nav-sep"></div>
+      <div class="nav-social">
+        <a href="#" aria-label="Discord"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.3 4.5A19.8 19.8 0 0 0 15.4 3l-.2.5a14 14 0 0 1 4.3 2.2 17.7 17.7 0 0 0-15 0A14 14 0 0 1 8.8 3.5L8.6 3a19.8 19.8 0 0 0-4.9 1.5C.6 9.1-.2 13.6.2 18a20 20 0 0 0 6 3l.8-1.6a13 13 0 0 1-2-1l.5-.4a14.2 14.2 0 0 0 12.2 0l.5.4c-.6.4-1.3.7-2 1L17 21a20 20 0 0 0 6-3c.5-5.2-.8-9.6-2.7-13.5ZM8 15.3c-1.2 0-2.1-1.1-2.1-2.4 0-1.3.9-2.4 2.1-2.4s2.2 1.1 2.1 2.4c0 1.3-.9 2.4-2.1 2.4Zm8 0c-1.2 0-2.1-1.1-2.1-2.4 0-1.3.9-2.4 2.1-2.4s2.2 1.1 2.1 2.4c0 1.3-.9 2.4-2.1 2.4Z"/></svg></a>
+        <a href="#" aria-label="X"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.2 2h3.3l-7.2 8.3L23 22h-6.7l-5.2-6.8L5.1 22H1.8l7.7-8.8L1 2h6.8l4.7 6.2L18.2 2Zm-1.2 18h1.8L7.1 3.9H5.2L17 20Z"/></svg></a>
+        <a href="#" aria-label="Reddit"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 12.1a2.1 2.1 0 0 0-3.6-1.4 10.3 10.3 0 0 0-5.4-1.7l.9-4.2 2.9.6a1.5 1.5 0 1 0 .2-1l-3.3-.7a.5.5 0 0 0-.6.4l-1 4.6a10.4 10.4 0 0 0-5.5 1.7 2.1 2.1 0 1 0-2.3 3.4 4 4 0 0 0 0 .6c0 3.1 3.6 5.6 8 5.6s8-2.5 8-5.6a4 4 0 0 0 0-.6 2.1 2.1 0 0 0 1.2-1.9ZM7 13.6a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Zm8.4 4c-1 1-3.1 1.1-3.7 1.1-.6 0-2.7 0-3.7-1.1a.4.4 0 0 1 .6-.6c.7.7 2.1.9 3.1.9 1 0 2.5-.2 3.1-.9a.4.4 0 1 1 .6.6Zm-.3-2.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Z"/></svg></a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===================================================== HERO -->
+  <main class="hero">
+    <h1 class="headline">Your AI worker for getting things done.</h1>
+    <p class="subhead">Hand off everyday tasks, reduce app switching, and keep work moving with BlueAI. Watch a real agent work, then build your own.</p>
+    <button class="cta">
+      <svg class="spark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"></path><path d="M20 3v4"></path><path d="M22 5h-4"></path><path d="M4 17v2"></path><path d="M5 18H3"></path></svg>
+      Download BlueAI
+      <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </button>
+
+    <!-- ===================================== SHOWCASE: STAGE + RAIL -->
+    <section class="showcase">
+
+      <!-- BIG CENTER STAGE (active agent plays here) -->
+      <div class="stage-main">
+
+        <!-- CAREER pane -->
+        <div class="pane" data-agent="career">
+          <div class="pane-top">
+            <div class="icon-tile icon-career">💼</div>
+            <div><div class="eyebrow">Career</div></div>
+            <div class="see-tag"><span>See it work</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></div>
+          </div>
+          <h2 class="pane-title">Auto apply to jobs with an agent that does the clicking</h2>
+          <p class="pane-desc">Reads a job, fills the application, and submits it for you across job boards. You review, it taps.</p>
+          <div class="stage">
+            <div class="cr-job">
+              <div class="cr-logo">A</div>
+              <div><div class="t">Senior Product Manager</div><div class="s">Acme · Remote</div></div>
+            </div>
+            <div class="cr-form">
+              <div class="cr-row"><span class="cr-lbl">Name</span><span class="cr-track"><span class="cr-fill"></span></span></div>
+              <div class="cr-row"><span class="cr-lbl">Email</span><span class="cr-track"><span class="cr-fill"></span></span></div>
+              <div class="cr-row"><span class="cr-lbl">Resume</span><span class="cr-track"><span class="cr-fill"></span></span></div>
+            </div>
+            <button class="cr-submit" tabindex="-1">Submit application</button>
+            <span class="cr-ripple"></span>
+            <div class="cr-applied">Applied ✓ <span style="opacity:.8">· <span class="cr-count">24</span> today</span></div>
+          </div>
+          
+        </div>
+
+        <!-- CREATOR pane -->
+        <div class="pane" data-agent="creator">
+          <div class="pane-top">
+            <div class="icon-tile icon-creator">🎬</div>
+            <div><div class="eyebrow">Creator</div></div>
+            <div class="see-tag"><span>See it work</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></div>
+          </div>
+          <h2 class="pane-title">A faceless video creator agent for YouTube</h2>
+          <p class="pane-desc">Finds a trend, writes the script, builds the short or micro-drama, and posts it. A whole channel on autopilot.</p>
+          <div class="stage">
+            <div class="cv-trend">▲ Trending</div>
+            <div class="cv-script"><span class="cv-line l1"></span><span class="cv-line l2"></span><span class="cv-line l3"></span></div>
+            <div class="cv-board">
+              <div class="cv-frame"></div><div class="cv-frame"></div>
+              <div class="cv-frame"><span class="cv-play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span></div>
+            </div>
+            <div class="cv-views"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg><span class="cv-count">0</span> views</div>
+          </div>
+          
+        </div>
+
+        <!-- FINANCE pane -->
+        <div class="pane" data-agent="finance">
+          <div class="pane-top">
+            <div class="icon-tile icon-finance">📈</div>
+            <div><div class="eyebrow">Finance</div></div>
+            <div class="see-tag"><span>See it work</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></div>
+          </div>
+          <h2 class="pane-title">An AI trading agent that runs live market analysis</h2>
+          <p class="pane-desc">Scans US markets every day and shows live agent portfolios you can watch. Data analysis, not advice.</p>
+          <div class="stage">
+            <div class="fn-tickers">
+              <div class="fn-tick"><div class="sym">AAPL</div><div class="pct up">+1.2%</div></div>
+              <div class="fn-tick"><div class="sym">NVDA</div><div class="pct up">+3.4%</div></div>
+              <div class="fn-tick"><div class="sym">TSLA</div><div class="pct dn">−0.8%</div></div>
+              <span class="fn-sweep"></span>
+            </div>
+            <div class="fn-chartwrap">
+              <svg class="fn-chart" viewBox="0 0 280 96" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="fn-grad" x1="0" y1="0" x2="280" y2="0" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#7B4CFF"></stop><stop offset="1" stop-color="#0EA4C5"></stop></linearGradient>
+                  <linearGradient id="fn-areagrad" x1="0" y1="0" x2="0" y2="96" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="rgba(123,76,255,.18)"></stop><stop offset="1" stop-color="rgba(14,164,197,0)"></stop></linearGradient>
+                </defs>
+                <path class="fn-area" d="M4 72 L40 62 L80 68 L120 46 L160 52 L200 28 L240 34 L276 12 L276 96 L4 96 Z" fill="url(#fn-areagrad)"></path>
+                <path class="fn-line" d="M4 72 L40 62 L80 68 L120 46 L160 52 L200 28 L240 34 L276 12"></path>
+              </svg>
+              <div class="fn-marker">BUY</div>
+            </div>
+            <div class="fn-port"><span class="v">$<span class="fn-val">12,480</span></span><span class="d">▲ 3.2%</span></div>
+          </div>
+          
+        </div>
+
+      </div>
+
+      <!-- RAIL: selectable thumbnails -->
+      <div class="rail">
+        <div class="pill-live"><span class="dot"></span><span>3 Agents Live Now</span></div>
+        <button class="thumb" data-agent="career">
+          <div class="thumb-top"><div class="thumb-icon icon-career">💼</div><span class="thumb-see" aria-label="See it work"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span></div>
+          <div class="thumb-eyebrow">Career</div>
+          <h3 class="thumb-title">Auto apply to jobs with an agent</h3>
+          <span class="thumb-progress"></span>
+        </button>
+        <button class="thumb" data-agent="creator">
+          <div class="thumb-top"><div class="thumb-icon icon-creator">🎬</div><span class="thumb-see" aria-label="See it work"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span></div>
+          <div class="thumb-eyebrow">Creator</div>
+          <h3 class="thumb-title">A faceless video creator for YouTube</h3>
+          <span class="thumb-progress"></span>
+        </button>
+        <button class="thumb" data-agent="finance">
+          <div class="thumb-top"><div class="thumb-icon icon-finance">📈</div><span class="thumb-see" aria-label="See it work"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span></div>
+          <div class="thumb-eyebrow">Finance</div>
+          <h3 class="thumb-title">An AI trading agent for live markets</h3>
+          <span class="thumb-progress"></span>
+        </button>
+      </div>
+
+    </section>
+  </main>
+  </div><!-- /.hero-screen -->
+
+  <!-- shared homepage sections injected below the hero -->
+  <div id="home-sections"></div>
+
+  <script src="assets/hero-cards.js"></script>
+  <script>
+  (function () {
+    const G = window.gsap;
+    const body = document.body;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const panes  = Array.from(document.querySelectorAll('.pane'));
+    const thumbs = Array.from(document.querySelectorAll('.thumb'));
+    const bars   = Array.from(document.querySelectorAll('.thumb-progress'));
+    const PERIOD = 5; // base dwell (s); each agent gets at least this, longer if its anim needs it
+    const dwellFor = (i) => Math.max(PERIOD, (modules[i].tl.duration() || 0) / (modules[i].tl.timeScale() || 1) + 0.9);
+
+    // build the three agent modules on their (large) stage panes
+    const M = window.BlueAIHeroCards;
+    const modules = [
+      M.buildCareer(panes[0]),
+      M.buildCreator(panes[1]),
+      M.buildFinance(panes[2]),
+    ];
+    // slow every agent's inner animation so the scenes are easy to read
+    modules.forEach(m => m.tl.timeScale(0.7));
+
+    /* ---------- reduced motion: show first agent, snap all to end-state ----- */
+    if (reduce || !G) {
+      body.classList.remove('js-anim');
+      if (G) modules.forEach(m => m.setEndState());
+      panes.forEach((p, idx) => { p.style.opacity = idx === 0 ? '1' : '0'; });
+      panes[0].classList.add('is-active');
+      thumbs[0].classList.add('is-active');
+      thumbs.slice(1).forEach(t => t.classList.add('is-dim'));
+      return;
+    }
+
+    /* ---------- ambient cycle: GSAP-driven so the progress bar stays in sync - */
+    let active = -1, paused = false, advanceTween = null;
+    const finePointer = window.matchMedia('(pointer:fine)').matches;
+
+    function scheduleAdvance() {
+      if (advanceTween) advanceTween.kill();
+      G.set(bars, { scaleX: 0 });
+      advanceTween = G.fromTo(bars[active], { scaleX: 0 },
+        { scaleX: 1, duration: dwellFor(active), ease: 'none', onComplete: advance });
+    }
+    function advance() { setActive((active + 1) % modules.length, { schedule: true, dir: 1 }); }
+
+    function setActive(i, { schedule = true, dir = 1 } = {}) {
+      if (i !== active) {
+        const prev = active;
+        active = i;
+        thumbs.forEach((t, idx) => {
+          t.classList.toggle('is-active', idx === i);
+          t.classList.toggle('is-dim', idx !== i);
+        });
+        panes.forEach((p, idx) => p.classList.toggle('is-active', idx === i));
+        // CAROUSEL SLIDE: outgoing slides off one side, incoming slides in from the other.
+        // Pure x-translate (both opaque, clipped by stage-main overflow) so they never overlap into mush.
+        if (prev < 0) {
+          G.set(panes[i], { xPercent: 0, opacity: 1 });
+        } else if (prev !== i) {
+          modules[prev].tl.pause();
+          G.to(panes[prev], { xPercent: -100 * dir, duration: 0.4, ease: 'power3.out',
+            onComplete: () => { G.set(panes[prev], { opacity: 0, xPercent: 0 }); } });
+          G.fromTo(panes[i], { xPercent: 100 * dir, opacity: 1 },
+                             { xPercent: 0, opacity: 1, duration: 0.4, ease: 'power3.out' });
+        }
+        modules[i].tl.restart();
+      } else {
+        modules[i].tl.restart();
+      }
+      if (schedule && !paused) scheduleAdvance();
+    }
+
+    /* ---------- hover / tap ------------------------------------------------- */
+    thumbs.forEach((thumb, i) => {
+      if (finePointer) {
+        thumb.addEventListener('pointerenter', () => {
+          paused = true; if (advanceTween) advanceTween.pause();
+          setActive(i, { schedule: false, dir: (active < 0 || i > active) ? 1 : -1 });
+        });
+        thumb.addEventListener('pointerleave', () => { paused = false; scheduleAdvance(); });
+      } else {
+        thumb.addEventListener('click', () => { setActive(i, { schedule: true, dir: (active < 0 || i > active) ? 1 : -1 }); });
+      }
+    });
+    // hovering the big stage also pauses the cycle
+    const stageMain = document.querySelector('.stage-main');
+    if (finePointer) {
+      stageMain.addEventListener('pointerenter', () => { paused = true; if (advanceTween) advanceTween.pause(); });
+      stageMain.addEventListener('pointerleave', () => { paused = false; scheduleAdvance(); });
+    }
+
+    /* ---------- ENTRY SEQUENCE (trimmed) ----------------------------------- */
+    const intro = G.timeline({
+      defaults: { ease: 'power3.out' },
+      onComplete: () => { body.classList.remove('js-anim'); setActive(0, { schedule: true }); }
+    });
+    const mark = document.querySelector('.nav-logomark');
+    const spark = document.querySelector('.bm-spark');
+    G.set(mark, { transformOrigin: '50% 50%' });
+
+    intro
+      .fromTo(mark, { opacity: 0, scale: 0.4, rotate: -22 },
+                    { opacity: 1, scale: 1, rotate: 0, duration: 0.5, ease: 'back.out(2)' })
+      .fromTo(spark, { scale: 0, transformOrigin: '50% 50%' },
+                     { scale: 1, duration: 0.4, ease: 'back.out(2.4)' }, '-=0.30')
+      // ONE quick grouped reveal of the left message (≤ 0.6s)
+      .fromTo('.headline, .subhead, .cta', { opacity: 0, y: 18 },
+              { opacity: 1, y: 0, duration: 0.42, stagger: 0.05, ease: 'power3.out' }, '-=0.12')
+      // pill + stage + rail rise together
+      .fromTo('.pill-live', { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.4 }, '-=0.06')
+      .fromTo('.stage-main', { opacity: 0, y: 34 }, { opacity: 1, y: 0, duration: 0.5 }, '<')
+      .fromTo('.thumb', { opacity: 0, y: 26 }, { opacity: 1, y: 0, duration: 0.45, stagger: 0.1 }, '<0.08');
+
+    // watchdog — never leave the hero blank if rAF/GSAP stalls
+    setTimeout(() => {
+      if (document.body.classList.contains('js-anim')) intro.progress(1);
+    }, 3200);
+  })();
+  </script>
+  <script>
+  /* inject the shared homepage sections (identical across all 3 hero options) */
+  (function(){
+    var mount = document.getElementById('home-sections');
+    if(!mount) return;
+    fetch('homepage-sections.html').then(function(r){return r.text();}).then(function(html){
+      var doc = new DOMParser().parseFromString(html, 'text/html');
+      var home = doc.querySelector('.bai-home');
+      if(home) mount.appendChild(document.importNode(home, true));
+    }).catch(function(){});
+  })();
+  </script>
+</body>
+</html>

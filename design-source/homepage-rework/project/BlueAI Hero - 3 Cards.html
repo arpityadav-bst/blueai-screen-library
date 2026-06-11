@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BlueAI — Hero</title>
+<link rel="stylesheet" href="assets/colors_and_type.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="assets/homepage-sections.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+  :root{
+    --green:#16a34a;
+    --green-bg:rgba(22,163,74,.10);
+    --font-head:'Space Grotesk', var(--font-display);
+    --font-mono:'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    --slate-900:#0f172a;
+    --hero-w:1180px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;}
+  body{
+    font-family:var(--font-ui);
+    color:var(--fg-1);
+    background:
+      radial-gradient(1100px 620px at 50% -8%, rgba(123,76,255,.10), transparent 60%),
+      radial-gradient(900px 600px at 88% 12%, rgba(14,164,197,.08), transparent 55%),
+      linear-gradient(180deg,#f3f4fc 0%, #eaeefb 55%, #eef1fc 100%);
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+
+  /* ----------------------------------------------------------------- NAV */
+  .nav{
+    display:flex;align-items:center;justify-content:space-between;
+    max-width:1320px;margin:0 auto;padding:26px 40px;
+  }
+  .brand{display:flex;align-items:center;gap:10px;}
+  .brand svg{display:block;width:34px;height:34px;}
+  .wordmark{
+    font-family:var(--font-brand);font-weight:700;font-size:25px;line-height:1;
+    background:var(--bai-gradient);-webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;color:transparent;letter-spacing:-.01em;
+  }
+  .nav-right{display:flex;align-items:center;gap:34px;}
+  .nav-links{display:flex;align-items:center;gap:34px;}
+  .nav-links a{
+    font-family:var(--font-ui);font-weight:500;font-size:16px;color:var(--fg-3);
+    text-decoration:none;transition:color .15s var(--ease-out);
+  }
+  .nav-links a:hover{color:var(--fg-1);}
+  .nav-sep{width:1px;height:22px;background:var(--bai-divider);}
+  .nav-social{display:flex;align-items:center;gap:18px;}
+  .nav-social a{color:var(--bai-stroke);display:flex;transition:color .15s var(--ease-out);}
+  .nav-social a:hover{color:var(--fg-2);}
+  .nav-social svg{width:21px;height:21px;display:block;}
+
+  /* --------------------------------------------------------------- HERO */
+  .hero{max-width:var(--hero-w);margin:0 auto;padding:34px 40px 90px;text-align:center;}
+
+  .pill-live{
+    display:inline-flex;align-items:center;gap:9px;
+    background:rgba(255,255,255,.7);border:1px solid var(--bai-divider);
+    border-radius:var(--radius-pill);padding:8px 16px 8px 14px;
+    box-shadow:var(--shadow-float);backdrop-filter:blur(6px);
+  }
+  .pill-live .dot{width:8px;height:8px;border-radius:50%;background:var(--green);
+    box-shadow:0 0 0 0 rgba(22,163,74,.5);animation:livePulse 2s var(--ease-out) infinite;}
+  .pill-live span{font-family:var(--font-ui);font-weight:600;font-size:12px;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--fg-2);}
+  @keyframes livePulse{0%{box-shadow:0 0 0 0 rgba(22,163,74,.45);}70%{box-shadow:0 0 0 7px rgba(22,163,74,0);}100%{box-shadow:0 0 0 0 rgba(22,163,74,0);}}
+
+  .headline{
+    font-family:var(--font-head);font-weight:600;letter-spacing:-.03em;
+    font-size:clamp(48px,5.4vw,60px);line-height:1.05;color:var(--slate-900);
+    text-wrap:balance;margin:24px 0 0;
+  }
+  .line-mask{overflow:hidden;display:block;padding-bottom:.06em;}
+  .line-inner{display:block;will-change:transform;}
+
+  .subhead{
+    font-family:var(--font-ui);font-weight:400;color:var(--fg-4);
+    font-size:clamp(17px,1.45vw,21px);line-height:1.55;
+    max-width:680px;margin:26px auto 0;
+  }
+
+  .cta{
+    display:inline-flex;align-items:center;gap:9px;margin-top:34px;
+    height:56px;padding:0 30px;border:none;cursor:pointer;
+    border-radius:var(--radius-pill);
+    background:linear-gradient(105deg,#1a90ff 0%, #6b53ff 55%, #7B4CFF 100%);
+    color:#fff;font-family:var(--font-ui);font-weight:600;font-size:18px;white-space:nowrap;
+    box-shadow:0 10px 26px -8px rgba(95,70,255,.55);
+    transition:transform .18s var(--ease-out), box-shadow .18s var(--ease-out);
+  }
+  .cta:hover{transform:translateY(-2px);box-shadow:0 16px 32px -8px rgba(95,70,255,.6);}
+  .cta:active{transform:translateY(0) scale(.98);}
+  .cta svg{width:18px;height:18px;}
+  .cta .spark{width:18px;height:18px;display:block;}
+  .cta .arrow{transition:transform .18s var(--ease-out);}
+  .cta:hover .arrow{transform:translateX(3px);}
+
+  /* --------------------------------------------------------------- CARDS */
+  .agents{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:24px;
+    margin-top:64px;align-items:stretch;
+  }
+  .card{
+    position:relative;text-align:left;background:var(--bai-canvas);
+    border:1px solid var(--bai-divider);border-radius:22px;
+    padding:22px 22px 24px;display:flex;flex-direction:column;
+    box-shadow:0 1px 2px rgba(8,10,31,.04);
+    cursor:pointer;will-change:transform;
+    transition:box-shadow .4s var(--ease-out), border-color .4s var(--ease-out);
+  }
+  .card::after{
+    content:"";position:absolute;inset:0;border-radius:22px;pointer-events:none;
+    box-shadow:0 0 0 1px transparent;opacity:0;
+    background:linear-gradient(180deg, rgba(123,76,255,.05), rgba(14,164,197,.04));
+    transition:opacity .4s var(--ease-out);
+  }
+  .card.is-active{
+    border-color:rgba(123,76,255,.35);
+    box-shadow:0 24px 50px -22px rgba(95,70,255,.45), 0 4px 14px -6px rgba(8,10,31,.10);
+  }
+  .card.is-active::after{opacity:1;}
+  .card.is-dim{opacity:.62;}
+
+  .card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;}
+  .icon-tile{
+    width:48px;height:48px;border-radius:13px;display:flex;align-items:center;
+    justify-content:center;font-size:24px;line-height:1;
+  }
+  .icon-career{background:linear-gradient(160deg,#e7e3ff,#dfe6ff);}
+  .icon-creator{background:linear-gradient(160deg,#ffe1f3,#f3e2ff);}
+  .icon-finance{background:linear-gradient(160deg,#dcf6e6,#e6f7ec);}
+
+  .see-tag{display:inline-flex;align-items:center;gap:6px;margin-left:auto;flex:none;white-space:nowrap;cursor:pointer;}
+  .see-tag span{font-family:var(--font-ui);font-weight:600;font-size:14px;color:#2f6dff;}
+  .see-tag svg{width:16px;height:16px;color:#2f6dff;transition:transform .18s var(--ease-out);}
+  .card:hover .see-tag svg{transform:translateX(3px);}
+
+  .eyebrow{font-family:var(--font-ui);font-weight:600;font-size:12px;letter-spacing:.13em;
+    text-transform:uppercase;color:#3d7bff;margin-bottom:7px;}
+  .card-title{font-family:var(--font-head);font-weight:600;font-size:20px;line-height:1.12;
+    letter-spacing:-.03em;color:var(--slate-900);text-wrap:balance;margin:0 0 16px;}
+
+  /* card stage (the inner animation) */
+  .stage{
+    position:relative;background:var(--bai-surface);
+    border:1px solid var(--bai-divider);border-radius:14px;
+    height:168px;padding:14px;overflow:hidden;margin-bottom:18px;
+  }
+
+  .see-link{display:inline-flex;align-items:center;gap:7px;margin-top:auto;
+    font-family:var(--font-ui);font-weight:600;font-size:15px;color:#2f6dff;
+    text-decoration:none;}
+  .see-link svg{width:16px;height:16px;transition:transform .18s var(--ease-out);}
+  .card:hover .see-link svg{transform:translateX(3px);}
+
+  /* ---------- CAREER stage ---------- */
+  .cr-job{display:flex;align-items:center;gap:9px;background:#fff;border:1px solid var(--bai-divider);
+    border-radius:9px;padding:7px 9px;margin-bottom:11px;}
+  .cr-logo{width:26px;height:26px;border-radius:7px;background:linear-gradient(150deg,#7B4CFF,#0EA4C5);
+    color:#fff;font-family:var(--font-head);font-weight:700;font-size:13px;display:flex;
+    align-items:center;justify-content:center;flex:none;}
+  .cr-job .t{font-family:var(--font-ui);font-weight:600;font-size:11.5px;color:var(--fg-1);line-height:1.2;}
+  .cr-job .s{font-family:var(--font-ui);font-size:10px;color:var(--fg-4);line-height:1.3;}
+  .cr-form{display:flex;flex-direction:column;gap:7px;}
+  .cr-row{display:flex;align-items:center;gap:8px;}
+  .cr-lbl{font-family:var(--font-ui);font-size:9.5px;color:var(--fg-4);width:42px;flex:none;}
+  .cr-track{flex:1;height:8px;border-radius:4px;background:#e7ebf5;overflow:hidden;}
+  .cr-fill{display:block;height:100%;width:100%;border-radius:4px;transform-origin:left center;
+    background:linear-gradient(90deg,#c9d3ee,#aab9e6);}
+  .cr-submit{position:absolute;left:14px;right:14px;bottom:14px;height:30px;border:none;cursor:default;
+    border-radius:8px;background:linear-gradient(105deg,#1a90ff,#7B4CFF);color:#fff;
+    font-family:var(--font-ui);font-weight:600;font-size:12px;display:flex;align-items:center;
+    justify-content:center;overflow:hidden;}
+  .cr-ripple{position:absolute;left:50%;bottom:15px;width:120px;height:120px;border-radius:50%;
+    background:rgba(255,255,255,.6);pointer-events:none;}
+  .cr-applied{position:absolute;left:14px;right:14px;bottom:14px;height:30px;border-radius:8px;
+    background:var(--green-bg);color:#0f7a3b;font-family:var(--font-ui);font-weight:600;font-size:12px;
+    display:flex;align-items:center;justify-content:center;gap:5px;opacity:0;}
+
+  /* ---------- CREATOR stage ---------- */
+  .cv-trend{display:inline-flex;align-items:center;gap:5px;background:#fff;border:1px solid var(--bai-divider);
+    border-radius:var(--radius-pill);padding:4px 10px;font-family:var(--font-ui);font-weight:600;
+    font-size:10.5px;color:#c2418a;margin-bottom:11px;}
+  .cv-script{display:flex;flex-direction:column;gap:6px;margin-bottom:13px;}
+  .cv-line{height:7px;border-radius:4px;background:linear-gradient(90deg,#d7c4e8,#c9d3ee);
+    transform-origin:left center;}
+  .cv-line.l1{width:92%;} .cv-line.l2{width:74%;} .cv-line.l3{width:84%;}
+  .cv-board{display:flex;gap:8px;}
+  .cv-frame{position:relative;flex:1;height:42px;border-radius:7px;background:#fff;
+    border:1px solid var(--bai-divider);overflow:hidden;}
+  .cv-frame::before{content:"";position:absolute;inset:0;
+    background:linear-gradient(135deg,rgba(123,76,255,.14),rgba(14,164,197,.12));}
+  .cv-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+    width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.92);
+    display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(8,10,31,.18);}
+  .cv-play svg{width:11px;height:11px;color:#1B1E38;margin-left:1px;}
+  .cv-views{position:absolute;left:14px;bottom:13px;font-family:var(--font-ui);font-weight:600;
+    font-size:11px;color:var(--fg-3);display:flex;align-items:center;gap:5px;}
+  .cv-views svg{width:11px;height:11px;color:#c2418a;}
+
+  /* ---------- FINANCE stage ---------- */
+  .fn-tickers{position:relative;display:flex;gap:7px;margin-bottom:10px;overflow:hidden;border-radius:7px;}
+  .fn-tick{flex:1;background:#fff;border:1px solid var(--bai-divider);border-radius:7px;padding:5px 7px;}
+  .fn-tick .sym{font-family:var(--font-mono);font-weight:600;font-size:10px;color:var(--slate-900);letter-spacing:-.02em;}
+  .fn-tick .pct{font-family:var(--font-mono);font-weight:500;font-size:9px;}
+  .fn-tick .pct.up{color:#0f7a3b;} .fn-tick .pct.dn{color:#d6455d;}
+  .fn-sweep{position:absolute;top:0;bottom:0;width:46px;pointer-events:none;
+    background:linear-gradient(90deg,transparent,rgba(123,76,255,.30),transparent);}
+  .fn-chartwrap{position:relative;height:62px;}
+  .fn-chart{width:100%;height:62px;display:block;overflow:visible;}
+  .fn-line{fill:none;stroke:url(#fn-grad);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+  .fn-marker{position:absolute;font-family:var(--font-mono);font-weight:600;font-size:9.5px;color:#fff;
+    background:#0f7a3b;border-radius:var(--radius-pill);padding:3px 8px;
+    left:58%;top:8px;box-shadow:0 3px 8px rgba(15,122,59,.4);}
+  .fn-marker::after{content:"";position:absolute;left:14px;top:100%;width:6px;height:6px;border-radius:50%;
+    background:#0f7a3b;margin-top:2px;}
+  .fn-port{position:absolute;left:14px;bottom:12px;display:flex;align-items:baseline;gap:7px;}
+  .fn-port .v{font-family:var(--font-mono);font-weight:600;font-size:17px;color:var(--slate-900);letter-spacing:-.02em;}
+  .fn-port .d{font-family:var(--font-mono);font-weight:500;font-size:11px;color:#0f7a3b;}
+
+  /* --------------------------------------------------------------- entry init */
+  .js-anim .nav-logomark,
+  .js-anim .pill-live,
+  .js-anim .headline,
+  .js-anim .subhead,
+  .js-anim .cta,
+  .js-anim .card{opacity:0;}
+
+  /* --------------------------------------------------------------- responsive */
+  @media (max-width:920px){
+    .nav-links{display:none;}
+    .agents{grid-template-columns:1fr;gap:18px;max-width:480px;margin-left:auto;margin-right:auto;}
+    .hero{padding-top:18px;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .pill-live .dot{animation:none;}
+  }
+</style>
+</head>
+<body class="js-anim">
+
+  <!-- ===================================================== NAV -->
+  <nav class="nav">
+    <div class="brand">
+      <span class="nav-logomark">
+        <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="BlueAI">
+          <rect width="32" height="32" rx="16" fill="url(#bm-g)"></rect>
+          <path class="bm-spark" d="M16 6C16 11.5228 20.4772 16 26 16C20.4772 16 16 20.4772 16 26C16 20.4772 11.5228 16 6 16C11.5228 16 16 11.5228 16 6Z" fill="white"></path>
+          <defs>
+            <linearGradient id="bm-g" x1="32" y1="16" x2="0" y2="16" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#7B4CFF"></stop><stop offset="1" stop-color="#0EA4C5"></stop>
+            </linearGradient>
+          </defs>
+        </svg>
+      </span>
+      <span class="wordmark">BlueAI</span>
+    </div>
+    <div class="nav-right">
+      <div class="nav-links">
+        <a href="#">Social Rewards</a>
+        <a href="#">Developer</a>
+        <a href="#">Try Skills</a>
+      </div>
+      <div class="nav-sep"></div>
+      <div class="nav-social">
+        <a href="#" aria-label="Discord"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.3 4.5A19.8 19.8 0 0 0 15.4 3l-.2.5a14 14 0 0 1 4.3 2.2 17.7 17.7 0 0 0-15 0A14 14 0 0 1 8.8 3.5L8.6 3a19.8 19.8 0 0 0-4.9 1.5C.6 9.1-.2 13.6.2 18a20 20 0 0 0 6 3l.8-1.6a13 13 0 0 1-2-1l.5-.4a14.2 14.2 0 0 0 12.2 0l.5.4c-.6.4-1.3.7-2 1L17 21a20 20 0 0 0 6-3c.5-5.2-.8-9.6-2.7-13.5ZM8 15.3c-1.2 0-2.1-1.1-2.1-2.4 0-1.3.9-2.4 2.1-2.4s2.2 1.1 2.1 2.4c0 1.3-.9 2.4-2.1 2.4Zm8 0c-1.2 0-2.1-1.1-2.1-2.4 0-1.3.9-2.4 2.1-2.4s2.2 1.1 2.1 2.4c0 1.3-.9 2.4-2.1 2.4Z"/></svg></a>
+        <a href="#" aria-label="X"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.2 2h3.3l-7.2 8.3L23 22h-6.7l-5.2-6.8L5.1 22H1.8l7.7-8.8L1 2h6.8l4.7 6.2L18.2 2Zm-1.2 18h1.8L7.1 3.9H5.2L17 20Z"/></svg></a>
+        <a href="#" aria-label="Reddit"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 12.1a2.1 2.1 0 0 0-3.6-1.4 10.3 10.3 0 0 0-5.4-1.7l.9-4.2 2.9.6a1.5 1.5 0 1 0 .2-1l-3.3-.7a.5.5 0 0 0-.6.4l-1 4.6a10.4 10.4 0 0 0-5.5 1.7 2.1 2.1 0 1 0-2.3 3.4 4 4 0 0 0 0 .6c0 3.1 3.6 5.6 8 5.6s8-2.5 8-5.6a4 4 0 0 0 0-.6 2.1 2.1 0 0 0 1.2-1.9ZM7 13.6a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Zm8.4 4c-1 1-3.1 1.1-3.7 1.1-.6 0-2.7 0-3.7-1.1a.4.4 0 0 1 .6-.6c.7.7 2.1.9 3.1.9 1 0 2.5-.2 3.1-.9a.4.4 0 1 1 .6.6Zm-.3-2.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Z"/></svg></a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===================================================== HERO -->
+  <main class="hero">
+    <div class="pill-live"><span class="dot"></span><span>3 Agents Live Now</span></div>
+
+    <h1 class="headline">
+      <span class="line-mask"><span class="line-inner">Your AI worker for</span></span>
+      <span class="line-mask"><span class="line-inner">getting things done.</span></span>
+    </h1>
+
+    <p class="subhead">Hand off everyday tasks, reduce app switching, and keep work moving with BlueAI. Watch a real agent work, then build your own.</p>
+
+    <button class="cta">
+      <svg class="spark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"></path><path d="M20 3v4"></path><path d="M22 5h-4"></path><path d="M4 17v2"></path><path d="M5 18H3"></path></svg>
+      Download BlueAI
+      <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </button>
+
+    <!-- ===================================================== AGENT CARDS -->
+    <section class="agents">
+
+      <!-- CAREER -->
+      <article class="card" data-agent="career">
+        <div class="card-top">
+          <div class="icon-tile icon-career">💼</div>
+          <div class="see-tag"><span>See it work</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></div>
+        </div>
+        <div class="eyebrow">Career</div>
+        <h3 class="card-title">Auto apply to jobs with an agent that does the clicking</h3>
+        <div class="stage">
+          <div class="cr-job">
+            <div class="cr-logo">A</div>
+            <div><div class="t">Senior Product Manager</div><div class="s">Acme · Remote</div></div>
+          </div>
+          <div class="cr-form">
+            <div class="cr-row"><span class="cr-lbl">Name</span><span class="cr-track"><span class="cr-fill"></span></span></div>
+            <div class="cr-row"><span class="cr-lbl">Email</span><span class="cr-track"><span class="cr-fill"></span></span></div>
+            <div class="cr-row"><span class="cr-lbl">Resume</span><span class="cr-track"><span class="cr-fill"></span></span></div>
+          </div>
+          <button class="cr-submit" tabindex="-1">Submit application</button>
+          <span class="cr-ripple"></span>
+          <div class="cr-applied">Applied ✓ <span style="opacity:.8">· <span class="cr-count">24</span> today</span></div>
+        </div>
+        
+      </article>
+
+      <!-- CREATOR -->
+      <article class="card" data-agent="creator">
+        <div class="card-top">
+          <div class="icon-tile icon-creator">🎬</div>
+          <div class="see-tag"><span>See it work</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></div>
+        </div>
+        <div class="eyebrow">Creator</div>
+        <h3 class="card-title">A faceless video creator agent for YouTube</h3>
+        <div class="stage">
+          <div class="cv-trend">▲ Trending</div>
+          <div class="cv-script">
+            <span class="cv-line l1"></span><span class="cv-line l2"></span><span class="cv-line l3"></span>
+          </div>
+          <div class="cv-board">
+            <div class="cv-frame"></div>
+            <div class="cv-frame"></div>
+            <div class="cv-frame">
+              <span class="cv-play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+            </div>
+          </div>
+          <div class="cv-views"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg><span class="cv-count">0</span> views</div>
+        </div>
+        
+      </article>
+
+      <!-- FINANCE -->
+      <article class="card" data-agent="finance">
+        <div class="card-top">
+          <div class="icon-tile icon-finance">📈</div>
+          <div class="see-tag"><span>See it work</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></div>
+        </div>
+        <div class="eyebrow">Finance</div>
+        <h3 class="card-title">An AI trading agent that runs live market analysis</h3>
+        <div class="stage">
+          <div class="fn-tickers">
+            <div class="fn-tick"><div class="sym">AAPL</div><div class="pct up">+1.2%</div></div>
+            <div class="fn-tick"><div class="sym">NVDA</div><div class="pct up">+3.4%</div></div>
+            <div class="fn-tick"><div class="sym">TSLA</div><div class="pct dn">−0.8%</div></div>
+            <span class="fn-sweep"></span>
+          </div>
+          <div class="fn-chartwrap">
+            <svg class="fn-chart" viewBox="0 0 280 62" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="fn-grad" x1="0" y1="0" x2="280" y2="0" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#7B4CFF"></stop><stop offset="1" stop-color="#0EA4C5"></stop>
+                </linearGradient>
+                <linearGradient id="fn-areagrad" x1="0" y1="0" x2="0" y2="62" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="rgba(123,76,255,.18)"></stop><stop offset="1" stop-color="rgba(14,164,197,0)"></stop>
+                </linearGradient>
+              </defs>
+              <path class="fn-area" d="M4 46 L40 40 L80 44 L120 30 L160 34 L200 18 L240 22 L276 8 L276 62 L4 62 Z" fill="url(#fn-areagrad)"></path>
+              <path class="fn-line" d="M4 46 L40 40 L80 44 L120 30 L160 34 L200 18 L240 22 L276 8"></path>
+            </svg>
+            <div class="fn-marker">BUY</div>
+          </div>
+          <div class="fn-port"><span class="v">$<span class="fn-val">12,480</span></span><span class="d">▲ 3.2%</span></div>
+        </div>
+        
+      </article>
+
+    </section>
+  </main>
+
+  <!-- shared homepage sections injected below the hero -->
+  <div id="home-sections"></div>
+
+  <script src="assets/hero-cards.js"></script>
+  <script>
+  (function () {
+    const G = window.gsap;
+    const body = document.body;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const cards = Array.from(document.querySelectorAll('.card'));
+
+    // build the three agent modules
+    const M = window.BlueAIHeroCards;
+    const modules = [
+      M.buildCareer(cards[0]),
+      M.buildCreator(cards[1]),
+      M.buildFinance(cards[2]),
+    ];
+
+    /* ---------------- reduced motion: snap everything to end-state ---------- */
+    if (reduce || !G) {
+      body.classList.remove('js-anim');
+      if (G) modules.forEach(m => m.setEndState());
+      cards[0] && cards[0].classList.add('is-active');
+      return;
+    }
+
+    /* ---------------- ambient cycle controller ----------------------------- */
+    let active = -1, paused = false, timer = null;
+    const PERIOD = 3500;
+    const finePointer = window.matchMedia('(pointer:fine)').matches;
+
+    function setActive(i, { restart = true } = {}) {
+      if (i === active) { if (restart) modules[i].tl.restart(); return; }
+      active = i;
+      cards.forEach((c, idx) => {
+        c.classList.toggle('is-active', idx === i);
+        c.classList.toggle('is-dim', idx !== i);
+      });
+      modules.forEach((m, idx) => {
+        if (idx === i) m.tl.restart();
+        else m.tl.pause();
+      });
+    }
+    function advance() { setActive((active + 1) % modules.length); }
+    function startCycle() {
+      stopCycle();
+      timer = setInterval(() => { if (!paused) advance(); }, PERIOD);
+    }
+    function stopCycle() { if (timer) { clearInterval(timer); timer = null; } }
+
+    /* ---------------- hover / tap interactions ----------------------------- */
+    cards.forEach((card, i) => {
+      if (finePointer) {
+        card.addEventListener('pointerenter', () => { paused = true; setActive(i); });
+        card.addEventListener('pointerleave', () => { paused = false; });
+      } else {
+        // touch: tap sets active, cycle keeps running (restarts the clock)
+        card.addEventListener('click', () => { setActive(i); startCycle(); });
+      }
+    });
+
+    /* ---------------- ENTRY SEQUENCE (trimmed — get to the cards fast) ----- */
+    const intro = G.timeline({
+      defaults: { ease: 'power3.out' },
+      onComplete: () => { body.classList.remove('js-anim'); setActive(0); startCycle(); }
+    });
+
+    // prime
+    const mark = document.querySelector('.nav-logomark');
+    const spark = document.querySelector('.bm-spark');
+    G.set(mark, { transformOrigin: '50% 50%' });
+    // nav (wordmark + links) is present on load — only the logo mark animates in
+
+    intro
+      // 1 — logo mark: scale + gradient reveal
+      .fromTo(mark, { opacity: 0, scale: 0.4, rotate: -22 },
+                    { opacity: 1, scale: 1, rotate: 0, duration: 0.5, ease: 'back.out(2)' })
+      .fromTo(spark, { scale: 0, transformOrigin: '50% 50%' },
+                     { scale: 1, duration: 0.4, ease: 'back.out(2.4)' }, '-=0.30')
+      // 2 — ONE quick grouped reveal: pill + headline + subhead + CTA (≤ 0.6s)
+      .fromTo('.pill-live, .headline, .subhead, .cta',
+              { opacity: 0, y: 18 },
+              { opacity: 1, y: 0, duration: 0.42, stagger: 0.05, ease: 'power3.out' }, '-=0.12')
+      // 3 — cards stagger up, then the cycle starts
+      .fromTo('.card', { opacity: 0, y: 34 },
+              { opacity: 1, y: 0, duration: 0.5, stagger: 0.1, ease: 'power3.out' }, '-=0.08');
+
+    // watchdog — if rAF/GSAP ever stalls or the CDN fails, never leave the hero blank
+    setTimeout(() => {
+      if (document.body.classList.contains('js-anim')) intro.progress(1);
+    }, 3200);
+  })();
+  </script>
+  <script>
+  /* inject the shared homepage sections (identical across all 3 hero options) */
+  (function(){
+    var mount = document.getElementById('home-sections');
+    if(!mount) return;
+    fetch('homepage-sections.html').then(function(r){return r.text();}).then(function(html){
+      var doc = new DOMParser().parseFromString(html, 'text/html');
+      var home = doc.querySelector('.bai-home');
+      if(home) mount.appendChild(document.importNode(home, true));
+    }).catch(function(){});
+  })();
+  </script>
+</body>
+</html>

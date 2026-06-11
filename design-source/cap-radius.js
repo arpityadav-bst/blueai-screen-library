@@ -1,0 +1,20 @@
+// Targeted screenshot of the Radius card in the style guide (verify circle/pill render).
+const { chromium } = require('playwright')
+const path = require('path')
+const fs = require('fs')
+const SHOTS = 'N:/Antigravity Main/blueai/__preview'
+fs.mkdirSync(SHOTS, { recursive: true })
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
+;(async () => {
+  const b = await chromium.launch({ headless: true })
+  const ctx = await b.newContext({ viewport: { width: 1440, height: 900 } })
+  const page = await ctx.newPage()
+  await page.goto('http://localhost:3000/style-guide', { waitUntil: 'networkidle', timeout: 30000 }).catch(() => {})
+  await page.evaluate(() => document.getElementById('scales')?.scrollIntoView({ block: 'start' }))
+  await sleep(1200)
+  const el = await page.$('#scales')
+  if (el) await el.screenshot({ path: path.join(SHOTS, 'radius-check.png') })
+  else await page.screenshot({ path: path.join(SHOTS, 'radius-check.png') })
+  await ctx.close(); await b.close()
+  console.log('DONE')
+})().catch((e) => { console.error(e); process.exit(1) })

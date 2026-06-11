@@ -1,0 +1,9 @@
+<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="sparkle-fill-g" x1="0" y1="0" x2="20" y2="20" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7B4CFF"></stop>
+      <stop offset="1" stop-color="#0EA4C5"></stop>
+    </linearGradient>
+  </defs>
+  <path d="M10 4.58008C11.0976 6.9727 13.0264 8.90218 15.4189 10C13.0267 11.0977 11.0977 13.0267 10 15.4189C8.90218 13.0264 6.9727 11.0976 4.58008 10C6.97297 8.90224 8.90224 6.97297 10 4.58008Z" fill="url(#sparkle-fill-g)"></path>
+</svg>

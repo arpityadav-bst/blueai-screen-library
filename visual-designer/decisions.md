@@ -1,0 +1,25 @@
+# blueAI — Decisions
+Last updated: 2026-06-10 (session 1)
+
+> Design/build decisions with reasoning. Promoted from scratchpad at audit passes.
+
+| Date | Decision | Why |
+|---|---|---|
+| 2026-06-10 | Built as a **Next + React + Tailwind** design-only replica from the Claude-design HTML/CSS/JS export (not Figma). | Matches WSUP/now.gg handoff pattern; the export's README explicitly said "recreate in whatever tech fits (React…)". |
+| 2026-06-10 | DS tokens: the **`--bai-*` CSS vars in globals.css are the source of truth**; `tailwind.config.ts` maps utilities (`bg-iris`, `text-ink-heading`, `bg-bai-gradient`) onto them. | Honors the export's CSS-var DS; gives Tailwind utilities for new code without duplicating values. |
+| 2026-06-10 | Marketing homepage sections use a **scoped CSS layer** (`src/styles/homepage.css`, scoped `.bai-home`) rather than re-derived Tailwind. | The export's CSS is already polished + token-based; fastest faithful path. DS components in /style-guide are Tailwind. |
+| 2026-06-10 | **All 3 hero directions built live** + the options chooser. | Designer's explicit choice (vs only the Recommended). |
+| 2026-06-10 | Hero agent motion **rebuilt React-native (framer-motion)**, NOT ported GSAP. **Phase-driven**: timed `STEPS` advance a `phase` int; `motion` components animate off it. | Designer's choice — lighter, more idiomatic handoff codebase than inheriting GSAP. Phase-driven is reliable + easy to retune. |
+| 2026-06-10 | **Stage** hero uses the RICH multi-scene agent animations; **Stage Original + 3 Cards** share the LEGACY single-scene ones (separate components, same markup, CSS-sized per context; `FinanceLegacy big` swaps chart geometry). | The export branches rich-vs-legacy on markup; both non-Recommended variants are legacy. Sharing avoids 2× the scene code; do NOT merge with rich. |
+| 2026-06-10 | Per-variant hero stylesheets are **scoped-by-route**; cross-hero/options links use full-page `<a>`. | The 3 hero CSS files reuse generic class names at different sizes — full-nav per route prevents cross-route CSS accumulation/collision. |
+| 2026-06-10 | Fonts: **Inter** (SF Pro substitute), **Space Grotesk** (marketing display), **Bricolage Grotesque** (wordmark), via `<link>`. | The export's substitutions (SF Pro/SF Pro Display aren't redistributable); flagged in the DS README. |
+
+| 2026-06-10 | Recommended-hero agent UX (first designer correction cycle): **instant** stage swaps (removed the directional slide — overlapped + inconsistent direction), **hover** to select a thumbnail (was click), and **slower** rich-scene pacing (STEPS + typewriter + dwell bumped). → taste rule 11. | Slide transitions read as glitchy/overlapping; hover is the expected affordance for "preview on point"; the demos played too fast to read each beat. |
+
+| 2026-06-10 | Reconciled a 2nd DS (**blueai-pm**, extracted from the shipping web-app codebase): keep blueai-modern's brand for the marketing site; FILL gaps from PM. Added the semantic **status** colors + interactive **accent `#1990FF`** (modern had neither) to the token layer + `/style-guide`. Lateral contradictions (gradient angle, body-font substitute) kept as modern, PM noted; PM's app components/icons/copy = the reference for future app surfaces. | Designer: fill modern's missing details from PM; on contradiction take the more mature. PM is mature on system coverage, modern on brand polish → split by surface (marketing = modern; app/system = PM). |
+
+| 2026-06-10 | Routing + style-guide restructure (designer): `/` → **redirects to `/style-guide`** (default address = the DS during the design phase); style guide rebuilt with the **WSUP sidebar architecture** (grouped Foundations/Components/Pages nav + scroll-spy); Recommended hero moved `/` → `/hero/stage`; hero-options is the "homepage"/review hub until a variant is finalized (then it becomes `/`). | Designer wants the DS front-and-center while choosing a hero direction; the chosen variant promotes to the homepage later. Mirrors how WSUP's style guide is the working hub. |
+
+| 2026-06-10 | **DS UX audit + completion** (designer: "make the DS complete, think like a UX designer; have we incorporated all of PM?"). Completed the **radius** scale (badge/chat/credits added → 7 + bubbles), the **shadow** scale (tokenized the brand `cta`/`cta-hover` glow that was inlined on every CTA + `brand-sm`), tokenized the **cta gradient**, and a full **badge system** (status chips · pill badges WITH outlines · outline tags · gradient credits pill). Then **incorporated PM's app-component sections** into /style-guide — Cards · Overview cards · Inputs & forms · Navigation · Credits (button/alerts/modal) · Icons (Heroicons) — + PM's interactive **indigo** token. | WSUP maturity bar (multiple radii/shadows) + PM authoritative specs (badges-status / spacing-radius / shadows previews). The webapp UI-kit screens (Dashboard/Chat/Jobs/Skills) are the LIVE product app, left as reference — not rebuilt as DS sections. |
+
+*(New rows accumulate at audit passes.)*

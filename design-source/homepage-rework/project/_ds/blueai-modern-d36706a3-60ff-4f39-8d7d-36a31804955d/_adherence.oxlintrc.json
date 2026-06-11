@@ -1,0 +1,200 @@
+{
+  "plugins": [
+    "react",
+    "import"
+  ],
+  "rules": {
+    "react/forbid-elements": [
+      "warn",
+      {
+        "forbid": []
+      }
+    ],
+    "no-restricted-imports": [
+      "warn",
+      {
+        "patterns": [
+          {
+            "group": [
+              "design-canvas.jsx",
+              "ui_kits/blueai-panel/**"
+            ],
+            "message": "Import design-system components from 'index.js', not component internals."
+          }
+        ]
+      }
+    ],
+    "no-restricted-syntax": [
+      "warn",
+      {
+        "selector": "Literal[value=/#[0-9a-fA-F]{3,8}\\b/]",
+        "message": "Raw hex color — use a design-system color token via var()."
+      },
+      {
+        "selector": "Literal[value=/\\b\\d+px\\b/]",
+        "message": "Raw px value — use a design-system spacing token via var()."
+      },
+      {
+        "selector": "Literal[value=/font-family\\s*:\\s*(?!['\\\"]?(?:Inter|Bricolage Grotesque))/i]",
+        "message": "Font not provided by the design system. Available: Inter, Bricolage Grotesque."
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": [
+        "**/index.js"
+      ],
+      "rules": {
+        "no-restricted-imports": "off"
+      }
+    }
+  ],
+  "x-omelette": {
+    "components": {},
+    "tokens": [
+      "--bai-canvas",
+      "--bai-cyan",
+      "--bai-divider",
+      "--bai-gradient",
+      "--bai-gradient-wash",
+      "--bai-gradient-wash-hover",
+      "--bai-ink-body",
+      "--bai-ink-body-2",
+      "--bai-ink-display",
+      "--bai-ink-heading",
+      "--bai-ink-muted",
+      "--bai-iris",
+      "--bai-iris-2",
+      "--bai-legacy-blue",
+      "--bai-stroke",
+      "--bai-stroke-warm",
+      "--bai-surface",
+      "--bg-canvas",
+      "--bg-surface",
+      "--border-card",
+      "--border-composer",
+      "--border-divider",
+      "--border-hairline",
+      "--border-header",
+      "--dur-base",
+      "--dur-fast",
+      "--dur-slow",
+      "--ease-out",
+      "--fg-1",
+      "--fg-2",
+      "--fg-3",
+      "--fg-4",
+      "--fg-disabled",
+      "--font-brand",
+      "--font-display",
+      "--font-ui",
+      "--line-body",
+      "--line-normal",
+      "--line-tight",
+      "--radius-bubble-recv",
+      "--radius-bubble-sent",
+      "--radius-circle",
+      "--radius-md",
+      "--radius-pill",
+      "--radius-sm",
+      "--shadow-float",
+      "--shadow-none",
+      "--shadow-overlay",
+      "--space-1",
+      "--space-2",
+      "--space-3",
+      "--space-4",
+      "--space-5",
+      "--space-6",
+      "--space-7",
+      "--space-8",
+      "--track-eyebrow",
+      "--type-11",
+      "--type-2xl",
+      "--type-base",
+      "--type-h3",
+      "--type-h4",
+      "--type-h5",
+      "--type-lg",
+      "--type-md",
+      "--type-sm",
+      "--type-xl",
+      "--type-xs"
+    ],
+    "tokenKinds": {
+      "--bai-iris": "color",
+      "--bai-cyan": "color",
+      "--bai-iris-2": "color",
+      "--bai-gradient": "color",
+      "--bai-gradient-wash": "other",
+      "--bai-gradient-wash-hover": "other",
+      "--bai-ink-display": "color",
+      "--bai-ink-heading": "color",
+      "--bai-ink-body": "color",
+      "--bai-ink-body-2": "color",
+      "--bai-ink-muted": "color",
+      "--bai-stroke": "color",
+      "--bai-stroke-warm": "color",
+      "--bai-divider": "color",
+      "--bai-surface": "color",
+      "--bai-canvas": "color",
+      "--bai-legacy-blue": "color",
+      "--fg-1": "color",
+      "--fg-2": "color",
+      "--fg-3": "color",
+      "--fg-4": "color",
+      "--fg-disabled": "color",
+      "--bg-canvas": "color",
+      "--bg-surface": "color",
+      "--border-hairline": "color",
+      "--border-divider": "color",
+      "--font-display": "font",
+      "--font-ui": "font",
+      "--font-brand": "font",
+      "--type-2xl": "font",
+      "--type-xl": "font",
+      "--type-lg": "font",
+      "--type-h3": "font",
+      "--type-h4": "font",
+      "--type-h5": "font",
+      "--type-md": "font",
+      "--type-base": "font",
+      "--type-sm": "font",
+      "--type-11": "font",
+      "--type-xs": "font",
+      "--line-tight": "other",
+      "--line-normal": "other",
+      "--line-body": "other",
+      "--track-eyebrow": "spacing",
+      "--space-1": "spacing",
+      "--space-2": "spacing",
+      "--space-3": "spacing",
+      "--space-4": "spacing",
+      "--space-5": "spacing",
+      "--space-6": "spacing",
+      "--space-7": "spacing",
+      "--space-8": "spacing",
+      "--radius-sm": "radius",
+      "--radius-md": "radius",
+      "--radius-pill": "radius",
+      "--radius-circle": "radius",
+      "--radius-bubble-sent": "radius",
+      "--radius-bubble-recv": "radius",
+      "--border-card": "color",
+      "--border-composer": "color",
+      "--border-header": "color",
+      "--shadow-none": "shadow",
+      "--shadow-float": "shadow",
+      "--shadow-overlay": "shadow",
+      "--ease-out": "other",
+      "--dur-fast": "other",
+      "--dur-base": "other",
+      "--dur-slow": "other"
+    },
+    "fontFamilies": [
+      "Bricolage Grotesque",
+      "Inter"
+    ]
+  }
+}

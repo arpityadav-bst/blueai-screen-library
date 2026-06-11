@@ -1,0 +1,176 @@
+/* ============================================================================
+   BlueAI homepage sections — shared styles (scoped under .bai-home)
+   Used by homepage-sections.html (standalone) and injected into the 3 hero
+   options so the page below the hero is identical everywhere.
+   Single source of truth for these sections' visuals.
+   ============================================================================ */
+.bai-home{
+  --bh-head:'Space Grotesk', 'SF Pro Display', var(--font-display);
+  --bh-slate:#0f172a;
+  --bh-blue:#2f6dff;
+  --bh-green:#16a34a;
+  --bh-orange:#f97316;
+  font-family:var(--font-ui);
+  color:var(--bh-slate);
+  position:relative;
+  z-index:1;
+}
+.bai-home *{box-sizing:border-box;}
+.bai-home .wrap{max-width:1080px;margin:0 auto;padding:0 40px;}
+
+/* shared heading / body type */
+.bai-home .h-eyebrow{font-family:var(--font-ui);font-weight:600;font-size:12px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--fg-4);margin:0 0 14px;}
+.bai-home .h-title{font-family:var(--bh-head);font-weight:600;letter-spacing:-.03em;line-height:1.05;
+  color:var(--bh-slate);margin:0;text-wrap:balance;}
+.bai-home .h-sub{font-family:var(--font-ui);font-weight:400;color:var(--fg-4);line-height:1.6;margin:0;}
+.bai-home .grad{background:var(--bai-gradient);-webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;color:transparent;}
+
+/* ---------------------------------------------------- WHAT BLUEAI DOES (intro) */
+.bai-home .intro{text-align:center;padding:96px 0 8px;}
+.bai-home .intro .h-title{font-size:clamp(34px,4.4vw,52px);}
+.bai-home .intro .h-sub{font-size:clamp(16px,1.4vw,19px);margin-top:14px;}
+
+/* ---------------------------------------------------- FEATURE ROWS */
+.bai-home .features{display:flex;flex-direction:column;gap:104px;padding:84px 0 40px;}
+.bai-home .feat{display:grid;grid-template-columns:1fr 1.12fr;gap:64px;align-items:center;}
+.bai-home .feat.reverse .feat-text{order:2;}
+.bai-home .feat.reverse .feat-visual{order:1;}
+
+.bai-home .feat-kicker{display:flex;align-items:center;gap:10px;margin-bottom:18px;}
+.bai-home .feat-num{width:24px;height:24px;border-radius:7px;background:var(--bai-gradient);
+  color:#fff;font-family:var(--bh-head);font-weight:600;font-size:13px;
+  display:flex;align-items:center;justify-content:center;flex:none;}
+.bai-home .feat-cat{font-family:var(--font-ui);font-weight:600;font-size:16px;color:var(--bh-blue);}
+.bai-home .feat-title{font-family:var(--bh-head);font-weight:600;letter-spacing:-.03em;line-height:1.06;
+  font-size:clamp(28px,3.2vw,40px);color:var(--bh-slate);margin:0 0 18px;text-wrap:balance;}
+.bai-home .feat-desc{font-family:var(--font-ui);font-size:16px;line-height:1.6;color:var(--fg-4);
+  margin:0 0 22px;max-width:34ch;}
+.bai-home .feat-quote{display:inline-flex;align-items:center;background:var(--bai-canvas);
+  border:1px solid var(--bai-divider);border-radius:var(--radius-pill);padding:9px 17px;
+  font-family:var(--font-ui);font-size:14px;color:var(--fg-3);box-shadow:var(--shadow-float);}
+
+/* feature visual — real product image from the live site */
+.bai-home .feat-visual{position:relative;border-radius:20px;overflow:hidden;
+  box-shadow:0 26px 54px -32px rgba(95,70,255,.42);}
+.bai-home .feat-visual img{display:block;width:100%;height:auto;}
+.bai-home .mock{position:absolute;inset:0;padding:26px;display:flex;flex-direction:column;gap:11px;justify-content:center;}
+.bai-home .mock-bar{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--bai-divider);
+  border-radius:11px;padding:11px 14px;box-shadow:var(--shadow-float);}
+.bai-home .mock-bar svg{width:16px;height:16px;color:var(--fg-4);flex:none;}
+.bai-home .mock-bar span{font-family:var(--font-ui);font-size:13.5px;color:var(--bh-slate);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.bai-home .mock-row{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--bai-divider);
+  border-radius:11px;padding:11px 13px;box-shadow:var(--shadow-float);}
+.bai-home .mock-ic{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  font-size:17px;flex:none;}
+.bai-home .mock-tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px;}
+.bai-home .mock-tx b{font-family:var(--font-ui);font-weight:600;font-size:12.5px;color:var(--bh-slate);
+  line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.bai-home .mock-tx i{font-family:var(--font-ui);font-style:normal;font-size:11px;color:var(--fg-4);line-height:1.25;}
+.bai-home .mock-tag{font-family:var(--font-ui);font-weight:700;font-size:12px;flex:none;}
+.bai-home .mock-tag.up{color:var(--bh-green);} .bai-home .mock-tag.bl{color:var(--bh-blue);}
+.bai-home .mock-pill{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;
+  background:var(--bai-gradient-wash);border:1px solid rgba(123,76,255,.2);border-radius:var(--radius-pill);
+  padding:7px 13px;font-family:var(--font-ui);font-weight:600;font-size:12px;color:#5b3fd6;}
+
+/* ---------------------------------------------------- SKILLS section */
+.bai-home .skills{text-align:center;padding:72px 0 0;}
+.bai-home .skills .h-eyebrow{display:inline-flex;align-items:center;gap:8px;justify-content:center;
+  background:var(--bai-canvas);border:1px solid var(--bai-divider);border-radius:var(--radius-pill);
+  padding:8px 17px;box-shadow:var(--shadow-float);margin:0 auto 22px;
+  font-weight:600;font-size:11px;letter-spacing:.18em;color:#5b6b8c;}
+.bai-home .skills .h-eyebrow img{width:13px;height:13px;}
+.bai-home .skills .h-title{font-size:clamp(30px,3.8vw,46px);}
+.bai-home .skills .h-sub{font-size:16px;max-width:620px;margin:16px auto 0;}
+
+/* download CTA button (matches hero) */
+.bai-home .dl-cta{display:inline-flex;align-items:center;gap:9px;height:54px;padding:0 28px;border:none;
+  cursor:pointer;border-radius:var(--radius-pill);text-decoration:none;
+  background:linear-gradient(105deg,#1a90ff 0%, #6b53ff 55%, #7B4CFF 100%);
+  color:#fff;font-family:var(--font-ui);font-weight:600;font-size:17px;white-space:nowrap;
+  box-shadow:0 10px 26px -8px rgba(95,70,255,.55);transition:transform .18s var(--ease-out),box-shadow .18s var(--ease-out);}
+.bai-home .dl-cta:hover{transform:translateY(-2px);box-shadow:0 16px 32px -8px rgba(95,70,255,.6);}
+.bai-home .dl-cta:active{transform:translateY(0) scale(.98);}
+.bai-home .dl-cta .spark{width:18px;height:18px;display:block;}
+.bai-home .dl-cta .arrow{width:18px;height:18px;transition:transform .18s var(--ease-out);}
+.bai-home .dl-cta:hover .arrow{transform:translateX(3px);}
+.bai-home .skills .dl-cta{margin-top:28px;}
+
+/* ---------------------------------------------------- ALL SKILLS grid */
+.bai-home .allskills{padding:56px 0 0;}
+.bai-home .allskills-head{margin-bottom:22px;}
+.bai-home .allskills-head h3{font-family:var(--bh-head);font-weight:600;font-size:24px;letter-spacing:-.02em;
+  color:var(--bh-slate);margin:0 0 6px;}
+.bai-home .allskills-head p{font-family:var(--font-ui);font-size:13px;color:var(--fg-4);margin:0;}
+.bai-home .skill-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+
+.bai-home .skill{position:relative;display:flex;flex-direction:column;background:var(--bai-canvas);
+  border:1px solid var(--bai-divider);border-radius:16px;padding:18px 18px 16px;
+  box-shadow:0 1px 2px rgba(8,10,31,.04);transition:transform .2s var(--ease-out),box-shadow .2s var(--ease-out),border-color .2s var(--ease-out);}
+.bai-home .skill:hover{transform:translateY(-3px);border-color:rgba(123,76,255,.3);
+  box-shadow:0 20px 40px -24px rgba(95,70,255,.4);}
+.bai-home .skill-top{display:flex;align-items:center;gap:10px;margin-bottom:15px;}
+.bai-home .skill-ic{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  font-size:18px;flex:none;}
+.bai-home .skill-cat{font-family:var(--font-ui);font-weight:600;font-size:10.5px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--bh-blue);background:rgba(47,109,255,.1);border-radius:var(--radius-pill);
+  padding:4px 10px;}
+.bai-home .skill-feat{position:absolute;top:16px;right:16px;font-family:var(--font-ui);font-weight:700;
+  font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:var(--bh-orange);
+  border-radius:var(--radius-pill);padding:4px 9px;}
+.bai-home .skill h4{font-family:var(--bh-head);font-weight:600;font-size:17px;letter-spacing:-.01em;
+  line-height:1.2;color:var(--bh-slate);margin:0 0 9px;}
+.bai-home .skill p{font-family:var(--font-ui);font-size:13px;line-height:1.5;color:var(--fg-4);margin:0 0 16px;}
+.bai-home .skill-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:auto;
+  padding-top:14px;border-top:1px solid var(--bai-divider);}
+.bai-home .skill-rate{display:inline-flex;align-items:center;gap:6px;font-family:var(--font-ui);font-size:13px;}
+.bai-home .skill-rate .star{color:#f5b50a;}
+.bai-home .skill-rate b{color:var(--bh-slate);font-weight:600;}
+.bai-home .skill-rate span{color:var(--fg-4);}
+.bai-home .skill-try{display:inline-flex;align-items:center;gap:5px;font-family:var(--font-ui);font-weight:600;
+  font-size:13px;color:var(--bh-blue);text-decoration:none;white-space:nowrap;}
+.bai-home .skill-try:hover{text-decoration:underline;}
+
+/* "more skills on the way" tile — matches live site */
+.bai-home .skill-more{align-items:center;justify-content:center;text-align:center;gap:9px;
+  background:linear-gradient(180deg,#eff4ff 0%,#e9f0fe 100%);border:1px solid #dce6fb;box-shadow:none;}
+.bai-home .skill-more:hover{transform:none;border-color:#c5d6f7;box-shadow:none;}
+.bai-home .skill-more .sm-ic{width:46px;height:46px;border-radius:13px;
+  background:linear-gradient(145deg,#4aa3ff 0%,#7B4CFF 100%);
+  display:flex;align-items:center;justify-content:center;margin-bottom:6px;
+  box-shadow:0 8px 18px -6px rgba(95,70,255,.5);}
+.bai-home .skill-more .sm-ic svg{width:24px;height:24px;}
+.bai-home .skill-more{align-items:center;justify-content:center;text-align:center;gap:14px;padding:28px 18px;}
+.bai-home .skill-more .sm-tx{display:flex;flex-direction:column;align-items:center;gap:7px;}
+.bai-home .skill-more b{font-family:var(--bh-head);font-weight:600;font-size:17px;line-height:1.3;color:var(--bh-slate);max-width:20ch;}
+.bai-home .skill-more span{font-family:var(--font-ui);font-size:13px;line-height:1.45;color:var(--fg-4);max-width:26ch;}
+
+/* ---------------------------------------------------- POWERED BY (closing CTA) */
+.bai-home .powered{text-align:center;padding:120px 0 110px;}
+.bai-home .powered .h-title{font-size:clamp(32px,4.2vw,50px);}
+.bai-home .powered .h-sub{font-size:16px;margin-top:14px;}
+.bai-home .powered .dl-cta{margin-top:30px;}
+
+/* ---------------------------------------------------- FOOTER */
+.bai-home .foot{border-top:1px solid var(--bai-divider);padding:30px 0;text-align:center;}
+.bai-home .foot p{font-family:var(--font-ui);font-size:12px;color:var(--fg-4);margin:0;}
+
+/* ---------------------------------------------------- RESPONSIVE */
+@media (max-width:880px){
+  .bai-home .wrap{padding:0 24px;}
+  .bai-home .feat{grid-template-columns:1fr;gap:28px;}
+  .bai-home .feat.reverse .feat-text{order:1;}
+  .bai-home .feat.reverse .feat-visual{order:2;}
+  .bai-home .features{gap:72px;padding-top:64px;}
+  .bai-home .skill-grid{grid-template-columns:1fr;}
+  .bai-home .intro{padding-top:72px;}
+}
+@media (min-width:881px) and (max-width:1080px){
+  .bai-home .skill-grid{grid-template-columns:repeat(2,1fr);}
+}
+
+@media (prefers-reduced-motion: reduce){
+  .bai-home .skill,.bai-home .dl-cta{transition:none;}
+}

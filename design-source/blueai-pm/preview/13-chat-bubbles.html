@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Plus Jakarta Sans', sans-serif; background: linear-gradient(to bottom, rgba(249,250,251,0.5), #fff); padding: 16px; border: 1px solid #E2E8F0; border-radius: 12px; display: flex; flex-direction: column; gap: 8px; }
+  .msg { display: flex; }
+  .msg.user { justify-content: flex-end; }
+  .bubble { max-width: 75%; border-radius: 16px; padding: 10px 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+  .bubble.user { background: linear-gradient(to bottom right, #6366F1, #4F46E5); color: #fff; box-shadow: 0 4px 6px rgba(79,70,229,0.20); }
+  .bubble.assistant { background: #F3F4F6; color: #1F2937; }
+  .bubble.success { background: #DCFCE7; color: #166534; }
+  .bubble.error { background: #FEE2E2; color: #991B1B; }
+  .bubble.warning { background: #FEF3C7; color: #92400E; }
+  .bubble.info { background: #DBEAFE; color: #1E40AF; }
+  .text { font-size: 13px; line-height: 1.5; white-space: pre-wrap; }
+  .time { font-size: 10px; margin-top: 4px; opacity: 0.65; }
+  .intro { background: #F3F4F6; border-radius: 16px; padding: 14px 16px; }
+  .intro h2 { font-size: 15px; font-weight: 700; color: #111827; margin-bottom: 4px; }
+  .intro p { font-size: 13px; color: #374151; line-height: 1.5; }
+  .suggestion { display: inline-flex; align-items: center; gap: 6px; border: 1px solid #E5E7EB; background: #fff; border-radius: 999px; padding: 6px 12px; font-size: 12px; color: #374151; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+  .loading-dots { display: flex; gap: 4px; padding: 10px 14px; background: #F3F4F6; border-radius: 16px; width: fit-content; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: #9CA3AF; animation: bounce 1.2s infinite; }
+  .dot:nth-child(2) { animation-delay: 0.2s; }
+  .dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes bounce { 0%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-6px); } }
+</style></head>
+<body>
+  <!-- Intro message -->
+  <div class="intro">
+    <h2>Hello, Alex</h2>
+    <p>I'm BlueAI, your AI assistant for BlueStacks App Player. I can help you control apps and perform tasks inside BlueStacks using natural language.</p>
+  </div>
+  <!-- Suggestions -->
+  <div style="display:flex; flex-wrap:wrap; gap:6px;">
+    <button class="suggestion"><svg width="10" height="10" fill="none" stroke="#4F46E5" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>Play Whiteout Survival as persona_TeacherPet</button>
+    <button class="suggestion"><svg width="10" height="10" fill="none" stroke="#4F46E5" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>Collect daily coins</button>
+  </div>
+  <!-- User message -->
+  <div class="msg user">
+    <div class="bubble user">
+      <div class="text">Collect my daily coins in Whiteout Survival</div>
+      <div class="time" style="color:rgba(255,255,255,0.7); text-align:right;">09:42 AM</div>
+    </div>
+  </div>
+  <!-- Agent started -->
+  <div class="msg">
+    <div class="bubble info">
+      <div class="text">Agent started. Launching Whiteout Survival…</div>
+      <div class="time" style="color:#3B82F6;">09:42 AM</div>
+    </div>
+  </div>
+  <!-- Loading -->
+  <div class="msg">
+    <div class="loading-dots">
+      <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+    </div>
+  </div>
+  <!-- Success -->
+  <div class="msg">
+    <div class="bubble success">
+      <div class="text">Task completed. Collected 1,200 coins successfully.</div>
+      <div class="time" style="color:#15803D;">09:44 AM</div>
+    </div>
+  </div>
+  <!-- Await input -->
+  <div class="msg">
+    <div class="bubble warning">
+      <div class="text">I need your input to proceed. Please confirm the action.</div>
+      <div class="time" style="color:#B45309;">09:45 AM</div>
+    </div>
+  </div>
+</body></html>

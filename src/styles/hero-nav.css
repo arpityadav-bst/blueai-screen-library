@@ -1,0 +1,24 @@
+/* ============================================================================
+   BlueAI Hero Nav — the SINGLE source of truth for the marketing/hero header.
+   Imported by <HeroNav/> so the styles travel with the component (used by all
+   three hero variants + showcased in the style guide). The only per-variant
+   difference is vertical padding, exposed as --nav-pad-y (set on each .hero-page).
+   All tokens (--bai-*, --fg-*, --font-ui/brand, --ease-out) are global (globals.css).
+   ============================================================================ */
+.nav { display: flex; align-items: center; justify-content: space-between; max-width: var(--bai-content); margin: 0 auto; padding: var(--nav-pad-y, 22px) 40px; }
+.brand { display: flex; align-items: center; gap: 10px; }
+.brand svg { display: block; width: 34px; height: 34px; }
+.wordmark { font-family: var(--font-brand); font-weight: 700; font-size: 25px; line-height: 1; background: var(--bai-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; letter-spacing: -.01em; }
+.nav-right { display: flex; align-items: center; gap: 34px; }
+.nav-links { display: flex; align-items: center; gap: 34px; }
+.nav-links a { font-family: var(--font-ui); font-weight: 500; font-size: 16px; color: var(--fg-3); text-decoration: none; transition: color .15s var(--ease-out); }
+.nav-links a:hover { color: var(--fg-1); }
+.nav-sep { width: 1px; height: 22px; background: var(--bai-divider); }
+.nav-social { display: flex; align-items: center; gap: 18px; }
+.nav-social a { color: var(--bai-stroke); display: flex; transition: color .15s var(--ease-out); }
+.nav-social a:hover { color: var(--fg-2); }
+.nav-social svg { width: 21px; height: 21px; display: block; }
+.nav-social a[aria-label="Reddit"] svg { width: 27px; height: 27px; } /* reddit glyph reads small at 21 — sized up to the glyph, not the box */
+
+/* shared responsive: drop the text links on narrow screens (icons + brand stay) */
+@media (max-width: 920px) { .nav-links { display: none; } }

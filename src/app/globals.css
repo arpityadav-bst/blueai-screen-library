@@ -1,0 +1,148 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ==========================================================================
+   blueAI "blueai-modern" design system — colors, type, spacing, radii, shadows.
+   Source: the Claude-design export (design-source/.../blueai-modern/colors_and_type.css,
+   from BlueAI.fig node 1:942 "New UX"). These --bai-* vars are the TOKEN SOURCE OF
+   TRUTH; tailwind.config.ts maps utilities (bg-iris, text-ink-heading, bg-bai-gradient…)
+   onto them. Fonts load via <link> in layout.tsx (Inter, Bricolage Grotesque, Space Grotesk).
+   ========================================================================== */
+
+@layer base {
+  :root {
+    /* ----- BRAND ACCENTS (only ever appear together, as a gradient) ----- */
+    --bai-iris:   rgb(123, 76, 255);   /* #7B4CFF */
+    --bai-cyan:   rgb(14, 164, 197);   /* #0EA4C5 */
+    --bai-iris-2: rgb(151, 71, 255);   /* #9747FF — used once, outer frame stroke */
+    --bai-gradient:            linear-gradient(to bottom right, var(--bai-iris) 0%, var(--bai-cyan) 99%);
+    --bai-gradient-wash:       linear-gradient(to bottom right, rgba(123, 76, 255, .10) 0%, rgba(14, 164, 197, .10) 99%);
+    --bai-gradient-wash-hover: linear-gradient(to bottom right, rgba(123, 76, 255, .18) 0%, rgba(14, 164, 197, .18) 99%);
+
+    /* ----- NEUTRAL RAMP (cool, slight blue cast) ----- */
+    --bai-ink-display: rgb(8, 10, 31);     /* #080A1F — display titles */
+    --bai-ink-heading: rgb(27, 30, 56);    /* #1B1E38 — headings, active icon */
+    --bai-ink-body:    rgb(43, 46, 76);    /* #2B2E4C — body dark */
+    --bai-ink-body-2:  rgb(55, 58, 88);    /* #373A58 — body */
+    --bai-ink-muted:   rgb(67, 70, 100);   /* #434664 — secondary text, eyebrows */
+    --bai-stroke:      rgb(182, 184, 204); /* #B6B8CC — borders, disabled icons */
+    --bai-stroke-warm: rgb(182, 184, 205); /* #B6B8CD — card strokes */
+    --bai-divider:     rgb(223, 228, 238); /* #DFE4EE — header/panel dividers */
+    --bai-surface:     rgb(247, 250, 255); /* #F7FAFF — card / tinted surface */
+    --bai-canvas:      rgb(255, 255, 255); /* white — canvas */
+    --bai-legacy-blue: rgb(26, 144, 255);  /* appears once; not a brand primary */
+
+    /* ----- SEMANTIC ROLE ALIASES (DS API) ----- */
+    --fg-1: var(--bai-ink-display);
+    --fg-2: var(--bai-ink-heading);
+    --fg-3: var(--bai-ink-body);
+    --fg-4: var(--bai-ink-muted);
+    --fg-disabled: var(--bai-stroke);
+    --bg-canvas: var(--bai-canvas);
+    --bg-surface: var(--bai-surface);
+    --border-hairline: var(--bai-stroke-warm);
+    --border-divider: var(--bai-divider);
+
+    /* ----- TYPE SCALE (panel-native; px) ----- */
+    --type-2xl: 28px; --type-xl: 24px; --type-lg: 20px; --type-h3: 17px; --type-h4: 15px;
+    --type-h5: 13px; --type-md: 16px; --type-base: 14px; --type-sm: 12px; --type-11: 11px; --type-xs: 10px;
+
+    /* ----- SPACING (4pt baseline) ----- */
+    --space-1: 4px; --space-2: 8px; --space-3: 10px; --space-4: 12px;
+    --space-5: 16px; --space-6: 20px; --space-7: 32px; --space-8: 36px;
+
+    /* ----- RADII (full scale — card · field · chat · credits · pill · circle + bubbles) ----- */
+    --radius-badge: 2px;    /* squared status chips */
+    --radius-sm: 8px;       /* cards / buttons / icon tiles */
+    --radius-md: 12px;      /* composer / panels / cards */
+    --radius-chat: 16px;    /* chat input + chat bubbles */
+    --radius-credits: 24px; /* credits / wallet pill */
+    --radius-pill: 128px;   /* pills, suggested actions */
+    --radius-circle: 9999px;
+    --radius-bubble-sent: 12px 12px 0 12px;
+    --radius-bubble-recv: 12px 12px 12px 0;
+
+    /* ----- LAYOUT ----- */
+    --bai-content: 1180px; /* shared content column — nav, all heroes, homepage body align to this (40px gutter) */
+
+    /* ----- BORDERS ----- */
+    --border-card: 0.5px solid var(--bai-stroke-warm);
+    --border-composer: 0.5px solid var(--bai-stroke);
+    --border-header: 1px solid var(--bai-divider);
+
+    /* ----- SHADOWS (border-driven system; float/overlay reserved for menus) ----- */
+    --shadow-none: none;
+    --shadow-float: 0 4px 16px -4px rgba(8, 10, 31, 0.08), 0 1px 2px rgba(8, 10, 31, 0.04);
+    --shadow-overlay: 0 12px 32px -8px rgba(8, 10, 31, 0.16);
+
+    /* ----- PM SUPPLEMENT — filled from the BlueAI PM DS (the shipping web-app codebase),
+       for what blueai-modern didn't spec. Interactive accent (app/in-product surfaces;
+       the MARKETING brand stays the iris→cyan gradient) + the semantic status system.
+       (Tailwind's default shadow-sm/md/lg/xl already match PM's scale; float/overlay above
+       are modern's named extras.) ----- */
+    --bai-accent:       rgb(25, 144, 255);  /* #1990FF — primary interactive (app) */
+    --bai-accent-hover: rgb(20, 128, 238);  /* #1480EE */
+    --bai-indigo:       #4F46E5;  /* PM secondary interactive — cards, nav hover, icon bg */
+    --bai-indigo-soft:  #EEF2FF;
+    --bai-indigo-ink:   #4338CA;
+    /* status hue · soft badge bg · badge ink */
+    --bai-success: #22C55E; --bai-success-soft: #DCFCE7; --bai-success-ink: #15803D;
+    --bai-warning: #F59E0B; --bai-warning-soft: #FEF3C7; --bai-warning-ink: #92400E;
+    --bai-danger:  #EF4444; --bai-danger-soft:  #FEE2E2; --bai-danger-ink:  #991B1B;
+    --bai-info:    #3B82F6; --bai-info-soft:    #DBEAFE; --bai-info-ink:    #1E40AF;
+    --bai-scheduled: #9333EA; --bai-scheduled-soft: #F3E8FF; --bai-scheduled-ink: #6B21A8;
+    --bai-jobs:    #F97316; --bai-jobs-soft:    #FFEDD5; --bai-jobs-ink:    #9A3412;
+    /* The brand "Download" CTA — was hand-inlined on every CTA; tokenized here (one source). */
+    --bai-cta-gradient:      linear-gradient(105deg, #1a90ff 0%, #6b53ff 55%, #7B4CFF 100%);
+    --bai-shadow-cta:        0 10px 26px -8px rgba(95, 70, 255, .55);
+    --bai-shadow-cta-hover:  0 16px 32px -8px rgba(95, 70, 255, .6);
+    --bai-shadow-brand-sm:   0 4px 6px -1px rgba(123, 76, 255, .20);  /* colored, for elevated brand chips */
+
+    /* ----- TYPE / MOTION (consumed by the .bai-* classes below) ----- */
+    --line-tight: 1;  --line-normal: 1.4;  --line-body: 1.6;
+    --track-eyebrow: 0.10em;
+    --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
+    --dur-fast: 120ms;  --dur-base: 180ms;  --dur-slow: 240ms;
+    --font-display: 'SF Pro Display', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-ui:      'SF Pro', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-brand:   'Bricolage Grotesque', 'Inter', sans-serif;
+    --font-head:    'Space Grotesk', var(--font-display); /* marketing display headings */
+  }
+
+  html, body {
+    background-color: var(--bai-canvas);
+    color: var(--bai-ink-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  body { font-family: var(--font-ui); }
+  ::selection { background: rgba(123, 76, 255, .18); }
+}
+
+/* ==========================================================================
+   Semantic typography classes — the DS's type API (maps to Figma text styles).
+   ========================================================================== */
+@layer components {
+  .bai-hero    { font-family: var(--font-display); font-weight: 800; font-size: 28px; line-height: var(--line-tight); color: var(--bai-ink-display); letter-spacing: -0.02em; }
+  .bai-display,
+  .bai-h1      { font-family: var(--font-display); font-weight: 700; font-size: 24px; line-height: var(--line-tight); color: var(--bai-ink-display); letter-spacing: -0.015em; }
+  .bai-h2      { font-family: var(--font-display); font-weight: 700; font-size: 20px; line-height: var(--line-tight); color: var(--bai-ink-display); letter-spacing: -0.01em; }
+  .bai-h3      { font-family: var(--font-display); font-weight: 700; font-size: 17px; line-height: 1.2; color: var(--bai-ink-display); }
+  .bai-h4      { font-family: var(--font-display); font-weight: 600; font-size: 15px; line-height: 1.2; color: var(--bai-ink-display); }
+  .bai-h5      { font-family: var(--font-ui); font-weight: 600; font-size: 13px; line-height: 1.2; color: var(--bai-ink-heading); }
+  .bai-body-lg { font-family: var(--font-display); font-weight: 400; font-size: 16px; line-height: var(--line-body); color: var(--bai-ink-muted); }
+  .bai-body    { font-family: var(--font-ui); font-weight: 400; font-size: 14px; line-height: var(--line-body); color: var(--bai-ink-body); }
+  .bai-body-sm { font-family: var(--font-ui); font-weight: 400; font-size: 12px; line-height: var(--line-body); color: var(--bai-ink-body); }
+  .bai-ui,
+  .bai-label   { font-family: var(--font-ui); font-weight: 500; font-size: 12px; line-height: var(--line-tight); color: var(--bai-ink-heading); }
+  .bai-label-sm{ font-family: var(--font-ui); font-weight: 500; font-size: 11px; line-height: var(--line-tight); color: var(--bai-ink-body); }
+  .bai-caption { font-family: var(--font-ui); font-weight: 400; font-size: 10px; line-height: var(--line-normal); color: var(--bai-ink-body); }
+  .bai-eyebrow { font-family: var(--font-display); font-weight: 400; font-size: 10px; line-height: var(--line-body); letter-spacing: var(--track-eyebrow); color: var(--bai-ink-muted); }
+  .bai-section-label { font-family: var(--font-display); font-weight: 600; font-size: 10px; line-height: var(--line-body); letter-spacing: 0.12em; text-transform: uppercase; color: var(--bai-ink-muted); }
+  .bai-wordmark { font-family: var(--font-brand); font-weight: 700; font-size: 18.46px; line-height: var(--line-tight); color: var(--bai-ink-heading); }
+  .bai-count   { font-family: var(--font-display); font-weight: 700; font-size: 14px; line-height: var(--line-tight); background: var(--bai-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; }
+
+  /* Inline gradient text — the "BlueAI" / "BlueStacks AI" highlights in headings. */
+  .text-gradient { background: var(--bai-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; }
+}

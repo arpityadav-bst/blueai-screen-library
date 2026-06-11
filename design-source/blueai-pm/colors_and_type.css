@@ -1,0 +1,368 @@
+/*
+ * BlueAI PM — Design Tokens
+ * Generated from frontend/src/index.css + Tailwind class audit
+ * Font: Plus Jakarta Sans (Google Fonts substitute for SF Pro)
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+/* ─────────────────────────────────────────────
+   BASE COLOR PALETTE
+   ───────────────────────────────────────────── */
+:root {
+  /* Brand / Interactive */
+  --color-accent:         #1990FF;  /* Primary CTA blue (Tailwind --color-accent) */
+  --color-accent-hover:   #1480ee;  /* accent at ~90% opacity equivalent */
+
+  /* Brand gradient stops */
+  --color-brand-from:     #0EA4C5;  /* Cyan start */
+  --color-brand-to:       #7B4CFF;  /* Purple end */
+
+  /* Indigo scale (primary interactive) */
+  --color-indigo-50:      #EEF2FF;
+  --color-indigo-100:     #E0E7FF;
+  --color-indigo-200:     #C7D2FE;
+  --color-indigo-300:     #A5B4FC;
+  --color-indigo-600:     #4F46E5;
+  --color-indigo-700:     #4338CA;
+
+  /* Purple scale */
+  --color-purple-100:     #F3E8FF;
+  --color-purple-500:     #A855F7;
+  --color-purple-600:     #9333EA;
+  --color-purple-700:     #7C3AED;
+
+  /* Neutral grays */
+  --color-gray-50:        #F9FAFB;
+  --color-gray-100:       #F3F4F6;
+  --color-gray-200:       #E5E7EB;
+  --color-gray-300:       #D1D5DB;
+  --color-gray-400:       #9CA3AF;
+  --color-gray-500:       #6B7280;
+  --color-gray-600:       #4B5563;
+  --color-gray-700:       #374151;
+  --color-gray-900:       #111827;
+
+  /* Slate scale (borders) */
+  --color-slate-100:      #F1F5F9;
+  --color-slate-200:      #E2E8F0;
+  --color-slate-300:      #CBD5E1;
+
+  /* Green / Emerald (success) */
+  --color-green-50:       #F0FDF4;
+  --color-green-100:      #DCFCE7;
+  --color-green-200:      #BBF7D0;
+  --color-green-500:      #22C55E;
+  --color-green-700:      #15803D;
+  --color-green-900:      #14532D;
+  --color-emerald-50:     #ECFDF5;
+  --color-emerald-500:    #10B981;
+  --color-emerald-600:    #059669;
+  --color-emerald-700:    #047857;
+
+  /* Amber / Yellow (warning) */
+  --color-yellow-100:     #FEF9C3;
+  --color-yellow-800:     #92400E;
+  --color-amber-50:       #FFFBEB;
+  --color-amber-100:      #FEF3C7;
+  --color-amber-200:      #FDE68A;
+  --color-amber-600:      #D97706;
+  --color-amber-700:      #B45309;
+  --color-amber-800:      #92400E;
+  --color-amber-900:      #78350F;
+
+  /* Red / Rose (danger) */
+  --color-red-100:        #FEE2E2;
+  --color-red-200:        #FECACA;
+  --color-red-400:        #F87171;
+  --color-red-500:        #EF4444;
+  --color-red-700:        #B91C1C;
+  --color-red-800:        #991B1B;
+  --color-red-900:        #7F1D1D;
+  --color-rose-500:       #F43F5E;
+  --color-rose-700:       #BE123C;
+
+  /* Blue (info / in-progress) */
+  --color-blue-100:       #DBEAFE;
+  --color-blue-400:       #60A5FA;
+  --color-blue-500:       #3B82F6;
+  --color-blue-800:       #1E40AF;
+  --color-blue-900:       #1E3A8A;
+
+  /* Orange (jobs) */
+  --color-orange-50:      #FFF7ED;
+  --color-orange-100:     #FFEDD5;
+  --color-orange-500:     #F97316;
+  --color-orange-600:     #EA580C;
+
+  /* ─────────────────────────────────────────────
+     SEMANTIC COLOR TOKENS
+     ───────────────────────────────────────────── */
+
+  /* Foreground */
+  --fg-primary:           var(--color-gray-900);
+  --fg-secondary:         var(--color-gray-600);
+  --fg-tertiary:          var(--color-gray-500);
+  --fg-disabled:          var(--color-gray-400);
+  --fg-on-accent:         #FFFFFF;
+  --fg-on-gradient:       #FFFFFF;
+  --fg-link:              var(--color-indigo-600);
+  --fg-link-hover:        var(--color-indigo-700);
+
+  /* Background */
+  --bg-page:              #FFFFFF;
+  --bg-surface:           #FFFFFF;
+  --bg-subtle:            var(--color-gray-50);
+  --bg-input:             #FFFFFF;
+  --bg-overlay:           rgba(0, 0, 0, 0.5);
+
+  /* Borders */
+  --border-default:       var(--color-slate-200);
+  --border-strong:        var(--color-gray-300);
+  --border-focus:         var(--color-blue-400);
+  --border-hover:         var(--color-indigo-300);
+
+  /* Brand gradient (CSS gradient) */
+  --gradient-brand:       linear-gradient(to right, var(--color-brand-from), var(--color-brand-to));
+  --gradient-cta:         linear-gradient(to bottom right, var(--color-indigo-600), var(--color-purple-600));
+  --gradient-chat-area:   linear-gradient(to bottom, rgba(249,250,251,0.5), #FFFFFF);
+
+  /* Status */
+  --status-assigned-bg:   var(--color-yellow-100);
+  --status-assigned-text: var(--color-yellow-800);
+  --status-accepted-bg:   var(--color-green-100);
+  --status-accepted-text: #166534; /* green-800 */
+  --status-inprogress-bg: var(--color-blue-100);
+  --status-inprogress-text: var(--color-blue-800);
+  --status-completed-bg:  var(--color-green-200);
+  --status-completed-text: var(--color-green-900);
+  --status-failed-bg:     var(--color-red-200);
+  --status-failed-text:   var(--color-red-900);
+  --status-declined-bg:   var(--color-red-100);
+  --status-declined-text: var(--color-red-800);
+  --status-expired-bg:    var(--color-slate-300);
+  --status-expired-text:  var(--color-gray-700);
+  --status-disabled-bg:   var(--color-slate-100);
+  --status-disabled-text: var(--color-gray-700);
+  --status-active-bg:     var(--color-indigo-100);
+  --status-active-text:   var(--color-indigo-600);
+
+  /* ─────────────────────────────────────────────
+     TYPOGRAPHY TOKENS
+     ───────────────────────────────────────────── */
+
+  /* Font families */
+  --font-primary:   'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-system:    -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+  --font-mono:      ui-monospace, 'Cascadia Code', 'Fira Code', monospace;
+
+  /* Font sizes */
+  --text-2xl:   1.5rem;    /* 24px — brand display */
+  --text-xl:    1.25rem;   /* 20px — page/section/card headings */
+  --text-lg:    1.125rem;  /* 18px — sub-headings */
+  --text-base:  1rem;      /* 16px — body (Tailwind default) */
+  --text-sm:    0.875rem;  /* 14px — body secondary */
+  --text-xs:    0.75rem;   /* 12px — labels, badges */
+  --text-2xs:   0.6875rem; /* 11px — timestamps, micro */
+  --text-10:    0.625rem;  /* 10px — admin/env badge text */
+
+  /* Font weights */
+  --weight-normal:    400;
+  --weight-medium:    500;
+  --weight-semibold:  600;
+  --weight-bold:      700;
+
+  /* Line heights */
+  --leading-none:   1;
+  --leading-tight:  1.25;
+  --leading-snug:   1.375;
+  --leading-normal: 1.5;
+  --leading-relaxed:1.625;
+
+  /* ─────────────────────────────────────────────
+     SPACING & RADIUS TOKENS
+     ───────────────────────────────────────────── */
+  --space-0:    0px;
+  --space-0-5:  0.125rem;  /* 2px */
+  --space-1:    0.25rem;   /* 4px */
+  --space-1-5:  0.375rem;  /* 6px */
+  --space-2:    0.5rem;    /* 8px */
+  --space-2-5:  0.625rem;  /* 10px */
+  --space-3:    0.75rem;   /* 12px */
+  --space-4:    1rem;      /* 16px */
+  --space-5:    1.25rem;   /* 20px */
+  --space-6:    1.5rem;    /* 24px */
+  --space-8:    2rem;      /* 32px */
+  --space-10:   2.5rem;    /* 40px */
+
+  --radius-sm:   0.125rem;  /* 2px  — status badges */
+  --radius-md:   0.5rem;    /* 8px  — buttons, icon containers */
+  --radius-lg:   0.75rem;   /* 12px — nav dropdown, modal header items */
+  --radius-xl:   0.75rem;   /* 12px — cards, modals */
+  --radius-2xl:  1rem;      /* 16px — chat input, chat bubbles */
+  --radius-3xl:  1.5rem;    /* 24px — credits button */
+  --radius-full: 9999px;    /* pill / avatar */
+
+  /* ─────────────────────────────────────────────
+     SHADOW TOKENS
+     ───────────────────────────────────────────── */
+  --shadow-sm:  0 1px 2px 0 rgba(0,0,0,0.05);
+  --shadow-md:  0 4px 6px -1px rgba(0,0,0,0.10), 0 2px 4px -2px rgba(0,0,0,0.10);
+  --shadow-lg:  0 10px 15px -3px rgba(0,0,0,0.10), 0 4px 6px -4px rgba(0,0,0,0.10);
+  --shadow-xl:  0 20px 25px -5px rgba(0,0,0,0.10), 0 8px 10px -6px rgba(0,0,0,0.10);
+  --shadow-indigo: 0 4px 6px -1px rgba(79,70,229,0.20);
+}
+
+/* ─────────────────────────────────────────────
+   SEMANTIC TYPE CLASSES
+   ───────────────────────────────────────────── */
+
+.blueai-display {
+  font-family: var(--font-primary);
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-none);
+  background: var(--gradient-brand);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.blueai-h1 {
+  font-family: var(--font-primary);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+  color: var(--fg-primary);
+  line-height: var(--leading-tight);
+}
+
+.blueai-h2 {
+  font-family: var(--font-primary);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+  color: var(--fg-primary);
+  line-height: var(--leading-tight);
+}
+
+.blueai-h3 {
+  font-family: var(--font-primary);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+  color: var(--fg-primary);
+  line-height: var(--leading-snug);
+}
+
+.blueai-body {
+  font-family: var(--font-primary);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-normal);
+  color: var(--fg-secondary);
+  line-height: var(--leading-normal);
+}
+
+.blueai-label {
+  font-family: var(--font-primary);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  color: var(--fg-secondary);
+  line-height: var(--leading-normal);
+}
+
+.blueai-micro {
+  font-family: var(--font-primary);
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-normal);
+  color: var(--fg-tertiary);
+  line-height: var(--leading-normal);
+}
+
+.blueai-code {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-normal);
+  color: var(--fg-primary);
+  background: var(--bg-subtle);
+  padding: 0.1em 0.4em;
+  border-radius: var(--radius-md);
+}
+
+/* ─────────────────────────────────────────────
+   UTILITY CLASSES
+   ───────────────────────────────────────────── */
+
+/* Gradient text */
+.text-gradient-brand {
+  background: var(--gradient-brand);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Card base */
+.blueai-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 200ms ease, border-color 200ms ease;
+}
+.blueai-card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--border-hover);
+}
+
+/* Button base */
+.blueai-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  font-family: var(--font-primary);
+  font-weight: var(--weight-medium);
+  font-size: var(--text-sm);
+  padding: 0.5rem 1.25rem;
+  cursor: pointer;
+  transition: all 200ms ease;
+  min-width: 8ch;
+}
+.blueai-btn:active { transform: scale(0.95); }
+.blueai-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+.blueai-btn-primary {
+  background: var(--color-accent);
+  color: var(--fg-on-accent);
+  padding-top: 0.625rem;
+  padding-bottom: 0.625rem;
+}
+.blueai-btn-primary:hover { background: var(--color-accent-hover); }
+
+.blueai-btn-secondary {
+  border: 1px solid var(--border-strong);
+  color: var(--fg-primary);
+  background: transparent;
+}
+.blueai-btn-secondary:hover { background: var(--color-gray-50); }
+
+.blueai-btn-success {
+  border: 1px solid var(--color-emerald-500);
+  color: var(--color-emerald-700);
+  background: transparent;
+}
+.blueai-btn-success:hover { background: var(--color-emerald-50); }
+
+.blueai-btn-danger {
+  border: 1px solid var(--color-rose-500);
+  color: var(--color-rose-700);
+  background: transparent;
+}
+.blueai-btn-danger:hover { background: #FFF1F2; }
+
+.blueai-btn-gradient {
+  background: linear-gradient(to right, var(--color-indigo-600), var(--color-purple-600));
+  color: var(--fg-on-gradient);
+  font-weight: var(--weight-semibold);
+  padding: 0.75rem 1.5rem;
+}
+.blueai-btn-gradient:hover {
+  background: linear-gradient(to right, var(--color-indigo-700), #6D28D9);
+}

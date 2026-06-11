@@ -1,0 +1,725 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BlueAI — Hero (Stage, two-column)</title>
+<link rel="stylesheet" href="assets/colors_and_type.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="assets/homepage-sections.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+  :root{
+    --green:#16a34a;
+    --green-bg:rgba(22,163,74,.10);
+    --font-head:'Space Grotesk', var(--font-display);
+    --font-mono:'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    --slate-900:#0f172a;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;}
+  body{
+    font-family:var(--font-ui);color:var(--fg-1);
+    background:
+      radial-gradient(1100px 620px at 18% -8%, rgba(123,76,255,.10), transparent 60%),
+      radial-gradient(900px 600px at 92% 8%, rgba(14,164,197,.10), transparent 55%),
+      linear-gradient(180deg,#f3f4fc 0%, #eaeefb 55%, #eef1fc 100%);
+    min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden;
+  }
+
+  /* ----------------------------------------------------------------- NAV */
+  .nav{display:flex;align-items:center;justify-content:space-between;max-width:1320px;margin:0 auto;padding:12px 40px;}
+  .brand{display:flex;align-items:center;gap:10px;}
+  .brand svg{display:block;width:34px;height:34px;}
+  .wordmark{font-family:var(--font-brand);font-weight:700;font-size:25px;line-height:1;
+    background:var(--bai-gradient);-webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;color:transparent;letter-spacing:-.01em;}
+  .nav-right{display:flex;align-items:center;gap:34px;}
+  .nav-links{display:flex;align-items:center;gap:34px;}
+  .nav-links a{font-family:var(--font-ui);font-weight:500;font-size:16px;color:var(--fg-3);
+    text-decoration:none;transition:color .15s var(--ease-out);}
+  .nav-links a:hover{color:var(--fg-1);}
+  .nav-sep{width:1px;height:22px;background:var(--bai-divider);}
+  .nav-social{display:flex;align-items:center;gap:18px;}
+  .nav-social a{color:var(--bai-stroke);display:flex;transition:color .15s var(--ease-out);}
+  .nav-social a:hover{color:var(--fg-2);}
+  .nav-social svg{width:21px;height:21px;display:block;}
+
+  /* --------------------------------------------------------------- HERO (2-col) */
+  .hero{max-width:1220px;margin:0 auto;padding:24px 48px 56px;
+    display:grid;grid-template-columns:0.86fr 1.14fr;gap:52px;align-items:center;}
+
+  /* ---- LEFT: headline / subhead / CTA, left-aligned, vertically centered ---- */
+  .hero-left{display:flex;flex-direction:column;align-items:flex-start;text-align:left;}
+  .headline{font-family:var(--font-head);font-weight:600;letter-spacing:-.03em;
+    font-size:clamp(40px,3.9vw,56px);line-height:1.05;color:var(--slate-900);
+    text-wrap:balance;margin:0;}
+  .subhead{font-family:var(--font-ui);font-weight:400;color:var(--fg-4);
+    font-size:clamp(16px,1.25vw,19px);line-height:1.55;max-width:30em;margin:20px 0 0;}
+  .cta{display:inline-flex;align-items:center;gap:9px;margin-top:28px;height:54px;padding:0 28px;
+    border:none;cursor:pointer;border-radius:var(--radius-pill);
+    background:linear-gradient(105deg,#1a90ff 0%, #6b53ff 55%, #7B4CFF 100%);
+    color:#fff;font-family:var(--font-ui);font-weight:600;font-size:18px;white-space:nowrap;
+    box-shadow:0 10px 26px -8px rgba(95,70,255,.55);
+    transition:transform .18s var(--ease-out), box-shadow .18s var(--ease-out);}
+  .cta:hover{transform:translateY(-2px);box-shadow:0 16px 32px -8px rgba(95,70,255,.6);}
+  .cta:active{transform:translateY(0) scale(.98);}
+  .cta .spark{width:18px;height:18px;display:block;}
+  .cta .arrow{width:18px;height:18px;transition:transform .18s var(--ease-out);}
+  .cta:hover .arrow{transform:translateX(3px);}
+
+  /* ---- RIGHT: pill + thumbnails (one unit) above the dominant stage -------- */
+  .hero-right{display:flex;flex-direction:column;min-height:0;}
+
+  .pill-live{align-self:flex-start;display:inline-flex;align-items:center;gap:9px;
+    background:rgba(255,255,255,.7);border:1px solid var(--bai-divider);
+    border-radius:var(--radius-pill);padding:6px 14px 6px 12px;box-shadow:var(--shadow-float);
+    backdrop-filter:blur(6px);margin-bottom:9px;}
+  .pill-live .dot{width:8px;height:8px;border-radius:50%;background:var(--green);
+    animation:livePulse 2s var(--ease-out) infinite;}
+  .pill-live span{font-family:var(--font-ui);font-weight:600;font-size:11.5px;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--fg-2);}
+  @keyframes livePulse{0%{box-shadow:0 0 0 0 rgba(22,163,74,.45);}70%{box-shadow:0 0 0 7px rgba(22,163,74,0);}100%{box-shadow:0 0 0 0 rgba(22,163,74,0);}}
+
+  /* minimal thumbnail row: icon + label + LIVE only */
+  .rail{display:flex;gap:10px;margin-bottom:10px;}
+  .thumb{position:relative;flex:1;min-width:0;display:flex;align-items:center;gap:9px;
+    background:var(--bai-canvas);border:1px solid var(--bai-divider);border-radius:14px;
+    padding:9px 11px;cursor:pointer;overflow:hidden;text-align:left;
+    box-shadow:0 1px 2px rgba(8,10,31,.04);
+    transition:transform .35s var(--ease-out), box-shadow .35s var(--ease-out), border-color .35s var(--ease-out);}
+  .thumb-icon{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;
+    justify-content:center;font-size:17px;flex:none;}
+  .thumb-label{font-family:var(--font-head);font-weight:600;font-size:14px;letter-spacing:-.01em;
+    color:var(--slate-900);flex:1;min-width:0;}
+  .thumb-see{display:inline-flex;align-items:center;color:#2f6dff;flex:none;}
+  .thumb-see svg{width:16px;height:16px;transition:transform .18s var(--ease-out);}
+  .thumb:hover .thumb-see svg,.thumb.is-active .thumb-see svg{transform:translateX(2px);}
+  .thumb-see .dot{width:5px;height:5px;border-radius:50%;background:var(--green);}
+  .thumb.is-dim{opacity:.58;}
+  .thumb.is-dim:hover{opacity:.85;}
+  .thumb.is-active{border-color:rgba(123,76,255,.5);box-shadow:0 12px 26px -14px rgba(95,70,255,.55);
+    transform:translateY(-1px);}
+  .thumb-progress{position:absolute;left:0;bottom:0;height:3px;width:100%;transform:scaleX(0);
+    transform-origin:left center;background:var(--bai-gradient);opacity:0;}
+  .thumb.is-active .thumb-progress{opacity:1;}
+  .icon-career{background:linear-gradient(160deg,#e7e3ff,#dfe6ff);}
+  .icon-creator{background:linear-gradient(160deg,#ffe1f3,#f3e2ff);}
+  .icon-finance{background:linear-gradient(160deg,#dcf6e6,#e6f7ec);}
+
+  /* the dominant stage panel — FIXED height (no reflow); flex inside is overlap-proof */
+  .stage-main{position:relative;flex:none;background:var(--bai-canvas);
+    border:1px solid rgba(123,76,255,.30);border-radius:22px;overflow:hidden;
+    height:clamp(376px,52vh,484px);
+    box-shadow:0 26px 56px -24px rgba(95,70,255,.42), 0 4px 14px -6px rgba(8,10,31,.08);}
+  .stage-main::before{content:"";position:absolute;inset:0;pointer-events:none;z-index:0;
+    background:linear-gradient(180deg, rgba(123,76,255,.05), rgba(14,164,197,.035));}
+  /* panes stacked absolutely → cross-fade with zero reflow */
+  .pane{position:absolute;inset:0;z-index:1;padding:18px 22px;display:flex;flex-direction:column;
+    opacity:0;pointer-events:none;}
+  .pane.is-active{pointer-events:auto;}
+  .pane-top{display:flex;align-items:center;gap:11px;margin-bottom:9px;flex:none;}
+  .icon-tile{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;
+    justify-content:center;font-size:22px;line-height:1;flex:none;}
+  .eyebrow{font-family:var(--font-ui);font-weight:600;font-size:12px;letter-spacing:.13em;
+    text-transform:uppercase;color:#3d7bff;}
+  .see-tag{display:inline-flex;align-items:center;gap:6px;margin-left:auto;flex:none;white-space:nowrap;
+    cursor:pointer;background:none;}
+  .see-tag span{font-family:var(--font-ui);font-weight:600;font-size:14px;color:#2f6dff;}
+  .see-tag svg{width:16px;height:16px;color:#2f6dff;transition:transform .18s var(--ease-out);}
+  .pane:hover .see-tag svg{transform:translateX(3px);}
+  .pane-title{font-family:var(--font-head);font-weight:600;font-size:24px;line-height:1.1;
+    letter-spacing:-.03em;color:var(--slate-900);text-wrap:balance;margin:0 0 11px;flex:none;}
+  .see-link{display:inline-flex;align-items:center;gap:7px;margin-top:11px;flex:none;
+    font-family:var(--font-ui);font-weight:600;font-size:15px;color:#2f6dff;text-decoration:none;width:fit-content;}
+  .see-link svg{width:16px;height:16px;transition:transform .18s var(--ease-out);}
+  .pane:hover .see-link svg{transform:translateX(3px);}
+
+  /* inner animation stage — flex column, fills remaining panel height, overlap-proof */
+  .stage{position:relative;flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;background:var(--bai-surface);
+    border:1px solid var(--bai-divider);border-radius:16px;padding:16px;overflow:hidden;}
+
+  /* ============ INNER STAGE ANIMATIONS ============ */
+  /* ---------- CAREER (multi-scene: search → results → select → apply) ---------- */
+  .cr-stage{padding:0;justify-content:stretch;}
+  .cr-scene{position:absolute;inset:0;padding:11px 15px;display:flex;flex-direction:column;}
+  .cr-find{gap:7px;justify-content:flex-start;}
+  .cr-apply{gap:7px;justify-content:flex-start;}
+
+  /* Scene 1 — find */
+  .cr-search{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--bai-divider);
+    border-radius:9px;padding:6px 10px;flex:none;}
+  .cr-search svg{width:14px;height:14px;color:var(--fg-4);flex:none;}
+  .cr-query{font-family:var(--font-ui);font-weight:500;font-size:13px;color:var(--slate-900);white-space:nowrap;}
+  .cr-caret{display:inline-block;width:1.5px;height:14px;background:#7B4CFF;margin-left:1px;vertical-align:-2px;}
+  .cr-results{display:flex;flex-direction:column;gap:9px;flex:1;min-height:0;justify-content:center;}
+  .cr-result{display:flex;align-items:center;gap:9px;background:#fff;border:1px solid var(--bai-divider);
+    border-radius:9px;padding:0 11px;position:relative;flex:1;min-height:0;max-height:60px;}
+  .cr-rlogo{width:23px;height:23px;border-radius:6px;color:#fff;font-family:var(--font-head);
+    font-weight:700;font-size:11px;display:flex;align-items:center;justify-content:center;flex:none;}
+  .cr-rmeta{flex:1;min-width:0;}
+  .cr-rmeta b{display:block;font-family:var(--font-ui);font-weight:600;font-size:12px;color:var(--slate-900);
+    line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .cr-rmeta i{font-family:var(--font-ui);font-style:normal;font-size:10px;color:var(--fg-4);}
+  .cr-rmatch{font-family:var(--font-mono);font-weight:600;font-size:10.5px;color:#0f7a3b;flex:none;}
+  .cr-result.is-pick{border-color:rgba(123,76,255,.55);box-shadow:0 6px 16px -9px rgba(95,70,255,.55);}
+
+  /* Scene 2 — apply */
+  .cr-job{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--bai-divider);
+    border-radius:10px;padding:7px 11px;flex:none;}
+  .cr-logo{width:30px;height:30px;border-radius:8px;background:linear-gradient(150deg,#7B4CFF,#0EA4C5);
+    color:#fff;font-family:var(--font-head);font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;flex:none;}
+  .cr-job .t{font-family:var(--font-ui);font-weight:600;font-size:13px;color:var(--slate-900);line-height:1.2;}
+  .cr-job .s{font-family:var(--font-ui);font-size:11px;color:var(--fg-4);line-height:1.3;}
+  .cr-form{display:flex;flex-direction:column;gap:9px;flex:1;min-height:0;justify-content:center;}
+  .cr-row{display:flex;align-items:center;gap:11px;flex:1;min-height:0;max-height:56px;background:#fff;
+    border:1px solid var(--bai-divider);border-radius:9px;padding:0 12px;}
+  .cr-lbl{font-family:var(--font-ui);font-size:11.5px;color:var(--fg-4);width:52px;flex:none;}
+  .cr-track{flex:1;height:10px;border-radius:5px;background:#eef1f8;overflow:hidden;}
+  .cr-fill{display:block;height:100%;width:100%;border-radius:5px;transform-origin:left center;
+    background:linear-gradient(90deg,#c9d3ee,#aab9e6);}
+  .cr-attach{display:flex;gap:8px;flex:none;}
+  .cr-chip{display:inline-flex;align-items:center;gap:6px;background:var(--bai-surface);border:1px solid var(--bai-divider);
+    border-radius:8px;padding:5px 9px;font-family:var(--font-ui);font-weight:600;font-size:11px;color:var(--fg-3);white-space:nowrap;}
+  .cr-chip svg{width:12px;height:12px;color:#7B4CFF;flex:none;}
+  .cr-chk{display:inline-flex;align-items:center;justify-content:center;width:13px;height:13px;border-radius:50%;
+    background:var(--green);color:#fff;font-size:8px;font-weight:700;}
+  .cr-actions{position:relative;flex:none;margin-top:0;height:36px;}
+  .cr-submit{position:absolute;inset:0;border:none;cursor:default;
+    border-radius:10px;background:linear-gradient(105deg,#1a90ff,#7B4CFF);color:#fff;
+    font-family:var(--font-ui);font-weight:600;font-size:13.5px;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+  .cr-ripple{position:absolute;left:50%;top:50%;width:160px;height:160px;border-radius:50%;
+    background:rgba(255,255,255,.5);pointer-events:none;}
+  .cr-applied{position:absolute;inset:0;border-radius:10px;
+    background:var(--green-bg);color:#0f7a3b;font-family:var(--font-ui);font-weight:600;font-size:13.5px;
+    display:flex;align-items:center;justify-content:center;gap:6px;opacity:0;}
+
+  /* ---------- CREATOR (multi-scene: describe → creates video → link → run channel) ---------- */
+  .cv-stage{padding:0;justify-content:stretch;}
+  .cv-scene{position:absolute;inset:0;padding:12px 15px;display:flex;flex-direction:column;}
+  .cv-brief{gap:8px;}
+  .cv-render{gap:8px;}
+
+  /* Scene 1 — you describe it (topic, style, platforms, length) */
+  .cv-topic{flex:1;display:flex;flex-direction:column;min-height:0;}
+  .cv-prompt-lbl{display:block;font-family:var(--font-ui);font-weight:600;font-size:9.5px;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--fg-4);margin-bottom:6px;}
+  .cv-script-box{background:#fff;border:1px solid var(--bai-divider);border-radius:10px;padding:9px 11px;
+    flex:1;min-height:42px;font-family:var(--font-ui);font-size:13px;line-height:1.4;color:var(--slate-900);}
+  .cv-caret{display:inline-block;width:1.5px;height:13px;background:#c2418a;margin-left:1px;vertical-align:-2px;}
+  .cv-settings{display:flex;gap:7px;flex:none;}
+  .cv-set{flex:1;background:#fff;border:1px solid var(--bai-divider);border-radius:9px;padding:5px 9px;}
+  .cv-set-k{display:block;font-family:var(--font-ui);font-size:8.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--fg-4);}
+  .cv-set-v{display:block;font-family:var(--font-ui);font-weight:600;font-size:11.5px;color:var(--slate-900);margin-top:2px;white-space:nowrap;}
+  .cv-set.is-set{border-color:rgba(194,65,138,.5);box-shadow:0 5px 13px -8px rgba(194,65,138,.55);}
+  .cv-gen-actions{flex:none;}
+  .cv-generate{width:100%;height:36px;border:none;border-radius:10px;cursor:default;
+    background:linear-gradient(105deg,#c2418a,#7B4CFF);color:#fff;font-family:var(--font-ui);font-weight:600;font-size:12.5px;
+    display:flex;align-items:center;justify-content:center;gap:6px;}
+  .cv-generate svg{width:13px;height:13px;}
+
+  /* Scene 2 — it creates the video, emails a link, runs the channel */
+  .cv-render-top{display:flex;align-items:center;gap:7px;flex:none;}
+  .cv-spin{width:13px;height:13px;border-radius:50%;border:2px solid rgba(194,65,138,.3);border-top-color:#c2418a;flex:none;}
+  .cv-render-lbl{font-family:var(--font-ui);font-weight:600;font-size:12px;color:var(--slate-900);}
+  .cv-make{display:flex;gap:16px;flex:1;min-height:0;align-items:center;}
+  /* video preview frame (vertical short) — fills the make region height */
+  .cv-preview{position:relative;width:120px;flex:none;align-self:stretch;min-height:96px;border-radius:11px;background:#fff;
+    border:1px solid var(--bai-divider);overflow:hidden;}
+  .cv-preview::before{content:"";position:absolute;inset:0;background:linear-gradient(150deg,rgba(123,76,255,.18),rgba(194,65,138,.16));}
+  .cv-cap{position:absolute;left:7px;right:7px;bottom:9px;height:5px;border-radius:3px;background:rgba(255,255,255,.85);transform-origin:left center;}
+  .cv-cap.c2{bottom:19px;right:26px;}
+  .cv-play{position:absolute;top:44%;left:50%;transform:translate(-50%,-50%);width:32px;height:32px;
+    border-radius:50%;background:rgba(255,255,255,.94);display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(8,10,31,.2);}
+  .cv-play svg{width:13px;height:13px;color:#1B1E38;margin-left:1px;}
+  /* build checklist */
+  .cv-steps{flex:1;display:flex;flex-direction:column;gap:13px;justify-content:center;}
+  .cv-step{display:flex;align-items:center;gap:9px;font-family:var(--font-ui);font-weight:500;font-size:12.5px;color:var(--fg-3);}
+  .cv-step .tick{width:18px;height:18px;border-radius:50%;background:var(--bai-surface);border:1px solid var(--bai-divider);
+    display:flex;align-items:center;justify-content:center;flex:none;transition:none;}
+  .cv-step .tick svg{width:10px;height:10px;color:#fff;}
+  .cv-step.is-done{color:var(--slate-900);}
+  .cv-step.is-done .tick{background:#c2418a;border-color:#c2418a;}
+  /* deliver footer: link emailed + posts on schedule */
+  .cv-deliver-card{display:flex;align-items:center;gap:10px;flex:none;
+    background:rgba(194,65,138,.08);border:1px solid rgba(194,65,138,.22);border-radius:10px;padding:9px 11px;}
+  .cv-deliver-card .ic{width:30px;height:30px;border-radius:8px;background:#fff;border:1px solid rgba(194,65,138,.2);
+    display:flex;align-items:center;justify-content:center;flex:none;}
+  .cv-deliver-card .ic svg{width:15px;height:15px;color:#c2418a;}
+  .cv-deliver-card b{display:block;font-family:var(--font-ui);font-weight:600;font-size:12.5px;color:#a8327a;line-height:1.2;}
+  .cv-deliver-card i{display:block;font-family:var(--font-ui);font-style:normal;font-size:10.5px;color:#9a4f7e;margin-top:1px;}
+
+  /* ---------- FINANCE (multi-scene: upload/ask → live data → runs numbers → email) ---------- */
+  .fn-stage{padding:0;justify-content:stretch;}
+  .fn-scene{position:absolute;inset:0;padding:10px 15px;display:flex;flex-direction:column;}
+  .fn-gather{gap:6px;}
+  .fn-deliver{gap:6px;}
+
+  /* Scene 1 — upload or ask, then pull live data */
+  .fn-ask{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--bai-divider);
+    border-radius:9px;padding:5px 10px;flex:none;}
+  .fn-chip{display:inline-flex;align-items:center;gap:5px;background:var(--bai-surface);border:1px solid var(--bai-divider);
+    border-radius:7px;padding:3px 7px;font-family:var(--font-ui);font-weight:600;font-size:10.5px;color:var(--fg-3);flex:none;}
+  .fn-chip svg{width:11px;height:11px;color:#3d7bff;flex:none;}
+  .fn-ask-q{font-family:var(--font-ui);font-size:12px;color:var(--slate-900);white-space:nowrap;overflow:hidden;}
+  .fn-caret{display:inline-block;width:1.5px;height:13px;background:#3d7bff;margin-left:1px;vertical-align:-2px;}
+  .fn-data-lbl{display:flex;align-items:center;gap:7px;font-family:var(--font-ui);font-weight:600;font-size:10.5px;
+    color:var(--fg-3);flex:none;white-space:nowrap;}
+  .fn-spin{width:11px;height:11px;border-radius:50%;border:2px solid rgba(61,123,255,.3);border-top-color:#3d7bff;flex:none;}
+  .fn-metrics{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;flex:none;overflow:hidden;border-radius:8px;}
+  .fn-metric{background:#fff;border:1px solid var(--bai-divider);border-radius:8px;padding:4px 8px;}
+  .fn-metric .k{display:block;font-family:var(--font-ui);font-size:8px;letter-spacing:.05em;text-transform:uppercase;color:var(--fg-4);}
+  .fn-metric .val{display:block;font-family:var(--font-mono);font-weight:600;font-size:12px;color:var(--slate-900);margin-top:1px;letter-spacing:-.02em;}
+  .fn-sweep{position:absolute;top:0;bottom:0;width:64px;pointer-events:none;z-index:2;
+    background:linear-gradient(90deg,transparent,rgba(61,123,255,.28),transparent);}
+  /* sparkline graph (data viz only — no buy/sell markers) — fills remaining height */
+  .fn-graph{position:relative;flex:1;min-height:34px;background:#fff;border:1px solid var(--bai-divider);
+    border-radius:9px;overflow:hidden;padding:2px;}
+  .fn-graph svg{width:100%;height:100%;display:block;overflow:visible;}
+  .fn-gline{fill:none;stroke:url(#fn-grad);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+  .fn-garea{opacity:0;}
+  .fn-gtag{position:absolute;top:5px;left:7px;font-family:var(--font-ui);font-weight:600;font-size:8.5px;
+    letter-spacing:.05em;text-transform:uppercase;color:var(--fg-4);}
+
+  /* Scene 2 — runs the numbers (position by position), delivers by email */
+  .fn-run-lbl{font-family:var(--font-ui);font-weight:600;font-size:10.5px;color:var(--fg-3);flex:none;}
+  .fn-breakdown{display:flex;flex-direction:column;gap:8px;flex:1;min-height:0;}
+  .fn-pos{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--bai-divider);
+    border-radius:9px;padding:0 11px;flex:1;min-height:0;}
+  .fn-pos .sym{font-family:var(--font-mono);font-weight:600;font-size:10.5px;color:#fff;border-radius:6px;
+    padding:3px 7px;flex:none;letter-spacing:-.02em;min-width:48px;text-align:center;}
+  .fn-pos .note{font-family:var(--font-ui);font-size:11.5px;line-height:1.25;color:var(--fg-2);flex:1;min-width:0;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .fn-email{display:flex;align-items:center;gap:9px;flex:none;
+    background:var(--green-bg);border:1px solid rgba(22,163,74,.25);border-radius:9px;padding:6px 10px;}
+  .fn-email .env{width:27px;height:27px;border-radius:7px;background:#fff;border:1px solid rgba(22,163,74,.2);
+    display:flex;align-items:center;justify-content:center;flex:none;}
+  .fn-email .env svg{width:14px;height:14px;color:#0f7a3b;}
+  .fn-email b{display:block;font-family:var(--font-ui);font-weight:600;font-size:12px;color:#0f7a3b;line-height:1.2;}
+  .fn-email i{display:block;font-family:var(--font-ui);font-style:normal;font-size:10px;color:#3a7a52;margin-top:1px;}
+
+  /* --------------------------------------------------------------- entry init */
+  .js-anim .nav-logomark,
+  .js-anim .headline,
+  .js-anim .subhead,
+  .js-anim .cta,
+  .js-anim .pill-live,
+  .js-anim .rail,
+  .js-anim .stage-main{opacity:0;}
+
+  /* --------------------------------------------------------------- responsive */
+  /* DESKTOP: whole hero fits in one viewport, no scroll */
+  @media (min-width:921px){
+    .hero-screen{height:100vh;overflow:hidden;display:flex;flex-direction:column;}
+    .nav{flex:none;width:100%;}
+    .hero{flex:1;min-height:0;width:100%;padding-top:0;padding-bottom:clamp(16px,2.4vh,34px);}
+  }
+  /* MOBILE / tablet: stack text on top, then pill + thumbnails + stage; allow scroll */
+  @media (max-width:920px){
+    .nav-links{display:none;}
+    .hero{grid-template-columns:1fr;gap:30px;padding:18px 24px 48px;align-items:start;}
+    .headline{font-size:clamp(38px,9vw,50px);}
+    .stage-main{height:430px;}
+  }
+  @media (max-width:420px){
+    .thumb-label{font-size:12.5px;}
+    .thumb{padding:10px;}
+  }
+  @media (prefers-reduced-motion: reduce){ .pill-live .dot{animation:none;} }
+</style>
+</head>
+<body class="js-anim">
+
+  <!-- ===================================================== NAV -->
+  <div class="hero-screen">
+  <nav class="nav">
+    <div class="brand">
+      <span class="nav-logomark">
+        <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="BlueAI">
+          <rect width="32" height="32" rx="16" fill="url(#bm-g)"></rect>
+          <path class="bm-spark" d="M16 6C16 11.5228 20.4772 16 26 16C20.4772 16 16 20.4772 16 26C16 20.4772 11.5228 16 6 16C11.5228 16 16 11.5228 16 6Z" fill="white"></path>
+          <defs><linearGradient id="bm-g" x1="32" y1="16" x2="0" y2="16" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#7B4CFF"></stop><stop offset="1" stop-color="#0EA4C5"></stop>
+          </linearGradient></defs>
+        </svg>
+      </span>
+      <span class="wordmark">BlueAI</span>
+    </div>
+    <div class="nav-right">
+      <div class="nav-links">
+        <a href="#">Social Rewards</a><a href="#">Developer</a><a href="#">Try Skills</a>
+      </div>
+      <div class="nav-sep"></div>
+      <div class="nav-social">
+        <a href="#" aria-label="Discord"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.3 4.5A19.8 19.8 0 0 0 15.4 3l-.2.5a14 14 0 0 1 4.3 2.2 17.7 17.7 0 0 0-15 0A14 14 0 0 1 8.8 3.5L8.6 3a19.8 19.8 0 0 0-4.9 1.5C.6 9.1-.2 13.6.2 18a20 20 0 0 0 6 3l.8-1.6a13 13 0 0 1-2-1l.5-.4a14.2 14.2 0 0 0 12.2 0l.5.4c-.6.4-1.3.7-2 1L17 21a20 20 0 0 0 6-3c.5-5.2-.8-9.6-2.7-13.5ZM8 15.3c-1.2 0-2.1-1.1-2.1-2.4 0-1.3.9-2.4 2.1-2.4s2.2 1.1 2.1 2.4c0 1.3-.9 2.4-2.1 2.4Zm8 0c-1.2 0-2.1-1.1-2.1-2.4 0-1.3.9-2.4 2.1-2.4s2.2 1.1 2.1 2.4c0 1.3-.9 2.4-2.1 2.4Z"/></svg></a>
+        <a href="#" aria-label="X"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.2 2h3.3l-7.2 8.3L23 22h-6.7l-5.2-6.8L5.1 22H1.8l7.7-8.8L1 2h6.8l4.7 6.2L18.2 2Zm-1.2 18h1.8L7.1 3.9H5.2L17 20Z"/></svg></a>
+        <a href="#" aria-label="Reddit"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 12.1a2.1 2.1 0 0 0-3.6-1.4 10.3 10.3 0 0 0-5.4-1.7l.9-4.2 2.9.6a1.5 1.5 0 1 0 .2-1l-3.3-.7a.5.5 0 0 0-.6.4l-1 4.6a10.4 10.4 0 0 0-5.5 1.7 2.1 2.1 0 1 0-2.3 3.4 4 4 0 0 0 0 .6c0 3.1 3.6 5.6 8 5.6s8-2.5 8-5.6a4 4 0 0 0 0-.6 2.1 2.1 0 0 0 1.2-1.9ZM7 13.6a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Zm8.4 4c-1 1-3.1 1.1-3.7 1.1-.6 0-2.7 0-3.7-1.1a.4.4 0 0 1 .6-.6c.7.7 2.1.9 3.1.9 1 0 2.5-.2 3.1-.9a.4.4 0 1 1 .6.6Zm-.3-2.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Z"/></svg></a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===================================================== HERO -->
+  <main class="hero">
+
+    <!-- LEFT: message -->
+    <div class="hero-left">
+      <h1 class="headline">Your AI worker for getting things done.</h1>
+      <p class="subhead">Hand off everyday tasks, reduce app switching, and keep work moving with BlueAI. Watch a real agent work, then build your own.</p>
+      <button class="cta">
+        <svg class="spark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"></path><path d="M20 3v4"></path><path d="M22 5h-4"></path><path d="M4 17v2"></path><path d="M5 18H3"></path></svg>
+        Download BlueAI
+        <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </button>
+    </div>
+
+    <!-- RIGHT: agent showcase -->
+    <div class="hero-right">
+      <div class="pill-live"><span class="dot"></span><span>3 Agents Live Now</span></div>
+
+      <!-- minimal selectable thumbnails -->
+      <div class="rail">
+        <button class="thumb" data-agent="career">
+          <span class="thumb-icon icon-career">💼</span>
+          <span class="thumb-label">Career</span>
+          <span class="thumb-see" aria-label="See it work"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span>
+          <span class="thumb-progress"></span>
+        </button>
+        <button class="thumb" data-agent="creator">
+          <span class="thumb-icon icon-creator">🎬</span>
+          <span class="thumb-label">Creator</span>
+          <span class="thumb-see" aria-label="See it work"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span>
+          <span class="thumb-progress"></span>
+        </button>
+        <button class="thumb" data-agent="finance">
+          <span class="thumb-icon icon-finance">📈</span>
+          <span class="thumb-label">Finance</span>
+          <span class="thumb-see" aria-label="See it work"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span>
+          <span class="thumb-progress"></span>
+        </button>
+      </div>
+
+      <!-- dominant stage -->
+      <div class="stage-main">
+
+        <!-- CAREER pane -->
+        <div class="pane" data-agent="career">
+          <div class="pane-top">
+            <div class="icon-tile icon-career">💼</div>
+            <div class="eyebrow">Career</div>
+            <div class="see-tag"><span>See it work</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></div>
+          </div>
+          <h2 class="pane-title" style="text-wrap:wrap;">Auto apply to jobs with an agent that does the&nbsp;clicking</h2>
+          <div class="stage cr-stage">
+
+            <!-- Scene 1 — search a profile, scan applications, pick one -->
+            <div class="cr-scene cr-find">
+              <div class="cr-search">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4.3-4.3"></path></svg>
+                <span class="cr-query"></span><span class="cr-caret"></span>
+              </div>
+              <div class="cr-results">
+                <div class="cr-result" data-pick="1">
+                  <span class="cr-rlogo" style="background:linear-gradient(150deg,#7B4CFF,#0EA4C5)">A</span>
+                  <span class="cr-rmeta"><b>Senior Product Manager</b><i>Acme · Remote</i></span>
+                  <span class="cr-rmatch">98%</span>
+                </div>
+                <div class="cr-result">
+                  <span class="cr-rlogo" style="background:linear-gradient(150deg,#2f8fff,#13c2c2)">G</span>
+                  <span class="cr-rmeta"><b>Product Lead, Growth</b><i>Globex · Hybrid</i></span>
+                  <span class="cr-rmatch">91%</span>
+                </div>
+                <div class="cr-result">
+                  <span class="cr-rlogo" style="background:linear-gradient(150deg,#8a6bff,#5b8def)">I</span>
+                  <span class="cr-rmeta"><b>Group PM, Platform</b><i>Initech · On-site</i></span>
+                  <span class="cr-rmatch">87%</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Scene 2 — fill the form, attach CV + cover letter, submit -->
+            <div class="cr-scene cr-apply">
+              <div class="cr-job">
+                <div class="cr-logo">A</div>
+                <div><div class="t">Senior Product Manager</div><div class="s">Acme · Remote</div></div>
+              </div>
+              <div class="cr-form">
+                <div class="cr-row"><span class="cr-lbl">Name</span><span class="cr-track"><span class="cr-fill"></span></span></div>
+                <div class="cr-row"><span class="cr-lbl">Email</span><span class="cr-track"><span class="cr-fill"></span></span></div>
+              </div>
+              <div class="cr-attach">
+                <span class="cr-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.4 11.05 12.25 20.2a5 5 0 0 1-7.07-7.07l9.19-9.19a3 3 0 0 1 4.24 4.24l-9.2 9.19a1 1 0 0 1-1.41-1.41l8.48-8.49"></path></svg>CV.pdf<span class="cr-chk">✓</span></span>
+                <span class="cr-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.4 11.05 12.25 20.2a5 5 0 0 1-7.07-7.07l9.19-9.19a3 3 0 0 1 4.24 4.24l-9.2 9.19a1 1 0 0 1-1.41-1.41l8.48-8.49"></path></svg>Cover letter<span class="cr-chk">✓</span></span>
+              </div>
+              <div class="cr-actions">
+                <button class="cr-submit" tabindex="-1">Submit application</button>
+                <div class="cr-applied">Applied ✓ <span style="opacity:.8">· <span class="cr-count">24</span> today</span></div>
+                <span class="cr-ripple"></span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- CREATOR pane -->
+        <div class="pane" data-agent="creator">
+          <div class="pane-top">
+            <div class="icon-tile icon-creator">🎬</div>
+            <div class="eyebrow">Creator</div>
+            <div class="see-tag"><span>See it work</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></div>
+          </div>
+          <h2 class="pane-title">A faceless video creator agent for YouTube</h2>
+          <div class="stage cv-stage">
+
+            <!-- Scene 1 — you describe it (topic/theme, style, platforms, length) -->
+            <div class="cv-scene cv-brief">
+              <div class="cv-topic">
+                <span class="cv-prompt-lbl">Describe your video</span>
+                <div class="cv-script-box"><span class="cv-typed"></span><span class="cv-caret"></span></div>
+              </div>
+              <div class="cv-settings">
+                <div class="cv-set" data-k="style"><span class="cv-set-k">Style</span><span class="cv-set-v">Cinematic</span></div>
+                <div class="cv-set" data-k="platforms"><span class="cv-set-k">Platforms</span><span class="cv-set-v">YT · TikTok</span></div>
+                <div class="cv-set" data-k="length"><span class="cv-set-k">Length</span><span class="cv-set-v">0:45</span></div>
+              </div>
+              <div class="cv-gen-actions">
+                <button class="cv-generate" tabindex="-1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"></path></svg>Create video</button>
+              </div>
+            </div>
+
+            <!-- Scene 2 — it creates the video, emails a link, runs the channel -->
+            <div class="cv-scene cv-render">
+              <div class="cv-render-top">
+                <span class="cv-spin"></span>
+                <span class="cv-render-lbl">Creating your video…</span>
+              </div>
+              <div class="cv-make">
+                <div class="cv-preview">
+                  <span class="cv-cap c2"></span><span class="cv-cap"></span>
+                  <span class="cv-play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+                </div>
+                <div class="cv-steps">
+                  <div class="cv-step" data-s="0"><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"></path></svg></span>Writes the script</div>
+                  <div class="cv-step" data-s="1"><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"></path></svg></span>Generates visuals + voiceover</div>
+                  <div class="cv-step" data-s="2"><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"></path></svg></span>Captions &amp; edits to template</div>
+                </div>
+              </div>
+              <div class="cv-deliver-card">
+                <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m3 7 9 6 9-6"></path></svg></span>
+                <span><b>Link emailed to review</b><i>Then posts to YouTube · TikTok on your schedule</i></span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- FINANCE pane -->
+        <div class="pane" data-agent="finance">
+          <div class="pane-top">
+            <div class="icon-tile icon-finance">📈</div>
+            <div class="eyebrow">Finance</div>
+            <div class="see-tag"><span>See it work</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></div>
+          </div>
+          <h2 class="pane-title">An AI trading agent that runs live market analysis</h2>
+          <div class="stage fn-stage">
+
+            <!-- Scene 1 — upload or ask, then pull live data -->
+            <div class="fn-scene fn-gather">
+              <div class="fn-ask">
+                <span class="fn-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="M7 10l5 5 5-5"></path><path d="M12 15V3"></path></svg>holdings.png</span>
+                <span class="fn-ask-q"></span><span class="fn-caret"></span>
+              </div>
+              <div class="fn-data-lbl"><span class="fn-spin"></span><span class="fn-data-txt">Pulling live data…</span></div>
+              <div class="fn-metrics">
+                <div class="fn-metric"><span class="k">Price</span><span class="val">$214</span></div>
+                <div class="fn-metric"><span class="k">Momentum</span><span class="val">+1.8%</span></div>
+                <div class="fn-metric"><span class="k">RSI</span><span class="val">58</span></div>
+                <div class="fn-metric"><span class="k">ADX</span><span class="val">27</span></div>
+                <div class="fn-metric"><span class="k">52W high</span><span class="val">−4%</span></div>
+                <div class="fn-metric"><span class="k">Volume</span><span class="val">1.4×</span></div>
+                <span class="fn-sweep"></span>
+              </div>
+              <div class="fn-graph">
+                <span class="fn-gtag">AAPL · 6M</span>
+                <svg viewBox="0 0 400 60" preserveAspectRatio="none">
+                  <defs>
+                    <linearGradient id="fn-grad" x1="0" y1="0" x2="400" y2="0" gradientUnits="userSpaceOnUse">
+                      <stop stop-color="#7B4CFF"></stop><stop offset="1" stop-color="#0EA4C5"></stop></linearGradient>
+                    <linearGradient id="fn-agrad" x1="0" y1="0" x2="0" y2="60" gradientUnits="userSpaceOnUse">
+                      <stop stop-color="rgba(61,123,255,.16)"></stop><stop offset="1" stop-color="rgba(61,123,255,0)"></stop></linearGradient>
+                  </defs>
+                  <path class="fn-garea" d="M4 46 L52 42 L100 47 L148 34 L196 38 L244 24 L292 30 L340 16 L396 20 L396 60 L4 60 Z" fill="url(#fn-agrad)"></path>
+                  <path class="fn-gline" d="M4 46 L52 42 L100 47 L148 34 L196 38 L244 24 L292 30 L340 16 L396 20"></path>
+                </svg>
+              </div>
+            </div>
+
+            <!-- Scene 2 — runs the numbers position by position, delivers by email -->
+            <div class="fn-scene fn-deliver">
+              <div class="fn-run-lbl">Running the numbers, position by position</div>
+              <div class="fn-breakdown">
+                <div class="fn-pos">
+                  <span class="sym" style="background:linear-gradient(150deg,#7B4CFF,#0EA4C5)">AAPL</span>
+                  <span class="note">Near 52-week high, momentum cooling as volume thins.</span>
+                </div>
+                <div class="fn-pos">
+                  <span class="sym" style="background:linear-gradient(150deg,#2f8fff,#13c2c2)">NVDA</span>
+                  <span class="note">Strong trend (ADX 31), price compressing under resistance.</span>
+                </div>
+                <div class="fn-pos">
+                  <span class="sym" style="background:linear-gradient(150deg,#8a6bff,#5b8def)">MSFT</span>
+                  <span class="note">Range-bound, low volatility, RSI neutral at 51.</span>
+                </div>
+                <div class="fn-pos">
+                  <span class="sym" style="background:linear-gradient(150deg,#d6455d,#e0863a)">TSLA</span>
+                  <span class="note">Below 50-day average, volume expanding on the downside.</span>
+                </div>
+              </div>
+              <div class="fn-email">
+                <span class="env"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m3 7 9 6 9-6"></path></svg></span>
+                <span><b>Analysis sent to your inbox</b><i>Data only — no buy or sell calls</i></span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+  </div><!-- /.hero-screen -->
+
+  <!-- shared homepage sections injected below the hero -->
+  <div id="home-sections"></div>
+
+  <script src="assets/hero-cards.js"></script>
+  <script>
+  (function () {
+    const G = window.gsap;
+    const body = document.body;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const panes  = Array.from(document.querySelectorAll('.pane'));
+    const thumbs = Array.from(document.querySelectorAll('.thumb'));
+    const bars   = Array.from(document.querySelectorAll('.thumb-progress'));
+    const PERIOD = 5; // base dwell (s); each agent gets at least this, longer if its anim needs it
+    // per-agent dwell = enough to finish its own (time-scaled) timeline + a read beat, floored at PERIOD
+    const dwellFor = (i) => Math.max(PERIOD, (modules[i].tl.duration() || 0) / (modules[i].tl.timeScale() || 1) + 0.9);
+
+    const M = window.BlueAIHeroCards;
+    const modules = [
+      M.buildCareer(panes[0]),
+      M.buildCreator(panes[1]),
+      M.buildFinance(panes[2]),
+    ];
+    // slow every agent's inner animation so the text-heavy scenes are easy to read
+    modules.forEach(m => m.tl.timeScale(0.7));
+
+    /* ---------- reduced motion: show first agent, snap all to end-state ----- */
+    if (reduce || !G) {
+      body.classList.remove('js-anim');
+      if (G) modules.forEach(m => m.setEndState());
+      panes.forEach((p, idx) => { p.style.opacity = idx === 0 ? '1' : '0'; });
+      panes[0].classList.add('is-active');
+      thumbs[0].classList.add('is-active');
+      thumbs.slice(1).forEach(t => t.classList.add('is-dim'));
+      return;
+    }
+
+    /* ---------- ambient cycle: GSAP-driven so the progress bar stays in sync - */
+    let active = -1, paused = false, advanceTween = null;
+    const finePointer = window.matchMedia('(pointer:fine)').matches;
+
+    function scheduleAdvance() {
+      if (advanceTween) advanceTween.kill();
+      G.set(bars, { scaleX: 0 });
+      advanceTween = G.fromTo(bars[active], { scaleX: 0 },
+        { scaleX: 1, duration: dwellFor(active), ease: 'none', onComplete: advance });
+    }
+    function advance() { setActive((active + 1) % modules.length, { schedule: true, dir: 1 }); }
+
+    function setActive(i, { schedule = true, dir = 1 } = {}) {
+      if (i !== active) {
+        const prev = active;
+        active = i;
+        thumbs.forEach((t, idx) => {
+          t.classList.toggle('is-active', idx === i);
+          t.classList.toggle('is-dim', idx !== i);
+        });
+        panes.forEach((p, idx) => p.classList.toggle('is-active', idx === i));
+        // CAROUSEL SLIDE: outgoing slides off one side, incoming slides in from the other.
+        // Pure x-translate (no opacity fade) so the two never overlap into a mush.
+        if (prev < 0) {
+          G.set(panes[i], { xPercent: 0, opacity: 1 });
+        } else if (prev !== i) {
+          modules[prev].tl.pause();
+          G.to(panes[prev], { xPercent: -100 * dir, duration: 0.4, ease: 'power3.out',
+            onComplete: () => { G.set(panes[prev], { opacity: 0, xPercent: 0 }); } });
+          G.fromTo(panes[i], { xPercent: 100 * dir, opacity: 1 },
+                             { xPercent: 0, opacity: 1, duration: 0.4, ease: 'power3.out' });
+        }
+        modules[i].tl.restart();
+      } else {
+        modules[i].tl.restart();
+      }
+      if (schedule && !paused) scheduleAdvance();
+    }
+
+    /* ---------- hover / tap (pause on hover, resume on release) ------------- */
+    thumbs.forEach((thumb, i) => {
+      if (finePointer) {
+        thumb.addEventListener('pointerenter', () => {
+          paused = true; if (advanceTween) advanceTween.pause();
+          setActive(i, { schedule: false, dir: (active < 0 || i > active) ? 1 : -1 });
+        });
+        thumb.addEventListener('pointerleave', () => { paused = false; scheduleAdvance(); });
+      } else {
+        thumb.addEventListener('click', () => { setActive(i, { schedule: true, dir: (active < 0 || i > active) ? 1 : -1 }); });
+      }
+    });
+    const stageMain = document.querySelector('.stage-main');
+    if (finePointer) {
+      stageMain.addEventListener('pointerenter', () => { paused = true; if (advanceTween) advanceTween.pause(); });
+      stageMain.addEventListener('pointerleave', () => { paused = false; scheduleAdvance(); });
+    }
+
+    /* ---------- ENTRY SEQUENCE (trimmed) ----------------------------------- */
+    const intro = G.timeline({
+      defaults: { ease: 'power3.out' },
+      onComplete: () => { body.classList.remove('js-anim'); setActive(0, { schedule: true }); }
+    });
+    const mark = document.querySelector('.nav-logomark');
+    const spark = document.querySelector('.bm-spark');
+    G.set(mark, { transformOrigin: '50% 50%' });
+
+    intro
+      .fromTo(mark, { opacity: 0, scale: 0.4, rotate: -22 },
+                    { opacity: 1, scale: 1, rotate: 0, duration: 0.5, ease: 'back.out(2)' })
+      .fromTo(spark, { scale: 0, transformOrigin: '50% 50%' },
+                     { scale: 1, duration: 0.4, ease: 'back.out(2.4)' }, '-=0.30')
+      // ONE quick grouped reveal of the left message + pill (≤ 0.6s)
+      .fromTo('.headline, .subhead, .cta, .pill-live', { opacity: 0, y: 18 },
+              { opacity: 1, y: 0, duration: 0.42, stagger: 0.05, ease: 'power3.out' }, '-=0.12')
+      // thumbnails + stage rise together
+      .fromTo('.rail', { opacity: 0, y: 22 }, { opacity: 1, y: 0, duration: 0.42 }, '-=0.06')
+      .fromTo('.stage-main', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.5 }, '<0.06');
+
+    // watchdog — never leave the hero blank if rAF/GSAP stalls
+    setTimeout(() => {
+      if (document.body.classList.contains('js-anim')) intro.progress(1);
+    }, 3200);
+  })();
+  </script>
+  <script>
+  /* inject the shared homepage sections (identical across all 3 hero options) */
+  (function(){
+    var mount = document.getElementById('home-sections');
+    if(!mount) return;
+    fetch('homepage-sections.html').then(function(r){return r.text();}).then(function(html){
+      var doc = new DOMParser().parseFromString(html, 'text/html');
+      var home = doc.querySelector('.bai-home');
+      if(home) mount.appendChild(document.importNode(home, true));
+    }).catch(function(){});
+  })();
+  </script>
+</body>
+</html>
