@@ -1,6 +1,7 @@
 'use client'
 import '@/styles/seo-home.css'
 import { useReveal } from './useReveal'
+import { SeoBackdrop } from './SeoBackdrop'
 import { SeoNav } from './SeoNav'
 import { SeoHero } from './SeoHero'
 import { SeoWhatIs } from './SeoWhatIs'
@@ -17,6 +18,7 @@ export function SeoHome() {
   useReveal()
   return (
     <div className="v-seo">
+      <SeoBackdrop />
       <SeoNav />
       <main>
         <SeoHero />

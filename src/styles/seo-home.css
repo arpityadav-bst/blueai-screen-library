@@ -8,14 +8,21 @@
   --seo-slate: #0f172a; --seo-blue: #2f6dff; --seo-blue-2: #3d7bff;
   --font-head: 'Space Grotesk', var(--font-display); --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 }
-.v-seo { background:
-    radial-gradient(1200px 720px at 14% -10%, rgba(123,76,255,.08), transparent 60%),
-    radial-gradient(1000px 700px at 92% 0%, rgba(14,164,197,.07), transparent 55%),
-    linear-gradient(180deg, #f5f6fd 0%, #eef1fb 100%);
+.v-seo { position: relative; background: linear-gradient(180deg, #f5f6fd 0%, #eef1fb 100%);
   min-height: 100vh; overflow-x: hidden; color: var(--seo-slate);
   --green: #16a34a; --green-bg: rgba(22,163,74,.10);
   --seo-w: 1640px;        /* wide / full-bleed-ish — the nav only */
   --seo-content: 1280px; } /* contained content column — hero + every section band + footer align to this */
+
+/* ── ambient living backdrop (SeoBackdrop): drifting orbs + a faint rotating logo sparkle ── */
+.v-seo .seo-backdrop { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.v-seo .seo-orb { position: absolute; top: 0; left: 0; width: 46vw; height: 46vw; max-width: 680px; max-height: 680px; border-radius: 50%; filter: blur(94px); opacity: .3; will-change: transform; }
+.v-seo .seo-orb-iris { background: radial-gradient(circle at center, rgba(123,76,255,.55), transparent 68%); }
+.v-seo .seo-orb-cyan { background: radial-gradient(circle at center, rgba(14,164,197,.5), transparent 68%); }
+.v-seo .seo-orb-blue { background: radial-gradient(circle at center, rgba(47,109,255,.42), transparent 68%); }
+.v-seo .seo-spark-bg { position: absolute; left: 50%; top: 40%; width: 34vw; max-width: 440px; height: auto; color: rgba(123,76,255,.06); will-change: transform; }
+/* content sits above the backdrop (nav is already z-50) */
+.v-seo main, .v-seo .seo-footer { position: relative; z-index: 1; }
 
 /* shared bits */
 .v-seo .seo-wordmark { font-family: var(--font-brand); font-weight: 700; font-size: 22px; letter-spacing: -.01em; color: var(--seo-slate); }
