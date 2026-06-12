@@ -1,6 +1,7 @@
 // Foundations sections for the style guide — Colors · Type · Spacing/Radius/Elevation.
 // Each is an id'd <section> so the sidebar can scroll-to + scroll-spy highlight.
 import { Wordmark } from '@/components/Wordmark'
+import { MotionDemo } from '@/components/style-guide/MotionDemo'
 
 function Swatch({ name, value, cls = '', style }: { name: string; value: string; cls?: string; style?: React.CSSProperties }) {
   return (
@@ -21,11 +22,12 @@ export function Foundations() {
       <section id="colors" className="scroll-mt-8">
         <h2 className="mb-5 text-xl font-semibold text-ink-display">Colors</h2>
         <p className="bai-section-label mb-3">Brand — only ever together, as a gradient</p>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
           <Swatch name="Gradient" value="iris → cyan" cls="bg-bai-gradient" />
           <Swatch name="10% wash" value="pills" cls="bg-bai-wash" />
           <Swatch name="Iris" value="#7B4CFF" cls="bg-iris" />
           <Swatch name="Cyan" value="#0EA4C5" cls="bg-cyan" />
+          <Swatch name="CTA gradient" value="blue→violet · Download pill" style={{ background: 'var(--bai-cta-gradient)' }} />
         </div>
         <p className="bai-section-label mb-3 mt-6">Neutral ramp (cool, blue-cast)</p>
         <div className="grid grid-cols-3 gap-3 sm:grid-cols-5">
@@ -41,6 +43,7 @@ export function Foundations() {
         <p className="bai-section-label mb-3 mt-6">Accent + semantic status (from the PM design system)</p>
         <div className="grid grid-cols-3 gap-3 sm:grid-cols-5">
           <Swatch name="Accent" value="#1990FF" cls="bg-accent" />
+          <Swatch name="Indigo" value="#4F46E5 · PM 2nd accent" style={{ background: 'var(--bai-indigo)' }} />
           <Swatch name="Success" value="#22C55E" cls="bg-status-success" />
           <Swatch name="Warning" value="#F59E0B" cls="bg-status-warning" />
           <Swatch name="Danger" value="#EF4444" cls="bg-status-danger" />
@@ -93,6 +96,7 @@ export function Foundations() {
                 <div key={k} className="flex items-center gap-3"><span className="w-5 text-2xs text-ink-muted">{k}</span><span className="h-3 rounded-sm bg-bai-gradient" style={{ width: v as number }} /><span className="text-2xs text-ink-muted">{v}px</span></div>
               ))}
             </div>
+            <p className="mt-3 text-2xs leading-relaxed text-ink-muted">Content width — <span className="font-mono">--bai-content</span> 1180px (the shared content column; a full-bleed nav runs over it).</p>
           </div>
           <div className="rounded-field border border-divider bg-surface p-5">
             <p className="bai-section-label mb-4">Radius</p>
@@ -113,6 +117,10 @@ export function Foundations() {
               <div className="text-center"><div className="size-14 rounded-field bg-cta-gradient shadow-cta" /><p className="mt-1.5 text-2xs text-ink-muted">cta</p></div>
               <div className="text-center"><div className="size-14 rounded-field border border-divider bg-canvas shadow-brand-sm" /><p className="mt-1.5 text-2xs text-ink-muted">brand-sm</p></div>
             </div>
+          </div>
+          <div className="rounded-field border border-divider bg-surface p-5 lg:col-span-3">
+            <p className="bai-section-label mb-4">Motion — hover / replay to see it</p>
+            <MotionDemo />
           </div>
         </div>
       </section>

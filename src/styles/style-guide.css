@@ -1,0 +1,15 @@
+/* Style-guide demo helpers (loaded only on /style-guide). */
+
+/* 1) Page-root scope classes (.v-site / .v-seo / .bai-home) carry min-height:100vh + a page
+   background. When one is reused to SHOWCASE a component, `.sg-demo` neutralises those page-root
+   side effects so the demo sizes to its content instead of ballooning to a full viewport. The
+   scoped descendant CSS (.v-site .site-btn, etc.) still applies — the wrapper is still .v-site. */
+.v-site.sg-demo, .v-seo.sg-demo, .bai-home.sg-demo, .v-rewards.sg-demo { min-height: 0; background: none; }
+
+/* 2) Replayable scroll-reveal sample (re-runs on a keyed remount in MotionDemo.tsx). */
+@keyframes sgReveal {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: none; }
+}
+.sg-reveal { animation: sgReveal .6s var(--ease-out) both; }
+@media (prefers-reduced-motion: reduce) { .sg-reveal { animation: none; } }

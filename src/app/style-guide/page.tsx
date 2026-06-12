@@ -2,7 +2,9 @@
 import { useState, useEffect, useRef } from 'react'
 import { Foundations } from '@/components/style-guide/Foundations'
 import { ComponentsSection } from '@/components/style-guide/ComponentsSection'
+import { SiteComponents } from '@/components/style-guide/SiteComponents'
 import { AgentComponents } from '@/components/style-guide/AgentComponents'
+import { MarketingPages } from '@/components/style-guide/MarketingPages'
 import { PmComponentsA } from '@/components/style-guide/PmComponentsA'
 import { PmComponentsB } from '@/components/style-guide/PmComponentsB'
 
@@ -11,9 +13,11 @@ import { PmComponentsB } from '@/components/style-guide/PmComponentsB'
 // DS-only — page navigation lives on the root Screen Library index (`/`).
 const NAV: { group: string; items: [string, string][] }[] = [
   { group: 'Foundations', items: [['colors', 'Colors'], ['type', 'Type scale'], ['scales', 'Spacing · Radius · Elevation']] },
-  { group: 'Components', items: [['hero-nav', 'Marketing nav'], ['download-cta', 'Download CTA'], ['buttons', 'Buttons'], ['status', 'Status badges'], ['pill-badges', 'Pill badges'], ['pills', 'Suggested pills'], ['feature-cards', 'Feature cards'], ['bubbles', 'Message bubbles'], ['composer', 'Composer'], ['header', 'Panel header']] },
-  { group: 'Agent page components', items: [['agent-form', 'Demo form kit'], ['agent-form-tabs', 'Tabbed form'], ['agent-upload', 'File upload'], ['agent-trades', 'Trade log + badges'], ['agent-video', 'Video card']] },
-  { group: 'App components (PM)', items: [['app-cards', 'Cards'], ['app-overview', 'Overview cards'], ['app-inputs', 'Inputs & forms'], ['app-nav', 'Navigation'], ['app-credits', 'Credits'], ['app-icons', 'Icons']] },
+  { group: 'Components', items: [['hero-nav', 'Hero nav (legacy)'], ['download-cta', 'Download CTA'], ['buttons', 'Buttons'], ['status', 'Status badges'], ['pill-badges', 'Pill badges'], ['pills', 'Suggested pills'], ['feature-cards', 'Feature cards'], ['bubbles', 'Message bubbles'], ['composer', 'Composer'], ['header', 'Panel header']] },
+  { group: 'Site & patterns', items: [['site-header', 'Marketing header'], ['site-footer', 'Marketing footer'], ['site-buttons', 'CTA buttons + Arrow'], ['site-steps', 'Numbered steps'], ['site-hiw', 'How it works'], ['site-cta-band', 'Dark CTA band'], ['site-faq', 'FAQ accordion']] },
+  { group: 'Agent pages', items: [['agent-form', 'Demo form kit'], ['agent-form-tabs', 'Tabbed form'], ['agent-upload', 'File upload'], ['agent-trades', 'Trade log + badges'], ['agent-video', 'Video card'], ['agent-openings', 'Openings card'], ['agent-portfolio', 'Portfolio card'], ['agent-odds', 'Odds table'], ['agent-caps', 'Capability card'], ['agent-more', 'More-agents card']] },
+  { group: 'Marketing pages', items: [['seo-task', 'SEO task card'], ['seo-info', 'What-is card'], ['seo-stage', 'Comparison stage'], ['seo-hero', 'SEO hero (animated)'], ['seo-cta', 'SEO CTA band'], ['home-feature', 'Feature row'], ['home-skill', 'Skill card'], ['rw-card', 'Reddit post card'], ['rw-check', 'Quality-check row'], ['rw-faq', 'FAQ-grid card'], ['rw-collage', 'Collage hero']] },
+  { group: 'App (PM)', items: [['app-cards', 'Cards'], ['app-overview', 'Overview cards'], ['app-inputs', 'Inputs & forms'], ['app-nav', 'Navigation'], ['app-credits', 'Credits'], ['app-icons', 'Icons']] },
 ]
 const SECTION_IDS = NAV.flatMap((g) => g.items.map(([id]) => id))
 const FLAT_ITEMS = NAV.flatMap((g) => g.items) // [id, label][] — flattened for the mobile chip nav
@@ -70,19 +74,30 @@ export default function StyleGuide() {
           <p className="bai-section-label text-iris">BlueAI</p>
           <p className="mt-0.5 font-head text-base font-semibold text-ink-display">Style Guide</p>
         </div>
-        <nav className="flex-1 px-3 pb-6">
-          {NAV.map((g) => (
-            <div key={g.group} className="mb-4">
-              <p className="px-2 pb-1.5 text-2xs font-semibold uppercase tracking-wide text-ink-muted">{g.group}</p>
-              {g.items.map(([id, label]) => (
-                <button key={id} type="button"
-                  onClick={() => jumpTo(id)}
-                  className={`block w-full rounded-card px-2 py-1.5 text-left text-sm transition-colors ${active === id ? 'bg-bai-wash font-semibold text-iris' : 'text-ink-body hover:bg-surface'}`}>
-                  {label}
+        <nav className="flex-1 px-2.5 pb-6 pt-1">
+          {NAV.map((g) => {
+            const open = g.items.some(([id]) => id === active)
+            return (
+              <div key={g.group} className="mb-0.5">
+                <button type="button" onClick={() => jumpTo(g.items[0][0])}
+                  className={`flex w-full items-center gap-2 rounded-card px-2.5 py-2 text-left transition-colors ${open ? '' : 'hover:bg-surface'}`}>
+                  <svg viewBox="0 0 24 24" className={`size-3 shrink-0 transition-transform ${open ? 'rotate-90 text-iris' : 'text-ink-muted'}`} fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+                  <span className={`flex-1 text-[13px] font-semibold leading-tight ${open ? 'text-iris' : 'text-ink-heading'}`}>{g.group}</span>
+                  <span className="shrink-0 text-2xs font-medium tabular-nums text-ink-muted">{g.items.length}</span>
                 </button>
-              ))}
-            </div>
-          ))}
+                {open && (
+                  <div className="mb-1.5 ml-[18px] border-l border-divider pl-1.5">
+                    {g.items.map(([id, label]) => (
+                      <button key={id} type="button" onClick={() => jumpTo(id)}
+                        className={`block w-full rounded-card px-2.5 py-1.5 text-left text-[13px] transition-colors ${active === id ? 'bg-bai-wash font-medium text-iris' : 'text-ink-body hover:bg-surface'}`}>
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )
+          })}
         </nav>
         <div className="px-5 pb-7 text-2xs leading-relaxed text-ink-muted">blueai-modern + PM<br />Design tokens</div>
       </aside>
@@ -102,9 +117,19 @@ export default function StyleGuide() {
             <ComponentsSection />
           </section>
           <section>
+            <h2 className="mb-1 text-xl font-semibold text-ink-display">Site chrome &amp; patterns</h2>
+            <p className="mb-5 text-sm text-ink-muted">The shared marketing-site chrome (header/footer) + the recurring section patterns on the SEO homepage, social-rewards, developer, and the 4 agent pages.</p>
+            <SiteComponents />
+          </section>
+          <section>
             <h2 className="mb-1 text-xl font-semibold text-ink-display">Agent page components</h2>
-            <p className="mb-5 text-sm text-ink-muted">The bluestacks.ai agent-page demos — faithful replicas of the live forms, built on blueAI tokens. The shared <span className="font-mono">.jmf-*</span> kit + FileUpload / VideoCard / trade-log.</p>
+            <p className="mb-5 text-sm text-ink-muted">The bluestacks.ai agent-page demos — faithful replicas of the live forms, built on blueAI tokens. The shared <span className="font-mono">.jmf-*</span> kit + FileUpload / VideoCard / trade-log + the page data sections.</p>
             <AgentComponents />
+          </section>
+          <section>
+            <h2 className="mb-1 text-xl font-semibold text-ink-display">Marketing pages</h2>
+            <p className="mb-5 text-sm text-ink-muted">Page-specific components &amp; patterns from the SEO homepage, the marketing homepage, and social-rewards.</p>
+            <MarketingPages />
           </section>
           <section>
             <h2 className="mb-1 text-xl font-semibold text-ink-display">App components</h2>

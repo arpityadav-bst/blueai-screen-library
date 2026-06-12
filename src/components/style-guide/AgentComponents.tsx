@@ -6,6 +6,7 @@ import { CareerForm } from '@/components/agent/CareerForm'
 import { FinanceForm } from '@/components/agent/FinanceForm'
 import { FileUpload } from '@/components/agent/FileUpload'
 import { VideoCard } from '@/components/agent/VideoCard'
+import { Arrow } from '@/components/Arrow'
 
 function Card({ id, title, note, children }: { id: string; title: string; note?: React.ReactNode; children: React.ReactNode }) {
   return (
@@ -62,8 +63,73 @@ export function AgentComponents() {
       {/* VideoCard — click-to-play */}
       <Card id="agent-video" title="Video card — poster + click-to-play"
         note="Real <video> (poster + loop/playsInline/preload=metadata, no native controls); a custom play overlay that hides while playing. Click toggles play/pause. Used in the creator 'Made by the agent' showcase.">
-        <div className="ag-vids max-w-[200px]">
+        <div className="ag-vids" style={{ gridTemplateColumns: '1fr', maxWidth: 220 }}>
           <VideoCard v={{ badge: 'Micro Drama', t: 'He Thought He Bought His Bride', meta: 'Kai · Ep. 1 · 1:02', file: 'kai-bride' }} />
+        </div>
+      </Card>
+
+      {/* Openings grid card (apply-to-jobs) + the source/Remote tags */}
+      <Card id="agent-openings" title="Openings card + source tags (.ag-job)"
+        note="The job-listing card in the apply-to-jobs 'All openings' grid: source tag (.ag-tag.src) + Remote tag (.ag-tag.rem) + title + company·loc + 'View role →'.">
+        <div className="ag-openings">
+          {[['AI/ML Data Contributor', 'TSMG Holding · United States (Remote)', true], ['Senior Product Designer, Agentic AI', 'Atlassian · San Francisco (Hybrid)', false]].map(([t, co, rem]) => (
+            <div className="ag-job" key={t as string}>
+              <div className="ag-job-badges"><span className="ag-tag src">LinkedIn</span>{rem && <span className="ag-tag rem">Remote</span>}</div>
+              <h4>{t}</h4><p className="co">{co}</p><span className="ag-job-link">View role →</span>
+            </div>
+          ))}
+        </div>
+      </Card>
+
+      {/* Portfolio card + benchmark pill (ai-trading-agent) */}
+      <Card id="agent-portfolio" title="Portfolio card + benchmark (.ag-port / .ag-bench)"
+        note="Paper-portfolio card: style label + mono return (success color) + description + holdings rows + rotations note; plus the SPY benchmark pill.">
+        <div className="ag-ports" style={{ gridTemplateColumns: '1fr' }}>
+          <div className="ag-port">
+            <div className="ag-port-style">Momentum</div>
+            <div className="ag-port-ret">+12.76%</div>
+            <p className="ag-port-d">Top names by 12-month trend strength, in an uptrend.</p>
+            <div className="ag-port-holds">
+              {[['MU', '+88%'], ['STX', '+44%']].map(([tk, pc]) => <div className="ag-hold" key={tk}><span className="tk">{tk}</span><span className="pc">{pc}</span></div>)}
+            </div>
+            <p className="ag-port-rot">No rotations yet, held since inception</p>
+          </div>
+        </div>
+        <div className="v-agent" style={{ marginTop: 12 }}><span className="ag-bench">Benchmark · S&amp;P 500 (SPY) <b>+3.24%</b> over the same window</span></div>
+      </Card>
+
+      {/* Odds table (prediction-market-agent) */}
+      <Card id="agent-odds" title="Odds table (.ag-odds) — the only table in the DS"
+        note="Polymarket-vs-Kalshi data table: mono numeric columns (right-aligned), the gap column accented, zebra-free hairline rows.">
+        <div className="ag-odds">
+          <table>
+            <thead><tr><th>Team</th><th className="num">Polymarket</th><th className="num">Kalshi</th><th className="num">Gap</th></tr></thead>
+            <tbody>
+              {[['Spain', '16.5%', '16.5%', '0.0 pt'], ['Portugal', '10.9%', '10.6%', '0.3 pt']].map(([team, pm, ka, gap]) => (
+                <tr key={team}><td>{team}</td><td className="num">{pm}</td><td className="num">{ka}</td><td className="num gap">{gap}</td></tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Card>
+
+      {/* Capability card (ai-video-creator) */}
+      <Card id="agent-caps" title="Capability card (.ag-cap)"
+        note="Emoji + title + description card — the 'What it makes' 3-up on the creator page.">
+        <div className="ag-caps" style={{ gridTemplateColumns: '1fr' }}>
+          <div className="ag-cap"><span className="ag-cap-emoji">🎭</span><h4>Micro dramas</h4><p>Character-driven episodic stories — the hook most AI video tools cannot do.</p></div>
+        </div>
+      </Card>
+
+      {/* More-agents cross-link card (AgentShell) */}
+      <Card id="agent-more" title="More-agents cross-link card (.ag-more-card)"
+        note="Tinted-icon nav card (icon tile + label + title + → arrow); the 'Explore the other agents' row on every agent page.">
+        <div className="ag-more" style={{ gridTemplateColumns: '1fr' }}>
+          <a className="ag-more-card" href="#0">
+            <span className="ag-more-ic ic-career">💼</span>
+            <span className="ag-more-tx"><b>Career</b><span>Auto apply to jobs</span></span>
+            <Arrow size={16} />
+          </a>
         </div>
       </Card>
     </div>

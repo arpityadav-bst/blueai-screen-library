@@ -21,8 +21,8 @@ export function ComponentsSection() {
     <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
       {/* Marketing nav (hero header) — ONE shared component across all 3 hero variants */}
       <section id="hero-nav" className="scroll-mt-8 rounded-field border border-divider bg-surface p-5 lg:col-span-2">
-        <p className="bai-section-label mb-1">Marketing nav — hero header (one shared component, all 3 variants)</p>
-        <p className="mb-4 text-2xs text-ink-muted">Single source: <span className="font-mono">components/hero/HeroNav.tsx</span> + <span className="font-mono">styles/hero-nav.css</span>. Stage / Stage&nbsp;Original / 3&nbsp;Cards all render it; only vertical padding differs, via <span className="font-mono">--nav-pad-y</span>.</p>
+        <p className="bai-section-label mb-1">Hero-prototype nav (legacy — HeroNav)</p>
+        <p className="mb-4 text-2xs text-ink-muted">Single source: <span className="font-mono">components/hero/HeroNav.tsx</span> + <span className="font-mono">styles/hero-nav.css</span> — used ONLY by the 3 hero prototypes (Stage / Stage&nbsp;Original / 3&nbsp;Cards). <b className="text-ink-heading">The production header</b> on the SEO homepage + every inner page is <span className="font-mono">&lt;MarketingHeader/&gt;</span> — see “Marketing header” under <b className="text-ink-heading">Site chrome &amp; patterns</b> below.</p>
         <div className="overflow-hidden rounded-card border border-divider bg-canvas">
           <HeroNav />
         </div>
@@ -45,7 +45,7 @@ export function ComponentsSection() {
 
       {/* Buttons */}
       <Card id="buttons" title="Buttons — gradient · accent · hairline">
-        <button className="inline-flex h-11 items-center gap-2 rounded-pill bg-bai-gradient px-5 text-sm font-semibold text-white shadow-[0_10px_26px_-8px_rgba(95,70,255,.55)]">New Chat</button>
+        <button className="inline-flex h-11 items-center gap-2 rounded-pill bg-bai-gradient px-5 text-sm font-semibold text-white shadow-cta">New Chat</button>
         <button className="inline-flex h-10 items-center gap-2 rounded-field bg-accent px-5 text-sm font-semibold text-white transition-colors hover:bg-accent-hover">Submit task</button>
         <button className="inline-flex h-10 items-center gap-2 rounded-field border border-stroke bg-canvas px-5 text-sm font-semibold text-ink-heading">Continue</button>
         <button disabled className="inline-flex h-10 cursor-not-allowed items-center gap-2 rounded-field bg-accent px-5 text-sm font-semibold text-white opacity-50">Disabled</button>
