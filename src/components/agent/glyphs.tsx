@@ -1,4 +1,5 @@
-// Shared inline glyphs for the interactive agent demo forms (CareerForm, CreatorForm).
+// Shared inline glyphs for the agent demo forms — Check (CareerForm/CreatorForm pills),
+// UploadIcon (FileUpload, used by the Resume + holdings fields).
 export const Check = () => (
   <svg className="jmf-check" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>
 )

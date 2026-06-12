@@ -3,6 +3,25 @@
 
 ---
 
+## Session 4 — 2026-06-12 — Discrepancy sweep across all 6 inner pages, videos, push, + audit/health-check
+**Screens:** apply-to-jobs · ai-video-creator · ai-trading-agent · prediction-market-agent · social-rewards · developer
+**Mode:** designer-directed fidelity sweep (live-vs-ours, page by page) → then audit-pass + health check.
+**Built / changed:**
+- **4 agent demos → faithful interactive forms** on a new shared `.jmf-*` kit (`CareerForm`/`CreatorForm`/`FinanceForm`/`MarketsForm`), each inspected element-by-element against the live DOM via the Chrome extension. New `FileUpload` (all-states), `VideoCard` (click-to-play), `glyphs`.
+- **Per-agent `seoBlocks`** (always-visible SEO content, 5–7 each), **`hiwHeading`** (fixed hardcoded "From targets to done" leak), **`heroAside`** (apply-to-jobs openings list). Finance **"Every trade" trade-log** section. social-rewards **scattered hero collage** (was tidy columns). Real **videos** in `public/videos/`.
+- Pushed to prod (commit `8fbad1a`). Audit cleanup: deleted dead `.jf`/`.ag-stage` CSS, tabs→`aria-pressed`, guarded `video.play()`.
+**Corrections (designer-caught):**
+- Header "Download for PC" CTA missing the → arrow (S3 debt).
+- apply-to-jobs form was a stub diverging from the live (S3 debt) → full rebuild; same for SEO blocks + more-agents emoji/arrow.
+- **social-rewards declared "faithful" on a copy-match — the hero composition (collage) was wrong** (genuine S4 Gate-8 miss).
+- **FileUpload shipped empty-state-only** — no filled/remove (genuine S4 Gate-8 miss).
+**Learned:** composition fidelity ≠ content fidelity (taste 23); render ALL states of a control (taste 24); faithful replication = inspect the SOURCE DOM, not eyeball a stub; shared-template copy must be data-driven (KB); descendant element selectors are specificity traps (KB); SSR-fetch fallback when the extension blocks URL reads (KB).
+**Files updated:** taste (23–25), knowledge-base (form kit + 4 rules), decisions (11 rows), project-insights (interactive agent pages), evolution (recurring cat #2 validated 2×). Scratchpad wiped.
+**`designer_caught_count: 2`** (social-rewards composition, FileUpload states). **Recurring category #2 (Gate-8 visual misses on new builds) — 2nd validation → codified as taste 23–24.** Watch next session: did I screenshot-verify composition + all control states BEFORE the designer saw it?
+**Routing repairs:** none (no misrouted entries found in the health check).
+
+---
+
 ## Session 3 — 2026-06-11 — Built the 6 bluestacks.ai inner pages (Social Rewards · Developer · 4 agent pages)
 **Mode:** active build — live-site replication via Edge CDP.
 

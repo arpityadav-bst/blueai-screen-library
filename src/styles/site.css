@@ -12,6 +12,10 @@
 .v-site main { position: relative; z-index: 1; }
 .v-site .site-wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
 html:has(.v-site) { scroll-behavior: smooth; }
+/* body-copy default: every paragraph avoids orphans/widows (taste rule 14). Low specificity —
+   a per-element rule (e.g. a heading using `balance`) still overrides. Ends the recurring
+   "this <p> was missing text-wrap: pretty" miss across all inner-page body copy. */
+.v-site p { text-wrap: pretty; }
 
 /* section heading helpers */
 .v-site .site-eyebrow { display: inline-block; font-family: var(--font-ui); font-weight: 700; font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--bai-mkt-blue); }

@@ -5,8 +5,7 @@ import { Check } from '@/components/agent/glyphs'
 import { FileUpload } from '@/components/agent/FileUpload'
 
 // Faithful interactive replica of the live bluestacks.ai "Get your job matches" form.
-// Design-only: submit is inert (preventDefault). Isolated .jmf-* namespace so the shared
-// .jf demo stubs on the other 3 agent pages are untouched. CSS in agent.css.
+// Design-only: submit is inert (preventDefault). Built on the shared .jmf-* form kit (agent.css).
 const LOCATIONS = ['US', 'Remote', 'Global', 'Other']
 const SENIORITY = ['Any', 'Internship', 'Entry level', 'Mid level', 'Senior', 'Lead / Staff', 'Director and above']
 

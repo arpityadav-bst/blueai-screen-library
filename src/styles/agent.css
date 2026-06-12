@@ -6,15 +6,10 @@
 .v-agent .ag-hero { max-width: 1200px; margin: 0 auto; padding: clamp(36px,5vw,72px) 24px clamp(30px,4vw,56px); display: grid; grid-template-columns: 1fr 0.92fr; gap: clamp(32px,4vw,56px); align-items: center; }
 .v-agent .ag-hero-text { display: flex; flex-direction: column; align-items: flex-start; }
 .v-agent .ag-h1 { font-family: var(--font-head); font-weight: 600; font-size: clamp(34px,4.4vw,56px); line-height: 1.05; letter-spacing: -.035em; color: var(--bai-mkt-slate); text-wrap: balance; margin: 16px 0 0; }
-.v-agent .ag-sub { font-family: var(--font-ui); font-size: clamp(15.5px,1.25vw,18.5px); line-height: 1.6; color: var(--fg-4); margin: 18px 0 0; max-width: 34em; }
+.v-agent .ag-sub { font-family: var(--font-ui); font-size: clamp(15.5px,1.25vw,18.5px); line-height: 1.6; color: var(--fg-4); margin: 18px 0 0; max-width: 34em; text-wrap: pretty; }
 .v-agent .ag-hero-cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
 .v-agent .ag-demo { position: relative; }
 @media (max-width: 920px) { .v-agent .ag-hero { grid-template-columns: 1fr; gap: 32px; } .v-agent .ag-demo { order: 2; } }
-
-/* a framed "stage" for the per-agent demo */
-.v-agent .ag-stage { position: relative; background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-radius: 20px; padding: 18px; box-shadow: 0 26px 56px -28px rgba(var(--bai-glow-rgb),.4), 0 4px 14px -6px rgba(8,10,31,.06); }
-.v-agent .ag-stage-label { display: flex; align-items: center; gap: 7px; font-family: var(--font-ui); font-weight: 700; font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--fg-4); margin-bottom: 12px; }
-.v-agent .ag-stage-label .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--bai-mkt-green); }
 
 /* ---- generic section frame ---- */
 .v-agent .ag-section { padding: clamp(44px,6vw,84px) 0; }
@@ -25,16 +20,6 @@
 .v-agent .ag-seo-block h3 { font-family: var(--font-head); font-weight: 600; font-size: clamp(16.5px,1.4vw,19px); letter-spacing: -.01em; color: var(--bai-mkt-slate); margin: 0; }
 .v-agent .ag-seo-block p { margin-top: 8px; }
 .v-agent .ag-whatis > .ag-seo-block:first-child { margin-top: 0; }
-
-/* ---- Career: latest-openings mini list (in hero demo) + form ---- */
-.v-agent .jf { display: flex; flex-direction: column; gap: 11px; }
-.v-agent .jf-row { display: flex; flex-direction: column; gap: 6px; }
-.v-agent .jf-lbl { font-family: var(--font-ui); font-weight: 600; font-size: 11px; color: var(--fg-3); }
-.v-agent .jf-input { height: 40px; border: 1px solid var(--bai-divider); border-radius: 10px; background: var(--bai-surface); padding: 0 12px; font-family: var(--font-ui); font-size: 13px; color: var(--fg-4); display: flex; align-items: center; }
-.v-agent .jf-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.v-agent .jf-chip { font-family: var(--font-ui); font-weight: 600; font-size: 11.5px; padding: 5px 11px; border-radius: var(--radius-pill); border: 1px solid var(--bai-divider); background: var(--bai-canvas); color: var(--fg-4); }
-.v-agent .jf-chip.is-on { background: var(--bai-gradient); color: #fff; border-color: transparent; }
-.v-agent .jf-submit { margin-top: 4px; height: 44px; border: none; border-radius: 12px; background: var(--bai-cta-gradient); color: #fff; font-family: var(--font-ui); font-weight: 600; font-size: 14px; box-shadow: var(--bai-shadow-cta); cursor: default; }
 
 /* ---- openings grid ---- */
 .v-agent .ag-openings { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 30px; }
@@ -85,7 +70,7 @@
 .v-agent .ag-cap p { font-family: var(--font-ui); font-size: 14px; line-height: 1.55; color: var(--fg-4); margin: 0; }
 @media (max-width: 760px) { .v-agent .ag-caps { grid-template-columns: 1fr; } }
 
-.v-agent .ag-disclaimer { font-family: var(--font-ui); font-size: 12px; line-height: 1.5; color: var(--fg-4); margin: 18px 0 0; max-width: 42em; }
+.v-agent .ag-disclaimer { font-family: var(--font-ui); font-size: 12px; line-height: 1.5; color: var(--fg-4); margin: 18px 0 0; max-width: 42em; text-wrap: pretty; }
 
 /* ---- Finance: live paper portfolios + benchmark ---- */
 .v-agent .ag-ports { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 30px; }
@@ -112,15 +97,11 @@
 .v-agent .ag-odds th.num, .v-agent .ag-odds td.num { text-align: right; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
 .v-agent .ag-odds tr:last-child td { border-bottom: none; }
 .v-agent .ag-odds td.gap { color: var(--bai-mkt-blue); font-weight: 600; }
-.v-agent .ag-odds-note { font-family: var(--font-ui); font-size: 11.5px; line-height: 1.5; color: var(--fg-4); margin: 14px 0 0; max-width: 70ch; }
+.v-agent .ag-odds-note { font-family: var(--font-ui); font-size: 11.5px; line-height: 1.5; color: var(--fg-4); margin: 14px 0 0; text-wrap: pretty; } /* table footnote → spans the table width (no prose cap), aligns to the table edges */
 @media (max-width: 520px) { .v-agent .ag-odds th, .v-agent .ag-odds td { padding: 10px 11px; font-size: 12px; } }
-.v-agent .jf-tabs { display: flex; gap: 6px; margin-bottom: 4px; }
-.v-agent .jf-tab { font-family: var(--font-ui); font-weight: 600; font-size: 12px; padding: 7px 13px; border-radius: 9px; border: 1px solid var(--bai-divider); background: var(--bai-canvas); color: var(--fg-4); }
-.v-agent .jf-tab.is-on { background: var(--bai-surface); color: var(--bai-mkt-slate); border-color: var(--bai-stroke); }
-.v-agent .jf-upload { border: 1.5px dashed var(--bai-stroke); border-radius: 10px; background: var(--bai-surface); padding: 18px; text-align: center; font-family: var(--font-ui); font-size: 12px; color: var(--fg-4); }
 
-/* ── Apply-to-jobs: faithful interactive "Get your job matches" form (replica of the live
-   bluestacks.ai page). Own .jmf-* namespace — isolated from the shared .jf demo stubs. ── */
+/* ── Interactive demo form kit (.jmf-*) — the shared form primitives behind all 4 agent demos
+   (apply-to-jobs / creator / finance / markets), faithful replicas of the live bluestacks.ai forms. ── */
 .v-agent .jmf-card { display: flex; flex-direction: column; gap: 18px; background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-radius: 20px; padding: clamp(20px,2.4vw,26px); box-shadow: 0 26px 56px -28px rgba(var(--bai-glow-rgb),.4), 0 4px 14px -6px rgba(8,10,31,.06); }
 .v-agent .jmf-head { display: flex; flex-direction: column; gap: 5px; }
 .v-agent .jmf-title { font-family: var(--font-head); font-weight: 600; font-size: 22px; letter-spacing: -.01em; color: var(--bai-mkt-slate); margin: 0; }

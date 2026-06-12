@@ -13,7 +13,7 @@ export function VideoCard({ v }: { v: Vid }) {
   const toggle = () => {
     const el = ref.current
     if (!el) return
-    if (el.paused) el.play()
+    if (el.paused) void el.play()?.catch(() => {})
     else el.pause()
   }
   return (

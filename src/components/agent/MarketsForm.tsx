@@ -13,9 +13,9 @@ export function MarketsForm() {
         <p className="jmf-sub">Join the queue. The agent watches your markets and emails you the moves.</p>
       </div>
 
-      <div className="jmf-tabs" role="tablist">
-        <button type="button" role="tab" aria-selected={tab === 'watch'} className={`jmf-tab${tab === 'watch' ? ' is-on' : ''}`} onClick={() => setTab('watch')}>Watch markets</button>
-        <button type="button" role="tab" aria-selected={tab === 'ask'} className={`jmf-tab${tab === 'ask' ? ' is-on' : ''}`} onClick={() => setTab('ask')}>Ask about odds</button>
+      <div className="jmf-tabs">
+        <button type="button" aria-pressed={tab === 'watch'} className={`jmf-tab${tab === 'watch' ? ' is-on' : ''}`} onClick={() => setTab('watch')}>Watch markets</button>
+        <button type="button" aria-pressed={tab === 'ask'} className={`jmf-tab${tab === 'ask' ? ' is-on' : ''}`} onClick={() => setTab('ask')}>Ask about odds</button>
       </div>
 
       <label className="jmf-field">

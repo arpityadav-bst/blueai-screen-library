@@ -1,5 +1,5 @@
 # blueAI — Evolution
-Last updated: 2026-06-11 (S2 close audit — full build day logged; recurring category #2 named: Gate-8 misses on new builds)
+Last updated: 2026-06-12 (S4 — discrepancy sweep + audit/health-check; recurring category #2 validated a 2nd time → codified as taste rules 23–24; designer_caught_count: 2)
 
 > VDA's growth + maturity timeline ON THE BLUEAI PROJECT. Separate from WSUP/now.gg —
 > a fresh notebook starts at Phase 1.
@@ -51,3 +51,18 @@ text-align (Vercel), Finance card width, close-band wrap, POLYMARKET clip, mobil
 body-too-wide; + the two-tone wordmark misread (corrected to the full gradient). A heavy BUILD day
 (Markets card · SEO homepage · brand SSOT · root Screen Library index · mobile pass · ambient
 backdrop) — all shipped live; the growth edge is the Gate-8 catch-rate, not the building.
+
+## S3 (2026-06-11) — inner-pages build
+Built the 6 bluestacks.ai inner pages + shared MarketingHeader/Footer chrome. Self-run build, **`designer_caught_count: 0` at ship** — BUT in hindsight the agent demos shipped as simplified static STUBS (wrong fields, missing SEO blocks, omitted sections), which S4 then had to rebuild. Lesson: "build verified green" ≠ "faithful" — a green build with stub content is still incomplete. Counts as a latent completeness gap, surfaced S4.
+
+## S4 (2026-06-12) — discrepancy sweep + audit/health-check (maintenance-heavy session)
+Designer-directed full discrepancy sweep across all 6 inner pages: rebuilt the 4 agent demos as faithful interactive forms, added per-agent SEO blocks + hiwHeading + heroAside, real videos + finance trade-log, social-rewards collage, FileUpload. Then this audit-pass (promoted ~17 scratchpad entries → taste 23–25 / KB / decisions; dead-CSS cleanup; a11y + play() fixes) + health check.
+
+**`designer_caught_count: 2`** (genuine NEW-build Gate-8 misses this session): (1) **social-rewards "faithful" on a copy-match alone** — the hero composition (scattered collage) was clearly different, caught on screenshot; (2) **FileUpload shipped empty-state-only** — no filled/remove states. *(The header arrow, the form stubs, the missing SEO blocks were S3-debt surfaced by the directed sweep, not fresh S4 ships — not counted here, but they reinforce the same theme.)*
+
+**Recurring category #2 — VALIDATED A 2ND TIME + now CODIFIED as forcing rules.** Both S4 misses are the same root as the S2 catches: *NEW/audited work gets the architecture right but skips the final "read the RENDERED result as a designer" pass.* Sharpened from a watch-item into actionable Gate-8 taste rules: **23 (composition fidelity ≠ content fidelity — screenshot-verify the rendered layout)** + **24 (render ALL states of a control)**. These give Gate 8 a concrete checklist instead of a vague "review it." 
+
+**Active gaps / watch next session:**
+- **The Gate-8 catch-rate is STILL the growth edge** (3rd session running). The new rules 23–24 are the test: next NEW build, did I screenshot-verify composition + check every control's states BEFORE the designer saw it? If the designer still catches a composition/state gap at S5, the rules aren't yet internalized (codification ≠ habit — the same honest lesson WSUP's workflow.md reached).
+- Phase 2 holds (not advancing toward Phase 3 until ≥3 consecutive low-caught sessions on NEW builds).
+- `rgba(8,10,31,…)` neutral-ink alpha — deferred tokenisation candidate (cross-file pass).

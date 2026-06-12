@@ -14,9 +14,9 @@ export function FinanceForm() {
         <p className="jmf-sub">Join the queue. The agent runs the numbers and emails you the breakdown.</p>
       </div>
 
-      <div className="jmf-tabs" role="tablist">
-        <button type="button" role="tab" aria-selected={tab === 'upload'} className={`jmf-tab${tab === 'upload' ? ' is-on' : ''}`} onClick={() => setTab('upload')}>Upload my holdings</button>
-        <button type="button" role="tab" aria-selected={tab === 'ask'} className={`jmf-tab${tab === 'ask' ? ' is-on' : ''}`} onClick={() => setTab('ask')}>Ask about a stock</button>
+      <div className="jmf-tabs">
+        <button type="button" aria-pressed={tab === 'upload'} className={`jmf-tab${tab === 'upload' ? ' is-on' : ''}`} onClick={() => setTab('upload')}>Upload my holdings</button>
+        <button type="button" aria-pressed={tab === 'ask'} className={`jmf-tab${tab === 'ask' ? ' is-on' : ''}`} onClick={() => setTab('ask')}>Ask about a stock</button>
       </div>
 
       <label className="jmf-field">

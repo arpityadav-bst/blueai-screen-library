@@ -1,5 +1,5 @@
 # blueAI — Taste
-Last updated: 2026-06-11 (S2 close audit — +rules 19–22 (brand SSOT · content width · ambient delight · mobile) + rule-14 amendment; full day's SEO-homepage/brand/mobile work promoted)
+Last updated: 2026-06-12 (S4 audit — +rules 23–25 (composition≠content fidelity · render-all-states · curly quotes); all three sharpen recurring category #2 → the Gate-8 catch-rate edge)
 
 > blueAI's design *language* — how it should feel — so VDA can design new blueAI
 > surfaces from instinct. Seeded from the Claude-design export's DS README (which is a
@@ -158,6 +158,33 @@ springy bounces) — "a utility assistant, not a toy."
     nav needs a real mobile MENU (hamburger → the links), never just `display:none` on them; the
     menu must OVERLAY content (absolute), not push it down. CTAs go full-width for tap targets.
     You cannot eyeball mobile from the desktop live view — screenshot at 390px and audit. *(S2-cont.)*
+
+## Codified taste rules (added S4 — the discrepancy-sweep day; all three sharpen recurring category #2)
+
+23. **Composition fidelity ≠ content fidelity — verify the RENDERED result, not the text.** When
+    replicating or auditing a surface as "faithful", a copy match does NOT prove a layout match.
+    Screenshot-compare the COMPOSITION: card arrangement, rotation/scatter, opacity, edge-bleed,
+    column vs collage, line-wrap, spacing rhythm. *(S4: I declared social-rewards "faithful" because
+    the COPY matched verbatim — but our hero was two tidy upright columns while the live is a
+    scattered, rotated, faded, edge-bleeding collage. The designer caught it. A content-check can
+    never catch a composition gap.)* This is the actionable Gate-8 form of recurring category #2:
+    **before declaring any build "done" or "faithful", read the rendered output as a designer —
+    screenshot it when layout/composition is involved — don't sign off from the code or the copy.**
+
+24. **Every control must render ALL its states — never ship only the empty/happy-path state.** An
+    input has to visibly represent empty AND filled AND (where it applies) a way to undo. A file
+    picker's "Choose file / No file chosen" must become "filename + remove (✕)" once a file is
+    attached — the "choose" affordance disappears, the box reads as filled. A toggle shows selected
+    vs unselected. A native control that lies about its state (a file input that still says "Choose
+    File" after a file is picked, with no removal) is not done. *(S4: built the Resume/holdings
+    upload with only the empty state; designer flagged "there should be a cancel option, and Choose
+    File shouldn't stay once uploaded." → `FileUpload` with empty↔filled↔remove.)*
+
+25. **Display/marketing copy uses directional curly quotes + apostrophes, never straight — and
+    verify it in the actual font.** `" ' ' "` not `" '`. Space Grotesk renders the straight
+    double-quote as two slanted "99" strokes, so a straight opening quote looks like an inverted
+    closing quote — invisible in code, wrong on screen. Check the rendered glyph, not the source.
+    *(S2-cont/S4.)*
 
 > Motion (framer-motion) gotchas, the spotlight pattern, the CSS-chunking leak, the ambient
 > backdrop, and mobile/layout/SSOT technical detail live in `knowledge-base.md`.

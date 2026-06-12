@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { Foundations } from '@/components/style-guide/Foundations'
 import { ComponentsSection } from '@/components/style-guide/ComponentsSection'
+import { AgentComponents } from '@/components/style-guide/AgentComponents'
 import { PmComponentsA } from '@/components/style-guide/PmComponentsA'
 import { PmComponentsB } from '@/components/style-guide/PmComponentsB'
 
@@ -11,6 +12,7 @@ import { PmComponentsB } from '@/components/style-guide/PmComponentsB'
 const NAV: { group: string; items: [string, string][] }[] = [
   { group: 'Foundations', items: [['colors', 'Colors'], ['type', 'Type scale'], ['scales', 'Spacing · Radius · Elevation']] },
   { group: 'Components', items: [['hero-nav', 'Marketing nav'], ['download-cta', 'Download CTA'], ['buttons', 'Buttons'], ['status', 'Status badges'], ['pill-badges', 'Pill badges'], ['pills', 'Suggested pills'], ['feature-cards', 'Feature cards'], ['bubbles', 'Message bubbles'], ['composer', 'Composer'], ['header', 'Panel header']] },
+  { group: 'Agent page components', items: [['agent-form', 'Demo form kit'], ['agent-form-tabs', 'Tabbed form'], ['agent-upload', 'File upload'], ['agent-trades', 'Trade log + badges'], ['agent-video', 'Video card']] },
   { group: 'App components (PM)', items: [['app-cards', 'Cards'], ['app-overview', 'Overview cards'], ['app-inputs', 'Inputs & forms'], ['app-nav', 'Navigation'], ['app-credits', 'Credits'], ['app-icons', 'Icons']] },
 ]
 const SECTION_IDS = NAV.flatMap((g) => g.items.map(([id]) => id))
@@ -98,6 +100,11 @@ export default function StyleGuide() {
           <section>
             <h2 className="mb-5 text-xl font-semibold text-ink-display">Components</h2>
             <ComponentsSection />
+          </section>
+          <section>
+            <h2 className="mb-1 text-xl font-semibold text-ink-display">Agent page components</h2>
+            <p className="mb-5 text-sm text-ink-muted">The bluestacks.ai agent-page demos — faithful replicas of the live forms, built on blueAI tokens. The shared <span className="font-mono">.jmf-*</span> kit + FileUpload / VideoCard / trade-log.</p>
+            <AgentComponents />
           </section>
           <section>
             <h2 className="mb-1 text-xl font-semibold text-ink-display">App components</h2>

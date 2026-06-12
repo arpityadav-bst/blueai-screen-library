@@ -1,5 +1,5 @@
 # blueAI — Project Insights
-Last updated: 2026-06-11 (S2 audit — +Deployment section, CSS-arch prod-chunking finding)
+Last updated: 2026-06-12 (S4 — agent pages interactive: AgentShell heroAside/seoBlocks/hiwHeading, .jmf form kit, public/videos; latest deploy commit 8fbad1a)
 
 > Architecture, domain, asset rules, and conventions specific to the blueAI replica.
 > Facts a developer/designer needs that aren't taste.
@@ -38,6 +38,14 @@ Last updated: 2026-06-11 (S2 audit — +Deployment section, CSS-arch prod-chunki
   `SiteFooter`/`SiteReveal`/`SiteFaq` scoped `.v-site` via `styles/site.css`; the 4 agent pages run on `components/agent/AgentShell.tsx` +
   per-agent data in `lib/agents-data.ts` (+ `lib/rewards-data.ts`, `lib/site-data.ts`). Each page is a 2nd
   root class (`.v-rewards`/`.v-dev`/`.v-agent`) over `.v-site`. SEO nav + both hero agent grids link here.
+- **S4 (2026-06-12) — agent pages made faithful + interactive.** `AgentShell` now takes `demo`, `feature`,
+  and two optional knobs: **`heroAside`** (apply-to-jobs swaps the default hero Download-CTA for a
+  "Latest openings" mini-list) and per-agent data fields **`seoBlocks`** (always-visible H3 SEO content,
+  rendered in the what-is section, or a standalone section before the FAQ when an agent has no `whatIs`)
+  + **`hiwHeading`** (per-agent how-it-works H2 — was hardcoded). The 4 hero demos are now interactive
+  client components on the shared `.jmf-*` form kit (`components/agent/{CareerForm,CreatorForm,FinanceForm,MarketsForm,FileUpload,VideoCard,glyphs}` — see KB "Agent demo form kit"). Finance adds an "Every trade"
+  trade-log section. social-rewards hero = scattered Reddit collage (absolute, per-card transforms). Real
+  "Made by the agent" videos in **`public/videos/`** (3 mp4 + posters, ~36MB, downloaded from the live site).
 
 ## Hero architecture — TWO animation paths (critical)
 The export's `hero-cards.js` branches per agent on which markup is present:
