@@ -17,7 +17,7 @@ export default function Home() {
   return (
     <main
       className="min-h-screen font-sans"
-      style={{ background: 'radial-gradient(1100px 620px at 50% -12%, rgba(123,76,255,.07), transparent 60%), linear-gradient(180deg, #f5f6fd 0%, #eef1fb 100%)' }}
+      style={{ background: 'radial-gradient(1100px 620px at 50% -12%, rgba(var(--bai-iris-rgb),.07), transparent 60%), var(--bai-page-grad)' }}
     >
       <div className="mx-auto max-w-[920px] px-6 py-16 md:py-24">
         <header className="mb-10">
@@ -33,7 +33,7 @@ export default function Home() {
             <a
               key={p.href}
               href={p.href}
-              className="group flex items-center justify-between gap-6 rounded-field border border-divider bg-canvas px-6 py-5 shadow-[0_1px_2px_rgba(8,10,31,.04)] transition-all hover:-translate-y-0.5 hover:border-[rgba(123,76,255,.35)] hover:shadow-float"
+              className="group flex items-center justify-between gap-6 rounded-field border border-divider bg-canvas px-6 py-5 shadow-hairline transition-all hover:-translate-y-0.5 hover:border-[rgba(var(--bai-iris-rgb),.35)] hover:shadow-float"
             >
               <div className="min-w-0">
                 <p className="font-head text-lg font-semibold tracking-tight text-ink-display">
@@ -50,7 +50,7 @@ export default function Home() {
         {/* Style Guide — the design-system reference; set apart + pinned at the bottom */}
         <a
           href="/style-guide"
-          className="group mt-6 flex items-center justify-between gap-6 rounded-field bg-bai-wash px-6 py-5 ring-1 ring-inset ring-[rgba(123,76,255,.22)] transition-all hover:-translate-y-0.5 hover:shadow-float"
+          className="group mt-6 flex items-center justify-between gap-6 rounded-field bg-bai-wash px-6 py-5 ring-1 ring-inset ring-[rgba(var(--bai-iris-rgb),.22)] transition-all hover:-translate-y-0.5 hover:shadow-float"
         >
           <div className="flex min-w-0 items-center gap-4">
             <span className="grid size-11 shrink-0 place-items-center rounded-card bg-bai-gradient text-white shadow-cta">

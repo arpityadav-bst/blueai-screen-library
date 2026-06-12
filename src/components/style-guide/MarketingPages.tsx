@@ -8,6 +8,7 @@ import '@/styles/social-rewards.css'
 import '@/styles/style-guide.css'
 import { Sparkle } from '@/components/Sparkle'
 import { Arrow } from '@/components/Arrow'
+import { PreviewAnatomy, Tok } from '@/components/style-guide/Anatomy'
 
 function Block({ id, title, note, scope, full, children }: { id: string; title: string; note?: React.ReactNode; scope: string; full?: boolean; children: React.ReactNode }) {
   return (
@@ -24,20 +25,26 @@ const Check = () => <svg viewBox="0 0 24 24" width="13" height="13" fill="none" 
 export function MarketingPages() {
   return (
     <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
-      {/* SEO task-hub card */}
-      <Block id="seo-task" scope="v-seo" title="SEO task-hub card"
-        note="Internal-linking hub tile — icon · LIVE badge · title · desc · verb link.">
-
-        <div className="seo-task-grid" style={{ gridTemplateColumns: '1fr 1fr' }}>
-          {[['💼', 'Apply to jobs', true], ['🎬', 'Make a video', true]].map(([ic, t, live]) => (
-            <a className="seo-task" href="#0" key={t as string}>
-              <div className="seo-task-top"><span className="seo-task-icon">{ic}</span>{live && <span className="seo-live"><span className="dot" />LIVE</span>}</div>
-              <h3>{t}</h3><p>Point BlueAI at it and the agent runs the task end-to-end on your device.</p>
+      {/* SEO task card — heavy treatment (the SEO homepage's internal-linking hub tile) */}
+      <PreviewAnatomy id="seo-task" scope="v-seo" title="SEO task card"
+        note="The internal-linking hub tile from the SEO homepage — icon · LIVE badge · title · description · verb link."
+        preview={
+          <div className="seo-task-grid" style={{ gridTemplateColumns: '1fr', maxWidth: 260 }}>
+            <a className="seo-task" href="#0">
+              <div className="seo-task-top"><span className="seo-task-icon">💼</span><span className="seo-live"><span className="dot" />LIVE</span></div>
+              <h3>Apply to jobs</h3><p>Point BlueAI at it and the agent runs the task end-to-end on your device.</p>
               <span className="seo-task-link">Explore <span className="arr">→</span></span>
             </a>
-          ))}
-        </div>
-      </Block>
+          </div>
+        }
+        rows={[
+          { code: <>.seo-task · bg-canvas · border-divider · radius-16 · hover lift + iris border</>, role: 'Card — hairline tile, lifts and borders iris on hover' },
+          { code: <>.seo-task-top · .seo-task-icon 36 (radius-10) + .seo-live badge</>, role: 'Top — icon tile + a LIVE status badge' },
+          { code: <>h3 · <Tok to="type">font-head</Tok> 16.5 · seo-slate</>, role: 'Title — Space Grotesk display, slate' },
+          { code: <>p · 13.5 · flex-1</>, role: 'Body — description; flex-1 pushes the link to the bottom' },
+          { code: <>.seo-task-link · seo-blue + .arr slides on hover</>, role: 'Link — verb + arrow that slides right on hover' },
+        ]}
+      />
 
       {/* SEO what-is explainer card */}
       <Block id="seo-info" scope="v-seo" title="What-is card"

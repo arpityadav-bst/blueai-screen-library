@@ -28,6 +28,7 @@ const config: Config = {
 
       // ─── Type scale — DS panel scale (10→28) + marketing display (34→48) ──
       fontSize: {
+        '2xs': ['11px', { lineHeight: '1.5' }],   // fine print — SG notes / anatomy roles / counts
         'xs':  ['10px', { lineHeight: '1.4' }],   // caption / eyebrow
         '11':  ['11px', { lineHeight: '1' }],
         'sm':  ['12px', { lineHeight: '1.6' }],   // body-sm / label
@@ -96,8 +97,9 @@ const config: Config = {
 
       // ─── Shadows — border-driven system; float/overlay reserved for menus ──
       boxShadow: {
-        'float':    '0 4px 16px -4px rgba(8,10,31,0.08), 0 1px 2px rgba(8,10,31,0.04)',
-        'overlay':  '0 12px 32px -8px rgba(8,10,31,0.16)',
+        'float':    'var(--shadow-float)',           // SSOT in globals.css (was a duplicated literal)
+        'overlay':  'var(--shadow-overlay)',
+        'hairline': 'var(--bai-shadow-hairline)',    // resting cards
         'cta':       'var(--bai-shadow-cta)',        // brand glow under the Download CTA
         'cta-hover': 'var(--bai-shadow-cta-hover)',
         'brand-sm':  'var(--bai-shadow-brand-sm)',   // colored, for elevated brand chips

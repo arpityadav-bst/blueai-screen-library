@@ -1,5 +1,5 @@
 # blueAI — Evolution
-Last updated: 2026-06-12 (S4 — discrepancy sweep + audit/health-check; recurring category #2 validated a 2nd time → codified as taste rules 23–24; designer_caught_count: 2)
+Last updated: 2026-06-12 (S5 — style-guide architecture day; category #2 validated a 3RD time (5 visual catches on the new SG build); atomic-hierarchy directive issued; S4 token deferral closed)
 
 > VDA's growth + maturity timeline ON THE BLUEAI PROJECT. Separate from WSUP/now.gg —
 > a fresh notebook starts at Phase 1.
@@ -65,4 +65,15 @@ Designer-directed full discrepancy sweep across all 6 inner pages: rebuilt the 4
 **Active gaps / watch next session:**
 - **The Gate-8 catch-rate is STILL the growth edge** (3rd session running). The new rules 23–24 are the test: next NEW build, did I screenshot-verify composition + check every control's states BEFORE the designer saw it? If the designer still catches a composition/state gap at S5, the rules aren't yet internalized (codification ≠ habit — the same honest lesson WSUP's workflow.md reached).
 - Phase 2 holds (not advancing toward Phase 3 until ≥3 consecutive low-caught sessions on NEW builds).
-- `rgba(8,10,31,…)` neutral-ink alpha — deferred tokenisation candidate (cross-file pass).
+- ✅ RESOLVED (S5): `rgba(8,10,31,…)` neutral-ink tokenisation — `--bai-ink-rgb` channel + `--bai-shadow-hairline` + `--bai-page-*`, migrated across all 12 stylesheets, computed-value-verified identical.
+
+## S5 (2026-06-12, same day as S4) — style-guide architecture day (heavy SG build + the atomic-hierarchy directive)
+Built the SG's documentation architecture: notes/titles trim → PREVIEW+ANATOMY two-tier model (Anatomy/Tok primitives, 7 heavy components) → Icons section → token focus rings → the `text-2xs` latent-bug fix (the whole fine-print tier was silently 16px, 129 elements) → form-kit molecule extraction (designer's componentisation check exposed 26× duplicated field markup) → "Form field molecules" SG section → index pared to 3 + the Style Guide row's distinct treatment → this audit's S3 token pass (ink/page channels + hairline; closed the S4 deferral).
+
+**`designer_caught_count: 5`** (visual, on the NEW SG build): (1) `.v-site` page-root balloon — a showcase card took a full viewport; (2) video card crushed to one-word-per-line; (3) sidebar group headers centered/wrapping; (4) the odds-note footnote — I fixed the orphan SYMPTOM (text-wrap) before the designer re-flagged the CAUSE (a prose cap on a table footnote); (5) the anatomy role text at body size (→ surfaced the text-2xs latent bug). Plus 4 process/completeness catches: "hero options" misread (chooser, not the 3 variants); SG captions over-explained (→ the trim + taste 27); fields only CSS-componentised (→ form-kit); molecules left undocumented after extraction (→ the SG section).
+
+**Recurring category #2 — VALIDATED A 3RD TIME.** All 5 visual catches are first-pass NEW-build misses the rules 23–24 checklist should have caught before presenting. Codification ≠ habit, confirmed. **Counter-evidence of growth, same session:** the deferred S4 token pass was completed proactively at audit; my own audit caught MY OWN fresh leaks (the index ring, the type arbitraries, the `.jmf-label` memory-typo via grep); and the misdiagnosis loop (stale reload) was root-caused honestly instead of shipped as a false "Tailwind is broken" comment. The edge is specifically the PRE-PRESENT visual pass on new builds, not auditing discipline.
+
+**New standing directive (designer, S5): atomic hierarchy is law** — taste 26. Every value tokenised, every layer extracted + documented at its level (token/CSS/React). This gives Gate 2/3 a sharper test than "use tokens": *name the layer; trace every value.*
+
+**Watch next session:** (a) the same Gate-8 pre-present pass — category #2 is now 3-for-3; (b) apply taste 26 from the FIRST line of any new build, not at audit; (c) two parked designer decisions still open: SiteFaq-vs-SeoFaq consolidation, dark `.site-cta-band` vs bright `.seo-close` unification.

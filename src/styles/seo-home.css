@@ -1,5 +1,5 @@
 /* ============================================================================
-   BlueAI — SEO Homepage (/seo). Standalone search-optimized homepage on the
+   BlueAI â€” SEO Homepage (/seo). Standalone search-optimized homepage on the
    --bai-* design system. EVERY rule is scoped under .v-seo so nothing leaks
    across routes (see knowledge-base "CSS architecture"). The legacy agent-scene
    styles are duplicated here (scoped) at the hero-card size.
@@ -8,13 +8,13 @@
   --seo-slate: var(--bai-mkt-slate); --seo-blue: var(--bai-mkt-blue); --seo-blue-2: var(--bai-mkt-blue-2);
   --font-head: 'Space Grotesk', var(--font-display); --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 }
-.v-seo { position: relative; background: linear-gradient(180deg, #f5f6fd 0%, #eef1fb 100%);
+.v-seo { position: relative; background: var(--bai-page-grad);
   min-height: 100vh; overflow-x: hidden; color: var(--seo-slate);
   --green: var(--bai-mkt-green); --green-bg: var(--bai-mkt-green-wash);
-  --seo-w: 1640px;        /* wide / full-bleed-ish — the nav only */
-  --seo-content: 1280px; } /* contained content column — hero + every section band + footer align to this */
+  --seo-w: 1640px;        /* wide / full-bleed-ish â€” the nav only */
+  --seo-content: 1280px; } /* contained content column â€” hero + every section band + footer align to this */
 
-/* ── ambient living backdrop (SeoBackdrop): drifting orbs + a faint rotating logo sparkle ── */
+/* â”€â”€ ambient living backdrop (SeoBackdrop): drifting orbs + a faint rotating logo sparkle â”€â”€ */
 .v-seo .seo-backdrop { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
 .v-seo .seo-orb { position: absolute; top: 0; left: 0; width: 46vw; height: 46vw; max-width: 680px; max-height: 680px; border-radius: 50%; filter: blur(94px); opacity: .3; will-change: transform; }
 .v-seo .seo-orb-iris { background: radial-gradient(circle at center, rgba(var(--bai-iris-rgb),.55), transparent 68%); }
@@ -42,30 +42,30 @@ html:has(.v-seo) { scroll-behavior: smooth; }
 @media (prefers-reduced-motion: reduce) { .v-seo [data-reveal] { opacity: 1; transform: none; transition: none; } }
 
 /* ---- NAV (sticky, full-bleed) ---- */
-.v-seo .seo-nav { position: sticky; top: 0; z-index: 50; background: rgba(245,246,253,.8); backdrop-filter: blur(10px); border-bottom: 1px solid var(--bai-divider); }
+.v-seo .seo-nav { position: sticky; top: 0; z-index: 50; background: rgba(var(--bai-page-rgb), .8); backdrop-filter: blur(10px); border-bottom: 1px solid var(--bai-divider); }
 .v-seo .seo-nav-inner { max-width: var(--seo-w); margin: 0 auto; padding: 13px 48px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
 .v-seo .seo-brand { display: flex; align-items: center; gap: 9px; text-decoration: none; }
 .v-seo .seo-brand img { display: block; width: 32px; height: 32px; border-radius: 50%; }
 .v-seo .seo-nav-links { display: flex; align-items: center; gap: 30px; }
 .v-seo .seo-nav-links a { font-family: var(--font-ui); font-weight: 500; font-size: 15px; color: var(--fg-3); text-decoration: none; transition: color .15s var(--ease-out); }
 .v-seo .seo-nav-links a:hover { color: var(--fg-1); }
-/* ↗ external-link affordance (Social Rewards · Developer open in a new tab) — inherits link color */
+/* â†— external-link affordance (Social Rewards Â· Developer open in a new tab) â€” inherits link color */
 .v-seo .seo-ext { display: inline-block; margin-left: 4px; vertical-align: -0.12em; opacity: .5; transition: opacity .15s var(--ease-out); }
 .v-seo a:hover .seo-ext { opacity: .8; }
 .v-seo .seo-nav-cta { font-family: var(--font-ui); font-weight: 600; font-size: 14.5px; color: #fff; background: var(--bai-cta-gradient); border-radius: var(--radius-pill); padding: 10px 20px; text-decoration: none; box-shadow: var(--bai-shadow-cta); transition: transform .18s var(--ease-out), box-shadow .18s var(--ease-out); white-space: nowrap; }
 .v-seo .seo-nav-cta:hover { transform: translateY(-2px); box-shadow: var(--bai-shadow-cta-hover); }
 .v-seo .seo-nav-right { display: flex; align-items: center; gap: 12px; }
 .v-seo .seo-nav-burger { display: none; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0; border: none; background: none; color: var(--fg-2); cursor: pointer; }
-.v-seo .seo-nav-menu { position: absolute; top: 100%; left: 0; right: 0; z-index: 5; display: flex; flex-direction: column; gap: 2px; padding: 6px 22px 18px; border-bottom: 1px solid var(--bai-divider); background: rgb(245,246,253); box-shadow: 0 18px 36px -18px rgba(8,10,31,.28); }
+.v-seo .seo-nav-menu { position: absolute; top: 100%; left: 0; right: 0; z-index: 5; display: flex; flex-direction: column; gap: 2px; padding: 6px 22px 18px; border-bottom: 1px solid var(--bai-divider); background: var(--bai-page); box-shadow: 0 18px 36px -18px rgba(var(--bai-ink-rgb),.28); }
 .v-seo .seo-nav-menu a { font-family: var(--font-ui); font-weight: 500; font-size: 16px; color: var(--fg-2); text-decoration: none; padding: 13px 4px; }
 .v-seo .seo-nav-menu a:active { color: var(--seo-blue); }
 .v-seo .seo-nav-menu .seo-nav-menu-cta { margin-top: 10px; display: inline-flex; align-items: center; justify-content: center; height: 48px; padding: 0; border-radius: var(--radius-pill); background: var(--bai-cta-gradient); color: #fff; font-weight: 600; font-size: 15.5px; box-shadow: var(--bai-shadow-cta); }
-/* scrim behind the open dropdown — dims the page below the menu; tap to close. Starts at the bar's
+/* scrim behind the open dropdown â€” dims the page below the menu; tap to close. Starts at the bar's
    bottom (top:100%) so the bar stays crisp, extends down the viewport. Mobile/tablet only. */
 .v-seo .seo-nav-scrim { position: absolute; top: 100%; left: 0; right: 0; height: 100vh; z-index: 2; border: none; padding: 0; cursor: pointer; background: rgba(8, 10, 31, .42); -webkit-tap-highlight-color: transparent; animation: seoScrimIn .2s var(--ease-out); }
 @keyframes seoScrimIn { from { opacity: 0; } to { opacity: 1; } }
 @media (min-width: 1081px) { .v-seo .seo-nav-menu, .v-seo .seo-nav-scrim { display: none; } }
-/* 721–1080 the bar CTA is still visible, so don't repeat it inside the dropdown */
+/* 721â€“1080 the bar CTA is still visible, so don't repeat it inside the dropdown */
 @media (min-width: 721px)  { .v-seo .seo-nav-menu .seo-nav-menu-cta { display: none; } }
 
 /* ---- HERO ---- */
@@ -87,8 +87,8 @@ html:has(.v-seo) { scroll-behavior: smooth; }
 .v-seo .seo-agents-label { display: inline-flex; align-items: center; gap: 8px; align-self: flex-start; font-family: var(--font-ui); font-weight: 600; font-size: 12.5px; letter-spacing: .03em; color: var(--fg-3); background: rgba(255,255,255,.72); border: 1px solid var(--bai-divider); border-radius: var(--radius-pill); padding: 6px 13px; box-shadow: var(--shadow-float); margin-bottom: 14px; }
 .v-seo .seo-agents-label .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
 .v-seo .seo-agents { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
-.v-seo .seo-agent { position: relative; top: 0; min-width: 0; background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-radius: 18px; padding: 16px; display: flex; flex-direction: column; cursor: pointer; box-shadow: 0 1px 2px rgba(8,10,31,.04); transition: box-shadow .4s var(--ease-out), border-color .4s var(--ease-out), top .3s var(--ease-out); }
-.v-seo .seo-agent.is-active { top: -6px; border-color: rgba(var(--bai-iris-rgb),.32); box-shadow: 0 22px 44px -20px rgba(var(--bai-glow-rgb),.4), 0 5px 14px -7px rgba(8,10,31,.1); }
+.v-seo .seo-agent { position: relative; top: 0; min-width: 0; background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-radius: 18px; padding: 16px; display: flex; flex-direction: column; cursor: pointer; box-shadow: var(--bai-shadow-hairline); transition: box-shadow .4s var(--ease-out), border-color .4s var(--ease-out), top .3s var(--ease-out); }
+.v-seo .seo-agent.is-active { top: -6px; border-color: rgba(var(--bai-iris-rgb),.32); box-shadow: 0 22px 44px -20px rgba(var(--bai-glow-rgb),.4), 0 5px 14px -7px rgba(var(--bai-ink-rgb),.1); }
 .v-seo .seo-agent.is-dim { opacity: .64; }
 .v-seo a.seo-agent { text-decoration: none; color: inherit; } /* cards link to their agent page */
 .v-seo .seo-agent-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 11px; }
@@ -124,7 +124,7 @@ html:has(.v-seo) { scroll-behavior: smooth; }
 .v-seo .cv-board { display: flex; gap: 8px; }
 .v-seo .cv-frame { position: relative; flex: 1; height: 36px; border-radius: 7px; background: #fff; border: 1px solid var(--bai-divider); overflow: hidden; }
 .v-seo .cv-frame::before { content: ""; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(var(--bai-iris-rgb),.14), rgba(var(--bai-cyan-rgb),.12)); }
-.v-seo .cv-play { position: absolute; inset: 0; margin: auto; width: 24px; height: 24px; border-radius: 50%; background: rgba(255,255,255,.92); display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(8,10,31,.18); }
+.v-seo .cv-play { position: absolute; inset: 0; margin: auto; width: 24px; height: 24px; border-radius: 50%; background: rgba(255,255,255,.92); display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(var(--bai-ink-rgb),.18); }
 .v-seo .cv-play svg { width: 11px; height: 11px; color: var(--bai-ink-heading); margin-left: 1px; }
 .v-seo .cv-views { margin-top: auto; font-family: var(--font-ui); font-weight: 600; font-size: 11px; color: var(--fg-3); display: flex; align-items: center; gap: 5px; }
 .v-seo .cv-views svg { width: 11px; height: 11px; color: #c2418a; }
@@ -161,14 +161,14 @@ html:has(.v-seo) { scroll-behavior: smooth; }
 /* ---- WHAT IS ---- */
 .v-seo .seo-snippet { font-family: var(--font-ui); font-size: clamp(17px,1.4vw,21px); line-height: 1.6; color: var(--fg-2); background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-left: 3px solid var(--seo-blue); border-radius: 12px; padding: 22px 26px; margin: 26px 0 0; max-width: 760px; }
 .v-seo .seo-trio { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 30px; }
-.v-seo .seo-info-card { background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-radius: 16px; padding: 22px; box-shadow: 0 1px 2px rgba(8,10,31,.04); }
+.v-seo .seo-info-card { background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-radius: 16px; padding: 22px; box-shadow: var(--bai-shadow-hairline); }
 .v-seo .seo-info-icon { width: 38px; height: 38px; border-radius: 11px; background: var(--bai-surface); border: 1px solid var(--bai-divider); display: flex; align-items: center; justify-content: center; font-size: 19px; margin-bottom: 14px; }
 .v-seo .seo-info-card h3 { font-family: var(--font-head); font-weight: 600; font-size: 18px; letter-spacing: -.02em; color: var(--seo-slate); margin: 0 0 7px; }
 .v-seo .seo-info-card p { font-family: var(--font-ui); font-size: 14.5px; line-height: 1.55; color: var(--fg-4); margin: 0; }
 
 /* ---- COMPARE ---- */
 .v-seo .seo-stages { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 30px; }
-.v-seo .seo-stage { background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-radius: 16px; padding: 24px; box-shadow: 0 1px 2px rgba(8,10,31,.04); }
+.v-seo .seo-stage { background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-radius: 16px; padding: 24px; box-shadow: var(--bai-shadow-hairline); }
 .v-seo .seo-stage.is-blue { border-color: rgba(var(--bai-mkt-blue-rgb),.5); box-shadow: 0 20px 44px -22px rgba(var(--bai-mkt-blue-rgb),.45); background: linear-gradient(180deg, #fff, #f5f8ff); }
 .v-seo .seo-stage-tag { display: block; font-family: var(--font-ui); font-weight: 700; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--fg-5, #9aa0b4); margin-bottom: 10px; }
 .v-seo .seo-stage.is-blue .seo-stage-tag { color: var(--seo-blue); }
@@ -177,7 +177,7 @@ html:has(.v-seo) { scroll-behavior: smooth; }
 
 /* ---- TASKS ---- */
 .v-seo .seo-task-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; margin-top: 34px; }
-.v-seo .seo-task { display: flex; flex-direction: column; background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-radius: 16px; padding: 20px; text-decoration: none; box-shadow: 0 1px 2px rgba(8,10,31,.04); transition: transform .25s var(--ease-out), box-shadow .25s var(--ease-out), border-color .25s var(--ease-out); }
+.v-seo .seo-task { display: flex; flex-direction: column; background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-radius: 16px; padding: 20px; text-decoration: none; box-shadow: var(--bai-shadow-hairline); transition: transform .25s var(--ease-out), box-shadow .25s var(--ease-out), border-color .25s var(--ease-out); }
 .v-seo .seo-task:hover { transform: translateY(-4px); border-color: rgba(var(--bai-iris-rgb),.3); box-shadow: 0 18px 38px -20px rgba(var(--bai-glow-rgb),.4); }
 .v-seo .seo-task-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
 .v-seo .seo-task-icon { width: 36px; height: 36px; border-radius: 10px; background: var(--bai-surface); border: 1px solid var(--bai-divider); display: flex; align-items: center; justify-content: center; font-size: 18px; }
@@ -189,7 +189,7 @@ html:has(.v-seo) { scroll-behavior: smooth; }
 
 /* ---- STEPS ---- */
 .v-seo .seo-steps-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 34px; }
-.v-seo .seo-step { background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-radius: 16px; padding: 22px; box-shadow: 0 1px 2px rgba(8,10,31,.04); }
+.v-seo .seo-step { background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-radius: 16px; padding: 22px; box-shadow: var(--bai-shadow-hairline); }
 .v-seo .seo-step-n { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 50%; background: var(--bai-gradient); color: #fff; font-family: var(--font-head); font-weight: 700; font-size: 14px; margin-bottom: 14px; }
 .v-seo .seo-step h3 { font-family: var(--font-head); font-weight: 600; font-size: 17px; letter-spacing: -.02em; color: var(--seo-slate); margin: 0 0 7px; }
 .v-seo .seo-step p { font-family: var(--font-ui); font-size: 13.5px; line-height: 1.5; color: var(--fg-4); margin: 0; }
@@ -197,9 +197,9 @@ html:has(.v-seo) { scroll-behavior: smooth; }
 .v-seo .seo-safety-icon { font-size: 15px; }
 
 /* ---- FAQ ---- */
-/* FAQ rows span the full section width (dividers edge-to-edge, +/− at the right) like every other
+/* FAQ rows span the full section width (dividers edge-to-edge, +/âˆ’ at the right) like every other
    band; only the ANSWER text keeps a reading measure (capped on .seo-faq-a p below). */
-.v-seo .seo-faq-list { margin-top: 30px; background: rgba(255,255,255,.82); backdrop-filter: blur(12px); border: 1px solid var(--bai-divider); border-radius: 18px; padding: 0 30px; box-shadow: 0 1px 2px rgba(8,10,31,.04); }
+.v-seo .seo-faq-list { margin-top: 30px; background: rgba(255,255,255,.82); backdrop-filter: blur(12px); border: 1px solid var(--bai-divider); border-radius: 18px; padding: 0 30px; box-shadow: var(--bai-shadow-hairline); }
 .v-seo .seo-faq-item { border-bottom: 1px solid var(--bai-divider); }
 .v-seo .seo-faq-item:last-child { border-bottom: none; }
 .v-seo .seo-faq-q { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 16px; background: none; border: none; cursor: pointer; text-align: left; padding: 20px 0; font-family: var(--font-head); font-weight: 600; font-size: clamp(16px,1.3vw,18.5px); letter-spacing: -.01em; color: var(--seo-slate); }
@@ -229,8 +229,8 @@ html:has(.v-seo) { scroll-behavior: smooth; }
 
 /* ---- responsive ---- */
 @media (max-width: 1080px) {
-  /* 6 nav links wrap below ~1100 → collapse the LINKS into the hamburger here; the
-     Download CTA stays in the bar (it only moves into the menu on phones, ≤720). */
+  /* 6 nav links wrap below ~1100 â†’ collapse the LINKS into the hamburger here; the
+     Download CTA stays in the bar (it only moves into the menu on phones, â‰¤720). */
   .v-seo .seo-nav-links { display: none; }
   .v-seo .seo-nav-burger { display: inline-flex; }
   .v-seo .seo-hero { grid-template-columns: 1fr; gap: 40px; align-items: start; }
@@ -245,7 +245,7 @@ html:has(.v-seo) { scroll-behavior: smooth; }
   .v-seo .seo-hero-ctas { flex-direction: column; align-items: stretch; }
   .v-seo .seo-cta-primary, .v-seo .seo-cta-secondary { width: 100%; justify-content: center; }
   .v-seo .seo-faq-list { padding: 0 20px; }
-  /* backdrop sparkle: pinned top-right, only the left half on-screen, big — spins like a gear on scroll */
+  /* backdrop sparkle: pinned top-right, only the left half on-screen, big â€” spins like a gear on scroll */
   .v-seo .seo-spark-bg { left: 100%; top: 15vh; width: 88vw; max-width: none; color: rgba(var(--bai-iris-rgb),.058); }
   .v-seo .seo-wrap { padding: 0 22px; }
   .v-seo .seo-hero { padding: 36px 22px 56px; }

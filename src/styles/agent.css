@@ -23,7 +23,7 @@
 
 /* ---- openings grid ---- */
 .v-agent .ag-openings { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 30px; }
-.v-agent .ag-job { display: flex; flex-direction: column; background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-radius: 14px; padding: 18px; box-shadow: 0 1px 2px rgba(8,10,31,.04); transition: transform .2s var(--ease-out), border-color .2s var(--ease-out), box-shadow .2s var(--ease-out); }
+.v-agent .ag-job { display: flex; flex-direction: column; background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-radius: 14px; padding: 18px; box-shadow: var(--bai-shadow-hairline); transition: transform .2s var(--ease-out), border-color .2s var(--ease-out), box-shadow .2s var(--ease-out); }
 .v-agent .ag-job:hover { transform: translateY(-3px); border-color: rgba(var(--bai-iris-rgb),.3); box-shadow: 0 16px 34px -20px rgba(var(--bai-glow-rgb),.4); }
 .v-agent .ag-job-badges { display: flex; gap: 6px; margin-bottom: 11px; }
 .v-agent .ag-tag { font-family: var(--font-ui); font-weight: 700; font-size: 9.5px; letter-spacing: .06em; text-transform: uppercase; padding: 3px 8px; border-radius: 6px; }
@@ -51,7 +51,7 @@
 
 /* ---- Creator: video showcase + capability cards ---- */
 .v-agent .ag-vids { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 30px; }
-.v-agent .ag-vid-frame { position: relative; aspect-ratio: 9 / 13; border-radius: 16px; overflow: hidden; background: linear-gradient(160deg, #2a2350, #143a52); box-shadow: 0 22px 46px -26px rgba(8,10,31,.45); display: flex; align-items: center; justify-content: center; border: none; padding: 0; width: 100%; cursor: pointer; }
+.v-agent .ag-vid-frame { position: relative; aspect-ratio: 9 / 13; border-radius: 16px; overflow: hidden; background: linear-gradient(160deg, #2a2350, #143a52); box-shadow: 0 22px 46px -26px rgba(var(--bai-ink-rgb),.45); display: flex; align-items: center; justify-content: center; border: none; padding: 0; width: 100%; cursor: pointer; }
 .v-agent .ag-vid-media { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
 .v-agent .ag-vid-frame.exp { background: linear-gradient(160deg, #1f3a4d, #145068); }
 .v-agent .ag-vid-frame::after { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 30% 20%, rgba(255,255,255,.12), transparent 60%); }
@@ -64,7 +64,7 @@
 @media (max-width: 480px) { .v-agent .ag-vids { grid-template-columns: 1fr; max-width: 320px; margin-left: auto; margin-right: auto; } }
 
 .v-agent .ag-caps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 30px; }
-.v-agent .ag-cap { background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-radius: 16px; padding: 24px; box-shadow: 0 1px 2px rgba(8,10,31,.04); }
+.v-agent .ag-cap { background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-radius: 16px; padding: 24px; box-shadow: var(--bai-shadow-hairline); }
 .v-agent .ag-cap-emoji { font-size: 26px; display: block; margin-bottom: 12px; }
 .v-agent .ag-cap h4 { font-family: var(--font-head); font-weight: 600; font-size: 17px; letter-spacing: -.01em; color: var(--bai-mkt-slate); margin: 0 0 6px; }
 .v-agent .ag-cap p { font-family: var(--font-ui); font-size: 14px; line-height: 1.55; color: var(--fg-4); margin: 0; }
@@ -74,7 +74,7 @@
 
 /* ---- Finance: live paper portfolios + benchmark ---- */
 .v-agent .ag-ports { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 30px; }
-.v-agent .ag-port { background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-radius: 16px; padding: 20px; box-shadow: 0 1px 2px rgba(8,10,31,.04); }
+.v-agent .ag-port { background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-radius: 16px; padding: 20px; box-shadow: var(--bai-shadow-hairline); }
 .v-agent .ag-port-style { font-family: var(--font-ui); font-weight: 700; font-size: 10.5px; letter-spacing: .05em; text-transform: uppercase; color: var(--fg-4); }
 .v-agent .ag-port-ret { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 700; font-size: 25px; letter-spacing: -.02em; color: var(--bai-mkt-green); margin: 5px 0 0; }
 .v-agent .ag-port-d { font-family: var(--font-ui); font-size: 12.5px; line-height: 1.45; color: var(--fg-4); margin: 10px 0 12px; }
@@ -89,7 +89,7 @@
 @media (max-width: 540px) { .v-agent .ag-ports { grid-template-columns: 1fr; } }
 
 /* ---- Markets: Polymarket vs Kalshi odds table ---- */
-.v-agent .ag-odds { width: 100%; margin-top: 26px; background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-radius: 16px; overflow: hidden; box-shadow: 0 1px 2px rgba(8,10,31,.04); }
+.v-agent .ag-odds { width: 100%; margin-top: 26px; background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-radius: 16px; overflow: hidden; box-shadow: var(--bai-shadow-hairline); }
 .v-agent .ag-odds table { width: 100%; border-collapse: collapse; }
 .v-agent .ag-odds th, .v-agent .ag-odds td { padding: 12px 18px; font-family: var(--font-ui); font-size: 13.5px; border-bottom: 1px solid var(--bai-divider); text-align: left; }
 .v-agent .ag-odds th { font-weight: 700; font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--fg-4); background: var(--bai-surface); }
@@ -97,12 +97,12 @@
 .v-agent .ag-odds th.num, .v-agent .ag-odds td.num { text-align: right; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
 .v-agent .ag-odds tr:last-child td { border-bottom: none; }
 .v-agent .ag-odds td.gap { color: var(--bai-mkt-blue); font-weight: 600; }
-.v-agent .ag-odds-note { font-family: var(--font-ui); font-size: 11.5px; line-height: 1.5; color: var(--fg-4); margin: 14px 0 0; text-wrap: pretty; } /* table footnote → spans the table width (no prose cap), aligns to the table edges */
+.v-agent .ag-odds-note { font-family: var(--font-ui); font-size: 11.5px; line-height: 1.5; color: var(--fg-4); margin: 14px 0 0; text-wrap: pretty; } /* table footnote â†’ spans the table width (no prose cap), aligns to the table edges */
 @media (max-width: 520px) { .v-agent .ag-odds th, .v-agent .ag-odds td { padding: 10px 11px; font-size: 12px; } }
 
-/* ── Interactive demo form kit (.jmf-*) — the shared form primitives behind all 4 agent demos
-   (apply-to-jobs / creator / finance / markets), faithful replicas of the live bluestacks.ai forms. ── */
-.v-agent .jmf-card { display: flex; flex-direction: column; gap: 18px; background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-radius: 20px; padding: clamp(20px,2.4vw,26px); box-shadow: 0 26px 56px -28px rgba(var(--bai-glow-rgb),.4), 0 4px 14px -6px rgba(8,10,31,.06); }
+/* â”€â”€ Interactive demo form kit (.jmf-*) â€” the shared form primitives behind all 4 agent demos
+   (apply-to-jobs / creator / finance / markets), faithful replicas of the live bluestacks.ai forms. â”€â”€ */
+.v-agent .jmf-card { display: flex; flex-direction: column; gap: 18px; background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-radius: 20px; padding: clamp(20px,2.4vw,26px); box-shadow: 0 26px 56px -28px rgba(var(--bai-glow-rgb),.4), 0 4px 14px -6px rgba(var(--bai-ink-rgb),.06); }
 .v-agent .jmf-head { display: flex; flex-direction: column; gap: 5px; }
 .v-agent .jmf-title { font-family: var(--font-head); font-weight: 600; font-size: 22px; letter-spacing: -.01em; color: var(--bai-mkt-slate); margin: 0; }
 .v-agent .jmf-sub { font-family: var(--font-ui); font-size: 13.5px; line-height: 1.5; color: var(--fg-4); margin: 0; }
@@ -120,7 +120,7 @@
 .v-agent .jmf-tab.is-on { background: var(--bai-surface); color: var(--bai-mkt-slate); border-color: var(--bai-stroke); }
 .v-agent .jmf-hint { font-family: var(--font-ui); font-size: 11.5px; line-height: 1.4; color: var(--fg-4); }
 
-/* "Every trade the agents have made" — trade-log rows (ai-trading-agent) */
+/* "Every trade the agents have made" â€” trade-log rows (ai-trading-agent) */
 .v-agent .ag-trades { margin-top: 26px; border: 1px solid var(--bai-divider); border-radius: var(--radius-md); overflow: hidden; max-width: 760px; }
 .v-agent .ag-trade { display: grid; grid-template-columns: 96px minmax(0,1fr) 58px 56px auto; align-items: center; gap: 14px; padding: 11px 16px; border-bottom: 1px solid var(--bai-divider); font-family: var(--font-ui); font-size: 13px; }
 .v-agent .ag-trade:last-child { border-bottom: none; }
@@ -151,11 +151,11 @@
 .v-agent .jmf-file-input { display: none; }
 .v-agent .jmf-upload.is-filled { border-style: solid; border-color: var(--bai-divider); background: var(--bai-canvas); }
 .v-agent .jmf-file-ic { color: var(--bai-mkt-blue); flex: none; }
-.v-agent .jmf-file-choose { flex: none; border: none; border-radius: var(--radius-pill); background: rgba(8,10,31,.06); padding: 7px 14px; font-family: var(--font-ui); font-weight: 600; font-size: 12.5px; color: var(--fg-2); cursor: pointer; transition: background .15s var(--ease-out); }
-.v-agent .jmf-file-choose:hover { background: rgba(8,10,31,.11); }
+.v-agent .jmf-file-choose { flex: none; border: none; border-radius: var(--radius-pill); background: rgba(var(--bai-ink-rgb),.06); padding: 7px 14px; font-family: var(--font-ui); font-weight: 600; font-size: 12.5px; color: var(--fg-2); cursor: pointer; transition: background .15s var(--ease-out); }
+.v-agent .jmf-file-choose:hover { background: rgba(var(--bai-ink-rgb),.11); }
 .v-agent .jmf-file-empty { font-family: var(--font-ui); font-size: 12.5px; color: var(--fg-4); }
 .v-agent .jmf-file-name { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: var(--font-ui); font-size: 13px; color: var(--fg-1); }
-.v-agent .jmf-file-x { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border: none; border-radius: 50%; background: rgba(8,10,31,.06); color: var(--fg-3); cursor: pointer; transition: background .15s var(--ease-out), color .15s var(--ease-out); }
+.v-agent .jmf-file-x { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border: none; border-radius: 50%; background: rgba(var(--bai-ink-rgb),.06); color: var(--fg-3); cursor: pointer; transition: background .15s var(--ease-out), color .15s var(--ease-out); }
 .v-agent .jmf-file-x:hover { background: var(--bai-danger-soft); color: var(--bai-danger-ink); }
 .v-agent .jmf-agree { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; }
 .v-agent .jmf-agree input { margin-top: 2px; width: 16px; height: 16px; flex: none; accent-color: var(--bai-mkt-blue); cursor: pointer; }

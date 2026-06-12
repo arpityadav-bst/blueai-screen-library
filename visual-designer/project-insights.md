@@ -1,5 +1,11 @@
 # blueAI — Project Insights
-Last updated: 2026-06-12 (S4 — agent pages interactive: AgentShell heroAside/seoBlocks/hiwHeading, .jmf form kit, public/videos; latest deploy commit 8fbad1a)
+Last updated: 2026-06-12 (S5 — SG anatomy architecture + form-kit molecules + ink/page channel tokens; index = 3 entries; latest deploy commit 0df2090)
+
+## Style guide architecture (S5)
+- **Sidebar:** surface-grouped accordion (Foundations · Components · Site & patterns · Agent pages · Marketing pages · App (PM)) — only the active group's items render; sentence-case light headers + per-group counts + a tree-line. Section ids drive scroll-spy; `tok-*` ids are linkable token anchors that RING on `:target`.
+- **Documentation model:** terse one-line ROLE notes everywhere; PREVIEW + ANATOMY (`components/style-guide/Anatomy.tsx`) only on the 7 heavy components (Download CTA · Marketing header · form kit · file upload · bubbles · credits pill · SEO task card). Molecules documented standalone in "Form field molecules".
+- **Form molecules:** `components/agent/form-kit.tsx` — all 4 agent forms compose these; never hand-write `.jmf` field markup.
+- **Index (`/`):** exactly 3 entries — SEO Homepage, Hero Options (chooser), Style Guide (distinct treatment, pinned last). Header/footer logo → `/seo`. The 3 hero variants are reached via the chooser; the 6 inner pages via the SEO nav + hero agent grids.
 
 > Architecture, domain, asset rules, and conventions specific to the blueAI replica.
 > Facts a developer/designer needs that aren't taste.

@@ -1,18 +1,18 @@
 /* ============================================================================
    Shared marketing-site chrome + patterns for the bluestacks.ai inner pages
-   (Social Rewards · Developer · the 4 agent pages). Scoped under .v-site so it
+   (Social Rewards Â· Developer Â· the 4 agent pages). Scoped under .v-site so it
    never collides with /seo or the heroes. Built on the --bai-* / --bai-mkt-*
    tokens. Each page adds a second root class (.v-rewards / .v-dev / .v-agent)
    for its page-specific CSS.
    ============================================================================ */
 .v-site { position: relative; min-height: 100vh; overflow-x: hidden;
   font-family: var(--font-ui); color: var(--bai-mkt-slate);
-  background: linear-gradient(180deg, #f5f6fd 0%, #eef1fb 100%); }
+  background: var(--bai-page-grad); }
 .v-site * { box-sizing: border-box; }
 .v-site main { position: relative; z-index: 1; }
 .v-site .site-wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
 html:has(.v-site) { scroll-behavior: smooth; }
-/* body-copy default: every paragraph avoids orphans/widows (taste rule 14). Low specificity —
+/* body-copy default: every paragraph avoids orphans/widows (taste rule 14). Low specificity â€”
    a per-element rule (e.g. a heading using `balance`) still overrides. Ends the recurring
    "this <p> was missing text-wrap: pretty" miss across all inner-page body copy. */
 .v-site p { text-wrap: pretty; }
@@ -36,7 +36,7 @@ html:has(.v-site) { scroll-behavior: smooth; }
 .v-site .site-btn-ghost { display: inline-flex; align-items: center; gap: 8px; height: 52px; padding: 0 22px; border-radius: var(--radius-pill); background: #fff; border: 1px solid var(--bai-stroke); color: var(--fg-2); font-weight: 600; font-size: 16px; text-decoration: none; transition: border-color .15s var(--ease-out), color .15s var(--ease-out); }
 .v-site .site-btn-ghost:hover { border-color: var(--bai-mkt-blue); color: var(--bai-mkt-blue); }
 
-/* (The site header was unified into the shared <MarketingHeader/> — styles live in header.css.) */
+/* (The site header was unified into the shared <MarketingHeader/> â€” styles live in header.css.) */
 
 /* ---- dark CTA band (shared close section) ---- */
 .v-site .site-cta-band { position: relative; overflow: hidden; border-radius: 28px; padding: clamp(48px,6vw,80px) 32px; text-align: center; background: linear-gradient(120deg, #1b1340 0%, #3b2a8c 48%, #1f6f8f 100%); box-shadow: 0 40px 80px -36px rgba(27,19,64,.6); }
@@ -49,20 +49,20 @@ html:has(.v-site) { scroll-behavior: smooth; }
 /* ---- shared content patterns ---- */
 /* numbered steps (vertical) */
 .v-site .site-steps { display: flex; flex-direction: column; gap: 16px; margin-top: 36px; }
-.v-site .site-step { display: flex; gap: 20px; align-items: flex-start; background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-radius: 18px; padding: 22px 24px; box-shadow: 0 1px 2px rgba(8,10,31,.04); }
+.v-site .site-step { display: flex; gap: 20px; align-items: flex-start; background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-radius: 18px; padding: 22px 24px; box-shadow: var(--bai-shadow-hairline); }
 .v-site .site-step-n { flex: none; width: 46px; height: 46px; border-radius: 13px; background: var(--bai-gradient); color: #fff; font-family: var(--font-head); font-weight: 700; font-size: 16px; display: flex; align-items: center; justify-content: center; box-shadow: var(--bai-shadow-brand-sm); }
 .v-site .site-step h3 { font-family: var(--font-head); font-weight: 600; font-size: 18px; letter-spacing: -.01em; color: var(--bai-mkt-slate); margin: 4px 0 6px; }
 .v-site .site-step p { font-family: var(--font-ui); font-size: 14.5px; line-height: 1.55; color: var(--fg-4); margin: 0; }
 
 /* compact step (how-it-works, 4-up) */
 .v-site .site-hiw { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 18px; margin-top: 30px; }
-.v-site .site-hiw-card { background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-radius: 16px; padding: 22px; box-shadow: 0 1px 2px rgba(8,10,31,.04); }
+.v-site .site-hiw-card { background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-radius: 16px; padding: 22px; box-shadow: var(--bai-shadow-hairline); }
 .v-site .site-hiw-n { width: 34px; height: 34px; border-radius: 10px; background: var(--bai-gradient); color: #fff; font-family: var(--font-head); font-weight: 700; font-size: 14px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 14px; }
 .v-site .site-hiw-card h4 { font-family: var(--font-head); font-weight: 600; font-size: 16px; letter-spacing: -.01em; color: var(--bai-mkt-slate); margin: 0 0 6px; }
 .v-site .site-hiw-card p { font-family: var(--font-ui); font-size: 13.5px; line-height: 1.5; color: var(--fg-4); margin: 0; }
 
 /* FAQ accordion (reused) */
-.v-site .site-faq { margin-top: 30px; background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-radius: 18px; padding: 0 28px; box-shadow: 0 1px 2px rgba(8,10,31,.04); }
+.v-site .site-faq { margin-top: 30px; background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-radius: 18px; padding: 0 28px; box-shadow: var(--bai-shadow-hairline); }
 .v-site .site-faq-item { border-bottom: 1px solid var(--bai-divider); }
 .v-site .site-faq-item:last-child { border-bottom: none; }
 .v-site .site-faq-q { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 16px; background: none; border: none; cursor: pointer; text-align: left; padding: 20px 0; font-family: var(--font-head); font-weight: 600; font-size: clamp(15.5px,1.3vw,18px); letter-spacing: -.01em; color: var(--bai-mkt-slate); }
@@ -73,7 +73,7 @@ html:has(.v-site) { scroll-behavior: smooth; }
 .v-site .site-faq-a p { font-family: var(--font-ui); font-size: 15px; line-height: 1.6; color: var(--fg-4); margin: 0 0 22px; max-width: 72ch; }
 
 /* ---- FOOTER ---- */
-.v-site .site-footer { position: relative; z-index: 1; border-top: 1px solid rgba(8,10,31,.08); margin-top: 8px; }
+.v-site .site-footer { position: relative; z-index: 1; border-top: 1px solid rgba(var(--bai-ink-rgb),.08); margin-top: 8px; }
 .v-site .site-footer-inner { max-width: 1200px; margin: 0 auto; padding: 26px 24px; display: flex; align-items: center; justify-content: space-between; gap: 18px; flex-wrap: wrap; }
 .v-site .site-footer-links { display: flex; align-items: center; gap: 22px; }
 .v-site .site-footer-links a { font-family: var(--font-ui); font-size: 14px; color: var(--fg-3); text-decoration: none; }

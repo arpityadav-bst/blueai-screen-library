@@ -1,16 +1,16 @@
 /* ============================================================================
-   Shared marketing HEADER — one identical nav on every page (SEO homepage + the
+   Shared marketing HEADER â€” one identical nav on every page (SEO homepage + the
    bluestacks.ai inner pages). Scoped to the header element class .bai-hdr (NOT a
    page root), so it renders the same regardless of the page's .v-* scope.
    Mirrors the SEO homepage nav. Built on --bai-* tokens.
    ============================================================================ */
-.bai-hdr { position: sticky; top: 0; z-index: 50; background: rgba(245,246,253,.8); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border-bottom: 1px solid var(--bai-divider); font-family: var(--font-ui); }
+.bai-hdr { position: sticky; top: 0; z-index: 50; background: rgba(var(--bai-page-rgb), .8); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border-bottom: 1px solid var(--bai-divider); font-family: var(--font-ui); }
 .bai-hdr * { box-sizing: border-box; }
 .bai-hdr-inner { max-width: 1640px; margin: 0 auto; padding: 13px 48px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
 .bai-hdr-brand { display: flex; align-items: center; gap: 9px; text-decoration: none; }
 .bai-hdr-brand img { display: block; width: 32px; height: 32px; border-radius: 50%; }
 .bai-hdr-right { display: flex; align-items: center; gap: 14px; }
-.bai-hdr-center { display: flex; align-items: center; gap: 22px; } /* nav links · divider · social — one centered group */
+.bai-hdr-center { display: flex; align-items: center; gap: 22px; } /* nav links Â· divider Â· social â€” one centered group */
 .bai-hdr-links { display: flex; align-items: center; gap: 30px; }
 .bai-hdr-links a { display: inline-flex; align-items: center; gap: 4px; font-family: var(--font-ui); font-weight: 500; font-size: 15px; color: var(--fg-3); text-decoration: none; transition: color .15s var(--ease-out); }
 .bai-hdr-links a:hover { color: var(--fg-1); }
@@ -33,18 +33,18 @@
 .bai-hdr .is-discord { color: #5865F2; }
 .bai-hdr .is-x { color: #000000; }
 .bai-hdr .is-reddit { color: #FF4500; }
-/* the reddit glyph reads small at the shared box size — sized up to the glyph (like HeroNav) */
+/* the reddit glyph reads small at the shared box size â€” sized up to the glyph (like HeroNav) */
 .bai-hdr-social .is-reddit svg { width: 25px; height: 25px; }
 .bai-hdr-menu-social .is-reddit svg { width: 29px; height: 29px; }
 
-/* mobile menu (opaque) + scrim — the perfected pattern */
-.bai-hdr-menu { position: absolute; top: 100%; left: 0; right: 0; z-index: 5; display: flex; flex-direction: column; gap: 2px; padding: 8px 24px 18px; border-bottom: 1px solid var(--bai-divider); background: rgb(245,246,253); box-shadow: 0 18px 36px -18px rgba(8,10,31,.28); }
+/* mobile menu (opaque) + scrim â€” the perfected pattern */
+.bai-hdr-menu { position: absolute; top: 100%; left: 0; right: 0; z-index: 5; display: flex; flex-direction: column; gap: 2px; padding: 8px 24px 18px; border-bottom: 1px solid var(--bai-divider); background: var(--bai-page); box-shadow: 0 18px 36px -18px rgba(var(--bai-ink-rgb),.28); }
 .bai-hdr-menu a { display: inline-flex; align-items: center; gap: 5px; font-family: var(--font-ui); font-weight: 500; font-size: 16px; color: var(--fg-2); text-decoration: none; padding: 13px 4px; }
 .bai-hdr-menu .bai-hdr-cta { margin-top: 10px; height: 48px; font-size: 15.5px; color: #fff; }
-.bai-hdr-scrim { position: absolute; top: 100%; left: 0; right: 0; height: 100vh; z-index: 2; border: none; padding: 0; cursor: pointer; background: rgba(8,10,31,.42); -webkit-tap-highlight-color: transparent; animation: baiHdrScrim .2s var(--ease-out); }
+.bai-hdr-scrim { position: absolute; top: 100%; left: 0; right: 0; height: 100vh; z-index: 2; border: none; padding: 0; cursor: pointer; background: rgba(var(--bai-ink-rgb),.42); -webkit-tap-highlight-color: transparent; animation: baiHdrScrim .2s var(--ease-out); }
 @keyframes baiHdrScrim { from { opacity: 0; } to { opacity: 1; } }
 
-/* responsive — links collapse to the hamburger ≤1080; bar CTA stays until ≤720 (then into the menu) */
+/* responsive â€” links collapse to the hamburger â‰¤1080; bar CTA stays until â‰¤720 (then into the menu) */
 @media (max-width: 1080px) { .bai-hdr-center { display: none; } .bai-hdr-burger { display: inline-flex; } }
 @media (min-width: 1081px) { .bai-hdr-menu, .bai-hdr-scrim { display: none; } }
 @media (min-width: 721px)  { .bai-hdr-menu .bai-hdr-cta { display: none; } }

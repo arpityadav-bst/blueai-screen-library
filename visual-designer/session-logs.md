@@ -3,6 +3,22 @@
 
 ---
 
+## Session 5 — 2026-06-12 (same day, post-S4) — Style-guide architecture + atomic-hierarchy directive + S3 token pass
+**Screens:** /style-guide (the big build) · / (index) · all 12 stylesheets (token migration)
+**Mode:** designer-led SG refinement (live review) → componentisation directive → audit-pass.
+**Built / changed:**
+- **SG documentation model:** trimmed ~30 verbose captions to terse roles → built `Anatomy`/`Tok`/`PreviewAnatomy` primitives → applied two-tier (7 heavy components incl. the stacked Marketing-header layout) → **Icons** Foundations section (9 glyphs) → `[id^='tok-']:target` focus rings → "where it's used" notes on radius/elevation.
+- **`text-2xs` latent bug:** the SG's entire fine-print tier (129 elements) silently rendered 16px — the class was never defined. One type-scale token fixed all of it.
+- **`form-kit.tsx` molecules** (Field/TextField/TextAreaField/SelectField/PillsField/Tabs/FormHead/Agree/Submit) — the field markup was hand-copied 26× across 4 forms; all refactored (Career 67→28 lines, agent bundles shrank ~50%). + SG "Form field molecules" section (all 10, standalone + interactive).
+- **Index pared to 3** (SEO Homepage · Hero Options · Style Guide w/ distinct DS treatment, pinned bottom); logo/wordmark → `/seo`. Pushed `0df2090` mid-session.
+- **S5 audit (this pass):** `--bai-ink-rgb` + `--bai-shadow-hairline` + `--bai-page-*` tokens, migrated 12 stylesheets (closed the S4 deferral); Tailwind float/overlay → var() SSOT; my own fresh leaks fixed (index iris ring, `text-[10/11px]` arbitraries); SG swatches for every new token; build green; computed values verified identical.
+**Corrections (designer-caught): 5 visual + 4 process** — see evolution S5. Headline: the balloon/crush/centered-headers/footnote-cause/role-size were all first-pass SG-build misses (category #2, 3rd validation).
+**Learned:** taste 26 (atomic hierarchy is law — the designer's standing directive) · 27 (role vs recipe; two-tier anatomy) · 28 (nav recedes; grouping axis by task) · 29 (width-by-role) · 13 amended (neutral channel + hairline). KB: hash-navigation isn't a reload (the 10-cycle misdiagnosis trap) · click-then-read races React · sg-demo page-root reset · anatomy rows are grep-verified quotes.
+**Files updated:** taste (26–29 + 13), decisions (6 rows), KB (S5 section), evolution (S5), project-insights (SG architecture), shared reasonings (+3), scratchpad WIPED.
+**`designer_caught_count: 5`** (visual, new SG build). **Watch next:** Gate-8 pre-present pass (3-for-3 now); apply taste 26 from line one; parked: SiteFaq/SeoFaq + the two CTA bands.
+
+---
+
 ## Session 4 — 2026-06-12 — Discrepancy sweep across all 6 inner pages, videos, push, + audit/health-check
 **Screens:** apply-to-jobs · ai-video-creator · ai-trading-agent · prediction-market-agent · social-rewards · developer
 **Mode:** designer-directed fidelity sweep (live-vs-ours, page by page) → then audit-pass + health check.

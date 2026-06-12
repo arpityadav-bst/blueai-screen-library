@@ -1,5 +1,5 @@
 /* ============================================================================
-   BlueAI Hero — Stage Original. Ported from "BlueAI Hero - Stage Original.html".
+   BlueAI Hero â€” Stage Original. Ported from "BlueAI Hero - Stage Original.html".
    Centered headline + CTA on top; below, a big center stage (one agent at a time,
    LEGACY animation) + a vertical thumbnail rail. Framer drives motion. Self-contained
    :root locals + the BIG legacy scene sizing (shared markup with 3-Cards, bigger here).
@@ -16,7 +16,7 @@
     linear-gradient(180deg, #f3f4fc 0%, #eaeefb 55%, #eef1fc 100%);
   min-height: 100vh; overflow-x: hidden; --nav-pad-y: 22px; }
 
-/* NAV → shared in hero-nav.css (imported by <HeroNav/>). Only --nav-pad-y differs (set on .hero-page above).
+/* NAV â†’ shared in hero-nav.css (imported by <HeroNav/>). Only --nav-pad-y differs (set on .hero-page above).
    The .nav { flex:none } in the min-width:921 block below is a Stage-Original layout override (100vh flex column). */
 
 /* HERO (centered, then showcase) */
@@ -36,7 +36,7 @@
 
 /* SHOWCASE (stage + rail) */
 .v-original .showcase { display: grid; grid-template-columns: 1.62fr 1fr; gap: 18px; margin-top: 30px; text-align: left; align-items: stretch; }
-.v-original .stage-main { position: relative; background: var(--bai-canvas); border: 1px solid rgba(var(--bai-iris-rgb),.30); border-radius: 24px; overflow: hidden; height: clamp(384px, 52vh, 468px); box-shadow: 0 26px 56px -24px rgba(var(--bai-glow-rgb),.42), 0 4px 14px -6px rgba(8,10,31,.08); }
+.v-original .stage-main { position: relative; background: var(--bai-canvas); border: 1px solid rgba(var(--bai-iris-rgb),.30); border-radius: 24px; overflow: hidden; height: clamp(384px, 52vh, 468px); box-shadow: 0 26px 56px -24px rgba(var(--bai-glow-rgb),.42), 0 4px 14px -6px rgba(var(--bai-ink-rgb),.08); }
 .v-original .stage-main::before { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 0; background: linear-gradient(180deg, rgba(var(--bai-iris-rgb),.05), rgba(var(--bai-cyan-rgb),.035)); }
 .v-original .pane { position: absolute; inset: 0; z-index: 1; padding: 22px 26px; display: flex; flex-direction: column; }
 .v-original .pane-top { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
@@ -50,12 +50,12 @@
 .v-original .see-tag svg { width: 16px; height: 16px; color: var(--bai-mkt-blue); transition: transform .18s var(--ease-out); }
 .v-original .pane:hover .see-tag svg { transform: translateX(3px); }
 .v-original .pane-title { font-family: var(--font-head); font-weight: 600; font-size: 22px; line-height: 1.1; letter-spacing: -.03em; color: var(--slate-900); text-wrap: balance; margin: 0 0 6px; }
-.v-original .pane-desc { font-family: var(--font-ui); font-weight: 400; font-size: 14.5px; line-height: 1.45; color: var(--fg-4); margin: 0 0 12px; text-wrap: pretty; } /* use the full available pane width (was a too-narrow 48ch cap that forced mid-phrase breaks). text-wrap:pretty + &nbsp;-glued trailing sentence in the copy → the break lands on the full stop when a sentence fits, else the best clause point. */
+.v-original .pane-desc { font-family: var(--font-ui); font-weight: 400; font-size: 14.5px; line-height: 1.45; color: var(--fg-4); margin: 0 0 12px; text-wrap: pretty; } /* use the full available pane width (was a too-narrow 48ch cap that forced mid-phrase breaks). text-wrap:pretty + &nbsp;-glued trailing sentence in the copy â†’ the break lands on the full stop when a sentence fits, else the best clause point. */
 .v-original .stage { position: relative; flex: 1; min-height: 148px; background: var(--bai-surface); border: 1px solid var(--bai-divider); border-radius: 16px; padding: 18px; overflow: hidden; }
 
 /* RAIL */
 .v-original .rail { display: flex; flex-direction: column; gap: 12px; }
-.v-original .thumb { position: relative; flex: 1; text-align: left; background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-radius: 16px; padding: 13px 14px 14px; cursor: pointer; display: flex; flex-direction: column; gap: 6px; overflow: hidden; box-shadow: 0 1px 2px rgba(8,10,31,.04); transition: transform .35s var(--ease-out), box-shadow .35s var(--ease-out), border-color .35s var(--ease-out); }
+.v-original .thumb { position: relative; flex: 1; text-align: left; background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-radius: 16px; padding: 13px 14px 14px; cursor: pointer; display: flex; flex-direction: column; gap: 6px; overflow: hidden; box-shadow: var(--bai-shadow-hairline); transition: transform .35s var(--ease-out), box-shadow .35s var(--ease-out), border-color .35s var(--ease-out); }
 .v-original .thumb-top { display: flex; align-items: center; gap: 10px; }
 .v-original .thumb-icon { width: 38px; height: 38px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex: none; }
 .v-original .thumb-eyebrow { font-family: var(--font-ui); font-weight: 600; font-size: 10.5px; letter-spacing: .13em; text-transform: uppercase; color: var(--bai-mkt-blue-2); }
@@ -88,7 +88,7 @@
 .v-original .cv-board { display: flex; gap: 11px; }
 .v-original .cv-frame { position: relative; flex: 1; height: 60px; border-radius: 10px; background: #fff; border: 1px solid var(--bai-divider); overflow: hidden; }
 .v-original .cv-frame::before { content: ""; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(var(--bai-iris-rgb),.14), rgba(var(--bai-cyan-rgb),.12)); }
-.v-original .cv-play { position: absolute; inset: 0; margin: auto; width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,.92); display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(8,10,31,.18); } /* center without transform — motion.span scale would override translate-centering */
+.v-original .cv-play { position: absolute; inset: 0; margin: auto; width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,.92); display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(var(--bai-ink-rgb),.18); } /* center without transform â€” motion.span scale would override translate-centering */
 .v-original .cv-play svg { width: 14px; height: 14px; color: var(--bai-ink-heading); margin-left: 1px; }
 .v-original .cv-views { position: absolute; left: 18px; bottom: 16px; font-family: var(--font-ui); font-weight: 600; font-size: 13px; color: var(--fg-3); display: flex; align-items: center; gap: 6px; }
 .v-original .cv-views svg { width: 13px; height: 13px; color: #c2418a; }
@@ -121,14 +121,14 @@
 @media (max-width: 920px) {
   /* .nav-links hidden via hero-nav.css */
   .v-original .showcase { grid-template-columns: 1fr; gap: 16px; margin-top: 28px; }
-  .v-original .stage-main { height: 490px; } /* taller — the mobile title+desc are taller, so the fixed stage was crushing the scene → "Applied" footer overlapped the form. Give the scene room. */
+  .v-original .stage-main { height: 490px; } /* taller â€” the mobile title+desc are taller, so the fixed stage was crushing the scene â†’ "Applied" footer overlapped the form. Give the scene room. */
   .v-original .pane { padding: 18px 18px; }
   .v-original .pane-title { font-size: 21px; }
   .v-original .pane-desc { font-size: 13.5px; }
   .v-original .rail { flex-direction: row; flex-wrap: wrap; }
   .v-original .rail .pill-live { width: 100%; justify-content: center; } /* full row above the thumb row */
   .v-original .thumb { align-items: center; }
-  .v-original .thumb-top { flex-direction: column; align-items: center; gap: 5px; } /* icon over label → label gets full thumb width, no "CARE…" clipping */
+  .v-original .thumb-top { flex-direction: column; align-items: center; gap: 5px; } /* icon over label â†’ label gets full thumb width, no "CAREâ€¦" clipping */
   .v-original .thumb-eyebrow { text-align: center; }
   .v-original .thumb-title { display: none; }
 }

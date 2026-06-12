@@ -13,3 +13,17 @@
 }
 .sg-reveal { animation: sgReveal .6s var(--ease-out) both; }
 @media (prefers-reduced-motion: reduce) { .sg-reveal { animation: none; } }
+
+/* 3) Token focus highlight — clicking a linked token (<Tok to="tok-…">) scrolls to it and the
+   :target draws an iris ring around that specific swatch/sample so it's findable. A short pulse
+   draws the eye on arrival, then a persistent ring stays while it's the active target. */
+[id^='tok-'] { scroll-margin-top: 24px; transition: box-shadow .2s var(--ease-out); }
+[id^='tok-']:target {
+  box-shadow: 0 0 0 2px var(--bai-iris), 0 0 0 6px rgba(var(--bai-iris-rgb), .16);
+  animation: sgTokFlash 1.1s var(--ease-out) 1;
+}
+@keyframes sgTokFlash {
+  0%   { box-shadow: 0 0 0 2px var(--bai-iris), 0 0 0 12px rgba(var(--bai-iris-rgb), .38); }
+  100% { box-shadow: 0 0 0 2px var(--bai-iris), 0 0 0 6px rgba(var(--bai-iris-rgb), .16); }
+}
+@media (prefers-reduced-motion: reduce) { [id^='tok-']:target { animation: none; } }

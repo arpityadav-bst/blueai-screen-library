@@ -1,8 +1,8 @@
 // Showcases the blueai-modern in-panel components on the DS tokens. Light theme.
 import { HeroNav } from '@/components/hero/HeroNav'
 import { Wordmark } from '@/components/Wordmark'
-import { Sparkle } from '@/components/Sparkle'
 import { DownloadCta } from '@/components/home/DownloadCta'
+import { PreviewAnatomy, Tok } from '@/components/style-guide/Anatomy'
 import '@/styles/homepage.css' // scoped under .bai-home — styles the real <DownloadCta/> below
 
 function Card({ id, title, children }: { id?: string; title: string; children: React.ReactNode }) {
@@ -28,15 +28,23 @@ export function ComponentsSection() {
         </div>
       </section>
 
-      {/* Download CTA — the canonical brand button (one of the two brand primitives) */}
-      <section id="download-cta" className="scroll-mt-8 rounded-field border border-divider bg-surface p-5 lg:col-span-2">
-        <p className="bai-section-label mb-1">Download CTA</p>
-        <p className="mb-4 text-2xs text-ink-muted">The canonical brand button — cta-gradient pill with the Sparkle + Wordmark primitives.</p>
-        <div className="bai-home flex flex-wrap items-center gap-5">
-          <DownloadCta />
-          <span className="inline-flex items-center gap-2 text-ink-muted"><Sparkle size={22} className="text-iris" /><span className="text-2xs">the canonical spark, standalone</span></span>
-        </div>
-      </section>
+      {/* Download CTA — the canonical brand button. Full PREVIEW + ANATOMY treatment:
+          the recipe a dev needs lives in the table, the role stays a terse note. */}
+      <PreviewAnatomy
+        id="download-cta"
+        title="Download CTA"
+        scope="bai-home"
+        note="The canonical brand button — a cta-gradient pill carrying the Sparkle primitive + label, with an arrow that slides on hover."
+        preview={<DownloadCta />}
+        rows={[
+          { code: <>.dl-cta · <Tok to="tok-cta-gradient">--bai-cta-gradient</Tok> · <Tok to="tok-radius-pill">radius-pill</Tok> · h-54 px-28</>, role: 'Container — gradient pill, fixed 54px height, generous padding' },
+          { code: <>inline-flex · gap-9 · 17px / 600 · text-white</>, role: 'Layout + label — flex row, white semibold label on the gradient' },
+          { code: <><Tok to="icons">Sparkle</Tok> .spark 18×18</>, role: 'Leading mark — the canonical Sparkle primitive (SSOT)' },
+          { code: <><Tok to="icons">Arrow</Tok> .arrow 18×18 · hover translateX(3px)</>, role: 'Trailing arrow — slides right on hover' },
+          { code: <><Tok to="tok-shadow-cta">shadow-cta</Tok> → shadow-cta-hover · translateY(-2px)</>, role: 'Elevation + hover — brand glow, lifts on hover' },
+          { code: <>active scale(.98) · reduced-motion → none</>, role: 'Press + a11y — tactile press, honors reduced-motion' },
+        ]}
+      />
 
       {/* Buttons */}
       <Card id="buttons" title="Buttons — gradient · accent · hairline">
@@ -56,18 +64,32 @@ export function ComponentsSection() {
         <span className="rounded-sm bg-status-jobs-soft px-2 py-1 text-2xs font-semibold text-status-jobs-ink">available</span>
       </Card>
 
-      {/* Pill badges (round, filled + outlined) · outline tags · gradient credits pill */}
-      <Card id="pill-badges" title="Pill badges · outline tags · credits">
+      {/* Pill badges (round, filled + outlined) · outline tags */}
+      <Card id="pill-badges" title="Pill badges · outline tags">
         <span className="inline-flex items-center gap-1.5 rounded-pill bg-status-info-soft px-2.5 py-1 text-2xs font-semibold text-status-info-ink"><span className="size-1.5 rounded-circle bg-status-info" />Active</span>
         <span className="inline-flex items-center gap-1 rounded-pill border border-status-success bg-status-success-soft px-2.5 py-1 text-2xs font-semibold text-status-success-ink">✓ Verified</span>
         <span className="inline-flex items-center gap-1 rounded-pill border border-status-scheduled bg-status-scheduled-soft px-2.5 py-1 text-2xs font-semibold text-status-scheduled-ink">Scheduled</span>
         <span className="rounded-pill bg-status-success-soft px-2.5 py-1 text-2xs font-semibold text-status-success-ink">5/10 skills active</span>
         <span className="rounded-card border border-status-scheduled px-2 py-0.5 text-2xs font-bold uppercase tracking-wide text-status-scheduled">Admin</span>
         <span className="rounded-card border border-status-warning px-2 py-0.5 text-2xs font-bold uppercase tracking-wide text-status-warning-ink">ENGG</span>
-        <span className="inline-block rounded-pill bg-bai-gradient p-px">
-          <span className="block rounded-pill bg-canvas px-3 py-1 text-xs font-bold"><span className="text-gradient">✦ 2,450</span></span>
-        </span>
       </Card>
+
+      {/* Credits pill — heavy treatment: the gradient-border trick isn't self-evident */}
+      <PreviewAnatomy
+        id="credits"
+        title="Credits pill"
+        note="The gradient-border credits chip — a padded gradient parent + a solid inner pill (no border-image)."
+        preview={
+          <span className="inline-block rounded-pill bg-bai-gradient p-px">
+            <span className="block rounded-pill bg-canvas px-3 py-1 text-xs font-bold"><span className="text-gradient">✦ 2,450</span></span>
+          </span>
+        }
+        rows={[
+          { code: <>outer · rounded-pill · <Tok to="tok-gradient">bg-bai-gradient</Tok> · p-px</>, role: 'Gradient border — full-pill gradient; the 1px padding becomes the ring' },
+          { code: <>inner · rounded-pill · bg-canvas · px-3 py-1</>, role: 'Fill — canvas pill inset by 1px, leaving a gradient hairline' },
+          { code: <>.text-gradient · ✦ · 12px / 700</>, role: 'Content — gradient-clipped spark + credit count' },
+        ]}
+      />
 
       {/* Suggested-action pills */}
       <Card id="pills" title="Suggested-action pills — ✦ on 10% wash">
@@ -87,13 +109,23 @@ export function ComponentsSection() {
         </div>
       </Card>
 
-      {/* Message bubbles */}
-      <Card id="bubbles" title="Message bubbles — asymmetric radius">
-        <div className="flex w-full flex-col items-end gap-2.5">
-          <div className="max-w-[80%] rounded-bubble-sent bg-bai-gradient px-3.5 py-2 text-sm text-white">Search for racing games on Play Store</div>
-          <div className="max-w-[80%] self-start rounded-bubble-recv border border-divider bg-surface px-3.5 py-2 text-sm text-ink-body">On it — here are the top racing games right now.</div>
-        </div>
-      </Card>
+      {/* Message bubbles — heavy treatment: the asymmetric radius is the non-obvious recipe */}
+      <PreviewAnatomy
+        id="bubbles"
+        title="Message bubbles"
+        note="Chat bubbles with an asymmetric radius — one corner stays sharp, pointing back toward the sender."
+        preview={
+          <div className="flex w-full max-w-[340px] flex-col items-end gap-2.5">
+            <div className="max-w-[85%] rounded-bubble-sent bg-bai-gradient px-3.5 py-2 text-sm text-white">Search for racing games on Play Store</div>
+            <div className="max-w-[85%] self-start rounded-bubble-recv border border-divider bg-surface px-3.5 py-2 text-sm text-ink-body">On it, here are the top racing games right now.</div>
+          </div>
+        }
+        rows={[
+          { code: <>rounded-bubble-sent (12 12 0 12) · <Tok to="tok-gradient">bg-bai-gradient</Tok> · self-end</>, role: 'Sent — gradient bubble, sharp bottom-right, right-aligned' },
+          { code: <>rounded-bubble-recv (12 12 12 0) · border-divider · bg-surface · self-start</>, role: 'Received — light bubble, sharp bottom-left, left-aligned' },
+          { code: <>max-w-[80%] · px-3.5 py-2 · text-sm</>, role: 'Width — caps at 80% so a bubble never spans the full column' },
+        ]}
+      />
 
       {/* Composer */}
       <Card id="composer" title="Prompt composer">

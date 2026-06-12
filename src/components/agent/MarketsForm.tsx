@@ -1,52 +1,26 @@
 'use client'
 import { useState } from 'react'
-import { Arrow } from '@/components/Arrow'
+import { TextField, TextAreaField, Tabs, FormHead, Agree, Submit } from '@/components/agent/form-kit'
 
 // Faithful interactive replica of the live bluestacks.ai "Get odds alerts" demo — a tabbed
-// form (Watch markets / Ask about odds). Design-only (submit inert). Reuses .jmf-*.
+// form (Watch markets / Ask about odds). Design-only (submit inert). Composes form-kit.
 export function MarketsForm() {
   const [tab, setTab] = useState<'watch' | 'ask'>('watch')
   return (
     <form className="jmf-card" onSubmit={(e) => e.preventDefault()}>
-      <div className="jmf-head">
-        <h2 className="jmf-title">Get odds alerts</h2>
-        <p className="jmf-sub">Join the queue. The agent watches your markets and emails you the moves.</p>
-      </div>
-
-      <div className="jmf-tabs">
-        <button type="button" aria-pressed={tab === 'watch'} className={`jmf-tab${tab === 'watch' ? ' is-on' : ''}`} onClick={() => setTab('watch')}>Watch markets</button>
-        <button type="button" aria-pressed={tab === 'ask'} className={`jmf-tab${tab === 'ask' ? ' is-on' : ''}`} onClick={() => setTab('ask')}>Ask about odds</button>
-      </div>
-
-      <label className="jmf-field">
-        <span className="jmf-lbl">Email</span>
-        <input className="jmf-input" type="email" placeholder="you@email.com" />
-      </label>
-
+      <FormHead title="Get odds alerts" sub="Join the queue. The agent watches your markets and emails you the moves." />
+      <Tabs value={tab} onChange={setTab} tabs={[['watch', 'Watch markets'], ['ask', 'Ask about odds']]} />
+      <TextField label="Email" type="email" placeholder="you@email.com" />
       {tab === 'watch' ? (
         <>
-          <label className="jmf-field">
-            <span className="jmf-lbl">Markets to watch</span>
-            <textarea className="jmf-input jmf-textarea" rows={2} placeholder="e.g. World Cup 2026 winner, USA to advance from group, Spain vs France" />
-          </label>
-          <label className="jmf-field">
-            <span className="jmf-lbl">Alert me when odds move <span className="jmf-opt">(optional)</span></span>
-            <input className="jmf-input" type="text" placeholder="e.g. 3 points of implied probability" />
-          </label>
+          <TextAreaField label="Markets to watch" placeholder="e.g. World Cup 2026 winner, USA to advance from group, Spain vs France" />
+          <TextField label="Alert me when odds move" optional="optional" placeholder="e.g. 3 points of implied probability" />
         </>
       ) : (
-        <label className="jmf-field">
-          <span className="jmf-lbl">Your question</span>
-          <textarea className="jmf-input jmf-textarea" rows={2} placeholder="e.g. What are the current World Cup winner odds? Where do Polymarket and Kalshi disagree most?" />
-        </label>
+        <TextAreaField label="Your question" placeholder="e.g. What are the current World Cup winner odds? Where do Polymarket and Kalshi disagree most?" />
       )}
-
-      <label className="jmf-agree">
-        <input type="checkbox" />
-        <span>I understand this is odds information for education, not betting advice, and I agree to be emailed my alerts and product updates.</span>
-      </label>
-
-      <button type="submit" className="jmf-submit">Get my alerts<Arrow size={18} /></button>
+      <Agree>I understand this is odds information for education, not betting advice, and I agree to be emailed my alerts and product updates.</Agree>
+      <Submit>Get my alerts</Submit>
     </form>
   )
 }

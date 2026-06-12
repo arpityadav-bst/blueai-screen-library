@@ -1,5 +1,5 @@
 /* ============================================================================
-   BlueAI Hero — Stage (two-column, ★ Recommended). Static visual styles ported
+   BlueAI Hero â€” Stage (two-column, â˜… Recommended). Static visual styles ported
    from the Claude-design export (BlueAI Hero - Stage.html inline \3c style>). Motion
    is rebuilt with Framer Motion in the React components, so this file is visuals
    only (initial hidden states are set in JSX, not here). Built on the --bai-*
@@ -20,7 +20,7 @@
     linear-gradient(180deg, #f3f4fc 0%, #eaeefb 55%, #eef1fc 100%);
   min-height: 100vh; overflow-x: hidden; --nav-pad-y: 12px; }
 
-/* NAV → shared in hero-nav.css (imported by <HeroNav/>). Only --nav-pad-y differs (set on .hero-page above).
+/* NAV â†’ shared in hero-nav.css (imported by <HeroNav/>). Only --nav-pad-y differs (set on .hero-page above).
    The .nav { flex:none } in the min-width:921 block below is a Stage-layout override (100vh flex column), not nav design. */
 
 /* --------------------------------------------------------------- HERO (2-col) */
@@ -50,7 +50,7 @@
    at the same single-class specificity. In the production CSS bundle those load
    together and order isn't guaranteed, so center can win on `.hero` and the
    heading + scene (which live here) inherit it. An own declaration on .hero-right
-   beats any inherited value, order-independently — keeps the Stage left-aligned. */
+   beats any inherited value, order-independently â€” keeps the Stage left-aligned. */
 .v-stage .hero-right { display: flex; flex-direction: column; min-height: 0; text-align: left; }
 .v-stage .pill-live { align-self: flex-start; display: inline-flex; align-items: center; gap: 9px;
   background: rgba(255,255,255,.7); border: 1px solid var(--bai-divider);
@@ -65,7 +65,7 @@
 .v-stage .rail { display: flex; gap: 10px; margin-bottom: 10px; }
 .v-stage .thumb { position: relative; flex: 1; min-width: 0; display: flex; align-items: center; gap: 9px;
   background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-radius: 14px;
-  padding: 9px 11px; cursor: pointer; overflow: hidden; text-align: left; box-shadow: 0 1px 2px rgba(8,10,31,.04);
+  padding: 9px 11px; cursor: pointer; overflow: hidden; text-align: left; box-shadow: var(--bai-shadow-hairline);
   transition: transform .35s var(--ease-out), box-shadow .35s var(--ease-out), border-color .35s var(--ease-out); }
 .v-stage .thumb-icon { width: 30px; height: 30px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 17px; flex: none; }
 .v-stage .thumb-label { font-family: var(--font-head); font-weight: 600; font-size: 14px; letter-spacing: -.01em; color: var(--slate-900); flex: 1; min-width: 0; }
@@ -85,7 +85,7 @@
 .v-stage .stage-main { position: relative; flex: none; background: var(--bai-canvas);
   border: 1px solid rgba(var(--bai-iris-rgb),.30); border-radius: 22px; overflow: hidden;
   height: clamp(376px, 52vh, 484px);
-  box-shadow: 0 26px 56px -24px rgba(var(--bai-glow-rgb),.42), 0 4px 14px -6px rgba(8,10,31,.08); }
+  box-shadow: 0 26px 56px -24px rgba(var(--bai-glow-rgb),.42), 0 4px 14px -6px rgba(var(--bai-ink-rgb),.08); }
 .v-stage .stage-main::before { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 0;
   background: linear-gradient(180deg, rgba(var(--bai-iris-rgb),.05), rgba(var(--bai-cyan-rgb),.035)); }
 .v-stage .pane { position: absolute; inset: 0; z-index: 1; padding: 18px 22px; display: flex; flex-direction: column; }
@@ -159,7 +159,7 @@
 .v-stage .cv-preview::before { content: ""; position: absolute; inset: 0; background: linear-gradient(150deg, rgba(var(--bai-iris-rgb),.18), rgba(194,65,138,.16)); }
 .v-stage .cv-cap { position: absolute; left: 7px; right: 7px; bottom: 9px; height: 5px; border-radius: 3px; background: rgba(255,255,255,.85); transform-origin: left center; }
 .v-stage .cv-cap.c2 { bottom: 19px; right: 26px; }
-.v-stage .cv-play { position: absolute; inset: 0; margin: auto; width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,.94); display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(8,10,31,.2); } /* center without transform — motion.span scale would override translate-centering */
+.v-stage .cv-play { position: absolute; inset: 0; margin: auto; width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,.94); display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(var(--bai-ink-rgb),.2); } /* center without transform â€” motion.span scale would override translate-centering */
 .v-stage .cv-play svg { width: 13px; height: 13px; color: var(--bai-ink-heading); margin-left: 1px; }
 .v-stage .cv-steps { flex: 1; display: flex; flex-direction: column; gap: 13px; justify-content: center; }
 .v-stage .cv-step { display: flex; align-items: center; gap: 9px; font-family: var(--font-ui); font-weight: 500; font-size: 12.5px; color: var(--fg-3); }
@@ -217,7 +217,7 @@
   .v-stage .headline { font-size: clamp(38px, 9vw, 50px); }
   .v-stage .stage-main { height: 430px; }
   .v-stage .thumb { padding: 9px 9px; }
-  .v-stage .thumb-see { display: none; } /* 3 thumbs in a row overflow on mobile — drop the arrow so icon+label fit */
+  .v-stage .thumb-see { display: none; } /* 3 thumbs in a row overflow on mobile â€” drop the arrow so icon+label fit */
   .v-stage .thumb-label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 }
 @media (max-width: 420px) {

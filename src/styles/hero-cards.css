@@ -1,5 +1,5 @@
 /* ============================================================================
-   BlueAI Hero — 3 Cards. Static visual styles ported from "BlueAI Hero - 3 Cards.html".
+   BlueAI Hero â€” 3 Cards. Static visual styles ported from "BlueAI Hero - 3 Cards.html".
    Centered headline + a 3-column row of agent cards, each running the LEGACY single-
    scene animation (Framer drives motion). Self-contained :root locals + scene sizing.
    ============================================================================ */
@@ -15,14 +15,14 @@
     linear-gradient(180deg, #f3f4fc 0%, #eaeefb 55%, #eef1fc 100%);
   min-height: 100vh; overflow-x: hidden; --nav-pad-y: 26px; --bai-content: 1440px; }
 
-/* NAV → shared in hero-nav.css (imported by <HeroNav/>). Only --nav-pad-y differs (set on .hero-page above). */
+/* NAV â†’ shared in hero-nav.css (imported by <HeroNav/>). Only --nav-pad-y differs (set on .hero-page above). */
 
 /* Wide "live-site" layout for the 4-card row: --bai-content is set to 1440 on .v-cards (above) so
    nav + hero + the homepage body all widen TOGETHER (no width step). The nav then opts into
    FULL-BLEED so the header spans the viewport like the live site (logo at the far edge). */
 .v-cards .nav { max-width: none; }
 
-/* HERO (centered) — cards band widened to 1600 so 4 cards get ~362px each (≥320). Decoupled
+/* HERO (centered) â€” cards band widened to 1600 so 4 cards get ~362px each (â‰¥320). Decoupled
    from --hero-w/--bai-content (which keeps the homepage body below at a saner 1440 measure). */
 .v-cards .hero { max-width: 1600px; margin: 0 auto; padding: 34px 40px 90px; text-align: center; }
 .v-cards .pill-live { display: inline-flex; align-items: center; gap: 9px; background: rgba(255,255,255,.7); border: 1px solid var(--bai-divider); border-radius: var(--radius-pill); padding: 8px 16px 8px 14px; box-shadow: var(--shadow-float); backdrop-filter: blur(6px); }
@@ -40,9 +40,9 @@
 
 /* CARDS */
 .v-cards .agents { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; margin-top: 64px; align-items: stretch; }
-.v-cards .card { position: relative; top: 0; min-width: 0; text-align: left; background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-radius: 22px; padding: 22px; display: flex; flex-direction: column; box-shadow: 0 1px 2px rgba(8,10,31,.04); cursor: pointer; transition: box-shadow .4s var(--ease-out), border-color .4s var(--ease-out), top .3s var(--ease-out); }
-/* active card LIFTS (via `top`, not transform — transform is owned by framer's entrance y). bg stays clean white = full text contrast. */
-.v-cards .card.is-active { top: -8px; border-color: rgba(var(--bai-iris-rgb),.35); box-shadow: 0 26px 52px -22px rgba(var(--bai-glow-rgb),.42), 0 6px 16px -8px rgba(8,10,31,.12); }
+.v-cards .card { position: relative; top: 0; min-width: 0; text-align: left; background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-radius: 22px; padding: 22px; display: flex; flex-direction: column; box-shadow: var(--bai-shadow-hairline); cursor: pointer; transition: box-shadow .4s var(--ease-out), border-color .4s var(--ease-out), top .3s var(--ease-out); }
+/* active card LIFTS (via `top`, not transform â€” transform is owned by framer's entrance y). bg stays clean white = full text contrast. */
+.v-cards .card.is-active { top: -8px; border-color: rgba(var(--bai-iris-rgb),.35); box-shadow: 0 26px 52px -22px rgba(var(--bai-glow-rgb),.42), 0 6px 16px -8px rgba(var(--bai-ink-rgb),.12); }
 .v-cards .card.is-dim { opacity: .62; }
 .v-cards a.card { text-decoration: none; color: inherit; } /* cards link to their agent page */
 .v-cards .card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; }
@@ -69,7 +69,7 @@
 .v-cards .cr-lbl { font-family: var(--font-ui); font-size: 9.5px; color: var(--fg-4); width: 42px; flex: none; }
 .v-cards .cr-track { flex: 1; height: 8px; border-radius: 4px; background: #e7ebf5; overflow: hidden; }
 .v-cards .cr-fill { display: block; height: 100%; width: 100%; border-radius: 4px; transform-origin: left center; background: linear-gradient(90deg, #c9d3ee, #aab9e6); }
-.v-cards .cr-submit { margin-top: auto; flex: none; height: 30px; border: none; cursor: default; border-radius: 8px; background: linear-gradient(105deg, var(--bai-legacy-blue), var(--bai-iris)); color: #fff; font-family: var(--font-ui); font-weight: 600; font-size: 12px; display: flex; align-items: center; justify-content: center; overflow: hidden; } /* flow at bottom (margin-top:auto) → gap above the form; .cr-applied overlays it */
+.v-cards .cr-submit { margin-top: auto; flex: none; height: 30px; border: none; cursor: default; border-radius: 8px; background: linear-gradient(105deg, var(--bai-legacy-blue), var(--bai-iris)); color: #fff; font-family: var(--font-ui); font-weight: 600; font-size: 12px; display: flex; align-items: center; justify-content: center; overflow: hidden; } /* flow at bottom (margin-top:auto) â†’ gap above the form; .cr-applied overlays it */
 .v-cards .cr-ripple { position: absolute; left: 50%; bottom: 15px; width: 120px; height: 120px; border-radius: 50%; background: rgba(255,255,255,.6); pointer-events: none; }
 .v-cards .cr-applied { position: absolute; left: 14px; right: 14px; bottom: 14px; height: 30px; border-radius: 8px; background: var(--green-bg); color: #0f7a3b; font-family: var(--font-ui); font-weight: 600; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 5px; }
 
@@ -81,9 +81,9 @@
 .v-cards .cv-board { display: flex; gap: 8px; }
 .v-cards .cv-frame { position: relative; flex: 1; height: 36px; border-radius: 7px; background: #fff; border: 1px solid var(--bai-divider); overflow: hidden; }
 .v-cards .cv-frame::before { content: ""; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(var(--bai-iris-rgb),.14), rgba(var(--bai-cyan-rgb),.12)); }
-.v-cards .cv-play { position: absolute; inset: 0; margin: auto; width: 24px; height: 24px; border-radius: 50%; background: rgba(255,255,255,.92); display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(8,10,31,.18); } /* center without transform — it's a motion.span whose scale transform would override translate-centering */
+.v-cards .cv-play { position: absolute; inset: 0; margin: auto; width: 24px; height: 24px; border-radius: 50%; background: rgba(255,255,255,.92); display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(var(--bai-ink-rgb),.18); } /* center without transform â€” it's a motion.span whose scale transform would override translate-centering */
 .v-cards .cv-play svg { width: 11px; height: 11px; color: var(--bai-ink-heading); margin-left: 1px; }
-.v-cards .cv-views { margin-top: auto; font-family: var(--font-ui); font-weight: 600; font-size: 11px; color: var(--fg-3); display: flex; align-items: center; gap: 5px; } /* flow at bottom (margin-top:auto) → never overlaps the storyboard above */
+.v-cards .cv-views { margin-top: auto; font-family: var(--font-ui); font-weight: 600; font-size: 11px; color: var(--fg-3); display: flex; align-items: center; gap: 5px; } /* flow at bottom (margin-top:auto) â†’ never overlaps the storyboard above */
 .v-cards .cv-views svg { width: 11px; height: 11px; color: #c2418a; }
 
 /* ---------- FINANCE (legacy) ---------- */
@@ -98,7 +98,7 @@
 .v-cards .fn-line { fill: none; stroke: url(#fn-grad); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
 .v-cards .fn-marker { position: absolute; font-family: var(--font-mono); font-weight: 600; font-size: 9.5px; color: #fff; background: #0f7a3b; border-radius: var(--radius-pill); padding: 3px 8px; left: 58%; top: 8px; box-shadow: 0 3px 8px rgba(15,122,59,.4); }
 .v-cards .fn-marker::after { content: ""; position: absolute; left: 14px; top: 100%; width: 6px; height: 6px; border-radius: 50%; background: #0f7a3b; margin-top: 2px; }
-.v-cards .fn-port { margin-top: auto; display: flex; align-items: baseline; gap: 7px; } /* flow at bottom (margin-top:auto) → gap above the chart */
+.v-cards .fn-port { margin-top: auto; display: flex; align-items: baseline; gap: 7px; } /* flow at bottom (margin-top:auto) â†’ gap above the chart */
 .v-cards .fn-port .v { font-family: var(--font-mono); font-weight: 600; font-size: 17px; color: var(--slate-900); letter-spacing: -.02em; }
 .v-cards .fn-port .d { font-family: var(--font-mono); font-weight: 500; font-size: 11px; color: #0f7a3b; }
 
@@ -120,7 +120,7 @@
 .v-cards .mk-alert-t { font-family: var(--font-ui); font-weight: 600; font-size: 11px; color: #2454c9; line-height: 1.2; }
 
 @media (max-width: 1440px) and (min-width: 921px) {
-  /* below ~1440 the 4-across row would push cards under 320 → drop to a 2×2 grid instead */
+  /* below ~1440 the 4-across row would push cards under 320 â†’ drop to a 2Ã—2 grid instead */
   .v-cards .agents { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 860px; margin-left: auto; margin-right: auto; }
 }
 @media (max-width: 920px) {

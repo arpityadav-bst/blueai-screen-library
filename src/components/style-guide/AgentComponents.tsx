@@ -2,11 +2,14 @@
 // The agent-page demo components (replicated from the live bluestacks.ai forms, built on blueAI
 // tokens). Renders the REAL components wrapped in .v-agent so the doc can't drift from the source.
 import '@/styles/agent.css'
+import { useState } from 'react'
 import { CareerForm } from '@/components/agent/CareerForm'
 import { FinanceForm } from '@/components/agent/FinanceForm'
 import { FileUpload } from '@/components/agent/FileUpload'
 import { VideoCard } from '@/components/agent/VideoCard'
+import { Field, TextField, TextAreaField, SelectField, PillsField, Tabs, FormHead, Agree, Submit } from '@/components/agent/form-kit'
 import { Arrow } from '@/components/Arrow'
+import { PreviewAnatomy, Tok } from '@/components/style-guide/Anatomy'
 
 function Card({ id, title, note, children }: { id: string; title: string; note?: React.ReactNode; children: React.ReactNode }) {
   return (
@@ -23,14 +26,62 @@ const TRADES: [string, string, 'buy' | 'sell', string, string][] = [
   ['Jun 9, 2026', 'Breakout / Compression', 'sell', 'KIM', '$11,166'],
 ]
 
+// One labeled cell in the molecules grid — mono molecule name over the live sample.
+function Molecule({ name, children }: { name: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <p className="mb-1.5 font-mono text-xs text-ink-muted">{name}</p>
+      {children}
+    </div>
+  )
+}
+
+// Every form-kit molecule standalone + interactive (stateful samples live here, not in the kit).
+function FieldMolecules() {
+  const [pills, setPills] = useState<string[]>(['US', 'Remote'])
+  const [tab, setTab] = useState<'watch' | 'ask'>('watch')
+  const togglePill = (p: string) => setPills((prev) => (prev.includes(p) ? prev.filter((x) => x !== p) : [...prev, p]))
+  return (
+    <div className="grid w-full gap-x-6 gap-y-5 sm:grid-cols-2">
+      <Molecule name="<TextField>"><TextField label="Email" type="email" placeholder="you@email.com" /></Molecule>
+      <Molecule name="<TextField optional>"><TextField label="Alert me when odds move" optional="optional" placeholder="e.g. 3 points of implied probability" /></Molecule>
+      <Molecule name="<TextAreaField>"><TextAreaField label="Your question" placeholder="e.g. Is NVDA overbought?" /></Molecule>
+      <Molecule name="<SelectField>"><SelectField label="Seniority" options={['Any', 'Entry level', 'Senior']} defaultValue="Any" /></Molecule>
+      <Molecule name="<PillsField>"><PillsField label="Location" options={['US', 'Remote', 'Global', 'Other']} value={pills} onToggle={togglePill} /></Molecule>
+      <Molecule name="<Tabs>"><Tabs value={tab} onChange={setTab} tabs={[['watch', 'Watch markets'], ['ask', 'Ask about odds']]} /></Molecule>
+      <Molecule name="<Field hint>"><Field label="Your holdings" hint="A broker screenshot, a portfolio export, or a PDF statement all work."><FileUpload accept=".pdf,.csv,image/*" /></Field></Molecule>
+      <Molecule name="<FormHead>"><FormHead title="Get your job matches" sub="Join the queue. The agent runs and emails you matching openings." /></Molecule>
+      <Molecule name="<Agree>"><Agree>I agree to be emailed my results and product updates.</Agree></Molecule>
+      <Molecule name="<Submit>"><form onSubmit={(e) => e.preventDefault()}><Submit>Get my job matches</Submit></form></Molecule>
+    </div>
+  )
+}
+
 export function AgentComponents() {
   return (
     <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
-      {/* The .jmf form kit — rendered live via the real CareerForm */}
-      <Card id="agent-form" title="Demo form kit"
-        note="The shared form kit — input · multi-select pills · select · upload · checkbox · submit. Accent is solid blue, not the brand gradient.">
+      {/* The .jmf form kit — heavy treatment (the most complex agent component) */}
+      <PreviewAnatomy
+        id="agent-form"
+        scope="v-agent"
+        title="Demo form kit"
+        note="The shared agent form kit. The accent is solid blue (mkt-blue), not the brand gradient — only the submit pill uses the gradient."
+        preview={<div className="w-full max-w-[420px]"><CareerForm /></div>}
+        rows={[
+          { code: <>{'<Field>'} · .jmf-field flex-col gap-6 + .jmf-lbl</>, role: 'Field molecule — stacked label over any control' },
+          { code: <>{'<TextField>'} · .jmf-input · radius-md · focus <Tok to="tok-mkt-blue">mkt-blue</Tok> + 3px ring</>, role: 'Input — hairline field; focus = blue border + soft ring' },
+          { code: <>{'<PillsField>'} · .jmf-pill + <Tok to="icons">Check</Tok> when on</>, role: 'Pill choice — single or multi; active chips show a check' },
+          { code: <>{'<SelectField>'} · appearance-none + chevron bg-image</>, role: 'Select — native control, custom chevron glyph' },
+          { code: <>{'<Field>'} + FileUpload · 1.5px dashed → solid (<Tok to="icons">Upload</Tok>)</>, role: 'Upload — dashed dropzone, flips solid when filled' },
+          { code: <>{'<Submit>'} · w-full · <Tok to="tok-cta-gradient">cta-gradient</Tok> · radius-pill · <Tok to="tok-shadow-cta">shadow-cta</Tok></>, role: 'Submit — full-width brand pill (the only gradient in the form)' },
+        ]}
+      />
 
-        <div className="max-w-[420px]"><CareerForm /></div>
+      {/* The form-kit molecules standalone — the layer between the .jmf-* atoms and the forms */}
+      <Card id="agent-fields" title="Form field molecules"
+        note="Every form-kit molecule, standalone and interactive. The four demo forms only compose these — no form hand-writes field markup.">
+
+        <FieldMolecules />
       </Card>
 
       {/* Tabbed variant + textarea + hint */}
@@ -40,12 +91,20 @@ export function AgentComponents() {
         <div className="max-w-[420px]"><FinanceForm /></div>
       </Card>
 
-      {/* FileUpload — all states (taste rule 24) */}
-      <Card id="agent-upload" title="File upload"
-        note="All states — empty (Choose file) → filled (filename + ✕ remove, box flips dashed to solid) → cleared.">
-
-        <div className="max-w-[420px]"><FileUpload accept=".pdf,.doc,.docx,image/*" /></div>
-      </Card>
+      {/* FileUpload — heavy treatment: all states (taste rule 24) */}
+      <PreviewAnatomy
+        id="agent-upload"
+        scope="v-agent"
+        title="File upload"
+        note="A stateful field — try it: empty → filled (filename + ✕, the box flips dashed to solid) → cleared."
+        preview={<div className="w-full max-w-[420px]"><FileUpload accept=".pdf,.doc,.docx,image/*" /></div>}
+        rows={[
+          { code: <>.jmf-upload · flex gap-12 · 1.5px dashed · radius-md · bg-surface</>, role: 'Empty — dashed dropzone, Upload glyph + “Choose file”' },
+          { code: <>.jmf-upload-ic · <Tok to="icons">Upload</Tok></>, role: 'Icon — upload glyph in the stroke color' },
+          { code: <>.is-filled · border-solid · border-divider · bg-canvas</>, role: 'Filled — flips to a solid bordered row' },
+          { code: <>filename + ✕ (<Tok to="icons">Close</Tok>)</>, role: 'Remove — ✕ clears the file back to empty' },
+        ]}
+      />
 
       {/* Trade-log rows + BUY/SELL badges */}
       <Card id="agent-trades" title="Trade log + badges"

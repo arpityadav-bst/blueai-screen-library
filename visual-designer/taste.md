@@ -1,5 +1,5 @@
 # blueAI — Taste
-Last updated: 2026-06-12 (S4 audit — +rules 23–25 (composition≠content fidelity · render-all-states · curly quotes); all three sharpen recurring category #2 → the Gate-8 catch-rate edge)
+Last updated: 2026-06-12 (S5 audit — +rules 26–29 (atomic hierarchy · role-vs-recipe docs · nav recedes · width-by-role); rule 13 amended with hairline + the neutral channel)
 
 > blueAI's design *language* — how it should feel — so VDA can design new blueAI
 > surfaces from instinct. Seeded from the Claude-design export's DS README (which is a
@@ -87,9 +87,12 @@ springy bounces) — "a utility assistant, not a toy."
 
 13. **The DS carries a full radius + shadow scale (don't reach for arbitraries).** Radii:
     badge 2 · card 8 · field 12 · chat 16 · credits 24 · pill 128 · circle + the asymmetric
-    bubbles. Shadows: float · overlay + the brand **cta** glow (tokenized — never inline the
-    `rgba(95,70,255,…)` CTA shadow again) + brand-sm + Tailwind sm/md/lg/xl. Reach for a token,
-    not an arbitrary value.
+    bubbles. Shadows: **hairline** (resting cards) · float · overlay + the brand **cta** glow
+    (tokenized — never inline the `rgba(95,70,255,…)` CTA shadow again) + brand-sm + Tailwind
+    sm/md/lg/xl. Reach for a token, not an arbitrary value. **Amendment (S5):** every neutral
+    rgba derives from the `--bai-ink-rgb` channel (scrims, hairlines, neutral shadows) and the
+    marketing page surface from `--bai-page-rgb`/`--bai-page-grad` — same one-source rule the
+    brand channels follow. No raw `rgba(8,10,31,…)` / `rgb(245,246,253)` anywhere.
 
 ## Codified taste rules (added S2 — promoted from the 2026-06-10 build session + S2 fixes)
 
@@ -185,6 +188,40 @@ springy bounces) — "a utility assistant, not a toy."
     double-quote as two slanted "99" strokes, so a straight opening quote looks like an inverted
     closing quote — invisible in code, wrong on screen. Check the rendered glyph, not the source.
     *(S2-cont/S4.)*
+
+## Codified taste rules (added S5 — the style-guide architecture + atomic-hierarchy day)
+
+26. **Atomic hierarchy is LAW (designer directive, S5): atoms → molecules → components →
+    patterns → pages, and EVERYTHING is tokenised — "even a space or padding."** Every value
+    traces to a token; every repeated structure gets extracted at its layer. "Componentised"
+    must be true at ALL THREE levels — token, CSS, **and React**: one CSS source with
+    copy-pasted markup is a half-extracted molecule (the `.jmf` field pair was hand-copied 26×
+    across 4 forms before the `form-kit.tsx` molecules). And **every layer gets its own
+    style-guide home** — a molecule only visible inside a composed organism is undocumented
+    for the dev who needs just the field. Test for any new UI: can I name its layer, and does
+    every value trace to a token? If either fails, fix before shipping.
+
+27. **A DS reference separates ROLE from RECIPE (learned from WSUP's style guide).** SHOW the
+    live component; the caption is a terse one-line ROLE in plain English. The build recipe
+    (classes, tokens, structure) lives in a structured PREVIEW + ANATOMY table — one build
+    concern per row, literal recipe left / plain-English purpose right, token names
+    cross-linked to (and ringing) the exact swatch. File paths are a grep target, not doc;
+    design rationale belongs in this notebook, not the caption. **Two-tier discipline:**
+    anatomy value ∝ structural complexity — reserve the heavy treatment for components whose
+    recipe isn't self-evident (header, form kit, bubbles, credits-pill border trick); atoms
+    keep show + terse note. Anatomizing everything is volume, not clarity. And anatomy rows
+    are GREP-VERIFIED against the real CSS, never written from memory (`.jmf-label` ≠ `.jmf-lbl`).
+
+28. **Navigation should recede; choose the grouping axis by the user's task.** Sidebar/nav
+    labels are sentence-case, small, light — ALL-CAPS bold nav shouts and competes with the
+    content it serves. Group a HANDOFF reference by surface (everything for a page together);
+    group an exploration library by kind. Don't copy a reference's taxonomy that doesn't fit
+    the content.
+
+29. **Width-by-role: a caption/footnote bound to a table or figure takes the WIDTH OF THE
+    ELEMENT IT ANNOTATES, not a prose measure.** The 50–75ch readability cap is for paragraphs
+    read top-to-bottom; fine print attached to a figure aligns to the figure's edges. (The
+    odds-table disclaimer at a 70ch cap wrapped to 4 cramped lines beside empty space.)
 
 > Motion (framer-motion) gotchas, the spotlight pattern, the CSS-chunking leak, the ambient
 > backdrop, and mobile/layout/SSOT technical detail live in `knowledge-base.md`.

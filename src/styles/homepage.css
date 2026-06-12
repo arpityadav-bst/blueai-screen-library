@@ -1,5 +1,5 @@
 /* ============================================================================
-   BlueAI homepage sections — shared styles (scoped under .bai-home)
+   BlueAI homepage sections â€” shared styles (scoped under .bai-home)
    Used by homepage-sections.html (standalone) and injected into the 3 hero
    options so the page below the hero is identical everywhere.
    Single source of truth for these sections' visuals.
@@ -35,7 +35,7 @@
 /* ---------------------------------------------------- FEATURE ROWS */
 .bai-home .features{display:flex;flex-direction:column;gap:104px;padding:84px 0 40px;}
 .bai-home .feat{display:grid;grid-template-columns:0.9fr 1.45fr;gap:56px;align-items:center;}
-.bai-home .feat.reverse{grid-template-columns:1.45fr 0.9fr;} /* mirror so the IMAGE (order:1 → col1) sits in the wide track too */
+.bai-home .feat.reverse{grid-template-columns:1.45fr 0.9fr;} /* mirror so the IMAGE (order:1 â†’ col1) sits in the wide track too */
 .bai-home .feat.reverse .feat-text{order:2;}
 .bai-home .feat.reverse .feat-visual{order:1;}
 
@@ -52,7 +52,7 @@
   border:1px solid var(--bai-divider);border-radius:var(--radius-pill);padding:9px 17px;
   font-family:var(--font-ui);font-size:14px;color:var(--fg-3);box-shadow:var(--shadow-float);}
 
-/* feature visual — real product image from the live site */
+/* feature visual â€” real product image from the live site */
 .bai-home .feat-visual{position:relative;border-radius:20px;overflow:hidden;
   box-shadow:0 26px 54px -32px rgba(var(--bai-glow-rgb),.42);}
 .bai-home .feat-visual img{display:block;width:100%;height:auto;}
@@ -109,7 +109,7 @@
 
 .bai-home .skill{position:relative;display:flex;flex-direction:column;background:var(--bai-canvas);
   border:1px solid var(--bai-divider);border-radius:16px;padding:18px 18px 16px;
-  box-shadow:0 1px 2px rgba(8,10,31,.04);transition:transform .2s var(--ease-out),box-shadow .2s var(--ease-out),border-color .2s var(--ease-out);}
+  box-shadow:var(--bai-shadow-hairline);transition:transform .2s var(--ease-out),box-shadow .2s var(--ease-out),border-color .2s var(--ease-out);}
 .bai-home .skill:hover{transform:translateY(-3px);border-color:rgba(var(--bai-iris-rgb),.3);
   box-shadow:0 20px 40px -24px rgba(var(--bai-glow-rgb),.4);}
 .bai-home .skill-top{display:flex;align-items:center;gap:10px;margin-bottom:15px;}
@@ -134,7 +134,7 @@
   font-size:13px;color:var(--bh-blue);text-decoration:none;white-space:nowrap;}
 .bai-home .skill-try:hover{text-decoration:underline;}
 
-/* "more skills on the way" tile — matches live site */
+/* "more skills on the way" tile â€” matches live site */
 .bai-home .skill-more{align-items:center;justify-content:center;text-align:center;gap:9px;
   background:linear-gradient(180deg,#eff4ff 0%,#e9f0fe 100%);border:1px solid #dce6fb;box-shadow:none;}
 .bai-home .skill-more:hover{transform:none;border-color:#c5d6f7;box-shadow:none;}

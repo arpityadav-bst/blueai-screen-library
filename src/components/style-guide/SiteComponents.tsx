@@ -8,6 +8,7 @@ import { MarketingHeader } from '@/components/MarketingHeader'
 import { MarketingFooter } from '@/components/MarketingFooter'
 import { SiteFaq } from '@/components/site/SiteFaq'
 import { Arrow } from '@/components/Arrow'
+import { PreviewAnatomy, Tok } from '@/components/style-guide/Anatomy'
 
 function Block({ id, title, note, full, children }: { id: string; title: string; note?: React.ReactNode; full?: boolean; children: React.ReactNode }) {
   return (
@@ -22,12 +23,24 @@ function Block({ id, title, note, full, children }: { id: string; title: string;
 export function SiteComponents() {
   return (
     <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
-      {/* The REAL shared header on every page (replaces the legacy HeroNav as the production nav) */}
-      <Block id="site-header" full title="Marketing header"
-        note="The shared header on every page — logo · centered links · brand-colored social · Download CTA · mobile hamburger.">
-
-        <div className="overflow-hidden rounded-card border border-divider"><MarketingHeader /></div>
-      </Block>
+      {/* The REAL shared header on every page (replaces the legacy HeroNav as the production nav).
+          Heavy treatment, stacked: full-width preview on top, anatomy below. */}
+      <PreviewAnatomy
+        id="site-header"
+        layout="stack"
+        title="Marketing header"
+        note="The shared header on every page — frosted sticky bar, centered links, brand-colored social, the Download CTA, and a mobile hamburger."
+        preview={<div className="overflow-hidden rounded-card border border-divider"><MarketingHeader /></div>}
+        rows={[
+          { code: <>.bai-hdr · sticky top-0 z-50 · backdrop-blur(10px) · border-b</>, role: 'Bar — sticky, frosted-glass blur over a hairline bottom border' },
+          { code: <>.bai-hdr-inner · max-w-1640 · px-48 py-13 · flex justify-between</>, role: 'Layout — centered max-width row, brand left / actions right' },
+          { code: <>.bai-hdr-brand · img 32 + Wordmark → /seo</>, role: 'Brand — icon + wordmark, links to the marketing home' },
+          { code: <>.bai-hdr-links · gap-30 · 15px / 500 · <Tok to="icons">External</Tok> ↗</>, role: 'Nav — primary links; external ones get the ↗ glyph' },
+          { code: <>.bai-hdr-social · is-discord / is-x / is-reddit</>, role: 'Social — each glyph in its platform brand color' },
+          { code: <>.bai-hdr-cta · <Tok to="tok-cta-gradient">cta-gradient</Tok> · radius-pill · <Tok to="tok-shadow-cta">shadow-cta</Tok> + <Tok to="icons">Arrow</Tok></>, role: 'CTA — the brand Download pill with a trailing sliding arrow' },
+          { code: <>.bai-hdr-burger + .bai-hdr-menu + scrim · ≤1080</>, role: 'Mobile — links collapse to a hamburger → opaque menu + scrim' },
+        ]}
+      />
 
       {/* The REAL shared footer */}
       <Block id="site-footer" full title="Marketing footer"

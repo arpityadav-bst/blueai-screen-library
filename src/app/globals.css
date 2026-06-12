@@ -18,6 +18,7 @@
     --bai-iris-rgb: 123, 76, 255;   /* #7B4CFF */
     --bai-cyan-rgb: 14, 164, 197;   /* #0EA4C5 */
     --bai-glow-rgb: 95, 70, 255;    /* #5F46FF — the brand shadow/glow purple, under brand elements */
+    --bai-ink-rgb:  8, 10, 31;      /* #080A1F — neutral ink channel; every neutral scrim/hairline/shadow rgba() derives from it (S3 audit — closes the neutral leak like S2 closed the brand one) */
     --bai-iris:   rgb(var(--bai-iris-rgb));
     --bai-cyan:   rgb(var(--bai-cyan-rgb));
     --bai-iris-2: rgb(151, 71, 255);   /* #9747FF — used once, outer frame stroke */
@@ -78,8 +79,9 @@
 
     /* ----- SHADOWS (border-driven system; float/overlay reserved for menus) ----- */
     --shadow-none: none;
-    --shadow-float: 0 4px 16px -4px rgba(8, 10, 31, 0.08), 0 1px 2px rgba(8, 10, 31, 0.04);
-    --shadow-overlay: 0 12px 32px -8px rgba(8, 10, 31, 0.16);
+    --shadow-float: 0 4px 16px -4px rgba(var(--bai-ink-rgb), 0.08), 0 1px 2px rgba(var(--bai-ink-rgb), 0.04);
+    --shadow-overlay: 0 12px 32px -8px rgba(var(--bai-ink-rgb), 0.16);
+    --bai-shadow-hairline: 0 1px 2px rgba(var(--bai-ink-rgb), 0.04); /* resting cards — was hand-inlined 20× across the page stylesheets (S3) */
 
     /* ----- PM SUPPLEMENT — filled from the BlueAI PM DS (the shipping web-app codebase),
        for what blueai-modern didn't spec. Interactive accent (app/in-product surfaces;
@@ -105,6 +107,9 @@
        stylesheets alias these: homepage.css "--bh-" vars, seo-home.css "--seo-" vars and
        "--green", and the heroes' "--slate-900" + "--green". Promoted from duplicated per-file
        locals at the S2 token audit. ----- */
+    --bai-page-rgb:       245, 246, 253;       /* #F5F6FD channel — the marketing page surface */
+    --bai-page:           rgb(var(--bai-page-rgb));               /* opaque: mobile menus */
+    --bai-page-grad:      linear-gradient(180deg, rgb(var(--bai-page-rgb)) 0%, #eef1fb 100%); /* the page background — .v-site/.v-seo/index (was inlined 3×, S3) */
     --bai-mkt-blue-rgb:   47, 109, 255;        /* #2F6DFF channel */
     --bai-mkt-blue-2-rgb: 61, 123, 255;        /* #3D7BFF channel */
     --bai-mkt-green-rgb:  22, 163, 74;         /* #16A34A channel */

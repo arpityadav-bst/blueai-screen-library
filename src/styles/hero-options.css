@@ -1,7 +1,7 @@
 /* ============================================================================
-   BlueAI Hero — Options / Design Review chooser. Ported from "BlueAI Hero - Options.html".
+   BlueAI Hero â€” Options / Design Review chooser. Ported from "BlueAI Hero - Options.html".
    Scoped under .ho so its generic class names (.grid, .opt, .blk, .ln) never leak.
-   Schematic thumbnails + UX pros/cons + ★ Recommended badge; links the 3 live heroes.
+   Schematic thumbnails + UX pros/cons + â˜… Recommended badge; links the 3 live heroes.
    ============================================================================ */
 .ho { --font-head: 'Space Grotesk', var(--font-display); --slate-900: var(--bai-mkt-slate);
   min-height: 100vh; display: flex; flex-direction: column; font-family: var(--font-ui); color: var(--fg-1);
@@ -17,7 +17,7 @@
 .ho h1 { font-family: var(--font-head); font-weight: 600; letter-spacing: -.03em; font-size: clamp(34px, 4vw, 48px); line-height: 1.05; color: var(--slate-900); margin: 0; text-wrap: balance; }
 .ho .lede { font-family: var(--font-ui); color: var(--fg-4); font-size: 18px; line-height: 1.55; max-width: 60ch; margin: 16px 0 40px; }
 .ho .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
-.ho .opt { display: flex; flex-direction: column; text-decoration: none; background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-radius: 20px; overflow: hidden; box-shadow: 0 1px 2px rgba(8,10,31,.04); transition: transform .2s var(--ease-out), box-shadow .2s var(--ease-out), border-color .2s var(--ease-out); }
+.ho .opt { display: flex; flex-direction: column; text-decoration: none; background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-radius: 20px; overflow: hidden; box-shadow: var(--bai-shadow-hairline); transition: transform .2s var(--ease-out), box-shadow .2s var(--ease-out), border-color .2s var(--ease-out); }
 .ho .opt:hover { transform: translateY(-3px); border-color: rgba(var(--bai-iris-rgb),.35); box-shadow: 0 24px 50px -24px rgba(var(--bai-glow-rgb),.45); }
 .ho .thumb { position: relative; height: 172px; border-bottom: 1px solid var(--bai-divider); overflow: hidden; background: linear-gradient(180deg, #fbfbff, #f1f3fd); }
 .ho .num { position: absolute; top: 12px; left: 12px; width: 26px; height: 26px; border-radius: 8px; background: var(--bai-gradient); color: #fff; font-family: var(--font-head); font-weight: 700; font-size: 13px; display: flex; align-items: center; justify-content: center; z-index: 2; }
