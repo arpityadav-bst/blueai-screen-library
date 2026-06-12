@@ -25,8 +25,9 @@ export function MarketingPages() {
   return (
     <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
       {/* SEO task-hub card */}
-      <Block id="seo-task" scope="v-seo" title="SEO task-hub card (.seo-task)"
-        note="The internal-linking hub tile (8-up on /seo) — icon + LIVE badge + title (a search verb) + desc + verb link. Each is an <a> to a task landing page.">
+      <Block id="seo-task" scope="v-seo" title="SEO task-hub card"
+        note="Internal-linking hub tile — icon · LIVE badge · title · desc · verb link.">
+
         <div className="seo-task-grid" style={{ gridTemplateColumns: '1fr 1fr' }}>
           {[['💼', 'Apply to jobs', true], ['🎬', 'Make a video', true]].map(([ic, t, live]) => (
             <a className="seo-task" href="#0" key={t as string}>
@@ -39,16 +40,18 @@ export function MarketingPages() {
       </Block>
 
       {/* SEO what-is explainer card */}
-      <Block id="seo-info" scope="v-seo" title="What-is explainer card (.seo-info-card)"
-        note="The 3-up explainer under the featured-snippet definition on /seo.">
+      <Block id="seo-info" scope="v-seo" title="What-is card"
+        note="Explainer card — icon · title · description.">
+
         <div className="seo-trio" style={{ gridTemplateColumns: '1fr' }}>
           <div className="seo-info-card"><div className="seo-info-icon">🧠</div><h3>It reads the screen</h3><p>BlueAI operates the real apps on screen — not a brittle API that breaks on a layout change.</p></div>
         </div>
       </Block>
 
       {/* SEO comparison stage card */}
-      <Block id="seo-stage" scope="v-seo" title="Comparison stage card (.seo-stage / .is-blue)"
-        note="The chatbot→assistant→worker frame; stage 3 (the 'worker' = BlueAI) is the highlighted .is-blue variant.">
+      <Block id="seo-stage" scope="v-seo" title="Comparison stage"
+        note="Comparison stage — the highlighted variant marks BlueAI as the 'worker'.">
+
         <div className="seo-stages" style={{ gridTemplateColumns: '1fr 1fr' }}>
           <div className="seo-stage"><span className="seo-stage-tag">Chatbot</span><h3>Answers questions</h3><p>Replies in text. You still do the task.</p></div>
           <div className="seo-stage is-blue"><span className="seo-stage-tag">Worker</span><h3>Does the task</h3><p>Operates the apps and completes it for you.</p></div>
@@ -56,14 +59,16 @@ export function MarketingPages() {
       </Block>
 
       {/* SEO hero grid + backdrop — page-specific animated, noted */}
-      <Block id="seo-hero" scope="v-seo" title="SEO hero agent grid + ambient backdrop (animated — see /seo)"
-        note={<>Page-specific animated compositions (not re-run here to keep the SG light): the 2×2 agent grid (<span className="font-mono">SeoAgentGrid</span>, spotlight loop + parallax) and <span className="font-mono">SeoBackdrop</span> (drifting iris/cyan orbs + rotating sparkle, taste rule 21, reduced-motion-gated). View live on <span className="font-mono">/seo</span>.</>}>
+      <Block id="seo-hero" scope="v-seo" title="SEO hero + backdrop"
+        note="Animated 2×2 agent grid + ambient backdrop — see them live on /seo.">
+
         <p className="text-2xs text-ink-muted">↗ Live on the SEO homepage.</p>
       </Block>
 
       {/* SEO close CTA band — distinct from the dark .site-cta-band */}
-      <Block id="seo-cta" scope="v-seo" full title="SEO close CTA band (.seo-close)"
-        note={<>The SEO homepage's BRIGHT-blue conversion close — a SEPARATE treatment from the dark <span className="font-mono">.site-cta-band</span> on the agent/rewards pages (sentence-per-line heading + Sparkle + Arrow CTA). <b className="text-ink-heading">Two CTA-band treatments now exist</b> (bright SEO vs dark inner-page) — intentional per the SEO page's brighter palette; flag if they should consolidate.</>}>
+      <Block id="seo-cta" scope="v-seo" full title="SEO CTA band"
+        note="The SEO bright-blue close CTA — a separate, brighter treatment from the dark inner-page CTA band.">
+
         <div className="seo-close">
           <h2 className="seo-close-h"><span>Stop doing the busywork.</span><span><br />Start reviewing it.</span></h2>
           <p className="seo-close-sub"><span>Hand your first task to an AI worker today.</span><span><br />Free on Windows and Mac, inside BlueStacks.</span></p>
@@ -72,8 +77,9 @@ export function MarketingPages() {
       </Block>
 
       {/* Homepage feature row */}
-      <Block id="home-feature" scope="bai-home" full title="Homepage feature row (.feat) — taste rule 10"
-        note="Alternating text-left / visual-right rows: number + category + Space-Grotesk title + one-line desc + a single chat-quote pill, opposite a product PNG (placeholder shown).">
+      <Block id="home-feature" scope="bai-home" full title="Feature row"
+        note="Alternating feature row — number · category · title · desc · chat-quote, opposite a product image (placeholder shown).">
+
         <div className="features">
           <article className="feat">
             <div className="feat-text">
@@ -88,8 +94,9 @@ export function MarketingPages() {
       </Block>
 
       {/* Homepage skill card */}
-      <Block id="home-skill" scope="bai-home" title="Skill card (.skill)"
-        note="The All-Skills grid card: icon tile + category + title + desc + star rating + Try link (15-up on the homepage).">
+      <Block id="home-skill" scope="bai-home" title="Skill card"
+        note="Skill card — icon · category · title · desc · rating · Try link.">
+
         <div className="skill-grid" style={{ gridTemplateColumns: '1fr' }}>
           <article className="skill">
             <div className="skill-top"><span className="skill-ic" style={{ background: '#e7e3ff' }}>🧠</span><span className="skill-cat">Productivity</span></div>
@@ -101,8 +108,9 @@ export function MarketingPages() {
       </Block>
 
       {/* Rewards post card */}
-      <Block id="rw-card" scope="v-rewards" title="Reddit post card (.sr-card)"
-        note="The r/BlueStacks testimonial card used in the social-rewards collage hero.">
+      <Block id="rw-card" scope="v-rewards" title="Reddit post card"
+        note="Reddit testimonial card — used in the collage hero.">
+
         <div style={{ maxWidth: 300 }}>
           <div className="sr-card">
             <div className="sr-card-top"><span className="sr-dot" /><span className="sr-rsub">r/BlueStacks</span><span className="sr-user">u/pixel_forge</span><span className="sr-badge">+1,000</span></div>
@@ -113,20 +121,23 @@ export function MarketingPages() {
       </Block>
 
       {/* Rewards quality-check row */}
-      <Block id="rw-check" scope="v-rewards" title="Quality-check row (.sr-check)"
-        note="Green-check + criterion row in the 'What makes a qualifying post' checklist.">
+      <Block id="rw-check" scope="v-rewards" title="Quality-check row"
+        note="Green-check criterion row.">
+
         <div className="sr-check"><span className="sr-check-ic"><Check /></span><p>At least 4–5 sentences with real substance — no low-effort or AI-generated content.</p></div>
       </Block>
 
       {/* Rewards FAQ-grid card */}
-      <Block id="rw-faq" scope="v-rewards" title="FAQ-grid card (.sr-faq-card)"
-        note="Social-rewards uses static 2-up Q/A cards (NOT the collapsing SiteFaq accordion) — a deliberate, different treatment.">
+      <Block id="rw-faq" scope="v-rewards" title="FAQ-grid card"
+        note="Static Q/A card — social-rewards uses these instead of the collapsing accordion.">
+
         <div className="sr-faq-card"><h3>How many credits do I get?</h3><p>Up to 1,000 free BlueAI credits, once per user.</p></div>
       </Block>
 
       {/* Rewards collage hero — note (taste 23) */}
-      <Block id="rw-collage" scope="v-rewards" full title="Reddit-collage hero (.sr-collage) — taste rule 23"
-        note={<>Scattered, rotated (∓10/5/2°), scaled (.86/.95/.88), faded (opacity .5/.85/.6), edge-bleeding post cards behind a wide centered headline — ambient social proof that frames rather than boxes the message. The composition rule 23 was written for. View live on <span className="font-mono">/social-rewards</span>.</>}>
+      <Block id="rw-collage" scope="v-rewards" full title="Collage hero"
+        note="Scattered, rotated, faded post cards bleeding off both edges behind the headline — see it live on /social-rewards.">
+
         <p className="text-2xs text-ink-muted">↗ Live on the Social Rewards page.</p>
       </Block>
     </div>

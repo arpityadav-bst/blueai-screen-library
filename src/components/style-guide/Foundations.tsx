@@ -59,7 +59,7 @@ export function Foundations() {
           <Swatch name="Mkt green" value="#16A34A · live" style={{ background: 'var(--bai-mkt-green)' }} />
           <Swatch name="Green wash" value="green · .10α" style={{ background: 'var(--bai-mkt-green-wash)' }} />
         </div>
-        <p className="mt-2 text-2xs leading-relaxed text-ink-muted">A distinct surface palette — one source (<span className="font-mono">--bai-mkt-*</span> in globals.css) — slate text + a marketing blue + a marketing green, used by the homepage, the SEO page, and the heroes’ marketing chrome. Intentionally separate from the brand gradient and the in-app ink ramp.</p>
+        <p className="mt-2 text-2xs leading-relaxed text-ink-muted">A distinct marketing palette (slate · blue · green) for the homepage / SEO / hero chrome — separate from the brand gradient and the in-app ink ramp.</p>
       </section>
 
       {/* TYPE */}

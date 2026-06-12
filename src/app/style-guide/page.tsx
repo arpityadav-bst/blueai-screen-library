@@ -99,7 +99,7 @@ export default function StyleGuide() {
             )
           })}
         </nav>
-        <div className="px-5 pb-7 text-2xs leading-relaxed text-ink-muted">blueai-modern + PM<br />Design tokens</div>
+        <div className="px-5 pb-7 text-2xs leading-relaxed text-ink-muted">BlueAI · Unified Design System</div>
       </aside>
 
       {/* ── main ── */}
@@ -123,7 +123,7 @@ export default function StyleGuide() {
           </section>
           <section>
             <h2 className="mb-1 text-xl font-semibold text-ink-display">Agent page components</h2>
-            <p className="mb-5 text-sm text-ink-muted">The bluestacks.ai agent-page demos — faithful replicas of the live forms, built on blueAI tokens. The shared <span className="font-mono">.jmf-*</span> kit + FileUpload / VideoCard / trade-log + the page data sections.</p>
+            <p className="mb-5 text-sm text-ink-muted">The bluestacks.ai agent-page demos — faithful interactive replicas of the live forms, plus each page's data sections.</p>
             <AgentComponents />
           </section>
           <section>

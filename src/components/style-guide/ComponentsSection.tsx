@@ -21,8 +21,8 @@ export function ComponentsSection() {
     <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
       {/* Marketing nav (hero header) — ONE shared component across all 3 hero variants */}
       <section id="hero-nav" className="scroll-mt-8 rounded-field border border-divider bg-surface p-5 lg:col-span-2">
-        <p className="bai-section-label mb-1">Hero-prototype nav (legacy — HeroNav)</p>
-        <p className="mb-4 text-2xs text-ink-muted">Single source: <span className="font-mono">components/hero/HeroNav.tsx</span> + <span className="font-mono">styles/hero-nav.css</span> — used ONLY by the 3 hero prototypes (Stage / Stage&nbsp;Original / 3&nbsp;Cards). <b className="text-ink-heading">The production header</b> on the SEO homepage + every inner page is <span className="font-mono">&lt;MarketingHeader/&gt;</span> — see “Marketing header” under <b className="text-ink-heading">Site chrome &amp; patterns</b> below.</p>
+        <p className="bai-section-label mb-1">Hero nav <span className="font-normal normal-case tracking-normal text-ink-muted">· legacy</span></p>
+        <p className="mb-4 text-2xs text-ink-muted">Used only by the 3 hero prototypes. The production header is Marketing header (Site chrome &amp; patterns).</p>
         <div className="overflow-hidden rounded-card border border-divider bg-canvas">
           <HeroNav />
         </div>
@@ -30,13 +30,8 @@ export function ComponentsSection() {
 
       {/* Download CTA — the canonical brand button (one of the two brand primitives) */}
       <section id="download-cta" className="scroll-mt-8 rounded-field border border-divider bg-surface p-5 lg:col-span-2">
-        <p className="bai-section-label mb-1">Download CTA — the canonical brand button</p>
-        <p className="mb-4 text-2xs leading-relaxed text-ink-muted">
-          Single source: <span className="font-mono">components/home/DownloadCta.tsx</span> on the <span className="font-mono">--bai-cta-gradient</span> pill.
-          The <span className="font-mono">&lt;Sparkle/&gt;</span> (lucide “Sparkles”) + the <span className="font-mono">&lt;Wordmark/&gt;</span> are the two brand
-          primitives — <b className="text-ink-heading">ALWAYS this spark + this wordmark</b>. The spark is a shared component
-          (<span className="font-mono">components/Sparkle.tsx</span>) — one source, used by every CTA (was inlined on 6 separately).
-        </p>
+        <p className="bai-section-label mb-1">Download CTA</p>
+        <p className="mb-4 text-2xs text-ink-muted">The canonical brand button — cta-gradient pill with the Sparkle + Wordmark primitives.</p>
         <div className="bai-home flex flex-wrap items-center gap-5">
           <DownloadCta />
           <span className="inline-flex items-center gap-2 text-ink-muted"><Sparkle size={22} className="text-iris" /><span className="text-2xs">the canonical spark, standalone</span></span>

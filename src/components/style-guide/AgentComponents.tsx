@@ -27,26 +27,30 @@ export function AgentComponents() {
   return (
     <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
       {/* The .jmf form kit — rendered live via the real CareerForm */}
-      <Card id="agent-form" title="Demo form kit (.jmf-*) — input · multi-select pills · select · upload · checkbox · submit"
-        note={<>The shared form primitives behind all 4 agent demos. Accent = <span className="font-mono">--bai-mkt-blue</span> (solid, not the brand gradient); focus ring <span className="font-mono">rgba(--bai-mkt-blue-rgb / .15)</span>; radii <span className="font-mono">--radius-md/-pill</span>. Source: <span className="font-mono">components/agent/CareerForm.tsx</span>.</>}>
+      <Card id="agent-form" title="Demo form kit"
+        note="The shared form kit — input · multi-select pills · select · upload · checkbox · submit. Accent is solid blue, not the brand gradient.">
+
         <div className="max-w-[420px]"><CareerForm /></div>
       </Card>
 
       {/* Tabbed variant + textarea + hint */}
-      <Card id="agent-form-tabs" title="Tabbed form variant — segmented toggle · textarea · hint"
-        note={<>Finance/Markets demos add an <span className="font-mono">aria-pressed</span> segmented toggle (NOT a full ARIA tablist), a <span className="font-mono">.jmf-textarea</span>, and a <span className="font-mono">.jmf-hint</span>. Source: <span className="font-mono">FinanceForm.tsx</span> / <span className="font-mono">MarketsForm.tsx</span>.</>}>
+      <Card id="agent-form-tabs" title="Tabbed form variant"
+        note="Tabbed variant (Finance / Markets) — a segmented toggle, a textarea, and a helper hint.">
+
         <div className="max-w-[420px]"><FinanceForm /></div>
       </Card>
 
       {/* FileUpload — all states (taste rule 24) */}
-      <Card id="agent-upload" title="File upload — empty → filled → remove"
-        note="Every state, per taste rule 24. Empty: Choose file + No file chosen. Click it: filename + remove (✕), box flips dashed→solid. ✕ resets to empty. One component, reused by the Resume + holdings fields.">
+      <Card id="agent-upload" title="File upload"
+        note="All states — empty (Choose file) → filled (filename + ✕ remove, box flips dashed to solid) → cleared.">
+
         <div className="max-w-[420px]"><FileUpload accept=".pdf,.doc,.docx,image/*" /></div>
       </Card>
 
       {/* Trade-log rows + BUY/SELL badges */}
-      <Card id="agent-trades" title="Trade-log row + BUY / SELL badges"
-        note={<>BUY = <span className="font-mono">--bai-success-*</span>, SELL = <span className="font-mono">--bai-danger-*</span> (the semantic status tokens). Row grid: date · style · action · ticker · value (reflows to 2 lines under 560px).</>}>
+      <Card id="agent-trades" title="Trade log + badges"
+        note="Trade-log row — date · style · BUY / SELL badge · ticker · value (BUY green, SELL red; reflows on mobile).">
+
         <div className="ag-trades w-full">
           {TRADES.map(([d, s, a, tk, v]) => (
             <div className="ag-trade" key={tk}>
@@ -61,16 +65,17 @@ export function AgentComponents() {
       </Card>
 
       {/* VideoCard — click-to-play */}
-      <Card id="agent-video" title="Video card — poster + click-to-play"
-        note="Real <video> (poster + loop/playsInline/preload=metadata, no native controls); a custom play overlay that hides while playing. Click toggles play/pause. Used in the creator 'Made by the agent' showcase.">
+      <Card id="agent-video" title="Video card"
+        note="Poster + click-to-play (loops, no native controls); the play overlay hides while playing.">
+
         <div className="ag-vids" style={{ gridTemplateColumns: '1fr', maxWidth: 220 }}>
           <VideoCard v={{ badge: 'Micro Drama', t: 'He Thought He Bought His Bride', meta: 'Kai · Ep. 1 · 1:02', file: 'kai-bride' }} />
         </div>
       </Card>
 
       {/* Openings grid card (apply-to-jobs) + the source/Remote tags */}
-      <Card id="agent-openings" title="Openings card + source tags (.ag-job)"
-        note="The job-listing card in the apply-to-jobs 'All openings' grid: source tag (.ag-tag.src) + Remote tag (.ag-tag.rem) + title + company·loc + 'View role →'.">
+      <Card id="agent-openings" title="Openings card"
+        note="Job-listing card — source tag · Remote tag · title · company·location · View role.">
         <div className="ag-openings">
           {[['AI/ML Data Contributor', 'TSMG Holding · United States (Remote)', true], ['Senior Product Designer, Agentic AI', 'Atlassian · San Francisco (Hybrid)', false]].map(([t, co, rem]) => (
             <div className="ag-job" key={t as string}>
@@ -82,8 +87,9 @@ export function AgentComponents() {
       </Card>
 
       {/* Portfolio card + benchmark pill (ai-trading-agent) */}
-      <Card id="agent-portfolio" title="Portfolio card + benchmark (.ag-port / .ag-bench)"
-        note="Paper-portfolio card: style label + mono return (success color) + description + holdings rows + rotations note; plus the SPY benchmark pill.">
+      <Card id="agent-portfolio" title="Portfolio card + benchmark"
+        note="Paper-portfolio card — style · return · holdings · rotations; plus the SPY benchmark pill.">
+
         <div className="ag-ports" style={{ gridTemplateColumns: '1fr' }}>
           <div className="ag-port">
             <div className="ag-port-style">Momentum</div>
@@ -99,8 +105,9 @@ export function AgentComponents() {
       </Card>
 
       {/* Odds table (prediction-market-agent) */}
-      <Card id="agent-odds" title="Odds table (.ag-odds) — the only table in the DS"
-        note="Polymarket-vs-Kalshi data table: mono numeric columns (right-aligned), the gap column accented, zebra-free hairline rows.">
+      <Card id="agent-odds" title="Odds table"
+        note="The odds data table — right-aligned numeric columns, accented gap column.">
+
         <div className="ag-odds">
           <table>
             <thead><tr><th>Team</th><th className="num">Polymarket</th><th className="num">Kalshi</th><th className="num">Gap</th></tr></thead>
@@ -114,16 +121,18 @@ export function AgentComponents() {
       </Card>
 
       {/* Capability card (ai-video-creator) */}
-      <Card id="agent-caps" title="Capability card (.ag-cap)"
-        note="Emoji + title + description card — the 'What it makes' 3-up on the creator page.">
+      <Card id="agent-caps" title="Capability card"
+        note="Emoji + title + description card.">
+
         <div className="ag-caps" style={{ gridTemplateColumns: '1fr' }}>
           <div className="ag-cap"><span className="ag-cap-emoji">🎭</span><h4>Micro dramas</h4><p>Character-driven episodic stories — the hook most AI video tools cannot do.</p></div>
         </div>
       </Card>
 
       {/* More-agents cross-link card (AgentShell) */}
-      <Card id="agent-more" title="More-agents cross-link card (.ag-more-card)"
-        note="Tinted-icon nav card (icon tile + label + title + → arrow); the 'Explore the other agents' row on every agent page.">
+      <Card id="agent-more" title="More-agents card"
+        note="Cross-link nav card — tinted icon · label · title · → arrow.">
+
         <div className="ag-more" style={{ gridTemplateColumns: '1fr' }}>
           <a className="ag-more-card" href="#0">
             <span className="ag-more-ic ic-career">💼</span>

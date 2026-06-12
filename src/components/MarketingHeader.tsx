@@ -18,7 +18,7 @@ export function MarketingHeader() {
   return (
     <header className="bai-hdr">
       <div className="bai-hdr-inner">
-        <a className="bai-hdr-brand" href="/" aria-label="BlueAI home">
+        <a className="bai-hdr-brand" href="/seo" aria-label="BlueAI home">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/blueai-icon-RzIisCsb.png" alt="" width={32} height={32} />
           <Wordmark size={22} />

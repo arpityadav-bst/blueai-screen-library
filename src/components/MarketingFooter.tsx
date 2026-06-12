@@ -12,7 +12,7 @@ export function MarketingFooter() {
     <footer className="bai-ftr">
       <div className="bai-ftr-inner">
         <div className="bai-ftr-brand">
-          <a className="bai-ftr-lockup" href="/" aria-label="BlueAI home">
+          <a className="bai-ftr-lockup" href="/seo" aria-label="BlueAI home">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/blueai-icon-RzIisCsb.png" alt="" width={28} height={28} />
             <Wordmark size={20} />
