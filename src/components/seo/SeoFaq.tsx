@@ -8,7 +8,7 @@ export function SeoFaq() {
   const [open, setOpen] = useState(0) // Q1 open by default (the "what is blue ai" lander query)
   return (
     <section className="seo-section seo-faq" id="faq">
-      <div className="seo-wrap seo-faq-wrap">
+      <div className="seo-wrap">
         <span className="seo-eyebrow" data-reveal>{FAQ.eyebrow}</span>
         <h2 className="seo-h2" data-reveal>{FAQ.h2}</h2>
         <div className="seo-faq-list" data-reveal>

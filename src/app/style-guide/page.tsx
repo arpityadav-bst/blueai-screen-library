@@ -10,7 +10,7 @@ import { PmComponentsB } from '@/components/style-guide/PmComponentsB'
 // DS-only — page navigation lives on the root Screen Library index (`/`).
 const NAV: { group: string; items: [string, string][] }[] = [
   { group: 'Foundations', items: [['colors', 'Colors'], ['type', 'Type scale'], ['scales', 'Spacing · Radius · Elevation']] },
-  { group: 'Components', items: [['hero-nav', 'Marketing nav'], ['buttons', 'Buttons'], ['status', 'Status badges'], ['pill-badges', 'Pill badges'], ['pills', 'Suggested pills'], ['feature-cards', 'Feature cards'], ['bubbles', 'Message bubbles'], ['composer', 'Composer'], ['header', 'Panel header']] },
+  { group: 'Components', items: [['hero-nav', 'Marketing nav'], ['download-cta', 'Download CTA'], ['buttons', 'Buttons'], ['status', 'Status badges'], ['pill-badges', 'Pill badges'], ['pills', 'Suggested pills'], ['feature-cards', 'Feature cards'], ['bubbles', 'Message bubbles'], ['composer', 'Composer'], ['header', 'Panel header']] },
   { group: 'App components (PM)', items: [['app-cards', 'Cards'], ['app-overview', 'Overview cards'], ['app-inputs', 'Inputs & forms'], ['app-nav', 'Navigation'], ['app-credits', 'Credits'], ['app-icons', 'Icons']] },
 ]
 const SECTION_IDS = NAV.flatMap((g) => g.items.map(([id]) => id))

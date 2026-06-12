@@ -2,7 +2,7 @@
 import '@/styles/seo-home.css'
 import { useReveal } from './useReveal'
 import { SeoBackdrop } from './SeoBackdrop'
-import { SeoNav } from './SeoNav'
+import { MarketingHeader } from '@/components/MarketingHeader'
 import { SeoHero } from './SeoHero'
 import { SeoWhatIs } from './SeoWhatIs'
 import { SeoCompare } from './SeoCompare'
@@ -10,7 +10,7 @@ import { SeoTasks } from './SeoTasks'
 import { SeoSteps } from './SeoSteps'
 import { SeoFaq } from './SeoFaq'
 import { SeoCta } from './SeoCta'
-import { SeoFooter } from './SeoFooter'
+import { MarketingFooter } from '@/components/MarketingFooter'
 
 // SEO Homepage orchestrator. Everything scoped under .v-seo (leak-safe). useReveal() drives the
 // scroll-reveal delight layer (sections fade + rise once on entry).
@@ -19,7 +19,7 @@ export function SeoHome() {
   return (
     <div className="v-seo">
       <SeoBackdrop />
-      <SeoNav />
+      <MarketingHeader />
       <main>
         <SeoHero />
         <SeoWhatIs />
@@ -29,7 +29,7 @@ export function SeoHome() {
         <SeoFaq />
         <SeoCta />
       </main>
-      <SeoFooter />
+      <MarketingFooter />
     </div>
   )
 }

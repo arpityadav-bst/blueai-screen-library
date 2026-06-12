@@ -13,6 +13,7 @@ import { HERO_AGENTS } from '@/lib/seo-data'
 // `.v-seo` in seo-home.css.
 const SCENES = { career: CareerLegacy, creator: CreatorLegacy, finance: FinanceLegacy, markets: MarketsLegacy } as const
 const ICONS: Record<string, string> = { career: '💼', creator: '🎬', finance: '📈', markets: '🎯' }
+const SLUG: Record<string, string> = { career: 'apply-to-jobs', creator: 'ai-video-creator', finance: 'ai-trading-agent', markets: 'prediction-market-agent' }
 const DWELL = [4200, 4400, 4800, 4600]
 const EASE = [0.22, 0.61, 0.36, 1] as const
 
@@ -34,15 +35,15 @@ export function SeoAgentGrid() {
         const Scene = SCENES[a.key]
         const live = i === active
         return (
-          <motion.article
+          <motion.a
             key={a.key}
+            href={`/${SLUG[a.key]}`}
             className={`seo-agent${live ? ' is-active' : ' is-dim'}`}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.12 + i * 0.08, ease: EASE }}
             onMouseEnter={() => { setPaused(true); select(i) }}
             onMouseLeave={() => setPaused(false)}
-            onClick={() => select(i)}
           >
             <div className="seo-agent-top">
               <div className={`seo-agent-icon icon-${a.key}`}>{ICONS[a.key]}</div>
@@ -55,7 +56,7 @@ export function SeoAgentGrid() {
             <div className="seo-agent-stage">
               <Scene key={live ? `live-${gen}` : 'idle'} active={live} />
             </div>
-          </motion.article>
+          </motion.a>
         )
       })}
     </div>

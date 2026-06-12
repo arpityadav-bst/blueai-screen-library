@@ -13,12 +13,17 @@
 @layer base {
   :root {
     /* ----- BRAND ACCENTS (only ever appear together, as a gradient) ----- */
-    --bai-iris:   rgb(123, 76, 255);   /* #7B4CFF */
-    --bai-cyan:   rgb(14, 164, 197);   /* #0EA4C5 */
+    /* Channel triples — the brand RGB lives here ONCE; the solid colors AND every rgba(…)
+       wash/glow/overlay across the app derive from these (S2 audit #2 — closes the wash leak). */
+    --bai-iris-rgb: 123, 76, 255;   /* #7B4CFF */
+    --bai-cyan-rgb: 14, 164, 197;   /* #0EA4C5 */
+    --bai-glow-rgb: 95, 70, 255;    /* #5F46FF — the brand shadow/glow purple, under brand elements */
+    --bai-iris:   rgb(var(--bai-iris-rgb));
+    --bai-cyan:   rgb(var(--bai-cyan-rgb));
     --bai-iris-2: rgb(151, 71, 255);   /* #9747FF — used once, outer frame stroke */
     --bai-gradient:            linear-gradient(to bottom right, var(--bai-iris) 0%, var(--bai-cyan) 99%);
-    --bai-gradient-wash:       linear-gradient(to bottom right, rgba(123, 76, 255, .10) 0%, rgba(14, 164, 197, .10) 99%);
-    --bai-gradient-wash-hover: linear-gradient(to bottom right, rgba(123, 76, 255, .18) 0%, rgba(14, 164, 197, .18) 99%);
+    --bai-gradient-wash:       linear-gradient(to bottom right, rgba(var(--bai-iris-rgb), .10) 0%, rgba(var(--bai-cyan-rgb), .10) 99%);
+    --bai-gradient-wash-hover: linear-gradient(to bottom right, rgba(var(--bai-iris-rgb), .18) 0%, rgba(var(--bai-cyan-rgb), .18) 99%);
 
     /* ----- NEUTRAL RAMP (cool, slight blue cast) ----- */
     --bai-ink-display: rgb(8, 10, 31);     /* #080A1F — display titles */
@@ -93,11 +98,27 @@
     --bai-info:    #3B82F6; --bai-info-soft:    #DBEAFE; --bai-info-ink:    #1E40AF;
     --bai-scheduled: #9333EA; --bai-scheduled-soft: #F3E8FF; --bai-scheduled-ink: #6B21A8;
     --bai-jobs:    #F97316; --bai-jobs-soft:    #FFEDD5; --bai-jobs-ink:    #9A3412;
+
+    /* ----- MARKETING SURFACE palette — homepage + SEO page + the heroes' marketing chrome
+       (NOT the in-app panel). Distinct from both the brand gradient AND the in-app ink ramp:
+       a slate text + a marketing blue + a marketing green. SINGLE SOURCE — the per-route
+       stylesheets alias these: homepage.css "--bh-" vars, seo-home.css "--seo-" vars and
+       "--green", and the heroes' "--slate-900" + "--green". Promoted from duplicated per-file
+       locals at the S2 token audit. ----- */
+    --bai-mkt-blue-rgb:   47, 109, 255;        /* #2F6DFF channel */
+    --bai-mkt-blue-2-rgb: 61, 123, 255;        /* #3D7BFF channel */
+    --bai-mkt-green-rgb:  22, 163, 74;         /* #16A34A channel */
+    --bai-mkt-slate:      #0f172a;             /* marketing display/body text (≠ --bai-ink-display) */
+    --bai-mkt-blue:       rgb(var(--bai-mkt-blue-rgb));    /* marketing accent — links, "see it work", tags */
+    --bai-mkt-blue-2:     rgb(var(--bai-mkt-blue-2-rgb));  /* marketing accent, lighter — eyebrows/secondary */
+    --bai-mkt-green:      rgb(var(--bai-mkt-green-rgb));   /* "live"/success on marketing surfaces (≠ --bai-success) */
+    --bai-mkt-green-wash: rgba(var(--bai-mkt-green-rgb), .10);
+
     /* The brand "Download" CTA — was hand-inlined on every CTA; tokenized here (one source). */
-    --bai-cta-gradient:      linear-gradient(105deg, #1a90ff 0%, #6b53ff 55%, #7B4CFF 100%);
-    --bai-shadow-cta:        0 10px 26px -8px rgba(95, 70, 255, .55);
-    --bai-shadow-cta-hover:  0 16px 32px -8px rgba(95, 70, 255, .6);
-    --bai-shadow-brand-sm:   0 4px 6px -1px rgba(123, 76, 255, .20);  /* colored, for elevated brand chips */
+    --bai-cta-gradient:      linear-gradient(105deg, var(--bai-legacy-blue) 0%, #6b53ff 55%, var(--bai-iris) 100%);
+    --bai-shadow-cta:        0 10px 26px -8px rgba(var(--bai-glow-rgb), .55);
+    --bai-shadow-cta-hover:  0 16px 32px -8px rgba(var(--bai-glow-rgb), .6);
+    --bai-shadow-brand-sm:   0 4px 6px -1px rgba(var(--bai-iris-rgb), .20);  /* colored, for elevated brand chips */
 
     /* ----- TYPE / MOTION (consumed by the .bai-* classes below) ----- */
     --line-tight: 1;  --line-normal: 1.4;  --line-body: 1.6;
@@ -117,7 +138,7 @@
     -moz-osx-font-smoothing: grayscale;
   }
   body { font-family: var(--font-ui); }
-  ::selection { background: rgba(123, 76, 255, .18); }
+  ::selection { background: rgba(var(--bai-iris-rgb), .18); }
 }
 
 /* ==========================================================================

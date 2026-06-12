@@ -1,5 +1,5 @@
 # blueAI — Taste
-Last updated: 2026-06-11 (S2 audit — promoted rules 14–18 from the build-session scratchpad + the prod text-align fix; Phase 2 entered)
+Last updated: 2026-06-11 (S2 close audit — +rules 19–22 (brand SSOT · content width · ambient delight · mobile) + rule-14 amendment; full day's SEO-homepage/brand/mobile work promoted)
 
 > blueAI's design *language* — how it should feel — so VDA can design new blueAI
 > surfaces from instinct. Seeded from the Claude-design export's DS README (which is a
@@ -103,6 +103,11 @@ springy bounces) — "a utility assistant, not a toy."
     break — wrap needs the REAL available width); and to keep a sentence whole, glue its words
     with ` ` (nbsp; prefer the visible JS escape). *(Designer corrected `balance`→`pretty`
     for body — `balance` split "submits it / for you" mid-phrase.)*
+    **Amendment (S2-cont):** `balance` is for SINGLE-sentence headings ONLY. A MULTI-sentence
+    heading/short line must break at the FULL STOP (one sentence per line) — split on
+    `(?<=\.)\s+` + `<br>` (each sentence still wraps internally if narrow, so it's mobile-safe).
+    `balance` on a 2-sentence heading splits straight THROUGH the full stop (the close-band
+    "busywork. Start reviewing" bug). Candidate: a reusable `<SentenceLines>` helper.
 
 15. **Equal padding on all sides is the default; flag the special cases.** And never let a
     trailing margin on the LAST child double-count the container's bottom padding — a card at
@@ -124,12 +129,43 @@ springy bounces) — "a utility assistant, not a toy."
     pill/stadium radii on a WIDE element so the radius reads as what it is. Generalizes: any
     token swatch must use a shape that actually exercises the token.
 
-> Motion (framer-motion) gotchas, the spotlight-animation pattern, the production CSS-chunking
-> leak, and mobile/layout rules from this session are TECHNICAL and live in `knowledge-base.md`.
+## Codified taste rules (added S2-cont — the SEO homepage + brand + mobile day)
+
+19. **Brand primitives are ONE shared asset (SSOT) — never re-drawn per surface.** The wordmark
+    is the `<Wordmark/>` component: "BlueAI" (always ONE word, no space) in the FULL primary
+    iris→cyan gradient clipped left-to-right (Bricolage 700) — NOT two-tone, NOT solid. The logo
+    is the official `blueai-icon` PNG (gradient circle + sparkle), in every nav + both footers.
+    The Download CTA always carries the canonical sparkle (lucide Sparkles). The smell: the same
+    primitive appearing in 3 places with 3 different treatments → extract to one component/asset.
+    *(S2-cont: had 3 drifting wordmark treatments + a hand-drawn logo; unified. I first misread the
+    wordmark as two-tone — designer corrected it to the full gradient.)*
+
+20. **Content sits in a contained column; the nav can run full-bleed.** Cap the hero + every
+    section band + footer at ONE shared content-width token (~1280px) so their edges align — but a
+    wide/full-bleed NAV over that contained column is a deliberate, correct pattern (Stripe/Linear/
+    Vercel), NOT misalignment. Too-wide body content hurts UX (line length >75ch, sparse card
+    grids, more eye travel). The real "misaligned" smell is body SECTIONS disagreeing with EACH
+    OTHER, not the nav being wider. *(S2-cont: aligned everything to the 1640 header → too wide;
+    split into a full-bleed nav + a 1280 content column.)*
+
+21. **Delight is ambient and on-brand, never literal.** To make a page feel alive, use a calm
+    living backdrop — soft gradient orbs that drift/recompose on scroll + a faint logo sparkle that
+    slowly rotates — NOT literal motifs (spinning gears, counting stats), which read as toy-like and
+    undercut "trustworthy utility." Ground text over a backdrop with a frosted-glass container
+    (semi-white + blur). All scroll-driven motion is gated on `prefers-reduced-motion`. *(S2-cont.)*
+
+22. **Mobile is its own design pass — verify it by SCREENSHOT.** A content page's section-anchor
+    nav needs a real mobile MENU (hamburger → the links), never just `display:none` on them; the
+    menu must OVERLAY content (absolute), not push it down. CTAs go full-width for tap targets.
+    You cannot eyeball mobile from the desktop live view — screenshot at 390px and audit. *(S2-cont.)*
+
+> Motion (framer-motion) gotchas, the spotlight pattern, the CSS-chunking leak, the ambient
+> backdrop, and mobile/layout/SSOT technical detail live in `knowledge-base.md`.
 
 ## Open corrections log
-*S2 (2026-06-11) — first substantive correction cycle PROMOTED. The parked Recommended-hero
-items were resolved before this session; the 2026-06-10 build-session corrections + the S2
-prod text-align fix are now promoted into rules 11–18 above + `decisions.md` + `knowledge-base.md`.
-No OPEN corrections pending. The Recommended hero's prod/dev parity is fixed (see KB
-"production CSS chunking can leak generic class rules"). Future corrections accumulate here.*
+*S2 (2026-06-11) — full day PROMOTED (rules 11–22 + decisions + KB). Designer corrections this
+day: balance→pretty body wrap; wordmark = full gradient (I'd misread it two-tone); body width
+(full-bleed nav + 1280 contained content); + several Gate-8 visual misses I shipped that the
+designer caught on review (Finance card wider than siblings, close-band heading wrapping through
+the full stop, POLYMARKET clip, mobile nav pushing content) — all fixed + promoted. No OPEN
+corrections pending. Watch: my Gate-8 catch-rate on NEW builds (see evolution).*

@@ -19,6 +19,7 @@ const CARDS = [
   { key: 'finance', icon: '📈', label: 'Finance', title: 'An AI trading agent that runs live market analysis', Scene: FinanceLegacy },
   { key: 'markets', icon: '🎯', label: 'Markets', title: 'A prediction market agent that watches the odds', Scene: MarketsLegacy },
 ]
+const SLUG: Record<string, string> = { career: 'apply-to-jobs', creator: 'ai-video-creator', finance: 'ai-trading-agent', markets: 'prediction-market-agent' }
 const DWELL = [4200, 4400, 4800, 4600] // ms per card — each ≥ its scene length + a read beat
 
 export function HeroCards() {
@@ -51,18 +52,18 @@ export function HeroCards() {
             const Scene = c.Scene
             const live = i === active
             return (
-              <motion.article key={c.key} className={`card${live ? ' is-active' : ' is-dim'}`}
+              <motion.a key={c.key} href={`/${SLUG[c.key]}`} className={`card${live ? ' is-active' : ' is-dim'}`}
                 initial={{ opacity: 0, y: 34 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 + i * 0.1, ease: EASE }}
-                onMouseEnter={() => { setPaused(true); select(i) }} onMouseLeave={() => setPaused(false)} onClick={() => select(i)}>
+                onMouseEnter={() => { setPaused(true); select(i) }} onMouseLeave={() => setPaused(false)}>
                 <div className="card-top">
                   <div className={`icon-tile icon-${c.key}`}>{c.icon}</div>
-                  <button type="button" className="see-tag"><span>See it work</span><HeroArrow /></button>
+                  <span className="see-tag"><span>See it work</span><HeroArrow /></span>
                 </div>
                 <div className="eyebrow">{c.label}</div>
                 <h3 className="card-title">{c.title}</h3>
                 {/* keyed remount on each activation (live-<gen>) replays from scratch; idle cards rest at phase 0 */}
                 <div className="stage"><Scene key={live ? `live-${gen}` : 'idle'} active={live} /></div>
-              </motion.article>
+              </motion.a>
             )
           })}
         </section>

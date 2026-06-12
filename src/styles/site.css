@@ -1,0 +1,89 @@
+/* ============================================================================
+   Shared marketing-site chrome + patterns for the bluestacks.ai inner pages
+   (Social Rewards · Developer · the 4 agent pages). Scoped under .v-site so it
+   never collides with /seo or the heroes. Built on the --bai-* / --bai-mkt-*
+   tokens. Each page adds a second root class (.v-rewards / .v-dev / .v-agent)
+   for its page-specific CSS.
+   ============================================================================ */
+.v-site { position: relative; min-height: 100vh; overflow-x: hidden;
+  font-family: var(--font-ui); color: var(--bai-mkt-slate);
+  background: linear-gradient(180deg, #f5f6fd 0%, #eef1fb 100%); }
+.v-site * { box-sizing: border-box; }
+.v-site main { position: relative; z-index: 1; }
+.v-site .site-wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+html:has(.v-site) { scroll-behavior: smooth; }
+
+/* section heading helpers */
+.v-site .site-eyebrow { display: inline-block; font-family: var(--font-ui); font-weight: 700; font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--bai-mkt-blue); }
+.v-site .site-h2 { font-family: var(--font-head); font-weight: 600; font-size: clamp(28px, 3.2vw, 42px); line-height: 1.08; letter-spacing: -.03em; color: var(--bai-mkt-slate); text-wrap: balance; margin: 12px 0 0; }
+.v-site .site-sub { font-family: var(--font-ui); font-size: clamp(15px, 1.2vw, 18px); line-height: 1.6; color: var(--fg-4); margin: 14px 0 0; max-width: 62ch; }
+.v-site .site-grad { background: var(--bai-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; }
+.v-site [data-reveal] { opacity: 0; transform: translateY(20px); transition: opacity .6s var(--ease-out), transform .6s var(--ease-out); }
+.v-site [data-reveal].is-in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .v-site [data-reveal] { opacity: 1; transform: none; transition: none; } }
+
+/* buttons */
+.v-site .site-btn { display: inline-flex; align-items: center; justify-content: center; gap: 9px; height: 52px; padding: 0 26px; border: none; cursor: pointer; border-radius: var(--radius-pill); background: var(--bai-cta-gradient); color: #fff; font-family: var(--font-ui); font-weight: 600; font-size: 16px; white-space: nowrap; text-decoration: none; box-shadow: var(--bai-shadow-cta); transition: transform .18s var(--ease-out), box-shadow .18s var(--ease-out); }
+.v-site .site-btn:hover { transform: translateY(-2px); box-shadow: var(--bai-shadow-cta-hover); }
+.v-site .site-btn:active { transform: translateY(0) scale(.98); }
+.v-site .site-btn svg { flex: none; }
+.v-site .site-btn .site-arrow { transition: transform .18s var(--ease-out); }
+.v-site .site-btn:hover .site-arrow { transform: translateX(3px); }
+.v-site .site-btn-ghost { display: inline-flex; align-items: center; gap: 8px; height: 52px; padding: 0 22px; border-radius: var(--radius-pill); background: #fff; border: 1px solid var(--bai-stroke); color: var(--fg-2); font-weight: 600; font-size: 16px; text-decoration: none; transition: border-color .15s var(--ease-out), color .15s var(--ease-out); }
+.v-site .site-btn-ghost:hover { border-color: var(--bai-mkt-blue); color: var(--bai-mkt-blue); }
+
+/* (The site header was unified into the shared <MarketingHeader/> — styles live in header.css.) */
+
+/* ---- dark CTA band (shared close section) ---- */
+.v-site .site-cta-band { position: relative; overflow: hidden; border-radius: 28px; padding: clamp(48px,6vw,80px) 32px; text-align: center; background: linear-gradient(120deg, #1b1340 0%, #3b2a8c 48%, #1f6f8f 100%); box-shadow: 0 40px 80px -36px rgba(27,19,64,.6); }
+.v-site .site-cta-band .site-eyebrow { color: rgba(255,255,255,.66); }
+.v-site .site-cta-h { font-family: var(--font-head); font-weight: 600; font-size: clamp(28px,3.4vw,44px); line-height: 1.08; letter-spacing: -.03em; color: #fff; text-wrap: balance; margin: 10px auto 0; }
+.v-site .site-cta-sub { font-family: var(--font-ui); font-size: clamp(15px,1.2vw,18px); color: rgba(255,255,255,.82); line-height: 1.55; margin: 14px auto 0; max-width: 52ch; }
+.v-site .site-cta-band .site-btn { margin-top: 28px; background: #fff; color: #2438b8; box-shadow: 0 14px 30px -12px rgba(0,0,0,.35); }
+.v-site .site-cta-band .site-btn:hover { box-shadow: 0 18px 38px -12px rgba(0,0,0,.45); }
+
+/* ---- shared content patterns ---- */
+/* numbered steps (vertical) */
+.v-site .site-steps { display: flex; flex-direction: column; gap: 16px; margin-top: 36px; }
+.v-site .site-step { display: flex; gap: 20px; align-items: flex-start; background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-radius: 18px; padding: 22px 24px; box-shadow: 0 1px 2px rgba(8,10,31,.04); }
+.v-site .site-step-n { flex: none; width: 46px; height: 46px; border-radius: 13px; background: var(--bai-gradient); color: #fff; font-family: var(--font-head); font-weight: 700; font-size: 16px; display: flex; align-items: center; justify-content: center; box-shadow: var(--bai-shadow-brand-sm); }
+.v-site .site-step h3 { font-family: var(--font-head); font-weight: 600; font-size: 18px; letter-spacing: -.01em; color: var(--bai-mkt-slate); margin: 4px 0 6px; }
+.v-site .site-step p { font-family: var(--font-ui); font-size: 14.5px; line-height: 1.55; color: var(--fg-4); margin: 0; }
+
+/* compact step (how-it-works, 4-up) */
+.v-site .site-hiw { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 18px; margin-top: 30px; }
+.v-site .site-hiw-card { background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-radius: 16px; padding: 22px; box-shadow: 0 1px 2px rgba(8,10,31,.04); }
+.v-site .site-hiw-n { width: 34px; height: 34px; border-radius: 10px; background: var(--bai-gradient); color: #fff; font-family: var(--font-head); font-weight: 700; font-size: 14px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 14px; }
+.v-site .site-hiw-card h4 { font-family: var(--font-head); font-weight: 600; font-size: 16px; letter-spacing: -.01em; color: var(--bai-mkt-slate); margin: 0 0 6px; }
+.v-site .site-hiw-card p { font-family: var(--font-ui); font-size: 13.5px; line-height: 1.5; color: var(--fg-4); margin: 0; }
+
+/* FAQ accordion (reused) */
+.v-site .site-faq { margin-top: 30px; background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-radius: 18px; padding: 0 28px; box-shadow: 0 1px 2px rgba(8,10,31,.04); }
+.v-site .site-faq-item { border-bottom: 1px solid var(--bai-divider); }
+.v-site .site-faq-item:last-child { border-bottom: none; }
+.v-site .site-faq-q { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 16px; background: none; border: none; cursor: pointer; text-align: left; padding: 20px 0; font-family: var(--font-head); font-weight: 600; font-size: clamp(15.5px,1.3vw,18px); letter-spacing: -.01em; color: var(--bai-mkt-slate); }
+.v-site .site-faq-pm { font-family: var(--font-ui); font-weight: 400; font-size: 22px; color: var(--bai-mkt-blue); flex: none; line-height: 1; }
+.v-site .site-faq-a { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .3s var(--ease-out); }
+.v-site .site-faq-item.is-open .site-faq-a { grid-template-rows: 1fr; }
+.v-site .site-faq-a-inner { overflow: hidden; }
+.v-site .site-faq-a p { font-family: var(--font-ui); font-size: 15px; line-height: 1.6; color: var(--fg-4); margin: 0 0 22px; max-width: 72ch; }
+
+/* ---- FOOTER ---- */
+.v-site .site-footer { position: relative; z-index: 1; border-top: 1px solid rgba(8,10,31,.08); margin-top: 8px; }
+.v-site .site-footer-inner { max-width: 1200px; margin: 0 auto; padding: 26px 24px; display: flex; align-items: center; justify-content: space-between; gap: 18px; flex-wrap: wrap; }
+.v-site .site-footer-links { display: flex; align-items: center; gap: 22px; }
+.v-site .site-footer-links a { font-family: var(--font-ui); font-size: 14px; color: var(--fg-3); text-decoration: none; }
+.v-site .site-footer-links a:hover { color: var(--bai-mkt-blue); }
+.v-site .site-footer-copy { font-family: var(--font-ui); font-size: 11.5px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--fg-4); }
+.v-site .site-footer.is-center .site-footer-inner { justify-content: center; }
+
+/* ---- responsive ---- */
+@media (max-width: 900px) {
+  .v-site .site-hiw { grid-template-columns: repeat(2, minmax(0,1fr)); }
+}
+@media (max-width: 600px) {
+  .v-site .site-hiw { grid-template-columns: 1fr; }
+  .v-site .site-step { padding: 18px; gap: 14px; }
+  .v-site .site-cta-band { padding: 44px 22px; border-radius: 22px; }
+  .v-site .site-footer-inner { flex-direction: column; gap: 12px; text-align: center; }
+}

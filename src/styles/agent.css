@@ -1,0 +1,206 @@
+/* The 4 agent pages (apply-to-jobs / ai-video-creator / ai-trading-agent /
+   prediction-market-agent). Scoped .v-agent (+ .v-site chrome). Shared structure;
+   the hero demo + feature section are passed per agent. */
+
+/* ---- HERO (2-col: copy + demo stage) ---- */
+.v-agent .ag-hero { max-width: 1200px; margin: 0 auto; padding: clamp(36px,5vw,72px) 24px clamp(30px,4vw,56px); display: grid; grid-template-columns: 1fr 0.92fr; gap: clamp(32px,4vw,56px); align-items: center; }
+.v-agent .ag-hero-text { display: flex; flex-direction: column; align-items: flex-start; }
+.v-agent .ag-h1 { font-family: var(--font-head); font-weight: 600; font-size: clamp(34px,4.4vw,56px); line-height: 1.05; letter-spacing: -.035em; color: var(--bai-mkt-slate); text-wrap: balance; margin: 16px 0 0; }
+.v-agent .ag-sub { font-family: var(--font-ui); font-size: clamp(15.5px,1.25vw,18.5px); line-height: 1.6; color: var(--fg-4); margin: 18px 0 0; max-width: 34em; }
+.v-agent .ag-hero-cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+.v-agent .ag-demo { position: relative; }
+@media (max-width: 920px) { .v-agent .ag-hero { grid-template-columns: 1fr; gap: 32px; } .v-agent .ag-demo { order: 2; } }
+
+/* a framed "stage" for the per-agent demo */
+.v-agent .ag-stage { position: relative; background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-radius: 20px; padding: 18px; box-shadow: 0 26px 56px -28px rgba(var(--bai-glow-rgb),.4), 0 4px 14px -6px rgba(8,10,31,.06); }
+.v-agent .ag-stage-label { display: flex; align-items: center; gap: 7px; font-family: var(--font-ui); font-weight: 700; font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--fg-4); margin-bottom: 12px; }
+.v-agent .ag-stage-label .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--bai-mkt-green); }
+
+/* ---- generic section frame ---- */
+.v-agent .ag-section { padding: clamp(44px,6vw,84px) 0; }
+.v-agent .ag-section.is-anchor { scroll-margin-top: 72px; }
+.v-agent .ag-whatis p { font-family: var(--font-ui); font-size: clamp(15.5px,1.3vw,18px); line-height: 1.7; color: var(--fg-3); margin: 18px 0 0; max-width: 80ch; }
+/* always-visible SEO content blocks under "What is" (faithful to the live page) */
+.v-agent .ag-seo-block { margin-top: 28px; }
+.v-agent .ag-seo-block h3 { font-family: var(--font-head); font-weight: 600; font-size: clamp(16.5px,1.4vw,19px); letter-spacing: -.01em; color: var(--bai-mkt-slate); margin: 0; }
+.v-agent .ag-seo-block p { margin-top: 8px; }
+.v-agent .ag-whatis > .ag-seo-block:first-child { margin-top: 0; }
+
+/* ---- Career: latest-openings mini list (in hero demo) + form ---- */
+.v-agent .jf { display: flex; flex-direction: column; gap: 11px; }
+.v-agent .jf-row { display: flex; flex-direction: column; gap: 6px; }
+.v-agent .jf-lbl { font-family: var(--font-ui); font-weight: 600; font-size: 11px; color: var(--fg-3); }
+.v-agent .jf-input { height: 40px; border: 1px solid var(--bai-divider); border-radius: 10px; background: var(--bai-surface); padding: 0 12px; font-family: var(--font-ui); font-size: 13px; color: var(--fg-4); display: flex; align-items: center; }
+.v-agent .jf-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.v-agent .jf-chip { font-family: var(--font-ui); font-weight: 600; font-size: 11.5px; padding: 5px 11px; border-radius: var(--radius-pill); border: 1px solid var(--bai-divider); background: var(--bai-canvas); color: var(--fg-4); }
+.v-agent .jf-chip.is-on { background: var(--bai-gradient); color: #fff; border-color: transparent; }
+.v-agent .jf-submit { margin-top: 4px; height: 44px; border: none; border-radius: 12px; background: var(--bai-cta-gradient); color: #fff; font-family: var(--font-ui); font-weight: 600; font-size: 14px; box-shadow: var(--bai-shadow-cta); cursor: default; }
+
+/* ---- openings grid ---- */
+.v-agent .ag-openings { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 30px; }
+.v-agent .ag-job { display: flex; flex-direction: column; background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-radius: 14px; padding: 18px; box-shadow: 0 1px 2px rgba(8,10,31,.04); transition: transform .2s var(--ease-out), border-color .2s var(--ease-out), box-shadow .2s var(--ease-out); }
+.v-agent .ag-job:hover { transform: translateY(-3px); border-color: rgba(var(--bai-iris-rgb),.3); box-shadow: 0 16px 34px -20px rgba(var(--bai-glow-rgb),.4); }
+.v-agent .ag-job-badges { display: flex; gap: 6px; margin-bottom: 11px; }
+.v-agent .ag-tag { font-family: var(--font-ui); font-weight: 700; font-size: 9.5px; letter-spacing: .06em; text-transform: uppercase; padding: 3px 8px; border-radius: 6px; }
+.v-agent .ag-tag.src { background: var(--bai-mkt-blue); color: #fff; }
+.v-agent .ag-tag.rem { background: var(--bai-mkt-green-wash); color: var(--bai-mkt-green); }
+.v-agent .ag-job h4 { font-family: var(--font-head); font-weight: 600; font-size: 15px; letter-spacing: -.01em; color: var(--bai-mkt-slate); line-height: 1.25; margin: 0 0 8px; }
+.v-agent .ag-job .co { font-family: var(--font-ui); font-size: 12.5px; color: var(--fg-4); margin: 0; }
+.v-agent .ag-job-link { margin-top: 14px; font-family: var(--font-ui); font-weight: 600; font-size: 12.5px; color: var(--bai-mkt-blue); }
+@media (max-width: 900px) { .v-agent .ag-openings { grid-template-columns: repeat(2,1fr); } }
+@media (max-width: 600px) { .v-agent .ag-openings { grid-template-columns: 1fr; } }
+
+/* ---- more agents cross-links ---- */
+.v-agent .ag-more { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 28px; }
+.v-agent .ag-more-card { display: flex; align-items: center; gap: 13px; background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-radius: 14px; padding: 16px 18px; text-decoration: none; transition: transform .2s var(--ease-out), border-color .2s var(--ease-out); }
+.v-agent .ag-more-card:hover { transform: translateY(-2px); border-color: rgba(var(--bai-iris-rgb),.3); }
+.v-agent .ag-more-ic { width: 40px; height: 40px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 20px; line-height: 1; flex: none; }
+.v-agent .ag-more-tx { flex: 1 1 auto; min-width: 0; }
+.v-agent .ag-more-card b { font-family: var(--font-head); font-weight: 600; font-size: 14.5px; color: var(--bai-mkt-slate); }
+.v-agent .ag-more-tx span { display: block; font-family: var(--font-ui); font-size: 12px; color: var(--fg-4); margin-top: 2px; }
+.v-agent .ag-more-card .site-arrow { flex: none; color: var(--bai-mkt-blue); transition: transform .18s var(--ease-out); }
+.v-agent .ag-more-card:hover .site-arrow { transform: translateX(3px); }
+@media (max-width: 760px) { .v-agent .ag-more { grid-template-columns: 1fr; } }
+
+.v-agent .ag-close { padding: 0 0 clamp(52px,8vw,96px); }
+
+/* ---- Creator: video showcase + capability cards ---- */
+.v-agent .ag-vids { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 30px; }
+.v-agent .ag-vid-frame { position: relative; aspect-ratio: 9 / 13; border-radius: 16px; overflow: hidden; background: linear-gradient(160deg, #2a2350, #143a52); box-shadow: 0 22px 46px -26px rgba(8,10,31,.45); display: flex; align-items: center; justify-content: center; border: none; padding: 0; width: 100%; cursor: pointer; }
+.v-agent .ag-vid-media { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+.v-agent .ag-vid-frame.exp { background: linear-gradient(160deg, #1f3a4d, #145068); }
+.v-agent .ag-vid-frame::after { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 30% 20%, rgba(255,255,255,.12), transparent 60%); }
+.v-agent .ag-vid-badge { position: absolute; top: 12px; left: 12px; z-index: 2; font-family: var(--font-ui); font-weight: 700; font-size: 9px; letter-spacing: .08em; text-transform: uppercase; color: #fff; background: rgba(255,255,255,.18); border-radius: 6px; padding: 4px 8px; -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
+.v-agent .ag-vid-play { position: relative; z-index: 2; width: 54px; height: 54px; border-radius: 50%; background: rgba(255,255,255,.94); display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 18px rgba(0,0,0,.32); }
+.v-agent .ag-vid-play svg { width: 20px; height: 20px; color: #1b1340; margin-left: 3px; }
+.v-agent .ag-vid h4 { font-family: var(--font-head); font-weight: 600; font-size: 14.5px; letter-spacing: -.01em; color: var(--bai-mkt-slate); margin: 13px 0 4px; line-height: 1.25; }
+.v-agent .ag-vid .meta { font-family: var(--font-ui); font-size: 12px; color: var(--fg-4); margin: 0; }
+@media (max-width: 760px) { .v-agent .ag-vids { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 480px) { .v-agent .ag-vids { grid-template-columns: 1fr; max-width: 320px; margin-left: auto; margin-right: auto; } }
+
+.v-agent .ag-caps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 30px; }
+.v-agent .ag-cap { background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-radius: 16px; padding: 24px; box-shadow: 0 1px 2px rgba(8,10,31,.04); }
+.v-agent .ag-cap-emoji { font-size: 26px; display: block; margin-bottom: 12px; }
+.v-agent .ag-cap h4 { font-family: var(--font-head); font-weight: 600; font-size: 17px; letter-spacing: -.01em; color: var(--bai-mkt-slate); margin: 0 0 6px; }
+.v-agent .ag-cap p { font-family: var(--font-ui); font-size: 14px; line-height: 1.55; color: var(--fg-4); margin: 0; }
+@media (max-width: 760px) { .v-agent .ag-caps { grid-template-columns: 1fr; } }
+
+.v-agent .ag-disclaimer { font-family: var(--font-ui); font-size: 12px; line-height: 1.5; color: var(--fg-4); margin: 18px 0 0; max-width: 42em; }
+
+/* ---- Finance: live paper portfolios + benchmark ---- */
+.v-agent .ag-ports { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 30px; }
+.v-agent .ag-port { background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-radius: 16px; padding: 20px; box-shadow: 0 1px 2px rgba(8,10,31,.04); }
+.v-agent .ag-port-style { font-family: var(--font-ui); font-weight: 700; font-size: 10.5px; letter-spacing: .05em; text-transform: uppercase; color: var(--fg-4); }
+.v-agent .ag-port-ret { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 700; font-size: 25px; letter-spacing: -.02em; color: var(--bai-mkt-green); margin: 5px 0 0; }
+.v-agent .ag-port-d { font-family: var(--font-ui); font-size: 12.5px; line-height: 1.45; color: var(--fg-4); margin: 10px 0 12px; }
+.v-agent .ag-port-holds { display: flex; flex-direction: column; gap: 6px; border-top: 1px solid var(--bai-divider); padding-top: 12px; }
+.v-agent .ag-hold { display: flex; justify-content: space-between; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; }
+.v-agent .ag-hold .tk { font-weight: 600; color: var(--bai-mkt-slate); }
+.v-agent .ag-hold .pc { color: var(--bai-mkt-green); }
+.v-agent .ag-port-rot { font-family: var(--font-ui); font-size: 10.5px; color: var(--fg-4); margin: 12px 0 0; }
+.v-agent .ag-bench { display: inline-flex; align-items: baseline; gap: 9px; margin-top: 20px; padding: 10px 16px; border: 1px solid var(--bai-divider); border-radius: var(--radius-pill); background: var(--bai-canvas); font-family: var(--font-ui); font-size: 13px; color: var(--fg-4); }
+.v-agent .ag-bench b { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--bai-mkt-slate); }
+@media (max-width: 980px) { .v-agent .ag-ports { grid-template-columns: repeat(2,1fr); } }
+@media (max-width: 540px) { .v-agent .ag-ports { grid-template-columns: 1fr; } }
+
+/* ---- Markets: Polymarket vs Kalshi odds table ---- */
+.v-agent .ag-odds { width: 100%; margin-top: 26px; background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-radius: 16px; overflow: hidden; box-shadow: 0 1px 2px rgba(8,10,31,.04); }
+.v-agent .ag-odds table { width: 100%; border-collapse: collapse; }
+.v-agent .ag-odds th, .v-agent .ag-odds td { padding: 12px 18px; font-family: var(--font-ui); font-size: 13.5px; border-bottom: 1px solid var(--bai-divider); text-align: left; }
+.v-agent .ag-odds th { font-weight: 700; font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--fg-4); background: var(--bai-surface); }
+.v-agent .ag-odds td { color: var(--bai-mkt-slate); }
+.v-agent .ag-odds th.num, .v-agent .ag-odds td.num { text-align: right; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+.v-agent .ag-odds tr:last-child td { border-bottom: none; }
+.v-agent .ag-odds td.gap { color: var(--bai-mkt-blue); font-weight: 600; }
+.v-agent .ag-odds-note { font-family: var(--font-ui); font-size: 11.5px; line-height: 1.5; color: var(--fg-4); margin: 14px 0 0; max-width: 70ch; }
+@media (max-width: 520px) { .v-agent .ag-odds th, .v-agent .ag-odds td { padding: 10px 11px; font-size: 12px; } }
+.v-agent .jf-tabs { display: flex; gap: 6px; margin-bottom: 4px; }
+.v-agent .jf-tab { font-family: var(--font-ui); font-weight: 600; font-size: 12px; padding: 7px 13px; border-radius: 9px; border: 1px solid var(--bai-divider); background: var(--bai-canvas); color: var(--fg-4); }
+.v-agent .jf-tab.is-on { background: var(--bai-surface); color: var(--bai-mkt-slate); border-color: var(--bai-stroke); }
+.v-agent .jf-upload { border: 1.5px dashed var(--bai-stroke); border-radius: 10px; background: var(--bai-surface); padding: 18px; text-align: center; font-family: var(--font-ui); font-size: 12px; color: var(--fg-4); }
+
+/* ── Apply-to-jobs: faithful interactive "Get your job matches" form (replica of the live
+   bluestacks.ai page). Own .jmf-* namespace — isolated from the shared .jf demo stubs. ── */
+.v-agent .jmf-card { display: flex; flex-direction: column; gap: 18px; background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-radius: 20px; padding: clamp(20px,2.4vw,26px); box-shadow: 0 26px 56px -28px rgba(var(--bai-glow-rgb),.4), 0 4px 14px -6px rgba(8,10,31,.06); }
+.v-agent .jmf-head { display: flex; flex-direction: column; gap: 5px; }
+.v-agent .jmf-title { font-family: var(--font-head); font-weight: 600; font-size: 22px; letter-spacing: -.01em; color: var(--bai-mkt-slate); margin: 0; }
+.v-agent .jmf-sub { font-family: var(--font-ui); font-size: 13.5px; line-height: 1.5; color: var(--fg-4); margin: 0; }
+.v-agent .jmf-field { display: flex; flex-direction: column; gap: 6px; }
+.v-agent .jmf-lbl { font-family: var(--font-ui); font-weight: 600; font-size: 13px; color: var(--fg-2); }
+.v-agent .jmf-opt { font-weight: 400; color: var(--fg-4); }
+.v-agent .jmf-input { width: 100%; border: 1px solid var(--bai-divider); border-radius: var(--radius-md); background: var(--bai-canvas); padding: 10px 14px; font-family: var(--font-ui); font-size: 13.5px; color: var(--fg-1); outline: none; transition: border-color .15s var(--ease-out), box-shadow .15s var(--ease-out); }
+.v-agent .jmf-input::placeholder { color: var(--bai-stroke); }
+.v-agent .jmf-input:hover { border-color: var(--bai-stroke); }
+.v-agent .jmf-input:focus { border-color: var(--bai-mkt-blue); box-shadow: 0 0 0 3px rgba(var(--bai-mkt-blue-rgb),.15); }
+.v-agent .jmf-textarea { resize: vertical; min-height: 64px; line-height: 1.5; }
+.v-agent .jmf-tabs { display: flex; gap: 6px; }
+.v-agent .jmf-tab { flex: 1; font-family: var(--font-ui); font-weight: 600; font-size: 12.5px; padding: 9px 10px; border-radius: 10px; border: 1px solid var(--bai-divider); background: var(--bai-canvas); color: var(--fg-4); cursor: pointer; transition: border-color .15s var(--ease-out), background .15s var(--ease-out), color .15s var(--ease-out); }
+.v-agent .jmf-tab:hover { border-color: var(--bai-stroke); }
+.v-agent .jmf-tab.is-on { background: var(--bai-surface); color: var(--bai-mkt-slate); border-color: var(--bai-stroke); }
+.v-agent .jmf-hint { font-family: var(--font-ui); font-size: 11.5px; line-height: 1.4; color: var(--fg-4); }
+
+/* "Every trade the agents have made" — trade-log rows (ai-trading-agent) */
+.v-agent .ag-trades { margin-top: 26px; border: 1px solid var(--bai-divider); border-radius: var(--radius-md); overflow: hidden; max-width: 760px; }
+.v-agent .ag-trade { display: grid; grid-template-columns: 96px minmax(0,1fr) 58px 56px auto; align-items: center; gap: 14px; padding: 11px 16px; border-bottom: 1px solid var(--bai-divider); font-family: var(--font-ui); font-size: 13px; }
+.v-agent .ag-trade:last-child { border-bottom: none; }
+.v-agent .ag-trade:nth-child(even) { background: var(--bai-surface); }
+.v-agent .ag-trade-date { color: var(--fg-4); font-size: 12px; }
+.v-agent .ag-trade-style { color: var(--fg-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.v-agent .ag-trade-act { justify-self: start; font-weight: 700; font-size: 9.5px; letter-spacing: .06em; padding: 3px 8px; border-radius: var(--radius-badge); }
+.v-agent .ag-trade-act.buy { color: var(--bai-success-ink); background: var(--bai-success-soft); }
+.v-agent .ag-trade-act.sell { color: var(--bai-danger-ink); background: var(--bai-danger-soft); }
+.v-agent .ag-trade-tk { font-weight: 700; color: var(--bai-mkt-slate); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+.v-agent .ag-trade-v { justify-self: end; color: var(--fg-3); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+@media (max-width: 560px) {
+  .v-agent .ag-trade { grid-template-columns: auto 1fr auto; grid-template-areas: "date act value" "tk style value"; gap: 3px 10px; padding: 10px 12px; }
+  .v-agent .ag-trade-date { grid-area: date; }
+  .v-agent .ag-trade-style { grid-area: style; justify-self: start; }
+  .v-agent .ag-trade-act { grid-area: act; justify-self: end; }
+  .v-agent .ag-trade-tk { grid-area: tk; }
+  .v-agent .ag-trade-v { grid-area: value; align-self: center; }
+}
+.v-agent .jmf-select { -webkit-appearance: none; -moz-appearance: none; appearance: none; cursor: pointer; padding-right: 38px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23b6b8cc' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; }
+.v-agent .jmf-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+.v-agent .jmf-pill { display: inline-flex; align-items: center; gap: 5px; font-family: var(--font-ui); font-weight: 500; font-size: 13px; padding: 8px 15px; border-radius: var(--radius-pill); border: 1px solid var(--bai-divider); background: var(--bai-canvas); color: var(--fg-3); cursor: pointer; transition: border-color .15s var(--ease-out), background .15s var(--ease-out), color .15s var(--ease-out); }
+.v-agent .jmf-pill:hover { border-color: var(--bai-stroke); }
+.v-agent .jmf-pill.is-on { background: var(--bai-mkt-blue); border-color: transparent; color: #fff; box-shadow: 0 1px 3px rgba(var(--bai-mkt-blue-rgb),.3); }
+.v-agent .jmf-check { flex: none; }
+.v-agent .jmf-upload { display: flex; align-items: center; gap: 12px; border: 1.5px dashed var(--bai-stroke); border-radius: var(--radius-md); background: var(--bai-surface); padding: 11px 14px; }
+.v-agent .jmf-upload-ic { color: var(--bai-stroke); flex: none; }
+.v-agent .jmf-file-input { display: none; }
+.v-agent .jmf-upload.is-filled { border-style: solid; border-color: var(--bai-divider); background: var(--bai-canvas); }
+.v-agent .jmf-file-ic { color: var(--bai-mkt-blue); flex: none; }
+.v-agent .jmf-file-choose { flex: none; border: none; border-radius: var(--radius-pill); background: rgba(8,10,31,.06); padding: 7px 14px; font-family: var(--font-ui); font-weight: 600; font-size: 12.5px; color: var(--fg-2); cursor: pointer; transition: background .15s var(--ease-out); }
+.v-agent .jmf-file-choose:hover { background: rgba(8,10,31,.11); }
+.v-agent .jmf-file-empty { font-family: var(--font-ui); font-size: 12.5px; color: var(--fg-4); }
+.v-agent .jmf-file-name { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: var(--font-ui); font-size: 13px; color: var(--fg-1); }
+.v-agent .jmf-file-x { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border: none; border-radius: 50%; background: rgba(8,10,31,.06); color: var(--fg-3); cursor: pointer; transition: background .15s var(--ease-out), color .15s var(--ease-out); }
+.v-agent .jmf-file-x:hover { background: var(--bai-danger-soft); color: var(--bai-danger-ink); }
+.v-agent .jmf-agree { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; }
+.v-agent .jmf-agree input { margin-top: 2px; width: 16px; height: 16px; flex: none; accent-color: var(--bai-mkt-blue); cursor: pointer; }
+.v-agent .jmf-agree span { font-family: var(--font-ui); font-size: 12px; line-height: 1.6; color: var(--fg-4); }
+.v-agent .jmf-submit { display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; margin-top: 2px; border: none; border-radius: var(--radius-pill); background: var(--bai-cta-gradient); color: #fff; font-family: var(--font-ui); font-weight: 600; font-size: 15px; padding: 13px 22px; box-shadow: var(--bai-shadow-cta); cursor: pointer; transition: transform .18s var(--ease-out), box-shadow .18s var(--ease-out); }
+.v-agent .jmf-submit:hover { transform: translateY(-2px); box-shadow: var(--bai-shadow-cta-hover); }
+.v-agent .jmf-submit .site-arrow { transition: transform .18s var(--ease-out); }
+.v-agent .jmf-submit:hover .site-arrow { transform: translateX(3px); }
+
+/* hero-left "Latest openings, found by the agent" mini-list (apply-to-jobs only, via heroAside) */
+.v-agent .ag-hero-jobs { margin-top: 30px; width: 100%; max-width: 470px; }
+.v-agent .ag-hero-jobs-top { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 12px; }
+.v-agent .ag-hero-jobs-lbl { display: inline-flex; align-items: center; gap: 7px; font-family: var(--font-ui); font-weight: 700; font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--fg-4); }
+.v-agent .ag-hero-jobs-lbl .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--bai-mkt-green); flex: none; }
+.v-agent .ag-hero-jobs-all { font-family: var(--font-ui); font-weight: 600; font-size: 12.5px; color: var(--bai-mkt-blue); text-decoration: none; white-space: nowrap; }
+.v-agent .ag-hero-jobs-all:hover { text-decoration: underline; }
+.v-agent .ag-hero-jobs-rows { display: flex; flex-direction: column; gap: 8px; }
+.v-agent .ag-hero-job { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; border: 1px solid var(--bai-divider); border-radius: var(--radius-md); background: var(--bai-canvas); transition: border-color .15s var(--ease-out); }
+.v-agent .ag-hero-job:hover { border-color: var(--bai-stroke); }
+.v-agent .ag-hero-job-tx { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.v-agent .ag-hero-job-tx b { font-family: var(--font-ui); font-weight: 600; font-size: 13.5px; color: var(--bai-mkt-slate); }
+.v-agent .ag-hero-job-tx span { font-family: var(--font-ui); font-size: 12px; color: var(--fg-4); }
+.v-agent .ag-hero-job-badge { flex: none; font-family: var(--font-ui); font-weight: 700; font-size: 9.5px; letter-spacing: .07em; text-transform: uppercase; color: var(--bai-mkt-blue); border: 1px solid var(--bai-divider); border-radius: var(--radius-pill); padding: 4px 9px; }
+
+/* per-agent demo accent tiles (icons) reuse the hero icon tints */
+.v-agent .ic-career { background: linear-gradient(160deg, #e7e3ff, #dfe6ff); }
+.v-agent .ic-creator { background: linear-gradient(160deg, #ffe1f3, #f3e2ff); }
+.v-agent .ic-finance { background: linear-gradient(160deg, #dcf6e6, #e6f7ec); }
+.v-agent .ic-markets { background: linear-gradient(160deg, #dbe7ff, #e7ecff); }

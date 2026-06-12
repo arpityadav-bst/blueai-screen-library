@@ -19,13 +19,25 @@ Last updated: 2026-06-11 (S2 audit — +Deployment section, CSS-arch prod-chunki
   every page (SEO homepage · hero-options · the 3 hero variants · style guide) as bordered rows via
   full-page `<a>`. Light DS wash + `<Wordmark/>`. Replaced the old redirect-to-style-guide (S2).
 - `/style-guide` — the DS reference, **WSUP-style sidebar architecture**: left grouped nav
-  (Foundations · Components · Pages) with scroll-to + scroll-spy active highlight; scrollable
-  main. The "Pages" group links the homepage (hero-options) + the 3 heroes. blueai-modern + PM.
-- `/hero-options` — the design-review **chooser = the "homepage" for now** (schematic previews
-  + UX pros/cons; links the 3 variants; #3 Recommended → `/hero/stage`).
-- `/hero/stage` — **★ Recommended Stage hero** (rich 2-scene agents) + homepage body. Becomes
-  the canonical homepage once the designer finalizes this direction.
+  (Foundations · Components) with scroll-to + scroll-spy; scrollable main. **DS-only** — page
+  navigation moved to the root Screen Library index (S2-cont; the "Pages" group was removed). blueai-modern + PM.
+- `/seo` — **SEO Homepage** (S2-cont) — standalone search-optimized page (scoped `.v-seo`):
+  hero (2×2 animated agents) · What-is · chatbot/assistant/worker · 8-card task hub · 4 steps · FAQ
+  (+ FAQPage JSON-LD) · CTA · footer. Full-bleed nav + a contained 1280 column; ambient `SeoBackdrop`
+  + scroll-reveal; mobile hamburger nav. See KB "SEO homepage + brand primitives".
+- `/hero-options` — the design-review **chooser** (schematic previews + UX pros/cons; links the 3
+  variants; #3 Recommended → `/hero/stage`).
+- `/hero/stage` — **★ Recommended Stage hero** (rich 2-scene agents) + homepage body.
 - `/hero/stage-original` · `/hero/3-cards` — the other two directions (legacy scenes) + homepage body.
+  `/hero/3-cards` now shows **4** agent cards (added Markets, S2-cont).
+- **bluestacks.ai inner pages (S3 — replicated from the live site via Edge CDP):**
+  `/social-rewards` · `/developer` · `/apply-to-jobs` (Career) · `/ai-video-creator` (Creator) ·
+  `/ai-trading-agent` (Finance) · `/prediction-market-agent` (Markets). Routes match the live slugs so the
+  wiring is natural. ONE shared header on EVERY page (SEO + inner): `components/MarketingHeader.tsx` +
+  `styles/header.css` (scoped to the header element `.bai-hdr`, route-scope-independent). Other chrome:
+  `SiteFooter`/`SiteReveal`/`SiteFaq` scoped `.v-site` via `styles/site.css`; the 4 agent pages run on `components/agent/AgentShell.tsx` +
+  per-agent data in `lib/agents-data.ts` (+ `lib/rewards-data.ts`, `lib/site-data.ts`). Each page is a 2nd
+  root class (`.v-rewards`/`.v-dev`/`.v-agent`) over `.v-site`. SEO nav + both hero agent grids link here.
 
 ## Hero architecture — TWO animation paths (critical)
 The export's `hero-cards.js` branches per agent on which markup is present:

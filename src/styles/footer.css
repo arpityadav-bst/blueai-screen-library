@@ -1,0 +1,31 @@
+/* ============================================================================
+   Shared marketing FOOTER — one identical footer on every page. Scoped to the footer
+   element class .bai-ftr (route-scope-independent), like header.css. Built on --bai-* tokens.
+   ============================================================================ */
+.bai-ftr { position: relative; z-index: 1; border-top: 1px solid rgba(8,10,31,.08); margin-top: 8px; font-family: var(--font-ui); }
+.bai-ftr * { box-sizing: border-box; }
+.bai-ftr-inner { max-width: 1200px; margin: 0 auto; padding: clamp(40px,5vw,56px) 24px 32px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 40px; }
+
+.bai-ftr-brand { max-width: 280px; }
+.bai-ftr-lockup { display: inline-flex; align-items: center; gap: 9px; text-decoration: none; }
+.bai-ftr-lockup img { width: 28px; height: 28px; border-radius: 50%; display: block; }
+.bai-ftr-tag { font-family: var(--font-ui); font-size: 13.5px; color: var(--fg-4); margin: 12px 0 0; }
+.bai-ftr-social { display: flex; align-items: center; gap: 16px; margin-top: 16px; }
+.bai-ftr-social a { display: inline-flex; transition: opacity .15s var(--ease-out), transform .15s var(--ease-out); }
+.bai-ftr-social a:hover { opacity: .82; transform: translateY(-1px); }
+.bai-ftr-social svg { width: 20px; height: 20px; }
+.bai-ftr-social .is-reddit svg { width: 26px; height: 26px; } /* reddit glyph reads small — sized up */
+.bai-ftr .is-discord { color: #5865F2; }
+.bai-ftr .is-x { color: #000000; }
+.bai-ftr .is-reddit { color: #FF4500; }
+
+.bai-ftr-cols { display: grid; grid-template-columns: repeat(4, auto); gap: clamp(28px,4vw,52px); }
+.bai-ftr-col h4 { font-family: var(--font-ui); font-weight: 700; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--fg-4); margin: 0 0 14px; }
+.bai-ftr-col a { display: block; font-family: var(--font-ui); font-size: 14px; color: var(--fg-3); text-decoration: none; margin-bottom: 9px; transition: color .15s var(--ease-out); }
+.bai-ftr-col a:hover { color: var(--bai-mkt-blue); }
+
+.bai-ftr-bottom { border-top: 1px solid rgba(8,10,31,.06); }
+.bai-ftr-bottom span { display: block; max-width: 1200px; margin: 0 auto; padding: 18px 24px; font-family: var(--font-ui); font-size: 11.5px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: var(--fg-4); }
+
+@media (max-width: 860px) { .bai-ftr-cols { grid-template-columns: repeat(2, 1fr); gap: 28px; } }
+@media (max-width: 560px) { .bai-ftr-inner { flex-direction: column; gap: 32px; } }

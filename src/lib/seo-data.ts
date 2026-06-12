@@ -8,11 +8,16 @@ export const SEO_META = {
     'BlueAI is an AI personal assistant that works like an AI worker. It opens apps, types, and finishes tasks for you. Free on PC.',
 }
 
-export const NAV_LINKS = [
+// First four are in-page section anchors (scroll-to). The last two are global marketing
+// links — now real internal pages (/social-rewards, /developer), so they navigate in-page
+// (same-tab), matching the live site.
+export const NAV_LINKS: { label: string; href: string; external?: boolean }[] = [
   { label: 'What is BlueAI', href: '#what-is' },
   { label: 'Tasks', href: '#tasks' },
   { label: 'How it works', href: '#how-it-works' },
   { label: 'FAQ', href: '#faq' },
+  { label: 'Social Rewards', href: '/social-rewards' },
+  { label: 'Developer', href: '/developer' },
 ]
 
 export const HERO = {
@@ -74,7 +79,7 @@ export const TASKS = {
 
 export const STEPS = {
   eyebrow: 'How it works',
-  h2: 'From "do this" to done in four steps',
+  h2: 'From “do this” to done in four steps',
   steps: [
     { n: 1, title: 'Tell it the task', desc: 'Type what you want done, in plain language. No setup, no flowcharts.' },
     { n: 2, title: 'It picks a skill', desc: 'BlueAI matches your task to a tested skill from the library, built for that exact job.' },
@@ -89,7 +94,7 @@ export const FAQ = {
   h2: 'Questions about your AI assistant, answered',
   items: [
     { q: 'What is BlueAI?', a: 'BlueAI is an AI worker that completes tasks for you by using real mobile apps. Give it a task in plain language and it picks the right skill, opens the app, and does the work: replying, posting, applying, booking. You review the result. It runs inside BlueStacks on Windows and Mac.' },
-    { q: 'Is BlueAI an AI assistant or an AI agent?', a: 'Both terms fit, but "AI worker" is the most precise. A typical AI assistant drafts and suggests; BlueAI goes further and operates real apps to finish the task, with you approving anything sensitive.' },
+    { q: 'Is BlueAI an AI assistant or an AI agent?', a: 'Both terms fit, but “AI worker” is the most precise. A typical AI assistant drafts and suggests; BlueAI goes further and operates real apps to finish the task, with you approving anything sensitive.' },
     { q: 'What is an AI worker?', a: 'An AI worker is an agent that completes a job end to end inside real apps — opening them, tapping, typing, and submitting — instead of only answering questions or writing drafts.' },
     { q: 'What devices does BlueAI run on?', a: 'BlueAI runs inside BlueStacks on Windows and Mac today and uses real Android apps to do the work. Connecting your own phone is coming soon.' },
     { q: 'How does BlueAI complete a task?', a: 'You describe the task in plain language. BlueAI matches it to a tested skill, opens the right app, and completes every step while you watch. You review the result before anything sensitive is finalized.' },

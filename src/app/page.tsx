@@ -15,6 +15,12 @@ const PAGES = [
   { href: '/hero/stage-original', name: 'Hero · Stage Original', desc: 'Big stage + thumbnail rail + homepage body' },
   { href: '/hero/3-cards', name: 'Hero · 4 Cards', desc: 'Four animated agent cards in a row + homepage body' },
   { href: '/style-guide', name: 'Style Guide', desc: 'Design tokens, type, and components' },
+  { href: '/social-rewards', name: 'Social Rewards', desc: 'Earn up to 1,000 credits — Reddit collage, 5 steps, FAQ' },
+  { href: '/developer', name: 'Developer', desc: 'Build with BlueAI — early-access credits teaser' },
+  { href: '/apply-to-jobs', name: 'Agent · Career', desc: 'Auto-apply job agent — matches form + live openings' },
+  { href: '/ai-video-creator', name: 'Agent · Creator', desc: 'Faceless YouTube video creator agent' },
+  { href: '/ai-trading-agent', name: 'Agent · Finance', desc: 'Live market analysis — agent paper portfolios' },
+  { href: '/prediction-market-agent', name: 'Agent · Markets', desc: 'Polymarket / Kalshi odds-watching agent' },
 ]
 
 export default function Home() {

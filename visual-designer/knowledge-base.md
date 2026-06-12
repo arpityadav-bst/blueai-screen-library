@@ -1,5 +1,5 @@
 # blueAI — Knowledge Base
-Last updated: 2026-06-11 (S2 audit — +Spotlight pattern, Motion/framer gotchas, CSS-architecture prod-chunking, mobile, token/layout hygiene, Components)
+Last updated: 2026-06-11 (S2 audit #2 — tokenisation tiering rule, marketing palette → global --bai-mkt-*, <Sparkle/> as 2nd brand SSOT, CSS-comment `*/` build gotcha)
 
 > blueAI's reusable components, patterns, and token hygiene. blueAI's own — unrelated
 > to WSUP/now.gg.
@@ -82,6 +82,16 @@ Confirmed by fetching the live CSS chunks.
 - **`next build` runs STRICT TS; `next dev` does not.** Always `npx next build` before relying on
   a deploy — two prod build failures in S2 (the framer type + the CSS leak, the latter only
   visible in the prod bundle).
+- **CSS-comment `*/` gotcha (S2 audit #2):** a `*/` sequence ANYWHERE inside a `/* … */` comment closes
+  it early → postcss "Unclosed block (n:n)" build fail pointing at the next `{`. Bit me writing the
+  literal `--seo-*/--green` in a token comment (the `*/` killed the comment, the rest became bad CSS).
+  Never put `*/` — or a glob like `--x-*/…` — in CSS comment prose. `next dev` may not surface it; `next build` does.
+- **NEVER run `npx next build` while `next dev` is running (S2 audit #2 — cost a confusing debug).** The
+  prod build overwrites the dev server's `.next`, so dev then serves SSR HTML that references dev JS chunks
+  which now 404 (`main-app.js`, `app-pages-internals.js`) → the page renders but **never hydrates**: looks
+  perfect in screenshots, but no interactivity (a hamburger that won't open, dead framer animations). Tell-tale:
+  404s on `/_next/static/chunks/*` in the dev log. Fix: kill dev → `rm -rf .next` → restart `npm run dev`.
+  For a prod-build check while iterating, STOP dev first; for small changes, trust dev's compile + screenshots.
 
 ## Token / layout hygiene (S2)
 - **Tailwind silently drops UNDEFINED utilities** (no error). `rounded-circle` was used 9× but
@@ -95,6 +105,17 @@ Confirmed by fetching the live CSS chunks.
   one element (a feature image) consistently larger across alternating left/right rows, MIRROR
   `grid-template-columns` per direction (`.feat` vs `.feat.reverse`); verify by measuring EVERY
   instance, not just row 1.
+- **Equal grid columns: use `minmax(0, 1fr)`, not `1fr`** (S2-cont). `1fr` = `minmax(auto,1fr)`, so
+  an item with wide min-content (an SVG chart, nowrap text) balloons its track and squeezes the rest
+  — the Finance card came out wider than its siblings. `minmax(0,1fr)` + `min-width:0` on the item =
+  truly equal columns. *(Gate-8 miss — designer caught it on review.)*
+- **Per-route width override via a scoped token** (S2-cont). To widen/narrow ONE route without
+  touching the shared nav stylesheet or other routes, override the content-width custom property on
+  that route's scope (`.v-cards .hero-screen { --bai-content: N }`) — the shared nav + hero inherit it.
+- **Content-width model (refined S2-cont):** a wide/full-bleed NAV over a CONTAINED ~1280 content
+  column (hero + sections + footer share one `--seo-content` token). Aligning ALL bands to the wide
+  header read too wide (bad line length, sparse grids). Full-bleed nav + contained content is the
+  standard pattern, NOT misalignment. → taste rule 20.
 
 ## Mobile (S2)
 - **App-style split-pane** (fixed sidebar + independently-scrolling main, `h-screen
@@ -108,12 +129,45 @@ Confirmed by fetching the live CSS chunks.
   doesn't re-highlight mid-scroll; a sticky nav needs a matching scroll OFFSET (scrollIntoView
   can't offset).
 - **Always screenshot mobile yourself** — can't eyeball it from the desktop live view.
+- **A content page's section-anchor nav needs a real mobile MENU** (S2-cont) — a hamburger → the
+  section links + CTA, never just `display:none` on the links (that strands the navigation). The
+  menu OVERLAYS content (`position:absolute` below the sticky bar with a shadow), it does NOT push
+  content down. CTAs go full-width on mobile for tap targets.
 
 ## Components (S2)
 - **HeroNav = single source of truth** for the marketing/hero nav: one `<HeroNav/>` + one
   `hero-nav.css` (imported by the component so styles travel with it); per-variant diffs exposed
   as a token (`--nav-pad-y`). Showcased as a LIVE "Marketing nav" section in `/style-guide` (renders
   the real component → can't drift). A component duplicated across variants is a DS smell → extract.
+
+## SEO homepage + brand primitives (S2-cont)
+- **`/seo` page** (`app/seo/page.tsx` + `components/seo/*` + `lib/seo-data.ts` + `styles/seo-home.css`,
+  ALL scoped `.v-seo`): a standalone content-rich, search-optimized homepage. Sections: nav · hero
+  (2×2 animated agents) · What-is (featured-snippet def) · chatbot/assistant/worker frame · 8-card
+  task hub (internal links) · 4 steps · FAQ accordion · CTA · footer. Reuses the legacy agent scenes
+  (their CSS DUPLICATED under `.v-seo` — scene classes can't cross route scopes; the cost of strict
+  per-route scoping).
+- **SEO mechanics:** page-level `metadata` (title/description) + semantic H1/H2 + **FAQPage JSON-LD**
+  rendered server-side in `page.tsx` from the SAME `FAQ` data as the visible accordion (can't drift)
+  — the PM's key lever (competitors have FAQ copy, no schema). FAQ answers stay in the DOM
+  (grid-rows 0fr→1fr animation) so they're crawlable.
+- **Two brand primitives, both SSOT components** (S2 audit #2): **`<Wordmark/>`** (`components/Wordmark.tsx`
+  + global `.bai-wordmark`): "BlueAI" in the full iris→cyan gradient (clip), one word, Bricolage 700 —
+  every nav + both footers + style guide. **`<Sparkle/>`** (`components/Sparkle.tsx`): the canonical lucide
+  "Sparkles" CTA icon — `size` prop OR `className="spark"` (CSS-sized). Was inlined in 6 files; now one
+  source, used by all 5 Download CTAs (`DownloadCta`/`HeroCta`/`HeroStage`/`SeoHero`/`SeoCta`). The scene
+  "generate" glyph (simpler, no accent marks — a DIFFERENT role) was intentionally NOT merged. Logo =
+  official `public/blueai-icon-RzIisCsb.png`. Both documented in `/style-guide` (Foundations type +
+  the "Download CTA" component card, which renders the REAL `<DownloadCta/>` under a `.bai-home` wrapper).
+  → taste rule 19, reasonings "brand primitives as SSOT".
+- **Root `/` = Screen Library index** (`app/page.tsx`): a light DS-styled directory linking every page
+  via full-page `<a>`. Replaced the redirect-to-style-guide; the style guide is now DS-only.
+- **Ambient backdrop** (`SeoBackdrop`): `position:fixed` layer behind content (content gets `z-index:1`).
+  Soft iris/cyan/blue orbs drift via framer `useScroll`+`useTransform` (each a different path →
+  recomposes per section) + a faint logo sparkle rotating ~720° across the scroll. On mobile it's
+  pinned top-right (left-half visible, big) as a slow gear. All gated on `useReducedMotion`. → taste rule 21.
+- **Scroll-reveal** (`useReveal`): one IntersectionObserver adds `is-in` to `[data-reveal]` (fade+rise
+  once, then unobserve); reduced-motion reveals everything immediately.
 
 ## PM-supplement tokens (S1 — filled from the blueai-pm DS)
 - `accent` (`#1990FF` + `accent-hover`) — interactive primary for **app** surfaces (the
@@ -133,9 +187,24 @@ Confirmed by fetching the live CSS chunks.
 - **PM app-component sections** built into `/style-guide` (group "App components (PM)"): `components/style-guide/PmComponentsA.tsx` (Cards · Overview cards · Inputs & forms) + `PmComponentsB.tsx` (Navigation · Credits button/alerts/modal · Icons). These document the shipping web-app DS; the marketing site doesn't use them. The full webapp UI-kit *screens* remain the live product (not rebuilt).
 
 ## Token hygiene
-- Resolve every value to a `--bai-*` token / Tailwind utility. Marketing-only locals
-  (`--bh-slate #0F172A`, marketing blue `#2F6DFF/#3D7BFF`, `--green #16a34a`, `--font-head`,
-  `--font-mono`) are scoped to the section/hero stylesheets — keep them there, don't leak
-  into the DS token layer.
-- Alpha modifiers on the var-based colors (`bg-iris/10`) DON'T work (vars aren't channel
-  triples) — use the dedicated `bg-bai-wash` token or an arbitrary rgba for one-offs.
+- **Tokenisation TIERING (the operating rule — S2 audit #2):** "fully tokenised" ≠ "every hex is a
+  token." **Tier 1** — a literal equal to a DS-primitive value (iris/cyan/ink/accent) is a LEAK → use
+  the token. **Tier 2** — a color used on >1 surface → promote to a GLOBAL token. **Tier 3** — bespoke
+  scene-illustration colors (fake-chart fills `#c9d3ee`/`#aab9e6`, creator-pink `#c2418a`, success-ink
+  `#0f7a3b`, icon-tile tints) → stay LOCAL; promoting one-offs pollutes the DS. Tokenise design
+  *decisions*, not decoration — and STATE the Tier-3 boundary out loud, don't silently skip it.
+- **Marketing-surface palette is now GLOBAL** (`--bai-mkt-slate/blue/blue-2/green/green-wash` in
+  globals.css; S2 audit #2 — this SUPERSEDES the earlier "keep marketing locals in the section
+  stylesheets" guidance). It was duplicated identically across 7 files (`--bh-*`, `--seo-*`, the heroes'
+  `--slate-900`/`--green`) → Tier 2 → one source; per-file locals now alias it. `--bh-orange` folded
+  into `--bai-jobs` (same value). `--font-head`/`--font-mono` stay per-stylesheet locals — fonts, fine.
+- **Alpha washes now tokenised via rgb-channel tokens** (S2 audit #2 — frontier CLOSED). `rgba()` can't
+  take a solid `--bai-iris` token, so the RGB triple gets its own token: `--bai-iris-rgb: 123, 76, 255`
+  → `rgba(var(--bai-iris-rgb), α)`. The solid DERIVES from it too (`--bai-iris: rgb(var(--bai-iris-rgb))`)
+  → the numbers live in ONE place. Channel tokens: `--bai-{iris,cyan,glow}-rgb` (glow = #5F46FF brand
+  shadow) + `--bai-mkt-{blue,blue-2,green}-rgb`. All 7 stylesheets + globals swept. **Pattern to reuse:**
+  any color that appears BOTH solid and as an rgba wash → define the channel triple, derive both.
+- **Still raw, by stated boundary:** `.tsx` rgba in SVG `<stop stop-color>`, Tailwind-arbitrary values
+  (`shadow-[…rgba(…)]`), and one inline page-bg gradient — `var()` is unreliable in SVG/JS-driven values
+  and fragile in Tailwind arbitrary syntax. Tailwind `bg-iris/10` alpha modifiers also DON'T work (vars
+  aren't channel triples for Tailwind's opacity plugin) — use `bg-bai-wash` or explicit rgba.

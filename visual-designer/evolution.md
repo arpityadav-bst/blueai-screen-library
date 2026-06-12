@@ -1,5 +1,5 @@
 # blueAI — Evolution
-Last updated: 2026-06-11 (S2 — Phase 2 entered; recurring category named)
+Last updated: 2026-06-11 (S2 close audit — full build day logged; recurring category #2 named: Gate-8 misses on new builds)
 
 > VDA's growth + maturity timeline ON THE BLUEAI PROJECT. Separate from WSUP/now.gg —
 > a fresh notebook starts at Phase 1.
@@ -31,10 +31,23 @@ latent). Will keep biting until the stylesheets are scoped under unique roots.
 
 **Active gaps / watch for next session:**
 - ✅ RESOLVED (S2): scoped the 3 hero stylesheets under `.v-stage`/`.v-cards`/`.v-original` — the
-  recurring CSS-leak category is now structurally closed (built bundle has zero unscoped generic
-  hero rules; verified live). Watch for the same generic-class trap if a 4th variant or a new
-  shared-name stylesheet is added — scope it from the start.
+  CSS-leak category is structurally closed (zero unscoped generic hero rules; verified live). Watch
+  the same trap if a 4th variant / shared-name stylesheet is added — scope it from the start.
+- **Gate-8 catch-rate on NEW builds — the growth edge (see recurring category #2).** Run the visual
+  self-review (and screenshot mobile/responsive) BEFORE presenting, not after the designer catches it.
+- A reusable `<SentenceLines>` helper (full-stop wrapping) — candidate, not yet built.
 - Hero motion timing is a first-pass approximation of the original GSAP — retune on review.
 
-**Count history:** S1 = N/A (build session). **S2 = `designer_caught_count: 1`** (the Stage hero
-prod/dev text-align mismatch, caught on Vercel — a prod-only CSS-chunking bug dev didn't show).
+**Recurring category #2 (named S2-cont): Gate-8 visual misses on first-pass NEW builds.** Across the
+4-card + SEO-homepage work I shipped several visual issues the designer caught on review that a
+pre-present Gate-8 pass should have caught: the Finance card wider than its siblings (`1fr` vs
+`minmax(0,1fr)`), the close-band heading wrapping through the full stop (rule 14), the POLYMARKET
+clip, the mobile nav pushing content, and aligning the body too wide. Pattern: NEW builds get the
+architecture right but skip the final "read it as a designer / screenshot it" pass. Remedy: Gate 8
+is always-on — run it (and for layout/responsive, screenshot) before presenting.
+
+**Count history:** S1 = N/A (build session). **S2 (full day) = `designer_caught_count: ~6`** — prod
+text-align (Vercel), Finance card width, close-band wrap, POLYMARKET clip, mobile-nav push,
+body-too-wide; + the two-tone wordmark misread (corrected to the full gradient). A heavy BUILD day
+(Markets card · SEO homepage · brand SSOT · root Screen Library index · mobile pass · ambient
+backdrop) — all shipped live; the growth edge is the Gate-8 catch-rate, not the building.

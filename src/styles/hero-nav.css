@@ -7,9 +7,7 @@
    ============================================================================ */
 .nav { display: flex; align-items: center; justify-content: space-between; max-width: var(--bai-content); margin: 0 auto; padding: var(--nav-pad-y, 22px) 40px; }
 .brand { display: flex; align-items: center; gap: 10px; }
-.brand svg { display: block; width: 34px; height: 34px; }
 .nav-logomark img { width: 34px; height: 34px; border-radius: 50%; display: block; }
-.wordmark { font-family: var(--font-brand); font-weight: 700; font-size: 25px; line-height: 1; background: var(--bai-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; letter-spacing: -.01em; }
 .nav-right { display: flex; align-items: center; gap: 34px; }
 .nav-links { display: flex; align-items: center; gap: 34px; }
 .nav-links a { font-family: var(--font-ui); font-weight: 500; font-size: 16px; color: var(--fg-3); text-decoration: none; transition: color .15s var(--ease-out); }

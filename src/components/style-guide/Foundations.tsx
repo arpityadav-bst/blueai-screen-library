@@ -2,10 +2,10 @@
 // Each is an id'd <section> so the sidebar can scroll-to + scroll-spy highlight.
 import { Wordmark } from '@/components/Wordmark'
 
-function Swatch({ name, value, cls }: { name: string; value: string; cls: string }) {
+function Swatch({ name, value, cls = '', style }: { name: string; value: string; cls?: string; style?: React.CSSProperties }) {
   return (
     <div className="overflow-hidden rounded-card border border-divider">
-      <div className={`h-14 ${cls}`} />
+      <div className={`h-14 ${cls}`} style={style} />
       <div className="px-2.5 py-2">
         <p className="text-xs font-semibold text-ink-heading">{name}</p>
         <p className="font-mono text-[10px] text-ink-muted">{value}</p>
@@ -48,6 +48,15 @@ export function Foundations() {
           <Swatch name="Scheduled" value="#9333EA" cls="bg-status-scheduled" />
           <Swatch name="Jobs" value="#F97316" cls="bg-status-jobs" />
         </div>
+        <p className="bai-section-label mb-3 mt-6">Marketing surface — homepage · SEO · hero chrome (not the in-app panel)</p>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
+          <Swatch name="Mkt slate" value="#0F172A · text" style={{ background: 'var(--bai-mkt-slate)' }} />
+          <Swatch name="Mkt blue" value="#2F6DFF · links" style={{ background: 'var(--bai-mkt-blue)' }} />
+          <Swatch name="Mkt blue-2" value="#3D7BFF · eyebrow" style={{ background: 'var(--bai-mkt-blue-2)' }} />
+          <Swatch name="Mkt green" value="#16A34A · live" style={{ background: 'var(--bai-mkt-green)' }} />
+          <Swatch name="Green wash" value="green · .10α" style={{ background: 'var(--bai-mkt-green-wash)' }} />
+        </div>
+        <p className="mt-2 text-2xs leading-relaxed text-ink-muted">A distinct surface palette — one source (<span className="font-mono">--bai-mkt-*</span> in globals.css) — slate text + a marketing blue + a marketing green, used by the homepage, the SEO page, and the heroes’ marketing chrome. Intentionally separate from the brand gradient and the in-app ink ramp.</p>
       </section>
 
       {/* TYPE */}

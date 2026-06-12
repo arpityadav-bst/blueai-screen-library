@@ -6,10 +6,10 @@
    ============================================================================ */
 .bai-home{
   --bh-head:'Space Grotesk', 'SF Pro Display', var(--font-display);
-  --bh-slate:#0f172a;
-  --bh-blue:#2f6dff;
-  --bh-green:#16a34a;
-  --bh-orange:#f97316;
+  --bh-slate:var(--bai-mkt-slate);
+  --bh-blue:var(--bai-mkt-blue);
+  --bh-green:var(--bai-mkt-green);
+  --bh-orange:var(--bai-jobs);
   font-family:var(--font-ui);
   color:var(--bh-slate);
   position:relative;
@@ -54,7 +54,7 @@
 
 /* feature visual — real product image from the live site */
 .bai-home .feat-visual{position:relative;border-radius:20px;overflow:hidden;
-  box-shadow:0 26px 54px -32px rgba(95,70,255,.42);}
+  box-shadow:0 26px 54px -32px rgba(var(--bai-glow-rgb),.42);}
 .bai-home .feat-visual img{display:block;width:100%;height:auto;}
 .bai-home .mock{position:absolute;inset:0;padding:26px;display:flex;flex-direction:column;gap:11px;justify-content:center;}
 .bai-home .mock-bar{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--bai-divider);
@@ -73,7 +73,7 @@
 .bai-home .mock-tag{font-family:var(--font-ui);font-weight:700;font-size:12px;flex:none;}
 .bai-home .mock-tag.up{color:var(--bh-green);} .bai-home .mock-tag.bl{color:var(--bh-blue);}
 .bai-home .mock-pill{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;
-  background:var(--bai-gradient-wash);border:1px solid rgba(123,76,255,.2);border-radius:var(--radius-pill);
+  background:var(--bai-gradient-wash);border:1px solid rgba(var(--bai-iris-rgb),.2);border-radius:var(--radius-pill);
   padding:7px 13px;font-family:var(--font-ui);font-weight:600;font-size:12px;color:#5b3fd6;}
 
 /* ---------------------------------------------------- SKILLS section */
@@ -110,13 +110,13 @@
 .bai-home .skill{position:relative;display:flex;flex-direction:column;background:var(--bai-canvas);
   border:1px solid var(--bai-divider);border-radius:16px;padding:18px 18px 16px;
   box-shadow:0 1px 2px rgba(8,10,31,.04);transition:transform .2s var(--ease-out),box-shadow .2s var(--ease-out),border-color .2s var(--ease-out);}
-.bai-home .skill:hover{transform:translateY(-3px);border-color:rgba(123,76,255,.3);
-  box-shadow:0 20px 40px -24px rgba(95,70,255,.4);}
+.bai-home .skill:hover{transform:translateY(-3px);border-color:rgba(var(--bai-iris-rgb),.3);
+  box-shadow:0 20px 40px -24px rgba(var(--bai-glow-rgb),.4);}
 .bai-home .skill-top{display:flex;align-items:center;gap:10px;margin-bottom:15px;}
 .bai-home .skill-ic{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;
   font-size:18px;flex:none;}
 .bai-home .skill-cat{font-family:var(--font-ui);font-weight:600;font-size:10.5px;letter-spacing:.09em;
-  text-transform:uppercase;color:var(--bh-blue);background:rgba(47,109,255,.1);border-radius:var(--radius-pill);
+  text-transform:uppercase;color:var(--bh-blue);background:rgba(var(--bai-mkt-blue-rgb),.1);border-radius:var(--radius-pill);
   padding:4px 10px;}
 .bai-home .skill-feat{position:absolute;top:16px;right:16px;font-family:var(--font-ui);font-weight:700;
   font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:var(--bh-orange);
@@ -139,9 +139,9 @@
   background:linear-gradient(180deg,#eff4ff 0%,#e9f0fe 100%);border:1px solid #dce6fb;box-shadow:none;}
 .bai-home .skill-more:hover{transform:none;border-color:#c5d6f7;box-shadow:none;}
 .bai-home .skill-more .sm-ic{width:46px;height:46px;border-radius:13px;
-  background:linear-gradient(145deg,#4aa3ff 0%,#7B4CFF 100%);
+  background:linear-gradient(145deg,#4aa3ff 0%,var(--bai-iris) 100%);
   display:flex;align-items:center;justify-content:center;margin-bottom:6px;
-  box-shadow:0 8px 18px -6px rgba(95,70,255,.5);}
+  box-shadow:0 8px 18px -6px rgba(var(--bai-glow-rgb),.5);}
 .bai-home .skill-more .sm-ic svg{width:24px;height:24px;}
 .bai-home .skill-more{align-items:center;justify-content:center;text-align:center;gap:14px;padding:28px 18px;}
 .bai-home .skill-more .sm-tx{display:flex;flex-direction:column;align-items:center;gap:7px;}
@@ -158,7 +158,6 @@
 .bai-home .foot{border-top:1px solid var(--bai-divider);padding:30px 0;text-align:center;}
 .bai-home .foot-brand{display:flex;align-items:center;justify-content:center;gap:9px;margin-bottom:12px;}
 .bai-home .foot-brand img{width:30px;height:30px;border-radius:50%;display:block;}
-.bai-home .foot-wordmark{font-family:var(--font-brand);font-weight:700;font-size:20px;line-height:1;background:var(--bai-gradient);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;letter-spacing:-.01em;}
 .bai-home .foot p{font-family:var(--font-ui);font-size:12px;color:var(--fg-4);margin:0;}
 
 /* ---------------------------------------------------- RESPONSIVE */
