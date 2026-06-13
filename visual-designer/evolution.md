@@ -1,5 +1,5 @@
 # blueAI — Evolution
-Last updated: 2026-06-12 (S5 — style-guide architecture day; category #2 validated a 3RD time (5 visual catches on the new SG build); atomic-hierarchy directive issued; S4 token deferral closed)
+Last updated: 2026-06-13 (S6 — live-demo clone + DS redesign + signature motion; category #2 validated a 4TH time (~8 catches, clustered on motion/floating/overlay); growth edge sharpened to the per-state/per-breakpoint walk-through)
 
 > VDA's growth + maturity timeline ON THE BLUEAI PROJECT. Separate from WSUP/now.gg —
 > a fresh notebook starts at Phase 1.
@@ -77,3 +77,14 @@ Built the SG's documentation architecture: notes/titles trim → PREVIEW+ANATOMY
 **New standing directive (designer, S5): atomic hierarchy is law** — taste 26. Every value tokenised, every layer extracted + documented at its level (token/CSS/React). This gives Gate 2/3 a sharper test than "use tokens": *name the layer; trace every value.*
 
 **Watch next session:** (a) the same Gate-8 pre-present pass — category #2 is now 3-for-3; (b) apply taste 26 from the FIRST line of any new build, not at audit; (c) two parked designer decisions still open: SiteFaq-vs-SeoFaq consolidation, dark `.site-cta-band` vs bright `.seo-close` unification.
+
+## S6 (2026-06-13) — live-demo: clone + DS redesign + the signature-motion day
+Cloned the PM's homepage byte-exact (`/live-demo`, static passthrough — exempt from the DS), then built `/live-demo-v2` as the DS redesign of the same funnel (scoped `.ldv2`, reused legacy scenes, framer motion). Iterated heavily on two signature moments — the **widget assembly intro** (blueprint → beam-wipe reveal) and the **docking widget** — plus an agent-mind lattice (added, then removed on designer call). Closed with a token pass (--bai-star / --bai-mkt-green-ink / --bai-cta-band) + this audit (SG coverage for the v2 patterns + the 3 tokens; promotion).
+
+**`designer_caught_count: ~8`** (the highest yet — almost all on the NEW v2 build + its animations): logo circle-in-circle (×2), docked widget cropping, badge obstructing the widget header, badge too harsh (black), footer painting over the docked widget, two pulsing dots, lattice "not good enough" + blueprint not merging, mobile header crowding + flag over the trust row. Plus brief-understanding catches (the island/funnel scope, the deliberate login wall) and the "is everything tokenised?" prompt.
+
+**Recurring category #2 — VALIDATED A 4TH TIME, and sharper: novel MOTION/interaction work is where my first-pass misses cluster.** The static layout largely held; the catches were on the things that move/float/overlay (the docked panel z-order, the badge clearance in two layouts, the two animated dots, the blueprint-vs-widget merge). New self-rule for next session's Gate 8: for any floating/animated/transient element, **walk it through every state and every breakpoint BEFORE presenting** — docked + hero, mobile + desktop, mid-animation + settled, over each background it can travel over. That's the concrete checklist this category keeps demanding.
+
+**Counter-evidence of growth:** the diagnoses got faster and more honest — root-caused the framer clip-path snap (→ CSS keyframe), the ancestor-stacking-context footer bug, the signal-redundancy (lifecycle not restyle), and RETRACTED my own wrong "var() in SVG attrs" claim when the lattice disproved it. The fixes addressed CAUSES (wipe-not-crossfade, retire-not-restyle, scale-not-reflow), not symptoms.
+
+**Watch next session:** (a) the floating/animated/breakpoint walk-through above — category #2 is now 4-for-4, still the growth edge; (b) the dev server died silently ~5× this session (check the port before debugging a "broken" route — it's a process-stability issue, not the code); (c) the two parked CTA-band / FAQ consolidation decisions remain open.

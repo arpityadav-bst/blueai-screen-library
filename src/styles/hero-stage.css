@@ -115,7 +115,7 @@
 .v-stage .cr-rmeta { flex: 1; min-width: 0; }
 .v-stage .cr-rmeta b { display: block; font-family: var(--font-ui); font-weight: 600; font-size: 12px; color: var(--slate-900); line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .v-stage .cr-rmeta i { font-family: var(--font-ui); font-style: normal; font-size: 10px; color: var(--fg-4); }
-.v-stage .cr-rmatch { font-family: var(--font-mono); font-weight: 600; font-size: 10.5px; color: #0f7a3b; flex: none; }
+.v-stage .cr-rmatch { font-family: var(--font-mono); font-weight: 600; font-size: 10.5px; color: var(--bai-mkt-green-ink); flex: none; }
 .v-stage .cr-result.is-pick { border-color: rgba(var(--bai-iris-rgb),.55); box-shadow: 0 6px 16px -9px rgba(var(--bai-glow-rgb),.55); }
 .v-stage .cr-job { display: flex; align-items: center; gap: 10px; background: #fff; border: 1px solid var(--bai-divider); border-radius: 10px; padding: 7px 11px; flex: none; }
 .v-stage .cr-logo { width: 30px; height: 30px; border-radius: 8px; background: linear-gradient(150deg, var(--bai-iris), var(--bai-cyan)); color: #fff; font-family: var(--font-head); font-weight: 700; font-size: 15px; display: flex; align-items: center; justify-content: center; flex: none; }
@@ -133,7 +133,7 @@
 .v-stage .cr-actions { position: relative; flex: none; height: 36px; }
 .v-stage .cr-submit { position: absolute; inset: 0; border: none; cursor: default; border-radius: 10px; background: linear-gradient(105deg, var(--bai-legacy-blue), var(--bai-iris)); color: #fff; font-family: var(--font-ui); font-weight: 600; font-size: 13.5px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
 .v-stage .cr-ripple { position: absolute; left: 50%; top: 50%; width: 160px; height: 160px; border-radius: 50%; background: rgba(255,255,255,.5); pointer-events: none; transform: translate(-50%,-50%) scale(0); }
-.v-stage .cr-applied { position: absolute; inset: 0; border-radius: 10px; background: var(--green-bg); color: #0f7a3b; font-family: var(--font-ui); font-weight: 600; font-size: 13.5px; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.v-stage .cr-applied { position: absolute; inset: 0; border-radius: 10px; background: var(--green-bg); color: var(--bai-mkt-green-ink); font-family: var(--font-ui); font-weight: 600; font-size: 13.5px; display: flex; align-items: center; justify-content: center; gap: 6px; }
 
 /* ============ CREATOR ============ */
 .v-stage .cv-stage { padding: 0; justify-content: stretch; }
@@ -201,8 +201,8 @@
 .v-stage .fn-pos .note { font-family: var(--font-ui); font-size: 11.5px; line-height: 1.25; color: var(--fg-2); flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .v-stage .fn-email { display: flex; align-items: center; gap: 9px; flex: none; background: var(--green-bg); border: 1px solid rgba(var(--bai-mkt-green-rgb),.25); border-radius: 9px; padding: 6px 10px; }
 .v-stage .fn-email .env { width: 27px; height: 27px; border-radius: 7px; background: #fff; border: 1px solid rgba(var(--bai-mkt-green-rgb),.2); display: flex; align-items: center; justify-content: center; flex: none; }
-.v-stage .fn-email .env svg { width: 14px; height: 14px; color: #0f7a3b; }
-.v-stage .fn-email b { display: block; font-family: var(--font-ui); font-weight: 600; font-size: 12px; color: #0f7a3b; line-height: 1.2; }
+.v-stage .fn-email .env svg { width: 14px; height: 14px; color: var(--bai-mkt-green-ink); }
+.v-stage .fn-email b { display: block; font-family: var(--font-ui); font-weight: 600; font-size: 12px; color: var(--bai-mkt-green-ink); line-height: 1.2; }
 .v-stage .fn-email i { display: block; font-family: var(--font-ui); font-style: normal; font-size: 10px; color: #3a7a52; margin-top: 1px; }
 
 /* --------------------------------------------------------------- responsive */

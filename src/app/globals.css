@@ -118,9 +118,12 @@
     --bai-mkt-blue-2:     rgb(var(--bai-mkt-blue-2-rgb));  /* marketing accent, lighter — eyebrows/secondary */
     --bai-mkt-green:      rgb(var(--bai-mkt-green-rgb));   /* "live"/success on marketing surfaces (≠ --bai-success) */
     --bai-mkt-green-wash: rgba(var(--bai-mkt-green-rgb), .10);
+    --bai-mkt-green-ink:  #0F7A3B;  /* the darker TEXT/ink green — "LIVE" labels, applied ✓, +% (paired w/ mkt-green); was raw #0f7a3b across seo + heroes + live-demo-v2 (S5 token pass) */
+    --bai-star:           #F5A623;  /* rating-star gold — a universal review gold, not a brand hue; the one semantic that isn't on the iris/cyan/neutral system */
 
     /* The brand "Download" CTA — was hand-inlined on every CTA; tokenized here (one source). */
     --bai-cta-gradient:      linear-gradient(105deg, var(--bai-legacy-blue) 0%, #6b53ff 55%, var(--bai-iris) 100%);
+    --bai-cta-band:          linear-gradient(120deg, var(--bai-ink-display), #1D1655 45%, var(--bai-iris) 120%); /* dark closing-CTA band (live-demo-v2); mid-stop lives here once */
     --bai-shadow-cta:        0 10px 26px -8px rgba(var(--bai-glow-rgb), .55);
     --bai-shadow-cta-hover:  0 16px 32px -8px rgba(var(--bai-glow-rgb), .6);
     --bai-shadow-brand-sm:   0 4px 6px -1px rgba(var(--bai-iris-rgb), .20);  /* colored, for elevated brand chips */

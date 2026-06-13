@@ -46,7 +46,7 @@
 .ho .ux { display: flex; flex-direction: column; gap: 8px; margin: 0; padding-top: 11px; border-top: 1px solid var(--bai-divider); }
 .ho .ux .r { display: flex; gap: 8px; font-family: var(--font-ui); font-size: 12.5px; line-height: 1.4; color: var(--fg-3); }
 .ho .ux .mk { flex: none; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; margin-top: 1px; }
-.ho .ux .pro .mk { background: rgba(var(--bai-mkt-green-rgb),.14); color: #0f7a3b; }
+.ho .ux .pro .mk { background: rgba(var(--bai-mkt-green-rgb),.14); color: var(--bai-mkt-green-ink); }
 .ho .ux .con .mk { background: rgba(100,116,139,.16); color: #64748b; }
 .ho .ux b { color: var(--slate-900); font-weight: 600; }
 .ho .open { display: inline-flex; align-items: center; gap: 7px; font-family: var(--font-ui); font-weight: 600; font-size: 14px; color: var(--bai-mkt-blue); margin-top: auto; padding-top: 6px; }

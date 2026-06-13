@@ -11,6 +11,8 @@ export const metadata: Metadata = {
 const PAGES = [
   { href: '/seo', name: 'SEO Homepage', desc: 'Search-optimized marketing homepage — full sections + FAQ schema' },
   { href: '/hero-options', name: 'Hero Options', desc: 'The three hero directions, compared side by side' },
+  { href: '/live-demo', name: 'Live Demo Homepage', desc: 'The PM’s homepage with the live hire-a-worker widget — exact static clone' },
+  { href: '/live-demo-v2', name: 'Live Demo Homepage · DS', desc: 'The same funnel redesigned on the BlueAI design system — live scenes, parallax, docking widget' },
 ]
 
 export default function Home() {

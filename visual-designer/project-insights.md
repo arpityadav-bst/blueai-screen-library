@@ -1,5 +1,5 @@
 # blueAI — Project Insights
-Last updated: 2026-06-12 (S5 — SG anatomy architecture + form-kit molecules + ink/page channel tokens; index = 3 entries; latest deploy commit 0df2090)
+Last updated: 2026-06-13 (S6 — /live-demo static clone + /live-demo-v2 DS redesign of the PM funnel: docking widget, blueprint beam-wipe intro, widget token-mirror; latest deploy commit 0df2090, v2 uncommitted)
 
 ## Style guide architecture (S5)
 - **Sidebar:** surface-grouped accordion (Foundations · Components · Site & patterns · Agent pages · Marketing pages · App (PM)) — only the active group's items render; sentence-case light headers + per-group counts + a tree-line. Section ids drive scroll-spy; `tok-*` ids are linkable token anchors that RING on `:target`.
@@ -52,6 +52,16 @@ Last updated: 2026-06-12 (S5 — SG anatomy architecture + form-kit molecules + 
   client components on the shared `.jmf-*` form kit (`components/agent/{CareerForm,CreatorForm,FinanceForm,MarketsForm,FileUpload,VideoCard,glyphs}` — see KB "Agent demo form kit"). Finance adds an "Every trade"
   trade-log section. social-rewards hero = scattered Reddit collage (absolute, per-card transforms). Real
   "Made by the agent" videos in **`public/videos/`** (3 mp4 + posters, ~36MB, downloaded from the live site).
+- **S6 (2026-06-13) — the PM's "hire a worker" homepage, two ways.** `/live-demo` = a byte-exact STATIC
+  CLONE of `ashish-pathak-bst/blue-ai-demo` (2 HTML files in `public/live-demo/`; `/live-demo` REDIRECTs to
+  `/index.html` so the relative `app.html` iframe resolves). **EXEMPT from the DS** — a PM artifact hosted
+  as-is; pristine source kept in `design-source/blue-ai-demo/`. `/live-demo-v2` = the **DS REDESIGN** of the
+  same funnel: scoped `.ldv2` (`styles/live-demo-v2.css`), `components/ldv2/*` (`Ldv2Hero`+`Ldv2WidgetIntro`,
+  `Ldv2Nav`, `Ldv2Workers`, `Ldv2Proof`, `Ldv2Lower`) + `lib/ldv2-data.ts`. Anchor-only nav (island funnel,
+  taste 32); reuses the legacy scenes; framer motion throughout. Signatures: docking widget + blueprint
+  beam-wipe assembly intro. The hire WIDGET is the PM's `app.html`, copied to `public/live-demo-v2/widget.html`
+  and reskinned to the DS via a `:root` token-MIRROR (iframe can't read app vars; flow/login byte-identical).
+  v2's new patterns are documented in `/style-guide` (Marketing-pages group) under `.ldv2.sg-demo`.
 
 ## Hero architecture — TWO animation paths (critical)
 The export's `hero-cards.js` branches per agent on which markup is present:

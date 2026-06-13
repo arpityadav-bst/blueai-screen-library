@@ -78,7 +78,7 @@
 .v-original .cr-fill { display: block; height: 100%; width: 100%; border-radius: 6px; transform-origin: left center; background: linear-gradient(90deg, #c9d3ee, #aab9e6); }
 .v-original .cr-submit { position: absolute; left: 18px; right: 18px; bottom: 18px; height: 40px; border: none; cursor: default; border-radius: 11px; background: linear-gradient(105deg, var(--bai-legacy-blue), var(--bai-iris)); color: #fff; font-family: var(--font-ui); font-weight: 600; font-size: 14px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
 .v-original .cr-ripple { position: absolute; left: 50%; bottom: 20px; width: 170px; height: 170px; border-radius: 50%; background: rgba(255,255,255,.6); pointer-events: none; }
-.v-original .cr-applied { position: absolute; left: 18px; right: 18px; bottom: 18px; height: 40px; border-radius: 11px; background: var(--green-bg); color: #0f7a3b; font-family: var(--font-ui); font-weight: 600; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.v-original .cr-applied { position: absolute; left: 18px; right: 18px; bottom: 18px; height: 40px; border-radius: 11px; background: var(--green-bg); color: var(--bai-mkt-green-ink); font-family: var(--font-ui); font-weight: 600; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 6px; }
 
 /* ---------- CREATOR (legacy, big) ---------- */
 .v-original .cv-trend { display: inline-flex; align-items: center; gap: 6px; background: #fff; border: 1px solid var(--bai-divider); border-radius: var(--radius-pill); padding: 6px 13px; font-family: var(--font-ui); font-weight: 600; font-size: 13px; color: #c2418a; margin-bottom: 15px; }
@@ -98,16 +98,16 @@
 .v-original .fn-tick { flex: 1; background: #fff; border: 1px solid var(--bai-divider); border-radius: 9px; padding: 7px 10px; }
 .v-original .fn-tick .sym { font-family: var(--font-mono); font-weight: 600; font-size: 13px; color: var(--slate-900); letter-spacing: -.02em; }
 .v-original .fn-tick .pct { font-family: var(--font-mono); font-weight: 500; font-size: 11px; }
-.v-original .fn-tick .pct.up { color: #0f7a3b; } .v-original .fn-tick .pct.dn { color: #d6455d; }
+.v-original .fn-tick .pct.up { color: var(--bai-mkt-green-ink); } .v-original .fn-tick .pct.dn { color: #d6455d; }
 .v-original .fn-sweep { position: absolute; top: 0; bottom: 0; width: 60px; pointer-events: none; background: linear-gradient(90deg, transparent, rgba(var(--bai-iris-rgb),.30), transparent); }
 .v-original .fn-chartwrap { position: relative; height: 96px; }
 .v-original .fn-chart { width: 100%; height: 96px; display: block; overflow: visible; }
 .v-original .fn-line { fill: none; stroke: url(#fn-grad); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
-.v-original .fn-marker { position: absolute; font-family: var(--font-mono); font-weight: 600; font-size: 12px; color: #fff; background: #0f7a3b; border-radius: var(--radius-pill); padding: 4px 11px; left: 58%; top: 10px; box-shadow: 0 3px 8px rgba(15,122,59,.4); }
-.v-original .fn-marker::after { content: ""; position: absolute; left: 16px; top: 100%; width: 7px; height: 7px; border-radius: 50%; background: #0f7a3b; margin-top: 3px; }
+.v-original .fn-marker { position: absolute; font-family: var(--font-mono); font-weight: 600; font-size: 12px; color: #fff; background: var(--bai-mkt-green-ink); border-radius: var(--radius-pill); padding: 4px 11px; left: 58%; top: 10px; box-shadow: 0 3px 8px rgba(15,122,59,.4); }
+.v-original .fn-marker::after { content: ""; position: absolute; left: 16px; top: 100%; width: 7px; height: 7px; border-radius: 50%; background: var(--bai-mkt-green-ink); margin-top: 3px; }
 .v-original .fn-port { position: absolute; left: 18px; bottom: 14px; display: flex; align-items: baseline; gap: 8px; }
 .v-original .fn-port .v { font-family: var(--font-mono); font-weight: 600; font-size: 23px; color: var(--slate-900); letter-spacing: -.02em; }
-.v-original .fn-port .d { font-family: var(--font-mono); font-weight: 500; font-size: 13px; color: #0f7a3b; }
+.v-original .fn-port .d { font-family: var(--font-mono); font-weight: 500; font-size: 13px; color: var(--bai-mkt-green-ink); }
 
 /* responsive */
 @media (min-width: 921px) {

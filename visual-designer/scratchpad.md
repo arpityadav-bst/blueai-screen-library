@@ -5,4 +5,4 @@ resolved. Promoted to decisions.md / taste.md at audit passes, then wiped.
 Format: `YYYY-MM-DD HH:mm — <file> — <what changed> — Why: <one phrase>`
 
 --- Pending audit entries ---
-(empty — last promoted 2026-06-12, S5 audit: 12 entries → taste 26–29 + 13-amendment, 6 decisions, KB S5 section, evolution S5, project-insights, shared reasonings ×3)
+(empty — last promoted 2026-06-13, S6 audit: 13 entries → taste 30–33, 6 decisions, KB S6 section, evolution S6, session-log S6, project-insights routes, shared reasonings ×4)

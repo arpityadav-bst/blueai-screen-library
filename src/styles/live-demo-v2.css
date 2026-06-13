@@ -1,0 +1,260 @@
+/* ============================================================================
+   BlueAI — Live Demo Homepage, DS redesign (/live-demo-v2). The PM's funnel
+   (blue-ai-demo) re-expressed on the --bai-* design system + framer motion.
+   EVERY rule scoped under .ldv2 (page-root class — never reuse to showcase).
+   The legacy agent-scene styles are duplicated here (scoped), like /seo did.
+   ============================================================================ */
+.ldv2 { position: relative; background: var(--bai-page-grad); min-height: 100vh; overflow-x: hidden;
+  color: var(--bai-mkt-slate); font-family: var(--font-ui);
+  --seo-slate: var(--bai-mkt-slate);                 /* scene-CSS aliases (the scene rules are shared verbatim with /seo) */
+  --green: var(--bai-mkt-green); --green-bg: var(--bai-mkt-green-wash);
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --ldv2-content: 1240px; }
+.ldv2 * { box-sizing: border-box; }
+html:has(.ldv2) { scroll-behavior: smooth; }
+.ldv2 .ldv2-wrap { max-width: var(--ldv2-content); margin: 0 auto; padding: 0 32px; }
+/* z-auto (NOT z-index:1) — a z-index on main would create a stacking context that CAPS the
+   docked fixed panel (z-90) beneath the footer; DOM order alone puts content above the backdrop */
+.ldv2 main { position: relative; }
+.ldv2 .ldv2-eyebrow { display: block; font-family: var(--font-ui); font-weight: 700; font-size: 12.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--bai-mkt-blue); }
+.ldv2 .ldv2-h2 { font-family: var(--font-head); font-weight: 600; font-size: clamp(28px, 3vw, 38px); line-height: 1.1; letter-spacing: -.03em; color: var(--bai-mkt-slate); text-wrap: balance; margin: 12px 0 0; }
+.ldv2 .ldv2-sub { font-family: var(--font-ui); font-size: clamp(14px, 1.15vw, 16.5px); color: var(--fg-4); line-height: 1.55; margin: 12px 0 0; text-wrap: pretty; }
+.ldv2 .ldv2-section { padding: clamp(54px, 6.5vw, 92px) 0; scroll-margin-top: 76px; }
+.ldv2 .ldv2-secthead { text-align: center; max-width: 680px; margin: 0 auto 44px; }
+
+/* ── ambient parallax backdrop (page-local) ───────────────────────────── */
+.ldv2 .ldv2-backdrop { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.ldv2 .ldv2-orb { position: absolute; width: 44vw; height: 44vw; max-width: 640px; max-height: 640px; border-radius: 50%; filter: blur(92px); opacity: .3; will-change: transform; }
+.ldv2 .ldv2-orb-iris { background: radial-gradient(circle at center, rgba(var(--bai-iris-rgb), .5), transparent 68%); }
+.ldv2 .ldv2-orb-cyan { background: radial-gradient(circle at center, rgba(var(--bai-cyan-rgb), .45), transparent 68%); }
+.ldv2 .ldv2-orb-blue { background: radial-gradient(circle at center, rgba(var(--bai-mkt-blue-rgb), .4), transparent 68%); }
+
+/* ── nav (sticky, frosted — anchors only: the page is a self-contained funnel) ── */
+.ldv2 .ldv2-nav { position: sticky; top: 0; z-index: 100; background: rgba(var(--bai-page-rgb), .8); -webkit-backdrop-filter: blur(11px); backdrop-filter: blur(11px); border-bottom: 1px solid var(--bai-divider); } /* above the hero panel (z-80) while it scrolls under */
+.ldv2 .ldv2-nav-in { max-width: var(--ldv2-content); margin: 0 auto; padding: 0 32px; height: 66px; display: flex; align-items: center; gap: 20px; }
+.ldv2 .ldv2-brand { display: flex; align-items: center; gap: 9px; }
+.ldv2 .ldv2-brand img { display: block; width: 30px; height: 30px; border-radius: 50%; }
+.ldv2 .ldv2-links { display: flex; gap: 28px; margin-left: 14px; }
+.ldv2 .ldv2-links a { font-size: 14px; font-weight: 500; color: var(--fg-3); text-decoration: none; transition: color .15s var(--ease-out); }
+.ldv2 .ldv2-links a:hover { color: var(--fg-1); }
+.ldv2 .ldv2-nav-right { margin-left: auto; display: flex; align-items: center; gap: 16px; }
+.ldv2 .ldv2-login { font-size: 14px; font-weight: 600; color: var(--fg-2); text-decoration: none; }
+.ldv2 .ldv2-cta { display: inline-flex; align-items: center; gap: 8px; border: none; cursor: pointer; font-family: var(--font-ui); font-weight: 600; font-size: 14.5px; color: #fff; background: var(--bai-cta-gradient); border-radius: var(--radius-pill); padding: 11px 20px; text-decoration: none; box-shadow: var(--bai-shadow-cta); transition: transform .18s var(--ease-out), box-shadow .18s var(--ease-out); white-space: nowrap; }
+.ldv2 .ldv2-cta:hover { transform: translateY(-2px); box-shadow: var(--bai-shadow-cta-hover); }
+.ldv2 .ldv2-cta .site-arrow { transition: transform .18s var(--ease-out); }
+.ldv2 .ldv2-cta:hover .site-arrow { transform: translateX(3px); }
+
+/* ── hero: copy left · live widget panel right ─────────────────────────── */
+.ldv2 .ldv2-hero { position: relative; }
+.ldv2 .ldv2-hero-grid { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 452px; gap: 48px; align-items: center; padding-top: 52px; padding-bottom: 58px; }
+
+/* trust row — real proof, pulled up to the decision point; grounds the copy + fills the column */
+.ldv2 .ldv2-trust { display: flex; align-items: center; gap: 13px; margin-top: 26px; flex-wrap: wrap; }
+.ldv2 .ldv2-stars { color: var(--bai-star); font-size: 15px; letter-spacing: 1.5px; }
+.ldv2 .ldv2-ti { font-family: var(--font-ui); font-size: 13px; font-weight: 500; color: var(--fg-4); }
+.ldv2 .ldv2-tdot { width: 4px; height: 4px; border-radius: 50%; background: var(--bai-stroke); }
+.ldv2 .ldv2-h1 { font-family: var(--font-head); font-weight: 600; font-size: clamp(34px, 3.6vw, 46px); letter-spacing: -.03em; line-height: 1.1; margin: 14px 0 0; color: var(--bai-mkt-slate); text-wrap: balance; }
+.ldv2 .ldv2-h1 .grad { background: var(--bai-gradient); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.ldv2 .ldv2-lead { font-size: 15.5px; color: var(--fg-4); margin-top: 14px; max-width: 400px; line-height: 1.55; text-wrap: pretty; }
+.ldv2 .ldv2-startcue { display: inline-flex; align-items: center; gap: 9px; margin-top: 22px; font-size: 13px; font-weight: 600; color: var(--fg-4); }
+.ldv2 .ldv2-startcue .arr { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 7px; background: var(--bai-wash, rgba(var(--bai-iris-rgb), .10)); color: var(--bai-iris); font-size: 13px; animation: ldv2Nudge 1.4s ease-in-out infinite; }
+@keyframes ldv2Nudge { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(3px); } }
+
+/* the live widget panel — slot keeps hero layout; the panel itself can DOCK (fixed) on scroll */
+.ldv2 .ldv2-panelslot { position: relative; width: 452px; height: 720px; justify-self: end; }
+.ldv2 .ldv2-panel { position: absolute; inset: 0; z-index: 80; }
+.ldv2 .ldv2-frame { position: absolute; inset: 0; border-radius: var(--radius-credits, 24px); overflow: hidden; background: var(--bai-surface); border: 1px solid var(--bai-divider); box-shadow: var(--shadow-overlay), 0 30px 70px -20px rgba(var(--bai-glow-rgb), .35); }
+.ldv2 .ldv2-frame iframe { width: 100%; height: 100%; border: 0; display: block; }
+/* floats FULLY ABOVE the frame (never straddles) — the widget's own header (brandbar / worker
+   name+status in chat) lives at its top edge, so an overlapping tag obstructs it. QUIET by
+   design: the DS green-wash live language (the worker cards' LIVE badge) — the panel is the
+   hero of the page; its label shouldn't out-shout it. */
+.ldv2 .ldv2-tryflag { position: absolute; top: -36px; left: 2px; z-index: 3; background: rgba(255, 255, 255, .85); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); border: 1px solid var(--bai-divider); color: var(--fg-2); font-family: var(--font-ui); font-size: 11.5px; font-weight: 600; padding: 4px 12px; border-radius: var(--radius-pill); display: flex; align-items: center; gap: 7px; transition: opacity .45s var(--ease-out), transform .45s var(--ease-out); }
+/* retired after first engagement — the worker's own presence dot is the live signal from here */
+.ldv2 .ldv2-tryflag.is-done { opacity: 0; transform: translateY(-5px); pointer-events: none; }
+.ldv2 .ldv2-tryflag .pd { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 0 rgba(var(--bai-mkt-green-rgb), .6); animation: ldv2Pd 2s infinite; }
+@keyframes ldv2Pd { 0% { box-shadow: 0 0 0 0 rgba(var(--bai-mkt-green-rgb), .6); } 70% { box-shadow: 0 0 0 6px rgba(var(--bai-mkt-green-rgb), 0); } 100% { box-shadow: 0 0 0 0 rgba(var(--bai-mkt-green-rgb), 0); } }
+.ldv2 .ldv2-glow { position: absolute; inset: -30px -20px; z-index: -1; background: radial-gradient(closest-side, rgba(var(--bai-glow-rgb), .18), transparent); filter: blur(10px); }
+/* widget assembly intro overlay — opaque, over the iframe. The blueprint DRAWS (framer pathLength),
+   then on .is-reveal the beam sweeps + the overlay is WIPED away top→bottom (clip-path), revealing
+   the live widget beneath the beam — no cross-fade, so blueprint + widget never overlap (no shift).
+   CSS drives the wipe/beam (framer snaps clip-path strings); colors in CSS (var() in SVG attrs is ok
+   here but CSS keeps framer to pathLength only). */
+.ldv2 .ldv2-intro { position: absolute; inset: 0; z-index: 5; background: var(--bai-surface); overflow: hidden; clip-path: inset(0 0 0 0); }
+.ldv2 .ldv2-intro svg { width: 100%; height: 100%; display: block; }
+.ldv2 .ldv2-intro svg g { stroke: rgba(var(--bai-iris-rgb), .6); stroke-width: 1.5; fill: rgba(var(--bai-iris-rgb), .07); fill-opacity: 0; transition: fill-opacity .3s var(--ease-out); }
+.ldv2 .ldv2-intro.is-reveal svg g { fill-opacity: 1; }
+.ldv2 .ldv2-intro.is-reveal { animation: ldv2Wipe .8s var(--ease-out) .25s forwards; }
+@keyframes ldv2Wipe { to { clip-path: inset(100% 0 0 0); } }
+.ldv2 .ldv2-intro-scan { position: absolute; left: 6%; right: 6%; top: 0; height: 2px; border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(var(--bai-iris-rgb), .9), transparent); box-shadow: 0 0 14px 2px rgba(var(--bai-iris-rgb), .45); animation: ldv2Beam .8s var(--ease-out) .25s forwards; }
+@keyframes ldv2Beam { from { top: 0; } to { top: 100%; } }
+/* docked (mini, follows the scroll) — framer `layout` FLIPs between the two states.
+   The iframe keeps its DESIGNED width and scales down (.8) — reflowing to 300px would
+   crop the widget's internal layout; scaling shrinks everything proportionally. */
+.ldv2 .ldv2-panel.is-docked { position: fixed; inset: auto 18px 18px auto; width: 300px; height: 500px; z-index: 90; }
+.ldv2 .ldv2-panel.is-docked .ldv2-frame iframe { width: 375px; height: 625px; transform: scale(.8); transform-origin: top left; }
+.ldv2 .ldv2-panel.is-docked .ldv2-glow { display: none; }
+/* docked: flag + restore form a small toolbar row ABOVE the mini panel — nothing overlaps it */
+.ldv2 .ldv2-panel.is-docked .ldv2-tryflag { top: -34px; left: 0; }
+.ldv2 .ldv2-restore { position: absolute; top: -36px; right: 0; z-index: 4; display: none; align-items: center; justify-content: center; width: 28px; height: 28px; border: 1px solid var(--bai-divider); border-radius: 50%; background: rgba(255, 255, 255, .85); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); color: var(--fg-2); cursor: pointer; transition: color .15s var(--ease-out), border-color .15s var(--ease-out); }
+.ldv2 .ldv2-restore:hover { color: var(--bai-iris); border-color: rgba(var(--bai-iris-rgb), .4); }
+.ldv2 .ldv2-panel.is-docked .ldv2-restore { display: inline-flex; }
+
+/* ── stats band (count-up) ─────────────────────────────────────────────── */
+.ldv2 .ldv2-stats { border-top: 1px solid var(--bai-divider); border-bottom: 1px solid var(--bai-divider); background: rgba(255, 255, 255, .55); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.ldv2 .ldv2-stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; padding: 28px 32px; max-width: var(--ldv2-content); margin: 0 auto; }
+.ldv2 .ldv2-stat { text-align: center; }
+.ldv2 .ldv2-stat .n { font-family: var(--font-head); font-weight: 600; font-size: 27px; letter-spacing: -.02em; color: var(--bai-mkt-slate); font-variant-numeric: tabular-nums; }
+.ldv2 .ldv2-stat .l { font-size: 12.5px; color: var(--fg-4); font-weight: 500; margin-top: 3px; }
+
+/* ── workers (spotlight grid — live scenes + the PM's result chips) ────── */
+.ldv2 .ldv2-workers { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; max-width: 940px; margin: 0 auto; }
+.ldv2 .ldv2-worker { position: relative; top: 0; background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-radius: 18px; padding: 18px; box-shadow: var(--bai-shadow-hairline); display: flex; flex-direction: column; transition: box-shadow .4s var(--ease-out), border-color .4s var(--ease-out), top .3s var(--ease-out), opacity .4s var(--ease-out); }
+.ldv2 .ldv2-worker.is-active { top: -6px; border-color: rgba(var(--bai-iris-rgb), .32); box-shadow: 0 22px 44px -20px rgba(var(--bai-glow-rgb), .4), 0 5px 14px -7px rgba(var(--bai-ink-rgb), .1); }
+.ldv2 .ldv2-worker.is-dim { opacity: .82; }
+.ldv2 .ldv2-worker-top { display: flex; align-items: center; gap: 11px; margin-bottom: 12px; }
+.ldv2 .ldv2-worker-icon { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; font-size: 21px; flex: none; }
+.ldv2 .icon-career { background: linear-gradient(160deg, #e3e9ff, #eef0ff); }
+.ldv2 .icon-creator { background: linear-gradient(160deg, #ffe1f3, #f3e2ff); }
+.ldv2 .icon-finance { background: linear-gradient(160deg, #dcf6e6, #e6f7ec); }
+.ldv2 .icon-markets { background: linear-gradient(160deg, #dbe7ff, #e7ecff); }
+.ldv2 .ldv2-worker h3 { font-family: var(--font-head); font-weight: 600; font-size: 17px; letter-spacing: -.02em; color: var(--bai-mkt-slate); margin: 0; }
+.ldv2 .ldv2-worker .live { display: inline-flex; align-items: center; gap: 5px; font-weight: 700; font-size: 10px; letter-spacing: .07em; color: var(--bai-mkt-green-ink); background: var(--green-bg); border-radius: var(--radius-pill); padding: 3px 8px; margin-left: auto; }
+.ldv2 .ldv2-worker .live .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+.ldv2 .ldv2-worker p { font-size: 13.5px; color: var(--fg-4); line-height: 1.5; margin: 0 0 12px; text-wrap: pretty; }
+.ldv2 .ldv2-stage { position: relative; background: var(--bai-surface); border: 1px solid var(--bai-divider); border-radius: 12px; height: 178px; padding: 14px; overflow: hidden; display: flex; flex-direction: column; }
+.ldv2 .ldv2-result { display: flex; align-items: center; gap: 7px; margin-top: 12px; font-size: 12.5px; font-weight: 600; color: var(--bai-mkt-green-ink); background: var(--green-bg); border-radius: 10px; padding: 8px 11px; }
+.ldv2 .ldv2-wmore { text-align: center; margin-top: 26px; font-size: 14px; color: var(--fg-4); font-weight: 500; }
+.ldv2 .ldv2-wmore b { color: var(--fg-2); font-weight: 600; }
+
+/* ---- reused legacy agent scenes (scoped to .ldv2 — shared verbatim with .v-seo) ---- */
+.ldv2 .cr-job { display: flex; align-items: center; gap: 9px; background: #fff; border: 1px solid var(--bai-divider); border-radius: 9px; padding: 7px 9px; margin-bottom: 7px; }
+.ldv2 .cr-logo { width: 26px; height: 26px; border-radius: 7px; background: linear-gradient(150deg, var(--bai-iris), var(--bai-cyan)); color: #fff; font-family: var(--font-head); font-weight: 700; font-size: 13px; display: flex; align-items: center; justify-content: center; flex: none; }
+.ldv2 .cr-job .t { font-family: var(--font-ui); font-weight: 600; font-size: 11.5px; color: var(--fg-1); line-height: 1.2; }
+.ldv2 .cr-job .s { font-family: var(--font-ui); font-size: 10px; color: var(--fg-4); line-height: 1.3; }
+.ldv2 .cr-form { display: flex; flex-direction: column; gap: 5px; }
+.ldv2 .cr-row { display: flex; align-items: center; gap: 8px; }
+.ldv2 .cr-lbl { font-family: var(--font-ui); font-size: 9.5px; color: var(--fg-4); width: 42px; flex: none; }
+.ldv2 .cr-track { flex: 1; height: 8px; border-radius: 4px; background: #e7ebf5; overflow: hidden; }
+.ldv2 .cr-fill { display: block; height: 100%; width: 100%; border-radius: 4px; transform-origin: left center; background: linear-gradient(90deg, #c9d3ee, #aab9e6); }
+.ldv2 .cr-submit { margin-top: auto; flex: none; height: 30px; border: none; cursor: default; border-radius: 8px; background: linear-gradient(105deg, var(--bai-legacy-blue), var(--bai-iris)); color: #fff; font-family: var(--font-ui); font-weight: 600; font-size: 12px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.ldv2 .cr-ripple { position: absolute; left: 50%; bottom: 15px; width: 120px; height: 120px; border-radius: 50%; background: rgba(255,255,255,.6); pointer-events: none; }
+.ldv2 .cr-applied { position: absolute; left: 14px; right: 14px; bottom: 14px; height: 30px; border-radius: 8px; background: var(--green-bg); color: var(--bai-mkt-green-ink); font-family: var(--font-ui); font-weight: 600; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 5px; }
+.ldv2 .cv-trend { display: inline-flex; align-items: center; gap: 5px; background: #fff; border: 1px solid var(--bai-divider); border-radius: var(--radius-pill); padding: 4px 10px; font-family: var(--font-ui); font-weight: 600; font-size: 10.5px; color: #c2418a; margin-bottom: 11px; align-self: flex-start; }
+.ldv2 .cv-script { display: flex; flex-direction: column; gap: 6px; margin-bottom: 13px; }
+.ldv2 .cv-line { height: 7px; border-radius: 4px; background: linear-gradient(90deg, #d7c4e8, #c9d3ee); transform-origin: left center; }
+.ldv2 .cv-line.l1 { width: 92%; } .ldv2 .cv-line.l2 { width: 74%; } .ldv2 .cv-line.l3 { width: 84%; }
+.ldv2 .cv-board { display: flex; gap: 8px; }
+.ldv2 .cv-frame { position: relative; flex: 1; height: 36px; border-radius: 7px; background: #fff; border: 1px solid var(--bai-divider); overflow: hidden; }
+.ldv2 .cv-frame::before { content: ""; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(var(--bai-iris-rgb),.14), rgba(var(--bai-cyan-rgb),.12)); }
+.ldv2 .cv-play { position: absolute; inset: 0; margin: auto; width: 24px; height: 24px; border-radius: 50%; background: rgba(255,255,255,.92); display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(var(--bai-ink-rgb),.18); }
+.ldv2 .cv-play svg { width: 11px; height: 11px; color: var(--bai-ink-heading); margin-left: 1px; }
+.ldv2 .cv-views { margin-top: auto; font-family: var(--font-ui); font-weight: 600; font-size: 11px; color: var(--fg-3); display: flex; align-items: center; gap: 5px; }
+.ldv2 .cv-views svg { width: 11px; height: 11px; color: #c2418a; }
+.ldv2 .fn-tickers { position: relative; display: flex; gap: 7px; margin-bottom: 10px; overflow: hidden; border-radius: 7px; }
+.ldv2 .fn-tick { flex: 1; background: #fff; border: 1px solid var(--bai-divider); border-radius: 7px; padding: 5px 7px; }
+.ldv2 .fn-tick .sym { font-family: var(--font-mono); font-weight: 600; font-size: 10px; color: var(--seo-slate); letter-spacing: -.02em; }
+.ldv2 .fn-tick .pct { font-family: var(--font-mono); font-weight: 500; font-size: 9px; }
+.ldv2 .fn-tick .pct.up { color: var(--bai-mkt-green-ink); } .ldv2 .fn-tick .pct.dn { color: #d6455d; }
+.ldv2 .fn-sweep { position: absolute; top: 0; bottom: 0; width: 46px; pointer-events: none; background: linear-gradient(90deg, transparent, rgba(var(--bai-iris-rgb),.30), transparent); }
+.ldv2 .fn-chartwrap { position: relative; height: 62px; }
+.ldv2 .fn-chart { width: 100%; height: 62px; display: block; overflow: visible; }
+.ldv2 .fn-line { fill: none; stroke: url(#fn-grad); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.ldv2 .fn-marker { position: absolute; font-family: var(--font-mono); font-weight: 600; font-size: 9.5px; color: #fff; background: var(--bai-mkt-green-ink); border-radius: var(--radius-pill); padding: 3px 8px; left: 58%; top: 8px; box-shadow: 0 3px 8px rgba(15,122,59,.4); }
+.ldv2 .fn-marker::after { content: ""; position: absolute; left: 14px; top: 100%; width: 6px; height: 6px; border-radius: 50%; background: var(--bai-mkt-green-ink); margin-top: 2px; }
+.ldv2 .fn-port { margin-top: auto; display: flex; align-items: baseline; gap: 7px; }
+.ldv2 .fn-port .v { font-family: var(--font-mono); font-weight: 600; font-size: 17px; color: var(--seo-slate); letter-spacing: -.02em; }
+.ldv2 .fn-port .d { font-family: var(--font-mono); font-weight: 500; font-size: 11px; color: var(--bai-mkt-green-ink); }
+.ldv2 .mk-watch { align-self: stretch; display: flex; align-items: center; gap: 6px; background: #fff; border: 1px solid var(--bai-divider); border-radius: var(--radius-pill); padding: 4px 10px; margin-bottom: 12px; }
+.ldv2 .mk-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); flex: none; }
+.ldv2 .mk-watch-t { font-family: var(--font-ui); font-weight: 600; font-size: 10.5px; color: var(--seo-slate); white-space: nowrap; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.ldv2 .mk-src { font-family: var(--font-ui); font-weight: 600; font-size: 8.5px; color: var(--bai-mkt-blue); text-transform: uppercase; letter-spacing: .05em; margin-left: auto; flex: none; }
+.ldv2 .mk-odds { display: flex; flex-direction: column; gap: 9px; }
+.ldv2 .mk-row { display: flex; align-items: center; gap: 8px; }
+.ldv2 .mk-name { font-family: var(--font-ui); font-weight: 600; font-size: 11px; color: var(--fg-2); width: 56px; flex: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ldv2 .mk-track { flex: 1; height: 8px; border-radius: 4px; background: #e7ebf5; overflow: hidden; }
+.ldv2 .mk-fill { display: block; height: 100%; width: 100%; border-radius: 4px; transform-origin: left center; background: linear-gradient(90deg, #7da0ff, var(--bai-mkt-blue)); }
+.ldv2 .mk-pct { font-family: var(--font-mono); font-weight: 600; font-size: 10.5px; color: var(--seo-slate); width: 42px; text-align: right; flex: none; letter-spacing: -.02em; }
+.ldv2 .mk-pct.is-up { color: var(--bai-mkt-green-ink); }
+.ldv2 .mk-alert { margin-top: auto; display: flex; align-items: center; gap: 7px; background: rgba(var(--bai-mkt-blue-rgb),.08); border: 1px solid rgba(var(--bai-mkt-blue-rgb),.2); border-radius: 8px; padding: 6px 9px; }
+.ldv2 .mk-env { width: 20px; height: 20px; border-radius: 6px; background: #fff; border: 1px solid rgba(var(--bai-mkt-blue-rgb),.25); display: flex; align-items: center; justify-content: center; flex: none; }
+.ldv2 .mk-env svg { width: 11px; height: 11px; color: var(--bai-mkt-blue); }
+.ldv2 .mk-alert-t { font-family: var(--font-ui); font-weight: 600; font-size: 11px; color: #2454c9; line-height: 1.2; }
+
+/* ── how it works (progress line draws across the 4 steps) ─────────────── */
+.ldv2 .ldv2-how { position: relative; }
+.ldv2 .ldv2-howline { position: absolute; top: -22px; left: 4%; right: 4%; height: 3px; border-radius: 2px; background: var(--bai-divider); overflow: hidden; }
+.ldv2 .ldv2-howfill { display: block; height: 100%; width: 100%; border-radius: 2px; background: var(--bai-gradient); transform-origin: left center; }
+.ldv2 .ldv2-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+.ldv2 .ldv2-step { background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-radius: 16px; padding: 22px 20px; box-shadow: var(--bai-shadow-hairline); }
+.ldv2 .ldv2-step .num { width: 34px; height: 34px; border-radius: 10px; background: var(--bai-gradient); color: #fff; font-family: var(--font-head); font-weight: 700; font-size: 15px; display: grid; place-items: center; }
+.ldv2 .ldv2-step h3 { font-family: var(--font-head); font-weight: 600; font-size: 16px; letter-spacing: -.01em; color: var(--bai-mkt-slate); margin: 14px 0 0; }
+.ldv2 .ldv2-step p { font-size: 13px; color: var(--fg-4); margin-top: 6px; line-height: 1.5; text-wrap: pretty; }
+
+/* ── why (bento — one brand-gradient accent card) ──────────────────────── */
+.ldv2 .ldv2-whygrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.ldv2 .ldv2-why { background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-radius: 18px; padding: 22px; box-shadow: var(--bai-shadow-hairline); }
+.ldv2 .ldv2-why .ic { width: 42px; height: 42px; border-radius: 11px; background: var(--bai-wash, rgba(var(--bai-iris-rgb), .10)); display: grid; place-items: center; font-size: 20px; }
+.ldv2 .ldv2-why h3 { font-family: var(--font-head); font-weight: 600; font-size: 16px; letter-spacing: -.01em; color: var(--bai-mkt-slate); margin: 13px 0 0; }
+.ldv2 .ldv2-why p { font-size: 13.5px; color: var(--fg-4); margin-top: 6px; line-height: 1.5; text-wrap: pretty; }
+.ldv2 .ldv2-why.is-accent { background: var(--bai-gradient); border: none; }
+.ldv2 .ldv2-why.is-accent .ic { background: rgba(255, 255, 255, .18); }
+.ldv2 .ldv2-why.is-accent h3 { color: #fff; }
+.ldv2 .ldv2-why.is-accent p { color: rgba(255, 255, 255, .9); }
+
+/* ── reviews ───────────────────────────────────────────────────────────── */
+.ldv2 .ldv2-quotes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.ldv2 .ldv2-quote { background: var(--bai-canvas); border: 1px solid var(--bai-divider); border-radius: 18px; padding: 22px; box-shadow: var(--bai-shadow-hairline); }
+.ldv2 .ldv2-stars { color: var(--bai-star); font-size: 14px; letter-spacing: 1px; }
+.ldv2 .ldv2-quote p { font-size: 14px; color: var(--fg-2); margin: 12px 0 16px; line-height: 1.55; text-wrap: pretty; }
+.ldv2 .ldv2-who { display: flex; align-items: center; gap: 10px; }
+.ldv2 .ldv2-av { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-weight: 700; font-size: 14px; font-family: var(--font-ui); }
+.ldv2 .ldv2-who .nm { font-size: 13.5px; font-weight: 600; color: var(--fg-1); }
+.ldv2 .ldv2-who .rl { font-size: 12px; color: var(--fg-4); }
+
+/* ── CTA band (dark, slow gradient pan) ────────────────────────────────── */
+.ldv2 .ldv2-ctaband { margin: 0 32px clamp(54px, 6.5vw, 92px); }
+.ldv2 .ldv2-ctaband .inner { max-width: var(--ldv2-content); margin: 0 auto; border-radius: 28px; padding: 56px 40px; text-align: center; color: #fff; position: relative; overflow: hidden;
+  background: var(--bai-cta-band); background-size: 170% 170%; animation: ldv2Pan 14s ease-in-out infinite alternate; }
+@keyframes ldv2Pan { from { background-position: 0% 30%; } to { background-position: 100% 70%; } }
+.ldv2 .ldv2-ctaband h2 { font-family: var(--font-head); font-weight: 600; font-size: clamp(28px, 3vw, 36px); letter-spacing: -.03em; text-wrap: balance; }
+.ldv2 .ldv2-ctaband p { font-size: 15.5px; opacity: .9; margin: 12px 0 26px; }
+.ldv2 .ldv2-btn-white { display: inline-flex; align-items: center; gap: 8px; background: #fff; color: var(--bai-iris); border: none; cursor: pointer; font-family: var(--font-ui); font-weight: 600; font-size: 15px; border-radius: var(--radius-pill); padding: 13px 24px; text-decoration: none; transition: transform .18s var(--ease-out), box-shadow .18s var(--ease-out); }
+.ldv2 .ldv2-btn-white:hover { transform: translateY(-2px); box-shadow: 0 12px 28px -10px rgba(var(--bai-ink-rgb), .5); }
+.ldv2 .ldv2-btn-white .site-arrow { transition: transform .18s var(--ease-out); }
+.ldv2 .ldv2-btn-white:hover .site-arrow { transform: translateX(3px); }
+.ldv2 .ldv2-gtag { display: flex; justify-content: center; align-items: center; gap: 7px; margin-top: 18px; font-size: 13px; font-weight: 600; opacity: .92; }
+
+/* ── footer ────────────────────────────────────────────────────────────── */
+.ldv2 .ldv2-footer { border-top: 1px solid var(--bai-divider); padding: 48px 0 30px; background: rgba(255, 255, 255, .5); position: relative; }
+.ldv2 .ldv2-fgrid { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 24px; }
+.ldv2 .ldv2-fcol h4 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--fg-4); margin: 0 0 14px; }
+.ldv2 .ldv2-fcol a { display: block; font-size: 13.5px; color: var(--fg-2); margin-bottom: 9px; font-weight: 500; text-decoration: none; }
+.ldv2 .ldv2-fcol a:hover { color: var(--bai-mkt-blue); }
+.ldv2 .ldv2-blurb { font-size: 13px; color: var(--fg-4); line-height: 1.55; margin-top: 12px; max-width: 260px; text-wrap: pretty; }
+.ldv2 .ldv2-fbottom { max-width: var(--ldv2-content); margin: 30px auto 0; padding: 18px 32px 0; border-top: 1px solid var(--bai-divider); display: flex; justify-content: space-between; font-size: 12.5px; color: var(--fg-4); }
+
+/* ── responsive ────────────────────────────────────────────────────────── */
+@media (max-width: 980px) {
+  .ldv2 .ldv2-hero-grid { grid-template-columns: 1fr; gap: 30px; }
+  /* stacked: the panel follows the copy, so the flag (floats -36px above the panel) would land on
+     the trust row — push the panel down so the flag clears it */
+  .ldv2 .ldv2-panelslot { width: 100%; max-width: 430px; justify-self: center; height: 680px; margin-top: 30px; }
+  .ldv2 .ldv2-panel.is-docked { position: absolute; inset: 0; width: auto; height: auto; } /* no docking on mobile */
+  .ldv2 .ldv2-links { display: none; }
+  .ldv2 .ldv2-startcue .arr { transform: rotate(90deg); }
+  .ldv2 .ldv2-stats-grid, .ldv2 .ldv2-steps, .ldv2 .ldv2-whygrid, .ldv2 .ldv2-quotes { grid-template-columns: 1fr 1fr; }
+  .ldv2 .ldv2-workers { grid-template-columns: 1fr; }
+  .ldv2 .ldv2-howline { display: none; }
+  .ldv2 .ldv2-fgrid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 560px) {
+  .ldv2 .ldv2-stats-grid, .ldv2 .ldv2-steps, .ldv2 .ldv2-whygrid, .ldv2 .ldv2-quotes, .ldv2 .ldv2-fgrid { grid-template-columns: 1fr; }
+  /* declutter the header at phone widths: drop the secondary "Log in" (it was wrapping), tighten gutter */
+  .ldv2 .ldv2-login { display: none; }
+  .ldv2 .ldv2-nav-in { padding: 0 18px; gap: 12px; }
+  .ldv2 .ldv2-cta { padding: 10px 16px; font-size: 14px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ldv2 .ldv2-startcue .arr, .ldv2 .ldv2-tryflag .pd, .ldv2 .ldv2-ctaband .inner { animation: none; }
+}

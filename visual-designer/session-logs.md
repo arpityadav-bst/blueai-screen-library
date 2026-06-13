@@ -3,6 +3,21 @@
 
 ---
 
+## Session 6 — 2026-06-13 — live-demo clone + DS redesign (/live-demo-v2) + signature motion + audit
+**Screens:** /live-demo (byte-exact PM clone) · /live-demo-v2 (DS redesign) · /style-guide (v2 coverage) · / (index)
+**Mode:** clone → DS redesign → heavy iteration on signature motion → token pass + audit.
+**Built / changed:**
+- **/live-demo** — static passthrough clone of the PM's `blue-ai-demo` (2 HTML files in `public/`, hash-verified; redirect-not-rewrite). Exempt from DS.
+- **/live-demo-v2** — DS redesign of the funnel: scoped `.ldv2`, `ldv2/` components + `ldv2-data.ts`, reused legacy scenes, framer motion (staged hero, parallax orbs, count-up stats, scroll-drawn how-it-works line, gradient-pan CTA band). **Docking widget** + **blueprint→beam-wipe assembly intro** signatures. Widget reskinned to DS (token-mirror :root; flow/login byte-identical). Trust row added; agent-mind lattice added then **removed** (designer call).
+- **Token pass:** +`--bai-star`, `--bai-mkt-green-ink` (31 raw→token across 6 files), `--bai-cta-band`. **SG coverage:** 3 tokens in Foundations + v2 patterns (trust/stats/quote/why/motion) in Marketing-pages group.
+- Mobile fixes (header declutter, badge clearance); logo→vector at orb sizes; many motion/overlay fixes.
+**Corrections (designer-caught):** ~8 — logo circle-in-circle (×2), docked cropping, badge obstruction, badge too harsh, footer-over-widget z-order, two pulsing dots, lattice + blueprint-merge, mobile header + flag. + brief-scope (island/funnel, login wall is intentional).
+**Learned:** taste 30 (signal lifecycle — retire, don't restyle) · 31 (hero-artifact label stays quiet; frosted over arbitrary bg) · 32 (landing = island funnel; product gates aren't friction) · 33 (re-verify floating/animated elements across all states+breakpoints). KB: framer snaps clip-path (use CSS) · double-spread clobbers `animate` · `var()` in SVG attrs DOES work (retracted prior claim) · ancestor z-index caps fixed children · scale-don't-reflow minis · redirect-not-rewrite for relative iframe src · dev server dies silently (check port).
+**Files updated:** taste (30–33), decisions (6 rows), KB (S6 section), evolution (S6), project-insights (routes), shared reasonings (+3). Scratchpad wiped.
+**`designer_caught_count: ~8`** (highest yet — clustered on NEW motion/floating/overlay work). **Recurring category #2 — 4th validation; growth edge sharpened to: walk every floating/animated/transient element through all states + breakpoints BEFORE presenting.** Build green (17 routes). **Watch next:** that pre-present walk-through; dev-server stability.
+
+---
+
 ## Session 5 — 2026-06-12 (same day, post-S4) — Style-guide architecture + atomic-hierarchy directive + S3 token pass
 **Screens:** /style-guide (the big build) · / (index) · all 12 stylesheets (token migration)
 **Mode:** designer-led SG refinement (live review) → componentisation directive → audit-pass.

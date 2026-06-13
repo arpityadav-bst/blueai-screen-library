@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blue AI — Hire your worker</title>
+<script>if(location.search.indexOf('embed')>-1){document.documentElement.classList.add('embed');}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2552EC;--blue-dark:#1c3fd0;--blue-50:#eef2ff;--blue-100:#dbe4ff;--blue-200:#c2d2ff;
+    --ink:#0c1326;--ink-soft:#1d2740;--slate:#46527a;--slate-2:#7b88a8;
+    --green:#16a34a;--green-50:#e9f8ef;--bg:#f7f9ff;--line:#e7ebf5;
+    --worker-grad:linear-gradient(135deg,#8b5cf6,#d946ef);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:'Inter',system-ui,sans-serif;background:#e9edf6;color:var(--ink);
+    -webkit-font-smoothing:antialiased;display:grid;place-items:center;padding:20px}
+  .frame{width:420px;max-width:100%;height:min(840px,94vh);background:var(--bg);border-radius:26px;
+    box-shadow:0 20px 60px rgba(12,19,38,.18);overflow:hidden;border:1px solid var(--line);
+    display:flex;flex-direction:column;position:relative}
+  /* embedded inside the homepage right rail: fill container, drop window chrome */
+  html.embed,html.embed body{height:100%}
+  html.embed body{background:transparent;padding:0;display:block}
+  html.embed .frame{width:100%;height:100%;border-radius:0;box-shadow:none;border:none}
+  html.embed .titlebar{display:none}
+  .titlebar{height:38px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;
+    padding:0 14px;flex:0 0 auto;z-index:5}
+  .dots{display:flex;gap:7px}.dots i{width:11px;height:11px;border-radius:50%;display:block}
+  .dots .r{background:#ff5f57}.dots .y{background:#febc2e}.dots .g{background:#28c840}
+  .titlebar .t{flex:1;text-align:center;font-size:12px;font-weight:600;color:var(--slate)}
+  .stagewrap{flex:1;position:relative;overflow:hidden}
+  .view{position:absolute;inset:0;display:flex;flex-direction:column;transition:opacity .28s}
+  .view.hidden{opacity:0;pointer-events:none}
+
+  .orb{border-radius:50%;display:grid;place-items:center;color:#fff;flex:0 0 auto;background:var(--worker-grad)}
+  .orb svg{width:54%;height:54%}
+  .orb.gen{background:linear-gradient(135deg,#3a6bff,#7a3cff)}
+
+  .btn{border:none;border-radius:14px;font-family:inherit;font-weight:700;cursor:pointer;font-size:15px;
+    padding:15px 18px;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:.15s;width:100%}
+  .btn-primary{background:var(--blue);color:#fff;box-shadow:0 8px 20px rgba(37,82,236,.3)}
+  .btn-primary:hover{background:var(--blue-dark)}
+  .btn-ghost{background:#fff;color:var(--ink-soft);border:1.5px solid var(--line)}
+  .scrollcol{overflow-y:auto;flex:1}
+  .scrollcol::-webkit-scrollbar{width:6px}.scrollcol::-webkit-scrollbar-thumb{background:#d6deec;border-radius:99px}
+  .pad{padding:26px 24px}
+  .brandbar{font-size:12px;font-weight:800;color:var(--blue);letter-spacing:.04em;text-transform:uppercase}
+  .guarantee{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:700;color:var(--green);
+    background:var(--green-50);border-radius:999px;padding:7px 14px}
+  .footbar{padding:14px 24px 20px;background:linear-gradient(transparent,var(--bg) 35%);flex:0 0 auto}
+
+  /* ---------- HIRE ---------- */
+  .hire .orb{width:74px;height:74px;margin:8px auto 0;box-shadow:0 12px 32px rgba(37,82,236,.32)}
+  .hire h1{font-size:26px;font-weight:900;letter-spacing:-.025em;line-height:1.12;margin:16px 6px 8px;text-align:center}
+  .hire .sub{font-size:14px;color:var(--slate);line-height:1.5;margin:0 4px;text-align:center}
+  .vlist{margin:18px 0 0;display:flex;flex-direction:column;gap:10px}
+  .vrow{display:flex;align-items:center;gap:11px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 13px}
+  .vrow .vi{width:34px;height:34px;border-radius:10px;background:var(--blue-50);display:grid;place-items:center;font-size:16px;flex:0 0 auto}
+  .vrow .vt{font-size:13px;font-weight:600;color:var(--ink-soft);line-height:1.35}
+  .vrow .vt b{font-weight:800}
+  .center{text-align:center}
+
+  /* ---------- SAMPLE WORK ---------- */
+  .swork h1{font-size:22px;font-weight:800;letter-spacing:-.02em;line-height:1.18;text-align:center;margin:6px 8px 4px}
+  .swork .sub{font-size:13.5px;color:var(--slate);text-align:center;margin:0 6px 4px;line-height:1.5}
+  .scards{display:flex;flex-direction:column;gap:12px;margin-top:16px}
+  .scard{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:0 4px 14px rgba(12,19,38,.05)}
+  .scard .top{display:flex;align-items:center;gap:11px}
+  .scard .si{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-size:20px;flex:0 0 auto}
+  .scard .nm{font-size:14.5px;font-weight:800;letter-spacing:-.01em}
+  .scard .tag{font-size:11px;font-weight:700;color:var(--blue);background:var(--blue-50);border-radius:999px;padding:3px 8px;display:inline-block;margin-top:2px}
+  .scard .did{font-size:13px;color:var(--ink-soft);line-height:1.45;margin:11px 0 0}
+  .scard .res{display:flex;align-items:center;gap:7px;margin-top:9px;font-size:12.5px;font-weight:700;color:var(--green);
+    background:var(--green-50);border-radius:10px;padding:8px 11px}
+
+  /* ---------- LOGIN ---------- */
+  .login{justify-content:center;align-items:center;text-align:center;padding:30px 28px}
+  .login .orb{width:66px;height:66px;margin-bottom:18px}
+  .login h1{font-size:22px;font-weight:800;letter-spacing:-.02em}
+  .login .sub{font-size:13.5px;color:var(--slate);margin:8px 6px 22px;line-height:1.5}
+  .gbtn{width:100%;background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:13px;font-family:inherit;
+    font-size:14.5px;font-weight:700;color:var(--ink-soft);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px}
+  .gbtn:hover{background:#fafbff}
+  .gmark{width:20px;height:20px;border-radius:50%;background:conic-gradient(#ea4335 0 25%,#fbbc05 0 50%,#34a853 0 75%,#4285f4 0);display:inline-block;position:relative}
+  .gmark:after{content:"";position:absolute;inset:5px;background:#fff;border-radius:50%}
+  .ordiv{display:flex;align-items:center;gap:10px;color:var(--slate-2);font-size:12px;margin:14px 0}
+  .ordiv:before,.ordiv:after{content:"";flex:1;height:1px;background:var(--line)}
+  .lginput{width:100%;border:1.5px solid var(--line);border-radius:14px;padding:13px 15px;font-family:inherit;font-size:14px;outline:none}
+  .lginput:focus{border-color:var(--blue)}
+  .mocknote{font-size:11px;color:var(--slate-2);margin-top:16px}
+
+  /* ---------- NAME ---------- */
+  .name{padding:30px 26px 22px;text-align:center;justify-content:space-between}
+  .name .orb{width:70px;height:70px;margin:6px auto 0;box-shadow:0 12px 30px rgba(139,92,246,.32)}
+  .name h1{font-size:23px;font-weight:800;letter-spacing:-.02em;margin:15px 6px 6px;line-height:1.15}
+  .name .sub{font-size:13.5px;color:var(--slate);line-height:1.5;margin:0 6px}
+  .name-input{display:block;width:100%;margin:18px auto 0;border:2px solid var(--blue);border-radius:16px;
+    padding:14px 18px;font-family:inherit;font-size:20px;font-weight:700;color:var(--ink);text-align:center;
+    outline:none;box-shadow:0 8px 22px rgba(37,82,236,.12)}
+  .suggest{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:13px 0 0}
+  .chipname{background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 13px;font-size:13px;font-weight:600;color:var(--slate);cursor:pointer}
+  .chipname.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .swatches{display:flex;gap:11px;justify-content:center;margin:18px 0 4px}
+  .sw{width:34px;height:34px;border-radius:50%;cursor:pointer;border:3px solid transparent;position:relative}
+  .sw.on{border-color:var(--ink);transform:scale(1.08)}
+  .sw.on:after{content:"✓";position:absolute;inset:0;display:grid;place-items:center;color:#fff;font-size:13px;font-weight:800}
+
+  /* ---------- CHAT ---------- */
+  .header{background:#fff;border-bottom:1px solid var(--line);padding:12px 16px;display:flex;align-items:center;gap:11px;flex:0 0 auto}
+  .header .orb{width:42px;height:42px;box-shadow:0 6px 16px rgba(139,92,246,.3)}
+  .header .who{flex:1;min-width:0}
+  .header .nm{font-size:15px;font-weight:800;letter-spacing:-.01em}
+  .header .st{font-size:11.5px;color:var(--green);font-weight:600;display:flex;align-items:center;gap:5px;margin-top:1px}
+  .live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block;
+    box-shadow:0 0 0 0 rgba(22,163,74,.5);animation:pulse 2s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(22,163,74,.5)}70%{box-shadow:0 0 0 7px rgba(22,163,74,0)}100%{box-shadow:0 0 0 0 rgba(22,163,74,0)}}
+  .credits{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--blue-200);border-radius:999px;padding:5px 10px;font-size:12.5px;font-weight:700;color:var(--blue);background:var(--blue-50)}
+  .thread{flex:1;overflow-y:auto;padding:18px 16px 8px;display:flex;flex-direction:column;gap:12px}
+  .thread::-webkit-scrollbar{width:6px}.thread::-webkit-scrollbar-thumb{background:#d6deec;border-radius:99px}
+  .row{display:flex;gap:9px;align-items:flex-end;max-width:100%}
+  .row.me{flex-direction:row-reverse}
+  .av{width:28px;height:28px;border-radius:50%;flex:0 0 auto;display:grid;place-items:center;color:#fff;background:var(--worker-grad)}
+  .av svg{width:55%;height:55%}
+  .bubble{font-size:13.5px;line-height:1.55;border-radius:16px;padding:11px 14px;max-width:80%}
+  .ai .bubble{background:#fff;border:1px solid var(--line);border-bottom-left-radius:5px;box-shadow:0 4px 14px rgba(12,19,38,.05)}
+  .me .bubble{background:var(--blue);color:#fff;border-bottom-right-radius:5px}
+  .bubble b,.bubble strong{font-weight:800}
+  .bubble ul{margin:6px 0 2px;padding-left:2px;list-style:none;display:flex;flex-direction:column;gap:7px}
+  .bubble li{padding-left:16px;position:relative}
+  .bubble li:before{content:"";position:absolute;left:2px;top:7px;width:6px;height:6px;border-radius:50%;background:var(--blue-200)}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;padding:2px 16px 6px 53px}
+  .chip{background:#fff;border:1.5px solid var(--blue-200);color:var(--blue);border-radius:999px;padding:9px 15px;font-size:13px;font-weight:700;cursor:pointer;transition:.12s;font-family:inherit}
+  .chip:hover{background:var(--blue);color:#fff;border-color:var(--blue)}
+  .typing{display:inline-flex;gap:4px;padding:4px 2px}
+  .typing i{width:7px;height:7px;border-radius:50%;background:var(--slate-2);animation:blink 1.2s infinite}
+  .typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}
+  @keyframes blink{0%,60%,100%{opacity:.25}30%{opacity:1}}
+  .composer{padding:12px 16px 14px;background:linear-gradient(transparent,var(--bg) 30%);flex:0 0 auto}
+  .ask{display:flex;align-items:flex-end;gap:9px;background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:6px 6px 6px 15px;box-shadow:0 4px 14px rgba(12,19,38,.06)}
+  .ask textarea{flex:1;border:none;outline:none;font-family:inherit;font-size:14px;color:var(--ink);background:none;resize:none;max-height:120px;line-height:1.4;padding:7px 0}
+  .ask textarea::placeholder{color:var(--slate-2)}
+  .send{width:40px;height:40px;border-radius:12px;background:var(--blue);color:#fff;border:none;display:grid;place-items:center;cursor:pointer;flex:0 0 auto;transition:.12s}
+  .send:disabled{background:var(--blue-200);cursor:default}
+  .foot-note{text-align:center;font-size:10.5px;color:var(--slate-2);margin-top:8px}
+
+  /* ---------- PAYMENT ---------- */
+  .pay{padding:24px 24px 20px;justify-content:space-between}
+  .pay h1{font-size:21px;font-weight:800;letter-spacing:-.02em;text-align:center}
+  .paysub{font-size:13px;color:var(--slate);text-align:center;margin:6px 8px 16px;line-height:1.5}
+  .paysum{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;align-items:center;gap:12px;box-shadow:0 4px 14px rgba(12,19,38,.05)}
+  .paysum .orb{width:40px;height:40px}
+  .paysum .pl{flex:1}
+  .paysum .pl .a{font-size:14px;font-weight:800}
+  .paysum .pl .b{font-size:12px;color:var(--slate);margin-top:1px}
+  .paysum .amt{font-size:20px;font-weight:900;letter-spacing:-.02em}
+  .paysum .amt small{font-size:11px;font-weight:700;color:var(--slate-2);display:block;text-align:right}
+  .card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px;margin-top:14px}
+  .card .lab{font-size:11px;font-weight:700;color:var(--slate);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
+  .card .field{border:1.5px solid var(--line);border-radius:11px;padding:11px 13px;font-size:13.5px;color:var(--ink-soft);display:flex;align-items:center;gap:9px}
+  .card .field .cc{margin-left:auto;display:flex;gap:5px}
+  .card .field .cc i{width:22px;height:14px;border-radius:3px;display:block}
+  .row2{display:flex;gap:10px;margin-top:10px}.row2 .card{flex:1;margin-top:0}
+  .paynote{font-size:11px;color:var(--slate-2);text-align:center;margin-top:12px;line-height:1.4}
+
+  /* ---------- DOWNLOAD ---------- */
+  .dl{padding:30px 26px 22px;text-align:center;justify-content:space-between}
+  .check{width:64px;height:64px;border-radius:50%;background:var(--green-50);color:var(--green);display:grid;place-items:center;margin:8px auto 0;font-size:30px}
+  .dl h1{font-size:23px;font-weight:800;letter-spacing:-.02em;margin:16px 6px 6px;line-height:1.18}
+  .dl .sub{font-size:13.5px;color:var(--slate);line-height:1.5;margin:0 6px}
+  .steps{margin:18px 0 0;display:flex;flex-direction:column;gap:10px;text-align:left}
+  .stp{display:flex;align-items:center;gap:11px;background:#fff;border:1px solid var(--line);border-radius:13px;padding:11px 12px}
+  .stp .n{width:24px;height:24px;border-radius:50%;background:var(--blue);color:#fff;font-size:12px;font-weight:800;display:grid;place-items:center;flex:0 0 auto}
+  .stp .tx{font-size:12.5px;font-weight:600;color:var(--ink-soft);line-height:1.35}
+  .dlrow{display:flex;gap:10px;margin-top:6px}
+  .dlrow .btn{font-size:14px;padding:13px}
+  .spin{width:18px;height:18px;border:2.5px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite}
+  @keyframes sp{to{transform:rotate(360deg)}}
+
+  /* START (embedded panel entry: action only, no marketing headline) */
+  .start .pad{display:flex;flex-direction:column;justify-content:center;min-height:100%;text-align:center}
+  .start .orb{width:70px;height:70px;margin:0 auto;box-shadow:0 12px 30px rgba(37,82,236,.3)}
+  .start h1{font-size:25px;font-weight:900;letter-spacing:-.025em;margin:16px 0 7px}
+  .start .sub{font-size:14px;color:var(--slate);line-height:1.5;margin:0 10px}
+  .ministeps{display:flex;flex-direction:column;gap:9px;margin:22px 0 0;text-align:left}
+  .mstep{display:flex;align-items:center;gap:11px;background:#fff;border:1px solid var(--line);border-radius:13px;
+    padding:11px 13px;font-size:12.5px;font-weight:600;color:var(--ink-soft);line-height:1.35}
+  .mstep .n{width:24px;height:24px;border-radius:7px;background:var(--blue-50);color:var(--blue);font-weight:800;
+    font-size:12px;display:grid;place-items:center;flex:0 0 auto}
+  .linklike{background:none;border:none;color:var(--slate);font-family:inherit;font-size:13px;font-weight:600;
+    cursor:pointer;width:100%;text-align:center;padding:11px 0 0}
+  .linklike:hover{color:var(--blue)}
+</style>
+</head>
+<body>
+<div class="frame">
+  <div class="titlebar"><div class="dots"><i class="r"></i><i class="y"></i><i class="g"></i></div><div class="t" id="titleT">bluestacks.ai</div></div>
+  <div class="stagewrap">
+
+    <!-- 1 HIRE (entry) -->
+    <div class="view hire" id="viewHire">
+      <div class="scrollcol"><div class="pad">
+        <div class="center"><span class="brandbar">bluestacks.ai</span></div>
+        <div class="orb gen"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.9 5.8a3 3 0 002.3 2.3L22 12l-5.8 1.9a3 3 0 00-2.3 2.3L12 22l-1.9-5.8a3 3 0 00-2.3-2.3L2 12l5.8-1.9a3 3 0 002.3-2.3z"/></svg></div>
+        <h1>Hire an AI worker to make you money.</h1>
+        <p class="sub">Not a chatbot that gives advice. A worker that uses real apps to earn and save for you, while you do nothing.</p>
+        <div class="vlist">
+          <div class="vrow"><div class="vi">📱</div><div class="vt"><b>Works in real apps.</b> Taps, types, and reads screens like a person, inside BlueStacks on your PC.</div></div>
+          <div class="vrow"><div class="vi">🌙</div><div class="vt"><b>Works while you sleep.</b> Hunts deals, posts content, watches your portfolio in the background.</div></div>
+          <div class="vrow"><div class="vi">✋</div><div class="vt"><b>You stay in control.</b> Never spends or posts a thing without your tap to approve.</div></div>
+        </div>
+      </div></div>
+      <div class="footbar">
+        <button class="btn btn-primary" id="goHire">Hire an AI worker →</button>
+        <button class="linklike" id="goSample">See what it can do</button>
+      </div>
+    </div>
+
+    <!-- 2 SAMPLE WORK -->
+    <div class="view hidden" id="viewSample">
+      <div class="scrollcol"><div class="pad">
+        <h1>Real work, already done by Blue AI workers.</h1>
+        <p class="sub">Four workers are live right now on bluestacks.ai. Here is what they actually shipped.</p>
+        <div class="scards">
+          <div class="scard">
+            <div class="top"><div class="si" style="background:#f0ecff">🎬</div><div><div class="nm">AI Video Creator</div><span class="tag">live agent</span></div></div>
+            <div class="did">Wrote, generated, and posted 7 faceless short videos to YouTube, TikTok, and Reels over a week.</div>
+            <div class="res">📈 12,400 views in week one, zero filming</div>
+          </div>
+          <div class="scard">
+            <div class="top"><div class="si" style="background:var(--blue-50)">💼</div><div><div class="nm">Apply to Jobs</div><span class="tag">live agent</span></div></div>
+            <div class="did">Searched LinkedIn overnight and matched 15 US product roles to a real resume.</div>
+            <div class="res">✅ 3 recruiter replies, 1 interview booked</div>
+          </div>
+          <div class="scard">
+            <div class="top"><div class="si" style="background:var(--green-50)">📈</div><div><div class="nm">AI Trading Agent</div><span class="tag">live agent</span></div></div>
+            <div class="did">Ran 4 paper portfolios and a daily market brief on real US stocks.</div>
+            <div class="res">📊 Momentum strategy +13.2% since Apr 27 (data, not advice)</div>
+          </div>
+          <div class="scard">
+            <div class="top"><div class="si" style="background:#fdeef0">🔮</div><div><div class="nm">Prediction Market Agent</div><span class="tag">live agent</span></div></div>
+            <div class="did">Scanned Polymarket and compared the odds against the underlying data.</div>
+            <div class="res">🎯 Flagged 3 markets mispriced by 8% or more</div>
+          </div>
+        </div>
+      </div></div>
+      <div class="footbar"><button class="btn btn-primary" id="goLogin">Log in to build mine →</button></div>
+    </div>
+
+    <!-- 3 LOGIN -->
+    <div class="view login hidden" id="viewLogin">
+      <div class="orb gen"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.9 5.8a3 3 0 002.3 2.3L22 12l-5.8 1.9a3 3 0 00-2.3 2.3L12 22l-1.9-5.8a3 3 0 00-2.3-2.3L2 12l5.8-1.9a3 3 0 002.3-2.3z"/></svg></div>
+      <h1>Log in to build your worker.</h1>
+      <p class="sub">Your worker, plan, and earnings are saved to your account.</p>
+      <button class="gbtn" id="googleBtn"><span class="gmark"></span> Continue with Google</button>
+      <div class="ordiv">or</div>
+      <input class="lginput" id="emailInput" placeholder="you@email.com" />
+      <button class="btn btn-primary" id="emailBtn" style="margin-top:10px">Continue</button>
+      <div class="mocknote">Mock login for this prototype. No real account is created.</div>
+    </div>
+
+    <!-- 4 NAME -->
+    <div class="view name hidden" id="viewName">
+      <div class="scrollcol"><div style="padding:30px 26px 0">
+        <div class="orb" style="margin:0 auto"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.9 5.8a3 3 0 002.3 2.3L22 12l-5.8 1.9a3 3 0 00-2.3 2.3L12 22l-1.9-5.8a3 3 0 00-2.3-2.3L2 12l5.8-1.9a3 3 0 002.3-2.3z"/></svg></div>
+        <h1>Name your worker.</h1>
+        <p class="sub">You are hiring an employee, not opening an app. Give it a name and a face. It is yours from here.</p>
+        <input class="name-input" id="nameInput" value="Penny" maxlength="20" />
+        <div class="suggest" id="suggest">
+          <span class="chipname on">Penny</span><span class="chipname">Nova</span><span class="chipname">Max</span><span class="chipname">Ivy</span><span class="chipname">Ace</span>
+        </div>
+        <div class="swatches" id="swatches">
+          <span class="sw on" data-g="linear-gradient(135deg,#8b5cf6,#d946ef)" style="background:linear-gradient(135deg,#8b5cf6,#d946ef)"></span>
+          <span class="sw" data-g="linear-gradient(135deg,#3a6bff,#7a3cff)" style="background:linear-gradient(135deg,#3a6bff,#7a3cff)"></span>
+          <span class="sw" data-g="linear-gradient(135deg,#13b16e,#0a8f86)" style="background:linear-gradient(135deg,#13b16e,#0a8f86)"></span>
+          <span class="sw" data-g="linear-gradient(135deg,#ff9f43,#ff6b6b)" style="background:linear-gradient(135deg,#ff9f43,#ff6b6b)"></span>
+          <span class="sw" data-g="linear-gradient(135deg,#0ea5e9,#22d3ee)" style="background:linear-gradient(135deg,#0ea5e9,#22d3ee)"></span>
+          <span class="sw" data-g="linear-gradient(135deg,#f43f5e,#fb7185)" style="background:linear-gradient(135deg,#f43f5e,#fb7185)"></span>
+        </div>
+      </div></div>
+      <div class="footbar"><button class="btn btn-primary" id="goChat">Meet <span id="nmEcho">Penny</span> →</button></div>
+    </div>
+
+    <!-- 5 CHAT -->
+    <div class="view hidden" id="viewChat">
+      <div class="header">
+        <div class="orb"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.9 5.8a3 3 0 002.3 2.3L22 12l-5.8 1.9a3 3 0 00-2.3 2.3L12 22l-1.9-5.8a3 3 0 00-2.3-2.3L2 12l5.8-1.9a3 3 0 002.3-2.3z"/></svg></div>
+        <div class="who"><div class="nm" id="hdrName">Penny</div><div class="st"><span class="live-dot"></span> <span id="status">Just hired · onboarding you</span></div></div>
+        <span class="credits">✦ 35,983</span>
+      </div>
+      <div class="thread" id="thread"></div>
+      <div class="composer">
+        <div class="ask">
+          <textarea id="input" rows="1" placeholder="Reply…"></textarea>
+          <button class="send" id="send" title="Send"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg></button>
+        </div>
+        <div class="foot-note" id="footNote">Penny never spends or posts without your approval</div>
+      </div>
+    </div>
+
+    <!-- 6 PAYMENT -->
+    <div class="view pay hidden" id="viewPay">
+      <div class="scrollcol"><div style="padding:24px 24px 0">
+        <h1>Fund your worker</h1>
+        <p class="paysub">This becomes <span id="payName2">Penny</span>'s working budget. She only spends it with your approval, and unspent money stays yours.</p>
+        <div class="paysum">
+          <div class="orb"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.9 5.8a3 3 0 002.3 2.3L22 12l-5.8 1.9a3 3 0 00-2.3 2.3L12 22l-1.9-5.8a3 3 0 00-2.3-2.3L2 12l5.8-1.9a3 3 0 002.3-2.3z"/></svg></div>
+          <div class="pl"><div class="a" id="payName">Penny</div><div class="b">Monthly working budget</div></div>
+          <div class="amt"><span id="payAmt">$50</span><small>per month</small></div>
+        </div>
+        <div class="card">
+          <div class="lab">Card number</div>
+          <div class="field">4242 4242 4242 4242 <span class="cc"><i style="background:#1a1f71"></i><i style="background:#eb001b"></i></span></div>
+        </div>
+        <div class="row2">
+          <div class="card"><div class="lab">Expiry</div><div class="field">04 / 28</div></div>
+          <div class="card"><div class="lab">CVC</div><div class="field">123</div></div>
+        </div>
+        <div class="center" style="margin-top:14px"><span class="guarantee">🛡️ 50% back if you are not happy in month one</span></div>
+      </div></div>
+      <div class="footbar">
+        <button class="btn btn-primary" id="payBtn">Fund Penny · $50/mo</button>
+        <div class="paynote">Mock payment for this prototype. Your card is not charged.</div>
+      </div>
+    </div>
+
+    <!-- 7 DOWNLOAD -->
+    <div class="view dl hidden" id="viewDownload">
+      <div class="scrollcol"><div style="padding:30px 26px 0">
+        <div class="check">✓</div>
+        <h1><span id="dlName">Penny</span> is funded and ready.</h1>
+        <p class="sub">One last step. Download Blue AI to your computer and <span id="dlName2">Penny</span> starts working.</p>
+        <div class="steps">
+          <div class="stp"><div class="n">1</div><div class="tx">Install Blue AI on your Mac or Windows PC.</div></div>
+          <div class="stp"><div class="n">2</div><div class="tx"><span id="dlName3">Penny</span> signs in to the apps she needs, with your OK.</div></div>
+          <div class="stp"><div class="n">3</div><div class="tx">She runs on your schedule (for example daily) and reports back here.</div></div>
+        </div>
+      </div></div>
+      <div class="footbar">
+        <div class="dlrow">
+          <button class="btn btn-primary" id="dlMac"> Download for Mac</button>
+          <button class="btn btn-ghost" id="dlWin">⊞ Windows</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const CHAT_API="https://dfhicvitmvnlixftjtlw.supabase.co/functions/v1/chat";
+const $=id=>document.getElementById(id);
+const state={name:'Penny', grad:'linear-gradient(135deg,#8b5cf6,#d946ef)', budget:50};
+const VIEWS=['viewHire','viewSample','viewLogin','viewName','viewChat','viewPay','viewDownload'];
+function showView(id){ VIEWS.forEach(v=>$(v).classList.toggle('hidden', v!==id));
+  $('titleT').textContent = (id==='viewHire'||id==='viewSample'||id==='viewLogin')?'bluestacks.ai':'Blue AI'; }
+
+/* nav */
+$('goHire').onclick=()=>showView('viewLogin');
+$('goSample').onclick=()=>{ try{ window.parent.document.getElementById('workers').scrollIntoView({behavior:'smooth',block:'start'}); }catch(e){ showView('viewSample'); } };
+$('goLogin').onclick=()=>showView('viewLogin');
+$('googleBtn').onclick=()=>showView('viewName');
+$('emailBtn').onclick=()=>showView('viewName');
+
+/* name */
+const nameInput=$('nameInput');
+function syncName(){ const v=(nameInput.value||'').trim()||'your worker'; $('nmEcho').textContent=v; }
+nameInput.addEventListener('input',syncName);
+$('suggest').querySelectorAll('.chipname').forEach(c=>c.onclick=()=>{
+  $('suggest').querySelectorAll('.chipname').forEach(x=>x.classList.remove('on'));
+  c.classList.add('on'); nameInput.value=c.textContent; syncName(); });
+$('swatches').querySelectorAll('.sw').forEach(s=>s.onclick=()=>{
+  $('swatches').querySelectorAll('.sw').forEach(x=>x.classList.remove('on'));
+  s.classList.add('on'); state.grad=s.dataset.g;
+  document.documentElement.style.setProperty('--worker-grad',state.grad); });
+$('goChat').onclick=()=>{
+  state.name=(nameInput.value||'').trim()||'Penny';
+  ['hdrName','payName','payName2','dlName','dlName2','dlName3'].forEach(id=>$(id).textContent=state.name);
+  $('footNote').textContent=state.name+' never spends or posts without your approval';
+  showView('viewChat'); startChat(); };
+
+/* chat */
+const thread=$('thread'), input=$('input'), sendBtn=$('send'), statusEl=$('status');
+let messages=[], awaitingBudget=false, busy=false;
+const PENNY_AV='<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.9 5.8a3 3 0 002.3 2.3L22 12l-5.8 1.9a3 3 0 00-2.3 2.3L12 22l-1.9-5.8a3 3 0 00-2.3-2.3L2 12l5.8-1.9a3 3 0 002.3-2.3z"/></svg>';
+function escapeHtml(s){return s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+function splitOptions(text){ const lines=text.split('\n'); let opts=null; const keep=[];
+  for(const ln of lines){ const m=ln.match(/^\s*OPTIONS:\s*(.+)$/i); if(m)opts=m[1].split('|').map(s=>s.trim()).filter(Boolean); else keep.push(ln);} return {clean:keep.join('\n').trim(),opts}; }
+function render(text){ const {clean}=splitOptions(text); const lines=clean.split('\n'); let html='',inList=false;
+  for(const ln of lines){ let t=escapeHtml(ln).replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>'); const b=ln.match(/^\s*[-•]\s+(.*)/);
+    if(b){ if(!inList){html+='<ul>';inList=true;} html+='<li>'+escapeHtml(b[1]).replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')+'</li>'; }
+    else { if(inList){html+='</ul>';inList=false;} html+=ln.trim()===''?'<br>':'<div>'+t+'</div>'; } }
+  if(inList)html+='</ul>'; return html; }
+function addRow(who){ const row=document.createElement('div'); row.className='row '+who;
+  const av=document.createElement('div'); av.className='av'; if(who==='ai')av.innerHTML=PENNY_AV; else av.textContent='🙂';
+  const bubble=document.createElement('div'); bubble.className='bubble'; row.appendChild(av); row.appendChild(bubble); thread.appendChild(row); return bubble; }
+function isBudgetSet(opts){ return opts.filter(o=>/\$\s*\d|\bmonth\b|\/mo/i.test(o)).length>=2; }
+function addChips(opts){ const budget=isBudgetSet(opts); if(budget)awaitingBudget=true;
+  const wrap=document.createElement('div'); wrap.className='chips';
+  opts.forEach(o=>{ const b=document.createElement('button'); b.className='chip'; b.textContent=o;
+    b.onclick=()=>{ wrap.remove(); budget?confirmBudget(o):sendUser(o); }; wrap.appendChild(b); });
+  thread.appendChild(wrap); scrollT(); }
+function scrollT(){ thread.scrollTop=thread.scrollHeight; }
+
+function startChat(){
+  const N=state.name;
+  const intro="Hi, I'm "+N+". You hired me, and I work for you now. Here is how I work:\n- I use real apps for you inside BlueStacks, tapping and reading screens like a person.\n- I work in the background and report back here.\n- I never spend or post without your tap to approve.";
+  const q="First, what is most you?\nOPTIONS: I invest | I'm creative | I shop a lot | I freelance | I run a business | Just exploring";
+  addRow('ai').innerHTML=render(intro);
+  addRow('ai').innerHTML=render(q);
+  messages.push({role:'assistant', content:intro+"\n\n"+q});
+  const {opts}=splitOptions(q); if(opts)addChips(opts); scrollT();
+}
+
+async function sendUser(text){
+  if(busy||!text.trim())return; busy=true; sendBtn.disabled=true;
+  document.querySelectorAll('.chips').forEach(c=>c.remove()); awaitingBudget=false;
+  addRow('me').textContent=text; messages.push({role:'user',content:text}); scrollT();
+  const aiBubble=addRow('ai'); aiBubble.innerHTML='<span class="typing"><i></i><i></i><i></i></span>';
+  statusEl.textContent=state.name+' is thinking…';
+  let full='';
+  try{
+    const resp=await fetch(CHAT_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages, worker_name:state.name})});
+    const reader=resp.body.getReader(); const dec=new TextDecoder();
+    while(true){ const {done,value}=await reader.read(); if(done)break;
+      full+=dec.decode(value,{stream:true}); aiBubble.innerHTML=render(full)+'<span class="typing" style="padding-left:2px"><i></i></span>'; scrollT(); }
+  }catch(e){ full+='\n[error] '+e.message; }
+  aiBubble.innerHTML=render(full); messages.push({role:'assistant',content:full});
+  const {opts}=splitOptions(full); if(opts)addChips(opts);
+  statusEl.textContent=state.name+' · building your plan';
+  busy=false; sendBtn.disabled=false; scrollT();
+}
+
+/* budget -> payment */
+function confirmBudget(text){
+  awaitingBudget=false; document.querySelectorAll('.chips').forEach(c=>c.remove());
+  addRow('me').textContent=text; scrollT();
+  const m=text.match(/\$?\s*(\d[\d,]*)/); const amt=m?parseInt(m[1].replace(/,/g,'')):0; state.budget=amt;
+  if(amt===0||/report/i.test(text)){ enterDownload(); return; }
+  $('payAmt').textContent='$'+amt; $('payBtn').textContent='Fund '+state.name+' · $'+amt+'/mo';
+  setTimeout(()=>showView('viewPay'),360);
+}
+$('payBtn').onclick=()=>{
+  const b=$('payBtn'); b.disabled=true; b.innerHTML='<span class="spin"></span> Processing…';
+  setTimeout(()=>{ b.disabled=false; b.textContent='Fund '+state.name+' · $'+state.budget+'/mo'; enterDownload(); }, 1100);
+};
+function enterDownload(){ showView('viewDownload'); }
+$('dlMac').onclick=()=>{ $('dlMac').textContent='Starting download…'; };
+$('dlWin').onclick=()=>{ $('dlWin').textContent='Starting…'; };
+
+/* input */
+input.addEventListener('input',()=>{input.style.height='auto';input.style.height=Math.min(input.scrollHeight,120)+'px';});
+function submit(){ const v=input.value; input.value=''; input.style.height='auto';
+  if(awaitingBudget && /\d/.test(v) && /\$|month|mo\b|\d{2}/i.test(v)) confirmBudget(v); else sendUser(v); }
+input.addEventListener('keydown',e=>{ if(e.key==='Enter'&&!e.shiftKey){e.preventDefault(); submit();} });
+sendBtn.onclick=submit;
+</script>
+</body>
+</html>

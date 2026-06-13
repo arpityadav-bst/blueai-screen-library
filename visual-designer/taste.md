@@ -1,5 +1,5 @@
 # blueAI — Taste
-Last updated: 2026-06-12 (S5 audit — +rules 26–29 (atomic hierarchy · role-vs-recipe docs · nav recedes · width-by-role); rule 13 amended with hairline + the neutral channel)
+Last updated: 2026-06-13 (S6 audit — +rules 30–33 (signal lifecycle · quiet hero-label/frosted-over-bg · landing=island funnel · re-verify floating/animated across states+breakpoints))
 
 > blueAI's design *language* — how it should feel — so VDA can design new blueAI
 > surfaces from instinct. Seeded from the Claude-design export's DS README (which is a
@@ -222,6 +222,35 @@ springy bounces) — "a utility assistant, not a toy."
     ELEMENT IT ANNOTATES, not a prose measure.** The 50–75ch readability cap is for paragraphs
     read top-to-bottom; fine print attached to a figure aligns to the figure's edges. (The
     odds-table disclaimer at a 70ch cap wrapped to 4 cramped lines beside empty space.)
+
+## Codified taste rules (added S6 — the live-demo-v2 redesign + signature-motion day)
+
+30. **A signal has a LIFESPAN tied to a journey stage — retire it when its job is done.** Don't run
+    two animated/pulsing indicators for the same meaning in proximity (pulse is the strongest
+    attention draw; duplicating it dilutes both). An *invitation* ("Live, try it now") is useful only
+    BEFORE engagement; once the user acts, the product's own presence signal takes over — so the
+    invitation fades out on first interaction, it doesn't get restyled to coexist. *(S6: two pulsing
+    green dots ~40px apart — our badge + the widget's worker-status dot. Fixed by lifecycle, not style.)*
+
+31. **A label attached to the page's HERO artifact must be quieter than the artifact**, and floating UI
+    that travels over arbitrary backgrounds needs an OPAQUE/frosted surface, never a tinted wash. The
+    live widget is the star of its page; its "Live, try it now" tag is a whisper (frosted-white hairline
+    pill, a small green dot carries "live"), not a loud black pill that out-shouts it. A translucent wash
+    breaks when the element floats over a dark band — frosted-solid survives any backdrop. *(S6.)*
+
+32. **A landing page is a focused FUNNEL: anchor-only nav, no outbound links, nothing imported.** An
+    outbound link leaks conversion; the page is a self-contained island. And a product GATE (a login wall
+    before the payoff) is a deliberate intent filter, not UX friction — ask "what is this gate FOR" before
+    "removing" it. *(S6: designer corrected me — I'd read the anchor-only nav as a flaw and proposed
+    softening the login wall; both were the point.)*
+
+33. **Re-verify every floating / negative-offset / animated element across ALL its states and breakpoints
+    before presenting.** A `-36px`-above-the-panel badge is safe while siblings sit in separate desktop
+    columns, but collides with whatever stacks above it on mobile; a fixed panel's z-order, a transient
+    animation's mid-frame, and a label's clearance must each be checked in docked+hero, mobile+desktop,
+    mid-motion+settled, and over every background it can travel over. This is the concrete Gate-8 checklist
+    for motion/floating work (recurring category #2's 4th validation). *(S6: badge-over-trust-row on mobile,
+    footer-over-docked-widget z-order, blueprint-vs-widget merge — all "looked fine in one state".)*
 
 > Motion (framer-motion) gotchas, the spotlight pattern, the CSS-chunking leak, the ambient
 > backdrop, and mobile/layout/SSOT technical detail live in `knowledge-base.md`.

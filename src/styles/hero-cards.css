@@ -71,7 +71,7 @@
 .v-cards .cr-fill { display: block; height: 100%; width: 100%; border-radius: 4px; transform-origin: left center; background: linear-gradient(90deg, #c9d3ee, #aab9e6); }
 .v-cards .cr-submit { margin-top: auto; flex: none; height: 30px; border: none; cursor: default; border-radius: 8px; background: linear-gradient(105deg, var(--bai-legacy-blue), var(--bai-iris)); color: #fff; font-family: var(--font-ui); font-weight: 600; font-size: 12px; display: flex; align-items: center; justify-content: center; overflow: hidden; } /* flow at bottom (margin-top:auto) â†’ gap above the form; .cr-applied overlays it */
 .v-cards .cr-ripple { position: absolute; left: 50%; bottom: 15px; width: 120px; height: 120px; border-radius: 50%; background: rgba(255,255,255,.6); pointer-events: none; }
-.v-cards .cr-applied { position: absolute; left: 14px; right: 14px; bottom: 14px; height: 30px; border-radius: 8px; background: var(--green-bg); color: #0f7a3b; font-family: var(--font-ui); font-weight: 600; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 5px; }
+.v-cards .cr-applied { position: absolute; left: 14px; right: 14px; bottom: 14px; height: 30px; border-radius: 8px; background: var(--green-bg); color: var(--bai-mkt-green-ink); font-family: var(--font-ui); font-weight: 600; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 5px; }
 
 /* ---------- CREATOR (legacy) ---------- */
 .v-cards .cv-trend { display: inline-flex; align-items: center; gap: 5px; background: #fff; border: 1px solid var(--bai-divider); border-radius: var(--radius-pill); padding: 4px 10px; font-family: var(--font-ui); font-weight: 600; font-size: 10.5px; color: #c2418a; margin-bottom: 11px; }
@@ -91,16 +91,16 @@
 .v-cards .fn-tick { flex: 1; background: #fff; border: 1px solid var(--bai-divider); border-radius: 7px; padding: 5px 7px; }
 .v-cards .fn-tick .sym { font-family: var(--font-mono); font-weight: 600; font-size: 10px; color: var(--slate-900); letter-spacing: -.02em; }
 .v-cards .fn-tick .pct { font-family: var(--font-mono); font-weight: 500; font-size: 9px; }
-.v-cards .fn-tick .pct.up { color: #0f7a3b; } .v-cards .fn-tick .pct.dn { color: #d6455d; }
+.v-cards .fn-tick .pct.up { color: var(--bai-mkt-green-ink); } .v-cards .fn-tick .pct.dn { color: #d6455d; }
 .v-cards .fn-sweep { position: absolute; top: 0; bottom: 0; width: 46px; pointer-events: none; background: linear-gradient(90deg, transparent, rgba(var(--bai-iris-rgb),.30), transparent); }
 .v-cards .fn-chartwrap { position: relative; height: 62px; }
 .v-cards .fn-chart { width: 100%; height: 62px; display: block; overflow: visible; }
 .v-cards .fn-line { fill: none; stroke: url(#fn-grad); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
-.v-cards .fn-marker { position: absolute; font-family: var(--font-mono); font-weight: 600; font-size: 9.5px; color: #fff; background: #0f7a3b; border-radius: var(--radius-pill); padding: 3px 8px; left: 58%; top: 8px; box-shadow: 0 3px 8px rgba(15,122,59,.4); }
-.v-cards .fn-marker::after { content: ""; position: absolute; left: 14px; top: 100%; width: 6px; height: 6px; border-radius: 50%; background: #0f7a3b; margin-top: 2px; }
+.v-cards .fn-marker { position: absolute; font-family: var(--font-mono); font-weight: 600; font-size: 9.5px; color: #fff; background: var(--bai-mkt-green-ink); border-radius: var(--radius-pill); padding: 3px 8px; left: 58%; top: 8px; box-shadow: 0 3px 8px rgba(15,122,59,.4); }
+.v-cards .fn-marker::after { content: ""; position: absolute; left: 14px; top: 100%; width: 6px; height: 6px; border-radius: 50%; background: var(--bai-mkt-green-ink); margin-top: 2px; }
 .v-cards .fn-port { margin-top: auto; display: flex; align-items: baseline; gap: 7px; } /* flow at bottom (margin-top:auto) â†’ gap above the chart */
 .v-cards .fn-port .v { font-family: var(--font-mono); font-weight: 600; font-size: 17px; color: var(--slate-900); letter-spacing: -.02em; }
-.v-cards .fn-port .d { font-family: var(--font-mono); font-weight: 500; font-size: 11px; color: #0f7a3b; }
+.v-cards .fn-port .d { font-family: var(--font-mono); font-weight: 500; font-size: 11px; color: var(--bai-mkt-green-ink); }
 
 /* ---------- MARKETS (legacy) ---------- */
 .v-cards .mk-watch { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; background: #fff; border: 1px solid var(--bai-divider); border-radius: var(--radius-pill); padding: 4px 10px; margin-bottom: 12px; }
@@ -113,7 +113,7 @@
 .v-cards .mk-track { flex: 1; height: 8px; border-radius: 4px; background: #e7ebf5; overflow: hidden; }
 .v-cards .mk-fill { display: block; height: 100%; width: 100%; border-radius: 4px; transform-origin: left center; background: linear-gradient(90deg, #7da0ff, var(--bai-mkt-blue)); }
 .v-cards .mk-pct { font-family: var(--font-mono); font-weight: 600; font-size: 10.5px; color: var(--slate-900); width: 42px; text-align: right; flex: none; letter-spacing: -.02em; }
-.v-cards .mk-pct.is-up { color: #0f7a3b; }
+.v-cards .mk-pct.is-up { color: var(--bai-mkt-green-ink); }
 .v-cards .mk-alert { margin-top: auto; display: flex; align-items: center; gap: 7px; background: rgba(var(--bai-mkt-blue-rgb),.08); border: 1px solid rgba(var(--bai-mkt-blue-rgb),.2); border-radius: 8px; padding: 6px 9px; }
 .v-cards .mk-env { width: 20px; height: 20px; border-radius: 6px; background: #fff; border: 1px solid rgba(var(--bai-mkt-blue-rgb),.25); display: flex; align-items: center; justify-content: center; flex: none; }
 .v-cards .mk-env svg { width: 11px; height: 11px; color: var(--bai-mkt-blue); }

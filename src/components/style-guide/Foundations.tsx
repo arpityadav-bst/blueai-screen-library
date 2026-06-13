@@ -49,6 +49,7 @@ export function Foundations() {
           <Swatch name="Iris" value="#7B4CFF" cls="bg-iris" />
           <Swatch name="Cyan" value="#0EA4C5" cls="bg-cyan" />
           <Swatch id="tok-cta-gradient" name="CTA gradient" value="blue→violet · Download pill" style={{ background: 'var(--bai-cta-gradient)' }} />
+          <Swatch name="CTA band" value="dark close-CTA · ink→iris" style={{ background: 'var(--bai-cta-band)' }} />
         </div>
         <p className="bai-section-label mb-3 mt-6">Neutral ramp (cool, blue-cast)</p>
         <div className="grid grid-cols-3 gap-3 sm:grid-cols-5">
@@ -80,8 +81,10 @@ export function Foundations() {
           <Swatch name="Mkt green" value="#16A34A · live" style={{ background: 'var(--bai-mkt-green)' }} />
           <Swatch name="Green wash" value="green · .10α" style={{ background: 'var(--bai-mkt-green-wash)' }} />
           <Swatch id="tok-page-grad" name="Page bg" value="page-grad · F5F6FD→EEF1FB" style={{ background: 'var(--bai-page-grad)' }} />
+          <Swatch name="Green ink" value="#0F7A3B · LIVE / applied text" style={{ background: 'var(--bai-mkt-green-ink)' }} />
+          <Swatch name="Star" value="#F5A623 · rating gold" style={{ background: 'var(--bai-star)' }} />
         </div>
-        <p className="mt-2 text-2xs leading-relaxed text-ink-muted">A distinct marketing palette (slate · blue · green) for the homepage / SEO / hero chrome — separate from the brand gradient and the in-app ink ramp.</p>
+        <p className="mt-2 text-2xs leading-relaxed text-ink-muted">A distinct marketing palette (slate · blue · green, + the darker green ink for LIVE/applied text) for the homepage / SEO / hero chrome — separate from the brand gradient and the in-app ink ramp. Star gold is the one semantic that sits off the brand system (review ratings).</p>
       </section>
 
       {/* TYPE */}
