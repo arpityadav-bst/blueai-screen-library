@@ -6,8 +6,8 @@ import { Ldv2Stats, Ldv2How } from '@/components/ldv2/Ldv2Proof'
 import { Ldv2Workers } from '@/components/ldv2/Ldv2Workers'
 import { Ldv2Why, Ldv2Quotes, Ldv2Cta, Ldv2Footer } from '@/components/ldv2/Ldv2Lower'
 
-// Live Demo Homepage — DS redesign of the PM's blue-ai-demo funnel (/live-demo is the
-// byte-exact clone for comparison). Same IA + copy + the LIVE hire widget (reskinned at
+// Live Demo Homepage — DS redesign of the PM's blue-ai-demo funnel (pristine source kept in
+// design-source/blue-ai-demo). Same IA + copy + the LIVE hire widget (reskinned at
 // public/live-demo-v2/widget.html); skin + motion are ours. Scoped .ldv2.
 export const metadata: Metadata = {
   title: 'BlueAI — Hire an AI worker to make you money | bluestacks.ai',
