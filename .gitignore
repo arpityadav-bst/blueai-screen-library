@@ -43,3 +43,7 @@ __preview/
 
 # PM reference mock (kept local — a 4.3MB screenshot, not a site asset)
 public/screencapture-*.png
+
+# BlueAI Product clone — PM design export (kept local; 4.8MB of screenshots/uploads,
+# reference only. The clone in public/blueai-product/ is self-contained.)
+design-source/blueai-uiux/

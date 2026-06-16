@@ -12,6 +12,7 @@ const PAGES = [
   { href: '/seo', name: 'SEO Homepage', desc: 'Search-optimized marketing homepage — full sections + FAQ schema' },
   { href: '/hero-options', name: 'Hero Options', desc: 'The three hero directions, compared side by side' },
   { href: '/live-demo-v2', name: 'Live Demo Homepage', desc: 'The hire-a-worker funnel on the BlueAI design system — live widget, agent scenes, parallax, docking widget' },
+  { href: '/blueai-product', name: 'BlueAI Product', desc: 'Exact clone of the live BlueAI desktop app — the new-variant chat, task-progress + feedback, and all five tabs. Standalone replica, not on the marketing design system.' },
 ]
 
 export default function Home() {
