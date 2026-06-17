@@ -43,7 +43,7 @@ export function CreatorLibrary() {
                 {i === 0 && <span className="cr-lib-badge">New</span>}
                 <div className="cr-lib-foot">
                   <b>{g.title}</b>
-                  <span>Just now · {g.model}</span>
+                  <span>Just now · {g.style}</span>
                 </div>
               </motion.article>
             ))}

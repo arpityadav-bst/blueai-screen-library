@@ -3,9 +3,10 @@ import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { GradientCanvas } from './GradientCanvas'
 import { useStudio } from './CreatorStudio'
+import { CreatorSelect } from './CreatorSelect'
 import { Sparkle } from '@/components/Sparkle'
 import { Arrow } from '@/components/Arrow'
-import { CREATOR_HERO, HERO_MODELS, HERO_PILLS } from '@/lib/creator-data'
+import { CREATOR_HERO, HERO_STYLES, HERO_ASPECTS, HERO_PILLS } from '@/lib/creator-data'
 
 // Hero: a living iris→cyan WebGL gradient under a frosted "create a video in one shot" prompt.
 // Design-only — the prompt + Generate are inert. Content rises in on load (framer-motion).
@@ -36,12 +37,21 @@ function useTypewriter(phrases: readonly string[], enabled: boolean) {
   return typed
 }
 
+// A little frame glyph whose proportions match the aspect ratio (square / tall / wide).
+const aspectIcon = (v: string) => {
+  const box: number[] = ({ '1:1': [5, 5, 14, 14], '9:16': [8, 3, 8, 18], '16:9': [3, 7, 18, 10] } as Record<string, number[]>)[v] ?? [4, 6, 16, 12]
+  return <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true"><rect x={box[0]} y={box[1]} width={box[2]} height={box[3]} rx="2" /></svg>
+}
+
 export function CreatorHero() {
   // Editable, design-only prompt. The typewriter is an animated PLACEHOLDER (only when empty +
   // unfocused); clicking in clears it so you can type. Pills fill the field; Generate runs the
   // login-gated studio flow (shared state in CreatorStudio): sign in → 1 free render → library.
-  const { prompt, setPrompt, model, setModel, generating, requestGenerate } = useStudio()
+  const { prompt, setPrompt, style, setStyle, generating, requestGenerate } = useStudio()
   const [focused, setFocused] = useState(false)
+  const [aspect, setAspect] = useState<string>('Auto')
+  const styleOptions = HERO_STYLES.map((s) => ({ value: s.value, hint: s.hint }))
+  const aspectOptions = HERO_ASPECTS.map((a) => ({ value: a.value, label: a.label, hint: a.hint, icon: aspectIcon(a.value) }))
   const showGhost = prompt === '' && !focused
   const typed = useTypewriter(CREATOR_HERO.examples, showGhost)
 
@@ -64,11 +74,10 @@ export function CreatorHero() {
             {showGhost && <div className="cr-prompt-ghost" aria-hidden="true">{typed}<span className="cr-caret" /></div>}
           </div>
           <div className="cr-prompt-bar">
-            <span className="cr-model"><Sparkle size={15} />
-              <select className="cr-model-sel" value={model} onChange={(e) => setModel(e.target.value)} aria-label="Model">
-                {HERO_MODELS.map((m) => <option key={m}>{m}</option>)}
-              </select>
-            </span>
+            <div className="cr-prompt-controls">
+              <CreatorSelect value={style} options={styleOptions} onChange={setStyle} label="Art style" heading="Choose a style" icon={<Sparkle size={15} />} />
+              <CreatorSelect value={aspect} options={aspectOptions} onChange={setAspect} label="Aspect ratio" heading="Choose aspect ratio" />
+            </div>
             <button type="button" className={`cr-go${generating ? ' is-busy' : ''}`} aria-label="Generate video" aria-busy={generating} onClick={requestGenerate}>
               {generating ? <span className="cr-spinner" aria-hidden="true" /> : <Arrow size={18} />}
             </button>

@@ -58,7 +58,7 @@ export function CreatorShareModal() {
             <div className="cr-gen-info">
               <span className="cr-eyebrow-sm">Your generation</span>
               <h3 className="cr-gen-title">{openGen.title}</h3>
-              <p className="cr-gen-meta">{openGen.model} · vertical short · Just now</p>
+              <p className="cr-gen-meta">{openGen.style} · vertical short · Just now</p>
               <p className="cr-gen-promote">Promote to</p>
               <div className="cr-gen-platforms">
                 {PLATFORMS.map((p) => (
