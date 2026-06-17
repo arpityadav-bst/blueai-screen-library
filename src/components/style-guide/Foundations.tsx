@@ -4,6 +4,7 @@ import { Wordmark } from '@/components/Wordmark'
 import { Sparkle } from '@/components/Sparkle'
 import { Arrow } from '@/components/Arrow'
 import { MotionDemo } from '@/components/style-guide/MotionDemo'
+import { SOCIAL } from '@/lib/site-data'
 
 function Swatch({ id, name, value, cls = '', style }: { id?: string; name: string; value: string; cls?: string; style?: React.CSSProperties }) {
   return (
@@ -31,10 +32,13 @@ const ICONS: { name: string; use: string; glyph: React.ReactNode }[] = [
   { name: 'Chevron', use: 'expand / next', glyph: <I d="M9 6l6 6-6 6" /> },
   { name: 'Menu', use: 'mobile nav', glyph: <I d="M4 7h16M4 12h16M4 17h16" /> },
   { name: 'Close', use: 'dismiss', glyph: <I d="M6 6 18 18M18 6 6 18" /> },
-  { name: 'Send', use: 'composer submit', glyph: <I d="M12 19V5M5 12l7-7 7 7" /> },
-  { name: 'Check', use: 'verified / done', glyph: <I d="M20 6 9 17l-5-5" /> },
+  { name: 'Check', use: 'pill / verified', glyph: <I d="M20 6 9 17l-5-5" /> },
   { name: 'Upload', use: 'file field', glyph: <I><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" /></I> },
 ]
+
+// Social brand logos — filled, in each platform's OWN brand color (third-party constants, not
+// --bai- tokens). Shapes reuse the SSOT paths from site-data; colors mirror header.css/footer.css.
+const SOCIAL_COLOR: Record<string, string> = { 'is-discord': '#5865F2', 'is-x': '#000000', 'is-reddit': '#FF4500' }
 
 export function Foundations() {
   return (
@@ -48,7 +52,7 @@ export function Foundations() {
           <Swatch name="10% wash" value="pills" cls="bg-bai-wash" />
           <Swatch name="Iris" value="#7B4CFF" cls="bg-iris" />
           <Swatch name="Cyan" value="#0EA4C5" cls="bg-cyan" />
-          <Swatch id="tok-cta-gradient" name="CTA gradient" value="blue→violet · Download pill" style={{ background: 'var(--bai-cta-gradient)' }} />
+          <Swatch id="tok-cta-gradient" name="CTA gradient" value="blue→violet · primary CTA pill" style={{ background: 'var(--bai-cta-gradient)' }} />
           <Swatch name="CTA band" value="dark close-CTA · ink→iris" style={{ background: 'var(--bai-cta-band)' }} />
         </div>
         <p className="bai-section-label mb-3 mt-6">Neutral ramp (cool, blue-cast)</p>
@@ -62,18 +66,12 @@ export function Foundations() {
           <Swatch name="Surface" value="#F7FAFF" cls="bg-surface" />
           <Swatch name="Canvas" value="#FFFFFF" cls="bg-canvas" />
         </div>
-        <p className="bai-section-label mb-3 mt-6">Accent + semantic status (from the PM design system)</p>
+        <p className="bai-section-label mb-3 mt-6">Semantic status — agent trade log (BUY / SELL)</p>
         <div className="grid grid-cols-3 gap-3 sm:grid-cols-5">
-          <Swatch name="Accent" value="#1990FF" cls="bg-accent" />
-          <Swatch name="Indigo" value="#4F46E5 · PM 2nd accent" style={{ background: 'var(--bai-indigo)' }} />
-          <Swatch name="Success" value="#22C55E" cls="bg-status-success" />
-          <Swatch name="Warning" value="#F59E0B" cls="bg-status-warning" />
-          <Swatch name="Danger" value="#EF4444" cls="bg-status-danger" />
-          <Swatch name="Info" value="#3B82F6" cls="bg-status-info" />
-          <Swatch name="Scheduled" value="#9333EA" cls="bg-status-scheduled" />
-          <Swatch name="Jobs" value="#F97316" cls="bg-status-jobs" />
+          <Swatch name="Success" value="#22C55E · BUY" cls="bg-status-success" />
+          <Swatch name="Danger" value="#EF4444 · SELL" cls="bg-status-danger" />
         </div>
-        <p className="bai-section-label mb-3 mt-6">Marketing surface — homepage · SEO · hero chrome (not the in-app panel)</p>
+        <p className="bai-section-label mb-3 mt-6">Marketing surface — homepage · agent / social-rewards / developer pages (not the in-app panel)</p>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
           <Swatch name="Mkt slate" value="#0F172A · text" style={{ background: 'var(--bai-mkt-slate)' }} />
           <Swatch id="tok-mkt-blue" name="Mkt blue" value="#2F6DFF · links" style={{ background: 'var(--bai-mkt-blue)' }} />
@@ -84,7 +82,7 @@ export function Foundations() {
           <Swatch name="Green ink" value="#0F7A3B · LIVE / applied text" style={{ background: 'var(--bai-mkt-green-ink)' }} />
           <Swatch name="Star" value="#F5A623 · rating gold" style={{ background: 'var(--bai-star)' }} />
         </div>
-        <p className="mt-2 text-2xs leading-relaxed text-ink-muted">A distinct marketing palette (slate · blue · green, + the darker green ink for LIVE/applied text) for the homepage / SEO / hero chrome — separate from the brand gradient and the in-app ink ramp. Star gold is the one semantic that sits off the brand system (review ratings).</p>
+        <p className="mt-2 text-2xs leading-relaxed text-ink-muted">A distinct marketing palette (slate · blue · green, + the darker green ink for LIVE/applied text) for the marketing pages — the homepage + the agent / social-rewards / developer pages — separate from the brand gradient and the in-app ink ramp. Star gold is the one semantic that sits off the brand system (review ratings).</p>
       </section>
 
       {/* TYPE */}
@@ -124,6 +122,16 @@ export function Foundations() {
             </div>
           ))}
         </div>
+        <p className="bai-section-label mb-3 mt-6">Social — brand logos (filled, in each platform's own brand color)</p>
+        <div className="grid grid-cols-3 gap-3 sm:grid-cols-5 lg:grid-cols-9">
+          {SOCIAL.map((s) => (
+            <div key={s.label} className="flex flex-col items-center gap-1.5 rounded-card border border-divider bg-surface px-2 py-4 text-center">
+              <span className="flex h-7 items-center" style={{ color: SOCIAL_COLOR[s.cls] }}><svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d={s.d} /></svg></span>
+              <span className="text-2xs font-semibold text-ink-heading">{s.label}</span>
+              <span className="text-xs leading-tight text-ink-muted">header · footer</span>
+            </div>
+          ))}
+        </div>
       </section>
 
       {/* SCALES */}
@@ -137,7 +145,7 @@ export function Foundations() {
                 <div key={k} className="flex items-center gap-3"><span className="w-5 text-2xs text-ink-muted">{k}</span><span className="h-3 rounded-sm bg-bai-gradient" style={{ width: v as number }} /><span className="text-2xs text-ink-muted">{v}px</span></div>
               ))}
             </div>
-            <p className="mt-3 text-2xs leading-relaxed text-ink-muted">Content width — <span className="font-mono">--bai-content</span> 1180px (the shared content column; a full-bleed nav runs over it).</p>
+            <p className="mt-3 text-2xs leading-relaxed text-ink-muted">Content width — <span className="font-mono">1200px</span> · 24px gutter — the shared content column (homepage · agent / social-rewards / developer · footer). The 1640px nav runs full-bleed over it.</p>
           </div>
           <div className="rounded-field border border-divider bg-surface p-5">
             <p className="bai-section-label mb-4">Radius</p>

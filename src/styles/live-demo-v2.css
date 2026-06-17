@@ -9,10 +9,10 @@
   --seo-slate: var(--bai-mkt-slate);                 /* scene-CSS aliases (the scene rules are shared verbatim with /seo) */
   --green: var(--bai-mkt-green); --green-bg: var(--bai-mkt-green-wash);
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
-  --ldv2-content: 1240px; }
+  --ldv2-content: 1200px; }  /* shared content column — matches the inner pages (.v-site/.v-agent) + footer; the 1640 nav runs full-bleed over it */
 .ldv2 * { box-sizing: border-box; }
 html:has(.ldv2) { scroll-behavior: smooth; }
-.ldv2 .ldv2-wrap { max-width: var(--ldv2-content); margin: 0 auto; padding: 0 32px; }
+.ldv2 .ldv2-wrap { max-width: var(--ldv2-content); margin: 0 auto; padding: 0 24px; }
 /* z-auto (NOT z-index:1) — a z-index on main would create a stacking context that CAPS the
    docked fixed panel (z-90) beneath the footer; DOM order alone puts content above the backdrop */
 .ldv2 main { position: relative; }
@@ -102,7 +102,7 @@ html:has(.ldv2) { scroll-behavior: smooth; }
 
 /* ── stats band (count-up) ─────────────────────────────────────────────── */
 .ldv2 .ldv2-stats { border-top: 1px solid var(--bai-divider); border-bottom: 1px solid var(--bai-divider); background: rgba(255, 255, 255, .55); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
-.ldv2 .ldv2-stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; padding: 28px 32px; max-width: var(--ldv2-content); margin: 0 auto; }
+.ldv2 .ldv2-stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; padding: 28px 24px; max-width: var(--ldv2-content); margin: 0 auto; }
 .ldv2 .ldv2-stat { text-align: center; }
 .ldv2 .ldv2-stat .n { font-family: var(--font-head); font-weight: 600; font-size: 27px; letter-spacing: -.02em; color: var(--bai-mkt-slate); font-variant-numeric: tabular-nums; }
 .ldv2 .ldv2-stat .l { font-size: 12.5px; color: var(--fg-4); font-weight: 500; margin-top: 3px; }
@@ -119,11 +119,11 @@ html:has(.ldv2) { scroll-behavior: smooth; }
 .ldv2 .icon-finance { background: linear-gradient(160deg, #dcf6e6, #e6f7ec); }
 .ldv2 .icon-markets { background: linear-gradient(160deg, #dbe7ff, #e7ecff); }
 .ldv2 .ldv2-worker h3 { font-family: var(--font-head); font-weight: 600; font-size: 17px; letter-spacing: -.02em; color: var(--bai-mkt-slate); margin: 0; }
-.ldv2 .ldv2-worker .live { display: inline-flex; align-items: center; gap: 5px; font-weight: 700; font-size: 10px; letter-spacing: .07em; color: var(--bai-mkt-green-ink); background: var(--green-bg); border-radius: var(--radius-pill); padding: 3px 8px; margin-left: auto; }
-.ldv2 .ldv2-worker .live .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
 .ldv2 .ldv2-worker p { font-size: 13.5px; color: var(--fg-4); line-height: 1.5; margin: 0 0 12px; text-wrap: pretty; }
 .ldv2 .ldv2-stage { position: relative; background: var(--bai-surface); border: 1px solid var(--bai-divider); border-radius: 12px; height: 178px; padding: 14px; overflow: hidden; display: flex; flex-direction: column; }
 .ldv2 .ldv2-result { display: flex; align-items: center; gap: 7px; margin-top: 12px; font-size: 12.5px; font-weight: 600; color: var(--bai-mkt-green-ink); background: var(--green-bg); border-radius: 10px; padding: 8px 11px; }
+.ldv2 .ldv2-worker-cta { display: inline-flex; align-items: center; gap: 6px; flex: none; margin-left: auto; font-size: 13px; font-weight: 600; white-space: nowrap; color: var(--bai-mkt-blue); text-decoration: none; transition: gap .2s var(--ease-out), color .2s var(--ease-out); }
+.ldv2 .ldv2-worker-cta:hover { gap: 9px; color: var(--bai-mkt-blue-2); }
 .ldv2 .ldv2-wmore { text-align: center; margin-top: 26px; font-size: 14px; color: var(--fg-4); font-weight: 500; }
 .ldv2 .ldv2-wmore b { color: var(--fg-2); font-weight: 600; }
 
@@ -213,7 +213,7 @@ html:has(.ldv2) { scroll-behavior: smooth; }
 .ldv2 .ldv2-who .rl { font-size: 12px; color: var(--fg-4); }
 
 /* ── CTA band (dark, slow gradient pan) ────────────────────────────────── */
-.ldv2 .ldv2-ctaband { margin: 0 32px clamp(54px, 6.5vw, 92px); }
+.ldv2 .ldv2-ctaband { margin: 0 24px clamp(54px, 6.5vw, 92px); }
 .ldv2 .ldv2-ctaband .inner { max-width: var(--ldv2-content); margin: 0 auto; border-radius: 28px; padding: 56px 40px; text-align: center; color: #fff; position: relative; overflow: hidden;
   background: var(--bai-cta-band); background-size: 170% 170%; animation: ldv2Pan 14s ease-in-out infinite alternate; }
 @keyframes ldv2Pan { from { background-position: 0% 30%; } to { background-position: 100% 70%; } }
@@ -250,6 +250,10 @@ html:has(.ldv2) { scroll-behavior: smooth; }
 }
 @media (max-width: 560px) {
   .ldv2 .ldv2-stats-grid, .ldv2 .ldv2-steps, .ldv2 .ldv2-whygrid, .ldv2 .ldv2-quotes, .ldv2 .ldv2-fgrid { grid-template-columns: 1fr; }
+  /* narrow cards: drop "See it work" to its own line so the worker NAME keeps full width (no 2-line squeeze).
+     padding-left (not margin) keeps the title-aligned offset INSIDE the 100% basis — margin would overflow. */
+  .ldv2 .ldv2-worker-top { flex-wrap: wrap; }
+  .ldv2 .ldv2-worker-cta { flex-basis: 100%; margin-left: 0; padding-left: 55px; }
   /* declutter the header at phone widths: drop the secondary "Log in" (it was wrapping), tighten gutter */
   .ldv2 .ldv2-login { display: none; }
   .ldv2 .ldv2-nav-in { padding: 0 18px; gap: 12px; }

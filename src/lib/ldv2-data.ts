@@ -9,11 +9,12 @@ export const LDV2_STATS = [
   { n: 100, decimals: 0, suffix: '%', label: 'of spends you approve' },
 ] as const
 
+// href → each worker's full agent page (the "See it work" deepener; routes shared with the SEO flow).
 export const LDV2_WORKERS = [
-  { key: 'creator', icon: '🎬', title: 'AI Video Creator', desc: 'Writes, generates, and posts faceless short videos to YouTube, TikTok, and Reels.', result: '📈 12,400 views in week one' },
-  { key: 'career', icon: '💼', title: 'Apply to Jobs', desc: 'Searches LinkedIn overnight and matches real roles to your resume.', result: '✅ 3 replies, 1 interview booked' },
-  { key: 'finance', icon: '📈', title: 'AI Trading Agent', desc: 'Runs paper portfolios and a daily brief on real US stocks. Data, not advice.', result: '📊 Momentum +13.2% since Apr 27' },
-  { key: 'markets', icon: '🔮', title: 'Prediction Market Agent', desc: 'Scans Polymarket and compares the odds against the underlying data.', result: '🎯 Flagged 3 markets mispriced 8%+' },
+  { key: 'creator', icon: '🎬', title: 'AI Video Creator', desc: 'Writes, generates, and posts faceless short videos to YouTube, TikTok, and Reels.', result: '📈 12,400 views in week one', href: '/ai-video-creator' },
+  { key: 'career', icon: '💼', title: 'Apply to Jobs', desc: 'Searches LinkedIn overnight and matches real roles to your resume.', result: '✅ 3 replies, 1 interview booked', href: '/apply-to-jobs' },
+  { key: 'finance', icon: '📈', title: 'AI Trading Agent', desc: 'Runs paper portfolios and a daily brief on real US stocks. Data, not advice.', result: '📊 Momentum +13.2% since Apr 27', href: '/ai-trading-agent' },
+  { key: 'markets', icon: '🔮', title: 'Prediction Market Agent', desc: 'Scans Polymarket and compares the odds against the underlying data.', result: '🎯 Flagged 3 markets mispriced 8%+', href: '/prediction-market-agent' },
 ] as const
 
 export const LDV2_STEPS = [
@@ -38,15 +39,14 @@ export const LDV2_QUOTES = [
   { q: '“The morning portfolio brief is the thing I open first now. It flags my earnings and risk before the market opens.”', nm: 'Aisha T.', rl: 'Retail investor', av: 'A', grad: 'linear-gradient(135deg,#13b16e,#0a8f86)' },
 ] as const
 
-export const LDV2_NAV = [
-  ['#workers', 'Workers'], ['#how', 'How it works'], ['#why', 'Why BlueAI'], ['#reviews', 'Reviews'],
-] as const
-
-export const LDV2_FOOTER = {
-  blurb: 'AI workers that use real apps to make and save money for you, on your PC inside BlueStacks.',
-  cols: [
-    { head: 'Product', links: [['#workers', 'Workers'], ['#how', 'How it works'], ['#why', 'Why BlueAI'], ['#hire', 'Pricing']] },
-    { head: 'Company', links: [['#', 'About'], ['#', 'Careers'], ['#', 'Blog'], ['#', 'Contact']] },
-    { head: 'Legal', links: [['#', 'Privacy'], ['#', 'Terms'], ['#', 'Guarantee'], ['#', 'Security']] },
-  ],
-} as const
+// Header nav for the live-demo homepage — passed to the shared <MarketingHeader/>. In-page anchors
+// localized to THIS page's sections; Social Rewards/Developer stay cross-page (↗), same as the SEO
+// header. The footer uses the shared <MarketingFooter/> as-is (its Learn links stay canonical /seo#…).
+export const LDV2_HEADER_LINKS = [
+  { label: 'Workers', href: '#workers' },
+  { label: 'How it works', href: '#how' },
+  { label: 'Why BlueAI', href: '#why' },
+  { label: 'Reviews', href: '#reviews' },
+  { label: 'Social Rewards', href: '/social-rewards', external: true },
+  { label: 'Developer', href: '/developer', external: true },
+]

@@ -5,6 +5,7 @@ import { CareerLegacy } from '@/components/hero/scenes/CareerLegacy'
 import { CreatorLegacy } from '@/components/hero/scenes/CreatorLegacy'
 import { FinanceLegacy } from '@/components/hero/scenes/FinanceLegacy'
 import { MarketsLegacy } from '@/components/hero/scenes/MarketsLegacy'
+import { Arrow } from '@/components/Arrow'
 import { LDV2_WORKERS } from '@/lib/ldv2-data'
 
 // The workers grid — the PM's 4 cards, ALIVE: each card runs its real agent scene on the
@@ -52,7 +53,7 @@ export function Ldv2Workers() {
                 <div className="ldv2-worker-top">
                   <div className={`ldv2-worker-icon icon-${w.key}`}>{w.icon}</div>
                   <h3>{w.title}</h3>
-                  <span className="live"><span className="dot" />LIVE</span>
+                  <a className="ldv2-worker-cta" href={w.href}>See it work<Arrow size={14} /></a>
                 </div>
                 <p>{w.desc}</p>
                 <div className="ldv2-stage">

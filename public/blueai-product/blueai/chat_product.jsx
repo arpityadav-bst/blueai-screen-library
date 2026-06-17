@@ -273,7 +273,7 @@
             {[0, 1, 2].map((i) =>
               <span key={i} style={{ width: 7, height: 7, borderRadius: '50%', background: '#818cf8', display: 'inline-block', animation: 'ba-pulse 1.2s ease-in-out infinite', animationDelay: (i * 0.18) + 's' }}></span>)}
           </div>
-          <p style={{ fontSize: 12, color: '#94a3b8' }}>Tinkering…</p>
+          <p style={{ fontSize: 12, color: '#94a3b8' }}>Working on it…</p>
         </div>
       </div>);
   }
@@ -290,42 +290,6 @@
       { role: 'final', tone: 'success', content: 'Done — I completed your task: “' + text + '”. Let me know if you’d like me to do anything else.', d: 900 }];
   }
 
-  /* ───────── Chat history overlay (from ChatView Variant) ───────── */
-  function HistoryOverlay({ onClose, onPick }) {
-    const items = [
-      { id: 'h1', prompt: 'Collect daily rewards from Coin Master & Monopoly Go', when: 'Today, 9:04 AM' },
-      { id: 'h2', prompt: 'Post my queued reels to Instagram & TikTok', when: 'Yesterday, 6:20 PM' },
-      { id: 'h3', prompt: 'Summarize my unread WhatsApp chats', when: '2 days ago, 8:11 AM' },
-      { id: 'h4', prompt: 'Find trending games on the Play Store this week', when: '4 days ago, 1:45 PM' }];
-    return (
-      <>
-        <div onClick={onClose} style={{ position: 'absolute', inset: 0, background: 'rgba(10,12,28,0.45)', zIndex: 80 }} />
-        <div style={{ position: 'absolute', inset: 0, zIndex: 90, background: 'white', display: 'flex', flexDirection: 'column' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px 10px', borderBottom: '1px solid #e2e8f0', flexShrink: 0 }}>
-            <h1 style={{ fontSize: 18, fontWeight: 800, color: '#111827', letterSpacing: '-0.3px' }}>Chat history</h1>
-            <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b', padding: 4, display: 'flex', alignItems: 'center' }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
-            </button>
-          </div>
-          <div style={{ flex: 1, overflowY: 'auto', padding: '12px 16px 20px', display: 'flex', flexDirection: 'column', gap: 8 }}>
-            {items.map((it) =>
-              <button key={it.id} onClick={() => onPick(it.prompt)}
-                style={{ display: 'flex', alignItems: 'flex-start', gap: 12, width: '100%', background: 'white', border: '1px solid #e2e8f0', borderRadius: 12, padding: '12px 13px', cursor: 'pointer', textAlign: 'left', fontFamily: 'inherit', transition: 'background 0.12s, border-color 0.12s' }}
-                onMouseEnter={(e) => { e.currentTarget.style.background = '#f8fafc'; e.currentTarget.style.borderColor = '#c7d2e1'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.background = 'white'; e.currentTarget.style.borderColor = '#e2e8f0'; }}>
-                <div style={{ width: 30, height: 30, borderRadius: '50%', background: '#f0f4ff', border: '1px solid #e0e7ff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: 1 }}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" strokeWidth="2" strokeLinecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>
-                </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{ fontSize: 13, fontWeight: 600, color: '#1e293b', lineHeight: 1.35 }}>{it.prompt}</p>
-                  <p style={{ fontSize: 11, color: '#94a3b8', marginTop: 3 }}>{it.when}</p>
-                </div>
-              </button>)}
-          </div>
-        </div>
-      </>);
-  }
-
   /* ───────── Live home categories (matched to the live app — newer than the export).
      Counts (7/4/4/3) come from the prompt lists; drill-down prompts are best-effort
      assembled from the export's real category prompts (not 1:1 sourced). ───────── */
@@ -338,9 +302,9 @@
         'Swipe profiles on my dating apps based on my preferences',
         'Find 3 Reddit threads worth replying to and draft my replies',
         'Draft sponsorship pitches to 5 brands for me',
-        'Schedule a week of Instagram posts with captions & hashtags',
-        'Reply to my DMs with quick, friendly responses',
-        'Post my queued reels to Instagram & TikTok'] },
+        'Draft replies to my unanswered Discord threads',
+        'Re-train my Reels feed toward dog videos',
+        'Show me what the people I follow posted this week'] },
     'Game Helpers': {
       icon: 'game', color: '#5B6CF6', bg: '#EEF0FE', border: '#D4D9FB',
       desc: 'Grabs your rewards and grinds dailies while you sleep.',
@@ -376,20 +340,31 @@
       const meta = cats[selectedCat];
       return (
         <div style={{ animation: 'baExpand 0.18s ease' }}>
-          <div style={{ marginBottom: 14, display: 'flex', alignItems: 'center', gap: 8 }}>
-            <button onClick={() => setSelectedCat(null)} style={{ display: 'flex', alignItems: 'center', gap: 5, background: 'white', border: '1px solid #e2e8f0', borderRadius: 999, cursor: 'pointer', color: '#7A8499', fontSize: 12, fontWeight: 600, padding: '5px 12px 5px 9px', fontFamily: 'inherit', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></svg>
-              Back
-            </button>
-            <span style={{ fontSize: 14, fontWeight: 700, color: '#111827' }}>{selectedCat}</span>
+          {/* Back to all categories */}
+          <button onClick={() => setSelectedCat(null)} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: 'white', border: '1px solid #e2e8f0', borderRadius: 999, cursor: 'pointer', color: '#7A8499', fontSize: 12, fontWeight: 600, padding: '5px 12px 5px 9px', fontFamily: 'inherit', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></svg>
+            All Actions
+          </button>
+          {/* Category header: icon · title · task-count pill · description (matches live) */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '14px 0' }}>
+            <div style={{ flexShrink: 0, width: 40, height: 40, borderRadius: 11, background: meta.bg, border: '1px solid ' + meta.border, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <C.ChatCatIcon type={meta.icon} size={22} color={meta.color} />
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+                <span style={{ fontSize: 17, fontWeight: 800, color: '#111827', letterSpacing: '-0.3px' }}>{selectedCat}</span>
+                <span style={{ flexShrink: 0, background: meta.bg, color: meta.color, fontSize: 11.5, fontWeight: 700, borderRadius: 999, padding: '3px 10px' }}>{meta.prompts.length} {meta.prompts.length === 1 ? 'task' : 'tasks'}</span>
+              </div>
+              <p style={{ fontSize: 11.5, color: '#6b7280', lineHeight: 1.35, marginTop: 2 }}>{meta.desc}</p>
+            </div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
             {meta.prompts.map((p, i) =>
               <button key={i} onClick={() => onRun(p)}
-                style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, border: '1px solid #e2e8f0', borderRadius: 10, background: 'white', padding: '9px 12px', fontSize: 13, color: '#374151', fontWeight: 500, cursor: 'pointer', textAlign: 'left', fontFamily: 'inherit', transition: 'background 0.12s, border-color 0.12s' }}
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, border: '1px solid #e2e8f0', borderRadius: 11, background: 'white', padding: '13px 14px', fontSize: 13.5, lineHeight: 1.4, color: '#374151', fontWeight: 500, cursor: 'pointer', textAlign: 'left', fontFamily: 'inherit', transition: 'background 0.12s, border-color 0.12s' }}
                 onMouseEnter={(e) => { e.currentTarget.style.background = '#f8fafc'; e.currentTarget.style.borderColor = '#c7d2e1'; }}
                 onMouseLeave={(e) => { e.currentTarget.style.background = 'white'; e.currentTarget.style.borderColor = '#e2e8f0'; }}>
-                <span>{p}</span>
+                <span style={{ textWrap: 'pretty' }}>{p}</span>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2.5" strokeLinecap="round" style={{ flexShrink: 0 }}><polyline points="9 18 15 12 9 6" /></svg>
               </button>)}
           </div>
@@ -401,7 +376,8 @@
         <p style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: '0.08em', color: '#94a3b8', marginBottom: 8, textAlign: 'left' }}>WHAT WOULD YOU LIKE TO DO?</p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
           {Object.entries(cats).map(([name, meta]) =>
-            <div key={name} onClick={() => setSelectedCat(name)}
+            <div key={name} role="button" tabIndex={0} onClick={() => setSelectedCat(name)}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelectedCat(name); } }}
               style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: 12, padding: '10px 12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 12, transition: 'transform 0.12s, box-shadow 0.12s' }}
               onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)'; e.currentTarget.style.borderColor = '#c7d2e1'; }}
               onMouseLeave={(e) => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = ''; e.currentTarget.style.borderColor = '#e2e8f0'; }}>
@@ -429,14 +405,14 @@
   }
 
   /* ───────── Merged chat screen: ProductHome (empty) → task-progress + feedback (active) ───────── */
-  function ChatScreen({ sessionKey, seed }) {
+  function ChatScreen({ sessionKey, seed, loading }) {
     const C = window.ChatCompare;
     const [convo, setConvo] = useState([]);
     const [visible, setVisible] = useState(0);
     const [draft, setDraft] = useState('');
     const [votes, setVotes] = useState({});
     const [reasons, setReasons] = useState({});
-    const [showHistory, setShowHistory] = useState(false);
+    const [composerFocused, setComposerFocused] = useState(false);
     const scrollRef = useRef(null);
     const taRef = useRef(null);
     const timers = useRef([]);
@@ -444,7 +420,7 @@
     // Reset on New chat
     useEffect(() => {
       timers.current.forEach(clearTimeout); timers.current = [];
-      setConvo([]); setVisible(0); setDraft(''); setVotes({}); setReasons({}); setShowHistory(false);
+      setConvo([]); setVisible(0); setDraft(''); setVotes({}); setReasons({});
     }, [sessionKey]);
 
     // Seed from "Try this skill" → prefill the composer
@@ -453,8 +429,6 @@
     useEffect(() => { const el = scrollRef.current; if (el) el.scrollTop = el.scrollHeight; }, [visible, convo]);
     useEffect(() => { const ta = taRef.current; if (!ta) return; ta.style.height = 'auto'; ta.style.height = Math.min(ta.scrollHeight, 120) + 'px'; }, [draft]);
     useEffect(() => () => { timers.current.forEach(clearTimeout); }, []);
-    // Let the top-bar "Chat History" menu open the overlay
-    useEffect(() => { window.__openChatHistory = () => setShowHistory(true); return () => { delete window.__openChatHistory; }; }, []);
 
     const started = convo.length > 0;
     const running = visible < convo.length;
@@ -474,8 +448,15 @@
         return [...prev, ...steps];
       });
     };
-    const fill = (p) => { setDraft(p); taRef.current && taRef.current.focus(); };
-
+    // Stop a running task at any time: cancel pending steps, drop a trailing "working"
+    // indicator, keep the partial output, and re-enable the composer to recalibrate.
+    const stop = () => {
+      timers.current.forEach(clearTimeout); timers.current = [];
+      let end = visible;
+      while (end > 0 && convo[end - 1] && convo[end - 1].role === 'thinking') end--;
+      setConvo(convo.slice(0, end));
+      setVisible(end);
+    };
     const feedbackFor = (idx, step) => {
       if (step.tone !== 'success') return null; // PM config: success only (onFailed = false)
       const key = 'k' + idx;
@@ -500,7 +481,9 @@
             <C.IntroCard sub="Your AI worker for BlueStacks — pick a task below or just type what you need." />
             {!started
               ? <div style={{ marginTop: 4 }}>
-                  <ProductHome onRun={(p) => run(p)} onOpenHistory={() => setShowHistory(true)} />
+                  {loading
+                    ? <window.HomeSkeleton />
+                    : <ProductHome onRun={(p) => run(p)} onOpenHistory={() => window.__openChatHistory && window.__openChatHistory()} />}
                 </div>
               : <div style={{ marginTop: 4 }}>{convo.slice(0, visible).map(renderStep)}</div>}
           </div>
@@ -508,24 +491,27 @@
 
         {/* Composer */}
         <div style={{ flexShrink: 0, padding: '4px 16px 10px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, border: '1px solid #c7dcf5', borderRadius: 14, background: 'white', padding: '8px 10px', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, border: '1px solid ' + (composerFocused ? '#1990FF' : '#c7dcf5'), borderRadius: 14, background: 'white', padding: '8px 10px', boxShadow: composerFocused ? '0 0 0 3px rgba(25,144,255,0.12)' : '0 1px 4px rgba(0,0,0,0.04)', transition: 'border-color 0.15s ease, box-shadow 0.15s ease' }}>
             <textarea ref={taRef} value={draft} disabled={running} rows={1}
               onChange={(e) => setDraft(e.target.value)}
+              onFocus={() => setComposerFocused(true)}
+              onBlur={() => setComposerFocused(false)}
               onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); run(); } }}
               placeholder={running ? 'BlueAI is working…' : 'Type your message...'}
               style={{ flex: 1, resize: 'none', background: 'transparent', border: 'none', outline: 'none', fontSize: 13.5, color: '#1f2937', padding: '4px 6px', lineHeight: 1.5, fontFamily: 'inherit', maxHeight: 120, overflowY: 'hidden' }} />
-            <button onClick={() => run()} disabled={running || !draft.trim()}
-              style={{ width: 34, height: 34, borderRadius: '50%', background: running ? '#eef1f6' : (draft.trim() ? '#1990FF' : '#9ec9f5'), border: running ? '1px solid #d6dce5' : 'none', cursor: !running && draft.trim() ? 'pointer' : 'default', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'background 0.15s ease' }}>
+            <button onClick={() => (running ? stop() : run())} disabled={!running && !draft.trim()}
+              aria-label={running ? 'Stop task' : 'Send message'} title={running ? 'Stop' : 'Send'}
+              style={{ width: 34, height: 34, borderRadius: '50%', background: running ? '#eef1f6' : (draft.trim() ? '#1990FF' : '#9ec9f5'), border: running ? '1px solid #d6dce5' : 'none', cursor: (running || draft.trim()) ? 'pointer' : 'default', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'background 0.15s ease' }}
+              onMouseEnter={(e) => { if (running || draft.trim()) e.currentTarget.style.opacity = '0.85'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; }}>
               {running
-                ? <svg width="13" height="13" viewBox="0 0 16 16"><rect x="4.5" y="4.5" width="7" height="7" rx="1.5" fill="#64748b" /></svg>
+                ? <svg width="13" height="13" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="3" fill="#64748b" /></svg>
                 : <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z" /></svg>}
             </button>
           </div>
         </div>
-
-        {showHistory && <HistoryOverlay onClose={() => setShowHistory(false)} onPick={(p) => { setShowHistory(false); fill(p); }} />}
       </>);
   }
 
-  window.ProductChat = { ChatScreen, HistoryOverlay };
+  window.ProductChat = { ChatScreen };
 })();

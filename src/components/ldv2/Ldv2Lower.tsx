@@ -1,8 +1,7 @@
 'use client'
 import { motion } from 'framer-motion'
-import { Wordmark } from '@/components/Wordmark'
 import { Arrow } from '@/components/Arrow'
-import { LDV2_WHY, LDV2_QUOTES, LDV2_FOOTER } from '@/lib/ldv2-data'
+import { LDV2_WHY, LDV2_QUOTES } from '@/lib/ldv2-data'
 
 const EASE = [0.22, 0.61, 0.36, 1] as const
 const card = (i: number) => ({
@@ -73,28 +72,5 @@ export function Ldv2Cta() {
   )
 }
 
-export function Ldv2Footer() {
-  return (
-    <footer className="ldv2-footer">
-      <div className="ldv2-wrap">
-        <div className="ldv2-fgrid">
-          <div className="ldv2-fcol">
-            <span className="ldv2-brand">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/blueai-icon-RzIisCsb.png" alt="" width={30} height={30} style={{ borderRadius: '50%' }} />
-              <Wordmark size={20} />
-            </span>
-            <p className="ldv2-blurb">{LDV2_FOOTER.blurb}</p>
-          </div>
-          {LDV2_FOOTER.cols.map((c) => (
-            <div className="ldv2-fcol" key={c.head}>
-              <h4>{c.head}</h4>
-              {c.links.map(([href, label]) => <a key={label} href={href}>{label}</a>)}
-            </div>
-          ))}
-        </div>
-      </div>
-      <div className="ldv2-fbottom"><span>© 2026 BlueStacks. All rights reserved.</span><span>bluestacks.ai</span></div>
-    </footer>
-  )
-}
+// NOTE: the live-demo footer now uses the shared <MarketingFooter/> (page.tsx) — the old custom
+// Ldv2Footer was removed when the page adopted the SEO chrome.

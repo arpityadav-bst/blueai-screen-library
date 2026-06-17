@@ -1,10 +1,12 @@
 import type { Metadata } from 'next'
 import '@/styles/live-demo-v2.css'
-import { Ldv2Nav } from '@/components/ldv2/Ldv2Nav'
+import { MarketingHeader } from '@/components/MarketingHeader'
+import { MarketingFooter } from '@/components/MarketingFooter'
 import { Ldv2Backdrop, Ldv2Hero } from '@/components/ldv2/Ldv2Hero'
 import { Ldv2Stats, Ldv2How } from '@/components/ldv2/Ldv2Proof'
 import { Ldv2Workers } from '@/components/ldv2/Ldv2Workers'
-import { Ldv2Why, Ldv2Quotes, Ldv2Cta, Ldv2Footer } from '@/components/ldv2/Ldv2Lower'
+import { Ldv2Why, Ldv2Quotes, Ldv2Cta } from '@/components/ldv2/Ldv2Lower'
+import { LDV2_HEADER_LINKS } from '@/lib/ldv2-data'
 
 // Live Demo Homepage — DS redesign of the PM's blue-ai-demo funnel (pristine source kept in
 // design-source/blue-ai-demo). Same IA + copy + the LIVE hire widget (reskinned at
@@ -18,7 +20,7 @@ export default function LiveDemoV2() {
   return (
     <div className="ldv2">
       <Ldv2Backdrop />
-      <Ldv2Nav />
+      <MarketingHeader links={LDV2_HEADER_LINKS} cta={{ label: 'Hire a worker', href: '#hire' }} />
       <main>
         <Ldv2Hero />
         <Ldv2Stats />
@@ -28,7 +30,7 @@ export default function LiveDemoV2() {
         <Ldv2Quotes />
         <Ldv2Cta />
       </main>
-      <Ldv2Footer />
+      <MarketingFooter />
     </div>
   )
 }

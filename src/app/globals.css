@@ -88,7 +88,8 @@
        the MARKETING brand stays the iris→cyan gradient) + the semantic status system.
        (Tailwind's default shadow-sm/md/lg/xl already match PM's scale; float/overlay above
        are modern's named extras.) ----- */
-    --bai-accent:       rgb(25, 144, 255);  /* #1990FF — primary interactive (app) */
+    --bai-accent-rgb:   25, 144, 255;       /* channel — accent washes/rings/scrims derive from this */
+    --bai-accent:       rgb(var(--bai-accent-rgb));  /* #1990FF — primary interactive (app) */
     --bai-accent-hover: rgb(20, 128, 238);  /* #1480EE */
     --bai-indigo:       #4F46E5;  /* PM secondary interactive — cards, nav hover, icon bg */
     --bai-indigo-soft:  #EEF2FF;
@@ -177,3 +178,7 @@
   /* Inline gradient text — the "BlueAI" / "BlueStacks AI" highlights in headings. */
   .text-gradient { background: var(--bai-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; }
 }
+
+/* ── Product (in-app) animations — boot dots + skeleton shimmer ── */
+@keyframes ba-bounce { 0%, 100% { transform: translateY(0); } 40% { transform: translateY(-7px); } 60% { transform: translateY(-4px); } }
+@keyframes ba-shimmer { 0% { background-position: -600px 0; } 100% { background-position: 600px 0; } }

@@ -74,7 +74,7 @@ function SkillCard({ skill, category, enabled, onToggle, onTry, onView, isUserOw
 
       {/* Name + Toggle */}
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
-        <p style={{ fontSize: 17.5, fontWeight: 700, color: '#111827', lineHeight: 1.3, flex: 1 }}>{skill.name}</p>
+        <p style={{ fontSize: 16, fontWeight: 700, color: '#111827', lineHeight: 1.3, flex: 1 }}>{skill.name}</p>
         <Toggle enabled={enabled} onToggle={() => onToggle(skill.id)} />
       </div>
 
@@ -124,7 +124,8 @@ function CategoryCard({ category, skills, onSelect }) {
   const meta = SKILLS_CAT_META[category];
   const Icon = SKILLS_CAT_ICON[category];
   return (
-    <div onClick={() => onSelect(category)}
+    <div onClick={() => onSelect(category)} role="button" tabIndex={0}
+      onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelect(category); } }}
       style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: 16, padding: '14px 12px 12px', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: 5, minHeight: 118, transition: 'transform 0.14s, box-shadow 0.14s, border-color 0.14s' }}
       onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 6px 20px rgba(0,0,0,0.10)'; e.currentTarget.style.borderColor = '#c7d2e1'; }}
       onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = ''; e.currentTarget.style.borderColor = '#e2e8f0'; }}>
@@ -223,14 +224,14 @@ function CreateSkillModal({ isOpen, onClose, onCreateSkill, onCreateWithAI, init
   const handleClose = () => { setName(''); setDesc(''); setInstruction(''); setMode('instruction'); onClose(); };
   const canCreate = name.trim() && desc.trim() && instruction.trim();
   return (
-    <ModalOverlay isOpen={isOpen} onClose={handleClose} title="Create skill">
+    <ModalOverlay isOpen={isOpen} onClose={handleClose} title="Create Skill">
       <div style={{ minHeight: 480 }}>
         <form style={{ display: 'flex', flexDirection: 'column', gap: 14 }} onSubmit={e => { e.preventDefault(); if (!canCreate) return; onCreateSkill({ name, desc }); handleClose(); }}>
           {/* Mode tabs — three underline tabs */}
           <div style={{ display: 'flex', borderBottom: '1.5px solid #e2e8f0', marginBottom: 2 }}>
             {[
-              { id: 'instruction', label: 'Write Instructions' },
-              { id: 'zip',         label: 'Upload ZIP' },
+              { id: 'instruction', label: 'Write instructions' },
+              { id: 'zip',         label: 'Upload a ZIP file' },
               { id: 'ai',          label: 'Create with BlueAI' },
             ].map(t => (
               <button key={t.id} type="button" onClick={() => setMode(t.id)}
@@ -244,24 +245,28 @@ function CreateSkillModal({ isOpen, onClose, onCreateSkill, onCreateWithAI, init
           {mode === 'instruction' && <>
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-                <label style={{ fontSize: 13, fontWeight: 500, color: '#374151' }}>Skill name <span style={{ color: '#ef4444' }}>*</span></label>
+                <label style={{ fontSize: 13, fontWeight: 500, color: '#374151' }}>Skill Name<span style={{ color: '#ef4444' }}>*</span></label>
                 <span style={{ fontSize: 11, color: name.length > 64 ? '#ef4444' : '#9ca3af' }}>{name.length}/64</span>
               </div>
-              <input value={name} onChange={e => setName(e.target.value)} maxLength={64} placeholder="e.g. coin-collector"
+              <input className="ba-field" value={name} onChange={e => setName(e.target.value)} maxLength={64} placeholder="e.g. coin-collector"
                 style={{ width: '100%', border: '1px solid #d1d5db', borderRadius: 8, padding: '9px 12px', fontSize: 14, outline: 'none', fontFamily: 'inherit', boxSizing: 'border-box' }} />
             </div>
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-                <label style={{ fontSize: 13, fontWeight: 500, color: '#374151' }}>Description <span style={{ color: '#ef4444' }}>*</span></label>
+                <label style={{ fontSize: 13, fontWeight: 500, color: '#374151' }}>Description<span style={{ color: '#ef4444' }}>*</span></label>
                 <span style={{ fontSize: 11, color: desc.length > 1024 ? '#ef4444' : '#9ca3af' }}>{desc.length}/1024</span>
               </div>
-              <textarea value={desc} onChange={e => setDesc(e.target.value)} maxLength={1024} rows={2} placeholder="What the skill does and when to use it."
+              <textarea className="ba-field" value={desc} onChange={e => setDesc(e.target.value)} maxLength={1024} rows={2} placeholder="What the skill does and when to use it."
                 style={{ width: '100%', border: '1px solid #d1d5db', borderRadius: 8, padding: '9px 12px', fontSize: 14, outline: 'none', resize: 'vertical', fontFamily: 'inherit', boxSizing: 'border-box' }} />
             </div>
             <div>
-              <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: '#374151', marginBottom: 6 }}>Instructions <span style={{ color: '#ef4444' }}>*</span></label>
-              <textarea value={instruction} onChange={e => setInstruction(e.target.value)} rows={3} placeholder="Step-by-step instructions for the skill…"
-                style={{ width: '100%', border: '1px solid #d1d5db', borderRadius: 8, padding: '9px 12px', fontSize: 14, outline: 'none', resize: 'vertical', fontFamily: 'inherit', boxSizing: 'border-box' }} />
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+                <label style={{ fontSize: 13, fontWeight: 500, color: '#374151' }}>Instruction<span style={{ color: '#ef4444' }}>*</span></label>
+                <span style={{ fontSize: 11, color: '#9ca3af' }}>{instruction.length} characters</span>
+              </div>
+              <textarea className="ba-field" value={instruction} onChange={e => setInstruction(e.target.value)} rows={6}
+                placeholder={"Write the instruction/prompt to run this skill in markdown format.\n\nRecommended sections-\n# Step-by-step instructions\n# Examples\n# Common edge cases"}
+                style={{ width: '100%', border: '1px solid #d1d5db', borderRadius: 8, padding: '9px 12px', fontSize: 14, outline: 'none', resize: 'vertical', fontFamily: 'inherit', boxSizing: 'border-box', lineHeight: 1.5 }} />
             </div>
           </>}
 
@@ -337,7 +342,8 @@ function BuildSkillCTA({ onSelectMode }) {
 /* ── MY SKILLS CATEGORY CARD ───────────────────────────────────── */
 function MySkillsCategoryCard({ count, onSelect }) {
   return (
-    <div onClick={onSelect}
+    <div onClick={onSelect} role="button" tabIndex={0}
+      onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelect(); } }}
       style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: 16, padding: '14px 12px 12px', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: 5, minHeight: 118, transition: 'transform 0.14s, box-shadow 0.14s, border-color 0.14s' }}
       onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 6px 20px rgba(0,0,0,0.10)'; e.currentTarget.style.borderColor = '#c7d2e1'; }}
       onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = ''; e.currentTarget.style.borderColor = '#e2e8f0'; }}>
@@ -487,15 +493,6 @@ function SkillsView({ skills, enabledMap, onToggle, onTry, onView, onNew, userSk
             style={{ width: 20, height: 20, borderRadius: '50%', border: '1.5px solid #cbd5e1', background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, color: '#94a3b8', textDecoration: 'none', flexShrink: 0, marginTop: 2 }}
             onMouseEnter={e => { e.currentTarget.style.borderColor = '#1990FF'; e.currentTarget.style.color = '#1990FF'; }}
             onMouseLeave={e => { e.currentTarget.style.borderColor = '#cbd5e1'; e.currentTarget.style.color = '#94a3b8'; }}>?</a>
-          <div style={{ flex: 1 }} />
-          {!selectedCat &&
-          <button onClick={() => onNew('instruction')}
-            style={{ display: 'flex', alignItems: 'center', gap: 5, background: '#1990FF', border: 'none', borderRadius: 20, cursor: 'pointer', color: 'white', fontSize: 12, fontWeight: 600, padding: '6px 13px 6px 10px', fontFamily: 'inherit', transition: 'opacity 0.13s' }}
-            onMouseEnter={e => e.currentTarget.style.opacity = '0.85'}
-            onMouseLeave={e => e.currentTarget.style.opacity = '1'}>
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            New skill
-          </button>}
         </div>
         <div style={{ position: 'relative' }}>
           <span style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}>

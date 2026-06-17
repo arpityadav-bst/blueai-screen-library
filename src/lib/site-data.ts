@@ -2,14 +2,15 @@
 export const DOWNLOAD_URL =
   'https://cloud.bluestacks.com/api/getdownloadnow?platform=win&utm_source=blueai-webpage&utm_medium=home-download-button&utm_campaign=blueai-webpage-home-en&bluestacks_version=bs5'
 
-// THE shared marketing header links — identical on every page. The four content links
-// resolve to the SEO homepage's sections (so they work from any page); Social Rewards and
-// Developer are their own pages, opened in a new tab (↗) per the designer.
+// THE shared marketing header links — identical on every page. The content links resolve to the
+// FINALIZED homepage's sections (/live-demo-v2, so they work from any page); Social Rewards and
+// Developer are their own pages, opened in a new tab (↗) per the designer. (SEO-homepage sections
+// — What is / Tasks / FAQ — were removed in the SEO-deprecation audit.)
 export const HEADER_LINKS: { label: string; href: string; external?: boolean }[] = [
-  { label: 'What is BlueAI', href: '/seo#what-is' },
-  { label: 'Tasks', href: '/seo#tasks' },
-  { label: 'How it works', href: '/seo#how-it-works' },
-  { label: 'FAQ', href: '/seo#faq' },
+  { label: 'Workers', href: '/live-demo-v2#workers' },
+  { label: 'How it works', href: '/live-demo-v2#how' },
+  { label: 'Why BlueAI', href: '/live-demo-v2#why' },
+  { label: 'Reviews', href: '/live-demo-v2#reviews' },
   { label: 'Social Rewards', href: '/social-rewards', external: true },
   { label: 'Developer', href: '/developer', external: true },
 ]
@@ -38,9 +39,8 @@ export const FOOTER = {
       { label: 'Developer', href: '/developer' },
     ] },
     { head: 'Learn', links: [
-      { label: 'What is BlueAI', href: '/seo#what-is' },
-      { label: 'How it works', href: '/seo#how-it-works' },
-      { label: 'FAQ', href: '/seo#faq' },
+      { label: 'How it works', href: '/live-demo-v2#how' },
+      { label: 'Why BlueAI', href: '/live-demo-v2#why' },
     ] },
     { head: 'Company', links: [
       { label: 'BlueStacks', href: 'https://www.bluestacks.com', external: true },

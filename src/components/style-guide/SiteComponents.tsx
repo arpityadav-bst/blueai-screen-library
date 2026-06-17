@@ -1,6 +1,6 @@
 'use client'
-// The shared marketing-site chrome + patterns used across every inner page (SEO homepage,
-// social-rewards, developer, the 4 agent pages). Renders the REAL MarketingHeader/Footer/SiteFaq
+// The shared marketing-site chrome + patterns used across the homepage + the inner pages
+// (social-rewards, developer, the 4 agent pages). Renders the REAL MarketingHeader/Footer/SiteFaq
 // so the docs can't drift; patterns are sample markup under .v-site (the live scope).
 import '@/styles/site.css'
 import '@/styles/style-guide.css'
@@ -29,15 +29,16 @@ export function SiteComponents() {
         id="site-header"
         layout="stack"
         title="Marketing header"
-        note="The shared header on every page — frosted sticky bar, centered links, brand-colored social, the Download CTA, and a mobile hamburger."
+        note="The shared header on every page — frosted sticky bar, centered links, brand-colored social, a primary CTA (overridable per page), and a mobile hamburger."
         preview={<div className="overflow-hidden rounded-card border border-divider"><MarketingHeader /></div>}
         rows={[
           { code: <>.bai-hdr · sticky top-0 z-50 · backdrop-blur(10px) · border-b</>, role: 'Bar — sticky, frosted-glass blur over a hairline bottom border' },
           { code: <>.bai-hdr-inner · max-w-1640 · px-48 py-13 · flex justify-between</>, role: 'Layout — centered max-width row, brand left / actions right' },
-          { code: <>.bai-hdr-brand · img 32 + Wordmark → /seo</>, role: 'Brand — icon + wordmark, links to the marketing home' },
+          { code: <>.bai-hdr-brand · img 32 + Wordmark → /live-demo-v2</>, role: 'Brand — icon + wordmark, links to the homepage' },
           { code: <>.bai-hdr-links · gap-30 · 15px / 500 · <Tok to="icons">External</Tok> ↗</>, role: 'Nav — primary links; external ones get the ↗ glyph' },
           { code: <>.bai-hdr-social · is-discord / is-x / is-reddit</>, role: 'Social — each glyph in its platform brand color' },
-          { code: <>.bai-hdr-cta · <Tok to="tok-cta-gradient">cta-gradient</Tok> · radius-pill · <Tok to="tok-shadow-cta">shadow-cta</Tok> + <Tok to="icons">Arrow</Tok></>, role: 'CTA — the brand Download pill with a trailing sliding arrow' },
+          { code: <>.bai-hdr-cta · <Tok to="tok-cta-gradient">cta-gradient</Tok> · radius-pill · <Tok to="tok-shadow-cta">shadow-cta</Tok> + <Tok to="icons">Arrow</Tok></>, role: 'CTA — the brand pill with a trailing sliding arrow' },
+          { code: <>props <span className="font-mono">links</span> · <span className="font-mono">cta</span> — per-page override</>, role: 'Override — the homepage passes its own anchor links + a “Hire a worker” CTA; default = the shared nav + Download for PC' },
           { code: <>.bai-hdr-burger + .bai-hdr-menu + scrim · ≤1080</>, role: 'Mobile — links collapse to a hamburger → opaque menu + scrim' },
         ]}
       />
@@ -50,12 +51,11 @@ export function SiteComponents() {
       </Block>
 
       {/* CTA button family + the Arrow brand primitive */}
-      <Block id="site-buttons" title="CTA buttons + Arrow"
-        note="Primary CTA pill + hairline secondary. The → Arrow trails every primary CTA and slides on hover.">
+      <Block id="site-buttons" title="CTA button + Arrow"
+        note="The primary CTA pill — a cta-gradient button with the → Arrow that trails it and slides on hover.">
 
         <div className="v-site sg-demo flex flex-wrap items-center gap-4">
           <a className="site-btn" href="#0">Download BlueAI<Arrow /></a>
-          <a className="site-btn-ghost" href="#0">Learn more</a>
         </div>
       </Block>
 
@@ -95,7 +95,7 @@ export function SiteComponents() {
 
       {/* FAQ accordion */}
       <Block id="site-faq" full title="FAQ accordion"
-        note="Crawlable accordion — answers stay in the DOM. The SEO page has a near-identical SeoFaq (consolidation candidate).">
+        note="Crawlable accordion — answers stay in the DOM.">
 
         <div className="v-site sg-demo"><SiteFaq items={[
           { q: 'What is an AI job application agent?', a: 'It opens a job app, reads a listing, decides if it fits, fills the form, answers screening questions, and submits — the way a person would.' },

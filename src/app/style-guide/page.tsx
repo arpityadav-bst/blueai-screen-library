@@ -1,23 +1,18 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
 import { Foundations } from '@/components/style-guide/Foundations'
-import { ComponentsSection } from '@/components/style-guide/ComponentsSection'
 import { SiteComponents } from '@/components/style-guide/SiteComponents'
 import { AgentComponents } from '@/components/style-guide/AgentComponents'
 import { MarketingPages } from '@/components/style-guide/MarketingPages'
-import { PmComponentsA } from '@/components/style-guide/PmComponentsA'
-import { PmComponentsB } from '@/components/style-guide/PmComponentsB'
 
 // /style-guide — WSUP-style architecture: a left sidebar (grouped section nav with
-// scroll-to + scroll-spy) + scrollable main. blueai-modern DS + PM supplement. Light theme.
+// scroll-to + scroll-spy) + scrollable main. The surviving marketing-site DS. Light theme.
 // DS-only — page navigation lives on the root Screen Library index (`/`).
 const NAV: { group: string; items: [string, string][] }[] = [
   { group: 'Foundations', items: [['colors', 'Colors'], ['type', 'Type scale'], ['icons', 'Icons'], ['scales', 'Spacing · Radius · Elevation']] },
-  { group: 'Components', items: [['hero-nav', 'Hero nav (legacy)'], ['download-cta', 'Download CTA'], ['buttons', 'Buttons'], ['status', 'Status badges'], ['pill-badges', 'Pill badges'], ['credits', 'Credits pill'], ['pills', 'Suggested pills'], ['feature-cards', 'Feature cards'], ['bubbles', 'Message bubbles'], ['composer', 'Composer'], ['header', 'Panel header']] },
-  { group: 'Site & patterns', items: [['site-header', 'Marketing header'], ['site-footer', 'Marketing footer'], ['site-buttons', 'CTA buttons + Arrow'], ['site-steps', 'Numbered steps'], ['site-hiw', 'How it works'], ['site-cta-band', 'Dark CTA band'], ['site-faq', 'FAQ accordion']] },
+  { group: 'Site & patterns', items: [['site-header', 'Marketing header'], ['site-footer', 'Marketing footer'], ['site-buttons', 'CTA button + Arrow'], ['site-steps', 'Numbered steps'], ['site-hiw', 'How it works'], ['site-cta-band', 'Dark CTA band'], ['site-faq', 'FAQ accordion']] },
   { group: 'Agent pages', items: [['agent-form', 'Demo form kit'], ['agent-fields', 'Form fields'], ['agent-form-tabs', 'Tabbed form'], ['agent-upload', 'File upload'], ['agent-trades', 'Trade log + badges'], ['agent-video', 'Video card'], ['agent-openings', 'Openings card'], ['agent-portfolio', 'Portfolio card'], ['agent-odds', 'Odds table'], ['agent-caps', 'Capability card'], ['agent-more', 'More-agents card']] },
-  { group: 'Marketing pages', items: [['seo-task', 'SEO task card'], ['seo-info', 'What-is card'], ['seo-stage', 'Comparison stage'], ['seo-hero', 'SEO hero (animated)'], ['seo-cta', 'SEO CTA band'], ['home-feature', 'Feature row'], ['home-skill', 'Skill card'], ['rw-card', 'Reddit post card'], ['rw-check', 'Quality-check row'], ['rw-faq', 'FAQ-grid card'], ['rw-collage', 'Collage hero'], ['ldv2-trust', 'Trust row'], ['ldv2-stats', 'Stats band'], ['ldv2-quote', 'Testimonial card'], ['ldv2-why', 'Why bento'], ['ldv2-motion', 'Signature motion']] },
-  { group: 'App (PM)', items: [['app-cards', 'Cards'], ['app-overview', 'Overview cards'], ['app-inputs', 'Inputs & forms'], ['app-nav', 'Navigation'], ['app-credits', 'Credits'], ['app-icons', 'Icons']] },
+  { group: 'Marketing pages', items: [['ldv2-worker', 'Worker card'], ['ldv2-trust', 'Trust row'], ['ldv2-stats', 'Stats band'], ['ldv2-quote', 'Testimonial card'], ['ldv2-why', 'Why bento'], ['ldv2-motion', 'Signature motion'], ['rw-card', 'Reddit post card'], ['rw-check', 'Quality-check row'], ['rw-faq', 'FAQ-grid card'], ['rw-collage', 'Collage hero']] },
 ]
 const SECTION_IDS = NAV.flatMap((g) => g.items.map(([id]) => id))
 const FLAT_ITEMS = NAV.flatMap((g) => g.items) // [id, label][] — flattened for the mobile chip nav
@@ -107,18 +102,14 @@ export default function StyleGuide() {
         <header className="mb-12 border-b border-divider pb-6">
           <p className="bai-section-label text-iris">BlueAI · blueai-modern</p>
           <h1 className="mt-1 font-head text-4xl font-semibold tracking-tight-3 text-ink-display">Style <span className="text-gradient">Guide</span></h1>
-          <p className="mt-2 max-w-xl text-sm text-ink-muted">The blueai-modern design system + PM supplement (status · accent). Iris→Cyan gradient on a cool neutral ramp, Inter + Space Grotesk + Bricolage. Light theme.</p>
+          <p className="mt-2 max-w-xl text-sm text-ink-muted">The blueai-modern marketing-site design system — foundations, shared chrome, agent-page components, and the homepage + social-rewards patterns. Iris→Cyan gradient on a cool neutral ramp, Inter + Space Grotesk + Bricolage. Light theme.</p>
         </header>
 
         <div className="space-y-14">
           <Foundations />
           <section>
-            <h2 className="mb-5 text-xl font-semibold text-ink-display">Components</h2>
-            <ComponentsSection />
-          </section>
-          <section>
             <h2 className="mb-1 text-xl font-semibold text-ink-display">Site chrome &amp; patterns</h2>
-            <p className="mb-5 text-sm text-ink-muted">The shared marketing-site chrome (header/footer) + the recurring section patterns on the SEO homepage, social-rewards, developer, and the 4 agent pages.</p>
+            <p className="mb-5 text-sm text-ink-muted">The shared marketing-site chrome (header/footer) + the recurring section patterns on the homepage, social-rewards, developer, and the 4 agent pages.</p>
             <SiteComponents />
           </section>
           <section>
@@ -128,21 +119,13 @@ export default function StyleGuide() {
           </section>
           <section>
             <h2 className="mb-1 text-xl font-semibold text-ink-display">Marketing pages</h2>
-            <p className="mb-5 text-sm text-ink-muted">Page-specific components &amp; patterns from the SEO homepage, the marketing homepage, and social-rewards.</p>
+            <p className="mb-5 text-sm text-ink-muted">Page-specific components &amp; patterns from the live-demo homepage and social-rewards.</p>
             <MarketingPages />
-          </section>
-          <section>
-            <h2 className="mb-1 text-xl font-semibold text-ink-display">App components</h2>
-            <p className="mb-5 text-sm text-ink-muted">From the PM design system (the shipping web-app) — the in-app product surfaces, documented here for the full blueAI DS reference.</p>
-            <div className="space-y-10">
-              <PmComponentsA />
-              <PmComponentsB />
-            </div>
           </section>
         </div>
 
         <footer className="mt-16 border-t border-divider pt-6 text-2xs text-ink-muted">
-          Source: BlueAI.fig “New UX” (blueai-modern) + the shipping web-app DS (blueai-pm). Tokens → <span className="font-mono">globals.css</span> + <span className="font-mono">tailwind.config.ts</span>.
+          Source: BlueAI.fig “New UX” (blueai-modern). Tokens → <span className="font-mono">globals.css</span> + <span className="font-mono">tailwind.config.ts</span>.
         </footer>
       </main>
     </div>

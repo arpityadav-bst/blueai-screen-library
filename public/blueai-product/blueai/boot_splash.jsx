@@ -19,20 +19,19 @@
 
   /* ── Boot Splash ───────────────────────────────────────────── */
   function BootSplash({ onDone }) {
+    // Live app shows two messages on cold start: "Starting BlueAI…" → "Loading your skills…".
     const MSGS = [
       'Starting BlueAI…',
-      'Connecting to BlueStacks…',
       'Loading your skills…',
-      'Almost ready…',
     ];
     const [idx, setIdx]       = useState(0);
     const [fading, setFading] = useState(false);
 
     useEffect(() => {
-      const timers = [1, 2, 3].map(i => setTimeout(() => setIdx(i), 650 * i));
-      const fadeT  = setTimeout(() => setFading(true), 2600);
-      const doneT  = setTimeout(() => onDone?.(),      3100);
-      return () => [...timers, fadeT, doneT].forEach(clearTimeout);
+      const msgT  = setTimeout(() => setIdx(1),        1050);
+      const fadeT = setTimeout(() => setFading(true),  2150);
+      const doneT = setTimeout(() => onDone?.(),       2650);
+      return () => [msgT, fadeT, doneT].forEach(clearTimeout);
     }, []);
 
     return (
@@ -78,5 +77,41 @@
     );
   }
 
-  Object.assign(window, { BootSplash, Shimmer });
+  /* ── Home skeleton (chat cold-start; mirrors ProductHome's card list) ── */
+  function HomeSkeleton() {
+    const card = (focused) => ({
+      background: 'white',
+      border: '1px solid ' + (focused ? '#bcd6f5' : '#e2e8f0'),
+      borderRadius: 12, padding: '11px 12px',
+      display: 'flex', alignItems: 'center', gap: 12,
+    });
+    return (
+      <div>
+        {/* "WHAT WOULD YOU LIKE TO DO?" label placeholder */}
+        <Shimmer w={150} h={9} r={4} extra={{ marginBottom: 12 }} />
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
+          {[0, 1, 2, 3].map(i => (
+            <div key={i} style={card(false)}>
+              <Shimmer w={36} h={36} r={10} />
+              <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 7 }}>
+                <Shimmer w="46%" h={10} r={5} />
+                <Shimmer w="82%" h={9} r={5} />
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+                <Shimmer w={34} h={9} r={5} />
+                <Shimmer w={10} h={10} r={3} />
+              </div>
+            </div>
+          ))}
+          {/* last card lands focused, as in the live cold-start */}
+          <div style={card(true)}>
+            <Shimmer w={32} h={32} r="50%" />
+            <Shimmer w="58%" h={10} r={5} />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  Object.assign(window, { BootSplash, Shimmer, HomeSkeleton });
 })();

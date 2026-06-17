@@ -33,8 +33,7 @@ html:has(.v-site) { scroll-behavior: smooth; }
 .v-site .site-btn svg { flex: none; }
 .v-site .site-btn .site-arrow { transition: transform .18s var(--ease-out); }
 .v-site .site-btn:hover .site-arrow { transform: translateX(3px); }
-.v-site .site-btn-ghost { display: inline-flex; align-items: center; gap: 8px; height: 52px; padding: 0 22px; border-radius: var(--radius-pill); background: #fff; border: 1px solid var(--bai-stroke); color: var(--fg-2); font-weight: 600; font-size: 16px; text-decoration: none; transition: border-color .15s var(--ease-out), color .15s var(--ease-out); }
-.v-site .site-btn-ghost:hover { border-color: var(--bai-mkt-blue); color: var(--bai-mkt-blue); }
+/* .site-btn-ghost removed — its only consumer was the SG "Learn more" demo (no surviving page used it). */
 
 /* (The site header was unified into the shared <MarketingHeader/> â€” styles live in header.css.) */
 

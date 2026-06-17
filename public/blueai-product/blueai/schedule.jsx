@@ -29,7 +29,7 @@ function ScheduleCard({ task, onEdit, onDelete }) {
           <svg width="14" height="14" fill="none" stroke="#9ca3af" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
           <span>
             <strong style={{ color: '#374151' }}>Next run:</strong>{' '}
-            <span style={{ color: '#4f46e5', fontWeight: 500 }}>
+            <span style={{ color: '#1990FF', fontWeight: 500 }}>
               {task.next_run ? new Date(task.next_run).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'N/A'}
             </span>
           </span>
@@ -63,15 +63,15 @@ function CreateScheduleModal({ isOpen, onClose, onSave }) {
       <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
         <div>
           <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: '#374151', marginBottom: 6 }}>Task name <span style={{ color: '#ef4444' }}>*</span></label>
-          <input value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Daily rewards collection" style={fieldStyle} />
+          <input className="ba-field" value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Daily rewards collection" style={fieldStyle} />
         </div>
         <div>
           <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: '#374151', marginBottom: 6 }}>Task prompt <span style={{ color: '#ef4444' }}>*</span></label>
-          <textarea value={prompt} onChange={e => setPrompt(e.target.value)} placeholder="Describe what BlueAI should do…" rows={3} style={{ ...fieldStyle, resize: 'vertical' }} />
+          <textarea className="ba-field" value={prompt} onChange={e => setPrompt(e.target.value)} placeholder="Describe what BlueAI should do…" rows={3} style={{ ...fieldStyle, resize: 'vertical' }} />
         </div>
         <div>
           <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: '#374151', marginBottom: 6 }}>Repeat</label>
-          <select value={repeat} onChange={e => setRepeat(e.target.value)} style={{ ...fieldStyle, background: 'white', cursor: 'pointer' }}>
+          <select className="ba-field" value={repeat} onChange={e => setRepeat(e.target.value)} style={{ ...fieldStyle, background: 'white', cursor: 'pointer' }}>
             <option value="once">One time</option>
             <option value="daily">Daily</option>
             <option value="weekly">Weekly</option>
@@ -80,7 +80,7 @@ function CreateScheduleModal({ isOpen, onClose, onSave }) {
         </div>
         <div style={{ display: 'flex', gap: 10 }}>
           <button type="button" onClick={onClose} style={{ flex: 1, padding: '10px', borderRadius: 8, background: 'white', border: '1px solid #e2e8f0', fontSize: 14, fontWeight: 500, color: '#374151', cursor: 'pointer', fontFamily: 'inherit' }}>Cancel</button>
-          <button type="submit" disabled={!canSave} style={{ flex: 1, padding: '10px', borderRadius: 8, background: canSave ? '#4f46e5' : '#e0e7ff', border: 'none', fontSize: 14, fontWeight: 600, color: canSave ? 'white' : '#a5b4fc', cursor: canSave ? 'pointer' : 'default', fontFamily: 'inherit' }}>Create</button>
+          <button type="submit" disabled={!canSave} style={{ flex: 1, padding: '10px', borderRadius: 8, background: canSave ? '#1990FF' : '#bfdbfe', border: 'none', fontSize: 14, fontWeight: 600, color: canSave ? 'white' : '#93c5fd', cursor: canSave ? 'pointer' : 'default', fontFamily: 'inherit' }}>Create</button>
         </div>
       </form>
     </ModalOverlay>
@@ -129,7 +129,7 @@ function ScheduleScreen({ isLoading }) {
           </div>
           <p style={{ fontSize: 15, fontWeight: 600, color: '#374151', marginBottom: 6 }}>No scheduled tasks</p>
           <p style={{ fontSize: 13, color: '#9ca3af', marginBottom: 16, lineHeight: 1.5 }}>Schedule jobs to run automatically at specific times.</p>
-          <button onClick={() => setShowCreate(true)} style={{ background: '#eef2ff', border: '1px solid #c7d2fe', borderRadius: 8, padding: '9px 20px', fontSize: 14, fontWeight: 600, color: '#4f46e5', cursor: 'pointer', fontFamily: 'inherit' }}>Create schedule</button>
+          <button onClick={() => setShowCreate(true)} style={{ background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: 8, padding: '9px 20px', fontSize: 14, fontWeight: 600, color: '#1990FF', cursor: 'pointer', fontFamily: 'inherit' }}>Create schedule</button>
         </div>
       ) : (
         <ul style={{ padding: 0, margin: 0 }}>

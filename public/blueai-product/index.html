@@ -43,6 +43,9 @@
       position: relative;
     }
     button, input, textarea, select { font-family: inherit; }
+    /* Shared form-field focus treatment (blue border + soft ring), consistent across Settings + modals. */
+    .ba-field { transition: border-color 0.15s ease, box-shadow 0.15s ease; }
+    .ba-field:focus { border-color: #1990FF !important; box-shadow: 0 0 0 3px rgba(25,144,255,0.12); }
     ::-webkit-scrollbar { width: 5px; height: 5px; }
     ::-webkit-scrollbar-track { background: #e2e8f0; }
     ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.18); border-radius: 4px; }
@@ -96,6 +99,10 @@
 <script type="text/babel" src="blueai/chat_compare.jsx"></script>
 <!-- Assembled product chat: NewHome + task-progress + feedback (exposes window.ProductChat) -->
 <script type="text/babel" src="blueai/chat_product.jsx"></script>
+<!-- Chat History in-app screen (exposes window.ChatHistory) -->
+<script type="text/babel" src="blueai/history.jsx"></script>
+<!-- Profile in-app screen + Logout modal (exposes window.Profile) -->
+<script type="text/babel" src="blueai/profile.jsx"></script>
 <!-- Screen components -->
 <script type="text/babel" src="blueai/jobs.jsx"></script>
 <script type="text/babel" src="blueai/skills.jsx"></script>
@@ -116,7 +123,7 @@ const CONFIG = {
 
 // Live header (newer than the export — matched to the live app screenshots):
 // logo · credits pill · New Chat · "?" help menu (Get help / Report Issue) · kebab (Chat History / Profile / Logout).
-function ProductTopBar({ credits, onNewChat, onOpenHistory, onOpenCredits }) {
+function ProductTopBar({ credits, onNewChat, onOpenHistory, onOpenCredits, onOpenProfile, onLogout }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
   const menuRef = useRef(null);
@@ -149,10 +156,12 @@ function ProductTopBar({ credits, onNewChat, onOpenHistory, onOpenCredits }) {
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
         {/* Credits pill — opens the AI Credits balance screen */}
-        <div onClick={onOpenCredits} style={{ background: 'linear-gradient(90deg,#0EA4C5,#7B4CFF)', borderRadius: 24, padding: 1.5, cursor: 'pointer' }}>
+        <div onClick={onOpenCredits} role="button" tabIndex={0} aria-label="AI credits"
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onOpenCredits(); } }}
+          style={{ background: 'linear-gradient(90deg,#0EA4C5,#7B4CFF)', borderRadius: 24, padding: 1.5, cursor: 'pointer' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 5, background: 'white', borderRadius: 24, padding: '5px 10px' }}>
             <img src="assets/Credits.svg" alt="" style={{ width: 14, height: 14 }} onError={(e) => { e.target.style.display = 'none'; }} />
-            <span style={{ background: 'linear-gradient(90deg,#0EA4C5,#7B4CFF)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontSize: 13, fontWeight: 700 }}>{credits}</span>
+            <span style={{ background: 'linear-gradient(90deg,#0EA4C5,#7B4CFF)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontSize: 13, fontWeight: 700 }}>{credits.toLocaleString('en-US')}</span>
           </div>
         </div>
         {/* New Chat */}
@@ -176,14 +185,14 @@ function ProductTopBar({ credits, onNewChat, onOpenHistory, onOpenCredits }) {
         </div>
         {/* Kebab menu */}
         <div ref={menuRef} style={{ position: 'relative' }}>
-          <button onClick={() => { setMenuOpen((v) => !v); setHelpOpen(false); }} style={iconBtn(menuOpen)}>
+          <button aria-label="More options" onClick={() => { setMenuOpen((v) => !v); setHelpOpen(false); }} style={iconBtn(menuOpen)}>
             <svg width="22" height="22" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.5" /><circle cx="12" cy="12" r="1.5" /><circle cx="12" cy="19" r="1.5" /></svg>
           </button>
           {menuOpen &&
             <div style={dropdown}>
               <button style={item} onClick={() => { setMenuOpen(false); onOpenHistory && onOpenHistory(); }} onMouseEnter={(e) => hover(e, true)} onMouseLeave={(e) => hover(e, false)}>{ClockIcon}Chat History</button>
-              <button style={item} onClick={() => setMenuOpen(false)} onMouseEnter={(e) => hover(e, true)} onMouseLeave={(e) => hover(e, false)}>{PersonIcon}Profile</button>
-              <button style={item} onClick={() => setMenuOpen(false)} onMouseEnter={(e) => hover(e, true)} onMouseLeave={(e) => hover(e, false)}>{LogoutIcon}Logout</button>
+              <button style={item} onClick={() => { setMenuOpen(false); onOpenProfile && onOpenProfile(); }} onMouseEnter={(e) => hover(e, true)} onMouseLeave={(e) => hover(e, false)}>{PersonIcon}Profile</button>
+              <button style={item} onClick={() => { setMenuOpen(false); onLogout && onLogout(); }} onMouseEnter={(e) => hover(e, true)} onMouseLeave={(e) => hover(e, false)}>{LogoutIcon}Logout</button>
             </div>}
         </div>
       </div>
@@ -208,7 +217,7 @@ function AICreditsScreen({ credits, onRefresh }) {
       {/* Balance */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, padding: '40px 0 34px' }}>
         <div style={{ ...star, width: 44, height: 44, flexShrink: 0 }} />
-        <span style={{ ...gradText, fontSize: 54, fontWeight: 800, letterSpacing: '-1px', lineHeight: 1 }}>{credits}</span>
+        <span style={{ ...gradText, fontSize: 54, fontWeight: 800, letterSpacing: '-1px', lineHeight: 1 }}>{credits.toLocaleString('en-US')}</span>
       </div>
       {/* Daily spend limit */}
       <div style={{ padding: '0 18px' }}>
@@ -237,7 +246,7 @@ function AICreditsScreen({ credits, onRefresh }) {
         </div>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '13px 0', borderBottom: '1px solid #eef2f6' }}>
           <p style={{ fontSize: 15, fontWeight: 700, color: '#111827' }}>Top-ups</p>
-          <span style={{ fontSize: 15, fontWeight: 700, color: '#111827' }}>{credits}</span>
+          <span style={{ fontSize: 15, fontWeight: 700, color: '#111827' }}>{credits.toLocaleString('en-US')}</span>
         </div>
       </div>
       {/* CTA */}
@@ -253,15 +262,30 @@ function AICreditsScreen({ credits, onRefresh }) {
 
 function App() {
   const ProductChatScreen = window.ProductChat.ChatScreen;
+  const HistoryScreen = window.ChatHistory.ChatHistoryScreen;
+  const ProfileScreen = window.Profile.ProfileScreen;
+  const LogoutModal = window.Profile.LogoutModal;
   const [activeTab, setActiveTab] = useState('chat');
   const [sessionKey, setSessionKey] = useState(0);   // bump to reset the chat (New chat)
   const [seed, setSeed] = useState(null);             // prefill chat from "Try this skill"
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [creditsOpen, setCreditsOpen] = useState(false); // AI Credits balance screen
+  const [historyOpen, setHistoryOpen] = useState(false); // Chat History in-app screen
+  const [profileOpen, setProfileOpen] = useState(false); // Profile in-app screen
+  const [logoutOpen, setLogoutOpen] = useState(false);   // Logout confirm modal
+  const [booting, setBooting] = useState(true);           // cold-start boot splash
+  const [homeReady, setHomeReady] = useState(false);      // skeleton → real content
   const isLoggedIn = CONFIG.isLoggedIn;
-  const isLoading = false;
+  const isLoading = !homeReady;
+  // After the splash fades, let the skeleton linger briefly, then settle the content in.
+  const handleBootDone = () => { setBooting(false); setTimeout(() => setHomeReady(true), 850); };
 
-  const handleNewChat = () => { setSeed(null); setSessionKey((k) => k + 1); setActiveTab('chat'); setCreditsOpen(false); };
+  // Chat History / Profile open as full in-app screens (kebab menu routes here).
+  const openHistory = () => { setCreditsOpen(false); setProfileOpen(false); setHistoryOpen(true); };
+  const openProfile = () => { setCreditsOpen(false); setHistoryOpen(false); setProfileOpen(true); };
+  useEffect(() => { window.__openChatHistory = openHistory; return () => { delete window.__openChatHistory; }; }, []);
+
+  const handleNewChat = () => { setSeed(null); setSessionKey((k) => k + 1); setActiveTab('chat'); setCreditsOpen(false); setHistoryOpen(false); setProfileOpen(false); setLogoutOpen(false); };
   const handleTrySkill = (skillObj) => {
     const text = typeof skillObj === 'string'
       ? skillObj
@@ -269,7 +293,7 @@ function App() {
     setSeed({ text, n: Date.now() });
     setActiveTab('chat');
   };
-  const handleTabChange = (tab) => { setActiveTab(tab); setCreditsOpen(false); if (tab !== 'chat') setSeed(null); };
+  const handleTabChange = (tab) => { setActiveTab(tab); setCreditsOpen(false); setHistoryOpen(false); setProfileOpen(false); if (tab !== 'chat') setSeed(null); };
 
   const isChat = activeTab === 'chat';
 
@@ -278,10 +302,16 @@ function App() {
       <ProductTopBar
         credits={CONFIG.credits}
         onNewChat={handleNewChat}
-        onOpenCredits={() => setCreditsOpen(true)}
-        onOpenHistory={() => { setCreditsOpen(false); setActiveTab('chat'); setTimeout(() => window.__openChatHistory?.(), 60); }} />
+        onOpenCredits={() => { setHistoryOpen(false); setProfileOpen(false); setCreditsOpen(true); }}
+        onOpenHistory={openHistory}
+        onOpenProfile={openProfile}
+        onLogout={() => setLogoutOpen(true)} />
 
-      {creditsOpen ? (
+      {profileOpen ? (
+        <ProfileScreen onSignOut={() => setLogoutOpen(true)} />
+      ) : historyOpen ? (
+        <HistoryScreen />
+      ) : creditsOpen ? (
         <AICreditsScreen credits={CONFIG.credits} onRefresh={() => {}} />
       ) : activeTab === 'skills' ? (
         <div key="skills" className="tab-anim" style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
@@ -308,7 +338,7 @@ function App() {
         </div>
       ) : isChat ? (
         <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column', width: '420px' }}>
-          <ProductChatScreen sessionKey={sessionKey} seed={seed} />
+          <ProductChatScreen sessionKey={sessionKey} seed={seed} loading={!homeReady} />
         </div>
       ) : (
         <div key={activeTab} className="tab-anim"
@@ -320,12 +350,19 @@ function App() {
       )}
 
       <FreeCreditsWidget triggerStyle="none" />
-      <BottomNavbar activeTab={creditsOpen ? null : activeTab} onTabChange={handleTabChange} />
+      <BottomNavbar activeTab={creditsOpen || historyOpen || profileOpen ? null : activeTab} onTabChange={handleTabChange} />
       <LoginModal
         isOpen={showLoginModal}
         variant={CONFIG.loginVariant}
         onClose={() => setShowLoginModal(false)}
         onSuccess={() => setShowLoginModal(false)} />
+
+      <LogoutModal
+        isOpen={logoutOpen}
+        onCancel={() => setLogoutOpen(false)}
+        onConfirm={() => { setLogoutOpen(false); setProfileOpen(false); setActiveTab('chat'); }} />
+
+      {booting && <BootSplash onDone={handleBootDone} />}
     </div>);
 }
 

@@ -1,13 +1,10 @@
 'use client'
-// Page-specific components/patterns from the SEO homepage (.v-seo), the marketing homepage
-// (.bai-home), and social-rewards (.v-rewards). Each sample renders under its real page scope so
-// the scoped CSS applies; the live animated heroes/backdrop are noted, not re-run.
-import '@/styles/seo-home.css'
-import '@/styles/homepage.css'
+// Page-specific components/patterns from the finalized live-demo homepage (.ldv2) and
+// social-rewards (.v-rewards). Each sample renders under its real page scope so the scoped CSS
+// applies; the live animated scenes / backdrop / motion are noted, not re-run.
 import '@/styles/social-rewards.css'
 import '@/styles/live-demo-v2.css'
 import '@/styles/style-guide.css'
-import { Sparkle } from '@/components/Sparkle'
 import { Arrow } from '@/components/Arrow'
 import { PreviewAnatomy, Tok } from '@/components/style-guide/Anatomy'
 
@@ -26,130 +23,34 @@ const Check = () => <svg viewBox="0 0 24 24" width="13" height="13" fill="none" 
 export function MarketingPages() {
   return (
     <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
-      {/* SEO task card — heavy treatment (the SEO homepage's internal-linking hub tile) */}
-      <PreviewAnatomy id="seo-task" scope="v-seo" title="SEO task card"
-        note="The internal-linking hub tile from the SEO homepage — icon · LIVE badge · title · description · verb link."
+      {/* ── Live Demo Homepage (/live-demo-v2) — the finalized homepage on the DS ── */}
+
+      {/* Worker card — the homepage centerpiece. Heavy treatment: icon tile · title · See-it-work · scene · result chip. */}
+      <PreviewAnatomy id="ldv2-worker" scope="ldv2" title="Worker card"
+        note="The homepage centerpiece — a live agent card on the spotlight loop. Icon tile · title · 'See it work' link · the running agent scene · a result chip (the receipt)."
         preview={
-          <div className="seo-task-grid" style={{ gridTemplateColumns: '1fr', maxWidth: 260 }}>
-            <a className="seo-task" href="#0">
-              <div className="seo-task-top"><span className="seo-task-icon">💼</span><span className="seo-live"><span className="dot" />LIVE</span></div>
-              <h3>Apply to jobs</h3><p>Point BlueAI at it and the agent runs the task end-to-end on your device.</p>
-              <span className="seo-task-link">Explore <span className="arr">→</span></span>
-            </a>
+          <div className="ldv2-workers" style={{ gridTemplateColumns: '1fr', maxWidth: 360, margin: 0 }}>
+            <div className="ldv2-worker is-active">
+              <div className="ldv2-worker-top">
+                <div className="ldv2-worker-icon icon-creator">🎬</div>
+                <h3>AI Video Creator</h3>
+                <a className="ldv2-worker-cta" href="#0">See it work<Arrow size={14} /></a>
+              </div>
+              <p>Writes, generates, and posts faceless short videos to YouTube, TikTok, and Reels.</p>
+              <div className="ldv2-stage" style={{ alignItems: 'center', justifyContent: 'center' }}><span className="text-2xs text-ink-muted">↗ live agent scene on /live-demo-v2</span></div>
+              <div className="ldv2-result">📈 12,400 views in week one</div>
+            </div>
           </div>
         }
         rows={[
-          { code: <>.seo-task · bg-canvas · border-divider · radius-16 · hover lift + iris border</>, role: 'Card — hairline tile, lifts and borders iris on hover' },
-          { code: <>.seo-task-top · .seo-task-icon 36 (radius-10) + .seo-live badge</>, role: 'Top — icon tile + a LIVE status badge' },
-          { code: <>h3 · <Tok to="type">font-head</Tok> 16.5 · seo-slate</>, role: 'Title — Space Grotesk display, slate' },
-          { code: <>p · 13.5 · flex-1</>, role: 'Body — description; flex-1 pushes the link to the bottom' },
-          { code: <>.seo-task-link · seo-blue + .arr slides on hover</>, role: 'Link — verb + arrow that slides right on hover' },
+          { code: <>.ldv2-worker · bg-canvas · border-divider · radius-18 · .is-active lifts -6px + iris border + glow</>, role: 'Card — hairline tile; the spotlighted one lifts with a brand glow' },
+          { code: <>.ldv2-worker-top · .ldv2-worker-icon 44 (radius-12, per-agent gradient) · h3 · .ldv2-worker-cta</>, role: 'Top — gradient icon tile · title · the "See it work" link pushed right' },
+          { code: <>.ldv2-worker-cta · <Tok to="tok-mkt-blue">--bai-mkt-blue</Tok> + <Tok to="icons">Arrow</Tok> 14 · gap nudges on hover · ≤560px → own line</>, role: 'CTA — quiet blue link to the agent page; arrow nudges on hover' },
+          { code: <>.ldv2-stage · bg-surface · border-divider · radius-12 · h-178</>, role: 'Stage — the legacy agent scene runs here on the spotlight loop (static in the SG)' },
+          { code: <>.ldv2-result · green wash · --bai-mkt-green-ink · radius-10</>, role: 'Result chip — the receipt: what the agent shipped' },
         ]}
       />
 
-      {/* SEO what-is explainer card */}
-      <Block id="seo-info" scope="v-seo" title="What-is card"
-        note="Explainer card — icon · title · description.">
-
-        <div className="seo-trio" style={{ gridTemplateColumns: '1fr' }}>
-          <div className="seo-info-card"><div className="seo-info-icon">🧠</div><h3>It reads the screen</h3><p>BlueAI operates the real apps on screen — not a brittle API that breaks on a layout change.</p></div>
-        </div>
-      </Block>
-
-      {/* SEO comparison stage card */}
-      <Block id="seo-stage" scope="v-seo" title="Comparison stage"
-        note="Comparison stage — the highlighted variant marks BlueAI as the 'worker'.">
-
-        <div className="seo-stages" style={{ gridTemplateColumns: '1fr 1fr' }}>
-          <div className="seo-stage"><span className="seo-stage-tag">Chatbot</span><h3>Answers questions</h3><p>Replies in text. You still do the task.</p></div>
-          <div className="seo-stage is-blue"><span className="seo-stage-tag">Worker</span><h3>Does the task</h3><p>Operates the apps and completes it for you.</p></div>
-        </div>
-      </Block>
-
-      {/* SEO hero grid + backdrop — page-specific animated, noted */}
-      <Block id="seo-hero" scope="v-seo" title="SEO hero + backdrop"
-        note="Animated 2×2 agent grid + ambient backdrop — see them live on /seo.">
-
-        <p className="text-2xs text-ink-muted">↗ Live on the SEO homepage.</p>
-      </Block>
-
-      {/* SEO close CTA band — distinct from the dark .site-cta-band */}
-      <Block id="seo-cta" scope="v-seo" full title="SEO CTA band"
-        note="The SEO bright-blue close CTA — a separate, brighter treatment from the dark inner-page CTA band.">
-
-        <div className="seo-close">
-          <h2 className="seo-close-h"><span>Stop doing the busywork.</span><span><br />Start reviewing it.</span></h2>
-          <p className="seo-close-sub"><span>Hand your first task to an AI worker today.</span><span><br />Free on Windows and Mac, inside BlueStacks.</span></p>
-          <a className="seo-close-cta" href="#0"><Sparkle size={18} />Download BlueAI for PC<Arrow /></a>
-        </div>
-      </Block>
-
-      {/* Homepage feature row */}
-      <Block id="home-feature" scope="bai-home" full title="Feature row"
-        note="Alternating feature row — number · category · title · desc · chat-quote, opposite a product image (placeholder shown).">
-
-        <div className="features">
-          <article className="feat">
-            <div className="feat-text">
-              <div className="feat-kicker"><span className="feat-num">01</span><span className="feat-cat">Search</span></div>
-              <h3 className="feat-title">Find the latest codes for any game</h3>
-              <p className="feat-desc">Ask BlueAI and it searches, opens the source, and brings back what actually works.</p>
-              <span className="feat-quote">“Find the latest codes for this game.”</span>
-            </div>
-            <div className="feat-visual"><div style={{ aspectRatio: '4 / 3', borderRadius: 20, background: 'linear-gradient(160deg, #e7e3ff, #dfe6ff)' }} /></div>
-          </article>
-        </div>
-      </Block>
-
-      {/* Homepage skill card */}
-      <Block id="home-skill" scope="bai-home" title="Skill card"
-        note="Skill card — icon · category · title · desc · rating · Try link.">
-
-        <div className="skill-grid" style={{ gridTemplateColumns: '1fr' }}>
-          <article className="skill">
-            <div className="skill-top"><span className="skill-ic" style={{ background: '#e7e3ff' }}>🧠</span><span className="skill-cat">Productivity</span></div>
-            <h4>Daily codes finder</h4>
-            <p>Pulls fresh redemption codes for your games every morning.</p>
-            <div className="skill-foot"><span className="skill-rate"><span className="star">★</span><b>4.8</b><span>· 1.2k</span></span><a className="skill-try" href="#0">+ Try on BlueAI</a></div>
-          </article>
-        </div>
-      </Block>
-
-      {/* Rewards post card */}
-      <Block id="rw-card" scope="v-rewards" title="Reddit post card"
-        note="Reddit testimonial card — used in the collage hero.">
-
-        <div style={{ maxWidth: 300 }}>
-          <div className="sr-card">
-            <div className="sr-card-top"><span className="sr-dot" /><span className="sr-rsub">r/BlueStacks</span><span className="sr-user">u/pixel_forge</span><span className="sr-badge">+1,000</span></div>
-            <p>Built a skill that auto-grinds dailies across 3 games. Mind blown.</p>
-            <div className="sr-meta"><span>▲ 1.2k</span><span>💬 184</span></div>
-          </div>
-        </div>
-      </Block>
-
-      {/* Rewards quality-check row */}
-      <Block id="rw-check" scope="v-rewards" title="Quality-check row"
-        note="Green-check criterion row.">
-
-        <div className="sr-check"><span className="sr-check-ic"><Check /></span><p>At least 4–5 sentences with real substance — no low-effort or AI-generated content.</p></div>
-      </Block>
-
-      {/* Rewards FAQ-grid card */}
-      <Block id="rw-faq" scope="v-rewards" title="FAQ-grid card"
-        note="Static Q/A card — social-rewards uses these instead of the collapsing accordion.">
-
-        <div className="sr-faq-card"><h3>How many credits do I get?</h3><p>Up to 1,000 free BlueAI credits, once per user.</p></div>
-      </Block>
-
-      {/* Rewards collage hero — note (taste 23) */}
-      <Block id="rw-collage" scope="v-rewards" full title="Collage hero"
-        note="Scattered, rotated, faded post cards bleeding off both edges behind the headline — see it live on /social-rewards.">
-
-        <p className="text-2xs text-ink-muted">↗ Live on the Social Rewards page.</p>
-      </Block>
-
-      {/* ── Live Demo Homepage (/live-demo-v2) — the DS redesign of the PM funnel ── */}
       <Block id="ldv2-trust" scope="ldv2" title="Trust row"
         note="Star rating + proof stats, pulled up beside the hire CTA — grounds the headline.">
         <div className="ldv2-trust">
@@ -190,6 +91,33 @@ export function MarketingPages() {
       <Block id="ldv2-motion" scope="ldv2" full title="Signature motion"
         note="Two page-local motions — see them live on /live-demo-v2. Both framer-motion, reduced-motion-gated.">
         <p className="text-2xs text-ink-muted">↗ <b>Widget assembly</b>: a blueprint wireframe draws, then a beam wipes it away to reveal the live widget. <b>Docking widget</b>: scrolling past the hero FLIPs the live panel to a corner mini so the demo stays reachable. The hire widget itself is the PM&rsquo;s artifact (iframe) — reskinned to the DS, not a documented DS component.</p>
+      </Block>
+
+      {/* ── Social Rewards (/social-rewards) ── */}
+      <Block id="rw-card" scope="v-rewards" title="Reddit post card"
+        note="Reddit testimonial card — used in the collage hero.">
+        <div style={{ maxWidth: 300 }}>
+          <div className="sr-card">
+            <div className="sr-card-top"><span className="sr-dot" /><span className="sr-rsub">r/BlueStacks</span><span className="sr-user">u/pixel_forge</span><span className="sr-badge">+1,000</span></div>
+            <p>Built a skill that auto-grinds dailies across 3 games. Mind blown.</p>
+            <div className="sr-meta"><span>▲ 1.2k</span><span>💬 184</span></div>
+          </div>
+        </div>
+      </Block>
+
+      <Block id="rw-check" scope="v-rewards" title="Quality-check row"
+        note="Green-check criterion row.">
+        <div className="sr-check"><span className="sr-check-ic"><Check /></span><p>At least 4–5 sentences with real substance — no low-effort or AI-generated content.</p></div>
+      </Block>
+
+      <Block id="rw-faq" scope="v-rewards" title="FAQ-grid card"
+        note="Static Q/A card — social-rewards uses these instead of the collapsing accordion.">
+        <div className="sr-faq-card"><h3>How many credits do I get?</h3><p>Up to 1,000 free BlueAI credits, once per user.</p></div>
+      </Block>
+
+      <Block id="rw-collage" scope="v-rewards" full title="Collage hero"
+        note="Scattered, rotated, faded post cards bleeding off both edges behind the headline — see it live on /social-rewards.">
+        <p className="text-2xs text-ink-muted">↗ Live on the Social Rewards page.</p>
       </Block>
     </div>
   )

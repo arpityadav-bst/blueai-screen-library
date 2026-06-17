@@ -93,7 +93,7 @@ function IntroCard({ sub }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', textAlign: 'left', width: '100%', gap: 6, padding: '20px 0px 16px' }}>
       <h2 style={{ fontWeight: 800, color: '#111827', letterSpacing: '-0.4px', lineHeight: 1.2, fontSize: '24px' }}>👋🏻 Hi, I'm BlueAI</h2>
-      <p style={{ color: '#6b7280', lineHeight: 1.5, fontSize: '18px' }}>{sub}</p>
+      <p style={{ color: '#6b7280', lineHeight: 1.5, fontSize: '15px', textWrap: 'pretty' }}>{sub}</p>
     </div>);
 }
 
