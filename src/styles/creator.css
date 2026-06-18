@@ -5,7 +5,7 @@
 .v-creator .cr-wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
 
 /* ── HERO ───────────────────────────────────────────────────────────────── */
-.v-creator .cr-hero { position: relative; overflow: hidden; display: flex; justify-content: center; padding: clamp(104px, 15vh, 190px) 24px clamp(72px, 10vh, 128px); }
+.v-creator .cr-hero { position: relative; overflow: hidden; display: flex; justify-content: center; padding: clamp(52px, 7vh, 88px) 24px clamp(72px, 10vh, 128px); }
 .v-creator .cr-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; z-index: 0; }
 /* the gradient is the static CSS fallback too (shows if WebGL is unavailable) + a soft fade into the page */
 .v-creator .cr-hero { background: radial-gradient(80% 60% at 30% 20%, rgba(123,76,255,.10), transparent 60%), radial-gradient(70% 55% at 80% 30%, rgba(14,164,197,.10), transparent 60%), var(--bai-canvas); }
@@ -63,7 +63,8 @@
 
 @media (max-width: 560px) {
   .v-creator .cr-prompt { padding: 12px; }
-  .v-creator .cr-hero { padding-left: 18px; padding-right: 18px; }
+  .v-creator .cr-hero { padding-left: 18px; padding-right: 18px; padding-top: clamp(44px, 7vh, 72px); padding-bottom: clamp(48px, 8vh, 88px); }
+  .v-creator .cr-pill { padding-top: 11px; padding-bottom: 11px; }
 }
 /* ── SECTIONS (shared heads) ───────────────────────────────────────────── */
 .v-creator .cr-section { padding: clamp(56px, 8vh, 104px) 0; }
@@ -266,6 +267,8 @@
 @media (max-width: 560px) {
   .v-creator .cr-tpl-grid { grid-template-columns: 1fr; }
   .v-creator .cr-hiw-grid { grid-template-columns: 1fr; }
+  .v-creator .cr-lib-grid { grid-template-columns: repeat(2, 1fr); }
+  .v-creator .cr-band-cta, .v-creator .cr-drama-cta { width: 100%; justify-content: center; }
   .v-creator .cr-drama-tile { max-width: none; }
   .v-creator .cr-gen-detail { flex-direction: column; }
   .v-creator .cr-gen-video { width: 100%; aspect-ratio: auto; height: 240px; }
