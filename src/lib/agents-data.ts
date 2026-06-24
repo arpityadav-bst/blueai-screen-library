@@ -55,7 +55,7 @@ export const CAREER: AgentData = {
     { q: 'Is auto applying to jobs safe for my accounts?', a: 'When you run it yourself, BlueAI acts inside your own logged-in session and never hands your data to a third party. You stay in control: approve each submit, set a daily cap, and stop the run any time. It applies only to roles that match your criteria, so it does not mass-spam.' },
     { q: 'Do you apply on my behalf, and how much does it cost?', a: 'Getting matches by email is free. To run the agent yourself you need BlueAI on BlueStacks (a real phone is coming soon), your resume, your logins for the job apps, and an LLM of your choice plugged in once. You pay only for the tokens each run uses, and new accounts start with free credits.' },
   ],
-  cta: { h: 'Stop filling out the same form', sub: 'Let BlueAI search, tailor and apply while you focus on the interviews.', btn: 'Get BlueAI free' },
+  cta: { h: 'Stop filling out the same form', sub: 'Let BlueAI search, tailor and apply while you focus on the interviews.', btn: 'Join the Waitlist' },
 }
 
 export const CREATOR: AgentData = {
@@ -90,7 +90,7 @@ export const CREATOR: AgentData = {
     { q: 'Is AI-generated content allowed on YouTube, TikTok and Instagram?', a: 'Faceless and AI-assisted content is allowed. Platforms require videos to be original and add value, and some ask creators to disclose synthetic media. BlueAI helps you produce original, on-theme videos, and you stay responsible for following each platform’s policies.' },
     { q: 'How much does it cost to make AI videos?', a: 'Submitting a request here is free. When you run BlueAI yourself, you bring your own LLM and pay only for the tokens and generation each run uses. Producing a short costs a small number of credits, and new accounts start with free credits.' },
   ],
-  cta: { h: 'Launch a channel that runs itself', sub: 'Describe it once. BlueAI makes the videos and posts them, every day, on every platform.', btn: 'Get BlueAI free' },
+  cta: { h: 'Launch a channel that runs itself', sub: 'Describe it once. BlueAI makes the videos and posts them, every day, on every platform.', btn: 'Join the Waitlist' },
 }
 
 export const FINANCE: AgentData = {
@@ -125,7 +125,7 @@ export const FINANCE: AgentData = {
     { q: 'How do I build my own AI trading agent, no coding?', a: 'Download BlueAI and describe, in plain language, the market or watchlist you want analyzed. It pulls the live data and runs the analysis on a schedule you set — no code and no API wiring.' },
     { q: 'Is it free, and what does it cost?', a: 'Getting an analysis by email is free. To run the agent yourself you bring your own LLM and pay only for the tokens each run uses; new accounts start with free credits.' },
   ],
-  cta: { h: 'Put the number-crunching on autopilot', sub: 'Run live market analysis on your own watchlist, every day, with BlueAI.', btn: 'Get BlueAI free' },
+  cta: { h: 'Put the number-crunching on autopilot', sub: 'Run live market analysis on your own watchlist, every day, with BlueAI.', btn: 'Join the Waitlist' },
 }
 
 export const MARKETS: AgentData = {
@@ -160,5 +160,5 @@ export const MARKETS: AgentData = {
     { q: 'How do I build my own prediction market watchlist agent?', a: 'Download BlueAI and name, in plain language, the markets you want watched and when to alert you. The agent reads the live odds and tracks them on a schedule you set — no code and no API wiring.' },
     { q: 'Is it free, and what does it cost?', a: 'Getting alerts by email is free. To run the agent yourself you bring your own LLM and pay only for the tokens each run uses; new accounts start with free credits.' },
   ],
-  cta: { h: 'Never miss an odds swing again', sub: 'Watch your own prediction markets through the whole World Cup, and beyond, with BlueAI.', btn: 'Get BlueAI free' },
+  cta: { h: 'Never miss an odds swing again', sub: 'Watch your own prediction markets through the whole World Cup, and beyond, with BlueAI.', btn: 'Join the Waitlist' },
 }

@@ -2,6 +2,11 @@
 export const DOWNLOAD_URL =
   'https://cloud.bluestacks.com/api/getdownloadnow?platform=win&utm_source=blueai-webpage&utm_medium=home-download-button&utm_campaign=blueai-webpage-home-en&bluestacks_version=bs5'
 
+// Pre-launch posture: the primary marketing CTA is "Join the Waitlist", not "Download".
+// No real waitlist backend yet (design-only handoff) → CTAs point at a placeholder anchor.
+// TODO(handoff): replace '#waitlist' with the real waitlist signup URL (set external:true if off-site).
+export const WAITLIST_URL = '#waitlist'
+
 // THE shared marketing header links — identical on every page. The content links resolve to the
 // FINALIZED homepage's sections (/live-demo-v2, so they work from any page); Social Rewards and
 // Developer are their own pages, opened in a new tab (↗) per the designer. (SEO-homepage sections

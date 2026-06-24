@@ -7,10 +7,10 @@ import { SiteReveal } from '@/components/site/SiteReveal'
 import { SiteFaq } from '@/components/site/SiteFaq'
 import { Sparkle } from '@/components/Sparkle'
 import { Arrow } from '@/components/Arrow'
-import { DOWNLOAD_URL } from '@/lib/site-data'
+import { WAITLIST_URL } from '@/lib/site-data'
 import { AGENTS, type AgentData } from '@/lib/agents-data'
 
-// Shared shell for the 4 agent pages: nav(Download) + hero(copy + demo) + optional feature
+// Shared shell for the 4 agent pages: nav(Waitlist) + hero(copy + demo) + optional feature
 // section + what-is + how-it-works + FAQ + more-agents + dark CTA + footer.
 export function AgentShell({ data, demo, feature, heroAside }: { data: AgentData; demo: ReactNode; feature?: ReactNode; heroAside?: ReactNode }) {
   const others = Object.values(AGENTS).filter((a) => a.slug !== AGENTS[data.key].slug)
@@ -26,7 +26,7 @@ export function AgentShell({ data, demo, feature, heroAside }: { data: AgentData
             <p className="ag-sub">{data.sub}</p>
             {heroAside ?? (
               <div className="ag-hero-cta">
-                <a className="site-btn" href={DOWNLOAD_URL} target="_blank" rel="noopener noreferrer"><Sparkle size={18} />Download BlueAI<Arrow /></a>
+                <a className="site-btn" href={WAITLIST_URL}><Sparkle size={18} />Join the Waitlist<Arrow /></a>
               </div>
             )}
             {data.disclaimer && <p className="ag-disclaimer">{data.disclaimer}</p>}
@@ -100,7 +100,7 @@ export function AgentShell({ data, demo, feature, heroAside }: { data: AgentData
             <div className="site-cta-band" data-reveal>
               <h2 className="site-cta-h">{data.cta.h}</h2>
               <p className="site-cta-sub">{data.cta.sub}</p>
-              <a className="site-btn" href={DOWNLOAD_URL} target="_blank" rel="noopener noreferrer"><Sparkle size={18} />{data.cta.btn}<Arrow /></a>
+              <a className="site-btn" href={WAITLIST_URL}><Sparkle size={18} />{data.cta.btn}<Arrow /></a>
             </div>
           </div>
         </section>

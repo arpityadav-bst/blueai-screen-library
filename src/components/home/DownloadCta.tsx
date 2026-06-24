@@ -1,8 +1,8 @@
 import { Sparkle } from '@/components/Sparkle'
 
-// "Download BlueAI" gradient CTA — the shared button used by the hero + homepage (.dl-cta).
-// Brand primitives: the canonical <Sparkle/> + the gradient pill (white label on it).
-export function DownloadCta({ label = 'Download BlueAI', href = '#' }: { label?: string; href?: string }) {
+// Primary gradient CTA — the shared button used by the hero + homepage (.dl-cta). Pre-launch
+// posture: default label is "Join the Waitlist". Brand primitives: the canonical <Sparkle/> + the gradient pill.
+export function DownloadCta({ label = 'Join the Waitlist', href = '#' }: { label?: string; href?: string }) {
   return (
     <a className="dl-cta" href={href}>
       <Sparkle className="spark" />

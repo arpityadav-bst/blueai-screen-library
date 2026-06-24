@@ -40,7 +40,7 @@ export function HeroStage() {
           <p className="subhead">Hand off everyday tasks, reduce app switching, and keep work moving with BlueAI. Watch a real agent work, then build your own.</p>
           <button className="cta">
             <Sparkle className="spark" />
-            Download BlueAI
+            Join the Waitlist
             <svg className="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
           </button>
         </motion.div>

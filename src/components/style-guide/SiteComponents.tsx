@@ -38,7 +38,7 @@ export function SiteComponents() {
           { code: <>.bai-hdr-links · gap-30 · 15px / 500 · <Tok to="icons">External</Tok> ↗</>, role: 'Nav — primary links; external ones get the ↗ glyph' },
           { code: <>.bai-hdr-social · is-discord / is-x / is-reddit</>, role: 'Social — each glyph in its platform brand color' },
           { code: <>.bai-hdr-cta · <Tok to="tok-cta-gradient">cta-gradient</Tok> · radius-pill · <Tok to="tok-shadow-cta">shadow-cta</Tok> + <Tok to="icons">Arrow</Tok></>, role: 'CTA — the brand pill with a trailing sliding arrow' },
-          { code: <>props <span className="font-mono">links</span> · <span className="font-mono">cta</span> — per-page override</>, role: 'Override — the homepage passes its own anchor links + a “Hire a worker” CTA; default = the shared nav + Download for PC' },
+          { code: <>props <span className="font-mono">links</span> · <span className="font-mono">cta</span> — per-page override</>, role: 'Override — the homepage passes its own in-page anchor links; the “Join the Waitlist” CTA is the shared default' },
           { code: <>.bai-hdr-burger + .bai-hdr-menu + scrim · ≤1080</>, role: 'Mobile — links collapse to a hamburger → opaque menu + scrim' },
         ]}
       />
@@ -55,7 +55,7 @@ export function SiteComponents() {
         note="The primary CTA pill — a cta-gradient button with the → Arrow that trails it and slides on hover.">
 
         <div className="v-site sg-demo flex flex-wrap items-center gap-4">
-          <a className="site-btn" href="#0">Download BlueAI<Arrow /></a>
+          <a className="site-btn" href="#0">Join the Waitlist<Arrow /></a>
         </div>
       </Block>
 

@@ -20,7 +20,7 @@ export default function LiveDemoV2() {
   return (
     <div className="ldv2">
       <Ldv2Backdrop />
-      <MarketingHeader links={LDV2_HEADER_LINKS} cta={{ label: 'Hire a worker', href: '#hire' }} />
+      <MarketingHeader links={LDV2_HEADER_LINKS} cta={{ label: 'Join the Waitlist', href: '#hire' }} />
       <main>
         <Ldv2Hero />
         <Ldv2Stats />

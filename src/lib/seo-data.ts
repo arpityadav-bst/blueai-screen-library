@@ -25,7 +25,7 @@ export const HERO = {
   h1: ['The AI assistant that ', 'finishes the job', ' for you.'] as const, // middle span = gradient
   subhead:
     'An AI assistant tells you what to do. BlueAI is an AI worker: it opens the apps, taps, types, and gets the task done while you watch. It runs inside BlueStacks on your PC today, and connects to your phone soon.',
-  primaryCta: 'Download BlueAI for PC',
+  primaryCta: 'Join the Waitlist',
   secondaryCta: 'Watch a worker run live',
   microcopy: 'Free to download · Windows and Mac · You approve anything sensitive',
   agentsLabel: '4 agents live now. Watch them work.',
@@ -106,7 +106,7 @@ export const FAQ = {
 export const CLOSE = {
   h2: 'Stop doing the busywork. Start reviewing it.',
   sub: 'Hand your first task to an AI worker today. Free on Windows and Mac, inside BlueStacks.',
-  cta: 'Download BlueAI for PC',
+  cta: 'Join the Waitlist',
 }
 
 export const FOOTER = {

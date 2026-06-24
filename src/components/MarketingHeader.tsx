@@ -3,11 +3,11 @@ import { useState } from 'react'
 import '@/styles/header.css'
 import { Wordmark } from '@/components/Wordmark'
 import { Arrow } from '@/components/Arrow'
-import { HEADER_LINKS, DOWNLOAD_URL, SOCIAL } from '@/lib/site-data'
+import { HEADER_LINKS, WAITLIST_URL, SOCIAL } from '@/lib/site-data'
 
 // THE shared marketing header — one identical nav on every page (SEO homepage + all the
 // bluestacks.ai inner pages). Logo + links (Social Rewards/Developer open in a new tab, ↗) +
-// "Download for PC" CTA + mobile hamburger (opaque menu + scrim). CSS in header.css (.bai-hdr).
+// "Join the Waitlist" CTA + mobile hamburger (opaque menu + scrim). CSS in header.css (.bai-hdr).
 const Ext = () => (
   <svg className="bai-hdr-ext" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7" /><polyline points="7 7 17 7 17 17" /></svg>
 )
@@ -15,11 +15,11 @@ const ext = (e?: boolean) => (e ? { target: '_blank', rel: 'noopener noreferrer'
 
 type HeaderLink = { label: string; href: string; external?: boolean }
 type HeaderCta = { label: string; href: string; external?: boolean }
-const DEFAULT_CTA: HeaderCta = { label: 'Download for PC', href: DOWNLOAD_URL, external: true }
+const DEFAULT_CTA: HeaderCta = { label: 'Join the Waitlist', href: WAITLIST_URL }
 
 // Optional per-page overrides: `links` (default = the shared SEO nav) and `cta` (default =
-// "Download for PC" → the real download URL). The live-demo homepage passes its own in-page
-// anchor links + a "Hire a worker" CTA → #hire (same tab, no new window).
+// "Join the Waitlist" → the waitlist URL). The live-demo homepage passes its own in-page
+// anchor links + a "Join the Waitlist" CTA → #hire (same tab, no new window).
 export function MarketingHeader({ links = HEADER_LINKS, cta = DEFAULT_CTA }: { links?: readonly HeaderLink[]; cta?: HeaderCta } = {}) {
   const [open, setOpen] = useState(false)
   return (

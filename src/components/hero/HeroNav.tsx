@@ -37,7 +37,7 @@ export function HeroCta({ size = 18 }: { size?: number }) {
   return (
     <button className="cta" style={{ fontSize: size }}>
       <Sparkle className="spark" />
-      Download BlueAI
+      Join the Waitlist
       <svg className="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
     </button>
   )
