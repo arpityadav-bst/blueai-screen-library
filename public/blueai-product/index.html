@@ -123,7 +123,7 @@ const CONFIG = {
 
 // Live header (newer than the export — matched to the live app screenshots):
 // logo · credits pill · New Chat · "?" help menu (Get help / Report Issue) · kebab (Chat History / Profile / Logout).
-function ProductTopBar({ credits, onNewChat, onOpenHistory, onOpenCredits, onOpenProfile, onLogout }) {
+function ProductTopBar({ credits, lowDot, onNewChat, onOpenHistory, onOpenCredits, onOpenProfile, onLogout }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
   const menuRef = useRef(null);
@@ -158,7 +158,8 @@ function ProductTopBar({ credits, onNewChat, onOpenHistory, onOpenCredits, onOpe
         {/* Credits pill — opens the AI Credits balance screen */}
         <div onClick={onOpenCredits} role="button" tabIndex={0} aria-label="AI credits"
           onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onOpenCredits(); } }}
-          style={{ background: 'linear-gradient(90deg,#0EA4C5,#7B4CFF)', borderRadius: 24, padding: 1.5, cursor: 'pointer' }}>
+          style={{ position: 'relative', background: 'linear-gradient(90deg,#0EA4C5,#7B4CFF)', borderRadius: 24, padding: 1.5, cursor: 'pointer' }}>
+          {lowDot && <span style={{ position: 'absolute', top: -2, right: -2, width: 8, height: 8, borderRadius: '50%', background: '#ef4444', border: '1.5px solid white' }} />}
           <div style={{ display: 'flex', alignItems: 'center', gap: 5, background: 'white', borderRadius: 24, padding: '5px 10px' }}>
             <img src="assets/Credits.svg" alt="" style={{ width: 14, height: 14 }} onError={(e) => { e.target.style.display = 'none'; }} />
             <span style={{ background: 'linear-gradient(90deg,#0EA4C5,#7B4CFF)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontSize: 13, fontWeight: 700 }}>{credits.toLocaleString('en-US')}</span>
@@ -199,64 +200,137 @@ function ProductTopBar({ credits, onNewChat, onOpenHistory, onOpenCredits, onOpe
     </div>);
 }
 
-// AI Credits balance screen (newer than the export — matched to the live app screenshot).
-// Opens when the credits pill is tapped.
-function AICreditsScreen({ credits, onRefresh }) {
+// AI Credits screen — two states: Prime member (balance + spend limit + breakdown) and
+// Non-prime (upsell to Prime). State is driven by App's `creditsPrime`; toggle bottom-right.
+function AICreditsScreen({ credits, isPrime }) {
   const star = { background: 'linear-gradient(135deg,#0EA4C5,#7B4CFF)', WebkitMaskImage: 'url(assets/Credits.svg)', WebkitMaskSize: 'contain', WebkitMaskRepeat: 'no-repeat', WebkitMaskPosition: 'center', maskImage: 'url(assets/Credits.svg)', maskSize: 'contain', maskRepeat: 'no-repeat', maskPosition: 'center' };
   const gradText = { background: 'linear-gradient(90deg,#0EA4C5,#7B4CFF)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' };
+
+  // Shared "more ways to get AI credits" section (both states).
+  const MORE = [
+    { icon: 'share', bg: '#FCEDE0', fg: '#EA7B2C', title: 'Earn 1,000 Free AI Credits', sub: 'Spread the word about BlueAI' },
+    { icon: 'code',  bg: '#EDE9FE', fg: '#7C3AED', title: 'Claim 25,000 AI Credits',    sub: 'Join the developer program' },
+  ];
+  const moreWays = (
+    <div style={{ padding: '4px 18px 24px' }}>
+      <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.06em', color: '#1990FF', textAlign: 'center', padding: '16px 0 12px' }}>MORE WAYS TO GET AI CREDITS</p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        {MORE.map((c, i) => (
+          <div key={i} role="button" tabIndex={0}
+            style={{ display: 'flex', alignItems: 'center', gap: 12, background: 'white', border: '1px solid #e8edf3', borderRadius: 12, padding: '13px 14px', cursor: 'pointer', boxShadow: '0 1px 3px rgba(0,0,0,0.04)', transition: 'border-color 0.13s, box-shadow 0.13s' }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = '#c7d2e1'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.07)'; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = '#e8edf3'; e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.04)'; }}>
+            <div style={{ width: 36, height: 36, borderRadius: 9, background: c.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              {c.icon === 'share'
+                ? <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={c.fg} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" y1="13.51" x2="15.42" y2="17.49" /><line x1="15.41" y1="6.51" x2="8.59" y2="10.49" /></svg>
+                : <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={c.fg} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" /></svg>}
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <p style={{ fontSize: 14, fontWeight: 700, color: '#111827', lineHeight: 1.25 }}>{c.title}</p>
+              <p style={{ fontSize: 12, color: '#94a3b8', marginTop: 2 }}>{c.sub}</p>
+            </div>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><path d="M7 17L17 7" /><path d="M8 7h9v9" /></svg>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
   return (
     <div className="tab-anim" style={{ flex: 1, overflowY: 'auto', background: '#f8fafc', display: 'flex', flexDirection: 'column' }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 18px 4px' }}>
         <h1 style={{ fontSize: 19, fontWeight: 800, color: '#111827', letterSpacing: '-0.3px' }}>AI Credits</h1>
-        <button onClick={onRefresh} aria-label="Refresh" style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8', padding: 4, display: 'flex' }}
+        <button aria-label="Refresh" style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8', padding: 4, display: 'flex' }}
           onMouseEnter={(e) => e.currentTarget.style.color = '#1990FF'} onMouseLeave={(e) => e.currentTarget.style.color = '#94a3b8'}>
           <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36" /><polyline points="21 3 21 9 15 9" /></svg>
         </button>
       </div>
-      {/* Balance */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, padding: '40px 0 34px' }}>
-        <div style={{ ...star, width: 44, height: 44, flexShrink: 0 }} />
-        <span style={{ ...gradText, fontSize: 54, fontWeight: 800, letterSpacing: '-1px', lineHeight: 1 }}>{credits.toLocaleString('en-US')}</span>
-      </div>
-      {/* Daily spend limit */}
-      <div style={{ padding: '0 18px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-          <span style={{ fontSize: 13.5, fontWeight: 600, color: '#475569' }}>Daily Spend Limit</span>
-          <span style={{ fontSize: 13.5, fontWeight: 600, color: '#94a3b8' }}>9/∞</span>
-        </div>
-        <div style={{ height: 8, borderRadius: 999, background: '#e2e8f0', overflow: 'hidden' }}>
-          <div style={{ height: '100%', width: '100%', borderRadius: 999, background: 'linear-gradient(90deg,#0EA4C5,#1990FF)' }} />
-        </div>
-      </div>
-      {/* Breakdown divider */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '28px 18px 8px' }}>
-        <div style={{ flex: 1, height: 1, background: '#e2e8f0' }} />
-        <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', color: '#94a3b8' }}>CREDIT BREAKDOWN</span>
-        <div style={{ flex: 1, height: 1, background: '#e2e8f0' }} />
-      </div>
-      {/* Breakdown rows */}
-      <div style={{ padding: '0 18px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '13px 0', borderBottom: '1px solid #eef2f6' }}>
-          <div>
-            <p style={{ fontSize: 15, fontWeight: 700, color: '#111827' }}>Prime</p>
-            <p style={{ fontSize: 12.5, color: '#94a3b8', marginTop: 2 }}>Renews in 11 days</p>
+
+      {isPrime ? (
+        <>
+          {/* Balance */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, padding: '40px 0 34px' }}>
+            <div style={{ ...star, width: 44, height: 44, flexShrink: 0 }} />
+            <span style={{ ...gradText, fontSize: 54, fontWeight: 800, letterSpacing: '-1px', lineHeight: 1 }}>{credits.toLocaleString('en-US')}</span>
           </div>
-          <span style={{ fontSize: 15, fontWeight: 700, color: '#111827' }}>0</span>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '13px 0', borderBottom: '1px solid #eef2f6' }}>
-          <p style={{ fontSize: 15, fontWeight: 700, color: '#111827' }}>Top-ups</p>
-          <span style={{ fontSize: 15, fontWeight: 700, color: '#111827' }}>{credits.toLocaleString('en-US')}</span>
-        </div>
-      </div>
-      {/* CTA */}
-      <div style={{ padding: '22px 18px 24px' }}>
-        <button style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7, background: '#1990FF', border: 'none', borderRadius: 12, padding: '14px 0', fontSize: 15, fontWeight: 700, color: 'white', cursor: 'pointer', fontFamily: 'inherit', transition: 'opacity 0.15s' }}
-          onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'} onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}>
-          Top Up or Manage Credits
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7" /><path d="M8 7h9v9" /></svg>
-        </button>
-      </div>
+          {/* Daily spend limit */}
+          <div style={{ padding: '0 18px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+              <span style={{ fontSize: 13.5, fontWeight: 600, color: '#475569' }}>Daily Spend Limit</span>
+              <span style={{ fontSize: 13.5, fontWeight: 600, color: '#94a3b8' }}>0/∞</span>
+            </div>
+            <div style={{ height: 8, borderRadius: 999, background: '#e2e8f0', overflow: 'hidden' }}>
+              <div style={{ height: '100%', width: '100%', borderRadius: 999, background: 'linear-gradient(90deg,#0EA4C5,#1990FF)' }} />
+            </div>
+          </div>
+          {/* Breakdown divider */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '28px 18px 8px' }}>
+            <div style={{ flex: 1, height: 1, background: '#e2e8f0' }} />
+            <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', color: '#94a3b8' }}>CREDIT BREAKDOWN</span>
+            <div style={{ flex: 1, height: 1, background: '#e2e8f0' }} />
+          </div>
+          {/* Breakdown rows */}
+          <div style={{ padding: '0 18px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '13px 0', borderBottom: '1px solid #eef2f6' }}>
+              <div>
+                <p style={{ fontSize: 15, fontWeight: 700, color: '#111827' }}>Prime</p>
+                <p style={{ fontSize: 12.5, color: '#94a3b8', marginTop: 2 }}>Renews in 11 days</p>
+              </div>
+              <span style={{ fontSize: 15, fontWeight: 700, color: '#111827' }}>0</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '13px 0', borderBottom: '1px solid #eef2f6' }}>
+              <p style={{ fontSize: 15, fontWeight: 700, color: '#111827' }}>Top-ups</p>
+              <span style={{ fontSize: 15, fontWeight: 700, color: '#111827' }}>{credits.toLocaleString('en-US')}</span>
+            </div>
+          </div>
+          {/* CTA */}
+          <div style={{ padding: '22px 18px 4px' }}>
+            <button style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7, background: '#1990FF', border: 'none', borderRadius: 12, padding: '14px 0', fontSize: 15, fontWeight: 700, color: 'white', cursor: 'pointer', fontFamily: 'inherit', transition: 'opacity 0.15s' }}
+              onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'} onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}>
+              Top Up or Manage Credits
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7" /><path d="M8 7h9v9" /></svg>
+            </button>
+          </div>
+        </>
+      ) : (
+        <>
+          {/* Balance (de-emphasized for non-prime) */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 9, padding: '14px 0 12px' }}>
+            <div style={{ ...star, width: 26, height: 26, flexShrink: 0 }} />
+            <span style={{ fontSize: 30, fontWeight: 800, color: '#111827', letterSpacing: '-0.5px', lineHeight: 1 }}>{credits.toLocaleString('en-US')}</span>
+          </div>
+          {/* Prime upsell */}
+          <div style={{ borderTop: '1px solid #eef2f6', borderBottom: '1px solid #eef2f6', padding: '13px 18px', textAlign: 'center' }}>
+            <p style={{ fontSize: 13, color: '#94a3b8' }}>BlueAI runs on credits</p>
+            <p style={{ fontSize: 16, fontWeight: 700, color: '#111827', marginTop: 4 }}>Get AI Credits with Prime</p>
+          </div>
+          <div style={{ textAlign: 'center', padding: '14px 18px 4px' }}>
+            <p style={{ ...gradText, fontSize: 56, fontWeight: 800, letterSpacing: '-2px', lineHeight: 1 }}>5000</p>
+            <p style={{ ...gradText, fontSize: 22, fontWeight: 800, marginTop: 2 }}>AI Credits</p>
+            <p style={{ fontSize: 13, color: '#94a3b8', marginTop: 6 }}>every month</p>
+            <button style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 600, color: '#1990FF', fontFamily: 'inherit', marginTop: 8, display: 'inline-flex', alignItems: 'center', gap: 3 }}>
+              View all benefits
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="9 18 15 12 9 6" /></svg>
+            </button>
+          </div>
+          <div style={{ padding: '14px 18px 4px' }}>
+            <button style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, background: '#1990FF', border: 'none', borderRadius: 12, padding: '14px 0', fontSize: 15, fontWeight: 700, color: 'white', cursor: 'pointer', fontFamily: 'inherit', transition: 'opacity 0.15s' }}
+              onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'} onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}>
+              Try for $3.99
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round"><polyline points="9 18 15 12 9 6" /></svg>
+            </button>
+            <p style={{ fontSize: 12, color: '#94a3b8', textAlign: 'center', marginTop: 8 }}>$7.99 next month onwards.</p>
+          </div>
+          {/* Informational note — non-prime members can bring their own API key */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '12px 18px 0', padding: '11px 13px', background: '#f4f6fb', border: '1px solid #e6eaf2', borderRadius: 10 }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><circle cx="7.5" cy="15.5" r="5.5" /><path d="m21 2-9.6 9.6" /><path d="m15.5 7.5 3 3L22 7l-3-3" /></svg>
+            <span style={{ fontSize: 12.5, color: '#475569', lineHeight: 1.4 }}>Non-prime members can add their own API key.</span>
+          </div>
+        </>
+      )}
+
+      {moreWays}
     </div>);
 }
 
@@ -275,8 +349,10 @@ function App() {
   const [logoutOpen, setLogoutOpen] = useState(false);   // Logout confirm modal
   const [booting, setBooting] = useState(true);           // cold-start boot splash
   const [homeReady, setHomeReady] = useState(false);      // skeleton → real content
+  const [creditsPrime, setCreditsPrime] = useState(false); // AI Credits: prime vs non-prime preview
   const isLoggedIn = CONFIG.isLoggedIn;
   const isLoading = !homeReady;
+  const credits = creditsPrime ? 49812 : 505;             // balance reflects the prime/non-prime state
   // After the splash fades, let the skeleton linger briefly, then settle the content in.
   const handleBootDone = () => { setBooting(false); setTimeout(() => setHomeReady(true), 850); };
 
@@ -300,7 +376,8 @@ function App() {
   return (
     <div className="ba-app">
       <ProductTopBar
-        credits={CONFIG.credits}
+        credits={credits}
+        lowDot={!creditsPrime}
         onNewChat={handleNewChat}
         onOpenCredits={() => { setHistoryOpen(false); setProfileOpen(false); setCreditsOpen(true); }}
         onOpenHistory={openHistory}
@@ -312,7 +389,7 @@ function App() {
       ) : historyOpen ? (
         <HistoryScreen />
       ) : creditsOpen ? (
-        <AICreditsScreen credits={CONFIG.credits} onRefresh={() => {}} />
+        <AICreditsScreen credits={credits} isPrime={creditsPrime} />
       ) : activeTab === 'skills' ? (
         <div key="skills" className="tab-anim" style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
           <div data-skills-scroll style={{ flex: 1, overflowY: 'auto', padding: '0 16px 8px', scrollbarWidth: 'thin', scrollbarColor: 'rgba(0,0,0,0.15) #e2e8f0' }}>
@@ -361,6 +438,20 @@ function App() {
         isOpen={logoutOpen}
         onCancel={() => setLogoutOpen(false)}
         onConfirm={() => { setLogoutOpen(false); setProfileOpen(false); setActiveTab('chat'); }} />
+
+      {/* Prime ↔ Non-prime preview toggle — bottom-right gutter, only while on the AI Credits screen */}
+      {creditsOpen &&
+        <div style={{ position: 'fixed', right: 24, bottom: 24, zIndex: 300, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>
+          <span style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: '0.04em', color: '#94a3b8', textTransform: 'uppercase' }}>Preview state</span>
+          <div style={{ display: 'flex', background: 'white', border: '1px solid #e2e8f0', borderRadius: 999, padding: 3, boxShadow: '0 4px 16px rgba(0,0,0,0.14)' }}>
+            {[['Prime', true], ['Non-prime', false]].map(([label, val]) => (
+              <button key={label} onClick={() => setCreditsPrime(val)}
+                style={{ border: 'none', borderRadius: 999, padding: '6px 14px', fontSize: 12.5, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', background: creditsPrime === val ? '#1990FF' : 'transparent', color: creditsPrime === val ? 'white' : '#64748b', transition: 'background 0.13s ease, color 0.13s ease' }}>
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>}
 
       {booting && <BootSplash onDone={handleBootDone} />}
     </div>);
