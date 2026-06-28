@@ -204,7 +204,34 @@ window.BlueAIBoot = function (host) {
     }
     ctx.globalAlpha = 1; ctx.restore();
   }
-  function holdStep(ts) { frameBase(); drawCenterLive(ts); holdRaf = requestAnimationFrame(holdStep); }
+  // Ambient background twinkle: random grid pixels light up + fade (gives the picker/boot screen the same living feel as the header's packet traffic).
+  var bgSparks = [], lastBgSpawn = 0;
+  function spawnBgSpark(now) {
+    bgSparks.push({
+      x: Math.round(Math.random() * (W / GRID)) * GRID,
+      y: Math.round(Math.random() * (H / GRID)) * GRID,
+      born: now, life: 1100 + Math.random() * 1700,
+      peak: 0.12 + Math.random() * 0.22,
+      col: Math.random() < 0.5 ? '110,168,255' : '123,76,255'
+    });
+  }
+  function drawBgSparks(now) {
+    for (var i = bgSparks.length - 1; i >= 0; i--) {
+      var s = bgSparks[i], t = (now - s.born) / s.life;
+      if (t >= 1) { bgSparks.splice(i, 1); continue; }
+      ctx.globalAlpha = Math.sin(t * Math.PI) * s.peak;     // fade in -> peak -> fade out
+      ctx.fillStyle = 'rgb(' + s.col + ')';
+      ctx.fillRect(s.x, s.y, GRID - 2, GRID - 2);
+    }
+    ctx.globalAlpha = 1;
+  }
+  function holdStep(ts) {
+    frameBase();
+    if (ts - lastBgSpawn > 110 && bgSparks.length < 24) { lastBgSpawn = ts; spawnBgSpark(ts); }   // steady ambient trickle, capped
+    drawBgSparks(ts);                                       // behind the logo
+    drawCenterLive(ts);
+    holdRaf = requestAnimationFrame(holdStep);
+  }
   function startHold() { if (!holdRaf) holdRaf = requestAnimationFrame(holdStep); }
   function stopHold() { if (holdRaf) { cancelAnimationFrame(holdRaf); holdRaf = null; } }
 
@@ -281,6 +308,7 @@ window.BlueAIBoot = function (host) {
     dissolve: function (onDone) { dissolve(onDone); },      // boot done -> left→right pixel splash, canvas clears
     enterHeader: function (onDone) { enterHeader(onDone); },// header logo drops in from the top, then goes live
     ready: function () { stopHold(); renderReady(); startAmbient(); },   // instant reopen -> header + chat
+    resize: function () { resize(); if (!raf && !holdRaf && !ambientRaf) renderReady(); },   // force a canvas re-fit (detached restore sets geometry before boot)
     drawMini: function (cv) { drawMini(cv); }
   };
 };
