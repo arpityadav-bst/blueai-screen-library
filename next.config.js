@@ -12,6 +12,7 @@ const nextConfig = {
   async rewrites() {
     return [
       { source: '/blueai-product', destination: '/blueai-product/index.html' },
+      { source: '/blueai-desktop', destination: '/blueai-desktop/index.html' },
     ]
   },
 }

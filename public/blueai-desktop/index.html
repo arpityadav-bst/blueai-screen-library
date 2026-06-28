@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Resolve relative asset paths against this folder so the page works at the clean /blueai-desktop URL. -->
+  <base href="/blueai-desktop/" />
+  <title>BlueAI on Desktop</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0e1a; }
+
+    /* Desktop scene fills the viewport. Clicking the bare desktop closes the panel. */
+    .stage {
+      position: fixed; inset: 0;
+      background: url('assets/desktop-bg.png') center / cover no-repeat;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* One scale keeps the whole scene fitting any viewport (sized for the OPEN width). */
+    .scaler { transform: scale(var(--scale, 1)); transform-origin: center center; }
+
+    /* The window box. The drawer is an absolute child so its animation never fights flex sizing.
+       On open, the pair shifts left by half the drawer width so it stays centered in both states. */
+    .composition {
+      position: relative;
+      width: 1000px; height: 573px;
+      transition: transform 280ms cubic-bezier(0.22, 0.61, 0.36, 1);
+    }
+    .composition.shift { transform: translateX(-145px); }
+
+    /* BlueStacks player window — the WHOLE image is the click target (toggles BlueAI). */
+    .bs-window {
+      width: 100%; height: 100%;
+      overflow: hidden; cursor: pointer;
+      box-shadow: 0 30px 90px rgba(0,0,0,0.55), 0 2px 8px rgba(0,0,0,0.4);
+      transition: box-shadow 180ms ease;
+      position: relative; z-index: 2;
+    }
+    .bs-window:hover { box-shadow: 0 36px 110px rgba(0,0,0,0.62), 0 2px 10px rgba(0,0,0,0.45); }
+    .bs-window img { display: block; width: 100%; height: 100%; }
+
+    /* BlueAI agent drawer — same height as the window, tucked behind its right edge, slides out.
+       Blank black canvas for now; the reinvented product gets built into #blueai-canvas. */
+    .drawer {
+      position: absolute; top: 0; left: 100%;
+      width: 290px; height: 100%;
+      background: #141a28;                      /* dark cool slate — in BlueStacks' navy family, not a black void */
+      border: 1px solid #232642;                /* BlueStacks' own chrome/edge tone */
+      overflow: hidden;
+      transform: translateX(-290px);            /* tucked behind the opaque window */
+      transition: transform 280ms cubic-bezier(0.22, 0.61, 0.36, 1);
+      box-shadow: 0 30px 90px rgba(3,7,36,0.5), 0 2px 8px rgba(3,7,36,0.4);
+      z-index: 1;
+    }
+    .drawer.open { transform: translateX(0); }  /* slides out flush to the window's right edge */
+    /* detached: a free-floating, resizable window over the desktop (left/top/size set inline) */
+    .drawer.detached { transform: none; z-index: 50; border-radius: 12px; resize: both; min-width: 290px; max-width: 920px; min-height: 320px; max-height: 760px; transition: none; box-shadow: 0 36px 90px rgba(0,0,0,0.62), 0 6px 20px rgba(0,0,0,0.5); }
+    .canvas { width: 100%; height: 100%; background: #141a28; position: relative; overflow: hidden; }
+    .bai-cv { position: absolute; inset: 0; }
+
+    /* Chat UI overlay — fades in after the boot sequence; the canvas logo shows through the header slot. */
+    .bai-ui { position: absolute; inset: 0; display: flex; flex-direction: column; opacity: 0; transition: opacity 420ms ease; pointer-events: none; }
+    .bai-ui.show { opacity: 1; pointer-events: auto; }
+    /* Opening reveal: header drops from the top, chatbar + tools rise from the bottom, conversation fades in last. */
+    .bai-ui.anim { transition: none; }                       /* children carry the motion, not a container cross-fade */
+    .bai-ui.anim .bai-header { transform: translateY(-130%); opacity: 0; }            /* off-screen base — NO transition, so it starts here */
+    .bai-ui.anim .bai-inputbar, .bai-ui.anim .bai-status { transform: translateY(160%); opacity: 0; }
+    .bai-ui.anim .bai-body { opacity: 0; }
+    .bai-ui.anim .bai-strip { opacity: 0; }
+    /* transition lives on the .in targets so .anim snaps off-screen, then .in slides everything into place */
+    .bai-ui.anim.in .bai-header, .bai-ui.anim.in .bai-inputbar, .bai-ui.anim.in .bai-status { transform: translateY(0); opacity: 1; transition: transform 460ms cubic-bezier(0.22,0.9,0.26,1), opacity 360ms ease; }
+    .bai-ui.anim.in .bai-body { opacity: 1; transition: opacity 520ms ease; }
+    .bai-ui.anim.in .bai-strip { opacity: 1; transition: opacity 360ms ease; transition-delay: 0.08s; }
+    .bai-ui.anim.in .bai-inputbar { transition-delay: 0.10s; }
+    .bai-ui.anim.in .bai-status { transition-delay: 0.16s; }
+    .bai-ui.anim.in .bai-body { transition-delay: 0.40s; }
+    .bai-header { position: relative; z-index: 40; height: 46px; flex-shrink: 0; display: flex; align-items: center; gap: 13px; padding: 0 10px 0 14px; border-bottom: 1px solid rgba(120,150,220,0.10); }   /* z-index keeps menus above the strip/panes; gap = logo↔wordmark spacing */
+    .bai-logoslot { width: 25px; height: 36px; flex-shrink: 0; }   /* snug to the smaller (~20px) logo so the logo↔"BlueAI" gap stays ~8px */
+    /* header-right utility: settings + 3-dots (overflow), same hover pill as the status line */
+    .bai-head-r { margin-left: auto; flex-shrink: 0; display: flex; align-items: center; gap: 2px; }   /* icons never shrink; title truncates instead */
+    .bai-icbtn { display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; border: none; border-radius: 6px; background: none; color: #566076; cursor: pointer; padding: 0; transition: background 0.15s, color 0.15s; }
+    .bai-icbtn:hover { background: #232b3d; color: #cdd6f4; }
+    .bai-icbtn svg { display: block; }
+    .bai-menu.down { top: calc(100% + 6px); bottom: auto; }   /* header menu opens downward */
+    .bai-menu.left { left: 0; right: auto; }                   /* attach menu aligns to the + (status-bar left) */
+    .bai-menu-ic { display: flex; align-items: center; justify-content: center; flex-shrink: 0; width: 14px; height: 14px; color: #8aa0c8; }
+    .bai-menu-ic svg { width: 14px; height: 14px; display: block; }
+    /* mode strip: chat · jobs · skills · scheduled (active = cyan underline) */
+    .bai-strip { display: flex; align-items: stretch; height: 38px; flex-shrink: 0; padding: 0 14px; border-bottom: 1px solid #232642; font-family: 'JetBrains Mono', ui-monospace, monospace; }
+    .bai-tab { position: relative; display: flex; align-items: center; gap: 5px; background: none; border: none; color: #6b7488; font-family: inherit; font-size: 12px; cursor: pointer; padding: 0 2px; margin-right: 16px; transition: color 0.15s; }
+    .bai-tab:last-child { margin-right: 0; }
+    .bai-tab:hover { color: #aab6d4; }
+    .bai-tab.active { color: #eaf0ff; }
+    .bai-tab.active::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: #6ea8ff; }   /* sits just above the strip stroke, attached — not straddling it */
+    .bai-tab-badge { background: #6ea8ff; color: #0b1220; font-size: 10px; line-height: 1; padding: 2px 5px; border-radius: 8px; }
+    /* panes: only the active mode is shown */
+    .bai-panes { flex: 1; min-height: 0; display: flex; }
+    .bai-pane { display: none; flex: 1; flex-direction: column; min-width: 0; min-height: 0; position: relative; }
+    .bai-pane.active { display: flex; }
+    .bai-stub { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 9px; padding: 28px 24px; text-align: center; font-family: 'JetBrains Mono', ui-monospace, monospace; }
+    .bai-stub .ic { width: 34px; height: 34px; border: 1px solid #2a3550; border-radius: 9px; display: flex; align-items: center; justify-content: center; color: #6ea8ff; }
+    .bai-stub h4 { margin: 0; color: #cdd6f4; font-size: 13px; font-weight: 500; }
+    .bai-stub p { margin: 0; max-width: 200px; font-size: 11.5px; line-height: 1.5; color: #7e8aa8; }
+    .bai-stub .soon { font-size: 10px; color: #5b6480; letter-spacing: 1px; }
+    .bai-wm { display: flex; align-items: center; min-width: 0; overflow: hidden; color: #eaf0ff; font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Consolas, Menlo, monospace; font-weight: 700; font-size: 14px; letter-spacing: -0.5px; }   /* static brand — no longer a switcher */
+    .bai-wm #baiTitle { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .bai-title-btn { display: flex; align-items: center; gap: 5px; min-width: 0; max-width: 100%; background: none; border: none; cursor: pointer; padding: 0; color: #6b7488; font-family: 'JetBrains Mono', ui-monospace, monospace; font-weight: 500; font-size: 11px; letter-spacing: 0; }   /* subtle, recessive — smaller + muted vs the brand wordmark */
+    .bai-title-btn #baiMainTitle { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .bai-title-btn:hover { color: #aab6d4; }
+    .bai-title-ar { flex-shrink: 0; color: #5b6480; font-size: 13px; font-weight: 400; line-height: 1; transition: color 0.15s; }
+    .bai-title-btn:hover .bai-title-ar { color: #aab6d4; }
+    .bai-chat-label { font-size: 9.5px; color: #5b6480; letter-spacing: 0.4px; padding: 3px 8px 4px; }
+    .bai-chat-dot { width: 6px; height: 6px; border-radius: 50%; background: transparent; box-shadow: inset 0 0 0 1.2px #5b6480; flex-shrink: 0; }
+    .bai-chat-row.on { background: rgba(110,168,255,0.10); }
+    .bai-chat-row.working .bai-chat-dot { background: #8a96b5; box-shadow: none; animation: bai-dot-pulse 1.2s ease-in-out infinite; }
+    .bai-chat-row.unseen .bai-chat-dot { background: #6ea8ff; box-shadow: none; }
+    .bai-chat-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .bai-chat-time { margin-left: auto; flex-shrink: 0; font-size: 10px; color: #5b6480; }
+    /* ---- Wide (detached ≥600px): left sidebar holds new chat · modes · recent · settings + more ---- */
+    .bai-sidebar { position: absolute; left: 0; top: 0; bottom: 0; width: 210px; display: none; flex-direction: column; padding: 12px 8px; background: #10151f; border-right: 1px solid #232642; z-index: 6; font-family: 'JetBrains Mono', ui-monospace, monospace; }
+    .bai-ui.wide .bai-sidebar { display: flex; top: 46px; }                                  /* sits BELOW the full-width header */
+    .bai-ui.wide .bai-panes, .bai-ui.wide .bai-main-title { margin-left: 210px; }             /* main content clears the sidebar; header stays full-width */
+    .bai-ui.wide .bai-strip, .bai-ui.wide #baiSettingsBtn, .bai-ui.wide #baiNewBtn, .bai-ui.wide .bai-title-ar { display: none; }   /* wide: sidebar owns modes/new-chat/recents; header keeps logo + "BlueAI" brand */
+    .bai-main-title { flex-shrink: 0; display: flex; align-items: center; padding: 12px 14px 6px; }   /* title (left) + new-chat icon (right), below the brand header */
+    .bai-main-title .bai-stat-wrap { flex: 1; min-width: 0; }
+    .bai-newchat-btn { margin-left: auto; flex-shrink: 0; }   /* new chat lives at the chat-window's top-right */
+    .bai-body { -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 16px); mask-image: linear-gradient(to bottom, transparent 0, #000 16px); }   /* content fades before reaching the title */
+    .bai-side-brand { display: none; }   /* header carries the logo now; sidebar starts at New chat */
+    .bai-side-logo { width: 20px; height: 20px; flex-shrink: 0; }
+    .bai-side-nav { display: flex; flex-direction: column; gap: 1px; }
+    .bai-side-newicon { margin-left: auto; flex-shrink: 0; display: flex; align-items: center; justify-content: center; padding: 0; border: none; background: none; color: #6b7488; cursor: pointer; transition: color 0.15s; }   /* sits inside the Chat item, right edge */
+    .bai-side-newicon:hover { color: #cdd6f4; }
+    .bai-side-newicon svg { width: 15px; height: 15px; display: block; }
+    .bai-side-item { position: relative; display: flex; align-items: center; gap: 9px; width: 100%; padding: 7px 10px; border: none; background: none; border-radius: 6px; color: #8a96b5; font-family: inherit; font-size: 12px; text-align: left; cursor: pointer; transition: background 0.15s, color 0.15s; }
+    .bai-side-item:hover { background: #1b2233; color: #cdd6f4; }
+    .bai-side-item.active { color: #eaf0ff; background: rgba(110,168,255,0.10); }
+    .bai-side-item.active::before { content: ''; position: absolute; left: 0; top: 6px; bottom: 6px; width: 2px; background: #6ea8ff; }
+    .bai-side-item .ic { display: flex; width: 15px; flex-shrink: 0; }
+    .bai-side-item .ic svg { width: 15px; height: 15px; }
+    .bai-side-badge { margin-left: auto; background: #6ea8ff; color: #0b1220; font-size: 10px; line-height: 1; padding: 2px 5px; border-radius: 8px; }
+    .bai-side-label { font-size: 9.5px; color: #5b6480; letter-spacing: 0.4px; padding: 12px 10px 5px; }
+    .bai-side-recents { display: flex; flex-direction: column; gap: 1px; overflow-y: auto; scrollbar-width: thin; }
+    .bai-side-rec { display: flex; align-items: center; gap: 7px; padding: 6px 10px; border-radius: 6px; font-size: 11.5px; color: #c7d1e6; cursor: pointer; }
+    .bai-side-rec:hover { background: #1b2233; }
+    .bai-side-rec .dot { width: 6px; height: 6px; border-radius: 50%; background: transparent; box-shadow: inset 0 0 0 1.2px #5b6480; flex-shrink: 0; }   /* seen / no change = hollow gray */
+    .bai-side-rec.on { background: rgba(110,168,255,0.10); }                                              /* current chat = row highlight */
+    .bai-side-rec.working .dot { background: #8a96b5; box-shadow: none; animation: bai-dot-pulse 1.2s ease-in-out infinite; }   /* working = gray, blinking */
+    .bai-side-rec.unseen .dot { background: #6ea8ff; box-shadow: none; }                                  /* task done, not seen yet = colored */
+    @keyframes bai-dot-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+    .bai-side-rec .nm { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .bai-side-rec .tm { flex-shrink: 0; font-size: 10px; color: #5b6480; }
+    .bai-side-foot { margin-top: auto; border-top: 1px solid #232642; padding-top: 6px; display: flex; align-items: center; gap: 4px; }
+    .bai-side-foot .bai-side-item { flex: 1; }
+    .bai-body { flex: 1; overflow-y: auto; padding: 12px 12px 18px; display: flex; flex-direction: column; gap: 8px; scrollbar-width: none; }
+    .bai-body::-webkit-scrollbar { width: 0; height: 0; display: none; }   /* native hidden; custom fade-thumb instead */
+    .bai-scroll { position: absolute; right: 3px; width: 4px; border-radius: 2px; background: rgba(160,180,220,0.5); opacity: 0; transition: opacity 0.4s ease; pointer-events: none; }
+    .bai-scroll.show { opacity: 1; }
+    /* Opening launcher — wordmark + two worker options, centered just below the assembled logo. */
+    .bai-launch { position: absolute; left: 0; right: 0; top: 53%; display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 0 24px; opacity: 0; transition: opacity 0.5s ease; pointer-events: none; }
+    .bai-launch.on { opacity: 1; pointer-events: auto; }
+    .bai-wordmark { font-family: 'JetBrains Mono', ui-monospace, monospace; font-weight: 700; font-size: 20px; letter-spacing: -0.5px; color: #eaf0ff; }
+    .bai-opts { display: flex; flex-direction: column; gap: 9px; width: 100%; max-width: 240px; }
+    .bai-skip { margin-top: -4px; background: none; border: none; color: #5b6480; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; cursor: pointer; padding: 5px 10px; border-radius: 6px; transition: color 0.15s, background 0.15s; }
+    .bai-skip:hover { color: #aab6d4; background: #1b2233; }
+    .bai-opt { display: flex; align-items: center; gap: 9px; padding: 11px 14px; background: #161c2b; border: 1px solid #2a3550; border-radius: 10px; color: #c7d1e6; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12px; text-align: left; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+    .bai-opt:hover { border-color: #3d6bd6; background: #1b2840; }
+    .bai-opt .k { color: #6ea8ff; }
+    /* Terminal boot-log — streams below the (twinkling) logo after a worker is picked. */
+    .bai-boot { position: absolute; left: 0; right: 0; top: 52%; padding: 0 22px; display: none; flex-direction: column; gap: 3px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10.5px; line-height: 1.5; color: #8190ad; opacity: 1; transition: opacity 0.3s ease; }
+    .bai-boot.on { display: flex; }
+    .bai-boot .ln { opacity: 0; transition: opacity 0.25s ease; }
+    .bai-boot .ln.s { opacity: 1; }
+    .bai-boot .ok { color: #5fcf8f; }
+    .bai-msg { font-size: 13px; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; }
+    .bai-msg.user { align-self: flex-end; max-width: 82%; padding: 7px 11px; border-radius: 13px; border-bottom-right-radius: 4px; background: #262d3d; color: #e8edf7; }
+    .bai-msg.ai { align-self: stretch; color: #c7d1e6; padding: 1px 2px 4px; }   /* plain text, no bubble */
+    .bai-msg.intro { font-size: 11.5px; line-height: 1.5; color: #8190ad; }   /* small, muted opening line */
+    /* in-chat clickable option group (BlueAI asks, you pick — terminal style) */
+    .bai-optg { align-self: stretch; display: flex; flex-direction: column; gap: 5px; margin: 1px 0 2px; }
+    .bai-optg.done { opacity: 0.45; pointer-events: none; }
+    .bai-opt-row { display: flex; align-items: flex-start; gap: 9px; padding: 8px 10px; background: #161c2b; border: 1px solid #2a3550; border-radius: 8px; cursor: pointer; text-align: left; font-family: 'JetBrains Mono', ui-monospace, monospace; transition: border-color 0.15s, background 0.15s; }
+    .bai-opt-row:hover { border-color: #3d6bd6; background: #1b2840; }
+    .bai-opt-num { color: #6ea8ff; font-size: 11px; line-height: 1.5; flex-shrink: 0; width: 11px; }
+    .bai-opt-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+    .bai-opt-label { color: #e8edf7; font-size: 12px; line-height: 1.4; }
+    .bai-opt-desc { color: #7e8aa8; font-size: 10.5px; line-height: 1.4; }
+    .bai-opt-hint { color: #5b6480; font-size: 10px; padding: 1px 2px; letter-spacing: 0.3px; }
+    /* result lists (job postings / content plan) + parsed-resume card */
+    .bai-reslist { align-self: stretch; display: flex; flex-direction: column; gap: 6px; margin: 1px 0 2px; }
+    .bai-rescard { display: flex; flex-direction: column; gap: 4px; padding: 9px 11px; background: #131a28; border: 1px solid #232642; border-radius: 8px; font-family: 'JetBrains Mono', ui-monospace, monospace; }
+    .bai-rescard .top { display: flex; align-items: center; gap: 8px; }
+    .bai-rescard .rtitle { color: #e8edf7; font-size: 12px; min-width: 0; }
+    .bai-rescard .src { margin-left: auto; flex-shrink: 0; font-size: 9px; letter-spacing: 0.3px; color: #6ea8ff; border: 1px solid #2a4a86; border-radius: 5px; padding: 1px 5px; }
+    .bai-rescard .meta { color: #7e8aa8; font-size: 10.5px; }
+    .bai-rescard .match { color: #5fcf8f; font-size: 10.5px; }
+    .bai-parsecard { align-self: stretch; background: #131a28; border: 1px solid #232642; border-radius: 8px; padding: 9px 11px; display: flex; flex-direction: column; gap: 5px; font-family: 'JetBrains Mono', ui-monospace, monospace; margin: 1px 0 2px; }
+    .bai-parsecard .pc-head { color: #5fcf8f; font-size: 10px; letter-spacing: 0.3px; margin-bottom: 1px; }
+    .bai-parsecard .pc-row { display: flex; gap: 8px; font-size: 11px; line-height: 1.35; }
+    .bai-parsecard .pc-k { color: #7e8aa8; width: 74px; flex-shrink: 0; }
+    .bai-parsecard .pc-v { color: #dbe3f4; min-width: 0; }
+    .bai-inputbar { display: flex; flex-direction: column; align-items: stretch; margin: 0 12px 7px; padding: 11px 12px; background: #0e1320; border: 1px solid #232642; border-radius: 10px; flex-shrink: 0; transition: border-color 0.18s ease; }
+    .bai-inputbar:focus-within { border-color: #2f3a5a; }   /* very slight lift on focus */
+    .bai-inputrow { display: flex; align-items: center; gap: 8px; }
+    .bai-prompt { color: #6ea8ff; font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 14px; line-height: 1; }
+    .bai-q { flex: 1; min-width: 0; background: transparent; border: none; outline: none; padding: 0; color: #cdd6f4; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12.5px; caret-color: #6ea8ff; }
+    .bai-q::placeholder { color: #5b6480; }
+    /* Claude-style "thinking" indicator above the chatbar — small animated logo + elapsed timer. */
+    .bai-body::before { content: ''; margin-top: auto; }   /* bottom-align the chat chain (terminal scrollback) */
+    .bai-thinking { align-self: stretch; display: flex; align-items: center; gap: 8px; padding: 1px 2px; }
+    .bai-thinking.stopped .bai-think-txt { color: #6b7488; }
+    .bai-send { display: flex; visibility: hidden; width: 22px; height: 22px; flex-shrink: 0; border: none; border-radius: 6px; background: none; color: #8aa0c8; cursor: pointer; align-items: center; justify-content: center; padding: 0; transition: background 0.15s, color 0.15s; }
+    .bai-send.stop { visibility: visible; }                 /* slot always reserved so the bar height never jumps; icon only shows while thinking */
+    .bai-send:hover { background: #232b3d; color: #cdd6f4; }   /* same hover pill as the status items */
+    .bai-send::before { content: ''; width: 9px; height: 9px; border: 1.5px solid currentColor; border-radius: 2px; }   /* slightly smaller outline stop, no pulse */
+    /* Phase 2: status line (attach · model · effort · credits) + attachment chips */
+    .bai-chips { display: none; flex-wrap: wrap; gap: 6px; margin: 0 0 8px; }   /* inside the chatbar, above the input row */
+    .bai-chips.has { display: flex; }
+    .bai-chip { display: flex; align-items: center; gap: 6px; padding: 4px 8px; background: #1a2031; border: 1px solid #2a3550; border-radius: 7px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; color: #c7d1e6; }
+    .bai-chip .x { cursor: pointer; color: #7e8aa8; opacity: 0; transition: opacity 0.15s, color 0.15s; }   /* remove control reveals on hover */
+    .bai-chip:hover .x { opacity: 1; }
+    .bai-chip .x:hover { color: #ff8c8c; }
+    .bai-status { display: flex; align-items: center; gap: 8px; margin: 0 12px 11px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10.5px; color: #7e8aa8; }
+    .bai-attach { flex-shrink: 0; border: none; border-radius: 6px; background: none; color: #8aa0c8; cursor: pointer; font-size: 13px; line-height: 1; padding: 3px 7px; display: flex; align-items: center; justify-content: center; transition: background 0.15s, color 0.15s; }
+    .bai-attach:hover { background: #232b3d; color: #cdd6f4; }   /* same hover pill as model/effort — consistent */
+    .bai-attach .bai-plus { display: block; line-height: 1; transform: scale(1.3); }   /* bigger glyph, same container (transform doesn't reflow) */
+    .bai-stat-r { margin-left: auto; display: flex; align-items: center; gap: 4px; }
+    .bai-stat-wrap { position: relative; }
+    .bai-stat-btn { background: none; border: none; border-radius: 6px; color: #aab6d4; font-family: inherit; font-size: 10.5px; cursor: pointer; padding: 3px 7px; white-space: nowrap; transition: background 0.15s, color 0.15s; }
+    .bai-stat-btn:hover { background: #232b3d; color: #eaf0ff; }   /* hover pill is the affordance — no persistent arrow */
+    .bai-credits { color: #8aa0c8; white-space: nowrap; border-radius: 6px; padding: 3px 7px; cursor: default; transition: background 0.15s; }
+    .bai-credits:hover { background: #232b3d; }   /* same hover pill; health color stays (set inline) */
+    .bai-menu { position: absolute; bottom: calc(100% + 6px); right: 0; min-width: 124px; background: #10151f; border: 1px solid #2a3550; border-radius: 8px; padding: 4px; display: none; flex-direction: column; gap: 1px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); z-index: 30; }
+    .bai-menu.open { display: flex; }
+    .bai-menu-item { display: flex; align-items: center; gap: 6px; padding: 6px 8px; border-radius: 5px; font-size: 11px; color: #c7d1e6; cursor: pointer; white-space: nowrap; }
+    .bai-menu-item:hover { background: #1b2840; }
+    .bai-menu-item .mk { width: 8px; color: #6ea8ff; }
+    /* popover title + ? help (description shows on hover/tap) */
+    .bai-menu-head { display: flex; align-items: center; gap: 8px; padding: 3px 6px 6px; border-bottom: 1px solid #232642; margin-bottom: 4px; }
+    .bai-menu-title { font-size: 11px; color: #aab6d4; letter-spacing: 0.2px; }
+    .bai-menu-help { margin-left: auto; flex-shrink: 0; border: none; border-radius: 6px; background: none; color: #6b7488; font-size: 12px; line-height: 1; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 2px 6px; transition: background 0.15s, color 0.15s; }
+    .bai-menu-help:hover { background: #232b3d; color: #cdd6f4; }   /* same hover pill as attach — no round stroke */
+    .bai-menu-desc { position: absolute; bottom: calc(100% + 6px); left: 0; right: 0; background: #10151f; border: 1px solid #2a3550; border-radius: 8px; padding: 8px 10px; font-size: 10.5px; line-height: 1.45; color: #8190ad; box-shadow: 0 8px 24px rgba(0,0,0,0.5); display: none; z-index: 5; }   /* floating card above the menu — does NOT reflow the options */
+    .bai-menu-desc.show { display: block; }
+    .bai-menu-items { display: flex; flex-direction: column; gap: 1px; }
+    .bai-think-cv { width: 20px; height: 20px; animation: bai-think-pulse 1.15s ease-in-out infinite; }
+    .bai-think-txt { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12px; color: #7e8aa8; }
+    .bai-think-txt em { font-style: normal; color: #6ea8ff; }
+    @keyframes bai-think-pulse { 0%, 100% { opacity: .5; transform: scale(.9); } 50% { opacity: 1; transform: scale(1.08); } }
+    .bai-cursor { width: 7px; height: 15px; background: #6ea8ff; display: inline-block; margin-left: -3px; animation: bai-blink 1.05s steps(1) infinite; }
+    @keyframes bai-blink { 50% { opacity: 0; } }
+  </style>
+</head>
+<body>
+  <div class="stage" id="stage">
+    <div class="scaler" id="scaler">
+      <div class="composition" id="composition">
+        <div class="bs-window" id="bsWindow" title="Open BlueAI">
+          <img src="assets/bluestacks-window.png" alt="BlueStacks App Player" draggable="false" />
+        </div>
+        <!-- Blank black canvas — the reinvented BlueAI product gets built in here. -->
+        <div class="drawer" id="drawer">
+          <div class="canvas" id="blueai-canvas">
+            <div class="bai-launch" id="baiLaunch">
+              <div class="bai-wordmark">BlueAI</div>
+              <div class="bai-opts">
+                <button class="bai-opt" data-worker="jobs"><span class="k">&rsaquo;</span> Scrape jobs &amp; auto-apply</button>
+                <button class="bai-opt" data-worker="content"><span class="k">&rsaquo;</span> Create &amp; publish content</button>
+              </div>
+              <button class="bai-skip" id="baiSkip" type="button">skip — just chat</button>
+            </div>
+            <div class="bai-boot" id="baiBoot"></div>
+            <div class="bai-ui" id="baiUi">
+              <div class="bai-sidebar" id="baiSidebar">
+                <div class="bai-side-brand"><canvas class="bai-side-logo" id="baiSideLogo"></canvas><span>BlueAI</span></div>
+                <div class="bai-side-nav">
+                  <div class="bai-side-item active" data-mode="chat"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-12.3 7.5L3 21l2-5.7A8.4 8.4 0 1 1 21 11.5z"/></svg></span>Chat<button class="bai-side-newicon" id="baiSideNew" type="button" aria-label="New chat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h13a2 2 0 0 0 2-2v-6"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/></svg></button></div>
+                  <button class="bai-side-item" data-mode="jobs" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h12M8 12h12M8 18h12"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/></svg></span>Jobs<span class="bai-side-badge">2</span></button>
+                  <button class="bai-side-item" data-mode="skills" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg></span>Skills</button>
+                  <button class="bai-side-item" data-mode="scheduled" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>Scheduled</button>
+                </div>
+                <div class="bai-side-label">RECENT</div>
+                <div class="bai-side-recents" id="baiSideRecents"></div>
+                <div class="bai-side-foot">
+                  <button class="bai-side-item" id="baiSideSettings" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>Settings</button>
+                </div>
+              </div>
+              <div class="bai-header">
+                <span class="bai-logoslot"></span>
+                <span class="bai-wm" id="baiWm"><span id="baiTitle">BlueAI</span></span>
+                <div class="bai-head-r">
+                  <button class="bai-icbtn" id="baiSettingsBtn" type="button" aria-label="Settings"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+                  <button class="bai-icbtn" id="baiDetach" type="button" aria-label="Detach"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14L21 3"/><path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5"/></svg></button>
+                  <button class="bai-icbtn" id="baiCollapseBtn" type="button" aria-label="Close panel"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+                </div>
+              </div>
+              <div class="bai-strip" id="baiStrip">
+                <button class="bai-tab active" data-mode="chat" type="button">chat</button>
+                <button class="bai-tab" data-mode="jobs" type="button">jobs<span class="bai-tab-badge">2</span></button>
+                <button class="bai-tab" data-mode="skills" type="button">skills</button>
+                <button class="bai-tab" data-mode="scheduled" type="button">scheduled</button>
+              </div>
+              <div class="bai-main-title">
+                <div class="bai-stat-wrap">
+                  <button class="bai-title-btn" id="baiTitleBtn" type="button"><span id="baiMainTitle">New chat</span><span class="bai-title-ar">&#8250;</span></button>
+                  <div class="bai-menu down left" id="baiTitleMenu">
+                    <div class="bai-menu-items">
+                      <div class="bai-chat-label">RECENT</div>
+                      <div id="baiRecents"></div>
+                    </div>
+                  </div>
+                </div>
+                <button class="bai-icbtn bai-newchat-btn" id="baiNewBtn" type="button" aria-label="New chat"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h13a2 2 0 0 0 2-2v-6"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/></svg></button>
+              </div>
+              <div class="bai-panes">
+                <div class="bai-pane active" id="paneChat">
+                  <div class="bai-body" id="baiBody"></div>
+                  <div class="bai-inputbar">
+                    <div class="bai-chips" id="baiChips"></div>
+                    <div class="bai-inputrow">
+                      <span class="bai-prompt">&rsaquo;</span>
+                      <input class="bai-q" id="baiInput" type="text" placeholder="Ask BlueAI anything…" autocomplete="off" spellcheck="false" />
+                      <button class="bai-send" id="baiSend" type="button" aria-label="Stop"></button>
+                    </div>
+                  </div>
+                  <div class="bai-status">
+                    <div class="bai-stat-wrap">
+                      <button class="bai-attach" id="baiAttach" type="button" aria-label="Attach"><span class="bai-plus">+</span></button>
+                      <div class="bai-menu left" id="baiAttachMenu">
+                        <div class="bai-menu-items">
+                          <div class="bai-menu-item bai-attach-item" data-kind="files"><span class="bai-menu-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L4 20"/></svg></span>add files or photos</div>
+                          <div class="bai-menu-item bai-attach-item" data-kind="folder"><span class="bai-menu-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span>add folder</div>
+                          <div class="bai-menu-item bai-attach-item" data-kind="skill"><span class="bai-menu-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></span>skill.md</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="bai-stat-r">
+                      <div class="bai-stat-wrap"><button class="bai-stat-btn" id="baiModelBtn" type="button"></button><div class="bai-menu" id="baiModelMenu"></div></div>
+                      <div class="bai-stat-wrap"><button class="bai-stat-btn" id="baiEffortBtn" type="button"></button><div class="bai-menu" id="baiEffortMenu"></div></div>
+                      <span class="bai-credits" id="baiCredits"></span>
+                    </div>
+                  </div>
+                  <div class="bai-scroll" id="baiScroll"></div>
+                </div>
+                <div class="bai-pane" id="paneJobs"><div class="bai-stub"><div class="ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg></div><h4>Jobs</h4><p>Running &amp; completed agent runs land here — status, logs, and what was applied to.</p><span class="soon">·· soon</span></div></div>
+                <div class="bai-pane" id="paneSkills"><div class="bai-stub"><div class="ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg></div><h4>Skills</h4><p>The worker's capabilities &amp; tools — browse, toggle, and configure what it can do.</p><span class="soon">·· soon</span></div></div>
+                <div class="bai-pane" id="paneScheduled"><div class="bai-stub"><div class="ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><h4>Scheduled</h4><p>Recurring tasks the worker runs for you — cadence, next run, and history.</p><span class="soon">·· soon</span></div></div>
+                <div class="bai-pane" id="paneSettings"><div class="bai-stub"><div class="ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div><h4>Settings</h4><p>Model defaults, effort, account, credits &amp; theme for this worker.</p><span class="soon">·· soon</span></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="boot.js"></script>
+  <script src="flows.js"></script>
+  <script>
+    (function () {
+      var stage = document.getElementById('stage');
+      var scaler = document.getElementById('scaler');
+      var composition = document.getElementById('composition');
+      var bsWindow = document.getElementById('bsWindow');
+      var drawer = document.getElementById('drawer');
+      var baiUi = document.getElementById('baiUi');
+      var baiCtrl = window.BlueAIBoot(document.getElementById('blueai-canvas'));
+      window.__baiCtrl = baiCtrl;          // exposed for frame-render debugging
+      var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var booted = false;                  // boot plays once per cold load; instant thereafter
+      function revealChat(animate) {                           // show the chat; animate = directional slide-in reveal
+        if (animate) {
+          baiUi.classList.add('anim'); baiUi.classList.add('show');
+          void baiUi.offsetWidth;                              // commit the off-screen base state (no rAF: robust in throttled tabs)
+          baiUi.classList.add('in');                           // …then transition header/bar/tools into place
+        } else { baiUi.classList.add('show'); }
+      }
+      var baiInput = document.getElementById('baiInput');
+      var baiBody = document.getElementById('baiBody');
+      var baiSend = document.getElementById('baiSend');
+      // Design-only: scripted BlueAI replies (no backend) so the chat experience is demoable.
+      var DEFAULT_GREET = "I'm BlueAI — your AI sidekick. I can create & publish content, find & auto-apply to jobs, and script your gaming videos. What can I do for you?";
+      // Two workers: each has a cinematic boot-log + the context greeting it opens the chat with.
+      var WORKERS = {
+        jobs: {
+          log: ['booting agent core · local GPU', 'mounting LLM: claude-opus-4.8 [1m ctx]', 'loading tools: browser · form-filler · resume-parser', 'wiring agent graph: search → match → apply', 'Job Worker online'],
+          greet: "Job Worker online. Drop a role, location, or filters and I'll start scraping listings and auto-applying for you."
+        },
+        content: {
+          log: ['booting agent core · local GPU', 'mounting LLM: claude-opus-4.8 [1m ctx]', 'loading tools: writer · renderer · publisher', 'wiring agent graph: ideate → create → publish', 'Content Worker online'],
+          greet: "Content Worker online. Give me a topic or hand me a brief and I'll create the content and publish it across your channels."
+        }
+      };
+      var RESPONSES = [
+        "On it — let me find the best match for that across your games.",
+        "Got it. I can set that up on your BlueStacks instance — want me to go ahead?",
+        "Sure. Here's what I'd recommend based on your setup.",
+        "Looking into that now. I'll pull the latest details for you.",
+        "Done — here's a quick take. Want the full breakdown?"
+      ];
+      var respIdx = 0, thinking = false, curThink = null, replyT = null, tickT = null, phraseT = null;
+      var PHRASES = ['reasoning…', 'querying tools…', 'composing…', 'almost done…'];
+      var STOPWORDS = ['interrupted', 'halted', 'aborted', 'killed', 'terminated'];   // random kill word on stop
+      function scrollBody() { baiBody.scrollTop = baiBody.scrollHeight; }
+      var baiScroll = document.getElementById('baiScroll'), scrollHideT = null;
+      function updateScroll() {                              // custom thumb: show on scroll, fade out when idle
+        var sh = baiBody.scrollHeight, ch = baiBody.clientHeight;
+        if (sh <= ch + 2) { baiScroll.classList.remove('show'); return; }
+        var th = Math.max(24, ch * ch / sh);
+        baiScroll.style.height = th + 'px';
+        baiScroll.style.top = (baiBody.offsetTop + (baiBody.scrollTop / (sh - ch)) * (ch - th)) + 'px';
+        baiScroll.classList.add('show');
+        clearTimeout(scrollHideT); scrollHideT = setTimeout(function () { baiScroll.classList.remove('show'); }, 900);
+      }
+      if (baiScroll) baiBody.addEventListener('scroll', updateScroll);
+      function addUser(text) { var d = document.createElement('div'); d.className = 'bai-msg user'; d.textContent = text; baiBody.appendChild(d); scrollBody(); }
+      function typewrite(el, text) {                        // types char-by-char: starts slow, accelerates as it goes
+        var i = 0, n = text.length;
+        (function step() { if (i >= n) return; el.textContent = text.slice(0, ++i); scrollBody(); setTimeout(step, Math.max(7, 42 - i * 0.75)); })();
+      }
+      function aiReply(text, extra) { var el = document.createElement('div'); el.className = 'bai-msg ai' + (extra ? ' ' + extra : ''); baiBody.appendChild(el); scrollBody(); typewrite(el, text); }
+      function setSend(stop) { thinking = stop; if (baiSend) baiSend.classList.toggle('stop', stop); }
+      function makeThinking() {                               // pending AI turn, inline below the user's message
+        var el = document.createElement('div'); el.className = 'bai-thinking';
+        var cv = document.createElement('canvas'); cv.className = 'bai-think-cv'; el.appendChild(cv);
+        var txt = document.createElement('span'); txt.className = 'bai-think-txt'; el.appendChild(txt);
+        baiBody.appendChild(el); scrollBody();
+        if (baiCtrl.drawMini) baiCtrl.drawMini(cv);
+        return { el: el, txt: txt };
+      }
+      function fmtT(s) { return s < 60 ? s + 's' : Math.floor(s / 60) + 'm ' + (s % 60) + 's'; }
+      function sendMessage(text) {
+        addUser(text);
+        credits = Math.max(0, credits - (30 + Math.floor(Math.random() * 90))); renderCredits();   // compute spent
+        curThink = makeThinking(); var t0 = Date.now(), pi = 0;
+        function tick() { curThink.txt.innerHTML = '<em>' + fmtT(Math.round((Date.now() - t0) / 1000)) + '</em> &middot; ' + PHRASES[pi]; }
+        tick(); tickT = setInterval(tick, 300);
+        phraseT = setInterval(function () { pi = Math.min(pi + 1, PHRASES.length - 1); }, 1400);
+        setSend(true);
+        replyT = setTimeout(function () {
+          clearInterval(tickT); clearInterval(phraseT);
+          if (curThink) { curThink.el.remove(); curThink = null; }
+          setSend(false); aiReply(RESPONSES[respIdx++ % RESPONSES.length]);
+        }, 2400 + Math.random() * 2200);
+      }
+      function stopThinking() {
+        clearTimeout(replyT); clearInterval(tickT); clearInterval(phraseT);
+        if (curThink) { curThink.el.className = 'bai-thinking stopped'; var c = curThink.el.querySelector('canvas'); if (c) c.style.display = 'none'; curThink.txt.innerHTML = '⊘ ' + STOPWORDS[(Math.random() * STOPWORDS.length) | 0]; curThink = null; }
+        setSend(false); scrollBody();
+      }
+      function submit() {
+        if (thinking) { stopThinking(); return; }
+        var v = baiInput.value.trim(); if (!v) return;
+        baiInput.value = '';
+        if (pending && pending.ask !== undefined) { resolveAsk(pending, v); return; }   // typed answer to a pending question
+        if (pending) return;                                                            // awaiting an action (upload) — ignore stray text
+        sendMessage(v);
+      }
+      if (baiInput) baiInput.addEventListener('keydown', function (e) { if (e.key === 'Enter' && !thinking && baiInput.value.trim()) { e.preventDefault(); submit(); } });
+      if (baiSend) baiSend.addEventListener('click', submit);
+
+      // ---- Phase 2: status line (model · effort · credits) + attachments (design-only) ----
+      var MODELS = ['Auto', 'Opus 4.8', 'Sonnet 4.6', 'Gemini 3.1 Pro', 'GPT-5.4'];
+      var EFFORTS = ['Fast', 'Standard', 'Extra', 'Max'];
+      var FILES = ['resume.pdf', 'portfolio.png', 'brief.md', 'logo.svg'];
+      var FOLDERS = ['designs/', 'projects/', 'exports/'];
+      var SKILLS = ['carousel.skill.md', 'jobs.skill.md', 'content.skill.md'];
+      var curModel = 'Opus 4.8', curEffort = 'Extra', credits = 49812, fIdx = 0;
+      var modelBtn = document.getElementById('baiModelBtn'), modelMenu = document.getElementById('baiModelMenu');
+      var effortBtn = document.getElementById('baiEffortBtn'), effortMenu = document.getElementById('baiEffortMenu');
+      var creditsEl = document.getElementById('baiCredits'), attachBtn = document.getElementById('baiAttach'), chips = document.getElementById('baiChips'), attachMenu = document.getElementById('baiAttachMenu'), folderIdx = 0, skillIdx = 0;
+      function renderModel() { modelBtn.textContent = curModel; }
+      function renderEffort() { effortBtn.textContent = curEffort; }
+      // credit health ramp (as balance depletes): blue good → yellow low → orange very low → red almost over
+      function creditColor(c) { return c > 12000 ? '#6ea8ff' : c > 5000 ? '#f4d35e' : c > 1500 ? '#f59e42' : '#ff6b6b'; }
+      function renderCredits() { creditsEl.textContent = '✦ ' + credits.toLocaleString('en-US'); creditsEl.style.color = creditColor(credits); }
+      function closeMenus() { modelMenu.classList.remove('open'); effortMenu.classList.remove('open'); if (attachMenu) attachMenu.classList.remove('open'); if (titleMenu) titleMenu.classList.remove('open'); }
+      function fillMenu(menu, items, cur, pick, title, desc) {
+        menu.innerHTML = '';
+        var head = document.createElement('div'); head.className = 'bai-menu-head';
+        var tl = document.createElement('span'); tl.className = 'bai-menu-title'; tl.textContent = title;
+        var help = document.createElement('button'); help.type = 'button'; help.className = 'bai-menu-help'; help.textContent = '?'; help.setAttribute('aria-label', 'About ' + title);
+        head.appendChild(tl); head.appendChild(help);
+        var dsc = document.createElement('div'); dsc.className = 'bai-menu-desc'; dsc.textContent = desc;
+        help.addEventListener('click', function (e) { e.stopPropagation(); });   // keep clicks from closing the menu
+        help.addEventListener('mouseenter', function () { dsc.classList.add('show'); });   // floating card -> no reflow, so hover is safe (like Claude)
+        help.addEventListener('mouseleave', function () { dsc.classList.remove('show'); });
+        menu.appendChild(head); menu.appendChild(dsc);
+        var list = document.createElement('div'); list.className = 'bai-menu-items';
+        items.forEach(function (it) {
+          var d = document.createElement('div'); d.className = 'bai-menu-item';
+          d.innerHTML = '<span class="mk">' + (it === cur ? '›' : '') + '</span>' + it;
+          d.addEventListener('click', function (e) { e.stopPropagation(); pick(it); closeMenus(); });
+          list.appendChild(d);
+        });
+        menu.appendChild(list);
+      }
+      modelBtn.addEventListener('click', function (e) { e.stopPropagation(); var was = modelMenu.classList.contains('open'); closeMenus(); if (!was) { fillMenu(modelMenu, MODELS, curModel, function (m) { curModel = m; renderModel(); }, 'Model', 'The model that answers. Auto picks the best fit; larger models reason deeper but spend more credits.'); modelMenu.classList.add('open'); } });
+      effortBtn.addEventListener('click', function (e) { e.stopPropagation(); var was = effortMenu.classList.contains('open'); closeMenus(); if (!was) { fillMenu(effortMenu, EFFORTS, curEffort, function (v) { curEffort = v; renderEffort(); }, 'Effort', 'Higher effort means more thorough responses, but takes longer and spends more credits.'); effortMenu.classList.add('open'); } });
+      drawer.addEventListener('click', closeMenus);   // any other in-drawer click closes the menus
+      function addChip(name) {
+        var c = document.createElement('span'); c.className = 'bai-chip';
+        c.innerHTML = name + ' <span class="x">✕</span>';
+        c.querySelector('.x').addEventListener('click', function () { c.remove(); if (!chips.children.length) chips.classList.remove('has'); });
+        chips.appendChild(c); chips.classList.add('has');
+      }
+      attachBtn.addEventListener('click', function (e) { e.stopPropagation(); var was = attachMenu.classList.contains('open'); closeMenus(); if (!was) attachMenu.classList.add('open'); });
+      [].forEach.call(attachMenu.querySelectorAll('.bai-attach-item'), function (it) {
+        it.addEventListener('click', function (e) {
+          e.stopPropagation();
+          var k = it.getAttribute('data-kind');
+          if (k === 'files') addChip(FILES[fIdx++ % FILES.length]);
+          else if (k === 'folder') addChip(FOLDERS[folderIdx++ % FOLDERS.length]);
+          else addChip(SKILLS[skillIdx++ % SKILLS.length]);
+          closeMenus();
+        });
+      });
+      renderModel(); renderEffort(); renderCredits();
+
+      // ---- Mode strip nav + header utility (settings) ----
+      var settingsBtn = document.getElementById('baiSettingsBtn');
+      var tabs = [].slice.call(document.querySelectorAll('.bai-tab'));
+      var panes = { chat: document.getElementById('paneChat'), jobs: document.getElementById('paneJobs'), skills: document.getElementById('paneSkills'), scheduled: document.getElementById('paneScheduled'), settings: document.getElementById('paneSettings') };
+      function setMode(m) {
+        Object.keys(panes).forEach(function (k) { panes[k].classList.toggle('active', k === m); });
+        tabs.forEach(function (t) { t.classList.toggle('active', t.getAttribute('data-mode') === m); });   // settings has no tab -> all tabs go inactive
+        [].forEach.call(document.querySelectorAll('.bai-side-item[data-mode]'), function (s) { s.classList.toggle('active', s.getAttribute('data-mode') === m); });   // mirror on the wide sidebar
+        var mt = document.getElementById('baiMainTitle'); if (mt) mt.textContent = m === 'chat' ? fullTitle : (m.charAt(0).toUpperCase() + m.slice(1));   // main-column title follows the mode
+      }
+      tabs.forEach(function (t) { t.addEventListener('click', function () { setMode(t.getAttribute('data-mode')); }); });
+      settingsBtn.addEventListener('click', function (e) { e.stopPropagation(); closeMenus(); setMode('settings'); });
+      var collapseBtn = document.getElementById('baiCollapseBtn');
+      collapseBtn.addEventListener('click', function (e) { e.stopPropagation(); closeMenus(); if (detached) reattach(); setOpen(false); });   // collapse (docked) / close (detached)
+
+      // ---- Detach / reattach: float the drawer off the player into a resizable, draggable window ----
+      var detachBtn = document.getElementById('baiDetach'), detached = false;
+      var IC_DETACH = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14L21 3"/><path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5"/></svg>';
+      var IC_REATTACH = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><rect x="2.5" y="4" width="19" height="16" rx="2.5"/><path d="M15.5 4H19A2.5 2.5 0 0 1 21.5 6.5V17.5A2.5 2.5 0 0 1 19 20H15.5Z" fill="currentColor" stroke="none"/></svg>';
+      var IC_COLLAPSE = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>';
+      var IC_CLOSE = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+      function syncWindowIcons() {
+        detachBtn.innerHTML = detached ? IC_REATTACH : IC_DETACH;
+        detachBtn.setAttribute('aria-label', detached ? 'Reattach' : 'Detach');
+        collapseBtn.innerHTML = detached ? IC_CLOSE : IC_COLLAPSE;
+        collapseBtn.setAttribute('aria-label', detached ? 'Close window' : 'Close panel');
+      }
+      function detach() {
+        detached = true; composition.classList.remove('shift');
+        var h = drawer.offsetHeight || 573;   // keep the default (docked) height
+        drawer.classList.add('detached');
+        drawer.style.left = '620px'; drawer.style.top = '0px'; drawer.style.width = '290px'; drawer.style.height = h + 'px';
+        syncWindowIcons();
+      }
+      function reattach() {
+        detached = false; drawer.classList.remove('detached');
+        drawer.style.left = ''; drawer.style.top = ''; drawer.style.width = ''; drawer.style.height = '';
+        if (drawer.classList.contains('open')) composition.classList.add('shift');
+        syncWindowIcons();
+      }
+      detachBtn.addEventListener('click', function (e) { e.stopPropagation(); closeMenus(); if (detached) reattach(); else detach(); });
+      syncWindowIcons();
+      var hdrEl = baiUi.querySelector('.bai-header');   // drag the floating window by its header
+      hdrEl.addEventListener('pointerdown', function (e) {
+        if (!detached || (e.target.closest && e.target.closest('button, .bai-wm, .bai-menu'))) return;
+        var sc = (scaler.getBoundingClientRect().width / scaler.offsetWidth) || 1;
+        var sx = e.clientX, sy = e.clientY, sl = parseFloat(drawer.style.left) || 0, st = parseFloat(drawer.style.top) || 0;
+        function mv(ev) { drawer.style.left = (sl + (ev.clientX - sx) / sc) + 'px'; drawer.style.top = (st + (ev.clientY - sy) / sc) + 'px'; }
+        function up() { window.removeEventListener('pointermove', mv); window.removeEventListener('pointerup', up); }
+        window.addEventListener('pointermove', mv); window.addEventListener('pointerup', up); e.preventDefault();
+      });
+
+      // ---- Guided flow engine: BlueAI interviews you with clickable options, then acts (scripted) ----
+      var FLOWS = window.BlueAIFlows || {};
+      var flow = null, flowI = 0, pending = null, ctx = {};
+      function typeMs(t) { return Math.min(2600, t.length * 16) + 220; }                 // ~ how long the typewriter takes
+      function fillVars(t) { return t.replace(/\{(\w+)\}/g, function (_, k) { return ctx[k] || k; }); }
+      function restorePlaceholder() { baiInput.placeholder = 'Ask BlueAI anything…'; }
+      function spendCredits(n) { if (n) { credits = Math.max(0, credits - n); renderCredits(); } }
+      function startFlow(name, initialDelay) { flow = (FLOWS[name] || []).slice(); flowI = 0; pending = null; ctx = {}; setTimeout(runStep, initialDelay || 800); }
+      function advance(d) { setTimeout(runStep, d || 450); }
+      function workSpinner(label, ms, done) {                                            // a transient "working…" line, then a callback
+        var th = makeThinking(), t0 = Date.now();
+        var ti = setInterval(function () { th.txt.innerHTML = '<em>' + Math.round((Date.now() - t0) / 1000) + 's</em> &middot; ' + label; }, 300);
+        th.txt.innerHTML = '<em>0s</em> &middot; ' + label;
+        setTimeout(function () { clearInterval(ti); th.el.remove(); done(); }, ms);
+      }
+      function runStep() {
+        if (!flow || flowI >= flow.length) { pending = null; flow = null; restorePlaceholder(); return; }
+        var s = flow[flowI++];
+        if (s.say !== undefined) {
+          aiReply(fillVars(s.say));
+          if (s.think) setTimeout(function () { workSpinner('working…', s.think, function () { advance(250); }); }, typeMs(s.say));
+          else advance(typeMs(s.say) + 550);
+        } else if (s.ask !== undefined) {
+          aiReply(fillVars(s.ask)); pending = s;
+          if (s.allowText) baiInput.placeholder = s.allowText;
+          setTimeout(function () { renderOptions(s); }, typeMs(s.ask) + 120);
+        } else if (s.results) { spendCredits(s.cost); renderResults(s.results); advance(950); }
+        else if (s.upload) { renderUpload(s.upload); pending = s; }
+        else if (s.parse) { spendCredits(s.cost); renderParse(s.parse); }
+      }
+      function renderOptions(s) {
+        var g = document.createElement('div'); g.className = 'bai-optg'; s._g = g;
+        (s.options || []).forEach(function (o, i) {
+          var row = document.createElement('button'); row.type = 'button'; row.className = 'bai-opt-row';
+          row.innerHTML = '<span class="bai-opt-num">' + (i + 1) + '</span><span class="bai-opt-body"><span class="bai-opt-label">' + o.label + '</span>' + (o.desc ? '<span class="bai-opt-desc">' + o.desc + '</span>' : '') + '</span>';
+          row.addEventListener('click', function (e) { e.stopPropagation(); resolveAsk(s, o.label); });
+          g.appendChild(row);
+        });
+        if (s.allowText) { var h = document.createElement('div'); h.className = 'bai-opt-hint'; h.textContent = '— or type your own below —'; g.appendChild(h); }
+        baiBody.appendChild(g); scrollBody();
+      }
+      function resolveAsk(s, value) {
+        if (s._g) s._g.remove();
+        if (s.key) ctx[s.key] = value;
+        addUser(value); pending = null; restorePlaceholder();
+        advance(520);
+      }
+      function renderResults(r) {
+        var list = document.createElement('div'); list.className = 'bai-reslist';
+        (r.items || []).forEach(function (it) {
+          var c = document.createElement('div'); c.className = 'bai-rescard';
+          if (r.kind === 'jobs') c.innerHTML = '<div class="top"><span class="rtitle">' + it.title + '</span><span class="src">' + it.source + '</span></div><div class="meta">' + it.company + ' · ' + it.meta + '</div><div class="match">▸ ' + it.match + '</div>';
+          else c.innerHTML = '<div class="top"><span class="rtitle">' + it.step + '</span></div><div class="meta">' + it.detail + '</div>';
+          list.appendChild(c);
+        });
+        baiBody.appendChild(list); scrollBody();
+      }
+      function renderUpload(u) {
+        var g = document.createElement('div'); g.className = 'bai-optg';
+        var row = document.createElement('button'); row.type = 'button'; row.className = 'bai-opt-row';
+        row.innerHTML = '<span class="bai-opt-num">+</span><span class="bai-opt-body"><span class="bai-opt-label">' + (u.label || 'Attach file') + '</span><span class="bai-opt-desc">' + (u.accept || '') + ' · click to attach</span></span>';
+        row.addEventListener('click', function (e) { e.stopPropagation(); g.remove(); addUser('resume.pdf ↑'); pending = null; advance(520); });
+        g.appendChild(row); baiBody.appendChild(g); scrollBody();
+      }
+      function renderParse(p) {
+        workSpinner('reading resume…', p.think || 1500, function () {
+          var card = document.createElement('div'); card.className = 'bai-parsecard';
+          var rows = (p.fields || []).map(function (f) { return '<div class="pc-row"><span class="pc-k">' + f.k + '</span><span class="pc-v">' + f.v + '</span></div>'; }).join('');
+          card.innerHTML = '<div class="pc-head">✓ parsed from resume.pdf</div>' + rows;
+          baiBody.appendChild(card); scrollBody(); advance(750);
+        });
+      }
+
+      // ---- General-chat greeting: a small BlueAI intro (no option cards) ----
+      function startGreeting() { aiReply(DEFAULT_GREET, 'intro'); }
+
+      window.__baiFlow = startFlow;   // debug hook (like __baiCtrl) — start a flow without the full opening
+
+      // ---- Chat session switcher: wordmark dropdown -> new chat + recent chats (scripted) ----
+      var titleBtn = document.getElementById('baiTitleBtn'), titleMenu = document.getElementById('baiTitleMenu'), newBtn = document.getElementById('baiNewBtn');
+      var recentsEl = document.getElementById('baiRecents');
+      var RECENTS = [
+        { title: 'Berlin UX roles', time: '2h', unseen: true, msgs: [{ u: 'find UX roles in berlin' }, { a: 'Found 4 strong matches across LinkedIn, Wellfound and Indeed — all remote-friendly.' }] },
+        { title: 'Carousel: AI news', time: '1d', working: true, msgs: [{ u: "make a carousel on this week's AI news" }, { a: 'Drafted a 5-slide carousel with a bright cover. Want me to publish it?' }] },
+        { title: 'Resume tailoring', time: '3d', msgs: [{ u: 'tailor my resume for product design' }, { a: 'Tightened your summary and pulled design-systems impact to the top.' }] },
+        { title: 'Free Fire FAQ', time: '5d', msgs: [{ u: 'gameplay review script for Free Fire' }, { a: 'Wrote a Hinglish beat-sheet — cold hook, FAQ, combat, verdict.' }] }
+      ];
+      var fullTitle = 'BlueAI';
+      function setTitle(t) { fullTitle = t; var mt = document.getElementById('baiMainTitle'); if (mt) mt.textContent = t; }   // header wordmark stays the "BlueAI" brand; the chat name lives in the main-column title
+      function aiInstant(text) { var el = document.createElement('div'); el.className = 'bai-msg ai'; el.textContent = text; baiBody.appendChild(el); }
+      function resetChatState() { flow = null; flowI = 0; pending = null; ctx = {}; restorePlaceholder(); }
+      function markRecent(r) {
+        [].forEach.call(recentsEl.children, function (row, i) { row.classList.toggle('on', RECENTS[i] === r); });
+        var sr = document.getElementById('baiSideRecents'); if (sr) [].forEach.call(sr.children, function (row, i) { row.classList.toggle('on', RECENTS[i] === r); });
+      }
+      function newChat() { resetChatState(); setMode('chat'); baiBody.innerHTML = ''; setTitle('New chat'); markRecent(null); startGreeting(); }
+      function refreshRecentClasses() { [recentsEl, document.getElementById('baiSideRecents')].forEach(function (c) { if (!c) return; [].forEach.call(c.children, function (row, i) { var rr = RECENTS[i]; if (!rr) return; row.classList.toggle('working', !!rr.working); row.classList.toggle('unseen', !!rr.unseen); }); }); }
+      function loadThread(r) { resetChatState(); setMode('chat'); baiBody.innerHTML = ''; setTitle(r.title); (r.msgs || []).forEach(function (m) { if (m.u !== undefined) addUser(m.u); else aiInstant(m.a); }); if (r.unseen) { r.unseen = false; refreshRecentClasses(); } markRecent(r); scrollBody(); }
+      RECENTS.forEach(function (r) {
+        var row = document.createElement('div'); row.className = 'bai-menu-item bai-chat-row' + (r.working ? ' working' : '') + (r.unseen ? ' unseen' : '');
+        row.innerHTML = '<span class="bai-chat-dot"></span><span class="bai-chat-name">' + r.title + '</span><span class="bai-chat-time">' + r.time + '</span>';
+        row.addEventListener('click', function (e) { e.stopPropagation(); loadThread(r); closeMenus(); });
+        recentsEl.appendChild(row);
+      });
+      titleBtn.addEventListener('click', function (e) { e.stopPropagation(); if (baiUi.classList.contains('wide')) return; var was = titleMenu.classList.contains('open'); closeMenus(); if (!was) titleMenu.classList.add('open'); });
+      newBtn.addEventListener('click', function (e) { e.stopPropagation(); newChat(); closeMenus(); });
+
+      // ---- Wide-mode left sidebar (mirrors the strip + switcher; toggled by width) ----
+      var sideRecentsEl = document.getElementById('baiSideRecents');
+      RECENTS.forEach(function (r) {
+        var row = document.createElement('div'); row.className = 'bai-side-rec' + (r.working ? ' working' : '') + (r.unseen ? ' unseen' : '');
+        row.innerHTML = '<span class="dot"></span><span class="nm">' + r.title + '</span><span class="tm">' + r.time + '</span>';
+        row.addEventListener('click', function (e) { e.stopPropagation(); loadThread(r); closeMenus(); });
+        sideRecentsEl.appendChild(row);
+      });
+      [].forEach.call(document.querySelectorAll('.bai-side-item[data-mode]'), function (b) {
+        b.addEventListener('click', function (e) { e.stopPropagation(); setMode(b.getAttribute('data-mode')); });
+      });
+      document.getElementById('baiSideNew').addEventListener('click', function (e) { e.stopPropagation(); newChat(); });
+      document.getElementById('baiSideSettings').addEventListener('click', function (e) { e.stopPropagation(); setMode('settings'); });
+      if (baiCtrl.drawMini) baiCtrl.drawMini(document.getElementById('baiSideLogo'));
+      if (window.ResizeObserver) new ResizeObserver(function () { baiUi.classList.toggle('wide', drawer.offsetWidth >= 600); }).observe(drawer);
+
+      // ---- Opening launcher: assembled logo -> wordmark + workers -> pick -> boot-log -> chat ----
+      var baiLaunch = document.getElementById('baiLaunch'), baiBoot = document.getElementById('baiBoot');
+      function showLauncher() { baiLaunch.classList.add('on'); }
+      function streamBootLog(lines, onDone) {                 // cinematic ~5s terminal stream
+        baiBoot.innerHTML = ''; baiBoot.classList.add('on');
+        var els = lines.map(function (txt, i) {
+          var d = document.createElement('div'); d.className = 'ln';
+          var last = i === lines.length - 1;
+          d.innerHTML = (last ? '<span class="ok">✓ </span>' : '<span style="color:#5b6480">▸ </span>') + txt;
+          baiBoot.appendChild(d); return d;
+        });
+        var i = 0, per = 480;   // fixed per-line cadence -> fewer lines means a shorter, snappier boot
+        (function next() { if (i >= els.length) { setTimeout(onDone, 520); return; } els[i].classList.add('s'); i++; setTimeout(next, per); })();
+      }
+      function pickWorker(key) {
+        var w = WORKERS[key]; if (!w) return;
+        baiLaunch.classList.remove('on');
+        if (baiCtrl.setEnergy) baiCtrl.setEnergy(1);          // logo pixels twinkle while "processing"
+        streamBootLog(w.log, function () {
+          baiBoot.style.opacity = '0';                         // boot-log fades out…
+          baiCtrl.dissolve(function () {                       // …as the logo bursts away left→right
+            baiBoot.classList.remove('on'); baiBoot.style.opacity = '';
+            revealChat(true);                                  // header drops from top; chatbar + tools rise from bottom
+            if (baiCtrl.enterHeader) baiCtrl.enterHeader(function () {});   // header logo drops in (canvas), then goes live
+            setTimeout(function () { aiReply(w.greet); startFlow(key, typeMs(w.greet) + 700); }, 760);   // greet, then BlueAI starts interviewing
+          });
+        });
+      }
+      [].forEach.call(document.querySelectorAll('.bai-opt'), function (b) {
+        b.addEventListener('click', function () { pickWorker(b.getAttribute('data-worker')); });
+      });
+      function skipToChat() {                                   // bypass the workers -> straight to a general BlueAI chat (no boot-log, no flow)
+        baiLaunch.classList.remove('on');
+        baiCtrl.dissolve(function () {
+          revealChat(true);
+          if (baiCtrl.enterHeader) baiCtrl.enterHeader(function () {});
+          setTimeout(function () { startGreeting(); }, 760);
+        });
+      }
+      var baiSkip = document.getElementById('baiSkip');
+      if (baiSkip) baiSkip.addEventListener('click', skipToChat);
+
+      // Scale the whole scene so the OPEN composition always fits the viewport (no clipping when expanded).
+      var PAD = 48, OPEN_W = 1000 + 290, CONTENT_H = 573, MAX = 1, MIN = 0.2;
+      function fit() {
+        var vw = window.innerWidth || document.documentElement.clientWidth || 1280;
+        var vh = window.innerHeight || document.documentElement.clientHeight || 800;
+        var s = Math.min((vw - 2 * PAD) / OPEN_W, (vh - 2 * PAD) / CONTENT_H, MAX);
+        if (!(s > 0)) s = MAX;          // guard against a 0/negative viewport reading
+        s = Math.max(MIN, s);            // never shrink below a usable size
+        scaler.style.setProperty('--scale', s);
+      }
+      fit();
+      requestAnimationFrame(fit);
+      addEventListener('load', fit);
+      addEventListener('resize', fit);
+      setTimeout(fit, 300);             // catch late layout in embedded contexts
+
+      function setOpen(open) {
+        drawer.classList.toggle('open', open);
+        composition.classList.toggle('shift', open);
+        if (open && !booted) {
+          booted = true;
+          if (prefersReduced) { baiCtrl.ready(); revealChat(false); startGreeting(); }   // reduced motion -> straight to chat
+          else baiCtrl.boot(showLauncher);   // assemble -> launcher (wordmark + the two workers)
+        }
+      }
+
+      // The whole BlueStacks image toggles the BlueAI drawer (impression: the player opened BlueAI).
+      bsWindow.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (detached) return;            // detached -> the player no longer toggles the floating window
+        setOpen(!drawer.classList.contains('open'));
+      });
+      // Clicking the bare desktop closes it (but never a detached, floating window).
+      stage.addEventListener('click', function () { if (detached) return; setOpen(false); });
+      // Clicks inside the drawer shouldn't close it.
+      drawer.addEventListener('click', function (e) { e.stopPropagation(); });
+      // Esc closes.
+      addEventListener('keydown', function (e) { if (e.key === 'Escape') setOpen(false); });
+    })();
+  </script>
+</body>
+</html>
