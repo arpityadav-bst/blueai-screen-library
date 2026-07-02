@@ -19,6 +19,9 @@ window.BlueAIBoot = function (host) {
   host.insertBefore(canvas, host.firstChild);
   var ctx = canvas.getContext('2d');
   var dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+  // Canvas palette per theme (must mirror the CSS --bai-bg): bg fill, absorb/spark flash, heartbeat ring.
+  var THEMES = { dark: { bg: '#141a28', flash: 'rgb(226,238,255)', ring: 'rgb(110,168,255)' }, light: { bg: '#f6f8fc', flash: 'rgb(29,79,184)', ring: 'rgb(37,99,217)' } };
+  var PAL = THEMES.dark;
 
   var W = 0, H = 0, pixels = [], hpixels = [], flickers = [];
   var BIG = 0.7, SMALL = 0.125, CXC = 0, CYC = 0, HDRX = 28, HDRY = 23;   // HDRY centers the logo in the slim 46px header
@@ -92,7 +95,7 @@ window.BlueAIBoot = function (host) {
     ctx.restore();
   }
 
-  function frameBase() { ctx.clearRect(0, 0, W, H); ctx.fillStyle = '#141a28'; ctx.fillRect(0, 0, W, H); }
+  function frameBase() { ctx.clearRect(0, 0, W, H); ctx.fillStyle = PAL.bg; ctx.fillRect(0, 0, W, H); }
 
   // Small, crisp settled header logo: integer device-px blocks (~1px gap), pixel-snapped edges.
   function drawHeaderLogo(cx, cy) {
@@ -132,7 +135,7 @@ window.BlueAIBoot = function (host) {
       ctx.fillStyle = p.color; ctx.fillRect(px, py, DB, DB);
       if (p.flash) {                                         // a packet was just absorbed here -> spark white, then fade back
         var fl = (now - p.flash) / 430;
-        if (fl < 1) { ctx.globalAlpha = (1 - fl) * 0.9; ctx.fillStyle = 'rgb(226,238,255)'; ctx.fillRect(px, py, DB, DB); }
+        if (fl < 1) { ctx.globalAlpha = (1 - fl) * 0.9; ctx.fillStyle = PAL.flash; ctx.fillRect(px, py, DB, DB); }
       }
     }
     ctx.globalAlpha = 1; ctx.restore();
@@ -145,7 +148,7 @@ window.BlueAIBoot = function (host) {
     if (now - lastBeat > 12000) { lastBeat = now; beats.push(now); }          // heartbeat ~every 12s
     for (var b = beats.length - 1; b >= 0; b--) {
       var age = (now - beats[b]) / 800; if (age >= 1) { beats.splice(b, 1); continue; }
-      ctx.globalAlpha = (1 - age) * 0.09; ctx.strokeStyle = 'rgb(110,168,255)'; ctx.lineWidth = 1.5;
+      ctx.globalAlpha = (1 - age) * 0.09; ctx.strokeStyle = PAL.ring; ctx.lineWidth = 1.5;
       ctx.beginPath(); ctx.arc(HDRX, HDRY, age * Math.max(W, H) * 0.6, 0, 6.2832); ctx.stroke();
     }
     ctx.globalAlpha = 1;
@@ -199,7 +202,7 @@ window.BlueAIBoot = function (host) {
       var tw = 0.5 + 0.5 * Math.sin(now * 0.0035 + p.lx * 1.1 + p.ly * 0.7);
       var spark = energy > 0 && ((Math.sin(now * 0.02 + k * 2.3) + 1) * 0.5) > (1 - energy * 0.28);
       ctx.globalAlpha = Math.min(1, 0.78 + 0.14 * tw + 0.22 * energy * tw);
-      ctx.fillStyle = spark ? 'rgba(225,238,255,1)' : p.color;
+      ctx.fillStyle = spark ? PAL.flash : p.color;
       ctx.fillRect(Math.round(cxD + p.lx * cellD) - h, Math.round(cyD + p.ly * cellD) - h, DB, DB);
     }
     ctx.globalAlpha = 1; ctx.restore();
@@ -308,6 +311,7 @@ window.BlueAIBoot = function (host) {
     dissolve: function (onDone) { dissolve(onDone); },      // boot done -> left→right pixel splash, canvas clears
     enterHeader: function (onDone) { enterHeader(onDone); },// header logo drops in from the top, then goes live
     ready: function () { stopHold(); renderReady(); startAmbient(); },   // instant reopen -> header + chat
+    setTheme: function (mode) { PAL = THEMES[mode] || THEMES.dark; if (ambientRaf) renderReady(); },   // repaint sync in the settled state; live loops pick PAL up next frame
     resize: function () { resize(); if (!raf && !holdRaf && !ambientRaf) renderReady(); },   // force a canvas re-fit (detached restore sets geometry before boot)
     drawMini: function (cv) { drawMini(cv); }
   };

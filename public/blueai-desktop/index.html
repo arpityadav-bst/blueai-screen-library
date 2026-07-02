@@ -38,19 +38,42 @@
       width: 100%; height: 100%;
       overflow: hidden; cursor: pointer;
       background: url('assets/bluestacks-window.png') center / 100% 100% no-repeat;   /* CSS bg, not <img>, so the browser's image-hover (Visual Search/Lens) button never attaches */
-      box-shadow: 0 30px 90px rgba(0,0,0,0.55), 0 2px 8px rgba(0,0,0,0.4);
+      box-shadow: 0 30px 90px -34px rgba(0,0,0,0.55), 0 2px 8px rgba(0,0,0,0.4);   /* negative spread keeps the ambient drop DOWNWARD — only a sliver spills onto the docked drawer; the 8px layer is the subtle edge */
       transition: box-shadow 180ms ease;
       position: relative; z-index: 2;
     }
-    .bs-window:hover { box-shadow: 0 36px 110px rgba(0,0,0,0.62), 0 2px 10px rgba(0,0,0,0.45); }
+    .bs-window:hover { box-shadow: 0 36px 110px -40px rgba(0,0,0,0.62), 0 2px 10px rgba(0,0,0,0.45); }
 
+    /* ---- Theme tokens: every chrome color flows from these. Dark (default) = the original palette,
+       byte-for-byte; .drawer.light overrides. boot.js mirrors --bai-bg for the canvas fill. ---- */
+    .drawer {
+      --bai-bg: #141a28; --bai-panel: #10151f; --bai-card: #161c2b; --bai-card-2: #131a28; --bai-input-bg: #0e1320; --bai-chip-bg: #1a2031;
+      --bai-hover: #1b2233; --bai-hover-acc: #1b2840; --bai-pill: #232b3d; --bai-user: #262d3d;
+      --bai-line: #232642; --bai-line-2: #2a3550; --bai-line-focus: #2f3a5a; --bai-line-soft: rgba(120,150,220,0.10); --bai-accent-line: #2a4a86;
+      --bai-text-bright: #eaf0ff; --bai-text-strong: #e8edf7; --bai-text-hi: #cdd6f4; --bai-text: #c7d1e6; --bai-text-soft: #dbe3f4;
+      --bai-muted-2: #8a96b5; --bai-muted: #8190ad; --bai-dim: #7e8aa8; --bai-dim-2: #6b7488; --bai-faint: #5b6480; --bai-icon: #566076; --bai-icon-2: #8aa0c8; --bai-hover-ink: #aab6d4;
+      --bai-accent: #6ea8ff; --bai-accent-strong: #3d6bd6; --bai-accent-wash: rgba(110,168,255,0.10); --bai-on-accent: #0b1220;
+      --bai-ok: #5fcf8f; --bai-danger: #ff8c8c; --bai-scroll: rgba(160,180,220,0.5); --bai-menu-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      --bai-credit-hi: #6ea8ff; --bai-credit-mid: #f4d35e; --bai-credit-low: #f59e42; --bai-credit-crit: #ff6b6b;
+    }
+    /* Light: cool paper-white slate. Inks picked for AA contrast on #f6f8fc/white (accent 5.0:1, body 8.5:1, dim ~5:1). */
+    .drawer.light {
+      --bai-bg: #f6f8fc; --bai-panel: #ffffff; --bai-card: #ffffff; --bai-card-2: #fbfcff; --bai-input-bg: #ffffff; --bai-chip-bg: #eaeff8;
+      --bai-hover: #e9edf6; --bai-hover-acc: #e8f0fd; --bai-pill: #e2e8f4; --bai-user: #e4e9f5;
+      --bai-line: #dbe2ee; --bai-line-2: #c9d4e6; --bai-line-focus: #a9bcdc; --bai-line-soft: rgba(30,60,120,0.12); --bai-accent-line: #b7cdf2;
+      --bai-text-bright: #101828; --bai-text-strong: #17202f; --bai-text-hi: #232f45; --bai-text: #35415a; --bai-text-soft: #1f2b42;
+      --bai-muted-2: #5a6a88; --bai-muted: #5d6c8a; --bai-dim: #5f6e8c; --bai-dim-2: #5f6b83; --bai-faint: #66748e; --bai-icon: #5c687f; --bai-icon-2: #52648a; --bai-hover-ink: #33415e;
+      --bai-accent: #2563d9; --bai-accent-strong: #1d4fb8; --bai-accent-wash: rgba(37,99,217,0.10); --bai-on-accent: #ffffff;
+      --bai-ok: #0e7c3a; --bai-danger: #d92d2d; --bai-scroll: rgba(70,90,130,0.45); --bai-menu-shadow: 0 8px 24px rgba(25,40,80,0.16);
+      --bai-credit-hi: #2563d9; --bai-credit-mid: #a16207; --bai-credit-low: #b04d08; --bai-credit-crit: #d92d2d;
+    }
     /* BlueAI agent drawer — same height as the window, tucked behind its right edge, slides out.
        Blank black canvas for now; the reinvented product gets built into #blueai-canvas. */
     .drawer {
       position: absolute; top: 0; left: 100%;
       width: 290px; height: 100%;
-      background: #141a28;                      /* dark cool slate — in BlueStacks' navy family, not a black void */
-      border: 1px solid #232642;                /* BlueStacks' own chrome/edge tone */
+      background: var(--bai-bg);                      /* dark cool slate — in BlueStacks' navy family, not a black void */
+      border: 1px solid var(--bai-line);                /* BlueStacks' own chrome/edge tone */
       overflow: hidden;
       transform: translateX(-290px);            /* tucked behind the opaque window */
       transition: transform 280ms cubic-bezier(0.22, 0.61, 0.36, 1);
@@ -61,7 +84,7 @@
     /* detached: a free-floating, resizable window over the desktop (left/top/size set inline) */
     .drawer.detached { transform: none; z-index: 50; border-radius: 12px; resize: both; min-width: 290px; max-width: 920px; min-height: 320px; max-height: 760px; transition: none; box-shadow: 0 36px 90px rgba(0,0,0,0.62), 0 6px 20px rgba(0,0,0,0.5); }
     .drawer.win-hidden { display: none; }                          /* detached window closed -> hidden, but its state is remembered */
-    .canvas { width: 100%; height: 100%; background: #141a28; position: relative; overflow: hidden; }
+    .canvas { width: 100%; height: 100%; background: var(--bai-bg); position: relative; overflow: hidden; }
     .bai-cv { position: absolute; inset: 0; }
 
     /* Chat UI overlay — fades in after the boot sequence; the canvas logo shows through the header slot. */
@@ -82,184 +105,199 @@
     .bai-ui.anim.in .bai-inputbar { transition-delay: 0.10s; }
     .bai-ui.anim.in .bai-status { transition-delay: 0.16s; }
     .bai-ui.anim.in .bai-body { transition-delay: 0.40s; }
-    .bai-header { position: relative; z-index: 40; height: 46px; flex-shrink: 0; display: flex; align-items: center; gap: 13px; padding: 0 10px 0 14px; border-bottom: 1px solid rgba(120,150,220,0.10); }   /* z-index keeps menus above the strip/panes; gap = logo↔wordmark spacing */
+    .bai-header { position: relative; z-index: 40; height: 46px; flex-shrink: 0; display: flex; align-items: center; gap: 13px; padding: 0 10px 0 14px; border-bottom: 1px solid var(--bai-line-soft); }   /* z-index keeps menus above the strip/panes; gap = logo↔wordmark spacing */
     .bai-logoslot { width: 25px; height: 36px; flex-shrink: 0; }   /* snug to the smaller (~20px) logo so the logo↔"BlueAI" gap stays ~8px */
     /* header-right utility: settings + 3-dots (overflow), same hover pill as the status line */
     .bai-head-r { margin-left: auto; flex-shrink: 0; display: flex; align-items: center; gap: 2px; }   /* icons never shrink; title truncates instead */
-    .bai-icbtn { display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; border: none; border-radius: 6px; background: none; color: #566076; cursor: pointer; padding: 0; transition: background 0.15s, color 0.15s; }
-    .bai-icbtn:hover { background: #232b3d; color: #cdd6f4; }
+    .bai-icbtn { display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; border: none; border-radius: 6px; background: none; color: var(--bai-icon); cursor: pointer; padding: 0; transition: background 0.15s, color 0.15s; }
+    .bai-icbtn:hover { background: var(--bai-pill); color: var(--bai-text-hi); }
     .bai-icbtn svg { display: block; }
     .bai-menu.down { top: calc(100% + 6px); bottom: auto; }   /* header menu opens downward */
     .bai-menu.left { left: 0; right: auto; }                   /* attach menu aligns to the + (status-bar left) */
-    .bai-menu-ic { display: flex; align-items: center; justify-content: center; flex-shrink: 0; width: 14px; height: 14px; color: #8aa0c8; }
+    .bai-menu-ic { display: flex; align-items: center; justify-content: center; flex-shrink: 0; width: 14px; height: 14px; color: var(--bai-icon-2); }
     .bai-menu-ic svg { width: 14px; height: 14px; display: block; }
     /* mode strip: chat · jobs · skills · scheduled (active = cyan underline) */
-    .bai-strip { display: flex; align-items: stretch; height: 38px; flex-shrink: 0; padding: 0 14px; border-bottom: 1px solid #232642; font-family: 'JetBrains Mono', ui-monospace, monospace; }
-    .bai-tab { position: relative; display: flex; align-items: center; gap: 5px; background: none; border: none; color: #6b7488; font-family: inherit; font-size: 12px; cursor: pointer; padding: 0 2px; margin-right: 16px; transition: color 0.15s; }
+    .bai-strip { display: flex; align-items: stretch; height: 38px; flex-shrink: 0; padding: 0 14px; border-bottom: 1px solid var(--bai-line); font-family: 'JetBrains Mono', ui-monospace, monospace; }
+    .bai-tab { position: relative; display: flex; align-items: center; gap: 5px; background: none; border: none; color: var(--bai-dim-2); font-family: inherit; font-size: 12px; cursor: pointer; padding: 0 2px; margin-right: 16px; transition: color 0.15s; }
     .bai-tab:last-child { margin-right: 0; }
-    .bai-tab:hover { color: #aab6d4; }
-    .bai-tab.active { color: #eaf0ff; }
-    .bai-tab.active::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: #6ea8ff; }   /* sits just above the strip stroke, attached — not straddling it */
-    .bai-tab-badge { background: #6ea8ff; color: #0b1220; font-size: 10px; line-height: 1; padding: 2px 5px; border-radius: 8px; }
+    .bai-tab:hover { color: var(--bai-hover-ink); }
+    .bai-tab.active { color: var(--bai-text-bright); }
+    .bai-tab.active::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--bai-accent); }   /* sits just above the strip stroke, attached — not straddling it */
+    .bai-tab-badge { background: var(--bai-accent); color: var(--bai-on-accent); font-size: 10px; line-height: 1; padding: 2px 5px; border-radius: 8px; }
     /* panes: only the active mode is shown */
     .bai-panes { flex: 1; min-height: 0; display: flex; }
     .bai-pane { display: none; flex: 1; flex-direction: column; min-width: 0; min-height: 0; position: relative; }
     .bai-pane.active { display: flex; }
     .bai-stub { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 9px; padding: 28px 24px; text-align: center; font-family: 'JetBrains Mono', ui-monospace, monospace; }
-    .bai-stub .ic { width: 34px; height: 34px; border: 1px solid #2a3550; border-radius: 9px; display: flex; align-items: center; justify-content: center; color: #6ea8ff; }
-    .bai-stub h4 { margin: 0; color: #cdd6f4; font-size: 13px; font-weight: 500; }
-    .bai-stub p { margin: 0; max-width: 200px; font-size: 11.5px; line-height: 1.5; color: #7e8aa8; }
-    .bai-stub .soon { font-size: 10px; color: #5b6480; letter-spacing: 1px; }
-    .bai-wm { display: flex; align-items: center; min-width: 0; overflow: hidden; color: #eaf0ff; font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Consolas, Menlo, monospace; font-weight: 700; font-size: 14px; letter-spacing: -0.5px; }   /* static brand — no longer a switcher */
+    .bai-stub .ic { width: 34px; height: 34px; border: 1px solid var(--bai-line-2); border-radius: 9px; display: flex; align-items: center; justify-content: center; color: var(--bai-accent); }
+    .bai-stub h4 { margin: 0; color: var(--bai-text-hi); font-size: 13px; font-weight: 500; }
+    .bai-stub p { margin: 0; max-width: 200px; font-size: 11.5px; line-height: 1.5; color: var(--bai-dim); }
+    .bai-stub .soon { font-size: 10px; color: var(--bai-faint); letter-spacing: 1px; }
+    /* settings pane: real controls (theme switcher) — same tokens + terminal styling as everything else */
+    .bai-set { flex: 1; padding: 14px; display: flex; flex-direction: column; gap: 9px; overflow-y: auto; font-family: 'JetBrains Mono', ui-monospace, monospace; }
+    .bai-set-label { font-size: 9.5px; color: var(--bai-faint); letter-spacing: 0.4px; }
+    .bai-set-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--bai-card-2); border: 1px solid var(--bai-line); border-radius: 8px; }
+    .bai-set-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+    .bai-set-name { font-size: 12px; color: var(--bai-text-hi); }
+    .bai-set-sub { font-size: 10px; color: var(--bai-dim); }
+    .bai-seg { flex-shrink: 0; display: flex; gap: 2px; padding: 2px; background: var(--bai-input-bg); border: 1px solid var(--bai-line-2); border-radius: 7px; }
+    .bai-seg-btn { border: none; background: none; border-radius: 5px; padding: 4px 10px; font-family: inherit; font-size: 11px; color: var(--bai-dim-2); cursor: pointer; transition: background 0.15s, color 0.15s; }
+    .bai-seg-btn:hover { color: var(--bai-hover-ink); }
+    .bai-seg-btn.active { background: var(--bai-accent); color: var(--bai-on-accent); }
+    .bai-set-soon { margin-top: 2px; text-align: center; font-size: 10px; letter-spacing: 1px; color: var(--bai-faint); }
+    .bai-wm { display: flex; align-items: center; min-width: 0; overflow: hidden; color: var(--bai-text-bright); font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Consolas, Menlo, monospace; font-weight: 700; font-size: 14px; letter-spacing: -0.5px; }   /* static brand — no longer a switcher */
     .bai-wm #baiTitle { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .bai-title-btn { display: flex; align-items: center; gap: 5px; min-width: 0; max-width: 100%; background: none; border: none; cursor: pointer; padding: 0; color: #6b7488; font-family: 'JetBrains Mono', ui-monospace, monospace; font-weight: 500; font-size: 11px; letter-spacing: 0; }   /* subtle, recessive — smaller + muted vs the brand wordmark */
+    .bai-title-btn { display: flex; align-items: center; gap: 5px; min-width: 0; max-width: 100%; background: none; border: none; cursor: pointer; padding: 0; color: var(--bai-dim-2); font-family: 'JetBrains Mono', ui-monospace, monospace; font-weight: 500; font-size: 11px; letter-spacing: 0; }   /* subtle, recessive — smaller + muted vs the brand wordmark */
     .bai-title-btn #baiMainTitle { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .bai-title-btn:hover { color: #aab6d4; }
-    .bai-title-ar { flex-shrink: 0; color: #5b6480; font-size: 13px; font-weight: 400; line-height: 1; transition: color 0.15s; }
-    .bai-title-btn:hover .bai-title-ar { color: #aab6d4; }
-    .bai-chat-label { font-size: 9.5px; color: #5b6480; letter-spacing: 0.4px; padding: 3px 8px 4px; }
-    .bai-chat-dot { width: 6px; height: 6px; border-radius: 50%; background: transparent; box-shadow: inset 0 0 0 1.2px #5b6480; flex-shrink: 0; }
-    .bai-chat-row.on { background: rgba(110,168,255,0.10); }
-    .bai-chat-row.working .bai-chat-dot { background: #8a96b5; box-shadow: none; animation: bai-dot-pulse 1.2s ease-in-out infinite; }
-    .bai-chat-row.unseen .bai-chat-dot { background: #6ea8ff; box-shadow: none; }
+    .bai-title-btn:hover { color: var(--bai-hover-ink); }
+    .bai-title-ar { flex-shrink: 0; color: var(--bai-faint); font-size: 13px; font-weight: 400; line-height: 1; transition: color 0.15s; }
+    .bai-title-btn:hover .bai-title-ar { color: var(--bai-hover-ink); }
+    .bai-chat-label { font-size: 9.5px; color: var(--bai-faint); letter-spacing: 0.4px; padding: 3px 8px 4px; }
+    .bai-chat-dot { width: 6px; height: 6px; border-radius: 50%; background: transparent; box-shadow: inset 0 0 0 1.2px var(--bai-faint); flex-shrink: 0; }
+    .bai-chat-row.on { background: var(--bai-accent-wash); }
+    .bai-chat-row.working .bai-chat-dot { background: var(--bai-muted-2); box-shadow: none; animation: bai-dot-pulse 1.2s ease-in-out infinite; }
+    .bai-chat-row.unseen .bai-chat-dot { background: var(--bai-accent); box-shadow: none; }
     .bai-chat-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .bai-chat-time { margin-left: auto; flex-shrink: 0; font-size: 10px; color: #5b6480; }
+    .bai-chat-time { margin-left: auto; flex-shrink: 0; font-size: 10px; color: var(--bai-faint); }
     /* ---- Wide (detached ≥600px): left sidebar holds new chat · modes · recent · settings + more ---- */
-    .bai-sidebar { position: absolute; left: 0; top: 0; bottom: 0; width: 210px; display: none; flex-direction: column; padding: 12px 8px; background: #10151f; border-right: 1px solid #232642; z-index: 6; font-family: 'JetBrains Mono', ui-monospace, monospace; }
+    .bai-sidebar { position: absolute; left: 0; top: 0; bottom: 0; width: 210px; display: none; flex-direction: column; padding: 12px 8px; background: var(--bai-panel); border-right: 1px solid var(--bai-line); z-index: 6; font-family: 'JetBrains Mono', ui-monospace, monospace; }
     .bai-ui.wide .bai-sidebar { display: flex; top: 46px; }                                  /* sits BELOW the full-width header */
     .bai-ui.wide .bai-panes, .bai-ui.wide .bai-main-title { margin-left: 210px; }             /* main content clears the sidebar; header stays full-width */
     .bai-ui.wide .bai-strip, .bai-ui.wide #baiSettingsBtn, .bai-ui.wide #baiNewBtn, .bai-ui.wide .bai-title-ar { display: none; }   /* wide: sidebar owns modes/new-chat/recents; header keeps logo + "BlueAI" brand */
     .bai-main-title { flex-shrink: 0; display: flex; align-items: center; padding: 12px 14px 6px; }   /* title (left) + new-chat icon (right), below the brand header */
+    /* non-chat modes: the title is just a plain pane label — recents arrow + new-chat are chat-surface tools */
+    .bai-ui.nonchat .bai-title-ar, .bai-ui.nonchat .bai-newchat-btn { display: none; }
+    .bai-ui.nonchat .bai-title-btn { pointer-events: none; cursor: default; }
     .bai-main-title .bai-stat-wrap { flex: 1; min-width: 0; }
     .bai-newchat-btn { margin-left: auto; flex-shrink: 0; }   /* new chat lives at the chat-window's top-right */
     .bai-body { -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 16px); mask-image: linear-gradient(to bottom, transparent 0, #000 16px); }   /* content fades before reaching the title */
     .bai-side-brand { display: none; }   /* header carries the logo now; sidebar starts at New chat */
     .bai-side-logo { width: 20px; height: 20px; flex-shrink: 0; }
     .bai-side-nav { display: flex; flex-direction: column; gap: 1px; }
-    .bai-side-newicon { margin-left: auto; flex-shrink: 0; display: flex; align-items: center; justify-content: center; padding: 0; border: none; background: none; color: #6b7488; cursor: pointer; transition: color 0.15s; }   /* sits inside the Chat item, right edge */
-    .bai-side-newicon:hover { color: #cdd6f4; }
+    .bai-side-newicon { margin-left: auto; flex-shrink: 0; display: flex; align-items: center; justify-content: center; padding: 0; border: none; background: none; color: var(--bai-dim-2); cursor: pointer; transition: color 0.15s; }   /* sits inside the Chat item, right edge */
+    .bai-side-newicon:hover { color: var(--bai-text-hi); }
     .bai-side-newicon svg { width: 15px; height: 15px; display: block; }
-    .bai-side-item { position: relative; display: flex; align-items: center; gap: 9px; width: 100%; padding: 7px 10px; border: none; background: none; border-radius: 6px; color: #8a96b5; font-family: inherit; font-size: 12px; text-align: left; cursor: pointer; transition: background 0.15s, color 0.15s; }
-    .bai-side-item:hover { background: #1b2233; color: #cdd6f4; }
-    .bai-side-item.active { color: #eaf0ff; background: rgba(110,168,255,0.10); }
-    .bai-side-item.active::before { content: ''; position: absolute; left: 0; top: 6px; bottom: 6px; width: 2px; background: #6ea8ff; }
+    .bai-side-item { position: relative; display: flex; align-items: center; gap: 9px; width: 100%; padding: 7px 10px; border: none; background: none; border-radius: 6px; color: var(--bai-muted-2); font-family: inherit; font-size: 12px; text-align: left; cursor: pointer; transition: background 0.15s, color 0.15s; }
+    .bai-side-item:hover { background: var(--bai-hover); color: var(--bai-text-hi); }
+    .bai-side-item.active { color: var(--bai-text-bright); background: var(--bai-accent-wash); }
+    .bai-side-item.active::before { content: ''; position: absolute; left: 0; top: 6px; bottom: 6px; width: 2px; background: var(--bai-accent); }
     .bai-side-item .ic { display: flex; width: 15px; flex-shrink: 0; }
     .bai-side-item .ic svg { width: 15px; height: 15px; }
-    .bai-side-badge { margin-left: auto; background: #6ea8ff; color: #0b1220; font-size: 10px; line-height: 1; padding: 2px 5px; border-radius: 8px; }
-    .bai-side-label { font-size: 9.5px; color: #5b6480; letter-spacing: 0.4px; padding: 12px 10px 5px; }
+    .bai-side-badge { margin-left: auto; background: var(--bai-accent); color: var(--bai-on-accent); font-size: 10px; line-height: 1; padding: 2px 5px; border-radius: 8px; }
+    .bai-side-label { font-size: 9.5px; color: var(--bai-faint); letter-spacing: 0.4px; padding: 12px 10px 5px; }
     .bai-side-recents { display: flex; flex-direction: column; gap: 1px; overflow-y: auto; scrollbar-width: thin; }
-    .bai-side-rec { display: flex; align-items: center; gap: 7px; padding: 6px 10px; border-radius: 6px; font-size: 11.5px; color: #c7d1e6; cursor: pointer; }
-    .bai-side-rec:hover { background: #1b2233; }
-    .bai-side-rec .dot { width: 6px; height: 6px; border-radius: 50%; background: transparent; box-shadow: inset 0 0 0 1.2px #5b6480; flex-shrink: 0; }   /* seen / no change = hollow gray */
-    .bai-side-rec.on { background: rgba(110,168,255,0.10); }                                              /* current chat = row highlight */
-    .bai-side-rec.working .dot { background: #8a96b5; box-shadow: none; animation: bai-dot-pulse 1.2s ease-in-out infinite; }   /* working = gray, blinking */
-    .bai-side-rec.unseen .dot { background: #6ea8ff; box-shadow: none; }                                  /* task done, not seen yet = colored */
+    .bai-side-rec { display: flex; align-items: center; gap: 7px; padding: 6px 10px; border-radius: 6px; font-size: 11.5px; color: var(--bai-text); cursor: pointer; }
+    .bai-side-rec:hover { background: var(--bai-hover); }
+    .bai-side-rec .dot { width: 6px; height: 6px; border-radius: 50%; background: transparent; box-shadow: inset 0 0 0 1.2px var(--bai-faint); flex-shrink: 0; }   /* seen / no change = hollow gray */
+    .bai-side-rec.on { background: var(--bai-accent-wash); }                                              /* current chat = row highlight */
+    .bai-side-rec.working .dot { background: var(--bai-muted-2); box-shadow: none; animation: bai-dot-pulse 1.2s ease-in-out infinite; }   /* working = gray, blinking */
+    .bai-side-rec.unseen .dot { background: var(--bai-accent); box-shadow: none; }                                  /* task done, not seen yet = colored */
     @keyframes bai-dot-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
     .bai-side-rec .nm { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .bai-side-rec .tm { flex-shrink: 0; font-size: 10px; color: #5b6480; }
-    .bai-side-foot { margin-top: auto; border-top: 1px solid #232642; padding-top: 6px; display: flex; align-items: center; gap: 4px; }
+    .bai-side-rec .tm { flex-shrink: 0; font-size: 10px; color: var(--bai-faint); }
+    .bai-side-foot { margin-top: auto; border-top: 1px solid var(--bai-line); padding-top: 6px; display: flex; align-items: center; gap: 4px; }
     .bai-side-foot .bai-side-item { flex: 1; }
     .bai-body { flex: 1; overflow-y: auto; padding: 12px 12px 18px; display: flex; flex-direction: column; gap: 8px; scrollbar-width: none; }
     .bai-body::-webkit-scrollbar { width: 0; height: 0; display: none; }   /* native hidden; custom fade-thumb instead */
-    .bai-scroll { position: absolute; right: 3px; width: 4px; border-radius: 2px; background: rgba(160,180,220,0.5); opacity: 0; transition: opacity 0.4s ease; pointer-events: none; }
+    .bai-scroll { position: absolute; right: 3px; width: 4px; border-radius: 2px; background: var(--bai-scroll); opacity: 0; transition: opacity 0.4s ease; pointer-events: none; }
     .bai-scroll.show { opacity: 1; }
     /* Opening launcher — wordmark + two worker options, centered just below the assembled logo. */
     .bai-launch { position: absolute; left: 0; right: 0; top: 53%; display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 0 24px; opacity: 0; transition: opacity 0.5s ease; pointer-events: none; }
     .bai-launch.on { opacity: 1; pointer-events: auto; }
     /* close/hide affordance on the picker screen (the chat header isn't there yet) — same hover pill as the header icons */
-    .bai-launch-close { position: absolute; top: 10px; right: 10px; z-index: 6; display: none; align-items: center; justify-content: center; width: 26px; height: 26px; border: none; border-radius: 6px; background: none; color: #566076; cursor: pointer; padding: 0; transition: background 0.15s, color 0.15s; }
+    .bai-launch-close { position: absolute; top: 10px; right: 10px; z-index: 6; display: none; align-items: center; justify-content: center; width: 26px; height: 26px; border: none; border-radius: 6px; background: none; color: var(--bai-icon); cursor: pointer; padding: 0; transition: background 0.15s, color 0.15s; }
     .bai-launch-close.on { display: flex; }
-    .bai-launch-close:hover { background: #232b3d; color: #cdd6f4; }
+    .bai-launch-close:hover { background: var(--bai-pill); color: var(--bai-text-hi); }
     .bai-launch-close svg { display: block; }
-    .bai-wordmark { font-family: 'JetBrains Mono', ui-monospace, monospace; font-weight: 700; font-size: 20px; letter-spacing: -0.5px; color: #eaf0ff; }
+    .bai-wordmark { font-family: 'JetBrains Mono', ui-monospace, monospace; font-weight: 700; font-size: 20px; letter-spacing: -0.5px; color: var(--bai-text-bright); }
     .bai-opts { display: flex; flex-direction: column; gap: 9px; width: 100%; max-width: 240px; }
-    .bai-skip { margin-top: -4px; background: none; border: none; color: #5b6480; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; cursor: pointer; padding: 5px 10px; border-radius: 6px; transition: color 0.15s, background 0.15s; }
-    .bai-skip:hover { color: #aab6d4; background: #1b2233; }
-    .bai-opt { display: flex; align-items: center; gap: 9px; padding: 11px 14px; background: #161c2b; border: 1px solid #2a3550; border-radius: 10px; color: #c7d1e6; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12px; text-align: left; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
-    .bai-opt:hover { border-color: #3d6bd6; background: #1b2840; }
-    .bai-opt .k { color: #6ea8ff; }
+    .bai-skip { margin-top: -4px; background: none; border: none; color: var(--bai-faint); font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; cursor: pointer; padding: 5px 10px; border-radius: 6px; transition: color 0.15s, background 0.15s; }
+    .bai-skip:hover { color: var(--bai-hover-ink); background: var(--bai-hover); }
+    .bai-opt { display: flex; align-items: center; gap: 9px; padding: 11px 14px; background: var(--bai-card); border: 1px solid var(--bai-line-2); border-radius: 10px; color: var(--bai-text); font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12px; text-align: left; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+    .bai-opt:hover { border-color: var(--bai-accent-strong); background: var(--bai-hover-acc); }
+    .bai-opt .k { color: var(--bai-accent); }
     /* Terminal boot-log — streams below the (twinkling) logo after a worker is picked. */
-    .bai-boot { position: absolute; left: 0; right: 0; top: 52%; width: max-content; max-width: calc(100% - 44px); margin: 0 auto; padding: 0; display: none; flex-direction: column; gap: 3px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10.5px; line-height: 1.5; color: #8190ad; opacity: 1; transition: opacity 0.3s ease; }   /* centered block under the logo; text stays left-aligned inside */
+    .bai-boot { position: absolute; left: 0; right: 0; top: 52%; width: max-content; max-width: calc(100% - 44px); margin: 0 auto; padding: 0; display: none; flex-direction: column; gap: 3px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10.5px; line-height: 1.5; color: var(--bai-muted); opacity: 1; transition: opacity 0.3s ease; }   /* centered block under the logo; text stays left-aligned inside */
     .bai-boot.on { display: flex; }
     .bai-boot .ln { opacity: 0; transition: opacity 0.25s ease; }
     .bai-boot .ln.s { opacity: 1; }
-    .bai-boot .ok { color: #5fcf8f; }
+    .bai-boot .ok { color: var(--bai-ok); }
     .bai-msg { font-size: 13px; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; }
-    .bai-msg.user { align-self: flex-end; max-width: 82%; padding: 7px 11px; border-radius: 13px; border-bottom-right-radius: 4px; background: #262d3d; color: #e8edf7; }
-    .bai-msg.ai { align-self: stretch; color: #c7d1e6; padding: 1px 2px 4px; }   /* plain text, no bubble */
-    .bai-msg.intro { font-size: 11.5px; line-height: 1.5; color: #8190ad; }   /* small, muted opening line */
+    .bai-msg.user { align-self: flex-end; max-width: 82%; padding: 7px 11px; border-radius: 13px; border-bottom-right-radius: 4px; background: var(--bai-user); color: var(--bai-text-strong); }
+    .bai-msg.ai { align-self: stretch; color: var(--bai-text); padding: 1px 2px 4px; }   /* plain text, no bubble */
+    .bai-msg.intro { font-size: 11.5px; line-height: 1.5; color: var(--bai-muted); }   /* small, muted opening line */
     /* in-chat clickable option group (BlueAI asks, you pick — terminal style) */
     .bai-optg { align-self: stretch; display: flex; flex-direction: column; gap: 5px; margin: 1px 0 2px; }
     .bai-optg.done { opacity: 0.45; pointer-events: none; }
-    .bai-opt-row { display: flex; align-items: flex-start; gap: 9px; padding: 8px 10px; background: #161c2b; border: 1px solid #2a3550; border-radius: 8px; cursor: pointer; text-align: left; font-family: 'JetBrains Mono', ui-monospace, monospace; transition: border-color 0.15s, background 0.15s; }
-    .bai-opt-row:hover { border-color: #3d6bd6; background: #1b2840; }
-    .bai-opt-num { color: #6ea8ff; font-size: 11px; line-height: 1.5; flex-shrink: 0; width: 11px; }
+    .bai-opt-row { display: flex; align-items: flex-start; gap: 9px; padding: 8px 10px; background: var(--bai-card); border: 1px solid var(--bai-line-2); border-radius: 8px; cursor: pointer; text-align: left; font-family: 'JetBrains Mono', ui-monospace, monospace; transition: border-color 0.15s, background 0.15s; }
+    .bai-opt-row:hover { border-color: var(--bai-accent-strong); background: var(--bai-hover-acc); }
+    .bai-opt-num { color: var(--bai-accent); font-size: 11px; line-height: 1.5; flex-shrink: 0; width: 11px; }
     .bai-opt-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-    .bai-opt-label { color: #e8edf7; font-size: 12px; line-height: 1.4; }
-    .bai-opt-desc { color: #7e8aa8; font-size: 10.5px; line-height: 1.4; }
-    .bai-opt-hint { color: #5b6480; font-size: 10px; padding: 1px 2px; letter-spacing: 0.3px; }
+    .bai-opt-label { color: var(--bai-text-strong); font-size: 12px; line-height: 1.4; }
+    .bai-opt-desc { color: var(--bai-dim); font-size: 10.5px; line-height: 1.4; }
+    .bai-opt-hint { color: var(--bai-faint); font-size: 10px; padding: 1px 2px; letter-spacing: 0.3px; }
     /* result lists (job postings / content plan) + parsed-resume card */
     .bai-reslist { align-self: stretch; display: flex; flex-direction: column; gap: 6px; margin: 1px 0 2px; }
-    .bai-rescard { display: flex; flex-direction: column; gap: 4px; padding: 9px 11px; background: #131a28; border: 1px solid #232642; border-radius: 8px; font-family: 'JetBrains Mono', ui-monospace, monospace; }
+    .bai-rescard { display: flex; flex-direction: column; gap: 4px; padding: 9px 11px; background: var(--bai-card-2); border: 1px solid var(--bai-line); border-radius: 8px; font-family: 'JetBrains Mono', ui-monospace, monospace; }
     .bai-rescard .top { display: flex; align-items: center; gap: 8px; }
-    .bai-rescard .rtitle { color: #e8edf7; font-size: 12px; min-width: 0; }
-    .bai-rescard .src { margin-left: auto; flex-shrink: 0; font-size: 9px; letter-spacing: 0.3px; color: #6ea8ff; border: 1px solid #2a4a86; border-radius: 5px; padding: 1px 5px; }
-    .bai-rescard .meta { color: #7e8aa8; font-size: 10.5px; }
-    .bai-rescard .match { color: #5fcf8f; font-size: 10.5px; }
-    .bai-parsecard { align-self: stretch; background: #131a28; border: 1px solid #232642; border-radius: 8px; padding: 9px 11px; display: flex; flex-direction: column; gap: 5px; font-family: 'JetBrains Mono', ui-monospace, monospace; margin: 1px 0 2px; }
-    .bai-parsecard .pc-head { color: #5fcf8f; font-size: 10px; letter-spacing: 0.3px; margin-bottom: 1px; }
+    .bai-rescard .rtitle { color: var(--bai-text-strong); font-size: 12px; min-width: 0; }
+    .bai-rescard .src { margin-left: auto; flex-shrink: 0; font-size: 9px; letter-spacing: 0.3px; color: var(--bai-accent); border: 1px solid var(--bai-accent-line); border-radius: 5px; padding: 1px 5px; }
+    .bai-rescard .meta { color: var(--bai-dim); font-size: 10.5px; }
+    .bai-rescard .match { color: var(--bai-ok); font-size: 10.5px; }
+    .bai-parsecard { align-self: stretch; background: var(--bai-card-2); border: 1px solid var(--bai-line); border-radius: 8px; padding: 9px 11px; display: flex; flex-direction: column; gap: 5px; font-family: 'JetBrains Mono', ui-monospace, monospace; margin: 1px 0 2px; }
+    .bai-parsecard .pc-head { color: var(--bai-ok); font-size: 10px; letter-spacing: 0.3px; margin-bottom: 1px; }
     .bai-parsecard .pc-row { display: flex; gap: 8px; font-size: 11px; line-height: 1.35; }
-    .bai-parsecard .pc-k { color: #7e8aa8; width: 74px; flex-shrink: 0; }
-    .bai-parsecard .pc-v { color: #dbe3f4; min-width: 0; }
-    .bai-inputbar { display: flex; flex-direction: column; align-items: stretch; margin: 0 12px 7px; padding: 11px 12px; background: #0e1320; border: 1px solid #232642; border-radius: 10px; flex-shrink: 0; transition: border-color 0.18s ease; }
-    .bai-inputbar:focus-within { border-color: #2f3a5a; }   /* very slight lift on focus */
+    .bai-parsecard .pc-k { color: var(--bai-dim); width: 74px; flex-shrink: 0; }
+    .bai-parsecard .pc-v { color: var(--bai-text-soft); min-width: 0; }
+    .bai-inputbar { display: flex; flex-direction: column; align-items: stretch; margin: 0 12px 7px; padding: 11px 12px; background: var(--bai-input-bg); border: 1px solid var(--bai-line); border-radius: 10px; flex-shrink: 0; transition: border-color 0.18s ease; }
+    .bai-inputbar:focus-within { border-color: var(--bai-line-focus); }   /* very slight lift on focus */
     .bai-inputrow { display: flex; align-items: center; gap: 8px; }
-    .bai-prompt { color: #6ea8ff; font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 14px; line-height: 1; }
-    .bai-q { flex: 1; min-width: 0; background: transparent; border: none; outline: none; padding: 0; color: #cdd6f4; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12.5px; caret-color: #6ea8ff; }
-    .bai-q::placeholder { color: #5b6480; }
+    .bai-prompt { color: var(--bai-accent); font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 14px; line-height: 1; }
+    .bai-q { flex: 1; min-width: 0; background: transparent; border: none; outline: none; padding: 0; color: var(--bai-text-hi); font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12.5px; caret-color: var(--bai-accent); }
+    .bai-q::placeholder { color: var(--bai-faint); }
     /* Claude-style "thinking" indicator above the chatbar — small animated logo + elapsed timer. */
     .bai-body::before { content: ''; margin-top: auto; }   /* bottom-align the chat chain (terminal scrollback) */
     .bai-thinking { align-self: stretch; display: flex; align-items: center; gap: 8px; padding: 1px 2px; }
-    .bai-thinking.stopped .bai-think-txt { color: #6b7488; }
-    .bai-send { display: flex; visibility: hidden; width: 22px; height: 22px; flex-shrink: 0; border: none; border-radius: 6px; background: none; color: #8aa0c8; cursor: pointer; align-items: center; justify-content: center; padding: 0; transition: background 0.15s, color 0.15s; }
+    .bai-thinking.stopped .bai-think-txt { color: var(--bai-dim-2); }
+    .bai-send { display: flex; visibility: hidden; width: 22px; height: 22px; flex-shrink: 0; border: none; border-radius: 6px; background: none; color: var(--bai-icon-2); cursor: pointer; align-items: center; justify-content: center; padding: 0; transition: background 0.15s, color 0.15s; }
     .bai-send.stop { visibility: visible; }                 /* slot always reserved so the bar height never jumps; icon only shows while thinking */
-    .bai-send:hover { background: #232b3d; color: #cdd6f4; }   /* same hover pill as the status items */
+    .bai-send:hover { background: var(--bai-pill); color: var(--bai-text-hi); }   /* same hover pill as the status items */
     .bai-send::before { content: ''; width: 9px; height: 9px; border: 1.5px solid currentColor; border-radius: 2px; }   /* slightly smaller outline stop, no pulse */
     /* Phase 2: status line (attach · model · effort · credits) + attachment chips */
     .bai-chips { display: none; flex-wrap: wrap; gap: 6px; margin: 0 0 8px; }   /* inside the chatbar, above the input row */
     .bai-chips.has { display: flex; }
-    .bai-chip { display: flex; align-items: center; gap: 6px; padding: 4px 8px; background: #1a2031; border: 1px solid #2a3550; border-radius: 7px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; color: #c7d1e6; }
-    .bai-chip .x { cursor: pointer; color: #7e8aa8; opacity: 0; transition: opacity 0.15s, color 0.15s; }   /* remove control reveals on hover */
+    .bai-chip { display: flex; align-items: center; gap: 6px; padding: 4px 8px; background: var(--bai-chip-bg); border: 1px solid var(--bai-line-2); border-radius: 7px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; color: var(--bai-text); }
+    .bai-chip .x { cursor: pointer; color: var(--bai-dim); opacity: 0; transition: opacity 0.15s, color 0.15s; }   /* remove control reveals on hover */
     .bai-chip:hover .x { opacity: 1; }
-    .bai-chip .x:hover { color: #ff8c8c; }
-    .bai-status { display: flex; align-items: center; gap: 8px; margin: 0 12px 11px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10.5px; color: #7e8aa8; }
-    .bai-attach { flex-shrink: 0; border: none; border-radius: 6px; background: none; color: #8aa0c8; cursor: pointer; font-size: 13px; line-height: 1; padding: 3px 7px; display: flex; align-items: center; justify-content: center; transition: background 0.15s, color 0.15s; }
-    .bai-attach:hover { background: #232b3d; color: #cdd6f4; }   /* same hover pill as model/effort — consistent */
+    .bai-chip .x:hover { color: var(--bai-danger); }
+    .bai-status { display: flex; align-items: center; gap: 8px; margin: 0 12px 11px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10.5px; color: var(--bai-dim); }
+    .bai-attach { flex-shrink: 0; border: none; border-radius: 6px; background: none; color: var(--bai-icon-2); cursor: pointer; font-size: 13px; line-height: 1; padding: 3px 7px; display: flex; align-items: center; justify-content: center; transition: background 0.15s, color 0.15s; }
+    .bai-attach:hover { background: var(--bai-pill); color: var(--bai-text-hi); }   /* same hover pill as model/effort — consistent */
     .bai-attach .bai-plus { display: block; line-height: 1; transform: scale(1.3); }   /* bigger glyph, same container (transform doesn't reflow) */
     .bai-stat-r { margin-left: auto; display: flex; align-items: center; gap: 4px; }
     .bai-stat-wrap { position: relative; }
-    .bai-stat-btn { background: none; border: none; border-radius: 6px; color: #aab6d4; font-family: inherit; font-size: 10.5px; cursor: pointer; padding: 3px 7px; white-space: nowrap; transition: background 0.15s, color 0.15s; }
-    .bai-stat-btn:hover { background: #232b3d; color: #eaf0ff; }   /* hover pill is the affordance — no persistent arrow */
-    .bai-credits { color: #8aa0c8; white-space: nowrap; border-radius: 6px; padding: 3px 7px; cursor: default; transition: background 0.15s; }
-    .bai-credits:hover { background: #232b3d; }   /* same hover pill; health color stays (set inline) */
-    .bai-menu { position: absolute; bottom: calc(100% + 6px); right: 0; min-width: 124px; background: #10151f; border: 1px solid #2a3550; border-radius: 8px; padding: 4px; display: none; flex-direction: column; gap: 1px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); z-index: 30; }
+    .bai-stat-btn { background: none; border: none; border-radius: 6px; color: var(--bai-hover-ink); font-family: inherit; font-size: 10.5px; cursor: pointer; padding: 3px 7px; white-space: nowrap; transition: background 0.15s, color 0.15s; }
+    .bai-stat-btn:hover { background: var(--bai-pill); color: var(--bai-text-bright); }   /* hover pill is the affordance — no persistent arrow */
+    .bai-credits { color: var(--bai-icon-2); white-space: nowrap; border-radius: 6px; padding: 3px 7px; cursor: default; transition: background 0.15s; }
+    .bai-credits:hover { background: var(--bai-pill); }   /* same hover pill; health color stays (set inline) */
+    .bai-menu { position: absolute; bottom: calc(100% + 6px); right: 0; min-width: 124px; background: var(--bai-panel); border: 1px solid var(--bai-line-2); border-radius: 8px; padding: 4px; display: none; flex-direction: column; gap: 1px; box-shadow: var(--bai-menu-shadow); z-index: 30; }
     .bai-menu.open { display: flex; }
-    .bai-menu-item { display: flex; align-items: center; gap: 6px; padding: 6px 8px; border-radius: 5px; font-size: 11px; color: #c7d1e6; cursor: pointer; white-space: nowrap; }
-    .bai-menu-item:hover { background: #1b2840; }
-    .bai-menu-item .mk { width: 8px; color: #6ea8ff; }
+    .bai-menu-item { display: flex; align-items: center; gap: 6px; padding: 6px 8px; border-radius: 5px; font-size: 11px; color: var(--bai-text); cursor: pointer; white-space: nowrap; }
+    .bai-menu-item:hover { background: var(--bai-hover-acc); }
+    .bai-menu-item .mk { width: 8px; color: var(--bai-accent); }
     /* popover title + ? help (description shows on hover/tap) */
-    .bai-menu-head { display: flex; align-items: center; gap: 8px; padding: 3px 6px 6px; border-bottom: 1px solid #232642; margin-bottom: 4px; }
-    .bai-menu-title { font-size: 11px; color: #aab6d4; letter-spacing: 0.2px; }
-    .bai-menu-help { margin-left: auto; flex-shrink: 0; border: none; border-radius: 6px; background: none; color: #6b7488; font-size: 12px; line-height: 1; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 2px 6px; transition: background 0.15s, color 0.15s; }
-    .bai-menu-help:hover { background: #232b3d; color: #cdd6f4; }   /* same hover pill as attach — no round stroke */
-    .bai-menu-desc { position: absolute; bottom: calc(100% + 6px); left: 0; right: 0; background: #10151f; border: 1px solid #2a3550; border-radius: 8px; padding: 8px 10px; font-size: 10.5px; line-height: 1.45; color: #8190ad; box-shadow: 0 8px 24px rgba(0,0,0,0.5); display: none; z-index: 5; }   /* floating card above the menu — does NOT reflow the options */
+    .bai-menu-head { display: flex; align-items: center; gap: 8px; padding: 3px 6px 6px; border-bottom: 1px solid var(--bai-line); margin-bottom: 4px; }
+    .bai-menu-title { font-size: 11px; color: var(--bai-hover-ink); letter-spacing: 0.2px; }
+    .bai-menu-help { margin-left: auto; flex-shrink: 0; border: none; border-radius: 6px; background: none; color: var(--bai-dim-2); font-size: 12px; line-height: 1; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 2px 6px; transition: background 0.15s, color 0.15s; }
+    .bai-menu-help:hover { background: var(--bai-pill); color: var(--bai-text-hi); }   /* same hover pill as attach — no round stroke */
+    .bai-menu-desc { position: absolute; bottom: calc(100% + 6px); left: 0; right: 0; background: var(--bai-panel); border: 1px solid var(--bai-line-2); border-radius: 8px; padding: 8px 10px; font-size: 10.5px; line-height: 1.45; color: var(--bai-muted); box-shadow: var(--bai-menu-shadow); display: none; z-index: 5; }   /* floating card above the menu — does NOT reflow the options */
     .bai-menu-desc.show { display: block; }
     .bai-menu-items { display: flex; flex-direction: column; gap: 1px; }
     .bai-think-cv { width: 20px; height: 20px; animation: bai-think-pulse 1.15s ease-in-out infinite; }
-    .bai-think-txt { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12px; color: #7e8aa8; }
-    .bai-think-txt em { font-style: normal; color: #6ea8ff; }
+    .bai-think-txt { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12px; color: var(--bai-dim); }
+    .bai-think-txt em { font-style: normal; color: var(--bai-accent); }
     @keyframes bai-think-pulse { 0%, 100% { opacity: .5; transform: scale(.9); } 50% { opacity: 1; transform: scale(1.08); } }
-    .bai-cursor { width: 7px; height: 15px; background: #6ea8ff; display: inline-block; margin-left: -3px; animation: bai-blink 1.05s steps(1) infinite; }
+    .bai-cursor { width: 7px; height: 15px; background: var(--bai-accent); display: inline-block; margin-left: -3px; animation: bai-blink 1.05s steps(1) infinite; }
     @keyframes bai-blink { 50% { opacity: 0; } }
   </style>
 </head>
@@ -356,7 +394,17 @@
                 <div class="bai-pane" id="paneJobs"><div class="bai-stub"><div class="ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg></div><h4>Jobs</h4><p>Running &amp; completed agent runs land here — status, logs, and what was applied to.</p><span class="soon">·· soon</span></div></div>
                 <div class="bai-pane" id="paneSkills"><div class="bai-stub"><div class="ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg></div><h4>Skills</h4><p>The worker's capabilities &amp; tools — browse, toggle, and configure what it can do.</p><span class="soon">·· soon</span></div></div>
                 <div class="bai-pane" id="paneScheduled"><div class="bai-stub"><div class="ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><h4>Scheduled</h4><p>Recurring tasks the worker runs for you — cadence, next run, and history.</p><span class="soon">·· soon</span></div></div>
-                <div class="bai-pane" id="paneSettings"><div class="bai-stub"><div class="ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div><h4>Settings</h4><p>Model defaults, effort, account, credits &amp; theme for this worker.</p><span class="soon">·· soon</span></div></div>
+                <div class="bai-pane" id="paneSettings"><div class="bai-set">
+                  <div class="bai-set-label">APPEARANCE</div>
+                  <div class="bai-set-row">
+                    <div class="bai-set-info"><span class="bai-set-name">Theme</span><span class="bai-set-sub">how the panel looks</span></div>
+                    <div class="bai-seg" id="baiThemeSeg">
+                      <button class="bai-seg-btn active" data-theme="dark" type="button">dark</button>
+                      <button class="bai-seg-btn" data-theme="light" type="button">light</button>
+                    </div>
+                  </div>
+                  <div class="bai-set-soon">·· more settings soon</div>
+                </div></div>
               </div>
             </div>
           </div>
@@ -483,7 +531,7 @@
       function renderModel() { modelBtn.textContent = curModel; }
       function renderEffort() { effortBtn.textContent = curEffort; }
       // credit health ramp (as balance depletes): blue good → yellow low → orange very low → red almost over
-      function creditColor(c) { return c > 12000 ? '#6ea8ff' : c > 5000 ? '#f4d35e' : c > 1500 ? '#f59e42' : '#ff6b6b'; }
+      function creditColor(c) { return c > 12000 ? 'var(--bai-credit-hi)' : c > 5000 ? 'var(--bai-credit-mid)' : c > 1500 ? 'var(--bai-credit-low)' : 'var(--bai-credit-crit)'; }   // theme vars -> the ramp re-colors itself on theme switch
       function renderCredits() { creditsEl.textContent = '✦ ' + credits.toLocaleString('en-US'); creditsEl.style.color = creditColor(credits); }
       function closeMenus() { modelMenu.classList.remove('open'); effortMenu.classList.remove('open'); if (attachMenu) attachMenu.classList.remove('open'); if (titleMenu) titleMenu.classList.remove('open'); }
       function fillMenu(menu, items, cur, pick, title, desc) {
@@ -537,6 +585,7 @@
         tabs.forEach(function (t) { t.classList.toggle('active', t.getAttribute('data-mode') === m); });   // settings has no tab -> all tabs go inactive
         [].forEach.call(document.querySelectorAll('.bai-side-item[data-mode]'), function (s) { s.classList.toggle('active', s.getAttribute('data-mode') === m); });   // mirror on the wide sidebar
         var mt = document.getElementById('baiMainTitle'); if (mt) mt.textContent = m === 'chat' ? fullTitle : (m.charAt(0).toUpperCase() + m.slice(1));   // main-column title follows the mode
+        baiUi.classList.toggle('nonchat', m !== 'chat');   // non-chat panes: plain label — no recents arrow, no new-chat
       }
       tabs.forEach(function (t) { t.addEventListener('click', function () { setMode(t.getAttribute('data-mode')); }); });
       settingsBtn.addEventListener('click', function (e) { e.stopPropagation(); closeMenus(); setMode('settings'); });
@@ -703,7 +752,7 @@
         row.addEventListener('click', function (e) { e.stopPropagation(); loadThread(r); closeMenus(); });
         recentsEl.appendChild(row);
       });
-      titleBtn.addEventListener('click', function (e) { e.stopPropagation(); if (baiUi.classList.contains('wide')) return; var was = titleMenu.classList.contains('open'); closeMenus(); if (!was) titleMenu.classList.add('open'); });
+      titleBtn.addEventListener('click', function (e) { e.stopPropagation(); if (baiUi.classList.contains('wide') || baiUi.classList.contains('nonchat')) return; var was = titleMenu.classList.contains('open'); closeMenus(); if (!was) titleMenu.classList.add('open'); });
       newBtn.addEventListener('click', function (e) { e.stopPropagation(); newChat(); closeMenus(); });
 
       // ---- Wide-mode left sidebar (mirrors the strip + switcher; toggled by width) ----
@@ -722,6 +771,21 @@
       if (baiCtrl.drawMini) baiCtrl.drawMini(document.getElementById('baiSideLogo'));
       if (window.ResizeObserver) new ResizeObserver(function () { if (drawer.classList.contains('win-hidden')) return; baiUi.classList.toggle('wide', drawer.offsetWidth >= 600); if (detached) saveWinSoon(); }).observe(drawer);
 
+      // ---- Theme: dark (default) / light — switched from Settings, persisted like the window state ----
+      var THEME_STORE = 'baiTheme';
+      function applyTheme(mode, save) {
+        var light = mode === 'light';
+        drawer.classList.toggle('light', light);
+        if (baiCtrl.setTheme) baiCtrl.setTheme(light ? 'light' : 'dark');   // canvas bg/flash/ring follow the CSS palette
+        [].forEach.call(document.querySelectorAll('#baiThemeSeg .bai-seg-btn'), function (b) { b.classList.toggle('active', (b.getAttribute('data-theme') === 'light') === light); });
+        if (save) { try { localStorage.setItem(THEME_STORE, light ? 'light' : 'dark'); } catch (e) {} }
+      }
+      [].forEach.call(document.querySelectorAll('#baiThemeSeg .bai-seg-btn'), function (b) {
+        b.addEventListener('click', function (e) { e.stopPropagation(); applyTheme(b.getAttribute('data-theme'), true); });
+      });
+      var savedTheme = 'dark'; try { savedTheme = localStorage.getItem(THEME_STORE) || 'dark'; } catch (e) {}
+      applyTheme(savedTheme, false);   // applied at load, before any open/boot — so a refresh comes back in your theme
+
       // ---- Opening launcher: assembled logo -> wordmark + workers -> pick -> boot-log -> chat ----
       var baiLaunch = document.getElementById('baiLaunch'), baiBoot = document.getElementById('baiBoot');
       function showLauncher() { baiLaunch.classList.add('on'); if (launchClose) launchClose.classList.add('on'); }
@@ -731,7 +795,7 @@
         var els = lines.map(function (txt, i) {
           var d = document.createElement('div'); d.className = 'ln';
           var last = i === lines.length - 1;
-          d.innerHTML = (last ? '<span class="ok">✓ </span>' : '<span style="color:#5b6480">▸ </span>') + txt;
+          d.innerHTML = (last ? '<span class="ok">✓ </span>' : '<span style="color:var(--bai-faint)">▸ </span>') + txt;
           baiBoot.appendChild(d); return d;
         });
         var i = 0, per = 480;   // fixed per-line cadence -> fewer lines means a shorter, snappier boot
