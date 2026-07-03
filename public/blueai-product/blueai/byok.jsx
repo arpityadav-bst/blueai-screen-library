@@ -61,7 +61,7 @@
           <input value={key} onChange={(e) => setKey(e.target.value)} type="text" spellCheck={false} autoComplete="off" placeholder="Paste your API key" style={{ ...controlBase, fontFamily: 'ui-monospace, Menlo, monospace' }} />
         </div>
         <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 4 }}>
-          <button {...hov} onClick={() => onUse && onUse({ provider, model, key: key.trim() || 'sk-ant-9Xsjhdw1u294' })} style={{ ...pillBtn, borderRadius: 10, padding: '10px 20px', fontSize: 14 }}>Use Manual</button>
+          <button {...hov} onClick={() => onUse && onUse({ provider, model, key: key.trim() || 'sk-ant-9Xsjhdw1u294' })} style={{ ...pillBtn, borderRadius: 10, padding: '10px 20px', fontSize: 14 }}>Use my key</button>
         </div>
       </div>
     );
