@@ -109,6 +109,8 @@
 <script type="text/babel" src="blueai/schedule.jsx"></script>
 <script type="text/babel" src="blueai/settings.jsx"></script>
 <script type="text/babel" src="blueai/login.jsx"></script>
+<!-- Bring-your-own-key + out-of-credits popups (exposes window.Byok) -->
+<script type="text/babel" src="blueai/byok.jsx"></script>
 
 <script type="text/babel">
 const { useState, useRef, useEffect } = React;
@@ -202,7 +204,7 @@ function ProductTopBar({ credits, lowDot, onNewChat, onOpenHistory, onOpenCredit
 
 // AI Credits screen — two states: Prime member (balance + spend limit + breakdown) and
 // Non-prime (upsell to Prime). State is driven by App's `creditsPrime`; toggle bottom-right.
-function AICreditsScreen({ credits, isPrime }) {
+function AICreditsScreen({ credits, isPrime, primeGeo, keyAdded, keyInfo, onAddKey, onRemoveKey }) {
   const star = { background: 'linear-gradient(135deg,#0EA4C5,#7B4CFF)', WebkitMaskImage: 'url(assets/Credits.svg)', WebkitMaskSize: 'contain', WebkitMaskRepeat: 'no-repeat', WebkitMaskPosition: 'center', maskImage: 'url(assets/Credits.svg)', maskSize: 'contain', maskRepeat: 'no-repeat', maskPosition: 'center' };
   const gradText = { background: 'linear-gradient(90deg,#0EA4C5,#7B4CFF)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' };
 
@@ -247,7 +249,31 @@ function AICreditsScreen({ credits, isPrime }) {
         </button>
       </div>
 
-      {isPrime ? (
+      {!primeGeo ? (
+        <>
+          {/* NON-PRIME GEO — Prime doesn't exist here; BYOK is the path (still gets 500 free credits on login) */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 9, padding: '18px 0 6px' }}>
+            {keyAdded ? (
+              <span style={{ fontSize: 20, fontWeight: 800, color: '#111827', letterSpacing: '-0.3px' }}>Using your own key</span>
+            ) : (
+              <>
+                <div style={{ ...star, width: 26, height: 26, flexShrink: 0 }} />
+                <span style={{ fontSize: 30, fontWeight: 800, color: '#111827', letterSpacing: '-0.5px', lineHeight: 1 }}>{credits.toLocaleString('en-US')}</span>
+              </>
+            )}
+          </div>
+          <p style={{ fontSize: 13, color: '#94a3b8', textAlign: 'center', padding: '0 24px 14px', lineHeight: 1.5 }}>
+            {keyAdded
+              ? 'BlueAI is running on your own provider — no credits are consumed.'
+              : (credits > 0 ? 'Your free credits are running low. Add your own key to keep going.' : "You're out of credits. Add your own key to keep using BlueAI.")}
+          </p>
+          <div style={{ padding: '2px 18px 6px' }}>
+            {keyAdded
+              ? <window.Byok.KeyAddedPanel info={keyInfo} onEdit={onRemoveKey} onRemove={onRemoveKey} />
+              : <window.Byok.ByokForm onUse={onAddKey} />}
+          </div>
+        </>
+      ) : isPrime ? (
         <>
           {/* Balance */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, padding: '40px 0 34px' }}>
@@ -300,28 +326,8 @@ function AICreditsScreen({ credits, isPrime }) {
             <div style={{ ...star, width: 26, height: 26, flexShrink: 0 }} />
             <span style={{ fontSize: 30, fontWeight: 800, color: '#111827', letterSpacing: '-0.5px', lineHeight: 1 }}>{credits.toLocaleString('en-US')}</span>
           </div>
-          {/* Prime upsell */}
-          <div style={{ borderTop: '1px solid #eef2f6', borderBottom: '1px solid #eef2f6', padding: '13px 18px', textAlign: 'center' }}>
-            <p style={{ fontSize: 13, color: '#94a3b8' }}>BlueAI runs on credits</p>
-            <p style={{ fontSize: 16, fontWeight: 700, color: '#111827', marginTop: 4 }}>Get AI Credits with Prime</p>
-          </div>
-          <div style={{ textAlign: 'center', padding: '14px 18px 4px' }}>
-            <p style={{ ...gradText, fontSize: 56, fontWeight: 800, letterSpacing: '-2px', lineHeight: 1 }}>5000</p>
-            <p style={{ ...gradText, fontSize: 22, fontWeight: 800, marginTop: 2 }}>AI Credits</p>
-            <p style={{ fontSize: 13, color: '#94a3b8', marginTop: 6 }}>every month</p>
-            <button style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 600, color: '#1990FF', fontFamily: 'inherit', marginTop: 8, display: 'inline-flex', alignItems: 'center', gap: 3 }}>
-              View all benefits
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="9 18 15 12 9 6" /></svg>
-            </button>
-          </div>
-          <div style={{ padding: '14px 18px 4px' }}>
-            <button style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, background: '#1990FF', border: 'none', borderRadius: 12, padding: '14px 0', fontSize: 15, fontWeight: 700, color: 'white', cursor: 'pointer', fontFamily: 'inherit', transition: 'opacity 0.15s' }}
-              onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'} onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}>
-              Try for $3.99
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round"><polyline points="9 18 15 12 9 6" /></svg>
-            </button>
-            <p style={{ fontSize: 12, color: '#94a3b8', textAlign: 'center', marginTop: 8 }}>$7.99 next month onwards.</p>
-          </div>
+          {/* Prime upsell (shared with the out-of-credits popup — window.Byok.PrimeUpsellCard) */}
+          <window.Byok.PrimeUpsellCard />
           {/* Bring-your-own-key — a clickable link alternative to Prime (anyone can do this, so no "non-prime" qualifier) */}
           <div style={{ textAlign: 'center', padding: '11px 18px 4px' }}>
             <button
@@ -354,10 +360,20 @@ function App() {
   const [logoutOpen, setLogoutOpen] = useState(false);   // Logout confirm modal
   const [booting, setBooting] = useState(true);           // cold-start boot splash
   const [homeReady, setHomeReady] = useState(false);      // skeleton → real content
-  const [creditsPrime, setCreditsPrime] = useState(false); // AI Credits: prime vs non-prime preview
+  const [creditsPrime, setCreditsPrime] = useState(false); // prime geo: member vs non-member
+  const [primeGeo, setPrimeGeo] = useState(true);          // does Prime exist here (21 geos) — else the user must BYOK
+  const [keyAdded, setKeyAdded] = useState(false);         // non-prime geo: has the user configured their own key
+  const [keyInfo, setKeyInfo] = useState(null);            // { provider, model, key }
+  const [zeroCredits, setZeroCredits] = useState(false);   // preview "out of credits" (drives the on-send popup)
+  const [oocOpen, setOocOpen] = useState(false);           // out-of-credits popup
+  const [previewOpen, setPreviewOpen] = useState(true);    // dev preview panel collapse
   const isLoggedIn = CONFIG.isLoggedIn;
   const isLoading = !homeReady;
-  const credits = creditsPrime ? 49812 : 505;             // balance reflects the prime/non-prime state
+  const DEFAULT_KEY = { provider: 'Anthropic', model: 'Claude 4.5', key: 'sk-ant-9Xsjhdw1u294' };
+  const credits = zeroCredits ? 0 : (primeGeo ? (creditsPrime ? 49812 : 505) : 500);  // non-prime geo starts on 500 free credits
+  const lowDot = credits < 1000;                           // red dot when low/empty (505/500/0) — not on 49,812
+  const addKey = (info) => { setKeyInfo(info || DEFAULT_KEY); setKeyAdded(true); setOocOpen(false); };
+  const removeKey = () => { setKeyInfo(null); setKeyAdded(false); };
   // After the splash fades, let the skeleton linger briefly, then settle the content in.
   const handleBootDone = () => { setBooting(false); setTimeout(() => setHomeReady(true), 850); };
 
@@ -378,11 +394,26 @@ function App() {
 
   const isChat = activeTab === 'chat';
 
+  // Dev-only preview toggle row — compact segmented control sharing one inner track (no per-pill shadow).
+  const PreviewRow = ({ label, opts, val, set }) => (
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, padding: '8px 0' }}>
+      <span style={{ fontSize: 10.5, fontWeight: 700, color: '#94a3b8' }}>{label}</span>
+      <div style={{ display: 'flex', background: '#f1f5f9', borderRadius: 8, padding: 2 }}>
+        {opts.map(([lbl, v]) => (
+          <button key={lbl} onClick={() => set(v)}
+            style={{ border: 'none', borderRadius: 6, padding: '4px 10px', fontSize: 11.5, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap', background: val === v ? '#1990FF' : 'transparent', color: val === v ? 'white' : '#64748b', transition: 'background 0.13s ease, color 0.13s ease' }}>
+            {lbl}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+
   return (
     <div className="ba-app">
       <ProductTopBar
         credits={credits}
-        lowDot={!creditsPrime}
+        lowDot={lowDot}
         onNewChat={handleNewChat}
         onOpenCredits={() => { setHistoryOpen(false); setProfileOpen(false); setCreditsOpen(true); }}
         onOpenHistory={openHistory}
@@ -394,7 +425,7 @@ function App() {
       ) : historyOpen ? (
         <HistoryScreen />
       ) : creditsOpen ? (
-        <AICreditsScreen credits={credits} isPrime={creditsPrime} />
+        <AICreditsScreen credits={credits} isPrime={creditsPrime} primeGeo={primeGeo} keyAdded={keyAdded} keyInfo={keyInfo} onAddKey={addKey} onRemoveKey={removeKey} />
       ) : activeTab === 'skills' ? (
         <div key="skills" className="tab-anim" style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
           <div data-skills-scroll style={{ flex: 1, overflowY: 'auto', padding: '0 16px 8px', scrollbarWidth: 'thin', scrollbarColor: 'rgba(0,0,0,0.15) #e2e8f0' }}>
@@ -420,7 +451,7 @@ function App() {
         </div>
       ) : isChat ? (
         <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column', width: '420px' }}>
-          <ProductChatScreen sessionKey={sessionKey} seed={seed} loading={!homeReady} />
+          <ProductChatScreen sessionKey={sessionKey} seed={seed} loading={!homeReady} zeroCredits={zeroCredits} onNoCredits={() => setOocOpen(true)} />
         </div>
       ) : (
         <div key={activeTab} className="tab-anim"
@@ -444,19 +475,35 @@ function App() {
         onCancel={() => setLogoutOpen(false)}
         onConfirm={() => { setLogoutOpen(false); setProfileOpen(false); setActiveTab('chat'); }} />
 
-      {/* Prime ↔ Non-prime preview toggle — bottom-right gutter, only while on the AI Credits screen */}
-      {creditsOpen &&
-        <div style={{ position: 'fixed', right: 24, bottom: 24, zIndex: 300, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>
-          <span style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: '0.04em', color: '#94a3b8', textTransform: 'uppercase' }}>Preview state</span>
-          <div style={{ display: 'flex', background: 'white', border: '1px solid #e2e8f0', borderRadius: 999, padding: 3, boxShadow: '0 4px 16px rgba(0,0,0,0.14)' }}>
-            {[['Prime', true], ['Non-prime', false]].map(([label, val]) => (
-              <button key={label} onClick={() => setCreditsPrime(val)}
-                style={{ border: 'none', borderRadius: 999, padding: '6px 14px', fontSize: 12.5, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', background: creditsPrime === val ? '#1990FF' : 'transparent', color: creditsPrime === val ? 'white' : '#64748b', transition: 'background 0.13s ease, color 0.13s ease' }}>
-                {label}
-              </button>
-            ))}
+      {/* Out-of-credits popup on message-send: prime geo → Prime upsell (image 1); non-prime geo → BYOK (image 2). */}
+      {oocOpen && <window.Byok.OutOfCreditsModal mode={!primeGeo ? 'byok' : (creditsPrime ? 'topup' : 'prime')} onClose={() => setOocOpen(false)} onUse={addKey} />}
+
+      {/* Preview-state dev control — ONE compact card (geo → member/key + credits), collapses to a gear. */}
+      {previewOpen ? (
+        <div style={{ position: 'fixed', right: 20, bottom: 20, zIndex: 300, width: 236, background: 'white', border: '1px solid #e2e8f0', borderRadius: 12, boxShadow: '0 10px 34px rgba(15,23,42,0.16)', padding: '9px 14px 11px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2 }}>
+            <span style={{ fontSize: 9.5, fontWeight: 800, letterSpacing: '0.09em', color: '#94a3b8', textTransform: 'uppercase' }}>Preview</span>
+            <button aria-label="Collapse preview" onClick={() => setPreviewOpen(false)}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#cbd5e1', padding: 2, display: 'flex' }}
+              onMouseEnter={(e) => e.currentTarget.style.color = '#64748b'} onMouseLeave={(e) => e.currentTarget.style.color = '#cbd5e1'}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
+            </button>
           </div>
-        </div>}
+          <PreviewRow label="Geo" opts={[['Prime geo', true], ['Non-prime geo', false]]} val={primeGeo} set={setPrimeGeo} />
+          <div style={{ height: 1, background: '#f1f5f9' }} />
+          {primeGeo
+            ? <PreviewRow label="Member" opts={[['Prime', true], ['Non-prime', false]]} val={creditsPrime} set={setCreditsPrime} />
+            : <PreviewRow label="Key" opts={[['No key', false], ['Key added', true]]} val={keyAdded} set={(v) => { setKeyAdded(v); setKeyInfo(v ? DEFAULT_KEY : null); }} />}
+          <div style={{ height: 1, background: '#f1f5f9' }} />
+          <PreviewRow label="Credits" opts={[['Full', false], ['Empty', true]]} val={zeroCredits} set={setZeroCredits} />
+        </div>
+      ) : (
+        <button aria-label="Preview state" onClick={() => setPreviewOpen(true)}
+          style={{ position: 'fixed', right: 20, bottom: 20, zIndex: 300, width: 38, height: 38, borderRadius: '50%', background: 'white', border: '1px solid #e2e8f0', boxShadow: '0 6px 20px rgba(15,23,42,0.16)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b' }}
+          onMouseEnter={(e) => e.currentTarget.style.color = '#1990FF'} onMouseLeave={(e) => e.currentTarget.style.color = '#64748b'}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" /></svg>
+        </button>
+      )}
 
       {booting && <BootSplash onDone={handleBootDone} />}
     </div>);

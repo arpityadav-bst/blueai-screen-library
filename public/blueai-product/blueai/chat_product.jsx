@@ -405,7 +405,7 @@
   }
 
   /* ───────── Merged chat screen: ProductHome (empty) → task-progress + feedback (active) ───────── */
-  function ChatScreen({ sessionKey, seed, loading }) {
+  function ChatScreen({ sessionKey, seed, loading, zeroCredits, onNoCredits }) {
     const C = window.ChatCompare;
     const [convo, setConvo] = useState([]);
     const [visible, setVisible] = useState(0);
@@ -436,6 +436,7 @@
     const run = (text) => {
       const t = (text != null ? text : draft).trim();
       if (!t || running) return;
+      if (zeroCredits) { if (onNoCredits) onNoCredits(); return; }   // out of credits → open the popup, keep the draft
       setDraft('');
       const steps = makeTaskSteps(t);
       setConvo((prev) => {
