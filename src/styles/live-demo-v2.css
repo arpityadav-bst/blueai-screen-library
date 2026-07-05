@@ -29,22 +29,8 @@ html:has(.ldv2) { scroll-behavior: smooth; }
 .ldv2 .ldv2-orb-cyan { background: radial-gradient(circle at center, rgba(var(--bai-cyan-rgb), .45), transparent 68%); }
 .ldv2 .ldv2-orb-blue { background: radial-gradient(circle at center, rgba(var(--bai-mkt-blue-rgb), .4), transparent 68%); }
 
-/* ── nav (sticky, frosted — anchors only: the page is a self-contained funnel) ── */
-.ldv2 .ldv2-nav { position: sticky; top: 0; z-index: 100; background: rgba(var(--bai-page-rgb), .8); -webkit-backdrop-filter: blur(11px); backdrop-filter: blur(11px); border-bottom: 1px solid var(--bai-divider); } /* above the hero panel (z-80) while it scrolls under */
-.ldv2 .ldv2-nav-in { max-width: var(--ldv2-content); margin: 0 auto; padding: 0 32px; height: 66px; display: flex; align-items: center; gap: 20px; }
-.ldv2 .ldv2-brand { display: flex; align-items: center; gap: 9px; }
-.ldv2 .ldv2-brand img { display: block; width: 30px; height: 30px; border-radius: 50%; }
-.ldv2 .ldv2-links { display: flex; gap: 28px; margin-left: 14px; }
-.ldv2 .ldv2-links a { font-size: 14px; font-weight: 500; color: var(--fg-3); text-decoration: none; transition: color .15s var(--ease-out); }
-.ldv2 .ldv2-links a:hover { color: var(--fg-1); }
-.ldv2 .ldv2-nav-right { margin-left: auto; display: flex; align-items: center; gap: 16px; }
-.ldv2 .ldv2-login { font-size: 14px; font-weight: 600; color: var(--fg-2); text-decoration: none; }
-.ldv2 .ldv2-cta { display: inline-flex; align-items: center; gap: 8px; border: none; cursor: pointer; font-family: var(--font-ui); font-weight: 600; font-size: 14.5px; color: #fff; background: var(--bai-cta-gradient); border-radius: var(--radius-pill); padding: 11px 20px; text-decoration: none; box-shadow: var(--bai-shadow-cta); transition: transform .18s var(--ease-out), box-shadow .18s var(--ease-out); white-space: nowrap; }
-.ldv2 .ldv2-cta:hover { transform: translateY(-2px); box-shadow: var(--bai-shadow-cta-hover); }
-.ldv2 .ldv2-cta .site-arrow { transition: transform .18s var(--ease-out); }
-.ldv2 .ldv2-cta:hover .site-arrow { transform: translateX(3px); }
-
 /* ── hero: copy left · live widget panel right ─────────────────────────── */
+/* (nav + footer are the SHARED MarketingHeader/Footer since the hub conversion — the old custom .ldv2-nav/.ldv2-footer chrome CSS was removed at the S8 audit) */
 .ldv2 .ldv2-hero { position: relative; }
 .ldv2 .ldv2-hero-grid { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 452px; gap: 48px; align-items: center; padding-top: 52px; padding-bottom: 58px; }
 
@@ -225,15 +211,6 @@ html:has(.ldv2) { scroll-behavior: smooth; }
 .ldv2 .ldv2-btn-white:hover .site-arrow { transform: translateX(3px); }
 .ldv2 .ldv2-gtag { display: flex; justify-content: center; align-items: center; gap: 7px; margin-top: 18px; font-size: 13px; font-weight: 600; opacity: .92; }
 
-/* ── footer ────────────────────────────────────────────────────────────── */
-.ldv2 .ldv2-footer { border-top: 1px solid var(--bai-divider); padding: 48px 0 30px; background: rgba(255, 255, 255, .5); position: relative; }
-.ldv2 .ldv2-fgrid { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 24px; }
-.ldv2 .ldv2-fcol h4 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--fg-4); margin: 0 0 14px; }
-.ldv2 .ldv2-fcol a { display: block; font-size: 13.5px; color: var(--fg-2); margin-bottom: 9px; font-weight: 500; text-decoration: none; }
-.ldv2 .ldv2-fcol a:hover { color: var(--bai-mkt-blue); }
-.ldv2 .ldv2-blurb { font-size: 13px; color: var(--fg-4); line-height: 1.55; margin-top: 12px; max-width: 260px; text-wrap: pretty; }
-.ldv2 .ldv2-fbottom { max-width: var(--ldv2-content); margin: 30px auto 0; padding: 18px 32px 0; border-top: 1px solid var(--bai-divider); display: flex; justify-content: space-between; font-size: 12.5px; color: var(--fg-4); }
-
 /* ── responsive ────────────────────────────────────────────────────────── */
 @media (max-width: 980px) {
   .ldv2 .ldv2-hero-grid { grid-template-columns: 1fr; gap: 30px; }
@@ -241,23 +218,17 @@ html:has(.ldv2) { scroll-behavior: smooth; }
      the trust row — push the panel down so the flag clears it */
   .ldv2 .ldv2-panelslot { width: 100%; max-width: 430px; justify-self: center; height: 680px; margin-top: 30px; }
   .ldv2 .ldv2-panel.is-docked { position: absolute; inset: 0; width: auto; height: auto; } /* no docking on mobile */
-  .ldv2 .ldv2-links { display: none; }
   .ldv2 .ldv2-startcue .arr { transform: rotate(90deg); }
   .ldv2 .ldv2-stats-grid, .ldv2 .ldv2-steps, .ldv2 .ldv2-whygrid, .ldv2 .ldv2-quotes { grid-template-columns: 1fr 1fr; }
   .ldv2 .ldv2-workers { grid-template-columns: 1fr; }
   .ldv2 .ldv2-howline { display: none; }
-  .ldv2 .ldv2-fgrid { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 560px) {
-  .ldv2 .ldv2-stats-grid, .ldv2 .ldv2-steps, .ldv2 .ldv2-whygrid, .ldv2 .ldv2-quotes, .ldv2 .ldv2-fgrid { grid-template-columns: 1fr; }
+  .ldv2 .ldv2-stats-grid, .ldv2 .ldv2-steps, .ldv2 .ldv2-whygrid, .ldv2 .ldv2-quotes { grid-template-columns: 1fr; }
   /* narrow cards: drop "See it work" to its own line so the worker NAME keeps full width (no 2-line squeeze).
      padding-left (not margin) keeps the title-aligned offset INSIDE the 100% basis — margin would overflow. */
   .ldv2 .ldv2-worker-top { flex-wrap: wrap; }
   .ldv2 .ldv2-worker-cta { flex-basis: 100%; margin-left: 0; padding-left: 55px; }
-  /* declutter the header at phone widths: drop the secondary "Log in" (it was wrapping), tighten gutter */
-  .ldv2 .ldv2-login { display: none; }
-  .ldv2 .ldv2-nav-in { padding: 0 18px; gap: 12px; }
-  .ldv2 .ldv2-cta { padding: 10px 16px; font-size: 14px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .ldv2 .ldv2-startcue .arr, .ldv2 .ldv2-tryflag .pd, .ldv2 .ldv2-ctaband .inner { animation: none; }
