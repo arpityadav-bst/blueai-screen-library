@@ -15,6 +15,7 @@ const PAGES = [
   { href: '/ai-video-creator-v2', name: 'AI Video Creator — Studio (v2)', desc: 'Creative-tool concept for the Video Creator landing — WebGL hero, GSAP format galleries, templates, models and a parallax example reel. On the blueAI design system.' },
   { href: '/blueai-product', name: 'BlueAI Product', desc: 'Exact clone of the live BlueAI desktop app — the new-variant chat, task-progress + feedback, and all five tabs. Standalone replica, not on the marketing design system.' },
   { href: '/blueai-desktop', name: 'BlueAI Terminal Modern', desc: 'BlueAI in its real context — a BlueStacks window on the desktop; click it to slide out the terminal drawer. Pixel-logo boot, worker launcher, guided option flows, mode strip. Standalone canvas + JS experiment.' },
+  { href: '/moneymaker', name: 'BlueAI Moneymaker', desc: 'BlueAI as a moneymaker — "The Autonomy OS". Premium futuristic AI-agent site on the creator-v2 light language: living gradient sky, 3D glass OS panel, GSAP parallax + pinned night-shift scene. Standalone experiment.' },
 ]
 
 export default function Home() {
