@@ -4,7 +4,6 @@
 // of agents working — never trading-dashboard chrome.
 
 export const MM_HERO = {
-  eyebrow: 'BlueAI · autonomous agents',
   h1a: 'The AI that',
   h1grad: 'pays you.',
   sub: 'Hire a team of autonomous agents that create, predict, trade and flip — quietly earning in the background while you live your life.',

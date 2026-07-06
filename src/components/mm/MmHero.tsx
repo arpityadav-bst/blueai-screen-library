@@ -77,7 +77,6 @@ export default function MmHero() {
       </div>
 
       <div className="mm-hero-copy">
-        <p className="mm-eyebrow mm-rise">{MM_HERO.eyebrow}</p>
         <h1 className="mm-h1 mm-rise">{MM_HERO.h1a} <span className="mm-grad">{MM_HERO.h1grad}</span></h1>
         <p className="mm-sub mm-rise">{MM_HERO.sub}</p>
         <div className="mm-cta-row mm-rise">
