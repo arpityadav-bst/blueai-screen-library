@@ -15,7 +15,9 @@ const PAGES = [
   { href: '/ai-video-creator-v2', name: 'AI Video Creator — Studio (v2)', desc: 'Creative-tool concept for the Video Creator landing — WebGL hero, GSAP format galleries, templates, models and a parallax example reel. On the blueAI design system.' },
   { href: '/blueai-product', name: 'BlueAI Product', desc: 'Exact clone of the live BlueAI desktop app — the new-variant chat, task-progress + feedback, and all five tabs. Standalone replica, not on the marketing design system.' },
   { href: '/blueai-desktop', name: 'BlueAI Terminal Modern', desc: 'BlueAI in its real context — a BlueStacks window on the desktop; click it to slide out the terminal drawer. Pixel-logo boot, worker launcher, guided option flows, mode strip. Standalone canvas + JS experiment.' },
-  { href: '/moneymaker', name: 'BlueAI Moneymaker', desc: 'BlueAI as a moneymaker — "The Autonomy OS". Premium futuristic AI-agent site on the creator-v2 light language: living gradient sky, 3D glass OS panel, GSAP parallax + pinned night-shift scene. Standalone experiment.' },
+  { href: '/moneymaker', name: 'Moneymaker — 1. Autonomy OS', desc: 'BlueAI as a moneymaker, variant 1: "The Autonomy OS". Light creator-v2 language — living gradient sky, 3D glass OS panel, GSAP parallax + pinned night-shift scene. Standalone experiment.' },
+  { href: '/moneymaker/mission-control', name: 'Moneymaker — 2. Mission Control', desc: 'BlueAI as a moneymaker, variant 2: "Mission Control". SpaceX-launch-broadcast aesthetic — starfield, an ascending worker unit, telemetry mono, a flight-manifest waitlist. Standalone experiment.' },
+  { href: '/moneymaker/capital-shift', name: 'Moneymaker — 3. The Capital Shift', desc: 'BlueAI as a moneymaker, variant 3: "The Capital Shift". Manifesto-led editorial big-type — the sell-time → sell-skill → sell-capital progression as the hero, procedural agent-network visualization. Standalone experiment.' },
 ]
 
 export default function Home() {

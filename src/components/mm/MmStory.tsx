@@ -2,7 +2,9 @@
 import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/dist/ScrollTrigger'
-import { MM_NIGHT, MM_TRUST, MM_CLOSE } from '@/lib/mm-data'
+import { MM_NIGHT, MM_CLOSE } from '@/lib/mm-data'
+import { WAITLIST_URL } from '@/lib/mm-shared-data'
+import MmTrustDeep from './MmTrustDeep'
 
 // The cinematic middle + close: a PINNED night-shift scene (deep slate interlude — the page's
 // one dark band), scroll-scrubbed: the moon arcs, the night's earnings surface one by one,
@@ -37,10 +39,6 @@ export default function MmStory() {
         .fromTo('.mm-beat', { autoAlpha: 0, y: 40 }, { autoAlpha: 1, y: 0, stagger: 0.45, duration: 0.45 }, 0.15)
         .fromTo('.mm-wake', { autoAlpha: 0, scale: 0.94 }, { autoAlpha: 1, scale: 1, duration: 0.5 }, 2.15)
         .to('.mm-night-sky', { backgroundPosition: '0% 100%', ease: 'none', duration: 2.9 }, 0)
-      gsap.fromTo('.mm-trust-card', { y: 36, autoAlpha: 0 }, {
-        y: 0, autoAlpha: 1, duration: 0.8, stagger: 0.12, ease: 'power3.out',
-        scrollTrigger: { trigger: '.mm-trust', start: 'top 76%' },
-      })
     }, rootRef)
     return () => ctx.revert()
   }, [])
@@ -74,24 +72,13 @@ export default function MmStory() {
         </div>
       </section>
 
-      {/* trust — the glass pillars that make "it touches my money" feel safe */}
-      <section className="mm-trust">
-        <p className="mm-sec-eyebrow">Built on trust</p>
-        <h2 className="mm-h2">Autonomous, <span className="mm-grad">never out of control.</span></h2>
-        <div className="mm-trust-grid">
-          {MM_TRUST.map((t) => (
-            <article className="mm-trust-card" key={t.title}>
-              <h3>{t.title}</h3>
-              <p>{t.desc}</p>
-            </article>
-          ))}
-        </div>
-      </section>
+      {/* trust — the glass pillars + the deepened custody flow + FAQ (MmTrustDeep) */}
+      <MmTrustDeep />
 
       {/* close — the brand-gradient band */}
       <section className="mm-close" id="start">
         <h2 className="mm-close-line">{MM_CLOSE.line}</h2>
-        <a className="mm-cta is-inverse" href="#top" aria-label={MM_CLOSE.cta}>{MM_CLOSE.cta}<span className="mm-cta-arr" aria-hidden="true">→</span></a>
+        <a className="mm-cta is-inverse" href={WAITLIST_URL} aria-label={MM_CLOSE.cta}>{MM_CLOSE.cta}<span className="mm-cta-arr" aria-hidden="true">→</span></a>
         <p className="mm-fine">{MM_CLOSE.fine}</p>
       </section>
     </div>

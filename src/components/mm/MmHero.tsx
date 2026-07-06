@@ -4,6 +4,7 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/dist/ScrollTrigger'
 import { GradientCanvas } from '@/components/creator/GradientCanvas'
 import { MM_HERO, MM_OS_AGENTS, MM_OS_FEED } from '@/lib/mm-data'
+import { WAITLIST_URL } from '@/lib/mm-shared-data'
 
 // /moneymaker hero — the first screen IS the product: the living brand-gradient sky
 // (creator-v2's GradientCanvas, reused) with a glass AUTONOMY OS panel floating in 3D.
@@ -73,14 +74,14 @@ export default function MmHero() {
       <div className="mm-topbar mm-rise">
         <span className="mm-mark">BlueAI</span>
         <span className="mm-topbar-tag">Moneymaker</span>
-        <a className="mm-topbar-cta" href="#start">{MM_HERO.primaryCta}</a>
+        <a className="mm-topbar-cta" href={WAITLIST_URL}>{MM_HERO.primaryCta}</a>
       </div>
 
       <div className="mm-hero-copy">
         <h1 className="mm-h1 mm-rise">{MM_HERO.h1a} <span className="mm-grad">{MM_HERO.h1grad}</span></h1>
         <p className="mm-sub mm-rise">{MM_HERO.sub}</p>
         <div className="mm-cta-row mm-rise">
-          <a className="mm-cta" href="#start">{MM_HERO.primaryCta}<span className="mm-cta-arr" aria-hidden="true">→</span></a>
+          <a className="mm-cta" href={WAITLIST_URL}>{MM_HERO.primaryCta}<span className="mm-cta-arr" aria-hidden="true">→</span></a>
           <a className="mm-cta-ghost" href="#agents">{MM_HERO.secondaryCta}</a>
         </div>
         <ul className="mm-trustline mm-rise">

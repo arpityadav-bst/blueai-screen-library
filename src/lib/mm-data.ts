@@ -6,8 +6,8 @@
 export const MM_HERO = {
   h1a: 'The AI that',
   h1grad: 'pays you.',
-  sub: 'Hire a team of autonomous agents that create, predict, trade and flip — quietly earning in the background while you live your life.',
-  primaryCta: 'Start earning',
+  sub: 'A team of autonomous agents that create, predict, trade and flip — quietly earning in the background while you live your life.',
+  primaryCta: 'Join the waitlist',
   secondaryCta: 'See how it works',
   trust: ['Funds stay in your accounts', 'Every action logged', 'You set the limits'],
 };
@@ -58,6 +58,6 @@ export const MM_TRUST = [
 
 export const MM_CLOSE = {
   line: 'Every day without them is a day they didn’t earn for you.',
-  cta: 'Start earning',
+  cta: 'Join the waitlist',
   fine: 'Demo experience with scripted data. Agents act only within limits you set; returns are never guaranteed and trading involves risk.',
 };
