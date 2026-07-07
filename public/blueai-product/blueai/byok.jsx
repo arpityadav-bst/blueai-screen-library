@@ -1,101 +1,41 @@
-// BlueAI — Out-of-credits popups + Bring-your-own-key (BYOK).
-// Three on-send variants (window: prime member → top-up · prime non-member → Prime offer ·
-// non-prime geo → BYOK). Chrome matched to Figma (Instance Manager → Sign Up & Subscription):
-// frosted "NOT ENOUGH CREDITS" banner peeking behind a white radius-12 card, soft shadow,
-// gradient-fade dividers, compact centered pill buttons. Light theme throughout.
-// Exposes window.Byok = { ByokForm, ByokFields, KeyAddedPanel, PrimeUpsellCard, TopUpCard, OutOfCreditsModal }.
+// BlueAI — Out-of-credits popups + credits-screen BYOK entry points.
+// BYOK CONFIG now lives in Settings (byok_settings.jsx). These are the *routes* into it:
+//   • OutOfCreditsModal(byok)   → a concise "Use Your API Key" prompt → Add API Key → Settings
+//   • OutOfCreditsModal(prime)  → Prime upsell (paid path, prime geo non-member)
+//   • OutOfCreditsModal(topup)  → Top-up (paid path, prime member out of credits)
+//   • CreditsByokRow            → the credits-screen row/button that routes to Settings BYOK
+// Chrome matched to Figma: frosted "NOT ENOUGH CREDITS" banner peeking behind a white card.
+// Exposes window.Byok = { PrimeUpsellCard, TopUpCard, ByokUpsell, CreditsByokRow, OutOfCreditsModal } (+ ByokSettings from byok_settings.jsx).
 (function () {
-  const { useState } = React;
-
   const BLUE = '#1990FF';
   const gradText = { background: 'linear-gradient(90deg,#0EA4C5,#7B4CFF)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' };
-  const CARD_BORDER = 'rgba(182,184,204,0.8)';               // Figma stroke #B6B8CC @ 80%
-  const CARD_SHADOW = '0 4px 32px rgba(0,0,0,0.10)';         // Figma drop-shadow
+  const CARD_BORDER = 'rgba(182,184,204,0.8)';
+  const CARD_SHADOW = '0 4px 32px rgba(0,0,0,0.10)';
   const Divider = () => <div style={{ height: 1, background: 'linear-gradient(90deg,transparent,rgba(35,38,66,0.18),transparent)', margin: '2px 0' }} />;
   const ChevR = ({ c = 'currentColor', s = 13 }) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6" /></svg>;
-  // centered compact pill (Figma button: radius 40, ~32 tall, hug)
   const pillBtn = { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 7, background: BLUE, border: 'none', borderRadius: 999, padding: '9px 22px', fontSize: 15, fontWeight: 700, color: 'white', cursor: 'pointer', fontFamily: 'inherit', transition: 'opacity 0.15s' };
   const hov = { onMouseEnter: (e) => e.currentTarget.style.opacity = '0.9', onMouseLeave: (e) => e.currentTarget.style.opacity = '1' };
 
   const KeyIcon = (p) => (
-    <svg width={p.s || 15} height={p.s || 15} viewBox="0 0 24 24" fill="none" stroke={p.c || 'currentColor'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+    <svg width={p.s || 26} height={p.s || 26} viewBox="0 0 24 24" fill="none" stroke={p.c || BLUE} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
       <circle cx="7.5" cy="15.5" r="5.5" /><path d="m21 2-9.6 9.6" /><path d="m15.5 7.5 3 3L22 7l-3-3" />
     </svg>
   );
 
-  const PROVIDERS = { Anthropic: ['Claude 4.5', 'Claude 4.1', 'Claude 3.7'], OpenAI: ['GPT-5.4', 'GPT-5', 'o4'], Google: ['Gemini 3.1 Pro', 'Gemini 3 Flash'] };
-  const labelStyle = { fontSize: 12, fontWeight: 700, color: '#475569', width: 66, flexShrink: 0 };
-  const fieldWrap = { display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 };
-  const controlBase = { flex: 1, minWidth: 0, background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 10, padding: '10px 12px', fontSize: 13.5, color: '#111827', fontFamily: 'inherit', outline: 'none' };
-
-  function Select({ value, options, onChange }) {
+  // Concise "you need credits → use your own key" prompt (screenshot 5). The full BYOK config
+  // is NOT crammed here — the button routes to Settings, where the key is actually added.
+  function ByokUpsell({ onAddKey }) {
     return (
-      <div style={{ position: 'relative', flex: 1, minWidth: 0 }}>
-        <select value={value} onChange={(e) => onChange(e.target.value)} style={{ ...controlBase, width: '100%', appearance: 'none', WebkitAppearance: 'none', cursor: 'pointer', paddingRight: 30 }}>
-          {options.map((o) => <option key={o} value={o}>{o}</option>)}
-        </select>
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}><polyline points="6 9 12 15 18 9" /></svg>
-      </div>
-    );
-  }
-
-  // BYOK form CONTENT (no card chrome) — used inside the modal and, wrapped, on the credits screen.
-  function ByokFields({ onUse }) {
-    const [provider, setProvider] = useState('Anthropic');
-    const [model, setModel] = useState(PROVIDERS.Anthropic[0]);
-    const [key, setKey] = useState('');
-    const pickProvider = (p) => { setProvider(p); setModel(PROVIDERS[p][0]); };
-    return (
-      <div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 3 }}>
-          <KeyIcon s={16} c={BLUE} />
-          <h3 style={{ fontSize: 15.5, fontWeight: 800, color: '#080a1f' }}>Use your own key</h3>
+      <div style={{ textAlign: 'center', padding: '4px 2px 2px' }}>
+        <div style={{ width: 64, height: 64, borderRadius: '50%', background: '#e8f1fe', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '4px auto 16px' }}>
+          <KeyIcon s={28} c={BLUE} />
         </div>
-        <p style={{ fontSize: 12.5, color: '#565977', margin: '0 0 15px' }}>Configure your own LLM provider</p>
-        <div style={fieldWrap}><span style={labelStyle}>Provider</span><Select value={provider} options={Object.keys(PROVIDERS)} onChange={pickProvider} /></div>
-        <div style={fieldWrap}><span style={labelStyle}>Model</span><Select value={model} options={PROVIDERS[provider]} onChange={setModel} /></div>
-        <div style={fieldWrap}>
-          <span style={{ ...labelStyle, display: 'inline-flex', alignItems: 'center', gap: 4 }}>API Key
-            <span title="Your key is stored locally on this device and never sent to BlueAI." style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 14, height: 14, borderRadius: '50%', border: '1px solid #cbd5e1', color: '#94a3b8', fontSize: 9.5, fontWeight: 700, cursor: 'help' }}>?</span>
-          </span>
-          <input value={key} onChange={(e) => setKey(e.target.value)} type="text" spellCheck={false} autoComplete="off" placeholder="Paste your API key" style={{ ...controlBase, fontFamily: 'ui-monospace, Menlo, monospace' }} />
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 4 }}>
-          <button {...hov} onClick={() => onUse && onUse({ provider, model, key: key.trim() || 'sk-ant-9Xsjhdw1u294' })} style={{ ...pillBtn, borderRadius: 10, padding: '10px 20px', fontSize: 14 }}>Use my key</button>
-        </div>
-      </div>
-    );
-  }
-  // Standalone (credits screen): the fields inside a card.
-  function ByokForm({ onUse }) {
-    return <div style={{ background: 'white', border: '1px solid ' + CARD_BORDER, borderRadius: 12, padding: 18, boxShadow: CARD_SHADOW }}><ByokFields onUse={onUse} /></div>;
-  }
-
-  function KeyAddedPanel({ info, onEdit, onRemove }) {
-    const k = info || { provider: 'Anthropic', model: 'Claude 4.5', key: 'sk-ant-9Xsjhdw1u294' };
-    const masked = (k.key && k.key.length > 6) ? k.key.slice(0, 5) + '••••••' + k.key.slice(-2) : '••••••••';
-    const row = (label, val, mono) => (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '9px 0', borderBottom: '1px solid #eef2f6' }}>
-        <span style={{ fontSize: 12.5, color: '#565977', fontWeight: 600 }}>{label}</span>
-        <span style={{ fontSize: 13, color: '#080a1f', fontWeight: 700, fontFamily: mono ? 'ui-monospace, Menlo, monospace' : 'inherit' }}>{val}</span>
-      </div>
-    );
-    return (
-      <div style={{ background: 'white', border: '1px solid ' + CARD_BORDER, borderRadius: 12, padding: '16px 18px', boxShadow: CARD_SHADOW }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-          <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 22, height: 22, borderRadius: '50%', background: '#dcfce7', flexShrink: 0 }}>
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
-          </span>
-          <h3 style={{ fontSize: 14.5, fontWeight: 800, color: '#080a1f' }}>Manual key active</h3>
-        </div>
-        {row('Provider', k.provider)}{row('Model', k.model)}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '9px 0' }}>
-          <span style={{ fontSize: 12.5, color: '#565977', fontWeight: 600 }}>API Key</span>
-          <span style={{ fontSize: 13, color: '#080a1f', fontWeight: 700, fontFamily: 'ui-monospace, Menlo, monospace' }}>{masked}</span>
-        </div>
-        <div style={{ display: 'flex', gap: 10, marginTop: 14 }}>
-          <button onClick={onEdit} style={{ flex: 1, borderRadius: 10, border: '1px solid #e2e8f0', background: 'white', padding: '10px', fontSize: 13.5, fontWeight: 700, color: '#374151', cursor: 'pointer', fontFamily: 'inherit' }}>Edit key</button>
-          <button onClick={onRemove} style={{ flex: 1, borderRadius: 10, border: '1px solid #fecaca', background: 'white', padding: '10px', fontSize: 13.5, fontWeight: 700, color: '#dc2626', cursor: 'pointer', fontFamily: 'inherit' }}>Remove</button>
+        <h3 style={{ fontSize: 21, fontWeight: 800, color: '#080a1f', letterSpacing: '-0.3px' }}>Use Your API Key</h3>
+        <p style={{ fontSize: 13.5, color: '#565977', lineHeight: 1.5, margin: '7px auto 18px', maxWidth: 250 }}>Add your API key to continue using BlueAI.</p>
+        <button {...hov} onClick={onAddKey} style={{ ...pillBtn, width: '100%', padding: '13px 22px', fontSize: 15.5, boxShadow: '0 6px 20px rgba(25,144,255,0.32)' }}>Add API Key</button>
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'center', gap: 7, marginTop: 15 }}>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 1.5 }}><circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8" /></svg>
+          <span style={{ fontSize: 12, color: '#94a3b8', lineHeight: 1.45, textAlign: 'left' }}>You can manage or change your key later in Settings.</span>
         </div>
       </div>
     );
@@ -125,7 +65,7 @@
     );
   }
 
-  // Prime MEMBER, out of credits — TOP-UP (not a re-pitch of Prime). Reuses the member screen's action.
+  // Prime MEMBER, out of credits — TOP-UP (not a re-pitch of Prime).
   function TopUpCard() {
     return (
       <div>
@@ -150,9 +90,56 @@
     );
   }
 
+  // Credits-screen row: a contextual button that routes to Settings › BYOK (not an inline form).
+  // Three states: key on/active (confirmation) · key added but switched OFF (nudge to turn on) ·
+  // no key (invite). "active" = BYOK toggle on AND a key saved.
+  function CreditsByokRow({ keyAdded, active, keyInfo, onManage }) {
+    if (active) {
+      const k = keyInfo || {};
+      return (
+        <div style={{ background: 'white', border: '1px solid #e8edf3', borderRadius: 12, padding: '14px 16px', boxShadow: '0 1px 3px rgba(0,0,0,0.04)', display: 'flex', alignItems: 'center', gap: 12 }}>
+          <span style={{ width: 34, height: 34, borderRadius: '50%', background: '#dcfce7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+          </span>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <p style={{ fontSize: 14, fontWeight: 700, color: '#111827' }}>Using your own key</p>
+            <p style={{ fontSize: 12, color: '#94a3b8', marginTop: 1 }}>{(k.provider || 'Provider')} · no credits consumed</p>
+          </div>
+          <button onClick={onManage} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: 13, fontWeight: 700, color: BLUE, display: 'inline-flex', alignItems: 'center', gap: 3, flexShrink: 0 }}>Manage <ChevR c={BLUE} /></button>
+        </div>
+      );
+    }
+    if (keyAdded) {
+      const k = keyInfo || {};
+      return (
+        <button onClick={onManage} style={{ width: '100%', textAlign: 'left', background: 'white', border: '1px solid #e8edf3', borderRadius: 12, padding: '14px 16px', boxShadow: '0 1px 3px rgba(0,0,0,0.04)', cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: 12 }}
+          onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#c7d2e1'; }} onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#e8edf3'; }}>
+          <span style={{ width: 34, height: 34, borderRadius: '50%', background: '#fff7ed', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><KeyIcon s={17} c="#ea7b2c" /></span>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <p style={{ fontSize: 14, fontWeight: 700, color: '#111827' }}>Your own key is off</p>
+            <p style={{ fontSize: 12, color: '#94a3b8', marginTop: 1 }}>{(k.provider || 'Provider')} saved · turn it on in Settings to stop using credits.</p>
+          </div>
+          <ChevR c="#94a3b8" />
+        </button>
+      );
+    }
+    return (
+      <button onClick={onManage} style={{ width: '100%', textAlign: 'left', background: 'white', border: '1px solid #e8edf3', borderRadius: 12, padding: '14px 16px', boxShadow: '0 1px 3px rgba(0,0,0,0.04)', cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: 12, transition: 'border-color 0.13s, box-shadow 0.13s' }}
+        onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#c7d2e1'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.07)'; }}
+        onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#e8edf3'; e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.04)'; }}>
+        <span style={{ width: 34, height: 34, borderRadius: '50%', background: '#e8f1fe', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><KeyIcon s={17} c={BLUE} /></span>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <p style={{ fontSize: 14, fontWeight: 700, color: '#111827' }}>Bring your own key</p>
+          <p style={{ fontSize: 12, color: '#94a3b8', marginTop: 1, lineHeight: 1.4 }}>Add an API key in Settings to keep going with no credits consumed.</p>
+        </div>
+        <ChevR c="#94a3b8" />
+      </button>
+    );
+  }
+
   // On-send out-of-credits popup. mode: 'prime' | 'topup' | 'byok'. Banner + white card (Figma chrome).
-  function OutOfCreditsModal({ mode, onClose, onUse }) {
-    const body = mode === 'byok' ? <ByokFields onUse={onUse} /> : mode === 'topup' ? <TopUpCard /> : <PrimeUpsellCard />;
+  function OutOfCreditsModal({ mode, onClose, onAddKey }) {
+    const body = mode === 'byok' ? <ByokUpsell onAddKey={onAddKey} /> : mode === 'topup' ? <TopUpCard /> : <PrimeUpsellCard />;
     return (
       <div onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
         style={{ position: 'absolute', inset: 0, zIndex: 130, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(15,23,42,0.5)', padding: 22 }}>
@@ -175,5 +162,5 @@
     );
   }
 
-  window.Byok = { ByokFields, ByokForm, KeyAddedPanel, PrimeUpsellCard, TopUpCard, OutOfCreditsModal };
+  window.Byok = Object.assign(window.Byok || {}, { PrimeUpsellCard, TopUpCard, ByokUpsell, CreditsByokRow, OutOfCreditsModal });
 })();

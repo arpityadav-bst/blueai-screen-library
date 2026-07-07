@@ -126,11 +126,14 @@ function AISettingsCard() {
   );
 }
 
-function SettingsScreen() {
+function SettingsScreen({ byok }) {
+  const ByokSettings = window.Byok && window.Byok.ByokSettings;
   return (
     <div style={{ paddingTop: 16, paddingBottom: 20 }}>
       <BluestacksCard />
       <TelegramCard />
+      {/* Bring Your Own Key — available in every geo; the canonical place to add/manage a key. */}
+      {ByokSettings && byok && <ByokSettings {...byok} />}
       <AISettingsCard />
     </div>
   );

@@ -282,12 +282,12 @@
   function makeTaskSteps(text) {
     return [
       { role: 'user', content: text, d: 250 },
-      { role: 'status', content: 'Got it — starting on your task…', d: 900 },
+      { role: 'status', content: 'Got it. Starting on your task…', d: 900 },
       { role: 'thinking', d: 1200 },
       { role: 'status', content: 'Opening the required app and navigating to the right screen…', d: 1100 },
       { role: 'status', content: 'Performing the actions step by step…', d: 1100 },
       { role: 'status', content: 'Verifying the result…', d: 1000 },
-      { role: 'final', tone: 'success', content: 'Done — I completed your task: “' + text + '”. Let me know if you’d like me to do anything else.', d: 900 }];
+      { role: 'final', tone: 'success', content: 'Done. I completed your task: “' + text + '”. Let me know if you’d like me to do anything else.', d: 900 }];
   }
 
   /* ───────── Live home categories (matched to the live app — newer than the export).
@@ -405,7 +405,7 @@
   }
 
   /* ───────── Merged chat screen: ProductHome (empty) → task-progress + feedback (active) ───────── */
-  function ChatScreen({ sessionKey, seed, loading, zeroCredits, onNoCredits }) {
+  function ChatScreen({ sessionKey, seed, loading, zeroCredits, onNoCredits, isOnboarding, onNeedLogin }) {
     const C = window.ChatCompare;
     const [convo, setConvo] = useState([]);
     const [visible, setVisible] = useState(0);
@@ -417,14 +417,23 @@
     const taRef = useRef(null);
     const timers = useRef([]);
 
-    // Reset on New chat
+    // Reset on New chat (and on a login-state flip, which also bumps sessionKey)
     useEffect(() => {
       timers.current.forEach(clearTimeout); timers.current = [];
       setConvo([]); setVisible(0); setDraft(''); setVotes({}); setReasons({});
     }, [sessionKey]);
 
-    // Seed from "Try this skill" → prefill the composer
-    useEffect(() => { if (seed && seed.text) { setDraft(seed.text); taRef.current && taRef.current.focus(); } }, [seed]);
+    // Onboarding chat lands here from the picker → focus the composer (prefilled or empty).
+    useEffect(() => { if (isOnboarding) taRef.current && taRef.current.focus(); }, [isOnboarding, sessionKey]);
+
+    // Seed → either prefill the composer ("Try this skill") or auto-run it. Auto-run is the
+    // onboarding → sign-in handoff: the message that opened the login gate gets SENT once the
+    // user is back and logged in (so the conversation starts and the category home is skipped).
+    useEffect(() => {
+      if (!seed || !seed.text) return;
+      if (seed.autorun) { run(seed.text); return; }
+      setDraft(seed.text); taRef.current && taRef.current.focus();
+    }, [seed]);
 
     useEffect(() => { const el = scrollRef.current; if (el) el.scrollTop = el.scrollHeight; }, [visible, convo]);
     useEffect(() => { const ta = taRef.current; if (!ta) return; ta.style.height = 'auto'; ta.style.height = Math.min(ta.scrollHeight, 120) + 'px'; }, [draft]);
@@ -436,6 +445,7 @@
     const run = (text) => {
       const t = (text != null ? text : draft).trim();
       if (!t || running) return;
+      if (isOnboarding) { if (onNeedLogin) onNeedLogin(t); return; }  // logged out → gate on sign-in, hand the message up so it can auto-send after login
       if (zeroCredits) { if (onNoCredits) onNoCredits(); return; }   // out of credits → open the popup, keep the draft
       setDraft('');
       const steps = makeTaskSteps(t);
@@ -479,20 +489,35 @@
       <>
         <div style={{ flex: 1, overflow: 'hidden' }}>
           <div ref={scrollRef} style={{ height: '100%', overflowY: 'auto', scrollbarWidth: 'thin', padding: '16px' }}>
-            <C.IntroCard sub="Your AI worker for BlueStacks — pick a task below or just type what you need." />
+            {/* Greeting shows on the pre-conversation view — it clears once a task is sent (both
+               onboarding + default). Onboarding chat pads the greeting down to match the design;
+               the picker welcome lives one level up (App), so no welcome renders here. */}
+            {!started &&
+              <C.IntroCard onboarding={isOnboarding} sub={isOnboarding
+                ? 'Just send your message whenever you are ready and see me do your work for you!'
+                : 'Your AI worker for BlueStacks — pick a task below or just type what you need.'} />}
             {!started
               ? <div style={{ marginTop: 4 }}>
-                  {loading
-                    ? <window.HomeSkeleton />
-                    : <ProductHome onRun={(p) => run(p)} onOpenHistory={() => window.__openChatHistory && window.__openChatHistory()} />}
+                  {isOnboarding
+                    ? null // onboarding chat = greeting + composer only (the category home is default-flow only)
+                    : (loading
+                        ? <window.HomeSkeleton />
+                        : <ProductHome onRun={(p) => run(p)} onOpenHistory={() => window.__openChatHistory && window.__openChatHistory()} />)}
                 </div>
               : <div style={{ marginTop: 4 }}>{convo.slice(0, visible).map(renderStep)}</div>}
           </div>
         </div>
 
         {/* Composer */}
-        <div style={{ flexShrink: 0, padding: '4px 16px 10px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, border: '1px solid ' + (composerFocused ? '#1990FF' : '#c7dcf5'), borderRadius: 14, background: 'white', padding: '8px 10px', boxShadow: composerFocused ? '0 0 0 3px rgba(25,144,255,0.12)' : '0 1px 4px rgba(0,0,0,0.04)', transition: 'border-color 0.15s ease, box-shadow 0.15s ease' }}>
+        <div style={{ flexShrink: 0, position: 'relative', padding: '4px 16px 10px' }}>
+          {/* Onboarding nudge — a pulsing "Send a message to watch BlueAI work" pill sits just
+             above the composer until a message is attempted (matches the design's OnboardingChat). */}
+          {isOnboarding && !started &&
+            <div style={{ position: 'absolute', bottom: 'calc(100% + 2px)', left: 16, display: 'inline-flex', alignItems: 'center', gap: 7, background: '#1990FF', color: 'white', borderRadius: 10, padding: '7px 12px', fontSize: 12, fontWeight: 600, boxShadow: '0 4px 14px rgba(25,144,255,0.3)', whiteSpace: 'nowrap' }}>
+              <span style={{ width: 7, height: 7, borderRadius: '50%', background: 'white', animation: 'ba-pulse 1.3s infinite' }} />
+              Send a message to watch BlueAI work
+            </div>}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, border: '1.5px solid ' + (isOnboarding ? '#60a5fa' : (composerFocused ? '#1990FF' : '#c7dcf5')), borderRadius: isOnboarding ? 18 : 14, background: 'white', padding: '8px 10px', boxShadow: composerFocused ? '0 0 0 3px rgba(25,144,255,0.12)' : (isOnboarding && !started ? '0 0 0 4px rgba(25,144,255,0.12)' : '0 1px 4px rgba(0,0,0,0.04)'), transition: 'border-color 0.15s ease, box-shadow 0.15s ease' }}>
             <textarea ref={taRef} value={draft} disabled={running} rows={1}
               onChange={(e) => setDraft(e.target.value)}
               onFocus={() => setComposerFocused(true)}

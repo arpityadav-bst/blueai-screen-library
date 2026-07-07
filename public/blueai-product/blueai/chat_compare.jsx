@@ -72,6 +72,7 @@ function ChatCatIcon({ type, size = 14, color = 'currentColor' }) {
   if (type === 'social') return <svg {...p}><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" y1="13.51" x2="15.42" y2="17.49" /><line x1="15.41" y1="6.51" x2="8.59" y2="10.49" /></svg>;
   if (type === 'productivity') return <svg {...p}><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg>;
   if (type === 'explore') return <svg {...p}><circle cx="12" cy="12" r="10" /><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" fill={color} opacity="0.6" stroke="none" /></svg>;
+  if (type === 'discover') return <svg {...p}><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>;
   return null;
 }
 
@@ -89,11 +90,13 @@ function aiReply(prompt) {
 }
 
 /* ───────── Intro ───────── */
-function IntroCard({ sub }) {
+function IntroCard({ sub, onboarding }) {
+  // Onboarding chat empty-state greeting is pushed down + uses a 16px sub to match the design
+  // (relax_flow OnboardingChat). Default home keeps the tighter top padding + 15px sub.
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', textAlign: 'left', width: '100%', gap: 6, padding: '20px 0px 16px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', textAlign: 'left', width: '100%', gap: onboarding ? 6 : 6, padding: onboarding ? '30px 0 8px' : '20px 0px 16px' }}>
       <h2 style={{ fontWeight: 800, color: '#111827', letterSpacing: '-0.4px', lineHeight: 1.2, fontSize: '24px' }}>👋🏻 Hi, I'm BlueAI</h2>
-      <p style={{ color: '#6b7280', lineHeight: 1.5, fontSize: '15px', textWrap: 'pretty' }}>{sub}</p>
+      <p style={{ color: '#6b7280', lineHeight: 1.55, fontSize: onboarding ? '16px' : '15px', textWrap: 'pretty' }}>{sub}</p>
     </div>);
 }
 

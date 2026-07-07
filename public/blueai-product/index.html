@@ -97,6 +97,8 @@
 <script type="text/babel" src="blueai/credits_widget.jsx"></script>
 <!-- Canonical NEW chat home (exposes window.ChatCompare) -->
 <script type="text/babel" src="blueai/chat_compare.jsx"></script>
+<!-- Onboarding welcome for the logged-out cold start (exposes window.Onboarding) -->
+<script type="text/babel" src="blueai/onboarding.jsx"></script>
 <!-- Assembled product chat: NewHome + task-progress + feedback (exposes window.ProductChat) -->
 <script type="text/babel" src="blueai/chat_product.jsx"></script>
 <!-- Chat History in-app screen (exposes window.ChatHistory) -->
@@ -109,8 +111,10 @@
 <script type="text/babel" src="blueai/schedule.jsx"></script>
 <script type="text/babel" src="blueai/settings.jsx"></script>
 <script type="text/babel" src="blueai/login.jsx"></script>
-<!-- Bring-your-own-key + out-of-credits popups (exposes window.Byok) -->
+<!-- Bring-your-own-key: out-of-credits popups + credits-screen routes (exposes window.Byok) -->
 <script type="text/babel" src="blueai/byok.jsx"></script>
+<!-- BYOK Settings section — the canonical add/manage-key surface (extends window.Byok) -->
+<script type="text/babel" src="blueai/byok_settings.jsx"></script>
 
 <script type="text/babel">
 const { useState, useRef, useEffect } = React;
@@ -118,14 +122,13 @@ const { useState, useRef, useEffect } = React;
 // Live product configuration (frozen — the Tweaks playground is removed).
 const CONFIG = {
   credits: 45812,        // matches the live Windows app
-  isLoggedIn: true,      // live app is signed in (credits pill only shows when logged in)
   skillsLayout: 'grid',
-  loginVariant: 'default',
 };
 
 // Live header (newer than the export — matched to the live app screenshots):
 // logo · credits pill · New Chat · "?" help menu (Get help / Report Issue) · kebab (Chat History / Profile / Logout).
-function ProductTopBar({ credits, lowDot, onNewChat, onOpenHistory, onOpenCredits, onOpenProfile, onLogout }) {
+// Logged-out (onboarding): strips to just the brand lockup — no credits/New Chat/help/kebab, matching the cold start.
+function ProductTopBar({ credits, lowDot, isLoggedIn, onNewChat, onOpenHistory, onOpenCredits, onOpenProfile, onLogout }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
   const menuRef = useRef(null);
@@ -156,6 +159,7 @@ function ProductTopBar({ credits, lowDot, onNewChat, onOpenHistory, onOpenCredit
         <img src="assets/Logo.png" alt="BlueAI" style={{ width: 32, height: 32 }} onError={(e) => { e.target.style.display = 'none'; }} />
         <span style={{ background: 'linear-gradient(90deg,#0EA4C5,#7B4CFF)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontSize: 22, fontWeight: 700, lineHeight: 1 }}>BlueAI</span>
       </div>
+      {isLoggedIn &&
       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
         {/* Credits pill — opens the AI Credits balance screen */}
         <div onClick={onOpenCredits} role="button" tabIndex={0} aria-label="AI credits"
@@ -198,13 +202,16 @@ function ProductTopBar({ credits, lowDot, onNewChat, onOpenHistory, onOpenCredit
               <button style={item} onClick={() => { setMenuOpen(false); onLogout && onLogout(); }} onMouseEnter={(e) => hover(e, true)} onMouseLeave={(e) => hover(e, false)}>{LogoutIcon}Logout</button>
             </div>}
         </div>
-      </div>
+      </div>}
     </div>);
 }
 
-// AI Credits screen — two states: Prime member (balance + spend limit + breakdown) and
-// Non-prime (upsell to Prime). State is driven by App's `creditsPrime`; toggle bottom-right.
-function AICreditsScreen({ credits, isPrime, primeGeo, keyAdded, keyInfo, onAddKey, onRemoveKey }) {
+// AI Credits screen. BYOK is universal (prime + non-prime) and the BYOK toggle is the master
+// switch — "whatever they've switched on will work" (PM). So when a key is added AND BYOK is on,
+// this screen shows the "running on your own key" state in ANY geo, with the credit balance
+// preserved/paused underneath; otherwise it shows the geo-specific credit view.
+function AICreditsScreen({ credits, isPrime, primeGeo, keyAdded, byokOn, keyInfo, onManageByok }) {
+  const byokActive = keyAdded && byokOn;
   const star = { background: 'linear-gradient(135deg,#0EA4C5,#7B4CFF)', WebkitMaskImage: 'url(assets/Credits.svg)', WebkitMaskSize: 'contain', WebkitMaskRepeat: 'no-repeat', WebkitMaskPosition: 'center', maskImage: 'url(assets/Credits.svg)', maskSize: 'contain', maskRepeat: 'no-repeat', maskPosition: 'center' };
   const gradText = { background: 'linear-gradient(90deg,#0EA4C5,#7B4CFF)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' };
 
@@ -249,28 +256,47 @@ function AICreditsScreen({ credits, isPrime, primeGeo, keyAdded, keyInfo, onAddK
         </button>
       </div>
 
-      {!primeGeo ? (
+      {byokActive ? (
         <>
-          {/* NON-PRIME GEO — Prime doesn't exist here; BYOK is the path (still gets 500 free credits on login) */}
+          {/* BYOK ACTIVE (any geo) — running on the user's own key; credits are paused, not consumed */}
+          <div style={{ padding: '18px 18px 6px' }}>
+            <div style={{ background: 'white', border: '1px solid #e8edf3', borderRadius: 14, padding: '16px 16px 14px', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <span style={{ width: 40, height: 40, borderRadius: '50%', background: '#dcfce7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><circle cx="7.5" cy="15.5" r="5.5" /><path d="m21 2-9.6 9.6" /><path d="m15.5 7.5 3 3L22 7l-3-3" /></svg>
+                </span>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <p style={{ fontSize: 15.5, fontWeight: 800, color: '#111827' }}>Running on your own key</p>
+                  <p style={{ fontSize: 12.5, color: '#94a3b8', marginTop: 2, lineHeight: 1.4 }}>{(keyInfo && keyInfo.provider) || 'Your provider'} · No BlueAI credits are consumed while this is on.</p>
+                </div>
+              </div>
+              <button onClick={onManageByok} style={{ width: '100%', marginTop: 14, borderRadius: 10, border: '1px solid #e2e8f0', background: 'white', padding: '10px', fontSize: 13.5, fontWeight: 700, color: '#1990FF', cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, transition: 'background 0.13s' }}
+                onMouseEnter={(e) => e.currentTarget.style.background = '#f8fafc'} onMouseLeave={(e) => e.currentTarget.style.background = 'white'}>
+                Manage in Settings
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6" /></svg>
+              </button>
+            </div>
+            {/* the banked balance is preserved for when they switch their key off */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 12, padding: '12px 14px', background: '#f1f5f9', borderRadius: 12 }}>
+              <div style={{ ...star, width: 20, height: 20, flexShrink: 0, opacity: 0.6 }} />
+              <p style={{ flex: 1, fontSize: 12.5, color: '#64748b', lineHeight: 1.4 }}>
+                Your {isPrime ? 'Prime' : 'BlueAI'} credits are paused, with <span style={{ fontWeight: 700, color: '#334155' }}>{credits.toLocaleString('en-US')}</span> waiting for when you switch your key off.
+              </p>
+            </div>
+          </div>
+        </>
+      ) : !primeGeo ? (
+        <>
+          {/* NON-PRIME GEO, not on own key — 500 free credits; BYOK (in Settings) is the way to keep going */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 9, padding: '18px 0 6px' }}>
-            {keyAdded ? (
-              <span style={{ fontSize: 20, fontWeight: 800, color: '#111827', letterSpacing: '-0.3px' }}>Using your own key</span>
-            ) : (
-              <>
-                <div style={{ ...star, width: 26, height: 26, flexShrink: 0 }} />
-                <span style={{ fontSize: 30, fontWeight: 800, color: '#111827', letterSpacing: '-0.5px', lineHeight: 1 }}>{credits.toLocaleString('en-US')}</span>
-              </>
-            )}
+            <div style={{ ...star, width: 26, height: 26, flexShrink: 0 }} />
+            <span style={{ fontSize: 30, fontWeight: 800, color: '#111827', letterSpacing: '-0.5px', lineHeight: 1 }}>{credits.toLocaleString('en-US')}</span>
           </div>
           <p style={{ fontSize: 13, color: '#94a3b8', textAlign: 'center', padding: '0 24px 14px', lineHeight: 1.5 }}>
-            {keyAdded
-              ? 'BlueAI is running on your own provider — no credits are consumed.'
-              : (credits > 0 ? 'Your free credits are running low. Add your own key to keep going.' : "You're out of credits. Add your own key to keep using BlueAI.")}
+            {credits > 0 ? 'Your free credits are running low. Add your own key to keep going.' : "You're out of credits. Add your own key to keep using BlueAI."}
           </p>
           <div style={{ padding: '2px 18px 6px' }}>
-            {keyAdded
-              ? <window.Byok.KeyAddedPanel info={keyInfo} onEdit={onRemoveKey} onRemove={onRemoveKey} />
-              : <window.Byok.ByokForm onUse={onAddKey} />}
+            <window.Byok.CreditsByokRow keyAdded={keyAdded} active={byokActive} keyInfo={keyInfo} onManage={onManageByok} />
           </div>
         </>
       ) : isPrime ? (
@@ -328,9 +354,9 @@ function AICreditsScreen({ credits, isPrime, primeGeo, keyAdded, keyInfo, onAddK
           </div>
           {/* Prime upsell (shared with the out-of-credits popup — window.Byok.PrimeUpsellCard) */}
           <window.Byok.PrimeUpsellCard />
-          {/* Bring-your-own-key — a clickable link alternative to Prime (anyone can do this, so no "non-prime" qualifier) */}
+          {/* Bring-your-own-key — a clickable alternative to Prime, routes to Settings › BYOK */}
           <div style={{ textAlign: 'center', padding: '11px 18px 4px' }}>
-            <button
+            <button onClick={onManageByok}
               onMouseEnter={(e) => e.currentTarget.style.color = '#475569'}
               onMouseLeave={(e) => e.currentTarget.style.color = '#64748b'}
               style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', fontFamily: 'inherit', fontSize: 13.5, fontWeight: 600, color: '#64748b', display: 'inline-flex', alignItems: 'center', gap: 5, textDecoration: 'underline', textUnderlineOffset: '2px', transition: 'color 0.13s ease' }}>
@@ -362,18 +388,30 @@ function App() {
   const [homeReady, setHomeReady] = useState(false);      // skeleton → real content
   const [creditsPrime, setCreditsPrime] = useState(false); // prime geo: member vs non-member
   const [primeGeo, setPrimeGeo] = useState(true);          // does Prime exist here (21 geos) — else the user must BYOK
-  const [keyAdded, setKeyAdded] = useState(false);         // non-prime geo: has the user configured their own key
+  const [keyAdded, setKeyAdded] = useState(false);         // has the user configured their own key (any geo)
   const [keyInfo, setKeyInfo] = useState(null);            // { provider, model, key }
+  const [byokOn, setByokOn] = useState(false);             // BYOK toggle in Settings
+  const [highlightByok, setHighlightByok] = useState(false); // pulse the Settings BYOK card when routed there
   const [zeroCredits, setZeroCredits] = useState(false);   // preview "out of credits" (drives the on-send popup)
   const [oocOpen, setOocOpen] = useState(false);           // out-of-credits popup
+  const [pendingMessage, setPendingMessage] = useState(null); // onboarding: message that opened the sign-in gate, auto-sent after login
   const [previewOpen, setPreviewOpen] = useState(true);    // dev preview panel collapse
-  const isLoggedIn = CONFIG.isLoggedIn;
+  const [isLoggedIn, setIsLoggedIn] = useState(true);       // preview toggle: Onboarding (logged out) vs Default (logged in)
+  const [onbPhase, setOnbPhase] = useState('welcome');      // onboarding sub-flow: 'welcome' (chrome-free picker) → 'chat'
   const isLoading = !homeReady;
-  const DEFAULT_KEY = { provider: 'Anthropic', model: 'Claude 4.5', key: 'sk-ant-9Xsjhdw1u294' };
+  const DEFAULT_KEY = { provider: 'Anthropic', model: 'claude-haiku-4-5', key: 'sk-ant-9Xsjhdw1qAAA' };
   const credits = zeroCredits ? 0 : (primeGeo ? (creditsPrime ? 49812 : 505) : 500);  // non-prime geo starts on 500 free credits
-  const lowDot = credits < 1000;                           // red dot when low/empty (505/500/0) — not on 49,812
-  const addKey = (info) => { setKeyInfo(info || DEFAULT_KEY); setKeyAdded(true); setOocOpen(false); };
+  const byokActive = keyAdded && byokOn;                   // running on the user's own key (any geo)
+  const lowDot = credits < 1000 && !byokActive;            // low/empty warning — suppressed while on own key (credits paused)
+  const addKey = (info) => { setKeyInfo(info || DEFAULT_KEY); setKeyAdded(true); setByokOn(true); setOocOpen(false); };
   const removeKey = () => { setKeyInfo(null); setKeyAdded(false); };
+  // Route into Settings › BYOK (from the out-of-credits popup or the credits-screen row): open
+  // Settings, turn BYOK on, and pulse-highlight the section so it's obvious where to add the key.
+  const goToByokSettings = () => {
+    setOocOpen(false); setCreditsOpen(false); setHistoryOpen(false); setProfileOpen(false);
+    setByokOn(true); setActiveTab('settings'); setHighlightByok(true);
+    setTimeout(() => setHighlightByok(false), 2000);
+  };
   // After the splash fades, let the skeleton linger briefly, then settle the content in.
   const handleBootDone = () => { setBooting(false); setTimeout(() => setHomeReady(true), 850); };
 
@@ -383,6 +421,22 @@ function App() {
   useEffect(() => { window.__openChatHistory = openHistory; return () => { delete window.__openChatHistory; }; }, []);
 
   const handleNewChat = () => { setSeed(null); setSessionKey((k) => k + 1); setActiveTab('chat'); setCreditsOpen(false); setHistoryOpen(false); setProfileOpen(false); setLogoutOpen(false); };
+  // Onboarding sign-in completes → the message that opened the gate auto-sends in the now
+  // logged-in DEFAULT flow (so the conversation starts and the category home is skipped —
+  // designer's correction). A fresh sign-in with no queued message just lands on the home.
+  // sessionKey bump resets ChatScreen; the autorun seed then fires the queued message.
+  const handleLoginSuccess = () => {
+    setShowLoginModal(false);
+    setIsLoggedIn(true);
+    setSessionKey((k) => k + 1);
+    setSeed(pendingMessage ? { text: pendingMessage, autorun: true, n: Date.now() } : null);
+    setPendingMessage(null);
+  };
+  // Preview-only: flip the Onboarding/Default session toggle. Onboarding always re-arms at
+  // its start (the chrome-free welcome picker); Default lands on a clean chat tab.
+  const switchSession = (loggedIn) => { setIsLoggedIn(loggedIn); setOnbPhase('welcome'); setSeed(null); setPendingMessage(null); setSessionKey((k) => k + 1); setActiveTab('chat'); setCreditsOpen(false); setHistoryOpen(false); setProfileOpen(false); };
+  // Onboarding picker → chat: prefill the composer with the picked task (empty for "Just type it").
+  const startOnboardingChat = (prompt) => { setSeed(prompt ? { text: prompt, n: Date.now() } : null); setSessionKey((k) => k + 1); setActiveTab('chat'); setOnbPhase('chat'); };
   const handleTrySkill = (skillObj) => {
     const text = typeof skillObj === 'string'
       ? skillObj
@@ -393,6 +447,9 @@ function App() {
   const handleTabChange = (tab) => { setActiveTab(tab); setCreditsOpen(false); setHistoryOpen(false); setProfileOpen(false); if (tab !== 'chat') setSeed(null); };
 
   const isChat = activeTab === 'chat';
+  // Logged-out cold start sits on the chrome-free welcome picker (no top bar, no bottom nav) —
+  // matches the design's picker phase. Once a task is picked / "just type it", we enter the chat.
+  const onboardingWelcome = !isLoggedIn && onbPhase === 'welcome';
 
   // Dev-only preview toggle row — compact segmented control sharing one inner track (no per-pill shadow).
   const PreviewRow = ({ label, opts, val, set }) => (
@@ -411,9 +468,16 @@ function App() {
 
   return (
     <div className="ba-app">
+      {onboardingWelcome ? (
+        <window.Onboarding.OnboardingWelcome
+          onPick={(item) => startOnboardingChat(item.prompt)}
+          onTypeIt={() => startOnboardingChat('')} />
+      ) : (
+      <>
       <ProductTopBar
         credits={credits}
         lowDot={lowDot}
+        isLoggedIn={isLoggedIn}
         onNewChat={handleNewChat}
         onOpenCredits={() => { setHistoryOpen(false); setProfileOpen(false); setCreditsOpen(true); }}
         onOpenHistory={openHistory}
@@ -425,7 +489,7 @@ function App() {
       ) : historyOpen ? (
         <HistoryScreen />
       ) : creditsOpen ? (
-        <AICreditsScreen credits={credits} isPrime={creditsPrime} primeGeo={primeGeo} keyAdded={keyAdded} keyInfo={keyInfo} onAddKey={addKey} onRemoveKey={removeKey} />
+        <AICreditsScreen credits={credits} isPrime={creditsPrime} primeGeo={primeGeo} keyAdded={keyAdded} byokOn={byokOn} keyInfo={keyInfo} onManageByok={goToByokSettings} />
       ) : activeTab === 'skills' ? (
         <div key="skills" className="tab-anim" style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
           <div data-skills-scroll style={{ flex: 1, overflowY: 'auto', padding: '0 16px 8px', scrollbarWidth: 'thin', scrollbarColor: 'rgba(0,0,0,0.15) #e2e8f0' }}>
@@ -451,24 +515,26 @@ function App() {
         </div>
       ) : isChat ? (
         <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column', width: '420px' }}>
-          <ProductChatScreen sessionKey={sessionKey} seed={seed} loading={!homeReady} zeroCredits={zeroCredits} onNoCredits={() => setOocOpen(true)} />
+          <ProductChatScreen sessionKey={sessionKey} seed={seed} loading={!homeReady} zeroCredits={zeroCredits && !byokActive} onNoCredits={() => setOocOpen(true)} isOnboarding={!isLoggedIn} onNeedLogin={(text) => { setPendingMessage(text); setShowLoginModal(true); }} />
         </div>
       ) : (
         <div key={activeTab} className="tab-anim"
           style={{ flex: 1, overflowY: 'auto', scrollbarWidth: 'thin', scrollbarColor: 'rgba(0,0,0,0.15) #e2e8f0', padding: '0px 16px 20px' }}>
           {activeTab === 'jobs' && <JobsScreen isLoading={isLoading} />}
           {activeTab === 'schedule' && <ScheduleScreen isLoading={isLoading} />}
-          {activeTab === 'settings' && <SettingsScreen />}
+          {activeTab === 'settings' && <SettingsScreen byok={{ on: byokOn, setOn: setByokOn, keyAdded, keyInfo, onSave: addKey, onRemove: removeKey, highlight: highlightByok }} />}
         </div>
       )}
 
       <FreeCreditsWidget triggerStyle="none" />
       <BottomNavbar activeTab={creditsOpen || historyOpen || profileOpen ? null : activeTab} onTabChange={handleTabChange} />
+      </>
+      )}
       <LoginModal
         isOpen={showLoginModal}
-        variant={CONFIG.loginVariant}
-        onClose={() => setShowLoginModal(false)}
-        onSuccess={() => setShowLoginModal(false)} />
+        variant="onboarding"
+        onClose={() => { setShowLoginModal(false); setPendingMessage(null); }}
+        onSuccess={handleLoginSuccess} />
 
       <LogoutModal
         isOpen={logoutOpen}
@@ -476,7 +542,7 @@ function App() {
         onConfirm={() => { setLogoutOpen(false); setProfileOpen(false); setActiveTab('chat'); }} />
 
       {/* Out-of-credits popup on message-send: prime geo → Prime upsell (image 1); non-prime geo → BYOK (image 2). */}
-      {oocOpen && <window.Byok.OutOfCreditsModal mode={!primeGeo ? 'byok' : (creditsPrime ? 'topup' : 'prime')} onClose={() => setOocOpen(false)} onUse={addKey} />}
+      {oocOpen && <window.Byok.OutOfCreditsModal mode={!primeGeo ? 'byok' : (creditsPrime ? 'topup' : 'prime')} onClose={() => setOocOpen(false)} onAddKey={goToByokSettings} />}
 
       {/* Preview-state dev control — ONE compact card (geo → member/key + credits), collapses to a gear. */}
       {previewOpen ? (
@@ -489,13 +555,33 @@ function App() {
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
             </button>
           </div>
-          <PreviewRow label="Geo" opts={[['Prime geo', true], ['Non-prime geo', false]]} val={primeGeo} set={setPrimeGeo} />
-          <div style={{ height: 1, background: '#f1f5f9' }} />
-          {primeGeo
-            ? <PreviewRow label="Member" opts={[['Prime', true], ['Non-prime', false]]} val={creditsPrime} set={setCreditsPrime} />
-            : <PreviewRow label="Key" opts={[['No key', false], ['Key added', true]]} val={keyAdded} set={(v) => { setKeyAdded(v); setKeyInfo(v ? DEFAULT_KEY : null); }} />}
-          <div style={{ height: 1, background: '#f1f5f9' }} />
-          <PreviewRow label="Credits" opts={[['Full', false], ['Empty', true]]} val={zeroCredits} set={setZeroCredits} />
+          {/* Progressive disclosure — mirror the product's real dependency chain so only the
+             controls that affect the CURRENT screen show. BYOK is universal (prime + non-prime)
+             and its toggle is the master switch — "whatever they've switched on will work":
+               Session ─ Onboarding (logged out) → nothing else applies
+                       └ Default (logged in) → Geo
+                            ├ Prime geo → Membership + Own key + Credits*
+                            └ Non-prime geo → Own key + Credits*
+               (*Credits hidden while running on the user's own key — credits are paused, not consumed.)
+             The Own-key toggle mirrors Settings: "Added" flips both keyAdded + byokOn on, so the
+             preview state stays in sync with what Settings shows and vice-versa. */}
+          {(() => {
+            const rows = [
+              <PreviewRow key="session" label="Session" opts={[['Onboarding', false], ['Default', true]]} val={isLoggedIn} set={switchSession} />
+            ];
+            if (isLoggedIn) {
+              rows.push(<PreviewRow key="geo" label="Geo" opts={[['Prime geo', true], ['Non-prime geo', false]]} val={primeGeo} set={setPrimeGeo} />);
+              if (primeGeo) rows.push(<PreviewRow key="membership" label="Membership" opts={[['Prime', true], ['Free', false]]} val={creditsPrime} set={setCreditsPrime} />);
+              rows.push(<PreviewRow key="key" label="Own key" opts={[['Off', false], ['On', true]]} val={byokActive} set={(v) => { setKeyAdded(v); setByokOn(v); setKeyInfo(v ? DEFAULT_KEY : null); }} />);
+              if (!byokActive) rows.push(<PreviewRow key="credits" label="Credits" opts={[['Full', false], ['Empty', true]]} val={zeroCredits} set={setZeroCredits} />);
+            }
+            return rows.map((row, i) => (
+              <React.Fragment key={row.key}>
+                {i > 0 && <div style={{ height: 1, background: '#f1f5f9' }} />}
+                {row}
+              </React.Fragment>
+            ));
+          })()}
         </div>
       ) : (
         <button aria-label="Preview state" onClick={() => setPreviewOpen(true)}
