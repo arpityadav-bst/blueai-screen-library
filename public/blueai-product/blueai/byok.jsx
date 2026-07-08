@@ -30,12 +30,12 @@
         <div style={{ width: 64, height: 64, borderRadius: '50%', background: '#e8f1fe', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '4px auto 16px' }}>
           <KeyIcon s={28} c={BLUE} />
         </div>
-        <h3 style={{ fontSize: 21, fontWeight: 800, color: '#080a1f', letterSpacing: '-0.3px' }}>Use Your API Key</h3>
-        <p style={{ fontSize: 13.5, color: '#565977', lineHeight: 1.5, margin: '7px auto 18px', maxWidth: 250 }}>Add your API key to continue using BlueAI.</p>
-        <button {...hov} onClick={onAddKey} style={{ ...pillBtn, width: '100%', padding: '13px 22px', fontSize: 15.5, boxShadow: '0 6px 20px rgba(25,144,255,0.32)' }}>Add API Key</button>
+        <h3 style={{ fontSize: 21, fontWeight: 800, color: '#080a1f', letterSpacing: '-0.3px' }}>Use your own key</h3>
+        <p style={{ fontSize: 13.5, color: '#565977', lineHeight: 1.5, margin: '7px auto 18px', maxWidth: 250 }}>Add a key to continue using BlueAI.</p>
+        <button {...hov} onClick={onAddKey} style={{ ...pillBtn, width: '100%', padding: '13px 22px', fontSize: 15.5, boxShadow: '0 6px 20px rgba(25,144,255,0.32)' }}>Add API key</button>
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'center', gap: 7, marginTop: 15 }}>
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 1.5 }}><circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8" /></svg>
-          <span style={{ fontSize: 12, color: '#94a3b8', lineHeight: 1.45, textAlign: 'left' }}>You can manage or change your key later in Settings.</span>
+          <span style={{ fontSize: 12, color: '#94a3b8', lineHeight: 1.45, textAlign: 'left' }}>You can manage it later in settings.</span>
         </div>
       </div>
     );
@@ -90,50 +90,38 @@
     );
   }
 
-  // Credits-screen row: a contextual button that routes to Settings › BYOK (not an inline form).
-  // Three states: key on/active (confirmation) · key added but switched OFF (nudge to turn on) ·
-  // no key (invite). "active" = BYOK toggle on AND a key saved.
-  function CreditsByokRow({ keyAdded, active, keyInfo, onManage }) {
-    if (active) {
-      const k = keyInfo || {};
-      return (
-        <div style={{ background: 'white', border: '1px solid #e8edf3', borderRadius: 12, padding: '14px 16px', boxShadow: '0 1px 3px rgba(0,0,0,0.04)', display: 'flex', alignItems: 'center', gap: 12 }}>
-          <span style={{ width: 34, height: 34, borderRadius: '50%', background: '#dcfce7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
-          </span>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <p style={{ fontSize: 14, fontWeight: 700, color: '#111827' }}>Using your own key</p>
-            <p style={{ fontSize: 12, color: '#94a3b8', marginTop: 1 }}>{(k.provider || 'Provider')} · no credits consumed</p>
-          </div>
-          <button onClick={onManage} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: 13, fontWeight: 700, color: BLUE, display: 'inline-flex', alignItems: 'center', gap: 3, flexShrink: 0 }}>Manage <ChevR c={BLUE} /></button>
-        </div>
-      );
-    }
-    if (keyAdded) {
-      const k = keyInfo || {};
-      return (
-        <button onClick={onManage} style={{ width: '100%', textAlign: 'left', background: 'white', border: '1px solid #e8edf3', borderRadius: 12, padding: '14px 16px', boxShadow: '0 1px 3px rgba(0,0,0,0.04)', cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: 12 }}
-          onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#c7d2e1'; }} onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#e8edf3'; }}>
-          <span style={{ width: 34, height: 34, borderRadius: '50%', background: '#fff7ed', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><KeyIcon s={17} c="#ea7b2c" /></span>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <p style={{ fontSize: 14, fontWeight: 700, color: '#111827' }}>Your own key is off</p>
-            <p style={{ fontSize: 12, color: '#94a3b8', marginTop: 1 }}>{(k.provider || 'Provider')} saved · turn it on in Settings to stop using credits.</p>
-          </div>
-          <ChevR c="#94a3b8" />
-        </button>
-      );
-    }
+  // Credits-screen invite CARD — routes to Settings › BYOK. Designed to carry the screen (not a thin
+  // strip): icon + promise + three benefit lines + a full-width CTA. Only ONE state now — a key that's
+  // switched off is DELETED (PM), so no "key saved but off". When a key IS on, the screen shows the
+  // "Running on your own key" card instead. (Exported as CreditsByokRow for the existing call site.)
+  var BYOK_BENEFITS = [
+    'Works with OpenAI, Anthropic, Gemini and more',
+    'Usage is billed to your provider, not BlueAI',
+    'Your key is stored on this device only'
+  ];
+  function CreditsByokRow({ onManage }) {
     return (
-      <button onClick={onManage} style={{ width: '100%', textAlign: 'left', background: 'white', border: '1px solid #e8edf3', borderRadius: 12, padding: '14px 16px', boxShadow: '0 1px 3px rgba(0,0,0,0.04)', cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: 12, transition: 'border-color 0.13s, box-shadow 0.13s' }}
-        onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#c7d2e1'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.07)'; }}
-        onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#e8edf3'; e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.04)'; }}>
-        <span style={{ width: 34, height: 34, borderRadius: '50%', background: '#e8f1fe', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><KeyIcon s={17} c={BLUE} /></span>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <p style={{ fontSize: 14, fontWeight: 700, color: '#111827' }}>Bring your own key</p>
-          <p style={{ fontSize: 12, color: '#94a3b8', marginTop: 1, lineHeight: 1.4 }}>Add an API key in Settings to keep going with no credits consumed.</p>
+      <div style={{ background: 'white', border: '1px solid #e8edf3', borderRadius: 16, padding: 20, boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 15 }}>
+          <span style={{ width: 44, height: 44, borderRadius: '50%', background: 'linear-gradient(135deg,rgba(14,164,197,0.14),rgba(123,76,255,0.14))', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><KeyIcon s={21} c={BLUE} /></span>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <p style={{ fontSize: 16, fontWeight: 800, color: '#080a1f' }}>Bring your own key</p>
+            <p style={{ fontSize: 12.5, color: '#565977', marginTop: 2 }}>Use BlueAI without spending credits.</p>
+          </div>
         </div>
-        <ChevR c="#94a3b8" />
-      </button>
+        <div style={{ height: 1, background: '#eef2f6', marginBottom: 15 }} />
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 11, marginBottom: 18 }}>
+          {BYOK_BENEFITS.map(function (b, i) {
+            return (
+              <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 9 }}>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 1 }}><polyline points="20 6 9 17 4 12" /></svg>
+                <span style={{ fontSize: 13, color: '#374151', lineHeight: 1.4 }}>{b}</span>
+              </div>
+            );
+          })}
+        </div>
+        <button {...hov} onClick={onManage} style={{ ...pillBtn, width: '100%', padding: '12px 22px', fontSize: 14.5, boxShadow: '0 6px 20px rgba(25,144,255,0.28)' }}>Add your key in Settings <ChevR c="white" s={15} /></button>
+      </div>
     );
   }
 

@@ -61,7 +61,7 @@
             <h2 style={{ fontSize: 17, fontWeight: 800, color: INK, marginBottom: 8 }}>Bring Your Own Key</h2>
             <p style={{ fontSize: 14, color: MUTED, lineHeight: 1.55 }}>Use your own API key from OpenAI, Anthropic, or another provider. Usage is billed directly to your provider account, with no BlueAI credits consumed.</p>
           </div>
-          <Toggle on={on} onClick={() => setOn(!on)} />
+          <Toggle on={on} onClick={() => { if (on) { setOn(false); onRemove(); setPicked(null); setKeyVal(''); } else { setOn(true); } }} />
         </div>
 
         {on && keyAdded && (
