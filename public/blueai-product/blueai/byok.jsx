@@ -90,37 +90,26 @@
     );
   }
 
-  // Credits-screen invite CARD — routes to Settings › BYOK. Designed to carry the screen (not a thin
-  // strip): icon + promise + three benefit lines + a full-width CTA. Only ONE state now — a key that's
-  // switched off is DELETED (PM), so no "key saved but off". When a key IS on, the screen shows the
-  // "Running on your own key" card instead. (Exported as CreditsByokRow for the existing call site.)
-  var BYOK_BENEFITS = [
-    'Works with OpenAI, Anthropic, Gemini and more',
-    'Usage is billed to your provider, not BlueAI',
-    'Your key is stored on this device only'
-  ];
+  // Credits-screen invite CARD — routes to Settings › BYOK. PM: drop the benefit list (too much info)
+  // and use a SQUARE, centred card instead of a wide rectangle — the taller square fills the screen so
+  // there's no dead space below. Icon → title → one-line promise → full-width CTA, all centred. Only ONE
+  // state — a key switched off is DELETED, so no "key saved but off"; when a key IS on the screen shows
+  // the "Running on your own key" card instead. (Exported as CreditsByokRow for the existing call site.)
   function CreditsByokRow({ onManage }) {
     return (
-      <div style={{ background: 'white', border: '1px solid #e8edf3', borderRadius: 16, padding: 20, boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 15 }}>
-          <span style={{ width: 44, height: 44, borderRadius: '50%', background: 'linear-gradient(135deg,rgba(14,164,197,0.14),rgba(123,76,255,0.14))', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><KeyIcon s={21} c={BLUE} /></span>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <p style={{ fontSize: 16, fontWeight: 800, color: '#080a1f' }}>Bring your own key</p>
-            <p style={{ fontSize: 12.5, color: '#565977', marginTop: 2 }}>Use BlueAI without spending credits.</p>
-          </div>
-        </div>
-        <div style={{ height: 1, background: '#eef2f6', marginBottom: 15 }} />
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 11, marginBottom: 18 }}>
-          {BYOK_BENEFITS.map(function (b, i) {
-            return (
-              <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 9 }}>
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 1 }}><polyline points="20 6 9 17 4 12" /></svg>
-                <span style={{ fontSize: 13, color: '#374151', lineHeight: 1.4 }}>{b}</span>
-              </div>
-            );
+      <div style={{ background: 'white', border: '1px solid #e8edf3', borderRadius: 18, boxShadow: '0 1px 3px rgba(0,0,0,0.04)', padding: '34px 24px 26px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+        {/* Badge box stays 58px in layout; the static rings are absolutely centred and OVERFLOW it,
+           so they add the radar halo without reserving height (content below doesn't shift). Opacity
+           drops with distance from the key. */}
+        <div style={{ position: 'relative', width: 58, height: 58, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 24 }}>
+          {[{ d: 104, o: 0.08 }, { d: 86, o: 0.18 }, { d: 68, o: 0.34 }].map(function (r, i) {
+            return <span key={i} aria-hidden="true" style={{ position: 'absolute', top: '50%', left: '50%', width: r.d, height: r.d, marginTop: -r.d / 2, marginLeft: -r.d / 2, borderRadius: '50%', border: '1.5px solid rgba(25,144,255,' + r.o + ')' }} />;
           })}
+          <span style={{ position: 'relative', zIndex: 1, width: 58, height: 58, borderRadius: '50%', background: 'linear-gradient(135deg,rgba(14,164,197,0.14),rgba(123,76,255,0.14))', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><KeyIcon s={27} c={BLUE} /></span>
         </div>
-        <button {...hov} onClick={onManage} style={{ ...pillBtn, width: '100%', padding: '12px 22px', fontSize: 14.5, boxShadow: '0 6px 20px rgba(25,144,255,0.28)' }}>Add your key in Settings <ChevR c="white" s={15} /></button>
+        <p style={{ fontSize: 19, fontWeight: 800, color: '#080a1f', letterSpacing: '-0.2px' }}>Bring your own key</p>
+        <p style={{ fontSize: 13.5, color: '#565977', marginTop: 8, maxWidth: '24ch', lineHeight: 1.5 }}>Use BlueAI without spending credits.</p>
+        <button {...hov} onClick={onManage} style={{ ...pillBtn, width: '100%', marginTop: 24, padding: '13px 22px', fontSize: 14.5, boxShadow: '0 6px 20px rgba(25,144,255,0.28)' }}>Add your key in Settings <ChevR c="white" s={15} /></button>
       </div>
     );
   }
