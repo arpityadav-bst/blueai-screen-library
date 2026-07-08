@@ -59,7 +59,7 @@
         <Divider />
         <div style={{ textAlign: 'center', padding: '16px 4px 2px' }}>
           <button {...hov} style={pillBtn}>Try for $3.99 <ChevR c="white" s={15} /></button>
-          <p style={{ fontSize: 11.5, color: '#94a3b8', marginTop: 11 }}>$4.99 next month onwards.</p>
+          <p style={{ fontSize: 11.5, color: '#94a3b8', marginTop: 11 }}>$7.99 next month onwards.</p>
         </div>
       </div>
     );
