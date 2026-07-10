@@ -109,6 +109,8 @@
 <script type="text/babel" src="blueai/jobs.jsx"></script>
 <script type="text/babel" src="blueai/skills.jsx"></script>
 <script type="text/babel" src="blueai/schedule.jsx"></script>
+<!-- AI Mode (Cloud vs Hybrid) — used inside settings.jsx (exposes window.AiMode) -->
+<script type="text/babel" src="blueai/ai_mode.jsx"></script>
 <script type="text/babel" src="blueai/settings.jsx"></script>
 <script type="text/babel" src="blueai/login.jsx"></script>
 <!-- Bring-your-own-key: out-of-credits popups + credits-screen routes (exposes window.Byok) -->
@@ -444,6 +446,8 @@ function App() {
   const [highlightByok, setHighlightByok] = useState(false); // pulse the Settings BYOK card when routed there
   const [zeroCredits, setZeroCredits] = useState(false);   // preview "out of credits" (drives the on-send popup)
   const [showChatStates, setShowChatStates] = useState(false); // preview: show one example bubble per chat message state (success/warning/error) instead of the live scripted task
+  const [aiHwSupported, setAiHwSupported] = useState(true);    // preview: does this PC meet Hybrid AI Mode's hardware requirements
+  const [aiConflict, setAiConflict] = useState(false);         // preview: another local model (e.g. LM Studio) already running
   const [oocOpen, setOocOpen] = useState(false);           // out-of-credits popup
   const [pendingMessage, setPendingMessage] = useState(null); // onboarding: message that opened the sign-in gate, auto-sent after login
   const [previewOpen, setPreviewOpen] = useState(true);    // dev preview panel collapse
@@ -573,7 +577,7 @@ function App() {
           style={{ flex: 1, overflowY: 'auto', scrollbarWidth: 'thin', scrollbarColor: 'rgba(0,0,0,0.15) #e2e8f0', padding: '0px 16px 20px' }}>
           {activeTab === 'jobs' && <JobsScreen isLoading={isLoading} />}
           {activeTab === 'schedule' && <ScheduleScreen isLoading={isLoading} />}
-          {activeTab === 'settings' && <SettingsScreen byok={{ on: byokOn, setOn: setByokOn, keyAdded, keyInfo, onSave: addKey, onRemove: removeKey, highlight: highlightByok }} />}
+          {activeTab === 'settings' && <SettingsScreen byok={{ on: byokOn, setOn: setByokOn, keyAdded, keyInfo, onSave: addKey, onRemove: removeKey, highlight: highlightByok }} aiModeConditions={{ hwSupported: aiHwSupported, conflict: aiConflict }} />}
         </div>
       )}
 
@@ -621,6 +625,10 @@ function App() {
               <PreviewRow key="session" label="Session" opts={[['Onboarding', false], ['Default', true]]} val={isLoggedIn} set={switchSession} />
             ];
             if (isChat) rows.push(<PreviewRow key="states" label="Chat states" opts={[['Off', false], ['On', true]]} val={showChatStates} set={setShowChatStates} />);
+            if (activeTab === 'settings') {
+              rows.push(<PreviewRow key="aihw" label="Hardware" opts={[['Yes', true], ['No', false]]} val={aiHwSupported} set={setAiHwSupported} />);
+              rows.push(<PreviewRow key="aiconflict" label="AI conflict" opts={[['None', false], ['Detected', true]]} val={aiConflict} set={setAiConflict} />);
+            }
             if (isLoggedIn) {
               rows.push(<PreviewRow key="geo" label="Geo" opts={[['Prime geo', true], ['Non-prime geo', false]]} val={primeGeo} set={setPrimeGeo} />);
               if (primeGeo) rows.push(<PreviewRow key="membership" label="Membership" opts={[['Prime', true], ['Free', false]]} val={creditsPrime} set={setCreditsPrime} />);
