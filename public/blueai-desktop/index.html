@@ -55,6 +55,7 @@
       --bai-accent: #6ea8ff; --bai-accent-strong: #3d6bd6; --bai-accent-wash: rgba(110,168,255,0.10); --bai-on-accent: #0b1220;
       --bai-ok: #5fcf8f; --bai-danger: #ff8c8c; --bai-scroll: rgba(160,180,220,0.5); --bai-menu-shadow: 0 8px 24px rgba(0,0,0,0.5);
       --bai-credit-hi: #6ea8ff; --bai-credit-mid: #f4d35e; --bai-credit-low: #f59e42; --bai-credit-crit: #ff6b6b;
+      --bai-titlebar-bg: #2b2c30; --bai-titlebar-line: #1c1d20; --bai-titlebar-text: #d7d9de; --bai-titlebar-icon: #b7bac1;   /* fixed OS-chrome gray — never redefined in .drawer.light, so it stays constant across themes */
     }
     /* Light: cool paper-white slate. Inks picked for AA contrast on #f6f8fc/white (accent 5.0:1, body 8.5:1, dim ~5:1). */
     .drawer.light {
@@ -87,8 +88,21 @@
     .canvas { width: 100%; height: 100%; background: var(--bai-bg); position: relative; overflow: hidden; }
     .bai-cv { position: absolute; inset: 0; }
 
-    /* Chat UI overlay — fades in after the boot sequence; the canvas logo shows through the header slot. */
-    .bai-ui { position: absolute; inset: 0; display: flex; flex-direction: column; opacity: 0; transition: opacity 420ms ease; pointer-events: none; }
+    /* Persistent OS-style title bar — sits above everything (launcher, boot-log, and chat UI alike),
+       fixed dark-gray regardless of the in-panel dark/light theme, like real window chrome. Drag-to-
+       move lives here now. Minimize/maximize are decorative only; only Close is wired. */
+    .bai-titlebar { position: absolute; top: 0; left: 0; right: 0; height: 30px; z-index: 60; display: flex; align-items: center; gap: 7px; padding: 0 6px 0 10px; background: var(--bai-titlebar-bg); border-bottom: 1px solid var(--bai-titlebar-line); }
+    .bai-tb-logo { width: 15px; height: 15px; flex-shrink: 0; display: block; border-radius: 50%; user-select: none; }
+    .bai-tb-title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; font-weight: 500; color: var(--bai-titlebar-text); letter-spacing: 0.2px; }
+    .bai-tb-btns { display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
+    .bai-tb-btn { display: flex; align-items: center; justify-content: center; width: 26px; height: 22px; border: none; border-radius: 4px; background: none; color: var(--bai-titlebar-icon); cursor: pointer; padding: 0; transition: background 0.12s, color 0.12s; }
+    .bai-tb-btn:hover { background: rgba(255,255,255,0.10); color: #f0f1f4; }
+    .bai-tb-btn.bai-tb-close:hover { background: #e6473a; color: #fff; }
+    .bai-tb-btn svg { display: block; pointer-events: none; }
+
+    /* Chat UI overlay — fades in after the boot sequence; the canvas logo shows through the header slot.
+       Starts at 30px to clear the persistent title bar above it. */
+    .bai-ui { position: absolute; top: 30px; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; opacity: 0; transition: opacity 420ms ease; pointer-events: none; }
     .bai-ui.show { opacity: 1; pointer-events: auto; }
     /* Opening reveal: header drops from the top, chatbar + tools rise from the bottom, conversation fades in last. */
     .bai-ui.anim { transition: none; }                       /* children carry the motion, not a container cross-fade */
@@ -150,7 +164,8 @@
     .bai-title-btn { display: flex; align-items: center; gap: 5px; min-width: 0; max-width: 100%; background: none; border: none; cursor: pointer; padding: 0; color: var(--bai-dim-2); font-family: 'JetBrains Mono', ui-monospace, monospace; font-weight: 500; font-size: 11px; letter-spacing: 0; }   /* subtle, recessive — smaller + muted vs the brand wordmark */
     .bai-title-btn #baiMainTitle { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .bai-title-btn:hover { color: var(--bai-hover-ink); }
-    .bai-title-ar { flex-shrink: 0; color: var(--bai-faint); font-size: 13px; font-weight: 400; line-height: 1; transition: color 0.15s; }
+    .bai-title-ar { flex-shrink: 0; display: flex; align-items: center; color: var(--bai-faint); margin-top: 1px; transition: color 0.15s; }   /* stroke chevron-down (same line style as the ›/icon set) = "opens a menu", not "go forward" */
+    .bai-title-ar svg { display: block; }
     .bai-title-btn:hover .bai-title-ar { color: var(--bai-hover-ink); }
     .bai-chat-label { font-size: 9.5px; color: var(--bai-faint); letter-spacing: 0.4px; padding: 3px 8px 4px; }
     .bai-chat-dot { width: 6px; height: 6px; border-radius: 50%; background: transparent; box-shadow: inset 0 0 0 1.2px var(--bai-faint); flex-shrink: 0; }
@@ -204,11 +219,6 @@
     /* Opening launcher — wordmark + two worker options, centered just below the assembled logo. */
     .bai-launch { position: absolute; left: 0; right: 0; top: 53%; display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 0 24px; opacity: 0; transition: opacity 0.5s ease; pointer-events: none; }
     .bai-launch.on { opacity: 1; pointer-events: auto; }
-    /* close/hide affordance on the picker screen (the chat header isn't there yet) — same hover pill as the header icons */
-    .bai-launch-close { position: absolute; top: 10px; right: 10px; z-index: 6; display: none; align-items: center; justify-content: center; width: 26px; height: 26px; border: none; border-radius: 6px; background: none; color: var(--bai-icon); cursor: pointer; padding: 0; transition: background 0.15s, color 0.15s; }
-    .bai-launch-close.on { display: flex; }
-    .bai-launch-close:hover { background: var(--bai-pill); color: var(--bai-text-hi); }
-    .bai-launch-close svg { display: block; }
     .bai-wordmark { font-family: 'JetBrains Mono', ui-monospace, monospace; font-weight: 700; font-size: 20px; letter-spacing: -0.5px; color: var(--bai-text-bright); }
     .bai-opts { display: flex; flex-direction: column; gap: 9px; width: 100%; max-width: 240px; }
     .bai-skip { margin-top: -4px; background: none; border: none; color: var(--bai-faint); font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; cursor: pointer; padding: 5px 10px; border-radius: 6px; transition: color 0.15s, background 0.15s; }
@@ -278,8 +288,20 @@
     .bai-stat-wrap { position: relative; }
     .bai-stat-btn { background: none; border: none; border-radius: 6px; color: var(--bai-hover-ink); font-family: inherit; font-size: 10.5px; cursor: pointer; padding: 3px 7px; white-space: nowrap; transition: background 0.15s, color 0.15s; }
     .bai-stat-btn:hover { background: var(--bai-pill); color: var(--bai-text-bright); }   /* hover pill is the affordance — no persistent arrow */
-    .bai-credits { color: var(--bai-icon-2); white-space: nowrap; border-radius: 6px; padding: 3px 7px; cursor: default; transition: background 0.15s; }
-    .bai-credits:hover { background: var(--bai-pill); }   /* same hover pill; health color stays (set inline) */
+    /* credits: a small circular gauge — % remaining at a glance, exact numbers on hover */
+    .bai-credits-wrap { display: flex; align-items: center; padding: 3px 5px; border-radius: 6px; cursor: default; transition: background 0.15s; }
+    .bai-credits-wrap:hover { background: var(--bai-pill); }   /* same hover pill as model/effort */
+    .bai-credit-ring { width: 14px; height: 14px; display: block; transform: rotate(-90deg); }   /* arc starts at 12 o'clock */
+    .bai-credit-ring .tr { fill: none; stroke: var(--bai-line-2); stroke-width: 3; }
+    .bai-credit-ring .fl { fill: none; stroke-width: 3; stroke-linecap: round; transition: stroke-dasharray 0.3s ease, stroke 0.3s ease; }
+    .bai-credits-wrap .bai-menu-desc { left: auto; right: 0; width: 176px; white-space: normal; }   /* two-class specificity beats .bai-menu-desc's own left:0/right:0 — card hugs the window's right edge and grows LEFT, never off-screen */
+    .bai-credits-wrap .bai-menu-desc.show { display: flex; flex-direction: column; gap: 5px; }
+    .cr-head { font-size: 9.5px; letter-spacing: 0.6px; color: var(--bai-faint); }
+    .cr-big { font-size: 15px; font-weight: 700; color: var(--bai-text-bright); font-family: 'JetBrains Mono', ui-monospace, monospace; }
+    .cr-big .sp { font-weight: 400; }
+    .cr-bar { height: 3px; border-radius: 2px; background: var(--bai-line-2); overflow: hidden; }
+    .cr-bar i { display: block; height: 100%; border-radius: 2px; }
+    .cr-sub { font-size: 10px; line-height: 1.4; color: var(--bai-dim); }
     .bai-menu { position: absolute; bottom: calc(100% + 6px); right: 0; min-width: 124px; background: var(--bai-panel); border: 1px solid var(--bai-line-2); border-radius: 8px; padding: 4px; display: none; flex-direction: column; gap: 1px; box-shadow: var(--bai-menu-shadow); z-index: 30; }
     .bai-menu.open { display: flex; }
     .bai-menu-item { display: flex; align-items: center; gap: 6px; padding: 6px 8px; border-radius: 5px; font-size: 11px; color: var(--bai-text); cursor: pointer; white-space: nowrap; }
@@ -309,7 +331,16 @@
         <!-- Blank black canvas — the reinvented BlueAI product gets built in here. -->
         <div class="drawer" id="drawer">
           <div class="canvas" id="blueai-canvas">
-            <button class="bai-launch-close" id="baiLaunchClose" type="button" aria-label="Close"></button>
+            <!-- OS-style window chrome: real logo asset + name + window controls (min/max decorative; ✕ closes) -->
+            <div class="bai-titlebar" id="baiTitlebar">
+              <img class="bai-tb-logo" src="assets/logo.png" alt="" draggable="false" />
+              <span class="bai-tb-title">BlueAI</span>
+              <div class="bai-tb-btns">
+                <button class="bai-tb-btn" id="baiMinBtn" type="button" aria-label="Minimize" tabindex="-1"><svg width="10" height="10" viewBox="0 0 10 10"><line x1="1" y1="5" x2="9" y2="5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></button>
+                <button class="bai-tb-btn" id="baiMaxBtn" type="button" aria-label="Maximize" tabindex="-1"><svg width="10" height="10" viewBox="0 0 10 10"><rect x="1.2" y="1.2" width="7.6" height="7.6" rx="0.5" fill="none" stroke="currentColor" stroke-width="1.3"/></svg></button>
+                <button class="bai-tb-btn bai-tb-close" id="baiTbClose" type="button" aria-label="Close"><svg width="10" height="10" viewBox="0 0 10 10"><line x1="1" y1="1" x2="9" y2="9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><line x1="9" y1="1" x2="1" y2="9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></button>
+              </div>
+            </div>
             <div class="bai-launch" id="baiLaunch">
               <div class="bai-wordmark">BlueAI</div>
               <div class="bai-opts">
@@ -323,7 +354,7 @@
               <div class="bai-sidebar" id="baiSidebar">
                 <div class="bai-side-brand"><canvas class="bai-side-logo" id="baiSideLogo"></canvas><span>BlueAI</span></div>
                 <div class="bai-side-nav">
-                  <div class="bai-side-item active" data-mode="chat"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-12.3 7.5L3 21l2-5.7A8.4 8.4 0 1 1 21 11.5z"/></svg></span>Chat<button class="bai-side-newicon" id="baiSideNew" type="button" aria-label="New chat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h13a2 2 0 0 0 2-2v-6"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/></svg></button></div>
+                  <div class="bai-side-item active" data-mode="chat"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-12.3 7.5L3 21l2-5.7A8.4 8.4 0 1 1 21 11.5z"/></svg></span>Chat<button class="bai-side-newicon" id="baiSideNew" type="button" aria-label="New chat" title="Start a new chat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h13a2 2 0 0 0 2-2v-6"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/></svg></button></div>
                   <button class="bai-side-item" data-mode="jobs" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h12M8 12h12M8 18h12"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/></svg></span>Jobs<span class="bai-side-badge">2</span></button>
                   <button class="bai-side-item" data-mode="skills" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg></span>Skills</button>
                   <button class="bai-side-item" data-mode="scheduled" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>Scheduled</button>
@@ -339,8 +370,6 @@
                 <span class="bai-wm" id="baiWm"><span id="baiTitle">BlueAI</span></span>
                 <div class="bai-head-r">
                   <button class="bai-icbtn" id="baiSettingsBtn" type="button" aria-label="Settings"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
-                  <button class="bai-icbtn" id="baiDetach" type="button" aria-label="Detach"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14L21 3"/><path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5"/></svg></button>
-                  <button class="bai-icbtn" id="baiCollapseBtn" type="button" aria-label="Close panel"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button>
                 </div>
               </div>
               <div class="bai-strip" id="baiStrip">
@@ -351,7 +380,7 @@
               </div>
               <div class="bai-main-title">
                 <div class="bai-stat-wrap">
-                  <button class="bai-title-btn" id="baiTitleBtn" type="button"><span id="baiMainTitle">New chat</span><span class="bai-title-ar">&#8250;</span></button>
+                  <button class="bai-title-btn" id="baiTitleBtn" type="button" title="Recent chats"><span id="baiMainTitle">Untitled chat</span><span class="bai-title-ar"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span></button>
                   <div class="bai-menu down left" id="baiTitleMenu">
                     <div class="bai-menu-items">
                       <div class="bai-chat-label">RECENT</div>
@@ -359,7 +388,7 @@
                     </div>
                   </div>
                 </div>
-                <button class="bai-icbtn bai-newchat-btn" id="baiNewBtn" type="button" aria-label="New chat"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h13a2 2 0 0 0 2-2v-6"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/></svg></button>
+                <button class="bai-icbtn bai-newchat-btn" id="baiNewBtn" type="button" aria-label="New chat" title="Start a new chat"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h13a2 2 0 0 0 2-2v-6"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/></svg></button>
               </div>
               <div class="bai-panes">
                 <div class="bai-pane active" id="paneChat">
@@ -386,7 +415,10 @@
                     <div class="bai-stat-r">
                       <div class="bai-stat-wrap"><button class="bai-stat-btn" id="baiModelBtn" type="button"></button><div class="bai-menu" id="baiModelMenu"></div></div>
                       <div class="bai-stat-wrap"><button class="bai-stat-btn" id="baiEffortBtn" type="button"></button><div class="bai-menu" id="baiEffortMenu"></div></div>
-                      <span class="bai-credits" id="baiCredits"></span>
+                      <div class="bai-stat-wrap bai-credits-wrap" id="baiCreditsWrap">
+                        <svg class="bai-credit-ring" viewBox="0 0 18 18" aria-label="Credits remaining"><circle class="tr" cx="9" cy="9" r="7"/><circle class="fl" id="baiCreditsArc" cx="9" cy="9" r="7"/></svg>
+                        <div class="bai-menu-desc bai-credits-desc" id="baiCreditsDesc"></div>
+                      </div>
                     </div>
                   </div>
                   <div class="bai-scroll" id="baiScroll"></div>
@@ -524,15 +556,27 @@
       var FILES = ['resume.pdf', 'portfolio.png', 'brief.md', 'logo.svg'];
       var FOLDERS = ['designs/', 'projects/', 'exports/'];
       var SKILLS = ['carousel.skill.md', 'jobs.skill.md', 'content.skill.md'];
-      var curModel = 'Opus 4.8', curEffort = 'Extra', credits = 49812, fIdx = 0;
+      var curModel = 'Opus 4.8', curEffort = 'Extra', credits = 49812, CREDIT_MAX = 50000, CREDIT_RESET_DAYS = 6, fIdx = 0;
       var modelBtn = document.getElementById('baiModelBtn'), modelMenu = document.getElementById('baiModelMenu');
       var effortBtn = document.getElementById('baiEffortBtn'), effortMenu = document.getElementById('baiEffortMenu');
-      var creditsEl = document.getElementById('baiCredits'), attachBtn = document.getElementById('baiAttach'), chips = document.getElementById('baiChips'), attachMenu = document.getElementById('baiAttachMenu'), folderIdx = 0, skillIdx = 0;
+      var creditsWrap = document.getElementById('baiCreditsWrap'), creditsArc = document.getElementById('baiCreditsArc'), creditsDesc = document.getElementById('baiCreditsDesc');
+      var RING_C = 2 * Math.PI * 7;   // circumference of the r=7 gauge circle
+      var attachBtn = document.getElementById('baiAttach'), chips = document.getElementById('baiChips'), attachMenu = document.getElementById('baiAttachMenu'), folderIdx = 0, skillIdx = 0;
       function renderModel() { modelBtn.textContent = curModel; }
       function renderEffort() { effortBtn.textContent = curEffort; }
       // credit health ramp (as balance depletes): blue good → yellow low → orange very low → red almost over
       function creditColor(c) { return c > 12000 ? 'var(--bai-credit-hi)' : c > 5000 ? 'var(--bai-credit-mid)' : c > 1500 ? 'var(--bai-credit-low)' : 'var(--bai-credit-crit)'; }   // theme vars -> the ramp re-colors itself on theme switch
-      function renderCredits() { creditsEl.textContent = '✦ ' + credits.toLocaleString('en-US'); creditsEl.style.color = creditColor(credits); }
+      function renderCredits() {                                                     // circular gauge: arc length = % remaining, ramp color; detail lives in the hover card
+        var pct = Math.max(0, Math.min(100, Math.round(credits / CREDIT_MAX * 100)));
+        var col = creditColor(credits);
+        creditsArc.style.strokeDasharray = (RING_C * pct / 100).toFixed(2) + ' ' + RING_C.toFixed(2);
+        creditsArc.style.stroke = col;
+        creditsDesc.innerHTML =
+          '<span class="cr-head">CREDITS</span>' +
+          '<span class="cr-big"><span class="sp" style="color:' + col + '">✦</span> ' + credits.toLocaleString('en-US') + '</span>' +
+          '<span class="cr-bar"><i style="width:' + pct + '%;background:' + col + '"></i></span>' +
+          '<span class="cr-sub">' + pct + '% of ' + CREDIT_MAX.toLocaleString('en-US') + ' left · resets in ' + CREDIT_RESET_DAYS + 'd</span>';
+      }
       function closeMenus() { modelMenu.classList.remove('open'); effortMenu.classList.remove('open'); if (attachMenu) attachMenu.classList.remove('open'); if (titleMenu) titleMenu.classList.remove('open'); }
       function fillMenu(menu, items, cur, pick, title, desc) {
         menu.innerHTML = '';
@@ -575,6 +619,7 @@
         });
       });
       renderModel(); renderEffort(); renderCredits();
+      if (creditsWrap) { creditsWrap.addEventListener('mouseenter', function () { creditsDesc.classList.add('show'); }); creditsWrap.addEventListener('mouseleave', function () { creditsDesc.classList.remove('show'); }); }   // hover -> exact balance / % / reset countdown
 
       // ---- Mode strip nav + header utility (settings) ----
       var settingsBtn = document.getElementById('baiSettingsBtn');
@@ -589,23 +634,12 @@
       }
       tabs.forEach(function (t) { t.addEventListener('click', function () { setMode(t.getAttribute('data-mode')); }); });
       settingsBtn.addEventListener('click', function (e) { e.stopPropagation(); closeMenus(); setMode('settings'); });
-      var collapseBtn = document.getElementById('baiCollapseBtn');
-      collapseBtn.addEventListener('click', function (e) { e.stopPropagation(); closeMenus(); closePanel(); });   // collapse (docked) / close + remember (detached)
+      var tbClose = document.getElementById('baiTbClose');
+      if (tbClose) tbClose.addEventListener('click', function (e) { e.stopPropagation(); closeMenus(); closePanel(); });   // title bar's Close — hides + remembers; Minimize/Maximize are decorative only (no handler)
 
-      // ---- Detach / reattach: float the drawer off the player into a resizable, draggable window ----
-      var detachBtn = document.getElementById('baiDetach'), detached = false, launchClose = document.getElementById('baiLaunchClose');
-      var IC_DETACH = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14L21 3"/><path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5"/></svg>';
-      var IC_REATTACH = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><rect x="2.5" y="4" width="19" height="16" rx="2.5"/><path d="M15.5 4H19A2.5 2.5 0 0 1 21.5 6.5V17.5A2.5 2.5 0 0 1 19 20H15.5Z" fill="currentColor" stroke="none"/></svg>';
-      var IC_COLLAPSE = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>';
-      var IC_CLOSE = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
-      function syncWindowIcons() {
-        detachBtn.innerHTML = detached ? IC_REATTACH : IC_DETACH;
-        detachBtn.setAttribute('aria-label', detached ? 'Reattach' : 'Detach');
-        collapseBtn.innerHTML = detached ? IC_CLOSE : IC_COLLAPSE;
-        collapseBtn.setAttribute('aria-label', detached ? 'Close window' : 'Close panel');
-        if (launchClose) { launchClose.innerHTML = detached ? IC_CLOSE : IC_COLLAPSE; launchClose.setAttribute('aria-label', detached ? 'Close window' : 'Close panel'); }
-      }
-      // Window-state persistence: remember detached + size/position across close + refresh (design-only, localStorage).
+      // ---- Floating window: always detached (the drawer/dock mode is gone) — resizable + draggable ----
+      var detached = false;   // flips true on first open and stays true; kept as a guard for pre-open states
+      // Window-state persistence: remember size/position across close + refresh (design-only, localStorage).
       var WIN_STORE = 'baiWin', saveT = null;
       function readWin() { try { var s = localStorage.getItem(WIN_STORE); return s ? JSON.parse(s) : null; } catch (e) { return null; } }
       function saveWin() {
@@ -627,20 +661,11 @@
         drawer.style.top = (geom ? clampY(geom.t) : 0) + 'px';
         drawer.style.width = w + 'px'; drawer.style.height = h + 'px';
         baiUi.classList.toggle('wide', w >= 600);              // set BEFORE any reveal so the sidebar slide-in fires for a wide restore
-        syncWindowIcons(); if (baiCtrl.resize) baiCtrl.resize(); saveWin();
+        if (baiCtrl.resize) baiCtrl.resize(); saveWin();
       }
-      function reattach() {
-        detached = false; drawer.classList.remove('detached', 'win-hidden');
-        drawer.style.left = ''; drawer.style.top = ''; drawer.style.width = ''; drawer.style.height = '';
-        if (drawer.classList.contains('open')) composition.classList.add('shift');
-        baiUi.classList.remove('wide');
-        syncWindowIcons(); if (baiCtrl.resize) baiCtrl.resize(); saveWin();   // saveWin() clears the key -> next open is docked
-      }
-      detachBtn.addEventListener('click', function (e) { e.stopPropagation(); closeMenus(); if (detached) reattach(); else detach(); });
-      syncWindowIcons();
-      var hdrEl = baiUi.querySelector('.bai-header');   // drag the floating window by its header
+      var hdrEl = document.getElementById('baiTitlebar');   // drag the floating window by its title bar
       hdrEl.addEventListener('pointerdown', function (e) {
-        if (!detached || (e.target.closest && e.target.closest('button, .bai-wm, .bai-menu'))) return;
+        if (!detached || (e.target.closest && e.target.closest('button'))) return;
         var sc = (scaler.getBoundingClientRect().width / scaler.offsetWidth) || 1;
         var sx = e.clientX, sy = e.clientY, sl = parseFloat(drawer.style.left) || 0, st = parseFloat(drawer.style.top) || 0;
         function mv(ev) { drawer.style.left = (sl + (ev.clientX - sx) / sc) + 'px'; drawer.style.top = (st + (ev.clientY - sy) / sc) + 'px'; }
@@ -725,6 +750,7 @@
       function startGreeting() { aiReply(DEFAULT_GREET, 'intro'); }
 
       window.__baiFlow = startFlow;   // debug hook (like __baiCtrl) — start a flow without the full opening
+      window.__setCredits = function (v) { credits = v; renderCredits(); };   // debug hook — jump the credits bar to a value without spamming sends
 
       // ---- Chat session switcher: wordmark dropdown -> new chat + recent chats (scripted) ----
       var titleBtn = document.getElementById('baiTitleBtn'), titleMenu = document.getElementById('baiTitleMenu'), newBtn = document.getElementById('baiNewBtn');
@@ -735,7 +761,7 @@
         { title: 'Resume tailoring', time: '3d', msgs: [{ u: 'tailor my resume for product design' }, { a: 'Tightened your summary and pulled design-systems impact to the top.' }] },
         { title: 'Free Fire FAQ', time: '5d', msgs: [{ u: 'gameplay review script for Free Fire' }, { a: 'Wrote a Hinglish beat-sheet — cold hook, FAQ, combat, verdict.' }] }
       ];
-      var fullTitle = 'BlueAI';
+      var fullTitle = 'Untitled chat';   // a NAME, not an action — "New chat" as a title read like a button
       function setTitle(t) { fullTitle = t; var mt = document.getElementById('baiMainTitle'); if (mt) mt.textContent = t; }   // header wordmark stays the "BlueAI" brand; the chat name lives in the main-column title
       function aiInstant(text) { var el = document.createElement('div'); el.className = 'bai-msg ai'; el.textContent = text; baiBody.appendChild(el); }
       function resetChatState() { flow = null; flowI = 0; pending = null; ctx = {}; restorePlaceholder(); }
@@ -743,7 +769,7 @@
         [].forEach.call(recentsEl.children, function (row, i) { row.classList.toggle('on', RECENTS[i] === r); });
         var sr = document.getElementById('baiSideRecents'); if (sr) [].forEach.call(sr.children, function (row, i) { row.classList.toggle('on', RECENTS[i] === r); });
       }
-      function newChat() { resetChatState(); setMode('chat'); baiBody.innerHTML = ''; setTitle('New chat'); markRecent(null); startGreeting(); }
+      function newChat() { resetChatState(); setMode('chat'); baiBody.innerHTML = ''; setTitle('Untitled chat'); markRecent(null); startGreeting(); }
       function refreshRecentClasses() { [recentsEl, document.getElementById('baiSideRecents')].forEach(function (c) { if (!c) return; [].forEach.call(c.children, function (row, i) { var rr = RECENTS[i]; if (!rr) return; row.classList.toggle('working', !!rr.working); row.classList.toggle('unseen', !!rr.unseen); }); }); }
       function loadThread(r) { resetChatState(); setMode('chat'); baiBody.innerHTML = ''; setTitle(r.title); (r.msgs || []).forEach(function (m) { if (m.u !== undefined) addUser(m.u); else aiInstant(m.a); }); if (r.unseen) { r.unseen = false; refreshRecentClasses(); } markRecent(r); scrollBody(); }
       RECENTS.forEach(function (r) {
@@ -788,8 +814,7 @@
 
       // ---- Opening launcher: assembled logo -> wordmark + workers -> pick -> boot-log -> chat ----
       var baiLaunch = document.getElementById('baiLaunch'), baiBoot = document.getElementById('baiBoot');
-      function showLauncher() { baiLaunch.classList.add('on'); if (launchClose) launchClose.classList.add('on'); }
-      if (launchClose) launchClose.addEventListener('click', function (e) { e.stopPropagation(); closePanel(); });   // close from the picker screen (remembers a detached window)
+      function showLauncher() { baiLaunch.classList.add('on'); }
       function streamBootLog(lines, onDone) {                 // cinematic ~5s terminal stream
         baiBoot.innerHTML = ''; baiBoot.classList.add('on');
         var els = lines.map(function (txt, i) {
@@ -803,7 +828,7 @@
       }
       function pickWorker(key) {
         var w = WORKERS[key]; if (!w) return;
-        baiLaunch.classList.remove('on'); if (launchClose) launchClose.classList.remove('on');
+        baiLaunch.classList.remove('on');
         if (baiCtrl.setEnergy) baiCtrl.setEnergy(1);          // logo pixels twinkle while "processing"
         streamBootLog(w.log, function () {
           baiBoot.style.opacity = '0';                         // boot-log fades out…
@@ -819,7 +844,7 @@
         b.addEventListener('click', function () { pickWorker(b.getAttribute('data-worker')); });
       });
       function skipToChat() {                                   // bypass the workers -> straight to a general BlueAI chat (no boot-log, no flow)
-        baiLaunch.classList.remove('on'); if (launchClose) launchClose.classList.remove('on');
+        baiLaunch.classList.remove('on');
         baiCtrl.dissolve(function () {
           revealChat(true);
           if (baiCtrl.enterHeader) baiCtrl.enterHeader(function () {});
@@ -847,10 +872,10 @@
 
       function setOpen(open) {
         if (!open) { drawer.classList.remove('open'); composition.classList.remove('shift'); return; }
-        drawer.classList.add('open');                          // logical "panel is open" (survives detach so reattach can re-dock)
+        drawer.classList.add('open');                          // logical "panel is open"
         var win = readWin();
         if (win && win.d) detach(win);                        // restore the floating window at its saved size/position
-        else composition.classList.add('shift');              // docked: nudge the pair left
+        else detach({ w: 360, h: 640, l: 620, t: 0 });         // no saved state yet -> open floating/portrait by default (was: dock)
         if (!booted) {
           booted = true;
           if (prefersReduced) { baiCtrl.ready(); revealChat(false); startGreeting(); }   // reduced motion -> straight to chat

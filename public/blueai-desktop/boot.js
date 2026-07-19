@@ -24,7 +24,7 @@ window.BlueAIBoot = function (host) {
   var PAL = THEMES.dark;
 
   var W = 0, H = 0, pixels = [], hpixels = [], flickers = [];
-  var BIG = 0.7, SMALL = 0.125, CXC = 0, CYC = 0, HDRX = 28, HDRY = 23;   // HDRY centers the logo in the slim 46px header
+  var BIG = 0.7, SMALL = 0.125, CXC = 0, CYC = 0, HDRX = 28, HDRY = 53;   // HDRY centers the logo in the 46px header, which sits BELOW the 30px OS title bar
 
   // A clean pixel disc minus a 4-point NSEW sparkle (astroid). Same relative shape at any resolution.
   function genLogo(cells, ex, starFac, discFac) {
