@@ -24,7 +24,7 @@ window.BlueAIBoot = function (host) {
   var PAL = THEMES.dark;
 
   var W = 0, H = 0, pixels = [], hpixels = [], flickers = [];
-  var BIG = 0.7, SMALL = 0.125, CXC = 0, CYC = 0, HDRX = 28, HDRY = 53;   // HDRY centers the logo in the 46px header, which sits BELOW the 30px OS title bar
+  var BIG = 0.7, SMALL = 0.125, CXC = 0, CYC = 0, CY_FRAC = 0.40, HDRX = 28, HDRY = 53;   // HDRY centers the logo in the 46px header, which sits BELOW the 30px OS title bar
 
   // A clean pixel disc minus a 4-point NSEW sparkle (astroid). Same relative shape at any resolution.
   function genLogo(cells, ex, starFac, discFac) {
@@ -51,7 +51,7 @@ window.BlueAIBoot = function (host) {
     canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     BIG = 130 / LOGO_PX; SMALL = 40 / LOGO_PX;   // smaller assembly logo
-    CXC = W / 2; CYC = H * 0.40;
+    CXC = W / 2; CYC = H * CY_FRAC;
   }
 
   function assignSpawns() {
@@ -313,6 +313,7 @@ window.BlueAIBoot = function (host) {
     ready: function () { stopHold(); renderReady(); startAmbient(); },   // instant reopen -> header + chat
     setTheme: function (mode) { PAL = THEMES[mode] || THEMES.dark; if (ambientRaf) renderReady(); },   // repaint sync in the settled state; live loops pick PAL up next frame
     resize: function () { resize(); if (!raf && !holdRaf && !ambientRaf) renderReady(); },   // force a canvas re-fit (detached restore sets geometry before boot)
-    drawMini: function (cv) { drawMini(cv); }
+    drawMini: function (cv) { drawMini(cv); },
+    setLogoY: function (f) { CY_FRAC = f; resize(); }   // vertical anchor of the big centre logo (onboarding lifts it up)
   };
 };
