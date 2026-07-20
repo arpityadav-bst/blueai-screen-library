@@ -47,15 +47,18 @@
     /* ---- Theme tokens: every chrome color flows from these. Dark (default) = the original palette,
        byte-for-byte; .drawer.light overrides. boot.js mirrors --bai-bg for the canvas fill. ---- */
     .drawer {
-      --bai-bg: #141a28; --bai-panel: #10151f; --bai-card: #161c2b; --bai-card-2: #131a28; --bai-input-bg: #0e1320; --bai-chip-bg: #1a2031;
-      --bai-hover: #1b2233; --bai-hover-acc: #1b2840; --bai-pill: #232b3d; --bai-user: #262d3d;
-      --bai-line: #232642; --bai-line-2: #2a3550; --bai-line-focus: #2f3a5a; --bai-line-soft: rgba(120,150,220,0.10); --bai-accent-line: #2a4a86;
-      --bai-text-bright: #eaf0ff; --bai-text-strong: #e8edf7; --bai-text-hi: #cdd6f4; --bai-text: #c7d1e6; --bai-text-soft: #dbe3f4;
-      --bai-muted-2: #8a96b5; --bai-muted: #8190ad; --bai-dim: #7e8aa8; --bai-dim-2: #6b7488; --bai-faint: #5b6480; --bai-icon: #566076; --bai-icon-2: #8aa0c8; --bai-hover-ink: #aab6d4;
-      --bai-accent: #6ea8ff; --bai-accent-strong: #3d6bd6; --bai-accent-wash: rgba(110,168,255,0.10); --bai-on-accent: #0b1220;
-      --bai-ok: #5fcf8f; --bai-danger: #ff8c8c; --bai-scroll: rgba(160,180,220,0.5); --bai-menu-shadow: 0 8px 24px rgba(0,0,0,0.5);
-      --bai-credit-hi: #6ea8ff; --bai-credit-mid: #f4d35e; --bai-credit-low: #f59e42; --bai-credit-crit: #ff6b6b;
-      --bai-titlebar-bg: #2b2c30; --bai-titlebar-line: #1c1d20; --bai-titlebar-text: #d7d9de; --bai-titlebar-icon: #b7bac1;   /* fixed OS-chrome gray — never redefined in .drawer.light, so it stays constant across themes */
+      /* Dark: matched to the real BlueStacks App Player chrome (near-black navy canvas, richer
+         saturated slate-blue panels like its Settings/Game-controls popovers, deeper blue accent
+         and gold credit color echoing its coin icon) — then pushed a notch richer/deeper still. */
+      --bai-bg: #0b0e19; --bai-panel: #1a2140; --bai-card: #1d2545; --bai-card-2: #171e3a; --bai-input-bg: #10152c; --bai-chip-bg: #202a4e;
+      --bai-hover: #212a4d; --bai-hover-acc: #1f2f54; --bai-pill: #26305a; --bai-user: #263061;
+      --bai-line: #262f52; --bai-line-2: #303c68; --bai-line-focus: #3c4f8f; --bai-line-soft: rgba(120,150,220,0.12); --bai-accent-line: #33509e;
+      --bai-text-bright: #f3f5fd; --bai-text-strong: #edf0fa; --bai-text-hi: #d2d9f2; --bai-text: #c2cbe8; --bai-text-soft: #dce2f8;
+      --bai-muted-2: #8a96c0; --bai-muted: #8590b8; --bai-dim: #7b87ae; --bai-dim-2: #6a75a2; --bai-faint: #596492; --bai-icon: #576392; --bai-icon-2: #8fa6e0; --bai-hover-ink: #b0bff0;
+      --bai-accent: #4a8bf5; --bai-accent-strong: #2c5fd0; --bai-accent-wash: rgba(74,139,245,0.14); --bai-on-accent: #071023;
+      --bai-ok: #34cf8f; --bai-danger: #ff5c68; --bai-scroll: rgba(160,180,220,0.5); --bai-menu-shadow: 0 10px 30px rgba(0,0,0,0.58);
+      --bai-credit-hi: #4a8bf5; --bai-credit-mid: #f0b429; --bai-credit-low: #f2914a; --bai-credit-crit: #ff5c68;
+      --bai-titlebar-bg: #080a14; --bai-titlebar-line: #05060c; --bai-titlebar-text: #e7ecfa; --bai-titlebar-icon: #99a8dc;   /* fixed near-black navy — matches BlueStacks' own title bar; never redefined in .drawer.light */
     }
     /* Light: cool paper-white slate. Inks picked for AA contrast on #f6f8fc/white (accent 5.0:1, body 8.5:1, dim ~5:1). */
     .drawer.light {
@@ -64,9 +67,9 @@
       --bai-line: #dbe2ee; --bai-line-2: #c9d4e6; --bai-line-focus: #a9bcdc; --bai-line-soft: rgba(30,60,120,0.12); --bai-accent-line: #b7cdf2;
       --bai-text-bright: #101828; --bai-text-strong: #17202f; --bai-text-hi: #232f45; --bai-text: #35415a; --bai-text-soft: #1f2b42;
       --bai-muted-2: #5a6a88; --bai-muted: #5d6c8a; --bai-dim: #5f6e8c; --bai-dim-2: #5f6b83; --bai-faint: #66748e; --bai-icon: #5c687f; --bai-icon-2: #52648a; --bai-hover-ink: #33415e;
-      --bai-accent: #2563d9; --bai-accent-strong: #1d4fb8; --bai-accent-wash: rgba(37,99,217,0.10); --bai-on-accent: #ffffff;
+      --bai-accent: #2258c9; --bai-accent-strong: #1a45a8; --bai-accent-wash: rgba(34,88,201,0.10); --bai-on-accent: #ffffff;
       --bai-ok: #0e7c3a; --bai-danger: #d92d2d; --bai-scroll: rgba(70,90,130,0.45); --bai-menu-shadow: 0 8px 24px rgba(25,40,80,0.16);
-      --bai-credit-hi: #2563d9; --bai-credit-mid: #a16207; --bai-credit-low: #b04d08; --bai-credit-crit: #d92d2d;
+      --bai-credit-hi: #2258c9; --bai-credit-mid: #a16207; --bai-credit-low: #b04d08; --bai-credit-crit: #d92d2d;
     }
     /* BlueAI agent drawer — same height as the window, tucked behind its right edge, slides out.
        Blank black canvas for now; the reinvented product gets built into #blueai-canvas. */

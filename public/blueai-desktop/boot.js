@@ -20,7 +20,7 @@ window.BlueAIBoot = function (host) {
   var ctx = canvas.getContext('2d');
   var dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
   // Canvas palette per theme (must mirror the CSS --bai-bg): bg fill, absorb/spark flash, heartbeat ring.
-  var THEMES = { dark: { bg: '#141a28', flash: 'rgb(226,238,255)', ring: 'rgb(110,168,255)' }, light: { bg: '#f6f8fc', flash: 'rgb(29,79,184)', ring: 'rgb(37,99,217)' } };
+  var THEMES = { dark: { bg: '#0b0e19', flash: 'rgb(226,238,255)', ring: 'rgb(74,139,245)' }, light: { bg: '#f6f8fc', flash: 'rgb(29,79,184)', ring: 'rgb(34,88,201)' } };
   var PAL = THEMES.dark;
 
   var W = 0, H = 0, pixels = [], hpixels = [], flickers = [];
