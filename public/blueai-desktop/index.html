@@ -50,7 +50,7 @@
       /* Dark: matched to the real BlueStacks App Player chrome (near-black navy canvas, richer
          saturated slate-blue panels like its Settings/Game-controls popovers, deeper blue accent
          and gold credit color echoing its coin icon) — then pushed a notch richer/deeper still. */
-      --bai-bg: #0b0e19; --bai-panel: #1a2140; --bai-card: #1d2545; --bai-card-2: #171e3a; --bai-input-bg: #10152c; --bai-chip-bg: #202a4e;
+      --bai-bg: #0b0e19; --bai-panel: #1a2140; --bai-card: #1d2545; --bai-card-2: #171e3a; --bai-input-bg: #10152c;
       --bai-hover: #212a4d; --bai-hover-acc: #1f2f54; --bai-pill: #26305a; --bai-user: #263061;
       --bai-line: #262f52; --bai-line-2: #303c68; --bai-line-focus: #3c4f8f; --bai-line-soft: rgba(120,150,220,0.12); --bai-accent-line: #33509e;
       --bai-text-bright: #f3f5fd; --bai-text-strong: #edf0fa; --bai-text-hi: #d2d9f2; --bai-text: #c2cbe8; --bai-text-soft: #dce2f8;
@@ -62,7 +62,7 @@
     }
     /* Light: cool paper-white slate. Inks picked for AA contrast on #f6f8fc/white (accent 5.0:1, body 8.5:1, dim ~5:1). */
     .drawer.light {
-      --bai-bg: #f6f8fc; --bai-panel: #ffffff; --bai-card: #ffffff; --bai-card-2: #fbfcff; --bai-input-bg: #ffffff; --bai-chip-bg: #eaeff8;
+      --bai-bg: #f6f8fc; --bai-panel: #ffffff; --bai-card: #ffffff; --bai-card-2: #fbfcff; --bai-input-bg: #ffffff;
       --bai-hover: #e9edf6; --bai-hover-acc: #e8f0fd; --bai-pill: #e2e8f4; --bai-user: #e4e9f5;
       --bai-line: #dbe2ee; --bai-line-2: #c9d4e6; --bai-line-focus: #a9bcdc; --bai-line-soft: rgba(30,60,120,0.12); --bai-accent-line: #b7cdf2;
       --bai-text-bright: #101828; --bai-text-strong: #17202f; --bai-text-hi: #232f45; --bai-text: #35415a; --bai-text-soft: #1f2b42;
@@ -130,7 +130,6 @@
     .bai-icbtn:hover { background: var(--bai-pill); color: var(--bai-text-hi); }
     .bai-icbtn svg { display: block; }
     .bai-menu.down { top: calc(100% + 6px); bottom: auto; }   /* header menu opens downward */
-    .bai-menu.left { left: 0; right: auto; }                   /* attach menu aligns to the + (status-bar left) */
     .bai-menu-ic { display: flex; align-items: center; justify-content: center; flex-shrink: 0; width: 14px; height: 14px; color: var(--bai-icon-2); }
     .bai-menu-ic svg { width: 14px; height: 14px; display: block; }
     /* mode strip: chat · jobs · skills · scheduled (active = cyan underline) */
@@ -276,17 +275,8 @@
     .bai-send.stop { visibility: visible; }                 /* slot always reserved so the bar height never jumps; icon only shows while thinking */
     .bai-send:hover { background: var(--bai-pill); color: var(--bai-text-hi); }   /* same hover pill as the status items */
     .bai-send::before { content: ''; width: 9px; height: 9px; border: 1.5px solid currentColor; border-radius: 2px; }   /* slightly smaller outline stop, no pulse */
-    /* Phase 2: status line (attach · model · effort · credits) + attachment chips */
-    .bai-chips { display: none; flex-wrap: wrap; gap: 6px; margin: 0 0 8px; }   /* inside the chatbar, above the input row */
-    .bai-chips.has { display: flex; }
-    .bai-chip { display: flex; align-items: center; gap: 6px; padding: 4px 8px; background: var(--bai-chip-bg); border: 1px solid var(--bai-line-2); border-radius: 7px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; color: var(--bai-text); }
-    .bai-chip .x { cursor: pointer; color: var(--bai-dim); opacity: 0; transition: opacity 0.15s, color 0.15s; }   /* remove control reveals on hover */
-    .bai-chip:hover .x { opacity: 1; }
-    .bai-chip .x:hover { color: var(--bai-danger); }
+    /* Phase 2: status line (model · effort · credits) */
     .bai-status { display: flex; align-items: center; gap: 8px; margin: 0 12px 11px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10.5px; color: var(--bai-dim); }
-    .bai-attach { flex-shrink: 0; border: none; border-radius: 6px; background: none; color: var(--bai-icon-2); cursor: pointer; font-size: 13px; line-height: 1; padding: 3px 7px; display: flex; align-items: center; justify-content: center; transition: background 0.15s, color 0.15s; }
-    .bai-attach:hover { background: var(--bai-pill); color: var(--bai-text-hi); }   /* same hover pill as model/effort — consistent */
-    .bai-attach .bai-plus { display: block; line-height: 1; transform: scale(1.3); }   /* bigger glyph, same container (transform doesn't reflow) */
     .bai-stat-r { margin-left: auto; display: flex; align-items: center; gap: 4px; }
     .bai-stat-wrap { position: relative; }
     .bai-stat-btn { background: none; border: none; border-radius: 6px; color: var(--bai-hover-ink); font-family: inherit; font-size: 10.5px; cursor: pointer; padding: 3px 7px; white-space: nowrap; transition: background 0.15s, color 0.15s; }
@@ -467,7 +457,6 @@
                 <div class="bai-pane active" id="paneChat">
                   <div class="bai-body" id="baiBody"></div>
                   <div class="bai-inputbar">
-                    <div class="bai-chips" id="baiChips"></div>
                     <div class="bai-inputrow">
                       <span class="bai-prompt">&rsaquo;</span>
                       <input class="bai-q" id="baiInput" type="text" placeholder="Ask BlueAI anything…" autocomplete="off" spellcheck="false" />
@@ -475,16 +464,6 @@
                     </div>
                   </div>
                   <div class="bai-status">
-                    <div class="bai-stat-wrap">
-                      <button class="bai-attach" id="baiAttach" type="button" aria-label="Attach"><span class="bai-plus">+</span></button>
-                      <div class="bai-menu left" id="baiAttachMenu">
-                        <div class="bai-menu-items">
-                          <div class="bai-menu-item bai-attach-item" data-kind="files"><span class="bai-menu-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L4 20"/></svg></span>add files or photos</div>
-                          <div class="bai-menu-item bai-attach-item" data-kind="folder"><span class="bai-menu-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span>add folder</div>
-                          <div class="bai-menu-item bai-attach-item" data-kind="skill"><span class="bai-menu-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></span>skill.md</div>
-                        </div>
-                      </div>
-                    </div>
                     <div class="bai-stat-r">
                       <div class="bai-stat-wrap"><button class="bai-stat-btn" id="baiModelBtn" type="button"></button><div class="bai-menu" id="baiModelMenu"></div></div>
                       <div class="bai-stat-wrap"><button class="bai-stat-btn" id="baiEffortBtn" type="button"></button><div class="bai-menu" id="baiEffortMenu"></div></div>
@@ -645,15 +624,11 @@
       // ---- Phase 2: status line (model · effort · credits) + attachments (design-only) ----
       var MODELS = ['Auto', 'Opus 4.8', 'Sonnet 4.6', 'Gemini 3.1 Pro', 'GPT-5.4'];
       var EFFORTS = ['Fast', 'Standard', 'Extra', 'Max'];
-      var FILES = ['resume.pdf', 'portfolio.png', 'brief.md', 'logo.svg'];
-      var FOLDERS = ['designs/', 'projects/', 'exports/'];
-      var SKILLS = ['carousel.skill.md', 'jobs.skill.md', 'content.skill.md'];
-      var curModel = 'Opus 4.8', curEffort = 'Extra', credits = 49812, CREDIT_MAX = 50000, CREDIT_RESET_DAYS = 6, fIdx = 0;
+      var curModel = 'Opus 4.8', curEffort = 'Extra', credits = 49812, CREDIT_MAX = 50000;
       var modelBtn = document.getElementById('baiModelBtn'), modelMenu = document.getElementById('baiModelMenu');
       var effortBtn = document.getElementById('baiEffortBtn'), effortMenu = document.getElementById('baiEffortMenu');
       var creditsWrap = document.getElementById('baiCreditsWrap'), creditsArc = document.getElementById('baiCreditsArc'), creditsDesc = document.getElementById('baiCreditsDesc');
       var RING_C = 2 * Math.PI * 7;   // circumference of the r=7 gauge circle
-      var attachBtn = document.getElementById('baiAttach'), chips = document.getElementById('baiChips'), attachMenu = document.getElementById('baiAttachMenu'), folderIdx = 0, skillIdx = 0;
       function renderModel() { modelBtn.textContent = curModel; }
       function renderEffort() { effortBtn.textContent = curEffort; }
       // credit health ramp (as balance depletes): blue good → yellow low → orange very low → red almost over
@@ -667,9 +642,9 @@
           '<span class="cr-head">CREDITS</span>' +
           '<span class="cr-big"><span class="sp" style="color:' + col + '">✦</span> ' + credits.toLocaleString('en-US') + '</span>' +
           '<span class="cr-bar"><i style="width:' + pct + '%;background:' + col + '"></i></span>' +
-          '<span class="cr-sub">' + pct + '% of ' + CREDIT_MAX.toLocaleString('en-US') + ' left · resets in ' + CREDIT_RESET_DAYS + 'd</span>';
+          '<span class="cr-sub">' + pct + '% of ' + CREDIT_MAX.toLocaleString('en-US') + ' left</span>';
       }
-      function closeMenus() { modelMenu.classList.remove('open'); effortMenu.classList.remove('open'); if (attachMenu) attachMenu.classList.remove('open'); if (titleMenu) titleMenu.classList.remove('open'); }
+      function closeMenus() { modelMenu.classList.remove('open'); effortMenu.classList.remove('open'); if (titleMenu) titleMenu.classList.remove('open'); }
       function fillMenu(menu, items, cur, pick, title, desc) {
         menu.innerHTML = '';
         var head = document.createElement('div'); head.className = 'bai-menu-head';
@@ -693,23 +668,6 @@
       modelBtn.addEventListener('click', function (e) { e.stopPropagation(); var was = modelMenu.classList.contains('open'); closeMenus(); if (!was) { fillMenu(modelMenu, MODELS, curModel, function (m) { curModel = m; renderModel(); }, 'Model', 'The model that answers. Auto picks the best fit; larger models reason deeper but spend more credits.'); modelMenu.classList.add('open'); } });
       effortBtn.addEventListener('click', function (e) { e.stopPropagation(); var was = effortMenu.classList.contains('open'); closeMenus(); if (!was) { fillMenu(effortMenu, EFFORTS, curEffort, function (v) { curEffort = v; renderEffort(); }, 'Effort', 'Higher effort means more thorough responses, but takes longer and spends more credits.'); effortMenu.classList.add('open'); } });
       drawer.addEventListener('click', closeMenus);   // any other in-drawer click closes the menus
-      function addChip(name) {
-        var c = document.createElement('span'); c.className = 'bai-chip';
-        c.innerHTML = name + ' <span class="x">✕</span>';
-        c.querySelector('.x').addEventListener('click', function () { c.remove(); if (!chips.children.length) chips.classList.remove('has'); });
-        chips.appendChild(c); chips.classList.add('has');
-      }
-      attachBtn.addEventListener('click', function (e) { e.stopPropagation(); var was = attachMenu.classList.contains('open'); closeMenus(); if (!was) attachMenu.classList.add('open'); });
-      [].forEach.call(attachMenu.querySelectorAll('.bai-attach-item'), function (it) {
-        it.addEventListener('click', function (e) {
-          e.stopPropagation();
-          var k = it.getAttribute('data-kind');
-          if (k === 'files') addChip(FILES[fIdx++ % FILES.length]);
-          else if (k === 'folder') addChip(FOLDERS[folderIdx++ % FOLDERS.length]);
-          else addChip(SKILLS[skillIdx++ % SKILLS.length]);
-          closeMenus();
-        });
-      });
       renderModel(); renderEffort(); renderCredits();
       if (creditsWrap) { creditsWrap.addEventListener('mouseenter', function () { creditsDesc.classList.add('show'); }); creditsWrap.addEventListener('mouseleave', function () { creditsDesc.classList.remove('show'); }); }   // hover -> exact balance / % / reset countdown
 
