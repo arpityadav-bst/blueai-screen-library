@@ -149,8 +149,9 @@
     .bai-stub p { margin: 0; max-width: 200px; font-size: 11.5px; line-height: 1.5; color: var(--bai-dim); }
     .bai-stub .soon { font-size: 10px; color: var(--bai-faint); letter-spacing: 1px; }
     /* settings pane: real controls (theme switcher) — same tokens + terminal styling as everything else */
-    .bai-set { flex: 1; padding: 14px; display: flex; flex-direction: column; gap: 9px; overflow-y: auto; font-family: 'JetBrains Mono', ui-monospace, monospace; }
-    .bai-set-label { font-size: 9.5px; color: var(--bai-faint); letter-spacing: 0.4px; }
+    .bai-set { flex: 1; padding: 14px; display: flex; flex-direction: column; overflow-y: auto; font-family: 'JetBrains Mono', ui-monospace, monospace; }   /* no uniform gap — spacing is hierarchy, see .bai-set-label */
+    .bai-set-label { font-size: 9.5px; color: var(--bai-faint); letter-spacing: 0.4px; margin: 24px 0 8px; }   /* generous ABOVE (new topic), tight BELOW (owns the card right after it) */
+    .bai-set-label:first-child { margin-top: 0; }
     .bai-set-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--bai-card-2); border: 1px solid var(--bai-line); border-radius: 8px; }
     .bai-set-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
     .bai-set-name { font-size: 12px; color: var(--bai-text-hi); }
@@ -292,7 +293,7 @@
     .bai-side-item .ic svg { width: 15px; height: 15px; }
     .bai-side-badge { margin-left: auto; background: var(--bai-accent); color: var(--bai-on-accent); font-size: 10px; line-height: 1; padding: 2px 5px; border-radius: 8px; }
     .bai-side-label { font-size: 9.5px; color: var(--bai-faint); letter-spacing: 0.4px; padding: 12px 10px 5px; }
-    .bai-side-recents { display: flex; flex-direction: column; gap: 1px; overflow-y: auto; scrollbar-width: thin; }
+    .bai-side-recents { display: flex; flex-direction: column; gap: 1px; overflow-y: auto; }
     .bai-side-rec { display: flex; align-items: center; gap: 7px; padding: 6px 10px; border-radius: 6px; font-size: 11.5px; color: var(--bai-text); cursor: pointer; }
     .bai-side-rec:hover { background: var(--bai-hover); }
     .bai-side-rec .dot { width: 6px; height: 6px; border-radius: 50%; background: transparent; box-shadow: inset 0 0 0 1.2px var(--bai-faint); flex-shrink: 0; }   /* seen / no change = hollow gray */
@@ -305,7 +306,9 @@
     .bai-side-foot { margin-top: auto; border-top: 1px solid var(--bai-line); padding-top: 6px; display: flex; align-items: center; gap: 4px; }
     .bai-side-foot .bai-side-item { flex: 1; }
     .bai-body { flex: 1; overflow-y: auto; padding: 12px 12px 18px; display: flex; flex-direction: column; gap: 8px; scrollbar-width: none; }
-    .bai-body::-webkit-scrollbar { width: 0; height: 0; display: none; }   /* native hidden; custom fade-thumb instead */
+    /* Native scrollbar hidden everywhere scrollable — the custom .bai-scroll fade-thumb is the only visible affordance, subtle and only shown while actively scrolling (see bindFadeScroll in JS). */
+    .bai-body::-webkit-scrollbar, .bai-set::-webkit-scrollbar, .bai-list-body::-webkit-scrollbar, .bai-subpane-body::-webkit-scrollbar, .bai-side-recents::-webkit-scrollbar { width: 0; height: 0; display: none; }
+    .bai-set, .bai-list-body, .bai-subpane-body, .bai-side-recents { scrollbar-width: none; }
     .bai-scroll { position: absolute; right: 3px; width: 4px; border-radius: 2px; background: var(--bai-scroll); opacity: 0; transition: opacity 0.4s ease; pointer-events: none; }
     .bai-scroll.show { opacity: 1; }
     /* Terminal boot-log — streams below the (twinkling) logo after a worker is picked.
@@ -547,6 +550,7 @@
                 </div>
                 <div class="bai-side-label">RECENT</div>
                 <div class="bai-side-recents" id="baiSideRecents"></div>
+                <div class="bai-scroll" id="baiSideScroll"></div>
                 <div class="bai-side-foot">
                   <button class="bai-side-item" id="baiSideSettings" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>Settings</button>
                 </div>
@@ -594,6 +598,7 @@
                 <div class="bai-pane" id="paneSkills">
                   <div class="bai-search"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><input id="baiSkillSearch" type="text" placeholder="Search skills…" autocomplete="off" spellcheck="false" /></div>
                   <div class="bai-list-body" id="baiSkillsList"></div>
+                  <div class="bai-scroll" id="baiSkillsScroll"></div>
                   <div class="bai-sticky-cta"><button id="baiSkillCta" type="button">Build a custom skill</button></div>
                 </div>
                 <div class="bai-pane" id="paneScheduled">
@@ -610,6 +615,7 @@
                     <div class="bai-newitem-actions"><button class="bai-newitem-cancel" id="baiSchedCancel" type="button">Cancel</button><button class="bai-newitem-create" id="baiSchedCreate" type="button">Create</button></div>
                   </div>
                   <div class="bai-list-body" id="baiSchedList"></div>
+                  <div class="bai-scroll" id="baiSchedScroll"></div>
                 </div>
                 <div class="bai-pane" id="paneSettings"><div class="bai-set">
                   <div class="bai-set-label">APPEARANCE</div>
@@ -641,7 +647,7 @@
                     <button class="bai-set-btn primary" id="baiSaveAiSettings" style="width:100%;">Save settings</button>
                     <div class="bai-set-save-confirm" id="baiSaveConfirm">✓ Settings saved successfully</div>
                   </div>
-                </div></div>
+                </div><div class="bai-scroll" id="baiSetScroll"></div></div>
               </div>
               <!-- Generic full-pane "subpane": back header + scrollable body, push/pop stack (Chat History, Skills
                    category drill-down, skill details, etc. all share this one shell — see openSubpane() in JS). -->
@@ -651,6 +657,7 @@
                   <span id="baiSubpaneTitle"></span>
                 </div>
                 <div class="bai-subpane-body" id="baiSubpaneBody"></div>
+                <div class="bai-scroll" id="baiSubpaneScroll"></div>
               </div>
               <!-- Onboarding · 3-step nav tour (skills -> scheduled -> chat) -->
               <div class="bai-tour" id="baiTour">
@@ -957,6 +964,7 @@
           row.addEventListener('click', function () { cat.mine ? openMySkills() : openCategory(cat); });
           skillsListEl.appendChild(row);
         });
+        refreshFadeScroll(skillsListEl, document.getElementById('baiSkillsScroll'));
       }
       function openSkillForm(existing) {
         openSubpane(existing ? 'Edit Skill' : 'New Skill', function (body) {
@@ -1013,9 +1021,10 @@
         if (!matches.length) {
           var empty = document.createElement('div'); empty.className = 'bai-stub';
           empty.innerHTML = '<h4>No skills match</h4><p>Try a different search term.</p>';
-          skillsListEl.appendChild(empty); return;
+          skillsListEl.appendChild(empty); refreshFadeScroll(skillsListEl, document.getElementById('baiSkillsScroll')); return;
         }
         matches.forEach(function (m) { skillsListEl.appendChild(skillCard(m.sk, !!m.cat.mine, m.cat.mine ? null : m.cat.name, function () { skillSearchInput.dispatchEvent(new Event('input')); })); });
+        refreshFadeScroll(skillsListEl, document.getElementById('baiSkillsScroll'));
       });
       document.getElementById('baiSkillCta').addEventListener('click', function () { openSkillForm(null); });
       renderSkillsHome();
@@ -1032,7 +1041,7 @@
         if (!SCHEDULED.length) {
           var empty = document.createElement('div'); empty.className = 'bai-stub';
           empty.innerHTML = '<div class="ic">' + iconSvg(SCHED_PATH, 17) + '</div><h4>Nothing scheduled yet</h4><p>Ask BlueAI to run a task later or repeat it on a schedule. Your scheduled tasks will appear here.</p>';
-          schedListEl.appendChild(empty); return;
+          schedListEl.appendChild(empty); refreshFadeScroll(schedListEl, document.getElementById('baiSchedScroll')); return;
         }
         SCHEDULED.forEach(function (t, i) {
           if (i === schedPendingDelete) {
@@ -1051,6 +1060,7 @@
           row.querySelector('.rm').addEventListener('click', function (e) { e.stopPropagation(); schedPendingDelete = i; renderScheduled(); });
           schedListEl.appendChild(row);
         });
+        refreshFadeScroll(schedListEl, document.getElementById('baiSchedScroll'));
       }
       function shimmerRow() { var r = document.createElement('div'); r.className = 'bai-item-card bai-shimmer'; r.innerHTML = '<span class="ic"></span><span class="info"><b class="sh-line"></b><span class="sh-line short"></span></span>'; return r; }
       function showSchedShimmerThenRender() {
@@ -1225,6 +1235,34 @@
         setTimeout(function () { c.style.display = 'none'; }, 2200);
       });
 
+      // ---- Subtle fade-scrollbar, generalized from the chat body's own thumb — applied to every other
+      // scrollable surface (Settings, Skills/Scheduled lists, the subpane stack, the wide sidebar's recents).
+      // Native scrollbars are hidden everywhere (see the shared ::-webkit-scrollbar rule); this custom thumb
+      // is the only visible affordance, and only while actively scrolling — it fades out ~900ms after idle. ----
+      function refreshFadeScroll(el, thumb) {
+        if (!el || !thumb) return;
+        var sh = el.scrollHeight, ch = el.clientHeight;
+        if (sh <= ch + 2) { thumb.classList.remove('show'); return; }
+        var th = Math.max(24, ch * ch / sh);
+        thumb.style.height = th + 'px';
+        thumb.style.top = (el.offsetTop + (el.scrollTop / (sh - ch)) * (ch - th)) + 'px';
+      }
+      function bindFadeScroll(el, thumb) {
+        if (!el || !thumb) return;
+        var hideT = null;
+        el.addEventListener('scroll', function () {
+          refreshFadeScroll(el, thumb);
+          thumb.classList.add('show');
+          clearTimeout(hideT); hideT = setTimeout(function () { thumb.classList.remove('show'); }, 900);
+        });
+        refreshFadeScroll(el, thumb);
+      }
+      bindFadeScroll(document.querySelector('.bai-set'), document.getElementById('baiSetScroll'));
+      bindFadeScroll(skillsListEl, document.getElementById('baiSkillsScroll'));
+      bindFadeScroll(schedListEl, document.getElementById('baiSchedScroll'));
+      bindFadeScroll(subpaneBodyEl, document.getElementById('baiSubpaneScroll'));
+      bindFadeScroll(document.getElementById('baiSideRecents'), document.getElementById('baiSideScroll'));
+
       // ---- Floating window: always detached (the drawer/dock mode is gone) — resizable + draggable ----
       var detached = false;   // flips true on first open and stays true; kept as a guard for pre-open states
       // Window-state persistence: remember size/position across close + refresh (design-only, localStorage).
@@ -1385,6 +1423,7 @@
         subpaneBodyEl.innerHTML = '';
         top.renderFn(subpaneBodyEl);
         subpaneEl.classList.add('on');
+        refreshFadeScroll(subpaneBodyEl, document.getElementById('baiSubpaneScroll'));
       }
       function openSubpane(title, renderFn) { subpaneStack.push({ title: title, renderFn: renderFn }); paintSubpane(); }
       function popSubpane() { subpaneStack.pop(); if (subpaneStack.length) paintSubpane(); else subpaneEl.classList.remove('on'); }
