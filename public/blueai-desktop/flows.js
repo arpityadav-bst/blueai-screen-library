@@ -81,6 +81,6 @@ window.BlueAIFlows = {
         ]
       }, cost: 320
     },
-    { say: 'On it — I’ll generate the drafts and publish across your channels. ✦' }
+    { say: 'On it. I’ll generate the drafts and publish across your channels. ✦' }
   ]
 };
