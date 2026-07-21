@@ -159,7 +159,6 @@
     .bai-seg-btn { border: none; background: none; border-radius: 5px; padding: 4px 10px; font-family: inherit; font-size: 11px; color: var(--bai-dim-2); cursor: pointer; transition: background 0.15s, color 0.15s; }
     .bai-seg-btn:hover { color: var(--bai-hover-ink); }
     .bai-seg-btn.active { background: var(--bai-accent); color: var(--bai-on-accent); }
-    .bai-set-soon { margin-top: 2px; text-align: center; font-size: 10px; letter-spacing: 1px; color: var(--bai-faint); }
 
     /* ---- Skills / Scheduled tabs: list + empty state + inline "new item" creation form ---- */
     .bai-list-head { flex-shrink: 0; display: flex; align-items: center; justify-content: flex-end; padding: 12px 14px 9px; font-family: 'JetBrains Mono', ui-monospace, monospace; }   /* the pane's own "Skills"/"Scheduled" label already comes from the shared main-title bar above — no second heading here */
@@ -172,6 +171,11 @@
     .bai-item-card .info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
     .bai-item-card .info b { font-size: 12px; color: var(--bai-text-hi); font-weight: 500; }
     .bai-item-card .info span { font-size: 10px; color: var(--bai-dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .bai-item-card .info .meta-next { color: var(--bai-accent); }
+    .bai-shimmer .ic { background: var(--bai-line-2) !important; color: transparent; animation: bai-shimmer-pulse 1.1s ease-in-out infinite; }
+    .bai-shimmer .sh-line { display: block; height: 9px; border-radius: 4px; margin: 3px 0; background: var(--bai-line-2); animation: bai-shimmer-pulse 1.1s ease-in-out infinite; }
+    .bai-shimmer .sh-line.short { width: 55%; }
+    @keyframes bai-shimmer-pulse { 0%, 100% { opacity: 0.35; } 50% { opacity: 0.8; } }
     .bai-item-card .rm { flex-shrink: 0; border: none; background: none; color: var(--bai-faint); cursor: pointer; padding: 4px; border-radius: 6px; font-size: 11px; opacity: 0; transition: opacity 0.15s, color 0.15s, background 0.15s; }
     .bai-item-card:hover .rm { opacity: 1; }
     .bai-item-card .rm:hover { color: var(--bai-danger); background: var(--bai-hover); }
@@ -188,6 +192,72 @@
     .bai-newitem-cancel:hover { background: var(--bai-hover); color: var(--bai-hover-ink); }
     .bai-newitem-create { border: none; background: var(--bai-accent); color: var(--bai-on-accent); font-family: inherit; font-size: 11px; font-weight: 700; padding: 6px 12px; border-radius: 7px; cursor: pointer; transition: filter 0.15s; }
     .bai-newitem-create:hover { filter: brightness(1.12); }
+
+    /* ---- Skills: search, category rows (home), skill cards (drill-down), details block, sticky create CTA ---- */
+    .bai-search { flex-shrink: 0; margin: 11px 14px 3px; display: flex; align-items: center; gap: 7px; padding: 8px 10px; background: var(--bai-input-bg); border: 1px solid var(--bai-line-2); border-radius: 9px; }
+    .bai-search svg { flex-shrink: 0; color: var(--bai-faint); }
+    .bai-search input { flex: 1; min-width: 0; background: none; border: none; outline: none; color: var(--bai-text-strong); font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11.5px; }
+    .bai-search input::placeholder { color: var(--bai-faint); }
+    .bai-cat-row { display: flex; align-items: center; gap: 12px; padding: 13px; background: var(--bai-card-2); border: 1px solid var(--bai-line); border-radius: 11px; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+    .bai-cat-row:hover { border-color: var(--bai-accent-strong); background: var(--bai-hover-acc); }
+    .bai-cat-row .ic { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: color-mix(in srgb, var(--cc, var(--bai-accent)) 15%, transparent); color: var(--cc, var(--bai-accent)); }
+    .bai-cat-row .info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+    .bai-cat-row .info b { font-size: 12.5px; color: var(--bai-text-hi); font-weight: 500; }
+    .bai-cat-row .info span { font-size: 10.5px; color: var(--bai-dim); }
+    .bai-cat-row .ar { flex-shrink: 0; color: var(--bai-faint); }
+    .bai-skillcard { display: flex; flex-direction: column; gap: 9px; padding: 13px; background: var(--bai-card-2); border: 1px solid var(--bai-line); border-radius: 12px; cursor: pointer; transition: border-color 0.15s; }
+    .bai-skillcard:hover { border-color: var(--bai-accent-strong); }
+    .bai-skillcard .sk-top { display: flex; align-items: center; gap: 8px; }
+    .bai-skillcard .sk-top b { flex: 1; min-width: 0; font-size: 12.5px; color: var(--bai-text-hi); font-weight: 500; }
+    .bai-skillcard .sk-desc { font-size: 10.5px; line-height: 1.55; color: var(--bai-dim); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .bai-skillcard .sk-foot { display: flex; align-items: center; gap: 8px; margin-top: 2px; }
+    .bai-sk-try { border: 1px solid var(--bai-accent-line); background: var(--bai-accent-wash); color: var(--bai-accent); font-family: inherit; font-size: 10.5px; font-weight: 700; padding: 5px 12px; border-radius: 20px; cursor: pointer; transition: filter 0.15s; }
+    .bai-sk-try:hover { filter: brightness(1.18); }
+    .bai-sk-link { border: none; background: none; color: var(--bai-dim); font-family: inherit; font-size: 10.5px; cursor: pointer; padding: 5px 7px; border-radius: 6px; margin-left: auto; }
+    .bai-sk-link:hover { color: var(--bai-hover-ink); background: var(--bai-hover); }
+    .bai-sk-link.danger:hover { color: var(--bai-danger); }
+    .bai-kv-block { display: flex; flex-direction: column; border: 1px solid var(--bai-line); border-radius: 11px; overflow: hidden; }
+    .bai-kv-row { display: flex; align-items: center; justify-content: space-between; padding: 11px 13px; font-size: 11px; font-family: 'JetBrains Mono', ui-monospace, monospace; }
+    .bai-kv-row + .bai-kv-row { border-top: 1px solid var(--bai-line); }
+    .bai-kv-row .k { color: var(--bai-dim); }
+    .bai-kv-row .v { color: var(--bai-text-strong); }
+    .bai-sticky-cta { flex-shrink: 0; padding: 12px 14px; border-top: 1px solid var(--bai-line); background: var(--bai-panel); }
+    .bai-sticky-cta button { width: 100%; border: none; background: var(--bai-accent); color: var(--bai-on-accent); font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11.5px; font-weight: 700; padding: 11px; border-radius: 10px; cursor: pointer; transition: filter 0.15s; }
+    .bai-sticky-cta button:hover { filter: brightness(1.12); }
+    .bai-create-tabs { flex-shrink: 0; display: flex; gap: 16px; padding: 0 0 9px; border-bottom: 1px solid var(--bai-line); margin-bottom: 13px; }
+    .bai-create-tab { border: none; background: none; color: var(--bai-dim); font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10.5px; font-weight: 700; padding: 0 0 9px; cursor: pointer; position: relative; }
+    .bai-create-tab.on { color: var(--bai-text-bright); }
+    .bai-create-tab.on::after { content: ''; position: absolute; left: 0; right: 0; bottom: -10px; height: 2px; background: var(--bai-accent); }
+    .bai-upload-row { display: flex; align-items: center; gap: 9px; padding: 12px 13px; background: var(--bai-input-bg); border: 1px dashed var(--bai-line-2); border-radius: 10px; cursor: pointer; color: var(--bai-text); font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11.5px; }
+    .bai-upload-hint { font-size: 10px; line-height: 1.55; color: var(--bai-dim); padding: 10px 11px; background: var(--bai-accent-wash); border-radius: 9px; margin-top: 9px; }
+    .bai-ai-create { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 11px; text-align: center; padding: 22px 10px; }
+    .bai-ai-create .ic { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: var(--bai-accent-wash); color: var(--bai-accent); }
+    .bai-ai-create p { font-size: 11px; line-height: 1.55; color: var(--bai-dim); max-width: 220px; }
+
+    /* ---- Settings: multi-line cards (Notifications / AI Mode / Own key / AI defaults) ---- */
+    .bai-set-card { display: flex; flex-direction: column; gap: 11px; padding: 13px; background: var(--bai-card-2); border: 1px solid var(--bai-line); border-radius: 11px; font-family: 'JetBrains Mono', ui-monospace, monospace; }
+    .bai-set-card-head { display: flex; align-items: center; gap: 10px; }
+    .bai-set-card-head .ic { width: 32px; height: 32px; border-radius: 9px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: var(--bai-chip-bg); color: var(--bai-accent); }
+    .bai-set-card-head .info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+    .bai-set-card-head .info b { font-size: 12px; color: var(--bai-text-hi); font-weight: 500; }
+    .bai-set-card-head .info span { font-size: 10px; color: var(--bai-dim); }
+    .bai-set-btn { flex-shrink: 0; border: 1px solid var(--bai-line-2); background: var(--bai-input-bg); color: var(--bai-text); font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10.5px; font-weight: 600; padding: 7px 12px; border-radius: 8px; cursor: pointer; transition: border-color 0.15s, background 0.15s, filter 0.15s; }
+    .bai-set-btn:hover { border-color: var(--bai-accent-strong); }
+    .bai-set-btn.primary { border: none; background: var(--bai-accent); color: var(--bai-on-accent); }
+    .bai-set-btn.primary:hover { filter: brightness(1.12); }
+    .bai-set-btn.danger { color: var(--bai-danger); border-color: color-mix(in srgb, var(--bai-danger) 40%, var(--bai-line-2)); }
+    .bai-set-pairing { display: flex; flex-direction: column; align-items: center; gap: 7px; padding: 15px 10px; background: var(--bai-input-bg); border-radius: 10px; }
+    .bai-set-pairing .code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 18px; font-weight: 700; letter-spacing: 4px; color: var(--bai-accent); }
+    .bai-set-pairing .hint { font-size: 10px; color: var(--bai-dim); text-align: center; }
+    .bai-set-divider { height: 1px; background: var(--bai-line); margin: 1px 0; }
+    .bai-set-field { display: flex; flex-direction: column; gap: 5px; }
+    .bai-set-field-label { font-size: 10.5px; color: var(--bai-dim); }
+    .bai-set-model-row { display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
+    .bai-set-model-row .v { font-size: 10.5px; color: var(--bai-text-hi); }
+    .bai-set-model-list { display: flex; flex-direction: column; gap: 1px; margin-top: 7px; border: 1px solid var(--bai-line); border-radius: 8px; overflow: hidden; }
+    .bai-set-model-list div { padding: 9px 12px; font-size: 10.5px; cursor: pointer; background: var(--bai-input-bg); transition: background 0.15s; }
+    .bai-set-model-list div:hover { background: var(--bai-hover); }
+    .bai-set-save-confirm { font-size: 10px; color: var(--bai-ok); text-align: center; display: none; }
     .bai-wm { display: flex; align-items: center; min-width: 0; overflow: hidden; color: var(--bai-text-bright); font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Consolas, Menlo, monospace; font-weight: 700; font-size: 14px; letter-spacing: -0.5px; }   /* static brand — no longer a switcher */
     .bai-wm #baiTitle { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .bai-title-btn { display: flex; align-items: center; gap: 5px; min-width: 0; max-width: 100%; background: none; border: none; cursor: pointer; padding: 0; color: var(--bai-dim-2); font-family: 'JetBrains Mono', ui-monospace, monospace; font-weight: 500; font-size: 11px; letter-spacing: 0; }   /* subtle, recessive — smaller + muted vs the brand wordmark */
@@ -338,11 +408,25 @@
     @keyframes bai-blink { 50% { opacity: 0; } }
 
     /* ---- Prototype state toggler (design-handoff, like the WSUP/product screen libraries) ---- */
-    .state-toggler { position: fixed; bottom: 14px; right: 14px; z-index: 200; display: flex; gap: 2px; padding: 3px; background: rgba(10,14,26,0.72); border: 1px solid rgba(255,255,255,0.14); border-radius: 9px; backdrop-filter: blur(6px); font-family: 'JetBrains Mono', ui-monospace, monospace; }
-    .state-toggler.left { left: 14px; right: auto; }
-    .state-toggler button { border: none; background: none; color: #8190ad; font-family: inherit; font-size: 11px; padding: 4px 10px; border-radius: 6px; cursor: pointer; transition: background 0.15s, color 0.15s; }
-    .state-toggler button:hover { color: #cdd6f4; }
-    .state-toggler button.on { background: #2a4a86; color: #eaf0ff; }
+    /* ---- Design-handoff Preview panel: collapsible, progressive-disclosure (matches the canonical blueAI
+       product's dev-preview panel). Deliberately fixed dev-chrome colors, not --bai-* tokens — like the OS
+       title bar, this tool should look the same regardless of the app's own dark/light theme. ---- */
+    .bai-preview { position: fixed; right: 14px; bottom: 14px; z-index: 200; font-family: 'JetBrains Mono', ui-monospace, monospace; }
+    .bai-preview-fab { width: 34px; height: 34px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.14); background: rgba(10,14,26,0.78); backdrop-filter: blur(6px); color: #8190ad; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 20px rgba(0,0,0,0.35); transition: color 0.15s; }
+    .bai-preview-fab:hover { color: #cdd6f4; }
+    .bai-preview-fab.hidden { display: none; }
+    .bai-preview-card { display: none; width: 208px; background: rgba(10,14,26,0.92); border: 1px solid rgba(255,255,255,0.14); border-radius: 12px; backdrop-filter: blur(6px); box-shadow: 0 10px 34px rgba(0,0,0,0.4); padding: 9px 12px 10px; }
+    .bai-preview-card.on { display: block; }
+    .bai-preview-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px; }
+    .bai-preview-head span { font-size: 9.5px; font-weight: 800; letter-spacing: 0.09em; color: #8190ad; text-transform: uppercase; }
+    .bai-preview-collapse { border: none; background: none; color: #8190ad; cursor: pointer; padding: 2px; display: flex; transition: color 0.15s; }
+    .bai-preview-collapse:hover { color: #cdd6f4; }
+    .bai-preview-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 7px 0; }
+    .bai-preview-row-label { font-size: 10px; font-weight: 700; color: #8190ad; white-space: nowrap; }
+    .bai-preview-seg { display: flex; background: rgba(255,255,255,0.07); border-radius: 7px; padding: 2px; }
+    .bai-preview-seg button { border: none; background: none; color: #8190ad; font-family: inherit; font-size: 10.5px; font-weight: 600; padding: 4px 9px; border-radius: 5px; cursor: pointer; white-space: nowrap; transition: background 0.13s, color 0.13s; }
+    .bai-preview-seg button.on { background: #2a4a86; color: #eaf0ff; }
+    .bai-preview-divider { height: 1px; background: rgba(255,255,255,0.08); }
 
     /* ---- Onboarding state · screen 1: headline + outcome cards (floating) + CTA under the assembled logo ---- */
     .bai-onb { position: absolute; left: 0; right: 0; top: 41%; padding: 0 24px; display: none; flex-direction: column; align-items: center; gap: 20px; text-align: center; opacity: 0; transition: opacity 0.5s ease; font-family: 'JetBrains Mono', ui-monospace, monospace; }
@@ -377,13 +461,14 @@
     .bai-onb-cta { width: 100%; max-width: 276px; padding: 10px; border: none; border-radius: 10px; background: var(--bai-accent); color: var(--bai-on-accent); font-family: inherit; font-size: 12px; font-weight: 700; cursor: pointer; transition: filter 0.15s; animation: onb-in 0.5s cubic-bezier(0.22,0.9,0.26,1) 0.55s both; }
     .bai-onb-cta:hover { filter: brightness(1.12); }
 
-    /* ---- Chat History: full pane (replaces the old cramped title-button dropdown) ---- */
-    .bai-history { position: absolute; left: 0; right: 0; top: 84px; bottom: 0; z-index: 50; display: none; flex-direction: column; background: var(--bai-bg); }   /* sits below header+strip, same anchor as the tour overlay */
-    .bai-history.on { display: flex; }
-    .bai-history-head { flex-shrink: 0; display: flex; align-items: center; gap: 8px; padding: 12px 14px 9px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12.5px; font-weight: 700; color: var(--bai-text-bright); border-bottom: 1px solid var(--bai-line); }
-    .bai-history-back { flex-shrink: 0; border: none; background: none; color: var(--bai-icon-2); cursor: pointer; padding: 4px; border-radius: 6px; display: flex; transition: background 0.15s, color 0.15s; }
-    .bai-history-back:hover { background: var(--bai-hover); color: var(--bai-hover-ink); }
-    .bai-history-list { flex: 1; overflow-y: auto; padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 8px; }
+    /* ---- Generic subpane shell: back header + scrollable body, push/pop stack (Chat History / Skills drill-down / etc.) ---- */
+    .bai-subpane { position: absolute; left: 0; right: 0; top: 84px; bottom: 0; z-index: 50; display: none; flex-direction: column; background: var(--bai-bg); }   /* sits below header+strip, same anchor as the tour overlay */
+    .bai-subpane.on { display: flex; }
+    .bai-subpane-head { flex-shrink: 0; display: flex; align-items: center; gap: 8px; padding: 12px 14px 9px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12.5px; font-weight: 700; color: var(--bai-text-bright); border-bottom: 1px solid var(--bai-line); }
+    .bai-subpane-back { flex-shrink: 0; border: none; background: none; color: var(--bai-icon-2); cursor: pointer; padding: 4px; border-radius: 6px; display: flex; transition: background 0.15s, color 0.15s; }
+    .bai-subpane-back:hover { background: var(--bai-hover); color: var(--bai-hover-ink); }
+    .bai-subpane-body { flex: 1; overflow-y: auto; padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 8px; }
+    /* Chat History card (a subpane-body content type) */
     .bai-history-card { display: flex; flex-direction: column; gap: 5px; padding: 11px 12px; background: var(--bai-card-2); border: 1px solid var(--bai-line); border-radius: 10px; cursor: pointer; font-family: 'JetBrains Mono', ui-monospace, monospace; transition: border-color 0.15s, background 0.15s; }
     .bai-history-card:hover { border-color: var(--bai-accent-strong); background: var(--bai-hover-acc); }
     .bai-history-card.on { border-color: var(--bai-accent-strong); background: var(--bai-accent-wash); }
@@ -507,19 +592,21 @@
                 </div>
                 <div class="bai-pane" id="paneJobs"><div class="bai-stub"><div class="ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg></div><h4>Jobs</h4><p>Running &amp; completed agent runs land here: status, logs, and what was applied to.</p><span class="soon">·· soon</span></div></div>
                 <div class="bai-pane" id="paneSkills">
-                  <div class="bai-list-head"><button class="bai-list-add" id="baiSkillAdd" type="button">+ New skill</button></div>
-                  <div class="bai-newitem" id="baiSkillForm" style="display:none">
-                    <input class="bai-newitem-input" id="baiSkillName" type="text" placeholder="Skill name" />
-                    <textarea class="bai-newitem-textarea" id="baiSkillDesc" placeholder="What should BlueAI do with this skill?"></textarea>
-                    <div class="bai-newitem-actions"><button class="bai-newitem-cancel" id="baiSkillCancel" type="button">Cancel</button><button class="bai-newitem-create" id="baiSkillCreate" type="button">Create</button></div>
-                  </div>
+                  <div class="bai-search"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><input id="baiSkillSearch" type="text" placeholder="Search skills…" autocomplete="off" spellcheck="false" /></div>
                   <div class="bai-list-body" id="baiSkillsList"></div>
+                  <div class="bai-sticky-cta"><button id="baiSkillCta" type="button">Build a custom skill</button></div>
                 </div>
                 <div class="bai-pane" id="paneScheduled">
                   <div class="bai-list-head"><button class="bai-list-add" id="baiSchedAdd" type="button">+ New task</button></div>
                   <div class="bai-newitem" id="baiSchedForm" style="display:none">
-                    <input class="bai-newitem-input" id="baiSchedName" type="text" placeholder="What should BlueAI do?" />
-                    <input class="bai-newitem-input" id="baiSchedWhen" type="text" placeholder="e.g. Every day at 9:00 AM" />
+                    <textarea class="bai-newitem-textarea" id="baiSchedName" placeholder="What should BlueAI do?" style="min-height:44px;"></textarea>
+                    <div class="bai-seg" id="baiSchedRepeat" style="align-self:flex-start;">
+                      <button type="button" class="bai-seg-btn active" data-v="Once">Once</button>
+                      <button type="button" class="bai-seg-btn" data-v="Daily">Daily</button>
+                      <button type="button" class="bai-seg-btn" data-v="Weekly">Weekly</button>
+                      <button type="button" class="bai-seg-btn" data-v="Monthly">Monthly</button>
+                    </div>
+                    <input class="bai-newitem-input" id="baiSchedTime" type="text" placeholder="Time, e.g. 9:00 AM" />
                     <div class="bai-newitem-actions"><button class="bai-newitem-cancel" id="baiSchedCancel" type="button">Cancel</button><button class="bai-newitem-create" id="baiSchedCreate" type="button">Create</button></div>
                   </div>
                   <div class="bai-list-body" id="baiSchedList"></div>
@@ -533,16 +620,37 @@
                       <button class="bai-seg-btn" data-theme="light" type="button">light</button>
                     </div>
                   </div>
-                  <div class="bai-set-soon">·· more settings soon</div>
+                  <div class="bai-set-label">CONNECTED</div>
+                  <div class="bai-set-row">
+                    <div class="bai-set-info"><span class="bai-set-name">BlueStacks instance</span><span class="bai-set-sub">This session's App Player, ready for tasks</span></div>
+                  </div>
+                  <div class="bai-set-label">NOTIFICATIONS</div>
+                  <div class="bai-set-card" id="baiNotifyCard"></div>
+                  <div class="bai-set-label">AI MODE</div>
+                  <div class="bai-set-card" id="baiAiModeCard"></div>
+                  <div class="bai-set-label">OWN API KEY</div>
+                  <div class="bai-set-card" id="baiByokCard"></div>
+                  <div class="bai-set-label">AI DEFAULTS</div>
+                  <div class="bai-set-card">
+                    <div class="bai-set-card-head"><span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M9 9h6v6H9z"/></svg></span><span class="info"><b>Chat AI Settings</b><span>Applies to new conversations</span></span></div>
+                    <div id="baiDefaultModelRow"></div>
+                    <div class="bai-set-divider"></div>
+                    <div class="bai-set-field"><span class="bai-set-field-label">Max output tokens</span><input class="bai-newitem-input" id="baiMaxTokens" type="number" value="4096" /></div>
+                    <div class="bai-set-field"><span class="bai-set-field-label">Max steps</span><input class="bai-newitem-input" id="baiMaxSteps" type="number" value="25" /></div>
+                    <div class="bai-set-field"><span class="bai-set-field-label">Timeout (seconds)</span><input class="bai-newitem-input" id="baiTimeoutSec" type="number" value="120" /></div>
+                    <button class="bai-set-btn primary" id="baiSaveAiSettings" style="width:100%;">Save settings</button>
+                    <div class="bai-set-save-confirm" id="baiSaveConfirm">✓ Settings saved successfully</div>
+                  </div>
                 </div></div>
               </div>
-              <!-- Chat History: full pane (not a cramped dropdown) — title/count/time + a Scheduled badge -->
-              <div class="bai-history" id="baiHistory">
-                <div class="bai-history-head">
-                  <button class="bai-history-back" id="baiHistoryBack" type="button" aria-label="Back"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
-                  <span>Chat History</span>
+              <!-- Generic full-pane "subpane": back header + scrollable body, push/pop stack (Chat History, Skills
+                   category drill-down, skill details, etc. all share this one shell — see openSubpane() in JS). -->
+              <div class="bai-subpane" id="baiSubpane">
+                <div class="bai-subpane-head">
+                  <button class="bai-subpane-back" id="baiSubpaneBack" type="button" aria-label="Back"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+                  <span id="baiSubpaneTitle"></span>
                 </div>
-                <div class="bai-history-list" id="baiHistoryList"></div>
+                <div class="bai-subpane-body" id="baiSubpaneBody"></div>
               </div>
               <!-- Onboarding · 3-step nav tour (skills -> scheduled -> chat) -->
               <div class="bai-tour" id="baiTour">
@@ -564,15 +672,17 @@
     </div>
   </div>
 
-  <!-- Design-handoff state toggler: which prototype state this page plays -->
-  <div class="state-toggler" id="stateToggler" aria-label="Prototype state">
-    <button data-state="default" type="button">default</button>
-    <button data-state="onboarding" type="button">onboarding</button>
-  </div>
-  <!-- Design-handoff state toggler: preview every chat message type at once, instead of hunting for it inside a live flow -->
-  <div class="state-toggler left" id="chatStatesToggler" aria-label="Chat message states preview">
-    <button data-cs="off" type="button" class="on">chat</button>
-    <button data-cs="on" type="button">states</button>
+  <!-- Design-handoff Preview panel: one collapsible progressive-disclosure toggler (matches the canonical
+       blueAI product's dev-preview panel) instead of separate always-visible pill togglers. -->
+  <div class="bai-preview" id="baiPreview" aria-label="Prototype preview state">
+    <button class="bai-preview-fab" id="baiPreviewFab" aria-label="Preview state" type="button"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+    <div class="bai-preview-card" id="baiPreviewCard">
+      <div class="bai-preview-head">
+        <span>Preview</span>
+        <button class="bai-preview-collapse" id="baiPreviewCollapse" aria-label="Collapse preview" type="button"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+      </div>
+      <div class="bai-preview-rows" id="baiPreviewRows"></div>
+    </div>
   </div>
 
   <script src="boot.js"></script>
@@ -734,60 +844,189 @@
       var settingsBtn = document.getElementById('baiSettingsBtn');
       var tabs = [].slice.call(document.querySelectorAll('.bai-tab'));
       var panes = { chat: document.getElementById('paneChat'), jobs: document.getElementById('paneJobs'), skills: document.getElementById('paneSkills'), scheduled: document.getElementById('paneScheduled'), settings: document.getElementById('paneSettings') };
+      var currentTabMode = 'chat';
       function setMode(m) {
+        currentTabMode = m;
         Object.keys(panes).forEach(function (k) { panes[k].classList.toggle('active', k === m); });
         tabs.forEach(function (t) { t.classList.toggle('active', t.getAttribute('data-mode') === m); });   // settings has no tab -> all tabs go inactive
         [].forEach.call(document.querySelectorAll('.bai-side-item[data-mode]'), function (s) { s.classList.toggle('active', s.getAttribute('data-mode') === m); });   // mirror on the wide sidebar
         var mt = document.getElementById('baiMainTitle'); if (mt) mt.textContent = m === 'chat' ? fullTitle : (m.charAt(0).toUpperCase() + m.slice(1));   // main-column title follows the mode
         baiUi.classList.toggle('nonchat', m !== 'chat');   // non-chat panes: plain label — no recents arrow, no new-chat
+        if (m === 'scheduled' && !schedShimmerShown) showSchedShimmerThenRender();   // one-time loading shimmer on first visit to the tab
+        if (typeof renderPreviewRows === 'function') renderPreviewRows();   // progressive disclosure: some rows are screen-scoped (defined later in the script; guarded since setMode can fire before it's declared)
       }
       tabs.forEach(function (t) { t.addEventListener('click', function () { setMode(t.getAttribute('data-mode')); }); });
       settingsBtn.addEventListener('click', function (e) { e.stopPropagation(); closeMenus(); setMode('settings'); });
       var tbClose = document.getElementById('baiTbClose');
       if (tbClose) tbClose.addEventListener('click', function (e) { e.stopPropagation(); closeMenus(); closePanel(); });   // title bar's Close — hides + remembers; Minimize/Maximize are decorative only (no handler)
 
-      // ---- Skills tab: list + empty state + inline "new skill" creation (design-only, client-side) ----
+      // ---- Skills tab: categories -> drill-down -> details, search, "Try" in chat, 3-mode create/edit flow ----
+      // Ported from the canonical blueAI product design (category grid -> drill-down -> skill card -> details
+      // modal -> 3-tab create modal), adapted to terminal-modern chrome + the subpane push/pop stack instead of
+      // a 2-col grid + real modals (360px portrait doesn't have room for either).
       function iconSvg(path, size) { return '<svg width="' + size + '" height="' + size + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + path + '</svg>'; }
-      var SKILL_PATH = '<path d="M13 2L3 14h7l-1 8 10-12h-7z"/>';
-      var SKILLS = [
-        { name: 'Daily rewards claimer', desc: 'Checks every linked game for free daily rewards and claims them automatically.' },
-        { name: 'Game news digest', desc: 'Summarizes new updates, patches, and events for your installed games.' }
+      var CAT_ICONS = {
+        games: '<rect x="3" y="8" width="18" height="4"/><path d="M12 8v13"/><path d="M19 12v9H5v-9"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8s1-5 4.5-5a2.5 2.5 0 0 1 0 5"/>',
+        content: '<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/>',
+        productivity: '<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>',
+        mine: '<path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/>'
+      };
+      var SKILL_CATEGORIES = [
+        { key: 'games', name: 'Games', cc: '#9d86f5', skills: [
+          { name: 'Daily rewards claimer', desc: 'Checks every linked game for free daily rewards and claims them automatically.', on: true },
+          { name: 'Redeem code finder', desc: 'Searches for and applies the latest working redeem codes for your games.', on: true }
+        ] },
+        { key: 'content', name: 'Content', cc: '#e0559a', skills: [
+          { name: 'Carousel drafter', desc: "Drafts a multi-slide carousel post from a topic or this week's news.", on: true },
+          { name: 'Gameplay review scriptwriter', desc: 'Writes a Hinglish beat-sheet for a gameplay review video.', on: true }
+        ] },
+        { key: 'productivity', name: 'Productivity', cc: '#4a8bf5', skills: [
+          { name: 'Resume tailorer', desc: 'Rewrites your resume summary and skills to match a specific job listing.', on: true },
+          { name: 'Job listing scanner', desc: 'Scans LinkedIn, Indeed, and Wellfound for roles matching your criteria.', on: true }
+        ] }
       ];
-      var skillsListEl = document.getElementById('baiSkillsList');
-      function renderSkills() {
-        skillsListEl.innerHTML = '';
-        if (!SKILLS.length) {
-          var empty = document.createElement('div'); empty.className = 'bai-stub';
-          empty.innerHTML = '<div class="ic">' + iconSvg(SKILL_PATH, 17) + '</div><h4>No skills available</h4><p>Create your own skills to give BlueAI instructions, tools, and knowledge for specific tasks.</p>';
-          skillsListEl.appendChild(empty); return;
+      var MY_SKILLS = [];   // starts empty — the empty state IS the real first-run state, not just a reachable edge case
+      var skillsListEl = document.getElementById('baiSkillsList'), skillSearchInput = document.getElementById('baiSkillSearch');
+
+      function tryInChat(name) {
+        closeAllSubpanes(); setMode('chat');
+        addUser('Use my "' + name + '" skill');
+        var th = makeThinking(); th.txt.innerHTML = '<em>2s</em> &middot; running ' + name + '…';
+        setTimeout(function () { th.el.remove(); renderDone(name + ' finished running.'); }, 1200);
+      }
+      function skillCard(sk, owned, catName, refreshFn) {
+        var row = document.createElement('div'); row.className = 'bai-skillcard';
+        row.innerHTML =
+          '<div class="sk-top"><b>' + sk.name + '</b><span class="bai-tgl' + (sk.on ? ' on' : '') + '" role="button" aria-label="Toggle skill"><i></i></span></div>' +
+          '<div class="sk-desc">' + sk.desc + '</div>' +
+          '<div class="sk-foot"><button class="bai-sk-try" type="button">Try</button>' +
+          (owned ? '<button class="bai-sk-link" type="button">Edit</button><button class="bai-sk-link danger" type="button">Delete</button>' : '<button class="bai-sk-link" type="button">Details ›</button>') +
+          '</div>';
+        row.querySelector('.bai-tgl').addEventListener('click', function (e) { e.stopPropagation(); sk.on = !sk.on; refreshFn(); });
+        row.querySelector('.bai-sk-try').addEventListener('click', function (e) { e.stopPropagation(); tryInChat(sk.name); });
+        var links = row.querySelectorAll('.bai-sk-link');
+        if (owned) {
+          links[0].addEventListener('click', function (e) { e.stopPropagation(); openSkillForm(sk); });
+          links[1].addEventListener('click', function (e) { e.stopPropagation(); MY_SKILLS.splice(MY_SKILLS.indexOf(sk), 1); refreshFn(); });
+        } else {
+          links[0].addEventListener('click', function (e) { e.stopPropagation(); openSkillDetails(sk, catName); });
         }
-        SKILLS.forEach(function (sk, i) {
-          var row = document.createElement('div'); row.className = 'bai-item-card';
-          row.innerHTML = '<span class="ic">' + iconSvg(SKILL_PATH, 15) + '</span><span class="info"><b>' + sk.name + '</b><span>' + sk.desc + '</span></span><button class="rm" type="button" aria-label="Remove skill" title="Remove">✕</button>';
-          row.querySelector('.rm').addEventListener('click', function (e) { e.stopPropagation(); SKILLS.splice(i, 1); renderSkills(); });
+        row.addEventListener('click', function () { openSkillDetails(sk, catName); });
+        return row;
+      }
+      function openSkillDetails(sk, catName) {
+        openSubpane(sk.name, function (body) {
+          var d = document.createElement('div'); d.className = 'sk-desc'; d.style.cssText = 'font-size:11.5px;line-height:1.6;color:var(--bai-text);-webkit-line-clamp:unset;';
+          d.textContent = sk.desc; body.appendChild(d);
+          var kv = document.createElement('div'); kv.className = 'bai-kv-block';
+          kv.innerHTML =
+            '<div class="bai-kv-row"><span class="k">Owner</span><span class="v">' + (catName ? 'BlueAI · Official' : 'You') + '</span></div>' +
+            '<div class="bai-kv-row"><span class="k">Status</span><span class="v">' + (sk.on ? 'Active' : 'Off') + '</span></div>' +
+            '<div class="bai-kv-row"><span class="k">Category</span><span class="v">' + (catName || 'My Skills') + '</span></div>' +
+            '<div class="bai-kv-row"><span class="k">Last updated</span><span class="v">' + (sk.updated || '2 days ago') + '</span></div>';
+          body.appendChild(kv);
+          var tryBtn = document.createElement('button'); tryBtn.className = 'bai-sk-try'; tryBtn.type = 'button'; tryBtn.style.marginTop = '2px'; tryBtn.textContent = 'Try this skill';
+          tryBtn.addEventListener('click', function () { tryInChat(sk.name); });
+          body.appendChild(tryBtn);
+        });
+      }
+      function openCategory(cat) {
+        openSubpane(cat.name, function (body) {
+          cat.skills.forEach(function (sk) { body.appendChild(skillCard(sk, false, cat.name, paintSubpane)); });
+        });
+      }
+      function openMySkills() {
+        openSubpane('My Skills', function (body) {
+          var head = document.createElement('div'); head.style.cssText = 'display:flex;justify-content:flex-end;';
+          var addBtn = document.createElement('button'); addBtn.className = 'bai-list-add'; addBtn.type = 'button'; addBtn.textContent = '+ New';
+          addBtn.addEventListener('click', function () { openSkillForm(null); });
+          head.appendChild(addBtn); body.appendChild(head);
+          if (!MY_SKILLS.length) {
+            var empty = document.createElement('div'); empty.className = 'bai-stub';
+            empty.innerHTML = '<div class="ic">' + iconSvg(CAT_ICONS.mine, 17) + '</div><h4>No skills available</h4><p>Create your own skills to give BlueAI instructions, tools, and knowledge for specific tasks.</p>';
+            body.appendChild(empty); return;
+          }
+          MY_SKILLS.forEach(function (sk) { body.appendChild(skillCard(sk, true, null, paintSubpane)); });
+        });
+      }
+      function renderSkillsHome() {
+        skillsListEl.innerHTML = '';
+        SKILL_CATEGORIES.concat([{ name: 'My Skills', cc: '#e0aa4e', skills: MY_SKILLS, mine: true }]).forEach(function (cat) {
+          var row = document.createElement('div'); row.className = 'bai-cat-row'; row.style.setProperty('--cc', cat.cc);
+          row.innerHTML = '<span class="ic">' + iconSvg(CAT_ICONS[cat.mine ? 'mine' : cat.key], 17) + '</span><span class="info"><b>' + cat.name + '</b><span>' + cat.skills.length + ' skill' + (cat.skills.length === 1 ? '' : 's') + '</span></span><span class="ar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span>';
+          row.addEventListener('click', function () { cat.mine ? openMySkills() : openCategory(cat); });
           skillsListEl.appendChild(row);
         });
       }
-      renderSkills();
-      var skillAddBtn = document.getElementById('baiSkillAdd'), skillForm = document.getElementById('baiSkillForm'), skillNameInput = document.getElementById('baiSkillName'), skillDescInput = document.getElementById('baiSkillDesc');
-      function openSkillForm() { skillForm.style.display = 'flex'; skillAddBtn.style.display = 'none'; skillNameInput.value = ''; skillDescInput.value = ''; skillNameInput.focus(); }
-      function closeSkillForm() { skillForm.style.display = 'none'; skillAddBtn.style.display = ''; }
-      skillAddBtn.addEventListener('click', function (e) { e.stopPropagation(); openSkillForm(); });
-      document.getElementById('baiSkillCancel').addEventListener('click', function (e) { e.stopPropagation(); closeSkillForm(); });
-      document.getElementById('baiSkillCreate').addEventListener('click', function (e) {
-        e.stopPropagation();
-        var name = skillNameInput.value.trim(); if (!name) { skillNameInput.focus(); return; }
-        SKILLS.push({ name: name, desc: skillDescInput.value.trim() || 'A custom skill for BlueAI to use when relevant.' });
-        closeSkillForm(); renderSkills();
+      function openSkillForm(existing) {
+        openSubpane(existing ? 'Edit Skill' : 'New Skill', function (body) {
+          var curMode = 'write';
+          var tabs = document.createElement('div'); tabs.className = 'bai-create-tabs';
+          [['write', 'Write instructions'], ['zip', 'Upload a ZIP file'], ['ai', 'Create with BlueAI']].forEach(function (m) {
+            var t = document.createElement('button'); t.type = 'button'; t.className = 'bai-create-tab' + (m[0] === curMode ? ' on' : ''); t.textContent = m[1];
+            t.addEventListener('click', function () { curMode = m[0]; [].forEach.call(tabs.children, function (x) { x.classList.toggle('on', x === t); }); renderMode(); });
+            tabs.appendChild(t);
+          });
+          if (!existing) body.appendChild(tabs);   // editing is always the "write instructions" form on the existing skill
+          var modeBody = document.createElement('div'); modeBody.style.cssText = 'flex:1; display:flex; flex-direction:column;';
+          body.appendChild(modeBody);
+          function renderMode() {
+            modeBody.innerHTML = '';
+            if (curMode === 'write' || existing) {
+              var nameInput = document.createElement('input'); nameInput.className = 'bai-newitem-input'; nameInput.type = 'text'; nameInput.placeholder = 'Skill name'; nameInput.style.marginBottom = '9px'; nameInput.value = existing ? existing.name : '';
+              var descInput = document.createElement('textarea'); descInput.className = 'bai-newitem-textarea'; descInput.placeholder = 'What should BlueAI do with this skill?'; descInput.style.marginBottom = '9px'; descInput.value = existing ? existing.desc : '';
+              var instrInput = document.createElement('textarea'); instrInput.className = 'bai-newitem-textarea'; instrInput.placeholder = 'Step-by-step instructions BlueAI should follow…'; instrInput.style.minHeight = '76px';
+              modeBody.appendChild(nameInput); modeBody.appendChild(descInput); modeBody.appendChild(instrInput);
+              var actions = document.createElement('div'); actions.className = 'bai-newitem-actions'; actions.style.marginTop = '11px';
+              actions.innerHTML = '<button class="bai-newitem-cancel" type="button">Cancel</button><button class="bai-newitem-create" type="button">' + (existing ? 'Save' : 'Create') + '</button>';
+              actions.querySelector('.bai-newitem-cancel').addEventListener('click', function () { popSubpane(); });
+              actions.querySelector('.bai-newitem-create').addEventListener('click', function () {
+                var name = nameInput.value.trim(); if (!name) { nameInput.focus(); return; }
+                var desc = descInput.value.trim() || 'A custom skill for BlueAI to use when relevant.';
+                if (existing) { existing.name = name; existing.desc = desc; } else MY_SKILLS.push({ name: name, desc: desc, on: true });
+                popSubpane(); renderSkillsHome();
+              });
+              modeBody.appendChild(actions);
+            } else if (curMode === 'zip') {
+              var up = document.createElement('div'); up.className = 'bai-upload-row'; up.innerHTML = '<span>+</span><span>Upload skill.zip</span>';
+              up.addEventListener('click', function () { MY_SKILLS.push({ name: 'skill.zip import', desc: 'Imported from an uploaded ZIP file.', on: true }); popSubpane(); renderSkillsHome(); });
+              var hint = document.createElement('div'); hint.className = 'bai-upload-hint'; hint.textContent = 'ZIP must include a skill.md with instructions and an optional tools/ folder. Max 10MB.';
+              modeBody.appendChild(up); modeBody.appendChild(hint);
+            } else {
+              var wrap = document.createElement('div'); wrap.className = 'bai-ai-create';
+              wrap.innerHTML = '<div class="ic">' + iconSvg('<path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/>', 20) + '</div><p>Describe the skill you want in plain language, and BlueAI will draft the instructions for you.</p><button class="bai-onb-cta" type="button" style="max-width:180px;">Start in Chat ›</button>';
+              wrap.querySelector('button').addEventListener('click', function () { closeAllSubpanes(); setMode('chat'); baiInput.value = 'Help me create a skill that '; baiInput.focus(); });
+              modeBody.appendChild(wrap);
+            }
+          }
+          renderMode();
+        });
+      }
+      skillSearchInput.addEventListener('input', function () {
+        var q = skillSearchInput.value.trim().toLowerCase();
+        if (!q) { renderSkillsHome(); return; }
+        skillsListEl.innerHTML = '';
+        var matches = [];
+        SKILL_CATEGORIES.concat([{ name: 'My Skills', skills: MY_SKILLS, mine: true }]).forEach(function (cat) {
+          cat.skills.forEach(function (sk) { if (sk.name.toLowerCase().indexOf(q) !== -1) matches.push({ sk: sk, cat: cat }); });
+        });
+        if (!matches.length) {
+          var empty = document.createElement('div'); empty.className = 'bai-stub';
+          empty.innerHTML = '<h4>No skills match</h4><p>Try a different search term.</p>';
+          skillsListEl.appendChild(empty); return;
+        }
+        matches.forEach(function (m) { skillsListEl.appendChild(skillCard(m.sk, !!m.cat.mine, m.cat.mine ? null : m.cat.name, function () { skillSearchInput.dispatchEvent(new Event('input')); })); });
       });
+      document.getElementById('baiSkillCta').addEventListener('click', function () { openSkillForm(null); });
+      renderSkillsHome();
 
-      // ---- Scheduled tab: list + empty state + inline "new scheduled task" creation ----
+      // ---- Scheduled tab: list + empty state + structured cadence picker + delete-confirm + one-time shimmer ----
       var SCHED_PATH = '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>';
       var SCHEDULED = [
         { name: 'Claim daily rewards', when: 'Every day at 9:00 AM', next: 'tomorrow, 9:00 AM', on: true },
         { name: 'Weekly game roundup', when: 'Every Monday at 8:00 AM', next: 'Mon, 8:00 AM', on: true }
       ];
-      var schedListEl = document.getElementById('baiSchedList');
+      var schedListEl = document.getElementById('baiSchedList'), schedPendingDelete = -1, schedShimmerShown = false;
       function renderScheduled() {
         schedListEl.innerHTML = '';
         if (!SCHEDULED.length) {
@@ -796,24 +1035,194 @@
           schedListEl.appendChild(empty); return;
         }
         SCHEDULED.forEach(function (t, i) {
+          if (i === schedPendingDelete) {
+            var confirmRow = document.createElement('div'); confirmRow.className = 'bai-item-card';
+            confirmRow.innerHTML = '<span class="info"><b>Delete "' + t.name + '"?</b><span>This can\'t be undone.</span></span>';
+            var cancelBtn = document.createElement('button'); cancelBtn.className = 'bai-newitem-cancel'; cancelBtn.type = 'button'; cancelBtn.textContent = 'Cancel';
+            var delBtn = document.createElement('button'); delBtn.className = 'bai-newitem-create'; delBtn.type = 'button'; delBtn.textContent = 'Delete'; delBtn.style.background = 'var(--bai-danger)';
+            cancelBtn.addEventListener('click', function (e) { e.stopPropagation(); schedPendingDelete = -1; renderScheduled(); });
+            delBtn.addEventListener('click', function (e) { e.stopPropagation(); SCHEDULED.splice(i, 1); schedPendingDelete = -1; renderScheduled(); });
+            confirmRow.appendChild(cancelBtn); confirmRow.appendChild(delBtn);
+            schedListEl.appendChild(confirmRow); return;
+          }
           var row = document.createElement('div'); row.className = 'bai-item-card';
-          row.innerHTML = '<span class="ic">' + iconSvg(SCHED_PATH, 15) + '</span><span class="info"><b>' + t.name + '</b><span>' + t.when + ' · next ' + t.next + '</span></span><span class="bai-tgl' + (t.on ? ' on' : '') + '" role="button" aria-label="Toggle on/off"><i></i></span><button class="rm" type="button" aria-label="Remove" title="Remove">✕</button>';
+          row.innerHTML = '<span class="ic">' + iconSvg(SCHED_PATH, 15) + '</span><span class="info"><b>' + t.name + '</b><span>' + t.when + '</span><span class="meta-next">Next: ' + t.next + '</span></span><span class="bai-tgl' + (t.on ? ' on' : '') + '" role="button" aria-label="Toggle on/off"><i></i></span><button class="rm" type="button" aria-label="Remove" title="Remove">✕</button>';
           row.querySelector('.bai-tgl').addEventListener('click', function (e) { e.stopPropagation(); t.on = !t.on; renderScheduled(); });
-          row.querySelector('.rm').addEventListener('click', function (e) { e.stopPropagation(); SCHEDULED.splice(i, 1); renderScheduled(); });
+          row.querySelector('.rm').addEventListener('click', function (e) { e.stopPropagation(); schedPendingDelete = i; renderScheduled(); });
           schedListEl.appendChild(row);
         });
       }
+      function shimmerRow() { var r = document.createElement('div'); r.className = 'bai-item-card bai-shimmer'; r.innerHTML = '<span class="ic"></span><span class="info"><b class="sh-line"></b><span class="sh-line short"></span></span>'; return r; }
+      function showSchedShimmerThenRender() {
+        schedShimmerShown = true;
+        schedListEl.innerHTML = ''; schedListEl.appendChild(shimmerRow()); schedListEl.appendChild(shimmerRow());
+        setTimeout(renderScheduled, 550);
+      }
       renderScheduled();
-      var schedAddBtn = document.getElementById('baiSchedAdd'), schedForm = document.getElementById('baiSchedForm'), schedNameInput = document.getElementById('baiSchedName'), schedWhenInput = document.getElementById('baiSchedWhen');
-      function openSchedForm() { schedForm.style.display = 'flex'; schedAddBtn.style.display = 'none'; schedNameInput.value = ''; schedWhenInput.value = ''; schedNameInput.focus(); }
+      var schedAddBtn = document.getElementById('baiSchedAdd'), schedForm = document.getElementById('baiSchedForm'), schedNameInput = document.getElementById('baiSchedName'), schedTimeInput = document.getElementById('baiSchedTime'), schedRepeat = 'Once';
+      [].forEach.call(document.querySelectorAll('#baiSchedRepeat .bai-seg-btn'), function (b) {
+        b.addEventListener('click', function (e) { e.stopPropagation(); schedRepeat = b.getAttribute('data-v'); [].forEach.call(b.parentNode.children, function (o) { o.classList.toggle('active', o === b); }); });
+      });
+      function openSchedForm() { schedForm.style.display = 'flex'; schedAddBtn.style.display = 'none'; schedNameInput.value = ''; schedTimeInput.value = ''; schedRepeat = 'Once'; [].forEach.call(document.querySelectorAll('#baiSchedRepeat .bai-seg-btn'), function (o, i) { o.classList.toggle('active', i === 0); }); schedNameInput.focus(); }
       function closeSchedForm() { schedForm.style.display = 'none'; schedAddBtn.style.display = ''; }
       schedAddBtn.addEventListener('click', function (e) { e.stopPropagation(); openSchedForm(); });
       document.getElementById('baiSchedCancel').addEventListener('click', function (e) { e.stopPropagation(); closeSchedForm(); });
       document.getElementById('baiSchedCreate').addEventListener('click', function (e) {
         e.stopPropagation();
         var name = schedNameInput.value.trim(); if (!name) { schedNameInput.focus(); return; }
-        SCHEDULED.push({ name: name, when: schedWhenInput.value.trim() || 'Once, next available slot', next: 'scheduling…', on: true });
+        var time = schedTimeInput.value.trim() || '9:00 AM';
+        var when = schedRepeat === 'Once' ? 'Once, at ' + time : 'Every ' + (schedRepeat === 'Daily' ? 'day' : schedRepeat === 'Weekly' ? 'week' : 'month') + ' at ' + time;
+        SCHEDULED.push({ name: name, when: when, next: schedRepeat === 'Once' ? time + ' today' : 'tomorrow, ' + time, on: true });
         closeSchedForm(); renderScheduled();
+      });
+
+      // ---- Settings: Notifications (pairing), AI Mode (Cloud/Hybrid), Own API key (BYOK), AI defaults ----
+      // Ported from the canonical blueAI product design's Settings card-stack, reworded away from Prime/
+      // subscription language (this desktop agent has no purchase flow, just a credit gauge) — BYOK, AI Mode,
+      // and AI defaults are all still genuinely relevant; "Telegram" became a generic notification pairing card.
+      var BELL_PATH = '<path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>';
+      var CPU_PATH = '<rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/>';
+      var KEY_PATH = '<circle cx="8" cy="15" r="4"/><path d="M10.5 12.5L20 3M17 6l3 3M14 9l2 2"/>';
+      var notifyState = 'off';   // off | pairing | on
+      function renderNotify() {
+        var el = document.getElementById('baiNotifyCard'); el.innerHTML = '';
+        var head = document.createElement('div'); head.className = 'bai-set-card-head';
+        head.innerHTML = '<span class="ic">' + iconSvg(BELL_PATH, 16) + '</span><span class="info"><b>Notifications</b><span>' + (notifyState === 'on' ? 'Connected · get notified when tasks finish' : 'Get notified on Telegram when tasks finish') + '</span></span>';
+        var btn = document.createElement('button'); btn.className = 'bai-set-btn' + (notifyState === 'off' ? ' primary' : notifyState === 'on' ? ' danger' : '');
+        btn.type = 'button'; btn.textContent = notifyState === 'off' ? 'Connect' : notifyState === 'on' ? 'Unlink' : 'Cancel';
+        btn.addEventListener('click', function () { notifyState = notifyState === 'off' ? 'pairing' : 'off'; renderNotify(); });
+        head.appendChild(btn); el.appendChild(head);
+        if (notifyState === 'pairing') {
+          var pairing = document.createElement('div'); pairing.className = 'bai-set-pairing';
+          pairing.innerHTML = '<span class="code">7 4 2 9 1 3</span><span class="hint">Enter this code in @BlueAIBot on Telegram</span>';
+          var confirmBtn = document.createElement('button'); confirmBtn.className = 'bai-set-btn primary'; confirmBtn.style.width = '100%'; confirmBtn.type = 'button'; confirmBtn.textContent = "I've paired — continue";
+          confirmBtn.addEventListener('click', function () { notifyState = 'on'; renderNotify(); });
+          el.appendChild(pairing); el.appendChild(confirmBtn);
+        }
+      }
+      renderNotify();
+
+      var aiMode = 'cloud', hybridMethod = 'auto', hybridStatus = 'idle', downloadPct = 0, hybridTimer = null, customApplied = false;
+      function renderAiMode() {
+        var el = document.getElementById('baiAiModeCard'); el.innerHTML = '';
+        var head = document.createElement('div'); head.className = 'bai-set-card-head';
+        head.innerHTML = '<span class="ic">' + iconSvg(CPU_PATH, 16) + '</span><span class="info"><b>AI Mode</b><span>Choose where BlueAI\'s model runs</span></span>';
+        el.appendChild(head);
+        var seg1 = document.createElement('div'); seg1.className = 'bai-seg'; seg1.style.alignSelf = 'stretch';
+        seg1.innerHTML = '<button type="button" class="bai-seg-btn' + (aiMode === 'cloud' ? ' active' : '') + '" style="flex:1">Cloud</button><button type="button" class="bai-seg-btn' + (aiMode === 'hybrid' ? ' active' : '') + '" style="flex:1">Hybrid</button>';
+        seg1.children[0].addEventListener('click', function () { aiMode = 'cloud'; renderAiMode(); });
+        seg1.children[1].addEventListener('click', function () { aiMode = 'hybrid'; renderAiMode(); });
+        el.appendChild(seg1);
+        if (aiMode !== 'hybrid') return;
+        el.appendChild(Object.assign(document.createElement('div'), { className: 'bai-set-divider' }));
+        var sub = document.createElement('div'); sub.style.cssText = 'font-size:10px;color:var(--bai-dim);'; sub.textContent = "Runs on this BlueStacks instance's local GPU"; el.appendChild(sub);
+        var seg2 = document.createElement('div'); seg2.className = 'bai-seg'; seg2.style.alignSelf = 'stretch';
+        seg2.innerHTML = '<button type="button" class="bai-seg-btn' + (hybridMethod === 'auto' ? ' active' : '') + '" style="flex:1">Auto</button><button type="button" class="bai-seg-btn' + (hybridMethod === 'custom' ? ' active' : '') + '" style="flex:1">Custom</button>';
+        seg2.children[0].addEventListener('click', function () { hybridMethod = 'auto'; renderAiMode(); });
+        seg2.children[1].addEventListener('click', function () { hybridMethod = 'custom'; renderAiMode(); });
+        el.appendChild(seg2);
+        if (hybridMethod === 'auto') {
+          if (hybridStatus === 'idle') {
+            var dlBtn = document.createElement('button'); dlBtn.className = 'bai-set-btn primary'; dlBtn.style.width = '100%'; dlBtn.type = 'button'; dlBtn.textContent = 'Download & enable';
+            dlBtn.addEventListener('click', startHybridDownload); el.appendChild(dlBtn);
+          } else if (hybridStatus === 'downloading') {
+            var barWrap = document.createElement('div'); barWrap.style.cssText = 'display:flex;flex-direction:column;gap:6px;';
+            barWrap.innerHTML = '<div style="height:6px;border-radius:4px;background:var(--bai-input-bg);overflow:hidden;"><div style="height:100%;width:' + downloadPct + '%;background:var(--bai-accent);"></div></div><span style="font-size:10px;color:var(--bai-dim);">Downloading local model… ' + Math.round(downloadPct) + '%</span>';
+            var cancelBtn = document.createElement('button'); cancelBtn.className = 'bai-set-btn'; cancelBtn.style.width = '100%'; cancelBtn.type = 'button'; cancelBtn.textContent = 'Cancel';
+            cancelBtn.addEventListener('click', function () { clearInterval(hybridTimer); hybridStatus = 'idle'; downloadPct = 0; renderAiMode(); });
+            el.appendChild(barWrap); el.appendChild(cancelBtn);
+          } else if (hybridStatus === 'installing') {
+            var inst = document.createElement('div'); inst.style.cssText = 'font-size:10.5px;color:var(--bai-dim);'; inst.textContent = 'Installing…'; el.appendChild(inst);
+          } else if (hybridStatus === 'running') {
+            var ready = document.createElement('div'); ready.className = 'bai-donecard'; ready.style.margin = '0';
+            ready.innerHTML = '<div class="dc-head">✓ HYBRID AI READY</div><div class="dc-body">Running locally on this instance\'s GPU.</div>';
+            var offBtn = document.createElement('button'); offBtn.className = 'bai-set-btn'; offBtn.style.width = '100%'; offBtn.type = 'button'; offBtn.textContent = 'Turn off';
+            offBtn.addEventListener('click', function () { hybridStatus = 'idle'; renderAiMode(); });
+            el.appendChild(ready); el.appendChild(offBtn);
+          }
+        } else if (!customApplied) {
+          var epInput = document.createElement('input'); epInput.className = 'bai-newitem-input'; epInput.id = 'baiHybridEndpoint'; epInput.placeholder = 'Endpoint URL';
+          var modelInput = document.createElement('input'); modelInput.className = 'bai-newitem-input'; modelInput.placeholder = 'Model name'; modelInput.style.marginTop = '7px';
+          var applyBtn = document.createElement('button'); applyBtn.className = 'bai-set-btn primary'; applyBtn.style.cssText = 'width:100%;margin-top:9px;'; applyBtn.type = 'button'; applyBtn.textContent = 'Apply';
+          applyBtn.addEventListener('click', function () { if (!epInput.value.trim()) { epInput.focus(); return; } customApplied = true; renderAiMode(); });
+          el.appendChild(epInput); el.appendChild(modelInput); el.appendChild(applyBtn);
+        } else {
+          var connected = document.createElement('div'); connected.className = 'bai-donecard'; connected.style.margin = '0';
+          connected.innerHTML = '<div class="dc-head">✓ CONNECTED</div><div class="dc-body">Using your custom endpoint.</div>';
+          var disBtn = document.createElement('button'); disBtn.className = 'bai-set-btn'; disBtn.style.width = '100%'; disBtn.type = 'button'; disBtn.textContent = 'Disconnect';
+          disBtn.addEventListener('click', function () { customApplied = false; renderAiMode(); });
+          el.appendChild(connected); el.appendChild(disBtn);
+        }
+      }
+      function startHybridDownload() {
+        hybridStatus = 'downloading'; downloadPct = 0; renderAiMode();
+        hybridTimer = setInterval(function () {
+          downloadPct += 8 + Math.random() * 10;
+          if (downloadPct >= 100) { downloadPct = 100; clearInterval(hybridTimer); hybridStatus = 'installing'; renderAiMode(); setTimeout(function () { hybridStatus = 'running'; renderAiMode(); }, 900); return; }
+          renderAiMode();
+        }, 220);
+      }
+      renderAiMode();
+
+      var stgByokOn = false, stgByokProvider = null, stgByokKey = null;
+      var BYOK_PROVIDERS = ['Anthropic', 'OpenAI', 'Gemini'];
+      function renderByok() {
+        var el = document.getElementById('baiByokCard'); el.innerHTML = '';
+        var head = document.createElement('div'); head.className = 'bai-set-card-head';
+        head.innerHTML = '<span class="ic">' + iconSvg(KEY_PATH, 16) + '</span><span class="info"><b>Own API key</b><span>Use your own key instead of BlueAI credits</span></span><span class="bai-tgl' + (stgByokOn ? ' on' : '') + '" role="button" aria-label="Toggle own key"><i></i></span>';
+        head.querySelector('.bai-tgl').addEventListener('click', function () { stgByokOn = !stgByokOn; if (!stgByokOn) { stgByokProvider = null; stgByokKey = null; } renderByok(); });
+        el.appendChild(head);
+        if (!stgByokOn) return;
+        if (!stgByokProvider) {
+          var warn = document.createElement('div'); warn.className = 'bai-warnrow'; warn.style.margin = '0';
+          warn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg><span>No API key configured</span>';
+          el.appendChild(warn);
+          var seg = document.createElement('div'); seg.className = 'bai-seg'; seg.style.alignSelf = 'stretch';
+          BYOK_PROVIDERS.forEach(function (p) { var b = document.createElement('button'); b.type = 'button'; b.className = 'bai-seg-btn'; b.style.flex = '1'; b.textContent = p; b.addEventListener('click', function () { stgByokProvider = p; renderByok(); }); seg.appendChild(b); });
+          el.appendChild(seg);
+        } else if (!stgByokKey) {
+          var sub = document.createElement('div'); sub.style.cssText = 'font-size:10.5px;color:var(--bai-text-hi);'; sub.textContent = stgByokProvider + ' API key'; el.appendChild(sub);
+          var keyInput = document.createElement('input'); keyInput.className = 'bai-newitem-input'; keyInput.type = 'text'; keyInput.placeholder = 'Paste your API key'; el.appendChild(keyInput);
+          var hint = document.createElement('div'); hint.style.cssText = 'font-size:10px;color:var(--bai-dim);'; hint.textContent = 'Stored encrypted on this device only.'; el.appendChild(hint);
+          var actions = document.createElement('div'); actions.className = 'bai-newitem-actions';
+          actions.innerHTML = '<button class="bai-newitem-cancel" type="button">Cancel</button><button class="bai-newitem-create" type="button">Validate &amp; Save</button>';
+          actions.querySelector('.bai-newitem-cancel').addEventListener('click', function () { stgByokProvider = null; renderByok(); });
+          actions.querySelector('.bai-newitem-create').addEventListener('click', function () { if (!keyInput.value.trim()) { keyInput.focus(); return; } stgByokKey = keyInput.value.trim(); renderByok(); });
+          el.appendChild(actions);
+        } else {
+          var row = document.createElement('div'); row.style.cssText = 'display:flex;align-items:center;gap:8px;';
+          row.innerHTML = '<span style="flex:1;font-size:10.5px;color:var(--bai-text-hi);">' + stgByokProvider + ' · ••••' + stgByokKey.slice(-4) + '</span>';
+          var rmBtn = document.createElement('button'); rmBtn.className = 'bai-set-btn danger'; rmBtn.type = 'button'; rmBtn.textContent = 'Remove';
+          rmBtn.addEventListener('click', function () { stgByokProvider = null; stgByokKey = null; renderByok(); });
+          row.appendChild(rmBtn); el.appendChild(row);
+          el.appendChild(Object.assign(document.createElement('div'), { className: 'bai-set-divider' }));
+          var modelRow = document.createElement('div'); modelRow.style.cssText = 'display:flex;align-items:center;justify-content:space-between;';
+          modelRow.innerHTML = '<span style="font-size:10.5px;color:var(--bai-dim);">AI Model</span><span style="font-size:10.5px;color:var(--bai-text-hi);">claude-sonnet-5</span>';
+          el.appendChild(modelRow);
+        }
+      }
+      renderByok();
+
+      var defaultModel = curModel, modelPickerOpen = false;
+      function renderDefaultModelRow() {
+        var el = document.getElementById('baiDefaultModelRow'); el.innerHTML = '';
+        var row = document.createElement('div'); row.className = 'bai-set-model-row';
+        row.innerHTML = '<span class="bai-set-field-label">Default model</span><span class="v">' + defaultModel + ' ›</span>';
+        row.addEventListener('click', function () { modelPickerOpen = !modelPickerOpen; renderDefaultModelRow(); });
+        el.appendChild(row);
+        if (!modelPickerOpen) return;
+        var list = document.createElement('div'); list.className = 'bai-set-model-list';
+        MODELS.forEach(function (m) {
+          var item = document.createElement('div'); item.style.color = m === defaultModel ? 'var(--bai-accent)' : 'var(--bai-text)'; item.textContent = (m === defaultModel ? '› ' : '') + m;
+          item.addEventListener('click', function () { defaultModel = m; modelPickerOpen = false; renderDefaultModelRow(); });
+          list.appendChild(item);
+        });
+        el.appendChild(list);
+      }
+      renderDefaultModelRow();
+      document.getElementById('baiSaveAiSettings').addEventListener('click', function () {
+        var c = document.getElementById('baiSaveConfirm'); c.style.display = 'block';
+        setTimeout(function () { c.style.display = 'none'; }, 2200);
       });
 
       // ---- Floating window: always detached (the drawer/dock mode is gone) — resizable + draggable ----
@@ -966,9 +1375,24 @@
       window.__baiFlow = startFlow;   // debug hook (like __baiCtrl) — start a flow without the full opening
       window.__setCredits = function (v) { credits = v; renderCredits(); };   // debug hook — jump the credits bar to a value without spamming sends
 
-      // ---- Chat session switcher: wordmark dropdown -> new chat + recent chats (scripted) ----
+      // ---- Generic subpane: back-header + scrollable body, push/pop stack. Shared by Chat History, Skills'
+      // category drill-down, and skill details — one shell, each consumer supplies its own render function. ----
+      var subpaneEl = document.getElementById('baiSubpane'), subpaneTitleEl = document.getElementById('baiSubpaneTitle'), subpaneBodyEl = document.getElementById('baiSubpaneBody'), subpaneBackBtn = document.getElementById('baiSubpaneBack');
+      var subpaneStack = [];
+      function paintSubpane() {
+        var top = subpaneStack[subpaneStack.length - 1];
+        subpaneTitleEl.textContent = top.title;
+        subpaneBodyEl.innerHTML = '';
+        top.renderFn(subpaneBodyEl);
+        subpaneEl.classList.add('on');
+      }
+      function openSubpane(title, renderFn) { subpaneStack.push({ title: title, renderFn: renderFn }); paintSubpane(); }
+      function popSubpane() { subpaneStack.pop(); if (subpaneStack.length) paintSubpane(); else subpaneEl.classList.remove('on'); }
+      function closeAllSubpanes() { subpaneStack = []; subpaneEl.classList.remove('on'); }
+      subpaneBackBtn.addEventListener('click', function (e) { e.stopPropagation(); popSubpane(); });
+
+      // ---- Chat session switcher: wordmark -> new chat + Chat History subpane (scripted) ----
       var titleBtn = document.getElementById('baiTitleBtn'), newBtn = document.getElementById('baiNewBtn');
-      var historyEl = document.getElementById('baiHistory'), historyListEl = document.getElementById('baiHistoryList'), historyBackBtn = document.getElementById('baiHistoryBack');
       var RECENTS = [
         { title: 'Daily rewards run', time: '20m', scheduled: true, count: 14, msgs: [{ u: '(scheduled) claim my daily login rewards' }, { a: "Claimed today's login bonus + streak bonus across 3 games." }] },
         { title: 'Weekly game roundup', time: '6h', scheduled: true, count: 6, msgs: [{ u: "(scheduled) summarize this week's new game drops" }, { a: 'Sent your weekly roundup: 5 new titles, 2 trending.' }] },
@@ -982,21 +1406,20 @@
       function aiInstant(text) { var el = document.createElement('div'); el.className = 'bai-msg ai'; el.textContent = text; baiBody.appendChild(el); }
       function resetChatState() { flow = null; flowI = 0; pending = null; ctx = {}; restorePlaceholder(); }
       function markRecent(r) {
-        [historyListEl, document.getElementById('baiSideRecents')].forEach(function (c) { if (!c) return; [].forEach.call(c.children, function (row, i) { row.classList.toggle('on', RECENTS[i] === r); }); });
+        var sr = document.getElementById('baiSideRecents'); if (sr) [].forEach.call(sr.children, function (row, i) { row.classList.toggle('on', RECENTS[i] === r); });
       }
       function newChat() { resetChatState(); setMode('chat'); baiBody.innerHTML = ''; setTitle('Untitled chat'); markRecent(null); startGreeting(); }
-      function refreshRecentClasses() { [historyListEl, document.getElementById('baiSideRecents')].forEach(function (c) { if (!c) return; [].forEach.call(c.children, function (row, i) { var rr = RECENTS[i]; if (!rr) return; row.classList.toggle('working', !!rr.working); row.classList.toggle('unseen', !!rr.unseen); }); }); }
+      function refreshRecentClasses() { var sr = document.getElementById('baiSideRecents'); if (!sr) return; [].forEach.call(sr.children, function (row, i) { var rr = RECENTS[i]; if (!rr) return; row.classList.toggle('working', !!rr.working); row.classList.toggle('unseen', !!rr.unseen); }); }
       function loadThread(r) { resetChatState(); setMode('chat'); baiBody.innerHTML = ''; setTitle(r.title); (r.msgs || []).forEach(function (m) { if (m.u !== undefined) addUser(m.u); else aiInstant(m.a); }); if (r.unseen) { r.unseen = false; refreshRecentClasses(); } markRecent(r); scrollBody(); }
-      function openHistory() { historyEl.classList.add('on'); }
-      function closeHistory() { historyEl.classList.remove('on'); }
-      RECENTS.forEach(function (r) {
-        var row = document.createElement('div'); row.className = 'bai-history-card' + (r.working ? ' working' : '') + (r.unseen ? ' unseen' : '');
-        row.innerHTML = '<div class="hc-top"><span class="hc-dot"></span><span class="hc-title">' + r.title + '</span>' + (r.scheduled ? '<span class="bai-sched-badge">Scheduled</span>' : '') + '</div><div class="hc-meta">' + (r.count || (r.msgs || []).length) + ' messages · ' + r.time + ' ago</div>';
-        row.addEventListener('click', function (e) { e.stopPropagation(); loadThread(r); closeHistory(); });
-        historyListEl.appendChild(row);
-      });
-      titleBtn.addEventListener('click', function (e) { e.stopPropagation(); if (baiUi.classList.contains('wide') || baiUi.classList.contains('nonchat')) return; closeMenus(); openHistory(); });
-      historyBackBtn.addEventListener('click', function (e) { e.stopPropagation(); closeHistory(); });
+      function renderHistoryList(body) {
+        RECENTS.forEach(function (r) {
+          var row = document.createElement('div'); row.className = 'bai-history-card' + (r.working ? ' working' : '') + (r.unseen ? ' unseen' : '');
+          row.innerHTML = '<div class="hc-top"><span class="hc-dot"></span><span class="hc-title">' + r.title + '</span>' + (r.scheduled ? '<span class="bai-sched-badge">Scheduled</span>' : '') + '</div><div class="hc-meta">' + (r.count || (r.msgs || []).length) + ' messages · ' + r.time + ' ago</div>';
+          row.addEventListener('click', function (e) { e.stopPropagation(); loadThread(r); closeAllSubpanes(); });
+          body.appendChild(row);
+        });
+      }
+      titleBtn.addEventListener('click', function (e) { e.stopPropagation(); if (baiUi.classList.contains('wide') || baiUi.classList.contains('nonchat')) return; closeMenus(); openSubpane('Chat History', renderHistoryList); });
       newBtn.addEventListener('click', function (e) { e.stopPropagation(); newChat(); closeMenus(); });
 
       // ---- Wide-mode left sidebar (mirrors the strip + switcher; toggled by width) ----
@@ -1030,20 +1453,14 @@
       var savedTheme = 'dark'; try { savedTheme = localStorage.getItem(THEME_STORE) || 'dark'; } catch (e) {}
       applyTheme(savedTheme, false);   // applied at load, before any open/boot — so a refresh comes back in your theme
 
-      // ---- Prototype state toggler (design-handoff): default | onboarding — switching replays the page in that state ----
+      // ---- Prototype state: default | onboarding — switching replays the page in that state (unchanged mechanic,
+      // now surfaced through the unified Preview panel below instead of its own always-visible pill toggler) ----
       var STATE_STORE = 'baiPageState', pageState = 'default';
       try { pageState = localStorage.getItem(STATE_STORE) || 'default'; } catch (e) {}
-      [].forEach.call(document.querySelectorAll('#stateToggler button'), function (b) {
-        b.classList.toggle('on', b.getAttribute('data-state') === pageState);
-        b.addEventListener('click', function () {
-          if (b.getAttribute('data-state') === pageState) return;
-          try { localStorage.setItem(STATE_STORE, b.getAttribute('data-state')); localStorage.removeItem('baiWin'); } catch (e) {}
-          location.reload();                                  // clean replay of the chosen state
-        });
-      });
 
-      // ---- Chat message-states preview toggle (design-handoff, same pattern as blueAI product's "Chat states" toggle):
+      // ---- Chat message-states preview (design-handoff, same pattern as blueAI product's "Chat states" toggle):
       // instant, no scripted delay, one example of every message type at once — no need to hunt through a live flow. ----
+      var chatStatesOn = false;
       function renderChatStatesPreview() {
         baiBody.innerHTML = '';
         addUser('Auto-apply to these 4 roles');
@@ -1063,16 +1480,48 @@
         addUser('Did it finish?');
         renderDone('Applied to all 4 roles and logged them in Jobs. ✦');
       }
-      [].forEach.call(document.querySelectorAll('#chatStatesToggler button'), function (b) {
-        b.addEventListener('click', function () {
-          var on = b.getAttribute('data-cs') === 'on';
-          [].forEach.call(document.querySelectorAll('#chatStatesToggler button'), function (o) { o.classList.toggle('on', o === b); });
-          baiUi.classList.toggle('states-preview', on);
-          setMode('chat');
-          if (on) { renderChatStatesPreview(); }
-          else { resetChatState(); baiBody.innerHTML = ''; setTitle('Untitled chat'); startGreeting(); }
+      function setChatStates(on) {
+        chatStatesOn = on;
+        baiUi.classList.toggle('states-preview', on);
+        setMode('chat');
+        if (on) renderChatStatesPreview();
+        else { resetChatState(); baiBody.innerHTML = ''; setTitle('Untitled chat'); startGreeting(); }
+        renderPreviewRows();
+      }
+
+      // ---- Unified Preview panel: ONE collapsible progressive-disclosure toggler (matches the canonical
+      // blueAI product's dev-preview panel) instead of two separate always-visible pill togglers. ----
+      var previewFab = document.getElementById('baiPreviewFab'), previewCard = document.getElementById('baiPreviewCard'), previewRowsEl = document.getElementById('baiPreviewRows');
+      function previewSegRow(label, opts, val, set) {
+        var row = document.createElement('div'); row.className = 'bai-preview-row';
+        var lab = document.createElement('span'); lab.className = 'bai-preview-row-label'; lab.textContent = label;
+        var seg = document.createElement('div'); seg.className = 'bai-preview-seg';
+        opts.forEach(function (o) {
+          var b = document.createElement('button'); b.type = 'button'; b.textContent = o[0]; if (o[1] === val) b.classList.add('on');
+          b.addEventListener('click', function () { set(o[1]); });
+          seg.appendChild(b);
         });
-      });
+        row.appendChild(lab); row.appendChild(seg);
+        return row;
+      }
+      function renderPreviewRows() {
+        previewRowsEl.innerHTML = '';
+        var rows = [previewSegRow('Session', [['Onboarding', 'onboarding'], ['Default', 'default']], pageState, function (v) {
+          if (v === pageState) return;
+          try { localStorage.setItem(STATE_STORE, v); localStorage.removeItem('baiWin'); } catch (e) {}
+          location.reload();   // clean replay of the chosen state
+        })];
+        if (pageState === 'default' && currentTabMode === 'chat') {
+          rows.push(previewSegRow('Chat states', [['Off', false], ['On', true]], chatStatesOn, setChatStates));
+        }
+        rows.forEach(function (row, i) {
+          if (i > 0) { var div = document.createElement('div'); div.className = 'bai-preview-divider'; previewRowsEl.appendChild(div); }
+          previewRowsEl.appendChild(row);
+        });
+      }
+      renderPreviewRows();
+      previewFab.addEventListener('click', function (e) { e.stopPropagation(); previewFab.classList.add('hidden'); previewCard.classList.add('on'); });
+      document.getElementById('baiPreviewCollapse').addEventListener('click', function (e) { e.stopPropagation(); previewCard.classList.remove('on'); previewFab.classList.remove('hidden'); });
 
       // ---- Onboarding state: welcome (logo + pitch + floating outcome cards + CTA) -> 3-step nav tour ----
       var baiOnb = document.getElementById('baiOnb'), baiTour = document.getElementById('baiTour');
