@@ -283,6 +283,7 @@
     .bai-donecard .dc-head { display: flex; align-items: center; gap: 5px; color: var(--bai-ok); font-size: 10px; font-weight: 700; letter-spacing: 0.3px; }
     .bai-donecard .dc-body { color: var(--bai-text-strong); font-size: 12px; line-height: 1.45; }
     .bai-inputbar { display: flex; flex-direction: column; align-items: stretch; margin: 0 12px 7px; padding: 11px 12px; background: var(--bai-input-bg); border: 1px solid var(--bai-line); border-radius: 10px; flex-shrink: 0; transition: border-color 0.18s ease; }
+    .bai-ui.states-preview .bai-inputbar { display: none; }   /* nothing to send while previewing every message state at once */
     .bai-inputbar:focus-within { border-color: var(--bai-line-focus); }   /* very slight lift on focus */
     .bai-inputrow { display: flex; align-items: center; gap: 8px; }
     .bai-prompt { color: var(--bai-accent); font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 14px; line-height: 1; }
@@ -338,6 +339,7 @@
 
     /* ---- Prototype state toggler (design-handoff, like the WSUP/product screen libraries) ---- */
     .state-toggler { position: fixed; bottom: 14px; right: 14px; z-index: 200; display: flex; gap: 2px; padding: 3px; background: rgba(10,14,26,0.72); border: 1px solid rgba(255,255,255,0.14); border-radius: 9px; backdrop-filter: blur(6px); font-family: 'JetBrains Mono', ui-monospace, monospace; }
+    .state-toggler.left { left: 14px; right: auto; }
     .state-toggler button { border: none; background: none; color: #8190ad; font-family: inherit; font-size: 11px; padding: 4px 10px; border-radius: 6px; cursor: pointer; transition: background 0.15s, color 0.15s; }
     .state-toggler button:hover { color: #cdd6f4; }
     .state-toggler button.on { background: #2a4a86; color: #eaf0ff; }
@@ -566,6 +568,11 @@
   <div class="state-toggler" id="stateToggler" aria-label="Prototype state">
     <button data-state="default" type="button">default</button>
     <button data-state="onboarding" type="button">onboarding</button>
+  </div>
+  <!-- Design-handoff state toggler: preview every chat message type at once, instead of hunting for it inside a live flow -->
+  <div class="state-toggler left" id="chatStatesToggler" aria-label="Chat message states preview">
+    <button data-cs="off" type="button" class="on">chat</button>
+    <button data-cs="on" type="button">states</button>
   </div>
 
   <script src="boot.js"></script>
@@ -1032,6 +1039,38 @@
           if (b.getAttribute('data-state') === pageState) return;
           try { localStorage.setItem(STATE_STORE, b.getAttribute('data-state')); localStorage.removeItem('baiWin'); } catch (e) {}
           location.reload();                                  // clean replay of the chosen state
+        });
+      });
+
+      // ---- Chat message-states preview toggle (design-handoff, same pattern as blueAI product's "Chat states" toggle):
+      // instant, no scripted delay, one example of every message type at once — no need to hunt through a live flow. ----
+      function renderChatStatesPreview() {
+        baiBody.innerHTML = '';
+        addUser('Auto-apply to these 4 roles');
+        var th = makeThinking(); th.txt.innerHTML = '<em>3s</em> &middot; scanning listings…';   // Intermediate — frozen, not a live ticking timer
+        addUser("What's the plan?");
+        renderResults({
+          kind: 'plan', items: [
+            { step: 'Tailor resume per role', detail: 'Rewrite summary + skills to match each listing' },
+            { step: 'Submit applications', detail: '4 applications, one per matched role' },
+            { step: 'Log everything in Jobs', detail: 'Status + link for every application' }
+          ]
+        });
+        addUser('Go ahead');
+        renderWarning('Auto-applying to all 4 roles will use more credits than a single search.');
+        addUser('Which platform first?');
+        renderOptions({ options: [{ label: 'LinkedIn' }, { label: 'Wellfound' }, { label: 'Indeed' }] });   // Input needed — still clickable, just not wired to a real flow here
+        addUser('Did it finish?');
+        renderDone('Applied to all 4 roles and logged them in Jobs. ✦');
+      }
+      [].forEach.call(document.querySelectorAll('#chatStatesToggler button'), function (b) {
+        b.addEventListener('click', function () {
+          var on = b.getAttribute('data-cs') === 'on';
+          [].forEach.call(document.querySelectorAll('#chatStatesToggler button'), function (o) { o.classList.toggle('on', o === b); });
+          baiUi.classList.toggle('states-preview', on);
+          setMode('chat');
+          if (on) { renderChatStatesPreview(); }
+          else { resetChatState(); baiBody.innerHTML = ''; setTitle('Untitled chat'); startGreeting(); }
         });
       });
 
