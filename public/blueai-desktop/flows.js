@@ -3,11 +3,13 @@
 // strings are substituted with earlier answers (ctx[key]).
 //
 // Step types:
-//   { ask, key?, options:[{label, desc?}], allowText? }   -> question + clickable options (+ optional type-your-own)
-//   { say, think? }                                        -> BlueAI line (typewriter); think = ms to show a working spinner after
-//   { results:{ kind:'jobs'|'plan', items:[...] }, cost? } -> a result list (job cards / plan rows)
-//   { upload:{ label, accept } }                           -> an attach affordance; resolves when clicked
+//   { ask, key?, options:[{label, desc?}], allowText? }   -> question + clickable options (+ optional type-your-own) — "Input needed" state
+//   { say, think? }                                        -> BlueAI line (typewriter); think = ms to show a working spinner after — the spinner is the "intermediate" state
+//   { results:{ kind:'jobs'|'plan', items:[...] }, cost? } -> a result list (job cards / labeled "Plan" rows)
+//   { upload:{ label, accept } }                           -> an attach affordance; resolves when clicked — also an "Input needed" state
 //   { parse:{ kind:'resume', think?, fields:[{k,v}] }, cost? } -> "reading…" then an extracted-details card
+//   { warn }                                                -> non-blocking amber heads-up, doesn't stop the task
+//   { done }                                                -> terminal "Task completed" card (use instead of a closing `say`)
 window.BlueAIFlows = {
   jobs: [
     {
@@ -43,7 +45,17 @@ window.BlueAIFlows = {
         ]
       }, cost: 240
     },
-    { say: 'Locked in. I’ll auto-apply to the strongest matches and log every application in Jobs. ✦' }
+    {
+      results: {
+        kind: 'plan', items: [
+          { step: 'Tailor resume per role', detail: 'Rewrite summary + skills to match each listing' },
+          { step: 'Submit applications', detail: '4 applications, one per matched role' },
+          { step: 'Log everything in Jobs', detail: 'Status + link for every application' }
+        ]
+      }
+    },
+    { warn: 'Auto-applying to all 4 roles will use more credits than a single search.' },
+    { done: 'Applied to all 4 roles and logged them in Jobs. ✦' }
   ],
 
   content: [
