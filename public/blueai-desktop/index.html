@@ -799,6 +799,14 @@
       function demoInput() { renderOptions({ options: [{ label: 'Option A' }, { label: 'Option B' }, { label: 'Option C' }] }); }
       function demoSuccess() { renderDone('Done — everything completed successfully.'); }
       function demoError() { renderError('Something went wrong while running that. Please try again.'); }
+      // For the Preview panel's buttons specifically: a bare state render dropped straight into the chat
+      // reads as a popup, not a reply — so wrap it in the same rhythm every real message already uses
+      // (a short user line, a thinking beat, then the reveal) instead of calling the demo*() functions raw.
+      function togglerDemo(userLine, thinkLabel, demoFn) {
+        addUser(userLine);
+        var th = makeThinking(); th.txt.textContent = thinkLabel;
+        setTimeout(function () { th.el.remove(); demoFn(); }, 900);
+      }
       function keywordReply(text) {
         var t = text.toLowerCase();
         if (t.indexOf('error') !== -1 || t.indexOf('fail') !== -1) { demoError(); return true; }
@@ -1643,11 +1651,11 @@
           location.reload();   // clean replay of the chosen state
         })];
         if (currentTabMode === 'chat') {
-          rows.push(previewActionRow('Plan', demoPlan));
-          rows.push(previewActionRow('Warning', demoWarn));
-          rows.push(previewActionRow('Input required', demoInput));
-          rows.push(previewActionRow('Success', demoSuccess));
-          rows.push(previewActionRow('Error', demoError));
+          rows.push(previewActionRow('Plan', function () { togglerDemo("what's the plan?", 'planning…', demoPlan); }));
+          rows.push(previewActionRow('Warning', function () { togglerDemo('go ahead', 'checking…', demoWarn); }));
+          rows.push(previewActionRow('Input required', function () { togglerDemo('which platform first?', 'thinking…', demoInput); }));
+          rows.push(previewActionRow('Success', function () { togglerDemo('did it finish?', 'wrapping up…', demoSuccess); }));
+          rows.push(previewActionRow('Error', function () { togglerDemo('try that again', 'retrying…', demoError); }));
         }
         rows.forEach(function (row, i) {
           if (i > 0) { var div = document.createElement('div'); div.className = 'bai-preview-divider'; previewRowsEl.appendChild(div); }
