@@ -437,6 +437,8 @@
     .bai-preview-row-label { flex-shrink: 0; font-size: 10px; font-weight: 700; color: #8190ad; white-space: nowrap; }
     .bai-preview-seg { flex-shrink: 0; display: flex; gap: 1px; background: rgba(255,255,255,0.07); border-radius: 7px; padding: 2px; }
     .bai-preview-seg button { border: none; background: none; color: #8190ad; font-family: inherit; font-size: 10px; font-weight: 600; padding: 4px 8px; border-radius: 5px; cursor: pointer; white-space: nowrap; transition: background 0.13s, color 0.13s; }
+    .bai-preview-action { flex-shrink: 0; border: none; background: #2a4a86; color: #eaf0ff; font-family: inherit; font-size: 10px; font-weight: 600; padding: 4px 10px; border-radius: 6px; cursor: pointer; white-space: nowrap; transition: filter 0.13s; }
+    .bai-preview-action:hover { filter: brightness(1.15); }
     .bai-preview-seg button.on { background: #2a4a86; color: #eaf0ff; }
     .bai-preview-divider { height: 1px; background: rgba(255,255,255,0.08); }
 
@@ -782,24 +784,28 @@
         if (baiCtrl.drawMini) baiCtrl.drawMini(cv);
         return { el: el, txt: txt };
       }
-      // Typing a word that names a message type replies with that type, live in the chat — no separate
-      // dev-only "preview" toggle needed, matching how the PM/designer actually wants to review these.
+      // Demo content for each message type — shared by (a) typing a matching keyword in live chat, and
+      // (b) the Preview panel's one-tap "show me this state" buttons, so devs can check either way.
+      function demoPlan() {
+        renderResults({
+          kind: 'plan', items: [
+            { step: 'Understand the request', detail: 'Figure out exactly what you need' },
+            { step: 'Take action', detail: 'Run the right skill or tool' },
+            { step: 'Report back', detail: 'Confirm once everything is done' }
+          ]
+        });
+      }
+      function demoWarn() { renderWarning('This may use more credits than usual.'); }
+      function demoInput() { renderOptions({ options: [{ label: 'Option A' }, { label: 'Option B' }, { label: 'Option C' }] }); }
+      function demoSuccess() { renderDone('Done — everything completed successfully.'); }
+      function demoError() { renderError('Something went wrong while running that. Please try again.'); }
       function keywordReply(text) {
         var t = text.toLowerCase();
-        if (t.indexOf('error') !== -1 || t.indexOf('fail') !== -1) { renderError('Something went wrong while running that. Please try again.'); return true; }
-        if (t.indexOf('warn') !== -1) { renderWarning('This may use more credits than usual.'); return true; }
-        if (t.indexOf('plan') !== -1) {
-          renderResults({
-            kind: 'plan', items: [
-              { step: 'Understand the request', detail: 'Figure out exactly what you need' },
-              { step: 'Take action', detail: 'Run the right skill or tool' },
-              { step: 'Report back', detail: 'Confirm once everything is done' }
-            ]
-          });
-          return true;
-        }
-        if (t.indexOf('option') !== -1 || t.indexOf('choice') !== -1) { renderOptions({ options: [{ label: 'Option A' }, { label: 'Option B' }, { label: 'Option C' }] }); return true; }
-        if (t.indexOf('success') !== -1 || t.indexOf('done') !== -1 || t.indexOf('complete') !== -1) { renderDone('Done — everything completed successfully.'); return true; }
+        if (t.indexOf('error') !== -1 || t.indexOf('fail') !== -1) { demoError(); return true; }
+        if (t.indexOf('warn') !== -1) { demoWarn(); return true; }
+        if (t.indexOf('plan') !== -1) { demoPlan(); return true; }
+        if (t.indexOf('option') !== -1 || t.indexOf('choice') !== -1) { demoInput(); return true; }
+        if (t.indexOf('success') !== -1 || t.indexOf('done') !== -1 || t.indexOf('complete') !== -1) { demoSuccess(); return true; }
         return false;
       }
       function sendMessage(text) {
@@ -883,7 +889,9 @@
       var settingsBtn = document.getElementById('baiSettingsBtn');
       var tabs = [].slice.call(document.querySelectorAll('.bai-tab'));
       var panes = { chat: document.getElementById('paneChat'), jobs: document.getElementById('paneJobs'), skills: document.getElementById('paneSkills'), scheduled: document.getElementById('paneScheduled'), settings: document.getElementById('paneSettings') };
+      var currentTabMode = 'chat';
       function setMode(m) {
+        currentTabMode = m;
         Object.keys(panes).forEach(function (k) { panes[k].classList.toggle('active', k === m); });
         tabs.forEach(function (t) { t.classList.toggle('active', t.getAttribute('data-mode') === m); });   // settings has no tab -> all tabs go inactive
         [].forEach.call(document.querySelectorAll('.bai-side-item[data-mode]'), function (s) { s.classList.toggle('active', s.getAttribute('data-mode') === m); });   // mirror on the wide sidebar
@@ -1616,6 +1624,17 @@
         row.appendChild(lab); row.appendChild(seg);
         return row;
       }
+      // One-tap "show me this state" row — these are one-off EVENTS in a conversation, not persistent modes,
+      // so a single action button (appends a fresh instance every tap) reads clearer than an on/off toggle
+      // would (what would "off" even do to a message already sent?).
+      function previewActionRow(label, onClick) {
+        var row = document.createElement('div'); row.className = 'bai-preview-row';
+        var lab = document.createElement('span'); lab.className = 'bai-preview-row-label'; lab.textContent = label;
+        var btn = document.createElement('button'); btn.type = 'button'; btn.className = 'bai-preview-action'; btn.textContent = 'Show';
+        btn.addEventListener('click', function (e) { e.stopPropagation(); onClick(); });
+        row.appendChild(lab); row.appendChild(btn);
+        return row;
+      }
       function renderPreviewRows() {
         previewRowsEl.innerHTML = '';
         var rows = [previewSegRow('Session', [['Onboarding', 'onboarding'], ['Default', 'default']], pageState, function (v) {
@@ -1623,6 +1642,13 @@
           try { localStorage.setItem(STATE_STORE, v); localStorage.removeItem('baiWin'); } catch (e) {}
           location.reload();   // clean replay of the chosen state
         })];
+        if (currentTabMode === 'chat') {
+          rows.push(previewActionRow('Plan', demoPlan));
+          rows.push(previewActionRow('Warning', demoWarn));
+          rows.push(previewActionRow('Input required', demoInput));
+          rows.push(previewActionRow('Success', demoSuccess));
+          rows.push(previewActionRow('Error', demoError));
+        }
         rows.forEach(function (row, i) {
           if (i > 0) { var div = document.createElement('div'); div.className = 'bai-preview-divider'; previewRowsEl.appendChild(div); }
           previewRowsEl.appendChild(row);
