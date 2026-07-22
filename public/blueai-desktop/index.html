@@ -355,8 +355,13 @@
     .bai-donecard { align-self: stretch; margin: 1px 0 2px; padding: 9px 11px; display: flex; flex-direction: column; gap: 3px; background: color-mix(in srgb, var(--bai-ok) 9%, var(--bai-card-2)); border: 1px solid color-mix(in srgb, var(--bai-ok) 35%, var(--bai-line)); border-radius: 8px; font-family: 'JetBrains Mono', ui-monospace, monospace; }
     .bai-donecard .dc-head { display: flex; align-items: center; gap: 5px; color: var(--bai-ok); font-size: 10px; font-weight: 700; letter-spacing: 0.3px; }
     .bai-donecard .dc-body { color: var(--bai-text-strong); font-size: 12px; line-height: 1.45; }
+    .bai-errorcard { align-self: stretch; margin: 1px 0 2px; padding: 9px 11px; display: flex; flex-direction: column; gap: 3px; background: color-mix(in srgb, var(--bai-danger) 9%, var(--bai-card-2)); border: 1px solid color-mix(in srgb, var(--bai-danger) 35%, var(--bai-line)); border-radius: 8px; font-family: 'JetBrains Mono', ui-monospace, monospace; }
+    .bai-errorcard .ec-head { display: flex; align-items: center; gap: 5px; color: var(--bai-danger); font-size: 10px; font-weight: 700; letter-spacing: 0.3px; }
+    .bai-errorcard .ec-body { color: var(--bai-text-strong); font-size: 12px; line-height: 1.45; }
     .bai-inputbar { display: flex; flex-direction: column; align-items: stretch; margin: 0 12px 7px; padding: 11px 12px; background: var(--bai-input-bg); border: 1px solid var(--bai-line); border-radius: 10px; flex-shrink: 0; transition: border-color 0.18s ease; }
-    .bai-ui.states-preview .bai-inputbar { display: none; }   /* nothing to send while previewing every message state at once */
+    .bai-history-note { display: none; flex-shrink: 0; text-align: center; margin: 0 12px 11px; padding: 9px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10.5px; color: var(--bai-faint); background: var(--bai-card-2); border: 1px solid var(--bai-line); border-radius: 9px; }
+    .bai-ui.viewing-history .bai-inputbar, .bai-ui.viewing-history .bai-status { display: none; }
+    .bai-ui.viewing-history .bai-history-note { display: block; }
     .bai-inputbar:focus-within { border-color: var(--bai-line-focus); }   /* very slight lift on focus */
     .bai-inputrow { display: flex; align-items: center; gap: 8px; }
     .bai-prompt { color: var(--bai-accent); font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 14px; line-height: 1; }
@@ -370,7 +375,7 @@
     .bai-send.stop { visibility: visible; }                 /* slot always reserved so the bar height never jumps; icon only shows while thinking */
     .bai-send:hover { background: var(--bai-pill); color: var(--bai-text-hi); }   /* same hover pill as the status items */
     .bai-send::before { content: ''; width: 9px; height: 9px; border: 1.5px solid currentColor; border-radius: 2px; }   /* slightly smaller outline stop, no pulse */
-    /* Phase 2: status line (model · effort · credits) */
+    /* Phase 2: status line (model · credits) */
     .bai-status { display: flex; align-items: center; gap: 8px; margin: 0 12px 11px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10.5px; color: var(--bai-dim); }
     .bai-stat-r { margin-left: auto; display: flex; align-items: center; gap: 4px; }
     .bai-stat-wrap { position: relative; }
@@ -378,7 +383,7 @@
     .bai-stat-btn:hover { background: var(--bai-pill); color: var(--bai-text-bright); }   /* hover pill is the affordance — no persistent arrow */
     /* credits: a small circular gauge — % remaining at a glance, exact numbers on hover */
     .bai-credits-wrap { display: flex; align-items: center; padding: 3px 5px; border-radius: 6px; cursor: default; transition: background 0.15s; }
-    .bai-credits-wrap:hover { background: var(--bai-pill); }   /* same hover pill as model/effort */
+    .bai-credits-wrap:hover { background: var(--bai-pill); }   /* same hover pill as the model button */
     .bai-credit-ring { width: 14px; height: 14px; display: block; transform: rotate(-90deg); }   /* arc starts at 12 o'clock */
     .bai-credit-ring .tr { fill: none; stroke: var(--bai-line-2); stroke-width: 3; }
     .bai-credit-ring .fl { fill: none; stroke-width: 3; stroke-linecap: round; transition: stroke-dasharray 0.3s ease, stroke 0.3s ease; }
@@ -418,16 +423,16 @@
     .bai-preview-fab { width: 34px; height: 34px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.14); background: rgba(10,14,26,0.78); backdrop-filter: blur(6px); color: #8190ad; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 20px rgba(0,0,0,0.35); transition: color 0.15s; }
     .bai-preview-fab:hover { color: #cdd6f4; }
     .bai-preview-fab.hidden { display: none; }
-    .bai-preview-card { display: none; width: 208px; background: rgba(10,14,26,0.92); border: 1px solid rgba(255,255,255,0.14); border-radius: 12px; backdrop-filter: blur(6px); box-shadow: 0 10px 34px rgba(0,0,0,0.4); padding: 9px 12px 10px; }
+    .bai-preview-card { display: none; width: 236px; background: rgba(10,14,26,0.92); border: 1px solid rgba(255,255,255,0.14); border-radius: 12px; backdrop-filter: blur(6px); box-shadow: 0 10px 34px rgba(0,0,0,0.4); padding: 9px 12px 10px; }
     .bai-preview-card.on { display: block; }
     .bai-preview-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px; }
     .bai-preview-head span { font-size: 9.5px; font-weight: 800; letter-spacing: 0.09em; color: #8190ad; text-transform: uppercase; }
     .bai-preview-collapse { border: none; background: none; color: #8190ad; cursor: pointer; padding: 2px; display: flex; transition: color 0.15s; }
     .bai-preview-collapse:hover { color: #cdd6f4; }
-    .bai-preview-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 7px 0; }
-    .bai-preview-row-label { font-size: 10px; font-weight: 700; color: #8190ad; white-space: nowrap; }
-    .bai-preview-seg { display: flex; background: rgba(255,255,255,0.07); border-radius: 7px; padding: 2px; }
-    .bai-preview-seg button { border: none; background: none; color: #8190ad; font-family: inherit; font-size: 10.5px; font-weight: 600; padding: 4px 9px; border-radius: 5px; cursor: pointer; white-space: nowrap; transition: background 0.13s, color 0.13s; }
+    .bai-preview-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 7px 0; }
+    .bai-preview-row-label { flex-shrink: 0; font-size: 10px; font-weight: 700; color: #8190ad; white-space: nowrap; }
+    .bai-preview-seg { flex-shrink: 0; display: flex; gap: 1px; background: rgba(255,255,255,0.07); border-radius: 7px; padding: 2px; }
+    .bai-preview-seg button { border: none; background: none; color: #8190ad; font-family: inherit; font-size: 10px; font-weight: 600; padding: 4px 8px; border-radius: 5px; cursor: pointer; white-space: nowrap; transition: background 0.13s, color 0.13s; }
     .bai-preview-seg button.on { background: #2a4a86; color: #eaf0ff; }
     .bai-preview-divider { height: 1px; background: rgba(255,255,255,0.08); }
 
@@ -543,7 +548,7 @@
               <div class="bai-sidebar" id="baiSidebar">
                 <div class="bai-side-brand"><canvas class="bai-side-logo" id="baiSideLogo"></canvas><span>BlueAI</span></div>
                 <div class="bai-side-nav">
-                  <div class="bai-side-item active" data-mode="chat"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-12.3 7.5L3 21l2-5.7A8.4 8.4 0 1 1 21 11.5z"/></svg></span>Chat<button class="bai-side-newicon" id="baiSideNew" type="button" aria-label="New chat" title="Start a new chat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M12 8v8M8 12h8"/></svg></button></div>
+                  <div class="bai-side-item active" data-mode="chat"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-12.3 7.5L3 21l2-5.7A8.4 8.4 0 1 1 21 11.5z"/></svg></span>Chat<button class="bai-side-newicon" id="baiSideNew" type="button" aria-label="New chat" title="Start a new chat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M12 7v6M9 10h6"/></svg></button></div>
                   <button class="bai-side-item" data-mode="jobs" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h12M8 12h12M8 18h12"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/></svg></span>Jobs<span class="bai-side-badge">2</span></button>
                   <button class="bai-side-item" data-mode="skills" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg></span>Skills</button>
                   <button class="bai-side-item" data-mode="scheduled" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>Scheduled</button>
@@ -570,7 +575,7 @@
               </div>
               <div class="bai-main-title">
                 <button class="bai-title-btn" id="baiTitleBtn" type="button" title="Chat history"><span id="baiMainTitle">Untitled chat</span><span class="bai-title-ar"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span></button>
-                <button class="bai-icbtn bai-newchat-btn" id="baiNewBtn" type="button" aria-label="New chat" title="Start a new chat"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M12 8v8M8 12h8"/></svg></button>
+                <button class="bai-icbtn bai-newchat-btn" id="baiNewBtn" type="button" aria-label="New chat" title="Start a new chat"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M12 7v6M9 10h6"/></svg></button>
               </div>
               <div class="bai-panes">
                 <div class="bai-pane active" id="paneChat">
@@ -582,10 +587,10 @@
                       <button class="bai-send" id="baiSend" type="button" aria-label="Stop"></button>
                     </div>
                   </div>
+                  <div class="bai-history-note">This is a past conversation — start a new chat to continue</div>
                   <div class="bai-status">
                     <div class="bai-stat-r">
                       <div class="bai-stat-wrap"><button class="bai-stat-btn" id="baiModelBtn" type="button"></button><div class="bai-menu" id="baiModelMenu"></div></div>
-                      <div class="bai-stat-wrap"><button class="bai-stat-btn" id="baiEffortBtn" type="button"></button><div class="bai-menu" id="baiEffortMenu"></div></div>
                       <div class="bai-stat-wrap bai-credits-wrap" id="baiCreditsWrap">
                         <svg class="bai-credit-ring" viewBox="0 0 18 18" aria-label="Credits remaining"><circle class="tr" cx="9" cy="9" r="7"/><circle class="fl" id="baiCreditsArc" cx="9" cy="9" r="7"/></svg>
                         <div class="bai-menu-desc bai-credits-desc" id="baiCreditsDesc"></div>
@@ -767,6 +772,26 @@
         return { el: el, txt: txt };
       }
       function fmtT(s) { return s < 60 ? s + 's' : Math.floor(s / 60) + 'm ' + (s % 60) + 's'; }
+      // Typing a word that names a message type replies with that type, live in the chat — no separate
+      // dev-only "preview" toggle needed, matching how the PM/designer actually wants to review these.
+      function keywordReply(text) {
+        var t = text.toLowerCase();
+        if (t.indexOf('error') !== -1 || t.indexOf('fail') !== -1) { renderError('Something went wrong while running that. Please try again.'); return true; }
+        if (t.indexOf('warn') !== -1) { renderWarning('This may use more credits than usual.'); return true; }
+        if (t.indexOf('plan') !== -1) {
+          renderResults({
+            kind: 'plan', items: [
+              { step: 'Understand the request', detail: 'Figure out exactly what you need' },
+              { step: 'Take action', detail: 'Run the right skill or tool' },
+              { step: 'Report back', detail: 'Confirm once everything is done' }
+            ]
+          });
+          return true;
+        }
+        if (t.indexOf('option') !== -1 || t.indexOf('choice') !== -1) { renderOptions({ options: [{ label: 'Option A' }, { label: 'Option B' }, { label: 'Option C' }] }); return true; }
+        if (t.indexOf('success') !== -1 || t.indexOf('done') !== -1 || t.indexOf('complete') !== -1) { renderDone('Done — everything completed successfully.'); return true; }
+        return false;
+      }
       function sendMessage(text) {
         addUser(text);
         credits = Math.max(0, credits - (30 + Math.floor(Math.random() * 90))); renderCredits();   // compute spent
@@ -778,7 +803,8 @@
         replyT = setTimeout(function () {
           clearInterval(tickT); clearInterval(phraseT);
           if (curThink) { curThink.el.remove(); curThink = null; }
-          setSend(false); aiReply(RESPONSES[respIdx++ % RESPONSES.length]);
+          setSend(false);
+          if (!keywordReply(text)) aiReply(RESPONSES[respIdx++ % RESPONSES.length]);
         }, 2400 + Math.random() * 2200);
       }
       function stopThinking() {
@@ -797,16 +823,13 @@
       if (baiInput) baiInput.addEventListener('keydown', function (e) { if (e.key === 'Enter' && !thinking && baiInput.value.trim()) { e.preventDefault(); submit(); } });
       if (baiSend) baiSend.addEventListener('click', submit);
 
-      // ---- Phase 2: status line (model · effort · credits) + attachments (design-only) ----
+      // ---- Phase 2: status line (model · credits) + attachments (design-only) ----
       var MODELS = ['Auto', 'Opus 4.8', 'Sonnet 4.6', 'Gemini 3.1 Pro', 'GPT-5.4'];
-      var EFFORTS = ['Fast', 'Standard', 'Extra', 'Max'];
-      var curModel = 'Opus 4.8', curEffort = 'Extra', credits = 49812, CREDIT_MAX = 50000;
+      var curModel = 'Opus 4.8', credits = 49812, CREDIT_MAX = 50000;
       var modelBtn = document.getElementById('baiModelBtn'), modelMenu = document.getElementById('baiModelMenu');
-      var effortBtn = document.getElementById('baiEffortBtn'), effortMenu = document.getElementById('baiEffortMenu');
       var creditsWrap = document.getElementById('baiCreditsWrap'), creditsArc = document.getElementById('baiCreditsArc'), creditsDesc = document.getElementById('baiCreditsDesc');
       var RING_C = 2 * Math.PI * 7;   // circumference of the r=7 gauge circle
       function renderModel() { modelBtn.textContent = curModel; }
-      function renderEffort() { effortBtn.textContent = curEffort; }
       // credit health ramp (as balance depletes): blue good → yellow low → orange very low → red almost over
       function creditColor(c) { return c > 12000 ? 'var(--bai-credit-hi)' : c > 5000 ? 'var(--bai-credit-mid)' : c > 1500 ? 'var(--bai-credit-low)' : 'var(--bai-credit-crit)'; }   // theme vars -> the ramp re-colors itself on theme switch
       function renderCredits() {                                                     // circular gauge: arc length = % remaining, ramp color; detail lives in the hover card
@@ -820,7 +843,7 @@
           '<span class="cr-bar"><i style="width:' + pct + '%;background:' + col + '"></i></span>' +
           '<span class="cr-sub">' + pct + '% of ' + CREDIT_MAX.toLocaleString('en-US') + ' left</span>';
       }
-      function closeMenus() { modelMenu.classList.remove('open'); effortMenu.classList.remove('open'); }
+      function closeMenus() { modelMenu.classList.remove('open'); }
       function fillMenu(menu, items, cur, pick, title, desc) {
         menu.innerHTML = '';
         var head = document.createElement('div'); head.className = 'bai-menu-head';
@@ -842,18 +865,15 @@
         menu.appendChild(list);
       }
       modelBtn.addEventListener('click', function (e) { e.stopPropagation(); var was = modelMenu.classList.contains('open'); closeMenus(); if (!was) { fillMenu(modelMenu, MODELS, curModel, function (m) { curModel = m; renderModel(); }, 'Model', 'The model that answers. Auto picks the best fit; larger models reason deeper but spend more credits.'); modelMenu.classList.add('open'); } });
-      effortBtn.addEventListener('click', function (e) { e.stopPropagation(); var was = effortMenu.classList.contains('open'); closeMenus(); if (!was) { fillMenu(effortMenu, EFFORTS, curEffort, function (v) { curEffort = v; renderEffort(); }, 'Effort', 'Higher effort means more thorough responses, but takes longer and spends more credits.'); effortMenu.classList.add('open'); } });
       drawer.addEventListener('click', closeMenus);   // any other in-drawer click closes the menus
-      renderModel(); renderEffort(); renderCredits();
+      renderModel(); renderCredits();
       if (creditsWrap) { creditsWrap.addEventListener('mouseenter', function () { creditsDesc.classList.add('show'); }); creditsWrap.addEventListener('mouseleave', function () { creditsDesc.classList.remove('show'); }); }   // hover -> exact balance / % / reset countdown
 
       // ---- Mode strip nav + header utility (settings) ----
       var settingsBtn = document.getElementById('baiSettingsBtn');
       var tabs = [].slice.call(document.querySelectorAll('.bai-tab'));
       var panes = { chat: document.getElementById('paneChat'), jobs: document.getElementById('paneJobs'), skills: document.getElementById('paneSkills'), scheduled: document.getElementById('paneScheduled'), settings: document.getElementById('paneSettings') };
-      var currentTabMode = 'chat';
       function setMode(m) {
-        currentTabMode = m;
         Object.keys(panes).forEach(function (k) { panes[k].classList.toggle('active', k === m); });
         tabs.forEach(function (t) { t.classList.toggle('active', t.getAttribute('data-mode') === m); });   // settings has no tab -> all tabs go inactive
         [].forEach.call(document.querySelectorAll('.bai-side-item[data-mode]'), function (s) { s.classList.toggle('active', s.getAttribute('data-mode') === m); });   // mirror on the wide sidebar
@@ -895,11 +915,10 @@
       var MY_SKILLS = [];   // starts empty — the empty state IS the real first-run state, not just a reachable edge case
       var skillsListEl = document.getElementById('baiSkillsList'), skillSearchInput = document.getElementById('baiSkillSearch');
 
-      function tryInChat(name) {
+      function tryInChat(name) {   // pre-fills the composer — doesn't auto-run, the user still presses send
         closeAllSubpanes(); setMode('chat');
-        addUser('Use my "' + name + '" skill');
-        var th = makeThinking(); th.txt.innerHTML = '<em>2s</em> &middot; running ' + name + '…';
-        setTimeout(function () { th.el.remove(); renderDone(name + ' finished running.'); }, 1200);
+        baiInput.value = 'Use my "' + name + '" skill';
+        baiInput.focus();
       }
       function skillCard(sk, owned, catName, refreshFn) {
         var row = document.createElement('div'); row.className = 'bai-skillcard';
@@ -1304,9 +1323,9 @@
       var flow = null, flowI = 0, pending = null, ctx = {};
       function typeMs(t) { return Math.min(2600, t.length * 16) + 220; }                 // ~ how long the typewriter takes
       function fillVars(t) { return t.replace(/\{(\w+)\}/g, function (_, k) { return ctx[k] || k; }); }
-      // Rotating contextual hints (like Claude Code's example-command cycling) — only while the input has no
-      // pending flow question of its own (s.allowText) to protect; a flow's own placeholder always wins.
-      // Cadence: PM asked for "after 3-5 seconds", so each step waits a random 3-5s rather than a fixed tick.
+      // Rotating contextual hints, typewriter style (PM: "text appears and goes away in that way") — only
+      // while the input has no pending flow question of its own (s.allowText) to protect; a flow's own
+      // placeholder always wins, and typing/erasing simply pauses (not skips) until it's free again.
       var INPUT_HINTS = [
         'Ask BlueAI anything…',
         'Collect game rewards',
@@ -1318,13 +1337,24 @@
       var hintI = 0, hintTimer = null;
       function restorePlaceholder() {
         clearTimeout(hintTimer);
-        hintI = 0; baiInput.placeholder = INPUT_HINTS[0];
-        (function tick() {
-          hintTimer = setTimeout(function () {
-            if (!(pending || flow)) { hintI = (hintI + 1) % INPUT_HINTS.length; baiInput.placeholder = INPUT_HINTS[hintI]; }   // a flow question owns the placeholder while it's pending
-            tick();
-          }, 3000 + Math.random() * 2000);
-        })();
+        hintI = 0; baiInput.placeholder = '';
+        typeHint();
+      }
+      function typeHint() {
+        var text = INPUT_HINTS[hintI], i = 0;
+        function typeStep() {
+          if (pending || flow) { hintTimer = setTimeout(typeStep, 300); return; }
+          baiInput.placeholder = text.slice(0, i);
+          if (i < text.length) { i++; hintTimer = setTimeout(typeStep, 45); }
+          else { hintTimer = setTimeout(eraseStep, 1500); }
+        }
+        function eraseStep() {
+          if (pending || flow) { hintTimer = setTimeout(eraseStep, 300); return; }
+          i--; baiInput.placeholder = text.slice(0, Math.max(0, i));
+          if (i > 0) { hintTimer = setTimeout(eraseStep, 25); }
+          else { hintI = (hintI + 1) % INPUT_HINTS.length; hintTimer = setTimeout(typeHint, 400); }
+        }
+        typeStep();
       }
       restorePlaceholder();
       function spendCredits(n) { if (n) { credits = Math.max(0, credits - n); renderCredits(); } }
@@ -1361,6 +1391,11 @@
       function renderDone(text) {
         var el = document.createElement('div'); el.className = 'bai-donecard';
         el.innerHTML = '<div class="dc-head">✓ TASK COMPLETED</div><div class="dc-body">' + text + '</div>';
+        baiBody.appendChild(el); scrollBody();
+      }
+      function renderError(text) {
+        var el = document.createElement('div'); el.className = 'bai-errorcard';
+        el.innerHTML = '<div class="ec-head">✕ ERROR</div><div class="ec-body">' + text + '</div>';
         baiBody.appendChild(el); scrollBody();
       }
       function renderOptions(s) {
@@ -1447,9 +1482,9 @@
       function markRecent(r) {
         var sr = document.getElementById('baiSideRecents'); if (sr) [].forEach.call(sr.children, function (row, i) { row.classList.toggle('on', RECENTS[i] === r); });
       }
-      function newChat() { resetChatState(); setMode('chat'); baiBody.innerHTML = ''; setTitle('Untitled chat'); markRecent(null); startGreeting(); }
+      function newChat() { resetChatState(); setMode('chat'); baiUi.classList.remove('viewing-history'); baiBody.innerHTML = ''; setTitle('Untitled chat'); markRecent(null); startGreeting(); }
       function refreshRecentClasses() { var sr = document.getElementById('baiSideRecents'); if (!sr) return; [].forEach.call(sr.children, function (row, i) { var rr = RECENTS[i]; if (!rr) return; row.classList.toggle('working', !!rr.working); row.classList.toggle('unseen', !!rr.unseen); }); }
-      function loadThread(r) { resetChatState(); setMode('chat'); baiBody.innerHTML = ''; setTitle(r.title); (r.msgs || []).forEach(function (m) { if (m.u !== undefined) addUser(m.u); else aiInstant(m.a); }); if (r.unseen) { r.unseen = false; refreshRecentClasses(); } markRecent(r); scrollBody(); }
+      function loadThread(r) { resetChatState(); setMode('chat'); baiUi.classList.add('viewing-history'); baiBody.innerHTML = ''; setTitle(r.title); (r.msgs || []).forEach(function (m) { if (m.u !== undefined) addUser(m.u); else aiInstant(m.a); }); if (r.unseen) { r.unseen = false; refreshRecentClasses(); } markRecent(r); scrollBody(); }
       function renderHistoryList(body) {
         RECENTS.forEach(function (r) {
           var row = document.createElement('div'); row.className = 'bai-history-card' + (r.working ? ' working' : '') + (r.unseen ? ' unseen' : '');
@@ -1497,37 +1532,6 @@
       var STATE_STORE = 'baiPageState', pageState = 'default';
       try { pageState = localStorage.getItem(STATE_STORE) || 'default'; } catch (e) {}
 
-      // ---- Chat message-states preview (design-handoff, same pattern as blueAI product's "Chat states" toggle):
-      // instant, no scripted delay, one example of every message type at once — no need to hunt through a live flow. ----
-      var chatStatesOn = false;
-      function renderChatStatesPreview() {
-        baiBody.innerHTML = '';
-        addUser('Auto-apply to these 4 roles');
-        var th = makeThinking(); th.txt.innerHTML = '<em>3s</em> &middot; scanning listings…';   // Intermediate — frozen, not a live ticking timer
-        addUser("What's the plan?");
-        renderResults({
-          kind: 'plan', items: [
-            { step: 'Tailor resume per role', detail: 'Rewrite summary + skills to match each listing' },
-            { step: 'Submit applications', detail: '4 applications, one per matched role' },
-            { step: 'Log everything in Jobs', detail: 'Status + link for every application' }
-          ]
-        });
-        addUser('Go ahead');
-        renderWarning('Auto-applying to all 4 roles will use more credits than a single search.');
-        addUser('Which platform first?');
-        renderOptions({ options: [{ label: 'LinkedIn' }, { label: 'Wellfound' }, { label: 'Indeed' }] });   // Input needed — still clickable, just not wired to a real flow here
-        addUser('Did it finish?');
-        renderDone('Applied to all 4 roles and logged them in Jobs. ✦');
-      }
-      function setChatStates(on) {
-        chatStatesOn = on;
-        baiUi.classList.toggle('states-preview', on);
-        setMode('chat');
-        if (on) renderChatStatesPreview();
-        else { resetChatState(); baiBody.innerHTML = ''; setTitle('Untitled chat'); startGreeting(); }
-        renderPreviewRows();
-      }
-
       // ---- Unified Preview panel: ONE collapsible progressive-disclosure toggler (matches the canonical
       // blueAI product's dev-preview panel) instead of two separate always-visible pill togglers. ----
       var previewFab = document.getElementById('baiPreviewFab'), previewCard = document.getElementById('baiPreviewCard'), previewRowsEl = document.getElementById('baiPreviewRows');
@@ -1550,9 +1554,6 @@
           try { localStorage.setItem(STATE_STORE, v); localStorage.removeItem('baiWin'); } catch (e) {}
           location.reload();   // clean replay of the chosen state
         })];
-        if (pageState === 'default' && currentTabMode === 'chat') {
-          rows.push(previewSegRow('Chat states', [['Off', false], ['On', true]], chatStatesOn, setChatStates));
-        }
         rows.forEach(function (row, i) {
           if (i > 0) { var div = document.createElement('div'); div.className = 'bai-preview-divider'; previewRowsEl.appendChild(div); }
           previewRowsEl.appendChild(row);
