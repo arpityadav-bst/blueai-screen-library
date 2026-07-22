@@ -764,7 +764,10 @@
         clearTimeout(scrollHideT); scrollHideT = setTimeout(function () { baiScroll.classList.remove('show'); }, 900);
       }
       if (baiScroll) baiBody.addEventListener('scroll', updateScroll);
-      function addUser(text) { var d = document.createElement('div'); d.className = 'bai-msg user'; d.textContent = text; baiBody.appendChild(d); scrollBody(); }
+      function addUser(text) {
+        if (!conversationStarted) { conversationStarted = true; clearTimeout(hintTimer); baiInput.placeholder = INPUT_HINTS[0]; }   // first message in this conversation — stop rotating hints for good
+        var d = document.createElement('div'); d.className = 'bai-msg user'; d.textContent = text; baiBody.appendChild(d); scrollBody();
+      }
       function typewrite(el, text) {                        // types char-by-char: starts slow, accelerates as it goes
         var i = 0, n = text.length;
         (function step() { if (i >= n) return; el.textContent = text.slice(0, ++i); scrollBody(); setTimeout(step, Math.max(7, 42 - i * 0.75)); })();
@@ -1333,6 +1336,8 @@
       // Rotating contextual hints, typewriter style (PM: "text appears and goes away in that way") — only
       // while the input has no pending flow question of its own (s.allowText) to protect; a flow's own
       // placeholder always wins, and typing/erasing simply pauses (not skips) until it's free again.
+      // Matches modern chat apps (ChatGPT/Claude): hints only play on a genuinely FRESH conversation —
+      // once the first message is sent, they stop for good (see addUser()) and the placeholder goes static.
       var INPUT_HINTS = [
         'Ask BlueAI anything…',
         'Collect game rewards',
@@ -1341,9 +1346,10 @@
         'Schedule my daily login rewards',
         'Draft a carousel about this week’s update'
       ];
-      var hintI = 0, hintTimer = null;
+      var hintI = 0, hintTimer = null, conversationStarted = false;
       function restorePlaceholder() {
         clearTimeout(hintTimer);
+        if (conversationStarted) { baiInput.placeholder = INPUT_HINTS[0]; return; }
         hintI = 0; baiInput.placeholder = '';
         typeHint();
       }
@@ -1540,7 +1546,7 @@
       var fullTitle = 'Untitled chat';   // a NAME, not an action — "New chat" as a title read like a button
       function setTitle(t) { fullTitle = t; var mt = document.getElementById('baiMainTitle'); if (mt) mt.textContent = t; }   // header wordmark stays the "BlueAI" brand; the chat name lives in the main-column title
       function aiInstant(text) { var el = document.createElement('div'); el.className = 'bai-msg ai'; el.textContent = text; baiBody.appendChild(el); }
-      function resetChatState() { flow = null; flowI = 0; pending = null; ctx = {}; restorePlaceholder(); }
+      function resetChatState() { flow = null; flowI = 0; pending = null; ctx = {}; conversationStarted = false; restorePlaceholder(); }
       function markRecent(r) {
         var sr = document.getElementById('baiSideRecents'); if (sr) [].forEach.call(sr.children, function (row, i) { row.classList.toggle('on', RECENTS[i] === r); });
       }
