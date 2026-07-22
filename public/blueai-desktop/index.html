@@ -779,7 +779,6 @@
         if (baiCtrl.drawMini) baiCtrl.drawMini(cv);
         return { el: el, txt: txt };
       }
-      function fmtT(s) { return s < 60 ? s + 's' : Math.floor(s / 60) + 'm ' + (s % 60) + 's'; }
       // Typing a word that names a message type replies with that type, live in the chat — no separate
       // dev-only "preview" toggle needed, matching how the PM/designer actually wants to review these.
       function keywordReply(text) {
@@ -803,8 +802,8 @@
       function sendMessage(text) {
         addUser(text);
         credits = Math.max(0, credits - (30 + Math.floor(Math.random() * 90))); renderCredits();   // compute spent
-        curThink = makeThinking(); var t0 = Date.now(), pi = 0;
-        function tick() { curThink.txt.innerHTML = '<em>' + fmtT(Math.round((Date.now() - t0) / 1000)) + '</em> &middot; ' + PHRASES[pi]; }
+        curThink = makeThinking(); var pi = 0;
+        function tick() { curThink.txt.textContent = PHRASES[pi]; }   // no elapsed-time counter — BlueAI is a bit slow right now, a visible clock would only underline it
         tick(); tickT = setInterval(tick, 300);
         phraseT = setInterval(function () { pi = Math.min(pi + 1, PHRASES.length - 1); }, 1400);
         setSend(true);
@@ -1369,10 +1368,9 @@
       function startFlow(name, initialDelay) { flow = (FLOWS[name] || []).slice(); flowI = 0; pending = null; ctx = {}; setTimeout(runStep, initialDelay || 800); }
       function advance(d) { setTimeout(runStep, d || 450); }
       function workSpinner(label, ms, done) {                                            // a transient "working…" line, then a callback
-        var th = makeThinking(), t0 = Date.now();
-        var ti = setInterval(function () { th.txt.innerHTML = '<em>' + Math.round((Date.now() - t0) / 1000) + 's</em> &middot; ' + label; }, 300);
-        th.txt.innerHTML = '<em>0s</em> &middot; ' + label;
-        setTimeout(function () { clearInterval(ti); th.el.remove(); done(); }, ms);
+        var th = makeThinking();
+        th.txt.textContent = label;   // no elapsed-time counter — see sendMessage's tick() for why
+        setTimeout(function () { th.el.remove(); done(); }, ms);
       }
       function runStep() {
         if (!flow || flowI >= flow.length) { pending = null; flow = null; restorePlaceholder(); return; }
