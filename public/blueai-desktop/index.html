@@ -1476,8 +1476,26 @@
       // ---- Chat session switcher: wordmark -> new chat + Chat History subpane (scripted) ----
       var titleBtn = document.getElementById('baiTitleBtn'), newBtn = document.getElementById('baiNewBtn');
       var RECENTS = [
-        { title: 'Daily rewards run', time: '20m', scheduled: true, count: 14, msgs: [{ u: '(scheduled) claim my daily login rewards' }, { a: "Claimed today's login bonus + streak bonus across 3 games." }] },
-        { title: 'Weekly game roundup', time: '6h', scheduled: true, count: 6, msgs: [{ u: "(scheduled) summarize this week's new game drops" }, { a: 'Sent your weekly roundup: 5 new titles, 2 trending.' }] },
+        {
+          title: 'Daily rewards run', time: '20m', scheduled: true, count: 14, msgs: [
+            { u: '(scheduled) claim my daily login rewards' },
+            { a: "Claimed today's login bonus + streak bonus across 3 games." },
+            { u: 'which games' },
+            { a: 'Free Fire, Subway Surf, and Royal Match — all claimed, no missed streaks.' },
+            { u: 'nice, keep it running daily' },
+            { a: "Will do — I'll claim these automatically every day at this time." }
+          ]
+        },
+        {
+          title: 'Weekly game roundup', time: '6h', scheduled: true, count: 6, msgs: [
+            { u: "(scheduled) summarize this week's new game drops" },
+            { a: 'Sent your weekly roundup: 5 new titles, 2 trending.' },
+            { u: 'which one is trending the most' },
+            { a: '"Hunt Royale" is climbing fastest — up 40% in installs this week.' },
+            { u: 'add it to my watchlist' },
+            { a: "Added. I'll flag any major updates or events for it going forward." }
+          ]
+        },
         {
           title: 'UX roles in Berlin', time: '2h', unseen: true, count: 9, msgs: [
             { u: 'find UX roles in berlin' },
@@ -1485,19 +1503,41 @@
             { u: 'which one pays the most' },
             { a: 'The Senior Product Designer role at Notion tops out around €95k, the highest of the four.' },
             { u: 'tailor my resume for that one' },
-            { a: 'Done — I rewrote your summary to lead with your design-systems work, since that\'s what they listed first.' }
+            { a: 'Done — I rewrote your summary to lead with your design-systems work, since that\'s what they listed first.' },
+            { u: 'when should i apply' },
+            { a: 'Today if you can — the Notion listing went up 2 days ago, and early applicants tend to get first-round slots.' }
           ]
         },
-        { title: "This week's AI news carousel", time: '1d', working: true, count: 5, msgs: [{ u: "make a carousel on this week's AI news" }, { a: 'Drafted a 5-slide carousel with a bright cover. Want me to publish it?' }] },
         {
-          title: 'Tailoring my resume for product design', time: '3d', count: 4, msgs: [
+          title: "This week's AI news carousel", time: '1d', working: true, count: 6, msgs: [
+            { u: "make a carousel on this week's AI news" },
+            { a: 'Drafted a 5-slide carousel with a bright cover. Want me to publish it?' },
+            { u: "what's on the cover" },
+            { a: 'A bold headline card — "This Week in AI" — with your brand colors and a stat callout.' },
+            { u: 'can you add a slide about the new model release' },
+            { a: "Sure — adding a slide comparing it to last month's release, with the key benchmark numbers." }
+          ]
+        },
+        {
+          title: 'Tailoring my resume for product design', time: '3d', count: 6, msgs: [
             { u: 'tailor my resume for product design' },
             { a: 'Tightened your summary and pulled design-systems impact to the top.' },
             { u: 'can you shorten the experience section too' },
-            { a: "Trimmed it to your 3 most relevant roles — it's about 30% shorter now." }
+            { a: "Trimmed it to your 3 most relevant roles — it's about 30% shorter now." },
+            { u: 'does it still fit on one page' },
+            { a: "Yes — you're at 620 words, comfortably one page with your current formatting." }
           ]
         },
-        { title: 'Free Fire gameplay review script', time: '5d', count: 11, msgs: [{ u: 'gameplay review script for Free Fire' }, { a: 'Wrote a Hinglish beat-sheet: cold hook, FAQ, combat, verdict.' }] }
+        {
+          title: 'Free Fire gameplay review script', time: '5d', count: 11, msgs: [
+            { u: 'gameplay review script for Free Fire' },
+            { a: 'Wrote a Hinglish beat-sheet: cold hook, FAQ, combat, verdict.' },
+            { u: 'can you add a section on the new season pass' },
+            { a: "Added a section covering the season pass rewards and whether it's worth buying." },
+            { u: 'perfect, export it' },
+            { a: 'Exported as a doc — check your Jobs tab for the download link.' }
+          ]
+        }
       ];
       var fullTitle = 'Untitled chat';   // a NAME, not an action — "New chat" as a title read like a button
       function setTitle(t) { fullTitle = t; var mt = document.getElementById('baiMainTitle'); if (mt) mt.textContent = t; }   // header wordmark stays the "BlueAI" brand; the chat name lives in the main-column title
