@@ -359,9 +359,13 @@
     .bai-errorcard .ec-head { display: flex; align-items: center; gap: 5px; color: var(--bai-danger); font-size: 10px; font-weight: 700; letter-spacing: 0.3px; }
     .bai-errorcard .ec-body { color: var(--bai-text-strong); font-size: 12px; line-height: 1.45; }
     .bai-inputbar { display: flex; flex-direction: column; align-items: stretch; margin: 0 12px 7px; padding: 11px 12px; background: var(--bai-input-bg); border: 1px solid var(--bai-line); border-radius: 10px; flex-shrink: 0; transition: border-color 0.18s ease; }
-    .bai-history-note { display: none; flex-shrink: 0; text-align: center; margin: 0 12px 11px; padding: 9px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10.5px; color: var(--bai-faint); background: var(--bai-card-2); border: 1px solid var(--bai-line); border-radius: 9px; }
+    .bai-history-note { display: none; align-items: center; gap: 10px; flex-shrink: 0; margin: 0 12px 11px; padding: 10px 11px; font-family: 'JetBrains Mono', ui-monospace, monospace; background: var(--bai-card-2); border: 1px solid var(--bai-line); border-radius: 10px; }
+    .bai-history-note .hn-ic { flex-shrink: 0; width: 26px; height: 26px; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: var(--bai-chip-bg); color: var(--bai-icon-2); }
+    .bai-history-note .hn-txt { flex: 1; min-width: 0; font-size: 10.5px; line-height: 1.4; color: var(--bai-dim); }
+    .bai-history-note .hn-btn { flex-shrink: 0; border: none; background: var(--bai-accent); color: var(--bai-on-accent); font-family: inherit; font-size: 10px; font-weight: 700; padding: 7px 11px; border-radius: 8px; cursor: pointer; white-space: nowrap; transition: filter 0.15s; }
+    .bai-history-note .hn-btn:hover { filter: brightness(1.12); }
     .bai-ui.viewing-history .bai-inputbar, .bai-ui.viewing-history .bai-status { display: none; }
-    .bai-ui.viewing-history .bai-history-note { display: block; }
+    .bai-ui.viewing-history .bai-history-note { display: flex; }
     .bai-inputbar:focus-within { border-color: var(--bai-line-focus); }   /* very slight lift on focus */
     .bai-inputrow { display: flex; align-items: center; gap: 8px; }
     .bai-prompt { color: var(--bai-accent); font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 14px; line-height: 1; }
@@ -587,7 +591,11 @@
                       <button class="bai-send" id="baiSend" type="button" aria-label="Stop"></button>
                     </div>
                   </div>
-                  <div class="bai-history-note">This is a past conversation — start a new chat to continue</div>
+                  <div class="bai-history-note" id="baiHistoryNote">
+                    <span class="hn-ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+                    <span class="hn-txt">You're viewing a past conversation.</span>
+                    <button class="hn-btn" id="baiHistoryNoteNew" type="button">Start a new chat</button>
+                  </div>
                   <div class="bai-status">
                     <div class="bai-stat-r">
                       <div class="bai-stat-wrap"><button class="bai-stat-btn" id="baiModelBtn" type="button"></button><div class="bai-menu" id="baiModelMenu"></div></div>
@@ -1470,10 +1478,26 @@
       var RECENTS = [
         { title: 'Daily rewards run', time: '20m', scheduled: true, count: 14, msgs: [{ u: '(scheduled) claim my daily login rewards' }, { a: "Claimed today's login bonus + streak bonus across 3 games." }] },
         { title: 'Weekly game roundup', time: '6h', scheduled: true, count: 6, msgs: [{ u: "(scheduled) summarize this week's new game drops" }, { a: 'Sent your weekly roundup: 5 new titles, 2 trending.' }] },
-        { title: 'Berlin UX roles', time: '2h', unseen: true, count: 9, msgs: [{ u: 'find UX roles in berlin' }, { a: 'Found 4 strong matches across LinkedIn, Wellfound and Indeed, all remote-friendly.' }] },
-        { title: 'Carousel: AI news', time: '1d', working: true, count: 5, msgs: [{ u: "make a carousel on this week's AI news" }, { a: 'Drafted a 5-slide carousel with a bright cover. Want me to publish it?' }] },
-        { title: 'Resume tailoring', time: '3d', count: 4, msgs: [{ u: 'tailor my resume for product design' }, { a: 'Tightened your summary and pulled design-systems impact to the top.' }] },
-        { title: 'Free Fire FAQ', time: '5d', count: 11, msgs: [{ u: 'gameplay review script for Free Fire' }, { a: 'Wrote a Hinglish beat-sheet: cold hook, FAQ, combat, verdict.' }] }
+        {
+          title: 'UX roles in Berlin', time: '2h', unseen: true, count: 9, msgs: [
+            { u: 'find UX roles in berlin' },
+            { a: 'Found 4 strong matches across LinkedIn, Wellfound and Indeed, all remote-friendly.' },
+            { u: 'which one pays the most' },
+            { a: 'The Senior Product Designer role at Notion tops out around €95k, the highest of the four.' },
+            { u: 'tailor my resume for that one' },
+            { a: 'Done — I rewrote your summary to lead with your design-systems work, since that\'s what they listed first.' }
+          ]
+        },
+        { title: "This week's AI news carousel", time: '1d', working: true, count: 5, msgs: [{ u: "make a carousel on this week's AI news" }, { a: 'Drafted a 5-slide carousel with a bright cover. Want me to publish it?' }] },
+        {
+          title: 'Tailoring my resume for product design', time: '3d', count: 4, msgs: [
+            { u: 'tailor my resume for product design' },
+            { a: 'Tightened your summary and pulled design-systems impact to the top.' },
+            { u: 'can you shorten the experience section too' },
+            { a: "Trimmed it to your 3 most relevant roles — it's about 30% shorter now." }
+          ]
+        },
+        { title: 'Free Fire gameplay review script', time: '5d', count: 11, msgs: [{ u: 'gameplay review script for Free Fire' }, { a: 'Wrote a Hinglish beat-sheet: cold hook, FAQ, combat, verdict.' }] }
       ];
       var fullTitle = 'Untitled chat';   // a NAME, not an action — "New chat" as a title read like a button
       function setTitle(t) { fullTitle = t; var mt = document.getElementById('baiMainTitle'); if (mt) mt.textContent = t; }   // header wordmark stays the "BlueAI" brand; the chat name lives in the main-column title
@@ -1495,6 +1519,7 @@
       }
       titleBtn.addEventListener('click', function (e) { e.stopPropagation(); if (baiUi.classList.contains('wide') || baiUi.classList.contains('nonchat')) return; closeMenus(); openSubpane('Chat History', renderHistoryList); });
       newBtn.addEventListener('click', function (e) { e.stopPropagation(); newChat(); closeMenus(); });
+      document.getElementById('baiHistoryNoteNew').addEventListener('click', function (e) { e.stopPropagation(); newChat(); });
 
       // ---- Wide-mode left sidebar (mirrors the strip + switcher; toggled by width) ----
       var sideRecentsEl = document.getElementById('baiSideRecents');
