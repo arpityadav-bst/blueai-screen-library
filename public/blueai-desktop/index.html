@@ -8,11 +8,11 @@
   <title>BlueAI on Desktop</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { height: 100%; overflow: hidden; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0e1a; }
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0e1a; }
 
     /* Desktop scene fills the viewport. Clicking the bare desktop closes the panel. */
     .stage {
@@ -96,7 +96,7 @@
        move lives here now. Minimize/maximize are decorative only; only Close is wired. */
     .bai-titlebar { position: absolute; top: 0; left: 0; right: 0; height: 30px; z-index: 60; display: flex; align-items: center; gap: 7px; padding: 0 6px 0 10px; background: var(--bai-titlebar-bg); border-bottom: 1px solid var(--bai-titlebar-line); }
     .bai-tb-logo { width: 15px; height: 15px; flex-shrink: 0; display: block; border-radius: 50%; user-select: none; }
-    .bai-tb-title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; font-weight: 500; color: var(--bai-titlebar-text); letter-spacing: 0.2px; }
+    .bai-tb-title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 11px; font-weight: 500; color: var(--bai-titlebar-text); letter-spacing: 0.2px; }
     .bai-tb-btns { display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
     .bai-tb-btn { display: flex; align-items: center; justify-content: center; width: 26px; height: 22px; border: none; border-radius: 4px; background: none; color: var(--bai-titlebar-icon); cursor: pointer; padding: 0; transition: background 0.12s, color 0.12s; }
     .bai-tb-btn:hover { background: rgba(255,255,255,0.10); color: #f0f1f4; }
@@ -132,7 +132,7 @@
     .bai-menu-ic { display: flex; align-items: center; justify-content: center; flex-shrink: 0; width: 14px; height: 14px; color: var(--bai-icon-2); }
     .bai-menu-ic svg { width: 14px; height: 14px; display: block; }
     /* mode strip: chat · jobs · skills · scheduled (active = cyan underline) */
-    .bai-strip { display: flex; align-items: stretch; height: 38px; flex-shrink: 0; padding: 0 14px; border-bottom: 1px solid var(--bai-line); font-family: 'JetBrains Mono', ui-monospace, monospace; }
+    .bai-strip { display: flex; align-items: stretch; height: 38px; flex-shrink: 0; padding: 0 14px; border-bottom: 1px solid var(--bai-line); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
     .bai-tab { position: relative; display: flex; align-items: center; gap: 5px; background: none; border: none; color: var(--bai-dim-2); font-family: inherit; font-size: 12px; cursor: pointer; padding: 0 2px; margin-right: 16px; transition: color 0.15s; }
     .bai-tab:last-child { margin-right: 0; }
     .bai-tab:hover { color: var(--bai-hover-ink); }
@@ -143,13 +143,13 @@
     .bai-panes { flex: 1; min-height: 0; display: flex; }
     .bai-pane { display: none; flex: 1; flex-direction: column; min-width: 0; min-height: 0; position: relative; }
     .bai-pane.active { display: flex; }
-    .bai-stub { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 9px; padding: 28px 24px; text-align: center; font-family: 'JetBrains Mono', ui-monospace, monospace; }
+    .bai-stub { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 9px; padding: 28px 24px; text-align: center; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
     .bai-stub .ic { width: 34px; height: 34px; border: 1px solid var(--bai-line-2); border-radius: 9px; display: flex; align-items: center; justify-content: center; color: var(--bai-accent); }
     .bai-stub h4 { margin: 0; color: var(--bai-text-hi); font-size: 13px; font-weight: 500; }
     .bai-stub p { margin: 0; max-width: 200px; font-size: 11.5px; line-height: 1.5; color: var(--bai-dim); }
     .bai-stub .soon { font-size: 10px; color: var(--bai-faint); letter-spacing: 1px; }
     /* settings pane: real controls (theme switcher) — same tokens + terminal styling as everything else */
-    .bai-set { flex: 1; padding: 14px; display: flex; flex-direction: column; overflow-y: auto; font-family: 'JetBrains Mono', ui-monospace, monospace; }   /* no uniform gap — spacing is hierarchy, see .bai-set-label */
+    .bai-set { flex: 1; padding: 14px; display: flex; flex-direction: column; overflow-y: auto; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }   /* no uniform gap — spacing is hierarchy, see .bai-set-label */
     .bai-set-label { font-size: 9.5px; color: var(--bai-faint); letter-spacing: 0.4px; margin: 24px 0 8px; }   /* generous ABOVE (new topic), tight BELOW (owns the card right after it) */
     .bai-set-label:first-child { margin-top: 0; }
     .bai-set-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--bai-card-2); border: 1px solid var(--bai-line); border-radius: 8px; }
@@ -162,12 +162,12 @@
     .bai-seg-btn.active { background: var(--bai-accent); color: var(--bai-on-accent); }
 
     /* ---- Skills / Scheduled tabs: list + empty state + inline "new item" creation form ---- */
-    .bai-list-head { flex-shrink: 0; display: flex; align-items: center; justify-content: flex-end; padding: 12px 14px 9px; font-family: 'JetBrains Mono', ui-monospace, monospace; }   /* the pane's own "Skills"/"Scheduled" label already comes from the shared main-title bar above — no second heading here */
+    .bai-list-head { flex-shrink: 0; display: flex; align-items: center; justify-content: flex-end; padding: 12px 14px 9px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }   /* the pane's own "Skills"/"Scheduled" label already comes from the shared main-title bar above — no second heading here */
     .bai-list-add { display: flex; align-items: center; gap: 4px; border: none; background: var(--bai-accent); color: var(--bai-on-accent); font-family: inherit; font-size: 10.5px; font-weight: 700; padding: 6px 11px; border-radius: 8px; cursor: pointer; transition: filter 0.15s; }
     .bai-list-add:hover { filter: brightness(1.12); }
     .bai-list-body { flex: 1; overflow-y: auto; padding: 2px 14px 14px; display: flex; flex-direction: column; gap: 8px; }
     .bai-list-body .bai-stub { padding: 24px 10px; }
-    .bai-item-card { display: flex; align-items: center; gap: 10px; padding: 10px 11px; background: var(--bai-card-2); border: 1px solid var(--bai-line); border-radius: 9px; font-family: 'JetBrains Mono', ui-monospace, monospace; }
+    .bai-item-card { display: flex; align-items: center; gap: 10px; padding: 10px 11px; background: var(--bai-card-2); border: 1px solid var(--bai-line); border-radius: 9px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
     .bai-item-card .ic { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: var(--bai-chip-bg); color: var(--bai-accent); }
     .bai-item-card .info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
     .bai-item-card .info b { font-size: 12px; color: var(--bai-text-hi); font-weight: 500; }
@@ -185,7 +185,7 @@
     .bai-tgl.on { background: var(--bai-accent-wash); border-color: var(--bai-accent-strong); }
     .bai-tgl.on i { transform: translateX(12px); background: var(--bai-accent); }
     .bai-newitem { flex-shrink: 0; display: flex; flex-direction: column; gap: 7px; margin: 0 14px 10px; padding: 11px 12px; background: var(--bai-card); border: 1px solid var(--bai-accent-line); border-radius: 10px; }
-    .bai-newitem-input, .bai-newitem-textarea { width: 100%; background: var(--bai-input-bg); border: 1px solid var(--bai-line-2); border-radius: 7px; padding: 7px 9px; color: var(--bai-text-strong); font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11.5px; outline: none; }
+    .bai-newitem-input, .bai-newitem-textarea { width: 100%; background: var(--bai-input-bg); border: 1px solid var(--bai-line-2); border-radius: 7px; padding: 7px 9px; color: var(--bai-text-strong); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 11.5px; outline: none; }
     .bai-newitem-input:focus, .bai-newitem-textarea:focus { border-color: var(--bai-line-focus); }
     .bai-newitem-textarea { resize: none; min-height: 50px; line-height: 1.4; }
     .bai-newitem-actions { display: flex; justify-content: flex-end; gap: 6px; }
@@ -197,7 +197,7 @@
     /* ---- Skills: search, category rows (home), skill cards (drill-down), details block, sticky create CTA ---- */
     .bai-search { flex-shrink: 0; margin: 11px 14px 3px; display: flex; align-items: center; gap: 7px; padding: 8px 10px; background: var(--bai-input-bg); border: 1px solid var(--bai-line-2); border-radius: 9px; }
     .bai-search svg { flex-shrink: 0; color: var(--bai-faint); }
-    .bai-search input { flex: 1; min-width: 0; background: none; border: none; outline: none; color: var(--bai-text-strong); font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11.5px; }
+    .bai-search input { flex: 1; min-width: 0; background: none; border: none; outline: none; color: var(--bai-text-strong); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 11.5px; }
     .bai-search input::placeholder { color: var(--bai-faint); }
     .bai-cat-row { display: flex; align-items: center; gap: 12px; padding: 13px; background: var(--bai-card-2); border: 1px solid var(--bai-line); border-radius: 11px; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
     .bai-cat-row:hover { border-color: var(--bai-accent-strong); background: var(--bai-hover-acc); }
@@ -218,38 +218,92 @@
     .bai-sk-link:hover { color: var(--bai-hover-ink); background: var(--bai-hover); }
     .bai-sk-link.danger:hover { color: var(--bai-danger); }
     .bai-kv-block { display: flex; flex-direction: column; border: 1px solid var(--bai-line); border-radius: 11px; overflow: hidden; }
-    .bai-kv-row { display: flex; align-items: center; justify-content: space-between; padding: 11px 13px; font-size: 11px; font-family: 'JetBrains Mono', ui-monospace, monospace; }
+    .bai-kv-row { display: flex; align-items: center; justify-content: space-between; padding: 11px 13px; font-size: 11px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
     .bai-kv-row + .bai-kv-row { border-top: 1px solid var(--bai-line); }
     .bai-kv-row .k { color: var(--bai-dim); }
     .bai-kv-row .v { color: var(--bai-text-strong); }
     .bai-sticky-cta { flex-shrink: 0; padding: 12px 14px; border-top: 1px solid var(--bai-line); background: var(--bai-panel); }
-    .bai-sticky-cta button { width: 100%; border: none; background: var(--bai-accent); color: var(--bai-on-accent); font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11.5px; font-weight: 700; padding: 11px; border-radius: 10px; cursor: pointer; transition: filter 0.15s; }
+    .bai-sticky-cta button { width: 100%; border: none; background: var(--bai-accent); color: var(--bai-on-accent); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 11.5px; font-weight: 700; padding: 11px; border-radius: 10px; cursor: pointer; transition: filter 0.15s; }
     .bai-sticky-cta button:hover { filter: brightness(1.12); }
     .bai-create-tabs { flex-shrink: 0; display: flex; gap: 16px; padding: 0 0 9px; border-bottom: 1px solid var(--bai-line); margin-bottom: 13px; }
-    .bai-create-tab { border: none; background: none; color: var(--bai-dim); font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10.5px; font-weight: 700; padding: 0 0 9px; cursor: pointer; position: relative; }
+    .bai-create-tab { border: none; background: none; color: var(--bai-dim); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 10.5px; font-weight: 700; padding: 0 0 9px; cursor: pointer; position: relative; }
     .bai-create-tab.on { color: var(--bai-text-bright); }
     .bai-create-tab.on::after { content: ''; position: absolute; left: 0; right: 0; bottom: -10px; height: 2px; background: var(--bai-accent); }
-    .bai-upload-row { display: flex; align-items: center; gap: 9px; padding: 12px 13px; background: var(--bai-input-bg); border: 1px dashed var(--bai-line-2); border-radius: 10px; cursor: pointer; color: var(--bai-text); font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11.5px; }
+    .bai-upload-row { display: flex; align-items: center; gap: 9px; padding: 12px 13px; background: var(--bai-input-bg); border: 1px dashed var(--bai-line-2); border-radius: 10px; cursor: pointer; color: var(--bai-text); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 11.5px; }
     .bai-upload-hint { font-size: 10px; line-height: 1.55; color: var(--bai-dim); padding: 10px 11px; background: var(--bai-accent-wash); border-radius: 9px; margin-top: 9px; }
     .bai-ai-create { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 11px; text-align: center; padding: 22px 10px; }
     .bai-ai-create .ic { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: var(--bai-accent-wash); color: var(--bai-accent); }
     .bai-ai-create p { font-size: 11px; line-height: 1.55; color: var(--bai-dim); max-width: 220px; }
 
     /* ---- Settings: multi-line cards (Notifications / AI Mode / Own key / AI defaults) ---- */
-    .bai-set-card { display: flex; flex-direction: column; gap: 11px; padding: 13px; background: var(--bai-card-2); border: 1px solid var(--bai-line); border-radius: 11px; font-family: 'JetBrains Mono', ui-monospace, monospace; }
+    .bai-set-card { display: flex; flex-direction: column; gap: 11px; padding: 13px; background: var(--bai-card-2); border: 1px solid var(--bai-line); border-radius: 11px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
     .bai-set-card-head { display: flex; align-items: center; gap: 10px; }
     .bai-set-card-head .ic { width: 32px; height: 32px; border-radius: 9px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: var(--bai-chip-bg); color: var(--bai-accent); }
     .bai-set-card-head .info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
     .bai-set-card-head .info b { font-size: 12px; color: var(--bai-text-hi); font-weight: 500; }
     .bai-set-card-head .info span { font-size: 10px; color: var(--bai-dim); }
-    .bai-set-btn { flex-shrink: 0; border: 1px solid var(--bai-line-2); background: var(--bai-input-bg); color: var(--bai-text); font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10.5px; font-weight: 600; padding: 7px 12px; border-radius: 8px; cursor: pointer; transition: border-color 0.15s, background 0.15s, filter 0.15s; }
+    .bai-set-btn { flex-shrink: 0; border: 1px solid var(--bai-line-2); background: var(--bai-input-bg); color: var(--bai-text); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 10.5px; font-weight: 600; padding: 7px 12px; border-radius: 8px; cursor: pointer; transition: border-color 0.15s, background 0.15s, filter 0.15s; }
     .bai-set-btn:hover { border-color: var(--bai-accent-strong); }
     .bai-set-btn.primary { border: none; background: var(--bai-accent); color: var(--bai-on-accent); }
     .bai-set-btn.primary:hover { filter: brightness(1.12); }
     .bai-set-btn.danger { color: var(--bai-danger); border-color: color-mix(in srgb, var(--bai-danger) 40%, var(--bai-line-2)); }
-    .bai-set-pairing { display: flex; flex-direction: column; align-items: center; gap: 7px; padding: 15px 10px; background: var(--bai-input-bg); border-radius: 10px; }
-    .bai-set-pairing .code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 18px; font-weight: 700; letter-spacing: 4px; color: var(--bai-accent); }
-    .bai-set-pairing .hint { font-size: 10px; color: var(--bai-dim); text-align: center; }
+    .bai-spin { flex-shrink: 0; width: 14px; height: 14px; border-radius: 50%; border: 2px solid #e2e6ee; border-top-color: #2f6fed; animation: bai-spin-rot 0.7s linear infinite; }
+    @keyframes bai-spin-rot { to { transform: rotate(360deg); } }
+    /* Sign-in gate + Telegram connect — the live product's own "system-level" dialogs: these stay a fixed
+       WHITE card regardless of the app's dark/light theme (confirmed from the reference screenshots — same
+       convention as the OS titlebar staying constant), unlike every other themed surface in this file. */
+    .bai-logingate { position: absolute; inset: 0; z-index: 220; display: none; align-items: center; justify-content: center; padding: 20px; background: rgba(4,8,18,0.52); backdrop-filter: blur(7px); -webkit-backdrop-filter: blur(7px); }
+    .bai-logingate.on { display: flex; }
+    .bai-logingate-card { width: 100%; max-width: 258px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; background: #ffffff; border-radius: 14px; padding: 22px 19px; box-shadow: 0 20px 60px rgba(0,0,0,0.4); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; animation: onb-in 0.3s cubic-bezier(0.22,0.9,0.26,1) both; }
+    .lg-s { font-size: 11px; line-height: 1.5; color: #667085; }
+    .lg-h { font-size: 15px; font-weight: 700; color: #101828; }
+    .lg-credits { font-size: 38px; font-weight: 700; line-height: 1; background: linear-gradient(90deg, #2f6fed, #7c5cf0); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .lg-check { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #2f6fed; }
+    .lg-div { align-self: stretch; height: 1px; background: #eceef3; }
+    .lg-cta { align-self: stretch; border: none; border-radius: 10px; padding: 11px; background: #2f6fed; color: #ffffff; font-family: inherit; font-size: 12px; font-weight: 700; cursor: pointer; transition: filter 0.15s; }
+    .lg-cta:hover { filter: brightness(1.08); }
+    .lg-link { font-size: 10.5px; color: #8a94a6; cursor: pointer; text-decoration: none; }
+    .lg-link:hover { color: #4a5468; }
+    .lg-link-warn { color: #b5750a; }
+    .lg-icon { width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #eef2fb; color: #2f6fed; }
+    .lg-icon-ok { background: #e3f8ee; color: #17a866; }
+    /* Telegram bot-connect modal — 2-step BotFather flow, matches the live product's real dialog verbatim */
+    .bai-tgmodal { position: absolute; top: 30px; left: 0; right: 0; bottom: 0; z-index: 230; display: none; align-items: center; justify-content: center; padding: 20px; background: rgba(4,8,18,0.52); backdrop-filter: blur(7px); -webkit-backdrop-filter: blur(7px); }
+    .bai-tgmodal.on { display: flex; }
+    .bai-tgmodal-card { width: 100%; max-width: 300px; max-height: 100%; overflow-y: auto; scrollbar-width: none; display: flex; flex-direction: column; background: #ffffff; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.4); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; animation: onb-in 0.3s cubic-bezier(0.22,0.9,0.26,1) both; }
+    .bai-tgmodal-card::-webkit-scrollbar { width: 0; height: 0; display: none; }
+    .tgm-head { display: flex; align-items: center; gap: 10px; padding: 16px 16px 14px; border-bottom: 1px solid #eceef3; }
+    .tgm-ic { flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%; background: #2f6fed; color: #ffffff; display: flex; align-items: center; justify-content: center; }
+    .tgm-title { flex: 1; font-size: 14.5px; font-weight: 700; color: #101828; }
+    .tgm-close { flex-shrink: 0; background: none; border: none; color: #98a2b3; font-size: 15px; cursor: pointer; padding: 4px; line-height: 1; }
+    .tgm-close:hover { color: #475467; }
+    .tgm-body { padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; font-size: 12px; line-height: 1.55; color: #3a4356; }
+    .tgm-body b { color: #101828; }
+    .tgm-body ul { padding-left: 18px; display: flex; flex-direction: column; gap: 6px; }
+    .tgm-body code { background: #f1f3f8; padding: 1px 5px; border-radius: 4px; font-size: 11px; }
+    .tgm-label { font-size: 12px; font-weight: 700; color: #101828; margin-top: 2px; }
+    .tgm-input { width: 100%; border: 1.5px solid #cfd6e4; border-radius: 9px; padding: 10px 12px; font-size: 12px; font-family: inherit; color: #101828; outline: none; background: #fff; }
+    .tgm-input:focus { border-color: #2f6fed; }
+    .tgm-hint { display: flex; align-items: center; gap: 6px; font-size: 10.5px; color: #8a94a6; }
+    .tgm-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 16px 16px; }
+    .tgm-step { font-size: 11px; color: #8a94a6; }
+    .tgm-cta { border: none; border-radius: 22px; padding: 10px 20px; background: #2f6fed; color: #ffffff; font-family: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer; transition: filter 0.15s; }
+    .tgm-cta:hover { filter: brightness(1.08); }
+    .tgm-cta:disabled { opacity: 0.55; cursor: default; }
+    .tgm-code-row { display: flex; align-items: center; gap: 6px; border: 1.5px solid #cfd6e4; border-radius: 9px; padding: 9px 10px; }
+    .tgm-code { flex: 1; font-size: 15px; font-weight: 700; letter-spacing: 2px; color: #101828; }
+    .tgm-icbtn { flex-shrink: 0; background: none; border: none; color: #667085; cursor: pointer; padding: 4px; display: flex; }
+    .tgm-icbtn:hover { color: #2f6fed; }
+    .tgm-copybtn { flex-shrink: 0; display: flex; align-items: center; gap: 4px; background: none; border: none; color: #2f6fed; font-family: inherit; font-size: 11.5px; font-weight: 700; cursor: pointer; padding: 4px 6px; white-space: nowrap; }
+    .tgm-expire { display: flex; align-items: center; gap: 5px; font-size: 10.5px; color: #8a94a6; }
+    .tgm-link { color: #2f6fed; text-decoration: none; font-weight: 600; }
+    .tgm-link:hover { text-decoration: underline; }
+    .tgm-waitcard { display: flex; align-items: flex-start; gap: 9px; background: #f6f8fc; border-radius: 10px; padding: 11px 12px; margin-top: 2px; }
+    .tgm-waittxt { display: flex; flex-direction: column; gap: 2px; font-size: 11px; }
+    .tgm-waittxt b { font-size: 11.5px; color: #101828; }
+    .tgm-waittxt span { color: #8a94a6; }
+    .tgm-abort { align-self: center; border: 1px solid #d7dce6; background: #ffffff; color: #344054; font-family: inherit; font-size: 11.5px; font-weight: 600; padding: 8px 18px; border-radius: 20px; cursor: pointer; }
+    .tgm-abort:hover { background: #f6f8fc; }
     .bai-set-divider { height: 1px; background: var(--bai-line); margin: 1px 0; }
     .bai-set-field { display: flex; flex-direction: column; gap: 5px; }
     .bai-set-field-label { font-size: 10.5px; color: var(--bai-dim); }
@@ -259,16 +313,16 @@
     .bai-set-model-list div { padding: 9px 12px; font-size: 10.5px; cursor: pointer; background: var(--bai-input-bg); transition: background 0.15s; }
     .bai-set-model-list div:hover { background: var(--bai-hover); }
     .bai-set-save-confirm { font-size: 10px; color: var(--bai-ok); text-align: center; display: none; }
-    .bai-wm { display: flex; align-items: center; min-width: 0; overflow: hidden; color: var(--bai-text-bright); font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Consolas, Menlo, monospace; font-weight: 700; font-size: 14px; letter-spacing: -0.5px; }   /* static brand — no longer a switcher */
+    .bai-wm { display: flex; align-items: center; min-width: 0; overflow: hidden; color: var(--bai-text-bright); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: -0.5px; }   /* static brand — no longer a switcher */
     .bai-wm #baiTitle { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .bai-title-btn { display: flex; align-items: center; gap: 5px; min-width: 0; max-width: 100%; background: none; border: none; cursor: pointer; padding: 0; color: var(--bai-dim-2); font-family: 'JetBrains Mono', ui-monospace, monospace; font-weight: 500; font-size: 11px; letter-spacing: 0; }   /* subtle, recessive — smaller + muted vs the brand wordmark */
+    .bai-title-btn { display: flex; align-items: center; gap: 5px; min-width: 0; max-width: 100%; background: none; border: none; cursor: pointer; padding: 0; color: var(--bai-dim-2); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-weight: 500; font-size: 11px; letter-spacing: 0; }   /* subtle, recessive — smaller + muted vs the brand wordmark */
     .bai-title-btn #baiMainTitle { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .bai-title-btn:hover { color: var(--bai-hover-ink); }
     .bai-title-ar { flex-shrink: 0; display: flex; align-items: center; color: var(--bai-faint); margin-top: 1px; transition: color 0.15s; }   /* stroke chevron-down (same line style as the ›/icon set) = "opens a menu", not "go forward" */
     .bai-title-ar svg { display: block; }
     .bai-title-btn:hover .bai-title-ar { color: var(--bai-hover-ink); }
     /* ---- Wide (detached ≥600px): left sidebar holds new chat · modes · recent · settings + more ---- */
-    .bai-sidebar { position: absolute; left: 0; top: 0; bottom: 0; width: 210px; display: none; flex-direction: column; padding: 12px 8px; background: var(--bai-panel); border-right: 1px solid var(--bai-line); z-index: 6; font-family: 'JetBrains Mono', ui-monospace, monospace; }
+    .bai-sidebar { position: absolute; left: 0; top: 0; bottom: 0; width: 210px; display: none; flex-direction: column; padding: 12px 8px; background: var(--bai-panel); border-right: 1px solid var(--bai-line); z-index: 6; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
     .bai-ui.wide .bai-sidebar { display: flex; top: 46px; }                                  /* sits BELOW the full-width header */
     .bai-ui.wide .bai-panes, .bai-ui.wide .bai-main-title { margin-left: 210px; }             /* main content clears the sidebar; header stays full-width */
     .bai-ui.wide .bai-strip, .bai-ui.wide #baiSettingsBtn, .bai-ui.wide #baiNewBtn, .bai-ui.wide .bai-title-ar { display: none; }   /* wide: sidebar owns modes/new-chat/recents; header keeps logo + "BlueAI" brand */
@@ -315,7 +369,7 @@
        The worker-picker launcher screen itself was removed (PM: "let go of this window altogether,
        no need for this right now") — this boot-log style is kept wired (pickWorker/streamBootLog/
        WORKERS below) only because the PM liked it and asked to keep it for possible future reuse. */
-    .bai-boot { position: absolute; left: 0; right: 0; top: 52%; width: max-content; max-width: calc(100% - 44px); margin: 0 auto; padding: 0; display: none; flex-direction: column; gap: 3px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10.5px; line-height: 1.5; color: var(--bai-muted); opacity: 1; transition: opacity 0.3s ease; }   /* centered block under the logo; text stays left-aligned inside */
+    .bai-boot { position: absolute; left: 0; right: 0; top: 52%; width: max-content; max-width: calc(100% - 44px); margin: 0 auto; padding: 0; display: none; flex-direction: column; gap: 3px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 10.5px; line-height: 1.5; color: var(--bai-muted); opacity: 1; transition: opacity 0.3s ease; }   /* centered block under the logo; text stays left-aligned inside */
     .bai-boot.on { display: flex; }
     .bai-boot .ln { opacity: 0; transition: opacity 0.25s ease; }
     .bai-boot .ln.s { opacity: 1; }
@@ -327,39 +381,54 @@
     /* in-chat clickable option group (BlueAI asks, you pick — terminal style) */
     .bai-optg { align-self: stretch; display: flex; flex-direction: column; gap: 5px; margin: 1px 0 2px; }
     .bai-optg.done { opacity: 0.45; pointer-events: none; }
-    .bai-opt-row { display: flex; align-items: flex-start; gap: 9px; padding: 8px 10px; background: var(--bai-card); border: 1px solid var(--bai-line-2); border-radius: 8px; cursor: pointer; text-align: left; font-family: 'JetBrains Mono', ui-monospace, monospace; transition: border-color 0.15s, background 0.15s; }
+    .bai-opt-row { display: flex; align-items: flex-start; gap: 9px; padding: 8px 10px; background: var(--bai-card); border: 1px solid var(--bai-line-2); border-radius: 8px; cursor: pointer; text-align: left; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; transition: border-color 0.15s, background 0.15s; }
     .bai-opt-row:hover { border-color: var(--bai-accent-strong); background: var(--bai-hover-acc); }
     .bai-opt-num { color: var(--bai-accent); font-size: 11px; line-height: 1.5; flex-shrink: 0; width: 11px; }
+    /* Menu-style options: a NUMBERED TEXT LIST inside one card, answered by typing (a number or the option
+       name), not by tapping — the other "input required" shape besides clickable .bai-opt-row buttons, used
+       when there are more/longer options. Tinted like warnrow's amber (this is a choice-prompt, not an error). */
+    .bai-menucard { align-self: stretch; margin: 1px 0 2px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; background: color-mix(in srgb, var(--bai-credit-mid) 16%, var(--bai-card-2)); border: 1px solid color-mix(in srgb, var(--bai-credit-mid) 38%, var(--bai-line)); border-radius: 8px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+    .bai-menucard .mn-intro { font-size: 12px; line-height: 1.45; color: var(--bai-text-strong); }
+    .bai-menucard .mn-list { display: flex; flex-direction: column; gap: 7px; margin: 0; padding-left: 18px; font-size: 12px; line-height: 1.45; color: var(--bai-text); }
+    .bai-menucard .mn-list b { color: var(--bai-text-strong); }
     .bai-opt-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
     .bai-opt-label { color: var(--bai-text-strong); font-size: 12px; line-height: 1.4; }
     .bai-opt-desc { color: var(--bai-dim); font-size: 10.5px; line-height: 1.4; }
     .bai-opt-hint { color: var(--bai-faint); font-size: 10px; padding: 1px 2px; letter-spacing: 0.3px; }
     /* result lists (job postings / content plan) + parsed-resume card */
     .bai-reslist { align-self: stretch; display: flex; flex-direction: column; gap: 6px; margin: 1px 0 2px; }
-    .bai-rescard { display: flex; flex-direction: column; gap: 4px; padding: 9px 11px; background: var(--bai-card-2); border: 1px solid var(--bai-line); border-radius: 8px; font-family: 'JetBrains Mono', ui-monospace, monospace; }
+    .bai-rescard { display: flex; flex-direction: column; gap: 4px; padding: 9px 11px; background: var(--bai-card-2); border: 1px solid var(--bai-line); border-radius: 8px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
     .bai-rescard .top { display: flex; align-items: center; gap: 8px; }
     .bai-rescard .rtitle { color: var(--bai-text-strong); font-size: 12px; min-width: 0; }
     .bai-rescard .src { margin-left: auto; flex-shrink: 0; font-size: 9px; letter-spacing: 0.3px; color: var(--bai-accent); border: 1px solid var(--bai-accent-line); border-radius: 5px; padding: 1px 5px; }
     .bai-rescard .meta { color: var(--bai-dim); font-size: 10.5px; }
     .bai-rescard .match { color: var(--bai-ok); font-size: 10.5px; }
-    .bai-parsecard { align-self: stretch; background: var(--bai-card-2); border: 1px solid var(--bai-line); border-radius: 8px; padding: 9px 11px; display: flex; flex-direction: column; gap: 5px; font-family: 'JetBrains Mono', ui-monospace, monospace; margin: 1px 0 2px; }
+    .bai-parsecard { align-self: stretch; background: var(--bai-card-2); border: 1px solid var(--bai-line); border-radius: 8px; padding: 9px 11px; display: flex; flex-direction: column; gap: 5px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; margin: 1px 0 2px; }
     .bai-parsecard .pc-head { color: var(--bai-ok); font-size: 10px; letter-spacing: 0.3px; margin-bottom: 1px; }
     .bai-parsecard .pc-row { display: flex; gap: 8px; font-size: 11px; line-height: 1.35; }
     .bai-parsecard .pc-k { color: var(--bai-dim); width: 74px; flex-shrink: 0; }
     .bai-parsecard .pc-v { color: var(--bai-text-soft); min-width: 0; }
     /* message-type states: Plan (labeled results list), Warning (non-blocking heads-up), Task completed (terminal) */
-    .bai-res-head { align-self: stretch; font-size: 10px; letter-spacing: 0.3px; color: var(--bai-accent); font-weight: 700; font-family: 'JetBrains Mono', ui-monospace, monospace; margin: 2px 0 -2px; }
+    .bai-res-head { align-self: stretch; font-size: 10px; letter-spacing: 0.3px; color: var(--bai-accent); font-weight: 700; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; margin: 2px 0 -2px; }
+    /* Plan: ONE card (label + interpreted intro + numbered concrete steps) — matches the live product's real
+       plan message shape, not a row of separate step-title cards. Tinted like donecard/errorcard (sibling
+       anatomy) rather than the reference's exact bubble width, so it stays consistent with our own message-type cards. */
+    .bai-plancard { align-self: stretch; margin: 1px 0 2px; padding: 9px 11px; display: flex; flex-direction: column; gap: 8px; background: color-mix(in srgb, var(--bai-accent) 10%, var(--bai-card-2)); border: 1px solid color-mix(in srgb, var(--bai-accent) 28%, var(--bai-line)); border-radius: 8px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+    .bai-plancard .pl-label { font-size: 10px; font-weight: 700; letter-spacing: 0.3px; color: var(--bai-accent); }
+    .bai-plancard .pl-intro { font-size: 12px; line-height: 1.45; color: var(--bai-text-strong); }
+    .bai-plancard .pl-steps { display: flex; flex-direction: column; gap: 6px; margin: 0; padding-left: 18px; font-size: 12px; line-height: 1.45; color: var(--bai-text); }
+    .bai-plancard .pl-steps b { color: var(--bai-text-strong); }
     .bai-warnrow { align-self: stretch; display: flex; align-items: flex-start; gap: 7px; padding: 8px 10px; margin: 1px 0 2px; background: color-mix(in srgb, var(--bai-credit-mid) 12%, transparent); border: 1px solid color-mix(in srgb, var(--bai-credit-mid) 32%, transparent); border-radius: 8px; }
     .bai-warnrow svg { flex-shrink: 0; margin-top: 1px; color: var(--bai-credit-mid); }
-    .bai-warnrow span { font-size: 11px; line-height: 1.45; color: var(--bai-text); font-family: 'JetBrains Mono', ui-monospace, monospace; }
-    .bai-donecard { align-self: stretch; margin: 1px 0 2px; padding: 9px 11px; display: flex; flex-direction: column; gap: 3px; background: color-mix(in srgb, var(--bai-ok) 9%, var(--bai-card-2)); border: 1px solid color-mix(in srgb, var(--bai-ok) 35%, var(--bai-line)); border-radius: 8px; font-family: 'JetBrains Mono', ui-monospace, monospace; }
+    .bai-warnrow span { font-size: 11px; line-height: 1.45; color: var(--bai-text); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+    .bai-donecard { align-self: stretch; margin: 1px 0 2px; padding: 9px 11px; display: flex; flex-direction: column; gap: 3px; background: color-mix(in srgb, var(--bai-ok) 9%, var(--bai-card-2)); border: 1px solid color-mix(in srgb, var(--bai-ok) 35%, var(--bai-line)); border-radius: 8px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
     .bai-donecard .dc-head { display: flex; align-items: center; gap: 5px; color: var(--bai-ok); font-size: 10px; font-weight: 700; letter-spacing: 0.3px; }
     .bai-donecard .dc-body { color: var(--bai-text-strong); font-size: 12px; line-height: 1.45; }
-    .bai-errorcard { align-self: stretch; margin: 1px 0 2px; padding: 9px 11px; display: flex; flex-direction: column; gap: 3px; background: color-mix(in srgb, var(--bai-danger) 9%, var(--bai-card-2)); border: 1px solid color-mix(in srgb, var(--bai-danger) 35%, var(--bai-line)); border-radius: 8px; font-family: 'JetBrains Mono', ui-monospace, monospace; }
+    .bai-errorcard { align-self: stretch; margin: 1px 0 2px; padding: 9px 11px; display: flex; flex-direction: column; gap: 3px; background: color-mix(in srgb, var(--bai-danger) 9%, var(--bai-card-2)); border: 1px solid color-mix(in srgb, var(--bai-danger) 35%, var(--bai-line)); border-radius: 8px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
     .bai-errorcard .ec-head { display: flex; align-items: center; gap: 5px; color: var(--bai-danger); font-size: 10px; font-weight: 700; letter-spacing: 0.3px; }
     .bai-errorcard .ec-body { color: var(--bai-text-strong); font-size: 12px; line-height: 1.45; }
     .bai-inputbar { display: flex; flex-direction: column; align-items: stretch; margin: 0 12px 7px; padding: 11px 12px; background: var(--bai-input-bg); border: 1px solid var(--bai-line); border-radius: 10px; flex-shrink: 0; transition: border-color 0.18s ease; }
-    .bai-history-note { display: none; align-items: center; gap: 10px; flex-shrink: 0; margin: 0 12px 11px; padding: 10px 11px; font-family: 'JetBrains Mono', ui-monospace, monospace; background: var(--bai-card-2); border: 1px solid var(--bai-line); border-radius: 10px; }
+    .bai-history-note { display: none; align-items: center; gap: 10px; flex-shrink: 0; margin: 0 12px 11px; padding: 10px 11px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bai-card-2); border: 1px solid var(--bai-line); border-radius: 10px; }
     .bai-history-note .hn-ic { flex-shrink: 0; width: 26px; height: 26px; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: var(--bai-chip-bg); color: var(--bai-icon-2); }
     .bai-history-note .hn-txt { flex: 1; min-width: 0; font-size: 10.5px; line-height: 1.4; color: var(--bai-dim); }
     .bai-history-note .hn-btn { flex-shrink: 0; border: none; background: var(--bai-accent); color: var(--bai-on-accent); font-family: inherit; font-size: 10px; font-weight: 700; padding: 7px 11px; border-radius: 8px; cursor: pointer; white-space: nowrap; transition: filter 0.15s; }
@@ -368,19 +437,20 @@
     .bai-ui.viewing-history .bai-history-note { display: flex; }
     .bai-inputbar:focus-within { border-color: var(--bai-line-focus); }   /* very slight lift on focus */
     .bai-inputrow { display: flex; align-items: center; gap: 8px; }
-    .bai-prompt { color: var(--bai-accent); font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 14px; line-height: 1; }
-    .bai-q { flex: 1; min-width: 0; background: transparent; border: none; outline: none; padding: 0; color: var(--bai-text-hi); font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12.5px; caret-color: var(--bai-accent); }
+    .bai-prompt { color: var(--bai-accent); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 14px; line-height: 1; }
+    .bai-q { flex: 1; min-width: 0; background: transparent; border: none; outline: none; padding: 0; color: var(--bai-text-hi); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 12.5px; caret-color: var(--bai-accent); }
     .bai-q::placeholder { color: var(--bai-faint); }
     /* Claude-style "thinking" indicator above the chatbar — small animated logo + elapsed timer. */
     .bai-body::before { content: ''; margin-top: auto; }   /* bottom-align the chat chain (terminal scrollback) */
     .bai-thinking { align-self: stretch; display: flex; align-items: center; gap: 8px; padding: 1px 2px; }
     .bai-thinking.stopped .bai-think-txt { color: var(--bai-dim-2); }
-    .bai-send { display: flex; visibility: hidden; width: 22px; height: 22px; flex-shrink: 0; border: none; border-radius: 6px; background: none; color: var(--bai-icon-2); cursor: pointer; align-items: center; justify-content: center; padding: 0; transition: background 0.15s, color 0.15s; }
-    .bai-send.stop { visibility: visible; }                 /* slot always reserved so the bar height never jumps; icon only shows while thinking */
-    .bai-send:hover { background: var(--bai-pill); color: var(--bai-text-hi); }   /* same hover pill as the status items */
-    .bai-send::before { content: ''; width: 9px; height: 9px; border: 1.5px solid currentColor; border-radius: 2px; }   /* slightly smaller outline stop, no pulse */
+    .bai-send { display: flex; width: 22px; height: 22px; flex-shrink: 0; border: none; border-radius: 6px; background: none; color: var(--bai-icon-2); cursor: pointer; align-items: center; justify-content: center; padding: 0; transition: background 0.15s, color 0.15s, opacity 0.15s; }
+    .bai-send svg { width: 14px; height: 14px; display: block; }
+    .bai-send.disabled { opacity: 0.32; cursor: default; }    /* idle + empty input — same slot, just quiet until there's something to send */
+    .bai-send.stop { color: var(--bai-text-hi); }
+    .bai-send:not(.disabled):hover { background: var(--bai-pill); color: var(--bai-text-hi); }   /* same hover pill as the status items */
     /* Phase 2: status line (model · credits) */
-    .bai-status { display: flex; align-items: center; gap: 8px; margin: 0 12px 11px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10.5px; color: var(--bai-dim); }
+    .bai-status { display: flex; align-items: center; gap: 8px; margin: 0 12px 11px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 10.5px; color: var(--bai-dim); }
     .bai-stat-r { margin-left: auto; display: flex; align-items: center; gap: 4px; }
     .bai-stat-wrap { position: relative; }
     .bai-stat-btn { background: none; border: none; border-radius: 6px; color: var(--bai-hover-ink); font-family: inherit; font-size: 10.5px; cursor: pointer; padding: 3px 7px; white-space: nowrap; transition: background 0.15s, color 0.15s; }
@@ -394,7 +464,7 @@
     .bai-credits-wrap .bai-menu-desc { left: auto; right: 0; width: 176px; white-space: normal; }   /* two-class specificity beats .bai-menu-desc's own left:0/right:0 — card hugs the window's right edge and grows LEFT, never off-screen */
     .bai-credits-wrap .bai-menu-desc.show { display: flex; flex-direction: column; gap: 5px; }
     .cr-head { font-size: 9.5px; letter-spacing: 0.6px; color: var(--bai-faint); }
-    .cr-big { font-size: 15px; font-weight: 700; color: var(--bai-text-bright); font-family: 'JetBrains Mono', ui-monospace, monospace; }
+    .cr-big { font-size: 15px; font-weight: 700; color: var(--bai-text-bright); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
     .cr-big .sp { font-weight: 400; }
     .cr-bar { height: 3px; border-radius: 2px; background: var(--bai-line-2); overflow: hidden; }
     .cr-bar i { display: block; height: 100%; border-radius: 2px; }
@@ -413,7 +483,7 @@
     .bai-menu-desc.show { display: block; }
     .bai-menu-items { display: flex; flex-direction: column; gap: 1px; }
     .bai-think-cv { width: 20px; height: 20px; animation: bai-think-pulse 1.15s ease-in-out infinite; }
-    .bai-think-txt { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12px; color: var(--bai-dim); }
+    .bai-think-txt { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 12px; color: var(--bai-dim); }
     .bai-think-txt em { font-style: normal; color: var(--bai-accent); }
     @keyframes bai-think-pulse { 0%, 100% { opacity: .5; transform: scale(.9); } 50% { opacity: 1; transform: scale(1.08); } }
     .bai-cursor { width: 7px; height: 15px; background: var(--bai-accent); display: inline-block; margin-left: -3px; animation: bai-blink 1.05s steps(1) infinite; }
@@ -423,7 +493,7 @@
     /* ---- Design-handoff Preview panel: collapsible, progressive-disclosure (matches the canonical blueAI
        product's dev-preview panel). Deliberately fixed dev-chrome colors, not --bai-* tokens — like the OS
        title bar, this tool should look the same regardless of the app's own dark/light theme. ---- */
-    .bai-preview { position: fixed; right: 14px; bottom: 14px; z-index: 200; font-family: 'JetBrains Mono', ui-monospace, monospace; }
+    .bai-preview { position: fixed; right: 14px; bottom: 14px; z-index: 200; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
     .bai-preview-fab { width: 34px; height: 34px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.14); background: rgba(10,14,26,0.78); backdrop-filter: blur(6px); color: #8190ad; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 20px rgba(0,0,0,0.35); transition: color 0.15s; }
     .bai-preview-fab:hover { color: #cdd6f4; }
     .bai-preview-fab.hidden { display: none; }
@@ -443,7 +513,7 @@
     .bai-preview-divider { height: 1px; background: rgba(255,255,255,0.08); }
 
     /* ---- Onboarding state · screen 1: headline + outcome cards (floating) + CTA under the assembled logo ---- */
-    .bai-onb { position: absolute; left: 0; right: 0; top: 41%; padding: 0 24px; display: none; flex-direction: column; align-items: center; gap: 20px; text-align: center; opacity: 0; transition: opacity 0.5s ease; font-family: 'JetBrains Mono', ui-monospace, monospace; }
+    .bai-onb { position: absolute; left: 0; right: 0; top: 41%; padding: 0 24px; display: none; flex-direction: column; align-items: center; gap: 20px; text-align: center; opacity: 0; transition: opacity 0.5s ease; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
     .bai-onb.on { display: flex; opacity: 1; }
     .bai-onb-h { font-size: 17.5px; font-weight: 700; letter-spacing: -0.3px; line-height: 1.42; color: var(--bai-text-bright); animation: onb-in 0.5s cubic-bezier(0.22,0.9,0.26,1) both; }
     .bai-onb-h em { font-style: normal; color: var(--bai-accent); }
@@ -478,12 +548,12 @@
     /* ---- Generic subpane shell: back header + scrollable body, push/pop stack (Chat History / Skills drill-down / etc.) ---- */
     .bai-subpane { position: absolute; left: 0; right: 0; top: 84px; bottom: 0; z-index: 50; display: none; flex-direction: column; background: var(--bai-bg); }   /* sits below header+strip, same anchor as the tour overlay */
     .bai-subpane.on { display: flex; }
-    .bai-subpane-head { flex-shrink: 0; display: flex; align-items: center; gap: 8px; padding: 12px 14px 9px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12.5px; font-weight: 700; color: var(--bai-text-bright); border-bottom: 1px solid var(--bai-line); }
+    .bai-subpane-head { flex-shrink: 0; display: flex; align-items: center; gap: 8px; padding: 12px 14px 9px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 12.5px; font-weight: 700; color: var(--bai-text-bright); border-bottom: 1px solid var(--bai-line); }
     .bai-subpane-back { flex-shrink: 0; border: none; background: none; color: var(--bai-icon-2); cursor: pointer; padding: 4px; border-radius: 6px; display: flex; transition: background 0.15s, color 0.15s; }
     .bai-subpane-back:hover { background: var(--bai-hover); color: var(--bai-hover-ink); }
     .bai-subpane-body { flex: 1; overflow-y: auto; padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 8px; }
     /* Chat History card (a subpane-body content type) */
-    .bai-history-card { display: flex; flex-direction: column; gap: 5px; padding: 11px 12px; background: var(--bai-card-2); border: 1px solid var(--bai-line); border-radius: 10px; cursor: pointer; font-family: 'JetBrains Mono', ui-monospace, monospace; transition: border-color 0.15s, background 0.15s; }
+    .bai-history-card { display: flex; flex-direction: column; gap: 5px; padding: 11px 12px; background: var(--bai-card-2); border: 1px solid var(--bai-line); border-radius: 10px; cursor: pointer; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; transition: border-color 0.15s, background 0.15s; }
     .bai-history-card:hover { border-color: var(--bai-accent-strong); background: var(--bai-hover-acc); }
     .bai-history-card.on { border-color: var(--bai-accent-strong); background: var(--bai-accent-wash); }
     .bai-history-card .hc-top { display: flex; align-items: center; gap: 8px; }
@@ -492,13 +562,13 @@
     .bai-history-card.unseen .hc-dot { background: var(--bai-accent); box-shadow: none; }
     .bai-history-card .hc-title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12.5px; color: var(--bai-text-strong); }
     .bai-history-card .hc-meta { font-size: 10px; color: var(--bai-dim); }
-    .bai-sched-badge { flex-shrink: 0; font-size: 9px; letter-spacing: 0.2px; padding: 2px 7px; border-radius: 20px; background: var(--bai-accent-wash); color: var(--bai-accent); border: 1px solid var(--bai-accent-line); font-family: 'JetBrains Mono', ui-monospace, monospace; }
+    .bai-sched-badge { flex-shrink: 0; font-size: 9px; letter-spacing: 0.2px; padding: 2px 7px; border-radius: 20px; background: var(--bai-accent-wash); color: var(--bai-accent); border: 1px solid var(--bai-accent-line); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
 
     /* ---- Onboarding · 3-step nav tour: dim + card under the mode strip, arrow at the highlighted tab ---- */
     .bai-tour { position: absolute; left: 0; right: 0; top: 84px; bottom: 0; z-index: 45; display: none; background: rgba(4,8,18,0.45); }   /* dim starts BELOW header+strip, so the chrome (and the canvas logo behind it) stays untouched */
     .bai-tour.on { display: block; }
     .bai-tab.tour-hi { color: var(--bai-text-bright); outline: 1.5px solid var(--bai-accent); outline-offset: 5px; border-radius: 4px; }
-    .bai-tour-card { position: absolute; top: 12px; left: 12px; right: 12px; display: flex; flex-direction: column; gap: 6px; background: var(--bai-panel); border: 1px solid var(--bai-line-2); border-radius: 12px; padding: 13px 14px; box-shadow: var(--bai-menu-shadow); font-family: 'JetBrains Mono', ui-monospace, monospace; }
+    .bai-tour-card { position: absolute; top: 12px; left: 12px; right: 12px; display: flex; flex-direction: column; gap: 6px; background: var(--bai-panel); border: 1px solid var(--bai-line-2); border-radius: 12px; padding: 13px 14px; box-shadow: var(--bai-menu-shadow); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
     .bai-tour-card::before { content: ''; position: absolute; top: -5.5px; left: var(--arrow-x, 26px); width: 9px; height: 9px; background: var(--bai-panel); border-left: 1px solid var(--bai-line-2); border-top: 1px solid var(--bai-line-2); transform: rotate(45deg); }
     .bai-tour-step { font-size: 9.5px; letter-spacing: 0.6px; color: var(--bai-accent); }
     .bai-tour-h { font-size: 13.5px; font-weight: 700; color: var(--bai-text-bright); }
@@ -550,11 +620,14 @@
               </div>
               <button class="bai-onb-cta" id="baiOnbCta" type="button">Get started &rsaquo;</button>
             </div>
+            <div class="bai-tgmodal" id="baiTgModal">
+              <div class="bai-tgmodal-card" id="baiTgModalCard"></div>
+            </div>
             <div class="bai-ui" id="baiUi">
               <div class="bai-sidebar" id="baiSidebar">
                 <div class="bai-side-brand"><canvas class="bai-side-logo" id="baiSideLogo"></canvas><span>BlueAI</span></div>
                 <div class="bai-side-nav">
-                  <div class="bai-side-item active" data-mode="chat"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-12.3 7.5L3 21l2-5.7A8.4 8.4 0 1 1 21 11.5z"/></svg></span>Chat<button class="bai-side-newicon" id="baiSideNew" type="button" aria-label="New chat" title="Start a new chat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M12 7v6M9 10h6"/></svg></button></div>
+                  <div class="bai-side-item active" data-mode="chat"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-12.3 7.5L3 21l2-5.7A8.4 8.4 0 1 1 21 11.5z"/></svg></span>Chat<button class="bai-side-newicon" id="baiSideNew" type="button" aria-label="New chat" title="Start a new chat"><svg viewBox="0 0 100 100" fill="currentColor"><path d="M83,49v18c0,8.8222656-7.1777344,16-16,16H24.2817383l-12.9570312,9.2548828c-.690918.4936523-1.5063477.7451172-2.3251953.7451172-.6254883,0-1.2529297-.1464844-1.8300781-.4433594-1.3320312-.6855469-2.1694336-2.0581055-2.1694336-3.5566406v-54c0-8.8222656,7.1777344-16,16-16h32c2.2089844,0,4,1.7910156,4,4s-1.7910156,4-4,4H21c-4.4111328,0-8,3.5888672-8,8v46.2270508l7.675293-5.4819336c.6782227-.4848633,1.4912109-.7451172,2.324707-.7451172h44c4.4111328,0,8-3.5888672,8-8v-18c0-2.2089844,1.7910156-4,4-4s4,1.7910156,4,4ZM91,19h-8v-8c0-2.2089844-1.7910156-4-4-4s-4,1.7910156-4,4v8h-8c-2.2089844,0-4,1.7910156-4,4s1.7910156,4,4,4h8v8c0,2.2089844,1.7910156,4,4,4s4-1.7910156,4-4v-8h8c2.2089844,0,4-1.7910156,4-4s-1.7910156-4-4-4ZM23,51c0,2.7614136,2.2385864,5,5,5s5-2.2385864,5-5-2.2385864-5-5-5-5,2.2385864-5,5ZM39,51c0,2.7614136,2.2385864,5,5,5s5-2.2385864,5-5-2.2385864-5-5-5-5,2.2385864-5,5ZM55,51c0,2.7614136,2.2385864,5,5,5s5-2.2385864,5-5-2.2385864-5-5-5-5,2.2385864-5,5Z"/></svg></button></div>
                   <button class="bai-side-item" data-mode="jobs" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h12M8 12h12M8 18h12"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/></svg></span>Jobs<span class="bai-side-badge">2</span></button>
                   <button class="bai-side-item" data-mode="skills" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg></span>Skills</button>
                   <button class="bai-side-item" data-mode="scheduled" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>Scheduled</button>
@@ -581,7 +654,7 @@
               </div>
               <div class="bai-main-title">
                 <button class="bai-title-btn" id="baiTitleBtn" type="button" title="Chat history"><span id="baiMainTitle">Untitled chat</span><span class="bai-title-ar"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span></button>
-                <button class="bai-icbtn bai-newchat-btn" id="baiNewBtn" type="button" aria-label="New chat" title="Start a new chat"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M12 7v6M9 10h6"/></svg></button>
+                <button class="bai-icbtn bai-newchat-btn" id="baiNewBtn" type="button" aria-label="New chat" title="Start a new chat"><svg width="15" height="15" viewBox="0 0 100 100" fill="currentColor"><path d="M83,49v18c0,8.8222656-7.1777344,16-16,16H24.2817383l-12.9570312,9.2548828c-.690918.4936523-1.5063477.7451172-2.3251953.7451172-.6254883,0-1.2529297-.1464844-1.8300781-.4433594-1.3320312-.6855469-2.1694336-2.0581055-2.1694336-3.5566406v-54c0-8.8222656,7.1777344-16,16-16h32c2.2089844,0,4,1.7910156,4,4s-1.7910156,4-4,4H21c-4.4111328,0-8,3.5888672-8,8v46.2270508l7.675293-5.4819336c.6782227-.4848633,1.4912109-.7451172,2.324707-.7451172h44c4.4111328,0,8-3.5888672,8-8v-18c0-2.2089844,1.7910156-4,4-4s4,1.7910156,4,4ZM91,19h-8v-8c0-2.2089844-1.7910156-4-4-4s-4,1.7910156-4,4v8h-8c-2.2089844,0-4,1.7910156-4,4s1.7910156,4,4,4h8v8c0,2.2089844,1.7910156,4,4,4s4-1.7910156,4-4v-8h8c2.2089844,0,4-1.7910156,4-4s-1.7910156-4-4-4ZM23,51c0,2.7614136,2.2385864,5,5,5s5-2.2385864,5-5-2.2385864-5-5-5-5,2.2385864-5,5ZM39,51c0,2.7614136,2.2385864,5,5,5s5-2.2385864,5-5-2.2385864-5-5-5-5,2.2385864-5,5ZM55,51c0,2.7614136,2.2385864,5,5,5s5-2.2385864,5-5-2.2385864-5-5-5-5,2.2385864-5,5Z"/></svg></button>
               </div>
               <div class="bai-panes">
                 <div class="bai-pane active" id="paneChat">
@@ -590,7 +663,7 @@
                     <div class="bai-inputrow">
                       <span class="bai-prompt">&rsaquo;</span>
                       <input class="bai-q" id="baiInput" type="text" placeholder="Ask BlueAI anything…" autocomplete="off" spellcheck="false" />
-                      <button class="bai-send" id="baiSend" type="button" aria-label="Stop"></button>
+                      <button class="bai-send" id="baiSend" type="button" aria-label="Send message"></button>
                     </div>
                   </div>
                   <div class="bai-history-note" id="baiHistoryNote">
@@ -608,6 +681,9 @@
                     </div>
                   </div>
                   <div class="bai-scroll" id="baiScroll"></div>
+                  <div class="bai-logingate" id="baiLoginGate">
+                    <div class="bai-logingate-card" id="baiLoginGateCard"></div>
+                  </div>
                 </div>
                 <div class="bai-pane" id="paneJobs"><div class="bai-stub"><div class="ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg></div><h4>Jobs</h4><p>Running &amp; completed agent runs land here: status, logs, and what was applied to.</p><span class="soon">·· soon</span></div></div>
                 <div class="bai-pane" id="paneSkills">
@@ -775,7 +851,17 @@
         (function step() { if (i >= n) return; el.textContent = text.slice(0, ++i); scrollBody(); setTimeout(step, Math.max(7, 42 - i * 0.75)); })();
       }
       function aiReply(text, extra) { var el = document.createElement('div'); el.className = 'bai-msg ai' + (extra ? ' ' + extra : ''); baiBody.appendChild(el); scrollBody(); typewrite(el, text); }
-      function setSend(stop) { thinking = stop; if (baiSend) baiSend.classList.toggle('stop', stop); }
+      var SEND_ICON = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/></svg>';
+      var STOP_ICON = '<svg width="14" height="14" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/></svg>';
+      function updateSendEnabled() { if (baiSend && !thinking) baiSend.classList.toggle('disabled', !baiInput.value.trim()); }
+      function setSend(stop) {
+        thinking = stop;
+        if (!baiSend) return;
+        baiSend.classList.toggle('stop', stop);
+        baiSend.innerHTML = stop ? STOP_ICON : SEND_ICON;
+        baiSend.setAttribute('aria-label', stop ? 'Stop' : 'Send message');
+        updateSendEnabled();
+      }
       function makeThinking() {                               // pending AI turn, inline below the user's message
         var el = document.createElement('div'); el.className = 'bai-thinking';
         var cv = document.createElement('canvas'); cv.className = 'bai-think-cv'; el.appendChild(cv);
@@ -788,15 +874,27 @@
       // (b) the Preview panel's one-tap "show me this state" buttons, so devs can check either way.
       function demoPlan() {
         renderResults({
-          kind: 'plan', items: [
-            { step: 'Understand the request', detail: 'Figure out exactly what you need' },
-            { step: 'Take action', detail: 'Run the right skill or tool' },
-            { step: 'Report back', detail: 'Confirm once everything is done' }
+          kind: 'plan',
+          intro: "You want me to find something useful to do right now and lay it out before I start.",
+          items: [
+            { text: 'Check Jobs and Scheduled for anything already in progress, so I don\'t duplicate work.' },
+            { text: 'Look at what you\'ve asked for recently to find the most useful next task.' },
+            { text: 'Run the right skill for it — job search, content creation, or a gaming script.' },
+            { text: 'Report back here once it\'s done, and flag anything that needs your OK first.' }
           ]
         });
       }
       function demoWarn() { renderWarning('This may use more credits than usual.'); }
       function demoInput() { renderOptions({ options: [{ label: 'Option A' }, { label: 'Option B' }, { label: 'Option C' }] }); }
+      function demoMenu() {
+        renderMenu('Here are some things I can do for you. Which would you like to start with?', [
+          { label: 'Collect Daily Rewards', desc: "I'll automatically open your games and claim your daily bonuses." },
+          { label: 'Get Strategy Guides', desc: 'Stuck in Genshin Impact or Honkai: Star Rail? I can find the best tips and builds for you.' },
+          { label: 'Claim Free Games', desc: "I'll check the Play Store for any paid games that are currently free to collect." },
+          { label: 'Try Something New', desc: 'I can find and install a new game for you based on your interests.' },
+          { label: 'Social Sharing', desc: 'I can help you share your latest gaming achievements or high scores to Reddit.' }
+        ]);
+      }
       function demoSuccess() { renderDone('Done — everything completed successfully.'); }
       function demoError() { renderError('Something went wrong while running that. Please try again.'); }
       // For the Preview panel's buttons specifically: a bare state render dropped straight into the chat
@@ -812,12 +910,13 @@
         if (t.indexOf('error') !== -1 || t.indexOf('fail') !== -1) { demoError(); return true; }
         if (t.indexOf('warn') !== -1) { demoWarn(); return true; }
         if (t.indexOf('plan') !== -1) { demoPlan(); return true; }
+        if (t.indexOf('menu') !== -1) { demoMenu(); return true; }
         if (t.indexOf('option') !== -1 || t.indexOf('choice') !== -1) { demoInput(); return true; }
         if (t.indexOf('success') !== -1 || t.indexOf('done') !== -1 || t.indexOf('complete') !== -1) { demoSuccess(); return true; }
         return false;
       }
-      function sendMessage(text) {
-        addUser(text);
+      function sendMessage(text) { addUser(text); proceedWithReply(text); }
+      function proceedWithReply(text) {
         credits = Math.max(0, credits - (30 + Math.floor(Math.random() * 90))); renderCredits();   // compute spent
         curThink = makeThinking(); var pi = 0;
         function tick() { curThink.txt.textContent = PHRASES[pi]; }   // no elapsed-time counter — BlueAI is a bit slow right now, a visible clock would only underline it
@@ -837,15 +936,74 @@
         setSend(false); scrollBody();
       }
       function submit() {
+        if (gateOpen) return;                                                          // blocked behind the sign-in gate
         if (thinking) { stopThinking(); return; }
         var v = baiInput.value.trim(); if (!v) return;
         baiInput.value = '';
         if (pending && pending.ask !== undefined) { resolveAsk(pending, v); return; }   // typed answer to a pending question
         if (pending) return;                                                            // awaiting an action (upload) — ignore stray text
+        if (!loggedIn) { addUser(v); pendingSendText = v; updateSendEnabled(); openLoginGate(); return; }   // first-ever message — gate before the reply
         sendMessage(v);
       }
       if (baiInput) baiInput.addEventListener('keydown', function (e) { if (e.key === 'Enter' && !thinking && baiInput.value.trim()) { e.preventDefault(); submit(); } });
+      if (baiInput) baiInput.addEventListener('input', updateSendEnabled);
       if (baiSend) baiSend.addEventListener('click', submit);
+      setSend(false);   // paint the initial idle send icon
+
+      // ---- Sign-in gate: shown once, right after the user's first-ever chat message, before any reply ----
+      // Mirrors the canonical blueAI product's real onboarding gate (PM feedback, 23 July): try-before-signup —
+      // let the user type, then require sign-in to claim their free credits before BlueAI actually replies.
+      var loggedIn = false, gateOpen = false, loginStep = 'claim', pendingSendText = null, loginBrowserT = null, loginSigningT = null;
+      var loginGateEl = document.getElementById('baiLoginGate'), loginGateCardEl = document.getElementById('baiLoginGateCard');
+      function openLoginGate() { gateOpen = true; loginStep = 'claim'; loginGateEl.classList.add('on'); renderLoginGate(); }
+      function closeLoginGate() { gateOpen = false; loginGateEl.classList.remove('on'); clearTimeout(loginBrowserT); clearTimeout(loginSigningT); }
+      function renderLoginGate() {
+        var el = loginGateCardEl; el.innerHTML = '';
+        if (loginStep === 'claim') {
+          el.innerHTML =
+            '<div class="lg-s">You need AI Credits to use BlueAI</div>' +
+            '<div class="lg-div"></div>' +
+            '<div class="lg-credits">500</div>' +
+            '<div class="lg-h" style="margin-top:-6px;">Free AI Credits</div>' +
+            '<div class="lg-s" style="margin-top:-6px;">on your first login</div>' +
+            '<div class="lg-check">' + iconSvg('<path d="M20 6 9 17l-5-5"/>', 13) + '<span>Enough for ~10 tasks</span></div>' +
+            '<div class="lg-div"></div>' +
+            '<button class="lg-cta" id="lgClaimBtn" type="button">Sign in to claim &rsaquo;</button>' +
+            '<a class="lg-link" id="lgTerms">Terms &amp; Conditions &rsaquo;</a>';
+          document.getElementById('lgClaimBtn').addEventListener('click', function () {
+            loginStep = 'browser'; renderLoginGate();
+            loginBrowserT = setTimeout(function () { loginStep = 'signing'; renderLoginGate(); loginSigningT = setTimeout(function () { loginStep = 'done'; renderLoginGate(); }, 1300); }, 1700);
+          });
+        } else if (loginStep === 'browser') {
+          el.innerHTML =
+            '<div class="lg-icon">' + iconSvg('<circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>', 22) + '</div>' +
+            '<div class="lg-h">Check your browser</div>' +
+            '<div class="lg-s">Finish logging in from your web browser</div>' +
+            '<div class="lg-div"></div>' +
+            '<a class="lg-link lg-link-warn" id="lgRetryLink">Not seeing the browser tab?</a>' +
+            '<button class="lg-cta" id="lgTryAgainBtn" type="button">Try again</button>';
+          document.getElementById('lgTryAgainBtn').addEventListener('click', function () {
+            clearTimeout(loginBrowserT); clearTimeout(loginSigningT);
+            loginStep = 'signing'; renderLoginGate();
+            loginSigningT = setTimeout(function () { loginStep = 'done'; renderLoginGate(); }, 1300);
+          });
+        } else if (loginStep === 'signing') {
+          el.innerHTML =
+            '<span class="bai-spin" style="width:26px;height:26px;border-width:3px;"></span>' +
+            '<div class="lg-h">Signing in…</div>' +
+            '<div class="lg-s">Please wait while we complete your sign-in</div>';
+        } else if (loginStep === 'done') {
+          el.innerHTML =
+            '<div class="lg-icon lg-icon-ok">' + iconSvg('<path d="M20 6 9 17l-5-5"/>', 22) + '</div>' +
+            '<div class="lg-h">Logged in</div>' +
+            '<div class="lg-s">Welcome back!</div>' +
+            '<button class="lg-cta" id="lgContinueBtn" type="button">Continue</button>';
+          document.getElementById('lgContinueBtn').addEventListener('click', function () {
+            loggedIn = true; credits = 500; renderCredits(); closeLoginGate();
+            if (pendingSendText != null) { var t = pendingSendText; pendingSendText = null; proceedWithReply(t); }
+          });
+        }
+      }
 
       // ---- Phase 2: status line (model · credits) + attachments (design-only) ----
       var MODELS = ['Auto', 'Opus 4.8', 'Sonnet 4.6', 'Gemini 3.1 Pro', 'GPT-5.4'];
@@ -1131,31 +1289,121 @@
         closeSchedForm(); renderScheduled();
       });
 
-      // ---- Settings: Notifications (pairing), AI Mode (Cloud/Hybrid), Own API key (BYOK), AI defaults ----
-      // Ported from the canonical blueAI product design's Settings card-stack, reworded away from Prime/
-      // subscription language (this desktop agent has no purchase flow, just a credit gauge) — BYOK, AI Mode,
-      // and AI defaults are all still genuinely relevant; "Telegram" became a generic notification pairing card.
-      var BELL_PATH = '<path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>';
+      // ---- Settings: Telegram, AI Mode (Cloud/Hybrid), Own API key (BYOK), AI defaults ----
+      // Ported from the canonical blueAI product design's Settings card-stack. Telegram copy/flow below
+      // matches the live product verbatim (PM feedback, 23 July) — a prior session had generalized this
+      // into a notification-only card; PM asked for the literal Telegram branding + connect flow back.
+      var TG_PATH = '<path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/>';
       var CPU_PATH = '<rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/>';
       var KEY_PATH = '<circle cx="8" cy="15" r="4"/><path d="M10.5 12.5L20 3M17 6l3 3M14 9l2 2"/>';
-      var notifyState = 'off';   // off | pairing | on
+      var TG_DESC = 'Connect your Telegram account and send commands to BlueAI from any device.';
+      var TG_BOT_USERNAME = 'MyBlueAIBot';   // fabricated for the demo — the live product derives this from the pasted token
+      var tgState = 'off';   // off | on — the actual connect flow lives in the #baiTgModal, not inline here
       function renderNotify() {
         var el = document.getElementById('baiNotifyCard'); el.innerHTML = '';
         var head = document.createElement('div'); head.className = 'bai-set-card-head';
-        head.innerHTML = '<span class="ic">' + iconSvg(BELL_PATH, 16) + '</span><span class="info"><b>Notifications</b><span>' + (notifyState === 'on' ? 'Connected · get notified when tasks finish' : 'Get notified on Telegram when tasks finish') + '</span></span>';
-        var btn = document.createElement('button'); btn.className = 'bai-set-btn' + (notifyState === 'off' ? ' primary' : notifyState === 'on' ? ' danger' : '');
-        btn.type = 'button'; btn.textContent = notifyState === 'off' ? 'Connect' : notifyState === 'on' ? 'Unlink' : 'Cancel';
-        btn.addEventListener('click', function () { notifyState = notifyState === 'off' ? 'pairing' : 'off'; renderNotify(); });
-        head.appendChild(btn); el.appendChild(head);
-        if (notifyState === 'pairing') {
-          var pairing = document.createElement('div'); pairing.className = 'bai-set-pairing';
-          pairing.innerHTML = '<span class="code">7 4 2 9 1 3</span><span class="hint">Enter this code in @BlueAIBot on Telegram</span>';
-          var confirmBtn = document.createElement('button'); confirmBtn.className = 'bai-set-btn primary'; confirmBtn.style.width = '100%'; confirmBtn.type = 'button'; confirmBtn.textContent = "I've paired — continue";
-          confirmBtn.addEventListener('click', function () { notifyState = 'on'; renderNotify(); });
-          el.appendChild(pairing); el.appendChild(confirmBtn);
-        }
+        var descHtml = tgState === 'on' ? 'Connected to <span style="color:var(--bai-accent);">@' + TG_BOT_USERNAME + '</span>' : TG_DESC;
+        head.innerHTML = '<span class="ic">' + iconSvg(TG_PATH, 16) + '</span><span class="info"><b>Telegram</b><span>' + descHtml + '</span></span>';
+        var btn = document.createElement('button'); btn.className = 'bai-set-btn' + (tgState === 'off' ? ' primary' : '');
+        btn.type = 'button'; btn.textContent = tgState === 'off' ? 'Connect Telegram' : 'Unlink';
+        btn.addEventListener('click', function () { if (tgState === 'off') { openTgModal(); } else { tgState = 'off'; renderNotify(); } });
+        head.appendChild(btn);
+        el.appendChild(head);
       }
       renderNotify();
+
+      // ---- Telegram connect modal: real 2-step BotFather flow (PM's reference screenshots, 23 July) ----
+      // Step 1 (paste bot token) AND step 2 (pairing code + live-status card) are both ported verbatim from
+      // the live product's actual dialog — title, copy, the alphanumeric code + regenerate/copy controls,
+      // the expiry countdown, the "/link CODE" slash command, and the inline "Waiting…/Abort" status card.
+      var tgModalEl = document.getElementById('baiTgModal'), tgModalCardEl = document.getElementById('baiTgModalCard');
+      var REFRESH_PATH = '<path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v6h-6"/>';
+      var COPY_PATH = '<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>';
+      var tgStep = 'token', tgWaitT = null, tgCountdownT = null, tgCode = '', tgExpireSec = 600;
+      function openTgModal() { tgStep = 'token'; tgModalEl.classList.add('on'); renderTgModal(); }
+      function closeTgModal() {
+        if (tgStep === 'done') { tgState = 'on'; renderNotify(); }   // dismissing after success still counts as connected
+        tgModalEl.classList.remove('on'); clearTimeout(tgWaitT); clearInterval(tgCountdownT);
+      }
+      function tgHead(title) { return '<div class="tgm-head"><span class="tgm-ic">' + iconSvg(TG_PATH, 15) + '</span><span class="tgm-title">' + title + '</span><button class="tgm-close" id="tgmClose" type="button" aria-label="Close">&times;</button></div>'; }
+      function genPairCode() { var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', s = ''; for (var i = 0; i < 6; i++) s += chars[(Math.random() * chars.length) | 0]; return s; }
+      function fmtCountdown(sec) { var m = Math.floor(sec / 60), s = sec % 60; return m + ':' + (s < 10 ? '0' : '') + s; }
+      function enterPairingStep() {
+        tgCode = genPairCode(); tgExpireSec = 600; tgStep = 'pairing'; renderTgModal();
+        clearInterval(tgCountdownT);
+        tgCountdownT = setInterval(function () {
+          tgExpireSec = Math.max(0, tgExpireSec - 1);
+          var v = document.getElementById('tgmExpireVal'); if (v) v.textContent = fmtCountdown(tgExpireSec);
+          if (tgExpireSec <= 0) clearInterval(tgCountdownT);
+        }, 1000);
+        clearTimeout(tgWaitT);
+        tgWaitT = setTimeout(function () { tgStep = 'done'; renderTgModal(); clearInterval(tgCountdownT); }, 2200);   // simulates BlueAI detecting the /link command
+      }
+      function renderTgModal() {
+        var el = tgModalCardEl; el.innerHTML = '';
+        if (tgStep === 'token') {
+          el.innerHTML = tgHead('Connect your Telegram bot') +
+            '<div class="tgm-body">' +
+              '<p>Create a bot in Telegram and link it to BlueAI</p>' +
+              '<b>In Telegram:</b>' +
+              '<ul>' +
+                '<li>Search for <b>@BotFather</b> and tap <b>Start</b></li>' +
+                '<li>Send <code>/newbot</code></li>' +
+                '<li>Enter a name for your bot (any name, e.g. <i>BlueAIAgent</i>)</li>' +
+                '<li>Choose a unique username for your bot (must end with "bot", e.g. <i>MyBlueAIBot</i>)</li>' +
+                '<li>Copy the bot token (a code like <i>1234567890:ABCDef...</i>)</li>' +
+              '</ul>' +
+              '<span class="tgm-label">Paste your bot token</span>' +
+              '<input class="tgm-input" id="tgmTokenInput" placeholder="Paste token from Telegram" autocomplete="off" spellcheck="false" />' +
+              '<span class="tgm-hint">🔒 Your token is private and used only to connect your bot.</span>' +
+            '</div>' +
+            '<div class="tgm-foot"><span class="tgm-step">Step 1 of 2</span><button class="tgm-cta" id="tgmContinueBtn" type="button">Continue to Pairing</button></div>';
+          document.getElementById('tgmContinueBtn').addEventListener('click', function () {
+            var tok = document.getElementById('tgmTokenInput'); if (!tok.value.trim()) { tok.focus(); return; }
+            var btn = document.getElementById('tgmContinueBtn'); btn.disabled = true; btn.textContent = 'Saving…';
+            setTimeout(enterPairingStep, 800);   // brief "validating the token" beat, matches the live product
+          });
+        } else if (tgStep === 'pairing') {
+          el.innerHTML = tgHead('Set up Telegram connection') +
+            '<div class="tgm-body">' +
+              '<p>Create a secure connection between your bot and BlueAI</p>' +
+              '<span class="tgm-label">Your pairing code</span>' +
+              '<div class="tgm-code-row">' +
+                '<span class="tgm-code" id="tgmCodeText">' + tgCode + '</span>' +
+                '<button class="tgm-icbtn" id="tgmRegenBtn" type="button" aria-label="Generate new code">' + iconSvg(REFRESH_PATH, 15) + '</button>' +
+                '<button class="tgm-copybtn" id="tgmCopyBtn" type="button">' + iconSvg(COPY_PATH, 13) + 'Copy</button>' +
+              '</div>' +
+              '<span class="tgm-expire">' + iconSvg(SCHED_PATH, 12) + 'Expires in <span id="tgmExpireVal">' + fmtCountdown(tgExpireSec) + '</span></span>' +
+              '<b>In Telegram:</b>' +
+              '<ul>' +
+                '<li>Open your bot: <a class="tgm-link" href="#" onclick="return false;">t.me/' + TG_BOT_USERNAME + '</a></li>' +
+                '<li>Tap <b>Start</b></li>' +
+                '<li>Send this command:<br /><code>/link ' + tgCode + '</code></li>' +
+              '</ul>' +
+              '<div class="tgm-waitcard"><span class="bai-spin"></span><span class="tgm-waittxt"><b>Waiting for confirmation…</b><span>We\'ll automatically complete setup once your bot is linked.</span></span></div>' +
+              '<button class="tgm-abort" id="tgmAbortBtn" type="button">Abort</button>' +
+            '</div>' +
+            '<div class="tgm-foot"><span class="tgm-step">Step 2 of 2</span></div>';
+          document.getElementById('tgmRegenBtn').addEventListener('click', enterPairingStep);
+          document.getElementById('tgmCopyBtn').addEventListener('click', function (e) {
+            var b = e.currentTarget;
+            if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(tgCode).catch(function () {});
+            var orig = b.innerHTML; b.innerHTML = iconSvg('<path d="M20 6 9 17l-5-5"/>', 13) + 'Copied';
+            setTimeout(function () { b.innerHTML = orig; }, 1200);
+          });
+          document.getElementById('tgmAbortBtn').addEventListener('click', closeTgModal);
+        } else if (tgStep === 'done') {
+          el.innerHTML = tgHead('Set up Telegram connection') +
+            '<div class="tgm-body" style="align-items:center;text-align:center;padding:26px 16px;">' +
+              '<div class="lg-icon lg-icon-ok">' + iconSvg('<path d="M20 6 9 17l-5-5"/>', 20) + '</div>' +
+              '<div style="font-weight:700;font-size:14.5px;color:#101828;">You\'re all set</div>' +
+              '<div style="font-size:11.5px;color:#667085;">Telegram is now connected to BlueAI.</div>' +
+              '<button class="tgm-cta" id="tgmDoneBtn" type="button" style="margin-top:6px;">Done</button>' +
+            '</div>';
+          document.getElementById('tgmDoneBtn').addEventListener('click', closeTgModal);
+        }
+        var closeBtn = document.getElementById('tgmClose'); if (closeBtn) closeBtn.addEventListener('click', closeTgModal);
+      }
 
       var aiMode = 'cloud', hybridMethod = 'auto', hybridStatus = 'idle', downloadPct = 0, hybridTimer = null, customApplied = false;
       function renderAiMode() {
@@ -1437,6 +1685,12 @@
         if (s.allowText) { var h = document.createElement('div'); h.className = 'bai-opt-hint'; h.textContent = 'or type your own below'; g.appendChild(h); }
         baiBody.appendChild(g); scrollBody();
       }
+      function renderMenu(intro, items) {
+        var el = document.createElement('div'); el.className = 'bai-menucard';
+        var itemsHtml = items.map(function (it) { return '<li><b>' + it.label + '</b>: ' + it.desc + '</li>'; }).join('');
+        el.innerHTML = '<div class="mn-intro">' + intro + '</div><ol class="mn-list">' + itemsHtml + '</ol>';
+        baiBody.appendChild(el); scrollBody();
+      }
       function resolveAsk(s, value) {
         if (s._g) s._g.remove();
         if (s.key) ctx[s.key] = value;
@@ -1444,12 +1698,17 @@
         advance(520);
       }
       function renderResults(r) {
-        if (r.kind === 'plan') { var head = document.createElement('div'); head.className = 'bai-res-head'; head.textContent = '◆ PROPOSED PLAN'; baiBody.appendChild(head); }
+        if (r.kind === 'plan') {
+          var card = document.createElement('div'); card.className = 'bai-plancard';
+          var stepsHtml = (r.items || []).map(function (it) { return '<li>' + (it.text ? it.text : '<b>' + it.step + '</b> — ' + it.detail) + '</li>'; }).join('');
+          card.innerHTML = '<div class="pl-label">PLAN</div>' + (r.intro ? '<div class="pl-intro">' + r.intro + '</div>' : '') + '<ol class="pl-steps">' + stepsHtml + '</ol>';
+          baiBody.appendChild(card); scrollBody();
+          return;
+        }
         var list = document.createElement('div'); list.className = 'bai-reslist';
         (r.items || []).forEach(function (it) {
           var c = document.createElement('div'); c.className = 'bai-rescard';
-          if (r.kind === 'jobs') c.innerHTML = '<div class="top"><span class="rtitle">' + it.title + '</span><span class="src">' + it.source + '</span></div><div class="meta">' + it.company + ' · ' + it.meta + '</div><div class="match">▸ ' + it.match + '</div>';
-          else c.innerHTML = '<div class="top"><span class="rtitle">' + it.step + '</span></div><div class="meta">' + it.detail + '</div>';
+          c.innerHTML = '<div class="top"><span class="rtitle">' + it.title + '</span><span class="src">' + it.source + '</span></div><div class="meta">' + it.company + ' · ' + it.meta + '</div><div class="match">▸ ' + it.match + '</div>';
           list.appendChild(c);
         });
         baiBody.appendChild(list); scrollBody();
@@ -1654,6 +1913,7 @@
           rows.push(previewActionRow('Plan', function () { togglerDemo("what's the plan?", 'planning…', demoPlan); }));
           rows.push(previewActionRow('Warning', function () { togglerDemo('go ahead', 'checking…', demoWarn); }));
           rows.push(previewActionRow('Input required', function () { togglerDemo('which platform first?', 'thinking…', demoInput); }));
+          rows.push(previewActionRow('Input required (menu)', function () { togglerDemo('what can you help me with?', 'checking…', demoMenu); }));
           rows.push(previewActionRow('Success', function () { togglerDemo('did it finish?', 'wrapping up…', demoSuccess); }));
           rows.push(previewActionRow('Error', function () { togglerDemo('try that again', 'retrying…', demoError); }));
         }
