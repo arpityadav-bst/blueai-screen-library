@@ -55,7 +55,7 @@
       --bai-line: #262f52; --bai-line-2: #303c68; --bai-line-focus: #3c4f8f; --bai-line-soft: rgba(120,150,220,0.12); --bai-accent-line: #33509e;
       --bai-text-bright: #f3f5fd; --bai-text-strong: #edf0fa; --bai-text-hi: #d2d9f2; --bai-text: #c2cbe8; --bai-text-soft: #dce2f8;
       --bai-muted-2: #8a96c0; --bai-muted: #8590b8; --bai-dim: #7b87ae; --bai-dim-2: #6a75a2; --bai-faint: #596492; --bai-icon: #576392; --bai-icon-2: #8fa6e0; --bai-hover-ink: #b0bff0;
-      --bai-accent: #4a8bf5; --bai-accent-strong: #2c5fd0; --bai-accent-wash: rgba(74,139,245,0.14); --bai-on-accent: #071023;
+      --bai-accent: #4a8bf5; --bai-accent-strong: #2c5fd0; --bai-accent-wash: rgba(74,139,245,0.14); --bai-on-accent: #071023; --bai-chip-bg: var(--bai-accent-wash);
       --bai-ok: #34cf8f; --bai-danger: #ff5c68; --bai-scroll: rgba(160,180,220,0.5); --bai-menu-shadow: 0 10px 30px rgba(0,0,0,0.58);
       --bai-credit-hi: #4a8bf5; --bai-credit-mid: #f0b429; --bai-credit-low: #f2914a; --bai-credit-crit: #ff5c68;
       --bai-titlebar-bg: #080a14; --bai-titlebar-line: #05060c; --bai-titlebar-text: #e7ecfa; --bai-titlebar-icon: #99a8dc;   /* fixed near-black navy — matches BlueStacks' own title bar; never redefined in .drawer.light */
@@ -67,7 +67,7 @@
       --bai-line: #dbe2ee; --bai-line-2: #c9d4e6; --bai-line-focus: #a9bcdc; --bai-line-soft: rgba(30,60,120,0.12); --bai-accent-line: #b7cdf2;
       --bai-text-bright: #101828; --bai-text-strong: #17202f; --bai-text-hi: #232f45; --bai-text: #35415a; --bai-text-soft: #1f2b42;
       --bai-muted-2: #5a6a88; --bai-muted: #5d6c8a; --bai-dim: #5f6e8c; --bai-dim-2: #5f6b83; --bai-faint: #66748e; --bai-icon: #5c687f; --bai-icon-2: #52648a; --bai-hover-ink: #33415e;
-      --bai-accent: #2258c9; --bai-accent-strong: #1a45a8; --bai-accent-wash: rgba(34,88,201,0.10); --bai-on-accent: #ffffff;
+      --bai-accent: #2258c9; --bai-accent-strong: #1a45a8; --bai-accent-wash: rgba(34,88,201,0.10); --bai-on-accent: #ffffff; --bai-chip-bg: var(--bai-accent-wash);
       --bai-ok: #0e7c3a; --bai-danger: #d92d2d; --bai-scroll: rgba(70,90,130,0.45); --bai-menu-shadow: 0 8px 24px rgba(25,40,80,0.16);
       --bai-credit-hi: #2258c9; --bai-credit-mid: #a16207; --bai-credit-low: #b04d08; --bai-credit-crit: #d92d2d;
     }
@@ -160,6 +160,39 @@
     .bai-seg-btn { border: none; background: none; border-radius: 5px; padding: 4px 10px; font-family: inherit; font-size: 11px; color: var(--bai-dim-2); cursor: pointer; transition: background 0.15s, color 0.15s; }
     .bai-seg-btn:hover { color: var(--bai-hover-ink); }
     .bai-seg-btn.active { background: var(--bai-accent); color: var(--bai-on-accent); }
+    /* Fix #3 (visual review): a quieter selected-state for segmented controls that sit ABOVE a primary
+       action in the same card (AI Mode's Cloud/Hybrid + Auto/Custom) — the solid-fill .active above is
+       correct for standalone toggles (Appearance), but next to a solid "Download & enable"/"Apply" button
+       it made every control in the card compete at the same visual weight.
+       Batch 1 (LB-06): the accent-wash treatment above still shared the SAME hue as the primary CTA, so
+       the two kept reading as one competing family rather than a clear primary/secondary pair — confirmed
+       via computed-style measurement (wash-fill vs solid-fill is a real but low-severity distinction, not
+       zero). Reserved the accent hue exclusively for the one primary action per card; segmented selection
+       now reads via a neutral raised-surface + bold-text treatment instead, with no accent color at all. */
+    .bai-seg.quiet .bai-seg-btn.active { background: var(--bai-pill); color: var(--bai-text-hi); font-weight: 700; box-shadow: inset 0 0 0 1px var(--bai-line-2); }
+    .bai-seg-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    /* Part 4: AI Mode's Cloud/Hybrid + Auto/Custom choices as option cards (title + explanatory subtext)
+       instead of label-only segmented buttons. Selected state reuses the SAME quiet neutral-fill rule as
+       .bai-seg.quiet above (LB-06) — accent hue stays reserved for the card's one primary action
+       (Download & enable / Apply), so a selected option card reads as chosen without competing with it. */
+    .bai-optcard-group { display: flex; flex-direction: column; gap: 6px; }
+    .bai-optcard { position: relative; display: flex; align-items: flex-start; gap: 9px; width: 100%; border: 1px solid var(--bai-line-2); border-radius: 9px; padding: 9px 10px; cursor: pointer; background: var(--bai-input-bg); font-family: inherit; text-align: left; transition: background 0.15s; }
+    .bai-optcard:hover { background: var(--bai-hover); }
+    .bai-optcard.active { background: var(--bai-pill); }
+    .bai-optcard.active .bai-optcard-title { font-weight: 700; color: var(--bai-text-hi); }
+    .bai-optcard.disabled { opacity: 0.45; cursor: not-allowed; }
+    .bai-optcard-dot { flex-shrink: 0; width: 15px; height: 15px; margin-top: 1px; border-radius: 50%; border: 1.5px solid var(--bai-line-2); display: flex; align-items: center; justify-content: center; }
+    .bai-optcard.active .bai-optcard-dot { border-color: var(--bai-text-hi); }
+    .bai-optcard.active .bai-optcard-dot::after { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--bai-text-hi); }
+    .bai-optcard-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+    .bai-optcard-title { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--bai-text); }
+    .bai-optcard-sub { font-size: 10.5px; color: var(--bai-dim); line-height: 1.4; }
+    .bai-optcard-badge { font-size: 9px; font-weight: 700; color: var(--bai-accent); }
+    /* Batch 3 (H25): small always-visible dot on the Auto segment when its download/install/run keeps
+       going in the background while Custom is the one being viewed — the terminal deliberately never
+       resets either flow on a method switch, so this makes that otherwise-invisible activity legible. */
+    .bai-bgprogress { position: absolute; top: 3px; right: 5px; font-size: 7px; line-height: 1; color: var(--bai-accent); animation: bai-bg-pulse 1.4s ease-in-out infinite; }
+    @keyframes bai-bg-pulse { 0%, 100% { opacity: 0.35; } 50% { opacity: 1; } }
 
     /* ---- Skills / Scheduled tabs: list + empty state + inline "new item" creation form ---- */
     .bai-list-head { flex-shrink: 0; display: flex; align-items: center; justify-content: flex-end; padding: 12px 14px 9px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }   /* the pane's own "Skills"/"Scheduled" label already comes from the shared main-title bar above — no second heading here */
@@ -177,7 +210,7 @@
     .bai-shimmer .sh-line { display: block; height: 9px; border-radius: 4px; margin: 3px 0; background: var(--bai-line-2); animation: bai-shimmer-pulse 1.1s ease-in-out infinite; }
     .bai-shimmer .sh-line.short { width: 55%; }
     @keyframes bai-shimmer-pulse { 0%, 100% { opacity: 0.35; } 50% { opacity: 0.8; } }
-    .bai-item-card .rm { flex-shrink: 0; border: none; background: none; color: var(--bai-faint); cursor: pointer; padding: 4px; border-radius: 6px; font-size: 11px; opacity: 0; transition: opacity 0.15s, color 0.15s, background 0.15s; }
+    .bai-item-card .rm { flex-shrink: 0; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border: none; background: none; color: var(--bai-faint); cursor: pointer; border-radius: 6px; opacity: 0; transition: opacity 0.15s, color 0.15s, background 0.15s; }   /* fixed square box, matches .bai-icbtn's footprint (Fix #4) */
     .bai-item-card:hover .rm { opacity: 1; }
     .bai-item-card .rm:hover { color: var(--bai-danger); background: var(--bai-hover); }
     .bai-tgl { width: 28px; height: 16px; border-radius: 20px; background: var(--bai-input-bg); border: 1px solid var(--bai-line-2); position: relative; cursor: pointer; flex-shrink: 0; transition: background 0.15s, border-color 0.15s; }
@@ -189,16 +222,20 @@
     .bai-newitem-input:focus, .bai-newitem-textarea:focus { border-color: var(--bai-line-focus); }
     .bai-newitem-textarea { resize: none; min-height: 50px; line-height: 1.4; }
     .bai-newitem-actions { display: flex; justify-content: flex-end; gap: 6px; }
-    .bai-newitem-cancel { border: none; background: none; color: var(--bai-dim); font-family: inherit; font-size: 11px; padding: 6px 10px; border-radius: 7px; cursor: pointer; }
+    .bai-newitem-cancel { border: none; background: none; color: var(--bai-dim); font-family: inherit; font-size: 11px; padding: 6px 10px; border-radius: 8px; cursor: pointer; }
     .bai-newitem-cancel:hover { background: var(--bai-hover); color: var(--bai-hover-ink); }
-    .bai-newitem-create { border: none; background: var(--bai-accent); color: var(--bai-on-accent); font-family: inherit; font-size: 11px; font-weight: 700; padding: 6px 12px; border-radius: 7px; cursor: pointer; transition: filter 0.15s; }
+    .bai-newitem-create { border: none; background: var(--bai-accent); color: var(--bai-on-accent); font-family: inherit; font-size: 11px; font-weight: 700; padding: 6px 12px; border-radius: 8px; cursor: pointer; transition: filter 0.15s; }
     .bai-newitem-create:hover { filter: brightness(1.12); }
 
     /* ---- Skills: search, category rows (home), skill cards (drill-down), details block, sticky create CTA ---- */
-    .bai-search { flex-shrink: 0; margin: 11px 14px 3px; display: flex; align-items: center; gap: 7px; padding: 8px 10px; background: var(--bai-input-bg); border: 1px solid var(--bai-line-2); border-radius: 9px; }
+    .bai-search { flex-shrink: 0; margin: 11px 14px 9px; display: flex; align-items: center; gap: 7px; padding: 8px 10px; background: var(--bai-input-bg); border: 1px solid var(--bai-line-2); border-radius: 9px; }   /* Fix #7: bottom margin 3px->9px; combined with .bai-list-body's own 2px top padding, the search-to-first-card gap is now 11px total, matching Scheduled's list-head-to-first-row gap exactly instead of an isolated ~5px */
     .bai-search svg { flex-shrink: 0; color: var(--bai-faint); }
     .bai-search input { flex: 1; min-width: 0; background: none; border: none; outline: none; color: var(--bai-text-strong); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 11.5px; }
     .bai-search input::placeholder { color: var(--bai-faint); }
+    /* Batch 5 (LB-02): search-clear control — hidden until there's a query to clear */
+    .bai-search-clear { display: none; flex-shrink: 0; width: 20px; height: 20px; align-items: center; justify-content: center; border: none; border-radius: 5px; background: none; color: var(--bai-faint); cursor: pointer; transition: background 0.15s, color 0.15s; }
+    .bai-search-clear.show { display: flex; }
+    .bai-search-clear:hover { background: var(--bai-hover); color: var(--bai-hover-ink); }
     .bai-cat-row { display: flex; align-items: center; gap: 12px; padding: 13px; background: var(--bai-card-2); border: 1px solid var(--bai-line); border-radius: 11px; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
     .bai-cat-row:hover { border-color: var(--bai-accent-strong); background: var(--bai-hover-acc); }
     .bai-cat-row .ic { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: color-mix(in srgb, var(--cc, var(--bai-accent)) 15%, transparent); color: var(--cc, var(--bai-accent)); }
@@ -208,35 +245,58 @@
     .bai-cat-row .ar { flex-shrink: 0; color: var(--bai-faint); }
     .bai-skillcard { display: flex; flex-direction: column; gap: 9px; padding: 13px; background: var(--bai-card-2); border: 1px solid var(--bai-line); border-radius: 12px; cursor: pointer; transition: border-color 0.15s; }
     .bai-skillcard:hover { border-color: var(--bai-accent-strong); }
+    .bai-skillcard .sk-content { display: flex; flex-direction: column; gap: 6px; }   /* Fix #6: title+desc are both "about the skill" — tighter than their gap to the footer's "actions" */
     .bai-skillcard .sk-top { display: flex; align-items: center; gap: 8px; }
     .bai-skillcard .sk-top b { flex: 1; min-width: 0; font-size: 12.5px; color: var(--bai-text-hi); font-weight: 500; }
     .bai-skillcard .sk-desc { font-size: 10.5px; line-height: 1.55; color: var(--bai-dim); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
     .bai-skillcard .sk-foot { display: flex; align-items: center; gap: 8px; margin-top: 2px; }
-    .bai-sk-try { border: 1px solid var(--bai-accent-line); background: var(--bai-accent-wash); color: var(--bai-accent); font-family: inherit; font-size: 10.5px; font-weight: 700; padding: 5px 12px; border-radius: 20px; cursor: pointer; transition: filter 0.15s; }
+    .bai-sk-try { border: 1px solid var(--bai-accent-line); background: var(--bai-accent-wash); color: var(--bai-accent); font-family: inherit; font-size: 10.5px; font-weight: 700; padding: 6px 12px; border-radius: 8px; cursor: pointer; transition: filter 0.15s; }   /* Fix #6: shared 8px family radius, was a 20px pill unlike any other control */
     .bai-sk-try:hover { filter: brightness(1.18); }
-    .bai-sk-link { border: none; background: none; color: var(--bai-dim); font-family: inherit; font-size: 10.5px; cursor: pointer; padding: 5px 7px; border-radius: 6px; margin-left: auto; }
+    .sk-manage { display: flex; align-items: center; gap: 2px; margin-left: auto; }   /* Fix #6: Edit+Delete grouped as one unit, tight internal gap (closely related), clearly separated from Try */
+    .bai-sk-link { border: none; background: none; color: var(--bai-dim); font-family: inherit; font-size: 10.5px; cursor: pointer; padding: 6px 10px; border-radius: 8px; margin-left: auto; }   /* default: standalone "Details ›" sits at the right edge */
+    .sk-manage .bai-sk-link { margin-left: 0; }   /* inside the group, the WRAPPER's own margin-left:auto does the push instead */
     .bai-sk-link:hover { color: var(--bai-hover-ink); background: var(--bai-hover); }
     .bai-sk-link.danger:hover { color: var(--bai-danger); }
     .bai-kv-block { display: flex; flex-direction: column; border: 1px solid var(--bai-line); border-radius: 11px; overflow: hidden; }
     .bai-kv-row { display: flex; align-items: center; justify-content: space-between; padding: 11px 13px; font-size: 11px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+    /* ---- Batch 2: Profile screen (Subpane content — reuses .bai-kv-block/.bai-kv-row verbatim) ---- */
+    .bai-profile-head { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 18px 0 16px; }
+    .bai-profile-avatar { width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 22px; font-weight: 700; background: linear-gradient(135deg, var(--bai-accent), #7c5cf0); }
+    .bai-profile-name { font-size: 13px; font-weight: 700; color: var(--bai-text-hi); }
+    .bai-profile-email { font-size: 10.5px; color: var(--bai-dim); }
+    .bai-kv-row .verified { background: color-mix(in srgb, var(--bai-ok) 16%, transparent); color: var(--bai-ok); font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 20px; margin-left: 6px; }
+    /* ---- Batch 2: system-level Logout confirm — shares .bai-logingate's exact footprint (OVL-01) via
+       the same class, so it's the identical overlay tier as Login/Telegram, not a one-off. ---- */
+    .bai-logoutgate-card { width: 100%; max-width: 230px; background: var(--bai-card); border: 1px solid var(--bai-line-2); border-radius: 12px; padding: 20px; box-shadow: 0 24px 60px rgba(0,0,0,0.4); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; animation: onb-in 0.3s cubic-bezier(0.22,0.9,0.26,1) both; }
+    .bai-logoutgate-title { font-size: 13px; font-weight: 700; color: var(--bai-text-strong); line-height: 1.4; margin-bottom: 16px; }
+    .bai-logoutgate-actions { display: flex; gap: 8px; }
+    .bai-logoutgate-actions button { flex: 1; padding: 8px; border-radius: 8px; font-family: inherit; font-size: 11px; cursor: pointer; }
+    .bai-logoutgate-cancel { border: 1px solid var(--bai-line-2); background: var(--bai-input-bg); color: var(--bai-text); font-weight: 600; }
+    .bai-logoutgate-cancel:hover { background: var(--bai-hover); }
+    .bai-logoutgate-confirm { border: none; background: var(--bai-danger); color: var(--bai-on-accent); font-weight: 700; transition: filter 0.15s; }
+    .bai-logoutgate-confirm:hover { filter: brightness(1.08); }
     .bai-kv-row + .bai-kv-row { border-top: 1px solid var(--bai-line); }
     .bai-kv-row .k { color: var(--bai-dim); }
     .bai-kv-row .v { color: var(--bai-text-strong); }
     .bai-sticky-cta { flex-shrink: 0; padding: 12px 14px; border-top: 1px solid var(--bai-line); background: var(--bai-panel); }
     .bai-sticky-cta button { width: 100%; border: none; background: var(--bai-accent); color: var(--bai-on-accent); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 11.5px; font-weight: 700; padding: 11px; border-radius: 10px; cursor: pointer; transition: filter 0.15s; }
     .bai-sticky-cta button:hover { filter: brightness(1.12); }
-    .bai-create-tabs { flex-shrink: 0; display: flex; gap: 16px; padding: 0 0 9px; border-bottom: 1px solid var(--bai-line); margin-bottom: 13px; }
-    .bai-create-tab { border: none; background: none; color: var(--bai-dim); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 10.5px; font-weight: 700; padding: 0 0 9px; cursor: pointer; position: relative; }
+    .bai-create-tabs { flex-shrink: 0; display: flex; padding: 0 0 9px; border-bottom: 1px solid var(--bai-line); margin-bottom: 13px; }
+    .bai-create-tab { flex: 1; text-align: center; border: none; background: none; color: var(--bai-dim); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 10.5px; font-weight: 700; padding: 0 4px 9px; cursor: pointer; position: relative; }   /* Fix #5: flex:1 = equal-width columns; the .on::after underline below is left/right:0 of THIS element, so it's now automatically constrained to one equal column instead of varying with each label's text length */
     .bai-create-tab.on { color: var(--bai-text-bright); }
     .bai-create-tab.on::after { content: ''; position: absolute; left: 0; right: 0; bottom: -10px; height: 2px; background: var(--bai-accent); }
-    .bai-upload-row { display: flex; align-items: center; gap: 9px; padding: 12px 13px; background: var(--bai-input-bg); border: 1px dashed var(--bai-line-2); border-radius: 10px; cursor: pointer; color: var(--bai-text); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 11.5px; }
-    .bai-upload-hint { font-size: 10px; line-height: 1.55; color: var(--bai-dim); padding: 10px 11px; background: var(--bai-accent-wash); border-radius: 9px; margin-top: 9px; }
+    .bai-upload-row { display: flex; align-items: center; justify-content: center; gap: 9px; padding: 12px 13px; background: var(--bai-accent-wash); border: 1px solid var(--bai-accent-line); border-radius: 8px; cursor: pointer; color: var(--bai-accent); font-weight: 700; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 11.5px; transition: filter 0.15s; }   /* Fix #5: a clear secondary action (accent-tinted, shared 8px radius) instead of a dashed passive drop-zone */
+    .bai-upload-row:hover { filter: brightness(1.1); }
+    .bai-upload-hint { font-size: 10px; line-height: 1.55; color: var(--bai-dim); padding: 10px 11px; background: var(--bai-card-2); border: 1px solid var(--bai-line); border-radius: 9px; margin-top: 9px; }
     .bai-ai-create { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 11px; text-align: center; padding: 22px 10px; }
     .bai-ai-create .ic { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: var(--bai-accent-wash); color: var(--bai-accent); }
     .bai-ai-create p { font-size: 11px; line-height: 1.55; color: var(--bai-dim); max-width: 220px; }
 
     /* ---- Settings: multi-line cards (Notifications / AI Mode / Own key / AI defaults) ---- */
-    .bai-set-card { display: flex; flex-direction: column; gap: 11px; padding: 13px; background: var(--bai-card-2); border: 1px solid var(--bai-line); border-radius: 11px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+    .bai-set-card { display: flex; flex-direction: column; gap: 11px; padding: 13px; background: var(--bai-card-2); border: 1px solid var(--bai-line); border-radius: 11px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; transition: box-shadow 0.3s ease, border-color 0.3s ease; }
+    /* Batch 4: routed-from-OOC-modal highlight — brief attention pulse, not a permanent state */
+    .bai-set-card.bai-highlight { border-color: var(--bai-accent-strong); box-shadow: 0 0 0 3px var(--bai-accent-wash); animation: bai-highlight-pulse 1.1s ease-in-out 2; }
+    @keyframes bai-highlight-pulse { 0%, 100% { box-shadow: 0 0 0 3px var(--bai-accent-wash); } 50% { box-shadow: 0 0 0 5px var(--bai-accent-wash); } }
     .bai-set-card-head { display: flex; align-items: center; gap: 10px; }
     .bai-set-card-head .ic { width: 32px; height: 32px; border-radius: 9px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: var(--bai-chip-bg); color: var(--bai-accent); }
     .bai-set-card-head .info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
@@ -247,63 +307,76 @@
     .bai-set-btn.primary { border: none; background: var(--bai-accent); color: var(--bai-on-accent); }
     .bai-set-btn.primary:hover { filter: brightness(1.12); }
     .bai-set-btn.danger { color: var(--bai-danger); border-color: color-mix(in srgb, var(--bai-danger) 40%, var(--bai-line-2)); }
-    .bai-spin { flex-shrink: 0; width: 14px; height: 14px; border-radius: 50%; border: 2px solid #e2e6ee; border-top-color: #2f6fed; animation: bai-spin-rot 0.7s linear infinite; }
+    .bai-spin { flex-shrink: 0; width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--bai-line-2); border-top-color: var(--bai-accent); animation: bai-spin-rot 0.7s linear infinite; }
     @keyframes bai-spin-rot { to { transform: rotate(360deg); } }
-    /* Sign-in gate + Telegram connect — the live product's own "system-level" dialogs: these stay a fixed
-       WHITE card regardless of the app's dark/light theme (confirmed from the reference screenshots — same
-       convention as the OS titlebar staying constant), unlike every other themed surface in this file. */
-    .bai-logingate { position: absolute; inset: 0; z-index: 220; display: none; align-items: center; justify-content: center; padding: 20px; background: rgba(4,8,18,0.52); backdrop-filter: blur(7px); -webkit-backdrop-filter: blur(7px); }
+    /* Sign-in gate + Telegram connect — system-level blocking overlays (audit: OVL-01/THEME-01). Content,
+       sequence and timing are ported from the live product's own dialogs; surface/text/border colors are
+       re-authored on this app's own --bai-* tokens so both re-theme correctly in dark and light, unlike the
+       reference (which has no dark theme). Both share one modal-title definition (.lg-h, .tgm-title below). */
+    .bai-logingate { position: absolute; top: 30px; left: 0; right: 0; bottom: 0; z-index: 220; display: none; align-items: center; justify-content: center; padding: 20px; background: rgba(4,8,18,0.52); backdrop-filter: blur(7px); -webkit-backdrop-filter: blur(7px); }
     .bai-logingate.on { display: flex; }
-    .bai-logingate-card { width: 100%; max-width: 258px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; background: #ffffff; border-radius: 14px; padding: 22px 19px; box-shadow: 0 20px 60px rgba(0,0,0,0.4); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; animation: onb-in 0.3s cubic-bezier(0.22,0.9,0.26,1) both; }
-    .lg-s { font-size: 11px; line-height: 1.5; color: #667085; }
-    .lg-h { font-size: 15px; font-weight: 700; color: #101828; }
-    .lg-credits { font-size: 38px; font-weight: 700; line-height: 1; background: linear-gradient(90deg, #2f6fed, #7c5cf0); -webkit-background-clip: text; background-clip: text; color: transparent; }
-    .lg-check { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #2f6fed; }
-    .lg-div { align-self: stretch; height: 1px; background: #eceef3; }
-    .lg-cta { align-self: stretch; border: none; border-radius: 10px; padding: 11px; background: #2f6fed; color: #ffffff; font-family: inherit; font-size: 12px; font-weight: 700; cursor: pointer; transition: filter 0.15s; }
+    .bai-logingate-card { position: relative; width: 100%; max-width: 258px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; background: var(--bai-card); border-radius: 14px; padding: 22px 19px; box-shadow: 0 20px 60px rgba(0,0,0,0.4); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; animation: onb-in 0.3s cubic-bezier(0.22,0.9,0.26,1) both; }
+    /* Batch 2: claim-step-only close control — same 24x24/6px-radius spec as every other icon button */
+    .lg-close { position: absolute; top: 10px; right: 10px; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border: none; border-radius: 6px; background: none; color: var(--bai-faint); cursor: pointer; transition: background 0.15s, color 0.15s; }
+    .lg-close:hover { background: var(--bai-hover); color: var(--bai-hover-ink); }
+    .lg-s { font-size: 11px; line-height: 1.5; color: var(--bai-dim); }
+    .lg-h, .tgm-title { font-size: 15px; font-weight: 700; color: var(--bai-text-hi); line-height: 1.3; }   /* one shared modal-title definition (TYP-01); line-height added in Fix #8 so a wrapped title stays comfortable next to the header's icon/close controls */
+    .lg-title-group { display: flex; flex-direction: column; gap: 6px; }   /* SPC-02: replaces the old inline negative-margin heading/subtext pairing */
+    .lg-credits { font-size: 38px; font-weight: 700; line-height: 1; background: linear-gradient(90deg, var(--bai-accent), var(--bai-accent-strong)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .lg-check { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--bai-accent); }
+    .lg-div { align-self: stretch; height: 1px; background: var(--bai-line); }
+    .lg-cta { align-self: stretch; border: none; border-radius: 10px; padding: 11px; background: var(--bai-accent); color: var(--bai-on-accent); font-family: inherit; font-size: 12px; font-weight: 700; cursor: pointer; transition: filter 0.15s; }
     .lg-cta:hover { filter: brightness(1.08); }
-    .lg-link { font-size: 10.5px; color: #8a94a6; cursor: pointer; text-decoration: none; }
-    .lg-link:hover { color: #4a5468; }
-    .lg-link-warn { color: #b5750a; }
-    .lg-icon { width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #eef2fb; color: #2f6fed; }
-    .lg-icon-ok { background: #e3f8ee; color: #17a866; }
+    .lg-link { font-size: 10.5px; color: var(--bai-faint); cursor: pointer; text-decoration: none; }
+    .lg-link:hover { color: var(--bai-hover-ink); }
+    .lg-link-warn { color: var(--bai-credit-mid); }
+    .lg-icon { width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--bai-accent-wash); color: var(--bai-accent); }
+    .lg-icon-ok { background: color-mix(in srgb, var(--bai-ok) 15%, transparent); color: var(--bai-ok); }
     /* Telegram bot-connect modal — 2-step BotFather flow, matches the live product's real dialog verbatim */
     .bai-tgmodal { position: absolute; top: 30px; left: 0; right: 0; bottom: 0; z-index: 230; display: none; align-items: center; justify-content: center; padding: 20px; background: rgba(4,8,18,0.52); backdrop-filter: blur(7px); -webkit-backdrop-filter: blur(7px); }
     .bai-tgmodal.on { display: flex; }
-    .bai-tgmodal-card { width: 100%; max-width: 300px; max-height: 100%; overflow-y: auto; scrollbar-width: none; display: flex; flex-direction: column; background: #ffffff; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.4); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; animation: onb-in 0.3s cubic-bezier(0.22,0.9,0.26,1) both; }
+    .bai-tgmodal-card { width: 100%; max-width: 336px; max-height: 100%; overflow-y: auto; scrollbar-width: none; display: flex; flex-direction: column; background: var(--bai-card); border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.4); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; animation: onb-in 0.3s cubic-bezier(0.22,0.9,0.26,1) both; }   /* Batch 1: 300->336px gives the header row's title more room before wrapping — still comfortably clear of a 380px compact drawer's own 20px backdrop padding each side */
     .bai-tgmodal-card::-webkit-scrollbar { width: 0; height: 0; display: none; }
-    .tgm-head { display: flex; align-items: center; gap: 10px; padding: 16px 16px 14px; border-bottom: 1px solid #eceef3; }
-    .tgm-ic { flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%; background: #2f6fed; color: #ffffff; display: flex; align-items: center; justify-content: center; }
-    .tgm-title { flex: 1; font-size: 14.5px; font-weight: 700; color: #101828; }
-    .tgm-close { flex-shrink: 0; background: none; border: none; color: #98a2b3; font-size: 15px; cursor: pointer; padding: 4px; line-height: 1; }
-    .tgm-close:hover { color: #475467; }
-    .tgm-body { padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; font-size: 12px; line-height: 1.55; color: #3a4356; }
-    .tgm-body b { color: #101828; }
+    .tgm-head { display: flex; align-items: center; gap: 8px; padding: 16px 16px 14px; border-bottom: 1px solid var(--bai-line); }   /* Batch 1: gap 10->8px, a little more room back to the title */
+    .tgm-ic { flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%; background: var(--bai-accent); color: var(--bai-on-accent); display: flex; align-items: center; justify-content: center; }   /* Fix #8: 32->28px so it no longer dominates a 28px-footprint close control */
+    .tgm-close { flex-shrink: 0; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: none; border: none; color: var(--bai-faint); cursor: pointer; border-radius: 6px; transition: background 0.15s, color 0.15s; }   /* Fix #8: comparable square footprint to .tgm-ic, real hover surface instead of a bare text glyph */
+    .tgm-close:hover { background: var(--bai-hover); color: var(--bai-hover-ink); }
+    .tgm-head .tgm-title { flex: 1; min-width: 0; }   /* scoped to .tgm-head only — lets a no-icon header (stdModalHead) push .tgm-close fully right without touching .lg-h's shared rule */
+    .tgm-body { padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; font-size: 12px; line-height: 1.55; color: var(--bai-text); }
+    .tgm-body b { color: var(--bai-text-hi); }
     .tgm-body ul { padding-left: 18px; display: flex; flex-direction: column; gap: 6px; }
-    .tgm-body code { background: #f1f3f8; padding: 1px 5px; border-radius: 4px; font-size: 11px; }
-    .tgm-label { font-size: 12px; font-weight: 700; color: #101828; margin-top: 2px; }
-    .tgm-input { width: 100%; border: 1.5px solid #cfd6e4; border-radius: 9px; padding: 10px 12px; font-size: 12px; font-family: inherit; color: #101828; outline: none; background: #fff; }
-    .tgm-input:focus { border-color: #2f6fed; }
-    .tgm-hint { display: flex; align-items: center; gap: 6px; font-size: 10.5px; color: #8a94a6; }
+    .tgm-body code { background: var(--bai-input-bg); padding: 1px 5px; border-radius: 4px; font-size: 11px; }
+    .tgm-label { font-size: 12px; font-weight: 700; color: var(--bai-text-hi); margin-top: 2px; }
+    .tgm-input { width: 100%; border: 1.5px solid var(--bai-line-2); border-radius: 9px; padding: 10px 12px; font-size: 12px; font-family: inherit; color: var(--bai-text-strong); outline: none; background: var(--bai-input-bg); }
+    .tgm-input:focus { border-color: var(--bai-line-focus); }
+    .tgm-hint { display: flex; align-items: center; gap: 6px; font-size: 10.5px; color: var(--bai-faint); }
     .tgm-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 16px 16px; }
-    .tgm-step { font-size: 11px; color: #8a94a6; }
-    .tgm-cta { border: none; border-radius: 22px; padding: 10px 20px; background: #2f6fed; color: #ffffff; font-family: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer; transition: filter 0.15s; }
+    .tgm-step { font-size: 11px; color: var(--bai-faint); }
+    .tgm-cta { border: none; border-radius: 10px; padding: 10px 20px; background: var(--bai-accent); color: var(--bai-on-accent); font-family: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer; transition: filter 0.15s; }   /* Batch 1: was a 22px pill, the only primary CTA in the app not on the shared 8-10px family */
     .tgm-cta:hover { filter: brightness(1.08); }
     .tgm-cta:disabled { opacity: 0.55; cursor: default; }
-    .tgm-code-row { display: flex; align-items: center; gap: 6px; border: 1.5px solid #cfd6e4; border-radius: 9px; padding: 9px 10px; }
-    .tgm-code { flex: 1; font-size: 15px; font-weight: 700; letter-spacing: 2px; color: #101828; }
-    .tgm-icbtn { flex-shrink: 0; background: none; border: none; color: #667085; cursor: pointer; padding: 4px; display: flex; }
-    .tgm-icbtn:hover { color: #2f6fed; }
-    .tgm-copybtn { flex-shrink: 0; display: flex; align-items: center; gap: 4px; background: none; border: none; color: #2f6fed; font-family: inherit; font-size: 11.5px; font-weight: 700; cursor: pointer; padding: 4px 6px; white-space: nowrap; }
-    .tgm-expire { display: flex; align-items: center; gap: 5px; font-size: 10.5px; color: #8a94a6; }
-    .tgm-link { color: #2f6fed; text-decoration: none; font-weight: 600; }
+    .tgm-code-row { display: flex; align-items: center; gap: 6px; border: 1.5px solid var(--bai-line-2); border-radius: 9px; padding: 9px 10px; }
+    .tgm-code { flex: 1; font-size: 15px; font-weight: 700; letter-spacing: 2px; color: var(--bai-text-hi); }
+    .tgm-icbtn { flex-shrink: 0; width: 26px; height: 26px; background: none; border: none; border-radius: 6px; color: var(--bai-faint); cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; transition: background 0.15s, color 0.15s; }   /* Batch 1: square footprint + hover fill, matching .bai-icbtn's established pattern */
+    .tgm-icbtn:hover { background: var(--bai-hover); color: var(--bai-accent); }
+    .tgm-copybtn { flex-shrink: 0; display: flex; align-items: center; gap: 4px; background: none; border: none; color: var(--bai-accent); font-family: inherit; font-size: 11.5px; font-weight: 700; cursor: pointer; padding: 4px 6px; white-space: nowrap; }
+    .tgm-expire { display: flex; align-items: center; gap: 5px; font-size: 10.5px; color: var(--bai-faint); }
+    .tgm-link { color: var(--bai-accent); text-decoration: none; font-weight: 600; }
     .tgm-link:hover { text-decoration: underline; }
-    .tgm-waitcard { display: flex; align-items: flex-start; gap: 9px; background: #f6f8fc; border-radius: 10px; padding: 11px 12px; margin-top: 2px; }
+    .tgm-waitcard { display: flex; align-items: flex-start; gap: 9px; background: var(--bai-card-2); border-radius: 10px; padding: 11px 12px; margin-top: 2px; }
     .tgm-waittxt { display: flex; flex-direction: column; gap: 2px; font-size: 11px; }
-    .tgm-waittxt b { font-size: 11.5px; color: #101828; }
-    .tgm-waittxt span { color: #8a94a6; }
-    .tgm-abort { align-self: center; border: 1px solid #d7dce6; background: #ffffff; color: #344054; font-family: inherit; font-size: 11.5px; font-weight: 600; padding: 8px 18px; border-radius: 20px; cursor: pointer; }
-    .tgm-abort:hover { background: #f6f8fc; }
+    .tgm-waittxt b { font-size: 11.5px; color: var(--bai-text-hi); }
+    .tgm-waittxt span { color: var(--bai-faint); }
+    .tgm-abort { align-self: center; border: 1px solid var(--bai-line-2); background: var(--bai-input-bg); color: var(--bai-text); font-family: inherit; font-size: 11.5px; font-weight: 600; padding: 8px 18px; border-radius: 8px; cursor: pointer; }   /* Batch 1: was a 20px pill, the only secondary action in the app not on the shared 8px family */
+    .tgm-abort:hover { background: var(--bai-hover); }
+    /* Shared modal-action family (OOC redesign) — one geometry for primary+secondary so a footer never mixes
+       .tgm-cta and .bai-set-btn again; both stack full-width with consistent height/radius/type. */
+    .bai-modalact-group { display: flex; flex-direction: column; gap: 9px; margin-top: 2px; }
+    .bai-modalact { align-self: stretch; width: 100%; min-height: 41px; border-radius: 9px; padding: 0 16px; font-family: inherit; font-size: 12.5px; font-weight: 700; line-height: 1.3; cursor: pointer; transition: filter 0.15s, background 0.15s, border-color 0.15s; display: flex; align-items: center; justify-content: center; text-align: center; }
+    .bai-modalact.primary { border: none; background: var(--bai-accent); color: var(--bai-on-accent); }
+    .bai-modalact.primary:hover { filter: brightness(1.08); }
+    .bai-modalact.secondary { border: 1px solid var(--bai-line-2); background: var(--bai-input-bg); color: var(--bai-text); }
+    .bai-modalact.secondary:hover { background: var(--bai-hover); }
     .bai-set-divider { height: 1px; background: var(--bai-line); margin: 1px 0; }
     .bai-set-field { display: flex; flex-direction: column; gap: 5px; }
     .bai-set-field-label { font-size: 10.5px; color: var(--bai-dim); }
@@ -325,7 +398,7 @@
     .bai-sidebar { position: absolute; left: 0; top: 0; bottom: 0; width: 210px; display: none; flex-direction: column; padding: 12px 8px; background: var(--bai-panel); border-right: 1px solid var(--bai-line); z-index: 6; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
     .bai-ui.wide .bai-sidebar { display: flex; top: 46px; }                                  /* sits BELOW the full-width header */
     .bai-ui.wide .bai-panes, .bai-ui.wide .bai-main-title { margin-left: 210px; }             /* main content clears the sidebar; header stays full-width */
-    .bai-ui.wide .bai-strip, .bai-ui.wide #baiSettingsBtn, .bai-ui.wide #baiNewBtn, .bai-ui.wide .bai-title-ar { display: none; }   /* wide: sidebar owns modes/new-chat/recents; header keeps logo + "BlueAI" brand */
+    .bai-ui.wide .bai-strip, .bai-ui.wide #baiSettingsBtn, .bai-ui.wide #baiNewBtn, .bai-ui.wide .bai-title-ar, .bai-ui.wide #baiHeadHelpWrap, .bai-ui.wide #baiHeadAcctWrap { display: none; }   /* wide: sidebar owns modes/new-chat/recents/settings/help/account; header keeps logo + "BlueAI" brand */
     .bai-main-title { flex-shrink: 0; display: flex; align-items: center; padding: 12px 14px 6px; }   /* title (left) + new-chat icon (right), below the brand header */
     /* non-chat modes: the title is just a plain pane label — recents arrow + new-chat are chat-surface tools */
     .bai-ui.nonchat .bai-title-ar, .bai-ui.nonchat .bai-newchat-btn { display: none; }
@@ -336,8 +409,8 @@
     .bai-side-brand { display: none; }   /* header carries the logo now; sidebar starts at New chat */
     .bai-side-logo { width: 20px; height: 20px; flex-shrink: 0; }
     .bai-side-nav { display: flex; flex-direction: column; gap: 1px; }
-    .bai-side-newicon { margin-left: auto; flex-shrink: 0; display: flex; align-items: center; justify-content: center; padding: 0; border: none; background: none; color: var(--bai-dim-2); cursor: pointer; transition: color 0.15s; }   /* sits inside the Chat item, right edge */
-    .bai-side-newicon:hover { color: var(--bai-text-hi); }
+    .bai-side-newicon { margin-left: auto; flex-shrink: 0; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; padding: 0; border: none; border-radius: 6px; background: none; color: var(--bai-dim-2); cursor: pointer; transition: background 0.15s, color 0.15s; }   /* sits inside the Chat item, right edge. Batch 1: square footprint + hover fill added, matching .bai-icbtn's established square-hover pattern instead of a bare color-only hover */
+    .bai-side-newicon:hover { background: var(--bai-pill); color: var(--bai-text-hi); }
     .bai-side-newicon svg { width: 15px; height: 15px; display: block; }
     .bai-side-item { position: relative; display: flex; align-items: center; gap: 9px; width: 100%; padding: 7px 10px; border: none; background: none; border-radius: 6px; color: var(--bai-muted-2); font-family: inherit; font-size: 12px; text-align: left; cursor: pointer; transition: background 0.15s, color 0.15s; }
     .bai-side-item:hover { background: var(--bai-hover); color: var(--bai-text-hi); }
@@ -359,7 +432,7 @@
     .bai-side-rec .tm { flex-shrink: 0; font-size: 10px; color: var(--bai-faint); }
     .bai-side-foot { margin-top: auto; border-top: 1px solid var(--bai-line); padding-top: 6px; display: flex; align-items: center; gap: 4px; }
     .bai-side-foot .bai-side-item { flex: 1; }
-    .bai-body { flex: 1; overflow-y: auto; padding: 12px 12px 18px; display: flex; flex-direction: column; gap: 8px; scrollbar-width: none; }
+    .bai-body { flex: 1; overflow-y: auto; padding: 14px 14px 18px; display: flex; flex-direction: column; gap: 8px; scrollbar-width: none; }
     /* Native scrollbar hidden everywhere scrollable — the custom .bai-scroll fade-thumb is the only visible affordance, subtle and only shown while actively scrolling (see bindFadeScroll in JS). */
     .bai-body::-webkit-scrollbar, .bai-set::-webkit-scrollbar, .bai-list-body::-webkit-scrollbar, .bai-subpane-body::-webkit-scrollbar, .bai-side-recents::-webkit-scrollbar { width: 0; height: 0; display: none; }
     .bai-set, .bai-list-body, .bai-subpane-body, .bai-side-recents { scrollbar-width: none; }
@@ -418,12 +491,22 @@
     .bai-plancard .pl-intro { font-size: 12px; line-height: 1.45; color: var(--bai-text-strong); }
     .bai-plancard .pl-steps { display: flex; flex-direction: column; gap: 6px; margin: 0; padding-left: 18px; font-size: 12px; line-height: 1.45; color: var(--bai-text); }
     .bai-plancard .pl-steps b { color: var(--bai-text-strong); }
-    .bai-warnrow { align-self: stretch; display: flex; align-items: flex-start; gap: 7px; padding: 8px 10px; margin: 1px 0 2px; background: color-mix(in srgb, var(--bai-credit-mid) 12%, transparent); border: 1px solid color-mix(in srgb, var(--bai-credit-mid) 32%, transparent); border-radius: 8px; }
+    .bai-warnrow { align-self: stretch; display: flex; align-items: flex-start; gap: 7px; padding: 9px 11px; margin: 1px 0 2px; background: color-mix(in srgb, var(--bai-credit-mid) 12%, transparent); border: 1px solid color-mix(in srgb, var(--bai-credit-mid) 32%, transparent); border-radius: 8px; }
     .bai-warnrow svg { flex-shrink: 0; margin-top: 1px; color: var(--bai-credit-mid); }
     .bai-warnrow span { font-size: 11px; line-height: 1.45; color: var(--bai-text); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
     .bai-donecard { align-self: stretch; margin: 1px 0 2px; padding: 9px 11px; display: flex; flex-direction: column; gap: 3px; background: color-mix(in srgb, var(--bai-ok) 9%, var(--bai-card-2)); border: 1px solid color-mix(in srgb, var(--bai-ok) 35%, var(--bai-line)); border-radius: 8px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
     .bai-donecard .dc-head { display: flex; align-items: center; gap: 5px; color: var(--bai-ok); font-size: 10px; font-weight: 700; letter-spacing: 0.3px; }
     .bai-donecard .dc-body { color: var(--bai-text-strong); font-size: 12px; line-height: 1.45; }
+    /* Batch 5: feedback thumbs on completed tasks, + reason chips on thumbs-down */
+    .bai-fb { display: flex; align-items: center; gap: 4px; margin-top: 4px; }
+    .bai-fb-btn { width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; border: none; border-radius: 6px; background: none; color: var(--bai-dim); cursor: pointer; transition: background 0.15s, color 0.15s; }
+    .bai-fb-btn:hover { background: var(--bai-hover); color: var(--bai-hover-ink); }
+    .bai-fb-btn.picked.up { color: var(--bai-ok); background: color-mix(in srgb, var(--bai-ok) 14%, transparent); }
+    .bai-fb-btn.picked.down { color: var(--bai-danger); background: color-mix(in srgb, var(--bai-danger) 14%, transparent); }
+    .bai-fb-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
+    .bai-fb-chip { border: 1px solid var(--bai-line-2); background: var(--bai-input-bg); color: var(--bai-text); font-family: inherit; font-size: 10px; padding: 4px 9px; border-radius: 20px; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+    .bai-fb-chip:hover { border-color: var(--bai-accent-strong); background: var(--bai-hover-acc); }
+    .bai-fb-thanks { font-size: 10.5px; color: var(--bai-dim); margin-top: 4px; }
     .bai-errorcard { align-self: stretch; margin: 1px 0 2px; padding: 9px 11px; display: flex; flex-direction: column; gap: 3px; background: color-mix(in srgb, var(--bai-danger) 9%, var(--bai-card-2)); border: 1px solid color-mix(in srgb, var(--bai-danger) 35%, var(--bai-line)); border-radius: 8px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
     .bai-errorcard .ec-head { display: flex; align-items: center; gap: 5px; color: var(--bai-danger); font-size: 10px; font-weight: 700; letter-spacing: 0.3px; }
     .bai-errorcard .ec-body { color: var(--bai-text-strong); font-size: 12px; line-height: 1.45; }
@@ -456,8 +539,12 @@
     .bai-stat-btn { background: none; border: none; border-radius: 6px; color: var(--bai-hover-ink); font-family: inherit; font-size: 10.5px; cursor: pointer; padding: 3px 7px; white-space: nowrap; transition: background 0.15s, color 0.15s; }
     .bai-stat-btn:hover { background: var(--bai-pill); color: var(--bai-text-bright); }   /* hover pill is the affordance — no persistent arrow */
     /* credits: a small circular gauge — % remaining at a glance, exact numbers on hover */
-    .bai-credits-wrap { display: flex; align-items: center; padding: 3px 5px; border-radius: 6px; cursor: default; transition: background 0.15s; }
+    .bai-credits-wrap { position: relative; display: flex; align-items: center; padding: 3px 5px; border-radius: 6px; cursor: default; transition: background 0.15s; }
     .bai-credits-wrap:hover { background: var(--bai-pill); }   /* same hover pill as the model button */
+    /* Batch 4: low-credit alert dot — suppressed while BYOK covers real usage (renderCredits only adds
+       the .low class when !byokActive), matching the reference's lowDot formula. */
+    .bai-credits-wrap.low::after { content: ''; position: absolute; top: 1px; right: 1px; width: 6px; height: 6px; border-radius: 50%; background: var(--bai-credit-crit); border: 1.5px solid var(--bai-panel); }
+    .cr-prime { color: var(--bai-credit-mid); font-weight: 700; }
     .bai-credit-ring { width: 14px; height: 14px; display: block; transform: rotate(-90deg); }   /* arc starts at 12 o'clock */
     .bai-credit-ring .tr { fill: none; stroke: var(--bai-line-2); stroke-width: 3; }
     .bai-credit-ring .fl { fill: none; stroke-width: 3; stroke-linecap: round; transition: stroke-dasharray 0.3s ease, stroke 0.3s ease; }
@@ -469,11 +556,26 @@
     .cr-bar { height: 3px; border-radius: 2px; background: var(--bai-line-2); overflow: hidden; }
     .cr-bar i { display: block; height: 100%; border-radius: 2px; }
     .cr-sub { font-size: 10px; line-height: 1.4; color: var(--bai-dim); }
+    /* Part 2: AI Credits screen — a bigger restatement of the same gauge (.cr-* above), same color ramp
+       (creditColor) and same PRIME badge, just sized for a dedicated screen instead of a hover popover. */
+    .aic-hero { display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; padding: 10px 0 4px; }
+    .aic-hero-label { font-size: 10px; font-weight: 700; letter-spacing: 0.6px; color: var(--bai-faint); }
+    .aic-hero-num { font-size: 34px; font-weight: 700; line-height: 1; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+    .aic-hero-sub { font-size: 11px; color: var(--bai-dim); }
+    .aic-bar { align-self: stretch; height: 5px; border-radius: 3px; background: var(--bai-line-2); overflow: hidden; margin: 4px 0 2px; }
+    .aic-bar i { display: block; height: 100%; border-radius: 3px; }
     .bai-menu { position: absolute; bottom: calc(100% + 6px); right: 0; min-width: 124px; background: var(--bai-panel); border: 1px solid var(--bai-line-2); border-radius: 8px; padding: 4px; display: none; flex-direction: column; gap: 1px; box-shadow: var(--bai-menu-shadow); z-index: 30; }
     .bai-menu.open { display: flex; }
-    .bai-menu-item { display: flex; align-items: center; gap: 6px; padding: 6px 8px; border-radius: 5px; font-size: 11px; color: var(--bai-text); cursor: pointer; white-space: nowrap; }
+    /* Batch 2: downward-opening variant — the header/sidebar Help + Account menus anchor from the TOP
+       of the app, unlike the composer's model picker (anchors from the bottom status bar upward). Same
+       component, same tokens, just flips which edge it grows from. */
+    .bai-menu.down { bottom: auto; top: calc(100% + 6px); }
+    .bai-menu-item { display: flex; align-items: center; gap: 7px; padding: 7px 9px; border-radius: 5px; font-size: 11px; color: var(--bai-text); cursor: pointer; white-space: nowrap; }
     .bai-menu-item:hover { background: var(--bai-hover-acc); }
     .bai-menu-item .mk { width: 8px; color: var(--bai-accent); }
+    .bai-menu-item.danger { color: var(--bai-danger); }
+    .bai-menu-item svg { flex-shrink: 0; }
+    .bai-menu-divider { height: 1px; background: var(--bai-line); margin: 3px 2px; }
     /* popover title + ? help (description shows on hover/tap) */
     .bai-menu-head { display: flex; align-items: center; gap: 8px; padding: 3px 6px 6px; border-bottom: 1px solid var(--bai-line); margin-bottom: 4px; }
     .bai-menu-title { font-size: 11px; color: var(--bai-hover-ink); letter-spacing: 0.2px; }
@@ -493,7 +595,10 @@
     /* ---- Design-handoff Preview panel: collapsible, progressive-disclosure (matches the canonical blueAI
        product's dev-preview panel). Deliberately fixed dev-chrome colors, not --bai-* tokens — like the OS
        title bar, this tool should look the same regardless of the app's own dark/light theme. ---- */
-    .bai-preview { position: fixed; right: 14px; bottom: 14px; z-index: 200; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+    /* Correction: this is a design-review control, not product UI — it must stay above every prototype
+       overlay (highest in-drawer z-index is .bai-tgmodal at 230) so a reviewer can keep changing Geo/
+       Membership/Own key/Credits while an OOC or Hybrid-setup modal is open and watch it update live. */
+    .bai-preview { position: fixed; right: 14px; bottom: 14px; z-index: 500; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
     .bai-preview-fab { width: 34px; height: 34px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.14); background: rgba(10,14,26,0.78); backdrop-filter: blur(6px); color: #8190ad; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 20px rgba(0,0,0,0.35); transition: color 0.15s; }
     .bai-preview-fab:hover { color: #cdd6f4; }
     .bai-preview-fab.hidden { display: none; }
@@ -511,6 +616,12 @@
     .bai-preview-action:hover { filter: brightness(1.15); }
     .bai-preview-seg button.on { background: #2a4a86; color: #eaf0ff; }
     .bai-preview-divider { height: 1px; background: rgba(255,255,255,0.08); }
+    /* Correction: Session has 3 labels ("Onboarding"/"Logged out"/"Logged in") that overflowed the default
+       label-left/control-right row (scrollWidth 260px > clientWidth 210px). Stack label above a full-width,
+       equal-flex segmented group instead — same card width, no clipping. */
+    .bai-preview-row-stacked { flex-direction: column; align-items: stretch; gap: 5px; }
+    .bai-preview-seg.stretch { flex-shrink: 1; width: 100%; }
+    .bai-preview-seg.stretch button { flex: 1; padding-left: 3px; padding-right: 3px; text-align: center; }
 
     /* ---- Onboarding state · screen 1: headline + outcome cards (floating) + CTA under the assembled logo ---- */
     .bai-onb { position: absolute; left: 0; right: 0; top: 41%; padding: 0 24px; display: none; flex-direction: column; align-items: center; gap: 20px; text-align: center; opacity: 0; transition: opacity 0.5s ease; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
@@ -548,6 +659,12 @@
     /* ---- Generic subpane shell: back header + scrollable body, push/pop stack (Chat History / Skills drill-down / etc.) ---- */
     .bai-subpane { position: absolute; left: 0; right: 0; top: 84px; bottom: 0; z-index: 50; display: none; flex-direction: column; background: var(--bai-bg); }   /* sits below header+strip, same anchor as the tour overlay */
     .bai-subpane.on { display: flex; }
+    /* Part 6: global-utility routes get their OWN shell — top is the header's height alone (46px, see
+       .bai-header), so it covers .bai-strip instead of sitting below it like .bai-subpane above. Same
+       left:0/right:0 footprint (and no wide-mode sidebar margin) as .bai-subpane, so it also fully covers
+       the sidebar in wide mode — a global route is a full takeover in either layout. */
+    .bai-globalroute { position: absolute; left: 0; right: 0; top: 46px; bottom: 0; z-index: 55; display: none; flex-direction: column; background: var(--bai-bg); }
+    .bai-globalroute.on { display: flex; }
     .bai-subpane-head { flex-shrink: 0; display: flex; align-items: center; gap: 8px; padding: 12px 14px 9px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 12.5px; font-weight: 700; color: var(--bai-text-bright); border-bottom: 1px solid var(--bai-line); }
     .bai-subpane-back { flex-shrink: 0; border: none; background: none; color: var(--bai-icon-2); cursor: pointer; padding: 4px; border-radius: 6px; display: flex; transition: background 0.15s, color 0.15s; }
     .bai-subpane-back:hover { background: var(--bai-hover); color: var(--bai-hover-ink); }
@@ -623,6 +740,35 @@
             <div class="bai-tgmodal" id="baiTgModal">
               <div class="bai-tgmodal-card" id="baiTgModalCard"></div>
             </div>
+            <!-- Batch 3 (H15): AI Mode setup-confirmation modal — SAME class (.bai-tgmodal) as Telegram's
+                 modal above, so it is the identical overlay tier, not a one-off. -->
+            <div class="bai-tgmodal" id="baiAiModal">
+              <div class="bai-tgmodal-card" id="baiAiModalCard"></div>
+            </div>
+            <!-- Batch 4: out-of-credit modal — SAME class (.bai-tgmodal) again, 3 variants (byok/topup/
+                 prime) chosen by the reference's own oocMode formula. -->
+            <div class="bai-tgmodal" id="baiOocModal">
+              <div class="bai-tgmodal-card" id="baiOocModalCard"></div>
+            </div>
+            <!-- System-level blocking overlay (audit: OVL-01) — same footprint/tier as .bai-tgmodal above,
+                 moved out of #paneChat so it covers the whole app (header/sidebar/panes/composer), not just
+                 the chat pane. Still opened/closed purely via JS (openLoginGate/closeLoginGate), so relocating
+                 this node doesn't change when or why it appears — only how much of the app it covers. -->
+            <div class="bai-logingate" id="baiLoginGate">
+              <div class="bai-logingate-card" id="baiLoginGateCard"></div>
+            </div>
+            <!-- Batch 2: Logout confirmation — SAME class (.bai-logingate) as the sign-in gate above, so it
+                 is structurally the identical system-level overlay tier, not a one-off. Only the inner card
+                 markup differs. -->
+            <div class="bai-logingate" id="baiLogoutGate">
+              <div class="bai-logoutgate-card">
+                <div class="bai-logoutgate-title">Are you sure you want to sign out?</div>
+                <div class="bai-logoutgate-actions">
+                  <button class="bai-logoutgate-cancel" id="baiLogoutCancelBtn" type="button">Cancel</button>
+                  <button class="bai-logoutgate-confirm" id="baiLogoutConfirmBtn" type="button">Log out</button>
+                </div>
+              </div>
+            </div>
             <div class="bai-ui" id="baiUi">
               <div class="bai-sidebar" id="baiSidebar">
                 <div class="bai-side-brand"><canvas class="bai-side-logo" id="baiSideLogo"></canvas><span>BlueAI</span></div>
@@ -637,6 +783,14 @@
                 <div class="bai-scroll" id="baiSideScroll"></div>
                 <div class="bai-side-foot">
                   <button class="bai-side-item" id="baiSideSettings" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>Settings</button>
+                  <div class="bai-stat-wrap" id="baiSideHelpWrap" style="position:relative;">
+                    <button class="bai-icbtn" id="baiSideHelpBtn" type="button" aria-label="Help"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></button>
+                    <div class="bai-menu down" id="baiSideHelpMenu"></div>
+                  </div>
+                  <div class="bai-stat-wrap" id="baiSideAcctWrap" style="position:relative;">
+                    <button class="bai-icbtn" id="baiSideAcctBtn" type="button" aria-label="Account"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button>
+                    <div class="bai-menu down" id="baiSideAcctMenu"></div>
+                  </div>
                 </div>
               </div>
               <div class="bai-header">
@@ -644,6 +798,14 @@
                 <span class="bai-wm" id="baiWm"><span id="baiTitle">BlueAI</span></span>
                 <div class="bai-head-r">
                   <button class="bai-icbtn" id="baiSettingsBtn" type="button" aria-label="Settings"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+                  <div class="bai-stat-wrap" id="baiHeadHelpWrap" style="position:relative;">
+                    <button class="bai-icbtn" id="baiHelpBtn" type="button" aria-label="Help"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></button>
+                    <div class="bai-menu down" id="baiHelpMenu"></div>
+                  </div>
+                  <div class="bai-stat-wrap" id="baiHeadAcctWrap" style="position:relative;">
+                    <button class="bai-icbtn" id="baiAcctBtn" type="button" aria-label="Account"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button>
+                    <div class="bai-menu down" id="baiAcctMenu"></div>
+                  </div>
                 </div>
               </div>
               <div class="bai-strip" id="baiStrip">
@@ -681,18 +843,18 @@
                     </div>
                   </div>
                   <div class="bai-scroll" id="baiScroll"></div>
-                  <div class="bai-logingate" id="baiLoginGate">
-                    <div class="bai-logingate-card" id="baiLoginGateCard"></div>
-                  </div>
                 </div>
                 <div class="bai-pane" id="paneJobs"><div class="bai-stub"><div class="ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg></div><h4>Jobs</h4><p>Running &amp; completed agent runs land here: status, logs, and what was applied to.</p><span class="soon">·· soon</span></div></div>
                 <div class="bai-pane" id="paneSkills">
-                  <div class="bai-search"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><input id="baiSkillSearch" type="text" placeholder="Search skills…" autocomplete="off" spellcheck="false" /></div>
+                  <div class="bai-search"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><input id="baiSkillSearch" type="text" placeholder="Search skills…" autocomplete="off" spellcheck="false" /><button class="bai-search-clear" id="baiSkillSearchClear" type="button" aria-label="Clear search"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
                   <div class="bai-list-body" id="baiSkillsList"></div>
                   <div class="bai-scroll" id="baiSkillsScroll"></div>
                   <div class="bai-sticky-cta"><button id="baiSkillCta" type="button">Build a custom skill</button></div>
                 </div>
                 <div class="bai-pane" id="paneScheduled">
+                  <!-- CMP-01 (audit, documented content-complexity exception): stays an inline card, not a
+                       Subpane, because this is one simple local form (cadence + time) — see openSkillForm's
+                       comment for why Skills escalates to a Subpane and this doesn't. -->
                   <div class="bai-list-head"><button class="bai-list-add" id="baiSchedAdd" type="button">+ New task</button></div>
                   <div class="bai-newitem" id="baiSchedForm" style="display:none">
                     <textarea class="bai-newitem-textarea" id="baiSchedName" placeholder="What should BlueAI do?" style="min-height:44px;"></textarea>
@@ -721,7 +883,7 @@
                   <div class="bai-set-row">
                     <div class="bai-set-info"><span class="bai-set-name">BlueStacks instance</span><span class="bai-set-sub">This session's App Player, ready for tasks</span></div>
                   </div>
-                  <div class="bai-set-label">NOTIFICATIONS</div>
+                  <div class="bai-set-label">INTEGRATIONS</div>
                   <div class="bai-set-card" id="baiNotifyCard"></div>
                   <div class="bai-set-label">AI MODE</div>
                   <div class="bai-set-card" id="baiAiModeCard"></div>
@@ -740,8 +902,10 @@
                   </div>
                 </div><div class="bai-scroll" id="baiSetScroll"></div></div>
               </div>
-              <!-- Generic full-pane "subpane": back header + scrollable body, push/pop stack (Chat History, Skills
-                   category drill-down, skill details, etc. all share this one shell — see openSubpane() in JS). -->
+              <!-- Generic full-pane "subpane": back header + scrollable body, push/pop stack. Part 6: reserved
+                   for Skills' own CONTEXTUAL drill-downs only (category, skill details, My Skills, New/Edit
+                   Skill) — these stay below the nav tabs. Chat History/Profile/AI Credits/compact-Settings
+                   are GLOBAL routes and use the separate .bai-globalroute shell below instead. -->
               <div class="bai-subpane" id="baiSubpane">
                 <div class="bai-subpane-head">
                   <button class="bai-subpane-back" id="baiSubpaneBack" type="button" aria-label="Back"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
@@ -749,6 +913,20 @@
                 </div>
                 <div class="bai-subpane-body" id="baiSubpaneBody"></div>
                 <div class="bai-scroll" id="baiSubpaneScroll"></div>
+              </div>
+              <!-- Global-utility route (Part 6): starts directly below the header, covers the tab strip
+                   (higher z-index, top = header height only). Single-level, not a stack — each of Chat
+                   History/Profile/AI Credits/compact-Settings is opened directly from the header/account
+                   menu and none of them navigate on to another, so Back always just closes this and reveals
+                   the tab underneath, which was never touched. Same header pattern as .bai-subpane above via
+                   the shared .bai-subpane-head/-back classes, so both read as one consistent "route" chrome. -->
+              <div class="bai-globalroute" id="baiGlobalRoute">
+                <div class="bai-subpane-head">
+                  <button class="bai-subpane-back" id="baiGlobalRouteBack" type="button" aria-label="Back"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+                  <span id="baiGlobalRouteTitle"></span>
+                </div>
+                <div class="bai-subpane-body" id="baiGlobalRouteBody"></div>
+                <div class="bai-scroll" id="baiGlobalRouteScroll"></div>
               </div>
               <!-- Onboarding · 3-step nav tour (skills -> scheduled -> chat) -->
               <div class="bai-tour" id="baiTour">
@@ -917,7 +1095,8 @@
       }
       function sendMessage(text) { addUser(text); proceedWithReply(text); }
       function proceedWithReply(text) {
-        credits = Math.max(0, credits - (30 + Math.floor(Math.random() * 90))); renderCredits();   // compute spent
+        if (!byokIsActive()) credits = Math.max(0, credits - (30 + Math.floor(Math.random() * 90)));   // BYOK: your own key, not BlueAI credits — balance must stay exactly unchanged
+        renderCredits();   // still refreshes the UI either way (cheap, and harmless when credits didn't change)
         curThink = makeThinking(); var pi = 0;
         function tick() { curThink.txt.textContent = PHRASES[pi]; }   // no elapsed-time counter — BlueAI is a bit slow right now, a visible clock would only underline it
         tick(); tickT = setInterval(tick, 300);
@@ -939,10 +1118,15 @@
         if (gateOpen) return;                                                          // blocked behind the sign-in gate
         if (thinking) { stopThinking(); return; }
         var v = baiInput.value.trim(); if (!v) return;
-        baiInput.value = '';
-        if (pending && pending.ask !== undefined) { resolveAsk(pending, v); return; }   // typed answer to a pending question
+        if (pending && pending.ask !== undefined) { baiInput.value = ''; resolveAsk(pending, v); return; }   // typed answer to a pending question — not a new submission, credits gate below doesn't apply
         if (pending) return;                                                            // awaiting an action (upload) — ignore stray text
-        if (!loggedIn) { addUser(v); pendingSendText = v; updateSendEnabled(); openLoginGate(); return; }   // first-ever message — gate before the reply
+        if (!loggedIn) { baiInput.value = ''; addUser(v); pendingSendText = v; updateSendEnabled(); openLoginGate(); return; }   // first-ever message — gate before the reply
+        // Hard submission gate: checked AFTER the pending/login branches (so it never blocks answering an
+        // already-in-flight prompt) and BEFORE baiInput is cleared (so the typed text survives). Calls
+        // openOocModal() directly, not maybeOpenOocModal() — every attempt re-opens it regardless of
+        // oocShownForThisZero, which stays reserved for the passive drain-to-zero notification only.
+        if (credits <= 0 && !byokIsActive()) { openOocModal(); return; }
+        baiInput.value = '';
         sendMessage(v);
       }
       if (baiInput) baiInput.addEventListener('keydown', function (e) { if (e.key === 'Enter' && !thinking && baiInput.value.trim()) { e.preventDefault(); submit(); } });
@@ -957,19 +1141,26 @@
       var loginGateEl = document.getElementById('baiLoginGate'), loginGateCardEl = document.getElementById('baiLoginGateCard');
       function openLoginGate() { gateOpen = true; loginStep = 'claim'; loginGateEl.classList.add('on'); renderLoginGate(); }
       function closeLoginGate() { gateOpen = false; loginGateEl.classList.remove('on'); clearTimeout(loginBrowserT); clearTimeout(loginSigningT); }
+      // Batch 2: pending-message dismissal — Close/Escape on the claim step only (matches the reference's
+      // exact step-gating: no close control anywhere else in the flow). Cancels the queued auto-send,
+      // deliberately LEAVES the already-visible user message in place (addUser() already rendered it before
+      // the gate opened), and returns to a normal usable chat — the NEXT send attempt re-opens the gate via
+      // submit()'s own existing !loggedIn check, so nothing extra is needed for that part.
+      function dismissLoginGate() { if (loginStep !== 'claim') return; pendingSendText = null; closeLoginGate(); }
       function renderLoginGate() {
         var el = loginGateCardEl; el.innerHTML = '';
         if (loginStep === 'claim') {
           el.innerHTML =
+            '<button class="lg-close" id="lgCloseBtn" type="button" aria-label="Close">' + iconSvg('<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>', 13) + '</button>' +
             '<div class="lg-s">You need AI Credits to use BlueAI</div>' +
             '<div class="lg-div"></div>' +
             '<div class="lg-credits">500</div>' +
-            '<div class="lg-h" style="margin-top:-6px;">Free AI Credits</div>' +
-            '<div class="lg-s" style="margin-top:-6px;">on your first login</div>' +
+            '<div class="lg-title-group"><div class="lg-h">Free AI Credits</div><div class="lg-s">on your first login</div></div>' +
             '<div class="lg-check">' + iconSvg('<path d="M20 6 9 17l-5-5"/>', 13) + '<span>Enough for ~10 tasks</span></div>' +
             '<div class="lg-div"></div>' +
             '<button class="lg-cta" id="lgClaimBtn" type="button">Sign in to claim &rsaquo;</button>' +
             '<a class="lg-link" id="lgTerms">Terms &amp; Conditions &rsaquo;</a>';
+          document.getElementById('lgCloseBtn').addEventListener('click', dismissLoginGate);
           document.getElementById('lgClaimBtn').addEventListener('click', function () {
             loginStep = 'browser'; renderLoginGate();
             loginBrowserT = setTimeout(function () { loginStep = 'signing'; renderLoginGate(); loginSigningT = setTimeout(function () { loginStep = 'done'; renderLoginGate(); }, 1300); }, 1700);
@@ -999,7 +1190,8 @@
             '<div class="lg-s">Welcome back!</div>' +
             '<button class="lg-cta" id="lgContinueBtn" type="button">Continue</button>';
           document.getElementById('lgContinueBtn').addEventListener('click', function () {
-            loggedIn = true; credits = 500; renderCredits(); closeLoginGate();
+            credits = 500; renderCredits(); closeLoginGate();
+            syncSessionState(true);   // loggedIn=true + pageState='loggedin', persisted — one real login, one place it's recorded
             if (pendingSendText != null) { var t = pendingSendText; pendingSendText = null; proceedWithReply(t); }
           });
         }
@@ -1014,18 +1206,170 @@
       function renderModel() { modelBtn.textContent = curModel; }
       // credit health ramp (as balance depletes): blue good → yellow low → orange very low → red almost over
       function creditColor(c) { return c > 12000 ? 'var(--bai-credit-hi)' : c > 5000 ? 'var(--bai-credit-mid)' : c > 1500 ? 'var(--bai-credit-low)' : 'var(--bai-credit-crit)'; }   // theme vars -> the ramp re-colors itself on theme switch
+
+      // ---- Batch 4: Credits/Prime/Geo/Membership/BYOK. primeGeo/creditsPrime/zeroCreditsPreview are
+      // account/location facts this design-only terminal has no real backing for, so — matching H13/H14's
+      // treatment — they're exposed as Preview-panel toggles, never a real reachable in-app control.
+      // Formula ported verbatim from the reference's own truth table (already audited this session):
+      //   credits = zeroCredits ? 0 : (primeGeo ? (creditsPrime ? 49812 : 505) : 500)
+      //   byokActive = keyAdded && byokOn ; lowDot = credits < 1000 && !byokActive
+      //   oocMode = !primeGeo ? 'byok' : (creditsPrime ? 'topup' : 'prime')
+      var primeGeo = true, creditsPrime = true, zeroCreditsPreview = false;
+      function byokIsActive() { return typeof stgByokOn !== 'undefined' && stgByokOn && typeof stgByokKey !== 'undefined' && !!stgByokKey; }
+      function recomputeCreditsTier() {
+        credits = zeroCreditsPreview ? 0 : (primeGeo ? (creditsPrime ? 49812 : 505) : 500);
+        renderCredits();
+      }
       function renderCredits() {                                                     // circular gauge: arc length = % remaining, ramp color; detail lives in the hover card
         var pct = Math.max(0, Math.min(100, Math.round(credits / CREDIT_MAX * 100)));
         var col = creditColor(credits);
+        var byokActive = byokIsActive();
         creditsArc.style.strokeDasharray = (RING_C * pct / 100).toFixed(2) + ' ' + RING_C.toFixed(2);
         creditsArc.style.stroke = col;
+        creditsWrap.classList.toggle('low', credits < 1000 && !byokActive);   // Batch 4: the low-credit alarm is suppressed while BYOK covers real usage
         creditsDesc.innerHTML =
-          '<span class="cr-head">CREDITS</span>' +
+          '<span class="cr-head">CREDITS' + (primeGeo && creditsPrime ? ' <span class="cr-prime">★ PRIME</span>' : '') + '</span>' +
           '<span class="cr-big"><span class="sp" style="color:' + col + '">✦</span> ' + credits.toLocaleString('en-US') + '</span>' +
           '<span class="cr-bar"><i style="width:' + pct + '%;background:' + col + '"></i></span>' +
-          '<span class="cr-sub">' + pct + '% of ' + CREDIT_MAX.toLocaleString('en-US') + ' left</span>';
+          '<span class="cr-sub">' + (byokActive ? 'Using your own API key — credits not spent' : pct + '% of ' + CREDIT_MAX.toLocaleString('en-US') + ' left') + '</span>';
+        if (loggedIn && credits <= 0 && !byokActive) maybeOpenOocModal();
+        else oocShownForThisZero = false;   // credits recovered — arm the modal to show again on the NEXT time they hit zero
       }
-      function closeMenus() { modelMenu.classList.remove('open'); }
+
+      // ---- Part 2: AI Credits screen (global route) — a bigger version of the same balance the header
+      // gauge/hover already shows, plus WHY it's what it is (Region/Plan, or "BYOK paused") and one
+      // contextual action. Reuses oocMode()/byokIsActive()/creditColor() directly — no separate state
+      // model, so this can never drift from the OOC modal's own reading of the same facts. ----
+      function renderAiCreditsScreen(el) {
+        var byokActive = byokIsActive();
+        var pct = Math.max(0, Math.min(100, Math.round(credits / CREDIT_MAX * 100)));
+        var col = creditColor(credits);
+        var hero = document.createElement('div'); hero.className = 'aic-hero';
+        // Correction: BYOK pauses/preserves the balance — it doesn't hide it. Showing an em dash
+        // contradicted the very next line's "the balance above stays exactly where it is" claim.
+        hero.innerHTML =
+          '<span class="aic-hero-label">CREDIT BALANCE' + (primeGeo && creditsPrime ? ' <span class="cr-prime">★ PRIME</span>' : '') + '</span>' +
+          '<span class="aic-hero-num" style="color:' + col + '">' + credits.toLocaleString('en-US') + '</span>' +
+          '<span class="aic-hero-sub">' + (byokActive ? 'Paused — your own API key is covering usage' : pct + '% of ' + CREDIT_MAX.toLocaleString('en-US') + ' left') + '</span>';
+        el.appendChild(hero);
+        var bar = document.createElement('div'); bar.className = 'aic-bar'; bar.innerHTML = '<i style="width:' + pct + '%;background:' + col + '"></i>';
+        el.appendChild(bar);
+        el.appendChild(Object.assign(document.createElement('div'), { className: 'bai-set-divider' }));
+
+        var planLabel = document.createElement('div'); planLabel.className = 'bai-set-label'; planLabel.textContent = 'PLAN'; el.appendChild(planLabel);
+        if (byokActive) {
+          var done = document.createElement('div'); done.className = 'bai-donecard';
+          done.innerHTML = '<div class="dc-head">✓ USING YOUR OWN KEY</div><div class="dc-body">Your API key is active, so credits aren\'t being spent — the balance above stays exactly where it is if you ever turn it off.</div>';
+          el.appendChild(done);
+        } else {
+          var kv = document.createElement('div'); kv.className = 'bai-kv-block';
+          kv.innerHTML =
+            '<div class="bai-kv-row"><span class="k">Region</span><span class="v">' + (primeGeo ? 'Prime-eligible' : 'Not Prime-eligible') + '</span></div>' +
+            '<div class="bai-kv-row"><span class="k">Plan</span><span class="v">' + (primeGeo && creditsPrime ? 'Prime member' : 'Free') + '</span></div>' +
+            '<div class="bai-kv-row"><span class="k">Refreshes</span><span class="v">Every cycle</span></div>';
+          el.appendChild(kv);
+        }
+        if (credits <= 0 && !byokActive) el.appendChild(warnRow("You're out of credits — use an action below to keep chatting."));
+
+        el.appendChild(Object.assign(document.createElement('div'), { className: 'bai-set-divider' }));
+        var actLabel = document.createElement('div'); actLabel.className = 'bai-set-label'; actLabel.textContent = 'ACTIONS'; el.appendChild(actLabel);
+        var actWrap = document.createElement('div'); actWrap.style.cssText = 'display:flex;flex-direction:column;gap:8px;';
+        function keyAction(label, primary) {
+          var b = document.createElement('button'); b.className = 'bai-set-btn' + (primary ? ' primary' : ''); b.style.width = '100%'; b.type = 'button'; b.textContent = label;
+          b.addEventListener('click', function () { closeMenus(); goToSettingsRoute(); highlightByokCard(); });
+          return b;
+        }
+        if (byokActive) {
+          actWrap.appendChild(keyAction('Manage your key', false));
+        } else {
+          var mode = oocMode();
+          // Same "no meaningless purchase CTA" rule as the OOC modal (Part 7): the purchase/upsell button
+          // renders fully active, same family as every other primary action, but has no click listener —
+          // this is a design-screen library, not a real checkout, and that stays true here too.
+          if (mode === 'byok') {
+            actWrap.appendChild(keyAction('Add API key', true));
+          } else {
+            var purchaseBtn = document.createElement('button'); purchaseBtn.className = 'bai-set-btn primary'; purchaseBtn.style.width = '100%'; purchaseBtn.type = 'button';
+            purchaseBtn.textContent = mode === 'topup' ? 'Top up credits' : 'Get Prime';
+            actWrap.appendChild(purchaseBtn);
+            actWrap.appendChild(keyAction('Add / manage own key', false));
+          }
+        }
+        el.appendChild(actWrap);
+      }
+
+      // ---- Batch 4: out-of-credit modal, 3 variants chosen by the reference's own oocMode formula.
+      // The BYOK route is real and shared across all 3 variants (Add/Manage key routes into Settings +
+      // highlights the BYOK card); the Prime/top-up purchase CTAs stay visually present but inert, per
+      // the explicit instruction not to invent a checkout flow. ----
+      var oocModalEl = document.getElementById('baiOocModal'), oocModalCardEl = document.getElementById('baiOocModalCard'), oocShownForThisZero = false;
+      // Standard icon-free modal header (Part 5 + Part 7) — title stretches via .tgm-head .tgm-title,
+      // close stays a real 28x28 hover target far-right. Used by the OOC modal and the Hybrid Auto modal;
+      // the Telegram connect modal keeps its own tgHead()/icon deliberately, unchanged.
+      function stdModalHead(title, closeId) {
+        return '<div class="tgm-head"><span class="tgm-title">' + title + '</span><button class="tgm-close" id="' + closeId + '" type="button" aria-label="Close">' + iconSvg('<path d="M18 6 6 18"/><path d="M6 6l12 12"/>', 14) + '</button></div>';
+      }
+      function oocMode() { return !primeGeo ? 'byok' : (creditsPrime ? 'topup' : 'prime'); }
+      function maybeOpenOocModal() { if (oocShownForThisZero) return; oocShownForThisZero = true; openOocModal(); }
+      function openOocModal() {
+        var mode = oocMode();
+        // Part 7: body copy is state-specific (never just repeats the "Out of credits" title), and each
+        // variant's actions come from the canonical reference meaning — no invented prices/checkout steps.
+        var V = {
+          byok: {
+            // Correction: non-Prime geo still starts with 500 free credits (recomputeCreditsTier) — this
+            // modal appears once those run out, not because the plan itself has zero balance. The old copy
+            // ("no credit balance to draw from") claimed the latter, which is false.
+            body: 'You’ve used your available AI credits. Prime isn’t available in this region, so add your own API key to continue using BlueAI.',
+            actions: [ { id: 'oocByokCta', label: 'Add API key', cls: 'primary' } ]
+          },
+          topup: {
+            body: 'Your Prime AI credits have run out for this cycle and will renew automatically. Top up now to keep going, or connect your own key instead.',
+            actions: [
+              { id: 'oocPrimaryCta', label: 'Top up credits', cls: 'primary' },
+              { id: 'oocByokCta', label: 'Add / manage own key', cls: 'secondary' },
+            ]
+          },
+          prime: {
+            body: 'Free accounts get a smaller AI allowance. Become a Prime member for a much larger credit balance each cycle, or connect your own key instead.',
+            actions: [
+              { id: 'oocPrimaryCta', label: 'Get Prime', cls: 'primary' },
+              { id: 'oocByokCta', label: 'Add / manage own key', cls: 'secondary' },
+            ]
+          },
+        }[mode];
+        oocModalCardEl.innerHTML =
+          stdModalHead('Out of credits', 'oocModalClose') +
+          '<div class="tgm-body"><p>' + V.body + '</p>' +
+            '<div class="bai-modalact-group">' +
+              V.actions.map(function (a) { return '<button class="bai-modalact ' + a.cls + '" id="' + a.id + '" type="button">' + a.label + '</button>'; }).join('') +
+            '</div>' +
+          '</div>';
+        document.getElementById('oocModalClose').addEventListener('click', closeOocModal);
+        // Correction (kept): the purchase CTA (#oocPrimaryCta, topup/prime only) has no destination wired
+        // (design-screen library, not a real checkout) — fully active styling, no disabled/opacity/tooltip,
+        // intentionally no click listener so tapping it is a visual no-op.
+        var byokBtn = document.getElementById('oocByokCta');
+        if (byokBtn) byokBtn.addEventListener('click', function () { closeOocModal(); closeMenus(); goToSettingsRoute(); highlightByokCard(); });
+        oocModalEl.classList.add('on');
+      }
+      function closeOocModal() { oocModalEl.classList.remove('on'); }
+      function highlightByokCard() {
+        var card = document.getElementById('baiByokCard'); if (!card) return;
+        card.classList.add('bai-highlight');
+        card.scrollIntoView({ block: 'center' });
+        setTimeout(function () { card.classList.remove('bai-highlight'); }, 2200);
+      }
+      function closeMenus() {
+        modelMenu.classList.remove('open');
+        // Batch 2: these are assigned further down the script but closeMenus() is never CALLED until a
+        // real click happens, by which point the whole script has finished its initial synchronous run —
+        // guarded with typeof anyway since this function is also reachable from the early Escape handler.
+        if (typeof helpMenuEl !== 'undefined' && helpMenuEl) helpMenuEl.classList.remove('open');
+        if (typeof sideHelpMenuEl !== 'undefined' && sideHelpMenuEl) sideHelpMenuEl.classList.remove('open');
+        if (typeof acctMenuEl !== 'undefined' && acctMenuEl) acctMenuEl.classList.remove('open');
+        if (typeof sideAcctMenuEl !== 'undefined' && sideAcctMenuEl) sideAcctMenuEl.classList.remove('open');
+      }
       function fillMenu(menu, items, cur, pick, title, desc) {
         menu.innerHTML = '';
         var head = document.createElement('div'); head.className = 'bai-menu-head';
@@ -1048,8 +1392,14 @@
       }
       modelBtn.addEventListener('click', function (e) { e.stopPropagation(); var was = modelMenu.classList.contains('open'); closeMenus(); if (!was) { fillMenu(modelMenu, MODELS, curModel, function (m) { curModel = m; renderModel(); }, 'Model', 'The model that answers. Auto picks the best fit; larger models reason deeper but spend more credits.'); modelMenu.classList.add('open'); } });
       drawer.addEventListener('click', closeMenus);   // any other in-drawer click closes the menus
-      renderModel(); renderCredits();
-      if (creditsWrap) { creditsWrap.addEventListener('mouseenter', function () { creditsDesc.classList.add('show'); }); creditsWrap.addEventListener('mouseleave', function () { creditsDesc.classList.remove('show'); }); }   // hover -> exact balance / % / reset countdown
+      renderModel(); recomputeCreditsTier();   // Batch 4: sets the initial balance from the primeGeo/creditsPrime formula (defaults match the original 49812)
+      if (creditsWrap) {
+        creditsWrap.addEventListener('mouseenter', function () { creditsDesc.classList.add('show'); }); creditsWrap.addEventListener('mouseleave', function () { creditsDesc.classList.remove('show'); });   // hover -> exact balance / % / reset countdown, unchanged
+        // Part 2: click -> full AI Credits screen. creditsWrap is already display:none while logged out
+        // (updateLoggedInChrome), so this is unreachable then anyway; the loggedIn guard just makes that
+        // explicit rather than relying only on the hidden wrapper.
+        creditsWrap.addEventListener('click', function (e) { e.stopPropagation(); if (!loggedIn) return; closeMenus(); openGlobalRoute('credits', 'AI Credits', renderAiCreditsScreen); });
+      }
 
       // ---- Mode strip nav + header utility (settings) ----
       var settingsBtn = document.getElementById('baiSettingsBtn');
@@ -1064,12 +1414,91 @@
         var mt = document.getElementById('baiMainTitle'); if (mt) mt.textContent = m === 'chat' ? fullTitle : (m.charAt(0).toUpperCase() + m.slice(1));   // main-column title follows the mode
         baiUi.classList.toggle('nonchat', m !== 'chat');   // non-chat panes: plain label — no recents arrow, no new-chat
         if (m === 'scheduled' && !schedShimmerShown) showSchedShimmerThenRender();   // one-time loading shimmer on first visit to the tab
+        if (m === 'skills' && !skillsShimmerShown) showSkillsShimmerThenRender();   // Batch 5: same treatment for Skills
         if (typeof renderPreviewRows === 'function') renderPreviewRows();   // progressive disclosure: some rows are screen-scoped (defined later in the script; guarded since setMode can fire before it's declared)
       }
       tabs.forEach(function (t) { t.addEventListener('click', function () { setMode(t.getAttribute('data-mode')); }); });
-      settingsBtn.addEventListener('click', function (e) { e.stopPropagation(); closeMenus(); setMode('settings'); });
+      // Part 6: compact's header gear opens Settings as a global-utility ROUTE, not setMode('settings') —
+      // currentTabMode/active tab underneath are never touched, so Back trivially restores them. Wide's own
+      // sidebar Settings destination (baiSideSettings below) is unaffected and still calls setMode directly.
+      settingsBtn.addEventListener('click', function (e) { e.stopPropagation(); closeMenus(); goToSettingsRoute(); });
       var tbClose = document.getElementById('baiTbClose');
       if (tbClose) tbClose.addEventListener('click', function (e) { e.stopPropagation(); closeMenus(); closePanel(); });   // title bar's Close — hides + remembers; Minimize/Maximize are decorative only (no handler)
+
+      // ---- Batch 2: Help + Account (kebab) menus. Compact keeps its own header buttons; wide keeps a
+      // duplicate pair in the sidebar footer (CSS hides whichever pair doesn't apply) — same content,
+      // rendered once into both, one delegated click handler per menu element. ----
+      var helpMenuEl = document.getElementById('baiHelpMenu'), sideHelpMenuEl = document.getElementById('baiSideHelpMenu');
+      var acctMenuEl = document.getElementById('baiAcctMenu'), sideAcctMenuEl = document.getElementById('baiSideAcctMenu');
+      var HELP_MENU_HTML =
+        '<div class="bai-menu-item" data-action="help">' + iconSvg('<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>', 13) + 'Get help</div>' +
+        '<div class="bai-menu-item danger" data-action="report">' + iconSvg('<path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/>', 13) + 'Report issue</div>';
+      var ACCT_MENU_HTML =
+        '<div class="bai-menu-item" data-action="history">' + iconSvg('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>', 13) + 'Chat History</div>' +
+        '<div class="bai-menu-item" data-action="profile">' + iconSvg('<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>', 13) + 'Profile</div>' +
+        '<div class="bai-menu-divider"></div>' +
+        '<div class="bai-menu-item danger" data-action="logout">' + iconSvg('<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/>', 13) + 'Logout</div>';
+      // Get Help / Report Issue: acknowledged, no invented downstream screens — explicit Batch 2 scope.
+      function onHelpMenuClick(e) { if (!e.target.closest('.bai-menu-item')) return; e.stopPropagation(); closeMenus(); }
+      function onAcctMenuClick(e) {
+        var item = e.target.closest('.bai-menu-item'); if (!item) return; e.stopPropagation();
+        var action = item.getAttribute('data-action'); closeMenus();
+        if (action === 'history') openGlobalRoute('history', 'Chat History', renderHistoryList);
+        else if (action === 'profile') openGlobalRoute('profile', 'Profile', renderProfile);
+        else if (action === 'logout') openLogoutGate();
+      }
+      [helpMenuEl, sideHelpMenuEl].forEach(function (m) { if (m) { m.innerHTML = HELP_MENU_HTML; m.addEventListener('click', onHelpMenuClick); } });
+      [acctMenuEl, sideAcctMenuEl].forEach(function (m) { if (m) { m.innerHTML = ACCT_MENU_HTML; m.addEventListener('click', onAcctMenuClick); } });
+      function toggleMenu(menuEl) { if (!menuEl) return; var was = menuEl.classList.contains('open'); closeMenus(); if (!was) menuEl.classList.add('open'); }
+      var helpBtn = document.getElementById('baiHelpBtn'), sideHelpBtn = document.getElementById('baiSideHelpBtn');
+      var acctBtn = document.getElementById('baiAcctBtn'), sideAcctBtn = document.getElementById('baiSideAcctBtn');
+      if (helpBtn) helpBtn.addEventListener('click', function (e) { e.stopPropagation(); toggleMenu(helpMenuEl); });
+      if (sideHelpBtn) sideHelpBtn.addEventListener('click', function (e) { e.stopPropagation(); toggleMenu(sideHelpMenuEl); });
+      if (acctBtn) acctBtn.addEventListener('click', function (e) { e.stopPropagation(); toggleMenu(acctMenuEl); });
+      if (sideAcctBtn) sideAcctBtn.addEventListener('click', function (e) { e.stopPropagation(); toggleMenu(sideAcctMenuEl); });
+
+      // ---- Batch 2: Profile screen (Subpane content — reuses .bai-kv-block/.bai-kv-row verbatim) ----
+      function renderProfile(el) {
+        el.innerHTML =
+          '<div class="bai-profile-head">' +
+            '<div class="bai-profile-avatar">A</div>' +
+            '<div class="bai-profile-name">Arpit Yadav</div>' +
+            '<div class="bai-profile-email">arpit.yadav@bluestacks.com</div>' +
+          '</div>' +
+          '<div class="bai-kv-block" style="margin-bottom:14px;">' +
+            '<div class="bai-kv-row"><span class="k">Handle</span><span class="v">TriflingStandpoint</span></div>' +
+            '<div class="bai-kv-row"><span class="k">Email</span><span class="v">arpit.yadav@bluestacks.com<span class="verified">Verified</span></span></div>' +
+            '<div class="bai-kv-row"><span class="k">Country</span><span class="v">India</span></div>' +
+            '<div class="bai-kv-row"><span class="k">Mobile</span><span class="v" style="color:var(--bai-faint);">Not set</span></div>' +
+          '</div>' +
+          '<button class="bai-set-btn danger" id="baiProfileSignOut" style="width:100%;" type="button">Sign out</button>';
+        document.getElementById('baiProfileSignOut').addEventListener('click', function () { closeGlobalRoute(); openLogoutGate(); });
+      }
+
+      // ---- Batch 2: system-level Logout confirmation — shares the Login Gate's exact overlay class,
+      // so it is the identical footprint tier, just a different card. Reference-exact copy. ----
+      var logoutGateEl = document.getElementById('baiLogoutGate'), logoutGateOpen = false;
+      function openLogoutGate() { logoutGateOpen = true; logoutGateEl.classList.add('on'); }
+      function closeLogoutGate() { logoutGateOpen = false; logoutGateEl.classList.remove('on'); }
+      document.getElementById('baiLogoutCancelBtn').addEventListener('click', closeLogoutGate);
+      document.getElementById('baiLogoutConfirmBtn').addEventListener('click', function () {
+        // Genuine logout result: return to the same logged-out state a fresh session starts in — the NEXT
+        // real send re-opens the sign-in gate via submit()'s own existing check. syncSessionState also
+        // persists pageState='loggedout' so a reload can't undo this real logout.
+        closeLogoutGate();
+        pendingSendText = null;
+        newChat(); setMode('chat');
+        syncSessionState(false);
+      });
+
+      // ---- Batch 2: logged-out chrome — Credits/Help/Account are account-scoped, hidden until signed in.
+      // Settings and the model picker are app configuration, not account state, so they always stay put. ----
+      function updateLoggedInChrome() {
+        [creditsWrap, helpBtn && helpBtn.parentElement, acctBtn && acctBtn.parentElement, sideHelpBtn && sideHelpBtn.parentElement, sideAcctBtn && sideAcctBtn.parentElement].forEach(function (el) {
+          if (el) el.style.display = loggedIn ? '' : 'none';
+        });
+      }
+      updateLoggedInChrome();
 
       // ---- Skills tab: categories -> drill-down -> details, search, "Try" in chat, 3-mode create/edit flow ----
       // Ported from the canonical blueAI product design (category grid -> drill-down -> skill card -> details
@@ -1097,27 +1526,53 @@
         ] }
       ];
       var MY_SKILLS = [];   // starts empty — the empty state IS the real first-run state, not just a reachable edge case
-      var skillsListEl = document.getElementById('baiSkillsList'), skillSearchInput = document.getElementById('baiSkillSearch');
+      var skillsListEl = document.getElementById('baiSkillsList'), skillSearchInput = document.getElementById('baiSkillSearch'), skillSearchClearBtn = document.getElementById('baiSkillSearchClear');
+      var skillsShimmerShown = false;
+      function showSkillsShimmerThenRender() {   // Batch 5: same one-time-on-first-visit pattern as Scheduled's own shimmer
+        skillsShimmerShown = true;
+        skillsListEl.innerHTML = ''; skillsListEl.appendChild(shimmerRow()); skillsListEl.appendChild(shimmerRow()); skillsListEl.appendChild(shimmerRow());
+        setTimeout(renderSkillsHome, 550);
+      }
+      skillSearchClearBtn.addEventListener('click', function (e) { e.stopPropagation(); skillSearchInput.value = ''; skillSearchInput.dispatchEvent(new Event('input')); skillSearchInput.focus(); });
 
       function tryInChat(name) {   // pre-fills the composer — doesn't auto-run, the user still presses send
         closeAllSubpanes(); setMode('chat');
         baiInput.value = 'Use my "' + name + '" skill';
         baiInput.focus();
       }
+      var skillPendingDelete = null;   // Batch 5 (F9): the skill object mid-delete-confirm, or null — reference
+      // compare works fine here since owned skills always come from the one stable MY_SKILLS array.
       function skillCard(sk, owned, catName, refreshFn) {
         var row = document.createElement('div'); row.className = 'bai-skillcard';
+        if (owned && sk === skillPendingDelete) {
+          // Batch 5 (F9): was an instant no-confirm splice — now mirrors Scheduled's own delete-confirm
+          // pattern exactly (same markup/classes), settled as an intentional improvement over the reference.
+          row.innerHTML = '<span class="info"><b>Delete "' + sk.name + '"?</b><span>This can\'t be undone.</span></span>';
+          var cancelBtn = document.createElement('button'); cancelBtn.className = 'bai-newitem-cancel'; cancelBtn.type = 'button'; cancelBtn.textContent = 'Cancel';
+          var delBtn = document.createElement('button'); delBtn.className = 'bai-newitem-create'; delBtn.type = 'button'; delBtn.textContent = 'Delete'; delBtn.style.background = 'var(--bai-danger)';
+          cancelBtn.addEventListener('click', function (e) { e.stopPropagation(); skillPendingDelete = null; refreshFn(); });
+          delBtn.addEventListener('click', function (e) { e.stopPropagation(); MY_SKILLS.splice(MY_SKILLS.indexOf(sk), 1); skillPendingDelete = null; refreshFn(); });
+          row.appendChild(cancelBtn); row.appendChild(delBtn);
+          return row;
+        }
+        // Fix #6 (visual review): title+toggle and description are both "about the skill" — grouped tighter
+        // (content-group) than the footer ("actions"), same content-vs-action distinction used in AI Mode's
+        // spacing fix. Footer: Try is the compact rectangular primary action (shared 8px radius, no longer a
+        // pill); Edit+Delete are grouped in .sk-manage on the right, visually separate from Try.
         row.innerHTML =
-          '<div class="sk-top"><b>' + sk.name + '</b><span class="bai-tgl' + (sk.on ? ' on' : '') + '" role="button" aria-label="Toggle skill"><i></i></span></div>' +
-          '<div class="sk-desc">' + sk.desc + '</div>' +
+          '<div class="sk-content">' +
+            '<div class="sk-top"><b>' + sk.name + '</b><span class="bai-tgl' + (sk.on ? ' on' : '') + '" role="button" aria-label="Toggle skill"><i></i></span></div>' +
+            '<div class="sk-desc">' + sk.desc + '</div>' +
+          '</div>' +
           '<div class="sk-foot"><button class="bai-sk-try" type="button">Try</button>' +
-          (owned ? '<button class="bai-sk-link" type="button">Edit</button><button class="bai-sk-link danger" type="button">Delete</button>' : '<button class="bai-sk-link" type="button">Details ›</button>') +
+          (owned ? '<div class="sk-manage"><button class="bai-sk-link" type="button">Edit</button><button class="bai-sk-link danger" type="button">Delete</button></div>' : '<button class="bai-sk-link" type="button">Details ›</button>') +
           '</div>';
         row.querySelector('.bai-tgl').addEventListener('click', function (e) { e.stopPropagation(); sk.on = !sk.on; refreshFn(); });
         row.querySelector('.bai-sk-try').addEventListener('click', function (e) { e.stopPropagation(); tryInChat(sk.name); });
         var links = row.querySelectorAll('.bai-sk-link');
         if (owned) {
           links[0].addEventListener('click', function (e) { e.stopPropagation(); openSkillForm(sk); });
-          links[1].addEventListener('click', function (e) { e.stopPropagation(); MY_SKILLS.splice(MY_SKILLS.indexOf(sk), 1); refreshFn(); });
+          links[1].addEventListener('click', function (e) { e.stopPropagation(); skillPendingDelete = sk; refreshFn(); });
         } else {
           links[0].addEventListener('click', function (e) { e.stopPropagation(); openSkillDetails(sk, catName); });
         }
@@ -1169,6 +1624,10 @@
         });
         refreshFadeScroll(skillsListEl, document.getElementById('baiSkillsScroll'));
       }
+      // CMP-01 (audit, documented content-complexity exception — not a bug): Skills' "create new" opens a
+      // full Subpane because it holds 3 substantial, independent creation methods (write / upload / hand off
+      // to chat). Scheduled's "create new" (.bai-newitem below) is a single simple local form, so it stays
+      // inline instead. Don't "fix" this divergence without re-reading that reasoning.
       function openSkillForm(existing) {
         openSubpane(existing ? 'Edit Skill' : 'New Skill', function (body) {
           var curMode = 'write';
@@ -1199,7 +1658,7 @@
               });
               modeBody.appendChild(actions);
             } else if (curMode === 'zip') {
-              var up = document.createElement('div'); up.className = 'bai-upload-row'; up.innerHTML = '<span>+</span><span>Upload skill.zip</span>';
+              var up = document.createElement('div'); up.className = 'bai-upload-row'; up.innerHTML = iconSvg('<path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/>', 16) + '<span>Upload skill.zip</span>';   /* Fix #5: real upload glyph, not a literal "+" character */
               up.addEventListener('click', function () { MY_SKILLS.push({ name: 'skill.zip import', desc: 'Imported from an uploaded ZIP file.', on: true }); popSubpane(); renderSkillsHome(); });
               var hint = document.createElement('div'); hint.className = 'bai-upload-hint'; hint.textContent = 'ZIP must include a skill.md with instructions and an optional tools/ folder. Max 10MB.';
               modeBody.appendChild(up); modeBody.appendChild(hint);
@@ -1215,6 +1674,7 @@
       }
       skillSearchInput.addEventListener('input', function () {
         var q = skillSearchInput.value.trim().toLowerCase();
+        skillSearchClearBtn.classList.toggle('show', !!q);   // Batch 5 (LB-02)
         if (!q) { renderSkillsHome(); return; }
         skillsListEl.innerHTML = '';
         var matches = [];
@@ -1258,7 +1718,7 @@
             schedListEl.appendChild(confirmRow); return;
           }
           var row = document.createElement('div'); row.className = 'bai-item-card';
-          row.innerHTML = '<span class="ic">' + iconSvg(SCHED_PATH, 15) + '</span><span class="info"><b>' + t.name + '</b><span>' + t.when + '</span><span class="meta-next">Next: ' + t.next + '</span></span><span class="bai-tgl' + (t.on ? ' on' : '') + '" role="button" aria-label="Toggle on/off"><i></i></span><button class="rm" type="button" aria-label="Remove" title="Remove">✕</button>';
+          row.innerHTML = '<span class="ic">' + iconSvg(SCHED_PATH, 15) + '</span><span class="info"><b>' + t.name + '</b><span>' + t.when + '</span><span class="meta-next">Next: ' + t.next + '</span></span><span class="bai-tgl' + (t.on ? ' on' : '') + '" role="button" aria-label="Toggle on/off"><i></i></span><button class="rm" type="button" aria-label="Remove" title="Remove">' + iconSvg('<path d="M18 6 6 18"/><path d="M6 6l12 12"/>', 14) + '</button>';
           row.querySelector('.bai-tgl').addEventListener('click', function (e) { e.stopPropagation(); t.on = !t.on; renderScheduled(); });
           row.querySelector('.rm').addEventListener('click', function (e) { e.stopPropagation(); schedPendingDelete = i; renderScheduled(); });
           schedListEl.appendChild(row);
@@ -1300,15 +1760,19 @@
       var TG_BOT_USERNAME = 'MyBlueAIBot';   // fabricated for the demo — the live product derives this from the pasted token
       var tgState = 'off';   // off | on — the actual connect flow lives in the #baiTgModal, not inline here
       function renderNotify() {
+        // Fix #2 (visual review): icon+title+description is the header/content block; the action button is
+        // its own row underneath (full-width, matching .bai-set-card's other primary actions) instead of a
+        // 4th flex sibling squeezed into the header row — at compact width that used to compress the
+        // description into narrow wrapped lines. Same structure in both disconnected/connected states.
         var el = document.getElementById('baiNotifyCard'); el.innerHTML = '';
         var head = document.createElement('div'); head.className = 'bai-set-card-head';
         var descHtml = tgState === 'on' ? 'Connected to <span style="color:var(--bai-accent);">@' + TG_BOT_USERNAME + '</span>' : TG_DESC;
         head.innerHTML = '<span class="ic">' + iconSvg(TG_PATH, 16) + '</span><span class="info"><b>Telegram</b><span>' + descHtml + '</span></span>';
-        var btn = document.createElement('button'); btn.className = 'bai-set-btn' + (tgState === 'off' ? ' primary' : '');
+        el.appendChild(head);
+        var btn = document.createElement('button'); btn.className = 'bai-set-btn' + (tgState === 'off' ? ' primary' : ''); btn.style.width = '100%';
         btn.type = 'button'; btn.textContent = tgState === 'off' ? 'Connect Telegram' : 'Unlink';
         btn.addEventListener('click', function () { if (tgState === 'off') { openTgModal(); } else { tgState = 'off'; renderNotify(); } });
-        head.appendChild(btn);
-        el.appendChild(head);
+        el.appendChild(btn);
       }
       renderNotify();
 
@@ -1325,7 +1789,7 @@
         if (tgStep === 'done') { tgState = 'on'; renderNotify(); }   // dismissing after success still counts as connected
         tgModalEl.classList.remove('on'); clearTimeout(tgWaitT); clearInterval(tgCountdownT);
       }
-      function tgHead(title) { return '<div class="tgm-head"><span class="tgm-ic">' + iconSvg(TG_PATH, 15) + '</span><span class="tgm-title">' + title + '</span><button class="tgm-close" id="tgmClose" type="button" aria-label="Close">&times;</button></div>'; }
+      function tgHead(title) { return '<div class="tgm-head"><span class="tgm-ic">' + iconSvg(TG_PATH, 14) + '</span><span class="tgm-title">' + title + '</span><button class="tgm-close" id="tgmClose" type="button" aria-label="Close">' + iconSvg('<path d="M18 6 6 18"/><path d="M6 6l12 12"/>', 14) + '</button></div>'; }   /* Fix #8: shared stroke close SVG (same path as Scheduled's remove control), not the text × */
       function genPairCode() { var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', s = ''; for (var i = 0; i < 6; i++) s += chars[(Math.random() * chars.length) | 0]; return s; }
       function fmtCountdown(sec) { var m = Math.floor(sec / 60), s = sec % 60; return m + ':' + (s < 10 ? '0' : '') + s; }
       function enterPairingStep() {
@@ -1396,8 +1860,8 @@
           el.innerHTML = tgHead('Set up Telegram connection') +
             '<div class="tgm-body" style="align-items:center;text-align:center;padding:26px 16px;">' +
               '<div class="lg-icon lg-icon-ok">' + iconSvg('<path d="M20 6 9 17l-5-5"/>', 20) + '</div>' +
-              '<div style="font-weight:700;font-size:14.5px;color:#101828;">You\'re all set</div>' +
-              '<div style="font-size:11.5px;color:#667085;">Telegram is now connected to BlueAI.</div>' +
+              '<div style="font-weight:700;font-size:14.5px;color:var(--bai-text-hi);">You\'re all set</div>' +
+              '<div style="font-size:11.5px;color:var(--bai-dim);">Telegram is now connected to BlueAI.</div>' +
               '<button class="tgm-cta" id="tgmDoneBtn" type="button" style="margin-top:6px;">Done</button>' +
             '</div>';
           document.getElementById('tgmDoneBtn').addEventListener('click', closeTgModal);
@@ -1405,65 +1869,167 @@
         var closeBtn = document.getElementById('tgmClose'); if (closeBtn) closeBtn.addEventListener('click', closeTgModal);
       }
 
-      var aiMode = 'cloud', hybridMethod = 'auto', hybridStatus = 'idle', downloadPct = 0, hybridTimer = null, customApplied = false;
+      // Batch 3: hybridMethod starts UNSET (H26) — the reference never has a null-method moment in the
+      // terminal today (index.html previously initialized 'auto' immediately); customStatus adds the
+      // checking/connecting transitional beat (H22); hwUnsupported/runtimeConflict are PREVIEW-ONLY
+      // states (H13/H14), toggled from the dev Preview panel, never reachable through real interaction —
+      // matching the settled decision that install_failed/startup_failed/blocked (H16) get NO toggle at all.
+      var aiMode = 'cloud', hybridMethod = null, hybridStatus = 'idle', downloadPct = 0, hybridTimer = null;
+      var customStatus = 'idle', customApplied = false, aiModalOpen = false;
+      var hwUnsupportedPreview = false, runtimeConflictPreview = false;
       function renderAiMode() {
+        // Fix #3 (visual review): meaningful wrapper groups instead of one uniform-gap flex column — the
+        // header, the Cloud/Hybrid choice, the "runs locally" explanation + Auto/Custom choice (grouped
+        // tightly since the explanation is ABOUT that control), the Endpoint/Model field pair (one shared
+        // field gap), and the primary action are now each their own spacing relationship.
         var el = document.getElementById('baiAiModeCard'); el.innerHTML = '';
         var head = document.createElement('div'); head.className = 'bai-set-card-head';
         head.innerHTML = '<span class="ic">' + iconSvg(CPU_PATH, 16) + '</span><span class="info"><b>AI Mode</b><span>Choose where BlueAI\'s model runs</span></span>';
         el.appendChild(head);
-        var seg1 = document.createElement('div'); seg1.className = 'bai-seg'; seg1.style.alignSelf = 'stretch';
-        seg1.innerHTML = '<button type="button" class="bai-seg-btn' + (aiMode === 'cloud' ? ' active' : '') + '" style="flex:1">Cloud</button><button type="button" class="bai-seg-btn' + (aiMode === 'hybrid' ? ' active' : '') + '" style="flex:1">Hybrid</button>';
-        seg1.children[0].addEventListener('click', function () { aiMode = 'cloud'; renderAiMode(); });
-        seg1.children[1].addEventListener('click', function () { aiMode = 'hybrid'; renderAiMode(); });
-        el.appendChild(seg1);
+        var group1 = document.createElement('div'); group1.className = 'bai-optcard-group'; group1.style.alignSelf = 'stretch';
+        var cloudCard = optCard({ title: 'Cloud', sub: 'Default. Uses cloud AI.', active: aiMode === 'cloud' });
+        var hybridCard = optCard({ title: 'Hybrid', sub: 'Uses your PC and saves tokens.', active: aiMode === 'hybrid', disabled: hwUnsupportedPreview });
+        cloudCard.addEventListener('click', function () { aiMode = 'cloud'; renderAiMode(); });
+        if (!hwUnsupportedPreview) hybridCard.addEventListener('click', function () { aiMode = 'hybrid'; renderAiMode(); });
+        group1.appendChild(cloudCard); group1.appendChild(hybridCard);
+        el.appendChild(group1);
+        // H13 preview: hardware-unsupported — Hybrid disabled + amber banner, reachable ONLY via the dev
+        // Preview panel toggle, never through real interaction.
+        if (hwUnsupportedPreview) {
+          el.appendChild(warnRow("This device doesn't support Hybrid mode. Use Cloud instead."));
+          if (aiMode === 'hybrid') aiMode = 'cloud';
+        }
         if (aiMode !== 'hybrid') return;
         el.appendChild(Object.assign(document.createElement('div'), { className: 'bai-set-divider' }));
-        var sub = document.createElement('div'); sub.style.cssText = 'font-size:10px;color:var(--bai-dim);'; sub.textContent = "Runs on this BlueStacks instance's local GPU"; el.appendChild(sub);
-        var seg2 = document.createElement('div'); seg2.className = 'bai-seg'; seg2.style.alignSelf = 'stretch';
-        seg2.innerHTML = '<button type="button" class="bai-seg-btn' + (hybridMethod === 'auto' ? ' active' : '') + '" style="flex:1">Auto</button><button type="button" class="bai-seg-btn' + (hybridMethod === 'custom' ? ' active' : '') + '" style="flex:1">Custom</button>';
-        seg2.children[0].addEventListener('click', function () { hybridMethod = 'auto'; renderAiMode(); });
-        seg2.children[1].addEventListener('click', function () { hybridMethod = 'custom'; renderAiMode(); });
-        el.appendChild(seg2);
-        if (hybridMethod === 'auto') {
-          if (hybridStatus === 'idle') {
-            var dlBtn = document.createElement('button'); dlBtn.className = 'bai-set-btn primary'; dlBtn.style.width = '100%'; dlBtn.type = 'button'; dlBtn.textContent = 'Download & enable';
-            dlBtn.addEventListener('click', startHybridDownload); el.appendChild(dlBtn);
-          } else if (hybridStatus === 'downloading') {
-            var barWrap = document.createElement('div'); barWrap.style.cssText = 'display:flex;flex-direction:column;gap:6px;';
-            barWrap.innerHTML = '<div style="height:6px;border-radius:4px;background:var(--bai-input-bg);overflow:hidden;"><div style="height:100%;width:' + downloadPct + '%;background:var(--bai-accent);"></div></div><span style="font-size:10px;color:var(--bai-dim);">Downloading local model… ' + Math.round(downloadPct) + '%</span>';
-            var cancelBtn = document.createElement('button'); cancelBtn.className = 'bai-set-btn'; cancelBtn.style.width = '100%'; cancelBtn.type = 'button'; cancelBtn.textContent = 'Cancel';
-            cancelBtn.addEventListener('click', function () { clearInterval(hybridTimer); hybridStatus = 'idle'; downloadPct = 0; renderAiMode(); });
-            el.appendChild(barWrap); el.appendChild(cancelBtn);
-          } else if (hybridStatus === 'installing') {
-            var inst = document.createElement('div'); inst.style.cssText = 'font-size:10.5px;color:var(--bai-dim);'; inst.textContent = 'Installing…'; el.appendChild(inst);
-          } else if (hybridStatus === 'running') {
-            var ready = document.createElement('div'); ready.className = 'bai-donecard'; ready.style.margin = '0';
-            ready.innerHTML = '<div class="dc-head">✓ HYBRID AI READY</div><div class="dc-body">Running locally on this instance\'s GPU.</div>';
-            var offBtn = document.createElement('button'); offBtn.className = 'bai-set-btn'; offBtn.style.width = '100%'; offBtn.type = 'button'; offBtn.textContent = 'Turn off';
-            offBtn.addEventListener('click', function () { hybridStatus = 'idle'; renderAiMode(); });
-            el.appendChild(ready); el.appendChild(offBtn);
-          }
+        var hybridGroup = document.createElement('div'); hybridGroup.style.cssText = 'display:flex;flex-direction:column;gap:6px;';
+        var sub = document.createElement('div'); sub.style.cssText = 'font-size:10px;color:var(--bai-dim);'; sub.textContent = "Runs on this BlueStacks instance's local GPU";
+        var group2 = document.createElement('div'); group2.className = 'bai-optcard-group'; group2.style.alignSelf = 'stretch';
+        var autoCard = optCard({ title: 'Auto', sub: 'BlueAI runs a local model for you.', badge: '★ Recommended', active: hybridMethod === 'auto', busy: hybridMethod !== 'auto' && hybridStatus !== 'idle' });
+        var customCard = optCard({ title: 'Custom', sub: 'Connect your own local VLM.', active: hybridMethod === 'custom' });
+        autoCard.addEventListener('click', function () { hybridMethod = 'auto'; renderAiMode(); });
+        customCard.addEventListener('click', function () { hybridMethod = 'custom'; renderAiMode(); });
+        group2.appendChild(autoCard); group2.appendChild(customCard);
+        hybridGroup.appendChild(sub); hybridGroup.appendChild(group2);
+        el.appendChild(hybridGroup);
+        if (hybridMethod === null) {
+          // H26: unset-method helper — shown only until the user actively picks Auto or Custom.
+          var helper = document.createElement('div'); helper.style.cssText = 'font-size:10.5px;color:var(--bai-dim);'; helper.textContent = 'Choose Auto or Custom to continue.';
+          el.appendChild(helper);
+        } else if (hybridMethod === 'auto') {
+          renderHybridAutoBody(el, false);
+        } else if (customStatus === 'checking') {
+          // Batch 3 (H22): must be checked BEFORE !customApplied — customApplied only flips true once
+          // this transitional beat finishes, so checking this branch second would make it unreachable
+          // (every render during the 1400ms window would keep hitting the empty-form branch instead).
+          var chk = document.createElement('div'); chk.style.cssText = 'display:flex;align-items:center;gap:8px;font-size:10.5px;color:var(--bai-dim);';
+          chk.innerHTML = '<span class="bai-spin"></span><span>Checking connection…</span>'; el.appendChild(chk);
         } else if (!customApplied) {
+          var fieldGroup = document.createElement('div'); fieldGroup.style.cssText = 'display:flex;flex-direction:column;gap:7px;';
           var epInput = document.createElement('input'); epInput.className = 'bai-newitem-input'; epInput.id = 'baiHybridEndpoint'; epInput.placeholder = 'Endpoint URL';
-          var modelInput = document.createElement('input'); modelInput.className = 'bai-newitem-input'; modelInput.placeholder = 'Model name'; modelInput.style.marginTop = '7px';
-          var applyBtn = document.createElement('button'); applyBtn.className = 'bai-set-btn primary'; applyBtn.style.cssText = 'width:100%;margin-top:9px;'; applyBtn.type = 'button'; applyBtn.textContent = 'Apply';
-          applyBtn.addEventListener('click', function () { if (!epInput.value.trim()) { epInput.focus(); return; } customApplied = true; renderAiMode(); });
-          el.appendChild(epInput); el.appendChild(modelInput); el.appendChild(applyBtn);
+          var modelInput = document.createElement('input'); modelInput.className = 'bai-newitem-input'; modelInput.id = 'baiHybridModel'; modelInput.placeholder = 'Model name';
+          fieldGroup.appendChild(epInput); fieldGroup.appendChild(modelInput);
+          var applyBtn = document.createElement('button'); applyBtn.className = 'bai-set-btn primary'; applyBtn.style.width = '100%'; applyBtn.type = 'button'; applyBtn.textContent = 'Apply';
+          function updateApplyEnabled() { var ok = epInput.value.trim() && modelInput.value.trim(); applyBtn.disabled = !ok; applyBtn.style.opacity = ok ? '' : '0.5'; applyBtn.style.cursor = ok ? '' : 'not-allowed'; }
+          epInput.addEventListener('input', updateApplyEnabled); modelInput.addEventListener('input', updateApplyEnabled); updateApplyEnabled();   // Batch 3 (H19): disabled until BOTH fields present, not just endpoint
+          applyBtn.addEventListener('click', function () {
+            if (applyBtn.disabled) return;
+            customStatus = 'checking'; renderAiMode();
+            setTimeout(function () { customStatus = 'idle'; customApplied = true; renderAiMode(); }, 1400);   // H22: real checking/connecting beat, not an instant flip
+          });
+          el.appendChild(fieldGroup); el.appendChild(applyBtn);
         } else {
           var connected = document.createElement('div'); connected.className = 'bai-donecard'; connected.style.margin = '0';
           connected.innerHTML = '<div class="dc-head">✓ CONNECTED</div><div class="dc-body">Using your custom endpoint.</div>';
           var disBtn = document.createElement('button'); disBtn.className = 'bai-set-btn'; disBtn.style.width = '100%'; disBtn.type = 'button'; disBtn.textContent = 'Disconnect';
-          disBtn.addEventListener('click', function () { customApplied = false; renderAiMode(); });
+          disBtn.addEventListener('click', function () { customApplied = false; renderAiMode(); });   // resets to blank fields — confirmed intentional (index.html history), not a bug
           el.appendChild(connected); el.appendChild(disBtn);
         }
       }
+      function warnRow(text) {
+        var w = document.createElement('div'); w.className = 'bai-warnrow'; w.style.margin = '0';
+        w.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg><span>' + text + '</span>';
+        return w;
+      }
+      // Part 4: one option-card builder for AI Mode's Cloud/Hybrid + Auto/Custom choices — title + subtext
+      // explain what each option does instead of a bare label; opts.badge/opts.busy are optional trailing
+      // marks on the title (Recommended star, background-activity dot), opts.disabled mirrors a real
+      // <button disabled> (no click wiring attached by the caller either).
+      function optCard(opts) {
+        var card = document.createElement('button'); card.type = 'button';
+        card.className = 'bai-optcard' + (opts.active ? ' active' : '') + (opts.disabled ? ' disabled' : '');
+        if (opts.disabled) card.disabled = true;
+        card.innerHTML =
+          '<span class="bai-optcard-dot"></span>' +
+          '<span class="bai-optcard-body">' +
+            '<span class="bai-optcard-title">' + opts.title +
+              (opts.badge ? '<span class="bai-optcard-badge">' + opts.badge + '</span>' : '') +
+              (opts.busy ? '<span class="bai-bgprogress" title="Still working in the background">●</span>' : '') +
+            '</span>' +
+            '<span class="bai-optcard-sub">' + opts.sub + '</span>' +
+          '</span>';
+        return card;
+      }
+      // Shared between the main settings card AND the setup-confirmation modal (Batch 3, H15) so the two
+      // never drift out of sync — both call this with their own container, same live hybridStatus.
+      function renderHybridAutoBody(el, inModal) {
+        if (runtimeConflictPreview && hybridStatus === 'running') {
+          el.appendChild(warnRow('Another app is already using the local GPU. Hybrid AI is paused until it\'s free.'));
+        }
+        if (hybridStatus === 'idle') {
+          var dlBtn = document.createElement('button'); dlBtn.className = 'bai-set-btn primary'; dlBtn.style.width = '100%'; dlBtn.type = 'button'; dlBtn.textContent = 'Download & enable';
+          dlBtn.addEventListener('click', inModal ? startHybridDownload : openAiModal);   // Batch 3 (H15): the card's own button now opens the confirmation modal instead of downloading directly
+          el.appendChild(dlBtn);
+        } else if (hybridStatus === 'downloading') {
+          var barWrap = document.createElement('div'); barWrap.style.cssText = 'display:flex;flex-direction:column;gap:6px;';
+          barWrap.innerHTML = '<div style="height:6px;border-radius:4px;background:var(--bai-input-bg);overflow:hidden;"><div style="height:100%;width:' + downloadPct + '%;background:var(--bai-accent);"></div></div><span style="font-size:10px;color:var(--bai-dim);">Downloading local model… ' + Math.round(downloadPct) + '%</span>';
+          var cancelBtn = document.createElement('button'); cancelBtn.className = 'bai-set-btn'; cancelBtn.style.width = '100%'; cancelBtn.type = 'button'; cancelBtn.textContent = 'Cancel';
+          cancelBtn.addEventListener('click', function () { clearInterval(hybridTimer); hybridStatus = 'idle'; downloadPct = 0; if (inModal) closeAiModal(); renderAiMode(); });
+          el.appendChild(barWrap); el.appendChild(cancelBtn);
+        } else if (hybridStatus === 'installing') {
+          var inst = document.createElement('div'); inst.style.cssText = 'font-size:10.5px;color:var(--bai-dim);'; inst.textContent = 'Installing…'; el.appendChild(inst);
+        } else if (hybridStatus === 'running') {
+          var ready = document.createElement('div'); ready.className = 'bai-donecard'; ready.style.margin = '0';
+          ready.innerHTML = '<div class="dc-head">✓ HYBRID AI READY</div><div class="dc-body">Running locally on this instance\'s GPU.</div>';
+          var offBtn = document.createElement('button'); offBtn.className = 'bai-set-btn'; offBtn.style.width = '100%'; offBtn.type = 'button'; offBtn.textContent = 'Turn off';
+          offBtn.addEventListener('click', function () { hybridStatus = 'idle'; if (inModal) closeAiModal(); renderAiMode(); });
+          el.appendChild(ready); el.appendChild(offBtn);
+        }
+      }
       function startHybridDownload() {
-        hybridStatus = 'downloading'; downloadPct = 0; renderAiMode();
+        hybridStatus = 'downloading'; downloadPct = 0; renderAiModal(); renderAiMode();
         hybridTimer = setInterval(function () {
           downloadPct += 8 + Math.random() * 10;
-          if (downloadPct >= 100) { downloadPct = 100; clearInterval(hybridTimer); hybridStatus = 'installing'; renderAiMode(); setTimeout(function () { hybridStatus = 'running'; renderAiMode(); }, 900); return; }
-          renderAiMode();
+          if (downloadPct >= 100) { downloadPct = 100; clearInterval(hybridTimer); hybridStatus = 'installing'; renderAiModal(); renderAiMode(); setTimeout(function () { hybridStatus = 'running'; renderAiModal(); renderAiMode(); }, 900); return; }
+          renderAiModal(); renderAiMode();
         }, 220);
+      }
+
+      // ---- Batch 3 (H15): setup-confirmation modal. Shares .bai-tgmodal's exact overlay footprint via
+      // the same class (consistent overlay tier, not a one-off). Persists through idle->downloading->
+      // installing->running, showing the SAME body as the main card (renderHybridAutoBody) — closing it
+      // is context-sensitive: idle = full cancel, anything past idle = hide only (process keeps running,
+      // still visible in the main card underneath). ----
+      var aiModalEl = document.getElementById('baiAiModal'), aiModalCardEl = document.getElementById('baiAiModalCard');
+      function openAiModal() { aiModalOpen = true; aiModalEl.classList.add('on'); renderAiModal(); }
+      function closeAiModal() { aiModalOpen = false; aiModalEl.classList.remove('on'); }
+      function cancelAiModal() { closeAiModal(); }   // idle/failed close = cancel; nothing to reset since idle already means "not started"
+      function renderAiModal() {
+        if (!aiModalOpen) return;
+        var titles = { idle: 'Set up Hybrid — Auto', downloading: 'Setting up Hybrid — Auto', installing: 'Setting up Hybrid — Auto', running: 'Hybrid — Auto' };
+        aiModalCardEl.innerHTML =
+          stdModalHead(titles[hybridStatus], 'aiModalClose') +
+          '<div class="tgm-body">' +
+            (hybridStatus === 'idle' ? '<p>BlueAI runs a local model on this instance\'s GPU. This needs about 3 to 4 GB of storage and a one-time download.</p>' : '') +
+            '<div id="aiModalBody"></div>' +
+          '</div>';
+        document.getElementById('aiModalClose').addEventListener('click', function () { if (hybridStatus === 'idle') cancelAiModal(); else closeAiModal(); });
+        var bodyEl = document.getElementById('aiModalBody');
+        renderHybridAutoBody(bodyEl, true);
+        if (hybridStatus === 'idle') {
+          var cancelBtn = document.createElement('button'); cancelBtn.className = 'bai-set-btn'; cancelBtn.style.cssText = 'width:100%;margin-top:8px;'; cancelBtn.type = 'button'; cancelBtn.textContent = 'Cancel';
+          cancelBtn.addEventListener('click', cancelAiModal);
+          bodyEl.parentElement.appendChild(cancelBtn);
+        }
       }
       renderAiMode();
 
@@ -1634,7 +2200,7 @@
         typeStep();
       }
       restorePlaceholder();
-      function spendCredits(n) { if (n) { credits = Math.max(0, credits - n); renderCredits(); } }
+      function spendCredits(n) { if (n && !byokIsActive()) { credits = Math.max(0, credits - n); } renderCredits(); }   // BYOK: balance must stay exactly unchanged
       function startFlow(name, initialDelay) { flow = (FLOWS[name] || []).slice(); flowI = 0; pending = null; ctx = {}; setTimeout(runStep, initialDelay || 800); }
       function advance(d) { setTimeout(runStep, d || 450); }
       function workSpinner(label, ms, done) {                                            // a transient "working…" line, then a callback
@@ -1664,9 +2230,36 @@
         el.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg><span>' + text + '</span>';
         baiBody.appendChild(el); scrollBody();
       }
+      var FEEDBACK_REASONS = ['Inaccurate', 'Unhelpful', 'Took too long', 'Other'];
       function renderDone(text) {
         var el = document.createElement('div'); el.className = 'bai-donecard';
         el.innerHTML = '<div class="dc-head">✓ TASK COMPLETED</div><div class="dc-body">' + text + '</div>';
+        // Batch 5: feedback thumbs — up is a one-tap acknowledgment; down reveals reason chips inline.
+        var fb = document.createElement('div'); fb.className = 'bai-fb';
+        var up = document.createElement('button'); up.type = 'button'; up.className = 'bai-fb-btn'; up.setAttribute('aria-label', 'Good response');
+        up.innerHTML = iconSvg('<path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>', 13);
+        var down = document.createElement('button'); down.type = 'button'; down.className = 'bai-fb-btn'; down.setAttribute('aria-label', 'Bad response');
+        down.innerHTML = iconSvg('<path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zM17 2h3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-3"/>', 13);
+        fb.appendChild(up); fb.appendChild(down); el.appendChild(fb);
+        up.addEventListener('click', function () {
+          if (up.classList.contains('picked')) return;
+          up.classList.add('picked', 'up'); down.disabled = true; down.style.opacity = '0.4';
+          var thanks = document.createElement('div'); thanks.className = 'bai-fb-thanks'; thanks.textContent = 'Thanks for the feedback.'; el.appendChild(thanks);
+        });
+        down.addEventListener('click', function () {
+          if (down.classList.contains('picked')) return;
+          down.classList.add('picked', 'down'); up.disabled = true; up.style.opacity = '0.4';
+          var chips = document.createElement('div'); chips.className = 'bai-fb-chips';
+          FEEDBACK_REASONS.forEach(function (reason) {
+            var chip = document.createElement('button'); chip.type = 'button'; chip.className = 'bai-fb-chip'; chip.textContent = reason;
+            chip.addEventListener('click', function () {
+              chips.remove();
+              var thanks = document.createElement('div'); thanks.className = 'bai-fb-thanks'; thanks.textContent = 'Thanks — noted: "' + reason + '".'; el.appendChild(thanks);
+            });
+            chips.appendChild(chip);
+          });
+          el.appendChild(chips);
+        });
         baiBody.appendChild(el); scrollBody();
       }
       function renderError(text) {
@@ -1752,6 +2345,63 @@
       function closeAllSubpanes() { subpaneStack = []; subpaneEl.classList.remove('on'); }
       subpaneBackBtn.addEventListener('click', function (e) { e.stopPropagation(); popSubpane(); });
 
+      // ---- Part 6: global-utility routes (Chat History / Profile / AI Credits / compact-Settings) — a
+      // separate, single-level shell (not a push/pop stack like Subpane above), since each is opened
+      // directly from the header/account menu and none of them navigate on to another. Settings gets one
+      // extra step on open/close: its content is the SAME .bai-set node #paneSettings uses in wide mode
+      // (physically relocated in and back out), so every existing renderer/id (AI Mode, BYOK, AI Defaults…)
+      // keeps working completely untouched rather than needing a duplicate copy of Settings' render logic.
+      var globalRouteEl = document.getElementById('baiGlobalRoute'), globalRouteTitleEl = document.getElementById('baiGlobalRouteTitle'), globalRouteBodyEl = document.getElementById('baiGlobalRouteBody'), globalRouteBackBtn = document.getElementById('baiGlobalRouteBack');
+      var globalRouteCurrent = null;   // 'history' | 'profile' | 'credits' | 'settings' | null
+      var setContentEl = document.querySelector('#paneSettings .bai-set');
+      function restoreSettingsHome() {
+        setContentEl.style.cssText = '';   // drop the override — .bai-set's own rule (flex:1;padding:14px;overflow-y:auto) takes back over
+        document.getElementById('paneSettings').appendChild(setContentEl);
+      }
+      // Part 3: Settings' account-state Preview rows are scoped to "am I looking at Settings", which in
+      // compact now means the global route (currentTabMode never becomes 'settings' there — see Part 6),
+      // and in wide still means the sidebar's setMode('settings') tab. Check both.
+      function isViewingSettings() { return currentTabMode === 'settings' || globalRouteCurrent === 'settings'; }
+      function openGlobalRoute(key, title, renderFn) {
+        // The header stays clickable while a route is open, so one route CAN jump straight to another
+        // (e.g. Settings open -> Account menu -> Profile) without Back/closeGlobalRoute() running first —
+        // guard that transition here too, or the relocated .bai-set node would be wiped by the innerHTML
+        // reset below and never make it back into #paneSettings for wide mode.
+        if (globalRouteCurrent === 'settings' && key !== 'settings') restoreSettingsHome();
+        globalRouteCurrent = key;
+        globalRouteTitleEl.textContent = title;
+        globalRouteBodyEl.innerHTML = '';
+        renderFn(globalRouteBodyEl);
+        globalRouteEl.classList.add('on');
+        refreshFadeScroll(globalRouteBodyEl, document.getElementById('baiGlobalRouteScroll'));
+        if (typeof renderPreviewRows === 'function') renderPreviewRows();   // mirrors setMode()'s own side effect, since compact's Settings route no longer goes through setMode
+      }
+      function closeGlobalRoute() {
+        if (globalRouteCurrent === 'settings') restoreSettingsHome();
+        globalRouteCurrent = null;
+        globalRouteEl.classList.remove('on');
+        if (typeof renderPreviewRows === 'function') renderPreviewRows();
+      }
+      globalRouteBackBtn.addEventListener('click', function (e) { e.stopPropagation(); closeGlobalRoute(); });
+      // Shared "take me to Settings" — anything that used to just call setMode('settings') to jump there
+      // (the OOC modal's BYOK CTA, the AI Credits screen's key actions) must branch by layout now that
+      // compact routes Settings through the global-route shell instead; wide keeps the direct sidebar path.
+      function goToSettingsRoute() {
+        if (baiUi.classList.contains('wide')) {
+          // Correction: a global route (e.g. AI Credits, opened before this) has no wide-specific footprint
+          // of its own — it stays a full-width overlay even in wide. Close it first or it stays visibly on
+          // top while Settings activates underneath via the sidebar.
+          if (globalRouteEl.classList.contains('on')) closeGlobalRoute();
+          setMode('settings');
+          return;
+        }
+        openGlobalRoute('settings', 'Settings', function (el) {
+          setContentEl.style.cssText = 'flex:1;overflow:visible;padding:0;display:flex;flex-direction:column;';
+          el.appendChild(setContentEl);
+        });
+      }
+      bindFadeScroll(globalRouteBodyEl, document.getElementById('baiGlobalRouteScroll'));
+
       // ---- Chat session switcher: wordmark -> new chat + Chat History subpane (scripted) ----
       var titleBtn = document.getElementById('baiTitleBtn'), newBtn = document.getElementById('baiNewBtn');
       var RECENTS = [
@@ -1832,11 +2482,11 @@
         RECENTS.forEach(function (r) {
           var row = document.createElement('div'); row.className = 'bai-history-card' + (r.working ? ' working' : '') + (r.unseen ? ' unseen' : '');
           row.innerHTML = '<div class="hc-top"><span class="hc-dot"></span><span class="hc-title">' + r.title + '</span>' + (r.scheduled ? '<span class="bai-sched-badge">Scheduled</span>' : '') + '</div><div class="hc-meta">' + (r.count || (r.msgs || []).length) + ' messages · ' + r.time + ' ago</div>';
-          row.addEventListener('click', function (e) { e.stopPropagation(); loadThread(r); closeAllSubpanes(); });
+          row.addEventListener('click', function (e) { e.stopPropagation(); loadThread(r); closeGlobalRoute(); });
           body.appendChild(row);
         });
       }
-      titleBtn.addEventListener('click', function (e) { e.stopPropagation(); if (baiUi.classList.contains('wide') || baiUi.classList.contains('nonchat')) return; closeMenus(); openSubpane('Chat History', renderHistoryList); });
+      titleBtn.addEventListener('click', function (e) { e.stopPropagation(); if (baiUi.classList.contains('wide') || baiUi.classList.contains('nonchat')) return; closeMenus(); openGlobalRoute('history', 'Chat History', renderHistoryList); });
       newBtn.addEventListener('click', function (e) { e.stopPropagation(); newChat(); closeMenus(); });
       document.getElementById('baiHistoryNoteNew').addEventListener('click', function (e) { e.stopPropagation(); newChat(); });
 
@@ -1871,18 +2521,80 @@
       var savedTheme = 'dark'; try { savedTheme = localStorage.getItem(THEME_STORE) || 'dark'; } catch (e) {}
       applyTheme(savedTheme, false);   // applied at load, before any open/boot — so a refresh comes back in your theme
 
-      // ---- Prototype state: default | onboarding — switching replays the page in that state (unchanged mechanic,
-      // now surfaced through the unified Preview panel below instead of its own always-visible pill toggler) ----
-      var STATE_STORE = 'baiPageState', pageState = 'default';
-      try { pageState = localStorage.getItem(STATE_STORE) || 'default'; } catch (e) {}
+      // ---- Prototype state: onboarding | loggedout | loggedin — switching replays the page in that state
+      // (unchanged reload mechanic, now surfaced through the unified Preview panel below instead of its own
+      // always-visible pill toggler). Part 1: three explicit, persisted states instead of the old
+      // onboarding/default pair — "loggedin" additionally seeds `loggedIn=true` below so a design reviewer
+      // never has to walk the real claim->try-again->continue login flow just to see logged-in chrome. ----
+      // Correction: fresh visitors default to already-Logged-in (no manual login walk needed to review the
+      // logged-in product) — clicking BlueStacks still opens the window normally either way. A pre-Part-1
+      // 'default' value still migrates to 'loggedout', preserving what that value actually meant historically.
+      var STATE_STORE = 'baiPageState', pageState = 'loggedin';
+      try {
+        var storedPageState = localStorage.getItem(STATE_STORE);
+        if (storedPageState === 'default') storedPageState = 'loggedout';   // migrate a pre-Part-1 saved value
+        pageState = storedPageState || 'loggedin';
+      } catch (e) {}
+      if (pageState === 'loggedin') { loggedIn = true; updateLoggedInChrome(); }
+      // ONE centralized setter — the Session row (and anything else that ever needs to switch preview
+      // session state) always goes through this, never touches `loggedIn`/pageState directly.
+      // Correction: Onboarding still gets the full "replay from a blank boot" treatment (logo assembles ->
+      // welcome screen) via reload, since that IS the onboarding experience. But Logged out <-> Logged in
+      // was ALSO going through reload — closing the window and forcing a re-click on BlueStacks just to
+      // flip account-state chrome, plus replaying the boot/logo animation for no reason. That direct
+      // transition now updates in place instead: no reload, no window close, no boot replay — it reuses
+      // syncSessionState() (the same helper real login/logout use) and resets to a clean chat view.
+      function setPreviewSession(v) {
+        if (v === pageState) return;
+        if (v === 'onboarding' || pageState === 'onboarding') {
+          try { localStorage.setItem(STATE_STORE, v); localStorage.removeItem('baiWin'); } catch (e) {}
+          location.reload();
+          return;
+        }
+        syncSessionState(v === 'loggedin');
+        newChat(); setMode('chat');
+      }
+      // Correction: the ONE authoritative sync point for REAL login/logout — keeps pageState in lockstep
+      // with loggedIn so the Preview Session selector always reflects the true current state (not just
+      // whatever was picked at load) and a reload can't undo a real logout or forget a real login. Unlike
+      // setPreviewSession() above (which reloads to deliberately replay a DIFFERENT boot state), this
+      // updates in place — logging in/out mid-session shouldn't replay onboarding or lose the chat.
+      function syncSessionState(isLoggedIn) {
+        loggedIn = isLoggedIn;
+        pageState = isLoggedIn ? 'loggedin' : 'loggedout';
+        try { localStorage.setItem(STATE_STORE, pageState); } catch (e) {}
+        updateLoggedInChrome();
+        if (typeof renderPreviewRows === 'function') renderPreviewRows();
+      }
 
       // ---- Unified Preview panel: ONE collapsible progressive-disclosure toggler (matches the canonical
       // blueAI product's dev-preview panel) instead of two separate always-visible pill togglers. ----
       var previewFab = document.getElementById('baiPreviewFab'), previewCard = document.getElementById('baiPreviewCard'), previewRowsEl = document.getElementById('baiPreviewRows');
+      // Correction: the panel's open/collapsed state wasn't persisted, so any reload — including the
+      // Session row's own deliberate location.reload() — silently snapped it back to collapsed even though
+      // the reviewer never asked it to close. It should stay open until they explicitly hit Collapse.
+      var PREVIEW_OPEN_STORE = 'baiPreviewOpen', previewOpenSaved = false;
+      try { previewOpenSaved = localStorage.getItem(PREVIEW_OPEN_STORE) === '1'; } catch (e) {}
+      if (previewOpenSaved) { previewFab.classList.add('hidden'); previewCard.classList.add('on'); }
       function previewSegRow(label, opts, val, set) {
         var row = document.createElement('div'); row.className = 'bai-preview-row';
         var lab = document.createElement('span'); lab.className = 'bai-preview-row-label'; lab.textContent = label;
         var seg = document.createElement('div'); seg.className = 'bai-preview-seg';
+        opts.forEach(function (o) {
+          var b = document.createElement('button'); b.type = 'button'; b.textContent = o[0]; if (o[1] === val) b.classList.add('on');
+          b.addEventListener('click', function () { set(o[1]); });
+          seg.appendChild(b);
+        });
+        row.appendChild(lab); row.appendChild(seg);
+        return row;
+      }
+      // Correction: stacked variant for a row whose option count/label length would overflow the default
+      // label-left/control-right layout (Session: Onboarding/Logged out/Logged in) — label on its own line,
+      // then a full-width segmented group with every option flexing equally underneath.
+      function previewSegRowStacked(label, opts, val, set) {
+        var row = document.createElement('div'); row.className = 'bai-preview-row bai-preview-row-stacked';
+        var lab = document.createElement('span'); lab.className = 'bai-preview-row-label'; lab.textContent = label;
+        var seg = document.createElement('div'); seg.className = 'bai-preview-seg stretch';
         opts.forEach(function (o) {
           var b = document.createElement('button'); b.type = 'button'; b.textContent = o[0]; if (o[1] === val) b.classList.add('on');
           b.addEventListener('click', function () { set(o[1]); });
@@ -1902,13 +2614,26 @@
         row.appendChild(lab); row.appendChild(btn);
         return row;
       }
+      // Part 3: one shared refresh after any account-state Preview row changes — keeps the header gauge,
+      // the Settings BYOK card, an open AI Credits screen, and an open OOC modal all reading the SAME
+      // facts (primeGeo/creditsPrime/zeroCreditsPreview/stgByokOn) instead of only some of them updating.
+      function refreshAccountDependentUI() {
+        recomputeCreditsTier();   // -> renderCredits(): header gauge + low-credit indicator + re-arms/opens OOC on zero
+        renderByok();
+        // Correction: renderAiCreditsScreen() only appends — without clearing first, every account-state
+        // change stacked a second complete Credits composition into the same route body. Header/scroll
+        // binding live on the route shell itself, not inside this body, so clearing it is safe.
+        if (globalRouteCurrent === 'credits') {
+          globalRouteBodyEl.innerHTML = '';
+          renderAiCreditsScreen(globalRouteBodyEl);
+          refreshFadeScroll(globalRouteBodyEl, document.getElementById('baiGlobalRouteScroll'));
+        }
+        if (oocModalEl.classList.contains('on')) openOocModal();   // re-render to the current variant, not just leave it stale
+        if (typeof renderPreviewRows === 'function') renderPreviewRows();   // Membership/Credits rows themselves must appear/disappear live as Geo/Own key change, not just their downstream effects
+      }
       function renderPreviewRows() {
         previewRowsEl.innerHTML = '';
-        var rows = [previewSegRow('Session', [['Onboarding', 'onboarding'], ['Default', 'default']], pageState, function (v) {
-          if (v === pageState) return;
-          try { localStorage.setItem(STATE_STORE, v); localStorage.removeItem('baiWin'); } catch (e) {}
-          location.reload();   // clean replay of the chosen state
-        })];
+        var rows = [previewSegRowStacked('Session', [['Onboarding', 'onboarding'], ['Logged out', 'loggedout'], ['Logged in', 'loggedin']], pageState, setPreviewSession)];
         if (currentTabMode === 'chat') {
           rows.push(previewActionRow('Plan', function () { togglerDemo("what's the plan?", 'planning…', demoPlan); }));
           rows.push(previewActionRow('Warning', function () { togglerDemo('go ahead', 'checking…', demoWarn); }));
@@ -1917,14 +2642,36 @@
           rows.push(previewActionRow('Success', function () { togglerDemo('did it finish?', 'wrapping up…', demoSuccess); }));
           rows.push(previewActionRow('Error', function () { togglerDemo('try that again', 'retrying…', demoError); }));
         }
+        // Batch 3 (H13/H14): dev-preview-only toggles — the reference gates these behind a hardware
+        // check / runtime detection with no real equivalent in this design-only terminal. These stay
+        // Settings-specific (they only affect the AI Mode card rendered there).
+        if (isViewingSettings()) {
+          rows.push(previewSegRow('Hardware unsupported', [['Off', false], ['On', true]], hwUnsupportedPreview, function (v) { hwUnsupportedPreview = v; renderAiMode(); }));
+          rows.push(previewSegRow('Runtime conflict', [['Off', false], ['On', true]], runtimeConflictPreview, function (v) { runtimeConflictPreview = v; renderAiMode(); if (aiModalOpen) renderAiModal(); }));
+        }
+        // Correction: Geo/Membership/Own key/Credits are ACCOUNT facts, not Settings-screen facts — a
+        // reviewer needs to change them while looking at Chat, AI Credits, an open OOC modal, etc., not
+        // just Settings. Gated only by session state (Logged in), never by which screen is open. Membership
+        // only applies once Geo=Prime; Credits' zero-balance toggle is moot once Own key=On (byokIsActive()
+        // already takes over the balance display/gating in that case — see refreshAccountDependentUI).
+        if (pageState === 'loggedin') {
+          rows.push(previewSegRow('Geo', [['Non-Prime', false], ['Prime', true]], primeGeo, function (v) { primeGeo = v; refreshAccountDependentUI(); }));
+          if (primeGeo) rows.push(previewSegRow('Membership', [['Non-member', false], ['Member', true]], creditsPrime, function (v) { creditsPrime = v; refreshAccountDependentUI(); }));
+          rows.push(previewSegRow('Own key', [['Off', false], ['On', true]], stgByokOn, function (v) {
+            stgByokOn = v;
+            if (v) { stgByokProvider = BYOK_PROVIDERS[0]; stgByokKey = 'sk-preview-demo-key'; } else { stgByokProvider = null; stgByokKey = null; }
+            refreshAccountDependentUI();
+          }));
+          if (!stgByokOn) rows.push(previewSegRow('Credits', [['Normal', false], ['Zero', true]], zeroCreditsPreview, function (v) { zeroCreditsPreview = v; refreshAccountDependentUI(); }));
+        }
         rows.forEach(function (row, i) {
           if (i > 0) { var div = document.createElement('div'); div.className = 'bai-preview-divider'; previewRowsEl.appendChild(div); }
           previewRowsEl.appendChild(row);
         });
       }
       renderPreviewRows();
-      previewFab.addEventListener('click', function (e) { e.stopPropagation(); previewFab.classList.add('hidden'); previewCard.classList.add('on'); });
-      document.getElementById('baiPreviewCollapse').addEventListener('click', function (e) { e.stopPropagation(); previewCard.classList.remove('on'); previewFab.classList.remove('hidden'); });
+      previewFab.addEventListener('click', function (e) { e.stopPropagation(); previewFab.classList.add('hidden'); previewCard.classList.add('on'); try { localStorage.setItem(PREVIEW_OPEN_STORE, '1'); } catch (err) {} });
+      document.getElementById('baiPreviewCollapse').addEventListener('click', function (e) { e.stopPropagation(); previewCard.classList.remove('on'); previewFab.classList.remove('hidden'); try { localStorage.setItem(PREVIEW_OPEN_STORE, '0'); } catch (err) {} });
 
       // ---- Onboarding state: welcome (logo + pitch + floating outcome cards + CTA) -> 3-step nav tour ----
       var baiOnb = document.getElementById('baiOnb'), baiTour = document.getElementById('baiTour');
@@ -2037,8 +2784,28 @@
       stage.addEventListener('click', function () { if (detached) return; setOpen(false); });
       // Clicks inside the drawer shouldn't close it.
       drawer.addEventListener('click', function (e) { e.stopPropagation(); });
-      // Esc closes (and remembers a detached window).
-      addEventListener('keydown', function (e) { if (e.key === 'Escape') closePanel(); });
+      // Esc closes (and remembers a detached window) — UNLESS a higher-priority overlay/menu is open,
+      // in which case Escape dismisses THAT first (Batch 2), matching how the login gate's Close button
+      // is scoped to the claim step only.
+      addEventListener('keydown', function (e) {
+        if (e.key !== 'Escape') return;
+        if (gateOpen) { if (loginStep === 'claim') dismissLoginGate(); return; }
+        if (typeof logoutGateOpen !== 'undefined' && logoutGateOpen) { closeLogoutGate(); return; }
+        if (typeof tgModalEl !== 'undefined' && tgModalEl.classList.contains('on')) { closeTgModal(); return; }
+        if (typeof aiModalOpen !== 'undefined' && aiModalOpen) { if (hybridStatus === 'idle') cancelAiModal(); else closeAiModal(); return; }
+        if (typeof oocModalEl !== 'undefined' && oocModalEl.classList.contains('on')) { closeOocModal(); return; }
+        // Batch 2 bug fix: this ALSO must check the wide-sidebar's own menu pair (sideHelpMenuEl/
+        // sideAcctMenuEl) — checking only the compact header's pair meant opening the sidebar's Help/
+        // Account menu in wide mode and pressing Escape fell through to closePanel() instead, closing
+        // the whole app window. Caught via a full smoke test across all 4 combos, not by inspection.
+        var anyMenuOpen = [modelMenu, helpMenuEl, acctMenuEl, sideHelpMenuEl, sideAcctMenuEl].some(function (m) { return m && m.classList.contains('open'); });
+        if (anyMenuOpen) { closeMenus(); return; }
+        // Part 6: the new global-route shell (Chat History/Profile/AI Credits/compact-Settings) is its own
+        // overlay too — same class of bug as the sidebar-menu fix above if this is skipped (Escape would
+        // fall through to closePanel() and close the whole app instead of just the route).
+        if (typeof globalRouteEl !== 'undefined' && globalRouteEl.classList.contains('on')) { closeGlobalRoute(); return; }
+        closePanel();
+      });
       // Onboarding state: the reviewer chose it from the toggler — open the window for them straight away.
       if (pageState === 'onboarding') setTimeout(function () { setOpen(true); }, 450);
     })();
