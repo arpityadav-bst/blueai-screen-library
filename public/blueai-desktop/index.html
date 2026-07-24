@@ -58,7 +58,9 @@
       --bai-accent: #4a8bf5; --bai-accent-strong: #2c5fd0; --bai-accent-wash: rgba(74,139,245,0.14); --bai-on-accent: #071023; --bai-chip-bg: var(--bai-accent-wash);
       --bai-ok: #34cf8f; --bai-danger: #ff5c68; --bai-scroll: rgba(160,180,220,0.5); --bai-menu-shadow: 0 10px 30px rgba(0,0,0,0.58);
       --bai-credit-hi: #4a8bf5; --bai-credit-mid: #f0b429; --bai-credit-low: #f2914a; --bai-credit-crit: #ff5c68;
+      --bai-yellow: #e6d573;   /* Correction: softened to pastel — a distinct yellow for "input required (menu)", separate hue from --bai-credit-mid's amber (used for warnings) so the two don't read as the same color */
       --bai-titlebar-bg: #080a14; --bai-titlebar-line: #05060c; --bai-titlebar-text: #e7ecfa; --bai-titlebar-icon: #99a8dc;   /* fixed near-black navy — matches BlueStacks' own title bar; never redefined in .drawer.light */
+      --bai-window-line: #262f52;   /* fixed window-outline tone (the original dark theme's own --bai-line) — never redefined in .drawer.light, so the outline stays this navy in both themes instead of swapping pale/white */
     }
     /* Light: cool paper-white slate. Inks picked for AA contrast on #f6f8fc/white (accent 5.0:1, body 8.5:1, dim ~5:1). */
     .drawer.light {
@@ -70,6 +72,7 @@
       --bai-accent: #2258c9; --bai-accent-strong: #1a45a8; --bai-accent-wash: rgba(34,88,201,0.10); --bai-on-accent: #ffffff; --bai-chip-bg: var(--bai-accent-wash);
       --bai-ok: #0e7c3a; --bai-danger: #d92d2d; --bai-scroll: rgba(70,90,130,0.45); --bai-menu-shadow: 0 8px 24px rgba(25,40,80,0.16);
       --bai-credit-hi: #2258c9; --bai-credit-mid: #a16207; --bai-credit-low: #b04d08; --bai-credit-crit: #d92d2d;
+      --bai-yellow: #c9a916;
     }
     /* BlueAI agent drawer — same height as the window, tucked behind its right edge, slides out.
        Blank black canvas for now; the reinvented product gets built into #blueai-canvas. */
@@ -77,7 +80,10 @@
       position: absolute; top: 0; left: 100%;
       width: 290px; height: 100%;
       background: var(--bai-bg);                      /* dark cool slate — in BlueStacks' navy family, not a black void */
-      border: 1px solid var(--bai-line);                /* BlueStacks' own chrome/edge tone */
+      border: 1px solid var(--bai-window-line);         /* Correction: fixed to the original dark-theme outline tone
+                                                            (never redefined in .drawer.light) — the themed --bai-line
+                                                            put a pale/white seam around the window in light theme,
+                                                            and --bai-titlebar-line read as too near-black instead */
       overflow: hidden;
       transform: translateX(-290px);            /* tucked behind the opaque window */
       transition: transform 280ms cubic-bezier(0.22, 0.61, 0.36, 1);
@@ -338,11 +344,16 @@
     .bai-tgmodal-card { width: 100%; max-width: 336px; max-height: 100%; overflow-y: auto; scrollbar-width: none; display: flex; flex-direction: column; background: var(--bai-card); border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.4); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; animation: onb-in 0.3s cubic-bezier(0.22,0.9,0.26,1) both; }   /* Batch 1: 300->336px gives the header row's title more room before wrapping — still comfortably clear of a 380px compact drawer's own 20px backdrop padding each side */
     .bai-tgmodal-card::-webkit-scrollbar { width: 0; height: 0; display: none; }
     .tgm-head { display: flex; align-items: center; gap: 8px; padding: 16px 16px 14px; border-bottom: 1px solid var(--bai-line); }   /* Batch 1: gap 10->8px, a little more room back to the title */
-    .tgm-ic { flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%; background: var(--bai-accent); color: var(--bai-on-accent); display: flex; align-items: center; justify-content: center; }   /* Fix #8: 32->28px so it no longer dominates a 28px-footprint close control */
+    .tgm-ic { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; background: var(--bai-accent); color: var(--bai-on-accent); display: flex; align-items: center; justify-content: center; }   /* Correction: 28->22px, was reading as bigger/heavier than the title next to it */
+    .tgm-ic-ok { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; background: color-mix(in srgb, var(--bai-ok) 16%, transparent); color: var(--bai-ok); display: flex; align-items: center; justify-content: center; }   /* Hybrid-ready header checkmark — a status indicator, not a decorative app-icon badge */
     .tgm-close { flex-shrink: 0; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: none; border: none; color: var(--bai-faint); cursor: pointer; border-radius: 6px; transition: background 0.15s, color 0.15s; }   /* Fix #8: comparable square footprint to .tgm-ic, real hover surface instead of a bare text glyph */
     .tgm-close:hover { background: var(--bai-hover); color: var(--bai-hover-ink); }
     .tgm-head .tgm-title { flex: 1; min-width: 0; }   /* scoped to .tgm-head only — lets a no-icon header (stdModalHead) push .tgm-close fully right without touching .lg-h's shared rule */
     .tgm-body { padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; font-size: 12px; line-height: 1.55; color: var(--bai-text); }
+    /* Correction: #aiModalBody was a bare block div — whatever renderHybridAutoBody appended (warning row,
+       donecard, buttons) had no automatic gap between them and relied on each element's own margin, which
+       wasn't consistently set. Give it the same flex+gap treatment as .tgm-body/.bai-set-card. */
+    #aiModalBody { display: flex; flex-direction: column; gap: 10px; }
     .tgm-body b { color: var(--bai-text-hi); }
     .tgm-body ul { padding-left: 18px; display: flex; flex-direction: column; gap: 6px; }
     .tgm-body code { background: var(--bai-input-bg); padding: 1px 5px; border-radius: 4px; font-size: 11px; }
@@ -460,7 +471,10 @@
     /* Menu-style options: a NUMBERED TEXT LIST inside one card, answered by typing (a number or the option
        name), not by tapping — the other "input required" shape besides clickable .bai-opt-row buttons, used
        when there are more/longer options. Tinted like warnrow's amber (this is a choice-prompt, not an error). */
-    .bai-menucard { align-self: stretch; margin: 1px 0 2px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; background: color-mix(in srgb, var(--bai-credit-mid) 16%, var(--bai-card-2)); border: 1px solid color-mix(in srgb, var(--bai-credit-mid) 38%, var(--bai-line)); border-radius: 8px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+    /* Correction: first moved off --bai-credit-mid (shared with .bai-warnrow) onto --bai-accent, but that
+       collided with .bai-plancard (which is ALSO accent blue) — same problem, different pair. Menu now gets
+       its own dedicated hue (--bai-yellow), distinct from warn's amber and plan's blue. */
+    .bai-menucard { align-self: stretch; margin: 1px 0 2px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; background: color-mix(in srgb, var(--bai-yellow) 16%, var(--bai-card-2)); border: 1px solid color-mix(in srgb, var(--bai-yellow) 40%, var(--bai-line)); border-radius: 8px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
     .bai-menucard .mn-intro { font-size: 12px; line-height: 1.45; color: var(--bai-text-strong); }
     .bai-menucard .mn-list { display: flex; flex-direction: column; gap: 7px; margin: 0; padding-left: 18px; font-size: 12px; line-height: 1.45; color: var(--bai-text); }
     .bai-menucard .mn-list b { color: var(--bai-text-strong); }
@@ -491,7 +505,9 @@
     .bai-plancard .pl-intro { font-size: 12px; line-height: 1.45; color: var(--bai-text-strong); }
     .bai-plancard .pl-steps { display: flex; flex-direction: column; gap: 6px; margin: 0; padding-left: 18px; font-size: 12px; line-height: 1.45; color: var(--bai-text); }
     .bai-plancard .pl-steps b { color: var(--bai-text-strong); }
-    .bai-warnrow { align-self: stretch; display: flex; align-items: flex-start; gap: 7px; padding: 9px 11px; margin: 1px 0 2px; background: color-mix(in srgb, var(--bai-credit-mid) 12%, transparent); border: 1px solid color-mix(in srgb, var(--bai-credit-mid) 32%, transparent); border-radius: 8px; }
+    /* Correction: 12%/32% mix read as dull/washed-out — bumped for more visible presence, matching how
+       .bai-donecard/.bai-errorcard read at a glance rather than blending into the background. */
+    .bai-warnrow { align-self: stretch; display: flex; align-items: flex-start; gap: 7px; padding: 9px 11px; margin: 1px 0 2px; background: color-mix(in srgb, var(--bai-credit-mid) 20%, transparent); border: 1px solid color-mix(in srgb, var(--bai-credit-mid) 48%, transparent); border-radius: 8px; }
     .bai-warnrow svg { flex-shrink: 0; margin-top: 1px; color: var(--bai-credit-mid); }
     .bai-warnrow span { font-size: 11px; line-height: 1.45; color: var(--bai-text); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
     .bai-donecard { align-self: stretch; margin: 1px 0 2px; padding: 9px 11px; display: flex; flex-direction: column; gap: 3px; background: color-mix(in srgb, var(--bai-ok) 9%, var(--bai-card-2)); border: 1px solid color-mix(in srgb, var(--bai-ok) 35%, var(--bai-line)); border-radius: 8px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
@@ -616,6 +632,11 @@
     .bai-preview-action:hover { filter: brightness(1.15); }
     .bai-preview-seg button.on { background: #2a4a86; color: #eaf0ff; }
     .bai-preview-divider { height: 1px; background: rgba(255,255,255,0.08); }
+    .bai-preview-group-head { cursor: pointer; }
+    .bai-preview-group-head:hover .bai-preview-row-label { color: #cdd6f4; }
+    .bai-preview-group-chev { display: flex; align-items: center; justify-content: center; color: #8190ad; transition: transform 0.15s, color 0.15s; transform: rotate(-90deg); }
+    .bai-preview-group-head:hover .bai-preview-group-chev { color: #cdd6f4; }
+    .bai-preview-group-chev.open { transform: rotate(0deg); }
     /* Correction: Session has 3 labels ("Onboarding"/"Logged out"/"Logged in") that overflowed the default
        label-left/control-right row (scrollWidth 260px > clientWidth 210px). Stack label above a full-width,
        equal-flex segmented group instead — same card width, no clipping. */
@@ -1306,8 +1327,12 @@
       // Standard icon-free modal header (Part 5 + Part 7) — title stretches via .tgm-head .tgm-title,
       // close stays a real 28x28 hover target far-right. Used by the OOC modal and the Hybrid Auto modal;
       // the Telegram connect modal keeps its own tgHead()/icon deliberately, unchanged.
-      function stdModalHead(title, closeId) {
-        return '<div class="tgm-head"><span class="tgm-title">' + title + '</span><button class="tgm-close" id="' + closeId + '" type="button" aria-label="Close">' + iconSvg('<path d="M18 6 6 18"/><path d="M6 6l12 12"/>', 14) + '</button></div>';
+      // iconHtml is optional — every existing caller (OOC modal, the setup states of the Hybrid modal)
+      // omits it and gets the plain no-icon header. The one exception is the Hybrid modal's own "ready"
+      // confirmation, which puts a small success checkmark before the title specifically to signal status,
+      // not as a generic decorative app-icon badge (the thing Part 5 removed).
+      function stdModalHead(title, closeId, iconHtml) {
+        return '<div class="tgm-head">' + (iconHtml || '') + '<span class="tgm-title">' + title + '</span><button class="tgm-close" id="' + closeId + '" type="button" aria-label="Close">' + iconSvg('<path d="M18 6 6 18"/><path d="M6 6l12 12"/>', 14) + '</button></div>';
       }
       function oocMode() { return !primeGeo ? 'byok' : (creditsPrime ? 'topup' : 'prime'); }
       function maybeOpenOocModal() { if (oocShownForThisZero) return; oocShownForThisZero = true; openOocModal(); }
@@ -1789,7 +1814,7 @@
         if (tgStep === 'done') { tgState = 'on'; renderNotify(); }   // dismissing after success still counts as connected
         tgModalEl.classList.remove('on'); clearTimeout(tgWaitT); clearInterval(tgCountdownT);
       }
-      function tgHead(title) { return '<div class="tgm-head"><span class="tgm-ic">' + iconSvg(TG_PATH, 14) + '</span><span class="tgm-title">' + title + '</span><button class="tgm-close" id="tgmClose" type="button" aria-label="Close">' + iconSvg('<path d="M18 6 6 18"/><path d="M6 6l12 12"/>', 14) + '</button></div>'; }   /* Fix #8: shared stroke close SVG (same path as Scheduled's remove control), not the text × */
+      function tgHead(title) { return '<div class="tgm-head"><span class="tgm-ic">' + iconSvg(TG_PATH, 12) + '</span><span class="tgm-title">' + title + '</span><button class="tgm-close" id="tgmClose" type="button" aria-label="Close">' + iconSvg('<path d="M18 6 6 18"/><path d="M6 6l12 12"/>', 14) + '</button></div>'; }   /* Fix #8: shared stroke close SVG (same path as Scheduled's remove control), not the text × */
       function genPairCode() { var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', s = ''; for (var i = 0; i < 6; i++) s += chars[(Math.random() * chars.length) | 0]; return s; }
       function fmtCountdown(sec) { var m = Math.floor(sec / 60), s = sec % 60; return m + ':' + (s < 10 ? '0' : '') + s; }
       function enterPairingStep() {
@@ -1972,8 +1997,15 @@
       // Shared between the main settings card AND the setup-confirmation modal (Batch 3, H15) so the two
       // never drift out of sync — both call this with their own container, same live hybridStatus.
       function renderHybridAutoBody(el, inModal) {
+        // Correction: a runtime conflict PAUSES hybrid — it can't also be "READY"/"Running locally" at the
+        // same time, so this is its own exclusive state (warning + a way to turn off), not an extra banner
+        // stacked on top of the normal running content.
         if (runtimeConflictPreview && hybridStatus === 'running') {
           el.appendChild(warnRow('Another app is already using the local GPU. Hybrid AI is paused until it\'s free.'));
+          var offBtnConflict = document.createElement('button'); offBtnConflict.className = 'bai-set-btn'; offBtnConflict.style.width = '100%'; offBtnConflict.type = 'button'; offBtnConflict.textContent = 'Turn off';
+          offBtnConflict.addEventListener('click', function () { hybridStatus = 'idle'; if (inModal) closeAiModal(); renderAiMode(); });
+          el.appendChild(offBtnConflict);
+          return;
         }
         if (hybridStatus === 'idle') {
           var dlBtn = document.createElement('button'); dlBtn.className = 'bai-set-btn primary'; dlBtn.style.width = '100%'; dlBtn.type = 'button'; dlBtn.textContent = 'Download & enable';
@@ -1988,11 +2020,26 @@
         } else if (hybridStatus === 'installing') {
           var inst = document.createElement('div'); inst.style.cssText = 'font-size:10.5px;color:var(--bai-dim);'; inst.textContent = 'Installing…'; el.appendChild(inst);
         } else if (hybridStatus === 'running') {
-          var ready = document.createElement('div'); ready.className = 'bai-donecard'; ready.style.margin = '0';
-          ready.innerHTML = '<div class="dc-head">✓ HYBRID AI READY</div><div class="dc-body">Running locally on this instance\'s GPU.</div>';
-          var offBtn = document.createElement('button'); offBtn.className = 'bai-set-btn'; offBtn.style.width = '100%'; offBtn.type = 'button'; offBtn.textContent = 'Turn off';
-          offBtn.addEventListener('click', function () { hybridStatus = 'idle'; if (inModal) closeAiModal(); renderAiMode(); });
-          el.appendChild(ready); el.appendChild(offBtn);
+          if (inModal) {
+            // Correction: the setup modal's job ends at "it's confirmed ready" — a one-time success
+            // message + Done, not the ongoing status/turn-off control (that lives in the Settings card,
+            // the `else` branch below, since it needs to stay reachable after this modal is long closed).
+            // The checkmark itself now sits in the header (next to "Hybrid AI is ready"), so this is plain text.
+            var doneRow = document.createElement('p');
+            doneRow.textContent = 'Hybrid is on. BlueAI now uses your PC for supported tasks to help save tokens.';
+            el.appendChild(doneRow);
+            var doneBtn = document.createElement('button'); doneBtn.className = 'bai-set-btn primary'; doneBtn.style.width = '100%'; doneBtn.type = 'button'; doneBtn.textContent = 'Done';
+            doneBtn.addEventListener('click', closeAiModal);
+            el.appendChild(doneBtn);
+          } else {
+            var ready = document.createElement('div'); ready.className = 'bai-donecard'; ready.style.margin = '0';
+            ready.innerHTML = '<div class="dc-head">✓ HYBRID AI READY</div><div class="dc-body">Running locally on this instance\'s GPU.</div>';
+            var offBtn = document.createElement('button'); offBtn.className = 'bai-set-btn'; offBtn.style.width = '100%'; offBtn.type = 'button'; offBtn.textContent = 'Turn off';
+            // Correction: turning Hybrid off returns to Cloud (the default) instead of leaving Hybrid
+            // selected-but-stopped — "off" should mean "back to normal," not a dangling half-state.
+            offBtn.addEventListener('click', function () { hybridStatus = 'idle'; aiMode = 'cloud'; renderAiMode(); });
+            el.appendChild(ready); el.appendChild(offBtn);
+          }
         }
       }
       function startHybridDownload() {
@@ -2015,9 +2062,10 @@
       function cancelAiModal() { closeAiModal(); }   // idle/failed close = cancel; nothing to reset since idle already means "not started"
       function renderAiModal() {
         if (!aiModalOpen) return;
-        var titles = { idle: 'Set up Hybrid — Auto', downloading: 'Setting up Hybrid — Auto', installing: 'Setting up Hybrid — Auto', running: 'Hybrid — Auto' };
+        var titles = { idle: 'Set up Hybrid — Auto', downloading: 'Setting up Hybrid — Auto', installing: 'Setting up Hybrid — Auto', running: 'Hybrid AI is ready' };
+        var readyIcon = hybridStatus === 'running' ? '<span class="tgm-ic-ok">' + iconSvg('<path d="M20 6 9 17l-5-5"/>', 12) + '</span>' : '';
         aiModalCardEl.innerHTML =
-          stdModalHead(titles[hybridStatus], 'aiModalClose') +
+          stdModalHead(titles[hybridStatus], 'aiModalClose', readyIcon) +
           '<div class="tgm-body">' +
             (hybridStatus === 'idle' ? '<p>BlueAI runs a local model on this instance\'s GPU. This needs about 3 to 4 GB of storage and a one-time download.</p>' : '') +
             '<div id="aiModalBody"></div>' +
@@ -2026,7 +2074,7 @@
         var bodyEl = document.getElementById('aiModalBody');
         renderHybridAutoBody(bodyEl, true);
         if (hybridStatus === 'idle') {
-          var cancelBtn = document.createElement('button'); cancelBtn.className = 'bai-set-btn'; cancelBtn.style.cssText = 'width:100%;margin-top:8px;'; cancelBtn.type = 'button'; cancelBtn.textContent = 'Cancel';
+          var cancelBtn = document.createElement('button'); cancelBtn.className = 'bai-set-btn'; cancelBtn.style.width = '100%'; cancelBtn.type = 'button'; cancelBtn.textContent = 'Cancel';
           cancelBtn.addEventListener('click', cancelAiModal);
           bodyEl.parentElement.appendChild(cancelBtn);
         }
@@ -2614,6 +2662,14 @@
         row.appendChild(lab); row.appendChild(btn);
         return row;
       }
+      // Collapsible group header — click to expand/collapse a run of rows underneath. `open` reflects
+      // in-memory state the caller owns, so it survives the panel's own innerHTML rebuild on every change.
+      function previewGroupHeader(label, open, onToggle) {
+        var row = document.createElement('div'); row.className = 'bai-preview-row bai-preview-group-head';
+        row.innerHTML = '<span class="bai-preview-row-label">' + label + '</span><span class="bai-preview-group-chev' + (open ? ' open' : '') + '"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>';
+        row.addEventListener('click', function (e) { e.stopPropagation(); onToggle(); });
+        return row;
+      }
       // Part 3: one shared refresh after any account-state Preview row changes — keeps the header gauge,
       // the Settings BYOK card, an open AI Credits screen, and an open OOC modal all reading the SAME
       // facts (primeGeo/creditsPrime/zeroCreditsPreview/stgByokOn) instead of only some of them updating.
@@ -2631,23 +2687,27 @@
         if (oocModalEl.classList.contains('on')) openOocModal();   // re-render to the current variant, not just leave it stale
         if (typeof renderPreviewRows === 'function') renderPreviewRows();   // Membership/Credits rows themselves must appear/disappear live as Geo/Own key change, not just their downstream effects
       }
+      var previewChatStatesOpen = false;   // collapsed by default — 6 rows of demo buttons were cluttering the panel
       function renderPreviewRows() {
         previewRowsEl.innerHTML = '';
         var rows = [previewSegRowStacked('Session', [['Onboarding', 'onboarding'], ['Logged out', 'loggedout'], ['Logged in', 'loggedin']], pageState, setPreviewSession)];
         if (currentTabMode === 'chat') {
-          rows.push(previewActionRow('Plan', function () { togglerDemo("what's the plan?", 'planning…', demoPlan); }));
-          rows.push(previewActionRow('Warning', function () { togglerDemo('go ahead', 'checking…', demoWarn); }));
-          rows.push(previewActionRow('Input required', function () { togglerDemo('which platform first?', 'thinking…', demoInput); }));
-          rows.push(previewActionRow('Input required (menu)', function () { togglerDemo('what can you help me with?', 'checking…', demoMenu); }));
-          rows.push(previewActionRow('Success', function () { togglerDemo('did it finish?', 'wrapping up…', demoSuccess); }));
-          rows.push(previewActionRow('Error', function () { togglerDemo('try that again', 'retrying…', demoError); }));
+          rows.push(previewGroupHeader('Chat states', previewChatStatesOpen, function () { previewChatStatesOpen = !previewChatStatesOpen; renderPreviewRows(); }));
+          if (previewChatStatesOpen) {
+            rows.push(previewActionRow('Plan', function () { togglerDemo("what's the plan?", 'planning…', demoPlan); }));
+            rows.push(previewActionRow('Warning', function () { togglerDemo('go ahead', 'checking…', demoWarn); }));
+            rows.push(previewActionRow('Input required', function () { togglerDemo('which platform first?', 'thinking…', demoInput); }));
+            rows.push(previewActionRow('Input required (menu)', function () { togglerDemo('what can you help me with?', 'checking…', demoMenu); }));
+            rows.push(previewActionRow('Success', function () { togglerDemo('did it finish?', 'wrapping up…', demoSuccess); }));
+            rows.push(previewActionRow('Error', function () { togglerDemo('try that again', 'retrying…', demoError); }));
+          }
         }
         // Batch 3 (H13/H14): dev-preview-only toggles — the reference gates these behind a hardware
         // check / runtime detection with no real equivalent in this design-only terminal. These stay
         // Settings-specific (they only affect the AI Mode card rendered there).
         if (isViewingSettings()) {
-          rows.push(previewSegRow('Hardware unsupported', [['Off', false], ['On', true]], hwUnsupportedPreview, function (v) { hwUnsupportedPreview = v; renderAiMode(); }));
-          rows.push(previewSegRow('Runtime conflict', [['Off', false], ['On', true]], runtimeConflictPreview, function (v) { runtimeConflictPreview = v; renderAiMode(); if (aiModalOpen) renderAiModal(); }));
+          rows.push(previewSegRow('Hardware unsupported', [['Off', false], ['On', true]], hwUnsupportedPreview, function (v) { hwUnsupportedPreview = v; renderAiMode(); renderPreviewRows(); }));
+          rows.push(previewSegRow('Runtime conflict', [['Off', false], ['On', true]], runtimeConflictPreview, function (v) { runtimeConflictPreview = v; renderAiMode(); if (aiModalOpen) renderAiModal(); renderPreviewRows(); }));
         }
         // Correction: Geo/Membership/Own key/Credits are ACCOUNT facts, not Settings-screen facts — a
         // reviewer needs to change them while looking at Chat, AI Credits, an open OOC modal, etc., not
