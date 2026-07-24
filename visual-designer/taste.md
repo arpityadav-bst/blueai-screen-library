@@ -301,16 +301,23 @@ springy bounces) — "a utility assistant, not a toy."
 
 ## Codified taste rules (added blueai-desktop audit, 2026-07-25 — a CRAFT rule, applies beyond the marketing site)
 
-38. **A divider must earn its slot against what's ALREADY signaling the boundary.** Before adding a
-    hairline separator, check: does a label's own margin, a card's own border, an icon, or a color/
-    weight change already say "these are different things"? A divider stacked on top of an existing
-    signal is a third cue doing a job two are already doing — remove it, don't add to it. *(blueai-
-    desktop, 2026-07-25: caught 3 times in one session — before a labeled section ("MORE WAYS TO GET
-    AI CREDITS": the label's own 24px top-margin already does it, confirmed against 6 sibling labeled
-    sections on the Settings home screen with zero dividers between any of them), between two already-
-    bordered cards (their own edges already separate them), and next to a "View details" link (its
-    accent color + bold weight + trailing chevron already read as "this is the action").)* Sibling
-    reasoning entry: `reasonings.md` "A divider is a THIRD signal, not a first one."
+38. **Any signal must earn its slot against what's ALREADY signaling the same thing** — a hairline
+    divider is only the most common shape of this; it also covers whole badges/tags. Before adding a
+    separator OR a status marker, check: does a label's own margin, a card's own border, an icon, a
+    color/weight change, or a NEIGHBORING text element already say the same thing? A second element
+    restating a fact the first already states is decoration, not information — remove it, don't add
+    to it. *(blueai-desktop, 2026-07-25: caught 4 times in one session, 3 dividers + 1 badge — before a
+    labeled section ("MORE WAYS TO GET AI CREDITS": the label's own 24px top-margin already does it,
+    confirmed against 6 sibling labeled sections on the Settings home screen with zero dividers between
+    any of them), between two already-bordered cards (their own edges already separate them), next to a
+    "View details" link (its accent color + bold weight + trailing chevron already read as "this is the
+    action"), and — the 4th, a different PRIMITIVE, same root cause — the header credit popover's "★
+    PRIME" badge, redundant with the plan-line text ("Prime") already stated right below it; replaced
+    with accent color ON that existing text rather than a second element beside it.)* **Amendment
+    (2026-07-25):** originally scoped to dividers only; broadened after the 4th instance showed the same
+    failure on a badge, a structurally different UI primitive — the rule is about REDUNDANT SIGNALS in
+    general, dividers were just the first shape it kept showing up in. Sibling reasoning entry:
+    `reasonings.md` "A signal is a repeat, not a first, unless it earns its slot."
 
 ## Open corrections log
 *SCOPE PIVOT (2026-07-25, designer directive) — superseding the S8 standing scope note below: **the

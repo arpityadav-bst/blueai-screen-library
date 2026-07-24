@@ -28,13 +28,29 @@ pattern was built for, or does it just resemble it?
 JOB actually is before reusing its treatment. If the jobs differ, the visual similarity is a
 coincidence, not a precedent.
 
-## A divider is a THIRD signal, not a first one
+## A signal is a repeat, not a first, unless it earns its slot
 
-See taste.md rule 38 for the codified visual rule — the reasoning behind it: before adding a literal
-separator line, name what's ALREADY doing the "these are different things" work (a label's own
-spacing, a card's own border, a color/weight change, an icon). A divider stacked on top of an
-existing signal doesn't add clarity, it adds noise disguised as structure. This surfaced 3 times in
-one session on the same screen family (blueai-desktop's AI Credits screen + its header popover) —
-confirmed rule, not a one-off preference.
+See taste.md rule 38 for the codified visual rule — the reasoning behind it: before adding ANY new
+signal (a literal divider line, a status badge, a tag), name what's ALREADY doing that same "here's a
+fact/boundary" work — a label's own spacing, a card's own border, a color/weight change, an icon, or
+even a plain neighboring text element. A new signal stacked on top of an existing one doesn't add
+clarity, it adds noise disguised as structure. This started as "a divider is a third signal" (3
+instances, all separators) and generalized on the 4th: the header credit popover's "★ PRIME" badge was
+removed for the exact same reason, even though a badge and a divider share no CSS in common — the
+redundancy was in the MEANING (both said "this account is Prime," one via a tag, one via the plan-line
+text below it), not the markup shape. **The generalizable test:** when adding a new visual element,
+ask "what fact is this stating?" — then check whether anything already visible states that same fact.
+If yes, the new element is decoration wearing information's clothes.
+
+## Front-load the one action a transient surface needs seen before it disappears
+
+A hover popover, a toast, anything that can vanish before the user finishes reading it, should put its
+most important actionable element where it's seen FIRST — near the title/header — not at the bottom of
+a stack the user has to scan past the data to reach. Stacking the action last assumes the user will
+read everything above it before it matters; a transient surface can't assume that. *(blueai-desktop,
+2026-07-25: the credits hover-popover's "View details ›" moved from the bottom of the info stack to the
+same row as the "CREDITS" title, top-right — designer's own reasoning: it should be visible the moment
+the popover opens, not after scanning past balance/bar/plan-line.)* Distinct from the redundant-signal
+rule above — this one is about ORDER/placement given a surface's lifespan, not about duplication.
 
 *(New entries accumulate at audit passes.)*

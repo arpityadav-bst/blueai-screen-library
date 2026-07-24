@@ -128,7 +128,7 @@
     .bai-ui.anim.in .bai-inputbar { transition-delay: 0.10s; }
     .bai-ui.anim.in .bai-status { transition-delay: 0.16s; }
     .bai-ui.anim.in .bai-body { transition-delay: 0.40s; }
-    .bai-header { position: relative; z-index: 40; height: 46px; flex-shrink: 0; display: flex; align-items: center; gap: 13px; padding: 0 10px 0 14px; border-bottom: 1px solid var(--bai-line-soft); }   /* z-index keeps menus above the strip/panes; gap = logo↔wordmark spacing */
+    .bai-header { position: relative; z-index: 58; height: 46px; flex-shrink: 0; display: flex; align-items: center; gap: 13px; padding: 0 10px 0 14px; border-bottom: 1px solid var(--bai-line-soft); }   /* Correction: was 40 — .bai-header creates its own stacking context, so its dropdown menus (Help/Account, z-index:30) can never paint above anything outside it regardless of their OWN z-index; .bai-globalroute (Settings/AI Credits, z-index:55, top:46px — right at the header's own edge) exceeded the header's old 40 and silently broke this comment's original intent. 58 clears globalroute(55)+subpane(50)+tour(45) while staying below the titlebar(60) and the blocking modals(220/230). gap = logo↔wordmark spacing */
     .bai-logoslot { width: 25px; height: 36px; flex-shrink: 0; }   /* snug to the smaller (~20px) logo so the logo↔"BlueAI" gap stays ~8px */
     /* header-right utility: settings + 3-dots (overflow), same hover pill as the status line */
     .bai-head-r { margin-left: auto; flex-shrink: 0; display: flex; align-items: center; gap: 2px; }   /* icons never shrink; title truncates instead */
@@ -268,8 +268,11 @@
     .bai-kv-row { display: flex; align-items: center; justify-content: space-between; padding: 11px 13px; font-size: 11px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
     /* ---- Batch 2: Profile screen (Subpane content — reuses .bai-kv-block/.bai-kv-row verbatim) ---- */
     .bai-profile-head { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 18px 0 16px; }
-    .bai-profile-avatar { width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 22px; font-weight: 700; background: linear-gradient(135deg, var(--bai-accent), #7c5cf0); }
+    .bai-profile-avatar { width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 22px; font-weight: 700; background: linear-gradient(135deg, var(--bai-accent), #7c5cf0); box-shadow: 0 0 0 5px var(--bai-accent-wash), 0 10px 24px rgba(0,0,0,0.18); }   /* Correction: soft accent halo — was a flat circle */
     .bai-profile-name { font-size: 13px; font-weight: 700; color: var(--bai-text-hi); }
+    .bai-profile-reveal { animation: onb-in 0.5s cubic-bezier(0.22,0.9,0.26,1) both; }   /* Correction: staggered entrance (per-element animation-delay inline) — reuses the onboarding sequence's own reveal technique verbatim rather than a new dependency (designer asked about GSAP; this achieves the same "feels alive on open" outcome with zero added libraries) */
+    .bai-kv-key { display: flex; align-items: center; gap: 8px; min-width: 0; }   /* Correction: wraps icon+label as one flex child so .bai-kv-row's existing space-between still puts .v on the right unchanged */
+    .bai-kv-ic { flex-shrink: 0; width: 15px; height: 15px; display: flex; align-items: center; justify-content: center; color: var(--bai-faint); }
     .bai-profile-email { font-size: 10.5px; color: var(--bai-dim); }
     .bai-kv-row .verified { background: color-mix(in srgb, var(--bai-ok) 16%, transparent); color: var(--bai-ok); font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 20px; margin-left: 6px; }
     /* ---- Batch 2: system-level Logout confirm — shares .bai-logingate's exact footprint (OVL-01) via
@@ -315,6 +318,7 @@
     .bai-set-btn.primary:hover { filter: brightness(1.12); }
     .bai-set-btn.hero { min-height: 41px; font-size: 12.5px; font-weight: 700; }   /* matches .bai-modalact's weight — a screen's single conversion CTA (Get Prime, Top Up, Add own key) plays the same role as the OOC modal's primary action, so it shouldn't read lighter just because it lives in Settings */
     .bai-set-btn.danger { color: var(--bai-danger); border-color: color-mix(in srgb, var(--bai-danger) 40%, var(--bai-line-2)); }
+    .bai-set-btn.danger:hover { border-color: var(--bai-danger); background: color-mix(in srgb, var(--bai-danger) 8%, var(--bai-input-bg)); }   /* Correction: was silently inheriting .bai-set-btn:hover's plain border-color:accent-blue — wrong signal on a destructive action; intensify the SAME danger color instead */
     .bai-spin { flex-shrink: 0; width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--bai-line-2); border-top-color: var(--bai-accent); animation: bai-spin-rot 0.7s linear infinite; }
     @keyframes bai-spin-rot { to { transform: rotate(360deg); } }
     /* Sign-in gate + Telegram connect — system-level blocking overlays (audit: OVL-01/THEME-01). Content,
@@ -570,14 +574,17 @@
     .bai-credit-ring .tr { fill: none; stroke: var(--bai-line-2); stroke-width: 3; }
     .bai-credit-ring .fl { fill: none; stroke-width: 3; stroke-linecap: round; transition: stroke-dasharray 0.3s ease, stroke 0.3s ease; }
     .bai-credit-ring.lg { width: 60px; height: 60px; flex-shrink: 0; }   /* AI Credits screen hero stat — same gauge, bigger, not a separate component */
-    .bai-credits-wrap .bai-menu-desc { left: auto; right: 0; width: 176px; white-space: normal; }   /* two-class specificity beats .bai-menu-desc's own left:0/right:0 — card hugs the window's right edge and grows LEFT, never off-screen */
+    .bai-credits-wrap .bai-menu-desc { left: auto; right: 0; width: 176px; white-space: normal; transition: border-color 0.15s, background 0.15s; }   /* two-class specificity beats .bai-menu-desc's own left:0/right:0 — card hugs the window's right edge and grows LEFT, never off-screen */
+    .bai-credits-wrap .bai-menu-desc:hover { border-color: var(--bai-accent-strong); background: var(--bai-hover-acc); }   /* Correction: the whole card is clickable (opens AI Credits) but had zero hover feedback — reuses the SAME border+background recipe as every other clickable card in this file (.bai-item-card, .bai-cat-row, etc.), scoped to THIS usage only — .bai-menu-desc is also a plain non-clickable tooltip elsewhere (the menu-help "?" hint), which must not get this treatment */
     .bai-credits-wrap .bai-menu-desc.show { display: flex; flex-direction: column; gap: 5px; }
+    .cr-headrow { display: flex; align-items: center; justify-content: space-between; gap: 8px; }   /* Correction: "View details" moved up here (top-right) — visible immediately on open, not just after scanning past the balance/bar/plan line */
     .cr-head { font-size: 9.5px; letter-spacing: 0.6px; color: var(--bai-faint); }
     .cr-big { font-size: 15px; font-weight: 700; color: var(--bai-text-bright); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
     .cr-big .sp { font-weight: 400; }
     .cr-bar { height: 3px; border-radius: 2px; background: var(--bai-line-2); overflow: hidden; }
     .cr-bar i { display: block; height: 100%; border-radius: 2px; }
     .cr-sub { font-size: 10px; line-height: 1.4; color: var(--bai-dim); }
+    .cr-sub.cr-sub-prime { color: var(--bai-accent); font-weight: 600; }   /* Correction: replaces the separate "★ PRIME" head badge — Prime status shown via color on the plan line itself instead of a second, redundant tag saying the same thing */
     .cr-viewmore { font-size: 9.5px; font-weight: 700; color: var(--bai-accent); }   /* Correction: dropped the border-top I first added — accent color + bold + the trailing chevron already read as "this is the action" (same as "View all benefits ›" elsewhere on this exact screen, which gets zero divider next to its own card head); a divider on top was doing a job already done, and no other info->action transition in this file uses one */
     /* Part 2: AI Credits screen — a bigger restatement of the same gauge (.cr-* above), same color ramp
        (creditColor) and same PRIME badge, just sized for a dedicated screen instead of a hover popover. */
@@ -1262,17 +1269,17 @@
         var byokActive = byokIsActive();
         creditsArc.style.strokeDasharray = (RING_C * pct / 100).toFixed(2) + ' ' + RING_C.toFixed(2);
         creditsArc.style.stroke = col;
+        // Correction: "View details" moved to the header row (top-right) — visible the instant the popover
+        // opens, not just after scanning past all the data. The "★ PRIME" badge is dropped from the head:
+        // it was a second, redundant signal for the same fact cr-sub's own "Prime" text already states below
+        // the bar — replaced with accent color ON that existing text instead of a whole extra badge element.
+        var primeActive = primeGeo && creditsPrime && !byokActive;
         creditsDesc.innerHTML =
-          '<span class="cr-head">CREDITS' + (primeGeo && creditsPrime ? ' <span class="cr-prime">★ PRIME</span>' : '') + '</span>' +
+          '<div class="cr-headrow"><span class="cr-head">CREDITS</span><span class="cr-viewmore">View details ›</span></div>' +
           '<span class="cr-big"><span class="sp" style="color:' + col + '">✦</span> ' + credits.toLocaleString('en-US') + '</span>' +
           '<span class="cr-bar"><i style="width:' + pct + '%;background:' + col + '"></i></span>' +
           // Correction: dropped "of 50,000" (never canonical, no universal max exists) — just the plan label.
-          '<span class="cr-sub">' + (byokActive ? 'Using your own API key — credits not spent' : (primeGeo && creditsPrime ? 'Prime' : 'Free tier')) + '</span>' +
-          // Correction: hovering showed the balance but nothing signaled the card itself is clickable (opens
-          // the full AI Credits screen) — this line is that signal. Real, not decorative: the click listener
-          // is on the wrapper that CONTAINS this popover, so a click anywhere in it (including this line) bubbles
-          // straight to it — no separate handler needed.
-          '<span class="cr-viewmore">View details ›</span>';
+          '<span class="cr-sub' + (primeActive ? ' cr-sub-prime' : '') + '">' + (byokActive ? 'Using your own API key — credits not spent' : (primeGeo && creditsPrime ? 'Prime' : 'Free tier')) + '</span>';
         // Correction: the AI Credits screen already shows this exact state live (ring + warning row) — popping
         // the modal ON TOP of the screen that's already telling you is pure redundancy, not a helpful nudge.
         // The active submit()-time gate (openOocModal() called directly when a send is actually blocked) is
@@ -1629,21 +1636,54 @@
       if (sideAcctBtn) sideAcctBtn.addEventListener('click', function (e) { e.stopPropagation(); toggleMenu(sideAcctMenuEl); });
 
       // ---- Batch 2: Profile screen (Subpane content — reuses .bai-kv-block/.bai-kv-row verbatim) ----
+      // Redesign (designer: "we have so much space, we should utilise that"): added a Plan card (reuses
+      // the credits screen's OWN ring-gauge/BYOK-card language + real primeGeo/creditsPrime/credits state
+      // — no invented data, and it's the one thing this screen was missing given the whole app is built
+      // around this exact system) + leading icons on each kv-row + a staggered CSS entrance (reuses the
+      // onboarding sequence's own onb-in keyframe — considered GSAP per the designer's suggestion, but this
+      // file has zero external dependencies anywhere and CSS-stagger already does this job elsewhere; no
+      // new library for one screen).
       function renderProfile(el) {
+        var byokActive = byokIsActive(), isPrimeMember = primeGeo && creditsPrime;
+        var planHtml;
+        if (byokActive) {
+          planHtml =
+            '<div class="bai-set-card bai-profile-reveal" style="margin:0;animation-delay:0.08s;">' +
+              '<div class="bai-set-card-head"><span class="ic" style="background:color-mix(in srgb, var(--bai-ok) 16%, transparent);color:var(--bai-ok);">' + iconSvg(KEY_PATH, 16) + '</span><span class="info"><b>Own API Key</b><span>Active — BlueAI credits aren’t used</span></span></div>' +
+            '</div>';
+        } else {
+          var pPct = Math.max(0, Math.min(100, Math.round(credits / tierMax() * 100)));
+          var pCol = creditColor(credits);
+          planHtml =
+            '<div class="bai-set-card bai-profile-reveal" style="margin:0;animation-delay:0.08s;">' +
+              '<div style="display:flex;align-items:center;gap:12px;">' +
+                '<svg class="bai-credit-ring lg" viewBox="0 0 18 18" aria-label="Credits remaining"><circle class="tr" cx="9" cy="9" r="7"/><circle class="fl" cx="9" cy="9" r="7" style="stroke-dasharray:' + (RING_C * pPct / 100).toFixed(2) + ' ' + RING_C.toFixed(2) + ';stroke:' + pCol + ';"/></svg>' +
+                '<span style="display:flex;flex-direction:column;gap:2px;min-width:0;flex:1;">' +
+                  '<span style="font-size:9.5px;font-weight:700;letter-spacing:0.4px;color:var(--bai-faint);">PLAN</span>' +
+                  '<span style="font-size:15px;font-weight:700;color:' + (isPrimeMember ? 'var(--bai-accent)' : 'var(--bai-text-hi)') + ';">' + (isPrimeMember ? '★ Prime' : 'Free tier') + '</span>' +
+                  '<span style="font-size:10px;color:var(--bai-dim);">' + credits.toLocaleString('en-US') + ' credits' + (isPrimeMember ? ' · renews in 11 days' : ' available') + '</span>' +
+                '</span>' +
+              '</div>' +
+              '<button class="bai-set-btn" style="width:100%;" type="button" id="baiProfileViewCredits">View AI Credits ›</button>' +
+            '</div>';
+        }
         el.innerHTML =
-          '<div class="bai-profile-head">' +
+          '<div class="bai-profile-head bai-profile-reveal" style="animation-delay:0s;">' +
             '<div class="bai-profile-avatar">A</div>' +
             '<div class="bai-profile-name">Arpit Yadav</div>' +
             '<div class="bai-profile-email">arpit.yadav@bluestacks.com</div>' +
           '</div>' +
-          '<div class="bai-kv-block" style="margin-bottom:14px;">' +
-            '<div class="bai-kv-row"><span class="k">Handle</span><span class="v">TriflingStandpoint</span></div>' +
-            '<div class="bai-kv-row"><span class="k">Email</span><span class="v">arpit.yadav@bluestacks.com<span class="verified">Verified</span></span></div>' +
-            '<div class="bai-kv-row"><span class="k">Country</span><span class="v">India</span></div>' +
-            '<div class="bai-kv-row"><span class="k">Mobile</span><span class="v" style="color:var(--bai-faint);">Not set</span></div>' +
+          planHtml +
+          '<div class="bai-kv-block bai-profile-reveal" style="margin:0;animation-delay:0.16s;">' +
+            '<div class="bai-kv-row"><span class="bai-kv-key"><span class="bai-kv-ic">' + iconSvg('<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>', 14) + '</span><span class="k">Handle</span></span><span class="v">TriflingStandpoint</span></div>' +
+            '<div class="bai-kv-row"><span class="bai-kv-key"><span class="bai-kv-ic">' + iconSvg('<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>', 14) + '</span><span class="k">Email</span></span><span class="v">arpit.yadav@bluestacks.com<span class="verified">Verified</span></span></div>' +
+            '<div class="bai-kv-row"><span class="bai-kv-key"><span class="bai-kv-ic">' + iconSvg('<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>', 14) + '</span><span class="k">Country</span></span><span class="v">India</span></div>' +
+            '<div class="bai-kv-row"><span class="bai-kv-key"><span class="bai-kv-ic">' + iconSvg('<rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>', 14) + '</span><span class="k">Mobile</span></span><span class="v" style="color:var(--bai-faint);">Not set</span></div>' +
           '</div>' +
-          '<button class="bai-set-btn danger" id="baiProfileSignOut" style="width:100%;" type="button">Sign out</button>';
+          '<button class="bai-set-btn danger bai-profile-reveal" id="baiProfileSignOut" style="width:100%;animation-delay:0.26s;" type="button">Sign out</button>';
         document.getElementById('baiProfileSignOut').addEventListener('click', function () { closeGlobalRoute(); openLogoutGate(); });
+        var viewCreditsBtn = document.getElementById('baiProfileViewCredits');
+        if (viewCreditsBtn) viewCreditsBtn.addEventListener('click', function () { openGlobalRoute('credits', 'AI Credits', renderAiCreditsScreen); });
       }
 
       // ---- Batch 2: system-level Logout confirmation — shares the Login Gate's exact overlay class,

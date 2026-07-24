@@ -5,6 +5,67 @@ resolved. Promoted to decisions.md / taste.md at audit passes, then wiped.
 Format: `YYYY-MM-DD HH:mm — <file> — <what changed> — Why: <one phrase>`
 
 --- Pending audit entries ---
+2026-07-25 (cont. 12) — /blueai-desktop — Two hover-state gaps, both confirmed via computed-style before AND
+after the fix, not assumed: (1) "Sign out" (`.bai-set-btn.danger`) was silently inheriting the base `.bai-set-
+btn:hover`'s `border-color:var(--bai-accent-strong)` (blue) — a destructive action's hover shifting toward
+brand-accent-blue is a semantic mismatch, and against a light background it barely registered as a hover at
+all. Added `.bai-set-btn.danger:hover` intensifying the SAME danger red instead + a faint danger-tinted
+background wash. (2) The credits header popover (`.bai-menu-desc`, entirely clickable per the earlier gap-
+reachability fix) had ZERO hover feedback anywhere — confirmed by grep, no `:hover` rule existed for it at all.
+Added one, but scoped to `.bai-credits-wrap .bai-menu-desc:hover` specifically (not the bare `.bai-menu-desc`
+class) after confirming that base class is ALSO used elsewhere as a plain non-clickable tooltip (the menu-help
+"?" hint inside other dropdowns) — giving THAT usage a "this is clickable" hover treatment would have been a
+false affordance. Reused the exact border+background hover recipe already established by every other clickable
+card in the file (`.bai-item-card`, `.bai-cat-row`, etc.) rather than inventing a new one. Verified computed
+colors resolve to the exact expected tokens (danger=#ff5c68, accent-strong=#2c5fd0), and mechanically confirmed
+no bare `.bai-menu-desc:hover` rule leaked into the stylesheet. — Why: both are instances of the SAME root
+lesson as the header-popover cursor:default bug a few turns back — a hover/interaction state that's either
+WRONG (borrowing an unrelated color) or MISSING entirely is a stronger, more confusing anti-signal than no
+change would be; and scoping the fix to exactly where the click-affordance is real (not the shared base class)
+is the same discipline as the plancard-reuse-rejection reasoning from earlier — match the fix to what's
+actually clickable, not everything that shares a class name.
+2026-07-25 (cont. 11) — /blueai-desktop — Profile screen redesign (designer: "so much space here, utilise
+that... maybe add GSAP"). Recommended against GSAP before building anything — this file has zero external
+dependencies anywhere, entirely hand-rolled CSS keyframes/transitions, and the onboarding sequence's own
+`onb-in` staggered-reveal technique already solves exactly this ("feels alive on open") without a new library;
+designer accepted the reasoning implicitly by not pushing back before saying "sure." Built: (1) a Plan card —
+byokActive branch reuses `.bai-set-card-head`+KEY_PATH exactly as the credits screen's own BYOK-active card;
+non-BYOK branch reuses the ring-gauge technique verbatim (creditColor/tierMax/credits, real state — no invented
+numbers) with a "View AI Credits ›" button routing to `renderAiCreditsScreen` via `openGlobalRoute`. This was
+the one clearly-missing, non-fabricated content gap: a profile screen on an app whose entire identity is its
+credit system, showing nothing about it. (2) Leading icons (user/mail/globe/smartphone, feather-style via the
+existing `iconSvg()` helper) on each kv-row via a new `.bai-kv-key`/`.bai-kv-ic` wrapper — additive only, doesn't
+touch `.bai-kv-row`/`.k`/`.v` so the AI Credits screen's OWN kv-block (CREDIT BREAKDOWN) is unaffected. (3) A
+soft accent-wash halo (box-shadow) on the avatar, was a flat circle. (4) Staggered `.bai-profile-reveal` class
+(reuses `onb-in` keyframe, per-element `animation-delay` inline) across avatar-block/plan-card/kv-block/sign-out.
+Also zeroed the kv-block's old inline `margin-bottom:14px` since this container (`.bai-subpane-body`, gap:8px —
+same one identified in the credits-screen work) already spaces top-level children; the old margin would have
+stacked with it, same bug class as the "CREDIT BREAKDOWN" fix earlier this session. Verified all 3 real states
+(Free/Prime/BYOK) render correctly with right copy+icons+glow, confirmed the "View AI Credits" button actually
+navigates (not just visually present), zero JS errors. — Why: same "match the fix to what's actually missing,
+don't invent filler" discipline as the rest of tonight — the credits gap was real and connects two screens that
+had no link before; a fake activity-feed/stats section would have been decoration for its own sake. Some empty
+space remains below Sign out by choice, not oversight — didn't want to over-stuff a profile screen just to
+eliminate white space that's normal for this kind of screen.
+2026-07-25 (cont. 10) — /blueai-desktop — Designer reported the Help (?) and Account (⋮) header dropdowns get
+trimmed specifically under the Settings panel and the AI Credits screen (not other panes). Root-caused via the
+actual z-index values (grepped all of them, not guessed): `.bai-globalroute` (the shared container for BOTH
+Settings and AI Credits — confirmed both route through it, `globalRouteCurrent: 'settings'|'credits'|...`) is
+z-index 55 and starts at `top:46px`, exactly the header's own height — while `.bai-header` (which contains
+Help/Account and their dropdowns) was only z-index 40. Since `.bai-header` establishes its own stacking context,
+its dropdown's OWN z-index (30) can never out-rank a sibling like `.bai-globalroute` regardless of that child
+value — only the ANCESTOR's z-index matters for that comparison. `.bai-subpane` (Skills drill-down etc.) doesn't
+hit this because it starts lower (`top:84px`, below the tab strip) and never geometrically reaches into the
+dropdown's space. Fixed by raising `.bai-header` from 40 to 58 — clears globalroute(55)/subpane(50)/tour(45)
+while staying below the titlebar(60) and the blocking modals(220/230). This restores the header's OWN pre-
+existing comment's stated intent ("z-index keeps menus above the strip/panes") — .bai-globalroute silently
+broke that when it was added later at a higher value than the header. Verified via `elementFromPoint()` hit-
+testing (not just a screenshot) in both Settings and AI Credits: the dropdown's own menu-item is now genuinely
+the top element at that screen position, not the panel underneath. — Why: this is a stacking-context lesson
+worth a knowledge-base entry at the next promotion — "an ancestor's z-index caps what any of its descendants
+can visually achieve against siblings, independent of the descendant's own z-index" — same root class of bug
+as the marketing site's own documented "fixed child can never escape an ancestor's stacking context" KB entry,
+just surfacing here as z-index-value drift rather than a missing z-index entirely.
 [blueai-desktop AI-Credits-screen + OOC-modal thread (2026-07-24→25, 9 entries) promoted to decisions.md/
 taste.md/reasonings.md/knowledge-base.md/project-insights.md/session-logs.md at the 2026-07-25 audit —
 see session-logs.md Session 11. The unrelated parity-audit thread below (cont. 11-17, matrix/manifest work)
