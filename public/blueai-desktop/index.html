@@ -206,7 +206,8 @@
     .bai-list-add:hover { filter: brightness(1.12); }
     .bai-list-body { flex: 1; overflow-y: auto; padding: 2px 14px 14px; display: flex; flex-direction: column; gap: 8px; }
     .bai-list-body .bai-stub { padding: 24px 10px; }
-    .bai-item-card { display: flex; align-items: center; gap: 10px; padding: 10px 11px; background: var(--bai-card-2); border: 1px solid var(--bai-line); border-radius: 9px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+    .bai-item-card { display: flex; align-items: center; gap: 10px; padding: 10px 11px; background: var(--bai-card-2); border: 1px solid var(--bai-line); border-radius: 9px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+    .bai-item-card:hover { border-color: var(--bai-accent-strong); background: var(--bai-hover-acc); }   /* Correction: matches .bai-cat-row/.bai-history-card's established hover treatment — was missing entirely */
     .bai-item-card .ic { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: var(--bai-chip-bg); color: var(--bai-accent); }
     .bai-item-card .info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
     .bai-item-card .info b { font-size: 12px; color: var(--bai-text-hi); font-weight: 500; }
@@ -312,6 +313,7 @@
     .bai-set-btn:hover { border-color: var(--bai-accent-strong); }
     .bai-set-btn.primary { border: none; background: var(--bai-accent); color: var(--bai-on-accent); }
     .bai-set-btn.primary:hover { filter: brightness(1.12); }
+    .bai-set-btn.hero { min-height: 41px; font-size: 12.5px; font-weight: 700; }   /* matches .bai-modalact's weight — a screen's single conversion CTA (Get Prime, Top Up, Add own key) plays the same role as the OOC modal's primary action, so it shouldn't read lighter just because it lives in Settings */
     .bai-set-btn.danger { color: var(--bai-danger); border-color: color-mix(in srgb, var(--bai-danger) 40%, var(--bai-line-2)); }
     .bai-spin { flex-shrink: 0; width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--bai-line-2); border-top-color: var(--bai-accent); animation: bai-spin-rot 0.7s linear infinite; }
     @keyframes bai-spin-rot { to { transform: rotate(360deg); } }
@@ -346,6 +348,7 @@
     .tgm-head { display: flex; align-items: center; gap: 8px; padding: 16px 16px 14px; border-bottom: 1px solid var(--bai-line); }   /* Batch 1: gap 10->8px, a little more room back to the title */
     .tgm-ic { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; background: var(--bai-accent); color: var(--bai-on-accent); display: flex; align-items: center; justify-content: center; }   /* Correction: 28->22px, was reading as bigger/heavier than the title next to it */
     .tgm-ic-ok { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; background: color-mix(in srgb, var(--bai-ok) 16%, transparent); color: var(--bai-ok); display: flex; align-items: center; justify-content: center; }   /* Hybrid-ready header checkmark — a status indicator, not a decorative app-icon badge */
+    .tgm-ic-acc { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; background: var(--bai-chip-bg); color: var(--bai-accent); display: flex; align-items: center; justify-content: center; font-size: 12px; }   /* OOC modal's per-mode context icon (key / ✦) — same accent-chip recipe as .bai-set-card-head .ic on the credits screen, just modal-scaled */
     .tgm-close { flex-shrink: 0; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: none; border: none; color: var(--bai-faint); cursor: pointer; border-radius: 6px; transition: background 0.15s, color 0.15s; }   /* Fix #8: comparable square footprint to .tgm-ic, real hover surface instead of a bare text glyph */
     .tgm-close:hover { background: var(--bai-hover); color: var(--bai-hover-ink); }
     .tgm-head .tgm-title { flex: 1; min-width: 0; }   /* scoped to .tgm-head only — lets a no-icon header (stdModalHead) push .tgm-close fully right without touching .lg-h's shared rule */
@@ -361,6 +364,7 @@
     .tgm-input { width: 100%; border: 1.5px solid var(--bai-line-2); border-radius: 9px; padding: 10px 12px; font-size: 12px; font-family: inherit; color: var(--bai-text-strong); outline: none; background: var(--bai-input-bg); }
     .tgm-input:focus { border-color: var(--bai-line-focus); }
     .tgm-hint { display: flex; align-items: center; gap: 6px; font-size: 10.5px; color: var(--bai-faint); }
+    .tgm-hint.center { justify-content: center; }   /* OOC modal's reassurance line sits under a full-width button, not a left-aligned form field like Telegram's own hint — centered reads better there */
     .tgm-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 16px 16px; }
     .tgm-step { font-size: 11px; color: var(--bai-faint); }
     .tgm-cta { border: none; border-radius: 10px; padding: 10px 20px; background: var(--bai-accent); color: var(--bai-on-accent); font-family: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer; transition: filter 0.15s; }   /* Batch 1: was a 22px pill, the only primary CTA in the app not on the shared 8-10px family */
@@ -548,6 +552,10 @@
     .bai-send.disabled { opacity: 0.32; cursor: default; }    /* idle + empty input — same slot, just quiet until there's something to send */
     .bai-send.stop { color: var(--bai-text-hi); }
     .bai-send:not(.disabled):hover { background: var(--bai-pill); color: var(--bai-text-hi); }   /* same hover pill as the status items */
+    /* Correction: ready-to-send (has text, not disabled, not the "stop" icon) reads as the primary action
+       here — same accent blue as every other primary CTA — instead of the same neutral icon color as idle. */
+    .bai-send:not(.disabled):not(.stop) { color: var(--bai-accent); }
+    .bai-send:not(.disabled):not(.stop):hover { background: var(--bai-accent-wash); color: var(--bai-accent-strong); }
     /* Phase 2: status line (model · credits) */
     .bai-status { display: flex; align-items: center; gap: 8px; margin: 0 12px 11px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 10.5px; color: var(--bai-dim); }
     .bai-stat-r { margin-left: auto; display: flex; align-items: center; gap: 4px; }
@@ -555,15 +563,13 @@
     .bai-stat-btn { background: none; border: none; border-radius: 6px; color: var(--bai-hover-ink); font-family: inherit; font-size: 10.5px; cursor: pointer; padding: 3px 7px; white-space: nowrap; transition: background 0.15s, color 0.15s; }
     .bai-stat-btn:hover { background: var(--bai-pill); color: var(--bai-text-bright); }   /* hover pill is the affordance — no persistent arrow */
     /* credits: a small circular gauge — % remaining at a glance, exact numbers on hover */
-    .bai-credits-wrap { position: relative; display: flex; align-items: center; padding: 3px 5px; border-radius: 6px; cursor: default; transition: background 0.15s; }
+    .bai-credits-wrap { position: relative; display: flex; align-items: center; padding: 3px 5px; border-radius: 6px; cursor: pointer; transition: background 0.15s; }   /* Correction: was cursor:default despite being genuinely clickable (opens the AI Credits screen) — probably predates that feature; the cursor itself was the strongest signal telling users this ISN'T interactive */
     .bai-credits-wrap:hover { background: var(--bai-pill); }   /* same hover pill as the model button */
-    /* Batch 4: low-credit alert dot — suppressed while BYOK covers real usage (renderCredits only adds
-       the .low class when !byokActive), matching the reference's lowDot formula. */
-    .bai-credits-wrap.low::after { content: ''; position: absolute; top: 1px; right: 1px; width: 6px; height: 6px; border-radius: 50%; background: var(--bai-credit-crit); border: 1.5px solid var(--bai-panel); }
     .cr-prime { color: var(--bai-credit-mid); font-weight: 700; }
     .bai-credit-ring { width: 14px; height: 14px; display: block; transform: rotate(-90deg); }   /* arc starts at 12 o'clock */
     .bai-credit-ring .tr { fill: none; stroke: var(--bai-line-2); stroke-width: 3; }
     .bai-credit-ring .fl { fill: none; stroke-width: 3; stroke-linecap: round; transition: stroke-dasharray 0.3s ease, stroke 0.3s ease; }
+    .bai-credit-ring.lg { width: 60px; height: 60px; flex-shrink: 0; }   /* AI Credits screen hero stat — same gauge, bigger, not a separate component */
     .bai-credits-wrap .bai-menu-desc { left: auto; right: 0; width: 176px; white-space: normal; }   /* two-class specificity beats .bai-menu-desc's own left:0/right:0 — card hugs the window's right edge and grows LEFT, never off-screen */
     .bai-credits-wrap .bai-menu-desc.show { display: flex; flex-direction: column; gap: 5px; }
     .cr-head { font-size: 9.5px; letter-spacing: 0.6px; color: var(--bai-faint); }
@@ -572,6 +578,7 @@
     .cr-bar { height: 3px; border-radius: 2px; background: var(--bai-line-2); overflow: hidden; }
     .cr-bar i { display: block; height: 100%; border-radius: 2px; }
     .cr-sub { font-size: 10px; line-height: 1.4; color: var(--bai-dim); }
+    .cr-viewmore { font-size: 9.5px; font-weight: 700; color: var(--bai-accent); }   /* Correction: dropped the border-top I first added — accent color + bold + the trailing chevron already read as "this is the action" (same as "View all benefits ›" elsewhere on this exact screen, which gets zero divider next to its own card head); a divider on top was doing a job already done, and no other info->action transition in this file uses one */
     /* Part 2: AI Credits screen — a bigger restatement of the same gauge (.cr-* above), same color ramp
        (creditColor) and same PRIME badge, just sized for a dedicated screen instead of a hover popover. */
     .aic-hero { display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; padding: 10px 0 4px; }
@@ -1220,13 +1227,21 @@
 
       // ---- Phase 2: status line (model · credits) + attachments (design-only) ----
       var MODELS = ['Auto', 'Opus 4.8', 'Sonnet 4.6', 'Gemini 3.1 Pro', 'GPT-5.4'];
-      var curModel = 'Opus 4.8', credits = 49812, CREDIT_MAX = 50000;
+      var curModel = 'Opus 4.8', credits = 5000;
+      // Correction: there's no universal credit ceiling — free/sign-in is 500, Prime is its own plan
+      // allocation (5000, the canonical reference figure), and neither is "50,000." A fixed CREDIT_MAX was
+      // never correct; the ring/bar/percentage everywhere now read against THIS user's actual tier max.
+      var PRIME_CREDIT_ALLOWANCE = 5000, FREE_CREDIT_ALLOWANCE = 500;
+      function tierMax() { return (primeGeo && creditsPrime) ? PRIME_CREDIT_ALLOWANCE : FREE_CREDIT_ALLOWANCE; }
       var modelBtn = document.getElementById('baiModelBtn'), modelMenu = document.getElementById('baiModelMenu');
       var creditsWrap = document.getElementById('baiCreditsWrap'), creditsArc = document.getElementById('baiCreditsArc'), creditsDesc = document.getElementById('baiCreditsDesc');
       var RING_C = 2 * Math.PI * 7;   // circumference of the r=7 gauge circle
       function renderModel() { modelBtn.textContent = curModel; }
       // credit health ramp (as balance depletes): blue good → yellow low → orange very low → red almost over
-      function creditColor(c) { return c > 12000 ? 'var(--bai-credit-hi)' : c > 5000 ? 'var(--bai-credit-mid)' : c > 1500 ? 'var(--bai-credit-low)' : 'var(--bai-credit-crit)'; }   // theme vars -> the ramp re-colors itself on theme switch
+      // Correction: these used to be absolute thresholds tuned for the old fixed-50,000 scale — against the
+      // real 500/5000 tiers they'd misfire badly (e.g. a FULL 5000 Prime balance is only "> 1500", reading
+      // as the orange "low" color at 100% full). Proportional to the user's own tier max instead.
+      function creditColor(c) { var p = tierMax() > 0 ? c / tierMax() * 100 : 0; return p > 60 ? 'var(--bai-credit-hi)' : p > 25 ? 'var(--bai-credit-mid)' : p > 5 ? 'var(--bai-credit-low)' : 'var(--bai-credit-crit)'; }   // theme vars -> the ramp re-colors itself on theme switch
 
       // ---- Batch 4: Credits/Prime/Geo/Membership/BYOK. primeGeo/creditsPrime/zeroCreditsPreview are
       // account/location facts this design-only terminal has no real backing for, so — matching H13/H14's
@@ -1238,85 +1253,185 @@
       var primeGeo = true, creditsPrime = true, zeroCreditsPreview = false;
       function byokIsActive() { return typeof stgByokOn !== 'undefined' && stgByokOn && typeof stgByokKey !== 'undefined' && !!stgByokKey; }
       function recomputeCreditsTier() {
-        credits = zeroCreditsPreview ? 0 : (primeGeo ? (creditsPrime ? 49812 : 505) : 500);
+        credits = zeroCreditsPreview ? 0 : tierMax();   // free (500) unified across geo — "free" never meant something different in a Prime-eligible region, that 505 was a leftover
         renderCredits();
       }
       function renderCredits() {                                                     // circular gauge: arc length = % remaining, ramp color; detail lives in the hover card
-        var pct = Math.max(0, Math.min(100, Math.round(credits / CREDIT_MAX * 100)));
+        var pct = Math.max(0, Math.min(100, Math.round(credits / tierMax() * 100)));
         var col = creditColor(credits);
         var byokActive = byokIsActive();
         creditsArc.style.strokeDasharray = (RING_C * pct / 100).toFixed(2) + ' ' + RING_C.toFixed(2);
         creditsArc.style.stroke = col;
-        creditsWrap.classList.toggle('low', credits < 1000 && !byokActive);   // Batch 4: the low-credit alarm is suppressed while BYOK covers real usage
         creditsDesc.innerHTML =
           '<span class="cr-head">CREDITS' + (primeGeo && creditsPrime ? ' <span class="cr-prime">★ PRIME</span>' : '') + '</span>' +
           '<span class="cr-big"><span class="sp" style="color:' + col + '">✦</span> ' + credits.toLocaleString('en-US') + '</span>' +
           '<span class="cr-bar"><i style="width:' + pct + '%;background:' + col + '"></i></span>' +
-          '<span class="cr-sub">' + (byokActive ? 'Using your own API key — credits not spent' : pct + '% of ' + CREDIT_MAX.toLocaleString('en-US') + ' left') + '</span>';
-        if (loggedIn && credits <= 0 && !byokActive) maybeOpenOocModal();
-        else oocShownForThisZero = false;   // credits recovered — arm the modal to show again on the NEXT time they hit zero
+          // Correction: dropped "of 50,000" (never canonical, no universal max exists) — just the plan label.
+          '<span class="cr-sub">' + (byokActive ? 'Using your own API key — credits not spent' : (primeGeo && creditsPrime ? 'Prime' : 'Free tier')) + '</span>' +
+          // Correction: hovering showed the balance but nothing signaled the card itself is clickable (opens
+          // the full AI Credits screen) — this line is that signal. Real, not decorative: the click listener
+          // is on the wrapper that CONTAINS this popover, so a click anywhere in it (including this line) bubbles
+          // straight to it — no separate handler needed.
+          '<span class="cr-viewmore">View details ›</span>';
+        // Correction: the AI Credits screen already shows this exact state live (ring + warning row) — popping
+        // the modal ON TOP of the screen that's already telling you is pure redundancy, not a helpful nudge.
+        // The active submit()-time gate (openOocModal() called directly when a send is actually blocked) is
+        // untouched — this only concerns the PASSIVE drain-to-zero notification.
+        if (loggedIn && credits <= 0 && !byokActive) {
+          if (globalRouteCurrent === 'credits') oocShownForThisZero = true;   // count it as "seen" so it doesn't ambush right after navigating away, but don't show it here
+          else maybeOpenOocModal();
+        } else oocShownForThisZero = false;   // credits recovered — arm the modal to show again on the NEXT time they hit zero
       }
 
       // ---- Part 2: AI Credits screen (global route) — a bigger version of the same balance the header
       // gauge/hover already shows, plus WHY it's what it is (Region/Plan, or "BYOK paused") and one
       // contextual action. Reuses oocMode()/byokIsActive()/creditColor() directly — no separate state
       // model, so this can never drift from the OOC modal's own reading of the same facts. ----
+      // Correction: full rebuild against the canonical reference (not this prototype's own invented "% of
+      // 50,000" framing). Four mutually-exclusive variants — BYOK active (+ a separate paused-Prime card if
+      // also a member), Prime member, Prime-geo upsell, non-Prime-geo BYOK-only — plus one section that's
+      // persistent across all of them ("More ways to get AI credits"). Still reuses byokIsActive()/
+      // primeGeo/creditsPrime/credits directly, so this can never drift from the OOC modal's own facts.
+      function keyManageAction(label, primary) {
+        var b = document.createElement('button'); b.className = 'bai-set-btn' + (primary ? ' primary hero' : ''); b.style.width = '100%'; b.type = 'button'; b.textContent = label;
+        b.addEventListener('click', function () { closeMenus(); goToSettingsRoute(); highlightByokCard(); });
+        return b;
+      }
+      function byokPillsHtml() {
+        return '<span style="display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:600;color:var(--bai-text-hi);background:var(--bai-pill);padding:4px 9px;border-radius:20px;"><i style="width:6px;height:6px;border-radius:50%;background:var(--bai-ok);flex-shrink:0;"></i>' + stgByokProvider + '</span>' +
+               '<span style="font-size:10.5px;font-weight:600;color:var(--bai-text-hi);background:var(--bai-pill);padding:4px 9px;border-radius:20px;">' + stgByokModel + '</span>';
+      }
+      function aicMoreWays(el) {
+        var label = document.createElement('div'); label.className = 'bai-set-label'; label.textContent = 'MORE WAYS TO GET AI CREDITS'; el.appendChild(label);
+        var wrap = document.createElement('div'); wrap.style.cssText = 'display:flex;flex-direction:column;gap:8px;';
+        [
+          { icon: '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>', title: 'Earn 1,000 Free AI Credits', desc: 'Spread the word about BlueAI' },
+          { icon: '<polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>', title: 'Claim 25,000 AI Credits', desc: 'Join the developer program' },
+        ].forEach(function (it) {
+          var card = document.createElement('div'); card.className = 'bai-item-card';
+          card.innerHTML = '<span class="ic">' + iconSvg(it.icon, 15) + '</span><span class="info"><b>' + it.title + '</b><span>' + it.desc + '</span></span><span style="flex-shrink:0;color:var(--bai-faint);">' + iconSvg('<path d="M7 17 17 7M7 7h10v10"/>', 13) + '</span>';
+          wrap.appendChild(card);
+        });
+        el.appendChild(wrap);
+      }
       function renderAiCreditsScreen(el) {
         var byokActive = byokIsActive();
-        var pct = Math.max(0, Math.min(100, Math.round(credits / CREDIT_MAX * 100)));
-        var col = creditColor(credits);
-        var hero = document.createElement('div'); hero.className = 'aic-hero';
-        // Correction: BYOK pauses/preserves the balance — it doesn't hide it. Showing an em dash
-        // contradicted the very next line's "the balance above stays exactly where it is" claim.
-        hero.innerHTML =
-          '<span class="aic-hero-label">CREDIT BALANCE' + (primeGeo && creditsPrime ? ' <span class="cr-prime">★ PRIME</span>' : '') + '</span>' +
-          '<span class="aic-hero-num" style="color:' + col + '">' + credits.toLocaleString('en-US') + '</span>' +
-          '<span class="aic-hero-sub">' + (byokActive ? 'Paused — your own API key is covering usage' : pct + '% of ' + CREDIT_MAX.toLocaleString('en-US') + ' left') + '</span>';
-        el.appendChild(hero);
-        var bar = document.createElement('div'); bar.className = 'aic-bar'; bar.innerHTML = '<i style="width:' + pct + '%;background:' + col + '"></i>';
-        el.appendChild(bar);
-        el.appendChild(Object.assign(document.createElement('div'), { className: 'bai-set-divider' }));
+        var isPrimeMember = primeGeo && creditsPrime;
 
-        var planLabel = document.createElement('div'); planLabel.className = 'bai-set-label'; planLabel.textContent = 'PLAN'; el.appendChild(planLabel);
+        // Redesign, extended to every branch (designer: "update other states too similarly"): every variant
+        // below now leads with the SAME ring-gauge technique as the header pill (.bai-credit-ring.lg), ramp-
+        // colored via creditColor()/tierMax() so it's never a coincidence that it matches the header. The
+        // BYOK-active branch is the one exception — no ring, because "unlimited via your own key" isn't a
+        // percentage of anything; its nested Prime-paused sub-card gets a DIMMED ring instead (opacity, not
+        // the health ramp) since paused is a dormancy state, not an urgency one.
         if (byokActive) {
-          var done = document.createElement('div'); done.className = 'bai-donecard';
-          done.innerHTML = '<div class="dc-head">✓ USING YOUR OWN KEY</div><div class="dc-body">Your API key is active, so credits aren\'t being spent — the balance above stays exactly where it is if you ever turn it off.</div>';
-          el.appendChild(done);
-        } else {
+          // Same gap-wrap pattern as the other 3 branches now (was the one holdout still using a manual
+          // divider between two cards) — two bordered .bai-set-cards already separate themselves with their
+          // own edges; a divider on top of that is a third line doing the same one job.
+          var wrap1 = document.createElement('div'); wrap1.style.cssText = 'display:flex;flex-direction:column;gap:10px;';
+          var card = document.createElement('div'); card.className = 'bai-set-card'; card.style.margin = '0';
+          card.innerHTML =
+            '<div class="bai-set-card-head"><span class="ic" style="background:color-mix(in srgb, var(--bai-ok) 16%, transparent);color:var(--bai-ok);">' + iconSvg(KEY_PATH, 16) + '</span><span class="info"><b>Running on your own key <span style="font-size:9px;font-weight:700;color:var(--bai-ok);background:color-mix(in srgb, var(--bai-ok) 14%, transparent);padding:2px 6px;border-radius:10px;">ACTIVE</span></b><span>No BlueAI credits are consumed while this is on.</span></span></div>' +
+            '<div style="display:flex;gap:6px;">' + byokPillsHtml() + '</div>';
+          card.appendChild(keyManageAction('Manage in Settings', false));
+          wrap1.appendChild(card);
+          if (isPrimeMember) {
+            var pausedPct = Math.max(0, Math.min(100, Math.round(credits / tierMax() * 100)));
+            var pcard = document.createElement('div'); pcard.className = 'bai-set-card'; pcard.style.margin = '0';
+            var pcardHead = document.createElement('div'); pcardHead.style.cssText = 'display:flex;align-items:center;gap:12px;';
+            pcardHead.innerHTML =
+              '<svg class="bai-credit-ring lg" viewBox="0 0 18 18" aria-label="Prime credits, paused" style="opacity:0.5;"><circle class="tr" cx="9" cy="9" r="7"/><circle class="fl" cx="9" cy="9" r="7" style="stroke-dasharray:' + (RING_C * pausedPct / 100).toFixed(2) + ' ' + RING_C.toFixed(2) + ';stroke:var(--bai-dim);"/></svg>' +
+              '<span style="display:flex;flex-direction:column;gap:2px;"><b style="font-size:12px;font-weight:500;color:var(--bai-text-hi);">Prime credits <span style="font-size:9px;font-weight:700;color:var(--bai-dim);background:var(--bai-pill);padding:2px 6px;border-radius:10px;">PAUSED</span></b><span style="font-size:10px;color:var(--bai-dim);">' + credits.toLocaleString('en-US') + ' credits · renews in 11 days</span></span>';
+            pcard.appendChild(pcardHead);
+            // Correction (kept): the purchase CTA has no destination wired — visually active, no listener.
+            var topupBtn1 = document.createElement('button'); topupBtn1.className = 'bai-set-btn'; topupBtn1.style.width = '100%'; topupBtn1.type = 'button'; topupBtn1.textContent = 'Top Up or Manage Credits';
+            pcard.appendChild(topupBtn1);
+            wrap1.appendChild(pcard);
+          }
+          el.appendChild(wrap1);
+        } else if (isPrimeMember) {
+          var wrap2 = document.createElement('div'); wrap2.style.cssText = 'display:flex;flex-direction:column;gap:10px;';
+          var col2 = creditColor(credits);
+          var pct2 = Math.max(0, Math.min(100, Math.round(credits / tierMax() * 100)));
+          var statCard2 = document.createElement('div'); statCard2.className = 'bai-set-card'; statCard2.style.margin = '0';
+          var statRow2 = document.createElement('div'); statRow2.style.cssText = 'display:flex;align-items:center;gap:12px;';
+          statRow2.innerHTML =
+            '<svg class="bai-credit-ring lg" viewBox="0 0 18 18" aria-label="Credits remaining"><circle class="tr" cx="9" cy="9" r="7"/><circle class="fl" cx="9" cy="9" r="7" style="stroke-dasharray:' + (RING_C * pct2 / 100).toFixed(2) + ' ' + RING_C.toFixed(2) + ';stroke:' + col2 + ';"/></svg>' +
+            '<span style="display:flex;flex-direction:column;gap:2px;"><span class="cr-prime" style="font-size:9.5px;letter-spacing:0.4px;">★ PRIME</span><span style="font-size:21px;font-weight:700;line-height:1;color:' + col2 + ';">' + credits.toLocaleString('en-US') + '<span style="font-size:11px;font-weight:600;color:var(--bai-dim);"> / ' + tierMax().toLocaleString('en-US') + '</span></span></span>';
+          statCard2.appendChild(statRow2);
+          if (credits <= 0) statCard2.appendChild(warnRow("You're out of credits — top up to keep chatting."));
+          wrap2.appendChild(statCard2);
+          // Correction: inside wrap2's gap:10 flex column, the label's own margin STACKS with the gap rather
+          // than replacing it (gap + margin-bottom, not max of the two) — the original "0 0 8px" put 10px
+          // above (from the gap alone) but 18px below (gap 10 + margin 8), i.e. the label read FARTHER from
+          // the breakdown table it's labeling than from the unrelated stat card above it. Net margin-bottom
+          // to -2 so the effective gap is 10 above / 8 below, restoring "label owns what's right after it."
+          var bLabel = document.createElement('div'); bLabel.className = 'bai-set-label'; bLabel.style.margin = '0 0 -2px'; bLabel.textContent = 'CREDIT BREAKDOWN'; wrap2.appendChild(bLabel);
           var kv = document.createElement('div'); kv.className = 'bai-kv-block';
           kv.innerHTML =
-            '<div class="bai-kv-row"><span class="k">Region</span><span class="v">' + (primeGeo ? 'Prime-eligible' : 'Not Prime-eligible') + '</span></div>' +
-            '<div class="bai-kv-row"><span class="k">Plan</span><span class="v">' + (primeGeo && creditsPrime ? 'Prime member' : 'Free') + '</span></div>' +
-            '<div class="bai-kv-row"><span class="k">Refreshes</span><span class="v">Every cycle</span></div>';
-          el.appendChild(kv);
-        }
-        if (credits <= 0 && !byokActive) el.appendChild(warnRow("You're out of credits — use an action below to keep chatting."));
+            '<div class="bai-kv-row"><span class="k">Prime <span style="color:var(--bai-faint);">· renews in 11 days</span></span><span class="v">' + credits.toLocaleString('en-US') + '</span></div>' +
+            '<div class="bai-kv-row"><span class="k">Top-ups</span><span class="v">0</span></div>';
+          wrap2.appendChild(kv);
+          var topupBtn2 = document.createElement('button'); topupBtn2.className = 'bai-set-btn primary hero'; topupBtn2.style.width = '100%'; topupBtn2.type = 'button'; topupBtn2.textContent = 'Top Up or Manage Credits';
+          wrap2.appendChild(topupBtn2);
+          wrap2.appendChild(keyManageAction('Add / manage own key', false));   // BYOK coexists with Prime, doesn't just replace it — a full-credit member can still switch (matches the upsell branch's same secondary action)
+          el.appendChild(wrap2);
+        } else if (primeGeo) {
+          // Redesign (designer: "doesn't look UX optimised... modernistic and creative"): reuses the header's
+          // OWN ring-gauge technique (bigger, via .bai-credit-ring.lg) instead of retyping the balance as plain
+          // centered text — ties this screen to the same visual language as the header pill one tap away.
+          // Fuses the empty-balance warning INTO the stat card (one bordered unit, not a floating banner) and
+          // consolidates the upsell into a single .bai-set-card-head (matching this file's own title+subtitle
+          // anatomy) instead of 3 separate centered lines competing for the same accent color.
+          var wrap = document.createElement('div'); wrap.style.cssText = 'display:flex;flex-direction:column;gap:10px;';
+          var freeCol = creditColor(credits);
+          var freePct = Math.max(0, Math.min(100, Math.round(credits / tierMax() * 100)));
+          var statCard = document.createElement('div'); statCard.className = 'bai-set-card'; statCard.style.margin = '0';
+          var statRow = document.createElement('div'); statRow.style.cssText = 'display:flex;align-items:center;gap:12px;';
+          statRow.innerHTML =
+            '<svg class="bai-credit-ring lg" viewBox="0 0 18 18" aria-label="Credits remaining"><circle class="tr" cx="9" cy="9" r="7"/><circle class="fl" cx="9" cy="9" r="7" style="stroke-dasharray:' + (RING_C * freePct / 100).toFixed(2) + ' ' + RING_C.toFixed(2) + ';stroke:' + freeCol + ';"/></svg>' +
+            '<span style="display:flex;flex-direction:column;gap:2px;"><span style="font-size:9.5px;font-weight:700;letter-spacing:0.4px;color:var(--bai-faint);">FREE TIER</span><span style="font-size:21px;font-weight:700;line-height:1;color:' + freeCol + ';">' + credits.toLocaleString('en-US') + '<span style="font-size:11px;font-weight:600;color:var(--bai-dim);"> / ' + tierMax().toLocaleString('en-US') + '</span></span></span>';
+          statCard.appendChild(statRow);
+          if (credits <= 0) statCard.appendChild(warnRow("You've used all your credits."));
+          wrap.appendChild(statCard);
 
-        el.appendChild(Object.assign(document.createElement('div'), { className: 'bai-set-divider' }));
-        var actLabel = document.createElement('div'); actLabel.className = 'bai-set-label'; actLabel.textContent = 'ACTIONS'; el.appendChild(actLabel);
-        var actWrap = document.createElement('div'); actWrap.style.cssText = 'display:flex;flex-direction:column;gap:8px;';
-        function keyAction(label, primary) {
-          var b = document.createElement('button'); b.className = 'bai-set-btn' + (primary ? ' primary' : ''); b.style.width = '100%'; b.type = 'button'; b.textContent = label;
-          b.addEventListener('click', function () { closeMenus(); goToSettingsRoute(); highlightByokCard(); });
-          return b;
-        }
-        if (byokActive) {
-          actWrap.appendChild(keyAction('Manage your key', false));
+          var upCard = document.createElement('div'); upCard.className = 'bai-set-card'; upCard.style.margin = '0';
+          upCard.innerHTML =
+            '<div class="bai-set-card-head"><span class="ic">✦</span><span class="info"><b>Get Prime</b><span>' + PRIME_CREDIT_ALLOWANCE.toLocaleString('en-US') + ' AI credits every cycle</span></span></div>' +
+            '<div style="font-size:10.5px;font-weight:600;color:var(--bai-dim);cursor:pointer;">View all benefits ›</div>';   // visually present, intentionally inert — same rule as the purchase CTAs
+          var primeBtn = document.createElement('button'); primeBtn.className = 'bai-set-btn primary hero'; primeBtn.style.width = '100%'; primeBtn.type = 'button'; primeBtn.textContent = 'Get Prime';
+          upCard.appendChild(primeBtn);
+          wrap.appendChild(upCard);
+
+          wrap.appendChild(keyManageAction('Add / manage own key', false));
+          el.appendChild(wrap);
         } else {
-          var mode = oocMode();
-          // Same "no meaningless purchase CTA" rule as the OOC modal (Part 7): the purchase/upsell button
-          // renders fully active, same family as every other primary action, but has no click listener —
-          // this is a design-screen library, not a real checkout, and that stays true here too.
-          if (mode === 'byok') {
-            actWrap.appendChild(keyAction('Add API key', true));
-          } else {
-            var purchaseBtn = document.createElement('button'); purchaseBtn.className = 'bai-set-btn primary'; purchaseBtn.style.width = '100%'; purchaseBtn.type = 'button';
-            purchaseBtn.textContent = mode === 'topup' ? 'Top up credits' : 'Get Prime';
-            actWrap.appendChild(purchaseBtn);
-            actWrap.appendChild(keyAction('Add / manage own key', false));
-          }
+          // Prime isn't offered in this region at all — no "FREE TIER" framing (that implies an upgrade path
+          // that doesn't exist here); just the balance + a note, BYOK is the only lever this variant has.
+          var wrap4 = document.createElement('div'); wrap4.style.cssText = 'display:flex;flex-direction:column;gap:10px;';
+          var col4 = creditColor(credits);
+          var pct4 = Math.max(0, Math.min(100, Math.round(credits / tierMax() * 100)));
+          var statCard4 = document.createElement('div'); statCard4.className = 'bai-set-card'; statCard4.style.margin = '0';
+          var statRow4 = document.createElement('div'); statRow4.style.cssText = 'display:flex;align-items:center;gap:12px;';
+          statRow4.innerHTML =
+            '<svg class="bai-credit-ring lg" viewBox="0 0 18 18" aria-label="Credits remaining"><circle class="tr" cx="9" cy="9" r="7"/><circle class="fl" cx="9" cy="9" r="7" style="stroke-dasharray:' + (RING_C * pct4 / 100).toFixed(2) + ' ' + RING_C.toFixed(2) + ';stroke:' + col4 + ';"/></svg>' +
+            '<span style="display:flex;flex-direction:column;gap:2px;"><span style="font-size:9.5px;font-weight:700;letter-spacing:0.4px;color:var(--bai-faint);">CREDITS</span><span style="font-size:21px;font-weight:700;line-height:1;color:' + col4 + ';">' + credits.toLocaleString('en-US') + '<span style="font-size:11px;font-weight:600;color:var(--bai-dim);"> / ' + tierMax().toLocaleString('en-US') + '</span></span></span>';
+          statCard4.appendChild(statRow4);
+          if (credits <= 0) statCard4.appendChild(warnRow("You're out of credits. Add your own key to keep using BlueAI."));
+          else { var note4 = document.createElement('div'); note4.style.cssText = 'font-size:10.5px;color:var(--bai-dim);'; note4.textContent = "Prime isn't available in this region."; statCard4.appendChild(note4); }
+          wrap4.appendChild(statCard4);
+
+          var byokCard = document.createElement('div'); byokCard.className = 'bai-set-card'; byokCard.style.margin = '0';
+          byokCard.innerHTML = '<div class="bai-set-card-head"><span class="ic">' + iconSvg(KEY_PATH, 16) + '</span><span class="info"><b>Bring your own key</b><span>Use BlueAI without spending credits.</span></span></div>';
+          byokCard.appendChild(keyManageAction('Add your own key in Settings', true));
+          wrap4.appendChild(byokCard);
+          el.appendChild(wrap4);
         }
-        el.appendChild(actWrap);
+
+        // No divider here — .bai-set-label's own 24px top-margin is this file's established section-break
+        // mechanism (see the 6 back-to-back labeled sections on the Settings home screen, none divider-
+        // separated); pairing a divider with a label right after it double-signals the same "new topic" break.
+        aicMoreWays(el);
       }
 
       // ---- Batch 4: out-of-credit modal, 3 variants chosen by the reference's own oocMode formula.
@@ -1338,25 +1453,45 @@
       function maybeOpenOocModal() { if (oocShownForThisZero) return; oocShownForThisZero = true; openOocModal(); }
       function openOocModal() {
         var mode = oocMode();
-        // Part 7: body copy is state-specific (never just repeats the "Out of credits" title), and each
-        // variant's actions come from the canonical reference meaning — no invented prices/checkout steps.
+        // Correction (designer: "it should be more action-personalised to what we want the user to do" — same
+        // spirit as the credits-screen redesign, applied to this surface's own job, not a copy-paste of that
+        // one's ring+card treatment. This modal only ever appears at credits===0 — a gauge here would always
+        // render empty, informing nothing a gauge is supposed to communicate a RANGE for. What this surface
+        // actually needed: a title that names the SITUATION+intended action instead of repeating the generic
+        // trigger condition in all 3 modes, a small header icon (same accent-chip recipe as the credits
+        // screen's Get-Prime/BYOK cards — key = byok, ✦ = topup/prime, since ✦ already means "Prime-related"
+        // there, not "upsell-only", so reusing it for topup's "you HAVE Prime, temporarily out" case holds),
+        // and the one concrete number each mode is actually offering pulled out of flat prose into emphasis.
+        var TITLES = { byok: 'Add your own key', topup: 'Out of Prime credits', prime: 'Out of free credits' };
+        var headIcon = '<span class="tgm-ic-acc">' + (mode === 'byok' ? iconSvg(KEY_PATH, 12) : '✦') + '</span>';
         var V = {
           byok: {
             // Correction: non-Prime geo still starts with 500 free credits (recomputeCreditsTier) — this
             // modal appears once those run out, not because the plan itself has zero balance. The old copy
             // ("no credit balance to draw from") claimed the latter, which is false.
             body: 'You’ve used your available AI credits. Prime isn’t available in this region, so add your own API key to continue using BlueAI.',
-            actions: [ { id: 'oocByokCta', label: 'Add API key', cls: 'primary' } ]
+            actions: [ { id: 'oocByokCta', label: 'Add API key', cls: 'primary' } ],
+            // Correction: reassurance for the one-and-only path in this variant — reduces "am I locked in?"
+            // hesitation before adding a key. Only shown here since byok is the sole action; topup/prime
+            // treat the key route as a secondary escape hatch, not the thing being asked of the user.
+            hint: 'You can manage your key later in Settings.'
           },
           topup: {
-            body: 'Your Prime AI credits have run out for this cycle and will renew automatically. Top up now to keep going, or connect your own key instead.',
+            // Correction: "renews in 11 days" is established canonical language (appears consistently across
+            // the reference's topup popup, Prime breakdown, and paused-Prime card) — a fixed illustrative
+            // detail like the credit numbers themselves, not a fabricated one-off like real pricing would be.
+            // The exact renewal window is the one fact worth a glance instead of a read, so it's the emphasis.
+            body: 'Your Prime AI credits have run out for this cycle — they <b style="color:var(--bai-accent);">renew in 11 days</b>. Top up now to keep going, or connect your own key instead.',
             actions: [
               { id: 'oocPrimaryCta', label: 'Top up credits', cls: 'primary' },
               { id: 'oocByokCta', label: 'Add / manage own key', cls: 'secondary' },
             ]
           },
           prime: {
-            body: 'Free accounts get a smaller AI allowance. Become a Prime member for a much larger credit balance each cycle, or connect your own key instead.',
+            // Correction: names the actual number now that it's confirmed (matches the AI Credits screen's
+            // own upsell copy) instead of the vague "a much larger credit balance." Now also emphasized —
+            // the number IS the pitch, it shouldn't sit flat in the middle of a sentence.
+            body: 'Free accounts get a smaller AI allowance. Become a Prime member for <b style="color:var(--bai-accent);">5,000 credits</b> every cycle, or connect your own key instead.',
             actions: [
               { id: 'oocPrimaryCta', label: 'Get Prime', cls: 'primary' },
               { id: 'oocByokCta', label: 'Add / manage own key', cls: 'secondary' },
@@ -1364,11 +1499,12 @@
           },
         }[mode];
         oocModalCardEl.innerHTML =
-          stdModalHead('Out of credits', 'oocModalClose') +
+          stdModalHead(TITLES[mode], 'oocModalClose', headIcon) +
           '<div class="tgm-body"><p>' + V.body + '</p>' +
             '<div class="bai-modalact-group">' +
               V.actions.map(function (a) { return '<button class="bai-modalact ' + a.cls + '" id="' + a.id + '" type="button">' + a.label + '</button>'; }).join('') +
             '</div>' +
+            (V.hint ? '<span class="tgm-hint center">' + iconSvg('<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>', 12) + V.hint + '</span>' : '') +
           '</div>';
         document.getElementById('oocModalClose').addEventListener('click', closeOocModal);
         // Correction (kept): the purchase CTA (#oocPrimaryCta, topup/prime only) has no destination wired
@@ -1419,7 +1555,17 @@
       drawer.addEventListener('click', closeMenus);   // any other in-drawer click closes the menus
       renderModel(); recomputeCreditsTier();   // Batch 4: sets the initial balance from the primeGeo/creditsPrime formula (defaults match the original 49812)
       if (creditsWrap) {
-        creditsWrap.addEventListener('mouseenter', function () { creditsDesc.classList.add('show'); }); creditsWrap.addEventListener('mouseleave', function () { creditsDesc.classList.remove('show'); });   // hover -> exact balance / % / reset countdown, unchanged
+        // Correction: the popover sits 6px ABOVE the wrapper (.bai-menu-desc's bottom:calc(100% + 6px)) —
+        // .bai-credits-wrap is position:relative, not the thing that visually contains it, so that 6px is a
+        // real screen-space gap the cursor crosses over something that ISN'T a descendant of creditsWrap.
+        // mouseleave fired mid-crossing, hiding the popover before the "View details" line could be reached.
+        // Fix: listen on BOTH the trigger and the popover itself (either one showing keeps it open), plus a
+        // short grace timeout so brief gap-crossing jitter doesn't trigger a hide at all.
+        var creditsHideTimer = null;
+        function showCreditsPopover() { clearTimeout(creditsHideTimer); creditsDesc.classList.add('show'); }
+        function scheduleHideCreditsPopover() { clearTimeout(creditsHideTimer); creditsHideTimer = setTimeout(function () { creditsDesc.classList.remove('show'); }, 150); }
+        creditsWrap.addEventListener('mouseenter', showCreditsPopover); creditsWrap.addEventListener('mouseleave', scheduleHideCreditsPopover);
+        creditsDesc.addEventListener('mouseenter', showCreditsPopover); creditsDesc.addEventListener('mouseleave', scheduleHideCreditsPopover);   // hover -> exact balance / % / reset countdown, unchanged
         // Part 2: click -> full AI Credits screen. creditsWrap is already display:none while logged out
         // (updateLoggedInChrome), so this is unreachable then anyway; the loggedIn guard just makes that
         // explicit rather than relying only on the hidden wrapper.
@@ -2081,13 +2227,16 @@
       }
       renderAiMode();
 
-      var stgByokOn = false, stgByokProvider = null, stgByokKey = null;
+      var stgByokOn = false, stgByokProvider = null, stgByokKey = null, stgByokModel = null, byokModelPickerOpen = false;
       var BYOK_PROVIDERS = ['Anthropic', 'OpenAI', 'Gemini'];
+      // Correction: BYOK is per-model, not just per-provider — the reference shows a provider pill AND a
+      // model pill together (e.g. "Anthropic" + "claude-haiku-4-5"). One reasonable model list per provider.
+      var BYOK_MODELS = { Anthropic: ['claude-haiku-4-5', 'claude-sonnet-5', 'claude-opus-4-8'], OpenAI: ['gpt-5.4-mini', 'gpt-5.4'], Gemini: ['gemini-3.5-flash', 'gemini-3.5-pro'] };
       function renderByok() {
         var el = document.getElementById('baiByokCard'); el.innerHTML = '';
         var head = document.createElement('div'); head.className = 'bai-set-card-head';
         head.innerHTML = '<span class="ic">' + iconSvg(KEY_PATH, 16) + '</span><span class="info"><b>Own API key</b><span>Use your own key instead of BlueAI credits</span></span><span class="bai-tgl' + (stgByokOn ? ' on' : '') + '" role="button" aria-label="Toggle own key"><i></i></span>';
-        head.querySelector('.bai-tgl').addEventListener('click', function () { stgByokOn = !stgByokOn; if (!stgByokOn) { stgByokProvider = null; stgByokKey = null; } renderByok(); });
+        head.querySelector('.bai-tgl').addEventListener('click', function () { stgByokOn = !stgByokOn; if (!stgByokOn) { stgByokProvider = null; stgByokKey = null; stgByokModel = null; } renderByok(); });
         el.appendChild(head);
         if (!stgByokOn) return;
         if (!stgByokProvider) {
@@ -2104,18 +2253,36 @@
           var actions = document.createElement('div'); actions.className = 'bai-newitem-actions';
           actions.innerHTML = '<button class="bai-newitem-cancel" type="button">Cancel</button><button class="bai-newitem-create" type="button">Validate &amp; Save</button>';
           actions.querySelector('.bai-newitem-cancel').addEventListener('click', function () { stgByokProvider = null; renderByok(); });
-          actions.querySelector('.bai-newitem-create').addEventListener('click', function () { if (!keyInput.value.trim()) { keyInput.focus(); return; } stgByokKey = keyInput.value.trim(); renderByok(); });
+          actions.querySelector('.bai-newitem-create').addEventListener('click', function () {
+            if (!keyInput.value.trim()) { keyInput.focus(); return; }
+            stgByokKey = keyInput.value.trim();
+            stgByokModel = BYOK_MODELS[stgByokProvider][0];   // sensible default the moment a key is connected
+            renderByok();
+          });
           el.appendChild(actions);
         } else {
           var row = document.createElement('div'); row.style.cssText = 'display:flex;align-items:center;gap:8px;';
           row.innerHTML = '<span style="flex:1;font-size:10.5px;color:var(--bai-text-hi);">' + stgByokProvider + ' · ••••' + stgByokKey.slice(-4) + '</span>';
           var rmBtn = document.createElement('button'); rmBtn.className = 'bai-set-btn danger'; rmBtn.type = 'button'; rmBtn.textContent = 'Remove';
-          rmBtn.addEventListener('click', function () { stgByokProvider = null; stgByokKey = null; renderByok(); });
+          rmBtn.addEventListener('click', function () { stgByokProvider = null; stgByokKey = null; stgByokModel = null; renderByok(); });
           row.appendChild(rmBtn); el.appendChild(row);
           el.appendChild(Object.assign(document.createElement('div'), { className: 'bai-set-divider' }));
-          var modelRow = document.createElement('div'); modelRow.style.cssText = 'display:flex;align-items:center;justify-content:space-between;';
-          modelRow.innerHTML = '<span style="font-size:10.5px;color:var(--bai-dim);">AI Model</span><span style="font-size:10.5px;color:var(--bai-text-hi);">claude-sonnet-5</span>';
+          // Correction: was a hardcoded "claude-sonnet-5" regardless of provider — now a real picker over
+          // that provider's own model list, reusing the same clickable-row + expandable-list pattern as
+          // the AI Defaults card's own model row (renderDefaultModelRow) for a consistent interaction.
+          var modelRow = document.createElement('div'); modelRow.className = 'bai-set-model-row';
+          modelRow.innerHTML = '<span class="bai-set-field-label">AI Model</span><span class="v">' + stgByokModel + ' ›</span>';
+          modelRow.addEventListener('click', function () { byokModelPickerOpen = !byokModelPickerOpen; renderByok(); });
           el.appendChild(modelRow);
+          if (byokModelPickerOpen) {
+            var mlist = document.createElement('div'); mlist.className = 'bai-set-model-list';
+            BYOK_MODELS[stgByokProvider].forEach(function (m) {
+              var item = document.createElement('div'); item.style.color = m === stgByokModel ? 'var(--bai-accent)' : 'var(--bai-text)'; item.textContent = (m === stgByokModel ? '› ' : '') + m;
+              item.addEventListener('click', function () { stgByokModel = m; byokModelPickerOpen = false; renderByok(); });
+              mlist.appendChild(item);
+            });
+            el.appendChild(mlist);
+          }
         }
       }
       renderByok();
@@ -2684,7 +2851,10 @@
           renderAiCreditsScreen(globalRouteBodyEl);
           refreshFadeScroll(globalRouteBodyEl, document.getElementById('baiGlobalRouteScroll'));
         }
-        if (oocModalEl.classList.contains('on')) openOocModal();   // re-render to the current variant, not just leave it stale
+        // Correction: if Own key just turned ON while this was showing, "out of credits" no longer applies
+        // at all — re-rendering it would just repaint the same byok-variant content instead of recognizing
+        // the whole reason it's open is now moot. Close it; otherwise keep re-rendering to the current variant.
+        if (oocModalEl.classList.contains('on')) { if (byokIsActive()) closeOocModal(); else openOocModal(); }
         if (typeof renderPreviewRows === 'function') renderPreviewRows();   // Membership/Credits rows themselves must appear/disappear live as Geo/Own key change, not just their downstream effects
       }
       var previewChatStatesOpen = false;   // collapsed by default — 6 rows of demo buttons were cluttering the panel
@@ -2719,7 +2889,7 @@
           if (primeGeo) rows.push(previewSegRow('Membership', [['Non-member', false], ['Member', true]], creditsPrime, function (v) { creditsPrime = v; refreshAccountDependentUI(); }));
           rows.push(previewSegRow('Own key', [['Off', false], ['On', true]], stgByokOn, function (v) {
             stgByokOn = v;
-            if (v) { stgByokProvider = BYOK_PROVIDERS[0]; stgByokKey = 'sk-preview-demo-key'; } else { stgByokProvider = null; stgByokKey = null; }
+            if (v) { stgByokProvider = BYOK_PROVIDERS[0]; stgByokKey = 'sk-preview-demo-key'; stgByokModel = BYOK_MODELS[stgByokProvider][0]; } else { stgByokProvider = null; stgByokKey = null; stgByokModel = null; }
             refreshAccountDependentUI();
           }));
           if (!stgByokOn) rows.push(previewSegRow('Credits', [['Normal', false], ['Zero', true]], zeroCreditsPreview, function (v) { zeroCreditsPreview = v; refreshAccountDependentUI(); }));

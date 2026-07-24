@@ -1,11 +1,25 @@
 # blueAI — Taste
-Last updated: 2026-06-13 (S6 audit — +rules 30–33 (signal lifecycle · quiet hero-label/frosted-over-bg · landing=island funnel · re-verify floating/animated across states+breakpoints))
+Last updated: 2026-07-25 (SCOPE PIVOT, designer directive — see note below. +rule 38 (divider redundancy),
+now a primary cross-surface rule rather than a marketing-site-only exception.)
+
+> **SCOPE PIVOT (2026-07-25, designer directive):** the marketing site (rules 1–37 below) and
+> `/blueai-product` are both DORMANT — not deleted, not wrong, just not where active work is right
+> now, and possibly not for a long time. **`/blueai-desktop` (the "modern terminal" prototype) is
+> the active surface going forward** — this reverses the prior framing, where blueai-desktop was
+> the DS-unbound exception to the marketing site's rules. Rules 1–37 stay on record (real, hard-won
+> learning — re-derive nothing if the marketing site resumes) but are no longer what Gate 8 reviews
+> new work against by default. blueai-desktop's own design system is being extracted into
+> `visual-designer/blueai-desktop-design-system.md` (tokens + component families cataloged from
+> `index.html` itself, since none existed anywhere before 2026-07-25) — that file + rule 38 below
+> are what govern blueai-desktop work now. If the marketing site or /blueai-product ever resume,
+> flip this note back — nothing here needs to be rebuilt, just re-prioritized.
 
 > blueAI's design *language* — how it should feel — so VDA can design new blueAI
 > surfaces from instinct. Seeded from the Claude-design export's DS README (which is a
 > real designer spec, not inference) + the marketing-site export. **This is blueAI's
 > house style and is unrelated to WSUP's or now.gg's.** Tokens live in
 > `tailwind.config.ts` + `src/app/globals.css` (the `--bai-*` layer); see `/style-guide`.
+> **(Marketing-site tokens/style-guide — see the scope pivot note above for blueai-desktop's own.)**
 
 ## What blueAI is
 **BlueAI is the AI assistant built into BlueStacks App Player** — wordmark "BlueAI by
@@ -243,6 +257,11 @@ springy bounces) — "a utility assistant, not a toy."
     before the payoff) is a deliberate intent filter, not UX friction — ask "what is this gate FOR" before
     "removing" it. *(S6: designer corrected me — I'd read the anchor-only nav as a flaw and proposed
     softening the login wall; both were the point.)*
+    **SCOPE CLAUSE (S8, from the 06-16 hub conversion):** rule 32 governs STANDALONE ad-funnels. When the
+    designer promotes a page to a CONNECTED site member (the live-demo homepage got the shared
+    MarketingHeader/Footer + outbound links), shared chrome + footer/in-content links are correct — what
+    survives from the funnel is the intent GATE (the login wall stays). Island → hub is a page-ROLE change
+    the designer makes consciously; treat any unprompted outbound link on a standalone funnel as drift.
 
 33. **Re-verify every floating / negative-offset / animated element across ALL its states and breakpoints
     before presenting.** A `-36px`-above-the-panel badge is safe while siblings sit in separate desktop
@@ -252,13 +271,66 @@ springy bounces) — "a utility assistant, not a toy."
     for motion/floating work (recurring category #2's 4th validation). *(S6: badge-over-trust-row on mobile,
     footer-over-docked-widget z-order, blueprint-vs-widget merge — all "looked fine in one state".)*
 
+## Codified taste rules (added S8 — the creator-v2 studio-concept + hub-conversion audit)
+
+34. **A prompt/hero bar holds GENERATION-TIME choices only.** Things you can't fix after the render
+    (aspect ratio, art style) earn a slot; post-production layers (music, SFX, captions, voice) live in
+    the editor or are AI-automated — they never stack as upfront dropdowns. A creative tool's first
+    surface stays minimal; every extra control contradicts the "one shot, just describe it" promise.
+    *(S8 ← creator-v2: Model dropped (engine jargon), Art style + Aspect kept; Sora/Higgsfield keep
+    their bars minimal for the same reason.)*
+
+35. **Every visible control must DO something believable — an inert control reads as broken.** Even in a
+    design-only prototype: pills fill the prompt, templates seed it + scroll to it, Generate spins then
+    reveals, a banner CTA focuses the input. If an element can't respond, don't render it as interactive.
+    *(Extends rule 24 — 24 is "render all STATES", 35 is "answer every CLICK".)*
+
+36. **User-content areas are quiet, dense, app-like — never marketing sections.** A "your generations"
+    library = compact left-aligned header + count, dense grid, inside a contained surface panel
+    (`--bai-surface` + divider + hairline on the white page). No hero headline, no centered pitch: the
+    page sells, the library serves. *(S8 ← Google Flow reference; "big centered head + one lonely card"
+    was the miss.)*
+
+37. **Never combine the gutter wrapper and a styled card on ONE element — nest the card inside the wrap.**
+    A section card carrying both the content-column class and its own padding overrides the outer gutter
+    and goes full-bleed on mobile. The wrap owns max-width + gutters; the card owns its padding, inside.
+    *(S8 ← the banner kissing both screen edges <1200px.)*
+
 > Motion (framer-motion) gotchas, the spotlight pattern, the CSS-chunking leak, the ambient
 > backdrop, and mobile/layout/SSOT technical detail live in `knowledge-base.md`.
 
+## Codified taste rules (added blueai-desktop audit, 2026-07-25 — a CRAFT rule, applies beyond the marketing site)
+
+38. **A divider must earn its slot against what's ALREADY signaling the boundary.** Before adding a
+    hairline separator, check: does a label's own margin, a card's own border, an icon, or a color/
+    weight change already say "these are different things"? A divider stacked on top of an existing
+    signal is a third cue doing a job two are already doing — remove it, don't add to it. *(blueai-
+    desktop, 2026-07-25: caught 3 times in one session — before a labeled section ("MORE WAYS TO GET
+    AI CREDITS": the label's own 24px top-margin already does it, confirmed against 6 sibling labeled
+    sections on the Settings home screen with zero dividers between any of them), between two already-
+    bordered cards (their own edges already separate them), and next to a "View details" link (its
+    accent color + bold weight + trailing chevron already read as "this is the action").)* Sibling
+    reasoning entry: `reasonings.md` "A divider is a THIRD signal, not a first one."
+
 ## Open corrections log
-*S2 (2026-06-11) — full day PROMOTED (rules 11–22 + decisions + KB). Designer corrections this
-day: balance→pretty body wrap; wordmark = full gradient (I'd misread it two-tone); body width
-(full-bleed nav + 1280 contained content); + several Gate-8 visual misses I shipped that the
-designer caught on review (Finance card wider than siblings, close-band heading wrapping through
-the full stop, POLYMARKET clip, mobile nav pushing content) — all fixed + promoted. No OPEN
-corrections pending. Watch: my Gate-8 catch-rate on NEW builds (see evolution).*
+*SCOPE PIVOT (2026-07-25, designer directive) — superseding the S8 standing scope note below: **the
+marketing site AND /blueai-product are now BOTH DORMANT; /blueai-desktop is the active surface.** This
+is the exact reverse of the S8 framing ("experiments are DS-unbound exceptions to the marketing site's
+rules") — blueai-desktop is no longer the exception, it's the default. Rules 1–37 are preserved (not
+deleted) for if the marketing site resumes; they are not what current work is reviewed against. Started
+`visual-designer/blueai-desktop-design-system.md` (didn't exist before — blueai-desktop had NO documented
+design system anywhere, only the marketing site's) to give blueai-desktop the same kind of DS reference
+WSUP has. This is a live, growing document — not expected to be exhaustive on day one.
+
+Blueai-desktop audit (2026-07-25) — promoted the AI Credits screen redesign + OOC modal redesign work
+(ring-gauge reuse, card-based restructure, mode-specific titles/icons, the divider-redundancy rule above)
+from scratchpad to decisions.md/taste.md/reasonings.md/knowledge-base.md/project-insights.md. Created
+`reasonings.md` for the first time this session (never existed for blueAI before). No OPEN corrections
+pending on blueai-desktop as of this promotion.
+
+S8 (2026-07-03, HISTORICAL — superseded by the scope pivot above) — the 06-13→06-24 backlog PROMOTED
+(rules 34–37 + the rule-32 scope clause + decisions + KB). Former standing scope note: "/moneymaker,
+/blueai-desktop and /blueai-product are DS-UNBOUND standalone experiments — rules 1–37 govern the
+marketing site only." Craft gates + rule 38 still apply everywhere regardless of scope, since they're
+process, not skin. Watch: Gate-8 pre-present walk-through on novel interactive/motion work (category #2,
+5 validations) — this watch item is marketing-site-specific and dormant along with it.*

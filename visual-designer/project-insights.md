@@ -1,5 +1,21 @@
 # blueAI — Project Insights
-Last updated: 2026-06-13 (S6 — /live-demo static clone + /live-demo-v2 DS redesign of the PM funnel: docking widget, blueprint beam-wipe intro, widget token-mirror; latest deploy commit 0df2090, v2 uncommitted)
+Last updated: 2026-07-25 (blueai-desktop audit — first blueai-desktop domain-fact entry: BYOK/Prime coexistence)
+
+## blueai-desktop domain facts (2026-07-25 audit)
+- **BYOK and Prime membership coexist — neither state should hide the other's UI.** A user with an
+  active own-key AND an active Prime membership sees BOTH: the "Running on your own key · ACTIVE" card
+  AND a separate "Prime credits · PAUSED" card (Prime isn't canceled, just not being drawn from). A
+  full-credit Prime member should still see a path to add their own key — BYOK isn't exclusively a
+  fallback for people without Prime. Confirmed on the AI Credits screen's Prime-member branch, which
+  had omitted the "Add / manage own key" action entirely (an oversight, not an intentional exclusivity)
+  until the designer caught it: "even when you have credits and you are a prime member... we should
+  give an option to add your own key right?" Any new blueai-desktop screen surfacing credit/key state
+  should default to assuming both can be true at once, not either/or.
+- **`renderAiCreditsScreen(el)`'s actual container is `#baiGlobalRouteBody` (class `.bai-subpane-body`,
+  `display:flex; flex-direction:column; gap:8px`), NOT `.bai-set`** (which has no uniform gap — spacing
+  there is deliberately margin-driven). Any spacing math for this screen must account for the container's
+  own 8px gap stacking with whatever margins its children carry — don't assume `.bai-set`'s "no gap"
+  convention applies here just because the visual style looks similar.
 
 ## Style guide architecture (S5)
 - **Sidebar:** surface-grouped accordion (Foundations · Components · Site & patterns · Agent pages · Marketing pages · App (PM)) — only the active group's items render; sentence-case light headers + per-group counts + a tree-line. Section ids drive scroll-spy; `tok-*` ids are linkable token anchors that RING on `:target`.
@@ -62,6 +78,24 @@ Last updated: 2026-06-13 (S6 — /live-demo static clone + /live-demo-v2 DS rede
   beam-wipe assembly intro. The hire WIDGET is the PM's `app.html`, copied to `public/live-demo-v2/widget.html`
   and reskinned to the DS via a `:root` token-MIRROR (iframe can't read app vars; flow/login byte-identical).
   v2's new patterns are documented in `/style-guide` (Marketing-pages group) under `.ldv2.sg-demo`.
+- **S6.5→S8 era (06-13 → 07-03) — the route map's CURRENT truth:**
+  - **`/live-demo-v2` = THE FINALIZED HOMEPAGE** (kept at its route; `/` stays the Screen Library index).
+    Hub-converted: shared MarketingHeader (per-page `links`/`cta` props) + MarketingFooter; custom
+    Ldv2Nav/Ldv2Footer deleted (CSS cleaned at S8). Worker cards link to the agent pages. Login gate stays.
+  - **`/live-demo` (byte-exact clone) REMOVED** — pristine PM source kept in `design-source/blue-ai-demo/`.
+  - **`/ai-video-creator-v2`** — the Studio CONCEPT page (bespoke `.v-creator`: three.js GradientCanvas
+    hero, gsap marquee, freemium mock flow, portaled `CreatorSelect`). NOT SG-synced — concept pages sync
+    only when finalized. The original `/ai-video-creator` agent page is untouched.
+  - **DEPRECATED but on disk** (removal parked — designer: "later"): `/seo` · `/hero-options` · `/hero/*`
+    + their components (seo/*, HeroNav [fully orphaned], HeroStage/Cards/StageOriginal, BaiHome/FeatureRows/
+    AllSkills, rich scenes) + CSS (hero-*.css, seo-home.css, homepage.css, hero-nav.css) + orphaned tokens
+    (--bai-accent/indigo/warning/info/scheduled/jobs, --bai-content).
+  - **Standalone DS-UNBOUND experiments:** `/blueai-product` (CDN+Babel clone of the live app; the AI-Credits
+    screen work lives here) · `/blueai-desktop` (static terminal-drawer experiment: index.html + boot.js +
+    flows.js, own dark/light theme system) · **`/moneymaker` (S8, upcoming)** — the moneymaker homepage,
+    completely new visual language by designer directive.
+  - **`WAITLIST_URL`** (site-data) = the acquisition-CTA SSOT everywhere (pre-launch posture, S7); real URL
+    still TODO-handoff.
 
 ## Hero architecture — TWO animation paths (critical)
 The export's `hero-cards.js` branches per agent on which markup is present:
@@ -141,8 +175,18 @@ marketing site; FILL gaps from blueai-pm; on a real contradiction take the more 
   (`/` 307→`/style-guide` by design). Build = `next build` (Next auto-detected). No env vars.
 - **Workflow:** push to `main` → Vercel rebuilds. Always run `npx next build` locally first —
   strict TS + the prod CSS bundle catch things `next dev` doesn't.
+- **Two-session dev:** the second server runs on :3001 with `BLUEAI_DIST_DIR=.next-3001` (launch config
+  `blueai-3001`) — isolates the build cache so parallel sessions can't corrupt each other (S6.5 fix).
 
 ## Known / flagged
+- **PARKED REMOVAL PASS** (designer: "later"): delete the deprecated /seo + /hero routes/components/CSS +
+  the orphaned tokens above + delist "SEO Homepage"/"Hero Options" from the root index. Blast radius mapped
+  06-16 (see decisions row); KEEP the 4 Legacy scenes (homepage worker cards use them) + MarketingHeader/
+  Footer + site-data.
+- **Known copy debt (S7, flagged not changed):** body copy still says "It is live / free to download /
+  Download BlueAI to…" on several surfaces while CTAs say "Join the Waitlist"; /developer in-body
+  "Claim 25,000 Credits" CTA; creator-v2's share→publish Download flow kept (breaks its install narrative
+  otherwise). Reconcile when the designer picks the launch posture.
 - ✅ CSS-leak fix DONE (S2) — the 3 hero stylesheets are scoped under `.v-*`; the leak class
   (text-align + `.hero` padding + the Stage-Original `.cv-trend`) is structurally closed.
 - Hero motion timing is a first-pass approximation of the original GSAP — retune on review.

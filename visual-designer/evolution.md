@@ -1,5 +1,5 @@
 # blueAI — Evolution
-Last updated: 2026-06-13 (S6 — live-demo clone + DS redesign + signature motion; category #2 validated a 4TH time (~8 catches, clustered on motion/floating/overlay); growth edge sharpened to the per-state/per-breakpoint walk-through)
+Last updated: 2026-07-03 (S8 audit — backlog promoted; category #2 validated a 5TH time on the creator-v2 build (interaction/overlay work again); next: /moneymaker, a DS-unbound standalone build — the pre-present walk-through is the test)
 
 > VDA's growth + maturity timeline ON THE BLUEAI PROJECT. Separate from WSUP/now.gg —
 > a fresh notebook starts at Phase 1.
@@ -88,3 +88,33 @@ Cloned the PM's homepage byte-exact (`/live-demo`, static passthrough — exempt
 **Counter-evidence of growth:** the diagnoses got faster and more honest — root-caused the framer clip-path snap (→ CSS keyframe), the ancestor-stacking-context footer bug, the signal-redundancy (lifecycle not restyle), and RETRACTED my own wrong "var() in SVG attrs" claim when the lattice disproved it. The fixes addressed CAUSES (wipe-not-crossfade, retire-not-restyle, scale-not-reflow), not symptoms.
 
 **Watch next session:** (a) the floating/animated/breakpoint walk-through above — category #2 is now 4-for-4, still the growth edge; (b) the dev server died silently ~5× this session (check the port before debugging a "broken" route — it's a process-stability issue, not the code); (c) the two parked CTA-band / FAQ consolidation decisions remain open.
+
+## S6.5 (2026-06-16 → 06-18, backfilled at the S8 audit) — hub conversion + SG scope + the creator-v2 studio concept
+Three unlogged working days, reconstructed from the scratchpad at S8. 06-16: /live-demo-v2 promoted
+island→hub (shared chrome; taste 32 scope clause) + the SG re-scoped to the surviving marketing DS
+(in-app groups removed) + the ENTIRE creator-v2 studio concept (WebGL hero, freemium mock, share→
+publish→install funnel, sample-prompt library, portaled dropdowns). 06-18: the mobile pass (5 fixes).
+**`designer_caught_count: ~9` across the era** — clipped/mis-stacked dropdowns (×2), banner empty→
+image, micro-drama "empty", library too loud (→ minimal → panel), inert hero controls, off-theme
+native selects, aspect popup crushing landscape, hero top-space (×2 — the second because I fixed the
+WRONG BREAKPOINT: designer's screenshot was desktop, I patched mobile).
+**Recurring category #2 — VALIDATED A 5TH TIME, same cluster:** novel INTERACTIVE/overlay work
+(dropdowns, modals, popovers) is where first-pass misses live; static layout mostly held. New concrete
+sub-rule from the era: *check WHICH viewport the designer is looking at before scoping a responsive fix.*
+**Counter-evidence of growth:** caught + fixed my own mobile regression pre-present (worker-title wrap);
+held the IP line on scraping twice; honest "the v1 videos never existed" finding; root-caused the
+AnimatePresence orphan + portal traps into reusable KB patterns.
+
+## S7 (2026-06-24) — waitlist swap
+Short directed session, `designer_caught_count: 0` — scope clarified upfront, the deprecated-page
+mix-up caught on my side. (Logged same-day in session-logs; counted here for the phase record.)
+
+## S8 (2026-07-03) — the overdue audit + the /moneymaker directive
+Promoted the 59-entry backlog: taste 34–37 + the rule-32 scope clause, 14 decision rows, the KB
+creator-v2 era section, project-insights route-map truth, this file, the backfilled logs; dead
+Ldv2Nav/Footer CSS removed; scratchpad wiped. **Phase 2 HOLDS** (S6 ~8 → S6.5 ~9 → S7 0: the low-caught
+S7 was a copy swap, not a new build — the phase-3 bar stays "≥3 consecutive low-caught NEW builds").
+**Next build = /moneymaker:** a DS-UNBOUND, award-winning standalone (designer directive). The craft
+gates travel even though the skin doesn't — and it's ALL novel motion/interaction work, i.e. category
+#2's home turf. The test for this build: walk every floating/animated/interactive element through all
+states + breakpoints BEFORE presenting, and verify at the viewport the designer will actually view.

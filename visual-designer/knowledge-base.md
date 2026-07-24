@@ -1,5 +1,38 @@
 # blueAI — Knowledge Base
-Last updated: 2026-06-13 (S6 audit — motion/stacking/clone mechanics: framer snaps clip-path · double-spread clobbers animate · ancestor z-index caps fixed children · scale-don't-reflow · redirect-not-rewrite for relative iframe src · dev server dies silently)
+Last updated: 2026-07-25 (blueai-desktop audit — first-ever blueai-desktop section: flex-gap+margin
+stacking trap, hover-menu reachability testing technique)
+
+## blueai-desktop — CSS + testing traps (2026-07-25 audit, first entries for this surface)
+- **A flex container's `gap` ADDS to a child's own pre-existing CSS margin — it does not collapse or
+  override it.** Moving a component (e.g. a `.bai-set-label`, designed assuming it's the ONLY spacing
+  mechanism around it) into a NEW container that has its own `gap` silently doubles the space on
+  whichever side the margin still has a value. Caught on the AI Credits screen's "CREDIT BREAKDOWN"
+  label: `margin: 0 0 8px` inside a `gap:10` wrap rendered as 10px above (gap alone, margin-top was
+  zeroed) but 18px below (gap 10 + margin-bottom 8) — backwards from "label owns what's right below
+  it." Fix: net the margin against the gap (`margin-bottom: -2px` → effective 8px), don't assume old
+  standalone-context spacing math still holds once nested in a gap-controlled parent. **Always
+  measure with `getBoundingClientRect`, not eyeballed** — this exact inversion is invisible by eye at
+  a 2px-ish difference and only surfaced once actually measured.
+- **A "hover menu closes before I can reach it" bug can ONLY be verified with real, stepped mouse
+  travel — a before/after snapshot check will report success while the bug still ships.** The failure
+  happens DURING the cursor's transit across the gap between the trigger and a `position:absolute`
+  floating menu (`mouseleave` fires on the trigger the instant the cursor crosses ANY non-descendant
+  element in that gap, even a menu that IS a real DOM child). Root fix: wire show/hide to BOTH the
+  trigger and the floating menu (either one being hovered keeps it open) + a short grace-period
+  timeout (150ms) so brief crossing jitter never triggers a hide. Verification: Playwright
+  `mouse.move(x, y, {steps: N})` stepping from the trigger to the target, polling the shown/hidden
+  state at every intermediate step — not `page.hover()` (which jumps) and not a scripted `.click()`
+  (which bypasses the real hover mechanism entirely). Caught on the credits-header popover after
+  designer report: "when I go over to view details it closes before I reach it."
+
+## Creator-v2 studio-concept era (S8 audit — the 06-13→06-24 backlog)
+- **AnimatePresence orphan trap:** toggling presence DURING the exit animation orphans the scrim DOM node — a dead full-screen scrim that no state change can remove (we had 2 stacked). For modals that can be opened/closed fast → **conditional render** (`if (!open) return null`) + a plain enter-only `motion.div`; reserve AnimatePresence for surfaces that can't be rapid-toggled.
+- **Popover escape kit (three distinct traps, one component):** (1) `backdrop-filter` creates a stacking context — a menu inside it can't out-z LATER siblings; lift the CONTEXT (`position:relative; z-index` on the flex item — flex-item z-index applies). (2) An ancestor `overflow:hidden` clips absolute menus regardless of z-index → **createPortal to `document.body`** with `position:fixed` from `getBoundingClientRect` (+ close on outside-mousedown excluding trigger AND menu, Escape, scroll, resize). (3) Portaled CSS must be UNSCOPED (it renders outside the page root class) — safe when tokens live at `:root`. This is `CreatorSelect.tsx` — reuse it for any themed dropdown.
+- **WebGL canvas (GradientCanvas):** size from a **ResizeObserver**, not window `resize` (preview_resize doesn't dispatch it); dispose renderer/geometry on unmount; `prefers-reduced-motion` → render one static frame.
+- **Two dev servers on one Next project corrupt the shared `.next` cache** (PackFileCacheStrategy ENOENT rename → phantom 404s + 90s+ latencies). PERMANENT FIX in place: `distDir: process.env.BLUEAI_DIST_DIR || '.next'` + the blueai-3001 launch config sets `.next-3001`. If it still recurs: stop server → clear `.next/cache` → restart.
+- **Verification traps on animated pages:** `preview_screenshot` wedges on WebGL/continuous-motion pages (renderer never idles) → verify via DOM/computed-style evals, SSR-HTML greps, direct HTTP probes. React re-render is ASYNC → click in one eval, READ in a separate eval. Clicks immediately after reload no-op (hydration race). `target=_blank` navs throw in headless evals (artifact, not a bug).
+- **Licensed stock for a public deploy:** Pexels API (free, commercial OK, no attribution) is the source for demo media; NEVER scrape branded AI-tool outputs (IP exposure — declined twice, designer agreed). Media auto-replace convention: drop real files at `public/videos/<slug>.mp4/.jpg` → replaces everywhere by filename, zero code change.
+- **Typewriter-as-placeholder:** animate example prompts in a GHOST layer shown only while `value === '' && !focused`; the field itself stays editable — a readOnly lock on the MAIN input reads as broken (taste 35).
 
 ## Motion, stacking, and clone mechanics (S6 — live-demo-v2)
 - **framer-motion does NOT reliably interpolate `clip-path` strings — it SNAPS to the target.** For a clip-path wipe/reveal, use a CSS `@keyframes` + a class toggle; keep framer for `pathLength`, opacity, transform. (Confirmed: animating `clipPath: inset(0%)→inset(100%)` via framer jumped instantly.)
