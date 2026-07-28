@@ -5,6 +5,225 @@ resolved. Promoted to decisions.md / taste.md at audit passes, then wiped.
 Format: `YYYY-MM-DD HH:mm — <file> — <what changed> — Why: <one phrase>`
 
 --- Pending audit entries ---
+2026-07-29 01:42 — /blueai-desktop — Onboarding's floating orb badges (`.bai-onb-orb`) and rotating receipt
+cards (`.bai-onb-card`) — designer, LIGHT THEME ONLY: "too old school... not modernistic dribbble-like...
+very dull." Root cause, confirmed by reading the actual rule rather than eyeballing: both already use a
+color-tinted shadow (`color-mix` against their own `--cc`/`--oc`, a fixed per-badge accent that doesn't vary
+by theme) layered with a second, plain `rgba(0,0,0,X)` shadow — a technique that reads fine in the default/
+dark theme (dark surroundings recede the black layer, letting the color read through) but falls apart
+against a light/white background, where the SAME black layer reads as a flat gray smudge and the SAME color-
+mix percentage looks weaker (less contrast to pick the tint out against white). Fixed with a `.drawer.light`
+override on both rules only: bigger blur, higher color-mix % (card 16->30%, orb 55->62%), and the black layer
+REPLACED with a second, larger, still color-mix'd layer instead of just softening the black — so the whole
+shadow reads as one cohesive colored glow rather than "weak tint + gray blur" at any opacity. Verified via
+computed `box-shadow` in both themes, not by eye: light now returns two `color(srgb ...)` layers with zero
+black; toggling `.light` off reproduces the original two-layer (tint + rgba-black) shadow byte-for-byte,
+confirming the override is additive and dark is untouched. Noted but deliberately NOT done: this file's
+established convention for theme differences is tokens (redefined once in the `.drawer.light{}` block), not
+scattered component overrides — checked, and no such override existed anywhere else in the file before this.
+Used a scoped override anyway since `--cc`/`--oc` are fixed, non-theme-varying per-badge colors (there's no
+"light vs dark" value to give them), and the actual theme-dependent knob is the shadow RECIPE (how much tint,
+whether black participates at all) — inventing a global "ambient shadow tint" token for exactly 2 call sites
+would be the bigger overreach, not the safer choice. — Why: a shadow recipe tuned by eye against one
+background doesn't transfer to the other by assumption — the same numbers can read as "glowing" on dark and
+"dull" on light, and the fix is a second recipe for the second background, not a bigger/smaller version of one
+recipe. Also: matching an established convention (tokens-not-overrides) is a default, not a rule to force onto
+every case — worth a sentence of justification when deliberately not following it, same as any other choice.
+2026-07-29 01:34 — /blueai-desktop — Scheduled's create/edit moved from an inline top-of-list form to its own
+subpane, matching Skills. Designer pushed on my own answer from the entry above: "is this the right behaviour
+... according to UX?" Before answering, checked how this app ALREADY solves the identical problem elsewhere —
+found Skills' `openSkillForm` uses a full subpane takeover, AND found an existing comment directly documenting
+why Scheduled didn't (CMP-01: Skills has 3 distinct creation methods, Scheduled has 1, so it stayed inline;
+"don't fix this divergence without re-reading that reasoning"). Reported both findings honestly rather than
+either blindly matching Skills or hiding behind the old decision — the 1-vs-3-methods distinction still holds,
+but Scheduled's form has grown a full 2-step date/time flow since that note was written, so I flagged it as a
+genuine reconsideration rather than deciding unilaterally. Designer said move it. Built as a THIRD independent
+overlay (`#baiSchedSubpane`), not sharing Subpane's push/pop stack (documented as Skills-reserved) or
+GlobalRoute's cross-tab scope (covers the nav strip, wrong semantic for a Scheduled-only action) — same split
+GlobalRoute itself already made from Subpane for the same kind of reason. Physically relocates the EXISTING
+`#baiSchedForm` node in and back out via `appendChild`/`insertBefore` (captured `nextSibling` at load time so
+it returns to its exact original spot) rather than rebuilding the form from scratch — the same technique
+GlobalRoute's own Settings entry already uses for `#paneSettings .bai-set`, found by reading that code before
+writing any of my own. This kept the ENTIRE date/time picker (2-step flow, scroll-centering, everything built
+across this whole session) completely untouched — zero risk to it, since none of its ids/listeners moved.
+Directly obsoleted the previous entry's "scroll the edited card to meet the form" fix (deleted, not left dead) —
+once the form is a full takeover, there's no card position to reconcile it with at all. Verified end-to-end:
+create, edit-with-prefill, the nested 2-step date/time picker inside the relocated form, Back (discards,
+restores node+state), Cancel (same), Save/Create (commits + closes + restores node), Delete's own inline
+confirm (untouched, still works) — across both themes, zero console errors. — Why: the load-bearing move here
+wasn't writing new code, it was reading two existing comments (CMP-01, and GlobalRoute's Settings-relocation
+note) before touching anything — both were left specifically so a future pass wouldn't reinvent or contradict
+a reasoning already worked out. Also: the RIGHT answer to "should X match Y" is sometimes "yes, but not by
+literally reusing Y's mechanism" — a visually-identical, architecturally-separate third shell served the actual
+goal (consistency the user perceives) without inheriting a stack/scope model built for a different job.
+2026-07-29 01:07 — /blueai-desktop — Designer: "why does the editor open above it [the clicked card]? is this
+right according to UX?" Verified live before answering (5-card list, clicked Edit on card 2) — confirmed:
+`#baiSchedForm` is ONE shared element fixed above `#baiSchedList`, so editing any card always opens the form
+at the top, disconnected from whichever card was clicked. First instinct was `schedForm.scrollIntoView()` —
+wrong fix, caught it myself before shipping: `#baiSchedList` has `overflow-y:auto` and IS the scroll
+container (sibling of, not ancestor to, the form), so the form was never actually going off-screen; scrolling
+it into view was a no-op dressed up as a fix. Real fix: scroll the SPECIFIC EDITED CARD (found via
+`SCHEDULED.indexOf(existing)` -> `schedListEl.children[idx]`) to the top of the list's own scroll box, so it
+lands directly adjacent to the form instead of relocating the form into the list — relocation would risk
+losing an in-progress edit if an unrelated card's re-render (e.g. its on/off toggle -> `renderScheduled()`)
+wiped `#baiSchedList.innerHTML` out from under it. Bug #2 while verifying the fix: `scrollIntoView` in the
+SAME tick as `schedForm.style.display='flex'` landed at the wrong scrollTop (205 instead of ~550) — the form
+appearing shrinks the list's own height (flex siblings under a fixed-height parent), and scrolling before
+that reflow completes measures stale geometry. Fixed by deferring one `requestAnimationFrame`. Bug #3, self-
+caused during verification: an unscoped `document.querySelectorAll('button')` picked up this environment's
+always-present debug "Preview" panel and clicked its "Logged out" toggle instead of the 5th real Edit button
+— cost a full reload to recover. — Why: three real lessons stacked in one fix. (1) A user's "is this right?"
+deserves the same live verification as a bug report — first-instinct fixes for UI-position complaints are
+easy to get backwards without checking what's actually scrolling. (2) A fix that "does something" isn't
+verified until you confirm it does the RIGHT thing (scrollTop went from 0 to a nonzero-but-wrong value on
+the first pass — looked plausible, wasn't). (3) Scope every DOM query to the specific container you mean —
+this file has floating debug/preview panels and other same-text buttons throughout, and `document`-wide
+queries will eventually hit one.
+2026-07-29 00:44 — /blueai-desktop — Scheduled date/time picker re-architected, not just re-tuned. Designer,
+after the 3rd or 4th round of width-fitting fixes on the combined calendar+time layout: "this is not working
+out for me... only show date first, once you select a date we show the timer, and you can go back to date
+to reselect." Replaced the single combined-layout picker with a 2-step flow (date step, then time step,
+back-link between them) — and every problem the last several entries were patching (oval cells at odd
+widths, overflow below ~410px, the stacking threshold and its "narrower means what exactly" back-and-forth,
+the hint-pulse to flag the time step) turned out to be downstream of ONE decision — showing calendar+time
+in one shared space — not independent bugs each needing its own fix. Removing that root cause let a full
+class of code go with it: `.bai-dt-cal`/`.bai-dt-time` wrapper divs, `.bai-dt-tcol`/`.bai-dt-rowlabel`,
+`timeAxis()`, `suppressScrollTouch`, the stacked-mode CSS block, the ResizeObserver on `#baiSchedForm`, the
+hint-pulse keyframe — all deleted as genuinely dead code, not left disabled "just in case." Step 2's header
+doubles as the back control (shows the picked date, tap to return) instead of a separate nav element. Smart
+entry point: opening on a task that already has a confirmed date+time (editing, or any reopen after Done)
+skips straight to the time step, since that's the far more common reason to reopen; a brand-new task starts
+at the date step. Verified the thing this whole redesign was chasing: zero overflow on EITHER step at the
+drawer's absolute floor width (290px, `pickerScrollW === pickerClientW` exactly) — something the combined
+layout could never guarantee at every size no matter how many times the threshold got retuned. — Why: this
+is the real version of the lesson the last few entries were circling without landing on it — when the SAME
+class of bug keeps needing a new patch (fit issue -> fixed width -> divider mismatch -> baseline mismatch ->
+axis-switch scroll bug -> threshold direction confusion), that's a signal to question the shared premise
+underneath all of them, not to keep patching individual symptoms. Should have raised "what if these two
+things just aren't shown together" as an option several rounds earlier instead of waiting for the designer
+to propose it.
+2026-07-29 00:28 — /blueai-desktop — Self-caught-too-late direction error on the stacked-mode width
+threshold. Designer said "push that threshold narrower"; I read "narrower" as "shrink the row-mode ZONE"
+(raise the pixel number, 400->500, so stacked wins more often) instead of the plainer, correct reading —
+"make the NUMBER smaller" (harder to trigger, row-mode survives to narrower widths). Shipped the wrong
+direction, verified it thoroughly (measured no-overflow at both ends), reported it as done — designer had to
+notice the window was switching to stacked WIDER than before and flag it before I caught it myself. Reverted
+400->500->400 (a no-op net change, but cost a full round trip). — Why: "push X narrower/wider" about a
+pixel threshold is genuinely ambiguous between "the number" and "the zone it gates" — thorough verification
+of the (wrong) interpretation doesn't substitute for confirming the interpretation itself first, especially
+when my own prior message had introduced the ambiguous framing in the first place ("push the threshold
+narrower... there's less reason to avoid it as eagerly" reads two ways). Next time: when a direction word
+applies to a threshold rather than a visible size/spacing, restate the CONCRETE effect ("that means row-mode
+would survive down to a narrower window than today, e.g. ~350px instead of ~410px — that what you want?")
+instead of echoing the ambiguous word back and proceeding.
+2026-07-28 23:57 — /blueai-desktop — Three more corrections on the same picker, same evening. (1) Designer:
+"we leave the timer outline colored until interacted with — we don't need that." The hint pulse's `to`
+keyframe kept `inset 0 0 0 1px var(--bai-accent-line)` alive forever (only the OUTER glow faded) — a real
+miss, not a design call; a "brief pulse" that never actually finishes doesn't read as a pulse. Fixed: both
+shadow layers in the `to` keyframe now fade to fully transparent, so `animation-fill-mode:forwards` leaves
+`box-shadow:none` behind, confirmed via `getComputedStyle` post-animation (was leaking the ring indefinitely
+before). (2) Designer corrected my OWN misreading of their earlier ask: stacked-mode's labeled Hours/Minutes
+rows scroll HORIZONTALLY, not vertically-in-a-wide-box like I'd assumed when I recommended against the full
+rebuild. Once corrected, built it: `.bai-dt-tcol` wrapper (`display:contents` in row mode — genuinely
+invisible, zero cost when not stacked) + `.bai-dt-rowlabel` (hidden except when stacked), same `.bai-dt-col`/
+`.bai-dt-colval` DOM reused for both orientations rather than a parallel widget, axis made a runtime
+parameter (`timeAxis()` returning scrollLeft/clientWidth/offsetLeft/offsetWidth vs the vertical set) so
+`scrollColTo`/`bindColScroll` didn't need a duplicate copy. Dropped the horizontal-mode selection-band
+entirely (a single shared band doesn't translate to two independent fluid-width rows, and at a single-line
+row height the centered value is already obvious without one) — a deliberate scope trim, not an oversight.
+Caught by testing, not asked: switching the `.stacked` class while the picker was ALREADY open left the
+scroll position on the OLD axis (e.g. vertical scrollTop) meaningless once the column became horizontal —
+`.on` still said the right value, but the visible scroll position was stuck at 0. Fixed by re-running
+`scrollColTo` for both columns specifically when the ResizeObserver detects the stacked state actually
+flipping while the picker is open — same "measure the actual interaction" lesson as everything else
+tonight; this one would never have surfaced from a static screenshot, only from resizing a genuinely-open
+picker and checking `scrollLeft`/`.on` together. (3) Designer: "labels... should have same baseline
+alignment" (July 2026 vs Time) — measured a real ~13px offset, root-caused to the SAME `justify-content:
+center` added earlier this session to fix the divider-height bug — centering the whole label+row block as
+one unit had pulled the label down with it as a side effect I hadn't checked for. Fixed by pinning the label
+to the top (removed `justify-content:center` from `.bai-dt-time`) and moving the centering responsibility to
+`.bai-dt-timerow` alone (`flex:1`, already-existing `align-items:center`) — verified `calheadTop ===
+timeheadTop` exactly AND `calHeight === timeHeight` exactly in the same check, i.e. this fix did not reopen
+the divider bug it was adjacent to. — Why: three more instances of the same pattern this whole session —
+measure before fixing, and check that a fix for problem A didn't quietly reintroduce problem B a few steps
+back (the label-drop was a side effect of the DIVIDER fix; the axis-switch scroll bug was a side effect of
+the STACKED-mode fix). Fixing UI in layers means re-verifying earlier layers, not just the newest one.
+2026-07-28 23:55 — /blueai-desktop — Edit picker pre-fill mismatch on repeating Scheduled tasks (designer,
+via direct DOM inspection: "Claim daily rewards" card showed "Next run: 29 Jul, 09:00" but its Edit picker
+opened on "28 Jun 2026, 09:00" — day 28 selected, June in view). Root cause: `openSchedForm(existing)` seeded
+`schedPicked`/`dtSelected` straight from `existing.startsAt` — the pattern's original anchor date, which for
+a 30-day-old Daily/Weekly task sits weeks in the past — while the card's own "Next run" line (and the whole
+point of `nextOccurrence()`) is the computed NEXT firing time from that anchor. Two displays of the same task
+disagreeing was the bug, not a rendering glitch in either one alone. Fixed by seeding the picker from
+`nextOccurrence(existing)` instead of the raw field (2-line change, `openSchedForm` only) — confirmed safe
+since `nextOccurrence()` is a pure read (clones `startsAt` for Daily/Weekly/Monthly, returns it unchanged for
+Once) and Save already just writes back whatever the picker holds as the new `startsAt`, so re-anchoring to
+the current next-run doesn't change future firing math (same weekday/day-of-month/time) — it just stops the
+anchor drifting further into the past. Verified round-trip on all 3 repeat shapes (Daily 29 Jul / Weekly 4
+Aug both now match their cards exactly, including the actual calendar-grid cell selected, not just the text
+label; created+edited a fresh Once task to confirm no regression on the path that was already correct). —
+Why: same root lesson as the rest of this thread — a value computed for display in one place (nextOccurrence,
+for the card) and a raw stored field in another (startsAt, for the picker) will read as consistent right up
+until the anchor date is old enough for the gap to become visible; the fix makes the SECOND surface call the
+same computation the FIRST one already trusts, rather than reconciling two independent sources after the fact.
+2026-07-28 23:34 — /blueai-desktop — Three follow-ups on the same picker, same session (designer caught 2,
+proposed 1 direction, asked for a 3rd feature). (1) Divider height mismatch: designer "the divider... bottom
+have too much padding" — measured `calBottom` vs `timeBottom`, confirmed a real ~29px gap (`.bai-dt-body`
+was `align-items:flex-start`, so the shorter `.bai-dt-time` box's own border-left stopped short of the
+taller calendar). Fixed with `align-items:stretch` on the body + `justify-content:center` on `.bai-dt-time`
+— divider now spans the exact full height (verified `calBottom === timeBottom` to the pixel), leftover space
+splits evenly instead of dumping at the bottom. (2) Narrow-width overflow: designer "reduce the width...
+goes out of bounds, find 3 ways" — measured real overflow (26px at 380px drawer width, 71px at the drawer's
+own 290px floor) before proposing anything. Presented 3 options (stack-below-threshold / horizontal-scroll-
+safety-net / uniform-scale, each tied to a technique already used elsewhere in this exact file) with a
+recommendation; designer picked option 1. Implemented as a dedicated `ResizeObserver` on `#baiSchedForm`
+(NOT reusing `#drawer`'s own wide/narrow observer — the sidebar eats ~210px of drawer width in wide mode,
+so drawer width alone isn't a safe proxy for this form's actual available space) toggling `.stacked` on
+`#baiDtPicker` below 400px form width. (3) Time-hint: designer "once you select the date should we
+highlight the timer... so user realizes he has to select both" — recommended it (2-3 sentences, held off
+implementing until confirmed, per the exploratory-question norm), then built it once asked: a pulse + steady
+accent ring on the time columns, added on day-click, cleared on the first REAL time interaction. Needed a
+`suppressScrollTouch` flag so `scrollColTo`'s own programmatic re-centering (called on every open/edit AND
+after every click-to-pick) doesn't itself clear the hint it's supposed to be waiting out — only a genuine
+drag (or a direct value click) counts. — Why: same lesson as the rest of this session, restated three
+times over — measure before diagnosing (divider, overflow numbers), and separate "the code did something"
+from "the user did something" when a signal (scroll events) can fire from both.
+Tooling note, not a product bug: this session's browser-preview tool only flushes pending ResizeObserver /
+scroll-event callbacks on an actual paint (e.g. a screenshot call) — plain `setTimeout`/wait does not unstick
+them. Cost ~20 min chasing a "the observer never fires" false alarm before isolating it with a fresh, minimal
+test observer. Worth remembering before concluding a resize-driven feature is broken in this environment.
+2026-07-28 23:04 — /blueai-desktop — Calendar/time picker visual-design pass (designer: "why does the
+calendar have to be responsive width-wise, I want true circles... find 10 things we can do visually to
+make them better" + separately "the arrow of the date/time field is too small compared to other
+chevrons"). Fixed `.bai-dt-cal` from `flex:1` (stretched, producing OVAL day cells since height was fixed
+at 26px but width tracked whatever space was available) to a fixed 214px (7 x 28px cells) — `border-
+radius:50%` on a guaranteed-square cell now renders a true circle, confirmed via `getBoundingClientRect`
+(width===height===20.3px at this panel's render scale), not eyeballed. Nine more changes same pass: taller
+scroller (108->160px, spacer math recomputed 40.5->65.5px); a "Time" label for parity with the calendar's
+own month header; a native-picker-style selection band (two hairlines, no fill, spans both columns,
+verified pixel-perfect centered on the `.on` value via rect comparison); outlined/secondary Done button
+(was identical solid-blue to the form's own Create/Save right below it — two adjacent primary CTAs); a
+box-shadow (`--bai-menu-shadow`, reused not invented) so the picker reads as a floating layer; centered the
+calendar+time block (`justify-content:center`) since it no longer stretches to fill the card; dimmer
+unselected time values (`--bai-dim` -> `--bai-faint`) for more contrast against the selected one; slightly
+more grid/header breathing room now cells are smaller; the field's closed-state chevron went from a bare
+"›" text glyph at `font-size:9px` to a proper stroke SVG at 12px matching `.bai-title-ar`'s existing
+chevron-affordance convention (rotate-on-open), since a text glyph read smaller/thinner than every other
+chevron in the file at a comparable weight class.
+Real bug found via measurement, not requested but fixed in the same pass: `openDtPicker()` called
+`renderDtTime()` (which centers the scroll position on the current hour/minute) BEFORE setting
+`dtPicker.style.display='block'` — so the centering math ran against a `display:none` element (0 height),
+silently no-opped, and the picker always opened scrolled to the top (hour 00) regardless of the actual
+selected/current time, even though the correct value was still marked `.on` underneath. Fixed by reordering
+so `display:block` happens first. Verified `scrollTop` is now non-zero and exactly matches the expected
+center-alignment formula for both the "new task" (defaults to now) and "edit existing" (pre-fills the
+task's stored time) paths.
+Separately noticed, NOT fixed (out of scope for a visual pass, flagged to designer instead): editing a
+repeating task pre-fills the picker with the task's original `startsAt` (e.g. "28 Jun, 09:00" for a Daily
+task), not the card's own displayed "Next run" date (e.g. "29 Jul, 09:00") — a data-model/product question,
+not a visual bug. — Why: the recurring lesson this session (icon-trim, ZIP-tab scope) is again "measure
+the actual interaction, don't eyeball the static state" — every claim above (circle, alignment, scroll
+position) was confirmed via `getBoundingClientRect`/`scrollTop`, not visual impression.
 2026-07-25 (cont. 12) — /blueai-desktop — Two hover-state gaps, both confirmed via computed-style before AND
 after the fix, not assumed: (1) "Sign out" (`.bai-set-btn.danger`) was silently inheriting the base `.bai-set-
 btn:hover`'s `border-color:var(--bai-accent-strong)` (blue) — a destructive action's hover shifting toward

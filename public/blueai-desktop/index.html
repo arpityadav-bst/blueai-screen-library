@@ -224,9 +224,88 @@
     .bai-tgl i { position: absolute; top: 1.5px; left: 2px; width: 11px; height: 11px; border-radius: 50%; background: var(--bai-faint); transition: transform 0.15s, background 0.15s; }
     .bai-tgl.on { background: var(--bai-accent-wash); border-color: var(--bai-accent-strong); }
     .bai-tgl.on i { transform: translateX(12px); background: var(--bai-accent); }
-    .bai-newitem { flex-shrink: 0; display: flex; flex-direction: column; gap: 7px; margin: 0 14px 10px; padding: 11px 12px; background: var(--bai-card); border: 1px solid var(--bai-accent-line); border-radius: 10px; }
+    /* Bug fix: the calendar+time picker can grow tall enough that its bottom (the time columns + Done
+       button) overflowed past the pane's visible height with no way to reach it — .bai-newitem was
+       flex-shrink:0 (never shrinks, never scrolls), which was fine when its content was always short and
+       fixed, but broke once a much taller expandable picker could live inside it. Now shrinks to fit
+       whatever space the flex column actually has (matching the min-height:0 pattern already established
+       elsewhere in this file for exactly this class of flexbox bug) and scrolls internally past that. */
+    .bai-newitem { flex-shrink: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 7px; margin: 0 14px 10px; padding: 11px 12px; background: var(--bai-card); border: 1px solid var(--bai-accent-line); border-radius: 10px; }
     .bai-newitem-input, .bai-newitem-textarea { width: 100%; background: var(--bai-input-bg); border: 1px solid var(--bai-line-2); border-radius: 7px; padding: 7px 9px; color: var(--bai-text-strong); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 11.5px; outline: none; }
     .bai-newitem-input:focus, .bai-newitem-textarea:focus { border-color: var(--bai-line-focus); }
+    /* Item 9 (PM) superseded: a native <input type="time"> solved "users have to type it" but still looked
+       like plain OS chrome. Custom-built calendar + time picker below — real date tracking too, not just
+       a time-of-day (matches the reference's unified "Start Time: 28-07-2026 14:42" field). */
+    .bai-dt-field { display: flex; align-items: center; gap: 8px; padding: 9px 11px; background: var(--bai-input-bg); border: 1px solid var(--bai-line-2); border-radius: 7px; cursor: pointer; transition: border-color 0.15s; }
+    .bai-dt-field:hover, .bai-dt-field.open { border-color: var(--bai-line-focus); }
+    .bai-dt-field .ic { color: var(--bai-accent); flex-shrink: 0; display: flex; }
+    .bai-dt-value { flex: 1; font-size: 11.5px; color: var(--bai-text-strong); font-variant-numeric: tabular-nums; }
+    .bai-dt-value.placeholder { color: var(--bai-faint); }
+    .bai-dt-ar { color: var(--bai-faint); display: flex; flex-shrink: 0; transition: transform 0.15s, color 0.15s; }
+    .bai-dt-ar svg { display: block; }
+    .bai-dt-field:hover .bai-dt-ar, .bai-dt-field.open .bai-dt-ar { color: var(--bai-text-hi); }
+    .bai-dt-field.open .bai-dt-ar { transform: rotate(90deg); }
+    .bai-dt-picker { margin-top: 8px; padding: 12px; background: var(--bai-card-2); border: 1px solid var(--bai-line); border-radius: 10px; box-shadow: var(--bai-menu-shadow); }
+    /* Two steps, one visible at a time (see the HTML comment above for why this replaced the combined
+       calendar+time layout). A quick fade+lift on entry so switching steps reads as a deliberate move
+       forward/back, not an abrupt swap. */
+    .bai-dt-step-date { width: 214px; margin: 0 auto; }
+    .bai-dt-step-time { display: none; }
+    .bai-dt-picker.step-time .bai-dt-step-date { display: none; }
+    .bai-dt-picker.step-time .bai-dt-step-time { display: flex; flex-direction: column; align-items: center; }
+    .bai-dt-step-date, .bai-dt-step-time { animation: bai-dt-step-in 0.2s ease both; }
+    @keyframes bai-dt-step-in { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: translateY(0); } }
+    .bai-dt-calhead { display: flex; align-items: center; justify-content: space-between; height: 22px; margin-bottom: 10px; }
+    .bai-dt-calhead span { font-size: 11px; font-weight: 700; color: var(--bai-text-hi); }
+    .bai-dt-navbtn { width: 22px; height: 22px; border: none; background: none; border-radius: 6px; color: var(--bai-dim); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 13px; line-height: 1; transition: background 0.15s, color 0.15s; }
+    .bai-dt-navbtn:hover { background: var(--bai-hover); color: var(--bai-text-hi); }
+    .bai-dt-weekdays, .bai-dt-days { display: grid; grid-template-columns: repeat(7, 1fr); }
+    .bai-dt-weekdays { text-align: center; font-size: 9px; font-weight: 700; color: var(--bai-faint); letter-spacing: 0.3px; margin-bottom: 6px; }
+    .bai-dt-days { gap: 3px; }
+    /* 28x28 fixed square — a day cell's size must never depend on card width, or border-radius:50% ellipses out. */
+    .bai-dt-day { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 10.5px; color: var(--bai-text); border-radius: 50%; cursor: pointer; background: none; border: none; font-family: inherit; font-variant-numeric: tabular-nums; transition: background 0.15s, color 0.15s; }
+    .bai-dt-day:hover { background: var(--bai-hover); }
+    .bai-dt-day.outside { color: var(--bai-faint); opacity: 0.4; }
+    .bai-dt-day.today:not(.selected) { color: var(--bai-accent); font-weight: 700; }
+    .bai-dt-day.selected { background: var(--bai-accent); color: var(--bai-on-accent); font-weight: 700; }
+    /* Step 2's header doubles as the back control — shows the picked date, tap anywhere to return to step 1. */
+    .bai-dt-backhead { display: flex; align-items: center; gap: 6px; width: 100%; height: 22px; margin-bottom: 14px; border: none; background: none; padding: 0; cursor: pointer; font-family: inherit; }
+    .bai-dt-backar { color: var(--bai-faint); display: flex; flex-shrink: 0; transition: color 0.15s; }
+    .bai-dt-backhead:hover .bai-dt-backar, .bai-dt-backhead:hover #baiDtBackLabel { color: var(--bai-text-hi); }
+    #baiDtBackLabel { font-size: 11px; font-weight: 700; color: var(--bai-text-hi); transition: color 0.15s; }
+    .bai-dt-timerow { position: relative; display: flex; align-items: center; gap: 6px; }
+    /* Selection-window band, native-picker style: two hairlines marking the always-centered row (scroll-
+       snap keeps the chosen value there), so it's obvious which number is selected without hunting for the
+       styled one. Spans both columns; no fill/radius so it doesn't clash with each column's own rounded corners. */
+    .bai-dt-selband { position: absolute; left: 0; right: 0; top: 50%; height: 29px; transform: translateY(-50%); border-top: 1px solid var(--bai-line-2); border-bottom: 1px solid var(--bai-line-2); pointer-events: none; z-index: 2; }
+    .bai-dt-col { position: relative; height: 160px; overflow-y: auto; width: 40px; scroll-snap-type: y mandatory; border-radius: 8px; background: var(--bai-input-bg); scrollbar-width: none; }
+    .bai-dt-col::-webkit-scrollbar { width: 0; height: 0; display: none; }
+    .bai-dt-col::before, .bai-dt-col::after { content: ''; display: block; height: 65.5px; scroll-snap-align: none; flex-shrink: 0; }
+    .bai-dt-colval { height: 29px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--bai-faint); cursor: pointer; scroll-snap-align: center; font-variant-numeric: tabular-nums; transition: color 0.15s; }
+    .bai-dt-colval.on { color: var(--bai-accent); font-weight: 700; font-size: 13.5px; }
+    .bai-dt-colsep { font-size: 14px; font-weight: 700; color: var(--bai-dim); }
+    /* Outlined, not solid — "Done" only confirms the date/time WITHIN the picker; the form's own "Create"/
+       "Save" button (solid, below) is the real primary action. Two adjacent solid-blue CTAs would compete.
+       Hidden on step 1 — there's nothing to confirm until a time exists too. */
+    .bai-dt-done { display: none; width: 100%; margin-top: 12px; border: 1px solid var(--bai-accent-line); background: color-mix(in srgb, var(--bai-accent) 10%, transparent); color: var(--bai-accent); font-family: inherit; font-size: 11px; font-weight: 700; padding: 7px 12px; border-radius: 8px; cursor: pointer; transition: background 0.15s; }
+    .bai-dt-picker.step-time .bai-dt-done { display: block; }
+    .bai-dt-done:hover { background: color-mix(in srgb, var(--bai-accent) 18%, transparent); }
+    /* Redesigned scheduled-task card (was a compact single-row .bai-item-card with no Edit affordance at
+       all) — bigger card, icon rows for Schedule/Next run, and a real Edit+Delete button pair, matching
+       the reference screenshot. */
+    .bai-sched-card { display: flex; flex-direction: column; gap: 8px; padding: 13px 14px; background: var(--bai-card-2); border: 1px solid var(--bai-line); border-radius: 12px; }
+    .bai-sched-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .bai-sched-head b { font-size: 13px; color: var(--bai-text-hi); font-weight: 700; }
+    .bai-sched-sub { font-size: 10.5px; color: var(--bai-dim); }
+    .bai-sched-row { display: flex; align-items: center; gap: 7px; font-size: 11px; color: var(--bai-dim); }
+    .bai-sched-row .ic { display: flex; color: var(--bai-faint); flex-shrink: 0; }
+    .bai-sched-row b { color: var(--bai-text-hi); font-weight: 600; margin-left: 2px; }
+    .bai-sched-row .bai-sched-next { color: var(--bai-accent); }
+    .bai-sched-actions { display: flex; gap: 8px; margin-top: 3px; }
+    .bai-sched-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid var(--bai-line-2); background: var(--bai-input-bg); color: var(--bai-text); font-family: inherit; font-size: 10.5px; font-weight: 600; padding: 8px 10px; border-radius: 8px; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+    .bai-sched-btn:hover { border-color: var(--bai-accent-strong); background: var(--bai-hover-acc); }
+    .bai-sched-btn.danger { color: var(--bai-danger); border-color: color-mix(in srgb, var(--bai-danger) 40%, var(--bai-line-2)); }
+    .bai-sched-btn.danger:hover { border-color: var(--bai-danger); background: color-mix(in srgb, var(--bai-danger) 8%, var(--bai-input-bg)); }
     .bai-newitem-textarea { resize: none; min-height: 50px; line-height: 1.4; }
     .bai-newitem-actions { display: flex; justify-content: flex-end; gap: 6px; }
     .bai-newitem-cancel { border: none; background: none; color: var(--bai-dim); font-family: inherit; font-size: 11px; padding: 6px 10px; border-radius: 8px; cursor: pointer; }
@@ -259,11 +338,20 @@
     .bai-skillcard .sk-foot { display: flex; align-items: center; gap: 8px; margin-top: 2px; }
     .bai-sk-try { border: 1px solid var(--bai-accent-line); background: var(--bai-accent-wash); color: var(--bai-accent); font-family: inherit; font-size: 10.5px; font-weight: 700; padding: 6px 12px; border-radius: 8px; cursor: pointer; transition: filter 0.15s; }   /* Fix #6: shared 8px family radius, was a 20px pill unlike any other control */
     .bai-sk-try:hover { filter: brightness(1.18); }
-    .sk-manage { display: flex; align-items: center; gap: 2px; margin-left: auto; }   /* Fix #6: Edit+Delete grouped as one unit, tight internal gap (closely related), clearly separated from Try */
-    .bai-sk-link { border: none; background: none; color: var(--bai-dim); font-family: inherit; font-size: 10.5px; cursor: pointer; padding: 6px 10px; border-radius: 8px; margin-left: auto; }   /* default: standalone "Details ›" sits at the right edge */
-    .sk-manage .bai-sk-link { margin-left: 0; }   /* inside the group, the WRAPPER's own margin-left:auto does the push instead */
+    .sk-manage { display: flex; align-items: center; gap: 6px; margin-left: auto; }
+    .bai-sk-link { border: none; background: none; color: var(--bai-dim); font-family: inherit; font-size: 10.5px; cursor: pointer; padding: 6px 10px; border-radius: 8px; margin-left: auto; }   /* only "Details ›" (catalog skills) uses this now — a single, non-destructive, view-only action stays a plain link */
     .bai-sk-link:hover { color: var(--bai-hover-ink); background: var(--bai-hover); }
-    .bai-sk-link.danger:hover { color: var(--bai-danger); }
+    /* Skills redesign (PM: "extensively... UX and aesthetics, behaviour"): Edit+Delete on YOUR OWN skills
+       upgraded from bare text links to bordered icon+label pills, matching the same treatment the
+       Scheduled-card redesign established (.bai-sched-btn) — one consistent "manage this item" language
+       across the app instead of two different ones. */
+    .bai-sk-pillbtn { display: flex; align-items: center; gap: 5px; border: 1px solid var(--bai-line-2); background: var(--bai-input-bg); color: var(--bai-dim); font-family: inherit; font-size: 10px; font-weight: 600; padding: 6px 10px; border-radius: 8px; cursor: pointer; transition: border-color 0.15s, color 0.15s, background 0.15s; }
+    .bai-sk-pillbtn:hover { border-color: var(--bai-accent-strong); color: var(--bai-text-hi); background: var(--bai-hover-acc); }
+    .bai-sk-pillbtn.danger { color: var(--bai-danger); border-color: color-mix(in srgb, var(--bai-danger) 40%, var(--bai-line-2)); }
+    .bai-sk-pillbtn.danger:hover { border-color: var(--bai-danger); background: color-mix(in srgb, var(--bai-danger) 8%, var(--bai-input-bg)); }
+    .sk-top .sk-ic { display: flex; color: var(--bai-accent); flex-shrink: 0; }
+    /* Field labels for the "Write instructions" form — was placeholder-only, which loses context once typed */
+    .bai-field-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 9px; }
     .bai-kv-block { display: flex; flex-direction: column; border: 1px solid var(--bai-line); border-radius: 11px; overflow: hidden; }
     .bai-kv-row { display: flex; align-items: center; justify-content: space-between; padding: 11px 13px; font-size: 11px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
     /* ---- Batch 2: Profile screen (Subpane content — reuses .bai-kv-block/.bai-kv-row verbatim) ---- */
@@ -291,13 +379,25 @@
     .bai-sticky-cta { flex-shrink: 0; padding: 12px 14px; border-top: 1px solid var(--bai-line); background: var(--bai-panel); }
     .bai-sticky-cta button { width: 100%; border: none; background: var(--bai-accent); color: var(--bai-on-accent); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 11.5px; font-weight: 700; padding: 11px; border-radius: 10px; cursor: pointer; transition: filter 0.15s; }
     .bai-sticky-cta button:hover { filter: brightness(1.12); }
-    .bai-create-tabs { flex-shrink: 0; display: flex; padding: 0 0 9px; border-bottom: 1px solid var(--bai-line); margin-bottom: 13px; }
-    .bai-create-tab { flex: 1; text-align: center; border: none; background: none; color: var(--bai-dim); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 10.5px; font-weight: 700; padding: 0 4px 9px; cursor: pointer; position: relative; }   /* Fix #5: flex:1 = equal-width columns; the .on::after underline below is left/right:0 of THIS element, so it's now automatically constrained to one equal column instead of varying with each label's text length */
-    .bai-create-tab.on { color: var(--bai-text-bright); }
-    .bai-create-tab.on::after { content: ''; position: absolute; left: 0; right: 0; bottom: -10px; height: 2px; background: var(--bai-accent); }
+    /* Redesigned from flat text + thin underline into icon+label segmented pills (PM: "better in terms of
+       aesthetics and navigation in terms of modern UX") — active tab gets a solid filled pill instead of a
+       2px underline, matching the segmented-control language modern tools (Linear, Notion, Vercel) use. */
+    .bai-create-tabs { flex-shrink: 0; display: flex; gap: 4px; padding: 3px; background: var(--bai-input-bg); border: 1px solid var(--bai-line-2); border-radius: 10px; margin-bottom: 13px; }
+    .bai-create-tab { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-align: center; border: none; background: none; color: var(--bai-dim); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 9.5px; font-weight: 600; line-height: 1.25; padding: 8px 4px; border-radius: 8px; cursor: pointer; transition: background 0.15s, color 0.15s; }
+    .bai-create-tab:hover { color: var(--bai-text-hi); }
+    .bai-create-tab .ic { display: flex; }
+    .bai-create-tab.on { background: var(--bai-accent); color: var(--bai-on-accent); font-weight: 700; }
+    .bai-create-tab.on:hover { color: var(--bai-on-accent); }
     .bai-upload-row { display: flex; align-items: center; justify-content: center; gap: 9px; padding: 12px 13px; background: var(--bai-accent-wash); border: 1px solid var(--bai-accent-line); border-radius: 8px; cursor: pointer; color: var(--bai-accent); font-weight: 700; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 11.5px; transition: filter 0.15s; }   /* Fix #5: a clear secondary action (accent-tinted, shared 8px radius) instead of a dashed passive drop-zone */
     .bai-upload-row:hover { filter: brightness(1.1); }
     .bai-upload-hint { font-size: 10px; line-height: 1.55; color: var(--bai-dim); padding: 10px 11px; background: var(--bai-card-2); border: 1px solid var(--bai-line); border-radius: 9px; margin-top: 9px; }
+    /* Distinct from .bai-upload-hint (that one's the dynamic "Selected: x.zip" status line, stays plain) —
+       this is the static file-requirements callout, styled as an actual info box matching the reference. */
+    .bai-upload-reqs { font-size: 10px; line-height: 1.6; color: var(--bai-text); padding: 11px 13px; background: var(--bai-accent-wash); border: 1px solid var(--bai-accent-line); border-radius: 9px; margin-top: 9px; }
+    .bai-upload-reqs b { display: block; margin-bottom: 5px; color: var(--bai-text-hi); font-weight: 700; }
+    .bai-upload-reqs ul { margin: 0; padding-left: 15px; }
+    .bai-upload-reqs li { margin-bottom: 3px; }
+    .bai-upload-reqs li:last-child { margin-bottom: 0; }
     .bai-ai-create { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 11px; text-align: center; padding: 22px 10px; }
     .bai-ai-create .ic { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: var(--bai-accent-wash); color: var(--bai-accent); }
     .bai-ai-create p { font-size: 11px; line-height: 1.55; color: var(--bai-dim); max-width: 220px; }
@@ -416,7 +516,13 @@
     /* ---- Wide (detached ≥600px): left sidebar holds new chat · modes · recent · settings + more ---- */
     .bai-sidebar { position: absolute; left: 0; top: 0; bottom: 0; width: 210px; display: none; flex-direction: column; padding: 12px 8px; background: var(--bai-panel); border-right: 1px solid var(--bai-line); z-index: 6; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
     .bai-ui.wide .bai-sidebar { display: flex; top: 46px; }                                  /* sits BELOW the full-width header */
-    .bai-ui.wide .bai-panes, .bai-ui.wide .bai-main-title { margin-left: 210px; }             /* main content clears the sidebar; header stays full-width */
+    .bai-ui.wide .bai-panes, .bai-ui.wide .bai-main-title, .bai-ui.wide .bai-subpane { margin-left: 210px; }             /* main content clears the sidebar; header stays full-width */
+    /* Bug fix: .bai-subpane (Skills' category drill-down, skill details, new/edit skill form — anything
+       via openSubpane()) was missing from the rule above, so in wide mode it covered the sidebar instead
+       of clearing it like .bai-panes does — Jobs/Scheduled/Recents effectively vanished behind it. Unlike
+       .bai-globalroute (Settings/Credits/History), whose full-width takeover is explicitly intentional
+       (see its own comment below), a subpane is "going deeper within the current tab," not a global
+       route — it should respect the sidebar exactly like the tab content it's layered over. */
     .bai-ui.wide .bai-strip, .bai-ui.wide #baiSettingsBtn, .bai-ui.wide #baiNewBtn, .bai-ui.wide .bai-title-ar, .bai-ui.wide #baiHeadHelpWrap, .bai-ui.wide #baiHeadAcctWrap { display: none; }   /* wide: sidebar owns modes/new-chat/recents/settings/help/account; header keeps logo + "BlueAI" brand */
     .bai-main-title { flex-shrink: 0; display: flex; align-items: center; padding: 12px 14px 6px; }   /* title (left) + new-chat icon (right), below the brand header */
     /* non-chat modes: the title is just a plain pane label — recents arrow + new-chat are chat-surface tools */
@@ -428,15 +534,18 @@
     .bai-side-brand { display: none; }   /* header carries the logo now; sidebar starts at New chat */
     .bai-side-logo { width: 20px; height: 20px; flex-shrink: 0; }
     .bai-side-nav { display: flex; flex-direction: column; gap: 1px; }
-    .bai-side-newicon { margin-left: auto; flex-shrink: 0; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; padding: 0; border: none; border-radius: 6px; background: none; color: var(--bai-dim-2); cursor: pointer; transition: background 0.15s, color 0.15s; }   /* sits inside the Chat item, right edge. Batch 1: square footprint + hover fill added, matching .bai-icbtn's established square-hover pattern instead of a bare color-only hover */
-    .bai-side-newicon:hover { background: var(--bai-pill); color: var(--bai-text-hi); }
-    .bai-side-newicon svg { width: 15px; height: 15px; display: block; }
     .bai-side-item { position: relative; display: flex; align-items: center; gap: 9px; width: 100%; padding: 7px 10px; border: none; background: none; border-radius: 6px; color: var(--bai-muted-2); font-family: inherit; font-size: 12px; text-align: left; cursor: pointer; transition: background 0.15s, color 0.15s; }
     .bai-side-item:hover { background: var(--bai-hover); color: var(--bai-text-hi); }
     .bai-side-item.active { color: var(--bai-text-bright); background: var(--bai-accent-wash); }
     .bai-side-item.active::before { content: ''; position: absolute; left: 0; top: 6px; bottom: 6px; width: 2px; background: var(--bai-accent); }
     .bai-side-item .ic { display: flex; width: 15px; flex-shrink: 0; }
     .bai-side-item .ic svg { width: 15px; height: 15px; }
+    /* Item 11 (PM): the New chat row's icon sits in a persistent circular badge, left of the label —
+       matching the Claude/ChatGPT "+ New" reference — instead of the plain inline icon the other nav rows use. */
+    /* Dropped the circular badge — shrank the icon too much and read as a permanent hover state. Same icon
+       box/size as Jobs/Skills/Scheduled now; differentiated by resting color alone (a shade darker/more
+       emphasized than --bai-muted-2) instead of a background treatment. */
+    .bai-side-newchat { color: var(--bai-text); }
     .bai-side-badge { margin-left: auto; background: var(--bai-accent); color: var(--bai-on-accent); font-size: 10px; line-height: 1; padding: 2px 5px; border-radius: 8px; }
     .bai-side-label { font-size: 9.5px; color: var(--bai-faint); letter-spacing: 0.4px; padding: 12px 10px 5px; }
     .bai-side-recents { display: flex; flex-direction: column; gap: 1px; overflow-y: auto; }
@@ -450,7 +559,11 @@
     .bai-side-rec .nm { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .bai-side-rec .tm { flex-shrink: 0; font-size: 10px; color: var(--bai-faint); }
     .bai-side-foot { margin-top: auto; border-top: 1px solid var(--bai-line); padding-top: 6px; display: flex; align-items: center; gap: 4px; }
-    .bai-side-foot .bai-side-item { flex: 1; }
+    .bai-side-foot .bai-side-item { flex: 1; min-width: 0; }
+    /* Bug fix: the Help/Account icon wraps had no flex-shrink protection, so when the row ran out of width
+       they got squeezed from their real 24x24 (.bai-icbtn) down to ~17x17 — read as "trimmed" icons. Only
+       Settings (a text label, can afford to truncate) should absorb shrinking; the icon buttons shouldn't. */
+    .bai-side-foot .bai-stat-wrap { flex-shrink: 0; }
     .bai-body { flex: 1; overflow-y: auto; padding: 14px 14px 18px; display: flex; flex-direction: column; gap: 8px; scrollbar-width: none; }
     /* Native scrollbar hidden everywhere scrollable — the custom .bai-scroll fade-thumb is the only visible affordance, subtle and only shown while actively scrolling (see bindFadeScroll in JS). */
     .bai-body::-webkit-scrollbar, .bai-set::-webkit-scrollbar, .bai-list-body::-webkit-scrollbar, .bai-subpane-body::-webkit-scrollbar, .bai-side-recents::-webkit-scrollbar { width: 0; height: 0; display: none; }
@@ -543,10 +656,23 @@
     .bai-ui.viewing-history .bai-inputbar, .bai-ui.viewing-history .bai-status { display: none; }
     .bai-ui.viewing-history .bai-history-note { display: flex; }
     .bai-inputbar:focus-within { border-color: var(--bai-line-focus); }   /* very slight lift on focus */
-    .bai-inputrow { display: flex; align-items: center; gap: 8px; }
-    .bai-prompt { color: var(--bai-accent); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 14px; line-height: 1; }
-    .bai-q { flex: 1; min-width: 0; background: transparent; border: none; outline: none; padding: 0; color: var(--bai-text-hi); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 12.5px; caret-color: var(--bai-accent); }
-    .bai-q::placeholder { color: var(--bai-faint); }
+    .bai-inputrow { display: flex; align-items: flex-end; gap: 8px; }
+    .bai-prompt { color: var(--bai-accent); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 14px; line-height: 1; padding-bottom: 3px; }
+    /* Auto-growing composer (PM: "similar to how claude handles it"): scrollHeight-driven height in JS
+       (autoResizeInput()) grows the box as real typed content wraps, capped at max-height then scrolls
+       internally — resize:none since the height is programmatic, not user-draggable. The rotating hint
+       placeholder deliberately does NOT drive this growth (see ::placeholder below) — a hint is a prompt,
+       not content, so it stays a clipped single line same as any normal input placeholder. */
+    .bai-q { flex: 1; min-width: 0; background: transparent; border: none; outline: none; padding: 0; color: var(--bai-text-hi); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 12.5px; line-height: 1.45; caret-color: var(--bai-accent); resize: none; overflow-y: hidden; max-height: 160px; }
+    /* The real ellipsis truncation happens in JS (setHintPlaceholder(), by the INPUT_HINTS block below) —
+       it measures actual pixel width via canvas and truncates the STRING itself before assigning
+       .placeholder, so a real "…" character ships already-fitted. This nowrap+hidden pair is only a
+       defensive backstop, deliberately NOT text-overflow:ellipsis or -webkit-line-clamp: the former
+       silently computes to "clip" on a <textarea>'s ::placeholder (doesn't apply to elements that wrap by
+       default), and the latter renders an ellipsis but makes the placeholder participate in the box's own
+       scrollHeight (an empty value measured ~2 lines tall) — reintroducing the exact growth-on-hint-text
+       bug this feature exists to prevent. Plain nowrap+hidden has neither problem. */
+    .bai-q::placeholder { color: var(--bai-faint); white-space: nowrap; overflow: hidden; }
     /* Claude-style "thinking" indicator above the chatbar — small animated logo + elapsed timer. */
     .bai-body::before { content: ''; margin-top: auto; }   /* bottom-align the chat chain (terminal scrollback) */
     .bai-thinking { align-self: stretch; display: flex; align-items: center; gap: 8px; padding: 1px 2px; }
@@ -680,6 +806,15 @@
     /* accent orbs floating around/behind the card slot — glowing, popping in, gently drifting (only THESE float) */
     .bai-onb-orb { position: absolute; z-index: 0; width: 31px; height: 31px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; background: var(--oc, #7c5cf0); box-shadow: 0 0 16px color-mix(in srgb, var(--oc, #7c5cf0) 55%, transparent), 0 4px 12px rgba(0,0,0,0.3); animation: onb-pop 0.45s cubic-bezier(0.34,1.4,0.5,1) both, onb-drift 6.5s ease-in-out infinite; }
     .bai-onb-orb svg { width: 14px; height: 14px; display: block; }
+    /* Light theme only (designer: "too old school, not dribbble-like, very dull") — the plain rgba(0,0,0,X)
+       half of each shadow reads as a flat gray smudge against a white background (it needs dark surroundings
+       to recede the way it does in the default/dark theme), and the --cc/--oc tint is a fixed, theme-
+       independent color, so its color-mix % also needs to run higher here to actually register against
+       white. Replacing the black layer with a bigger, softer, color-mix'd one instead of just tuning
+       numbers — a component-scoped override rather than a new global token, since nothing else in this file
+       needs an "ambient shadow tint" token and inventing one for two rules would be the bigger overreach. */
+    .drawer.light .bai-onb-card { box-shadow: 0 10px 26px color-mix(in srgb, var(--cc, #6ea8ff) 30%, transparent), 0 3px 8px color-mix(in srgb, var(--cc, #6ea8ff) 18%, transparent); }
+    .drawer.light .bai-onb-orb { box-shadow: 0 0 18px color-mix(in srgb, var(--oc, #7c5cf0) 62%, transparent), 0 10px 22px color-mix(in srgb, var(--oc, #7c5cf0) 26%, transparent); }
     @keyframes onb-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes onb-pop { from { opacity: 0; scale: 0.3; } to { opacity: 1; scale: 1; } }
     @keyframes onb-cycle {   /* 15s loop shared by 5 cards, 3s apart: rise in, hold ~2s, lift out, stay hidden */
@@ -808,7 +943,14 @@
               <div class="bai-sidebar" id="baiSidebar">
                 <div class="bai-side-brand"><canvas class="bai-side-logo" id="baiSideLogo"></canvas><span>BlueAI</span></div>
                 <div class="bai-side-nav">
-                  <div class="bai-side-item active" data-mode="chat"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-12.3 7.5L3 21l2-5.7A8.4 8.4 0 1 1 21 11.5z"/></svg></span>Chat<button class="bai-side-newicon" id="baiSideNew" type="button" aria-label="New chat" title="Start a new chat"><svg viewBox="0 0 100 100" fill="currentColor"><path d="M83,49v18c0,8.8222656-7.1777344,16-16,16H24.2817383l-12.9570312,9.2548828c-.690918.4936523-1.5063477.7451172-2.3251953.7451172-.6254883,0-1.2529297-.1464844-1.8300781-.4433594-1.3320312-.6855469-2.1694336-2.0581055-2.1694336-3.5566406v-54c0-8.8222656,7.1777344-16,16-16h32c2.2089844,0,4,1.7910156,4,4s-1.7910156,4-4,4H21c-4.4111328,0-8,3.5888672-8,8v46.2270508l7.675293-5.4819336c.6782227-.4848633,1.4912109-.7451172,2.324707-.7451172h44c4.4111328,0,8-3.5888672,8-8v-18c0-2.2089844,1.7910156-4,4-4s4,1.7910156,4,4ZM91,19h-8v-8c0-2.2089844-1.7910156-4-4-4s-4,1.7910156-4,4v8h-8c-2.2089844,0-4,1.7910156-4,4s1.7910156,4,4,4h8v8c0,2.2089844,1.7910156,4,4,4s4-1.7910156,4-4v-8h8c2.2089844,0,4-1.7910156,4-4s-1.7910156-4-4-4ZM23,51c0,2.7614136,2.2385864,5,5,5s5-2.2385864,5-5-2.2385864-5-5-5-5,2.2385864-5,5ZM39,51c0,2.7614136,2.2385864,5,5,5s5-2.2385864,5-5-2.2385864-5-5-5-5,2.2385864-5,5ZM55,51c0,2.7614136,2.2385864,5,5,5s5-2.2385864,5-5-2.2385864-5-5-5-5,2.2385864-5,5Z"/></svg></button></div>
+                  <!-- Item 11 (PM): was a "Chat" mode-tab with a small embedded new-chat icon crammed at its
+                       right edge — easy to miss. Designer chose to replace it outright rather than add a
+                       second row alongside it: this row now IS "New chat" (reuses the same bubble icon,
+                       matching Claude/ChatGPT's own "+ New" pattern above their history list), and clicking
+                       it always starts fresh — there's no separate "just switch to the chat pane" affordance
+                       anymore, by choice. Also now a real <button> (previously a <div>, since a <button>
+                       couldn't nest the old embedded icon-button) for proper focus/hover semantics. -->
+                  <button class="bai-side-item bai-side-newchat" data-mode="chat" type="button"><span class="ic"><svg viewBox="0 0 100 100" fill="currentColor"><path d="M83,49v18c0,8.8222656-7.1777344,16-16,16H24.2817383l-12.9570312,9.2548828c-.690918.4936523-1.5063477.7451172-2.3251953.7451172-.6254883,0-1.2529297-.1464844-1.8300781-.4433594-1.3320312-.6855469-2.1694336-2.0581055-2.1694336-3.5566406v-54c0-8.8222656,7.1777344-16,16-16h32c2.2089844,0,4,1.7910156,4,4s-1.7910156,4-4,4H21c-4.4111328,0-8,3.5888672-8,8v46.2270508l7.675293-5.4819336c.6782227-.4848633,1.4912109-.7451172,2.324707-.7451172h44c4.4111328,0,8-3.5888672,8-8v-18c0-2.2089844,1.7910156-4,4-4s4,1.7910156,4,4ZM91,19h-8v-8c0-2.2089844-1.7910156-4-4-4s-4,1.7910156-4,4v8h-8c-2.2089844,0-4,1.7910156-4,4s1.7910156,4,4,4h8v8c0,2.2089844,1.7910156,4,4,4s4-1.7910156,4-4v-8h8c2.2089844,0,4-1.7910156,4-4s-1.7910156-4-4-4ZM23,51c0,2.7614136,2.2385864,5,5,5s5-2.2385864,5-5-2.2385864-5-5-5-5,2.2385864-5,5ZM39,51c0,2.7614136,2.2385864,5,5,5s5-2.2385864,5-5-2.2385864-5-5-5-5,2.2385864-5,5ZM55,51c0,2.7614136,2.2385864,5,5,5s5-2.2385864,5-5-2.2385864-5-5-5-5,2.2385864-5,5Z"/></svg></span>New chat</button>
                   <button class="bai-side-item" data-mode="jobs" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h12M8 12h12M8 18h12"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/></svg></span>Jobs</button>
                   <button class="bai-side-item" data-mode="skills" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg></span>Skills</button>
                   <button class="bai-side-item" data-mode="scheduled" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>Scheduled</button>
@@ -818,13 +960,19 @@
                 <div class="bai-scroll" id="baiSideScroll"></div>
                 <div class="bai-side-foot">
                   <button class="bai-side-item" id="baiSideSettings" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>Settings</button>
+                  <!-- Bug fix: these two live in the SIDEBAR FOOTER — the bottom-most row of a fixed-height
+                       panel, with no room below. They'd been given the same "down" (opens-below-trigger)
+                       class as the narrow-mode header's copies of Help/Account, which sit at the TOP of the
+                       screen where opening downward is correct. Here it made the menu render ~40px past
+                       #drawer's own bottom edge, which clips via overflow:hidden — invisible, not just
+                       "trimmed". Default (no "down") opens upward instead, which fits. -->
                   <div class="bai-stat-wrap" id="baiSideHelpWrap" style="position:relative;">
                     <button class="bai-icbtn" id="baiSideHelpBtn" type="button" aria-label="Help"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></button>
-                    <div class="bai-menu down" id="baiSideHelpMenu"></div>
+                    <div class="bai-menu" id="baiSideHelpMenu"></div>
                   </div>
                   <div class="bai-stat-wrap" id="baiSideAcctWrap" style="position:relative;">
                     <button class="bai-icbtn" id="baiSideAcctBtn" type="button" aria-label="Account"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button>
-                    <div class="bai-menu down" id="baiSideAcctMenu"></div>
+                    <div class="bai-menu" id="baiSideAcctMenu"></div>
                   </div>
                 </div>
               </div>
@@ -859,7 +1007,7 @@
                   <div class="bai-inputbar">
                     <div class="bai-inputrow">
                       <span class="bai-prompt">&rsaquo;</span>
-                      <input class="bai-q" id="baiInput" type="text" placeholder="Ask BlueAI to get things done in your apps…" autocomplete="off" spellcheck="false" />
+                      <textarea class="bai-q" id="baiInput" rows="1" placeholder="Ask BlueAI to get things done in your apps…" autocomplete="off" spellcheck="false"></textarea>
                       <button class="bai-send" id="baiSend" type="button" aria-label="Send message"></button>
                     </div>
                   </div>
@@ -899,7 +1047,43 @@
                       <button type="button" class="bai-seg-btn" data-v="Weekly">Weekly</button>
                       <button type="button" class="bai-seg-btn" data-v="Monthly">Monthly</button>
                     </div>
-                    <input class="bai-newitem-input" id="baiSchedTime" type="text" placeholder="Time, e.g. 9:00 AM" />
+                    <div class="bai-dt-field" id="baiDtField" role="button" tabindex="0">
+                      <span class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
+                      <span class="bai-dt-value placeholder" id="baiDtValue">Pick a date &amp; time</span>
+                      <span class="bai-dt-ar"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span>
+                    </div>
+                    <!-- Rebuilt as a 2-step flow (designer: "this is not working out... only show date
+                         first, once you select a date we show the timer, and you can go back to date to
+                         reselect"). Was a single combined calendar+time row/stacked layout that had to keep
+                         being re-tuned for width (oval cells, overflow, a stacking threshold, a hint-pulse
+                         to flag the time step) — showing one step at a time removes the "fit two things in
+                         one space" problem those were all patching, not just one symptom of it. Step 2's
+                         header doubles as the back control (shows the picked date, tap to return to step 1)
+                         instead of a generic "Time" label. -->
+                    <div class="bai-dt-picker" id="baiDtPicker" style="display:none">
+                      <div class="bai-dt-step-date" id="baiDtStepDate">
+                        <div class="bai-dt-calhead">
+                          <button type="button" class="bai-dt-navbtn" id="baiDtPrev">‹</button>
+                          <span id="baiDtMonthLabel">July 2026</span>
+                          <button type="button" class="bai-dt-navbtn" id="baiDtNext">›</button>
+                        </div>
+                        <div class="bai-dt-weekdays"><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span><span>Su</span></div>
+                        <div class="bai-dt-days" id="baiDtDays"></div>
+                      </div>
+                      <div class="bai-dt-step-time" id="baiDtStepTime">
+                        <button type="button" class="bai-dt-backhead" id="baiDtBackToDate">
+                          <span class="bai-dt-backar"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></span>
+                          <span id="baiDtBackLabel">28 Jul</span>
+                        </button>
+                        <div class="bai-dt-timerow">
+                          <div class="bai-dt-col" id="baiDtHours"></div>
+                          <span class="bai-dt-colsep">:</span>
+                          <div class="bai-dt-col" id="baiDtMinutes"></div>
+                          <div class="bai-dt-selband"></div>
+                        </div>
+                      </div>
+                      <button type="button" class="bai-dt-done" id="baiDtDone">Done</button>
+                    </div>
                     <div class="bai-newitem-actions"><button class="bai-newitem-cancel" id="baiSchedCancel" type="button">Cancel</button><button class="bai-newitem-create" id="baiSchedCreate" type="button">Create</button></div>
                   </div>
                   <div class="bai-list-body" id="baiSchedList"></div>
@@ -948,6 +1132,22 @@
                 </div>
                 <div class="bai-subpane-body" id="baiSubpaneBody"></div>
                 <div class="bai-scroll" id="baiSubpaneScroll"></div>
+              </div>
+              <!-- Scheduled's own contextual create/edit overlay (designer: "move it to a subpane like
+                   Skills"). A third, independent shell rather than reusing Subpane above (reserved for
+                   Skills specifically, see its own comment) or GlobalRoute (cross-tab routes, covers the nav
+                   strip) — same reasoning that split GlobalRoute off from Subpane in the first place: a
+                   different tab's own contextual need, not a deeper nesting level of an existing one.
+                   #baiSchedForm is physically relocated in and back out on open/close (see openSchedSubpane/
+                   closeSchedSubpane below) rather than rebuilt from scratch each time — same technique
+                   GlobalRoute's own Settings entry uses for #paneSettings' .bai-set — so none of the form's
+                   existing IDs/JS (including the whole date/time picker) need touching. -->
+              <div class="bai-subpane" id="baiSchedSubpane">
+                <div class="bai-subpane-head">
+                  <button class="bai-subpane-back" id="baiSchedSubpaneBack" type="button" aria-label="Back"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+                  <span id="baiSchedSubpaneTitle"></span>
+                </div>
+                <div class="bai-subpane-body" id="baiSchedSubpaneBody"></div>
               </div>
               <!-- Global-utility route (Part 6): starts directly below the header, covers the tab strip
                    (higher z-index, top = header height only). Single-level, not a stack — each of Chat
@@ -1055,18 +1255,43 @@
         clearTimeout(scrollHideT); scrollHideT = setTimeout(function () { baiScroll.classList.remove('show'); }, 900);
       }
       if (baiScroll) baiBody.addEventListener('scroll', updateScroll);
+      function addUserBubble(text) { var d = document.createElement('div'); d.className = 'bai-msg user'; d.textContent = text; baiBody.appendChild(d); scrollBody(); }
       function addUser(text) {
-        if (!conversationStarted) { conversationStarted = true; clearTimeout(hintTimer); baiInput.placeholder = INPUT_HINTS[0]; }   // first message in this conversation — stop rotating hints for good
-        var d = document.createElement('div'); d.className = 'bai-msg user'; d.textContent = text; baiBody.appendChild(d); scrollBody();
+        // Bug fix: this used to ALSO run loadThread()'s replay of historical msgs (addUser was doing double
+        // duty as both "record a live message" and "paint a bubble"). Since resetChatState() just set
+        // conversationStarted=false right before a replay starts, replaying an EXISTING thread's first
+        // message looked exactly like starting a fresh one — spawning a duplicate Recent entry every time
+        // an existing conversation (e.g. "Daily rewards run") was opened. loadThread() now calls
+        // addUserBubble() directly (pure rendering, no side effects) instead of this function.
+        if (!conversationStarted) {
+          conversationStarted = true; clearTimeout(hintTimer); setHintPlaceholder(INPUT_HINTS[0]);   // first message in this conversation — stop rotating hints for good
+          // Item 11b (PM): matches ChatGPT/Claude — a fresh conversation's first message both titles it
+          // and creates its Recent entry, live (not just the 6 hardcoded seed conversations). No real LLM
+          // summarization here, so the title is an honest, direct derivation of what was actually typed
+          // (trim/capitalize/truncate) rather than faking a "smart" AI-generated one.
+          currentRecent = { title: deriveTitle(text), time: 'now', msgs: [] };
+          RECENTS.unshift(currentRecent);
+          setTitle(currentRecent.title);
+          renderSideRecents(); markRecent(currentRecent);
+        }
+        if (currentRecent) currentRecent.msgs.push({ u: text });   // keeps growing so navigating away and back via loadThread() shows the real conversation, not an empty/stale one
+        addUserBubble(text);
       }
       function typewrite(el, text) {                        // types char-by-char: starts slow, accelerates as it goes
         var i = 0, n = text.length;
         (function step() { if (i >= n) return; el.textContent = text.slice(0, ++i); scrollBody(); setTimeout(step, Math.max(7, 42 - i * 0.75)); })();
       }
-      function aiReply(text, extra) { var el = document.createElement('div'); el.className = 'bai-msg ai' + (extra ? ' ' + extra : ''); baiBody.appendChild(el); scrollBody(); typewrite(el, text); }
+      function aiReply(text, extra) { var el = document.createElement('div'); el.className = 'bai-msg ai' + (extra ? ' ' + extra : ''); baiBody.appendChild(el); scrollBody(); typewrite(el, text); if (currentRecent) currentRecent.msgs.push({ a: text }); }
       var SEND_ICON = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/></svg>';
       var STOP_ICON = '<svg width="14" height="14" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/></svg>';
       function updateSendEnabled() { if (baiSend && !thinking) baiSend.classList.toggle('disabled', !baiInput.value.trim()); }
+      var INPUT_MAX_H = 160;   // px — after this, the composer scrolls internally instead of growing further
+      function autoResizeInput() {
+        baiInput.style.height = 'auto';   // collapse first so scrollHeight reflects content, not the previous (possibly taller) height
+        var full = baiInput.scrollHeight;
+        baiInput.style.height = Math.min(full, INPUT_MAX_H) + 'px';
+        baiInput.style.overflowY = full > INPUT_MAX_H ? 'auto' : 'hidden';
+      }
       function setSend(stop) {
         thinking = stop;
         if (!baiSend) return;
@@ -1153,19 +1378,24 @@
         if (gateOpen) return;                                                          // blocked behind the sign-in gate
         if (thinking) { stopThinking(); return; }
         var v = baiInput.value.trim(); if (!v) return;
-        if (pending && pending.ask !== undefined) { baiInput.value = ''; resolveAsk(pending, v); return; }   // typed answer to a pending question — not a new submission, credits gate below doesn't apply
+        if (pending && pending.ask !== undefined) { baiInput.value = ''; autoResizeInput(); resolveAsk(pending, v); return; }   // typed answer to a pending question — not a new submission, credits gate below doesn't apply
         if (pending) return;                                                            // awaiting an action (upload) — ignore stray text
-        if (!loggedIn) { baiInput.value = ''; addUser(v); pendingSendText = v; updateSendEnabled(); openLoginGate(); return; }   // first-ever message — gate before the reply
+        if (!loggedIn) { baiInput.value = ''; autoResizeInput(); addUser(v); pendingSendText = v; updateSendEnabled(); openLoginGate(); return; }   // first-ever message — gate before the reply
         // Hard submission gate: checked AFTER the pending/login branches (so it never blocks answering an
         // already-in-flight prompt) and BEFORE baiInput is cleared (so the typed text survives). Calls
         // openOocModal() directly, not maybeOpenOocModal() — every attempt re-opens it regardless of
         // oocShownForThisZero, which stays reserved for the passive drain-to-zero notification only.
         if (credits <= 0 && !byokIsActive()) { openOocModal(); return; }
         baiInput.value = '';
+        autoResizeInput();
         sendMessage(v);
       }
-      if (baiInput) baiInput.addEventListener('keydown', function (e) { if (e.key === 'Enter' && !thinking && baiInput.value.trim()) { e.preventDefault(); submit(); } });
-      if (baiInput) baiInput.addEventListener('input', updateSendEnabled);
+      if (baiInput) baiInput.addEventListener('keydown', function (e) {
+        if (e.key !== 'Enter' || e.shiftKey) return;   // Shift+Enter: let the textarea insert its own newline
+        e.preventDefault();                             // plain Enter never inserts a newline — it always attempts to send
+        if (!thinking && baiInput.value.trim()) submit();
+      });
+      if (baiInput) baiInput.addEventListener('input', function () { updateSendEnabled(); autoResizeInput(); });
       if (baiSend) baiSend.addEventListener('click', submit);
       setSend(false);   // paint the initial idle send icon
 
@@ -1587,7 +1817,7 @@
         currentTabMode = m;
         Object.keys(panes).forEach(function (k) { panes[k].classList.toggle('active', k === m); });
         tabs.forEach(function (t) { t.classList.toggle('active', t.getAttribute('data-mode') === m); });   // settings has no tab -> all tabs go inactive
-        [].forEach.call(document.querySelectorAll('.bai-side-item[data-mode]'), function (s) { s.classList.toggle('active', s.getAttribute('data-mode') === m); });   // mirror on the wide sidebar
+        [].forEach.call(document.querySelectorAll('.bai-side-item[data-mode]:not(.bai-side-newchat)'), function (s) { s.classList.toggle('active', s.getAttribute('data-mode') === m); });   // mirror on the wide sidebar — New chat is excluded: it's an action button (always starts fresh), not a persistent location like Jobs/Skills/Scheduled, so it should never look "currently selected"
         var mt = document.getElementById('baiMainTitle'); if (mt) mt.textContent = m === 'chat' ? fullTitle : (m.charAt(0).toUpperCase() + m.slice(1));   // main-column title follows the mode
         baiUi.classList.toggle('nonchat', m !== 'chat');   // non-chat panes: plain label — no recents arrow, no new-chat
         if (m === 'scheduled' && !schedShimmerShown) showSchedShimmerThenRender();   // one-time loading shimmer on first visit to the tab
@@ -1715,6 +1945,7 @@
       // modal -> 3-tab create modal), adapted to terminal-modern chrome + the subpane push/pop stack instead of
       // a 2-col grid + real modals (360px portrait doesn't have room for either).
       function iconSvg(path, size) { return '<svg width="' + size + '" height="' + size + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + path + '</svg>'; }
+      var SKILL_ICON_PATH = '<path d="M13 2L3 14h7l-1 8 10-12h-7z"/>';   // same bolt as the wide-sidebar's own "Skills" nav icon — individual skill cards echo the section's own icon
       var CAT_ICONS = {
         games: '<rect x="3" y="8" width="18" height="4"/><path d="M12 8v13"/><path d="M19 12v9H5v-9"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8s1-5 4.5-5a2.5 2.5 0 0 1 0 5"/>',
         content: '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>',
@@ -1758,6 +1989,7 @@
       function tryInChat(name) {   // pre-fills the composer — doesn't auto-run, the user still presses send
         closeAllSubpanes(); setMode('chat');
         baiInput.value = 'Use my "' + name + '" skill';
+        autoResizeInput();
         baiInput.focus();
       }
       var skillPendingDelete = null;   // Batch 5 (F9): the skill object mid-delete-confirm, or null — reference
@@ -1779,22 +2011,27 @@
         // (content-group) than the footer ("actions"), same content-vs-action distinction used in AI Mode's
         // spacing fix. Footer: Try is the compact rectangular primary action (shared 8px radius, no longer a
         // pill); Edit+Delete are grouped in .sk-manage on the right, visually separate from Try.
+        // Skills redesign: a small leading icon (same bolt used for the Skills nav item itself) for quick
+        // scannability, and Edit+Delete upgraded to bordered icon+label pills (.bai-sk-pillbtn) — matching
+        // the same "manage this item" language the Scheduled-card redesign established, instead of the
+        // plain text links this had before. "Details ›" (catalog/non-owned skills) stays a plain link —
+        // it's a single, non-destructive view action, a different kind of thing from edit/delete.
         row.innerHTML =
           '<div class="sk-content">' +
-            '<div class="sk-top"><b>' + sk.name + '</b><span class="bai-tgl' + (sk.on ? ' on' : '') + '" role="button" aria-label="Toggle skill"><i></i></span></div>' +
+            '<div class="sk-top"><span class="sk-ic">' + iconSvg(SKILL_ICON_PATH, 13) + '</span><b>' + sk.name + '</b><span class="bai-tgl' + (sk.on ? ' on' : '') + '" role="button" aria-label="Toggle skill"><i></i></span></div>' +
             '<div class="sk-desc">' + sk.desc + '</div>' +
           '</div>' +
           '<div class="sk-foot"><button class="bai-sk-try" type="button">Try</button>' +
-          (owned ? '<div class="sk-manage"><button class="bai-sk-link" type="button">Edit</button><button class="bai-sk-link danger" type="button">Delete</button></div>' : '<button class="bai-sk-link" type="button">Details ›</button>') +
+          (owned ? '<div class="sk-manage"><button class="bai-sk-pillbtn" type="button">' + iconSvg(EDIT_PATH, 12) + 'Edit</button><button class="bai-sk-pillbtn danger" type="button">' + iconSvg(TRASH_PATH, 12) + 'Delete</button></div>' : '<button class="bai-sk-link" type="button">Details ›</button>') +
           '</div>';
         row.querySelector('.bai-tgl').addEventListener('click', function (e) { e.stopPropagation(); sk.on = !sk.on; refreshFn(); });
         row.querySelector('.bai-sk-try').addEventListener('click', function (e) { e.stopPropagation(); tryInChat(sk.name); });
-        var links = row.querySelectorAll('.bai-sk-link');
         if (owned) {
-          links[0].addEventListener('click', function (e) { e.stopPropagation(); openSkillForm(sk); });
-          links[1].addEventListener('click', function (e) { e.stopPropagation(); skillPendingDelete = sk; refreshFn(); });
+          var pills = row.querySelectorAll('.bai-sk-pillbtn');
+          pills[0].addEventListener('click', function (e) { e.stopPropagation(); openSkillForm(sk); });
+          pills[1].addEventListener('click', function (e) { e.stopPropagation(); skillPendingDelete = sk; refreshFn(); });
         } else {
-          links[0].addEventListener('click', function (e) { e.stopPropagation(); openSkillDetails(sk, catName); });
+          row.querySelector('.bai-sk-link').addEventListener('click', function (e) { e.stopPropagation(); openSkillDetails(sk, catName); });
         }
         row.addEventListener('click', function () { openSkillDetails(sk, catName); });
         return row;
@@ -1855,42 +2092,94 @@
       // inline instead. Don't "fix" this divergence without re-reading that reasoning.
       function openSkillForm(existing) {
         openSubpane(existing ? 'Edit Skill' : 'New Skill', function (body) {
-          var curMode = 'write';
+          // Item 10/11 (PM correction): editing a skill shows both Write-instructions and Upload-a-ZIP
+          // tabs regardless of how it was originally made — not locked into just its origin mode. "Create
+          // with BlueAI" is net-new-only (drafts something from scratch, doesn't make sense as an "edit").
+          // The active tab still defaults to match the skill's current .via, and saving through either tab
+          // updates .via to match — so a skill's "mode" always reflects its most recent edit, not just its
+          // original creation method.
+          var curMode = (existing && existing.via === 'zip') ? 'zip' : 'write';
+          var tabDefs = [
+            ['write', 'Write instructions', EDIT_PATH],
+            ['zip', 'Upload a ZIP file', '<path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/>']
+          ];
+          if (!existing) tabDefs.push(['ai', 'Create with BlueAI', '<path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/>']);
           var tabs = document.createElement('div'); tabs.className = 'bai-create-tabs';
-          [['write', 'Write instructions'], ['zip', 'Upload a ZIP file'], ['ai', 'Create with BlueAI']].forEach(function (m) {
-            var t = document.createElement('button'); t.type = 'button'; t.className = 'bai-create-tab' + (m[0] === curMode ? ' on' : ''); t.textContent = m[1];
+          tabDefs.forEach(function (m) {
+            var t = document.createElement('button'); t.type = 'button'; t.className = 'bai-create-tab' + (m[0] === curMode ? ' on' : '');
+            t.innerHTML = '<span class="ic">' + iconSvg(m[2], 15) + '</span>' + m[1];
             t.addEventListener('click', function () { curMode = m[0]; [].forEach.call(tabs.children, function (x) { x.classList.toggle('on', x === t); }); renderMode(); });
             tabs.appendChild(t);
           });
-          if (!existing) body.appendChild(tabs);   // editing is always the "write instructions" form on the existing skill
+          body.appendChild(tabs);
           var modeBody = document.createElement('div'); modeBody.style.cssText = 'flex:1; display:flex; flex-direction:column;';
           body.appendChild(modeBody);
           function renderMode() {
             modeBody.innerHTML = '';
-            if (curMode === 'write' || existing) {
-              var nameInput = document.createElement('input'); nameInput.className = 'bai-newitem-input'; nameInput.type = 'text'; nameInput.placeholder = 'Skill name'; nameInput.style.marginBottom = '9px'; nameInput.value = existing ? existing.name : '';
-              var descInput = document.createElement('textarea'); descInput.className = 'bai-newitem-textarea'; descInput.placeholder = 'What should BlueAI do with this skill?'; descInput.style.marginBottom = '9px'; descInput.value = existing ? existing.desc : '';
+            if (curMode === 'write') {
+              // Field labels added (PM: form aesthetics) — was placeholder-only, so context disappeared the
+              // moment you started typing; a small label above each field keeps it visible throughout.
+              function fieldGroup(labelText, inputEl) {
+                var wrap = document.createElement('div'); wrap.className = 'bai-field-group';
+                var label = document.createElement('span'); label.className = 'bai-set-field-label'; label.textContent = labelText;
+                wrap.appendChild(label); wrap.appendChild(inputEl);
+                return wrap;
+              }
+              var nameInput = document.createElement('input'); nameInput.className = 'bai-newitem-input'; nameInput.type = 'text'; nameInput.placeholder = 'e.g. Weekly review scriptwriter'; nameInput.value = existing ? existing.name : '';
+              var descInput = document.createElement('textarea'); descInput.className = 'bai-newitem-textarea'; descInput.placeholder = 'What should BlueAI do with this skill?'; descInput.value = existing ? existing.desc : '';
               var instrInput = document.createElement('textarea'); instrInput.className = 'bai-newitem-textarea'; instrInput.placeholder = 'Step-by-step instructions BlueAI should follow…'; instrInput.style.minHeight = '76px';
-              modeBody.appendChild(nameInput); modeBody.appendChild(descInput); modeBody.appendChild(instrInput);
+              modeBody.appendChild(fieldGroup('Skill name', nameInput));
+              modeBody.appendChild(fieldGroup('Description', descInput));
+              modeBody.appendChild(fieldGroup('Instructions', instrInput));
               var actions = document.createElement('div'); actions.className = 'bai-newitem-actions'; actions.style.marginTop = '11px';
               actions.innerHTML = '<button class="bai-newitem-cancel" type="button">Cancel</button><button class="bai-newitem-create" type="button">' + (existing ? 'Save' : 'Create') + '</button>';
               actions.querySelector('.bai-newitem-cancel').addEventListener('click', function () { popSubpane(); });
               actions.querySelector('.bai-newitem-create').addEventListener('click', function () {
                 var name = nameInput.value.trim(); if (!name) { nameInput.focus(); return; }
                 var desc = descInput.value.trim() || 'A custom skill for BlueAI to use when relevant.';
-                if (existing) { existing.name = name; existing.desc = desc; } else MY_SKILLS.push({ name: name, desc: desc, on: true });
+                if (existing) { existing.name = name; existing.desc = desc; existing.via = 'write'; } else MY_SKILLS.push({ name: name, desc: desc, on: true, via: 'write' });
                 popSubpane(); renderSkillsHome();
               });
               modeBody.appendChild(actions);
             } else if (curMode === 'zip') {
-              var up = document.createElement('div'); up.className = 'bai-upload-row'; up.innerHTML = iconSvg('<path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/>', 16) + '<span>Upload skill.zip</span>';   /* Fix #5: real upload glyph, not a literal "+" character */
-              up.addEventListener('click', function () { MY_SKILLS.push({ name: 'skill.zip import', desc: 'Imported from an uploaded ZIP file.', on: true }); popSubpane(); renderSkillsHome(); });
-              var hint = document.createElement('div'); hint.className = 'bai-upload-hint'; hint.textContent = 'ZIP must include a skill.md with instructions and an optional tools/ folder. Max 10MB.';
-              modeBody.appendChild(up); modeBody.appendChild(hint);
+              // Real <input type="file"> (hidden) triggered by the same styled .bai-upload-row used at
+              // create time — genuine OS file picker + real filename shown, matching the reference's native
+              // "Choose file / <name>" pattern, but through this app's own visual language instead of raw
+              // unstyled browser chrome. Still no real ZIP parsing (no backend here) — same honesty boundary
+              // as everything else in this prototype.
+              var fileInput = document.createElement('input'); fileInput.type = 'file'; fileInput.accept = '.zip'; fileInput.style.display = 'none';
+              // Checks .via specifically (not just truthy existing) — a write-sourced skill switched to
+              // this tab has no real prior zip to reference, so it should read like a fresh upload, not
+              // falsely claim a "Current: skill.zip" that was never real.
+              var existingZip = existing && existing.via === 'zip';
+              var up = document.createElement('div'); up.className = 'bai-upload-row'; up.innerHTML = iconSvg('<path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/>', 16) + '<span>' + (existingZip ? 'Upload a new ZIP file' : 'Upload skill.zip') + '</span>';
+              up.addEventListener('click', function () { fileInput.click(); });
+              var picked = document.createElement('div'); picked.className = 'bai-upload-hint'; picked.style.color = 'var(--bai-text-hi)';
+              picked.textContent = existingZip ? ('Current: ' + (existing.zipName || 'skill.zip')) : 'No file chosen';
+              fileInput.addEventListener('change', function () { if (fileInput.files[0]) picked.textContent = 'Selected: ' + fileInput.files[0].name; });
+              var hint = document.createElement('div'); hint.className = 'bai-upload-reqs';
+              hint.innerHTML = '<b>File requirements</b><ul>' +
+                '<li>ZIP file must be less than 20MB.</li>' +
+                '<li>ZIP file that includes exactly one SKILL.md file at root level.</li>' +
+                '<li>SKILL.md contains a skill name, description formatted in YAML and instructions in markdown.</li>' +
+                '<li>Author names ‘nowgg’, ‘bluestacks’, ‘blueai’, and ‘admin’ are reserved — use a different name in SKILL.md.</li>' +
+                '</ul>';
+              modeBody.appendChild(up); modeBody.appendChild(fileInput); modeBody.appendChild(picked); modeBody.appendChild(hint);
+              var zActions = document.createElement('div'); zActions.className = 'bai-newitem-actions'; zActions.style.marginTop = '11px';
+              zActions.innerHTML = '<button class="bai-newitem-cancel" type="button">Cancel</button><button class="bai-newitem-create" type="button">' + (existing ? 'Save Changes' : 'Upload') + '</button>';
+              zActions.querySelector('.bai-newitem-cancel').addEventListener('click', function () { popSubpane(); });
+              zActions.querySelector('.bai-newitem-create').addEventListener('click', function () {
+                var f = fileInput.files[0];
+                if (!f) { if (!existing) { up.focus(); return; } popSubpane(); return; }   // new skill: a zip is required; editing with no new pick: nothing changed, just close
+                if (existing) { existing.zipName = f.name; existing.desc = 'Imported from ' + f.name + '.'; existing.via = 'zip'; }
+                else MY_SKILLS.push({ name: f.name.replace(/\.zip$/i, ''), desc: 'Imported from ' + f.name + '.', on: true, via: 'zip', zipName: f.name });
+                popSubpane(); renderSkillsHome();
+              });
+              modeBody.appendChild(zActions);
             } else {
               var wrap = document.createElement('div'); wrap.className = 'bai-ai-create';
               wrap.innerHTML = '<div class="ic">' + iconSvg('<path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/>', 20) + '</div><p>Describe the skill you want in plain language, and BlueAI will draft the instructions for you.</p><button class="bai-onb-cta" type="button" style="max-width:180px;">Start in Chat ›</button>';
-              wrap.querySelector('button').addEventListener('click', function () { closeAllSubpanes(); setMode('chat'); baiInput.value = 'Help me create a skill that '; baiInput.focus(); });
+              wrap.querySelector('button').addEventListener('click', function () { closeAllSubpanes(); setMode('chat'); baiInput.value = 'Help me create a skill that '; autoResizeInput(); baiInput.focus(); });
               modeBody.appendChild(wrap);
             }
           }
@@ -1917,36 +2206,66 @@
       document.getElementById('baiSkillCta').addEventListener('click', function () { openSkillForm(null); });
       renderSkillsHome();
 
-      // ---- Scheduled tab: list + empty state + structured cadence picker + delete-confirm + one-time shimmer ----
-      var SCHED_PATH = '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>';
+      // ---- Scheduled tab: list + empty state + structured cadence picker + custom calendar/time picker +
+      // bigger cards with Edit/Delete + one-time shimmer. Redesign (PM: "think of it like a UX designer",
+      // reference screenshots for both the picker and the card) — real date+time tracking now (was a bare
+      // time-of-day string; "Once" never had a concept of WHICH day), and an actual Edit affordance (was
+      // missing entirely — only toggle + a tiny X-only remove icon existed before). ----
+      var SCHED_PATH = '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>';   // clock — "Next run" row + picker field
+      var CAL_PATH = '<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>';   // calendar — "Schedule" row + empty state
+      var EDIT_PATH = '<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4z"/>';
+      var TRASH_PATH = '<path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/>';
+      var MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+      function pad2(n) { return (n < 10 ? '0' : '') + n; }
+      function formatDateShort(d) { return d.getDate() + ' ' + MONTH_NAMES[d.getMonth()].slice(0, 3); }   // "29 Jul"
+      function formatTime24(d) { return pad2(d.getHours()) + ':' + pad2(d.getMinutes()); }               // "19:56"
+      function formatDateTime(d) { return formatDateShort(d) + ' ' + d.getFullYear() + ', ' + formatTime24(d); }   // picker field label
+      function sameDay(a, b) { return !!a && !!b && a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate(); }
+      function nextOccurrence(t) {   // no real backend/scheduler here — simulates "what fires next" from startsAt + repeat, purely for display
+        var now = new Date();
+        if (t.repeat === 'Once') return t.startsAt;
+        var next = new Date(t.startsAt);
+        if (t.repeat === 'Monthly') { while (next <= now) next.setMonth(next.getMonth() + 1); }
+        else { var step = t.repeat === 'Weekly' ? 7 : 1; while (next <= now) next.setDate(next.getDate() + step); }
+        return next;
+      }
+      function seedStart(daysAgo, hour, minute) { var d = new Date(); d.setDate(d.getDate() - daysAgo); d.setHours(hour, minute, 0, 0); return d; }
       var SCHEDULED = [
-        { name: 'Claim daily rewards', when: 'Every day at 9:00 AM', next: 'tomorrow, 9:00 AM', on: true },
-        { name: 'Weekly game roundup', when: 'Every Monday at 8:00 AM', next: 'Mon, 8:00 AM', on: true }
+        { name: 'Claim daily rewards', repeat: 'Daily', startsAt: seedStart(30, 9, 0), on: true },
+        { name: 'Weekly game roundup', repeat: 'Weekly', startsAt: seedStart(21, 8, 0), on: true }
       ];
       var schedListEl = document.getElementById('baiSchedList'), schedPendingDelete = -1, schedShimmerShown = false;
       function renderScheduled() {
         schedListEl.innerHTML = '';
         if (!SCHEDULED.length) {
           var empty = document.createElement('div'); empty.className = 'bai-stub';
-          empty.innerHTML = '<div class="ic">' + iconSvg(SCHED_PATH, 17) + '</div><h4>Nothing scheduled yet</h4><p>Ask BlueAI to run a task later or repeat it on a schedule. Your scheduled tasks will appear here.</p>';
+          empty.innerHTML = '<div class="ic">' + iconSvg(CAL_PATH, 17) + '</div><h4>Nothing scheduled yet</h4><p>Ask BlueAI to run a task later or repeat it on a schedule. Your scheduled tasks will appear here.</p>';
           schedListEl.appendChild(empty); refreshFadeScroll(schedListEl, document.getElementById('baiSchedScroll')); return;
         }
         SCHEDULED.forEach(function (t, i) {
+          var card = document.createElement('div'); card.className = 'bai-sched-card';
           if (i === schedPendingDelete) {
-            var confirmRow = document.createElement('div'); confirmRow.className = 'bai-item-card';
-            confirmRow.innerHTML = '<span class="info"><b>Delete "' + t.name + '"?</b><span>This can\'t be undone.</span></span>';
-            var cancelBtn = document.createElement('button'); cancelBtn.className = 'bai-newitem-cancel'; cancelBtn.type = 'button'; cancelBtn.textContent = 'Cancel';
-            var delBtn = document.createElement('button'); delBtn.className = 'bai-newitem-create'; delBtn.type = 'button'; delBtn.textContent = 'Delete'; delBtn.style.background = 'var(--bai-danger)';
+            card.innerHTML = '<b>Delete "' + t.name + '"?</b><span class="bai-sched-sub">This can\'t be undone.</span>';
+            var actions0 = document.createElement('div'); actions0.className = 'bai-sched-actions';
+            var cancelBtn = document.createElement('button'); cancelBtn.className = 'bai-sched-btn'; cancelBtn.type = 'button'; cancelBtn.textContent = 'Cancel';
+            var delBtn = document.createElement('button'); delBtn.className = 'bai-sched-btn danger'; delBtn.type = 'button'; delBtn.textContent = 'Delete';
             cancelBtn.addEventListener('click', function (e) { e.stopPropagation(); schedPendingDelete = -1; renderScheduled(); });
             delBtn.addEventListener('click', function (e) { e.stopPropagation(); SCHEDULED.splice(i, 1); schedPendingDelete = -1; renderScheduled(); });
-            confirmRow.appendChild(cancelBtn); confirmRow.appendChild(delBtn);
-            schedListEl.appendChild(confirmRow); return;
+            actions0.appendChild(cancelBtn); actions0.appendChild(delBtn);
+            card.appendChild(actions0); schedListEl.appendChild(card); return;
           }
-          var row = document.createElement('div'); row.className = 'bai-item-card';
-          row.innerHTML = '<span class="ic">' + iconSvg(SCHED_PATH, 15) + '</span><span class="info"><b>' + t.name + '</b><span>' + t.when + '</span><span class="meta-next">Next: ' + t.next + '</span></span><span class="bai-tgl' + (t.on ? ' on' : '') + '" role="button" aria-label="Toggle on/off"><i></i></span><button class="rm" type="button" aria-label="Remove" title="Remove">' + iconSvg('<path d="M18 6 6 18"/><path d="M6 6l12 12"/>', 14) + '</button>';
-          row.querySelector('.bai-tgl').addEventListener('click', function (e) { e.stopPropagation(); t.on = !t.on; renderScheduled(); });
-          row.querySelector('.rm').addEventListener('click', function (e) { e.stopPropagation(); schedPendingDelete = i; renderScheduled(); });
-          schedListEl.appendChild(row);
+          var next = nextOccurrence(t);
+          card.innerHTML =
+            '<div class="bai-sched-head"><b>' + t.name + '</b><span class="bai-tgl' + (t.on ? ' on' : '') + '" role="button" aria-label="Toggle on/off"><i></i></span></div>' +
+            '<div class="bai-sched-row"><span class="ic">' + iconSvg(CAL_PATH, 13) + '</span>Schedule: <b>' + t.repeat + '</b></div>' +
+            '<div class="bai-sched-row"><span class="ic">' + iconSvg(SCHED_PATH, 13) + '</span>Next run: <b class="bai-sched-next">' + formatDateShort(next) + ', ' + formatTime24(next) + '</b></div>';
+          var actions = document.createElement('div'); actions.className = 'bai-sched-actions';
+          actions.innerHTML = '<button class="bai-sched-btn" type="button">' + iconSvg(EDIT_PATH, 13) + 'Edit</button><button class="bai-sched-btn danger" type="button">' + iconSvg(TRASH_PATH, 13) + 'Delete</button>';
+          card.appendChild(actions);
+          card.querySelector('.bai-tgl').addEventListener('click', function (e) { e.stopPropagation(); t.on = !t.on; renderScheduled(); });
+          actions.children[0].addEventListener('click', function (e) { e.stopPropagation(); openSchedForm(t); });
+          actions.children[1].addEventListener('click', function (e) { e.stopPropagation(); schedPendingDelete = i; renderScheduled(); });
+          schedListEl.appendChild(card);
         });
         refreshFadeScroll(schedListEl, document.getElementById('baiSchedScroll'));
       }
@@ -1957,20 +2276,134 @@
         setTimeout(renderScheduled, 550);
       }
       renderScheduled();
-      var schedAddBtn = document.getElementById('baiSchedAdd'), schedForm = document.getElementById('baiSchedForm'), schedNameInput = document.getElementById('baiSchedName'), schedTimeInput = document.getElementById('baiSchedTime'), schedRepeat = 'Once';
+
+      // ---- Custom calendar + time picker (replaces the native <input type="time">) ----
+      var dtField = document.getElementById('baiDtField'), dtPicker = document.getElementById('baiDtPicker'), dtValueEl = document.getElementById('baiDtValue');
+      var dtDaysEl = document.getElementById('baiDtDays'), dtMonthLabel = document.getElementById('baiDtMonthLabel');
+      var dtHoursEl = document.getElementById('baiDtHours'), dtMinutesEl = document.getElementById('baiDtMinutes');
+      var dtBackLabelEl = document.getElementById('baiDtBackLabel');
+      var schedPicked = null;         // confirmed Date once "Done" is pressed, else null
+      var dtSelected = null;          // day currently highlighted in the grid (day-precision Date)
+      var dtCalYear = new Date().getFullYear(), dtCalMonth = new Date().getMonth();   // month currently being VIEWED (independent of dtSelected)
+      var dtHour = 9, dtMinute = 0;
+      function defaultDtNow() { var d = new Date(); d.setSeconds(0, 0); return d; }
+      function updateDtFieldLabel() {
+        if (schedPicked) { dtValueEl.textContent = formatDateTime(schedPicked); dtValueEl.classList.remove('placeholder'); }
+        else { dtValueEl.textContent = 'Pick a date & time'; dtValueEl.classList.add('placeholder'); }
+      }
+      function renderDtCalendar() {
+        dtMonthLabel.textContent = MONTH_NAMES[dtCalMonth] + ' ' + dtCalYear;
+        dtDaysEl.innerHTML = '';
+        var firstOfMonth = new Date(dtCalYear, dtCalMonth, 1);
+        var startIdx = (firstOfMonth.getDay() + 6) % 7;   // JS Sun=0..Sat=6 -> Mon=0..Sun=6, matching the Mo-Su header
+        var gridStart = new Date(dtCalYear, dtCalMonth, 1 - startIdx);
+        var today = new Date();
+        for (var i = 0; i < 42; i++) {
+          var cellDate = new Date(gridStart.getFullYear(), gridStart.getMonth(), gridStart.getDate() + i);
+          var btn = document.createElement('button'); btn.type = 'button'; btn.className = 'bai-dt-day';
+          if (cellDate.getMonth() !== dtCalMonth) btn.classList.add('outside');
+          if (sameDay(cellDate, today)) btn.classList.add('today');
+          if (sameDay(cellDate, dtSelected)) btn.classList.add('selected');
+          btn.textContent = cellDate.getDate();
+          (function (d) { btn.addEventListener('click', function (e) { e.stopPropagation(); dtSelected = d; renderDtCalendar(); goToTimeStep(); }); })(cellDate);
+          dtDaysEl.appendChild(btn);
+        }
+      }
+      function renderDtTimeCol(el, max, current, onPick) {
+        el.innerHTML = '';
+        for (var v = 0; v <= max; v++) {
+          var item = document.createElement('div'); item.className = 'bai-dt-colval' + (v === current ? ' on' : ''); item.textContent = pad2(v);
+          (function (val) { item.addEventListener('click', function (e) { e.stopPropagation(); onPick(val); }); })(v);
+          el.appendChild(item);
+        }
+      }
+      function scrollColTo(el, index) { var item = el.children[index]; if (item) el.scrollTop = item.offsetTop - el.clientHeight / 2 + item.offsetHeight / 2; }
+      function renderDtTime() {
+        renderDtTimeCol(dtHoursEl, 23, dtHour, function (v) { dtHour = v; renderDtTime(); });
+        renderDtTimeCol(dtMinutesEl, 59, dtMinute, function (v) { dtMinute = v; renderDtTime(); });
+        scrollColTo(dtHoursEl, dtHour); scrollColTo(dtMinutesEl, dtMinute);
+      }
+      function bindColScroll(el, onSettle) {   // detects the item nearest the visual center once scrolling settles — decoupled from any hardcoded row-height math
+        var t = null;
+        el.addEventListener('scroll', function () {
+          clearTimeout(t);
+          t = setTimeout(function () {
+            var mid = el.scrollTop + el.clientHeight / 2, best = 0, bestDist = Infinity;
+            [].forEach.call(el.children, function (child, idx) {
+              var dist = Math.abs((child.offsetTop + child.offsetHeight / 2) - mid);
+              if (dist < bestDist) { bestDist = dist; best = idx; }
+            });
+            onSettle(best);
+          }, 120);
+        });
+      }
+      bindColScroll(dtHoursEl, function (idx) { dtHour = idx; renderDtTime(); });
+      bindColScroll(dtMinutesEl, function (idx) { dtMinute = idx; renderDtTime(); });
+      function goToTimeStep() {
+        dtBackLabelEl.textContent = formatDateShort(dtSelected);
+        dtPicker.classList.add('step-time');   // must flip BEFORE renderDtTime()'s scrollColTo calls, or the
+        renderDtTime();                        // still-display:none step has 0 height and centering no-ops
+      }
+      function goToDateStep() { dtPicker.classList.remove('step-time'); renderDtCalendar(); }
+      function openDtPicker() {
+        var base = schedPicked || defaultDtNow();
+        dtCalYear = base.getFullYear(); dtCalMonth = base.getMonth();
+        if (!dtSelected || schedPicked) dtSelected = new Date(base.getFullYear(), base.getMonth(), base.getDate());
+        dtHour = base.getHours(); dtMinute = base.getMinutes();
+        dtPicker.style.display = 'block'; dtField.classList.add('open');
+        renderDtCalendar();
+        // A confirmed date+time already exists (editing, or reopening after a prior Done) -> most likely
+        // reason to reopen is tweaking the time, so skip straight there. Brand-new task -> date step first.
+        if (schedPicked) goToTimeStep(); else dtPicker.classList.remove('step-time');
+      }
+      function closeDtPicker() { dtPicker.style.display = 'none'; dtField.classList.remove('open'); }
+      dtField.addEventListener('click', function (e) { e.stopPropagation(); if (dtPicker.style.display === 'none') openDtPicker(); else closeDtPicker(); });
+      document.getElementById('baiDtPrev').addEventListener('click', function (e) { e.stopPropagation(); dtCalMonth--; if (dtCalMonth < 0) { dtCalMonth = 11; dtCalYear--; } renderDtCalendar(); });
+      document.getElementById('baiDtNext').addEventListener('click', function (e) { e.stopPropagation(); dtCalMonth++; if (dtCalMonth > 11) { dtCalMonth = 0; dtCalYear++; } renderDtCalendar(); });
+      document.getElementById('baiDtBackToDate').addEventListener('click', function (e) { e.stopPropagation(); goToDateStep(); });
+      document.getElementById('baiDtDone').addEventListener('click', function (e) {
+        e.stopPropagation();
+        var d = dtSelected || defaultDtNow();
+        schedPicked = new Date(d.getFullYear(), d.getMonth(), d.getDate(), dtHour, dtMinute, 0, 0);
+        updateDtFieldLabel(); closeDtPicker();
+      });
+      document.addEventListener('click', function (e) { if (dtPicker.style.display !== 'none' && !dtField.contains(e.target) && !dtPicker.contains(e.target)) closeDtPicker(); });
+
+      var schedAddBtn = document.getElementById('baiSchedAdd'), schedForm = document.getElementById('baiSchedForm'), schedNameInput = document.getElementById('baiSchedName'), schedRepeat = 'Once', schedEditing = null;
       [].forEach.call(document.querySelectorAll('#baiSchedRepeat .bai-seg-btn'), function (b) {
         b.addEventListener('click', function (e) { e.stopPropagation(); schedRepeat = b.getAttribute('data-v'); [].forEach.call(b.parentNode.children, function (o) { o.classList.toggle('active', o === b); }); });
       });
-      function openSchedForm() { schedForm.style.display = 'flex'; schedAddBtn.style.display = 'none'; schedNameInput.value = ''; schedTimeInput.value = ''; schedRepeat = 'Once'; [].forEach.call(document.querySelectorAll('#baiSchedRepeat .bai-seg-btn'), function (o, i) { o.classList.toggle('active', i === 0); }); schedNameInput.focus(); }
-      function closeSchedForm() { schedForm.style.display = 'none'; schedAddBtn.style.display = ''; }
-      schedAddBtn.addEventListener('click', function (e) { e.stopPropagation(); openSchedForm(); });
+      // Physically relocates #baiSchedForm in and back out of its own overlay (see the HTML comment above
+      // #baiSchedSubpane), rather than rebuilding the form from scratch each time — keeps every existing id/
+      // listener in this file, including the whole date/time picker, completely untouched.
+      var schedSubpaneEl = document.getElementById('baiSchedSubpane'), schedSubpaneTitleEl = document.getElementById('baiSchedSubpaneTitle'), schedSubpaneBodyEl = document.getElementById('baiSchedSubpaneBody');
+      var schedFormHome = schedForm.parentElement, schedFormHomeNext = schedForm.nextSibling;   // #baiSchedForm's original spot, so closing puts it back exactly where it came from
+      function openSchedSubpane(title) { schedSubpaneTitleEl.textContent = title; schedSubpaneBodyEl.appendChild(schedForm); schedSubpaneEl.classList.add('on'); }
+      function closeSchedSubpane() { schedFormHome.insertBefore(schedForm, schedFormHomeNext); schedSubpaneEl.classList.remove('on'); }
+      document.getElementById('baiSchedSubpaneBack').addEventListener('click', function (e) { e.stopPropagation(); closeSchedForm(); });
+      function openSchedForm(existing) {
+        schedEditing = existing || null;
+        openSchedSubpane(existing ? 'Edit Task' : 'New Task');
+        schedForm.style.display = 'flex'; schedAddBtn.style.display = 'none';
+        schedNameInput.value = existing ? existing.name : '';
+        schedRepeat = existing ? existing.repeat : 'Once';
+        [].forEach.call(document.querySelectorAll('#baiSchedRepeat .bai-seg-btn'), function (o) { o.classList.toggle('active', o.getAttribute('data-v') === schedRepeat); });
+        var editSeed = existing ? nextOccurrence(existing) : null;   // pre-fill from the pattern's NEXT run (matches the card's "Next run" line), not the original startsAt anchor
+        schedPicked = editSeed ? new Date(editSeed) : null;
+        dtSelected = editSeed ? new Date(editSeed.getFullYear(), editSeed.getMonth(), editSeed.getDate()) : null;
+        updateDtFieldLabel(); closeDtPicker();
+        document.getElementById('baiSchedCreate').textContent = existing ? 'Save' : 'Create';
+        if (!existing) schedNameInput.focus();
+      }
+      function closeSchedForm() { closeSchedSubpane(); schedForm.style.display = 'none'; schedAddBtn.style.display = ''; schedEditing = null; closeDtPicker(); }
+      schedAddBtn.addEventListener('click', function (e) { e.stopPropagation(); openSchedForm(null); });
       document.getElementById('baiSchedCancel').addEventListener('click', function (e) { e.stopPropagation(); closeSchedForm(); });
       document.getElementById('baiSchedCreate').addEventListener('click', function (e) {
         e.stopPropagation();
         var name = schedNameInput.value.trim(); if (!name) { schedNameInput.focus(); return; }
-        var time = schedTimeInput.value.trim() || '9:00 AM';
-        var when = schedRepeat === 'Once' ? 'Once, at ' + time : 'Every ' + (schedRepeat === 'Daily' ? 'day' : schedRepeat === 'Weekly' ? 'week' : 'month') + ' at ' + time;
-        SCHEDULED.push({ name: name, when: when, next: schedRepeat === 'Once' ? time + ' today' : 'tomorrow, ' + time, on: true });
+        var startsAt = schedPicked || defaultDtNow();
+        if (schedEditing) { schedEditing.name = name; schedEditing.repeat = schedRepeat; schedEditing.startsAt = startsAt; }
+        else SCHEDULED.push({ name: name, repeat: schedRepeat, startsAt: startsAt, on: true });
         closeSchedForm(); renderScheduled();
       });
 
@@ -2449,6 +2882,34 @@
       // placeholder always wins, and typing/erasing simply pauses (not skips) until it's free again.
       // Matches modern chat apps (ChatGPT/Claude): hints only play on a genuinely FRESH conversation —
       // once the first message is sent, they stop for good (see addUser()) and the placeholder goes static.
+      //
+      // PM: long hints were overflowing the box. CSS-only truncation doesn't work here — text-overflow:
+      // ellipsis silently computes to "clip" on a <textarea>'s ::placeholder (verified), and the -webkit-
+      // line-clamp workaround that DOES render an ellipsis has its own bug: it makes the placeholder
+      // participate in the textarea's own scrollHeight, inflating an EMPTY box's height to match the
+      // hint's wrapped height — i.e. the exact "box grows because of a hint, not real content" bug this
+      // is supposed to prevent. Instead, truncate the STRING itself (real "…" character, real measured
+      // width via canvas) before it ever reaches .placeholder — no CSS pseudo-element truncation involved,
+      // so it can't misbehave the same way. ::placeholder keeps nowrap+hidden below only as a defensive
+      // backstop (that combination alone does NOT affect scrollHeight — only line-clamp does).
+      var __hintCanvas = null;
+      function textPxWidth(text, font) {
+        if (!__hintCanvas) __hintCanvas = document.createElement('canvas');
+        var ctx = __hintCanvas.getContext('2d');
+        ctx.font = font;
+        return ctx.measureText(text).width;
+      }
+      function setHintPlaceholder(text) {
+        var maxW = baiInput.clientWidth - 2;   // small buffer against sub-pixel rounding
+        var font = getComputedStyle(baiInput).font;
+        if (!text || textPxWidth(text, font) <= maxW) { baiInput.placeholder = text; return; }
+        var lo = 0, hi = text.length;   // binary search the longest prefix that still fits with "…" appended
+        while (lo < hi) {
+          var mid = (lo + hi + 1) >> 1;
+          if (textPxWidth(text.slice(0, mid) + '…', font) <= maxW) lo = mid; else hi = mid - 1;
+        }
+        baiInput.placeholder = text.slice(0, lo).replace(/\s+$/, '') + '…';
+      }
       var INPUT_HINTS = [
         'Ask BlueAI to get things done in your apps…',
         'Find me a paid game that’s free on Google Play',
@@ -2464,7 +2925,7 @@
       var hintI = 0, hintTimer = null, conversationStarted = false;
       function restorePlaceholder() {
         clearTimeout(hintTimer);
-        if (conversationStarted) { baiInput.placeholder = INPUT_HINTS[0]; return; }
+        if (conversationStarted) { setHintPlaceholder(INPUT_HINTS[0]); return; }
         hintI = 0; baiInput.placeholder = '';
         typeHint();
       }
@@ -2472,13 +2933,13 @@
         var text = INPUT_HINTS[hintI], i = 0;
         function typeStep() {
           if (pending || flow) { hintTimer = setTimeout(typeStep, 300); return; }
-          baiInput.placeholder = text.slice(0, i);
+          setHintPlaceholder(text.slice(0, i));
           if (i < text.length) { i++; hintTimer = setTimeout(typeStep, 45); }
           else { hintTimer = setTimeout(eraseStep, 1500); }
         }
         function eraseStep() {
           if (pending || flow) { hintTimer = setTimeout(eraseStep, 300); return; }
-          i--; baiInput.placeholder = text.slice(0, Math.max(0, i));
+          i--; setHintPlaceholder(text.slice(0, Math.max(0, i)));
           if (i > 0) { hintTimer = setTimeout(eraseStep, 25); }
           else { hintI = (hintI + 1) % INPUT_HINTS.length; hintTimer = setTimeout(typeHint, 400); }
         }
@@ -2502,7 +2963,7 @@
           else advance(typeMs(s.say) + 550);
         } else if (s.ask !== undefined) {
           aiReply(fillVars(s.ask)); pending = s;
-          if (s.allowText) baiInput.placeholder = s.allowText;
+          if (s.allowText) setHintPlaceholder(s.allowText);
           setTimeout(function () { renderOptions(s); }, typeMs(s.ask) + 120);
         } else if (s.results) { spendCredits(s.cost); renderResults(s.results); advance(950); }
         else if (s.upload) { renderUpload(s.upload); pending = s; }
@@ -2689,6 +3150,15 @@
 
       // ---- Chat session switcher: wordmark -> new chat + Chat History subpane (scripted) ----
       var titleBtn = document.getElementById('baiTitleBtn'), newBtn = document.getElementById('baiNewBtn');
+      var currentRecent = null;   // the live RECENTS entry for the conversation in progress, or null before the first message
+      function deriveTitle(text) {   // no real LLM here to "smart-summarize" — an honest direct derivation instead
+        var t = text.trim().replace(/\s+/g, ' ');
+        if (!t) return 'Untitled chat';
+        t = t.charAt(0).toUpperCase() + t.slice(1);
+        var MAX = 42;
+        if (t.length > MAX) t = t.slice(0, MAX).replace(/\s+\S*$/, '') + '…';
+        return t;
+      }
       var RECENTS = [
         {
           title: 'Daily rewards run', time: '20m', scheduled: true, count: 14, msgs: [
@@ -2756,13 +3226,13 @@
       var fullTitle = 'Untitled chat';   // a NAME, not an action — "New chat" as a title read like a button
       function setTitle(t) { fullTitle = t; var mt = document.getElementById('baiMainTitle'); if (mt) mt.textContent = t; }   // header wordmark stays the "BlueAI" brand; the chat name lives in the main-column title
       function aiInstant(text) { var el = document.createElement('div'); el.className = 'bai-msg ai'; el.textContent = text; baiBody.appendChild(el); }
-      function resetChatState() { flow = null; flowI = 0; pending = null; ctx = {}; conversationStarted = false; restorePlaceholder(); }
+      function resetChatState() { flow = null; flowI = 0; pending = null; ctx = {}; conversationStarted = false; currentRecent = null; restorePlaceholder(); }
       function markRecent(r) {
         var sr = document.getElementById('baiSideRecents'); if (sr) [].forEach.call(sr.children, function (row, i) { row.classList.toggle('on', RECENTS[i] === r); });
       }
       function newChat() { resetChatState(); setMode('chat'); baiUi.classList.remove('viewing-history'); baiBody.innerHTML = ''; setTitle('Untitled chat'); markRecent(null); startGreeting(); }
       function refreshRecentClasses() { var sr = document.getElementById('baiSideRecents'); if (!sr) return; [].forEach.call(sr.children, function (row, i) { var rr = RECENTS[i]; if (!rr) return; row.classList.toggle('working', !!rr.working); row.classList.toggle('unseen', !!rr.unseen); }); }
-      function loadThread(r) { resetChatState(); setMode('chat'); baiUi.classList.add('viewing-history'); baiBody.innerHTML = ''; setTitle(r.title); (r.msgs || []).forEach(function (m) { if (m.u !== undefined) addUser(m.u); else aiInstant(m.a); }); if (r.unseen) { r.unseen = false; refreshRecentClasses(); } markRecent(r); scrollBody(); }
+      function loadThread(r) { resetChatState(); setMode('chat'); baiUi.classList.add('viewing-history'); baiBody.innerHTML = ''; setTitle(r.title); (r.msgs || []).forEach(function (m) { if (m.u !== undefined) addUserBubble(m.u); else aiInstant(m.a); }); if (r.unseen) { r.unseen = false; refreshRecentClasses(); } markRecent(r); scrollBody(); }
       function renderHistoryList(body) {
         RECENTS.forEach(function (r) {
           var row = document.createElement('div'); row.className = 'bai-history-card' + (r.working ? ' working' : '') + (r.unseen ? ' unseen' : '');
@@ -2777,16 +3247,20 @@
 
       // ---- Wide-mode left sidebar (mirrors the strip + switcher; toggled by width) ----
       var sideRecentsEl = document.getElementById('baiSideRecents');
-      RECENTS.forEach(function (r) {
-        var row = document.createElement('div'); row.className = 'bai-side-rec' + (r.working ? ' working' : '') + (r.unseen ? ' unseen' : '');
-        row.innerHTML = '<span class="dot"></span><span class="nm">' + r.title + '</span>' + (r.scheduled ? '<span class="bai-sched-badge">Scheduled</span>' : '<span class="tm">' + r.time + '</span>');
-        row.addEventListener('click', function (e) { e.stopPropagation(); loadThread(r); closeMenus(); });
-        sideRecentsEl.appendChild(row);
-      });
+      function renderSideRecents() {   // was a one-time forEach — now reusable so a live auto-titled entry (item 11b) can insert itself
+        sideRecentsEl.innerHTML = '';
+        RECENTS.forEach(function (r) {
+          var row = document.createElement('div'); row.className = 'bai-side-rec' + (r.working ? ' working' : '') + (r.unseen ? ' unseen' : '');
+          row.innerHTML = '<span class="dot"></span><span class="nm">' + r.title + '</span>' + (r.scheduled ? '<span class="bai-sched-badge">Scheduled</span>' : '<span class="tm">' + r.time + '</span>');
+          row.addEventListener('click', function (e) { e.stopPropagation(); loadThread(r); closeMenus(); });
+          sideRecentsEl.appendChild(row);
+        });
+      }
+      renderSideRecents();
       [].forEach.call(document.querySelectorAll('.bai-side-item[data-mode]'), function (b) {
-        b.addEventListener('click', function (e) { e.stopPropagation(); setMode(b.getAttribute('data-mode')); });
+        var m = b.getAttribute('data-mode');
+        b.addEventListener('click', function (e) { e.stopPropagation(); if (m === 'chat') newChat(); else setMode(m); });   // the "chat" row is "New chat" now (item 11) — always starts fresh, doesn't just switch panes
       });
-      document.getElementById('baiSideNew').addEventListener('click', function (e) { e.stopPropagation(); newChat(); });
       document.getElementById('baiSideSettings').addEventListener('click', function (e) { e.stopPropagation(); setMode('settings'); });
       if (baiCtrl.drawMini) baiCtrl.drawMini(document.getElementById('baiSideLogo'));
       if (window.ResizeObserver) new ResizeObserver(function () { if (drawer.classList.contains('win-hidden')) return; baiUi.classList.toggle('wide', drawer.offsetWidth >= 600); if (detached) saveWinSoon(); }).observe(drawer);
