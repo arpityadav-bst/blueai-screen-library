@@ -5,6 +5,42 @@ resolved. Promoted to decisions.md / taste.md at audit passes, then wiped.
 Format: `YYYY-MM-DD HH:mm — <file> — <what changed> — Why: <one phrase>`
 
 --- Pending audit entries ---
+2026-07-29 02:13 — /blueai-desktop — Chat input placeholder color, light theme only (designer: "is the
+placeholder color too much for an input bar placeholder?"). Didn't answer by eye — computed actual WCAG
+contrast before agreeing: `--bai-faint` (shared by both themes) resolves to ~4.7:1 against the light input's
+white background, i.e. nearly AA body-TEXT contrast (4.5:1) for what's supposed to be a receded hint; the
+same token in dark theme sits at ~3.1:1, correctly muted. Same shape as the onboarding-shadow entry above —
+one shared token, tuned fine for one background, too prominent on the other. Fixed with a `.drawer.light
+.bai-q::placeholder` override (`#8b96ae`, same blue-gray hue family as the existing `--bai-dim`/`--bai-faint`
+ladder, just lighter) landing at ~3:1 — matched to dark theme's OWN contrast level rather than picking a
+number in isolation. Deliberately did not touch `--bai-faint` itself: it also drives weekday labels and
+disabled states elsewhere, unrelated to this ask. Verified via `getComputedStyle(input, '::placeholder')` in
+both themes — light now returns `rgb(139,150,174)` (the new override), dark still returns the original
+`rgb(89,100,146)`, confirming the scoping is exact. — Why: "too much" is a testable claim, not just a vibe —
+computing the actual contrast number turned a subjective color opinion into a specific, defensible target
+(match dark theme's own ~3:1, not an arbitrary lighter guess), and confirmed the fix without eyeballing it.
+2026-07-29 02:06 — /blueai-desktop — Chat input placeholder, two-part designer request across two messages.
+First message ("a very long placeholder... keeps showing, is that right?") I verified live before answering —
+typing correctly hides it, clearing correctly resumes rotation, no technical bug — so I answered the UX
+question instead (long+animated is a lot for an empty-state hint) and asked what to change. Second message
+clarified the REAL target: not the pre-conversation rotation, but what happens AFTER — screenshot showed "Ask
+BlueAI to get things done in your..." still showing as the placeholder mid-conversation, after a real reply.
+Traced it: `INPUT_HINTS[0]` (the same long first rotating hint) was hardcoded as the "stop rotating for good"
+fallback in TWO places (`addUser()`'s first-message branch, `restorePlaceholder()`'s `conversationStarted`
+branch) — so the long onboarding-style sentence was never actually going away, just freezing there instead of
+rotating. Designer's own instinct was right (their suggested "ask bluestacks anything" became `STATIC_PLACE
+HOLDER = 'Ask BlueAI anything'`, correct product name substituted) — a fresh chat needs the explanatory
+examples, an ongoing one doesn't need re-explaining every empty turn. Also shortened the 5 longest rotating
+hints (dating-swipe one was 58 chars; trimmed 4-5 others), meaning-preserved, e.g. "Swipe profiles on my dating
+apps based on my preferences" -> "Swipe my dating apps for me" — checked the static HTML placeholder attribute
+(the pre-JS fallback) separately and updated it too, so it can't drift out of sync with hint #0 the way the
+JS fallback just had. Verified end-to-end via the ACTUAL send button (`#baiSend`) after a simulated Enter-key
+send silently failed to submit — placeholder correctly reads "Ask BlueAI anything" post-send and stays put
+after a 2s wait (no stray rotation timer re-overwriting it). — Why: the user's FIRST message pointed at the
+right screen but the wrong mechanism (I found no bug in the rotation-while-typing behavior because there wasn't
+one); the SECOND message, with a screenshot of the actual mid-conversation state, pointed at the real one. Two
+different call sites had drifted to the same wrong fallback value — a sign to grep for every use of a constant
+before assuming there's only one place to fix, not just the first one found.
 2026-07-29 01:42 — /blueai-desktop — Onboarding's floating orb badges (`.bai-onb-orb`) and rotating receipt
 cards (`.bai-onb-card`) — designer, LIGHT THEME ONLY: "too old school... not modernistic dribbble-like...
 very dull." Root cause, confirmed by reading the actual rule rather than eyeballing: both already use a

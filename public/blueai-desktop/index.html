@@ -673,6 +673,12 @@
        scrollHeight (an empty value measured ~2 lines tall) — reintroducing the exact growth-on-hint-text
        bug this feature exists to prevent. Plain nowrap+hidden has neither problem. */
     .bai-q::placeholder { color: var(--bai-faint); white-space: nowrap; overflow: hidden; }
+    /* Light theme only — --bai-faint's light value (#66748e) computes to ~4.7:1 against the input's white
+       background, nearly AA body-text contrast (4.5:1), too prominent for a hint that's meant to visibly
+       recede. Dark theme's own value already sits around ~3.1:1 and reads correctly muted; this brings
+       light theme to the same ballpark (~3:1) instead of redefining --bai-faint itself, which is also used
+       for several unrelated things (weekday labels, disabled states) that aren't this request's concern. */
+    .drawer.light .bai-q::placeholder { color: #8b96ae; }
     /* Claude-style "thinking" indicator above the chatbar — small animated logo + elapsed timer. */
     .bai-body::before { content: ''; margin-top: auto; }   /* bottom-align the chat chain (terminal scrollback) */
     .bai-thinking { align-self: stretch; display: flex; align-items: center; gap: 8px; padding: 1px 2px; }
@@ -1007,7 +1013,7 @@
                   <div class="bai-inputbar">
                     <div class="bai-inputrow">
                       <span class="bai-prompt">&rsaquo;</span>
-                      <textarea class="bai-q" id="baiInput" rows="1" placeholder="Ask BlueAI to get things done in your apps…" autocomplete="off" spellcheck="false"></textarea>
+                      <textarea class="bai-q" id="baiInput" rows="1" placeholder="Get things done in your apps…" autocomplete="off" spellcheck="false"></textarea>
                       <button class="bai-send" id="baiSend" type="button" aria-label="Send message"></button>
                     </div>
                   </div>
@@ -1264,7 +1270,7 @@
         // an existing conversation (e.g. "Daily rewards run") was opened. loadThread() now calls
         // addUserBubble() directly (pure rendering, no side effects) instead of this function.
         if (!conversationStarted) {
-          conversationStarted = true; clearTimeout(hintTimer); setHintPlaceholder(INPUT_HINTS[0]);   // first message in this conversation — stop rotating hints for good
+          conversationStarted = true; clearTimeout(hintTimer); setHintPlaceholder(STATIC_PLACEHOLDER);   // first message in this conversation — stop rotating hints for good
           // Item 11b (PM): matches ChatGPT/Claude — a fresh conversation's first message both titles it
           // and creates its Recent entry, live (not just the 6 hardcoded seed conversations). No real LLM
           // summarization here, so the title is an honest, direct derivation of what was actually typed
@@ -2911,21 +2917,26 @@
         baiInput.placeholder = text.slice(0, lo).replace(/\s+$/, '') + '…';
       }
       var INPUT_HINTS = [
-        'Ask BlueAI to get things done in your apps…',
-        'Find me a paid game that’s free on Google Play',
+        'Get things done in your apps…',
+        'Find a paid game that’s free today',
         'Run my morning automation',
         'Find a gift for @username',
-        'Swipe profiles on my dating apps based on my preferences',
+        'Swipe my dating apps for me',
         'Play Whiteout Survival for 10 minutes',
-        'Find a guide for the level I’m stuck on',
+        'Find a guide for my stuck level',
         'Collect my in-game rewards',
-        'Find active redeem codes for my game',
+        'Find redeem codes for my game',
         'Suggest an outfit for me today'
       ];
+      // Once a conversation is under way, the placeholder isn't onboarding anyone anymore — it's just the
+      // quiet "type here" cue between turns, so it gets its own short, generic text instead of freezing on
+      // whichever example hint happened to be first (designer: "once you start typing the behaviour should
+      // change" — a fresh chat gets the explanatory examples, an ongoing one doesn't need re-explaining).
+      var STATIC_PLACEHOLDER = 'Ask BlueAI anything';
       var hintI = 0, hintTimer = null, conversationStarted = false;
       function restorePlaceholder() {
         clearTimeout(hintTimer);
-        if (conversationStarted) { setHintPlaceholder(INPUT_HINTS[0]); return; }
+        if (conversationStarted) { setHintPlaceholder(STATIC_PLACEHOLDER); return; }
         hintI = 0; baiInput.placeholder = '';
         typeHint();
       }
