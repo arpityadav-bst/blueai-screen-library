@@ -434,13 +434,29 @@
     .lg-s { font-size: 11px; line-height: 1.5; color: var(--bai-dim); }
     .lg-h, .tgm-title { font-size: 15px; font-weight: 700; color: var(--bai-text-hi); line-height: 1.3; }   /* one shared modal-title definition (TYP-01); line-height added in Fix #8 so a wrapped title stays comfortable next to the header's icon/close controls */
     .lg-title-group { display: flex; flex-direction: column; gap: 6px; }   /* SPC-02: replaces the old inline negative-margin heading/subtext pairing */
-    .lg-credits { font-size: 38px; font-weight: 700; line-height: 1; background: linear-gradient(90deg, var(--bai-accent), var(--bai-accent-strong)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    /* Gradient lives HERE, on the base definition, because .lg-credits has exactly two consumers — the login
+       gate's claim step and the OOC offer cards — and both are the same thing: a headline credit figure. It
+       was previously accent -> accent-strong, which in light theme is #2258c9 -> #1a45a8, two near-identical
+       navies that rendered as flat fill; accent -> the palette's existing violet (#7c5cf0) gives it real hue
+       travel. Keeping it in one place rather than as a per-surface override is what stops the two drifting. */
+    .lg-credits { font-size: 38px; font-weight: 700; line-height: 1; background: linear-gradient(100deg, var(--bai-accent), #7c5cf0); -webkit-background-clip: text; background-clip: text; color: transparent; }
     .lg-check { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--bai-accent); }
     .lg-div { align-self: stretch; height: 1px; background: var(--bai-line); }
     .lg-cta { align-self: stretch; border: none; border-radius: 10px; padding: 11px; background: var(--bai-accent); color: var(--bai-on-accent); font-family: inherit; font-size: 12px; font-weight: 700; cursor: pointer; transition: filter 0.15s; }
     .lg-cta:hover { filter: brightness(1.08); }
     .lg-link { font-size: 10.5px; color: var(--bai-faint); cursor: pointer; text-decoration: none; }
     .lg-link:hover { color: var(--bai-hover-ink); }
+    /* CLAIM STEP ONLY (.lg-offer, toggled in renderLoginGate). That step is a credit OFFER — the same job as
+       the OOC offer cards — so it gets the same treatment: bigger tighter number, dividers carrying the
+       spacing so the three groups read as groups instead of one evenly-gapped column, and an accent-tinted
+       CTA shadow. The browser/signing/done steps deliberately keep the plainer icon+title layout: they're
+       STATUS, with no figure to lead with — the same offer-vs-status split as the BYOK popup. Card width is
+       left at 258px on purpose: the OOC card needed 300px for a 4-digit "5000", this shows a 3-digit "500". */
+    .bai-logingate-card.lg-offer { gap: 7px; padding: 24px 22px 20px; }
+    .lg-offer .lg-div { margin: 6px 0; }
+    .lg-offer .lg-credits { font-size: 46px; letter-spacing: -1.5px; }
+    .lg-offer .lg-title-group { gap: 2px; }
+    .lg-offer .lg-cta { margin-top: 3px; box-shadow: 0 8px 20px color-mix(in srgb, var(--bai-accent) 30%, transparent); }
     .lg-link-warn { color: var(--bai-credit-mid); }
     .lg-icon { width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--bai-accent-wash); color: var(--bai-accent); }
     .lg-icon-ok { background: color-mix(in srgb, var(--bai-ok) 15%, transparent); color: var(--bai-ok); }
@@ -491,19 +507,56 @@
     /* Shared modal-action family (OOC redesign) — one geometry for primary+secondary so a footer never mixes
        .tgm-cta and .bai-set-btn again; both stack full-width with consistent height/radius/type. */
     .bai-modalact-group { display: flex; flex-direction: column; gap: 9px; margin-top: 2px; }
-    .bai-modalact { align-self: stretch; width: 100%; min-height: 41px; border-radius: 9px; padding: 0 16px; font-family: inherit; font-size: 12.5px; font-weight: 700; line-height: 1.3; cursor: pointer; transition: filter 0.15s, background 0.15s, border-color 0.15s; display: flex; align-items: center; justify-content: center; text-align: center; }
+    .bai-modalact { align-self: stretch; width: 100%; min-height: 41px; border-radius: 9px; padding: 0 16px; font-family: inherit; font-size: 12.5px; font-weight: 700; line-height: 1.3; cursor: pointer; transition: filter 0.15s, background 0.15s, border-color 0.15s; display: flex; align-items: center; justify-content: center; gap: 6px; text-align: center; }   /* gap only bites on the one label+icon action ("Top Up ↗"); single-text buttons are unaffected */
     .bai-modalact.primary { border: none; background: var(--bai-accent); color: var(--bai-on-accent); }
     .bai-modalact.primary:hover { filter: brightness(1.08); }
     .bai-modalact.secondary { border: 1px solid var(--bai-line-2); background: var(--bai-input-bg); color: var(--bai-text); }
     .bai-modalact.secondary:hover { background: var(--bai-hover); }
+    /* Centred "credit offer" variant of the OOC modal — used by the Prime-upsell and top-up modes, whose
+       live counterparts are both centred cards led by a big gradient number, not the left-aligned
+       title+actions layout the BYOK mode keeps (that one is an instruction, and has no number to lead with).
+       PM: "let's try to use the existing popup in the style of the new UI" — so the STRUCTURE is the live
+       popup's (eyebrow -> title -> rule -> number -> label -> link -> CTA -> footnote) while the styling
+       stays this file's own: the login gate's .lg-* recipe, which already solves exactly this "here's the
+       credit offer, here's the CTA" card, and .bai-modalact's 9px button rather than the live pill. */
+    .bai-tgmodal-card.ooc-offer { max-width: 300px; }
+    /* gap is deliberately tight and the dividers carry margin instead — that's what makes the three content
+       groups (pitch / number+link / CTA+footnote) read as groups rather than one evenly-spaced column. */
+    .ooc-offer .tgm-body { position: relative; align-items: center; text-align: center; gap: 7px; padding: 24px 22px 20px; }
+    .ooc-offer .lg-div { margin: 6px 0; }
+    /* Headline number: the accent->accent-strong pair the login gate uses is two near-identical navies in
+       light theme (#2258c9 -> #1a45a8), so it read as flat fill. Spanning accent -> the violet already in
+       this palette (#7c5cf0, as used by the profile avatar and the onboarding orbs) gives it the real hue
+       travel the live popup has. Scoped to .ooc-offer so the login gate's own "500" is left alone. */
+    .ooc-offer .lg-credits { font-size: 46px; letter-spacing: -1.5px; }   /* gradient now comes from the base .lg-credits — only the scale differs here */
+    .ooc-offer .lg-title-group { gap: 2px; }
+    .ooc-num { display: flex; align-items: center; gap: 8px; }   /* topup's "✦ 0" pairing — center, not baseline: on a 46px numeral a baseline sits the sparkle ~6px below the number's optical middle */
+    .ooc-num .spark { font-size: 26px; line-height: 1; color: var(--bai-accent); }
+    .ooc-credlabel { font-size: 13.5px; font-weight: 700; letter-spacing: 0.2px; background: linear-gradient(100deg, var(--bai-accent), #7c5cf0); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .ooc-link { font-size: 11px; font-weight: 600; color: var(--bai-accent); cursor: pointer; }   /* visually present, intentionally inert — same rule as the purchase CTAs */
+    .ooc-offer .bai-modalact.primary { box-shadow: 0 8px 20px color-mix(in srgb, var(--bai-accent) 30%, transparent); }   /* accent-tinted, not black — same reasoning as the onboarding shadows */
+    .ooc-foot { font-size: 10.5px; color: var(--bai-faint); }
+    /* "NOT ENOUGH CREDITS" strip. Prime-upsell mode only: that mode's title is an OFFER ("Get AI Credits
+       with Prime") and never states why the modal appeared, which is exactly the gap the live popup fills
+       this way. The top-up mode doesn't get one — its own title already reads "Out of credits". */
+    .ooc-alert { display: flex; align-items: center; justify-content: center; gap: 7px; padding: 11px 14px; background: color-mix(in srgb, var(--bai-danger) 12%, var(--bai-card)); color: var(--bai-danger); font-size: 10px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; border-bottom: 1px solid color-mix(in srgb, var(--bai-danger) 20%, transparent); }
+    .ooc-alert svg { flex-shrink: 0; }
     .bai-set-divider { height: 1px; background: var(--bai-line); margin: 1px 0; }
     .bai-set-field { display: flex; flex-direction: column; gap: 5px; }
     .bai-set-field-label { font-size: 10.5px; color: var(--bai-dim); }
-    .bai-set-model-row { display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
+    .bai-set-model-row { position: relative; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }   /* position:relative = the anchor for .rowmenu below */
     .bai-set-model-row .v { font-size: 10.5px; color: var(--bai-text-hi); }
-    .bai-set-model-list { display: flex; flex-direction: column; gap: 1px; margin-top: 7px; border: 1px solid var(--bai-line); border-radius: 8px; overflow: hidden; }
-    .bai-set-model-list div { padding: 9px 12px; font-size: 10.5px; cursor: pointer; background: var(--bai-input-bg); transition: background 0.15s; }
-    .bai-set-model-list div:hover { background: var(--bai-hover); }
+    /* Settings row-pickers (Provider / AI Model / Default model) are real floating dropdowns (PM: "a simple
+       dropdown should be more suitable in case we add more models in the future"). They replace an inline
+       expanding list that pushed the whole card taller on every open. Deliberately reuses the shared
+       .bai-menu surface + .bai-menu-item/.mk rows the header's own model picker already uses — one dropdown
+       language across the app instead of a second look-alike; only the anchoring differs, since .bai-menu
+       itself is built to open UPWARD off a header/footer trigger. Two-class selectors, so they beat
+       .bai-menu's own top/bottom regardless of source order. .flip = the no-room-below case, applied by
+       settingsPicker() after measuring the real scroll container. */
+    .bai-menu.rowmenu { top: calc(100% + 6px); bottom: auto; left: 0; right: 0; max-height: 170px; overflow-y: auto; scrollbar-width: none; }
+    .bai-menu.rowmenu.flip { top: auto; bottom: calc(100% + 6px); }
+    .bai-menu.rowmenu::-webkit-scrollbar { width: 0; height: 0; display: none; }
     .bai-set-save-confirm { font-size: 10px; color: var(--bai-ok); text-align: center; display: none; }
     .bai-wm { display: flex; align-items: center; min-width: 0; overflow: hidden; color: var(--bai-text-bright); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: -0.5px; }   /* static brand — no longer a switcher */
     .bai-wm #baiTitle { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -1420,6 +1473,7 @@
       function dismissLoginGate() { if (loginStep !== 'claim') return; pendingSendText = null; closeLoginGate(); }
       function renderLoginGate() {
         var el = loginGateCardEl; el.innerHTML = '';
+        el.classList.toggle('lg-offer', loginStep === 'claim');   // offer treatment on the claim step only — the rest are status steps
         if (loginStep === 'claim') {
           el.innerHTML =
             '<button class="lg-close" id="lgCloseBtn" type="button" aria-label="Close">' + iconSvg('<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>', 13) + '</button>' +
@@ -1640,7 +1694,7 @@
 
           var upCard = document.createElement('div'); upCard.className = 'bai-set-card'; upCard.style.margin = '0';
           upCard.innerHTML =
-            '<div class="bai-set-card-head"><span class="ic">✦</span><span class="info"><b>Get Prime</b><span>' + PRIME_CREDIT_ALLOWANCE.toLocaleString('en-US') + ' AI credits every cycle</span></span></div>' +
+            '<div class="bai-set-card-head"><span class="ic">✦</span><span class="info"><b>Get Prime</b><span>' + PRIME_CREDIT_ALLOWANCE.toLocaleString('en-US') + ' AI credits every month</span></span></div>' +   /* PM: "every cycle" reads technical — same wording fix as the upsell popup, kept in sync here so the two Prime pitches don't diverge */
             '<div style="font-size:10.5px;font-weight:600;color:var(--bai-dim);cursor:pointer;">View all benefits ›</div>';   // visually present, intentionally inert — same rule as the purchase CTAs
           var primeBtn = document.createElement('button'); primeBtn.className = 'bai-set-btn primary hero'; primeBtn.style.width = '100%'; primeBtn.type = 'button'; primeBtn.textContent = 'Get Prime';
           upCard.appendChild(primeBtn);
@@ -1693,65 +1747,64 @@
       }
       function oocMode() { return !primeGeo ? 'byok' : (creditsPrime ? 'topup' : 'prime'); }
       function maybeOpenOocModal() { if (oocShownForThisZero) return; oocShownForThisZero = true; openOocModal(); }
+      // PM batch (29 Jul): both credit-related modes were rebuilt to their LIVE counterparts' structure —
+      // centred, led by the big gradient number — since the live popups are what users already recognise;
+      // the styling stays this file's own (see .ooc-offer). Single CTA in each: "Top up" and "manage
+      // credits" land on the same page, so two buttons were doing one job, and the own-key route stays
+      // reachable from Settings (and is still the ONLY action in the byok mode below, so it's never lost).
       function openOocModal() {
         var mode = oocMode();
-        // Correction (designer: "it should be more action-personalised to what we want the user to do" — same
-        // spirit as the credits-screen redesign, applied to this surface's own job, not a copy-paste of that
-        // one's ring+card treatment. This modal only ever appears at credits===0 — a gauge here would always
-        // render empty, informing nothing a gauge is supposed to communicate a RANGE for. What this surface
-        // actually needed: a title that names the SITUATION+intended action instead of repeating the generic
-        // trigger condition in all 3 modes, a small header icon (same accent-chip recipe as the credits
-        // screen's Get-Prime/BYOK cards — key = byok, ✦ = topup/prime, since ✦ already means "Prime-related"
-        // there, not "upsell-only", so reusing it for topup's "you HAVE Prime, temporarily out" case holds),
-        // and the one concrete number each mode is actually offering pulled out of flat prose into emphasis.
-        var TITLES = { byok: 'Add your own key', topup: 'Out of Prime credits', prime: 'Out of free credits' };
-        var headIcon = '<span class="tgm-ic-acc">' + (mode === 'byok' ? iconSvg(KEY_PATH, 12) : '✦') + '</span>';
-        var V = {
-          byok: {
-            // Correction: non-Prime geo still starts with 500 free credits (recomputeCreditsTier) — this
-            // modal appears once those run out, not because the plan itself has zero balance. The old copy
-            // ("no credit balance to draw from") claimed the latter, which is false.
-            body: 'You’ve used your available AI credits. Prime isn’t available in this region, so add your own API key to continue using BlueAI.',
-            actions: [ { id: 'oocByokCta', label: 'Add API key', cls: 'primary' } ],
-            // Correction: reassurance for the one-and-only path in this variant — reduces "am I locked in?"
-            // hesitation before adding a key. Only shown here since byok is the sole action; topup/prime
-            // treat the key route as a secondary escape hatch, not the thing being asked of the user.
-            hint: 'You can manage your key later in Settings.'
-          },
-          topup: {
-            // Correction: "renews in 11 days" is established canonical language (appears consistently across
-            // the reference's topup popup, Prime breakdown, and paused-Prime card) — a fixed illustrative
-            // detail like the credit numbers themselves, not a fabricated one-off like real pricing would be.
-            // The exact renewal window is the one fact worth a glance instead of a read, so it's the emphasis.
-            body: 'Your Prime AI credits have run out for this cycle — they <b style="color:var(--bai-accent);">renew in 11 days</b>. Top up now to keep going, or connect your own key instead.',
-            actions: [
-              { id: 'oocPrimaryCta', label: 'Top up credits', cls: 'primary' },
-              { id: 'oocByokCta', label: 'Add / manage own key', cls: 'secondary' },
-            ]
-          },
-          prime: {
-            // Correction: names the actual number now that it's confirmed (matches the AI Credits screen's
-            // own upsell copy) instead of the vague "a much larger credit balance." Now also emphasized —
-            // the number IS the pitch, it shouldn't sit flat in the middle of a sentence.
-            body: 'Free accounts get a smaller AI allowance. Become a Prime member for <b style="color:var(--bai-accent);">5,000 credits</b> every cycle, or connect your own key instead.',
-            actions: [
-              { id: 'oocPrimaryCta', label: 'Get Prime', cls: 'primary' },
-              { id: 'oocByokCta', label: 'Add / manage own key', cls: 'secondary' },
-            ]
-          },
-        }[mode];
-        oocModalCardEl.innerHTML =
-          stdModalHead(TITLES[mode], 'oocModalClose', headIcon) +
-          '<div class="tgm-body"><p>' + V.body + '</p>' +
-            '<div class="bai-modalact-group">' +
-              V.actions.map(function (a) { return '<button class="bai-modalact ' + a.cls + '" id="' + a.id + '" type="button">' + a.label + '</button>'; }).join('') +
-            '</div>' +
-            (V.hint ? '<span class="tgm-hint center">' + iconSvg('<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>', 12) + V.hint + '</span>' : '') +
-          '</div>';
+        oocModalCardEl.classList.toggle('ooc-offer', mode !== 'byok');
+        if (mode === 'byok') {
+          // Non-Prime geo. Keeps the left-aligned instruction layout: this mode is a "do this to continue"
+          // message with no credit number to lead with, so the centred offer card genuinely doesn't apply,
+          // and PM scoped this one to copy only. Copy: dropped the "Prime isn't available in this region"
+          // clause — the regional reason isn't what makes the user act, the action is.
+          oocModalCardEl.innerHTML =
+            stdModalHead('Add your own key', 'oocModalClose', '<span class="tgm-ic-acc">' + iconSvg(KEY_PATH, 12) + '</span>') +
+            '<div class="tgm-body"><p>You’ve used your available AI credits. Add your own API key to continue using BlueAI.</p>' +
+              '<div class="bai-modalact-group"><button class="bai-modalact primary" id="oocByokCta" type="button">Add API key</button></div>' +
+              '<span class="tgm-hint center">' + iconSvg('<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>', 12) + 'You can manage your key later in Settings.</span>' +
+            '</div>';
+        } else {
+          // Close sits INSIDE .tgm-body (which is position:relative) rather than on the card, so it lands
+          // below the alert strip when one is present instead of on top of it — and is unchanged where there
+          // isn't one, since the body starts at the card's top edge in that case.
+          var closeHtml = '<button class="lg-close" id="oocModalClose" type="button" aria-label="Close">' + iconSvg('<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>', 13) + '</button>';
+          if (mode === 'topup') {
+            // Prime member, balance spent. No renewal line: the live popup doesn't carry one, and "AI
+            // Credits" (never "Prime credits") is the sanctioned name for the balance.
+            oocModalCardEl.innerHTML =
+              '<div class="tgm-body">' + closeHtml +
+                '<div class="ooc-num"><span class="spark">✦</span><span class="lg-credits">0</span></div>' +
+                '<div class="lg-div"></div>' +
+                '<div class="lg-h">Out of credits</div>' +
+                '<p>You’ve used all your AI credits. Top up to continue chatting and complete tasks.</p>' +
+                '<button class="bai-modalact primary" id="oocPrimaryCta" type="button">Top Up' + iconSvg('<path d="M7 17 17 7M7 7h10v10"/>', 13) + '</button>' +
+              '</div>';
+          } else {
+            // Free account in a Prime geo — the subscribe pitch. Allowance is read from
+            // PRIME_CREDIT_ALLOWANCE (unformatted, as the live popup shows it) so the headline number can't
+            // drift from the one the credits screen and tier math already use.
+            oocModalCardEl.innerHTML =
+              '<div class="ooc-alert">' + iconSvg('<path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/>', 13) + 'Not enough credits</div>' +
+              '<div class="tgm-body">' + closeHtml +
+                '<div class="lg-s">BlueAI runs on credits</div>' +
+                '<div class="lg-h">Get AI Credits with Prime</div>' +
+                '<div class="lg-div"></div>' +
+                '<div class="lg-credits">' + PRIME_CREDIT_ALLOWANCE + '</div>' +
+                '<div class="lg-title-group"><div class="ooc-credlabel">AI Credits</div><div class="lg-s">every month</div></div>' +
+                '<div class="ooc-link">View all benefits &rsaquo;</div>' +
+                '<div class="lg-div"></div>' +
+                '<button class="bai-modalact primary" id="oocPrimaryCta" type="button">Try for $3.99 &rsaquo;</button>' +
+                '<div class="ooc-foot">$7.99 next month onwards.</div>' +
+              '</div>';
+          }
+        }
         document.getElementById('oocModalClose').addEventListener('click', closeOocModal);
-        // Correction (kept): the purchase CTA (#oocPrimaryCta, topup/prime only) has no destination wired
-        // (design-screen library, not a real checkout) — fully active styling, no disabled/opacity/tooltip,
-        // intentionally no click listener so tapping it is a visual no-op.
+        // Correction (kept): the purchase CTA (#oocPrimaryCta, topup/prime only) and "View all benefits"
+        // have no destination wired (design-screen library, not a real checkout) — fully active styling, no
+        // disabled/opacity/tooltip, intentionally no click listener so tapping them is a visual no-op.
         var byokBtn = document.getElementById('oocByokCta');
         if (byokBtn) byokBtn.addEventListener('click', function () { closeOocModal(); closeMenus(); goToSettingsRoute(); highlightByokCard(); });
         oocModalEl.classList.add('on');
@@ -1772,6 +1825,11 @@
         if (typeof sideHelpMenuEl !== 'undefined' && sideHelpMenuEl) sideHelpMenuEl.classList.remove('open');
         if (typeof acctMenuEl !== 'undefined' && acctMenuEl) acctMenuEl.classList.remove('open');
         if (typeof sideAcctMenuEl !== 'undefined' && sideAcctMenuEl) sideAcctMenuEl.classList.remove('open');
+        // The three Settings row-pickers are flag-driven overlays, so dismissing them means a re-render, not
+        // just dropping a class. Same typeof guard as above: with `var` hoisting these read as 'undefined'
+        // until their own line runs, which is exactly the "script hasn't got there yet" skip we want.
+        if (typeof byokProviderPickerOpen !== 'undefined' && (byokProviderPickerOpen || byokModelPickerOpen)) { byokProviderPickerOpen = false; byokModelPickerOpen = false; renderByok(); }
+        if (typeof modelPickerOpen !== 'undefined' && modelPickerOpen) { modelPickerOpen = false; renderDefaultModelRow(); }
       }
       function fillMenu(menu, items, cur, pick, title, desc) {
         menu.innerHTML = '';
@@ -2725,6 +2783,31 @@
       // Correction: BYOK is per-model, not just per-provider — the reference shows a provider pill AND a
       // model pill together (e.g. "Anthropic" + "claude-haiku-4-5"). One reasonable model list per provider.
       var BYOK_MODELS = { Anthropic: ['claude-haiku-4-5', 'claude-sonnet-5', 'claude-opus-4-8'], OpenAI: ['gpt-5.4-mini', 'gpt-5.4'], Gemini: ['gemini-3.5-flash', 'gemini-3.5-pro'] };
+      // One floating dropdown shared by all three Settings row-pickers (PM: "a simple dropdown"). Renders
+      // into the ROW (which is position:relative) so it overlays instead of growing the card, and marks the
+      // current value with the same .mk chevron the header's model menu uses.
+      function settingsPicker(row, items, current, onPick) {
+        var menu = document.createElement('div'); menu.className = 'bai-menu rowmenu open';
+        items.forEach(function (it) {
+          var d = document.createElement('div'); d.className = 'bai-menu-item';
+          d.innerHTML = '<span class="mk">' + (it === current ? '›' : '') + '</span>' + it;
+          d.addEventListener('click', function (e) { e.stopPropagation(); onPick(it); });   // stopPropagation: the drawer-wide closeMenus() listener would otherwise re-render this away mid-pick
+          menu.appendChild(d);
+        });
+        row.appendChild(menu);
+        // Flip above the row when there's no room below inside whatever is ACTUALLY scrolling — .bai-set in
+        // wide mode, #baiGlobalRouteBody in compact (Settings is physically relocated between the two), so
+        // this walks up for the real clipper rather than assuming either. An overlay that opens into a
+        // clipped region would be worse than the inline list it replaced.
+        for (var clip = menu.parentElement; clip; clip = clip.parentElement) {
+          var oy = getComputedStyle(clip).overflowY;
+          if (oy !== 'auto' && oy !== 'scroll') continue;
+          var cr = clip.getBoundingClientRect(), mr = menu.getBoundingClientRect(), rr = row.getBoundingClientRect();
+          if (mr.bottom > cr.bottom && (rr.top - cr.top) > mr.height) menu.classList.add('flip');
+          break;
+        }
+        return menu;
+      }
       function renderByok() {
         var el = document.getElementById('baiByokCard'); el.innerHTML = '';
         var head = document.createElement('div'); head.className = 'bai-set-card-head';
@@ -2737,20 +2820,12 @@
           warn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg><span>No API key configured</span>';
           el.appendChild(warn);
           // Item 5 (PM): a dropdown scales better than a segmented row as more providers get added.
-          // Mirrors the AI Model picker just below (.bai-set-model-row/.bai-set-model-list) exactly.
+          // Now a real floating dropdown via settingsPicker(), same as the two model pickers.
           var provRow = document.createElement('div'); provRow.className = 'bai-set-model-row';
           provRow.innerHTML = '<span class="bai-set-field-label">Provider</span><span class="v">Select provider ›</span>';
-          provRow.addEventListener('click', function () { byokProviderPickerOpen = !byokProviderPickerOpen; renderByok(); });
+          provRow.addEventListener('click', function (e) { e.stopPropagation(); byokProviderPickerOpen = !byokProviderPickerOpen; renderByok(); });
           el.appendChild(provRow);
-          if (byokProviderPickerOpen) {
-            var plist = document.createElement('div'); plist.className = 'bai-set-model-list';
-            BYOK_PROVIDERS.forEach(function (p) {
-              var item = document.createElement('div'); item.textContent = p;
-              item.addEventListener('click', function () { stgByokProvider = p; byokProviderPickerOpen = false; renderByok(); });
-              plist.appendChild(item);
-            });
-            el.appendChild(plist);
-          }
+          if (byokProviderPickerOpen) settingsPicker(provRow, BYOK_PROVIDERS, null, function (p) { stgByokProvider = p; byokProviderPickerOpen = false; renderByok(); });
         } else if (!stgByokKey) {
           var sub = document.createElement('div'); sub.style.cssText = 'font-size:10.5px;color:var(--bai-text-hi);'; sub.textContent = stgByokProvider + ' API key'; el.appendChild(sub);
           var keyInput = document.createElement('input'); keyInput.className = 'bai-newitem-input'; keyInput.type = 'text'; keyInput.placeholder = 'Paste your API key'; el.appendChild(keyInput);
@@ -2777,17 +2852,9 @@
           // the AI Defaults card's own model row (renderDefaultModelRow) for a consistent interaction.
           var modelRow = document.createElement('div'); modelRow.className = 'bai-set-model-row';
           modelRow.innerHTML = '<span class="bai-set-field-label">AI Model</span><span class="v">' + stgByokModel + ' ›</span>';
-          modelRow.addEventListener('click', function () { byokModelPickerOpen = !byokModelPickerOpen; renderByok(); });
+          modelRow.addEventListener('click', function (e) { e.stopPropagation(); byokModelPickerOpen = !byokModelPickerOpen; renderByok(); });
           el.appendChild(modelRow);
-          if (byokModelPickerOpen) {
-            var mlist = document.createElement('div'); mlist.className = 'bai-set-model-list';
-            BYOK_MODELS[stgByokProvider].forEach(function (m) {
-              var item = document.createElement('div'); item.style.color = m === stgByokModel ? 'var(--bai-accent)' : 'var(--bai-text)'; item.textContent = (m === stgByokModel ? '› ' : '') + m;
-              item.addEventListener('click', function () { stgByokModel = m; byokModelPickerOpen = false; renderByok(); });
-              mlist.appendChild(item);
-            });
-            el.appendChild(mlist);
-          }
+          if (byokModelPickerOpen) settingsPicker(modelRow, BYOK_MODELS[stgByokProvider], stgByokModel, function (m) { stgByokModel = m; byokModelPickerOpen = false; renderByok(); });
         }
       }
       renderByok();
@@ -2797,16 +2864,9 @@
         var el = document.getElementById('baiDefaultModelRow'); el.innerHTML = '';
         var row = document.createElement('div'); row.className = 'bai-set-model-row';
         row.innerHTML = '<span class="bai-set-field-label">Default model</span><span class="v">' + defaultModel + ' ›</span>';
-        row.addEventListener('click', function () { modelPickerOpen = !modelPickerOpen; renderDefaultModelRow(); });
+        row.addEventListener('click', function (e) { e.stopPropagation(); modelPickerOpen = !modelPickerOpen; renderDefaultModelRow(); });
         el.appendChild(row);
-        if (!modelPickerOpen) return;
-        var list = document.createElement('div'); list.className = 'bai-set-model-list';
-        MODELS.forEach(function (m) {
-          var item = document.createElement('div'); item.style.color = m === defaultModel ? 'var(--bai-accent)' : 'var(--bai-text)'; item.textContent = (m === defaultModel ? '› ' : '') + m;
-          item.addEventListener('click', function () { defaultModel = m; modelPickerOpen = false; renderDefaultModelRow(); });
-          list.appendChild(item);
-        });
-        el.appendChild(list);
+        if (modelPickerOpen) settingsPicker(row, MODELS, defaultModel, function (m) { defaultModel = m; modelPickerOpen = false; renderDefaultModelRow(); });
       }
       renderDefaultModelRow();
       document.getElementById('baiSaveAiSettings').addEventListener('click', function () {
@@ -3583,7 +3643,11 @@
         // sideAcctMenuEl) — checking only the compact header's pair meant opening the sidebar's Help/
         // Account menu in wide mode and pressing Escape fell through to closePanel() instead, closing
         // the whole app window. Caught via a full smoke test across all 4 combos, not by inspection.
-        var anyMenuOpen = [modelMenu, helpMenuEl, acctMenuEl, sideHelpMenuEl, sideAcctMenuEl].some(function (m) { return m && m.classList.contains('open'); });
+        // The Settings row-pickers must be listed here too, for the same reason the sidebar's menu pair had
+        // to be: they're now real dropdowns, so Escape has to dismiss THEM rather than falling through to
+        // closePanel() and shutting the whole window. They're flag-driven, not class-driven, hence the || tail.
+        var anyMenuOpen = [modelMenu, helpMenuEl, acctMenuEl, sideHelpMenuEl, sideAcctMenuEl].some(function (m) { return m && m.classList.contains('open'); })
+          || byokProviderPickerOpen || byokModelPickerOpen || modelPickerOpen;
         if (anyMenuOpen) { closeMenus(); return; }
         // Part 6: the new global-route shell (Chat History/Profile/AI Credits/compact-Settings) is its own
         // overlay too — same class of bug as the sidebar-menu fix above if this is skipped (Escape would

@@ -5,6 +5,79 @@ resolved. Promoted to decisions.md / taste.md at audit passes, then wiped.
 Format: `YYYY-MM-DD HH:mm — <file> — <what changed> — Why: <one phrase>`
 
 --- Pending audit entries ---
+2026-07-29 17:37 — /blueai-desktop — Follow-up on the credit popups, 3 asks. (1) "We are missing not enough
+credits msg here" — I had SKIPPED that strip in the previous pass and said so out loud, reasoning the modal's
+own title covered it. Wrong call, and the PM's correction exposes why: in the Prime mode the title is an OFFER
+("Get AI Credits with Prime") which never states why the modal appeared, so the strip is the only thing
+carrying the trigger — precisely the case where it's load-bearing rather than redundant. Added it there and
+deliberately NOT to the top-up mode, whose own title already reads "Out of credits". Lesson: "the title
+already says it" only holds when the title is a STATUS; it fails when the title is a pitch.
+(2) "Star and zero needs to have centered horizontal from middle" — measured before touching anything, and the
+measurement disambiguated a genuinely ambiguous request: the ✦+0 GROUP was already dead-centred horizontally
+(0.0px off card centre), so that reading had nothing to fix; what was actually wrong was `align-items:baseline`
+on `.ooc-num` sitting the sparkle 6.0px BELOW the numeral's optical middle — i.e. the two weren't on a shared
+horizontal centre line, which is what the words describe. baseline -> center, re-measured at 0.0px. Also
+reported the third measurement I found and did NOT act on (the big "0" itself sits 13.4px right of card centre,
+because the sparkle occupies width to its left) — live centres the pair the same way, so that's intended, but
+worth naming rather than silently leaving.
+(3) "Do you think this modern terminal theme layout can be much better?" — opinion asked, so I gave one with a
+concrete diagnosis instead of just agreeing: the biggest gap was the gradient. `.lg-credits` uses
+accent -> accent-strong, which in LIGHT theme is #2258c9 -> #1a45a8 — two near-identical navies, so a "gradient"
+headline was rendering as flat fill next to live's blue->violet. Fixed by spanning accent -> #7c5cf0, the violet
+ALREADY in this palette (profile avatar, onboarding orbs) rather than introducing a colour; scoped to
+`.ooc-offer` so the login gate's own "500" is untouched (it's a different surface nobody asked about). Also:
+number 42->46px with -1.5px tracking, the same gradient on the "AI Credits" label, real grouping via divider
+margins + a tighter base gap (one uniform 11px gap made the three content groups read as one flat column), and
+an accent-tinted CTA shadow — tinted not black, same reasoning as the onboarding-shadow entry earlier today.
+Verified in both themes: banner `color-mix` adapts (light pink / dark maroon, red text both), gradient resolves
+to two genuinely different hues, alert absent in top-up mode, close button lands below the strip (it moved
+inside `.tgm-body`, which is now position:relative, so it's correct with AND without a strip). Zero console
+errors. — Why: two lessons worth keeping. A skip I flagged out loud still needs re-examining when challenged —
+flagging isn't the same as being right. And measuring an ambiguous layout complaint beats picking a reading:
+the numbers showed one of the two plausible interpretations had literally nothing wrong with it.
+2026-07-29 17:21 — /blueai-desktop — PM feedback batch on the credits/BYOK surfaces (4 items, 2 live-production
+reference screenshots supplied). Asked 3 clarifying questions BEFORE building rather than guessing, all 3
+material: (a) whether to carry the live popup's real prices ($3.99 trial / $7.99 thereafter) into a prototype
+that had never shown a currency figure — PM said yes, and it's consistent with this file's own precedent of
+treating live-build details ("renews in 11 days") as fixed illustrative data; (b) whether the secondary
+"Add / manage own key" button should go from BOTH credit popups or only the top-up one PM raised — PM said
+both; (c) item 3.3 (BYOK provider dropdown) was ALREADY shipped in the 28 Jul batch as a row+expanding list,
+so I asked what was actually wanted rather than either re-doing it or silently skipping — turned out PM wanted
+a REAL floating overlay, not the inline list. That third question is the load-bearing one: without it I'd have
+either no-op'd a real request or rebuilt something already done.
+Built: (1) Prime upsell + top-up popups rebuilt on the LIVE popups' structure (centred, led by the big
+gradient number) — and the key reuse find is that this file's login gate already solves exactly this "here's
+the credit offer, here's the CTA" card, so `.lg-credits`/`.lg-h`/`.lg-s`/`.lg-div`/`.lg-close` carried the
+whole layout and the only new CSS is one `.ooc-offer` positioning/centring block. That IS the literal answer
+to PM's "use the existing popup in the style of the new UI": live's CONTENT/structure, this file's OWN styling
+(kept `.bai-modalact`'s 9px button rather than copying live's full pill, since the pill isn't this design
+system's button geometry). Headline number reads from `PRIME_CREDIT_ALLOWANCE` so it can't drift from the
+credits screen or the tier math. (2) Both popups down to a single CTA; the own-key route is still the sole
+action in the non-Prime-geo mode, so it's never actually lost. (3) Copy: dropped "Prime isn't available in
+this region" (the regional reason isn't what makes someone act), dropped the renewal line, "Prime credits" ->
+"AI Credits", and swept "every cycle" -> "every month" on the AI Credits screen's Get-Prime card too — PM
+raised it under the popup, but leaving the other Prime pitch saying "cycle" would just re-open the same note.
+(4) The BYOK mode deliberately KEEPS its left-aligned instruction layout while the other two went centred:
+it has no credit number to lead with, and PM scoped that mode to copy only — flagged rather than silently
+harmonised. (5) All three Settings row-pickers (Provider, BYOK AI Model, Default model) converted to real
+floating dropdowns via one shared `settingsPicker()`, reusing the `.bai-menu` surface + `.bai-menu-item`/`.mk`
+rows the header's own model picker already uses (one dropdown language, not a second look-alike; only the
+anchoring differs). Converted all three, not just the BYOK pair PM named, because leaving two
+visually-identical rows behaving differently in the same Settings screen is itself a defect.
+Two things I went looking for because this session already taught them: (i) an overlay inside a scrolling
+pane can open into a clipped region — so `settingsPicker()` walks up for the REAL scroll container (`.bai-set`
+in wide, `#baiGlobalRouteBody` in compact, since Settings is physically relocated between the two) and flips
+above the row when there's no room below; verified it flips at the bottom of the scroll and does NOT flip
+mid-pane, and that the menu sits fully inside the clipper (79px headroom) in compact. (ii) Escape had to be
+taught about these pickers or it would fall through to `closePanel()` and close the whole window — the exact
+bug class already documented at the sidebar-menu fix; added them to both `closeMenus()` and the Escape guard,
+and verified Escape now dismisses the dropdown with the window still open.
+Verified: all 3 OOC modes in light AND dark, the own-key CTA still routes to Settings + highlights the card,
+full BYOK flow (pick provider -> paste key -> save -> model defaults -> switch model), the `›` current-value
+marker, drawer-click close, and — the actual point of item 4 — card height byte-identical open vs closed
+(`grewBy: 0`) on all three pickers, where the old inline list grew it every time. Zero console errors. — Why:
+the three questions cost one round trip and prevented three wrong builds; and "already done" is a legitimate
+answer to check for, not something to quietly re-implement or quietly skip.
 2026-07-29 02:13 — /blueai-desktop — Chat input placeholder color, light theme only (designer: "is the
 placeholder color too much for an input bar placeholder?"). Didn't answer by eye — computed actual WCAG
 contrast before agreeing: `--bai-faint` (shared by both themes) resolves to ~4.7:1 against the light input's
