@@ -5,6 +5,41 @@ resolved. Promoted to decisions.md / taste.md at audit passes, then wiped.
 Format: `YYYY-MM-DD HH:mm — <file> — <what changed> — Why: <one phrase>`
 
 --- Pending audit entries ---
+2026-08-01 — /blueai-desktop — **DS Phase 4: date/time picker + Skill create flows documented.** Coverage
+**186/330 (56%) → 222/330 (67%)**. Two sections, both markup grep-verified before writing.
+Picker: documented as a deliberately TWO-STEP flow, with the reasoning that matters — an earlier combined
+calendar+clock layout needed re-tuning for every width (oval cells, sub-410px overflow, a stacking threshold,
+a pulse to hint the time step) and all of those were symptoms of ONE premise (two things sharing one space),
+so the premise went rather than being patched again. Called out 3 things that read as trivia but are
+load-bearing: (1) day cells are a fixed 214px grid (7×28) not `flex:1`, because a stretched cell at fixed
+height renders as an OVAL under `border-radius:50%` — measured the specimen at exactly 28×28 to confirm the
+circle is a real circle; (2) `.bai-dt-col`'s `::before`/`::after` spacers are what let 00 and 59 reach the
+centre band — the empty space above `00` in the specimen is load-bearing, not a gap, and I said so because it
+LOOKS like a bug; (3) `.bai-dt-done` is `display:none` until `.step-time`, i.e. you can't confirm before
+reaching the time step, so the button doesn't exist yet rather than sitting disabled. Built the specimen cells
+the way the product builds them (real `.bai-dt-day` buttons with `.outside`/`.today`/`.selected`, zero-padded
+`.bai-dt-colval.on`) and replicated `scrollColTo`'s centring — verified via geometry that the `.on` value is
+actually centred in the selection band, not just present.
+Skills: documented WHY it has a method switcher at all (three real ways in — write / ZIP / BlueAI-drafts —
+versus Scheduled's one; the count follows real methods, not symmetry) and that the third tab disappears when
+editing, because "create with BlueAI" isn't a way to edit. Also that `.bai-ai-create` is deliberately a
+HANDOFF (explains, then seeds the prompt and sends you to Chat) rather than a second composer, and that it
+reuses `.bai-onb-cta` instead of introducing another button.
+**Caught a real error in my own copy, from the render rather than the code:** I'd written that
+`.bai-create-tab.on` "draws the 2px accent underline" — the screenshot showed a solid blue fill. Checked the
+CSS: `.on` is `background: var(--bai-accent)`, and the container is an inset padded box. I had described
+`.bai-tab` (the mode strip, which genuinely does use a 2px underline) while looking at `.bai-create-tab`.
+Fixed, and turned it into the useful part: these are TWO DIFFERENT MODELS sharing the word "tab" —
+`.bai-create-tabs` is architecturally a segmented control (same recipe as `.bai-seg`: inset container, active =
+filled, icon-above-label at 9.5px), `.bai-tab` is a real tab strip (horizontal 12px, underline). The guide now
+says which to pick by intent: switching a MODE vs picking an INPUT METHOD.
+Also corrected the "Not yet covered" paragraph, which still listed the shell/onboarding/picker/Skills as
+undocumented after I'd just documented them — and made it defer to the live coverage list rather than
+restating a count that will rot. Verified: 0 empty SVGs, no h-overflow, zero JS errors, product unaffected.
+— Why: fourth round, same lesson from a new angle. Every prior catch came from grepping the source BEFORE
+writing; this one came from comparing the rendered specimen AGAINST what I'd already written — a different
+check that catches a different error class (confidently-wrong prose about real markup). Worth keeping both:
+grep before writing, then read the render back against the words.
 2026-08-01 — /blueai-desktop — **DS Phase 3: documented the shell + full-screen states.** Added 8 sections —
 App shell (titlebar/header/mode strip/screen title/status row), Wide-mode sidebar, Routes & subpanes, Chat
 composer, Empty states, Gates & offer card, Onboarding & tour, Dev preview panel. Coverage moved from

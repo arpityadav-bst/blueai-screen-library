@@ -133,6 +133,8 @@
     <a href="#badges">Badges &amp; status</a>
     <a href="#credits">Credits &amp; gauge</a>
     <a href="#overlays">Overlays</a>
+    <a href="#datetime">Date &amp; time picker</a>
+    <a href="#skills">Skill create flows</a>
     <a href="#feedback">Feedback &amp; loading</a>
     <a href="#empty">Empty states</a>
 
@@ -769,12 +771,181 @@
       </div>
     </section>
 
+    <section class="sg-sec" id="datetime">
+      <h2 class="sg-sech">Date &amp; time picker</h2>
+      <p class="sg-secnote">
+        A <strong>two-step</strong> picker: choose a date, then a time. That structure is the whole design
+        decision — an earlier version showed calendar and clock side by side and needed re-tuning for every
+        width (oval day cells, overflow below ~410px, a stacking threshold, a pulse to hint the time step).
+        All of those were symptoms of one premise — two things sharing one space — so the premise went instead
+        of being patched further. Step 2's header <em>is</em> the back control: it shows the date you picked and
+        returns you to step 1, rather than adding a separate nav element.
+      </p>
+      <div class="sg-flag" style="margin:0 0 14px;">
+        <b>Three things that look like details but aren't.</b>
+        <br /><br />
+        <b>1.</b> Day cells are a fixed <code>214px</code> grid (7&times;28px) rather than
+        <code>flex:1</code> — a stretched cell with a fixed height renders as an <em>oval</em> under
+        <code>border-radius:50%</code>, so a guaranteed square is what makes the circle a circle.
+        <br /><br />
+        <b>2.</b> <code>.bai-dt-col</code> uses <code>::before</code>/<code>::after</code> spacers so the first
+        and last values can scroll to the centre band; without them you can't select 00 or 59. That's the empty
+        space visible above <code>00</code> in the minutes column below — it's load-bearing, not a gap.
+        <br /><br />
+        <b>3.</b> <code>.bai-dt-done</code> is <code>display:none</code> until <code>.step-time</code> — you
+        can't confirm before you've reached the time step, so the button doesn't exist yet rather than sitting
+        there disabled.
+      </div>
+
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-dt-field</span><span class="sg-role">The closed control. <code>.bai-dt-value.placeholder</code> is the unset state; <code>.open</code> rotates <code>.bai-dt-ar</code> and highlights the border.</span></div>
+        <div class="sg-canvas bai-scope sg-col sg-narrow">
+          <div class="bai-dt-field sg-w">
+            <span class="ic" data-icon="calendar" data-size="14"></span>
+            <span class="bai-dt-value placeholder">Pick a date &amp; time</span>
+            <span class="bai-dt-ar" data-icon="chevron" data-size="12"></span>
+          </div>
+          <div class="bai-dt-field open sg-w">
+            <span class="ic" data-icon="calendar" data-size="14"></span>
+            <span class="bai-dt-value">28 Jul 2026, 09:00</span>
+            <span class="bai-dt-ar" data-icon="chevron" data-size="12"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-dt-step-date</span> <span class="sg-cls">.bai-dt-day</span><span class="sg-role">Step 1. <code>.bai-dt-calhead</code> month nav (text <code>‹ ›</code> glyphs, not SVG), <code>.bai-dt-weekdays</code>, then the grid — <code>.outside</code> for adjacent months, <code>.today</code> ringed, <code>.selected</code> filled.</span></div>
+        <div class="sg-canvas bai-scope" style="align-items:flex-start;">
+          <div class="bai-dt-picker" style="display:block;position:relative;">
+            <div class="bai-dt-step-date">
+              <div class="bai-dt-calhead">
+                <button type="button" class="bai-dt-navbtn">&lsaquo;</button>
+                <span>July 2026</span>
+                <button type="button" class="bai-dt-navbtn">&rsaquo;</button>
+              </div>
+              <div class="bai-dt-weekdays"><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span><span>Su</span></div>
+              <div class="bai-dt-days" id="sgDtDays"></div>
+            </div>
+            <button type="button" class="bai-dt-done">Done</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-dt-step-time</span> <span class="sg-cls">.bai-dt-col</span> <span class="sg-cls">.bai-dt-selband</span><span class="sg-role">Step 2. The back header carries the chosen date; two scrolling columns share one selection band (two hairlines, no fill) with <code>.bai-dt-colval.on</code> centred in it.</span></div>
+        <div class="sg-canvas bai-scope" style="align-items:flex-start;">
+          <div class="bai-dt-picker step-time" style="display:block;position:relative;">
+            <div class="bai-dt-step-time">
+              <button type="button" class="bai-dt-backhead">
+                <span class="bai-dt-backar"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></span>
+                <span>28 Jul</span>
+              </button>
+              <div class="bai-dt-timerow">
+                <div class="bai-dt-col" id="sgDtHours"></div>
+                <span class="bai-dt-colsep">:</span>
+                <div class="bai-dt-col" id="sgDtMins"></div>
+                <div class="bai-dt-selband"></div>
+              </div>
+            </div>
+            <button type="button" class="bai-dt-done">Done</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sg-sec" id="skills">
+      <h2 class="sg-sech">Skill create flows</h2>
+      <p class="sg-secnote">
+        Skills is the one area with <strong>three ways in</strong>, which is why it gets a tab switcher where
+        Scheduled (one method) does not — the tab count follows the number of real methods, not symmetry.
+        Write instructions, upload a ZIP, or have BlueAI draft it. Editing an existing skill drops the third
+        tab, because "create with BlueAI" isn't a way to edit.
+      </p>
+
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-create-tabs</span> <span class="sg-cls">.bai-create-tab</span><span class="sg-role">Method switcher — despite the name, this is a <strong>segmented control</strong>, not a tab strip: inset container, <code>.on</code> is a <em>solid accent fill</em>, and each option stacks its icon above a 9.5px label. Compare <code>.bai-tab</code> in App shell, which is a real tab strip (horizontal 12px, 2px underline). Same word, two different models — pick by whether you're switching a <em>mode</em> (tabs) or picking an <em>input method</em> (this).</span></div>
+        <div class="sg-canvas bai-scope" style="padding:0 14px;display:block;">
+          <div class="bai-create-tabs">
+            <button type="button" class="bai-create-tab on"><span class="ic" data-icon="edit" data-size="15"></span>Write instructions</button>
+            <button type="button" class="bai-create-tab"><span class="ic" data-icon="upload" data-size="15"></span>Upload a ZIP file</button>
+            <button type="button" class="bai-create-tab"><span class="ic" data-icon="gear" data-size="15"></span>Create with BlueAI</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-upload-row</span> <span class="sg-cls">.bai-upload-hint</span> <span class="sg-cls">.bai-upload-reqs</span><span class="sg-role">The ZIP path. A styled row stands in for the hidden <code>&lt;input type="file"&gt;</code>; the hint below it always states the real state ("No file chosen" → "Selected: …"), never an implied one.</span></div>
+        <div class="sg-canvas bai-scope sg-col sg-narrow">
+          <div class="bai-upload-row sg-w" data-icon="upload" data-size="16"><span>Upload skill.zip</span></div>
+          <div class="bai-upload-hint sg-w">No file chosen</div>
+          <div class="bai-upload-hint sg-w" style="color:var(--bai-text-hi);">Selected: my-skill.zip</div>
+          <div class="bai-upload-reqs sg-w">
+            <b>File requirements</b>
+            <ul>
+              <li>ZIP file must be less than 20MB.</li>
+              <li>ZIP file that includes exactly one SKILL.md file at root level.</li>
+              <li>SKILL.md contains a skill name, description formatted in YAML and instructions in markdown.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-ai-create</span><span class="sg-role">The BlueAI-drafts-it path. Deliberately a <em>handoff</em>, not a second composer: it explains and then sends you to Chat with the prompt pre-seeded. Reuses <code>.bai-onb-cta</code> rather than introducing another button.</span></div>
+        <div class="sg-canvas bai-scope" style="padding:0;display:block;">
+          <div class="bai-ai-create">
+            <div class="ic" data-icon="gear" data-size="20"></div>
+            <p>Describe the skill you want in plain language, and BlueAI will draft the instructions for you.</p>
+            <button class="bai-onb-cta" type="button" style="max-width:180px;animation:none;">Start in Chat &rsaquo;</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-skillcard</span> <span class="sg-cls">.bai-sk-pillbtn</span> <span class="sg-cls">.bai-sk-link</span><span class="sg-role">A skill row. Owned skills get bordered icon+label pills (Edit / Delete <code>.danger</code>) grouped tightly in <code>.sk-manage</code>; non-owned get a plain "Details ›". The enable toggle sits in the title row, not the footer.</span></div>
+        <div class="sg-canvas bai-scope sg-col sg-narrow">
+          <div class="bai-skillcard sg-w">
+            <div class="sk-content">
+              <div class="sk-top"><span class="sk-ic" data-icon="bolt" data-size="13"></span><b>Redeem game codes</b><span class="bai-tgl on" role="button" aria-label="Toggle skill"><i></i></span></div>
+              <div class="sk-desc">Finds working codes for a game and applies them to your account.</div>
+            </div>
+            <div class="sk-foot">
+              <button class="bai-sk-try" type="button">Try</button>
+              <div class="sk-manage">
+                <button class="bai-sk-pillbtn" type="button" data-icon="edit" data-size="12">Edit</button>
+                <button class="bai-sk-pillbtn danger" type="button" data-icon="trash" data-size="12">Delete</button>
+              </div>
+            </div>
+          </div>
+          <div class="bai-skillcard sg-w">
+            <div class="sk-content">
+              <div class="sk-top"><span class="sk-ic" data-icon="bolt" data-size="13"></span><b>Morning brief</b><span class="bai-tgl" role="button" aria-label="Toggle skill"><i></i></span></div>
+              <div class="sk-desc">Summarises overnight activity across your apps.</div>
+            </div>
+            <div class="sk-foot">
+              <button class="bai-sk-try" type="button">Try</button>
+              <button class="bai-sk-link" type="button">Details &rsaquo;</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-sticky-cta</span><span class="sg-role">Pinned footer action for the Skills list — bordered off from the scrolling content above it so it stays reachable at any scroll position.</span></div>
+        <div class="sg-canvas bai-scope" style="padding:0;display:block;">
+          <div class="bai-sticky-cta"><button type="button">Build a custom skill</button></div>
+        </div>
+      </div>
+    </section>
+
     <section class="sg-sec" id="feedback">
       <h2 class="sg-sech">Feedback &amp; loading</h2>
       <div class="sg-spec">
-        <div class="sg-spechead"><span class="sg-cls">.bai-spin</span> <span class="sg-cls">.bai-fb</span> <span class="sg-cls">.bai-fb-chip</span><span class="sg-role">Inline spinner; per-reply thumbs with follow-up reason chips.</span></div>
+        <div class="sg-spechead"><span class="sg-cls">.bai-spin</span> <span class="sg-cls">.bai-shimmer</span> <span class="sg-cls">.bai-fb</span> <span class="sg-cls">.bai-fb-chip</span><span class="sg-role">Inline spinner; skeleton rows (a <code>.bai-item-card</code> plus <code>.bai-shimmer</code> — the real card shape, so nothing shifts when content lands); per-reply thumbs with follow-up reason chips.</span></div>
         <div class="sg-canvas bai-scope sg-col sg-narrow">
           <div style="display:flex;align-items:center;gap:9px;"><span class="bai-spin"></span><span style="font-size:11px;color:var(--bai-dim);">Checking your key…</span></div>
+          <div class="bai-item-card bai-shimmer sg-w"><span class="ic"></span><span class="info"><b class="sh-line"></b><span class="sh-line short"></span></span></div>
+          <div class="bai-item-card bai-shimmer sg-w"><span class="ic"></span><span class="info"><b class="sh-line"></b><span class="sh-line short"></span></span></div>
           <div class="bai-fb">
             <button class="bai-fb-btn" type="button" data-icon="thumbUp" data-size="13"></button>
             <button class="bai-fb-btn" type="button" data-icon="thumbDown" data-size="13"></button>
@@ -999,10 +1170,11 @@
         it is a real change to the product and needs its own pass. Every number here is computed at load, so
         it cannot fall behind the stylesheet.
         <br /><br />
-        <b>Not yet covered here.</b> The app shell (titlebar, header, tab strip, sidebar), the onboarding
-        sequence and nav tour, the Scheduled date/time picker, Skills create/upload flows, the boot animation,
-        and the dev-only Preview panel. All exist in <code>blueai-desktop.css</code>; none are documented on
-        this page yet — see the live coverage count below.
+        <b>Not yet covered here.</b> The boot animation (<code>.bai-boot</code>), the outer desktop scene
+        (<code>.stage</code> / <code>.bs-window</code> / <code>.canvas</code> — scaffolding for the demo, not
+        product UI), the Scheduled list's own card family (<code>.bai-sched-*</code>), and assorted one-off
+        descendants. All exist in <code>blueai-desktop.css</code>; the coverage block above lists every one
+        by name, so trust that list over this paragraph.
         <br /><br />
         <b>Markup is the one thing still copied.</b> The CSS and the icon set are shared with the product, but
         each specimen's HTML is hand-written here because the product builds most of it in JS. That's a real
@@ -1134,7 +1306,36 @@
     document.querySelectorAll('[data-live-duppairs]').forEach(function (e) { e.textContent = dupPairs; });
     var topRad = RADII.slice().sort(function (a, b) { return b[1] - a[1]; })[0];
     document.querySelectorAll('[data-live-toprad]').forEach(function (e) { e.textContent = topRad[0] + ' (' + topRad[1] + ' uses)'; });
+    renderPicker();
     renderCoverage(css);
+  }
+
+  // ---- picker specimens. Cells/values are built the way the product builds them (a .bai-dt-day
+  //      button per cell with .outside/.today/.selected; zero-padded .bai-dt-colval with .on) so the
+  //      state classes are shown on real elements rather than described in prose. ----
+  function renderPicker() {
+    var pad2 = function (n) { return (n < 10 ? '0' : '') + n; };
+    // July 2026 starts on a Wednesday, so the grid opens with 2 trailing June days
+    var days = [], d;
+    for (d = 29; d <= 30; d++) days.push({ n: d, outside: true });
+    for (d = 1; d <= 31; d++) days.push({ n: d, today: d === 24, selected: d === 28 });
+    for (d = 1; days.length % 7 !== 0; d++) days.push({ n: d, outside: true });
+    document.getElementById('sgDtDays').innerHTML = days.map(function (x) {
+      var cls = 'bai-dt-day' + (x.outside ? ' outside' : '') + (x.today ? ' today' : '') + (x.selected ? ' selected' : '');
+      return '<button type="button" class="' + cls + '">' + x.n + '</button>';
+    }).join('');
+    function col(host, max, current) {
+      var out = [];
+      for (var v = 0; v <= max; v++) out.push('<div class="bai-dt-colval' + (v === current ? ' on' : '') + '">' + pad2(v) + '</div>');
+      document.getElementById(host).innerHTML = out.join('');
+    }
+    col('sgDtHours', 23, 9);
+    col('sgDtMins', 59, 0);
+    // centre the selected value under the selection band, same as the product's scrollColTo()
+    ['sgDtHours', 'sgDtMins'].forEach(function (id) {
+      var el = document.getElementById(id), on = el.querySelector('.bai-dt-colval.on');
+      if (on) el.scrollTop = on.offsetTop - (el.clientHeight - on.offsetHeight) / 2;
+    });
   }
 
   // ---- self-measured coverage: every base class the stylesheet defines vs. the ones this page

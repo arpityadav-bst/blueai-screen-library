@@ -97,11 +97,12 @@ operates on stale memory of blueAI's design system. The reading IS the reset.
   --directory blueai/public`) → `http://localhost:8410/blueai-desktop/index.html`. Note: this
   server drops between sessions fairly often — check it before concluding something's broken.
 - Design-system docs: `style-guide.html` (built 2026-08-01) — foundations (46 tokens, live-tallied
-  type/radius scales, the 29-icon set) + 17 sections across shell, components and full-screen
-  states, house conventions, and a **self-measured** coverage figure: currently 186 of 330 classes
-  (56%), computed at load rather than asserted. Still undocumented: the Scheduled date/time picker
-  (`.bai-dt-*`) and the Skills create/upload flows — the page lists every uncovered class by name,
-  so trust that list over this sentence. Design reasoning lives in `visual-designer/` (taste.md,
+  type/radius scales, the 29-icon set) + 19 sections across shell, components and full-screen
+  states, house conventions, and a **self-measured** coverage figure: currently 222 of 330 classes
+  (67%), computed at load rather than asserted. Still undocumented: the boot animation, the outer
+  demo scene (`.stage`/`.bs-window`/`.canvas` — demo scaffolding, not product UI) and the
+  `.bai-sched-*` card family. The page lists every uncovered class by name, so trust that list
+  over this sentence. Design reasoning lives in `visual-designer/` (taste.md,
   reasonings.md, decisions.md).
 - Designer reviews live in-browser during iteration — skip Playwright screenshots for small/
   mechanical changes (see `feedback_skip_screenshots_when_watching` memory); verify with
