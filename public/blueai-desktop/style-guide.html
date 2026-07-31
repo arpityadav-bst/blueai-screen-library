@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <base href="/blueai-desktop/" />
+  <title>BlueAI Modern Terminal — Design System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- THE product stylesheet, linked not copied. Every specimen below is the real component with
+       the real classes, so this page cannot drift from what ships. -->
+  <link rel="stylesheet" href="blueai-desktop.css" />
+
+  <style>
+    /* ============================================================================
+       Style-guide chrome ONLY. Prefixed sg- so it can never collide with the
+       product's classes. Nothing here is part of the design system.
+
+       First job: undo the product CSS's app-shell globals. blueai-desktop.css sets
+       html,body{height:100%;overflow:hidden} and a fixed dark body background —
+       correct for a fixed-viewport app, fatal for a scrolling document.
+       ============================================================================ */
+    html, body { height: auto; overflow: visible; }
+    body { background: var(--sg-bg); color: var(--sg-ink); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; -webkit-font-smoothing: antialiased; }
+
+    :root {
+      --sg-bg: #0d1017; --sg-panel: #14181f; --sg-line: #242a35; --sg-line-2: #333b49;
+      --sg-ink: #e8ecf3; --sg-ink-2: #a6b0c0; --sg-ink-3: #6f7a8b; --sg-accent: #6fa8ff;
+      --sg-code-bg: #0a0d13;
+    }
+    body.sg-lightpage {
+      --sg-bg: #f7f8fa; --sg-panel: #ffffff; --sg-line: #e3e7ed; --sg-line-2: #cdd4de;
+      --sg-ink: #12161d; --sg-ink-2: #4e5765; --sg-ink-3: #7c8694; --sg-accent: #1b5fd0;
+      --sg-code-bg: #f0f2f6;
+    }
+
+    .sg-shell { display: grid; grid-template-columns: 232px minmax(0, 1fr); gap: 0; align-items: start; }
+    @media (max-width: 900px) { .sg-shell { grid-template-columns: 1fr; } .sg-nav { position: static !important; height: auto !important; border-right: none !important; border-bottom: 1px solid var(--sg-line); } }
+
+    /* --- sidebar --- */
+    .sg-nav { position: sticky; top: 0; height: 100vh; overflow-y: auto; padding: 22px 16px 40px; border-right: 1px solid var(--sg-line); background: var(--sg-panel); }
+    .sg-brand { font-size: 13px; font-weight: 700; letter-spacing: -0.2px; margin-bottom: 3px; }
+    .sg-brand span { color: var(--sg-accent); }
+    .sg-brandsub { font-size: 10.5px; color: var(--sg-ink-3); line-height: 1.5; margin-bottom: 18px; }
+    .sg-navgroup { font-size: 9px; font-weight: 700; letter-spacing: 0.7px; text-transform: uppercase; color: var(--sg-ink-3); margin: 18px 0 7px; }
+    .sg-nav a { display: block; padding: 5px 8px; margin: 0 -8px; border-radius: 6px; font-size: 11.5px; color: var(--sg-ink-2); text-decoration: none; transition: background 0.14s, color 0.14s; }
+    .sg-nav a:hover { background: var(--sg-line); color: var(--sg-ink); }
+
+    /* --- main --- */
+    .sg-main { padding: 26px 30px 120px; min-width: 0; }
+    .sg-head { display: flex; align-items: flex-start; gap: 16px; flex-wrap: wrap; padding-bottom: 20px; margin-bottom: 8px; border-bottom: 1px solid var(--sg-line); }
+    .sg-h1 { font-size: 21px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 6px; }
+    .sg-lede { font-size: 12px; line-height: 1.65; color: var(--sg-ink-2); max-width: 66ch; }
+    .sg-lede code { background: var(--sg-code-bg); border: 1px solid var(--sg-line); border-radius: 4px; padding: 1px 5px; font-size: 11px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .sg-toggles { margin-left: auto; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+    .sg-tbtn { display: flex; align-items: center; gap: 7px; border: 1px solid var(--sg-line-2); background: var(--sg-panel); color: var(--sg-ink); font-family: inherit; font-size: 11px; font-weight: 600; padding: 8px 13px; border-radius: 8px; cursor: pointer; white-space: nowrap; transition: border-color 0.14s, background 0.14s; }
+    .sg-tbtn:hover { border-color: var(--sg-accent); }
+    .sg-tbtn i { width: 8px; height: 8px; border-radius: 50%; background: var(--sg-accent); flex-shrink: 0; }
+
+    .sg-sec { margin-top: 40px; scroll-margin-top: 18px; }
+    .sg-sech { font-size: 15px; font-weight: 700; letter-spacing: -0.2px; padding-bottom: 9px; border-bottom: 1px solid var(--sg-line); margin-bottom: 4px; }
+    .sg-secnote { font-size: 11.5px; line-height: 1.6; color: var(--sg-ink-2); margin: 10px 0 16px; max-width: 74ch; }
+    .sg-secnote strong { color: var(--sg-ink); font-weight: 600; }
+    .sg-secnote code { background: var(--sg-code-bg); border: 1px solid var(--sg-line); border-radius: 4px; padding: 1px 5px; font-size: 10.5px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+
+    /* a specimen = the real component, on the real canvas, with its class named */
+    .sg-spec { border: 1px solid var(--sg-line); border-radius: 10px; overflow: hidden; margin-bottom: 14px; background: var(--sg-panel); }
+    .sg-spechead { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; padding: 9px 13px; border-bottom: 1px solid var(--sg-line); }
+    .sg-cls { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; color: var(--sg-accent); font-weight: 600; }
+    .sg-role { font-size: 11px; color: var(--sg-ink-2); line-height: 1.5; }
+    /* .bai-scope hands the specimen the REAL tokens (see the alias note in blueai-desktop.css) */
+    .sg-canvas { padding: 18px; background: var(--bai-bg); display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-start; }
+    .sg-canvas.sg-col { flex-direction: column; }
+    .sg-canvas.sg-col > * { align-self: stretch; }
+    .sg-canvas.sg-narrow > * { max-width: 330px; }
+    .sg-w { width: 100%; max-width: 330px; }
+    .sg-lbl { font-size: 9.5px; letter-spacing: 0.4px; text-transform: uppercase; color: var(--bai-faint); margin-bottom: -4px; }
+
+    /* token swatches */
+    .sg-tokgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(216px, 1fr)); gap: 8px; padding: 16px; background: var(--bai-bg); }
+    .sg-tok { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border: 1px solid var(--bai-line); border-radius: 8px; background: var(--bai-card-2); min-width: 0; }
+    .sg-swatch { width: 30px; height: 30px; border-radius: 7px; flex-shrink: 0; border: 1px solid var(--bai-line-2); background-image: linear-gradient(45deg, #8884 25%, transparent 25%, transparent 75%, #8884 75%), linear-gradient(45deg, #8884 25%, transparent 25%, transparent 75%, #8884 75%); background-size: 10px 10px; background-position: 0 0, 5px 5px; position: relative; overflow: hidden; }
+    .sg-swatch i { position: absolute; inset: 0; }
+    .sg-tokmeta { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+    .sg-tokname { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 10px; color: var(--bai-text-hi); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .sg-tokval { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 9.5px; color: var(--bai-dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    /* scale tables */
+    .sg-scale { padding: 14px 16px; background: var(--bai-bg); display: flex; flex-direction: column; gap: 2px; }
+    .sg-scalerow { display: flex; align-items: baseline; gap: 14px; padding: 6px 0; border-bottom: 1px solid var(--bai-line); }
+    .sg-scalerow:last-child { border-bottom: none; }
+    .sg-scaleval { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 10px; color: var(--bai-accent); width: 56px; flex-shrink: 0; }
+    .sg-scaleuse { font-size: 9.5px; color: var(--bai-faint); width: 62px; flex-shrink: 0; }
+    .sg-scalesample { color: var(--bai-text-hi); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .sg-radrow { display: flex; align-items: center; gap: 14px; padding: 5px 0; }
+    .sg-radbox { width: 72px; height: 34px; background: var(--bai-card-2); border: 1px solid var(--bai-line-2); flex-shrink: 0; }
+
+    .sg-flag { border: 1px solid color-mix(in srgb, #f0b429 42%, var(--sg-line)); background: color-mix(in srgb, #f0b429 9%, var(--sg-panel)); border-radius: 9px; padding: 11px 13px; font-size: 11.5px; line-height: 1.6; color: var(--sg-ink-2); margin: 0 0 16px; }
+    .sg-flag b { color: var(--sg-ink); }
+    .sg-foot { margin-top: 56px; padding-top: 18px; border-top: 1px solid var(--sg-line); font-size: 11px; line-height: 1.7; color: var(--sg-ink-3); max-width: 78ch; }
+  </style>
+</head>
+<body>
+<div class="sg-shell">
+
+  <nav class="sg-nav">
+    <div class="sg-brand">BlueAI <span>Modern Terminal</span></div>
+    <div class="sg-brandsub">Design system — live specimens rendered from the product's own stylesheet.</div>
+
+    <div class="sg-navgroup">Foundations</div>
+    <a href="#tokens">Color tokens</a>
+    <a href="#type">Type scale</a>
+    <a href="#radius">Radius scale</a>
+    <a href="#icons">Icons</a>
+
+    <div class="sg-navgroup">Components</div>
+    <a href="#buttons">Buttons</a>
+    <a href="#cards">Cards &amp; surfaces</a>
+    <a href="#kv">Key–value blocks</a>
+    <a href="#controls">Form controls</a>
+    <a href="#messages">Chat message cards</a>
+    <a href="#badges">Badges &amp; status</a>
+    <a href="#credits">Credits &amp; gauge</a>
+    <a href="#overlays">Overlays</a>
+    <a href="#feedback">Feedback &amp; loading</a>
+
+    <div class="sg-navgroup">Meta</div>
+    <a href="#conventions">Conventions</a>
+    <a href="#gaps">Known gaps</a>
+  </nav>
+
+  <main class="sg-main">
+    <header class="sg-head">
+      <div>
+        <div class="sg-h1">Modern Terminal — Design System</div>
+        <p class="sg-lede">
+          Every specimen on this page is the <strong>real component</strong>, rendered with the real class
+          names from <code>blueai-desktop.css</code> — the same stylesheet the product links. Nothing is
+          re-implemented here, so this page cannot silently drift from what ships. Token values are read
+          live via <code>getComputedStyle</code> rather than typed in.
+        </p>
+      </div>
+      <div class="sg-toggles">
+        <button class="sg-tbtn" id="sgTheme" type="button"><i></i><span>Specimens: dark</span></button>
+        <button class="sg-tbtn" id="sgPage" type="button"><i></i><span>Page: dark</span></button>
+      </div>
+    </header>
+
+    <div class="sg-flag">
+      <b>How the theming works.</b> The 46 <code>--bai-*</code> tokens are declared on <code>.drawer</code>
+      (dark) and <code>.drawer.light</code>, not on <code>:root</code> — deliberately, because the dormant
+      marketing site in this same repo uses the same <code>--bai-*</code> namespace with entirely different
+      values, and the scoping is what stops the two colliding. Component rules are plain global classes that
+      resolve those vars, so a specimen outside a token scope would lose every colour. This page wraps each
+      canvas in <code>.bai-scope</code> — a tokens-only alias declared alongside <code>.drawer</code> in the
+      product stylesheet, so these swatches are the real values, not a copy.
+    </div>
+
+    <!-- ================= FOUNDATIONS ================= -->
+    <section class="sg-sec" id="tokens">
+      <h2 class="sg-sech">Color tokens</h2>
+      <p class="sg-secnote">
+        All 46, grouped by role. Values are resolved from the live stylesheet for the currently selected
+        specimen theme — flip <em>Specimens</em> above to compare dark against light. Tokens marked
+        <strong>fixed</strong> are intentionally not redefined in light theme.
+      </p>
+      <div id="sgTokens"></div>
+    </section>
+
+    <section class="sg-sec" id="type">
+      <h2 class="sg-sech">Type scale</h2>
+      <p class="sg-secnote">
+        Inter throughout, one family. Sizes below are <strong>measured from the stylesheet</strong>, with use
+        counts — this is the scale as it actually exists, not an idealised one. Weights in use: 400, 500, 600,
+        <strong>700 (dominant, 54 uses)</strong>, plus a single 800.
+      </p>
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">font-size</span><span class="sg-role">value · uses · rendered sample</span></div>
+        <div class="sg-scale bai-scope" id="sgType"></div>
+      </div>
+    </section>
+
+    <section class="sg-sec" id="radius">
+      <h2 class="sg-sech">Radius scale</h2>
+      <p class="sg-secnote">
+        Measured from the stylesheet. <strong>8px is the workhorse (32 uses)</strong> — buttons, chat cards,
+        inputs; 9–12px for larger panels and modal cards; 20px+ only for pills and circles.
+      </p>
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">border-radius</span><span class="sg-role">value · uses</span></div>
+        <div class="sg-scale bai-scope" id="sgRadius"></div>
+      </div>
+    </section>
+
+    <section class="sg-sec" id="icons">
+      <h2 class="sg-sech">Icons</h2>
+      <p class="sg-secnote">
+        Feather-style line icons, built inline by the product's own <code>iconSvg(path, size)</code> helper:
+        <code>fill:none</code>, <code>stroke:currentColor</code>, <code>stroke-width:1.8</code>,
+        round caps and joins, 24×24 viewBox. They inherit colour from their container, which is why the same
+        glyph works on a card, a button, and an accent chip without variants.
+      </p>
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">iconSvg()</span><span class="sg-role">Common sizes: 12–16px inline, 13–14px in rows, 15–16px in icon chips.</span></div>
+        <div class="sg-canvas bai-scope" id="sgIcons" style="align-items:center;gap:18px;"></div>
+      </div>
+    </section>
+
+    <!-- ================= COMPONENTS ================= -->
+    <section class="sg-sec" id="buttons">
+      <h2 class="sg-sech">Buttons</h2>
+      <p class="sg-secnote">
+        Two families by context. <code>.bai-set-btn</code> is the <strong>in-pane</strong> button (Settings,
+        cards, screens); <code>.bai-modalact</code> is the <strong>in-modal</strong> action, taller and
+        heavier because a modal asks for one decision. <code>.hero</code> exists so a screen's single
+        conversion CTA matches the modal's weight instead of reading lighter just for living in Settings.
+      </p>
+
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-set-btn</span><span class="sg-role">In-pane button. Default is secondary/outlined; add <code>.primary</code> for the one key action, <code>.danger</code> for destructive, <code>.hero</code> to match modal weight.</span></div>
+        <div class="sg-canvas bai-scope">
+          <button class="bai-set-btn" type="button">Secondary</button>
+          <button class="bai-set-btn primary" type="button">Primary</button>
+          <button class="bai-set-btn danger" type="button">Sign out</button>
+          <button class="bai-set-btn primary hero" type="button" style="width:190px;">Primary · hero</button>
+          <button class="bai-set-btn hero" type="button" style="width:190px;">Secondary · hero</button>
+        </div>
+      </div>
+
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-modalact</span><span class="sg-role">Modal action. Always full width, 41px floor, stacked in a <code>.bai-modalact-group</code> — primary first, escape hatch second.</span></div>
+        <div class="sg-canvas bai-scope sg-col sg-narrow">
+          <div class="bai-modalact-group sg-w">
+            <button class="bai-modalact primary" type="button">Top Up</button>
+            <button class="bai-modalact secondary" type="button">Add / manage own key</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-list-add</span> <span class="sg-cls">.bai-sk-try</span> <span class="sg-cls">.bai-sk-link</span> <span class="sg-cls">.bai-newitem-create</span><span class="sg-role">Compact contextual actions: list header add, card try/details, inline-form commit.</span></div>
+        <div class="sg-canvas bai-scope" style="align-items:center;">
+          <button class="bai-list-add" type="button">+ New</button>
+          <button class="bai-sk-try" type="button">Try</button>
+          <button class="bai-sk-link" type="button" style="margin-left:0;">Details ›</button>
+          <button class="bai-newitem-create" type="button">Create</button>
+          <button class="bai-newitem-cancel" type="button">Cancel</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="sg-sec" id="cards">
+      <h2 class="sg-sech">Cards &amp; surfaces</h2>
+      <p class="sg-secnote">
+        One shared anatomy runs through all of them: an <strong>icon chip + title/description block</strong>,
+        optionally a trailing affordance. Every clickable card shares the same hover treatment
+        (<code>border-color</code> → accent-strong, <code>background</code> → hover-acc) — if a new card is
+        clickable, it inherits that, not a new look.
+      </p>
+
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-set-card</span><span class="sg-role">Multi-line Settings card. <code>.bai-set-card-head</code> holds <code>.ic</code> + <code>.info &gt; b, span</code>; actions stack underneath.</span></div>
+        <div class="sg-canvas bai-scope sg-col sg-narrow">
+          <div class="bai-set-card">
+            <div class="bai-set-card-head">
+              <span class="ic" data-icon="key" data-size="16"></span>
+              <span class="info"><b>Own API key</b><span>Use your own key instead of BlueAI credits</span></span>
+            </div>
+            <button class="bai-set-btn" type="button">Manage in Settings</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-item-card</span><span class="sg-role">Compact list row. Clickable; reveals a trailing action on hover.</span></div>
+        <div class="sg-canvas bai-scope sg-col sg-narrow">
+          <div class="bai-item-card">
+            <span class="ic" data-icon="share" data-size="15"></span>
+            <span class="info"><b>Earn 1,000 Free AI Credits</b><span>Spread the word about BlueAI</span></span>
+            <span style="flex-shrink:0;color:var(--bai-faint);" data-icon="external" data-size="13"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-cat-row</span><span class="sg-role">Category row (Skills home). Icon chip tints from a per-row <code>--cc</code> var, so categories differ by hue without new classes.</span></div>
+        <div class="sg-canvas bai-scope sg-col sg-narrow">
+          <div class="bai-cat-row" style="--cc:#34cf8f;">
+            <span class="ic" data-icon="bolt" data-size="18"></span>
+            <span class="info"><b>Productivity</b><span>12 skills</span></span>
+            <span class="ar" data-icon="chevron" data-size="14"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-history-card</span><span class="sg-role">Chat-history row. <code>.on</code> = current chat, <code>.unseen</code> / <code>.working</code> recolour the status dot.</span></div>
+        <div class="sg-canvas bai-scope sg-col sg-narrow">
+          <div class="bai-history-card">
+            <div class="hc-top"><span class="hc-dot"></span><span class="hc-title">Find codes for this game</span></div>
+            <div class="hc-meta">2 hours ago · 8 messages</div>
+          </div>
+          <div class="bai-history-card on">
+            <div class="hc-top"><span class="hc-dot"></span><span class="hc-title">Swipe my dating apps</span></div>
+            <div class="hc-meta">Current chat</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sg-sec" id="kv">
+      <h2 class="sg-sech">Key–value blocks</h2>
+      <p class="sg-secnote">
+        <code>.bai-kv-block</code> is a bordered list whose rows self-divide — <code>.bai-kv-row +
+        .bai-kv-row</code> draws the hairline, so no separator markup is ever added by hand. Used for
+        Profile fields and the credit breakdown.
+      </p>
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-kv-block</span> <span class="sg-cls">.bai-kv-row</span><span class="sg-role"><code>.k</code> = dim label (optionally with a leading <code>.bai-kv-ic</code>), <code>.v</code> = value, <code>.verified</code> = inline confirmation pill.</span></div>
+        <div class="sg-canvas bai-scope sg-col sg-narrow">
+          <div class="bai-kv-block">
+            <div class="bai-kv-row"><span class="bai-kv-key"><span class="bai-kv-ic" data-icon="user" data-size="14"></span><span class="k">Handle</span></span><span class="v">TriflingStandpoint</span></div>
+            <div class="bai-kv-row"><span class="bai-kv-key"><span class="bai-kv-ic" data-icon="mail" data-size="14"></span><span class="k">Email</span></span><span class="v">you@example.com<span class="verified">Verified</span></span></div>
+            <div class="bai-kv-row"><span class="bai-kv-key"><span class="bai-kv-ic" data-icon="phone" data-size="14"></span><span class="k">Mobile</span></span><span class="v" style="color:var(--bai-faint);">Not set</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sg-sec" id="controls">
+      <h2 class="sg-sech">Form controls</h2>
+      <p class="sg-secnote">
+        Every control renders <strong>all</strong> its states — an input that looks identical empty and filled,
+        or a toggle you can't read at a glance, is not finished.
+      </p>
+
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-seg</span> <span class="sg-cls">.bai-seg-btn</span><span class="sg-role">Segmented control for 2–3 mutually exclusive options. <code>.active</code> fills with accent.</span></div>
+        <div class="sg-canvas bai-scope" style="align-items:center;">
+          <div class="bai-seg"><button class="bai-seg-btn active" type="button">dark</button><button class="bai-seg-btn" type="button">light</button></div>
+          <div class="bai-seg"><button class="bai-seg-btn" type="button">Once</button><button class="bai-seg-btn active" type="button">Daily</button><button class="bai-seg-btn" type="button">Weekly</button></div>
+        </div>
+      </div>
+
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-tgl</span><span class="sg-role">Binary toggle. Off and on must be distinguishable without hover — <code>.on</code> shifts both the track and the knob.</span></div>
+        <div class="sg-canvas bai-scope" style="align-items:center;gap:22px;">
+          <div class="bai-tgl"><i></i></div>
+          <div class="bai-tgl on"><i></i></div>
+        </div>
+      </div>
+
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-optcard</span><span class="sg-role">Radio option card, for a choice that needs explaining. <code>.active</code> fills the dot; <code>.disabled</code> for unavailable options.</span></div>
+        <div class="sg-canvas bai-scope sg-col sg-narrow">
+          <div class="bai-optcard-group sg-w">
+            <button class="bai-optcard active" type="button">
+              <span class="bai-optcard-dot"></span>
+              <span class="bai-optcard-body"><span class="bai-optcard-title">Cloud</span><span class="bai-optcard-sub">Default. Uses cloud AI.</span></span>
+            </button>
+            <button class="bai-optcard" type="button">
+              <span class="bai-optcard-dot"></span>
+              <span class="bai-optcard-body"><span class="bai-optcard-title">Hybrid <span class="bai-optcard-badge">SAVES CREDITS</span></span><span class="bai-optcard-sub">Uses your PC for supported tasks.</span></span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-newitem-input</span> <span class="sg-cls">.bai-search</span> <span class="sg-cls">.bai-set-field</span><span class="sg-role">Text input, search field with clear affordance, and a labelled field wrapper.</span></div>
+        <div class="sg-canvas bai-scope sg-col sg-narrow">
+          <div class="bai-set-field sg-w">
+            <span class="bai-set-field-label">Endpoint URL</span>
+            <input class="bai-newitem-input" type="text" placeholder="https://…" />
+          </div>
+          <div class="bai-set-field sg-w">
+            <span class="bai-set-field-label">Filled</span>
+            <input class="bai-newitem-input" type="text" value="sk-ant-api03-…" />
+          </div>
+          <div class="bai-search sg-w" style="margin:0;">
+            <span data-icon="search" data-size="14" style="color:var(--bai-faint);display:flex;"></span>
+            <input type="text" placeholder="Search skills" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sg-sec" id="messages">
+      <h2 class="sg-sech">Chat message cards</h2>
+      <p class="sg-secnote">
+        One family, one shape: <code>color-mix()</code> of a semantic hue into <code>--bai-card-2</code> for
+        the fill, the same hue at higher percentage for the border, 8px radius. <strong>The hue is the
+        meaning</strong> — accent for a plan, amber for a warning, green for done, red for an error, and a
+        dedicated pastel yellow for "your input is needed" so it never reads as a warning.
+      </p>
+
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-plancard</span><span class="sg-role">The assistant's own numbered plan. Accent-tinted. Not an upsell card — a message.</span></div>
+        <div class="sg-canvas bai-scope sg-col sg-narrow">
+          <div class="bai-plancard sg-w">
+            <div class="pl-label">PLAN</div>
+            <div class="pl-intro">I'll find working codes and redeem them for you.</div>
+            <ol class="pl-steps"><li><b>Search</b> — check the official channels</li><li><b>Verify</b> — drop expired ones</li><li><b>Redeem</b> — apply to your account</li></ol>
+          </div>
+        </div>
+      </div>
+
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-warnrow</span> <span class="sg-cls">.bai-donecard</span> <span class="sg-cls">.bai-errorcard</span><span class="sg-role">Amber warning row, green completion, red failure. Each is a status, not an action. <strong>Convention:</strong> the head is a glyph + ALL-CAPS status (<code>✓ TASK COMPLETED</code>, <code>✕ ERROR</code>), the body is a sentence.</span></div>
+        <div class="sg-canvas bai-scope sg-col sg-narrow">
+          <div class="bai-warnrow sg-w" data-icon-warn><span>You've used all your credits.</span></div>
+          <div class="bai-donecard sg-w"><div class="dc-head">✓ TASK COMPLETED</div><div class="dc-body">3 codes redeemed successfully.</div></div>
+          <div class="bai-errorcard sg-w"><div class="ec-head">✕ ERROR</div><div class="ec-body">The game's code page didn't respond. Try again shortly.</div></div>
+        </div>
+      </div>
+
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-menucard</span><span class="sg-role">"Input required" prompt — a distinct pastel yellow, deliberately a different hue from the amber warning so the two never read as the same state.</span></div>
+        <div class="sg-canvas bai-scope sg-col sg-narrow">
+          <div class="bai-menucard sg-w">
+            <div class="mn-intro">Which account should I use?</div>
+            <ol class="mn-list">
+              <li><b>Personal</b>: your own Google account</li>
+              <li><b>Work</b>: the managed workspace account</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-opt-row</span> <span class="sg-cls">.bai-optg</span><span class="sg-role">Tappable numbered choice. Use when options are short; the menucard above when they're longer.</span></div>
+        <div class="sg-canvas bai-scope sg-col sg-narrow">
+          <div class="bai-optg sg-w">
+            <button class="bai-opt-row" type="button"><span class="bai-opt-num">1</span><span class="bai-opt-body"><span class="bai-opt-label">Use my saved preferences</span><span class="bai-opt-desc">Swipe right on profiles matching them</span></span></button>
+            <button class="bai-opt-row" type="button"><span class="bai-opt-num">2</span><span class="bai-opt-body"><span class="bai-opt-label">Ask me each time</span></span></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-rescard</span> <span class="sg-cls">.bai-res-head</span><span class="sg-role">A single retrieved result, in a <code>.bai-reslist</code>. <code>.top</code> = title + outlined <code>.src</code> tag, <code>.meta</code> = context line, <code>.match</code> = the <code>▸</code>-prefixed reason it matched.</span></div>
+        <div class="sg-canvas bai-scope sg-col sg-narrow">
+          <div class="sg-w">
+            <div class="bai-res-head">3 RESULTS</div>
+            <div class="bai-reslist">
+              <div class="bai-rescard">
+                <div class="top"><span class="rtitle">Senior Product Designer</span><span class="src">LinkedIn</span></div>
+                <div class="meta">Figma · Remote · Posted 2d ago</div>
+                <div class="match">▸ Matches your design-systems experience</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sg-sec" id="badges">
+      <h2 class="sg-sech">Badges &amp; status</h2>
+      <p class="sg-secnote">
+        Small, and each says something the surrounding text doesn't. A badge that restates its neighbour is
+        decoration — the credit popover's old "★ PRIME" tag was removed for exactly that reason once the plan
+        line beneath it already said "Prime".
+      </p>
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-tab-badge</span> <span class="sg-cls">.bai-side-badge</span> <span class="sg-cls">.bai-sched-badge</span> <span class="sg-cls">.verified</span> <span class="sg-cls">.cr-prime</span><span class="sg-role">Count badge (tab / sidebar), outlined schedule pill, green confirmation, and the Prime marker.</span></div>
+        <div class="sg-canvas bai-scope" style="align-items:center;gap:16px;">
+          <span class="bai-tab-badge">3</span>
+          <span class="bai-side-badge">12</span>
+          <span class="bai-sched-badge">Daily · 09:00</span>
+          <span class="bai-kv-row" style="padding:0;"><span class="verified">Verified</span></span>
+          <span class="cr-prime" style="font-size:9.5px;letter-spacing:0.4px;">★ PRIME</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="sg-sec" id="credits">
+      <h2 class="sg-sech">Credits &amp; gauge</h2>
+      <p class="sg-secnote">
+        The credit ring is the product's <strong>one shared way of showing a balance</strong> — an SVG arc
+        driven by <code>stroke-dasharray</code>, coloured by a ramp that steps blue → amber → orange → red as
+        the balance drains (<code>--bai-credit-hi/mid/low/crit</code>). <code>.lg</code> is the same gauge at
+        60px for screen heroes. Because the header pill and the AI Credits screen share it, zooming from one
+        to the other reads as the same number, not two dialects.
+      </p>
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-credit-ring</span> <span class="sg-cls">.bai-credit-ring.lg</span><span class="sg-role">14px inline (header) and 60px hero. The ramp colour carries urgency; the arc carries proportion.</span></div>
+        <div class="sg-canvas bai-scope" style="align-items:center;gap:26px;" id="sgRings"></div>
+      </div>
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.cr-*</span><span class="sg-role">The header hover popover: title row with its action top-right, big balance, thin bar, plan line.</span></div>
+        <div class="sg-canvas bai-scope" style="align-items:flex-start;">
+          <div style="width:176px;background:var(--bai-panel);border:1px solid var(--bai-line-2);border-radius:8px;padding:8px 10px;display:flex;flex-direction:column;gap:5px;box-shadow:var(--bai-menu-shadow);">
+            <div class="cr-headrow"><span class="cr-head">CREDITS</span><span class="cr-viewmore">View details ›</span></div>
+            <span class="cr-big"><span class="sp" style="color:var(--bai-credit-hi)">✦</span> 5,000</span>
+            <span class="cr-bar"><i style="width:100%;background:var(--bai-credit-hi)"></i></span>
+            <span class="cr-sub cr-sub-prime">Prime</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sg-sec" id="overlays">
+      <h2 class="sg-sech">Overlays</h2>
+      <p class="sg-secnote">
+        Three tiers, and the tier is the meaning. A <strong>dropdown</strong> (<code>.bai-menu</code>) is a
+        local choice. A <strong>modal</strong> (<code>.bai-tgmodal-card</code>) blocks because a decision is
+        required. A <strong>route/subpane</strong> takes the whole pane for a destination. Modal headers are
+        icon-optional and share one <code>.tgm-head</code> so titles never drift in size.
+      </p>
+
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-menu</span> <span class="sg-cls">.bai-menu-item</span><span class="sg-role">Dropdown. One surface for every menu in the app; only the anchor differs. <code>.mk</code> marks the current value.</span></div>
+        <div class="sg-canvas bai-scope" style="align-items:flex-start;">
+          <div class="bai-menu open" style="position:relative;bottom:auto;right:auto;min-width:150px;">
+            <div class="bai-menu-item"><span class="mk">›</span>Opus 4.8</div>
+            <div class="bai-menu-item"><span class="mk"></span>Sonnet 4.6</div>
+            <div class="bai-menu-divider"></div>
+            <div class="bai-menu-item danger">Report issue</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-tgmodal-card</span> <span class="sg-cls">.tgm-*</span><span class="sg-role">Modal kit: <code>.tgm-head</code> (title + close, optional icon chip), <code>.tgm-body</code>, <code>.tgm-hint</code>, actions.</span></div>
+        <div class="sg-canvas bai-scope" style="align-items:flex-start;">
+          <div class="bai-tgmodal-card" style="max-width:300px;">
+            <div class="tgm-head">
+              <span class="tgm-ic-acc" data-icon="key" data-size="12"></span>
+              <span class="tgm-title">Add your own key</span>
+              <button class="tgm-close" type="button" aria-label="Close" data-icon="close" data-size="14"></button>
+            </div>
+            <div class="tgm-body">
+              <p>You've used your available AI credits. Add your own API key to continue using BlueAI.</p>
+              <div class="bai-modalact-group"><button class="bai-modalact primary" type="button">Add API key</button></div>
+              <span class="tgm-hint center"><span data-icon="info" data-size="12" style="display:flex;"></span>You can manage your key later in Settings.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.tgm-ic</span> <span class="sg-cls">.tgm-ic-ok</span> <span class="sg-cls">.tgm-ic-acc</span><span class="sg-role">Modal header chips: brand-solid, green status, accent context. All 22px circles.</span></div>
+        <div class="sg-canvas bai-scope" style="align-items:center;gap:18px;" id="sgChips"></div>
+      </div>
+    </section>
+
+    <section class="sg-sec" id="feedback">
+      <h2 class="sg-sech">Feedback &amp; loading</h2>
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-spin</span> <span class="sg-cls">.bai-fb</span> <span class="sg-cls">.bai-fb-chip</span><span class="sg-role">Inline spinner; per-reply thumbs with follow-up reason chips.</span></div>
+        <div class="sg-canvas bai-scope sg-col sg-narrow">
+          <div style="display:flex;align-items:center;gap:9px;"><span class="bai-spin"></span><span style="font-size:11px;color:var(--bai-dim);">Checking your key…</span></div>
+          <div class="bai-fb">
+            <button class="bai-fb-btn" type="button" data-icon="up" data-size="13"></button>
+            <button class="bai-fb-btn" type="button" data-icon="down" data-size="13"></button>
+          </div>
+          <div class="bai-fb-chips">
+            <button class="bai-fb-chip" type="button">Not accurate</button>
+            <button class="bai-fb-chip" type="button">Too slow</button>
+            <button class="bai-fb-chip" type="button">Didn't follow</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= META ================= -->
+    <section class="sg-sec" id="conventions">
+      <h2 class="sg-sech">Conventions</h2>
+      <p class="sg-secnote">
+        Rules that hold across the system — worth reading before adding anything.
+      </p>
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">house rules</span></div>
+        <div class="sg-canvas sg-col" style="background:var(--sg-panel);gap:11px;">
+          <div class="sg-secnote" style="margin:0;">
+            <strong>1. A signal must earn its slot.</strong> Before adding a divider, badge, or tag, name what
+            already signals that boundary — a label's own margin, a card's border, a colour/weight shift, or a
+            neighbouring line of text. A second element restating the first is decoration.
+          </div>
+          <div class="sg-secnote" style="margin:0;">
+            <strong>2. Match the ROLE, not the look.</strong> Reuse a component because it does the same
+            <em>job</em>, not because it resembles what you need. An accent-tinted card that happens to look
+            right may be a chat-message bubble, not a pricing card.
+          </div>
+          <div class="sg-secnote" style="margin:0;">
+            <strong>3. Every control renders every state.</strong> Empty, filled, active, disabled, hover.
+            An interaction state that's missing — or borrowed from an unrelated colour — is a worse signal
+            than none.
+          </div>
+          <div class="sg-secnote" style="margin:0;">
+            <strong>4. One hero action per surface.</strong> Filled + <code>.hero</code> weight for the action
+            you're recommending; outlined and slimmer for the escape hatch. The size difference is doing work.
+          </div>
+          <div class="sg-secnote" style="margin:0;">
+            <strong>5. Spacing is hierarchy.</strong> Tight within a group, generous between groups. Beware
+            stacking a child's own <code>margin</code> against a parent's flex <code>gap</code> — they add,
+            they don't override, and that's how a label ends up further from what it labels.
+          </div>
+          <div class="sg-secnote" style="margin:0;">
+            <strong>6. Both themes, every time.</strong> A recipe tuned by eye on dark can read dull or
+            smudged on light (and vice versa). Check contrast, not vibes.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sg-sec" id="gaps">
+      <h2 class="sg-sech">Known gaps</h2>
+      <p class="sg-secnote">Honest scope of this page, so nobody mistakes absence for completeness.</p>
+      <div class="sg-flag" style="margin:0;">
+        <b>Scale drift.</b> The stylesheet uses <b>19 distinct font sizes</b> and <b>15 radii</b>, including
+        near-duplicate pairs (9/9.5, 10/10.5, 11/11.5, 12/12.5, 13/13.5). That's documented above as-is
+        rather than tidied, because consolidating it is a real change to the product and needs its own pass.
+        <br /><br />
+        <b>Not yet covered here.</b> The app shell (titlebar, header, tab strip, sidebar), the onboarding
+        sequence and nav tour, the Scheduled date/time picker, Skills create/upload flows, the boot animation,
+        and the dev-only Preview panel. All exist in <code>blueai-desktop.css</code>; none are documented on
+        this page yet. Roughly 60 of the 278 classes are represented so far.
+      </div>
+    </section>
+
+    <footer class="sg-foot">
+      Specimens render from <code>blueai-desktop.css</code> — the product's own stylesheet — inside
+      <code>.bai-scope</code>, so nothing on this page is a second copy of the styles.
+      This documents <strong>blueai-desktop</strong> (the active surface). The marketing site's separate
+      design system lives at <code>/style-guide</code> and is dormant; the two share a
+      <code>--bai-*</code> prefix but no values.
+    </footer>
+  </main>
+</div>
+
+<script>
+  // ---- icon set: the product's own iconSvg() convention, mirrored here so specimens carry real glyphs ----
+  var P = {
+    key: '<circle cx="8" cy="15" r="4"/><path d="M10.5 12.5L20 3M17 6l3 3M14 9l2 2"/>',
+    share: '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>',
+    external: '<path d="M7 17 17 7M7 7h10v10"/>',
+    chevron: '<path d="m9 18 6-6-6-6"/>',
+    bolt: '<path d="M13 2 3 14h8l-1 8 10-12h-8l1-8z"/>',
+    user: '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+    mail: '<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>',
+    phone: '<rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>',
+    search: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>',
+    close: '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
+    info: '<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>',
+    check: '<path d="M20 6 9 17l-5-5"/>',
+    warn: '<path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/>',
+    up: '<path d="M7 10v12M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88z"/>',
+    down: '<path d="M17 14V2M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88z"/>',
+    sparkle: '<path d="M12 3l1.6 4.6L18 9l-4.4 1.4L12 15l-1.6-4.6L6 9l4.4-1.4L12 3z"/>'
+  };
+  function icon(name, size) {
+    return '<svg width="' + size + '" height="' + size + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+           'stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + (P[name] || '') + '</svg>';
+  }
+  // fill every [data-icon] placeholder
+  document.querySelectorAll('[data-icon]').forEach(function (el) {
+    el.innerHTML = icon(el.getAttribute('data-icon'), parseInt(el.getAttribute('data-size') || '14', 10)) + el.innerHTML;
+  });
+  document.querySelectorAll('[data-icon-warn]').forEach(function (el) { el.innerHTML = icon('warn', 14) + el.innerHTML; });
+
+  // ---- token table. Values are READ from the live stylesheet, never typed here. ----
+  var GROUPS = [
+    ['Surfaces', ['--bai-bg', '--bai-panel', '--bai-card', '--bai-card-2', '--bai-input-bg', '--bai-pill', '--bai-hover', '--bai-hover-acc', '--bai-user']],
+    ['Lines & borders', ['--bai-line', '--bai-line-2', '--bai-line-focus', '--bai-line-soft', '--bai-accent-line', '--bai-window-line*']],
+    ['Text', ['--bai-text-bright', '--bai-text-strong', '--bai-text-hi', '--bai-text', '--bai-text-soft', '--bai-muted-2', '--bai-muted', '--bai-dim', '--bai-dim-2', '--bai-faint', '--bai-hover-ink']],
+    ['Icons', ['--bai-icon', '--bai-icon-2']],
+    ['Accent', ['--bai-accent', '--bai-accent-strong', '--bai-accent-wash', '--bai-on-accent', '--bai-chip-bg']],
+    ['Semantic', ['--bai-ok', '--bai-danger', '--bai-yellow']],
+    ['Credit ramp', ['--bai-credit-hi', '--bai-credit-mid', '--bai-credit-low', '--bai-credit-crit']],
+    ['Titlebar (fixed — not themed)', ['--bai-titlebar-bg*', '--bai-titlebar-line*', '--bai-titlebar-text*', '--bai-titlebar-icon*']],
+    ['Other', ['--bai-scroll', '--bai-menu-shadow']]
+  ];
+  function renderTokens() {
+    var host = document.getElementById('sgTokens');
+    host.innerHTML = '';
+    var probe = document.createElement('div');
+    probe.className = 'bai-scope' + (specDark ? '' : ' light');
+    document.body.appendChild(probe);
+    var cs = getComputedStyle(probe);
+    GROUPS.forEach(function (g) {
+      var h = document.createElement('div'); h.className = 'sg-spec';
+      var fixedNote = g[0].indexOf('fixed') !== -1 ? '' : '';
+      h.innerHTML = '<div class="sg-spechead"><span class="sg-cls">' + g[0] + '</span><span class="sg-role">' + g[1].length + ' tokens</span></div>';
+      var grid = document.createElement('div');
+      grid.className = 'sg-tokgrid bai-scope' + (specDark ? '' : ' light');
+      g[1].forEach(function (rawName) {
+        var fixed = rawName.slice(-1) === '*';
+        var name = fixed ? rawName.slice(0, -1) : rawName;
+        var val = cs.getPropertyValue(name).trim();
+        var row = document.createElement('div'); row.className = 'sg-tok';
+        var isShadow = name.indexOf('shadow') !== -1;
+        row.innerHTML =
+          '<span class="sg-swatch">' + (isShadow ? '<i style="background:var(--bai-card);box-shadow:' + val + '"></i>' : '<i style="background:' + val + '"></i>') + '</span>' +
+          '<span class="sg-tokmeta"><span class="sg-tokname">' + name + (fixed ? ' <span style="color:var(--bai-faint);">fixed</span>' : '') + '</span>' +
+          '<span class="sg-tokval" title="' + val + '">' + (val || '—') + '</span></span>';
+        grid.appendChild(row);
+      });
+      h.appendChild(grid);
+      host.appendChild(h);
+    });
+    probe.remove();
+  }
+
+  // ---- measured scales (counts computed from blueai-desktop.css) ----
+  var TYPE = [['7px',1,'Micro — background-progress tick only'],['9px',5,'Smallest label'],['9.5px',7,'Section labels, eyebrows'],['10px',28,'Captions, meta'],['10.5px',26,'Secondary body, hints'],['11px',26,'Body small, menu items'],['11.5px',12,'Sidebar rows'],['12px',23,'Body, card titles'],['12.5px',9,'Input text, modal actions'],['13px',6,'Chat message body'],['13.5px',3,'Tour heading'],['14px',3,'Brand wordmark'],['15px',3,'Credit balance'],['17.5px',1,'Onboarding headline'],['22px',1,'Avatar initial'],['26px',1,'Large numeral'],['34px',1,'Credits hero'],['38px',1,'Login-gate credits'],['46px',2,'Offer-modal headline']];
+  var RADII = [['2px',3],['3px',3],['4px',4],['5px',6],['6px',15],['7px',4],['8px',32],['9px',10],['10px',13],['11px',3],['12px',8],['13px',1],['14px',1],['16px',1],['20px',4]];
+  function renderScales() {
+    document.getElementById('sgType').innerHTML = TYPE.map(function (t) {
+      return '<div class="sg-scalerow"><span class="sg-scaleval">' + t[0] + '</span><span class="sg-scaleuse">' + t[1] + '&times;</span>' +
+             '<span class="sg-scalesample" style="font-size:' + t[0] + ';">' + t[2] + '</span></div>';
+    }).join('');
+    document.getElementById('sgRadius').innerHTML = RADII.map(function (r) {
+      return '<div class="sg-radrow"><span class="sg-scaleval">' + r[0] + '</span><span class="sg-scaleuse">' + r[1] + '&times;</span>' +
+             '<span class="sg-radbox" style="border-radius:' + r[0] + ';"></span></div>';
+    }).join('');
+    document.getElementById('sgIcons').innerHTML = ['key','share','user','mail','search','check','warn','info','close','chevron','bolt','external']
+      .map(function (n) { return '<span style="display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--bai-icon-2);">' + icon(n, 18) +
+        '<span style="font-size:9px;color:var(--bai-faint);font-family:ui-monospace,monospace;">' + n + '</span></span>'; }).join('');
+    document.getElementById('sgChips').innerHTML =
+      '<span class="tgm-ic">' + icon('sparkle', 12) + '</span>' +
+      '<span class="tgm-ic-ok">' + icon('check', 12) + '</span>' +
+      '<span class="tgm-ic-acc">' + icon('key', 12) + '</span>';
+
+    // credit ring, at the four ramp stops — same dasharray technique the product uses
+    var C = 2 * Math.PI * 7;
+    var stops = [[100, 'hi', '5,000 / 5,000'], [45, 'mid', '2,250'], [15, 'low', '750'], [0, 'crit', '0']];
+    document.getElementById('sgRings').innerHTML = stops.map(function (s) {
+      var ring = function (cls) {
+        return '<svg class="bai-credit-ring' + cls + '" viewBox="0 0 18 18"><circle class="tr" cx="9" cy="9" r="7"/>' +
+               '<circle class="fl" cx="9" cy="9" r="7" style="stroke-dasharray:' + (C * s[0] / 100).toFixed(2) + ' ' + C.toFixed(2) +
+               ';stroke:var(--bai-credit-' + s[1] + ');"/></svg>';
+      };
+      return '<span style="display:flex;flex-direction:column;align-items:center;gap:8px;">' + ring(' lg') + ring('') +
+             '<span style="font-size:9.5px;color:var(--bai-faint);font-family:ui-monospace,monospace;">' + s[1] + ' · ' + s[2] + '</span></span>';
+    }).join('');
+  }
+
+  // ---- theme toggles: specimens and page chrome switch independently, so you can review
+  //      light specimens without a white page burning your eyes at night. ----
+  var specDark = true, pageDark = true;
+  function applySpecTheme() {
+    document.querySelectorAll('.bai-scope').forEach(function (el) { el.classList.toggle('light', !specDark); });
+    document.querySelector('#sgTheme span').textContent = 'Specimens: ' + (specDark ? 'dark' : 'light');
+    renderTokens();
+  }
+  document.getElementById('sgTheme').addEventListener('click', function () { specDark = !specDark; applySpecTheme(); });
+  document.getElementById('sgPage').addEventListener('click', function () {
+    pageDark = !pageDark;
+    document.body.classList.toggle('sg-lightpage', !pageDark);
+    document.querySelector('#sgPage span').textContent = 'Page: ' + (pageDark ? 'dark' : 'light');
+  });
+
+  renderScales();
+  applySpecTheme();
+</script>
+</body>
+</html>

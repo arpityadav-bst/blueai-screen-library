@@ -70,8 +70,15 @@ operates on stale memory of blueAI's design system. The reading IS the reset.
   - `index.html` — markup + the app's inline `<script>` (file-size-rule EXEMPT by established
     convention; a deliberate fast-iteration prototype, not a Next/React app)
   - `blueai-desktop.css` — **the design system**: all 46 `--bai-*` tokens (defined on `.drawer`
-    dark / `.drawer.light`) + every component family. Extracted from index.html 2026-08-01 so a
-    style guide can LINK it and render the real components instead of re-implementing them.
+    dark / `.drawer.light`, plus a `.bai-scope` tokens-only alias for the style guide) + every
+    component family. Extracted from index.html 2026-08-01 so the style guide can LINK it and
+    render the real components instead of re-implementing them.
+  - `style-guide.html` — **the DS reference.** Open at
+    `http://localhost:8410/blueai-desktop/style-guide.html`. Links the product stylesheet and
+    renders real components inside `.bai-scope`, so it cannot drift. Token values are read live
+    via `getComputedStyle`, never typed. Independent dark/light toggles for specimens and page.
+    **When you add or change a component, add/update its specimen in the same edit** — that's the
+    whole reason it links the real CSS rather than copying it.
   - `boot.js` · `flows.js` — pre-existing extracted scripts
 - **Tokens are `.drawer`-scoped on purpose** — the dormant marketing site in this same repo uses
   the same `--bai-*` namespace with completely different values. The scoping is what stops them
@@ -80,8 +87,11 @@ operates on stale memory of blueAI's design system. The reading IS the reset.
 - Local preview: `.claude/launch.json`'s `blueai-desktop` config (`python -m http.server 8410
   --directory blueai/public`) → `http://localhost:8410/blueai-desktop/index.html`. Note: this
   server drops between sessions fairly often — check it before concluding something's broken.
-- Design-system docs: `style-guide.html` (planned, Phase 2 — a plain-HTML sibling that links
-  `blueai-desktop.css`) + reasoning/conventions in `visual-designer/`.
+- Design-system docs: `style-guide.html` (built 2026-08-01) covers foundations (46 tokens, the
+  measured type/radius scales, icons) + ~60 of 278 classes across 9 component families, plus the
+  house conventions and an honest "known gaps" list. The app shell, onboarding/tour, date-time
+  picker and Skills flows are NOT yet documented there. Design reasoning lives in
+  `visual-designer/` (taste.md, reasonings.md, decisions.md).
 - Designer reviews live in-browser during iteration — skip Playwright screenshots for small/
   mechanical changes (see `feedback_skip_screenshots_when_watching` memory); verify with
   Playwright only for first-time-wiring new interactions or genuine logic/data-model changes.

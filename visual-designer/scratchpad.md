@@ -5,6 +5,44 @@ resolved. Promoted to decisions.md / taste.md at audit passes, then wiped.
 Format: `YYYY-MM-DD HH:mm — <file> — <what changed> — Why: <one phrase>`
 
 --- Pending audit entries ---
+2026-08-01 — /blueai-desktop — **DS Phase 2: built `style-guide.html`** — blueai-desktop's first design-system
+reference (the repo's only DS artifact previously documented the dormant marketing site).
+Architecture decision that made it possible: the tokens are declared on `.drawer`, but 614 of the 623 component
+rules are plain global classes that merely RESOLVE `var(--bai-*)`. So a specimen rendered outside a `.drawer`
+ancestor keeps its geometry and silently loses every colour. Three options — (a) re-declare tokens in the guide
+(the exact drift the guide exists to prevent), (b) wrap specimens in a real `.drawer` (drags in position/
+transform/resize/size), or (c) add a tokens-only `.bai-scope` alias to the product CSS. Chose (c): a 5-selector
+change aliasing `.bai-scope` onto the 2 token blocks + the 3 `.drawer.light` component overrides (the placeholder
+-contrast and onboarding-shadow fixes from 29 Jul — without those the guide's LIGHT specimens would have rendered
+the exact bugs that were fixed). Deliberately did NOT alias the `.drawer` LAYOUT rule. Verified the product is
+untouched by re-running the Phase-1 harness: 5 selector-text changes, and 0 token / 0 non-animation property
+changes across both themes — i.e. only selectors gained an alias, nothing resolved differently.
+Second non-obvious trap, caught by testing not reasoning: `blueai-desktop.css` sets `html,body{height:100%;
+overflow:hidden}` + a fixed dark body background — correct for a fixed-viewport app, fatal for a 10,500px
+scrolling document. The guide overrides both AFTER the link. Its own chrome is `sg-`-prefixed so it can never
+collide with product classes.
+Anti-drift design: specimens are the REAL components with the REAL class names; token swatches read values via
+`getComputedStyle` rather than hardcoding hex, so a token change updates the page automatically. Independent
+dark/light toggles for specimens vs. page chrome (so light specimens can be reviewed without a white page at
+night). Type + radius scales COMPUTED from the stylesheet with usage counts, not eyeballed.
+Found and fixed 4 real accuracy defects in my own first-pass specimens, all by grepping how index.html actually
+builds each component instead of trusting recall: `.mn-list` is an `<ol>` of `<li>`s (I'd used a div with inline
+`<b>`, which rendered the numbers on separate lines); `.dc-head`/`.ec-head` follow a glyph + ALL-CAPS convention
+(`✓ TASK COMPLETED`, `✕ ERROR`) that my prettier invented copy had erased — the convention is now documented as
+such; `.bai-rescard` has a third `.match` element with a `▸` prefix I'd omitted. Also verified `.bai-modalact
+.secondary` genuinely exists before documenting it (it does, line 522).
+Stated honest scope rather than implying completeness: ~60 of 278 classes across 9 families are covered; the app
+shell, onboarding/tour, date-time picker, Skills flows and boot animation are named as NOT covered. Also
+surfaced a real finding rather than tidying it away — the stylesheet carries 19 distinct font sizes and 15 radii
+including near-duplicate pairs (9/9.5, 10/10.5, 11/11.5, 12/12.5, 13/13.5), documented as-is with a note that
+consolidating is its own product change. Verified: zero JS errors, 46/46 tokens resolving non-empty, specimens
+confirmed styled by real rules via computed values (card bg == `--bai-card-2`, hero button exactly 41px, rings
+60/14px, toggle knob `translateX(12px)`), no horizontal overflow, theme toggle flips `--bai-bg` correctly.
+— Why: the load-bearing insight was diagnosing that the blocker was STRUCTURAL (918 lines of inline CSS + tokens
+scoped to a layout element), not documentational — so Phase 1 had to be an extraction and Phase 2 had to solve
+token scoping, before a single word of documentation was worth writing. And a style guide is the one artifact
+where "documented from memory" is self-defeating: 4 of my own specimens were subtly wrong until grepped against
+the real render path, which is precisely the drift the whole link-the-real-CSS approach exists to prevent.
 2026-08-01 — /blueai-desktop — **DS Phase 1: extracted the inline `<style>` block into `blueai-desktop.css`.**
 Context: designer greenlit building blueai-desktop its own design system (it had none — every DS artifact in
 this repo documents the now-dormant marketing site). Established first that the blocker was structural, not
