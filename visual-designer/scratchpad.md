@@ -5,6 +5,47 @@ resolved. Promoted to decisions.md / taste.md at audit passes, then wiped.
 Format: `YYYY-MM-DD HH:mm — <file> — <what changed> — Why: <one phrase>`
 
 --- Pending audit entries ---
+2026-08-01 — /blueai-desktop — **Independent re-audit (new check) + gaps closed. Coverage 222→233/330 (71%),
+every component family now has a section.** Also owned a numbering drift honestly: the original plan was
+Phase 1 extract → Phase 2 build → **Phase 3 "fill it"**; what I later labelled Phase 3 (shell) and Phase 4
+(picker/skills) were both installments OF that Phase 3. So "is Phase 3 done" = yes now, not at 56%.
+**The new check — specimen-vs-product fidelity.** Prior audits verified classes exist, tokens resolve, and
+numbers are computed. None had asked the actual question a style guide lives or dies on: *does a specimen
+render like the real component?* Built a harness that walks 8 product surfaces harvesting computed styles per
+class-combo, does the same on the guide, and diffs 19 APPEARANCE properties (excluding layout/position, which
+specimens legitimately neutralise). First run: **115 mismatches.** Four were real:
+ (1) **The guide was masking a whole class of bug.** 87 findings were `color: product=rgb(0,0,0) guide=light`.
+ Root cause: `.drawer` sets no color, so the product's subtree inherits the document default (black); this
+ page's body sets a light ink, which inherited into every specimen. Any component missing its own `color`
+ would look CORRECT here and render black-on-dark in the product. Fixed with `color: initial` on `.sg-canvas`
+ — the guide now reproduces the product's real inheritance, so that gap would show as visibly-black text.
+ This is the most valuable finding of the whole DS effort so far: the guide was structurally incapable of
+ revealing a specific real defect.
+ (2) **The credits popover specimen was hand-rolled.** I'd built its container with inline styles instead of
+ the real `.bai-menu-desc` + `.bai-credits-wrap`, so `.cr-headrow`/`.cr-bar` inherited 16px instead of the
+ real 10.5px. Invisible by eye; caught only by computed-style diff. The lesson generalises: a specimen must
+ include the real PARENTS, not just the component — inherited typography is part of the component.
+ (3) `.bai-subpane-body` had a `padding:12px` override I'd added for looks, vs the real `10px 12px 12px`.
+ (4) Onboarding cards/labels were missing `.bai-onb`'s `text-align:center` context.
+Two findings were artifacts of MY OWN audit method (first-instance-wins), which I verified rather than
+assumed: `.bai-preview-row-label` (compared a head label against a row label — there's a `.bai-preview-head
+span` descendant rule, so my specimen was right) and `.bai-stat-wrap` (used in two contexts inheriting 16px in
+the header vs 10.5px in `.bai-status` — enumerated all 6 product instances to confirm). Also corrected one
+markup detail found while resolving it: the product's preview head uses a bare `<span>`, not the row-label
+class. Final state: 115 → 12 findings, all 12 explained as benign (pre-animation opacity 0, expected inherited
+black, multi-context class), **0 real mismatches.**
+**Gaps closed:** boot sequence (documented the fixed ~480ms per-line cadence — cutting a line genuinely
+shortens the boot rather than just speeding the same wall-clock), the `.bai-sched-*` card family INCLUDING its
+in-card delete confirm (contrasted against the full-app logout gate: destructive choice stays attached to the
+thing it affects unless it affects the whole session), and a Demo scene section for `.stage`/`.bs-window`/
+`.canvas`. **Resisted gaming my own metric there:** the scene is prose-documented but deliberately NOT
+specimen'd (a fixed full-viewport wallpaper inside a doc card would hijack the page), so those classes still
+count as UNCOVERED and the section says so explicitly — describing something in a paragraph shouldn't buy
+coverage credit. Also validated 0 duplicate IDs and all 27 nav anchors resolving.
+— Why: three prior audits all asked "is the documentation accurate?" This one asked "is the documentation
+FAITHFUL?" — a different question, and the only one that catches a guide whose specimens are individually
+well-formed but collectively lying about how the component behaves in situ. Worth re-running after every batch
+of new specimens; it's now named in CLAUDE.md as part of the contract rather than a one-off.
 2026-08-01 — /blueai-desktop — **DS Phase 4: date/time picker + Skill create flows documented.** Coverage
 **186/330 (56%) → 222/330 (67%)**. Two sections, both markup grep-verified before writing.
 Picker: documented as a deliberately TWO-STEP flow, with the reasoning that matters — an earlier combined

@@ -98,11 +98,15 @@ operates on stale memory of blueAI's design system. The reading IS the reset.
   server drops between sessions fairly often — check it before concluding something's broken.
 - Design-system docs: `style-guide.html` (built 2026-08-01) — foundations (46 tokens, live-tallied
   type/radius scales, the 29-icon set) + 19 sections across shell, components and full-screen
-  states, house conventions, and a **self-measured** coverage figure: currently 222 of 330 classes
-  (67%), computed at load rather than asserted. Still undocumented: the boot animation, the outer
-  demo scene (`.stage`/`.bs-window`/`.canvas` — demo scaffolding, not product UI) and the
-  `.bai-sched-*` card family. The page lists every uncovered class by name, so trust that list
-  over this sentence. Design reasoning lives in `visual-designer/` (taste.md,
+  states, house conventions, and a **self-measured** coverage figure: currently 233 of 330 classes
+  (71%), computed at load rather than asserted. **Every component family now has a section**; the
+  remaining uncovered classes are the demo scene (documented but deliberately not specimen'd),
+  mid-gesture modifier classes, and one-off descendants already visible inside their parent's
+  specimen. The page lists every uncovered class by name — trust that list over this sentence.
+- **Specimen fidelity is verified, not assumed.** `scratchpad`-logged audit compares every shared
+  class between the guide and the running product across 19 appearance properties. Re-run it after
+  adding specimens; it caught 4 real bugs on its first run, including this page's own body ink
+  leaking into specimens and thereby masking components with no `color` of their own. Design reasoning lives in `visual-designer/` (taste.md,
   reasonings.md, decisions.md).
 - Designer reviews live in-browser during iteration — skip Playwright screenshots for small/
   mechanical changes (see `feedback_skip_screenshots_when_watching` memory); verify with

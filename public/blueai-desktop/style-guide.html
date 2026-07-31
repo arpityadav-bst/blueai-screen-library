@@ -73,8 +73,13 @@
     .sg-spechead { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; padding: 9px 13px; border-bottom: 1px solid var(--sg-line); }
     .sg-cls { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; color: var(--sg-accent); font-weight: 600; }
     .sg-role { font-size: 11px; color: var(--sg-ink-2); line-height: 1.5; }
-    /* .bai-scope hands the specimen the REAL tokens (see the alias note in blueai-desktop.css) */
-    .sg-canvas { padding: 18px; background: var(--bai-bg); display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-start; }
+    /* .bai-scope hands the specimen the REAL tokens (see the alias note in blueai-desktop.css).
+       `color: initial` is deliberate and load-bearing: the product's .drawer subtree sets no color,
+       so it inherits the document default (black). This page's body sets a light ink — letting that
+       inherit into specimens would MASK any component missing its own color declaration (it would
+       look correct here and render black-on-dark in the product). Resetting to initial reproduces
+       the product's real inheritance, so that gap shows up as visibly-black text instead. */
+    .sg-canvas { padding: 18px; background: var(--bai-bg); display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-start; color: initial; }
     .sg-canvas.sg-col { flex-direction: column; }
     .sg-canvas.sg-col > * { align-self: stretch; }
     .sg-canvas.sg-narrow > * { max-width: 330px; }
@@ -141,7 +146,9 @@
     <div class="sg-navgroup">Full-screen states</div>
     <a href="#gates">Gates &amp; offer card</a>
     <a href="#onboarding">Onboarding &amp; tour</a>
+    <a href="#boot">Boot sequence</a>
     <a href="#preview">Dev preview panel</a>
+    <a href="#scene">Demo scene</a>
 
     <div class="sg-navgroup">Meta</div>
     <a href="#conventions">Conventions</a>
@@ -378,7 +385,7 @@
               <button class="bai-subpane-back" type="button" aria-label="Back"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
               <span>AI Credits</span>
             </div>
-            <div class="bai-subpane-body" style="padding:12px;">
+            <div class="bai-subpane-body">
               <div class="bai-kv-block"><div class="bai-kv-row"><span class="k">Route body</span><span class="v">scrolls independently</span></div></div>
             </div>
           </div>
@@ -716,11 +723,18 @@
       <div class="sg-spec">
         <div class="sg-spechead"><span class="sg-cls">.cr-*</span><span class="sg-role">The header hover popover: title row with its action top-right, big balance, thin bar, plan line.</span></div>
         <div class="sg-canvas bai-scope" style="align-items:flex-start;">
-          <div style="width:176px;background:var(--bai-panel);border:1px solid var(--bai-line-2);border-radius:8px;padding:8px 10px;display:flex;flex-direction:column;gap:5px;box-shadow:var(--bai-menu-shadow);">
-            <div class="cr-headrow"><span class="cr-head">CREDITS</span><span class="cr-viewmore">View details ›</span></div>
-            <span class="cr-big"><span class="sp" style="color:var(--bai-credit-hi)">✦</span> 5,000</span>
-            <span class="cr-bar"><i style="width:100%;background:var(--bai-credit-hi)"></i></span>
-            <span class="cr-sub cr-sub-prime">Prime</span>
+          <!-- The real parents matter here: .bai-menu-desc sets the font-size/line-height/color the
+               .cr-* children INHERIT, and .bai-credits-wrap is what constrains it to 176px. An earlier
+               version of this specimen hand-rolled the container with inline styles, which left
+               .cr-headrow and .cr-bar inheriting 16px instead of the real 10.5px — invisible by eye,
+               caught by diffing computed styles against the product. -->
+          <div class="bai-credits-wrap" style="position:relative;">
+            <div class="bai-menu-desc show" style="position:relative;bottom:auto;display:flex;flex-direction:column;gap:5px;">
+              <div class="cr-headrow"><span class="cr-head">CREDITS</span><span class="cr-viewmore">View details ›</span></div>
+              <span class="cr-big"><span class="sp" style="color:var(--bai-credit-hi)">✦</span> 5,000</span>
+              <span class="cr-bar"><i style="width:100%;background:var(--bai-credit-hi)"></i></span>
+              <span class="cr-sub cr-sub-prime">Prime</span>
+            </div>
           </div>
         </div>
       </div>
@@ -936,6 +950,35 @@
           <div class="bai-sticky-cta"><button type="button">Build a custom skill</button></div>
         </div>
       </div>
+
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-sched-card</span> <span class="sg-cls">.bai-sched-row</span> <span class="sg-cls">.bai-sched-btn</span><span class="sg-role">A scheduled task. Title row carries the on/off toggle; each detail row is <code>.ic</code> + label + bold value, with <code>.bai-sched-next</code> accenting the computed next run. Actions are icon+label buttons, Delete as <code>.danger</code>.</span></div>
+        <div class="sg-canvas bai-scope sg-col sg-narrow">
+          <div class="bai-sched-card sg-w">
+            <div class="bai-sched-head"><b>Claim daily rewards</b><span class="bai-tgl on" role="button" aria-label="Toggle on/off"><i></i></span></div>
+            <div class="bai-sched-row"><span class="ic" data-icon="calendar" data-size="13"></span>Schedule: <b>Daily</b></div>
+            <div class="bai-sched-row"><span class="ic" data-icon="clock" data-size="13"></span>Next run: <b class="bai-sched-next">29 Jul, 09:00</b></div>
+            <div class="bai-sched-actions">
+              <button class="bai-sched-btn" type="button" data-icon="edit" data-size="13">Edit</button>
+              <button class="bai-sched-btn danger" type="button" data-icon="trash" data-size="13">Delete</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-sched-card</span> (delete confirm) <span class="sg-cls">.bai-sched-sub</span><span class="sg-role">Deleting swaps the card's own contents for the confirm rather than opening an overlay — the destructive choice stays attached to the thing it affects. Compare the full-app logout gate, which blocks because it affects the whole session.</span></div>
+        <div class="sg-canvas bai-scope sg-col sg-narrow">
+          <div class="bai-sched-card sg-w">
+            <b>Delete "Claim daily rewards"?</b>
+            <span class="bai-sched-sub">This can't be undone.</span>
+            <div class="bai-sched-actions">
+              <button class="bai-sched-btn" type="button">Cancel</button>
+              <button class="bai-sched-btn danger" type="button">Delete</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <section class="sg-sec" id="feedback">
@@ -1055,7 +1098,10 @@
       </div>
       <div class="sg-spec">
         <div class="sg-spechead"><span class="sg-cls">.bai-onb-card</span> <span class="sg-cls">.bai-onb-orb</span><span class="sg-role">Outcome card and floating badge. Both take their tint from a local var, and both use a fully colour-mixed shadow in light theme (a plain black layer read as grey smudge there).</span></div>
-        <div class="sg-canvas bai-scope" style="align-items:center;gap:26px;padding:26px 18px;">
+        <!-- text-align:center reproduces .bai-onb's own context, which these children inherit from
+             in the product (caught by diffing computed styles — the orbs/labels read text-align:start
+             here without it) -->
+        <div class="sg-canvas bai-scope" style="align-items:center;gap:26px;padding:26px 18px;text-align:center;">
           <div class="bai-onb-card" style="--cc:#e0559a;position:relative;left:auto;top:auto;animation:none;">
             <span class="ic" data-icon="mail" data-size="15"></span><span class="tx"><b>Morning brief delivered</b></span>
           </div>
@@ -1068,9 +1114,9 @@
       </div>
       <div class="sg-spec">
         <div class="sg-spechead"><span class="sg-cls">.bai-onb-h</span> <span class="sg-cls">.bai-onb-s</span> <span class="sg-cls">.bai-onb-fr</span> <span class="sg-cls">.bai-onb-cta</span><span class="sg-role">Headline (with <code>em</code> for the accent phrase), subtext, the uppercase framing label, and the CTA.</span></div>
-        <div class="sg-canvas bai-scope sg-col" style="align-items:center;padding:20px;">
-          <div class="bai-onb-h" style="animation:none;text-align:center;">Your AI agent that<br /><em>gets things done.</em></div>
-          <div class="bai-onb-s" style="animation:none;text-align:center;">Ask in plain language. BlueAI works inside your apps and reports back.</div>
+        <div class="sg-canvas bai-scope sg-col" style="align-items:center;padding:20px;text-align:center;">
+          <div class="bai-onb-h" style="animation:none;">Your AI agent that<br /><em>gets things done.</em></div>
+          <div class="bai-onb-s" style="animation:none;">Ask in plain language. BlueAI works inside your apps and reports back.</div>
           <div class="bai-onb-fr" style="animation:none;">Here's what I can do for you</div>
           <button class="bai-onb-cta" type="button" style="animation:none;">Get started &rsaquo;</button>
         </div>
@@ -1092,6 +1138,28 @@
       </div>
     </section>
 
+    <section class="sg-sec" id="boot">
+      <h2 class="sg-sech">Boot sequence</h2>
+      <p class="sg-secnote">
+        A short terminal-style log that streams while the panel opens — the one place this prototype leans
+        into the "terminal" idea literally. Lines reveal on a <strong>fixed ~480ms cadence</strong> rather than
+        a total duration, so cutting a line makes the boot genuinely snappier instead of just speeding up the
+        same wall-clock. Pending lines are prefixed <code>▸</code> in <code>--bai-faint</code>; the final line
+        flips to a green <code>✓</code>. <code>.ln.s</code> is the revealed state.
+      </p>
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-boot</span> <span class="sg-cls">.ln</span> <span class="sg-cls">.ok</span><span class="sg-role">Left-aligned inside a centred block. Shown here fully revealed; in the product each <code>.ln</code> gains <code>.s</code> in sequence.</span></div>
+        <div class="sg-canvas bai-scope" style="align-items:center;padding:22px;">
+          <div class="bai-boot on" style="position:relative;top:auto;left:auto;right:auto;display:flex;">
+            <div class="ln s"><span style="color:var(--bai-faint)">▸ </span>Connecting to BlueStacks instance</div>
+            <div class="ln s"><span style="color:var(--bai-faint)">▸ </span>Loading your skills</div>
+            <div class="ln s"><span style="color:var(--bai-faint)">▸ </span>Checking scheduled tasks</div>
+            <div class="ln s"><span class="ok">✓ </span>Ready</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section class="sg-sec" id="preview">
       <h2 class="sg-sech">Dev preview panel</h2>
       <p class="sg-secnote">
@@ -1105,10 +1173,36 @@
         <div class="sg-spechead"><span class="sg-cls">.bai-preview-card</span> <span class="sg-cls">.bai-preview-row</span> <span class="sg-cls">.bai-preview-seg</span><span class="sg-role">Collapsible panel of labelled state togglers, plus one-shot <code>.bai-preview-action</code> buttons.</span></div>
         <div class="sg-canvas" style="background:#0a0e1a;align-items:flex-start;padding:20px;">
           <div class="bai-preview-card" style="display:block;">
-            <div class="bai-preview-head"><span class="bai-preview-row-label">PREVIEW</span><button class="bai-preview-collapse" type="button" data-icon="chevron" data-size="13"></button></div>
+            <!-- bare <span>, matching the product: .bai-preview-head span carries the uppercase styling -->
+            <div class="bai-preview-head"><span>Preview</span><button class="bai-preview-collapse" type="button" data-icon="chevron" data-size="13"></button></div>
             <div class="bai-preview-row"><span class="bai-preview-row-label">Geo</span><div class="bai-preview-seg"><button class="bai-preview-action" type="button" style="background:none;color:#8190ad;">Non-Prime</button><button class="bai-preview-action" type="button">Prime</button></div></div>
             <div class="bai-preview-divider"></div>
             <div class="bai-preview-row"><span class="bai-preview-row-label">Credits</span><div class="bai-preview-seg"><button class="bai-preview-action" type="button">Normal</button><button class="bai-preview-action" type="button" style="background:none;color:#8190ad;">Zero</button></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sg-sec" id="scene">
+      <h2 class="sg-sech">Demo scene</h2>
+      <p class="sg-secnote">
+        The outermost layer, and the one part of this stylesheet that is <strong>not product UI</strong>: a
+        mock desktop with a BlueStacks window screenshot, which exists so the panel can be shown in the context
+        it actually ships in. Documented here so nobody mistakes it for something the real product renders —
+        and so nobody restyles it thinking it's chrome.
+      </p>
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.stage</span> <span class="sg-cls">.scaler</span> <span class="sg-cls">.composition</span> <span class="sg-cls">.bs-window</span> <span class="sg-cls">.canvas</span><span class="sg-role">Demo scaffolding, outside-in. <code>.stage</code> is the desktop wallpaper; <code>.scaler</code> applies a <code>--scale</code> transform so the whole scene can be shrunk without reflowing it; <code>.composition</code> positions the pieces; <code>.bs-window</code> is the App Player screenshot; <code>.canvas</code> is the panel's own backdrop, mirroring <code>--bai-bg</code> (boot.js paints the same value onto its canvas element).</span></div>
+        <div class="sg-canvas" style="background:var(--sg-panel);display:block;padding:16px;">
+          <div class="sg-secnote" style="margin:0;">
+            Deliberately not rendered as a specimen: <code>.stage</code> is <code>position:fixed</code> over the
+            whole viewport and <code>.bs-window</code> pulls a full desktop screenshot — reproducing either
+            inside a documentation card would hijack the page rather than illustrate anything. Open
+            <a href="index.html" style="color:var(--sg-accent);">the prototype itself</a> to see the scene.
+            <br /><br />
+            <b>These classes therefore still count as UNCOVERED</b> in the figure above, and still appear in its
+            missing list — correctly. The metric measures rendered specimens, not prose, and describing
+            something in a paragraph shouldn't buy coverage credit.
           </div>
         </div>
       </div>
@@ -1170,11 +1264,22 @@
         it is a real change to the product and needs its own pass. Every number here is computed at load, so
         it cannot fall behind the stylesheet.
         <br /><br />
-        <b>Not yet covered here.</b> The boot animation (<code>.bai-boot</code>), the outer desktop scene
-        (<code>.stage</code> / <code>.bs-window</code> / <code>.canvas</code> — scaffolding for the demo, not
-        product UI), the Scheduled list's own card family (<code>.bai-sched-*</code>), and assorted one-off
-        descendants. All exist in <code>blueai-desktop.css</code>; the coverage block above lists every one
-        by name, so trust that list over this paragraph.
+        <b>What's left.</b> Every component family now has a section. The remaining uncovered classes in the
+        list above are: the <b>demo scene</b> (<code>.stage</code>/<code>.bs-window</code>/<code>.canvas</code>
+        — documented in its own section but deliberately not specimen'd, since reproducing a fixed full-viewport
+        wallpaper inside a doc card would hijack the page), <b>interaction-state and modifier classes</b> that
+        only exist mid-gesture (<code>.working</code>, <code>.flip</code>, <code>.win-hidden</code>,
+        <code>.detached</code>, drag/scroll helpers), and <b>one-off descendants</b> of documented components
+        (<code>.hn-ic</code>, <code>.sh-line</code>, <code>.mk</code> and similar) whose parent's specimen
+        already shows them in place. Trust the list above over this paragraph.
+        <br /><br />
+        <b>Specimen fidelity is checked, not assumed.</b> The specimens have been diffed against the real
+        components in the running product — every shared class compared on 19 appearance properties. That check
+        found four genuine bugs on its first run: the credits popover was hand-rolled instead of using its real
+        <code>.bai-menu-desc</code> parent (leaving its children inheriting 16px instead of 10.5px), a subpane
+        padding override, a missing <code>text-align</code> context on the onboarding cards, and this page's own
+        body ink leaking into specimens — which would have <em>masked</em> any component missing a
+        <code>color</code> declaration. All fixed; the diff is clean.
         <br /><br />
         <b>Markup is the one thing still copied.</b> The CSS and the icon set are shared with the product, but
         each specimen's HTML is hand-written here because the product builds most of it in JS. That's a real
