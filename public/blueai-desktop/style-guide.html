@@ -210,10 +210,16 @@
     <section class="sg-sec" id="type">
       <h2 class="sg-sech">Type scale</h2>
       <p class="sg-secnote">
-        Inter throughout, one family. The <strong><span data-live-typecount>…</span> sizes</strong> below are
-        tallied from the live stylesheet at page load, with real use counts — this is the scale as it actually
-        exists, not an idealised one. Weights in use: 400, 500, 600, <strong>700 (dominant)</strong>, plus a
-        single 800.
+        Inter throughout, one family. <strong>Sizes are tokens now</strong> — the
+        <span data-live-typecount>…</span> steps below are tallied from the live stylesheet by counting how
+        many declarations reference each token, and each value is read back from that token. Weights in use:
+        400, 500, 600, <strong>700 (dominant)</strong>, plus a single 800.
+        <br /><br />
+        Text steps carry <strong>role names</strong> because the role is stable. Display sizes and the two
+        optically-matched <strong>glyphs</strong> (the progress tick; the ✦ that sits beside a 46px numeral)
+        carry size names — calling 22px "avatar" would be wrong the first time it's reused. Any declaration
+        still using a raw px value appears in <span style="color:var(--bai-credit-mid);">amber</span> below;
+        there are currently <strong><span data-live-untokenised>…</span></strong>.
       </p>
       <div class="sg-spec">
         <div class="sg-spechead"><span class="sg-cls">font-size</span><span class="sg-role">value · uses · rendered sample</span></div>
@@ -224,9 +230,11 @@
     <section class="sg-sec" id="radius">
       <h2 class="sg-sech">Radius scale</h2>
       <p class="sg-secnote">
-        Tallied live from the stylesheet — <span data-live-radcount>…</span> distinct values.
-        <strong>The workhorse is <span data-live-toprad>…</span></strong> — buttons, chat cards, inputs;
-        9–12px for larger panels and modal cards; 20px+ only for pills and circles.
+        Tokenised too — <span data-live-radcount>…</span> steps, tallied live.
+        <strong>The workhorse is <span data-live-toprad>…</span></strong> (<code>r-md</code>) — buttons, chat
+        cards, inputs; <code>r-lg</code> for panels and modal cards; <code>r-pill</code> (999px) for anything
+        fully round. <code>border-radius: 50%</code> stays a literal: a true circle is a shape, not a step on
+        this scale.
       </p>
       <div class="sg-spec">
         <div class="sg-spechead"><span class="sg-cls">border-radius</span><span class="sg-role">value · uses</span></div>
@@ -1529,13 +1537,19 @@
   //      font-size. Only the human-written role labels stay editorial; a size with no label still
   //      appears in the table, so a new value can't hide. ----
   var TYPE_ROLES = {
-    '7px': 'Micro — background-progress tick only', '9px': 'Smallest label',
-    '9.5px': 'Section labels, eyebrows', '10px': 'Captions, meta', '10.5px': 'Secondary body, hints',
-    '11px': 'Body small, menu items', '11.5px': 'Sidebar rows', '12px': 'Body, card titles',
-    '12.5px': 'Input text, modal actions', '13px': 'Chat message body', '13.5px': 'Tour heading',
-    '14px': 'Brand wordmark', '15px': 'Credit balance', '17.5px': 'Onboarding headline',
-    '22px': 'Avatar initial', '26px': 'Large numeral', '34px': 'Credits hero',
-    '38px': 'Login-gate credits', '46px': 'Offer-modal headline'
+    '--bai-fs-label':   'ALL-CAPS labels, eyebrows',
+    
+    '--bai-fs-sm':      'Captions, meta, body-small, menu items, sidebar rows',
+    '--bai-fs-base':    'Body, card titles',
+    '--bai-fs-body':    'Chat message body',
+    '--bai-fs-lg':      'Brand wordmark',
+    '--bai-fs-xl':      'Credit balance',
+    '--bai-fs-d18':     'Onboarding headline',
+    '--bai-fs-d22':     'Credit numerals, avatar initial',
+    '--bai-fs-d38':     'Login-gate credits',
+    '--bai-fs-d46':     'Offer-modal headline',
+    '--bai-glyph-xs':   'Glyph — background-progress tick',
+    '--bai-glyph-lg':   'Glyph — ✦ beside the 46px numeral',
   };
   function ownRulesText() {
     var out = [];
@@ -1549,32 +1563,61 @@
     }
     return out.join('\n');
   }
-  function tally(text, re) {
-    var m = {}, x;
-    while ((x = re.exec(text)) !== null) { m[x[1]] = (m[x[1]] || 0) + 1; }
-    return Object.keys(m).map(function (k) { return [k, m[k]]; })
-      .sort(function (a, b) { return parseFloat(a[0]) - parseFloat(b[0]); });
+  /* Tally by TOKEN, resolving each token's value live. Before the size scale existed this counted raw
+     `font-size: 12px` literals; now every product declaration goes through var(--bai-fs-*), so the old
+     regex would have found nothing and silently rendered an empty table. Counts how many declarations
+     reference each token, and reads the token's value from the live stylesheet. */
+  function tallyTokens(text, prop, prefix) {
+    var counts = {}, x;
+    var use = new RegExp(prop + ':\\s*var\\((' + prefix + '[a-z0-9-]+)\\)', 'g');
+    while ((x = use.exec(text)) !== null) counts[x[1]] = (counts[x[1]] || 0) + 1;
+    // any surviving raw literal is reported too, so a bypass cannot hide
+    var raw = {};
+    var lit = new RegExp(prop + ':\\s*([\\d.]+px)', 'g');
+    while ((x = lit.exec(text)) !== null) raw[x[1]] = (raw[x[1]] || 0) + 1;
+    var probe = document.createElement('div');
+    probe.className = 'bai-scope';
+    document.body.appendChild(probe);
+    var cs = getComputedStyle(probe);
+    var rows = Object.keys(counts).map(function (t) {
+      return { token: t, value: cs.getPropertyValue(t).trim(), uses: counts[t] };
+    });
+    probe.remove();
+    Object.keys(raw).forEach(function (v) { rows.push({ token: null, value: v, uses: raw[v] }); });
+    return rows.sort(function (a, b) { return parseFloat(a.value) - parseFloat(b.value); });
   }
   function renderScales() {
     var css = ownRulesText();
-    var TYPE = tally(css, /font-size:\s*([\d.]+px)/g);
-    var RADII = tally(css, /border-radius:\s*([\d.]+px)/g);
+    var TYPE = tallyTokens(css, 'font-size', '--bai-(?:fs|glyph)-');
+    var RADII = tallyTokens(css, 'border-radius', '--bai-r-');
     document.getElementById('sgType').innerHTML = TYPE.map(function (t) {
-      var role = TYPE_ROLES[t[0]] || '<em style="opacity:.65;">(no role documented yet)</em>';
-      return '<div class="sg-scalerow"><span class="sg-scaleval">' + t[0] + '</span><span class="sg-scaleuse">' + t[1] + '&times;</span>' +
-             '<span class="sg-scalesample" style="font-size:' + t[0] + ';">' + role + '</span></div>';
+      var role = TYPE_ROLES[t.token] || TYPE_ROLES[t.value] || '<em style="opacity:.65;">(no role documented yet)</em>';
+      var name = t.token
+        ? '<code style="color:var(--bai-accent);">' + t.token.replace('--bai-', '') + '</code>'
+        : '<em style="color:var(--bai-credit-mid);">raw ' + t.value + '</em>';
+      return '<div class="sg-scalerow"><span class="sg-scaleval">' + t.value + '</span>' +
+             '<span class="sg-scaleuse">' + t.uses + '&times;</span>' +
+             '<span class="sg-scalesample" style="font-size:' + t.value + ';">' + role + '</span>' +
+             '<span style="margin-left:auto;font-size:9.5px;flex-shrink:0;">' + name + '</span></div>';
     }).join('');
     document.getElementById('sgRadius').innerHTML = RADII.map(function (r) {
-      return '<div class="sg-radrow"><span class="sg-scaleval">' + r[0] + '</span><span class="sg-scaleuse">' + r[1] + '&times;</span>' +
-             '<span class="sg-radbox" style="border-radius:' + r[0] + ';"></span></div>';
+      var name = r.token
+        ? '<code style="color:var(--bai-accent);font-size:9.5px;">' + r.token.replace('--bai-', '') + '</code>'
+        : '<em style="color:var(--bai-credit-mid);font-size:9.5px;">raw ' + r.value + '</em>';
+      return '<div class="sg-radrow"><span class="sg-scaleval">' + r.value + '</span><span class="sg-scaleuse">' + r.uses + '&times;</span>' +
+             '<span class="sg-radbox" style="border-radius:' + r.value + ';"></span>' + name + '</div>';
     }).join('');
     // the drift callouts state live numbers too, so they can never contradict the tables above them
-    var dupPairs = TYPE.filter(function (t, i) { return i > 0 && parseFloat(t[0]) - parseFloat(TYPE[i - 1][0]) === 0.5; }).length;
+    var vals = TYPE.map(function (t) { return parseFloat(t.value); }).sort(function (a, b) { return a - b; });
+    var dupPairs = vals.filter(function (v, i) { return i > 0 && v - vals[i - 1] === 0.5; }).length;
+    var untokenised = TYPE.filter(function (t) { return !t.token; }).length +
+                      RADII.filter(function (r) { return !r.token; }).length;
     document.querySelectorAll('[data-live-typecount]').forEach(function (e) { e.textContent = TYPE.length; });
     document.querySelectorAll('[data-live-radcount]').forEach(function (e) { e.textContent = RADII.length; });
     document.querySelectorAll('[data-live-duppairs]').forEach(function (e) { e.textContent = dupPairs; });
-    var topRad = RADII.slice().sort(function (a, b) { return b[1] - a[1]; })[0];
-    document.querySelectorAll('[data-live-toprad]').forEach(function (e) { e.textContent = topRad[0] + ' (' + topRad[1] + ' uses)'; });
+    document.querySelectorAll('[data-live-untokenised]').forEach(function (e) { e.textContent = untokenised; });
+    var topRad = RADII.slice().sort(function (a, b) { return b.uses - a.uses; })[0];
+    document.querySelectorAll('[data-live-toprad]').forEach(function (e) { e.textContent = topRad.value + ' (' + topRad.uses + ' uses)'; });
     renderPicker();
     renderCoverage(css);
   }

@@ -177,6 +177,34 @@ if (dead.length) {
   console.log('OK — every styled class has a call site.');
 }
 
+/* ---------- 8. SIZE SCALE: no raw px sizes outside the allowed exceptions ---------- */
+section('8. SIZE SCALE');
+/* Without this the scale decays inside a week — the next component copies whatever literal is nearest,
+   which is exactly how the file reached 20 font-sizes and 15 radii. Two allowed exceptions:
+   the token declarations themselves, and the dev Preview panel (position:fixed outside .drawer, so
+   .drawer-scoped tokens cannot resolve there — see the note above its block). */
+function rawSizes(text, file) {
+  const out = [];
+  text.split(/\r?\n/).forEach((line, i) => {
+    if (/--bai-(fs|r|glyph)-[a-z0-9]+:\s*[\d.]+px/.test(line)) return;      // the token block itself
+    if (line.indexOf('.bai-preview') === 0) return;                          // documented exception
+    const m = line.match(/(font-size|border-radius):\s*([\d.]+px)/);
+    if (m) out.push(file + ':' + (i + 1) + '  ' + m[0].trim());
+  });
+  return out;
+}
+const rawFound = rawSizes(CSS, 'blueai-desktop.css').concat(rawSizes(PROD, 'index.html'));
+if (rawFound.length) {
+  console.log('FAIL — raw px size(s) outside the token scale. Use a --bai-fs-* / --bai-r-* token:');
+  rawFound.slice(0, 12).forEach(r => console.log('   ' + r));
+  if (rawFound.length > 12) console.log('   ... +' + (rawFound.length - 12) + ' more');
+  fail++;
+} else {
+  const fsTok = new Set([...CSS.matchAll(/font-size:\s*var\((--bai-(?:fs|glyph)-[a-z0-9-]+)\)/g)].map(m => m[1]));
+  const rTok = new Set([...CSS.matchAll(/border-radius:\s*var\((--bai-r-[a-z0-9-]+)\)/g)].map(m => m[1]));
+  console.log('OK — every product size goes through a token (' + fsTok.size + ' size tokens, ' + rTok.size + ' radius tokens in use).');
+}
+
 console.log('\n' + '='.repeat(64));
 console.log(fail === 0
   ? 'PASS — no drift detected between the product and its design system.'

@@ -678,8 +678,8 @@
         return b;
       }
       function byokPillsHtml() {
-        return '<span style="display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:600;color:var(--bai-text-hi);background:var(--bai-pill);padding:4px 9px;border-radius:20px;"><i style="width:6px;height:6px;border-radius:50%;background:var(--bai-ok);flex-shrink:0;"></i>' + stgByokProvider + '</span>' +
-               '<span style="font-size:10.5px;font-weight:600;color:var(--bai-text-hi);background:var(--bai-pill);padding:4px 9px;border-radius:20px;">' + stgByokModel + '</span>';
+        return '<span style="display:inline-flex;align-items:center;gap:5px;font-size:var(--bai-fs-sm);font-weight:600;color:var(--bai-text-hi);background:var(--bai-pill);padding:4px 9px;border-radius:var(--bai-r-pill);"><i style="width:6px;height:6px;border-radius:50%;background:var(--bai-ok);flex-shrink:0;"></i>' + stgByokProvider + '</span>' +
+               '<span style="font-size:var(--bai-fs-sm);font-weight:600;color:var(--bai-text-hi);background:var(--bai-pill);padding:4px 9px;border-radius:var(--bai-r-pill);">' + stgByokModel + '</span>';
       }
       function aicMoreWays(el) {
         var label = document.createElement('div'); label.className = 'bai-set-label'; label.textContent = 'MORE WAYS TO GET AI CREDITS'; el.appendChild(label);
@@ -711,7 +711,7 @@
           var wrap1 = document.createElement('div'); wrap1.style.cssText = 'display:flex;flex-direction:column;gap:10px;';
           var card = document.createElement('div'); card.className = 'bai-set-card'; card.style.margin = '0';
           card.innerHTML =
-            '<div class="bai-set-card-head"><span class="ic" style="background:color-mix(in srgb, var(--bai-ok) 16%, transparent);color:var(--bai-ok);">' + iconSvg(KEY_PATH, 16) + '</span><span class="info"><b>Running on your own key <span style="font-size:9px;font-weight:700;color:var(--bai-ok);background:color-mix(in srgb, var(--bai-ok) 14%, transparent);padding:2px 6px;border-radius:10px;">ACTIVE</span></b><span>No BlueAI credits are consumed while this is on.</span></span></div>' +
+            '<div class="bai-set-card-head"><span class="ic" style="background:color-mix(in srgb, var(--bai-ok) 16%, transparent);color:var(--bai-ok);">' + iconSvg(KEY_PATH, 16) + '</span><span class="info"><b>Running on your own key <span style="font-size:var(--bai-fs-label);font-weight:700;color:var(--bai-ok);background:color-mix(in srgb, var(--bai-ok) 14%, transparent);padding:2px 6px;border-radius:var(--bai-r-cta);">ACTIVE</span></b><span>No BlueAI credits are consumed while this is on.</span></span></div>' +
             '<div style="display:flex;gap:6px;">' + byokPillsHtml() + '</div>';
           card.appendChild(keyManageAction('Manage in Settings', false));
           wrap1.appendChild(card);
@@ -721,7 +721,7 @@
             var pcardHead = document.createElement('div'); pcardHead.style.cssText = 'display:flex;align-items:center;gap:12px;';
             pcardHead.innerHTML =
               '<svg class="bai-credit-ring lg" viewBox="0 0 18 18" aria-label="Prime credits, paused" style="opacity:0.5;"><circle class="tr" cx="9" cy="9" r="7"/><circle class="fl" cx="9" cy="9" r="7" style="stroke-dasharray:' + (RING_C * pausedPct / 100).toFixed(2) + ' ' + RING_C.toFixed(2) + ';stroke:var(--bai-dim);"/></svg>' +
-              '<span style="display:flex;flex-direction:column;gap:2px;"><b style="font-size:12px;font-weight:500;color:var(--bai-text-hi);">Prime credits <span style="font-size:9px;font-weight:700;color:var(--bai-dim);background:var(--bai-pill);padding:2px 6px;border-radius:10px;">PAUSED</span></b><span style="font-size:10px;color:var(--bai-dim);">' + credits.toLocaleString('en-US') + ' credits · renews in 11 days</span></span>';
+              '<span style="display:flex;flex-direction:column;gap:2px;"><b style="font-size:var(--bai-fs-base);font-weight:500;color:var(--bai-text-hi);">Prime credits <span style="font-size:var(--bai-fs-label);font-weight:700;color:var(--bai-dim);background:var(--bai-pill);padding:2px 6px;border-radius:var(--bai-r-cta);">PAUSED</span></b><span style="font-size:var(--bai-fs-sm);color:var(--bai-dim);">' + credits.toLocaleString('en-US') + ' credits · renews in 11 days</span></span>';
             pcard.appendChild(pcardHead);
             // Correction (kept): the purchase CTA has no destination wired — visually active, no listener.
             var topupBtn1 = document.createElement('button'); topupBtn1.className = 'bai-set-btn'; topupBtn1.style.width = '100%'; topupBtn1.type = 'button'; topupBtn1.textContent = 'Top Up or Manage Credits';
@@ -737,7 +737,7 @@
           var statRow2 = document.createElement('div'); statRow2.style.cssText = 'display:flex;align-items:center;gap:12px;';
           statRow2.innerHTML =
             '<svg class="bai-credit-ring lg" viewBox="0 0 18 18" aria-label="Credits remaining"><circle class="tr" cx="9" cy="9" r="7"/><circle class="fl" cx="9" cy="9" r="7" style="stroke-dasharray:' + (RING_C * pct2 / 100).toFixed(2) + ' ' + RING_C.toFixed(2) + ';stroke:' + col2 + ';"/></svg>' +
-            '<span style="display:flex;flex-direction:column;gap:2px;"><span class="cr-prime" style="font-size:9.5px;letter-spacing:0.4px;">★ PRIME</span><span style="font-size:21px;font-weight:700;line-height:1;color:' + col2 + ';">' + credits.toLocaleString('en-US') + '</span></span></span>';
+            '<span style="display:flex;flex-direction:column;gap:2px;"><span class="cr-prime" style="font-size:var(--bai-fs-label);letter-spacing:0.4px;">★ PRIME</span><span style="font-size:var(--bai-fs-d22);font-weight:700;line-height:1;color:' + col2 + ';">' + credits.toLocaleString('en-US') + '</span></span></span>';
           statCard2.appendChild(statRow2);
           if (credits <= 0) statCard2.appendChild(warnRow("You're out of credits — top up to keep chatting."));
           wrap2.appendChild(statCard2);
@@ -770,7 +770,7 @@
           var statRow = document.createElement('div'); statRow.style.cssText = 'display:flex;align-items:center;gap:12px;';
           statRow.innerHTML =
             '<svg class="bai-credit-ring lg" viewBox="0 0 18 18" aria-label="Credits remaining"><circle class="tr" cx="9" cy="9" r="7"/><circle class="fl" cx="9" cy="9" r="7" style="stroke-dasharray:' + (RING_C * freePct / 100).toFixed(2) + ' ' + RING_C.toFixed(2) + ';stroke:' + freeCol + ';"/></svg>' +
-            '<span style="display:flex;flex-direction:column;gap:2px;"><span style="font-size:9.5px;font-weight:700;letter-spacing:0.4px;color:var(--bai-faint);">FREE TIER</span><span style="font-size:21px;font-weight:700;line-height:1;color:' + freeCol + ';">' + credits.toLocaleString('en-US') + '</span></span></span>';
+            '<span style="display:flex;flex-direction:column;gap:2px;"><span style="font-size:var(--bai-fs-label);font-weight:700;letter-spacing:0.4px;color:var(--bai-faint);">FREE TIER</span><span style="font-size:var(--bai-fs-d22);font-weight:700;line-height:1;color:' + freeCol + ';">' + credits.toLocaleString('en-US') + '</span></span></span>';
           statCard.appendChild(statRow);
           if (credits <= 0) statCard.appendChild(warnRow("You've used all your credits."));
           wrap.appendChild(statCard);
@@ -778,7 +778,7 @@
           var upCard = document.createElement('div'); upCard.className = 'bai-set-card'; upCard.style.margin = '0';
           upCard.innerHTML =
             '<div class="bai-set-card-head"><span class="ic">✦</span><span class="info"><b>Get Prime</b><span>' + PRIME_CREDIT_ALLOWANCE.toLocaleString('en-US') + ' AI credits every month</span></span></div>' +   /* PM: "every cycle" reads technical — same wording fix as the upsell popup, kept in sync here so the two Prime pitches don't diverge */
-            '<div style="font-size:10.5px;font-weight:600;color:var(--bai-dim);cursor:pointer;">View all benefits ›</div>';   // visually present, intentionally inert — same rule as the purchase CTAs
+            '<div style="font-size:var(--bai-fs-sm);font-weight:600;color:var(--bai-dim);cursor:pointer;">View all benefits ›</div>';   // visually present, intentionally inert — same rule as the purchase CTAs
           var primeBtn = document.createElement('button'); primeBtn.className = 'bai-set-btn primary hero'; primeBtn.style.width = '100%'; primeBtn.type = 'button'; primeBtn.textContent = 'Get Prime';
           upCard.appendChild(primeBtn);
           wrap.appendChild(upCard);
@@ -795,7 +795,7 @@
           var statRow4 = document.createElement('div'); statRow4.style.cssText = 'display:flex;align-items:center;gap:12px;';
           statRow4.innerHTML =
             '<svg class="bai-credit-ring lg" viewBox="0 0 18 18" aria-label="Credits remaining"><circle class="tr" cx="9" cy="9" r="7"/><circle class="fl" cx="9" cy="9" r="7" style="stroke-dasharray:' + (RING_C * pct4 / 100).toFixed(2) + ' ' + RING_C.toFixed(2) + ';stroke:' + col4 + ';"/></svg>' +
-            '<span style="display:flex;flex-direction:column;gap:2px;"><span style="font-size:9.5px;font-weight:700;letter-spacing:0.4px;color:var(--bai-faint);">CREDITS</span><span style="font-size:21px;font-weight:700;line-height:1;color:' + col4 + ';">' + credits.toLocaleString('en-US') + '</span></span></span>';
+            '<span style="display:flex;flex-direction:column;gap:2px;"><span style="font-size:var(--bai-fs-label);font-weight:700;letter-spacing:0.4px;color:var(--bai-faint);">CREDITS</span><span style="font-size:var(--bai-fs-d22);font-weight:700;line-height:1;color:' + col4 + ';">' + credits.toLocaleString('en-US') + '</span></span></span>';
           statCard4.appendChild(statRow4);
           if (credits <= 0) statCard4.appendChild(warnRow("You're out of credits. Add your own key to keep using BlueAI."));   // Item 6 (PM): dropped the "Prime isn't available in this region" note — a user in a non-Prime geo has no reason to know what Prime is in the first place
           wrap4.appendChild(statCard4);
@@ -1035,9 +1035,9 @@
               '<div style="display:flex;align-items:center;gap:12px;">' +
                 '<svg class="bai-credit-ring lg" viewBox="0 0 18 18" aria-label="Credits remaining"><circle class="tr" cx="9" cy="9" r="7"/><circle class="fl" cx="9" cy="9" r="7" style="stroke-dasharray:' + (RING_C * pPct / 100).toFixed(2) + ' ' + RING_C.toFixed(2) + ';stroke:' + pCol + ';"/></svg>' +
                 '<span style="display:flex;flex-direction:column;gap:2px;min-width:0;flex:1;">' +
-                  '<span style="font-size:9.5px;font-weight:700;letter-spacing:0.4px;color:var(--bai-faint);">PLAN</span>' +
-                  '<span style="font-size:15px;font-weight:700;color:' + (isPrimeMember ? 'var(--bai-accent)' : 'var(--bai-text-hi)') + ';">' + (isPrimeMember ? '★ Prime' : 'Free tier') + '</span>' +
-                  '<span style="font-size:10px;color:var(--bai-dim);">' + credits.toLocaleString('en-US') + ' credits' + (isPrimeMember ? ' · renews in 11 days' : ' available') + '</span>' +
+                  '<span style="font-size:var(--bai-fs-label);font-weight:700;letter-spacing:0.4px;color:var(--bai-faint);">PLAN</span>' +
+                  '<span style="font-size:var(--bai-fs-xl);font-weight:700;color:' + (isPrimeMember ? 'var(--bai-accent)' : 'var(--bai-text-hi)') + ';">' + (isPrimeMember ? '★ Prime' : 'Free tier') + '</span>' +
+                  '<span style="font-size:var(--bai-fs-sm);color:var(--bai-dim);">' + credits.toLocaleString('en-US') + ' credits' + (isPrimeMember ? ' · renews in 11 days' : ' available') + '</span>' +
                 '</span>' +
               '</div>' +
               '<button class="bai-set-btn" style="width:100%;" type="button" id="baiProfileViewCredits">View AI Credits ›</button>' +
@@ -1185,7 +1185,7 @@
       }
       function openSkillDetails(sk, catName) {
         openSubpane(sk.name, function (body) {
-          var d = document.createElement('div'); d.className = 'sk-desc'; d.style.cssText = 'font-size:11.5px;line-height:1.6;color:var(--bai-text);-webkit-line-clamp:unset;';
+          var d = document.createElement('div'); d.className = 'sk-desc'; d.style.cssText = 'font-size:var(--bai-fs-sm);line-height:1.6;color:var(--bai-text);-webkit-line-clamp:unset;';
           d.textContent = sk.desc; body.appendChild(d);
           var kv = document.createElement('div'); kv.className = 'bai-kv-block';
           kv.innerHTML =
@@ -1665,8 +1665,8 @@
           el.innerHTML = tgHead('Set up Telegram connection') +
             '<div class="tgm-body" style="align-items:center;text-align:center;padding:26px 16px;">' +
               '<div class="lg-icon lg-icon-ok">' + iconSvg('<path d="M20 6 9 17l-5-5"/>', 20) + '</div>' +
-              '<div style="font-weight:700;font-size:14.5px;color:var(--bai-text-hi);">You\'re all set</div>' +
-              '<div style="font-size:11.5px;color:var(--bai-dim);">Telegram is now connected to BlueAI.</div>' +
+              '<div style="font-weight:700;font-size:var(--bai-fs-lg);color:var(--bai-text-hi);">You\'re all set</div>' +
+              '<div style="font-size:var(--bai-fs-sm);color:var(--bai-dim);">Telegram is now connected to BlueAI.</div>' +
               '<button class="tgm-cta" id="tgmDoneBtn" type="button" style="margin-top:6px;">Done</button>' +
             '</div>';
           document.getElementById('tgmDoneBtn').addEventListener('click', closeTgModal);
@@ -1707,7 +1707,7 @@
         if (aiMode !== 'hybrid') return;
         el.appendChild(Object.assign(document.createElement('div'), { className: 'bai-set-divider' }));
         var hybridGroup = document.createElement('div'); hybridGroup.style.cssText = 'display:flex;flex-direction:column;gap:6px;';
-        var sub = document.createElement('div'); sub.style.cssText = 'font-size:10px;color:var(--bai-dim);'; sub.textContent = "Runs on this BlueStacks instance's local GPU";
+        var sub = document.createElement('div'); sub.style.cssText = 'font-size:var(--bai-fs-sm);color:var(--bai-dim);'; sub.textContent = "Runs on this BlueStacks instance's local GPU";
         var group2 = document.createElement('div'); group2.className = 'bai-optcard-group'; group2.style.alignSelf = 'stretch';
         var autoCard = optCard({ title: 'Auto', sub: 'BlueAI runs a local model for you.', badge: '★ Recommended', active: hybridMethod === 'auto', busy: hybridMethod !== 'auto' && hybridStatus !== 'idle' });
         var customCard = optCard({ title: 'Custom', sub: 'Connect your own local VLM.', active: hybridMethod === 'custom' });
@@ -1718,7 +1718,7 @@
         el.appendChild(hybridGroup);
         if (hybridMethod === null) {
           // H26: unset-method helper — shown only until the user actively picks Auto or Custom.
-          var helper = document.createElement('div'); helper.style.cssText = 'font-size:10.5px;color:var(--bai-dim);'; helper.textContent = 'Choose Auto or Custom to continue.';
+          var helper = document.createElement('div'); helper.style.cssText = 'font-size:var(--bai-fs-sm);color:var(--bai-dim);'; helper.textContent = 'Choose Auto or Custom to continue.';
           el.appendChild(helper);
         } else if (hybridMethod === 'auto') {
           renderHybridAutoBody(el, false);
@@ -1726,7 +1726,7 @@
           // Batch 3 (H22): must be checked BEFORE !customApplied — customApplied only flips true once
           // this transitional beat finishes, so checking this branch second would make it unreachable
           // (every render during the 1400ms window would keep hitting the empty-form branch instead).
-          var chk = document.createElement('div'); chk.style.cssText = 'display:flex;align-items:center;gap:8px;font-size:10.5px;color:var(--bai-dim);';
+          var chk = document.createElement('div'); chk.style.cssText = 'display:flex;align-items:center;gap:8px;font-size:var(--bai-fs-sm);color:var(--bai-dim);';
           chk.innerHTML = '<span class="bai-spin"></span><span>Checking connection…</span>'; el.appendChild(chk);
         } else if (!customApplied) {
           var fieldGroup = document.createElement('div'); fieldGroup.style.cssText = 'display:flex;flex-direction:column;gap:7px;';
@@ -1793,12 +1793,12 @@
           el.appendChild(dlBtn);
         } else if (hybridStatus === 'downloading') {
           var barWrap = document.createElement('div'); barWrap.style.cssText = 'display:flex;flex-direction:column;gap:6px;';
-          barWrap.innerHTML = '<div style="height:6px;border-radius:4px;background:var(--bai-input-bg);overflow:hidden;"><div style="height:100%;width:' + downloadPct + '%;background:var(--bai-accent);"></div></div><span style="font-size:10px;color:var(--bai-dim);">Downloading local model… ' + Math.round(downloadPct) + '%</span>';
+          barWrap.innerHTML = '<div style="height:6px;border-radius:var(--bai-r-xs);background:var(--bai-input-bg);overflow:hidden;"><div style="height:100%;width:' + downloadPct + '%;background:var(--bai-accent);"></div></div><span style="font-size:var(--bai-fs-sm);color:var(--bai-dim);">Downloading local model… ' + Math.round(downloadPct) + '%</span>';
           var cancelBtn = document.createElement('button'); cancelBtn.className = 'bai-set-btn'; cancelBtn.style.width = '100%'; cancelBtn.type = 'button'; cancelBtn.textContent = 'Cancel';
           cancelBtn.addEventListener('click', function () { clearInterval(hybridTimer); hybridStatus = 'idle'; downloadPct = 0; if (inModal) closeAiModal(); renderAiMode(); });
           el.appendChild(barWrap); el.appendChild(cancelBtn);
         } else if (hybridStatus === 'installing') {
-          var inst = document.createElement('div'); inst.style.cssText = 'font-size:10.5px;color:var(--bai-dim);'; inst.textContent = 'Installing…'; el.appendChild(inst);
+          var inst = document.createElement('div'); inst.style.cssText = 'font-size:var(--bai-fs-sm);color:var(--bai-dim);'; inst.textContent = 'Installing…'; el.appendChild(inst);
         } else if (hybridStatus === 'running') {
           if (inModal) {
             // Correction: the setup modal's job ends at "it's confirmed ready" — a one-time success
@@ -1910,9 +1910,9 @@
           el.appendChild(provRow);
           if (byokProviderPickerOpen) settingsPicker(provRow, BYOK_PROVIDERS, null, function (p) { stgByokProvider = p; byokProviderPickerOpen = false; renderByok(); });
         } else if (!stgByokKey) {
-          var sub = document.createElement('div'); sub.style.cssText = 'font-size:10.5px;color:var(--bai-text-hi);'; sub.textContent = stgByokProvider + ' API key'; el.appendChild(sub);
+          var sub = document.createElement('div'); sub.style.cssText = 'font-size:var(--bai-fs-sm);color:var(--bai-text-hi);'; sub.textContent = stgByokProvider + ' API key'; el.appendChild(sub);
           var keyInput = document.createElement('input'); keyInput.className = 'bai-newitem-input'; keyInput.type = 'text'; keyInput.placeholder = 'Paste your API key'; el.appendChild(keyInput);
-          var hint = document.createElement('div'); hint.style.cssText = 'font-size:10px;color:var(--bai-dim);'; hint.textContent = 'Stored encrypted on this device only.'; el.appendChild(hint);
+          var hint = document.createElement('div'); hint.style.cssText = 'font-size:var(--bai-fs-sm);color:var(--bai-dim);'; hint.textContent = 'Stored encrypted on this device only.'; el.appendChild(hint);
           var actions = document.createElement('div'); actions.className = 'bai-newitem-actions';
           actions.innerHTML = '<button class="bai-newitem-cancel" type="button">Cancel</button><button class="bai-newitem-create" type="button">Validate &amp; Save</button>';
           actions.querySelector('.bai-newitem-cancel').addEventListener('click', function () { stgByokProvider = null; renderByok(); });
@@ -1925,7 +1925,7 @@
           el.appendChild(actions);
         } else {
           var row = document.createElement('div'); row.style.cssText = 'display:flex;align-items:center;gap:8px;';
-          row.innerHTML = '<span style="flex:1;font-size:10.5px;color:var(--bai-text-hi);">' + stgByokProvider + ' · ••••' + stgByokKey.slice(-4) + '</span>';
+          row.innerHTML = '<span style="flex:1;font-size:var(--bai-fs-sm);color:var(--bai-text-hi);">' + stgByokProvider + ' · ••••' + stgByokKey.slice(-4) + '</span>';
           var rmBtn = document.createElement('button'); rmBtn.className = 'bai-set-btn danger'; rmBtn.type = 'button'; rmBtn.textContent = 'Remove';
           rmBtn.addEventListener('click', function () { stgByokProvider = null; stgByokKey = null; stgByokModel = null; renderByok(); });
           row.appendChild(rmBtn); el.appendChild(row);
