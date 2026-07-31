@@ -132,10 +132,13 @@ WSUP/now.gg cross-contamination, and blueai-desktop is not a different product f
   `public/blueai-desktop/`:
   - `index.html` — markup + the app's inline `<script>` (file-size-rule EXEMPT by established
     convention; a deliberate fast-iteration prototype, not a Next/React app)
-  - `blueai-desktop.css` — **the design system**: all 46 `--bai-*` tokens (defined on `.drawer`
+  - `blueai-desktop.css` — **the design system**: every `--bai-*` token (defined on `.drawer`
     dark / `.drawer.light`, plus a `.bai-scope` tokens-only alias for the style guide) + every
     component family. Extracted from index.html 2026-08-01 so the style guide can LINK it and
     render the real components instead of re-implementing them.
+    **Counts are deliberately not written down here** — the style guide tallies them live, and a
+    number in this file went stale the same day it was written (it said 46; adding the type and
+    radius scales made it 64). Open the guide, or run `ds-drift-check.js`, for the current figure.
   - `blueai-icons.js` — **the icon set.** `BAI_ICONS`, 29 named paths. Fully SSOT for the style
     guide (which renders every specimen from it and *throws* on an unknown name — it previously
     invented glyphs and that shipped looking fine). Only **partially** SSOT for the product:
@@ -165,13 +168,15 @@ WSUP/now.gg cross-contamination, and blueai-desktop is not a different product f
 - Local preview: `.claude/launch.json`'s `blueai-desktop` config (`python -m http.server 8410
   --directory blueai/public`) → `http://localhost:8410/blueai-desktop/index.html`. Note: this
   server drops between sessions fairly often — check it before concluding something's broken.
-- Design-system docs: `style-guide.html` (built 2026-08-01) — foundations (46 tokens, live-tallied
+- Design-system docs: `style-guide.html` (built 2026-08-01) — foundations (all tokens, live-tallied
   type/radius scales, the 29-icon set) + 19 sections across shell, components and full-screen
-  states, house conventions, and a **self-measured** coverage figure: currently 233 of 330 classes
-  (71%), computed at load rather than asserted. **Every component family now has a section**; the
-  remaining uncovered classes are the demo scene (documented but deliberately not specimen'd),
-  mid-gesture modifier classes, and one-off descendants already visible inside their parent's
-  specimen. The page lists every uncovered class by name — trust that list over this sentence.
+  states, house conventions, and a **self-measured** coverage figure computed at load rather than
+  asserted. **Every component family has a section**; the remaining uncovered classes are the demo
+  scene (documented but deliberately not specimen'd), mid-gesture modifier classes, and one-off
+  descendants already visible inside their parent's specimen. The page lists every uncovered class
+  by name, and prints the coverage percentage — **trust the page, not a number in this file.**
+  (The figure quoted here was wrong within a week of being written. Live-tallied numbers belong in
+  the thing that tallies them.)
 - **Specimen fidelity is verified, not assumed.** `scratchpad`-logged audit compares every shared
   class between the guide and the running product across 19 appearance properties. Re-run it after
   adding specimens; it caught 4 real bugs on its first run, including this page's own body ink

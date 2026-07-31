@@ -711,7 +711,7 @@
           var wrap1 = document.createElement('div'); wrap1.style.cssText = 'display:flex;flex-direction:column;gap:10px;';
           var card = document.createElement('div'); card.className = 'bai-set-card'; card.style.margin = '0';
           card.innerHTML =
-            '<div class="bai-set-card-head"><span class="ic" style="background:color-mix(in srgb, var(--bai-ok) 16%, transparent);color:var(--bai-ok);">' + iconSvg(KEY_PATH, 16) + '</span><span class="info"><b>Running on your own key <span style="font-size:var(--bai-fs-label);font-weight:700;color:var(--bai-ok);background:color-mix(in srgb, var(--bai-ok) 14%, transparent);padding:2px 6px;border-radius:var(--bai-r-cta);">ACTIVE</span></b><span>No BlueAI credits are consumed while this is on.</span></span></div>' +
+            '<div class="bai-set-card-head"><span class="ic" style="background:color-mix(in srgb, var(--bai-ok) 16%, transparent);color:var(--bai-ok);">' + iconSvg(KEY_PATH, 16) + '</span><span class="info"><b>Running on your own key <span style="font-size:var(--bai-fs-label);font-weight:700;color:var(--bai-ok);background:color-mix(in srgb, var(--bai-ok) 14%, transparent);padding:2px 6px;border-radius:var(--bai-r-md);">ACTIVE</span></b><span>No BlueAI credits are consumed while this is on.</span></span></div>' +
             '<div style="display:flex;gap:6px;">' + byokPillsHtml() + '</div>';
           card.appendChild(keyManageAction('Manage in Settings', false));
           wrap1.appendChild(card);
@@ -721,7 +721,7 @@
             var pcardHead = document.createElement('div'); pcardHead.style.cssText = 'display:flex;align-items:center;gap:12px;';
             pcardHead.innerHTML =
               '<svg class="bai-credit-ring lg" viewBox="0 0 18 18" aria-label="Prime credits, paused" style="opacity:0.5;"><circle class="tr" cx="9" cy="9" r="7"/><circle class="fl" cx="9" cy="9" r="7" style="stroke-dasharray:' + (RING_C * pausedPct / 100).toFixed(2) + ' ' + RING_C.toFixed(2) + ';stroke:var(--bai-dim);"/></svg>' +
-              '<span style="display:flex;flex-direction:column;gap:2px;"><b style="font-size:var(--bai-fs-base);font-weight:500;color:var(--bai-text-hi);">Prime credits <span style="font-size:var(--bai-fs-label);font-weight:700;color:var(--bai-dim);background:var(--bai-pill);padding:2px 6px;border-radius:var(--bai-r-cta);">PAUSED</span></b><span style="font-size:var(--bai-fs-sm);color:var(--bai-dim);">' + credits.toLocaleString('en-US') + ' credits · renews in 11 days</span></span>';
+              '<span style="display:flex;flex-direction:column;gap:2px;"><b style="font-size:var(--bai-fs-base);font-weight:500;color:var(--bai-text-hi);">Prime credits <span style="font-size:var(--bai-fs-label);font-weight:700;color:var(--bai-dim);background:var(--bai-pill);padding:2px 6px;border-radius:var(--bai-r-md);">PAUSED</span></b><span style="font-size:var(--bai-fs-sm);color:var(--bai-dim);">' + credits.toLocaleString('en-US') + ' credits · renews in 11 days</span></span>';
             pcard.appendChild(pcardHead);
             // Correction (kept): the purchase CTA has no destination wired — visually active, no listener.
             var topupBtn1 = document.createElement('button'); topupBtn1.className = 'bai-set-btn'; topupBtn1.style.width = '100%'; topupBtn1.type = 'button'; topupBtn1.textContent = 'Top Up or Manage Credits';
