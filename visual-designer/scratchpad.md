@@ -29,6 +29,42 @@ would have renamed a token without changing a decision, or spent width in the ti
 Sending them to the designer rather than applying them was right: #1 had a legitimate opposite answer and it
 wasn't mine to make.
 
+2026-08-01 — blueai-desktop (skill-create method switcher) — designer: "these tabs are not looking good…
+Create with BlueAI wraps to 2 lines when selected otherwise not. is there any other better UX way to do this?
+only if not should we try a smaller font token?" Two separate problems, and the font was neither of them.
+(1) BUG: `.bai-create-tab.on` added `font-weight: 700` over the base 600. Because the options are equal-width
+`flex:1`, the selected tab's own text got wider and tipped the longest label onto a second line — so PICKING a
+tab resized the tab row. Removed the weight change entirely: the selected tab already carries a solid accent
+fill and inverted ink, so bold was triple-encoding that cost a reflow. Selection is now encoded in colour only.
+(2) PATTERN, which is what the designer was actually seeing: three 17-19 char labels in ~88px columns, each
+trying to be both the method's NAME and its DESCRIPTION — and only ONE of the three explained itself, in the
+body, AFTER you'd already picked it. Designer chose "keep the segmented control, shorten + explain" over
+switching to vertical option cards. Labels → one word ('Write' / 'Upload' / 'Ask BlueAI'), plus a new
+`.bai-create-hint` line under the control that changes per method so ALL THREE explain themselves at the moment
+of choice. `min-height` reserves two lines so switching methods doesn't shift the form either. Tabs' bottom
+margin 13→6px with the 13px moved onto the hint, so the hint reads as attached to the control it describes
+rather than as a caption floating over the form. Deleted the now-duplicate paragraph from the Ask-BlueAI pane
+(the hint says the same thing 8px above) and its orphaned `.bai-ai-create p` rule. Also fixed a specimen bug
+found on the way: the third tab's 8-spoke asterisk was an inline literal in TWO places and absent from
+`blueai-icons.js`, so the style guide substituted `gear` and had been showing the wrong glyph — added as
+`spark`, consumed via `SPARK_PATH` in both product sites, specimen repointed. Guide specimen updated in the
+SAME edit per the operating contract (new labels quoted verbatim, hint line added, stale "9.5px label" → 11px).
+Verified 3 selections × 4 widths × 2 themes: row height stable, form position stable, zero wrapping anywhere
+(the old labels wrapped to 2 lines at 290px in EVERY state; one-word labels now fit at the 290px minimum),
+3 distinct hints, drift check PASS, zero JS errors. — Why: I proposed 'BlueAI' as the third label in my own
+mock and then didn't ship it — a bare product name inside an app called BlueAI doesn't distinguish anything,
+since every method is "with BlueAI". 'Ask BlueAI' keeps the parallel verb construction AND the branding at 10
+chars instead of 18. Flagged rather than silently substituted.
+
+2026-08-01 — verification method — the wrap the designer reported was SELECTION-dependent, and my Tranche 3
+wrap check could not have found it: it measured all three tabs across widths and themes, but only ever in the
+default selection. I varied the dimensions I'd thought of (viewport, theme) and left the one the bug lived in
+(which element has `.on`) fixed. Rewrote the scan to iterate every tab AS the selected one and assert the row
+height is invariant across selections. — Why: "verify at the layer where the failure lives" isn't enough on its
+own — you also have to enumerate the STATES a property depends on, not just the dimensions you habitually vary.
+A width sweep feels thorough and is blind to anything triggered by interaction. → candidate reasonings
+principle: if a style is state-dependent, the state IS a test dimension.
+
 2026-08-01 — blueai/CLAUDE.md — while syncing prose for the above, found TWO of my own numbers already stale:
 "all 46 `--bai-*` tokens" (actually 64 once Tranche 1/2 added the type + radius scales) and "233 of 330 classes
 (71%)" (now 249/325, 77%). Both were written THIS session and were wrong within days. Fixed by deleting the

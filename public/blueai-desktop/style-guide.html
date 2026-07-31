@@ -942,18 +942,19 @@
       <p class="sg-secnote">
         Skills is the one area with <strong>three ways in</strong>, which is why it gets a tab switcher where
         Scheduled (one method) does not — the tab count follows the number of real methods, not symmetry.
-        Write instructions, upload a ZIP, or have BlueAI draft it. Editing an existing skill drops the third
-        tab, because "create with BlueAI" isn't a way to edit.
+        Write it, upload a ZIP, or have BlueAI draft it. Editing an existing skill drops the third
+        tab, because "Ask BlueAI" isn't a way to edit.
       </p>
 
       <div class="sg-spec">
-        <div class="sg-spechead"><span class="sg-cls">.bai-create-tabs</span> <span class="sg-cls">.bai-create-tab</span><span class="sg-role">Method switcher — despite the name, this is a <strong>segmented control</strong>, not a tab strip: inset container, <code>.on</code> is a <em>solid accent fill</em>, and each option stacks its icon above a 9.5px label. Compare <code>.bai-tab</code> in App shell, which is a real tab strip (horizontal 12px, 2px underline). Same word, two different models — pick by whether you're switching a <em>mode</em> (tabs) or picking an <em>input method</em> (this).</span></div>
+        <div class="sg-spechead"><span class="sg-cls">.bai-create-tabs</span> <span class="sg-cls">.bai-create-tab</span> <span class="sg-cls">.bai-create-hint</span><span class="sg-role">Method switcher — despite the name, this is a <strong>segmented control</strong>, not a tab strip: inset container, <code>.on</code> is a <em>solid accent fill</em>, and each option stacks its icon above an 11px label. Compare <code>.bai-tab</code> in App shell, which is a real tab strip (horizontal 12px, 2px underline). Same word, two different models — pick by whether you're switching a <em>mode</em> (tabs) or picking an <em>input method</em> (this).<br><br><strong>Two rules this control exists to demonstrate.</strong> (1) <em>Selection is encoded in colour, never in metrics.</em> <code>.on</code> deliberately does NOT change <code>font-weight</code> — it once went 600→700, and because the options are equal-width <code>flex:1</code>, the extra glyph width tipped the longest label onto a second line, so picking a tab resized the tab row. The fill and inverted ink already carry the state; bolding on top was triple-encoding that cost a reflow. (2) <em>One-word labels plus a shared explainer.</em> Labels were "Write instructions" / "Upload a ZIP file" / "Create with BlueAI" — 17-19 characters in ~88px columns, permanently one glyph from wrapping, and each trying to be both the name and the description. The <code>.bai-create-hint</code> line below now carries the description for <strong>every</strong> method; previously only the BlueAI option explained itself, and it did so in the body <em>after</em> you'd committed. The hint reserves two lines (<code>min-height</code>) so switching methods doesn't shift the form either.</span></div>
         <div class="sg-canvas bai-scope" style="padding:0 14px;display:block;">
           <div class="bai-create-tabs">
-            <button type="button" class="bai-create-tab on"><span class="ic" data-icon="edit" data-size="15"></span>Write instructions</button>
-            <button type="button" class="bai-create-tab"><span class="ic" data-icon="upload" data-size="15"></span>Upload a ZIP file</button>
-            <button type="button" class="bai-create-tab"><span class="ic" data-icon="gear" data-size="15"></span>Create with BlueAI</button>
+            <button type="button" class="bai-create-tab on"><span class="ic" data-icon="edit" data-size="15"></span>Write</button>
+            <button type="button" class="bai-create-tab"><span class="ic" data-icon="upload" data-size="15"></span>Upload</button>
+            <button type="button" class="bai-create-tab"><span class="ic" data-icon="spark" data-size="15"></span>Ask BlueAI</button>
           </div>
+          <div class="bai-create-hint">Write the steps yourself.</div>
         </div>
       </div>
 

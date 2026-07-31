@@ -433,12 +433,23 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans
 /* Redesigned from flat text + thin underline into icon+label segmented pills (PM: "better in terms of
    aesthetics and navigation in terms of modern UX") — active tab gets a solid filled pill instead of a
    2px underline, matching the segmented-control language modern tools (Linear, Notion, Vercel) use. */
-.bai-create-tabs { flex-shrink: 0; display: flex; gap: 4px; padding: 3px; background: var(--bai-input-bg); border: 1px solid var(--bai-line-2); border-radius: var(--bai-r-md); margin-bottom: 13px; }
+/* margin-bottom drops 13px -> 6px because .bai-create-hint now sits directly beneath and BELONGS to this
+   control — it has to read as attached to the tabs, not as a floating caption over the form. The 13px gap
+   moved onto the hint instead, so the pair sits tight together and loose from what follows. */
+.bai-create-tabs { flex-shrink: 0; display: flex; gap: 4px; padding: 3px; background: var(--bai-input-bg); border: 1px solid var(--bai-line-2); border-radius: var(--bai-r-md); margin-bottom: 6px; }
 .bai-create-tab { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-align: center; border: none; background: none; color: var(--bai-dim); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: var(--bai-fs-sm); font-weight: 600; line-height: 1.25; padding: 8px 4px; border-radius: var(--bai-r-md); cursor: pointer; transition: background 0.15s, color 0.15s; }
 .bai-create-tab:hover { color: var(--bai-text-hi); }
 .bai-create-tab .ic { display: flex; }
-.bai-create-tab.on { background: var(--bai-accent); color: var(--bai-on-accent); font-weight: 700; }
+/* No font-weight change on selection — deliberately. The selected tab already carries a solid accent
+   fill and inverted ink; bolding it too was triple-encoding, and because the tabs are equal-width
+   flex:1, the extra glyph width tipped the longest label ("Create with BlueAI") onto a second line.
+   Selecting a tab must never reflow the tab row. Encode selection in colour, not in metrics. */
+.bai-create-tab.on { background: var(--bai-accent); color: var(--bai-on-accent); }
 .bai-create-tab.on:hover { color: var(--bai-on-accent); }
+/* One explainer for the selected method. min-height reserves two lines' worth of space so switching
+   methods never shifts the form below it — the same no-reflow-on-selection rule as the tabs themselves,
+   which is the whole reason this control was rebuilt. */
+.bai-create-hint { flex-shrink: 0; font-size: var(--bai-fs-sm); line-height: 1.45; color: var(--bai-dim); min-height: 32px; padding: 0 2px; margin-bottom: 13px; }
 .bai-upload-row { display: flex; align-items: center; justify-content: center; gap: 9px; padding: 12px 13px; background: var(--bai-accent-wash); border: 1px solid var(--bai-accent-line); border-radius: var(--bai-r-md); cursor: pointer; color: var(--bai-accent); font-weight: 700; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: var(--bai-fs-sm); transition: filter 0.15s; }   /* Fix #5: a clear secondary action (accent-tinted, shared 8px radius) instead of a dashed passive drop-zone */
 .bai-upload-row:hover { filter: brightness(1.1); }
 .bai-upload-hint { font-size: var(--bai-fs-sm); line-height: 1.55; color: var(--bai-dim); padding: 10px 11px; background: var(--bai-card-2); border: 1px solid var(--bai-line); border-radius: var(--bai-r-md); margin-top: 9px; }
@@ -451,7 +462,9 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans
 .bai-upload-reqs li:last-child { margin-bottom: 0; }
 .bai-ai-create { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 11px; text-align: center; padding: 22px 10px; }
 .bai-ai-create .ic { width: 42px; height: 42px; border-radius: var(--bai-r-lg); display: flex; align-items: center; justify-content: center; background: var(--bai-accent-wash); color: var(--bai-accent); }
-.bai-ai-create p { font-size: var(--bai-fs-sm); line-height: 1.55; color: var(--bai-dim); max-width: 220px; }
+/* `.bai-ai-create p` was deleted with the paragraph it styled (the sentence moved up into
+   .bai-create-hint, where every method gets one instead of only this one). Removed rather than
+   left behind — an orphan rule reads as a component that still has a paragraph. */
 
 /* ---- Settings: multi-line cards (Notifications / AI Mode / Own key / AI defaults) ---- */
 .bai-set-card { display: flex; flex-direction: column; gap: 11px; padding: 13px; background: var(--bai-card-2); border: 1px solid var(--bai-line); border-radius: var(--bai-r-lg); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; transition: box-shadow 0.3s ease, border-color 0.3s ease; }

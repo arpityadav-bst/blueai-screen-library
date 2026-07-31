@@ -1246,19 +1246,35 @@
           // updates .via to match — so a skill's "mode" always reflects its most recent edit, not just its
           // original creation method.
           var curMode = (existing && existing.via === 'zip') ? 'zip' : 'write';
+          // Labels are ONE WORD each (+ a short explainer below the control), not the former
+          // "Write instructions" / "Upload a ZIP file" / "Create with BlueAI". Two reasons: three
+          // 17-19 char labels in ~88px columns were permanently one glyph away from wrapping, and
+          // they were trying to be the method's NAME and its DESCRIPTION at once. The icon plus the
+          // explainer line now carry the description, so the label only has to name the choice.
+          // 4th slot = that explainer. Every option gets one — previously only the BlueAI option
+          // explained itself, and it did so in the body AFTER you'd already picked it.
           var tabDefs = [
-            ['write', 'Write instructions', EDIT_PATH],
-            ['zip', 'Upload a ZIP file', '<path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/>']
+            ['write', 'Write', EDIT_PATH, 'Write the steps yourself.'],
+            ['zip', 'Upload', UPLOAD_PATH, 'Import a skill you already have as a .zip file.'],
           ];
-          if (!existing) tabDefs.push(['ai', 'Create with BlueAI', '<path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/>']);
+          if (!existing) tabDefs.push(['ai', 'Ask BlueAI', SPARK_PATH, 'Describe it in plain language — BlueAI drafts the instructions.']);
           var tabs = document.createElement('div'); tabs.className = 'bai-create-tabs';
+          // The explainer sits BETWEEN the control and the form, and belongs to the control — so it's
+          // spaced tight to the tabs and loose to the form below (see the margins in the stylesheet).
+          var tabHint = document.createElement('div'); tabHint.className = 'bai-create-hint';
+          function syncTabHint() {
+            var d = tabDefs.filter(function (x) { return x[0] === curMode; })[0];
+            tabHint.textContent = d ? d[3] : '';
+          }
           tabDefs.forEach(function (m) {
             var t = document.createElement('button'); t.type = 'button'; t.className = 'bai-create-tab' + (m[0] === curMode ? ' on' : '');
             t.innerHTML = '<span class="ic">' + iconSvg(m[2], 15) + '</span>' + m[1];
-            t.addEventListener('click', function () { curMode = m[0]; [].forEach.call(tabs.children, function (x) { x.classList.toggle('on', x === t); }); renderMode(); });
+            t.addEventListener('click', function () { curMode = m[0]; [].forEach.call(tabs.children, function (x) { x.classList.toggle('on', x === t); }); syncTabHint(); renderMode(); });
             tabs.appendChild(t);
           });
           body.appendChild(tabs);
+          syncTabHint();
+          body.appendChild(tabHint);
           var modeBody = document.createElement('div'); modeBody.style.cssText = 'flex:1; display:flex; flex-direction:column;';
           body.appendChild(modeBody);
           function renderMode() {
@@ -1324,8 +1340,12 @@
               });
               modeBody.appendChild(zActions);
             } else {
+              // No explanatory <p> here any more: the method explainer under the switcher already says
+              // "Describe it in plain language — BlueAI drafts the instructions", and printing the same
+              // sentence twice on one short screen is a repeat that hasn't earned its slot. The pane is
+              // now purely the handoff: glyph + the action.
               var wrap = document.createElement('div'); wrap.className = 'bai-ai-create';
-              wrap.innerHTML = '<div class="ic">' + iconSvg('<path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/>', 20) + '</div><p>Describe the skill you want in plain language, and BlueAI will draft the instructions for you.</p><button class="bai-onb-cta" type="button" style="max-width:180px;">Start in Chat ›</button>';
+              wrap.innerHTML = '<div class="ic">' + iconSvg(SPARK_PATH, 20) + '</div><button class="bai-onb-cta" type="button" style="max-width:180px;">Start in Chat ›</button>';
               wrap.querySelector('button').addEventListener('click', function () { closeAllSubpanes(); setMode('chat'); baiInput.value = 'Help me create a skill that '; autoResizeInput(); baiInput.focus(); });
               modeBody.appendChild(wrap);
             }
@@ -1362,6 +1382,9 @@
       var CAL_PATH = BAI_ICONS.calendar;   // calendar — "Schedule" row + empty state
       var EDIT_PATH = BAI_ICONS.edit;
       var TRASH_PATH = BAI_ICONS.trash;
+      var UPLOAD_PATH = BAI_ICONS.upload;   // skill-create method switcher + its upload row
+      var SPARK_PATH = BAI_ICONS.spark;     // the "Ask BlueAI" method — was an inline literal in two places,
+                                            // which is why the style guide showed a gear for this tab
       var MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
       function pad2(n) { return (n < 10 ? '0' : '') + n; }
       function formatDateShort(d) { return d.getDate() + ' ' + MONTH_NAMES[d.getMonth()].slice(0, 3); }   // "29 Jul"
