@@ -48,3 +48,9 @@ public/screencapture-*.png
 # BlueAI Product clone — PM design export (kept local; 4.8MB of screenshots/uploads,
 # reference only. The clone in public/blueai-product/ is self-contained.)
 design-source/blueai-uiux/
+
+# Parity-audit evidence — ~15MB, 208 screenshots + their capture/validate tooling. Kept LOCAL:
+# it's regenerable from the tooling and it's working evidence for an in-progress audit, not a
+# deliverable. Ignored (not just untracked) because a `git add -A visual-designer/` swept it into
+# a commit once — untracking alone wouldn't stop that happening again.
+visual-designer/audits/
