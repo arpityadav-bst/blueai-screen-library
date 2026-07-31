@@ -6,7 +6,32 @@ Format: `YYYY-MM-DD HH:mm — <file> — <what changed> — Why: <one phrase>`
 
 --- Pending audit entries ---
 
-(empty)
+2026-08-01 (cont.) — blueai-desktop — designer asked the three open gaps be CLOSED, not documented:
+(1) The "26 unnamed glyphs" decomposed on inspection into 8 §6 false-positives (named splices,
+iconSvg's own template, the credit-ring GAUGE — a data-viz component, not a glyph) and 18 real
+anonymous glyphs. Named all 18 (chevronLeft/chevronDown/database/kebab/winMinimize/winMaximize/
+winClose/gem/camera/droplet/envelope/listChecks/taskDone/frame/stopSquare + 2 re-encodings folded
+into existing names: the onboarding calendar drawn as one path = module calendar's three <line>s,
+the login-gate globe's M2 12h20 = module globe's equator <line>; + 2 anonymous static copies of the
+catGames gift). Module 37 → 52; §6 now 52/52 consumed, 0 duplicated, 0 unnamed. Rendering proven
+unchanged: 362-SVG before/after diff — the ONLY changed element is the calendar re-encoding, whose
+line-vs-path geometry is stroke-identical. (2) The raw radius longhand (.bai-msg.user asymmetric
+bubble corner, 4px) → var(--bai-r-xs); §8's regex now gates longhands too. (3) §9 coverage 10 → 33
+of 58 by adding aria-label and specific-class anchors — with verdict logic split BY ANCHOR KIND
+after the first version flagged two false positives: nearest-wins is right for labels (stops sibling
+tabs validating each other) but wrong for classes, where one class legitimately carries several
+icons (.bai-sk-pillbtn is Edit AND Delete) and the class token sits physically closer to the
+PREVIOUS button's icon. Classes/aria use membership-within-element-span instead. Also fixed my own
+checker's window-slice truncation (BAI_ICONS.thumbDown cut to "thum" = phantom mismatch). The
+widened §9 then immediately caught SIX real wrong icons in specimens no check could previously see:
+the chat-title and preview-collapse arrows (chevron→chevronDown — they point down in the product),
+and the onboarding orbs/cards, whose whole composition was invented (clock/bolt/mail/calendar vs
+the product's database/gift/camera/envelope, per-tint). Negative-tested both new anchor kinds
+(deliberate wrong icon → FAIL, exit 1 → restored). The remaining 25 unanchored renders are almost
+all the icon-set CATALOG, which is a catalog, not a usage claim — stated in §9's output. — Why:
+"can't be checked" had been standing in for "didn't finish naming things"; once everything had a
+name, the checkable surface tripled and the very first run at the new width found six real bugs.
+→ candidate reasonings principle: an exemption list is a to-do list wearing a scope statement.
 
 **All three threads were promoted at the 2026-08-01 pass:**
 

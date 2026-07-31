@@ -697,7 +697,10 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans
 .bai-boot .ln.s { opacity: 1; }
 .bai-boot .ok { color: var(--bai-ok); }
 .bai-msg { font-size: var(--bai-fs-body); line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; }
-.bai-msg.user { align-self: flex-end; max-width: 82%; padding: 7px 11px; border-radius: var(--bai-r-lg); border-bottom-right-radius: 4px; background: var(--bai-user); color: var(--bai-text-strong); }
+/* The asymmetric bubble corner goes through the token like everything else — this longhand was the
+   one raw radius left after tranche 2, invisible to §8's shorthand-only regex until an audit found
+   it. §8 now gates longhands too. */
+.bai-msg.user { align-self: flex-end; max-width: 82%; padding: 7px 11px; border-radius: var(--bai-r-lg); border-bottom-right-radius: var(--bai-r-xs); background: var(--bai-user); color: var(--bai-text-strong); }
 .bai-msg.ai { align-self: stretch; color: var(--bai-text); padding: 1px 2px 4px; }   /* plain text, no bubble */
 .bai-msg.intro { font-size: var(--bai-fs-sm); line-height: 1.5; color: var(--bai-muted); }   /* small, muted opening line */
 /* in-chat clickable option group (BlueAI asks, you pick — terminal style) */

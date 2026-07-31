@@ -5,15 +5,16 @@
 
    SCOPE — read this precisely; a looser version of it has been wrong three times.
 
-   What IS true: every path **in this module** is reached by name in both files.
-   Zero of them are duplicated as an inline literal in index.html.
-
-   What is NOT true: that every glyph in the product lives here. index.html still
-   contains inline <svg> bodies for glyphs this module does not carry — gamepad,
-   database, chevron-down/left, the kebab, and others — and several of those are
-   duplicated among *themselves*. They are anonymous, so no tool can ask whether
-   the right one is used where. **§6 prints both numbers every run. Read them
-   there; do not restate them here.**
+   As of batch 3 (2026-08-01), every ICON GLYPH in the product is named here and
+   reached by name — §6 counts zero unnamed inline bodies and zero duplicated
+   module paths. Deliberately NOT here, each for a stated reason:
+     - the credits ring gauge (`.bai-credit-ring`) — a data-viz component whose
+       arc is computed at runtime; it has no fixed glyph body to name
+     - the "✦" sparkle — a text character, so it belongs to the type layer
+   **§6 prints the live counts every run. Read them there; do not restate them
+   here — a paragraph in this exact spot has been wrong in BOTH directions now
+   (claiming SSOT while 23 paths were inline; claiming unnamed glyphs remained
+   after they had all been named).**
      - style-guide.html renders every icon specimen from this object and THROWS on
        an unknown name, so the guide cannot show a glyph the product lacks.
      - index.html reaches every path through a name too. Three call shapes, all
@@ -63,9 +64,10 @@
        sidebar nav items at 1.7, chevron/search at 2, the search-clear X at 2.2.
        Rendering any of these THROUGH iconSvg (as the style guide does) shows them
        at 1.8 — very slightly off from the product in those specific places.
-     - The account "kebab" glyph is NOT here: it is fill-based (fill:currentColor,
-       three circles, no stroke), so it cannot go through iconSvg at all. It stays
-       inline in index.html as the documented exception to the stroke convention.
+     - The account "kebab" and the three titlebar window controls break the stroke
+       convention (kebab is fill-based; the win* glyphs are 10x10 with per-element
+       styling). They ARE here — batch 3 named them — with BAI_ICON_META entries so
+       the guide renders them on their own terms instead of through the house wrapper.
    The sparkle is deliberately absent: the product uses the text glyph "✦", not
    an SVG, so it belongs to the type layer rather than the icon set.
    ============================================================================ */
@@ -114,6 +116,23 @@ var BAI_ICONS = {
   catOther: "<polygon points=\"12 2 2 7 12 12 22 7 12 2\"/><polyline points=\"2 17 12 22 22 17\"/><polyline points=\"2 12 12 17 22 12\"/>",
   catMine: "<path d=\"M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z\"/>",
   reward: "<polyline points=\"16 18 22 12 16 6\"/><polyline points=\"8 6 2 12 8 18\"/>",
+  // Batch 3 (2026-08-01): the LAST anonymous glyphs, named so §6 counts zero and §9 can reach them.
+  // kebab + winMinimize/winMaximize/winClose break the stroke convention — see BAI_ICON_META.
+  chevronLeft: "<path d=\"M15 18l-6-6 6-6\"/>",
+  chevronDown: "<path d=\"M6 9l6 6 6-6\"/>",
+  database: "<ellipse cx=\"12\" cy=\"5\" rx=\"8\" ry=\"3\"/><path d=\"M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5\"/><path d=\"M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6\"/>",
+  kebab: "<circle cx=\"12\" cy=\"5\" r=\"1.6\"/><circle cx=\"12\" cy=\"12\" r=\"1.6\"/><circle cx=\"12\" cy=\"19\" r=\"1.6\"/>",
+  winMinimize: "<line x1=\"1\" y1=\"5\" x2=\"9\" y2=\"5\" stroke=\"currentColor\" stroke-width=\"1.4\" stroke-linecap=\"round\"/>",
+  winMaximize: "<rect x=\"1.2\" y=\"1.2\" width=\"7.6\" height=\"7.6\" rx=\"0.5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.3\"/>",
+  winClose: "<line x1=\"1\" y1=\"1\" x2=\"9\" y2=\"9\" stroke=\"currentColor\" stroke-width=\"1.4\" stroke-linecap=\"round\"/><line x1=\"9\" y1=\"1\" x2=\"1\" y2=\"9\" stroke=\"currentColor\" stroke-width=\"1.4\" stroke-linecap=\"round\"/>",
+  gem: "<path d=\"M6 3h12l4 6-10 12L2 9z\"/>",
+  camera: "<rect x=\"2\" y=\"6\" width=\"20\" height=\"15\" rx=\"3\"/><circle cx=\"12\" cy=\"13.5\" r=\"3.5\"/><path d=\"M8 6l1.5-3h5L16 6\"/>",
+  droplet: "<path d=\"M12 2c3 4 6 6.5 6 10a6 6 0 0 1-12 0c0-3.5 3-6 6-10z\"/>",
+  envelope: "<rect x=\"3\" y=\"5\" width=\"18\" height=\"14\" rx=\"2\"/><path d=\"M3 7l9 6 9-6\"/>",
+  listChecks: "<path d=\"M8 6h12M8 12h12M8 18h12\"/><circle cx=\"4\" cy=\"6\" r=\"1\"/><circle cx=\"4\" cy=\"12\" r=\"1\"/><circle cx=\"4\" cy=\"18\" r=\"1\"/>",
+  taskDone: "<path d=\"M9 11l3 3 8-8\"/><path d=\"M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9\"/>",
+  frame: "<rect x=\"4\" y=\"4\" width=\"16\" height=\"16\" rx=\"3\"/><path d=\"M9 9h6v6H9z\"/>",
+  stopSquare: "<rect x=\"6\" y=\"6\" width=\"12\" height=\"12\" rx=\"2\" fill=\"currentColor\"/>",
   gear: "<circle cx=\"12\" cy=\"12\" r=\"3\"/><path d=\"M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z\"/>",
 };
 
@@ -123,4 +142,8 @@ var BAI_ICONS = {
    glyph as an invisible stroked one. */
 var BAI_ICON_META = {
   newChat: { viewBox: '0 0 100 100', fill: 'currentColor', stroke: 'none' },
+  kebab: { fill: 'currentColor', stroke: 'none' },
+  winMinimize: { viewBox: '0 0 10 10', fill: 'none', stroke: 'none' },   // elements carry their own stroke
+  winMaximize: { viewBox: '0 0 10 10', fill: 'none', stroke: 'none' },
+  winClose: { viewBox: '0 0 10 10', fill: 'none', stroke: 'none' },
 };

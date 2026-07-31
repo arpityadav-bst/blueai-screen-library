@@ -185,9 +185,20 @@ if (worst.length) console.log('  most duplicated: ' + worst.join(', '));
    claiming "a true single source of truth for BOTH files" while the product still drew dozens of
    glyphs that were never added here — anonymous, therefore uncheckable by §9 or anything else.
    That omission is the more useful figure, so it is printed rather than described. */
+/* Three shapes the unnamed-glyph counter must SKIP, each for a stated reason — an audit of the first
+   version found it counting 26 "unnamed glyphs" of which 8 were not glyphs at all:
+     - bodies containing "' + "  — shape-B splices and iconSvg()'s own template; already named
+     - class="bai-credit-ring"  — the credits GAUGE, a data-viz component whose arc is driven by
+       stroke-dasharray at runtime; it has no fixed glyph body to name
+   Everything else inline and not in the module is a genuinely anonymous glyph. */
 const knownBodies = new Set(iconEntries.map(e => e[1]));
-const inlineBodies = [...PROD.matchAll(/<svg\b(?![^>]*data-bai-icon)[^>]*>([\s\S]{5,1400}?)<\/svg>/g)]
-  .map(m => m[1].trim()).filter(b => b && !knownBodies.has(b));
+const rawInline = [...PROD.matchAll(/<svg\b(?![^>]*data-bai-icon)([^>]*)>([\s\S]{5,1400}?)<\/svg>/g)];
+let exemptSplices = 0, exemptGauges = 0;
+const inlineBodies = rawInline.filter(m => {
+  if (m[2].indexOf("' + ") !== -1 || m[2].indexOf("' +") === 0) { exemptSplices++; return false; }
+  if (m[1].indexOf('bai-credit-ring') !== -1) { exemptGauges++; return false; }
+  return true;
+}).map(m => m[2].trim()).filter(b => b && !knownBodies.has(b));
 const tally = {};
 inlineBodies.forEach(b => { tally[b] = (tally[b] || 0) + 1; });
 const repeated = Object.values(tally).filter(v => v > 1);
@@ -195,8 +206,13 @@ console.log('  UNNAMED glyphs still inline (not in the module at all): ' + inlin
             ' occurrence(s), ' + Object.keys(tally).length + ' distinct' +
             (repeated.length ? '; ' + repeated.length + ' of them duplicated among themselves (' +
               repeated.reduce((a, b) => a + b, 0) + ' occurrences)' : ''));
-console.log('  An anonymous path cannot be cross-checked by §9 — naming one is what turns');
-console.log('  "is this the right icon here?" from unanswerable into a test.');
+console.log('  (skipped as not-glyphs: ' + exemptSplices + ' named splice(s)/template, ' +
+            exemptGauges + ' credit-ring gauge(s))');
+if (Object.keys(tally).length) {
+  Object.entries(tally).slice(0, 5).forEach(([b, n]) => console.log('    ×' + n + '  ' + b.replace(/\s+/g, ' ').slice(0, 80)));
+  console.log('  An anonymous path cannot be cross-checked by §9 — naming one is what turns');
+  console.log('  "is this the right icon here?" from unanswerable into a test.');
+}
 
 /* ---------- 7. DEAD CSS: classes in the stylesheet with no call site anywhere ---------- */
 section('7. DEAD CSS (reported, not failed)');
@@ -230,7 +246,9 @@ function rawSizes(text, file) {
   text.split(/\r?\n/).forEach((line, i) => {
     if (/--bai-(fs|r|glyph)-[a-z0-9]+:\s*[\d.]+px/.test(line)) return;      // the token block itself
     if (line.indexOf('.bai-preview') === 0) return;                          // documented exception
-    const m = line.match(/(font-size|border-radius):\s*([\d.]+px)/);
+    // longhands included — a raw `border-bottom-right-radius: 4px` hid behind the shorthand-only
+    // version of this regex until an audit found it
+    const m = line.match(/(font-size|border(?:-(?:top|bottom)-(?:left|right))?-radius):\s*([\d.]+px)/);
     if (m) out.push(file + ':' + (i + 1) + '  ' + m[0].trim());
   });
   return out;
@@ -291,37 +309,89 @@ const nameOf = tok => (tok in pathConst ? pathConst[tok] : tok);
          5 icons across 64 sites, and Write/Upload/Ask BlueAI shared one identical candidate set
          because they sit in the same tabDefs array — so any permutation of those three passed.
          The window is now tight, and a label whose sites are all ambiguous is reported, not passed. */
-const LABEL_RE = /data-icon="(\w+)"[^>]*>\s*<\/(?:span|div)>\s*([A-Za-z][^<]{2,60}?)\s*</g;
-const rawPairs = [...GUIDE.matchAll(LABEL_RE)].map(m => ({ icon: m[1], label: m[2].trim() }));
-const pairs = rawPairs.filter(x => x.label.length > 2);
+/* THREE anchor kinds, in priority order — the first version could only anchor on an adjacent text
+   label, which covered 10 of 58 icon renders and left 48 "NOT verified by anything". The guide's own
+   markup already carries two more product-verbatim anchors:
+     label      — visible text right after the icon's element (the original anchor)
+     aria-label — copied from the product on icon-only buttons ("Minimize", "New chat", "Back"…)
+     class      — a specific bai-… or tgm-… class on the icon's own element; usable only when that
+                  class has few product sites, else the anchor is too ambiguous to mean anything */
 const candidateIcons = (GUIDE.match(/data-icon="/g) || []).length;
+const pairs = [];
+const seenPair = new Set();
+const addPair = (icon, anchor, kind) => {
+  const k = icon + '|' + anchor + '|' + kind;
+  if (anchor && anchor.length > 2 && !seenPair.has(k)) { seenPair.add(k); pairs.push({ icon, anchor, kind }); }
+};
+// (a) adjacent text labels
+[...GUIDE.matchAll(/data-icon="(\w+)"[^>]*>\s*<\/(?:span|div)>\s*([A-Za-z][^<]{2,60}?)\s*</g)]
+  .forEach(m => addPair(m[1], m[2].trim(), 'label'));
+// (b) aria-label / (c) specific class on the data-icon element itself
+[...GUIDE.matchAll(/<[a-z]+ ([^>]*?)data-icon="(\w+)"([^>]*)>/g)].forEach(m => {
+  const attrs = m[1] + m[3];
+  const aria = attrs.match(/aria-label="([^"]{3,60})"/);
+  if (aria) { addPair(m[2], 'aria-label="' + aria[1] + '"', 'aria'); return; }
+  const cls = attrs.match(/class="([^"]*)"/);
+  if (cls) {
+    // the most specific product class on the element — longest wins ("bai-newchat-btn" over "bai-icbtn")
+    const specific = cls[1].split(/\s+/).filter(c => /^(?:bai|tgm|lg|cr|ooc)-[a-z-]{4,}$/.test(c))
+      .sort((x, y) => y.length - x.length)[0];
+    if (specific) addPair(m[2], specific, 'class');
+  }
+});
 
-const mism = [], unverifiable = [];
-pairs.forEach(({ icon, label }) => {
-  // EVERY occurrence, not the first. Checking only PROD.indexOf(label) made "Write" resolve to a code
-  // comment that happened to start with the word — the same first-instance-wins mistake that produced
-  // false positives in the specimen-fidelity audit. A label is verified if ANY of its sites agrees.
+// every named-icon reference in the product, by absolute position — computed once, never sliced
+const ICON_SITES = [...PROD.matchAll(/BAI_ICONS\.(\w+)|data-bai-icon="(\w+)"|\b([A-Z][A-Z0-9_]*_PATH)\b/g)]
+  .map(m => ({ pos: m.index, name: nameOf(m[1] || m[2] || m[3]) }));
+const WIN = 250;         // label anchors: a static <svg> tag's attribute run is ~150 chars; 110 could not see past it
+const WIN_MEMBER = 280;  // class/aria anchors: roughly one element's own span — big enough to reach the
+                         // icon through the svg's attributes, small enough not to swallow the next row
+
+const mism = [], unverifiable = [], ambiguous = [];
+pairs.forEach(({ icon, anchor, kind }) => {
+  // EVERY occurrence, not the first. Checking only the first site made "Write" resolve to a code
+  // comment that happened to start with the word — first-instance-wins produced false positives twice.
+  const needle = kind === 'aria' ? anchor : anchor;   // aria anchors are already the full attribute text
   const sites = [];
-  for (let i = PROD.indexOf(label); i !== -1; i = PROD.indexOf(label, i + 1)) sites.push(i);
-  if (!sites.length) { unverifiable.push(label + ' (label not found in product)'); return; }
-  /* Tight window, and per-site rather than unioned. A site "agrees" only if the NEAREST named icon to
-     that label is the specimen's icon. Unioning a wide window is what let three sibling tab labels
-     share one candidate set and validate each other's glyph. */
-  const WIN = 110;
-  const verdicts = sites.map(at => {
-    const from = Math.max(0, at - WIN), win = PROD.slice(from, at + WIN);
-    const hits = [...win.matchAll(/BAI_ICONS\.(\w+)|data-bai-icon="(\w+)"|\b([A-Z][A-Z0-9_]*_PATH)\b/g)]
-      .map(m => ({ name: nameOf(m[1] || m[2] || m[3]), d: Math.abs((from + m.index) - at) }))
-      .sort((a, b) => a.d - b.d);
-    return hits.length ? hits[0].name : null;
-  }).filter(Boolean);
+  for (let i = PROD.indexOf(needle); i !== -1; i = PROD.indexOf(needle, i + 1)) sites.push(i);
+  if (!sites.length) { unverifiable.push('[' + kind + '] ' + anchor + ' (not found in product)'); return; }
+  if (kind === 'class' && sites.length > 6) {
+    // a class this common anchors nothing — saying "the icon appears near SOME .bai-icbtn" is the
+    // over-wide-window mistake wearing a different hat
+    ambiguous.push('[class] ' + anchor + ' (' + sites.length + ' product sites — too common to anchor)');
+    return;
+  }
+  /* Verdict logic differs BY ANCHOR KIND, and each divergence here was paid for with a wrong result:
+       label  → nearest-wins. A label names ONE icon's neighbour; taking the whole window let sibling
+                tab labels validate each other's glyphs (the original ±320 false-pass).
+       class / aria → membership. One class legitimately carries several icons (.bai-sk-pillbtn is
+                both Edit AND Delete), and a class token physically sits BETWEEN its own icon and the
+                previous button's — nearest-wins flagged trash-on-Delete as wrong because the *Edit*
+                icon was 10 chars closer. The membership window is small enough (~one element's span)
+                that it can still only see icons on or beside the anchored element.
+     All positions come from a PRE-INDEXED whole-file list — an earlier ±110 string slice TRUNCATED
+     names at the window edge (`BAI_ICONS.thumbDown` → `thum`, a phantom mismatch) and was shorter
+     than a static <svg>'s own attribute run, so hydrated icons sat just out of reach of their labels. */
+  const verdicts = [];
+  sites.forEach(at => {
+    if (kind === 'label') {
+      let best = null;
+      for (const h of ICON_SITES) {
+        const d = Math.abs(h.pos - at);
+        if (d <= WIN && (!best || d < best.d)) best = { name: h.name, d };
+      }
+      if (best) verdicts.push(best.name);
+    } else {
+      for (const h of ICON_SITES) if (Math.abs(h.pos - at) <= WIN_MEMBER) verdicts.push(h.name);
+    }
+  });
   if (!verdicts.length) {
-    unverifiable.push(label + ' (no named icon within ' + WIN + ' chars of any of its ' + sites.length + ' site(s)) — ' +
+    unverifiable.push('[' + kind + '] ' + anchor + ' (no named icon within ' + WIN + ' chars of any of its ' + sites.length + ' site(s)) — ' +
       'likely an ANONYMOUS inline glyph in the product; name it and this becomes checkable');
     return;
   }
   if (verdicts.indexOf(icon) === -1) {
-    mism.push('"' + label + '" — guide shows `' + icon + '`, nearest named icon in the product is `' +
+    mism.push('[' + kind + '] "' + anchor + '" — guide shows `' + icon + '`, nearest named icon in the product is `' +
       [...new Set(verdicts)].join('/') + '`');
   }
 });
@@ -336,16 +406,27 @@ if (mism.length) {
   console.log('   certainly broken the matcher — fix the matcher; do not lower the floor.');
   fail++;
 } else {
-  console.log('OK — ' + (pairs.length - unverifiable.length) + '/' + pairs.length +
-              ' icon+label specimens match the nearest named icon the product uses for that component.');
+  const verified = pairs.length - unverifiable.length - ambiguous.length;
+  console.log('OK — ' + verified + '/' + pairs.length +
+              ' anchored specimens match the nearest named icon the product uses for that component.');
 }
-console.log('   COVERAGE OF THIS CHECK: ' + pairs.length + ' of ' + candidateIcons + ' data-icon renders in the guide' +
-            ' carry an adjacent text label, which is the only anchor §9 can use.');
-console.log('   The other ' + (candidateIcons - pairs.length) + ' are icon-only specimens and are NOT verified by anything.');
+const anchored = new Set();
+[...GUIDE.matchAll(/<[a-z]+ ([^>]*?)data-icon="(\w+)"([^>]*)>/g)].forEach((m, i) => {
+  const attrs = m[1] + m[3];
+  if (/aria-label="[^"]{3,60}"/.test(attrs) || /class="[^"]*\b(?:bai|tgm|lg|cr|ooc)-[a-z-]{4,}/.test(attrs)) anchored.add(i);
+});
+console.log('   COVERAGE OF THIS CHECK: ' + pairs.length + ' anchor(s) over ' + candidateIcons +
+            ' data-icon renders (anchors: text label, aria-label, or a specific class on the element).');
+console.log('   Renders with NO anchor of any kind are NOT verified by anything — the icon-set catalog');
+console.log('   section is most of these, and it is a catalog, not a usage claim.');
+if (ambiguous.length) {
+  console.log('   too ambiguous to anchor (' + ambiguous.length + '):');
+  ambiguous.slice(0, 4).forEach(u => console.log('     ' + u));
+}
 if (unverifiable.length) {
   console.log('   not cross-checkable (' + unverifiable.length + ') — listed so the OK above is not read as full coverage:');
-  unverifiable.slice(0, 6).forEach(u => console.log('     ' + u));
-  if (unverifiable.length > 6) console.log('     ... +' + (unverifiable.length - 6) + ' more');
+  unverifiable.slice(0, 8).forEach(u => console.log('     ' + u));
+  if (unverifiable.length > 8) console.log('     ... +' + (unverifiable.length - 8) + ' more');
 }
 
 console.log('\n' + '='.repeat(64));
