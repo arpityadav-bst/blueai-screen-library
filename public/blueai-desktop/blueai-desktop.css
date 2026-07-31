@@ -780,14 +780,12 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans
 .cr-sub { font-size: 10px; line-height: 1.4; color: var(--bai-dim); }
 .cr-sub.cr-sub-prime { color: var(--bai-accent); font-weight: 600; }   /* Correction: replaces the separate "★ PRIME" head badge — Prime status shown via color on the plan line itself instead of a second, redundant tag saying the same thing */
 .cr-viewmore { font-size: 9.5px; font-weight: 700; color: var(--bai-accent); }   /* Correction: dropped the border-top I first added — accent color + bold + the trailing chevron already read as "this is the action" (same as "View all benefits ›" elsewhere on this exact screen, which gets zero divider next to its own card head); a divider on top was doing a job already done, and no other info->action transition in this file uses one */
-/* Part 2: AI Credits screen — a bigger restatement of the same gauge (.cr-* above), same color ramp
-   (creditColor) and same PRIME badge, just sized for a dedicated screen instead of a hover popover. */
-.aic-hero { display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; padding: 10px 0 4px; }
-.aic-hero-label { font-size: 10px; font-weight: 700; letter-spacing: 0.6px; color: var(--bai-faint); }
-.aic-hero-num { font-size: 34px; font-weight: 700; line-height: 1; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
-.aic-hero-sub { font-size: 11px; color: var(--bai-dim); }
-.aic-bar { align-self: stretch; height: 5px; border-radius: 3px; background: var(--bai-line-2); overflow: hidden; margin: 4px 0 2px; }
-.aic-bar i { display: block; height: 100%; border-radius: 3px; }
+/* The AI Credits screen's original centred hero (.aic-hero / .aic-hero-num / .aic-hero-label /
+   .aic-hero-sub / .aic-bar) was REMOVED 2026-08-01. That screen now leads with the shared ring gauge
+   inside .bai-set-cards instead of restating the balance as centred text, so those six rules had no
+   call site left in index.html or the style guide. Deleted rather than left behind: dead rules
+   inflate the style guide's coverage denominator, which makes "what still needs documenting" mix
+   real gaps with garbage. Found by ds-drift-check.js §7. */
 .bai-menu { position: absolute; bottom: calc(100% + 6px); right: 0; min-width: 124px; background: var(--bai-panel); border: 1px solid var(--bai-line-2); border-radius: 8px; padding: 4px; display: none; flex-direction: column; gap: 1px; box-shadow: var(--bai-menu-shadow); z-index: 30; }
 .bai-menu.open { display: flex; }
 /* Batch 2: downward-opening variant — the header/sidebar Help + Account menus anchor from the TOP

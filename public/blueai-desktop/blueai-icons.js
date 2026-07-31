@@ -1,11 +1,24 @@
 /* ============================================================================
    blueAI on Desktop — icon set (single source of truth)
 
-   Generated from the paths already used in index.html, then adopted BY it:
-   index.html assigns its named *_PATH constants from this object, and
-   style-guide.html renders its icon specimens from the same object. Neither
-   file keeps its own copy, so the style guide cannot show a glyph the product
-   does not actually use (it did, before this file existed).
+   Generated from the paths already used in index.html, then adopted BY it.
+
+   HONEST SCOPE — this is a single source of truth for the STYLE GUIDE, and only
+   partially for the product:
+     - style-guide.html renders every icon specimen from this object and THROWS
+       on an unknown name, so the guide provably cannot show a glyph the product
+       lacks. That was the original defect and it is closed.
+     - index.html consumes only its 10 named *_PATH constants from here. The
+       other 19 keys still exist as inline path literals in index.html (23 of 29
+       paths appear inline at least once — `check` 5x, `warn` 5x, `close`/`gear`/
+       `help`/`clock` 3x each). Most sit in STATIC markup, which cannot reference
+       a JS variable without changing how those icons render — a product refactor,
+       not a docs fix. So editing an inline copy can still leave this module
+       stale, and ds-drift-check.js §6 reports the duplication count so it is
+       visible and cannot quietly grow.
+   An earlier version of this header claimed "neither file keeps its own copy."
+   That was an overclaim, found by an independent audit — corrected here rather
+   than left as false documentation inside the file whose job is preventing it.
 
    Convention: 24x24 viewBox, fill:none, stroke:currentColor, stroke-width 1.8,
    round caps/joins — applied by iconSvg(path, size) in index.html.

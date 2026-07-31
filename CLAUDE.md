@@ -74,10 +74,17 @@ operates on stale memory of blueAI's design system. The reading IS the reset.
     dark / `.drawer.light`, plus a `.bai-scope` tokens-only alias for the style guide) + every
     component family. Extracted from index.html 2026-08-01 so the style guide can LINK it and
     render the real components instead of re-implementing them.
-  - `blueai-icons.js` — **the icon set (SSOT).** `BAI_ICONS`, 29 named paths. index.html assigns
-    its own `*_PATH` constants from this object and the style guide renders from it, so neither
-    keeps a private copy. The guide *throws* on an unknown icon name rather than rendering blank —
-    it previously invented glyphs (a wrong bolt, a fake sparkle) and that shipped looking fine.
+  - `blueai-icons.js` — **the icon set.** `BAI_ICONS`, 29 named paths. Fully SSOT for the style
+    guide (which renders every specimen from it and *throws* on an unknown name — it previously
+    invented glyphs and that shipped looking fine). Only **partially** SSOT for the product:
+    index.html consumes 10 named `*_PATH` constants from it, but 23 of 29 paths also exist as
+    inline literals, mostly in static markup that can't reference a JS variable. `ds-drift-check.js`
+    §6 reports that count so it stays visible.
+  - `ds-drift-check.js` — **run this after any component change:** `node ds-drift-check.js`.
+    Fails on invented specimen copy (every button label/placeholder must exist verbatim in
+    index.html), coverage regression below a floor, unknown icon names, re-declared icon literals,
+    and the guide restyling `.bai-*` itself. Also *reports* icon duplication and dead CSS. It exists
+    because invented copy shipped twice and only a human comparing screenshots caught it.
   - `style-guide.html` — **the DS reference.** Open at
     `http://localhost:8410/blueai-desktop/style-guide.html`. Links the product stylesheet + icon
     set and renders real components inside `.bai-scope`, so it cannot drift. Everything numeric is

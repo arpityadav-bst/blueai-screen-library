@@ -359,18 +359,21 @@
         <div class="sg-spechead"><span class="sg-cls">.bai-sidebar</span> <span class="sg-cls">.bai-side-item</span> <span class="sg-cls">.bai-side-label</span> <span class="sg-cls">.bai-side-rec</span><span class="sg-role">Nav rows (<code>.active</code>), a section label, recent-chat rows (<code>.on</code> current, <code>.unseen</code> / <code>.working</code> recolour the dot), and the pinned footer.</span></div>
         <div class="sg-canvas bai-scope" style="padding:0;display:block;">
           <div class="bai-sidebar" style="position:relative;display:flex;width:100%;max-width:230px;">
+            <!-- real nav order: New chat, Jobs, Skills, Scheduled. The first row is .bai-side-newchat
+                 (its own variant, not the active tab); .active marks the current mode. -->
             <div class="bai-side-nav">
-              <button class="bai-side-item active" type="button"><span class="ic" data-icon="chevron" data-size="15"></span>Chat
-                <span class="bai-side-newicon" data-icon="edit" data-size="13"></span>
-              </button>
-              <button class="bai-side-item" type="button"><span class="ic" data-icon="clock" data-size="15"></span>Scheduled<span class="bai-side-badge">3</span></button>
-              <button class="bai-side-item" type="button"><span class="ic" data-icon="bolt" data-size="15"></span>Skills</button>
+              <button class="bai-side-item bai-side-newchat" type="button"><span class="ic" data-icon="edit" data-size="15"></span>New chat</button>
+              <button class="bai-side-item" type="button"><span class="ic"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h12M8 12h12M8 18h12"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/></svg></span>Jobs</button>
+              <button class="bai-side-item active" type="button"><span class="ic" data-icon="bolt" data-size="15"></span>Skills</button>
+              <button class="bai-side-item" type="button"><span class="ic" data-icon="clock" data-size="15"></span>Scheduled</button>
             </div>
             <div class="bai-side-label">RECENT</div>
+            <!-- real RECENTS rows: .dot + .nm title + a trailing .tm time OR a Scheduled badge -->
             <div class="bai-side-recents">
-              <div class="bai-side-rec on"><span class="dot"></span><span>Find codes for this game</span></div>
-              <div class="bai-side-rec unseen"><span class="dot"></span><span>Swipe my dating apps</span></div>
-              <div class="bai-side-rec"><span class="dot"></span><span>Morning brief</span></div>
+              <div class="bai-side-rec on"><span class="dot"></span><span class="nm">Daily rewards run</span><span class="bai-sched-badge">Scheduled</span></div>
+              <div class="bai-side-rec unseen"><span class="dot"></span><span class="nm">UX roles in Berlin</span><span class="tm">2h</span></div>
+              <div class="bai-side-rec working"><span class="dot"></span><span class="nm">Free Fire gameplay review script</span><span class="tm">1d</span></div>
+              <div class="bai-side-rec"><span class="dot"></span><span class="nm">Tailoring my resume for product design</span><span class="tm">3d</span></div>
             </div>
             <div class="bai-side-foot">
               <button class="bai-side-item" type="button"><span class="ic" data-icon="gear" data-size="15"></span>Settings</button>
@@ -465,7 +468,7 @@
       <div class="sg-spec">
         <div class="sg-spechead"><span class="sg-cls">.bai-thinking</span> <span class="sg-cls">.bai-cursor</span><span class="sg-role">In-flight state: pulsing mark + status text, and the blinking caret used while a reply types in.</span></div>
         <div class="sg-canvas bai-scope sg-col sg-narrow">
-          <div class="bai-thinking"><span class="bai-think-txt">Working on it<span class="bai-cursor"></span></span></div>
+          <div class="bai-thinking"><span class="bai-think-txt">reasoning…<span class="bai-cursor"></span></span></div>
         </div>
       </div>
 
@@ -503,12 +506,16 @@
       </div>
 
       <div class="sg-spec">
-        <div class="sg-spechead"><span class="sg-cls">.bai-modalact</span><span class="sg-role">Modal action. Always full width, 41px floor, stacked in a <code>.bai-modalact-group</code> — primary first, escape hatch second.</span></div>
+        <div class="sg-spechead"><span class="sg-cls">.bai-modalact</span><span class="sg-role">Modal action. Always full width, 41px floor. <strong>Every one in the product today is <code>.primary</code>, and the only group holds a single button</strong> — an earlier two-button version was cut because "Top up" and "manage credits" landed on the same page, so two buttons were doing one job. <code>.secondary</code> exists in CSS but is currently unrendered.</span></div>
         <div class="sg-canvas bai-scope sg-col sg-narrow">
+          <span class="sg-lbl">Real: single-action group</span>
           <div class="bai-modalact-group sg-w">
-            <button class="bai-modalact primary" type="button">Top Up</button>
-            <button class="bai-modalact secondary" type="button">Add / manage own key</button>
+            <button class="bai-modalact primary" type="button">Add API key</button>
           </div>
+          <span class="sg-lbl">Real: label + icon (the only case <code>.bai-modalact</code>'s gap:6px bites)</span>
+          <button class="bai-modalact primary sg-w" type="button">Top Up<span data-icon="external" data-size="13" style="display:flex;"></span></button>
+          <span class="sg-lbl">CSS-only, not currently used in the product</span>
+          <button class="bai-modalact secondary sg-w" type="button">Add API key</button>
         </div>
       </div>
 
@@ -571,13 +578,14 @@
       <div class="sg-spec">
         <div class="sg-spechead"><span class="sg-cls">.bai-history-card</span><span class="sg-role">Chat-history row. <code>.on</code> = current chat, <code>.unseen</code> / <code>.working</code> recolour the status dot.</span></div>
         <div class="sg-canvas bai-scope sg-col sg-narrow">
-          <div class="bai-history-card">
-            <div class="hc-top"><span class="hc-dot"></span><span class="hc-title">Find codes for this game</span></div>
-            <div class="hc-meta">2 hours ago · 8 messages</div>
+          <!-- real RECENTS entries; .hc-meta is "<count> messages · <time> ago" -->
+          <div class="bai-history-card unseen">
+            <div class="hc-top"><span class="hc-dot"></span><span class="hc-title">UX roles in Berlin</span></div>
+            <div class="hc-meta">9 messages · 2h ago</div>
           </div>
           <div class="bai-history-card on">
-            <div class="hc-top"><span class="hc-dot"></span><span class="hc-title">Swipe my dating apps</span></div>
-            <div class="hc-meta">Current chat</div>
+            <div class="hc-top"><span class="hc-dot"></span><span class="hc-title">Daily rewards run</span><span class="bai-sched-badge">Scheduled</span></div>
+            <div class="hc-meta">14 messages · 20m ago</div>
           </div>
         </div>
       </div>
@@ -635,7 +643,14 @@
             </button>
             <button class="bai-optcard" type="button">
               <span class="bai-optcard-dot"></span>
-              <span class="bai-optcard-body"><span class="bai-optcard-title">Hybrid <span class="bai-optcard-badge">SAVES CREDITS</span></span><span class="bai-optcard-sub">Uses your PC for supported tasks.</span></span>
+              <span class="bai-optcard-body"><span class="bai-optcard-title">Hybrid</span><span class="bai-optcard-sub">Uses your PC and saves tokens.</span></span>
+            </button>
+          </div>
+          <span class="sg-lbl">The badge lives on the Hybrid <em>method</em> group, not the mode group</span>
+          <div class="bai-optcard-group sg-w">
+            <button class="bai-optcard active" type="button">
+              <span class="bai-optcard-dot"></span>
+              <span class="bai-optcard-body"><span class="bai-optcard-title">Auto <span class="bai-optcard-badge">★ Recommended</span></span><span class="bai-optcard-sub">BlueAI runs a local model for you.</span></span>
             </button>
           </div>
         </div>
@@ -645,8 +660,8 @@
         <div class="sg-spechead"><span class="sg-cls">.bai-newitem-input</span> <span class="sg-cls">.bai-search</span> <span class="sg-cls">.bai-set-field</span><span class="sg-role">Text input, search field with clear affordance, and a labelled field wrapper.</span></div>
         <div class="sg-canvas bai-scope sg-col sg-narrow">
           <div class="bai-set-field sg-w">
-            <span class="bai-set-field-label">Endpoint URL</span>
-            <input class="bai-newitem-input" type="text" placeholder="https://…" />
+            <span class="bai-set-field-label">Custom endpoint</span>
+            <input class="bai-newitem-input" type="text" placeholder="Endpoint URL" />
           </div>
           <div class="bai-set-field sg-w">
             <span class="bai-set-field-label">Filled</span>
@@ -684,8 +699,8 @@
         <div class="sg-spechead"><span class="sg-cls">.bai-warnrow</span> <span class="sg-cls">.bai-donecard</span> <span class="sg-cls">.bai-errorcard</span><span class="sg-role">Amber warning row, green completion, red failure. Each is a status, not an action. <strong>Convention:</strong> the head is a glyph + ALL-CAPS status (<code>✓ TASK COMPLETED</code>, <code>✕ ERROR</code>), the body is a sentence.</span></div>
         <div class="sg-canvas bai-scope sg-col sg-narrow">
           <div class="bai-warnrow sg-w" data-icon-warn><span>You've used all your credits.</span></div>
-          <div class="bai-donecard sg-w"><div class="dc-head">✓ TASK COMPLETED</div><div class="dc-body">3 codes redeemed successfully.</div></div>
-          <div class="bai-errorcard sg-w"><div class="ec-head">✕ ERROR</div><div class="ec-body">The game's code page didn't respond. Try again shortly.</div></div>
+          <div class="bai-donecard sg-w"><div class="dc-head">✓ TASK COMPLETED</div><div class="dc-body">Done — everything completed successfully.</div></div>
+          <div class="bai-errorcard sg-w"><div class="ec-head">✕ ERROR</div><div class="ec-body">Something went wrong while running that. Please try again.</div></div>
         </div>
       </div>
 
@@ -705,9 +720,10 @@
       <div class="sg-spec">
         <div class="sg-spechead"><span class="sg-cls">.bai-opt-row</span> <span class="sg-cls">.bai-optg</span><span class="sg-role">Tappable numbered choice. Use when options are short; the menucard above when they're longer.</span></div>
         <div class="sg-canvas bai-scope sg-col sg-narrow">
+          <!-- real option copy from the product's own suggestion set -->
           <div class="bai-optg sg-w">
-            <button class="bai-opt-row" type="button"><span class="bai-opt-num">1</span><span class="bai-opt-body"><span class="bai-opt-label">Use my saved preferences</span><span class="bai-opt-desc">Swipe right on profiles matching them</span></span></button>
-            <button class="bai-opt-row" type="button"><span class="bai-opt-num">2</span><span class="bai-opt-body"><span class="bai-opt-label">Ask me each time</span></span></button>
+            <button class="bai-opt-row" type="button"><span class="bai-opt-num">1</span><span class="bai-opt-body"><span class="bai-opt-label">Get Strategy Guides</span><span class="bai-opt-desc">Stuck in Genshin Impact or Honkai: Star Rail? I can find the best tips and builds for you.</span></span></button>
+            <button class="bai-opt-row" type="button"><span class="bai-opt-num">2</span><span class="bai-opt-body"><span class="bai-opt-label">Try Something New</span><span class="bai-opt-desc">I can find and install a new game for you based on your interests.</span></span></button>
           </div>
         </div>
       </div>
@@ -737,11 +753,11 @@
         line beneath it already said "Prime".
       </p>
       <div class="sg-spec">
-        <div class="sg-spechead"><span class="sg-cls">.bai-tab-badge</span> <span class="sg-cls">.bai-side-badge</span> <span class="sg-cls">.bai-sched-badge</span> <span class="sg-cls">.verified</span> <span class="sg-cls">.cr-prime</span><span class="sg-role">Count badge (tab / sidebar), outlined schedule pill, green confirmation, and the Prime marker.</span></div>
+        <div class="sg-spechead"><span class="sg-cls">.bai-tab-badge</span> <span class="sg-cls">.bai-side-badge</span> <span class="sg-cls">.bai-sched-badge</span> <span class="sg-cls">.verified</span> <span class="sg-cls">.cr-prime</span><span class="sg-role">Count badge (tab / sidebar), the Scheduled marker, green confirmation, and the Prime marker. <strong><code>.bai-sched-badge</code> marks a chat as schedule-originated and <em>replaces</em> the timestamp</strong> — it does not show the cadence, so its text is always "Scheduled". The two count badges are CSS-defined but currently unrendered in the product (no live counts feed them).</span></div>
         <div class="sg-canvas bai-scope" style="align-items:center;gap:16px;">
           <span class="bai-tab-badge">3</span>
-          <span class="bai-side-badge">12</span>
-          <span class="bai-sched-badge">Daily · 09:00</span>
+          <span class="bai-side-badge">3</span>
+          <span class="bai-sched-badge">Scheduled</span>
           <span class="bai-kv-row" style="padding:0;"><span class="verified">Verified</span></span>
           <span class="cr-prime" style="font-size:9.5px;letter-spacing:0.4px;">★ PRIME</span>
         </div>
@@ -966,8 +982,8 @@
         <div class="sg-canvas bai-scope sg-col sg-narrow">
           <div class="bai-skillcard sg-w">
             <div class="sk-content">
-              <div class="sk-top"><span class="sk-ic" data-icon="bolt" data-size="13"></span><b>Redeem game codes</b><span class="bai-tgl on" role="button" aria-label="Toggle skill"><i></i></span></div>
-              <div class="sk-desc">Finds working codes for a game and applies them to your account.</div>
+              <div class="sk-top"><span class="sk-ic" data-icon="bolt" data-size="13"></span><b>Daily rewards claimer</b><span class="bai-tgl on" role="button" aria-label="Toggle skill"><i></i></span></div>
+              <div class="sk-desc">Checks every linked game for free daily rewards and claims them automatically.</div>
             </div>
             <div class="sk-foot">
               <button class="bai-sk-try" type="button">Try</button>
@@ -979,8 +995,8 @@
           </div>
           <div class="bai-skillcard sg-w">
             <div class="sk-content">
-              <div class="sk-top"><span class="sk-ic" data-icon="bolt" data-size="13"></span><b>Morning brief</b><span class="bai-tgl" role="button" aria-label="Toggle skill"><i></i></span></div>
-              <div class="sk-desc">Summarises overnight activity across your apps.</div>
+              <div class="sk-top"><span class="sk-ic" data-icon="bolt" data-size="13"></span><b>Redeem code finder</b><span class="bai-tgl" role="button" aria-label="Toggle skill"><i></i></span></div>
+              <div class="sk-desc">Searches for and applies the latest working redeem codes for your games.</div>
             </div>
             <div class="sk-foot">
               <button class="bai-sk-try" type="button">Try</button>
@@ -1039,10 +1055,12 @@
             <button class="bai-fb-btn" type="button" data-icon="thumbUp" data-size="13"></button>
             <button class="bai-fb-btn" type="button" data-icon="thumbDown" data-size="13"></button>
           </div>
+          <!-- the real FEEDBACK_REASONS array, in order -->
           <div class="bai-fb-chips">
-            <button class="bai-fb-chip" type="button">Not accurate</button>
-            <button class="bai-fb-chip" type="button">Too slow</button>
-            <button class="bai-fb-chip" type="button">Didn't follow</button>
+            <button class="bai-fb-chip" type="button">Inaccurate</button>
+            <button class="bai-fb-chip" type="button">Unhelpful</button>
+            <button class="bai-fb-chip" type="button">Took too long</button>
+            <button class="bai-fb-chip" type="button">Other</button>
           </div>
         </div>
       </div>
@@ -1235,7 +1253,7 @@
         <div class="sg-spechead"><span class="sg-cls">.bai-onb-h</span> <span class="sg-cls">.bai-onb-s</span> <span class="sg-cls">.bai-onb-fr</span> <span class="sg-cls">.bai-onb-cta</span><span class="sg-role">Headline (with <code>em</code> for the accent phrase), subtext, the uppercase framing label, and the CTA.</span></div>
         <div class="sg-canvas bai-scope sg-col" style="align-items:center;padding:20px;text-align:center;">
           <div class="bai-onb-h" style="animation:none;">Your AI agent that<br /><em>gets things done.</em></div>
-          <div class="bai-onb-s" style="animation:none;">Ask in plain language. BlueAI works inside your apps and reports back.</div>
+          <div class="bai-onb-s" style="animation:none;">Handle multi-step tasks across your BlueStacks apps, find deals, claim rewards, create content, and more.</div>
           <div class="bai-onb-fr" style="animation:none;">Here's what I can do for you</div>
           <button class="bai-onb-cta" type="button" style="animation:none;">Get started &rsaquo;</button>
         </div>
@@ -1245,8 +1263,8 @@
         <div class="sg-canvas bai-scope" style="align-items:flex-start;">
           <div class="bai-tour-card" style="position:relative;top:auto;left:auto;right:auto;max-width:320px;">
             <span class="bai-tour-step">STEP 1 OF 3</span>
-            <span class="bai-tour-h">Everything starts in Chat</span>
-            <span class="bai-tour-p">Describe the outcome you want. BlueAI plans the steps and asks before anything irreversible.</span>
+            <span class="bai-tour-h">Explore skills</span>
+            <span class="bai-tour-p">Skills are reusable sets of instructions, tools, and knowledge that BlueAI uses when needed. Explore available skills or create your own.</span>
             <div class="bai-tour-foot">
               <div class="bai-tour-dots"><i class="on"></i><i></i><i></i></div>
               <button class="bai-tour-skip" type="button">skip tour</button>
@@ -1260,20 +1278,22 @@
     <section class="sg-sec" id="boot">
       <h2 class="sg-sech">Boot sequence</h2>
       <p class="sg-secnote">
-        A short terminal-style log that streams while the panel opens — the one place this prototype leans
-        into the "terminal" idea literally. Lines reveal on a <strong>fixed ~480ms cadence</strong> rather than
-        a total duration, so cutting a line makes the boot genuinely snappier instead of just speeding up the
-        same wall-clock. Pending lines are prefixed <code>▸</code> in <code>--bai-faint</code>; the final line
-        flips to a green <code>✓</code>. <code>.ln.s</code> is the revealed state.
+        A terminal-style log that streams while an <strong>agent worker</strong> spins up — the one place this
+        prototype leans into the "terminal" idea literally. Each worker has its own 5-line log, ending in a
+        green <code>✓ … online</code>. Lines reveal on a <strong>fixed ~480ms cadence</strong> rather than a
+        total duration, so cutting a line makes the boot genuinely snappier instead of just speeding the same
+        wall-clock. Pending lines are prefixed <code>▸</code> in <code>--bai-faint</code>; <code>.ln.s</code>
+        is the revealed state.
       </p>
       <div class="sg-spec">
-        <div class="sg-spechead"><span class="sg-cls">.bai-boot</span> <span class="sg-cls">.ln</span> <span class="sg-cls">.ok</span><span class="sg-role">Left-aligned inside a centred block. Shown here fully revealed; in the product each <code>.ln</code> gains <code>.s</code> in sequence.</span></div>
+        <div class="sg-spechead"><span class="sg-cls">.bai-boot</span> <span class="sg-cls">.ln</span> <span class="sg-cls">.ok</span><span class="sg-role">The real Job-Worker log, verbatim. Left-aligned inside a centred block; shown fully revealed, whereas the product adds <code>.s</code> to each <code>.ln</code> in sequence.</span></div>
         <div class="sg-canvas bai-scope" style="align-items:center;padding:22px;">
           <div class="bai-boot on" style="position:relative;top:auto;left:auto;right:auto;display:flex;">
-            <div class="ln s"><span style="color:var(--bai-faint)">▸ </span>Connecting to BlueStacks instance</div>
-            <div class="ln s"><span style="color:var(--bai-faint)">▸ </span>Loading your skills</div>
-            <div class="ln s"><span style="color:var(--bai-faint)">▸ </span>Checking scheduled tasks</div>
-            <div class="ln s"><span class="ok">✓ </span>Ready</div>
+            <div class="ln s"><span style="color:var(--bai-faint)">▸ </span>booting agent core · local GPU</div>
+            <div class="ln s"><span style="color:var(--bai-faint)">▸ </span>mounting LLM: claude-opus-4.8 [1m ctx]</div>
+            <div class="ln s"><span style="color:var(--bai-faint)">▸ </span>loading tools: browser · form-filler · resume-parser</div>
+            <div class="ln s"><span style="color:var(--bai-faint)">▸ </span>wiring agent graph: search → match → apply</div>
+            <div class="ln s"><span class="ok">✓ </span>Job Worker online</div>
           </div>
         </div>
       </div>
@@ -1448,6 +1468,20 @@
     ['Titlebar (fixed — not themed)', ['--bai-titlebar-bg*', '--bai-titlebar-line*', '--bai-titlebar-text*', '--bai-titlebar-icon*']],
     ['Other', ['--bai-scroll', '--bai-menu-shadow']]
   ];
+  /* GROUPS above is hand-authored — the token VALUES are read live, but the NAME list is not, so a
+     newly added --bai-* token would otherwise be invisible on this page forever. (TYPE_ROLES has the
+     same shape but is self-revealing: an unlabelled size still renders. This was the opposite.) So:
+     diff the declared tokens against the listed ones and surface any that are missing, rather than
+     silently omitting them. Found by an independent audit of this page. */
+  function unlistedTokens(css) {
+    var listed = {};
+    GROUPS.forEach(function (g) { g[1].forEach(function (n) { listed[n.replace(/\*$/, '')] = true; }); });
+    var declared = {};
+    var re = /(--bai-[a-z0-9-]+)\s*:/g, m;
+    while ((m = re.exec(css)) !== null) declared[m[1]] = true;
+    return Object.keys(declared).filter(function (n) { return !listed[n]; }).sort();
+  }
+
   function renderTokens() {
     var host = document.getElementById('sgTokens');
     host.innerHTML = '';
@@ -1476,6 +1510,17 @@
       h.appendChild(grid);
       host.appendChild(h);
     });
+    // surface any declared token this page's hand-written GROUPS list forgot
+    var missed = unlistedTokens(ownRulesText());
+    if (missed.length) {
+      var warn = document.createElement('div');
+      warn.className = 'sg-flag';
+      warn.style.margin = '14px 0 0';
+      warn.innerHTML = '<b>' + missed.length + ' token(s) declared in the stylesheet but missing from this page\'s ' +
+        'group list</b> — add them to <code>GROUPS</code> in style-guide.html so they get a swatch: ' +
+        '<code>' + missed.join('</code> <code>') + '</code>';
+      host.appendChild(warn);
+    }
     probe.remove();
   }
 
