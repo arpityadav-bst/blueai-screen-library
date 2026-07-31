@@ -1,6 +1,5 @@
 # blueAI — Knowledge Base
-Last updated: 2026-07-25 (blueai-desktop audit — first-ever blueai-desktop section: flex-gap+margin
-stacking trap, hover-menu reachability testing technique)
+Last updated: 2026-08-01 (the design-system build — DS architecture + traps: base-href fragment rebasing, token scope vs fixed-position, the .bai-scope alias, pill-radius clamping, ellipsis false positives, pinned generators)
 
 ## blueai-desktop — CSS + testing traps (2026-07-25 audit, first entries for this surface)
 - **A flex container's `gap` ADDS to a child's own pre-existing CSS margin — it does not collapse or
@@ -24,6 +23,28 @@ stacking trap, hover-menu reachability testing technique)
   state at every intermediate step — not `page.hover()` (which jumps) and not a scripted `.click()`
   (which bypasses the real hover mechanism entirely). Caught on the credits-header popover after
   designer report: "when I go over to view details it closes before I reach it."
+
+## Design-system architecture + traps (2026-08-01 — the DS build)
+- **A <base href> re-bases FRAGMENT links too.** Copying index.html's `<base href="/blueai-desktop/">` into
+  style-guide.html made every `#section` link resolve to `/blueai-desktop/#section`, which the server answers
+  with the directory index — so every sidebar click left the guide for the product. Inheriting a solution
+  without inheriting its problem. A page whose own paths are same-directory relative needs no base at all.
+- **Tokens scoped to `.drawer` do not reach `position:fixed` descendants of `<body>`.** The dev Preview panel
+  lives outside `.drawer`, so tokenising its sizes collapsed its radius to 0px and its text to the 16px
+  default. It is deliberately outside the design system, so the fix was literals + a do-not-tokenise note,
+  NOT widening the token scope. Check ancestry before tokenising anything fixed-position.
+- **A tokens-only alias makes a style guide possible.** Component rules here are plain global classes that
+  resolve `var(--bai-*)`; only the token declarations are `.drawer`-scoped. Adding `.bai-scope` alongside
+  `.drawer` on the token blocks (and on the three `.drawer.light` component overrides) lets any container
+  request the real token values with no second copy. Do not alias it onto the `.drawer` LAYOUT rule.
+- **A 20px radius on a <=40px-tall element is already fully round**, so 20px -> 999px is a no-op: radius is
+  clamped to half the smaller dimension. Proven by pixel-diffing `.bai-tgl` at both values (byte-identical),
+  not assumed.
+- **`overflow:hidden` + `text-overflow:ellipsis` + `nowrap` always reports `scrollWidth > clientWidth`.** An
+  overflow scanner must exclude it or it reports every designed truncation as a defect.
+- **A generator that reads HEAD becomes un-re-runnable once its own output is adopted.** `gen_icons.js` read
+  the product's literal icon paths from `git show HEAD`; after index.html was rewired to read them back from
+  the generated file, HEAD no longer contained them. Pin such scripts to the source commit.
 
 ## Creator-v2 studio-concept era (S8 audit — the 06-13→06-24 backlog)
 - **AnimatePresence orphan trap:** toggling presence DURING the exit animation orphans the scrim DOM node — a dead full-screen scrim that no state change can remove (we had 2 stacked). For modals that can be opened/closed fast → **conditional render** (`if (!open) return null`) + a plain enter-only `motion.div`; reserve AnimatePresence for surfaces that can't be rapid-toggled.

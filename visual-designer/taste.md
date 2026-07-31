@@ -319,6 +319,28 @@ springy bounces) — "a utility assistant, not a toy."
     general, dividers were just the first shape it kept showing up in. Sibling reasoning entry:
     `reasonings.md` "A signal is a repeat, not a first, unless it earns its slot."
 
+## Codified taste rules (added 2026-08-01 — the design-system build; rules 39–41 are CRAFT, they apply on any surface)
+
+39. **A half-pixel is not a hierarchy step.** If two values differ by less than roughly 1px at these
+    sizes, they are not two levels — they are the residue of tuning things one at a time, and they make
+    the system unpredictable to build against. Merge them. When merging TEXT at or below 11px, merge
+    **up** (never shrink the smallest type — legibility floor beats tidiness); above that, merge toward
+    whichever value has more declarations. *(blueai-desktop 2026-08-01: 20 font-sizes and 15 radii,
+    including 9/9.5, 10/10.5, 11/11.5, 12/12.5, 13/13.5 pairs → 6 text steps + 4 display + 2 glyphs, and
+    9 radius tokens. 101 sub-threshold merges, verified as ≤1px each.)*
+
+40. **Tokenise sizes, not just colours — an untokenised axis drifts by default.** Colours here were
+    fully tokenised while every size was a raw literal, so each new component picked its size by copying
+    whatever neighbour was nearest. That is *how* you get 10 and 10.5 for one role: not carelessness, but
+    the absence of anything to reach for. Any axis without a named vocabulary will re-drift no matter how
+    many times it is cleaned. Give text steps ROLE names (the role is stable); give display sizes and
+    optically-matched glyphs SIZE names, because naming 22px "avatar" is wrong the first time it's reused.
+
+41. **Hierarchy carried by colour does not also need to be carried by size.** When two text roles sit a
+    half-step apart, check what actually separates them before preserving the size gap — here
+    caption-vs-body-small was already distinguished by the text-colour ramp (`--bai-dim` vs
+    `--bai-text`), so the 0.5px difference was doing no work at all and merging cost nothing.
+
 ## Open corrections log
 *SCOPE PIVOT (2026-07-25, designer directive) — superseding the S8 standing scope note below: **the
 marketing site AND /blueai-product are now BOTH DORMANT; /blueai-desktop is the active surface.** This

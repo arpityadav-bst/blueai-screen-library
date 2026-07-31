@@ -55,12 +55,74 @@ NOT load WSUP's or now.gg's notebook for blueAI work — that's cross-contaminat
 4. `visual-designer/decisions.md` — recent decisions so new work doesn't contradict them
 5. `visual-designer/session-logs.md` — most recent entry only (top)
 6. `visual-designer/scratchpad.md` — pending entries (flag if non-empty past the header)
+7. **Run `node public/blueai-desktop/ds-drift-check.js`** — 20 seconds, and it tells you the current
+   truth about the design system (coverage, any invented copy, any raw sizes, dead CSS) instead of
+   making you infer it. Do this at session start AND before declaring any change done.
 
 **After reading, announce:** *"VDA bootstrap loaded — blueAI, Phase X, last session
 caught_count: N, watching for [recurring category]. Scratchpad: [empty | N pending]."*
 
 **Why:** skipping these is itself a Gate 6 fail — every blueAI edit made without them
 operates on stale memory of blueAI's design system. The reading IS the reset.
+
+---
+
+## ⚡ VDA OPERATING CONTRACT for blueai-desktop (2026-08-01) — differs from WSUP on purpose
+
+blueai-desktop has **no separate design-system implementation.** The DS *is* `blueai-desktop.css` +
+`blueai-icons.js`; `style-guide.html` is a *view* onto them, not a second copy. That single fact
+decides everything below, and it is why the inherited WSUP cadence is wrong here.
+
+### The two directions are not symmetrical
+
+**DS → product: unsynchronizable, by identity.** Change a token or a rule and the product has it on
+reload, because it links the same file. Nothing to propagate, nothing to remember. The cost is the
+mirror image: no staging layer, so **blast radius** replaces drift as the risk. Before touching a
+shared rule, grep its consumers — a "let me soften `--bai-faint`" edit lands on 40 surfaces at once.
+
+**Product → guide: automatic for APPEARANCE, manual for MEANING.** Automatic with zero memory
+involved: token values (read via `getComputedStyle`), the type/radius tables (tallied from the live
+sheet), the icon inventory, the coverage number, and any *restyle* of an already-specimen'd component.
+**Not automatic:** a component's markup, its copy, and its set of states — because the guide
+hand-writes specimens while the product builds most of its DOM in JS template strings.
+
+**Every real defect so far has come out of that one gap.** Invented glyphs, then invented copy, then a
+four-state login flow documented as one invented state. Nothing else has failed.
+
+### Therefore: INVERT the deferred-Gate-5 cadence
+
+`vda-core/workflow.md` defers style-guide sync to the audit pass. That is right for WSUP, where the
+guide is a separate React route and syncing is expensive. **It is wrong here.** When specimens are
+hand-written, deferring the sync does not produce staleness — it produces **fabrication**, because the
+later pass writes what it remembers instead of what it reads. That is the exact mechanism behind every
+invented-copy incident. Here the sync costs one edit in one file.
+
+> **For blueai-desktop: specimen + prose sync is INLINE, same edit. Decisions promotion stays deferred.**
+
+### The one rule that makes fabrication structurally impossible
+
+> **Specimen copy is never authored. It is quoted.** Every user-facing string in a specimen must exist
+> verbatim in `index.html`. If you cannot find it there, you are inventing it.
+
+### Same-edit obligations, and what enforces each
+
+| If the edit touches… | Same-edit obligation | Enforced by |
+|---|---|---|
+| a new CSS class | a specimen renders it | `ds-drift-check.js` §2 (coverage floor) |
+| a new `--bai-*` token | a row in the guide's `GROUPS` | the guide self-reports omissions |
+| a size or radius | a `--bai-fs-*` / `--bai-r-*` token, never a literal | §8 |
+| an icon | added to `blueai-icons.js`, consumed via `BAI_ICONS.<key>` | §3 + §4 |
+| a component's markup / copy / states | specimen re-derived from `index.html`, strings verbatim | §1 |
+| a class removed from the product | its CSS rule removed too | §7 (reports dead CSS) |
+
+**Run `node ds-drift-check.js` before saying done.** It is not a nicety: it is the only thing standing
+between this project and the defect that has bitten three times.
+
+### Notebook
+
+Keep using `blueai/visual-designer/` — it is already blueAI-scoped and the SCOPE PIVOT note re-pointed
+it at blueai-desktop. Do **not** create a second notebook; per-product separation exists to stop
+WSUP/now.gg cross-contamination, and blueai-desktop is not a different product from blueAI.
 
 ---
 
