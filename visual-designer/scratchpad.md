@@ -5,6 +5,42 @@ resolved. Promoted to decisions.md / taste.md at audit passes, then wiped.
 Format: `YYYY-MM-DD HH:mm — <file> — <what changed> — Why: <one phrase>`
 
 --- Pending audit entries ---
+2026-08-01 — /blueai-desktop — **DS Phase 1: extracted the inline `<style>` block into `blueai-desktop.css`.**
+Context: designer greenlit building blueai-desktop its own design system (it had none — every DS artifact in
+this repo documents the now-dormant marketing site). Established first that the blocker was structural, not
+documentational: 918 of index.html's 3,663 lines were CSS inside a single `<style>` block, and a style guide
+worth having renders the REAL components (taste 27 / "render the real thing so docs can't drift"), which is
+impossible against inline CSS. So Phase 1 is the extraction; Phase 2 is `style-guide.html` linking the same
+sheet. Precedent for the move already existed IN this file — `boot.js`/`flows.js` are already external.
+Did it with a scripted split + hard assertions rather than hand-pasting 917 lines, and the assertions earned
+their keep immediately: first run aborted on `expected 3663 lines, got 3664` (trailing-newline off-by-one in
+`split()`), which a hand-edit would have silently turned into a lost or duplicated line. Also asserted the
+exact `<style>`/`</style>` boundary text and that no OTHER style tags exist anywhere. Detected CRLF + no-BOM
+first and preserved both. Dedented 4 spaces (903 lines; CSS whitespace-insensitive, and the rule-dump check
+below proves semantics unchanged) so the standalone file isn't uniformly indented.
+Verification — built the baseline BEFORE touching anything, which is the only ordering that actually proves
+anything: (a) the definitive check is a dump of all 628 CSS rules AS THE BROWSER PARSED THEM (`cssText` off
+`document.styleSheets`), which covers every rule including the ~87 selectors whose elements don't exist at
+load (modals, dynamically-rendered cards) — a live-element-only diff would have missed those entirely;
+(b) all 46 `--bai-*` tokens resolved on `.drawer`; (c) the FULL computed-style dump (every one of ~340
+longhands) for 124 live elements — 56,481 property comparisons. Both themes, both times. Result: 628/628
+rules identical, 46/46 tokens identical, 56,479/56,481 props identical. The 2 that differed (`.bai-body
+{opacity: 0.609197→0.609101}`, `.bai-status {transform: sub-pixel translateY}`) I did NOT hand-wave as
+"probably animation" — proved it by running the capture TWICE against the identical post-extraction code and
+showing the same 2 properties differ between two runs of unchanged code, i.e. in-flight animation sampling,
+not extraction damage. Separately caught the one real risk of a CSS extraction that computed styles can't
+see: `url()` resolution changes base (document → stylesheet location). Verified via network log, not
+reasoning — both `assets/desktop-bg.png` and `assets/bluestacks-window.png` return 200 and resolve to the
+correct absolute URLs; zero requestfailed. Plus `inlineStyleTags: 0` (the block is genuinely gone), the
+linked sheet parsing 628 rules, and a functional smoke test in both themes (Settings route, Help dropdown
+still painting above the panel = the z-index fix survived, Credits route, ring at exactly 60px). Zero JS
+errors throughout. index.html 3,663 → 2,745 lines. Updated blueai/CLAUDE.md, whose "single file" description
+was now wrong, and documented the `.drawer`-scoping-vs-marketing-site namespace collision in both the CSS
+header and CLAUDE.md. — Why: two lessons. (1) The order is the method — a baseline captured after the change
+proves nothing, and the "compare what the BROWSER parsed, not what I think I moved" framing is what made the
+verification complete rather than merely broad. (2) When a diff shows a small residual, distinguishing
+"expected nondeterminism" from "real damage" requires an experiment (run twice on identical code), not a
+plausible-sounding explanation — the explanation and the proof are not the same thing.
 2026-07-29 17:37 — /blueai-desktop — Follow-up on the credit popups, 3 asks. (1) "We are missing not enough
 credits msg here" — I had SKIPPED that strip in the previous pass and said so out loud, reasoning the modal's
 own title covered it. Wrong call, and the PM's correction exposes why: in the Prime mode the title is an OFFER

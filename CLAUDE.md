@@ -64,13 +64,24 @@ operates on stale memory of blueAI's design system. The reading IS the reset.
 ---
 
 ## blueai-desktop — ACTIVE
-- The "modern terminal" prototype replicating BlueAI (BlueStacks' in-app AI assistant), single
-  file: `public/blueai-desktop/index.html` (file-size-rule EXEMPT by established convention —
-  it's a deliberate fast-iteration single-file prototype, not a Next/React app).
+- The "modern terminal" prototype replicating BlueAI (BlueStacks' in-app AI assistant). Plain
+  HTML/CSS/vanilla-JS, no build step, no JS dependencies (one webfont `<link>` aside). Files in
+  `public/blueai-desktop/`:
+  - `index.html` — markup + the app's inline `<script>` (file-size-rule EXEMPT by established
+    convention; a deliberate fast-iteration prototype, not a Next/React app)
+  - `blueai-desktop.css` — **the design system**: all 46 `--bai-*` tokens (defined on `.drawer`
+    dark / `.drawer.light`) + every component family. Extracted from index.html 2026-08-01 so a
+    style guide can LINK it and render the real components instead of re-implementing them.
+  - `boot.js` · `flows.js` — pre-existing extracted scripts
+- **Tokens are `.drawer`-scoped on purpose** — the dormant marketing site in this same repo uses
+  the same `--bai-*` namespace with completely different values. The scoping is what stops them
+  colliding. Do not hoist them to `:root`, and do not assume a `--bai-*` name means the same
+  thing in both products.
 - Local preview: `.claude/launch.json`'s `blueai-desktop` config (`python -m http.server 8410
-  --directory blueai/public`) → `http://localhost:8410/blueai-desktop/index.html`.
-- Design system: `visual-designer/blueai-desktop-design-system.md` (tokens + component
-  families — a living document, extracted from the file itself, not exhaustive on day one).
+  --directory blueai/public`) → `http://localhost:8410/blueai-desktop/index.html`. Note: this
+  server drops between sessions fairly often — check it before concluding something's broken.
+- Design-system docs: `style-guide.html` (planned, Phase 2 — a plain-HTML sibling that links
+  `blueai-desktop.css`) + reasoning/conventions in `visual-designer/`.
 - Designer reviews live in-browser during iteration — skip Playwright screenshots for small/
   mechanical changes (see `feedback_skip_screenshots_when_watching` memory); verify with
   Playwright only for first-time-wiring new interactions or genuine logic/data-model changes.
