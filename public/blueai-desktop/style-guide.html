@@ -12,6 +12,9 @@
   <!-- THE product stylesheet, linked not copied. Every specimen below is the real component with
        the real classes, so this page cannot drift from what ships. -->
   <link rel="stylesheet" href="blueai-desktop.css" />
+  <!-- THE product icon set, same deal. index.html assigns its own *_PATH constants from this
+       object, so a glyph shown here is by definition one the product actually uses. -->
+  <script src="blueai-icons.js"></script>
 
   <style>
     /* ============================================================================
@@ -172,9 +175,10 @@
     <section class="sg-sec" id="type">
       <h2 class="sg-sech">Type scale</h2>
       <p class="sg-secnote">
-        Inter throughout, one family. Sizes below are <strong>measured from the stylesheet</strong>, with use
-        counts — this is the scale as it actually exists, not an idealised one. Weights in use: 400, 500, 600,
-        <strong>700 (dominant, 54 uses)</strong>, plus a single 800.
+        Inter throughout, one family. The <strong><span data-live-typecount>…</span> sizes</strong> below are
+        tallied from the live stylesheet at page load, with real use counts — this is the scale as it actually
+        exists, not an idealised one. Weights in use: 400, 500, 600, <strong>700 (dominant)</strong>, plus a
+        single 800.
       </p>
       <div class="sg-spec">
         <div class="sg-spechead"><span class="sg-cls">font-size</span><span class="sg-role">value · uses · rendered sample</span></div>
@@ -185,8 +189,9 @@
     <section class="sg-sec" id="radius">
       <h2 class="sg-sech">Radius scale</h2>
       <p class="sg-secnote">
-        Measured from the stylesheet. <strong>8px is the workhorse (32 uses)</strong> — buttons, chat cards,
-        inputs; 9–12px for larger panels and modal cards; 20px+ only for pills and circles.
+        Tallied live from the stylesheet — <span data-live-radcount>…</span> distinct values.
+        <strong>The workhorse is <span data-live-toprad>…</span></strong> — buttons, chat cards, inputs;
+        9–12px for larger panels and modal cards; 20px+ only for pills and circles.
       </p>
       <div class="sg-spec">
         <div class="sg-spechead"><span class="sg-cls">border-radius</span><span class="sg-role">value · uses</span></div>
@@ -197,14 +202,25 @@
     <section class="sg-sec" id="icons">
       <h2 class="sg-sech">Icons</h2>
       <p class="sg-secnote">
-        Feather-style line icons, built inline by the product's own <code>iconSvg(path, size)</code> helper:
+        Feather-style line icons, built by the product's own <code>iconSvg(path, size)</code> helper:
         <code>fill:none</code>, <code>stroke:currentColor</code>, <code>stroke-width:1.8</code>,
         round caps and joins, 24×24 viewBox. They inherit colour from their container, which is why the same
-        glyph works on a card, a button, and an accent chip without variants.
+        glyph works on a card, a button, and an accent chip without variants. The paths live in
+        <code>blueai-icons.js</code>, which <strong>both the product and this page read from</strong> — so
+        the grid below is the complete real inventory, not a sample.
       </p>
+      <div class="sg-flag" style="margin:0 0 14px;">
+        <b>Two inconsistencies, recorded not tidied.</b> <code>close</code> and <code>closeAlt</code> are two
+        different paths for the same X glyph, both live today. <code>chevron</code> and <code>search</code> are
+        authored in static markup at <code>stroke-width:2</code> while <code>iconSvg()</code> uses 1.8 — so they
+        render very slightly heavier in the product than in this grid. Unifying either is a product change.
+        <br /><br />
+        The <b>✦ sparkle</b> is deliberately not here: the product uses the text character, not an SVG, so it
+        belongs to the type layer.
+      </div>
       <div class="sg-spec">
-        <div class="sg-spechead"><span class="sg-cls">iconSvg()</span><span class="sg-role">Common sizes: 12–16px inline, 13–14px in rows, 15–16px in icon chips.</span></div>
-        <div class="sg-canvas bai-scope" id="sgIcons" style="align-items:center;gap:18px;"></div>
+        <div class="sg-spechead"><span class="sg-cls">BAI_ICONS</span><span class="sg-role"><span id="sgIconCount">…</span> icons · common sizes 12–16px. Names are the keys in <code>blueai-icons.js</code>.</span></div>
+        <div class="sg-canvas bai-scope" id="sgIcons" style="align-items:flex-start;gap:16px;"></div>
       </div>
     </section>
 
@@ -553,8 +569,8 @@
         <div class="sg-canvas bai-scope sg-col sg-narrow">
           <div style="display:flex;align-items:center;gap:9px;"><span class="bai-spin"></span><span style="font-size:11px;color:var(--bai-dim);">Checking your key…</span></div>
           <div class="bai-fb">
-            <button class="bai-fb-btn" type="button" data-icon="up" data-size="13"></button>
-            <button class="bai-fb-btn" type="button" data-icon="down" data-size="13"></button>
+            <button class="bai-fb-btn" type="button" data-icon="thumbUp" data-size="13"></button>
+            <button class="bai-fb-btn" type="button" data-icon="thumbDown" data-size="13"></button>
           </div>
           <div class="bai-fb-chips">
             <button class="bai-fb-chip" type="button">Not accurate</button>
@@ -609,15 +625,28 @@
     <section class="sg-sec" id="gaps">
       <h2 class="sg-sech">Known gaps</h2>
       <p class="sg-secnote">Honest scope of this page, so nobody mistakes absence for completeness.</p>
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">coverage</span><span class="sg-role">Measured at page load by diffing the classes this page renders against every class in the stylesheet — so it can't overstate itself.</span></div>
+        <div class="sg-scale bai-scope" id="sgCoverage"></div>
+      </div>
       <div class="sg-flag" style="margin:0;">
-        <b>Scale drift.</b> The stylesheet uses <b>19 distinct font sizes</b> and <b>15 radii</b>, including
-        near-duplicate pairs (9/9.5, 10/10.5, 11/11.5, 12/12.5, 13/13.5). That's documented above as-is
-        rather than tidied, because consolidating it is a real change to the product and needs its own pass.
+        <b>Scale drift.</b> The stylesheet uses <b><span data-live-typecount>…</span> distinct font sizes</b>
+        and <b><span data-live-radcount>…</span> radii</b> — with
+        <b><span data-live-duppairs>…</span> places where two consecutive sizes differ by only 0.5px</b>
+        (9/9.5, 10/10.5, 11/11.5 and so on). Documented above as-is rather than tidied, because consolidating
+        it is a real change to the product and needs its own pass. Every number here is computed at load, so
+        it cannot fall behind the stylesheet.
         <br /><br />
         <b>Not yet covered here.</b> The app shell (titlebar, header, tab strip, sidebar), the onboarding
         sequence and nav tour, the Scheduled date/time picker, Skills create/upload flows, the boot animation,
         and the dev-only Preview panel. All exist in <code>blueai-desktop.css</code>; none are documented on
-        this page yet. Roughly 60 of the 278 classes are represented so far.
+        this page yet — see the live coverage count below.
+        <br /><br />
+        <b>Markup is the one thing still copied.</b> The CSS and the icon set are shared with the product, but
+        each specimen's HTML is hand-written here because the product builds most of it in JS. That's a real
+        drift vector — four specimens were subtly wrong on day one until checked against the render path. When
+        you change a component's markup, grep how <code>index.html</code> builds it and update the specimen in
+        the same edit.
       </div>
     </section>
 
@@ -632,28 +661,16 @@
 </div>
 
 <script>
-  // ---- icon set: the product's own iconSvg() convention, mirrored here so specimens carry real glyphs ----
-  var P = {
-    key: '<circle cx="8" cy="15" r="4"/><path d="M10.5 12.5L20 3M17 6l3 3M14 9l2 2"/>',
-    share: '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>',
-    external: '<path d="M7 17 17 7M7 7h10v10"/>',
-    chevron: '<path d="m9 18 6-6-6-6"/>',
-    bolt: '<path d="M13 2 3 14h8l-1 8 10-12h-8l1-8z"/>',
-    user: '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
-    mail: '<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>',
-    phone: '<rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>',
-    search: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>',
-    close: '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
-    info: '<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>',
-    check: '<path d="M20 6 9 17l-5-5"/>',
-    warn: '<path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/>',
-    up: '<path d="M7 10v12M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88z"/>',
-    down: '<path d="M17 14V2M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88z"/>',
-    sparkle: '<path d="M12 3l1.6 4.6L18 9l-4.4 1.4L12 15l-1.6-4.6L6 9l4.4-1.4L12 3z"/>'
-  };
+  // ---- icons come from the product's own set (blueai-icons.js). No local copy: a glyph on this
+  //      page is, by construction, one the product actually renders. The guard exists because the
+  //      first version of this page DID invent glyphs (a different bolt, a made-up sparkle) — a
+  //      silent `|| ''` fallback is what let that ship looking fine. ----
   function icon(name, size) {
+    var d = BAI_ICONS[name];
+    if (!d) throw new Error('style-guide: "' + name + '" is not in the product icon set (blueai-icons.js). ' +
+      'Add it to the product first — the guide must not invent glyphs.');
     return '<svg width="' + size + '" height="' + size + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
-           'stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + (P[name] || '') + '</svg>';
+           'stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + d + '</svg>';
   }
   // fill every [data-icon] placeholder
   document.querySelectorAll('[data-icon]').forEach(function (el) {
@@ -704,23 +721,100 @@
     probe.remove();
   }
 
-  // ---- measured scales (counts computed from blueai-desktop.css) ----
-  var TYPE = [['7px',1,'Micro — background-progress tick only'],['9px',5,'Smallest label'],['9.5px',7,'Section labels, eyebrows'],['10px',28,'Captions, meta'],['10.5px',26,'Secondary body, hints'],['11px',26,'Body small, menu items'],['11.5px',12,'Sidebar rows'],['12px',23,'Body, card titles'],['12.5px',9,'Input text, modal actions'],['13px',6,'Chat message body'],['13.5px',3,'Tour heading'],['14px',3,'Brand wordmark'],['15px',3,'Credit balance'],['17.5px',1,'Onboarding headline'],['22px',1,'Avatar initial'],['26px',1,'Large numeral'],['34px',1,'Credits hero'],['38px',1,'Login-gate credits'],['46px',2,'Offer-modal headline']];
-  var RADII = [['2px',3],['3px',3],['4px',4],['5px',6],['6px',15],['7px',4],['8px',32],['9px',10],['10px',13],['11px',3],['12px',8],['13px',1],['14px',1],['16px',1],['20px',4]];
+  // ---- scales are TALLIED FROM THE LIVE STYLESHEET at load, not hardcoded. An earlier version of
+  //      this page baked in the counts, which would have gone stale the first time anyone touched a
+  //      font-size. Only the human-written role labels stay editorial; a size with no label still
+  //      appears in the table, so a new value can't hide. ----
+  var TYPE_ROLES = {
+    '7px': 'Micro — background-progress tick only', '9px': 'Smallest label',
+    '9.5px': 'Section labels, eyebrows', '10px': 'Captions, meta', '10.5px': 'Secondary body, hints',
+    '11px': 'Body small, menu items', '11.5px': 'Sidebar rows', '12px': 'Body, card titles',
+    '12.5px': 'Input text, modal actions', '13px': 'Chat message body', '13.5px': 'Tour heading',
+    '14px': 'Brand wordmark', '15px': 'Credit balance', '17.5px': 'Onboarding headline',
+    '22px': 'Avatar initial', '26px': 'Large numeral', '34px': 'Credits hero',
+    '38px': 'Login-gate credits', '46px': 'Offer-modal headline'
+  };
+  function ownRulesText() {
+    var out = [];
+    for (var i = 0; i < document.styleSheets.length; i++) {
+      var sh = document.styleSheets[i];
+      if (sh.href && sh.href.indexOf('blueai-desktop.css') === -1) continue;   // product sheet only
+      if (!sh.href) continue;                                                   // skip this page's own <style>
+      var rules;
+      try { rules = sh.cssRules; } catch (e) { continue; }
+      for (var j = 0; j < rules.length; j++) out.push(rules[j].cssText);
+    }
+    return out.join('\n');
+  }
+  function tally(text, re) {
+    var m = {}, x;
+    while ((x = re.exec(text)) !== null) { m[x[1]] = (m[x[1]] || 0) + 1; }
+    return Object.keys(m).map(function (k) { return [k, m[k]]; })
+      .sort(function (a, b) { return parseFloat(a[0]) - parseFloat(b[0]); });
+  }
   function renderScales() {
+    var css = ownRulesText();
+    var TYPE = tally(css, /font-size:\s*([\d.]+px)/g);
+    var RADII = tally(css, /border-radius:\s*([\d.]+px)/g);
     document.getElementById('sgType').innerHTML = TYPE.map(function (t) {
+      var role = TYPE_ROLES[t[0]] || '<em style="opacity:.65;">(no role documented yet)</em>';
       return '<div class="sg-scalerow"><span class="sg-scaleval">' + t[0] + '</span><span class="sg-scaleuse">' + t[1] + '&times;</span>' +
-             '<span class="sg-scalesample" style="font-size:' + t[0] + ';">' + t[2] + '</span></div>';
+             '<span class="sg-scalesample" style="font-size:' + t[0] + ';">' + role + '</span></div>';
     }).join('');
     document.getElementById('sgRadius').innerHTML = RADII.map(function (r) {
       return '<div class="sg-radrow"><span class="sg-scaleval">' + r[0] + '</span><span class="sg-scaleuse">' + r[1] + '&times;</span>' +
              '<span class="sg-radbox" style="border-radius:' + r[0] + ';"></span></div>';
     }).join('');
-    document.getElementById('sgIcons').innerHTML = ['key','share','user','mail','search','check','warn','info','close','chevron','bolt','external']
-      .map(function (n) { return '<span style="display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--bai-icon-2);">' + icon(n, 18) +
-        '<span style="font-size:9px;color:var(--bai-faint);font-family:ui-monospace,monospace;">' + n + '</span></span>'; }).join('');
+    // the drift callouts state live numbers too, so they can never contradict the tables above them
+    var dupPairs = TYPE.filter(function (t, i) { return i > 0 && parseFloat(t[0]) - parseFloat(TYPE[i - 1][0]) === 0.5; }).length;
+    document.querySelectorAll('[data-live-typecount]').forEach(function (e) { e.textContent = TYPE.length; });
+    document.querySelectorAll('[data-live-radcount]').forEach(function (e) { e.textContent = RADII.length; });
+    document.querySelectorAll('[data-live-duppairs]').forEach(function (e) { e.textContent = dupPairs; });
+    var topRad = RADII.slice().sort(function (a, b) { return b[1] - a[1]; })[0];
+    document.querySelectorAll('[data-live-toprad]').forEach(function (e) { e.textContent = topRad[0] + ' (' + topRad[1] + ' uses)'; });
+    renderCoverage(css);
+  }
+
+  // ---- self-measured coverage: every base class the stylesheet defines vs. the ones this page
+  //      actually renders. Replaces a hand-written "~60 of 278" that would rot immediately. ----
+  function renderCoverage(css) {
+    var defined = {};
+    var re = /(^|[\s,>+~])\.([a-zA-Z][\w-]*)/g, m;
+    var selectorsOnly = css.replace(/\{[^}]*\}/g, '|');   // drop declaration bodies
+    while ((m = re.exec(selectorsOnly)) !== null) {
+      var c = m[2];
+      if (c.indexOf('sg-') === 0) continue;               // this page's own chrome, not the DS
+      defined[c] = true;
+    }
+    var rendered = {};
+    document.querySelectorAll('.sg-canvas *, .sg-canvas').forEach(function (el) {
+      (el.getAttribute('class') || '').split(/\s+/).forEach(function (c) {
+        if (c && c.indexOf('sg-') !== 0 && c !== 'bai-scope') rendered[c] = true;
+      });
+    });
+    var all = Object.keys(defined).sort();
+    var covered = all.filter(function (c) { return rendered[c]; });
+    var missing = all.filter(function (c) { return !rendered[c]; });
+    var pct = Math.round(covered.length / all.length * 100);
+    document.getElementById('sgCoverage').innerHTML =
+      '<div class="sg-scalerow" style="border-bottom:none;"><span class="sg-scaleval" style="width:auto;">' +
+        covered.length + ' / ' + all.length + '</span>' +
+      '<span class="sg-scalesample" style="color:var(--bai-text-hi);white-space:normal;">classes defined in ' +
+        '<code style="color:var(--bai-accent);">blueai-desktop.css</code> are rendered somewhere on this page ' +
+        '(<b>' + pct + '%</b>). The rest are listed below — absence here is a documented gap, not a claim of completeness.</span></div>' +
+      '<div style="padding:10px 0 2px;font-size:9.5px;line-height:1.9;color:var(--bai-faint);' +
+        'font-family:ui-monospace,SFMono-Regular,Menlo,monospace;word-break:break-word;">' +
+        missing.map(function (c) { return '.' + c; }).join('  ') + '</div>';
+    document.querySelectorAll('[data-live-covered]').forEach(function (e) { e.textContent = covered.length; });
+    document.querySelectorAll('[data-live-total]').forEach(function (e) { e.textContent = all.length; });
+    // the WHOLE set, enumerated from the product's own module — so this section is a complete
+    // inventory rather than a hand-picked sample that can quietly fall behind
+    document.getElementById('sgIcons').innerHTML = Object.keys(BAI_ICONS)
+      .map(function (n) { return '<span style="display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--bai-icon-2);width:62px;text-align:center;">' + icon(n, 18) +
+        '<span style="font-size:9px;color:var(--bai-faint);font-family:ui-monospace,monospace;word-break:break-all;">' + n + '</span></span>'; }).join('');
+    document.getElementById('sgIconCount').textContent = Object.keys(BAI_ICONS).length;
     document.getElementById('sgChips').innerHTML =
-      '<span class="tgm-ic">' + icon('sparkle', 12) + '</span>' +
+      '<span class="tgm-ic">' + icon('telegram', 12) + '</span>' +
       '<span class="tgm-ic-ok">' + icon('check', 12) + '</span>' +
       '<span class="tgm-ic-acc">' + icon('key', 12) + '</span>';
 

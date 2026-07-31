@@ -5,6 +5,49 @@ resolved. Promoted to decisions.md / taste.md at audit passes, then wiped.
 Format: `YYYY-MM-DD HH:mm — <file> — <what changed> — Why: <one phrase>`
 
 --- Pending audit entries ---
+2026-08-01 — /blueai-desktop — **Independent audit of DS Phases 1+2, then fixed what actually undermined the
+DS.** Designer asked for an audit rather than a re-confirmation, so I went after the checks I had NOT run.
+FOUND CLEAN (Phase 1): my Phase-1 verification compared the browser's PARSED rules — but comments are not in
+`cssRules`, so a lost comment (and this file's comments carry the design reasoning) would have passed silently.
+Byte-diffed the extracted CSS against the pre-extraction commit: 917 vs 917 lines, IDENTICAL after dedent,
+comment-start count 179 vs 179. Also isolated the Phase-2 CSS delta: exactly the 7-line alias comment + 5
+aliased selectors, nothing else. Both phases genuinely clean — but I only know that now because I checked the
+thing my original harness structurally could not see.
+FOUND BROKEN (Phase 2) — three real DS violations, all of the same species (a "reference" that is actually a
+COPY):
+ (1) **The guide invented icons.** It carried its own hardcoded `P = {...}` path table. Compared every entry
+ against the paths the product actually uses: 7 of 16 were NOT product paths — including `bolt`, where I'd
+ written a different shape than the product's real skills glyph, and `sparkle`, which isn't even an SVG in the
+ product (it's the text character ✦). A DS reference showing glyphs the product doesn't have is worse than no
+ reference: someone building from it ships the wrong icon. FIX: generated `blueai-icons.js` (28 icons) BY SCRIPT
+ from the paths already in index.html — machine-copied, each asserted to exist verbatim in the source, so no
+ path was retyped by me. Then rewired index.html's 10 named `*_PATH` constants to read from it (comments
+ preserved) and the guide to render from the same object. Added a hard guard: `icon()` THROWS on an unknown
+ name instead of the old silent `|| ''` fallback — that fallback is precisely what let invented glyphs ship
+ looking fine. The guide now structurally cannot show a glyph the product lacks.
+ (2) **Hardcoded scale tallies.** The type/radius tables were numbers I computed once at authoring time —
+ stale the moment anyone touches a font-size. FIX: tallied at page load from the live stylesheet's own
+ cssRules. Only the human-written role labels stay editorial, and an unlabelled size still renders (marked "no
+ role documented yet") so a new value can't hide.
+ (3) **Hardcoded coverage claim.** I'd written "~60 of 278 classes." FIX: the page now measures itself by
+ diffing rendered classes against every class in the stylesheet — and the live number is **96 of 330 (29%)**,
+ i.e. BOTH of my hand-written figures were wrong (330 not 278, because my CLI count only took the first class
+ of each selector and missed descendants like `.ic`/`.info`/`.k`/`.v`; 96 not ~60). It now also prints every
+ uncovered class by name. Same correction hit the "0.5px pairs" wording: my prose said 5 pairs, the live metric
+ says 10 consecutive half-steps — reworded so number and description agree.
+Also surfaced 2 genuine product inconsistencies while mapping icons, recorded in the icon module + guide rather
+than silently unified (unifying is a product change): `close` and `closeAlt` are two different paths for the
+same X glyph, and `chevron`/`search` are authored in static markup at stroke-width 2 while `iconSvg()` uses 1.8.
+Verified after every step that the PRODUCT is unaffected: rule/token/property diff 0 across both themes for the
+alias AND the icon rewire; then a functional pass confirming 0 empty SVGs across chat/skills/scheduled/settings
+(the CSS harness can't see JS-rendered icons, so that needed its own check); guard confirmed throwing; guide
+still zero JS errors, 46/46 tokens, no overflow, theme toggle working.
+— Why: the lesson is about what a verification harness CANNOT see. Phase 1's rule-dump was strong but blind to
+comments; the CSS baseline was blind to JS-rendered icons; a `|| ''` fallback was blind to invented names. Each
+gap needed a different KIND of check, not a more thorough version of the same one. And the three fixes share
+one principle worth keeping: a design-system artifact must be *generated from* or *guarded against* the product,
+never transcribed alongside it — every number and glyph I typed by hand was wrong or went stale, and every one
+I derived was right.
 2026-08-01 — /blueai-desktop — **DS Phase 2: built `style-guide.html`** — blueai-desktop's first design-system
 reference (the repo's only DS artifact previously documented the dormant marketing site).
 Architecture decision that made it possible: the tokens are declared on `.drawer`, but 614 of the 623 component
