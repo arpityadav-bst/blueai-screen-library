@@ -14,8 +14,14 @@
    is a product change, not a documentation one):
      - `close` and `closeAlt` are two different paths for the same X glyph, both
        live in the product today.
-     - `chevron` and `search` are authored in static markup at stroke-width 2,
-       while iconSvg() renders everything else at 1.8.
+     - FOUR stroke weights are in play. iconSvg() uses 1.8; the header/sidebar
+       icons (gear, help) are authored in static markup at 1.6; chevron/search at
+       2; the search-clear X at 2.2. Rendering any of these THROUGH iconSvg (as the
+       style guide does) shows them at 1.8, i.e. very slightly lighter than the
+       product does in those specific places.
+     - The account "kebab" glyph is NOT here: it is fill-based (fill:currentColor,
+       three circles, no stroke), so it cannot go through iconSvg at all. It stays
+       inline in index.html as the documented exception to the stroke convention.
    The sparkle is deliberately absent: the product uses the text glyph "✦", not
    an SVG, so it belongs to the type layer rather than the icon set.
    ============================================================================ */
@@ -48,4 +54,5 @@ var BAI_ICONS = {
   share: "<circle cx=\"18\" cy=\"5\" r=\"3\"/><circle cx=\"6\" cy=\"12\" r=\"3\"/><circle cx=\"18\" cy=\"19\" r=\"3\"/><line x1=\"8.59\" y1=\"13.51\" x2=\"15.42\" y2=\"17.49\"/><line x1=\"15.41\" y1=\"6.51\" x2=\"8.59\" y2=\"10.49\"/>",
   chevron: "<path d=\"M9 18l6-6-6-6\"/>",
   search: "<circle cx=\"11\" cy=\"11\" r=\"7\"/><path d=\"M21 21l-4.3-4.3\"/>",
+  gear: "<circle cx=\"12\" cy=\"12\" r=\"3\"/><path d=\"M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z\"/>",
 };

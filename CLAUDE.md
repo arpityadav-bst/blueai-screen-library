@@ -19,10 +19,10 @@ dormant surface becomes active again, flip this note back — nothing needs to b
 re-prioritized.
 
 **Practical effect:** Gate 8 (taste.md) now reviews new work against blueai-desktop's OWN
-design system (`visual-designer/blueai-desktop-design-system.md` — tokens + component families
-cataloged directly from `index.html`, since blueai-desktop had no documented design system
-anywhere before this pivot) + taste rule 38 (a cross-surface craft rule), not the marketing
-site's rules 1–37 (preserved on record, not currently load-bearing).
+design system — **`public/blueai-desktop/style-guide.html`** (live specimens, built from the
+product's own stylesheet + icon set; blueai-desktop had no documented DS at all before this
+pivot) + taste rule 38 (a cross-surface craft rule) — not the marketing site's rules 1–37
+(preserved on record, not currently load-bearing).
 
 ---
 
@@ -49,8 +49,9 @@ NOT load WSUP's or now.gg's notebook for blueAI work — that's cross-contaminat
 2. `../agents/vda-core/QUALITY-GATES.md` — 8 gates + dual-cadence + Gate 6.5 + routing table
 3. `visual-designer/taste.md` — read the SCOPE PIVOT note at the top first, then rule 38;
    rules 1–37 are dormant-surface reference, not what Gate 8 reviews against right now
-3b. `visual-designer/blueai-desktop-design-system.md` — blueai-desktop's own tokens +
-   component families; THIS is what Gate 8 reviews blueai-desktop work against
+3b. `public/blueai-desktop/style-guide.html` — blueai-desktop's own DS reference (tokens,
+   scales, icon set, component families). THIS is what Gate 8 reviews blueai-desktop work
+   against. Skim its section list + "Known gaps"; open it in the browser when designing.
 4. `visual-designer/decisions.md` — recent decisions so new work doesn't contradict them
 5. `visual-designer/session-logs.md` — most recent entry only (top)
 6. `visual-designer/scratchpad.md` — pending entries (flag if non-empty past the header)
@@ -73,7 +74,7 @@ operates on stale memory of blueAI's design system. The reading IS the reset.
     dark / `.drawer.light`, plus a `.bai-scope` tokens-only alias for the style guide) + every
     component family. Extracted from index.html 2026-08-01 so the style guide can LINK it and
     render the real components instead of re-implementing them.
-  - `blueai-icons.js` — **the icon set (SSOT).** `BAI_ICONS`, 28 named paths. index.html assigns
+  - `blueai-icons.js` — **the icon set (SSOT).** `BAI_ICONS`, 29 named paths. index.html assigns
     its own `*_PATH` constants from this object and the style guide renders from it, so neither
     keeps a private copy. The guide *throws* on an unknown icon name rather than rendering blank —
     it previously invented glyphs (a wrong bolt, a fake sparkle) and that shipped looking fine.
@@ -95,12 +96,13 @@ operates on stale memory of blueAI's design system. The reading IS the reset.
 - Local preview: `.claude/launch.json`'s `blueai-desktop` config (`python -m http.server 8410
   --directory blueai/public`) → `http://localhost:8410/blueai-desktop/index.html`. Note: this
   server drops between sessions fairly often — check it before concluding something's broken.
-- Design-system docs: `style-guide.html` (built 2026-08-01) covers foundations (46 tokens, the
-  live-tallied type/radius scales, the 28-icon set) + 9 component families, plus house conventions
-  and a self-measured coverage figure — currently ~96 of 330 classes (29%), computed at load rather
-  than asserted. The app shell, onboarding/tour, date-time picker and Skills flows are NOT yet
-  documented; the page lists every uncovered class by name. Design reasoning lives in
-  `visual-designer/` (taste.md, reasonings.md, decisions.md).
+- Design-system docs: `style-guide.html` (built 2026-08-01) — foundations (46 tokens, live-tallied
+  type/radius scales, the 29-icon set) + 17 sections across shell, components and full-screen
+  states, house conventions, and a **self-measured** coverage figure: currently 186 of 330 classes
+  (56%), computed at load rather than asserted. Still undocumented: the Scheduled date/time picker
+  (`.bai-dt-*`) and the Skills create/upload flows — the page lists every uncovered class by name,
+  so trust that list over this sentence. Design reasoning lives in `visual-designer/` (taste.md,
+  reasonings.md, decisions.md).
 - Designer reviews live in-browser during iteration — skip Playwright screenshots for small/
   mechanical changes (see `feedback_skip_screenshots_when_watching` memory); verify with
   Playwright only for first-time-wiring new interactions or genuine logic/data-model changes.

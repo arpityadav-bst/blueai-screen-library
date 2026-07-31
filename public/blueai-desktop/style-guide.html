@@ -118,6 +118,12 @@
     <a href="#radius">Radius scale</a>
     <a href="#icons">Icons</a>
 
+    <div class="sg-navgroup">Shell &amp; navigation</div>
+    <a href="#shell">App shell</a>
+    <a href="#sidebar">Wide-mode sidebar</a>
+    <a href="#routes">Routes &amp; subpanes</a>
+    <a href="#composer">Chat composer</a>
+
     <div class="sg-navgroup">Components</div>
     <a href="#buttons">Buttons</a>
     <a href="#cards">Cards &amp; surfaces</a>
@@ -128,6 +134,12 @@
     <a href="#credits">Credits &amp; gauge</a>
     <a href="#overlays">Overlays</a>
     <a href="#feedback">Feedback &amp; loading</a>
+    <a href="#empty">Empty states</a>
+
+    <div class="sg-navgroup">Full-screen states</div>
+    <a href="#gates">Gates &amp; offer card</a>
+    <a href="#onboarding">Onboarding &amp; tour</a>
+    <a href="#preview">Dev preview panel</a>
 
     <div class="sg-navgroup">Meta</div>
     <a href="#conventions">Conventions</a>
@@ -210,17 +222,212 @@
         the grid below is the complete real inventory, not a sample.
       </p>
       <div class="sg-flag" style="margin:0 0 14px;">
-        <b>Two inconsistencies, recorded not tidied.</b> <code>close</code> and <code>closeAlt</code> are two
-        different paths for the same X glyph, both live today. <code>chevron</code> and <code>search</code> are
-        authored in static markup at <code>stroke-width:2</code> while <code>iconSvg()</code> uses 1.8 — so they
-        render very slightly heavier in the product than in this grid. Unifying either is a product change.
+        <b>Inconsistencies, recorded not tidied</b> — each would be a product change, so they're documented
+        rather than quietly fixed:
         <br /><br />
-        The <b>✦ sparkle</b> is deliberately not here: the product uses the text character, not an SVG, so it
+        <b>1. Four stroke weights.</b> <code>iconSvg()</code> renders at <b>1.8</b>; the header and sidebar
+        icons (<code>gear</code>, <code>help</code>) are authored inline at <b>1.6</b>;
+        <code>chevron</code>/<code>search</code> at <b>2</b>; the search-clear X at <b>2.2</b>. Every glyph in
+        the grid below is drawn at 1.8, so a few render marginally lighter here than in the product.
+        <br /><br />
+        <b>2. Two close glyphs.</b> <code>close</code> and <code>closeAlt</code> are different paths for the
+        same X, both live today.
+        <br /><br />
+        <b>3. One fill-based icon.</b> The account "kebab" is three filled circles with no stroke, so it can't
+        go through <code>iconSvg()</code> and isn't in the set — it stays inline in <code>index.html</code>.
+        You can see it in the App shell header specimen above.
+        <br /><br />
+        The <b>✦ sparkle</b> is also absent by design: the product uses the text character, not an SVG, so it
         belongs to the type layer.
       </div>
       <div class="sg-spec">
         <div class="sg-spechead"><span class="sg-cls">BAI_ICONS</span><span class="sg-role"><span id="sgIconCount">…</span> icons · common sizes 12–16px. Names are the keys in <code>blueai-icons.js</code>.</span></div>
         <div class="sg-canvas bai-scope" id="sgIcons" style="align-items:flex-start;gap:16px;"></div>
+      </div>
+    </section>
+
+    <!-- ================= SHELL & NAVIGATION ================= -->
+    <section class="sg-sec" id="shell">
+      <h2 class="sg-sech">App shell</h2>
+      <p class="sg-secnote">
+        The frame every screen lives inside, top to bottom: an OS-style <strong>titlebar</strong>, the
+        <strong>brand header</strong> carrying the global icon buttons, the <strong>mode strip</strong>, and a
+        <strong>screen title row</strong>. Two things worth knowing before touching any of it: the titlebar keeps
+        its own <em>fixed</em> near-black tokens in both themes (it imitates BlueStacks' own chrome, so it must
+        not follow the app theme), and <code>.bai-header</code> carries <code>z-index:58</code> so its dropdowns
+        paint above the route panels below — lower it and the Help/Account menus get clipped.
+      </p>
+
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-titlebar</span><span class="sg-role">30px OS-style bar. Uses the fixed <code>--bai-titlebar-*</code> tokens — deliberately theme-independent.</span></div>
+        <div class="sg-canvas bai-scope" style="padding:0;display:block;">
+          <div class="bai-titlebar" style="position:relative;top:auto;">
+            <img class="bai-tb-logo" src="assets/logo.png" alt="" />
+            <span class="bai-tb-title">BlueAI</span>
+            <div class="bai-tb-btns">
+              <button class="bai-tb-btn" type="button" aria-label="Minimise"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14"/></svg></button>
+              <button class="bai-tb-btn" type="button" aria-label="Maximise"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="5" width="14" height="14" rx="1"/></svg></button>
+              <button class="bai-tb-btn" type="button" aria-label="Close" data-icon="close" data-size="12"></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-header</span> <span class="sg-cls">.bai-wm</span> <span class="sg-cls">.bai-icbtn</span><span class="sg-role">Brand row. <code>.bai-logoslot</code> reserves the logo's space, <code>.bai-wm</code> is the static wordmark, <code>.bai-head-r</code> pins the icon buttons right and never shrinks them. The account glyph is the product's one <strong>fill-based</strong> icon — reproduced inline here because it can't go through <code>iconSvg()</code>.</span></div>
+        <div class="sg-canvas bai-scope" style="padding:0;display:block;background:var(--bai-panel);">
+          <div class="bai-header">
+            <span class="bai-logoslot"></span>
+            <span class="bai-wm">BlueAI</span>
+            <div class="bai-head-r">
+              <button class="bai-icbtn" type="button" aria-label="Settings" data-icon="gear" data-size="14"></button>
+              <button class="bai-icbtn" type="button" aria-label="Help" data-icon="help" data-size="14"></button>
+              <button class="bai-icbtn" type="button" aria-label="Account"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-strip</span> <span class="sg-cls">.bai-tab</span><span class="sg-role">Mode strip. <code>.active</code> draws a 2px accent underline attached to the strip's own stroke, not straddling it.</span></div>
+        <div class="sg-canvas bai-scope" style="padding:0;display:block;">
+          <div class="bai-strip">
+            <button class="bai-tab active" type="button">Chat</button>
+            <button class="bai-tab" type="button">Jobs</button>
+            <button class="bai-tab" type="button">Skills</button>
+            <button class="bai-tab" type="button">Scheduled</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-main-title</span> <span class="sg-cls">.bai-title-btn</span><span class="sg-role">Screen title + new-chat action. The title is a recessive <em>button</em> (11px, muted) — quieter than the brand wordmark above it, with a chevron marking it as a menu rather than a link.</span></div>
+        <div class="sg-canvas bai-scope" style="padding:0;display:block;">
+          <div class="bai-main-title">
+            <button class="bai-title-btn" type="button"><span>Untitled chat</span><span class="bai-title-ar" data-icon="chevron" data-size="11"></span></button>
+            <button class="bai-icbtn bai-newchat-btn" type="button" aria-label="New chat" data-icon="edit" data-size="15"></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-status</span> <span class="sg-cls">.bai-stat-btn</span> <span class="sg-cls">.bai-stat-wrap</span><span class="sg-role">Below-composer status row: model picker + the credit gauge, right-aligned via <code>.bai-stat-r</code>. <code>.bai-stat-wrap</code> is the positioning anchor every dropdown hangs from.</span></div>
+        <div class="sg-canvas bai-scope" style="padding:14px 0;display:block;">
+          <div class="bai-status">
+            <div class="bai-stat-r">
+              <div class="bai-stat-wrap"><button class="bai-stat-btn" type="button">Opus 4.8</button></div>
+              <div class="bai-stat-wrap bai-credits-wrap">
+                <svg class="bai-credit-ring" viewBox="0 0 18 18" aria-label="Credits remaining"><circle class="tr" cx="9" cy="9" r="7"/><circle class="fl" cx="9" cy="9" r="7" style="stroke-dasharray:43.98 43.98;stroke:var(--bai-credit-hi);"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sg-sec" id="sidebar">
+      <h2 class="sg-sech">Wide-mode sidebar</h2>
+      <p class="sg-secnote">
+        At ≥600px the drawer swaps the mode strip for a 210px left sidebar. Same destinations, different
+        affordance — so the nav labels stay sentence-weight and muted rather than shouting, and the active row
+        is marked by a 2px accent bar plus a wash, never by bolding the text.
+      </p>
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-sidebar</span> <span class="sg-cls">.bai-side-item</span> <span class="sg-cls">.bai-side-label</span> <span class="sg-cls">.bai-side-rec</span><span class="sg-role">Nav rows (<code>.active</code>), a section label, recent-chat rows (<code>.on</code> current, <code>.unseen</code> / <code>.working</code> recolour the dot), and the pinned footer.</span></div>
+        <div class="sg-canvas bai-scope" style="padding:0;display:block;">
+          <div class="bai-sidebar" style="position:relative;display:flex;width:100%;max-width:230px;">
+            <div class="bai-side-nav">
+              <button class="bai-side-item active" type="button"><span class="ic" data-icon="chevron" data-size="15"></span>Chat
+                <span class="bai-side-newicon" data-icon="edit" data-size="13"></span>
+              </button>
+              <button class="bai-side-item" type="button"><span class="ic" data-icon="clock" data-size="15"></span>Scheduled<span class="bai-side-badge">3</span></button>
+              <button class="bai-side-item" type="button"><span class="ic" data-icon="bolt" data-size="15"></span>Skills</button>
+            </div>
+            <div class="bai-side-label">RECENT</div>
+            <div class="bai-side-recents">
+              <div class="bai-side-rec on"><span class="dot"></span><span>Find codes for this game</span></div>
+              <div class="bai-side-rec unseen"><span class="dot"></span><span>Swipe my dating apps</span></div>
+              <div class="bai-side-rec"><span class="dot"></span><span>Morning brief</span></div>
+            </div>
+            <div class="bai-side-foot">
+              <button class="bai-side-item" type="button"><span class="ic" data-icon="gear" data-size="15"></span>Settings</button>
+              <button class="bai-icbtn" type="button" aria-label="Help" data-icon="help" data-size="14"></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sg-sec" id="routes">
+      <h2 class="sg-sech">Routes &amp; subpanes</h2>
+      <p class="sg-secnote">
+        Two full-pane shells that look alike and mean different things. <code>.bai-subpane</code> starts
+        <em>below</em> the mode strip (<code>top:84px</code>) — it's a drill-down <em>within</em> a tab, and it
+        keeps a push/pop stack. <code>.bai-globalroute</code> starts below the header only
+        (<code>top:46px</code>, covering the strip) — it's a destination that isn't any tab, like Settings or
+        AI Credits. Picking the wrong one is a semantic bug, not a cosmetic one: it decides whether the tab
+        strip stays reachable.
+      </p>
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-subpane-head</span> <span class="sg-cls">.bai-subpane-back</span> <span class="sg-cls">.bai-subpane-body</span><span class="sg-role">Shared header + scrollable body used by both shells. The body is a <code>gap:8px</code> flex column — mind that when a child brings its own margin.</span></div>
+        <div class="sg-canvas bai-scope" style="padding:0;display:block;">
+          <div style="background:var(--bai-bg);">
+            <div class="bai-subpane-head">
+              <button class="bai-subpane-back" type="button" aria-label="Back"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <span>AI Credits</span>
+            </div>
+            <div class="bai-subpane-body" style="padding:12px;">
+              <div class="bai-kv-block"><div class="bai-kv-row"><span class="k">Route body</span><span class="v">scrolls independently</span></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sg-sec" id="composer">
+      <h2 class="sg-sech">Chat composer</h2>
+      <p class="sg-secnote">
+        <code>.bai-q</code> is a <strong><code>&lt;textarea rows="1"&gt;</code></strong>, not an input — it grows
+        with content, which is why the bar is a flex column rather than a fixed-height row. The
+        <code>&rsaquo;</code> prompt glyph is a terminal cue, and the send button is only tinted accent once
+        there's something to send.
+      </p>
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-inputbar</span> <span class="sg-cls">.bai-prompt</span> <span class="sg-cls">.bai-q</span> <span class="sg-cls">.bai-send</span><span class="sg-role">Empty (placeholder) and with content. Send is <code>.disabled</code> until there's text.</span></div>
+        <div class="sg-canvas bai-scope sg-col" style="padding:14px 0;">
+          <div class="bai-inputbar">
+            <div class="bai-inputrow">
+              <span class="bai-prompt">&rsaquo;</span>
+              <textarea class="bai-q" rows="1" placeholder="Ask BlueAI anything"></textarea>
+              <button class="bai-send disabled" type="button" aria-label="Send"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
+            </div>
+          </div>
+          <div class="bai-inputbar">
+            <div class="bai-inputrow">
+              <span class="bai-prompt">&rsaquo;</span>
+              <textarea class="bai-q" rows="1">Redeem today's codes for me</textarea>
+              <button class="bai-send" type="button" aria-label="Send"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-thinking</span> <span class="sg-cls">.bai-cursor</span><span class="sg-role">In-flight state: pulsing mark + status text, and the blinking caret used while a reply types in.</span></div>
+        <div class="sg-canvas bai-scope sg-col sg-narrow">
+          <div class="bai-thinking"><span class="bai-think-txt">Working on it<span class="bai-cursor"></span></span></div>
+        </div>
+      </div>
+
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-history-note</span><span class="sg-role">Shown while viewing a past conversation — explains the state <em>and</em> offers the way out, in one row.</span></div>
+        <div class="sg-canvas bai-scope sg-col" style="padding:14px 0;">
+          <div class="bai-history-note" style="display:flex;">
+            <span class="hn-ic" data-icon="clock" data-size="14"></span>
+            <span class="hn-txt">You're viewing a past conversation.</span>
+            <button class="hn-btn" type="button">Start a new chat</button>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -576,6 +783,161 @@
             <button class="bai-fb-chip" type="button">Not accurate</button>
             <button class="bai-fb-chip" type="button">Too slow</button>
             <button class="bai-fb-chip" type="button">Didn't follow</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sg-sec" id="empty">
+      <h2 class="sg-sech">Empty states</h2>
+      <p class="sg-secnote">
+        One shape for "nothing here yet": a bordered icon tile, a heading, an optional status pill, then a
+        sentence explaining what <em>will</em> appear. It says what the space is for — never just "No items".
+      </p>
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-stub</span><span class="sg-role"><code>.ic</code> tile + <code>h4</code> + <code>.soon</code> pill + <code>p</code>. Centred in the pane.</span></div>
+        <div class="sg-canvas bai-scope" style="padding:0;display:block;">
+          <div class="bai-stub" style="min-height:200px;">
+            <div class="ic" data-icon="check" data-size="17"></div>
+            <h4>Jobs</h4>
+            <span class="soon">Coming soon</span>
+            <p>Running &amp; completed agent runs land here: status, logs, and what was applied to.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= FULL-SCREEN STATES ================= -->
+    <section class="sg-sec" id="gates">
+      <h2 class="sg-sech">Gates &amp; offer card</h2>
+      <p class="sg-secnote">
+        Blocking overlays, all sharing one footprint (<code>top:30px</code> so the OS titlebar stays visible,
+        scrim + <code>backdrop-filter</code>). The <strong>tier communicates severity</strong>: a gate stops the
+        session (sign in, sign out), the offer card interrupts a single action. Logout uses this full-app
+        treatment rather than a small inline confirm because it affects the whole session, not one item.
+      </p>
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-logingate-card</span> <span class="sg-cls">.lg-*</span><span class="sg-role">Sign-in gate: icon, gradient credit figure, heading/subtext group, divider, CTA, footnote link.</span></div>
+        <div class="sg-canvas bai-scope" style="align-items:flex-start;">
+          <div class="bai-logingate-card" style="animation:none;">
+            <span class="lg-icon" data-icon="key" data-size="20"></span>
+            <div class="lg-title-group">
+              <div class="lg-h">Sign in to continue</div>
+              <div class="lg-s">Your credits and chats follow your account.</div>
+            </div>
+            <div class="lg-div"></div>
+            <div class="lg-credits">500</div>
+            <div class="lg-s">free AI credits to start</div>
+            <button class="lg-cta" type="button">Continue with Google</button>
+            <span class="lg-link">Maybe later</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-logoutgate-card</span><span class="sg-role">Destructive confirm. Two equal-width actions; the confirm is solid <code>--bai-danger</code>, never accent.</span></div>
+        <div class="sg-canvas bai-scope" style="align-items:flex-start;">
+          <div class="bai-logoutgate-card" style="animation:none;">
+            <div class="bai-logoutgate-title">Are you sure you want to sign out?</div>
+            <div class="bai-logoutgate-actions">
+              <button class="bai-logoutgate-cancel" type="button">Cancel</button>
+              <button class="bai-logoutgate-confirm" type="button">Log out</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.ooc-offer</span> <span class="sg-cls">.ooc-alert</span> <span class="sg-cls">.ooc-num</span><span class="sg-role">Out-of-credits offer. A <code>.bai-tgmodal-card</code> modifier that recentres the modal and leads with the big gradient figure; the alert strip above it names the trigger the offer headline doesn't.</span></div>
+        <div class="sg-canvas bai-scope" style="align-items:flex-start;">
+          <div class="bai-tgmodal-card ooc-offer">
+            <div class="ooc-alert" data-icon-warn>Not enough credits</div>
+            <div class="tgm-body">
+              <div class="lg-s">BlueAI runs on credits</div>
+              <div class="lg-h">Get AI Credits with Prime</div>
+              <div class="lg-div"></div>
+              <div class="lg-credits">5000</div>
+              <div class="lg-title-group"><div class="ooc-credlabel">AI Credits</div><div class="lg-s">every month</div></div>
+              <div class="ooc-link">View all benefits &rsaquo;</div>
+              <div class="lg-div"></div>
+              <button class="bai-modalact primary" type="button">Get Prime</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sg-sec" id="onboarding">
+      <h2 class="sg-sech">Onboarding &amp; tour</h2>
+      <p class="sg-secnote">
+        First-run only. The onboarding screen stages itself in with <code>onb-in</code> plus incrementing
+        <code>animation-delay</code> — the same technique reused for the Profile screen's entrance, and the
+        reason this prototype needs no animation library. Each floating card and orb carries its own
+        <code>--cc</code> / <code>--oc</code> colour, so variety costs a CSS variable rather than a class.
+      </p>
+      <div class="sg-flag" style="margin:0 0 14px;">
+        <b>Note on the glyphs below.</b> The real onboarding cards use one-off <em>decorative</em> icons
+        (database, gem, trophy…) that live inline in the markup and are deliberately not in
+        <code>blueai-icons.js</code> — they're illustration, not the icon system. The specimens use real set
+        icons so this page keeps its no-invented-glyphs guarantee; what's being documented is the
+        <code>--cc</code> tint pattern, not the artwork.
+      </div>
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-onb-card</span> <span class="sg-cls">.bai-onb-orb</span><span class="sg-role">Outcome card and floating badge. Both take their tint from a local var, and both use a fully colour-mixed shadow in light theme (a plain black layer read as grey smudge there).</span></div>
+        <div class="sg-canvas bai-scope" style="align-items:center;gap:26px;padding:26px 18px;">
+          <div class="bai-onb-card" style="--cc:#e0559a;position:relative;left:auto;top:auto;animation:none;">
+            <span class="ic" data-icon="mail" data-size="15"></span><span class="tx"><b>Morning brief delivered</b></span>
+          </div>
+          <div class="bai-onb-card" style="--cc:#4a8bf5;position:relative;left:auto;top:auto;animation:none;">
+            <span class="ic" data-icon="calendar" data-size="15"></span><span class="tx"><b>Daily streak kept</b></span>
+          </div>
+          <span class="bai-onb-orb" style="--oc:#e8a93c;position:relative;left:auto;top:auto;animation:none;" data-icon="clock" data-size="15"></span>
+          <span class="bai-onb-orb" style="--oc:#7c5cf0;position:relative;left:auto;top:auto;animation:none;" data-icon="bolt" data-size="15"></span>
+        </div>
+      </div>
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-onb-h</span> <span class="sg-cls">.bai-onb-s</span> <span class="sg-cls">.bai-onb-fr</span> <span class="sg-cls">.bai-onb-cta</span><span class="sg-role">Headline (with <code>em</code> for the accent phrase), subtext, the uppercase framing label, and the CTA.</span></div>
+        <div class="sg-canvas bai-scope sg-col" style="align-items:center;padding:20px;">
+          <div class="bai-onb-h" style="animation:none;text-align:center;">Your AI agent that<br /><em>gets things done.</em></div>
+          <div class="bai-onb-s" style="animation:none;text-align:center;">Ask in plain language. BlueAI works inside your apps and reports back.</div>
+          <div class="bai-onb-fr" style="animation:none;">Here's what I can do for you</div>
+          <button class="bai-onb-cta" type="button" style="animation:none;">Get started &rsaquo;</button>
+        </div>
+      </div>
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-tour-card</span> <span class="sg-cls">.bai-tour-dots</span><span class="sg-role">3-step nav tour. Progress as dots (the active one widens rather than changing colour alone); skip is lowercase and quiet, next is the primary.</span></div>
+        <div class="sg-canvas bai-scope" style="align-items:flex-start;">
+          <div class="bai-tour-card" style="position:relative;top:auto;left:auto;right:auto;max-width:320px;">
+            <span class="bai-tour-step">STEP 1 OF 3</span>
+            <span class="bai-tour-h">Everything starts in Chat</span>
+            <span class="bai-tour-p">Describe the outcome you want. BlueAI plans the steps and asks before anything irreversible.</span>
+            <div class="bai-tour-foot">
+              <div class="bai-tour-dots"><i class="on"></i><i></i><i></i></div>
+              <button class="bai-tour-skip" type="button">skip tour</button>
+              <button class="bai-tour-next" type="button">Next &rsaquo;</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sg-sec" id="preview">
+      <h2 class="sg-sech">Dev preview panel</h2>
+      <p class="sg-secnote">
+        Not product UI — a design-handoff tool for reaching states that have no in-app trigger (region, plan,
+        empty balance). It's the one surface that <strong>deliberately ignores the token system</strong>: fixed
+        dark translucent chrome, its own greys, <code>z-index:500</code> above every overlay, and
+        <code>position:fixed</code> outside <code>.drawer</code> entirely — so it can never be mistaken for part
+        of the product or accidentally captured in a product screenshot.
+      </p>
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-preview-card</span> <span class="sg-cls">.bai-preview-row</span> <span class="sg-cls">.bai-preview-seg</span><span class="sg-role">Collapsible panel of labelled state togglers, plus one-shot <code>.bai-preview-action</code> buttons.</span></div>
+        <div class="sg-canvas" style="background:#0a0e1a;align-items:flex-start;padding:20px;">
+          <div class="bai-preview-card" style="display:block;">
+            <div class="bai-preview-head"><span class="bai-preview-row-label">PREVIEW</span><button class="bai-preview-collapse" type="button" data-icon="chevron" data-size="13"></button></div>
+            <div class="bai-preview-row"><span class="bai-preview-row-label">Geo</span><div class="bai-preview-seg"><button class="bai-preview-action" type="button" style="background:none;color:#8190ad;">Non-Prime</button><button class="bai-preview-action" type="button">Prime</button></div></div>
+            <div class="bai-preview-divider"></div>
+            <div class="bai-preview-row"><span class="bai-preview-row-label">Credits</span><div class="bai-preview-seg"><button class="bai-preview-action" type="button">Normal</button><button class="bai-preview-action" type="button" style="background:none;color:#8190ad;">Zero</button></div></div>
           </div>
         </div>
       </div>

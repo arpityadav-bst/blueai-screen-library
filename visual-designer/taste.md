@@ -9,7 +9,7 @@ now a primary cross-surface rule rather than a marketing-site-only exception.)
 > the DS-unbound exception to the marketing site's rules. Rules 1–37 stay on record (real, hard-won
 > learning — re-derive nothing if the marketing site resumes) but are no longer what Gate 8 reviews
 > new work against by default. blueai-desktop's own design system is being extracted into
-> `visual-designer/blueai-desktop-design-system.md` (tokens + component families cataloged from
+> `public/blueai-desktop/style-guide.html` (live specimens + tokens, built from
 > `index.html` itself, since none existed anywhere before 2026-07-25) — that file + rule 38 below
 > are what govern blueai-desktop work now. If the marketing site or /blueai-product ever resume,
 > flip this note back — nothing here needs to be rebuilt, just re-prioritized.
@@ -325,7 +325,7 @@ marketing site AND /blueai-product are now BOTH DORMANT; /blueai-desktop is the 
 is the exact reverse of the S8 framing ("experiments are DS-unbound exceptions to the marketing site's
 rules") — blueai-desktop is no longer the exception, it's the default. Rules 1–37 are preserved (not
 deleted) for if the marketing site resumes; they are not what current work is reviewed against. Started
-`visual-designer/blueai-desktop-design-system.md` (didn't exist before — blueai-desktop had NO documented
+`public/blueai-desktop/style-guide.html` (didn't exist before — blueai-desktop had NO documented
 design system anywhere, only the marketing site's) to give blueai-desktop the same kind of DS reference
 WSUP has. This is a live, growing document — not expected to be exhaustive on day one.
 

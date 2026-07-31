@@ -5,6 +5,42 @@ resolved. Promoted to decisions.md / taste.md at audit passes, then wiped.
 Format: `YYYY-MM-DD HH:mm — <file> — <what changed> — Why: <one phrase>`
 
 --- Pending audit entries ---
+2026-08-01 — /blueai-desktop — **DS Phase 3: documented the shell + full-screen states.** Added 8 sections —
+App shell (titlebar/header/mode strip/screen title/status row), Wide-mode sidebar, Routes & subpanes, Chat
+composer, Empty states, Gates & offer card, Onboarding & tour, Dev preview panel. Coverage moved from
+**96/330 (29%) to 186/330 (56%)**, measured by the page itself, not asserted.
+Every specimen's markup was grep-verified against index.html first (the audit's lesson). That caught real
+things I'd otherwise have written wrong: `.bai-q` is a `<textarea rows="1">` not an `<input>` (which is WHY the
+input bar is a flex column — it grows); `.bai-history-note` has `.hn-ic`/`.hn-txt`/`.hn-btn`; `.bai-stub` is
+`.ic`+`h4`+`.soon`+`p`; `.bai-side-rec` carries a `.dot` child with `.on`/`.unseen`/`.working` variants.
+Documented three shell facts that are semantic, not cosmetic, and that a future edit could easily break:
+`.bai-header`'s `z-index:58` is what keeps its dropdowns above the route panels (the bug fixed on 25 Jul);
+the titlebar's `--bai-titlebar-*` tokens are deliberately theme-INDEPENDENT because it imitates BlueStacks'
+own chrome; and `.bai-subpane` (top:84px, drill-down within a tab, keeps a push/pop stack) vs
+`.bai-globalroute` (top:46px, covers the strip, a destination that is no tab) is a MEANING difference —
+picking the wrong shell decides whether the tab strip stays reachable.
+Two boundary calls made explicit rather than fudged: (1) the onboarding cards' per-card glyphs (database,
+gem, trophy…) are decorative illustration, not DS icons — the specimens use real set icons and the section
+documents the `--cc` tint PATTERN instead, keeping the no-invented-glyphs guarantee intact. (2) the dev
+Preview panel is documented as the one surface that deliberately ignores the token system (fixed dark
+translucent chrome, z-index 500, position:fixed outside `.drawer`) so it can never be mistaken for product UI.
+Caught myself repeating the audit's own mistake mid-Phase-3: I'd used `cpu` for the settings gear and
+`chevron` for the account kebab as stand-ins, because neither was in the icon set — exactly the "misleading
+placeholder" defect the audit had just fixed. Investigated instead of leaving it, which surfaced a THIRD real
+inconsistency: the product uses FOUR stroke weights (iconSvg 1.8 · header/sidebar gear+help 1.6 ·
+chevron/search 2 · search-clear X 2.2), and the account kebab is `fill:currentColor` with no stroke at all,
+so it structurally cannot go through `iconSvg()`. Fix: added the real `gear` to the icon set (29 now),
+reproduced the kebab inline in the specimen as the documented stroke-convention exception, and rewrote the
+icon section's callout to state all four weights.
+Also fixed a fragility I'd built into my own tooling: `gen_icons.js` read `git show HEAD`, but once index.html
+was rewired to read FROM the generated file, HEAD no longer contained the literal paths — so the generator was
+un-re-runnable after its own first commit. Pinned it to the source commit (25a260b) with a comment saying why.
+Verified: 29/29 icons render, guard still throws on unknown names, 0 empty SVGs anywhere (product AND guide),
+no horizontal overflow after adding specimens whose real CSS is position:absolute/fixed, zero JS errors.
+— Why: the recurring lesson, now three rounds deep, is that a stand-in is a lie with good intentions. Both
+times I reached for "close enough" glyph (invented bolt in Phase 2, `cpu`-for-gear here), the honest fix
+required investigating the real thing — and both times that investigation surfaced a genuine product finding
+I'd otherwise have missed entirely. The placeholder wasn't just inaccurate; it was hiding information.
 2026-08-01 — /blueai-desktop — **Independent audit of DS Phases 1+2, then fixed what actually undermined the
 DS.** Designer asked for an audit rather than a re-confirmation, so I went after the checks I had NOT run.
 FOUND CLEAN (Phase 1): my Phase-1 verification compared the browser's PARSED rules — but comments are not in
