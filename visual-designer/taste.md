@@ -1,5 +1,5 @@
 # blueAI — Taste
-Last updated: 2026-07-25 (SCOPE PIVOT, designer directive — see note below. +rule 38 (divider redundancy),
+Last updated: 2026-08-01 (rule 41 widened from text roles to component states — see its own note). 2026-07-25 (SCOPE PIVOT, designer directive — see note below. +rule 38 (divider redundancy),
 now a primary cross-surface rule rather than a marketing-site-only exception.)
 
 > **SCOPE PIVOT (2026-07-25, designer directive):** the marketing site (rules 1–37 below) and
@@ -336,10 +336,19 @@ springy bounces) — "a utility assistant, not a toy."
     many times it is cleaned. Give text steps ROLE names (the role is stable); give display sizes and
     optically-matched glyphs SIZE names, because naming 22px "avatar" is wrong the first time it's reused.
 
-41. **Hierarchy carried by colour does not also need to be carried by size.** When two text roles sit a
-    half-step apart, check what actually separates them before preserving the size gap — here
-    caption-vs-body-small was already distinguished by the text-colour ramp (`--bai-dim` vs
-    `--bai-text`), so the 0.5px difference was doing no work at all and merging cost nothing.
+41. **Anything already carried by colour does not also need to be carried by type metrics.** When two
+    roles differ, check what actually separates them before preserving a size or weight gap.
+    - *Text roles:* caption-vs-body-small was already distinguished by the colour ramp (`--bai-dim` vs
+      `--bai-text`), so the 0.5px difference was doing no work and merging cost nothing.
+    - *Component STATES (added 2026-08-01):* the skill-create switcher's selected tab had a solid accent
+      fill AND inverted ink AND `font-weight: 700`. The weight was the third signal, and it was the
+      expensive one — the options are equal-width `flex:1`, so wider glyphs tipped the longest label onto
+      a second line and **selecting a tab resized the tab row.** Encode state in colour; never in metrics.
+    - **Why this rule got widened:** it was originally written only about "two text roles a half-step
+      apart," so it never fired on a state change — the switcher bug sat in the product while the rule
+      that covered it was already on record. A principle written at the width of the instance that
+      taught it will not catch the next instance. When promoting a rule, state it at the level of the
+      *mechanism* (colour vs metrics), not the example (captions vs body).
 
 ## Open corrections log
 *SCOPE PIVOT (2026-07-25, designer directive) — superseding the S8 standing scope note below: **the
