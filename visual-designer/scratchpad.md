@@ -5,6 +5,21 @@ resolved. Promoted to decisions.md / taste.md at audit passes, then wiped.
 Format: `YYYY-MM-DD HH:mm — <file> — <what changed> — Why: <one phrase>`
 
 --- Pending audit entries ---
+2026-08-01 (cont. 2) — blueai-desktop — designer, looking at the guide's live tally: 'Why are there Raw
+values here?' All 8 amber rows (raw 6px ×3, 12px ×1, 9.5px ×1, 10.5px ×3) were the dev Preview panel —
+exempted from tokenisation with the note 'position:fixed outside .drawer, tokens cannot resolve there;
+do not re-apply'. That justification went STALE the day .bai-scope was created, and nobody re-derived
+it — the exemption outlived its reason by a full session. Fixed: the panel wrapper now carries
+bai-scope, all 8 literals tokenised (10.5→fs-sm is a 0.5px bump on a dev tool — the same half-step
+merge the product got in tranche 1), the §8 exemption REMOVED (zero per-selector exemptions remain),
+the stale do-not-re-apply note rewritten with its history, and the guide's 'Scale drift' known-gap
+marked RESOLVED. §8 now reads 'zero raw px anywhere, longhands and the dev panel included'; the tally
+shows no amber. Verified: preview panel still drives all 3 OOC modes; drift PASS. — Why: an exemption
+is a claim with an expiry date, and nothing re-checks it — the amber rows in the guide were the ONLY
+thing still telling the truth about it. The live tally surfacing what the gate excused is exactly the
+guide working as designed. Confirms the pending principle above: an exemption list is a to-do list
+wearing a scope statement.
+
 
 2026-08-01 (cont.) — blueai-desktop — designer asked the three open gaps be CLOSED, not documented:
 (1) The "26 unnamed glyphs" decomposed on inspection into 8 §6 false-positives (named splices,

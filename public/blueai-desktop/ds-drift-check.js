@@ -238,14 +238,16 @@ if (dead.length) {
 /* ---------- 8. SIZE SCALE: no raw px sizes outside the allowed exceptions ---------- */
 section('8. SIZE SCALE');
 /* Without this the scale decays inside a week — the next component copies whatever literal is nearest,
-   which is exactly how the file reached 20 font-sizes and 15 radii. Two allowed exceptions:
-   the token declarations themselves, and the dev Preview panel (position:fixed outside .drawer, so
-   .drawer-scoped tokens cannot resolve there — see the note above its block). */
+   which is exactly how the file reached 20 font-sizes and 15 radii. ONE allowed exception: the token
+   declarations themselves. The dev Preview panel used to be a second exception ("position:fixed
+   outside .drawer, so tokens can't resolve") — that justification went stale the day `.bai-scope`
+   was created, and the designer spotted the amber "raw" rows it left in the guide's live tally.
+   The panel's wrapper now carries .bai-scope and its sizes go through tokens like everything else.
+   NO per-selector exemptions remain: an exemption list is a to-do list wearing a scope statement. */
 function rawSizes(text, file) {
   const out = [];
   text.split(/\r?\n/).forEach((line, i) => {
     if (/--bai-(fs|r|glyph)-[a-z0-9]+:\s*[\d.]+px/.test(line)) return;      // the token block itself
-    if (line.indexOf('.bai-preview') === 0) return;                          // documented exception
     // longhands included — a raw `border-bottom-right-radius: 4px` hid behind the shorthand-only
     // version of this regex until an audit found it
     const m = line.match(/(font-size|border(?:-(?:top|bottom)-(?:left|right))?-radius):\s*([\d.]+px)/);
@@ -262,20 +264,10 @@ if (rawFound.length) {
 } else {
   const fsTok = new Set([...CSS.matchAll(/font-size:\s*var\((--bai-(?:fs|glyph)-[a-z0-9-]+)\)/g)].map(m => m[1]));
   const rTok = new Set([...CSS.matchAll(/border-radius:\s*var\((--bai-r-[a-z0-9-]+)\)/g)].map(m => m[1]));
-  /* Say what was actually checked. "every product size" was false on two counts an audit caught:
-     the dev Preview panel is exempted wholesale (and holds several raw literals), and the regex only
-     ever matched the `font-size`/`border-radius` SHORTHANDS in px — so a longhand corner slipped by. */
-  const exemptRaw = CSS.split(/\r?\n/).filter(l => l.indexOf('.bai-preview') === 0 && /(font-size|border-radius):\s*[\d.]+px/.test(l)).length;
-  const longhand = [...CSS.matchAll(/border-(?:top|bottom)-(?:left|right)-radius:\s*([\d.]+px)/g)].map(m => m[0]);
-  console.log('OK — no raw font-size/border-radius px in the checked scope (' + fsTok.size +
-              ' size tokens, ' + rTok.size + ' radius tokens in use).');
-  console.log('   SCOPE: shorthand `font-size` and `border-radius` in px only. Widths, padding, gap,');
-  console.log('   rem/em and the RIGHT-token question are all outside it.');
-  if (exemptRaw) console.log('   ' + exemptRaw + ' raw literal(s) exempted inside .bai-preview (dev panel, documented).');
-  if (longhand.length) {
-    console.log('   NOTE — ' + longhand.length + ' raw radius LONGHAND(s) the shorthand regex cannot see: ' +
-                longhand.join(', ') + '. Reported, not failed: these were invisible until an audit found them.');
-  }
+  console.log('OK — zero raw font-size/border-radius px anywhere, longhands and the dev panel included' +
+              ' (' + fsTok.size + ' size tokens, ' + rTok.size + ' radius tokens in use).');
+  console.log('   SCOPE: `font-size` and all `border-radius` forms, in px. Widths, padding, gap,');
+  console.log('   rem/em and the RIGHT-token question are still outside it.');
 }
 
 /* ---------------------------------------------------------------------------

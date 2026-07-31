@@ -1404,12 +1404,13 @@
         <div class="sg-scale bai-scope" id="sgCoverage"></div>
       </div>
       <div class="sg-flag" style="margin:0;">
-        <b>Scale drift.</b> The stylesheet uses <b><span data-live-typecount>…</span> distinct font sizes</b>
-        and <b><span data-live-radcount>…</span> radii</b> — with
-        <b><span data-live-duppairs>…</span> places where two consecutive sizes differ by only 0.5px</b>
-        (9/9.5, 10/10.5, 11/11.5 and so on). Documented above as-is rather than tidied, because consolidating
-        it is a real change to the product and needs its own pass. Every number here is computed at load, so
-        it cannot fall behind the stylesheet.
+        <b>Scale drift — RESOLVED (2026-08-01).</b> The stylesheet uses <b><span data-live-typecount>…</span> distinct font sizes</b>
+        and <b><span data-live-radcount>…</span> radii</b>, with
+        <b><span data-live-duppairs>…</span> half-pixel pairs</b> remaining. When this note was written the
+        counts were 20 sizes / 15 radii with five 0.5px pairs; three tranches of consolidation (the last two
+        designer-reviewed) plus tokenising the dev Preview panel via <code>.bai-scope</code> brought it to the
+        tallied scale above, all through <code>--bai-fs-*</code> / <code>--bai-r-*</code> tokens.
+        Every number here is computed at load, so this paragraph can understate progress but the figures cannot lie.
         <br /><br />
         <b>What's left.</b> Every component family now has a section. The remaining uncovered classes in the
         list above are: the <b>demo scene</b> (<code>.stage</code>/<code>.bs-window</code>/<code>.canvas</code>
