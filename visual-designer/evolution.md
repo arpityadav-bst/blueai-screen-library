@@ -1,5 +1,5 @@
 # blueAI — Evolution
-Last updated: 2026-07-03 (S8 audit — backlog promoted; category #2 validated a 5TH time on the creator-v2 build (interaction/overlay work again); next: /moneymaker, a DS-unbound standalone build — the pre-present walk-through is the test)
+Last updated: 2026-08-01 (S9-S12 era added: scope pivot to blueai-desktop + its design system; S8's /moneymaker direction marked SUPERSEDED; honest maturity read — structurally onboarded, not yet habitually; Phase 2 HOLDS, this era counts nothing toward the Phase-3 bar)
 
 > VDA's growth + maturity timeline ON THE BLUEAI PROJECT. Separate from WSUP/now.gg —
 > a fresh notebook starts at Phase 1.
@@ -118,3 +118,51 @@ S7 was a copy swap, not a new build — the phase-3 bar stays "≥3 consecutive 
 gates travel even though the skin doesn't — and it's ALL novel motion/interaction work, i.e. category
 #2's home turf. The test for this build: walk every floating/animated/interactive element through all
 states + breakpoints BEFORE presenting, and verify at the viewport the designer will actually view.
+
+> **SUPERSEDED 2026-07-25 by the SCOPE PIVOT — see S9-S12 below.** /moneymaker never started, and the
+> "DS-unbound" framing above is now backwards: the active surface HAS a design system, and it is the
+> one thing new work is bound to. Left in place as the record of what S8 believed, not as direction.
+
+## S9-S12 (2026-07-25 → 2026-08-01) — the scope pivot and blueai-desktop's design system
+**The project changed shape.** Designer directive: the marketing site and `/blueai-product` are both
+dormant; **`/blueai-desktop` (the "modern terminal" prototype) is the only active surface.** Rules 1-37
+of taste.md describe the dormant site and are no longer what Gate 8 reviews against; rules 38-41 and
+`public/blueai-desktop/style-guide.html` are.
+
+**What got built:** blueai-desktop had no design system at all — every DS artifact in the repo
+documented the dormant site. Extracted 918 lines of inline CSS into `blueai-desktop.css`, built
+`style-guide.html` as a *view* onto it (links the real sheet, renders real components, computes every
+number at load), documented 19 sections, then tokenised the size and radius scales (20 font-sizes → 12
+tokens; 15 radii → 6) across three tranches, the last of which went to the designer as an accept/reject
+artifact because those six changes were visible taste calls, not cleanups.
+
+**The era's defining defect, three escalating instances:** invented icons → invented copy → a
+four-state login flow documented as one invented state. All three had the same mechanism — a specimen
+written from memory instead of read from source — and all three were caught by the designer comparing
+screenshots, never by me. The structural answer was `ds-drift-check.js` plus inverting vda-core's
+deferred-Gate-5 cadence: **here, specimen sync is inline/same-edit**, because deferring a hand-written
+specimen doesn't produce staleness, it produces fabrication.
+
+**Recurring category #2 (novel interactive/overlay work) — VALIDATED A 6TH TIME**, and it now has a
+sharper edge: the skill-switcher reflow bug lived in an *interaction state*, and the reason my own
+checks missed it is that they swept widths and themes while holding selection fixed. New sub-rule:
+*if a style is state-dependent, the state IS a test dimension.*
+
+**Counter-evidence of growth this era:** built the gate that makes the recurring defect machine-
+catchable; corrected three of my own false claims in the very files meant to prevent false claims
+(the icon header twice, the token list once); caught a real regression in my own icon migration before
+it shipped by snapshotting 362 rendered SVGs; negative-tested the new check by reintroducing the bug it
+was written for, rather than trusting a green run.
+
+**Phase 2 still HOLDS, and the bar has not moved.** Phase 3 needs ≥3 consecutive low-caught NEW builds.
+This era was infrastructure and correction work, not new builds — `designer_caught_count: 11` for S12.
+Nothing here counts toward the phase-3 bar; recording it as progress would be exactly the kind of
+self-flattering accounting the notebook exists to prevent.
+
+**The honest maturity read (2026-08-01):** onboarded *structurally*, not yet *habitually*. Bootstrap,
+operating contract, drift gate and notebook all exist and work. The gap is generalization — taste rule
+41 already covered the switcher bug and never fired, because it had been written at the width of the
+single example that taught it. **What Phase 3 actually requires here isn't more rules, it's rules
+stated at the level of the mechanism.** Gate 6.5 (Generalization Probe) is the gate for this and it
+did not run. Next session: promote the three pending scratchpad threads, and run 6.5 on every rule
+promoted rather than only on new work.

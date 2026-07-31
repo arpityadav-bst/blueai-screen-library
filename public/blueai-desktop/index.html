@@ -91,16 +91,16 @@
                        it always starts fresh — there's no separate "just switch to the chat pane" affordance
                        anymore, by choice. Also now a real <button> (previously a <div>, since a <button>
                        couldn't nest the old embedded icon-button) for proper focus/hover semantics. -->
-                  <button class="bai-side-item bai-side-newchat" data-mode="chat" type="button"><span class="ic"><svg viewBox="0 0 100 100" fill="currentColor"><path d="M83,49v18c0,8.8222656-7.1777344,16-16,16H24.2817383l-12.9570312,9.2548828c-.690918.4936523-1.5063477.7451172-2.3251953.7451172-.6254883,0-1.2529297-.1464844-1.8300781-.4433594-1.3320312-.6855469-2.1694336-2.0581055-2.1694336-3.5566406v-54c0-8.8222656,7.1777344-16,16-16h32c2.2089844,0,4,1.7910156,4,4s-1.7910156,4-4,4H21c-4.4111328,0-8,3.5888672-8,8v46.2270508l7.675293-5.4819336c.6782227-.4848633,1.4912109-.7451172,2.324707-.7451172h44c4.4111328,0,8-3.5888672,8-8v-18c0-2.2089844,1.7910156-4,4-4s4,1.7910156,4,4ZM91,19h-8v-8c0-2.2089844-1.7910156-4-4-4s-4,1.7910156-4,4v8h-8c-2.2089844,0-4,1.7910156-4,4s1.7910156,4,4,4h8v8c0,2.2089844,1.7910156,4,4,4s4-1.7910156,4-4v-8h8c2.2089844,0,4-1.7910156,4-4s-1.7910156-4-4-4ZM23,51c0,2.7614136,2.2385864,5,5,5s5-2.2385864,5-5-2.2385864-5-5-5-5,2.2385864-5,5ZM39,51c0,2.7614136,2.2385864,5,5,5s5-2.2385864,5-5-2.2385864-5-5-5-5,2.2385864-5,5ZM55,51c0,2.7614136,2.2385864,5,5,5s5-2.2385864,5-5-2.2385864-5-5-5-5,2.2385864-5,5Z"/></svg></span>New chat</button>
+                  <button class="bai-side-item bai-side-newchat" data-mode="chat" type="button"><span class="ic"><svg viewBox="0 0 100 100" fill="currentColor" data-bai-icon="newChat"></svg></span>New chat</button>
                   <button class="bai-side-item" data-mode="jobs" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h12M8 12h12M8 18h12"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/></svg></span>Jobs</button>
-                  <button class="bai-side-item" data-mode="skills" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg></span>Skills</button>
-                  <button class="bai-side-item" data-mode="scheduled" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>Scheduled</button>
+                  <button class="bai-side-item" data-mode="skills" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" data-bai-icon="bolt"></svg></span>Skills</button>
+                  <button class="bai-side-item" data-mode="scheduled" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" data-bai-icon="clock"></svg></span>Scheduled</button>
                 </div>
                 <div class="bai-side-label">RECENT</div>
                 <div class="bai-side-recents" id="baiSideRecents"></div>
                 <div class="bai-scroll" id="baiSideScroll"></div>
                 <div class="bai-side-foot">
-                  <button class="bai-side-item" id="baiSideSettings" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>Settings</button>
+                  <button class="bai-side-item" id="baiSideSettings" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" data-bai-icon="gear"></svg></span>Settings</button>
                   <!-- Bug fix: these two live in the SIDEBAR FOOTER — the bottom-most row of a fixed-height
                        panel, with no room below. They'd been given the same "down" (opens-below-trigger)
                        class as the narrow-mode header's copies of Help/Account, which sit at the TOP of the
@@ -108,7 +108,7 @@
                        #drawer's own bottom edge, which clips via overflow:hidden — invisible, not just
                        "trimmed". Default (no "down") opens upward instead, which fits. -->
                   <div class="bai-stat-wrap" id="baiSideHelpWrap" style="position:relative;">
-                    <button class="bai-icbtn" id="baiSideHelpBtn" type="button" aria-label="Help"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></button>
+                    <button class="bai-icbtn" id="baiSideHelpBtn" type="button" aria-label="Help"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" data-bai-icon="help"></svg></button>
                     <div class="bai-menu" id="baiSideHelpMenu"></div>
                   </div>
                   <div class="bai-stat-wrap" id="baiSideAcctWrap" style="position:relative;">
@@ -121,9 +121,9 @@
                 <span class="bai-logoslot"></span>
                 <span class="bai-wm" id="baiWm"><span id="baiTitle">BlueAI</span></span>
                 <div class="bai-head-r">
-                  <button class="bai-icbtn" id="baiSettingsBtn" type="button" aria-label="Settings"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+                  <button class="bai-icbtn" id="baiSettingsBtn" type="button" aria-label="Settings"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" data-bai-icon="gear"></svg></button>
                   <div class="bai-stat-wrap" id="baiHeadHelpWrap" style="position:relative;">
-                    <button class="bai-icbtn" id="baiHelpBtn" type="button" aria-label="Help"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></button>
+                    <button class="bai-icbtn" id="baiHelpBtn" type="button" aria-label="Help"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" data-bai-icon="help"></svg></button>
                     <div class="bai-menu down" id="baiHelpMenu"></div>
                   </div>
                   <div class="bai-stat-wrap" id="baiHeadAcctWrap" style="position:relative;">
@@ -140,7 +140,7 @@
               </div>
               <div class="bai-main-title">
                 <button class="bai-title-btn" id="baiTitleBtn" type="button" title="Chat history"><span id="baiMainTitle">Untitled chat</span><span class="bai-title-ar"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span></button>
-                <button class="bai-icbtn bai-newchat-btn" id="baiNewBtn" type="button" aria-label="New chat" title="Start a new chat"><svg width="15" height="15" viewBox="0 0 100 100" fill="currentColor"><path d="M83,49v18c0,8.8222656-7.1777344,16-16,16H24.2817383l-12.9570312,9.2548828c-.690918.4936523-1.5063477.7451172-2.3251953.7451172-.6254883,0-1.2529297-.1464844-1.8300781-.4433594-1.3320312-.6855469-2.1694336-2.0581055-2.1694336-3.5566406v-54c0-8.8222656,7.1777344-16,16-16h32c2.2089844,0,4,1.7910156,4,4s-1.7910156,4-4,4H21c-4.4111328,0-8,3.5888672-8,8v46.2270508l7.675293-5.4819336c.6782227-.4848633,1.4912109-.7451172,2.324707-.7451172h44c4.4111328,0,8-3.5888672,8-8v-18c0-2.2089844,1.7910156-4,4-4s4,1.7910156,4,4ZM91,19h-8v-8c0-2.2089844-1.7910156-4-4-4s-4,1.7910156-4,4v8h-8c-2.2089844,0-4,1.7910156-4,4s1.7910156,4,4,4h8v8c0,2.2089844,1.7910156,4,4,4s4-1.7910156,4-4v-8h8c2.2089844,0,4-1.7910156,4-4s-1.7910156-4-4-4ZM23,51c0,2.7614136,2.2385864,5,5,5s5-2.2385864,5-5-2.2385864-5-5-5-5,2.2385864-5,5ZM39,51c0,2.7614136,2.2385864,5,5,5s5-2.2385864,5-5-2.2385864-5-5-5-5,2.2385864-5,5ZM55,51c0,2.7614136,2.2385864,5,5,5s5-2.2385864,5-5-2.2385864-5-5-5-5,2.2385864-5,5Z"/></svg></button>
+                <button class="bai-icbtn bai-newchat-btn" id="baiNewBtn" type="button" aria-label="New chat" title="Start a new chat"><svg width="15" height="15" viewBox="0 0 100 100" fill="currentColor" data-bai-icon="newChat"></svg></button>
               </div>
               <div class="bai-panes">
                 <div class="bai-pane active" id="paneChat">
@@ -153,7 +153,7 @@
                     </div>
                   </div>
                   <div class="bai-history-note" id="baiHistoryNote">
-                    <span class="hn-ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+                    <span class="hn-ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" data-bai-icon="clock"></svg></span>
                     <span class="hn-txt">You're viewing a past conversation.</span>
                     <button class="hn-btn" id="baiHistoryNoteNew" type="button">Start a new chat</button>
                   </div>
@@ -170,7 +170,7 @@
                 </div>
                 <div class="bai-pane" id="paneJobs"><div class="bai-stub"><div class="ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg></div><h4>Jobs</h4><span class="soon">Coming soon</span><p>Running &amp; completed agent runs land here: status, logs, and what was applied to.</p></div></div>
                 <div class="bai-pane" id="paneSkills">
-                  <div class="bai-search"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><input id="baiSkillSearch" type="text" placeholder="Search skills…" autocomplete="off" spellcheck="false" /><button class="bai-search-clear" id="baiSkillSearchClear" type="button" aria-label="Clear search"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+                  <div class="bai-search"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-bai-icon="search"></svg><input id="baiSkillSearch" type="text" placeholder="Search skills…" autocomplete="off" spellcheck="false" /><button class="bai-search-clear" id="baiSkillSearchClear" type="button" aria-label="Clear search"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" data-bai-icon="close"></svg></button></div>
                   <div class="bai-list-body" id="baiSkillsList"></div>
                   <div class="bai-scroll" id="baiSkillsScroll"></div>
                   <div class="bai-sticky-cta"><button id="baiSkillCta" type="button">Build a custom skill</button></div>
@@ -189,9 +189,9 @@
                       <button type="button" class="bai-seg-btn" data-v="Monthly">Monthly</button>
                     </div>
                     <div class="bai-dt-field" id="baiDtField" role="button" tabindex="0">
-                      <span class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
+                      <span class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" data-bai-icon="calendar"></svg></span>
                       <span class="bai-dt-value placeholder" id="baiDtValue">Pick a date &amp; time</span>
-                      <span class="bai-dt-ar"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span>
+                      <span class="bai-dt-ar"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-bai-icon="chevron"></svg></span>
                     </div>
                     <!-- Rebuilt as a 2-step flow (designer: "this is not working out... only show date
                          first, once you select a date we show the timer, and you can go back to date to
@@ -327,7 +327,7 @@
   <!-- Design-handoff Preview panel: one collapsible progressive-disclosure toggler (matches the canonical
        blueAI product's dev-preview panel) instead of separate always-visible pill togglers. -->
   <div class="bai-preview" id="baiPreview" aria-label="Prototype preview state">
-    <button class="bai-preview-fab" id="baiPreviewFab" aria-label="Preview state" type="button"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+    <button class="bai-preview-fab" id="baiPreviewFab" aria-label="Preview state" type="button"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" data-bai-icon="gear"></svg></button>
     <div class="bai-preview-card" id="baiPreviewCard">
       <div class="bai-preview-head">
         <span>Preview</span>
@@ -424,7 +424,7 @@
         (function step() { if (i >= n) return; el.textContent = text.slice(0, ++i); scrollBody(); setTimeout(step, Math.max(7, 42 - i * 0.75)); })();
       }
       function aiReply(text, extra) { var el = document.createElement('div'); el.className = 'bai-msg ai' + (extra ? ' ' + extra : ''); baiBody.appendChild(el); scrollBody(); typewrite(el, text); if (currentRecent) currentRecent.msgs.push({ a: text }); }
-      var SEND_ICON = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/></svg>';
+      var SEND_ICON = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + BAI_ICONS.telegram + '</svg>';
       var STOP_ICON = '<svg width="14" height="14" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/></svg>';
       function updateSendEnabled() { if (baiSend && !thinking) baiSend.classList.toggle('disabled', !baiInput.value.trim()); }
       var INPUT_MAX_H = 160;   // px — after this, the composer scrolls internally instead of growing further
@@ -559,12 +559,12 @@
         el.classList.toggle('lg-offer', loginStep === 'claim');   // offer treatment on the claim step only — the rest are status steps
         if (loginStep === 'claim') {
           el.innerHTML =
-            '<button class="lg-close" id="lgCloseBtn" type="button" aria-label="Close">' + iconSvg('<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>', 13) + '</button>' +
+            '<button class="lg-close" id="lgCloseBtn" type="button" aria-label="Close">' + iconSvg(BAI_ICONS.close, 13) + '</button>' +
             '<div class="lg-s">You need AI Credits to use BlueAI</div>' +
             '<div class="lg-div"></div>' +
             '<div class="lg-credits">500</div>' +
             '<div class="lg-title-group"><div class="lg-h">Free AI Credits</div><div class="lg-s">on your first login</div></div>' +
-            '<div class="lg-check">' + iconSvg('<path d="M20 6 9 17l-5-5"/>', 13) + '<span>Enough for ~10 tasks</span></div>' +
+            '<div class="lg-check">' + iconSvg(BAI_ICONS.check, 13) + '<span>Enough for ~10 tasks</span></div>' +
             '<div class="lg-div"></div>' +
             '<button class="lg-cta" id="lgClaimBtn" type="button">Sign in to claim &rsaquo;</button>' +
             '<a class="lg-link" id="lgTerms">Terms &amp; Conditions &rsaquo;</a>';
@@ -593,7 +593,7 @@
             '<div class="lg-s">Please wait while we complete your sign-in</div>';
         } else if (loginStep === 'done') {
           el.innerHTML =
-            '<div class="lg-icon lg-icon-ok">' + iconSvg('<path d="M20 6 9 17l-5-5"/>', 22) + '</div>' +
+            '<div class="lg-icon lg-icon-ok">' + iconSvg(BAI_ICONS.check, 22) + '</div>' +
             '<div class="lg-h">Logged in</div>' +
             '<div class="lg-s">Welcome back!</div>' +
             '<button class="lg-cta" id="lgContinueBtn" type="button">Continue</button>';
@@ -685,11 +685,11 @@
         var label = document.createElement('div'); label.className = 'bai-set-label'; label.textContent = 'MORE WAYS TO GET AI CREDITS'; el.appendChild(label);
         var wrap = document.createElement('div'); wrap.style.cssText = 'display:flex;flex-direction:column;gap:8px;';
         [
-          { icon: '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>', title: 'Earn 1,000 Free AI Credits', desc: 'Spread the word about BlueAI' },
-          { icon: '<polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>', title: 'Claim 25,000 AI Credits', desc: 'Join the developer program' },
+          { icon: BAI_ICONS.share, title: 'Earn 1,000 Free AI Credits', desc: 'Spread the word about BlueAI' },
+          { icon: BAI_ICONS.reward, title: 'Claim 25,000 AI Credits', desc: 'Join the developer program' },
         ].forEach(function (it) {
           var card = document.createElement('div'); card.className = 'bai-item-card';
-          card.innerHTML = '<span class="ic">' + iconSvg(it.icon, 15) + '</span><span class="info"><b>' + it.title + '</b><span>' + it.desc + '</span></span><span style="flex-shrink:0;color:var(--bai-faint);">' + iconSvg('<path d="M7 17 17 7M7 7h10v10"/>', 13) + '</span>';
+          card.innerHTML = '<span class="ic">' + iconSvg(it.icon, 15) + '</span><span class="info"><b>' + it.title + '</b><span>' + it.desc + '</span></span><span style="flex-shrink:0;color:var(--bai-faint);">' + iconSvg(BAI_ICONS.external, 13) + '</span>';
           wrap.appendChild(card);
         });
         el.appendChild(wrap);
@@ -826,7 +826,7 @@
       // confirmation, which puts a small success checkmark before the title specifically to signal status,
       // not as a generic decorative app-icon badge (the thing Part 5 removed).
       function stdModalHead(title, closeId, iconHtml) {
-        return '<div class="tgm-head">' + (iconHtml || '') + '<span class="tgm-title">' + title + '</span><button class="tgm-close" id="' + closeId + '" type="button" aria-label="Close">' + iconSvg('<path d="M18 6 6 18"/><path d="M6 6l12 12"/>', 14) + '</button></div>';
+        return '<div class="tgm-head">' + (iconHtml || '') + '<span class="tgm-title">' + title + '</span><button class="tgm-close" id="' + closeId + '" type="button" aria-label="Close">' + iconSvg(BAI_ICONS.closeAlt, 14) + '</button></div>';
       }
       function oocMode() { return !primeGeo ? 'byok' : (creditsPrime ? 'topup' : 'prime'); }
       function maybeOpenOocModal() { if (oocShownForThisZero) return; oocShownForThisZero = true; openOocModal(); }
@@ -847,13 +847,13 @@
             stdModalHead('Add your own key', 'oocModalClose', '<span class="tgm-ic-acc">' + iconSvg(KEY_PATH, 12) + '</span>') +
             '<div class="tgm-body"><p>You’ve used your available AI credits. Add your own API key to continue using BlueAI.</p>' +
               '<div class="bai-modalact-group"><button class="bai-modalact primary" id="oocByokCta" type="button">Add API key</button></div>' +
-              '<span class="tgm-hint center">' + iconSvg('<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>', 12) + 'You can manage your key later in Settings.</span>' +
+              '<span class="tgm-hint center">' + iconSvg(BAI_ICONS.info, 12) + 'You can manage your key later in Settings.</span>' +
             '</div>';
         } else {
           // Close sits INSIDE .tgm-body (which is position:relative) rather than on the card, so it lands
           // below the alert strip when one is present instead of on top of it — and is unchanged where there
           // isn't one, since the body starts at the card's top edge in that case.
-          var closeHtml = '<button class="lg-close" id="oocModalClose" type="button" aria-label="Close">' + iconSvg('<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>', 13) + '</button>';
+          var closeHtml = '<button class="lg-close" id="oocModalClose" type="button" aria-label="Close">' + iconSvg(BAI_ICONS.close, 13) + '</button>';
           if (mode === 'topup') {
             // Prime member, balance spent. No renewal line: the live popup doesn't carry one, and "AI
             // Credits" (never "Prime credits") is the sanctioned name for the balance.
@@ -863,14 +863,14 @@
                 '<div class="lg-div"></div>' +
                 '<div class="lg-h">Out of credits</div>' +
                 '<p>You’ve used all your AI credits. Top up to continue chatting and complete tasks.</p>' +
-                '<button class="bai-modalact primary" id="oocPrimaryCta" type="button">Top Up' + iconSvg('<path d="M7 17 17 7M7 7h10v10"/>', 13) + '</button>' +
+                '<button class="bai-modalact primary" id="oocPrimaryCta" type="button">Top Up' + iconSvg(BAI_ICONS.external, 13) + '</button>' +
               '</div>';
           } else {
             // Free account in a Prime geo — the subscribe pitch. Allowance is read from
             // PRIME_CREDIT_ALLOWANCE (unformatted, as the live popup shows it) so the headline number can't
             // drift from the one the credits screen and tier math already use.
             oocModalCardEl.innerHTML =
-              '<div class="ooc-alert">' + iconSvg('<path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/>', 13) + 'Not enough credits</div>' +
+              '<div class="ooc-alert">' + iconSvg(BAI_ICONS.warn, 13) + 'Not enough credits</div>' +
               '<div class="tgm-body">' + closeHtml +
                 '<div class="lg-s">BlueAI runs on credits</div>' +
                 '<div class="lg-h">Get AI Credits with Prime</div>' +
@@ -985,13 +985,13 @@
       var helpMenuEl = document.getElementById('baiHelpMenu'), sideHelpMenuEl = document.getElementById('baiSideHelpMenu');
       var acctMenuEl = document.getElementById('baiAcctMenu'), sideAcctMenuEl = document.getElementById('baiSideAcctMenu');
       var HELP_MENU_HTML =
-        '<div class="bai-menu-item" data-action="help">' + iconSvg('<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>', 13) + 'Get help</div>' +
-        '<div class="bai-menu-item danger" data-action="report">' + iconSvg('<path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/>', 13) + 'Report issue</div>';
+        '<div class="bai-menu-item" data-action="help">' + iconSvg(BAI_ICONS.help, 13) + 'Get help</div>' +
+        '<div class="bai-menu-item danger" data-action="report">' + iconSvg(BAI_ICONS.warn, 13) + 'Report issue</div>';
       var ACCT_MENU_HTML =
-        '<div class="bai-menu-item" data-action="history">' + iconSvg('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>', 13) + 'Chat History</div>' +
-        '<div class="bai-menu-item" data-action="profile">' + iconSvg('<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>', 13) + 'Profile</div>' +
+        '<div class="bai-menu-item" data-action="history">' + iconSvg(BAI_ICONS.clock, 13) + 'Chat History</div>' +
+        '<div class="bai-menu-item" data-action="profile">' + iconSvg(BAI_ICONS.user, 13) + 'Profile</div>' +
         '<div class="bai-menu-divider"></div>' +
-        '<div class="bai-menu-item danger" data-action="logout">' + iconSvg('<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/>', 13) + 'Logout</div>';
+        '<div class="bai-menu-item danger" data-action="logout">' + iconSvg(BAI_ICONS.logout, 13) + 'Logout</div>';
       // Get Help / Report Issue: acknowledged, no invented downstream screens — explicit Batch 2 scope.
       function onHelpMenuClick(e) { if (!e.target.closest('.bai-menu-item')) return; e.stopPropagation(); closeMenus(); }
       function onAcctMenuClick(e) {
@@ -1051,10 +1051,10 @@
           '</div>' +
           planHtml +
           '<div class="bai-kv-block bai-profile-reveal" style="margin:0;animation-delay:0.16s;">' +
-            '<div class="bai-kv-row"><span class="bai-kv-key"><span class="bai-kv-ic">' + iconSvg('<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>', 14) + '</span><span class="k">Handle</span></span><span class="v">TriflingStandpoint</span></div>' +
-            '<div class="bai-kv-row"><span class="bai-kv-key"><span class="bai-kv-ic">' + iconSvg('<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>', 14) + '</span><span class="k">Email</span></span><span class="v">arpit.yadav@bluestacks.com<span class="verified">Verified</span></span></div>' +
-            '<div class="bai-kv-row"><span class="bai-kv-key"><span class="bai-kv-ic">' + iconSvg('<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>', 14) + '</span><span class="k">Country</span></span><span class="v">India</span></div>' +
-            '<div class="bai-kv-row"><span class="bai-kv-key"><span class="bai-kv-ic">' + iconSvg('<rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>', 14) + '</span><span class="k">Mobile</span></span><span class="v" style="color:var(--bai-faint);">Not set</span></div>' +
+            '<div class="bai-kv-row"><span class="bai-kv-key"><span class="bai-kv-ic">' + iconSvg(BAI_ICONS.user, 14) + '</span><span class="k">Handle</span></span><span class="v">TriflingStandpoint</span></div>' +
+            '<div class="bai-kv-row"><span class="bai-kv-key"><span class="bai-kv-ic">' + iconSvg(BAI_ICONS.mail, 14) + '</span><span class="k">Email</span></span><span class="v">arpit.yadav@bluestacks.com<span class="verified">Verified</span></span></div>' +
+            '<div class="bai-kv-row"><span class="bai-kv-key"><span class="bai-kv-ic">' + iconSvg(BAI_ICONS.globe, 14) + '</span><span class="k">Country</span></span><span class="v">India</span></div>' +
+            '<div class="bai-kv-row"><span class="bai-kv-key"><span class="bai-kv-ic">' + iconSvg(BAI_ICONS.phone, 14) + '</span><span class="k">Mobile</span></span><span class="v" style="color:var(--bai-faint);">Not set</span></div>' +
           '</div>' +
           '<button class="bai-set-btn danger bai-profile-reveal" id="baiProfileSignOut" style="width:100%;animation-delay:0.26s;" type="button">Sign out</button>';
         document.getElementById('baiProfileSignOut').addEventListener('click', function () { closeGlobalRoute(); openLogoutGate(); });
@@ -1093,13 +1093,23 @@
       // a 2-col grid + real modals (360px portrait doesn't have room for either).
       function iconSvg(path, size) { return '<svg width="' + size + '" height="' + size + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + path + '</svg>'; }
       var SKILL_ICON_PATH = BAI_ICONS.bolt;   // same bolt as the wide-sidebar's own "Skills" nav icon — individual skill cards echo the section's own icon
+      // Static <svg> icons in the markup above keep their OWN attributes — four different stroke
+      // weights are in play — and source only their PATH from the shared module. Filling innerHTML
+      // leaves every authored attribute intact; routing them through iconSvg() instead would flatten
+      // them all to 1.8 and silently restyle the header and sidebar.
+      // Only static markup is hydrated here. Icons inside JS-built HTML splice BAI_ICONS in directly
+      // at render time, because a one-time pass cannot reach nodes that do not exist yet.
+      [].forEach.call(document.querySelectorAll('[data-bai-icon]'), function (el) {
+        var p = BAI_ICONS[el.getAttribute('data-bai-icon')];
+        if (p) el.innerHTML = p; else console.error('unknown data-bai-icon:', el.getAttribute('data-bai-icon'));
+      });
       var CAT_ICONS = {
-        games: '<rect x="3" y="8" width="18" height="4"/><path d="M12 8v13"/><path d="M19 12v9H5v-9"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8s1-5 4.5-5a2.5 2.5 0 0 1 0 5"/>',
-        content: '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>',
-        productivity: '<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>',
-        explore: '<circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/>',
-        other: '<polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/>',
-        mine: '<path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/>'
+        games: BAI_ICONS.catGames,
+        content: BAI_ICONS.share,
+        productivity: BAI_ICONS.catProductivity,
+        explore: BAI_ICONS.catExplore,
+        other: BAI_ICONS.catOther,
+        mine: BAI_ICONS.catMine
       };
       // Item 8 (PM): categories/descriptions/copy match the real product's own Skills tab content —
       // only the 2-col grid layout was left behind (see the note above: this prototype already
@@ -1227,7 +1237,7 @@
         skillsListEl.innerHTML = '';
         [{ name: 'My Skills', cc: '#e0aa4e', desc: 'Skills you’ve built and customised', skills: MY_SKILLS, mine: true }].concat(SKILL_CATEGORIES).forEach(function (cat) {
           var row = document.createElement('div'); row.className = 'bai-cat-row'; row.style.setProperty('--cc', cat.cc);
-          row.innerHTML = '<span class="ic">' + iconSvg(CAT_ICONS[cat.mine ? 'mine' : cat.key], 17) + '</span><span class="info"><b>' + cat.name + '</b><span>' + cat.desc + ' · ' + cat.skills.length + ' skill' + (cat.skills.length === 1 ? '' : 's') + '</span></span><span class="ar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span>';
+          row.innerHTML = '<span class="ic">' + iconSvg(CAT_ICONS[cat.mine ? 'mine' : cat.key], 17) + '</span><span class="info"><b>' + cat.name + '</b><span>' + cat.desc + ' · ' + cat.skills.length + ' skill' + (cat.skills.length === 1 ? '' : 's') + '</span></span><span class="ar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + BAI_ICONS.chevron + '</svg></span>';
           row.addEventListener('click', function () { cat.mine ? openMySkills() : openCategory(cat); });
           skillsListEl.appendChild(row);
         });
@@ -1315,7 +1325,7 @@
               // this tab has no real prior zip to reference, so it should read like a fresh upload, not
               // falsely claim a "Current: skill.zip" that was never real.
               var existingZip = existing && existing.via === 'zip';
-              var up = document.createElement('div'); up.className = 'bai-upload-row'; up.innerHTML = iconSvg('<path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/>', 16) + '<span>' + (existingZip ? 'Upload a new ZIP file' : 'Upload skill.zip') + '</span>';
+              var up = document.createElement('div'); up.className = 'bai-upload-row'; up.innerHTML = iconSvg(BAI_ICONS.upload, 16) + '<span>' + (existingZip ? 'Upload a new ZIP file' : 'Upload skill.zip') + '</span>';
               up.addEventListener('click', function () { fileInput.click(); });
               var picked = document.createElement('div'); picked.className = 'bai-upload-hint'; picked.style.color = 'var(--bai-text-hi)';
               picked.textContent = existingZip ? ('Current: ' + (existing.zipName || 'skill.zip')) : 'No file chosen';
@@ -1617,7 +1627,7 @@
         if (tgStep === 'done') { tgState = 'on'; renderNotify(); }   // dismissing after success still counts as connected
         tgModalEl.classList.remove('on'); clearTimeout(tgWaitT); clearInterval(tgCountdownT);
       }
-      function tgHead(title) { return '<div class="tgm-head"><span class="tgm-ic">' + iconSvg(TG_PATH, 12) + '</span><span class="tgm-title">' + title + '</span><button class="tgm-close" id="tgmClose" type="button" aria-label="Close">' + iconSvg('<path d="M18 6 6 18"/><path d="M6 6l12 12"/>', 14) + '</button></div>'; }   /* Fix #8: shared stroke close SVG (same path as Scheduled's remove control), not the text × */
+      function tgHead(title) { return '<div class="tgm-head"><span class="tgm-ic">' + iconSvg(TG_PATH, 12) + '</span><span class="tgm-title">' + title + '</span><button class="tgm-close" id="tgmClose" type="button" aria-label="Close">' + iconSvg(BAI_ICONS.closeAlt, 14) + '</button></div>'; }   /* Fix #8: shared stroke close SVG (same path as Scheduled's remove control), not the text × */
       function genPairCode() { var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', s = ''; for (var i = 0; i < 6; i++) s += chars[(Math.random() * chars.length) | 0]; return s; }
       function fmtCountdown(sec) { var m = Math.floor(sec / 60), s = sec % 60; return m + ':' + (s < 10 ? '0' : '') + s; }
       function enterPairingStep() {
@@ -1680,14 +1690,14 @@
           document.getElementById('tgmCopyBtn').addEventListener('click', function (e) {
             var b = e.currentTarget;
             if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(tgCode).catch(function () {});
-            var orig = b.innerHTML; b.innerHTML = iconSvg('<path d="M20 6 9 17l-5-5"/>', 13) + 'Copied';
+            var orig = b.innerHTML; b.innerHTML = iconSvg(BAI_ICONS.check, 13) + 'Copied';
             setTimeout(function () { b.innerHTML = orig; }, 1200);
           });
           document.getElementById('tgmAbortBtn').addEventListener('click', closeTgModal);
         } else if (tgStep === 'done') {
           el.innerHTML = tgHead('Set up Telegram connection') +
             '<div class="tgm-body" style="align-items:center;text-align:center;padding:26px 16px;">' +
-              '<div class="lg-icon lg-icon-ok">' + iconSvg('<path d="M20 6 9 17l-5-5"/>', 20) + '</div>' +
+              '<div class="lg-icon lg-icon-ok">' + iconSvg(BAI_ICONS.check, 20) + '</div>' +
               '<div style="font-weight:700;font-size:var(--bai-fs-lg);color:var(--bai-text-hi);">You\'re all set</div>' +
               '<div style="font-size:var(--bai-fs-sm);color:var(--bai-dim);">Telegram is now connected to BlueAI.</div>' +
               '<button class="tgm-cta" id="tgmDoneBtn" type="button" style="margin-top:6px;">Done</button>' +
@@ -1775,7 +1785,7 @@
       }
       function warnRow(text) {
         var w = document.createElement('div'); w.className = 'bai-warnrow'; w.style.margin = '0';
-        w.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg><span>' + text + '</span>';
+        w.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + BAI_ICONS.warn + '</svg><span>' + text + '</span>';
         return w;
       }
       // Part 4: one option-card builder for AI Mode's Cloud/Hybrid + Auto/Custom choices — title + subtext
@@ -1866,7 +1876,7 @@
       function renderAiModal() {
         if (!aiModalOpen) return;
         var titles = { idle: 'Set up Hybrid — Auto', downloading: 'Setting up Hybrid — Auto', installing: 'Setting up Hybrid — Auto', running: 'Hybrid AI is ready' };
-        var readyIcon = hybridStatus === 'running' ? '<span class="tgm-ic-ok">' + iconSvg('<path d="M20 6 9 17l-5-5"/>', 12) + '</span>' : '';
+        var readyIcon = hybridStatus === 'running' ? '<span class="tgm-ic-ok">' + iconSvg(BAI_ICONS.check, 12) + '</span>' : '';
         aiModalCardEl.innerHTML =
           stdModalHead(titles[hybridStatus], 'aiModalClose', readyIcon) +
           '<div class="tgm-body">' +
@@ -1923,7 +1933,7 @@
         if (!stgByokOn) return;
         if (!stgByokProvider) {
           var warn = document.createElement('div'); warn.className = 'bai-warnrow'; warn.style.margin = '0';
-          warn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg><span>No API key configured</span>';
+          warn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + BAI_ICONS.warn + '</svg><span>No API key configured</span>';
           el.appendChild(warn);
           // Item 5 (PM): a dropdown scales better than a segmented row as more providers get added.
           // Now a real floating dropdown via settingsPicker(), same as the two model pickers.
@@ -2150,7 +2160,7 @@
       }
       function renderWarning(text) {
         var el = document.createElement('div'); el.className = 'bai-warnrow';
-        el.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg><span>' + text + '</span>';
+        el.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + BAI_ICONS.warn + '</svg><span>' + text + '</span>';
         baiBody.appendChild(el); scrollBody();
       }
       var FEEDBACK_REASONS = ['Inaccurate', 'Unhelpful', 'Took too long', 'Other'];
@@ -2160,9 +2170,9 @@
         // Batch 5: feedback thumbs — up is a one-tap acknowledgment; down reveals reason chips inline.
         var fb = document.createElement('div'); fb.className = 'bai-fb';
         var up = document.createElement('button'); up.type = 'button'; up.className = 'bai-fb-btn'; up.setAttribute('aria-label', 'Good response');
-        up.innerHTML = iconSvg('<path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>', 13);
+        up.innerHTML = iconSvg(BAI_ICONS.thumbUp, 13);
         var down = document.createElement('button'); down.type = 'button'; down.className = 'bai-fb-btn'; down.setAttribute('aria-label', 'Bad response');
-        down.innerHTML = iconSvg('<path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zM17 2h3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-3"/>', 13);
+        down.innerHTML = iconSvg(BAI_ICONS.thumbDown, 13);
         fb.appendChild(up); fb.appendChild(down); el.appendChild(fb);
         up.addEventListener('click', function () {
           if (up.classList.contains('picked')) return;

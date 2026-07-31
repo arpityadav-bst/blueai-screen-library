@@ -1,5 +1,5 @@
 # blueAI — Taste
-Last updated: 2026-08-01 (rule 41 widened from text roles to component states — see its own note). 2026-07-25 (SCOPE PIVOT, designer directive — see note below. +rule 38 (divider redundancy),
+Last updated: 2026-08-01 (rule 41 restated as a MECHANISM — non-layout vs layout-affecting channels — after an independent audit judged the first widening had generalised the title but not the trigger; cross-linked to rule 38; rule 39's stale radius count corrected). 2026-07-25 (SCOPE PIVOT, designer directive — see note below. +rule 38 (divider redundancy),
 now a primary cross-surface rule rather than a marketing-site-only exception.)
 
 > **SCOPE PIVOT (2026-07-25, designer directive):** the marketing site (rules 1–37 below) and
@@ -10,8 +10,8 @@ now a primary cross-surface rule rather than a marketing-site-only exception.)
 > learning — re-derive nothing if the marketing site resumes) but are no longer what Gate 8 reviews
 > new work against by default. blueai-desktop's own design system is being extracted into
 > `public/blueai-desktop/style-guide.html` (live specimens + tokens, built from
-> `index.html` itself, since none existed anywhere before 2026-07-25) — that file + rule 38 below
-> are what govern blueai-desktop work now. If the marketing site or /blueai-product ever resume,
+> `index.html` itself, since none existed anywhere before 2026-07-25) — that file + **rules 38-41**
+> below are what govern blueai-desktop work now. If the marketing site or /blueai-product ever resume,
 > flip this note back — nothing here needs to be rebuilt, just re-prioritized.
 
 > blueAI's design *language* — how it should feel — so VDA can design new blueAI
@@ -326,8 +326,9 @@ springy bounces) — "a utility assistant, not a toy."
     the system unpredictable to build against. Merge them. When merging TEXT at or below 11px, merge
     **up** (never shrink the smallest type — legibility floor beats tidiness); above that, merge toward
     whichever value has more declarations. *(blueai-desktop 2026-08-01: 20 font-sizes and 15 radii,
-    including 9/9.5, 10/10.5, 11/11.5, 12/12.5, 13/13.5 pairs → 6 text steps + 4 display + 2 glyphs, and
-    9 radius tokens. 101 sub-threshold merges, verified as ≤1px each.)*
+    including 9/9.5, 10/10.5, 11/11.5, 12/12.5, 13/13.5 pairs → 6 text steps + 4 display + 2 glyphs.
+    The radius count in this note was left at 9 after tranche 3 retired three more the same day —
+    corrected, and now deliberately not restated: `ds-drift-check.js` §8 prints the live figure.)*
 
 40. **Tokenise sizes, not just colours — an untokenised axis drifts by default.** Colours here were
     fully tokenised while every size was a raw literal, so each new component picked its size by copying
@@ -336,14 +337,35 @@ springy bounces) — "a utility assistant, not a toy."
     many times it is cleaned. Give text steps ROLE names (the role is stable); give display sizes and
     optically-matched glyphs SIZE names, because naming 22px "avatar" is wrong the first time it's reused.
 
-41. **Anything already carried by colour does not also need to be carried by type metrics.** When two
-    roles differ, check what actually separates them before preserving a size or weight gap.
+41. **A distinction already carried by a non-layout channel must not be re-encoded in a channel with
+    layout side-effects.** Colour, fill, opacity, iconography and position-in-a-group cost nothing when
+    they change. Font-size, weight, letter-spacing, padding and border-width all change how much room
+    a thing takes — so re-encoding a distinction in one of those buys no clarity and can move the
+    layout. **Whenever two things must read as different — two text roles, two states of one control,
+    two tiers, two severities — ask which channel already separates them, and stop there.**
+
+    *Where this applies beyond the instances below:* a "selected" list row that is both tinted and
+    indented; an error field that is both red and bolded; a primary button that is both filled and
+    larger than its sibling. None of those are text-role problems, and all three are this rule.
+
+    *What would stop this rule firing:* reading it as being about **text**. It is about *channels*.
+    The failure recorded below happened because an earlier wording said "two text roles a half-step
+    apart", so a component STATE never matched it. If you find yourself deciding whether the thing in
+    front of you counts as a "role", the rule already applies — check the channels.
+
+    When two things differ, check what actually separates them before preserving a size or weight gap.
     - *Text roles:* caption-vs-body-small was already distinguished by the colour ramp (`--bai-dim` vs
       `--bai-text`), so the 0.5px difference was doing no work and merging cost nothing.
     - *Component STATES (added 2026-08-01):* the skill-create switcher's selected tab had a solid accent
       fill AND inverted ink AND `font-weight: 700`. The weight was the third signal, and it was the
       expensive one — the options are equal-width `flex:1`, so wider glyphs tipped the longest label onto
       a second line and **selecting a tab resized the tab row.** Encode state in colour; never in metrics.
+    **Relationship to rule 38.** Rule 38 ("any signal must earn its slot against what's ALREADY
+    signalling the same thing") is the general form; this rule is that test applied to the specific
+    case where the redundant channel has layout side-effects. They were written separately and neither
+    referenced the other, which is the same generalization failure one level up: two rules stating one
+    mechanism at two widths. Read 38 first; reach for 41 when the redundant signal costs space.
+
     - **Why this rule got widened:** it was originally written only about "two text roles a half-step
       apart," so it never fired on a state change — the switcher bug sat in the product while the rule
       that covered it was already on record. A principle written at the width of the instance that

@@ -336,7 +336,7 @@
         <div class="sg-canvas bai-scope" style="padding:0;display:block;">
           <div class="bai-main-title">
             <button class="bai-title-btn" type="button"><span>Untitled chat</span><span class="bai-title-ar" data-icon="chevron" data-size="11"></span></button>
-            <button class="bai-icbtn bai-newchat-btn" type="button" aria-label="New chat" data-icon="edit" data-size="15"></button>
+            <button class="bai-icbtn bai-newchat-btn" type="button" aria-label="New chat" data-icon="newChat" data-size="15"></button>
           </div>
         </div>
       </div>
@@ -370,7 +370,7 @@
             <!-- real nav order: New chat, Jobs, Skills, Scheduled. The first row is .bai-side-newchat
                  (its own variant, not the active tab); .active marks the current mode. -->
             <div class="bai-side-nav">
-              <button class="bai-side-item bai-side-newchat" type="button"><span class="ic" data-icon="edit" data-size="15"></span>New chat</button>
+              <button class="bai-side-item bai-side-newchat" type="button"><span class="ic" data-icon="newChat" data-size="15"></span>New chat</button>
               <button class="bai-side-item" type="button"><span class="ic"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h12M8 12h12M8 18h12"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/></svg></span>Jobs</button>
               <button class="bai-side-item active" type="button"><span class="ic" data-icon="bolt" data-size="15"></span>Skills</button>
               <button class="bai-side-item" type="button"><span class="ic" data-icon="clock" data-size="15"></span>Scheduled</button>
@@ -839,7 +839,7 @@
               <p>Create a bot in Telegram and link it to BlueAI</p>
               <div class="tgm-label">Paste your bot token</div>
               <input class="tgm-input" type="text" placeholder="Paste token from Telegram" />
-              <span class="tgm-hint"><span data-icon="info" data-size="12" style="display:flex;"></span>BlueAI only uses this to send your messages.</span>
+              <span class="tgm-hint">🔒 Your token is private and used only to connect your bot.</span>
             </div>
             <div class="tgm-foot">
               <span class="tgm-step">Step 1 of 2</span>
@@ -976,11 +976,10 @@
       </div>
 
       <div class="sg-spec">
-        <div class="sg-spechead"><span class="sg-cls">.bai-ai-create</span><span class="sg-role">The BlueAI-drafts-it path. Deliberately a <em>handoff</em>, not a second composer: it explains and then sends you to Chat with the prompt pre-seeded. Reuses <code>.bai-onb-cta</code> rather than introducing another button.</span></div>
+        <div class="sg-spechead"><span class="sg-cls">.bai-ai-create</span><span class="sg-role">The BlueAI-drafts-it path. Deliberately a <em>handoff</em>, not a second composer: it sends you to Chat with the prompt pre-seeded. Reuses <code>.bai-onb-cta</code> rather than introducing another button. <strong>It holds no explanatory paragraph</strong> — the method explainer under the switcher above already says <em>"Describe it in plain language — BlueAI drafts the instructions"</em>, and repeating it 8px lower is a signal that hasn't earned its slot. This specimen carried a stale <code>&lt;p&gt;</code> quoting the older, longer copy for exactly as long as it took an independent audit to read it: the sentence had been deleted from the product, its CSS rule deleted too, and the specimen left behind — so it rendered unstyled text that existed nowhere in the app. Invented copy does not only arrive by writing something new; it also arrives by <em>failing to delete</em>.</span></div>
         <div class="sg-canvas bai-scope" style="padding:0;display:block;">
           <div class="bai-ai-create">
-            <div class="ic" data-icon="gear" data-size="20"></div>
-            <p>Describe the skill you want in plain language, and BlueAI will draft the instructions for you.</p>
+            <div class="ic" data-icon="spark" data-size="20"></div>
             <button class="bai-onb-cta" type="button" style="max-width:180px;animation:none;">Start in Chat &rsaquo;</button>
           </div>
         </div>
@@ -1456,7 +1455,11 @@
     var d = BAI_ICONS[name];
     if (!d) throw new Error('style-guide: "' + name + '" is not in the product icon set (blueai-icons.js). ' +
       'Add it to the product first — the guide must not invent glyphs.');
-    return '<svg width="' + size + '" height="' + size + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+    // Most icons use the house wrapper; a few (see BAI_ICON_META) are authored differently in the
+    // product and must be rendered on their own terms, or the guide documents a glyph nobody ships.
+    var meta = (typeof BAI_ICON_META !== 'undefined' && BAI_ICON_META[name]) || {};
+    return '<svg width="' + size + '" height="' + size + '" viewBox="' + (meta.viewBox || '0 0 24 24') + '" ' +
+           'fill="' + (meta.fill || 'none') + '" stroke="' + (meta.stroke || 'currentColor') + '" ' +
            'stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + d + '</svg>';
   }
   // fill every [data-icon] placeholder

@@ -71,7 +71,7 @@ number in prose are all the same risk class. If it can be typed from memory, it 
 
 ## Have something that didn't build it check the claims
 
-After building the design system I ran an independent audit over it — six agents with no stake in my
+After building the design system I ran an independent multi-agent audit over it — agents with no stake in my
 prior conclusions. They found **two places where I had documented my own work more favourably than the
 code supported**: a header comment claiming "neither file keeps its own copy" of the icon paths (23 of 29
 were still duplicated inline), and a token list whose values were computed live but whose *names* were
@@ -97,5 +97,53 @@ a real defect:
 
 A more thorough version of the same check would not have caught any of these. Ask what *kind* of thing
 could be wrong, then pick a check that can see that kind.
+
+## A measured number belongs only in the thing that measures it
+
+**Four instances, two different files, same mechanism.** The parity-audit thread hit it three times —
+Layer A's §2 accounting table hand-written once and never re-derived after the data changed; an HTML
+summary hand-typed to 256 when its own JSON said 240; evidence counts that were added when they
+overlapped. Then, on 2026-08-01, `blueai/CLAUDE.md` was found asserting "46 tokens" (64) and "233 of
+330 classes, 71%" (249/325, 77%) — **both written that same session** and both already wrong.
+
+The tempting fix each time is "update it, and be more careful." That has now failed four times. The
+real fix is that the transcription should not exist: CLAUDE.md was changed to point at the style guide
+and `ds-drift-check.js`, which count on demand, and to say explicitly why no figure is written down.
+
+**How to apply:** if a number can be computed, never also state it in prose. If prose genuinely needs
+it, have the prose name the command that prints it. A hand-copied measurement is a correct statement
+with an expiry date nobody records.
+
+## If a style is state-dependent, the state is a test dimension
+
+The skill-create switcher's selected tab carried `font-weight: 700`; the options are equal-width
+`flex:1`, so the extra glyph width tipped the longest label onto a second line and **selecting a tab
+resized the tab row.** The designer found it. My own wrap scan could not have: it swept viewport
+widths and both themes while leaving selection at its default. I varied the dimensions I habitually
+vary and held fixed the one the bug lived in.
+
+**How to apply:** before sweeping, list what the property depends on — not what is easy to iterate.
+Width and theme are the reflexive axes; hover, focus, selected, disabled, loading, empty, overflowing
+and error are the ones that get skipped, and interactive state is where this project's recurring
+defect category has now landed six times. A sweep that feels thorough is still blind along any axis
+it never moved.
+
+## New verification tooling is wrong until it is diffed against something known-good
+
+Every verification harness this project has built contained at least one real bug on its first
+*successful* run — the capture scripts, the manifest validator, both generator scripts, and on
+2026-08-01 the icon migration itself, whose v1 tagged six JS-string SVGs for a boot-time hydration
+pass that could never reach them, rendering them empty. The comparison script written to check that
+migration was *also* wrong, in the opposite direction: it reported 292 differences that were purely an
+artifact of adding an attribute and re-sorting on it.
+
+So "it ran without throwing" proves nothing, and so does "the diff was clean." What works is diffing
+against something independently known to be right: a pre-change snapshot, a second run for
+idempotency, the DOM itself, or the file's own CSS as ground truth.
+
+**And its sharpest form — negative-test the check.** `ds-drift-check.js` §9 was written to catch a
+wrong-but-valid icon, so the bug it was written for was deliberately reintroduced to confirm it fails
+and exits non-zero, then reverted. A check that has never failed is not a check that works; it is a
+check that has never been asked.
 
 *(New entries accumulate at audit passes.)*

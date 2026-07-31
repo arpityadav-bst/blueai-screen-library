@@ -21,7 +21,7 @@ re-prioritized.
 **Practical effect:** Gate 8 (taste.md) now reviews new work against blueai-desktop's OWN
 design system — **`public/blueai-desktop/style-guide.html`** (live specimens, built from the
 product's own stylesheet + icon set; blueai-desktop had no documented DS at all before this
-pivot) + taste rule 38 (a cross-surface craft rule) — not the marketing site's rules 1–37
+pivot) + taste **rules 38-41** (the cross-surface craft rules) — not the marketing site's rules 1–37
 (preserved on record, not currently load-bearing).
 
 ---
@@ -47,8 +47,9 @@ NOT load WSUP's or now.gg's notebook for blueAI work — that's cross-contaminat
 **Mandatory reads on first blueAI touch, in this order** (craft = shared `../agents/vda-core/`; notebook = blueAI's `visual-designer/`):
 1. `../agents/vda-core/agent.md` — re-anchor identity (think like a UX designer)
 2. `../agents/vda-core/QUALITY-GATES.md` — 8 gates + dual-cadence + Gate 6.5 + routing table
-3. `visual-designer/taste.md` — read the SCOPE PIVOT note at the top first, then rule 38;
-   rules 1–37 are dormant-surface reference, not what Gate 8 reviews against right now
+3. `visual-designer/taste.md` — read the SCOPE PIVOT note at the top first, then **rules 38-41**
+   (this list said "rule 38" while 39, 40 and 41 were already live — including 41, the one the
+   2026-08-01 switcher bug turned on); rules 1–37 are dormant-surface reference
 3b. `public/blueai-desktop/style-guide.html` — blueai-desktop's own DS reference (tokens,
    scales, icon set, component families). THIS is what Gate 8 reviews blueai-desktop work
    against. Skim its section list + "Known gaps"; open it in the browser when designing.
@@ -86,8 +87,15 @@ sheet), the icon inventory, the coverage number, and any *restyle* of an already
 **Not automatic:** a component's markup, its copy, and its set of states — because the guide
 hand-writes specimens while the product builds most of its DOM in JS template strings.
 
-**Every real defect so far has come out of that one gap.** Invented glyphs, then invented copy, then a
-four-state login flow documented as one invented state. Nothing else has failed.
+**The worst-repeating defect comes out of that one gap** — invented glyphs, then invented copy, then a
+four-state login flow documented as one invented state, then (2026-08-01) a specimen paragraph left
+behind after its product copy was deleted. *Failing to delete* is the same defect as inventing.
+
+This paragraph used to end "Nothing else has failed," which was false and worth keeping as a caution:
+the skill-switcher `font-weight` reflow was a CSS metrics bug, the icon migration's first version
+rendered six glyphs empty, and the hover-popover, `cursor: default` and divider-redundancy corrections
+were none of them specimen gaps. A sentence that flatters one's own model of the failure mode is how
+the *other* failure modes stay unwatched.
 
 ### Therefore: INVERT the deferred-Gate-5 cadence
 
@@ -99,30 +107,64 @@ invented-copy incident. Here the sync costs one edit in one file.
 
 > **For blueai-desktop: specimen + prose sync is INLINE, same edit. Decisions promotion stays deferred.**
 
-### The one rule that makes fabrication structurally impossible
+### The rule that makes fabrication rare (not impossible — see the table)
 
 > **Specimen copy is never authored. It is quoted.** Every user-facing string in a specimen must exist
 > verbatim in `index.html`. If you cannot find it there, you are inventing it.
 
-### Same-edit obligations, and what enforces each
+This is a discipline, not a mechanism. It was previously headed "makes fabrication structurally
+impossible," which was wrong: §1 samples `<button>` text and `placeholder=`, and the 2026-08-01 stale
+`<p>` sat in a specimen for exactly as long as it took an audit to read it. Assume it is on you.
 
-| If the edit touches… | Same-edit obligation | Enforced by |
-|---|---|---|
-| a new CSS class | a specimen renders it | `ds-drift-check.js` §2 (coverage floor) |
-| a new `--bai-*` token | a row in the guide's `GROUPS` | the guide self-reports omissions |
-| a size or radius | a `--bai-fs-*` / `--bai-r-*` token, never a literal | §8 |
-| an icon | added to `blueai-icons.js`, consumed via `BAI_ICONS.<key>` | §3 + §4 |
-| a component's markup / copy / states | specimen re-derived from `index.html`, strings verbatim | §1 |
-| a class removed from the product | its CSS rule removed too | §7 (reports dead CSS) |
+### Same-edit obligations, and how much of each is really enforced
 
-**Run `node ds-drift-check.js` before saying done.** It is not a nicety: it is the only thing standing
-between this project and the defect that has bitten three times.
+**Read the "gap" column before trusting a row.** An audit found this table over-claiming on three of
+six; the check now prints its own scope footer, which is authoritative over anything written here.
+
+| If the edit touches… | Same-edit obligation | Partly caught by | The gap you still own |
+|---|---|---|---|
+| a new CSS class | a specimen renders it | §2 coverage **floor** | a floor, not a check — several classes can ship uncovered before it trips |
+| a new `--bai-*` token | a row in the guide's `GROUPS` | the guide self-reports omissions | none known — this one genuinely works |
+| a size or radius | a `--bai-fs-*` / `--bai-r-*` token | §8 | shorthand px only; longhand corners, widths, padding, gaps and rem are invisible, and the *right* token is never checked |
+| an icon | named in `blueai-icons.js`, consumed by name | §4 (product-side literals), §6 (duplication), §9 (right glyph) | §9 only reaches specimens with an adjacent text label; icon-only specimens are unverified |
+| a component's **markup / copy / states** | specimen re-derived from `index.html` | §1, for `<button>` text + placeholders | **markup and states are not checked at all** — which is exactly where the four-state login flow defect lived |
+| a class removed from the product | its CSS rule removed too | §7 **reports**, never fails | nothing stops a dead rule landing |
+
+**Run `node ds-drift-check.js` before saying done** — then read its scope footer, not just PASS. It
+narrows the gap that has bitten four times; it does not close it, and it has itself printed a false OK
+before now. Where the table says you own the gap, you own it.
 
 ### Notebook
 
 Keep using `blueai/visual-designer/` — it is already blueAI-scoped and the SCOPE PIVOT note re-pointed
 it at blueai-desktop. Do **not** create a second notebook; per-product separation exists to stop
 WSUP/now.gg cross-contamination, and blueai-desktop is not a different product from blueAI.
+
+### Promotion rule: state the mechanism, not the instance (added 2026-08-01)
+
+**Gate 6.5 (Generalization Probe) runs on every rule PROMOTED, not only on new work.** This is a
+blueAI-scoped addition to the shared cadence; `agents/vda-core/` is protected and unchanged.
+
+It exists because of a measured failure. Taste rule 41 — *hierarchy carried by colour does not also
+need to be carried by size* — already covered the skill-switcher reflow bug. It never fired, because it
+had been written as "two text roles a half-step apart": the width of the single example that taught it.
+A component **state** never matched that description, so a live bug sat in the product while the rule
+governing it sat in the notebook. Widening it was a one-line edit that should have happened at
+promotion time, months earlier, for free.
+
+**Before writing any rule into `taste.md` or `reasonings.md`, answer three questions in the rule itself:**
+
+1. **What is the mechanism, stripped of this instance?** Rule 41's mechanism is *colour vs type
+   metrics*. Its instance was *captions vs body-small*. Write the first; cite the second as an example.
+2. **Where else does this mechanism apply?** Name at least one surface the originating instance did not
+   touch. If none can be named, the rule may genuinely be a one-off — say so explicitly, so the next
+   reader doesn't have to re-derive whether it generalizes.
+3. **What would make this rule fail to fire?** Usually a noun that is too specific ("text roles",
+   "dividers", "modals"). Replace it or the rule catches exactly one bug: the one that already happened.
+
+**The notebook's problem has never been volume.** The taste file alone runs to hundreds of lines
+(counting it here would repeat the very mistake this section is about). Every recurring defect this project has had was already covered by something written
+down. The failure mode is rules phrased so narrowly they only match their own origin story.
 
 ---
 
@@ -139,12 +181,14 @@ WSUP/now.gg cross-contamination, and blueai-desktop is not a different product f
     **Counts are deliberately not written down here** — the style guide tallies them live, and a
     number in this file went stale the same day it was written (it said 46; adding the type and
     radius scales made it 64). Open the guide, or run `ds-drift-check.js`, for the current figure.
-  - `blueai-icons.js` — **the icon set.** `BAI_ICONS`, 29 named paths. Fully SSOT for the style
-    guide (which renders every specimen from it and *throws* on an unknown name — it previously
-    invented glyphs and that shipped looking fine). Only **partially** SSOT for the product:
-    index.html consumes 10 named `*_PATH` constants from it, but 23 of 29 paths also exist as
-    inline literals, mostly in static markup that can't reference a JS variable. `ds-drift-check.js`
-    §6 reports that count so it stays visible.
+  - `blueai-icons.js` — **the icon set.** SSOT for the style guide (which renders every specimen
+    from it and *throws* on an unknown name). For the product: every path **that is in the module**
+    is now reached by name, via three call shapes documented in its header — but the product still
+    draws glyphs the module doesn't carry, and those stay anonymous and therefore uncheckable.
+    **No counts here on purpose** — `ds-drift-check.js` §6 prints them (module size, duplication,
+    and unnamed-glyph count) every run. Four numbers written in this bullet were wrong at once
+    before they were deleted; the header of that file records three separate versions of the same
+    mistake. Read §6.
   - `ds-drift-check.js` — **run this after any component change:** `node ds-drift-check.js`.
     Fails on invented specimen copy (every button label/placeholder must exist verbatim in
     index.html), coverage regression below a floor, unknown icon names, re-declared icon literals,
@@ -152,7 +196,8 @@ WSUP/now.gg cross-contamination, and blueai-desktop is not a different product f
     because invented copy shipped twice and only a human comparing screenshots caught it.
   - `style-guide.html` — **the DS reference.** Open at
     `http://localhost:8410/blueai-desktop/style-guide.html`. Links the product stylesheet + icon
-    set and renders real components inside `.bai-scope`, so it cannot drift. Everything numeric is
+    set and renders real components inside `.bai-scope`, so their **styling** cannot drift (markup and
+    copy still can, and have — the guide's own page says "that's a real drift vector"). Everything numeric is
     computed at load — token values via `getComputedStyle`, type/radius scales tallied from the
     live stylesheet, and its own class coverage measured by diffing rendered classes against the
     stylesheet. Independent dark/light toggles for specimens and page.
@@ -165,23 +210,27 @@ WSUP/now.gg cross-contamination, and blueai-desktop is not a different product f
   the same `--bai-*` namespace with completely different values. The scoping is what stops them
   colliding. Do not hoist them to `:root`, and do not assume a `--bai-*` name means the same
   thing in both products.
-- Local preview: `.claude/launch.json`'s `blueai-desktop` config (`python -m http.server 8410
+- Local preview: the workspace-root `../.claude/launch.json`'s `blueai-desktop` config (NOT
+  `blueai/.claude/`, which does not exist) (`python -m http.server 8410
   --directory blueai/public`) → `http://localhost:8410/blueai-desktop/index.html`. Note: this
   server drops between sessions fairly often — check it before concluding something's broken.
-- Design-system docs: `style-guide.html` (built 2026-08-01) — foundations (all tokens, live-tallied
-  type/radius scales, the 29-icon set) + 19 sections across shell, components and full-screen
+- Design-system docs: `style-guide.html` (built 2026-08-01) — foundations (tokens, live-tallied
+  type/radius scales, the icon set) + sections across shell, components and full-screen
   states, house conventions, and a **self-measured** coverage figure computed at load rather than
-  asserted. **Every component family has a section**; the remaining uncovered classes are the demo
-  scene (documented but deliberately not specimen'd), mid-gesture modifier classes, and one-off
-  descendants already visible inside their parent's specimen. The page lists every uncovered class
-  by name, and prints the coverage percentage — **trust the page, not a number in this file.**
-  (The figure quoted here was wrong within a week of being written. Live-tallied numbers belong in
-  the thing that tallies them.)
-- **Specimen fidelity is verified, not assumed.** `scratchpad`-logged audit compares every shared
-  class between the guide and the running product across 19 appearance properties. Re-run it after
-  adding specimens; it caught 4 real bugs on its first run, including this page's own body ink
-  leaking into specimens and thereby masking components with no `color` of their own. Design reasoning lives in `visual-designer/` (taste.md,
-  reasonings.md, decisions.md).
+  asserted. Every component family has a section. **The page lists every uncovered class by name and
+  prints the coverage percentage — trust the page, never a summary here.**
+  This bullet used to characterise the uncovered set as "the demo scene, mid-gesture modifiers, and
+  one-off descendants." An audit found that list wrong: it also contains component ROOTS
+  (`.bai-logingate`, `.bai-tgmodal`, `.bai-onb`, `.bai-tour`, the `tgm-*` pairing family) and the
+  handful §7 reports as dead CSS — a category the sentence didn't mention at all. The guide's own
+  version of this paragraph ends "Trust the list above over this paragraph"; whoever copied it here
+  dropped that hedge, which is the whole reason the copy went wrong.
+- **Specimen fidelity checking:** `ds-drift-check.js` is the live tool — run it. (A one-off
+  computed-style comparison harness was used during the 2026-08-01 build and caught 4 real bugs,
+  including this page's own body ink leaking into specimens and masking components with no `color`
+  of their own. It was never committed, so "re-run it" is not actionable; rebuild it if you need
+  that class of check again.) Design reasoning lives in `visual-designer/` (taste.md, reasonings.md,
+  decisions.md).
 - Designer reviews live in-browser during iteration — skip Playwright screenshots for small/
   mechanical changes (see `feedback_skip_screenshots_when_watching` memory); verify with
   Playwright only for first-time-wiring new interactions or genuine logic/data-model changes.

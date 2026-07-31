@@ -3,6 +3,44 @@
 
 ---
 
+## Session 13 — 2026-08-01 — size/radius tranches, the switcher rebuild, and closing the gate's blind spot
+`designer_caught_count: 2` — (1) the skill-switcher reflow ("these tabs are not looking good right now…
+Create with BlueAI wraps to 2 lines when selected otherwise not"), and (2) the meta-catch that followed:
+asking whether the design system and product were *really* in sync, which is what surfaced everything below.
+
+**What the designer decided, not me.** Tranche 3's six visible size/radius changes went out as an
+accept/reject artifact; 4 accepted, 2 declined. Then the switcher: offered vertical option cards vs
+"keep the tabs, shorten + explain" vs reflow-fix-only; designer chose the middle. Both times the
+alternative was to just apply my preference, and both times the choice moved.
+
+**The two real defects.** The switcher's `.on` state added `font-weight: 700` over `600` — on equal-width
+`flex:1` options, that tips the longest label onto a second line, so *selecting a tab resized the tab row*.
+And the pattern beneath it: only one of three methods explained itself, in the body, after you'd committed.
+Fixed by encoding selection in colour only, one-word labels, and a shared explainer line.
+
+**Taste rule 41 already covered the first one and never fired.** It was written as "two text roles a
+half-step apart" — the width of the single example that taught it — so a component *state* never matched.
+Widened to the mechanism (colour vs type metrics). This is the session's most useful finding: the notebook
+is not short of rules, it is short of rules stated generally enough to catch the next instance. Gate 6.5
+exists precisely for this and did not run.
+
+**Infrastructure.** Named all 44 inline icon paths (0 left), which made `ds-drift-check.js` §9 possible —
+the cross-check that catches a *wrong-but-valid* icon, the class of bug that let a `gear` sit on the
+Ask-BlueAI tab for weeks with every check green. Added a scope footer so PASS stops over-claiming. §6
+(icon duplication) is now closed at 0/30.
+
+**Three of my own claims were false this session**, all in files whose job is preventing false claims:
+`blueai-icons.js`'s header twice (first "neither file keeps its own copy", then "most sit in static
+markup" — really 27 of 44 were ordinary JS literals, an estimate that made the migration look harder than
+it was and left the hole open for weeks), and CLAUDE.md's token/coverage figures, written the same session
+and already wrong. Also caught a real regression in my own migration (v1 rendered six icons empty) and a
+false-alarm in my own comparison script (292 phantom diffs from re-sorting on an added attribute) — both
+before they reached the designer, both only because the work was diffed against a known-good snapshot.
+
+**Watch next session:** run Gate 6.5 on every rule *promoted*, not only on new work — that is the specific
+habit missing. `evolution.md` re-pointed this session after being 4 weeks stale; the parity-audit thread is
+finally promoted for its method lessons (its *findings* remain in progress and are NOT closed).
+
 ## Session 12 — 2026-07-24→08-01 — blueai-desktop's design system, built and then audited into shape
 Freshness check: taste ✓ (+rules 38–41) | decisions ✓ (+8 rows) | reasonings ✓ (created this era, +3 principles) | knowledge-base ✓ (+2 sections) | project-insights ✓ | evolution ✗ NOT updated this pass (see Watch next) | session-logs (this entry)
 **Screen:** `/blueai-desktop`. **Mode:** live-reviewed iteration for the UX work, then agent-assisted audit.
