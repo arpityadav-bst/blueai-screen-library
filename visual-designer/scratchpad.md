@@ -5,6 +5,45 @@ resolved. Promoted to decisions.md / taste.md at audit passes, then wiped.
 Format: `YYYY-MM-DD HH:mm — <file> — <what changed> — Why: <one phrase>`
 
 --- Pending audit entries ---
+2026-08-01 — /blueai-desktop — **Designer caught INVENTED COPY in the style guide + 3 usability bugs.** They
+screenshotted the real product login gate against my specimen and asked "is there a specific reason we kept it
+different, or did we miss something?" — answer: **we missed something.** Not intentional. Same species as the
+invented icons from the earlier audit, one layer up: I'd written plausible-sounding copy instead of reading the
+product's real strings.
+What was actually wrong with the login gate: the product's is a **FOUR-STEP FLOW** (`claim → browser → signing
+→ done`, driven by `loginStep`), and the claim step gets an `.lg-offer` modifier on the card that I'd never used
+(46px credits, tighter gaps, glow on the CTA). My specimen invented a single fictional state with invented copy
+("Sign in to continue" / "Your credits and chats follow your account" / "Continue with Google" / "Maybe later")
+— none of which exists in the product, whose real copy is "You need AI Credits to use BlueAI" / "500" / "Free AI
+Credits" / "on your first login" / "✓ Enough for ~10 tasks" / "Sign in to claim ›" / "Terms & Conditions ›".
+Also missing: `.lg-check`, `.lg-link-warn`, `.lg-icon-ok`, and the reused 26px `.bai-spin`. Rebuilt all 4 states
+verbatim.
+Same class of defect on the two other surfaces the designer named: **OOC modal** — my specimen showed 1 of the
+**3 real modes** (prime-upsell / top-up / own-key), with the wrong CTA ("Get Prime" vs the real "Try for $3.99 ›")
+and a missing `.ooc-foot` ("$7.99 next month onwards."); rebuilt all three, and documented WHY mode 3 keeps the
+plain left-aligned layout (no credit number to lead with, so the centred offer treatment would borrow drama it
+hasn't earned). **Composer** — the placeholder isn't one string: it ROTATES through 10 real example prompts
+before the first message, then settles on "Ask BlueAI anything"; my specimen showed the post-conversation text
+as the empty state, collapsing a deliberate two-phase behaviour into one. Also missed the send button's THIRD
+state entirely (`.stop`, a filled square while a reply streams — one button, two jobs). All rebuilt from source.
+Deduped as a side effect: the modal-kit specimen and OOC mode 3 had become the same card, so the kit specimen
+now shows the **Telegram** connect modal — the surface `.tgm-*` is actually named for — with its real 2-step
+footer, `.tgm-label`/`.tgm-input`/`.tgm-step`/`.tgm-cta`.
+**3 usability bugs, all real:** (1) every sidebar nav link navigated to the PRODUCT instead of scrolling. Root
+cause: I'd copied `<base href="/blueai-desktop/">` from index.html, and a `<base>` re-bases FRAGMENT links too —
+so `#tokens` resolved to `/blueai-desktop/#tokens`, which the server answers with the directory index. Removed
+it (this page's paths are all same-directory relative, so it never needed one) and added `scroll-margin-top` so
+jumps clear the new sticky bar. (2) Theme choice didn't survive reload — now persisted in localStorage, both
+axes independently. (3) The theme toggles were in the page header, so switching meant scrolling to the top every
+time — moved into a `position:sticky` bar with a blur backdrop, plus an amber dot when a theme is light so the
+current state reads at a glance. Coverage rose 233→**247/330 (75%)** purely from documenting real states that
+had been collapsed. Fidelity harness re-run: still 0 real mismatches.
+— Why: the icons audit taught "a stand-in is a lie with good intentions" about GLYPHS; this is the same lesson
+about COPY and STATES, which are bigger lies because they're the part a developer copies verbatim. The
+generalisable rule now proven three times: for a design-system specimen, anything I can write from imagination
+(copy, state count, which classes participate) is exactly the part I must read from source instead. Also worth
+naming: two of the three usability bugs came from copying a pattern out of the product (`<base href>`) into a
+document where it meant something different — inheriting a solution without inheriting its problem.
 2026-08-01 — /blueai-desktop — **Independent re-audit (new check) + gaps closed. Coverage 222→233/330 (71%),
 every component family now has a section.** Also owned a numbering drift honestly: the original plan was
 Phase 1 extract → Phase 2 build → **Phase 3 "fill it"**; what I later labelled Phase 3 (shell) and Phase 4

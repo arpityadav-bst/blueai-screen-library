@@ -3,7 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <base href="/blueai-desktop/" />
+  <!-- NO <base href> here, deliberately. index.html sets one so its relative asset paths resolve at the
+       clean /blueai-desktop URL — but a <base> also re-bases FRAGMENT links, so this page's sidebar
+       "#tokens" resolved to "/blueai-desktop/#tokens", which the server answers with the directory index
+       (index.html). Every nav click bounced you into the prototype instead of scrolling. All of this page's
+       own paths are same-directory relative, so it needs no base at all. -->
   <title>BlueAI Modern Terminal — Design System</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -52,15 +56,23 @@
     .sg-nav a:hover { background: var(--sg-line); color: var(--sg-ink); }
 
     /* --- main --- */
-    .sg-main { padding: 26px 30px 120px; min-width: 0; }
-    .sg-head { display: flex; align-items: flex-start; gap: 16px; flex-wrap: wrap; padding-bottom: 20px; margin-bottom: 8px; border-bottom: 1px solid var(--sg-line); }
+    .sg-main { padding: 0 30px 120px; min-width: 0; }
+    .sg-head { display: flex; align-items: flex-start; gap: 16px; flex-wrap: wrap; padding: 22px 0 20px; margin-bottom: 8px; border-bottom: 1px solid var(--sg-line); }
     .sg-h1 { font-size: 21px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 6px; }
     .sg-lede { font-size: 12px; line-height: 1.65; color: var(--sg-ink-2); max-width: 66ch; }
     .sg-lede code { background: var(--sg-code-bg); border: 1px solid var(--sg-line); border-radius: 4px; padding: 1px 5px; font-size: 11px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
-    .sg-toggles { margin-left: auto; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
-    .sg-tbtn { display: flex; align-items: center; gap: 7px; border: 1px solid var(--sg-line-2); background: var(--sg-panel); color: var(--sg-ink); font-family: inherit; font-size: 11px; font-weight: 600; padding: 8px 13px; border-radius: 8px; cursor: pointer; white-space: nowrap; transition: border-color 0.14s, background 0.14s; }
+    /* Theme controls are STICKY at the top of the scrolling column — you switch dark/light constantly
+       while reviewing, and having to scroll back up for it every time made the page tiring to use. */
+    .sg-toggles { position: sticky; top: 0; z-index: 20; display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+      margin: 0 -30px 0; padding: 10px 30px; background: color-mix(in srgb, var(--sg-bg) 88%, transparent);
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-bottom: 1px solid var(--sg-line); }
+    .sg-tbtn { display: flex; align-items: center; gap: 7px; border: 1px solid var(--sg-line-2); background: var(--sg-panel); color: var(--sg-ink); font-family: inherit; font-size: 11px; font-weight: 600; padding: 7px 12px; border-radius: 8px; cursor: pointer; white-space: nowrap; transition: border-color 0.14s, background 0.14s; }
     .sg-tbtn:hover { border-color: var(--sg-accent); }
-    .sg-tbtn i { width: 8px; height: 8px; border-radius: 50%; background: var(--sg-accent); flex-shrink: 0; }
+    .sg-tbtn i { width: 8px; height: 8px; border-radius: 50%; background: var(--sg-accent); flex-shrink: 0; transition: background 0.14s; }
+    .sg-tbtn.is-light i { background: #e6b84a; }
+    .sg-togglabel { font-size: 10px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; color: var(--sg-ink-3); margin-right: 2px; }
+    /* anchor targets must clear the sticky bar when jumped to */
+    .sg-sec { scroll-margin-top: 62px; }
 
     .sg-sec { margin-top: 40px; scroll-margin-top: 18px; }
     .sg-sech { font-size: 15px; font-weight: 700; letter-spacing: -0.2px; padding-bottom: 9px; border-bottom: 1px solid var(--sg-line); margin-bottom: 4px; }
@@ -156,6 +168,12 @@
   </nav>
 
   <main class="sg-main">
+    <div class="sg-toggles">
+      <span class="sg-togglabel">Theme</span>
+      <button class="sg-tbtn" id="sgTheme" type="button"><i></i><span>Specimens: dark</span></button>
+      <button class="sg-tbtn" id="sgPage" type="button"><i></i><span>Page: dark</span></button>
+    </div>
+
     <header class="sg-head">
       <div>
         <div class="sg-h1">Modern Terminal — Design System</div>
@@ -165,10 +183,6 @@
           re-implemented here, so this page cannot silently drift from what ships. Token values are read
           live via <code>getComputedStyle</code> rather than typed in.
         </p>
-      </div>
-      <div class="sg-toggles">
-        <button class="sg-tbtn" id="sgTheme" type="button"><i></i><span>Specimens: dark</span></button>
-        <button class="sg-tbtn" id="sgPage" type="button"><i></i><span>Page: dark</span></button>
       </div>
     </header>
 
@@ -398,24 +412,51 @@
       <p class="sg-secnote">
         <code>.bai-q</code> is a <strong><code>&lt;textarea rows="1"&gt;</code></strong>, not an input — it grows
         with content, which is why the bar is a flex column rather than a fixed-height row. The
-        <code>&rsaquo;</code> prompt glyph is a terminal cue, and the send button is only tinted accent once
-        there's something to send.
+        <code>&rsaquo;</code> prompt glyph is a terminal cue.
+        <br /><br />
+        <strong>The placeholder changes job over the conversation's life.</strong> Before the first message it
+        <em>rotates</em> through 10 real example prompts (starting <code>"Get things done in your apps…"</code>)
+        — it's onboarding. Once a conversation is under way it settles on one short generic cue,
+        <code>"Ask BlueAI anything"</code>, because an ongoing chat doesn't need re-explaining every empty turn.
       </p>
       <div class="sg-spec">
-        <div class="sg-spechead"><span class="sg-cls">.bai-inputbar</span> <span class="sg-cls">.bai-prompt</span> <span class="sg-cls">.bai-q</span> <span class="sg-cls">.bai-send</span><span class="sg-role">Empty (placeholder) and with content. Send is <code>.disabled</code> until there's text.</span></div>
+        <div class="sg-spechead"><span class="sg-cls">.bai-inputbar</span> <span class="sg-cls">.bai-prompt</span> <span class="sg-cls">.bai-q</span> <span class="sg-cls">.bai-send</span><span class="sg-role">All three real states, top to bottom: fresh chat (rotating example hint), ongoing chat (static cue), and filled. Send goes <code>.disabled</code> → enabled as text appears.</span></div>
+        <div class="sg-canvas bai-scope sg-col" style="padding:14px 0;">
+          <span class="sg-lbl">Fresh chat — rotating hint (first of 10)</span>
+          <div class="bai-inputbar">
+            <div class="bai-inputrow">
+              <span class="bai-prompt">&rsaquo;</span>
+              <textarea class="bai-q" rows="1" placeholder="Get things done in your apps&hellip;"></textarea>
+              <button class="bai-send disabled" type="button" aria-label="Send message"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/></svg></button>
+            </div>
+          </div>
+          <span class="sg-lbl">Ongoing chat — static cue</span>
+          <div class="bai-inputbar">
+            <div class="bai-inputrow">
+              <span class="bai-prompt">&rsaquo;</span>
+              <textarea class="bai-q" rows="1" placeholder="Ask BlueAI anything"></textarea>
+              <button class="bai-send disabled" type="button" aria-label="Send message"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/></svg></button>
+            </div>
+          </div>
+          <span class="sg-lbl">Filled — send enabled</span>
+          <div class="bai-inputbar">
+            <div class="bai-inputrow">
+              <span class="bai-prompt">&rsaquo;</span>
+              <textarea class="bai-q" rows="1">Find redeem codes for my game</textarea>
+              <button class="bai-send" type="button" aria-label="Send message"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/></svg></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-send.stop</span><span class="sg-role">The third send state, easy to miss: while a reply is streaming the same button becomes a <strong>stop</strong> control — filled square glyph, <code>aria-label</code> flips to "Stop". One button, two jobs, so the primary action is always in the same place.</span></div>
         <div class="sg-canvas bai-scope sg-col" style="padding:14px 0;">
           <div class="bai-inputbar">
             <div class="bai-inputrow">
               <span class="bai-prompt">&rsaquo;</span>
               <textarea class="bai-q" rows="1" placeholder="Ask BlueAI anything"></textarea>
-              <button class="bai-send disabled" type="button" aria-label="Send"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
-            </div>
-          </div>
-          <div class="bai-inputbar">
-            <div class="bai-inputrow">
-              <span class="bai-prompt">&rsaquo;</span>
-              <textarea class="bai-q" rows="1">Redeem today's codes for me</textarea>
-              <button class="bai-send" type="button" aria-label="Send"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
+              <button class="bai-send stop" type="button" aria-label="Stop"><svg width="14" height="14" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/></svg></button>
             </div>
           </div>
         </div>
@@ -762,18 +803,23 @@
       </div>
 
       <div class="sg-spec">
-        <div class="sg-spechead"><span class="sg-cls">.bai-tgmodal-card</span> <span class="sg-cls">.tgm-*</span><span class="sg-role">Modal kit: <code>.tgm-head</code> (title + close, optional icon chip), <code>.tgm-body</code>, <code>.tgm-hint</code>, actions.</span></div>
+        <div class="sg-spechead"><span class="sg-cls">.bai-tgmodal-card</span> <span class="sg-cls">.tgm-*</span><span class="sg-role">The modal kit, shown on the surface it's named for (tgm = the Telegram connect modal): <code>.tgm-head</code> (title + close, optional icon chip) · <code>.tgm-body</code> · <code>.tgm-label</code> + <code>.tgm-input</code> · <code>.tgm-hint</code> · <code>.tgm-foot</code> with <code>.tgm-step</code> and <code>.tgm-cta</code>. A multi-step modal keeps its step count in the footer, next to the action that advances it.</span></div>
         <div class="sg-canvas bai-scope" style="align-items:flex-start;">
-          <div class="bai-tgmodal-card" style="max-width:300px;">
+          <div class="bai-tgmodal-card" style="max-width:320px;">
             <div class="tgm-head">
-              <span class="tgm-ic-acc" data-icon="key" data-size="12"></span>
-              <span class="tgm-title">Add your own key</span>
+              <span class="tgm-ic" data-icon="telegram" data-size="12"></span>
+              <span class="tgm-title">Connect Telegram</span>
               <button class="tgm-close" type="button" aria-label="Close" data-icon="close" data-size="14"></button>
             </div>
             <div class="tgm-body">
-              <p>You've used your available AI credits. Add your own API key to continue using BlueAI.</p>
-              <div class="bai-modalact-group"><button class="bai-modalact primary" type="button">Add API key</button></div>
-              <span class="tgm-hint center"><span data-icon="info" data-size="12" style="display:flex;"></span>You can manage your key later in Settings.</span>
+              <p>Create a bot in Telegram and link it to BlueAI</p>
+              <div class="tgm-label">Paste your bot token</div>
+              <input class="tgm-input" type="text" placeholder="Paste token from Telegram" />
+              <span class="tgm-hint"><span data-icon="info" data-size="12" style="display:flex;"></span>BlueAI only uses this to send your messages.</span>
+            </div>
+            <div class="tgm-foot">
+              <span class="tgm-step">Step 1 of 2</span>
+              <button class="tgm-cta" type="button">Continue</button>
             </div>
           </div>
         </div>
@@ -1030,20 +1076,51 @@
         session (sign in, sign out), the offer card interrupts a single action. Logout uses this full-app
         treatment rather than a small inline confirm because it affects the whole session, not one item.
       </p>
+      <p class="sg-secnote">
+        The sign-in gate is a <strong>four-step flow</strong>, not one card:
+        <code>claim → browser → signing → done</code>. Only the first step is an <em>offer</em>, and it gets a
+        <code>.lg-offer</code> modifier on the card for it (bigger credit figure, tighter gaps, a glow on the
+        CTA); the other three are <em>status</em> steps and share the plain card. Copy below is verbatim from
+        the product — this is the real flow, not an illustration of one.
+      </p>
       <div class="sg-spec">
-        <div class="sg-spechead"><span class="sg-cls">.bai-logingate-card</span> <span class="sg-cls">.lg-*</span><span class="sg-role">Sign-in gate: icon, gradient credit figure, heading/subtext group, divider, CTA, footnote link.</span></div>
+        <div class="sg-spechead"><span class="sg-cls">.bai-logingate-card.lg-offer</span><span class="sg-role">Step 1 — the offer. Leads with the credit figure (46px under <code>.lg-offer</code>), then the value line, then a <code>.lg-check</code> reassurance, then the CTA and terms.</span></div>
         <div class="sg-canvas bai-scope" style="align-items:flex-start;">
-          <div class="bai-logingate-card" style="animation:none;">
-            <span class="lg-icon" data-icon="key" data-size="20"></span>
-            <div class="lg-title-group">
-              <div class="lg-h">Sign in to continue</div>
-              <div class="lg-s">Your credits and chats follow your account.</div>
-            </div>
+          <div class="bai-logingate-card lg-offer" style="animation:none;">
+            <button class="lg-close" type="button" aria-label="Close" data-icon="close" data-size="13"></button>
+            <div class="lg-s">You need AI Credits to use BlueAI</div>
             <div class="lg-div"></div>
             <div class="lg-credits">500</div>
-            <div class="lg-s">free AI credits to start</div>
-            <button class="lg-cta" type="button">Continue with Google</button>
-            <span class="lg-link">Maybe later</span>
+            <div class="lg-title-group"><div class="lg-h">Free AI Credits</div><div class="lg-s">on your first login</div></div>
+            <div class="lg-check" data-icon="check" data-size="13"><span>Enough for ~10 tasks</span></div>
+            <div class="lg-div"></div>
+            <button class="lg-cta" type="button">Sign in to claim &rsaquo;</button>
+            <a class="lg-link">Terms &amp; Conditions &rsaquo;</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-logingate-card</span> <span class="sg-cls">.lg-icon</span> <span class="sg-cls">.lg-link-warn</span> <span class="sg-cls">.lg-icon-ok</span><span class="sg-role">Steps 2–4 — status, not offer. Note <code>.lg-link-warn</code> (amber) for the "stuck?" escape hatch, the reused <code>.bai-spin</code> at 26px for the waiting step, and <code>.lg-icon-ok</code> (green) for success.</span></div>
+        <div class="sg-canvas bai-scope" style="align-items:flex-start;gap:14px;">
+          <div class="bai-logingate-card" style="animation:none;">
+            <span class="lg-icon" data-icon="globe" data-size="20"></span>
+            <div class="lg-h">Check your browser</div>
+            <div class="lg-s">Finish logging in from your web browser</div>
+            <div class="lg-div"></div>
+            <a class="lg-link lg-link-warn">Not seeing the browser tab?</a>
+            <button class="lg-cta" type="button">Try again</button>
+          </div>
+          <div class="bai-logingate-card" style="animation:none;">
+            <span class="bai-spin" style="width:26px;height:26px;border-width:3px;"></span>
+            <div class="lg-h">Signing in&hellip;</div>
+            <div class="lg-s">Please wait while we complete your sign-in</div>
+          </div>
+          <div class="bai-logingate-card" style="animation:none;">
+            <span class="lg-icon lg-icon-ok" data-icon="check" data-size="20"></span>
+            <div class="lg-h">Logged in</div>
+            <div class="lg-s">Welcome back!</div>
+            <button class="lg-cta" type="button">Continue</button>
           </div>
         </div>
       </div>
@@ -1061,12 +1138,19 @@
         </div>
       </div>
 
+      <p class="sg-secnote">
+        The out-of-credits modal has <strong>three modes</strong>, chosen by region and plan — and they are not
+        cosmetic variants, they're different asks. Two get the <code>.ooc-offer</code> treatment (recentred,
+        led by the big gradient figure); the third stays a plain left-aligned instruction because it has no
+        number to lead with. Copy below is verbatim.
+      </p>
       <div class="sg-spec">
-        <div class="sg-spechead"><span class="sg-cls">.ooc-offer</span> <span class="sg-cls">.ooc-alert</span> <span class="sg-cls">.ooc-num</span><span class="sg-role">Out-of-credits offer. A <code>.bai-tgmodal-card</code> modifier that recentres the modal and leads with the big gradient figure; the alert strip above it names the trigger the offer headline doesn't.</span></div>
+        <div class="sg-spechead"><span class="sg-cls">.ooc-offer</span> <span class="sg-cls">.ooc-alert</span> <span class="sg-cls">.ooc-credlabel</span> <span class="sg-cls">.ooc-link</span> <span class="sg-cls">.ooc-foot</span><span class="sg-role">Mode 1 — <strong>Prime upsell</strong> (free account, Prime region). The <code>.ooc-alert</code> strip names the trigger the offer headline doesn't, and <code>.ooc-foot</code> carries the follow-on price.</span></div>
         <div class="sg-canvas bai-scope" style="align-items:flex-start;">
           <div class="bai-tgmodal-card ooc-offer">
             <div class="ooc-alert" data-icon-warn>Not enough credits</div>
             <div class="tgm-body">
+              <button class="lg-close" type="button" aria-label="Close" data-icon="close" data-size="13"></button>
               <div class="lg-s">BlueAI runs on credits</div>
               <div class="lg-h">Get AI Credits with Prime</div>
               <div class="lg-div"></div>
@@ -1074,7 +1158,42 @@
               <div class="lg-title-group"><div class="ooc-credlabel">AI Credits</div><div class="lg-s">every month</div></div>
               <div class="ooc-link">View all benefits &rsaquo;</div>
               <div class="lg-div"></div>
-              <button class="bai-modalact primary" type="button">Get Prime</button>
+              <button class="bai-modalact primary" type="button">Try for $3.99 &rsaquo;</button>
+              <div class="ooc-foot">$7.99 next month onwards.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.ooc-num</span><span class="sg-role">Mode 2 — <strong>top-up</strong> (Prime member, balance spent). Leads with the spent balance itself: <code>.ooc-num</code> pairs the ✦ sparkle with a <code>.lg-credits</code> zero, centred on a shared horizontal line rather than a text baseline.</span></div>
+        <div class="sg-canvas bai-scope" style="align-items:flex-start;">
+          <div class="bai-tgmodal-card ooc-offer">
+            <div class="tgm-body">
+              <button class="lg-close" type="button" aria-label="Close" data-icon="close" data-size="13"></button>
+              <div class="ooc-num"><span class="spark">✦</span><span class="lg-credits">0</span></div>
+              <div class="lg-div"></div>
+              <div class="lg-h">Out of credits</div>
+              <p>You’ve used all your AI credits. Top up to continue chatting and complete tasks.</p>
+              <button class="bai-modalact primary" type="button">Top Up<span data-icon="external" data-size="13" style="display:flex;"></span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-tgmodal-card</span> (no <code>.ooc-offer</code>) <span class="sg-cls">.tgm-ic-acc</span> <span class="sg-cls">.tgm-hint.center</span><span class="sg-role">Mode 3 — <strong>own key</strong> (Prime unavailable in this region). Deliberately <em>keeps</em> the plain left-aligned instruction layout: there's no credit number to lead with, so the centred offer treatment would be borrowing drama it hasn't earned.</span></div>
+        <div class="sg-canvas bai-scope" style="align-items:flex-start;">
+          <div class="bai-tgmodal-card">
+            <div class="tgm-head">
+              <span class="tgm-ic-acc" data-icon="key" data-size="12"></span>
+              <span class="tgm-title">Add your own key</span>
+              <button class="tgm-close" type="button" aria-label="Close" data-icon="close" data-size="14"></button>
+            </div>
+            <div class="tgm-body">
+              <p>You’ve used your available AI credits. Add your own API key to continue using BlueAI.</p>
+              <div class="bai-modalact-group"><button class="bai-modalact primary" type="button">Add API key</button></div>
+              <span class="tgm-hint center"><span data-icon="info" data-size="12" style="display:flex;"></span>You can manage your key later in Settings.</span>
             </div>
           </div>
         </div>
@@ -1500,23 +1619,36 @@
     }).join('');
   }
 
-  // ---- theme toggles: specimens and page chrome switch independently, so you can review
-  //      light specimens without a white page burning your eyes at night. ----
-  var specDark = true, pageDark = true;
+  // ---- theme toggles: specimens and page chrome switch independently, so you can review light
+  //      specimens without a white page burning your eyes at night. Both PERSIST in localStorage —
+  //      re-picking your theme after every reload made the page annoying to live with. ----
+  var STORE = 'baiSgTheme';
+  var saved = {};
+  try { saved = JSON.parse(localStorage.getItem(STORE) || '{}') || {}; } catch (e) { saved = {}; }
+  var specDark = saved.spec !== 'light';
+  var pageDark = saved.page !== 'light';
+  function persist() {
+    try { localStorage.setItem(STORE, JSON.stringify({ spec: specDark ? 'dark' : 'light', page: pageDark ? 'dark' : 'light' })); } catch (e) {}
+  }
   function applySpecTheme() {
     document.querySelectorAll('.bai-scope').forEach(function (el) { el.classList.toggle('light', !specDark); });
-    document.querySelector('#sgTheme span').textContent = 'Specimens: ' + (specDark ? 'dark' : 'light');
+    var b = document.getElementById('sgTheme');
+    b.querySelector('span').textContent = 'Specimens: ' + (specDark ? 'dark' : 'light');
+    b.classList.toggle('is-light', !specDark);
     renderTokens();
   }
-  document.getElementById('sgTheme').addEventListener('click', function () { specDark = !specDark; applySpecTheme(); });
-  document.getElementById('sgPage').addEventListener('click', function () {
-    pageDark = !pageDark;
+  function applyPageTheme() {
     document.body.classList.toggle('sg-lightpage', !pageDark);
-    document.querySelector('#sgPage span').textContent = 'Page: ' + (pageDark ? 'dark' : 'light');
-  });
+    var b = document.getElementById('sgPage');
+    b.querySelector('span').textContent = 'Page: ' + (pageDark ? 'dark' : 'light');
+    b.classList.toggle('is-light', !pageDark);
+  }
+  document.getElementById('sgTheme').addEventListener('click', function () { specDark = !specDark; applySpecTheme(); persist(); });
+  document.getElementById('sgPage').addEventListener('click', function () { pageDark = !pageDark; applyPageTheme(); persist(); });
 
   renderScales();
   applySpecTheme();
+  applyPageTheme();
 </script>
 </body>
 </html>
