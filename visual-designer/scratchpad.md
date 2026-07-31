@@ -5,6 +5,44 @@ resolved. Promoted to decisions.md / taste.md at audit passes, then wiped.
 Format: `YYYY-MM-DD HH:mm — <file> — <what changed> — Why: <one phrase>`
 
 --- Pending audit entries ---
+2026-08-01 — /blueai-desktop — **14-agent workflow audit + drift detector built + 3 usability bugs fixed.**
+Designer asked for a full sweep with multiple agents, independent audits, and a layman report. Ran a workflow:
+6 specimen families audited in parallel, each finding then adversarially re-verified by a skeptic agent
+instructed to default to REFUTE, plus 2 deep analyses (scales, VDA operating model). 61 confirmed findings —
+28 high / 21 medium / 12 low. The login-gate family came back **0 findings**, independently confirming the fix
+I'd made an hour earlier from the designer's screenshot.
+**Built ds-drift-check.js** — the real deliverable. Invented copy has now shipped twice and BOTH times only a
+human comparing screenshots caught it, which means the process had no mechanical defence against its most
+common defect. The check fails on: specimen copy absent from index.html (scoped to button labels +
+placeholders — the copy a developer transcribes verbatim, and precisely what was wrong both times), coverage
+regression below a floor, unknown icon names, re-declared icon literals, and the guide restyling `.bai-*`
+itself; it also REPORTS icon duplication and dead CSS without failing (deleting a rule is a product decision).
+It earned itself immediately: on first run it found **4 more invented-copy cases nobody had reported** — the
+feedback chips (real: Inaccurate / Unhelpful / Took too long / Other), both option rows, and an invented
+"SAVES CREDITS" badge whose real counterpart is "★ Recommended" on a *different* option group. Also had to fix
+the detector's own first version: it flattened button text, so a button wrapping child elements produced a
+concatenation matching nothing — 4 false positives. Now compares text segments individually.
+**Two overclaims of MY OWN, both found by the audit rather than by me** — the more useful half of the day:
+(1) `blueai-icons.js`'s header said "neither file keeps its own copy." FALSE — only 10 of 29 paths are consumed
+via `BAI_ICONS`; **23 of 29 still exist as inline literals** in index.html (check ×5, warn ×5, close/gear/help/
+clock ×3). Most sit in static markup that cannot reference a JS variable without changing how those icons
+render, so full dedup is a product refactor, not a docs fix. Corrected the header to state the real scope and
+added drift-check §6 to keep the number visible. A false claim inside the file whose job is preventing false
+claims is the worst place for one. (2) The token swatch list (`GROUPS`) is hand-authored — values were live but
+NAMES were not, so a newly added `--bai-*` token would have been invisible on the page forever (46 vs 46 clean
+today, by luck). The page now diffs declared-vs-listed and prints a warning for any it forgot — the same
+self-revealing property `TYPE_ROLES` already had.
+**Deleted 5 dead `.aic-*` rules** left over from my own AI Credits rebuild — dead rules inflate the coverage
+denominator, which makes "what still needs documenting" mix real gaps with garbage. Coverage 247/330 → 250/325
+(77%), improving on both axes.
+**3 usability bugs** (all real, all mine): `<base href>` copied from index.html re-based FRAGMENT links so every
+sidebar click left the guide for the product; theme choice didn't survive reload; toggles sat in the page header
+of a 16,000px document. Fixed with removal + localStorage + a sticky bar.
+— Why: the workflow's value wasn't volume, it was INDEPENDENCE. Six agents with no stake in my prior claims
+found two places where I had documented my own work more favourably than the code supported. That's a class of
+error self-review structurally cannot catch — I was the one who wrote both claims and believed them. Worth
+keeping as a pattern: after building any artifact that makes claims about itself, have something that didn't
+build it check the claims.
 2026-08-01 — /blueai-desktop — **Designer caught INVENTED COPY in the style guide + 3 usability bugs.** They
 screenshotted the real product login gate against my specimen and asked "is there a specific reason we kept it
 different, or did we miss something?" — answer: **we missed something.** Not intentional. Same species as the
