@@ -21,7 +21,7 @@ re-prioritized.
 **Practical effect:** Gate 8 (taste.md) now reviews new work against blueai-desktop's OWN
 design system — **`public/blueai-desktop/style-guide.html`** (live specimens, built from the
 product's own stylesheet + icon set; blueai-desktop had no documented DS at all before this
-pivot) + taste **rules 38-41** (the cross-surface craft rules) — not the marketing site's rules 1–37
+pivot) + taste **rules 38-44** (the cross-surface craft rules) — not the marketing site's rules 1–37
 (preserved on record, not currently load-bearing).
 
 ---
@@ -47,7 +47,7 @@ NOT load WSUP's or now.gg's notebook for blueAI work — that's cross-contaminat
 **Mandatory reads on first blueAI touch, in this order** (craft = shared `../agents/vda-core/`; notebook = blueAI's `visual-designer/`):
 1. `../agents/vda-core/agent.md` — re-anchor identity (think like a UX designer)
 2. `../agents/vda-core/QUALITY-GATES.md` — 8 gates + dual-cadence + Gate 6.5 + routing table
-3. `visual-designer/taste.md` — read the SCOPE PIVOT note at the top first, then **rules 38-41**
+3. `visual-designer/taste.md` — read the SCOPE PIVOT note at the top first, then **rules 38-44**
    (this list said "rule 38" while 39, 40 and 41 were already live — including 41, the one the
    2026-08-01 switcher bug turned on); rules 1–37 are dormant-surface reference
 3b. `public/blueai-desktop/style-guide.html` — blueai-desktop's own DS reference (tokens,

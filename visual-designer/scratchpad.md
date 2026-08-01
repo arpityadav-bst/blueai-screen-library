@@ -5,6 +5,35 @@ resolved. Promoted to decisions.md / taste.md at audit passes, then wiped.
 Format: `YYYY-MM-DD HH:mm — <file> — <what changed> — Why: <one phrase>`
 
 --- Pending audit entries ---
+2026-08-01 (cont. 5) — blueai-desktop — designer raised THREE UX findings, all fixed:
+(1) REDUNDANT TITLES: Skills/Jobs/Scheduled repeated the active tab's own name as a grey heading below
+the tab bar (the shared #baiMainTitle simply echoes the mode name outside chat). Rule 38: the tab
+already says where you are; the row was a pure repeat costing ~30px of a 593px drawer. The title row
+now hides on non-chat tabs; chat keeps it (there it carries real state — conversation title + history
+dropdown + new-chat).
+(2) CTA CONSISTENCY: creating an item is the SAME operation on every list screen, but Skills docked a
+full-width "Build a custom skill" bar at the bottom while Scheduled and the My Skills subpane used a
+top-right pill. Unified on the pill: Skills now has "+ New skill" top-right (same id, same handler, same
+row position as "+ New task"); the sticky bar and its CSS deleted. Reasoning recorded in the specimen:
+docked full-width CTAs are reserved for a flow's single COMMITMENT action (login gate, OOC) — list
+management gets the pill; the bar also permanently spent ~60px promoting a secondary action, and its
+removal + the title-row removal together let the whole category list fit without scrolling.
+(3) NESTED RADII — designer taught the rule verbatim: "containers within containers, the inner radius
+should be smaller, otherwise the curves mismatch and don't feel parallel." Codified as TASTE RULE 44
+(concentric: r_inner = r_outer − inset; applies only where curves MEET — inner elements deeper than the
+outer radius are exempt, which keeps the rule from outlawing every card in a panel; 50% circles exempt).
+Built a runtime sweep (radius-nesting-audit.js, committed beside the drift check) — it found exactly TWO
+real product mismatches: the Settings dark/light seg (the designer's own example: inner pill 6px =
+container 6px at 2px inset → r-xs 4px) and the skill-create method switcher (selected tab 8px =
+container 8px at 3px inset → r-xs) — WHICH I REBUILT THIS MORNING and shipped with the mismatch anyway:
+the rule wasn't written down, so nothing fired. Both fixed with existing tokens; sweep re-run clean
+(remaining hits are out-of-zone false positives; the tool's filter tightened to the perceptual rule).
+Verified: drift check PASS all 11; runtime clean everywhere; chat keeps its title row; the new pill
+opens the create form; screenshots reviewed. — Why: (1)+(2) are rule 38 and the one-operation-one-
+location principle wearing new clothes; (3) is a genuinely NEW taste rule taught by the designer, and
+its first sweep caught a same-day regression in my own rebuild — the fastest rule-to-catch cycle this
+notebook has recorded.
+
 2026-08-01 (cont. 4) — src/app/page.tsx (Screen Library index at /) — designer: "should we also
 reorganise and reevaluate this index page?" Yes — it was the last surface still asserting the pre-pivot
 world, and it is the FRONT DOOR: the active surface sat sixth of nine, described as a "Standalone canvas

@@ -1,5 +1,5 @@
 # blueAI — Taste
-Last updated: 2026-08-01 (+rules 42 (choice-control copy) & 43 (deliberate one-offs); Q2/Q3 answers added to 38-40 per the promotion rule; rule 41 restated as a MECHANISM — non-layout vs layout-affecting channels — after an independent audit judged the first widening had generalised the title but not the trigger; cross-linked to rule 38; rule 39's stale radius count corrected). 2026-07-25 (SCOPE PIVOT, designer directive — see note below. +rule 38 (divider redundancy),
+Last updated: 2026-08-01 (+rule 44 (concentric nested radii, designer-taught); +rules 42 (choice-control copy) & 43 (deliberate one-offs); Q2/Q3 answers added to 38-40 per the promotion rule; rule 41 restated as a MECHANISM — non-layout vs layout-affecting channels — after an independent audit judged the first widening had generalised the title but not the trigger; cross-linked to rule 38; rule 39's stale radius count corrected). 2026-07-25 (SCOPE PIVOT, designer directive — see note below. +rule 38 (divider redundancy),
 now a primary cross-surface rule rather than a marketing-site-only exception.)
 
 > **SCOPE PIVOT (2026-07-25, designer directive):** the marketing site (rules 1–37 below) and
@@ -10,7 +10,7 @@ now a primary cross-surface rule rather than a marketing-site-only exception.)
 > learning — re-derive nothing if the marketing site resumes) but are no longer what Gate 8 reviews
 > new work against by default. blueai-desktop's own design system is being extracted into
 > `public/blueai-desktop/style-guide.html` (live specimens + tokens, built from
-> `index.html` itself, since none existed anywhere before 2026-07-25) — that file + **rules 38-41**
+> `index.html` itself, since none existed anywhere before 2026-07-25) — that file + **rules 38-44**
 > below are what govern blueai-desktop work now. If the marketing site or /blueai-product ever resume,
 > flip this note back — nothing here needs to be rebuilt, just re-prioritized.
 
@@ -407,6 +407,26 @@ springy bounces) — "a utility assistant, not a toy."
     not flatten deliberate one-offs; the cure for an undocumented one-off is documentation, not merging.
     *(Previously recorded only in a comment beside the token block — designer-taste data stored where no
     design session reads. Promoted here 2026-08-01.)*
+
+44. **Nested rounded corners must be concentric: inner radius = outer radius − inset.** When a rounded
+    element sits inside another rounded element near its corner, equal radii read as non-parallel curves
+    — the inner corner visibly "pokes at" the outer one. The designer's rule, verbatim: "when used
+    together, containers within containers, the round radius of the element inside should be smaller,
+    otherwise the curves mismatch and don't feel parallel." Compute it: `r_inner ≈ r_outer − gap`
+    (a 6px container with 2px padding wants a 4px pill inside). It only applies where curves MEET —
+    once the inner element sits deeper than the outer radius, the corner zones never overlap and any
+    radius is fine, which is what keeps this from outlawing every card in a panel.
+    *(blueai-desktop 2026-08-01: a runtime sweep of every rounded-in-rounded pair found exactly two
+    real product mismatches — the Settings dark/light segmented control (inner pill 6px = container
+    6px; → 4px) and the skill-create method switcher (selected tab 8px = container 8px at 3px inset;
+    → 4px). The switcher had been REBUILT that same day and the mismatch shipped anyway — the rule
+    wasn't written down, so nothing fired. Sweep script: radius-nesting-audit.js beside the drift
+    check.)*
+    *Where else this applies:* chips inside inputs, avatars inside list rows, thumbnails inside cards,
+    a progress fill inside its track — any composed control with visible nested corners.
+    *What would stop it firing:* reading it as a segmented-control rule; it is geometry, and it fires
+    on every rounded-in-rounded pair whose corners approach each other. `border-radius: 50%` circles
+    are exempt — a circle is a shape, not a scale step.
 
 ## Open corrections log
 *SCOPE PIVOT (2026-07-25, designer directive) — superseding the S8 standing scope note below: **the

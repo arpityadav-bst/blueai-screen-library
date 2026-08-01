@@ -320,7 +320,7 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans
 .bai-set-name { font-size: var(--bai-fs-base); color: var(--bai-text-hi); }
 .bai-set-sub { font-size: var(--bai-fs-sm); color: var(--bai-dim); }
 .bai-seg { flex-shrink: 0; display: flex; gap: var(--bai-sp-2); padding: var(--bai-sp-2); background: var(--bai-input-bg); border: 1px solid var(--bai-line-2); border-radius: var(--bai-r-sm); }
-.bai-seg-btn { border: none; background: none; border-radius: var(--bai-r-sm); padding: var(--bai-sp-4) var(--bai-sp-10); font-family: inherit; font-size: var(--bai-fs-sm); color: var(--bai-dim-2); cursor: pointer; transition: background var(--bai-t-150), color var(--bai-t-150); }
+.bai-seg-btn { border: none; background: none; border-radius: var(--bai-r-xs); /* concentric: container is r-sm(6) with 2px padding, so the nested pill is 6-2=4 — equal radii read as non-parallel curves (taste rule 44) */ padding: var(--bai-sp-4) var(--bai-sp-10); font-family: inherit; font-size: var(--bai-fs-sm); color: var(--bai-dim-2); cursor: pointer; transition: background var(--bai-t-150), color var(--bai-t-150); }
 .bai-seg-btn:hover { color: var(--bai-hover-ink); }
 .bai-seg-btn.active { background: var(--bai-accent); color: var(--bai-on-accent); }
 /* Fix #3 (visual review): a quieter selected-state for segmented controls that sit ABOVE a primary
@@ -533,9 +533,11 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans
 .bai-kv-row + .bai-kv-row { border-top: 1px solid var(--bai-line); }
 .bai-kv-row .k { color: var(--bai-dim); }
 .bai-kv-row .v { color: var(--bai-text-strong); }
-.bai-sticky-cta { flex-shrink: 0; padding: var(--bai-sp-12) var(--bai-sp-14); border-top: 1px solid var(--bai-line); background: var(--bai-panel); }
-.bai-sticky-cta button { width: 100%; border: none; background: var(--bai-accent); color: var(--bai-on-accent); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: var(--bai-fs-sm); font-weight: var(--bai-fw-700); padding: var(--bai-sp-11); border-radius: var(--bai-r-md); cursor: pointer; transition: filter var(--bai-t-150); }
-.bai-sticky-cta button:hover { filter: brightness(1.12); }
+/* .bai-sticky-cta deleted with the bottom bar it styled (2026-08-01, designer). Creating an item in
+   a list is the same operation on every tab, so it gets the same affordance in the same place: the
+   top-right .bai-list-add pill that Scheduled and the My Skills subpane already use. The full-width
+   docked bar also permanently spent ~60px of a 593px drawer to promote a secondary action; docked
+   CTAs are reserved for a flow's single commitment action (login gate, OOC), not list management. */
 /* Redesigned from flat text + thin underline into icon+label segmented pills (PM: "better in terms of
    aesthetics and navigation in terms of modern UX") — active tab gets a solid filled pill instead of a
    2px underline, matching the segmented-control language modern tools (Linear, Notion, Vercel) use. */
@@ -543,7 +545,7 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans
    control — it has to read as attached to the tabs, not as a floating caption over the form. The 13px gap
    moved onto the hint instead, so the pair sits tight together and loose from what follows. */
 .bai-create-tabs { flex-shrink: 0; display: flex; gap: var(--bai-sp-4); padding: var(--bai-sp-3); background: var(--bai-input-bg); border: 1px solid var(--bai-line-2); border-radius: var(--bai-r-md); margin-bottom: var(--bai-sp-6); }
-.bai-create-tab { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--bai-sp-4); text-align: center; border: none; background: none; color: var(--bai-dim); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: var(--bai-fs-sm); font-weight: var(--bai-fw-600); line-height: var(--bai-lh-125); padding: var(--bai-sp-8) var(--bai-sp-4); border-radius: var(--bai-r-md); cursor: pointer; transition: background var(--bai-t-150), color var(--bai-t-150); }
+.bai-create-tab { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--bai-sp-4); text-align: center; border: none; background: none; color: var(--bai-dim); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: var(--bai-fs-sm); font-weight: var(--bai-fw-600); line-height: var(--bai-lh-125); padding: var(--bai-sp-8) var(--bai-sp-4); border-radius: var(--bai-r-xs); /* concentric: the tabs container is r-md(8) with 3px padding -> nested tab <= 5; equal radii were flagged by the designer's nesting rule (taste 44) */ cursor: pointer; transition: background var(--bai-t-150), color var(--bai-t-150); }
 .bai-create-tab:hover { color: var(--bai-text-hi); }
 .bai-create-tab .ic { display: flex; }
 /* No font-weight change on selection — deliberately. The selected tab already carries a solid accent
@@ -749,8 +751,11 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans
 .bai-ui.wide .bai-strip, .bai-ui.wide #baiSettingsBtn, .bai-ui.wide #baiNewBtn, .bai-ui.wide .bai-title-ar, .bai-ui.wide #baiHeadHelpWrap, .bai-ui.wide #baiHeadAcctWrap { display: none; }   /* wide: sidebar owns modes/new-chat/recents/settings/help/account; header keeps logo + "BlueAI" brand */
 .bai-main-title { flex-shrink: 0; display: flex; align-items: center; padding: var(--bai-sp-12) var(--bai-sp-14) var(--bai-sp-6); }   /* title (left) + new-chat icon (right), below the brand header */
 /* non-chat modes: the title is just a plain pane label — recents arrow + new-chat are chat-surface tools */
-.bai-ui.nonchat .bai-title-ar, .bai-ui.nonchat .bai-newchat-btn { display: none; }
-.bai-ui.nonchat .bai-title-btn { pointer-events: none; cursor: default; }
+/* Non-chat tabs: the main-title row is HIDDEN entirely (was: shown with the tab's own name restated
+   as a plain label — the active tab already says where you are, so the row was a pure repeat, taste
+   rule 38, and it cost ~30px of a 593px drawer). Chat keeps the row: there it carries real state
+   (the conversation title + history dropdown + new-chat). */
+.bai-ui.nonchat .bai-main-title { display: none; }
 .bai-main-title .bai-title-btn { flex: 1; min-width: 0; }
 .bai-newchat-btn { margin-left: auto; flex-shrink: 0; }   /* new chat lives at the chat-window's top-right */
 .bai-body { -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 16px); mask-image: linear-gradient(to bottom, transparent 0, #000 16px); }   /* content fades before reaching the title */

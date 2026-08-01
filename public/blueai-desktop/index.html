@@ -170,11 +170,14 @@
                 </div>
                 <div class="bai-pane" id="paneJobs"><div class="bai-stub"><div class="ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" data-bai-icon="taskDone"></svg></div><h4>Jobs</h4><span class="soon">Coming soon</span><p>Running &amp; completed agent runs land here: status, logs, and what was applied to.</p></div></div>
                 <div class="bai-pane" id="paneSkills">
+                  <!-- Create sits top-right, same place as Scheduled's "+ New task" and My Skills' "+ New" -- one
+                       operation, one location. It used to be a full-width bar docked at the bottom, which both
+                       broke that consistency and spent ~60px of drawer height promoting a secondary action. -->
+                  <div class="bai-list-head"><button class="bai-list-add" id="baiSkillCta" type="button">+ New skill</button></div>
                   <div class="bai-search"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-bai-icon="search"></svg><input id="baiSkillSearch" type="text" placeholder="Search skills…" autocomplete="off" spellcheck="false" /><button class="bai-search-clear" id="baiSkillSearchClear" type="button" aria-label="Clear search"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" data-bai-icon="close"></svg></button></div>
                   <div class="bai-list-body" id="baiSkillsList"></div>
                   <div class="bai-scroll" id="baiSkillsScroll"></div>
-                  <div class="bai-sticky-cta"><button id="baiSkillCta" type="button">Build a custom skill</button></div>
-                </div>
+                                  </div>
                 <div class="bai-pane" id="paneScheduled">
                   <!-- CMP-01 (audit, documented content-complexity exception): stays an inline card, not a
                        Subpane, because this is one simple local form (cadence + time) — see openSkillForm's
