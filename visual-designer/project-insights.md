@@ -95,7 +95,8 @@ Last updated: 2026-07-25 (blueai-desktop audit — first blueai-desktop domain-f
     **`/blueai-desktop` is the ACTIVE surface and has its own design system** — `blueai-desktop.css` (the
     tokens + components ARE the DS), `blueai-icons.js` (every glyph named), `style-guide.html` (a live VIEW
     onto them, self-measuring), `ds-drift-check.js` (the gate; run it before saying done). `/moneymaker`
-    never started. `/blueai-product` is dormant alongside the marketing site.
+    WAS built — three variants (Autonomy OS / Mission Control / Capital Shift) at src/app/moneymaker/,
+    arrived in the other-machine sync; dormant. `/blueai-product` is dormant alongside the marketing site.
     - *Old text:* "Standalone DS-UNBOUND experiments: `/blueai-product` (CDN+Babel clone of the live app) ·
       `/blueai-desktop` (static terminal-drawer experiment, own dark/light theme system) · `/moneymaker`
       (S8, upcoming)."

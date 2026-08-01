@@ -119,7 +119,11 @@ gates travel even though the skin doesn't — and it's ALL novel motion/interact
 #2's home turf. The test for this build: walk every floating/animated/interactive element through all
 states + breakpoints BEFORE presenting, and verify at the viewport the designer will actually view.
 
-> **SUPERSEDED 2026-07-25 by the SCOPE PIVOT — see S9-S12 below.** /moneymaker never started, and the
+> **SUPERSEDED 2026-07-25 by the SCOPE PIVOT — see S9-S12 below.** /moneymaker WAS built — three
+> variants exist at src/app/moneymaker/ (they arrived in the other-machine sync; a note here claimed
+> "never started" for a few hours on 2026-08-01 because it was written from the S8 plan instead of
+> from `ls src/app` — the exact write-from-memory failure this notebook keeps cataloguing). It is
+> DORMANT with the rest of the marketing surfaces, and the
 > "DS-unbound" framing above is now backwards: the active surface HAS a design system, and it is the
 > one thing new work is bound to. Left in place as the record of what S8 believed, not as direction.
 

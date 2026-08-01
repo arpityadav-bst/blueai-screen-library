@@ -5,6 +5,24 @@ resolved. Promoted to decisions.md / taste.md at audit passes, then wiped.
 Format: `YYYY-MM-DD HH:mm — <file> — <what changed> — Why: <one phrase>`
 
 --- Pending audit entries ---
+2026-08-01 (cont. 4) — src/app/page.tsx (Screen Library index at /) — designer: "should we also
+reorganise and reevaluate this index page?" Yes — it was the last surface still asserting the pre-pivot
+world, and it is the FRONT DOOR: the active surface sat sixth of nine, described as a "Standalone canvas
++ JS experiment"; the pinned Design-System card pointed at the DORMANT marketing style guide; the active
+prototype's own style guide wasn't linked at all; nothing told a visitor which pages are current vs
+parked. Reorganised: ACTIVE group on top (Terminal Modern with an honest product description + its
+Design System as the gradient-tile card, linking /blueai-desktop/style-guide.html), DORMANT group below
+at reduced opacity with the pivot date in its label, and the marketing DS moved into the dormant group
+with copy saying exactly what it governs. Nothing deleted. Verified: tsc clean, renders on next dev,
+the DS link returns 200, zero page errors. — Why: an index that misstates which work is current
+misleads every reviewer who lands on it; grouping by status IS the information, and the status labels
+carry the pivot date so the grouping is traceable to the directive rather than an opinion.
+ALSO — a false claim of MINE caught by this task: this morning I wrote "/moneymaker never started" into
+evolution.md and project-insights.md, from the S8 plan instead of from `ls src/app` — three built
+variants exist (arrived in the other-machine sync). Corrected in evolution, project-insights and the
+earlier scratchpad entry, with the mistake recorded rather than silently swapped. Same write-from-memory
+failure the notebook keeps cataloguing, committed WHILE cataloguing it.
+
 2026-08-01 (cont. 3) — FINAL health check, designer-ordered: reaudit everything, confirm full
 tokenisation ("every single thing, no exceptions"), confirm VDA learns like a junior designer, codify
 rules over trust. Three independent auditors (code soundness / doc staleness / notebook quality) + my
@@ -120,7 +138,7 @@ name, the checkable surface tripled and the very first run at the new width foun
    only in the thing that measures it", "if a style is state-dependent, the state is a test dimension",
    "new verification tooling is wrong until diffed against something known-good"), Session 13, and the
    S9-S12 era written into evolution.md — which had been 4 weeks stale and still pointed at a
-   /moneymaker build that never started.
+   /moneymaker build as the next step. *[correction, same day: moneymaker WAS in fact built — three variants exist at src/app/moneymaker/, arrived in the other-machine sync; it is dormant, not absent. The first version of this line said it never started — written from the S8 plan instead of from ls.]*
 
 3. **The parity-audit thread** (cont. 11-17) — its **method lessons** are now promoted, after being
    deferred across three sessions on the grounds that consolidating an in-progress audit risks recording
