@@ -183,7 +183,17 @@
                   <!-- CMP-01 (audit, documented content-complexity exception): stays an inline card, not a
                        Subpane, because this is one simple local form (cadence + time) — see openSkillForm's
                        comment for why Skills escalates to a Subpane and this doesn't. -->
-                  <div class="bai-list-head"><button class="bai-list-add" id="baiSchedAdd" type="button">+ New task</button></div>
+                  <!-- No header band here on purpose (designer): a row whose only occupant is one button
+                       reads as an empty header with a stray control, not a toolbar — Skills' toolbar row
+                       earns its place by sharing it with the search field; this screen has nothing to share
+                       a row with. So "+ New task" is CONTENT, not chrome: renderScheduled() relocates this
+                       same node to be the first row of the list itself (ghost/dashed, distinct from real
+                       cards) whenever the list is non-empty. #baiSchedAddHome is a permanent, always-attached
+                       parking spot for it — the code NEVER fully detaches this button (a detached node is
+                       invisible to getElementById and never comes back once nothing holds a reference to it;
+                       that shipped as a real bug here before being caught). Every place that would otherwise
+                       wipe #baiSchedList's innerHTML parks the button back here FIRST. -->
+                  <div id="baiSchedAddHome" style="display:none;"><button class="bai-sched-newrow" id="baiSchedAdd" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-bai-icon="plus"></svg>New task</button></div>
                   <div class="bai-newitem" id="baiSchedForm" style="display:none">
                     <textarea class="bai-newitem-textarea" id="baiSchedName" placeholder="What should BlueAI do?" style="min-height:44px;"></textarea>
                     <div class="bai-seg" id="baiSchedRepeat" style="align-self:flex-start;">
@@ -1437,15 +1447,29 @@
         { name: 'Claim daily rewards', repeat: 'Daily', startsAt: seedStart(30, 9, 0), on: true },
         { name: 'Weekly game roundup', repeat: 'Weekly', startsAt: seedStart(21, 8, 0), on: true }
       ];
-      var schedListEl = document.getElementById('baiSchedList'), schedPendingDelete = -1, schedShimmerShown = false;
+      var schedListEl = document.getElementById('baiSchedList'), schedAddHomeEl = document.getElementById('baiSchedAddHome'), schedPendingDelete = -1, schedShimmerShown = false;
+      // CTA placement (designer, 2026-08-01): no header band. "+ New task" is the FIRST ROW of the
+      // list when tasks exist (relocated here each render — same physical-move technique this file
+      // already uses for #baiSchedForm), and the empty state's own centred CTA takes over when the
+      // list is empty.
+      // ANY function that would wipe #baiSchedList's innerHTML MUST park the button back into
+      // #baiSchedAddHome FIRST — a real bug shipped here from getting this wrong twice: (1) a bare
+      // `innerHTML = ''` while the button lived inside the list DESTROYS it outright, not just detaches
+      // it; (2) even calling `removeChild` directly (an earlier fix attempt) orphans it PERMANENTLY,
+      // because a detached node with no parent is invisible to getElementById and nothing ever holds a
+      // reference to reattach it later — appendChild-to-a-still-attached-parent is the only safe "move".
+      // schedAddHomeEl always exists in the live document, so the button is NEVER without a live parent.
+      function schedParkAddRow() {
+        var el = document.getElementById('baiSchedAdd');
+        if (el) schedAddHomeEl.appendChild(el);   // a MOVE (still attached throughout), never a bare removeChild
+        return el;
+      }
       function renderScheduled() {
+        // Read via getElementById (inside the helper), not a closure var: this function's first call
+        // (line ~1497, below) runs before `schedAddBtn` is assigned (~1584), so that closure var is
+        // still undefined at that point.
+        var addRow = schedParkAddRow();
         schedListEl.innerHTML = '';
-        // Same empty/filled SWAP as My Skills (designer): when the list is empty, the header pill's
-        // whole row hides and the empty state carries its own centred CTA — the action sits where the
-        // eye already is, and the two placements never stack (rule 38). renderScheduled runs on every
-        // add/delete, so the swap tracks list state with no extra wiring.
-        var headRow = schedAddBtn ? schedAddBtn.parentElement : null;
-        if (headRow) headRow.style.display = SCHEDULED.length ? '' : 'none';
         if (!SCHEDULED.length) {
           var empty = document.createElement('div'); empty.className = 'bai-stub';
           empty.innerHTML = '<div class="ic">' + iconSvg(CAL_PATH, 17) + '</div><h4>Nothing scheduled yet</h4><p>Ask BlueAI to run a task later or repeat it on a schedule. Your scheduled tasks will appear here.</p>';
@@ -1454,6 +1478,7 @@
           empty.appendChild(cta);
           schedListEl.appendChild(empty); refreshFadeScroll(schedListEl, document.getElementById('baiSchedScroll')); return;
         }
+        if (addRow) { addRow.style.display = ''; schedListEl.appendChild(addRow); }
         SCHEDULED.forEach(function (t, i) {
           var card = document.createElement('div'); card.className = 'bai-sched-card';
           if (i === schedPendingDelete) {
@@ -1484,6 +1509,7 @@
       function shimmerRow() { var r = document.createElement('div'); r.className = 'bai-item-card bai-shimmer'; r.innerHTML = '<span class="ic"></span><span class="info"><b class="sh-line"></b><span class="sh-line short"></span></span>'; return r; }
       function showSchedShimmerThenRender() {
         schedShimmerShown = true;
+        schedParkAddRow();   // see the comment on this helper — this wipe outright destroyed/orphaned the button twice
         schedListEl.innerHTML = ''; schedListEl.appendChild(shimmerRow()); schedListEl.appendChild(shimmerRow());
         setTimeout(renderScheduled, 550);
       }

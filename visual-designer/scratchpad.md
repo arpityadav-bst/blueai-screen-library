@@ -5,6 +5,36 @@ resolved. Promoted to decisions.md / taste.md at audit passes, then wiped.
 Format: `YYYY-MM-DD HH:mm — <file> — <what changed> — Why: <one phrase>`
 
 --- Pending audit entries ---
+2026-08-01 (cont. 10) — blueai-desktop — designer applied the ground theory from cont. 9 to Scheduled:
+‘+ New task’ as the FIRST ROW of the list, not a header row. Ground rule stated once, for real this
+time: a control never earns a row to itself; if the row has no OTHER persistent content to share it
+with (search, nav chrome), the CTA is not chrome — it’s content, and belongs in the list’s own visual
+rhythm as its first item. Styled with the house “clear secondary action” treatment already established
+by .bai-upload-row (accent-wash + accent-line — that component’s own comment already rejected a dashed
+look for the identical reason), sharing .bai-sched-card’s radius. Named a new icon () rather than
+hand-drawing it in the specimen — caught immediately by §11 (zero hand-authored svg bodies), which is
+exactly the gate that exists to catch this.
+
+TWO REAL BUGS caught building this, both about node lifetime across re-renders — worth writing down at
+mechanism level since they will recur the next time ANY element needs to be shared between two container
+states: (1) a bare  DESTROYS any child currently inside it, including a node
+another function cares about — the first fix (detach the node first) missed that (2)  with
+nowhere to put the node back ORPHANS it: a detached node with no live parent is invisible to
+getElementById and nothing re-attaches it, so it is gone forever the instant nothing else references it.
+The actual fix needed a permanent, ALWAYS-ATTACHED “parking” element (#baiSchedAddHome) that the button
+moves to/from — an appendChild MOVE between two live parents, never a bare removeChild. Also found and
+fixed a SECOND wipe site (showSchedShimmerThenRender, the first-visit shimmer) that bypassed the first
+fix entirely — factored into one shared helper (schedParkAddRow) called at both wipe sites, so a third
+future wipe site fails loudly instead of silently. Verified through the real flow: 2 demo tasks → row
+visible as first child; delete both → row hidden, stub CTA shown; create via the empty CTA → row
+returns; create via the row itself → second task added, row still first child. Drift PASS (§1/§3/§6/§9/
+§11 all touched by this change and all green); runtime clean; overflow clean; OOC unaffected. — Why:
+node-lifetime bugs across re-renders are the DOM equivalent of dangling pointers — the fix is never
+“detach and remember to reattach later,” it’s “never let it be un-attached, ever”. → candidate reasonings
+principle: a shared DOM node needs a permanent home it can always be moved back to, not a detach-and-
+hope-something-reattaches-it pattern.
+
+
 2026-08-01 (cont. 9) — blueai-desktop — designer: 'similarly, what about the Scheduled tab pill?'
 Right again — Scheduled was the PRE-FIX My Skills shape: an empty state ('Nothing scheduled yet') with
 no action in it, and the '+ New task' row floating above it regardless. Same swap applied: empty → the

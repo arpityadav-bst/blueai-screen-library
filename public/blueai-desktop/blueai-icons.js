@@ -105,6 +105,7 @@ var BAI_ICONS = {
   // wrong glyph in that specimen. Added here and consumed by both product sites via SPARK_PATH.
   // Distinct from the sparkle note above: that one really is a text character, this one is a path.
   spark: "<path d=\"M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8\"/>",
+  plus: "<path d=\"M12 5v14M5 12h14\"/>",
   // EXCEPTION to the convention above: a FILLED 100x100 glyph, not a 24x24 stroked one.
   // Recorded in BAI_ICON_META below so the style guide can render it correctly instead of
   // silently substituting a same-shaped stroked icon — which is what happened: the guide showed

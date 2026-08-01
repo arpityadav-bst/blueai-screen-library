@@ -456,6 +456,14 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans
 /* Redesigned scheduled-task card (was a compact single-row .bai-item-card with no Edit affordance at
    all) — bigger card, icon rows for Schedule/Next run, and a real Edit+Delete button pair, matching
    the reference screenshot. */
+/* The create affordance as the list's own first row (designer, 2026-08-01) — not a header band. Uses
+   the house "clear secondary action" treatment already established by .bai-upload-row (accent-wash +
+   accent-line, NOT dashed — that comment there already rejected a dashed passive look for the same
+   reason a bare header row felt orphaned: it reads as optional chrome rather than a real affordance).
+   r-lg matches .bai-sched-card below it so the two read as one list, not two different systems. */
+.bai-sched-newrow { display: flex; align-items: center; gap: var(--bai-sp-8); padding: var(--bai-sp-11) var(--bai-sp-14); background: var(--bai-accent-wash); border: 1px solid var(--bai-accent-line); border-radius: var(--bai-r-lg); cursor: pointer; color: var(--bai-accent); font-weight: var(--bai-fw-700); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: var(--bai-fs-sm); transition: filter var(--bai-t-150); }
+.bai-sched-newrow:hover { filter: brightness(1.1); }
+.bai-sched-newrow svg { flex-shrink: 0; }
 .bai-sched-card { display: flex; flex-direction: column; gap: var(--bai-sp-8); padding: var(--bai-sp-13) var(--bai-sp-14); background: var(--bai-card-2); border: 1px solid var(--bai-line); border-radius: var(--bai-r-lg); }
 .bai-sched-head { display: flex; align-items: center; justify-content: space-between; gap: var(--bai-sp-8); }
 .bai-sched-head b { font-size: var(--bai-fs-body); color: var(--bai-text-hi); font-weight: var(--bai-fw-700); }
