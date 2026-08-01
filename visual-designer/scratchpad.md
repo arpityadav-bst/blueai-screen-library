@@ -5,6 +5,20 @@ resolved. Promoted to decisions.md / taste.md at audit passes, then wiped.
 Format: `YYYY-MM-DD HH:mm — <file> — <what changed> — Why: <one phrase>`
 
 --- Pending audit entries ---
+2026-08-01 (cont. 6) — blueai-desktop — designer, on the freshly-moved pill: 'does this pill look right
+here according to UX? is this the best place for it?' Honest answer: no — the consistency fix created an
+ORPHAN: a lone pill paying for a whole row. Refined: where a screen has a search field, search + create
+share ONE toolbar row (.bai-list-head.with-search — search flex:1, both search and its input min-width:0
+so the flex child can actually shrink, the pill white-space:nowrap + flex-shrink:0 so it NEVER pays the
+squeeze). Two regressions caught during the fix itself, both at 290px: the pill wrapped to two lines
+(the switcher-reflow defect class — third sighting today) and then, with nowrap, it overflowed the row
+because a flex child defaults to min-width:auto and refuses to shrink below content. Verified 447+290,
+one row, no wrap, no overflow; guide specimen now shows BOTH variants (with-search and pill-only) with
+the refinement reasoning; drift PASS. — Why: consistency ('one operation, one location') and grouping
+('controls of the same list share its toolbar') are BOTH true — the first fix satisfied one and violated
+the other; the pill's anchor (top-right corner) is the invariant, the row it sits in is not. → feeds
+rule 42's family: a control row exists to group controls, not to give each control a row.
+
 2026-08-01 (cont. 5) — blueai-desktop — designer raised THREE UX findings, all fixed:
 (1) REDUNDANT TITLES: Skills/Jobs/Scheduled repeated the active tab's own name as a grey heading below
 the tab bar (the shared #baiMainTitle simply echoes the mode name outside chat). Rule 38: the tab
