@@ -5,6 +5,35 @@ resolved. Promoted to decisions.md / taste.md at audit passes, then wiped.
 Format: `YYYY-MM-DD HH:mm — <file> — <what changed> — Why: <one phrase>`
 
 --- Pending audit entries ---
+2026-08-01 (cont. 13) — blueai-desktop + workspace — designer asked the three questions cont. 12's fix
+begged: is this a component or a variant now? why didn't the gates catch it? and will these checks run
+by themselves in the future? All three answered in code, not prose:
+(1) TAXONOMY: the two rows are a FAMILY — one base rule (the combined selector) IS the component; each
+member's own rule IS a variant, holding only role-justified deltas with the reason stated in place.
+Promoted to reasonings.md ("if two components share a treatment, the sharing lives in the selector, not
+in a comment") — the taxonomy answer is written INTO the principle so the next "component or variant?"
+moment has an answer on file.
+(2) WHY NO GATE FIRED: every existing gate checks product↔guide sync; NONE checked intra-product
+consistency between two components claiming kinship — the claim lived in a comment, and comments are
+not a checked surface. NEW GATE §12 (component families): families are DECLARED in a manifest inside
+ds-drift-check.js; the gate FAILS if the combined base rule disappears or if any member's own rule
+re-declares a family property (the exact override path the drift would take). Both failure branches
+negative-tested (planted the gap-override and a renamed base rule → exit 1 → restored). Honest scope
+printed in its output: only DECLARED families are checked — declaring one is the design act; two rules
+that merely look similar stay invisible until someone declares them.
+(3) AUTOMATION: the hand-pasted health-check prompt is now the /blueai-health command
+(workspace .claude/commands/blueai-health.md) — mechanical gates, independent reaudit, VDA-learning
+check, full-tokenisation check, fix-everything-found, with the ownership rule (visible changes are
+proposals, not applications) baked into it. CLAUDE.md's bootstrap now points at it for session ends.
+The truly automatic layer stays what it was: the bootstrap mandates ds-drift-check at session start AND
+before any "done" — the judgment layer (reaudit, VDA check) runs on the command, because judgment can't
+be a cron job. Also: obligations table gained the family row; spot-checked every selector touched today
+— fully tokenised. — Why: "I thought the quality gates would take care of this" is the right complaint,
+and the answer is never "the gates should have known" — a gate only sees what someone taught it to see;
+each designer catch this session became a new section (§9 icons, §10 hydration, §11 provenance, §12
+families) precisely so the SAME catch never needs the designer twice.
+
+
 2026-08-01 (cont. 12) — blueai-desktop — designer: '+ New task looks clearly like the upload-skill CTA,
 but the alignment/padding/spacing differ -- is that right per DS/UX?' Checked the two rules side by
 side rather than trusting my own earlier comment, which claimed .bai-sched-newrow used 'the house

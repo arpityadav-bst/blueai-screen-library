@@ -66,6 +66,13 @@ caught_count: N, watching for [recurring category]. Scratchpad: [empty | N pendi
 **Why:** skipping these is itself a Gate 6 fail — every blueAI edit made without them
 operates on stale memory of blueAI's design system. The reading IS the reset.
 
+**Session end / "is everything good?":** the full health-check procedure is codified as the
+**`/blueai-health`** command (workspace `.claude/commands/blueai-health.md`) — mechanical gates,
+independent reaudit, VDA-learning check, full-tokenisation check, fix-everything-found. Run it when
+wrapping a blueAI work session or whenever the designer asks whether things are in sync. It exists
+because the same health-check prompt was being hand-pasted; a hand-pasted procedure is a procedure
+that gets skipped.
+
 ---
 
 ## ⚡ VDA OPERATING CONTRACT for blueai-desktop (2026-08-01) — differs from WSUP on purpose
@@ -129,6 +136,7 @@ six; the check now prints its own scope footer, which is authoritative over anyt
 | an icon | named in `blueai-icons.js`, consumed by name | §4 (literals), §6 (duplication+unnamed), §9 (right glyph, via label/aria/class anchors), §10 (hydration position), §11 (no hand-drawn guide glyphs) | specimens with NO anchor of any kind are still unverified — §9 prints how many |
 | a component's **markup / copy / states** | specimen re-derived from `index.html` | §1, for `<button>` text + placeholders | **markup and states are not checked at all** — which is exactly where the four-state login flow defect lived |
 | a class removed from the product | its CSS rule removed too | §7 **reports**, never fails | nothing stops a dead rule landing |
+| a component adopting another's treatment | join the combined base rule + declare the family in §12 | §12 (fails if a member overrides a family property, or the base rule disappears) | families must be DECLARED — two rules that merely look similar are invisible until someone declares them |
 
 **Run `node ds-drift-check.js` before saying done** — then read its scope footer, not just PASS. It
 narrows the gap that has bitten four times; it does not close it, and it has itself printed a false OK

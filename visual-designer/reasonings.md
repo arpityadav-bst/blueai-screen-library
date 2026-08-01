@@ -175,4 +175,27 @@ reviewer) that only asks "is this a real icon?" instead of "is this THE icon the
 the product's choice for that exact site — never pick a plausible member of the same set from memory.
 Plausibility is what makes the error durable.
 
+## If two components share a treatment, the sharing lives in the selector, not in a comment
+
+`.bai-sched-newrow` was written with a comment claiming it used "the house treatment already
+established by `.bai-upload-row`". The colour/type layer did match — ten properties verbatim — but
+alignment, padding, radius and gap had all quietly diverged, one of them (gap) with no design reason
+at all. Nothing enforced the claimed sameness, so the first time one side was edited without the
+other, they drifted, and only the designer comparing them side by side caught it. This is the same
+defect this project keeps finding in icons and copy — a claim of sameness that nothing checks —
+wearing CSS clothes.
+
+**The taxonomy answer, since the question will recur:** two components that share a look are a
+FAMILY — one base rule (the combined selector) owning the shared properties, plus each member's own
+rule holding only its role-justified differences. That is a "base + variants" component model
+expressed in plain CSS: the base rule IS the component, the member rules ARE the variants, and each
+variant delta must carry its reason in place (here: alignment differs because one is a standalone
+centred CTA and the other a flush-left list row; radius differs to match each one's surrounding
+card family; padding differs to hit this system's 32px control-row height).
+
+**How to apply:** when a new component "adopts" an existing one's treatment, do not copy the
+declarations and note the kinship — add its selector to the base rule and declare the family in
+`ds-drift-check.js` §12, which fails if any member ever re-declares a family property. The moment
+you find yourself writing "matches X" in a comment, that sentence should be a selector instead.
+
 *(New entries accumulate at audit passes.)*

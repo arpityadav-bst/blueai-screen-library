@@ -483,6 +483,65 @@ section('11. GUIDE GLYPH PROVENANCE (no inline <svg> bodies in specimens)');
   }
 }
 
+/* ---------------------------------------------------------------------------
+   12. COMPONENT FAMILIES — components that share a treatment must share a RULE.
+       The designer caught .bai-sched-newrow claiming (in a comment) to use
+       ".bai-upload-row's house treatment" while alignment, padding, radius and
+       gap had all silently diverged — a comment asserted sameness that nothing
+       enforced. The fix expressed the family as one combined-selector rule; this
+       section guards that fix: for each declared family, (a) the combined base
+       rule must exist, and (b) no member's OWN rule may re-declare a family
+       property, because an override is exactly how the drift would sneak back.
+       Adding a member to a family here is a design decision — do it when a new
+       component genuinely adopts an existing treatment, and let the base rule
+       carry the shared look.
+   --------------------------------------------------------------------------- */
+section('12. COMPONENT FAMILIES (shared treatment = shared rule, never a comment)');
+{
+  // family -> [members, properties the base rule owns]
+  const FAMILIES = [
+    {
+      name: 'secondary action (accent-wash row)',
+      members: ['.bai-upload-row', '.bai-sched-newrow'],
+      props: ['background', 'border', 'color', 'font-weight', 'font-family', 'font-size', 'transition', 'gap', 'display', 'align-items', 'cursor'],
+    },
+  ];
+  const cssNoComments = CSS.replace(/\/\*[\s\S]*?\*\//g, '');
+  let famFail = 0;
+  FAMILIES.forEach(f => {
+    // (a) the combined base rule exists (members together in one selector list)
+    const baseRe = new RegExp(f.members.map(m => m.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('\\s*,\\s*') + '\\s*\\{([^}]*)\\}');
+    const base = cssNoComments.match(baseRe);
+    if (!base) {
+      console.log('FAIL — family "' + f.name + '": no combined rule `' + f.members.join(', ') + ' { … }` found.');
+      console.log('   The shared treatment must live in ONE rule; separate per-member copies is how it drifted.');
+      famFail++;
+      return;
+    }
+    // (b) no member re-declares a family property in its own rule(s)
+    f.members.forEach(m => {
+      const ownRe = new RegExp('(?:^|\\})\\s*' + m.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\s*\\{([^}]*)\\}', 'g');
+      let mm;
+      while ((mm = ownRe.exec(cssNoComments)) !== null) {
+        f.props.forEach(pr => {
+          const prRe = new RegExp('(?:^|[\\s;])' + pr + '\\s*:', 'i');
+          if (prRe.test(mm[1])) {
+            console.log('FAIL — family "' + f.name + '": ' + m + '\'s own rule re-declares `' + pr + '`,');
+            console.log('   overriding the family base — this is exactly the silent-drift path the family exists to close.');
+            console.log('   Either the value belongs in the base rule (both members), or the property is role-specific');
+            console.log('   and must be REMOVED from the family\'s props list here, with the reason.');
+            famFail++;
+          }
+        });
+      }
+    });
+    if (!famFail) console.log('OK — family "' + f.name + '": one base rule owns ' + f.props.length + ' shared properties; no member overrides any of them.');
+  });
+  if (famFail) fail += famFail;
+  console.log('   SCOPE: only families DECLARED above are checked. Two components that merely look similar');
+  console.log('   are invisible here until someone declares them a family — that declaration is the design act.');
+}
+
 console.log('\n' + '='.repeat(64));
 console.log(fail === 0
   ? 'PASS — no drift detected in what is checked below.'
