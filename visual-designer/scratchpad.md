@@ -5,6 +5,22 @@ resolved. Promoted to decisions.md / taste.md at audit passes, then wiped.
 Format: `YYYY-MM-DD HH:mm — <file> — <what changed> — Why: <one phrase>`
 
 --- Pending audit entries ---
+2026-08-01 (cont. 11) — blueai-desktop — designer, on the new Scheduled row: does this feel right?
+spacing around New task? Real, but not where I first guessed. Measured before touching anything: the
+gap BELOW the row (8px) already matched the card-to-card gap exactly, so that part was correct. What was
+off was the row's OWN vertical padding: 11px top/bottom around a SINGLE line of content, vs the same
+13px the real cards spend across THREE stacked lines -- a much higher padding-to-content ratio, so the
+row read as a padded banner/field (38px tall) rather than a slim list row. Designer then clarified: the
+TOP margin specifically. Fixed by tightening padding sp-11 -> sp-9, landing the row at 34px -- close to
+this exact system's own established 32px control-row height (the Skills search+pill toolbar, stretched
+to equal heights earlier this session) -- a number picked from precedent, not by eye. Verified: gap below
+unchanged (still 8px, matching cards); full create/delete/empty flow still clean; drift PASS; runtime
+clean; overflow clean. -- Why: "spacing feels off" is rarely one measurement -- diagnosing WHICH box
+model property (margin below vs padding within) before touching CSS is what separates a correct fix from
+a plausible-looking one; measuring first is what let the designer's later one-word clarification
+("top margin") land on the right property instantly instead of triggering another guess-and-check round.
+
+
 2026-08-01 (cont. 10) — blueai-desktop — designer applied the ground theory from cont. 9 to Scheduled:
 ‘+ New task’ as the FIRST ROW of the list, not a header row. Ground rule stated once, for real this
 time: a control never earns a row to itself; if the row has no OTHER persistent content to share it
