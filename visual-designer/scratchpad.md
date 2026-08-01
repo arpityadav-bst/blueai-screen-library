@@ -5,6 +5,22 @@ resolved. Promoted to decisions.md / taste.md at audit passes, then wiped.
 Format: `YYYY-MM-DD HH:mm — <file> — <what changed> — Why: <one phrase>`
 
 --- Pending audit entries ---
+2026-08-01 (cont. 7) — blueai-desktop — designer, two more: 'what about the pill HERE (My Skills)?
+and don’t you find it odd one is taller than the other (search vs pill)?' Both real. (1) My Skills’
+'+ New' was the SAME orphan-row defect as cont. 6, one screen deeper — a flex-end div in the body
+giving the pill a row of its own, directly above an empty state. The subpane HEAD grew a right-aligned
+action slot (openSubpane takes an optional actionFn; paintSubpane clears + fills #baiSubpaneAction each
+paint, so every other subpane stays clean); the pill (.bai-list-add.compact, padding scaled to the head
+row) now sits beside the 'My Skills' title. The invariant, stated once and now true on all three
+surfaces: CREATE ANCHORS THE TOP-RIGHT OF THE FIRST ROW — it never buys a row of its own. (2) Heights:
+search was 34px, pill 28px, in one row — mismatched control heights read as unrelated things. The
+toolbar is now align-items:stretch; both measure exactly 32px. Verified: pill in head row beside title,
+no orphan div in body, empty state intact, create form opens from the head pill, toolbar heights EQUAL,
+drift PASS, runtime clean. — Why: cont. 6’s principle (a control row groups controls) had a second
+instance one level down that I did not sweep for after fixing the first — the designer found it in
+minutes. When a defect is found on one surface, grep for its SHAPE everywhere before calling it fixed;
+that is the same lesson as the icon batches, in layout form.
+
 2026-08-01 (cont. 6) — blueai-desktop — designer, on the freshly-moved pill: 'does this pill look right
 here according to UX? is this the best place for it?' Honest answer: no — the consistency fix created an
 ORPHAN: a lone pill paying for a whole row. Refined: where a screen has a search field, search + create

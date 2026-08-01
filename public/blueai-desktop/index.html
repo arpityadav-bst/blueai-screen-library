@@ -274,6 +274,7 @@
                 <div class="bai-subpane-head">
                   <button class="bai-subpane-back" id="baiSubpaneBack" type="button" aria-label="Back"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-bai-icon="chevronLeft"></svg></button>
                   <span id="baiSubpaneTitle"></span>
+                  <span id="baiSubpaneAction" style="margin-left:auto;display:flex;"></span>
                 </div>
                 <div class="bai-subpane-body" id="baiSubpaneBody"></div>
                 <div class="bai-scroll" id="baiSubpaneScroll"></div>
@@ -1230,16 +1231,16 @@
       }
       function openMySkills() {
         openSubpane('My Skills', function (body) {
-          var head = document.createElement('div'); head.style.cssText = 'display:flex;justify-content:flex-end;';
-          var addBtn = document.createElement('button'); addBtn.className = 'bai-list-add'; addBtn.type = 'button'; addBtn.textContent = '+ New';
-          addBtn.addEventListener('click', function () { openSkillForm(null); });
-          head.appendChild(addBtn); body.appendChild(head);
           if (!MY_SKILLS.length) {
             var empty = document.createElement('div'); empty.className = 'bai-stub';
             empty.innerHTML = '<div class="ic">' + iconSvg(CAT_ICONS.mine, 17) + '</div><h4>No skills available</h4><p>Create your own skills to give BlueAI instructions, tools, and knowledge for specific tasks.</p>';
             body.appendChild(empty); return;
           }
           MY_SKILLS.forEach(function (sk) { body.appendChild(skillCard(sk, true, null, paintSubpane)); });
+        }, function (act) {
+          var addBtn = document.createElement('button'); addBtn.className = 'bai-list-add compact'; addBtn.type = 'button'; addBtn.textContent = '+ New';
+          addBtn.addEventListener('click', function () { openSkillForm(null); });
+          act.appendChild(addBtn);
         });
       }
       function renderSkillsHome() {
@@ -2280,12 +2281,18 @@
       function paintSubpane() {
         var top = subpaneStack[subpaneStack.length - 1];
         subpaneTitleEl.textContent = top.title;
+        // The optional header action (e.g. My Skills' "+ New") lives IN the head row, right-aligned —
+        // the same top-right-of-the-first-row anchor as every other create affordance. It used to be a
+        // flex-end div in the body: a pill paying for a whole row of its own (designer: an orphan).
+        var actEl = document.getElementById('baiSubpaneAction');
+        actEl.innerHTML = '';
+        if (top.actionFn) top.actionFn(actEl);
         subpaneBodyEl.innerHTML = '';
         top.renderFn(subpaneBodyEl);
         subpaneEl.classList.add('on');
         refreshFadeScroll(subpaneBodyEl, document.getElementById('baiSubpaneScroll'));
       }
-      function openSubpane(title, renderFn) { subpaneStack.push({ title: title, renderFn: renderFn }); paintSubpane(); }
+      function openSubpane(title, renderFn, actionFn) { subpaneStack.push({ title: title, renderFn: renderFn, actionFn: actionFn || null }); paintSubpane(); }
       function popSubpane() { subpaneStack.pop(); if (subpaneStack.length) paintSubpane(); else subpaneEl.classList.remove('on'); }
       function closeAllSubpanes() { subpaneStack = []; subpaneEl.classList.remove('on'); }
       subpaneBackBtn.addEventListener('click', function (e) { e.stopPropagation(); popSubpane(); });
