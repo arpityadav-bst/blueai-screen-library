@@ -11,15 +11,15 @@ time: a control never earns a row to itself; if the row has no OTHER persistent 
 with (search, nav chrome), the CTA is not chrome — it’s content, and belongs in the list’s own visual
 rhythm as its first item. Styled with the house “clear secondary action” treatment already established
 by .bai-upload-row (accent-wash + accent-line — that component’s own comment already rejected a dashed
-look for the identical reason), sharing .bai-sched-card’s radius. Named a new icon () rather than
+look for the identical reason), sharing .bai-sched-card’s radius. Named a new icon (`plus`) rather than
 hand-drawing it in the specimen — caught immediately by §11 (zero hand-authored svg bodies), which is
 exactly the gate that exists to catch this.
 
 TWO REAL BUGS caught building this, both about node lifetime across re-renders — worth writing down at
 mechanism level since they will recur the next time ANY element needs to be shared between two container
-states: (1) a bare  DESTROYS any child currently inside it, including a node
-another function cares about — the first fix (detach the node first) missed that (2)  with
-nowhere to put the node back ORPHANS it: a detached node with no live parent is invisible to
+states: (1) a bare `container.innerHTML = ''` DESTROYS any child currently inside it, including a node
+another function cares about — the first fix (detach the node first) missed that (2) a bare `removeChild`
+with nowhere to put the node back ORPHANS it: a detached node with no live parent is invisible to
 getElementById and nothing re-attaches it, so it is gone forever the instant nothing else references it.
 The actual fix needed a permanent, ALWAYS-ATTACHED “parking” element (#baiSchedAddHome) that the button
 moves to/from — an appendChild MOVE between two live parents, never a bare removeChild. Also found and
