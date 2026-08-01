@@ -175,7 +175,10 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans
   --bai-sp-22: 22px;
   --bai-sp-24: 24px;
   --bai-sp-28: 28px;
-  --bai-sp-210: 210px;
+  --bai-wide-sidebar-w: 210px;   /* wide-mode sidebar width AND the content offset beside it — one
+     token because the two numbers must never diverge (the panes' margin-left has to equal the
+     sidebar's width exactly). Was --bai-sp-210: a 210px "spacing step" was a layout dimension
+     wearing a spacing name, and it stuck out of the sp- ramp the moment the guide tallied it. */
   --bai-t-80: 80ms;
   --bai-t-100: 100ms;
   --bai-t-120: 120ms;
@@ -774,9 +777,9 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans
 .bai-title-ar svg { display: block; }
 .bai-title-btn:hover .bai-title-ar { color: var(--bai-hover-ink); }
 /* ---- Wide (detached ≥600px): left sidebar holds new chat · modes · recent · settings + more ---- */
-.bai-sidebar { position: absolute; left: 0; top: 0; bottom: 0; width: 210px; display: none; flex-direction: column; padding: var(--bai-sp-12) var(--bai-sp-8); background: var(--bai-panel); border-right: 1px solid var(--bai-line); z-index: var(--bai-z-6); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+.bai-sidebar { position: absolute; left: 0; top: 0; bottom: 0; width: var(--bai-wide-sidebar-w); display: none; flex-direction: column; padding: var(--bai-sp-12) var(--bai-sp-8); background: var(--bai-panel); border-right: 1px solid var(--bai-line); z-index: var(--bai-z-6); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
 .bai-ui.wide .bai-sidebar { display: flex; top: 46px; }                                  /* sits BELOW the full-width header */
-.bai-ui.wide .bai-panes, .bai-ui.wide .bai-main-title, .bai-ui.wide .bai-subpane { margin-left: var(--bai-sp-210); }             /* main content clears the sidebar; header stays full-width */
+.bai-ui.wide .bai-panes, .bai-ui.wide .bai-main-title, .bai-ui.wide .bai-subpane { margin-left: var(--bai-wide-sidebar-w); }             /* main content clears the sidebar; header stays full-width */
 /* Bug fix: .bai-subpane (Skills' category drill-down, skill details, new/edit skill form — anything
    via openSubpane()) was missing from the rule above, so in wide mode it covered the sidebar instead
    of clearing it like .bai-panes does — Jobs/Scheduled/Recents effectively vanished behind it. Unlike

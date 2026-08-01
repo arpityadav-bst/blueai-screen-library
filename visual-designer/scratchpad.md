@@ -5,6 +5,37 @@ resolved. Promoted to decisions.md / taste.md at audit passes, then wiped.
 Format: `YYYY-MM-DD HH:mm — <file> — <what changed> — Why: <one phrase>`
 
 --- Pending audit entries ---
+2026-08-01 (cont. 14) — blueai-desktop — designer pasted the guide's own Known-gaps page back and asked
+'is this fine in DS?' Reading my own honesty page closely surfaced four things, all fixed:
+(1) BUG in the live tally: the Other-scales regex couldn't cross a hyphen inside a token name, so
+--bai-shadow-modal-lg and --bai-shadow-avatar-halo silently vanished — the shadow row showed 3 of 5
+tokens, directly beneath the sentence 'the figures cannot lie'. A live tally is only as honest as its
+parser; the figure lied by omission. Regex fixed ([a-z0-9_-]), all 5 render, no prefix collisions
+(every axis prefix is followed by a hyphen).
+(2) --bai-sp-210 retired: a 210px 'spacing step' was a layout dimension wearing a spacing name — it
+stuck out of the ramp the moment the tally displayed it. Better than a rename: the sidebar's own
+width: 210px was a RAW literal (width isn't in §8's scope), and the panes' margin-left must always
+equal it — a hidden coupling between two numbers. One semantic token (--bai-wide-sidebar-w) now feeds
+both; verified wide mode still measures 210/210. Naming the coupling is the actual DS win.
+(3) .bai-scope removed from the DEFINED set in both coverage computations (guide + drift §2): the
+tokens-only alias is excluded from 'rendered' by design, so counting it definable made it permanent
+noise in the uncovered list — an uncoverable class in a to-do list teaches people to ignore the list.
+(4) TWO prose overclaims fixed: 'Specimen fidelity is checked, not assumed… the diff is clean' spoke in
+the present tense about a one-off harness that was never committed and has not re-run since — reworded
+to dated past tense, pointing at what actually gates markup now (§1/§9/§11/§12). And the
+undocumented-families list had gone incomplete AGAIN (second time for this same paragraph): the
+uncovered list plainly shows the inline form-card family (.bai-newitem*/-field-group, partially
+covered) and the Settings row internals (.bai-set-row/-label/-sub/…) — both now named.
+Also visible in the pasted tally and left DELIBERATELY for the designer tranche, not fixed by me
+(merges are visible = designer's call): motion has 16 duration tokens with t-150 at 87 uses and four
+near-neighbours (120/130/160/180) at 1-3 uses each — classic drift; line-height pairs 1.4/1.42 and
+1.6/1.62 (sub-1px effective at every size in use — rule 39 candidates); spacing one-offs 15/19/28.
+Ready to prepare as a Tranche-4 accept/reject artifact whenever asked. — Why: an honesty page is a
+CLAIM like any other and needs the same audit; three of the four defects were the page overstating its
+own honesty (a lying tally, an uncoverable class in the gap list, present-tense credit for a past
+check). The gap list only works if every entry in it is actually actionable.
+
+
 2026-08-01 (cont. 13) — blueai-desktop + workspace — designer asked the three questions cont. 12's fix
 begged: is this a component or a variant now? why didn't the gates catch it? and will these checks run
 by themselves in the future? All three answered in code, not prose:

@@ -1452,13 +1452,20 @@
         contents are (<code>.bai-logingate</code>, <code>.bai-tgmodal</code>, <code>.bai-onb</code>,
         <code>.bai-tour</code>, <code>.bai-preview</code>); and <b>genuinely undocumented families</b> — as of
         2026-08-01 that means the Profile card (<code>.bai-profile-*</code>), the parsed-resume card
-        (<code>.bai-parsecard</code>/<code>.pc-*</code>), chat message bubbles (<code>.bai-msg</code>) and the
-        Telegram pairing-code set (<code>tgm-code/-waitcard/-copybtn</code>…) — real gaps, on the worklist,
+        (<code>.bai-parsecard</code>/<code>.pc-*</code>), chat message bubbles (<code>.bai-msg</code>), the
+        Telegram pairing-code set (<code>tgm-code/-waitcard/-copybtn</code>…), the inline form card family
+        (<code>.bai-newitem</code>/<code>-actions</code>/<code>-textarea</code>, <code>.bai-field-group</code> —
+        partially covered: its input and buttons render in the skill-create specimen, the card itself doesn't)
+        and the Settings row internals (<code>.bai-set-row/-label/-sub/-name/-info/-divider</code>) — real
+        gaps, on the worklist,
         plus whatever §7 currently reports as dead CSS. Trust the list above over this paragraph.
         <br /><br />
-        <b>Specimen fidelity is checked, not assumed.</b> The specimens have been diffed against the real
-        components in the running product — every shared class compared on 19 appearance properties. That check
-        found four genuine bugs on its first run: the credits popover was hand-rolled instead of using its real
+        <b>Specimen fidelity was audited once, and is gated continuously.</b> A one-off harness (2026-08-01,
+        not committed — rebuild it if that class of check is needed again) diffed every shared class against the
+        running product on 19 appearance properties. An earlier version of this paragraph said “is checked” in
+        the present tense, which overclaimed: markup changes since that run are guarded by ds-drift-check.js
+        (copy §1, icon choice §9, glyph provenance §11, families §12), not by re-running that diff. Its one run
+        found four genuine bugs: the credits popover was hand-rolled instead of using its real
         <code>.bai-menu-desc</code> parent (leaving its children inheriting 16px instead of 10.5px), a subpane
         padding override, a missing <code>text-align</code> context on the onboarding cards, and this page's own
         body ink leaking into specimens — which would have <em>masked</em> any component missing a
@@ -1705,7 +1712,11 @@
                 ['z', 'z-layer'], ['t', 'duration'], ['ease', 'easing'], ['shadow', 'shadow']];
     var html = '';
     AXES.forEach(function (ax) {
-      var re = new RegExp('(--bai-' + ax[0] + '-[a-z0-9_]+)\s*:\s*([^;]+);', 'g'), m;
+      // [a-z0-9_-] WITH the hyphen: the first version couldn't cross one, so --bai-shadow-modal-lg and
+      // --bai-shadow-avatar-halo silently vanished from a tally sitting under the words 'the figures
+      // cannot lie' — the figure lied by omission. (No prefix collisions: every axis prefix is followed
+      // by a hyphen, so --bai-t- cannot swallow --bai-text-* or --bai-titlebar-*.)
+      var re = new RegExp('(--bai-' + ax[0] + '-[a-z0-9_-]+)\s*:\s*([^;]+);', 'g'), m;
       var rows = [];
       while ((m = re.exec(css)) !== null) {
         var uses = (css.split('var(' + m[1] + ')').length - 1);
@@ -1730,6 +1741,7 @@
     while ((m = re.exec(selectorsOnly)) !== null) {
       var c = m[2];
       if (c.indexOf('sg-') === 0) continue;               // this page's own chrome, not the DS
+      if (c === 'bai-scope') continue;                    // the tokens-only alias — excluded from 'rendered' by design, so counting it as definable made it permanent noise in the uncovered list
       defined[c] = true;
     }
     var rendered = {};

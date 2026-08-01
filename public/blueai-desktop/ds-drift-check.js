@@ -95,7 +95,7 @@ section('2. SPECIMEN COVERAGE');
 const selectorsOnly = CSS.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\{[^}]*\}/g, '|');
 const defined = new Set();
 for (const m of selectorsOnly.matchAll(/(^|[\s,>+~|])\.([a-zA-Z][\w-]*)/g)) {
-  if (m[2].indexOf('sg-') !== 0) defined.add(m[2]);
+  if (m[2].indexOf('sg-') !== 0 && m[2] !== 'bai-scope') defined.add(m[2]);   // bai-scope: tokens-only alias, excluded from 'rendered' by design — counting it as definable was permanent noise
 }
 const rendered = new Set();
 for (const m of GUIDE.matchAll(/class="([^"]+)"/g)) {
