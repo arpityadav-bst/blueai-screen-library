@@ -3,6 +3,57 @@
 
 ---
 
+## Session 14 — 2026-08-01 (same day, second half) — the CTA-placement saga, gates 10-12, and auditing the honesty page
+`designer_caught_count: 11` — and the shape of them matters more than the number: NINE were the
+designer pointing at a SIBLING surface after I fixed the first instance of a pattern. That is one
+process failure repeated, not nine unrelated misses.
+
+**The CTA-placement saga (5 rounds, 4 surfaces) → taste rule 45.** Started as "Skills' create CTA is a
+bottom bar while Scheduled's is a top pill" and ended as a full ground theory the designer taught me
+one correction at a time: a control never earns a row to itself; if the first row has other persistent
+content (search, nav chrome, a subpane head) dock the affordance to its top-right CORNER — the corner
+is the invariant, the row is not; if there is no shareable row the affordance is not chrome, it is
+CONTENT (the list's own first row, flush-left with the cards); when the list is EMPTY the affordance
+moves into the empty state, centred; the placements SWAP with list state and never stack. Also from
+this thread: controls sharing a row must be equal height (`align-items: stretch`) and the pill never
+pays the squeeze. **Every round of this was the designer's, not mine** — my contribution was
+implementing and generalising, which is the honest split.
+
+**Four new gates, each born from a designer catch** (all negative-tested to FAIL + exit 1, then
+restored): §9 icon CHOICE (label/aria/class anchors — its first widened run caught SIX wrong specimen
+icons including invented titlebar glyphs); §10 hydration position; §11 no hand-drawn glyphs in the
+guide; §12 component FAMILIES (shared treatment must be a shared RULE — born from
+`.bai-sched-newrow` claiming kinship with `.bai-upload-row` in a comment while four properties had
+silently diverged). The pattern: the designer asked "shouldn't the quality gates have caught this?" and
+the honest answer is a gate only sees what someone taught it to see — so each catch became a section.
+
+**Auditing the honesty page against itself** (designer pasted Known-gaps back and asked "is this fine
+in DS?"): found the live tally's regex could not cross a hyphen, so it showed 3 of 5 shadow tokens
+directly beneath the words "the figures cannot lie"; `--bai-sp-210` was a layout dimension wearing a
+spacing name (→ semantic `--bai-wide-sidebar-w`, which also de-rawed the sidebar width it must equal —
+naming the coupling was the real win); `.bai-scope` sat permanently unactionable in the gap list; and
+two prose overclaims (present-tense credit for a one-off harness; an incomplete families list, second
+time for that same paragraph).
+
+**Also:** full-axis tokenisation (~91 tokens: spacing/line-height/weight/letter-spacing/z/motion/
+shadows, 1:1 no merges, ZERO computed drift across 118,018 styles); the Screen Library index (`/`)
+reorganised ACTIVE-above-DORMANT (and my own false "moneymaker never started" claim corrected in three
+files — it exists, three variants); `/blueai-health` created so the health-check prompt stops being
+hand-pasted.
+
+**Counter-evidence of growth:** built the four gates that make today's catches machine-catchable;
+caught my own regressions before shipping (the ease-curve substitution crossing the demo-scene
+boundary, two DOM node-lifetime bugs, a phantom 292-diff from my own comparison script); and when the
+designer asked "did VDA learn everything?", re-checked the notebook instead of answering yes — which
+found two real gaps (the top-margin insight stranded in a CSS comment; rule 45 unwritten).
+
+**Phase 2 still HOLDS.** This was correction-and-infrastructure work, not new builds; nothing here
+counts toward the Phase-3 bar (≥3 consecutive low-caught NEW builds).
+
+**Watch next session:** the fix-one-forget-the-siblings failure is now the top recurring category —
+when a defect is found, sweep for its SHAPE across every surface before calling it fixed. And 15
+scratchpad entries are pending an audit pass.
+
 ## Session 13 — 2026-08-01 — size/radius tranches, the switcher rebuild, and closing the gate's blind spot
 `designer_caught_count: 2` — (1) the skill-switcher reflow ("these tabs are not looking good right now…
 Create with BlueAI wraps to 2 lines when selected otherwise not"), and (2) the meta-catch that followed:
