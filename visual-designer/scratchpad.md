@@ -5,6 +5,22 @@ resolved. Promoted to decisions.md / taste.md at audit passes, then wiped.
 Format: `YYYY-MM-DD HH:mm — <file> — <what changed> — Why: <one phrase>`
 
 --- Pending audit entries ---
+2026-08-01 (cont. 11b — CORRECTION to cont. 11, found by re-checking the notebook when the designer
+asked 'did VDA learn everything?') — cont. 11 conflated two separate corrections: it mentions the
+designer's 'top margin' clarification but records only the PADDING fix. The actual top-margin fix that
+followed was never logged here — it lived only in a CSS comment, which is exactly the storage mistake
+rule 43's own history warns about (designer-relevant reasoning stored where no design session reads).
+The record, properly: designer, third pass — 'the top margin above the button, it is very close to the
+nav tabs row.' Measured: the row sat 2px below the tab bar; Skills' search toolbar sits 11px below it.
+The asymmetry's CAUSE is structural, and is the durable lesson: Skills gets its 11px from its OWN
+toolbar wrapper's padding (.with-search), which the Scheduled row — living directly inside the bare
+list — never had; removing the old header row had silently removed the spacing that rode along with
+it. Fix: margin-top sp-9 on the row + the list's own 2px = 11px, matching Skills' effective gap
+exactly, a number taken from the sibling surface rather than picked by eye. — Why: when a wrapper is
+deleted, everything it carried goes with it — spacing included; audit the space a removed element used
+to provide, not just the element.
+
+
 2026-08-01 (cont. 14) — blueai-desktop — designer pasted the guide's own Known-gaps page back and asked
 'is this fine in DS?' Reading my own honesty page closely surfaced four things, all fixed:
 (1) BUG in the live tally: the Other-scales regex couldn't cross a hyphen inside a token name, so

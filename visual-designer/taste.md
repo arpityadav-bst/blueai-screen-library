@@ -1,5 +1,5 @@
 # blueAI — Taste
-Last updated: 2026-08-01 (+rule 44 (concentric nested radii, designer-taught); +rules 42 (choice-control copy) & 43 (deliberate one-offs); Q2/Q3 answers added to 38-40 per the promotion rule; rule 41 restated as a MECHANISM — non-layout vs layout-affecting channels — after an independent audit judged the first widening had generalised the title but not the trigger; cross-linked to rule 38; rule 39's stale radius count corrected). 2026-07-25 (SCOPE PIVOT, designer directive — see note below. +rule 38 (divider redundancy),
+Last updated: 2026-08-01 (+rule 45 (create-affordance placement ground theory, designer-taught over five rounds); +rule 44 (concentric nested radii, designer-taught); +rules 42 (choice-control copy) & 43 (deliberate one-offs); Q2/Q3 answers added to 38-40 per the promotion rule; rule 41 restated as a MECHANISM — non-layout vs layout-affecting channels — after an independent audit judged the first widening had generalised the title but not the trigger; cross-linked to rule 38; rule 39's stale radius count corrected). 2026-07-25 (SCOPE PIVOT, designer directive — see note below. +rule 38 (divider redundancy),
 now a primary cross-surface rule rather than a marketing-site-only exception.)
 
 > **SCOPE PIVOT (2026-07-25, designer directive):** the marketing site (rules 1–37 below) and
@@ -10,7 +10,7 @@ now a primary cross-surface rule rather than a marketing-site-only exception.)
 > learning — re-derive nothing if the marketing site resumes) but are no longer what Gate 8 reviews
 > new work against by default. blueai-desktop's own design system is being extracted into
 > `public/blueai-desktop/style-guide.html` (live specimens + tokens, built from
-> `index.html` itself, since none existed anywhere before 2026-07-25) — that file + **rules 38-44**
+> `index.html` itself, since none existed anywhere before 2026-07-25) — that file + **rules 38-45**
 > below are what govern blueai-desktop work now. If the marketing site or /blueai-product ever resume,
 > flip this note back — nothing here needs to be rebuilt, just re-prioritized.
 
@@ -427,6 +427,33 @@ springy bounces) — "a utility assistant, not a toy."
     *What would stop it firing:* reading it as a segmented-control rule; it is geometry, and it fires
     on every rounded-in-rounded pair whose corners approach each other. `border-radius: 50%` circles
     are exempt — a circle is a shape, not a scale step.
+
+45. **Create-affordance placement — the full ground theory (designer-taught, 2026-08-01, five rounds).**
+    A control never earns a row to itself. Decide placement by asking two questions in order:
+    - **Does the first row already have persistent content to share?** (a search field, nav chrome, a
+      subpane's back+title head) → dock the affordance to that row's TOP-RIGHT CORNER. The corner is
+      the invariant; the row it sits in is not. Controls sharing a row are ONE toolbar: equal heights
+      (`align-items: stretch` — a 34px search beside a 28px pill reads as two unrelated things), and
+      the pill never pays the squeeze (`white-space: nowrap` + `flex-shrink: 0`; the search shrinks
+      and truncates its placeholder instead).
+    - **No shareable row?** Then the affordance is not chrome — it is CONTENT: the list's own first
+      item, in the same visual rhythm and radius family as the real rows below it, flush-left with
+      them (centering it would break the shared scan line). Never manufacture a header band to hold
+      one button: a row whose only occupant is a small corner control reads as an empty header with a
+      stray control.
+    - **Empty list?** The affordance moves INTO the empty state, centred under the explanation copy —
+      the one screen where the primary action has no competition for attention. The two placements
+      SWAP with list state; they never stack (rule 38: two create buttons at once is a duplicated
+      signal).
+    *(blueai-desktop 2026-08-01: one thread, four surfaces, five designer rounds — the Skills toolbar,
+    the My Skills subpane head, the Scheduled first-row affordance, and both empty states. Each round
+    fixed one surface and the designer had to point at the next sibling — see the fix-one-forget-the-
+    siblings lesson in the scratchpad.)*
+    *Where else this applies:* any future list screen (Jobs, when it becomes real), settings sections
+    that grow an "add" action, the chat-history route — and non-create actions too: any singular
+    affordance attached to a collection.
+    *What would stop it firing:* reading it as a rule about "+ New pills". It is about ANY action
+    affordance attached to a collection, whatever its label or shape.
 
 ## Open corrections log
 *SCOPE PIVOT (2026-07-25, designer directive) — superseding the S8 standing scope note below: **the
