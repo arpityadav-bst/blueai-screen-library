@@ -363,7 +363,9 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans
 .bai-list-head.with-search .bai-search { flex: 1; margin: 0; min-width: 0; }   /* min-width:0 on both — a flex child defaults to min-width:auto and refuses to shrink below its content, which pushed the pill out of the row at 290px */
 .bai-list-head.with-search .bai-search input { min-width: 0; }
 .bai-list-add { display: flex; align-items: center; gap: var(--bai-sp-4); white-space: nowrap; flex-shrink: 0; /* the pill never pays the squeeze in a shared toolbar row — at 290px it wrapped to two lines (same defect class as the switcher reflow); the search field takes the squeeze instead, its placeholder truncates gracefully */ border: none; background: var(--bai-accent); color: var(--bai-on-accent); font-family: inherit; font-size: var(--bai-fs-sm); font-weight: var(--bai-fw-700); padding: var(--bai-sp-6) var(--bai-sp-11); border-radius: var(--bai-r-md); cursor: pointer; transition: filter var(--bai-t-150); }
-.bai-list-add.compact { padding: var(--bai-sp-4) var(--bai-sp-9); }   /* subpane-head slot: the head row is shorter than a toolbar row, the pill compacts to sit inside it */
+/* `.bai-list-add.compact` deleted same-day (designer: "feels too thin"). It shrank the pill to fit
+   the subpane head row — backwards: a control keeps its touch-target size and the ROW grows to fit
+   it. The head's own padding already absorbs the standard pill without the row feeling tall. */
 .bai-list-add:hover { filter: brightness(1.12); }
 .bai-list-body { flex: 1; overflow-y: auto; padding: var(--bai-sp-2) var(--bai-sp-14) var(--bai-sp-14); display: flex; flex-direction: column; gap: var(--bai-sp-8); }
 .bai-list-body .bai-stub { padding: var(--bai-sp-24) var(--bai-sp-10); }

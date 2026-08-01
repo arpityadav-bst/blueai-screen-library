@@ -5,6 +5,22 @@ resolved. Promoted to decisions.md / taste.md at audit passes, then wiped.
 Format: `YYYY-MM-DD HH:mm — <file> — <what changed> — Why: <one phrase>`
 
 --- Pending audit entries ---
+2026-08-01 (cont. 8) — blueai-desktop — designer, third pass on the create affordance: 'when EMPTY it
+should be a clear centred CTA in the empty state; when filled, the header row — and the compact pill
+feels too thin.' Both applied. (1) EMPTY/FILLED SWAP: the empty state now carries its own centred
+'+ New skill' under the explanation copy (the eye is already there; a header pill above an empty body
+makes it travel), and the header slot stays EMPTY until the list exists — the two placements swap with
+list state, never stack (rule 38: two create buttons at once is a duplicated signal). actionFn runs per
+paint, so the swap tracks state with no extra wiring — create a skill from the empty CTA, pop back, and
+the header pill is simply there. (2) .bai-list-add.compact DELETED same-day: I had shrunk the pill to
+fit the head row — backwards; a control keeps its touch-target size and the ROW grows to fit it.
+Verified through the real flow: empty → centred CTA, no header pill; created 'Test skill' via the form →
+back on My Skills with the header '+ New' at standard size, stub gone, one card. Drift PASS. Guide prose
+re-synced (it named .compact, one hour old and already stale — retired with its reason recorded). — Why:
+empty states are the one screen where the primary action has no competition for attention — that is
+where it converts; once content exists, the action retreats to chrome so content leads. The swap encodes
+that hierarchy; stacking both would have re-created the redundancy rule 38 exists to kill.
+
 2026-08-01 (cont. 7) — blueai-desktop — designer, two more: 'what about the pill HERE (My Skills)?
 and don’t you find it odd one is taller than the other (search vs pill)?' Both real. (1) My Skills’
 '+ New' was the SAME orphan-row defect as cont. 6, one screen deeper — a flex-end div in the body
