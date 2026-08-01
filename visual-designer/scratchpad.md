@@ -5,6 +5,36 @@ resolved. Promoted to decisions.md / taste.md at audit passes, then wiped.
 Format: `YYYY-MM-DD HH:mm — <file> — <what changed> — Why: <one phrase>`
 
 --- Pending audit entries ---
+2026-08-01 (cont. 12) — blueai-desktop — designer: '+ New task looks clearly like the upload-skill CTA,
+but the alignment/padding/spacing differ -- is that right per DS/UX?' Checked the two rules side by
+side rather than trusting my own earlier comment, which claimed .bai-sched-newrow used 'the house
+treatment already established by .bai-upload-row' -- true for colour/type (10 properties verbatim
+identical), false for layout: alignment (center vs left), padding (12/13 vs 9/14), radius (r-md vs
+r-lg), and gap (9px vs 8px -- this one had NO role justification, pure drift). The comment overclaimed
+full parity; the code only delivered partial parity. Same defect class this whole session has been
+finding in icons and copy, just in CSS this time -- a claim about sameness that nothing enforced.
+
+Fixed at the mechanism, not just the prose: extracted the 12 genuinely-shared properties (display,
+align-items, cursor, background, border, color, font-weight, font-family, font-size, transition, gap,
+:hover) into ONE rule on '.bai-upload-row, .bai-sched-newrow' together, so the family is now enforced
+by the cascade -- it literally cannot drift apart the way it just did, because there is only one place
+to edit it. Each component's own rule keeps ONLY its role-specific properties: .bai-upload-row centers
+(standalone dominant CTA, nothing beside it) with its own r-md/padding; .bai-sched-newrow stays
+flush-left (a list row that must match the flush-left cards below it -- centering would break that scan
+line) with r-lg + its own 32px-target padding + its unique margin-top. Also fixed the one property with
+no role justification: gap unified to 9px (was 8, silent drift, not a decision).
+
+Verified: all 12 shared properties measured computed-identical across both live components; the 6
+role-specific properties differ exactly as documented and nothing else; drift PASS; runtime clean;
+overflow clean. Guide prose rewritten on BOTH specs to state precisely what's shared (enforced by the
+combined selector) vs what differs (three named reasons) instead of the vague 'same treatment' claim
+that started this. -- Why: 'looks similar, DS review says fine' is not verification -- a shared LOOK
+between two components should be a shared RULE, not two independently hand-tuned rules that happen to
+overlap; the moment they were edited separately (this session, by me) they drifted, and nothing but a
+designer's eye caught it. -> candidate reasonings principle: if two components are meant to share a
+treatment, express the sharing in the selector, not in a comment asserting it.
+
+
 2026-08-01 (cont. 11) — blueai-desktop — designer, on the new Scheduled row: does this feel right?
 spacing around New task? Real, but not where I first guessed. Measured before touching anything: the
 gap BELOW the row (8px) already matched the card-to-card gap exactly, so that part was correct. What was

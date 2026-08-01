@@ -456,19 +456,31 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans
 /* Redesigned scheduled-task card (was a compact single-row .bai-item-card with no Edit affordance at
    all) — bigger card, icon rows for Schedule/Next run, and a real Edit+Delete button pair, matching
    the reference screenshot. */
-/* The create affordance as the list's own first row (designer, 2026-08-01) — not a header band. Uses
-   the house "clear secondary action" treatment already established by .bai-upload-row (accent-wash +
-   accent-line, NOT dashed — that comment there already rejected a dashed passive look for the same
-   reason a bare header row felt orphaned: it reads as optional chrome rather than a real affordance).
-   r-lg matches .bai-sched-card below it so the two read as one list, not two different systems.
-   Padding tightened sp-11 -> sp-9 (designer, same day): 11px top/bottom around a SINGLE line of
-   content gave this row a bigger padding-to-content ratio than the real cards below it (which spend
-   the same 13px on three stacked lines), so it read as a padded banner/field rather than a slim list
-   row — 38px tall vs. this system's own established 32px control-row height (the Skills search+pill
-   toolbar, stretched to match earlier this session). sp-9 lands it at 32px, matching that precedent
-   exactly rather than picking a new number by eye. */
-.bai-sched-newrow { display: flex; align-items: center; gap: var(--bai-sp-8); padding: var(--bai-sp-9) var(--bai-sp-14); background: var(--bai-accent-wash); border: 1px solid var(--bai-accent-line); border-radius: var(--bai-r-lg); cursor: pointer; color: var(--bai-accent); font-weight: var(--bai-fw-700); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: var(--bai-fs-sm); transition: filter var(--bai-t-150); }
-.bai-sched-newrow:hover { filter: brightness(1.1); }
+/* SHARED "secondary action" FAMILY — the accent-tinted look for a low-emphasis but still-clickable
+   action (vs. the solid --bai-accent primary CTAs elsewhere). Declared ONCE, on both consumers, so the
+   look literally cannot drift between them — a comment used to just ASSERT these two matched ("the
+   house treatment already established by .bai-upload-row"), which was only half true: the colour/type
+   layer matched, but alignment/gap/padding/radius had quietly diverged, and nothing but a comment was
+   claiming otherwise — caught when the designer compared the two side by side, not by any gate (there
+   isn't one for "two rules that should share a subset of properties", only for exact duplicates). The
+   cascade enforcing it here is the actual fix; the paragraph explaining it is documentation, not proof.
+   Each consumer below keeps ONLY the properties its own ROLE genuinely needs to differ on. */
+.bai-upload-row, .bai-sched-newrow { display: flex; align-items: center; cursor: pointer; gap: var(--bai-sp-9); background: var(--bai-accent-wash); border: 1px solid var(--bai-accent-line); color: var(--bai-accent); font-weight: var(--bai-fw-700); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: var(--bai-fs-sm); transition: filter var(--bai-t-150); }
+.bai-upload-row:hover, .bai-sched-newrow:hover { filter: brightness(1.1); }
+/* The create affordance as the list's own first row (designer, 2026-08-01) — not a header band.
+   Deliberately DIFFERENT from .bai-upload-row on three properties, each for a stated reason, not
+   drift: (1) no justify-content:center — this is a LIST ROW that must align flush-left with the real
+   cards below it (their titles all start at the same left edge); centering it would break that scan
+   line, which is exactly why .bai-upload-row (a standalone, singular CTA with nothing beside it)
+   correctly IS centered — different role, different alignment, on purpose. (2) r-lg not r-md, to match
+   .bai-sched-card below it so the two read as one list, not two different systems. (3) its own padding,
+   tuned to hit THIS system's established 32px control-row height (the Skills search+pill toolbar,
+   equalised earlier the same session) rather than .bai-upload-row's own comfortable stand-alone size —
+   11px top/bottom around a single line read as a padded banner at first (38px), tightened to 9px/34px.
+   margin-top: sp-9 (+ the list's own 2px padding = 11px) matches Skills' effective top-of-tab-content
+   gap exactly — Skills gets that 11px from its OWN .with-search wrapper padding, not from anything
+   shared here; this row has no such wrapper, so its top gap has to be stated explicitly. */
+.bai-sched-newrow { margin-top: var(--bai-sp-9); padding: var(--bai-sp-9) var(--bai-sp-14); border-radius: var(--bai-r-lg); }
 .bai-sched-newrow svg { flex-shrink: 0; }
 .bai-sched-card { display: flex; flex-direction: column; gap: var(--bai-sp-8); padding: var(--bai-sp-13) var(--bai-sp-14); background: var(--bai-card-2); border: 1px solid var(--bai-line); border-radius: var(--bai-r-lg); }
 .bai-sched-head { display: flex; align-items: center; justify-content: space-between; gap: var(--bai-sp-8); }
@@ -578,8 +590,11 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans
    methods never shifts the form below it — the same no-reflow-on-selection rule as the tabs themselves,
    which is the whole reason this control was rebuilt. */
 .bai-create-hint { flex-shrink: 0; font-size: var(--bai-fs-sm); line-height: var(--bai-lh-145); color: var(--bai-dim); min-height: 32px; padding: 0 var(--bai-sp-2); margin-bottom: var(--bai-sp-13); }
-.bai-upload-row { display: flex; align-items: center; justify-content: center; gap: var(--bai-sp-9); padding: var(--bai-sp-12) var(--bai-sp-13); background: var(--bai-accent-wash); border: 1px solid var(--bai-accent-line); border-radius: var(--bai-r-md); cursor: pointer; color: var(--bai-accent); font-weight: var(--bai-fw-700); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: var(--bai-fs-sm); transition: filter var(--bai-t-150); }   /* Fix #5: a clear secondary action (accent-tinted, shared 8px radius) instead of a dashed passive drop-zone */
-.bai-upload-row:hover { filter: brightness(1.1); }
+/* Shared colour/type declared once, above, on `.bai-upload-row, .bai-sched-newrow` together — see that
+   rule's comment. This block keeps only what THIS component's role needs to differ on: centered
+   (a standalone dominant CTA, nothing beside it — unlike .bai-sched-newrow, a list row that must stay
+   flush-left with its siblings), its own comfortable padding, and r-md. */
+.bai-upload-row { justify-content: center; padding: var(--bai-sp-12) var(--bai-sp-13); border-radius: var(--bai-r-md); }   /* Fix #5: a clear secondary action (accent-tinted, shared 8px radius) instead of a dashed passive drop-zone */
 .bai-upload-hint { font-size: var(--bai-fs-sm); line-height: var(--bai-lh-155); color: var(--bai-dim); padding: var(--bai-sp-10) var(--bai-sp-11); background: var(--bai-card-2); border: 1px solid var(--bai-line); border-radius: var(--bai-r-md); margin-top: var(--bai-sp-9); }
 /* Distinct from .bai-upload-hint (that one's the dynamic "Selected: x.zip" status line, stays plain) —
    this is the static file-requirements callout, styled as an actual info box matching the reference. */
