@@ -146,4 +146,33 @@ wrong-but-valid icon, so the bug it was written for was deliberately reintroduce
 and exits non-zero, then reverted. A check that has never failed is not a check that works; it is a
 check that has never been asked.
 
+## Provably-invisible changes are mine to make; anything visible is the designer's call
+
+The size-scale consolidation split cleanly: tranches 1-2 (merging half-pixel steps, swapping literals
+for tokens) were applied autonomously because a computed-style diff proved ZERO rendered change; the six
+proposals that would move real pixels went to the designer as an accept/reject artifact — and the
+designer took four and declined two, one of which ("the 16px modal corner") had a legitimate opposite
+answer I could not have adjudicated alone.
+
+**The line is not "small vs big" — it is "provable vs visible."** *Provable* means measured (a
+before/after diff at the rendering layer), never assumed: an edit that "obviously changes nothing" is an
+assumption wearing confidence. Anything that changes how the product LOOKS — even 2px on a corner — is a
+taste call, and taste belongs to the designer until explicitly delegated.
+
+**How to apply:** before touching shared styles, decide which side of the line the edit is on. Provable →
+do it, attach the proof. Visible → propose it with a rendered comparison and wait. When one batch
+contains both kinds, split the batch.
+
+## An icon is the product's choice, not a plausible one
+
+Six specimens rendered real, well-drawn, *wrong* icons: right-chevrons where the product points down, a
+clock-and-bolt orbit composition where the product shows a database and a gift. Nothing was invented —
+every glyph existed in the set — which is exactly why no existence check and no glance caught it.
+**Wrong-but-valid is a different failure class from invented**, and it is invisible to any check (or any
+reviewer) that only asks "is this a real icon?" instead of "is this THE icon the product uses here?"
+
+**How to apply:** when documenting or reusing any asset choice (icon, illustration, glyph, emoji), quote
+the product's choice for that exact site — never pick a plausible member of the same set from memory.
+Plausibility is what makes the error durable.
+
 *(New entries accumulate at audit passes.)*

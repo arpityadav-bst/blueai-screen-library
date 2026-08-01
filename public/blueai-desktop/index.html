@@ -342,6 +342,21 @@
   <script src="flows.js"></script>
   <script>
     (function () {
+      /* Hydrate the static icons FIRST — an audit flagged that this loop used to sit ~760 lines into
+         the IIFE, so any exception in the init code above it would have left every titlebar/sidebar/
+         header icon blank. All its targets are in the markup above the script; nothing here depends
+         on anything else in this file. */
+      // Static <svg> icons in the markup above keep their OWN attributes — four different stroke
+      // weights are in play — and source only their PATH from the shared module. Filling innerHTML
+      // leaves every authored attribute intact; routing them through iconSvg() instead would flatten
+      // them all to 1.8 and silently restyle the header and sidebar.
+      // Only static markup is hydrated here. Icons inside JS-built HTML splice BAI_ICONS in directly
+      // at render time, because a one-time pass cannot reach nodes that do not exist yet.
+      [].forEach.call(document.querySelectorAll('[data-bai-icon]'), function (el) {
+        var p = BAI_ICONS[el.getAttribute('data-bai-icon')];
+        if (p) el.innerHTML = p; else console.error('unknown data-bai-icon:', el.getAttribute('data-bai-icon'));
+      });
+
       var stage = document.getElementById('stage');
       var scaler = document.getElementById('scaler');
       var composition = document.getElementById('composition');
@@ -1093,16 +1108,6 @@
       // a 2-col grid + real modals (360px portrait doesn't have room for either).
       function iconSvg(path, size) { return '<svg width="' + size + '" height="' + size + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + path + '</svg>'; }
       var SKILL_ICON_PATH = BAI_ICONS.bolt;   // same bolt as the wide-sidebar's own "Skills" nav icon — individual skill cards echo the section's own icon
-      // Static <svg> icons in the markup above keep their OWN attributes — four different stroke
-      // weights are in play — and source only their PATH from the shared module. Filling innerHTML
-      // leaves every authored attribute intact; routing them through iconSvg() instead would flatten
-      // them all to 1.8 and silently restyle the header and sidebar.
-      // Only static markup is hydrated here. Icons inside JS-built HTML splice BAI_ICONS in directly
-      // at render time, because a one-time pass cannot reach nodes that do not exist yet.
-      [].forEach.call(document.querySelectorAll('[data-bai-icon]'), function (el) {
-        var p = BAI_ICONS[el.getAttribute('data-bai-icon')];
-        if (p) el.innerHTML = p; else console.error('unknown data-bai-icon:', el.getAttribute('data-bai-icon'));
-      });
       var CAT_ICONS = {
         games: BAI_ICONS.catGames,
         content: BAI_ICONS.share,
@@ -1325,7 +1330,10 @@
               // this tab has no real prior zip to reference, so it should read like a fresh upload, not
               // falsely claim a "Current: skill.zip" that was never real.
               var existingZip = existing && existing.via === 'zip';
-              var up = document.createElement('div'); up.className = 'bai-upload-row'; up.innerHTML = iconSvg(BAI_ICONS.upload, 16) + '<span>' + (existingZip ? 'Upload a new ZIP file' : 'Upload skill.zip') + '</span>';
+              // A BUTTON, not a div — an audit found up.focus() below was a silent no-op (a div is not
+              // focusable without tabindex), so tapping Upload with no file gave zero feedback. A real
+              // button also makes the row keyboard-operable, which a click-only div never was.
+              var up = document.createElement('button'); up.type = 'button'; up.className = 'bai-upload-row'; up.innerHTML = iconSvg(BAI_ICONS.upload, 16) + '<span>' + (existingZip ? 'Upload a new ZIP file' : 'Upload skill.zip') + '</span>';
               up.addEventListener('click', function () { fileInput.click(); });
               var picked = document.createElement('div'); picked.className = 'bai-upload-hint'; picked.style.color = 'var(--bai-text-hi)';
               picked.textContent = existingZip ? ('Current: ' + (existing.zipName || 'skill.zip')) : 'No file chosen';

@@ -90,10 +90,15 @@ Last updated: 2026-07-25 (blueai-desktop audit — first blueai-desktop domain-f
     + their components (seo/*, HeroNav [fully orphaned], HeroStage/Cards/StageOriginal, BaiHome/FeatureRows/
     AllSkills, rich scenes) + CSS (hero-*.css, seo-home.css, homepage.css, hero-nav.css) + orphaned tokens
     (--bai-accent/indigo/warning/info/scheduled/jobs, --bai-content).
-  - **Standalone DS-UNBOUND experiments:** `/blueai-product` (CDN+Babel clone of the live app; the AI-Credits
-    screen work lives here) · `/blueai-desktop` (static terminal-drawer experiment: index.html + boot.js +
-    flows.js, own dark/light theme system) · **`/moneymaker` (S8, upcoming)** — the moneymaker homepage,
-    completely new visual language by designer directive.
+  - **SUPERSEDED (2026-07-25 scope pivot — this sub-bullet kept as history):** the framing below described
+    `/blueai-desktop` as a "DS-unbound experiment" and `/moneymaker` as the next build. Both are wrong now:
+    **`/blueai-desktop` is the ACTIVE surface and has its own design system** — `blueai-desktop.css` (the
+    tokens + components ARE the DS), `blueai-icons.js` (every glyph named), `style-guide.html` (a live VIEW
+    onto them, self-measuring), `ds-drift-check.js` (the gate; run it before saying done). `/moneymaker`
+    never started. `/blueai-product` is dormant alongside the marketing site.
+    - *Old text:* "Standalone DS-UNBOUND experiments: `/blueai-product` (CDN+Babel clone of the live app) ·
+      `/blueai-desktop` (static terminal-drawer experiment, own dark/light theme system) · `/moneymaker`
+      (S8, upcoming)."
   - **`WAITLIST_URL`** (site-data) = the acquisition-CTA SSOT everywhere (pre-launch posture, S7); real URL
     still TODO-handoff.
 

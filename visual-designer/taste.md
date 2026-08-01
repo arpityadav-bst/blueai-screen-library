@@ -1,5 +1,5 @@
 # blueAI — Taste
-Last updated: 2026-08-01 (rule 41 restated as a MECHANISM — non-layout vs layout-affecting channels — after an independent audit judged the first widening had generalised the title but not the trigger; cross-linked to rule 38; rule 39's stale radius count corrected). 2026-07-25 (SCOPE PIVOT, designer directive — see note below. +rule 38 (divider redundancy),
+Last updated: 2026-08-01 (+rules 42 (choice-control copy) & 43 (deliberate one-offs); Q2/Q3 answers added to 38-40 per the promotion rule; rule 41 restated as a MECHANISM — non-layout vs layout-affecting channels — after an independent audit judged the first widening had generalised the title but not the trigger; cross-linked to rule 38; rule 39's stale radius count corrected). 2026-07-25 (SCOPE PIVOT, designer directive — see note below. +rule 38 (divider redundancy),
 now a primary cross-surface rule rather than a marketing-site-only exception.)
 
 > **SCOPE PIVOT (2026-07-25, designer directive):** the marketing site (rules 1–37 below) and
@@ -318,6 +318,10 @@ springy bounces) — "a utility assistant, not a toy."
     failure on a badge, a structurally different UI primitive — the rule is about REDUNDANT SIGNALS in
     general, dividers were just the first shape it kept showing up in. Sibling reasoning entry:
     `reasonings.md` "A signal is a repeat, not a first, unless it earns its slot."
+    *Where else this applies (surfaces it has NOT bitten on yet):* an icon beside a label that names the
+    same thing; a tooltip repeating a visible caption; an empty-state illustration captioned with the
+    same sentence twice. *What would stop it firing:* reading it as a rule about SEPARATORS — it is
+    about any element restating a fact something visible already states, in any primitive."
 
 ## Codified taste rules (added 2026-08-01 — the design-system build; rules 39–41 are CRAFT, they apply on any surface)
 
@@ -329,6 +333,10 @@ springy bounces) — "a utility assistant, not a toy."
     including 9/9.5, 10/10.5, 11/11.5, 12/12.5, 13/13.5 pairs → 6 text steps + 4 display + 2 glyphs.
     The radius count in this note was left at 9 after tranche 3 retired three more the same day —
     corrected, and now deliberately not restated: `ds-drift-check.js` §8 prints the live figure.)*
+    *Where else this applies:* any near-continuous axis — spacing (9 vs 10px gaps), line-height
+    (1.4 vs 1.42), opacity steps, colour-ramp stops a few RGB points apart, motion durations 20-30ms
+    apart. The test is effective rendered difference, not the unit. *What would stop it firing:* reading
+    "px" literally — a 1.4/1.42 line-height pair is the same residue in a different unit.
 
 40. **Tokenise sizes, not just colours — an untokenised axis drifts by default.** Colours here were
     fully tokenised while every size was a raw literal, so each new component picked its size by copying
@@ -336,6 +344,11 @@ springy bounces) — "a utility assistant, not a toy."
     the absence of anything to reach for. Any axis without a named vocabulary will re-drift no matter how
     many times it is cleaned. Give text steps ROLE names (the role is stable); give display sizes and
     optically-matched glyphs SIZE names, because naming 22px "avatar" is wrong the first time it's reused.
+    *Where else this applies — the axes still open on this surface when this note was written:* spacing
+    (25 raw values, zero tokens), line-height, font-weight, letter-spacing, z-index layers, shadows and
+    motion durations. Each will re-drift until named. *What would stop it firing:* treating "sizes" as
+    the rule's subject — the mechanism is ANY axis without a vocabulary, including ones with no px in
+    them (weights, unitless line-heights, easing curves).
 
 41. **A distinction already carried by a non-layout channel must not be re-encoded in a channel with
     layout side-effects.** Colour, fill, opacity, iconography and position-in-a-group cost nothing when
@@ -371,6 +384,29 @@ springy bounces) — "a utility assistant, not a toy."
       that covered it was already on record. A principle written at the width of the instance that
       taught it will not catch the next instance. When promoting a rule, state it at the level of the
       *mechanism* (colour vs metrics), not the example (captions vs body).
+
+42. **In a choice control, labels NAME and one shared explainer DESCRIBES — no option may explain
+    itself only after commit.** A segmented control's options get one word each (the icon plus an
+    explainer line carry the description); the explainer sits under the control, swaps with the
+    selection, and reserves its space so switching never reflows the form. The failure this codifies:
+    three 17-19 character labels each trying to be both the option's name AND its description, while
+    only one of the three explained itself — in the body, after you had already picked it. If an option
+    needs a paragraph to justify itself once selected, that paragraph belonged at the moment of choice.
+    *(blueai-desktop 2026-08-01, skill-create method switcher: 'Write' / 'Upload' / 'Ask BlueAI' + one
+    hint line replaced 'Write instructions' / 'Upload a ZIP file' / 'Create with BlueAI' + a
+    post-commit explanation.)* *Where else this applies:* plan pickers, payment-method choices, any
+    radio-card group. *What would stop it firing:* treating it as a rule about tab strips — it is about
+    any control where choosing precedes understanding.
+
+43. **A size used once ON PURPOSE is not scale drift — record the purpose, and defend it.** Two
+    Tranche-3 consolidation proposals were DECLINED by the designer, and the reasons are taste, not
+    tidiness: the **wordmark stays 14px** because +1px buys nothing but costs width in the tightest row
+    of a 290px panel (brand marks are set by fit, not by scale step); the **login-gate credit figure
+    stays 38px** because re-tokenising it would rename a token without changing a decision — a display
+    size used once is fine when the once is deliberate. The general form: consolidation pressure must
+    not flatten deliberate one-offs; the cure for an undocumented one-off is documentation, not merging.
+    *(Previously recorded only in a comment beside the token block — designer-taste data stored where no
+    design session reads. Promoted here 2026-08-01.)*
 
 ## Open corrections log
 *SCOPE PIVOT (2026-07-25, designer directive) — superseding the S8 standing scope note below: **the

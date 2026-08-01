@@ -187,7 +187,7 @@
     </header>
 
     <div class="sg-flag">
-      <b>How the theming works.</b> The 46 <code>--bai-*</code> tokens are declared on <code>.drawer</code>
+      <b>How the theming works.</b> The <code>--bai-*</code> tokens (the swatch grid and scale tables below tally them live) are declared on <code>.drawer</code>
       (dark) and <code>.drawer.light</code>, not on <code>:root</code> — deliberately, because the dormant
       marketing site in this same repo uses the same <code>--bai-*</code> namespace with entirely different
       values, and the scoping is what stops the two colliding. Component rules are plain global classes that
@@ -200,7 +200,7 @@
     <section class="sg-sec" id="tokens">
       <h2 class="sg-sech">Color tokens</h2>
       <p class="sg-secnote">
-        All 46, grouped by role. Values are resolved from the live stylesheet for the currently selected
+        Grouped by role — the swatch grid below renders every token in the hand-curated GROUPS list, and a warning appears if the stylesheet declares a colour token the list forgot (the count lives in the grid, not this sentence: a hard-coded “46” here went stale when 5 tokens joined). Values are resolved from the live stylesheet for the currently selected
         specimen theme — flip <em>Specimens</em> above to compare dark against light. Tokens marked
         <strong>fixed</strong> are intentionally not redefined in light theme.
       </p>
@@ -256,17 +256,22 @@
         <b>Inconsistencies, recorded not tidied</b> — each would be a product change, so they're documented
         rather than quietly fixed:
         <br /><br />
-        <b>1. Four stroke weights.</b> <code>iconSvg()</code> renders at <b>1.8</b>; the header and sidebar
-        icons (<code>gear</code>, <code>help</code>) are authored inline at <b>1.6</b>;
-        <code>chevron</code>/<code>search</code> at <b>2</b>; the search-clear X at <b>2.2</b>. Every glyph in
-        the grid below is drawn at 1.8, so a few render marginally lighter here than in the product.
+        <b>1. Stroke weights are not unified.</b> <code>iconSvg()</code> renders at <b>1.8</b>, but the product
+        authors <b>eight distinct weights</b> file-wide (1.3&thinsp;/&thinsp;1.4&thinsp;/&thinsp;1.6&thinsp;/&thinsp;1.7&thinsp;/&thinsp;1.8&thinsp;/&thinsp;2&thinsp;/&thinsp;2.2&thinsp;/&thinsp;2.4), five of them on the
+        static header/sidebar nodes (gear+help 1.6, sidebar nav 1.7, chevron/search 2, search-clear 2.2).
+        Every glyph in the grid below is drawn at 1.8, so several render marginally lighter or heavier here
+        than in the product. <em>(An earlier version of this note said "four weights" — counted, it was eight;
+        see the same correction in blueai-icons.js's header.)</em>
         <br /><br />
         <b>2. Two close glyphs.</b> <code>close</code> and <code>closeAlt</code> are different paths for the
         same X, both live today.
         <br /><br />
-        <b>3. One fill-based icon.</b> The account "kebab" is three filled circles with no stroke, so it can't
-        go through <code>iconSvg()</code> and isn't in the set — it stays inline in <code>index.html</code>.
-        You can see it in the App shell header specimen above.
+        <b>3. Convention-breakers carry metadata.</b> The account "kebab" (fill-based, no stroke), the
+        <code>newChat</code> bubble (filled, 100&times;100) and the three <code>win*</code> titlebar controls
+        (10&times;10, per-element styling) don't fit the stroked-24&times;24 wrapper, so each has a
+        <code>BAI_ICON_META</code> entry and <code>icon()</code> renders it on its own terms. <em>(An earlier
+        version said the kebab "isn't in the set and stays inline" — true until batch 3 named every glyph;
+        the App-shell specimens above now consume all five by name.)</em>
         <br /><br />
         The <b>✦ sparkle</b> is also absent by design: the product uses the text character, not an SVG, so it
         belongs to the type layer.
@@ -296,9 +301,9 @@
             <img class="bai-tb-logo" src="assets/logo.png" alt="" />
             <span class="bai-tb-title">BlueAI</span>
             <div class="bai-tb-btns">
-              <button class="bai-tb-btn" type="button" aria-label="Minimise"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14"/></svg></button>
-              <button class="bai-tb-btn" type="button" aria-label="Maximise"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="5" width="14" height="14" rx="1"/></svg></button>
-              <button class="bai-tb-btn" type="button" aria-label="Close" data-icon="close" data-size="12"></button>
+              <button class="bai-tb-btn" type="button" aria-label="Minimize" data-icon="winMinimize" data-size="10"></button>
+              <button class="bai-tb-btn" type="button" aria-label="Maximize" data-icon="winMaximize" data-size="10"></button>
+              <button class="bai-tb-btn" type="button" aria-label="Close" data-icon="winClose" data-size="10"></button>
             </div>
           </div>
         </div>
@@ -313,7 +318,7 @@
             <div class="bai-head-r">
               <button class="bai-icbtn" type="button" aria-label="Settings" data-icon="gear" data-size="14"></button>
               <button class="bai-icbtn" type="button" aria-label="Help" data-icon="help" data-size="14"></button>
-              <button class="bai-icbtn" type="button" aria-label="Account"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button>
+              <button class="bai-icbtn" type="button" aria-label="Account" data-icon="kebab" data-size="14"></button>
             </div>
           </div>
         </div>
@@ -371,7 +376,7 @@
                  (its own variant, not the active tab); .active marks the current mode. -->
             <div class="bai-side-nav">
               <button class="bai-side-item bai-side-newchat" type="button"><span class="ic" data-icon="newChat" data-size="15"></span>New chat</button>
-              <button class="bai-side-item" type="button"><span class="ic"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h12M8 12h12M8 18h12"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/></svg></span>Jobs</button>
+              <button class="bai-side-item" type="button"><span class="ic"><span data-icon="listChecks" data-size="15" style="display:flex;"></span></span>Jobs</button>
               <button class="bai-side-item active" type="button"><span class="ic" data-icon="bolt" data-size="15"></span>Skills</button>
               <button class="bai-side-item" type="button"><span class="ic" data-icon="clock" data-size="15"></span>Scheduled</button>
             </div>
@@ -407,7 +412,7 @@
         <div class="sg-canvas bai-scope" style="padding:0;display:block;">
           <div style="background:var(--bai-bg);">
             <div class="bai-subpane-head">
-              <button class="bai-subpane-back" type="button" aria-label="Back"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <button class="bai-subpane-back" type="button" aria-label="Back"><span data-icon="chevronLeft" data-size="15" style="display:flex;"></span></button>
               <span>AI Credits</span>
             </div>
             <div class="bai-subpane-body">
@@ -438,7 +443,7 @@
             <div class="bai-inputrow">
               <span class="bai-prompt">&rsaquo;</span>
               <textarea class="bai-q" rows="1" placeholder="Get things done in your apps&hellip;"></textarea>
-              <button class="bai-send disabled" type="button" aria-label="Send message"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/></svg></button>
+              <button class="bai-send disabled" type="button" aria-label="Send message"><span data-icon="telegram" data-size="14" style="display:flex;"></span></button>
             </div>
           </div>
           <span class="sg-lbl">Ongoing chat — static cue</span>
@@ -446,7 +451,7 @@
             <div class="bai-inputrow">
               <span class="bai-prompt">&rsaquo;</span>
               <textarea class="bai-q" rows="1" placeholder="Ask BlueAI anything"></textarea>
-              <button class="bai-send disabled" type="button" aria-label="Send message"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/></svg></button>
+              <button class="bai-send disabled" type="button" aria-label="Send message"><span data-icon="telegram" data-size="14" style="display:flex;"></span></button>
             </div>
           </div>
           <span class="sg-lbl">Filled — send enabled</span>
@@ -454,7 +459,7 @@
             <div class="bai-inputrow">
               <span class="bai-prompt">&rsaquo;</span>
               <textarea class="bai-q" rows="1">Find redeem codes for my game</textarea>
-              <button class="bai-send" type="button" aria-label="Send message"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/></svg></button>
+              <button class="bai-send" type="button" aria-label="Send message"><span data-icon="telegram" data-size="14" style="display:flex;"></span></button>
             </div>
           </div>
         </div>
@@ -467,7 +472,7 @@
             <div class="bai-inputrow">
               <span class="bai-prompt">&rsaquo;</span>
               <textarea class="bai-q" rows="1" placeholder="Ask BlueAI anything"></textarea>
-              <button class="bai-send stop" type="button" aria-label="Stop"><svg width="14" height="14" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/></svg></button>
+              <button class="bai-send stop" type="button" aria-label="Stop"><span data-icon="stopSquare" data-size="14" style="display:flex;"></span></button>
             </div>
           </div>
         </div>
@@ -833,7 +838,7 @@
             <div class="tgm-head">
               <span class="tgm-ic" data-icon="telegram" data-size="12"></span>
               <span class="tgm-title">Connect Telegram</span>
-              <button class="tgm-close" type="button" aria-label="Close" data-icon="close" data-size="14"></button>
+              <button class="tgm-close" type="button" aria-label="Close" data-icon="closeAlt" data-size="14"></button>
             </div>
             <div class="tgm-body">
               <p>Create a bot in Telegram and link it to BlueAI</p>
@@ -921,7 +926,7 @@
           <div class="bai-dt-picker step-time" style="display:block;position:relative;">
             <div class="bai-dt-step-time">
               <button type="button" class="bai-dt-backhead">
-                <span class="bai-dt-backar"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></span>
+                <span class="bai-dt-backar"><span data-icon="chevronLeft" data-size="12" style="display:flex;"></span></span>
                 <span>28 Jul</span>
               </button>
               <div class="bai-dt-timerow">
@@ -1214,7 +1219,7 @@
             <div class="tgm-head">
               <span class="tgm-ic-acc" data-icon="key" data-size="12"></span>
               <span class="tgm-title">Add your own key</span>
-              <button class="tgm-close" type="button" aria-label="Close" data-icon="close" data-size="14"></button>
+              <button class="tgm-close" type="button" aria-label="Close" data-icon="closeAlt" data-size="14"></button>
             </div>
             <div class="tgm-body">
               <p>You’ve used your available AI credits. Add your own API key to continue using BlueAI.</p>
@@ -1235,11 +1240,12 @@
         <code>--cc</code> / <code>--oc</code> colour, so variety costs a CSS variable rather than a class.
       </p>
       <div class="sg-flag" style="margin:0 0 14px;">
-        <b>Note on the glyphs below.</b> The real onboarding cards use one-off <em>decorative</em> icons
-        (database, gem, trophy…) that live inline in the markup and are deliberately not in
-        <code>blueai-icons.js</code> — they're illustration, not the icon system. The specimens use real set
-        icons so this page keeps its no-invented-glyphs guarantee; what's being documented is the
-        <code>--cc</code> tint pattern, not the artwork.
+        <b>Note on the glyphs below.</b> The onboarding cards' decorative icons (database, gem, camera,
+        droplet, envelope, the gift) <em>are</em> in <code>blueai-icons.js</code> since batch 3 — every glyph
+        the product draws is named, so these specimens now render the exact icon the product pairs with each
+        <code>--cc</code> tint. <em>(An earlier version of this note said they were "deliberately not in the
+        module"; that was true when written and became false the day they were named — the specimen below
+        already consumed <code>database</code> by name while this note still said it couldn't.)</em>
       </div>
       <div class="sg-spec">
         <div class="sg-spechead"><span class="sg-cls">.bai-onb-card</span> <span class="sg-cls">.bai-onb-orb</span><span class="sg-role">Outcome card and floating badge. Both take their tint from a local var, and both use a fully colour-mixed shadow in light theme (a plain black layer read as grey smudge there).</span></div>
@@ -1248,10 +1254,10 @@
              here without it) -->
         <div class="sg-canvas bai-scope" style="align-items:center;gap:26px;padding:26px 18px;text-align:center;">
           <div class="bai-onb-card" style="--cc:#e0559a;position:relative;left:auto;top:auto;animation:none;">
-            <span class="ic" data-icon="camera" data-size="15"></span><span class="tx"><b>Morning brief delivered</b></span>
+            <span class="ic" data-icon="camera" data-size="15"></span><span class="tx"><b>Posted to Instagram</b></span>
           </div>
           <div class="bai-onb-card" style="--cc:#4a8bf5;position:relative;left:auto;top:auto;animation:none;">
-            <span class="ic" data-icon="envelope" data-size="15"></span><span class="tx"><b>Daily streak kept</b></span>
+            <span class="ic" data-icon="envelope" data-size="15"></span><span class="tx"><b>Morning brief delivered</b></span>
           </div>
           <span class="bai-onb-orb" style="--oc:#e8a93c;position:relative;left:auto;top:auto;animation:none;" data-icon="database" data-size="15"></span>
           <span class="bai-onb-orb" style="--oc:#7c5cf0;position:relative;left:auto;top:auto;animation:none;" data-icon="catGames" data-size="15"></span>
@@ -1311,14 +1317,15 @@
       <h2 class="sg-sech">Dev preview panel</h2>
       <p class="sg-secnote">
         Not product UI — a design-handoff tool for reaching states that have no in-app trigger (region, plan,
-        empty balance). It's the one surface that <strong>deliberately ignores the token system</strong>: fixed
+        empty balance). Its <strong>colours</strong> deliberately ignore the token system (its sizes, radii and spacing go
+        through the shared tokens via <code>bai-scope</code> since 2026-08-01): fixed
         dark translucent chrome, its own greys, <code>z-index:500</code> above every overlay, and
         <code>position:fixed</code> outside <code>.drawer</code> entirely — so it can never be mistaken for part
         of the product or accidentally captured in a product screenshot.
       </p>
       <div class="sg-spec">
         <div class="sg-spechead"><span class="sg-cls">.bai-preview-card</span> <span class="sg-cls">.bai-preview-row</span> <span class="sg-cls">.bai-preview-seg</span><span class="sg-role">Collapsible panel of labelled state togglers, plus one-shot <code>.bai-preview-action</code> buttons.</span></div>
-        <div class="sg-canvas" style="background:#0a0e1a;align-items:flex-start;padding:20px;">
+        <div class="sg-canvas bai-scope" style="background:#0a0e1a;align-items:flex-start;padding:20px;">
           <div class="bai-preview-card" style="display:block;">
             <!-- bare <span>, matching the product: .bai-preview-head span carries the uppercase styling -->
             <div class="bai-preview-head"><span>Preview</span><button class="bai-preview-collapse" type="button" data-icon="chevronDown" data-size="13"></button></div>
@@ -1403,6 +1410,21 @@
         <div class="sg-spechead"><span class="sg-cls">coverage</span><span class="sg-role">Measured at page load by diffing the classes this page renders against every class in the stylesheet — so it can't overstate itself.</span></div>
         <div class="sg-scale bai-scope" id="sgCoverage"></div>
       </div>
+
+      <h2 class="sg-sech" id="sec-other-scales">Other scales (tokenised 2026-08-01)</h2>
+      <p class="sg-secnote">
+        Spacing, line-height, font-weight, letter-spacing, z-layers, motion and shadows — every axis rule 40
+        named as still open. Tokenised <b>1:1, no value merges</b>: merges are visible, and visible changes are
+        the designer's call, so the value-suffixed names below are <b>provisional</b> — consolidating each axis
+        into a role-named scale is a future designer-reviewed tranche, exactly like the type scale was. Every
+        row is tallied live from the stylesheet.
+      </p>
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">--bai-sp-* / lh / fw / ls / z / t / ease / shadow</span><span class="sg-role">Declared value + how many declarations reach it. A token with one use isn’t automatically drift — but a cluster of near-identical values is (rule 39 lists the candidates).</span></div>
+        <div class="sg-canvas" style="display:block;">
+          <div id="sgOtherScales"></div>
+        </div>
+      </div>
       <div class="sg-flag" style="margin:0;">
         <b>Scale drift — RESOLVED (2026-08-01).</b> The stylesheet uses <b><span data-live-typecount>…</span> distinct font sizes</b>
         and <b><span data-live-radcount>…</span> radii</b>, with
@@ -1412,14 +1434,18 @@
         tallied scale above, all through <code>--bai-fs-*</code> / <code>--bai-r-*</code> tokens.
         Every number here is computed at load, so this paragraph can understate progress but the figures cannot lie.
         <br /><br />
-        <b>What's left.</b> Every component family now has a section. The remaining uncovered classes in the
-        list above are: the <b>demo scene</b> (<code>.stage</code>/<code>.bs-window</code>/<code>.canvas</code>
-        — documented in its own section but deliberately not specimen'd, since reproducing a fixed full-viewport
-        wallpaper inside a doc card would hijack the page), <b>interaction-state and modifier classes</b> that
-        only exist mid-gesture (<code>.working</code>, <code>.flip</code>, <code>.win-hidden</code>,
-        <code>.detached</code>, drag/scroll helpers), and <b>one-off descendants</b> of documented components
-        (<code>.hn-ic</code>, <code>.sh-line</code>, <code>.mk</code> and similar) whose parent's specimen
-        already shows them in place. Trust the list above over this paragraph.
+        <b>What's left.</b> The uncovered list above is the truth; this paragraph is a reading guide to it,
+        and an audit found an earlier version of it flattering the list. The uncovered classes fall into FIVE
+        kinds, not three: the <b>demo scene</b> (deliberately not specimen'd — a fixed full-viewport wallpaper
+        would hijack the page); <b>mid-gesture modifier classes</b> (<code>.working</code>, <code>.flip</code>,
+        <code>.detached</code>, drag/scroll helpers); <b>one-off descendants</b> a parent's specimen already
+        shows in place; <b>component ROOTS whose overlay wrapper isn't rendered</b> even though their card
+        contents are (<code>.bai-logingate</code>, <code>.bai-tgmodal</code>, <code>.bai-onb</code>,
+        <code>.bai-tour</code>, <code>.bai-preview</code>); and <b>genuinely undocumented families</b> — as of
+        2026-08-01 that means the Profile card (<code>.bai-profile-*</code>), the parsed-resume card
+        (<code>.bai-parsecard</code>/<code>.pc-*</code>), chat message bubbles (<code>.bai-msg</code>) and the
+        Telegram pairing-code set (<code>tgm-code/-waitcard/-copybtn</code>…) — real gaps, on the worklist,
+        plus whatever §7 currently reports as dead CSS. Trust the list above over this paragraph.
         <br /><br />
         <b>Specimen fidelity is checked, not assumed.</b> The specimens have been diffed against the real
         components in the running product — every shared class compared on 19 appearance properties. That check
@@ -1478,7 +1504,8 @@
     ['Accent', ['--bai-accent', '--bai-accent-strong', '--bai-accent-wash', '--bai-on-accent', '--bai-chip-bg']],
     ['Semantic', ['--bai-ok', '--bai-danger', '--bai-yellow']],
     ['Credit ramp', ['--bai-credit-hi', '--bai-credit-mid', '--bai-credit-low', '--bai-credit-crit']],
-    ['Titlebar (fixed — not themed)', ['--bai-titlebar-bg*', '--bai-titlebar-line*', '--bai-titlebar-text*', '--bai-titlebar-icon*']],
+    ['Titlebar (fixed — not themed)', ['--bai-titlebar-bg*', '--bai-titlebar-line*', '--bai-titlebar-text*', '--bai-titlebar-icon*', '--bai-titlebar-hover-bg*', '--bai-titlebar-hover-ink*', '--bai-titlebar-close*']],
+    ['Overlays & hints (added 2026-08-01)', ['--bai-scrim', '--bai-scrim-soft', '--bai-placeholder']],
     ['Other', ['--bai-scroll', '--bai-menu-shadow']]
   ];
   /* GROUPS above is hand-authored — the token VALUES are read live, but the NAME list is not, so a
@@ -1492,7 +1519,11 @@
     var declared = {};
     var re = /(--bai-[a-z0-9-]+)\s*:/g, m;
     while ((m = re.exec(css)) !== null) declared[m[1]] = true;
-    return Object.keys(declared).filter(function (n) { return !listed[n]; }).sort();
+    // Axis-scale tokens (spacing/line-height/weight/letter-spacing/z/motion/shadows) are rendered live
+    // by the "Other scales" section below, not as colour swatches — excluding them here is what keeps
+    // this warning meaningful instead of permanently red after the 2026-08-01 axis tokenisation.
+    var OTHER_SCALES = /^--bai-(sp|lh|fw|ls|z|t|ease|shadow|glyph|fs|r)-/;
+    return Object.keys(declared).filter(function (n) { return !listed[n] && !OTHER_SCALES.test(n); }).sort();
   }
 
   function renderTokens() {
@@ -1625,6 +1656,7 @@
     document.querySelectorAll('[data-live-toprad]').forEach(function (e) { e.textContent = topRad.value + ' (' + topRad.uses + ' uses)'; });
     renderPicker();
     renderCoverage(css);
+    renderOtherScales(css);
   }
 
   // ---- picker specimens. Cells/values are built the way the product builds them (a .bai-dt-day
@@ -1657,6 +1689,31 @@
 
   // ---- self-measured coverage: every base class the stylesheet defines vs. the ones this page
   //      actually renders. Replaces a hand-written "~60 of 278" that would rot immediately. ----
+  function renderOtherScales(css) {
+    var host = document.getElementById('sgOtherScales');
+    if (!host) return;
+    var AXES = [['sp', 'spacing'], ['lh', 'line-height'], ['fw', 'font-weight'], ['ls', 'letter-spacing'],
+                ['z', 'z-layer'], ['t', 'duration'], ['ease', 'easing'], ['shadow', 'shadow']];
+    var html = '';
+    AXES.forEach(function (ax) {
+      var re = new RegExp('(--bai-' + ax[0] + '-[a-z0-9_]+)\s*:\s*([^;]+);', 'g'), m;
+      var rows = [];
+      while ((m = re.exec(css)) !== null) {
+        var uses = (css.split('var(' + m[1] + ')').length - 1);
+        rows.push({ name: m[1], val: m[2].trim(), uses: uses });
+      }
+      if (!rows.length) return;
+      html += '<div style="font-weight:700;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:var(--sg-ink-3);margin:14px 0 6px;">' + ax[1] + ' — ' + rows.length + ' token(s)</div>';
+      html += rows.map(function (r) {
+        return '<div style="display:flex;gap:14px;font-family:ui-monospace,Menlo,monospace;font-size:11px;padding:3px 0;border-bottom:1px solid var(--sg-line);">'
+          + '<span style="min-width:170px;color:var(--sg-accent);">' + r.name + '</span>'
+          + '<span style="min-width:220px;">' + r.val + '</span>'
+          + '<span style="color:var(--sg-ink-3);">' + r.uses + '×</span></div>';
+      }).join('');
+    });
+    host.innerHTML = html || '(no axis tokens found)';
+  }
+
   function renderCoverage(css) {
     var defined = {};
     var re = /(^|[\s,>+~])\.([a-zA-Z][\w-]*)/g, m;

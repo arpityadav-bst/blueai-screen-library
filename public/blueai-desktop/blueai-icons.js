@@ -54,7 +54,7 @@
    Convention: 24x24 viewBox, fill:none, stroke:currentColor, stroke-width 1.8,
    round caps/joins — applied by iconSvg(path, size) in index.html.
 
-   TWO KNOWN INCONSISTENCIES, recorded rather than silently tidied (unifying them
+   THREE KNOWN INCONSISTENCIES, recorded rather than silently tidied (unifying them
    is a product change, not a documentation one):
      - `close` and `closeAlt` are two different paths for the same X glyph, both
        live in the product today.

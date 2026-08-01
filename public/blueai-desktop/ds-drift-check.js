@@ -277,15 +277,22 @@ if (rawFound.length) {
       the wrong one, and every check stayed green. Existence checks cannot catch a
       wrong-but-valid value; only a cross-reference can.
 
-      Method: anchor on the LABEL. Where a specimen pairs an icon with visible text,
-      find that same text in the product and read the icon named next to it. Works
+      Method: anchor on whatever product-verbatim handle the specimen carries — an adjacent
+      text label, an aria-label, or a specific class — find that same handle in the product and
+      read the icon named beside it. Works
       because the icon migration gave every path a name — before it, 15 of 24 icons
       were anonymous path literals and this check was impossible to write.
    --------------------------------------------------------------------------- */
 section('9. ICON CHOICE (specimen icon vs the product\'s own icon)');
 const pathConst = {};                                    // FOO_PATH -> icon name
 [...PROD.matchAll(/var\s+([A-Z][A-Z0-9_]*)\s*=\s*BAI_ICONS\.(\w+)/g)].forEach(m => { pathConst[m[1]] = m[2]; });
-const nameOf = tok => (tok in pathConst ? pathConst[tok] : tok);
+const nameOf = tok => {
+  if (tok in pathConst) return pathConst[tok];
+  // A *_PATH constant not assigned from BAI_ICONS can never match an icon name. Returning the raw
+  // token polluted verdict pools and could fabricate a mismatch; null drops it from ICON_SITES.
+  if (/_PATH$/.test(tok)) return null;
+  return tok;
+};
 
 /* An independent audit took this section apart and found four ways it could pass while wrong. All four
    are fixed below, because a check that can quietly succeed is the failure mode this whole file exists
@@ -322,7 +329,11 @@ const addPair = (icon, anchor, kind) => {
 [...GUIDE.matchAll(/<[a-z]+ ([^>]*?)data-icon="(\w+)"([^>]*)>/g)].forEach(m => {
   const attrs = m[1] + m[3];
   const aria = attrs.match(/aria-label="([^"]{3,60})"/);
-  if (aria) { addPair(m[2], 'aria-label="' + aria[1] + '"', 'aria'); return; }
+  if (aria) addPair(m[2], 'aria-label="' + aria[1] + '"', 'aria');
+  // no early return — an element can carry BOTH anchors, and the class anchor is the tighter one:
+  // aria-label="Close" matches five product sites across three different close glyphs, while
+  // .tgm-close matches exactly the one this specimen claims to be. Suppressing the class anchor
+  // behind the aria one is how a wrong close-glyph passed the first version of this check.
   const cls = attrs.match(/class="([^"]*)"/);
   if (cls) {
     // the most specific product class on the element — longest wins ("bai-newchat-btn" over "bai-icbtn")
@@ -334,7 +345,7 @@ const addPair = (icon, anchor, kind) => {
 
 // every named-icon reference in the product, by absolute position — computed once, never sliced
 const ICON_SITES = [...PROD.matchAll(/BAI_ICONS\.(\w+)|data-bai-icon="(\w+)"|\b([A-Z][A-Z0-9_]*_PATH)\b/g)]
-  .map(m => ({ pos: m.index, name: nameOf(m[1] || m[2] || m[3]) }));
+  .map(m => ({ pos: m.index, name: nameOf(m[1] || m[2] || m[3]) })).filter(h => h.name);
 const WIN = 250;         // label anchors: a static <svg> tag's attribute run is ~150 chars; 110 could not see past it
 const WIN_MEMBER = 280;  // class/aria anchors: roughly one element's own span — big enough to reach the
                          // icon through the svg's attributes, small enough not to swallow the next row
@@ -366,7 +377,7 @@ pairs.forEach(({ icon, anchor, kind }) => {
      than a static <svg>'s own attribute run, so hydrated icons sat just out of reach of their labels. */
   const verdicts = [];
   sites.forEach(at => {
-    if (kind === 'label') {
+    if (kind === 'label' || kind === 'aria') {
       let best = null;
       for (const h of ICON_SITES) {
         const d = Math.abs(h.pos - at);
@@ -402,11 +413,6 @@ if (mism.length) {
   console.log('OK — ' + verified + '/' + pairs.length +
               ' anchored specimens match the nearest named icon the product uses for that component.');
 }
-const anchored = new Set();
-[...GUIDE.matchAll(/<[a-z]+ ([^>]*?)data-icon="(\w+)"([^>]*)>/g)].forEach((m, i) => {
-  const attrs = m[1] + m[3];
-  if (/aria-label="[^"]{3,60}"/.test(attrs) || /class="[^"]*\b(?:bai|tgm|lg|cr|ooc)-[a-z-]{4,}/.test(attrs)) anchored.add(i);
-});
 console.log('   COVERAGE OF THIS CHECK: ' + pairs.length + ' anchor(s) over ' + candidateIcons +
             ' data-icon renders (anchors: text label, aria-label, or a specific class on the element).');
 console.log('   Renders with NO anchor of any kind are NOT verified by anything — the icon-set catalog');
@@ -421,6 +427,62 @@ if (unverifiable.length) {
   if (unverifiable.length > 8) console.log('     ... +' + (unverifiable.length - 8) + ' more');
 }
 
+/* ---------------------------------------------------------------------------
+   10. HYDRATION POSITION — every data-bai-icon must sit in TRUE static markup,
+       BEFORE the inline <script> begins. The migration's first version tagged
+       six SVGs inside JS template strings; they are created at render time,
+       after the one-time boot hydration has already run, so they rendered
+       EMPTY. That bug was fixed by hand and, until this section, was prevented
+       only by a code comment. A comment is a hope; this is a gate.
+   --------------------------------------------------------------------------- */
+section('10. HYDRATION POSITION (data-bai-icon must precede the script)');
+{
+  const scriptAt = PROD.indexOf('<script>');
+  const late = [];
+  for (let i = PROD.indexOf('data-bai-icon="'); i !== -1; i = PROD.indexOf('data-bai-icon="', i + 1)) {
+    if (i > scriptAt) late.push(PROD.slice(0, i).split(/\r?\n/).length);
+  }
+  if (late.length) {
+    console.log('FAIL — ' + late.length + ' data-bai-icon attribute(s) AFTER the <script> tag (lines ' + late.join(', ') + ').');
+    console.log('   Those elements are built at render time; the boot hydration pass cannot reach them and');
+    console.log('   they will render EMPTY. Inside JS strings, splice BAI_ICONS.<name> directly instead.');
+    fail++;
+  } else {
+    console.log('OK — all data-bai-icon attributes precede the script; the boot hydration reaches every one.');
+  }
+  const metaKeys = [...ICONS.matchAll(/^ {2}(\w+): \{/gm)].map(m => m[1]);
+  const badMeta = metaKeys.filter(k => !iconNames.has(k));
+  if (badMeta.length) { console.log('FAIL — BAI_ICON_META key(s) with no BAI_ICONS entry: ' + badMeta.join(', ')); fail++; }
+  else console.log('OK — every BAI_ICON_META key exists in BAI_ICONS (' + metaKeys.length + ' meta entries).');
+}
+
+/* ---------------------------------------------------------------------------
+   11. NO HAND-DRAWN GLYPHS IN SPECIMENS — every <svg> the guide renders must
+       come from the module (data-icon / icon()), never be authored inline.
+       Two audits found what §3 and §9 structurally could not: the titlebar
+       specimens carried INVENTED 24x24 min/max glyphs matching nothing in the
+       product, and the kebab was a hand-copied inline body. §3 validates only
+       names; §6 scans only index.html. This closes the guide-side hole.
+   --------------------------------------------------------------------------- */
+section('11. GUIDE GLYPH PROVENANCE (no inline <svg> bodies in specimens)');
+{
+  // the credits ring GAUGE is a data-viz component whose arc is runtime-computed — same documented
+  // exemption as §6; everything else must come from the module
+  const inline = [...GUIDE.matchAll(/<svg\b([^>]*)>([\s\S]{5,1200}?)<\/svg>/g)]
+    .filter(m => m[1].indexOf('bai-credit-ring') === -1)
+    .filter(m => /<(path|circle|rect|line|polyline|polygon)\b/.test(m[2]))
+    .map(m => ({ line: GUIDE.slice(0, m.index).split(/\r?\n/).length, hint: m[2].replace(/\s+/g, ' ').slice(0, 60) }));
+  if (inline.length) {
+    console.log('FAIL — ' + inline.length + ' hand-authored <svg> bod(ies) in the guide. A specimen must render');
+    console.log('   icons via data-icon="<name>" so provenance is checkable — an inline body is either a copy');
+    console.log('   that will go stale or an invention that was never true:');
+    inline.slice(0, 6).forEach(x => console.log('     line ' + x.line + ': ' + x.hint));
+    fail++;
+  } else {
+    console.log('OK — the guide hand-authors zero svg bodies; every glyph resolves through the shared module.');
+  }
+}
+
 console.log('\n' + '='.repeat(64));
 console.log(fail === 0
   ? 'PASS — no drift detected in what is checked below.'
@@ -432,7 +494,7 @@ console.log('='.repeat(64));
 console.log('WHAT THIS DOES AND DOES NOT VERIFY');
 console.log('  genuinely cross-referenced against the product:');
 console.log('    §1 specimen <button> text + placeholders — must exist verbatim in index.html');
-console.log('    §9 icon choice, for the subset of specimens carrying an adjacent text label');
+console.log('    §9 icon choice — anchored on adjacent text labels, aria-labels, and specific classes');
 console.log('    §6 module paths vs inline literals');
 console.log('  NOT cross-references, though an earlier version of this footer listed them as such:');
 console.log('    §4 reads index.html alone — it never opens blueai-icons.js');

@@ -125,8 +125,8 @@ six; the check now prints its own scope footer, which is authoritative over anyt
 |---|---|---|---|
 | a new CSS class | a specimen renders it | §2 coverage **floor** | a floor, not a check — several classes can ship uncovered before it trips |
 | a new `--bai-*` token | a row in the guide's `GROUPS` | the guide self-reports omissions | none known — this one genuinely works |
-| a size or radius | a `--bai-fs-*` / `--bai-r-*` token | §8 | shorthand px only; longhand corners, widths, padding, gaps and rem are invisible, and the *right* token is never checked |
-| an icon | named in `blueai-icons.js`, consumed by name | §4 (product-side literals), §6 (duplication), §9 (right glyph) | §9 only reaches specimens with an adjacent text label; icon-only specimens are unverified |
+| a size / radius / spacing / weight / line-height / letter-spacing / z-layer / motion value | the matching `--bai-*` token | §8 (sizes+radii incl. longhands, zero exemptions) | spacing/weight/etc. have tokens but no gate yet; widths and rem are invisible; the *right* token is never checked |
+| an icon | named in `blueai-icons.js`, consumed by name | §4 (literals), §6 (duplication+unnamed), §9 (right glyph, via label/aria/class anchors), §10 (hydration position), §11 (no hand-drawn guide glyphs) | specimens with NO anchor of any kind are still unverified — §9 prints how many |
 | a component's **markup / copy / states** | specimen re-derived from `index.html` | §1, for `<button>` text + placeholders | **markup and states are not checked at all** — which is exactly where the four-state login flow defect lived |
 | a class removed from the product | its CSS rule removed too | §7 **reports**, never fails | nothing stops a dead rule landing |
 
@@ -183,8 +183,9 @@ down. The failure mode is rules phrased so narrowly they only match their own or
     radius scales made it 64). Open the guide, or run `ds-drift-check.js`, for the current figure.
   - `blueai-icons.js` — **the icon set.** SSOT for the style guide (which renders every specimen
     from it and *throws* on an unknown name). For the product: every path **that is in the module**
-    is now reached by name, via three call shapes documented in its header — but the product still
-    draws glyphs the module doesn't carry, and those stay anonymous and therefore uncheckable.
+    is now reached by name, via three call shapes documented in its header. Since batch 3
+    (2026-08-01), §6 counts ZERO unnamed inline glyphs — every icon the product draws is named;
+    the only svg outside the module is the credits ring gauge, a runtime data-viz component.
     **No counts here on purpose** — `ds-drift-check.js` §6 prints them (module size, duplication,
     and unnamed-glyph count) every run. Four numbers written in this bullet were wrong at once
     before they were deleted; the header of that file records three separate versions of the same

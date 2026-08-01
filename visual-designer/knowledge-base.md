@@ -29,10 +29,16 @@ Last updated: 2026-08-01 (the design-system build — DS architecture + traps: b
   style-guide.html made every `#section` link resolve to `/blueai-desktop/#section`, which the server answers
   with the directory index — so every sidebar click left the guide for the product. Inheriting a solution
   without inheriting its problem. A page whose own paths are same-directory relative needs no base at all.
-- **Tokens scoped to `.drawer` do not reach `position:fixed` descendants of `<body>`.** The dev Preview panel
-  lives outside `.drawer`, so tokenising its sizes collapsed its radius to 0px and its text to the 16px
-  default. It is deliberately outside the design system, so the fix was literals + a do-not-tokenise note,
-  NOT widening the token scope. Check ancestry before tokenising anything fixed-position.
+- **Tokens scoped to `.drawer` do not reach `position:fixed` descendants of `<body>` — but the fix is to
+  hand them the scope, not to give up.** (Rewritten 2026-08-01; the first version of this entry taught the
+  wrong move.) Tokenising the dev Preview panel's sizes once collapsed its radius to 0px because it lives
+  outside `.drawer`; the original entry concluded "literals + a do-not-tokenise note, NOT widening the token
+  scope." That conclusion outlived its own justification the day `.bai-scope` (the tokens-only alias) was
+  created, and the raw literals then sat in the guide's tally as unexplained amber rows until the designer
+  asked why. Current truth: the panel's wrapper carries `bai-scope`, its sizes go through tokens, and zero
+  per-selector exemptions remain in the gate. The durable lessons: *check ancestry before tokenising anything
+  fixed-position* (still true), and *an exemption is a claim with an expiry date that nothing re-checks —
+  re-derive it whenever the mechanism it cites changes.*
 - **A tokens-only alias makes a style guide possible.** Component rules here are plain global classes that
   resolve `var(--bai-*)`; only the token declarations are `.drawer`-scoped. Adding `.bai-scope` alongside
   `.drawer` on the token blocks (and on the three `.drawer.light` component overrides) lets any container
