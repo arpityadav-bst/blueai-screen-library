@@ -1440,9 +1440,18 @@
       var schedListEl = document.getElementById('baiSchedList'), schedPendingDelete = -1, schedShimmerShown = false;
       function renderScheduled() {
         schedListEl.innerHTML = '';
+        // Same empty/filled SWAP as My Skills (designer): when the list is empty, the header pill's
+        // whole row hides and the empty state carries its own centred CTA — the action sits where the
+        // eye already is, and the two placements never stack (rule 38). renderScheduled runs on every
+        // add/delete, so the swap tracks list state with no extra wiring.
+        var headRow = schedAddBtn ? schedAddBtn.parentElement : null;
+        if (headRow) headRow.style.display = SCHEDULED.length ? '' : 'none';
         if (!SCHEDULED.length) {
           var empty = document.createElement('div'); empty.className = 'bai-stub';
           empty.innerHTML = '<div class="ic">' + iconSvg(CAL_PATH, 17) + '</div><h4>Nothing scheduled yet</h4><p>Ask BlueAI to run a task later or repeat it on a schedule. Your scheduled tasks will appear here.</p>';
+          var cta = document.createElement('button'); cta.className = 'bai-list-add'; cta.type = 'button'; cta.textContent = '+ New task'; cta.style.marginTop = 'var(--bai-sp-4)';
+          cta.addEventListener('click', function () { openSchedForm(null); });
+          empty.appendChild(cta);
           schedListEl.appendChild(empty); refreshFadeScroll(schedListEl, document.getElementById('baiSchedScroll')); return;
         }
         SCHEDULED.forEach(function (t, i) {

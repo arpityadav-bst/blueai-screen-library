@@ -5,6 +5,20 @@ resolved. Promoted to decisions.md / taste.md at audit passes, then wiped.
 Format: `YYYY-MM-DD HH:mm — <file> — <what changed> — Why: <one phrase>`
 
 --- Pending audit entries ---
+2026-08-01 (cont. 9) — blueai-desktop — designer: 'similarly, what about the Scheduled tab pill?'
+Right again — Scheduled was the PRE-FIX My Skills shape: an empty state ('Nothing scheduled yet') with
+no action in it, and the '+ New task' row floating above it regardless. Same swap applied: empty → the
+header row HIDES (display:none on the whole row, not just the pill — an empty row would still spend the
+space) and the stub carries a centred '+ New task' opening the same form subpane; filled → row returns.
+renderScheduled runs on every add/delete, so the swap is free. Verified through the real flow: 2 demo
+tasks → row visible; deleted both via Delete→confirm → row gone, centred CTA; created 'Test task' from
+the CTA → row back, one card. Drift PASS; guide prose extended with the Scheduled parity in the same
+edit. — Why: this is the third surface of the same pattern in one thread (Skills toolbar, My Skills
+subpane, Scheduled tab) — and the second time the designer had to point at a sibling surface I should
+have swept after fixing the first. The pattern is now structural on all three; the process failure
+(fix-one-forget-the-siblings) has cost two extra review rounds today and belongs in the next audit as
+its own lesson: A FIX TO A PATTERN IS NOT DONE UNTIL EVERY INSTANCE OF THE PATTERN IS VISITED.
+
 2026-08-01 (cont. 8) — blueai-desktop — designer, third pass on the create affordance: 'when EMPTY it
 should be a clear centred CTA in the empty state; when filled, the header row — and the compact pill
 feels too thin.' Both applied. (1) EMPTY/FILLED SWAP: the empty state now carries its own centred
