@@ -13,6 +13,7 @@ const nextConfig = {
     return [
       { source: '/blueai-product', destination: '/blueai-product/index.html' },
       { source: '/blueai-desktop', destination: '/blueai-desktop/index.html' },
+      { source: '/blueai-creators', destination: '/blueai-creators/index.html' },
     ]
   },
 }
