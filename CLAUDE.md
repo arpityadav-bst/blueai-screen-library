@@ -10,13 +10,17 @@ WSUP/now.gg: visual fidelity + handoff clarity, no real backend.
 
 ## ⚡ SCOPE PIVOT (2026-07-25, designer directive) — READ THIS FIRST
 
-**`/blueai-desktop` (the "modern terminal" prototype) is the ACTIVE surface.** The marketing
-site (all routes below under "Marketing site + /blueai-product — DORMANT") and the separate
-`/blueai-product` thread are BOTH dormant — not deleted, not deprecated, just not where work
-is happening, possibly for a long time. This reverses the prior framing, where blueai-desktop
-was treated as a DS-unbound side experiment and the marketing site was the default. If either
-dormant surface becomes active again, flip this note back — nothing needs to be rebuilt, only
-re-prioritized.
+**`/blueai-desktop` (the "modern terminal" prototype) is the ACTIVE surface — and it is the ONLY
+one.** Everything else in this repo is dormant or parked: the marketing site, `/blueai-product`,
+`/moneymaker`, `/live-demo-v2`, `/clay`, and `/blueai-creators` (each has its own section below).
+Not deleted, not deprecated, just not where work is happening, possibly for a long time. This
+reverses the prior framing, where blueai-desktop was treated as a DS-unbound side experiment and
+the marketing site was the default. If a dormant surface becomes active again, flip this note back
+— nothing needs to be rebuilt, only re-prioritized.
+
+**State the list as "everything except blueai-desktop", not as an enumeration.** The enumeration
+here named two surfaces while four existed; it went stale the first time one was added. If you add
+a surface to this repo, it is parked by default and does not need this note edited.
 
 **Practical effect:** Gate 8 (taste.md) now reviews new work against blueai-desktop's OWN
 design system — **`public/blueai-desktop/style-guide.html`** (live specimens, built from the
@@ -33,16 +37,30 @@ the shared `../agents/vda-core/`; blueAI's TASTE/decisions live here in `visual-
 **None of the gates fire if the files aren't read at session start.** Non-negotiable. **Do
 NOT load WSUP's or now.gg's notebook for blueAI work — that's cross-contamination.**
 
-**Trigger** — fire the FIRST time any of these are true in a session:
-- Human message references *blueAI, blueai, "BlueAI by now.gg"*, the **blueai-desktop /
-  "modern terminal" prototype** (the active surface — any of its components: credits screen,
-  OOC modal, Settings cards, Telegram/AI-Mode/BYOK, Preview panel, etc.), or — for DORMANT
-  work only if explicitly asked — the marketing-site hero (Stage / Stage Original / 3 Cards),
-  homepage, or components (`HeroStage`, `HeroCards`, `HeroStageOriginal`, `HeroNav`, `BaiHome`,
-  `FeatureRows`, `AllSkills`, the agent scenes, etc.)
-- Human drags/pastes a file path under `blueai/`
-- About to read/write a file under `blueai/`
-- Human says "build", "design", "fix the layout", "update VDA"
+**Trigger — the trigger is `blueai-desktop`, NOT the word "blueai"** (narrowed 2026-08-03, designer
+directive). The bootstrap is expensive and it exists to protect ONE surface; firing it on the bare
+project name made every unrelated errand in this repo pay for it. Fire the FIRST time any of these
+are true in a session:
+- Human message references the **blueai-desktop / "modern terminal" prototype** — the one active
+  surface — or its design system, by name or by component: credits screen, OOC modal, Settings
+  cards, Telegram / AI-Mode / BYOK, Preview panel, Skills / Jobs / Scheduled, the login gate,
+  onboarding, the titlebar, the drawer.
+- Human drags/pastes, or you are about to read/write, a file under `public/blueai-desktop/`
+  (`index.html`, `blueai-desktop.css`, `blueai-icons.js`, `style-guide.html`, `ds-drift-check.js`,
+  `boot.js`, `flows.js`) or under `visual-designer/`.
+- Human says "build", "design", "fix the layout", "update VDA" **about blueai-desktop**.
+
+**It does NOT fire for anything else in this repo.** Every other surface here is DORMANT or PARKED
+and is out of VDA scope — work on it freely, no bootstrap, no Gate 8 against blueai-desktop's DS:
+the marketing site (`/seo`, the three heroes, `HeroStage` / `HeroCards` / `HeroStageOriginal` /
+`HeroNav` / `BaiHome` / `FeatureRows` / `AllSkills`, the agent scenes), `/blueai-product`,
+`/moneymaker`, `/live-demo-v2`, `/clay`, `/blueai-creators`, and the root Screen Library index.
+A dormant surface fires the bootstrap ONLY if the designer explicitly asks for VDA or
+design-system review on it.
+
+**The blast-radius rule survives the narrowing.** Out of VDA scope is not out of care: a dormant
+surface must never be edited in a way that touches `public/blueai-desktop/**` or `visual-designer/**`.
+Those two trees are the active surface, bootstrap or no bootstrap.
 
 **Mandatory reads on first blueAI touch, in this order** (craft = shared `../agents/vda-core/`; notebook = blueAI's `visual-designer/`):
 1. `../agents/vda-core/agent.md` — re-anchor identity (think like a UX designer)
@@ -257,6 +275,24 @@ down. The failure mode is rules phrased so narrowly they only match their own or
 - **CSS:** per-variant hero stylesheets are scoped-by-route; cross-route links use
   full-page `<a>`. DS tokens in `globals.css` (`--bai-*`) + `tailwind.config.ts`.
 - **Parked fixes:** `design-source/FIX-LATER.md` (designer's Recommended-hero polish items).
+
+## /blueai-creators — PARKED (added 2026-08-03)
+- A two-sided creator-marketplace onboarding concept: creators paid **cash** for verified posts;
+  brands hire many small local creators instead of one macro influencer. Pre-launch, so both
+  journeys end at a **waitlist**, not a signup.
+- Plain self-contained HTML/CSS/JS, no build step, hash-routed. Files in `public/blueai-creators/`:
+  `index.html` (8 pages — `#/creators` → earnings → waitlist, and `#/brands` → map → compare →
+  plan → reserve), `diagrams.html` (page inventory, two swimlanes, a level-1 DFD),
+  `onboarding-flows.md` (the spec: decisions, segmentation, agent architecture, economics),
+  plus `README.md` and `CONTEXT.md` (full working context for a cold start — read it first).
+- Served at `/blueai-creators` via a rewrite in `next.config.js`, same as `/blueai-desktop` and
+  `/blueai-product`. Indexed on the root Screen Library under **Dormant**, as two cards.
+- **Out of VDA scope, and it carries its OWN tokens** — a self-contained `:root` palette with
+  light/dark, unrelated to either `--bai-*` layer. That is deliberate, not drift; do not
+  "harmonise" it with a BlueAI design system, and do not review it against one.
+- **Every dollar figure is an illustrative model for screen design, not a researched rate card.**
+  The one real dependency is a creator index; until it holds live Austin data, the earnings
+  estimate and the supply map are both illustrative. See §9–10 of `CONTEXT.md`.
 
 ## File size rule (inherited)
 **Max 300 lines per `.tsx`/`.ts`.** `.md`, `package-lock.json`, `.css` config-style files
