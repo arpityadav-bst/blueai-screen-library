@@ -320,8 +320,29 @@ springy bounces) — "a utility assistant, not a toy."
     `reasonings.md` "A signal is a repeat, not a first, unless it earns its slot."
     *Where else this applies (surfaces it has NOT bitten on yet):* an icon beside a label that names the
     same thing; a tooltip repeating a visible caption; an empty-state illustration captioned with the
-    same sentence twice. *What would stop it firing:* reading it as a rule about SEPARATORS — it is
-    about any element restating a fact something visible already states, in any primitive."
+    same sentence twice.
+
+    **AMENDMENT (2026-08-03) — the fail-to-fire clause below was WRONG, and today proved it.**
+    It read: *"reading it as a rule about SEPARATORS."* That is not how the rule failed. Every wording of
+    it — here and in its `reasonings.md` sibling — is a gate on **addition**: *"before adding a separator
+    OR a status marker"*, *"before adding ANY new signal"*, *"when adding a new visual element."* Today's
+    redundant element was **inherited, not added**: the Scheduled form was wrapped in a bordered card that
+    restated a boundary its own subpane already drew, and the card was months-old code I had simply kept
+    while rebuilding everything inside it. Nothing was being added, so nothing fired, and the designer
+    found it. **The real fail-to-fire is: a redundancy rule scoped to additions never fires on code you
+    inherit.**
+    *Restated so it can fire either way:* when you touch a surface, every element already on it is IN
+    SCOPE, not background. The question is not "should I add this signal?" but "does each signal here
+    still earn its slot, given what this surface now contains?" An element that earned its slot when it
+    was written can stop earning it without anyone editing it — see rule 46, which is the same fact from
+    the container's side.
+    *Second width, same mechanism (also today):* redundancy by **ubiquity**, not adjacency. The live
+    product asterisks six of seven field labels; a marker on almost every member of a set marks nothing,
+    and the only informative marking would have been the one field whose requirement actually varies. A
+    signal repeated across a whole set is as empty as a signal repeated beside its neighbour.
+    *What would stop it firing NOW:* reading it as a rule about elements you are about to write (it covers
+    what is already there), about SEPARATORS (it covers any primitive), or about a signal's NEIGHBOUR (it
+    covers a signal repeated across a whole set).
 
 ## Codified taste rules (added 2026-08-01 — the design-system build; rules 39–41 are CRAFT, they apply on any surface)
 
@@ -454,6 +475,33 @@ springy bounces) — "a utility assistant, not a toy."
     affordance attached to a collection.
     *What would stop it firing:* reading it as a rule about "+ New pills". It is about ANY action
     affordance attached to a collection, whatever its label or shape.
+
+46. **A wrapper's correctness is a function of what it wraps — so containment is part of the delta whenever
+    content changes scale.** A container earns its slot against the content inside it: its border, its
+    padding, its max-width, its scroll behaviour were all judged against a particular amount and shape of
+    content. Change that content substantially and the container's justification expires *without anyone
+    editing the container* — so when you add to or remove from a surface, re-review the box AROUND the
+    content, not only the gaps between items inside it. Gate 8.4 already says "re-check spacing after a
+    content change"; read it to include the containment.
+    *(blueai-desktop 2026-08-03: Scheduled's task form was wrapped in `.bai-newitem`, a bordered
+    accent-outlined card. At three short fields it read as a small form block and nobody questioned it. I
+    rebuilt the form to seven field groups — and the same untouched element became a full-height box that
+    was (a) redundant, restating a boundary its own full-screen subpane already drew, and (b) misaligned,
+    because its 14px margin double-paid `.bai-subpane-body`'s existing 12px padding: card edge at 27px and
+    its fields at 40px, against 13–15px for every other container on the screen. The designer caught it by
+    eye in one look. Removing it also retired two layout workarounds I had built AND documented as forced
+    constraints hours earlier — a 2×2 grid and a 4+3 chip wrap, both genuinely real at the 179px the card
+    left, neither real at the 264px without it.)*
+    *Where else this applies:* a settings card whose content shrank to a single row; a modal that grew past
+    its scroll threshold and now needs a pinned footer; a section that lost items and whose `min-height`
+    is now dead air; a `max-width` set for prose that now holds a table; a scroll container that no longer
+    has anything to scroll. **Both directions** — shrinking content strands a wrapper just as growing
+    content strains it.
+    *What would stop it firing:* reading it as a rule about content that GREW (shrinking is the same
+    fault), or reading "container" as only a visible card — a `max-width`, a padding wrapper, a scroll
+    context and a flex parent are all the same element for this purpose, and three of those are invisible.
+    *Sibling:* rule 38's 2026-08-03 amendment is this same fact from the signal's side — an element can
+    stop earning its slot with nobody touching it. Read them together.
 
 ## Open corrections log
 *SCOPE PIVOT (2026-07-25, designer directive) — superseding the S8 standing scope note below: **the

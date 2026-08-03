@@ -65,18 +65,39 @@ Those two trees are the active surface, bootstrap or no bootstrap.
 **Mandatory reads on first blueAI touch, in this order** (craft = shared `../agents/vda-core/`; notebook = blueAI's `visual-designer/`):
 1. `../agents/vda-core/agent.md` — re-anchor identity (think like a UX designer)
 2. `../agents/vda-core/QUALITY-GATES.md` — 8 gates + dual-cadence + Gate 6.5 + routing table
-3. `visual-designer/taste.md` — read the SCOPE PIVOT note at the top first, then **rules 38-45**
-   (this list said "rule 38" while 39, 40 and 41 were already live — including 41, the one the
-   2026-08-01 switcher bug turned on); rules 1–37 are dormant-surface reference
+3. `visual-designer/taste.md` — read the SCOPE PIVOT note at the top first, then **every rule from 38
+   onward** — deliberately NOT enumerated. This line said "rule 38" while 39–41 were live, then
+   "rules 38-45" while 46 was live; an enumeration of a growing list is wrong the moment the list
+   grows, and it was wrong twice here. The file is the list. Rules 1–37 are dormant-surface reference.
 3b. `public/blueai-desktop/style-guide.html` — blueai-desktop's own DS reference (tokens,
    scales, icon set, component families). THIS is what Gate 8 reviews blueai-desktop work
    against. Skim its section list + "Known gaps"; open it in the browser when designing.
 4. `visual-designer/decisions.md` — recent decisions so new work doesn't contradict them
-5. `visual-designer/session-logs.md` — most recent entry only (top)
-6. `visual-designer/scratchpad.md` — pending entries (flag if non-empty past the header)
-7. **Run `node public/blueai-desktop/ds-drift-check.js`** — 20 seconds, and it tells you the current
+5. `visual-designer/reasonings.md` — the principles behind the rules; this is what makes a NEW
+   situation decidable rather than only a repeat one
+6. `visual-designer/project-insights.md` — the FACTS file. For blueai-desktop, read the **layout
+   system** section: the 290px floor, the deliberate 14px/12px list-vs-subpane gutter split, the
+   264px form content width, and the node-relocation rule. A 2026-08-03 defect (a wrapper
+   double-paying a gutter) existed partly because these numbers were written nowhere a session reads.
+7. `visual-designer/knowledge-base.md` — accumulated traps. Read the **blueai-desktop traps**
+   section at the bottom; everything above it is the dormant marketing site.
+8. `visual-designer/session-logs.md` — most recent entry only (top), including its `Freshness check:`
+   line and `designer_caught_count`
+9. `visual-designer/scratchpad.md` — pending entries (flag if non-empty past the header)
+10. `visual-designer/evolution.md` — current phase + the CURRENT top recurring category, which is
+   what you are watching for this session. Read the newest era section, not the whole file.
+11. **Run `node public/blueai-desktop/ds-drift-check.js`** — 20 seconds, and it tells you the current
    truth about the design system (coverage, any invented copy, any raw sizes, dead CSS) instead of
    making you infer it. Do this at session start AND before declaring any change done.
+
+**Why items 5, 6, 7 and 10 were ADDED (2026-08-03).** This list held six notebook files while
+`../agents/vda-core/agent.md` says *"NOTEBOOK files — read ALL — these ARE you for THIS project"* and
+names seven. An independent audit found the four omitted files were **exactly the four that had gone
+stale**, which is not a coincidence: a file nothing reads is a file nothing corrects. Two further
+consequences of the omission: Gate 6.5's rule-conflict cross-check is *specified* to check new rules
+against `knowledge-base.md`, so it was structurally unable to run; and `evolution.md` carried the wrong
+"watch this" category for two sessions with nobody reading it. The cost of the extra reads is real —
+mitigated by pointing each one at the section that matters rather than the whole file.
 
 **After reading, announce:** *"VDA bootstrap loaded — blueAI, Phase X, last session
 caught_count: N, watching for [recurring category]. Scratchpad: [empty | N pending]."*

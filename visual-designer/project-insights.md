@@ -1,5 +1,48 @@
 # blueAI — Project Insights
-Last updated: 2026-07-25 (blueai-desktop audit — first blueai-desktop domain-fact entry: BYOK/Prime coexistence)
+Last updated: 2026-08-03 (Session-15 audit pass: added the blueai-desktop LAYOUT SYSTEM section below — the active surface had almost no facts here, which is why today's container defect had nothing to check against. Corrected a false Index claim and marked the marketing-site sections as dormant-scope. NOTE ON THIS LINE: it said 2026-07-25 while the file already contained a 2026-08-01 correction — the previous audit reported this file "re-pointed" after patching one paragraph, and the wrong date meant the mandated freshness check would PASS on a stale file. Bump this on every touch; the check reads it.)
+
+## blueai-desktop LAYOUT SYSTEM — the active surface's measurements (added 2026-08-03)
+
+*Why this section exists: an audit found that of ~200 lines in this file, roughly 15 described the surface
+VDA actually designs. Today's container defect — a wrapper double-paying a gutter — had no facts file to be
+checked against, so it took the designer's eye. These are the numbers a design decision on this surface
+needs, and they are recorded here, once, instead of being re-measured per session.*
+
+- **Drawer width: 290px.** That is `.drawer`'s base width AND its detached `min-width`, so it is the
+  narrowest layout anything here must survive. Default open state is a detached floating window
+  (`360×640`); a `ResizeObserver` adds `.wide` at **≥600px**; detached `max-width` is 920px.
+  **Design at 290 and verify at 290/380/920** — passing at 360 proves nothing about the floor.
+- **Two gutters, deliberately 2px apart.** `.bai-list-body` pays `sp-14` of side padding; `.bai-subpane-body`
+  pays `sp-12`. So a **list view's content edge sits at 15px** from the drawer edge and a **subpane's at
+  13px** (each +1px for the drawer border). Skills and Scheduled have the identical split, so this is house
+  behaviour, not drift. **⚠ OPEN, designer's call:** whether to unify them. Raised 2026-08-03, not decided —
+  this is the item that must not be lost when the scratchpad is wiped.
+- **A subpane form's usable content width is 264px** at the 290px drawer (`290 − 2px borders − 24px
+  subpane-body padding`). Both Skills' and Scheduled's create forms measure exactly this. **This number was
+  wrong three times in one day** — 210px (measured on a shorter form that didn't yet scroll), then 179px
+  (correct *for a form wrapped in a `.bai-newitem` card that was double-paying the gutter*), then 264px once
+  that wrapper was removed. Layout constraints derived from the first two were faithfully measured and wrong.
+  See `reasonings.md` *"A measured constraint inherits the wrongness of whatever produced the measurement."*
+- **What fits at 264px, measured:** a 4-across `.bai-seg.fill` (`Minutes/Daily/Weekly/Monthly` = 212px of
+  content) and one row of 7 day chips (259px). Neither fits at 179px, which is why intermediate versions had
+  a 2×2 grid and a 4+3 wrap. The tightest element is the narrowest day chip, with ~1.6px of text slack at
+  290px — **re-measure that if the day labels ever change.**
+- **A scrollbar is layout, not chrome.** `.bai-newitem`'s `overflow-y: auto` scrollbar takes ~16px whenever
+  its content is tall enough, and that silently changes every width derived inside it. When measuring a
+  container's inner width, note whether it is scrolling at the time.
+- **Forms live in subpanes, with no card wrapper.** Both create forms put `.bai-field-group` children
+  straight into the subpane body. The subpane's own head row + full-screen background are the container;
+  a bordered card inside one is redundant (rule 38) and misaligns (rule 46). Inter-group spacing comes from
+  `.bai-field-group`'s own `margin-bottom`, never a `gap` on the parent — so both forms breathe identically.
+- **Three independent overlay shells, and they are not a hierarchy.** `#baiSubpane` (Skills),
+  `#baiSchedSubpane` (Scheduled), and GlobalRoute (cross-tab utilities — Chat History / Profile / AI Credits
+  / compact Settings; starts below the header and covers the tab strip). A tab's own contextual need gets its
+  own shell rather than a deeper nesting level of someone else's.
+- **Nodes are MOVED between live parents, never detached.** `#baiSchedForm`, the shared date/time picker
+  (parked in `#baiDtPickerHome`), the `+ New task` row (parked in `#baiSchedAddHome`) and `#paneSettings`'
+  `.bai-set` are all relocated by `appendChild` between two always-attached parents. A detached node is
+  invisible to `getElementById` and never returns — that shipped as a real bug twice. Any function that wipes
+  a container's `innerHTML` must park the moved node FIRST.
 
 ## blueai-desktop domain facts (2026-07-25 audit)
 - **BYOK and Prime membership coexist — neither state should hide the other's UI.** A user with an
@@ -17,11 +60,12 @@ Last updated: 2026-07-25 (blueai-desktop audit — first blueai-desktop domain-f
   own 8px gap stacking with whatever margins its children carry — don't assume `.bai-set`'s "no gap"
   convention applies here just because the visual style looks similar.
 
-## Style guide architecture (S5)
+## Style guide architecture (S5) — DORMANT SCOPE: this is the MARKETING site's guide
+*(Scope note added 2026-08-03. Everything in this section describes the dormant marketing site's React `/style-guide` route. The ACTIVE surface's design-system reference is a different artifact entirely — `public/blueai-desktop/style-guide.html`, a single self-measuring page that links the product's own stylesheet and icon module. Do not apply this section's architecture to it.)*
 - **Sidebar:** surface-grouped accordion (Foundations · Components · Site & patterns · Agent pages · Marketing pages · App (PM)) — only the active group's items render; sentence-case light headers + per-group counts + a tree-line. Section ids drive scroll-spy; `tok-*` ids are linkable token anchors that RING on `:target`.
 - **Documentation model:** terse one-line ROLE notes everywhere; PREVIEW + ANATOMY (`components/style-guide/Anatomy.tsx`) only on the 7 heavy components (Download CTA · Marketing header · form kit · file upload · bubbles · credits pill · SEO task card). Molecules documented standalone in "Form field molecules".
 - **Form molecules:** `components/agent/form-kit.tsx` — all 4 agent forms compose these; never hand-write `.jmf` field markup.
-- **Index (`/`):** exactly 3 entries — SEO Homepage, Hero Options (chooser), Style Guide (distinct treatment, pinned last). Header/footer logo → `/seo`. The 3 hero variants are reached via the chooser; the 6 inner pages via the SEO nav + hero agent grids.
+- **Index (`/`):** grouped ACTIVE-above-DORMANT since 2026-08-01, nine cards, with the pivot date in the dormant group's label — Terminal Modern (blueai-desktop) and its own Design System sit on top; the marketing site, /blueai-product, /moneymaker, /live-demo-v2, /clay and /blueai-creators sit below at reduced opacity. Grouping by status IS the information. *(This bullet previously read "exactly 3 entries — SEO Homepage, Hero Options, Style Guide". That was falsified on 2026-08-01, when the reorg found the active surface sitting sixth of nine and the pinned DS card pointing at the dormant marketing style guide. Recorded as a correction rather than silently swapped: an enumeration in prose goes stale the first time something is added — count nothing here that the page itself can show.)*
 
 > Architecture, domain, asset rules, and conventions specific to the blueAI replica.
 > Facts a developer/designer needs that aren't taste.

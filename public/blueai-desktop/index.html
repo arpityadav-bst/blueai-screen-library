@@ -180,9 +180,14 @@
                   <div class="bai-scroll" id="baiSkillsScroll"></div>
                                   </div>
                 <div class="bai-pane" id="paneScheduled">
-                  <!-- CMP-01 (audit, documented content-complexity exception): stays an inline card, not a
-                       Subpane, because this is one simple local form (cadence + time) — see openSkillForm's
-                       comment for why Skills escalates to a Subpane and this doesn't. -->
+                  <!-- CMP-01, RETIRED (2026-08-03, found by reaudit). This read: "stays an inline card, not a
+                       Subpane, because this is one simple local form (cadence + time)". All three clauses are
+                       now false: the form IS relocated into #baiSchedSubpane (has been since c848267), it has
+                       no card chrome (the wrapper was removed today), and it is seven field groups, not
+                       "cadence + time". The exception it documented no longer exists — Scheduled and Skills
+                       both escalate to a subpane, which is the consistency the exception used to excuse.
+                       Kept as a marker rather than deleted, because a reader who remembers CMP-01 should be
+                       able to find out that it was retired and why, not just find it missing. -->
                   <!-- No header band here on purpose (designer): a row whose only occupant is one button
                        reads as an empty header with a stray control, not a toolbar — Skills' toolbar row
                        earns its place by sharing it with the search field; this screen has nothing to share
@@ -203,7 +208,7 @@
                        End time; and the three repeat-dependent sub-fields.
                        DELIBERATELY NOT copied from the live screens: (1) its centred modal — this form
                        lives in Scheduled's own subpane, the shell the designer chose for it, and a 565px
-                       modal has no analogue in a 294px drawer; (2) its "Scheduled Tasks" header band with
+                       modal has no analogue in a 290px drawer; (2) its "Scheduled Tasks" header band with
                        a "+ New" button — taste rule 45 retired exactly that here over five designer
                        rounds; (3) the asterisk on six of seven labels, and End Time's "Not applicable for
                        one-time execution" helper line — see the CSS notes on .bai-newitem-create:disabled
@@ -274,7 +279,8 @@
                          2). Same relocation technique this file already uses for #baiSchedForm itself and
                          for #paneSettings' .bai-set, and it obeys this file's own hard-won node-lifetime
                          rule: #baiDtPickerHome is a permanent, always-attached parking parent, so the
-                         picker moves between two live parents and is never detached (see schedParkAddRow's
+                         picker moves between three live parents — its hidden home plus each time field's own
+                         group — and is never detached (see schedParkAddRow's
                          comment for the bug that taught this).
                          The 2-step flow itself is unchanged (designer: "only show date first, once you
                          select a date we show the timer, and you can go back to date to reselect"). Step
@@ -1058,6 +1064,15 @@
       var currentTabMode = 'chat';
       function setMode(m) {
         currentTabMode = m;
+        // Leaving a tab must not leave THAT tab's contextual overlay layered over the new one. Neither
+        // subpane shell was being torn down on a tab change: opening Scheduled's New Task form and clicking
+        // Chat left the form sitting fully opaque and clickable over the Chat pane (reaudit 2026-08-03
+        // measured 288x524, opacity 1, pointer-events auto). Pre-existing, but this session grew that form
+        // from three fields to seven, so the stranded overlay now covers most of the drawer.
+        // The call goes HERE, in the single funnel every tab change passes through — the two existing
+        // callers of closeAllSubpanes() sit outside it and only covered their own paths, which is exactly
+        // why the tab strip never did. Idempotent, so the double-call from those two is harmless.
+        closeAllSubpanes();
         Object.keys(panes).forEach(function (k) { panes[k].classList.toggle('active', k === m); });
         tabs.forEach(function (t) { t.classList.toggle('active', t.getAttribute('data-mode') === m); });   // settings has no tab -> all tabs go inactive
         [].forEach.call(document.querySelectorAll('.bai-side-item[data-mode]:not(.bai-side-newchat)'), function (s) { s.classList.toggle('active', s.getAttribute('data-mode') === m); });   // mirror on the wide sidebar — New chat is excluded: it's an action button (always starts fresh), not a persistent location like Jobs/Skills/Scheduled, so it should never look "currently selected"
@@ -1341,8 +1356,11 @@
       }
       // CMP-01 (audit, documented content-complexity exception — not a bug): Skills' "create new" opens a
       // full Subpane because it holds 3 substantial, independent creation methods (write / upload / hand off
-      // to chat). Scheduled's "create new" (.bai-newitem below) is a single simple local form, so it stays
-      // inline instead. Don't "fix" this divergence without re-reading that reasoning.
+      // to chat). Scheduled's "create new" ALSO escalates to a subpane now (its own, #baiSchedSubpane) —
+      // this comment used to say it "stays inline" in a `.bai-newitem` card and warned not to "fix the
+      // divergence"; both the class and the divergence are gone as of 2026-08-03, and the two create
+      // flows are now consistent. Left in place, corrected, because the old text actively told the next
+      // reader to preserve something that no longer exists.
       function openSkillForm(existing) {
         openSubpane(existing ? 'Edit Skill' : 'New Skill', function (body) {
           // Item 10/11 (PM correction): editing a skill shows both Write-instructions and Upload-a-ZIP
@@ -1507,6 +1525,19 @@
       function formatDateTime(d) { return formatDateShort(d) + ' ' + d.getFullYear() + ', ' + formatTime24(d); }   // picker field label
       function sameDay(a, b) { return !!a && !!b && a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate(); }
       var DAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];   // JS getDay() order, so the index IS the day number
+      // Escapes text that is about to be interpolated into an innerHTML string. The Scheduled cards are
+      // built with innerHTML (for the icon splices), and BOTH user-authored fields — a task's name and now
+      // its prompt — were being dropped in raw. An independent reaudit (2026-08-03) landed
+      // `<img src=x onerror=…>` in a prompt and got it to execute; a name of `C<i>NAME</i>` rendered as
+      // real italics. `name` was pre-existing, `prompt` was added the same day WITH a half-escape already
+      // in the same expression (`.replace(/"/g,'&quot;')` for the title attribute), which makes the
+      // omission a defect and not a convention. Escape at the interpolation site, both fields, always —
+      // and note the attribute case needs `"` escaped too, which is why quotes are in the map.
+      function escHtml(s) {
+        return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+          return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+        });
+      }
       function monthlyOn(year, month, dom, h, mi) {   // clamps to the month's real length — new Date(y, 1, 31) silently rolls into March, which would render a visibly wrong "Next run"
         var last = new Date(year, month + 1, 0).getDate();
         return new Date(year, month, Math.min(dom, last), h, mi, 0, 0);
@@ -1514,30 +1545,61 @@
       // No real backend/scheduler here — this simulates "what fires next" from the task's own fields,
       // purely for display. Returns null when a Custom pattern's window has closed, which the card
       // renders as "Ended" (a state that only exists now that End Time does).
-      // Every loop is guarded: an interval of 0 or a Weekly task with no days selected must not be able
-      // to spin the drawer, even though the form's own validity check should stop both reaching here.
+      //
+      // TWO INVARIANTS, both of which the first version broke (found by an independent reaudit, 2026-08-03):
+      //   (a) the result is never EARLIER than startsAt. The Monthly branch used to re-anchor on startsAt's
+      //       MONTH at `dom` and then only advance while <= now, never comparing against startsAt itself —
+      //       so a task starting 25 Sep with dayOfMonth 5 displayed "Next run: 5 Sep", twenty days before
+      //       the start the user picked. Monthly was the only branch that could go backwards.
+      //   (b) the result is never in the PAST. The first version walked forward one step at a time behind a
+      //       loop guard; a start date years back exhausted the guard and RETURNED THE PARTIAL RESULT — a
+      //       past date, and for Weekly even a disallowed weekday. A guard that stops an infinite loop by
+      //       emitting a wrong answer has converted a hang into a lie.
+      // Both are fixed by ARITHMETIC instead of iteration: each branch jumps straight to the right
+      // period and then steps at most a couple of times. There is now no loop that can run more than 7
+      // iterations, so no guard is needed and no guard can mask anything.
       function nextOccurrence(t) {
-        var now = new Date(), next = new Date(t.startsAt), guard = 0;
+        var now = new Date(), start = new Date(t.startsAt), next;
         if (t.mode === 'One-time') return t.startsAt;
         if (t.repeat === 'Minutes') {
-          var step = Math.max(1, parseInt(t.interval, 10) || 30);
-          while (next <= now && guard++ < 200000) next.setMinutes(next.getMinutes() + step);
-        } else if (t.repeat === 'Weekly') {
-          var days = (t.days && t.days.length) ? t.days : [t.startsAt.getDay()];   // fall back to the start date's own weekday
-          while (guard++ < 400) { if (next > now && days.indexOf(next.getDay()) !== -1) break; next.setDate(next.getDate() + 1); }
+          var stepMs = Math.max(1, parseInt(t.interval, 10) || 30) * 60000;
+          var elapsed = now - start;
+          next = new Date(start.getTime() + (elapsed <= 0 ? 0 : (Math.floor(elapsed / stepMs) + 1) * stepMs));
         } else if (t.repeat === 'Monthly') {
           var dom = Math.min(31, Math.max(1, parseInt(t.dayOfMonth, 10) || 1));
-          next = monthlyOn(t.startsAt.getFullYear(), t.startsAt.getMonth(), dom, t.startsAt.getHours(), t.startsAt.getMinutes());
-          while (next <= now && guard++ < 400) next = monthlyOn(next.getFullYear(), next.getMonth() + 1, dom, next.getHours(), next.getMinutes());
+          next = monthlyOn(start.getFullYear(), start.getMonth(), dom, start.getHours(), start.getMinutes());
+          if (next < start) next = monthlyOn(start.getFullYear(), start.getMonth() + 1, dom, start.getHours(), start.getMinutes());   // invariant (a)
+          if (next <= now) {
+            var months = (now.getFullYear() - next.getFullYear()) * 12 + (now.getMonth() - next.getMonth());
+            if (months > 0) next = monthlyOn(next.getFullYear(), next.getMonth() + months, dom, next.getHours(), next.getMinutes());
+            while (next <= now) next = monthlyOn(next.getFullYear(), next.getMonth() + 1, dom, next.getHours(), next.getMinutes());   // <= 2 iterations
+          }
+        } else if (t.repeat === 'Weekly') {
+          var days = (t.days && t.days.length) ? t.days : [start.getDay()];   // fall back to the start date's own weekday
+          next = new Date(start);
+          if (next <= now) {   // jump to today at the start's time-of-day, never before startsAt
+            next = new Date(now.getFullYear(), now.getMonth(), now.getDate(), start.getHours(), start.getMinutes(), 0, 0);
+            if (next <= now) next.setDate(next.getDate() + 1);
+          }
+          for (var i = 0; i < 7 && days.indexOf(next.getDay()) === -1; i++) next.setDate(next.getDate() + 1);   // <= 7, always lands on an allowed day
         } else {   // Daily
-          while (next <= now && guard++ < 4000) next.setDate(next.getDate() + 1);
+          next = new Date(start);
+          if (next <= now) {
+            var d0 = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+            var dn = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            next.setDate(next.getDate() + Math.max(0, Math.round((dn - d0) / 86400000)));   // jump whole days at once
+            while (next <= now) next.setDate(next.getDate() + 1);   // <= 1 iteration
+          }
         }
         if (t.mode === 'Custom' && t.endsAt && next > t.endsAt) return null;
         return next;
       }
       // The card's one-line cadence summary. Weekly COMPRESSES above three days ("every day" / "5 days")
-      // rather than listing all seven: at 11px in a 210px card row the full list wraps to three lines and
-      // out-weighs the task's own name (taste rule 14 — a wrap is a hierarchy decision, not an accident).
+      // rather than listing all seven: at 11px the full seven-day list wraps to TWO lines in a card row that
+      // measures 230px at the 290px drawer, and out-weighs the task's own name.
+      // (Both figures in this sentence were wrong when written — "210px" and "three lines"; 210 was one of
+      // the three widths the CSS comment beside this feature explicitly flags as having been wrong twice
+      // in one day, carried into a new comment about a DIFFERENT container. Re-measured by reaudit.) (taste rule 14 — a wrap is a hierarchy decision, not an accident).
       function cadenceLabel(t) {
         if (t.mode === 'One-time') return 'Once';
         if (t.repeat === 'Minutes') return 'Every ' + (Math.max(1, parseInt(t.interval, 10) || 30)) + ' min';
@@ -1596,7 +1658,7 @@
         SCHEDULED.forEach(function (t, i) {
           var card = document.createElement('div'); card.className = 'bai-sched-card';
           if (i === schedPendingDelete) {
-            card.innerHTML = '<b>Delete "' + t.name + '"?</b><span class="bai-sched-sub">This can\'t be undone.</span>';
+            card.innerHTML = '<b>Delete "' + escHtml(t.name) + '"?</b><span class="bai-sched-sub">This can\'t be undone.</span>';
             var actions0 = document.createElement('div'); actions0.className = 'bai-sched-actions';
             var cancelBtn = document.createElement('button'); cancelBtn.className = 'bai-sched-btn'; cancelBtn.type = 'button'; cancelBtn.textContent = 'Cancel';
             var delBtn = document.createElement('button'); delBtn.className = 'bai-sched-btn danger'; delBtn.type = 'button'; delBtn.textContent = 'Delete';
@@ -1611,8 +1673,8 @@
           // "Ends" appears ONLY for Custom, the one mode that has an end; "Next run" becomes "Ended" once
           // a Custom window has closed.
           card.innerHTML =
-            '<div class="bai-sched-head"><b>' + t.name + '</b><span class="bai-tgl' + (t.on ? ' on' : '') + '" role="button" aria-label="Toggle on/off"><i></i></span></div>' +
-            (t.prompt ? '<span class="bai-sched-sub clip" title="' + t.prompt.replace(/"/g, '&quot;') + '">' + t.prompt + '</span>' : '') +
+            '<div class="bai-sched-head"><b>' + escHtml(t.name) + '</b><span class="bai-tgl' + (t.on ? ' on' : '') + '" role="button" aria-label="Toggle on/off"><i></i></span></div>' +
+            (t.prompt ? '<span class="bai-sched-sub clip" title="' + escHtml(t.prompt) + '">' + escHtml(t.prompt) + '</span>' : '') +
             '<div class="bai-sched-row"><span class="ic">' + iconSvg(CADENCE_PATH, 13) + '</span>Schedule: <b>' + cadenceLabel(t) + '</b></div>' +
             '<div class="bai-sched-row"><span class="ic">' + iconSvg(SCHED_PATH, 13) + '</span>' +
               (next ? 'Next run: <b class="bai-sched-next">' + formatDateShort(next) + ', ' + formatTime24(next) + '</b>' : 'Next run: <b>Ended</b>') + '</div>' +
@@ -1832,7 +1894,13 @@
         if (!schedNameInput.value.trim() || !schedPromptInput.value.trim() || !schedStart) return false;
         if (schedMode === 'Custom' && (!schedEnd || schedEnd <= schedStart)) return false;
         if (schedMode !== 'One-time') {
-          var n = parseInt(schedIntervalInput.value, 10);
+          // Whole numbers only. parseInt() alone accepted "1.5" and "1e2" — both stored verbatim on the
+          // record while every reader re-clamped them, so the card said "Every 1 min" for an interval of
+          // 1.5 and "day 1" for a day-of-month of 1e2. A record that holds a value its own label denies is
+          // worse than a rejected one (reaudit, 2026-08-03).
+          var raw = schedIntervalInput.value.trim();
+          var isWholeNumber = /^\d+$/.test(raw);
+          var n = isWholeNumber ? parseInt(raw, 10) : NaN;
           if (schedRepeat === 'Minutes' && !(n > 0)) return false;
           if (schedRepeat === 'Monthly' && !(n >= 1 && n <= 31)) return false;
           if (schedRepeat === 'Weekly' && !schedDays.length) return false;
@@ -2612,7 +2680,26 @@
       }
       function openSubpane(title, renderFn, actionFn) { subpaneStack.push({ title: title, renderFn: renderFn, actionFn: actionFn || null }); paintSubpane(); }
       function popSubpane() { subpaneStack.pop(); if (subpaneStack.length) paintSubpane(); else subpaneEl.classList.remove('on'); }
-      function closeAllSubpanes() { subpaneStack = []; subpaneEl.classList.remove('on'); }
+      // Closes BOTH subpane shells. It used to clear only #baiSubpane (Skills'), so switching tabs with
+      // Scheduled's New Task form open left that form layered over the Chat pane, fully opaque and
+      // clickable — confirmed by reaudit (2026-08-03): 288x524, opacity 1, pointer-events auto.
+      // Pre-existing, but this change grew the form from 3 fields to 7, so the stranded overlay now covers
+      // most of the drawer. Routed through closeSchedForm() rather than just dropping the `on` class,
+      // because that is the path that also parks #baiSchedForm back to its home and resets edit state —
+      // dropping the class alone would leave the form's node in the subpane and its state half-live.
+      function closeAllSubpanes() {
+        // Defensive on every reference: setMode() calls this, and setMode runs during boot BEFORE the vars
+        // below are assigned (they are `var`s declared further down, so they are hoisted-but-undefined at
+        // that point). Guarding is cheaper than reordering ~1500 lines, and an unguarded `.classList` here
+        // would throw during startup only — the worst kind of intermittent.
+        subpaneStack = [];
+        if (subpaneEl) subpaneEl.classList.remove('on');
+        // Scheduled's shell is a separate overlay and needs its own teardown. Routed through
+        // closeSchedForm() rather than just dropping the class, because that is the path that also parks
+        // #baiSchedForm back to its home and resets edit state; dropping the class alone would leave the
+        // form's node inside the subpane with its state half-live.
+        if (typeof closeSchedForm === 'function' && schedSubpaneEl && schedSubpaneEl.classList.contains('on')) closeSchedForm();
+      }
       subpaneBackBtn.addEventListener('click', function (e) { e.stopPropagation(); popSubpane(); });
 
       // ---- Part 6: global-utility routes (Chat History / Profile / AI Credits / compact-Settings) — a

@@ -1,5 +1,5 @@
 # blueAI — Reasonings
-Last updated: 2026-07-25 (file created this session — blueAI never had one; see session-logs Session 11)
+Last updated: 2026-08-03 (+2 principles: "a measured constraint inherits the wrongness of whatever produced the measurement" and "inherit at every level of the composition". Header date was left at 2026-07-25 through six additions made 2026-08-01 — an audit caught it; the date is now bumped on every touch, because the mandated freshness check READS this line and a stale header makes the check pass on a stale file.)
 
 > The deeper WHY behind decisions — principles that explain a CLASS of decisions, not a
 > single moment. `decisions.md` captures the moment; this file captures the generalization.
@@ -197,5 +197,60 @@ card family; padding differs to hit this system's 32px control-row height).
 declarations and note the kinship — add its selector to the base rule and declare the family in
 `ds-drift-check.js` §12, which fails if any member ever re-declares a family property. The moment
 you find yourself writing "matches X" in a comment, that sentence should be a selector instead.
+
+## A measured constraint inherits the wrongness of whatever produced the measurement
+
+A number you measured yourself feels like bedrock, and "MEASURED, not preference" reads like the end of an
+argument. It is not. A measurement is a fact **about the thing you measured** — and if that thing should not
+have existed, the figure is faithful and the conclusion built on it is wrong. Measuring protects you from
+guessing; it does not protect you from measuring the wrong subject.
+
+**Where this came from (blueai-desktop, 2026-08-03).** Scheduled's form had 179px of usable width, and I
+measured that honestly. From it I derived two layouts and wrote them into the CSS with the words *"MEASURED,
+not preference"* as their defence: Repeat Type had to be a 2×2 grid because four labels measure 212px, and
+the day chips had to wrap 4+3 because seven need 259px. Both derivations were arithmetically correct. Then
+the designer asked why the form's container didn't match the rest of the screen's padding, the container
+turned out to be a wrapper that should never have been there, and the width became 264px — at which point
+both "forced" layouts became single rows. **The figure was right and the conclusion was wrong.** The same
+width had by then been wrong three times in one day (210 → 179 → 264), each time because it was measured
+against a containment that then changed.
+
+**Distinct from *"A measured number belongs only in the thing that measures it"*** (above), and worth keeping
+separate: that principle is about a correct figure going STALE in transcription — the cure is to point at the
+thing that measures instead of restating it. This one is about a figure that is CURRENT and CORRECT and
+measured against the wrong subject. Neither cure fixes the other; a live tally of 179px would have been just
+as misleading.
+
+**How to apply:** when a measurement becomes a constraint — especially one you are about to encode as "this
+layout is forced" — name the subject it was taken against, in the same breath. *"179px, given the card
+wrapper"* survives the wrapper's removal as an obviously-expired claim; *"179px"* does not. And when anything
+in the containment chain changes, treat every constraint derived from it as unverified rather than inherited.
+*Where else this applies:* a performance budget measured on a page that later dropped its heaviest component;
+a line-length cap derived from a font that was then swapped; a touch-target minimum measured at a zoom level;
+any "we can't, because it doesn't fit" whose fit was computed inside a container nobody questioned.
+*What would stop it firing:* reading it as being about WIDTHS, or about arithmetic errors. The arithmetic is
+right every time — that is what makes it dangerous.
+
+## Inherit at every level of the composition, not just the level you were editing
+
+Gate 2.2 says: before building a new surface, grep for sibling surfaces in the same role and inherit their
+anatomy. The trap is that a surface has several levels at once — the container, the layout, the field
+groups, the controls, the labels — and running the inheritance check on the level you happen to be thinking
+about feels like running it.
+
+**Where this came from (blueai-desktop, 2026-08-03).** Building Scheduled's form I *did* run Gate 2.2, and it
+worked: I found Skills' create form and inherited its `.bai-field-group` + `.bai-set-field-label` pattern
+rather than inventing a label treatment. The same sibling, at the level immediately above, has **no card
+wrapper at all** — its field groups sit straight in the subpane body. I never asked the question at that
+level, so I kept the wrapper the form already had. The evidence was in the file I was already reading, for
+the reason I was already reading it.
+
+**How to apply:** when a sibling surface answers one question, ask it the rest. Enumerate the levels
+explicitly — container, layout, grouping, control, label, copy — and say what the sibling does at each. A
+half-run inheritance check is more dangerous than a skipped one, because it produces the feeling of having
+checked. *Where else this applies:* copying a card's internals while inventing its shell; matching a modal's
+footer while inventing its header; adopting a list row's typography while inventing its spacing rhythm.
+*What would stop it firing:* believing the check is a single act. It is one question per level, and finding
+the right sibling is the cheap part.
 
 *(New entries accumulate at audit passes.)*

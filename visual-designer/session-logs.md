@@ -3,6 +3,86 @@
 
 ---
 
+## Session 15 — 2026-08-03 — Scheduled's full field set, the container the designer caught, and the first self-audit
+Freshness check: taste ✓ (+rule 46, +rule 38 amendment) | decisions ✓ (+8 rows, was 2 sessions unpromoted) | reasonings (STALE header — said 2026-07-25 while holding six 08-01 additions — fixed, +2 principles) | project-insights (STALE — false Index claim, no facts for the active surface — fixed, +layout-system section) | knowledge-base (STALE — nothing from S14/S15 — fixed, +5 traps, +raw-px scope clause) | evolution (STALE — 2 sessions behind, wrong watch item — fixed, S13-S15 added) | session-logs ✓ | scratchpad ✓ (17 promoted, wiped)
+`designer_caught_count: 1`
+
+**This line was missing from Sessions 13 and 14, and that is why two files rotted.** `agent.md` says if the
+freshness line is absent, the check didn't happen. It didn't. Restored, and the rule tightened: bump each
+file's own `Last updated` header on every touch, because two of those headers were themselves wrong — so
+even a check that ran would have passed on stale files.
+
+**Built: Scheduled's task form, to the live product's full field set.** Name and Prompt as separate fields
+(they were one textarea, so a task had no name); Execution Mode and Repeat Type as two controls (the old
+single seg conflated how LONG a task runs with how OFTEN, with "Once" an execution mode hiding among three
+cadences); Start and End time sharing one relocated picker; three repeat-dependent sub-fields; and cards
+rewritten so the form never collects a field the product can't show back. Four things from the live screens
+were deliberately declined, each against a codified rule, and named rather than buried so the designer could
+overrule any of them.
+
+**THE ONE DESIGNER CATCH — and it is a rule failure, not an oversight.** *"The schedule new task window
+didn't have another container but now we have introduced another container, also whose width is not accurate
+to rest of the padding in the screen — may I ask why?"* Both halves right. The form was wrapped in
+`.bai-newitem`, which was simultaneously a redundant container (the subpane already draws that boundary) and
+a double-paid gutter (its 14px margin on top of the subpane body's 12px → card edge at 27px, fields at 40px,
+against 13–15px everywhere else). Measured before answering, and verified against `git show HEAD` that the
+wrapper was months-old code I had inherited, not added.
+
+Two rules already covered it and neither fired:
+- **Rule 38 (redundant signals) is written as a gate on ADDITION** — *"before adding a separator or a status
+  marker"*. Nothing was being added. **Its fail-to-fire clause was wrong and is now corrected**: a redundancy
+  rule scoped to additions never fires on code you inherit. Inherited elements are in scope, not background.
+- **Gate 2.2 (sibling inheritance) ran, and half-worked.** I found Skills' create form and inherited its
+  field-group + label pattern from it — while that same sibling, one level up, has no card wrapper at all.
+  A half-run inheritance check is worse than a skipped one: it produces the feeling of having checked.
+  → new `reasonings.md` principle.
+
+**Removing the wrapper invalidated two of my own documented decisions from hours earlier.** 179px → 264px
+retired a 2×2 Repeat Type grid and a 4+3 day wrap that I had measured honestly and written into the CSS as
+*"MEASURED, not preference"*. Both were real at 179px; neither was real at 264px. The figure was right and
+the conclusion was wrong → new `reasonings.md` principle: **a measured constraint inherits the wrongness of
+whatever produced the measurement.** That width was wrong three times in one day (210 → 179 → 264).
+
+**Health check found real bugs — two HIGH, in code I had just written and verified.** Two independent
+reaudits (neither wrote the code):
+- `nextOccurrence` could display a "Next run" **before the task's own start time** (Monthly re-anchored on
+  the start's month and never compared against the start), and its loop guards, when exhausted by an old
+  start date, **returned the partial result** — a past date, and for Weekly a disallowed weekday. A guard
+  that stops a hang by emitting a wrong answer has converted a hang into a lie. Rewritten from iteration to
+  arithmetic: no loop exceeds 7 iterations, so no guard is needed. 12 assertions, and 2000 worst-case calls
+  now run in 2ms where one used to take 441ms.
+- The prompt echo I added was an **HTML injection sink** — a reaudit landed a working `<img onerror>` in it.
+  The same expression already escaped quotes for the title attribute, which makes it a defect, not a
+  convention. Both user fields now escaped at every interpolation site, including the delete-confirm.
+- Plus: a tab change left the open form layered over the Chat pane (fixed in `setMode`, the single funnel —
+  the two existing callers sat outside it, which is exactly why the tab strip was never covered); a disabled
+  field still brightened its chevron on hover; and `parseInt` accepted `1.5`/`1e2` into a field whose label
+  denied them.
+- **Ten stale claims** in comments and guide prose that this session's own changes falsified — including two
+  wrong measurements, a "reserves two lines" comment above a rule reserving one, an orphaned comment block
+  describing the deleted rule's opposite behaviour, and a "What's left" entry contradicted by a specimen in
+  the same file. This remains the project's most-repeated defect, and it was found by independent audit, not
+  by me.
+
+**Counter-evidence of growth.** All 14 form states built and self-verified with no designer round; four
+defects caught by my own Gate-8 pass before presenting; a self-inflicted CSS break (an orphaned `*/` that
+silently dropped a rule and made a sticky footer compute `static`) caught by an assertion on a **computed**
+value, where the screenshots taken in the same minute looked fine and were invalid — a comment-balance check
+is now standard. One prose claim of shared treatment was converted into an enforced §12 family, proven
+invisible first (24 readings, zero drift) and both failure branches negative-tested.
+
+**First-ever self-audit artifact** — `self-audit-session-15.md`. Mandated every 5 sessions; Sessions 5 and 10
+were also due and also never written. Verdict: DRIFTING → recovering. Capture is healthy, **promotion was
+stalled and biased** — the best design reasoning was accumulating in the file scheduled for deletion while
+checker internals got the permanent homes. Also fixed the bootstrap read-list conflict: `blueai/CLAUDE.md`
+omitted the four notebook files that `agent.md` mandates, and those four were exactly the four that rotted.
+
+**Phase 2 HOLDS.** First genuinely low-caught NEW build of this era, but the bar is ≥3 consecutive. One of three.
+
+**Watch next session:** `fix-one-forget-the-siblings` remains the top recurring category, and this session's
+catch is its next relative — **inherited code is not background.** Also: `decisions.md` is past its 100-row
+pruning threshold, and rule 43 still needs its boundary drawn (designer's call).
+
 ## Session 14 — 2026-08-01 (same day, second half) — the CTA-placement saga, gates 10-12, and auditing the honesty page
 `designer_caught_count: 11` — and the shape of them matters more than the number: NINE were the
 designer pointing at a SIBLING surface after I fixed the first instance of a pattern. That is one

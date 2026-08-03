@@ -86,7 +86,7 @@ The 4 agent pages' hero demos are FAITHFUL INTERACTIVE replicas of the live blue
 - **`FileUpload`** — the all-states control (taste rule 24): hidden native `<input type=file>` triggered by a custom "Choose file" button; EMPTY = upload icon + Choose file + "No file chosen"; FILLED = file icon + filename + remove (✕), box flips dashed→solid (`is-filled`); ✕ resets state + `input.value=''`. **Wrap it in a `<div>`, NOT a `<label>`** — a label would double-fire the picker alongside the trigger button.
 - **`VideoCard`** — real `<video>` (poster + `loop`/`playsInline`/`preload=metadata`, no native controls), click toggles play/pause, overlay hides while playing; guard `el.play()?.catch(()=>{})` (autoplay-interruption rejects). Videos live in `public/videos/` (downloaded from the live site).
 - **Tabs are styled toggle buttons** (`aria-pressed`), NOT a full ARIA tablist — a `role="tab"` without `role="tabpanel"`+`aria-controls` is a worse, incomplete contract; for a segmented control that swaps inline fields, `aria-pressed` is the honest semantic.
-- **Documented in `/style-guide` → "Agent page components"** (S4 audit — `components/style-guide/AgentComponents.tsx`): live `CareerForm` (the kit) + tabbed `FinanceForm` + `FileUpload` (all states) + trade-log BUY/SELL badges + `VideoCard`, rendered REAL (wrapped in `.v-agent`) so the docs can't drift. **Tokenisation verdict (S4, mechanically grepped):** every color/radius/shadow uses `--bai-*` / `--radius-*` / channel-rgb tokens; the BUY/SELL badges reuse `--bai-success/danger-*`. The ONLY raw colors are **Tier-3 bespoke** (the VideoCard frame gradient `#2a2350…` + play glyph `#1b1340` — single-surface decoration, stays local per the tiering rule) + the **deferred neutral-ink alpha** `rgba(8,10,31,…)` (the file's established shadow/tint literal). No Tier-1/2 leaks; no new global token was needed. Literal px for type/spacing in scoped marketing CSS is the project convention (matches homepage/hero CSS), not a violation.
+- **Documented in `/style-guide` → "Agent page components"** (S4 audit — `components/style-guide/AgentComponents.tsx`): live `CareerForm` (the kit) + tabbed `FinanceForm` + `FileUpload` (all states) + trade-log BUY/SELL badges + `VideoCard`, rendered REAL (wrapped in `.v-agent`) so the docs can't drift. **Tokenisation verdict (S4, mechanically grepped):** every color/radius/shadow uses `--bai-*` / `--radius-*` / channel-rgb tokens; the BUY/SELL badges reuse `--bai-success/danger-*`. The ONLY raw colors are **Tier-3 bespoke** (the VideoCard frame gradient `#2a2350…` + play glyph `#1b1340` — single-surface decoration, stays local per the tiering rule) + the **deferred neutral-ink alpha** `rgba(8,10,31,…)` (the file's established shadow/tint literal). No Tier-1/2 leaks; no new global token was needed. Literal px for type/spacing in scoped marketing CSS is the DORMANT MARKETING SITE's frozen convention (matches homepage/hero CSS) — **SCOPE CLAUSE added 2026-08-03, because as written this sentence contradicted two standing rules and an audit caught it.** Craft rule 40 (*"tokenise sizes, not just colours — an untokenised axis drifts by default"*) is explicitly declared surface-independent, and rule 26 is a designer directive with no scope clause at all (*"EVERYTHING is tokenised — even a space or padding"*). Both outrank this note. It is a record of what the dormant site already IS, frozen, **not a precedent and never a defence for new work** — blueai-desktop has zero raw font-size/radius px and `ds-drift-check.js` §8 fails on any. If the marketing site ever resumes, tokenising it is the correct first move, not an exception to be preserved.
 
 ## CSS + shared-template gotchas (S4)
 - **Descendant element selectors are specificity traps.** `.ag-more-card span` (0,2,1) OUT-SPECIFIES a `.ag-more-ic` class (0,2,0) — and an icon wrapper IS a span — so the text-styling rule (`display:block; 12px`) bled onto the emoji tile and cramped it top-left. **Scope text rules to the inner wrapper class** (`.ag-more-tx span`), never `.card span`. Any `.parent element` selector silently captures every matching descendant.
@@ -301,3 +301,35 @@ Confirmed by fetching the live CSS chunks.
   (`shadow-[…rgba(…)]`), and one inline page-bg gradient — `var()` is unreliable in SVG/JS-driven values
   and fragile in Tailwind arbitrary syntax. Tailwind `bg-iris/10` alpha modifiers also DON'T work (vars
   aren't channel triples for Tailwind's opacity plugin) — use `bg-bai-wash` or explicit rgba.
+
+
+## blueai-desktop traps (2026-08-03 — the ACTIVE surface; everything above this heading is the dormant marketing site)
+
+- **A shared DOM node needs a permanent home, not a detach-and-remember.** Three elements on this surface are
+  MOVED between parents rather than rebuilt: `#baiSchedForm`, the single date/time picker, and the `+ New task`
+  row. Two real bugs came from getting this wrong: a bare `container.innerHTML = ''` DESTROYS a child another
+  function still cares about, and a bare `removeChild` ORPHANS it — a detached node with no live parent is
+  invisible to `getElementById` and nothing re-attaches it. The pattern that works: an always-attached hidden
+  parking element (`#baiDtPickerHome`, `#baiSchedAddHome`) and `appendChild` MOVES between two live parents, so
+  the node is never parentless. Any function that wipes a container must park first — and factor the parking
+  into one shared helper, so a future third wipe site fails loudly instead of silently.
+- **Editing a CSS comment can silently delete the rule beneath it.** The existing gotcha entry above covers a
+  stray `*/` while *authoring* comment prose. It bit again on 2026-08-03 in a different shape: two comment
+  EDITS each left the original terminator in place, orphaning a `*/`, which dropped `.bai-schedform` entirely
+  and made a `position: sticky` footer compute `static`. The failure is invisible in the source and produces a
+  plausible-looking page. **Verification step, now standard:** after any comment edit, assert `/*` count ==
+  `*/` count, zero orphan terminators by a depth scan, and `{` count == `}` count. It is three lines of Python
+  and it catches a class of break that no screenshot will show you.
+- **Assert computed values, never appearance.** The broken-stylesheet bug above was caught because a probe read
+  `getComputedStyle(el).position` and got `static`. The screenshots taken in the same minute looked fine and
+  were invalid. Any harness that renders something is not thereby a harness that renders the RIGHT thing.
+- **The screenshot harness has two traps of its own, both of which produce clean-looking lies.** (1) `.drawer`
+  is `translateX`'d off-screen until `.open`, and it does not boot until the real trigger runs — an element
+  screenshot of it before that captures the BlueStacks mock sitting behind it, which reads as a pass. Open it
+  by clicking `.bs-window`, and use Playwright's `reducedMotion: 'reduce'` so the boot animation is skipped
+  rather than caught mid-assembly. (2) Forcing the drawer's `height` inline makes the element taller than the
+  canvas inside it, so the demo scene shows through the bottom — which reads as a broken light theme. Pin the
+  WIDTH only.
+- **Know which element is the scroll container before scripting against it.** Removing the form's `.bai-newitem`
+  wrapper moved scrolling from the form to `.bai-subpane-body`; a harness still setting `scrollTop` on the form
+  silently did nothing and produced screenshots of the wrong region.

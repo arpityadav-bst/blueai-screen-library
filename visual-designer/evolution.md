@@ -1,5 +1,5 @@
 # blueAI — Evolution
-Last updated: 2026-08-01 (S9-S12 era added: scope pivot to blueai-desktop + its design system; S8's /moneymaker direction marked SUPERSEDED; honest maturity read — structurally onboarded, not yet habitually; Phase 2 HOLDS, this era counts nothing toward the Phase-3 bar)
+Last updated: 2026-08-03 (S13-S15 added — this file was TWO SESSIONS BEHIND and an audit caught it; the stale "rules 38-41" enumeration replaced with a pointer; the current top recurring category corrected. Earlier: S9-S12 era added
 
 > VDA's growth + maturity timeline ON THE BLUEAI PROJECT. Separate from WSUP/now.gg —
 > a fresh notebook starts at Phase 1.
@@ -130,7 +130,7 @@ states + breakpoints BEFORE presenting, and verify at the viewport the designer 
 ## S9-S12 (2026-07-25 → 2026-08-01) — the scope pivot and blueai-desktop's design system
 **The project changed shape.** Designer directive: the marketing site and `/blueai-product` are both
 dormant; **`/blueai-desktop` (the "modern terminal" prototype) is the only active surface.** Rules 1-37
-of taste.md describe the dormant site and are no longer what Gate 8 reviews against; rules 38-41 and
+of taste.md describe the dormant site and are no longer what Gate 8 reviews against; the CURRENT rule set in `taste.md` (deliberately NOT enumerated here — this line said "rules 38-41" while 42-45 were already live, which is the same stale-list defect `blueai/CLAUDE.md` diagnoses about itself; the file is the list) and
 `public/blueai-desktop/style-guide.html` are.
 
 **What got built:** blueai-desktop had no design system at all — every DS artifact in the repo
@@ -170,3 +170,46 @@ single example that taught it. **What Phase 3 actually requires here isn't more 
 stated at the level of the mechanism.** Gate 6.5 (Generalization Probe) is the gate for this and it
 did not run. Next session: promote the three pending scratchpad threads, and run 6.5 on every rule
 promoted rather than only on new work.
+
+
+## S13-S15 (2026-08-01 → 2026-08-03) — tranches, the Scheduled rebuild, and the first real self-audit
+
+**The ledger this file was missing.** `designer_caught_count`: **S13 = 2**, **S14 = 11**, **S15 = 1**.
+S14's 11 needs its shape, not just its number: NINE were the designer pointing at a SIBLING surface after
+I fixed the first instance of a pattern — one process failure repeated, not nine separate misses.
+
+**The current top recurring category is `fix-one-forget-the-siblings`** — a fix to a pattern is not done
+until every instance of the pattern has been visited. This SUPERSEDES "recurring category #2" (Gate-8
+visual misses on first-pass new builds), which this file had been re-validating up to a 6th time. Recording
+the handover explicitly because a phase tracker two sessions behind hands the next session the wrong thing
+to watch, which is exactly what happened.
+
+**S15's single catch is that category's next relative, and worth naming as its own shape.** The designer
+asked why Scheduled's form had gained a container whose width didn't match the rest of the screen. Both
+halves were right. The wrapper was months-old code I had *inherited* while rebuilding everything inside it
+— so the codified rule that governs it (38, redundant signals) could not fire, because every wording of it
+gates *additions*. **Inherited code is not background; when you touch a surface, what is already on it is in
+scope.** Fixed at the rule, not just the surface: 38's fail-to-fire clause was wrong and is now corrected,
+and rule 46 states the same fact from the container's side.
+
+**Counter-evidence of growth, S15.** The form's full field set, its conditional matrix and all 14 states
+were built and self-verified without a designer round; four defects were caught by my own Gate-8 pass
+before presenting (a solid-fill glyph beside stroke siblings, a two-line reservation under one-line copy,
+a commitment action scrolling off a now-scrolling form, a footer hairline with dead air beneath it); a
+self-inflicted CSS break was caught by an assertion on a *computed* value rather than by a screenshot; and
+one shared-treatment claim I had written in prose was converted into an enforced `ds-drift-check.js` §12
+family with both failure branches negative-tested.
+
+**Phase 2 still HOLDS.** S15 was one substantive NEW build with `designer_caught_count: 1`, which is the
+first genuinely low-caught new build of this era — but the Phase-3 bar is **≥3 consecutive**, so this is
+one of three, not an arrival. Counting it as more would be the self-flattering accounting this file exists
+to prevent.
+
+**The honest maturity read (2026-08-03), updated.** Last session's read was "onboarded structurally, not
+habitually," with generalization named as the gap. That diagnosis held and produced a measurable result:
+the S15 catch was *itself* a generalization failure in a rule that had already been amended twice. The
+newer gap is one level up — **promotion is stalled and biased.** An independent audit this session found
+that the design reasoning is being captured well but almost entirely in `scratchpad.md`, while what reaches
+the permanent files skews to checker internals; 17 entries had gone unpromoted across two sessions, and the
+mandated per-5-session self-audit had never once been written. Both are addressed this session. **What
+Phase 3 requires from here: promote every session, and route design reasoning to the design files.**

@@ -505,6 +505,16 @@ section('12. COMPONENT FAMILIES (shared treatment = shared rule, never a comment
       members: ['.bai-upload-row', '.bai-sched-newrow'],
       props: ['background', 'border', 'color', 'font-weight', 'font-family', 'font-size', 'transition', 'gap', 'display', 'align-items', 'cursor'],
     },
+    {
+      // Declared 2026-08-03. The Scheduled form stacks THREE pick-one controls (Execution Mode, Repeat
+      // Type, Select Days) and the style guide asserts in prose that "selected reads the same everywhere
+      // on this form" — that claim is now enforced rather than asserted.
+      // `border-color` is deliberately NOT a family property: .bai-daychip.on is the only member with a
+      // border of its own, so it owns that one legitimately, with the reason stated at the rule.
+      name: 'selected state (accent fill, inverted ink)',
+      members: ['.bai-seg-btn.active', '.bai-daychip.on'],
+      props: ['background', 'color'],
+    },
   ];
   const cssNoComments = CSS.replace(/\/\*[\s\S]*?\*\//g, '');
   let famFail = 0;
