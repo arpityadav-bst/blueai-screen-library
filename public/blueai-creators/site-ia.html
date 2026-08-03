@@ -1,0 +1,678 @@
+<title>Blue AI — Full Site IA (waitlist release)</title>
+
+<style>
+  :root{
+    --ground:#F6F8FD;--surface:#FFFFFF;--surface-2:#FBFCFE;
+    --ink:#0E1729;--ink-2:#46536B;--ink-3:#7C889F;
+    --line:#E2E8F3;--line-2:#EDF1F8;
+    --blue:#1668F5;--blue-ink:#0B47B0;--blue-soft:#E7EFFE;
+    --green:#0E9E70;--green-ink:#0A7554;--green-soft:#E1F5EC;
+    --violet:#6338E8;--violet-ink:#4A22C4;--violet-soft:#EDE8FE;
+    --slate:#5B6B85;--slate-soft:#EAEFF7;
+    --amber:#B45309;--amber-soft:#FDF0DC;
+    --warn:#C2410C;--warn-soft:#FDEDE4;
+    --grid:rgba(22,104,245,.05);
+    --sh:0 1px 2px rgba(14,23,41,.05),0 12px 28px -14px rgba(14,23,41,.16);
+    --f-d:-apple-system,BlinkMacSystemFont,"Segoe UI Variable Display","Segoe UI",system-ui,sans-serif;
+    --f-b:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+    --f-m:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme:dark){:root{
+    --ground:#070C15;--surface:#101825;--surface-2:#151E2E;
+    --ink:#EDF2FA;--ink-2:#A3B0C6;--ink-3:#6B7991;
+    --line:#212D43;--line-2:#1A2334;
+    --blue:#4C8DFF;--blue-ink:#A8C8FF;--blue-soft:#152845;
+    --green:#34C795;--green-ink:#7FE0BC;--green-soft:#0E2C23;
+    --violet:#9B7CFF;--violet-ink:#C4B0FF;--violet-soft:#1D1740;
+    --slate:#8B9AB4;--slate-soft:#18202F;
+    --amber:#E8A857;--amber-soft:#2A1F0F;
+    --warn:#F08A5D;--warn-soft:#2B1A12;
+    --grid:rgba(120,165,255,.055);
+    --sh:0 1px 2px rgba(0,0,0,.4),0 12px 28px -14px rgba(0,0,0,.7);
+  }}
+  :root[data-theme="dark"]{
+    --ground:#070C15;--surface:#101825;--surface-2:#151E2E;
+    --ink:#EDF2FA;--ink-2:#A3B0C6;--ink-3:#6B7991;
+    --line:#212D43;--line-2:#1A2334;
+    --blue:#4C8DFF;--blue-ink:#A8C8FF;--blue-soft:#152845;
+    --green:#34C795;--green-ink:#7FE0BC;--green-soft:#0E2C23;
+    --violet:#9B7CFF;--violet-ink:#C4B0FF;--violet-soft:#1D1740;
+    --slate:#8B9AB4;--slate-soft:#18202F;
+    --amber:#E8A857;--amber-soft:#2A1F0F;
+    --warn:#F08A5D;--warn-soft:#2B1A12;
+    --grid:rgba(120,165,255,.055);
+    --sh:0 1px 2px rgba(0,0,0,.4),0 12px 28px -14px rgba(0,0,0,.7);
+  }
+
+  *{box-sizing:border-box}
+  body{margin:0;font-family:var(--f-b);font-size:16px;line-height:1.55;color:var(--ink);
+    background-color:var(--ground);
+    background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+    background-size:64px 64px,64px 64px;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1300px;margin:0 auto;padding:44px 28px 90px}
+  .k{font-family:var(--f-m);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);font-weight:500}
+  .k.b{color:var(--blue)} .k.v{color:var(--violet)} .k.g{color:var(--green)}
+  h1{font-family:var(--f-d);font-weight:800;letter-spacing:-.04em;font-size:clamp(30px,4vw,44px);line-height:1.05;margin:10px 0 14px;text-wrap:balance}
+  h2{font-family:var(--f-d);font-weight:800;letter-spacing:-.035em;font-size:clamp(23px,3vw,31px);margin:0 0 10px;text-wrap:balance}
+  h3{font-family:var(--f-d);font-weight:750;letter-spacing:-.02em;font-size:18px;margin:26px 0 8px}
+  p{color:var(--ink-2);margin:0 0 14px;max-width:78ch}
+  p.lede{font-size:17.5px}
+  b,strong{color:var(--ink);font-weight:650}
+  code{font-family:var(--f-m);font-size:.88em;background:var(--surface-2);border:1px solid var(--line);
+    border-radius:5px;padding:1px 6px;color:var(--ink);white-space:nowrap}
+
+  header.top{border-bottom:1px solid var(--line);padding-bottom:26px;margin-bottom:38px}
+  section.s{margin-bottom:60px;scroll-margin-top:20px}
+
+  .panel{border:1px solid var(--line);border-radius:16px;background:var(--surface);box-shadow:var(--sh);padding:24px 26px}
+  .panel.flat{box-shadow:none;background:var(--surface-2)}
+
+  .callout{margin-top:20px;border:1px solid var(--line);border-left:3px solid var(--blue);border-radius:0 14px 14px 0;
+    background:var(--surface);padding:18px 24px}
+  .callout.warn{border-left-color:var(--warn)}
+  .callout.green{border-left-color:var(--green)}
+  .callout p:last-child{margin-bottom:0}
+  .callout h3{margin-top:0}
+
+  /* ---- sitemap tree ---- */
+  .treewrap{overflow-x:auto;border:1px solid var(--line);border-radius:16px;background:var(--surface);box-shadow:var(--sh);padding:22px 24px}
+  .tree{font-family:var(--f-m);font-size:13px;line-height:1.95;min-width:760px;white-space:pre}
+  .tree .zone{font-weight:700;letter-spacing:.04em}
+  .tree .zc{color:var(--violet-ink)} .tree .zb{color:var(--blue-ink)}
+  .tree .zs{color:var(--ink-2)} .tree .zl{color:var(--ink-3)}
+  .tree .u{color:var(--ink);font-weight:650}
+  .tree .n{color:var(--ink-3);font-weight:400}
+  .tree .star{color:var(--green);font-weight:700}
+  .tree .new{color:var(--amber);font-weight:700}
+  .tree .later{color:var(--ink-3);font-style:italic}
+  .tree .br{color:var(--ink-3)}
+
+  /* ---- tables ---- */
+  .tw{overflow-x:auto;border:1px solid var(--line);border-radius:16px;background:var(--surface);box-shadow:var(--sh)}
+  table{width:100%;border-collapse:collapse;font-size:14.5px;min-width:880px}
+  th,td{padding:13px 16px;text-align:left;border-bottom:1px solid var(--line-2);vertical-align:top}
+  thead th{font-family:var(--f-m);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--ink-3);font-weight:600;background:var(--surface-2)}
+  tbody tr:last-child td{border-bottom:0}
+  tr.hdr td{background:var(--surface-2);font-family:var(--f-m);font-size:10px;letter-spacing:.12em;
+    text-transform:uppercase;font-weight:600;color:var(--ink-2)}
+  td.url{font-family:var(--f-m);font-size:12.5px;white-space:nowrap;font-weight:600;color:var(--blue-ink)}
+  td.url.v{color:var(--violet-ink)}
+  td.cap{color:var(--ink-2)}
+  td.none{color:var(--ink-3);font-style:italic}
+
+  .tag{display:inline-block;font-family:var(--f-m);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;
+    font-weight:700;padding:3px 8px;border-radius:5px;margin-right:6px;white-space:nowrap}
+  .tag.conv{background:var(--green-soft);color:var(--green-ink)}
+  .tag.new{background:var(--amber-soft);color:var(--amber)}
+  .tag.chg{background:var(--warn-soft);color:var(--warn)}
+  .tag.has{background:var(--slate-soft);color:var(--ink-3)}
+  .tag.opt{background:var(--violet-soft);color:var(--violet-ink)}
+
+  .scroller{overflow-x:auto;border:1px solid var(--line);border-radius:18px;background:var(--surface);box-shadow:var(--sh);padding:4px}
+  .scroller svg{display:block}
+  svg text{font-family:var(--f-b)}
+  svg .nl{font-size:12.5px;font-weight:650}
+  svg .nu{font-family:var(--f-m);font-size:10.5px;font-weight:600}
+  svg .el{font-size:11px;font-weight:500}
+  svg .lane{font-family:var(--f-m);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:700}
+  .scrollnote{font-family:var(--f-m);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin-top:10px}
+
+  .cols2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:900px){.cols2{grid-template-columns:1fr}}
+
+  .navbox{border:1px solid var(--line);border-radius:14px;background:var(--surface);overflow:hidden}
+  .navbox .nh{padding:12px 16px;background:var(--surface-2);border-bottom:1px solid var(--line);
+    font-family:var(--f-m);font-size:10px;letter-spacing:.12em;text-transform:uppercase;font-weight:700}
+  .navbox.c .nh{color:var(--violet-ink)} .navbox.b .nh{color:var(--blue-ink)}
+  .navbox ul{margin:0;padding:14px 18px;list-style:none}
+  .navbox li{display:flex;gap:10px;align-items:baseline;padding:5px 0;font-size:14px;color:var(--ink-2);flex-wrap:wrap}
+  .navbox li b{color:var(--ink);min-width:118px;font-weight:650}
+  .navbox li code{font-size:11.5px}
+  .navbox .rulez{padding:12px 18px;border-top:1px solid var(--line-2);font-size:13px;color:var(--ink-3);background:var(--surface-2)}
+
+  ul.pl{color:var(--ink-2);max-width:78ch;padding-left:20px}
+  ul.pl li{margin-bottom:7px}
+
+  .rowspec{border:1px solid var(--line);border-radius:14px;background:var(--surface-2);padding:16px 18px;margin-top:14px;
+    font-family:var(--f-m);font-size:12.5px;color:var(--ink-2);overflow-x:auto}
+  .rowspec b{color:var(--ink)}
+
+  footer{border-top:1px solid var(--line);padding-top:22px;color:var(--ink-3);font-size:13.5px;margin-top:20px}
+
+  .toc{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+  .toc a{font-family:var(--f-m);font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:600;
+    text-decoration:none;color:var(--ink-2);border:1px solid var(--line);background:var(--surface);
+    border-radius:8px;padding:6px 11px}
+  .toc a:hover{color:var(--blue);border-color:var(--blue)}
+</style>
+
+<div class="wrap">
+
+<header class="top">
+  <span class="k b">Blue AI &middot; information architecture &middot; draft 1</span>
+  <h1>The full site, structured for one job: get on the list</h1>
+  <p class="lede">Everything below is <b>structure only</b> &mdash; no screens, no visual design. It takes the eight prototype pages that already exist, adds the pages a real site needs (about, FAQ, legal, per-zone how-it-works), and connects them into one navigable site with <b>two audience zones and a single conversion goal</b>.</p>
+  <p style="margin-bottom:0"><b>Scope of this release:</b> waitlist only. Pricing, log-in, the creator app and the brand dashboard are deliberately out &mdash; but each has a reserved slot below, so adding them later is an insert, not a restructure.</p>
+  <div class="toc">
+    <a href="#model">1 &middot; The model</a>
+    <a href="#map">2 &middot; Site map</a>
+    <a href="#graph">3 &middot; What connects to what</a>
+    <a href="#creator">4 &middot; Creator zone</a>
+    <a href="#brand">5 &middot; Brand zone</a>
+    <a href="#list">6 &middot; Map &rarr; creator list</a>
+    <a href="#shared">7 &middot; Shared &amp; legal</a>
+    <a href="#nav">8 &middot; Navigation</a>
+    <a href="#capture">9 &middot; What we capture</a>
+    <a href="#later">10 &middot; Reserved for later</a>
+    <a href="#open">11 &middot; Decisions needed</a>
+  </div>
+</header>
+
+<!-- ============ 1. MODEL ============ -->
+<section class="s" id="model">
+  <span class="k">Section 1</span>
+  <h2>The model in one paragraph</h2>
+  <p>Two audiences that must never be blended, one brand shell that must never fork. So: <b>two parallel zones</b> &mdash; a creator zone at the root and a brand zone under <code>/brands</code> &mdash; sharing one header component, one footer component, and one set of shared pages (about, FAQ, legal). Each zone is a straight funnel ending in a single list signup. A persistent switch in the header moves between zones; nothing else does, so neither funnel leaks into the other by accident.</p>
+
+  <div class="cols2" style="margin-top:20px">
+    <div class="panel">
+      <span class="k v">Why the creator zone owns the root</span>
+      <p style="margin:8px 0 0;font-size:14.5px">Cold start is <b>supply first</b> (spec &sect;6.6) &mdash; creators join for free, and brands will not touch an empty marketplace. Creators also arrive cold, in volume, from search and social, so they need the address you can say out loud. Brands mostly arrive from a conversation or a direct link, so <code>/brands</code> as a named destination costs them nothing.</p>
+      <p style="margin:10px 0 0;font-size:14.5px"><b>Rejected:</b> a neutral audience-chooser splash at <code>/</code>. It charges 100% of visitors an extra click, converts nobody, and has no SEO surface of its own.</p>
+    </div>
+    <div class="panel">
+      <span class="k g">Why both zones end at a list, not a signup</span>
+      <p style="margin:8px 0 0;font-size:14.5px">There is nothing to sell yet. The creator terminal is <code>/waitlist</code> (join, then move up by doing work that pre-builds the matching profile). The brand terminal is <code>/brands/reserve</code> (a founding-brand pilot slot, $0 today).</p>
+      <p style="margin:10px 0 0;font-size:14.5px">Different forms, different promises, <b>one goal</b>. Every primary CTA on the site points at one of these two pages &mdash; if a CTA points anywhere else, it is a bug.</p>
+    </div>
+  </div>
+
+  <div class="callout">
+    <h3>The one principle carried over from the prototype</h3>
+    <p><b>Give the number before asking for the email.</b> In the eight-page prototype, two pages captured nothing at all &mdash; that inversion was the whole point. In this IA the ratio gets stronger, not weaker: <b>12 of 18 pages capture nothing</b>. See &sect;9.</p>
+  </div>
+</section>
+
+<!-- ============ 2. SITE MAP ============ -->
+<section class="s" id="map">
+  <span class="k">Section 2</span>
+  <h2>Site map &mdash; what contains what</h2>
+  <p><span class="tag has">Exists</span> already built in the prototype &nbsp; <span class="tag new">New</span> to be written &nbsp; <span class="tag chg">Changed</span> replaces something that exists &nbsp; <span class="tag conv">★</span> conversion page</p>
+
+  <div class="treewrap">
+<div class="tree"><span class="zone">bluestacks.ai</span> <span class="n">— Blue AI, pre-launch</span>
+<span class="br">│</span>
+<span class="br">├──</span> <span class="zone zc">CREATOR ZONE</span> <span class="n">— the default zone, owns the root</span>
+<span class="br">│   ├──</span> <span class="u">/</span>                          <span class="n">Creator home</span>
+<span class="br">│   ├──</span> <span class="u">/how-it-works</span>             <span class="n">Four steps + exactly how you get paid</span>   <span class="new">NEW</span>
+<span class="br">│   ├──</span> <span class="u">/what-you-earn</span>            <span class="n">Rate card + the job ladder</span>              <span class="new">NEW, optional</span>
+<span class="br">│   ├──</span> <span class="u">/earnings</span>                 <span class="n">Your estimate — computed from a handle</span>
+<span class="br">│   ├──</span> <span class="u">/coach</span>                    <span class="n">No audience yet? The six-week plan</span>      <span class="new">NEW</span>
+<span class="br">│   └──</span> <span class="u">/waitlist</span>                 <span class="n">Join, then move up the queue</span>            <span class="star">★ CONVERSION</span>
+<span class="br">│</span>
+<span class="br">├──</span> <span class="zone zb">BRAND ZONE</span>
+<span class="br">│   ├──</span> <span class="u">/brands</span>                   <span class="n">Brand home</span>
+<span class="br">│   ├──</span> <span class="u">/brands/how-it-works</span>      <span class="n">The managed loop, verification, rights</span>  <span class="new">NEW</span>
+<span class="br">│   ├──</span> <span class="u">/brands/creators</span>          <span class="n">Top creators near you — ranked list</span>     <span class="new">REPLACES THE MAP</span>
+<span class="br">│   ├──</span> <span class="u">/brands/compare</span>           <span class="n">One macro name vs the local fleet</span>
+<span class="br">│   ├──</span> <span class="u">/brands/plan</span>              <span class="n">Budget in, forecast out</span>
+<span class="br">│   └──</span> <span class="u">/brands/reserve</span>           <span class="n">Reserve a founding-brand slot</span>           <span class="star">★ CONVERSION</span>
+<span class="br">│</span>
+<span class="br">├──</span> <span class="zone zs">SHARED</span> <span class="n">— one copy, reachable from both zones</span>
+<span class="br">│   ├──</span> <span class="u">/about</span>                    <span class="n">Why now, who we are, the parent brand</span>   <span class="new">NEW</span>
+<span class="br">│   └──</span> <span class="u">/faq</span>                      <span class="n">Two groups: creators · brands</span>           <span class="new">NEW</span>
+<span class="br">│</span>
+<span class="br">├──</span> <span class="zone zl">LEGAL</span>
+<span class="br">│   ├──</span> <span class="u">/legal/terms</span>                                                           <span class="new">NEW</span>
+<span class="br">│   ├──</span> <span class="u">/legal/privacy</span>            <span class="n">What we read, what we store</span>             <span class="new">NEW</span>
+<span class="br">│   ├──</span> <span class="u">/legal/creator-terms</span>      <span class="n">Payout, rights tiers, what we never do</span>  <span class="new">NEW</span>
+<span class="br">│   └──</span> <span class="u">/legal/verification</span>       <span class="n">Fraud + disclosure policy — published</span>   <span class="new">NEW</span>
+<span class="br">│</span>
+<span class="br">├──</span> <span class="zone zl">UTILITY</span>
+<span class="br">│   └──</span> <span class="u">/404</span>                      <span class="n">Routes to the zone you came from</span>        <span class="new">NEW</span>
+<span class="br">│</span>
+<span class="br">└──</span> <span class="zone zl">RESERVED — not in this release</span>
+<span class="br">    ├──</span> <span class="later">/pricing</span>                  <span class="n">brand-side fees, once they are real</span>
+<span class="br">    ├──</span> <span class="later">/login</span>                    <span class="n">needs accounts, which need a backend</span>
+<span class="br">    ├──</span> <span class="later">/app/*</span>                    <span class="n">the creator app</span>
+<span class="br">    └──</span> <span class="later">/dashboard/*</span>              <span class="n">the brand console</span></div>
+  </div>
+
+  <p style="margin-top:16px"><b>18 live URLs</b>, of which 4 are legal boilerplate and 8 already exist as prototype screens. Six pages are genuinely new writing, and one &mdash; the creator list &mdash; is a redesign of something we already have.</p>
+
+  <div class="callout warn">
+    <h3>One page I deliberately did NOT create: a standalone <code>/trust</code></h3>
+    <p>Verification, fraud policy, disclosure and safety are the strongest material we have, and the instinct is to give them their own page. But that content is <b>already required</b> on both <code>/how-it-works</code> pages, framed for each audience &mdash; a creator needs "when do I get paid and how do you check", a brand needs "why is this invoice billable". A third page would restate both and immediately go stale against them.</p>
+    <p>So: the <b>argument</b> lives in each zone's how-it-works page; the <b>publishable policy</b> lives once at <code>/legal/verification</code> and both link to it. The spec is explicit that this policy is meant to be published (&sect;6.2) &mdash; legal is where a policy is citable, not a marketing page.</p>
+  </div>
+</section>
+
+<!-- ============ 3. LINK GRAPH ============ -->
+<section class="s" id="graph">
+  <span class="k">Section 3</span>
+  <h2>What connects to what</h2>
+  <p>Solid arrows are the <b>funnel</b> &mdash; each page's one primary CTA. Dashed arrows are branches and alternate exits. Support pages sit below their zone: they are reachable from the header on every page in that zone, but they are <b>not steps</b>, and nothing in the funnel points down into them.</p>
+
+  <div class="scroller">
+    <svg viewBox="0 0 1240 610" width="1240" height="610" role="img" aria-label="Link graph of the Blue AI site, creator zone above, brand zone below">
+      <defs>
+        <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--ink-3)"/></marker>
+        <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--warn)"/></marker>
+      </defs>
+
+      <!-- CREATOR BAND -->
+      <rect x="0" y="30" width="1240" height="272" rx="14" fill="var(--violet-soft)" opacity=".38"/>
+      <text class="lane" x="16" y="52" fill="var(--violet)">Creator zone &mdash; root</text>
+
+      <!-- funnel arrows (drawn under nodes) -->
+      <path d="M 184 101 L 220 101" fill="none" stroke="var(--ink-3)" stroke-width="1.7" marker-end="url(#ar)"/>
+      <path d="M 384 101 L 420 101" fill="none" stroke="var(--ink-3)" stroke-width="1.7" marker-end="url(#ar)"/>
+      <path d="M 584 101 L 820 101" fill="none" stroke="var(--ink-3)" stroke-width="1.7" marker-end="url(#ar)"/>
+      <path d="M 504 130 V 189 H 620" fill="none" stroke="var(--warn)" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+      <path d="M 784 189 H 904 V 134" fill="none" stroke="var(--warn)" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+
+      <!-- creator nodes -->
+      <rect x="24" y="72" width="160" height="58" rx="11" fill="var(--slate-soft)" stroke="var(--slate)" stroke-width="1.4"/>
+      <text class="nu" x="38" y="96" fill="var(--ink-3)">ENTRY</text>
+      <text class="el" x="38" y="115" fill="var(--ink-2)">email / search / post</text>
+
+      <rect x="224" y="72" width="160" height="58" rx="11" fill="var(--violet-soft)" stroke="var(--violet)" stroke-width="1.4"/>
+      <text class="nu" x="238" y="95" fill="var(--violet-ink)">/</text>
+      <text class="nl" x="238" y="115" fill="var(--ink)">Creator home</text>
+
+      <rect x="424" y="72" width="160" height="58" rx="11" fill="var(--violet-soft)" stroke="var(--violet)" stroke-width="1.4"/>
+      <text class="nu" x="438" y="95" fill="var(--violet-ink)">/earnings</text>
+      <text class="nl" x="438" y="115" fill="var(--ink)">Your estimate</text>
+
+      <rect x="624" y="160" width="160" height="58" rx="11" fill="var(--warn-soft)" stroke="var(--warn)" stroke-width="1.4"/>
+      <text class="nu" x="638" y="183" fill="var(--warn)">/coach</text>
+      <text class="nl" x="638" y="203" fill="var(--ink)">Under 1,000</text>
+
+      <rect x="824" y="72" width="160" height="58" rx="11" fill="var(--green-soft)" stroke="var(--green)" stroke-width="1.8"/>
+      <text class="nu" x="838" y="95" fill="var(--green-ink)">/waitlist ★</text>
+      <text class="nl" x="838" y="115" fill="var(--ink)">Join the list</text>
+
+      <text class="el" x="700" y="93" text-anchor="middle" fill="var(--ink-3)">above the floor</text>
+      <text class="el" x="516" y="153" fill="var(--warn)">below the floor &mdash; never a dead end</text>
+      <text class="el" x="796" y="232" fill="var(--warn)">micro-actions still pay &middot; rejoins at the list</text>
+
+      <!-- creator support -->
+      <rect x="224" y="240" width="160" height="46" rx="10" fill="var(--surface)" stroke="var(--line)" stroke-width="1.3" stroke-dasharray="4 3"/>
+      <text class="nu" x="238" y="268" fill="var(--ink-2)">/how-it-works</text>
+      <rect x="404" y="240" width="170" height="46" rx="10" fill="var(--surface)" stroke="var(--line)" stroke-width="1.3" stroke-dasharray="4 3"/>
+      <text class="nu" x="418" y="268" fill="var(--ink-2)">/what-you-earn</text>
+      <text class="el" x="592" y="268" fill="var(--ink-3)">&larr; support pages: in the header on every creator page, never in the funnel</text>
+
+      <!-- BRAND BAND -->
+      <rect x="0" y="320" width="1240" height="272" rx="14" fill="var(--blue-soft)" opacity=".34"/>
+      <text class="lane" x="16" y="342" fill="var(--blue)">Brand zone &mdash; /brands</text>
+
+      <path d="M 184 391 L 220 391" fill="none" stroke="var(--ink-3)" stroke-width="1.7" marker-end="url(#ar)"/>
+      <path d="M 384 391 L 420 391" fill="none" stroke="var(--ink-3)" stroke-width="1.7" marker-end="url(#ar)"/>
+      <path d="M 584 391 L 620 391" fill="none" stroke="var(--ink-3)" stroke-width="1.7" marker-end="url(#ar)"/>
+      <path d="M 784 391 L 820 391" fill="none" stroke="var(--ink-3)" stroke-width="1.7" marker-end="url(#ar)"/>
+      <path d="M 984 391 L 1020 391" fill="none" stroke="var(--ink-3)" stroke-width="1.7" marker-end="url(#ar)"/>
+      <path d="M 504 420 V 446 H 904 V 424" fill="none" stroke="var(--ink-3)" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#ar)"/>
+      <path d="M 904 420 V 505 H 1016" fill="none" stroke="var(--warn)" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#arw)"/>
+
+      <rect x="24" y="362" width="160" height="58" rx="11" fill="var(--slate-soft)" stroke="var(--slate)" stroke-width="1.4"/>
+      <text class="nu" x="38" y="386" fill="var(--ink-3)">ENTRY</text>
+      <text class="el" x="38" y="405" fill="var(--ink-2)">email / search / sales</text>
+
+      <rect x="224" y="362" width="160" height="58" rx="11" fill="var(--blue-soft)" stroke="var(--blue)" stroke-width="1.4"/>
+      <text class="nu" x="238" y="385" fill="var(--blue-ink)">/brands</text>
+      <text class="nl" x="238" y="405" fill="var(--ink)">Brand home</text>
+
+      <rect x="424" y="362" width="160" height="58" rx="11" fill="var(--blue-soft)" stroke="var(--blue)" stroke-width="1.4"/>
+      <text class="nu" x="438" y="385" fill="var(--blue-ink)">/creators</text>
+      <text class="nl" x="438" y="405" fill="var(--ink)">Top creators</text>
+
+      <rect x="624" y="362" width="160" height="58" rx="11" fill="var(--blue-soft)" stroke="var(--blue)" stroke-width="1.4"/>
+      <text class="nu" x="638" y="385" fill="var(--blue-ink)">/compare</text>
+      <text class="nl" x="638" y="405" fill="var(--ink)">The argument</text>
+
+      <rect x="824" y="362" width="160" height="58" rx="11" fill="var(--blue-soft)" stroke="var(--blue)" stroke-width="1.4"/>
+      <text class="nu" x="838" y="385" fill="var(--blue-ink)">/plan</text>
+      <text class="nl" x="838" y="405" fill="var(--ink)">The forecast</text>
+
+      <rect x="1024" y="362" width="160" height="58" rx="11" fill="var(--green-soft)" stroke="var(--green)" stroke-width="1.8"/>
+      <text class="nu" x="1038" y="385" fill="var(--green-ink)">/reserve ★</text>
+      <text class="nl" x="1038" y="405" fill="var(--ink)">Founding brand</text>
+
+      <rect x="1024" y="480" width="160" height="50" rx="11" fill="var(--warn-soft)" stroke="var(--warn)" stroke-width="1.4"/>
+      <text class="nu" x="1038" y="500" fill="var(--warn)">alt exit</text>
+      <text class="el" x="1038" y="518" fill="var(--ink)">Email me the forecast</text>
+      <text class="el" x="700" y="470" fill="var(--ink-3)">skip the argument &mdash; straight to the forecast</text>
+      <text class="el" x="700" y="512" fill="var(--warn)">still a qualified lead: budget + city + brief attached</text>
+
+      <rect x="424" y="480" width="190" height="46" rx="10" fill="var(--surface)" stroke="var(--line)" stroke-width="1.3" stroke-dasharray="4 3"/>
+      <text class="nu" x="438" y="508" fill="var(--ink-2)">/brands/how-it-works</text>
+    </svg>
+  </div>
+  <p class="scrollnote">Scroll sideways if the diagram is cut off &rarr;</p>
+
+  <div class="callout">
+    <h3>The three links not drawn above</h3>
+    <p><b>1. The shared zone.</b> <code>/about</code>, <code>/faq</code> and the four legal pages are reachable from the footer on <i>every</i> page in both zones. That is 18 &times; 6 arrows; drawing them would turn the diagram into noise. The rule instead: <b>shared pages are footer-reachable everywhere and are never a primary CTA.</b></p>
+    <p><b>2. The zone switch.</b> One link in the header, both directions, on every page. A brand reading the creator pitch is one click from their own zone and vice versa &mdash; a two-sided marketplace has to let a visitor discover they are on the wrong side.</p>
+    <p><b>3. Backwards.</b> Every funnel page carries a breadcrumb to the previous step, as the prototype already does. Forward is a button; backward is a text link. Never the same weight.</p>
+  </div>
+</section>
+
+<!-- ============ 4. CREATOR ZONE ============ -->
+<section class="s" id="creator">
+  <span class="k v">Section 4</span>
+  <h2>Creator zone &mdash; page by page</h2>
+  <div class="tw">
+    <table>
+      <thead><tr><th style="width:150px">URL</th><th style="width:210px">Its one job</th><th>What goes on it</th><th style="width:170px">Primary CTA</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="url v">/</td>
+          <td><span class="tag has">Exists</span>Convince, then ask for <b>one field</b></td>
+          <td class="cap">Hero + handle input · the earnings mock · three benefit cards · the three channels with rates · four steps (summary, links out to the full page) · the rate table (summary) · trust row · closing CTA band</td>
+          <td class="cap">Paste a handle &rarr; <code>/earnings</code></td>
+        </tr>
+        <tr>
+          <td class="url v">/how-it-works</td>
+          <td><span class="tag new">New</span>Kill the <b>&ldquo;is this a scam&rdquo;</b> objection in full</td>
+          <td class="cap">The four steps expanded · what &ldquo;verified&rdquo; actually means (24h / 72h / 7d, paid on the 72-hour reading) · <b>the payment section that currently exists nowhere:</b> Stripe Connect, $10 minimum, ACH free, instant debit 1.5%, W-9 at $600 · the three numbers shown before any job is claimed · links to <code>/legal/verification</code></td>
+          <td class="cap">Estimate earnings &rarr; <code>/earnings</code></td>
+        </tr>
+        <tr>
+          <td class="url v">/what-you-earn</td>
+          <td><span class="tag new">New</span><span class="tag opt">Optional</span>Own the highest-intent search</td>
+          <td class="cap">The full rate card per outcome · the job ladder from comment to YouTube integration · two worked examples · the 20%-from-the-brand explanation · the illustrative-figures caveat</td>
+          <td class="cap">Estimate earnings &rarr; <code>/earnings</code></td>
+        </tr>
+        <tr>
+          <td class="url v">/earnings</td>
+          <td><span class="tag has">Exists</span>Show a believable number <b>before signup</b></td>
+          <td class="cap">What Blue AI read (followers, median views, niche, city &mdash; showing the working is what makes the number credible) · the range · the breakdown · the job ladder · the Coach card if below the floor · persona switcher</td>
+          <td class="cap">Join the waitlist &rarr; <code>/waitlist</code></td>
+        </tr>
+        <tr>
+          <td class="url v">/coach</td>
+          <td><span class="tag new">New</span>Make &ldquo;too small&rdquo; a <b>route</b>, not a bounce</td>
+          <td class="cap">The six-week plan · what pays today with no follower minimum (comment $1.50, receipt $3, story $5) · what unlocks at 1,000 · the fact that no competitor does this &mdash; Duel rejects applicants, Kale requires a purchase</td>
+          <td class="cap">Join the waitlist &rarr; <code>/waitlist</code></td>
+        </tr>
+        <tr>
+          <td class="url v">/waitlist</td>
+          <td><span class="tag conv">★ Conversion</span>Turn a queue into <b>useful work</b></td>
+          <td class="cap">Email capture · queue position + progress meter · the four priority actions (connect a channel counts double, three profile questions, invite local creators) · what happens next · the Austin target</td>
+          <td class="cap">Connect a channel &mdash; the only action that makes you matchable</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout warn">
+    <h3>An IA gap the prototype has today</h3>
+    <p><code>/earnings</code> is a <b>computed</b> page &mdash; it needs a handle to exist. Right now a cold hit on that URL silently shows <code>@sarahmakesdinner</code>, which reads as either a bug or someone else's data. Same for <code>/brands/creators</code>, which needs a product URL and a city.</p>
+    <p>Both need a real <b>empty state that asks for the input</b>, since these are exactly the URLs that get shared, bookmarked and pasted into decks. Any page that computes from an input needs a way to collect that input on arrival.</p>
+  </div>
+</section>
+
+<!-- ============ 5. BRAND ZONE ============ -->
+<section class="s" id="brand">
+  <span class="k b">Section 5</span>
+  <h2>Brand zone &mdash; page by page</h2>
+  <div class="tw">
+    <table>
+      <thead><tr><th style="width:180px">URL</th><th style="width:210px">Its one job</th><th>What goes on it</th><th style="width:180px">Primary CTA</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="url">/brands</td>
+          <td><span class="tag has">Exists</span>State the trade, ask for <b>two fields</b></td>
+          <td class="cap">Hero + product URL and city · three benefit cards · the $10,000 comparison in miniature · the three channels · the Reddit exclusion stated on the page rather than silently omitted · trust row · closing CTA</td>
+          <td class="cap">See who&rsquo;s nearby &rarr; <code>/brands/creators</code></td>
+        </tr>
+        <tr>
+          <td class="url">/brands/how-it-works</td>
+          <td><span class="tag new">New</span>Explain the <b>managed loop</b></td>
+          <td class="cap">What the agents replace, role by role · verification and the 72-hour reading · who carries fraud risk (we do) · per-creator approval and the safety floor · automatic ad disclosure · the three rights tiers priced · escrow and unspent-budget return · links to <code>/legal/verification</code></td>
+          <td class="cap">See who&rsquo;s nearby &rarr; <code>/brands/creators</code></td>
+        </tr>
+        <tr>
+          <td class="url">/brands/creators</td>
+          <td><span class="tag chg">Changed</span>Prove <b>supply exists</b> near them &mdash; now as a ranked list</td>
+          <td class="cap">Full spec in &sect;6 below</td>
+          <td class="cap">Compare &rarr; <code>/brands/compare</code><br><span style="font-size:13px">(secondary: skip to the forecast)</span></td>
+        </tr>
+        <tr>
+          <td class="url">/brands/compare</td>
+          <td><span class="tag has">Exists</span>Win the argument vs <b>one big name</b></td>
+          <td class="cap">The side-by-side at $10,000, macro modeled generously on purpose · the in-market row that closes it (~4,400 vs ~770,000) · third-party evidence: Emarketer/WSJ, Kale 1.6&times;, Duel/Beekman +30% · the Isha Patel quote</td>
+          <td class="cap">Build the forecast &rarr; <code>/brands/plan</code></td>
+        </tr>
+        <tr>
+          <td class="url">/brands/plan</td>
+          <td><span class="tag has">Exists</span>Let them <b>price it themselves</b></td>
+          <td class="cap">Budget slider · bid unit · follower floor · live forecast (creators, posts, views, CPM) · the payout-vs-fee split shown as a line item · the four protections</td>
+          <td class="cap">Reserve &rarr; <code>/brands/reserve</code><br><span style="font-size:13px">(alt: email me the forecast)</span></td>
+        </tr>
+        <tr>
+          <td class="url">/brands/reserve</td>
+          <td><span class="tag conv">★ Conversion</span>Convert to a <b>pilot</b>, not a purchase</td>
+          <td class="cap">The campaign spec assembled from everything captured so far · work email + company · $0 charged today, escrow funds at launch · the email-me-instead exit kept visible</td>
+          <td class="cap">Reserve as a founding brand</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============ 6. THE LIST ============ -->
+<section class="s" id="list">
+  <span class="k">Section 6</span>
+  <h2>Replacing the map with a ranked creator list</h2>
+  <p>The PM did not like the map. Before replacing it, it is worth being precise about <b>what job the map was doing</b>, because the replacement has to keep that job or the brand funnel loses its strongest page: <i>supply is the one thing a brand cannot verify for themselves.</i></p>
+
+  <div class="cols2">
+    <div class="panel">
+      <span class="k">What the map did well &mdash; must survive</span>
+      <ul class="pl" style="margin:10px 0 0">
+        <li>Density at a glance: <b>412 creators within 25 miles</b></li>
+        <li>Geography &mdash; they are <i>near you</i>, spread across real neighbourhoods</li>
+        <li>Filterable by niche and platform, with counters recomputing live</li>
+        <li>Anonymised: no handles, no faces &mdash; protects creators, and makes reserving the way to see more</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <span class="k">What the map could never do</span>
+      <ul class="pl" style="margin:10px 0 0">
+        <li>Answer <b>&ldquo;are these people any good?&rdquo;</b> &mdash; a dot has no stats</li>
+        <li>Show <b>price</b>, so it could not lead naturally into the forecast</li>
+        <li>Survive a screenshot into a deck; a canvas of dots explains nothing out of context</li>
+        <li>Feel like inventory. A marketplace shows you <i>listings</i></li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>The replacement page, top to bottom</h3>
+  <ul class="pl">
+    <li><b>Head</b> &mdash; &ldquo;412 creators within 25 miles of Austin&rdquo;, the product Blue AI read, and the <span class="tag chg" style="margin:0">Indicative sample</span> badge kept exactly as-is.</li>
+    <li><b>The four stat tiles, unchanged</b> &mdash; creators · combined monthly views · matching your category · median followers. This is the density proof the map carried; it moves up here and keeps recomputing on filter.</li>
+    <li><b>Neighbourhood strip</b> &mdash; horizontal bars, not a map: Downtown 90 · North Loop 62 · East Side 58 · Mueller 52 · South Lamar 46 · Westlake 44 · St Elmo 40 · Del Valle 20. This is how the <i>geography</i> half of the map's job survives without a canvas.</li>
+    <li><b>Filters + a sort control</b> &mdash; niche and platform chips as before, plus the thing a list can offer that a map cannot: <b>Best match</b> (default) · Most local reach · Most engaged · Lowest cost per 1,000.</li>
+    <li><b>The list itself</b> &mdash; roughly 12 rows of 412, still anonymised.</li>
+    <li><b>Foot</b> &mdash; &ldquo;See all 412 with handles when you reserve&rdquo; + the primary CTA onward to the comparison.</li>
+  </ul>
+
+  <h3>Row anatomy</h3>
+  <div class="rowspec">
+<b>#7</b> &nbsp; Food &amp; drink creator &middot; North Loop &nbsp;&nbsp; [IG] [TT] &nbsp;&nbsp; <b>3,240</b> followers &nbsp;&nbsp; <b>4,800</b> median views &nbsp;&nbsp; <b>6.1%</b> engagement &nbsp;&nbsp; ~<b>$58</b> / post &nbsp;&nbsp; <b>Strong match</b>
+  </div>
+  <p style="margin-top:12px">Pseudonymous label carries niche + neighbourhood, which is what a brand actually needs before reserving. No handle, no avatar, no name.</p>
+
+  <div class="callout green">
+    <h3>What may and may not appear in a row</h3>
+    <p><b>Allowed, because it is public and Scout can genuinely read it:</b> follower count, median views, engagement rate, niche, neighbourhood, platform mix &mdash; and a cost estimate derived from the published rate card. The spec is explicit that the creator index holds <b>public metrics only</b>, and that reading a public account is real work, not theatre.</p>
+    <p><b>Not allowed:</b> reliability score, on-time rate, past-brand history, disclosure-compliance rating. Those are real fields in the segmentation schema, but they can only exist <i>after</i> creators have run campaigns. Putting them in a pre-launch row would be inventing traction, which is the one thing this audience will not forgive. If a trust column is wanted, it reads &ldquo;available at launch&rdquo; and stays empty.</p>
+  </div>
+
+  <div class="callout warn">
+    <h3>The cost of this change, stated plainly</h3>
+    <p>A list is <b>more exposed than a map</b>. Anonymous dots can be illustrative and nobody audits them; a row that says &ldquo;3,240 followers · 4,800 median views · ~$58/post&rdquo; invites someone to check. So this swap raises the bar on the creator index &mdash; the open blocker in &sect;9 of the spec &mdash; rather than lowering it.</p>
+    <p>That is an argument for hand-seeding Austin sooner, not against the list. But it should be a conscious trade, not a surprise: <b>the list is the better page and the more expensive one.</b></p>
+  </div>
+</section>
+
+<!-- ============ 7. SHARED ============ -->
+<section class="s" id="shared">
+  <span class="k">Section 7</span>
+  <h2>Shared pages &amp; legal</h2>
+  <div class="tw">
+    <table>
+      <thead><tr><th style="width:190px">URL</th><th style="width:200px">Its one job</th><th>What goes on it</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="url">/about</td>
+          <td>Establish that this is <b>a real company with a real thesis</b></td>
+          <td class="cap">The post-follower era in plain language · the spend shift (under 5,000 followers went 3.1% &rarr; 19.9% of US influencer spend) · what is wrong with the gift-card programmes we are competing with · that Blue AI is BlueStacks / now.gg, which is the credibility a pre-launch marketplace otherwise lacks · honest pre-launch status</td>
+        </tr>
+        <tr>
+          <td class="url">/faq</td>
+          <td>Answer the objections <b>in the open</b></td>
+          <td class="cap">Two groups on one page, switchable: <b>Creators</b> (how much, how often, do I need followers, do you post as me, is it cash, what about tax) and <b>Brands</b> (what if a post underperforms, who carries fraud risk, can I approve creators, who owns the content, when do I pay). Carries FAQPage structured data &mdash; there is precedent for that in this repo, and competitors have the copy without the schema.</td>
+        </tr>
+        <tr class="hdr"><td colspan="3">Legal &mdash; boilerplate except the last one</td></tr>
+        <tr><td class="url">/legal/terms</td><td>Site terms</td><td class="cap">Standard. Explicitly pre-launch: joining a list is not a contract to supply or buy anything.</td></tr>
+        <tr><td class="url">/legal/privacy</td><td>What we read and store</td><td class="cap">The one that matters here: we read <b>public</b> profile data, we store an email and public metrics, we never post as the creator, connection is read-only. This is the page the "read-only, Blue AI never posts as you" claim on the homepage points to.</td></tr>
+        <tr><td class="url">/legal/creator-terms</td><td>The creator deal</td><td class="cap">Payout mechanics, the $10 withdrawal floor, tax, and the three rights tiers &mdash; including that the creator keeps ownership at Tier 1 and always keeps the post on their own feed.</td></tr>
+        <tr>
+          <td class="url">/legal/verification</td>
+          <td><b>A trust asset, not fine print</b></td>
+          <td class="cap">The published fraud and disclosure policy: what we check, the 24h/72h/7d readings, payment on the 72-hour figure rather than the peak, the three consequences, and the promise that a brand is never invoiced for an outcome we could not verify. The spec says to publish this &mdash; both how-it-works pages link here rather than restating it.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============ 8. NAV ============ -->
+<section class="s" id="nav">
+  <span class="k">Section 8</span>
+  <h2>Navigation model</h2>
+  <p><b>One header component, two configurations.</b> The zone decides which links render; everything else &mdash; logo, switch, CTA slot, mobile behaviour &mdash; is identical. Same for the footer, which is byte-identical everywhere.</p>
+
+  <div class="cols2" style="margin-top:18px">
+    <div class="navbox c">
+      <div class="nh">Header &mdash; creator configuration</div>
+      <ul>
+        <li><b>Logo</b> bluestacks.ai <code>&rarr; /</code></li>
+        <li><b>Zone chip</b> CREATORS</li>
+        <li><b>How it works</b> <code>/how-it-works</code></li>
+        <li><b>What you earn</b> <code>/what-you-earn</code></li>
+        <li><b>Coach</b> <code>/coach</code></li>
+        <li><b>FAQ</b> <code>/faq</code></li>
+        <li><b>Switch</b> For brands &rarr; <code>/brands</code></li>
+        <li><b>CTA</b> Estimate earnings <code>&rarr; /earnings</code></li>
+      </ul>
+      <div class="rulez">On <code>/waitlist</code> the CTA is suppressed &mdash; the visitor already converted; a CTA to convert again is noise.</div>
+    </div>
+    <div class="navbox b">
+      <div class="nh">Header &mdash; brand configuration</div>
+      <ul>
+        <li><b>Logo</b> bluestacks.ai <code>&rarr; /brands</code></li>
+        <li><b>Zone chip</b> BRANDS</li>
+        <li><b>How it works</b> <code>/brands/how-it-works</code></li>
+        <li><b>Find creators</b> <code>/brands/creators</code></li>
+        <li><b>Why it works</b> <code>/brands/compare</code></li>
+        <li><b>FAQ</b> <code>/faq</code></li>
+        <li><b>Switch</b> For creators &rarr; <code>/</code></li>
+        <li><b>CTA</b> See who&rsquo;s nearby <code>&rarr; /brands/creators</code></li>
+      </ul>
+      <div class="rulez">Same suppression rule on <code>/brands/reserve</code>.</div>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <h3>Two fixes this bakes in</h3>
+    <p><b>Every header link goes somewhere real.</b> Today three of eight do not &mdash; creator-side &ldquo;Channels&rdquo; and &ldquo;Why Blue AI&rdquo; both point at <code>#/creators</code>, and brand-side &ldquo;Why Blue AI&rdquo; points at <code>#/brands</code>. They reload the page top. They are also <code>hide-sm</code>, so under 820px the creator nav collapses to one link and a button. Giving each of them a real destination is most of why the new support pages exist.</p>
+    <p><b>The brand zone chip currently reads INFLUENCERS.</b> That names what the visitor is <i>buying</i>, not who they are &mdash; and the whole pitch is that they are hiring many small creators rather than an influencer. It should read BRANDS. Flagging rather than assuming, since it is the live site's wording.</p>
+  </div>
+
+  <h3>Footer &mdash; identical on all 18 pages</h3>
+  <div class="tw" style="margin-top:10px">
+    <table style="min-width:760px">
+      <thead><tr><th>For creators</th><th>For brands</th><th>Company</th><th>Legal</th></tr></thead>
+      <tbody><tr>
+        <td class="cap">Earn with Blue AI<br>How it works<br>What you earn<br>Estimate your earnings<br>No audience yet?<br><b>Join the waitlist</b></td>
+        <td class="cap">Hire creators<br>How it works<br>Find creators near you<br>Why it works<br>Build a forecast<br><b>Reserve a slot</b></td>
+        <td class="cap">About<br>FAQ<br>Contact<br><span style="color:var(--ink-3)">(contact is a mailto, not a page &mdash; a contact page with no team behind it is worse than none)</span></td>
+        <td class="cap">Terms<br>Privacy<br>Creator terms<br>Verification &amp; disclosure</td>
+      </tr></tbody>
+    </table>
+  </div>
+  <p style="margin-top:12px"><b>Plus one line under the columns, on every page:</b> &ldquo;Pre-launch. All figures are illustrative models built for design, not researched rate cards.&rdquo; That disclosure currently sits on individual pages as a hint; at site scale it belongs in the chrome, said once, everywhere.</p>
+  <p><b>Deliberately not in the footer:</b> a &ldquo;coming soon&rdquo; list of pricing / login / app / dashboard. Pre-launch, a roadmap in the footer reads as a promise, and the site's whole credibility strategy is not promising things.</p>
+</section>
+
+<!-- ============ 9. CAPTURE ============ -->
+<section class="s" id="capture">
+  <span class="k">Section 9</span>
+  <h2>What each page captures</h2>
+  <p>The prototype's best property was that two of eight pages asked for nothing. At 18 pages that property gets <b>stronger</b>: six pages capture, twelve give.</p>
+  <div class="tw">
+    <table style="min-width:700px">
+      <thead><tr><th style="width:210px">Page</th><th>What it captures</th></tr></thead>
+      <tbody>
+        <tr><td class="url v">/</td><td class="cap">Handle &mdash; one field</td></tr>
+        <tr><td class="url v">/waitlist</td><td class="cap">Email, connected channel + read-only token, three niche answers, referrals</td></tr>
+        <tr><td class="url">/brands</td><td class="cap">Product URL, target city</td></tr>
+        <tr><td class="url">/brands/creators</td><td class="cap">Which niches, platforms and sort order they cared about &mdash; intent, not identity</td></tr>
+        <tr><td class="url">/brands/plan</td><td class="cap">Budget, bid unit, follower floor</td></tr>
+        <tr><td class="url">/brands/reserve</td><td class="cap">Work email, company, and the whole campaign spec assembled upstream</td></tr>
+        <tr><td class="url" style="color:var(--ink-3)">the other 12</td><td class="none">Nothing. <code>/earnings</code>, <code>/coach</code>, <code>/brands/compare</code>, both how-it-works pages, <code>/what-you-earn</code>, <code>/about</code>, <code>/faq</code> and the four legal pages exist purely to give something away first.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============ 10. LATER ============ -->
+<section class="s" id="later">
+  <span class="k">Section 10</span>
+  <h2>Reserved for later &mdash; and where each one slots in</h2>
+  <p>Naming the slot now is what makes this an insert later instead of a restructure. None of these are built, linked, or announced.</p>
+  <div class="tw">
+    <table style="min-width:820px">
+      <thead><tr><th style="width:160px">Later</th><th style="width:230px">Where it lands</th><th>What has to be true first</th></tr></thead>
+      <tbody>
+        <tr><td class="url" style="color:var(--ink-3)">/pricing</td><td class="cap">Brand zone, between how-it-works and creators; a nav slot opens</td><td class="cap">The 20% take rate has to be a real published commercial position, and the founding-brand discount has to be decided (open item 2 in the spec)</td></tr>
+        <tr><td class="url" style="color:var(--ink-3)">/login</td><td class="cap">Header, far right, past the CTA in both zones</td><td class="cap">Accounts, which means a backend. Nothing to log into pre-launch</td></tr>
+        <tr><td class="url" style="color:var(--ink-3)">/app/*</td><td class="cap">A third zone. The creator waitlist becomes its front door</td><td class="cap">Launch. The waitlist is deliberately collecting the exact profile this needs, so the transition is a state change for the user, not a new signup</td></tr>
+        <tr><td class="url" style="color:var(--ink-3)">/dashboard/*</td><td class="cap">A fourth zone; <code>/brands/reserve</code> becomes its front door</td><td class="cap">Launch + a first campaign. The reservation already captures the full campaign spec, so day one is not a blank form</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============ 11. OPEN ============ -->
+<section class="s" id="open">
+  <span class="k">Section 11</span>
+  <h2>Decisions I need from you before draft 2</h2>
+  <div class="tw">
+    <table style="min-width:820px">
+      <thead><tr><th style="width:40px">#</th><th style="width:300px">Question</th><th>My recommendation</th></tr></thead>
+      <tbody>
+        <tr><td><b>1</b></td><td class="cap"><b>Does the creator zone own <code>/</code>?</b> Or does the root stay a neutral page and creators live at <code>/creators</code>?</td><td class="cap">Creator zone owns the root &mdash; supply-first, and it is the audience arriving cold in volume. Brands lose nothing by being a named destination.</td></tr>
+        <tr><td><b>2</b></td><td class="cap"><b>Does <code>/what-you-earn</code> exist as a page,</b> or stay a section on the creator home?</td><td class="cap">Make it a page. It is the highest-intent thing a creator searches for, and it gives the header link a real destination. It is the one page here I would cut if you want a leaner draft.</td></tr>
+        <tr><td><b>3</b></td><td class="cap"><b>Zone chip: INFLUENCERS or BRANDS?</b></td><td class="cap">BRANDS. It names the reader, and &ldquo;influencer&rdquo; is the thing we are arguing against buying.</td></tr>
+        <tr><td><b>4</b></td><td class="cap"><b>How many creator rows show before reserving</b> &mdash; and does the count itself become the tease?</td><td class="cap">Twelve rows of 412, then the gate. Enough to judge quality, not enough to shop.</td></tr>
+        <tr><td><b>5</b></td><td class="cap"><b>Does the creator index get hand-seeded for Austin now?</b> The list makes this more urgent than the map did.</td><td class="cap">Yes, and it is still the only real blocker. Two pages depend on it and they are the two strongest pages on the site.</td></tr>
+        <tr><td><b>6</b></td><td class="cap"><b>Path-based URLs, or keep hash routing?</b></td><td class="cap">Path-based for a real site &mdash; hash routes cost you the FAQ and article SEO the shared pages exist to earn. The prototype can stay hash-routed; they are different artifacts.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<footer>
+  Draft 1 &middot; structure only, no visual design. Companion to <code>onboarding-flows.md</code> (the reasoning), <code>diagrams.html</code> (swimlanes + data flow) and <code>index.html</code> (the eight-page prototype). Illustrative figures throughout.
+</footer>
+
+</div>

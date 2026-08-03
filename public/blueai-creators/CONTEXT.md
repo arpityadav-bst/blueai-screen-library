@@ -333,6 +333,17 @@ independently verified.
 - Indexed on the **root Screen Library** (`src/app/page.tsx`) under **Dormant**, as two
   cards: the prototype and the diagrams page.
 
+**UPDATE 2026-08-03 (same day, later):** the full **website draft 1 now exists at `site/`** —
+18 pages, two zones, built from the approved `site-ia.html` with all six of its §11
+recommendations accepted, PLUS the PM-requested change: **the brand supply map is replaced by
+a ranked creator list** (`site/brands/creators.html`). Design direction "The Payout" is locked
+in `site/DESIGN.md` (read it before touching any screen — it carries the anti-AI-slop ban
+list). Assets are Higgsfield-generated tactile props, matted with `video-creator/matte_u2net.py`,
+graded by `site/assets/tools/grade.py`; job ids in `site/assets/higgsfield/JOB-RECORD.md`.
+Fonts: Cabinet Grotesk + General Sans (Fontshare FFL) + IBM Plex Mono, self-hosted. Motion:
+GSAP 3.15 + ScrollTrigger vendored in `site/shared/`. The 8-page hash prototype stays beside
+it untouched as the flow reference.
+
 **Status: PARKED / experimental** (designer's call, 2026-08-03). This surface is in the same
 class as `/blueai-product` and the dormant marketing pages — it is **not** governed by VDA,
 not reviewed against either BlueAI design system, and touching it must not touch

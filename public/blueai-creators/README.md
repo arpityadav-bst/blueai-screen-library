@@ -12,6 +12,8 @@ Design-only, like the rest of this repo. No backend, no real data, all figures i
 | `index.html` | Clickable prototype site — 8 pages across both journeys |
 | `diagrams.html` | Page inventory, two swimlanes, level-1 data flow diagram |
 | `onboarding-flows.md` | The spec: reasoning, decisions, economics, open questions |
+| `site-ia.html` | The approved full-site IA — 18 URLs, two zones, nav model, the map→list swap |
+| `site/` | **Website draft 1 — "The Payout."** The real 18-page site built from that IA: creator zone at the root, brand zone under `brands/`, shared + legal pages. Own design system (see `site/DESIGN.md` — the lock file with the anti-slop ban list), self-hosted fonts, generated tactile props (`site/assets/`, pipeline in `site/assets/higgsfield/JOB-RECORD.md`), GSAP motion vendored locally. Serve and open `/blueai-creators/site/` |
 
 ## Viewing it
 

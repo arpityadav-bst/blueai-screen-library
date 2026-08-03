@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Top creators near you — Blue AI for brands</title>
+<meta name="description" content="412 creators within 25 miles of Austin, ranked and filterable by niche and platform — followers, median views, engagement and cost per post, anonymised until you reserve.">
+<base href="/blueai-creators/site/brands/">
+<link rel="stylesheet" href="../shared/site.css">
+<style>
+  .stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--sp-4)}
+  @media(max-width:880px){.stat-row{grid-template-columns:1fr 1fr}}
+  .stat-row .st{border-top:2px solid var(--ink);padding-top:14px}
+  .stat-row .v{font-family:var(--f-money);font-size:clamp(30px,3.6vw,44px);font-weight:600;line-height:1.1;margin-top:6px;font-variant-numeric:tabular-nums}
+  .hood{display:flex;align-items:center;gap:14px;font-size:14px;color:var(--ink-2);padding:7px 0}
+  .hood .nm{font-family:var(--f-money);font-size:12px;width:110px;flex:none;color:var(--ink-2)}
+  .hood .bar{height:14px;background:var(--work);border-radius:3px;min-width:3px;transition:width .4s var(--ease)}
+  .hood .ct{font-family:var(--f-money);font-size:12px;color:var(--ink-3)}
+  .crow{display:grid;grid-template-columns:44px 1.5fr repeat(4,1fr) auto;gap:14px;align-items:center;
+    padding:15px 6px;border-bottom:1px solid var(--line);font-size:14.5px}
+  .crow:last-child{border-bottom:0}
+  .crow .rank{font-family:var(--f-money);font-size:13px;color:var(--ink-3)}
+  .crow .who b{display:block;font-weight:600;font-size:15px}
+  .crow .who span{font-size:12.5px;color:var(--ink-3);font-family:var(--f-money)}
+  .crow .num{font-family:var(--f-money);font-variant-numeric:tabular-nums;font-size:14px}
+  .crow .num small{display:block;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin-top:2px}
+  .crow .match{font-family:var(--f-money);font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;
+    color:var(--cash);background:var(--cash-soft);border-radius:4px;padding:5px 9px;white-space:nowrap}
+  .crow .match.mid{color:var(--work-deep);background:var(--work-soft)}
+  .crow-head{display:grid;grid-template-columns:44px 1.5fr repeat(4,1fr) auto;gap:14px;
+    padding:0 6px 10px;border-bottom:2px solid var(--ink)}
+  .crow-head span{font-family:var(--f-money);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+  @media(max-width:880px){
+    .crow,.crow-head{grid-template-columns:28px 1.6fr 1fr auto;gap:10px}
+    .crow .h-sm,.crow-head .h-sm,.crow .h-xs,.crow-head .h-xs{display:none}
+    .crow .match{padding:4px 7px;font-size:10px}
+  }
+</style>
+</head>
+<body class="zone-brand" data-page="brands-creators" data-depth="1">
+<header class="hd" data-chrome></header>
+
+<!-- EMPTY STATE — cold hit asks for the input -->
+<section class="band roomy" id="empty" hidden>
+  <div class="wrap narrow">
+    <span class="m-label z">Find creators</span>
+    <h1 class="t-2xl" style="margin:16px 0 18px;max-width:18ch">Paste a product page. Pick a city. That&rsquo;s the brief.</h1>
+    <p class="lead" style="max-width:54ch">Blue AI reads the page &mdash; category, price point, where it&rsquo;s sold &mdash; and shows you the local creator supply before asking for anything.</p>
+    <form class="input-row" action="creators.html" method="get" style="margin-top:var(--sp-4);max-width:680px">
+      <div style="flex:1;min-width:200px">
+        <label class="m-label" for="urlEmpty" style="display:block;margin-bottom:7px">Product URL</label>
+        <input type="url" id="urlEmpty" name="url" placeholder="yourproduct.com" spellcheck="false" style="width:100%">
+      </div>
+      <div>
+        <label class="m-label" for="cityEmpty" style="display:block;margin-bottom:7px">Target city</label>
+        <select id="cityEmpty" name="city">
+          <option>Austin, TX</option><option>Chicago, IL</option><option>Phoenix, AZ</option><option>Nashville, TN</option>
+        </select>
+      </div>
+      <button class="btn z lg" type="submit" style="align-self:flex-end">See who&rsquo;s nearby</button>
+    </form>
+  </div>
+</section>
+
+<div id="result" hidden>
+<section class="band">
+  <div class="wrap">
+    <a class="crumb" href="index.html">Back to home</a>
+    <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;justify-content:space-between">
+      <div>
+        <span class="m-label z">Step 1 of 3 &middot; supply</span>
+        <h1 class="t-2xl" style="margin:12px 0 8px">Creators within 25 miles of <span id="cityName">Austin</span></h1>
+        <p style="margin:0">Blue AI read <b id="prodName" class="m" style="font-size:15px">tallcreeksoda.com</b> &mdash; better-for-you soda, $2.49 single, sold at H-E-B and Whole Foods.</p>
+      </div>
+      <span class="m-label" style="color:var(--flag);border:1.5px solid color-mix(in srgb,var(--flag) 40%,var(--line));border-radius:var(--r-pill);padding:8px 14px">Indicative sample</span>
+    </div>
+
+    <div class="stat-row" style="margin-top:var(--sp-5)">
+      <div class="st"><span class="m-label">Creators</span><div class="v" id="sCreators">412</div></div>
+      <div class="st"><span class="m-label">Combined monthly views</span><div class="v" id="sViews">1.9M</div></div>
+      <div class="st"><span class="m-label">Matching your category</span><div class="v" id="sNiche">144</div></div>
+      <div class="st"><span class="m-label">Median followers</span><div class="v" id="sMedian">3,180</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="band tight shift" style="border-top:1px solid var(--line)">
+  <div class="wrap">
+    <div class="grid2" style="align-items:start;gap:var(--sp-5)">
+      <div>
+        <span class="m-label z sec-label">Where they are</span>
+        <div id="hoods"></div>
+      </div>
+      <div>
+        <span class="m-label z sec-label">Narrow it down</span>
+        <div class="chip-row" id="nicheChips" style="margin-bottom:12px"></div>
+        <div class="chip-row" id="platChips" style="margin-bottom:18px"></div>
+        <span class="m-label z sec-label">Rank by</span>
+        <div class="chip-row" id="sortChips"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px;margin-bottom:var(--sp-3)">
+      <h2 class="t-xl">Top matches</h2>
+      <span class="m" style="font-size:13px;color:var(--ink-3)" id="showing">showing 12 of 412</span>
+    </div>
+    <div class="crow-head">
+      <span>#</span><span>Creator</span><span class="h-xs">Followers</span><span class="h-sm">Median views</span><span class="h-sm">Engagement</span><span>Est. / post</span><span>Match</span>
+    </div>
+    <div id="rows"></div>
+    <div style="margin-top:var(--sp-4);display:flex;gap:14px;flex-wrap:wrap;align-items:center">
+      <a class="btn z lg" href="compare.html">Next &mdash; compare against one big name</a>
+      <a class="btn ghost lg" href="plan.html">Skip to the forecast</a>
+    </div>
+  </div>
+</section>
+</div>
+
+<footer class="ft" data-chrome></footer>
+<script src="../shared/gsap.min.js"></script>
+<script src="../shared/ScrollTrigger.min.js"></script>
+<script src="../shared/site.js"></script>
+<script>
+(function(){
+  "use strict";
+  /* seeded generator — same trick as the prototype map, so the numbers are stable */
+  var seed=20260729;
+  function rnd(){seed=(seed*1103515245+12345)&0x7fffffff;return seed/0x7fffffff;}
+  var NICHES=[{k:"food",n:"Food & beverage",s:.30},{k:"fit",n:"Fitness",s:.18},{k:"beauty",n:"Beauty",s:.20},{k:"life",n:"Lifestyle",s:.22},{k:"fam",n:"Family",s:.10}];
+  var PLATS=[{k:"ig",n:"Instagram"},{k:"tt",n:"TikTok"},{k:"yt",n:"YouTube"}];
+  var HOODS=[["Downtown",90],["North Loop",62],["East Side",58],["Mueller",52],["South Lamar",46],["Westlake",44],["St Elmo",40],["Del Valle",20]];
+  var LABEL={food:"Food & drink creator",fit:"Fitness creator",beauty:"Beauty creator",life:"Lifestyle creator",fam:"Family creator"};
+  var CREATORS=(function(){
+    var out=[],i,h;
+    for(h=0;h<HOODS.length;h++){
+      for(i=0;i<HOODS[h][1];i++){
+        var roll=rnd(),acc=0,nk="life",j;
+        for(j=0;j<NICHES.length;j++){acc+=NICHES[j].s;if(roll<=acc){nk=NICHES[j].k;break;}}
+        /* nano-heavy skew: median lands ≈3,200 followers — the population the whole pitch is about */
+        var fol=Math.round(900+Math.pow(rnd(),2.2)*11000);
+        var mv=Math.round(fol*(0.8+rnd()*1.2));
+        out.push({hood:HOODS[h][0],niche:nk,plat:PLATS[Math.floor(rnd()*3)].k,
+          fol:fol,views:mv,eng:+(3+rnd()*5.5).toFixed(1),
+          cost:Math.round(mv/1000*12)});
+      }
+    }
+    return out;
+  })();
+  var filters={niche:null,plat:null,sort:"match"};
+  var firstPaint=true; /* the page just loaded with these params isn't "the user just
+    changed a filter" — only tween from the second paint() call onward. */
+  var SORTS=[["match","Best match"],["local","Most local reach"],["eng","Most engaged"],["cpm","Lowest cost / 1,000"]];
+
+  var params=new URLSearchParams(location.search);
+  if(!params.get("url")&&!params.get("city")){document.getElementById("empty").hidden=false;return;}
+  document.getElementById("result").hidden=false;
+  document.getElementById("cityName").textContent=(params.get("city")||"Austin, TX").split(",")[0];
+  var u=(params.get("url")||"tallcreeksoda.com").replace(/^https?:\/\//,"").split("/")[0];
+  document.getElementById("prodName").textContent=u;
+
+  function hit(c){return (!filters.niche||c.niche===filters.niche)&&(!filters.plat||c.plat===filters.plat);}
+  function fmt(n){return n.toLocaleString("en-US");}
+
+  function chips(){
+    var nc='<button class="chip" data-all aria-pressed="'+(!filters.niche)+'">All niches</button>';
+    NICHES.forEach(function(n){nc+='<button class="chip" data-niche="'+n.k+'" aria-pressed="'+(filters.niche===n.k)+'">'+n.n+"</button>";});
+    document.getElementById("nicheChips").innerHTML=nc;
+    var pc='<button class="chip" data-allp aria-pressed="'+(!filters.plat)+'">All platforms</button>';
+    PLATS.forEach(function(p){pc+='<button class="chip" data-plat="'+p.k+'" aria-pressed="'+(filters.plat===p.k)+'">'+p.n+"</button>";});
+    document.getElementById("platChips").innerHTML=pc;
+    document.getElementById("sortChips").innerHTML=SORTS.map(function(s){
+      return '<button class="chip" data-sort="'+s[0]+'" aria-pressed="'+(filters.sort===s[0])+'">'+s[1]+"</button>";
+    }).join("");
+    [["nicheChips","niche"],["platChips","plat"],["sortChips","sort"]].forEach(function(pair){
+      document.getElementById(pair[0]).querySelectorAll("button").forEach(function(b){
+        b.addEventListener("click",function(){
+          if(b.hasAttribute("data-all"))filters.niche=null;
+          else if(b.hasAttribute("data-allp"))filters.plat=null;
+          else if(b.dataset.niche)filters.niche=filters.niche===b.dataset.niche?null:b.dataset.niche;
+          else if(b.dataset.plat)filters.plat=filters.plat===b.dataset.plat?null:b.dataset.plat;
+          else if(b.dataset.sort)filters.sort=b.dataset.sort;
+          paint();
+        });
+      });
+    });
+  }
+
+  function paint(){
+    chips();
+    var on=CREATORS.filter(hit);
+    var views=on.reduce(function(a,c){return a+c.views;},0);
+    var niche=CREATORS.filter(function(c){return c.niche==="food"&&(!filters.plat||c.plat===filters.plat);}).length;
+    var fols=on.map(function(c){return c.fol;}).sort(function(a,b){return a-b;});
+    /* Mechanism 4: these four numbers used to snap on every filter/sort click — the
+       .hood .bar widths a few lines below already animate (CSS transition, .4s). The
+       page's OWN initial load (from URL params) isn't a user-changed-something event —
+       only tween from the second paint() call onward. */
+    var sMedianEl=document.getElementById("sMedian"), medianVal=fols.length?fols[Math.floor(fols.length/2)]:null;
+    if(firstPaint){
+      document.getElementById("sCreators").textContent=fmt(on.length);
+      document.getElementById("sViews").textContent=(views/1e6).toFixed(1)+"M";
+      document.getElementById("sNiche").textContent=fmt(niche);
+      sMedianEl.textContent=medianVal!==null?fmt(medianVal):"—";
+    } else {
+      window.BAI.tweenNumber(document.getElementById("sCreators"), on.length, function(v){return fmt(Math.round(v));});
+      window.BAI.tweenNumber(document.getElementById("sViews"), views, function(v){return (v/1e6).toFixed(1)+"M";}, {duration:.4});
+      window.BAI.tweenNumber(document.getElementById("sNiche"), niche, function(v){return fmt(Math.round(v));});
+      if(medianVal!==null){ window.BAI.tweenNumber(sMedianEl, medianVal, function(v){return fmt(Math.round(v));}); }
+      else { sMedianEl.textContent="—"; } // no creators match — not a number, nothing to tween
+    }
+    // neighbourhood bars
+    var byHood={},max=0;
+    on.forEach(function(c){byHood[c.hood]=(byHood[c.hood]||0)+1;});
+    HOODS.forEach(function(h){max=Math.max(max,byHood[h[0]]||0);});
+    document.getElementById("hoods").innerHTML=HOODS.map(function(h){
+      var n=byHood[h[0]]||0;
+      return '<div class="hood"><span class="nm">'+h[0].toUpperCase()+'</span><span class="bar" style="width:'+(max?Math.round(n/max*100):0)+'%"></span><span class="ct">'+n+"</span></div>";
+    }).join("");
+    // ranked rows
+    var sorted=on.slice();
+    if(filters.sort==="local")sorted.sort(function(a,b){return b.views-a.views;});
+    else if(filters.sort==="eng")sorted.sort(function(a,b){return b.eng-a.eng;});
+    else if(filters.sort==="cpm")sorted.sort(function(a,b){return (a.cost/a.views)-(b.cost/b.views);});
+    else sorted.sort(function(a,b){return (b.eng*b.views)-(a.eng*a.views);});
+    document.getElementById("rows").innerHTML=sorted.slice(0,12).map(function(c,i){
+      var plat=c.plat==="ig"?"IG":c.plat==="tt"?"TT":"YT";
+      return '<div class="crow"><span class="rank">'+String(i+1).padStart(2,"0")+"</span>"+
+        '<span class="who"><b>'+LABEL[c.niche]+"</b><span>"+c.hood+" · "+plat+"</span></span>"+
+        '<span class="num h-xs">'+fmt(c.fol)+"</span>"+
+        '<span class="num h-sm">'+fmt(c.views)+"</span>"+
+        '<span class="num h-sm">'+c.eng+"%</span>"+
+        '<span class="num">~$'+fmt(c.cost)+"</span>"+
+        '<span class="match'+(i<5?"":" mid")+'">'+(i<5?"Strong match":"Good match")+"</span></div>";
+    }).join("");
+    document.getElementById("showing").textContent="showing "+Math.min(12,sorted.length)+" of "+fmt(on.length);
+  }
+  paint();
+  firstPaint=false;
+})();
+</script>
+</body>
+</html>
