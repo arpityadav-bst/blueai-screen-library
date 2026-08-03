@@ -1119,8 +1119,14 @@
       var acctBtn = document.getElementById('baiAcctBtn'), sideAcctBtn = document.getElementById('baiSideAcctBtn');
       if (helpBtn) helpBtn.addEventListener('click', function (e) { e.stopPropagation(); toggleMenu(helpMenuEl); });
       if (sideHelpBtn) sideHelpBtn.addEventListener('click', function (e) { e.stopPropagation(); toggleMenu(sideHelpMenuEl); });
-      if (acctBtn) acctBtn.addEventListener('click', function (e) { e.stopPropagation(); toggleMenu(acctMenuEl); });
-      if (sideAcctBtn) sideAcctBtn.addEventListener('click', function (e) { e.stopPropagation(); toggleMenu(sideAcctMenuEl); });
+      // Designer bug (2026-08-03): a logged-out user had no way to sign in except by sending a chat
+      // message — openLoginGate() had exactly one caller (submit()). Account was hidden entirely when
+      // logged out (see the OLD updateLoggedInChrome below), so there was no second door.
+      // Fixed at the click handler, not just visibility: when logged out, Account skips the History/
+      // Profile/Logout menu (none of those apply without a session) and opens the sign-in gate directly
+      // — same gate the chat-send path uses, so there is only ever one login surface, not two.
+      if (acctBtn) acctBtn.addEventListener('click', function (e) { e.stopPropagation(); if (!loggedIn) { openLoginGate(); return; } toggleMenu(acctMenuEl); });
+      if (sideAcctBtn) sideAcctBtn.addEventListener('click', function (e) { e.stopPropagation(); if (!loggedIn) { openLoginGate(); return; } toggleMenu(sideAcctMenuEl); });
 
       // ---- Batch 2: Profile screen (Subpane content — reuses .bai-kv-block/.bai-kv-row verbatim) ----
       // Redesign (designer: "we have so much space, we should utilise that"): added a Plan card (reuses
@@ -1189,11 +1195,36 @@
         syncSessionState(false);
       });
 
-      // ---- Batch 2: logged-out chrome — Credits/Help/Account are account-scoped, hidden until signed in.
-      // Settings and the model picker are app configuration, not account state, so they always stay put. ----
+      // ---- Batch 2: logged-out chrome — Credits/Help are account-scoped, hidden until signed in.
+      // Settings and the model picker are app configuration, not account state, so they always stay put.
+      // Account is DELIBERATELY NOT in that hidden list (fixed 2026-08-03) — it used to be, which meant
+      // Account was hidden BECAUSE the user wasn't signed in, on a button whose only other job IS signing
+      // in. It now always shows; its icon and click behavior change instead (below), which is what
+      // actually differs between the two states — not whether the door exists. ----
       function updateLoggedInChrome() {
-        [creditsWrap, helpBtn && helpBtn.parentElement, acctBtn && acctBtn.parentElement, sideHelpBtn && sideHelpBtn.parentElement, sideAcctBtn && sideAcctBtn.parentElement].forEach(function (el) {
+        [creditsWrap, helpBtn && helpBtn.parentElement, sideHelpBtn && sideHelpBtn.parentElement].forEach(function (el) {
           if (el) el.style.display = loggedIn ? '' : 'none';
+        });
+        // Icon follows the action, not the other way round: logged-in Account OPENS A MENU (kebab, "more
+        // options" — matches every other menu-trigger in this file); logged-out Account NAVIGATES
+        // DIRECTLY to sign-in (person glyph — the live product's own icon for this exact control, and the
+        // one piece of its content this fix reuses). A kebab that performs a direct action reads as
+        // broken affordance the moment you notice it opens nothing.
+        // Two full svg strings, not iconSvg() for both: kebab is a SOLID-FILL glyph (three filled dots,
+        // fill="currentColor", no stroke) while iconSvg()'s shared config is stroke-based
+        // (fill="none" stroke="currentColor") — wrapping kebab's circles in that would render them as
+        // thin hollow rings instead of solid dots. Each branch carries the attributes its own glyph needs.
+        // NO data-bai-icon attribute here on purpose — §10 exists precisely to fail on that attribute
+        // appearing inside JS-built markup, because its whole job is flagging an SVG that is EMPTY until
+        // the one-time boot hydration reaches it; these are never empty, since BAI_ICONS.kebab/.user are
+        // spliced in directly, in the same line, which is §10's own stated fix. The aria-label already
+        // anchors this element for §9's icon-choice check, so nothing is lost by leaving the attribute off.
+        [acctBtn, sideAcctBtn].forEach(function (b) {
+          if (!b) return;
+          b.innerHTML = loggedIn
+            ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">' + BAI_ICONS.kebab + '</svg>'
+            : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + BAI_ICONS.user + '</svg>';
+          b.setAttribute('aria-label', loggedIn ? 'Account' : 'Sign in');
         });
       }
       updateLoggedInChrome();
@@ -2441,6 +2472,7 @@
         drawer.style.top = (geom ? clampY(geom.t) : 0) + 'px';
         drawer.style.width = w + 'px'; drawer.style.height = h + 'px';
         baiUi.classList.toggle('wide', w >= 600);              // set BEFORE any reveal so the sidebar slide-in fires for a wide restore
+        if (baiCtrl.setWide) baiCtrl.setWide(w >= 600);   // canvas paints the header row in the nav-shell tone too — see boot.js's HDR_BG
         if (baiCtrl.resize) baiCtrl.resize(); saveWin();
       }
       var hdrEl = document.getElementById('baiTitlebar');   // drag the floating window by its title bar
@@ -2874,7 +2906,13 @@
       });
       document.getElementById('baiSideSettings').addEventListener('click', function (e) { e.stopPropagation(); setMode('settings'); });
       if (baiCtrl.drawMini) baiCtrl.drawMini(document.getElementById('baiSideLogo'));
-      if (window.ResizeObserver) new ResizeObserver(function () { if (drawer.classList.contains('win-hidden')) return; baiUi.classList.toggle('wide', drawer.offsetWidth >= 600); if (detached) saveWinSoon(); }).observe(drawer);
+      if (window.ResizeObserver) new ResizeObserver(function () {
+        if (drawer.classList.contains('win-hidden')) return;
+        var isWide = drawer.offsetWidth >= 600;
+        baiUi.classList.toggle('wide', isWide);
+        if (baiCtrl.setWide) baiCtrl.setWide(isWide);   // keep the canvas's header-row fill in sync on every live resize/drag
+        if (detached) saveWinSoon();
+      }).observe(drawer);
 
       // ---- Theme: dark (default) / light — switched from Settings, persisted like the window state ----
       var THEME_STORE = 'baiTheme';

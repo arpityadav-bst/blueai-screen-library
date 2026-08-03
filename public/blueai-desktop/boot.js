@@ -25,6 +25,15 @@ window.BlueAIBoot = function (host) {
 
   var W = 0, H = 0, pixels = [], hpixels = [], flickers = [];
   var BIG = 0.7, SMALL = 0.125, CXC = 0, CYC = 0, CY_FRAC = 0.40, HDRX = 28, HDRY = 53;   // HDRY centers the logo in the 46px header, which sits BELOW the 30px OS title bar
+  var HDR_H = 76, HDR_BG = null;   // 30px titlebar + 46px header. HDR_BG null = the header row is just PAL.bg like
+  // everywhere else (compact mode, unchanged). Set non-null (setWide()) when the wide-mode nav shell needs its own
+  // tone: the header/titlebar area is genuinely TRANSPARENT DOM (no CSS background) and always has been — this
+  // canvas IS what the header shows, continuously repainted every frame (the live logo, ambient sparkle packets,
+  // heartbeat rings). A 2026-08-04 fix gave `.bai-ui.wide .bai-header` its own opaque CSS background to match the
+  // sidebar, which silently painted over all of that — the logo, in particular, simply stopped rendering in wide
+  // mode, with no error, because nothing FAILED, the canvas was just no longer visible. The correct fix paints the
+  // new tone INTO this canvas instead of covering it with DOM, so the logo/ambient animation keeps showing through
+  // exactly as before, just on a different backdrop colour.
 
   // A clean pixel disc minus a 4-point NSEW sparkle (astroid). Same relative shape at any resolution.
   function genLogo(cells, ex, starFac, discFac) {
@@ -95,7 +104,11 @@ window.BlueAIBoot = function (host) {
     ctx.restore();
   }
 
-  function frameBase() { ctx.clearRect(0, 0, W, H); ctx.fillStyle = PAL.bg; ctx.fillRect(0, 0, W, H); }
+  function frameBase() {
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = PAL.bg; ctx.fillRect(0, 0, W, H);
+    if (HDR_BG) { ctx.fillStyle = HDR_BG; ctx.fillRect(0, 0, W, HDR_H); }   // wide-mode nav-shell tone, header row only — painted before the logo/packets so they still draw on top
+  }
 
   // Small, crisp settled header logo: integer device-px blocks (~1px gap), pixel-snapped edges.
   function drawHeaderLogo(cx, cy) {
@@ -311,9 +324,17 @@ window.BlueAIBoot = function (host) {
     dissolve: function (onDone) { dissolve(onDone); },      // boot done -> left→right pixel splash, canvas clears
     enterHeader: function (onDone) { enterHeader(onDone); },// header logo drops in from the top, then goes live
     ready: function () { stopHold(); renderReady(); startAmbient(); },   // instant reopen -> header + chat
-    setTheme: function (mode) { PAL = THEMES[mode] || THEMES.dark; if (ambientRaf) renderReady(); },   // repaint sync in the settled state; live loops pick PAL up next frame
+    setTheme: function (mode) {
+      PAL = THEMES[mode] || THEMES.dark;
+      if (HDR_BG !== null) HDR_BG = getComputedStyle(host).getPropertyValue('--bai-shell-bg').trim() || null;   // re-read: shell-bg's value differs per theme
+      if (ambientRaf) renderReady();   // repaint sync in the settled state; live loops pick PAL/HDR_BG up next frame
+    },
     resize: function () { resize(); if (!raf && !holdRaf && !ambientRaf) renderReady(); },   // force a canvas re-fit (detached restore sets geometry before boot)
     drawMini: function (cv) { drawMini(cv); },
-    setLogoY: function (f) { CY_FRAC = f; resize(); }   // vertical anchor of the big centre logo (onboarding lifts it up)
+    setLogoY: function (f) { CY_FRAC = f; resize(); },   // vertical anchor of the big centre logo (onboarding lifts it up)
+    setWide: function (isWide) {   // wide-mode nav shell: paint the header row with --bai-shell-bg instead of PAL.bg
+      HDR_BG = isWide ? (getComputedStyle(host).getPropertyValue('--bai-shell-bg').trim() || null) : null;
+      if (ambientRaf) renderReady();   // repaint immediately if already in the live/settled state; boot/hold states pick it up on their own next frame
+    }
   };
 };

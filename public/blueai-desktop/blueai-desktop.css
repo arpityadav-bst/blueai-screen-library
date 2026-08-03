@@ -75,6 +75,35 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans
   --bai-yellow: #e6d573;   /* Correction: softened to pastel — a distinct yellow for "input required (menu)", separate hue from --bai-credit-mid's amber (used for warnings) so the two don't read as the same color */
   --bai-titlebar-bg: #080a14; --bai-titlebar-line: #05060c; --bai-titlebar-text: #e7ecfa; --bai-titlebar-icon: #99a8dc;   /* fixed near-black navy — matches BlueStacks' own title bar; never redefined in .drawer.light */
   --bai-window-line: #262f52;   /* fixed window-outline tone (the original dark theme's own --bai-line) — never redefined in .drawer.light, so the outline stays this navy in both themes instead of swapping pale/white */
+  --bai-shell-bg: #0d111e;   /* the wide-mode NAV SHELL's own tone — header + sidebar together — deliberately its
+     own token, not --bai-panel. RENAMED from --bai-sidebar-bg (2026-08-03→08-04, two designer rounds on the same
+     surface, direction reversed on the second):
+     ROUND 1 (2026-08-03): comparing real reference apps in landscape mode, sidebar/header/chat read as
+     near-uniform tone, contrast reserved for the selected nav item — not the ~2.5x jump --bai-panel (#1a2140)
+     gave the sidebar against --bai-bg (#0b0e19). Landed the sidebar BARELY DARKER than canvas, pairing it
+     visually with the header (which has no background of its own and falls through to canvas) — i.e. paired by
+     ADJACENCY: header sits directly above chat, so header+chat got the shared tone and sidebar sat apart.
+     ROUND 2 (2026-08-04): designer corrected the PAIRING, not just the pixel value — header's actual ROLE is
+     nav chrome (logo, wordmark, settings/help/account), the SAME role the sidebar plays (mode switcher, recents),
+     not the chat pane's role (the workspace, the thing that changes per-conversation). Grouping header with chat
+     because they happen to sit stacked on top of each other was matching visual FAMILY/adjacency, not ROLE — the
+     exact failure reasonings.md already names ("match the fix to the surface's role, not its visual family"),
+     now caught in a decision THIS SAME NOTEBOOK made one day earlier. Correct pairing: header + sidebar share
+     ONE tone (this token, now BARELY LIGHTER than canvas, not darker). CORRECTION (still 2026-08-04): the header
+     does NOT pick this up via a CSS background — `.bai-header` genuinely has none, ever; the boot canvas beneath
+     it (boot.js) is what renders there (the live logo, ambient packets, heartbeat), and an opaque DOM background
+     silently painted over all of that with no error. The canvas now paints its own header-row rect in this token
+     instead (boot.js's HDR_BG, driven by `baiCtrl.setWide()`), so the animation keeps showing through. The
+     compact 290px view passes `isWide=false` to that same call, so its header stays canvas-toned exactly as
+     before — nothing there changed.
+     Chat is now the one surface that reads apart — a darker, recessed content well the lighter nav shell frames,
+     rather than the header pairing with it by proximity.
+     Split from --bai-panel on purpose, still: that token's other 4 consumers (.bai-menu, .bai-menu-desc,
+     .bai-tour-card x2) are FLOATING/elevated surfaces that WANT to pop against the canvas (they carry
+     --bai-menu-shadow for exactly that reason) — a docked shell and a floating overlay are different roles even
+     though both happen to read "brighter than canvas" now. Light theme: see the light block's own --bai-shell-bg,
+     corrected the same day for the same reason (a philosophy adopted in one theme and left out of the other
+     isn't adopted, it's a one-off). */
 
   /* ---- Size scale (added 2026-08-01) ------------------------------------------------------
      Declared HERE, on .drawer/.bai-scope alongside the colours — deliberately NOT on :root,
@@ -225,6 +254,18 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans
 .drawer.light, .bai-scope.light {
   --bai-placeholder: #8b96ae;   /* light needs a darker hint ink than light --bai-faint */
   --bai-bg: #f6f8fc; --bai-panel: #ffffff; --bai-card: #ffffff; --bai-card-2: #fbfcff; --bai-input-bg: #ffffff;
+  --bai-shell-bg: var(--bai-card-2);   /* RENAMED from --bai-sidebar-bg, direction reversed, same day (2026-08-04) —
+     see the full round-1/round-2 history on the dark block's --bai-shell-bg. Round 1 landed this barely DARKER
+     than --bai-bg (#242,244,249 vs #f6f8fc), pairing the sidebar's tone with the header (which has no bg of its
+     own and falls through to canvas) — grouped by adjacency. Round 2: the header's ROLE is nav chrome, the SAME
+     role the sidebar plays, not the chat pane's role — so header+sidebar now share ONE tone, barely LIGHTER than
+     canvas. The header does NOT pick this up via CSS (see the dark block's correction note — the boot canvas
+     underneath is what actually renders there; an opaque DOM background silently hid the live logo/ambient
+     animation). Reuses the EXISTING --bai-card-2 (#fbfcff) rather
+     than inventing a new near-duplicate literal — it already sits barely lighter than canvas (251,252,255 vs
+     246,248,252), which is exactly the "a lil lighter" delta wanted here. --bai-panel stays #ffffff, untouched —
+     still owns the floating/elevated family (menus, tour card), a different role from the docked shell even
+     though both now read brighter than canvas. */
   --bai-hover: #e9edf6; --bai-hover-acc: #e8f0fd; --bai-pill: #e2e8f4; --bai-user: #e4e9f5;
   --bai-line: #dbe2ee; --bai-line-2: #c9d4e6; --bai-line-focus: #a9bcdc; --bai-line-soft: rgba(30,60,120,0.12); --bai-accent-line: #b7cdf2;
   --bai-text-bright: #101828; --bai-text-strong: #17202f; --bai-text-hi: #232f45; --bai-text: #35415a; --bai-text-soft: #1f2b42;
@@ -910,7 +951,7 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans
 .bai-title-ar svg { display: block; }
 .bai-title-btn:hover .bai-title-ar { color: var(--bai-hover-ink); }
 /* ---- Wide (detached ≥600px): left sidebar holds new chat · modes · recent · settings + more ---- */
-.bai-sidebar { position: absolute; left: 0; top: 0; bottom: 0; width: var(--bai-wide-sidebar-w); display: none; flex-direction: column; padding: var(--bai-sp-12) var(--bai-sp-8); background: var(--bai-panel); border-right: 1px solid var(--bai-line); z-index: var(--bai-z-6); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+.bai-sidebar { position: absolute; left: 0; top: 0; bottom: 0; width: var(--bai-wide-sidebar-w); display: none; flex-direction: column; padding: var(--bai-sp-12) var(--bai-sp-8); background: var(--bai-shell-bg); border-right: 1px solid var(--bai-line); z-index: var(--bai-z-6); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
 .bai-ui.wide .bai-sidebar { display: flex; top: 46px; }                                  /* sits BELOW the full-width header */
 .bai-ui.wide .bai-panes, .bai-ui.wide .bai-main-title, .bai-ui.wide .bai-subpane { margin-left: var(--bai-wide-sidebar-w); }             /* main content clears the sidebar; header stays full-width */
 /* Bug fix: .bai-subpane (Skills' category drill-down, skill details, new/edit skill form — anything
@@ -920,6 +961,15 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans
    (see its own comment below), a subpane is "going deeper within the current tab," not a global
    route — it should respect the sidebar exactly like the tab content it's layered over. */
 .bai-ui.wide .bai-strip, .bai-ui.wide #baiSettingsBtn, .bai-ui.wide #baiNewBtn, .bai-ui.wide .bai-title-ar, .bai-ui.wide #baiHeadHelpWrap, .bai-ui.wide #baiHeadAcctWrap { display: none; }   /* wide: sidebar owns modes/new-chat/recents/settings/help/account; header keeps logo + "BlueAI" brand */
+/* Header + sidebar are ONE nav shell in wide mode (2026-08-04, designer round 2 — see --bai-shell-bg's full
+   history on the dark theme block). NOT done as a CSS background on .bai-header — that was the first attempt,
+   and it was wrong: .bai-header has no background of its own by design and never has, because the boot canvas
+   underneath (boot.js) is genuinely what renders there — the live twinkling logo, ambient sparkle packets,
+   heartbeat pulses, all continuously repainted every frame. Giving the header row an opaque DOM background
+   silently painted over all of that; nothing errored, the logo just stopped being visible in wide mode. The
+   canvas now paints its own header-row rectangle in --bai-shell-bg instead (boot.js's HDR_BG, set via
+   baiCtrl.setWide()), so the animation keeps showing through exactly as before, just on the new tone. See
+   boot.js for the actual fill logic — nothing to declare here. */
 .bai-main-title { flex-shrink: 0; display: flex; align-items: center; padding: var(--bai-sp-12) var(--bai-sp-14) var(--bai-sp-6); }   /* title (left) + new-chat icon (right), below the brand header */
 /* non-chat modes: the title is just a plain pane label — recents arrow + new-chat are chat-surface tools */
 /* Non-chat tabs: the main-title row is HIDDEN entirely (was: shown with the tab's own name restated
