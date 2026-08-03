@@ -1,5 +1,8 @@
 # blueAI — Project Insights
-Last updated: 2026-08-03 (Session-15 audit pass: added the blueai-desktop LAYOUT SYSTEM section below — the active surface had almost no facts here, which is why today's container defect had nothing to check against. Corrected a false Index claim and marked the marketing-site sections as dormant-scope. NOTE ON THIS LINE: it said 2026-07-25 while the file already contained a 2026-08-01 correction — the previous audit reported this file "re-pointed" after patching one paragraph, and the wrong date meant the mandated freshness check would PASS on a stale file. Bump this on every touch; the check reads it.)
+Last updated: 2026-08-04 (+the boot-canvas fact in the layout-system section: `.bai-header`/`.bai-titlebar`
+have no CSS background on purpose, because a continuously-repainted canvas underneath is what actually
+renders there — an opaque background silently deletes it with no error, cost a designer round to catch.
+Earlier: 2026-08-03, Session-15 audit pass: added the blueai-desktop LAYOUT SYSTEM section below — the active surface had almost no facts here, which is why today's container defect had nothing to check against. Corrected a false Index claim and marked the marketing-site sections as dormant-scope. NOTE ON THIS LINE: it said 2026-07-25 while the file already contained a 2026-08-01 correction — the previous audit reported this file "re-pointed" after patching one paragraph, and the wrong date meant the mandated freshness check would PASS on a stale file. Bump this on every touch; the check reads it.)
 
 ## blueai-desktop LAYOUT SYSTEM — the active surface's measurements (added 2026-08-03)
 
@@ -43,6 +46,20 @@ needs, and they are recorded here, once, instead of being re-measured per sessio
   `.bai-set` are all relocated by `appendChild` between two always-attached parents. A detached node is
   invisible to `getElementById` and never returns — that shipped as a real bug twice. Any function that wipes
   a container's `innerHTML` must park the moved node FIRST.
+- **`.bai-header` and `.bai-titlebar` have NO CSS background — on purpose, and it is load-bearing.** A canvas
+  (`boot.js`, the `<canvas class="bai-cv">` inserted as `.canvas`'s first child) sits behind the entire drawer
+  and continuously repaints: the live twinkling pixel logo (`drawLiveLogo`), ambient sparkle packets streaming
+  right-to-left (`spawnPacket`/`ambientStep`), and a heartbeat ring every ~12s. It shows through ANYWHERE the
+  DOM above it is transparent — which used to mean the whole header row. **Giving `.bai-header` an opaque CSS
+  background silently deletes all of that with no error** (2026-08-04, cost a designer round to catch: "what
+  happened to logo and traffic, I don't see it"). If the wide-mode nav shell ever needs a different tone here
+  again, it must be painted INTO the canvas (`boot.js`'s `HDR_BG`/`HDR_H`, driven by `baiCtrl.setWide(isWide)`,
+  which reads `--bai-shell-bg` live via `getComputedStyle` — never hardcode the hex), never as a DOM background
+  on `.bai-header` itself. `HDR_H = 76` = 30px titlebar + 46px header; both are fixed regardless of drawer width.
+  Two other canvas call sites exist and are unrelated to the header: `drawMini()` draws the chat "thinking"
+  indicator's own small canvas, and (separately) the wide sidebar's own `#baiSideLogo` canvas — which is itself
+  always invisible, since `.bai-side-brand{display:none}` is unconditional ("header carries the logo now" —
+  meaning the titlebar's real logo.png, not this canvas).
 
 ## blueai-desktop domain facts (2026-07-25 audit)
 - **BYOK and Prime membership coexist — neither state should hide the other's UI.** A user with an

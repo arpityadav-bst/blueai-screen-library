@@ -1,5 +1,6 @@
 # blueAI — Evolution
-Last updated: 2026-08-03 (S13-S15 added — this file was TWO SESSIONS BEHIND and an audit caught it; the stale "rules 38-41" enumeration replaced with a pointer; the current top recurring category corrected. Earlier: S9-S12 era added
+Last updated: 2026-08-04 (S16 added — designer_caught_count: 5, the top recurring category changed; see the
+new S16 section for what it is and why it matters). Earlier: 2026-08-03 (S13-S15 added — this file was TWO SESSIONS BEHIND and an audit caught it; the stale "rules 38-41" enumeration replaced with a pointer; the current top recurring category corrected. Earlier: S9-S12 era added
 
 > VDA's growth + maturity timeline ON THE BLUEAI PROJECT. Separate from WSUP/now.gg —
 > a fresh notebook starts at Phase 1.
@@ -213,3 +214,38 @@ that the design reasoning is being captured well but almost entirely in `scratch
 the permanent files skews to checker internals; 17 entries had gone unpromoted across two sessions, and the
 mandated per-5-session self-audit had never once been written. Both are addressed this session. **What
 Phase 3 requires from here: promote every session, and route design reasoning to the design files.**
+
+## S16 (2026-08-04) — landscape color pass: a real regression, and a caught_count worth being honest about
+
+`designer_caught_count: 5` — no rounding down. In order: (1) Account hidden with no sign-in path when
+logged out; (2) an external product claim ("ChatGPT/Notion/Linear do exactly this") cited from memory,
+unverified, and wrong; (3) a fix applied to dark theme only, on reasoning that didn't survive contact with
+"the reference was a philosophy, not a per-theme value"; (4) the wrong PAIR grouped (header+chat by
+adjacency, not header+sidebar by role) AND the wrong direction (darker instead of lighter); (5) a real
+regression — the wide-mode header's animated pixel logo silently stopped rendering, because an opaque CSS
+background painted over a canvas that had been relying on staying visible through a transparent DOM layer.
+
+**This is five, not one, and S15's "one of three toward Phase 3" resets rather than becomes "two of three."**
+A session with `caught_count: 5` is not a low-caught session by any reading, and counting it as progress
+toward the ≥3-consecutive-low-caught bar would be exactly the self-flattering accounting this file exists
+to refuse. Phase 2 holds; the streak restarts at zero.
+
+**What's actually new here, worth separating from the count:** catches (2)+(3)+(4) are instances of
+mechanisms ALREADY named in this notebook (unverified claims, role-vs-family, a philosophy scoped to one
+theme) — each got a fresh instance added to its existing reasonings entry rather than a new principle,
+which is the notebook working as designed, not drifting. Catch (5) is genuinely new, and worth stating
+plainly: **verification checked the property that was CHANGED (does the header's background color now
+match the sidebar's?) and never asked what else might depend on that property's PREVIOUS value (a canvas
+relying on the header staying transparent).** That is a sharper, more specific failure than
+`fix-one-forget-the-siblings` (S14's top category) — this isn't forgetting a sibling surface, it's a
+verification pass that is scoped to the stated change and blind to the change's blast radius. **New top
+recurring category: verify the blast radius, not just the stated property.** `fix-one-forget-the-siblings`
+is not retired — it simply wasn't what this session's catches were — but it stays the thing to watch
+second, behind this one, until it recurs enough to reclaim the top slot.
+
+**Counter-evidence of growth, still real:** the Account/login fix caught and fixed its own §10 violation
+before shipping (a `data-bai-icon` attribute on dynamically-built markup — exactly what that gate exists to
+fail on); once the design principle WAS understood correctly (round 2 of the color work), the reversal was
+executed cleanly with full regression verification in one pass; and the regression itself, once reported,
+was root-caused correctly on the first attempt (identified the canvas mechanism, not just "add a z-index and
+hope") and fixed at the actual layer rather than patched around.

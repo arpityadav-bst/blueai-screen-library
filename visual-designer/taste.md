@@ -1,5 +1,8 @@
 # blueAI — Taste
-Last updated: 2026-08-01 (+rule 45 (create-affordance placement ground theory, designer-taught over five rounds); +rule 44 (concentric nested radii, designer-taught); +rules 42 (choice-control copy) & 43 (deliberate one-offs); Q2/Q3 answers added to 38-40 per the promotion rule; rule 41 restated as a MECHANISM — non-layout vs layout-affecting channels — after an independent audit judged the first widening had generalised the title but not the trigger; cross-linked to rule 38; rule 39's stale radius count corrected). 2026-07-25 (SCOPE PIVOT, designer directive — see note below. +rule 38 (divider redundancy),
+Last updated: 2026-08-04 (+rule 47 (group by role not adjacency; depth as hierarchy — designer-taught over
+two rounds) — header on every touch per the Session-15 lesson, since a stale date here is what let this file
+go two sessions unread before). Earlier: 2026-08-03 (+rule 46 (a wrapper's correctness is a function of what
+it wraps) + rule 38's fail-to-fire clause corrected — the Session-15 audit pass). 2026-08-01 (+rule 45 (create-affordance placement ground theory, designer-taught over five rounds); +rule 44 (concentric nested radii, designer-taught); +rules 42 (choice-control copy) & 43 (deliberate one-offs); Q2/Q3 answers added to 38-40 per the promotion rule; rule 41 restated as a MECHANISM — non-layout vs layout-affecting channels — after an independent audit judged the first widening had generalised the title but not the trigger; cross-linked to rule 38; rule 39's stale radius count corrected). 2026-07-25 (SCOPE PIVOT, designer directive — see note below. +rule 38 (divider redundancy),
 now a primary cross-surface rule rather than a marketing-site-only exception.)
 
 > **SCOPE PIVOT (2026-07-25, designer directive):** the marketing site (rules 1–37 below) and
@@ -502,6 +505,30 @@ springy bounces) — "a utility assistant, not a toy."
     context and a flex parent are all the same element for this purpose, and three of those are invisible.
     *Sibling:* rule 38's 2026-08-03 amendment is this same fact from the signal's side — an element can
     stop earning its slot with nobody touching it. Read them together.
+
+47. **Group surfaces by ROLE, not by physical adjacency — and let depth carry the hierarchy between the
+    groups: lighter advances, darker recedes.** Two surfaces that happen to sit next to each other are not
+    thereby the same kind of thing. Nav chrome (a header, a sidebar) shares a role — persistent, the same
+    regardless of what content is showing — and a content pane (a chat, an editor, a document) is a
+    different role: the thing that actually changes. Pair surfaces by which of those two groups they
+    belong to, not by which one is drawn next to which. Once grouped, the tonal relationship between the
+    two groups is itself a signal: the group that reads lighter feels like it sits ABOVE/in front of the
+    group that reads darker, which recedes — so the chrome (the frame) is lighter, the content well (the
+    thing you're looking into) is darker, matching how a physical bezel relates to the screen it frames.
+    *(blueai-desktop, 2026-08-04: landscape header+sidebar+chat. First pass paired header with chat because
+    they sit stacked on top of each other — ADJACENCY — landing the sidebar as the one barely-darker odd
+    surface out. Designer corrected the grouping itself: header and sidebar are both nav chrome (logo,
+    settings/help/account, mode-switcher, recents), chat is the workspace — regroup by role, and the
+    designer's own follow-up supplied the direction: darker reads as more depth, which is why the chrome
+    wants to sit slightly above the content well, not level with it. Second pass reversed both the pairing
+    and the lightness direction on that single insight.)*
+    *Where else this applies:* a toolbar + a status bar that happen to bracket a canvas (same chrome role,
+    should share a tone, even though the canvas sits between them, not beside them); a card's header row and
+    footer row (same "frame" role around the card's own content); any pair of controls that read as unrelated
+    only because a third element happens to sit between them in the layout.
+    *What would stop it firing:* checking only whether two elements *touch* or *sit near* each other. The
+    question is never proximity — it's whether the two elements answer the same question ("where am I / what
+    can I do from here" = chrome) or different ones (chrome vs. "what am I looking at right now" = content).
 
 ## Open corrections log
 *SCOPE PIVOT (2026-07-25, designer directive) — superseding the S8 standing scope note below: **the

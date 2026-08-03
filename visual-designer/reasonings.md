@@ -1,5 +1,13 @@
 # blueAI — Reasonings
-Last updated: 2026-08-03 (+2 principles: "a measured constraint inherits the wrongness of whatever produced the measurement" and "inherit at every level of the composition". Header date was left at 2026-07-25 through six additions made 2026-08-01 — an audit caught it; the date is now bumped on every touch, because the mandated freshness check READS this line and a stale header makes the check pass on a stale file.)
+Last updated: 2026-08-04 (+2 principles: "a philosophy applied in one theme/mode and left out of the other
+isn't applied" and "before painting over something that looks empty, check what relies on it staying that
+way"; widened "match the fix to the surface's role" (adjacency is a family too) and "anything I can write
+from imagination…" (external product precedent is the same risk class as an internal spec) with fresh
+instances each. Earlier: 2026-08-03 (+2 principles: "a measured constraint inherits the wrongness of
+whatever produced the measurement" and "inherit at every level of the composition". Header date was left
+at 2026-07-25 through six additions made 2026-08-01 — an audit caught it; the date is now bumped on every
+touch, because the mandated freshness check READS this line and a stale header makes the check pass on a
+stale file.)
 
 > The deeper WHY behind decisions — principles that explain a CLASS of decisions, not a
 > single moment. `decisions.md` captures the moment; this file captures the generalization.
@@ -27,6 +35,17 @@ pattern was built for, or does it just resemble it?
 **How to apply:** when a new surface reminds you of an existing one, name what the existing one's
 JOB actually is before reusing its treatment. If the jobs differ, the visual similarity is a
 coincidence, not a precedent.
+
+**A second shape of the same mistake (blueai-desktop, 2026-08-04):** the "family" being matched doesn't
+have to be a component — it can be plain physical ADJACENCY. Landscape mode's header sits directly above
+the chat pane, so I gave them the same background tone, treating "sits right above" as if it were a role
+match. It wasn't: the header's actual job is nav chrome — the same job the sidebar does (logo, settings,
+mode-switcher) — and chat's job is the workspace, the thing that changes per-conversation. The designer's
+fix regrouped by role (header+sidebar, not header+chat) and named the missing piece explicitly: once
+grouped correctly, depth (lighter vs. darker) is what expresses which group is chrome and which is
+content — the group that reads lighter sits above/in front, the darker group recedes. → taste rule 47.
+**Widened test:** before pairing two surfaces' treatment, ask whether the resemblance is ROLE (do they do
+the same job?) or merely FAMILY — and adjacency, like visual similarity, is a family, not a role.
 
 ## A signal is a repeat, not a first, unless it earns its slot
 
@@ -68,6 +87,16 @@ never authored — and ideally machine-checked, which is what `ds-drift-check.js
 
 Corollary for documentation of any kind: a specimen, a screenshot, a claim in a header comment, and a
 number in prose are all the same risk class. If it can be typed from memory, it will eventually be wrong.
+
+**The same test applies to EXTERNAL precedent, not just internal specs (blueai-desktop, 2026-08-03).**
+Asked whether a color decision matched real products, I answered "ChatGPT/Notion/Linear do exactly this"
+— confident, plausible, and unverified, because I had no screenshot in front of me, only a memory of
+what those products are generally like. The designer posted two real references, and both showed the
+opposite of my claim. Citing a competitor's pattern from memory is the same move as inventing a copy
+string: something plausible standing in for something checked. **Widened test:** "could I have written
+this without opening the file" now also reads "…without a screenshot of the thing I'm citing" — a
+remembered impression of a product is not evidence about its current UI, any more than a remembered
+impression of a spec is evidence about the code.
 
 ## Have something that didn't build it check the claims
 
@@ -252,5 +281,52 @@ checked. *Where else this applies:* copying a card's internals while inventing i
 footer while inventing its header; adopting a list row's typography while inventing its spacing rhythm.
 *What would stop it firing:* believing the check is a single act. It is one question per level, and finding
 the right sibling is the cheap part.
+
+## A philosophy applied in one theme/mode and left out of the other isn't applied — it's a one-off
+
+"Verified" has a scope, and the scope is easy to understate. Fixing a surface's tone in dark mode and
+reasoning that light mode's version of the same gap "wasn't the one screenshotted, and was already small"
+feels like a proportionate, evidence-respecting call — it isn't. What the reference actually taught was a
+PRINCIPLE (dock = canvas tone; contrast lives on the selected item, not the base panel), and a principle
+that governs one theme but not its sibling was never really adopted — it was patched into the one place
+someone happened to be looking.
+
+**Where this came from (blueai-desktop, 2026-08-04):** dark theme's sidebar was split into its own token
+and moved barely-dark, matching a design reference shown in dark theme. Light theme's identical structural
+gap (a pure-white sidebar against a barely-tinted canvas) was left alone, reasoned as smaller in raw pixel
+terms. The designer's correction wasn't "fix the other theme too" as a checklist item — it was pointing out
+that the FIRST fix was never actually a principle if it only held in the theme that happened to be
+screenshotted.
+
+**How to apply:** whenever a fix is framed as "the reference/rule/pattern says X," ask immediately: does X
+apply to every mode/theme/variant this surface has, or only the one currently in view? If a sibling
+variant has the analogous gap and it's left alone, name explicitly why it's exempt (a real, stated reason)
+rather than silently, or it will read exactly like this one did: an oversight wearing the shape of a
+decision. *Where else this applies:* a spacing fix applied to desktop and "probably fine" on mobile without
+checking; an accessibility fix applied to the primary flow and not its error state; a copy fix applied to
+one locale.
+
+## Before painting over something that "looks empty," check what relies on it staying that way
+
+A DOM element with no CSS background is not always simply showing whatever is behind it by default — it
+can be a deliberate window onto something else entirely, and the only way to know is to check, not to
+infer from the fact that nothing is currently declared there.
+
+**Where this came from (blueai-desktop, 2026-08-04):** `.bai-header` has never had a CSS background. It
+looks, from the stylesheet alone, like a plain transparent element that would just show the canvas'
+flat fill-color behind it — a safe thing to paint an opaque color onto. It wasn't: a canvas underneath it
+continuously repaints a live twinkling logo, ambient sparkle packets, and heartbeat pulses, every frame,
+and the ONLY reason any of that was ever visible is that nothing opaque sat on top of it. Giving the
+header a flat background silently deleted that animation from the user's view, with no error anywhere —
+the canvas kept rendering perfectly, just invisibly.
+
+**How to apply:** before adding an opaque background/covering layer to an element that currently has
+none, grep for what ELSE might be relying on that transparency — a canvas underneath, a positioned sibling
+peeking through, a `mix-blend-mode` effect. "It's currently transparent" is not evidence that it's *safe*
+to make opaque; it's only evidence that nothing is declared to stop you. **Sibling test, same shape:**
+"new verification tooling is wrong until diffed against something known-good" (above) checks whether a
+CHECK sees enough; this checks whether a CHANGE reaches further than what was verified — a fix that only
+confirms the property it touched (background color) can still break a property it never thought to look
+at (what renders behind that background).
 
 *(New entries accumulate at audit passes.)*

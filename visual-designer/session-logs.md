@@ -3,6 +3,72 @@
 
 ---
 
+## Session 16 — 2026-08-04 — landscape color pass: a real regression, and a caught_count worth naming
+Freshness check: taste ✓ (+rule 47, headers bumped inline this time — not left stale) | decisions ✓ (+6 rows) | reasonings ✓ (+2 principles, 2 existing widened with fresh instances) | project-insights ✓ (+boot-canvas fact) | knowledge-base — (no new traps this session; not touched) | evolution ✓ (+S16, watch-category changed) | session-logs (this entry) | scratchpad ✓ (6 entries promoted, wiped)
+`designer_caught_count: 5`
+
+**Continuation of the same conversation that closed Session 15**, but genuinely new work done afterward —
+promoted as its own session rather than folded silently into 15's already-closed entry, since 15 declared
+itself complete with its own verdict and count.
+
+**1. Account/login-gate fix.** Designer showed the live product's Account screen (content reference only,
+not layout, per their own instruction) and asked why a logged-out user had no way to sign in except by
+sending a chat message. Root cause: `openLoginGate()` had exactly one caller, and Account was hidden
+entirely when logged out — on the one button whose other job IS signing in. Fixed: Account always visible;
+logged-out click skips the menu and opens the gate directly (designer's choice over a menu or a logged-out
+Profile screen); icon swaps kebab↔person to match the action, not a fixed identity. Self-caught before
+shipping: a `data-bai-icon` attribute on dynamically-built markup, exactly what §10 exists to fail on.
+
+**2. The landscape color saga — three rounds, one real regression.** Designer asked whether the
+sidebar/header/chat surface tones were right. I answered with an UNVERIFIED claim ("ChatGPT/Notion/Linear
+do exactly this") — no screenshot, just a remembered impression. Designer posted two real references,
+both showing the opposite: near-uniform tone across all three surfaces, contrast reserved for the
+selected item. **Round 1:** split the sidebar off `--bai-panel` (still owned by floating menus/tour card —
+a genuinely elevated role) into its own token, landed barely darker than canvas, dark theme only. **Round
+1.5:** designer — "light theme doesn't feel right like dark" — right; the reference was a philosophy, not
+a value scoped to whichever theme got screenshotted. Applied the same treatment to light, reusing the
+existing `--bai-card-2` rather than inventing a near-duplicate literal. **Round 2:** designer asked for the
+opposite pairing — sidebar a little LIGHTER, header+sidebar sharing ONE color — then asked me to guess why
+before building it. Correct guess: header and sidebar are both nav chrome (same functional role); chat is
+the workspace, the thing that changes. My round-1 fix had paired header with chat because they sit
+physically stacked — adjacency, not role, the exact failure this notebook already names, caught in a
+decision it made one day earlier. Designer's own follow-up supplied the direction: darker reads as more
+depth/recessed, which is why the lighter shell sits above the content well rather than level with it.
+Renamed `--bai-sidebar-bg` → `--bai-shell-bg` (now two consumers), reversed both themes' values.
+
+**3. The regression, and why verification didn't catch it.** "What happened to logo and traffic, I don't
+see it." The wide-mode header's animated pixel logo had silently stopped rendering. Root cause: `.bai-header`
+has never had a CSS background — a canvas underneath it (`boot.js`) is what actually renders there,
+continuously repainting a live twinkling logo, ambient sparkle packets, and heartbeat pulses, visible only
+because nothing opaque sat on top of it. Giving the header a flat background for the shell-tone fix silently
+painted over all of it, with no error anywhere. **My own verification had only checked that background
+color VALUES matched (header==sidebar) — it never asked whether an opaque layer would occlude something
+else rendering behind it via a completely different mechanism.** Fixed at the actual layer: reverted the
+CSS background to none; taught the canvas itself (`boot.js`'s new `HDR_BG`/`setWide()`) to paint the
+header-row rectangle in the shell tone before drawing the logo on top, reading the color live from CSS so
+it can't drift. Verified compact mode screenshot-identical to before any of this session's work.
+
+**New top recurring category, replacing `fix-one-forget-the-siblings`:** *verify the blast radius, not just
+the stated property.* Three of five catches this session were instances of mechanisms already on record
+(unverified claims, role-vs-adjacency, one-theme philosophies) and were folded into their existing
+reasonings entries as fresh instances — the notebook routing worked as designed. The regression is the new
+shape: a check that confirms the property you changed says nothing about what depended on the property's
+PREVIOUS value. See `reasonings.md`'s new "before painting over something that looks empty" principle.
+
+**Phase 2 HOLDS. The Phase-3 streak resets, not "2 of 3."** `caught_count: 5` is not a low-caught session by
+any reading; counting it as progress would be the self-flattering accounting this file exists to refuse.
+
+**Counter-evidence of growth, still real:** the login fix's self-caught §10 violation; once the color
+principle was actually understood (round 2), it was executed cleanly with full regression verification in
+one pass; and the regression, once reported, was root-caused correctly on the first attempt — the canvas
+mechanism was identified, not patched around with a z-index guess — and fixed at the layer that was
+actually wrong.
+
+**Watch next session:** the blast-radius category above. Before verifying "did the changed property come
+out right," ask "what else could this same edit have touched that I haven't checked."
+
+---
+
 ## Session 15 — 2026-08-03 — Scheduled's full field set, the container the designer caught, and the first self-audit
 Freshness check: taste ✓ (+rule 46, +rule 38 amendment) | decisions ✓ (+8 rows, was 2 sessions unpromoted) | reasonings (STALE header — said 2026-07-25 while holding six 08-01 additions — fixed, +2 principles) | project-insights (STALE — false Index claim, no facts for the active surface — fixed, +layout-system section) | knowledge-base (STALE — nothing from S14/S15 — fixed, +5 traps, +raw-px scope clause) | evolution (STALE — 2 sessions behind, wrong watch item — fixed, S13-S15 added) | session-logs ✓ | scratchpad ✓ (17 promoted, wiped)
 `designer_caught_count: 1`
