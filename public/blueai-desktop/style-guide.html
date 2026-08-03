@@ -631,10 +631,48 @@
       </p>
 
       <div class="sg-spec">
-        <div class="sg-spechead"><span class="sg-cls">.bai-seg</span> <span class="sg-cls">.bai-seg-btn</span><span class="sg-role">Segmented control for 2–3 mutually exclusive options. <code>.active</code> fills with accent.</span></div>
+        <div class="sg-spechead"><span class="sg-cls">.bai-seg</span> <span class="sg-cls">.bai-seg-btn</span> <span class="sg-cls">.fill</span><span class="sg-role">Segmented control for 2–3 mutually exclusive options. <code>.active</code> fills with accent — <strong>colour only, never metrics</strong>: no weight or size change, because the options are equal-width and a wider glyph would resize the whole row when you selected it (taste rule 41, learned from the skill-switcher reflow). <code>.fill</code> stretches the control to its container's width and divides it evenly (<code>flex: 1</code>), for a seg that has to line its edges up with full-width fields above it. It also trims the buttons' side padding, because with <code>flex: 1</code> the cell width comes from the flex distribution, not from each button's own padding. Scheduled's form uses it twice — <strong>Execution Mode</strong> (3 across) and <strong>Repeat Type</strong> (4 across). <strong>Retired (2026-08-03):</strong> this spec used to show an <code>Once / Daily / Weekly</code> seg for Scheduled's cadence. That control no longer exists: "Once" was an execution MODE hiding among three cadences, so mode and cadence split into two controls. A <code>.bai-optgrid</code> 2×2 variant existed for a few hours in between, on the belief that four labels could not fit one row — true at the 179px the form had while a stray card wrapper was double-paying its gutter, false at the 264px it has now. Both the variant and its CSS are gone. Recorded rather than silently swapped: a stale specimen documents a control the product does not have, which is the same defect as inventing one.</span></div>
         <div class="sg-canvas bai-scope" style="align-items:center;">
           <div class="bai-seg"><button class="bai-seg-btn active" type="button">dark</button><button class="bai-seg-btn" type="button">light</button></div>
-          <div class="bai-seg"><button class="bai-seg-btn" type="button">Once</button><button class="bai-seg-btn active" type="button">Daily</button><button class="bai-seg-btn" type="button">Weekly</button></div>
+          <div class="bai-seg fill" style="width:264px;"><button class="bai-seg-btn active" type="button">One-time</button><button class="bai-seg-btn" type="button">Indefinite</button><button class="bai-seg-btn" type="button">Custom</button></div>
+          <div class="bai-seg fill" style="width:264px;"><button class="bai-seg-btn" type="button">Minutes</button><button class="bai-seg-btn active" type="button">Daily</button><button class="bai-seg-btn" type="button">Weekly</button><button class="bai-seg-btn" type="button">Monthly</button></div>
+        </div>
+      </div>
+
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-seg-hint</span><span class="sg-role">The ONE shared explainer under a choice control: the options NAME, this line DESCRIBES, and it says so at the moment of choosing rather than after committing (taste rule 42). It reserves its own line height so switching selection never reflows the form — which is also why every variant of the copy must fit ONE line at the 264px form width. It is what lets Scheduled's End Time field get away with no helper line of its own: the reason an end time does not apply is stated here.</span></div>
+        <div class="sg-canvas bai-scope" style="display:block;max-width:264px;">
+          <div class="bai-seg fill"><button class="bai-seg-btn" type="button">One-time</button><button class="bai-seg-btn active" type="button">Indefinite</button><button class="bai-seg-btn" type="button">Custom</button></div>
+          <span class="bai-seg-hint">Repeats with no end date.</span>
+        </div>
+      </div>
+
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-subfield</span> <span class="sg-cls">.bai-daygrid</span> <span class="sg-cls">.bai-daychip</span><span class="sg-role">A sub-field that BELONGS to the choice above it, not a field of its own — the accent wash is what says so. Scheduled's Repeat Type reveals one of three inside it: a numeric Interval for <code>Minutes</code>, a Day of Month for <code>Monthly</code>, and this day picker for <code>Weekly</code>. For <code>Daily</code> the whole panel is <strong>absent</strong>, not empty: a tinted panel with nothing in it is a signal with nothing to say. Seven chips in ONE row, matching the live product's own day picker — they briefly wrapped 4+3, which was genuinely forced at the 179px the form had while a stray card wrapper was double-paying its gutter, and stopped being forced the moment that wrapper went. At the tightest supported drawer (290px) the narrowest chip has ~1.6px of text slack inside its padding: it fits, and it is the constraint to re-measure if this label set ever changes. <strong>Now the only bordered container on the form</strong>, which is what makes its "belongs to the choice above" job read — see <code>.bai-schedform</code>. <code>.on</code> is accent-filled, exactly as in the two segs above, so "selected" reads the same everywhere on this form.</span></div>
+        <div class="sg-canvas bai-scope" style="display:block;max-width:264px;">
+          <div class="bai-subfield">
+            <span class="bai-set-field-label">Select Days</span>
+            <div class="bai-daygrid">
+              <button class="bai-daychip" type="button">Sun</button>
+              <button class="bai-daychip on" type="button">Mon</button>
+              <button class="bai-daychip" type="button">Tue</button>
+              <button class="bai-daychip on" type="button">Wed</button>
+              <button class="bai-daychip" type="button">Thu</button>
+              <button class="bai-daychip on" type="button">Fri</button>
+              <button class="bai-daychip" type="button">Sat</button>
+            </div>
+          </div>
+          <div class="bai-subfield" style="margin-top:10px;">
+            <span class="bai-set-field-label">Interval (Minutes)</span>
+            <input class="bai-newitem-input" type="text" placeholder="e.g. 30" />
+          </div>
+        </div>
+      </div>
+
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-field-err</span><span class="sg-role">A validation message, rendered only while its condition holds — so it is never a redundant permanent signal (rule 38), and reserving space for it would be permanent dead air. One condition uses it today: an end time at or before the start time. Note what it is NOT used for — "this field is required" is carried by the submit button's disabled state, not by a marker on every label.</span></div>
+        <div class="sg-canvas bai-scope" style="display:block;max-width:264px;">
+          <span class="bai-field-err">End time must be after the start time.</span>
         </div>
       </div>
 
@@ -887,7 +925,8 @@
       </div>
 
       <div class="sg-spec">
-        <div class="sg-spechead"><span class="sg-cls">.bai-dt-field</span><span class="sg-role">The closed control. <code>.bai-dt-value.placeholder</code> is the unset state; <code>.open</code> rotates <code>.bai-dt-ar</code> and highlights the border.</span></div>
+        <div class="sg-spechead"><span class="sg-cls">.bai-dt-field</span> <span class="sg-cls">.disabled</span><span class="sg-role">The closed control. <code>.bai-dt-value.placeholder</code> is the unset state; <code>.open</code> rotates <code>.bai-dt-ar</code> and highlights the border. <strong><code>.disabled</code> (2026-08-03)</strong> is Scheduled's End Time when the chosen execution mode has no end — and note where the explanation lives: the field states its own non-applicability <em>in place</em>, as its value, rather than carrying a helper line beneath it. The live product puts a "Not applicable for one-time execution" line under the field; here the reason is already on the Execution Mode's <code>.bai-seg-hint</code>, so a second element restating it would be decoration (rule 38). The field stays VISIBLE rather than hidden, because the mode choice is precisely what decides whether it applies — it has to be present to carry that.
+        <strong>Two fields, one picker.</strong> Start Time and End Time share a single <code>.bai-dt-picker</code> instance, physically moved into whichever field's <code>.bai-field-group</code> opened it, rather than a second copy of ~25 lines of markup (Gate 3: componentize at 2). It parks in an always-attached hidden home between uses, never detached — see <code>schedParkAddRow</code>'s comment in the product for the node-lifetime bug that rule exists to prevent.</span></div>
         <div class="sg-canvas bai-scope sg-col sg-narrow">
           <div class="bai-dt-field sg-w">
             <span class="ic" data-icon="calendar" data-size="14"></span>
@@ -897,6 +936,11 @@
           <div class="bai-dt-field open sg-w">
             <span class="ic" data-icon="calendar" data-size="14"></span>
             <span class="bai-dt-value">28 Jul 2026, 09:00</span>
+            <span class="bai-dt-ar" data-icon="chevron" data-size="12"></span>
+          </div>
+          <div class="bai-dt-field disabled sg-w">
+            <span class="ic" data-icon="calendar" data-size="14"></span>
+            <span class="bai-dt-value placeholder">Not applicable</span>
             <span class="bai-dt-ar" data-icon="chevron" data-size="12"></span>
           </div>
         </div>
@@ -1036,15 +1080,80 @@
       </div>
 
       <div class="sg-spec">
-        <div class="sg-spechead"><span class="sg-cls">.bai-sched-card</span> <span class="sg-cls">.bai-sched-row</span> <span class="sg-cls">.bai-sched-btn</span><span class="sg-role">A scheduled task. Title row carries the on/off toggle; each detail row is <code>.ic</code> + label + bold value, with <code>.bai-sched-next</code> accenting the computed next run. Actions are icon+label buttons, Delete as <code>.danger</code>.</span></div>
+        <div class="sg-spechead"><span class="sg-cls">.bai-sched-card</span> <span class="sg-cls">.bai-sched-row</span> <span class="sg-cls">.bai-sched-sub.clip</span> <span class="sg-cls">.bai-sched-btn</span><span class="sg-role">A scheduled task. Title row carries the on/off toggle; then a one-line clipped echo of the task's PROMPT (<code>.bai-sched-sub.clip</code> — without it a card titled "Daily Report" never says what it does; clipped rather than wrapped because the prompt is supporting detail and three lines of it would out-weigh the name); then <code>.ic</code> + label + bold value detail rows, with <code>.bai-sched-next</code> accenting the computed next run. Actions are icon+label buttons, Delete as <code>.danger</code>. <strong>Which rows appear (2026-08-03):</strong> Schedule and Next run always; <strong>Ends only for the Custom execution mode</strong>, the one mode that has an end. Next run reads <code>Ended</code> once a Custom window has closed. <strong>Row icons are three distinct thin strokes, and each is deliberate:</strong> Schedule holds a CADENCE ("Daily", "Every 30 min", "Weekly · Mon, Fri") which is a repeat concept, so it takes <code>refresh</code> — it used to take <code>calendar</code>, which then moved to the row that genuinely is a date, Ends. A first pass used <code>stopSquare</code> for Ends and it was rejected on sight: it is a solid <code>fill="currentColor"</code> media-stop glyph and sat visibly heavier than its two stroke siblings. <strong>Weekly cadence compresses above three days</strong> ("every day" / "5 days") — the full seven-day list wraps to three lines at this width.</span></div>
         <div class="sg-canvas bai-scope sg-col sg-narrow">
           <div class="bai-sched-card sg-w">
             <div class="bai-sched-head"><b>Claim daily rewards</b><span class="bai-tgl on" role="button" aria-label="Toggle on/off"><i></i></span></div>
-            <div class="bai-sched-row"><span class="ic" data-icon="calendar" data-size="13"></span>Schedule: <b>Daily</b></div>
+            <span class="bai-sched-sub clip">Claim my daily login rewards across every installed game.</span>
+            <div class="bai-sched-row"><span class="ic" data-icon="refresh" data-size="13"></span>Schedule: <b>Daily</b></div>
             <div class="bai-sched-row"><span class="ic" data-icon="clock" data-size="13"></span>Next run: <b class="bai-sched-next">29 Jul, 09:00</b></div>
             <div class="bai-sched-actions">
               <button class="bai-sched-btn" type="button" data-icon="edit" data-size="13">Edit</button>
               <button class="bai-sched-btn danger" type="button" data-icon="trash" data-size="13">Delete</button>
+            </div>
+          </div>
+          <div class="bai-sched-card sg-w">
+            <div class="bai-sched-head"><b>Watch for restock</b><span class="bai-tgl" role="button" aria-label="Toggle on/off"><i></i></span></div>
+            <span class="bai-sched-sub clip">Check the store page for restocked bundles and alert me.</span>
+            <div class="bai-sched-row"><span class="ic" data-icon="refresh" data-size="13"></span>Schedule: <b>Every 30 min</b></div>
+            <div class="bai-sched-row"><span class="ic" data-icon="clock" data-size="13"></span>Next run: <b class="bai-sched-next">3 Aug, 14:00</b></div>
+            <div class="bai-sched-row"><span class="ic" data-icon="calendar" data-size="13"></span>Ends: <b>9 Aug, 22:00</b></div>
+            <div class="bai-sched-actions">
+              <button class="bai-sched-btn" type="button" data-icon="edit" data-size="13">Edit</button>
+              <button class="bai-sched-btn danger" type="button" data-icon="trash" data-size="13">Delete</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-schedform</span> <span class="sg-cls">.bai-field-group</span> <span class="sg-cls">.bai-newitem-actions</span> <span class="sg-role">Scheduled's New/Edit Task form, shown here in its <code>One-time</code> state (the sub-field states are on <code>.bai-subfield</code> above). Previously named in "What's left" as an undocumented family; documented 2026-08-03, when it was rebuilt to the live product's full field set: Name and Prompt as SEPARATE fields (they used to be one "What should BlueAI do?" textarea, so a task had no name of its own), Execution Mode and Repeat Type as two controls rather than one (the old single <code>Once/Daily/Weekly/Monthly</code> seg conflated how LONG a task runs with how OFTEN), Start and End time, and the repeat-dependent sub-field.
+        <strong>NO card chrome, and that is the point (designer, 2026-08-03).</strong> This form carried <code>.bai-newitem</code> — a bordered, accent-outlined card — until the designer asked why its width did not match the rest of the screen. Two faults, one element: it was a <em>redundant container</em> (the form has its own full-screen subpane, whose head row and background already say "you are in a form"; a bordered card inside that restates a boundary already drawn — rule 38), and it <em>double-paid the gutter</em> (<code>.bai-subpane-body</code> already gives 12px of side padding, and the card added its own 14px margin, so at the 290px drawer the card edge sat at 27px and its fields at 40px against 13–15px for every other container on the screen — taste rule 37 / rule 15's corollary). The card was months-old code; growing the form from three fields to seven is what turned a small block into an obviously misaligned box. <strong>The sibling was the tell:</strong> Skills' create form puts its field groups straight into the subpane body with no wrapper — Gate 2.2, and it was there to be read. Fields now sit at 13px / 264px, byte-identical to Skills'. Inter-group spacing comes from <code>.bai-field-group</code>'s own margin-bottom, no gap on the parent, also matching Skills. <strong>Removing it also retired two layout workarounds</strong> that only existed because of it — a 2×2 Repeat Type grid and a 4+3 day wrap, both genuinely forced at the 179px the card left behind, neither forced at 264px.
+        <strong>Every field is labelled, and none is asterisked.</strong> Required-ness is carried entirely by <code>.bai-newitem-create:disabled</code> — Create stays disabled until everything the CHOSEN MODE requires is present, which is mode-dependent (Custom also needs an end time after the start; Minutes needs an interval; Weekly needs at least one day; Monthly needs a valid day-of-month). The live product asterisks six of seven labels; a marker on almost every field marks nothing (rule 38), and six red marks is a lot of red for a panel with one accent.
+        <strong>The actions row is <code>position: sticky</code></strong>, scoped to <code>.bai-schedform &gt; &amp;</code> — Skills' create form uses the same class straight inside its subpane body, where it should scroll with the content. It became necessary when the form grew: at three fields it never scrolled and the row was always visible; at seven field groups it always scrolls, and Create — this flow's commitment action — was scrolling off the bottom. It bleeds out through <code>.bai-subpane-body</code>'s padding to the drawer's inner edges so content passes behind it, not beside it; the hairline earns its slot by marking the scroll boundary (rule 38), which nothing else states.
+        <strong>Not copied from the live product:</strong> its centred modal (this form lives in Scheduled's own subpane — a 565px modal has no analogue in a 290px drawer) and its "Scheduled Tasks" header band with a "+ New" button (taste rule 45 retired exactly that here, over five designer rounds; see <code>.bai-sched-newrow</code>).</span></div>
+        <div class="sg-canvas bai-scope" style="display:block;">
+          <div class="bai-schedform" style="max-width:264px;">
+            <div class="bai-field-group">
+              <span class="bai-set-field-label">Name</span>
+              <input class="bai-newitem-input" type="text" placeholder="e.g. Daily Report" />
+            </div>
+            <div class="bai-field-group">
+              <span class="bai-set-field-label">Prompt</span>
+              <textarea class="bai-newitem-textarea" placeholder="Enter the prompt to execute"></textarea>
+            </div>
+            <div class="bai-field-group">
+              <span class="bai-set-field-label">Execution Mode</span>
+              <div class="bai-seg fill">
+                <button class="bai-seg-btn active" type="button">One-time</button>
+                <button class="bai-seg-btn" type="button">Indefinite</button>
+                <button class="bai-seg-btn" type="button">Custom</button>
+              </div>
+              <span class="bai-seg-hint">Runs once, then stops.</span>
+            </div>
+            <!-- Repeat Type is ABSENT in this One-time specimen, exactly as in the product: a cadence
+                 control on a run-once task controls nothing, and a disabled one would still spend the
+                 space. Contrast End Time below, which stays visible-but-disabled, because the mode
+                 choice is precisely what decides whether it applies. -->
+            <div class="bai-field-group">
+              <span class="bai-set-field-label">Start Time</span>
+              <div class="bai-dt-field">
+                <span class="ic" data-icon="calendar" data-size="14"></span>
+                <span class="bai-dt-value placeholder">Pick a date &amp; time</span>
+                <span class="bai-dt-ar" data-icon="chevron" data-size="12"></span>
+              </div>
+            </div>
+            <div class="bai-field-group">
+              <span class="bai-set-field-label">End Time</span>
+              <div class="bai-dt-field disabled">
+                <span class="ic" data-icon="calendar" data-size="14"></span>
+                <span class="bai-dt-value placeholder">Not applicable</span>
+                <span class="bai-dt-ar" data-icon="chevron" data-size="12"></span>
+              </div>
+            </div>
+            <div class="bai-newitem-actions">
+              <button class="bai-newitem-cancel" type="button">Cancel</button>
+              <button class="bai-newitem-create" type="button" disabled>Create</button>
             </div>
           </div>
         </div>

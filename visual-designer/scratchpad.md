@@ -5,6 +5,139 @@ resolved. Promoted to decisions.md / taste.md at audit passes, then wiped.
 Format: `YYYY-MM-DD HH:mm — <file> — <what changed> — Why: <one phrase>`
 
 --- Pending audit entries ---
+2026-08-03 (cont.) — blueai-desktop — DESIGNER CATCH, and the best one of the session: "the schedule new
+task window didn't have another container but now we have introduced another container, also whose width
+is not accurate to rest of the padding in the screen — may I ask why?" Both halves right, and the answer
+to "why" is that I inherited a wrapper instead of asking whether it still earned its slot.
+
+MEASURED before answering (290px drawer, left inset / width): list card 15/260 · "+ New task" row 15/260
+· FORM CARD 27/236 · the form's actual fields 40/210 · Skills' create-form fields 13/264. So the form was
+the only container on the screen not on the house gutter, and its fields sat 54px narrower than the
+equivalent fields one tab over.
+
+TWO FAULTS IN ONE ELEMENT, both pre-existing in `.bai-newitem` (verified against `git show HEAD` — the
+rule was byte-identical, I did not add it):
+(1) REDUNDANT CONTAINER. The form has its own full-screen subpane, whose head row and background already
+say "you are in a form". A bordered, accent-outlined card inside that restates a boundary already drawn —
+rule 38. And the SIBLING was sitting right there to be read: Skills' create form puts its field groups
+straight into the subpane body with no wrapper at all. That is Gate 2.2, sibling-surface inheritance, and
+I ran it on the CONTROLS (inheriting .bai-field-group + .bai-set-field-label from that very form) while
+never asking the same question about the CONTAINER I was putting them in.
+(2) DOUBLE-COUNTED GUTTER. `.bai-subpane-body` already pays 12px of side padding; the card added its own
+`margin: 0 14px` on top. Taste rule 37 / rule 15's corollary, already on record here, in a file I read at
+session start.
+
+WHY IT SURFACED NOW, which is the transferable part: the card was months-old code and it was not visibly
+wrong at three short fields — it read as a small form block. Growing the form to seven field groups turned
+the same element into a full-height box, and only then did the misalignment become obvious. **A wrapper's
+correctness is a function of what it wraps.** When you change the content of a surface by 2-3x, the
+containment is part of the delta, not part of the background — Gate 8.4 says re-check spacing after a
+content change, and it should be read to include the container, not just the gaps inside it.
+
+WHAT THE REMOVAL BOUGHT, which I did not expect: 179px → 264px, and that retired TWO layout workarounds I
+had built and DOCUMENTED as forced constraints hours earlier — the 2x2 Repeat Type grid (four labels
+measure 212px) and the 4+3 day-chip wrap (seven chips need 259px). Both were honestly measured and both
+were real at 179px. Neither was real at 264px. Both are now single rows, matching the live product's own
+layout. `.bai-optgrid`/`-btn` deleted as dead CSS along with its specimen. — Why (the lesson worth
+promoting): **a measured constraint inherits the wrongness of whatever produced the measurement.** I wrote
+"MEASURED, not preference" into the CSS as a defence of those two layouts, and the measurement was
+faithful — of a container that should not have existed. The figure was right and the conclusion was wrong,
+which is the failure mode a number in a comment cannot protect against. This is the same width now wrong
+THREE times in one day (210 → 179 → 264), each time because it was measured against a surface that then
+changed; the comment now records all three with their causes instead of asserting the current one.
+
+Also caught by my own re-check, not the designer: the short One-time state (five groups, no scrolling) drew
+the sticky footer's hairline across the panel with ~200px of dead air beneath it — a divider separating the
+buttons from nothing (rule 38 again, in the state I had not re-reviewed after adding the footer). Fixed
+with `flex: 1 0 auto` on the form + `margin-top: auto` on the row, so it sits at the panel's bottom edge
+when short and pins when long — one rule for both states rather than a hairline that only makes sense in
+one. AND: my own fix broke the stylesheet — both comment edits left an orphan `*/`, which silently dropped
+`.bai-schedform` and made the footer compute `position: static`. The geometry probe caught it (it asserts
+computed `position`, not appearance), the screenshots taken in between were invalid, and everything was
+re-shot. Added a comment-balance + brace-count check to the verification pass. — Why: an assertion on a
+COMPUTED value catches a broken stylesheet; a screenshot of it looks plausible and passes.
+
+Style guide re-synced in the same edit: form spec re-headed `.bai-schedform` with the full container story,
+`.bai-seg.fill` now showing both the 3-across and 4-across rows, `.bai-optgrid`'s spec deleted with its
+reason recorded, day-grid spec rewritten to one row of seven (noting the ~1.6px narrowest-chip slack at
+290px as the constraint to re-measure if the labels ever change), and every 179px figure in the guide, the
+CSS and index.html corrected to 264. Re-verified end to end AFTER the fix per the regression protocol:
+drift PASS all 12; coverage 79%; guide 148 svgs / 0 empty icons / 0 overflow; all 14 form states + edit
+round-trip; fields at 13/264 = byte-identical to Skills; one row each for both controls and zero
+horizontal scroll at 290/360/620 x both themes; zero JS errors.
+
+NOTED, NOT CHANGED (designer's call): `.bai-list-body` pays 14px of side padding while `.bai-subpane-body`
+pays 12px, so a list view's content edge sits at 15px and a subpane's at 13px. Pre-existing and consistent
+— Skills has the identical 2px split — so it is house behaviour rather than drift from this work, but it is
+the one remaining gutter inconsistency on this screen if you want them unified.
+
+2026-08-03 — blueai-desktop, public/blueai-desktop/{index.html,blueai-desktop.css,style-guide.html} —
+designer supplied SIX live-product screens of the real "Schedule Task" modal and asked for its missing
+fields/states/layout in blueai-desktop. Built the full field set: Name and Prompt as SEPARATE fields
+(they were one "What should BlueAI do?" textarea, so a task had no name of its own); Execution Mode
+(One-time/Indefinite/Custom) and Repeat Type (Minutes/Daily/Weekly/Monthly) as TWO controls where there
+had been one — the old single Once/Daily/Weekly/Monthly seg conflated how LONG a task runs with how
+OFTEN, with "Once" an execution mode hiding among three cadences; Start AND End time; and the three
+repeat-dependent sub-fields (Interval / Select Days / Day of Month). Cards, seeds and nextOccurrence
+rewritten to the new model so the form never collects a field the product doesn't show back.
+
+FOUR THINGS I DECLINED TO COPY FROM LIVE, each against a codified rule — these are the entries a
+designer might want to overrule, so they are named rather than buried:
+(1) its centred MODAL → our subpane (the shell the designer chose for this form; a 565px modal has no
+analogue in a 290px drawer). (2) its "Scheduled Tasks" header band + "+ New" button → taste rule 45
+retired precisely that here over five designer rounds. (3) the asterisk on six of seven labels →
+required-ness is carried by Create's disabled state instead; a marker on almost every field marks
+nothing (rule 38), and the ONE genuinely variable requirement (End Time) already changes visible state.
+(4) its "Not applicable for one-time execution" helper LINE under End Time → the field states its own
+non-applicability in place, as its value, because the Execution Mode explainer above already says why.
+That explainer is itself rule 42 applied: live only explains "Indefinite" AFTER you pick it, on a
+different field, which is the after-you-committed shape rule 42 exists to stop.
+
+THE MEASUREMENT THAT DECIDED THE LAYOUT, and the mistake in it. Repeat Type is a 2x2 grid, not a
+4-across seg, because Minutes/Daily/Weekly/Monthly measure 212px of content and the form is narrower
+than that; Select Days wraps 4+3 because seven chips need 259px. I first recorded the available width as
+210px and wrote 210 into the CSS comment. It is 179px: the form is now tall enough that .bai-newitem's
+own overflow-y scrollbar is ALWAYS present and takes ~16px, and 210 had been measured on the SHORT
+pre-change form that never scrolled. The 2x2 conclusion survived; what nearly didn't was Execution
+Mode's 3-across seg, which at the real 179px had "One-time"/"Indefinite" bleeding 2.7px into their own
+side padding — fixed by trimming .bai-seg.fill's button padding, since with flex:1 the cell width comes
+from the flex distribution and not from each button's padding. — Why: a width measured on one version of
+a surface is not a property of the surface; it changed the moment the content changed, and the number
+went into a comment as if it were permanent. Re-measure after the content that made it true is gone.
+
+FOUR DEFECTS I CAUGHT MYSELF in the Gate 8 pass, none designer-flagged:
+(a) `stopSquare` used for "the end" in two places — it is a solid `fill="currentColor"` media-stop
+square and sat visibly heavier than the thin strokes beside it. The End Time FIELD now shares Start
+Time's calendar (both are date pickers; "start" vs "end" is already carried by the two labels, rule 38),
+and the card's Ends row took the calendar while "Schedule:" took `refresh` — a cadence is a repeat
+concept, not a date. Three distinct equal-weight strokes. NOTE FOR THE DESIGNER: changing Schedule's
+existing icon is the one visible change here I made rather than proposed.
+(b) The mode explainer reserved TWO lines (rule 42 requires reserved space so switching never reflows),
+but only one of three strings needed two — leaving a visible hole under the other two. Copy shortened so
+all three fit ONE line at 179px, reservation dropped to one line.
+(c) Gate 8.4, the delta not the screen: with three fields this form never scrolled and Cancel/Create sat
+visibly at the bottom. At seven field groups it always scrolls, and Create — the flow's commitment
+action — scrolled off. Actions row is now `position: sticky`, scoped to `.bai-newitem > &` because
+Skills' create form uses the same class with nothing to be sticky against.
+(d) My own screenshot harness lied twice before it told the truth: first it shot `.drawer` while the
+drawer was still translated off-screen and unbooted, producing a clean-looking image of the BlueStacks
+mock behind it; then a forced inline height made the element taller than its canvas and the demo scene
+showed through the bottom, which I read as a broken light theme until I checked `--bai-bg` and found it
+flipping correctly. — Why: new verification tooling is wrong until diffed against something known-good
+(already a reasonings principle here) — and BOTH failures produced plausible images, which is the
+dangerous kind. A harness that renders something is not a harness that renders the right thing.
+
+Style-guide sync INLINE per the blueai-desktop operating contract, same edit: new specimens for
+`.bai-seg.fill`, `.bai-seg-hint`, `.bai-optgrid(-btn)`, `.bai-subfield`/`.bai-daygrid`/`.bai-daychip`,
+`.bai-field-err`, `.bai-dt-field.disabled`, `.bai-sched-sub.clip`, plus the FORM itself
+(`.bai-newitem`/`.bai-field-group`) which the guide's own "What's left" had listed as an undocumented
+family. Retired the stale `Once / Daily / Weekly` seg specimen WITH its reason recorded rather than
+silently swapped — it documented a control the product no longer has, and failing to delete is the same
+defect as inventing. Coverage 76% → 79% (263/332). Verified: drift PASS all 12; guide renders 148 svgs,
+0 empty icons, 0 overflow; product zero overflow and zero JS errors across 3 widths x 2 themes with
+every conditional piece visible at once; all 11 form states + create/edit round-trip + delete-confirm +
+empty state walked through by hand.
+
 2026-08-01 (cont. 11b — CORRECTION to cont. 11, found by re-checking the notebook when the designer
 asked 'did VDA learn everything?') — cont. 11 conflated two separate corrections: it mentions the
 designer's 'top margin' clarification but records only the PADDING fix. The actual top-margin fix that

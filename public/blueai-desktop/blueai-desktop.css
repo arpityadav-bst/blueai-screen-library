@@ -396,7 +396,29 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans
    fixed, but broke once a much taller expandable picker could live inside it. Now shrinks to fit
    whatever space the flex column actually has (matching the min-height:0 pattern already established
    elsewhere in this file for exactly this class of flexbox bug) and scrolls internally past that. */
-.bai-newitem { flex-shrink: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: var(--bai-sp-7); margin: 0 var(--bai-sp-14) var(--bai-sp-10); padding: var(--bai-sp-11) var(--bai-sp-12); background: var(--bai-card); border: 1px solid var(--bai-accent-line); border-radius: var(--bai-r-md); }
+/* Scheduled's New/Edit Task form. Deliberately NO card chrome — it is a bare grouping element that the
+   subpane relocation logic moves in and out (see #baiSchedSubpane's comment).
+   It USED to be `.bai-newitem`: a bordered, accent-outlined card with `margin: 0 sp-14` and its own
+   `padding: sp-11 sp-12`, and that was wrong twice over — the designer caught both on sight (2026-08-03).
+   (1) REDUNDANT CONTAINER: the form lives in its own full-screen subpane, whose head row and background
+       already say "you are in a form". A bordered card inside that restates a boundary already drawn
+       (rule 38) — and it is not what the SIBLING form does: Skills' create form puts its field groups
+       straight into the subpane body with no wrapper (Gate 2.2, sibling-surface inheritance).
+   (2) DOUBLE-COUNTED GUTTER: `.bai-subpane-body` already pays 12px of side padding, so the card's own
+       14px margin paid the gutter twice. Measured at the 290px drawer: the card edge sat at 27px and its
+       fields at 40px, against 13-15px for every other container on this screen (the list cards, the
+       "+ New task" row, Skills' form). That is taste rule 37 / rule 15's corollary — a gutter wrapper and
+       a styled card must never double-count. The card was old code, unchanged for months; growing the form
+       from three fields to seven field groups is what turned a small block into an obviously misaligned box.
+   Inter-group spacing now comes from `.bai-field-group`'s own margin-bottom, with NO gap here — exactly
+   how Skills' form spaces itself. Adding a gap would make the two forms breathe differently.
+   `.bai-subpane-body` is now the scroll container, which is what the sticky actions row below anchors to.
+   `flex: 1 0 auto` makes the form fill the subpane body when its content is SHORT, which is what lets the
+   actions row's `margin-top: auto` push itself to the panel's bottom edge instead of stopping at the end
+   of the fields. Without it, the One-time state (five short groups, no scrolling) drew the footer's
+   hairline across the panel with ~200px of dead air beneath it — a divider separating the buttons from
+   nothing, which is rule 38 again. Grow-not-shrink, so the long states still overflow and scroll. */
+.bai-schedform { flex: 1 0 auto; display: flex; flex-direction: column; }
 .bai-newitem-input, .bai-newitem-textarea { width: 100%; background: var(--bai-input-bg); border: 1px solid var(--bai-line-2); border-radius: var(--bai-r-sm); padding: var(--bai-sp-7) var(--bai-sp-9); color: var(--bai-text-strong); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: var(--bai-fs-sm); outline: none; }
 .bai-newitem-input:focus, .bai-newitem-textarea:focus { border-color: var(--bai-line-focus); }
 /* Item 9 (PM) superseded: a native <input type="time"> solved "users have to type it" but still looked
@@ -489,6 +511,12 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans
 .bai-sched-head { display: flex; align-items: center; justify-content: space-between; gap: var(--bai-sp-8); }
 .bai-sched-head b { font-size: var(--bai-fs-body); color: var(--bai-text-hi); font-weight: var(--bai-fw-700); }
 .bai-sched-sub { font-size: var(--bai-fs-sm); color: var(--bai-dim); }
+/* `.clip` = the card's one-line echo of the task's PROMPT, directly under its name. Without it a
+   card titled "Daily Report" never says what it actually does. One line, ellipsised: the prompt is
+   supporting detail on a list card, and letting it wrap to three lines would out-weigh the name.
+   A modifier rather than a change to .bai-sched-sub itself — the delete-confirm line uses the base
+   class and must stay free to wrap. */
+.bai-sched-sub.clip { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .bai-sched-row { display: flex; align-items: center; gap: var(--bai-sp-7); font-size: var(--bai-fs-sm); color: var(--bai-dim); }
 .bai-sched-row .ic { display: flex; color: var(--bai-faint); flex-shrink: 0; }
 .bai-sched-row b { color: var(--bai-text-hi); font-weight: var(--bai-fw-600); margin-left: var(--bai-sp-2); }
@@ -500,10 +528,84 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans
 .bai-sched-btn.danger:hover { border-color: var(--bai-danger); background: color-mix(in srgb, var(--bai-danger) 8%, var(--bai-input-bg)); }
 .bai-newitem-textarea { resize: none; min-height: 50px; line-height: var(--bai-lh-140); }
 .bai-newitem-actions { display: flex; justify-content: flex-end; gap: var(--bai-sp-6); }
+/* Pinned footer, but ONLY inside Scheduled's form. Skills' create form uses this same class directly in
+   its subpane body, where it should scroll with the content and the bleed below would be wrong.
+   Why it is necessary (Gate 8.4 — review the delta, not just the screen): with three fields this form
+   never scrolled, so the actions row sat at the bottom and was always visible. With seven field groups it
+   always scrolls, and "Create" — this flow's commitment action — was scrolling off the bottom.
+   The offsets are measured against `.bai-subpane-body`'s padding (sp-10 sp-12 sp-12), which became the
+   scroll container when the `.bai-newitem` card was removed: the row bleeds out to the subpane's inner
+   edges so scrolling content passes BEHIND it rather than beside it. The hairline earns its slot
+   (rule 38) by marking the scroll boundary, which nothing else states.
+   `margin-top: auto` pairs with `.bai-schedform`'s `flex: 1 0 auto` so the row sits at the panel's bottom
+   edge in the short states and pins there in the scrolling ones — one rule covering both, instead of a
+   hairline that only makes sense in one of them. */
+.bai-schedform > .bai-newitem-actions {
+  position: sticky; bottom: calc(0px - var(--bai-sp-12));
+  margin: auto calc(0px - var(--bai-sp-12)) calc(0px - var(--bai-sp-12));
+  padding: var(--bai-sp-9) var(--bai-sp-12) var(--bai-sp-12);
+  background: var(--bai-bg); border-top: 1px solid var(--bai-line);
+}
 .bai-newitem-cancel { border: none; background: none; color: var(--bai-dim); font-family: inherit; font-size: var(--bai-fs-sm); padding: var(--bai-sp-6) var(--bai-sp-10); border-radius: var(--bai-r-md); cursor: pointer; }
 .bai-newitem-cancel:hover { background: var(--bai-hover); color: var(--bai-hover-ink); }
 .bai-newitem-create { border: none; background: var(--bai-accent); color: var(--bai-on-accent); font-family: inherit; font-size: var(--bai-fs-sm); font-weight: var(--bai-fw-700); padding: var(--bai-sp-6) var(--bai-sp-12); border-radius: var(--bai-r-md); cursor: pointer; transition: filter var(--bai-t-150); }
 .bai-newitem-create:hover { filter: brightness(1.12); }
+/* Create is disabled until every field the CHOSEN MODE actually requires is filled. This is what
+   communicates "required" on this form, instead of the live product's asterisk on six of seven
+   labels — a marker on almost every field marks nothing (rule 38: a signal must earn its slot
+   against what already signals the same thing). The one genuinely variable requirement, End Time,
+   states its own applicability in place; see .bai-dt-field.disabled below. */
+.bai-newitem-create:disabled, .bai-newitem-create:disabled:hover { opacity: 0.45; cursor: not-allowed; filter: none; }
+
+/* ---- Scheduled task form: the live product's full field set (2026-08-03) — Name · Prompt ·
+   Execution Mode · Start/End Time · Repeat Type · the repeat-dependent sub-field. Three layout
+   choices below are MEASURED, not preference. The usable inner width is 264px at the 290px drawer:
+   .bai-subpane-body's own 12px padding inside the drawer's 1px borders, and nothing else — the same
+   264px Skills' create form gets.
+   THIS NUMBER HAS BEEN WRONG TWICE IN ONE DAY, both times because it was measured on a version of
+   the surface that no longer existed. First 210px, measured on the short pre-2026-08-03 form before
+   it grew tall enough to always show a scrollbar. Then 179px, correct for the form while it still
+   sat inside a `.bai-newitem` card that was double-paying the gutter — and every layout decision
+   below was derived from that 179 until the designer asked why the container's width did not match
+   the rest of the screen. A width is a property of the CONTAINMENT, not of the screen; re-measure
+   whenever either changes, and do not trust the figure in a comment over the DOM. At 264px:
+   (a) `.fill` trims the buttons' side padding: with `flex: 1` the cell width comes from the flex
+       distribution, not from each button's own padding, and at sp-10 the longest labels bled into
+       it, leaving visibly less side padding on those than on the shortest one.
+   (b) BOTH choice controls are 4-and-3-across `.bai-seg.fill` rows, and Select Days is ONE row of
+       seven. That is only possible at 264px. Removing the `.bai-newitem` card (see its note above)
+       is what bought the width: at the old 179px, Repeat Type's four labels measured 212px of
+       content and had to be a 2x2 grid, and seven day chips needed 259px and wrapped 4+3. Both
+       were real constraints, and both were caused by a wrapper that should not have been there.
+       Cells are `flex: 1`, and `.active` changes colour only — never metrics — so selecting an
+       option can never resize the row (taste rule 41, the switcher-reflow defect). ---- */
+.bai-seg.fill { align-self: stretch; }
+.bai-seg.fill .bai-seg-btn { flex: 1; min-width: 0; white-space: nowrap; padding-left: var(--bai-sp-4); padding-right: var(--bai-sp-4); }
+/* The ONE shared explainer under a choice control (taste rule 42: options NAME, one line
+   DESCRIBES). It reserves two lines of its own height so switching selection never reflows the
+   form, and it is why End Time needs no "Not applicable for …" helper of its own — the reason an
+   end time does not apply is stated here, at the moment of choosing, not after committing. */
+.bai-seg-hint { font-size: var(--bai-fs-sm); color: var(--bai-dim); line-height: var(--bai-lh-140); min-height: calc(var(--bai-fs-sm) * var(--bai-lh-140)); }
+/* The repeat-dependent sub-field (Interval / Select Days / Day of Month). An accent-wash panel so
+   it reads as BELONGING to the Repeat Type choice above it rather than as a seventh independent
+   field — the live product tints this block for the same reason. Absent entirely for Daily, which
+   needs no extra input: an empty tinted panel would be a signal with nothing to say. */
+.bai-subfield { display: flex; flex-direction: column; gap: var(--bai-sp-6); padding: var(--bai-sp-9) var(--bai-sp-10); background: var(--bai-accent-wash); border: 1px solid var(--bai-accent-line); border-radius: var(--bai-r-sm); }
+/* One row of seven, matching the live product's own day picker — see note (b) above for the width
+   that made it possible. Was `repeat(4, …)` (a 4+3 wrap) while the removed card constrained this. */
+.bai-daygrid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: var(--bai-sp-4); }
+.bai-daychip { padding: var(--bai-sp-6) var(--bai-sp-2); border: 1px solid var(--bai-line-2); background: var(--bai-input-bg); color: var(--bai-dim); font-family: inherit; font-size: var(--bai-fs-sm); border-radius: var(--bai-r-xs); cursor: pointer; transition: border-color var(--bai-t-150), background var(--bai-t-150), color var(--bai-t-150); }
+.bai-daychip:hover { border-color: var(--bai-accent-strong); color: var(--bai-text-hi); }
+.bai-daychip.on { background: var(--bai-accent); border-color: var(--bai-accent); color: var(--bai-on-accent); }
+/* End Time when the chosen mode has no end (One-time / Indefinite): the field states its own
+   non-applicability IN PLACE — its value reads "Not applicable" — instead of adding a helper line
+   beneath it. Rule 38 again: the disabled field plus the Execution Mode explainer already carry
+   the fact; a third element restating it is decoration. */
+.bai-dt-field.disabled { cursor: not-allowed; opacity: 0.5; }
+.bai-dt-field.disabled:hover { border-color: var(--bai-line-2); }
+/* A validation state, not a permanent label — rendered only while the condition is true, so it is
+   never a redundant signal. Currently one condition: an end time at or before the start time. */
+.bai-field-err { font-size: var(--bai-fs-sm); color: var(--bai-danger); line-height: var(--bai-lh-140); }
 
 /* ---- Skills: search, category rows (home), skill cards (drill-down), details block, sticky create CTA ---- */
 .bai-search { flex-shrink: 0; margin: var(--bai-sp-11) var(--bai-sp-14) var(--bai-sp-9); display: flex; align-items: center; gap: var(--bai-sp-7); padding: var(--bai-sp-8) var(--bai-sp-10); background: var(--bai-input-bg); border: 1px solid var(--bai-line-2); border-radius: var(--bai-r-md); }   /* Fix #7: bottom margin 3px->9px; combined with .bai-list-body's own 2px top padding, the search-to-first-card gap is now 11px total, matching Scheduled's list-head-to-first-row gap exactly instead of an isolated ~5px */
