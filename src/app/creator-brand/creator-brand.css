@@ -1,0 +1,33 @@
+/* ───────────────────────────────────────────────────────────────────────
+   creator-brand — small helper classes on top of the shared blueai-modern
+   design system (globals.css --bai-* tokens). No new palette here; this
+   page uses the same iris→cyan gradient, ink ramp, and radii/shadows as
+   the rest of the marketing site. Only additions the DS doesn't already
+   have: a paper-grain texture and the handle-lookup "scanning" sweep.
+   ─────────────────────────────────────────────────────────────────────── */
+
+/* Fine paper grain — subtle depth on the canvas, not a texture people notice
+   consciously. SVG feTurbulence baked as a data-uri, tiled. */
+.cb-grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.03;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Card elevation matching the shared DS "resting card" shadow — used on the
+   lookup/job cards instead of inventing a new shadow value. */
+.cb-glow {
+  box-shadow: var(--shadow-float);
+}
+
+/* Numeric ticker — tabular figures so the earnings estimate doesn't jitter in width */
+.cb-tabular { font-variant-numeric: tabular-nums; }
+
+/* Scan-bar sweep used by the handle-lookup "reading…" state */
+@keyframes cb-scan {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(300%); }
+}

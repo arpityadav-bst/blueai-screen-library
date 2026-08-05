@@ -26,6 +26,11 @@ const ACTIVE = [
     desc: 'Live style guide onto the product’s own stylesheet and icon set — tokens, scales and specimens are computed from the real files at load, and ds-drift-check.js gates every change.',
     ds: true,
   },
+  {
+    href: '/creator-brand/creators',
+    name: 'Creator ↔ Brand',
+    desc: 'Pre-launch acquisition site, two audiences sharing one header/switcher: creators (paste your handle, see what you could earn, the real automation loop, a jobs-board preview) and brands (post a job, outcome-based pricing, a live job-post form). On the blueai-modern marketing design system.',
+  },
 ]
 
 const DORMANT = [

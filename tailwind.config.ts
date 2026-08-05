@@ -26,7 +26,7 @@ const config: Config = {
         brand: ['"Bricolage Grotesque"', 'Inter', 'sans-serif'],            // wordmark
       },
 
-      // ─── Type scale — DS panel scale (10→28) + marketing display (34→48) ──
+      // ─── Type scale — DS panel scale (10→28) + marketing display (34→60) ──
       fontSize: {
         '2xs': ['11px', { lineHeight: '1.5' }],   // fine print — SG notes / anatomy roles / counts
         'xs':  ['10px', { lineHeight: '1.4' }],   // caption / eyebrow
@@ -42,7 +42,8 @@ const config: Config = {
         '2xl': ['28px', { lineHeight: '1.05' }],  // hero (panel)
         '3xl': ['34px', { lineHeight: '1.05' }],  // marketing hero min
         '4xl': ['42px', { lineHeight: '1.04' }],
-        '5xl': ['48px', { lineHeight: '1.03' }],  // marketing hero max
+        '5xl': ['48px', { lineHeight: '1.12' }],  // only used by the two creator-brand Hero H1s — loosened from 1.03 for the same descender-clipping reason as 6xl
+        '6xl': ['60px', { lineHeight: '1.15' }],  // marketing hero max — oversized display moments; kept looser than 4xl/5xl on purpose, 1.02-1.04 clips descenders (g/y/p) at this size
       },
 
       // ─── Colors — mapped to the --bai-* token vars (globals.css) ──
@@ -80,6 +81,7 @@ const config: Config = {
         'bai-wash':       'var(--bai-gradient-wash)',
         'bai-wash-hover': 'var(--bai-gradient-wash-hover)',
         'cta-gradient':   'var(--bai-cta-gradient)',  // the "Download BlueAI" tri-stop gradient
+        'cta-band':       'var(--bai-cta-band)',       // dark closing-CTA band (live-demo-v2)
       },
 
       // ─── Radii — DS progression (8 · 12 · 128 pill · asymmetric bubble) ──
@@ -93,6 +95,19 @@ const config: Config = {
         'circle': '9999px', // send button, avatars, status dots, toggle knobs
         'bubble-sent': '12px 12px 0px 12px',
         'bubble-recv': '12px 12px 12px 0px',
+      },
+
+      // ─── Spacing — the DS's 4pt scale (globals.css --space-1..8), namespaced "ds-*" so it
+      // extends (not overrides) Tailwind's own default numeric spacing scale used everywhere else.
+      spacing: {
+        'ds-1': 'var(--space-1)', // 4px
+        'ds-2': 'var(--space-2)', // 8px
+        'ds-3': 'var(--space-3)', // 10px
+        'ds-4': 'var(--space-4)', // 12px
+        'ds-5': 'var(--space-5)', // 16px
+        'ds-6': 'var(--space-6)', // 20px
+        'ds-7': 'var(--space-7)', // 32px
+        'ds-8': 'var(--space-8)', // 36px
       },
 
       // ─── Shadows — border-driven system; float/overlay reserved for menus ──
