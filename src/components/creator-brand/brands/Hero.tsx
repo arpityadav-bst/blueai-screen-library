@@ -81,12 +81,12 @@ export default function Hero() {
               alt="A brand posts a video and budget, BlueAI matches it to real creators, and verified watches, likes, and comments roll in."
               width={1672}
               height={941}
-              className="h-auto w-full mix-blend-multiply"
+              className="h-auto w-full"
               style={{
-                // multiply: this asset's bg is #FAFAFB (slightly brighter than the page's
-                // #F9F9FA) — multiplying renders its near-white bg as the page color, so no
-                // visible surface seam. The creators asset matches the page exactly, so it
-                // doesn't need this.
+                // No blend mode: this asset's background measures #F7F7F7–#F9F9F9 against the
+                // page's #F9F9FA — a 0–2 unit delta, already invisible. A mix-blend-multiply
+                // was here for the PREVIOUS asset; against this one it darkens the background
+                // ~6 units below the page and creates the very seam it was meant to remove.
                 maskImage: 'radial-gradient(ellipse 75% 80% at center, black 55%, transparent 92%)',
                 WebkitMaskImage: 'radial-gradient(ellipse 75% 80% at center, black 55%, transparent 92%)',
               }}

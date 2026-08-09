@@ -8,25 +8,35 @@ WSUP/now.gg: visual fidelity + handoff clarity, no real backend.
 
 ---
 
-## ⚡ SCOPE PIVOT (2026-07-25, designer directive) — READ THIS FIRST
+## ⚡ SCOPE (2026-08-06, designer directive) — READ THIS FIRST
 
-**`/blueai-desktop` (the "modern terminal" prototype) is the ACTIVE surface — and it is the ONLY
-one.** Everything else in this repo is dormant or parked: the marketing site, `/blueai-product`,
-`/moneymaker`, `/live-demo-v2`, `/clay`, and `/blueai-creators` (each has its own section below).
-Not deleted, not deprecated, just not where work is happening, possibly for a long time. This
-reverses the prior framing, where blueai-desktop was treated as a DS-unbound side experiment and
-the marketing site was the default. If a dormant surface becomes active again, flip this note back
-— nothing needs to be rebuilt, only re-prioritized.
+**Two surfaces are ACTIVE — work happens on these:**
+- **`/blueai-desktop`** (the "modern terminal" prototype) — the product prototype.
+- **`/creator-brand`** — the creators + brands pre-launch acquisition pages.
 
-**State the list as "everything except blueai-desktop", not as an enumeration.** The enumeration
-here named two surfaces while four existed; it went stale the first time one was added. If you add
-a surface to this repo, it is parked by default and does not need this note edited.
+**Two are MAINTAINED** — not where new work happens, but genuinely updated from time to time as
+the product and the marketing system move: **`/style-guide`** (marketing design system) and
+**`/blueai-product`**. Treat a change here as normal work, not an exhumation.
 
-**Practical effect:** Gate 8 (taste.md) now reviews new work against blueai-desktop's OWN
+**Everything else is DORMANT** — kept on record, not in progress: `/seo`, `/hero-options`,
+`/live-demo-v2`, `/ai-video-creator-v2`, plus the unindexed routes (`/hero/*`, `/apply-to-jobs`,
+`/ai-trading-agent`, `/prediction-market-agent`, `/social-rewards`, `/developer`, `/product`) and
+the untracked `/clay` experiment.
+
+**State the dormant set as "everything not named above", not as an enumeration.** A previous
+version of this note enumerated it and went stale the first time a surface was added — then again
+when two were deleted. If you add a surface, it is dormant by default and this note needs no edit.
+
+**DELETED 2026-08-06 (designer directive — do not resurrect):** `/blueai-creators` (all three
+entries: the site, the onboarding prototype, the flows/diagrams) and `/moneymaker` (all three
+variants). Removed from `public/`, `src/app/`, `src/components/`, `src/lib/`, `src/styles/`, the
+rewrites in `next.config.js`, and the Screen Library index. Recoverable from git history if ever
+needed; nothing in the live tree references them.
+
+**Practical effect for VDA:** Gate 8 (taste.md) reviews new work against blueai-desktop's OWN
 design system — **`public/blueai-desktop/style-guide.html`** (live specimens, built from the
-product's own stylesheet + icon set; blueai-desktop had no documented DS at all before this
-pivot) + taste **rules 38-45** (the cross-surface craft rules) — not the marketing site's rules 1–37
-(preserved on record, not currently load-bearing).
+product's own stylesheet + icon set) + taste **rules from 38 onward** (the cross-surface craft
+rules) — not the marketing site's rules 1–37 (preserved on record, not currently load-bearing).
 
 ---
 
@@ -50,13 +60,14 @@ are true in a session:
   `boot.js`, `flows.js`) or under `visual-designer/`.
 - Human says "build", "design", "fix the layout", "update VDA" **about blueai-desktop**.
 
-**It does NOT fire for anything else in this repo.** Every other surface here is DORMANT or PARKED
-and is out of VDA scope — work on it freely, no bootstrap, no Gate 8 against blueai-desktop's DS:
-the marketing site (`/seo`, the three heroes, `HeroStage` / `HeroCards` / `HeroStageOriginal` /
-`HeroNav` / `BaiHome` / `FeatureRows` / `AllSkills`, the agent scenes), `/blueai-product`,
-`/moneymaker`, `/live-demo-v2`, `/clay`, `/blueai-creators`, and the root Screen Library index.
-A dormant surface fires the bootstrap ONLY if the designer explicitly asks for VDA or
-design-system review on it.
+**It does NOT fire for anything else in this repo — including `/creator-brand`.** VDA is aligned
+to blueai-desktop and nothing else. Every other surface is out of VDA scope — work on it freely,
+no bootstrap, no Gate 8 against blueai-desktop's DS: `/creator-brand` (ACTIVE, but independently
+designed on the marketing DS), `/style-guide`, `/blueai-product`, the marketing site (`/seo`, the
+three heroes, `HeroStage` / `HeroCards` / `HeroStageOriginal` / `HeroNav` / `BaiHome` /
+`FeatureRows` / `AllSkills`, the agent scenes), `/live-demo-v2`, `/ai-video-creator-v2`, `/clay`,
+and the root Screen Library index. A non-blueai-desktop surface fires the bootstrap ONLY if the
+designer explicitly asks for VDA or design-system review on it.
 
 **The blast-radius rule survives the narrowing.** Out of VDA scope is not out of care: a dormant
 surface must never be edited in a way that touches `public/blueai-desktop/**` or `visual-designer/**`.
@@ -297,23 +308,36 @@ down. The failure mode is rules phrased so narrowly they only match their own or
   full-page `<a>`. DS tokens in `globals.css` (`--bai-*`) + `tailwind.config.ts`.
 - **Parked fixes:** `design-source/FIX-LATER.md` (designer's Recommended-hero polish items).
 
-## /blueai-creators — PARKED (added 2026-08-03)
-- A two-sided creator-marketplace onboarding concept: creators paid **cash** for verified posts;
-  brands hire many small local creators instead of one macro influencer. Pre-launch, so both
-  journeys end at a **waitlist**, not a signup.
-- Plain self-contained HTML/CSS/JS, no build step, hash-routed. Files in `public/blueai-creators/`:
-  `index.html` (8 pages — `#/creators` → earnings → waitlist, and `#/brands` → map → compare →
-  plan → reserve), `diagrams.html` (page inventory, two swimlanes, a level-1 DFD),
-  `onboarding-flows.md` (the spec: decisions, segmentation, agent architecture, economics),
-  plus `README.md` and `CONTEXT.md` (full working context for a cold start — read it first).
-- Served at `/blueai-creators` via a rewrite in `next.config.js`, same as `/blueai-desktop` and
-  `/blueai-product`. Indexed on the root Screen Library under **Dormant**, as two cards.
-- **Out of VDA scope, and it carries its OWN tokens** — a self-contained `:root` palette with
-  light/dark, unrelated to either `--bai-*` layer. That is deliberate, not drift; do not
-  "harmonise" it with a BlueAI design system, and do not review it against one.
-- **Every dollar figure is an illustrative model for screen design, not a researched rate card.**
-  The one real dependency is a creator index; until it holds live Austin data, the earnings
-  estimate and the supply map are both illustrative. See §9–10 of `CONTEXT.md`.
+## /creator-brand — pre-launch acquisition site — ACTIVE
+- **What it sells:** BlueAI as the layer between creators and brands. A brand posts a YouTube
+  video + a budget; BlueAI matches it to creators whose interests fit, runs the watch/like/comment
+  on their account, verifies each engagement, and pays out. Both journeys end at a **waitlist**,
+  not a signup.
+- **Two routes, one shell:** `/creator-brand/creators` (default) and `/creator-brand/brands`,
+  sharing `components/creator-brand/Header.tsx` + `Footer.tsx`. The header's nav carries a
+  cross-link ("For Brands" / "For Creators") rather than a toggle control.
+- **On the marketing design system** (`globals.css` `--bai-*` + `tailwind.config.ts`) — NOT a
+  private token set. `creator-brand.css` holds only what the DS lacks: the paper-grain texture and
+  the handle-lookup scan keyframe. If you need a value, reach for a token first.
+- **Scope is deliberately narrow — YouTube only.** Instagram/TikTok/X/Reddit are shown as "soon".
+  Jobs are a flat rate per verified watch+like+comment; there is no per-outcome bidding, no
+  negotiation, and no creator-authored brief. Copy that implies otherwise is wrong — see the real
+  job schema (title, description, jobPrompt[], verifyPrompt[], preRequisites[], totalBudget,
+  jobTargetCount, startAt, endAt, visibility), of which the brand form deliberately exposes only
+  brand name, goal, video URL, budget, and campaign window. The rest is BlueAI's own template.
+- **Design-only:** the handle lookup returns a deterministic illustrative estimate (`estimate.ts`),
+  the waitlist and job-post forms are UI stubs. **Every dollar figure is illustrative, not a
+  researched rate card.**
+- **Shared hero motion primitives** live under `components/creator-brand/creators/` and are
+  imported by BOTH heroes: `PixelRain.tsx` (a port of blueai-desktop `boot.js`'s ambient
+  background twinkle, re-tuned for a light background and a much larger canvas) and
+  `TiltImage.tsx` (window-level cursor tracking, so the artwork tilts even when the pointer is
+  elsewhere on the page).
+- **Hero artwork:** `public/creator-brand/*.png`. The page background (`layout.tsx`, `#F9F9FA`) is
+  sampled to match the artwork's own background so the radial-masked edges dissolve with no visible
+  seam. **Before adding a blend mode to "fix" a seam, measure the asset** — a `mix-blend-multiply`
+  added for one asset darkened its replacement ~6 units *below* the page and created the very seam
+  it was meant to remove.
 
 ## File size rule (inherited)
 **Max 300 lines per `.tsx`/`.ts`.** `.md`, `package-lock.json`, `.css` config-style files

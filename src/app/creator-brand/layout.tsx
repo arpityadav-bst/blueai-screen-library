@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 export default function CreatorBrandLayout({ children }: { children: React.ReactNode }) {
   return (
-    // bg matches the sampled background of the Hero's creator-workflow.png (~#F9F9FA,
+    // bg matches the sampled background of the hero artwork (~#F9F9FA,
     // not pure white) so the image's masked edges blend into the page with no visible
     // seam. Scoped to this layout only — the shared --bai-canvas token stays untouched.
     <div className="relative min-h-screen overflow-x-clip bg-[#F9F9FA]">
