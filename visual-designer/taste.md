@@ -1,7 +1,10 @@
 # blueAI — Taste
 Last updated: 2026-08-11 (+rule 48 (box shape is an output; owe the travel axis a floor, not a shape — with
 its own runtime gate, `icon-target-audit.js`) +rule 49 (align a mixed-height row on the axis that survives a
-content-length change) — Session 17. Earlier: 2026-08-04 (+rule 47 (group by role not adjacency; depth as hierarchy — designer-taught over
+content-length change) +rule 50, added at the POST-CLOSE promotion (an action row's layout is decided by label
+FIT, not button count; and "committing action sits right" is an ORDER rule, so it does not apply to a lone
+action — designer-taught, and it overturned a well-argued independent-review finding) — Session 17.
+Earlier: 2026-08-04 (+rule 47 (group by role not adjacency; depth as hierarchy — designer-taught over
 two rounds) — header on every touch per the Session-15 lesson, since a stale date here is what let this file
 go two sessions unread before). Earlier: 2026-08-03 (+rule 46 (a wrapper's correctness is a function of what
 it wraps) + rule 38's fail-to-fire clause corrected — the Session-15 audit pass). 2026-08-01 (+rule 45 (create-affordance placement ground theory, designer-taught over five rounds); +rule 44 (concentric nested radii, designer-taught); +rules 42 (choice-control copy) & 43 (deliberate one-offs); Q2/Q3 answers added to 38-40 per the promotion rule; rule 41 restated as a MECHANISM — non-layout vs layout-affecting channels — after an independent audit judged the first widening had generalised the title but not the trigger; cross-linked to rule 38; rule 39's stale radius count corrected). 2026-07-25 (SCOPE PIVOT, designer directive — see note below. +rule 38 (divider redundancy),
@@ -621,6 +624,38 @@ springy bounces) — "a utility assistant, not a toy."
     *The test:* are the row's children peers competing for the same height (→ stretch), or is one of them a
     fixed marker annotating the other's variable content (→ centre)? If a row somehow has both (a toolbar that
     also holds a wrapping label), split it — the label is content, not a control.
+
+50. **An action row's LAYOUT is decided by whether its labels fit, not by how many actions it has. Side by side
+    at equal width is the default; stack only when equal-width side-by-side would compress or wrap a label.
+    And "the committing action sits on the right" is a rule about ORDER — it has no meaning when there is only
+    one action, so a lone action takes the full width rather than being pushed to a side.**
+    Two mistakes hide inside "how should these buttons sit." The first is treating COUNT as the input: "two
+    buttons → side by side, one button → full width" happens to be right most of the time and is right for the
+    wrong reason, so it gives no answer at all for two buttons with long labels. The input is FIT — measure
+    whether both labels survive at equal width in the available column, and go vertical only when they don't.
+    The second is over-generalising the right-alignment convention: it exists so a user's muscle memory can
+    find the committing action among SEVERAL, and a single dismissal has nothing to be ordered against.
+    Right-aligning it buys no recognition and costs the target width that full-width gives for free.
+    *(blueai-desktop, 2026-08-11: an independent review flagged the Key-saved acknowledgement's lone "Got it"
+    as 202×32 = 2.08× the area of the delete confirm's own commit button (97×32) and sitting at a different
+    x-position — arguing the harmless action out-weighed the irreversible one and contradicted the learned
+    bottom-right position. The reasoning was sound and the conclusion was wrong. Designer: "since there is no
+    other button needed here the full width is the right approach — but yes the major action can sit on the
+    right side," i.e. the order rule holds for the PAIR, which already satisfies it, and full width is correct
+    for the singleton. The designer then supplied the fit-based rule above, which the review had not
+    considered at all.)*
+    *Where else this applies:* a form's Cancel/Save pair whose labels grow under localisation (the same row is
+    side-by-side in English and may need stacking in German); a three-action row, where fit fails much sooner;
+    a confirm whose commit label is a verb phrase ("Delete 12 tasks") rather than a word; any narrow-column
+    action row — this app's dialogs live in a 202px content column at the 290px drawer, so fit is a live
+    constraint, not a theoretical one.
+    *What would stop it firing:* reading it as a rule about BUTTON COUNT — count is the symptom the old
+    heuristic keyed on, and it is exactly what makes that heuristic silently wrong for long labels. Also:
+    applying the right-alignment convention to a singleton, which is how a review can produce a
+    well-argued regression.
+    *Sibling:* rule 41. Both concern a signal that only means something in contrast — 41 says don't re-encode a
+    distinction a cheaper channel already carries; 50 says don't apply a POSITIONAL convention when there is
+    nothing to contrast the position against.
 
 ## Open corrections log
 *SCOPE PIVOT (2026-07-25, designer directive) — superseding the S8 standing scope note below: **the
