@@ -29,6 +29,12 @@
       <polyline points="20 6 9 17 4 12" />
     </svg>);
 
+  // Same glyph the product window's own titlebar minimize button already uses (index.html's
+  // ProductTitlebar) — reused here rather than invented, so the two minimize affordances in the
+  // same app read as one convention.
+  const IcoMinimize = ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 10 10"><rect x="1" y="4.6" width="8" height="1" fill="currentColor" /></svg>);
+
   // Best-guess match to the real BlueStacks App Player's UI font from the reference
   // screenshots (Poppins) — falls back to the Segoe stack if it fails to load or the guess
   // is wrong. Title weight is also dropped from 700→600 regardless (designer's explicit
@@ -61,11 +67,12 @@
     onCancel, onComplete
   }) {
     const [phase, setPhase] = useState('idle');
+    const [minimized, setMinimized] = useState(false);
     const timers = useRef([]);
     const clear = () => { timers.current.forEach(clearTimeout); timers.current = []; };
 
     // Re-arm every time the dialog opens, so a cancelled-then-reopened install starts at idle.
-    useEffect(() => { if (open) { clear(); setPhase('idle'); } return clear; }, [open]);
+    useEffect(() => { if (open) { clear(); setPhase('idle'); setMinimized(false); } return clear; }, [open]);
 
     // Esc cancels, but only before the install starts — there is no cancelling a running install.
     useEffect(() => {
@@ -77,14 +84,22 @@
 
     if (!open) return null;
 
+    const dark = skin === 'bluestacks';
+    const label = phase === 'done' ? doneLabel : downloadingLabel;
+
+    // Minimized = render nothing. No chip, no indicator — the window underneath just becomes
+    // fully usable again. The download's timers (below, in start()) keep running regardless of
+    // what's rendered, so it completes and triggers onComplete on schedule either way; there's
+    // nothing to "restore," since minimize only shows up during 'downloading' (see the button
+    // below), a phase this dialog auto-advances out of on its own.
+    if (minimized) return null;
+
     const start = () => {
       setPhase('downloading');
       timers.current.push(setTimeout(() => setPhase('done'), downloadMs));
       timers.current.push(setTimeout(() => { onComplete && onComplete(); }, downloadMs + doneMs));
     };
 
-    const dark = skin === 'bluestacks';
-    const label = phase === 'done' ? doneLabel : downloadingLabel;
     /* `contained` scopes the dialog to the window that raised it — absolute inside that window's
        box rather than fixed over the whole viewport. A real app's modal dims its OWN window, not
        your entire Windows desktop, and the designer's BlueStacks references show exactly that:
@@ -136,19 +151,31 @@
               </div>
             ) : (
               <>
-                {/* Title + close, same row — designer correction (2026-08-10): the ✕ used to sit
-                   absolutely positioned in the corner, disconnected from the title's own line;
-                   this puts them on one baseline instead, so the title reads as the row's other
-                   half rather than something the ✕ happens to float near. */}
+                {/* Title + minimize + close, same row — designer correction (2026-08-10): the ✕
+                   used to sit absolutely positioned in the corner, disconnected from the title's
+                   own line; this puts them on one baseline instead. Minimize shows ONLY during
+                   'downloading' — that's the actual scenario (BlueStacks stays usable while
+                   BlueAI downloads in the background); there's nothing running yet in 'idle' to
+                   minimize away from. Close stays idle-only, unchanged: still no cancelling a
+                   running install. The two are mutually exclusive by phase, never both shown. */}
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
                   <h2 style={{ fontSize: 18, fontWeight: 600, color: '#F2F5FF', lineHeight: 1.3, textWrap: 'balance' }}>{title}</h2>
-                  {phase === 'idle' &&
-                    <button aria-label="Close" onClick={onCancel}
-                      style={{ flexShrink: 0, width: 26, height: 26, display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', borderRadius: 0, background: 'none', color: '#98A2C4', cursor: 'pointer', padding: 0 }}
-                      onMouseEnter={(e) => e.currentTarget.style.background = '#2B3559'}
-                      onMouseLeave={(e) => e.currentTarget.style.background = 'none'}>
-                      <IcoX size={20} strokeWidth={1.6} />
-                    </button>}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 2, flexShrink: 0 }}>
+                    {phase === 'downloading' &&
+                      <button aria-label="Minimize" onClick={() => setMinimized(true)}
+                        style={{ width: 26, height: 26, display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', borderRadius: 0, background: 'none', color: '#98A2C4', cursor: 'pointer', padding: 0 }}
+                        onMouseEnter={(e) => e.currentTarget.style.background = '#2B3559'}
+                        onMouseLeave={(e) => e.currentTarget.style.background = 'none'}>
+                        <IcoMinimize size={16} />
+                      </button>}
+                    {phase === 'idle' &&
+                      <button aria-label="Close" onClick={onCancel}
+                        style={{ width: 26, height: 26, display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', borderRadius: 0, background: 'none', color: '#98A2C4', cursor: 'pointer', padding: 0 }}
+                        onMouseEnter={(e) => e.currentTarget.style.background = '#2B3559'}
+                        onMouseLeave={(e) => e.currentTarget.style.background = 'none'}>
+                        <IcoX size={20} strokeWidth={1.6} />
+                      </button>}
+                  </div>
                 </div>
                 {/* Icon + body, same row — designer correction: the icon used to sit beside the
                    TITLE (matching the "Disk cleanup" reference); moved beside the BODY copy
@@ -192,18 +219,31 @@
        CreditsByokRow, OutOfCreditsModal in byok.jsx) rather than freehanded: centered icon
        badge → centered title/body → a muted metadata pill → one full-width PILL primary
        button with the house glow shadow. Dismiss is the ✕ alone, same as every other card
-       in that family — a second "Cancel" text link duplicated it without adding a choice. */
+       in that family — a second "Cancel" text link duplicated it without adding a choice.
+       Minimize (2026-08-10) joins it in the same corner, shown ONLY during 'downloading' — the
+       actual scenario (BlueAI should stay usable while BlueStacks downloads); there's nothing
+       running yet in 'idle' to minimize away from. Close stays idle-only — the two never overlap. */
     return (
       <div style={overlay} onMouseDown={(e) => { if (e.target === e.currentTarget && phase === 'idle' && onCancel) onCancel(); }}>
         <div role="dialog" aria-modal="true" aria-label={title}
           style={{ position: 'relative', width: '100%', maxWidth: 340, background: 'white', border: '1px solid #e2e8f0', borderRadius: 20, boxShadow: '0 24px 60px rgba(15,23,42,0.24)', padding: '30px 26px 26px', textAlign: 'center' }}>
-          {phase === 'idle' &&
-            <button aria-label="Close" onClick={onCancel}
-              style={{ position: 'absolute', top: 14, right: 14, width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', borderRadius: 8, background: 'none', color: '#94a3b8', cursor: 'pointer', padding: 0 }}
-              onMouseEnter={(e) => { e.currentTarget.style.background = '#f1f5f9'; e.currentTarget.style.color = '#475569'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = 'none'; e.currentTarget.style.color = '#94a3b8'; }}>
-              <IcoX size={15} />
-            </button>}
+          {phase !== 'done' &&
+            <div style={{ position: 'absolute', top: 14, right: 14, display: 'flex', alignItems: 'center', gap: 2 }}>
+              {phase === 'downloading' &&
+                <button aria-label="Minimize" onClick={() => setMinimized(true)}
+                  style={{ width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', borderRadius: 8, background: 'none', color: '#94a3b8', cursor: 'pointer', padding: 0 }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = '#f1f5f9'; e.currentTarget.style.color = '#475569'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = 'none'; e.currentTarget.style.color = '#94a3b8'; }}>
+                  <IcoMinimize size={16} />
+                </button>}
+              {phase === 'idle' &&
+                <button aria-label="Close" onClick={onCancel}
+                  style={{ width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', borderRadius: 8, background: 'none', color: '#94a3b8', cursor: 'pointer', padding: 0 }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = '#f1f5f9'; e.currentTarget.style.color = '#475569'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = 'none'; e.currentTarget.style.color = '#94a3b8'; }}>
+                  <IcoX size={15} />
+                </button>}
+            </div>}
           {icon &&
             <div style={{ width: 58, height: 58, borderRadius: '50%', background: 'linear-gradient(135deg,rgba(14,164,197,0.14),rgba(123,76,255,0.14))', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 18px' }}>
               <img src={icon} alt="" style={{ width: 28, height: 28, borderRadius: 6 }} onError={(e) => { e.target.style.display = 'none'; }} />
