@@ -1,5 +1,9 @@
 # blueAI — Project Insights
-Last updated: 2026-08-11 (Session 17: +the overlay/z-layer inventory and the notification-surface taxonomy in the
+Last updated: 2026-08-11 (Session 17, POST-CLOSE amendment: the gutter question this file had flagged as
+"⚠ OPEN, designer's call" since 2026-08-03 is now RESOLVED — 15px everywhere — and the form-width fact moved
+264 → 260px as a direct result, its FOURTH revision. Both bullets rewritten in the layout-system section
+rather than annotated, because a fact file that accumulates "actually, now it's…" is a fact file you stop
+trusting. Earlier the same day, Session 17: +the overlay/z-layer inventory and the notification-surface taxonomy in the
 layout-system section — the app now has THREE notification-weight tiers and a reader had no way to know which to
 reach for; +the `#scaler` two-coordinate-space fact, which is a property of this surface's shell, not a bug.
 Earlier: 2026-08-04 (+the boot-canvas fact in the layout-system section: `.bai-header`/`.bai-titlebar`

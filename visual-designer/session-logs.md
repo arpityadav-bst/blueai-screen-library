@@ -105,13 +105,41 @@ gates is precisely the "green light over an unexamined area" failure this notebo
 green light was real for the two gates named and meaningless for the surface the third one owns. The list is
 now complete and the count is derived from the actual file set.
 
-**Post-close fixes (2026-08-11, after this pass closed — logged in `scratchpad.md` for the NEXT promotion,
-deliberately not retro-promoted into this entry):** the landscape subpane bug the designer caught by eye
-(`.bai-subpane`'s `top: 84px` is a sum of header+strip, and wide mode hides the strip, so every subpane opened
-38px low and left a strip-height band of the parent pane showing — Skills' search toolbar was visible above an
-open "My Skills"); the identical latent bug on `.bai-tour`, fixed and explicitly FLAGGED as not making the tour
-work in landscape; the rule-44 fix above; and the radius gate's false-positive filter. Not folded into this
-entry because a closed audit that keeps absorbing later work stops being a record of what was true at close.
+**Post-close fixes (2026-08-11, after this pass closed — all 10 logged in `scratchpad.md` for the NEXT
+promotion, deliberately not retro-promoted into this entry, because a closed audit that keeps absorbing later
+work stops being a record of what was true at close).** This paragraph has itself been AMENDED once: it
+originally listed four items and was already incomplete when written, which is the same
+subset-presented-as-the-whole failure as the gates line above it. The full set:
+*Designer-caught:* (1) the landscape subpane bug — `.bai-subpane`'s `top: 84px` is a sum of header+strip and
+wide mode hides the strip, so every subpane opened 38px low and left a strip-height band of the parent pane
+showing (Skills' search toolbar visible above an open "My Skills"); (2) the three-way Cancel split, settled
+into two roles — `.bai-dialog-cancel` joins `.bai-set-btn` as a declared §12 family (only the FILL had ever
+differed), forms keep `.bai-newitem-cancel`, filled-pill retired; (3) the dialog body colour, now matching
+`.tgm-body`; (4) the 15px/13px gutter, unified to 15px — open since 2026-08-03, and it re-narrowed every
+subpane form 264 → 260px, so the 7-day-chip row was RE-MEASURED rather than assumed; (5) the toolbar help
+icon's radius, now matching its row-mate; (6) the tour in landscape — removed rather than repositioned, since
+`tourHi()` targets a `.bai-tab` that wide mode hides.
+*Self-caught while fixing those:* (7) a rule-44 concentric violation on `.bai-preview-seg button`, exposed
+only because routing Membership to `.stretch` made those buttons reach the track's corners; (8) the radius
+gate's two standing false positives (the guide's own doc wrappers), now filtered — it reads a true 0 for the
+first time.
+*Resolved as already-correct, no code change:* (9) the review's ack-button finding — the designer ruled the
+lone full-width button right and supplied the better general rule (side-by-side vs stacked is decided by
+whether labels FIT at equal size, not by button count). Recorded so it cannot be re-flagged as drift.
+*Infrastructure:* (10) this session moved to its own git worktree.
+
+**Where this session's work now lives (2026-08-11).** `N:\Antigravity Main\blueai-worktrees\blueai-desktop\`
+on branch `blueai-desktop/work`, committed as `7b143a6` and fast-forwarded to
+`arpityadav-bst/blueai-screen-library` `main`. The shared `blueai\` checkout is no longer this session's
+working directory, and the preview server on 8410 was re-pointed at the worktree (verified by byte-comparing
+the served CSS against the worktree file — the two-copies-one-served trap has bitten twice before).
+**The migration's real hazard was ownership, not merge conflicts:** the shared checkout held 50 uncommitted
+files belonging to THREE sessions, and a naive "commit everything to move it" would have swept up the
+creator-brand session's live work. Only this session's 16 were copied, each byte-verified, and the discard
+from the shared checkout was gated on proving all 16 matched the commit first. 51 − 16 = 35 remaining
+confirmed the precision. Note for whoever pushes next: the shared checkout's LOCAL `main` is now one commit
+behind `origin/main`, an inherent consequence of pushing a branch straight to the remote's main (which is
+what keeps the other sessions undisturbed) — fetch before pushing or it will be rejected.
 
 **New top recurring category:** *a property nobody measured is a property nobody checked — if a design rule can
 be expressed as a number, it needs a gate, not a paragraph.* Two of this session's rules now have one — and the
