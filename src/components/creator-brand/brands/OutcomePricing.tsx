@@ -1,11 +1,11 @@
 import Reveal from '../Reveal'
 
 const ROWS = [
-  { label: 'What you pay for', old: 'Follower count', bai: 'A flat rate per verified watch + like + comment' },
+  { label: 'What you pay for', old: 'Follower count', bai: 'A flat rate per verified engagement' },
   { label: 'Who you reach', old: 'One large influencer', bai: 'Thousands of real accounts, spread out' },
   { label: 'How it feels to viewers', old: 'Reads as an ad', bai: 'Reads as real engagement' },
   { label: 'Negotiating rates', old: 'Back-and-forth over email/DM', bai: 'You set the budget and window, that’s it' },
-  { label: 'Checking the work happened', old: 'Manual, on trust', bai: 'BlueAI verifies every watch, like, and comment' },
+  { label: 'Checking the work happened', old: 'Manual, on trust', bai: 'BlueAI verifies every single interaction' },
   { label: 'Paying out', old: 'Invoices, manual transfers', bai: 'Automatic, only when the engagement clears' },
 ]
 
@@ -20,7 +20,7 @@ export default function OutcomePricing() {
           </h2>
           <p className="bai-body mt-4 max-w-[48ch] text-ink-body-2">
             Set a total budget and a campaign window. BlueAI divides it across real people who
-            watch your video in full, like it, and comment — and only pays out once each one is verified.
+            genuinely engage with your video — and only pays out once each one is verified.
           </p>
         </Reveal>
 

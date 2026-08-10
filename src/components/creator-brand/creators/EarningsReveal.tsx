@@ -58,7 +58,7 @@ export default function EarningsReveal({ estimate, handleLabel }: { estimate: Es
           <span className="text-[14px] font-medium text-ink-muted">/ week</span>
         </div>
         <p className="mt-2 text-[12px] text-ink-muted">
-          A flat rate per YouTube job, plus a bit more for the share step based on your reach. Real
+          A flat rate per YouTube job, plus a reach bonus based on your following. Real
           payouts depend on the jobs available.
         </p>
       </div>

@@ -3,8 +3,8 @@ import Reveal from '../Reveal'
 const STEPS = [
   { n: '01', title: 'Post the job', body: 'Give us your YouTube video, your budget, and a start/end window. Takes a couple of minutes.' },
   { n: '02', title: 'BlueAI matches creators', body: 'Thousands of waitlisted accounts pick up the job themselves — no outreach from you.' },
-  { n: '03', title: 'Watch, like, comment — verified', body: 'Each creator watches your video in full, likes it, and comments. BlueAI confirms every single one before it counts.' },
-  { n: '04', title: 'You watch it run, live', body: 'See how many have watched, liked, and commented — in real time, from your budget, until the window closes.' },
+  { n: '03', title: 'Real engagement, verified', body: 'Each creator genuinely engages with your video, and BlueAI confirms every single one before it counts.' },
+  { n: '04', title: 'You watch it run, live', body: 'See the engagement roll in — in real time, from your budget, until the window closes.' },
 ]
 
 export default function HowItWorksBrand() {

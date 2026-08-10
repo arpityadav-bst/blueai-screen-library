@@ -2,10 +2,10 @@ import Reveal from '../Reveal'
 import FAQAccordion from '../FAQAccordion'
 
 const ITEMS = [
-  { q: 'Does posting a job cost anything?', a: 'No. Posting a job only defines the terms — your budget is only ever spent against watches, likes, and comments that BlueAI actually verifies.' },
-  { q: 'What exactly does a creator do?', a: 'They watch your YouTube video in full, like it, and leave a comment — all verified by BlueAI before it counts against your budget.' },
+  { q: 'Does posting a job cost anything?', a: 'No. Posting a job only defines the terms — your budget is only ever spent against engagement that BlueAI actually verifies.' },
+  { q: 'What exactly does a creator do?', a: 'They genuinely engage with your YouTube video — all verified by BlueAI before it counts against your budget.' },
   { q: 'Is this only for YouTube?', a: 'Yes, for now — YouTube jobs are live today. Instagram, TikTok, X, and Reddit are coming soon.' },
-  { q: 'What stops a creator from faking it?', a: 'BlueAI checks each watch, like, and comment directly — content that doesn’t meet the bar simply doesn’t get paid.' },
+  { q: 'What stops a creator from faking it?', a: 'BlueAI checks every single interaction directly — anything that doesn’t meet the bar simply doesn’t get paid.' },
   { q: 'Can I run more than one job at a time?', a: 'Yes — each job has its own budget and window, so you can run several in parallel.' },
 ]
 

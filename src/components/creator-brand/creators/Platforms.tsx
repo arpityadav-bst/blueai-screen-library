@@ -3,11 +3,11 @@ import Reveal from '../Reveal'
 // Same stroke-glyph family as AmbientOrbit (play/camera/soundwave), plus a distinct
 // cross for X and an upvote arrow for Reddit — no two channels share a glyph.
 const CHANNELS = [
-  { label: 'YouTube', body: 'Watch, like, and comment jobs — live right now.', color: '#FF5A5A', path: 'M9 8l7 4-7 4V8Z', live: true },
+  { label: 'YouTube', body: 'Engagement jobs — live right now.', color: '#FF5A5A', path: 'M9 8l7 4-7 4V8Z', live: true },
   { label: 'Instagram', body: 'Reels and posts.', color: '#7B4CFF', path: 'M4 8h4l1.5-2h5L16 8h4v11H4V8Z M12 10.5a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z', live: false },
   { label: 'TikTok', body: 'Any clip that hits the brief.', color: '#0B0E1A', path: 'M6 16V9M10 18V6M14 18V9M18 15v-3', live: false },
   { label: 'X', body: 'Threads and posts.', color: '#1F2937', path: 'M6 6l12 12M18 6 6 18', live: false },
-  { label: 'Reddit', body: 'Comments and upvotes.', color: '#F97316', path: 'M12 5v13M7 10l5-5 5 5', live: false },
+  { label: 'Reddit', body: 'Engagement jobs, coming soon.', color: '#F97316', path: 'M12 5v13M7 10l5-5 5 5', live: false },
 ]
 
 export default function Platforms() {

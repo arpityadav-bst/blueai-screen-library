@@ -68,8 +68,8 @@ export default function Hero() {
             An AI that turns your channel <span className="text-gradient italic inline-block pr-[0.2em]">into income.</span>
           </h1>
           <p className="bai-body-lg mx-auto mt-5 max-w-[640px]">
-            BlueAI matches you to a real brand job that fits your interests, does the watching,
-            liking, and commenting for you, and pays you once it&apos;s verified.
+            BlueAI matches you to a real brand job that fits your interests, handles it on your
+            account end to end, and pays you once it&apos;s verified.
           </p>
         </Reveal>
 

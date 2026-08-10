@@ -2,10 +2,10 @@ import Reveal from '../Reveal'
 import { CBLinkButton } from '../Button'
 
 const JOBS = [
-  { brand: 'Fernweh Coffee', color: '#2F6DFF', task: 'Watch our cold-brew launch video in full, like it, and leave a genuine comment', pay: 7, claimed: 62, target: 100 },
-  { brand: 'Loop Running Co.', color: '#16A34A', task: 'Watch our new trail-shoe review, like it, and comment your take', pay: 6, claimed: 118, target: 150 },
-  { brand: 'Nettle & Sage', color: '#7B4CFF', task: 'Watch our SPF stick demo end to end, like and comment', pay: 8, claimed: 30, target: 80 },
-  { brand: 'Pixel Pantry', color: '#F97316', task: 'Watch our meal-kit unboxing, like it, and comment a question', pay: 5, claimed: 44, target: 60 },
+  { brand: 'Fernweh Coffee', color: '#2F6DFF', task: 'Watch our cold-brew launch video and leave a genuine reaction', pay: 7, claimed: 62, target: 100 },
+  { brand: 'Loop Running Co.', color: '#16A34A', task: 'Watch our new trail-shoe review and share your take', pay: 6, claimed: 118, target: 150 },
+  { brand: 'Nettle & Sage', color: '#7B4CFF', task: 'Watch our SPF stick demo end to end and share your thoughts', pay: 8, claimed: 30, target: 80 },
+  { brand: 'Pixel Pantry', color: '#F97316', task: 'Watch our meal-kit unboxing and ask a question in the comments', pay: 5, claimed: 44, target: 60 },
 ]
 
 export default function JobsPreview() {
@@ -15,11 +15,11 @@ export default function JobsPreview() {
         <Reveal>
           <p className="bai-eyebrow uppercase text-iris">Open right now</p>
           <h2 className="mt-3 font-head text-3xl font-bold text-ink-display sm:text-4xl">
-            Brands are already paying for exactly this — watch, like, comment.
+            Brands are already paying for exactly this — real engagement.
           </h2>
           <p className="bai-body mt-4 max-w-[56ch] text-ink-body-2">
-            Every open job pays a flat rate for watching a video in full, liking it, and leaving a
-            comment — and only shows up if it fits what you&apos;re already into.
+            Every open job pays a flat rate for genuinely engaging with a video — and only shows up
+            if it fits what you&apos;re already into.
           </p>
         </Reveal>
 

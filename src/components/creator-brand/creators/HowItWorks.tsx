@@ -4,7 +4,7 @@ import CommentApprovalDemo from './CommentApprovalDemo'
 const STEPS = [
   { n: '01', title: 'Paste your handle', body: 'BlueAI reads your channel in seconds. No application, no waiting on a reply.' },
   { n: '02', title: 'Accept a job that fits', body: 'BlueAI already knows what you’re into — from your watch history, or a few quick questions if you’re new — so every job it shows fits what you’d actually watch. You still decide.' },
-  { n: '03', title: 'BlueAI does the work', body: 'It finds the brand’s video on your account, watches it in full, likes it, comments, and shares it — then confirms everything registered.' },
+  { n: '03', title: 'BlueAI takes it from there', body: 'It handles the brand’s video on your account from start to finish, then verifies everything before it counts.' },
   { n: '04', title: 'Get paid, on repeat', body: 'You get paid once it clears, and BlueAI schedules the next cycle automatically — no re-accepting anything.' },
 ]
 
@@ -15,10 +15,10 @@ export default function HowItWorks() {
         <Reveal>
           <p className="bai-eyebrow uppercase text-iris">How it works</p>
           <h2 className="mt-3 max-w-[34ch] font-head text-3xl font-bold text-ink-display sm:text-4xl">
-            You don&apos;t do the watching, liking, or commenting — BlueAI does.
+            You don&apos;t have to do a thing — BlueAI takes it from there.
           </h2>
           <p className="bai-body mt-4 max-w-[58ch] text-ink-body-2">
-            Accept a job and BlueAI runs it on your account, end to end. Nothing to schedule, nothing
+            Accept a job and BlueAI handles it, end to end. Nothing to schedule, nothing
             to remember, nothing to negotiate.
           </p>
         </Reveal>

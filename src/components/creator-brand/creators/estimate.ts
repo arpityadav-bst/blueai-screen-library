@@ -2,9 +2,9 @@
 // produces the same numbers (feels alive, not randomized-fake). NOT a researched rate
 // card; purely for screen design, same convention as the rest of this repo's prototypes.
 //
-// Only YouTube jobs are real right now — a flat per-job rate for watch+like+comment,
-// plus a small reach-scaled bonus for the share step (bigger following = more reach
-// delivered, so it pays a bit more). Other platforms are shown as "coming soon."
+// Only YouTube jobs are real right now — a flat per-job rate, plus a small reach-scaled
+// bonus (bigger following = more reach delivered, so it pays a bit more). Other
+// platforms are shown as "coming soon."
 
 export type PlatformKey = 'youtube' | 'instagram' | 'tiktok' | 'x'
 
@@ -21,8 +21,8 @@ export type Estimate = {
   tier: string
 }
 
-const FLAT_RATE_PER_JOB = 6 // watch + like + comment, regardless of audience size
-const REACH_RATE_PER_1K = 0.35 // the share step scales with your following
+const FLAT_RATE_PER_JOB = 6 // per verified job, regardless of audience size
+const REACH_RATE_PER_1K = 0.35 // reach bonus scales with your following
 
 export function estimateFromFollowers(followers: number, _platform: PlatformKey): Estimate {
   const jobsPerWeek = 5

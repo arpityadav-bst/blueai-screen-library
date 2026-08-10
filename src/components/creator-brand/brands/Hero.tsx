@@ -9,7 +9,7 @@ import TiltImage from '../creators/TiltImage'
 
 // Same edge-card device as the creators hero — brand-side proof points.
 const EDGE_CARDS = [
-  { text: 'Pay per verified watch, like & comment', side: 'left' as const, top: 60, offset: -10, rot: -7, scale: 0.94 },
+  { text: 'Pay only for verified engagement', side: 'left' as const, top: 60, offset: -10, rot: -7, scale: 0.94 },
   { text: 'No PR team, no outreach, no briefs', side: 'left' as const, top: 150, offset: 6, rot: -2, scale: 1 },
   { text: 'Thousands of real accounts, not one big ad', side: 'left' as const, top: 240, offset: -14, rot: -5, scale: 0.9 },
   { text: 'Posting a job costs nothing upfront', side: 'left' as const, top: 330, offset: 2, rot: -3, scale: 0.96 },
@@ -61,11 +61,11 @@ export default function Hero() {
       <div className="relative z-[1] mx-auto flex max-w-[1380px] flex-col items-center text-center">
         <Reveal className="flex flex-col items-center">
           <h1 className="max-w-[780px] font-head text-5xl font-bold tracking-tight-2 text-ink-display sm:text-6xl">
-            BlueAI is your <span className="text-gradient italic inline-block pr-[0.2em]">influencer manager.</span>
+            An AI that turns your budget <span className="text-gradient italic inline-block pr-[0.2em]">into real reach.</span>
           </h1>
           <p className="bai-body-lg mx-auto mt-5 max-w-[640px]">
-            Post your video and a budget. BlueAI matches it to thousands of real people who watch it
-            in full, like it, and comment — then pays them for you, automatically.
+            Post your video and a budget. BlueAI matches it to thousands of real people who
+            genuinely engage with it, verifies every interaction, and pays them for you, automatically.
           </p>
         </Reveal>
 
@@ -78,7 +78,7 @@ export default function Hero() {
           <TiltImage className="-mt-[3%]">
             <Image
               src="/creator-brand/brand-workflow-small-label.png"
-              alt="A brand posts a video and budget, BlueAI matches it to real creators, and verified watches, likes, and comments roll in."
+              alt="A brand posts a video and budget, BlueAI matches it to real creators, and verified engagement rolls in."
               width={1672}
               height={941}
               className="h-auto w-full"

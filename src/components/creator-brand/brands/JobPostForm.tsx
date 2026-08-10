@@ -85,7 +85,7 @@ export default function JobPostForm() {
                   />
                 </div>
                 {reach && (
-                  <p className="mt-1.5 text-[12px] text-iris">≈ {reach.toLocaleString()} creators will watch, like &amp; comment on this budget</p>
+                  <p className="mt-1.5 text-[12px] text-iris">≈ {reach.toLocaleString()} creators will engage with your video on this budget</p>
                 )}
               </label>
 

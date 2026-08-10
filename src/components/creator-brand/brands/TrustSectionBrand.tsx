@@ -1,9 +1,9 @@
 import Reveal from '../Reveal'
 
 const POINTS = [
-  { title: 'A real pool of creators', body: 'Thousands of creators are already waitlisted and ready to watch, like, and comment on jobs like yours the moment we launch.' },
-  { title: 'Every engagement is checked, not assumed', body: 'BlueAI verifies each watch, like, and comment before a single dollar of your budget moves.' },
-  { title: 'Live status, the whole time', body: 'How many have watched, liked, and commented — you can see it in real time as your budget spends.' },
+  { title: 'A real pool of creators', body: 'Thousands of creators are already waitlisted and ready to engage with jobs like yours the moment we launch.' },
+  { title: 'Every engagement is checked, not assumed', body: 'BlueAI verifies every single interaction before a dollar of your budget moves.' },
+  { title: 'Live status, the whole time', body: 'See how much engagement is rolling in, in real time, as your budget spends.' },
 ]
 
 export default function TrustSectionBrand() {

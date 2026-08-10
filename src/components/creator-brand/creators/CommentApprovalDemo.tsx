@@ -11,7 +11,7 @@ export default function CommentApprovalDemo() {
     <div className="shadow-float rounded-credits border border-stroke-warm bg-white p-6">
       <p className="text-[12px] font-semibold uppercase tracking-label text-ink-muted">Before it posts, as you</p>
       <div className="mt-3 rounded-chat border border-divider bg-canvas p-4">
-        <p className="text-[13px] text-ink-muted">BlueAI wants to post this comment on your behalf:</p>
+        <p className="text-[13px] text-ink-muted">Ready to go out under your name:</p>
         <p className="mt-2 rounded-field bg-white px-3 py-2.5 text-[14px] text-ink-heading shadow-hairline">
           &ldquo;This actually made me want to try it myself, great breakdown 👏&rdquo;
         </p>
