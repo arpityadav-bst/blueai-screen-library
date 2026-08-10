@@ -1,0 +1,116 @@
+/* ============================================================================
+   /blueai-product — the fake Windows desktop the product window sits on.
+
+   OUT OF PRODUCT DS SCOPE. Everything in this file mimics an OS and a
+   third-party app (BlueStacks App Player), not BlueAI. It is deliberately kept
+   out of index.html's own <style> block for the same reason /blueai-desktop
+   keeps its scene in a marked-off section: none of these values are product
+   design tokens and none of them should be reused by product UI.
+
+   Architecture — matched to /blueai-desktop's .stage / .scaler / .composition exactly:
+     .pscene            fixed, wallpaper as a viewport-level `cover`, centres everything
+       .pscene-scaler   ONE scale() applied ONLY to the windows, not the wallpaper
+         .pscene-comp   flex row: [BlueStacks window] gap [BlueAI window]
+
+   HISTORY (designer, 2026-08-10): this briefly went through a "fixed 1920x1080 screen" version
+   where the wallpaper scaled WITH the windows, to stop the wallpaper cropping at odd aspect
+   ratios. That traded one problem for a worse one — a visible letterboxed border around the
+   whole scene at any size other than exactly 1920x1080. Reverted to /blueai-desktop's own
+   technique instead: the wallpaper is a `cover` background on the UNSCALED, always-viewport-filling
+   .pscene, so it always fills edge to edge with no border, at the cost of cropping its edges on
+   an unusual aspect ratio — which is what /blueai-desktop itself does and has always looked fine
+   on, because desktop-bg.png is a wide scenic image with nothing pinned to its exact edges. Only
+   the WINDOWS scale, via .pscene-scaler, same as /blueai-desktop's .scaler scales only .composition.
+   ============================================================================ */
+
+html, body { height: 100%; overflow: hidden; }
+
+.pscene {
+  position: fixed; inset: 0;
+  background: url('assets/desktop-bg.png') center / cover no-repeat;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* One scale for the windows only. Driven by DesktopScene's fit(). */
+.pscene-scaler { transform: scale(var(--scale, 1)); transform-origin: center center; }
+
+/* The row. transform is animated for the FLIP shift that runs when a window
+   mounts, so the window that was ALREADY on screen doesn't jump sideways. */
+.pscene-comp {
+  display: flex; align-items: center; gap: 16px;
+  transition: transform 320ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.pscene-comp.pscene-comp--noanim { transition: none; }   /* the FLIP's first frame */
+
+/* ---- BlueStacks App Player window --------------------------------------------------
+   Screenshot frames are CSS backgrounds, not <img> — same reason /blueai-desktop gives:
+   an <img> attracts Chrome's image-hover (Visual Search / Lens) button, which lands right
+   on top of the scene and ruins every screenshot. All three frames are exactly 1394x799
+   so `100% 100%` never stretches and swapping frames causes no geometric shift. */
+.pscene-bs {
+  width: 1000px; height: 573px; flex-shrink: 0;
+  position: relative; z-index: 1;
+  background-image: url('assets/bluestacks/bs-home.png');
+  background-size: 100% 100%; background-repeat: no-repeat; background-position: center;
+  box-shadow: 0 30px 90px -34px rgba(0,0,0,0.55), 0 2px 8px rgba(0,0,0,0.4);
+  transition: box-shadow 180ms ease;
+}
+.pscene-bs[data-screen="loading"]      { background-image: url('assets/bluestacks/bs-loading.png'); }
+.pscene-bs[data-screen="play-youtube"] { background-image: url('assets/bluestacks/bs-play-youtube.png'); }
+
+/* Only clickable when the click DOES something (install BlueAI, or reopen a closed
+   BlueAI window). Otherwise it's scenery and must not offer a hand cursor. */
+.pscene-bs--live { cursor: pointer; }
+.pscene-bs--live:hover { box-shadow: 0 36px 110px -40px rgba(0,0,0,0.62), 0 2px 10px rgba(0,0,0,0.45); }
+
+/* A window appearing on the desktop. */
+.pscene-win-in { animation: pscene-win-in 320ms cubic-bezier(0.22, 0.61, 0.36, 1) both; }
+@keyframes pscene-win-in { from { opacity: 0; transform: scale(0.985); } to { opacity: 1; transform: none; } }
+
+/* ---- The BlueAI Windows app's own window frame -------------------------------------
+   866 = 830px content box (untouched — every screen inside was designed against it)
+       + 34px titlebar + 2px of hairline border (box-sizing is border-box globally).
+   Radius 10, not the product's 16: this is an OS window, and Windows 11 corners are
+   tighter than a web card's. */
+.ba-win {
+  width: 421px; height: 866px; flex-shrink: 0;
+  display: flex; flex-direction: column; overflow: hidden;
+  position: relative; z-index: 2;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1; border-radius: 10px;
+  box-shadow: 0 30px 90px -30px rgba(0,0,0,0.6), 0 2px 10px rgba(0,0,0,0.35);
+}
+
+.ba-titlebar {
+  height: 34px; flex-shrink: 0;
+  display: flex; align-items: center; gap: 8px;
+  padding: 0 4px 0 11px;
+  background: #f3f5f8; border-bottom: 1px solid #e2e8f0;
+  user-select: none;
+}
+.ba-tb-logo { width: 16px; height: 16px; flex-shrink: 0; display: block; }
+.ba-tb-title {
+  flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  font-size: 12.5px; font-weight: 600; color: #334155; letter-spacing: 0.2px;
+}
+.ba-tb-btns { display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
+.ba-tb-btn {
+  width: 30px; height: 24px; padding: 0;
+  display: flex; align-items: center; justify-content: center;
+  border: none; border-radius: 4px; background: none; color: #64748b; cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+}
+.ba-tb-btn:hover { background: #e2e8f0; color: #1f2937; }
+.ba-tb-btn.ba-tb-close:hover { background: #e81123; color: #fff; }   /* Windows' own close-hover red */
+.ba-tb-btn svg { display: block; pointer-events: none; }
+
+/* ---- Installer dialog: indeterminate progress -------------------------------------
+   Indeterminate on purpose. A percentage would imply we know how far along a download
+   is; nothing here is downloading anything. */
+.ba-indet { position: relative; overflow: hidden; }
+.ba-indet::after {
+  content: ''; position: absolute; top: 0; bottom: 0; width: 38%;
+  background: currentColor; border-radius: inherit;
+  animation: ba-indet 1150ms cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+}
+@keyframes ba-indet { from { left: -38%; } to { left: 100%; } }

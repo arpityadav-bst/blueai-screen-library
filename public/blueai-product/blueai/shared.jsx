@@ -63,7 +63,13 @@ function ModalOverlay({ isOpen, onClose, title, children }) {
   if (!isOpen) return null;
   return (
     <div onClick={(e) => {if (e.target === e.currentTarget) onClose();}}
-    style={{ position: 'fixed', inset: 0, zIndex: 60, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.5)', padding: '16px 20px 80px' }}>
+    /* ABSOLUTE, not fixed: these are IN-APP modals (job details, schedule, Telegram, Hybrid
+       setup) and they must be scoped to the product window, the way LoginModal / LogoutModal /
+       OutOfCreditsModal already are. It was `fixed` while the page was a single centred card,
+       where the difference didn't show. It shows now: the scene's scaler carries a transform, so
+       a fixed overlay would be positioned against the whole desktop and centre its dialog over
+       the BlueStacks window instead of inside the app. */
+    style={{ position: 'absolute', inset: 0, zIndex: 60, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.5)', padding: '16px 20px 80px' }}>
       <div style={{ position: 'relative', width: '100%', maxWidth: 382, maxHeight: '88vh', overflowY: 'auto', background: 'white', borderRadius: 12, boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }}>
         <div style={{ position: 'sticky', top: 0, zIndex: 10, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', background: 'white', borderBottom: '1px solid #e5e7eb' }}>
           <h2 style={{ fontSize: 18, fontWeight: 600, color: '#111827' }}>{title}</h2>
