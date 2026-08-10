@@ -27,6 +27,33 @@
    next to the loosened hero — raised further to 1.28. */
 .cb-scope h2 { line-height: 1.28; }
 
+/* ── Wordmark: Space Grotesk in display ink, on THIS route only ──
+   The shared .bai-wordmark (globals.css, @layer components) is Bricolage 700 filled with the
+   iris→cyan gradient, and it is genuinely the single source of truth — 11 other files consume it
+   (the marketing site's header and footer, /developer, the hero variants, BaiHome, and two style
+   guide sections that document it as the canonical brand lockup). Editing it there to satisfy
+   this route would silently restyle all of them, including the specimen that describes it.
+
+   Scoped instead. Two consumers here, Header.tsx and Footer.tsx, neither on a dark background,
+   so display ink is safe in both.
+
+   Three declarations are needed to undo a gradient fill, not one: `background: none` removes the
+   gradient, but `-webkit-text-fill-color` is what actually paints webkit glyphs and it is set to
+   transparent upstream — leave it and the wordmark stays invisible no matter what `color` says.
+   background-clip goes back to border-box so nothing is still clipping to the text box.
+
+   --font-head is the hero/section-heading face; --bai-ink-display is the ink those headings use,
+   so the lockup now matches the typography it sits above rather than being the one Bricolage
+   element on the page. Tracking stays at the shared -0.01em. */
+.cb-scope .bai-wordmark {
+  font-family: var(--font-head);
+  background: none;
+  -webkit-background-clip: border-box;
+  background-clip: border-box;
+  -webkit-text-fill-color: var(--bai-ink-display);
+  color: var(--bai-ink-display);
+}
+
 /* Fine paper grain — subtle depth on the canvas, not a texture people notice
    consciously. SVG feTurbulence baked as a data-uri, tiled. */
 .cb-grain {
@@ -95,57 +122,200 @@
 /* Numeric ticker — tabular figures so the earnings estimate doesn't jitter in width */
 .cb-tabular { font-variant-numeric: tabular-nums; }
 
-/* ── Step sequencer — title beat + crossfade (v3) ──
-   .cb-beat: the title's own full screen (v1/v2 also used this for per-step beats; v3
-   crossfades the steps instead — see .cb-seq-pin/.cb-seq-frame below — so this is now
-   title-only, no scroll-snap needed since there's nothing to snap between). */
-.cb-beat {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 4rem 1.5rem;
+/* ── Line-breaking: no orphans, no stub lines ──
+   This is the real mechanism for "nothing should feel orphaned on a line", rather than
+   hand-inserting <br> at widths that only hold for one viewport.
+
+   `balance` on headings: the browser evens out the line lengths across the whole heading,
+   so a 2-line title can't leave one short word stranded on line 2. Capped by browsers at
+   a handful of lines, which is exactly the heading case.
+
+   `pretty` on body copy: the browser looks ahead and avoids leaving a single word on the
+   final line, shifting a word down from the line above instead — precisely the "move the
+   whole line" behaviour wanted here, done at layout time so it stays correct at every
+   width and font size.
+
+   Support note, honestly: `balance` is broad (incl. Firefox). `pretty` is Chromium + Safari;
+   Firefox ignores it today and simply falls back to normal wrapping. That's why the prose
+   itself ALSO binds its final two words with a non-breaking space ( ) — that part works
+   everywhere, and is what guarantees no lone trailing word even without `pretty`. */
+.cb-scope h1,
+.cb-scope h2,
+.cb-scope h3 {
+  text-wrap: balance;
+}
+.cb-scope p,
+.cb-scope li {
+  text-wrap: pretty;
 }
 
-/* .cb-seq-pin is the pinned section GSAP holds in place while the four steps crossfade
-   inside it (StepSequencer.tsx). .cb-seq-frame stacks every step on the exact same spot
-   — position:absolute + inset:0 — so only opacity/scale need to move; nothing reflows
-   mid-fade. min-height MUST be 100vh, not less: the pin anchors at 'top top', so content
-   centered inside a shorter box sits centered on THAT box, not on the viewport — a 78vh
-   box put everything noticeably above true center. */
-.cb-seq-pin {
-  position: relative;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem 1.5rem;
-}
-.cb-seq-frame {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  will-change: opacity, transform;
+/* NOTE: the step section used to be a GSAP-pinned scroll sequencer, and it owned three
+   classes here — .cb-beat (a full-viewport title screen), .cb-seq-pin (the pinned section)
+   and .cb-seq-frame (absolutely stacked step frames that crossfaded in place). All three
+   are gone with it: the steps are now a plain row of cards (StepCards.tsx) using the shared
+   Reveal primitive, so there is nothing to pin, stack or centre against the viewport, and
+   no CSS of their own. Removed rather than left behind — a rule with no consumer is the
+   thing that makes the next reader think a mechanism still exists. */
+
+/* ── Section-title highlight on the DARK closing-CTA bands ──
+   Every section title on both pages carries the logo-gradient accent phrase (globals.css
+   `.text-gradient`, iris #7B4CFF -> cyan #0EA4C5). That gradient is tuned for the light canvas
+   and it does NOT survive the CTA band: the band runs ink-display -> #1D1655 -> iris, so its
+   right half is already almost exactly iris, and the accent phrase sits centred across it. The
+   iris end of the text would be near-invisible against its own colour.
+
+   Same two hues, lifted in luminance, so it reads as the same brand accent while holding
+   contrast on the band. Keep the direction (to bottom right) identical to --bai-gradient so the
+   two treatments are recognisably the same gesture. */
+.cb-text-gradient-dark {
+  background: linear-gradient(to bottom right, #a98bff 0%, #5fd3ec 99%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
 }
 
-/* The glow blob behind each step's image — this is the "transparent WOW" part. The
-   image itself is radial-masked at its own edges (inline style, per-step); this blob
-   sits behind it so the fade-out has something lit to dissolve into, instead of
-   dissolving into flat canvas. Color is set per-step via inline style (--glow). */
-.cb-beat-glow {
-  position: absolute;
-  width: 70vw;
-  height: 70vw;
-  max-width: 640px;
-  max-height: 640px;
-  border-radius: 50%;
-  background: radial-gradient(circle at center, var(--glow, rgba(123, 76, 255, .4)), transparent 70%);
-  filter: blur(64px);
-  opacity: 0.8;
+/* ── Step cards: fixed-width track ──
+   Card width is a fixed clamp, NOT a fraction of the row, so a creators card (3 up) and a
+   brands card (4 up) are literally the same size. That was the requirement and a
+   `grid-cols-3 / grid-cols-4` split cannot meet it: with 1fr columns the 4-up page's cards
+   are always narrower than the 3-up page's. The consequence is that the 4-up track is wider
+   than the viewport, which is exactly what StepCards' horizontal shift exists to handle.
+
+   The gap is wide because the oversized numerals hang into it — and the hang is capped by it,
+   since a numeral crossing into the previous card would paint on top of that card (each card
+   wrapper becomes a stacking context the moment GSAP puts a fractional opacity on it, so the
+   numeral's z-0 can't drop behind an earlier sibling's z-10 card) — that constraint is GONE,
+   see the stacking note in StepCards: the numerals now live in the track's own stacking
+   context, so they paint behind every card and may hang as far left as we like.
+
+   The gap is therefore about breathing room only, not about clearing the numerals. */
+.cb-step-track {
+  --cb-card-w: clamp(300px, 27vw, 440px);
+  gap: 80px;
 }
+.cb-step-card { flex: 0 0 var(--cb-card-w); }
+
+/* The shift viewport. It has to clip HORIZONTALLY — the brands track runs ~400px wider than
+   the viewport, and unclipped that becomes a horizontal scrollbar on the whole page (the route
+   layout deliberately has no overflow-x-clip of its own). But it must NOT clip vertically: the
+   numerals hang ~96px above the cards, and that overhang is the whole point of them.
+
+   `overflow: hidden` cannot express that — and neither can `overflow-x: hidden`, because when
+   one axis is `hidden` the other computes to `auto`, which would both re-clip the numerals and
+   hand the user a scrollbar that can desync from the scripted shift. `clip` is the one value
+   that is allowed to pair with `visible`, so this is the exact declaration that says "crop the
+   sides, let the tops through".
+
+   Clipping here is safe for the pin even though a clip context can capture position:fixed
+   descendants — this element is INSIDE the pinned section, not an ancestor of it.
+
+   `overflow-clip-margin` is what lets the FIRST card's numeral hang left without the track
+   having to reserve layout padding for it. Padding would have worked and did, but it spends the
+   same horizontal budget the cards do — 96px of hang meant 96px of side padding on both ends,
+   which forced the cards ~40px narrower at 1280 to keep the 3-up row fitting. The clip margin
+   moves the paint boundary outward instead and costs no layout at all. */
+.cb-step-viewport {
+  overflow-x: clip;
+  overflow-y: visible;
+  overflow-clip-margin: 140px;
+}
+/* Safari < 16 has no `overflow: clip`. Fall back to clipping both axes: the numerals lose their
+   overhang, which is cosmetic, rather than the page gaining a horizontal scrollbar, which is not. */
+@supports not (overflow: clip) {
+  .cb-step-viewport { overflow: hidden; }
+}
+
+/* Below lg the track isn't a track — cards stack and the sequencer doesn't run at all. */
+@media (max-width: 1023px) {
+  .cb-step-track { flex-direction: column; align-items: center; }
+  .cb-step-card { flex: 0 0 auto; width: 100%; max-width: 440px; }
+}
+
+/* ── Text-field shells: the hero handle lookup + the waitlist email ──
+   Both fields live here rather than in each component, because they are the same control in
+   two colour schemes and they were already drifting: the hero had a focus state and no hover
+   state, the waitlist had neither.
+
+   FOCUS IS NEUTRAL, NOT BRAND. The hero field used `focus-within:border-iris`. A saturated
+   purple ring on a light field reads as a validation state rather than as "the caret is
+   here", and it puts a second helping of brand colour inside a 48px control that already
+   contains a full gradient button. Neutral darkening communicates focus perfectly well, and
+   it's what a text field is supposed to do — the brand colour in this component is the CTA's
+   job, not the border's.
+
+   Three steps, each a real contrast change so hover and focus can't be confused:
+     rest    --bai-divider      #DFE4EE
+     hover   --bai-stroke-warm  #B6B8CD
+     focus   --bai-ink-muted    #434664  + a 4px neutral halo at 6%
+   The halo is what keeps focus unmistakable while staying quiet — it reads as depth rather
+   than as a coloured outline, and it satisfies "visible focus indicator" without shouting.
+
+   PLACEHOLDERS. These were --bai-ink-muted (#434664), which is ~9:1 on white — the same
+   weight as typed text, which is exactly why the hero field looked pre-filled rather than
+   empty. 0.55 alpha on the neutral ink channel lands ~4.2:1: unmistakably lighter than the
+   ink-heading value the user types, still comfortably legible. Derived from --bai-ink-rgb so
+   it tracks the neutral channel instead of hardcoding a grey.
+
+   THREE VARIANTS, because the shells genuinely start from different borders:
+     .cb-field         light, rest --bai-divider      — the hero pill on white
+     .cb-field-strong  light, rest --bai-stroke-warm  — the job-post fields inside a card,
+                                                        which need a firmer rest border to
+                                                        read as fields at all
+     .cb-field-dark    on the closing-CTA band
+   Each is applied either to a WRAPPER (hero, waitlist, the budget affix group) or directly to
+   an <input> (the rest of the job-post form), so every state is declared for both :focus-within
+   and :focus, and placeholders for both `input::placeholder` and bare `::placeholder`.
+   Getting one of those pairs wrong is a silently-dead rule. */
+.cb-field,
+.cb-field-strong,
+.cb-field-dark {
+  transition: border-color 160ms cubic-bezier(0.22, 0.61, 0.36, 1), box-shadow 160ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.cb-field { border-color: var(--bai-divider); }
+.cb-field:hover { border-color: var(--bai-stroke-warm); }
+
+.cb-field-strong { border-color: var(--bai-stroke-warm); }
+/* Rest is already stroke-warm (~0.29 alpha equivalent on white), so hover has to go PAST it
+   to register at all — 0.38 is the smallest step that reads as a change rather than as noise. */
+.cb-field-strong:hover { border-color: rgba(var(--bai-ink-rgb), 0.38); }
+
+.cb-field:focus-within,
+.cb-field:focus,
+.cb-field-strong:focus-within,
+.cb-field-strong:focus {
+  border-color: var(--bai-ink-muted);
+  box-shadow: 0 0 0 4px rgba(var(--bai-ink-rgb), 0.06);
+}
+
+.cb-field::placeholder,
+.cb-field input::placeholder,
+.cb-field-strong::placeholder,
+.cb-field-strong input::placeholder { color: rgba(var(--bai-ink-rgb), 0.55); }
+
+/* The hero's "@" is a prefix AFFIX, not typed content, so it belongs at placeholder weight —
+   same declaration, so the two can't fall out of step and neither hardcodes a grey. */
+.cb-field-affix { color: rgba(var(--bai-ink-rgb), 0.55); }
+
+.cb-field-dark { border-color: rgba(255, 255, 255, 0.18); }
+.cb-field-dark:hover { border-color: rgba(255, 255, 255, 0.3); }
+.cb-field-dark:focus-within,
+.cb-field-dark:focus {
+  border-color: rgba(255, 255, 255, 0.55);
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.08);
+}
+.cb-field-dark::placeholder,
+.cb-field-dark input::placeholder { color: rgba(255, 255, 255, 0.45); }
+
+/* NOTE: the closing-CTA bands' receding grid used to live here as .cb-cta-plane — two
+   background-gradient planes rotated in 3-D with perspective. It is computed geometry in
+   CTAGrid.tsx now, because with a 3D rotation the paint's real extent depends non-linearly on
+   the plane height, the rotation angle, the perspective distance AND the band's own measured
+   height. Three attempts each broke a different axis: faint horizontals (cos(78deg) squashed a
+   1px line to 0.21px), then two stripes (a 132px row pitch left ~2 rows in a 310px plane), then
+   both planes overlapping straight across the copy (619px planes inside a 387px band). All of
+   those rules are deleted rather than left behind; see CTAGrid.tsx for the full account. */
 
 /* Scan-bar sweep used by the handle-lookup "reading…" state */
 @keyframes cb-scan {

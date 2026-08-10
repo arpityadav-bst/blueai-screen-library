@@ -15,12 +15,17 @@ export default function JobsPreview() {
   return (
     <section id="jobs" className="relative px-6 py-24">
       <div className="mx-auto max-w-content">
-        <Reveal>
-          <h2 className="font-head text-3xl font-bold text-ink-display sm:text-4xl">
-            Real brands. Real budgets. Open right now.
+        <Reveal className="text-center">
+          <h2 className="mx-auto max-w-[26ch] font-head text-3xl font-bold text-ink-display sm:text-4xl">
+            Real brands. Real budgets.
+            <span className="block text-gradient italic pr-[0.2em]">Open right now.</span>
           </h2>
-          <p className="bai-body mt-4 max-w-[56ch] text-ink-body-2">
-            Every job pays a flat rate, and only reaches you if it fits what you already watch.
+          {/* bai-body-lg (16px), not bai-body (14px). At 14px a section's lead paragraph was
+              the same size as the body text inside cards, so there was no hierarchy between
+              "what this section is about" and "a detail inside one card". 16px also matches
+              the hero and step leads, which were already bai-body-lg. */}
+          <p className="bai-body-lg mx-auto mt-4 max-w-[56ch] text-ink-body-2">
+            Every job pays a flat rate, and only reaches you if it fits what you already watch.
           </p>
         </Reveal>
 
@@ -85,7 +90,7 @@ export default function JobsPreview() {
 
         <Reveal className="mt-6 flex flex-col items-center gap-3 text-center">
           <p className="text-[14px] text-ink-body-2">
-            This is a live preview of the board — you&apos;ll be able to accept jobs once BlueAI opens.
+            This is a live preview of the board. You&apos;ll be able to accept jobs once BlueAI opens.
           </p>
           <CBLinkButton href="#waitlist" size="lg">Join the waitlist to unlock jobs</CBLinkButton>
         </Reveal>

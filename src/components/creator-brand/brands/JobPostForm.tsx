@@ -14,13 +14,18 @@ export default function JobPostForm() {
   return (
     <section id="post-a-job" className="px-6 py-24">
       <div className="mx-auto max-w-content grid gap-12 lg:grid-cols-[0.85fr_1.15fr]">
-        <Reveal>
+        {/* Centred like every other section header. Note this one is NOT a full-width
+            section header — it's the left column of a 2-up split with the form on the
+            right — so it centres within that column, not the page. */}
+        <Reveal className="text-center lg:text-left">
           <h2 className="font-head text-3xl font-bold text-ink-display sm:text-4xl">
-            Set the terms once. BlueAI runs it from there.
+            Set the terms once.
+            <span className="block text-gradient italic pr-[0.2em]">BlueAI runs the rest.</span>
           </h2>
-          <p className="bai-body mt-4 text-ink-body-2">
-            Nothing is charged when you post this — you&apos;re only defining the job so BlueAI can
-            start matching creators to it the moment we launch.
+          {/* bai-body-lg (16px) — see the note in HowItWorksBrand.tsx. */}
+          <p className="bai-body-lg mt-4 text-ink-body-2">
+            Nothing is charged now. You&apos;re only defining the job, so BlueAI can start matching
+            creators the moment we launch.
           </p>
         </Reveal>
 
@@ -30,7 +35,7 @@ export default function JobPostForm() {
               <h3 className="font-head text-[22px] font-semibold text-ink-display">Your job is queued.</h3>
               <p className="mx-auto mt-2 max-w-[38ch] text-[14px] text-ink-body-2">
                 BlueAI will start matching creators to it the moment jobs go live. We&apos;ll email
-                you as soon as it&apos;s running.
+                you as soon as it&apos;s running.
               </p>
             </div>
           ) : (
@@ -46,7 +51,7 @@ export default function JobPostForm() {
                 <input
                   required
                   placeholder="e.g. Fernweh Coffee"
-                  className="mt-1 w-full rounded-field border border-stroke-warm px-3 py-2.5 text-[14px] outline-none focus:border-iris"
+                  className="mt-1 cb-field-strong w-full rounded-field border px-3 py-2.5 text-[14px] outline-none"
                 />
               </label>
 
@@ -55,7 +60,7 @@ export default function JobPostForm() {
                 <input
                   required
                   placeholder="e.g. awareness for our new product launch"
-                  className="mt-1 w-full rounded-field border border-stroke-warm px-3 py-2.5 text-[14px] outline-none focus:border-iris"
+                  className="mt-1 cb-field-strong w-full rounded-field border px-3 py-2.5 text-[14px] outline-none"
                 />
               </label>
 
@@ -65,13 +70,13 @@ export default function JobPostForm() {
                   required
                   type="url"
                   placeholder="https://youtube.com/watch?v=…"
-                  className="mt-1 w-full rounded-field border border-stroke-warm px-3 py-2.5 text-[14px] outline-none focus:border-iris"
+                  className="mt-1 cb-field-strong w-full rounded-field border px-3 py-2.5 text-[14px] outline-none"
                 />
               </label>
 
               <label className="mt-4 block">
                 <span className="text-[12px] font-medium text-ink-muted">Total budget</span>
-                <div className="mt-1 flex items-center rounded-field border border-stroke-warm px-3 focus-within:border-iris">
+                <div className="mt-1 cb-field-strong flex items-center rounded-field border px-3">
                   <span className="text-[14px] text-ink-muted">$</span>
                   <input
                     required
@@ -91,17 +96,17 @@ export default function JobPostForm() {
               <div className="mt-4 grid grid-cols-2 gap-3">
                 <label className="block">
                   <span className="text-[12px] font-medium text-ink-muted">Start date</span>
-                  <input required type="date" className="mt-1 w-full rounded-field border border-stroke-warm px-3 py-2.5 text-[14px] outline-none focus:border-iris" />
+                  <input required type="date" className="mt-1 cb-field-strong w-full rounded-field border px-3 py-2.5 text-[14px] outline-none" />
                 </label>
                 <label className="block">
                   <span className="text-[12px] font-medium text-ink-muted">End date</span>
-                  <input required type="date" className="mt-1 w-full rounded-field border border-stroke-warm px-3 py-2.5 text-[14px] outline-none focus:border-iris" />
+                  <input required type="date" className="mt-1 cb-field-strong w-full rounded-field border px-3 py-2.5 text-[14px] outline-none" />
                 </label>
               </div>
 
               <label className="mt-4 block">
                 <span className="text-[12px] font-medium text-ink-muted">Where should we send updates?</span>
-                <input required type="email" placeholder="you@brand.com" className="mt-1 w-full rounded-field border border-stroke-warm px-3 py-2.5 text-[14px] outline-none focus:border-iris" />
+                <input required type="email" placeholder="you@brand.com" className="mt-1 cb-field-strong w-full rounded-field border px-3 py-2.5 text-[14px] outline-none" />
               </label>
 
               <button
@@ -110,7 +115,7 @@ export default function JobPostForm() {
               >
                 Post this job
               </button>
-              <p className="text-center text-[12px] text-ink-muted">No payment happens now — you&apos;re only defining the job.</p>
+              <p className="text-center text-[12px] text-ink-muted">No payment happens now. You&apos;re only defining the job.</p>
             </form>
           )}
         </Reveal>

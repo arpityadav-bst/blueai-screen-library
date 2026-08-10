@@ -59,7 +59,7 @@ export default function EarningsReveal({ estimate, handleLabel }: { estimate: Es
         </div>
         <p className="mt-2 text-[12px] text-ink-muted">
           A flat rate per YouTube job, plus a reach bonus based on your following. Real
-          payouts depend on the jobs available.
+          payouts depend on the jobs available.
         </p>
       </div>
 

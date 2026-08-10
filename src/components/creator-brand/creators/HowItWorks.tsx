@@ -1,59 +1,64 @@
-import Reveal from '../Reveal'
-import StepSequencer, { type SequencerStep } from '../StepSequencer'
-import CommentApprovalDemo from './CommentApprovalDemo'
+import StepCards, { type Step } from '../StepCards'
 
-// Step art: abstract glass objects, generated to match the hero PNGs' material language
-// (translucent, iris/cyan/blue inner light, near-white ground). Deliberately carries no
-// text, labels or UI of any kind — anything legible baked into a raster can't be edited
-// later, which is exactly how the previous hero art ended up asserting things the copy
-// had already been corrected to stop saying. `glow` is the color behind each image in
-// its own beat — always one of the on-brand hues, never an arbitrary one.
-const STEPS: SequencerStep[] = [
+// Step art: designer-supplied set, used EXACTLY as delivered — no background cut, no
+// rescaling, no mask, no weight normalisation. All of that machinery existed to make an
+// opaque near-white raster sit convincingly on open page background; inside a card the
+// image is full-bleed against the card's own edge, so there is no floating box to
+// disguise and nothing to correct. Filenames are the designer's own rather than the old
+// step0N-* numbering, which had drifted out of step with the steps themselves.
+//
+// CAVEAT ON THE ART, not on the code: several of these illustrations draw the engagement
+// mechanics as icons (an eye, a heart, a speech bubble, a repost arrow). The copy on both
+// pages was deliberately reworked to stop enumerating those, and a raster asserts them just
+// as much as a sentence while being much harder to change later. The alt text below
+// describes what is drawn WITHOUT re-enumerating them, which is the only part of this that
+// code can fix.
+const STEPS: Step[] = [
   {
     n: '01',
-    title: 'Paste your handle',
-    body: 'BlueAI reads your channel in seconds. No application, no waiting on a reply.',
-    img: '/creator-brand/steps/step01-read.png',
-    alt: 'A glass sphere with a ring of light passing through it, suggesting a channel being read.',
-    glow: 'rgba(123, 76, 255, .38)', // iris
+    title: 'Accept a job that fits',
+    // Was two parenthetical em dashes wrapping a middle clause. Split into two sentences
+    // instead: the aside was doing real work and deserved to be a statement, not an
+    // interruption.
+    //
+    // Then trimmed from 184 to ~137 characters to match the other two bodies' line count.
+    // Two clauses went, and neither is load-bearing HERE: "if you're new" is already implied
+    // by "a few quick questions", and "and you still decide" is said twice over by this
+    // card's own title ("Accept a job that fits") and the section heading ("You say yes
+    // once"). The mechanism — how BlueAI knows your taste — is the part worth the characters,
+    // so it stayed.
+    body: 'BlueAI already knows what you’re into, from your watch history or a few quick questions. So every job it shows is one you’d actually watch.',
+    img: '/creator-brand/steps/creator-02-accept-job.png',
+    alt: 'A person smiling behind three floating glass product cards, reaching toward the middle one, which carries a checkmark.',
   },
   {
     n: '02',
-    title: 'Accept a job that fits',
-    body: 'BlueAI already knows what you’re into — from your watch history, or a few quick questions if you’re new — so every job it shows fits what you’d actually watch. You still decide.',
-    img: '/creator-brand/steps/step02-match.png',
-    alt: 'Many small glass spheres settling into one connected lattice.',
-    glow: 'rgba(14, 164, 197, .38)', // cyan
+    title: 'BlueAI takes it from there',
+    // "toward your payout" is added length that does real work: it's the hinge into step 03,
+    // and it brings this body up to the same line count as its neighbours rather than
+    // padding it with filler to get there.
+    body: 'It handles the brand’s video on your account from start to finish, then verifies the work before it counts toward your payout.',
+    img: '/creator-brand/steps/creator-03-blueai-takes-over.png',
+    alt: 'A person sitting back with a mug while glass panels float in front of them around a video panel, each panel marked with a checkmark.',
   },
   {
     n: '03',
-    title: 'BlueAI takes it from there',
-    body: 'It handles the brand’s video on your account from start to finish, then verifies everything before it counts.',
-    img: '/creator-brand/steps/step03-run.png',
-    alt: 'A glass prism splitting a single beam of light into clean rays.',
-    glow: 'rgba(47, 109, 255, .38)', // mkt-blue
-  },
-  {
-    n: '04',
     title: 'Get paid, on repeat',
-    body: 'You get paid once it clears, and BlueAI schedules the next cycle automatically — no re-accepting anything.',
-    img: '/creator-brand/steps/step04-paid.png',
-    alt: 'A stack of glass discs accumulating upward with a warm glow at the base.',
-    glow: 'rgba(107, 83, 255, .38)', // cta-gradient midpoint
+    body: 'You get paid once the work clears, and BlueAI schedules the next cycle automatically. There’s nothing for you to re-accept.',
+    img: '/creator-brand/steps/creator-04-get-paid.png',
+    alt: 'A person holding a phone behind floating glass cards of stacked parcels, with a glowing wallet resting below them.',
   },
 ]
 
 export default function HowItWorks() {
   return (
     <section id="how-it-works">
-      <StepSequencer
-        // Was "BlueAI takes it from there" — the exact same sentence as step 03, ~200px
-        // below it. Reworded so the section heading and the step title stop colliding.
-        // Accent phrase on its OWN line rather than trailing inline: at hero scale, an
-        // italic gradient span crowding the end of a line is exactly what clipped
+      <StepCards
+        // Was "BlueAI takes it from there" — the exact same sentence as step 02, a few
+        // hundred px below it. Reworded so the section heading and the step title stop
+        // colliding. Accent phrase on its OWN line rather than trailing inline: at this
+        // scale an italic gradient span crowding the end of a line is what clipped
         // descenders on the hero H1 before pr-[0.2em] + a looser line-height fixed it.
-        // Own line removes the crowding outright; pr-[0.2em] is kept as the same
-        // established safety margin, not because this exact phrase has a descender.
         heading={
           <>
             You say yes once.
@@ -62,29 +67,6 @@ export default function HowItWorks() {
         }
         steps={STEPS}
       />
-
-      {/* Kept as its own beat AFTER the sequence rather than folded into step 04. It's
-          the strongest trust artifact on the page — a real, visible mechanic — and it
-          gets more attention standing alone than as the tail of someone else's list.
-          Deliberately NOT a .cb-beat: this is reference material you read, not a moment
-          you arrive at, so it stays in normal flow. */}
-      <div className="px-6 pb-24 pt-4">
-        <div className="mx-auto grid max-w-content items-center gap-8 lg:grid-cols-2 lg:gap-14">
-          <Reveal>
-            <h3 className="font-head text-[24px] font-semibold text-ink-display sm:text-[28px]">
-              You&apos;re always in the loop.
-            </h3>
-            <p className="bai-body mt-3 max-w-[48ch] text-ink-body-2">
-              Every comment BlueAI wants to post shows up on your screen first, before it goes out
-              under your name. Approve it, edit it, or switch on auto-approve if you&apos;d rather not
-              be asked every time.
-            </p>
-          </Reveal>
-          <Reveal delay={0.1}>
-            <CommentApprovalDemo />
-          </Reveal>
-        </div>
-      </div>
     </section>
   )
 }

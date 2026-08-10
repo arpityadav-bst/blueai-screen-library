@@ -6,22 +6,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Wordmark } from '@/components/Wordmark'
 import { Arrow } from '@/components/Arrow'
 import { Sparkle } from '@/components/Sparkle'
-
-const NAV: Record<'creators' | 'brands', { label: string; href: string }[]> = {
-  creators: [
-    { label: 'How it works', href: '#how-it-works' },
-    { label: 'Open jobs', href: '#jobs' },
-    { label: 'Platforms', href: '#platforms' },
-    { label: 'FAQ', href: '#faq' },
-  ],
-  brands: [
-    { label: 'How it works', href: '#how-it-works' },
-    { label: 'Platforms', href: '#platforms' },
-    { label: 'Pricing', href: '#pricing' },
-    { label: 'Post a job', href: '#post-a-job' },
-    { label: 'FAQ', href: '#faq' },
-  ],
-}
+import { NAV } from './nav'
 
 export default function Header() {
   const pathname = usePathname()

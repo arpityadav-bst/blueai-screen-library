@@ -69,7 +69,7 @@ export default function Hero() {
           </h1>
           <p className="bai-body-lg mx-auto mt-5 max-w-[640px]">
             BlueAI matches you to a real brand job that fits your interests, handles it on your
-            account end to end, and pays you once it&apos;s verified.
+            account end to end, and pays you once it&apos;s verified.
           </p>
         </Reveal>
 

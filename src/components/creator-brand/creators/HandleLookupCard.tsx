@@ -58,14 +58,20 @@ export default function HandleLookupCard() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="shadow-hairline flex items-stretch rounded-pill border border-divider bg-white pl-4 focus-within:border-iris"
+      // cb-field owns border colour + hover + focus + placeholder (creator-brand.css). The
+      // border-colour utility and `focus-within:border-iris` are gone from here on purpose —
+      // see that rule for why focus is neutral rather than brand-purple.
+      className="cb-field shadow-hairline flex items-stretch rounded-pill border bg-white pl-4"
     >
-      <span className="flex items-center text-[14px] text-ink-muted">@</span>
+      {/* The @ is a prefix affix, not content — it should sit at placeholder weight while the
+          field is empty and not compete with what gets typed after it. */}
+      <span className="cb-field-affix flex items-center text-[14px]">@</span>
       <input
         value={handle}
         onChange={(e) => setHandle(e.target.value)}
         placeholder="yourchannel"
-        className="w-full bg-transparent py-3.5 pl-1.5 pr-2 text-[14px] text-ink-heading outline-none placeholder:text-ink-muted"
+        // No placeholder: utility here — cb-field sets it, and a utility would outrank it.
+        className="w-full bg-transparent py-3.5 pl-1.5 pr-2 text-[14px] text-ink-heading outline-none"
       />
       <button
         type="submit"

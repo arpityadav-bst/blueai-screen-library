@@ -14,7 +14,7 @@ const EDGE_CARDS = [
   { text: 'No PR team, no outreach, no briefs', side: 'left' as const, top: 150, offset: 6, rot: -2, scale: 1 },
   { text: 'Thousands of real accounts, not one big ad', side: 'left' as const, top: 240, offset: -14, rot: -5, scale: 0.9 },
   { text: 'Posting a job costs nothing upfront', side: 'left' as const, top: 330, offset: 2, rot: -3, scale: 0.96 },
-  { text: 'Set a budget and a window — that’s it', side: 'left' as const, top: 420, offset: -18, rot: -6, scale: 0.9 },
+  { text: 'Set a budget and a window, that’s it', side: 'left' as const, top: 420, offset: -18, rot: -6, scale: 0.9 },
   { text: 'Every engagement verified before it counts', side: 'right' as const, top: 60, offset: -14, rot: 7, scale: 0.94 },
   { text: 'Watch results roll in live', side: 'right' as const, top: 150, offset: 4, rot: 2, scale: 1 },
   { text: 'Creators matched to your niche', side: 'right' as const, top: 240, offset: -16, rot: 5, scale: 0.9 },
@@ -65,8 +65,8 @@ export default function Hero() {
             An AI that turns your budget <span className="text-gradient italic inline-block pr-[0.2em]">into real reach.</span>
           </h1>
           <p className="bai-body-lg mx-auto mt-5 max-w-[640px]">
-            Set your goal and your budget — BlueAI matches thousands of real people who
-            genuinely engage with your video, verifies every interaction, and pays them for you, automatically.
+            Set your goal and your budget. BlueAI matches thousands of real people who genuinely
+            engage with your video, verifies every interaction, and pays them for you, automatically.
           </p>
         </Reveal>
 

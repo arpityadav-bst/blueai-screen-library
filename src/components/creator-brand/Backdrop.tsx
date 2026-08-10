@@ -23,11 +23,17 @@ export default function Backdrop() {
   const reduce = useReducedMotion()
   const { scrollYProgress: p, scrollY } = useScroll()
 
-  // THE HERO IS OFF LIMITS. Both heroes are signed off, and this layer is mounted in the
-  // route layout, so without a gate it renders behind them too and quietly changes
-  // finished work. It stays at opacity 0 for the whole hero and only fades in as the hero
-  // leaves — measured off #hero rather than a guessed scroll distance, because the two
-  // heroes aren't the same height and neither is a phone.
+  // THE HERO IS OFF LIMITS — and it is the ONLY thing that is. Both heroes are signed off,
+  // and this layer is mounted in the route layout, so without a gate it renders behind them
+  // too and quietly changes finished work. It stays at opacity 0 for the whole hero and only
+  // fades in as the hero leaves — measured off #hero rather than a guessed scroll distance,
+  // because the two heroes aren't the same height and neither is a phone.
+  //
+  // It was briefly also gated OFF across #how-it-works, when the step art was alpha-cut and
+  // a drifting colour field showed straight through the illustrations. That reason died with
+  // the cut: the cards are opaque surfaces, so the backdrop sits behind them the way it sits
+  // behind every other section, and it should. Don't re-add a per-section gate here without
+  // one — the layer is the page's room, and holes in it read as the room flickering.
   const [heroEnd, setHeroEnd] = useState(0)
   useEffect(() => {
     const hero = document.getElementById('hero')
