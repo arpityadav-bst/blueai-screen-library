@@ -87,8 +87,12 @@ Those two trees are the active surface, bootstrap or no bootstrap.
 5. `visual-designer/reasonings.md` — the principles behind the rules; this is what makes a NEW
    situation decidable rather than only a repeat one
 6. `visual-designer/project-insights.md` — the FACTS file. For blueai-desktop, read the **layout
-   system** section: the 290px floor, the deliberate 14px/12px list-vs-subpane gutter split, the
-   264px form content width, and the node-relocation rule. A 2026-08-03 defect (a wrapper
+   system** section: the 290px floor, the unified 15px gutter, the 260px form content width, and the
+   node-relocation rule. **Do not carry numbers out of this line — read the file.** This line said
+   "the deliberate 14px/12px list-vs-subpane gutter split, the 264px form content width" until
+   2026-08-11, when the designer unified the gutter and that narrowed the form to 260px; both figures
+   were then wrong in the very instruction telling a session to go learn them. The form width has now
+   been revised four times. A 2026-08-03 defect (a wrapper
    double-paying a gutter) existed partly because these numbers were written nowhere a session reads.
 7. `visual-designer/knowledge-base.md` — accumulated traps. Read the **blueai-desktop traps**
    section at the bottom; everything above it is the dormant marketing site.
@@ -269,10 +273,23 @@ down. The failure mode is rules phrased so narrowly they only match their own or
   the same `--bai-*` namespace with completely different values. The scoping is what stops them
   colliding. Do not hoist them to `:root`, and do not assume a `--bai-*` name means the same
   thing in both products.
-- Local preview: the workspace-root `../.claude/launch.json`'s `blueai-desktop` config (NOT
-  `blueai/.claude/`, which does not exist) (`python -m http.server 8410
-  --directory blueai/public`) → `http://localhost:8410/blueai-desktop/index.html`. Note: this
-  server drops between sessions fairly often — check it before concluding something's broken.
+- **Local preview + WHERE THIS SURFACE IS EDITED (changed 2026-08-11 — read this before opening a file).**
+  blueai-desktop now lives in its own git worktree: **`N:\Antigravity Main\blueai-worktrees\blueai-desktop\`**
+  on branch `blueai-desktop/work`. The shared `blueai\` checkout stays on `main` and is used by OTHER
+  concurrent sessions (`/creator-brand`, `/blueai-product`, each in its own worktree too) — **do not edit
+  `blueai\public\blueai-desktop\**` or `blueai\visual-designer\**` by hand**; that copy is frozen at whatever
+  was last pushed and will silently drift.
+  The preview config is still the workspace-root `../.claude/launch.json`'s `blueai-desktop` entry (NOT
+  `blueai/.claude/`, which does not exist), but it now runs `scripts/nocache_static_server.py 8410
+  --directory blueai-worktrees/blueai-desktop/public` → `http://localhost:8410/blueai-desktop/index.html`.
+  Two things that have each cost real time: the server drops between sessions fairly often (check it before
+  concluding something's broken), and **`python -m http.server` sends no cache headers**, which is why the
+  custom no-cache server exists — the plain one served a frozen CSS snapshot through full restarts.
+  **Verify the server serves the tree you are editing, don't assume** — byte-compare a served file against
+  the worktree copy. Editing one directory while serving another has produced clean-looking lies twice.
+  Ship with `git push origin blueai-desktop/work:main` (a fast-forward straight from the branch); never
+  `git checkout main` locally, which is what disturbs the other sessions. Fetch first — the shared
+  checkout's local `main` runs behind `origin/main` by design under this pattern.
 - Design-system docs: `style-guide.html` (built 2026-08-01) — foundations (tokens, live-tallied
   type/radius scales, the icon set) + sections across shell, components and full-screen
   states, house conventions, and a **self-measured** coverage figure computed at load rather than

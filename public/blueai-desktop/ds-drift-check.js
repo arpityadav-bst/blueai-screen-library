@@ -500,11 +500,13 @@ section('12. COMPONENT FAMILIES (shared treatment = shared rule, never a comment
 {
   // family -> [members, properties the base rule owns]
   const FAMILIES = [
-    {
-      name: 'secondary action (accent-wash row)',
-      members: ['.bai-upload-row', '.bai-sched-newrow'],
-      props: ['background', 'border', 'color', 'font-weight', 'font-family', 'font-size', 'transition', 'gap', 'display', 'align-items', 'cursor'],
-    },
+    // RETIRED 2026-08-04 — 'secondary action (accent-wash row)', members .bai-upload-row +
+    // .bai-sched-newrow. Schedule's create affordance became a docked full-width bar (PM requirement), so
+    // .bai-sched-newrow no longer exists and the pair is down to one member. Removed rather than left with a
+    // single member, because a one-member family passes vacuously: §12 would keep printing a reassuring OK
+    // about a shared treatment that has nothing left to share. §7 is what caught the orphan — it reported
+    // .bai-sched-newrow as dead CSS while §12 still called the family healthy, which is worth remembering:
+    // a family entry is only as alive as its members, and §12 does not check that they still exist.
     {
       // Declared 2026-08-03. The Scheduled form stacks THREE pick-one controls (Execution Mode, Repeat
       // Type, Select Days) and the style guide asserts in prose that "selected reads the same everywhere
@@ -514,6 +516,24 @@ section('12. COMPONENT FAMILIES (shared treatment = shared rule, never a comment
       name: 'selected state (accent fill, inverted ink)',
       members: ['.bai-seg-btn.active', '.bai-daychip.on'],
       props: ['background', 'color'],
+    },
+    {
+      // Declared 2026-08-11 on the designer's ruling: "we should use the hybrid AI popup one for popups and
+      // the plain-text no-border-no-fill grey one in forms." That settles a THREE-way split into two roles —
+      // outlined for popups/settings (this family), plain text for inline forms (.bai-newitem-cancel, which
+      // is deliberately NOT a member: it is the other role, not a variant of this one). The filled-pill
+      // treatment .bai-dialog-cancel used to carry is retired.
+      // Only the fill actually differed between the two members before this — border, colour, weight and
+      // radius already matched, which is precisely the situation that drifts silently: two rules that agree
+      // today with nothing holding them together. `font-weight` is a family prop because both members are
+      // secondary actions that must not read as primary; SIZING is not, because .bai-set-btn is sized by its
+      // own padding while .bai-dialog-cancel is stretched by `.bai-dialog-actions button { flex: 1 }` — a
+      // role-justified difference, stated at each rule.
+      // NOTE for whoever adds a member: `.bai-set-btn.primary/.danger/.hero` are variants OF a member, not
+      // members — they override family props on purpose and must never be listed here.
+      name: 'secondary action (outlined, neutral fill)',
+      members: ['.bai-set-btn', '.bai-dialog-cancel'],
+      props: ['border', 'background', 'color', 'font-weight'],
     },
   ];
   const cssNoComments = CSS.replace(/\/\*[\s\S]*?\*\//g, '');

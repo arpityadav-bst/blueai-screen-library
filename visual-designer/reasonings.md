@@ -1,5 +1,7 @@
 # blueAI — Reasonings
-Last updated: 2026-08-04 (+2 principles: "a philosophy applied in one theme/mode and left out of the other
+Last updated: 2026-08-11 (+6 principles: content-pacing-as-designer-not-generator, reassurance-must-match-state,
+a-rejection-must-be-re-tested, persistent-vs-transient rule scope, one-glance state legibility on transient
+surfaces, and a shared rule's hidden sibling-dependency — Session 17. Earlier: 2026-08-04 (+2 principles: "a philosophy applied in one theme/mode and left out of the other
 isn't applied" and "before painting over something that looks empty, check what relies on it staying that
 way"; widened "match the fix to the surface's role" (adjacency is a family too) and "anything I can write
 from imagination…" (external product precedent is the same risk class as an internal spec) with fresh
@@ -328,5 +330,103 @@ to make opaque; it's only evidence that nothing is declared to stop you. **Sibli
 CHECK sees enough; this checks whether a CHANGE reaches further than what was verified — a fix that only
 confirms the property it touched (background color) can still break a property it never thought to look
 at (what renders behind that background).
+
+## Scripted content that reads as a template is a pacing bug, not a content bug
+
+A multi-step flow with uniform line lengths and evenly-spaced pauses reads as a template being filled in,
+even when every line is individually well-written — the UNIFORMITY itself is the tell, independent of the
+words. "plan my day" produced exactly one reply for one message, then five, and the fix that made it read
+as real work wasn't better copy on any one line — it was varying line length and pause duration across the
+sequence (a two-word beat, a sentence that has to explain something, a short result) so the rhythm itself
+stopped signalling "generated."
+
+**How to apply:** when authoring any multi-step scripted content (a demo flow, a chain of status updates,
+a sequence of onboarding messages), audit the SHAPE of the sequence, not just each line's wording — same
+length + same cadence across 3+ steps is itself a defect, the same way a uniform icon-button aspect is a
+defect independent of which icon it is (taste rule 48's sibling principle, one level up from CSS).
+
+## Reassurance copy is only reassurance if the thing it reassures about currently exists
+
+A sentence that is TRUE IN GENERAL ("signing out won't stop your scheduled tasks") can be FALSE IN THIS
+STATE (there are no scheduled tasks) — and copy that states a general truth without checking the specific
+state doesn't just fail to reassure, it actively misleads: the user goes looking for the tasks the sentence
+implied exist. This is a distinct failure from ordinary copy inaccuracy, because the sentence was never
+factually wrong in the abstract — it was written for the common case and never re-checked against the
+actual data at render time.
+
+**How to apply:** any copy that names a consequence, a count, or an object ("your X will Y") must be
+verified against the LIVE state that renders it, not assumed true because it usually is. If the object can
+be empty/zero, write the empty-case sentence explicitly rather than letting the general sentence render
+over nothing.
+
+## A rejection reasoned as "X is impossible" must be re-tested before the next session inherits it as fact
+
+A design decision that REMOVES a mechanism on the grounds that a constraint makes it impossible carries a
+premise, and that premise can be wrong even when the decision that followed from it felt careful. Schedule's
+empty-state create button was deleted with the stated reasoning "a permanently-docked bar cannot swap" —
+which was simply false; nothing prevents a docked bar from hiding. The decision READ as principled (it
+cited rule 38, named a mechanism, gave a reason) while resting on an unverified claim about what CSS/JS can
+do.
+
+**How to apply:** when a past decision's stated reason is "X is impossible" or "X cannot Y," that clause is
+a claim, not a fact, and claims about mechanism (not taste) are cheap to re-test. Before inheriting a prior
+rejection as settled, ask specifically: is the stated impossibility actually true, or was it true of the
+IMPLEMENTATION at the time (a permanent bar) rather than the MECHANISM in general (a bar, full stop)? This
+is the mirror case to *"a measured constraint inherits the wrongness of whatever produced the measurement"*
+(above) — that principle is about a NUMBER staying attached to an expired subject; this one is about a
+REJECTION staying attached to an expired argument.
+
+## A rule scoped to a PERSISTENT surface does not automatically transfer to a TRANSIENT one
+
+"No auto-dismiss timer, close button only" was the right call for a card the user reads at their own
+pace — a timer there would half-duplicate the close button (rule 38's mechanism: two ways to end the same
+state is one too many). The same reasoning, applied unchanged to a REDESIGNED version of that surface as a
+transient top banner, would have been wrong: a banner whose entire premise is announce-then-leave needs a
+timer, and the close button becomes the early-exit rather than the only exit. Same component's job, same
+underlying event (credits arrived), but the surface's LIFETIME changed — persistent vs. transient — and
+that is exactly the kind of change Gate 6.5's rule-conflict cross-check exists to catch before an old rule
+gets silently reapplied to a new shape.
+
+**How to apply:** before reapplying a codified rule to a redesigned or repurposed surface, name what the
+rule's justification actually depended on. If it depended on the surface's LIFETIME (read-at-leisure vs.
+glance-and-gone), re-derive the rule for the new lifetime rather than inheriting the old value. *Sibling to*
+the rule-conflict cross-check itself (QUALITY-GATES.md Gate 6.5) — this is the specific shape that check
+takes when the axis that changed is how long the surface stays on screen.
+
+## A transient surface needs its state legible in ONE glance — a single faint channel is not enough
+
+A reward toast and an alert toast were structurally identical apart from a 22px icon's fill colour — and
+that fill was a 16% wash, faint by design (the same recipe an independent review had already measured at
+~1.25:1 on a white card). Asked directly whether the two "look delightful," the honest answer named the
+real gap: state was carried by exactly one channel, and that channel was weak. A card the user can linger
+on can afford a subtle signal; a banner that is gone in 2.5–4 seconds cannot — it has to read correctly in
+peripheral vision on the first frame, not on close inspection.
+
+**How to apply:** for any surface with a short, uncontrolled lifespan (a toast, a flash message, anything
+that can vanish before the user finishes looking), audit how many channels carry its most important
+distinction and how strong each one is. If the answer is "one, and it's a 15% colour wash," add a second,
+stronger channel — reuse whatever idiom this app already uses for state elsewhere (here: a coloured
+border, already established on buttons at 40% strength) rather than inventing a new one. This is the
+mirror case to rule 41 ("a distinction already carried by a non-layout channel must not be RE-encoded") —
+41 is about too many channels stacking redundantly; this is about too few, and too weak, on a surface that
+gets exactly one chance to be read.
+
+## A shared rule's correctness can depend on an assumed sibling that isn't present at every call site
+
+`.bai-list-body`'s 2px top padding is not a complete value — it was calibrated on the assumption that a
+`.bai-list-head` toolbar sits above it and supplies the other 9px of the real gap itself. That assumption
+was true everywhere the rule had been used (Skills), so nothing exposed it until a NEW call site (Schedule)
+reused the same class with no toolbar above it, and inherited half a gap with no way to know the other half
+was missing. The rule read as self-contained CSS; it was actually one half of a two-part contract with an
+unstated partner element.
+
+**How to apply:** before reusing a shared class/rule in a new context, ask not just "does this value look
+right here" but "was this value derived assuming something ELSE is also present, and is that something
+actually here?" This is the sibling-anatomy question (Gate 2.2) run in the other direction — 2.2 asks
+whether a NEW surface should inherit an existing sibling's anatomy; this asks whether an EXISTING shared
+rule secretly depends on a sibling that a new call site doesn't have. *Where else this applies:* any
+padding/margin pair split across a parent and a expected-but-optional child (a card's own gap assuming a
+header row; a form's field spacing assuming a label is always present); any two-part visual contract where
+one half is a class and the other half is "whatever else happens to be in the DOM."
 
 *(New entries accumulate at audit passes.)*
