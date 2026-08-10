@@ -39,35 +39,37 @@ the audit had no style-guide backlog to sweep — two documentation gaps found d
 fixed then: the toast's prose was stale after the last two critique rounds, and the Preview panel's `-stacked`
 row variant had never been specimen'd despite predating this session.)*
 
---- Designer's call — OPEN, carried forward (do NOT wipe without a decision) ---
+--- Designer's call — ALL FOUR RESOLVED 2026-08-11. Nothing open here. ---
 
-These are unresolved questions, not pending promotions. Per the Session-15 rule, anything still undecided at an
-audit goes to a permanent file rather than the next scratchpad — but these three are all narrow, live, and
-attached to code touched this session, so they are held here with an explicit carry-forward marker instead.
+> **This section previously read "OPEN, carried forward (do NOT wipe without a decision)" and listed four live
+> questions. The designer decided every one of them on 2026-08-11 and this section was not updated** — so a
+> future session would have read a do-not-wipe marker, believed four settled questions were still open, and
+> re-raised them with the designer. **That is the most expensive shape of stale record in this notebook: it
+> doesn't just mislead the reader, it spends the designer's time re-deciding what they already decided.**
+> Found by checking when the designer asked whether anything was wrongly claimed — the THIRD stale-record catch
+> of that one question, after the gates line and the "all 10 logged" claim. All three were prose summaries of
+> my own bookkeeping; none were code. The code had gates and held up under every mechanical check. **The
+> asymmetry is the lesson: this notebook's weak surface is not the product, it is the notebook.**
 
-1. **The single-button ack's width.** `.bai-dialog-actions button:only-child` is full-width — 202×32 = 2.08× the
-   area of the confirm shape's own commit button (97×32), and it sits at a different x-position, so muscle
-   memory built on "the committing button is on the right" is contradicted by the shape that follows it. The
-   independent review proposed `flex: 0 1 auto; min-width: 97px; margin-left: auto` (same column, same right
-   edge as the confirm). Not applied: it changes how the dialog LOOKS, which is the designer's call, and the
-   full-width single CTA has real precedent in this same overlay tier (`.lg-cta`).
-2. **Three Cancel treatments coexist.** Ghost `.bai-newitem-cancel` (4 call sites, the most used), filled pill
-   `.bai-dialog-cancel` (the shared dialog), outlined `.bai-set-btn` (2 full-width modal Cancels). Worth being
-   honest about the dialog's: its fill was NOT a deliberate hierarchy choice — it began as `--bai-input-bg`
-   like `.bai-set-btn` and was changed to `--bai-pill` on 2026-08-04 to fix a light-theme bug where
-   `--bai-input-bg` is `#ffffff`, identical to the card, making the button invisible. There IS a defensible
-   reason for a confirm's Cancel to differ from an inline form's (in a confirm the two buttons are the only
-   choices and the other one is red), but the third treatment — a full-width outlined Cancel in the AI-Mode
-   modal doing the same job as `.bai-dialog-cancel` — is a genuine inconsistency. Convergence direction is the
-   designer's.
-3. **`.bai-help-inline` radius vs its toolbar twin.** It uses `--bai-r-sm` while `.bai-search`, same height and
-   the same row, uses `--bai-r-md`. The CSS explicitly calls them "ONE toolbar"; matching the radius would
-   strengthen that, but it's a visible change nobody asked for.
+1. **Single-button ack width — RESOLVED: no change.** Designer: *"I like right aligned but since there is no
+   other button needed here the full width is the right approach — but yes the major action can sit on the
+   right side."* So the review's `min-width: 97px; margin-left: auto` proposal is DECLINED, and the confirm
+   shape's existing Cancel-left/commit-right order is confirmed correct. Recorded so it cannot be re-flagged as
+   drift. The designer also supplied a better general rule than the review had: **side-by-side vs stacked is
+   decided by whether the labels FIT side by side at equal size, not by how many buttons there are.**
+2. **Three Cancel treatments — RESOLVED and implemented.** Designer: *"use the hybrid AI popup one for popups
+   and the plain text no border no fill grey one in forms."* `.bai-dialog-cancel` now joins `.bai-set-btn` as a
+   declared §12 family (only the FILL had ever differed); forms keep `.bai-newitem-cancel`; the filled pill is
+   retired. See the pending row above.
+3. **`.bai-help-inline` radius — RESOLVED and implemented.** Designer: *"we should do that."* Now `--bai-r-md`,
+   scoped to the toolbar context; the 24px instance beside the Hybrid subtitle keeps `--bai-r-sm`.
+4. **The gutter split (open since 2026-08-03, Session 15) — RESOLVED and implemented.** Designer: *"we should
+   fix this match by 15px only."* `.bai-subpane-body` now pays `sp-14`, so list and subpane content edges both
+   sit at 15px. `project-insights.md`'s layout-system section has been rewritten accordingly, including the
+   consequence: form width 264 → 260px, its fourth revision.
 
-*(Also still open, from Session 15, living in `project-insights.md`'s layout-system section with its own
-designer's-call flag: the `.bai-list-body` 14px vs `.bai-subpane-body` 12px gutter split. Raised 2026-08-03,
-not decided. Session 17 touched the adjacent `#baiSchedList` padding-top but deliberately did not fold this
-question into that fix — they are different questions.)*
+*(Nothing is carried forward from this section. The four decisions live as pending rows above and promote to
+`decisions.md` at the next audit pass.)*
 
 --- Prior audit history ---
 

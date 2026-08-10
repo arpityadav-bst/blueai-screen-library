@@ -319,7 +319,27 @@ because a harness returning nothing reads as good news and that is the dangerous
 under any framing. But the composition of the count has shifted in a way worth tracking: S16's catches were
 mostly *reasoning* failures already named in this notebook, while S17's are mostly *unmeasured properties* —
 and unmeasured properties are the failure mode that gates can actually close, which is why two of them now
-have gates. **New top recurring category: a property nobody measured is a property nobody checked — if a
-design rule can be expressed as a number, it needs a gate, not a paragraph.** S16's "verify the blast radius,
-not just the stated property" is not retired and stays second — it simply wasn't what this session's catches
-were made of.
+have gates.
+
+**POST-CLOSE ADDENDUM (2026-08-11), and it changes the top category.** After this entry was written the
+designer asked one question — *"nothing is wrongly claimed, right?"* — and checking it surfaced **three false
+records in a row**: the "Gates at close" line naming two of three gates (the unrun third immediately found a
+real rule-44 violation in this session's own code); an "all 10 logged in scratchpad.md" claim where two
+different groupings coincidentally both totalled 10; and a section headed **"Designer's call — OPEN, carried
+forward (do NOT wipe without a decision)"** listing four questions the designer had decided that same day.
+That last one is the expensive shape: it would not merely have misinformed the next session, it would have
+sent it to re-ask the designer four settled questions.
+
+**All three were prose summaries of my own bookkeeping. Not one was code.** Every mechanical check on the
+product held — three gates green by exit code, CSS integrity balanced, the commit verifiably records-only,
+every documented figure re-derived. **So the new top recurring category is: the notebook is the weak surface,
+not the product — and a tidy number is the tell.** "All 10", "two of three gates", "these three are open" all
+read as verified while nothing had verified them. The mechanism is that code has gates and prose does not, so
+prose is where unchecked confidence accumulates. Practical form for next session: **before writing any count,
+"all", "every", or "nothing left" into a notebook file, run the command that proves it** — and treat a
+carry-forward/open-question marker as a claim with an expiry date, re-checked against what the designer
+actually said, not against what it said when written.
+
+Demoted to second: *a property nobody measured is a property nobody checked — if a design rule can be
+expressed as a number, it needs a gate, not a paragraph* (still live; two of this session's rules now have
+gates). Third: S16's *verify the blast radius, not just the stated property*. Neither is retired.
