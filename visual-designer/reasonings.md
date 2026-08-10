@@ -521,10 +521,23 @@ gates and prose does not, so prose is where unchecked confidence accumulates.** 
 designer asking one question, which is the same mechanism as *"have something that didn't build it check the
 claims"* — except the artifact being checked was the notebook itself.
 
+**A fourth instance, and it is the most instructive, because it happened INSIDE the pass that wrote this
+principle.** Promoting those rows, I wrote "9 `decisions.md` rows" in the scratchpad's promotion note and in
+the commit message. The real number was 10. The arithmetic was: 10 scratchpad rows, the tour's two collapse
+into one, therefore 9 — and then, while actually writing the table, I split one lesson into its own row on
+purpose and never re-derived the total. **10 − 1 + 1 = 10.** The plan said 9; the artifact said 10; I reported
+the plan. Caught by running `grep -c` over the table rather than re-reading my own sentence.
+
+That sharpens the rule: the danger is not laziness about counting, it is that **a count computed BEFORE the
+work is a forecast, and it keeps its authority after the work diverges from it.** Every earlier instance has
+this shape too — "two of three gates" was true of the plan for the gate list, "all 10 logged" was true of one
+grouping, "these four are open" was true when written.
+
 **How to apply:** before writing a count, an "all", an "every", or a "nothing left" into any record, run the
-command that proves it. And treat every carry-forward marker as re-checkable state: at each audit, verify each
-open question against what the designer has since actually said, not against what the marker said when
-written. *Where else this applies:* a "known gaps" list in a style guide; a TODO block in a CLAUDE.md; a
+command that proves it — **and run it against the finished artifact, not against your intent for it.** If a
+number was decided before the work, treat it as void the moment the work changes. And treat every
+carry-forward marker as re-checkable state: at each audit, verify each open question against what the designer
+has since actually said, not against what the marker said when written. *Where else this applies:* a "known gaps" list in a style guide; a TODO block in a CLAUDE.md; a
 "deferred" note in a decisions row; any freshness header. *What would stop it firing:* checking whether the
 individual items are accurate rather than whether the SET is still the set — every item in that open-questions
 section was accurately described; all four had simply been answered.

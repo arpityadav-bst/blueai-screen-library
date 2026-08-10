@@ -16,9 +16,17 @@ Format: `YYYY-MM-DD HH:mm — <file> — <what changed> — Why: <one phrase>`
 --- Pending audit entries ---
 
 *(EMPTY. The Session-17 POST-CLOSE promotion pass, 2026-08-11, drained all 10 rows on the designer's request
-for a second proper close. Promoted to: **9 `decisions.md` rows** under their own "Session 17 POST-CLOSE"
-heading — the tour's two rows collapsed into ONE decision, since the second superseded the first and a
-decisions row records the decision that stands, not the path to it; **taste rule 50** (an action row's layout
+for a second proper close. Promoted to: **10 `decisions.md` rows** under their own "Session 17 POST-CLOSE"
+heading. **[COUNT CORRECTED — this said "9" when first written, and the pushed commit message still says 9.**
+The arithmetic I did in my head was: 10 scratchpad rows, the tour's two collapse into one, therefore 9. I then
+split the `--bai-pill`-fixed-a-defect-that-didn't-exist lesson into its own row *while writing the table* —
+deliberately, because that lesson outlives the code — and never re-derived the total. So 10 − 1 + 1 = 10.
+**This is the "a tidy number standing in for a checked one" failure, committed inside the very pass that
+codified it as the top recurring category** — see `reasonings.md`'s "a record that asserts 'open', 'all', or a
+count is a claim, and it expires." Found by running `grep -c` on the table instead of trusting the sentence.
+The rule it proves: derive counts from the artifact, never from the plan you had for the artifact.]**
+The tour's two rows DID collapse into one decision, since the second superseded the first and a decisions row
+records the decision that stands, not the path to it; **taste rule 50** (an action row's layout
 is decided by label FIT, not button count, and "committing action sits right" is an ORDER rule that cannot
 apply to a lone action — this one overturned a well-argued independent-review finding, so it is recorded
 against the review as well as the code); and **4 `reasonings.md` principles** — a constant that is secretly a
