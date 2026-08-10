@@ -1,7 +1,12 @@
 # blueAI — Reasonings
-Last updated: 2026-08-11 (+6 principles: content-pacing-as-designer-not-generator, reassurance-must-match-state,
-a-rejection-must-be-re-tested, persistent-vs-transient rule scope, one-glance state legibility on transient
-surfaces, and a shared rule's hidden sibling-dependency — Session 17. Earlier: 2026-08-04 (+2 principles: "a philosophy applied in one theme/mode and left out of the other
+Last updated: 2026-08-11 (POST-CLOSE promotion: +4 more principles — a constant that is secretly a SUM breaks
+when a term stops existing; fixing an unreproduced defect introduces one; a gate with standing false positives
+has stopped being a gate; and a record asserting "open"/"all"/a count is a claim that expires. That last one
+came from three false records found in a single session, all of them prose about my own bookkeeping and none of
+them code — see `evolution.md`'s top recurring category. Earlier the same day: +6 principles —
+content-pacing-as-designer-not-generator, reassurance-must-match-state, a-rejection-must-be-re-tested,
+persistent-vs-transient rule scope, one-glance state legibility on transient surfaces, and a shared rule's
+hidden sibling-dependency — Session 17. Earlier: 2026-08-04 (+2 principles: "a philosophy applied in one theme/mode and left out of the other
 isn't applied" and "before painting over something that looks empty, check what relies on it staying that
 way"; widened "match the fix to the surface's role" (adjacency is a family too) and "anything I can write
 from imagination…" (external product precedent is the same risk class as an internal spec) with fresh
@@ -428,5 +433,113 @@ rule secretly depends on a sibling that a new call site doesn't have. *Where els
 padding/margin pair split across a parent and a expected-but-optional child (a card's own gap assuming a
 header row; a form's field spacing assuming a label is always present); any two-part visual contract where
 one half is a class and the other half is "whatever else happens to be in the DOM."
+
+## A constant that is secretly a SUM breaks when one of its terms stops existing
+
+`top: 84px` looks like a position. It is arithmetic — 46px header + 38px tab strip — and one of those terms
+does not exist in every mode. Landscape hides the tab strip, so every subpane opened 38px too low and left a
+strip-height band of the parent pane showing. Nothing was miscalculated; the sum was correct for the mode it
+was written in and silently wrong in the mode that removes a term.
+
+**This is now a three-instance family in this project, and the third is what makes it worth its own entry:**
+`.bai-list-body`'s 2px top padding (half a gap, correct only when a toolbar sibling supplies the other half —
+and `#baiSchedList` has no toolbar); `.bai-subpane`'s and `.bai-tour`'s 84px (header + a strip one mode
+hides); and, one level up, S16's *"a philosophy applied in one theme and left out of the other isn't
+applied."* All three are the same mechanism: **a value whose correctness depends on a condition that is true
+where it was authored and false somewhere else it applies.**
+
+**How to apply:** when you write or inherit a hard-coded dimension, ask what it is the sum OF, and write that
+down beside it — `/* 84 = 46 header + 38 strip */` survives the strip's disappearance as an obviously-expired
+claim, where a bare `84px` does not. Then ask which of those terms any mode, theme, breakpoint or state can
+remove. **The tell is a number that no single element in the file actually has.** If a value equals A + B, it
+belongs either in a `calc()` naming both, or in a rule scoped to the condition under which both exist.
+*Where else this applies:* a `max-height` that assumes a footer is present; a scroll offset that assumes a
+sticky header; a z-index chosen as "one above the thing that used to be there"; a width computed against a
+sidebar that collapses. *What would stop it firing:* reading it as being about ARITHMETIC ERRORS. Every sum
+here was correct. The failure is a correct sum outliving one of its addends.
+
+## Fixing a defect you have not reproduced is how you introduce one
+
+`.bai-dialog-cancel`'s background was changed from `--bai-input-bg` to `--bai-pill` to fix a light-theme bug
+where the fill matched the card and the button was "invisible." The button carries a 1px border. It was an
+OUTLINED button, the border defined it, and it was never invisible — the same recipe its sibling
+`.bai-set-btn` has always used on the same white card. **The fix solved nothing, and it created the
+inconsistency the designer had to point out a week later**, which then cost a ruling, a family declaration and
+a negative test to undo.
+
+The mechanism is that the defect was inferred from VALUES (`--bai-input-bg` equals `--bai-card` in light
+theme — true) rather than observed in a RENDER (is the control actually indistinguishable? — no, its border
+distinguishes it). A value-level inference about appearance skips every other property that also contributes
+to appearance.
+
+**How to apply:** before fixing a visual defect, render the state and confirm the defect. If the report came
+from reasoning rather than from looking — "these two tokens are equal, therefore this is invisible" — that is
+a hypothesis, not a finding. *Sibling, and worth reading together:* *"before painting over something that
+looks empty, check what relies on it staying that way"* is this principle's mirror — that one is about a
+change reaching further than you verified, this one is about a change fixing less than you assumed (nothing).
+Both come from treating a stylesheet reading as equivalent to a rendered result.
+*Where else this applies:* "this text must be unreadable, the contrast ratio is 3:1" on text that carries a
+shadow or a weight change; "this is clipped, the parent is `overflow: hidden`" on a child that fits; any
+accessibility or contrast fix derived from tokens rather than from the rendered pixel.
+
+## A gate with standing false positives has already stopped being a gate
+
+`radius-nesting-audit.js` had two permanent false findings — product components nested inside the style
+guide's own documentation wrappers, one of them demanding a 1px radius on a sidebar row. It had therefore
+never printed zero. Its output had become a thing to skim, and **a real rule-44 violation in that session's
+own code was sitting directly underneath the noise.** Filtering the two false positives is what let the real
+one be seen.
+
+The cost of a false positive is not the false positive. It is that a reader who must mentally discount part
+of a gate's output stops reading the whole of it, so the gate's true findings inherit the noise's credibility
+rather than the reverse. **A check that cannot reach zero teaches you to ignore it.**
+
+**How to apply:** treat "known false positives" as a bug in the gate with the same priority as a missed
+detection, and fix them by narrowing the gate's scope explicitly (with the reason recorded in the gate), not
+by remembering to ignore them. If a gate's clean state is not reachable, its findings are advisory at best.
+*Where else this applies:* a lint rule disabled inline in forty files; a test suite with a known-flaky test;
+a coverage report with an untracked exclusion list; any dashboard with a metric everyone knows to ignore.
+*What would stop it firing:* judging a gate by whether its findings are TRUE rather than whether its clean
+state is REACHABLE. Both false positives here were, in a narrow sense, accurately measured.
+
+## A record that asserts "open", "all", or a count is a claim, and it expires
+
+In one session three separate records in this notebook were false, and all three were of one shape: a
+summary of my own bookkeeping asserting completeness. "Gates at close" named two of three gates — and the
+unrun third immediately found a real violation in that session's code. "All 10 logged in scratchpad.md" was
+false because two different groupings coincidentally both totalled 10. And a section headed **"Designer's
+call — OPEN, carried forward (do NOT wipe without a decision)"** listed four questions the designer had
+decided that same day.
+
+The third is the expensive one, and it defines the category: **a stale FACT misleads a reader; a stale
+OPEN-QUESTION marker spends the designer's time re-deciding what they already decided.** A do-not-wipe marker
+is trusted precisely because it looks deliberate.
+
+None of the three were code. Every mechanical check on the product held that session — three gates green by
+exit code, CSS integrity balanced, every documented figure re-derived. **The asymmetry is the point: code has
+gates and prose does not, so prose is where unchecked confidence accumulates.** All three were found by the
+designer asking one question, which is the same mechanism as *"have something that didn't build it check the
+claims"* — except the artifact being checked was the notebook itself.
+
+**A fourth instance, and it is the most instructive, because it happened INSIDE the pass that wrote this
+principle.** Promoting those rows, I wrote "9 `decisions.md` rows" in the scratchpad's promotion note and in
+the commit message. The real number was 10. The arithmetic was: 10 scratchpad rows, the tour's two collapse
+into one, therefore 9 — and then, while actually writing the table, I split one lesson into its own row on
+purpose and never re-derived the total. **10 − 1 + 1 = 10.** The plan said 9; the artifact said 10; I reported
+the plan. Caught by running `grep -c` over the table rather than re-reading my own sentence.
+
+That sharpens the rule: the danger is not laziness about counting, it is that **a count computed BEFORE the
+work is a forecast, and it keeps its authority after the work diverges from it.** Every earlier instance has
+this shape too — "two of three gates" was true of the plan for the gate list, "all 10 logged" was true of one
+grouping, "these four are open" was true when written.
+
+**How to apply:** before writing a count, an "all", an "every", or a "nothing left" into any record, run the
+command that proves it — **and run it against the finished artifact, not against your intent for it.** If a
+number was decided before the work, treat it as void the moment the work changes. And treat every
+carry-forward marker as re-checkable state: at each audit, verify each open question against what the designer
+has since actually said, not against what the marker said when written. *Where else this applies:* a "known gaps" list in a style guide; a TODO block in a CLAUDE.md; a
+"deferred" note in a decisions row; any freshness header. *What would stop it firing:* checking whether the
+individual items are accurate rather than whether the SET is still the set — every item in that open-questions
+section was accurately described; all four had simply been answered.
 
 *(New entries accumulate at audit passes.)*

@@ -3,9 +3,16 @@
 
 ---
 
-## Session 17 — 2026-08-10 → 08-11 — the 12-item batch, two new taste rules (one with a runtime gate), and the toast
-Freshness check: taste ✓ (+rules 48, 49; header bumped inline) | decisions ✓ (+17 rows) | reasonings ✓ (+6 principles) | project-insights ✓ (+notification taxonomy, z-layer inventory, the `#scaler` two-space fact) | knowledge-base ✓ (+3 traps — first touch since 2026-08-01) | evolution ✓ (+S17, new top category) | session-logs (this entry) | scratchpad ✓ (31 entries promoted, wiped) | style-guide ✓ (synced inline every edit, per this project's inverted-Gate-5 contract)
-`designer_caught_count: 9`
+## Session 17 — 2026-08-10 → 08-11 — the 12-item batch, three new taste rules (one with a runtime gate), the toast, and TWO closes
+Freshness check (as of the POST-CLOSE pass, which is the authoritative one): taste ✓ (+rules 48, 49, **50**; header bumped at both passes) | decisions ✓ (+17 rows at the first close, **+9 more** at the post-close pass under their own heading) | reasonings ✓ (+6 principles, **+4 more**) | project-insights ✓ (+notification taxonomy, z-layer inventory, the `#scaler` two-space fact; **amended post-close** — gutter resolved, form width 264→260px) | knowledge-base ✓ (+3 traps at the first close; deliberately NOT touched post-close — every mechanism promoted then already had a `reasonings.md` home, and a fourth telling is the duplication the Session-15 audit flagged) | evolution ✓ (+S17, **top category REPLACED post-close**) | session-logs (this entry, amended three times — see below) | scratchpad ✓ (31 entries promoted at the first close, **10 more promoted and wiped at the post-close pass; now genuinely empty, carrying nothing forward**) | style-guide ✓ (synced inline every edit, per this project's inverted-Gate-5 contract) | CLAUDE.md ✓ (**stale bootstrap facts corrected post-close** — it was telling the next session to learn two numbers that had changed that day, and describing a preview server that no longer existed)
+`designer_caught_count: 9` (unchanged — the post-close catches were record errors in this notebook, not design or product defects, and folding them into a design-catch count would flatter the design work by mislabelling the failure)
+
+**This session closed TWICE, and the second close is the one to read.** The first was a normal audit pass. Then
+post-close work continued (see the itemised list further down), the designer asked whether anything had been
+wrongly claimed, and checking that surfaced three false records — which is what produced rule 50's sibling
+reasoning entry, the replaced top category, and the corrected bootstrap. **The lesson is in the ordering:** a
+session that declares itself closed and then keeps working needs its records re-drained, not appended to, and
+the second drain found things the first could not have.
 
 **Two working days, one continuous thread.** Day 1 closed out the 12-item design batch (items 3, 5, 6, 8 plus
 the independent review's fixes); day 2 was almost entirely designer critique on single surfaces, which is where

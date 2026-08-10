@@ -15,18 +15,40 @@ Format: `YYYY-MM-DD HH:mm — <file> — <what changed> — Why: <one phrase>`
 
 --- Pending audit entries ---
 
-2026-08-11 — blueai-desktop.css — `.bai-ui.wide .bai-subpane { top: 46px }` (was inheriting the base 84px) — Why: 84 is a SUM (46px header + 38px tab strip) and wide mode hides the strip, so every subpane opened 38px too low and left exactly a strip-height band of the parent pane uncovered — designer's screenshot showed Skills' search toolbar visible above an open "My Skills". `.bai-globalroute` already used 46px, so the right value was in the file; the subpane was the outlier.
-2026-08-11 — blueai-desktop.css — `.bai-ui.wide .bai-tour { top: 46px }`, the same sibling bug as the subpane above, fixed but FLAGGED as not making the tour work in landscape — Why: `tourHi()` targets `.bai-tab` and the card's arrow reads `tab.offsetLeft`, both dead when the strip is `display:none`; the tour is compact-only by construction. **SUPERSEDED the same day — see the `display: none` row at the bottom; `top: 46px` is NOT in the code.** Kept because the supersession is the lesson (a correctly-positioned scrim over a highlight pointing nowhere is a half-fix that reads as done), but do not read this row as describing current CSS.
-2026-08-11 — blueai-desktop.css — `.bai-preview-seg button` radius `--bai-r-sm`(6) → `--bai-r-xs`(4) — Why: rule 44 concentric (track is r-sm with 2px padding); caught by radius-nesting-audit only after routing Membership to the `.stretch` variant made these buttons `flex:1` and reach the track's corners for the first time — rule 46's mechanism exactly.
-2026-08-11 — radius-nesting-audit.js — skip `.sg-spec`/`.sg-canvas` as containers (walk past to the next real ancestor) — Why: the guide's own doc cards aren't product containers; they produced 2 permanent false "mismatches" demanding a 1px radius on a sidebar row, and standing noise in a gate's output teaches you to skim it.
-2026-08-11 — blueai-desktop.css — toolbar `.bai-help-inline` radius --bai-r-sm → --bai-r-md, scoped to the toolbar context — Why: designer approved; it's a 32px box beside a 32px `.bai-search` on r-md, and this rule's own premise is that the two are ONE toolbar — a shared height with an unshared corner reads as two controls that happen to match in size. Beside the Hybrid subtitle it stays 24px/r-sm.
-2026-08-11 — blueai-desktop.css + ds-drift-check.js — `.bai-dialog-cancel` joins `.bai-set-btn` as a declared §12 SECONDARY-ACTION family (outlined); fill `--bai-pill` → `--bai-input-bg`; hover unified; filled-pill retired — Why: designer's ruling (Hybrid-popup treatment for popups, plain text for forms). Only the FILL differed — border/colour/weight/radius already matched, the classic silent-drift state. Also: the `--bai-pill` fill came from a 2026-08-04 "fix" for a light-theme invisibility bug that wasn't real — the button has a 1px border, so it's OUTLINED and the border defines it. Gate negative-tested (injected the drift, confirmed FAIL, reverted).
-2026-08-11 — blueai-desktop.css — `.bai-dialog-body` colour `--bai-muted-2` → `--bai-text`, matching `.tgm-body` — Why: designer noticed two blocking overlays in the same tier reading at different text weights; also a further contrast improvement, so it satisfies the consistency ask and the earlier WCAG finding at once. Font size deliberately still differs (denser surface).
-2026-08-11 — blueai-desktop.css — `.bai-subpane-body` side+bottom padding sp-12 → sp-14, closing the 15px/13px gutter split open since 2026-08-03 — Why: designer's call, "fix this match by 15px only". ⚠ Narrows every subpane form 264 → 260px; RE-MEASURED at 290px rather than assumed — 7 day chips single-row (217px of chips in a 238px grid, zero overflow, no clipping) and the 4-across seg single-row. project-insights updated; the 264px figure is now the FOURTH revision of that number.
-2026-08-11 — DECISION, no code change — single-button ack keeps its full width; "committing action sits right" applies only when there ARE two buttons — Why: designer resolved the review's finding #5 as already-correct ("since there is no other button needed here the full width is the right approach"), and supplied the general rule: side-by-side-vs-stacked is decided by whether the labels FIT side by side at equal size, not by button count. Recorded so it can't be re-proposed as drift.
-2026-08-11 — blueai-desktop.css — `.bai-ui.wide .bai-tour { display: none }`, REPLACING the `top: 46px` fix made an hour earlier — Why: designer confirmed onboarding only ever runs in portrait and offered leave-or-remove; removing is better because the tour is compact-only by construction (`tourHi()` targets `.bai-tab`, hidden in wide), so a correctly-positioned scrim over a highlight pointing at nothing is a half-fix that READS as handled. Portrait untouched (selector needs `.wide`, added only ≥600px).
+*(EMPTY. The Session-17 POST-CLOSE promotion pass, 2026-08-11, drained all 10 rows on the designer's request
+for a second proper close. Promoted to: **10 `decisions.md` rows** under their own "Session 17 POST-CLOSE"
+heading. **[COUNT CORRECTED — this said "9" when first written, and the pushed commit message still says 9.**
+The arithmetic I did in my head was: 10 scratchpad rows, the tour's two collapse into one, therefore 9. I then
+split the `--bai-pill`-fixed-a-defect-that-didn't-exist lesson into its own row *while writing the table* —
+deliberately, because that lesson outlives the code — and never re-derived the total. So 10 − 1 + 1 = 10.
+**This is the "a tidy number standing in for a checked one" failure, committed inside the very pass that
+codified it as the top recurring category** — see `reasonings.md`'s "a record that asserts 'open', 'all', or a
+count is a claim, and it expires." Found by running `grep -c` on the table instead of trusting the sentence.
+The rule it proves: derive counts from the artifact, never from the plan you had for the artifact.]**
+The tour's two rows DID collapse into one decision, since the second superseded the first and a decisions row
+records the decision that stands, not the path to it; **taste rule 50** (an action row's layout
+is decided by label FIT, not button count, and "committing action sits right" is an ORDER rule that cannot
+apply to a lone action — this one overturned a well-argued independent-review finding, so it is recorded
+against the review as well as the code); and **4 `reasonings.md` principles** — a constant that is secretly a
+SUM breaks when one of its terms stops existing (a THREE-instance family: `.bai-list-body`'s 2px,
+`.bai-subpane`/`.bai-tour`'s 84px, and S16's one-theme philosophy — consolidated into one entry rather than a
+third fresh instance, exactly as this file's own note recommended); fixing an unreproduced defect introduces
+one; a gate with standing false positives has already stopped being a gate; and a record asserting
+"open"/"all"/a count is a claim that expires.
 
-*(Above are POST-CLOSE fixes, logged after Session 17's audit pass had already run — they belong to the next promotion, not to the one recorded below. The three post-close items are all one family worth naming at that promotion: **a hardcoded constant that is secretly a SUM of terms, one of which a different mode removes.** That is the same shape as `.bai-list-body`'s 2px (half a gap assuming a toolbar sibling) promoted this session, and as the one-theme-philosophy principle from S16 — strong candidate for consolidating all three into one reasonings entry rather than a third fresh instance.)*
+Gate 6.5 was run on every row. It produced one BOUNDARY that mattered: rule 50 versus rule 41 — both concern a
+signal that only means something in contrast, so 50 cross-references 41 rather than restating it. It also
+confirmed two rows needed NO new rule: `.bai-preview-seg`'s radius is rule 44 under rule 46's mechanism (a
+nesting relationship whose correctness changed when a layout change made the buttons reach the track's
+corners — the first time those two rules have interacted, noted on the decisions row instead of a new rule),
+and the dialog-body colour is a plain consistency fix with no transferable principle beyond what rule 38's
+family already covers.
+
+`knowledge-base.md` deliberately not touched this pass: every mechanism promoted here has a home in
+`reasonings.md`, and a fourth telling is the duplication the Session-15 audit already flagged as unhealthy.
+
+Nothing is carried forward. The "Designer's call" section below is closed — all four of its questions were
+decided 2026-08-11 and their decisions are now in `decisions.md`.)*
 
 *(Session 17's audit pass, 2026-08-11, promoted 31 entries — 17 rows into `decisions.md`, taste rules
 48 and 49 (48 shipping with its own runtime gate, `icon-target-audit.js`), 6 `reasonings.md` principles, 3
