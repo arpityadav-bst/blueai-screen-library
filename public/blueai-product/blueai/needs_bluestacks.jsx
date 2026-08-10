@@ -1,9 +1,11 @@
 // BlueAI — "this task needs BlueStacks" chat state + the rule that decides when it fires.
-// Exports: window.NeedsBluestacks = { Bubble, needsApp, BS_BOOT }
+// Exports: window.NeedsBluestacks = { Bubble, ProgressBubble, needsApp, BS_BOOT, PLAY_FRAME }
 //
 // Lives in its own file rather than in chat_product.jsx, which is already 600 lines.
 
 (function () {
+  const { useState, useEffect } = React;
+
   /* ── Which tasks need BlueStacks ────────────────────────────────────────────────────────
      Designer's call: only app-named tasks, not every task. Two rules, in order:
 
@@ -61,12 +63,19 @@
 
   /* The chat bubble. Info-blue — a sibling of WarningBubble, not a copy of it: nothing has gone
      wrong and nothing failed, the task simply can't start until a dependency exists. Orange would
-     read as a problem with the request. */
+     read as a problem with the request.
+
+     The button hides itself after one click (local `clicked` state) rather than disabling in
+     place — once clicked, a ProgressBubble appears right below carrying the same information
+     (what's installing), so a lingering disabled "Get BlueStacks" button would just be a second,
+     redundant thing saying the same thing. This also blocks a second click from queuing a
+     duplicate install — there's no debounce anywhere upstream of this component. */
   function Bubble({ app, onGet }) {
+    const [clicked, setClicked] = useState(false);
     return (
       <div className="ba-msg-in" style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: 10 }}>
         <div style={{ maxWidth: 300, background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: 16, padding: '12px 14px 12px', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, marginBottom: 11 }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, marginBottom: clicked ? 0 : 11 }}>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 1 }}>
               <circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8" />
             </svg>
@@ -74,16 +83,57 @@
               This one runs inside BlueStacks App Player. I drive {app} there, and BlueStacks isn’t installed on this PC yet.
             </p>
           </div>
-          <button onClick={onGet}
-            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7, width: '100%', background: '#1990FF', border: 'none', borderRadius: 10, padding: '10px 0', fontSize: 13.5, fontWeight: 700, color: 'white', cursor: 'pointer', fontFamily: 'inherit', transition: 'opacity 0.15s ease' }}
-            onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
-            onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}>
-            <img src="assets/BlueStacks.png" alt="" style={{ width: 20, height: 20, borderRadius: 4 }} onError={(e) => { e.target.style.display = 'none'; }} />
-            Get BlueStacks
-          </button>
+          {!clicked &&
+            <button onClick={() => { setClicked(true); onGet(); }}
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7, width: '100%', background: '#1990FF', border: 'none', borderRadius: 10, padding: '10px 0', fontSize: 13.5, fontWeight: 700, color: 'white', cursor: 'pointer', fontFamily: 'inherit', transition: 'opacity 0.15s ease' }}
+              onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
+              onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}>
+              <img src="assets/BlueStacks.png" alt="" style={{ width: 20, height: 20, borderRadius: 4 }} onError={(e) => { e.target.style.display = 'none'; }} />
+              Get BlueStacks
+            </button>}
         </div>
       </div>);
   }
 
-  window.NeedsBluestacks = { Bubble, needsApp, BS_BOOT, PLAY_FRAME };
+  /* The install-in-progress card. Replaces what used to be a separate modal (InstallDialog,
+     "bluestacks" config) entirely — designer's call (2026-08-10), matched to a live-production
+     screenshot of an in-chat skill-progress card (PLAN → a progress card with a live percentage
+     → a bar filling). No modal, no scrim, nothing blocking: the rest of the app stays fully
+     usable while this ticks up, which is the actual point of putting it in the conversation
+     instead of a popup. Kept in the app's own blue (matching the Bubble above it), not the
+     screenshot's purple — that purple is the live app's AUTO-GAMEPLAY skill's own branding, a
+     different feature; reusing it here would borrow a color identity that means something else. */
+  function ProgressBubble({ app, onDone }) {
+    const [pct, setPct] = useState(0);
+    const DURATION = 3000;   // matches the old InstallDialog's downloadMs for BlueStacks
+
+    useEffect(() => {
+      let raf;
+      const startedAt = Date.now();
+      const tick = () => {
+        const p = Math.min(100, Math.round(((Date.now() - startedAt) / DURATION) * 100));
+        setPct(p);
+        if (p >= 100) { onDone && onDone(); return; }
+        raf = requestAnimationFrame(tick);
+      };
+      raf = requestAnimationFrame(tick);
+      return () => cancelAnimationFrame(raf);
+    }, []);
+
+    return (
+      <div className="ba-msg-in" style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: 10 }}>
+        <div style={{ maxWidth: 300, width: '100%', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: 16, padding: '12px 14px 13px', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
+          <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.07em', color: '#2563eb', textTransform: 'uppercase', marginBottom: 9 }}>Installing</p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 9 }}>
+            <span className="ba-ring-spin" aria-hidden="true" />
+            <span style={{ fontSize: 13, fontWeight: 700, color: '#1e40af' }}>BlueStacks App Player · {pct}%</span>
+          </div>
+          <div style={{ height: 6, borderRadius: 999, background: '#dbeafe', overflow: 'hidden' }}>
+            <div style={{ height: '100%', width: pct + '%', borderRadius: 999, background: '#1990FF' }} />
+          </div>
+        </div>
+      </div>);
+  }
+
+  window.NeedsBluestacks = { Bubble, ProgressBubble, needsApp, BS_BOOT, PLAY_FRAME };
 })();

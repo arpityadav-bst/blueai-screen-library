@@ -22,7 +22,7 @@
   const makeResumeSteps = (t, app) => B().makeResumeSteps(t, app);
 
   /* ───────── Merged chat screen: ProductHome (empty) → task-progress + feedback (active) ───────── */
-  function ChatScreen({ sessionKey, seed, loading, zeroCredits, onNoCredits, isOnboarding, onNeedLogin, showStates, bsInstalled = true, onGetBluestacks, resume }) {
+  function ChatScreen({ sessionKey, seed, loading, zeroCredits, onNoCredits, isOnboarding, onNeedLogin, showStates, bsInstalled = true, onBsInstalled }) {
     const C = window.ChatCompare;
     const [convo, setConvo] = useState([]);
     const [visible, setVisible] = useState(0);
@@ -89,12 +89,6 @@
       push(makeTaskSteps(t));
     };
 
-    /* BlueStacks just finished installing → carry on with the task that was blocked. Keyed on
-       resume.n so the same request can be replayed. */
-    useEffect(() => {
-      if (!resume || !resume.n) return;
-      push(makeResumeSteps(resume.text, resume.app));
-    }, [resume ? resume.n : 0]);
     // Stop a running task at any time: cancel pending steps, drop a trailing "working"
     // indicator, keep the partial output, and re-enable the composer to recalibrate.
     const stop = () => {
@@ -118,8 +112,16 @@
       if (step.role === 'user') return <UserBubble key={i} content={step.content} />;
       if (step.role === 'status') return <StatusBubble key={i} content={step.content} />;
       if (step.role === 'warning') return <WarningBubble key={i} content={step.content} />;
+      /* "Needs BlueStacks" → click Get BlueStacks → an inline progress card, no modal (designer,
+         2026-08-10). Clicking pushes the NEXT step into this same conversation rather than
+         opening anything outside it; when that step's own timer finishes, it tells the parent to
+         run the scene-level effects (mount the BlueStacks window, cycle its frames) and picks the
+         original task back up right here, in the same convo — no round-trip through parent state
+         needed now that nothing ever leaves the chat. */
       if (step.role === 'needsbs') return <window.NeedsBluestacks.Bubble key={i} app={step.app}
-        onGet={() => onGetBluestacks && onGetBluestacks(step.text, step.app)} />;
+        onGet={() => push([{ role: 'installing-bs', app: step.app, text: step.text, d: 200 }])} />;
+      if (step.role === 'installing-bs') return <window.NeedsBluestacks.ProgressBubble key={i} app={step.app}
+        onDone={() => { onBsInstalled && onBsInstalled(step.app, step.text); push(makeResumeSteps(step.text, step.app)); }} />;
       if (step.role === 'thinking') return i === visible - 1 ? <ThinkingBubble key={i} /> : null;
       return <FinalBubble key={i} msg={step} feedback={feedbackFor(i, step)} />;
     };

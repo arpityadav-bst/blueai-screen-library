@@ -67,6 +67,9 @@
     @keyframes tabFadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
     .tab-anim { animation: tabFadeUp 0.18s ease; }
     @keyframes ba-shimmer { 0% { background-position: -600px 0; } 100% { background-position: 600px 0; } }
+    /* Small spinning ring — the in-chat BlueStacks install progress card (needs_bluestacks.jsx). */
+    @keyframes ba-spin { to { transform: rotate(360deg); } }
+    .ba-ring-spin { display: inline-block; width: 13px; height: 13px; flex-shrink: 0; border-radius: 50%; border: 2px solid #bfdbfe; border-top-color: #1990FF; animation: ba-spin 0.8s linear infinite; }
 
     /* ── Chat conversation + feedback (from ChatView Feedback) ── */
     @keyframes baMsgIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
@@ -137,7 +140,7 @@ const { useState, useRef, useEffect } = React;
 
 // Deep-linkable starting state, so a review link can point at the exact screen being discussed:
 //   ?bs=0                 BlueStacks not installed        ?bai=0   BlueAI not installed
-//   ?dlg=bluestacks|blueai  open that installer            ?ask=…   auto-send that message
+//   ?dlg=blueai           open Flow A's installer          ?ask=…   auto-send that message
 // Anything else falls back to "both installed", so a bare URL is unchanged.
 const QS = new URLSearchParams(location.search);
 const START = (() => {
@@ -474,8 +477,10 @@ function ProductTitlebar({ onClose }) {
     </div>);
 }
 
-/* Installer copy, keyed by what is being installed. Only the entries a real trigger can reach
-   live here — Flow B's 'bluestacks' entry lands with the chat CTA that opens it, not before. */
+/* Installer copy for Flow A only (BlueStacks talking, installing BlueAI). Flow B (installing
+   BlueStacks) no longer uses this modal at all — designer's call (2026-08-10): it's now an
+   inline progress card in the chat instead (see needs_bluestacks.jsx's ProgressBubble). The
+   'bluestacks' config that used to live here was removed with it, not left as dead data. */
 const INSTALLERS = {
   blueai: {
     skin: 'bluestacks',                       // BlueStacks is the app doing the talking
@@ -488,19 +493,6 @@ const INSTALLERS = {
     downloadingLabel: 'Downloading BlueAI…',
     doneLabel: 'BlueAI is installed. Launching it now…',
     downloadMs: 2800,
-    doneMs: 900
-  },
-  bluestacks: {
-    skin: 'blueai',                           // BlueAI is the app doing the talking here
-    icon: 'assets/BlueStacks.png',
-    title: 'BlueStacks App Player required',
-    body: 'I run Android apps inside BlueStacks App Player. It isn’t on this PC yet, so I’ll download and set it up now, then carry on with your task.',
-    meta: 'Download size: 621 MB · One-time setup',
-    primaryLabel: 'Download and Install',
-    // No cancelLabel: this is the BlueAI skin, which dismisses via ✕ only (see install_dialog.jsx).
-    downloadingLabel: 'Downloading BlueStacks…',
-    doneLabel: 'BlueStacks is installed. Starting it now…',
-    downloadMs: 3000,
     doneMs: 900
   }
 };
@@ -544,17 +536,11 @@ function App() {
   const [baiInstalled, setBaiInstalled] = useState(START.bai);  // BlueAI Windows software present on this PC
   const [winOpen, setWinOpen] = useState(true);             // its window is open (✕ closes it; still installed)
   const [bsScreen, setBsScreen] = useState('home');         // which BlueStacks frame: home | loading | play-youtube
-  // ?dlg= opens that installer straight away. Only honoured when the thing is genuinely missing —
-  // otherwise it would show an install prompt for software that is already installed.
-  const [installing, setInstalling] = useState(() => {
-    const d = QS.get('dlg');
-    if (d === 'blueai' && !START.bai) return 'blueai';
-    if (d === 'bluestacks' && !START.bs) return 'bluestacks';
-    return null;
-  });                                                                // key into INSTALLERS, or null
+  // ?dlg=blueai opens that installer straight away. Only honoured when BlueAI is genuinely
+  // missing — otherwise it would show an install prompt for software that is already installed.
+  // (Flow B/BlueStacks has no modal to deep-link into anymore — see INSTALLERS above.)
+  const [installing, setInstalling] = useState(() => (QS.get('dlg') === 'blueai' && !START.bai) ? 'blueai' : null);
   const [winJustIn, setWinJustIn] = useState(false);        // play the window's open animation once
-  const [pendingTask, setPendingTask] = useState(null);     // { text, app } blocked on BlueStacks
-  const [resume, setResume] = useState(null);               // { text, app, n } → chat picks the task back up
   const [onbPhase, setOnbPhase] = useState('welcome');      // onboarding sub-flow: 'welcome' (chrome-free picker) → 'chat'
   const isLoading = !homeReady;
   const DEFAULT_KEY = { provider: 'Anthropic', model: 'claude-haiku-4-5', key: 'sk-ant-9Xsjhdw1qAAA' };
@@ -594,26 +580,24 @@ function App() {
     if (!baiInstalled) { setInstalling('blueai'); return; }   // Flow A: the install prompt
     if (!winOpen) openWindow();                                // already installed → just relaunch
   };
-  /* Flow B: the chat's "Get BlueStacks" button. Hold onto the task that was blocked so it can be
-     resumed the moment BlueStacks exists — an install that dead-ends and makes you retype the
-     request would waste the whole flow. */
-  const handleGetBluestacks = (text, app) => { setPendingTask({ text, app }); setInstalling('bluestacks'); };
-
   const finishInstall = () => {
-    if (installing === 'blueai') { setBaiInstalled(true); setInstalling(null); openWindow(); return; }
-    if (installing === 'bluestacks') {
-      const B = window.NeedsBluestacks.BS_BOOT;
-      setInstalling(null);
-      setBsInstalled(true);
-      setBsScreen('loading');                                       // the player cold-starts…
-      setTimeout(() => setBsScreen('home'), B.loading);              // …lands on its home…
-      // …then the app's Play listing, but ONLY for an app we hold a listing screenshot of.
-      // Otherwise it rests on the home screen rather than showing the wrong app's page.
-      const listing = pendingTask && window.NeedsBluestacks.PLAY_FRAME[pendingTask.app];
-      if (listing) setTimeout(() => setBsScreen(listing), B.loading + B.home);
-      // Same clock as the frames above (BS_BOOT), so the narration lands just after each swap.
-      if (pendingTask) { setResume({ text: pendingTask.text, app: pendingTask.app, n: Date.now() }); setPendingTask(null); }
-    }
+    if (installing === 'blueai') { setBaiInstalled(true); setInstalling(null); openWindow(); }
+  };
+
+  /* Flow B's scene-level payoff — mount the BlueStacks window and cycle it through its cold-start
+     frames. Called by ChatScreen's inline progress card (needs_bluestacks.jsx's ProgressBubble)
+     once IT finishes, not by a modal's onComplete — Flow B has no modal anymore. The chat side
+     (resuming the original task) is handled entirely inside ChatScreen itself now; this function
+     only owns what the DESKTOP SCENE needs to do, which is genuinely parent-owned state. */
+  const completeBluestacksInstall = (app) => {
+    const B = window.NeedsBluestacks.BS_BOOT;
+    setBsInstalled(true);
+    setBsScreen('loading');                                       // the player cold-starts…
+    setTimeout(() => setBsScreen('home'), B.loading);              // …lands on its home…
+    // …then the app's Play listing, but ONLY for an app we hold a listing screenshot of.
+    // Otherwise it rests on the home screen rather than showing the wrong app's page.
+    const listing = window.NeedsBluestacks.PLAY_FRAME[app];
+    if (listing) setTimeout(() => setBsScreen(listing), B.loading + B.home);
   };
   /* Preview panel: flip either install flag. GUARD — turning the last one off would leave a bare
      desktop with nothing on it and no way back, which is not a designed state, so the other one
@@ -708,15 +692,13 @@ function App() {
   );
 
   /* The installer belongs to the app that raises it, so it renders INSIDE that app's window —
-     centred on it, dimming it and nothing else. Flow A's is raised by BlueStacks, Flow B's by
-     BlueAI, hence the split by skin. */
+     centred on it, dimming it and nothing else. Only Flow A uses this now (BlueStacks raising
+     the prompt to install BlueAI); Flow B's install lives entirely inside the chat instead. */
   const installerCfg = INSTALLERS[installing];
-  const installer = installerCfg
+  const bsInstaller = installerCfg
     ? <window.InstallDialog open contained {...installerCfg}
-        onCancel={() => { setInstalling(null); setPendingTask(null); }} onComplete={finishInstall} />
+        onCancel={() => setInstalling(null)} onComplete={finishInstall} />
     : null;
-  const bsInstaller = installerCfg && installerCfg.skin === 'bluestacks' ? installer : null;
-  const appInstaller = installerCfg && installerCfg.skin !== 'bluestacks' ? installer : null;
 
   const productWindow = (
     <div className={'ba-win' + (winJustIn ? ' pscene-win-in' : '')}>
@@ -770,7 +752,7 @@ function App() {
       ) : isChat ? (
         <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column', width: '420px' }}>
           <ProductChatScreen sessionKey={sessionKey} seed={seed} loading={!homeReady} zeroCredits={zeroCredits && !byokActive} onNoCredits={() => setOocOpen(true)} isOnboarding={!isLoggedIn} onNeedLogin={(text) => { setPendingMessage(text); setShowLoginModal(true); }} showStates={showChatStates}
-            bsInstalled={bsInstalled} onGetBluestacks={handleGetBluestacks} resume={resume} />
+            bsInstalled={bsInstalled} onBsInstalled={completeBluestacksInstall} />
         </div>
       ) : (
         <div key={activeTab} className="tab-anim"
@@ -799,7 +781,6 @@ function App() {
       {/* Out-of-credits popup on message-send: prime geo → Prime upsell (image 1); non-prime geo → BYOK (image 2). */}
       {oocOpen && <window.Byok.OutOfCreditsModal mode={!primeGeo ? 'byok' : (creditsPrime ? 'topup' : 'prime')} onClose={() => setOocOpen(false)} onAddKey={goToByokSettings} />}
 
-      {appInstaller}
       {booting && <BootSplash onDone={handleBootDone} />}
       </div>
     </div>);
