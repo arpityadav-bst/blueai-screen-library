@@ -105,11 +105,20 @@ gates is precisely the "green light over an unexamined area" failure this notebo
 green light was real for the two gates named and meaningless for the surface the third one owns. The list is
 now complete and the count is derived from the actual file set.
 
-**Post-close fixes (2026-08-11, after this pass closed — all 10 logged in `scratchpad.md` for the NEXT
-promotion, deliberately not retro-promoted into this entry, because a closed audit that keeps absorbing later
-work stops being a record of what was true at close).** This paragraph has itself been AMENDED once: it
-originally listed four items and was already incomplete when written, which is the same
-subset-presented-as-the-whole failure as the gates line above it. The full set:
+**Post-close fixes (2026-08-11, after this pass closed — the nine DESIGN items are logged in `scratchpad.md`
+for the NEXT promotion, deliberately not retro-promoted into this entry, because a closed audit that keeps
+absorbing later work stops being a record of what was true at close. Item 10 is infrastructure, not a design
+correction, so it is recorded here and in memory rather than forced into the scratchpad's format.)**
+This paragraph has now been AMENDED TWICE, and the second amendment is worth more than the first.
+*First:* it originally listed four items and was already incomplete when written — the same
+subset-presented-as-the-whole failure as the gates line above it.
+*Second:* the rewrite that fixed that said "all 10 logged in `scratchpad.md`", which was **false**, and it was
+false in the specific way this notebook keeps catching — a tidy number standing in for a checked one. Two
+different groupings both happened to total 10 (the scratchpad's ten ROWS include the tour twice, as a fix and
+then its supersession, and contain no row for the worktree migration; this paragraph's ten ITEMS count the
+tour once and count the migration), so the sentence read as verified while nothing had verified it. Caught
+only because the designer asked "nothing is wrongly claimed, right?" — i.e. by the same mechanism as every
+prior instance: someone else asking. The full set:
 *Designer-caught:* (1) the landscape subpane bug — `.bai-subpane`'s `top: 84px` is a sum of header+strip and
 wide mode hides the strip, so every subpane opened 38px low and left a strip-height band of the parent pane
 showing (Skills' search toolbar visible above an open "My Skills"); (2) the three-way Cancel split, settled
