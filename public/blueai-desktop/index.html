@@ -68,17 +68,16 @@
             <div class="bai-logingate" id="baiLoginGate">
               <div class="bai-logingate-card" id="baiLoginGateCard"></div>
             </div>
-            <!-- Batch 2: Logout confirmation — SAME class (.bai-logingate) as the sign-in gate above, so it
-                 is structurally the identical system-level overlay tier, not a one-off. Only the inner card
-                 markup differs. -->
-            <div class="bai-logingate" id="baiLogoutGate">
-              <div class="bai-logoutgate-card">
-                <div class="bai-logoutgate-title">Are you sure you want to sign out?</div>
-                <div class="bai-logoutgate-actions">
-                  <button class="bai-logoutgate-cancel" id="baiLogoutCancelBtn" type="button">Cancel</button>
-                  <button class="bai-logoutgate-confirm" id="baiLogoutConfirmBtn" type="button">Log out</button>
-                </div>
-              </div>
+            <!-- GENERALISED DIALOG (designer, 2026-08-04): ONE overlay + ONE card for every general popup in the
+                 product — sign-out confirm, delete skill, delete scheduled task, key-saved acknowledgement, and
+                 the close-window confirm. Contents are built by openDialog() (search this file for it), which is
+                 the single implementation all five callers share. The card is intentionally EMPTY here: five
+                 hand-written markup copies is exactly how the old inline delete-confirms drifted from the
+                 sign-out card they were supposed to resemble.
+                 Shares the overlay tier with .bai-logingate via a combined base rule in the stylesheet (§12
+                 family), so the scrim/blur/geometry cannot diverge between the gate and the dialog. -->
+            <div class="bai-dialog" id="baiDialog">
+              <div class="bai-dialog-card" id="baiDialogCard" role="dialog" aria-modal="true" aria-labelledby="baiDialogTitle"></div>
             </div>
             <div class="bai-ui" id="baiUi">
               <div class="bai-sidebar" id="baiSidebar">
@@ -94,7 +93,7 @@
                   <button class="bai-side-item bai-side-newchat" data-mode="chat" type="button"><span class="ic"><svg viewBox="0 0 100 100" fill="currentColor" data-bai-icon="newChat"></svg></span>New chat</button>
                   <button class="bai-side-item" data-mode="jobs" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" data-bai-icon="listChecks"></svg></span>Jobs</button>
                   <button class="bai-side-item" data-mode="skills" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" data-bai-icon="bolt"></svg></span>Skills</button>
-                  <button class="bai-side-item" data-mode="scheduled" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" data-bai-icon="clock"></svg></span>Scheduled</button>
+                  <button class="bai-side-item" data-mode="scheduled" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" data-bai-icon="clock"></svg></span>Schedule</button>
                 </div>
                 <div class="bai-side-label">RECENT</div>
                 <div class="bai-side-recents" id="baiSideRecents"></div>
@@ -132,11 +131,30 @@
                   </div>
                 </div>
               </div>
+              <!-- Item 3, REDESIGNED (designer, 2026-08-11) from a bottom-right persistent card to a
+                   top-slide-down banner — the mobile-OS-notification pattern: drops in from above, shows
+                   briefly, dismisses itself (2.5–4s, scaled to how much there is to read) OR on a manual
+                   close tap, whichever comes first. That auto-dismiss is a direct reversal of the card
+                   version's "close button only, no timer" call (rule 38 — a timer would half-duplicate the
+                   close button); it no longer applies, because a system-style banner announcing itself and
+                   leaving is the whole point of this shape, not a card the user is expected to read at their
+                   own pace. ONE shared root for both variants it carries (reward / alert) rather than a
+                   component per variant — same structure, same motion, only the chip's colour+glyph and the
+                   copy change; see .bai-toast's own comment in the stylesheet for why REWARD reuses
+                   .tgm-ic-ok's exact recipe rather than inventing a "rewarding" colour from scratch. -->
+              <div class="bai-toast" id="baiToast" role="status" aria-live="polite">
+                <div class="bai-toast-ic" id="baiToastIc"></div>
+                <div class="bai-toast-body">
+                  <span class="bai-toast-title" id="baiToastTitle"></span>
+                  <span class="bai-toast-sub" id="baiToastSub"></span>
+                </div>
+                <button class="tgm-close" id="baiToastClose" type="button" aria-label="Dismiss"></button>
+              </div>
               <div class="bai-strip" id="baiStrip">
                 <button class="bai-tab active" data-mode="chat" type="button">Chat</button>
                 <button class="bai-tab" data-mode="jobs" type="button">Jobs</button>
                 <button class="bai-tab" data-mode="skills" type="button">Skills</button>
-                <button class="bai-tab" data-mode="scheduled" type="button">Scheduled</button>
+                <button class="bai-tab" data-mode="scheduled" type="button">Schedule</button>
               </div>
               <div class="bai-main-title">
                 <button class="bai-title-btn" id="baiTitleBtn" type="button" title="Chat history"><span id="baiMainTitle">Untitled chat</span><span class="bai-title-ar"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" data-bai-icon="chevronDown"></svg></span></button>
@@ -168,16 +186,18 @@
                   </div>
                   <div class="bai-scroll" id="baiScroll"></div>
                 </div>
-                <div class="bai-pane" id="paneJobs"><div class="bai-stub"><div class="ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" data-bai-icon="taskDone"></svg></div><h4>Jobs</h4><span class="soon">Coming soon</span><p>Running &amp; completed agent runs land here: status, logs, and what was applied to.</p></div></div>
+                <div class="bai-pane" id="paneJobs"><div class="bai-stub"><div class="ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" data-bai-icon="taskDone"></svg></div><h4>Jobs</h4><span class="soon">Coming soon</span></div></div>
                 <div class="bai-pane" id="paneSkills">
-                  <!-- ONE toolbar row: search + create together. Both are list-management controls, so they share a
-                       row instead of each paying for its own (the pill briefly had a row to itself and read as an
-                       orphan -- designer). Create stays in the TOP-RIGHT CORNER, the same visual anchor as
-                       Scheduled's "+ New task" and My Skills' "+ New": one operation, one location. It used to
-                       be a full-width bar docked at the bottom -- see .bai-list-add's specimen for that story. -->
-                  <div class="bai-list-head with-search"><div class="bai-search"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-bai-icon="search"></svg><input id="baiSkillSearch" type="text" placeholder="Search skills…" autocomplete="off" spellcheck="false" /><button class="bai-search-clear" id="baiSkillSearchClear" type="button" aria-label="Clear search"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" data-bai-icon="close"></svg></button></div><button class="bai-list-add" id="baiSkillCta" type="button">+ New skill</button></div>
+                  <!-- Toolbar row: search + inline help. The CREATE action is NOT here any more — it moved to a
+                       full-width bar docked at the pane's bottom (2026-08-04, PM requirement relayed by the
+                       designer), which is where it lived before 2026-08-01. The pill that used to sit in this
+                       row's top-right corner, and the whole one-operation-one-location argument behind it, are
+                       preserved in taste rule 45 and in .bai-dock-cta-bar's own note in the stylesheet — the
+                       design reasoning did not change, the requirement came from outside it. -->
+                  <div class="bai-list-head with-search"><div class="bai-search"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-bai-icon="search"></svg><input id="baiSkillSearch" type="text" placeholder="Search skills…" autocomplete="off" spellcheck="false" /><button class="bai-search-clear" id="baiSkillSearchClear" type="button" aria-label="Clear search"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" data-bai-icon="close"></svg></button></div><button class="bai-icbtn bai-help-inline" type="button" aria-label="Help"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" data-bai-icon="help"></svg></button></div>
                   <div class="bai-list-body" id="baiSkillsList"></div>
                   <div class="bai-scroll" id="baiSkillsScroll"></div>
+                  <div class="bai-dock-cta-bar"><button class="bai-dock-cta" id="baiSkillCta" type="button">+ New skill</button></div>
                                   </div>
                 <div class="bai-pane" id="paneScheduled">
                   <!-- CMP-01, RETIRED (2026-08-03, found by reaudit). This read: "stays an inline card, not a
@@ -188,17 +208,17 @@
                        both escalate to a subpane, which is the consistency the exception used to excuse.
                        Kept as a marker rather than deleted, because a reader who remembers CMP-01 should be
                        able to find out that it was retired and why, not just find it missing. -->
-                  <!-- No header band here on purpose (designer): a row whose only occupant is one button
-                       reads as an empty header with a stray control, not a toolbar — Skills' toolbar row
-                       earns its place by sharing it with the search field; this screen has nothing to share
-                       a row with. So "+ New task" is CONTENT, not chrome: renderScheduled() relocates this
-                       same node to be the first row of the list itself (ghost/dashed, distinct from real
-                       cards) whenever the list is non-empty. #baiSchedAddHome is a permanent, always-attached
-                       parking spot for it — the code NEVER fully detaches this button (a detached node is
-                       invisible to getElementById and never comes back once nothing holds a reference to it;
-                       that shipped as a real bug here before being caught). Every place that would otherwise
-                       wipe #baiSchedList's innerHTML parks the button back here FIRST. -->
-                  <div id="baiSchedAddHome" style="display:none;"><button class="bai-sched-newrow" id="baiSchedAdd" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-bai-icon="plus"></svg>New task</button></div>
+                  <!-- The create action is a full-width bar docked at this pane's BOTTOM (see the end of this pane),
+                       2026-08-04, PM requirement relayed by the designer.
+                       WHAT THIS REPLACED, since the machinery it needed is now gone: "+ New task" used to be
+                       CONTENT rather than chrome — renderScheduled() physically relocated one button node to be
+                       the list's own first row, and #baiSchedAddHome was a permanent always-attached parking
+                       spot so the node was never detached (a detached node is invisible to getElementById and
+                       never comes back; that shipped as a real bug here once). A statically docked bar needs
+                       none of that: the button lives in one place and never moves, so the parking home,
+                       schedParkAddRow() and every "park before wiping innerHTML" obligation are deleted with
+                       it. That is a genuine simplification, not a loss — the reason the old design needed the
+                       machinery was the relocation, and the relocation is what the requirement removed. -->
                   <!-- The live product's full Schedule-Task field set (2026-08-03, designer supplied the
                        live screens as content reference): Name and Prompt as SEPARATE fields (this form
                        used to conflate them into one "What should BlueAI do?" textarea, so a task had no
@@ -315,6 +335,7 @@
                   </div>
                   <div class="bai-list-body" id="baiSchedList"></div>
                   <div class="bai-scroll" id="baiSchedScroll"></div>
+                  <div class="bai-dock-cta-bar" id="baiSchedDock"><button class="bai-dock-cta" id="baiSchedAdd" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-bai-icon="plus"></svg>New task</button></div>
                 </div>
                 <div class="bai-pane" id="paneSettings"><div class="bai-set">
                   <div class="bai-set-label">APPEARANCE</div>
@@ -591,7 +612,14 @@
         var t = text.toLowerCase();
         if (t.indexOf('error') !== -1 || t.indexOf('fail') !== -1) { demoError(); return true; }
         if (t.indexOf('warn') !== -1) { demoWarn(); return true; }
-        if (t.indexOf('plan') !== -1) { demoPlan(); return true; }
+        // Item 8: a real multi-turn reply (ack -> plan card -> working -> success), not a lone plan card.
+        // Runs through the FLOWS engine. The 120ms initialDelay is deliberate and must not be written as 0:
+        // startFlow does `initialDelay || 800`, so a 0 falls through to the engine's own 800ms default — and
+        // proceedWithReply() has ALREADY spent its thinking beat before calling this, so another 800ms pause
+        // here would read as the reply hanging. 120ms is just enough to not collide with the spinner's removal.
+        // The Preview panel's own "Plan" row still calls demoPlan() directly — that row documents the plan
+        // CARD as one state, which is a different job from playing the conversation around it.
+        if (t.indexOf('plan') !== -1) { startFlow('plan', 120); return true; }
         if (t.indexOf('menu') !== -1) { demoMenu(); return true; }
         if (t.indexOf('option') !== -1 || t.indexOf('choice') !== -1) { demoInput(); return true; }
         if (t.indexOf('success') !== -1 || t.indexOf('done') !== -1 || t.indexOf('complete') !== -1) { demoSuccess(); return true; }
@@ -701,6 +729,7 @@
             '<button class="lg-cta" id="lgContinueBtn" type="button">Continue</button>';
           document.getElementById('lgContinueBtn').addEventListener('click', function () {
             credits = 500; renderCredits(); closeLoginGate();
+            showRewardToast(500, 'Free credits on your first login.');   // the app's one real credits-ADDITION moment; item 3's notification is reachable through actual interaction, not only the Preview panel
             syncSessionState(true);   // loggedIn=true + pageState='loggedin', persisted — one real login, one place it's recorded
             if (pendingSendText != null) { var t = pendingSendText; pendingSendText = null; proceedWithReply(t); }
           });
@@ -717,6 +746,44 @@
       function tierMax() { return (primeGeo && creditsPrime) ? PRIME_CREDIT_ALLOWANCE : FREE_CREDIT_ALLOWANCE; }
       var modelBtn = document.getElementById('baiModelBtn'), modelMenu = document.getElementById('baiModelMenu');
       var creditsWrap = document.getElementById('baiCreditsWrap'), creditsArc = document.getElementById('baiCreditsArc'), creditsDesc = document.getElementById('baiCreditsDesc');
+      // ---- Item 3, REDESIGNED 2026-08-11: top slide-down toast, replacing the bottom-right card ----
+      // ONE shared root for both variants (reward / alert) rather than one component per variant: same
+      // structure, same slide, same auto-dismiss maths — only the icon chip's colour+glyph and the two text
+      // lines change. Positioning is now trivial precisely BECAUSE it moved to the top: the old card had to
+      // measure and clear whatever bottom chrome the open pane had (composer vs. docked CTA bar), which is
+      // exactly the complexity a system-style banner sidesteps by living above all of it, fixed to .bai-ui's
+      // own top edge — no per-pane measurement, no resize listener, no scaled-px conversion. That entire
+      // mechanism (positionCreditNote) is deleted with the redesign, not left as dead code alongside it.
+      var toastEl = document.getElementById('baiToast'), toastIcEl = document.getElementById('baiToastIc');
+      var toastTitleEl = document.getElementById('baiToastTitle'), toastSubEl = document.getElementById('baiToastSub');
+      document.getElementById('baiToastClose').innerHTML = iconSvg(BAI_ICONS.closeAlt, 14);
+      var toastTimer = null;
+      function hideToast() { toastEl.classList.remove('on'); clearTimeout(toastTimer); toastTimer = null; }
+      // Auto-dismiss window is 2.5–4s, SCALED to how much there is to read (designer, 2026-08-11: "two point
+      // five to four seconds depending on the content digestion and minimal amount of information") rather
+      // than one fixed number — "+500 AI Credits" alone earns the floor, a title+subtitle pair earns more,
+      // and it never exceeds the ceiling regardless of length. This is a direct reversal of the bottom-right
+      // card's "no timer, close button only" call: that call held for a CARD the user reads at their own
+      // pace; it does not hold for a BANNER whose entire idea is announce-then-leave.
+      function toastDuration(text) { return Math.max(2500, Math.min(4000, 1400 + text.length * 45)); }
+      function showToast(opts) {
+        // opts: { kind: 'reward'|'alert', icon, title, sub? }
+        toastEl.classList.remove('reward', 'alert'); toastEl.classList.add(opts.kind);
+        toastIcEl.innerHTML = iconSvg(opts.icon, 12);
+        toastTitleEl.textContent = opts.title;
+        toastSubEl.textContent = opts.sub || '';
+        toastSubEl.style.display = opts.sub ? '' : 'none';
+        clearTimeout(toastTimer);
+        toastEl.classList.remove('on');   // restart the slide-in when a second toast arrives mid-display
+        void toastEl.offsetWidth;
+        toastEl.classList.add('on');
+        toastTimer = setTimeout(hideToast, toastDuration(opts.title + ' ' + (opts.sub || '')));
+      }
+      function showRewardToast(amount, reason) {
+        showToast({ kind: 'reward', icon: BAI_ICONS.check, title: '+' + amount.toLocaleString('en-US') + ' AI Credits', sub: reason });
+      }
+      function showAlertToast(message) { showToast({ kind: 'alert', icon: BAI_ICONS.warn, title: message }); }
+      document.getElementById('baiToastClose').addEventListener('click', hideToast);
       var RING_C = 2 * Math.PI * 7;   // circumference of the r=7 gauge circle
       function renderModel() { modelBtn.textContent = curModel; }
       // credit health ramp (as balance depletes): blue good → yellow low → orange very low → red almost over
@@ -1088,7 +1155,19 @@
       // sidebar Settings destination (baiSideSettings below) is unaffected and still calls setMode directly.
       settingsBtn.addEventListener('click', function (e) { e.stopPropagation(); closeMenus(); goToSettingsRoute(); });
       var tbClose = document.getElementById('baiTbClose');
-      if (tbClose) tbClose.addEventListener('click', function (e) { e.stopPropagation(); closeMenus(); closePanel(); });   // title bar's Close — hides + remembers; Minimize/Maximize are decorative only (no handler)
+      // Title bar's Close now CONFIRMS first (designer, 2026-08-04: "should ask a confirmation popup just like
+      // sign out"), through the same generalised dialog. Esc is deliberately NOT routed through the confirm —
+      // Esc already means "dismiss the thing in front of me" everywhere in this file, and making the escape
+      // key itself open a popup would invert that. Minimize/Maximize stay decorative (no handler).
+      if (tbClose) tbClose.addEventListener('click', function (e) {
+        e.stopPropagation(); closeMenus();
+        openDialog({
+          title: 'Close BlueAI?',
+          body: 'Scheduled tasks keep running in the background. Your chats stay where you left them.',
+          confirmLabel: 'Close', danger: true,
+          onConfirm: closePanel
+        });
+      });
 
       // ---- Batch 2: Help + Account (kebab) menus. Compact keeps its own header buttons; wide keeps a
       // duplicate pair in the sidebar footer (CSS hides whichever pair doesn't apply) — same content,
@@ -1181,19 +1260,129 @@
 
       // ---- Batch 2: system-level Logout confirmation — shares the Login Gate's exact overlay class,
       // so it is the identical footprint tier, just a different card. Reference-exact copy. ----
-      var logoutGateEl = document.getElementById('baiLogoutGate'), logoutGateOpen = false;
-      function openLogoutGate() { logoutGateOpen = true; logoutGateEl.classList.add('on'); }
-      function closeLogoutGate() { logoutGateOpen = false; logoutGateEl.classList.remove('on'); }
-      document.getElementById('baiLogoutCancelBtn').addEventListener('click', closeLogoutGate);
-      document.getElementById('baiLogoutConfirmBtn').addEventListener('click', function () {
-        // Genuine logout result: return to the same logged-out state a fresh session starts in — the NEXT
-        // real send re-opens the sign-in gate via submit()'s own existing check. syncSessionState also
-        // persists pageState='loggedout' so a reload can't undo this real logout.
-        closeLogoutGate();
-        pendingSendText = null;
-        newChat(); setMode('chat');
-        syncSessionState(false);
+      // ---- GENERALISED DIALOG (designer, 2026-08-04) — ONE implementation for every general popup ----
+      // Callers: sign-out confirm, close-window confirm, delete skill, delete scheduled task, key-saved ack.
+      // Everything about a dialog that is the SAME across those five lives here; each caller supplies only
+      // what genuinely differs (its copy, its commit label, whether the commit is destructive, what it does).
+      // opts = { title, body, confirmLabel, danger, ack, icon, onConfirm }
+      //   ack:true   -> ACKNOWLEDGEMENT shape: one dismiss button, no Cancel, because there is nothing to
+      //                 decide (key-saved). Not a confirm with Cancel hidden — a different shape on purpose.
+      //   danger:true -> destructive commit colour, via a modifier on the same button (see the CSS note).
+      //   icon        -> optional status chip; the ack variant uses it, confirms deliberately do not (a warn
+      //                 glyph on every delete would be a second signal for what the copy + red button
+      //                 already say — rule 38).
+      var dialogEl = document.getElementById('baiDialog'), dialogCardEl = document.getElementById('baiDialogCard');
+      var dialogOpen = false, dialogPrevFocus = null, dialogPrevScope = null;
+      var FOCUSABLE = 'button:not([disabled]), a[href], input:not([disabled]), select, textarea, [tabindex]:not([tabindex="-1"])';
+      function closeDialog() {
+        dialogOpen = false; dialogEl.classList.remove('on'); dialogCardEl.innerHTML = '';
+        // Restore focus ONLY if the element is still in the document. Independent review (2026-08-04) caught
+        // the ordering: closeDialog() ran before onConfirm(), so on "delete the only skill" the pill was
+        // refocused and then destroyed by the re-render, dropping focus to <body> — a keyboard user restarts
+        // from the top of the panel. Callers now run their action FIRST (see the confirm handler).
+        // A guard alone was not enough: a *successful* delete legitimately destroys its own trigger, so the
+        // guard just declined to restore and focus still fell to <body> — the exact outcome it was added to
+        // prevent, verified empirically (activeElement === BODY after confirming a delete). So the surviving
+        // case gets a real destination: the surface the trigger lived in, which is where the user's attention
+        // already is.
+        var t = dialogPrevFocus, scope = dialogPrevScope;
+        dialogPrevFocus = null; dialogPrevScope = null;
+        if (t && t.focus && document.contains(t)) { try { t.focus(); } catch (e) {} return; }
+        if (!scope || !document.contains(scope)) return;
+        var next = scope.querySelector(FOCUSABLE);
+        if (next) { try { next.focus(); return; } catch (e) {} }
+        scope.setAttribute('tabindex', '-1');            // no controls left (empty list) -> park on the surface
+        try { scope.focus(); } catch (e) {}
+      }
+      // FOCUS TRAP. Without it, one Shift+Tab from a dialog reached the control BEHIND the scrim and Enter
+      // re-fired it — from "Close BlueAI?" that meant re-firing the titlebar close; from "Delete this
+      // scheduled task?" five Tabs reached the background card's own live Delete button. The card asserts
+      // aria-modal="true", so leaking focus out of it was also a straight contradiction of what it told AT.
+      // Mouse was already correctly blocked by the scrim; this is the keyboard half of the same guarantee.
+      // Scoped to the dialog on purpose: the sign-in gate leaks identically and is an app-wide gap worth
+      // fixing separately — it is not this component's to silently absorb, and the blast radius here (a live
+      // destructive control one keystroke away) is what makes it urgent for the dialog specifically.
+      dialogEl.addEventListener('keydown', function (e) {
+        if (e.key !== 'Tab' || !dialogOpen) return;
+        var f = dialogCardEl.querySelectorAll('button');
+        if (!f.length) return;
+        var first = f[0], last = f[f.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
       });
+      function openDialog(opts) {
+        dialogPrevFocus = document.activeElement;   // return focus where it came from on dismiss
+        // ...and the surface it lived in, as the fallback for when the commit destroys the trigger itself.
+        dialogPrevScope = dialogPrevFocus && dialogPrevFocus.closest
+          ? dialogPrevFocus.closest('#baiSubpaneBody, .bai-list-body, .bai-pane, .bai-titlebar') : null;
+        dialogOpen = true;
+        dialogCardEl.innerHTML = '';
+        if (opts.icon) {
+          var ic = document.createElement('div'); ic.className = 'bai-dialog-ic';
+          ic.innerHTML = iconSvg(opts.icon, 12); dialogCardEl.appendChild(ic);   // chip shrunk 30->22 (independent review, 2026-08-10); 12 matches .tgm-ic-ok's own glyph size at that chip size, not the old 15
+        }
+        var t = document.createElement('div'); t.className = 'bai-dialog-title'; t.id = 'baiDialogTitle';
+        t.textContent = opts.title; dialogCardEl.appendChild(t);
+        if (opts.body) {
+          // id + aria-describedby so the consequence copy ("This can't be undone") is part of the dialog's
+          // accessible description, not just visible text next to it (review #10).
+          var bd = document.createElement('div'); bd.className = 'bai-dialog-body'; bd.id = 'baiDialogBody';
+          bd.textContent = opts.body;
+          dialogCardEl.appendChild(bd);
+          dialogCardEl.setAttribute('aria-describedby', 'baiDialogBody');
+        } else {
+          dialogCardEl.removeAttribute('aria-describedby');
+        }
+        var acts = document.createElement('div'); acts.className = 'bai-dialog-actions';
+        if (!opts.ack) {
+          var cancel = document.createElement('button'); cancel.className = 'bai-dialog-cancel'; cancel.type = 'button';
+          cancel.textContent = 'Cancel';
+          cancel.addEventListener('click', function (e) { e.stopPropagation(); closeDialog(); });
+          acts.appendChild(cancel);
+        }
+        var ok = document.createElement('button');
+        ok.className = 'bai-dialog-confirm' + (opts.danger ? ' danger' : ''); ok.type = 'button';
+        ok.textContent = opts.confirmLabel || (opts.ack ? 'Got it' : 'Confirm');
+        ok.addEventListener('click', function (e) {
+          e.stopPropagation();
+          // Action FIRST, then close. The reverse order refocused a control the action was about to destroy
+          // (review #6). closeDialog() clears `on` and empties the card, so a caller that opens a NEW dialog
+          // from inside onConfirm still wins — it runs after this returns and simply refills the same card.
+          var fn = opts.onConfirm;
+          if (fn) fn();
+          closeDialog();
+        });
+        acts.appendChild(ok);
+        dialogCardEl.appendChild(acts);
+        dialogEl.classList.add('on');
+        // Focus the SAFE action on a destructive dialog, never the destructive one. The first version focused
+        // the commit button unconditionally, which meant a dialog asking "Delete this skill?" opened with
+        // Delete already armed — one stray Enter or Space and it is gone, with the keypress most likely
+        // intended for whatever the user was doing before the dialog appeared. An acknowledgement has only
+        // one button and nothing to lose, so it keeps focus on it.
+        (opts.danger && !opts.ack ? acts.querySelector('.bai-dialog-cancel') : ok).focus();
+      }
+      // Sign-out now goes through the shared dialog. The RESULT is unchanged: return to the same logged-out
+      // state a fresh session starts in — the next real send re-opens the sign-in gate via submit()'s own
+      // check, and syncSessionState persists pageState='loggedout' so a reload can't undo a real logout.
+      function openLogoutGate() {
+        // Body depends on whether there ARE scheduled tasks (designer, 2026-08-10: "even when I don't have
+        // anything scheduled we see this copy"). "Your scheduled tasks keep running" is reassurance about a
+        // consequence — and when there are no tasks it isn't reassurance, it's a claim about something that
+        // doesn't exist, which makes the user hunt for tasks they never created. The count matters too: with
+        // one task, "tasks" is wrong. Falls back to the plain consequence of signing out, which is the only
+        // thing left that's actually true.
+        var n = SCHEDULED.length;
+        var body = n
+          ? 'Your ' + (n === 1 ? 'scheduled task keeps' : n + ' scheduled tasks keep') + ' running. You’ll need to sign in again to see ' + (n === 1 ? 'it' : 'them') + '.'
+          : 'You’ll need to sign in again to use BlueAI.';
+        openDialog({
+          title: 'Sign out of BlueAI?',
+          body: body,
+          confirmLabel: 'Sign out', danger: true,
+          onConfirm: function () { pendingSendText = null; newChat(); setMode('chat'); syncSessionState(false); }
+        });
+      }
 
       // ---- Batch 2: logged-out chrome — Credits/Help are account-scoped, hidden until signed in.
       // Settings and the model picker are app configuration, not account state, so they always stay put.
@@ -1281,21 +1470,10 @@
         autoResizeInput();
         baiInput.focus();
       }
-      var skillPendingDelete = null;   // Batch 5 (F9): the skill object mid-delete-confirm, or null — reference
-      // compare works fine here since owned skills always come from the one stable MY_SKILLS array.
+      // skillPendingDelete removed 2026-08-04: the card no longer becomes its own confirm, so there is no
+      // mid-delete row state to track — the shared dialog holds it, and the skill is captured in its closure.
       function skillCard(sk, owned, catName, refreshFn) {
         var row = document.createElement('div'); row.className = 'bai-skillcard';
-        if (owned && sk === skillPendingDelete) {
-          // Batch 5 (F9): was an instant no-confirm splice — now mirrors Scheduled's own delete-confirm
-          // pattern exactly (same markup/classes), settled as an intentional improvement over the reference.
-          row.innerHTML = '<span class="info"><b>Delete "' + sk.name + '"?</b><span>This can\'t be undone.</span></span>';
-          var cancelBtn = document.createElement('button'); cancelBtn.className = 'bai-newitem-cancel'; cancelBtn.type = 'button'; cancelBtn.textContent = 'Cancel';
-          var delBtn = document.createElement('button'); delBtn.className = 'bai-newitem-create'; delBtn.type = 'button'; delBtn.textContent = 'Delete'; delBtn.style.background = 'var(--bai-danger)';
-          cancelBtn.addEventListener('click', function (e) { e.stopPropagation(); skillPendingDelete = null; refreshFn(); });
-          delBtn.addEventListener('click', function (e) { e.stopPropagation(); MY_SKILLS.splice(MY_SKILLS.indexOf(sk), 1); skillPendingDelete = null; refreshFn(); });
-          row.appendChild(cancelBtn); row.appendChild(delBtn);
-          return row;
-        }
         // Fix #6 (visual review): title+toggle and description are both "about the skill" — grouped tighter
         // (content-group) than the footer ("actions"), same content-vs-action distinction used in AI Mode's
         // spacing fix. Footer: Try is the compact rectangular primary action (shared 8px radius, no longer a
@@ -1318,7 +1496,18 @@
         if (owned) {
           var pills = row.querySelectorAll('.bai-sk-pillbtn');
           pills[0].addEventListener('click', function (e) { e.stopPropagation(); openSkillForm(sk); });
-          pills[1].addEventListener('click', function (e) { e.stopPropagation(); skillPendingDelete = sk; refreshFn(); });
+          pills[1].addEventListener('click', function (e) {
+            e.stopPropagation();
+            // Shared dialog, same as Schedule's delete (designer, 2026-08-04). Skill name in the BODY, not the
+            // title, for the same reason: a user-supplied string of any length inside a 244px title wraps
+            // unpredictably and can orphan a word. Index re-resolved at commit time, never captured early.
+            openDialog({
+              title: 'Delete this skill?',
+              body: '“' + sk.name + '” will be removed. This can’t be undone.',
+              confirmLabel: 'Delete', danger: true,
+              onConfirm: function () { var at = MY_SKILLS.indexOf(sk); if (at !== -1) MY_SKILLS.splice(at, 1); refreshFn(); }
+            });
+          });
         } else {
           row.querySelector('.bai-sk-link').addEventListener('click', function (e) { e.stopPropagation(); openSkillDetails(sk, catName); });
         }
@@ -1654,50 +1843,33 @@
         { name: 'Weekly game roundup', prompt: "Summarize this week's new game drops and post the list to Telegram.", mode: 'Indefinite', repeat: 'Weekly', startsAt: seedStart(21, 8, 0), endsAt: null, interval: '', days: [1, 5], dayOfMonth: '1', on: true },
         { name: 'Watch for restock', prompt: 'Check the store page for restocked bundles and alert me.', mode: 'Custom', repeat: 'Minutes', startsAt: seedStart(1, 10, 0), endsAt: seedEnd(6, 22, 0), interval: '30', days: [], dayOfMonth: '1', on: false }
       ];
-      var schedListEl = document.getElementById('baiSchedList'), schedAddHomeEl = document.getElementById('baiSchedAddHome'), schedPendingDelete = -1, schedShimmerShown = false;
-      // CTA placement (designer, 2026-08-01): no header band. "+ New task" is the FIRST ROW of the
-      // list when tasks exist (relocated here each render — same physical-move technique this file
-      // already uses for #baiSchedForm), and the empty state's own centred CTA takes over when the
-      // list is empty.
-      // ANY function that would wipe #baiSchedList's innerHTML MUST park the button back into
-      // #baiSchedAddHome FIRST — a real bug shipped here from getting this wrong twice: (1) a bare
-      // `innerHTML = ''` while the button lived inside the list DESTROYS it outright, not just detaches
-      // it; (2) even calling `removeChild` directly (an earlier fix attempt) orphans it PERMANENTLY,
-      // because a detached node with no parent is invisible to getElementById and nothing ever holds a
-      // reference to reattach it later — appendChild-to-a-still-attached-parent is the only safe "move".
-      // schedAddHomeEl always exists in the live document, so the button is NEVER without a live parent.
-      function schedParkAddRow() {
-        var el = document.getElementById('baiSchedAdd');
-        if (el) schedAddHomeEl.appendChild(el);   // a MOVE (still attached throughout), never a bare removeChild
-        return el;
-      }
+      var schedListEl = document.getElementById('baiSchedList'), schedShimmerShown = false;
+      // Two pieces of state died on 2026-08-04, both because the thing that needed them is gone:
+      // schedPendingDelete (the card no longer becomes its own confirm — the shared dialog holds that), and
+      // schedAddHomeEl (the create button no longer moves, so it needs no parking home).
       function renderScheduled() {
-        // Read via getElementById (inside the helper), not a closure var: this function's first call
-        // (line ~1497, below) runs before `schedAddBtn` is assigned (~1584), so that closure var is
-        // still undefined at that point.
-        var addRow = schedParkAddRow();
-        schedListEl.innerHTML = '';
+        schedListEl.innerHTML = '';   // safe to wipe unconditionally now: no borrowed node lives in this list any more
+        // Empty state and docked bar SWAP, never stack (designer, 2026-08-10) — the same rule openMySkills
+        // has always followed, which the docked bar broke here. The bar exists so the create action stays
+        // reachable past a long list; with no list there is nothing to scroll past, and the eye is already on
+        // the explanation, so the action belongs directly under it rather than pinned to an edge the user has
+        // no reason to look at. Reuses .bai-list-add, the same centred pill My Skills' empty state uses.
+        // NOT "show both": rule 38 — two create buttons on screen at once is one signal too many. My earlier
+        // note here argued the opposite (that the docked bar's always-present-ness is what forbids a second
+        // copy); the resolution is that the bar is not always present, it is the non-empty half of a pair.
+        var schedDock = document.getElementById('baiSchedDock');
+        schedDock.style.display = SCHEDULED.length ? '' : 'none';
         if (!SCHEDULED.length) {
           var empty = document.createElement('div'); empty.className = 'bai-stub';
           empty.innerHTML = '<div class="ic">' + iconSvg(CAL_PATH, 17) + '</div><h4>Nothing scheduled yet</h4><p>Ask BlueAI to run a task later or repeat it on a schedule. Your scheduled tasks will appear here.</p>';
-          var cta = document.createElement('button'); cta.className = 'bai-list-add'; cta.type = 'button'; cta.textContent = '+ New task'; cta.style.marginTop = 'var(--bai-sp-4)';
-          cta.addEventListener('click', function () { openSchedForm(null); });
-          empty.appendChild(cta);
+          var ecta = document.createElement('button'); ecta.className = 'bai-list-add'; ecta.type = 'button';
+          ecta.textContent = '+ New task'; ecta.style.marginTop = 'var(--bai-sp-4)';
+          ecta.addEventListener('click', function () { openSchedForm(null); });
+          empty.appendChild(ecta);
           schedListEl.appendChild(empty); refreshFadeScroll(schedListEl, document.getElementById('baiSchedScroll')); return;
         }
-        if (addRow) { addRow.style.display = ''; schedListEl.appendChild(addRow); }
         SCHEDULED.forEach(function (t, i) {
           var card = document.createElement('div'); card.className = 'bai-sched-card';
-          if (i === schedPendingDelete) {
-            card.innerHTML = '<b>Delete "' + escHtml(t.name) + '"?</b><span class="bai-sched-sub">This can\'t be undone.</span>';
-            var actions0 = document.createElement('div'); actions0.className = 'bai-sched-actions';
-            var cancelBtn = document.createElement('button'); cancelBtn.className = 'bai-sched-btn'; cancelBtn.type = 'button'; cancelBtn.textContent = 'Cancel';
-            var delBtn = document.createElement('button'); delBtn.className = 'bai-sched-btn danger'; delBtn.type = 'button'; delBtn.textContent = 'Delete';
-            cancelBtn.addEventListener('click', function (e) { e.stopPropagation(); schedPendingDelete = -1; renderScheduled(); });
-            delBtn.addEventListener('click', function (e) { e.stopPropagation(); SCHEDULED.splice(i, 1); schedPendingDelete = -1; renderScheduled(); });
-            actions0.appendChild(cancelBtn); actions0.appendChild(delBtn);
-            card.appendChild(actions0); schedListEl.appendChild(card); return;
-          }
           var next = nextOccurrence(t);
           // Every field the form now collects is represented here — otherwise the form gathers data the
           // product never shows back (rule 35's spirit: a control that leads nowhere reads as broken).
@@ -1715,7 +1887,22 @@
           card.appendChild(actions);
           card.querySelector('.bai-tgl').addEventListener('click', function (e) { e.stopPropagation(); t.on = !t.on; renderScheduled(); });
           actions.children[0].addEventListener('click', function (e) { e.stopPropagation(); openSchedForm(t); });
-          actions.children[1].addEventListener('click', function (e) { e.stopPropagation(); schedPendingDelete = i; renderScheduled(); });
+          actions.children[1].addEventListener('click', function (e) {
+            e.stopPropagation();
+            // Confirm in the SHARED dialog, not by mutating this card (designer, 2026-08-04: every confirmation
+            // in the product goes through a popup, so a card that became its own confirm was the odd one out).
+            // The task name goes in the BODY, not the title: at 244px a title carrying an arbitrary-length user
+            // string wraps unpredictably and can orphan a word — the exact thing the designer asked to avoid —
+            // so the title stays a fixed, balanced question and the name sits in prose that is allowed to wrap.
+            // Index is re-resolved at COMMIT time via indexOf(t), not the captured `i`: the list can re-render
+            // between opening the dialog and confirming, and a stale index would delete the wrong row.
+            openDialog({
+              title: 'Delete this scheduled task?',
+              body: '“' + t.name + '” will be removed. This can’t be undone.',
+              confirmLabel: 'Delete', danger: true,
+              onConfirm: function () { var at = SCHEDULED.indexOf(t); if (at !== -1) SCHEDULED.splice(at, 1); renderScheduled(); }
+            });
+          });
           schedListEl.appendChild(card);
         });
         refreshFadeScroll(schedListEl, document.getElementById('baiSchedScroll'));
@@ -1723,7 +1910,6 @@
       function shimmerRow() { var r = document.createElement('div'); r.className = 'bai-item-card bai-shimmer'; r.innerHTML = '<span class="ic"></span><span class="info"><b class="sh-line"></b><span class="sh-line short"></span></span>'; return r; }
       function showSchedShimmerThenRender() {
         schedShimmerShown = true;
-        schedParkAddRow();   // see the comment on this helper — this wipe outright destroyed/orphaned the button twice
         schedListEl.innerHTML = ''; schedListEl.appendChild(shimmerRow()); schedListEl.appendChild(shimmerRow());
         setTimeout(renderScheduled, 550);
       }
@@ -1825,19 +2011,35 @@
         dtCalYear = base.getFullYear(); dtCalMonth = base.getMonth();
         dtSelected = new Date(base.getFullYear(), base.getMonth(), base.getDate());
         dtHour = base.getHours(); dtMinute = base.getMinutes();
-        (which === 'end' ? dtEndGroupEl : dtStartGroupEl).appendChild(dtPicker);
         dtPicker.style.display = 'block';
         (which === 'end' ? dtEndField : dtField).classList.add('open');
         renderDtCalendar();
         // A confirmed date+time already exists for THIS field (editing, or reopening after a prior Done)
         // -> most likely reason to reopen is tweaking the time, so skip straight there. Otherwise date first.
         if (current) goToTimeStep(); else dtPicker.classList.remove('step-time');
+        // Placement LAST: the picker floats rather than pushing the form down (designer, 2026-08-04), and it
+        // portals out to .bai-ui because the calendar is taller than the space either side of the field
+        // inside .bai-subpane-body. Must run after display:block AND after the step is chosen, because the
+        // two steps have different heights — measuring before either would place it on a height the user
+        // never sees. Same helper the Settings pickers use.
+        placeFloating(dtPicker, which === 'end' ? dtEndField : dtField, { portal: true });
       }
       function closeDtPicker() {
         dtPicker.style.display = 'none';
+        dtPicker.style.top = ''; dtPicker.style.bottom = ''; dtPicker.style.left = ''; dtPicker.style.width = '';
+        dtPicker.style.right = ''; dtPicker.style.maxHeight = ''; dtPicker.style.overflowY = '';
         dtPickerHomeEl.appendChild(dtPicker);   // a MOVE between two always-attached parents, never a bare removeChild
         dtField.classList.remove('open'); dtEndField.classList.remove('open');
       }
+      // Portaled overlays don't ride their pane's scroll, so a scroll while open would leave the picker
+      // pointing at a field that has moved. Close it — predictable, and the same outcome as clicking away.
+      // Capture phase, but ignore scrolls that originate INSIDE the picker: when the clamp above gives it an
+      // internal scrollbar, scrolling the calendar itself must not dismiss it.
+      document.addEventListener('scroll', function (e) {
+        if (dtPicker.style.display === 'none') return;
+        if (dtPicker.contains(e.target)) return;   // contains() includes the node itself
+        closeDtPicker();
+      }, true);
       function toggleDtPicker(which) {
         var alreadyOpenHere = dtPicker.style.display !== 'none' && dtTarget === which;
         closeDtPicker();
@@ -2170,11 +2372,48 @@
         if (aiMode !== 'hybrid') return;
         el.appendChild(Object.assign(document.createElement('div'), { className: 'bai-set-divider' }));
         var hybridGroup = document.createElement('div'); hybridGroup.style.cssText = 'display:flex;flex-direction:column;gap:6px;';
-        var sub = document.createElement('div'); sub.style.cssText = 'font-size:var(--bai-fs-sm);color:var(--bai-dim);'; sub.textContent = "Runs on this BlueStacks instance's local GPU";
+        // Hybrid's own explainer line, now carrying the inline help affordance (designer, 2026-08-04:
+        // "hybrid AI mode also needs help icon alongside its own header, same icon used at other places" —
+        // placement confirmed as inline on this subtitle rather than inventing a separate "Hybrid" header row).
+        // Same glyph/size/stroke as the header's help button. INERT ON PURPOSE: in the real product this links
+        // out to a support article, and this is a design-only replica — so it renders the affordance and stops
+        // there, exactly like Get Help / Report Issue already do. Do NOT "fix" it by inventing a destination.
+        var sub = document.createElement('div'); sub.style.cssText = 'font-size:var(--bai-fs-sm);color:var(--bai-dim);display:flex;align-items:center;gap:var(--bai-sp-6);';
+        var subTxt = document.createElement('span'); subTxt.textContent = "Runs on this BlueStacks instance's local GPU";
+        var subHelp = document.createElement('button'); subHelp.className = 'bai-icbtn bai-help-inline'; subHelp.type = 'button'; subHelp.setAttribute('aria-label', 'Help');
+        // RIGHT EDGE of the section, not trailing the sentence (designer asked which, 2026-08-10). Three
+        // reasons, in order of how much they settle it:
+        //  1. It is the app's existing pattern and this was the only exception — the header's help button sits
+        //     in .bai-head-r (margin-left:auto), the model menu's sits at its head's right edge (margin-left:
+        //     auto), and the Skills toolbar's is the row's last child. Help affordances landing in a
+        //     predictable right-hand column is worth more than each one hugging its own phrase.
+        //  2. What the help is ABOUT is Hybrid mode, i.e. this section — not that one sentence. Bound to the
+        //     row's edge it reads as the section's help; bound to the last word it reads as a footnote on the
+        //     sentence, which is a narrower promise than the article behind it keeps.
+        //  3. It survives wrapping. At 290px this line wraps, and a trailing icon then sits after the last
+        //     word wherever that lands, which reads as accidental; margin-left:auto keeps it vertically
+        //     centred against the whole block at a fixed edge.
+        // This does NOT reverse the 2026-08-04 decision to put it "inline on the subtitle line" rather than
+        // inventing a separate Hybrid header row — that was about WHICH ROW it lives on, and it still lives
+        // on this one. Only its horizontal alignment within that row changes.
+        subHelp.style.marginLeft = 'auto';
+        subHelp.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">' + BAI_ICONS.help + '</svg>';
+        sub.appendChild(subTxt); sub.appendChild(subHelp);
         var group2 = document.createElement('div'); group2.className = 'bai-optcard-group'; group2.style.alignSelf = 'stretch';
         var autoCard = optCard({ title: 'Auto', sub: 'BlueAI runs a local model for you.', badge: '★ Recommended', active: hybridMethod === 'auto', busy: hybridMethod !== 'auto' && hybridStatus !== 'idle' });
         var customCard = optCard({ title: 'Custom', sub: 'Connect your own local VLM.', active: hybridMethod === 'custom' });
-        autoCard.addEventListener('click', function () { hybridMethod = 'auto'; renderAiMode(); });
+        // Item 6 (designer, 2026-08-10): "selecting AI mode in settings should auto-open the popup directly
+        // instead of the two-step click." Picking Auto WAS: render the card, which then showed its own
+        // "Download" button, which opened the setup confirmation — so the user had to say "Auto" and then say
+        // it again. Choosing Auto IS the intent to set it up, so the modal opens on the selection.
+        // Only when hybridStatus is 'idle': once it's downloading/installing/running, or paused by the GPU
+        // conflict, the card is reporting live state and re-selecting Auto must not throw a setup dialog over
+        // it. The card's own button stays — after cancelling the modal it's the way back in, which is a
+        // different job from "pick this mode" (so not a rule-38 duplicate signal).
+        autoCard.addEventListener('click', function () {
+          hybridMethod = 'auto'; renderAiMode();
+          if (hybridStatus === 'idle') openAiModal();
+        });
         customCard.addEventListener('click', function () { hybridMethod = 'custom'; renderAiMode(); });
         group2.appendChild(autoCard); group2.appendChild(customCard);
         hybridGroup.appendChild(sub); hybridGroup.appendChild(group2);
@@ -2332,6 +2571,72 @@
       // One floating dropdown shared by all three Settings row-pickers (PM: "a simple dropdown"). Renders
       // into the ROW (which is position:relative) so it overlays instead of growing the card, and marks the
       // current value with the same .mk chevron the header's model menu uses.
+      // Place a floating overlay (the date/time picker, the Settings row dropdowns) so it is ALWAYS fully
+      // reachable. Three jobs, in order:
+      //   1. PICK A SIDE — below the anchor when it fits there, otherwise above when above is roomier.
+      //   2. GUARANTEE FIT — clamp max-height to the space actually available on the chosen side, so an
+      //      overlay can never open into a region the user cannot reach.
+      //   3. ESCAPE THE CLIPPER (portal:true) — an overlay anchored inside a scrolling pane can never exceed
+      //      that pane's height, so the picker is moved up to .bai-ui, which spans the app window interior,
+      //      and positioned against that instead.
+      // This replaces flipIfClipped(), which did only (1) — and (1) alone is not a guarantee. Measured on the
+      // sched form: the 258px calendar had 195px below the Start Time field and 243px above it inside
+      // .bai-subpane-body, so the flip test correctly declined (above wouldn't fit either) and the picker
+      // then rendered 75px past the app window with its last two week-rows unclickable — elementFromPoint at
+      // the picker's own bottom edge returned #stage, i.e. outside the app. Choosing the better of two sides
+      // that both fail is not a fit guarantee, and no fixed calendar height is one either: the window is
+      // resizable, and at a 620px-tall window the space below the same field drops to 166px.
+      // Still walks UP for the real clipper in the non-portal case rather than assuming one: Settings is
+      // physically relocated between .bai-set (wide) and #baiGlobalRouteBody (compact), so its scrolling
+      // ancestor differs by surface and by width. The Settings dropdowns deliberately do NOT portal — their
+      // 170px CSS cap already fits inside their clipper, so (2) is the only part they were missing, and
+      // portaling them would move them out of the row whose own click handling closes them.
+      function placeFloating(overlay, anchorEl, opts) {
+        opts = opts || {};
+        // Clear only the inline values WE set. A CSS max-height (rowmenu's 170px) must survive this reset,
+        // which is exactly what clearing the inline property does.
+        overlay.style.maxHeight = ''; overlay.style.overflowY = '';
+        overlay.style.top = ''; overlay.style.bottom = ''; overlay.style.left = ''; overlay.style.right = ''; overlay.style.width = '';
+        var host = null;
+        if (opts.portal) {
+          host = baiUi;   // a MOVE between two always-attached parents (here and #baiDtPickerHome), never a detach
+          if (overlay.parentElement !== host) host.appendChild(overlay);
+        }
+        var clip = host;
+        if (!clip) {
+          for (var n = overlay.parentElement; n; n = n.parentElement) {
+            var oy = getComputedStyle(n).overflowY;
+            if (oy === 'auto' || oy === 'scroll') { clip = n; break; }
+          }
+          if (!clip) return;
+        }
+        var GAP = 6, EDGE = 8;                       // EDGE = don't sit flush against the clipper's own edge
+        var cr = clip.getBoundingClientRect(), ar = anchorEl.getBoundingClientRect();
+        // TWO COORDINATE SPACES, and mixing them is a real bug this hit. #scaler puts a CSS transform on the
+        // whole app, so getBoundingClientRect() returns SCALED viewport pixels while the values we write
+        // (style.left/width/top) and the value we read (offsetHeight) are UNSCALED local pixels. Measured
+        // before this divide: at a 620px-tall window (scale ~0.92) the picker came out 279px wide against a
+        // 305px field and overlapped it by 12px; at 520px wide (scale ~0.33) it came out 36px wide. Convert
+        // every measured delta into local px once, here, and the rest of the maths stays in one space.
+        var s = clip.offsetWidth ? cr.width / clip.offsetWidth : 1;
+        if (!s || !isFinite(s)) s = 1;
+        var toLocal = function (v) { return v / s; };
+        if (host) {                                  // portaled: the anchor's geometry no longer comes for free
+          overlay.style.left = Math.round(toLocal(ar.left - cr.left)) + 'px';
+          overlay.style.right = 'auto';
+          overlay.style.width = Math.round(toLocal(ar.width)) + 'px';
+        }
+        var h = overlay.offsetHeight;                // local px, measured AFTER the width is fixed and any CSS cap applies
+        var below = toLocal(cr.bottom - ar.bottom) - GAP - EDGE, above = toLocal(ar.top - cr.top) - GAP - EDGE;
+        var useAbove = h > below && above > below;
+        var space = Math.max(useAbove ? above : below, 0);
+        overlay.dataset.place = useAbove ? 'above' : 'below';
+        if (host) {
+          if (useAbove) { overlay.style.bottom = Math.round(toLocal(cr.bottom - ar.top) + GAP) + 'px'; overlay.style.top = 'auto'; }
+          else { overlay.style.top = Math.round(toLocal(ar.bottom - cr.top) + GAP) + 'px'; overlay.style.bottom = 'auto'; }
+        } else if (useAbove) { overlay.classList.add('flip'); } else { overlay.classList.remove('flip'); }
+        if (h > space) { overlay.style.maxHeight = Math.floor(space) + 'px'; overlay.style.overflowY = 'auto'; }
+      }
       function settingsPicker(row, items, current, onPick) {
         var menu = document.createElement('div'); menu.className = 'bai-menu rowmenu open';
         items.forEach(function (it) {
@@ -2341,17 +2646,12 @@
           menu.appendChild(d);
         });
         row.appendChild(menu);
-        // Flip above the row when there's no room below inside whatever is ACTUALLY scrolling — .bai-set in
+        // Open above the row when there's no room below inside whatever is ACTUALLY scrolling — .bai-set in
         // wide mode, #baiGlobalRouteBody in compact (Settings is physically relocated between the two), so
         // this walks up for the real clipper rather than assuming either. An overlay that opens into a
-        // clipped region would be worse than the inline list it replaced.
-        for (var clip = menu.parentElement; clip; clip = clip.parentElement) {
-          var oy = getComputedStyle(clip).overflowY;
-          if (oy !== 'auto' && oy !== 'scroll') continue;
-          var cr = clip.getBoundingClientRect(), mr = menu.getBoundingClientRect(), rr = row.getBoundingClientRect();
-          if (mr.bottom > cr.bottom && (rr.top - cr.top) > mr.height) menu.classList.add('flip');
-          break;
-        }
+        // clipped region would be worse than the inline list it replaced — and when NEITHER side fits, the
+        // shared helper clamps instead of picking the least-bad side.
+        placeFloating(menu, row);
         return menu;
       }
       function renderByok() {
@@ -2384,6 +2684,18 @@
             stgByokKey = keyInput.value.trim();
             stgByokModel = BYOK_MODELS[stgByokProvider][0];   // sensible default the moment a key is connected
             renderByok();
+            // Key-saved ACKNOWLEDGEMENT (designer, 2026-08-04) — the ack shape of the shared dialog: one
+            // dismiss button, because saving already happened and there is nothing left to decide. It runs
+            // AFTER renderByok() so the surface behind the scrim is already in its connected state when the
+            // dialog is dismissed. The check glyph is the one place a dialog icon is warranted: an
+            // acknowledgement has no red button or imperative copy to carry the outcome, so the status has to
+            // come from somewhere — confirms deliberately get no icon (rule 38).
+            openDialog({
+              ack: true, icon: BAI_ICONS.check,
+              title: 'Key saved',
+              body: 'BlueAI will use your own ' + stgByokProvider + ' key. Credits stay untouched while it’s on.',
+              confirmLabel: 'Got it'
+            });
           });
           el.appendChild(actions);
         } else {
@@ -2981,8 +3293,13 @@
       // Correction: the panel's open/collapsed state wasn't persisted, so any reload — including the
       // Session row's own deliberate location.reload() — silently snapped it back to collapsed even though
       // the reviewer never asked it to close. It should stay open until they explicitly hit Collapse.
-      var PREVIEW_OPEN_STORE = 'baiPreviewOpen', previewOpenSaved = false;
-      try { previewOpenSaved = localStorage.getItem(PREVIEW_OPEN_STORE) === '1'; } catch (e) {}
+      // Default OPEN (designer, 2026-08-10). Several states — the credits-added notification, the chat message
+      // states, hardware-unsupported, zero credits — are reachable ONLY from this panel, so a reviewer who
+      // lands on a collapsed FAB has to discover the panel before they can see half the design. `=== '0'` not
+      // `!== '1'`: absent means "never chose", which now resolves to open; only an explicit Collapse (which
+      // writes '0') keeps it shut, so the persistence the reload fix added still holds in both directions.
+      var PREVIEW_OPEN_STORE = 'baiPreviewOpen', previewOpenSaved = true;
+      try { previewOpenSaved = localStorage.getItem(PREVIEW_OPEN_STORE) !== '0'; } catch (e) {}
       if (previewOpenSaved) { previewFab.classList.add('hidden'); previewCard.classList.add('on'); }
       function previewSegRow(label, opts, val, set) {
         var row = document.createElement('div'); row.className = 'bai-preview-row';
@@ -3079,13 +3396,28 @@
         // already takes over the balance display/gating in that case — see refreshAccountDependentUI).
         if (pageState === 'loggedin') {
           rows.push(previewSegRow('Geo', [['Non-Prime', false], ['Prime', true]], primeGeo, function (v) { primeGeo = v; refreshAccountDependentUI(); }));
-          if (primeGeo) rows.push(previewSegRow('Membership', [['Non-member', false], ['Member', true]], creditsPrime, function (v) { creditsPrime = v; refreshAccountDependentUI(); }));
+          // Stacked, not inline (fix, 2026-08-11): "Membership" is the longest label in this panel (10 chars,
+          // vs Geo/Own key/Credits' 3-6) and "Non-member" is the longest option — together they didn't fit
+          // the label-left/control-right layout's ~212px inner width and ran the row outside the card, the
+          // same overflow previewSegRowStacked's own comment already names as its reason to exist (Session's
+          // label+3-option row). This is that same failure mode with a 2-option row, not a new one.
+          if (primeGeo) rows.push(previewSegRowStacked('Membership', [['Non-member', false], ['Member', true]], creditsPrime, function (v) { creditsPrime = v; refreshAccountDependentUI(); }));
           rows.push(previewSegRow('Own key', [['Off', false], ['On', true]], stgByokOn, function (v) {
             stgByokOn = v;
             if (v) { stgByokProvider = BYOK_PROVIDERS[0]; stgByokKey = 'sk-preview-demo-key'; stgByokModel = BYOK_MODELS[stgByokProvider][0]; } else { stgByokProvider = null; stgByokKey = null; stgByokModel = null; }
             refreshAccountDependentUI();
           }));
           if (!stgByokOn) rows.push(previewSegRow('Credits', [['Normal', false], ['Zero', true]], zeroCreditsPreview, function (v) { zeroCreditsPreview = v; refreshAccountDependentUI(); }));
+          // Item 3: an EVENT, not a mode — same reasoning as the Chat-states rows, so an action button
+          // rather than a toggle. Its one real trigger is the first-login grant, which a reviewer already
+          // past login can't replay without a reload; this shows the notification from any screen.
+          rows.push(previewActionRow('Credits added', function () { showRewardToast(1000, 'Monthly Prime refill.'); }));
+          // Alert variant (designer, 2026-08-11): the same toast root, danger-tinted, for a failure the app
+          // needs to surface without blocking it — same non-blocking argument the reward toast was built on,
+          // just the other emotional register. No real trigger exists yet (nothing in this prototype fails
+          // asynchronously), so like Chat states above, this is a "show me the state" row rather than a live
+          // consequence of anything clickable.
+          rows.push(previewActionRow('Error alert', function () { showAlertToast('Hybrid AI paused — the local GPU is busy.'); }));
         }
         rows.forEach(function (row, i) {
           if (i > 0) { var div = document.createElement('div'); div.className = 'bai-preview-divider'; previewRowsEl.appendChild(div); }
@@ -3213,7 +3545,7 @@
       addEventListener('keydown', function (e) {
         if (e.key !== 'Escape') return;
         if (gateOpen) { if (loginStep === 'claim') dismissLoginGate(); return; }
-        if (typeof logoutGateOpen !== 'undefined' && logoutGateOpen) { closeLogoutGate(); return; }
+        if (typeof dialogOpen !== 'undefined' && dialogOpen) { closeDialog(); return; }   // the generalised dialog replaced the logout-specific gate; every popup built by openDialog() is Esc-dismissible through this one branch
         if (typeof tgModalEl !== 'undefined' && tgModalEl.classList.contains('on')) { closeTgModal(); return; }
         if (typeof aiModalOpen !== 'undefined' && aiModalOpen) { if (hybridStatus === 'idle') cancelAiModal(); else closeAiModal(); return; }
         if (typeof oocModalEl !== 'undefined' && oocModalEl.classList.contains('on')) { closeOocModal(); return; }

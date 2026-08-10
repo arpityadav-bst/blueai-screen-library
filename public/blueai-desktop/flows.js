@@ -94,5 +94,40 @@ window.BlueAIFlows = {
       }, cost: 320
     },
     { say: 'On it. I’ll generate the drafts and publish across your channels. ✦' }
+  ],
+  // Item 8 (designer, 2026-08-10): "multiple responses from AI in chat with plan steps and success —
+  // typing 'plan my day' should produce more than one reply." It used to produce exactly one: the plan card
+  // and nothing else, so the agent appeared to stop the moment it finished thinking out loud. This is a
+  // FLOW rather than a new chain of setTimeouts in index.html because the engine that runs these already
+  // emits one message per step, with the working spinners and the terminal card, and duplicating that
+  // sequencing by hand is how the two would drift.
+  // No `ask`/`upload` step on purpose: "plan my day" is not a question to hand back, so this plays start to
+  // finish without ever parking on `pending` — the user can keep typing while it runs.
+  plan: [
+    { say: 'Let me check what’s already running before I put anything new on the list.', think: 1500 },
+    {
+      results: {
+        kind: 'plan',
+        intro: 'Here’s what I’d do today, in order — nothing has started yet.',
+        items: [
+          { text: 'Check Jobs and Scheduled for anything already in progress, so I don’t duplicate work.' },
+          { text: 'Claim today’s rewards and check your streaks before they reset.' },
+          { text: 'Pick up the most useful thing you asked for recently and run the right skill for it.' },
+          { text: 'Report back here as each step finishes, and flag anything that needs your OK first.' }
+        ]
+      }, cost: 60
+    },
+    // The middle is deliberately UNEVEN in line length (designer, 2026-08-10: "some with longer lines some
+    // with smaller"). A run of same-length lines reads as a template being filled in; real work reports
+    // itself at whatever length the step deserves — a two-word acknowledgement, then a sentence that has to
+    // explain something, then a short result. The `think` values vary with it, so the pauses aren't metronomic
+    // either: a lookup is quick, claiming rewards across games is not.
+    { say: 'On it.', think: 900 },
+    { say: 'Nothing running in Jobs or Scheduled right now, so there’s no overlap to work around — I’ll take the list from the top.', think: 2000 },
+    { say: 'Claiming today’s rewards across your installed games.', think: 2400 },
+    { say: 'Two claimed, one had already reset. Checking streaks.', think: 1600 },
+    { warn: 'Your Genshin streak resets in about 3 hours — I’ve moved it ahead of the rest.' },
+    { say: 'Streaks are safe. Queueing the remaining two steps so they run without you.', think: 1500 },
+    { done: 'Rewards claimed and streaks checked. The rest is scheduled — I’ll report back as each step finishes.' }
   ]
 };

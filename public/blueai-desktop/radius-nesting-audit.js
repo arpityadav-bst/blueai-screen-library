@@ -33,6 +33,15 @@ async function scan(p) {
         a = a.parentElement;
       }
       if (!a || a === document.body) return;
+      // The style guide's OWN chrome is not a product container (2026-08-11). `.sg-spec`/`.sg-canvas` are
+      // documentation cards that wrap product components purely to display them — a `.bai-side-item` does not
+      // owe its radius to the doc card it is being demonstrated inside, and rule 44 is about curves that MEET
+      // in the real product. Left unfiltered, this reported 2 permanent "mismatches" demanding a 1px radius on
+      // a sidebar row, which is the kind of standing noise that teaches you to skim a gate's output — the
+      // inverse of the "green light over an unexamined area" problem this project already names, and just as
+      // corrosive. Product pairs inside the guide are still caught: only the guide's own wrapper is skipped,
+      // so the scan walks PAST it to the next rounded ancestor rather than stopping.
+      if (/\bsg-(spec|canvas)\b/.test(String(a.className || ''))) return;
       const acs = getComputedStyle(a);
       const ro = rad(acs);
       const er = el.getBoundingClientRect(), ar = a.getBoundingClientRect();

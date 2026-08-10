@@ -1,5 +1,8 @@
 # blueAI — Project Insights
-Last updated: 2026-08-04 (+the boot-canvas fact in the layout-system section: `.bai-header`/`.bai-titlebar`
+Last updated: 2026-08-11 (Session 17: +the overlay/z-layer inventory and the notification-surface taxonomy in the
+layout-system section — the app now has THREE notification-weight tiers and a reader had no way to know which to
+reach for; +the `#scaler` two-coordinate-space fact, which is a property of this surface's shell, not a bug.
+Earlier: 2026-08-04 (+the boot-canvas fact in the layout-system section: `.bai-header`/`.bai-titlebar`
 have no CSS background on purpose, because a continuously-repainted canvas underneath is what actually
 renders there — an opaque background silently deletes it with no error, cost a designer round to catch.
 Earlier: 2026-08-03, Session-15 audit pass: added the blueai-desktop LAYOUT SYSTEM section below — the active surface had almost no facts here, which is why today's container defect had nothing to check against. Corrected a false Index claim and marked the marketing-site sections as dormant-scope. NOTE ON THIS LINE: it said 2026-07-25 while the file already contained a 2026-08-01 correction — the previous audit reported this file "re-pointed" after patching one paragraph, and the wrong date meant the mandated freshness check would PASS on a stale file. Bump this on every touch; the check reads it.)
@@ -15,21 +18,29 @@ needs, and they are recorded here, once, instead of being re-measured per sessio
   narrowest layout anything here must survive. Default open state is a detached floating window
   (`360×640`); a `ResizeObserver` adds `.wide` at **≥600px**; detached `max-width` is 920px.
   **Design at 290 and verify at 290/380/920** — passing at 360 proves nothing about the floor.
-- **Two gutters, deliberately 2px apart.** `.bai-list-body` pays `sp-14` of side padding; `.bai-subpane-body`
-  pays `sp-12`. So a **list view's content edge sits at 15px** from the drawer edge and a **subpane's at
-  13px** (each +1px for the drawer border). Skills and Scheduled have the identical split, so this is house
-  behaviour, not drift. **⚠ OPEN, designer's call:** whether to unify them. Raised 2026-08-03, not decided —
-  this is the item that must not be lost when the scratchpad is wiped.
-- **A subpane form's usable content width is 264px** at the 290px drawer (`290 − 2px borders − 24px
-  subpane-body padding`). Both Skills' and Scheduled's create forms measure exactly this. **This number was
-  wrong three times in one day** — 210px (measured on a shorter form that didn't yet scroll), then 179px
-  (correct *for a form wrapped in a `.bai-newitem` card that was double-paying the gutter*), then 264px once
-  that wrapper was removed. Layout constraints derived from the first two were faithfully measured and wrong.
-  See `reasonings.md` *"A measured constraint inherits the wrongness of whatever produced the measurement."*
-- **What fits at 264px, measured:** a 4-across `.bai-seg.fill` (`Minutes/Daily/Weekly/Monthly` = 212px of
-  content) and one row of 7 day chips (259px). Neither fits at 179px, which is why intermediate versions had
-  a 2×2 grid and a 4+3 wrap. The tightest element is the narrowest day chip, with ~1.6px of text slack at
-  290px — **re-measure that if the day labels ever change.**
+- **ONE gutter: 15px, everywhere. RESOLVED 2026-08-11 by the designer** ("we should fix this match by 15px
+  only"), closing a question open since 2026-08-03. `.bai-list-body` and `.bai-subpane-body` both now pay
+  `sp-14` of side padding, so a **list view's and a subpane's content edge both sit at 15px** from the drawer
+  edge (+1px drawer border). Previously the subpane paid `sp-12` → 13px, which was consistent across Skills and
+  Scheduled (house behaviour, not drift) but meant tapping from a list into its own detail screen shifted every
+  element 2px left. **Tops still differ and that is deliberate:** `.bai-subpane-body` keeps `sp-10` because a
+  `.bai-subpane-head` sits above it, while `.bai-list-body`'s `sp-2` is half a gap shared with the toolbar above
+  it (see `#baiSchedList`, which has no toolbar and therefore needs its own `sp-14` top).
+- **A subpane form's usable content width is 260px** at the 290px drawer (`290 − 2px borders − 28px
+  subpane-body padding`), as of the 2026-08-11 gutter unification — **it was 264px** while the subpane paid
+  `sp-12`. **This number has now been wrong or stale FOUR times** — 210px (measured on a shorter form that
+  didn't yet scroll), 179px (correct *for a form wrapped in a `.bai-newitem` card that double-paid the gutter*),
+  264px once that wrapper was removed, and now 260px once the gutter was unified. Every one of those was
+  honestly measured against the containment of the day. See `reasonings.md` *"A measured constraint inherits the
+  wrongness of whatever produced the measurement"* — and note the corollary this fourth revision proves: the
+  figure goes stale when the CONTAINER changes, not only when the measurement was sloppy.
+- **What fits at 260px, re-measured 2026-08-11 at a 290px drawer** (not carried over from the 264px era): the
+  4-across `.bai-seg.fill` (`Minutes/Daily/Weekly/Monthly`) is single-row with zero overflow, and the row of
+  **7 day chips is single-row at 31px each = 217px of chips inside a 238px `.bai-daygrid`**, zero overflow, no
+  text clipped. (`.bai-daygrid` is narrower than the form because `.bai-subfield` indents it.) Neither fits at
+  179px, which is why intermediate versions had a 2×2 grid and a 4+3 wrap. The chip row remains the tightest
+  known element in any subpane — **re-measure it if the day labels change, if the gutter moves again, or before
+  adding anything to `.bai-subfield`.**
 - **A scrollbar is layout, not chrome.** `.bai-newitem`'s `overflow-y: auto` scrollbar takes ~16px whenever
   its content is tall enough, and that silently changes every width derived inside it. When measuring a
   container's inner width, note whether it is scrolling at the time.
@@ -60,6 +71,36 @@ needs, and they are recorded here, once, instead of being re-measured per sessio
   indicator's own small canvas, and (separately) the wide sidebar's own `#baiSideLogo` canvas — which is itself
   always invisible, since `.bai-side-brand{display:none}` is unconditional ("header carries the logo now" —
   meaning the titlebar's real logo.png, not this canvas).
+
+- **THREE notification weights, and picking the wrong one is the recurring mistake.** They differ by whether
+  they BLOCK and how long they LIVE, not by how important the message is:
+  1. **`.bai-dialog`** — blocking (scrim + focus trap + `aria-modal`), persists until dismissed. For anything
+     that ASKS A QUESTION: sign-out, close-window, delete-skill, delete-task (confirm shape), plus the
+     key-saved ACK shape. Two shapes, one root; the ack is not "a confirm with Cancel hidden."
+  2. **`.bai-tgmodal`** — also blocking, but owns a multi-step FLOW with its own header/body/footer (Telegram
+     pairing, Hybrid setup). Reach for this only when the interaction has steps.
+  3. **`.bai-toast`** — non-blocking, transient, self-dismissing (2.5–4s, content-scaled), top slide-down.
+     For anything that STATES A FACT and asks nothing: credits arrived (`reward`), something failed (`alert`).
+  **The test:** does it ask a question (→ 1), walk through steps (→ 2), or just report (→ 3)? A blocking scrim
+  over information the user can't act on is the wrong weight — that was the original argument for building
+  tier 3 at all, and it's the thing to re-check any time a new "notify the user" need appears.
+- **`.bai-toast` is the app's ONLY non-blocking notification surface**, so it has no sibling to inherit from —
+  which is exactly why its two variants (`reward`/`alert`) are states of ONE root rather than two components,
+  and why both reuse existing chips (`.tgm-ic-ok`'s ok-wash recipe / the danger token at matching strength)
+  instead of introducing new colour vocabulary. If a third variant is ever needed (info? progress?), it is a
+  third state on this root, not a fourth component.
+- **The z-layer inventory, in order, so a new overlay doesn't have to guess.** `--bai-z-5/6` (sidebar,
+  menu-desc) · `30` (in-pane menus) · `45` (tour) · `50` (`.bai-subpane`) · `55` (`.bai-globalroute`) ·
+  `58` (`.bai-header` — creates its own stacking context, so its children can't out-z anything outside it) ·
+  **`59` (portaled floating overlays: `.bai-dt-picker`, `.bai-toast`)** — deliberately above header/subpane/
+  globalroute, deliberately below · `60` (`.bai-titlebar`, so OS window controls always win) · `220`
+  (`.bai-dialog`/`.bai-logingate`) · `230` (`.bai-tgmodal`) · `500` (dev Preview panel). **A new floating
+  overlay anchored inside a pane belongs at 59;** a new blocking one belongs at 220+.
+- **`#scaler` puts the whole app behind a CSS `transform: scale()`** (~0.33 at compact width, 1.0 at wide).
+  This is a property of the demo shell, not a bug, and it means **`getBoundingClientRect()` and `offsetWidth`
+  report in different coordinate spaces on this surface** — see `knowledge-base.md` for the two defects this
+  has already caused and the measurement rule that prevents a third. Any code or harness that does px maths
+  here must decide which space it is in, once, explicitly.
 
 ## blueai-desktop domain facts (2026-07-25 audit)
 - **BYOK and Prime membership coexist — neither state should hide the other's UI.** A user with an

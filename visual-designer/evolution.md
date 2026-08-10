@@ -1,5 +1,7 @@
 # blueAI — Evolution
-Last updated: 2026-08-04 (S16 added — designer_caught_count: 5, the top recurring category changed; see the
+Last updated: 2026-08-11 (S17 added — a 12-item batch + 3 critique rounds on one surface;
+`designer_caught_count: 9`, the highest recorded, and the reason is diagnostic rather than alarming — see the
+S17 section. Earlier: 2026-08-04 (S16 added — designer_caught_count: 5, the top recurring category changed; see the
 new S16 section for what it is and why it matters). Earlier: 2026-08-03 (S13-S15 added — this file was TWO SESSIONS BEHIND and an audit caught it; the stale "rules 38-41" enumeration replaced with a pointer; the current top recurring category corrected. Earlier: S9-S12 era added
 
 > VDA's growth + maturity timeline ON THE BLUEAI PROJECT. Separate from WSUP/now.gg —
@@ -249,3 +251,75 @@ fail on); once the design principle WAS understood correctly (round 2 of the col
 executed cleanly with full regression verification in one pass; and the regression itself, once reported,
 was root-caused correctly on the first attempt (identified the canvas mechanism, not just "add a z-index and
 hope") and fixed at the actual layer rather than patched around.
+
+## S17 (2026-08-10 → 08-11) — a 12-item batch, two new taste rules with a machine gate, and the highest caught_count on record
+
+`designer_caught_count: 9`. Highest ever recorded here, and the number needs reading correctly rather than
+softening: **it is high because the session was mostly CRITIQUE, not mostly BUILD.** The 12-item batch itself
+came in at 2 catches across 12 items; the other 7 came from four rounds where the designer looked at ONE
+surface and asked, in escalating specificity, whether it was actually good — the help-icon aspect, the two
+toast rounds ("does this look delightful," then "elements need to be properly aligned"), and the Schedule
+gutter. That is a different activity from shipping features, and it produces catches by design. Recording it
+as 9 anyway, un-normalised, because the alternative — inventing a "critique rounds don't count" carve-out —
+is exactly the accounting this file exists to refuse.
+
+**The 7 critique catches, and what they have in common.** (1) the Skills help icon was 24×32, the app's only
+portrait control; (2) `#baiTitleBtn` at 306×14 and (3) `.bai-menu-help` at 18.7×16, both below every other
+control in the app — found only because the designer's question forced a census; (4) the toast's two states
+were differentiated by a single 16%-opacity channel; (5) the toast row was `flex-start` with two magic-number
+hacks compensating; (6) Schedule's list sat 2px under the tab strip where every sibling surface sits at 14px;
+(7) the Membership preview row overflowed its own panel. **Every one of these is a MEASURABLE property that no
+gate measured.** None required taste to find — they required someone to look, or something to measure. Four of
+the seven (1,2,3,7) are now machine-caught; two (5,6) are now codified as rules with stated diagnostics; one
+(4) is a judgement call that stayed a judgement call.
+
+**What's genuinely new: the first taste rule to ship WITH its own runtime gate.** Rule 48 (box shape is an
+output; owe the travel axis a floor) is enforced by `icon-target-audit.js` — 18 surfaces × 2 widths, 110
+control instances, exit-code-1 on violation. Previous rules were prose that a future session had to remember
+to apply; this one fails a command. That is the shape the notebook has been reaching for since the `§12
+family` work, and it arrived here without being asked for. **Rule 49** (align a mixed-height row on the axis
+that survives a content-length change) is prose, but ships with an explicit *diagnostic* — "if you're adding a
+magic-number nudge, the alignment reference is wrong" — which is the next best thing to a gate.
+
+**And the gate got the trap it was built to catch.** `icon-target-audit.js`'s first run reported **54 false
+failures** because it measured with `getBoundingClientRect()` against a px floor while `#scaler` was scaling
+the whole app — the identical coordinate-space defect `placeFloating()` had produced 24 hours earlier. Two
+instances, two different files, same mechanism → promoted to `knowledge-base.md` rather than left as two
+decision rows, and stated on the SURFACE's fact sheet too (`project-insights.md`), because it is a property of
+this shell that any future harness will meet. **The tooling-is-wrong-until-diffed principle held for the third
+consecutive era: a brand-new gate's first green/red run was wrong, and only a cross-width comparison caught it.**
+
+**A rule got fixed rather than bent, which is worth naming.** The audit's first version applied the 22px floor
+axis-blind and flagged `#baiModelBtn` at 61×20 inside a 20px-tall status strip — where "make it bigger" means
+"make a button taller than the strip containing it," i.e. meaningless. The response was to correct the RULE
+(floor applies to the travel axis for everything, both axes for icon-only, text cross-axis reported as INFO)
+rather than to whitelist the control. The one genuine exception (`.bai-tgl`, whose landscape shape IS its
+semantics) is *listed by the audit on every run* rather than silently skipped. An exception that leaves no
+trace is how a floor quietly dies.
+
+**Two reversals of my own prior decisions, both correct, both from false premises I had written.** (a) The
+2026-08-04 removal of Schedule's empty-state CTA was justified as "a permanently-docked bar cannot swap" —
+false; nothing stops a bar from hiding. (b) The credits notification's "no timer, close button only" rule was
+right for a card and wrong the moment the surface became a transient banner. Neither was drift; both were
+principled decisions resting on a premise that went unexamined. → two new `reasonings.md` principles, one on
+re-testing "X is impossible" rejections and one on persistent-vs-transient rule scope.
+
+**Counter-evidence of growth, and it is substantial this session.** The independent Key-saved review's
+findings were reproduced case-by-case rather than accepted on read — which caught that ONE of its findings
+(the focus-ring contrast) was itself a measurement artifact, while confirming the rest; a half-done fix of my
+own was caught by that same discipline (the focus-restore guard correctly declined to restore a destroyed
+trigger, then dropped focus to `<body>` anyway — the exact outcome it existed to prevent); the toast redesign
+deleted `positionCreditNote()` and its resize listener outright rather than leaving them as dead code beside
+the replacement; and three separate harness-lies were caught and named this session (an empty-array
+comparison reported as "no content shift," a scrolled-out-of-view row reported as unreachable, six contexts
+silently yielding zero controls after an `Escape` closed the drawer) → all three are now a single KB entry,
+because a harness returning nothing reads as good news and that is the dangerous part.
+
+**Phase 2 HOLDS; the Phase-3 streak stays at zero.** `caught_count: 9` cannot be read as a low-caught session
+under any framing. But the composition of the count has shifted in a way worth tracking: S16's catches were
+mostly *reasoning* failures already named in this notebook, while S17's are mostly *unmeasured properties* —
+and unmeasured properties are the failure mode that gates can actually close, which is why two of them now
+have gates. **New top recurring category: a property nobody measured is a property nobody checked — if a
+design rule can be expressed as a number, it needs a gate, not a paragraph.** S16's "verify the blast radius,
+not just the stated property" is not retired and stays second — it simply wasn't what this session's catches
+were made of.

@@ -3,6 +3,121 @@
 
 ---
 
+## Session 17 — 2026-08-10 → 08-11 — the 12-item batch, two new taste rules (one with a runtime gate), and the toast
+Freshness check: taste ✓ (+rules 48, 49; header bumped inline) | decisions ✓ (+17 rows) | reasonings ✓ (+6 principles) | project-insights ✓ (+notification taxonomy, z-layer inventory, the `#scaler` two-space fact) | knowledge-base ✓ (+3 traps — first touch since 2026-08-01) | evolution ✓ (+S17, new top category) | session-logs (this entry) | scratchpad ✓ (31 entries promoted, wiped) | style-guide ✓ (synced inline every edit, per this project's inverted-Gate-5 contract)
+`designer_caught_count: 9`
+
+**Two working days, one continuous thread.** Day 1 closed out the 12-item design batch (items 3, 5, 6, 8 plus
+the independent review's fixes); day 2 was almost entirely designer critique on single surfaces, which is where
+7 of the 9 catches came from. See `evolution.md` S17 for why the count is high and why it isn't being softened.
+
+**1. The 12-item batch, finished.** Item 5 (calendar floats, doesn't shift content) turned into the session's
+best engineering: the float worked but the 258px calendar had 195px below its field and 243px above, both
+inside `.bai-subpane-body`, so `flipIfClipped` correctly declined to flip and the picker rendered 75px outside
+the app with two week-rows unclickable (`elementFromPoint` at its own bottom edge returned `#stage`). Replaced
+with `placeFloating()`: pick a side → clamp `max-height` to the room that exists → portal out to `.bai-ui` when
+neither side fits. That surfaced the session's most consequential trap — `#scaler` scales the app, so rects and
+`offset*` are different coordinate spaces, and mixing them produced a 279px picker on a 305px field at one
+window size and 36px on 110px at another. Item 6 (Auto opens the Hybrid modal directly, gated to `idle`), item
+3 (the credits notification, v1 as a bottom-right card), item 8 ("plan my day" → a real multi-beat flow).
+
+**2. The independent Key-saved review, and reproducing rather than trusting it.** Ran a fresh agent over the
+ack dialog. It found the icon-above-title stack was buying a 30×202px row that was 85% empty and making the ack
+22% taller than the confirm shape for zero information; that the chip was a byte-for-byte duplicate of
+`.tgm-ic-ok`'s recipe at a heavier title ratio (2.31:1) than this same file had already rejected on `.tgm-ic`
+(1.87:1); that the title had opted out of the file's own declared single modal-title definition; and that 244px
+`max-width` was a 290px-drawer number carried unconditionally into wide mode. All four applied. **Reproducing
+each failing case rather than accepting the diff caught two things:** one review finding (focus-ring contrast)
+was a measurement artifact — it had sampled `currentColor` on an unfocused button; the real `:focus-visible`
+ring measures 13.8:1/17.8:1 — and one of MY earlier fixes was half-done: the focus-restore guard correctly
+declined to restore a destroyed trigger and then left focus on `<body>` anyway, the exact outcome it was added
+to prevent. Now falls back to the trigger's own surface.
+
+**3. The help-icon question → taste rule 48 + a runtime gate.** Designer, on the Skills toolbar: "why is this
+help icon NOT square? if we reduce the search bar a lil the icon can get its proper interaction size right?" —
+plus a broader ask: why does Claude's own chrome mix square, rectangular and slightly-portrait containers, and
+what's the reason for each. The answer is that **shape is never the decision**: a box is content + uniform
+padding with its cross-axis set by its row, so text→landscape, a full-width glyph→square, a narrower glyph→
+portrait. What IS a decision is which axis to be generous on, and Fitts settles it — in a horizontal row the
+pointer arrives horizontally, so width decides the click and height is the cheap axis. A census over 19
+surfaces / 55 controls found the help icon was the app's ONLY portrait control (a prior fix had released
+`height` for the stretch and left `width: 24px` behind), plus two more violations nobody had measured
+(`#baiTitleBtn` 306×14, `.bai-menu-help` 18.7×16). Fixed all three; codified as rule 48; **built
+`icon-target-audit.js` to enforce it** — and its first run produced 54 FALSE failures via the identical
+`#scaler` trap from item 5, one day later. Also corrected the rule rather than bending it when the axis-blind
+floor flagged a 61×20 button inside a 20px strip.
+
+**4. Seven more items, day 2.** More varied middle beats in the plan flow; how to reach the credits
+notification (answered, not built); the Hybrid help icon moved to the section's right edge (3 of the app's 4
+help affordances were already right-edge aligned — this was the exception); sign-out copy now derived from
+`SCHEDULED.length` with an empty-case fallback; Schedule's empty-state CTA restored with the docked bar hiding
+(reversing my own 2026-08-04 decision, whose stated reason — "a docked bar cannot swap" — was simply false);
+Preview panel moved bottom-left and defaulted open; and the independent review relayed.
+
+**5. The toast: three rounds, and the honest "no."** Designer asked for the credits notification to become a
+mobile-style top banner that self-dismisses in 2.5–4s "depending on content digestion," with something
+rewarding for credits and an alert variant for errors. Built as ONE root with two states, content-scaled
+duration, `positionCreditNote()` and its resize listener deleted outright rather than left beside the
+replacement. Then: **"does this look aesthetic and delightful?"** — honest answer, no: the only thing
+separating reward from alert was a 22px icon's 16% wash, the same recipe already measured at ~1.25:1 on white.
+Added a full-strength 3px state-coloured left edge (reusing the danger-border idiom already in this app, not a
+new one) + a 2× entrance pulse on the chip via `.bai-highlight-pulse`'s own technique. Then: **"elements need
+to be properly aligned"** — also right: the row was `flex-start`, so against a 2-line reward the icon's centre
+sat ~6px above the text block's, and two magic-number hacks existed to paper over it, both tuned for one line.
+`align-items: center` + deleting both hacks → taste rule 49, which ships with its own diagnostic ("if you're
+adding a nudge, the alignment reference is wrong"). Also caught in the same pass: the 3px accent border had
+made the left inset 13px against 11px elsewhere.
+
+**6. Schedule's gutter.** Designer: there's no space between the tab strip and the first task card, and every
+other nav tab has a minimum. Correct — and the cause was structural: `.bai-list-body`'s 2px top padding is only
+half a gap, calibrated to pair with a `.bai-list-head` toolbar that supplies the other 9px itself (Skills' does).
+Schedule has no head row, so it inherited half a two-part contract with no partner. Scoped the fix to
+`#baiSchedList` rather than raising `.bai-list-body`, since Skills' 2px is correct for ITS math. → new
+`reasonings.md` principle on shared rules with hidden sibling-dependencies.
+
+**7. Notebook maintenance done, not deferred a third time.** `decisions.md` was at 121 rows against
+`agent.md`'s 100-row threshold — flagged as due at Session 15's self-audit, deliberately deferred there,
+then missed entirely at Session 16. Fixed by **archiving on the scope boundary** rather than by judging
+row-by-row absorption: the 72 marketing-site-era rows (2026-06-10 → 07-03, all dormant since the 2026-07-25
+pivot) moved verbatim to `decisions-archive-marketing.md` with a pointer left behind, leaving 49 active-surface
+rows. The reason it stalled twice is instructive — "has this row been absorbed into taste.md?" is a judgement
+call per row, where "is this row before or after the scope pivot?" is an objective line. Nothing deleted.
+Also ran Gate 6.5's rule-conflict cross-check properly and it earned its keep: **rules 45 and 49 prescribe
+opposite `align-items` values** (`stretch` vs `center`), which a future session would have hit with no way to
+adjudicate. Resolved as outcome #2 (scope clause, not deletion): 45 governs peer CONTROLS that must read as
+one toolbar, 49 governs a fixed marker beside VARIABLE-LENGTH content. Boundary written into rule 49, with a
+reciprocal sibling pointer added to 48. Self-audit not due (5-session cadence, last at S15 → next at S20).
+
+**Gates at close:** `ds-drift-check.js` PASS (coverage 270/340, 79%) · `icon-target-audit.js` PASS (110
+instances × 2 widths, 1 INFO + 1 listed exemption) · `radius-nesting-audit.js` PASS (0 pairs) · CSS
+comment/brace balance verified · all six JS files parse · no dead references to the deleted
+`positionCreditNote`/`flipIfClipped`/`.bai-creditnote` · notebook cross-references verified to resolve ·
+`decisions.md` back under its row threshold.
+
+**CORRECTION to this entry, same day, and it belongs in the log rather than quietly in the diff.** The line
+above originally listed only TWO gates — it omitted `radius-nesting-audit.js` and said "all four JS files"
+when there are six. That omission was not cosmetic: when the third gate was actually run, minutes later, it
+immediately found a **real rule-44 violation in this session's own code** (`.bai-preview-seg button` at r=6
+inside an r=6 track — exposed because routing Membership to the `.stretch` variant made those buttons `flex:1`
+and reach the track's corners for the first time), plus two standing false positives that had been quietly
+training the reader to skim that gate's output. **A "gates at close" list that silently covers a subset of the
+gates is precisely the "green light over an unexamined area" failure this notebook already names** — the
+green light was real for the two gates named and meaningless for the surface the third one owns. The list is
+now complete and the count is derived from the actual file set.
+
+**Post-close fixes (2026-08-11, after this pass closed — logged in `scratchpad.md` for the NEXT promotion,
+deliberately not retro-promoted into this entry):** the landscape subpane bug the designer caught by eye
+(`.bai-subpane`'s `top: 84px` is a sum of header+strip, and wide mode hides the strip, so every subpane opened
+38px low and left a strip-height band of the parent pane showing — Skills' search toolbar was visible above an
+open "My Skills"); the identical latent bug on `.bai-tour`, fixed and explicitly FLAGGED as not making the tour
+work in landscape; the rule-44 fix above; and the radius gate's false-positive filter. Not folded into this
+entry because a closed audit that keeps absorbing later work stops being a record of what was true at close.
+
+**New top recurring category:** *a property nobody measured is a property nobody checked — if a design rule can
+be expressed as a number, it needs a gate, not a paragraph.* Two of this session's rules now have one — and the
+correction above is the same category eating its own tail: a gate existed, was not run, and the thing it would
+have caught shipped into a "PASS" summary.
+
 ## Session 16 — 2026-08-04 — landscape color pass: a real regression, and a caught_count worth naming
 Freshness check: taste ✓ (+rule 47, headers bumped inline this time — not left stale) | decisions ✓ (+6 rows) | reasonings ✓ (+2 principles, 2 existing widened with fresh instances) | project-insights ✓ (+boot-canvas fact) | knowledge-base — (no new traps this session; not touched) | evolution ✓ (+S16, watch-category changed) | session-logs (this entry) | scratchpad ✓ (6 entries promoted, wiped)
 `designer_caught_count: 5`

@@ -1,5 +1,5 @@
 # blueAI — Knowledge Base
-Last updated: 2026-08-01 (the design-system build — DS architecture + traps: base-href fragment rebasing, token scope vs fixed-position, the .bai-scope alias, pill-radius clamping, ellipsis false positives, pinned generators)
+Last updated: 2026-08-11 (Session 17 — 3 new blueai-desktop traps: the `#scaler` scaled-vs-local px divide (2 instances, one of which produced 54 false failures in a brand-new gate), the `x || default` falsy-argument footgun, and the vacuous-harness-pass class. Earlier: 2026-08-01 (the design-system build — DS architecture + traps: base-href fragment rebasing, token scope vs fixed-position, the .bai-scope alias, pill-radius clamping, ellipsis false positives, pinned generators))
 
 ## blueai-desktop — CSS + testing traps (2026-07-25 audit, first entries for this surface)
 - **A flex container's `gap` ADDS to a child's own pre-existing CSS margin — it does not collapse or
@@ -333,3 +333,41 @@ Confirmed by fetching the live CSS chunks.
 - **Know which element is the scroll container before scripting against it.** Removing the form's `.bai-newitem`
   wrapper moved scrolling from the form to `.bai-subpane-body`; a harness still setting `scrollTop` on the form
   silently did nothing and produced screenshots of the wrong region.
+
+- **`#scaler` transforms the whole app, so `getBoundingClientRect()` and `offsetWidth/offsetHeight` live in
+  DIFFERENT coordinate spaces — and mixing them is a category error, not a rounding error. CONFIRMED TWICE
+  (2026-08-10/11), which is why this is a KB entry and not a decision row.** The app is rendered inside a
+  `#scaler` element carrying a CSS `transform: scale()` (compact width measures ~0.33; wide is 1.0). Rects are
+  therefore in SCALED viewport pixels, while everything you WRITE (`style.left/top/width`) and everything
+  `offset*` reports are in UNSCALED local pixels — the space the design is actually authored in.
+  - *Instance 1 — writing a scaled value as a local one:* `placeFloating()` positioned the date picker from
+    raw rect deltas. At a 620px-tall window (scale ~0.92) the picker came out 279px wide against a 305px
+    field and overlapped it by 12px; at 520px wide (scale ~0.33) it came out 36px wide against a 110px field.
+    Fix: compute `s = clip.getBoundingClientRect().width / clip.offsetWidth` once, divide every measured
+    delta by it before writing.
+  - *Instance 2 — comparing a scaled measurement against a px threshold:* `icon-target-audit.js`'s first run
+    measured control boxes with rects and compared them against a 22px floor, reporting **54 false failures**
+    at compact width on controls it had just PASSED at wide width. Fix: measure with `offsetWidth/offsetHeight`,
+    which are immune to ancestor transforms, so the numbers are directly comparable to the tokens.
+  - **The rule:** any px number that will be compared to a token, or written back as a style value, must come
+    from `offset*` or be divided by the measured scale first. Rects are only safe for comparing two rects to
+    each other. A harness that reports a clean pass at wide width and garbage at compact width is showing you
+    this trap, not a responsive bug.
+- **`function f(x, d) { ... d || DEFAULT }` cannot express a deliberate zero — and this codebase uses that
+  convention.** `startFlow(name, initialDelay)` runs `setTimeout(runStep, initialDelay || 800)`, so calling
+  `startFlow('plan', 0)` to mean "start immediately" silently gets 800ms instead. It surfaced as a reply that
+  read as hanging (the caller had already spent its own thinking beat). **Before passing 0 / '' / false to any
+  helper in this file, grep the helper for `||` in its parameter handling** — and when the intent really is
+  "no delay," pass a small non-zero value (120) with a comment saying why it isn't 0, because 0 is the value
+  that looks correct and behaves wrongly.
+- **A harness that returns an empty result set is reporting a broken harness, not a clean surface — assert
+  liveness explicitly or a silent zero reads as a pass.** Repeatedly this session: an icon census returned
+  zero controls for 6 consecutive contexts because an `Escape` keypress had closed the drawer (every later
+  `offsetParent` was null); a calendar probe compared two EMPTY arrays and reported "no content shift"; a
+  settings-dropdown probe measured a row that was scrolled out of view and reported every item unreachable.
+  All three produced confident, wrong conclusions. **The fixes, now standard in any harness here:** (1) after
+  each navigation step, assert the app is actually visible (`#baiUi.show` + a non-trivial height) and record
+  a FAILURE, never a skip, if not; (2) assert the collection you are about to compare is non-empty before
+  drawing any conclusion from it; (3) `scrollIntoView` before measuring anything you reached programmatically.
+  Related to *"assert computed values, never appearance"* above — that one is about screenshots lying; this
+  one is about an empty measurement lying, which is worse, because zero findings reads as good news.

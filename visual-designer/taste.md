@@ -1,5 +1,7 @@
 # blueAI — Taste
-Last updated: 2026-08-04 (+rule 47 (group by role not adjacency; depth as hierarchy — designer-taught over
+Last updated: 2026-08-11 (+rule 48 (box shape is an output; owe the travel axis a floor, not a shape — with
+its own runtime gate, `icon-target-audit.js`) +rule 49 (align a mixed-height row on the axis that survives a
+content-length change) — Session 17. Earlier: 2026-08-04 (+rule 47 (group by role not adjacency; depth as hierarchy — designer-taught over
 two rounds) — header on every touch per the Session-15 lesson, since a stale date here is what let this file
 go two sessions unread before). Earlier: 2026-08-03 (+rule 46 (a wrapper's correctness is a function of what
 it wraps) + rule 38's fail-to-fire clause corrected — the Session-15 audit pass). 2026-08-01 (+rule 45 (create-affordance placement ground theory, designer-taught over five rounds); +rule 44 (concentric nested radii, designer-taught); +rules 42 (choice-control copy) & 43 (deliberate one-offs); Q2/Q3 answers added to 38-40 per the promotion rule; rule 41 restated as a MECHANISM — non-layout vs layout-affecting channels — after an independent audit judged the first widening had generalised the title but not the trigger; cross-linked to rule 38; rule 39's stale radius count corrected). 2026-07-25 (SCOPE PIVOT, designer directive — see note below. +rule 38 (divider redundancy),
@@ -529,6 +531,96 @@ springy bounces) — "a utility assistant, not a toy."
     *What would stop it firing:* checking only whether two elements *touch* or *sit near* each other. The
     question is never proximity — it's whether the two elements answer the same question ("where am I / what
     can I do from here" = chrome) or different ones (chrome vs. "what am I looking at right now" = content).
+
+48. **A control's box shape is an OUTPUT of two decisions — the content and the row's cross-axis size — never
+    a style choice of its own. What you owe every container is not a shape but a floor on the axis the
+    pointer travels along: at least square for an icon-only control in a horizontal row, and never portrait.**
+    The box is content + one uniform padding, with the cross-axis set by the row it sits in. So text →
+    landscape (text is wide), a glyph as wide as the row allows → square, a *narrower* glyph under the same
+    padding → portrait. Nobody picks "square" or "rectangle"; you pick the padding and the row height and
+    the aspect falls out. The design act is choosing which axis to be generous on, and Fitts answers that:
+    acquisition cost depends on the target's extent **along the direction the pointer approaches from**. In a
+    horizontal toolbar the pointer arrives horizontally, so WIDTH decides whether the click lands and height
+    is the cheap axis; in a vertical list it is exactly reversed. Hence: horizontal row → at least square,
+    landscape welcome, **portrait is a defect** because it spends the free axis and starves the deciding one;
+    vertical list → full width, comfortable height. Floor of 22px (this app's own smallest deliberate control,
+    not an imported number) applies to the travel axis for every control and to *both* axes for icon-only
+    ones — a text control's cheap axis is set by its row's typographic density, which is a different decision.
+    *(blueai-desktop, 2026-08-10: designer, on the Skills toolbar — "why is this skill help icon NOT square?
+    if we can reduce the width of the search bar a lil the icon can get its proper interaction size right?"
+    It measured 24×32 — the ONLY portrait control in the app across 19 surfaces and 55 controls, because a
+    previous fix released `height` so `align-items: stretch` could match the search field's 32px and left
+    `width: 24px` behind. `aspect-ratio: 1` now ties width to whatever the row stretches height to, and the
+    8px comes out of `.bai-search`, which is `flex: 1` — the designer's own remedy, exactly. The same designer
+    asked WHY Claude's desktop shows a square box on the credits ring but rectangles on "Opus 5"/"High", and
+    slightly portrait boxes on its mic and chevron: same law — text is wide, a full-width glyph is square, a
+    narrow glyph under constant side padding goes portrait. Two more violations fell out of the census:
+    `#baiTitleBtn` at 306×14 and `.bai-menu-help` at 18.7×16.)*
+    *Where else this applies:* any icon button that inherits a stretched height without a matching width; a
+    toolbar mixing text and icon controls; an icon added to an existing row (it takes the row's height, so
+    check its width the same moment); a vertical nav item that is inset rather than full-width; a dense
+    status strip where a control's cheap axis is capped by the strip itself.
+    *What would stop it firing:* treating "square" as the goal rather than the by-product — a box can be
+    square for the wrong reason (a hard-coded width that happens to match) and satisfy the letter of this
+    while the padding is uneven. Also: applying the floor axis-blind. The first version of the machine gate
+    did, and flagged `#baiModelBtn` at 61×20 in a 20px-tall status strip, where "make it taller" means
+    "make the button taller than its own strip" — meaningless. A genuine exception exists and is *listed*
+    rather than silently skipped: a control whose SHAPE IS ITS SEMANTICS (`.bai-tgl`, 28×16 — a switch
+    depicts a track with a knob travelling along it, so that landscape IS the control, not padding).
+    *Gate:* `icon-target-audit.js` — runtime, because this is a law about computed geometry that no static
+    read of the stylesheet can see. Measures `offsetWidth/offsetHeight`, never `getBoundingClientRect`:
+    `#scaler` transforms the whole app, so rect values are scaled and the first run produced 54 false
+    failures at compact width. Same trap as `placeFloating`; see [[feedback_blueai_atomic_hierarchy]].
+    *Sibling:* **rule 49** is this rule's other half — 48 sizes a control's own box, 49 places children of
+    differing heights inside a row, and 49 carries the boundary clause against rule 45's `stretch`.
+
+49. **In a row mixing a fixed-size element with a variable-length one, align on the axis that survives the
+    content changing — which is almost always CENTRE, not START. If you find yourself adding a magic-number
+    nudge to make an alignment look right, the alignment reference is wrong, not the number.**
+    `align-items: flex-start` anchors every child to the row's top edge, so a fixed-height element (an icon
+    chip, an avatar, a checkbox) and a text block that can be one line or three no longer share a reference
+    point: the text grows downward from the top while the chip stays put, and the chip's true centre drifts
+    further above the text block's centre with every added line. Centre alignment ties every child to the
+    same optical middle regardless of how many lines the text runs to — so it is stable across content
+    length by construction, where start-alignment is correct only for the one line count it was tuned on.
+    **The diagnostic is the compensation:** a `padding-top: 1px` on the text, a negative margin pulling a
+    button back toward a corner, a `margin-top: -4px` on an icon — each of those exists because the
+    alignment reference is wrong, and each is calibrated to exactly one content length. Delete the
+    compensations WITH the fix; leaving them is how a corrected alignment ends up 1px off in the other
+    direction.
+    *(blueai-desktop, 2026-08-11: the toast. Designer, twice — first "does this look aesthetic and
+    delightful," then, after a colour/motion pass, "the elements inside those notification need to be
+    properly aligned, positioned and resized." The row was `flex-start`; against a 2-line reward
+    (title+subtitle) the 22px icon's centre sat ~6px above the text block's. Two hacks existed to paper over
+    it — `.bai-toast-body { padding-top: 1px }` and negative margins on `.tgm-close` — both tuned for the
+    ONE-line alert and neither holding for the two-line reward. `align-items: center` + deleting both hacks
+    fixed 1-line and 2-line simultaneously with zero magic numbers. It also surfaced a second asymmetry the
+    same pass: the 3px accent `border-left` had made the left inset 13px against 11px on the other three
+    sides, because padding was set uniformly while the border was not.)*
+    *Where else this applies:* any list row with an avatar + a title that can wrap; a checkbox beside a
+    multi-line label; a status dot beside a variable-length message; an icon beside a heading that goes to
+    two lines at a narrow width; a form label beside a control taller than its own text. **And the border
+    corollary:** whenever an element carries asymmetric border widths, its padding must be set per-side to
+    compensate, or the visual inset differs from the declared one by the border delta.
+    *What would stop it firing:* only checking the alignment at the content length currently on screen —
+    the failure is invisible at one line and grows with each additional line, so a row that looks correct in
+    its most common state can be structurally misaligned. Also: reading it as a rule about ICONS. It fires on
+    any fixed-size child beside a variable-height one, whatever either of them is.
+    *Sibling:* rule 48 is the same family one axis over — 48 governs a control's own box shape (what the
+    aspect ratio should be), 49 governs how children of differing heights relate INSIDE a row. Read 48 for
+    "how big is this control," 49 for "where does it sit next to its neighbour."
+    **BOUNDARY vs rule 45 — these two prescribe DIFFERENT `align-items` values and the distinction is the row's
+    CONTENTS, not its shape (Gate 6.5 cross-check, 2026-08-11).** Rule 45 mandates `align-items: stretch` for a
+    shared toolbar; this rule mandates `center`. Both are right, for different rows:
+    - **Peer CONTROLS that must read as one toolbar → `stretch`** (rule 45). A 32px search field beside a 24px
+      icon button reads as two unrelated things; equalising their heights is what makes the row one object. The
+      children are all interactive, all want the same height, and none has variable-length content.
+    - **A fixed-size element beside VARIABLE-LENGTH content → `center`** (this rule). An icon chip beside text
+      that may run one line or three must not stretch — a 22px status chip pulled to two lines tall is absurd,
+      and `flex-start` drifts as the text grows. Centre is the only reference stable across content length.
+    *The test:* are the row's children peers competing for the same height (→ stretch), or is one of them a
+    fixed marker annotating the other's variable content (→ centre)? If a row somehow has both (a toolbar that
+    also holds a wrapping label), split it — the label is content, not a control.
 
 ## Open corrections log
 *SCOPE PIVOT (2026-07-25, designer directive) — superseding the S8 standing scope note below: **the
