@@ -11,8 +11,7 @@ export default function TrustSectionBrand() {
     <section className="px-6 py-24">
       <div className="mx-auto max-w-content">
         <Reveal className="flex flex-col items-center text-center">
-          <p className="bai-eyebrow uppercase text-iris">Why brands trust it</p>
-          <h2 className="mt-3 max-w-[30ch] font-head text-3xl font-bold text-ink-display sm:text-4xl">
+          <h2 className="max-w-[30ch] font-head text-3xl font-bold text-ink-display sm:text-4xl">
             3,100+ creators are already working jobs today.
           </h2>
         </Reveal>

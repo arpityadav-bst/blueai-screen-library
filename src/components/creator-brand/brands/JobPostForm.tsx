@@ -15,9 +15,8 @@ export default function JobPostForm() {
     <section id="post-a-job" className="px-6 py-24">
       <div className="mx-auto max-w-content grid gap-12 lg:grid-cols-[0.85fr_1.15fr]">
         <Reveal>
-          <p className="bai-eyebrow uppercase text-iris">Post a job</p>
-          <h2 className="mt-3 font-head text-3xl font-bold text-ink-display sm:text-4xl">
-            Set the terms once. We&apos;ll run it from here.
+          <h2 className="font-head text-3xl font-bold text-ink-display sm:text-4xl">
+            Set the terms once. BlueAI runs it from there.
           </h2>
           <p className="bai-body mt-4 text-ink-body-2">
             Nothing is charged when you post this — you&apos;re only defining the job so BlueAI can
@@ -111,7 +110,7 @@ export default function JobPostForm() {
               >
                 Post this job
               </button>
-              <p className="mt-3 text-center text-[12px] text-ink-muted">No payment happens now — you&apos;re only defining the job.</p>
+              <p className="text-center text-[12px] text-ink-muted">No payment happens now — you&apos;re only defining the job.</p>
             </form>
           )}
         </Reveal>

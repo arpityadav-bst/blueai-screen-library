@@ -11,9 +11,8 @@ export default function WaitlistCTA() {
     <section id="waitlist" className="px-6 pb-24 pt-24">
       <Reveal className="mx-auto max-w-content" as="div">
         <div className="overflow-hidden rounded-credits bg-cta-band px-8 py-16 text-center sm:px-16">
-          <p className="bai-eyebrow uppercase text-white/70">Pre-launch</p>
-          <h2 className="mx-auto mt-3 max-w-[24ch] font-head text-3xl font-bold text-white sm:text-4xl">
-            Be first in line when the jobs open up.
+          <h2 className="mx-auto max-w-[24ch] font-head text-3xl font-bold text-white sm:text-4xl">
+            The jobs open soon. Be first in line.
           </h2>
           <p className="mx-auto mt-4 max-w-[46ch] text-[15px] text-white/70">
             Join 12,400+ creators waiting to start earning through BlueAI.

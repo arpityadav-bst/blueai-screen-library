@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import Reveal from '../Reveal'
 import { CBLinkButton } from '../Button'
 import PixelRain from '../creators/PixelRain'
@@ -51,7 +52,7 @@ function EdgeCard({ c }: { c: (typeof EDGE_CARDS)[number] }) {
 
 export default function Hero() {
   return (
-    <section className="relative overflow-hidden px-6 pb-24 pt-10 sm:pt-14">
+    <section id="hero" className="relative overflow-hidden px-6 pb-24 pt-10 sm:pt-14">
       <PixelRain className="z-0" />
 
       <div className="absolute inset-0 z-0" aria-hidden="true">
@@ -64,29 +65,34 @@ export default function Hero() {
             An AI that turns your budget <span className="text-gradient italic inline-block pr-[0.2em]">into real reach.</span>
           </h1>
           <p className="bai-body-lg mx-auto mt-5 max-w-[640px]">
-            Post your video and a budget. BlueAI matches it to thousands of real people who
-            genuinely engage with it, verifies every interaction, and pays them for you, automatically.
+            Set your goal and your budget — BlueAI matches thousands of real people who
+            genuinely engage with your video, verifies every interaction, and pays them for you, automatically.
           </p>
         </Reveal>
 
-        <Reveal delay={0.15} className="mt-14 flex flex-wrap items-center justify-center gap-3">
-          <CBLinkButton href="#post-a-job" size="lg">Post a job</CBLinkButton>
-          <CBLinkButton href="#pricing" size="lg" variant="secondary">See how pricing works</CBLinkButton>
+        <Reveal delay={0.15} className="mt-14 flex flex-col items-center gap-3">
+          <CBLinkButton href="#post-a-job" size="lg" className="min-w-[240px]">Post a job</CBLinkButton>
+          <Link
+            href="#pricing"
+            className="text-[13px] font-normal text-ink-muted underline decoration-1 underline-offset-4 opacity-70 transition-opacity hover:text-ink-heading hover:opacity-100"
+          >
+            See how pricing works
+          </Link>
         </Reveal>
 
-        <Reveal delay={0.25} className="mt-6 w-full max-w-[1380px] overflow-hidden">
-          <TiltImage className="-mt-[3%]">
+        <Reveal delay={0.25} className="mt-10 w-full max-w-[1240px] overflow-hidden">
+          <TiltImage className="-mt-[1%]">
             <Image
-              src="/creator-brand/brand-workflow-small-label.png"
-              alt="A brand posts a video and budget, BlueAI matches it to real creators, and verified engagement rolls in."
+              id="hero-image"
+              src="/creator-brand/brand-workflow-engagement-v1.png"
+              alt="A brand's job going live, engagement being verified, and payment settling automatically."
               width={1672}
               height={941}
               className="h-auto w-full"
               style={{
-                // No blend mode: this asset's background measures #F7F7F7–#F9F9F9 against the
-                // page's #F9F9FA — a 0–2 unit delta, already invisible. A mix-blend-multiply
-                // was here for the PREVIOUS asset; against this one it darkens the background
-                // ~6 units below the page and creates the very seam it was meant to remove.
+                // No blend mode: this asset's background measures ~#F7F7F7–#F9F9FA against the
+                // page's #F9F9FA — a 0–3 unit delta, already invisible. Measure before adding a
+                // blend mode here again — see the git history on this line for why.
                 maskImage: 'radial-gradient(ellipse 75% 80% at center, black 55%, transparent 92%)',
                 WebkitMaskImage: 'radial-gradient(ellipse 75% 80% at center, black 55%, transparent 92%)',
               }}

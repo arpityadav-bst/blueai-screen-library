@@ -6,6 +6,27 @@
    have: a paper-grain texture and the handle-lookup "scanning" sweep.
    ─────────────────────────────────────────────────────────────────────── */
 
+/* Subtler CTA glow than the shared DS default. Scoped locally rather than
+   editing --bai-shadow-cta/-hover in globals.css — that token is load-bearing
+   on 17 other files (dormant marketing pages, the style guide, ai-video-
+   creator-v2), so a global edit here would move CTAs it was never asked to
+   touch. Same blur/offset ratio as the shared value, just tighter and lower
+   opacity. */
+.cb-scope {
+  --bai-shadow-cta: 0 6px 16px -8px rgba(var(--bai-glow-rgb), .32);
+  --bai-shadow-cta-hover: 0 9px 20px -8px rgba(var(--bai-glow-rgb), .38);
+}
+
+/* Every section h2 was inheriting text-3xl/4xl's SHARED lineHeight (1.05/1.04,
+   tailwind.config.ts) — the exact tightness the hero H1 was corrected away from
+   (5xl/6xl loosened to 1.12/1.15) because it crowds descenders on a 2-line wrap. Scoped
+   to h2 specifically (never h1 — the hero titles keep their own tuple values) rather
+   than editing the shared 3xl/4xl tokens, which are load-bearing on the dormant
+   marketing pages. Specificity: one class + one type selector beats a bare utility
+   class, so this wins regardless of source order. 1.16 read as still tight once seen
+   next to the loosened hero — raised further to 1.28. */
+.cb-scope h2 { line-height: 1.28; }
+
 /* Fine paper grain — subtle depth on the canvas, not a texture people notice
    consciously. SVG feTurbulence baked as a data-uri, tiled. */
 .cb-grain {
@@ -23,8 +44,108 @@
   box-shadow: var(--shadow-float);
 }
 
+/* ── Ambient backdrop (Backdrop.tsx) — drifting orbs + the rotating logo star ──
+   One fixed layer behind every section. Sits at z-index 0; page content is lifted
+   to z-index 1 below, and the header is already z-50, so all three stack cleanly.
+   Values follow /seo's .seo-backdrop, with the star's alpha raised — /seo tuned
+   .038 against #eef1fb and this canvas is #F9F9FA, where that reads as nothing. */
+.cb-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.cb-orb {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 46vw;
+  height: 46vw;
+  max-width: 720px;
+  max-height: 720px;
+  border-radius: 50%;
+  filter: blur(96px);
+  opacity: 0.34;
+  will-change: transform;
+}
+.cb-orb-iris { background: radial-gradient(circle at center, rgba(var(--bai-iris-rgb), .55), transparent 68%); }
+.cb-orb-cyan { background: radial-gradient(circle at center, rgba(var(--bai-cyan-rgb), .5), transparent 68%); }
+.cb-orb-blue { background: radial-gradient(circle at center, rgba(var(--bai-mkt-blue-rgb), .44), transparent 68%); }
+.cb-star {
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  width: 36vw;
+  max-width: 460px;
+  height: auto;
+  color: rgba(var(--bai-iris-rgb), .055);
+  will-change: transform;
+}
+/* Content rides above the backdrop. The header owns z-50 already. */
+.cb-scope > main,
+.cb-scope > footer { position: relative; z-index: 1; }
+
+@media (max-width: 720px) {
+  /* Star pins to the top-right and goes large — only its left half on screen, so it
+     reads as a slow gear turning at the edge rather than a shape behind the text. */
+  .cb-star { left: 100%; top: 14vh; width: 92vw; max-width: none; color: rgba(var(--bai-iris-rgb), .07); }
+}
+
 /* Numeric ticker — tabular figures so the earnings estimate doesn't jitter in width */
 .cb-tabular { font-variant-numeric: tabular-nums; }
+
+/* ── Step sequencer — title beat + crossfade (v3) ──
+   .cb-beat: the title's own full screen (v1/v2 also used this for per-step beats; v3
+   crossfades the steps instead — see .cb-seq-pin/.cb-seq-frame below — so this is now
+   title-only, no scroll-snap needed since there's nothing to snap between). */
+.cb-beat {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 1.5rem;
+}
+
+/* .cb-seq-pin is the pinned section GSAP holds in place while the four steps crossfade
+   inside it (StepSequencer.tsx). .cb-seq-frame stacks every step on the exact same spot
+   — position:absolute + inset:0 — so only opacity/scale need to move; nothing reflows
+   mid-fade. min-height MUST be 100vh, not less: the pin anchors at 'top top', so content
+   centered inside a shorter box sits centered on THAT box, not on the viewport — a 78vh
+   box put everything noticeably above true center. */
+.cb-seq-pin {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem;
+}
+.cb-seq-frame {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  will-change: opacity, transform;
+}
+
+/* The glow blob behind each step's image — this is the "transparent WOW" part. The
+   image itself is radial-masked at its own edges (inline style, per-step); this blob
+   sits behind it so the fade-out has something lit to dissolve into, instead of
+   dissolving into flat canvas. Color is set per-step via inline style (--glow). */
+.cb-beat-glow {
+  position: absolute;
+  width: 70vw;
+  height: 70vw;
+  max-width: 640px;
+  max-height: 640px;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, var(--glow, rgba(123, 76, 255, .4)), transparent 70%);
+  filter: blur(64px);
+  opacity: 0.8;
+}
 
 /* Scan-bar sweep used by the handle-lookup "reading…" state */
 @keyframes cb-scan {

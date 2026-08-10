@@ -58,20 +58,20 @@ export default function HandleLookupCard() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="shadow-hairline flex items-center gap-1.5 rounded-pill border border-divider bg-white py-1.5 pl-4 pr-1.5 focus-within:border-iris"
+      className="shadow-hairline flex items-stretch rounded-pill border border-divider bg-white pl-4 focus-within:border-iris"
     >
-      <span className="text-[13px] text-ink-muted">@</span>
+      <span className="flex items-center text-[14px] text-ink-muted">@</span>
       <input
         value={handle}
         onChange={(e) => setHandle(e.target.value)}
         placeholder="yourchannel"
-        className="w-full bg-transparent text-[13px] text-ink-heading outline-none placeholder:text-ink-muted"
+        className="w-full bg-transparent py-3.5 pl-1.5 pr-2 text-[14px] text-ink-heading outline-none placeholder:text-ink-muted"
       />
       <button
         type="submit"
-        className="shrink-0 rounded-pill bg-cta-gradient px-4 py-2 text-[12.5px] font-semibold text-white shadow-cta transition-transform hover:-translate-y-0.5 hover:shadow-cta-hover"
+        className="flex shrink-0 items-center justify-center rounded-pill bg-cta-gradient px-6 text-[14px] font-semibold text-white shadow-cta transition-transform hover:-translate-y-0.5 hover:shadow-cta-hover"
       >
-        See what you could earn
+        See your earnings
       </button>
     </form>
   )

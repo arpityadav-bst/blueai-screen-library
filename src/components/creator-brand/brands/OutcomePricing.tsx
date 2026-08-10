@@ -14,9 +14,8 @@ export default function OutcomePricing() {
     <section id="pricing" className="px-6 py-24">
       <div className="mx-auto max-w-content">
         <Reveal>
-          <p className="bai-eyebrow uppercase text-iris">Pricing model</p>
-          <h2 className="mt-3 max-w-[20ch] font-head text-3xl font-bold text-ink-display sm:text-4xl">
-            One flat rate, split across as many creators as your budget allows.
+          <h2 className="max-w-[20ch] font-head text-3xl font-bold text-ink-display sm:text-4xl">
+            One flat rate. As many creators as your budget buys.
           </h2>
           <p className="bai-body mt-4 max-w-[48ch] text-ink-body-2">
             Set a total budget and a campaign window. BlueAI divides it across real people who

@@ -15,8 +15,7 @@ export default function FAQ() {
     <section id="faq" className="px-6 py-24">
       <div className="mx-auto max-w-content">
         <Reveal>
-          <p className="bai-eyebrow uppercase text-iris">FAQ</p>
-          <h2 className="mt-3 font-head text-3xl font-bold text-ink-display sm:text-4xl">
+          <h2 className="font-head text-3xl font-bold text-ink-display sm:text-4xl">
             Questions creators actually ask.
           </h2>
         </Reveal>

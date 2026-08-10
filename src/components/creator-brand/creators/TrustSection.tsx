@@ -14,11 +14,15 @@ const POINTS = [
 
 export default function TrustSection() {
   return (
-    <section className="px-6 py-24">
+    <section id="trust" className="px-6 py-24">
       <div className="mx-auto max-w-content">
         <Reveal className="flex flex-col items-center text-center">
-          <p className="bai-eyebrow uppercase text-iris">Why creators trust it</p>
-          <div className="mt-4 flex flex-wrap justify-center gap-10">
+          {/* This section had no h2 at all — eyebrow straight into raw numbers, which is
+              why it read as starting mid-thought. */}
+          <h2 className="max-w-[26ch] font-head text-3xl font-bold text-ink-display sm:text-4xl">
+            Nothing happens on your channel without you.
+          </h2>
+          <div className="mt-6 flex flex-wrap justify-center gap-10">
             {STATS.map((s) => (
               <div key={s.label}>
                 <div className="font-head text-3xl font-bold text-ink-display">{s.value}</div>
