@@ -120,13 +120,20 @@
       return () => cancelAnimationFrame(raf);
     }, []);
 
+    // This card is never removed once pushed — push() only appends, so it stays in the
+    // conversation permanently as a record of what happened, frozen at whatever it last
+    // rendered. A spinning ring frozen next to "100%" reads as stuck/broken, not finished, so
+    // the done state swaps to a static checkmark rather than just leaving the spin running.
+    const done = pct >= 100;
     return (
       <div className="ba-msg-in" style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: 10 }}>
         <div style={{ maxWidth: 300, width: '100%', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: 16, padding: '12px 14px 13px', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
           <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.07em', color: '#2563eb', textTransform: 'uppercase', marginBottom: 9 }}>Installing</p>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 9 }}>
-            <span className="ba-ring-spin" aria-hidden="true" />
-            <span style={{ fontSize: 13, fontWeight: 700, color: '#1e40af' }}>BlueStacks App Player · {pct}%</span>
+            {done
+              ? <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1990FF" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><polyline points="20 6 9 17 4 12" /></svg>
+              : <span className="ba-ring-spin" aria-hidden="true" />}
+            <span style={{ fontSize: 13, fontWeight: 700, color: '#1e40af' }}>Getting ready {pct}%</span>
           </div>
           <div style={{ height: 6, borderRadius: 999, background: '#dbeafe', overflow: 'hidden' }}>
             <div style={{ height: '100%', width: pct + '%', borderRadius: 999, background: '#1990FF' }} />
