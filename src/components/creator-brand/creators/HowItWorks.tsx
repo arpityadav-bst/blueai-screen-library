@@ -1,52 +1,72 @@
-import Reveal from '../Reveal'
-import CommentApprovalDemo from './CommentApprovalDemo'
+import StepCards, { type Step } from '../StepCards'
 
-const STEPS = [
-  { n: '01', title: 'Paste your handle', body: 'BlueAI reads your channel in seconds. No application, no waiting on a reply.' },
-  { n: '02', title: 'Accept a job that fits', body: 'BlueAI already knows what you’re into — from your watch history, or a few quick questions if you’re new — so every job it shows fits what you’d actually watch. You still decide.' },
-  { n: '03', title: 'BlueAI takes it from there', body: 'It handles the brand’s video on your account from start to finish, then verifies everything before it counts.' },
-  { n: '04', title: 'Get paid, on repeat', body: 'You get paid once it clears, and BlueAI schedules the next cycle automatically — no re-accepting anything.' },
+// Step art: designer-supplied set, used EXACTLY as delivered — no background cut, no
+// rescaling, no mask, no weight normalisation. All of that machinery existed to make an
+// opaque near-white raster sit convincingly on open page background; inside a card the
+// image is full-bleed against the card's own edge, so there is no floating box to
+// disguise and nothing to correct. Filenames are the designer's own rather than the old
+// step0N-* numbering, which had drifted out of step with the steps themselves.
+//
+// CAVEAT ON THE ART, not on the code: several of these illustrations draw the engagement
+// mechanics as icons (an eye, a heart, a speech bubble, a repost arrow). The copy on both
+// pages was deliberately reworked to stop enumerating those, and a raster asserts them just
+// as much as a sentence while being much harder to change later. The alt text below
+// describes what is drawn WITHOUT re-enumerating them, which is the only part of this that
+// code can fix.
+const STEPS: Step[] = [
+  {
+    n: '01',
+    title: 'Accept a job that fits',
+    // Was two parenthetical em dashes wrapping a middle clause. Split into two sentences
+    // instead: the aside was doing real work and deserved to be a statement, not an
+    // interruption.
+    //
+    // Then trimmed from 184 to ~137 characters to match the other two bodies' line count.
+    // Two clauses went, and neither is load-bearing HERE: "if you're new" is already implied
+    // by "a few quick questions", and "and you still decide" is said twice over by this
+    // card's own title ("Accept a job that fits") and the section heading ("You say yes
+    // once"). The mechanism — how BlueAI knows your taste — is the part worth the characters,
+    // so it stayed.
+    body: 'BlueAI already knows what you’re into, from your watch history or a few quick questions. So every job it shows is one you’d actually watch.',
+    img: '/creator-brand/steps/creator-02-accept-job.png',
+    alt: 'A person smiling behind three floating glass product cards, reaching toward the middle one, which carries a checkmark.',
+  },
+  {
+    n: '02',
+    title: 'BlueAI takes it from there',
+    // "toward your payout" is added length that does real work: it's the hinge into step 03,
+    // and it brings this body up to the same line count as its neighbours rather than
+    // padding it with filler to get there.
+    body: 'It handles the brand’s video on your account from start to finish, then verifies the work before it counts toward your payout.',
+    img: '/creator-brand/steps/creator-03-blueai-takes-over.png',
+    alt: 'A person sitting back with a mug while glass panels float in front of them around a video panel, each panel marked with a checkmark.',
+  },
+  {
+    n: '03',
+    title: 'Get paid, on repeat',
+    body: 'You get paid once the work clears, and BlueAI schedules the next cycle automatically. There’s nothing for you to re-accept.',
+    img: '/creator-brand/steps/creator-04-get-paid.png',
+    alt: 'A person holding a phone behind floating glass cards of stacked parcels, with a glowing wallet resting below them.',
+  },
 ]
 
 export default function HowItWorks() {
   return (
-    <section id="how-it-works" className="px-6 py-24">
-      <div className="mx-auto max-w-content">
-        <Reveal>
-          <p className="bai-eyebrow uppercase text-iris">How it works</p>
-          <h2 className="mt-3 max-w-[34ch] font-head text-3xl font-bold text-ink-display sm:text-4xl">
-            You don&apos;t have to do a thing — BlueAI takes it from there.
-          </h2>
-          <p className="bai-body mt-4 max-w-[58ch] text-ink-body-2">
-            Accept a job and BlueAI handles it, end to end. Nothing to schedule, nothing
-            to remember, nothing to negotiate.
-          </p>
-        </Reveal>
-
-        <Reveal stagger className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {STEPS.map((s) => (
-            <div key={s.n} data-reveal-item className="rounded-chat border border-stroke-warm bg-white p-6">
-              <span className="font-head text-[13px] font-medium text-ink-muted">{s.n}</span>
-              <h3 className="mt-3 font-head text-[19px] font-semibold text-ink-display">{s.title}</h3>
-              <p className="mt-2 text-[14px] leading-relaxed text-ink-body-2">{s.body}</p>
-            </div>
-          ))}
-        </Reveal>
-
-        <div className="mt-10 grid items-center gap-8 lg:grid-cols-2">
-          <Reveal>
-            <h3 className="font-head text-[22px] font-semibold text-ink-display">You&apos;re always in the loop.</h3>
-            <p className="bai-body mt-3 max-w-[48ch] text-ink-body-2">
-              Every comment BlueAI wants to post shows up on your screen first, before it goes out
-              under your name. Approve it, edit it, or switch on auto-approve if you&apos;d rather not
-              be asked every time.
-            </p>
-          </Reveal>
-          <Reveal delay={0.1}>
-            <CommentApprovalDemo />
-          </Reveal>
-        </div>
-      </div>
+    <section id="how-it-works">
+      <StepCards
+        // Was "BlueAI takes it from there" — the exact same sentence as step 02, a few
+        // hundred px below it. Reworded so the section heading and the step title stop
+        // colliding. Accent phrase on its OWN line rather than trailing inline: at this
+        // scale an italic gradient span crowding the end of a line is what clipped
+        // descenders on the hero H1 before pr-[0.2em] + a looser line-height fixed it.
+        heading={
+          <>
+            You say yes once.
+            <span className="mt-2 block text-gradient italic pr-[0.2em]">BlueAI does the rest.</span>
+          </>
+        }
+        steps={STEPS}
+      />
     </section>
   )
 }

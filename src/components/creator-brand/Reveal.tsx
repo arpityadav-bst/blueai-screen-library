@@ -36,6 +36,11 @@ export default function Reveal({
   useEffect(() => {
     const el = ref.current
     if (!el) return
+    // Respect prefers-reduced-motion: leave everything at its final state rather than
+    // animating it in. Without this the whole site fades/rises for users who asked it
+    // not to — and since this primitive wraps ~20 sections, it was the single biggest
+    // motion-accessibility gap in the project.
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const ctx = gsap.context(() => {
       const targets = stagger ? el.querySelectorAll(staggerSelector) : el
       gsap.set(targets, { opacity: 0, y })

@@ -55,7 +55,7 @@ function EdgeCard({ c }: { c: (typeof EDGE_CARDS)[number] }) {
 
 export default function Hero() {
   return (
-    <section className="relative overflow-hidden px-6 pb-24 pt-10 sm:pt-14">
+    <section id="hero" className="relative overflow-hidden px-6 pb-24 pt-10 sm:pt-14">
       <PixelRain className="z-0" />
 
       <div className="absolute inset-0 z-0" aria-hidden="true">
@@ -69,19 +69,20 @@ export default function Hero() {
           </h1>
           <p className="bai-body-lg mx-auto mt-5 max-w-[640px]">
             BlueAI matches you to a real brand job that fits your interests, handles it on your
-            account end to end, and pays you once it&apos;s verified.
+            account end to end, and pays you once it&apos;s verified.
           </p>
         </Reveal>
 
-        <Reveal delay={0.15} className="w-full max-w-sm mt-14">
+        <Reveal delay={0.15} className="w-full max-w-md mt-14">
           <HandleLookupCard />
         </Reveal>
 
-        <Reveal delay={0.25} className="mt-6 w-full max-w-[1380px] overflow-hidden">
-          <TiltImage className="-mt-[3%]">
+        <Reveal delay={0.25} className="mt-10 w-full max-w-[1240px] overflow-hidden">
+          <TiltImage className="-mt-[1%]">
             <Image
-              src="/creator-brand/creator-workflow-create.png"
-              alt="A creator filming branded content while opportunities, approval, verification, and payment move around them."
+              id="hero-image"
+              src="/creator-brand/creator-workflow-engagement-v1.png"
+              alt="A creator accepting a job, engagement being verified, and payment landing in their account."
               width={1672}
               height={941}
               priority
