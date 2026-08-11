@@ -5,10 +5,9 @@ import { usePathname } from 'next/navigation'
 import { Wordmark } from '@/components/Wordmark'
 import { Arrow } from '@/components/Arrow'
 import { NAV, OTHER, type NavAudience } from './nav'
-import { useCBModal } from './ModalHost'
 
-// Shared by all three link shapes in the columns below (anchor, modal button, cross-page Link) so
-// the footer can't grow three near-identical quiet-link treatments.
+// Shared by both link shapes in the columns below (in-page anchor, cross-page Link) so the footer
+// can't grow two near-identical quiet-link treatments.
 const FOOTER_LINK = 'bai-body-sm text-ink-body-2 transition-colors hover:text-ink-heading'
 
 /**
@@ -26,7 +25,6 @@ const FOOTER_LINK = 'bai-body-sm text-ink-body-2 transition-colors hover:text-in
  * exist, the same rule the rest of this site holds copy to.
  */
 export default function Footer() {
-  const { open } = useCBModal()
   const pathname = usePathname()
   const active: NavAudience = pathname?.includes('/brands') ? 'brands' : 'creators'
   const other = OTHER[active]
@@ -71,17 +69,9 @@ export default function Footer() {
             <ul className="mt-4 space-y-2.5">
               {NAV[active].map((item) => (
                 <li key={item.label}>
-                  {/* Modal items are buttons here for the same reason as in the header — see
-                      nav.ts. Same class string, so the column reads as one list. */}
-                  {item.modal ? (
-                    <button type="button" onClick={() => open(item.modal!)} className={FOOTER_LINK}>
-                      {item.label}
-                    </button>
-                  ) : (
-                    <a href={item.href} onClick={(e) => scrollToSection(e, item.href!)} className={FOOTER_LINK}>
-                      {item.label}
-                    </a>
-                  )}
+                  <a href={item.href} onClick={(e) => scrollToSection(e, item.href)} className={FOOTER_LINK}>
+                    {item.label}
+                  </a>
                 </li>
               ))}
             </ul>
@@ -108,13 +98,10 @@ export default function Footer() {
                   <Arrow size={12} />
                 </Link>
               </li>
-              {/* Anchors only. A modal item has no href to append, and this column crosses to the
-                  OTHER page — a dialog can't be opened from here without navigating there first,
-                  so these stay real deep links. Was `.filter(href !== '#create-a-campaign')`, a
-                  string exclusion that only worked because it named the one item; filtering on the
-                  absence of an href holds for any modal item added later. */}
+              {/* Deep links into the other page's sections. No filter any more: every nav item is
+                  an anchor again now that the campaign entry is gone (see nav.ts), so there is
+                  nothing here without an href to skip. */}
               {NAV[other]
-                .filter((item) => item.href)
                 .slice(0, 3)
                 .map((item) => (
                   <li key={item.label}>

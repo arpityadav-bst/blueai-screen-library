@@ -39,8 +39,15 @@ export function useCBModal() {
 export default function ModalHost({ children }: { children: ReactNode }) {
   const [state, setState] = useState<{ kind: ModalKind; handle?: string } | null>(null)
   const [lookupMode, setLookupMode] = useState<LookupMode>('auto')
+  // The campaign dialog's SURFACE changes once submitted: the queued state is the CTA band. That
+  // has to live out here rather than inside the form, because the panel's background and the close
+  // button's colour are the dialog's, not the form's.
+  const [campaignDone, setCampaignDone] = useState(false)
 
   const open = useCallback((kind: ModalKind, payload?: { handle?: string }) => {
+    // Reset on OPEN, not on close: resetting on close would flip the panel back to white while the
+    // dialog is still on screen.
+    if (kind === 'campaign') setCampaignDone(false)
     setState({ kind, ...payload })
   }, [])
   const close = useCallback(() => setState(null), [])
@@ -53,8 +60,14 @@ export default function ModalHost({ children }: { children: ReactNode }) {
       {/* Each dialog is mounted only while it's the open one, so its contents start fresh: the
           campaign form reopens at step 1, the lookup re-runs its scan, the waitlist forgets a
           previous email. A kept-mounted dialog would reopen mid-flow on the second visit. */}
-      <Modal open={state?.kind === 'campaign'} onClose={close} size="lg" label="Create a campaign">
-        <CampaignForm onClose={close} />
+      <Modal
+        open={state?.kind === 'campaign'}
+        onClose={close}
+        size="lg"
+        variant={campaignDone ? 'band' : 'light'}
+        label="Create a campaign"
+      >
+        <CampaignForm onClose={close} onDone={() => setCampaignDone(true)} />
       </Modal>
 
       {/* xl — this table has three columns and six rows of real sentences; at the form's width its
@@ -62,7 +75,11 @@ export default function ModalHost({ children }: { children: ReactNode }) {
       <Modal open={state?.kind === 'pricing'} onClose={close} size="xl" label="How pricing works">
         <div className="border-b border-divider px-6 py-5 pr-12 sm:px-8 sm:pr-14">
           <h2 className="font-head text-[20px] font-bold text-ink-display">How pricing works</h2>
-          <p className="mt-1 max-w-[62ch] text-[13px] text-ink-body-2">
+          {/* 62ch broke this 150-character sentence over THREE lines inside a 1040px panel, with the
+              last one a stub — the column was a third of the width available to it. 80ch settles it
+              into two even lines and still stops well short of the panel edge, so it doesn't run the
+              full width of the table below it. */}
+          <p className="mt-1 max-w-[80ch] text-[13px] text-ink-body-2">
             One flat rate per verified engagement. You set the budget and the window — BlueAI spreads it
             across real people and pays out only as each engagement clears.
           </p>

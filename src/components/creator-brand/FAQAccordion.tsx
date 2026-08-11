@@ -8,7 +8,7 @@ export default function FAQAccordion({ items }: { items: FAQItem[] }) {
   const [open, setOpen] = useState<number | null>(0)
 
   return (
-    <div className="divide-y divide-divider rounded-field border border-stroke-warm bg-white">
+    <div className="divide-y divide-divider rounded-field border border-divider bg-white">
       {items.map((item, i) => {
         const isOpen = open === i
         return (

@@ -3,6 +3,7 @@
 import type { Dispatch, SetStateAction } from 'react'
 import DateField from '../../controls/DateField'
 import SelectField from '../../controls/SelectField'
+import { Check } from '../../controls/icons'
 import { INPUT, LABEL } from '../../controls/fieldClasses'
 import { FieldError, withErr } from '../../forms'
 import { ACTIONS, COUNTRIES, type Draft } from './spec'
@@ -74,17 +75,27 @@ export function StepOne({ d, setD, err, touch }: Props) {
               // The checkbox is sr-only, so keyboard focus has nothing visible to land on unless
               // the ring is forwarded to the chip — hence peer + peer-focus-visible. Without it
               // this row was keyboard-operable but invisibly so.
+              //
+              // SELECTED IS NOT A CTA (designer, 2026-08-11). These were gradient pills with a
+              // brand shadow, which is the exact treatment of the form's own submit button — three
+              // filters reading as three primary actions, right above the real one. Selected is now
+              // a 10%-wash + iris ink + iris hairline + a small check: unmistakably on, visibly a
+              // filter. Smaller too (12px, tighter padding, 8px radius rather than a 128px pill),
+              // so the row reads as a set of options rather than a row of buttons.
               <label key={a} className="cursor-pointer select-none">
                 <input type="checkbox" checked={on} onChange={() => toggleAction(a)} className="peer sr-only" />
                 <span
-                  className={`block rounded-pill border px-4 py-2 text-[13px] font-medium capitalize transition-all duration-base ease-out-bai peer-focus-visible:ring-2 peer-focus-visible:ring-iris/40 peer-focus-visible:ring-offset-2 ${
+                  className={`flex items-center gap-1.5 rounded-card border px-2.5 py-1.5 text-[12px] font-medium capitalize transition-all duration-base ease-out-bai peer-focus-visible:ring-2 peer-focus-visible:ring-iris/30 peer-focus-visible:ring-offset-2 ${
                     on
-                      ? 'border-transparent bg-bai-gradient text-white shadow-brand-sm'
+                      ? 'border-[rgba(var(--bai-iris-rgb),0.35)] bg-[rgba(var(--bai-iris-rgb),0.07)] text-iris'
                       : err.actions
                         ? 'border-status-danger text-ink-body-2'
-                        : 'border-stroke-warm text-ink-body-2 hover:border-ink-muted'
+                        : 'border-divider text-ink-muted hover:border-stroke-warm hover:text-ink-body-2'
                   }`}
                 >
+                  {/* The check occupies its slot whether or not it's shown, so selecting a chip
+                      doesn't widen it and shuffle the two beside it. */}
+                  <span className="flex w-3 justify-center">{on && <Check size={11} />}</span>
                   {a}
                 </span>
               </label>

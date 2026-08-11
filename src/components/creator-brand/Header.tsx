@@ -204,31 +204,11 @@ export default function Header() {
         </Link>
 
         <nav className="hidden items-center gap-8 lg:flex">
-          {/* Two shapes, one list — see nav.ts. A modal item is a <button>, never an <a href="#">:
-              this nav's own scrollToSection would have nothing to scroll to, and an anchor that
-              opens a dialog lies to anyone reading the status bar. Both shapes carry the same
-              class string so the row stays visually one nav. */}
-          {NAV[active].map((item) =>
-            item.modal ? (
-              <button
-                key={item.label}
-                type="button"
-                onClick={() => open(item.modal!)}
-                className={NAV_LINK}
-              >
-                {item.label}
-              </button>
-            ) : (
-              <a
-                key={item.label}
-                href={item.href}
-                onClick={(e) => scrollToSection(e, item.href!)}
-                className={NAV_LINK}
-              >
-                {item.label}
-              </a>
-            )
-          )}
+          {NAV[active].map((item) => (
+            <a key={item.label} href={item.href} onClick={(e) => scrollToSection(e, item.href)} className={NAV_LINK}>
+              {item.label}
+            </a>
+          ))}
           {/* Context switch, not a same-page scroll link like the rest of this nav — LAST in
               the list now (was first), no underline any more, and marked as "leads elsewhere"
               by a small diagonal arrow instead. The arrow is the SAME Arrow component every

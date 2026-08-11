@@ -48,7 +48,7 @@ export default function JobsPreview() {
             {JOBS.map((j) => {
               const pct = Math.round((j.claimed / j.target) * 100)
               return (
-                <div key={j.brand} data-reveal-item className="rounded-chat border border-stroke-warm bg-white p-6">
+                <div key={j.brand} data-reveal-item className="rounded-chat border border-divider bg-white p-6">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
                       <span
@@ -59,7 +59,8 @@ export default function JobsPreview() {
                       </span>
                       <span className="text-[14px] font-semibold text-ink-heading">{j.brand}</span>
                     </div>
-                    <span className="rounded-pill bg-canvas px-2.5 py-1 text-[11px] font-medium text-ink-muted">YouTube</span>
+                    {/* Same invisible-white-fill fix — this chip had no visible container. */}
+                    <span className="rounded-pill bg-[var(--cb-track)] px-2.5 py-1 text-[11px] font-medium text-ink-muted">YouTube</span>
                   </div>
                   <p className="mt-3 text-[14px] leading-snug text-ink-body-2">{j.task}</p>
 
@@ -68,7 +69,9 @@ export default function JobsPreview() {
                       <span>{j.claimed}/{j.target} claimed</span>
                       <span>{pct}%</span>
                     </div>
-                    <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-pill bg-canvas">
+                    {/* --cb-track, not bg-canvas — canvas is pure white, so on this white card the
+                        unfilled part of the claim bar was invisible and every job read as 100%. */}
+                    <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-pill bg-[var(--cb-track)]">
                       <div className="h-full rounded-pill bg-bai-gradient" style={{ width: `${pct}%` }} />
                     </div>
                   </div>

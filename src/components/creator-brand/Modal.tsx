@@ -26,7 +26,9 @@ import CTAGrid from './CTAGrid'
 type Variant = 'light' | 'band'
 
 const PANEL: Record<Variant, string> = {
-  light: 'bg-white border border-stroke-warm',
+  // border-divider, not stroke-warm: at panel scale the firmer stroke read as a drawn outline
+  // around the dialog. See the SURFACES vs CONTROLS note in creator-brand.css.
+  light: 'bg-white border border-divider',
   band: 'bg-cta-band',
 }
 
@@ -149,9 +151,11 @@ export default function Modal({
           {/* Its own id prefix — the closing band's CTAGrid is on the page at the same time, and
               four duplicated SVG ids is a bug waiting for someone to change one band's geometry. */}
           {variant === 'band' && <CTAGrid idPrefix="cbGridModal" />}
-          {/* Close sits above the grid in the band variant, hence the z. Its hit area is 36px
-              while the glyph is 14 — the smallest control in the dialog shouldn't also be the
-              hardest to hit. */}
+          {/* Close sits above the grid in the band variant, hence the z. Its hit area is 36px while
+              the glyph is 14 — the smallest control in the dialog shouldn't also be the hardest to
+              hit. The light variant's hover fill was `hover:bg-canvas`, and --bai-canvas is pure
+              WHITE, so on a white panel the hover container did not exist and only the glyph
+              darkened. --cb-hover is a real fill (creator-brand.css). */}
           <button
             type="button"
             onClick={onClose}
@@ -159,7 +163,7 @@ export default function Modal({
             className={`absolute right-3.5 top-3.5 z-20 flex h-9 w-9 items-center justify-center rounded-circle transition-colors duration-base ease-out-bai ${
               variant === 'band'
                 ? 'text-white/50 hover:bg-white/10 hover:text-white'
-                : 'text-ink-muted hover:bg-canvas hover:text-ink-heading'
+                : 'text-ink-muted hover:bg-[var(--cb-hover)] hover:text-ink-heading'
             }`}
           >
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true">

@@ -60,7 +60,7 @@ export default function TrustSection() {
               No text-colour utility on the value — .text-gradient works by making the text
               transparent and clipping a background to it, and any `text-*` utility outranks it
               (it lives in @layer components) and would paint the glyphs solid. */}
-          <div className="mt-8 flex flex-col overflow-hidden rounded-credits border border-stroke-warm bg-white shadow-float sm:flex-row sm:divide-x sm:divide-divider">
+          <div className="mt-8 flex flex-col overflow-hidden rounded-credits border border-divider bg-white shadow-float sm:flex-row sm:divide-x sm:divide-divider">
             {STATS.map((s) => (
               <div key={s.label} className="px-10 py-5">
                 <div className="cb-tabular font-head text-4xl font-bold text-gradient">{s.value}</div>
@@ -77,7 +77,7 @@ export default function TrustSection() {
               data-reveal-item
               // Hover lift + shadow on settle, matching the step cards and the platform cards.
               // These were the only cards on either page that were completely inert.
-              className="rounded-chat border border-stroke-warm bg-white p-6 transition-all duration-base ease-out-bai hover:-translate-y-1 hover:shadow-float"
+              className="rounded-chat border border-divider bg-white p-6 transition-all duration-base ease-out-bai hover:-translate-y-1 hover:shadow-float"
             >
               <h3 className="font-head text-[18px] font-semibold text-ink-display">{p.title}</h3>
               <p className="mt-2 text-[14px] leading-relaxed text-ink-body-2">{p.body}</p>

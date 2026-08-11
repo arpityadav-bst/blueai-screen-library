@@ -211,16 +211,21 @@ function Calendar({
               onClick={() => onPick(d)}
               // 32x32 fixed square, never a percentage: a day cell whose size tracks the popover
               // width turns rounded-circle into an ellipse the moment the two disagree.
+              // Every hover here was `bg-canvas` — white on white, so the days had no hover at all.
+              // --cb-hover is blueai-desktop's own light --bai-hover, matching .bai-dt-day:hover in
+              // the window this calendar was modelled on. Left on the three ENABLED branches rather
+              // than hoisted to the base class: a disabled day still matches :hover in CSS, and
+              // lighting up a day you can't pick is worse than no hover.
               className={`mx-auto flex h-8 w-8 items-center justify-center rounded-circle text-[13px] tabular-nums outline-none transition-colors duration-fast ease-out-bai focus-visible:ring-2 focus-visible:ring-iris/40 ${
                 selected
                   ? 'bg-bai-gradient font-semibold text-white'
                   : disabled
                     ? 'cursor-not-allowed text-ink-muted/30'
                     : outside
-                      ? 'text-ink-muted/45 hover:bg-canvas'
+                      ? 'text-ink-muted/45 hover:bg-[var(--cb-hover)]'
                       : k === today
-                        ? 'font-bold text-iris hover:bg-canvas'
-                        : 'text-ink-body-2 hover:bg-canvas'
+                        ? 'font-bold text-iris hover:bg-[var(--cb-hover)]'
+                        : 'text-ink-body-2 hover:bg-[var(--cb-hover)]'
               }`}
             >
               {d.getDate()}
@@ -271,7 +276,7 @@ function NavBtn({
       aria-label={label}
       disabled={disabled}
       onClick={onClick}
-      className="flex h-7 w-7 items-center justify-center rounded-card text-ink-muted transition-colors duration-fast ease-out-bai hover:bg-canvas hover:text-ink-heading disabled:pointer-events-none disabled:opacity-30"
+      className="flex h-7 w-7 items-center justify-center rounded-card text-ink-muted transition-colors duration-fast ease-out-bai hover:bg-[var(--cb-hover)] hover:text-ink-heading disabled:pointer-events-none disabled:opacity-30"
     >
       {children}
     </button>

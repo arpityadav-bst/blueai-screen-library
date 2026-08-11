@@ -39,7 +39,7 @@ export default function PlatformsGrid({ heading, intro, bodies }: Props) {
               className={`relative rounded-chat border p-5 transition-all duration-base ease-out-bai hover:-translate-y-1 ${
                 c.live
                   ? 'shadow-float border-[rgba(123,76,255,.28)] bg-white'
-                  : 'border-stroke-warm bg-white/70 hover:border-ink-muted hover:bg-white'
+                  : 'border-divider bg-white/70 hover:border-stroke-warm hover:bg-white'
               }`}
             >
               {c.live ? (

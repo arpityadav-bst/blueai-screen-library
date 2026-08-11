@@ -141,7 +141,7 @@ export default function Popover({
         // Padding is left to the consumer — a menu wants 6px and a calendar 16px, and putting
         // either here would mean fighting it with a same-property utility whose win depends on
         // source order.
-        className={`cb-pop shadow-float z-[105] rounded-field border border-stroke-warm bg-white ${className}`}
+        className={`cb-pop shadow-float z-[105] rounded-field border border-divider bg-white ${className}`}
       >
         {children}
       </div>

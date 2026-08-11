@@ -49,7 +49,9 @@ export default function LookupFlow({ handle, mode }: { handle: string; mode: 'au
         </div>
         <p className="mt-6 text-[15px] font-semibold text-ink-display">Reading {label}</p>
         <p className="mt-1 text-[13px] text-ink-muted">Checking your size and what you post about…</p>
-        <div className="mx-auto mt-6 h-1.5 w-full max-w-[260px] overflow-hidden rounded-pill bg-canvas">
+        {/* --cb-track, not bg-canvas: canvas is white, so the unfilled part of this bar was
+            invisible on a white panel and the sweep looked like a bar with no track. */}
+        <div className="mx-auto mt-6 h-1.5 w-full max-w-[260px] overflow-hidden rounded-pill bg-[var(--cb-track)]">
           <div className="h-full w-1/3 rounded-pill bg-bai-gradient" style={{ animation: `cb-scan ${SCAN_DURATION_MS}ms ease-in-out infinite` }} />
         </div>
       </div>

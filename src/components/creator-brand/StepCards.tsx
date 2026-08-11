@@ -428,7 +428,7 @@ export default function StepCards({ heading, steps }: Props) {
                 }}
                 className="relative z-10 h-full lg:motion-safe:opacity-0"
               >
-                <article className="flex h-full flex-col overflow-hidden rounded-credits border border-stroke-warm bg-white shadow-float transition-transform duration-base ease-out-bai hover:-translate-y-1.5">
+                <article className="flex h-full flex-col overflow-hidden rounded-credits border border-divider bg-white shadow-float transition-transform duration-base ease-out-bai hover:-translate-y-1.5">
                 {/* Square panel because the source art is square, so `object-cover` fills it
                     exactly and crops nothing. The hairline beneath is what makes the small
                     tone difference between art background and card white read as a panel

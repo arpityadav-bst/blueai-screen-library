@@ -29,7 +29,7 @@ export default function OutcomePricing() {
         {/* rounded-credits + shadow-float instead of rounded-chat + a bare border: this is the
             largest single object on the page and it was sitting flatter than the 3-up trust cards
             below it. */}
-        <Reveal className="mt-14 overflow-hidden rounded-credits border border-stroke-warm bg-white shadow-float">
+        <Reveal className="mt-14 overflow-hidden rounded-credits border border-divider bg-white shadow-float">
           <PricingTable />
         </Reveal>
       </div>

@@ -36,7 +36,7 @@ export default function TrustSectionBrand() {
 
         <Reveal stagger className="mt-14 grid gap-6 sm:grid-cols-3">
           {POINTS.map((p) => (
-            <div key={p.title} data-reveal-item className="rounded-chat border border-stroke-warm bg-white p-6 transition-all duration-base ease-out-bai hover:-translate-y-1 hover:shadow-float">
+            <div key={p.title} data-reveal-item className="rounded-chat border border-divider bg-white p-6 transition-all duration-base ease-out-bai hover:-translate-y-1 hover:shadow-float">
               <h3 className="font-head text-[18px] font-semibold text-ink-display">{p.title}</h3>
               <p className="mt-2 text-[14px] leading-relaxed text-ink-body-2">{p.body}</p>
             </div>

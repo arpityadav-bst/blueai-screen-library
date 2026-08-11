@@ -95,14 +95,15 @@ export default function SelectField({
 
         {open && (
           <Popover anchor={triggerRef} onClose={close} className="p-1.5">
-            {/* cb-noscroll hides the scrollbar, as the reference picker does — the list is capped
-                just below a whole row, so the clipped row is itself the scroll affordance. */}
+            {/* cb-thinscroll: the bar fades in on hover and back out when the pointer leaves
+                (creator-brand.css). It replaced a fully hidden bar — which matched the reference
+                picker, but a list that scrolls should say so. */}
             <div
               ref={listRef}
               role="listbox"
               aria-label={label}
               onKeyDown={(e) => rove(e, listRef)}
-              className={`cb-noscroll overflow-y-auto ${MAX_VISIBLE}`}
+              className={`cb-thinscroll overflow-y-auto ${MAX_VISIBLE}`}
             >
               {options.map((o, i) => {
                 const on = o === value
@@ -114,7 +115,11 @@ export default function SelectField({
                     aria-selected={on}
                     {...(i === focusIdx ? { 'data-autofocus': true } : {})}
                     onClick={() => pick(o)}
-                    className={`flex w-full items-center gap-2 rounded-card px-2.5 py-2 text-left text-[13px] outline-none transition-colors duration-fast ease-out-bai hover:bg-canvas focus-visible:bg-canvas ${
+                    // The hover fill was `bg-canvas`, i.e. white on white — no hover at all. The
+                    // value is now blueai-desktop's own light-theme --bai-hover, the window this
+                    // picker was modelled on. focus-visible gets the same fill so driving the list
+                    // by keyboard shows the same row highlight the pointer does.
+                    className={`flex w-full items-center gap-2 rounded-card px-2.5 py-2 text-left text-[13px] outline-none transition-colors duration-fast ease-out-bai hover:bg-[var(--cb-hover)] focus-visible:bg-[var(--cb-hover)] ${
                       on ? 'font-semibold text-ink-heading' : 'text-ink-body-2'
                     }`}
                   >

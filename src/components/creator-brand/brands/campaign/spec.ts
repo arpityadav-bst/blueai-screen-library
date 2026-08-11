@@ -53,10 +53,15 @@ export const INITIAL: Draft = {
 // Grouped as the designer asked: what to promote / what it costs and when / who and why. The
 // grouping is the point — nine fields in one column read as a chore, three groups of two-to-three
 // read as a short conversation, and each group answers one question a brand actually has.
+//
+// Titles only. Each step used to carry a `sub` as well, which put TWO titles and TWO subtitles in
+// the dialog's top ~140px with the progress rail wedged between them (designer, 2026-08-11: "not
+// UX friendly"). The dialog's own title and its "nothing is charged now" reassurance are the pair
+// worth keeping; the step subtitles restated what the field labels underneath already say.
 export const STEPS = [
-  { title: 'What to promote', sub: 'The video, and what BlueAI should do on it.' },
-  { title: 'Spend and window', sub: 'What the campaign costs, and when it runs.' },
-  { title: 'Who and why', sub: 'Where the creators are — and what you want out of it.' },
+  { title: 'What to promote' },
+  { title: 'Spend and window' },
+  { title: 'Who and why' },
 ] as const
 
 // Which fields each step owns. Advancing validates only its own step's fields — otherwise step 1's
