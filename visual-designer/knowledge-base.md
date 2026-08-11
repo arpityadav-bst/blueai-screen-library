@@ -1,5 +1,9 @@
 # blueAI — Knowledge Base
-Last updated: 2026-08-11 (Session 17 — 3 new blueai-desktop traps: the `#scaler` scaled-vs-local px divide (2 instances, one of which produced 54 false failures in a brand-new gate), the `x || default` falsy-argument footgun, and the vacuous-harness-pass class. Earlier: 2026-08-01 (the design-system build — DS architecture + traps: base-href fragment rebasing, token scope vs fixed-position, the .bai-scope alias, pill-radius clamping, ellipsis false positives, pinned generators))
+Last updated: 2026-08-11 (Session 18 — +1 trap (a throw inside requestAnimationFrame/any async callback
+surfaces nowhere in the UI: the sequence stops mid-way and reads as FINISHED, console only — so read the
+console before re-reading your own logic) and widened the `d || DEFAULT` "cannot express its own absence"
+trap to cover DECLARATION ORDER, which produced the same plausible-wrong-state from `var` hoisting. Earlier:
+2026-08-11 (Session 17 — 3 new blueai-desktop traps: the `#scaler` scaled-vs-local px divide (2 instances, one of which produced 54 false failures in a brand-new gate), the `x || default` falsy-argument footgun, and the vacuous-harness-pass class. Earlier: 2026-08-01 (the design-system build — DS architecture + traps: base-href fragment rebasing, token scope vs fixed-position, the .bai-scope alias, pill-radius clamping, ellipsis false positives, pinned generators))
 
 ## blueai-desktop — CSS + testing traps (2026-07-25 audit, first entries for this surface)
 - **A flex container's `gap` ADDS to a child's own pre-existing CSS margin — it does not collapse or
@@ -360,6 +364,29 @@ Confirmed by fetching the live CSS chunks.
   helper in this file, grep the helper for `||` in its parameter handling** — and when the intent really is
   "no delay," pass a small non-zero value (120) with a comment saying why it isn't 0, because 0 is the value
   that looks correct and behaves wrongly.
+  **WIDENED 2026-08-11 — the mechanism is bigger than `||`, and DECLARATION ORDER is the same bug.** This
+  file's inline script is one long IIFE, so `var` declarations hoist their NAME to the top and leave the
+  ASSIGNMENT where it was written. `var bsInstalled = true, baiInstalled = true` sat ~117 lines *below*
+  `renderPreviewRows()`, which reads both — so the install checkboxes rendered UNCHECKED on a machine where
+  both are installed. Nothing threw: `undefined` is falsy, and **falsy is indistinguishable from a deliberate
+  `false` at the point of use**, which is why the output was a plausible wrong state rather than an error.
+  That is the same root as `d || DEFAULT`: a value that cannot express its own absence, so absence
+  impersonates a legitimate value. **Two habits close both:** in a file this long, declare state ABOVE its
+  first reader and not next to its conceptual neighbours (mine sat with the scene mechanics, which read as
+  the natural home and was wrong); and when a falsy value is meaningful, test `=== undefined` / `!= null`
+  rather than truthiness. Grep target for the order problem: any `var` whose name appears earlier in the file
+  than its own declaration line.
+- **A throw inside `requestAnimationFrame` (or any async callback) surfaces NOWHERE in the UI — the animation
+  just stops mid-way and looks finished.** `bsInstallCard(app)` shipped without its parameter while
+  referencing `app`, so the rAF tick threw `ReferenceError` on the frame that completes the install: the
+  progress card reached "Getting ready 100%", stopped, and the entire scene payoff (the player mounting and
+  cycling its frames) never ran. On screen it read as a *finished* install. Nothing in the DOM, no visible
+  error state, no failed assertion — **only the console had it.** The same applies to `setTimeout`,
+  `addEventListener`, promise bodies and `IntersectionObserver`: a throw kills that callback silently and
+  leaves whatever it had already done on screen, which is the most convincing possible wrong state.
+  **So when a scripted sequence stops part-way, read the console BEFORE re-reading the code** — the failure
+  mode of "it ran and then just stopped" is almost always a thrown callback, and re-reading your own logic
+  is exactly the search that cannot find it.
 - **A harness that returns an empty result set is reporting a broken harness, not a clean surface — assert
   liveness explicitly or a silent zero reads as a pass.** Repeatedly this session: an icon census returned
   zero controls for 6 consecutive contexts because an `Escape` keypress had closed the drawer (every later

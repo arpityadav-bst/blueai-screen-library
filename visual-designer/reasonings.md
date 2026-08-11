@@ -1,5 +1,10 @@
 # blueAI — Reasonings
-Last updated: 2026-08-11 (POST-CLOSE promotion: +4 more principles — a constant that is secretly a SUM breaks
+Last updated: 2026-08-11 (Session 18: +1 principle — a preparatory step that leaves an artifact behind feels
+like the work and stops being checked (three PNGs copied and never referenced; the completion test is a
+reference count, not the file's existence); widened "match the fix to the surface's ROLE" with a THIRD shape
+where the false family was INTERACTION SHAPE and Gate 2 itself pointed at the wrong component; and added the
+MIRROR case to "before painting over something that looks empty" — removing an opaque layer something relied
+on to stay hidden. Earlier the same day, POST-CLOSE promotion: +4 more principles — a constant that is secretly a SUM breaks
 when a term stops existing; fixing an unreproduced defect introduces one; a gate with standing false positives
 has stopped being a gate; and a record asserting "open"/"all"/a count is a claim that expires. That last one
 came from three false records found in a single session, all of them prose about my own bookkeeping and none of
@@ -53,6 +58,22 @@ grouped correctly, depth (lighter vs. darker) is what expresses which group is c
 content — the group that reads lighter sits above/in front, the darker group recedes. → taste rule 47.
 **Widened test:** before pairing two surfaces' treatment, ask whether the resemblance is ROLE (do they do
 the same job?) or merely FAMILY — and adjacency, like visual similarity, is a family, not a role.
+
+**A THIRD shape, and the "family" this time was INTERACTION SHAPE (blueai-desktop, 2026-08-11).** Flow B needed
+a button offered inside a chat message, so I reached for `.bai-optg > .bai-opt-row` — and my justification was
+explicitly Gate 2: this app already renders a single actionable thing inside a message that exact way
+(`renderUpload`'s "Attach file" — a glyph badge, a label, a sub-line). The shape matched perfectly. The role
+did not: **`.bai-opt-row` is a pick-one LIST ROW**, and its resting state is a white card with a grey border
+*because that is what a list row should look like* — only its hover turns accent. An install is a commit, not
+an option in a list. The designer's report was the symptom exactly: *"this doesn't even look like a button
+unless I hover over it."*
+**What makes this instance worth adding rather than a repeat:** the previous two were resemblances I noticed
+passively (it *looks* like a plancard; it *sits above* the chat). This one I actively argued for on
+reuse-discipline grounds, and the gate I cited — "reuse the established component" — is the one that pointed
+me at the wrong component. **Gate 2 tells you to reuse; it does not tell you WHICH resemblance counts.** So
+the widened test now has a third entry: visual similarity is a family, adjacency is a family, and
+*"appears in the same position and has the same number of parts"* is a family too. Only "answers the same
+question for the user" is a role.
 
 ## A signal is a repeat, not a first, unless it earns its slot
 
@@ -559,5 +580,32 @@ has since actually said, not against what the marker said when written. *Where e
 "deferred" note in a decisions row; any freshness header. *What would stop it firing:* checking whether the
 individual items are accurate rather than whether the SET is still the set — every item in that open-questions
 section was accurately described; all four had simply been answered.
+
+## A preparatory step that leaves an artifact behind feels like the work, and stops being checked
+
+I copied three BlueStacks screenshots into `assets/bluestacks/` so the install flow could cycle the player
+through its cold-start frames — and then never wrote a line that referenced any of them. All three sat on
+disk with **zero references** while the install snapped the old static image back on. The designer asked
+"you didn't get that installing bluestacks image from other blueAI product?" and a `grep -c` answered it in
+one command.
+
+The mechanism is that the preparatory step **produced a visible, checkable artifact** — files in a folder,
+with the right names, the right dimensions, verifiably copied. That artifact resembles progress closely
+enough that the step it was preparing for never got its own verification. **An unused asset is
+indistinguishable from a used one until something renders it**, and "the file is there" is evidence about
+the file, not about the screen.
+
+**Where else this exact shape appears:** a token defined and never referenced; a CSS class written for
+markup that was never given it; a config key added that nothing reads; a dependency installed and never
+imported; a function written and never called; a gate authored and never run (which is its own entry above,
+and the same mechanism — the gate FILE existing felt like the gate working). Every one leaves a legitimate
+artifact and none of them do anything.
+
+**How to apply:** after any acquisition or scaffolding step — copying assets, adding tokens, creating a
+file — the completion test is a **reference count in the consuming code**, not the artifact's existence.
+`grep -c` is the whole check and it takes one command. And treat the good feeling of a completed
+preparatory step as the signal to run it, not as evidence you can skip it.
+*What would stop it firing:* reading it as being about ASSETS. It is about any step whose output is
+inspectable but inert.
 
 *(New entries accumulate at audit passes.)*
