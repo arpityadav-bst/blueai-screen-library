@@ -43,6 +43,37 @@ const SIZES = {
 const FOCUSABLE =
   'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
 
+// The close button's geometry, shared with ModalHeader below. This pair is the whole reason the
+// header exists as a component: the close button is absolutely positioned against the PANEL, while
+// each dialog's header used to bring its own padding — so whether the glyph lined up with the title
+// was luck, and it didn't (the earnings dialog's 13px title sat ~6px above the glyph's centre).
+//
+// Both now use the same two numbers: a CLOSE_BOX-tall row at CLOSE_INSET from the top. The title
+// row centres its content in that box, so the glyph and the title share a centre line at
+// CLOSE_INSET + CLOSE_BOX/2 whatever size the title text is — 13px handle or 20px heading.
+const CLOSE_INSET = 'top-3.5' // 14px
+const CLOSE_BOX = 'h-9 w-9' //   36px — hit target, vs a 14px glyph
+
+/**
+ * The header row for light dialogs: a title line that lines up with the close button, and an
+ * optional subtitle under it. Four dialogs were hand-writing this with three different paddings and
+ * two different subtitle sizes; the alignment bug was only the visible half of that.
+ *
+ * pr-14 (56px) clears the close button's own 14px inset + 36px box on every breakpoint. The old
+ * headers used pr-12 (48px) below sm, which left 2px of overlap.
+ */
+export function ModalHeader({ title, sub }: { title: ReactNode; sub?: ReactNode }) {
+  return (
+    <div className={`border-b border-divider px-6 pb-4 pr-14 sm:px-7 sm:pr-14 ${CLOSE_INSET.replace('top-', 'pt-')}`}>
+      {/* min-h-9 == CLOSE_BOX, items-center == the glyph's own centring. Wrapping is allowed for a
+          long title on a narrow panel, and in that case the box grows and re-centres — the title
+          then sits below the glyph, which is the right trade against clipping it. */}
+      <div className="flex min-h-9 flex-wrap items-center gap-x-2">{title}</div>
+      {sub && <p className="mt-1 max-w-[80ch] text-[13px] text-ink-body-2">{sub}</p>}
+    </div>
+  )
+}
+
 export default function Modal({
   open,
   onClose,
@@ -160,7 +191,7 @@ export default function Modal({
             type="button"
             onClick={onClose}
             aria-label="Close"
-            className={`absolute right-3.5 top-3.5 z-20 flex h-9 w-9 items-center justify-center rounded-circle transition-colors duration-base ease-out-bai ${
+            className={`absolute right-3.5 ${CLOSE_INSET} z-20 flex ${CLOSE_BOX} items-center justify-center rounded-circle transition-colors duration-base ease-out-bai ${
               variant === 'band'
                 ? 'text-white/50 hover:bg-white/10 hover:text-white'
                 : 'text-ink-muted hover:bg-[var(--cb-hover)] hover:text-ink-heading'

@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { StepOne, StepTwo, StepThree } from './campaign/Steps'
 import { INITIAL, STEPS, STEP_FIELDS, validate, type Draft } from './campaign/spec'
 import type { Errors } from '../forms'
+import { ModalHeader } from '../Modal'
 
 // The field list is the real product's, given by the designer 2026-08-11 — Campaign Name, Post URL,
 // Action, Start Date, End Date, Campaign Budget, Bid price, Target Country, plus "What's the goal?"
@@ -110,13 +111,10 @@ export default function CampaignForm({
 
   return (
     <>
-      {/* pr-12 clears Modal's own close button, which is absolutely positioned over this corner. */}
-      <div className="border-b border-divider px-6 py-5 pr-12 sm:px-8 sm:pr-14">
-        <h2 className="font-head text-[20px] font-bold text-ink-display">Create a campaign</h2>
-        <p className="mt-1 text-[13px] text-ink-body-2">
-          Nothing is charged now — you&apos;re only defining the campaign.
-        </p>
-      </div>
+      <ModalHeader
+        title={<h2 className="font-head text-[20px] font-bold text-ink-display">Create a campaign</h2>}
+        sub="Nothing is charged now — you're only defining the campaign."
+      />
 
       <form onSubmit={submit} className="px-6 py-6 sm:px-8">
         {/* ONE row: the step's title, and the progress pinned to the right edge of it. This top

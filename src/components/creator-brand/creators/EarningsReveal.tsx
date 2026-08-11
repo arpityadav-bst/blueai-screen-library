@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { formatCount, type Estimate } from './estimate'
 import { useCBModal } from '../ModalHost'
+import { ModalHeader } from '../Modal'
 
 // The lookup result. It used to be a card that REPLACED the hero's input — the input vanished the
 // moment you submitted, so there was no way to try a second handle without a page reload, and the
@@ -64,11 +65,16 @@ export default function EarningsReveal({
 
   return (
     <div ref={rootRef} className="cb-tabular">
-      {/* Handle and tier on one line. pr-12 clears Modal's close button. */}
-      <div className="flex flex-wrap items-baseline gap-x-2 border-b border-divider px-6 py-4 pr-12 sm:px-7 sm:pr-14">
-        <span className="text-[13px] font-semibold text-ink-heading">{handleLabel}</span>
-        <span className="text-[12.5px] text-ink-muted">· {estimate.tier}</span>
-      </div>
+      {/* ModalHeader, not a hand-rolled row: it guarantees this line shares a centre with the close
+          button (Modal.tsx). Hand-rolled with py-4 and a 13px title, the glyph sat ~6px below it. */}
+      <ModalHeader
+        title={
+          <>
+            <span className="text-[13px] font-semibold text-ink-heading">{handleLabel}</span>
+            <span className="text-[12.5px] text-ink-muted">· {estimate.tier}</span>
+          </>
+        }
+      />
 
       <div className="px-6 py-6 sm:px-7">
         <p className="text-[12.5px] text-ink-muted">

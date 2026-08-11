@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react'
-import Modal from './Modal'
+import Modal, { ModalHeader } from './Modal'
 import CampaignForm from './brands/CampaignForm'
 import PricingTable from './brands/PricingTable'
 import WaitlistForm from './creators/WaitlistForm'
@@ -73,17 +73,13 @@ export default function ModalHost({ children }: { children: ReactNode }) {
       {/* xl — this table has three columns and six rows of real sentences; at the form's width its
           middle column wraps every cell. */}
       <Modal open={state?.kind === 'pricing'} onClose={close} size="xl" label="How pricing works">
-        <div className="border-b border-divider px-6 py-5 pr-12 sm:px-8 sm:pr-14">
-          <h2 className="font-head text-[20px] font-bold text-ink-display">How pricing works</h2>
-          {/* 62ch broke this 150-character sentence over THREE lines inside a 1040px panel, with the
-              last one a stub — the column was a third of the width available to it. 80ch settles it
-              into two even lines and still stops well short of the panel edge, so it doesn't run the
-              full width of the table below it. */}
-          <p className="mt-1 max-w-[80ch] text-[13px] text-ink-body-2">
-            One flat rate per verified engagement. You set the budget and the window — BlueAI spreads it
-            across real people and pays out only as each engagement clears.
-          </p>
-        </div>
+        {/* ModalHeader's subtitle is capped at 80ch. At the 62ch this used to carry, the
+            150-character sentence broke over THREE lines inside a 1040px panel with the last one a
+            stub — the column was a third of the width available to it. */}
+        <ModalHeader
+          title={<h2 className="font-head text-[20px] font-bold text-ink-display">How pricing works</h2>}
+          sub="One flat rate per verified engagement. You set the budget and the window — BlueAI spreads it across real people and pays out only as each engagement clears."
+        />
         <PricingTable />
       </Modal>
 

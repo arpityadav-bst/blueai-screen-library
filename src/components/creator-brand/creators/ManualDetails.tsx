@@ -5,6 +5,7 @@ import SelectField from '../controls/SelectField'
 import { INPUT, LABEL } from '../controls/fieldClasses'
 import { FieldError, withErr } from '../forms'
 import { CATEGORIES } from './estimate'
+import { ModalHeader } from '../Modal'
 
 // The fallback path: BlueAI couldn't read the channel, so it asks. Reachable from the state
 // toggler (bottom-left, creators only) because this is a design-handoff replica — there's no real
@@ -38,17 +39,16 @@ export default function ManualDetails({
 
   return (
     <>
-      <div className="border-b border-divider px-6 py-5 pr-12 sm:px-7 sm:pr-14">
-        {/* Names what failed and what happens next, in that order. "Something went wrong" would
-            leave the reader deciding whether the form below is a punishment or a fix. */}
-        <h2 className="font-head text-[19px] font-bold text-ink-display">
-          We couldn&apos;t read {handleLabel} automatically.
-        </h2>
-        <p className="mt-1.5 text-[13.5px] text-ink-body-2">
-          Two details and we can still show you the estimate. Nothing here is stored — it&apos;s only
-          used to work out the number.
-        </p>
-      </div>
+      {/* Names what failed and what happens next, in that order. "Something went wrong" would leave
+          the reader deciding whether the form below is a punishment or a fix. */}
+      <ModalHeader
+        title={
+          <h2 className="font-head text-[19px] font-bold text-ink-display">
+            We couldn&apos;t read {handleLabel} automatically.
+          </h2>
+        }
+        sub="Two details and we can still show you the estimate. Nothing here is stored — it's only used to work out the number."
+      />
 
       <form
         noValidate
