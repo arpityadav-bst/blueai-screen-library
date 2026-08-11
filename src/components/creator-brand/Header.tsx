@@ -224,12 +224,16 @@ export default function Header() {
               nav's usual hover:text-ink-heading — asked to share that colour specifically, not the
               rest of the nav's. It was a literal #2258c9 until the footer needed the same value
               and got it wrong; it's the --cb-accent variable now (creator-brand.css). */}
+          {/* size 13, was 11. Against a 15px label an 11px glyph read as a stray tick rather than
+              as part of the link — and it was the odd one out in its own row: the header CTA a few
+              pixels to the right pairs the SAME 15px label with a 13px Arrow. One arrow size for the
+              header's 15px labels, and gap-1.5 to match that CTA too. */}
           <Link
             href={active === 'creators' ? '/creator-brand/brands' : '/creator-brand/creators'}
-            className="cb-accent-hover inline-flex items-center gap-1 text-[15px] font-normal text-ink-muted opacity-70 transition-all hover:opacity-100"
+            className="cb-accent-hover inline-flex items-center gap-1.5 text-[15px] font-normal text-ink-muted opacity-70 transition-all hover:opacity-100"
           >
             {active === 'creators' ? 'For Brands' : 'For Creators'}
-            <Arrow size={11} className="-rotate-45" />
+            <Arrow size={13} className="-rotate-45" />
           </Link>
         </nav>
 
