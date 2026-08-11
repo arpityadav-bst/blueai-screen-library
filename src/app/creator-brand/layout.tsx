@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import './creator-brand.css'
 import Backdrop from '@/components/creator-brand/Backdrop'
+import ModalHost from '@/components/creator-brand/ModalHost'
 
 // Uses the shared blueai-modern design system loaded by the root layout (Inter/Space
 // Grotesk/Bricolage Grotesque fonts, --bai-* tokens) — no separate token set here.
@@ -28,7 +29,11 @@ export default function CreatorBrandLayout({ children }: { children: React.React
     <div className="cb-scope relative min-h-screen bg-[#F9F9FA]">
       <Backdrop />
       <div className="cb-grain" aria-hidden="true" />
-      {children}
+      {/* Hosts all four popups and the context every CTA calls to open them. At the LAYOUT level
+          because the triggers are spread across both heroes, both closing bands, the header, the
+          footer, the nav and the lookup result — and because one of them opens a dialog from
+          inside another. See ModalHost.tsx. */}
+      <ModalHost>{children}</ModalHost>
     </div>
   )
 }

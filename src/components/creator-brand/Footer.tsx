@@ -5,6 +5,11 @@ import { usePathname } from 'next/navigation'
 import { Wordmark } from '@/components/Wordmark'
 import { Arrow } from '@/components/Arrow'
 import { NAV, OTHER, type NavAudience } from './nav'
+import { useCBModal } from './ModalHost'
+
+// Shared by all three link shapes in the columns below (anchor, modal button, cross-page Link) so
+// the footer can't grow three near-identical quiet-link treatments.
+const FOOTER_LINK = 'bai-body-sm text-ink-body-2 transition-colors hover:text-ink-heading'
 
 /**
  * Rebuilt from a single centered line (logo · tagline · copyright) into a proper wayfinding
@@ -21,6 +26,7 @@ import { NAV, OTHER, type NavAudience } from './nav'
  * exist, the same rule the rest of this site holds copy to.
  */
 export default function Footer() {
+  const { open } = useCBModal()
   const pathname = usePathname()
   const active: NavAudience = pathname?.includes('/brands') ? 'brands' : 'creators'
   const other = OTHER[active]
@@ -64,14 +70,18 @@ export default function Footer() {
             </h3>
             <ul className="mt-4 space-y-2.5">
               {NAV[active].map((item) => (
-                <li key={item.href}>
-                  <a
-                    href={item.href}
-                    onClick={(e) => scrollToSection(e, item.href)}
-                    className="bai-body-sm text-ink-body-2 transition-colors hover:text-ink-heading"
-                  >
-                    {item.label}
-                  </a>
+                <li key={item.label}>
+                  {/* Modal items are buttons here for the same reason as in the header — see
+                      nav.ts. Same class string, so the column reads as one list. */}
+                  {item.modal ? (
+                    <button type="button" onClick={() => open(item.modal!)} className={FOOTER_LINK}>
+                      {item.label}
+                    </button>
+                  ) : (
+                    <a href={item.href} onClick={(e) => scrollToSection(e, item.href!)} className={FOOTER_LINK}>
+                      {item.label}
+                    </a>
+                  )}
                 </li>
               ))}
             </ul>
@@ -86,23 +96,29 @@ export default function Footer() {
             </h3>
             <ul className="mt-4 space-y-2.5">
               <li>
+                {/* cb-accent, was text-iris. The purple was never this site's accent — the accent
+                    is the header CTA's hover blue, now the --cb-accent variable (creator-brand.css).
+                    This is the one link in the footer that carries it, because it's the one that
+                    leaves for the other audience's page. */}
                 <Link
                   href={`/creator-brand/${other}`}
-                  className="bai-body-sm inline-flex items-center gap-1 font-semibold text-iris transition-colors hover:text-ink-heading"
+                  className="bai-body-sm cb-accent inline-flex items-center gap-1 font-semibold transition-colors hover:text-ink-heading"
                 >
-                  {other === 'brands' ? 'Post a job' : 'Join the waitlist'}
+                  {other === 'brands' ? 'Create a campaign' : 'Join the waitlist'}
                   <Arrow size={12} />
                 </Link>
               </li>
+              {/* Anchors only. A modal item has no href to append, and this column crosses to the
+                  OTHER page — a dialog can't be opened from here without navigating there first,
+                  so these stay real deep links. Was `.filter(href !== '#create-a-campaign')`, a
+                  string exclusion that only worked because it named the one item; filtering on the
+                  absence of an href holds for any modal item added later. */}
               {NAV[other]
-                .filter((item) => item.href !== '#post-a-job')
+                .filter((item) => item.href)
                 .slice(0, 3)
                 .map((item) => (
-                  <li key={item.href}>
-                    <Link
-                      href={`/creator-brand/${other}${item.href}`}
-                      className="bai-body-sm text-ink-body-2 transition-colors hover:text-ink-heading"
-                    >
+                  <li key={item.label}>
+                    <Link href={`/creator-brand/${other}${item.href}`} className={FOOTER_LINK}>
                       {item.label}
                     </Link>
                   </li>

@@ -6,6 +6,7 @@ import Reveal from '../Reveal'
 import HandleLookupCard from './HandleLookupCard'
 import PixelRain from './PixelRain'
 import TiltImage from './TiltImage'
+import { HERO_IMAGE_MASK } from '../heroImageMask'
 
 // Slim proof-point cards, scattered near the hero's edges (same device as the social-rewards
 // hero's Reddit-post collage). Quiet by default (low opacity, hairline border) — on hover each
@@ -87,10 +88,11 @@ export default function Hero() {
               height={941}
               priority
               className="h-auto w-full"
-              style={{
-                maskImage: 'radial-gradient(ellipse 75% 80% at center, black 55%, transparent 92%)',
-                WebkitMaskImage: 'radial-gradient(ellipse 75% 80% at center, black 55%, transparent 92%)',
-              }}
+              // Same mask as the brands hero — see heroImageMask.ts. This asset's own background
+              // delta measured WORSE than the brands one (up to 8.7 luma units near the bottom
+              // edge), so it carried the identical hard-seam bug even though nobody had flagged
+              // it here yet.
+              style={{ maskImage: HERO_IMAGE_MASK, WebkitMaskImage: HERO_IMAGE_MASK }}
             />
           </TiltImage>
         </Reveal>

@@ -40,6 +40,33 @@ export function estimateFromHandle(handle: string, platform: PlatformKey): Estim
   return estimateFromFollowers(followers, platform)
 }
 
+// What a creator picks in the manual-details fallback, for when BlueAI can't read the channel
+// itself. Illustrative and deliberately short — a 40-entry taxonomy would be a research artefact,
+// not a design one.
+export const CATEGORIES = [
+  'Gaming',
+  'Tech & reviews',
+  'Beauty & fashion',
+  'Fitness & health',
+  'Food & cooking',
+  'Travel',
+  'Music',
+  'Education',
+  'Comedy',
+  'Vlogs & lifestyle',
+  'Finance',
+  'Something else',
+]
+
+// The category does NOT move the money, and that's the model, not a shortcut: the rate is flat per
+// verified job plus a reach bonus, so what a channel is ABOUT decides which jobs get matched to it,
+// never what those jobs pay. Returning the same arithmetic from both paths is what keeps the manual
+// fallback honest — a creator who types their own numbers gets the same answer the auto lookup
+// would have given for the same following.
+export function estimateFromManual(followers: number, _category: string): Estimate {
+  return estimateFromFollowers(followers, 'youtube')
+}
+
 export function formatCount(n: number): string {
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`
   if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`

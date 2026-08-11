@@ -37,11 +37,16 @@ const SEG_VH = 55 // scroll distance per beat — one for the title, one per car
  *
  * HORIZONTAL SHIFT. Cards are a fixed width (see .cb-step-track), so a 4-up page's cards are
  * the same size as a 3-up page's rather than being squeezed to fit — which means the brands
- * track is wider than the viewport. When a card lands off-screen right, the row slides left
- * far enough to bring it in, and the card's own entrance is delayed until that slide is mostly
- * done, so you see the row make room and THEN the card arrive. The shift is derived from
- * measured geometry, not from the step count, so it is 0 whenever the row already fits (every
- * creators viewport, and the brands page's first three cards) and needs no per-page config.
+ * track can be wider than the STAGE it sits in (.cb-step-viewport, pinned to a fixed 3-card
+ * width so both pages' card 1 starts at the same x — see that class for the bug this is fixing).
+ * When a card lands off-stage right, the row slides left far enough to bring it in, and the
+ * card's own entrance is delayed until that slide is mostly done, so you see the row make room
+ * and THEN the card arrive. The shift is derived from measured geometry, not from the step
+ * count, so it is 0 whenever the row already fits, and needs no per-page config — that used to
+ * mean "every creators width", full stop, but is now "every creators width above ~1900px": see
+ * .cb-step-viewport's min() for why the stage is sometimes narrower than a full 3-card row,
+ * which is when creators can shift too. Nothing here special-cases either page; it's the same
+ * measurement either way.
  *
  * This is the pinned mechanism the earlier sequencer used, minus the thing that made that one
  * fragile. There, each beat REPLACED the previous one, so every transition was a handover
@@ -213,9 +218,27 @@ export default function StepCards({ heading, steps }: Props) {
         </h2>
       </div>
 
-      {/* Gradient + fade defs, once. Both use the default objectBoundingBox units, so they
-          resolve against each numeral's OWN glyph box — a "1" and a "4" each get the full
-          gradient across themselves rather than a slice of a shared one. */}
+      {/* Gradient + fade defs, once.
+
+          The FADE mask (fadeId/maskId) is deliberately NOT objectBoundingBox — that was tried
+          first and was the actual cause of "1" looking cropped/incomplete while 2/3/4 looked
+          fine. objectBoundingBox re-stretches the fade to fit EACH digit's own glyph bbox, and
+          text x="4" is identical for every digit, but "1"'s bbox is only 88 units wide against
+          124 for "4" — so the SAME absolute stroke position lands at a HIGHER fraction-of-its-
+          own-width for the narrow digit than the wide one, meaning "1" fades faster for
+          identical ink. Measured: at 40 units in from the left, that's x_frac 0.45 for "1" but
+          only 0.32 for "4" — "1"'s actual vertical stroke was landing deep enough into the
+          falloff (gone by 68%) to read as mostly gone below its top few pixels, while "3"/"4"'s
+          wider strokes stayed in the bright zone. Not a per-digit tuning problem — a fraction
+          computed against a different denominator per glyph can't give the same digit the same
+          treatment twice, let alone match it across four different ones.
+
+          Fixed by mapping the fade to the SVG's own fixed 150x185 canvas (userSpaceOnUse)
+          instead of each glyph's bbox — one absolute coordinate space, shared by every digit,
+          so the same physical stroke position gets the same alpha regardless of which number
+          it belongs to. The STROKE gradient (strokeId) was never affected by this — it paints
+          via the element's own paint server reference, not a mask, so it was never subject to
+          bbox rescaling in the first place. */}
       <svg width="0" height="0" aria-hidden="true" className="absolute">
         <defs>
           {/* Matches --bai-gradient exactly: to bottom right, iris 0% -> cyan 99%. */}
@@ -224,7 +247,10 @@ export default function StepCards({ heading, steps }: Props) {
             <stop offset="99%" style={{ stopColor: 'rgb(var(--bai-cyan-rgb))' }} />
           </linearGradient>
           {/* Fades toward bottom-right — i.e. INTO the card, which is the direction the card
-              covers it from. */}
+              covers it from. gradientUnits left at its default (objectBoundingBox) is correct
+              HERE: this gradient paints the mask's own <rect> below, which is now a FIXED
+              150x185 box, identical for every digit — so "resolves against its own box" means
+              the same absolute box every time, which is the whole fix from the mask itself. */}
           {/* Peak alpha is 0.7, not 1: this mask carries the numeral's RESTING softness as well
               as its directional fade, because element opacity is reserved for the entrance
               animation (GSAP drives it 0 -> 1, so a CSS opacity for softness would be
@@ -234,21 +260,48 @@ export default function StepCards({ heading, steps }: Props) {
               is actually exposed and makes the dissolve INTO the card much more pronounced;
               a linear ramp left too much weight sitting under the card where it can't be seen
               but still reads through the top edge. Pull the middle stop's offset in to fade
-              harder, push it out to fade more gently. */}
+              harder, push it out to fade more gently.
+
+              A "100% -> 0.1" floor (never true transparent) was tried here briefly, on the
+              theory that "1" reading as cropped was the fade erasing too much of its sparse
+              ink. It was a real, measurable difference in isolation — but wrong: the actual
+              cause was where .cb-step-clip drew its crop boundary, not this gradient at all.
+              Reverted; see that class for the real fix. Left as a note so the same theory
+              doesn't get retried. */}
           <linearGradient id={fadeId} x1="0" y1="0" x2="1" y2="1">
             <stop offset="0%" stopColor="#fff" stopOpacity="0.7" />
             <stop offset="32%" stopColor="#fff" stopOpacity="0.22" />
             <stop offset="68%" stopColor="#fff" stopOpacity="0" />
           </linearGradient>
-          <mask id={maskId} maskContentUnits="objectBoundingBox">
-            <rect x="0" y="0" width="1" height="1" fill={`url(#${fadeId})`} />
+          {/* x/y/width/height match the numeral <svg>'s own viewBox exactly (see the numeral
+              below) — this IS the fixed coordinate space every digit now shares. Re-derive
+              these four numbers together if the viewBox ever changes; they're duplicated here
+              because SVG has no way for a <mask> to read another element's viewBox. */}
+          <mask id={maskId} maskUnits="userSpaceOnUse" x="0" y="0" width="150" height="185">
+            <rect x="0" y="0" width="150" height="185" fill={`url(#${fadeId})`} />
           </mask>
         </defs>
       </svg>
 
-      {/* The shift's viewport — crops the off-screen part of a track wider than the page, with
-          no scrollbar and nothing the user can drag out of sync. Horizontally only; see
-          .cb-step-viewport for why that distinction is load-bearing for the numerals.
+      {/* TWO nested boxes, and the split is load-bearing:
+            .cb-step-clip     full-bleed, owns the overflow — so the ONLY thing that can crop a
+                              sliding card is the page's own edge, never the stage's own inset
+            .cb-step-viewport the STAGE — caps its own width at exactly a 3-card span and
+                              centres THAT, not whatever the actual (3- or 4-card) track
+                              measures, which is what makes card 1 land at the same x-position
+                              on both pages; crops nothing itself any more
+          Collapsing these into one element (as this was originally written) is what caused
+          "card 1 clipped from the left": with the crop on the SAME element that also insets the
+          stage from the page (~140px), an outgoing card got guillotined mid-page, with ordinary
+          page background sitting to the left of the cut — the crop landed at the stage's own
+          edge, not the page's. See .cb-step-viewport in the CSS for the full account, including
+          two earlier wrong turns (widening a clip-margin, then blaming the fade mask) before
+          landing on relocating the boundary itself.
+
+          .cb-step-clip is also horizontal-clip-only, for the SAME reason as before: the
+          numerals hang ~96px ABOVE their cards, and clipping that vertically too would cut the
+          one thing the hang exists to show. No scrollbar and nothing the user can drag out of
+          sync, either — it just crops at the page edge instead of dragging one open.
 
           translate-y-10 is OPTICAL centring, and it is measured rather than eyeballed. The pin
           centres this box geometrically and does it correctly — the track lands at offsetTop
@@ -262,16 +315,27 @@ export default function StepCards({ heading, steps }: Props) {
           It goes on THIS element, not the track: GSAP owns the track's transform for the
           horizontal shift and an inline transform would overwrite a Tailwind translate class.
           Re-derive the 40px if the numeral's -top or size changes. */}
-      <div className="cb-step-viewport relative z-10 w-full lg:translate-y-10">
+      <div className="cb-step-clip relative z-10 w-full lg:translate-y-10">
+        <div className="cb-step-viewport">
         <div
           ref={trackRef}
-          // Padding here is now just breathing room — it no longer has to reserve space for the
-          // numerals in EITHER axis, which is what let the cards go back to 27vw. The left hang
-          // is covered by .cb-step-viewport's overflow-clip-margin and the top hang by its
-          // overflow-y: visible. Reserving layout for them instead cost ~144px horizontally
+          // NO mx-auto — the track is flush against the STAGE's left edge (.cb-step-viewport),
+          // not self-centred. Self-centring is exactly the bug this replaced: a 4-card track is
+          // wider than the stage, and centring a wider box on itself pushes its start negative.
+          // Flush-left means card 1 always starts at the same x on both pages; any extra width
+          // (brands' 4th card) simply overflows the stage to the right, where the shift reveals
+          // it. Creators' own row doesn't visually change — its 3-card content already equals
+          // the stage's width, so flush-left and self-centred land in the same place for it.
+          //
+          // Padding here is otherwise just breathing room — it doesn't have to reserve space
+          // for the numerals in EITHER axis. The top hang is covered by .cb-step-clip's
+          // overflow-y: visible; the left hang needs no covering at all any more, because the
+          // crop boundary that matters is now the PAGE edge (.cb-step-clip is full-bleed), and
+          // at rest the leftmost numeral sits ~76px inside it — comfortably clear on its own.
+          // Reserving real padding for either hang instead would have cost ~144px horizontally
           // (forcing ~40px narrower cards at 1280) and ~224px vertically (in a block the pin has
           // to fit in one viewport).
-          className="cb-step-track relative mx-auto flex w-full px-6 py-6 lg:w-max lg:px-8 lg:py-8"
+          className="cb-step-track relative flex w-full px-6 py-6 lg:w-max lg:px-8 lg:py-8"
         >
           {steps.map((s, i) => (
             // THREE nested elements, and the nesting is what makes the numerals able to hang
@@ -318,13 +382,17 @@ export default function StepCards({ heading, steps }: Props) {
                 // 150x185 rendered at 203x250, i.e. scaled 1.35. The digit's cap height is
                 // ~0.72em = 140 units, sitting on the y=152 baseline, so its top edge is 12
                 // units (16px) below the SVG's own top. At -top-24 (96px) that leaves ~80px of
-                // digit above the card, visible because .cb-step-viewport doesn't clip upward.
+                // digit above the card, visible because .cb-step-clip's overflow-y: visible
+                // never clips upward at all.
                 //
                 // -left-24 (96px) is no longer bounded by the gap: z-0 here sorts below every
                 // card's z-10 in the track's stacking context, so overlapping the neighbour is
-                // fine — it goes behind it. Nor is it bounded by track padding any more;
-                // .cb-step-viewport's overflow-clip-margin paints 140px outside the clip box, so
-                // the first card's numeral shows without the track reserving layout for it.
+                // fine — it goes behind it. Nor is it bounded by track padding; the only crop
+                // that applies is .cb-step-clip's, at the true page edge rather than the STAGE's
+                // own tighter inset — so this numeral is visible for exactly as long as its own
+                // card genuinely is, and only clipped once it has actually scrolled off-page,
+                // same as any carousel item would be. See .cb-step-viewport in the CSS for why
+                // the boundary living there instead was the actual bug.
                 ref={(el) => {
                   numRefs.current[i] = el
                 }}
@@ -398,6 +466,7 @@ export default function StepCards({ heading, steps }: Props) {
               </div>
             </div>
           ))}
+        </div>
         </div>
       </div>
     </div>

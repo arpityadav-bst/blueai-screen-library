@@ -1,5 +1,5 @@
 import Reveal from '../Reveal'
-import { CBLinkButton } from '../Button'
+import { ModalCTA } from '../OpenModal'
 
 // Colors were #2F6DFF / #16A34A (green) / #7B4CFF / #F97316 (orange) — two of those are
 // off the brand's iris/cyan/blue system. These are our own mock avatars, not real brand
@@ -92,7 +92,9 @@ export default function JobsPreview() {
           <p className="text-[14px] text-ink-body-2">
             This is a live preview of the board. You&apos;ll be able to accept jobs once BlueAI opens.
           </p>
-          <CBLinkButton href="#waitlist" size="lg">Join the waitlist to unlock jobs</CBLinkButton>
+          {/* Opens the popup rather than scrolling to the closing section — this is mid-page, and
+              the designer's rule is that only that final section's own CTA stays inline. */}
+          <ModalCTA kind="waitlist" size="lg">Join the waitlist to unlock jobs</ModalCTA>
         </Reveal>
       </div>
     </section>

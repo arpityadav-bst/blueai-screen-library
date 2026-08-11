@@ -11,7 +11,7 @@ import StepCards, { type Step } from '../StepCards'
 const STEPS: Step[] = [
   {
     n: '01',
-    title: 'Post the job',
+    title: 'Create the campaign',
     // "campaign window" rather than bare "window", which was ambiguous on its own and also
     // brings this body to the same line count as the other three.
     body: 'Tell us your goal, your budget, and a campaign window. It takes a couple of minutes.',
@@ -21,7 +21,7 @@ const STEPS: Step[] = [
   {
     n: '02',
     title: 'BlueAI matches creators',
-    body: 'Thousands of waitlisted accounts pick up the job themselves. No outreach from you.',
+    body: 'Thousands of waitlisted accounts pick up your campaign themselves. No outreach from you.',
     img: '/creator-brand/steps/brand-02-match-creators.png',
     alt: 'Eight glass portrait cards arranged around a central panel, each card marked with a checkmark.',
   },

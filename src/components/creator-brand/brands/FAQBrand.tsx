@@ -7,8 +7,8 @@ import FAQAccordion from '../FAQAccordion'
 // answer can't end on one stranded word.
 const ITEMS = [
   {
-    q: 'Does posting a job cost anything?',
-    a: 'No. Posting a job only defines the terms. Your budget is only ever spent against engagement that BlueAI actually verifies.',
+    q: 'Does creating a campaign cost anything?',
+    a: 'No. Creating a campaign only defines the terms. Your budget is only ever spent against engagement that BlueAI actually verifies.',
   },
   {
     q: 'What exactly does a creator do?',
@@ -16,15 +16,15 @@ const ITEMS = [
   },
   {
     q: 'Is this only for YouTube?',
-    a: 'For now, yes. YouTube jobs are live today, and Instagram, TikTok, X, and Reddit are coming soon.',
+    a: 'For now, yes. YouTube campaigns are live today, and Instagram, TikTok, X, and Reddit are coming soon.',
   },
   {
     q: 'What stops a creator from faking it?',
     a: 'BlueAI checks every single interaction directly. Anything that doesn’t meet the bar simply doesn’t get paid.',
   },
   {
-    q: 'Can I run more than one job at a time?',
-    a: 'Yes. Each job has its own budget and window, so you can run several in parallel.',
+    q: 'Can I run more than one campaign at a time?',
+    a: 'Yes. Each campaign has its own budget and window, so you can run several in parallel.',
   },
 ]
 

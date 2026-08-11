@@ -18,7 +18,7 @@ import Reveal from '../Reveal'
 //     duplicated step 04's line almost exactly. Recast onto what a brand actually wants from a
 //     live view: where the money is going.
 const POINTS = [
-  { title: 'A real pool of creators', body: 'Thousands of creators are waitlisted and ready for jobs like yours at launch.' },
+  { title: 'A real pool of creators', body: 'Thousands of creators are waitlisted and ready for campaigns like yours.' },
   { title: 'Checked, never assumed', body: 'BlueAI verifies every interaction before a dollar of your budget moves.' },
   { title: 'Live status, the whole time', body: 'See exactly where your budget is going, and on what, while it happens.' },
 ]
