@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Wordmark } from '@/components/Wordmark'
 import { Arrow } from '@/components/Arrow'
 import { Sparkle } from '@/components/Sparkle'
-import { NAV } from './nav'
+import { HEADER_NAV } from './nav'
 import { useCBModal } from './ModalHost'
 
 // Shared by both nav shapes (anchor and modal button) so the row can't end up with two slightly
@@ -204,7 +204,10 @@ export default function Header() {
         </Link>
 
         <nav className="hidden items-center gap-8 lg:flex">
-          {NAV[active].map((item) => (
+          {/* HEADER_NAV, not NAV — the header carries only the items flagged `inHeader` (one, right
+              now). The footer still lists every section; see nav.ts for why that split is a flag on
+              one list rather than two lists. */}
+          {HEADER_NAV[active].map((item) => (
             <a key={item.label} href={item.href} onClick={(e) => scrollToSection(e, item.href)} className={NAV_LINK}>
               {item.label}
             </a>
