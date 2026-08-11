@@ -327,10 +327,28 @@ and the ONLY reason any of that was ever visible is that nothing opaque sat on t
 header a flat background silently deleted that animation from the user's view, with no error anywhere —
 the canvas kept rendering perfectly, just invisibly.
 
+**THE MIRROR CASE — REMOVING an opaque layer something relied on to stay HIDDEN (blueai-desktop,
+2026-08-11).** This principle was written about adding a covering layer. It fires just as hard in reverse,
+and the reverse is easier to miss because "hide this element" sounds like a subtraction with no blast
+radius. The install-state work hid the BlueStacks player window when BlueStacks isn't installed — correct
+in itself. But `.drawer`'s CLOSED state was never CSS-hidden: it sits at `left: 100%` translated back
+-290px, i.e. 710px into a 1000px composition — *directly behind the opaque player image*. Its hiddenness
+was **occlusion by a sibling**, not a property of its own. Hiding the player exposed an unbooted, blank
+white window, and the designer saw it immediately.
+
+**Generalised: an element's apparent visual state can be produced entirely by a NEIGHBOUR, and nothing in
+that element's own CSS records the dependency.** Grepping `.drawer`'s rules would never reveal that it
+depends on `.bs-window` being opaque and on top. So the test cuts both ways: before making an element
+opaque, ask what needs to show through it; before hiding or removing one, ask **what was relying on it to
+cover something**. A second lesson came free — the exposed state was also a DEAD END, because the only
+affordance that opens the drawer is clicking the player, so "player hidden + drawer closed" had nothing to
+interact with and no way out. When you remove a surface, check whether it was the only route to something.
+
 **How to apply:** before adding an opaque background/covering layer to an element that currently has
 none, grep for what ELSE might be relying on that transparency — a canvas underneath, a positioned sibling
 peeking through, a `mix-blend-mode` effect. "It's currently transparent" is not evidence that it's *safe*
-to make opaque; it's only evidence that nothing is declared to stop you. **Sibling test, same shape:**
+to make opaque; it's only evidence that nothing is declared to stop you. And symmetrically: "this element
+is currently invisible" is not evidence that its own CSS makes it so. **Sibling test, same shape:**
 "new verification tooling is wrong until diffed against something known-good" (above) checks whether a
 CHECK sees enough; this checks whether a CHANGE reaches further than what was verified — a fix that only
 confirms the property it touched (background color) can still break a property it never thought to look
