@@ -156,7 +156,7 @@
       background: 'rgba(4,8,20,0.5)', padding: contained ? 16 : 24, cursor: 'default'
     };
 
-    const iconBtn = { width: 26, height: 26, display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', borderRadius: 8, background: 'none', color: '#98A2C4', cursor: 'pointer', padding: 0 };
+    const iconBtn = { width: 26, height: 26, display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', borderRadius: 0, background: 'none', color: '#98A2C4', cursor: 'pointer', padding: 0 };
     const closeMini = { onMouseEnter: (e) => e.currentTarget.style.background = '#2B3559', onMouseLeave: (e) => e.currentTarget.style.background = 'none' };
 
     const btn = { border: 'none', borderRadius: 0, padding: '10px 20px', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', transition: 'background 130ms ease, opacity 130ms ease' };
