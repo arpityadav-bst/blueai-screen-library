@@ -1,17 +1,21 @@
 // BlueAI — "additional files required" installer dialog.
 // Exports: window.InstallDialog
 //
-// ONE component, ONE state machine (idle → downloading → done → onComplete), TWO skins:
+// ONE state machine (idle → downloading → done → onComplete). ONE skin now, dark/BlueStacks
+// (Flow A: BlueStacks is installed, BlueAI is not) — the light/"blueai" skin this file used to
+// also render was Flow B's, and Flow B stopped using any modal (2026-08-10, see
+// needs_bluestacks.jsx's ProgressBubble — installing BlueStacks is an inline chat card now, not
+// a popup). Removed that branch outright rather than leave it unreachable.
 //
-//   skin="bluestacks"  BlueStacks App Player is doing the talking (Flow A: BlueStacks is
-//                      installed, BlueAI is not). Dark navy chrome, header strip, tight
-//                      4-6px radii, buttons bottom-right — Windows-app idioms, rebuilt from
-//                      the designer's Media Gallery / Manager / New-instance references. It
-//                      must NOT look like BlueAI; that difference is the whole point.
-//
-//   skin="blueai"      BlueAI is doing the talking (Flow B: BlueAI is installed, BlueStacks
-//                      is not). The product's own light system. A BlueStacks-dark dialog for
-//                      software that isn't installed yet would misattribute the voice.
+// Rebuilt again (2026-08-11) into a centered "onboarding" layout (badge → title → subtitle →
+// divider → body copy → CTA → wave), modeled on a real BlueStacks login-dialog reference. First
+// pass also copied that reference's rounded corners onto the card and button — overriding the
+// designer's own explicit, direct rule from earlier this session ("no round radius in any
+// container or CTA in the BlueStacks App Player UI") based on a personal read of ONE image,
+// without checking back first. Corrected same day: card and button are sharp again, radius 0,
+// matching that rule and the other four confirm/utility dialogs. The ONE rounding exception that
+// survives is the circular badge/checkmark — an identity/completion mark, not chrome, same
+// precedent as the done-screen's own checkmark badge already established.
 //
 // Progress is INDETERMINATE by design. A percentage would claim we know how far along a
 // download is, and nothing here downloads anything.
@@ -41,6 +45,48 @@
   // fallback instruction), so the dialog reads lighter even if the font guess doesn't land.
   const BS_FONT = '"Poppins", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, sans-serif';
 
+
+  /* The wave behind the CTA — the same idea as boot.js's pixel logo/rain in blueai-desktop
+     (small squares, brand gradient, always moving), rebuilt fresh for this no-canvas prototype
+     rather than ported: that engine is a full grid-assembly particle system with no single
+     "wave" output to lift, and blueai-product doesn't share code with blueai-desktop at all
+     (separate design systems by project convention). This is TWO overlapping SVG layers of the
+     exact same wavy path — one filled with the brand's own cyan→purple gradient (the "color
+     tone" asked for), one filled with a small-square pattern at low opacity (the "pixel" texture)
+     — drawn twice side by side and scrolled by exactly one tile-width so the loop is seamless.
+     translateX animates -400px → 0, i.e. content moves toward larger X — rightward on screen,
+     not the app's existing `ba-marquee` direction (which moves left). */
+  function PixelWave({ height = 108 }) {
+    const TILE_W = 400, HUMPS = 4, H = height, HW = TILE_W / HUMPS;
+    const buildPath = (ox) => {
+      let d = 'M' + ox + ',' + (H * 0.62);
+      for (let i = 0; i < HUMPS; i++) {
+        const x0 = ox + i * HW;
+        d += ' C ' + (x0 + HW * 0.25) + ',' + (H * 0.12) + ' ' + (x0 + HW * 0.25) + ',' + (H * 1.05) + ' ' + (x0 + HW * 0.5) + ',' + (H * 0.62);
+        d += ' C ' + (x0 + HW * 0.75) + ',' + (H * 0.18) + ' ' + (x0 + HW * 0.75) + ',' + (H * 1.05) + ' ' + (x0 + HW) + ',' + (H * 0.62);
+      }
+      return d + ' L ' + (ox + TILE_W) + ',' + H + ' L ' + ox + ',' + H + ' Z';
+    };
+    const twoTiles = buildPath(0) + ' ' + buildPath(TILE_W);
+    return (
+      <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: H, overflow: 'hidden', zIndex: 0, pointerEvents: 'none' }}>
+        <svg width={TILE_W * 2} height={H} style={{ display: 'block' }}>
+          <defs>
+            <linearGradient id="baWaveGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="#0EA4C5" /><stop offset="100%" stopColor="#7B4CFF" />
+            </linearGradient>
+            <pattern id="baWavePixels" width="7" height="7" patternUnits="userSpaceOnUse">
+              <rect width="4" height="4" fill="white" />
+            </pattern>
+          </defs>
+          <g className="ba-wave-scroll">
+            <path d={twoTiles} fill="url(#baWaveGrad)" opacity="0.85" />
+            <path d={twoTiles} fill="url(#baWavePixels)" opacity="0.16" />
+          </g>
+        </svg>
+      </div>);
+  }
+
   /* The progress shell that REPLACES the buttons once the install starts — bar + label, no
      percentage. Shared by both skins; only its palette differs. */
   function ProgressShell({ phase, label, dark }) {
@@ -59,9 +105,9 @@
   }
 
   function InstallDialog({
-    open, skin = 'blueai', icon, contained,
-    title, body, meta,
-    primaryLabel = 'Download and Install', cancelLabel = 'Not now',
+    open, icon, contained,
+    title, subtitle, body, body2, meta,
+    primaryLabel = 'Download', cancelLabel = 'Not now',
     downloadingLabel = 'Downloading…', doneLabel = 'Installed. Launching it now…',
     downloadMs = 2800, doneMs = 900,
     onCancel, onComplete
@@ -84,8 +130,8 @@
 
     if (!open) return null;
 
-    const dark = skin === 'bluestacks';
     const label = phase === 'done' ? doneLabel : downloadingLabel;
+    const done = phase === 'done';
 
     // Minimized = render nothing. No chip, no indicator — the window underneath just becomes
     // fully usable again. The download's timers (below, in start()) keep running regardless of
@@ -107,169 +153,84 @@
     const overlay = {
       position: contained ? 'absolute' : 'fixed', inset: 0, zIndex: 400,
       display: 'flex', alignItems: 'center', justifyContent: 'center',
-      background: dark ? 'rgba(4,8,20,0.5)' : 'rgba(15,23,42,0.44)',
-      padding: contained ? 16 : 24,     // contained in the 421px product window, 380 + 32 fits
-      cursor: 'default'
+      background: 'rgba(4,8,20,0.5)', padding: contained ? 16 : 24, cursor: 'default'
     };
 
-    /* ── BlueStacks skin ─────────────────────────────────────────────────────────────────
-       Rebuilt twice against the real reference screenshots — second pass (2026-08-10)
-       corrects the first, which over-rounded everything (16px radius, rounded buttons) on a
-       mistaken read of the same five images. Designer's direct correction, looking at the
-       same screenshots: BlueStacks' own chrome has NO rounding anywhere — not the dialog
-       panel, not the buttons, not the icon's container. The one place softness survives is
-       inside an icon's own artwork (e.g. the white rounded box under the clapperboard in the
-       "Login successful" reference) — that shape is baked into the PNG, not drawn by this
-       dialog's CSS, so it isn't a counterexample.
-       Also corrected: the close ✕ is thinner and larger (was 14px/2.2 stroke, now 20px/1.6),
-       and the "done" phase is a real success SCREEN — icon + message, replacing the
-       explanatory content entirely — modelled on the "Login successful" reference, rather
-       than a small checkmark squeezed into the footer where the buttons used to be. */
-    if (dark) {
-      const btn = { border: 'none', borderRadius: 0, padding: '10px 20px', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', transition: 'background 130ms ease, opacity 130ms ease' };
-      const done = phase === 'done';
-      const ICON_SIZE = 52, ICON_GAP = 18;
-      return (
-        <div style={overlay} onMouseDown={(e) => { if (e.target === e.currentTarget && phase === 'idle' && onCancel) onCancel(); }}>
-          <div role="dialog" aria-modal="true" aria-label={title}
-            style={{ position: 'relative', width: 420, background: '#1E2440', borderRadius: 0, boxShadow: '0 24px 70px rgba(0,0,0,0.55)', fontFamily: BS_FONT, padding: '24px 24px 22px' }}>
-            {done ? (
-              /* Success screen — the explanatory header/body/meta/buttons are gone, not
-                 hidden-in-place, matching how "Login successful" replaces its own idle
-                 content rather than appending a status line to it. No CTA: this is a
-                 transient state that auto-advances (onComplete), so a button here would be
-                 a dead affordance, unlike the reference's non-advancing "Okay". */
-              <div style={{ textAlign: 'center', padding: '10px 4px 6px' }}>
-                {/* Circular by design exception, not oversight: the "no rounding anywhere" rule
-                   (see the block comment above) came from five real dialogs, none of which show
-                   a success badge — a square reads wrong specifically for a completion checkmark,
-                   where a circle is the near-universal shape. Scoped to just this one badge. */}
-                <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'rgba(74,222,128,0.14)', color: '#4ade80', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 18px' }}>
-                  <IcoCheck size={28} strokeWidth={2.4} />
-                </div>
-                <h2 style={{ fontSize: 17, fontWeight: 600, color: '#F2F5FF', lineHeight: 1.35, textWrap: 'balance' }}>{doneLabel}</h2>
-              </div>
-            ) : (
-              <>
-                {/* Title + minimize + close, same row — designer correction (2026-08-10): the ✕
-                   used to sit absolutely positioned in the corner, disconnected from the title's
-                   own line; this puts them on one baseline instead. Minimize shows ONLY during
-                   'downloading' — that's the actual scenario (BlueStacks stays usable while
-                   BlueAI downloads in the background); there's nothing running yet in 'idle' to
-                   minimize away from. Close stays idle-only, unchanged: still no cancelling a
-                   running install. The two are mutually exclusive by phase, never both shown. */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-                  <h2 style={{ fontSize: 18, fontWeight: 600, color: '#F2F5FF', lineHeight: 1.3, textWrap: 'balance' }}>{title}</h2>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 2, flexShrink: 0 }}>
-                    {phase === 'downloading' &&
-                      <button aria-label="Minimize" onClick={() => setMinimized(true)}
-                        style={{ width: 26, height: 26, display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', borderRadius: 0, background: 'none', color: '#98A2C4', cursor: 'pointer', padding: 0 }}
-                        onMouseEnter={(e) => e.currentTarget.style.background = '#2B3559'}
-                        onMouseLeave={(e) => e.currentTarget.style.background = 'none'}>
-                        <IcoMinimize size={16} />
-                      </button>}
-                    {phase === 'idle' &&
-                      <button aria-label="Close" onClick={onCancel}
-                        style={{ width: 26, height: 26, display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', borderRadius: 0, background: 'none', color: '#98A2C4', cursor: 'pointer', padding: 0 }}
-                        onMouseEnter={(e) => e.currentTarget.style.background = '#2B3559'}
-                        onMouseLeave={(e) => e.currentTarget.style.background = 'none'}>
-                        <IcoX size={20} strokeWidth={1.6} />
-                      </button>}
-                  </div>
-                </div>
-                {/* Icon + body, same row — designer correction: the icon used to sit beside the
-                   TITLE (matching the "Disk cleanup" reference); moved beside the BODY copy
-                   instead. ICON_SIZE/ICON_GAP are shared with meta's indent below, so the
-                   metadata line lines up with where the body TEXT starts, not with the icon —
-                   two hard-coded numbers here would drift apart the next time either changes. */}
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: ICON_GAP, marginTop: 14 }}>
-                  {icon &&
-                    <img src={icon} alt="" style={{ width: ICON_SIZE, height: ICON_SIZE, flexShrink: 0 }} onError={(e) => { e.target.style.display = 'none'; }} />}
-                  <p style={{ flex: 1, minWidth: 0, fontSize: 13.5, lineHeight: 1.6, color: '#98A2C4' }}>{body}</p>
-                </div>
-                {meta && <p style={{ fontSize: 12, color: '#6F7BA4', marginTop: 10, marginLeft: icon ? ICON_SIZE + ICON_GAP : 0 }}>{meta}</p>}
-                {/* footer: right-aligned button pair (Close App Player / Disk cleanup both use
-                   this exact shape), or the progress shell that replaces it mid-download */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 10, marginTop: 22 }}>
-                  {phase === 'idle' ? (
-                    <>
-                      <button onClick={onCancel}
-                        style={{ ...btn, background: '#F2F5FF', color: '#1E2440' }}
-                        onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
-                        onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}>
-                        {cancelLabel}
-                      </button>
-                      <button onClick={start} autoFocus
-                        style={{ ...btn, background: '#1E7FE0', color: 'white' }}
-                        onMouseEnter={(e) => e.currentTarget.style.background = '#1B72CC'}
-                        onMouseLeave={(e) => e.currentTarget.style.background = '#1E7FE0'}>
-                        {primaryLabel}
-                      </button>
-                    </>
-                  ) : <div style={{ width: '100%' }}><ProgressShell phase={phase} label={label} dark /></div>}
-                </div>
-              </>
-            )}
-          </div>
-        </div>);
-    }
+    const iconBtn = { width: 26, height: 26, display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', borderRadius: 8, background: 'none', color: '#98A2C4', cursor: 'pointer', padding: 0 };
+    const closeMini = { onMouseEnter: (e) => e.currentTarget.style.background = '#2B3559', onMouseLeave: (e) => e.currentTarget.style.background = 'none' };
 
-    /* ── BlueAI skin ───────────────────────────────────────────────────────────────────
-       Matched to the product's own "explain, then one CTA" card family (ByokUpsell,
-       CreditsByokRow, OutOfCreditsModal in byok.jsx) rather than freehanded: centered icon
-       badge → centered title/body → a muted metadata pill → one full-width PILL primary
-       button with the house glow shadow. Dismiss is the ✕ alone, same as every other card
-       in that family — a second "Cancel" text link duplicated it without adding a choice.
-       Minimize (2026-08-10) joins it in the same corner, shown ONLY during 'downloading' — the
-       actual scenario (BlueAI should stay usable while BlueStacks downloads); there's nothing
-       running yet in 'idle' to minimize away from. Close stays idle-only — the two never overlap. */
+    const btn = { border: 'none', borderRadius: 0, padding: '10px 20px', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', transition: 'background 130ms ease, opacity 130ms ease' };
+    const ICON_SIZE = 44, ICON_GAP = 14;
+
     return (
       <div style={overlay} onMouseDown={(e) => { if (e.target === e.currentTarget && phase === 'idle' && onCancel) onCancel(); }}>
         <div role="dialog" aria-modal="true" aria-label={title}
-          style={{ position: 'relative', width: '100%', maxWidth: 340, background: 'white', border: '1px solid #e2e8f0', borderRadius: 20, boxShadow: '0 24px 60px rgba(15,23,42,0.24)', padding: '30px 26px 26px', textAlign: 'center' }}>
-          {phase !== 'done' &&
-            <div style={{ position: 'absolute', top: 14, right: 14, display: 'flex', alignItems: 'center', gap: 2 }}>
-              {phase === 'downloading' &&
-                <button aria-label="Minimize" onClick={() => setMinimized(true)}
-                  style={{ width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', borderRadius: 8, background: 'none', color: '#94a3b8', cursor: 'pointer', padding: 0 }}
-                  onMouseEnter={(e) => { e.currentTarget.style.background = '#f1f5f9'; e.currentTarget.style.color = '#475569'; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.background = 'none'; e.currentTarget.style.color = '#94a3b8'; }}>
-                  <IcoMinimize size={16} />
-                </button>}
-              {phase === 'idle' &&
-                <button aria-label="Close" onClick={onCancel}
-                  style={{ width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', borderRadius: 8, background: 'none', color: '#94a3b8', cursor: 'pointer', padding: 0 }}
-                  onMouseEnter={(e) => { e.currentTarget.style.background = '#f1f5f9'; e.currentTarget.style.color = '#475569'; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.background = 'none'; e.currentTarget.style.color = '#94a3b8'; }}>
-                  <IcoX size={15} />
-                </button>}
-            </div>}
-          {icon &&
-            <div style={{ width: 58, height: 58, borderRadius: '50%', background: 'linear-gradient(135deg,rgba(14,164,197,0.14),rgba(123,76,255,0.14))', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 18px' }}>
-              <img src={icon} alt="" style={{ width: 28, height: 28, borderRadius: 6 }} onError={(e) => { e.target.style.display = 'none'; }} />
-            </div>}
-          {/* textWrap: balance — not maxWidth tuning or copy-rewriting — is what keeps this
-             orphan-proof: title/body are shared strings across installer configs (see
-             INSTALLERS in index.html), so the fix has to hold for whatever text lands here,
-             not just today's wording. "BlueStacks App Player required" was stranding
-             "required" alone on its own line before this. */}
-          <h2 style={{ fontSize: 19, fontWeight: 800, color: '#080a1f', letterSpacing: '-0.2px', lineHeight: 1.3, textWrap: 'balance' }}>{title}</h2>
-          <p style={{ fontSize: 13.5, lineHeight: 1.55, color: '#565977', marginTop: 8, maxWidth: 264, marginLeft: 'auto', marginRight: 'auto', textWrap: 'balance' }}>{body}</p>
-          {meta &&
-            <div style={{ display: 'inline-flex', alignItems: 'center', marginTop: 14, padding: '5px 13px', borderRadius: 999, background: '#f1f5f9' }}>
-              <span style={{ fontSize: 11.5, fontWeight: 600, color: '#565977' }}>{meta}</span>
-            </div>}
+          style={{ position: 'relative', width: 420, background: '#1E2440', borderRadius: 0, boxShadow: '0 24px 70px rgba(0,0,0,0.55)', fontFamily: BS_FONT, padding: '24px 24px 22px' }}>
 
-          <div style={{ marginTop: 22 }}>
-            {phase === 'idle' ? (
-              <button onClick={start} autoFocus
-                style={{ width: '100%', background: '#1990FF', border: 'none', borderRadius: 999, padding: '13px 22px', fontSize: 14.5, fontWeight: 700, color: 'white', cursor: 'pointer', fontFamily: 'inherit', boxShadow: '0 6px 20px rgba(25,144,255,0.28)', transition: 'opacity 0.15s ease' }}
-                onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
-                onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}>
-                {primaryLabel}
-              </button>
-            ) : <ProgressShell phase={phase} label={label} />}
-          </div>
+          {done ? (
+            /* Success screen — unchanged throughout every rebuild this component has had. */
+            <div style={{ textAlign: 'center', padding: '10px 4px 6px' }}>
+              <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'rgba(74,222,128,0.14)', color: '#4ade80', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 18px' }}>
+                <IcoCheck size={28} strokeWidth={2.4} />
+              </div>
+              <h2 style={{ fontSize: 17, fontWeight: 600, color: '#F2F5FF', lineHeight: 1.35, textWrap: 'balance' }}>{doneLabel}</h2>
+            </div>
+          ) : (
+            <>
+              {/* Left-aligned structure (2026-08-11, designer: "how it was earlier, only before
+                 we made it centre aligned, but with this new data"). Icon moved back beside
+                 title+subtitle (designer's next correction, same session) rather than beside the
+                 body copy — so body/body2/meta now run full-width, nothing left to indent past
+                 an icon that isn't in that row anymore. Centering, the circular gradient badge,
+                 and the wave-behind-the-footer are all gone with the layout revert; the wave
+                 specifically doesn't carry over cleanly onto a small flex-end button row (it was
+                 built to sit behind a full-width button with clear space below), so it's dropped
+                 here rather than force-fit. Sharp corners / no-glow stay — that correction fixed a
+                 real contradiction with the designer's own rule, unrelated to the layout question. */}
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: ICON_GAP }}>
+                {icon &&
+                  <img src={icon} alt="" style={{ width: ICON_SIZE, height: ICON_SIZE, flexShrink: 0 }} onError={(e) => { e.target.style.display = 'none'; }} />}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+                    <h2 style={{ fontSize: 18, fontWeight: 500, color: '#F2F5FF', lineHeight: 1.1, textWrap: 'balance' }}>{title}</h2>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 2, flexShrink: 0 }}>
+                      {phase === 'downloading' &&
+                        <button aria-label="Minimize" onClick={() => setMinimized(true)} style={iconBtn} {...closeMini}><IcoMinimize size={16} /></button>}
+                      {phase === 'idle' &&
+                        <button aria-label="Close" onClick={onCancel} style={iconBtn} {...closeMini}><IcoX size={20} strokeWidth={1.6} /></button>}
+                    </div>
+                  </div>
+                  {subtitle && <p style={{ fontSize: 13, fontWeight: 600, color: '#5B9CF6', lineHeight: 1.2, marginTop: 2 }}>{subtitle}</p>}
+                </div>
+              </div>
+
+              <div style={{ height: 1, background: '#2B3559', margin: '16px 0' }} />
+
+              <p style={{ fontSize: 13.5, lineHeight: 1.6, color: '#98A2C4' }}>{body}</p>
+              {body2 && <p style={{ fontSize: 13.5, lineHeight: 1.6, color: '#98A2C4', marginTop: 10 }}>{body2}</p>}
+              {meta && phase === 'idle' && <p style={{ fontSize: 12, color: '#6F7BA4', marginTop: 10 }}>{meta}</p>}
+
+              {/* footer: right-aligned button pair, or the progress shell mid-download */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 10, marginTop: 22 }}>
+                {phase === 'idle' ? (
+                  <>
+                    <button onClick={onCancel}
+                      style={{ ...btn, background: '#F2F5FF', color: '#1E2440' }}
+                      onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
+                      onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}>
+                      {cancelLabel}
+                    </button>
+                    <button onClick={start} autoFocus
+                      style={{ ...btn, background: '#1E7FE0', color: 'white' }}
+                      onMouseEnter={(e) => e.currentTarget.style.background = '#1B72CC'}
+                      onMouseLeave={(e) => e.currentTarget.style.background = '#1E7FE0'}>
+                      {primaryLabel}
+                    </button>
+                  </>
+                ) : <div style={{ width: '100%' }}><ProgressShell phase={phase} label={label} dark /></div>}
+              </div>
+            </>
+          )}
         </div>
       </div>);
   }

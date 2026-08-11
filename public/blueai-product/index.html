@@ -70,6 +70,11 @@
     /* Small spinning ring — the in-chat BlueStacks install progress card (needs_bluestacks.jsx). */
     @keyframes ba-spin { to { transform: rotate(360deg); } }
     .ba-ring-spin { display: inline-block; width: 13px; height: 13px; flex-shrink: 0; border-radius: 50%; border: 2px solid #bfdbfe; border-top-color: #1990FF; animation: ba-spin 0.8s linear infinite; }
+    /* Install dialog's background wave (install_dialog.jsx's PixelWave) — two tile-widths drawn
+       side by side, scrolled by exactly one tile so the loop is seamless. -400px→0 (not the
+       app's existing ba-marquee direction, which goes the other way) so it reads as moving right. */
+    @keyframes ba-wave-scroll { from { transform: translateX(-400px); } to { transform: translateX(0); } }
+    .ba-wave-scroll { animation: ba-wave-scroll 7s linear infinite; }
 
     /* ── Chat conversation + feedback (from ChatView Feedback) ── */
     @keyframes baMsgIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
@@ -99,7 +104,7 @@
 <script type="text/babel" src="blueai/shared.jsx"></script>
 <!-- The Windows desktop scene: wallpaper + BlueStacks App Player window (exposes window.DesktopScene) -->
 <script type="text/babel" src="blueai/desktop_scene.jsx"></script>
-<!-- "Additional files required" installer dialog, BlueStacks + BlueAI skins (exposes window.InstallDialog) -->
+<!-- "Additional files required" installer dialog — Flow A only now (exposes window.InstallDialog) -->
 <script type="text/babel" src="blueai/install_dialog.jsx"></script>
 <!-- Boot splash + Shimmer -->
 <script type="text/babel" src="blueai/boot_splash.jsx"></script>
@@ -482,14 +487,17 @@ function ProductTitlebar({ onClose }) {
    inline progress card in the chat instead (see needs_bluestacks.jsx's ProgressBubble). The
    'bluestacks' config that used to live here was removed with it, not left as dead data. */
 const INSTALLERS = {
+  // Copy from the designer's "Full State 1" table (2026-08-11) — onboarding-style rewrite,
+  // replacing the old single-title/single-body confirm copy. No `skin`/`cancelLabel` anymore:
+  // InstallDialog is one skin now (see its file header), and this reference has no secondary
+  // button, dismissing via ✕ only.
   blueai: {
-    skin: 'bluestacks',                       // BlueStacks is the app doing the talking
     icon: 'assets/Logo.png',
-    title: 'BlueAI needs a few more files',
-    body: 'BlueAI runs as a companion app alongside BlueStacks App Player. It needs one additional component downloaded before it can start.',
-    meta: 'Download size: 182 MB · One-time setup',
-    primaryLabel: 'Download and Install',
-    cancelLabel: 'Not now',
+    title: 'Meet BlueAI.',
+    subtitle: 'Your AI worker that gets things done.',
+    body: 'Tell BlueAI what you need, in plain words. It handles multi-step tasks across your BlueStacks apps, finds deals, claims rewards, creates content, and more.',
+    meta: '182 MB · One-time setup',
+    primaryLabel: 'Download BlueAI',
     downloadingLabel: 'Downloading BlueAI…',
     doneLabel: 'BlueAI is installed. Launching it now…',
     downloadMs: 2800,
