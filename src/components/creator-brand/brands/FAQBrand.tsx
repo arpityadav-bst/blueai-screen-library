@@ -1,7 +1,7 @@
 import Reveal from '../Reveal'
 import FAQAccordion from '../FAQAccordion'
 
-// Same copy rules as the creators page — see the note in creators/FAQ.tsx for the full
+// Same copy rules as the creators page, see the note in creators/FAQ.tsx for the full
 // reasoning. In short: no em dashes (rewritten into real sentences, not swapped for a colon),
 // and the last two words of each answer are joined by a literal non-breaking space so an
 // answer can't end on one stranded word.

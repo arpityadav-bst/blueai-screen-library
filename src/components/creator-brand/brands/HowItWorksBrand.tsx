@@ -1,7 +1,7 @@
 import StepCards, { type Step } from '../StepCards'
 
 // Converted from a static 4-up card grid, to a pinned scroll sequencer, and now back to a
-// 4-up card grid — this time on the shared StepCards component the creators page also uses,
+// 4-up card grid, this time on the shared StepCards component the creators page also uses,
 // so both journeys are told the same way and neither page owns a private layout.
 //
 // Step art: designer-supplied set, used exactly as delivered. See creators/HowItWorks.tsx
@@ -28,7 +28,7 @@ const STEPS: Step[] = [
   {
     n: '03',
     title: 'Real engagement, verified',
-    // "verifies every one" for "confirms every single one" — same claim, and the shorter
+    // "verifies every one" for "confirms every single one", same claim, and the shorter
     // form brings this, the longest of the four, down to their line count.
     body: 'Each creator genuinely engages with your video, and BlueAI verifies every one before it counts.',
     img: '/creator-brand/steps/brand-03-engagement-verified.png',

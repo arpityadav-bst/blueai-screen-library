@@ -8,7 +8,7 @@ import PixelRain from '../creators/PixelRain'
 import TiltImage from '../creators/TiltImage'
 import { HERO_IMAGE_MASK } from '../heroImageMask'
 
-// Same edge-card device as the creators hero — brand-side proof points.
+// Same edge-card device as the creators hero, brand-side proof points.
 const EDGE_CARDS = [
   { text: 'Pay only for verified engagement', side: 'left' as const, top: 60, offset: -10, rot: -7, scale: 0.94 },
   { text: 'No PR team, no outreach, no briefs', side: 'left' as const, top: 150, offset: 6, rot: -2, scale: 1 },
@@ -70,7 +70,7 @@ export default function Hero() {
           </p>
         </Reveal>
 
-        {/* Both open dialogs now (designer, 2026-08-11) — the campaign form is no longer a page
+        {/* Both open dialogs now (designer, 2026-08-11), the campaign form is no longer a page
             section to scroll to, and "See how pricing works" shows the pricing table over the page
             rather than jumping past four sections to reach it. */}
         <Reveal delay={0.15} className="mt-14 flex flex-col items-center gap-3">
@@ -87,7 +87,7 @@ export default function Hero() {
               width={1672}
               height={941}
               className="h-auto w-full"
-              // No blend mode. That correction still holds — see heroImageMask.ts for what
+              // No blend mode. That correction still holds, see heroImageMask.ts for what
               // needed fixing instead. The mask's vertical radius left a hard-edged seam at the
               // top/bottom, because this asset's background runs 2-8 luma units darker than the
               // page and the old ellipse only faded it to ~80% opacity by the image edge, not to

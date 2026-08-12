@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react'
 import Modal, { ModalHeader } from './Modal'
+import BrandSignIn from './brands/BrandSignIn'
 import CampaignForm from './brands/CampaignForm'
 import PricingTable from './brands/PricingTable'
 import WaitlistForm from './creators/WaitlistForm'
@@ -43,6 +44,12 @@ export default function ModalHost({ children }: { children: ReactNode }) {
   // has to live out here rather than inside the form, because the panel's background and the close
   // button's colour are the dialog's, not the form's.
   const [campaignDone, setCampaignDone] = useState(false)
+  // Campaigns belong to a brand account, so the campaign dialog is gated: signed out, it renders
+  // the sign-in panel; signed in (design stub, lasts the visit), the form. The state lives here so
+  // every "Create a campaign" trigger on the page inherits the gate through the one host. The
+  // email (null on the Google stub path) rides along into the Supabase submission.
+  const [brand, setBrand] = useState<{ email: string | null } | null>(null)
+  const signedIn = brand !== null
 
   const open = useCallback((kind: ModalKind, payload?: { handle?: string }) => {
     // Reset on OPEN, not on close: resetting on close would flip the panel back to white while the
@@ -63,11 +70,15 @@ export default function ModalHost({ children }: { children: ReactNode }) {
       <Modal
         open={state?.kind === 'campaign'}
         onClose={close}
-        size="lg"
+        size={signedIn ? 'lg' : 'sm'}
         variant={campaignDone ? 'band' : 'light'}
-        label="Create a campaign"
+        label={signedIn ? 'Create a campaign' : 'Sign in to continue'}
       >
-        <CampaignForm onClose={close} onDone={() => setCampaignDone(true)} />
+        {signedIn ? (
+          <CampaignForm onClose={close} onDone={() => setCampaignDone(true)} email={brand?.email ?? null} />
+        ) : (
+          <BrandSignIn onSignedIn={(email) => setBrand({ email: email ?? null })} />
+        )}
       </Modal>
 
       {/* xl — this table has three columns and six rows of real sentences; at the form's width its
@@ -78,7 +89,7 @@ export default function ModalHost({ children }: { children: ReactNode }) {
             stub — the column was a third of the width available to it. */}
         <ModalHeader
           title={<h2 className="font-head text-[20px] font-bold text-ink-display">How pricing works</h2>}
-          sub="One flat rate per verified engagement. You set the budget and the window — BlueAI spreads it across real people and pays out only as each engagement clears."
+          sub="One flat rate per verified engagement. You set the budget and the window. BlueAI spreads it across real people and pays out only as each engagement clears."
         />
         <PricingTable />
       </Modal>

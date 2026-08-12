@@ -1,7 +1,7 @@
 import Reveal from '../Reveal'
 import PricingTable from './PricingTable'
 
-// The section stays on the page; only the hero's "See how pricing works" link changed — it opens
+// The section stays on the page; only the hero's "See how pricing works" link changed, it opens
 // the same table in a dialog now instead of scrolling here. The table itself moved to
 // PricingTable.tsx so both render one copy of it.
 export default function OutcomePricing() {
@@ -16,7 +16,7 @@ export default function OutcomePricing() {
             One flat rate.
             <span className="block text-gradient italic pr-[0.2em]">As many creators as your budget buys.</span>
           </h2>
-          {/* Was 158 characters in a 48ch column — three lines, one of them a stub. Trimmed to
+          {/* Was 158 characters in a 48ch column, three lines, one of them a stub. Trimmed to
               ~120 and widened to 60ch so it lands in two. "divides it across" became "spreads it
               across" and the doubled "once each one is verified" collapsed; the claim is
               unchanged. */}

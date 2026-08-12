@@ -2,22 +2,25 @@
 
 import type { Dispatch, SetStateAction } from 'react'
 import DateField from '../../controls/DateField'
-import SelectField from '../../controls/SelectField'
 import { Check } from '../../controls/icons'
 import { INPUT, LABEL } from '../../controls/fieldClasses'
 import { FieldError, withErr } from '../../forms'
-import { ACTIONS, COUNTRIES, type Draft } from './spec'
+import { CHANNELS } from '../../platforms/channels'
+import { ACTIONS, type Draft } from './spec'
+
+// The one live platform (channels.ts is the logo SSOT; YouTube is the only entry with live: true).
+const YT = CHANNELS[0]
 
 type Props = {
   d: Draft
   setD: Dispatch<SetStateAction<Draft>>
-  /** Only the errors that should currently be VISIBLE — the parent decides that, not the field. */
+  /** Only the errors that should currently be VISIBLE, the parent decides that, not the field. */
   err: Record<string, string | undefined>
   /** Marks a field touched, so its error can appear once the user has left it. */
   touch: (k: string) => void
 }
 
-// Placeholders are concrete examples with no "e.g." prefix — the label already says what the field
+// Placeholders are concrete examples with no "e.g." prefix, the label already says what the field
 // is, and cb-field-strong's placeholder colour is deliberately tuned (0.55 alpha, ~4.2:1) to read
 // as empty rather than pre-filled, which is the job "e.g." was doing.
 export function StepOne({ d, setD, err, touch }: Props) {
@@ -31,20 +34,36 @@ export function StepOne({ d, setD, err, touch }: Props) {
 
   return (
     <>
-      <label className="block">
+      {/* Platform is stated, not chosen: campaigns run on YouTube only. Saying it first, as a
+          field, puts the constraint where the brand is looking, instead of a hint under the URL. */}
+      <div>
+        <span className={LABEL}>Platform</span>
+        <div className="mt-2 flex flex-wrap items-center gap-3">
+          <span className="flex items-center gap-1.5 rounded-card border border-[rgba(var(--bai-iris-rgb),0.35)] bg-[rgba(var(--bai-iris-rgb),0.07)] px-2.5 py-1.5 text-[12px] font-medium text-ink-heading">
+            <span className="flex w-3 justify-center text-iris"><Check size={11} /></span>
+            <svg viewBox="0 0 24 24" width={14} height={14} aria-hidden="true">
+              <path fill={YT.color} d={YT.path} />
+            </svg>
+            {YT.label}
+          </span>
+          <span className="text-[11px] text-ink-muted">More platforms coming soon.</span>
+        </div>
+      </div>
+
+      <label className="mt-5 block">
         <span className={LABEL}>Campaign name</span>
         <input
           value={d.name}
           onChange={(e) => setD((p) => ({ ...p, name: e.target.value }))}
           onBlur={() => touch('name')}
-          placeholder="Fernweh Coffee — spring launch"
+          placeholder="Fernweh Coffee: spring launch"
           className={withErr(INPUT, err.name)}
         />
         <FieldError>{err.name}</FieldError>
       </label>
 
       <label className="mt-5 block">
-        <span className={LABEL}>Post URL</span>
+        <span className={LABEL}>YouTube video URL</span>
         <input
           type="url"
           inputMode="url"
@@ -54,12 +73,12 @@ export function StepOne({ d, setD, err, touch }: Props) {
           placeholder="https://youtube.com/watch?v=…"
           className={withErr(INPUT, err.url)}
         />
-        {/* The hint gives way to the error rather than stacking with it — two lines of 11px text
+        {/* The hint gives way to the error rather than stacking with it, two lines of 11px text
             under one field, one of them red, is where a form starts looking broken. */}
         {err.url ? (
           <FieldError>{err.url}</FieldError>
         ) : (
-          <span className="mt-1.5 block text-[11px] text-ink-muted">YouTube only for now.</span>
+          <span className="mt-1.5 block text-[11px] text-ink-muted">A public YouTube video or Short.</span>
         )}
       </label>
 
@@ -73,11 +92,11 @@ export function StepOne({ d, setD, err, touch }: Props) {
             const on = d.actions.includes(a)
             return (
               // The checkbox is sr-only, so keyboard focus has nothing visible to land on unless
-              // the ring is forwarded to the chip — hence peer + peer-focus-visible. Without it
+              // the ring is forwarded to the chip, hence peer + peer-focus-visible. Without it
               // this row was keyboard-operable but invisibly so.
               //
               // SELECTED IS NOT A CTA (designer, 2026-08-11). These were gradient pills with a
-              // brand shadow, which is the exact treatment of the form's own submit button — three
+              // brand shadow, which is the exact treatment of the form's own submit button, three
               // filters reading as three primary actions, right above the real one. Selected is now
               // a 10%-wash + iris ink + iris hairline + a small check: unmistakably on, visibly a
               // filter. Smaller too (12px, tighter padding, 8px radius rather than a 128px pill),
@@ -110,7 +129,7 @@ export function StepOne({ d, setD, err, touch }: Props) {
 
 export function StepTwo({ d, setD, err, touch }: Props) {
   // A campaign can't start in the past, and it can't end before it starts. Both are enforced by
-  // the pickers' own floors rather than by an error message after the fact — and moving the start
+  // the pickers' own floors rather than by an error message after the fact, and moving the start
   // past an already-chosen end clears that end, because leaving an impossible window on screen
   // and calling it invalid is worse than asking for the one field again.
   const today = new Date()
@@ -137,10 +156,10 @@ export function StepTwo({ d, setD, err, touch }: Props) {
           err={err.bid}
         />
       </div>
-      {/* Only shown when neither money field is complaining — see the Post URL note for why. */}
+      {/* Only shown when neither money field is complaining, see the Post URL note for why. */}
       {!err.budget && !err.bid && (
         <span className="mt-1.5 block text-[11px] text-ink-muted">
-          The bid is what you pay for each verified action. Illustrative — not a rate card.
+          The bid is what you pay for each verified action. Illustrative, not a rate card.
         </span>
       )}
 
@@ -156,7 +175,7 @@ export function StepTwo({ d, setD, err, touch }: Props) {
             setD((p) => ({ ...p, start: v, end: p.end && p.end < v ? null : p.end }))
           }}
         />
-        {/* align="right" so the calendar — wider than the half-width field it hangs off —
+        {/* align="right" so the calendar, wider than the half-width field it hangs off,
             opens inward across the card instead of off its right edge. */}
         <DateField
           label="End date"
@@ -178,15 +197,22 @@ export function StepTwo({ d, setD, err, touch }: Props) {
 export function StepThree({ d, setD }: Props) {
   return (
     <>
-      <SelectField
-        label="Target country"
-        value={d.country}
-        options={COUNTRIES}
-        onChange={(v) => setD((p) => ({ ...p, country: v }))}
-      />
+      {/* Stated, not chosen, same treatment as step 1's Platform row: the pilot cohort is
+          US-based, so United States is the one country a campaign can honestly target. This
+          goes back to being a SelectField the day COUNTRIES grows past one entry. */}
+      <div>
+        <span className={LABEL}>Target country</span>
+        <div className="mt-2 flex flex-wrap items-center gap-3">
+          <span className="flex items-center gap-1.5 rounded-card border border-[rgba(var(--bai-iris-rgb),0.35)] bg-[rgba(var(--bai-iris-rgb),0.07)] px-2.5 py-1.5 text-[12px] font-medium text-ink-heading">
+            <span className="flex w-3 justify-center text-iris"><Check size={11} /></span>
+            {d.country}
+          </span>
+          <span className="text-[11px] text-ink-muted">More countries coming soon.</span>
+        </div>
+      </div>
 
       {/* The one optional field, and the label says so rather than relying on the absence of
-          `required` — which is invisible until you try to submit. */}
+          `required`, which is invisible until you try to submit. */}
       <label className="mt-5 block">
         <span className={LABEL}>
           What&apos;s the goal? <span className="font-normal">(optional)</span>
@@ -204,7 +230,7 @@ export function StepThree({ d, setD }: Props) {
 }
 
 // The $ is a prefix AFFIX, not typed content, so it sits at placeholder weight (cb-field-affix)
-// and the SHELL carries the border — which is why cb-field-strong is on the wrapper here and the
+// and the SHELL carries the border, which is why cb-field-strong is on the wrapper here and the
 // inner input is transparent and borderless. cb-nospin removes the native number spinners: they
 // paint hard against the right edge, the same crowding the custom chevron was built to avoid.
 function Money({

@@ -2,8 +2,8 @@ import Reveal from '../Reveal'
 
 // Rebalanced like the creators trust cards and the step cards. These sit three-up in
 // max-w-content, so each card has ~329px of text: ~37 characters per title line and ~47 per
-// body line. Before this the titles ran 23/40/27 — the middle one wrapped to two lines while
-// its neighbours held one — and the bodies 107/78/75 (3/2/2 lines). One card was carrying half
+// body line. Before this the titles ran 23/40/27, the middle one wrapped to two lines while
+// its neighbours held one, and the bodies 107/78/75 (3/2/2 lines). One card was carrying half
 // again as much copy as the others, which is what made the row read as uneven rather than as
 // three peers. Now titles are 23/22/27 (all one line) and bodies 77/71/70 (a 7-character
 // spread, all two lines).

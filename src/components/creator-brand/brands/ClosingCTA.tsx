@@ -18,7 +18,7 @@ export default function ClosingCTA() {
             Set the terms now. BlueAI starts matching creators to it the moment we go live.
           </p>
           <div className="mt-8 flex justify-center">
-            {/* min-w matches the hero's own "Create a campaign" button (Hero.tsx) — the pill was
+            {/* min-w matches the hero's own "Create a campaign" button (Hero.tsx), the pill was
                 hugging its short label and reading small against this section's own
                 16-radius band and 60px vertical padding, the same fix already applied there. */}
             <ModalCTA

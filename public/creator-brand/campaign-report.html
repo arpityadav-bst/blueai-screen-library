@@ -1,0 +1,584 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Campaigns: Brand/Agency Portal Template</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Bricolage+Grotesque:wght@700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* blueai-modern tokens, mirrored from the screen library's globals.css so this static page
+   matches the campaign creation dialog. Iris and cyan only ever appear together as a gradient. */
+:root{
+  --iris-rgb:123,76,255; --cyan-rgb:14,164,197; --ink-rgb:8,10,31;
+  --iris:rgb(var(--iris-rgb));
+  --gradient:linear-gradient(to bottom right,rgb(var(--iris-rgb)) 0%,rgb(var(--cyan-rgb)) 99%);
+  --gradient-r:linear-gradient(to right,rgb(var(--iris-rgb)) 0%,rgb(var(--cyan-rgb)) 99%);
+  --iris-wash:rgba(var(--iris-rgb),.07); --iris-line:rgba(var(--iris-rgb),.35);
+
+  --ink-display:#080A1F; --ink-heading:#1B1E38; --ink-body:#2B2E4C;
+  --ink-muted:#434664; --ink-soft:#757A94;
+  --stroke:#B6B8CC; --stroke-warm:#B6B8CD; --divider:#DFE4EE;
+  --surface:#F7FAFF; --canvas:#FFFFFF; --page:#F9F9FA;
+
+  --success:#22C55E; --success-soft:#DCFCE7; --success-ink:#15803D;
+  --warning:#F59E0B; --warning-soft:#FEF3C7; --warning-ink:#92400E;
+  --danger:#EF4444;  --danger-soft:#FEE2E2;  --danger-ink:#991B1B;
+  --info:#3B82F6;    --info-soft:#DBEAFE;    --info-ink:#1E40AF;
+
+  --r-card:8px; --r-md:12px; --r-pill:128px;
+  --sans:'Inter','SF Pro',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --head:'Space Grotesk','SF Pro Display','Inter',sans-serif;
+  --brand:'Bricolage Grotesque','Inter',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--page);color:var(--ink-body);font-family:var(--sans);font-size:14px;line-height:1.6}
+a{color:var(--iris);text-decoration:none}
+a:hover{text-decoration:underline}
+.num{font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+
+.topbar{background:var(--canvas);border-bottom:1px solid var(--divider);padding:0 28px;height:60px;display:flex;align-items:center;gap:20px}
+.wordmark{font-family:var(--brand);font-weight:700;font-size:18px;color:var(--ink-display);line-height:1}
+.wordmark .tag{display:block;font-family:var(--sans);font-size:8.5px;font-weight:700;letter-spacing:.24em;color:var(--iris);margin-top:2px}
+.crumb{color:var(--ink-soft);font-size:13px}
+.crumb b{color:var(--ink-heading);font-weight:600}
+.crumb a{color:var(--ink-soft)}
+.account{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink-muted)}
+.avatar{width:28px;height:28px;border-radius:9999px;background:var(--iris-wash);color:var(--iris);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px}
+
+.wrap{max-width:1100px;margin:0 auto;padding:28px 28px 60px}
+.view{display:none}
+.view.on{display:block}
+
+.pagehead{display:flex;align-items:center;gap:16px;margin-bottom:20px}
+.pagehead h1{font-family:var(--head);font-size:26px;font-weight:700;color:var(--ink-display);letter-spacing:-.02em;line-height:1.15}
+.pagehead .right{margin-left:auto;display:flex;gap:10px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 18px;border-radius:var(--r-pill);font-size:13px;font-weight:600;cursor:pointer;border:0.5px solid var(--stroke-warm);background:var(--canvas);color:var(--ink-heading);font-family:var(--sans);transition:transform .15s ease}
+.btn:hover{transform:translateY(-1px)}
+.btn.primary{background:var(--gradient);border:none;color:#fff;box-shadow:0 4px 14px rgba(95,70,255,.25)}
+.back{font-size:13px;font-weight:600;color:var(--ink-muted);cursor:pointer}
+.back:hover{color:var(--ink-heading)}
+
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.02em;padding:3px 10px;border-radius:var(--r-pill);white-space:nowrap}
+.chip .dot{width:7px;height:7px;border-radius:9999px;background:currentColor}
+.chip.live{background:var(--success-soft);color:var(--success-ink)}
+.chip.done{background:var(--info-soft);color:var(--info-ink)}
+.chip.short{background:var(--warning-soft);color:var(--warning-ink)}
+.chip.review{background:#EEF1F6;color:var(--ink-muted)}
+
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+.tiles.five{grid-template-columns:repeat(5,1fr)}
+.tile{background:var(--canvas);border:0.5px solid var(--stroke-warm);border-radius:var(--r-md);padding:16px}
+.tile .label{font-size:10px;font-weight:600;color:var(--ink-muted);text-transform:uppercase;letter-spacing:.08em}
+.tile .value{font-family:var(--head);font-size:24px;font-weight:700;color:var(--ink-display);margin-top:6px;letter-spacing:-.02em;line-height:1.1}
+.tile .sub{font-size:12px;color:var(--ink-soft);margin-top:3px;line-height:1.45}
+.tile .sub.warn{color:var(--warning-ink);font-weight:600}
+
+.card{background:var(--canvas);border:0.5px solid var(--stroke-warm);border-radius:var(--r-md);padding:20px;margin-bottom:16px}
+.card h2{font-family:var(--head);font-size:17px;font-weight:600;color:var(--ink-heading);margin-bottom:4px}
+.card .hint{font-size:12.5px;color:var(--ink-soft);margin-bottom:14px;line-height:1.5}
+.grid2{display:grid;grid-template-columns:1fr 320px;gap:16px;align-items:start}
+
+/* campaign list */
+.clist .row{display:grid;grid-template-columns:minmax(230px,1.4fr) 1fr 130px 120px 110px;gap:18px;align-items:center;padding:16px 20px;background:var(--canvas);border:0.5px solid var(--stroke-warm);border-radius:var(--r-md);margin-bottom:10px;cursor:pointer;transition:border-color .15s,box-shadow .15s,transform .15s}
+.clist .row:hover{border-color:var(--iris-line);box-shadow:0 4px 16px rgba(95,70,255,.10);transform:translateY(-1px)}
+.cname{font-size:14.5px;font-weight:600;color:var(--ink-heading);line-height:1.35}
+.cmeta{font-size:12px;color:var(--ink-soft);margin-top:3px}
+.colhead{display:grid;grid-template-columns:minmax(230px,1.4fr) 1fr 130px 120px 110px;gap:18px;padding:0 20px 8px;font-size:10px;font-weight:600;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.08em}
+.fillcell .bar{height:8px;border-radius:9999px;background:var(--iris-wash);overflow:hidden;margin-bottom:5px}
+.fillcell .bar i{display:block;height:100%;background:var(--gradient-r);border-radius:9999px}
+.fillcell .t{font-size:12px;color:var(--ink-soft)}
+.fillcell .t b{color:var(--ink-heading)}
+.cell{font-size:13px;color:var(--ink-soft)}
+.cell b{color:var(--ink-heading);font-weight:600}
+.cell .s{display:block;font-size:11.5px;color:var(--ink-soft)}
+.rowlink{font-size:12.5px;font-weight:600;color:var(--iris);text-align:right}
+
+/* detail */
+.meta{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px;font-size:13px;color:var(--ink-muted)}
+.meta b{color:var(--ink-heading);font-weight:600}
+.chart-wrap{position:relative}
+svg text{font-family:var(--sans)}
+.tooltip{position:absolute;pointer-events:none;background:var(--ink-display);color:#fff;font-size:12px;padding:6px 10px;border-radius:var(--r-card);opacity:0;transition:opacity .1s;white-space:nowrap;transform:translate(-50%,-115%)}
+.tooltip b{font-variant-numeric:tabular-nums}
+.staterow{display:flex;gap:10px;flex-wrap:wrap}
+.state{flex:1;min-width:140px;display:flex;align-items:center;gap:10px;border:0.5px solid var(--stroke-warm);border-radius:var(--r-md);padding:12px 14px}
+.state .ic{width:30px;height:30px;border-radius:var(--r-card);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700}
+.state.good .ic{background:var(--success-soft);color:var(--success-ink)}
+.state.warn .ic{background:var(--warning-soft);color:var(--warning-ink)}
+.state.bad .ic{background:var(--danger-soft);color:var(--danger-ink)}
+.state .n{font-family:var(--head);font-size:19px;font-weight:700;color:var(--ink-display);line-height:1.15}
+.state .t{font-size:12px;color:var(--ink-muted);line-height:1.4}
+.note{font-size:12.5px;color:var(--ink-body);background:var(--iris-wash);border-radius:var(--r-card);padding:10px 12px;margin-top:12px;line-height:1.55}
+.filters{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.filter{font-size:12px;font-weight:500;color:var(--ink-muted);border:0.5px solid var(--stroke-warm);border-radius:var(--r-card);padding:6px 12px;background:var(--canvas);cursor:pointer;transition:border-color .15s,color .15s}
+.filter:hover{border-color:var(--stroke);color:var(--ink-heading)}
+.filter.on{background:var(--iris-wash);border-color:var(--iris-line);color:var(--iris);font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-soft);font-weight:600;padding:8px 10px;border-bottom:1px solid var(--divider)}
+td{padding:10px;border-bottom:1px solid var(--divider);vertical-align:top;color:var(--ink-body)}
+tr:last-child td{border-bottom:none}
+.acts{display:flex;gap:4px}
+.act{font-size:10px;font-weight:600;letter-spacing:.03em;padding:2px 7px;border-radius:var(--r-card);background:var(--iris-wash);color:var(--iris)}
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:3px 9px;border-radius:var(--r-pill)}
+.pill.good{background:var(--success-soft);color:var(--success-ink)}
+.pill.warn{background:var(--warning-soft);color:var(--warning-ink)}
+.pill.bad{background:var(--danger-soft);color:var(--danger-ink)}
+.comment{color:var(--ink-muted);font-size:12.5px;max-width:260px;line-height:1.5}
+.evd a{display:block;font-size:12.5px}
+.acct{width:100%;font-size:13.5px}
+.acct tr td{padding:9px 0;border-bottom:1px solid var(--divider)}
+.acct tr:last-child td{border-bottom:none}
+.acct td:last-child{text-align:right;font-weight:600;color:var(--ink-heading)}
+.acct .total td{font-size:15px;font-weight:700;color:var(--ink-display)}
+.paid{color:var(--success-ink);font-weight:700}
+.footnote{font-size:12px;color:var(--ink-soft);margin-top:12px;line-height:1.55}
+.privacy{border-top:1px solid var(--divider);margin-top:28px;padding-top:16px;font-size:12.5px;color:var(--ink-soft);max-width:720px;line-height:1.6}
+
+/* in-review empty state */
+.emptycard{background:var(--canvas);border:0.5px solid var(--stroke-warm);border-radius:var(--r-md);padding:48px 28px;text-align:center}
+.emptycard .eic{width:44px;height:44px;border-radius:9999px;background:#EEF1F6;color:var(--ink-muted);display:flex;align-items:center;justify-content:center;font-size:20px;margin:0 auto}
+.emptycard h2{font-family:var(--head);font-size:20px;font-weight:700;color:var(--ink-display);margin-top:14px}
+.emptycard p{max-width:46ch;margin:8px auto 0;font-size:13.5px;color:var(--ink-muted);line-height:1.6}
+.emptycard .cta{margin-top:22px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.banner{display:none;align-items:center;gap:6px;background:var(--iris-wash);border:0.5px solid var(--iris-line);border-radius:var(--r-card);padding:10px 14px;font-size:12.5px;color:var(--ink-body);margin-bottom:16px;line-height:1.5}
+.banner b{color:var(--iris)}
+.banner a{margin-left:auto;font-weight:600;white-space:nowrap;cursor:pointer}
+
+@media(max-width:900px){
+  .tiles,.tiles.five{grid-template-columns:repeat(2,1fr)}
+  .grid2{grid-template-columns:1fr}
+  .clist .row,.colhead{grid-template-columns:1fr 1fr;grid-auto-rows:auto}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wordmark">BlueAI<span class="tag">BRANDS</span></div>
+  <div class="crumb" id="crumb"><b>Campaigns</b></div>
+  <div class="account"><div class="avatar">AM</div> Acme Media</div>
+</div>
+
+<div class="wrap">
+
+<!-- ============ VIEW 1: CAMPAIGNS LIST ============ -->
+<div class="view on" id="view-list">
+
+  <div class="pagehead">
+    <h1>Campaigns</h1>
+    <div class="right"><button class="btn primary">+ New campaign</button></div>
+  </div>
+
+  <div class="tiles">
+    <div class="tile">
+      <div class="label">Active campaigns</div>
+      <div class="value num">2</div>
+      <div class="sub">2 more closed this quarter</div>
+    </div>
+    <div class="tile">
+      <div class="label">Verified completions, all time</div>
+      <div class="value num">726</div>
+      <div class="sub">every one carries evidence</div>
+    </div>
+    <div class="tile">
+      <div class="label">Spend this month</div>
+      <div class="value num">$330</div>
+      <div class="sub">only verified completions bill</div>
+    </div>
+  </div>
+
+  <div class="colhead"><span>Campaign</span><span>Fill</span><span>Spend</span><span>Status</span><span></span></div>
+
+  <div class="clist" id="clist">
+    <div class="row" onclick="show('detail')">
+      <div>
+        <div class="cname">Spring Launch: Product Reveal Short</div>
+        <div class="cmeta">YouTube Short &middot; Watch + Like + Comment &middot; US &middot; ends Aug 18</div>
+      </div>
+      <div class="fillcell"><div class="bar"><i style="width:42.4%"></i></div><div class="t"><b class="num">212</b> of <span class="num">500</span> &middot; 7 days left</div></div>
+      <div class="cell"><b class="num">$212</b><span class="s num">of $500</span></div>
+      <div><span class="chip live"><span class="dot"></span> LIVE</span></div>
+      <div class="rowlink">View report &rsaquo;</div>
+    </div>
+
+    <div class="row" onclick="show('detail')">
+      <div>
+        <div class="cname">Creator Collab Teaser</div>
+        <div class="cmeta">YouTube Short &middot; Watch + Like &middot; US &middot; ends Aug 14</div>
+      </div>
+      <div class="fillcell"><div class="bar"><i style="width:78.7%"></i></div><div class="t"><b class="num">118</b> of <span class="num">150</span> &middot; 3 days left</div></div>
+      <div class="cell"><b class="num">$118</b><span class="s num">of $150</span></div>
+      <div><span class="chip live"><span class="dot"></span> LIVE</span></div>
+      <div class="rowlink">View report &rsaquo;</div>
+    </div>
+
+    <div class="row" onclick="show('detail')">
+      <div>
+        <div class="cname">July Brand Anthem</div>
+        <div class="cmeta">YouTube Short &middot; Watch + Like + Comment &middot; US &middot; closed Aug 1</div>
+      </div>
+      <div class="fillcell"><div class="bar"><i style="width:100%"></i></div><div class="t"><b class="num">300</b> of <span class="num">300</span> &middot; target met</div></div>
+      <div class="cell"><b class="num">$300</b><span class="s num">of $300</span></div>
+      <div><span class="chip done">&#10003; COMPLETED</span></div>
+      <div class="rowlink">View report &rsaquo;</div>
+    </div>
+
+    <div class="row" onclick="show('detail')">
+      <div>
+        <div class="cname">Summer Drop Part 1</div>
+        <div class="cmeta">YouTube Short &middot; Watch + Like + Comment &middot; US &middot; closed Jul 21</div>
+      </div>
+      <div class="fillcell"><div class="bar"><i style="width:48%"></i></div><div class="t"><b class="num">96</b> of <span class="num">200</span> &middot; make-good applied</div></div>
+      <div class="cell"><b class="num">$96</b><span class="s num">of $200</span></div>
+      <div><span class="chip short">&#9888; UNDER TARGET</span></div>
+      <div class="rowlink">View report &rsaquo;</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============ VIEW 2: CAMPAIGN DETAIL ============ -->
+<div class="view" id="view-detail">
+
+  <div style="margin-bottom:14px"><a class="back" onclick="show('list')">&lsaquo; All campaigns</a></div>
+
+  <div class="banner" id="sample-banner">
+    <span><b>Sample report.</b> Illustrative data showing what your report looks like once your campaign is live.</span>
+    <a onclick="show('review')">Back to your campaign</a>
+  </div>
+
+  <div class="pagehead" style="flex-wrap:wrap">
+    <div>
+      <h1>Spring Launch: Product Reveal Short</h1>
+      <div class="meta">
+        <span class="chip live"><span class="dot"></span> LIVE</span>
+        <span>Post: <a href="#">youtube.com/shorts/xK9...q2w</a></span>
+        <span>Actions: <b>Watch + Like + Comment</b></span>
+        <span>Aug 4 to Aug 18, 2026</span>
+        <span>Country: <b>United States</b></span>
+      </div>
+    </div>
+    <div class="right">
+      <button class="btn">Download CSV</button>
+      <button class="btn primary">PDF Receipt</button>
+    </div>
+  </div>
+
+  <div class="tiles five">
+    <div class="tile">
+      <div class="label">Fill</div>
+      <div class="value num">42%</div>
+      <div class="sub">212 of 500 target</div>
+    </div>
+    <div class="tile">
+      <div class="label">Verified</div>
+      <div class="value num">212</div>
+      <div class="sub">only verified runs bill</div>
+    </div>
+    <div class="tile">
+      <div class="label">Spend</div>
+      <div class="value num">$212</div>
+      <div class="sub">of $500</div>
+    </div>
+    <div class="tile">
+      <div class="label">Under review</div>
+      <div class="value num">6</div>
+      <div class="sub warn">not billed until resolved</div>
+    </div>
+    <div class="tile">
+      <div class="label">Days remaining</div>
+      <div class="value num">7</div>
+      <div class="sub">ends Aug 18</div>
+    </div>
+  </div>
+
+  <div class="grid2">
+
+    <div class="card">
+      <h2>Progress</h2>
+      <div class="hint">Cumulative verified completions against the pace needed to reach 500 by Aug 18.</div>
+
+      <div class="chart-wrap">
+        <svg id="chart" viewBox="0 0 640 240" width="100%" role="img" aria-label="Cumulative verified completions by day versus target pace">
+          <g stroke="#EEF1F6" stroke-width="1">
+            <line x1="46" y1="20"  x2="620" y2="20"/>
+            <line x1="46" y1="66"  x2="620" y2="66"/>
+            <line x1="46" y1="112" x2="620" y2="112"/>
+            <line x1="46" y1="158" x2="620" y2="158"/>
+            <line x1="46" y1="204" x2="620" y2="204"/>
+          </g>
+          <g font-size="10.5" fill="#757A94">
+            <text x="38" y="24"  text-anchor="end">500</text>
+            <text x="38" y="70"  text-anchor="end">375</text>
+            <text x="38" y="116" text-anchor="end">250</text>
+            <text x="38" y="162" text-anchor="end">125</text>
+            <text x="38" y="208" text-anchor="end">0</text>
+          </g>
+          <g font-size="10.5" fill="#757A94" text-anchor="middle">
+            <text x="46"  y="224">Aug 4</text>
+            <text x="169" y="224">Aug 7</text>
+            <text x="333" y="224">Aug 11</text>
+            <text x="497" y="224">Aug 15</text>
+            <text x="620" y="224">Aug 18</text>
+          </g>
+          <line x1="46" y1="204" x2="620" y2="20" stroke="#B6B8CC" stroke-width="2" stroke-dasharray="5 5"/>
+          <text x="480" y="52" font-size="11" fill="#757A94">Target pace</text>
+          <polyline fill="none" stroke="#7B4CFF" stroke-width="2"
+            points="46,197.4 87,186.7 128,173.8 169,163.5 210,152.9 251,144.0 292,134.1 333,126.0"/>
+          <g fill="#7B4CFF" stroke="#FFFFFF" stroke-width="2">
+            <circle cx="46"  cy="197.4" r="4"/>
+            <circle cx="87"  cy="186.7" r="4"/>
+            <circle cx="128" cy="173.8" r="4"/>
+            <circle cx="169" cy="163.5" r="4"/>
+            <circle cx="210" cy="152.9" r="4"/>
+            <circle cx="251" cy="144.0" r="4"/>
+            <circle cx="292" cy="134.1" r="4"/>
+            <circle cx="333" cy="126.0" r="4"/>
+          </g>
+          <text x="344" y="122" font-size="11" font-weight="600" fill="#1B1E38">Verified <tspan font-weight="700">212</tspan></text>
+          <line id="xh" x1="0" y1="20" x2="0" y2="204" stroke="#B6B8CC" stroke-width="1" visibility="hidden"/>
+          <rect id="hit" x="46" y="20" width="574" height="184" fill="transparent"/>
+        </svg>
+        <div class="tooltip" id="tip"></div>
+      </div>
+
+      <div class="staterow" style="margin-top:16px">
+        <div class="state"><div><div class="n num">270</div><div class="t">Open on the board</div></div></div>
+        <div class="state"><div><div class="n num">12</div><div class="t">Claimed, in progress</div></div></div>
+        <div class="state"><div><div class="n num">22</div><div class="t">Completed today</div></div></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <h2>Accounting</h2>
+        <table class="acct">
+          <tr><td>Campaign budget</td><td class="num">$500.00</td></tr>
+          <tr><td>Bid per verified completion</td><td class="num">$1.00</td></tr>
+          <tr><td>Consumed (212 x $1.00)</td><td class="num">$212.00</td></tr>
+          <tr class="total"><td>Remaining</td><td class="num">$288.00</td></tr>
+          <tr><td>Invoice <span class="num">INV-2026-081</span></td><td class="paid">PAID</td></tr>
+        </table>
+        <div class="footnote">If the campaign closes under target, unconsumed budget is settled per the make-good policy in your agreement.</div>
+      </div>
+
+      <div class="card">
+        <h2>Verification</h2>
+        <div class="staterow" style="flex-direction:column">
+          <div class="state good"><div class="ic">&#10003;</div><div><div class="n num">212</div><div class="t">Verified</div></div></div>
+          <div class="state warn"><div class="ic">&#8635;</div><div><div class="n num">6</div><div class="t">Under review</div></div></div>
+          <div class="state bad"><div class="ic">&#10005;</div><div><div class="n num">9</div><div class="t">Did not verify</div></div></div>
+        </div>
+        <div class="note">Every completion is checked before it bills. You are never charged for a run that does not verify.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="card">
+    <h2>Proof of work</h2>
+    <div class="hint">Every verified run carries evidence. Runs are numbered; the community members who complete jobs stay anonymous.</div>
+    <div class="filters">
+      <div class="filter on">All (227)</div>
+      <div class="filter">Verified (212)</div>
+      <div class="filter">Under review (6)</div>
+      <div class="filter">Did not verify (9)</div>
+      <div class="filter" style="margin-left:auto">Aug 4 to Aug 11 &#9662;</div>
+    </div>
+    <table>
+      <thead>
+        <tr><th>Run</th><th>Completed</th><th>Actions</th><th>Comment</th><th>Evidence</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="num">#0212</td>
+          <td>Aug 11, 09:42</td>
+          <td><div class="acts"><span class="act">WATCH</span><span class="act">LIKE</span><span class="act">COMMENT</span></div></td>
+          <td class="comment">"The reveal at the end got me, did not expect that finish"</td>
+          <td class="evd"><a href="#">Screenshot</a><a href="#">Comment permalink</a></td>
+          <td><span class="pill good">&#10003; Verified</span></td>
+        </tr>
+        <tr>
+          <td class="num">#0211</td>
+          <td>Aug 11, 09:17</td>
+          <td><div class="acts"><span class="act">WATCH</span><span class="act">LIKE</span><span class="act">COMMENT</span></div></td>
+          <td class="comment">"Watched this twice, the pacing is so clean"</td>
+          <td class="evd"><a href="#">Screenshot</a><a href="#">Comment permalink</a></td>
+          <td><span class="pill good">&#10003; Verified</span></td>
+        </tr>
+        <tr>
+          <td class="num">#0210</td>
+          <td>Aug 11, 08:55</td>
+          <td><div class="acts"><span class="act">WATCH</span><span class="act">LIKE</span><span class="act">COMMENT</span></div></td>
+          <td class="comment">"Comment posted, awaiting platform indexing"</td>
+          <td class="evd"><a href="#">Screenshot</a></td>
+          <td><span class="pill warn">&#8635; Under review</span></td>
+        </tr>
+        <tr>
+          <td class="num">#0209</td>
+          <td>Aug 11, 08:31</td>
+          <td><div class="acts"><span class="act">WATCH</span><span class="act">LIKE</span></div></td>
+          <td class="comment">-</td>
+          <td class="evd"><a href="#">Screenshot</a></td>
+          <td><span class="pill good">&#10003; Verified</span></td>
+        </tr>
+        <tr>
+          <td class="num">#0208</td>
+          <td>Aug 10, 21:06</td>
+          <td><div class="acts"><span class="act">WATCH</span><span class="act">LIKE</span><span class="act">COMMENT</span></div></td>
+          <td class="comment">"This is the kind of ad I actually finish"</td>
+          <td class="evd"><a href="#">Screenshot</a><a href="#">Comment permalink</a></td>
+          <td><span class="pill good">&#10003; Verified</span></td>
+        </tr>
+        <tr>
+          <td class="num">#0207</td>
+          <td>Aug 10, 19:48</td>
+          <td><div class="acts"><span class="act">WATCH</span></div></td>
+          <td class="comment">"Like action did not register on retry"</td>
+          <td class="evd"><a href="#">Screenshot</a></td>
+          <td><span class="pill bad">&#10005; Did not verify</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <div style="text-align:center;margin-top:12px"><a href="#" style="font-size:13px;font-weight:600">Show all 227 runs</a></div>
+  </div>
+
+  <div class="privacy">
+    Work on this campaign is completed by community members on their own devices and accounts, paced like normal use. Their identities are never shared; runs are numbered. Evidence is retained for the period stated in your agreement.
+  </div>
+
+</div>
+
+<!-- ============ VIEW 3: IN-REVIEW EMPTY STATE ============ -->
+<div class="view" id="view-review">
+
+  <div style="margin-bottom:14px"><a class="back" onclick="show('list')">&lsaquo; All campaigns</a></div>
+
+  <div class="pagehead" style="flex-wrap:wrap">
+    <div>
+      <h1 id="rv-name">Your campaign</h1>
+      <div class="meta">
+        <span class="chip review">&#8635; IN REVIEW</span>
+        <span>YouTube Short</span>
+        <span>Country: <b>United States</b></span>
+        <span>Submitted just now</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid2">
+
+    <div class="emptycard">
+      <div class="eic">&#8635;</div>
+      <h2>This campaign is in review.</h2>
+      <p>We check every campaign before it reaches the community, usually within one business day. Once it is approved and live, verified completions, spend, and proof of work appear here as they happen.</p>
+      <div class="cta">
+        <button class="btn primary" onclick="show('detail', true)">View a sample report</button>
+        <button class="btn" onclick="show('list')">Back to campaigns</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Campaign setup</h2>
+      <div class="hint">What you defined. Editable until the campaign goes live.</div>
+      <table class="acct">
+        <tr><td>Campaign budget</td><td class="num" id="rv-budget">$500.00</td></tr>
+        <tr><td>Bid per verified completion</td><td class="num" id="rv-bid">$1.00</td></tr>
+        <tr><td>Target reach</td><td class="num" id="rv-reach">500</td></tr>
+        <tr><td>Consumed</td><td class="num">$0.00</td></tr>
+        <tr><td>Invoice</td><td>After approval</td></tr>
+      </table>
+      <div class="footnote">Nothing is charged while the campaign is in review.</div>
+    </div>
+
+  </div>
+
+</div>
+
+</div>
+
+<script>
+// The submitted-campaign params (if any), parsed once and shared by the list row and the
+// in-review view.
+var submitted=(function(){
+  var q=new URLSearchParams(location.search);
+  var name=q.get('submitted');
+  if(!name) return null;
+  var budget=parseFloat(q.get('budget'))||500;
+  var bid=parseFloat(q.get('bid'))||1;
+  return {name:name, budget:budget, bid:bid, reach:bid>0?Math.round(budget/bid):0};
+})();
+
+var esc=function(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML};
+
+function show(which, sample){
+  ['list','detail','review'].forEach(function(v){
+    document.getElementById('view-'+v).classList.toggle('on', which===v);
+  });
+  // The sample banner only frames the detail when it was entered from the in-review empty state.
+  document.getElementById('sample-banner').style.display=(which==='detail'&&sample)?'flex':'none';
+  var crumb;
+  if(which==='list') crumb='<b>Campaigns</b>';
+  else if(which==='review') crumb='<a onclick="show(\'list\')" style="cursor:pointer">Campaigns</a> &rsaquo; <b>'+(submitted?esc(submitted.name):'Your campaign')+'</b>';
+  else crumb='<a onclick="show(\'list\')" style="cursor:pointer">Campaigns</a> &rsaquo; <b>'+(sample?'Sample report':'Spring Launch: Product Reveal Short')+'</b>';
+  document.getElementById('crumb').innerHTML=crumb;
+  window.scrollTo(0,0);
+}
+if(location.hash==='#detail') show('detail');
+
+// A just-submitted campaign is prepended to the list as IN REVIEW: nothing filled, nothing
+// spent, not yet on the board. Its row opens the in-review empty state, not the sample data.
+(function(){
+  if(!submitted) return;
+  var row=document.createElement('div');
+  row.className='row';
+  row.onclick=function(){show('review')};
+  row.innerHTML=
+    '<div><div class="cname">'+esc(submitted.name)+'</div>'+
+    '<div class="cmeta">YouTube Short &middot; US &middot; submitted just now</div></div>'+
+    '<div class="fillcell"><div class="bar"><i style="width:0%"></i></div>'+
+    '<div class="t"><b class="num">0</b> of <span class="num">'+submitted.reach+'</span> &middot; starts after review</div></div>'+
+    '<div class="cell"><b class="num">$0</b><span class="s num">of $'+submitted.budget+'</span></div>'+
+    '<div><span class="chip review">&#8635; IN REVIEW</span></div>'+
+    '<div class="rowlink">View report &rsaquo;</div>';
+  var list=document.getElementById('clist');
+  list.insertBefore(row,list.firstElementChild);
+  // Fill the in-review view from the same params.
+  document.getElementById('rv-name').textContent=submitted.name;
+  document.getElementById('rv-budget').textContent='$'+submitted.budget.toFixed(2);
+  document.getElementById('rv-bid').textContent='$'+submitted.bid.toFixed(2);
+  document.getElementById('rv-reach').textContent=String(submitted.reach);
+})();
+
+(function(){
+  var svg=document.getElementById('chart'), hit=document.getElementById('hit'),
+      xh=document.getElementById('xh'), tip=document.getElementById('tip');
+  var days=['Aug 4','Aug 5','Aug 6','Aug 7','Aug 8','Aug 9','Aug 10','Aug 11'];
+  var vals=[18,47,82,110,139,163,190,212];
+  var X0=46, STEP=41;
+  function toSvgX(evt){
+    var pt=svg.createSVGPoint(); pt.x=evt.clientX; pt.y=evt.clientY;
+    return pt.matrixTransform(svg.getScreenCTM().inverse()).x;
+  }
+  hit.addEventListener('mousemove',function(e){
+    var x=toSvgX(e);
+    var i=Math.round((x-X0)/STEP);
+    if(i<0)i=0; if(i>7)i=7;
+    var px=X0+i*STEP, py=204-vals[i]*0.368;
+    xh.setAttribute('x1',px); xh.setAttribute('x2',px); xh.setAttribute('visibility','visible');
+    var r=svg.getBoundingClientRect(), scale=r.width/640;
+    tip.style.left=(px*scale)+'px';
+    tip.style.top=(py*scale)+'px';
+    var pace=Math.round(500*(i)/14);
+    tip.innerHTML=days[i]+': <b>'+vals[i]+'</b> verified &middot; pace <b>'+pace+'</b>';
+    tip.style.opacity=1;
+  });
+  hit.addEventListener('mouseleave',function(){
+    xh.setAttribute('visibility','hidden'); tip.style.opacity=0;
+  });
+})();
+</script>
+</body>
+</html>

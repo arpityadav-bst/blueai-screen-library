@@ -1,28 +1,15 @@
 // The campaign draft's shape, its field data, and its validation. Split out of CampaignForm.tsx so
 // the orchestrator holds flow (steps, submit) and nothing else. The field SHELL classes used to
 // live here too; they moved to controls/fieldClasses.ts once the creators' manual-details form
-// needed the same ones — a shell shared by both audiences shouldn't live under brands/.
+// needed the same ones, a shell shared by both audiences shouldn't live under brands/.
 import { isUrl, type Errors } from '../../forms'
 
 export const ACTIONS = ['watch', 'like', 'comment'] as const
 
-// Illustrative, like every dollar figure on this site — a design-handoff stub, not a researched
-// market list. Worldwide first because it's the sane default for a pre-launch campaign.
-export const COUNTRIES = [
-  'Worldwide',
-  'United States',
-  'United Kingdom',
-  'Canada',
-  'Australia',
-  'Germany',
-  'France',
-  'Brazil',
-  'India',
-  'Indonesia',
-  'Japan',
-  'Mexico',
-  'Philippines',
-]
+// US only for the pilot (product decision, 2026-08-12): the worker cohort is US-based, so that is
+// the one country a campaign can honestly target. The list grows as new regions open; until then
+// the form states the country rather than offering a one-item dropdown.
+export const COUNTRIES = ['United States']
 
 export type Draft = {
   name: string
@@ -37,7 +24,7 @@ export type Draft = {
 }
 
 // All three actions on by default because that combination is the unit the rate was built around.
-// Country defaults to Worldwide for the same reason it's first in the list.
+// Country is fixed to the one region the pilot serves.
 export const INITIAL: Draft = {
   name: '',
   url: '',
@@ -46,12 +33,12 @@ export const INITIAL: Draft = {
   bid: '',
   start: null,
   end: null,
-  country: 'Worldwide',
+  country: 'United States',
   goal: '',
 }
 
 // Grouped as the designer asked: what to promote / what it costs and when / who and why. The
-// grouping is the point — nine fields in one column read as a chore, three groups of two-to-three
+// grouping is the point, nine fields in one column read as a chore, three groups of two-to-three
 // read as a short conversation, and each group answers one question a brand actually has.
 //
 // Titles only. Each step used to carry a `sub` as well, which put TWO titles and TWO subtitles in
@@ -60,11 +47,11 @@ export const INITIAL: Draft = {
 // worth keeping; the step subtitles restated what the field labels underneath already say.
 export const STEPS = [
   { title: 'What to promote' },
-  { title: 'Spend and window' },
+  { title: 'Budget and schedule' },
   { title: 'Who and why' },
 ] as const
 
-// Which fields each step owns. Advancing validates only its own step's fields — otherwise step 1's
+// Which fields each step owns. Advancing validates only its own step's fields, otherwise step 1's
 // Continue would light up errors on dates nobody has been shown yet.
 export const STEP_FIELDS: readonly string[][] = [
   ['name', 'url', 'actions'],
@@ -74,13 +61,24 @@ export const STEP_FIELDS: readonly string[][] = [
 
 // Messages, not codes: each one says what to do rather than what's wrong, which is the difference
 // between "Invalid URL" and something a reader can act on without re-reading the label.
-// Step 3 produces no errors at all — country is defaulted and the goal is the one optional field,
+// Step 3 produces no errors at all, country is defaulted and the goal is the one optional field,
 // so it's the finish step, not a quiz.
+// Campaigns run on YouTube only; the URL check enforces what step 1's Platform row states.
+function isYouTubeUrl(u: string): boolean {
+  try {
+    const h = new URL(u).hostname.replace(/^(www|m)\./, '')
+    return h === 'youtube.com' || h === 'youtu.be'
+  } catch {
+    return false
+  }
+}
+
 export function validate(d: Draft): Errors {
   const e: Errors = {}
   if (!d.name.trim()) e.name = 'Give the campaign a name.'
-  if (!d.url.trim()) e.url = 'Add the link to the video you want promoted.'
-  else if (!isUrl(d.url)) e.url = 'That doesn’t look like a link — it should start with https://'
+  if (!d.url.trim()) e.url = 'Add the link to the YouTube video you want promoted.'
+  else if (!isUrl(d.url)) e.url = 'That doesn’t look like a link. It should start with https://'
+  else if (!isYouTubeUrl(d.url)) e.url = 'Campaigns run on YouTube for now. Paste a youtube.com or youtu.be link.'
   if (d.actions.length === 0) e.actions = 'Pick at least one action.'
   if (!d.budget.trim()) e.budget = 'Set a budget.'
   else if (Number(d.budget) <= 0) e.budget = 'The budget has to be more than $0.'
