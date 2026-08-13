@@ -207,7 +207,7 @@ export default function StepCards({ heading, steps }: Props) {
             ~26 — and the brands heading's first clause ("No PR team. No negotiating.") is 27, which
             wrapped it and made that heading three lines. 26ch holds ~31, clearing the longest first
             clause on either page. */}
-        <h2 className="mx-auto max-w-[26ch] font-head text-5xl font-bold text-ink-display sm:text-6xl">
+        <h2 className="mx-auto max-w-[26ch] font-head text-[32px] font-bold leading-[1.15] text-ink-display sm:text-5xl sm:leading-[1.12] md:text-6xl">
           {heading}
         </h2>
       </div>

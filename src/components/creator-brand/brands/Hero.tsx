@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import Image from 'next/image'
 import Reveal from '../Reveal'
 import { ModalCTA, ModalTextLink } from '../OpenModal'
 import PixelRain from '../creators/PixelRain'
@@ -61,7 +60,7 @@ export default function Hero() {
 
       <div className="relative z-[1] mx-auto flex max-w-[1380px] flex-col items-center text-center">
         <Reveal className="flex flex-col items-center">
-          <h1 className="max-w-[780px] font-head text-5xl font-bold tracking-tight-2 text-ink-display sm:text-6xl">
+          <h1 className="max-w-[780px] font-head text-[32px] font-bold leading-[1.15] tracking-tight-2 text-ink-display sm:text-5xl sm:leading-[1.12] md:text-6xl">
             An AI that turns your budget <span className="text-gradient italic inline-block pr-[0.2em]">into real reach.</span>
           </h1>
           <p className="bai-body-lg mx-auto mt-5 max-w-[640px]">
@@ -80,22 +79,40 @@ export default function Hero() {
 
         <Reveal delay={0.25} className="mt-10 w-full max-w-[1240px] overflow-hidden">
           <TiltImage className="-mt-[1%]">
-            <Image
-              id="hero-image"
-              src="/creator-brand/brand-workflow-engagement-v2.png"
-              alt="A brand's campaign going live, engagement being verified, and payment settling automatically."
-              width={1672}
-              height={941}
-              className="h-auto w-full"
-              // No blend mode. That correction still holds, see heroImageMask.ts for what
-              // needed fixing instead. The mask's vertical radius left a hard-edged seam at the
-              // top/bottom, because this asset's background runs 2-8 luma units darker than the
-              // page and the old ellipse only faded it to ~80% opacity by the image edge, not to
-              // zero. Measure any replacement asset the same way before assuming the mask still
-              // covers it: this file's own background delta was checked only at its 4px border
-              // (a near-best-case sample) before the full row-by-row profile caught the real gap.
-              style={{ maskImage: HERO_IMAGE_MASK, WebkitMaskImage: HERO_IMAGE_MASK }}
-            />
+            {/* MOBILE GETS ITS OWN COMPOSITION, same reasoning as the creators hero (see that file for
+                the full account): a real <picture>, not two images toggled by display classes, because
+                this route has images.unoptimized set and a CSS-hidden <img> still gets fetched — so
+                hiding one of two would ship both hero images to every visitor regardless of which
+                renders. The wrapper's aspect-ratio switches at the same breakpoint the <source> does. */}
+            <picture>
+              <source media="(min-width: 640px)" srcSet="/creator-brand/brand-workflow-engagement-v2.webp" />
+              <img
+                id="hero-image"
+                // MOBILE SOURCE (below sm) — brand-workflow-engagement-mobile.webp, 2026-08-13. A pool of
+                // creators plus verification/growth iconography — no engagement mechanics drawn as icons,
+                // no baked text or logos. Background measured before wiring: raw corner bg ~252.5, masked
+                // edge delta +0.47/+0.28 left/right — inside the mask's 1-3 unit tolerance, no retone
+                // needed. WebP q90: 1.76 MB -> 0.142 MB, PSNR 39.2. Original preserved at
+                // design-source/creator-brand-art/hero-mobile-brands.png.
+                //
+                // DESKTOP SOURCE (sm and up, via the <source> above) — brand-workflow-engagement-v2.webp.
+                // No blend mode: that correction still holds, see heroImageMask.ts for what needed fixing
+                // instead. The mask's vertical radius left a hard-edged seam at the top/bottom, because
+                // this asset's background runs 2-8 luma units darker than the page and the old ellipse
+                // only faded it to ~80% opacity by the image edge, not to zero. Measure any replacement
+                // asset the same way before assuming the mask still covers it: this file's own background
+                // delta was checked only at its 4px border (a near-best-case sample) before the full
+                // row-by-row profile caught the real gap.
+                src="/creator-brand/brand-workflow-engagement-mobile.webp"
+                alt="A brand's campaign going live, engagement being verified, and payment settling automatically."
+                fetchPriority="high"
+                loading="eager"
+                width={1672}
+                height={941}
+                className="aspect-[1086/1448] w-full object-contain sm:aspect-[1672/941] sm:h-auto"
+                style={{ maskImage: HERO_IMAGE_MASK, WebkitMaskImage: HERO_IMAGE_MASK }}
+              />
+            </picture>
           </TiltImage>
         </Reveal>
       </div>

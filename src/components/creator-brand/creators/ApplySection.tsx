@@ -1,5 +1,6 @@
 import Reveal from '../Reveal'
 import ApplyForm from './ApplyForm'
+import PixelRain from './PixelRain'
 
 // The top of the page once you're signed in — a headline and the application, in place of the
 // marketing hero (see CreatorsTop.tsx for the swap).
@@ -16,17 +17,39 @@ import ApplyForm from './ApplyForm'
 // scrolls to once you're signed in, plus what the form itself scrolls back to between steps.
 export default function ApplySection() {
   return (
-    <section id="hero" className="px-6 pb-16 pt-10 sm:pt-14">
-      <div className="mx-auto max-w-[620px]">
+    // data-cb-nogate is read by Backdrop.tsx. That layer holds itself at opacity 0 for the whole of
+    // #hero, because both marketing heroes are signed off and it must not repaint them — but this
+    // section IS #hero when you're signed in, so the orbs and the logo star were invisible for the
+    // entire application. They should be there from the top, at full strength, with no fade-in: this
+    // is a form, not a hero, and it has nothing to protect.
+    <section
+      id="hero"
+      data-cb-nogate="true"
+      className="relative overflow-hidden px-6 pb-16 pt-10 sm:pt-14"
+    >
+      {/* The same ambient twinkle the marketing hero carries, for the same reason: signing in should
+          not drop the reader onto a plainer page than the one that persuaded them. */}
+      <PixelRain className="z-0" />
+
+      <div className="relative z-[1] mx-auto max-w-[620px]">
         <Reveal className="text-center">
-          <h1 className="font-head text-4xl font-bold tracking-tight-2 text-ink-display sm:text-5xl">
+          <h1 className="font-head text-[30px] font-bold leading-[1.15] tracking-tight-2 text-ink-display sm:text-4xl md:text-5xl">
             One short application.
-            <span className="mt-2 block text-gradient italic pr-[0.2em]">Then we take it from here.</span>
+            <span className="mt-1 block text-gradient italic pr-[0.2em]">Then we take it from here.</span>
           </h1>
-          {/* No time estimate. "About three minutes" is the kind of number that is wrong for the
+          {/* THE SUB WAS ORPHANED BY ITS OWN max-w (designer, 2026-08-13). At 46ch it was capped near
+              410px inside a 620px column, so a 62-character sentence had to break — and it broke late,
+              leaving "spot opens." alone on a second line under a two-line headline. Three lines of
+              ragged centred text with the shortest at the bottom is what read as floating.
+              It fits on ONE line in this column now. text-balance is the insurance for narrow
+              viewports, where it still has to wrap: it splits the sentence evenly instead of pushing a
+              stub onto its own row. The gap above also came down (5 -> 4) so it sits WITH the headline
+              rather than adrift below it, and the headline's own two lines tightened for the same
+              reason.
+              No time estimate, still. "About three minutes" is the kind of number that is wrong for the
               reader who writes two paragraphs on question 7, and a form that under-promises its own
               length is worse than one that says nothing. The step count is visible in the rail. */}
-          <p className="bai-body-lg mx-auto mt-5 max-w-[46ch]">
+          <p className="bai-body-lg mx-auto mt-4 [text-wrap:balance]">
             We review every application and email you when your spot opens.
           </p>
         </Reveal>

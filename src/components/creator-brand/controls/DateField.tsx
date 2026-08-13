@@ -69,7 +69,7 @@ export default function DateField({
           onClick={() => setOpen((o) => !o)}
           className={withErr(TRIGGER, err)}
         >
-          <CalendarGlyph size={15} className="shrink-0 text-iris" />
+          <CalendarGlyph size={15} className="shrink-0 text-[var(--cb-accent)]" />
           {/* cb-field-affix is the placeholder weight the rest of the form's fields use, so an
               empty date field reads as empty rather than as pre-filled. cb-tabular keeps the digits
               from shuffling the layout as the day changes. */}
@@ -85,7 +85,9 @@ export default function DateField({
         </button>
 
         {open && (
-          <Popover anchor={triggerRef} onClose={close} align={align} className="w-[268px] p-4">
+          <Popover anchor={triggerRef} onClose={close} align={align} // 340 wide, not 268: seven 44px day cells need 308px plus padding. max-w keeps it inside a narrow
+          // viewport when the end-date field opens it right-aligned.
+          className="w-[340px] max-w-[calc(100vw-32px)] p-3">
             <Calendar
               value={value}
               min={min ?? null}
@@ -216,15 +218,20 @@ function Calendar({
               // the window this calendar was modelled on. Left on the three ENABLED branches rather
               // than hoisted to the base class: a disabled day still matches :hover in CSS, and
               // lighting up a day you can't pick is worse than no hover.
-              className={`mx-auto flex h-8 w-8 items-center justify-center rounded-circle text-[13px] tabular-nums outline-none transition-colors duration-fast ease-out-bai focus-visible:ring-2 focus-visible:ring-iris/40 ${
+              className={`mx-auto flex h-11 w-11 items-center justify-center rounded-circle text-[13px] tabular-nums outline-none transition-colors duration-fast ease-out-bai focus-visible:ring-2 focus-visible:ring-[rgba(var(--cb-accent-rgb),0.40)] ${
                 selected
-                  ? 'bg-bai-gradient font-semibold text-white'
+                  // Iris solid, not bg-bai-gradient (2026-08-13). A chosen day is a VALUE, and this
+                  // site keeps the gradient for things you press — the same correction that took it
+                  // off the campaign form's filter chips on 2026-08-11 and off the application's
+                  // selection marks today. It also puts every "chosen" on the site in one colour:
+                  // this day, ChoiceGroup's cards and chips, CheckField's box, SelectField's tick.
+                  ? 'font-semibold text-white [background:var(--cb-accent)]'
                   : disabled
                     ? 'cursor-not-allowed text-ink-muted/30'
                     : outside
-                      ? 'text-ink-muted/45 hover:bg-[var(--cb-hover)]'
+                      ? 'text-ink-muted/70 hover:bg-[var(--cb-hover)]'
                       : k === today
-                        ? 'font-bold text-iris hover:bg-[var(--cb-hover)]'
+                        ? 'font-bold text-[var(--cb-accent)] hover:bg-[var(--cb-hover)]'
                         : 'text-ink-body-2 hover:bg-[var(--cb-hover)]'
               }`}
             >
@@ -276,7 +283,7 @@ function NavBtn({
       aria-label={label}
       disabled={disabled}
       onClick={onClick}
-      className="flex h-7 w-7 items-center justify-center rounded-card text-ink-muted transition-colors duration-fast ease-out-bai hover:bg-[var(--cb-hover)] hover:text-ink-heading disabled:pointer-events-none disabled:opacity-30"
+      className="flex h-11 w-11 items-center justify-center rounded-card text-ink-muted transition-colors duration-fast ease-out-bai hover:bg-[var(--cb-hover)] hover:text-ink-heading disabled:pointer-events-none disabled:opacity-30"
     >
       {children}
     </button>

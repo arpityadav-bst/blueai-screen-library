@@ -27,6 +27,10 @@
      text-iris (the brand purple) instead, which was simply the wrong colour — and a fourth
      hand-typed literal is how the next one goes wrong too. */
   --cb-accent: #2258c9;
+  /* The same colour as an RGB triplet, so it can carry alpha. Added 2026-08-13 when the accent took
+     over every SELECTED state on this route from iris — washes and hairlines need rgba(), and a hex
+     token cannot provide one. Keep the two in sync: 34,88,201 IS #2258c9. */
+  --cb-accent-rgb: 34, 88, 201;
 
   /* HOVER FILL. There was none, and that is why hover "was missing" on the dropdown rows, the
      calendar days, the month arrows and every dialog close button: they all used `hover:bg-canvas`,
@@ -129,8 +133,18 @@
   inset: 0;
   pointer-events: none;
   opacity: 0.03;
-  mix-blend-mode: multiply;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* THE BLEND IS DESKTOP-ONLY. .cb-grain is inset:0 on .cb-scope, i.e. the whole DOCUMENT — over
+   10,000px tall on the brands page — and mix-blend-mode makes the compositor read back everything
+   painted beneath and re-blend it on every scroll frame, defeating layer caching for the entire page.
+   That is the canonical mobile scroll-jank primitive, spent here on 3% of noise that is invisible at
+   phone DPI. The texture still renders below lg; only the blend is dropped.
+   Written as its own block rather than nested inside .cb-grain: nested @media needs CSS Nesting, and
+   this file is plain CSS that has to work wherever the export lands. */
+@media (min-width: 1024px) {
+  .cb-grain { mix-blend-mode: multiply; }
 }
 
 /* Card elevation matching the shared DS "resting card" shadow — used on the
@@ -349,8 +363,20 @@
    page visible beside it. Hence no overflow and no clip-margin here at all. */
 .cb-step-viewport {
   --cb-card-w: clamp(300px, 27vw, 440px);
-  max-width: min(calc(3 * var(--cb-card-w) + 2 * 80px + 2 * 32px), calc(100% - 2 * 140px));
   margin-inline: auto;
+}
+/* THE CAP IS DESKTOP-ONLY, and the note above used to claim it was "inert below lg: this only ever
+   CAPS the width, never forces growth, and a mobile viewport is always narrower than either bound
+   anyway." That was wrong, and expensively so. The second bound is calc(100% - 280px), which SHRINKS
+   WITH THE VIEWPORT — so on a phone it is not merely applicable, it is always the binding term.
+   Measured live before this fix: at 320px the stage computed to 40px, each step card to 0px, and the
+   media panel to 0px. The whole How It Works section rendered as nothing, on BOTH pages.
+   The 140px page margin exists only to protect the numeral's -left-24 hang, and that numeral is
+   lg:block. Gating the cap to the same breakpoint makes the two agree. */
+@media (min-width: 1024px) {
+  .cb-step-viewport {
+    max-width: min(calc(3 * var(--cb-card-w) + 2 * 80px + 2 * 32px), calc(100% - 2 * 140px));
+  }
 }
 
 /* THE CLIP, full-bleed. Spans the section's whole width, so the only place content can be
@@ -379,8 +405,12 @@
 }
 
 /* Below lg the track isn't a track — cards stack and the sequencer doesn't run at all. */
-@media (max-width: 1023px) {
-  .cb-step-track { flex-direction: column; align-items: center; }
+@media (max-width: 1023.98px) {
+  .cb-step-track { flex-direction: column; align-items: center;     /* 32, not the track's 80: that number was derived as breathing room around the hanging
+       numerals on the horizontal track, and the numerals are lg-only. Stacked, it was 80px of dead
+       space between every card. */
+    gap: 32px;
+  }
   .cb-step-card { flex: 0 0 auto; width: 100%; max-width: 440px; }
 }
 

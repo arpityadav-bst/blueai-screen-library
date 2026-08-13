@@ -143,10 +143,11 @@ function MediaPanel({ step, i }: { step: Step; i: number }) {
         className="relative flex aspect-square w-full items-center justify-center border-b border-divider bg-surface"
         aria-hidden="true"
       >
-        {/* 4%/7% iris→cyan, i.e. the brand gradient at wash strength. Strong enough to read as a
+        {/* Accent→cyan at wash strength (was iris→cyan until 2026-08-13, when iris stopped being a
+            UI colour on this route). Strong enough to read as a
             deliberate panel, quiet enough that it never competes with the card's own copy. */}
-        <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(var(--bai-iris-rgb),0.07),rgba(var(--bai-cyan-rgb),0.04))]" />
-        <Sparkle size={30} className="relative text-iris opacity-25" />
+        <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(var(--cb-accent-rgb),0.07),rgba(var(--bai-cyan-rgb),0.04))]" />
+        <Sparkle size={30} className="relative text-[var(--cb-accent)] opacity-25" />
       </div>
     )
   }
@@ -157,8 +158,10 @@ function MediaPanel({ step, i }: { step: Step; i: number }) {
         src={step.img}
         alt={step.alt ?? ''}
         fill
-        sizes="(min-width: 1024px) 440px, 90vw"
-        priority={i === 0}
+        // 90vw was wrong: the real rendered width is min(100vw - 48px, 440px). And priority is GONE —
+        // it preloaded a card that sits two or three screens below the fold on a phone, competing with
+        // the hero that actually needed it.
+        sizes="(min-width: 536px) 440px, calc(100vw - 48px)"
         className="object-cover"
       />
     </div>

@@ -25,7 +25,12 @@
 // exists — if a nav item ever needs to open a dialog again, that shape is in git history.
 export type NavAudience = 'creators' | 'brands'
 
-/** `inHeader` opts an item into the header's short nav. Everything here shows in the footer. */
+/** `inHeader` opts an item into the header's short DESKTOP nav. Everything here shows in the footer.
+ *
+ *  A note for the next person tempted to delete this: it was deleted on 2026-08-13, on a misreading of
+ *  "the header just needs logo art and CTA, not navigation items" — which was an answer about the
+ *  MOBILE header. The nav is `hidden lg:flex`, so mobile never showed it in the first place and there
+ *  was nothing there to remove. Desktop lost its nav for nothing. Restored. */
 export type NavItem = { label: string; href: string; inHeader?: boolean }
 
 // "Open jobs" (#jobs) was removed 2026-08-13 with the section it pointed at — the PM cut the "Real

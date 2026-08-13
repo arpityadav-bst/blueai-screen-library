@@ -61,8 +61,9 @@ const FOCUSABLE =
 // Both now use the same two numbers: a CLOSE_BOX-tall row at CLOSE_INSET from the top. The title
 // row centres its content in that box, so the glyph and the title share a centre line at
 // CLOSE_INSET + CLOSE_BOX/2 whatever size the title text is — 13px handle or 20px heading.
-const CLOSE_INSET = 'top-3.5' // 14px
-const CLOSE_BOX = 'h-9 w-9' //   36px — hit target, vs a 14px glyph
+const CLOSE_INSET = 'top-2.5' // 10px
+const CLOSE_BOX = 'h-11 w-11' //  44px, the touch minimum. Was 36 — fine for a mouse, 8px short for
+//                                a thumb, on the one control every dialog relies on to get out.
 
 /**
  * The header row for light dialogs: a title line that lines up with the close button, and an
@@ -74,11 +75,11 @@ const CLOSE_BOX = 'h-9 w-9' //   36px — hit target, vs a 14px glyph
  */
 export function ModalHeader({ title, sub }: { title: ReactNode; sub?: ReactNode }) {
   return (
-    <div className={`border-b border-divider px-6 pb-4 pr-14 sm:px-7 sm:pr-14 ${CLOSE_INSET.replace('top-', 'pt-')}`}>
+    <div className={`border-b border-divider px-6 pb-4 pr-16 sm:px-7 sm:pr-16 ${CLOSE_INSET.replace('top-', 'pt-')}`}>
       {/* min-h-9 == CLOSE_BOX, items-center == the glyph's own centring. Wrapping is allowed for a
           long title on a narrow panel, and in that case the box grows and re-centres — the title
           then sits below the glyph, which is the right trade against clipping it. */}
-      <div className="flex min-h-9 flex-wrap items-center gap-x-2">{title}</div>
+      <div className="flex min-h-11 flex-wrap items-center gap-x-2">{title}</div>
       {sub && <p className="mt-1 max-w-[80ch] text-[13px] text-ink-body-2">{sub}</p>}
     </div>
   )

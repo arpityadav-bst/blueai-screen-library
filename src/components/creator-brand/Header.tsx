@@ -8,8 +8,7 @@ import { Arrow } from '@/components/Arrow'
 import { HEADER_NAV } from './nav'
 import HeaderCTA from './HeaderCTA'
 
-// Shared by both nav shapes (anchor and modal button) so the row can't end up with two slightly
-// different quiet-link treatments.
+// Shared by both nav shapes so the row can't end up with two slightly different quiet-link treatments.
 const NAV_LINK =
   'text-[15px] font-normal text-ink-muted opacity-70 transition-all hover:text-ink-heading hover:opacity-100'
 

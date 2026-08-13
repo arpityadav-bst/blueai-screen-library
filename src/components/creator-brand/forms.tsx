@@ -25,15 +25,22 @@ export function showErr(errors: Errors, touched: Record<string, boolean>, forced
 }
 
 export function FieldError({ children, dark = false }: { children?: string; dark?: boolean }) {
-  if (!children) return null
+  // SPACE RESERVED WHETHER OR NOT THERE'S A MESSAGE (designer, 2026-08-13) — this used to return null
+  // when empty, so a field's real height was shorter with no error than with one. An error appearing
+  // therefore pushed everything below it down by its own height, on every field on the page at once —
+  // which on this form's fixed-height card read as the whole card visibly resizing the moment you blurred
+  // a field, not as a small in-place message. The line's box now always exists at the same height; an
+  // error swaps an invisible placeholder for visible red text IN that box instead of inserting a new one.
+  // role/aria-hidden stay conditional so an empty slot is neither announced nor exposed as an alert.
   return (
-    // role="alert" so it's announced when it appears, rather than sitting silently in the DOM
-    // for a screen reader to discover on the next pass.
     <span
-      role="alert"
-      className={`mt-1.5 block text-[11px] font-medium ${dark ? 'cb-err-dark' : 'text-status-danger'}`}
+      role={children ? 'alert' : undefined}
+      aria-hidden={!children}
+      className={`mt-1.5 block min-h-[15px] text-[11px] font-medium leading-snug ${
+        children ? (dark ? 'cb-err-dark' : 'text-status-danger') : 'invisible'
+      }`}
     >
-      {children}
+      {children || ' '}
     </span>
   )
 }

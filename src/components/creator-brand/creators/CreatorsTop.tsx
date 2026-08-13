@@ -32,6 +32,9 @@ export default function CreatorsTop() {
   // way; this is entirely about the pin.
   useEffect(() => {
     ScrollTrigger.refresh()
+    // Backdrop measures #hero to decide where to fade in, and whether to gate itself at all. This swap
+    // replaces that element, so it has to re-read both — see Backdrop.tsx.
+    window.dispatchEvent(new Event('cb-top-change'))
   }, [signedIn])
 
   return signedIn ? <ApplySection /> : <Hero />

@@ -119,13 +119,13 @@ export default function SelectField({
                     // value is now blueai-desktop's own light-theme --bai-hover, the window this
                     // picker was modelled on. focus-visible gets the same fill so driving the list
                     // by keyboard shows the same row highlight the pointer does.
-                    className={`flex w-full items-center gap-2 rounded-card px-2.5 py-2 text-left text-[13px] outline-none transition-colors duration-fast ease-out-bai hover:bg-[var(--cb-hover)] focus-visible:bg-[var(--cb-hover)] ${
+                    className={`flex min-h-[44px] w-full items-center gap-2 rounded-card px-2.5 py-3 text-left text-[13px] outline-none transition-colors duration-fast ease-out-bai hover:bg-[var(--cb-hover)] focus-visible:bg-[var(--cb-hover)] active:bg-[var(--cb-hover)] ${
                       on ? 'font-semibold text-ink-heading' : 'text-ink-body-2'
                     }`}
                   >
                     {/* Fixed-width marker slot, so the label column starts at the same x on every
                         row whether or not that row is the selected one. */}
-                    <span className="flex w-3.5 shrink-0 justify-center text-iris">
+                    <span className="flex w-3.5 shrink-0 justify-center text-[var(--cb-accent)]">
                       {on && <Check size={12} />}
                     </span>
                     {o}

@@ -2,7 +2,7 @@
 // the orchestrator holds flow (steps, submit) and nothing else. The field SHELL classes used to
 // live here too; they moved to controls/fieldClasses.ts once the creators' manual-details form
 // needed the same ones, a shell shared by both audiences shouldn't live under brands/.
-import { isUrl, type Errors } from '../../forms'
+import type { Errors } from '../../forms'
 
 export const ACTIONS = ['watch', 'like', 'comment'] as const
 
@@ -63,22 +63,21 @@ export const STEP_FIELDS: readonly string[][] = [
 // between "Invalid URL" and something a reader can act on without re-reading the label.
 // Step 3 produces no errors at all, country is defaulted and the goal is the one optional field,
 // so it's the finish step, not a quiz.
-// Campaigns run on YouTube only; the URL check enforces what step 1's Platform row states.
-function isYouTubeUrl(u: string): boolean {
-  try {
-    const h = new URL(u).hostname.replace(/^(www|m)\./, '')
-    return h === 'youtube.com' || h === 'youtu.be'
-  } catch {
-    return false
-  }
-}
-
+//
+// NON-EMPTY IS THE WHOLE CHECK NOW (designer, 2026-08-13) — this used to also gate on isYouTubeUrl(),
+// a hostname check that rejected anything that wasn't literally youtube.com/youtu.be. That was one
+// step past the fix that had already landed here (dropping the https:// requirement so a bare paste
+// like `youtube.com/watch?v=...` would pass) — same instinct, same problem: a design-only prototype
+// gaining a validation rule strict enough to reject input a real reader would type, for a field nothing
+// here actually calls out to. The creator form's own channel field (apply/Steps.tsx) already treats
+// its link the same way — any non-empty text — and this field disagreeing with that, on the same
+// site, for a form that submits nowhere real, was the actual bug. If a live backend ever needs to
+// resolve this into a real video, validate it there, against the real API, not with a hostname guess
+// here.
 export function validate(d: Draft): Errors {
   const e: Errors = {}
   if (!d.name.trim()) e.name = 'Give the campaign a name.'
   if (!d.url.trim()) e.url = 'Add the link to the YouTube video you want promoted.'
-  else if (!isUrl(d.url)) e.url = 'That doesn’t look like a link. It should start with https://'
-  else if (!isYouTubeUrl(d.url)) e.url = 'Campaigns run on YouTube for now. Paste a youtube.com or youtu.be link.'
   if (d.actions.length === 0) e.actions = 'Pick at least one action.'
   if (!d.budget.trim()) e.budget = 'Set a budget.'
   else if (Number(d.budget) <= 0) e.budget = 'The budget has to be more than $0.'

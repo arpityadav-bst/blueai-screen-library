@@ -37,23 +37,19 @@ import { useApply } from './ApplyState'
 // STILL NOT A REAL LOGIN, and it must never become one. There is no auth behind this: the email
 // field collects nothing, has no name/autoComplete, and posts nowhere. Every control lands on the
 // same prototype sign-in so a reviewer can't dead-end on a button that looks operable.
-// 70% BLACK, NO BLUR (designer, 2026-08-13). This landed after a detour worth recording, because the
-// detour is the lesson.
+// SOLID DARK GREY, NO BLUR (designer, 2026-08-13). The scrape's card is glass — rgba(0,0,0,0.7) over
+// rgba(0,0,0,0.2) with backdrop-blur(32px) — and chasing that is the one thing here that went a long
+// way round, so the conclusion is worth keeping:
 //
-// The scrape's card is glass: rgba(0,0,0,0.7) over rgba(0,0,0,0.2) with backdrop-blur(32px). Chasing
-// that here meant the blur had to be visible, and it wasn't — Modal's shared scrim (58% + its own
-// 3px blur) sits between this card and the page, and a backdrop-filter can only reveal what is behind
-// it. The fix on offer was to lighten the scrim for this one dialog. It worked, and it was the wrong
-// trade: the overlay belongs to the SITE, so a creators dialog dimming the page differently from a
-// brands dialog breaks a consistency a visitor feels without naming. The blur went instead.
+// The blur was never visible, because Modal's shared scrim (58% + its own 3px blur) sits between this
+// card and the page, and a backdrop-filter can only reveal what is behind it. The fix on offer was to
+// lighten the scrim for this dialog alone. It worked, and it was the wrong trade — the overlay belongs
+// to the SITE, so a creators dialog dimming the page differently from a brands dialog breaks a
+// consistency a visitor feels without being able to name. The scrim went back; the blur went instead.
 //
-// At 70% opaque the card doesn't need one. The density that made the blur pointless is the same
-// density that makes it unnecessary — and 0.7 is the scraped outer value, so this is closer to the
-// real card than the 40% it replaced, not further from it.
-// SOLID dark grey (designer, 2026-08-13) — not a translucent black. Every previous value here was an
-// alpha over whatever happened to be behind the dialog, which meant the card's read changed with the
-// page under it; a solid surface is the same card every time. It also ends the blur/scrim thread for
-// good: there is nothing to see through, so nothing to blur and no reason to touch the shared overlay.
+// Solid rather than any alpha, then: a translucent card's read changes with whatever page is behind
+// it, and a solid one is the same card every time. It also closes this thread for good — nothing to
+// see through means nothing to blur and no reason to touch the shared overlay again.
 const CARD_BG = '#1F1F23'
 const RING = '#7B4CFF'
 const CTA = 'linear-gradient(270deg, #7B4CFF 0%, #0EA4C5 99.48%)'
@@ -69,19 +65,16 @@ const PROVIDERS = [
 export default function SignInDialog({ onClose }: { onClose: () => void }) {
   const { signIn } = useApply()
 
-  // After signing in, the page's top section swaps the marketing hero for the application
-  // (CreatorsTop.tsx), so the scroll has to wait for that render — hence the double rAF. One frame is
-  // not enough: the first fires before React has committed the swap, so #apply doesn't exist yet and
-  // scrollIntoView silently no-ops. It matters most from the closing band, where the reader is at the
-  // bottom of the page and the form is now at the top.
+  // TOP OF THE PAGE, not the form (designer, 2026-08-13). This used to scroll #apply into view, which
+  // landed the form under the header with the headline already gone — you arrived mid-page at
+  // something you had not been introduced to. Scrolling to 0 is also simpler than it was: the old
+  // version needed a double rAF because #apply does not exist until React commits the hero/application
+  // swap, and 0 needs no target at all. It still matters most from the closing band, where the reader
+  // is at the bottom when they sign in.
   function go() {
     signIn()
     onClose()
-    requestAnimationFrame(() =>
-      requestAnimationFrame(() => {
-        document.getElementById('apply')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      }),
-    )
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   return (
@@ -112,19 +105,22 @@ export default function SignInDialog({ onClose }: { onClose: () => void }) {
           <Waves />
           <div className="relative">
             <h3 className="pb-2 pt-4 text-center text-[12px] font-normal leading-[18px]">One account for</h3>
-            <div className="flex items-center justify-center gap-[18px]">
+            {/* MEASURED at 320: mark 42 + gap 10.84 + wordmark 75 + gap 18 + rule + gap 18 + now.gg 122
+                = 287px of lockup in 236px of card. Everything steps down together below sm so the
+                proportions hold; at sm and up these are the scraped sizes exactly. */}
+            <div className="flex items-center justify-center gap-3 sm:gap-[18px]">
               <span className="flex items-center gap-[10.84px]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={`${A}/bluestacks-mark.svg`} alt="" width={42} height={38} />
+                <img src={`${A}/bluestacks-mark.svg`} alt="" width={42} height={38} className="w-8 sm:w-[42px]" />
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={`${A}/bluestacks-wordmark.svg`} alt="BlueStacks" width={75} height={13} />
+                <img src={`${A}/bluestacks-wordmark.svg`} alt="BlueStacks" width={75} height={13} className="w-[62px] sm:w-[75px]" />
               </span>
               <span
                 className="h-[35px] w-px shrink-0"
                 style={{ backgroundImage: 'linear-gradient(0deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50.1%, rgba(255,255,255,0) 100%)' }}
               />
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={`${A}/nowgg-logo.svg`} alt="now.gg" width={122} height={37} />
+              <img src={`${A}/nowgg-logo.svg`} alt="now.gg" width={122} height={37} className="w-[100px] sm:w-[122px]" />
             </div>
           </div>
         </div>
@@ -157,7 +153,11 @@ export default function SignInDialog({ onClose }: { onClose: () => void }) {
               inputMode="email"
               autoComplete="off"
               placeholder="abc@xyz.com"
-              className="w-full rounded-[8px] border-[0.8px] border-white/50 bg-black/20 px-4 py-2 text-[14px] font-normal leading-[21px] text-white shadow-[0_2px_8px_rgba(0,0,0,0.04)] outline-none transition-[border-color,box-shadow] duration-base ease-out-bai placeholder:text-white/40 hover:border-white/80 focus:border-[#7B4CFF] focus:shadow-[0_0_0_3px_rgba(123,76,255,0.25)]"
+              // text-[16px] BELOW sm, 14px above. iOS Safari zooms the whole page when a focused field is
+              // under 16px, which on a dialog means the card jumps and the reader loses their place.
+              // 14px is the scraped value and it is kept everywhere it is safe, i.e. everywhere that
+              // isn't a phone.
+              className="w-full rounded-[8px] border-[0.8px] border-white/50 bg-black/20 px-4 py-2 text-[16px] font-normal leading-[21px] text-white shadow-[0_2px_8px_rgba(0,0,0,0.04)] outline-none transition-[border-color,box-shadow] duration-base ease-out-bai placeholder:text-white/40 hover:border-white/80 focus:border-[#7B4CFF] focus:shadow-[0_0_0_3px_rgba(123,76,255,0.25)] sm:text-[14px]"
             />
           </div>
 
@@ -184,7 +184,12 @@ export default function SignInDialog({ onClose }: { onClose: () => void }) {
             <span className="h-px flex-auto bg-white/20" />
           </div>
 
-          <div className="flex flex-row justify-center gap-4">
+          {/* gap-2 below sm. MEASURED: each button floors at ~68px (20px icon + px-6), so four of them
+              plus three 16px gaps need 316px — against 236px of usable width inside a 284px card at a
+              320px viewport. They are flex-auto, but padding is a floor they cannot shrink past, so the
+              row overflowed its own card. Tighter padding and gap on small screens drops the floor to
+              ~36px each and the row fits with room to spare. */}
+          <div className="flex flex-row justify-center gap-2 sm:gap-4">
             {PROVIDERS.map((p) => (
               <button
                 key={p.id}
@@ -192,7 +197,7 @@ export default function SignInDialog({ onClose }: { onClose: () => void }) {
                 onClick={go}
                 aria-label={`Continue with ${p.id}`}
                 style={{ background: p.bg }}
-                className="flex h-10 flex-auto items-center justify-center rounded-[8px] px-6 transition-transform duration-base ease-out-bai hover:-translate-y-0.5 active:translate-y-0"
+                className="flex h-11 min-w-0 flex-auto items-center justify-center rounded-[8px] px-2 transition-transform duration-base ease-out-bai hover:-translate-y-0.5 active:translate-y-0 sm:px-6"
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={p.icon} alt="" width={p.w} height={p.h} className="shrink-0" />
@@ -209,7 +214,7 @@ export default function SignInDialog({ onClose }: { onClose: () => void }) {
             By signing up, you agree to the <u>Terms of Use</u> and <u>Privacy Policy</u>, including{' '}
             <u>Cookie Use</u>.
           </p>
-          <p className="text-center text-[10.5px] leading-snug text-white/30">
+          <p className="text-center text-[10.5px] leading-snug text-white/60">
             Prototype. No account is created and nothing is sent.
           </p>
         </div>
@@ -219,15 +224,22 @@ export default function SignInDialog({ onClose }: { onClose: () => void }) {
 }
 
 /**
- * The header's two gradient waves, copied path-for-path from the real card's inline SVGs (the
- * portrait pair; the page also ships a landscape pair we don't use at this width). Both are wider and
- * taller than the 360px header and start above its top edge, which is what makes the crest sit where
- * it does — so they are absolutely positioned at top-0 and allowed to overflow, not scaled to fit.
+ * The header's two gradient waves, copied path-for-path from the real card's inline SVGs (the portrait
+ * pair; the page also ships a landscape pair we don't use at this width).
+ *
+ * w-full + preserveAspectRatio="none", NOT the scraped width="360" (2026-08-13, mobile pass). At a
+ * 360px viewport the card is 353px and at 320 it is 284, so a hard-coded 360 wave was 71px too wide
+ * inside its own card — measured — and the overflow-hidden simply cropped the crest off-centre. The
+ * wave now always spans exactly the card it sits in.
+ *
+ * Non-uniform scaling is safe HERE and would not be for most art: these are two gentle curves with no
+ * circles, text or corner radii in them, so stretching horizontally is imperceptible. Height stays
+ * pinned so the header's own 135px (see above) still clears the crest at every width.
  */
 function Waves() {
   return (
     <div className="pointer-events-none absolute inset-x-0 top-0" aria-hidden="true">
-      <svg xmlns="http://www.w3.org/2000/svg" width="360" height="135" viewBox="0 0 360 135" fill="none" className="absolute left-0 top-0">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 135" fill="none" preserveAspectRatio="none" className="absolute inset-x-0 top-0 h-[135px] w-full">
         <path
           opacity="0.4"
           d="M237.886 105.464C363.827 91.9235 407.104 113.841 413 126.492V-12.5H-41V126.492C31.5221 147.52 80.4597 122.389 237.886 105.464Z"
@@ -240,7 +252,7 @@ function Waves() {
           </linearGradient>
         </defs>
       </svg>
-      <svg xmlns="http://www.w3.org/2000/svg" width="360" height="123" viewBox="0 0 360 123" fill="none" className="absolute left-0 top-0">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 123" fill="none" preserveAspectRatio="none" className="absolute inset-x-0 top-0 h-[123px] w-full">
         <path
           opacity="0.5"
           d="M136.8 95.834C31.9418 83.3991 -4.09091 103.527 -9 115.146V-12.5H369V115.146C308.618 134.457 267.873 111.378 136.8 95.834Z"

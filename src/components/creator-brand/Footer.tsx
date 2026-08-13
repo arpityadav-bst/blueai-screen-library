@@ -8,7 +8,12 @@ import { NAV, OTHER, type NavAudience } from './nav'
 
 // Shared by both link shapes in the columns below (in-page anchor, cross-page Link) so the footer
 // can't grow two near-identical quiet-link treatments.
-const FOOTER_LINK = 'bai-body-sm text-ink-body-2 transition-colors hover:text-ink-heading'
+// inline-block + py-3 rather than a bigger font: the padding lifts each row to ~43px while the type
+// stays exactly where it was designed. The lists drop their space-y to compensate, so the visual
+// rhythm is unchanged and only the hit area grows. Below sm the three columns stack into one strip,
+// which is what made ~19px targets at 10px spacing the densest tap region on either page.
+const FOOTER_LINK =
+  'bai-body-sm inline-block py-3 text-ink-body-2 transition-colors hover:text-ink-heading active:text-ink-heading'
 
 /**
  * Rebuilt from a single centered line (logo · tagline · copyright) into a proper wayfinding
@@ -66,7 +71,7 @@ export default function Footer() {
             <h3 className="bai-caption font-semibold uppercase tracking-label text-ink-muted">
               On this page
             </h3>
-            <ul className="mt-4 space-y-2.5">
+            <ul className="mt-1">
               {NAV[active].map((item) => (
                 <li key={item.label}>
                   <a href={item.href} onClick={(e) => scrollToSection(e, item.href)} className={FOOTER_LINK}>
@@ -84,7 +89,7 @@ export default function Footer() {
             <h3 className="bai-caption font-semibold uppercase tracking-label text-ink-muted">
               {other === 'brands' ? 'For brands' : 'For creators'}
             </h3>
-            <ul className="mt-4 space-y-2.5">
+            <ul className="mt-1">
               <li>
                 {/* cb-accent, was text-iris. The purple was never this site's accent — the accent
                     is the header CTA's hover blue, now the --cb-accent variable (creator-brand.css).
@@ -92,7 +97,7 @@ export default function Footer() {
                     leaves for the other audience's page. */}
                 <Link
                   href={`/creator-brand/${other}`}
-                  className="bai-body-sm cb-accent inline-flex items-center gap-1 font-semibold transition-colors hover:text-ink-heading"
+                  className="bai-body-sm cb-accent inline-flex items-center gap-1 py-3 font-semibold transition-colors hover:text-ink-heading"
                 >
                   {/* "Apply now", was "Join the waitlist" (2026-08-13). This label is the one the
                       BRANDS page shows, pointing at the creators journey — so it was the last live
@@ -127,7 +132,7 @@ export default function Footer() {
           <a
             href="#hero"
             onClick={(e) => scrollToSection(e, '#hero')}
-            className="bai-caption inline-flex items-center gap-1.5 text-ink-muted transition-colors hover:text-ink-heading"
+            className="bai-caption inline-flex items-center gap-1.5 py-3 text-ink-muted transition-colors hover:text-ink-heading"
           >
             Back to top
             <Arrow size={11} className="-rotate-90" />

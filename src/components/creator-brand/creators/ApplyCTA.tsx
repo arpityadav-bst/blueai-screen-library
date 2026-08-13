@@ -43,7 +43,7 @@ export default function ApplyCTA() {
           </h2>
           {/* Straight from the PM's own FAQ answer, which is the only thing on record about why there
               is a queue. Nothing here promises a deadline or a spot count — neither exists. */}
-          <p className="bai-body-lg mx-auto mt-4 max-w-[46ch] text-white/70">
+          <p className="bai-body-lg mx-auto mt-4 max-w-[46ch] text-white/80">
             Apply now and we’ll email you as soon as your spot opens.
           </p>
           {/* Signed out this opens the sign-in dialog; signed in it scrolls to the form already at the

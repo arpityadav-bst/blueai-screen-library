@@ -48,7 +48,7 @@ export default function PreviewToggler() {
         type="button"
         onClick={() => setOpenPanel(true)}
         aria-label="Preview state"
-        className={`fixed bottom-3.5 left-3.5 z-[110] flex h-9 w-9 items-center justify-center rounded-circle text-ink-muted transition-colors duration-base ease-out-bai hover:text-ink-heading ${CARD}`}
+        className={`fixed bottom-3.5 left-3.5 z-[110] flex h-11 w-11 items-center justify-center rounded-circle text-ink-muted transition-colors duration-base ease-out-bai hover:text-ink-heading ${CARD}`}
       >
         <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
           <circle cx="12" cy="12" r="3" />
@@ -66,7 +66,7 @@ export default function PreviewToggler() {
           type="button"
           onClick={() => setOpenPanel(false)}
           aria-label="Collapse preview panel"
-          className="-mr-1 flex h-6 w-6 items-center justify-center rounded-card text-ink-muted transition-colors duration-base ease-out-bai hover:bg-[var(--cb-hover)] hover:text-ink-heading"
+          className="-mr-1 flex h-9 w-9 items-center justify-center rounded-card text-ink-muted transition-colors duration-base ease-out-bai hover:bg-[var(--cb-hover)] hover:text-ink-heading"
         >
           <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="M6 9.5l6 6 6-6" />
@@ -87,7 +87,7 @@ export default function PreviewToggler() {
               type="button"
               aria-pressed={signedIn === state}
               onClick={() => (state ? signIn() : signOut())}
-              className={`flex-1 rounded-[6px] px-2 py-1 text-[11.5px] font-semibold transition-all duration-fast ease-out-bai ${
+              className={`flex-1 rounded-[6px] px-2 py-2.5 text-[11.5px] font-semibold transition-all duration-fast ease-out-bai ${
                 signedIn === state
                   ? 'bg-white text-ink-heading shadow-hairline'
                   : 'text-ink-muted hover:text-ink-body-2'

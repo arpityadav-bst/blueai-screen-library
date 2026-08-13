@@ -12,9 +12,9 @@ export default function ClosingCTA() {
             <span className="cb-text-gradient-dark block italic pr-[0.2em]">live the day we launch.</span>
           </h2>
           {/* Was an off-token text-[15px]. Now bai-body-lg like every other lead;
-              text-white/70 still wins over the class's own color because utilities outrank
+              text-white/80 still wins over the class's own color because utilities outrank
               @layer components. */}
-          <p className="bai-body-lg mx-auto mt-4 max-w-[46ch] text-white/70">
+          <p className="bai-body-lg mx-auto mt-4 max-w-[46ch] text-white/80">
             Set the terms now. BlueAI starts matching creators to it the moment we go live.
           </p>
           <div className="mt-8 flex justify-center">
@@ -25,7 +25,9 @@ export default function ClosingCTA() {
               kind="campaign"
               size="lg"
               variant="secondary"
-              className="min-w-[240px] !border-transparent !bg-white !text-ink-display"
+              // The band pays px-6 (section) + px-8 (CTABand) = 112px, so at 320 there are 208px for a 240px
+          // min-width — and CTABand is overflow-hidden, so it was clipped rather than scrolled.
+          className="w-full max-w-[280px] sm:w-auto sm:min-w-[240px] !border-transparent !bg-white !text-ink-display"
             >
               Create a campaign
             </ModalCTA>

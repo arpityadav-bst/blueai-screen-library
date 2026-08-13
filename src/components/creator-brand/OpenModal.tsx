@@ -41,7 +41,11 @@ export function ModalTextLink({ kind, children }: { kind: ModalKind; children: R
     <button
       type="button"
       onClick={() => open(kind)}
-      className="text-[13px] font-normal text-ink-muted underline decoration-1 underline-offset-4 opacity-70 transition-opacity duration-base ease-out-bai hover:text-ink-heading hover:opacity-100"
+      // No opacity-70 — same 3.90:1 failure as the header CTA had: ink-muted at 0.7 over this route's
+      // #F9F9FA composites to roughly rgb(122,124,145), and 13px regular needs 4.5:1. The underline
+      // already marks this as the quiet secondary action; dimming it as well was doing the job twice
+      // and failing contrast to do it.
+      className="inline-block py-3 text-[13px] font-normal text-ink-body-2 underline decoration-1 underline-offset-4 transition-colors duration-base ease-out-bai hover:text-ink-heading"
     >
       {children}
     </button>

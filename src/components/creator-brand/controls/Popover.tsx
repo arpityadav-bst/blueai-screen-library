@@ -54,7 +54,7 @@ export default function Popover({
   const ref = useRef<HTMLDivElement>(null)
   // null until measured. Rendered `visibility: hidden` until then, so the measure-then-place pass
   // never shows a frame at the wrong position.
-  const [pos, setPos] = useState<{ top: number; left: number; width?: number } | null>(null)
+  const [pos, setPos] = useState<{ top: number; left: number; width?: number; maxHeight?: number } | null>(null)
 
   const place = useCallback(() => {
     const el = ref.current
@@ -69,10 +69,22 @@ export default function Popover({
     // Only flip up if up actually fits — otherwise a tall calendar near the bottom of a short
     // window flips and gets clipped by the TOP of the viewport instead.
     const above = window.innerHeight - r.bottom - GAP < h && r.top - GAP > h
+    // CLAMPED TO THE VIEWPORT, both axes. This element is position:fixed, so anything placed outside
+    // the viewport is not merely awkward — it is unreachable, because there is nothing to scroll.
+    // Measured before this: at a 320px width the end-date field opens its 340px calendar right-aligned
+    // at left = -4px, i.e. starting off the left edge of the screen. The start-date field cleared by
+    // 12px, which is one padding change away from the same bug.
+    // maxHeight covers the other half: in landscape on a phone neither above nor below fits a ~295px
+    // calendar, so it rendered below and ran off the bottom with no way to reach the last week.
+    const M = 8
+    const raw = align === 'right' ? r.right - w : r.left
+    const left = Math.min(Math.max(M, raw), Math.max(M, window.innerWidth - w - M))
+    const room = above ? r.top - GAP : window.innerHeight - r.bottom - GAP
     setPos({
       top: above ? r.top - GAP - h : r.bottom + GAP,
-      left: align === 'right' ? r.right - w : r.left,
+      left,
       width: align === 'stretch' ? r.width : undefined,
+      maxHeight: Math.max(180, room - M),
     })
   }, [anchor, align])
 

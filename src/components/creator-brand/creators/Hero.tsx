@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import Image from 'next/image'
 import Reveal from '../Reveal'
 import ApplyButton from './ApplyButton'
 import PixelRain from './PixelRain'
@@ -80,7 +79,11 @@ export default function Hero() {
               forward-looking while the product is YouTube-only today — that is the PM's call, and the
               Platforms section a screen below states the actual scope, so the page does not leave the
               claim unqualified. */}
-          <h1 className="max-w-[820px] font-head text-5xl font-bold tracking-tight-2 text-ink-display sm:text-6xl">
+          {/* A real mobile step. 5xl is 48px and `sm` is 640px, so 320/360/390 all took the base — at
+              320 that is ~9 characters a line and the whole first screen is headline. Every other
+              heading on the site already steps; the two heroes and the steps H2 were the outliers. */}
+          <h1
+            className="max-w-[820px] font-head text-[32px] font-bold leading-[1.15] tracking-tight-2 text-ink-display sm:text-5xl sm:leading-[1.12] md:text-6xl">
             An AI that turns your social accounts{' '}
             <span className="text-gradient italic inline-block pr-[0.2em]">into income.</span>
           </h1>
@@ -101,57 +104,85 @@ export default function Hero() {
 
         <Reveal delay={0.25} className="mt-12 w-full max-w-[1240px] overflow-hidden">
           <TiltImage className="-mt-[1%]">
-            <Image
-              id="hero-image"
-              // v5, 2026-08-13. Draws none of the engagement mechanics the brief rules out — no eye,
-              // heart, speech bubble or repost arrow — and carries no baked text, numbers or logos.
-              // WebP q90 rather than the supplied PNG: 1.59 MB -> 0.118 MB, on a `priority` image that
-              // gates this page's LCP. Original preserved outside the repo as
-              // step-images-v3/creator-00-hero-v5.png.
-              //
-              // TWO SEPARATE EDGE PROBLEMS WERE FIXED HERE, and keeping them apart is the useful part
-              // of this note, because the wrong fix was available and tempting for both.
-              //
-              // 1. THE SUBJECT AGAINST THE FRAME (v3). v3 ran the subject and a shelving unit hard
-              //    into the left edge: -43 units raw, compositing to -18.7 against the page — a
-              //    visible vertical step where her arm simply stopped. heroImageMask.ts leaves the
-              //    side edges at ~0.69 alpha deliberately and says why: the side delta measured only
-              //    1-3 units on the assets it was tuned against. So v3 broke the mask's premise; it
-              //    did not reveal a mask bug. Tightening rx would have moved the brands hero too (the
-              //    mask is shared) and faded the subject further in. Fixed by the ASSET insetting its
-              //    subject, from v4 on.
-              //
-              // 2. THE BACKGROUND AGAINST THE PAGE (v4 and v5 both). Both arrived with a ~253
-              //    background against this route's 249/249/250 page, and the designer reported white
-              //    bands down the left and right edges. The mask cannot help: horizontally its alpha
-              //    bottoms out at 0.686 and NEVER reaches 0, so a background brighter than the page
-              //    stays at least 69% present all the way out. Vertically ry=52% DOES reach 0, which
-              //    is exactly why only the sides showed it. layout.tsx's page colour was SAMPLED from
-              //    the original artwork, so any new asset with a different background breaks the
-              //    premise the whole no-seam system rests on.
-              //    Fixed in the ASSET: a linear per-channel scale (measured bg -> page colour, 0 -> 0)
-              //    baked into the WebP, landing the background on the page exactly and darkening
-              //    everything else by a uniform 1.47%. v5's edge delta went +3.0 -> -0.23 / -1.46.
-              //    NOT a blend mode — a multiply on an asset BRIGHTER than the page manufactures the
-              //    very seam it gets reached for, the mistake already on record in blueai/CLAUDE.md.
-              //    NOT the mask — shared with the brands hero, whose own background measures -0.86 at
-              //    the edge and is correctly inside tolerance.
-              //
-              // IF THIS ASSET IS EVER REPLACED, RE-MEASURE BOTH. Sample the corner background against
-              // the page colour, and check the mid-height composite at x=0 and x=20. A new hero has
-              // now broken one or other of these three times running.
-              src="/creator-brand/creator-00-hero.webp"
-              alt="A woman at a laptop with brand campaign cards, a month calendar and a wallet floating beside her."
-              width={1672}
-              height={941}
-              priority
-              className="h-auto w-full"
-              // Same mask as the brands hero — see heroImageMask.ts. This asset's own background
-              // delta measured WORSE than the brands one (up to 8.7 luma units near the bottom
-              // edge), so it carried the identical hard-seam bug even though nobody had flagged
-              // it here yet.
-              style={{ maskImage: HERO_IMAGE_MASK, WebkitMaskImage: HERO_IMAGE_MASK }}
-            />
+            {/* MOBILE GETS ITS OWN COMPOSITION, not a shrunk crop of the desktop landscape (designer,
+                2026-08-13). At a 342-390px rendered width the 1672x941 desktop photo becomes a
+                ~190-220px sliver — technically visible, but too small to read as the hero it's meant to
+                be. The new asset is a genuine portrait crop (1086x1448, 3:4) composed for that width,
+                not the same photo resized.
+                A real <picture>, not two next/image elements toggled by Tailwind display classes: this
+                route sets images.unoptimized in next.config, so next/image gives no resizing benefit
+                here anyway — and a CSS-hidden <img> still gets FETCHED by the browser regardless of
+                display:none, so hiding one of two <Image>s would still ship both hero images to every
+                visitor. <picture>'s <source media> is the one mechanism that only downloads the asset
+                that will actually render.
+                The wrapper's own aspect-ratio switches at the same breakpoint the <source> does
+                (aspect-[1086/1448] below sm, aspect-[1672/941] at sm+), so the box is reserved correctly
+                before either image has loaded — no layout shift on either path. */}
+            <picture>
+              <source media="(min-width: 640px)" srcSet="/creator-brand/creator-00-hero.webp" />
+              <img
+                id="hero-image"
+                // MOBILE SOURCE (below sm) — creator-00-hero-mobile.webp, 2026-08-13. Draws none of the
+                // engagement mechanics the brief rules out and carries no baked text, numbers or logos —
+                // checked before wiring, same as the desktop asset below. Background measured before
+                // wiring: raw corner bg ~252.4, masked edge delta +0.08/+0.27 left/right — both already
+                // inside the mask's 1-3 unit tolerance, so no retone was needed (a rare clean asset in
+                // this set). WebP q90: 1.54 MB -> 0.109 MB, PSNR 40.5. Original preserved at
+                // design-source/creator-brand-art/hero-mobile-creators.png.
+                //
+                // DESKTOP SOURCE (sm and up, via the <source> above) — v5, 2026-08-13. Draws none of the
+                // engagement mechanics the brief rules out — no eye, heart, speech bubble or repost
+                // arrow — and carries no baked text, numbers or logos. WebP q90 rather than the supplied
+                // PNG: 1.59 MB -> 0.118 MB. Original preserved outside the repo as
+                // step-images-v3/creator-00-hero-v5.png.
+                //
+                // TWO SEPARATE EDGE PROBLEMS WERE FIXED on the desktop asset, and keeping them apart is
+                // the useful part of this note, because the wrong fix was available and tempting for
+                // both.
+                //
+                // 1. THE SUBJECT AGAINST THE FRAME (v3). v3 ran the subject and a shelving unit hard
+                //    into the left edge: -43 units raw, compositing to -18.7 against the page — a
+                //    visible vertical step where her arm simply stopped. heroImageMask.ts leaves the
+                //    side edges at ~0.69 alpha deliberately and says why: the side delta measured only
+                //    1-3 units on the assets it was tuned against. So v3 broke the mask's premise; it
+                //    did not reveal a mask bug. Tightening rx would have moved the brands hero too (the
+                //    mask is shared) and faded the subject further in. Fixed by the ASSET insetting its
+                //    subject, from v4 on.
+                //
+                // 2. THE BACKGROUND AGAINST THE PAGE (v4 and v5 both). Both arrived with a ~253
+                //    background against this route's 249/249/250 page, and the designer reported white
+                //    bands down the left and right edges. The mask cannot help: horizontally its alpha
+                //    bottoms out at 0.686 and NEVER reaches 0, so a background brighter than the page
+                //    stays at least 69% present all the way out. Vertically ry=52% DOES reach 0, which
+                //    is exactly why only the sides showed it. layout.tsx's page colour was SAMPLED from
+                //    the original artwork, so any new asset with a different background breaks the
+                //    premise the whole no-seam system rests on.
+                //    Fixed in the ASSET: a linear per-channel scale (measured bg -> page colour, 0 -> 0)
+                //    baked into the WebP, landing the background on the page exactly and darkening
+                //    everything else by a uniform 1.47%. v5's edge delta went +3.0 -> -0.23 / -1.46.
+                //    NOT a blend mode — a multiply on an asset BRIGHTER than the page manufactures the
+                //    very seam it gets reached for, the mistake already on record in blueai/CLAUDE.md.
+                //    NOT the mask — shared with the brands hero, whose own background measures -0.86 at
+                //    the edge and is correctly inside tolerance.
+                //
+                // IF EITHER ASSET IS EVER REPLACED, RE-MEASURE IT. Sample the corner background against
+                // the page colour, and check the mid-height composite at x=0 and x=20. The desktop hero
+                // has broken one or other of these three times running.
+                src="/creator-brand/creator-00-hero-mobile.webp"
+                alt="A woman at a laptop with brand campaign cards, a month calendar and a wallet floating beside her."
+                width={1672}
+                height={941}
+                fetchPriority="high"
+                loading="eager"
+                // Same mask as the brands hero — see heroImageMask.ts. This asset's own background
+                // delta measured WORSE than the brands one (up to 8.7 luma units near the bottom
+                // edge), so it carried the identical hard-seam bug even though nobody had flagged
+                // it here yet. The mask is percentage-based (75%/52% of the ELEMENT's own box), so it
+                // re-derives correctly for the mobile source's different aspect ratio without changes.
+                className="aspect-[1086/1448] w-full object-contain sm:aspect-[1672/941] sm:h-auto"
+                style={{ maskImage: HERO_IMAGE_MASK, WebkitMaskImage: HERO_IMAGE_MASK }}
+              />
+            </picture>
           </TiltImage>
         </Reveal>
       </div>

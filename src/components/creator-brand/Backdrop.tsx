@@ -34,14 +34,30 @@ export default function Backdrop() {
   // the cut: the cards are opaque surfaces, so the backdrop sits behind them the way it sits
   // behind every other section, and it should. Don't re-add a per-section gate here without
   // one — the layer is the page's room, and holes in it read as the room flickering.
+  // ...UNLESS THE SECTION OPTS OUT (2026-08-13). The creators page swaps its hero for the application
+  // once you sign in, and that section keeps id="hero" so the logo's scroll-to-top still works. The
+  // gate below then hid this layer for the whole form. A form is not a signed-off hero and has nothing
+  // to protect, so ApplySection marks itself data-cb-nogate and the layer stays on from the top.
+  //
+  // Re-measured on `cb-top-change`, dispatched by CreatorsTop when that swap happens — without it this
+  // effect's [] deps would leave both the marker and the height stuck on whichever section mounted
+  // first, which is exactly the stale-measurement bug the resize listener already exists to avoid.
   const [heroEnd, setHeroEnd] = useState(0)
+  const [noGate, setNoGate] = useState(false)
   useEffect(() => {
-    const hero = document.getElementById('hero')
-    if (!hero) return
-    const measure = () => setHeroEnd(hero.offsetTop + hero.offsetHeight)
+    const measure = () => {
+      const hero = document.getElementById('hero')
+      if (!hero) return
+      setNoGate(hero.dataset.cbNogate === 'true')
+      setHeroEnd(hero.offsetTop + hero.offsetHeight)
+    }
     measure()
     window.addEventListener('resize', measure)
-    return () => window.removeEventListener('resize', measure)
+    window.addEventListener('cb-top-change', measure)
+    return () => {
+      window.removeEventListener('resize', measure)
+      window.removeEventListener('cb-top-change', measure)
+    }
   }, [])
 
   const gate = useTransform(
@@ -61,11 +77,18 @@ export default function Backdrop() {
   const blueX = useTransform(p, [0, 0.5, 1], v(['14vw', '46vw', '22vw']))
   const blueY = useTransform(p, [0, 1], v(['64vh', '26vh']))
 
+  // The opted-out (application) case still fades — it just does it over a short scroll instead of a
+  // whole hero. Landing on a page with the orbs already at full strength puts atmosphere behind the
+  // first thing the reader has to read; letting them arrive after ~240px means the form gets a clean
+  // top and the room fills in as you move into it. Same idea as the hero gate, two orders of magnitude
+  // shorter.
+  const shortGate = useTransform(scrollY, [0, 240], [0, 1])
+
   const starRotate = useTransform(p, [0, 1], reduce ? [0, 0] : [0, 540])
   const starScale = useTransform(p, [0, 0.5, 1], reduce ? [1, 1, 1] : [0.88, 1.14, 0.94])
 
   return (
-    <motion.div className="cb-backdrop" aria-hidden="true" style={{ opacity: gate }}>
+    <motion.div className="cb-backdrop" aria-hidden="true" style={{ opacity: noGate ? shortGate : gate }}>
       <motion.div className="cb-orb cb-orb-iris" style={{ x: irisX, y: irisY }} />
       <motion.div className="cb-orb cb-orb-cyan" style={{ x: cyanX, y: cyanY }} />
       <motion.div className="cb-orb cb-orb-blue" style={{ x: blueX, y: blueY }} />

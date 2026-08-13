@@ -34,10 +34,10 @@ export default function ApplyButton({
       open('signin')
       return
     }
-    // scroll-mt-24 on the target keeps the form's top edge clear of the sticky header — see
-    // ApplySection.tsx. block:'start' rather than 'center' so a tall card lands at its own top
-    // rather than mid-form.
-    document.getElementById('apply')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    // The top of the page, matching SignInDialog and the form's own step changes — the application
+    // sits there once you're signed in, and landing on it with its heading intact beats landing on
+    // the form's top edge with the heading scrolled away.
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   return (

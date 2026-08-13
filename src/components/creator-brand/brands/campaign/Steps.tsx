@@ -39,8 +39,8 @@ export function StepOne({ d, setD, err, touch }: Props) {
       <div>
         <span className={LABEL}>Platform</span>
         <div className="mt-2 flex flex-wrap items-center gap-3">
-          <span className="flex items-center gap-1.5 rounded-card border border-[rgba(var(--bai-iris-rgb),0.35)] bg-[rgba(var(--bai-iris-rgb),0.07)] px-2.5 py-1.5 text-[12px] font-medium text-ink-heading">
-            <span className="flex w-3 justify-center text-iris"><Check size={11} /></span>
+          <span className="flex items-center gap-1.5 rounded-card border border-[rgba(var(--cb-accent-rgb),0.38)] bg-[rgba(var(--cb-accent-rgb),0.07)] px-2.5 py-1.5 text-[12px] font-medium text-ink-heading">
+            <span className="flex w-3 justify-center text-[var(--cb-accent)]"><Check size={11} /></span>
             <svg viewBox="0 0 24 24" width={14} height={14} aria-hidden="true">
               <path fill={YT.color} d={YT.path} />
             </svg>
@@ -65,7 +65,14 @@ export function StepOne({ d, setD, err, touch }: Props) {
       <label className="mt-5 block">
         <span className={LABEL}>YouTube video URL</span>
         <input
-          type="url"
+          // type="text", NOT type="url" (2026-08-13). The browser enforces its OWN constraint on a
+          // url input and it demands a scheme, so `asdas.com` — or any perfectly good
+          // `youtube.com/watch?v=...` — was rejected by a native bubble before our validator ran at
+          // all. That bubble also cannot be styled, cannot be positioned, and speaks in the browser's
+          // words rather than ours, which on a design library is three problems in one.
+          // inputMode="url" is kept: it is what actually earns the URL keyboard on a phone, and unlike
+          // the type it carries no validation of its own.
+          type="text"
           inputMode="url"
           value={d.url}
           onChange={(e) => setD((p) => ({ ...p, url: e.target.value }))}
@@ -104,17 +111,21 @@ export function StepOne({ d, setD, err, touch }: Props) {
               <label key={a} className="cursor-pointer select-none">
                 <input type="checkbox" checked={on} onChange={() => toggleAction(a)} className="peer sr-only" />
                 <span
-                  className={`flex items-center gap-1.5 rounded-card border px-2.5 py-1.5 text-[12px] font-medium capitalize transition-all duration-base ease-out-bai peer-focus-visible:ring-2 peer-focus-visible:ring-iris/30 peer-focus-visible:ring-offset-2 ${
+                  className={`flex min-h-[44px] items-center gap-1.5 rounded-card border px-3.5 py-2.5 text-[12px] font-medium capitalize transition-all duration-base ease-out-bai peer-focus-visible:ring-2 peer-focus-visible:ring-[rgba(var(--cb-accent-rgb),0.30)] peer-focus-visible:ring-offset-2 ${
                     on
-                      ? 'border-[rgba(var(--bai-iris-rgb),0.35)] bg-[rgba(var(--bai-iris-rgb),0.07)] text-iris'
+                      ? 'border-[rgba(var(--cb-accent-rgb),0.38)] bg-[rgba(var(--cb-accent-rgb),0.07)] text-[var(--cb-accent)]'
                       : err.actions
                         ? 'border-status-danger text-ink-body-2'
                         : 'border-divider text-ink-muted hover:border-stroke-warm hover:text-ink-body-2'
                   }`}
                 >
-                  {/* The check occupies its slot whether or not it's shown, so selecting a chip
-                      doesn't widen it and shuffle the two beside it. */}
-                  <span className="flex w-3 justify-center">{on && <Check size={11} />}</span>
+                  {/* NO CHECK, AND NO SLOT FOR ONE (designer, 2026-08-13). The mark used to sit in a
+                      permanently reserved w-3 box so that selecting a chip wouldn't widen it and
+                      shuffle its neighbours. That worked, at the price of every UNSELECTED chip
+                      showing an empty indent where its glyph wasn't. Colour already says "on" three
+                      times over here — border, fill and ink all change — so the tick was a second
+                      signal for one state paid for with a hole in the other. Same fix as the
+                      creators' ChoiceGroup chips; see that file. */}
                   {a}
                 </span>
               </label>
@@ -136,7 +147,9 @@ export function StepTwo({ d, setD, err, touch }: Props) {
 
   return (
     <>
-      <div className="grid grid-cols-2 gap-3">
+      {/* Single column below sm: at 320 these were 98px each, and the date trigger alone needs ~145px
+          of content (glyph + gap + "Pick a day" + chevron). */}
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Money
           label="Campaign budget"
           value={d.budget}
@@ -163,7 +176,7 @@ export function StepTwo({ d, setD, err, touch }: Props) {
         </span>
       )}
 
-      <div className="mt-5 grid grid-cols-2 gap-3">
+      <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
         <DateField
           label="Start date"
           value={d.start}
@@ -203,8 +216,8 @@ export function StepThree({ d, setD }: Props) {
       <div>
         <span className={LABEL}>Target country</span>
         <div className="mt-2 flex flex-wrap items-center gap-3">
-          <span className="flex items-center gap-1.5 rounded-card border border-[rgba(var(--bai-iris-rgb),0.35)] bg-[rgba(var(--bai-iris-rgb),0.07)] px-2.5 py-1.5 text-[12px] font-medium text-ink-heading">
-            <span className="flex w-3 justify-center text-iris"><Check size={11} /></span>
+          <span className="flex items-center gap-1.5 rounded-card border border-[rgba(var(--cb-accent-rgb),0.38)] bg-[rgba(var(--cb-accent-rgb),0.07)] px-2.5 py-1.5 text-[12px] font-medium text-ink-heading">
+            <span className="flex w-3 justify-center text-[var(--cb-accent)]"><Check size={11} /></span>
             {d.country}
           </span>
           <span className="text-[11px] text-ink-muted">More countries coming soon.</span>

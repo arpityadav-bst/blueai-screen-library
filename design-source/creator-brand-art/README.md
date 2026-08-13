@@ -16,7 +16,17 @@ from gone, with no backup anywhere. That is the whole reason they are committed.
 | `creator-01-apply.png` | `public/creator-brand/steps/creator-01-apply.webp` | WebP q90 |
 | `creator-02-selected.png` | `public/creator-brand/steps/creator-02-selected.webp` | WebP q90 |
 | `creator-03-setup-blueai.png` | `public/creator-brand/steps/creator-03-setup-blueai.webp` | WebP q90 |
-| `creator-04-earn-monthly.png` | `public/creator-brand/steps/creator-04-earn-monthly.webp` | WebP q90 |
+| `creator-04-earn-monthly.png` | `public/creator-brand/steps/creator-04-earn-monthly.webp` | background retone, then WebP q90 |
+| `hero-mobile-creators.png` | `public/creator-brand/creator-00-hero-mobile.webp` | WebP q90, no retone |
+| `hero-mobile-brands.png` | `public/creator-brand/brand-workflow-engagement-mobile.webp` | WebP q90, no retone |
+
+The two mobile ones (2026-08-13) are dedicated portrait compositions (1086x1448, 3:4), not crops of the
+desktop landscape heroes — the desktop asset shrunk to a ~340px mobile width read as a ~190-220px
+sliver, too small to work as a hero. Both are served through a `<picture>` with a `min-width: 640px`
+`<source>`, so only one of the two ever downloads per visit (see `heroImageMask.ts` and each `Hero.tsx`
+for why this couldn't be two `next/image`s toggled by a display class). Neither needed the retone the
+first hero did — both measured inside the mask's tolerance straight out of the box: creators at
++0.08/+0.27 left/right, brands at +0.47/+0.28.
 
 ## The hero's retone, and why it is not optional
 

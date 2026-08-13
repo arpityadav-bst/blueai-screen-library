@@ -5,7 +5,15 @@ import ChoiceGroup from '../../controls/ChoiceGroup'
 import CheckField from '../../controls/CheckField'
 import { INPUT, LABEL } from '../../controls/fieldClasses'
 import { FieldError, withErr } from '../../forms'
-import { DESCRIBES, FULL_RUN, OPERATING_SYSTEMS, RAM, YES_NO, type Draft } from './spec'
+import type { Draft } from './spec'
+import { DESCRIBES_OPTS, FULL_RUN_OPTS, HAS_YT_OPTS, YES_NO_CHIPS } from './options'
+import Long from './Long'
+import StepIntro from './StepIntro'
+
+// Re-exported so ApplyForm.tsx keeps its existing `import { StepIntro, StepOne, ... } from './Steps'`
+// — StepIntro's own implementation moved to StepIntro.tsx (2026-08-13) to keep this file under the
+// 300-line rule, same pattern as Long.tsx and options.tsx.
+export { StepIntro }
 
 type Props = {
   d: Draft
@@ -29,14 +37,30 @@ function choiceSetter({ setD, touch }: Props) {
   }
 }
 
+// ONE GAP VALUE BETWEEN DISTINCT QUESTIONS, EVERYWHERE IN THIS FILE — EXCEPT STEP 4 (designer,
+// 2026-08-13). Was a mix of mt-5 and mt-6 depending on which step you were looking at, with no reason
+// for the difference — which is itself why step 5 read as a wall of text: an unrelated question
+// started only 20px after the previous one's hint ended, the same distance as the hint sits from ITS
+// OWN field (ChoiceGroup's internal mt-2/mt-2.5 gaps). Same distance for "this belongs together" and
+// "this is a new question" is what makes two things look like one. mt-7 (28px) is that one value, on
+// every wrapper that separates one question from the next — deliberately looser than any gap INSIDE a
+// question, so the eye can tell the two kinds of space apart without reading the words.
+//
+// StepFour is the one deliberate exception (Appy, 2026-08-13): it carries four groups against every
+// other step's two or three, which made it the one step whose own content ran past the shared
+// min-height floor. Its own gaps were brought down to mt-5 (20px) specifically to buy that height
+// back — still clearly looser than a gap INSIDE a question, just not as loose as the rest of the form.
+// See StepFour's own comment for the reasoning; don't copy mt-5 into another step without the same
+// height pressure that justified it here.
+
 export function StepOne(p: Props) {
   const { d, setD, err } = p
   const pick = choiceSetter(p)
   return (
     <>
-      {/* The gate first, and phrased as the reader's own statement ("I'm 18 or older") rather than
-          as an instruction to confirm something. It is the one question that can end the
-          application, so it is not buried under the profile question. */}
+      {/* The gate first, and phrased as the reader's own statement ("I'm 18 or older") rather than as
+          an instruction to confirm something. It is the one question that can end the application, so
+          it is not buried under the profile question. */}
       <CheckField
         checked={d.adult}
         onChange={(v) => {
@@ -48,12 +72,20 @@ export function StepOne(p: Props) {
         I&apos;m 18 or older.
       </CheckField>
 
-      <div className="mt-6">
+      <div className="mt-7">
+        {/* CARDS, THREE-UP NOT ONE-PER-ROW (designer, 2026-08-13) — five options arranged 2-up
+            (mobile) / 3-up (desktop) rather than chips or a one-per-row stack, so "Student" keeps the
+            icon and the weight a "who you are" question deserves without costing a whole extra screen
+            of height. columns={3} is what drives 2-up on mobile via ChoiceGroup's own breakpoint table
+            (not a new mechanism) — see the 'wide' fix in ChoiceGroup.tsx for the lone 5th card that
+            falls out of that grid. */}
         <ChoiceGroup
           label="What best describes you?"
           name="apply-describes"
+          variant="cards"
+          columns={3}
           value={d.describes}
-          options={DESCRIBES}
+          options={DESCRIBES_OPTS}
           onChange={pick('describes')}
           err={err.describes}
         />
@@ -70,26 +102,34 @@ export function StepTwo(p: Props) {
       <ChoiceGroup
         label="Do you have a YouTube account?"
         name="apply-has-youtube"
+        variant="cards"
         value={d.hasYouTube}
-        options={YES_NO}
+        options={HAS_YT_OPTS}
         onChange={(v) => {
-          // Answering "No" clears whatever was typed, so a link can't be submitted alongside a
-          // "No" — a stale value behind a changed answer is the kind of contradiction that reaches
-          // the reviewer looking like real data.
+          // Answering "No" clears whatever was typed, so a link can't be submitted alongside a "No".
+          // A stale value behind a changed answer is the kind of contradiction that reaches the
+          // reviewer looking like real data.
           p.touch('hasYouTube')
           setD((prev) => ({ ...prev, hasYouTube: v, channel: v === 'Yes' ? prev.channel : '' }))
         }}
         err={err.hasYouTube}
       />
 
-      {/* Rendered only when it applies. A disabled-but-visible field still reads as work left
-          undone, and "paste your channel link" is unanswerable for someone who just said they
-          don't have a channel. YouTube is the only live platform, so a "No" is not a rejection —
-          the copy below says so rather than leaving the reader to guess. */}
+      {/* Rendered only when it applies. A disabled-but-visible field still reads as work left undone,
+          and "paste your channel link" is unanswerable for someone who just said they don't have a
+          channel. YouTube is the only live platform, so a "No" is not a rejection, and the copy below
+          says so rather than leaving the reader to guess. */}
       {hasChannel ? (
-        <label className="mt-6 block">
+        <label className="mt-7 block">
           <span className={LABEL}>Paste your channel or handle link</span>
           <input
+            // iOS otherwise gives the default keyboard and autocapitalises this to "Youtube.com/@…",
+            // and autocorrect mangles handles. The campaign form already solved it for its URL field.
+            type="text"
+            inputMode="url"
+            autoCapitalize="none"
+            autoCorrect="off"
+            spellCheck={false}
             value={d.channel}
             onChange={(e) => setD((prev) => ({ ...prev, channel: e.target.value }))}
             onBlur={() => p.touch('channel')}
@@ -100,9 +140,9 @@ export function StepTwo(p: Props) {
         </label>
       ) : (
         d.hasYouTube === 'No' && (
-          <p className="mt-6 rounded-card border border-divider bg-white px-4 py-3 text-[13px] leading-relaxed text-ink-body-2">
-            That&apos;s fine. YouTube is the only platform live today, so campaigns will be limited
-            for now. Instagram, TikTok, X and Reddit are next.
+          <p className="mt-7 rounded-field border border-divider bg-surface px-4 py-3.5 text-[13px] leading-relaxed text-ink-body-2">
+            That&apos;s fine. YouTube is the only platform live today, so campaigns will be limited for
+            now. Instagram, TikTok, X and Reddit are next.
           </p>
         )
       )}
@@ -111,40 +151,7 @@ export function StepTwo(p: Props) {
 }
 
 export function StepThree(p: Props) {
-  const { d, err } = p
-  const pick = choiceSetter(p)
-  return (
-    <>
-      {/* Both hardware questions live together because they answer one thing: can this person
-          actually run BlueAI. The RAM hint says why it is being asked, which is the difference
-          between a reasonable question and a nosy one. */}
-      <ChoiceGroup
-        label="What operating system does your computer run?"
-        name="apply-os"
-        value={d.os}
-        options={OPERATING_SYSTEMS}
-        onChange={pick('os')}
-        err={err.os}
-      />
-
-      <div className="mt-6">
-        <ChoiceGroup
-          label="How much RAM does it have?"
-          hint="BlueAI runs on your own machine, so this tells us what it can handle."
-          name="apply-ram"
-          value={d.ram}
-          options={RAM}
-          onChange={pick('ram')}
-          err={err.ram}
-        />
-      </div>
-    </>
-  )
-}
-
-export function StepFour(p: Props) {
   const { d, setD, err } = p
-  const pick = choiceSetter(p)
   return (
     <>
       <Long
@@ -156,68 +163,67 @@ export function StepFour(p: Props) {
         err={err.why}
       />
 
-      <div className="mt-6">
+      <div className="mt-7">
         <Long
           label="Have you earned money online before? What did you try and how did it go?"
           value={d.earnedBefore}
           onChange={(v) => setD((prev) => ({ ...prev, earnedBefore: v }))}
           onBlur={() => p.touch('earnedBefore')}
-          // "Nothing yet" being an acceptable answer is said in the placeholder AND in the
-          // validation message, because a reader who has never tried will otherwise read this as a
-          // requirement they fail rather than as a question with a short answer.
+          // "Nothing yet" being an acceptable answer is said in the placeholder AND in the validation
+          // message, because a reader who has never tried will otherwise read this as a requirement
+          // they fail rather than as a question with a short answer.
           placeholder="Nothing yet is a perfectly good answer."
           err={err.earnedBefore}
-        />
-      </div>
-
-      <div className="mt-6">
-        <ChoiceGroup
-          label="Are you okay with us reaching out to you for feedback if needed?"
-          name="apply-feedback"
-          value={d.feedbackOk}
-          options={YES_NO}
-          onChange={pick('feedbackOk')}
-          err={err.feedbackOk}
         />
       </div>
     </>
   )
 }
 
-export function StepFive(p: Props) {
+export function StepFour(p: Props) {
   const { d, setD, err } = p
   const pick = choiceSetter(p)
   return (
     <>
       <ChoiceGroup
         label="Do you have a PayPal account?"
-        hint="Payouts go out via PayPal at the end of each month."
+        hint="Payouts go out via PayPal."
         name="apply-paypal"
         value={d.hasPaypal}
-        options={YES_NO}
+        options={YES_NO_CHIPS}
         onChange={pick('hasPaypal')}
         err={err.hasPaypal}
       />
 
-      <div className="mt-6">
+      {/* OWN ROW, not the PayPal question's side-by-side partner — the PM's framing sentence is too
+          long for a half-width column without wrapping awkwardly and losing the "quick" read.
+          mt-5, NOT mt-7 (Appy, 2026-08-13) — this step carries four groups (the other three steps
+          carry two or three), which is what made it the one step that ran past the shared floor. The
+          fix here is spacing, not content: mt-7 is this file's rhythm for "distinct question" gaps
+          everywhere else, and shrinking it JUST on this step trades a little of that separation back
+          for height, on the one step that actually needs the room. Kept above zero on purpose — the
+          full-run, email and checkbox groups still read as separate things at 20px, just not as
+          loosely as the rest of the form. */}
+      <div className="mt-5">
         <ChoiceGroup
-          label="The program runs for about a month. Are you in for the full run?"
+          label="Jobs don&rsquo;t take much of your day, but this is a long-term program. Are you in for the long run?"
           name="apply-full-run"
           value={d.fullRun}
-          options={FULL_RUN}
+          options={FULL_RUN_OPTS}
           onChange={pick('fullRun')}
           err={err.fullRun}
         />
       </div>
 
-      {/* Pre-filled from the signed-in account and editable, because the question is which email
-          the reader WANTS to be contacted on — which is not necessarily the one they signed in
-          with. Pre-filling answers the common case without deciding it for them. */}
-      <label className="mt-6 block">
+      {/* Pre-filled from the signed-in account and editable, because the question is which email the
+          reader WANTS to be contacted on, which is not necessarily the one they signed in with.
+          Pre-filling answers the common case without deciding it for them. */}
+      <label className="mt-5 block">
         <span className={LABEL}>What email should we contact you on?</span>
         <input
           type="email"
           inputMode="email"
+          autoComplete="email"
           value={d.email}
           onChange={(e) => setD((prev) => ({ ...prev, email: e.target.value }))}
           onBlur={() => p.touch('email')}
@@ -227,52 +233,28 @@ export function StepFive(p: Props) {
         <FieldError>{err.email}</FieldError>
       </label>
 
-      <div className="mt-6">
+      {/* ONE CHECKBOX, NOT TWO (PM, 2026-08-13) — this replaces both the old "okay to be contacted for
+          feedback" question (step 3) and the old "okay to be emailed about the program" checkbox that
+          used to sit right here. Program Terms is styled the same way SignInDialog treats "Terms of
+          Use" / "Privacy Policy" elsewhere on this site — an underlined in-line mention, not a routed
+          link — for the same reason: there is no Program Terms page in this design-only build yet, and
+          an underline that goes nowhere is honest about that in a way a broken href would not be.
+          subtle — this is boilerplate you tick on the way out, not a decision like the age gate; see
+          CheckField's own comment on `subtle` for why it drops the bordered-card treatment. */}
+      <div className="mt-5">
         <CheckField
-          checked={d.emailConsent}
+          subtle
+          checked={d.agree}
           onChange={(v) => {
-            p.touch('emailConsent')
-            setD((prev) => ({ ...prev, emailConsent: v }))
+            p.touch('agree')
+            setD((prev) => ({ ...prev, agree: v }))
           }}
-          err={err.emailConsent}
+          err={err.agree}
         >
-          I&apos;m okay with being contacted by email about the program.
+          By applying, I agree to the <u>Program Terms</u> and I&apos;m okay with BlueStacks reaching
+          out to me about the program.
         </CheckField>
       </div>
     </>
-  )
-}
-
-// Shared long-text field. Four rows rather than three: both questions here invite two or three
-// sentences, and a box that starts scrolling on the second line reads as smaller than the answer
-// it's asking for.
-function Long({
-  label,
-  value,
-  onChange,
-  onBlur,
-  placeholder,
-  err,
-}: {
-  label: string
-  value: string
-  onChange: (v: string) => void
-  onBlur: () => void
-  placeholder: string
-  err?: string
-}) {
-  return (
-    <label className="block">
-      <span className={LABEL}>{label}</span>
-      <textarea
-        rows={4}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        onBlur={onBlur}
-        placeholder={placeholder}
-        className={withErr(`${INPUT} resize-none py-3 leading-relaxed`, err)}
-      />
-      <FieldError>{err}</FieldError>
-    </label>
   )
 }

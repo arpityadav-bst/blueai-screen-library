@@ -1,14 +1,16 @@
 'use client'
 
 import { useState } from 'react'
-import { StepOne, StepTwo, StepThree, StepFour, StepFive } from './apply/Steps'
+import { Arrow } from '@/components/Arrow'
+import { StepIntro, StepOne, StepTwo, StepThree, StepFour } from './apply/Steps'
 import { INITIAL, STEPS, STEP_FIELDS, validate, type Draft } from './apply/spec'
 import type { Errors } from '../forms'
 import CTABand from '../CTABand'
 import { useApply } from './ApplyState'
 
-// The creator application. Thirteen questions across five steps — the flow lives here, the questions
-// and their rules live in apply/spec.ts, the fields themselves in apply/Steps.tsx.
+// The creator application. Ten questions across five steps — the first of which (StepIntro) asks
+// nothing at all, it's the "About the program" summary on its own screen. The flow lives here, the
+// questions and their rules live in apply/spec.ts, the fields themselves in apply/Steps.tsx.
 //
 // SAME MACHINERY AS THE BRANDS CAMPAIGN FORM, deliberately: per-step validation, errors that only
 // appear once touched or once a submit has forced them, a never-disabled submit that reveals the
@@ -53,11 +55,11 @@ export default function ApplyForm() {
       return
     }
     if (step < LAST) {
+      // NO AUTO-SCROLL (designer, 2026-08-13) — two scroll targets were tried and removed (the page
+      // top, then #apply). Both were compensating for the box below changing size on every step; with
+      // one shared min-height across all four steps, the Continue/Submit button stays roughly where it
+      // was, so there's nothing left that needs correcting for.
       setStep((s) => s + 1)
-      // The form is a tall card in a tall page, so advancing has to bring the new step's first
-      // question back into view — otherwise step 4's two long-text boxes leave you looking at the
-      // Continue button of a step you have not read.
-      document.getElementById('apply')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
       return
     }
     setSubmitted(true)
@@ -70,67 +72,86 @@ export default function ApplyForm() {
   if (submitted) {
     return (
       <CTABand idPrefix="cbGridApplied">
-        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-circle bg-white/10 ring-1 ring-white/20">
-          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="white" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <path d="M4.5 12.5l5 5L19.5 6.5" />
-          </svg>
+        {/* SAME SIZE AS THE FORM BEFORE IT (PM, 2026-08-13) — the card was visibly shrinking on submit,
+            which reads as content disappearing rather than as a confirmation.
+            Matches the step body's floor above (460/400): py-6 top (24) + title/rail row (~26) +
+            mt-7 (28) + body (460 mobile / 400 desktop) + mt-7 (28) + buttons (52, one row at both
+            breakpoints) + py-6 (24) = 642 mobile, 582 desktop. CTABand's own py-16 is 128px (64 top +
+            64 bottom): 642-128=514 mobile, 582-128=454 desktop. flex centring keeps the actual content
+            (icon, heading, paragraph) in the middle of the box rather than pinned to its top. */}
+        <div className="flex min-h-[514px] flex-col items-center justify-center sm:min-h-[454px]">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-circle bg-white/10 ring-1 ring-white/20">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="white" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M4.5 12.5l5 5L19.5 6.5" />
+            </svg>
+          </div>
+          <h2 className="mt-5 font-head text-3xl font-bold text-white">Thanks for applying.</h2>
+          <p className="bai-body-lg mx-auto mt-3 max-w-[44ch] text-white/80">
+            We review every application and will email{' '}
+            <b className="font-semibold text-white">{d.email}</b> when your spot opens.
+          </p>
         </div>
-        <h2 className="mt-5 font-head text-3xl font-bold text-white">Thanks for applying.</h2>
-        <p className="bai-body-lg mx-auto mt-3 max-w-[44ch] text-white/70">
-          We review every application and will email{' '}
-          <b className="font-semibold text-white">{d.email}</b> when your spot opens.
-        </p>
       </CTABand>
     )
   }
 
   return (
     <div className="overflow-hidden rounded-credits border border-divider bg-white shadow-float">
-      {/* The account row IS the sign-in step made visible. Step 1 of How It Works promises "sign in
-          with your now.gg account", and without this the prototype would claim a step it never
-          shows. It is not a control — no chevron, no menu — because there is nothing to do with it
-          here; signing out is the review-only affordance in PreviewToggler. */}
-      <div className="flex items-center gap-3 border-b border-divider bg-surface px-6 py-4 sm:px-8">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-circle bg-bai-gradient text-[12px] font-bold text-white">
-          {account.initials}
-        </span>
-        <span className="min-w-0">
-          <span className="block truncate text-[14px] font-semibold text-ink-heading">{account.name}</span>
-          <span className="block truncate text-[11.5px] text-ink-muted">Signed in with now.gg</span>
-        </span>
-      </div>
-
-      <form onSubmit={submit} className="px-6 py-6 sm:px-8">
+      {/* noValidate — see CampaignForm. Our inline errors speak, not the browser's bubbles. */}
+      <form noValidate onSubmit={submit} className="px-6 py-6 sm:px-8">
         {/* ONE row: the step's title with its progress pinned to the right edge — the shape the
             campaign form's top area was reduced to on 2026-08-11, after running title → subtitle →
             full-width rail → "STEP 2 OF 5" → step-title as five stacked rows of chrome. */}
         <div className="flex items-baseline justify-between gap-4">
-          <h3 className="font-head text-[17px] font-semibold text-ink-display">{STEPS[step].title}</h3>
-          <Rail step={step} onJump={setStep} />
+          {/* h2 — the only other heading on this page is the section h1, so an h3 skipped a level. */}
+          <h2 className="font-head text-[17px] font-semibold text-ink-display">{STEPS[step].title}</h2>
+          <Rail step={step} />
         </div>
 
-        {/* Holds the card at roughly the tallest step's height so moving between steps doesn't
-            resize it. Taller than the campaign form's 300 because step 4 is two four-row textareas
-            plus a chip group. */}
-        <div className="mt-5 min-h-[352px]">
-          {step === 0 && <StepOne {...stepProps} />}
-          {step === 1 && <StepTwo {...stepProps} />}
-          {step === 2 && <StepThree {...stepProps} />}
-          {step === 3 && <StepFour {...stepProps} />}
-          {step === 4 && <StepFive {...stepProps} />}
+        {/* ONE STEP MOUNTED AT A TIME (designer, 2026-08-13) — a same-day CSS-grid version stacked all
+            steps in one shared cell so the container measured itself against real content instead of a
+            guessed number, and it produced exactly the failure that trick risks: a moment where the
+            "hidden" steps weren't actually hidden, so two steps' fields rendered on top of each other
+            at once. A broken-looking form is a strictly worse failure than one that's a little
+            inconsistent in height, so: only the current step's DOM exists, full stop — there is no way
+            for two steps to ever occupy the same pixels, CSS bug or not.
+            460/400 IS APPY'S NUMBER, NOT A RE-ESTIMATE (2026-08-13) — the generous 520/470 above made
+            the card too tall after a hard refresh ruled out stale-build as the explanation for the
+            earlier complaint, so this went back to the last values that were sized against real content
+            rather than padded defensively. It's the same floor the OLD five-step form used before the
+            PC-specs step was cut and the two consent checkboxes became one — those changes only made
+            steps shorter, not taller (the one exception, the new agree checkbox, being handled by
+            `subtle` now rather than by the floor). If a step overflows this again, that step's content
+            is the thing to trim, not this number — it's been raised twice already chasing a step
+            instead of the other way round. */}
+        <div className="mt-7 min-h-[460px] sm:min-h-[400px]">
+          {step === 0 && <StepIntro />}
+          {step === 1 && <StepOne {...stepProps} />}
+          {step === 2 && <StepTwo {...stepProps} />}
+          {step === 3 && <StepThree {...stepProps} />}
+          {step === 4 && <StepFour {...stepProps} />}
         </div>
 
+        {/* ONE ROW AT BOTH BREAKPOINTS NOW (designer, 2026-08-13). This used to stack below sm because
+            two full-width labels — "Back" and "Submit application" — couldn't both fit one mobile row
+            without the longer one wrapping to two lines. Shrinking Back to an icon (below) removes that
+            constraint instead of working around it: an icon button plus a flex-1 primary fits one row
+            at any width this form ships at, so there's one layout to maintain, not two. */}
         <div className="mt-7 flex items-center gap-3">
-          {/* Same size as the primary, both flex-1, and the primary carries a transparent border so
-              the pair matches on BOTH axes — without it the bordered secondary measures ~2px larger
-              each way, which reads as sloppy rather than as a difference. */}
           {step > 0 && (
             <button
               type="button"
               onClick={() => setStep((s) => s - 1)}
-              className="flex-1 rounded-pill border border-stroke-warm bg-white px-5 py-3.5 text-[15px] font-semibold text-ink-heading transition-all duration-base ease-out-bai hover:border-ink-heading hover:bg-surface active:scale-[0.98]"
+              // ICON-ONLY BELOW sm, full label at sm+ (designer, 2026-08-13) — same button, same
+              // handler, just what it shows. sr-only/not-sr-only keeps "Back" as the button's real
+              // accessible name at every width rather than switching to aria-label, so a screen reader
+              // hears the same thing regardless of viewport. Arrow is the site's own right-arrow glyph,
+              // reused rotated 180deg rather than drawing a second asset — its own doc comment already
+              // names this exact use ("a 'back to top' use that rotates this same glyph").
+              className="flex shrink-0 items-center justify-center gap-1.5 rounded-pill border border-stroke-warm bg-white p-3.5 text-[15px] font-semibold text-ink-heading transition-all duration-base ease-out-bai hover:border-ink-heading hover:bg-surface active:scale-[0.98] sm:flex-1 sm:px-5"
             >
-              Back
+              <Arrow size={15} className="rotate-180 sm:hidden" />
+              <span className="sr-only sm:not-sr-only">Back</span>
             </button>
           )}
           <button
@@ -153,7 +174,7 @@ export default function ApplyForm() {
  * Unfilled segments are --cb-track, NOT bg-canvas: --bai-canvas is pure white, so on a white card a
  * five-segment rail rendered as however-many-are-filled and read as "step 2 of 2".
  */
-function Rail({ step, onJump }: { step: number; onJump: (s: number) => void }) {
+function Rail({ step }: { step: number }) {
   return (
     <div className="flex shrink-0 items-center gap-2">
       <span className="cb-tabular text-[11px] font-semibold text-ink-muted">
@@ -162,14 +183,16 @@ function Rail({ step, onJump }: { step: number; onJump: (s: number) => void }) {
       </span>
       <span className="flex gap-1">
         {STEPS.map((s, i) => (
-          <button
+          // NOT A BUTTON ANY MORE (mobile pass, 2026-08-13). These were real buttons that jumped back a
+          // step, at 4px tall by 16px wide with 4px between them — 9% of the minimum touch height and
+          // by a distance the worst target in the codebase. Padding them out to 44px was the obvious
+          // fix and the wrong one: it would put five 44px hit zones in the step-title row, which at a
+          // 320px card cannot hold the title and the rail on one line.
+          // They are indicators now. Backward navigation already has a real, adequately-sized control —
+          // the Back button — so this was a duplicate affordance that only existed at an untappable size.
+          <span
             key={s.title}
-            type="button"
-            aria-label={`Step ${i + 1}: ${s.title}`}
-            aria-current={i === step ? 'step' : undefined}
-            disabled={i > step}
-            onClick={() => onJump(i)}
-            className={`h-1 w-4 rounded-pill transition-colors duration-slow ease-out-bai disabled:cursor-default ${
+            className={`h-1 w-4 rounded-pill transition-colors duration-slow ease-out-bai ${
               i <= step ? 'bg-bai-gradient' : 'bg-[var(--cb-track)]'
             }`}
           />

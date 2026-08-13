@@ -26,7 +26,7 @@ const Cross = () => (
 )
 
 const Check = () => (
-  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="mt-[4px] shrink-0 text-iris sm:mt-0" aria-hidden="true">
+  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="mt-[4px] shrink-0 text-[var(--cb-accent)] sm:mt-0" aria-hidden="true">
     <path d="M20 6 9 17l-5-5" />
   </svg>
 )
@@ -39,7 +39,7 @@ const COLS = 'sm:grid sm:grid-cols-[1.15fr_1fr_1.25fr]'
 // A flat iris tint, not bg-bai-wash. The wash is a gradient, and applying a gradient per-row
 // restarts it in every cell, six visible bands instead of one column. A flat alpha tiles
 // seamlessly, so the six cells read as a single continuous highlight down the table.
-const HILITE = 'bg-[rgba(var(--bai-iris-rgb),0.05)]'
+const HILITE = 'bg-[rgba(var(--cb-accent-rgb),0.05)]'
 
 export default function PricingTable() {
   return (

@@ -99,7 +99,7 @@ export default function CampaignForm({
         {/* Doesn't promise an email, the form doesn't collect one. Saying "we'll email you" with
             no email field is the kind of copy that outlives the UI it described. "In review" is
             the honest lifecycle: every campaign is checked before it reaches workers. */}
-        <p className="bai-body-lg mx-auto mt-2.5 max-w-[40ch] text-white/70">
+        <p className="bai-body-lg mx-auto mt-2.5 max-w-[40ch] text-white/80">
           <b className="font-semibold text-white">{d.name}</b> is in review. We check every
           campaign before it goes live; you can follow it on its report page.
         </p>
@@ -119,7 +119,7 @@ export default function CampaignForm({
         <button
           type="button"
           onClick={onClose}
-          className="mx-auto mt-4 block text-[13px] font-medium text-white/70 transition-colors duration-base hover:text-white"
+          className="mx-auto mt-4 block text-[13px] font-medium text-white/80 transition-colors duration-base hover:text-white"
         >
           Done
         </button>
@@ -134,26 +134,37 @@ export default function CampaignForm({
         sub="Nothing is charged now. You're only defining the campaign."
       />
 
-      <form onSubmit={submit} className="px-6 py-6 sm:px-8">
+      {/* noValidate: this form runs its own validation, shown inline under each field in this site's
+          own voice. Without it the browser fires a native bubble FIRST — unstyleable, differently
+          worded, and in some cases plain wrong for a design replica. The handle-lookup form has always
+          carried it; it simply never reached the two real forms. */}
+      <form noValidate onSubmit={submit} className="px-6 py-6 sm:px-8">
         {/* ONE row: the step's title, and the progress pinned to the right edge of it. This top
             area used to run dialog-title → dialog-subtitle → full-width rail → "STEP 2 OF 3" →
             step-title → step-subtitle, which is two titles and two subtitles with the progress
             wedged in the middle. Now the progress is a passenger on the line it describes. */}
         <div className="flex items-baseline justify-between gap-4">
           <h3 className="font-head text-[17px] font-semibold text-ink-display">{STEPS[step].title}</h3>
-          <Rail step={step} onJump={setStep} />
+          <Rail step={step} />
         </div>
 
         {/* min-h holds the panel at roughly step 1's height, so moving between steps doesn't
             resize the dialog, and with a dialog that's centred, a height change moves BOTH
             edges, which is far more distracting than it was in the page. */}
-        <div className="mt-5 min-h-[300px]">
+        {/* min-h is a DESKTOP stabiliser — it stops a centred dialog resizing both edges between steps.
+            On a phone the panel is already taller than the viewport and the reader is scrolling, so it
+            stabilises nothing and just burns ~120px of a short screen. */}
+        <div className="mt-5 min-h-0 sm:min-h-[300px]">
           {step === 0 && <StepOne d={d} setD={setD} err={visible} touch={touch} />}
           {step === 1 && <StepTwo d={d} setD={setD} err={visible} touch={touch} />}
           {step === 2 && <StepThree d={d} setD={setD} err={visible} touch={touch} />}
         </div>
 
-        <div className="mt-7 flex items-center gap-3">
+        {/* STACKED BELOW sm. Side by side, each button gets ~86-94px of label room at 360, and
+            "Create this campaign" needs ~140-155px — so the primary wrapped to two lines and broke the
+            equal-size pairing both files went to trouble to build. col-reverse keeps the primary
+            nearest the thumb while DOM and tab order stay unchanged. */}
+        <div className="mt-7 flex flex-col-reverse gap-3 sm:flex-row sm:items-center">
           {/* Back is a SECONDARY button now, not a bare text link, and the same size as Continue,
               both flex-1, same padding, same radius. As a tertiary text button it was a different
               species sitting next to the primary, which made the pair read as one button with a
@@ -197,7 +208,7 @@ export default function CampaignForm({
  * step whose own Continue is about to send you back anyway. The count stays as an sr-only string so
  * the tick marks aren't the only way to know where you are.
  */
-function Rail({ step, onJump }: { step: number; onJump: (s: number) => void }) {
+function Rail({ step }: { step: number }) {
   return (
     <div className="flex shrink-0 items-center gap-2">
       <span className="cb-tabular text-[11px] font-semibold text-ink-muted">
@@ -206,14 +217,16 @@ function Rail({ step, onJump }: { step: number; onJump: (s: number) => void }) {
       </span>
       <span className="flex gap-1">
         {STEPS.map((s, i) => (
-          <button
+          // NOT A BUTTON ANY MORE (mobile pass, 2026-08-13). These were real buttons that jumped back a
+          // step, at 4px tall by 16px wide with 4px between them — 9% of the minimum touch height and
+          // by a distance the worst target in the codebase. Padding them out to 44px was the obvious
+          // fix and the wrong one: it would put five 44px hit zones in the step-title row, which at a
+          // 320px card cannot hold the title and the rail on one line.
+          // They are indicators now. Backward navigation already has a real, full-width control — the
+          // Back button — so this was a duplicate affordance that only existed at an untappable size.
+          <span
             key={s.title}
-            type="button"
-            aria-label={`Step ${i + 1}: ${s.title}`}
-            aria-current={i === step ? 'step' : undefined}
-            disabled={i > step}
-            onClick={() => onJump(i)}
-            className={`h-1 w-4 rounded-pill transition-colors duration-slow ease-out-bai disabled:cursor-default ${
+            className={`h-1 w-4 rounded-pill transition-colors duration-slow ease-out-bai ${
               i <= step ? 'bg-bai-gradient' : 'bg-[var(--cb-track)]'
             }`}
           />

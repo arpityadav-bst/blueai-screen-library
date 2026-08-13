@@ -44,8 +44,11 @@ const ITEMS = [
     a: 'Each job pays a fixed amount. Earnings depend on the jobs available to you.',
   },
   {
-    q: 'When and how do I get paid?',
-    a: 'Via PayPal, at the end of each month.',
+    // Question word order swapped and the answer shortened to one word (PM, 2026-08-13): "monthly"
+    // says everything "at the end of each month" did, and it matches the same trim made to the
+    // How It Works Earn step and the application's own PayPal hint.
+    q: 'How and when do I get paid?',
+    a: 'Via PayPal, monthly.',
   },
   {
     q: 'Why is there a waitlist?',

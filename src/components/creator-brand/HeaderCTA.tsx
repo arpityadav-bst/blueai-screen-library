@@ -51,7 +51,11 @@ export default function HeaderCTA({
             // SITE'S ACCENT, --cb-accent via cb-accent-hover (creator-brand.css). Still not the
             // marketing DS's --bai-accent (#1990FF), which is load-bearing on the dormant pages — the
             // variable is .cb-scope-scoped for exactly that reason.
-            'cb-accent-hover inline-flex items-center gap-1.5 text-[15px] font-normal text-ink-muted opacity-70 transition-all hover:opacity-100'
+            // No opacity: ink-muted at 0.7 over this route's #F9F9FA composites to 3.90:1, and this is
+            // the header's only action. The gradient pill state already carries the hierarchy, so the
+            // quiet state does not need quietening twice. whitespace-nowrap stops "Create a campaign"
+            // wrapping inside its own row at 320.
+            'cb-accent-hover -mr-2 inline-flex min-h-[44px] items-center gap-1.5 whitespace-nowrap px-2 py-2.5 text-[14px] font-normal text-ink-body-2 transition-all sm:text-[15px]'
       }
     >
       {pastHeroImage && <Sparkle size={13} />}

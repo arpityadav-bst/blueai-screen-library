@@ -31,9 +31,14 @@ export default function Platforms() {
           <span className="block text-gradient italic pr-[0.2em]">Everything else is coming.</span>
         </>
       }
-      // "Apply now to be first in line", not "Join now" — there is no list to join any more, and this
-      // is the sentence that told the reader what to do about the platforms that aren't live yet.
-      intro="BlueAI runs brand campaigns on YouTube today. Instagram, TikTok, X and Reddit are next. Apply now to be first in line."
+      // Rewritten 2026-08-13 (PM). "Supports", not "runs" — softer verb for the same fact. The platform
+      // list collapses to "Everything else is coming soon" rather than naming Instagram/TikTok/X/Reddit
+      // a second time; they're already named as cards in the grid this line introduces. "Apply", not
+      // "Apply now" — this is the intro line, not a button, so the urgency belongs to the actual CTA.
+      // NBSP joins the last two words per this file's own convention (see FAQ.tsx's note, which cites
+      // this very attribute as the reason it has to be the literal character, not a &nbsp; escape) —
+      // the string itself hadn't actually been carrying one until this edit.
+      intro="BlueAI supports campaigns on YouTube today. Everything else is coming soon. Apply to be the first in line."
       bodies={BODIES}
     />
   )
