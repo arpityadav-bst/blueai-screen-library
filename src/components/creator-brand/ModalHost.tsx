@@ -1,7 +1,8 @@
 'use client'
 
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 import Modal, { ModalHeader } from './Modal'
+import BrandSignIn from './brands/BrandSignIn'
 import CampaignForm from './brands/CampaignForm'
 import PricingTable from './brands/PricingTable'
 import SignInDialog from './creators/SignInDialog'
@@ -12,18 +13,29 @@ import SignInDialog from './creators/SignInDialog'
 // closing bands, the header and the footer. One host, one open dialog, always — which is also what
 // stops two scroll locks and two focus traps from ever fighting.
 //
-// DOWN TO THREE KINDS (2026-08-13). `lookup` and `waitlist` are gone, and so is the `lookupMode`
-// state that existed only to drive the lookup's two outcomes:
-//   · `lookup` — the handle lookup and its earnings estimate were removed per the PM (screenshot item
-//     1), along with LookupFlow, EarningsReveal, ManualDetails and estimate.ts. The application is the
-//     hero's entry point now.
-//   · `waitlist` — the email capture is replaced by the application, which collects a contact email as
-//     one of its own questions.
-// Both were deleted rather than left mounted-but-unreachable. An unreachable dialog is a dialog nobody
-// reviews, and its data model quietly stops matching the product it claims to demonstrate.
+// ── MERGE NOTE (2026-08-13) ─────────────────────────────────────────────────────────────────────
+// This file was the one real conflict between PR #1 (brands campaign workflow) and the creators
+// restructure landed the same day. Both sides rewrote it from different starting points and neither
+// is a superset of the other, so this is a hand-merge — not "ours", not "theirs":
 //
-// `signin` is the one addition: the minimal now.gg sign-in the creators journey opens before the
-// application. The application form itself is NOT a dialog — it renders inline at the top of the page
+//   FROM THE CREATORS WORK — the dialog set. `lookup` and `waitlist` are gone, along with the
+//   `lookupMode` state that existed only to drive the lookup's two outcomes. The handle lookup and
+//   its earnings estimate were removed per the PM brief (LookupFlow, EarningsReveal, ManualDetails
+//   and estimate.ts are all deleted), and the waitlist email capture is replaced by the application,
+//   which collects a contact email as one of its own questions. PR #1 still carried both because it
+//   branched before that work; re-adding them here would reference four files that no longer exist.
+//
+//   FROM PR #1 — everything about brands. The campaign dialog is GATED now: a brand signs in first
+//   (BrandSignIn), the session persists in localStorage, and `?create=1` deep-links straight into the
+//   dialog from the campaign report dashboard's "+ New campaign". The dialog's size and label follow
+//   that gate, and CampaignForm receives the signed-in email.
+//
+//   `signin` is the creators-side equivalent and is deliberately SEPARATE from BrandSignIn: it is a
+//   replica of now.gg's own card gating a creator application, where BrandSignIn is a work-email
+//   panel gating a campaign. Same idea, two audiences, two designs — collapsing them into one would
+//   force one surface's visual language onto the other.
+//
+// The application form itself is NOT a dialog — it renders inline at the top of the creators page
 // once signed in (creators/ApplySection.tsx), which is the designer's architecture.
 export type ModalKind = 'campaign' | 'pricing' | 'signin'
 
@@ -48,6 +60,11 @@ export default function ModalHost({ children }: { children: ReactNode }) {
   // to live out here rather than inside the form, because the panel's background and the close
   // button's colour are the dialog's, not the form's.
   const [campaignDone, setCampaignDone] = useState(false)
+  // Brand-side session (PR #1). null = signed out; { email } = signed in, where email may itself be
+  // null for the Google stub — which is why this is an object rather than a bare string.
+  const [brand, setBrand] = useState<{ email: string | null } | null>(null)
+  const [createIntent, setCreateIntent] = useState(false)
+  const signedIn = brand !== null
 
   const open = useCallback((k: ModalKind) => {
     // Reset on OPEN, not on close: resetting on close would flip the panel back to white while the
@@ -56,6 +73,24 @@ export default function ModalHost({ children }: { children: ReactNode }) {
     setKind(k)
   }, [])
   const close = useCallback(() => setKind(null), [])
+
+  // Hydrate the stored brand sign-in, and honour ?create=1 (the dashboard's "+ New campaign"): it
+  // opens the campaign dialog immediately — at the form for a signed-in brand, at the gate otherwise.
+  // In an effect because localStorage and location do not exist server-side.
+  useEffect(() => {
+    try {
+      const v = localStorage.getItem('cb-brand-email')
+      if (v !== null) setBrand({ email: v || null })
+    } catch {
+      // Private-mode Safari throws on storage access. Staying signed out is the correct fallback and
+      // it must not take the page down with it.
+    }
+    if (new URLSearchParams(window.location.search).get('create') === '1') {
+      setCreateIntent(true)
+      open('campaign')
+    }
+  }, [open])
+
   const value = useMemo(() => ({ open, close }), [open, close])
 
   return (
@@ -67,11 +102,32 @@ export default function ModalHost({ children }: { children: ReactNode }) {
       <Modal
         open={kind === 'campaign'}
         onClose={close}
-        size="lg"
+        size={signedIn ? 'lg' : 'sm'}
         variant={campaignDone ? 'band' : 'light'}
-        label="Create a campaign"
+        label={signedIn ? 'Create a campaign' : 'Sign in to continue'}
       >
-        <CampaignForm onClose={close} onDone={() => setCampaignDone(true)} />
+        {signedIn ? (
+          <CampaignForm onClose={close} onDone={() => setCampaignDone(true)} email={brand?.email ?? null} />
+        ) : (
+          <BrandSignIn
+            onSignedIn={(email) => {
+              try {
+                localStorage.setItem('cb-brand-email', email ?? '')
+              } catch {
+                // As above — the in-memory state is what drives the UI; storage is the convenience.
+              }
+              // Signed in FROM the dashboard's create button: stay put and show the form. Signed in
+              // from the marketing page: the dashboard is the destination, so go there.
+              if (createIntent) {
+                setBrand({ email: email ?? null })
+              } else {
+                window.location.assign(
+                  `${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/creator-brand/campaign-report.html`,
+                )
+              }
+            }}
+          />
+        )}
       </Modal>
 
       {/* xl — this table has three columns and six rows of real sentences; at the form's width its
@@ -82,7 +138,7 @@ export default function ModalHost({ children }: { children: ReactNode }) {
             stub — the column was a third of the width available to it. */}
         <ModalHeader
           title={<h2 className="font-head text-[20px] font-bold text-ink-display">How pricing works</h2>}
-          sub="One flat rate per verified engagement. You set the budget and the window — BlueAI spreads it across real people and pays out only as each engagement clears."
+          sub="One flat rate per verified engagement. You set the budget and the window. BlueAI spreads it across real people and pays out only as each engagement clears."
         />
         <PricingTable />
       </Modal>

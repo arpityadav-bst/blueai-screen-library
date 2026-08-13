@@ -1,6 +1,6 @@
 // The old-way / BlueAI comparison table, on its own so the `#pricing` SECTION and the pricing
 // POPUP render the same one. The hero's "See how pricing works" opens a dialog now instead of
-// scrolling (designer, 2026-08-11) — and a dialog showing a second, hand-copied version of this
+// scrolling (designer, 2026-08-11), and a dialog showing a second, hand-copied version of this
 // table is how the two start disagreeing about what BlueAI charges for.
 //
 // No Reveal in here, deliberately: the section wraps this in one, and a scroll-triggered fade
@@ -37,14 +37,14 @@ const Check = () => (
 const COLS = 'sm:grid sm:grid-cols-[1.15fr_1fr_1.25fr]'
 
 // A flat iris tint, not bg-bai-wash. The wash is a gradient, and applying a gradient per-row
-// restarts it in every cell — six visible bands instead of one column. A flat alpha tiles
+// restarts it in every cell, six visible bands instead of one column. A flat alpha tiles
 // seamlessly, so the six cells read as a single continuous highlight down the table.
 const HILITE = 'bg-[rgba(var(--bai-iris-rgb),0.05)]'
 
 export default function PricingTable() {
   return (
     <>
-      {/* Header is desktop-only — below sm there are no columns for it to label, and the per-row
+      {/* Header is desktop-only, below sm there are no columns for it to label, and the per-row
           cross/check carry the same distinction there. */}
       <div className={`hidden border-b border-divider text-[11px] font-semibold uppercase tracking-label ${COLS}`}>
         <span className="px-6 py-3.5" />

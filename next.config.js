@@ -8,13 +8,25 @@ const nextConfig = {
     // Design-only handoff: local export assets, served unoptimized (no remote CDN).
     unoptimized: true,
   },
-  // Serve the static prototypes (public/**/index.html) at clean URLs.
-  async rewrites() {
-    return [
-      { source: '/blueai-product', destination: '/blueai-product/index.html' },
-      { source: '/blueai-desktop', destination: '/blueai-desktop/index.html' },
-    ]
-  },
+  // STATIC_EXPORT builds a fully static copy for hosts that only serve physical files (the
+  // bluestacks.ai dev/prod S3 bucket): output: 'export' + trailingSlash so every route is a
+  // real <route>/index.html, under an optional base path. Rewrites are not supported in export
+  // mode, so the clean-URL rewrites for the static prototypes exist only in the normal build.
+  ...(process.env.STATIC_EXPORT
+    ? {
+        output: 'export',
+        basePath: process.env.STATIC_EXPORT_BASE || '',
+        trailingSlash: true,
+      }
+    : {
+        // Serve the static prototypes (public/**/index.html) at clean URLs.
+        async rewrites() {
+          return [
+            { source: '/blueai-product', destination: '/blueai-product/index.html' },
+            { source: '/blueai-desktop', destination: '/blueai-desktop/index.html' },
+          ]
+        },
+      }),
 }
 
 module.exports = nextConfig

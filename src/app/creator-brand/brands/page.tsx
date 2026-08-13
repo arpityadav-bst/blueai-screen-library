@@ -16,7 +16,7 @@ export default function BrandsPage() {
         <Hero />
         <HowItWorksBrand />
         <PlatformsBrand />
-        {/* No campaign-form section any more (designer, 2026-08-11) — the form is a dialog opened
+        {/* No campaign-form section any more (designer, 2026-08-11), the form is a dialog opened
             by every "Create a campaign" CTA. It's mounted once in the layout's ModalHost. */}
         <OutcomePricing />
         <TrustSectionBrand />
