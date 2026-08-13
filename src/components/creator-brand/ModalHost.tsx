@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 import Modal, { ModalHeader } from './Modal'
 import BrandSignIn from './brands/BrandSignIn'
 import CampaignForm from './brands/CampaignForm'
@@ -45,10 +45,15 @@ export default function ModalHost({ children }: { children: ReactNode }) {
   // button's colour are the dialog's, not the form's.
   const [campaignDone, setCampaignDone] = useState(false)
   // Campaigns belong to a brand account, so the campaign dialog is gated: signed out, it renders
-  // the sign-in panel; signed in (design stub, lasts the visit), the form. The state lives here so
-  // every "Create a campaign" trigger on the page inherits the gate through the one host. The
-  // email (null on the Google stub path) rides along into the Supabase submission.
+  // the sign-in panel; signed in, the form. The state lives here so every "Create a campaign"
+  // trigger on the page inherits the gate through the one host. The email (null on the Google
+  // stub path) rides along into the Supabase submission.
+  //
+  // Sign-in persists in localStorage (design stub: localStorage is the account), because the
+  // flow now spans pages: first sign-in lands the brand on the campaign-report dashboard, and
+  // its "+ New campaign" button returns here with ?create=1 expecting to skip the gate.
   const [brand, setBrand] = useState<{ email: string | null } | null>(null)
+  const [createIntent, setCreateIntent] = useState(false)
   const signedIn = brand !== null
 
   const open = useCallback((kind: ModalKind, payload?: { handle?: string }) => {
@@ -57,6 +62,20 @@ export default function ModalHost({ children }: { children: ReactNode }) {
     if (kind === 'campaign') setCampaignDone(false)
     setState({ kind, ...payload })
   }, [])
+
+  // Hydrate the stored sign-in, and honor ?create=1 (the dashboard's "+ New campaign" button):
+  // it opens the campaign dialog immediately, at the form for a signed-in brand, at the gate
+  // otherwise. In an effect because localStorage and location do not exist server-side.
+  useEffect(() => {
+    try {
+      const v = localStorage.getItem('cb-brand-email')
+      if (v !== null) setBrand({ email: v || null })
+    } catch {}
+    if (new URLSearchParams(window.location.search).get('create') === '1') {
+      setCreateIntent(true)
+      open('campaign')
+    }
+  }, [open])
   const close = useCallback(() => setState(null), [])
   const value = useMemo(() => ({ open, close, lookupMode, setLookupMode }), [open, close, lookupMode])
 
@@ -77,7 +96,23 @@ export default function ModalHost({ children }: { children: ReactNode }) {
         {signedIn ? (
           <CampaignForm onClose={close} onDone={() => setCampaignDone(true)} email={brand?.email ?? null} />
         ) : (
-          <BrandSignIn onSignedIn={(email) => setBrand({ email: email ?? null })} />
+          <BrandSignIn
+            onSignedIn={(email) => {
+              try {
+                localStorage.setItem('cb-brand-email', email ?? '')
+              } catch {}
+              // Landing-page sign-in goes to the campaigns dashboard; a sign-in reached via the
+              // dashboard's own "+ New campaign" (?create=1) continues into the form instead,
+              // because that brand already chose to create.
+              if (createIntent) {
+                setBrand({ email: email ?? null })
+              } else {
+                window.location.assign(
+                  `${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/creator-brand/campaign-report.html`,
+                )
+              }
+            }}
+          />
         )}
       </Modal>
 
