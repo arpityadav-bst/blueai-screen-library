@@ -657,8 +657,29 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans
 }
 .bai-newitem-cancel { border: none; background: none; color: var(--bai-dim); font-family: inherit; font-size: var(--bai-fs-sm); padding: var(--bai-sp-6) var(--bai-sp-10); border-radius: var(--bai-r-md); cursor: pointer; }
 .bai-newitem-cancel:hover { background: var(--bai-hover); color: var(--bai-hover-ink); }
-.bai-newitem-create { border: none; background: var(--bai-accent); color: var(--bai-on-accent); font-family: inherit; font-size: var(--bai-fs-sm); font-weight: var(--bai-fw-700); padding: var(--bai-sp-6) var(--bai-sp-12); border-radius: var(--bai-r-md); cursor: pointer; transition: filter var(--bai-t-150); }
-.bai-newitem-create:hover { filter: brightness(1.12); }
+/* FILLED-ACTION family (declared 2026-08-11, ds-drift-check §12). Designer, on Flow B's CTA: "this
+   doesn't even look like a button unless I hover over it — is there anything DS that can work or do we
+   need a new component?" The answer was neither a new component NOR the class I had used:
+   `.bai-opt-row` is a white card with a grey border and regular weight, so at rest it reads as a LIST
+   ROW, which is exactly what it is (renderOptions/renderMenu use it for pick-one lists). Only its hover
+   turns accent, which is why it looked interactive only on hover.
+   The treatment that already existed and reads as a button at rest is this one — filled accent, inverted
+   ink, weight 700. `.bai-newitem-create` (the create-form's commit) and `.bai-chat-cta` (an action offered
+   inside a message) share it, so it lives in ONE rule rather than a lookalike copy.
+   Why FILLED and not `.bai-sk-try`'s accent-OUTLINE: Flow B's button sits directly beneath
+   `.bai-warnrow.info`, which is itself an accent wash with an accent-line border. An outlined accent
+   button under an accent-washed row is two near-identical surfaces stacked — the button would dissolve
+   into the note above it. Filled is the only one of the two that separates. */
+.bai-newitem-create, .bai-chat-cta { border: none; background: var(--bai-accent); color: var(--bai-on-accent); font-weight: var(--bai-fw-700); }
+.bai-newitem-create:hover, .bai-chat-cta:hover { filter: brightness(1.12); }
+.bai-newitem-create { font-family: inherit; font-size: var(--bai-fs-sm); padding: var(--bai-sp-6) var(--bai-sp-12); border-radius: var(--bai-r-md); cursor: pointer; transition: filter var(--bai-t-150); }
+/* Its own sizing, and the deltas are role-justified: this one is offered inside a CHAT MESSAGE, so it
+   aligns to the message column (align-self: flex-start, not stretch — a full-width bar would read as
+   docked chrome rather than something the assistant offered), sits on --bai-fs-base like the message text
+   it follows rather than the form's smaller --bai-fs-sm, and carries a glyph slot. */
+.bai-chat-cta { align-self: flex-start; display: flex; align-items: center; gap: var(--bai-sp-7); margin: var(--bai-sp-1) 0 var(--bai-sp-2); padding: var(--bai-sp-8) var(--bai-sp-12); border-radius: var(--bai-r-md); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: var(--bai-fs-base); cursor: pointer; transition: filter var(--bai-t-150); }
+.bai-chat-cta svg { flex-shrink: 0; }
+.bai-chat-cta .cta-sub { font-weight: var(--bai-fw-500); opacity: 0.72; }   /* the "Free · installs in the background" line — same ink, de-emphasised by opacity so it can't drift from the label's colour */
 /* Create is disabled until every field the CHOSEN MODE actually requires is filled. This is what
    communicates "required" on this form, instead of the live product's asterisk on six of seven
    labels — a marker on almost every field marks nothing (rule 38: a signal must earn its slot
@@ -1353,7 +1374,40 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans
 .bai-warnrow { align-self: stretch; display: flex; align-items: flex-start; gap: var(--bai-sp-7); padding: var(--bai-sp-9) var(--bai-sp-11); margin: var(--bai-sp-1) 0 var(--bai-sp-2); background: color-mix(in srgb, var(--bai-credit-mid) 20%, transparent); border: 1px solid color-mix(in srgb, var(--bai-credit-mid) 48%, transparent); border-radius: var(--bai-r-md); }
 .bai-warnrow svg { flex-shrink: 0; margin-top: var(--bai-sp-1); color: var(--bai-credit-mid); }
 .bai-warnrow span { font-size: var(--bai-fs-sm); line-height: var(--bai-lh-145); color: var(--bai-text); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+/* INFO variant (2026-08-11) — a MODIFIER, not a second row component: identical structure, identical
+   metrics, only the colour channel changes, which is rule 41's own prescription (a distinction already
+   carried by colour must not be re-encoded in anything with layout side-effects). Ported from
+   blueai-product's "needs BlueStacks" bubble, and its reasoning is the part worth keeping: nothing has
+   gone WRONG and nothing failed — the task simply cannot start until a dependency exists. Amber would
+   read as a problem with the user's request, which is a different claim. `.bai-warnrow`'s own accent-wash
+   recipe is reused at the same 20%/48% strengths so the two rows read as one family at two severities. */
+/* CORRECTED same day, designer asked "where is its DS coming from? is this bg color font color all good?"
+   — and the honest answer was no. The first version read `color-mix(--bai-accent 20%)` for the fill and
+   `color-mix(--bai-accent 48%)` for the border, which I produced by copying `.bai-warnrow`'s amber recipe
+   and swapping the hue. Mechanical, not considered: the amber row uses color-mix BECAUSE no amber token
+   pair exists, whereas the accent has had `--bai-accent-wash` + `--bai-accent-line` all along — the exact
+   pair `.bai-sk-try` already uses for an accent surface. Measured consequence: my fill was 20% against the
+   DS's own 10%, so this row rendered at DOUBLE the saturation of every other accent surface in the app,
+   and its border was an alpha of the accent where the DS uses a solid desaturated blue (#b7cdf2 in light).
+   Now on the tokens. Gate 0/Gate 1 failure on my part — a new value invented where a token existed. */
+.bai-warnrow.info { background: var(--bai-accent-wash); border-color: var(--bai-accent-line); }
+.bai-warnrow.info svg { color: var(--bai-accent); }
+/* Progress bar, EXTRACTED 2026-08-11 (Gate 3, threshold 2). The Hybrid-AI download had this recipe inline
+   in a JS template string; Flow B's install needs the same thing, and two usages is the extraction
+   threshold — so it becomes a class and BOTH call sites use it rather than a second copy drifting from the
+   first. `--bai-r-xs` and `--bai-input-bg`/`--bai-accent` are the values that inline version already used;
+   nothing was re-picked. Width is the one thing the caller sets, because it is data, not style. */
+.bai-progbar { height: 6px; border-radius: var(--bai-r-xs); background: var(--bai-input-bg); overflow: hidden; }
+.bai-progbar-fill { height: 100%; background: var(--bai-accent); transition: width var(--bai-t-150) linear; }
 .bai-donecard { align-self: stretch; margin: var(--bai-sp-1) 0 var(--bai-sp-2); padding: var(--bai-sp-9) var(--bai-sp-11); display: flex; flex-direction: column; gap: var(--bai-sp-3); background: color-mix(in srgb, var(--bai-ok) 9%, var(--bai-card-2)); border: 1px solid color-mix(in srgb, var(--bai-ok) 35%, var(--bai-line)); border-radius: var(--bai-r-md); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+/* WORKING variant (2026-08-11) — same modifier discipline as .bai-warnrow.info above: the card's whole
+   anatomy (stretch, padding, gap, uppercase label head, body line) is already right for an in-progress
+   task, so only the colour changes from --bai-ok to --bai-accent. A green-headed card that says
+   "INSTALLING" would be claiming completion. Ported from blueai-product's ProgressBubble, which is where
+   the "no modal, it lives in the conversation" decision came from — the app stays fully usable while this
+   ticks, which is the actual point of putting it in the chat. */
+.bai-donecard.working { background: color-mix(in srgb, var(--bai-accent) 9%, var(--bai-card-2)); border-color: color-mix(in srgb, var(--bai-accent) 35%, var(--bai-line)); }
+.bai-donecard.working .dc-head { color: var(--bai-accent); }
 .bai-donecard .dc-head { display: flex; align-items: center; gap: var(--bai-sp-5); color: var(--bai-ok); font-size: var(--bai-fs-sm); font-weight: var(--bai-fw-700); letter-spacing: var(--bai-ls-0_3px); }
 .bai-donecard .dc-body { color: var(--bai-text-strong); font-size: var(--bai-fs-base); line-height: var(--bai-lh-145); }
 /* Batch 5: feedback thumbs on completed tasks, + reason chips on thumbs-down */
@@ -1533,6 +1587,20 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans
    label-left/control-right row (scrollWidth 260px > clientWidth 210px). Stack label above a full-width,
    equal-flex segmented group instead — same card width, no clipping. */
 .bai-preview-row-stacked { flex-direction: column; align-items: stretch; gap: var(--bai-sp-5); }
+/* CHECK row (designer, 2026-08-11: "instead of NO and YES in state toggler can we have simple checkbox
+   with their name in a single row"). Replaces two `previewSegRow`s — and the designer's instinct is right
+   for a reason worth writing down: No/Yes is a segmented control, which is the shape for a choice BETWEEN
+   options. Installed-ness is not a choice between two things, it is a fact that is either true or not, and
+   there were two independent facts sharing a label. A checkbox says "this is on" in one glyph, so both
+   flags fit one row and the row needs no label at all — the names ARE the labels.
+   Gate 8.2: the UNCHECKED state is the recurring blind spot on this primitive, so the empty box keeps a
+   visible 1px edge against the panel's own dark surface rather than relying on fill alone to be seen. */
+.bai-preview-checks { display: flex; align-items: center; gap: var(--bai-sp-12); flex-wrap: wrap; }
+.bai-preview-check { display: flex; align-items: center; gap: var(--bai-sp-6); border: none; background: none; padding: 0; cursor: pointer; font-family: inherit; font-size: var(--bai-fs-sm); font-weight: var(--bai-fw-700); color: #8190ad; white-space: nowrap; transition: color var(--bai-t-130); }
+.bai-preview-check:hover { color: #cdd6f4; }
+.bai-preview-check .box { flex-shrink: 0; width: 13px; height: 13px; border-radius: var(--bai-r-xs); border: 1px solid rgba(255,255,255,0.28); display: flex; align-items: center; justify-content: center; color: transparent; transition: background var(--bai-t-130), border-color var(--bai-t-130), color var(--bai-t-130); }
+.bai-preview-check.on { color: #eaf0ff; }
+.bai-preview-check.on .box { background: #2a4a86; border-color: #2a4a86; color: #eaf0ff; }
 .bai-preview-seg.stretch { flex-shrink: 1; width: 100%; }
 .bai-preview-seg.stretch button { flex: 1; padding-left: var(--bai-sp-3); padding-right: var(--bai-sp-3); text-align: center; }
 

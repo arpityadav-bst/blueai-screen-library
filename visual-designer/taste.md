@@ -4,7 +4,9 @@ its own runtime gate, `icon-target-audit.js`) +rule 49 (align a mixed-height row
 content-length change) +rule 50, added at the POST-CLOSE promotion (an action row's layout is decided by label
 FIT, not button count; and "committing action sits right" is an ORDER rule, so it does not apply to a lone
 action — designer-taught, and it overturned a well-argued independent-review finding) — Session 17.
-Earlier: 2026-08-04 (+rule 47 (group by role not adjacency; depth as hierarchy — designer-taught over
++rule 51, Session 18 (a control's shape is set by the shape of its DATA — a choice BETWEEN options is a seg,
+an independent boolean is a checkbox; two booleans are not a four-way choice — designer-taught on the install
+flags). Earlier: 2026-08-04 (+rule 47 (group by role not adjacency; depth as hierarchy — designer-taught over
 two rounds) — header on every touch per the Session-15 lesson, since a stale date here is what let this file
 go two sessions unread before). Earlier: 2026-08-03 (+rule 46 (a wrapper's correctness is a function of what
 it wraps) + rule 38's fail-to-fire clause corrected — the Session-15 audit pass). 2026-08-01 (+rule 45 (create-affordance placement ground theory, designer-taught over five rounds); +rule 44 (concentric nested radii, designer-taught); +rules 42 (choice-control copy) & 43 (deliberate one-offs); Q2/Q3 answers added to 38-40 per the promotion rule; rule 41 restated as a MECHANISM — non-layout vs layout-affecting channels — after an independent audit judged the first widening had generalised the title but not the trigger; cross-linked to rule 38; rule 39's stale radius count corrected). 2026-07-25 (SCOPE PIVOT, designer directive — see note below. +rule 38 (divider redundancy),
@@ -656,6 +658,36 @@ springy bounces) — "a utility assistant, not a toy."
     *Sibling:* rule 41. Both concern a signal that only means something in contrast — 41 says don't re-encode a
     distinction a cheaper channel already carries; 50 says don't apply a POSITIONAL convention when there is
     nothing to contrast the position against.
+
+51. **A control's SHAPE is set by the shape of its DATA, not by how many values it happens to have. A choice
+    BETWEEN mutually-exclusive options is a segmented control; an independent fact that is either true or not
+    is a checkbox. Two booleans are not a four-way choice, and a boolean is not a two-option pick.**
+    The tell that this has gone wrong is a control that renders correctly and still asks the wrong question.
+    A No/Yes segmented pair is a legitimate control — for a genuine either/or. Point it at a boolean and it
+    silently reframes a *fact* as a *decision between two alternatives*, which costs a label ("BlueStacks:
+    No/Yes" needs a name for the row AND names for both values), costs width, and — when there are two
+    independent booleans — implies the pair is one setting with four modes rather than two facts that happen
+    to sit together. A checkbox states "this is on" in a single glyph, so it needs no value labels at all and
+    the ITEM's name becomes the row's only label.
+    *(blueai-desktop, 2026-08-11: the Preview panel's install flags. Built as two `previewSegRow`s —
+    "BlueStacks · No/Yes", "BlueAI · No/Yes" — because the product's own panel used a two-value control and I
+    matched it without asking what the data was. Designer: "instead of NO and YES in state toggler can we
+    have simple checkbox with their name in a single row." Both flags now fit ONE row with no row label. The
+    designer's instinct was about tidiness; the reason it is right is semantic.)*
+    *Where else this applies:* a "dark mode On/Off" seg (a boolean — checkbox or switch); a set of feature
+    flags rendered as a row of segs; a single seg used for a yes/no confirmation; and the inverse error, which
+    is just as real — a checkbox list used for options that are mutually exclusive, where a radio group or seg
+    is correct because ticking two is meaningless.
+    *What would stop it firing:* counting VALUES instead of reading the data's shape. "It has two states,
+    therefore a two-option control" is the exact substitution this rule exists to catch — a boolean and an
+    either/or both have two states and want different controls. Also: copying a control from a reference
+    implementation without asking what its data is, which is how this one arrived.
+    *Sibling:* rule 42 governs the COPY inside a choice control (labels name, one explainer describes); this
+    governs which control to reach for in the first place. Read 51 to pick the control, 42 to write it.
+    *And a boundary worth stating:* a switch/toggle is also a boolean control, and the difference from a
+    checkbox is immediacy — a switch implies the change takes effect NOW, a checkbox can be one of several
+    selections you confirm later. These flags apply instantly, so `.bai-tgl` would have been defensible too;
+    checkbox was the designer's call and both are semantically honest, unlike the seg.
 
 ## Open corrections log
 *SCOPE PIVOT (2026-07-25, designer directive) — superseding the S8 standing scope note below: **the

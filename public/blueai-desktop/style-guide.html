@@ -563,6 +563,16 @@
           <button class="bai-newitem-cancel" type="button">Cancel</button>
         </div>
       </div>
+
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.bai-chat-cta</span> <span class="sg-cls">.cta-sub</span><span class="sg-role">An action the assistant OFFERS inside a message — currently Flow B's "Get BlueStacks". A member of the <strong>filled-action family</strong> with <code>.bai-newitem-create</code>: one base rule owns the fill, the inverted ink and the weight, so the two cannot drift (<code>ds-drift-check</code> §12). Each keeps only role-justified sizing.
+        <strong>It replaced <code>.bai-opt-row</code>, and the reason is a Gate 2 correction worth keeping.</strong> The designer's report was "this doesn't even look like a button unless I hover over it" — correct, and the cause was that I matched the SHAPE (a single actionable thing in a message, exactly like <code>renderUpload</code>'s "Attach file") while ignoring the ROLE. <code>.bai-opt-row</code> is a pick-one <em>list row</em>; its resting state is a white card with a grey border <em>because that is what a list row should look like</em>, and only its hover turns accent. An install is a commit, not an option in a list. Matching a component because it appears in the same place is the role-vs-family error already on record in <code>reasonings.md</code>.
+        <strong>Why filled rather than <code>.bai-sk-try</code>'s accent outline:</strong> this button sits directly beneath <code>.bai-warnrow.info</code>, which is itself an accent wash with an accent-line border. An outlined accent button under an accent-washed row is two near-identical surfaces stacked, and the button dissolves into the note above it. Filled is the only one of the two that separates.
+        <strong>Deltas from its family sibling, each with a reason:</strong> <code>align-self: flex-start</code> so it aligns to the message column rather than stretching (a full-width bar would read as docked chrome, not something offered in conversation); <code>--bai-fs-base</code> to match the message text it follows rather than the form's smaller <code>--bai-fs-sm</code>; and a glyph slot. <code>.cta-sub</code> de-emphasises the secondary line by <em>opacity</em> rather than a second colour token, so it can never drift from the label's ink.</span></div>
+        <div class="sg-canvas bai-scope" style="align-items:flex-start;">
+          <button class="bai-chat-cta" type="button" data-icon="plus" data-size="13"><span>Get BlueStacks</span><span class="cta-sub">Free · installs in the background</span></button>
+        </div>
+      </div>
     </section>
 
     <section class="sg-sec" id="cards">
@@ -768,12 +778,19 @@
       </div>
 
       <div class="sg-spec">
-        <div class="sg-spechead"><span class="sg-cls">.bai-warnrow</span> <span class="sg-cls">.bai-donecard</span> <span class="sg-cls">.bai-errorcard</span><span class="sg-role">Amber warning row, green completion, red failure. Each is a status, not an action. <strong>Convention:</strong> the head is a glyph + ALL-CAPS status (<code>✓ TASK COMPLETED</code>, <code>✕ ERROR</code>), the body is a sentence.</span></div>
+        <div class="sg-spechead"><span class="sg-cls">.bai-warnrow</span> <span class="sg-cls">.info</span> <span class="sg-cls">.bai-donecard</span> <span class="sg-cls">.working</span> <span class="sg-cls">.bai-errorcard</span> <span class="sg-cls">.bai-progbar</span><span class="sg-role">Amber warning row, green completion, red failure. Each is a status, not an action. <strong>Convention:</strong> the head is a glyph + ALL-CAPS status (<code>✓ TASK COMPLETED</code>, <code>✕ ERROR</code>), the body is a sentence.
+        <strong>Two MODIFIERS added 2026-08-11, both colour-only.</strong> <code>.bai-warnrow.info</code> and <code>.bai-donecard.working</code> change the colour channel and <em>nothing</em> else — same padding, same gaps, same anatomy — which is rule 41's own prescription: a distinction already carried by colour must not be re-encoded in anything with layout side-effects. They are modifiers rather than new components for exactly that reason.
+        <strong>Why <code>.info</code> is blue and not amber.</strong> It carries "this task can't start until a dependency exists" — nothing has gone WRONG and nothing failed. Amber would assert a problem with the user's request, which is a different claim. Ported with that reasoning from blueai-product's "needs BlueStacks" bubble. <strong>Why <code>.working</code> exists:</strong> a green-headed card reading "INSTALLING" would be claiming completion.
+        <strong>And <code>.info</code>'s values were CORRECTED the same day</strong> (designer: "where is its DS coming from? is this bg color font color all good?"). The first version used <code>color-mix(--bai-accent 20%)</code> / <code>48%</code>, produced by copying the amber row's recipe and swapping the hue — mechanical, not considered. The amber row uses <code>color-mix</code> <em>because no amber token pair exists</em>; the accent has had <code>--bai-accent-wash</code> + <code>--bai-accent-line</code> all along, the same pair <code>.bai-sk-try</code> uses. Measured: the fill was rendering at 20% against the DS's own 10%, i.e. <strong>double the saturation of every other accent surface in the app</strong>, with a border built as an alpha of the accent where the DS uses a solid desaturated blue. Now on the tokens. A token existed and a new value was invented anyway — Gate 0/Gate 1.
+        <strong><code>.bai-progbar</code> was EXTRACTED, not authored</strong> (Gate 3, threshold 2). The Hybrid-AI download had this exact recipe inline in a JS template string; Flow B's install needed the same bar, and two usages is the extraction threshold — so both call sites now share the class. Its values are the ones that inline version already used; nothing was re-picked. Only <code>width</code> stays inline on <code>.bai-progbar-fill</code>, because that is data, not style.</span></div>
         <div class="sg-canvas bai-scope sg-col sg-narrow">
           <div class="bai-warnrow sg-w" data-icon-warn><span>You've used all your credits.</span></div>
+          <div class="bai-warnrow info sg-w" data-icon-info><span>This one runs inside BlueStacks App Player. I drive YouTube there, and BlueStacks isn&rsquo;t installed on this PC yet.</span></div>
+          <div class="bai-donecard working sg-w"><div class="dc-head">INSTALLING</div><div class="dc-body">Getting ready 62%</div><div class="bai-progbar"><div class="bai-progbar-fill" style="width:62%"></div></div></div>
           <div class="bai-donecard sg-w"><div class="dc-head">✓ TASK COMPLETED</div><div class="dc-body">Done — everything completed successfully.</div></div>
           <div class="bai-errorcard sg-w"><div class="ec-head">✕ ERROR</div><div class="ec-body">Something went wrong while running that. Please try again.</div></div>
         </div>
+        <p class="sg-secnote"><strong>Out of scope, deliberately:</strong> BlueStacks' own "Meet BlueAI" install dialog (Flow A — BlueStacks present, BlueAI not) is <em>not</em> documented here and is exempt from every gate, including the two runtime audits. It is third-party chrome: at that moment BlueAI is not installed, so none of this design system exists on the machine and the software talking is BlueStacks. Designer's ruling, 2026-08-11. It lives in <code>bs-install-dialog.js</code>, carries every style inline at BlueStacks' own values (never <code>--bai-*</code>), and contributes zero rules to <code>blueai-desktop.css</code> — so the exclusion is structural rather than an exemption list. This note exists so a reader who has seen that dialog and cannot find it here learns that was intentional.</p>
       </div>
 
       <div class="sg-spec">
@@ -1709,6 +1726,11 @@
     el.innerHTML = icon(el.getAttribute('data-icon'), parseInt(el.getAttribute('data-size') || '14', 10)) + el.innerHTML;
   });
   document.querySelectorAll('[data-icon-warn]').forEach(function (el) { el.innerHTML = icon('warn', 14) + el.innerHTML; });
+  // `info`, for .bai-warnrow.info — added 2026-08-11 with that modifier. Goes through icon() like every
+  // other glyph on this page (§11: the guide hand-authors zero svg bodies), rather than reusing
+  // data-icon-warn, which would have put the wrong glyph in the specimen — a wrong-but-valid icon is the
+  // failure §9 exists for, and it is invisible to any check that only asks "is this a real icon?".
+  document.querySelectorAll('[data-icon-info]').forEach(function (el) { el.innerHTML = icon('info', 14) + el.innerHTML; });
 
   // ---- token table. Values are READ from the live stylesheet, never typed here. ----
   var GROUPS = [

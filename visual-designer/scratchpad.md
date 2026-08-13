@@ -15,51 +15,25 @@ Format: `YYYY-MM-DD HH:mm — <file> — <what changed> — Why: <one phrase>`
 
 --- Pending audit entries ---
 
-*(EMPTY. The Session-17 POST-CLOSE promotion pass, 2026-08-11, drained all 10 rows on the designer's request
-for a second proper close. Promoted to: **10 `decisions.md` rows** under their own "Session 17 POST-CLOSE"
-heading. **[COUNT CORRECTED — this said "9" when first written, and the pushed commit message still says 9.**
-The arithmetic I did in my head was: 10 scratchpad rows, the tour's two collapse into one, therefore 9. I then
-split the `--bai-pill`-fixed-a-defect-that-didn't-exist lesson into its own row *while writing the table* —
-deliberately, because that lesson outlives the code — and never re-derived the total. So 10 − 1 + 1 = 10.
-**This is the "a tidy number standing in for a checked one" failure, committed inside the very pass that
-codified it as the top recurring category** — see `reasonings.md`'s "a record that asserts 'open', 'all', or a
-count is a claim, and it expires." Found by running `grep -c` on the table instead of trusting the sentence.
-The rule it proves: derive counts from the artifact, never from the plan you had for the artifact.]**
-The tour's two rows DID collapse into one decision, since the second superseded the first and a decisions row
-records the decision that stands, not the path to it; **taste rule 50** (an action row's layout
-is decided by label FIT, not button count, and "committing action sits right" is an ORDER rule that cannot
-apply to a lone action — this one overturned a well-argued independent-review finding, so it is recorded
-against the review as well as the code); and **4 `reasonings.md` principles** — a constant that is secretly a
-SUM breaks when one of its terms stops existing (a THREE-instance family: `.bai-list-body`'s 2px,
-`.bai-subpane`/`.bai-tour`'s 84px, and S16's one-theme philosophy — consolidated into one entry rather than a
-third fresh instance, exactly as this file's own note recommended); fixing an unreproduced defect introduces
-one; a gate with standing false positives has already stopped being a gate; and a record asserting
-"open"/"all"/a count is a claim that expires.
+*(EMPTY. The Session-18 audit pass, 2026-08-11, drained all 9 rows. Promoted to: **11 `decisions.md` rows**
+under a "Session 18" heading (11 not 9 — three rows were split out because their lessons outlive the code:
+the invented-`.info`-values correction, the structural-exclusion mechanism, and the three driven-only defects
+grouped as one row. Count derived from `grep -c` on the finished table, not from the plan — see the
+"a record that asserts a count" principle, which this pass exists partly because of); **taste rule 51** (a
+control's shape is set by the shape of its DATA — a choice BETWEEN options is a seg, an independent boolean is
+a checkbox, and two booleans are not a four-way choice); **1 new `reasonings.md` principle** (a preparatory
+step that leaves an artifact behind feels like the work and stops being checked) plus **two existing entries
+widened** — role-vs-family gained a THIRD shape where the false family was INTERACTION SHAPE and Gate 2 itself
+pointed at the wrong component, and "before painting over something that looks empty" gained its MIRROR case
+(removing an opaque layer something relied on to stay hidden); **1 new `knowledge-base.md` trap** (a throw
+inside requestAnimationFrame surfaces nowhere in the UI) plus the `d || DEFAULT` trap widened to cover
+declaration order, which is the same "cannot express its own absence" mechanism; and a new
+**`project-insights.md`** section for the install state and the `.bs-*` boundary.
 
-Gate 6.5 was run on every row. It produced one BOUNDARY that mattered: rule 50 versus rule 41 — both concern a
-signal that only means something in contrast, so 50 cross-references 41 rather than restating it. It also
-confirmed two rows needed NO new rule: `.bai-preview-seg`'s radius is rule 44 under rule 46's mechanism (a
-nesting relationship whose correctness changed when a layout change made the buttons reach the track's
-corners — the first time those two rules have interacted, noted on the decisions row instead of a new rule),
-and the dialog-body colour is a plain consistency fix with no transferable principle beyond what rule 38's
-family already covers.
-
-`knowledge-base.md` deliberately not touched this pass: every mechanism promoted here has a home in
-`reasonings.md`, and a fourth telling is the duplication the Session-15 audit already flagged as unhealthy.
-
-Nothing is carried forward. The "Designer's call" section below is closed — all four of its questions were
-decided 2026-08-11 and their decisions are now in `decisions.md`.)*
-
-*(Session 17's audit pass, 2026-08-11, promoted 31 entries — 17 rows into `decisions.md`, taste rules
-48 and 49 (48 shipping with its own runtime gate, `icon-target-audit.js`), 6 `reasonings.md` principles, 3
-`knowledge-base.md` traps (first touch since 2026-08-01), the notification-surface taxonomy + z-layer
-inventory + the `#scaler` coordinate-space fact into `project-insights.md`, and `evolution.md`/`session-logs.md`
-brought current with `designer_caught_count: 9` and a new top recurring category — "a property nobody measured
-is a property nobody checked; if a design rule can be expressed as a number, it needs a gate, not a paragraph."
-`style-guide.html` was synced inline on every edit throughout, per this project's inverted-Gate-5 contract, so
-the audit had no style-guide backlog to sweep — two documentation gaps found during the audit's own review were
-fixed then: the toast's prose was stale after the last two critique rounds, and the Preview panel's `-stacked`
-row variant had never been specimen'd despite predating this session.)*
+Gate 6.5 on every row. It produced one BOUNDARY: rule 51 vs rule 42 — 42 governs the COPY inside a choice
+control, 51 governs which control to reach for, so 51 cross-references rather than restates. And one
+deliberate NON-promotion: the switch-vs-checkbox distinction is recorded as a boundary clause inside rule 51
+rather than its own rule, because both are semantically honest here and only the seg was wrong.)*
 
 --- Designer's call — ALL FOUR RESOLVED 2026-08-11. Nothing open here. ---
 
@@ -90,8 +64,12 @@ row variant had never been specimen'd despite predating this session.)*
    sit at 15px. `project-insights.md`'s layout-system section has been rewritten accordingly, including the
    consequence: form width 264 → 260px, its fourth revision.
 
-*(Nothing is carried forward from this section. The four decisions live as pending rows above and promote to
-`decisions.md` at the next audit pass.)*
+*(Nothing is carried forward from this section. **All four are now IN `decisions.md`** — promoted at the
+Session-17 POST-CLOSE pass, verified by grep at the Session-18 pass rather than assumed. This line previously
+read "live as pending rows above and promote at the next audit pass," which went stale the moment that
+promotion ran: the rows it pointed at are gone and the promotion it predicted has happened. Caught by
+checking, and worth leaving visible as a fourth instance of the same thing — a record that describes a FUTURE
+step keeps asserting it after the step is taken.)*
 
 --- Prior audit history ---
 

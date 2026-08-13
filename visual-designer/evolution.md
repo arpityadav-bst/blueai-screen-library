@@ -1,5 +1,8 @@
 # blueAI — Evolution
-Last updated: 2026-08-11 (S17 added — a 12-item batch + 3 critique rounds on one surface;
+Last updated: 2026-08-11 (S18 added — the install flows; `designer_caught_count: 6`, and FOUR of the six are
+one mechanism, which is the new top recurring category: **resemblance is not a reason** — I matched things by
+resemblance (a recipe, a shape, a control, an asset copy) without checking the resemblance was the right axis,
+and in one case Gate 2 itself pointed at the wrong component. Earlier: S17 added — a 12-item batch + 3 critique rounds on one surface;
 `designer_caught_count: 9`, the highest recorded, and the reason is diagnostic rather than alarming — see the
 S17 section. Earlier: 2026-08-04 (S16 added — designer_caught_count: 5, the top recurring category changed; see the
 new S16 section for what it is and why it matters). Earlier: 2026-08-03 (S13-S15 added — this file was TWO SESSIONS BEHIND and an audit caught it; the stale "rules 38-41" enumeration replaced with a pointer; the current top recurring category corrected. Earlier: S9-S12 era added
@@ -343,3 +346,45 @@ actually said, not against what it said when written.
 Demoted to second: *a property nobody measured is a property nobody checked — if a design rule can be
 expressed as a number, it needs a gate, not a paragraph* (still live; two of this session's rules now have
 gates). Third: S16's *verify the blast radius, not just the stated property*. Neither is retired.
+
+## S18 (2026-08-11) — the install flows: four of six catches were the SAME reuse error
+
+`designer_caught_count: 6`, not rounded down. In order: (1) install toggles should have been checkboxes, not
+No/Yes segs; (2) the player stayed visible with BlueStacks uninstalled; (3) `.bai-warnrow.info`'s colours were
+INVENTED when the accent token pair already existed — measured at double the saturation of every other accent
+surface in the app; (4) the Flow B CTA didn't read as a button at rest; (5) three frame PNGs copied and never
+referenced; (6) hiding the player exposed a blank, unbooted drawer.
+
+**FOUR of those six are one mechanism, and it is the top category now: I matched something by resemblance and
+never checked that the resemblance was the RIGHT one.** The `.info` row copied the amber row's `color-mix`
+recipe — which exists only because no amber token pair does. The CTA copied `.bai-opt-row`'s shape, which is a
+pick-one *list row*, for a commit action. The checkboxes copied blueai-product's two-value control without
+asking what the underlying data was (two independent booleans, not a four-way choice). The frames were copied
+and the copying *felt* like the wiring.
+
+**The sharpest part: in the CTA case I explicitly invoked Gate 2 — "reuse the established component" — and the
+gate pointed me at the wrong component.** So this is not a case of skipping a gate; it is a gate that
+under-specifies. Gate 2 says reuse; it does not say which resemblance counts. **New top recurring category:
+resemblance is not a reason — before reusing anything, name what it is you are matching (values? shape?
+position? role?) and check that THAT is the axis that matters.** Role-vs-family already covered part of this
+and now carries a third instance with the new width named (*same position, same number of parts* is a family,
+not a role); the `.info` values are its token-level twin (a recipe copied along with the constraint that
+justified it, into a context without that constraint).
+
+Demoted to second: S17's *the notebook is the weak surface, not the product — a tidy number is the tell*
+(still live, and this pass derived its own count by grep because of it, then found a fourth stale-record
+instance in the scratchpad's closing line). Third: *a property nobody measured is a property nobody checked*.
+Neither retired.
+
+**Counter-evidence of growth, and it is substantial.** The VDA-boundary analysis — which flow is ours, which
+is not, and why that follows from "the drawer IS BlueAI" — was reasoned out and confirmed with the designer
+BEFORE any code, which is the first time a structural question on this surface has been settled up front
+rather than corrected after. The exclusion was made **structural** (nothing for the gate to see) rather than
+an exemption list. Gate 3's extraction threshold was honoured unprompted, including migrating the existing
+call site. A nonexistent `download` icon was caught pre-ship by verifying the name instead of trusting a `||`
+fallback. And both self-caught defects were found by reading the CONSOLE rather than re-reading my own logic,
+which is the only search that finds a thrown async callback.
+
+**Phase 2 HOLDS; Phase-3 streak stays at zero.** Six catches is not low. But the failure mode has moved from
+"didn't measure" to "matched the wrong thing", and that is a reasoning error rather than a verification gap —
+harder to gate, which is why it goes to the top of the watch list rather than into a script.

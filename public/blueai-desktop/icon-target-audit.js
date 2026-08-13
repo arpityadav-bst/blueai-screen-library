@@ -43,6 +43,13 @@ const SCAN = (label) => {
   [...document.querySelectorAll(sel)].forEach(el => {
     if (!el.offsetParent) return;
     if (el.closest('#baiPreview')) return;                       // dev-only panel, not product surface
+    /* BLUESTACKS' OWN CHROME — out of this design system entirely, so out of this gate too (designer's
+       ruling, 2026-08-11: the install dialog "shouldn't be a part of any Audit or style guide or DS or
+       VDA for blueAI desktop"). Its buttons are 26×26 BlueStacks icon buttons at BlueStacks' own metrics;
+       judging them against rule 48's floor would be measuring third-party software against our rules and
+       reporting the mismatch as our defect. This is a REAL exemption, not a convenience one — which is why
+       it names the boundary prefix rather than a single id: `.bs-*` means "not ours". */
+    if (el.closest('.bs-ui, #bsInstallHost, .bs-window')) return;
     const r = el.getBoundingClientRect();
     if (r.width < 1 || r.height < 1) return;
     const cs = getComputedStyle(el);

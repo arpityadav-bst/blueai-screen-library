@@ -1,5 +1,10 @@
 # blueAI — Reasonings
-Last updated: 2026-08-11 (POST-CLOSE promotion: +4 more principles — a constant that is secretly a SUM breaks
+Last updated: 2026-08-11 (Session 18: +1 principle — a preparatory step that leaves an artifact behind feels
+like the work and stops being checked (three PNGs copied and never referenced; the completion test is a
+reference count, not the file's existence); widened "match the fix to the surface's ROLE" with a THIRD shape
+where the false family was INTERACTION SHAPE and Gate 2 itself pointed at the wrong component; and added the
+MIRROR case to "before painting over something that looks empty" — removing an opaque layer something relied
+on to stay hidden. Earlier the same day, POST-CLOSE promotion: +4 more principles — a constant that is secretly a SUM breaks
 when a term stops existing; fixing an unreproduced defect introduces one; a gate with standing false positives
 has stopped being a gate; and a record asserting "open"/"all"/a count is a claim that expires. That last one
 came from three false records found in a single session, all of them prose about my own bookkeeping and none of
@@ -53,6 +58,22 @@ grouped correctly, depth (lighter vs. darker) is what expresses which group is c
 content — the group that reads lighter sits above/in front, the darker group recedes. → taste rule 47.
 **Widened test:** before pairing two surfaces' treatment, ask whether the resemblance is ROLE (do they do
 the same job?) or merely FAMILY — and adjacency, like visual similarity, is a family, not a role.
+
+**A THIRD shape, and the "family" this time was INTERACTION SHAPE (blueai-desktop, 2026-08-11).** Flow B needed
+a button offered inside a chat message, so I reached for `.bai-optg > .bai-opt-row` — and my justification was
+explicitly Gate 2: this app already renders a single actionable thing inside a message that exact way
+(`renderUpload`'s "Attach file" — a glyph badge, a label, a sub-line). The shape matched perfectly. The role
+did not: **`.bai-opt-row` is a pick-one LIST ROW**, and its resting state is a white card with a grey border
+*because that is what a list row should look like* — only its hover turns accent. An install is a commit, not
+an option in a list. The designer's report was the symptom exactly: *"this doesn't even look like a button
+unless I hover over it."*
+**What makes this instance worth adding rather than a repeat:** the previous two were resemblances I noticed
+passively (it *looks* like a plancard; it *sits above* the chat). This one I actively argued for on
+reuse-discipline grounds, and the gate I cited — "reuse the established component" — is the one that pointed
+me at the wrong component. **Gate 2 tells you to reuse; it does not tell you WHICH resemblance counts.** So
+the widened test now has a third entry: visual similarity is a family, adjacency is a family, and
+*"appears in the same position and has the same number of parts"* is a family too. Only "answers the same
+question for the user" is a role.
 
 ## A signal is a repeat, not a first, unless it earns its slot
 
@@ -327,10 +348,28 @@ and the ONLY reason any of that was ever visible is that nothing opaque sat on t
 header a flat background silently deleted that animation from the user's view, with no error anywhere —
 the canvas kept rendering perfectly, just invisibly.
 
+**THE MIRROR CASE — REMOVING an opaque layer something relied on to stay HIDDEN (blueai-desktop,
+2026-08-11).** This principle was written about adding a covering layer. It fires just as hard in reverse,
+and the reverse is easier to miss because "hide this element" sounds like a subtraction with no blast
+radius. The install-state work hid the BlueStacks player window when BlueStacks isn't installed — correct
+in itself. But `.drawer`'s CLOSED state was never CSS-hidden: it sits at `left: 100%` translated back
+-290px, i.e. 710px into a 1000px composition — *directly behind the opaque player image*. Its hiddenness
+was **occlusion by a sibling**, not a property of its own. Hiding the player exposed an unbooted, blank
+white window, and the designer saw it immediately.
+
+**Generalised: an element's apparent visual state can be produced entirely by a NEIGHBOUR, and nothing in
+that element's own CSS records the dependency.** Grepping `.drawer`'s rules would never reveal that it
+depends on `.bs-window` being opaque and on top. So the test cuts both ways: before making an element
+opaque, ask what needs to show through it; before hiding or removing one, ask **what was relying on it to
+cover something**. A second lesson came free — the exposed state was also a DEAD END, because the only
+affordance that opens the drawer is clicking the player, so "player hidden + drawer closed" had nothing to
+interact with and no way out. When you remove a surface, check whether it was the only route to something.
+
 **How to apply:** before adding an opaque background/covering layer to an element that currently has
 none, grep for what ELSE might be relying on that transparency — a canvas underneath, a positioned sibling
 peeking through, a `mix-blend-mode` effect. "It's currently transparent" is not evidence that it's *safe*
-to make opaque; it's only evidence that nothing is declared to stop you. **Sibling test, same shape:**
+to make opaque; it's only evidence that nothing is declared to stop you. And symmetrically: "this element
+is currently invisible" is not evidence that its own CSS makes it so. **Sibling test, same shape:**
 "new verification tooling is wrong until diffed against something known-good" (above) checks whether a
 CHECK sees enough; this checks whether a CHANGE reaches further than what was verified — a fix that only
 confirms the property it touched (background color) can still break a property it never thought to look
@@ -541,5 +580,32 @@ has since actually said, not against what the marker said when written. *Where e
 "deferred" note in a decisions row; any freshness header. *What would stop it firing:* checking whether the
 individual items are accurate rather than whether the SET is still the set — every item in that open-questions
 section was accurately described; all four had simply been answered.
+
+## A preparatory step that leaves an artifact behind feels like the work, and stops being checked
+
+I copied three BlueStacks screenshots into `assets/bluestacks/` so the install flow could cycle the player
+through its cold-start frames — and then never wrote a line that referenced any of them. All three sat on
+disk with **zero references** while the install snapped the old static image back on. The designer asked
+"you didn't get that installing bluestacks image from other blueAI product?" and a `grep -c` answered it in
+one command.
+
+The mechanism is that the preparatory step **produced a visible, checkable artifact** — files in a folder,
+with the right names, the right dimensions, verifiably copied. That artifact resembles progress closely
+enough that the step it was preparing for never got its own verification. **An unused asset is
+indistinguishable from a used one until something renders it**, and "the file is there" is evidence about
+the file, not about the screen.
+
+**Where else this exact shape appears:** a token defined and never referenced; a CSS class written for
+markup that was never given it; a config key added that nothing reads; a dependency installed and never
+imported; a function written and never called; a gate authored and never run (which is its own entry above,
+and the same mechanism — the gate FILE existing felt like the gate working). Every one leaves a legitimate
+artifact and none of them do anything.
+
+**How to apply:** after any acquisition or scaffolding step — copying assets, adding tokens, creating a
+file — the completion test is a **reference count in the consuming code**, not the artifact's existence.
+`grep -c` is the whole check and it takes one command. And treat the good feeling of a completed
+preparatory step as the signal to run it, not as evidence you can skip it.
+*What would stop it firing:* reading it as being about ASSETS. It is about any step whose output is
+inspectable but inert.
 
 *(New entries accumulate at audit passes.)*
