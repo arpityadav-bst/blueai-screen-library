@@ -4,8 +4,8 @@ import { useState } from 'react'
 import Reveal from '../Reveal'
 import ApplyButton from './ApplyButton'
 import PixelRain from './PixelRain'
+import ScrollCue from './ScrollCue'
 import TiltImage from './TiltImage'
-import { HERO_IMAGE_MASK } from '../heroImageMask'
 
 // Slim proof-point cards, scattered near the hero's edges (same device as the social-rewards
 // hero's Reddit-post collage). Quiet by default (low opacity, hairline border) — on hover each
@@ -66,6 +66,7 @@ function EdgeCard({ c }: { c: (typeof EDGE_CARDS)[number] }) {
 // you're in. Nothing here needs to know that; it just no longer owns the page top unconditionally.
 export default function Hero() {
   return (
+    <>
     <section id="hero" className="relative overflow-hidden px-6 pb-24 pt-10 sm:pt-14">
       <PixelRain className="z-0" />
 
@@ -174,18 +175,25 @@ export default function Hero() {
                 height={941}
                 fetchPriority="high"
                 loading="eager"
-                // Same mask as the brands hero — see heroImageMask.ts. This asset's own background
-                // delta measured WORSE than the brands one (up to 8.7 luma units near the bottom
-                // edge), so it carried the identical hard-seam bug even though nobody had flagged
-                // it here yet. The mask is percentage-based (75%/52% of the ELEMENT's own box), so it
-                // re-derives correctly for the mobile source's different aspect ratio without changes.
-                className="aspect-[1086/1448] w-full object-contain sm:aspect-[1672/941] sm:h-auto"
-                style={{ maskImage: HERO_IMAGE_MASK, WebkitMaskImage: HERO_IMAGE_MASK }}
+                // Same vignette class as the brands hero — see heroImageMask.ts + creator-brand.css's
+                // .cb-hero-vignette (a box-shadow now, not a mask, see that rule's comment for why).
+                // Desktop's fade (sm and up) matches the brands hero's: this asset's own background
+                // delta measured WORSE than the brands one on that source (up to 8.7 luma units near
+                // the bottom edge), so it carried the identical hard-seam bug even though nobody had
+                // flagged it here yet. Below sm the vignette is smaller — the mobile source's own
+                // measured edge delta (+0.08/+0.27) barely needs any fade at all.
+                className="aspect-[1086/1448] w-full object-contain sm:aspect-[1672/941] sm:h-auto cb-hero-vignette"
               />
             </picture>
           </TiltImage>
         </Reveal>
       </div>
     </section>
+
+    {/* SIBLING of the section, not a child — see ScrollCue.tsx for why (overflow-hidden above
+        would clip it). Same conditional scope as the hero itself: this whole component only
+        renders signed-out, so the cue disappears exactly when the hero does. */}
+    <ScrollCue />
+    </>
   )
 }

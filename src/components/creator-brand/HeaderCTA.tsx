@@ -22,6 +22,11 @@ import type { NavAudience } from './nav'
 // popover carrying the account identity and Log out. It replaced an inert avatar+name row whose only
 // route out of the signed-in state was the review-only PreviewToggler — which is fine for a reviewer
 // and wrong for the flow being reviewed.
+//
+// THE TWO CTA BUTTONS ARE `hidden lg:...` NOW (2026-08-13) — MobileMenu.tsx is what shows below
+// `lg`, carrying the same action inside its own popover alongside the nav row mobile never had.
+// The AccountMenu branch is deliberately NOT hidden — it's compact enough to stay on screen at
+// every width, and MobileMenu itself renders nothing in that state (see its own comment).
 export default function HeaderCTA({
   active,
   pastHeroImage,
@@ -46,7 +51,7 @@ export default function HeaderCTA({
           ? // Past the hero image, this becomes the primary CTA — the canonical Sparkle + label +
             // Arrow pattern (DownloadCta.tsx), same gradient pill as the hero's own button, so it
             // reads as THE action once that one scrolls by.
-            'inline-flex items-center gap-1.5 rounded-pill bg-cta-gradient px-4 py-2 text-[14px] font-semibold text-white shadow-cta transition-all hover:-translate-y-0.5 hover:shadow-cta-hover'
+            'hidden items-center gap-1.5 rounded-pill bg-cta-gradient px-4 py-2 text-[14px] font-semibold text-white shadow-cta transition-all hover:-translate-y-0.5 hover:shadow-cta-hover lg:inline-flex'
           : // Over the hero, stay quiet — the hero's own CTA is already the focus. Hover is THIS
             // SITE'S ACCENT, --cb-accent via cb-accent-hover (creator-brand.css). Still not the
             // marketing DS's --bai-accent (#1990FF), which is load-bearing on the dormant pages — the
@@ -55,7 +60,7 @@ export default function HeaderCTA({
             // the header's only action. The gradient pill state already carries the hierarchy, so the
             // quiet state does not need quietening twice. whitespace-nowrap stops "Create a campaign"
             // wrapping inside its own row at 320.
-            'cb-accent-hover -mr-2 inline-flex min-h-[44px] items-center gap-1.5 whitespace-nowrap px-2 py-2.5 text-[14px] font-normal text-ink-body-2 transition-all sm:text-[15px]'
+            'cb-accent-hover -mr-2 hidden min-h-[44px] items-center gap-1.5 whitespace-nowrap px-2 py-2.5 text-[14px] font-normal text-ink-body-2 transition-all lg:inline-flex sm:text-[15px]'
       }
     >
       {pastHeroImage && <Sparkle size={13} />}

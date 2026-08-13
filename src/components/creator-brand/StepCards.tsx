@@ -195,13 +195,24 @@ export default function StepCards({ heading, steps }: Props) {
   }, [steps.length])
 
   return (
-    <div ref={pinRef} className="relative py-20 lg:flex lg:min-h-screen lg:items-center lg:py-0">
+    // py-20 → py-10 BELOW lg (Appy, 2026-08-13) — this section's mobile padding, and the title
+    // block's own min-height right below, were both sized for the DESKTOP pinned sequence: py-0
+    // there because min-h-screen + centring does the real spacing, and the title's 46vh gave it
+    // "a screen to itself before the cards arrive" as the pin's opening beat. Neither of those
+    // reasons exists below lg — matchMedia gates the whole pin to `(min-width: 1024px)`, so a phone
+    // never scrubs through this section, it just scrolls past a static heading and some stacked
+    // cards. Carrying the desktop numbers over anyway is what made this read as an oversized gap
+    // between the sections either side of it, on both pages (StepCards is shared). Still real
+    // section padding, just not sized for an animation that doesn't run here.
+    <div ref={pinRef} className="relative py-10 lg:flex lg:min-h-screen lg:items-center lg:py-0">
       <div
         ref={titleRef}
-        className="flex min-h-[46vh] items-center justify-center px-6 text-center lg:absolute lg:inset-0 lg:min-h-0"
+        className="flex items-center justify-center px-6 py-6 text-center lg:absolute lg:inset-0 lg:min-h-0 lg:py-0"
       >
         {/* Hero scale (5xl/6xl), not section scale — it owns a screen to itself before the cards
-            arrive, the way it did as the sequencer's opening beat.
+            arrive on desktop, the way it did as the sequencer's opening beat. Below lg it's just
+            this section's heading (see the mobile-padding note above), py-6 rather than the
+            desktop pin's 46vh "own screen".
 
             26ch, not 22ch. A `ch` box holds roughly 1.2x its value in average characters, so 22ch held
             ~26 — and the brands heading's first clause ("No PR team. No negotiating.") is 27, which

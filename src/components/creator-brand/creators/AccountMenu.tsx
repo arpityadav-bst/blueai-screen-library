@@ -109,6 +109,14 @@ export default function AccountMenu() {
           <div className="px-2.5 pb-2 pt-1">
             <span className="block truncate text-[11.5px] text-ink-muted">{account.email}</span>
           </div>
+          {/* bg-surface at rest (added 2026-08-13) — this had NO background until hovered, so the
+              one actionable row in the menu looked like plain text next to the email line above it
+              rather than a control. surface is a deliberately fainter step than the hover tint
+              (#F7FAFF vs --cb-hover's #E9EDF6) — enough to read as "this is a button" without
+              competing with the real hover/active feedback.
+              justify-center (added same edit) — icon + label were left-aligned in a panel wider
+              than either needs, which reads as flush-left-by-neglect rather than a deliberate
+              layout. Centred as a pair, same as a normal button's contents would be. */}
           <button
             type="button"
             role="menuitem"
@@ -116,7 +124,7 @@ export default function AccountMenu() {
               setOpen(false)
               signOut()
             }}
-            className="flex min-h-[44px] items-center gap-2 rounded-card px-2.5 py-3 text-left text-[13px] text-ink-body-2 transition-colors duration-fast ease-out-bai hover:bg-[var(--cb-hover)] hover:text-ink-heading active:bg-[var(--cb-hover)]"
+            className="flex min-h-[44px] items-center justify-center gap-2 rounded-card bg-surface px-2.5 py-3 text-[13px] text-ink-body-2 transition-colors duration-fast ease-out-bai hover:bg-[var(--cb-hover)] hover:text-ink-heading active:bg-[var(--cb-hover)]"
           >
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="shrink-0">
               <path d="M15 4h3.5A1.5 1.5 0 0 1 20 5.5v13A1.5 1.5 0 0 1 18.5 20H15M10 8l-4 4 4 4M6 12h9" />

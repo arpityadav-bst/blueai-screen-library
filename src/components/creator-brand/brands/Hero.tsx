@@ -4,8 +4,8 @@ import { useState } from 'react'
 import Reveal from '../Reveal'
 import { ModalCTA, ModalTextLink } from '../OpenModal'
 import PixelRain from '../creators/PixelRain'
+import ScrollCue from '../creators/ScrollCue'
 import TiltImage from '../creators/TiltImage'
-import { HERO_IMAGE_MASK } from '../heroImageMask'
 
 // Same edge-card device as the creators hero, brand-side proof points.
 const EDGE_CARDS = [
@@ -51,6 +51,7 @@ function EdgeCard({ c }: { c: (typeof EDGE_CARDS)[number] }) {
 
 export default function Hero() {
   return (
+    <>
     <section id="hero" className="relative overflow-hidden px-6 pb-24 pt-10 sm:pt-14">
       <PixelRain className="z-0" />
 
@@ -103,19 +104,30 @@ export default function Hero() {
                 // asset the same way before assuming the mask still covers it: this file's own background
                 // delta was checked only at its 4px border (a near-best-case sample) before the full
                 // row-by-row profile caught the real gap.
+                //
+                // MOBILE SOURCE gets a smaller vignette below sm (2026-08-13, .cb-hero-vignette in
+                // creator-brand.css — a box-shadow now, not a mask, see that rule's comment for why)
+                // — its own measured edge delta (+0.47/+0.28) is tiny, nowhere near the desktop
+                // asset's 2-8 units, so the same wide fade was fading real image for no reason on
+                // that source specifically.
                 src="/creator-brand/brand-workflow-engagement-mobile.webp"
                 alt="A brand's campaign going live, engagement being verified, and payment settling automatically."
                 fetchPriority="high"
                 loading="eager"
                 width={1672}
                 height={941}
-                className="aspect-[1086/1448] w-full object-contain sm:aspect-[1672/941] sm:h-auto"
-                style={{ maskImage: HERO_IMAGE_MASK, WebkitMaskImage: HERO_IMAGE_MASK }}
+                className="aspect-[1086/1448] w-full object-contain sm:aspect-[1672/941] sm:h-auto cb-hero-vignette"
               />
             </picture>
           </TiltImage>
         </Reveal>
       </div>
     </section>
+
+    {/* SIBLING of the section, not a child — see ScrollCue.tsx for why (overflow-hidden above
+        would clip it). This page has no signed-in variant, so it's unconditional here, but the
+        component still lives with the creators one since both heroes share it. */}
+    <ScrollCue />
+    </>
   )
 }

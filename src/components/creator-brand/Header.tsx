@@ -7,6 +7,7 @@ import { Wordmark } from '@/components/Wordmark'
 import { Arrow } from '@/components/Arrow'
 import { HEADER_NAV } from './nav'
 import HeaderCTA from './HeaderCTA'
+import MobileMenu from './MobileMenu'
 
 // Shared by both nav shapes so the row can't end up with two slightly different quiet-link treatments.
 const NAV_LINK =
@@ -237,8 +238,11 @@ export default function Header() {
         <div className="flex items-center gap-4">
           {/* Three outcomes now (creators signed-in shows an account chip instead of a CTA), so the
               branch lives in its own component rather than as a nested ternary inside this row — see
-              HeaderCTA.tsx. It also keeps this file under the 300-line rule. */}
+              HeaderCTA.tsx. It also keeps this file under the 300-line rule.
+              MobileMenu is the desktop nav row + this same CTA, collapsed into one hamburger below
+              `lg` — see that file for why it renders nothing for a signed-in creator. */}
           <HeaderCTA active={active} pastHeroImage={pastHeroImage} />
+          <MobileMenu active={active} />
         </div>
       </div>
     </header>

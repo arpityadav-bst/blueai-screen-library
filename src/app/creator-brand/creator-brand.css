@@ -192,6 +192,30 @@
   will-change: transform;
 }
 /* Content rides above the backdrop. The header owns z-50 already. */
+
+/* ── Scroll cue (ScrollCue.tsx) — hero to steps section, desktop only ──
+   Reimplements a supplied Lottie ("mouse-scrolling.json": a mouse outline, a short line inside it
+   that slides down and eases back, looping ~1.7s) as a plain SVG + CSS keyframe rather than adding
+   a lottie-web/lottie-react dependency for one small two-shape loop — this codebase already prefers
+   hand-rolled motion primitives for exactly this reason (PixelRain, TiltImage). Not a bezier-exact
+   copy of the source file's easing, just the same read: a dot travels down inside the outline, fades
+   near the bottom, and resets to the top.
+   Colour is --cb-accent (`currentColor` on the SVG, set via text colour in ScrollCue.tsx) — the
+   source file's own stroke was a hardcoded dark navy, which is a fixed colour this route doesn't
+   have a token for and isn't the accent Appy asked for it to use. */
+@keyframes cb-scroll-dot {
+  0% { transform: translateY(0); opacity: 1; }
+  70% { transform: translateY(13px); opacity: 0; }
+  71% { transform: translateY(0); opacity: 0; }
+  100% { opacity: 1; }
+}
+.cb-scroll-dot {
+  animation: cb-scroll-dot 1.8s ease-in-out infinite;
+  transform-origin: center;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cb-scroll-dot { animation: none; }
+}
 .cb-scope > main,
 .cb-scope > footer { position: relative; z-index: 1; }
 
@@ -230,6 +254,75 @@
 .cb-scope li {
   text-wrap: pretty;
 }
+
+/* ── Hero photo edge vignette (creators/Hero.tsx, brands/Hero.tsx) — RECTANGULAR, via mask-image
+   again, NOT box-shadow (Appy, 2026-08-13 — box-shadow lasted about one round).
+
+   WHY THE BOX-SHADOW VERSION DID NOTHING VISIBLE: box-shadow (inset or not) paints in the same
+   layer as an element's background — and for a REPLACED element like <img>, the actual decoded
+   image pixels paint ABOVE that layer, not below it. The shadow was rendering; it was just sitting
+   underneath the opaque photo the entire time. This is a property of <img> specifically, not a
+   blur-radius or colour mistake — box-shadow as a photo vignette only works on elements whose
+   image is a CSS background-image, which this deliberately isn't (see the <picture> art-direction
+   comment in each Hero.tsx for why).
+
+   BACK TO mask-image, which this codebase has already proven works correctly on this exact <img>
+   (every earlier round's tuning was real, visible, and responded to changes) — reshaped instead of
+   reverting to the ellipse. TWO linear-gradients, one per axis, each independently opaque in its
+   own middle band and fading to transparent at ITS OWN two edges, combined with
+   `mask-composite: intersect` (Porter-Duff source-in: the two layers MULTIPLY, so a point only
+   stays fully visible where BOTH the x-gradient and the y-gradient say "opaque"). That treats all
+   four straight edges identically by construction — there is no rx/ry pair to imbalance any more,
+   because there's no ellipse.
+   `-webkit-mask-composite: source-in` is the pre-standard Safari name for the same operation;
+   Safari's mask-composite keyword set predates the current spec's add/subtract/intersect/exclude
+   names, so both declarations are needed, unprefixed listed second so it wins where a browser
+   understands both.
+
+   ONE HONEST CAVEAT — corners still fade a little more than the straight edges, because multiplying
+   two partial fades together produces a smaller number than either fade alone (0.4 x 0.4 = 0.16, not
+   0.4). That IS a real compounding effect, just a much smaller and more contained one than the
+   ellipse's: it only shows up in the actual corner regions where both gradients overlap, rather than
+   scaling every non-axis-aligned direction the way hypot() did across the whole ellipse. If the
+   corners still read as noticeably softer than the edges once you look, that's the next thing to
+   narrow — the fade widths below, not a shape change.
+
+   Widths are percentages of each axis's OWN dimension (same reasoning the ellipse's rx/ry used for
+   working across the mobile portrait crop and the desktop landscape one without separate numbers
+   per aspect ratio).
+   PUSHED NARROWER AGAIN, 12%->6% mobile / 18%->9% desktop (Appy, same day) — as far in as felt safe
+   without the transition itself turning into a visible hard line: the stops are still a genuine
+   linear ramp over that width, not a cliff, so even at 6% there's a real few-pixel gradient doing
+   the dissolving rather than a cut. Smaller width is also, incidentally, less exposed to this rule's
+   own corner-compounding caveat above — a thinner band leaves a thinner region for the two axes to
+   overlap in. If either edge now reads as a hard line rather than a soft one, that's this one
+   number to widen back a little, not a sign the mechanism is wrong. */
+.cb-hero-vignette {
+  --cb-vig: 6%;
+  mask-image:
+    linear-gradient(to right, transparent, black var(--cb-vig), black calc(100% - var(--cb-vig)), transparent),
+    linear-gradient(to bottom, transparent, black var(--cb-vig), black calc(100% - var(--cb-vig)), transparent);
+  mask-composite: intersect;
+  -webkit-mask-image:
+    linear-gradient(to right, transparent, black var(--cb-vig), black calc(100% - var(--cb-vig)), transparent),
+    linear-gradient(to bottom, transparent, black var(--cb-vig), black calc(100% - var(--cb-vig)), transparent);
+  -webkit-mask-composite: source-in;
+}
+@media (min-width: 640px) {
+  .cb-hero-vignette {
+    --cb-vig: 9%;
+  }
+}
+
+/* THE ELLIPSE HISTORY THIS REPLACED, kept for the record rather than deleted — four rounds of
+   tuning an ellipse's rx/ry/stops against measured background deltas, each one trading edge fade
+   against corner fade because the shape made trading them off the only lever available:
+   mobile started at ellipse 55%/50% (black 85%, transparent 95%), corners eased to 70%/51%, edges
+   then re-opened by pulling back to 58%/51% (re-tightening the corners as an accepted trade);
+   desktop started at ellipse 75%/52% (black 55%, transparent 92%), corners eased to 82%/52%, band
+   narrowed and edges re-opened by pulling back to 65%/52%. Every one of those moves was correct
+   given an ellipse; none of them could reach "edges and corners fade equally", which is the whole
+   reason this is box-shadow now instead. */
 
 /* NOTE: the step section used to be a GSAP-pinned scroll sequencer, and it owned three
    classes here — .cb-beat (a full-viewport title screen), .cb-seq-pin (the pinned section)
