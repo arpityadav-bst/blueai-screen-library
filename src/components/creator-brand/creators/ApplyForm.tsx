@@ -158,7 +158,7 @@ function Rail({ step, onJump }: { step: number; onJump: (s: number) => void }) {
     <div className="flex shrink-0 items-center gap-2">
       <span className="cb-tabular text-[11px] font-semibold text-ink-muted">
         {step + 1}/{STEPS.length}
-        <span className="sr-only"> — step {step + 1} of {STEPS.length}</span>
+        <span className="sr-only">, step {step + 1} of {STEPS.length}</span>
       </span>
       <span className="flex gap-1">
         {STEPS.map((s, i) => (

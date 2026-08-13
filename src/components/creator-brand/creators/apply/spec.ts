@@ -100,7 +100,7 @@ export function validate(d: Draft): Errors {
   if (!d.fullRun) e.fullRun = 'Let us know if you are in for the full run.'
 
   if (!d.email.trim()) e.email = 'Add the email you want to be contacted on.'
-  else if (!isEmail(d.email)) e.email = 'That doesn’t look like an email — check for a typo.'
+  else if (!isEmail(d.email)) e.email = 'That doesn’t look like an email. Check for a typo.'
 
   if (!d.emailConsent) e.emailConsent = 'We need your okay to email you about the program.'
 

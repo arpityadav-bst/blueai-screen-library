@@ -210,7 +210,7 @@ export default function SignInDialog({ onClose }: { onClose: () => void }) {
             <u>Cookie Use</u>.
           </p>
           <p className="text-center text-[10.5px] leading-snug text-white/30">
-            Prototype — no account is created and nothing is sent.
+            Prototype. No account is created and nothing is sent.
           </p>
         </div>
       </>

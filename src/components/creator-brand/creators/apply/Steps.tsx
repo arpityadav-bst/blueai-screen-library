@@ -101,7 +101,7 @@ export function StepTwo(p: Props) {
       ) : (
         d.hasYouTube === 'No' && (
           <p className="mt-6 rounded-card border border-divider bg-white px-4 py-3 text-[13px] leading-relaxed text-ink-body-2">
-            That&apos;s fine — YouTube is the only platform live today, so campaigns will be limited
+            That&apos;s fine. YouTube is the only platform live today, so campaigns will be limited
             for now. Instagram, TikTok, X and Reddit are next.
           </p>
         )
