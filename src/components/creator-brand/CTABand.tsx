@@ -12,11 +12,23 @@ import CTAGrid from './CTAGrid'
  * computed explicitly instead of guessed.
  *
  * `overflow-hidden` still crops the grid to the band's rounded corners.
+ *
+ * `idPrefix` is REQUIRED whenever two bands can be on the page at once, and it is not a style knob:
+ * CTAGrid declares four SVG gradient/mask ids, and duplicating them is a latent bug that renders
+ * correctly by accident (both instances share a viewBox and userSpaceOnUse geometry) right up until
+ * someone changes one band's dimensions. The creators page has two live cases — the submitted
+ * application's confirmation and the closing band below it.
  */
-export default function CTABand({ children }: { children: React.ReactNode }) {
+export default function CTABand({
+  children,
+  idPrefix,
+}: {
+  children: React.ReactNode
+  idPrefix?: string
+}) {
   return (
     <div className="relative overflow-hidden rounded-credits bg-cta-band px-8 py-16 text-center sm:px-16">
-      <CTAGrid />
+      <CTAGrid idPrefix={idPrefix} />
       {/* Content rides above the grid. */}
       <div className="relative z-10">{children}</div>
     </div>

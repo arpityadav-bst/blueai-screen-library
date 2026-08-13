@@ -1,0 +1,62 @@
+'use client'
+
+import { Arrow } from '@/components/Arrow'
+import { Sparkle } from '@/components/Sparkle'
+import { useCBModal } from './ModalHost'
+import { useApply } from './creators/ApplyState'
+import AccountMenu from './creators/AccountMenu'
+import type { NavAudience } from './nav'
+
+// The header's right-hand slot. Pulled out of Header.tsx on 2026-08-13 — that file was at 269 lines
+// against this project's 300-line rule and this slot grew a third state, so it needed to be somewhere
+// rather than pushing the header over.
+//
+// THREE OUTCOMES, not two:
+//   · brands            → "Create a campaign", opens the campaign dialog. Unchanged.
+//   · creators, out     → "Apply Now", opens the sign-in dialog.
+//   · creators, in      → the account chip. No CTA at all, because the action it would offer is
+//                         already on the page: the application IS the top of the page once you're
+//                         signed in, so a header button pointing at it competes with itself.
+//
+// The chip IS a menu now (designer, 2026-08-13): hover feedback on the trigger, and a click opens a
+// popover carrying the account identity and Log out. It replaced an inert avatar+name row whose only
+// route out of the signed-in state was the review-only PreviewToggler — which is fine for a reviewer
+// and wrong for the flow being reviewed.
+export default function HeaderCTA({
+  active,
+  pastHeroImage,
+}: {
+  active: NavAudience
+  /** Once the hero image's top edge reaches the header, the quiet link becomes the primary button. */
+  pastHeroImage: boolean
+}) {
+  const { open } = useCBModal()
+  const { signedIn } = useApply()
+
+  // Was an inert avatar+name row with no hover and no way out of the signed-in state. It is now a
+  // real menu control (AccountMenu), following blueai-desktop's kebab pattern — see that file.
+  if (active === 'creators' && signedIn) return <AccountMenu />
+
+  return (
+    <button
+      type="button"
+      onClick={() => open(active === 'creators' ? 'signin' : 'campaign')}
+      className={
+        pastHeroImage
+          ? // Past the hero image, this becomes the primary CTA — the canonical Sparkle + label +
+            // Arrow pattern (DownloadCta.tsx), same gradient pill as the hero's own button, so it
+            // reads as THE action once that one scrolls by.
+            'inline-flex items-center gap-1.5 rounded-pill bg-cta-gradient px-4 py-2 text-[14px] font-semibold text-white shadow-cta transition-all hover:-translate-y-0.5 hover:shadow-cta-hover'
+          : // Over the hero, stay quiet — the hero's own CTA is already the focus. Hover is THIS
+            // SITE'S ACCENT, --cb-accent via cb-accent-hover (creator-brand.css). Still not the
+            // marketing DS's --bai-accent (#1990FF), which is load-bearing on the dormant pages — the
+            // variable is .cb-scope-scoped for exactly that reason.
+            'cb-accent-hover inline-flex items-center gap-1.5 text-[15px] font-normal text-ink-muted opacity-70 transition-all hover:opacity-100'
+      }
+    >
+      {pastHeroImage && <Sparkle size={13} />}
+      {active === 'creators' ? 'Apply Now' : 'Create a campaign'}
+      <Arrow size={13} />
+    </button>
+  )
+}

@@ -5,9 +5,8 @@ import { usePathname } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import { Wordmark } from '@/components/Wordmark'
 import { Arrow } from '@/components/Arrow'
-import { Sparkle } from '@/components/Sparkle'
 import { HEADER_NAV } from './nav'
-import { useCBModal } from './ModalHost'
+import HeaderCTA from './HeaderCTA'
 
 // Shared by both nav shapes (anchor and modal button) so the row can't end up with two slightly
 // different quiet-link treatments.
@@ -15,7 +14,6 @@ const NAV_LINK =
   'text-[15px] font-normal text-ink-muted opacity-70 transition-all hover:text-ink-heading hover:opacity-100'
 
 export default function Header() {
-  const { open } = useCBModal()
   const pathname = usePathname()
   const active = pathname?.includes('/brands') ? 'brands' : 'creators'
   const headerRef = useRef<HTMLElement>(null)
@@ -238,30 +236,10 @@ export default function Header() {
         </nav>
 
         <div className="flex items-center gap-4">
-          {/* Was an anchor to #waitlist / #create-a-campaign. Both are dialogs now, so it's a
-              button — and on creators it deliberately opens the POPUP rather than scrolling to the
-              closing section: the designer's rule is that every waitlist CTA except that final
-              section's own opens the popup. */}
-          <button
-            type="button"
-            onClick={() => open(active === 'creators' ? 'waitlist' : 'campaign')}
-            className={
-              pastHeroImage
-                ? // Past the hero image, this becomes the primary CTA — the canonical
-                  // Sparkle + label + Arrow pattern (DownloadCta.tsx), same gradient pill as
-                  // the hero's own button, so it reads as THE action once that one scrolls by.
-                  'inline-flex items-center gap-1.5 rounded-pill bg-cta-gradient px-4 py-2 text-[14px] font-semibold text-white shadow-cta transition-all hover:-translate-y-0.5 hover:shadow-cta-hover'
-                : // Over the hero, stay quiet — the hero's own CTA is already the focus. Hover is
-                  // THIS SITE'S ACCENT, now --cb-accent via cb-accent-hover (creator-brand.css).
-                  // Still not the marketing DS's --bai-accent (#1990FF), which is load-bearing on
-                  // the dormant pages — the variable is .cb-scope-scoped for exactly that reason.
-                  'cb-accent-hover inline-flex items-center gap-1.5 text-[15px] font-normal text-ink-muted opacity-70 transition-all hover:opacity-100'
-            }
-          >
-            {pastHeroImage && <Sparkle size={13} />}
-            {active === 'creators' ? 'Join the waitlist' : 'Create a campaign'}
-            <Arrow size={13} />
-          </button>
+          {/* Three outcomes now (creators signed-in shows an account chip instead of a CTA), so the
+              branch lives in its own component rather than as a nested ternary inside this row — see
+              HeaderCTA.tsx. It also keeps this file under the 300-line rule. */}
+          <HeaderCTA active={active} pastHeroImage={pastHeroImage} />
         </div>
       </div>
     </header>

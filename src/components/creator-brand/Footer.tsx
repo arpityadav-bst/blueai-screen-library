@@ -94,22 +94,30 @@ export default function Footer() {
                   href={`/creator-brand/${other}`}
                   className="bai-body-sm cb-accent inline-flex items-center gap-1 font-semibold transition-colors hover:text-ink-heading"
                 >
-                  {other === 'brands' ? 'Create a campaign' : 'Join the waitlist'}
+                  {/* "Apply now", was "Join the waitlist" (2026-08-13). This label is the one the
+                      BRANDS page shows, pointing at the creators journey — so it was the last live
+                      "Join the waitlist" on the site and the only one the creators-page rewrite could
+                      not reach from inside creators/. The nav COLUMNS either side of it updated for
+                      free because they derive from NAV; a hand-written label does not, which is the
+                      whole argument nav.ts makes about second lists and why it is worth re-reading
+                      when a label changes rather than only when a link does. */}
+                  {other === 'brands' ? 'Create a campaign' : 'Apply now'}
                   <Arrow size={12} />
                 </Link>
               </li>
-              {/* Deep links into the other page's sections. No filter any more: every nav item is
-                  an anchor again now that the campaign entry is gone (see nav.ts), so there is
-                  nothing here without an href to skip. */}
-              {NAV[other]
-                .slice(0, 3)
-                .map((item) => (
-                  <li key={item.label}>
-                    <Link href={`/creator-brand/${other}${item.href}`} className={FOOTER_LINK}>
-                      {item.label}
-                    </Link>
-                  </li>
-                ))}
+              {/* Deep links into the other page's sections. No filter and no cap: every nav item is a
+                  real anchor, and both audiences' lists are now three items. The `.slice(0, 3)` that
+                  used to be here existed only to trim the creators list back when it carried four —
+                  which makes it a silent truncation the moment either page gains a section, hiding the
+                  new one in the other page's footer with nothing to indicate it. The list is short
+                  because the pages are short; if that stops being true it should show. */}
+              {NAV[other].map((item) => (
+                <li key={item.label}>
+                  <Link href={`/creator-brand/${other}${item.href}`} className={FOOTER_LINK}>
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
         </div>

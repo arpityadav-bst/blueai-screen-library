@@ -23,16 +23,26 @@ import CTAGrid from './CTAGrid'
 // solve. Here the scroll container is the full-viewport overlay instead, so a popover only ever
 // meets the viewport edge, which is the boundary its own flip logic already measures against.
 
-type Variant = 'light' | 'band'
+type Variant = 'light' | 'band' | 'dark'
 
 const PANEL: Record<Variant, string> = {
   // border-divider, not stroke-warm: at panel scale the firmer stroke read as a drawn outline
   // around the dialog. See the SURFACES vs CONTROLS note in creator-brand.css.
   light: 'bg-white border border-divider',
   band: 'bg-cta-band',
+  // Added 2026-08-13 for the now.gg sign-in card, which paints its own surface edge to edge (its
+  // header gradient has to reach the panel's rounded corners). Transparent rather than a colour, so
+  // the panel contributes only its radius and its overflow clip and never a seam under the card. It
+  // shares `band`'s light-on-dark close button but NOT its CTAGrid — grid lines across a replica of
+  // someone else's login screen would be this site's decoration on a surface that isn't ours.
+  dark: 'bg-transparent',
 }
 
 const SIZES = {
+  // 360px is the now.gg sign-in card's MEASURED width, not a round number picked to look right —
+  // every type size, padding and control height in SignInDialog was scraped at this width, so
+  // changing it silently rescales a replica that is supposed to be exact.
+  xs: 'max-w-[360px]',
   sm: 'max-w-md',
   md: 'max-w-[580px]',
   lg: 'max-w-[720px]',
@@ -171,6 +181,12 @@ export default function Modal({
       {/* The scrim is its own element rather than a background on the scroll container, so a
           click lands on IT and not on the padding around the panel — closing a dialog because
           you clicked 2px of dead space beside it is indistinguishable from a misfire. */}
+      {/* ONE SCRIM, IDENTICAL FOR EVERY DIALOG ON BOTH PAGES — do not make this variant-dependent.
+          It was, briefly, on 2026-08-13: the sign-in card had a backdrop blur that the 58% scrim was
+          flattening, so the scrim was lightened for that one dialog to let the glass read. It worked
+          and it was still wrong. The overlay is a property of the SITE, not of whichever card happens
+          to be open, and a creators dialog dimming the page differently from a brands dialog is a
+          consistency break a visitor feels without being able to name. The blur went instead. */}
       <div className="cb-scrim fixed inset-0 bg-[rgba(16,18,34,0.58)] backdrop-blur-[3px]" onClick={onClose} />
 
       <div className="relative flex min-h-full items-center justify-center p-4 sm:p-6">
@@ -192,7 +208,7 @@ export default function Modal({
             onClick={onClose}
             aria-label="Close"
             className={`absolute right-3.5 ${CLOSE_INSET} z-20 flex ${CLOSE_BOX} items-center justify-center rounded-circle transition-colors duration-base ease-out-bai ${
-              variant === 'band'
+              variant !== 'light'
                 ? 'text-white/50 hover:bg-white/10 hover:text-white'
                 : 'text-ink-muted hover:bg-[var(--cb-hover)] hover:text-ink-heading'
             }`}

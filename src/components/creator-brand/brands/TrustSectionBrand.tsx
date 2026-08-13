@@ -18,7 +18,9 @@ import Reveal from '../Reveal'
 //     duplicated step 04's line almost exactly. Recast onto what a brand actually wants from a
 //     live view: where the money is going.
 const POINTS = [
-  { title: 'A real pool of creators', body: 'Thousands of creators are waitlisted and ready for campaigns like yours.' },
+  // 'waitlisted' -> 'approved' (2026-08-13): creators apply and are selected now, so nobody is on
+  // a list. 69 characters against siblings at 70 and 69, so the three still wrap alike.
+  { title: 'A real pool of creators', body: 'A growing pool of approved creators is ready for campaigns like yours.' },
   { title: 'Checked, never assumed', body: 'BlueAI verifies every interaction before a dollar of your budget moves.' },
   { title: 'Live status, the whole time', body: 'See exactly where your budget is going, and on what, while it happens.' },
 ]
@@ -29,8 +31,19 @@ export default function TrustSectionBrand() {
       <div className="mx-auto max-w-content">
         <Reveal className="flex flex-col items-center text-center">
           <h2 className="max-w-[30ch] font-head text-3xl font-bold text-ink-display sm:text-4xl">
-            3,100+ creators are already
-            <span className="block text-gradient italic pr-[0.2em]">working jobs today.</span>
+            {/* THE INVENTED NUMBER IS GONE (2026-08-13). "3,100+ creators are already working jobs
+                today" was the surviving half of a pair — its twin, the 12,400+/3,100+ stat panel on
+                the creators page, went with the trust section the PM cut. Neither figure was ever
+                backed by anything, and a social-proof count is the one number on a pre-launch page a
+                reader takes literally. Replaced with a claim the product can actually stand behind:
+                every applicant is reviewed before they can touch a campaign, which is a stronger
+                thing to tell a brand than a headcount anyway.
+
+                Two complete clauses, one per line — the section-title rule from 2026-08-11 — so the
+                accent line can't orphan and the heading is pinned to two lines. Both sit under this
+                h2's 30ch box. */}
+            Every creator is approved first.
+            <span className="block text-gradient italic pr-[0.2em]">Then matched to your campaign.</span>
           </h2>
         </Reveal>
 

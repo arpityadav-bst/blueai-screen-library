@@ -8,37 +8,51 @@ import FAQAccordion from '../FAQAccordion'
 // 2. The last two words of every body string are joined by a literal non-breaking space
 //    (U+00A0), so a paragraph can never end on one stranded word. It IS an invisible
 //    character in the source, which is a real downside — but it has to be the literal
-//    character, not a   escape: several of these strings are passed as JSX attributes
+//    character, not a &nbsp; escape: several of these strings are passed as JSX attributes
 //    (see Platforms.tsx `intro=`), and JSX attribute values are literal, so an escape would
-//    render as the visible text " " instead of a space.
-//    Grep for it with: grep -P 'Â ' <file>
+//    render as the visible text "&nbsp;" instead of a space.
+//    Grep for it with: grep -P '\xc2\xa0' <file>
 // 3. The rest of the line-breaking is done by the browser — see the text-wrap rules in
 //    creator-brand.css.
-
+//
+// REPLACED WHOLESALE 2026-08-13. These five are the PM's, and they answer a different set of
+// questions than the six before them, because the model changed: the old set explained a per-job loop
+// (how jobs get picked, who writes the comments, how long verification takes) that no longer exists.
+// Two of those old answers had also become outright wrong — payouts are monthly via PayPal, not "as
+// soon as the job clears", and the entry point is an application, not a waitlist signup.
+//
+// This section also absorbed the "Nothing happens on your channel without you" section, removed per
+// the PM (screenshot item 7) on the grounds that its content belongs in the FAQ. It does, and it is
+// here: the safety answer below carries what that section's four cards were saying.
 const ITEMS = [
   {
-    q: 'Do I need a lot of subscribers to join?',
-    a: 'No. The flat rate is the same regardless of your channel size.',
+    q: 'What exactly will BlueAI do on my account?',
+    a: 'BlueAI completes brand campaigns on your behalf. You can see every job it runs.',
   },
   {
-    q: 'How does BlueAI pick which jobs I see?',
-    a: 'Not randomly. It learns your interests from a couple of quick questions when you join, or automatically from your existing watch history, and only shows jobs that match what you already watch.',
+    q: 'Is my account safe? Can I see what it’s doing?',
+    a: 'Yes. BlueAI runs on your own computer and only performs the jobs shown to you. You stay in control and can stop it at any time.',
   },
   {
-    q: 'Do I have to write the comments myself?',
-    a: 'No. BlueAI drafts a genuine comment for the video and shows it to you before posting. Approve it, edit it, or turn on auto-approve if you would rather not be asked every time.',
+    q: 'How much can I earn?',
+    // TODO(PM): the brief ends this answer with a bracketed "[Add per-job payout range]" — a
+    // placeholder for a figure that has not been supplied. It is deliberately NOT rendered: shipping
+    // a visible "[Add …]" to the page is worse than shipping the answer one sentence shorter, and
+    // inventing a range would put a made-up rate in front of applicants. Drop the number in here when
+    // it exists; every other dollar figure on this site is marked illustrative, and a payout range in
+    // an FAQ would be the first one a reader takes literally.
+    a: 'Each job pays a fixed amount. Earnings depend on the jobs available to you.',
   },
   {
-    q: 'Is it only YouTube right now?',
-    a: 'Yes. YouTube jobs are live today. Instagram, TikTok, X, and Reddit are coming soon, and joining the waitlist now puts you first in line when they open.',
+    q: 'When and how do I get paid?',
+    a: 'Via PayPal, at the end of each month.',
   },
   {
-    q: 'How long does verification take?',
-    a: 'BlueAI confirms your engagement shortly after it happens, and pays out automatically once the job clears.',
-  },
-  {
-    q: 'What happens after I accept a job?',
-    a: 'BlueAI handles it on your account from start to finish. You approve the comment before it posts, and the next cycle is scheduled automatically.',
+    q: 'Why is there a waitlist?',
+    // The word "waitlist" survives the switch to an application on purpose, and it is the PM's: you
+    // apply, and the batched onboarding behind that application is the queue. What changed is the
+    // ACTION on the page (apply, not join a list), not the fact that there is a queue.
+    a: 'We onboard members in batches so everyone gets a smooth start. We’ll email you as soon as your spot opens.',
   },
 ]
 

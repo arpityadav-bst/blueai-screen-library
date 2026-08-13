@@ -28,10 +28,13 @@ export type NavAudience = 'creators' | 'brands'
 /** `inHeader` opts an item into the header's short nav. Everything here shows in the footer. */
 export type NavItem = { label: string; href: string; inHeader?: boolean }
 
+// "Open jobs" (#jobs) was removed 2026-08-13 with the section it pointed at — the PM cut the "Real
+// brands. Real budgets." jobs board for the pilot (screenshot item 5). A footer link to a deleted
+// anchor scrolls nowhere and looks like a broken page, which is why this list's own header note says
+// to grep the section ids before adding an entry: the same rule applies when one goes away.
 export const NAV: Record<NavAudience, NavItem[]> = {
   creators: [
     { label: 'How it works', href: '#how-it-works', inHeader: true },
-    { label: 'Open jobs', href: '#jobs' },
     { label: 'Platforms', href: '#platforms' },
     { label: 'FAQ', href: '#faq' },
   ],

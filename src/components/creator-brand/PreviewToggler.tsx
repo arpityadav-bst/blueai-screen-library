@@ -1,12 +1,18 @@
 'use client'
 
 import { useState } from 'react'
-import { useCBModal } from './ModalHost'
+import { useApply } from './creators/ApplyState'
 
 // Design-handoff state toggler — creators page only. Modelled on blueai-desktop's bottom-left dev
 // Preview panel (collapsible FAB + card of labelled segmented rows), for the same reason that panel
-// exists: the "we couldn't read your channel" path has no real YouTube API behind it to fail on its
-// own, so without a control it is a state nobody can reach and therefore a state nobody reviews.
+// exists: a state that can only be reached by walking a flow is a state nobody reviews.
+//
+// REPURPOSED 2026-08-13. It used to switch what the handle lookup found ("Found" / "Not found"); that
+// lookup and its two outcomes were removed per the PM, so the row now switches the thing this page
+// actually has two versions of: SIGNED OUT (marketing hero) versus SIGNED IN (the application at the
+// top of the page, an account chip in the header). Reviewing the signed-in half otherwise means
+// clicking Apply Now and signing in on every reload, and getting back to the signed-out half means
+// clearing sessionStorage by hand — which is exactly the "state nobody reviews" this panel exists for.
 //
 // IT MUST NOT LOOK LIKE A CTA — the designer's constraint, and the reason the source panel was built
 // as its own visual language too. Nothing here is a gradient or a 128px pill: the track is a flat
@@ -30,7 +36,7 @@ import { useCBModal } from './ModalHost'
 const CARD = 'border border-divider bg-white/95 shadow-float backdrop-blur-[6px]'
 
 export default function PreviewToggler() {
-  const { lookupMode, setLookupMode } = useCBModal()
+  const { signedIn, signIn, signOut } = useApply()
   // MINIMIZED by default (designer, 2026-08-11) — the source panel opens itself because it is the
   // only way to reach several of that prototype's states, but here it governs one optional branch
   // and this is a page a designer reviews as a page. The FAB keeps it one click away.
@@ -69,20 +75,20 @@ export default function PreviewToggler() {
       </div>
 
       <div className="mt-2.5">
-        <span className="block text-[12px] font-semibold text-ink-body-2">Handle lookup</span>
+        <span className="block text-[12px] font-semibold text-ink-body-2">Account</span>
         {/* Concentric radii: the track is 8px with 2px of padding, so the inner chips are 8−2=6.
             Taken from the source panel, which had this exact pair caught by its own radius audit —
             the segments fill the track's corners, so matching the outer radius inside would leave a
             visible sliver of track at each corner. */}
         <div className="mt-1.5 flex gap-0.5 rounded-card bg-[var(--cb-track)] p-0.5">
-          {([['auto', 'Found'], ['manual', 'Not found']] as const).map(([m, label]) => (
+          {([[false, 'Signed out'], [true, 'Signed in']] as const).map(([state, label]) => (
             <button
-              key={m}
+              key={label}
               type="button"
-              aria-pressed={lookupMode === m}
-              onClick={() => setLookupMode(m)}
+              aria-pressed={signedIn === state}
+              onClick={() => (state ? signIn() : signOut())}
               className={`flex-1 rounded-[6px] px-2 py-1 text-[11.5px] font-semibold transition-all duration-fast ease-out-bai ${
-                lookupMode === m
+                signedIn === state
                   ? 'bg-white text-ink-heading shadow-hairline'
                   : 'text-ink-muted hover:text-ink-body-2'
               }`}
@@ -94,7 +100,8 @@ export default function PreviewToggler() {
       </div>
 
       <p className="mt-2 text-[10.5px] leading-snug text-ink-muted">
-        Switches what the handle lookup finds. Re-runs live while the popup is open.
+        Signed in puts the application at the top of the page and the account in the header. Survives
+        a reload; resets when the tab closes.
       </p>
     </div>
   )
