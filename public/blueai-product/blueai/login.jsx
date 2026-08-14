@@ -3,12 +3,22 @@
 
 const { useState, useEffect } = React;
 
-function LoginModal({ isOpen, onClose, onSuccess, variant }) {
-  const [step, setStep] = useState('default');
+function LoginModal({ isOpen, onClose, onSuccess, variant, initialStep }) {
+  const [step, setStep] = useState(initialStep || 'default');
   const v = variant || (typeof window !== 'undefined' && window.__loginVariant) || 'default';
 
-  // Reset state when modal reopens
-  useEffect(() => {if (isOpen) setStep('default');}, [isOpen]);
+  // Reset state when modal reopens. initialStep lets a caller skip straight past the 'default'
+  // step (MoneyMaker's welcome page already IS that screen, full-page — see moneymaker.jsx).
+  useEffect(() => {if (isOpen) setStep(initialStep || 'default');}, [isOpen, initialStep]);
+
+  // Opening directly at 'browser' skips the click that normally starts handleSignIn's own
+  // auto-advance timers, so replay that same chain here instead.
+  useEffect(() => {
+    if (!isOpen || initialStep !== 'browser') return;
+    const t1 = setTimeout(() => setStep('signing'), 2200);
+    const t2 = setTimeout(() => setStep('success'), 4000);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, [isOpen, initialStep]);
 
   useEffect(() => {
     const h = (e) => {if (e.key === 'Escape' && step === 'default') onClose?.();};
@@ -39,8 +49,11 @@ function LoginModal({ isOpen, onClose, onSuccess, variant }) {
     onMouseLeave: (e) => e.currentTarget.style.color = base
   });
 
+  // maxWidth widened 288→360 so the browser step's "Use the account you applied with" line fits
+  // on one row instead of wrapping (shared by all three of this step's screens: browser/signing/
+  // success — harmless there, just more breathing room around already-centered content).
   const card = (children) =>
-  <div style={{ width: '100%', maxWidth: 288, background: 'white', borderRadius: 20, border: '1px solid #e5e7eb', padding: '40px 32px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, boxShadow: '0 8px 32px rgba(0,0,0,0.14)' }}>
+  <div style={{ width: '100%', maxWidth: 360, background: 'white', borderRadius: 20, border: '1px solid #e5e7eb', padding: '40px 32px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, boxShadow: '0 8px 32px rgba(0,0,0,0.14)' }}>
       {children}
     </div>;
 
@@ -203,6 +216,14 @@ function LoginModal({ isOpen, onClose, onSuccess, variant }) {
             <div>
               <p style={{ fontSize: 17, fontWeight: 700, color: '#111827' }}>Check your browser</p>
               <p style={{ marginTop: 5, fontSize: 13, color: '#6b7280', lineHeight: 1.5 }}>Finish logging in from your web browser</p>
+            </div>
+            {/* Same info-blue palette as needs_bluestacks.jsx's Bubble (bg/border/ink/icon) —
+               the product's one established "blue notice" treatment, reused rather than a new tone. */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, width: '100%', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: 12, padding: '10px 14px', boxSizing: 'border-box' }}>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                <circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8" />
+              </svg>
+              <span style={{ fontSize: 13, fontWeight: 600, color: '#1e40af', textAlign: 'left' }}>Use the account you applied with</span>
             </div>
             <div style={{ width: '100%', height: 1, background: 'linear-gradient(90deg,transparent,rgba(35,38,66,0.18),transparent)' }} />
             <button onClick={handleSignIn} {...linkHover('#f59e0b', '#d97706')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: '#f59e0b', fontWeight: 500, fontFamily: 'inherit', transition: 'color 0.15s ease' }}>

@@ -22,7 +22,7 @@
   const makeResumeSteps = (t, app) => B().makeResumeSteps(t, app);
 
   /* ───────── Merged chat screen: ProductHome (empty) → task-progress + feedback (active) ───────── */
-  function ChatScreen({ sessionKey, seed, loading, zeroCredits, onNoCredits, isOnboarding, onNeedLogin, showStates, bsInstalled = true, onBsInstalled }) {
+  function ChatScreen({ sessionKey, seed, loading, zeroCredits, onNoCredits, isOnboarding, sessionMode = 'default', onNeedLogin, showStates, bsInstalled = true, onBsInstalled }) {
     const C = window.ChatCompare;
     const [convo, setConvo] = useState([]);
     const [visible, setVisible] = useState(0);
@@ -135,13 +135,19 @@
                  onboarding + default). Onboarding chat pads the greeting down to match the design;
                  the picker welcome lives one level up (App), so no welcome renders here. */}
               {!started &&
-                <C.IntroCard onboarding={isOnboarding} sub={isOnboarding
-                  ? 'Just send your message whenever you are ready and see me do your work for you!'
-                  : 'Your AI worker for BlueStacks — pick a task below or just type what you need.'} />}
+                <C.IntroCard onboarding={isOnboarding}
+                  title={sessionMode === 'moneymaker' && !isOnboarding ? 'Hi, Alex 👋' : undefined}
+                  sub={sessionMode === 'moneymaker' && !isOnboarding
+                    ? "You're all set. Run MoneyMaker to get your first job."
+                    : isOnboarding
+                    ? 'Just send your message whenever you are ready and see me do your work for you!'
+                    : 'Your AI worker for BlueStacks — pick a task below or just type what you need.'} />}
               {!started
                 ? <div style={{ marginTop: 4 }}>
                     {isOnboarding
-                      ? null // onboarding chat = greeting + composer only (the category home is default-flow only)
+                      ? null // pre-login chat (onboarding or moneymaker) = greeting + composer only
+                      : sessionMode === 'moneymaker'
+                      ? (loading ? <window.HomeSkeleton /> : <window.MoneyMaker.MoneyMakerHome onRun={(p, cat) => run(p, cat)} />)
                       : (loading
                           ? <window.HomeSkeleton />
                           : <ProductHome onRun={(p, cat) => run(p, cat)} onOpenHistory={() => window.__openChatHistory && window.__openChatHistory()} />)}
