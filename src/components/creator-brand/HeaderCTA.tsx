@@ -36,14 +36,17 @@ export default function HeaderCTA({
   pastHeroImage: boolean
 }) {
   const { open } = useCBModal()
-  const { signedIn, isReturningUser } = useApply()
+  const { signedIn } = useApply()
 
   // Was an inert avatar+name row with no hover and no way out of the signed-in state. It is now a
   // real menu control (AccountMenu), following blueai-desktop's kebab pattern — see that file.
-  // isReturningUser added 2026-08-14: "same header... just his profile icon and the email and the
-  // logout, just how it is right now when signed in" was the explicit ask for the dashboard — it's
-  // the same account state as a signed-in first-time creator, not a fourth header treatment.
-  if (active === 'creators' && (signedIn || isReturningUser)) return <AccountMenu />
+  //
+  // signedIn ALONE covers both signed-in outcomes (2026-08-14) — "same header... just his profile
+  // icon and the email and the logout, just how it is right now when signed in" was the explicit ask
+  // for the dashboard, and CreatorsTop.tsx now only ever shows the dashboard when signedIn is true, so
+  // there's no longer a separate isReturningUser check needed here: it's the same account chip either
+  // way, which is also what makes Log out land on the same Hero from both places.
+  if (active === 'creators' && signedIn) return <AccountMenu />
 
   return (
     <button

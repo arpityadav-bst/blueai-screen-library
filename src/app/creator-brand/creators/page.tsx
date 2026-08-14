@@ -28,15 +28,21 @@ import { useApply } from '@/components/creator-brand/creators/ApplyState'
 // — the dashboard IS the page for that persona, same principle as CreatorsTop already applies to its
 // own swap. `'use client'` on this file (was a server component) is what lets it read that flag
 // directly rather than needing a separate wrapper component just to hide four sections + the footer.
+//
+// onDashboard = signedIn && isReturningUser, NOT isReturningUser alone (2026-08-14 fix) — the
+// dashboard only actually renders once CreatorsTop's own signedIn check passes too. Gating this on
+// isReturningUser by itself hid these sections under the signed-out Hero the moment the reviewer
+// flipped the preview toggle to "Returning user", before ever signing in.
 export default function CreatorsPage() {
-  const { isReturningUser } = useApply()
+  const { signedIn, isReturningUser } = useApply()
+  const onDashboard = signedIn && isReturningUser
 
   return (
     <>
       <Header />
       <main>
         <CreatorsTop />
-        {!isReturningUser && (
+        {!onDashboard && (
           <>
             <HowItWorks />
             <Platforms />
@@ -45,10 +51,11 @@ export default function CreatorsPage() {
           </>
         )}
       </main>
-      {!isReturningUser && <Footer />}
+      {!onDashboard && <Footer />}
       {/* Creators only — it toggles the signed-in state, and the brands page has no signed-in state to
           toggle. Design-handoff chrome, deliberately unlike any CTA on the page. Stays mounted in
-          EVERY state, dashboard included — it's the only way back out of isReturningUser. */}
+          EVERY state, dashboard included — Log out is now the real way back out, but this stays as
+          the way to set up which persona the NEXT sign-in resolves to. */}
       <PreviewToggler />
     </>
   )

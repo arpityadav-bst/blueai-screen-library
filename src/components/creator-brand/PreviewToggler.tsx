@@ -8,13 +8,18 @@ import { useApply } from './creators/ApplyState'
 // exists: a state that can only be reached by walking a flow is a state nobody reviews.
 //
 // ONE ROW NOW, NOT TWO (2026-08-14) — this used to carry "Account: Signed out / Signed in" (2026-08-13,
-// itself a repurposing of the old handle-lookup row). That row is GONE, not renamed: the new-user side
-// of this page — hero, Apply Now, sign in, the application form — is a real flow you can still click
-// through exactly as it always worked, so it doesn't need a design-review shortcut of its own. What
-// genuinely cannot be reached by clicking is the RETURNING creator's dashboard (it means having
-// actually downloaded BlueAI and completed jobs in it), so that's the one switch this panel carries:
-// New user (today's site, untouched) versus Returning user (the dashboard, direct). See
-// ApplyState.tsx's `isReturningUser` for why this is its own flag rather than a third `signedIn` value.
+// itself a repurposing of the old handle-lookup row). That row is GONE, not renamed: signing in and out
+// is a real flow you can click through — Apply Now opens sign-in, the account menu's Log out reverses
+// it — with no design-review shortcut needed for either half any more.
+//
+// RESHAPED 2026-08-14: this row does NOT jump straight to the dashboard any more (it used to, and that
+// was the bug — it bypassed signedIn entirely, so Log out from the dashboard had nothing to undo). It
+// now sets what "Apply Now → sign in" resolves TO, same as picking which of two accounts you're about
+// to sign into: New user goes to the application form (today's flow, untouched); Returning user goes
+// to the dashboard (a creator who already downloaded BlueAI and is earning through it — nobody can
+// reach that persona by actually doing that, so it needs a design-review switch same as `signedIn`
+// itself does). See ApplyState.tsx's `isReturningUser` for why this stays its own flag rather than a
+// third `signedIn` value.
 //
 // IT MUST NOT LOOK LIKE A CTA — the designer's constraint, and the reason the source panel was built
 // as its own visual language too. Nothing here is a gradient or a 128px pill: the track is a flat
@@ -102,9 +107,9 @@ export default function PreviewToggler() {
       </div>
 
       <p className="mt-2 text-[10.5px] leading-snug text-ink-muted">
-        New user is today's site, unchanged — click Apply Now and sign in as normal to see the
-        application. Returning user jumps straight to the dashboard. Survives a reload; resets when
-        the tab closes.
+        Sets what signing in leads to — click Apply Now and sign in to see it. New user opens the
+        application; Returning user opens the dashboard. Survives a reload; resets when the tab
+        closes.
       </p>
     </div>
   )

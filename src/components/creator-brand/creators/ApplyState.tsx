@@ -19,13 +19,17 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 // during render would make the server's HTML and the client's first render disagree, which is a
 // hydration error — and the signed-out state is the honest default for a fresh visitor anyway.
 const KEY = 'cb-creator-signed-in'
-// A SECOND, INDEPENDENT flag (Appy, 2026-08-14) — not a third value on `signedIn`, and deliberately
-// not wired through a real sign-in interaction at all. This isn't a returning creator's session;
-// it's a design-review switch for a persona that has no other way to reach: nobody can walk this
-// flow for real (it means having actually downloaded BlueAI and completed jobs in it), so — same
-// reasoning PreviewToggler.tsx already gives for `signedIn` itself — a state nobody can reach by
-// clicking is a state nobody reviews. `isReturningUser` short-circuits CreatorsTop straight to the
-// dashboard, and takes priority over `signedIn` when both are true (see CreatorsTop.tsx).
+// A SECOND, INDEPENDENT flag (Appy, 2026-08-14) — not a third value on `signedIn`. It answers a
+// different question: `signedIn` is "did they click through the sign-in dialog"; `isReturningUser`
+// is "when they do, does that account turn out to be a first-time applicant or a creator who already
+// downloaded BlueAI and is earning through it". CreatorsTop.tsx reads BOTH — signedIn decides Hero vs.
+// signed-in content, isReturningUser then decides which signed-in content (application form vs.
+// dashboard). It is NOT wired through a real sign-in interaction (nobody can walk that flow for real —
+// it means having actually completed jobs in BlueAI), so — same reasoning PreviewToggler.tsx already
+// gives for `signedIn` itself — a persona nobody can select for real is a persona nobody reviews.
+// RESHAPED 2026-08-14: this used to take priority OVER signedIn and skip the sign-in step entirely.
+// That meant signOut() (which only clears signedIn) couldn't undo it — Log out from the dashboard did
+// nothing. isReturningUser must never be checked without signedIn alongside it.
 const RETURNING_KEY = 'cb-creator-returning'
 
 /** Illustrative, like every other name and figure on this site. Not a real account. */
