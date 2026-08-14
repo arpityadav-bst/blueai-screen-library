@@ -7,12 +7,14 @@ import { useApply } from './creators/ApplyState'
 // Preview panel (collapsible FAB + card of labelled segmented rows), for the same reason that panel
 // exists: a state that can only be reached by walking a flow is a state nobody reviews.
 //
-// REPURPOSED 2026-08-13. It used to switch what the handle lookup found ("Found" / "Not found"); that
-// lookup and its two outcomes were removed per the PM, so the row now switches the thing this page
-// actually has two versions of: SIGNED OUT (marketing hero) versus SIGNED IN (the application at the
-// top of the page, an account chip in the header). Reviewing the signed-in half otherwise means
-// clicking Apply Now and signing in on every reload, and getting back to the signed-out half means
-// clearing sessionStorage by hand — which is exactly the "state nobody reviews" this panel exists for.
+// ONE ROW NOW, NOT TWO (2026-08-14) — this used to carry "Account: Signed out / Signed in" (2026-08-13,
+// itself a repurposing of the old handle-lookup row). That row is GONE, not renamed: the new-user side
+// of this page — hero, Apply Now, sign in, the application form — is a real flow you can still click
+// through exactly as it always worked, so it doesn't need a design-review shortcut of its own. What
+// genuinely cannot be reached by clicking is the RETURNING creator's dashboard (it means having
+// actually downloaded BlueAI and completed jobs in it), so that's the one switch this panel carries:
+// New user (today's site, untouched) versus Returning user (the dashboard, direct). See
+// ApplyState.tsx's `isReturningUser` for why this is its own flag rather than a third `signedIn` value.
 //
 // IT MUST NOT LOOK LIKE A CTA — the designer's constraint, and the reason the source panel was built
 // as its own visual language too. Nothing here is a gradient or a 128px pill: the track is a flat
@@ -36,7 +38,7 @@ import { useApply } from './creators/ApplyState'
 const CARD = 'border border-divider bg-white/95 shadow-float backdrop-blur-[6px]'
 
 export default function PreviewToggler() {
-  const { signedIn, signIn, signOut } = useApply()
+  const { isReturningUser, setReturningUser } = useApply()
   // MINIMIZED by default (designer, 2026-08-11) — the source panel opens itself because it is the
   // only way to reach several of that prototype's states, but here it governs one optional branch
   // and this is a page a designer reviews as a page. The FAB keeps it one click away.
@@ -75,20 +77,20 @@ export default function PreviewToggler() {
       </div>
 
       <div className="mt-2.5">
-        <span className="block text-[12px] font-semibold text-ink-body-2">Account</span>
+        <span className="block text-[12px] font-semibold text-ink-body-2">Journey</span>
         {/* Concentric radii: the track is 8px with 2px of padding, so the inner chips are 8−2=6.
             Taken from the source panel, which had this exact pair caught by its own radius audit —
             the segments fill the track's corners, so matching the outer radius inside would leave a
             visible sliver of track at each corner. */}
         <div className="mt-1.5 flex gap-0.5 rounded-card bg-[var(--cb-track)] p-0.5">
-          {([[false, 'Signed out'], [true, 'Signed in']] as const).map(([state, label]) => (
+          {([[false, 'New user'], [true, 'Returning user']] as const).map(([state, label]) => (
             <button
               key={label}
               type="button"
-              aria-pressed={signedIn === state}
-              onClick={() => (state ? signIn() : signOut())}
+              aria-pressed={isReturningUser === state}
+              onClick={() => setReturningUser(state)}
               className={`flex-1 rounded-[6px] px-2 py-2.5 text-[11.5px] font-semibold transition-all duration-fast ease-out-bai ${
-                signedIn === state
+                isReturningUser === state
                   ? 'bg-white text-ink-heading shadow-hairline'
                   : 'text-ink-muted hover:text-ink-body-2'
               }`}
@@ -100,8 +102,9 @@ export default function PreviewToggler() {
       </div>
 
       <p className="mt-2 text-[10.5px] leading-snug text-ink-muted">
-        Signed in puts the application at the top of the page and the account in the header. Survives
-        a reload; resets when the tab closes.
+        New user is today's site, unchanged — click Apply Now and sign in as normal to see the
+        application. Returning user jumps straight to the dashboard. Survives a reload; resets when
+        the tab closes.
       </p>
     </div>
   )

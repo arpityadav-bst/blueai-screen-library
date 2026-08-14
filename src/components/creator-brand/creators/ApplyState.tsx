@@ -19,6 +19,14 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 // during render would make the server's HTML and the client's first render disagree, which is a
 // hydration error — and the signed-out state is the honest default for a fresh visitor anyway.
 const KEY = 'cb-creator-signed-in'
+// A SECOND, INDEPENDENT flag (Appy, 2026-08-14) — not a third value on `signedIn`, and deliberately
+// not wired through a real sign-in interaction at all. This isn't a returning creator's session;
+// it's a design-review switch for a persona that has no other way to reach: nobody can walk this
+// flow for real (it means having actually downloaded BlueAI and completed jobs in it), so — same
+// reasoning PreviewToggler.tsx already gives for `signedIn` itself — a state nobody can reach by
+// clicking is a state nobody reviews. `isReturningUser` short-circuits CreatorsTop straight to the
+// dashboard, and takes priority over `signedIn` when both are true (see CreatorsTop.tsx).
+const RETURNING_KEY = 'cb-creator-returning'
 
 /** Illustrative, like every other name and figure on this site. Not a real account. */
 export const MOCK_ACCOUNT = {
@@ -35,6 +43,9 @@ type Ctx = {
   signIn: () => void
   signOut: () => void
   account: typeof MOCK_ACCOUNT
+  /** The "returning creator, already earning in BlueAI" persona — see the const above. */
+  isReturningUser: boolean
+  setReturningUser: (v: boolean) => void
 }
 
 const ApplyCtx = createContext<Ctx | null>(null)
@@ -49,11 +60,13 @@ export function useApply() {
 
 export default function ApplyProvider({ children }: { children: ReactNode }) {
   const [signedIn, setSignedIn] = useState(false)
+  const [isReturningUser, setIsReturningUser] = useState(false)
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
     try {
       setSignedIn(sessionStorage.getItem(KEY) === '1')
+      setIsReturningUser(sessionStorage.getItem(RETURNING_KEY) === '1')
     } catch {
       // Private-mode Safari throws on sessionStorage access. Staying signed out is the correct
       // fallback, and it must not take the page down with it.
@@ -74,9 +87,19 @@ export default function ApplyProvider({ children }: { children: ReactNode }) {
   const signIn = useCallback(() => write(true), [write])
   const signOut = useCallback(() => write(false), [write])
 
+  const setReturningUser = useCallback((v: boolean) => {
+    setIsReturningUser(v)
+    try {
+      if (v) sessionStorage.setItem(RETURNING_KEY, '1')
+      else sessionStorage.removeItem(RETURNING_KEY)
+    } catch {
+      // Same fallback as above.
+    }
+  }, [])
+
   const value = useMemo(
-    () => ({ signedIn, ready, signIn, signOut, account: MOCK_ACCOUNT }),
-    [signedIn, ready, signIn, signOut],
+    () => ({ signedIn, ready, signIn, signOut, account: MOCK_ACCOUNT, isReturningUser, setReturningUser }),
+    [signedIn, ready, signIn, signOut, isReturningUser, setReturningUser],
   )
 
   return <ApplyCtx.Provider value={value}>{children}</ApplyCtx.Provider>

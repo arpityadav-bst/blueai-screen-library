@@ -8,6 +8,7 @@ import { Arrow } from '@/components/Arrow'
 import { HEADER_NAV } from './nav'
 import HeaderCTA from './HeaderCTA'
 import MobileMenu from './MobileMenu'
+import { useApply } from './creators/ApplyState'
 
 // Shared by both nav shapes so the row can't end up with two slightly different quiet-link treatments.
 const NAV_LINK =
@@ -16,6 +17,11 @@ const NAV_LINK =
 export default function Header() {
   const pathname = usePathname()
   const active = pathname?.includes('/brands') ? 'brands' : 'creators'
+  const { isReturningUser } = useApply()
+  // The dashboard's own page.tsx already drops HowItWorks/Platforms/FAQ/ApplyCTA entirely (see that
+  // file's 2026-08-14 note) — so on the returning-user dashboard, this nav's anchors point at
+  // sections that no longer exist in the DOM. A link that scrolls nowhere is worse than no link.
+  const showNav = !(active === 'creators' && isReturningUser)
   const headerRef = useRef<HTMLElement>(null)
   const wordmarkWrapRef = useRef<HTMLSpanElement>(null)
   const labelRef = useRef<HTMLSpanElement>(null)
@@ -201,39 +207,41 @@ export default function Header() {
           </span>
         </Link>
 
-        <nav className="hidden items-center gap-8 lg:flex">
-          {/* HEADER_NAV, not NAV — the header carries only the items flagged `inHeader` (one, right
-              now). The footer still lists every section; see nav.ts for why that split is a flag on
-              one list rather than two lists. */}
-          {HEADER_NAV[active].map((item) => (
-            <a key={item.label} href={item.href} onClick={(e) => scrollToSection(e, item.href)} className={NAV_LINK}>
-              {item.label}
-            </a>
-          ))}
-          {/* Context switch, not a same-page scroll link like the rest of this nav — LAST in
-              the list now (was first), no underline any more, and marked as "leads elsewhere"
-              by a small diagonal arrow instead. The arrow is the SAME Arrow component every
-              other CTA on this page uses, just rotated 45deg rather than a new glyph — same
-              precedent as the footer's "Back to top" link rotating it -90deg. Its stroke is
-              currentColor, so nesting it inside this link means it inherits the link's own
-              colour and transitions automatically: no separate hover rule to keep in sync.
+        {showNav && (
+          <nav className="hidden items-center gap-8 lg:flex">
+            {/* HEADER_NAV, not NAV — the header carries only the items flagged `inHeader` (one, right
+                now). The footer still lists every section; see nav.ts for why that split is a flag on
+                one list rather than two lists. */}
+            {HEADER_NAV[active].map((item) => (
+              <a key={item.label} href={item.href} onClick={(e) => scrollToSection(e, item.href)} className={NAV_LINK}>
+                {item.label}
+              </a>
+            ))}
+            {/* Context switch, not a same-page scroll link like the rest of this nav — LAST in
+                the list now (was first), no underline any more, and marked as "leads elsewhere"
+                by a small diagonal arrow instead. The arrow is the SAME Arrow component every
+                other CTA on this page uses, just rotated 45deg rather than a new glyph — same
+                precedent as the footer's "Back to top" link rotating it -90deg. Its stroke is
+                currentColor, so nesting it inside this link means it inherits the link's own
+                colour and transitions automatically: no separate hover rule to keep in sync.
 
-              cb-accent-hover matches the header CTA's own quiet-state hover rather than this
-              nav's usual hover:text-ink-heading — asked to share that colour specifically, not the
-              rest of the nav's. It was a literal #2258c9 until the footer needed the same value
-              and got it wrong; it's the --cb-accent variable now (creator-brand.css). */}
-          {/* size 13, was 11. Against a 15px label an 11px glyph read as a stray tick rather than
-              as part of the link — and it was the odd one out in its own row: the header CTA a few
-              pixels to the right pairs the SAME 15px label with a 13px Arrow. One arrow size for the
-              header's 15px labels, and gap-1.5 to match that CTA too. */}
-          <Link
-            href={active === 'creators' ? '/creator-brand/brands' : '/creator-brand/creators'}
-            className="cb-accent-hover inline-flex items-center gap-1.5 text-[15px] font-normal text-ink-muted opacity-70 transition-all hover:opacity-100"
-          >
-            {active === 'creators' ? 'For Brands' : 'For Creators'}
-            <Arrow size={13} className="-rotate-45" />
-          </Link>
-        </nav>
+                cb-accent-hover matches the header CTA's own quiet-state hover rather than this
+                nav's usual hover:text-ink-heading — asked to share that colour specifically, not the
+                rest of the nav's. It was a literal #2258c9 until the footer needed the same value
+                and got it wrong; it's the --cb-accent variable now (creator-brand.css). */}
+            {/* size 13, was 11. Against a 15px label an 11px glyph read as a stray tick rather than
+                as part of the link — and it was the odd one out in its own row: the header CTA a few
+                pixels to the right pairs the SAME 15px label with a 13px Arrow. One arrow size for the
+                header's 15px labels, and gap-1.5 to match that CTA too. */}
+            <Link
+              href={active === 'creators' ? '/creator-brand/brands' : '/creator-brand/creators'}
+              className="cb-accent-hover inline-flex items-center gap-1.5 text-[15px] font-normal text-ink-muted opacity-70 transition-all hover:opacity-100"
+            >
+              {active === 'creators' ? 'For Brands' : 'For Creators'}
+              <Arrow size={13} className="-rotate-45" />
+            </Link>
+          </nav>
+        )}
 
         <div className="flex items-center gap-4">
           {/* Three outcomes now (creators signed-in shows an account chip instead of a CTA), so the

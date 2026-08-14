@@ -15,13 +15,14 @@ import { HEADER_NAV, OTHER, type NavAudience } from './nav'
 // anchored to this sticky header" once. Two overlays doing the same job with different code is
 // how they drift apart the first time one gets a fix the other doesn't.
 //
-// NOT RENDERED for a signed-in creator: HeaderCTA already swaps the CTA for AccountMenu in that
-// state, and AccountMenu is compact enough to stay on screen at every width rather than move
-// behind a second tap. This component exists specifically to replace the CTA below `lg` — signed
-// in, there is no CTA here to replace, so it renders nothing and AccountMenu carries on unchanged.
+// NOT RENDERED for a signed-in creator OR the returning-user dashboard (2026-08-14): HeaderCTA
+// already swaps the CTA for AccountMenu in both states, and AccountMenu is compact enough to stay
+// on screen at every width rather than move behind a second tap. This component exists specifically
+// to replace the CTA below `lg` — in either of those states there is no CTA here to replace, so it
+// renders nothing and AccountMenu carries on unchanged.
 export default function MobileMenu({ active }: { active: NavAudience }) {
   const { open: openModal } = useCBModal()
-  const { signedIn } = useApply()
+  const { signedIn, isReturningUser } = useApply()
   const [open, setOpen] = useState(false)
   const wrapRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
@@ -44,7 +45,7 @@ export default function MobileMenu({ active }: { active: NavAudience }) {
     }
   }, [open])
 
-  if (active === 'creators' && signedIn) return null
+  if (active === 'creators' && (signedIn || isReturningUser)) return null
 
   // Same-page anchor scroll, same mechanism Header.tsx's own nav links use — close the menu first
   // so the reader sees the page move, not a popover sitting on top of it.

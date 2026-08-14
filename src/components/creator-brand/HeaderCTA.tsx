@@ -36,11 +36,14 @@ export default function HeaderCTA({
   pastHeroImage: boolean
 }) {
   const { open } = useCBModal()
-  const { signedIn } = useApply()
+  const { signedIn, isReturningUser } = useApply()
 
   // Was an inert avatar+name row with no hover and no way out of the signed-in state. It is now a
   // real menu control (AccountMenu), following blueai-desktop's kebab pattern — see that file.
-  if (active === 'creators' && signedIn) return <AccountMenu />
+  // isReturningUser added 2026-08-14: "same header... just his profile icon and the email and the
+  // logout, just how it is right now when signed in" was the explicit ask for the dashboard — it's
+  // the same account state as a signed-in first-time creator, not a fourth header treatment.
+  if (active === 'creators' && (signedIn || isReturningUser)) return <AccountMenu />
 
   return (
     <button
