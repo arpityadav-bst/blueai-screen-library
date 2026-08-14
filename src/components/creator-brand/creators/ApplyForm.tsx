@@ -3,12 +3,13 @@
 import { useState } from 'react'
 import { Arrow } from '@/components/Arrow'
 import { StepIntro, StepOne, StepTwo, StepThree, StepFour } from './apply/Steps'
+import Milestones from './apply/Milestones'
 import { INITIAL, STEPS, STEP_FIELDS, validate, type Draft } from './apply/spec'
 import type { Errors } from '../forms'
 import CTABand from '../CTABand'
 import { useApply } from './ApplyState'
 
-// The creator application. Ten questions across five steps — the first of which (StepIntro) asks
+// The creator application. Eleven questions across five steps — the first of which (StepIntro) asks
 // nothing at all, it's the "About the program" summary on its own screen. The flow lives here, the
 // questions and their rules live in apply/spec.ts, the fields themselves in apply/Steps.tsx.
 //
@@ -71,98 +72,108 @@ export default function ApplyForm() {
   // mask ids would otherwise be declared twice (see CTAGrid.tsx for the bug that caused).
   if (submitted) {
     return (
-      <CTABand idPrefix="cbGridApplied">
-        {/* SAME SIZE AS THE FORM BEFORE IT (PM, 2026-08-13) — the card was visibly shrinking on submit,
-            which reads as content disappearing rather than as a confirmation.
-            Matches the step body's floor above (460/400): py-6 top (24) + title/rail row (~26) +
-            mt-7 (28) + body (460 mobile / 400 desktop) + mt-7 (28) + buttons (52, one row at both
-            breakpoints) + py-6 (24) = 642 mobile, 582 desktop. CTABand's own py-16 is 128px (64 top +
-            64 bottom): 642-128=514 mobile, 582-128=454 desktop. flex centring keeps the actual content
-            (icon, heading, paragraph) in the middle of the box rather than pinned to its top. */}
-        <div className="flex min-h-[514px] flex-col items-center justify-center sm:min-h-[454px]">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-circle bg-white/10 ring-1 ring-white/20">
-            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="white" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M4.5 12.5l5 5L19.5 6.5" />
-            </svg>
+      <>
+        {/* Same strip as above the form, one dot further along — submitting is what moves the reader
+            from "Apply" to "We review", and the strip advancing is the visual receipt of that. */}
+        <Milestones stage="submitted" />
+        <CTABand idPrefix="cbGridApplied">
+          {/* SAME SIZE AS THE FORM BEFORE IT (PM, 2026-08-13) — the card was visibly shrinking on submit,
+              which reads as content disappearing rather than as a confirmation.
+              Matches the step body's floor above (460/400): py-6 top (24) + title/rail row (~26) +
+              mt-7 (28) + body (460 mobile / 400 desktop) + mt-7 (28) + buttons (52, one row at both
+              breakpoints) + py-6 (24) = 642 mobile, 582 desktop. CTABand's own py-16 is 128px (64 top +
+              64 bottom): 642-128=514 mobile, 582-128=454 desktop. flex centring keeps the actual content
+              (icon, heading, paragraph) in the middle of the box rather than pinned to its top. */}
+          <div className="flex min-h-[514px] flex-col items-center justify-center sm:min-h-[454px]">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-circle bg-white/10 ring-1 ring-white/20">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="white" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M4.5 12.5l5 5L19.5 6.5" />
+              </svg>
+            </div>
+            <h2 className="mt-5 font-head text-3xl font-bold text-white">Thanks for applying.</h2>
+            <p className="bai-body-lg mx-auto mt-3 max-w-[44ch] text-white/80">
+              We review every application and will email{' '}
+              <b className="font-semibold text-white">{d.email}</b> when your spot opens.
+            </p>
           </div>
-          <h2 className="mt-5 font-head text-3xl font-bold text-white">Thanks for applying.</h2>
-          <p className="bai-body-lg mx-auto mt-3 max-w-[44ch] text-white/80">
-            We review every application and will email{' '}
-            <b className="font-semibold text-white">{d.email}</b> when your spot opens.
-          </p>
-        </div>
-      </CTABand>
+        </CTABand>
+      </>
     )
   }
 
   return (
-    <div className="overflow-hidden rounded-credits border border-divider bg-white shadow-float">
-      {/* noValidate — see CampaignForm. Our inline errors speak, not the browser's bubbles. */}
-      <form noValidate onSubmit={submit} className="px-6 py-6 sm:px-8">
-        {/* ONE row: the step's title with its progress pinned to the right edge — the shape the
-            campaign form's top area was reduced to on 2026-08-11, after running title → subtitle →
-            full-width rail → "STEP 2 OF 5" → step-title as five stacked rows of chrome. */}
-        <div className="flex items-baseline justify-between gap-4">
-          {/* h2 — the only other heading on this page is the section h1, so an h3 skipped a level. */}
-          <h2 className="font-head text-[17px] font-semibold text-ink-display">{STEPS[step].title}</h2>
-          <Rail step={step} />
-        </div>
+    <>
+      {/* The journey strip sits with the form, not in ApplySection, because `submitted` lives here —
+          the strip's whole job is to advance when the form's state does. */}
+      <Milestones stage="filling" />
+      <div className="overflow-hidden rounded-credits border border-divider bg-white shadow-float">
+        {/* noValidate — see CampaignForm. Our inline errors speak, not the browser's bubbles. */}
+        <form noValidate onSubmit={submit} className="px-6 py-6 sm:px-8">
+          {/* ONE row: the step's title with its progress pinned to the right edge — the shape the
+              campaign form's top area was reduced to on 2026-08-11, after running title → subtitle →
+              full-width rail → "STEP 2 OF 5" → step-title as five stacked rows of chrome. */}
+          <div className="flex items-baseline justify-between gap-4">
+            {/* h2 — the only other heading on this page is the section h1, so an h3 skipped a level. */}
+            <h2 className="font-head text-[17px] font-semibold text-ink-display">{STEPS[step].title}</h2>
+            <Rail step={step} />
+          </div>
 
-        {/* ONE STEP MOUNTED AT A TIME (designer, 2026-08-13) — a same-day CSS-grid version stacked all
-            steps in one shared cell so the container measured itself against real content instead of a
-            guessed number, and it produced exactly the failure that trick risks: a moment where the
-            "hidden" steps weren't actually hidden, so two steps' fields rendered on top of each other
-            at once. A broken-looking form is a strictly worse failure than one that's a little
-            inconsistent in height, so: only the current step's DOM exists, full stop — there is no way
-            for two steps to ever occupy the same pixels, CSS bug or not.
-            460/400 IS APPY'S NUMBER, NOT A RE-ESTIMATE (2026-08-13) — the generous 520/470 above made
-            the card too tall after a hard refresh ruled out stale-build as the explanation for the
-            earlier complaint, so this went back to the last values that were sized against real content
-            rather than padded defensively. It's the same floor the OLD five-step form used before the
-            PC-specs step was cut and the two consent checkboxes became one — those changes only made
-            steps shorter, not taller (the one exception, the new agree checkbox, being handled by
-            `subtle` now rather than by the floor). If a step overflows this again, that step's content
-            is the thing to trim, not this number — it's been raised twice already chasing a step
-            instead of the other way round. */}
-        <div className="mt-7 min-h-[460px] sm:min-h-[400px]">
-          {step === 0 && <StepIntro />}
-          {step === 1 && <StepOne {...stepProps} />}
-          {step === 2 && <StepTwo {...stepProps} />}
-          {step === 3 && <StepThree {...stepProps} />}
-          {step === 4 && <StepFour {...stepProps} />}
-        </div>
+          {/* ONE STEP MOUNTED AT A TIME (designer, 2026-08-13) — a same-day CSS-grid version stacked all
+              steps in one shared cell so the container measured itself against real content instead of a
+              guessed number, and it produced exactly the failure that trick risks: a moment where the
+              "hidden" steps weren't actually hidden, so two steps' fields rendered on top of each other
+              at once. A broken-looking form is a strictly worse failure than one that's a little
+              inconsistent in height, so: only the current step's DOM exists, full stop — there is no way
+              for two steps to ever occupy the same pixels, CSS bug or not.
+              460/400 IS APPY'S NUMBER, NOT A RE-ESTIMATE (2026-08-13) — the generous 520/470 above made
+              the card too tall after a hard refresh ruled out stale-build as the explanation for the
+              earlier complaint, so this went back to the last values that were sized against real content
+              rather than padded defensively. It's the same floor the OLD five-step form used before the
+              PC-specs step was cut and the two consent checkboxes became one — those changes only made
+              steps shorter, not taller (the one exception, the new agree checkbox, being handled by
+              `subtle` now rather than by the floor). If a step overflows this again, that step's content
+              is the thing to trim, not this number — it's been raised twice already chasing a step
+              instead of the other way round. */}
+          <div className="mt-7 min-h-[460px] sm:min-h-[400px]">
+            {step === 0 && <StepIntro />}
+            {step === 1 && <StepOne {...stepProps} />}
+            {step === 2 && <StepTwo {...stepProps} />}
+            {step === 3 && <StepThree {...stepProps} />}
+            {step === 4 && <StepFour {...stepProps} />}
+          </div>
 
-        {/* ONE ROW AT BOTH BREAKPOINTS NOW (designer, 2026-08-13). This used to stack below sm because
-            two full-width labels — "Back" and "Submit application" — couldn't both fit one mobile row
-            without the longer one wrapping to two lines. Shrinking Back to an icon (below) removes that
-            constraint instead of working around it: an icon button plus a flex-1 primary fits one row
-            at any width this form ships at, so there's one layout to maintain, not two. */}
-        <div className="mt-7 flex items-center gap-3">
-          {step > 0 && (
+          {/* ONE ROW AT BOTH BREAKPOINTS NOW (designer, 2026-08-13). This used to stack below sm because
+              two full-width labels — "Back" and "Submit application" — couldn't both fit one mobile row
+              without the longer one wrapping to two lines. Shrinking Back to an icon (below) removes that
+              constraint instead of working around it: an icon button plus a flex-1 primary fits one row
+              at any width this form ships at, so there's one layout to maintain, not two. */}
+          <div className="mt-7 flex items-center gap-3">
+            {step > 0 && (
+              <button
+                type="button"
+                onClick={() => setStep((s) => s - 1)}
+                // ICON-ONLY BELOW sm, full label at sm+ (designer, 2026-08-13) — same button, same
+                // handler, just what it shows. sr-only/not-sr-only keeps "Back" as the button's real
+                // accessible name at every width rather than switching to aria-label, so a screen reader
+                // hears the same thing regardless of viewport. Arrow is the site's own right-arrow glyph,
+                // reused rotated 180deg rather than drawing a second asset — its own doc comment already
+                // names this exact use ("a 'back to top' use that rotates this same glyph").
+                className="flex shrink-0 items-center justify-center gap-1.5 rounded-pill border border-stroke-warm bg-white p-3.5 text-[15px] font-semibold text-ink-heading transition-all duration-base ease-out-bai hover:border-ink-heading hover:bg-surface active:scale-[0.98] sm:flex-1 sm:px-5"
+              >
+                <Arrow size={15} className="rotate-180 sm:hidden" />
+                <span className="sr-only sm:not-sr-only">Back</span>
+              </button>
+            )}
             <button
-              type="button"
-              onClick={() => setStep((s) => s - 1)}
-              // ICON-ONLY BELOW sm, full label at sm+ (designer, 2026-08-13) — same button, same
-              // handler, just what it shows. sr-only/not-sr-only keeps "Back" as the button's real
-              // accessible name at every width rather than switching to aria-label, so a screen reader
-              // hears the same thing regardless of viewport. Arrow is the site's own right-arrow glyph,
-              // reused rotated 180deg rather than drawing a second asset — its own doc comment already
-              // names this exact use ("a 'back to top' use that rotates this same glyph").
-              className="flex shrink-0 items-center justify-center gap-1.5 rounded-pill border border-stroke-warm bg-white p-3.5 text-[15px] font-semibold text-ink-heading transition-all duration-base ease-out-bai hover:border-ink-heading hover:bg-surface active:scale-[0.98] sm:flex-1 sm:px-5"
+              type="submit"
+              className="flex-1 rounded-pill border border-transparent bg-cta-gradient px-5 py-3.5 text-[15px] font-semibold text-white shadow-cta transition-all duration-base ease-out-bai hover:-translate-y-0.5 hover:shadow-cta-hover"
             >
-              <Arrow size={15} className="rotate-180 sm:hidden" />
-              <span className="sr-only sm:not-sr-only">Back</span>
+              {step === LAST ? 'Submit application' : 'Continue'}
             </button>
-          )}
-          <button
-            type="submit"
-            className="flex-1 rounded-pill border border-transparent bg-cta-gradient px-5 py-3.5 text-[15px] font-semibold text-white shadow-cta transition-all duration-base ease-out-bai hover:-translate-y-0.5 hover:shadow-cta-hover"
-          >
-            {step === LAST ? 'Submit application' : 'Continue'}
-          </button>
-        </div>
-      </form>
-    </div>
+          </div>
+        </form>
+      </div>
+    </>
   )
 }
 

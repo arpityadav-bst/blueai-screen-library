@@ -4,9 +4,8 @@ import { useState } from 'react'
 import Reveal from '../../Reveal'
 import { useApply } from '../ApplyState'
 import StatCards from './StatCards'
-import JobList from './JobList'
 import CashOutModal from './CashOutModal'
-import { MOCK_COMPLETED_JOBS, MOCK_STATS } from './mockData'
+import { MOCK_STATS } from './mockData'
 
 // The returning creator's dashboard — CreatorsTop.tsx's third state, replacing both the marketing
 // hero AND the application (a returning creator has nothing to apply for). page.tsx also drops
@@ -51,12 +50,10 @@ export default function Dashboard() {
           />
         </Reveal>
 
-        <Reveal delay={0.14} className="mt-10">
-          <h2 className="font-head text-[18px] font-semibold text-ink-display">Completed jobs</h2>
-          <div className="mt-4">
-            <JobList jobs={MOCK_COMPLETED_JOBS} />
-          </div>
-        </Reveal>
+        {/* NO PER-JOB LIST (PM, 2026-08-14 meeting): individual completed jobs — names and the brands
+            behind them — must not be shown to creators. Aggregate numbers are fine, so the count tile
+            in StatCards stays. JobList.tsx and MOCK_COMPLETED_JOBS remain on disk unimported in case
+            the decision softens; if it becomes final, delete them rather than leaving dead code. */}
       </div>
 
       <CashOutModal open={cashOutOpen} balance={balance} onClose={() => setCashOutOpen(false)} onWithdrawn={() => setBalance(0)} />

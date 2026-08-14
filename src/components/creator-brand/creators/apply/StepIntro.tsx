@@ -1,24 +1,37 @@
 // Split out of Steps.tsx on 2026-08-13 to keep that file under this project's 300-line rule — pure
 // extraction, no behaviour change. Same reason Long.tsx and options.tsx were split out earlier.
 
-import { CadenceIcon, ClockIcon, DocumentIcon, WalletIcon } from './introIcons'
+import { CadenceIcon, ClockIcon, DocumentIcon, MonitorIcon, WalletIcon } from './introIcons'
 
-// StepIntro's four points, each an icon + a sentence with the one number/name in it bolded. Data only,
+// StepIntro's five points, each an icon + a sentence with the one number/name in it bolded. Data only,
 // kept beside the component that reads it rather than in options.tsx — those are ChoiceGroup answer
 // sets, these are static copy, a different shape entirely.
+//
+// CHRONOLOGICAL ORDER, AND DAYS NOT JOBS (PM, 2026-08-14). The old first point led with "[X] jobs
+// every [Y] days", which failed two ways at once: an applicant this early doesn't know what a "job"
+// is, and job availability isn't in the applicant's control, so a job-count obligation was a promise
+// the program couldn't grade fairly. The requirement is now phrased as days-run — the same measure the
+// creator dashboard will report — and what BlueAI does is described as "campaigns and tasks from
+// brands", the same words the rest of this site uses ("jobs" was tried and cut, PM 2026-08-14: an
+// internal noun an applicant hasn't met yet). Order tells the program as a story: invite email →
+// what BlueAI does → your one obligation → the payoff → the terms. The email is mentioned because the
+// pilot build is only delivered through it, so line 1 also answers "set it up from where?".
 const INTRO_POINTS = [
   {
-    icon: <CadenceIcon />,
-    body: <>You&apos;ll need to complete at least <b className="font-semibold text-ink-heading">[X] jobs</b> every{' '}
-      <b className="font-semibold text-ink-heading">[Y] days</b> using BlueAI.</>,
+    icon: <MonitorIcon />,
+    body: <>Once accepted, we&apos;ll email you a download link. Set up BlueAI on your PC.</>,
   },
   {
     icon: <ClockIcon />,
-    body: 'Each job takes a few minutes; BlueAI does the work on your YouTube account inside BlueStacks.',
+    body: <>BlueAI completes campaigns and tasks from brands on your YouTube account. Each takes a few minutes.</>,
+  },
+  {
+    icon: <CadenceIcon />,
+    body: <>All you do: run BlueAI on at least <b className="font-semibold text-ink-heading">20 days</b> each month.</>,
   },
   {
     icon: <WalletIcon />,
-    body: <>You earn <b className="font-semibold text-ink-heading">$30 per month</b>, paid via PayPal.</>,
+    body: <>You earn <b className="font-semibold text-ink-heading">$30 every month</b>, paid via PayPal.</>,
   },
   {
     icon: <DocumentIcon />,
@@ -38,10 +51,11 @@ export default function StepIntro() {
     // ABOUT THE PROGRAM (PM, 2026-08-13) — before the first question, literally: its own step, ahead
     // of step 1, so an applicant knows the shape of the commitment before answering anything rather
     // than discovering it after.
-    // [X] and [Y] are left as the PM wrote them: real numbers for the job cadence weren't given, and a
-    // guessed figure here would be a fabricated program term, not an illustrative one — this site's
-    // dollar figures are illustrative by design, but a job-frequency requirement is a real obligation
-    // an applicant is agreeing to. Fill in once the PM has the real numbers.
+    // "20 days" is the PM's OWN placeholder (2026-08-14), not a signed-off program term — it replaced
+    // a literal "[X] days" at the PM's request, on the PM's explicit "I can say that it's a
+    // placeholder". The distinction from this site's illustrative dollar figures still matters: the
+    // run requirement is a real obligation an applicant agrees to, so if the final number differs,
+    // this line (and the CadenceIcon doc comment in introIcons.tsx) is where it changes.
     //
     // NO SECOND "ABOUT THE PROGRAM" HEADING (fixed 2026-08-13) — this box used to repeat the step's
     // own title verbatim as its first line, so the screen said the same three words twice in the

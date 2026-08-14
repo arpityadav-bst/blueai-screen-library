@@ -3,15 +3,18 @@
 //
 // THE QUESTIONS ARE THE PM'S, VERBATIM IN INTENT. What is NOT the PM's is the GROUPING — the brief
 // said "minimal and with proper segregation so it doesn't overwhelm the creator", which is a
-// constraint, not a layout. Ten fields in one column is the thing that brief exists to prevent, so
+// constraint, not a layout. Eleven fields in one column is the thing that brief exists to prevent, so
 // they're split into four steps of two to four, each answering one question a reader can hold in
-// their head: are you eligible, what's your channel, who are you, how do we pay and reach you.
+// their head: are you eligible, what's your channel, can you deliver, how do we pay and reach you.
 //
 // CUT TO FOUR STEPS, NOT FIVE (PM, 2026-08-13). The PC-specs step (OS + RAM) is gone entirely —
 // dropped as a question, not just reshuffled, so os/ram no longer exist on Draft at all. The two
 // separate consent checkboxes ("okay to be contacted for feedback", "okay to be emailed about the
 // program") are also gone, replaced by ONE checkbox at the very end that covers both plus the
 // Program Terms — see `agree` below.
+//
+// "WHY DO YOU WANT TO JOIN?" CUT (PM, 2026-08-14), replaced by two capacity chip questions (pcHours,
+// runDays) — see StepThree for the reasoning and options.tsx for why the answers are fixed ranges.
 import { isEmail, type Errors } from '../../forms'
 
 export type Draft = {
@@ -19,7 +22,8 @@ export type Draft = {
   describes: string
   hasYouTube: string
   channel: string
-  why: string
+  pcHours: string
+  runDays: string
   earnedBefore: string
   hasPaypal: string
   fullRun: string
@@ -36,7 +40,8 @@ export const INITIAL: Draft = {
   describes: '',
   hasYouTube: '',
   channel: '',
-  why: '',
+  pcHours: '',
+  runDays: '',
   earnedBefore: '',
   hasPaypal: '',
   fullRun: '',
@@ -59,7 +64,7 @@ export const STEP_FIELDS: readonly string[][] = [
   [],
   ['adult', 'describes'],
   ['hasYouTube', 'channel'],
-  ['why', 'earnedBefore'],
+  ['pcHours', 'runDays', 'earnedBefore'],
   ['hasPaypal', 'fullRun', 'email', 'agree'],
 ]
 
@@ -73,12 +78,13 @@ export function validate(d: Draft): Errors {
   if (!d.describes) e.describes = 'Pick the one that fits best.'
 
   if (!d.hasYouTube) e.hasYouTube = 'Let us know if you have a YouTube account.'
-  // Only asked for when there is a channel to ask about. Answering "No" leaves this field
-  // unrendered rather than rendered-and-optional: a visible field nobody has to fill still reads
-  // as work, and the honest state is that the question no longer applies.
-  if (d.hasYouTube === 'Yes' && !d.channel.trim()) e.channel = 'Paste your channel or handle link.'
+  // The channel link itself is OPTIONAL (PM, 2026-08-14) — a "Yes" without a pasted link is a valid
+  // application, so there is deliberately no validation on d.channel. The field still only RENDERS
+  // after a "Yes" (see StepTwo): a visible field nobody has to fill still reads as work, and the
+  // honest state after a "No" is that the question no longer applies.
 
-  if (!d.why.trim()) e.why = 'Tell us why you want to join.'
+  if (!d.pcHours) e.pcHours = 'Pick the closest option.'
+  if (!d.runDays) e.runDays = 'Pick the closest option.'
   if (!d.earnedBefore.trim()) e.earnedBefore = 'Tell us what you have tried. “Nothing yet” is an answer.'
 
   if (!d.hasPaypal) e.hasPaypal = 'Let us know if you have a PayPal account.'

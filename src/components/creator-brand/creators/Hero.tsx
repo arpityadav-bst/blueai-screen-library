@@ -2,6 +2,8 @@
 
 import { useState } from 'react'
 import Reveal from '../Reveal'
+import { useCBModal } from '../ModalHost'
+import { useApply } from './ApplyState'
 import ApplyButton from './ApplyButton'
 import PixelRain from './PixelRain'
 import ScrollCue from './ScrollCue'
@@ -65,6 +67,8 @@ function EdgeCard({ c }: { c: (typeof EDGE_CARDS)[number] }) {
 // Rendered only while signed OUT — CreatorsTop.tsx swaps this whole section for the application once
 // you're in. Nothing here needs to know that; it just no longer owns the page top unconditionally.
 export default function Hero() {
+  const { open } = useCBModal()
+  const { setJourney } = useApply()
   return (
     <>
     <section id="hero" className="relative overflow-hidden px-6 pb-24 pt-10 sm:pt-14">
@@ -99,8 +103,32 @@ export default function Hero() {
             the manual-details fallback and estimate.ts). The application IS the entry point now, so
             a second, competing entry point that answered a different question had to go rather than
             sit beside it. */}
-        <Reveal delay={0.15} className="mt-12">
+        <Reveal delay={0.15} className="mt-12 flex flex-col items-center">
           <ApplyButton />
+          {/* The returning-user door (PM, 2026-08-14). "Apply Now" is the only entry on this page, and
+              it reads wrong to someone who already has an account — they aren't applying, they're
+              getting back in. A quiet line under the CTA, link-styled the way every site does this,
+              opening the SAME sign-in dialog. Deliberately small and muted — the page's job is still
+              to convert new applicants, and this only needs to be findable by the person already
+              looking for it. This Hero only renders signed OUT (see CreatorsTop), so it needs no
+              signed-in branch.
+              THIS DOOR RESOLVES TO THE DASHBOARD (PM, 2026-08-14): someone clicking "Sign in" has an
+              account by definition, so the journey is set to returningUser before the dialog opens —
+              overriding the preview panel's persona for this one door. The panel still governs what
+              "Apply Now" resolves to; that's the door whose outcome is genuinely ambiguous. */}
+          <p className="mt-4 text-[13px] text-ink-muted">
+            Already have an account?{' '}
+            <button
+              type="button"
+              onClick={() => {
+                setJourney('returningUser')
+                open('signin')
+              }}
+              className="font-medium text-[var(--cb-accent)] underline underline-offset-2 transition-colors duration-base ease-out-bai hover:text-ink-heading"
+            >
+              Sign in
+            </button>
+          </p>
         </Reveal>
 
         <Reveal delay={0.25} className="mt-12 w-full max-w-[1240px] overflow-hidden">

@@ -6,7 +6,7 @@ import CheckField from '../../controls/CheckField'
 import { INPUT, LABEL } from '../../controls/fieldClasses'
 import { FieldError, withErr } from '../../forms'
 import type { Draft } from './spec'
-import { DESCRIBES_OPTS, FULL_RUN_OPTS, HAS_YT_OPTS, YES_NO_CHIPS } from './options'
+import { DESCRIBES_OPTS, FULL_RUN_OPTS, HAS_YT_OPTS, PC_HOURS_OPTS, RUN_DAYS_OPTS, YES_NO_CHIPS } from './options'
 import Long from './Long'
 import StepIntro from './StepIntro'
 
@@ -121,7 +121,12 @@ export function StepTwo(p: Props) {
           says so rather than leaving the reader to guess. */}
       {hasChannel ? (
         <label className="mt-7 block">
-          <span className={LABEL}>Paste your channel or handle link</span>
+          {/* "(optional)" in the label, not just silently unvalidated (PM, 2026-08-14) — an
+              unmarked field reads as required, so skipping it would still feel like leaving the
+              form incomplete even though validate() no longer checks it. */}
+          <span className={LABEL}>
+            Paste your channel or handle link <span className="font-normal text-ink-muted">(optional)</span>
+          </span>
           <input
             // iOS otherwise gives the default keyboard and autocapitalises this to "Youtube.com/@…",
             // and autocorrect mangles handles. The campaign form already solved it for its URL field.
@@ -152,16 +157,35 @@ export function StepTwo(p: Props) {
 
 export function StepThree(p: Props) {
   const { d, setD, err } = p
+  const pick = choiceSetter(p)
   return (
     <>
-      <Long
-        label="Why do you want to join?"
-        value={d.why}
-        onChange={(v) => setD((prev) => ({ ...prev, why: v }))}
-        onBlur={() => p.touch('why')}
-        placeholder="A couple of lines is plenty."
-        err={err.why}
+      {/* "Why do you want to join?" was CUT from this slot (PM, 2026-08-14). Every answer was some
+          form of "to earn money", which gave a reviewer nothing to select on — a question's worth of
+          friction spent on zero signal. These two capacity questions are what a reviewer actually
+          needs to predict the program's own requirement (20 days a month, step 1's terms): the first
+          asks whether the PC can deliver, the second whether the person will. Chips, not text —
+          four fixed ranges per question keep the effort below the paragraph they replaced and make
+          applications comparable side by side at review time. */}
+      <ChoiceGroup
+        label="How many hours a day is your PC on and connected to the internet?"
+        name="apply-pc-hours"
+        value={d.pcHours}
+        options={PC_HOURS_OPTS}
+        onChange={pick('pcHours')}
+        err={err.pcHours}
       />
+
+      <div className="mt-7">
+        <ChoiceGroup
+          label="How many days a week could you run BlueAI?"
+          name="apply-run-days"
+          value={d.runDays}
+          options={RUN_DAYS_OPTS}
+          onChange={pick('runDays')}
+          err={err.runDays}
+        />
+      </div>
 
       <div className="mt-7">
         <Long
@@ -195,8 +219,11 @@ export function StepFour(p: Props) {
         err={err.hasPaypal}
       />
 
-      {/* OWN ROW, not the PayPal question's side-by-side partner — the PM's framing sentence is too
+      {/* OWN ROW, not the PayPal question's side-by-side partner — the framing sentence is too
           long for a half-width column without wrapping awkwardly and losing the "quick" read.
+          REWORDED 2026-08-14 (PM): "Jobs don't take much of your day" was the last user-facing "jobs"
+          in the form — same cut as StepIntro's, and the new framing ("a few minutes a day") repeats
+          the intro's own time claim rather than introducing a new noun.
           mt-5, NOT mt-7 (Appy, 2026-08-13) — this step carries four groups (the other three steps
           carry two or three), which is what made it the one step that ran past the shared floor. The
           fix here is spacing, not content: mt-7 is this file's rhythm for "distinct question" gaps
@@ -206,7 +233,7 @@ export function StepFour(p: Props) {
           loosely as the rest of the form. */}
       <div className="mt-5">
         <ChoiceGroup
-          label="Jobs don&rsquo;t take much of your day, but this is a long-term program. Are you in for the long run?"
+          label="Running BlueAI only takes a few minutes a day, but this is a long-term program. Are you in for the long run?"
           name="apply-full-run"
           value={d.fullRun}
           options={FULL_RUN_OPTS}

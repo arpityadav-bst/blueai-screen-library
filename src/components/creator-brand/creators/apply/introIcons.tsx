@@ -1,4 +1,4 @@
-// Glyphs for StepIntro's four "About the program" points, split into their own file (same reason
+// Glyphs for StepIntro's "About the program" points, split into their own file (same reason
 // Long.tsx and options.tsx were split out of Steps.tsx — the 300-line rule). Same conventions as
 // controls/choiceIcons.tsx so the whole form's icon language stays one family: 24 viewBox,
 // currentColor stroke, round caps/joins, aria-hidden.
@@ -16,13 +16,24 @@ const box = (size: number, className: string) => ({
   className,
 })
 
-/** The job cadence ("at least [X] jobs every [Y] days") — a calendar with one date filled in. */
+/** The run cadence ("at least 20 days each month") — a calendar with one date filled in. */
 export function CadenceIcon({ size = 18, className = '' }: P) {
   return (
     <svg {...box(size, className)}>
       <rect x="4" y="5.5" width="16" height="14" rx="2" />
       <path d="M4 9.5h16M8.5 3.5v3M15.5 3.5v3" />
       <rect x="13.2" y="13" width="3.4" height="3.2" rx="0.6" fill="currentColor" stroke="none" />
+    </svg>
+  )
+}
+
+/** The invite email + download link ("once accepted, we'll email you"). */
+export function MonitorIcon({ size = 18, className = '' }: P) {
+  return (
+    <svg {...box(size, className)}>
+      <rect x="3" y="4" width="18" height="12.5" rx="2" />
+      <path d="M9.5 20.5h5M12 16.5v4" />
+      <path d="M12 7v5M9.8 10l2.2 2 2.2-2" />
     </svg>
   )
 }
