@@ -39,16 +39,16 @@ export default function PlatformsGrid({ heading, intro, bodies }: Props) {
               className={`relative rounded-chat border p-5 transition-all duration-base ease-out-bai hover:-translate-y-1 ${
                 c.live
                   ? 'shadow-float border-[rgba(123,76,255,.28)] bg-white'
-                  : 'border-stroke-warm bg-white/70 hover:border-ink-muted hover:bg-white'
+                  : 'border-divider bg-white/70 hover:border-stroke-warm hover:bg-white'
               }`}
             >
               {c.live ? (
                 <span className="absolute right-3.5 top-3.5 flex items-center gap-1.5">
                   <span className="relative flex h-1.5 w-1.5">
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-circle bg-iris opacity-60" />
-                    <span className="relative inline-flex h-1.5 w-1.5 rounded-circle bg-iris" />
+                    <span className="absolute inline-flex h-full w-full animate-ping motion-reduce:animate-none rounded-circle bg-[var(--cb-accent)] opacity-60" />
+                    <span className="relative inline-flex h-1.5 w-1.5 rounded-circle bg-[var(--cb-accent)]" />
                   </span>
-                  <span className="text-[10px] font-semibold uppercase tracking-label text-iris">Live</span>
+                  <span className="text-[10px] font-semibold uppercase tracking-label text-[var(--cb-accent)]">Live</span>
                 </span>
               ) : (
                 <span className="absolute right-3.5 top-3.5 rounded-pill border border-divider bg-canvas px-2 py-0.5 text-[10px] font-semibold uppercase tracking-label text-ink-muted">

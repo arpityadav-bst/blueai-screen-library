@@ -42,6 +42,13 @@ async function scan(p) {
       // corrosive. Product pairs inside the guide are still caught: only the guide's own wrapper is skipped,
       // so the scan walks PAST it to the next rounded ancestor rather than stopping.
       if (/\bsg-(spec|canvas)\b/.test(String(a.className || ''))) return;
+      /* BlueStacks' own chrome, skipped for a DIFFERENT reason than the guide wrapper above — not "this
+         container isn't real" but "this component isn't ours." Rule 44 is a rule of THIS design system, and
+         BlueStacks' install dialog is deliberately outside it (designer, 2026-08-11). Its card and buttons
+         are radius 0 by BlueStacks' own explicit rule, with one circular completion badge; measuring that
+         against our concentric-radius law would report a conflict between two systems as a defect in one.
+         Checked on the ELEMENT, not just the ancestor, so a `.bs-*` child inside any container is exempt. */
+      if (el.closest('.bs-ui, #bsInstallHost, .bs-window') || (a.closest && a.closest('.bs-ui, #bsInstallHost, .bs-window'))) return;
       const acs = getComputedStyle(a);
       const ro = rad(acs);
       const er = el.getBoundingClientRect(), ar = a.getBoundingClientRect();

@@ -535,6 +535,17 @@ section('12. COMPONENT FAMILIES (shared treatment = shared rule, never a comment
       members: ['.bai-set-btn', '.bai-dialog-cancel'],
       props: ['border', 'background', 'color', 'font-weight'],
     },
+    {
+      // Declared 2026-08-11 when Flow B needed an action that reads as a button AT REST. The treatment
+      // already existed on `.bai-newitem-create`; rather than copy it (which is how the two would agree
+      // today and drift tomorrow), the fill/ink/weight moved into one combined rule and `.bai-chat-cta`
+      // joined it. `font-size` is deliberately NOT a family prop: the form's commit sits on --bai-fs-sm
+      // and the chat action on --bai-fs-base, matching the message text it follows — a role-justified
+      // difference, stated at each rule. Same for padding and align-self.
+      name: 'filled action (accent fill, inverted ink)',
+      members: ['.bai-newitem-create', '.bai-chat-cta'],
+      props: ['background', 'color', 'font-weight'],
+    },
   ];
   const cssNoComments = CSS.replace(/\/\*[\s\S]*?\*\//g, '');
   let famFail = 0;

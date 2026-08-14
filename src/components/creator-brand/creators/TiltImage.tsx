@@ -11,6 +11,12 @@ export default function TiltImage({ children, className = '' }: { children: Reac
   const [tilt, setTilt] = useState({ rx: 0, ry: 0 })
 
   useEffect(() => {
+    // NO TILT ON TOUCH. There is no pointer to follow, but a tap still fires a COMPATIBILITY mousemove
+    // on both Android and iOS — so the art lurched up to 6 degrees and STAYED there: there is no
+    // mouseleave on a touch device and no second move to bring it back. Bailing also avoids building a
+    // 3D rendering context around a full-size hero image for a transform that never changes.
+    if (window.matchMedia('(hover: none), (pointer: coarse), (prefers-reduced-motion: reduce)').matches) return
+
     function onMove(e: MouseEvent) {
       const rect = ref.current?.getBoundingClientRect()
       if (!rect) return

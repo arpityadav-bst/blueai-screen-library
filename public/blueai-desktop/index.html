@@ -448,6 +448,12 @@
   <script src="blueai-icons.js"></script>
   <script src="boot.js"></script>
   <script src="flows.js"></script>
+  <!-- BlueStacks' OWN install dialog (Flow A: BlueStacks present, BlueAI not). Deliberately NOT part of
+       this product's design system, style guide, or any audit — designer's ruling 2026-08-11. It ships as
+       ONE script tag and nothing else: it creates its own scrim/host and carries every style inline, so
+       none of BlueStacks' raw values ever land in blueai-desktop.css or in this file, where
+       ds-drift-check §8 would (correctly) fail them. See the file's own header for the full reasoning. -->
+  <script src="bs-install-dialog.js"></script>
   <script>
     (function () {
       /* Hydrate the static icons FIRST — an audit flagged that this loop used to sit ~760 lines into
@@ -608,8 +614,149 @@
         var th = makeThinking(); th.txt.textContent = thinkLabel;
         setTimeout(function () { th.el.remove(); demoFn(); }, 900);
       }
+      /* ---- FLOW B: a task that needs BlueStacks, when BlueStacks isn't installed ---------------
+         Content ported from blueai-product's needs_bluestacks.jsx; the DESIGN is this product's own
+         (info-row modifier + working-card modifier + the extracted progress bar), because unlike Flow A
+         this is BlueAI speaking, inside BlueAI's own window.
+         Two pieces of the source's reasoning carried over deliberately:
+         1. It fires only for APP-NAMED tasks, not every task. Blocking a pure drafting request on an
+            Android emulator looks broken; a feed-read task quietly succeeding does not. Over-gating is
+            the more visible error, so the token list stays short and the generic fallbacks sit LAST —
+            the loop stops at its first hit and we want the real name for the copy ("Opening YouTube…"
+            beats "Opening the app…").
+         2. The install is NOT a modal. It is a card in the conversation, so the rest of the app stays
+            usable while it ticks — that is the whole point of putting it there. */
+      /* BlueStacks' cold start, ms per frame. ONE source of truth on purpose — the SCENE uses these to
+         swap the player's screenshot and the CHAT uses them to time its narration, so each line lands
+         just AFTER the frame it describes and the two cannot drift. Hard-coding either side is what lets
+         the chat announce a screen the window hasn't reached. Ported with the constants themselves. */
+      var BS_BOOT = { loading: 2400, home: 1400 };
+      /* Which apps we actually hold a Play-Store screenshot for. YouTube only, today — so only a YouTube
+         task may end on the third frame. Ask for TikTok and the sequence RESTS on the BlueStacks home
+         screen, because showing a YouTube listing while the chat says "Found TikTok" is a straightforward
+         lie about what the product did. Drop another listing into assets/bluestacks/ and add it here. */
+      var BS_PLAY_FRAME = { YouTube: 'bs-play-youtube' };
+      // The player's frames. `null` = blueai-desktop's own existing player image, which is what the scene
+      // rests on outside a boot sequence.
+      var BS_FRAMES = { loading: 'bs-loading', home: 'bs-home' };
+      function setBsScreen(frame) {
+        bsWindow.style.backgroundImage = frame
+          ? "url('assets/bluestacks/" + frame + ".png')"
+          : '';   // '' falls back to the CSS rule's own bluestacks-window.png
+      }
+
+      var BS_APPS = [
+        ['youtube', 'YouTube'], ['tiktok', 'TikTok'], ['instagram', 'Instagram'], ['reels', 'Instagram'],
+        ['reddit', 'Reddit'], ['discord', 'Discord'], ['whatsapp', 'WhatsApp'], ['snapchat', 'Snapchat'],
+        ['telegram', 'Telegram'], ['twitter', 'X'], ['facebook', 'Facebook'], ['spotify', 'Spotify'],
+        ['netflix', 'Netflix'], ['google play', 'Google Play'], ['play store', 'the Play Store'],
+        ['coin master', 'Coin Master'], ['whiteout survival', 'Whiteout Survival'],
+        ['royal match', 'Royal Match'], ['subway surf', 'Subway Surfers'], ['free fire', 'Free Fire MAX'],
+        ['clash', 'Clash of Critters'], ['epic seven', 'Epic Seven'], ['maplestory', 'MapleStory'],
+        // Generic fallbacks — last on purpose, so a named app always wins.
+        ['apps', 'the app'], ['app', 'the app'], ['games', 'the game'], ['game', 'the game']
+      ];
+      function bsNeedsApp(text) {
+        var t = ' ' + String(text || '').toLowerCase() + ' ';
+        for (var i = 0; i < BS_APPS.length; i++) {
+          var token = BS_APPS[i][0].replace(/ /g, '\\s+');
+          if (new RegExp('[^a-z]' + token + '[^a-z]').test(t)) return BS_APPS[i][1];
+        }
+        return null;
+      }
+      // The install card. Appended once and never removed — the chat only appends, so it stays as a
+      // permanent record of what happened. A spinner frozen beside "100%" reads as stuck rather than
+      // finished, so the done state swaps to a static check (the source's own correction).
+      // Takes `app` — it needs it to hand to bsBootAndResume(), which decides whether a Play listing
+      // exists for that app. The first version omitted the parameter and referenced `app` anyway, which
+      // threw inside the rAF loop: the card reached 100% and then silently stopped, so the install LOOKED
+      // finished while the scene payoff never ran. A throw inside requestAnimationFrame doesn't surface
+      // anywhere the user can see — it only showed up in the console.
+      function bsInstallCard(app) {
+        var card = document.createElement('div'); card.className = 'bai-donecard working';
+        var head = document.createElement('div'); head.className = 'dc-head'; head.textContent = 'INSTALLING';
+        var row = document.createElement('div'); row.style.cssText = 'display:flex;align-items:center;gap:var(--bai-sp-6);';
+        var mark = document.createElement('span'); mark.className = 'bai-spin';
+        var label = document.createElement('span'); label.className = 'dc-body';
+        var bar = document.createElement('div'); bar.className = 'bai-progbar';
+        var fill = document.createElement('div'); fill.className = 'bai-progbar-fill'; fill.style.width = '0%';
+        bar.appendChild(fill); row.appendChild(mark); row.appendChild(label);
+        card.appendChild(head); card.appendChild(row); card.appendChild(bar);
+        baiBody.appendChild(card); scrollBody();
+        var pct = 0, DURATION = 3000, t0 = Date.now();
+        (function tick() {
+          pct = Math.min(100, Math.round((Date.now() - t0) / DURATION * 100));
+          label.textContent = 'Getting ready ' + pct + '%';
+          fill.style.width = pct + '%';
+          if (pct >= 100) {
+            mark.className = ''; mark.innerHTML = iconSvg(BAI_ICONS.check, 13);
+            mark.style.cssText = 'display:flex;color:var(--bai-accent);flex-shrink:0;';
+            bsBootAndResume(app);
+            return;
+          }
+          requestAnimationFrame(tick);
+        })();
+      }
+      /* THE SCENE PAYOFF + the narration that resumes the task, both timed off BS_BOOT.
+         This is the part I had copied the assets for and then never wired — bs-loading/bs-home/
+         bs-play-youtube sat in the folder unreferenced while the install just snapped the static player
+         image back on. The designer caught it. Worth naming the shape: copying an asset feels like
+         progress, and an unused asset is indistinguishable from a used one until someone looks at the
+         screen — the file being present is not evidence that anything renders it.
+         The player MOUNTS, cold-starts, lands on its home screen, and only then opens a Play listing —
+         and only for an app we actually hold a listing for (otherwise it rests on home rather than
+         showing the wrong app's page). Each chat line lands just after the frame it describes. */
+      function bsBootAndResume(app) {
+        var listing = BS_PLAY_FRAME[app];
+        setInstalled('bs', true);        // the player mounts…
+        setBsScreen(BS_FRAMES.loading);  // …cold-starting
+        setTimeout(function () { setBsScreen(BS_FRAMES.home); }, BS_BOOT.loading);
+        if (listing) setTimeout(function () { setBsScreen(listing); }, BS_BOOT.loading + BS_BOOT.home);
+
+        // Narration, offsets derived from the same constants rather than restated.
+        var say = [
+          [900, 'BlueStacks is starting…'],
+          [BS_BOOT.loading + 200, listing ? 'BlueStacks is ready. Opening the Play Store…' : 'BlueStacks is ready.'],
+          [BS_BOOT.loading + BS_BOOT.home + 400, listing ? 'Found ' + app + '. Opening it…' : 'Opening ' + app + '…']
+        ];
+        say.forEach(function (s) { setTimeout(function () { aiInstant(s[1]); }, s[0]); });
+        setTimeout(function () {
+          renderDone('Done — I finished that in ' + app + '.');
+        }, BS_BOOT.loading + BS_BOOT.home + 1600);
+      }
+      function bsNeedsReply(app) {
+        var row = document.createElement('div'); row.className = 'bai-warnrow info';
+        row.innerHTML = iconSvg(BAI_ICONS.info, 14) +
+          '<span>This one runs inside BlueStacks App Player. I drive ' + escHtml(app) +
+          ' there, and BlueStacks isn’t installed on this PC yet.</span>';
+        baiBody.appendChild(row);
+        /* `.bai-chat-cta` — a member of the FILLED-ACTION family (see its rule). CORRECTED from
+           `.bai-optg > .bai-opt-row`, which the designer caught: "this doesn't even look like a button
+           unless I hover over it." They were right and my Gate 2 reasoning was wrong in a specific way —
+           I matched the SHAPE (a single actionable thing in a message, like renderUpload's "Attach file")
+           and ignored the ROLE. `.bai-opt-row` is a pick-one LIST ROW; its resting state is a white card
+           with a grey border because that is what a list row should look like, and only its hover turns
+           accent. An install action is a commit, not an option in a list. Matching a component because it
+           sits in the same place is the role-vs-family error this notebook already names.
+           `plus`, explicitly — there is no `download` glyph in the set, and the `||` fallback I first
+           wrote would have resolved to this silently. */
+        var cta = document.createElement('button'); cta.type = 'button'; cta.className = 'bai-chat-cta';
+        cta.innerHTML = iconSvg(BAI_ICONS.plus, 13)
+          + '<span>Get BlueStacks</span>'
+          + '<span class="cta-sub">Free · installs in the background</span>';
+        // Removes itself on click rather than disabling in place: the card that appears below carries the
+        // same information, so a lingering disabled button would be a second element saying it (rule 38).
+        // It also blocks a double-click from queuing two installs — nothing upstream debounces.
+        cta.addEventListener('click', function () { cta.remove(); bsInstallCard(app); });
+        baiBody.appendChild(cta); scrollBody();
+      }
+
       function keywordReply(text) {
         var t = text.toLowerCase();
+        // FLOW B first: a dependency that doesn't exist outranks every demo keyword below, because the
+        // task genuinely cannot start. Checked before them so "find me a game guide" can't fall through
+        // to a canned reply that pretends the work happened.
+        if (!bsInstalled) { var app = bsNeedsApp(text); if (app) { bsNeedsReply(app); return true; } }
         if (t.indexOf('error') !== -1 || t.indexOf('fail') !== -1) { demoError(); return true; }
         if (t.indexOf('warn') !== -1) { demoWarn(); return true; }
         // Item 8: a real multi-turn reply (ack -> plan card -> working -> success), not a lone plan card.
@@ -2495,7 +2642,10 @@
           el.appendChild(dlBtn);
         } else if (hybridStatus === 'downloading') {
           var barWrap = document.createElement('div'); barWrap.style.cssText = 'display:flex;flex-direction:column;gap:6px;';
-          barWrap.innerHTML = '<div style="height:6px;border-radius:var(--bai-r-xs);background:var(--bai-input-bg);overflow:hidden;"><div style="height:100%;width:' + downloadPct + '%;background:var(--bai-accent);"></div></div><span style="font-size:var(--bai-fs-sm);color:var(--bai-dim);">Downloading local model… ' + Math.round(downloadPct) + '%</span>';
+          // Uses the extracted .bai-progbar (2026-08-11) — this recipe was inline here until Flow B's
+          // install needed the same bar, which is Gate 3's threshold of 2. Both call sites now share
+          // the class; only the width, which is data, stays inline.
+          barWrap.innerHTML = '<div class="bai-progbar"><div class="bai-progbar-fill" style="width:' + downloadPct + '%"></div></div><span style="font-size:var(--bai-fs-sm);color:var(--bai-dim);">Downloading local model… ' + Math.round(downloadPct) + '%</span>';
           var cancelBtn = document.createElement('button'); cancelBtn.className = 'bai-set-btn'; cancelBtn.style.width = '100%'; cancelBtn.type = 'button'; cancelBtn.textContent = 'Cancel';
           cancelBtn.addEventListener('click', function () { clearInterval(hybridTimer); hybridStatus = 'idle'; downloadPct = 0; if (inModal) closeAiModal(); renderAiMode(); });
           el.appendChild(barWrap); el.appendChild(cancelBtn);
@@ -3331,6 +3481,25 @@
       // One-tap "show me this state" row — these are one-off EVENTS in a conversation, not persistent modes,
       // so a single action button (appends a fresh instance every tap) reads clearer than an on/off toggle
       // would (what would "off" even do to a message already sent?).
+      /* One row, N checkboxes, each carrying its own name — no row label, because the names are the
+         labels (designer, 2026-08-11). Used for the install flags, which are two INDEPENDENT booleans
+         rather than a choice between options, so a segmented No/Yes was the wrong control shape for them.
+         `items` = [[label, value, setter], …]. */
+      function previewCheckRow(items) {
+        var row = document.createElement('div'); row.className = 'bai-preview-row';
+        var wrap = document.createElement('div'); wrap.className = 'bai-preview-checks';
+        items.forEach(function (it) {
+          var b = document.createElement('button'); b.type = 'button';
+          b.className = 'bai-preview-check' + (it[1] ? ' on' : '');
+          b.setAttribute('role', 'checkbox');
+          b.setAttribute('aria-checked', it[1] ? 'true' : 'false');
+          b.innerHTML = '<span class="box">' + iconSvg(BAI_ICONS.check, 9) + '</span>' + it[0];
+          b.addEventListener('click', function (e) { e.stopPropagation(); it[2](!it[1]); });
+          wrap.appendChild(b);
+        });
+        row.appendChild(wrap);
+        return row;
+      }
       function previewActionRow(label, onClick) {
         var row = document.createElement('div'); row.className = 'bai-preview-row';
         var lab = document.createElement('span'); lab.className = 'bai-preview-row-label'; lab.textContent = label;
@@ -3368,9 +3537,31 @@
         if (typeof renderPreviewRows === 'function') renderPreviewRows();   // Membership/Credits rows themselves must appear/disappear live as Geo/Own key change, not just their downstream effects
       }
       var previewChatStatesOpen = false;   // collapsed by default — 6 rows of demo buttons were cluttering the panel
+      /* WHAT IS INSTALLED ON THIS PC — declared HERE, above the Preview panel, and the position is a bug
+         fix rather than a preference. These lived beside the scene mechanics ~120 lines below, which reads
+         as the natural home, and `var` hoisting made that silently wrong: the NAME hoists, the assignment
+         does not, so `renderPreviewRows()` (called ~117 lines before the assignment ran) read both flags as
+         `undefined` and drew both checkboxes unchecked on a machine where both are installed. A falsy
+         `undefined` is indistinguishable from a deliberate `false` at the point of use, which is why this
+         produced a plausible-looking wrong state rather than an error. Same family as the `d || DEFAULT`
+         trap already in knowledge-base.md: a value that cannot express its own absence.
+         Two independent flags with THREE valid states, not four — the guard in setInstalled() is what keeps
+         "neither installed" out, because that is a bare desktop with no way back, not a designed screen. */
+      var bsInstalled = true, baiInstalled = true;
+
       function renderPreviewRows() {
         previewRowsEl.innerHTML = '';
-        var rows = [previewSegRowStacked('Session', [['Onboarding', 'onboarding'], ['Logged out', 'loggedout'], ['Logged in', 'loggedin']], pageState, setPreviewSession)];
+        /* INSTALLED sits FIRST because it gates everything below it — with BlueAI not installed there is
+           no app to configure, so every other row is describing software that isn't on the machine.
+           Same position and same reasoning as blueai-product's own panel. Two rows rather than one
+           3-option row, because the two flags are independent, not a choice between modes — and the
+           guard in setInstalled() is what keeps the illegal fourth state (neither installed) out. */
+        var rows = [
+          previewCheckRow([
+            ['BlueStacks', bsInstalled, function (v) { setInstalled('bs', v); }],
+            ['BlueAI', baiInstalled, function (v) { setInstalled('bai', v); }]
+          ]),
+          previewSegRowStacked('Session', [['Onboarding', 'onboarding'], ['Logged out', 'loggedout'], ['Logged in', 'loggedin']], pageState, setPreviewSession)];
         if (currentTabMode === 'chat') {
           rows.push(previewGroupHeader('Chat states', previewChatStatesOpen, function () { previewChatStatesOpen = !previewChatStatesOpen; renderPreviewRows(); }));
           if (previewChatStatesOpen) {
@@ -3529,9 +3720,83 @@
         else { drawer.classList.remove('open'); composition.classList.remove('shift'); }
       }
 
+      /* ---- WHAT IS INSTALLED ON THIS PC (ported model, 2026-08-11) --------------------------
+         Two independent flags, and the pair has THREE valid states, not four. Ported from
+         blueai-product, whose own guard comment is the reason: turning the last one off would
+         leave a bare desktop with nothing on it and no way back, which is not a designed state —
+         so the other one turns on instead of allowing it.
+           both true            -> the app as it has always been
+           bs=1, bai=0  FLOW A  -> no drawer at all (the drawer IS BlueAI), and clicking the
+                                   player raises BLUESTACKS' own install dialog. None of that
+                                   screen is ours; see bs-install-dialog.js.
+           bs=0, bai=1  FLOW B  -> normal BlueAI, but a task that needs an Android app can't
+                                   start. Handled entirely inside the chat (see needsBsReply),
+                                   never as a modal — the app stays usable while it installs. */
+      function applyInstallState() {
+        // Flow A hides the drawer outright rather than just closing it: "closed" still implies
+        // installed software you can reopen, and here there is none to reopen.
+        drawer.style.display = baiInstalled ? '' : 'none';
+        if (!baiInstalled) { drawer.classList.remove('open'); composition.classList.remove('shift'); }
+        /* …and the PLAYER hides when BlueStacks isn't installed (designer caught this: "when I click no
+           in bluestacks app player the app player image is still showing"). Obvious in hindsight and
+           worth naming: I wrote the flag pair, then only wired the consequences for ONE of them —
+           `applyInstallState` handled the drawer and the title and silently left the other flag's own
+           surface on screen, so "BlueStacks: No" was a state the model knew about and the scene didn't.
+           Safe to hide because `.composition` is a fixed 1000×573 box and `setOpen()` always opens the
+           drawer DETACHED (floating, its own left/top), so nothing depends on the player for layout. */
+        bsWindow.style.display = bsInstalled ? '' : 'none';
+        // The player is only clickable when the click DOES something (product's own rule): install
+        // BlueAI, or reopen a window that was closed with ✕. Otherwise it is scenery.
+        bsWindow.title = !baiInstalled ? 'Install BlueAI' : 'Open BlueAI';
+        if (baiInstalled) window.BsInstallDialog.close();
+        /* …and if the player is gone while BlueAI IS installed, BlueAI's own window must be OPEN.
+           TWO reasons, and the first is a bug the designer caught ("getting state when app player is off,
+           initially blueAI is on" — a blank white window):
+           1. **The closed drawer was never CSS-hidden.** It sits at `left:100%` translated back -290px,
+              i.e. 710px into the 1000px composition — *directly behind the opaque player image*. Its
+              hidden state was occlusion by a SIBLING, not any property of its own. Hiding the player
+              therefore exposed an unbooted, empty drawer (`.bai-ui` had no `.show`; nothing had booted
+              because boot only runs on open). This is `reasonings.md`'s "before painting over something
+              that looks empty, check what relies on it staying that way" — running in REVERSE: I removed
+              an opaque layer that something else was relying on to stay hidden. Same mechanism, opposite
+              direction, and worth adding to that entry as its mirror case.
+           2. Even fixed by hiding it, "player gone + drawer closed" is a dead end: the ONLY affordance
+              that opens BlueAI is clicking the player, so that state has nothing to interact with and no
+              way out of itself. Opening the window is the honest state — BlueAI is installed software and,
+              with no player on the desktop, its own window is the surface.
+           Called from here rather than from setInstalled's 'bai' branch so it covers BOTH routes in one
+           place: turning BlueAI on, and turning BlueStacks off. */
+        if (baiInstalled && !bsInstalled && !drawer.classList.contains('open')) setOpen(true);
+      }
+      function setInstalled(which, val) {
+        window.BsInstallDialog.close();
+        if (which === 'bs') { bsInstalled = val; if (!val && !baiInstalled) baiInstalled = true; }
+        else { baiInstalled = val; if (!val && !bsInstalled) bsInstalled = true; }
+        applyInstallState();
+        if (typeof renderPreviewRows === 'function') renderPreviewRows();
+        /* Switching BlueAI ON opens its window — the product does the same (`if (val) openWindow()`).
+           Without this, "BlueAI: on" left the drawer present-but-closed, which reads as the checkbox
+           having done nothing. The `bsInstalled` guard avoids double-calling setOpen, since
+           applyInstallState() above already opens it whenever the player is absent. */
+        if (which === 'bai' && val && bsInstalled) setOpen(true);
+      }
+      // Flow A's completion: BlueAI now exists, so the drawer appears and launches itself —
+      // matching the dialog's own closing copy ("BlueAI is installed. Launching it now…").
+      function finishBaiInstall() {
+        baiInstalled = true;
+        window.BsInstallDialog.close();
+        applyInstallState();
+        if (typeof renderPreviewRows === 'function') renderPreviewRows();
+        setOpen(true);
+      }
+
       // The whole BlueStacks image opens BlueAI (impression: the player opened it).
       bsWindow.addEventListener('click', function (e) {
         e.stopPropagation();
+        if (!baiInstalled) {   // FLOW A — raise BlueStacks' installer instead
+          window.BsInstallDialog.open({ onComplete: finishBaiInstall, onCancel: function () { window.BsInstallDialog.close(); } });
+          return;
+        }
         if (detached) { if (drawer.classList.contains('win-hidden')) setOpen(true); return; }   // reopen a closed floating window; never toggle a visible one
         setOpen(!drawer.classList.contains('open'));
       });

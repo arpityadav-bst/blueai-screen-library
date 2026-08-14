@@ -11,7 +11,12 @@ import type { Config } from 'tailwindcss'
 // on top of the in-panel DS.
 // ───────────────────────────────────────────────────────────────────────────
 
+// hoverOnlyWhenSupported compiles every `hover:` utility inside `@media (hover: hover)`. Without it,
+// Android Chrome and iOS latch the hover state after a tap and it stays until you tap elsewhere — so
+// a tapped chip, calendar day or card keeps its hover fill and reads as selected when it isn't.
+// One flag, every `hover:` on the site.
 const config: Config = {
+  future: { hoverOnlyWhenSupported: true },
   content: [
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',

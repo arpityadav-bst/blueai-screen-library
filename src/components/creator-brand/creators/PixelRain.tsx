@@ -21,6 +21,10 @@ export default function PixelRain({ className = '' }: { className?: string }) {
     const ctx = canvas?.getContext('2d')
     if (!canvas || !ctx) return
 
+    // REDUCED MOTION: a continuously twinkling field is exactly what this preference asks not to see,
+    // and this file never checked. Reveal.tsx has always done it; PixelRain never adopted it.
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
     const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1))
     let W = 0
     let H = 0
@@ -80,7 +84,25 @@ export default function PixelRain({ className = '' }: { className?: string }) {
     ro?.observe(canvas.parentElement ?? canvas)
     window.addEventListener('resize', resize)
 
+    // PAUSE WHEN OFFSCREEN. The loop re-queued forever, so a hero scrolled two screens away still
+    // cleared and recomposited a full-height canvas 60x a second for the rest of the session. Three
+    // instances of this component are mounted across the route, so this is the biggest battery win
+    // available on a phone.
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) {
+          if (!raf) raf = requestAnimationFrame(step)
+        } else if (raf) {
+          cancelAnimationFrame(raf)
+          raf = 0
+        }
+      },
+      { rootMargin: '96px' },
+    )
+    io.observe(canvas)
+
     return () => {
+      io.disconnect()
       cancelAnimationFrame(raf)
       window.removeEventListener('resize', resize)
       ro?.disconnect()

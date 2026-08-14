@@ -5,7 +5,7 @@ import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 
 // Visual counter-argument to Hero's AmbientOrbit: instead of one channel reading one
-// AI, this is many small creators orbiting one brand mark — "reach through many local
+// AI, this is many small creators orbiting one brand mark, "reach through many local
 // voices, not one big one." Same icon-badge family as AmbientOrbit (stroke glyph in a
 // colored circle) so the two hero devices read as one system, not two unrelated widgets.
 const DOTS = [
@@ -22,7 +22,7 @@ const DOTS = [
 ]
 
 const COLORS = ['#2F6DFF', '#0EA4C5', '#7B4CFF'] // real --bai-mkt-blue / --bai-cyan / --bai-iris
-const CHECK_PATH = 'M5 13l4 4L19 7' // "verified" — each dot is a completed, checked job
+const CHECK_PATH = 'M5 13l4 4L19 7' // "verified", each dot is a completed, checked job
 const BADGE_SIZE = 18
 
 export default function BrandOrbit() {

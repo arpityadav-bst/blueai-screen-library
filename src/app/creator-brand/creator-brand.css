@@ -15,7 +15,79 @@
 .cb-scope {
   --bai-shadow-cta: 0 6px 16px -8px rgba(var(--bai-glow-rgb), .32);
   --bai-shadow-cta-hover: 0 9px 20px -8px rgba(var(--bai-glow-rgb), .38);
+
+  /* THIS SITE'S ACCENT (designer, 2026-08-11): the header CTA's hover blue. Named --cb-*, not
+     --bai-*, deliberately — the marketing DS's own --bai-accent is #1990FF and is load-bearing on
+     the dormant pages in this repo, so this darker shade cannot claim that name without restyling
+     them. Scoped to .cb-scope, so it exists on these two routes and nowhere else.
+
+     It became a variable when it reached its THIRD consumer: the header CTA's quiet-state hover,
+     the header's cross-audience nav link, and the footer's cross-audience link. The first two
+     carried it as a literal #2258c9 with a comment explaining the value; the footer had
+     text-iris (the brand purple) instead, which was simply the wrong colour — and a fourth
+     hand-typed literal is how the next one goes wrong too. */
+  --cb-accent: #2258c9;
+  /* The same colour as an RGB triplet, so it can carry alpha. Added 2026-08-13 when the accent took
+     over every SELECTED state on this route from iris — washes and hairlines need rgba(), and a hex
+     token cannot provide one. Keep the two in sync: 34,88,201 IS #2258c9. */
+  --cb-accent-rgb: 34, 88, 201;
+
+  /* HOVER FILL. There was none, and that is why hover "was missing" on the dropdown rows, the
+     calendar days, the month arrows and every dialog close button: they all used `hover:bg-canvas`,
+     and --bai-canvas is pure WHITE (globals.css). A white hover on a white surface is not a subtle
+     hover, it is no hover. The value is blueai-desktop's own light-theme --bai-hover, the window
+     the designer named as the reference — copied rather than invented so the two feel the same. */
+  --cb-hover: #e9edf6;
+
+  /* EMPTY-TRACK FILL, same story: progress rails and meters used bg-canvas for their unfilled
+     part, so on a white card the campaign form's 3-step rail rendered as TWO visible bars and the
+     third was invisible — it read as "step 2 of 2". */
+  --cb-track: #e4e9f2;
+
+  /* CARD/SURFACE STROKE. --bai-stroke-warm (#B6B8CD) is a mid grey-purple and reads as a drawn
+     outline at card scale; --bai-divider (#DFE4EE) is the hairline the same DS already uses for
+     panel dividers, and it happens to land within a shade of blueai-desktop's light --bai-line
+     (#dbe2ee). The rule this settles, applied across both pages:
+        SURFACES  (cards, panels, dialogs, popovers, tables, accordions) → divider, very subtle
+        CONTROLS  (buttons, chips, form fields) → keep the firmer stroke, or they stop reading
+                   as things you can operate
+     Declared as a variable mainly so this comment has somewhere to live; the components use
+     Tailwind's border-divider directly. */
+  --cb-surface-stroke: var(--bai-divider);
 }
+
+/* The accent gets utilities because it's a plain colour swap. --cb-hover and --cb-track are
+   consumed as `bg-[var(--cb-hover)]` in the components instead, so they compose with Tailwind's own
+   variants — `hover:`, `focus-visible:` and crucially `disabled:`, since a disabled calendar day
+   still matches :hover in CSS and a bare `.cb-hover:hover` rule would light it up. */
+.cb-accent { color: var(--cb-accent); }
+.cb-accent-hover:hover { color: var(--cb-accent); }
+
+/* Scrollbar that appears only while the list is being used, and fades rather than snapping.
+   Replaces .cb-noscroll, which hid the bar outright — that matched the reference picker, but the
+   designer's call is better: a permanently hidden bar means a list that scrolls never says so, and
+   a permanently visible one is chrome sitting inside a 188px menu.
+
+   :hover ONLY, deliberately. A `:focus-within` clause was here as well, on the theory that it would
+   cover keyboard users — but the dropdown focuses one of its own options the moment it opens, so
+   focus-within was true for the entire time the menu was on screen and the bar never faded at all.
+   That is the opposite of what was asked for. The keyboard path doesn't need it either: roving
+   focus calls .focus(), which scrolls the row into view on its own, so the bar would be reporting
+   a scroll the browser has already performed.
+
+   Both engines are needed: `scrollbar-color` for Firefox, the ::-webkit-scrollbar pseudo-elements
+   for Chromium and Safari. Only the THUMB transitions — the track stays transparent throughout, so
+   nothing reserves a visible gutter. */
+.cb-thinscroll { scrollbar-width: thin; scrollbar-color: transparent transparent; }
+.cb-thinscroll:hover { scrollbar-color: rgba(var(--bai-ink-rgb), 0.22) transparent; }
+.cb-thinscroll::-webkit-scrollbar { width: 6px; }
+.cb-thinscroll::-webkit-scrollbar-track { background: transparent; }
+.cb-thinscroll::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 999px;
+  transition: background 220ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.cb-thinscroll:hover::-webkit-scrollbar-thumb { background: rgba(var(--bai-ink-rgb), 0.22); }
 
 /* Every section h2 was inheriting text-3xl/4xl's SHARED lineHeight (1.05/1.04,
    tailwind.config.ts) — the exact tightness the hero H1 was corrected away from
@@ -61,8 +133,18 @@
   inset: 0;
   pointer-events: none;
   opacity: 0.03;
-  mix-blend-mode: multiply;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* THE BLEND IS DESKTOP-ONLY. .cb-grain is inset:0 on .cb-scope, i.e. the whole DOCUMENT — over
+   10,000px tall on the brands page — and mix-blend-mode makes the compositor read back everything
+   painted beneath and re-blend it on every scroll frame, defeating layer caching for the entire page.
+   That is the canonical mobile scroll-jank primitive, spent here on 3% of noise that is invisible at
+   phone DPI. The texture still renders below lg; only the blend is dropped.
+   Written as its own block rather than nested inside .cb-grain: nested @media needs CSS Nesting, and
+   this file is plain CSS that has to work wherever the export lands. */
+@media (min-width: 1024px) {
+  .cb-grain { mix-blend-mode: multiply; }
 }
 
 /* Card elevation matching the shared DS "resting card" shadow — used on the
@@ -110,6 +192,30 @@
   will-change: transform;
 }
 /* Content rides above the backdrop. The header owns z-50 already. */
+
+/* ── Scroll cue (ScrollCue.tsx) — hero to steps section, desktop only ──
+   Reimplements a supplied Lottie ("mouse-scrolling.json": a mouse outline, a short line inside it
+   that slides down and eases back, looping ~1.7s) as a plain SVG + CSS keyframe rather than adding
+   a lottie-web/lottie-react dependency for one small two-shape loop — this codebase already prefers
+   hand-rolled motion primitives for exactly this reason (PixelRain, TiltImage). Not a bezier-exact
+   copy of the source file's easing, just the same read: a dot travels down inside the outline, fades
+   near the bottom, and resets to the top.
+   Colour is --cb-accent (`currentColor` on the SVG, set via text colour in ScrollCue.tsx) — the
+   source file's own stroke was a hardcoded dark navy, which is a fixed colour this route doesn't
+   have a token for and isn't the accent Appy asked for it to use. */
+@keyframes cb-scroll-dot {
+  0% { transform: translateY(0); opacity: 1; }
+  70% { transform: translateY(13px); opacity: 0; }
+  71% { transform: translateY(0); opacity: 0; }
+  100% { opacity: 1; }
+}
+.cb-scroll-dot {
+  animation: cb-scroll-dot 1.8s ease-in-out infinite;
+  transform-origin: center;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cb-scroll-dot { animation: none; }
+}
 .cb-scope > main,
 .cb-scope > footer { position: relative; z-index: 1; }
 
@@ -149,6 +255,75 @@
   text-wrap: pretty;
 }
 
+/* ── Hero photo edge vignette (creators/Hero.tsx, brands/Hero.tsx) — RECTANGULAR, via mask-image
+   again, NOT box-shadow (Appy, 2026-08-13 — box-shadow lasted about one round).
+
+   WHY THE BOX-SHADOW VERSION DID NOTHING VISIBLE: box-shadow (inset or not) paints in the same
+   layer as an element's background — and for a REPLACED element like <img>, the actual decoded
+   image pixels paint ABOVE that layer, not below it. The shadow was rendering; it was just sitting
+   underneath the opaque photo the entire time. This is a property of <img> specifically, not a
+   blur-radius or colour mistake — box-shadow as a photo vignette only works on elements whose
+   image is a CSS background-image, which this deliberately isn't (see the <picture> art-direction
+   comment in each Hero.tsx for why).
+
+   BACK TO mask-image, which this codebase has already proven works correctly on this exact <img>
+   (every earlier round's tuning was real, visible, and responded to changes) — reshaped instead of
+   reverting to the ellipse. TWO linear-gradients, one per axis, each independently opaque in its
+   own middle band and fading to transparent at ITS OWN two edges, combined with
+   `mask-composite: intersect` (Porter-Duff source-in: the two layers MULTIPLY, so a point only
+   stays fully visible where BOTH the x-gradient and the y-gradient say "opaque"). That treats all
+   four straight edges identically by construction — there is no rx/ry pair to imbalance any more,
+   because there's no ellipse.
+   `-webkit-mask-composite: source-in` is the pre-standard Safari name for the same operation;
+   Safari's mask-composite keyword set predates the current spec's add/subtract/intersect/exclude
+   names, so both declarations are needed, unprefixed listed second so it wins where a browser
+   understands both.
+
+   ONE HONEST CAVEAT — corners still fade a little more than the straight edges, because multiplying
+   two partial fades together produces a smaller number than either fade alone (0.4 x 0.4 = 0.16, not
+   0.4). That IS a real compounding effect, just a much smaller and more contained one than the
+   ellipse's: it only shows up in the actual corner regions where both gradients overlap, rather than
+   scaling every non-axis-aligned direction the way hypot() did across the whole ellipse. If the
+   corners still read as noticeably softer than the edges once you look, that's the next thing to
+   narrow — the fade widths below, not a shape change.
+
+   Widths are percentages of each axis's OWN dimension (same reasoning the ellipse's rx/ry used for
+   working across the mobile portrait crop and the desktop landscape one without separate numbers
+   per aspect ratio).
+   PUSHED NARROWER AGAIN, 12%->6% mobile / 18%->9% desktop (Appy, same day) — as far in as felt safe
+   without the transition itself turning into a visible hard line: the stops are still a genuine
+   linear ramp over that width, not a cliff, so even at 6% there's a real few-pixel gradient doing
+   the dissolving rather than a cut. Smaller width is also, incidentally, less exposed to this rule's
+   own corner-compounding caveat above — a thinner band leaves a thinner region for the two axes to
+   overlap in. If either edge now reads as a hard line rather than a soft one, that's this one
+   number to widen back a little, not a sign the mechanism is wrong. */
+.cb-hero-vignette {
+  --cb-vig: 6%;
+  mask-image:
+    linear-gradient(to right, transparent, black var(--cb-vig), black calc(100% - var(--cb-vig)), transparent),
+    linear-gradient(to bottom, transparent, black var(--cb-vig), black calc(100% - var(--cb-vig)), transparent);
+  mask-composite: intersect;
+  -webkit-mask-image:
+    linear-gradient(to right, transparent, black var(--cb-vig), black calc(100% - var(--cb-vig)), transparent),
+    linear-gradient(to bottom, transparent, black var(--cb-vig), black calc(100% - var(--cb-vig)), transparent);
+  -webkit-mask-composite: source-in;
+}
+@media (min-width: 640px) {
+  .cb-hero-vignette {
+    --cb-vig: 9%;
+  }
+}
+
+/* THE ELLIPSE HISTORY THIS REPLACED, kept for the record rather than deleted — four rounds of
+   tuning an ellipse's rx/ry/stops against measured background deltas, each one trading edge fade
+   against corner fade because the shape made trading them off the only lever available:
+   mobile started at ellipse 55%/50% (black 85%, transparent 95%), corners eased to 70%/51%, edges
+   then re-opened by pulling back to 58%/51% (re-tightening the corners as an accepted trade);
+   desktop started at ellipse 75%/52% (black 55%, transparent 92%), corners eased to 82%/52%, band
+   narrowed and edges re-opened by pulling back to 65%/52%. Every one of those moves was correct
+   given an ellipse; none of them could reach "edges and corners fade equally", which is the whole
+   reason this is box-shadow now instead. */
+
 /* NOTE: the step section used to be a GSAP-pinned scroll sequencer, and it owned three
    classes here — .cb-beat (a full-viewport title screen), .cb-seq-pin (the pinned section)
    and .cb-seq-frame (absolutely stacked step frames that crossfaded in place). All three
@@ -179,8 +354,7 @@
    Card width is a fixed clamp, NOT a fraction of the row, so a creators card (3 up) and a
    brands card (4 up) are literally the same size. That was the requirement and a
    `grid-cols-3 / grid-cols-4` split cannot meet it: with 1fr columns the 4-up page's cards
-   are always narrower than the 3-up page's. The consequence is that the 4-up track is wider
-   than the viewport, which is exactly what StepCards' horizontal shift exists to handle.
+   are always narrower than the 3-up page's.
 
    The gap is wide because the oversized numerals hang into it — and the hang is capped by it,
    since a numeral crossing into the previous card would paint on top of that card (each card
@@ -191,15 +365,68 @@
 
    The gap is therefore about breathing room only, not about clearing the numerals. */
 .cb-step-track {
-  --cb-card-w: clamp(300px, 27vw, 440px);
   gap: 80px;
 }
 .cb-step-card { flex: 0 0 var(--cb-card-w); }
 
-/* The shift viewport. It has to clip HORIZONTALLY — the brands track runs ~400px wider than
-   the viewport, and unclipped that becomes a horizontal scrollbar on the whole page (the route
-   layout deliberately has no overflow-x-clip of its own). But it must NOT clip vertically: the
-   numerals hang ~96px above the cards, and that overhang is the whole point of them.
+/* THE STAGE. --cb-card-w lives here, not on .cb-step-track, because this element's own
+   max-width formula below needs to read it too, and a custom property only cascades DOWN —
+   defining it on the child track couldn't feed the parent.
+
+   max-width is fixed at exactly a 3-CARD width, on both pages, regardless of how many cards
+   the page actually has. This is the fix for a real bug, not a stylistic choice: the track
+   used to centre itself on ITS OWN content width (`mx-auto` on a `w-max` box). For creators
+   (3 cards) that's harmless — the box IS 3 cards wide. For brands (4 cards) it was actively
+   wrong: centring a wider-than-viewport box on itself gives a NEGATIVE left inset, i.e. card 1
+   starts off-screen to the left. Measured at common desktop widths (1280-1600px) that was
+   -170 to -260px — not "slightly too far left", card 1 and its numeral were being clipped by
+   .cb-step-viewport's own overflow-x:clip.
+
+   Pinning the STAGE to a fixed 3-card width (rather than centring the actual, variable-count
+   row) makes both pages' card 1 land at the identical x-position by construction: the track
+   itself has no `mx-auto` any more (see StepCards.tsx) and simply starts flush at this box's
+   left edge. Brands' 4th card overflows the STAGE to the right — clipped at rest, and revealed
+   by the same horizontal shift that already existed, sliding the row left just far enough
+   inside this same stage rather than out to the browser's own edge. That reads as "scroll right
+   within the row" rather than "the row apologetically drifts across the whole viewport", which
+   is the intended behaviour, not a side effect of the fix.
+
+   The `+ 2 * 80px + 2 * 32px` mirrors .cb-step-track's own `gap: 80px` (2 gaps between 3 cards)
+   and the track's `lg:px-8` padding (32px, both sides) — re-derive both literals here if either
+   changes, since a CSS var can't reach across to a Tailwind utility class to read it.
+
+   THE min() IS A SECOND, SEPARATE FIX — the "3-card stage" fix above equalised the two pages'
+   left inset, but at realistic desktop widths that shared inset can still be smaller than the
+   numeral's own -96px hang (StepCards.tsx), so the numeral clips against the actual edge of the
+   browser window — a different failure from the one this rule originally fixed, and one that
+   was ALREADY there for creators too; it just hadn't been looked at yet. Measured: the "ideal"
+   3-card formula gives an inset under 140px for every width from 1024 up to ~1900px — i.e. most
+   real desktop windows, not an edge case.
+     `calc(100% - 2 * 140px)` is a hard ceiling on the stage's own width: whatever the ideal
+   formula wants, the stage can never be wider than (this element's containing block) minus
+   280px, which by construction leaves >=140px on each side once centred. This 140 answers a
+   STATIC question — "how much real page margin does the numeral's own -96px hang need at
+   rest" — and it stays 140 on its own terms. It used to equal the overflow-clip-margin below
+   too, by coincidence of both starting from the same hang figure; they no longer match, because
+   the clip-margin below also has to survive the horizontal SHIFT, which this ceiling doesn't
+   need to know about at all. Don't re-couple them — see that rule for why.
+     THE TRADE: below ~1920px this ceiling now binds tighter than the 3-card formula, so the
+   track (still sized to that formula) overflows the STAGE's right edge — meaning creators' card
+   3 can now also sit behind the clip at rest, revealed by a shift, at widths where it never
+   needed one before. That's accepted deliberately: the shift math is fully generic (measures
+   real geometry every time, nothing hardcodes "3 never shifts"), so this degrades through
+   already-tested machinery. A clipped numeral at a common window width was the alternative, and
+   that one has no such fallback.
+
+   Inert below `lg`: this only ever CAPS the width, never forces growth, and a mobile viewport is
+   always narrower than either bound anyway, so `margin-inline: auto` there has zero slack to
+   distribute. No media-query guard needed.
+
+   Also acts as the shift viewport, and it has to clip HORIZONTALLY for that reason too — the
+   brands track can run wider than the stage above, and unclipped that becomes a horizontal
+   scrollbar on the whole page (the route layout deliberately has no overflow-x-clip of its
+   own). But it must NOT clip vertically: the numerals hang ~96px above the cards, and that
+   overhang is the whole point of them.
 
    `overflow: hidden` cannot express that — and neither can `overflow-x: hidden`, because when
    one axis is `hidden` the other computes to `auto`, which would both re-clip the numerals and
@@ -210,25 +437,73 @@
    Clipping here is safe for the pin even though a clip context can capture position:fixed
    descendants — this element is INSIDE the pinned section, not an ancestor of it.
 
-   `overflow-clip-margin` is what lets the FIRST card's numeral hang left without the track
-   having to reserve layout padding for it. Padding would have worked and did, but it spends the
-   same horizontal budget the cards do — 96px of hang meant 96px of side padding on both ends,
-   which forced the cards ~40px narrower at 1280 to keep the 3-up row fitting. The clip margin
-   moves the paint boundary outward instead and costs no layout at all. */
+   THIS ELEMENT NO LONGER CLIPS. It only sizes and centres the row; the clipping moved to
+   .cb-step-clip below, which is full-bleed. That separation is the fix for the real bug, and it
+   is worth being explicit about why two earlier attempts here were both wrong:
+
+   The row slides left (StepCards' shift) to bring a later card into view. While it slides, the
+   outgoing cards have to be cropped by SOMETHING. When the clip lived on this element — a box
+   inset ~140px from each page edge — that crop landed 140px INSIDE the page, so card 1 was
+   guillotined mid-page with ordinary page background sitting to the left of the cut. That reads
+   as a rendering fault, not as a carousel.
+     Attempt 1 raised `overflow-clip-margin` from 140 to 900px to "let it paint past the edge".
+   Wrong tool: a clip margin makes the crop happen FURTHER OUT, but the crop still exists, and
+   pushing it out far enough to hide it would also let the row paint over the sections either
+   side of it. Attempt 2 (see the mask note in StepCards.tsx) blamed the numeral's fade gradient
+   entirely — a real measurable difference in isolation, but not this.
+     The actual fix is WHERE the boundary is, not how far it's offset: crop at the page edge, so
+   an outgoing card slides off-screen the way a carousel should, and nothing is ever cut with
+   page visible beside it. Hence no overflow and no clip-margin here at all. */
 .cb-step-viewport {
+  --cb-card-w: clamp(300px, 27vw, 440px);
+  margin-inline: auto;
+}
+/* THE CAP IS DESKTOP-ONLY, and the note above used to claim it was "inert below lg: this only ever
+   CAPS the width, never forces growth, and a mobile viewport is always narrower than either bound
+   anyway." That was wrong, and expensively so. The second bound is calc(100% - 280px), which SHRINKS
+   WITH THE VIEWPORT — so on a phone it is not merely applicable, it is always the binding term.
+   Measured live before this fix: at 320px the stage computed to 40px, each step card to 0px, and the
+   media panel to 0px. The whole How It Works section rendered as nothing, on BOTH pages.
+   The 140px page margin exists only to protect the numeral's -left-24 hang, and that numeral is
+   lg:block. Gating the cap to the same breakpoint makes the two agree. */
+@media (min-width: 1024px) {
+  .cb-step-viewport {
+    max-width: min(calc(3 * var(--cb-card-w) + 2 * 80px + 2 * 32px), calc(100% - 2 * 140px));
+  }
+}
+
+/* THE CLIP, full-bleed. Spans the section's whole width, so the only place content can be
+   cropped is the page's own edge.
+
+   Still has to clip HORIZONTALLY: the brands track is wider than the page once shifted, and
+   unclipped that becomes a horizontal scrollbar on the whole document (the route layout
+   deliberately has no overflow-x-clip of its own — see layout.tsx).
+
+   And still must NOT clip vertically: the numerals hang ~96px ABOVE their cards, and that
+   overhang is the whole point of them. `overflow: hidden` can't express that, and neither can
+   `overflow-x: hidden` — when one axis is `hidden` the other computes to `auto`, which would
+   both re-clip the numerals and hand the user a scrollbar that can desync from the scripted
+   shift. `clip` is the one value allowed to pair with `visible`.
+
+   No `overflow-clip-margin` needed now: at rest the leftmost numeral sits ~76px from the page
+   edge, comfortably inside this box, so there is nothing to paint past. */
+.cb-step-clip {
   overflow-x: clip;
   overflow-y: visible;
-  overflow-clip-margin: 140px;
 }
 /* Safari < 16 has no `overflow: clip`. Fall back to clipping both axes: the numerals lose their
    overhang, which is cosmetic, rather than the page gaining a horizontal scrollbar, which is not. */
 @supports not (overflow: clip) {
-  .cb-step-viewport { overflow: hidden; }
+  .cb-step-clip { overflow: hidden; }
 }
 
 /* Below lg the track isn't a track — cards stack and the sequencer doesn't run at all. */
-@media (max-width: 1023px) {
-  .cb-step-track { flex-direction: column; align-items: center; }
+@media (max-width: 1023.98px) {
+  .cb-step-track { flex-direction: column; align-items: center;     /* 32, not the track's 80: that number was derived as breathing room around the hanging
+       numerals on the horizontal track, and the numerals are lg-only. Stacked, it was 80px of dead
+       space between every card. */
+    gap: 32px;
+  }
   .cb-step-card { flex: 0 0 auto; width: 100%; max-width: 440px; }
 }
 
@@ -307,6 +582,85 @@
 }
 .cb-field-dark::placeholder,
 .cb-field-dark input::placeholder { color: rgba(255, 255, 255, 0.45); }
+
+/* ── Invalid fields ────────────────────────────────────────────────────────────────────────
+   Declared AFTER the three .cb-field* variants on purpose. All four are single-class selectors,
+   so this is a source-order win, not a specificity one — and it has to beat both the rest border
+   AND the :hover border, or hovering an invalid field quietly turns it valid-looking again.
+
+   The halo is the same 4px shape the focus state uses, in the danger channel instead of the
+   neutral one: an invalid field that's ALSO focused should still read as invalid, and two
+   competing ring colours would just fight. Keeping the geometry identical and swapping only the
+   hue is what lets the two states coexist.
+
+   Deliberately border + halo only, no red background: the field still has to be comfortable to
+   read and re-type in, and a tinted input makes typed ink harder to see for exactly as long as
+   the error lasts. */
+.cb-field-error,
+.cb-field-error:hover,
+.cb-field-error:focus,
+.cb-field-error:focus-within {
+  border-color: var(--bai-danger);
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
+}
+
+/* The band variant of the same thing. #EF4444 on the near-black CTA band measures ~3.3:1 — under
+   the 4.5:1 an error message has to clear, and errors are the one text on the page a user MUST be
+   able to read. These two lighten it into range while staying unmistakably red. */
+.cb-field-error-dark,
+.cb-field-error-dark:hover,
+.cb-field-error-dark:focus,
+.cb-field-error-dark:focus-within {
+  border-color: #ff8b8b;
+  box-shadow: 0 0 0 4px rgba(255, 139, 139, 0.16);
+}
+.cb-err-dark { color: #ffb4b4; }
+
+/* ── Dialogs ───────────────────────────────────────────────────────────────────────────────
+   Scrim fades; panel fades and rises 10px with a slight scale-up from 0.985. The panel's curve
+   is the site's standard out-ease and it runs 40ms longer than the scrim, so the backdrop is
+   already settled as the card arrives rather than both landing on the same frame.
+
+   prefers-reduced-motion drops the transform and keeps the fade — the fade is what tells you a
+   layer appeared, the movement is only polish, and Reveal.tsx makes the same trade. */
+@keyframes cb-scrim-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes cb-modal-in {
+  from { opacity: 0; transform: translateY(10px) scale(0.985); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.cb-scrim { animation: cb-scrim-in 180ms cubic-bezier(0.22, 0.61, 0.36, 1) both; }
+.cb-modal { animation: cb-modal-in 220ms cubic-bezier(0.22, 0.61, 0.36, 1) both; }
+@media (prefers-reduced-motion: reduce) {
+  .cb-modal { animation: cb-scrim-in 180ms linear both; }
+}
+
+/* ── Campaign form: the two custom controls ────────────────────────────────────────────────
+   The country dropdown and the date pickers replaced a native <select> and two native
+   <input type="date">. Both natives were OS chrome: cb-field-strong above could not reach
+   their hover, focus or arrow, so they were the two fields in the form whose states didn't
+   match the others' — and their arrows sat hard against the right edge while the text sat
+   14px off the left. The React side is components/creator-brand/brands/campaign/; only the
+   three things Tailwind can't express land here.
+
+   .cb-pop — the shared floating surface's entry motion. A keyframe rather than a transition
+   because the element mounts on open, and there is no "from" state to transition out of.
+   Same 3px lift + fade + ease as the rest of the site's overlays. */
+@keyframes cb-pop-in {
+  from { opacity: 0; transform: translateY(3px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.cb-pop { animation: cb-pop-in 180ms cubic-bezier(0.22, 0.61, 0.36, 1) both; }
+
+/* NOTE: .cb-noscroll lived here — a fully hidden scrollbar on the dropdown's list, matching the
+   reference picker. Replaced by .cb-thinscroll above (designer, 2026-08-11) and removed rather than
+   left behind: a hidden bar means a list that scrolls never admits it. */
+
+/* Native number spinners paint flush to the field's right edge — the exact crowding the custom
+   chevron was built to avoid, reintroduced by the two money fields. Removed rather than restyled:
+   they're unusable at a $1 step anyway, and both fields take free-form amounts. */
+.cb-nospin { -moz-appearance: textfield; appearance: textfield; }
+.cb-nospin::-webkit-outer-spin-button,
+.cb-nospin::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 
 /* NOTE: the closing-CTA bands' receding grid used to live here as .cb-cta-plane — two
    background-gradient planes rotated in 3-D with perspective. It is computed geometry in

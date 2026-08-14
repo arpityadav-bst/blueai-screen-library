@@ -3,6 +3,69 @@
 
 ---
 
+## Session 18 — 2026-08-11 — the BlueStacks/BlueAI install flows: one feature, two sides of the VDA boundary
+Freshness check: taste ✓ (+rule 51; header bumped) | decisions ✓ (+11 rows, count derived by grep not by plan) | reasonings ✓ (+1 principle, 2 existing widened) | project-insights ✓ (+INSTALL STATE / `.bs-*` boundary section) | knowledge-base ✓ (+1 trap, 1 widened) | evolution ✓ (+S18) | session-logs (this entry) | scratchpad ✓ (9 promoted, wiped) | style-guide ✓ (synced inline per this project's Gate-5 inversion) | gates ✓ (ds-drift PASS 274/347 + 3 §12 families, icon-target PASS, radius 0 pairs)
+`designer_caught_count: 6`
+
+**The shape of the work.** Port blueai-product's install concept — enable/disable BlueStacks and BlueAI, plus
+what each shows when the other is missing. The structural insight came before any code: **the two flows land on
+OPPOSITE sides of the VDA boundary.** Flow A (BlueStacks present, BlueAI not) has *no drawer at all*, because
+the drawer IS BlueAI — so that screen is wallpaper + player + BlueStacks' own dialog, and none of it is this
+design system's. Flow B (BlueAI present, BlueStacks not) is BlueAI speaking inside its own window, so it must
+be *designed*, not ported. The designer confirmed Flow A stays verbatim and out of every audit.
+
+**1. The exclusion is structural, not an exemption list.** `bs-install-dialog.js` creates its own scrim/host
+and keeps every style inline at BlueStacks' values, so it contributes zero rules to `blueai-desktop.css` and
+zero to `index.html` — the two files `ds-drift-check` §8 scans for raw `font-size`/`border-radius` px, of
+which the dialog legitimately has 8. **There is nothing for the gate to see, rather than something told to
+ignore**, which is the gate's own §8 principle ("an exemption list is a to-do list wearing a scope
+statement"). Runtime audits skip `.bs-*` by name. Ported vanilla rather than as `.jsx` because the prototypes
+share no runtime; `PixelWave` (dead in the source) and an unused prop deliberately not carried over.
+
+**2. DS work rather than one-off styling.** Two colour-only modifiers (rule 41), `.bai-progbar` **extracted**
+at Gate 3's threshold with the Hybrid call site migrated onto it, and a third **§12 family**. Boot frames and
+chat narration both driven off one `BS_BOOT` constant so a line can never announce a frame the window has not
+reached; the Play-listing frame is gated to apps we hold a screenshot for, because showing a YouTube listing
+under "Found TikTok" would be a lie about what the product did.
+
+**3. Six designer catches, and I am not rounding that down.** (1) the toggles should be checkboxes — and the
+reason generalises to rule 51, so this was a design miss, not a preference; (2) the player stayed visible with
+BlueStacks off; (3) `.bai-warnrow.info`'s values were INVENTED (`color-mix 20%/48%`) when
+`--bai-accent-wash`/`--bai-accent-line` existed — measured at **double the saturation of every other accent
+surface**, a Gate 0/Gate 1 failure; (4) the CTA didn't read as a button; (5) the three frame PNGs were copied
+and never referenced; (6) hiding the player exposed a blank unbooted drawer.
+
+**What the catches have in common, and it is not carelessness.** Four of the six are *reuse* errors of the same
+family: I matched something by resemblance and skipped the check that the resemblance was the RIGHT one. The
+`.info` values copied the amber row's recipe (which uses `color-mix` only because no amber token exists); the
+CTA copied `.bai-opt-row`'s shape (a pick-one list row) for a commit action; the checkboxes copied the
+product's two-value control without asking what the data was. **In the CTA case I explicitly cited Gate 2 —
+"reuse the established component" — and the gate pointed me at the wrong component.** That is now the third
+instance on the role-vs-family principle, with the new width named: *appears in the same position and has the
+same number of parts* is a family, not a role.
+
+**4. Two self-caught defects that only appeared when DRIVEN, both producing plausible wrong states rather than
+errors.** `var bsInstalled = true` sat ~117 lines below `renderPreviewRows()` — `var` hoists the name, not the
+value, so both checkboxes rendered unchecked and `undefined` was indistinguishable from a deliberate `false`.
+And `bsInstallCard(app)` shipped without its parameter, throwing `ReferenceError` **inside the rAF loop**: the
+card reached "Getting ready 100%", stopped, and read as a *finished* install with nothing in the DOM to say
+otherwise. Only the console had it. **Found by reading console errors rather than re-reading my own logic** —
+which is the only search that can find a thrown callback.
+
+**Counter-evidence of growth, and it is real.** The boundary analysis (which flow is ours, which is not, and
+why the answer follows from "the drawer IS BlueAI") was reasoned out and confirmed with the designer *before*
+any code; every ported value was read from the source rather than recalled; the exclusion was made structural
+rather than promised; the extraction threshold was honoured unprompted; the `download` icon that does not
+exist was caught before shipping by verifying the name instead of trusting a `||` fallback; and the count in
+this pass's own promotion note was derived by `grep -c` on the finished table, not from the plan — the
+specific failure the previous pass had committed.
+
+**Phase 2 HOLDS; the Phase-3 streak stays at zero.** `caught_count: 6` is not a low-caught session. The
+composition is worth tracking though: S17's catches were mostly *unmeasured properties*, S18's are mostly
+*wrong-resemblance reuse* — a reasoning failure, which is the harder kind to gate.
+
+---
+
 ## Session 17 — 2026-08-10 → 08-11 — the 12-item batch, three new taste rules (one with a runtime gate), the toast, and TWO closes
 Freshness check (as of the POST-CLOSE pass, which is the authoritative one): taste ✓ (+rules 48, 49, **50**; header bumped at both passes) | decisions ✓ (+17 rows at the first close, **+9 more** at the post-close pass under their own heading) | reasonings ✓ (+6 principles, **+4 more**) | project-insights ✓ (+notification taxonomy, z-layer inventory, the `#scaler` two-space fact; **amended post-close** — gutter resolved, form width 264→260px) | knowledge-base ✓ (+3 traps at the first close; deliberately NOT touched post-close — every mechanism promoted then already had a `reasonings.md` home, and a fourth telling is the duplication the Session-15 audit flagged) | evolution ✓ (+S17, **top category REPLACED post-close**) | session-logs (this entry, amended three times — see below) | scratchpad ✓ (31 entries promoted at the first close, **10 more promoted and wiped at the post-close pass; now genuinely empty, carrying nothing forward**) | style-guide ✓ (synced inline every edit, per this project's inverted-Gate-5 contract) | CLAUDE.md ✓ (**stale bootstrap facts corrected post-close** — it was telling the next session to learn two numbers that had changed that day, and describing a preview server that no longer existed)
 `designer_caught_count: 9` (unchanged — the post-close catches were record errors in this notebook, not design or product defects, and folding them into a design-catch count would flatter the design work by mislabelling the failure)

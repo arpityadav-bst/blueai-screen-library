@@ -1,0 +1,966 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Campaigns: Brand/Agency Portal Template</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Bricolage+Grotesque:wght@700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* blueai-modern tokens, mirrored from the screen library's globals.css so this static page
+   matches the campaign creation dialog. Iris and cyan only ever appear together as a gradient. */
+:root{
+  --iris-rgb:123,76,255; --cyan-rgb:14,164,197; --ink-rgb:8,10,31;
+  --iris:rgb(var(--iris-rgb));
+  --gradient:linear-gradient(to bottom right,rgb(var(--iris-rgb)) 0%,rgb(var(--cyan-rgb)) 99%);
+  --gradient-r:linear-gradient(to right,rgb(var(--iris-rgb)) 0%,rgb(var(--cyan-rgb)) 99%);
+  --iris-wash:rgba(var(--iris-rgb),.07); --iris-line:rgba(var(--iris-rgb),.35);
+
+  --ink-display:#080A1F; --ink-heading:#1B1E38; --ink-body:#2B2E4C;
+  --ink-muted:#434664; --ink-soft:#757A94;
+  --stroke:#B6B8CC; --stroke-warm:#B6B8CD; --divider:#DFE4EE;
+  --surface:#F7FAFF; --canvas:#FFFFFF; --page:#F9F9FA;
+
+  --success:#22C55E; --success-soft:#DCFCE7; --success-ink:#15803D;
+  --warning:#F59E0B; --warning-soft:#FEF3C7; --warning-ink:#92400E;
+  --danger:#EF4444;  --danger-soft:#FEE2E2;  --danger-ink:#991B1B;
+  --info:#3B82F6;    --info-soft:#DBEAFE;    --info-ink:#1E40AF;
+
+  --r-card:8px; --r-md:12px; --r-pill:128px;
+  --sans:'Inter','SF Pro',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --head:'Space Grotesk','SF Pro Display','Inter',sans-serif;
+  --brand:'Bricolage Grotesque','Inter',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--page);color:var(--ink-body);font-family:var(--sans);font-size:14px;line-height:1.6}
+a{color:var(--iris);text-decoration:none}
+a:hover{text-decoration:underline}
+.num{font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+
+.topbar{background:var(--canvas);border-bottom:1px solid var(--divider);padding:0 28px;height:60px;display:flex;align-items:center;gap:20px}
+.wordmark{font-family:var(--brand);font-weight:700;font-size:18px;color:var(--ink-display);line-height:1}
+.wordmark .tag{display:block;font-family:var(--sans);font-size:8.5px;font-weight:700;letter-spacing:.24em;color:var(--iris);margin-top:2px}
+.crumb{color:var(--ink-soft);font-size:13px}
+.crumb b{color:var(--ink-heading);font-weight:600}
+.crumb a{color:var(--ink-soft)}
+.account{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink-muted)}
+.avatar{width:28px;height:28px;border-radius:9999px;background:var(--iris-wash);color:var(--iris);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px}
+
+.wrap{max-width:1100px;margin:0 auto;padding:28px 28px 60px}
+.view{display:none}
+.view.on{display:block}
+
+.pagehead{display:flex;align-items:center;gap:16px;margin-bottom:20px}
+.pagehead h1{font-family:var(--head);font-size:26px;font-weight:700;color:var(--ink-display);letter-spacing:-.02em;line-height:1.15}
+.pagehead .right{margin-left:auto;display:flex;gap:10px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 18px;border-radius:var(--r-pill);font-size:13px;font-weight:600;cursor:pointer;border:0.5px solid var(--stroke-warm);background:var(--canvas);color:var(--ink-heading);font-family:var(--sans);transition:transform .15s ease}
+.btn:hover{transform:translateY(-1px)}
+.btn.primary{background:var(--gradient);border:none;color:#fff;box-shadow:0 4px 14px rgba(95,70,255,.25)}
+.back{font-size:13px;font-weight:600;color:var(--ink-muted);cursor:pointer}
+.back:hover{color:var(--ink-heading)}
+
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.02em;padding:3px 10px;border-radius:var(--r-pill);white-space:nowrap}
+.chip .dot{width:7px;height:7px;border-radius:9999px;background:currentColor}
+.chip.live{background:var(--success-soft);color:var(--success-ink)}
+.chip.done{background:var(--info-soft);color:var(--info-ink)}
+.chip.short{background:var(--warning-soft);color:var(--warning-ink)}
+.chip.review{background:#EEF1F6;color:var(--ink-muted)}
+
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px}
+.tiles.five{grid-template-columns:repeat(5,1fr)}
+.tile{background:var(--canvas);border:0.5px solid var(--stroke-warm);border-radius:var(--r-md);padding:16px}
+.tile .label{font-size:10px;font-weight:600;color:var(--ink-muted);text-transform:uppercase;letter-spacing:.08em}
+.tile .value{font-family:var(--head);font-size:24px;font-weight:700;color:var(--ink-display);margin-top:6px;letter-spacing:-.02em;line-height:1.1}
+.tile .sub{font-size:12px;color:var(--ink-soft);margin-top:3px;line-height:1.45}
+.tile .sub.warn{color:var(--warning-ink);font-weight:600}
+
+.card{background:var(--canvas);border:0.5px solid var(--stroke-warm);border-radius:var(--r-md);padding:20px;margin-bottom:16px}
+.card h2{font-family:var(--head);font-size:17px;font-weight:600;color:var(--ink-heading);margin-bottom:4px}
+.card .hint{font-size:12.5px;color:var(--ink-soft);margin-bottom:14px;line-height:1.5}
+.grid2{display:grid;grid-template-columns:1fr 320px;gap:16px;align-items:start}
+
+/* campaign list */
+.seghead{display:flex;align-items:center;gap:10px;font-family:var(--head);font-size:15px;font-weight:700;color:var(--ink-heading);margin:4px 0 10px}
+.seghead .note{font-family:var(--sans);font-size:11.5px;font-weight:500;color:var(--ink-soft)}
+.clist .row{display:grid;grid-template-columns:minmax(230px,1.4fr) 1fr 130px 120px 110px;gap:18px;align-items:center;padding:16px 20px;background:var(--canvas);border:0.5px solid var(--stroke-warm);border-radius:var(--r-md);margin-bottom:10px;cursor:pointer;transition:border-color .15s,box-shadow .15s,transform .15s}
+.clist .row:hover{border-color:var(--iris-line);box-shadow:0 4px 16px rgba(95,70,255,.10);transform:translateY(-1px)}
+.cname{font-size:14.5px;font-weight:600;color:var(--ink-heading);line-height:1.35}
+.cmeta{font-size:12px;color:var(--ink-soft);margin-top:3px}
+.colhead{display:grid;grid-template-columns:minmax(230px,1.4fr) 1fr 130px 120px 110px;gap:18px;padding:0 20px 8px;font-size:10px;font-weight:600;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.08em}
+.fillcell .bar{height:8px;border-radius:9999px;background:var(--iris-wash);overflow:hidden;margin-bottom:5px}
+.fillcell .bar i{display:block;height:100%;background:var(--gradient-r);border-radius:9999px}
+.fillcell .t{font-size:12px;color:var(--ink-soft)}
+.fillcell .t b{color:var(--ink-heading)}
+.cell{font-size:13px;color:var(--ink-soft)}
+.cell b{color:var(--ink-heading);font-weight:600}
+.cell .s{display:block;font-size:11.5px;color:var(--ink-soft)}
+.rowlink{font-size:12.5px;font-weight:600;color:var(--iris);text-align:right}
+.emptyrow{background:var(--canvas);border:0.5px dashed var(--stroke-warm);border-radius:var(--r-md);padding:26px 20px;text-align:center;font-size:13px;color:var(--ink-muted);margin-bottom:10px}
+.emptyrow a{font-weight:600;cursor:pointer}
+
+/* detail */
+.meta{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px;font-size:13px;color:var(--ink-muted)}
+.meta b{color:var(--ink-heading);font-weight:600}
+.chart-wrap{position:relative}
+svg text{font-family:var(--sans)}
+.tooltip{position:absolute;pointer-events:none;background:var(--ink-display);color:#fff;font-size:12px;padding:6px 10px;border-radius:var(--r-card);opacity:0;transition:opacity .1s;white-space:nowrap;transform:translate(-50%,-115%)}
+.tooltip b{font-variant-numeric:tabular-nums}
+.staterow{display:flex;gap:10px;flex-wrap:wrap}
+.state{flex:1;min-width:140px;display:flex;align-items:center;gap:10px;border:0.5px solid var(--stroke-warm);border-radius:var(--r-md);padding:12px 14px}
+.state .ic{width:30px;height:30px;border-radius:var(--r-card);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700}
+.state.good .ic{background:var(--success-soft);color:var(--success-ink)}
+.state.warn .ic{background:var(--warning-soft);color:var(--warning-ink)}
+.state.bad .ic{background:var(--danger-soft);color:var(--danger-ink)}
+.state .n{font-family:var(--head);font-size:19px;font-weight:700;color:var(--ink-display);line-height:1.15}
+.state .t{font-size:12px;color:var(--ink-muted);line-height:1.4}
+.note{font-size:12.5px;color:var(--ink-body);background:var(--iris-wash);border-radius:var(--r-card);padding:10px 12px;margin-top:12px;line-height:1.55}
+.filters{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.filter{font-size:12px;font-weight:500;color:var(--ink-muted);border:0.5px solid var(--stroke-warm);border-radius:var(--r-card);padding:6px 12px;background:var(--canvas);cursor:pointer;transition:border-color .15s,color .15s}
+.filter:hover{border-color:var(--stroke);color:var(--ink-heading)}
+.filter.on{background:var(--iris-wash);border-color:var(--iris-line);color:var(--iris);font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-soft);font-weight:600;padding:8px 10px;border-bottom:1px solid var(--divider)}
+td{padding:10px;border-bottom:1px solid var(--divider);vertical-align:top;color:var(--ink-body)}
+tr:last-child td{border-bottom:none}
+.acts{display:flex;gap:4px}
+.act{font-size:10px;font-weight:600;letter-spacing:.03em;padding:2px 7px;border-radius:var(--r-card);background:var(--iris-wash);color:var(--iris)}
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:3px 9px;border-radius:var(--r-pill)}
+.pill.good{background:var(--success-soft);color:var(--success-ink)}
+.pill.warn{background:var(--warning-soft);color:var(--warning-ink)}
+.pill.bad{background:var(--danger-soft);color:var(--danger-ink)}
+.comment{color:var(--ink-muted);font-size:12.5px;max-width:260px;line-height:1.5}
+.evd a{display:block;font-size:12.5px}
+.acct{width:100%;font-size:13.5px}
+.acct tr td{padding:9px 0;border-bottom:1px solid var(--divider)}
+.acct tr:last-child td{border-bottom:none}
+.acct td:last-child{text-align:right;font-weight:600;color:var(--ink-heading)}
+.acct .total td{font-size:15px;font-weight:700;color:var(--ink-display)}
+.paid{color:var(--success-ink);font-weight:700}
+.footnote{font-size:12px;color:var(--ink-soft);margin-top:12px;line-height:1.55}
+.privacy{border-top:1px solid var(--divider);margin-top:28px;padding-top:16px;font-size:12.5px;color:var(--ink-soft);max-width:720px;line-height:1.6}
+
+/* in-review empty state */
+.emptycard{background:var(--canvas);border:0.5px solid var(--stroke-warm);border-radius:var(--r-md);padding:48px 28px;text-align:center}
+.emptycard .eic{width:44px;height:44px;border-radius:9999px;background:#EEF1F6;color:var(--ink-muted);display:flex;align-items:center;justify-content:center;font-size:20px;margin:0 auto}
+.emptycard h2{font-family:var(--head);font-size:20px;font-weight:700;color:var(--ink-display);margin-top:14px}
+.emptycard p{max-width:46ch;margin:8px auto 0;font-size:13.5px;color:var(--ink-muted);line-height:1.6}
+.emptycard .cta{margin-top:22px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.banner{display:none;align-items:center;gap:6px;background:var(--iris-wash);border:0.5px solid var(--iris-line);border-radius:var(--r-card);padding:10px 14px;font-size:12.5px;color:var(--ink-body);margin-bottom:16px;line-height:1.5}
+.banner b{color:var(--iris)}
+.banner a{margin-left:auto;font-weight:600;white-space:nowrap;cursor:pointer}
+
+/* create-campaign dialog (in-page port of the landing page's React dialog, same DS) */
+.scrim{position:fixed;inset:0;z-index:100;background:rgba(8,10,31,.45);display:none;align-items:flex-start;justify-content:center;overflow-y:auto;padding:40px 16px}
+.scrim.on{display:flex}
+.dlg{position:relative;background:var(--canvas);border-radius:18px;width:100%;max-width:620px;box-shadow:0 24px 64px rgba(8,10,31,.25);margin:auto}
+.dlg.dark{background:linear-gradient(135deg,#241a5e 0%,#3d2b96 55%,#4a35b4 100%);color:#fff}
+.dclose{position:absolute;top:16px;right:16px;width:36px;height:36px;border:none;background:none;font-size:18px;color:var(--ink-muted);cursor:pointer;border-radius:var(--r-card)}
+.dlg.dark .dclose{color:rgba(255,255,255,.7)}
+.dhead{padding:24px 28px 18px;border-bottom:1px solid var(--divider)}
+.dhead h2{font-family:var(--head);font-size:20px;font-weight:700;color:var(--ink-display)}
+.dhead p{font-size:13px;color:var(--ink-muted);margin-top:4px}
+.dbody{padding:22px 28px 26px}
+.steprow{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:18px}
+.steprow h3{font-family:var(--head);font-size:17px;font-weight:700;color:var(--ink-display)}
+.prog{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-muted)}
+.prog .seg{width:26px;height:4px;border-radius:9999px;background:#E7EAF2;display:inline-block}
+.prog .seg.on{background:var(--gradient-r)}
+.fld{display:block;margin-top:16px}
+.fld:first-child{margin-top:0}
+.flabel{display:block;font-size:12px;font-weight:500;color:var(--ink-muted)}
+.finput{width:100%;margin-top:6px;padding:12px 14px;font-size:14px;font-family:var(--sans);color:var(--ink-heading);background:var(--canvas);border:0.5px solid var(--stroke-warm);border-radius:var(--r-md);outline:none}
+.finput:focus{border-color:var(--iris-line)}
+.finput.err{border-color:var(--danger)}
+.ferr{display:none;margin-top:6px;font-size:11px;font-weight:500;color:var(--danger-ink)}
+.fhint{display:block;margin-top:6px;font-size:11px;color:var(--ink-soft)}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px;align-items:start}
+.frow:first-child{margin-top:0}
+.frow .fld{margin-top:0}
+.chiprow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:8px}
+.selchip{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:var(--r-card);font-size:12px;font-weight:500;border:0.5px solid var(--divider);color:var(--ink-muted);cursor:pointer;user-select:none;background:var(--canvas)}
+.selchip.on{background:var(--iris-wash);border-color:var(--iris-line);color:var(--iris);font-weight:600}
+.selchip.fixed{background:var(--iris-wash);border-color:var(--iris-line);color:var(--ink-heading);font-weight:600;cursor:default}
+.moresoon{font-size:11px;color:var(--ink-soft)}
+.dbtns{display:flex;gap:10px;margin-top:24px}
+.dbtns .btn{flex:1;padding:13px 18px;font-size:14px}
+.moneywrap{position:relative;display:block;margin-top:6px}
+.moneywrap .cur{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--ink-soft);font-size:14px;line-height:1;pointer-events:none}
+.moneywrap .finput{margin-top:0;padding-left:30px}
+.dsuccess{padding:52px 40px;text-align:center}
+.dsuccess .mark{margin:0 auto;width:56px;height:56px;border-radius:9999px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;color:#fff;font-size:24px}
+.dsuccess h2{font-family:var(--head);font-size:24px;font-weight:700;color:#fff;margin-top:18px}
+.dsuccess p{max-width:42ch;margin:10px auto 0;font-size:14px;color:rgba(255,255,255,.75);line-height:1.6}
+.dsuccess p b{color:#fff}
+.dsuccess .wpill{display:inline-block;margin-top:26px;min-width:240px;padding:13px 26px;border-radius:var(--r-pill);background:#fff;color:var(--ink-display);font-size:14px;font-weight:600;cursor:pointer;border:none}
+.dsuccess .quiet{display:block;margin:14px auto 0;background:none;border:none;color:rgba(255,255,255,.7);font-size:13px;font-weight:500;cursor:pointer}
+.dsuccess .quiet:hover{color:#fff}
+
+@media(max-width:900px){
+  .tiles,.tiles.five{grid-template-columns:repeat(2,1fr)}
+  .grid2{grid-template-columns:1fr}
+  .clist .row,.colhead{grid-template-columns:1fr 1fr;grid-auto-rows:auto}
+  .frow{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wordmark">BlueAI<span class="tag">BRANDS</span></div>
+  <div class="crumb" id="crumb"><b>Campaigns</b></div>
+  <div class="account"><div class="avatar" id="acct-avatar">BR</div> <span id="acct-name">Your brand</span></div>
+</div>
+
+<div class="wrap">
+
+<!-- ============ VIEW 1: CAMPAIGNS LIST ============ -->
+<div class="view on" id="view-list">
+
+  <div class="pagehead">
+    <h1>Campaigns</h1>
+    <div class="right"><button class="btn primary" onclick="newCampaign()">+ New campaign</button></div>
+  </div>
+
+  <div class="tiles">
+    <div class="tile">
+      <div class="label">In review</div>
+      <div class="value num" id="t-review">0</div>
+      <div class="sub">campaigns awaiting approval</div>
+    </div>
+    <div class="tile">
+      <div class="label">Verified completions, all time</div>
+      <div class="value num">0</div>
+      <div class="sub">they appear as campaigns go live</div>
+    </div>
+    <div class="tile">
+      <div class="label">Spend this month</div>
+      <div class="value num">$0</div>
+      <div class="sub">only verified completions bill</div>
+    </div>
+  </div>
+
+  <div class="seghead">Your campaigns</div>
+  <div class="colhead"><span>Campaign</span><span>Fill</span><span>Spend</span><span>Status</span><span></span></div>
+  <div class="clist" id="my-clist"></div>
+  <div class="emptyrow" id="my-empty">No campaigns yet. <a onclick="newCampaign()">Create your first campaign</a> and it appears here, in review first, then live.</div>
+
+  <div class="seghead" style="margin-top:26px">Sample reports <span class="note">illustrative data showing what a live campaign report looks like</span></div>
+  <div class="colhead"><span>Campaign</span><span>Fill</span><span>Spend</span><span>Status</span><span></span></div>
+  <div class="clist" id="clist">
+    <div class="row" onclick="show('detail',{backTo:'list'})">
+      <div>
+        <div class="cname">Spring Launch: Product Reveal Short</div>
+        <div class="cmeta">Sample &middot; YouTube Short &middot; Watch + Like + Comment &middot; US</div>
+      </div>
+      <div class="fillcell"><div class="bar"><i style="width:42.4%"></i></div><div class="t"><b class="num">212</b> of <span class="num">500</span> &middot; 7 days left</div></div>
+      <div class="cell"><b class="num">$212</b><span class="s num">of $500</span></div>
+      <div><span class="chip live"><span class="dot"></span> LIVE</span></div>
+      <div class="rowlink">View report &rsaquo;</div>
+    </div>
+
+    <div class="row" onclick="show('detail',{backTo:'list'})">
+      <div>
+        <div class="cname">Creator Collab Teaser</div>
+        <div class="cmeta">Sample &middot; YouTube Short &middot; Watch + Like &middot; US</div>
+      </div>
+      <div class="fillcell"><div class="bar"><i style="width:78.7%"></i></div><div class="t"><b class="num">118</b> of <span class="num">150</span> &middot; 3 days left</div></div>
+      <div class="cell"><b class="num">$118</b><span class="s num">of $150</span></div>
+      <div><span class="chip live"><span class="dot"></span> LIVE</span></div>
+      <div class="rowlink">View report &rsaquo;</div>
+    </div>
+
+    <div class="row" onclick="show('detail',{backTo:'list'})">
+      <div>
+        <div class="cname">July Brand Anthem</div>
+        <div class="cmeta">Sample &middot; YouTube Short &middot; Watch + Like + Comment &middot; US</div>
+      </div>
+      <div class="fillcell"><div class="bar"><i style="width:100%"></i></div><div class="t"><b class="num">300</b> of <span class="num">300</span> &middot; target met</div></div>
+      <div class="cell"><b class="num">$300</b><span class="s num">of $300</span></div>
+      <div><span class="chip done">&#10003; COMPLETED</span></div>
+      <div class="rowlink">View report &rsaquo;</div>
+    </div>
+
+    <div class="row" onclick="show('detail',{backTo:'list'})">
+      <div>
+        <div class="cname">Summer Drop Part 1</div>
+        <div class="cmeta">Sample &middot; YouTube Short &middot; Watch + Like + Comment &middot; US</div>
+      </div>
+      <div class="fillcell"><div class="bar"><i style="width:48%"></i></div><div class="t"><b class="num">96</b> of <span class="num">200</span> &middot; make-good applied</div></div>
+      <div class="cell"><b class="num">$96</b><span class="s num">of $200</span></div>
+      <div><span class="chip short">&#9888; UNDER TARGET</span></div>
+      <div class="rowlink">View report &rsaquo;</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============ VIEW 2: CAMPAIGN DETAIL (SAMPLE DATA) ============ -->
+<div class="view" id="view-detail">
+
+  <div style="margin-bottom:14px"><a class="back" onclick="show('list')">&lsaquo; All campaigns</a></div>
+
+  <div class="banner" id="sample-banner">
+    <span><b>Sample report.</b> Illustrative data showing what your report looks like once your campaign is live.</span>
+    <a id="banner-back" onclick="show('list')">Back to campaigns</a>
+  </div>
+
+  <div class="pagehead" style="flex-wrap:wrap">
+    <div>
+      <h1>Spring Launch: Product Reveal Short</h1>
+      <div class="meta">
+        <span class="chip live"><span class="dot"></span> LIVE</span>
+        <span>Post: <a href="#">youtube.com/shorts/xK9...q2w</a></span>
+        <span>Actions: <b>Watch + Like + Comment</b></span>
+        <span>Aug 4 to Aug 18, 2026</span>
+        <span>Country: <b>United States</b></span>
+      </div>
+    </div>
+    <div class="right">
+      <button class="btn">Download CSV</button>
+      <button class="btn primary">PDF Receipt</button>
+    </div>
+  </div>
+
+  <div class="tiles five">
+    <div class="tile">
+      <div class="label">Fill</div>
+      <div class="value num">42%</div>
+      <div class="sub">212 of 500 target</div>
+    </div>
+    <div class="tile">
+      <div class="label">Verified</div>
+      <div class="value num">212</div>
+      <div class="sub">only verified runs bill</div>
+    </div>
+    <div class="tile">
+      <div class="label">Spend</div>
+      <div class="value num">$212</div>
+      <div class="sub">of $500</div>
+    </div>
+    <div class="tile">
+      <div class="label">Under review</div>
+      <div class="value num">6</div>
+      <div class="sub warn">not billed until resolved</div>
+    </div>
+    <div class="tile">
+      <div class="label">Days remaining</div>
+      <div class="value num">7</div>
+      <div class="sub">ends Aug 18</div>
+    </div>
+  </div>
+
+  <div class="grid2">
+
+    <div class="card">
+      <h2>Progress</h2>
+      <div class="hint">Cumulative verified completions against the pace needed to reach 500 by Aug 18.</div>
+
+      <div class="chart-wrap">
+        <svg id="chart" viewBox="0 0 640 240" width="100%" role="img" aria-label="Cumulative verified completions by day versus target pace">
+          <g stroke="#EEF1F6" stroke-width="1">
+            <line x1="46" y1="20"  x2="620" y2="20"/>
+            <line x1="46" y1="66"  x2="620" y2="66"/>
+            <line x1="46" y1="112" x2="620" y2="112"/>
+            <line x1="46" y1="158" x2="620" y2="158"/>
+            <line x1="46" y1="204" x2="620" y2="204"/>
+          </g>
+          <g font-size="10.5" fill="#757A94">
+            <text x="38" y="24"  text-anchor="end">500</text>
+            <text x="38" y="70"  text-anchor="end">375</text>
+            <text x="38" y="116" text-anchor="end">250</text>
+            <text x="38" y="162" text-anchor="end">125</text>
+            <text x="38" y="208" text-anchor="end">0</text>
+          </g>
+          <g font-size="10.5" fill="#757A94" text-anchor="middle">
+            <text x="46"  y="224">Aug 4</text>
+            <text x="169" y="224">Aug 7</text>
+            <text x="333" y="224">Aug 11</text>
+            <text x="497" y="224">Aug 15</text>
+            <text x="620" y="224">Aug 18</text>
+          </g>
+          <line x1="46" y1="204" x2="620" y2="20" stroke="#B6B8CC" stroke-width="2" stroke-dasharray="5 5"/>
+          <text x="480" y="52" font-size="11" fill="#757A94">Target pace</text>
+          <polyline fill="none" stroke="#7B4CFF" stroke-width="2"
+            points="46,197.4 87,186.7 128,173.8 169,163.5 210,152.9 251,144.0 292,134.1 333,126.0"/>
+          <g fill="#7B4CFF" stroke="#FFFFFF" stroke-width="2">
+            <circle cx="46"  cy="197.4" r="4"/>
+            <circle cx="87"  cy="186.7" r="4"/>
+            <circle cx="128" cy="173.8" r="4"/>
+            <circle cx="169" cy="163.5" r="4"/>
+            <circle cx="210" cy="152.9" r="4"/>
+            <circle cx="251" cy="144.0" r="4"/>
+            <circle cx="292" cy="134.1" r="4"/>
+            <circle cx="333" cy="126.0" r="4"/>
+          </g>
+          <text x="344" y="122" font-size="11" font-weight="600" fill="#1B1E38">Verified <tspan font-weight="700">212</tspan></text>
+          <line id="xh" x1="0" y1="20" x2="0" y2="204" stroke="#B6B8CC" stroke-width="1" visibility="hidden"/>
+          <rect id="hit" x="46" y="20" width="574" height="184" fill="transparent"/>
+        </svg>
+        <div class="tooltip" id="tip"></div>
+      </div>
+
+      <div class="staterow" style="margin-top:16px">
+        <div class="state"><div><div class="n num">270</div><div class="t">Open on the board</div></div></div>
+        <div class="state"><div><div class="n num">12</div><div class="t">Claimed, in progress</div></div></div>
+        <div class="state"><div><div class="n num">22</div><div class="t">Completed today</div></div></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <h2>Accounting</h2>
+        <table class="acct">
+          <tr><td>Campaign budget</td><td class="num">$500.00</td></tr>
+          <tr><td>Bid per verified completion</td><td class="num">$1.00</td></tr>
+          <tr><td>Consumed (212 x $1.00)</td><td class="num">$212.00</td></tr>
+          <tr class="total"><td>Remaining</td><td class="num">$288.00</td></tr>
+          <tr><td>Invoice <span class="num">INV-2026-081</span></td><td class="paid">PAID</td></tr>
+        </table>
+        <div class="footnote">If the campaign closes under target, unconsumed budget is settled per the make-good policy in your agreement.</div>
+      </div>
+
+      <div class="card">
+        <h2>Verification</h2>
+        <div class="staterow" style="flex-direction:column">
+          <div class="state good"><div class="ic">&#10003;</div><div><div class="n num">212</div><div class="t">Verified</div></div></div>
+          <div class="state warn"><div class="ic">&#8635;</div><div><div class="n num">6</div><div class="t">Under review</div></div></div>
+          <div class="state bad"><div class="ic">&#10005;</div><div><div class="n num">9</div><div class="t">Did not verify</div></div></div>
+        </div>
+        <div class="note">Every completion is checked before it bills. You are never charged for a run that does not verify.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="card">
+    <h2>Proof of work</h2>
+    <div class="hint">Every verified run carries evidence. Runs are numbered; the community members who complete jobs stay anonymous.</div>
+    <div class="filters">
+      <div class="filter on">All (227)</div>
+      <div class="filter">Verified (212)</div>
+      <div class="filter">Under review (6)</div>
+      <div class="filter">Did not verify (9)</div>
+      <div class="filter" style="margin-left:auto">Aug 4 to Aug 11 &#9662;</div>
+    </div>
+    <table>
+      <thead>
+        <tr><th>Run</th><th>Completed</th><th>Actions</th><th>Comment</th><th>Evidence</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="num">#0212</td>
+          <td>Aug 11, 09:42</td>
+          <td><div class="acts"><span class="act">WATCH</span><span class="act">LIKE</span><span class="act">COMMENT</span></div></td>
+          <td class="comment">"The reveal at the end got me, did not expect that finish"</td>
+          <td class="evd"><a href="#">Screenshot</a><a href="#">Comment permalink</a></td>
+          <td><span class="pill good">&#10003; Verified</span></td>
+        </tr>
+        <tr>
+          <td class="num">#0211</td>
+          <td>Aug 11, 09:17</td>
+          <td><div class="acts"><span class="act">WATCH</span><span class="act">LIKE</span><span class="act">COMMENT</span></div></td>
+          <td class="comment">"Watched this twice, the pacing is so clean"</td>
+          <td class="evd"><a href="#">Screenshot</a><a href="#">Comment permalink</a></td>
+          <td><span class="pill good">&#10003; Verified</span></td>
+        </tr>
+        <tr>
+          <td class="num">#0210</td>
+          <td>Aug 11, 08:55</td>
+          <td><div class="acts"><span class="act">WATCH</span><span class="act">LIKE</span><span class="act">COMMENT</span></div></td>
+          <td class="comment">"Comment posted, awaiting platform indexing"</td>
+          <td class="evd"><a href="#">Screenshot</a></td>
+          <td><span class="pill warn">&#8635; Under review</span></td>
+        </tr>
+        <tr>
+          <td class="num">#0209</td>
+          <td>Aug 11, 08:31</td>
+          <td><div class="acts"><span class="act">WATCH</span><span class="act">LIKE</span></div></td>
+          <td class="comment">-</td>
+          <td class="evd"><a href="#">Screenshot</a></td>
+          <td><span class="pill good">&#10003; Verified</span></td>
+        </tr>
+        <tr>
+          <td class="num">#0208</td>
+          <td>Aug 10, 21:06</td>
+          <td><div class="acts"><span class="act">WATCH</span><span class="act">LIKE</span><span class="act">COMMENT</span></div></td>
+          <td class="comment">"This is the kind of ad I actually finish"</td>
+          <td class="evd"><a href="#">Screenshot</a><a href="#">Comment permalink</a></td>
+          <td><span class="pill good">&#10003; Verified</span></td>
+        </tr>
+        <tr>
+          <td class="num">#0207</td>
+          <td>Aug 10, 19:48</td>
+          <td><div class="acts"><span class="act">WATCH</span></div></td>
+          <td class="comment">"Like action did not register on retry"</td>
+          <td class="evd"><a href="#">Screenshot</a></td>
+          <td><span class="pill bad">&#10005; Did not verify</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <div style="text-align:center;margin-top:12px"><a href="#" style="font-size:13px;font-weight:600">Show all 227 runs</a></div>
+  </div>
+
+  <div class="privacy">
+    Work on this campaign is completed by community members on their own devices and accounts, paced like normal use. Their identities are never shared; runs are numbered. Evidence is retained for the period stated in your agreement.
+  </div>
+
+</div>
+
+<!-- ============ VIEW 3: IN-REVIEW EMPTY STATE ============ -->
+<div class="view" id="view-review">
+
+  <div style="margin-bottom:14px"><a class="back" onclick="show('list')">&lsaquo; All campaigns</a></div>
+
+  <div class="pagehead" style="flex-wrap:wrap">
+    <div>
+      <h1 id="rv-name">Your campaign</h1>
+      <div class="meta">
+        <span class="chip review">&#8635; IN REVIEW</span>
+        <span>YouTube Short</span>
+        <span>Country: <b>United States</b></span>
+        <span id="rv-when">Submitted just now</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid2">
+
+    <div class="emptycard">
+      <div class="eic">&#8635;</div>
+      <h2>This campaign is in review.</h2>
+      <p>We check every campaign before it reaches the community, usually within one business day. Once it is approved and live, verified completions, spend, and proof of work appear here as they happen.</p>
+      <div class="cta">
+        <button class="btn primary" onclick="show('detail',{backTo:'review'})">View a sample report</button>
+        <button class="btn" onclick="show('list')">Back to campaigns</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Campaign setup</h2>
+      <div class="hint">What you defined. Editable until the campaign goes live.</div>
+      <table class="acct">
+        <tr><td>Campaign budget</td><td class="num" id="rv-budget">$500.00</td></tr>
+        <tr><td>Bid per verified completion</td><td class="num" id="rv-bid">$1.00</td></tr>
+        <tr><td>Target reach</td><td class="num" id="rv-reach">500</td></tr>
+        <tr><td>Consumed</td><td class="num">$0.00</td></tr>
+        <tr><td>Invoice</td><td>After approval</td></tr>
+      </table>
+      <div class="footnote">Nothing is charged while the campaign is in review.</div>
+    </div>
+
+  </div>
+
+</div>
+
+</div>
+
+<!-- ============ CREATE CAMPAIGN DIALOG (overlays the list, no navigation) ============ -->
+<div class="scrim" id="cdlg">
+  <div class="dlg" id="cdlg-panel" role="dialog" aria-modal="true" aria-label="Create a campaign">
+    <button class="dclose" onclick="closeCreate()" aria-label="Close">&#10005;</button>
+
+    <!-- shown only when no stored sign-in (direct dashboard visit) -->
+    <div id="cd-signin" style="display:none">
+      <div class="dhead">
+        <h2>Sign in to continue</h2>
+        <p>Campaigns belong to your brand account: its reports, its invoices, its review status.</p>
+      </div>
+      <div class="dbody">
+        <label class="fld">
+          <span class="flabel">Work email</span>
+          <input class="finput" id="si-email" type="email" placeholder="you@yourbrand.com">
+          <span class="ferr" id="si-err">Enter your work email.</span>
+        </label>
+        <div class="dbtns" style="margin-top:18px"><button class="btn primary" onclick="signinEmail()">Continue with email</button></div>
+        <div class="dbtns"><button class="btn" onclick="signinDone(null)">Continue with Google</button></div>
+      </div>
+    </div>
+
+    <div id="cd-form">
+      <div class="dhead">
+        <h2>Create a campaign</h2>
+        <p>Nothing is charged now. You're only defining the campaign.</p>
+      </div>
+      <div class="dbody">
+        <div class="steprow">
+          <h3 id="cd-title">What to promote</h3>
+          <div class="prog"><span><span class="num" id="cd-n">1</span>/3</span>
+            <i class="seg on" id="sg1"></i><i class="seg" id="sg2"></i><i class="seg" id="sg3"></i>
+          </div>
+        </div>
+
+        <div id="cd-s1">
+          <div class="fld">
+            <span class="flabel">Platform</span>
+            <div class="chiprow">
+              <span class="selchip fixed">&#10003;
+                <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path fill="#FF0000" d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814z"/><path fill="#fff" d="M9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                YouTube</span>
+              <span class="moresoon">More platforms coming soon.</span>
+            </div>
+          </div>
+          <label class="fld">
+            <span class="flabel">Campaign name</span>
+            <input class="finput" id="f-name" placeholder="Fernweh Coffee: spring launch">
+            <span class="ferr" id="e-name"></span>
+          </label>
+          <label class="fld">
+            <span class="flabel">YouTube video URL</span>
+            <input class="finput" id="f-url" type="url" placeholder="https://youtube.com/watch?v=...">
+            <span class="ferr" id="e-url"></span>
+            <span class="fhint" id="h-url">A public YouTube video or Short.</span>
+          </label>
+          <div class="fld">
+            <span class="flabel">Action</span>
+            <div class="chiprow" id="f-actions">
+              <span class="selchip on" data-a="watch" onclick="toggleAction(this)">&#10003; Watch</span>
+              <span class="selchip on" data-a="like" onclick="toggleAction(this)">&#10003; Like</span>
+              <span class="selchip on" data-a="comment" onclick="toggleAction(this)">&#10003; Comment</span>
+            </div>
+            <span class="ferr" id="e-actions"></span>
+          </div>
+        </div>
+
+        <div id="cd-s2" style="display:none">
+          <div class="frow">
+            <label class="fld">
+              <span class="flabel">Campaign budget</span>
+              <span class="moneywrap"><span class="cur">$</span><input class="finput" id="f-budget" type="number" min="0" step="1" placeholder="500"></span>
+              <span class="ferr" id="e-budget"></span>
+            </label>
+            <label class="fld">
+              <span class="flabel">Bid price</span>
+              <span class="moneywrap"><span class="cur">$</span><input class="finput" id="f-bid" type="number" min="0" step="0.05" placeholder="1.00"></span>
+              <span class="ferr" id="e-bid"></span>
+            </label>
+          </div>
+          <span class="fhint">The bid is what you pay for each verified action. Illustrative, not a rate card.</span>
+          <div class="frow">
+            <label class="fld">
+              <span class="flabel">Start date</span>
+              <input class="finput" id="f-start" type="date">
+              <span class="ferr" id="e-start"></span>
+            </label>
+            <label class="fld">
+              <span class="flabel">End date</span>
+              <input class="finput" id="f-end" type="date">
+              <span class="ferr" id="e-end"></span>
+            </label>
+          </div>
+        </div>
+
+        <div id="cd-s3" style="display:none">
+          <div class="fld">
+            <span class="flabel">Target country</span>
+            <div class="chiprow">
+              <span class="selchip fixed">&#10003; United States</span>
+              <span class="moresoon">More countries coming soon.</span>
+            </div>
+          </div>
+          <label class="fld">
+            <span class="flabel">What's the goal? <span style="font-weight:400">(optional)</span></span>
+            <textarea class="finput" id="f-goal" rows="3" placeholder="Awareness for our new roast, ahead of the summer range." style="resize:none"></textarea>
+          </label>
+        </div>
+
+        <div class="dbtns">
+          <button class="btn" id="cd-back" onclick="stepBack()" style="display:none">Back</button>
+          <button class="btn primary" id="cd-next" onclick="stepNext()">Continue</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="cd-done" style="display:none">
+      <div class="dsuccess">
+        <div class="mark">&#10003;</div>
+        <h2>Campaign submitted.</h2>
+        <p><b id="done-name"></b> is in review. We check every campaign before it goes live; you can follow it right here on your dashboard.</p>
+        <button class="wpill" onclick="doneView()">View campaign</button>
+        <button class="quiet" onclick="closeCreate()">Done</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// Campaign creation happens IN PLACE: the dialog overlays this dashboard, no navigation. It is
+// a vanilla port of the landing page's React dialog (same steps, same validation, same Supabase
+// submission), because the dashboard is where a signed-in brand lives.
+function newCampaign(){ openCreate(); }
+
+var SUPABASE_URL='https://dfhicvitmvnlixftjtlw.supabase.co';
+var SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRmaGljdml0bXZubGl4ZnRqdGx3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA5NzIwMDMsImV4cCI6MjA5NjU0ODAwM30.J7aXVJxB5EoWSnyaxcEtorw6nWy1pTIEOTgxdBz6rAY';
+
+var cd={step:1};
+function brandEmail(){ try{return localStorage.getItem('cb-brand-email')}catch(e){return null} }
+
+function openCreate(){
+  // A brand normally arrives signed in; otherwise the same sign-in shows inside this dialog
+  // first and continues into the form.
+  var signed=brandEmail()!==null;
+  document.getElementById('cd-signin').style.display=signed?'none':'block';
+  document.getElementById('cd-form').style.display=signed?'block':'none';
+  document.getElementById('cd-done').style.display='none';
+  document.getElementById('cdlg-panel').classList.remove('dark');
+  setStep(1);
+  document.getElementById('cdlg').classList.add('on');
+  document.body.style.overflow='hidden';
+}
+function closeCreate(){
+  document.getElementById('cdlg').classList.remove('on');
+  document.body.style.overflow='';
+}
+function signinEmail(){
+  var v=document.getElementById('si-email').value.trim();
+  var ok=/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
+  var err=document.getElementById('si-err');
+  err.textContent=v?'That doesn’t look like an email address.':'Enter your work email.';
+  err.style.display=ok?'none':'block';
+  document.getElementById('si-email').classList.toggle('err',!ok);
+  if(ok) signinDone(v);
+}
+function signinDone(email){
+  try{localStorage.setItem('cb-brand-email',email||'')}catch(e){}
+  try{
+    var em=email||'';
+    if(em){
+      var handle=em.split('@')[0];
+      document.getElementById('acct-name').textContent=handle;
+      document.getElementById('acct-avatar').textContent=handle.slice(0,2).toUpperCase();
+    }
+  }catch(e){}
+  document.getElementById('cd-signin').style.display='none';
+  document.getElementById('cd-form').style.display='block';
+}
+function toggleAction(el){
+  el.classList.toggle('on');
+  el.innerHTML=(el.classList.contains('on')?'&#10003; ':'')+el.getAttribute('data-a').replace(/^./,function(c){return c.toUpperCase()});
+}
+function setStep(n){
+  cd.step=n;
+  document.getElementById('cd-s1').style.display=n===1?'block':'none';
+  document.getElementById('cd-s2').style.display=n===2?'block':'none';
+  document.getElementById('cd-s3').style.display=n===3?'block':'none';
+  document.getElementById('cd-n').textContent=String(n);
+  for(var i=1;i<=3;i++) document.getElementById('sg'+i).className='seg'+(i<=n?' on':'');
+  document.getElementById('cd-title').textContent=['What to promote','Budget and schedule','Who and why'][n-1];
+  document.getElementById('cd-back').style.display=n>1?'inline-flex':'none';
+  document.getElementById('cd-next').textContent=n===3?'Create this campaign':'Continue';
+}
+function fieldErr(id,msg){
+  var e=document.getElementById('e-'+id), f=document.getElementById('f-'+id);
+  if(msg){ e.textContent=msg; e.style.display='block'; if(f)f.classList.add('err'); }
+  else { e.style.display='none'; if(f)f.classList.remove('err'); }
+  var h=document.getElementById('h-'+id); if(h) h.style.display=msg?'none':'block';
+  return !msg;
+}
+function isYouTube(u){
+  try{var h=new URL(u).hostname.replace(/^(www|m)\./,'');return h==='youtube.com'||h==='youtu.be'}catch(e){return false}
+}
+function validStep(n){
+  var ok=true;
+  if(n===1){
+    var name=document.getElementById('f-name').value.trim();
+    var url=document.getElementById('f-url').value.trim();
+    var acts=document.querySelectorAll('#f-actions .selchip.on').length;
+    ok=fieldErr('name',name?'':'Give the campaign a name.')&&ok;
+    ok=fieldErr('url',!url?'Add the link to the YouTube video you want promoted.'
+      :!/^https?:\/\/\S+\.\S+/.test(url)?'That doesn’t look like a link. It should start with https://'
+      :!isYouTube(url)?'Campaigns run on YouTube for now. Paste a youtube.com or youtu.be link.':'')&&ok;
+    ok=fieldErr('actions',acts?'':'Pick at least one action.')&&ok;
+  }
+  if(n===2){
+    var b=parseFloat(document.getElementById('f-budget').value);
+    var bid=parseFloat(document.getElementById('f-bid').value);
+    var s=document.getElementById('f-start').value, e2=document.getElementById('f-end').value;
+    ok=fieldErr('budget',!(b>0)?'Set a budget above $0.':'')&&ok;
+    ok=fieldErr('bid',!(bid>0)?'Set a bid above $0.':'')&&ok;
+    ok=fieldErr('start',s?'':'Pick a start date.')&&ok;
+    ok=fieldErr('end',!e2?'Pick an end date.':(s&&e2<=s)?'The end date has to be after the start.':'')&&ok;
+  }
+  return ok;
+}
+function stepBack(){ if(cd.step>1) setStep(cd.step-1); }
+function stepNext(){
+  if(!validStep(cd.step)) return;
+  if(cd.step<3){ setStep(cd.step+1); return; }
+  submitCreate();
+}
+function submitCreate(){
+  var d={
+    name:document.getElementById('f-name').value.trim(),
+    url:document.getElementById('f-url').value.trim(),
+    actions:Array.prototype.map.call(document.querySelectorAll('#f-actions .selchip.on'),function(c){return c.getAttribute('data-a')}),
+    budget:parseFloat(document.getElementById('f-budget').value)||0,
+    bid:parseFloat(document.getElementById('f-bid').value)||0,
+    start:document.getElementById('f-start').value||null,
+    end:document.getElementById('f-end').value||null,
+    goal:document.getElementById('f-goal').value.trim()
+  };
+  // Fire-and-forget with keepalive, so a closed tab cannot lose the write.
+  try{
+    fetch(SUPABASE_URL+'/rest/v1/brand_campaign_submissions',{
+      method:'POST',
+      keepalive:true,
+      headers:{apikey:SUPABASE_ANON_KEY,Authorization:'Bearer '+SUPABASE_ANON_KEY,'Content-Type':'application/json',Prefer:'return=minimal'},
+      body:JSON.stringify({
+        campaign_name:d.name,post_url:d.url,actions:d.actions,
+        budget_usd:d.budget||null,bid_usd:d.bid||null,
+        start_date:d.start,end_date:d.end,
+        target_country:'United States',goal:d.goal||null,
+        email:brandEmail()||null
+      })
+    }).catch(function(){});
+  }catch(e){}
+  var mine=loadMine();
+  var entry={name:d.name,budget:d.budget,bid:d.bid,ts:Date.now()};
+  mine.unshift(entry);
+  saveMine(mine);
+  renderMine();
+  cd.last=entry;
+  document.getElementById('done-name').textContent=d.name;
+  document.getElementById('cd-form').style.display='none';
+  document.getElementById('cdlg-panel').classList.add('dark');
+  document.getElementById('cd-done').style.display='block';
+}
+function doneView(){
+  closeCreate();
+  if(cd.last) openReview(cd.last);
+}
+
+var esc=function(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML};
+
+// The signed-in brand, written by the landing page's sign-in gate. Personalizes the account chip.
+try{
+  var em=localStorage.getItem('cb-brand-email');
+  if(em){
+    var handle=em.split('@')[0];
+    document.getElementById('acct-name').textContent=handle;
+    document.getElementById('acct-avatar').textContent=handle.slice(0,2).toUpperCase();
+  }
+}catch(e){}
+
+// Your campaigns persist in this browser (design prototype: localStorage is the account).
+var MY_KEY='cb-my-campaigns';
+function loadMine(){ try{return JSON.parse(localStorage.getItem(MY_KEY)||'[]')}catch(e){return []} }
+function saveMine(l){ try{localStorage.setItem(MY_KEY,JSON.stringify(l))}catch(e){} }
+
+// A just-submitted campaign arrives once via query params from the success band's View campaign
+// CTA, then lives in localStorage with the rest.
+(function(){
+  var q=new URLSearchParams(location.search);
+  var name=q.get('submitted');
+  if(!name) return;
+  var budget=parseFloat(q.get('budget'))||500;
+  var bid=parseFloat(q.get('bid'))||1;
+  var mine=loadMine();
+  if(!mine.some(function(c){return c.name===name && c.budget===budget && c.bid===bid})){
+    mine.unshift({name:name,budget:budget,bid:bid,ts:Date.now()});
+    saveMine(mine);
+  }
+})();
+
+var current=null; // the campaign the review view is showing
+
+function fmtWhen(ts){
+  if(!ts) return 'Submitted just now';
+  var d=new Date(ts), now=new Date();
+  if(d.toDateString()===now.toDateString()) return 'Submitted today';
+  return 'Submitted '+d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+}
+
+function openReview(c){
+  current=c;
+  var reach=c.bid>0?Math.round(c.budget/c.bid):0;
+  document.getElementById('rv-name').textContent=c.name;
+  document.getElementById('rv-when').textContent=fmtWhen(c.ts);
+  document.getElementById('rv-budget').textContent='$'+Number(c.budget).toFixed(2);
+  document.getElementById('rv-bid').textContent='$'+Number(c.bid).toFixed(2);
+  document.getElementById('rv-reach').textContent=String(reach);
+  show('review');
+}
+
+function renderMine(){
+  var mine=loadMine();
+  var list=document.getElementById('my-clist');
+  list.innerHTML='';
+  document.getElementById('my-empty').style.display=mine.length?'none':'block';
+  document.getElementById('t-review').textContent=String(mine.length);
+  mine.forEach(function(c,i){
+    var reach=c.bid>0?Math.round(c.budget/c.bid):0;
+    var row=document.createElement('div');
+    row.className='row';
+    row.onclick=function(){openReview(c)};
+    row.innerHTML=
+      '<div><div class="cname">'+esc(c.name)+'</div>'+
+      '<div class="cmeta">YouTube Short &middot; US &middot; '+fmtWhen(c.ts).toLowerCase()+'</div></div>'+
+      '<div class="fillcell"><div class="bar"><i style="width:0%"></i></div>'+
+      '<div class="t"><b class="num">0</b> of <span class="num">'+reach+'</span> &middot; starts after review</div></div>'+
+      '<div class="cell"><b class="num">$0</b><span class="s num">of $'+c.budget+'</span></div>'+
+      '<div><span class="chip review">&#8635; IN REVIEW</span></div>'+
+      '<div class="rowlink">View report &rsaquo;</div>';
+    list.appendChild(row);
+  });
+}
+renderMine();
+
+function show(which, opts){
+  opts=opts||{};
+  ['list','detail','review'].forEach(function(v){
+    document.getElementById('view-'+v).classList.toggle('on', which===v);
+  });
+  // Every detail on this prototype is sample data, so the banner always frames it; only the
+  // way back differs (to the list, or to the in-review campaign that led here).
+  var banner=document.getElementById('sample-banner');
+  banner.style.display=(which==='detail')?'flex':'none';
+  if(which==='detail'){
+    var back=document.getElementById('banner-back');
+    if(opts.backTo==='review' && current){
+      back.textContent='Back to your campaign';
+      back.onclick=function(){show('review')};
+    } else {
+      back.textContent='Back to campaigns';
+      back.onclick=function(){show('list')};
+    }
+  }
+  var crumb;
+  if(which==='list') crumb='<b>Campaigns</b>';
+  else if(which==='review') crumb='<a onclick="show(\'list\')" style="cursor:pointer">Campaigns</a> &rsaquo; <b>'+(current?esc(current.name):'Your campaign')+'</b>';
+  else crumb='<a onclick="show(\'list\')" style="cursor:pointer">Campaigns</a> &rsaquo; <b>Sample report</b>';
+  document.getElementById('crumb').innerHTML=crumb;
+  window.scrollTo(0,0);
+}
+if(location.hash==='#detail') show('detail',{backTo:'list'});
+
+(function(){
+  var svg=document.getElementById('chart'), hit=document.getElementById('hit'),
+      xh=document.getElementById('xh'), tip=document.getElementById('tip');
+  var days=['Aug 4','Aug 5','Aug 6','Aug 7','Aug 8','Aug 9','Aug 10','Aug 11'];
+  var vals=[18,47,82,110,139,163,190,212];
+  var X0=46, STEP=41;
+  function toSvgX(evt){
+    var pt=svg.createSVGPoint(); pt.x=evt.clientX; pt.y=evt.clientY;
+    return pt.matrixTransform(svg.getScreenCTM().inverse()).x;
+  }
+  hit.addEventListener('mousemove',function(e){
+    var x=toSvgX(e);
+    var i=Math.round((x-X0)/STEP);
+    if(i<0)i=0; if(i>7)i=7;
+    var px=X0+i*STEP, py=204-vals[i]*0.368;
+    xh.setAttribute('x1',px); xh.setAttribute('x2',px); xh.setAttribute('visibility','visible');
+    var r=svg.getBoundingClientRect(), scale=r.width/640;
+    tip.style.left=(px*scale)+'px';
+    tip.style.top=(py*scale)+'px';
+    var pace=Math.round(500*(i)/14);
+    tip.innerHTML=days[i]+': <b>'+vals[i]+'</b> verified &middot; pace <b>'+pace+'</b>';
+    tip.style.opacity=1;
+  });
+  hit.addEventListener('mouseleave',function(){
+    xh.setAttribute('visibility','hidden'); tip.style.opacity=0;
+  });
+})();
+</script>
+</body>
+</html>

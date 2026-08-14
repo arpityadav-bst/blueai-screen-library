@@ -96,7 +96,21 @@ function Plane({ id, kind }: PlaneProps) {
   )
 }
 
-export default function CTAGrid() {
+/**
+ * `idPrefix` exists because there can now be TWO of these in one document at once: the closing
+ * band's, and the waitlist dialog's (Modal.tsx variant="band"). The gradient and mask ids used to
+ * be static strings, so a second instance duplicated four ids and every `url(#…)` in it resolved
+ * to the FIRST instance's definitions. That happens to render correctly here — both instances share
+ * the same viewBox and userSpaceOnUse geometry, so the borrowed mask lands in exactly the right
+ * place — which is precisely why it would have gone unnoticed until someone changed one band's
+ * dimensions and broke the other. A prop rather than useId(): this is otherwise a pure-markup
+ * server component, and adding a hook would ship it to the client for an id.
+ */
+export default function CTAGrid({ idPrefix = 'cbGrid' }: { idPrefix?: string }) {
+  const fadeFloor = `${idPrefix}FadeFloor`
+  const fadeCeiling = `${idPrefix}FadeCeiling`
+  const maskFloor = `${idPrefix}MaskFloor`
+  const maskCeiling = `${idPrefix}MaskCeiling`
   return (
     <svg
       className="pointer-events-none absolute inset-0 h-full w-full"
@@ -110,25 +124,25 @@ export default function CTAGrid() {
         {/* Three stops rather than two: the middle one pulls most of the falloff into the first
             third, so the grid is already dissolving well before FADE_END instead of dimming at a
             constant rate all the way down. */}
-        <linearGradient id="cbGridFadeFloor" x1="0" y1="1" x2="0" y2="0">
+        <linearGradient id={fadeFloor} x1="0" y1="1" x2="0" y2="0">
           <stop offset="0%" stopColor="#fff" stopOpacity="1" />
           <stop offset={`${FADE_END * 45}%`} stopColor="#fff" stopOpacity="0.4" />
           <stop offset={`${FADE_END * 100}%`} stopColor="#fff" stopOpacity="0" />
         </linearGradient>
-        <linearGradient id="cbGridFadeCeiling" x1="0" y1="0" x2="0" y2="1">
+        <linearGradient id={fadeCeiling} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#fff" stopOpacity="1" />
           <stop offset={`${FADE_END * 45}%`} stopColor="#fff" stopOpacity="0.4" />
           <stop offset={`${FADE_END * 100}%`} stopColor="#fff" stopOpacity="0" />
         </linearGradient>
-        <mask id="cbGridMaskFloor" maskUnits="userSpaceOnUse" x="0" y={H - DEPTH} width={W} height={DEPTH}>
-          <rect x="0" y={H - DEPTH} width={W} height={DEPTH} fill="url(#cbGridFadeFloor)" />
+        <mask id={maskFloor} maskUnits="userSpaceOnUse" x="0" y={H - DEPTH} width={W} height={DEPTH}>
+          <rect x="0" y={H - DEPTH} width={W} height={DEPTH} fill={`url(#${fadeFloor})`} />
         </mask>
-        <mask id="cbGridMaskCeiling" maskUnits="userSpaceOnUse" x="0" y="0" width={W} height={DEPTH}>
-          <rect x="0" y="0" width={W} height={DEPTH} fill="url(#cbGridFadeCeiling)" />
+        <mask id={maskCeiling} maskUnits="userSpaceOnUse" x="0" y="0" width={W} height={DEPTH}>
+          <rect x="0" y="0" width={W} height={DEPTH} fill={`url(#${fadeCeiling})`} />
         </mask>
       </defs>
-      <Plane id="cbGridMaskCeiling" kind="ceiling" />
-      <Plane id="cbGridMaskFloor" kind="floor" />
+      <Plane id={maskCeiling} kind="ceiling" />
+      <Plane id={maskFloor} kind="floor" />
     </svg>
   )
 }

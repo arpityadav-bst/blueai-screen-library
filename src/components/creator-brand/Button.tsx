@@ -8,7 +8,7 @@ const base =
   'transition-all duration-fast ease-out-bai select-none whitespace-nowrap'
 
 const sizes = {
-  md: 'px-5 py-2.5 text-[14px]',
+  md: 'px-5 py-3 text-[14px] min-h-[44px]',
   lg: 'px-7 py-3.5 text-[15px]',
 }
 

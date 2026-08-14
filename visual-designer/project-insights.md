@@ -1,5 +1,8 @@
 # blueAI — Project Insights
-Last updated: 2026-08-11 (Session 17, POST-CLOSE amendment: the gutter question this file had flagged as
+Last updated: 2026-08-11 (Session 18: +the INSTALL STATE + BlueStacks-boundary section below — the drawer's
+closed state is OCCLUDED by the player rather than css-hidden (cost a designer round), the three-valid-state
+flag pair and where to declare it, the `.bs-*` structural exclusion, and the one-source-of-truth boot frames.
+Earlier the same day, Session 17 POST-CLOSE amendment: the gutter question this file had flagged as
 "⚠ OPEN, designer's call" since 2026-08-03 is now RESOLVED — 15px everywhere — and the form-width fact moved
 264 → 260px as a direct result, its FOURTH revision. Both bullets rewritten in the layout-system section
 rather than annotated, because a fact file that accumulates "actually, now it's…" is a fact file you stop
@@ -105,6 +108,41 @@ needs, and they are recorded here, once, instead of being re-measured per sessio
   report in different coordinate spaces on this surface** — see `knowledge-base.md` for the two defects this
   has already caused and the measurement rule that prevents a third. Any code or harness that does px maths
   here must decide which space it is in, once, explicitly.
+
+## blueai-desktop INSTALL STATE + the BlueStacks boundary (added 2026-08-11, Session 18)
+
+- **`.drawer`'s CLOSED state is NOT css-hidden — it is OCCLUDED BY `.bs-window`.** The drawer sits at
+  `left: 100%` translated back `-290px`, i.e. **710px into the 1000px `.composition`** — directly behind the
+  opaque player image. Nothing in `.drawer`'s own rules hides it. **So hiding or removing `.bs-window` exposes
+  an unbooted, blank BlueAI window** (boot only runs on open, so `.bai-ui` has no `.show`). This cost a
+  designer round. Anything that changes the player's visibility must also decide what the drawer does —
+  `applyInstallState()` is where that lives, and it opens the drawer whenever the player is absent, because
+  "player hidden + drawer closed" is additionally a DEAD END: the only affordance that opens BlueAI is
+  clicking the player. See `reasonings.md` *"before painting over something that looks empty…"*, mirror case.
+- **Two install flags, THREE valid states.** `bsInstalled` / `baiInstalled`, both defaulting true, with a
+  guard in `setInstalled()`: turning the last one off flips the other on, because "neither installed" is a
+  bare desktop with nothing on it and no route back. **Declare these ABOVE `renderPreviewRows()`** — they were
+  written beside the scene mechanics ~117 lines below it, and `var` hoisting made the checkboxes render
+  unchecked (see the widened absence-expression trap in `knowledge-base.md`).
+- **Flow A has NO drawer at all**, because the drawer *is* BlueAI. That state is wallpaper + player +
+  BlueStacks' own install dialog, and none of it is this design system's.
+- **The BlueStacks boundary is `.bs-*`, and the exclusion is structural rather than an exemption list.**
+  `bs-install-dialog.js` holds Flow A's dialog, creates its own scrim/host, and keeps **every** style inline
+  at BlueStacks' own values (`#1E2440` / `#2B3559` / `#98A2C4` / `#1E7FE0` / Poppins / radius 0) — never
+  `--bai-*`. It contributes **zero rules to `blueai-desktop.css` and zero to `index.html`**, which is what
+  makes it invisible to `ds-drift-check` §8 (that section scans exactly those two files for raw
+  `font-size`/`border-radius` px, and the dialog legitimately has 8). The two RUNTIME audits skip
+  `.bs-ui, #bsInstallHost, .bs-window` by name. **Do not "fix" its values to tokens** — that would put
+  BlueAI's identity on software the user has not installed yet.
+- **Player frames + boot timing are ONE source of truth.** `BS_BOOT = { loading: 2400, home: 1400 }` drives
+  BOTH the scene's screenshot swaps (`setBsScreen`) and the chat's narration offsets, so a line can never
+  announce a frame the window has not reached. Frames live in `assets/bluestacks/` (`bs-loading`, `bs-home`,
+  `bs-play-youtube`), all **1394×799 — the same ratio as `.composition`**, so they drop in as backgrounds;
+  `setBsScreen('')` falls back to the CSS rule's own `bluestacks-window.png`.
+  **`BS_PLAY_FRAME` gates the third frame to apps we hold a listing screenshot for — YouTube only today.**
+  That is an honesty constraint: showing a YouTube listing while the chat says "Found TikTok" is a lie about
+  what the product did, so other apps rest on the home screen and the copy adapts. Add a listing to that map
+  when you add a screenshot.
 
 ## blueai-desktop domain facts (2026-07-25 audit)
 - **BYOK and Prime membership coexist — neither state should hide the other's UI.** A user with an
