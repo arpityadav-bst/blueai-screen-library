@@ -19,18 +19,23 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 // during render would make the server's HTML and the client's first render disagree, which is a
 // hydration error — and the signed-out state is the honest default for a fresh visitor anyway.
 const KEY = 'cb-creator-signed-in'
-// A SECOND, INDEPENDENT flag (Appy, 2026-08-14) — not a third value on `signedIn`. It answers a
-// different question: `signedIn` is "did they click through the sign-in dialog"; `isReturningUser`
-// is "when they do, does that account turn out to be a first-time applicant or a creator who already
-// downloaded BlueAI and is earning through it". CreatorsTop.tsx reads BOTH — signedIn decides Hero vs.
-// signed-in content, isReturningUser then decides which signed-in content (application form vs.
-// dashboard). It is NOT wired through a real sign-in interaction (nobody can walk that flow for real —
-// it means having actually completed jobs in BlueAI), so — same reasoning PreviewToggler.tsx already
-// gives for `signedIn` itself — a persona nobody can select for real is a persona nobody reviews.
-// RESHAPED 2026-08-14: this used to take priority OVER signedIn and skip the sign-in step entirely.
-// That meant signOut() (which only clears signedIn) couldn't undo it — Log out from the dashboard did
-// nothing. isReturningUser must never be checked without signedIn alongside it.
-const RETURNING_KEY = 'cb-creator-returning'
+// A SECOND, INDEPENDENT flag (Appy, 2026-08-14), now a THREE-WAY `journey` rather than a boolean
+// (widened 2026-08-14 to add the "full capacity" persona). It answers a different question than
+// `signedIn`: signedIn is "did they click through the sign-in dialog"; `journey` is "when they do,
+// which of three accounts does this turn out to be" — a first-time applicant, a creator who already
+// downloaded BlueAI and is earning through it, or someone signing in while BlueAI isn't taking new
+// creators. CreatorsTop.tsx reads BOTH — signedIn decides Hero vs. signed-in content, journey then
+// decides WHICH signed-in content (application form / dashboard / the full-capacity notice). None of
+// this is wired through a real sign-in interaction (nobody can walk any of these three for real — the
+// dashboard means having actually completed jobs in BlueAI, and "full capacity" is a state of the
+// product, not the account), so — same reasoning PreviewToggler.tsx already gives for `signedIn`
+// itself — a persona nobody can select for real is a persona nobody reviews.
+// journey must NEVER be checked without signedIn alongside it (2026-08-14 fix) — an earlier version
+// let the equivalent flag take priority OVER signedIn and skip sign-in entirely, which meant
+// signOut() (which only clears signedIn) couldn't undo it: Log out from the dashboard did nothing.
+const JOURNEY_KEY = 'cb-creator-journey'
+export type Journey = 'newUser' | 'returningUser' | 'fullCapacity'
+const JOURNEYS: Journey[] = ['newUser', 'returningUser', 'fullCapacity']
 
 /** Illustrative, like every other name and figure on this site. Not a real account. */
 export const MOCK_ACCOUNT = {
@@ -47,9 +52,9 @@ type Ctx = {
   signIn: () => void
   signOut: () => void
   account: typeof MOCK_ACCOUNT
-  /** The "returning creator, already earning in BlueAI" persona — see the const above. */
-  isReturningUser: boolean
-  setReturningUser: (v: boolean) => void
+  /** Which signed-in persona a sign-in resolves to — see the const above. */
+  journey: Journey
+  setJourney: (v: Journey) => void
 }
 
 const ApplyCtx = createContext<Ctx | null>(null)
@@ -64,13 +69,14 @@ export function useApply() {
 
 export default function ApplyProvider({ children }: { children: ReactNode }) {
   const [signedIn, setSignedIn] = useState(false)
-  const [isReturningUser, setIsReturningUser] = useState(false)
+  const [journey, setJourneyState] = useState<Journey>('newUser')
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
     try {
       setSignedIn(sessionStorage.getItem(KEY) === '1')
-      setIsReturningUser(sessionStorage.getItem(RETURNING_KEY) === '1')
+      const stored = sessionStorage.getItem(JOURNEY_KEY)
+      if (stored && (JOURNEYS as string[]).includes(stored)) setJourneyState(stored as Journey)
     } catch {
       // Private-mode Safari throws on sessionStorage access. Staying signed out is the correct
       // fallback, and it must not take the page down with it.
@@ -91,19 +97,18 @@ export default function ApplyProvider({ children }: { children: ReactNode }) {
   const signIn = useCallback(() => write(true), [write])
   const signOut = useCallback(() => write(false), [write])
 
-  const setReturningUser = useCallback((v: boolean) => {
-    setIsReturningUser(v)
+  const setJourney = useCallback((v: Journey) => {
+    setJourneyState(v)
     try {
-      if (v) sessionStorage.setItem(RETURNING_KEY, '1')
-      else sessionStorage.removeItem(RETURNING_KEY)
+      sessionStorage.setItem(JOURNEY_KEY, v)
     } catch {
       // Same fallback as above.
     }
   }, [])
 
   const value = useMemo(
-    () => ({ signedIn, ready, signIn, signOut, account: MOCK_ACCOUNT, isReturningUser, setReturningUser }),
-    [signedIn, ready, signIn, signOut, isReturningUser, setReturningUser],
+    () => ({ signedIn, ready, signIn, signOut, account: MOCK_ACCOUNT, journey, setJourney }),
+    [signedIn, ready, signIn, signOut, journey, setJourney],
   )
 
   return <ApplyCtx.Provider value={value}>{children}</ApplyCtx.Provider>

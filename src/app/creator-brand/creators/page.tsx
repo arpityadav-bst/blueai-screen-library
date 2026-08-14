@@ -29,13 +29,15 @@ import { useApply } from '@/components/creator-brand/creators/ApplyState'
 // own swap. `'use client'` on this file (was a server component) is what lets it read that flag
 // directly rather than needing a separate wrapper component just to hide four sections + the footer.
 //
-// onDashboard = signedIn && isReturningUser, NOT isReturningUser alone (2026-08-14 fix) — the
+// onDashboard = signedIn && journey === 'returningUser', NOT journey alone (2026-08-14 fix) — the
 // dashboard only actually renders once CreatorsTop's own signedIn check passes too. Gating this on
-// isReturningUser by itself hid these sections under the signed-out Hero the moment the reviewer
-// flipped the preview toggle to "Returning user", before ever signing in.
+// journey by itself hid these sections under the signed-out Hero the moment the reviewer flipped the
+// preview toggle to "Returning user", before ever signing in. The full-capacity persona (2026-08-14)
+// deliberately does NOT hide these sections — it sits in ApplySection's own slot at the top of the
+// page, same as a first-time applicant, and the rest of the page reads the same underneath it.
 export default function CreatorsPage() {
-  const { signedIn, isReturningUser } = useApply()
-  const onDashboard = signedIn && isReturningUser
+  const { signedIn, journey } = useApply()
+  const onDashboard = signedIn && journey === 'returningUser'
 
   return (
     <>

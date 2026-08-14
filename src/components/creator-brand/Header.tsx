@@ -17,16 +17,17 @@ const NAV_LINK =
 export default function Header() {
   const pathname = usePathname()
   const active = pathname?.includes('/brands') ? 'brands' : 'creators'
-  const { signedIn, isReturningUser } = useApply()
+  const { signedIn, journey } = useApply()
   // The dashboard's own page.tsx already drops HowItWorks/Platforms/FAQ/ApplyCTA entirely (see that
   // file's 2026-08-14 note) — so on the returning-user dashboard, this nav's anchors point at
   // sections that no longer exist in the DOM. A link that scrolls nowhere is worse than no link.
   //
-  // BOTH FLAGS, not isReturningUser alone (2026-08-14 fix) — the dashboard only actually renders once
-  // signedIn is ALSO true (CreatorsTop.tsx gates on signedIn first); isReturningUser on its own is just
-  // the reviewer's choice of what a future sign-in resolves to. Checking it alone hid this nav for
-  // "Returning user" even while the signed-out Hero was still on screen.
-  const onDashboard = active === 'creators' && signedIn && isReturningUser
+  // BOTH FLAGS, not journey alone (2026-08-14 fix) — the dashboard only actually renders once signedIn
+  // is ALSO true (CreatorsTop.tsx gates on signedIn first); journey on its own is just the reviewer's
+  // choice of what a future sign-in resolves to. Checking it alone hid this nav for "Returning user"
+  // even while the signed-out Hero was still on screen. The full-capacity notice keeps the nav — it
+  // sits in the same slot ApplySection would, and that state doesn't hide it either.
+  const onDashboard = active === 'creators' && signedIn && journey === 'returningUser'
   const showNav = !onDashboard
   const headerRef = useRef<HTMLElement>(null)
   const wordmarkWrapRef = useRef<HTMLSpanElement>(null)
