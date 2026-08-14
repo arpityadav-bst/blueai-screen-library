@@ -90,12 +90,14 @@ function aiReply(prompt) {
 }
 
 /* ───────── Intro ───────── */
-function IntroCard({ sub, onboarding }) {
+function IntroCard({ sub, onboarding, title }) {
   // Onboarding chat empty-state greeting is pushed down + uses a 16px sub to match the design
   // (relax_flow OnboardingChat). Default home keeps the tighter top padding + 15px sub.
+  // title is optional — every existing caller gets the same hardcoded greeting as before;
+  // MoneyMaker's post-login home is the one caller that overrides it ("Hi, Alex 👋").
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', textAlign: 'left', width: '100%', gap: onboarding ? 6 : 6, padding: onboarding ? '30px 0 8px' : '20px 0px 16px' }}>
-      <h2 style={{ fontWeight: 800, color: '#111827', letterSpacing: '-0.4px', lineHeight: 1.2, fontSize: '24px' }}>👋🏻 Hi, I'm BlueAI</h2>
+      <h2 style={{ fontWeight: 800, color: '#111827', letterSpacing: '-0.4px', lineHeight: 1.2, fontSize: '24px' }}>{title || "👋🏻 Hi, I'm BlueAI"}</h2>
       <p style={{ color: '#6b7280', lineHeight: 1.55, fontSize: onboarding ? '16px' : '15px', textWrap: 'pretty' }}>{sub}</p>
     </div>);
 }

@@ -114,6 +114,8 @@
 <script type="text/babel" src="blueai/chat_compare.jsx"></script>
 <!-- Onboarding welcome for the logged-out cold start (exposes window.Onboarding) -->
 <script type="text/babel" src="blueai/onboarding.jsx"></script>
+<!-- MoneyMaker session variant: welcome + post-login chat home (exposes window.MoneyMaker) -->
+<script type="text/babel" src="blueai/moneymaker.jsx"></script>
 <!-- "Needs BlueStacks" chat state + the rule that decides when it fires (exposes window.NeedsBluestacks) -->
 <script type="text/babel" src="blueai/needs_bluestacks.jsx"></script>
 <!-- Chat internals, split out of chat_product.jsx for the 300-line rule. Each resolves its
@@ -535,7 +537,9 @@ function App() {
   const [oocOpen, setOocOpen] = useState(false);           // out-of-credits popup
   const [pendingMessage, setPendingMessage] = useState(null); // onboarding: message that opened the sign-in gate, auto-sent after login
   const [previewOpen, setPreviewOpen] = useState(true);    // dev preview panel collapse
-  const [isLoggedIn, setIsLoggedIn] = useState(true);       // preview toggle: Onboarding (logged out) vs Default (logged in)
+  const [isLoggedIn, setIsLoggedIn] = useState(true);       // within the current session: has sign-in completed
+  const [sessionMode, setSessionMode] = useState('default'); // preview toggle: which session — Onboarding | Default | MoneyMaker
+  const [loginFlow, setLoginFlow] = useState('onboarding');  // which flow opened LoginModal: 'onboarding' (composer-gated) or 'moneymaker' (welcome CTA, opens straight past the default step)
   // ── Desktop install model. Two independent booleans; at least one is always true (see
   // toggleInstalled's guard), because "nothing installed" is not a designed screen.
   // ?bs=0 / ?bai=0 deep-link a starting configuration, so a review link can point straight at
@@ -636,13 +640,17 @@ function App() {
   const handleLoginSuccess = () => {
     setShowLoginModal(false);
     setIsLoggedIn(true);
+    // MoneyMaker: nothing was typed/queued — the CTA on the welcome page opened this directly —
+    // so just reveal the chat home as-is, no seed/sessionKey churn.
+    if (loginFlow === 'moneymaker') return;
     setSessionKey((k) => k + 1);
     setSeed(pendingMessage ? { text: pendingMessage, autorun: true, n: Date.now() } : null);
     setPendingMessage(null);
   };
-  // Preview-only: flip the Onboarding/Default session toggle. Onboarding always re-arms at
-  // its start (the chrome-free welcome picker); Default lands on a clean chat tab.
-  const switchSession = (loggedIn) => { setIsLoggedIn(loggedIn); setOnbPhase('welcome'); setSeed(null); setPendingMessage(null); setSessionKey((k) => k + 1); setActiveTab('chat'); setCreditsOpen(false); setHistoryOpen(false); setProfileOpen(false); };
+  // Preview-only: flip the Onboarding/Default/MoneyMaker session toggle. The two logged-out
+  // variants always re-arm at their start (the chrome-free welcome screen); Default lands on a
+  // clean chat tab, already signed in.
+  const switchSession = (mode) => { setSessionMode(mode); setIsLoggedIn(mode === 'default'); setOnbPhase('welcome'); setSeed(null); setPendingMessage(null); setSessionKey((k) => k + 1); setActiveTab('chat'); setCreditsOpen(false); setHistoryOpen(false); setProfileOpen(false); };
   // Onboarding picker → chat: prefill the composer with the picked task (empty for "Just type it").
   const startOnboardingChat = (prompt) => { setSeed(prompt ? { text: prompt, n: Date.now() } : null); setSessionKey((k) => k + 1); setActiveTab('chat'); setOnbPhase('chat'); };
   const handleTrySkill = (skillObj) => {
@@ -653,6 +661,9 @@ function App() {
     setActiveTab('chat');
   };
   const handleTabChange = (tab) => { setActiveTab(tab); setCreditsOpen(false); setHistoryOpen(false); setProfileOpen(false); if (tab !== 'chat') setSeed(null); };
+  // MoneyMaker's welcome page IS the "please sign in" screen, so its CTA opens LoginModal
+  // straight past the 'default' step (see login.jsx's initialStep).
+  const handleMoneyMakerSignIn = () => { setLoginFlow('moneymaker'); setShowLoginModal(true); };
 
   const isChat = activeTab === 'chat';
   // Logged-out cold start sits on the chrome-free welcome picker (no top bar, no bottom nav) —
@@ -671,20 +682,35 @@ function App() {
     chipOffLine: '#2a3048', chipOffInk: '#6b7390', box: '#3a4160'
   };
 
-  // Compact segmented control sharing one inner track (no per-pill shadow).
-  const PreviewRow = ({ label, opts, val, set }) => (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, padding: '8px 0' }}>
-      <span style={{ fontSize: 10.5, fontWeight: 700, color: DEV.label }}>{label}</span>
-      <div style={{ display: 'flex', background: DEV.track, borderRadius: 8, padding: 2 }}>
+  // Compact segmented control sharing one inner track (no per-pill shadow). 3+ options (e.g.
+  // Session's Onboarding/Default/MoneyMaker) get the label on its own line above a full-width
+  // track instead of squeezing both onto one row — that's what was pushing MoneyMaker past the
+  // card's edge. flexWrap is a safety net, not the fix: a still-too-narrow track wraps instead of
+  // spilling outside the rounded card.
+  const PreviewRow = ({ label, opts, val, set }) => {
+    const stacked = opts.length > 2;
+    const track = (
+      <div style={{ display: 'flex', flexWrap: 'wrap', background: DEV.track, borderRadius: 8, padding: 2, width: stacked ? '100%' : undefined, boxSizing: 'border-box' }}>
         {opts.map(([lbl, v]) => (
           <button key={lbl} onClick={() => set(v)}
-            style={{ border: 'none', borderRadius: 6, padding: '4px 10px', fontSize: 11.5, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap', background: val === v ? DEV.on : 'transparent', color: val === v ? DEV.onInk : DEV.ink, transition: 'background 0.13s ease, color 0.13s ease' }}>
+            style={{ flex: stacked ? 1 : undefined, border: 'none', borderRadius: 6, padding: '4px 10px', fontSize: 11.5, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap', background: val === v ? DEV.on : 'transparent', color: val === v ? DEV.onInk : DEV.ink, transition: 'background 0.13s ease, color 0.13s ease' }}>
             {lbl}
           </button>
         ))}
       </div>
-    </div>
-  );
+    );
+    return stacked ? (
+      <div style={{ padding: '8px 0' }}>
+        <span style={{ display: 'block', fontSize: 10.5, fontWeight: 700, color: DEV.label, marginBottom: 6 }}>{label}</span>
+        {track}
+      </div>
+    ) : (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, padding: '8px 0' }}>
+        <span style={{ fontSize: 10.5, fontWeight: 700, color: DEV.label }}>{label}</span>
+        {track}
+      </div>
+    );
+  };
 
   /* Two INDEPENDENT booleans, so they get checkbox chips rather than PreviewRow's either/or
      segments — a segmented pair would imply picking one excludes the other, which is the
@@ -713,9 +739,13 @@ function App() {
       <ProductTitlebar onClose={() => setWinOpen(false)} />
       <div className="ba-app">
       {onboardingWelcome ? (
-        <window.Onboarding.OnboardingWelcome
-          onPick={(item) => startOnboardingChat(item.prompt)}
-          onTypeIt={() => startOnboardingChat('')} />
+        sessionMode === 'moneymaker' ? (
+          <window.MoneyMaker.MoneyMakerWelcome onSignIn={handleMoneyMakerSignIn} />
+        ) : (
+          <window.Onboarding.OnboardingWelcome
+            onPick={(item) => startOnboardingChat(item.prompt)}
+            onTypeIt={() => startOnboardingChat('')} />
+        )
       ) : (
       <>
       <ProductTopBar
@@ -759,7 +789,7 @@ function App() {
         </div>
       ) : isChat ? (
         <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column', width: '420px' }}>
-          <ProductChatScreen sessionKey={sessionKey} seed={seed} loading={!homeReady} zeroCredits={zeroCredits && !byokActive} onNoCredits={() => setOocOpen(true)} isOnboarding={!isLoggedIn} onNeedLogin={(text) => { setPendingMessage(text); setShowLoginModal(true); }} showStates={showChatStates}
+          <ProductChatScreen sessionKey={sessionKey} seed={seed} loading={!homeReady} zeroCredits={zeroCredits && !byokActive} onNoCredits={() => setOocOpen(true)} isOnboarding={!isLoggedIn} sessionMode={sessionMode} onNeedLogin={(text) => { setLoginFlow('onboarding'); setPendingMessage(text); setShowLoginModal(true); }} showStates={showChatStates}
             bsInstalled={bsInstalled} onBsInstalled={completeBluestacksInstall} />
         </div>
       ) : (
@@ -778,6 +808,7 @@ function App() {
       <LoginModal
         isOpen={showLoginModal}
         variant="onboarding"
+        initialStep={loginFlow === 'moneymaker' ? 'browser' : 'default'}
         onClose={() => { setShowLoginModal(false); setPendingMessage(null); }}
         onSuccess={handleLoginSuccess} />
 
@@ -819,7 +850,7 @@ function App() {
         <div
           onMouseEnter={(e) => e.currentTarget.style.opacity = '1'}
           onMouseLeave={(e) => e.currentTarget.style.opacity = '0.88'}
-          style={{ position: 'fixed', left: 20, bottom: 20, zIndex: 300, width: 236, background: DEV.surface, border: '1px solid ' + DEV.line, borderRadius: 12, boxShadow: '0 12px 38px rgba(0,0,0,0.5)', padding: '9px 14px 11px', opacity: 0.88, transition: 'opacity 0.16s ease' }}>
+          style={{ position: 'fixed', left: 20, bottom: 20, zIndex: 300, width: 300, background: DEV.surface, border: '1px solid ' + DEV.line, borderRadius: 12, boxShadow: '0 12px 38px rgba(0,0,0,0.5)', padding: '9px 14px 11px', opacity: 0.88, transition: 'opacity 0.16s ease' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2 }}>
             <span style={{ fontSize: 9.5, fontWeight: 800, letterSpacing: '0.09em', color: DEV.label, textTransform: 'uppercase' }}>Preview</span>
             <button aria-label="Collapse preview" onClick={() => setPreviewOpen(false)}
@@ -850,7 +881,7 @@ function App() {
           {baiInstalled && <div style={{ height: 1, background: DEV.divider }} />}
           {baiInstalled && (() => {
             const rows = [
-              <PreviewRow key="session" label="Session" opts={[['Onboarding', false], ['Default', true]]} val={isLoggedIn} set={switchSession} />
+              <PreviewRow key="session" label="Session" opts={[['Onboarding', 'onboarding'], ['Default', 'default'], ['MoneyMaker', 'moneymaker']]} val={sessionMode} set={switchSession} />
             ];
             if (isChat) rows.push(<PreviewRow key="states" label="Chat states" opts={[['Off', false], ['On', true]]} val={showChatStates} set={setShowChatStates} />);
             if (activeTab === 'settings') {
