@@ -1,4 +1,4 @@
-import { ClockIcon, WalletIcon } from '../apply/introIcons'
+import { WalletIcon } from '../apply/introIcons'
 import { YesIcon } from '../../controls/choiceIcons'
 
 // REBUILT 2026-08-14 against direct feedback on the first version, which stacked icon-over-figure-
@@ -7,9 +7,12 @@ import { YesIcon } from '../../controls/choiceIcons'
 // The brand side's own report (campaign-report.html's `.state` rows: icon LEFT, figure+label stacked
 // to its right, one compact horizontal band) already had the better shape; this now matches it.
 //
-// NO HOVER ON Completed/Active — neither opens anything, and a hover effect on a control that does
+// NO HOVER ON Completed — it doesn't open anything, and a hover effect on a control that does
 // nothing on click is a promise the card doesn't keep. Earned DOES get one, because Cash Out is a
 // real action living on that card.
+//
+// ACTIVE JOBS CARD REMOVED (2026-08-14, direct feedback: "we don't need it here") — was a third card
+// in a 3-up grid; the grid is 2-up now rather than 2 cards inside a 3-column track with an empty slot.
 //
 // EARNED IS NOT A COLOURED BLOCK ANY MORE — the first version washed the whole card in a flat accent
 // tint at rest, which read as a stuck/broken hover state rather than a deliberate highlight (exact
@@ -35,17 +38,15 @@ function Figure({ tone = 'default', children }: { tone?: 'default' | 'success'; 
 
 export default function StatCards({
   completedJobs,
-  activeJobs,
   balance,
   onCashOut,
 }: {
   completedJobs: number
-  activeJobs: number
   balance: number
   onCashOut: () => void
 }) {
   return (
-    <div className="grid gap-4 sm:grid-cols-3">
+    <div className="grid gap-4 sm:grid-cols-2">
       <div className={CARD}>
         <span className={`${ICON_WRAP} bg-status-success-soft text-status-success`}>
           <YesIcon size={18} />
@@ -53,16 +54,6 @@ export default function StatCards({
         <div className="min-w-0">
           <Figure>{completedJobs}</Figure>
           <p className="mt-0.5 truncate text-[13px] text-ink-muted">Completed jobs</p>
-        </div>
-      </div>
-
-      <div className={CARD}>
-        <span className={`${ICON_WRAP} bg-surface text-ink-body-2`}>
-          <ClockIcon size={18} />
-        </span>
-        <div className="min-w-0">
-          <Figure>{activeJobs}</Figure>
-          <p className="mt-0.5 truncate text-[13px] text-ink-muted">Active jobs</p>
         </div>
       </div>
 

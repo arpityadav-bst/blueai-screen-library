@@ -5,9 +5,8 @@ import Reveal from '../../Reveal'
 import { useApply } from '../ApplyState'
 import StatCards from './StatCards'
 import JobList from './JobList'
-import JobDetailModal from './JobDetailModal'
 import CashOutModal from './CashOutModal'
-import { MOCK_COMPLETED_JOBS, MOCK_STATS, type CompletedJob } from './mockData'
+import { MOCK_COMPLETED_JOBS, MOCK_STATS } from './mockData'
 
 // The returning creator's dashboard — CreatorsTop.tsx's third state, replacing both the marketing
 // hero AND the application (a returning creator has nothing to apply for). page.tsx also drops
@@ -29,7 +28,6 @@ import { MOCK_COMPLETED_JOBS, MOCK_STATS, type CompletedJob } from './mockData'
 export default function Dashboard() {
   const { account } = useApply()
   const [balance, setBalance] = useState(MOCK_STATS.balance)
-  const [selectedJob, setSelectedJob] = useState<CompletedJob | null>(null)
   const [cashOutOpen, setCashOutOpen] = useState(false)
 
   return (
@@ -48,7 +46,6 @@ export default function Dashboard() {
         <Reveal delay={0.08} className="mt-8">
           <StatCards
             completedJobs={MOCK_STATS.completedJobs}
-            activeJobs={MOCK_STATS.activeJobs}
             balance={balance}
             onCashOut={() => setCashOutOpen(true)}
           />
@@ -57,12 +54,11 @@ export default function Dashboard() {
         <Reveal delay={0.14} className="mt-10">
           <h2 className="font-head text-[18px] font-semibold text-ink-display">Completed jobs</h2>
           <div className="mt-4">
-            <JobList jobs={MOCK_COMPLETED_JOBS} onSelect={setSelectedJob} />
+            <JobList jobs={MOCK_COMPLETED_JOBS} />
           </div>
         </Reveal>
       </div>
 
-      <JobDetailModal job={selectedJob} onClose={() => setSelectedJob(null)} />
       <CashOutModal open={cashOutOpen} balance={balance} onClose={() => setCashOutOpen(false)} onWithdrawn={() => setBalance(0)} />
     </section>
   )
