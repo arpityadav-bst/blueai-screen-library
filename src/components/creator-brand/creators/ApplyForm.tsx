@@ -108,13 +108,32 @@ export default function ApplyForm() {
       <Milestones stage="filling" />
       <div className="overflow-hidden rounded-credits border border-divider bg-white shadow-float">
         {/* noValidate — see CampaignForm. Our inline errors speak, not the browser's bubbles. */}
-        <form noValidate onSubmit={submit} className="px-6 py-6 sm:px-8">
+        {/* px-4 BELOW sm, WAS px-6 (Appy, 2026-08-14) — mobile only; sm and up keep px-8 untouched.
+            At 390px the form's content column was 294px: 48px to the section's own px-6 gutter and
+            another 48px to this padding. Every question label, chip row and consent line was wrapping
+            against that, and wrapping is what makes the mobile box taller than the desktop one in the
+            first place (min-h 460 vs 400 below). Trading 16px of card padding back gives the content
+            310px, which is the cheapest width available here — see the note on the section's own
+            gutter for why the other 48px is NOT the one to take. */}
+        <form noValidate onSubmit={submit} className="px-4 py-6 sm:px-8">
           {/* ONE row: the step's title with its progress pinned to the right edge — the shape the
               campaign form's top area was reduced to on 2026-08-11, after running title → subtitle →
               full-width rail → "STEP 2 OF 5" → step-title as five stacked rows of chrome. */}
-          <div className="flex items-baseline justify-between gap-4">
+          {/* gap-3 below sm (gap-4 at sm+) — part of the same one-line-title budget as the h2's own
+              mobile size, next comment. */}
+          <div className="flex items-baseline justify-between gap-3 sm:gap-4">
             {/* h2 — the only other heading on this page is the section h1, so an h3 skipped a level. */}
-            <h2 className="font-head text-[17px] font-semibold text-ink-display">{STEPS[step].title}</h2>
+            {/* 15px BELOW sm, 17px UNCHANGED AT sm+ (Appy, 2026-08-14). The five step titles are
+                different lengths, and this row sits OUTSIDE the fixed 480px step box below — so when
+                the longest title ("Payment and contact") wrapped to two lines at mobile width, that
+                one card ran ~22px taller than the rest, which Appy confirmed on-device was exactly the
+                remaining height mismatch after the box itself was fixed. At 15px the longest title
+                fits the ~180px the rail leaves it with margin to spare, so every title is one line and
+                every card top is identical. Also consistent with Appy's own earlier read that mobile
+                type runs bigger than it needs to. If a future title is added, keep it short enough to
+                hold one line at 15px on a 360px viewport — this row's uniformity is what the whole
+                fixed-height scheme hangs off. */}
+            <h2 className="font-head text-[15px] font-semibold text-ink-display sm:text-[17px]">{STEPS[step].title}</h2>
             <Rail step={step} />
           </div>
 
@@ -134,7 +153,23 @@ export default function ApplyForm() {
               `subtle` now rather than by the floor). If a step overflows this again, that step's content
               is the thing to trim, not this number — it's been raised twice already chasing a step
               instead of the other way round. */}
-          <div className="mt-7 min-h-[460px] sm:min-h-[400px]">
+          {/* MOBILE IS AN EXACT HEIGHT NOW, NOT A FLOOR — h-[480px], EXACT, per Appy's explicit brief
+              (2026-08-14): "same and under 480px EXACT. nothing more and nothing less." The previous
+              two rounds (min-h 460, then 520) kept failing for the same reason: a floor only pads
+              SHORT steps up, so any step whose content exceeded the number kept its own height and
+              the card still moved between steps. h fixes the box at 480 for every step regardless of
+              content; the min-h approach is retired on mobile, not mistuned.
+              THE OBLIGATION THIS CREATES: content must FIT 480, because a fixed box doesn't grow — an
+              overflowing step would spill over the button row. Step 4 was the only one over (~513px:
+              two chip groups wrapping to two rows each + a rows-3 textarea + three error slots), so it
+              was trimmed mobile-only to fit — see StepThree's mt-4 sm:mt-7 gaps and Long.tsx's
+              two-line mobile cap. Steps 1/2/3/5 were already under 480. If a future edit pushes any
+              step past 480 on a ~390px viewport, trim THAT step; the 480 is not the knob.
+              THE ONE GAP EXEMPTED from trimming is step 5's PayPal -> long-run mt-5 (Appy, same
+              message, with a screenshot) — it stays at 20px on mobile too. Step 5 fits regardless.
+              DESKTOP IS FINAL AND UNTOUCHED: sm:h-auto restores content sizing and sm:min-h-[400px]
+              keeps the floor exactly as signed off. Nothing below sm leaks upward. */}
+          <div className="mt-7 h-[480px] sm:h-auto sm:min-h-[400px]">
             {step === 0 && <StepIntro />}
             {step === 1 && <StepOne {...stepProps} />}
             {step === 2 && <StepTwo {...stepProps} />}
@@ -146,7 +181,14 @@ export default function ApplyForm() {
               two full-width labels — "Back" and "Submit application" — couldn't both fit one mobile row
               without the longer one wrapping to two lines. Shrinking Back to an icon (below) removes that
               constraint instead of working around it: an icon button plus a flex-1 primary fits one row
-              at any width this form ships at, so there's one layout to maintain, not two. */}
+              at any width this form ships at, so there's one layout to maintain, not two.
+              STAYS mt-7 (Appy, 2026-08-14) — briefly tried at mt-5 and put back, because this gap sits
+              OUTSIDE the min-height box above and is therefore measured from the FLOOR, not from the
+              last field. That makes it identical on all five steps, so changing it cannot bring step 5
+              closer to the others — it only moves every button row together, i.e. it changes the card
+              height Appy wanted preserved while leaving the actual mismatch untouched. Step 5 is
+              equalised by its OWN internal gaps instead (see StepFour). Making this one step-dependent
+              would work arithmetically only at a NEGATIVE value, so it isn't an option either. */}
           <div className="mt-7 flex items-center gap-3">
             {step > 0 && (
               <button
@@ -201,9 +243,11 @@ function Rail({ step }: { step: number }) {
           // 320px card cannot hold the title and the rail on one line.
           // They are indicators now. Backward navigation already has a real, adequately-sized control —
           // the Back button — so this was a duplicate affordance that only existed at an untappable size.
+          // w-3 below sm (w-4 unchanged at sm+) — 5px handed to the title so the longest one holds a
+          // single line at mobile width; see the h2's own comment for the full budget.
           <span
             key={s.title}
-            className={`h-1 w-4 rounded-pill transition-colors duration-slow ease-out-bai ${
+            className={`h-1 w-3 rounded-pill transition-colors duration-slow ease-out-bai sm:w-4 ${
               i <= step ? 'bg-bai-gradient' : 'bg-[var(--cb-track)]'
             }`}
           />

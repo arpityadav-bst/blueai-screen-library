@@ -76,6 +76,7 @@ export default function ChoiceGroup({
   err,
   variant = 'chips',
   columns = 2,
+  tight = false,
 }: {
   label: string
   /** Sits under the options, and gives way to the error rather than stacking with it. */
@@ -89,6 +90,14 @@ export default function ChoiceGroup({
   variant?: 'cards' | 'chips'
   /** cards only. */
   columns?: 2 | 3
+  /**
+   * Halves the label→options gap (10px → 4px). OPT-IN, and it exists for exactly one caller: the
+   * application's last step, which carries four groups against every other step's two or three and
+   * therefore has to fit the same fixed-height box on 6px less of everything (Appy, 2026-08-14).
+   * Default false so no other group on the site moves — this is a height concession bought on one
+   * screen, not a change of opinion about how far a label should sit from its own control.
+   */
+  tight?: boolean
 }) {
   const items: Choice[] = options.map((o) => (typeof o === 'string' ? { value: o } : o))
 
@@ -104,8 +113,8 @@ export default function ChoiceGroup({
             // One column below sm. At 320 the form card leaves ~224px, so a 2-up card is ~106px wide
             // against p-3.5 padding, a 13px label, an 11px hint and an absolutely-positioned tick at
             // right-2 — labels wrapped to three lines and ran under the tick.
-            ? `mt-2.5 grid gap-2.5 ${columns === 3 ? 'grid-cols-2 sm:grid-cols-3' : 'grid-cols-1 sm:grid-cols-2'}`
-            : 'mt-2.5 flex flex-wrap gap-2'
+            ? `${tight ? 'mt-1' : 'mt-2.5'} grid gap-2.5 ${columns === 3 ? 'grid-cols-2 sm:grid-cols-3' : 'grid-cols-1 sm:grid-cols-2'}`
+            : `${tight ? 'mt-1' : 'mt-2.5'} flex flex-wrap gap-2`
         }
       >
         {items.map((o, i) => {

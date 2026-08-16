@@ -70,13 +70,27 @@ export default function StepIntro() {
     // fields, so unlike every other step here, making this box bigger is pure upside, not a height
     // fight with a question.
     <div className="rounded-field border border-divider bg-surface px-5 py-5 sm:px-7 sm:py-6">
+      {/* THE TINTED CIRCLE IS DESKTOP-ONLY (Appy, 2026-08-14) — mobile keeps the glyph and drops the
+          container around it. The circle is h-9/w-9 (36px) holding an 18px icon, i.e. exactly double
+          the thing it decorates, and it was charging that full 36px plus a 14px gap against a column
+          only ~270px wide inside this box. Below sm the icon now sits bare at its own 18px against a
+          12px gap, which hands ~20px straight back to the sentence — the widest single gain available
+          on this step without touching type size or copy.
+          It STAYS at sm and up, where the column is roughly twice as wide and the tint is doing real
+          work: five stacked rows need something to anchor the eye down the left edge, and there the
+          36px is affordable. This is a width concession, not a change of mind about the treatment.
+          THE mt VALUES SWAP WITH IT, and they are not interchangeable. The text carried mt-1.5 to
+          optically centre its first line against the 36px circle (circle centre 18px; text centre
+          6 + 12.2). With no circle that same 6px would leave the glyph riding ~9px high, so below sm
+          the nudge moves to the ICON instead (mt-[3px] puts the 18px glyph's centre at 12px against
+          the text's own 12.2px). Each breakpoint centres against whatever it actually renders. */}
       <ul className="space-y-5">
         {INTRO_POINTS.map((point, i) => (
-          <li key={i} className="flex items-start gap-3.5">
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-circle bg-[rgba(var(--cb-accent-rgb),0.1)] text-[var(--cb-accent)]">
+          <li key={i} className="flex items-start gap-3 sm:gap-3.5">
+            <span className="mt-[3px] flex shrink-0 items-center justify-center text-[var(--cb-accent)] sm:mt-0 sm:h-9 sm:w-9 sm:rounded-circle sm:bg-[rgba(var(--cb-accent-rgb),0.1)]">
               {point.icon}
             </span>
-            <span className="mt-1.5 text-[15px] leading-relaxed text-ink-body-2">{point.body}</span>
+            <span className="text-[15px] leading-relaxed text-ink-body-2 sm:mt-1.5">{point.body}</span>
           </li>
         ))}
       </ul>

@@ -13,6 +13,15 @@ import { FieldError, withErr } from '../../forms'
 // invitation to write a couple of sentences, not a single-line field; it does not cap what someone can
 // type, only the box's resting size — the textarea still scrolls internally past three lines the same
 // way it always scrolled past four.
+//
+// TWO LINES ON MOBILE, THREE AT sm+ (Appy, 2026-08-14) — the h-[78px] sm:h-auto pair below. Same
+// budget as the rest of that day's mobile pass: the form card is a FIXED 480px below sm (see
+// ApplyForm), and this textarea's third line was part of the ~33px its step ran over. The rows={3}
+// attribute still sets the desktop resting size (sm:h-auto hands control back to it); on mobile the
+// explicit height wins. 78px = two 26px lines of the mobile 16px/relaxed text plus py-3's 24px.
+// The same truth as the three-vs-four paragraph above still holds one size further down: this caps
+// the box's resting size, never the answer — it scrolls internally past two lines exactly as it
+// always scrolled past three.
 // Hover, focus and placeholder come from cb-field-strong, the same shell every text input on this site
 // uses (controls/fieldClasses.ts).
 export default function Long({
@@ -34,7 +43,7 @@ export default function Long({
         onChange={(e) => onChange(e.target.value)}
         onBlur={onBlur}
         placeholder={placeholder}
-        className={withErr(`${INPUT} resize-none py-3 leading-relaxed`, err)}
+        className={withErr(`${INPUT} h-[78px] resize-none py-3 leading-relaxed sm:h-auto`, err)}
       />
       <FieldError>{err}</FieldError>
     </label>

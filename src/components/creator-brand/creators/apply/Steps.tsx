@@ -176,7 +176,12 @@ export function StepThree(p: Props) {
         err={err.pcHours}
       />
 
-      <div className="mt-7">
+      {/* mt-4 BELOW sm ONLY (Appy, 2026-08-14) — this step is the one that exceeded the mobile card's
+          fixed 480px (see ApplyForm's h-[480px] comment): at ~310px both chip groups wrap to two rows
+          and the textarea keeps three lines, landing near 513px. These two gaps (24px back) plus the
+          textarea's mobile cap (Long.tsx) are what bring it under 480. Desktop keeps mt-7 — that
+          rhythm is signed off and this step never overflowed there. */}
+      <div className="mt-4 sm:mt-7">
         <ChoiceGroup
           label="How many days a week could you run BlueAI?"
           name="apply-run-days"
@@ -187,7 +192,8 @@ export function StepThree(p: Props) {
         />
       </div>
 
-      <div className="mt-7">
+      {/* mt-4 below sm for the same 480px budget as the gap above — desktop untouched. */}
+      <div className="mt-4 sm:mt-7">
         <Long
           label="Have you earned money online before? What did you try and how did it go?"
           value={d.earnedBefore}
@@ -217,6 +223,7 @@ export function StepFour(p: Props) {
         options={YES_NO_CHIPS}
         onChange={pick('hasPaypal')}
         err={err.hasPaypal}
+        tight
       />
 
       {/* OWN ROW, not the PayPal question's side-by-side partner — the framing sentence is too
@@ -224,13 +231,21 @@ export function StepFour(p: Props) {
           REWORDED 2026-08-14 (PM): "Jobs don't take much of your day" was the last user-facing "jobs"
           in the form — same cut as StepIntro's, and the new framing ("a few minutes a day") repeats
           the intro's own time claim rather than introducing a new noun.
-          mt-5, NOT mt-7 (Appy, 2026-08-13) — this step carries four groups (the other three steps
-          carry two or three), which is what made it the one step that ran past the shared floor. The
-          fix here is spacing, not content: mt-7 is this file's rhythm for "distinct question" gaps
-          everywhere else, and shrinking it JUST on this step trades a little of that separation back
-          for height, on the one step that actually needs the room. Kept above zero on purpose — the
-          full-run, email and checkbox groups still read as separate things at 20px, just not as
-          loosely as the rest of the form. */}
+          STAYS mt-5 — this is the ONE gap on this step Appy asked to leave exactly as it was
+          (2026-08-14), and everything else on the step was re-cut around that constraint.
+          THE ARITHMETIC, because it is why the other two gaps are 4px and why ChoiceGroup grew a
+          `tight` prop at all: step 5 runs ~30px past the 400px floor, and its three gaps held 48px
+          between them (20+20+8). Holding this one at 20 leaves the other two needing to total -2px —
+          i.e. zeroing both STILL lands ~2px over. The three step gaps alone cannot do it, so the
+          remaining 12px is bought from a FOURTH gap instead: `tight` halves each group's label->
+          options gap (10px -> 4px) on this step's two ChoiceGroups. Budget then reads 20+4+4 = 28
+          against 30 available, which clears the floor with ~2px to spare — every step's box measures
+          400px and all five cards match, with the button row untouched at mt-7.
+          THE RESULT IS DELIBERATELY UNEVEN, which is the point: 41px between the first two questions
+          (this gap plus PayPal's own 21px hint slot) and ~25px between the rest. Appy asked for the
+          first boundary to keep its weight while the others gave — so the step now emphasises one
+          break instead of spacing all three the same. Do not "fix" this into a uniform rhythm without
+          re-reading the budget above; there is nothing left to pay for it with. */}
       <div className="mt-5">
         <ChoiceGroup
           label="Running BlueAI only takes a few minutes a day, but this is a long-term program. Are you in for the long run?"
@@ -239,13 +254,14 @@ export function StepFour(p: Props) {
           options={FULL_RUN_OPTS}
           onChange={pick('fullRun')}
           err={err.fullRun}
+          tight
         />
       </div>
 
       {/* Pre-filled from the signed-in account and editable, because the question is which email the
           reader WANTS to be contacted on, which is not necessarily the one they signed in with.
           Pre-filling answers the common case without deciding it for them. */}
-      <label className="mt-5 block">
+      <label className="mt-1 block">
         <span className={LABEL}>What email should we contact you on?</span>
         <input
           type="email"
@@ -267,8 +283,14 @@ export function StepFour(p: Props) {
           link — for the same reason: there is no Program Terms page in this design-only build yet, and
           an underline that goes nowhere is honest about that in a way a broken href would not be.
           subtle — this is boilerplate you tick on the way out, not a decision like the age gate; see
-          CheckField's own comment on `subtle` for why it drops the bordered-card treatment. */}
-      <div className="mt-5">
+          CheckField's own comment on `subtle` for why it drops the bordered-card treatment.
+          mt-1, one of the two gaps that gave so the PayPal -> long-run gap above could stay at mt-5 —
+          see that group's comment for the full budget. This one has the least to lose from it: every
+          other gap on the step separates one QUESTION from the next, while this separates the last
+          question from boilerplate you tick on the way out, which was never its peer. The email
+          field's own 21px reserved error slot sits between the two regardless, so the real distance
+          here is ~25px, not 4px. */}
+      <div className="mt-1">
         <CheckField
           subtle
           checked={d.agree}

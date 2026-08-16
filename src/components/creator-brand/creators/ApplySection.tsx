@@ -22,6 +22,16 @@ export default function ApplySection() {
     // section IS #hero when you're signed in, so the orbs and the logo star were invisible for the
     // entire application. They should be there from the top, at full strength, with no fade-in: this
     // is a form, not a hero, and it has nothing to protect.
+    //
+    // px-6 IS DELIBERATE AND SHOULD STAY (2026-08-14). Asked to widen the form on mobile, the obvious
+    // move is to take it from here as well as from the card's own padding — this is the other 48px.
+    // It is the wrong 48px: px-6 is the PAGE grid. Header.tsx, HowItWorks, the FAQ and the closing
+    // band all carry the same px-6, so narrowing it here alone would leave the form card sitting
+    // further out than the header's own logo and than every section below it — the exact
+    // header-vs-content grid mismatch Appy caught on the dashboard earlier the same day. The card's
+    // internal padding (ApplyForm) is the half that can move, because nothing else is aligned to it.
+    // If the form genuinely needs more than that, change the gutter SITE-WIDE at this breakpoint
+    // rather than on this one section.
     <section
       id="hero"
       data-cb-nogate="true"
