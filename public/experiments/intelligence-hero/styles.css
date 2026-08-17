@@ -784,6 +784,20 @@ body::after {
     --logo-pitch: 3;
   }
 
+  /* Shift the hero video's framing up 80px, mobile only.
+     The HEIGHT grows by the same 80px rather than this being a bare translate:
+     .bg is the box, and moving the video up without making it taller would leave
+     an 80px uncovered strip at the bottom of the hero.
+     Note object-position can't do this job here — at a phone's aspect ratio a 16:9
+     video under `cover` overflows horizontally and fits exactly vertically, so
+     there is no vertical slack for object-position to move. The element itself has
+     to move. `bottom: auto` is explicit because `inset: 0` set it. */
+  .bg-video {
+    top: -80px;
+    bottom: auto;
+    height: calc(100% + 80px);
+  }
+
   .site-header {
     justify-content: space-between;
     gap: 12px;
