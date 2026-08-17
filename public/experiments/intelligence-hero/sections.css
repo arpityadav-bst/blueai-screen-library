@@ -479,8 +479,8 @@
    below it or crop it early:
 
      --cv-aspect   the VIDEO FILE's own aspect (height / width). Must match the
-                   file in index.html: closer-blob.mp4 is 1920×768 = 40%,
-                   closer-sphere.mp4 is 1920×928 = 48.33%.
+                   file in index.html: closer-blob.mp4 is 1920×768 = 40%. Swap the
+                   video and this has to change with it - nothing checks.
      --cv-w        how wide the video is as a fraction of the band
      --cv-reveal   how much of the frame's height shows
      --cv-opacity  how present it is

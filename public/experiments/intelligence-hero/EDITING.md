@@ -623,26 +623,36 @@ file** — `sections.css` — so `styles.css` stays the hero's. Behaviour is in 
 
 ### The closing video band
 
-`assets/closer-loop.mp4` — the blue liquid sphere, **1920×928, H.264, 10s, 7.3 MB**.
-
-**The source cannot be used directly.** It's ProRes 4444 with an alpha channel (`yuva444p12le`) at
-**805 MB**, and no browser plays ProRes. Alpha in browsers means VP9/WebM (no Safari) or HEVC (Safari
-only) — but none of that is needed here, because the band sits on `#000` and blends with `screen`, and
-*screen over black is identity*. So the alpha was flattened onto black and encoded as plain H.264,
-which is universally supported and 100× smaller:
+**`assets/closer-blob.mp4`** — the morphing fluid blob, **1920×768, H.264, 15s, 1.4 MB**. The only
+video in `assets/`; there is no alternate.
 
 ```bash
-ffmpeg -f lavfi -i "color=black:s=1920x1080:r=30:d=10" -i SOURCE.mov \
-  -filter_complex "[0][1]overlay=shortest=1,crop=1920:928:0:67,format=yuv420p" \
-  -c:v libx264 -crf 20 -preset medium -movflags +faststart -an assets/closer-loop.mp4
+ffmpeg -i SOURCE.mov -vf "crop=1920:768:0:140,format=yuv420p" \
+  -c:v libx264 -crf 20 -preset medium -movflags +faststart -an assets/closer-blob.mp4
 ```
 
-The explicit `overlay` onto a black source matters — just dropping the alpha channel leaves whatever
-happens to be in the RGB planes behind transparent pixels, which is not reliably black.
+**`crop=…:0:140` removes dead space, measured not guessed.** A per-row profile of the frame's visible
+energy put the blob's content at y=**140**→**905**, so 140px of empty top and 175px of empty bottom are
+gone. Cropping matters more than it looks: the band shows only the *top* of the frame, so dead pixels at
+the top are dead pixels in the only part anyone sees.
 
-**`crop=…:0:67` removes dead space, measured not guessed.** A per-row profile of the sphere's visible
-energy put its content at y=**67**→**995**, so 67px above it were empty and are gone. Verified after
-encoding: everything outside the sphere is pure `0`, highlights reach `253`.
+> **If you ever swap in a `.mov` with an alpha channel**, it needs more than a crop. ProRes 4444
+> (`yuva444p12le`) doesn't play in any browser, and browser alpha means VP9/WebM (no Safari) or HEVC
+> (Safari only). None of that is necessary here: the band sits on `#000` and blends with `screen`, and
+> **screen over black is identity** — so flatten the alpha onto black and encode plain H.264. Composite
+> **explicitly**, because merely dropping the alpha channel leaves whatever happens to sit in the RGB
+> planes behind transparent pixels, which is not reliably black:
+>
+> ```bash
+> ffmpeg -f lavfi -i "color=black:s=1920x1080:r=30:d=10" -i SOURCE.mov \
+>   -filter_complex "[0][1]overlay=shortest=1,crop=W:H:0:TOP,format=yuv420p" \
+>   -c:v libx264 -crf 20 -preset medium -movflags +faststart -an assets/closer-blob.mp4
+> ```
+>
+> That path was used for a blue-sphere alternate (805 MB ProRes → 7.3 MB H.264). The encode was
+> **deleted** rather than kept — an unused 7 MB binary is permanent repo weight, and this recipe plus
+> the source file reproduce it in one command. Verify after encoding that everything outside the subject
+> reads pure `0`.
 
 **Four knobs, on `.closer-video`** — and the band's height is *derived* from them, so changing any one
 can't leave a gap below the video or crop it early:
@@ -670,16 +680,16 @@ padding-top: calc(var(--cv-aspect) * var(--cv-w) * var(--cv-reveal));
 Because percentage padding resolves against *width*, the whole band tracks the viewport with no media
 query. The video is centred with `left: 50%` + `translateX(-50%)`, so narrowing it keeps it in the middle.
 
-**Two videos are on disk; the band uses one.** Switching is a `src` change **plus** `--cv-aspect`, and
-the two must agree or the band's height stops matching the frame:
+**`--cv-aspect` must match whatever file is in `src`.** It is the video's own height ÷ width — `40%` for
+`closer-blob.mp4` (768/1920). Swap the video without updating it and the band's height stops matching the
+frame: too small crops the subject early, too large leaves dead black below it. There is no gate on this;
+the two are only kept in step by remembering.
 
-| File | Size | Aspect → `--cv-aspect` |
-|---|---|---|
-| `closer-blob.mp4` *(in use)* | 1920×768, 1.4 MB | `40%` |
-| `closer-sphere.mp4` | 1920×928, 7.3 MB | `48.33%` |
-
-Both were cropped to their measured content — the blob's was y=140→905 (140px of dead top), the
-sphere's y=67→995. Neither crop was estimated; both came from a per-row luminance profile.
+**Mobile overrides all four** (`sections.css`, the 620px block): `--cv-w: 1.7`, `--cv-reveal: 0.72`,
+`--cv-opacity: 0.68`. Because the band's height is a fraction of *width*, the desktop values collapse it
+to ~70px on a phone. A `--cv-w` above 1 makes the video wider than the viewport and lets the band's
+`overflow: hidden` crop the sides — which *zooms* the blob rather than merely stretching the band, and is
+the only way to make it bigger once full-bleed isn't enough.
 
 ### Footer
 

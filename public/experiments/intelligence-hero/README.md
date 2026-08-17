@@ -57,8 +57,7 @@ logo.js                         the procedural pixel logo (ported from blueai-de
 main.js                         stat count-up + mobile menu
 scroll.js                       scroll reveals + the §2 scrubbed word fill
 assets/noise.png                160×160 tileable film grain
-assets/closer-blob.mp4          closing video band (in use) — 1920×768
-assets/closer-sphere.mp4        closing video band (alternate) — 1920×928
+assets/closer-blob.mp4          closing video band — 1920×768, 1.4 MB
 fonts/GeistPixel-Circle.woff2   fallback display face — SEE BELOW
 COPY-AUDIT.md                   why every line of copy says what it says
 EDITING.md                      ← how to change anything: text, style, image, video
