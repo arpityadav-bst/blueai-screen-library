@@ -20,6 +20,14 @@ const nextConfig = {
       }
     : {
         // Serve the static prototypes (public/**/index.html) at clean URLs.
+        // Each of these two is only safe because its index.html declares a
+        // <base href="/blueai-desktop/"> (resp. /blueai-product/). Without that, at
+        // /foo the browser resolves relative URLs against / — `styles.css` becomes
+        // /styles.css, 404s, and the page renders completely unstyled.
+        // A page added here needs a <base> tag or absolute asset paths. Note also
+        // that rewrites do NOT exist in STATIC_EXPORT mode above, so a page linked
+        // only via a rewrite is unreachable in a static export — which is why
+        // /experiments/... is linked directly at its index.html from the index page.
         async rewrites() {
           return [
             { source: '/blueai-product', destination: '/blueai-product/index.html' },

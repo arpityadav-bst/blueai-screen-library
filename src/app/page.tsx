@@ -40,6 +40,21 @@ const MAINTAINED = [
   { href: '/blueai-product', name: 'BlueAI Product', desc: 'Exact clone of the live BlueAI desktop app — the new-variant chat, task-progress + feedback, and all five tabs. Standalone replica, not on the marketing design system.' },
 ]
 
+// EXPERIMENTS — deliberately not a product surface. Standalone static pages that
+// share nothing with the products: no --bai-* tokens, no marketing design system,
+// no VDA scope. Each one owns its own stylesheet and its own README. They live here
+// only so they can be navigated to; grouping them apart is the point.
+const EXPERIMENTS = [
+  {
+    // Linked at index.html deliberately, NOT via an extensionless rewrite: this page
+    // uses relative asset paths, and at /experiments/intelligence-hero the browser
+    // would resolve them against /experiments/ and serve the page unstyled.
+    href: '/experiments/intelligence-hero/index.html',
+    name: 'You Own Machines — vision page',
+    desc: 'The CEO-brief vision page: BlueAI as a command layer over anything autonomous, digital or physical. Full-bleed video hero, a scroll-scrubbed morning sequence, six capability domains, and the economics. Vanilla HTML/CSS/JS, its own design language — every figure on it is illustrative.',
+  },
+]
+
 const DORMANT = [
   { href: '/seo', name: 'SEO Homepage', desc: 'Search-optimized marketing homepage — full sections + FAQ schema' },
   { href: '/hero-options', name: 'Hero Options', desc: 'The three hero directions, compared side by side' },
@@ -94,8 +109,8 @@ export default function Home() {
           <h1 className="mt-3 font-head text-4xl font-semibold tracking-tight-3 text-ink-display">Screen Library</h1>
           <p className="mt-2 max-w-xl text-[15px] leading-relaxed text-ink-muted">
             Design-only handoff. Active work lives in the Terminal Modern prototype and the
-            Creator&nbsp;↔&nbsp;Brand site; everything below that is either maintained occasionally
-            or kept on record.
+            Creator&nbsp;↔&nbsp;Brand site; below that, pages are maintained occasionally, run as
+            standalone experiments, or kept on record.
           </p>
         </header>
 
@@ -107,6 +122,11 @@ export default function Home() {
         <p className="bai-section-label mb-3 mt-12 text-ink-muted">Maintained — updated from time to time</p>
         <div className="space-y-3">
           {MAINTAINED.map((p) => <Card key={p.href} p={p} />)}
+        </div>
+
+        <p className="bai-section-label mb-3 mt-12 text-ink-muted">Experiments — outside every product surface</p>
+        <div className="space-y-3">
+          {EXPERIMENTS.map((p) => <Card key={p.href} p={p} />)}
         </div>
 
         <p className="bai-section-label mb-3 mt-12 text-ink-muted">Dormant — kept on record</p>

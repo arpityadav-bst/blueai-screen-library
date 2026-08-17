@@ -1,0 +1,661 @@
+/* ==========================================================================
+   sections.css — everything below the hero.
+   Tokens, reset, shell, header, hero and stats live in styles.css.
+   ========================================================================== */
+
+:root {
+  --ink-1: #ffffff; /* section headlines */
+  --ink-2: #b9b9bd; /* body copy */
+  --ink-3: #74747b; /* labels, meta */
+  /* Unfilled scrub words. Was .14, which was close to illegible — anyone landing
+     mid-section before the scrub caught up saw a wall of near-invisible text.
+     .24 still reads clearly as "not yet lit" but stays readable. */
+  --ink-dim: rgba(255, 255, 255, 0.24);
+  --hairline: rgba(255, 255, 255, 0.08);
+  --hairline-2: rgba(255, 255, 255, 0.14);
+
+  /* ── The shade ladder ──────────────────────────────────────────────────
+     Sampled from the hero video itself, not picked by eye. Its dark
+     chromatic pixels sit at hue 21.8° / sat 0.25 — a warm brown — so every
+     shade below is that same hue at rising luminance. shade-0 is #000000
+     because the video's bottom 6% measures exactly that: the hero hands off
+     to pure black, which is what lets §2 start on the same plane.        */
+  --shade-0: #000000;
+  --shade-1: #0c0907;
+  --shade-2: #17110e;
+  --shade-3: #241a15;
+
+  /* How long a section holds its inherited shade before starting to drift into
+     the next. Low = the fade spans almost the whole section, which reads as one
+     continuous surface slowly changing tone. Raise it and each section starts to
+     feel like a flat panel with a transition strip at the bottom. */
+  --shade-hold: 8%;
+
+  /* Surfaces are translucent white, NOT fixed colours — a card has to ride
+     whatever shade its section happens to be, or it fights the fade. */
+  --card-bg: rgba(255, 255, 255, 0.035);
+  --card-bg-hover: rgba(255, 255, 255, 0.06);
+}
+
+/* ── Shared section furniture ─────────────────────────────────────────── */
+
+/* No borders anywhere. Each section holds its inherited shade only briefly at
+   the top, then drifts into the next across almost its whole height — so every
+   boundary has the SAME colour on both sides and there is nothing to see at the
+   join. A section declares only --from and --to; the gradient is shared. */
+.section,
+.scrub {
+  background-image: linear-gradient(
+    180deg,
+    var(--from, var(--shade-0)) 0%,
+    var(--from, var(--shade-0)) var(--shade-hold),
+    var(--to, var(--shade-0)) 100%
+  );
+}
+
+.scrub {
+  --from: var(--shade-0); /* pure black — continuous with the hero's bottom */
+  --to: var(--shade-1);
+}
+
+#what-it-runs {
+  --from: var(--shade-1);
+  --to: var(--shade-2);
+}
+
+#how-it-works {
+  --from: var(--shade-2);
+  --to: var(--shade-3);
+}
+
+/* Comes back down rather than only ever lightening, so the page breathes. */
+#economics {
+  --from: var(--shade-3);
+  --to: var(--shade-2);
+}
+
+#contact {
+  --from: var(--shade-2);
+  --to: var(--shade-0); /* close the loop on black */
+}
+
+.section {
+  position: relative;
+  z-index: 1;
+  padding: clamp(72px, 12vh, 150px) clamp(24px, 4vw, 40px);
+}
+
+/* Grain is ONE fixed, page-wide overlay — see the note in styles.css. It used to
+   be a per-section ::before, which put grain on the sections and none on the
+   hero, and that boundary was itself a visible divider. */
+
+.wrap {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 1040px;
+  margin: 0 auto;
+}
+
+.section-label {
+  display: block;
+  margin-bottom: clamp(14px, 2vh, 20px);
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: clamp(11.5px, 1.1vw, 12px);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.section-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(26px, 4.4vw, 50px);
+  letter-spacing: var(--display-track);
+  word-spacing: var(--display-word);
+  line-height: 1.14;
+  color: var(--ink-1);
+}
+
+.section-sub {
+  max-width: 56ch;
+  margin: clamp(16px, 2.4vh, 24px) 0 0;
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: clamp(16px, 1.5vw, 17.5px);
+  line-height: 1.6;
+  color: var(--ink-2);
+}
+
+/* A market claim, not a statistic — deliberately carries no invented forecast.
+   Sized between the sub and a headline so it reads as an assertion, not body. */
+.scale-line {
+  max-width: 40ch;
+  margin: clamp(30px, 4.5vh, 48px) 0 0;
+  padding-left: clamp(14px, 1.6vw, 20px);
+  border-left: 2px solid var(--hairline-2);
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: clamp(17px, 1.9vw, 22px);
+  letter-spacing: -0.015em;
+  line-height: 1.5;
+  color: var(--ink-1);
+}
+
+/* Mark + wordmark as one unit. Shared by the closer and the footer deliberately —
+   the same lockup written twice is two lockups waiting to drift. Display face, so
+   it ties back to the headline and the stat glyphs. */
+.brand-lockup {
+  display: inline-flex;
+  align-items: center;
+  gap: clamp(7px, 0.9vw, 10px);
+  font-family: var(--font-display);
+  font-size: clamp(15px, 1.5vw, 18px);
+  letter-spacing: var(--display-track);
+  word-spacing: var(--display-word);
+  color: var(--ink-2);
+}
+
+/* ── Scroll-reveal (the scrolling counterpart to .anim) ───────────────── */
+
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(26px);
+  filter: blur(6px);
+  transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--d, 0s);
+}
+
+[data-reveal].is-in {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+/* ── §2 The morning — scroll-scrubbed word fill ───────────────────────── */
+
+/* Outer is tall; inner sticks to the viewport, so you scroll THROUGH the text. */
+.scrub {
+  position: relative;
+  z-index: 1;
+  height: 260vh;
+}
+
+.scrub-stage {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  height: 100dvh;
+  padding: clamp(24px, 6vh, 60px) clamp(24px, 5vw, 48px);
+  text-align: center;
+}
+
+.scrub-clock {
+  margin-bottom: clamp(20px, 4vh, 38px);
+  font-family: var(--font-display);
+  font-size: clamp(22px, 3vw, 34px);
+  letter-spacing: var(--display-track);
+  word-spacing: var(--display-word);
+  color: var(--ink-1);
+}
+
+.scrub-text {
+  max-width: min(900px, 94%);
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: clamp(19px, 2.9vw, 40px);
+  letter-spacing: -0.02em;
+  line-height: 1.42;
+  color: var(--ink-1);
+}
+
+/* Each word starts nearly invisible and fills as the scroll passes it. */
+.scrub-text .word {
+  color: var(--ink-dim);
+  transition: color 0.18s linear;
+}
+
+.scrub-text .word.lit {
+  color: var(--ink-1);
+}
+
+.scrub-foot {
+  margin-top: clamp(24px, 4vh, 44px);
+  font-family: var(--font-sans);
+  font-size: clamp(13px, 1.3vw, 14px);
+  letter-spacing: 0.02em;
+  color: var(--ink-3);
+}
+
+/* ── §3 Domain cards ─────────────────────────────────────────────────── */
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(12px, 1.6vw, 18px);
+  margin-top: clamp(38px, 6vh, 64px);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: clamp(22px, 2.6vw, 30px);
+  border: 1px solid var(--hairline);
+  border-radius: 20px;
+  background: var(--card-bg);
+  transition: border-color 0.35s ease, background 0.35s ease,
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.card:hover {
+  border-color: var(--hairline-2);
+  background: var(--card-bg-hover);
+  transform: translateY(-3px);
+}
+
+/* The only live domain, given visual weight without a status badge — the
+   designer's call was to present all six as one vision, so this lifts the card
+   rather than labelling it. */
+.card--lead {
+  background: rgba(255, 255, 255, 0.062);
+  border-color: var(--hairline-2);
+}
+
+.card--lead:hover {
+  background: rgba(255, 255, 255, 0.085);
+}
+
+.card-glyph {
+  margin-bottom: clamp(16px, 2.2vh, 22px);
+  font-family: var(--font-display);
+  font-size: clamp(28px, 2.6vw, 32px);
+  line-height: 1;
+  letter-spacing: var(--display-track);
+  word-spacing: var(--display-word);
+  color: var(--ink-1);
+}
+
+.card-title {
+  margin: 0 0 8px;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: clamp(16.5px, 1.5vw, 17.5px);
+  letter-spacing: -0.015em;
+  color: var(--ink-1);
+}
+
+.card-copy {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: clamp(15px, 1.35vw, 15px);
+  line-height: 1.58;
+  color: var(--ink-2);
+}
+
+/* ── §4 How it works ─────────────────────────────────────────────────── */
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(20px, 3vw, 44px);
+  margin-top: clamp(40px, 6vh, 70px);
+}
+
+.step {
+  padding-top: clamp(18px, 2.4vh, 26px);
+  border-top: 1px solid var(--hairline-2);
+}
+
+.step-num {
+  display: block;
+  margin-bottom: clamp(12px, 1.8vh, 18px);
+  font-family: var(--font-display);
+  font-size: clamp(24px, 2.2vw, 28px);
+  letter-spacing: var(--display-track);
+  word-spacing: var(--display-word);
+  color: var(--ink-1);
+}
+
+.step-title {
+  margin: 0 0 8px;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: clamp(17px, 1.6vw, 19px);
+  letter-spacing: -0.015em;
+  color: var(--ink-1);
+}
+
+.step-copy {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: clamp(15px, 1.35vw, 15px);
+  line-height: 1.58;
+  color: var(--ink-2);
+}
+
+/* ── §5 While you rest, it earns ─────────────────────────────────────── */
+
+.earns {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(12px, 1.6vw, 18px);
+  margin-top: clamp(38px, 6vh, 64px);
+}
+
+.earn {
+  display: flex;
+  flex-direction: column;
+  padding: clamp(24px, 2.8vw, 34px);
+  border: 1px solid var(--hairline);
+  border-radius: 20px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.055) 0%,
+    rgba(255, 255, 255, 0.015) 100%
+  );
+}
+
+/* The time window, not a number — the whole point of this section is WHEN it
+   works, so the emphatic slot holds "While you sleep" rather than a figure.
+   Also keeps it from restating the hero's counters verbatim. */
+.earn-when {
+  font-family: var(--font-display);
+  font-size: clamp(16px, 1.9vw, 23px);
+  letter-spacing: var(--display-track);
+  word-spacing: var(--display-word);
+  line-height: 1.2;
+  color: var(--ink-1);
+}
+
+.earn-title {
+  margin: clamp(20px, 2.8vh, 28px) 0 8px;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: clamp(16.5px, 1.5vw, 17.5px);
+  letter-spacing: -0.015em;
+  color: var(--ink-1);
+}
+
+.earn-copy {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: clamp(15px, 1.35vw, 15px);
+  line-height: 1.58;
+  color: var(--ink-2);
+}
+
+/* margin-top:auto pins the figure to the bottom of the panel so all three line
+   up regardless of how long their copy runs. */
+.earn-figure {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin: 0;
+  margin-top: auto;
+  padding-top: clamp(18px, 2.6vh, 24px);
+  border-top: 1px solid var(--hairline);
+}
+
+.earn-figure-num {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: clamp(21px, 2.5vw, 30px);
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-1);
+}
+
+.earn-figure-label {
+  font-family: var(--font-sans);
+  font-size: clamp(12.5px, 1.2vw, 13px);
+  line-height: 1.4;
+  letter-spacing: 0.01em;
+  color: var(--ink-3);
+}
+
+/* ── §6 Closer ───────────────────────────────────────────────────────── */
+
+/* Was min-height:92vh with centred content, which parked ~40vh of void between
+   the CTA and the video band below — plus .section's own bottom padding on top of
+   that. Shorter box + a much smaller bottom padding closes the gap; the video
+   band now provides the page's visual bottom instead of empty section. */
+.closer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 58vh;
+  padding-bottom: clamp(20px, 3vh, 40px);
+  text-align: center;
+}
+
+/* Overrides .brand-lockup's inline-flex: block-level is what lets it centre
+   itself in .wrap. .closer's text-align can't reach a flex container's items.
+   Larger wordmark than the footer's — it sits above a 30–74px headline here, not
+   in a 12px bar, so the shared size reads undersized. The MARK stays at its fixed
+   pitch either way; only the type scales. */
+.closer-mark {
+  display: flex;
+  justify-content: center;
+  gap: clamp(9px, 1.1vw, 13px);
+  margin-bottom: clamp(18px, 2.6vh, 30px);
+  font-size: clamp(20px, 2.1vw, 26px);
+  color: var(--ink-1);
+}
+
+.closer .section-title {
+  font-size: clamp(30px, 6vw, 74px);
+}
+
+.closer .section-sub {
+  max-width: min(520px, 92%);
+  margin-inline: auto;
+  text-align: center;
+}
+
+.closer .cta {
+  margin-top: clamp(26px, 4vh, 40px);
+}
+
+/* ── Closing video band ──────────────────────────────────────────────── */
+
+/* Sits on --shade-0, which is exactly where #contact's fade ends — so the chain
+   still joins and the band has no top edge.
+
+   Four knobs, all here. The band's height is DERIVED from them rather than set by
+   hand, so changing the width, the reveal or the video itself can't leave a gap
+   below it or crop it early:
+
+     --cv-aspect   the VIDEO FILE's own aspect (height / width). Must match the
+                   file in index.html: closer-blob.mp4 is 1920×768 = 40%,
+                   closer-sphere.mp4 is 1920×928 = 48.33%.
+     --cv-w        how wide the video is as a fraction of the band
+     --cv-reveal   how much of the frame's height shows
+     --cv-opacity  how present it is
+
+   padding-top = aspect × w × reveal, and because a percentage padding resolves
+   against WIDTH, the whole band tracks the viewport with no media query. */
+.closer-video {
+  --cv-aspect: 40%;
+  --cv-w: 0.78;
+  --cv-reveal: 0.58;
+  --cv-opacity: 0.5;
+
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  background: var(--shade-0);
+}
+
+.closer-video::before {
+  content: "";
+  display: block;
+  padding-top: calc(var(--cv-aspect) * var(--cv-w) * var(--cv-reveal));
+}
+
+/* Measured on the encoded file: everything outside the sphere is pure 0 and the
+   highlights reach 253. `screen` therefore drops the whole background into the
+   page ground and only the sphere survives — no video rectangle to see, just
+   light emerging from the dark. */
+.closer-video-el {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(var(--cv-w) * 100%);
+  height: auto;
+  opacity: var(--cv-opacity);
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+/* ── Footer ──────────────────────────────────────────────────────────── */
+
+/* The one hairline on the page, and a deliberate exception to the no-dividers
+   rule: that rule exists so SECTION transitions have no visible seam. A footer
+   is a trailing UI bar, not a section — sitting on the same shade-0 as the video
+   band above it, without the line it reads as text floating in the dark rather
+   than a bar. */
+.site-footer {
+  position: relative;
+  z-index: 1;
+  background: var(--shade-0);
+  border-top: 1px solid var(--hairline);
+}
+
+.footer-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(12px, 3vw, 28px);
+  width: 100%;
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: clamp(15px, 2.2vh, 20px) clamp(24px, 4vw, 40px);
+  font-family: var(--font-sans);
+  font-size: clamp(12px, 1.2vw, 12.5px);
+  letter-spacing: 0.01em;
+  color: var(--ink-3);
+}
+
+/* The footer's brand needs no rule of its own — .brand-lockup carries the type
+   and spacing. Don't add an empty .footer-brand class back just to have a hook. */
+
+.footer-meta {
+  display: flex;
+  align-items: center;
+  gap: clamp(12px, 2vw, 20px);
+}
+
+.footer-meta a {
+  transition: color 0.2s ease;
+}
+
+.footer-meta a:hover {
+  color: var(--ink-1);
+}
+
+/* ── Breakpoints ─────────────────────────────────────────────────────── */
+
+@media (max-width: 900px) {
+  .cards,
+  .earns {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .steps {
+    grid-template-columns: 1fr;
+    gap: clamp(18px, 3vh, 28px);
+  }
+}
+
+@media (max-width: 620px) {
+  .cards,
+  .earns {
+    grid-template-columns: 1fr;
+  }
+
+  /* A single bar can't hold brand + three items at 360px; stack it centred
+     rather than let it crush or overflow. */
+  .footer-bar {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
+
+  /* The band's height is a fraction of WIDTH, so on a narrow screen the desktop
+     values collapse it to ~70px and the blob all but disappears. Go full-bleed,
+     reveal more of the frame, and lift the opacity — at a smaller size the same
+     0.5 reads as almost nothing. */
+  /* --cv-w above 1 makes the video WIDER than the viewport, cropped equally on
+     both sides by the band's overflow:hidden — which zooms the blob rather than
+     just stretching the band. That's the only way to make it bigger once
+     full-bleed isn't enough. It's centred, and the blob is centred in frame, so
+     the crop takes empty edges. Band height follows automatically:
+     40% x 1.7 x 0.72 = ~49% of width, roughly 184px at 375. */
+  .closer-video {
+    --cv-w: 1.7;
+    --cv-reveal: 0.72;
+    --cv-opacity: 0.68;
+  }
+
+  /* 12vh of section padding is ~97px top AND bottom on a phone — generous on a
+     desktop, dead space on a 375px column where every section is already tall. */
+  .section {
+    padding-top: clamp(56px, 7vh, 92px);
+    padding-bottom: clamp(56px, 7vh, 92px);
+  }
+
+  /* 58vh centring a short block left a ~300px void above the lockup. */
+  .closer {
+    min-height: 38vh;
+  }
+
+  /* A shorter track — less scrolling to complete the fill on a small screen. */
+  .scrub {
+    height: 200vh;
+  }
+
+  .scrub-text {
+    font-size: clamp(18px, 5.2vw, 26px);
+    line-height: 1.5;
+  }
+}
+
+/* ── Reduced motion ──────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    transition: none !important;
+  }
+
+  /* No scrub: collapse the track and show the sentence in full. */
+  .scrub {
+    height: auto;
+  }
+
+  .scrub-stage {
+    position: static;
+    height: auto;
+    min-height: 70vh;
+  }
+
+  .scrub-text .word {
+    color: var(--ink-1);
+  }
+}

@@ -1,0 +1,945 @@
+/* ==========================================================================
+   Intelligence Designed To Evolve — single-viewport video hero
+   ========================================================================== */
+
+/* Fallback display face (primary is BubbledotICG-FinePos, loaded from CDN) */
+@font-face {
+  font-family: "Geist Pixel Circle";
+  src: url("fonts/GeistPixel-Circle.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --bg: #000000;
+  --text: #ffffff;
+  --muted: #8e8e8e;
+  --nav-text: #2e2e2e;
+  --pill-dark: #28282a;
+  --sign-in-text: #c8c8c8;
+  --nav-shadow: 0 4px 14px rgba(0, 0, 0, 0.16);
+  --trust-bg: #28282a;
+  --trust-border: rgba(255, 255, 255, 0.4);
+  --trust-text: #c4c2c3;
+  --live-dot: #ffffff; /* swap to #4ade80 for a conventional "online" green */
+  --hero-shift: 80px; /* how far below true centre the hero block sits */
+  --grain: 0.45; /* film-grain strength — the one knob, see body::after */
+
+  /* Pixel-logo ink. Set = flat colour. Set to `none` (or delete) and logo.js
+     falls back to blueai-desktop's own cyan→violet diagonal grade. */
+  --logo-ink: #000000;
+
+  /* Cell pitch: mark = 9 x pitch. 2.6 is boot.js's own value, so DESKTOP renders
+     the same size as the blueai-desktop header logo (21.6px at dpr 1.25). This is
+     signed off - do not raise it to fix a mobile problem. Mobile has its own
+     override in the 720px block, where a 9-cell grid needs ~3 CSS px per cell for
+     the gap to stay visible. */
+  --logo-pitch: 2.6;
+
+  /* ── Dot-matrix tracking ────────────────────────────────────────────────
+     ONE value for every element in the display face. It used to be set
+     per-element — -0.04, -0.045, -0.05, -0.08, -0.09 — which is why the
+     spacing read as tight in one place and loose in another. The -0.08/-0.09
+     pair was worse than inconsistent: it was tracking used as a FITTING tool
+     to squeeze the nowrap headline onto a phone. Fitting is font-size's job.
+     Any new display-face element must use these, never its own number. */
+  --display-track: -0.04em;
+  --display-word: -0.06em;
+  --font-sans: "Inter", "Segoe UI", system-ui, sans-serif;
+  --font-display: "BubbledotICG-FinePos", "Geist Pixel Circle", monospace;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  /* Reserve the scrollbar gutter permanently. Without it, body.menu-open's
+     `overflow: hidden` removes the scrollbar and the entire page jumps sideways
+     by its width the moment the mobile menu opens — measured at 20px. Costs
+     nothing here because this page always scrolls. */
+  scrollbar-gutter: stable;
+}
+
+/* The page scrolls now, so this has to actually lock it behind the sheet. */
+body.menu-open {
+  overflow: hidden;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ── Film grain ───────────────────────────────────────────────────────────
+   ONE overlay for the whole page, fixed to the viewport.
+
+   Two reasons it lives here and not on the sections. First, grain applied
+   per-section put tooth on the sections and none on the hero, and that
+   boundary read as exactly the divider the shade fade exists to remove.
+   Second, `fixed` means the grain doesn't travel with the content — it
+   behaves like grain in a lens rather than texture printed on the page,
+   which is what the video above it actually looks like.
+
+   Effective strength is the tile's own alpha (mean 9/255) times --grain,
+   so ~1.6% average and ~4.6% at the brightest pixels. It should be a
+   whisper: if you can see it as texture, it's too strong. --grain is the
+   only knob; the tile is regenerated only to change grain SIZE. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background-image: url("assets/noise.png");
+  background-repeat: repeat;
+  opacity: var(--grain);
+}
+
+/* ── Background video ─────────────────────────────────────────────────── */
+
+/* Height-capped to one screen: the video is the HERO's background, not the
+   page's. Sections below bring their own. `fixed` here would park it behind the
+   whole document — dramatic, but text over moving video for a full page is a
+   legibility problem. */
+.bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100vh;
+  height: 100dvh;
+  background: #000;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.bg-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* The source video's bottom 6% measures exactly #000000, which is what makes the
+   handoff into §2 seamless — but `cover` crops top and bottom on a wide, short
+   viewport and would expose the mauve mid-frame right at the join. This scrim
+   guarantees the hero ends on black at every aspect ratio. */
+.bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(180deg, transparent 62%, #000 100%);
+}
+
+/* ── Page shell ───────────────────────────────────────────────────────── */
+
+/* min-height, not height — still exactly one screen, but no longer a lid on the
+   document. */
+.page {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: clamp(16px, 2.4vh, 28px) clamp(20px, 3vw, 32px);
+}
+
+.site-header,
+.hero,
+.stats,
+.mobile-menu,
+.menu-overlay {
+  z-index: 1;
+}
+
+/* ── Header ───────────────────────────────────────────────────────────── */
+
+.site-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(18px, 2.8vw, 28px);
+  width: 100%;
+  max-width: 720px;
+  flex-shrink: 0;
+  animation: slideDown 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.logo {
+  display: grid;
+  place-items: center;
+  /* FINAL, signed off. Do not change either of these to "fix" the mobile mark;
+     mobile has its own override in the 720px block. */
+  width: clamp(40px, 4.4vw, 46px);
+  height: clamp(40px, 4.4vw, 46px);
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: var(--nav-shadow);
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* The mark is a canvas, not an image — logo.js draws blueai-desktop's procedural
+   pixel logo into it at that file's own fixed cell pitch (~27px at dpr 1).
+   Do NOT give it a width/height here: JS owns both, deliberately. A <canvas>
+   falls back to an intrinsic 300×150 the moment a CSS box isn't applied, so a
+   percentage rule is a 300px logo waiting to happen — it already happened once.
+   The circle centres it via .logo's `place-items: center`. */
+.logo-canvas {
+  display: block;
+  /* Belt-and-braces: if the bitmap ever does get scaled, keep the blocks hard
+     instead of letting the browser smooth them into mush. */
+  image-rendering: pixelated;
+}
+
+/* Per-instance ink. logo.js reads --logo-ink off each canvas, so the colour is a
+   CSS concern only — same mark, same size, different ink. */
+.logo-canvas.is-white {
+  --logo-ink: #ffffff;
+}
+
+.logo:hover {
+  transform: scale(1.04);
+}
+
+.nav-pill {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1;
+  max-width: 430px;
+  height: clamp(44px, 5.2vw, 48px);
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: var(--nav-shadow);
+}
+
+.nav-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding: 0 10px;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: clamp(13px, 1.4vw, 15px);
+  letter-spacing: -0.01em;
+  color: var(--nav-text);
+  opacity: 0.5;
+  transition: opacity 0.2s ease;
+  white-space: nowrap;
+}
+
+.nav-link:hover {
+  opacity: 0.75;
+}
+
+.nav-link.is-active {
+  opacity: 1;
+}
+
+/* Three 3×3 dots under the active label */
+.nav-link.is-active::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 5px;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--nav-text);
+  transform: translateX(-50%);
+  box-shadow: -5px 0 0 var(--nav-text), 5px 0 0 var(--nav-text);
+}
+
+.signin {
+  display: flex;
+  align-items: center;
+  height: clamp(44px, 5.2vw, 48px);
+  padding: 0 clamp(16px, 2vw, 22px);
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: var(--pill-dark);
+  color: var(--sign-in-text);
+  font-weight: 500;
+  font-size: clamp(13px, 1.4vw, 15px);
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  box-shadow: var(--nav-shadow);
+  transition: background 0.22s ease, color 0.22s ease, transform 0.22s ease;
+}
+
+.signin:hover {
+  background: #323234;
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.burger {
+  display: none;
+}
+
+/* ── Hero ─────────────────────────────────────────────────────────────── */
+
+/* transform, not margin: the hero is flex-centred, so a top margin would grow the
+   box and re-centre it, moving the title down only half of whatever you set. A
+   transform shifts it the exact distance and reflows nothing. */
+.hero {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 900px;
+  text-align: center;
+  transform: translateY(var(--hero-shift));
+}
+
+/* REMOVED: a radial scrim behind the hero copy, added to keep the headline legible
+   over the video's bright upper band.
+
+   It shipped a visible artefact — the faint horizontal divider under the header.
+   A radial-gradient defaults to `farthest-corner` sizing, so it only reaches full
+   transparency at the box's CORNERS: at the top edge MIDPOINT the normalised
+   radius is just 1/sqrt(2) = 0.707, where that gradient still carried 6.5% black.
+   Against 0% immediately outside the element, that's a hard 6.5% step across the
+   full width. Its left/right steps existed too but sat off-screen behind the -12%
+   horizontal inset, which is why only a horizontal line was visible.
+
+   If a hero scrim is ever wanted again: `radial-gradient(ellipse closest-side, …)`
+   reaches 0 at all four edge midpoints and has no step. Kept as a note because the
+   defect is in the DEFAULT sizing keyword and is easy to reintroduce. */
+
+/* Trust row */
+
+.trust {
+  --trust-size: clamp(36px, 4.5vw, 42px);
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: clamp(16px, 2.5vh, 26px);
+}
+
+/* PARKED — the three-ring enterprise-logo cluster. Unused since the trust row
+   became a liveness signal; retained pending sign-off on that direction. If the
+   logos are not coming back, delete through `.trust:hover .avatar.a3`. */
+.avatar {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: var(--trust-size);
+  height: var(--trust-size);
+  padding: 5px;
+  border-radius: 50%;
+  background: var(--trust-bg);
+  border: 1px solid var(--trust-border);
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.avatar-inner {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #fff;
+}
+
+.avatar-inner i {
+  font-size: calc(var(--trust-size) * 0.34);
+  line-height: 1;
+  color: #111;
+}
+
+.avatar.a1 {
+  z-index: 1;
+}
+.avatar.a2 {
+  z-index: 2;
+  margin-left: calc(var(--trust-size) * -0.42);
+}
+.avatar.a3 {
+  z-index: 4;
+  margin-left: calc(var(--trust-size) * -0.42);
+}
+
+.trust:hover .avatar.a1 {
+  transform: translateY(-2px);
+}
+.trust:hover .avatar.a2 {
+  transform: translateY(-4px);
+}
+.trust:hover .avatar.a3 {
+  transform: translateY(-2px);
+}
+
+.trust-pill {
+  position: relative;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  height: var(--trust-size);
+  margin-left: calc(var(--trust-size) * -0.42);
+  padding-left: calc(var(--trust-size) * 0.58);
+  padding-right: calc(var(--trust-size) * 0.36);
+  border-radius: 999px;
+  background: var(--trust-bg);
+  border: 1px solid var(--trust-border);
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: clamp(12px, 1.4vw, 13.5px);
+  letter-spacing: -0.01em;
+  color: var(--trust-text);
+  white-space: nowrap;
+}
+
+/* Liveness variant — no rings to clear, so the overlap offsets reset to
+   symmetric padding and the dot gets its own gap. */
+.trust-pill.is-live {
+  margin-left: 0;
+  gap: calc(var(--trust-size) * 0.26);
+  padding-left: calc(var(--trust-size) * 0.42);
+  padding-right: calc(var(--trust-size) * 0.42);
+}
+
+.live-dot {
+  width: 7px;
+  height: 7px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--live-dot);
+  animation: livePulse 2.4s ease-out infinite;
+}
+
+.live-count {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: #fff;
+}
+
+/* Headline */
+
+.headline {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  color: #fff;
+  font-size: clamp(26px, 6.2vw, 80px);
+  letter-spacing: var(--display-track);
+  word-spacing: var(--display-word);
+  line-height: 1.12;
+}
+
+/* The parent carries no reveal of its own — the lines animate individually. */
+.headline.anim {
+  opacity: 1;
+  transform: none;
+  filter: none;
+  animation: none;
+}
+
+.headline .line {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(14px);
+  animation: headlineFade 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.headline .line-1 {
+  animation-delay: 0.12s;
+}
+.headline .line-2 {
+  animation-delay: 0.3s;
+}
+
+/* Subhead */
+
+.subhead {
+  max-width: min(500px, 92%);
+  margin: clamp(14px, 2vh, 22px) auto 0;
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: clamp(calc(13.5px + 2pt), calc(1.55vw + 2pt), calc(16.5px + 2pt));
+  line-height: 1.55;
+  color: #d0d0d0;
+  opacity: 0.8;
+}
+
+/* CTA */
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: clamp(18px, 2.8vh, 30px);
+  padding: clamp(11px, 1.6vh, 13px) clamp(22px, 3vw, 28px);
+  border-radius: 999px;
+  background: #fff;
+  color: #000;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: clamp(13.5px, 1.5vw, 14.5px);
+  letter-spacing: -0.01em;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.15),
+    0 0 22px rgba(255, 255, 255, 0.32), 0 0 44px rgba(255, 255, 255, 0.12);
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.28s ease;
+}
+
+.cta.anim {
+  animation-name: revealPulse;
+}
+
+.cta:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.25),
+    0 0 30px rgba(255, 255, 255, 0.45), 0 0 60px rgba(255, 255, 255, 0.2);
+}
+
+/* ── Stats footer ─────────────────────────────────────────────────────── */
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(12px, 2vw, 24px);
+  width: 100%;
+  max-width: 920px;
+  flex-shrink: 0;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+}
+
+.stat-icon {
+  font-family: var(--font-display);
+  font-size: clamp(22px, 3vw, 33px);
+  line-height: 1.1;
+  letter-spacing: var(--display-track);
+  word-spacing: var(--display-word);
+  color: #fff;
+}
+
+.stat-value {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: clamp(18px, 2.2vw, 26px);
+  letter-spacing: -0.025em;
+  font-variant-numeric: tabular-nums;
+  color: #fff;
+}
+
+.stat-label {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: clamp(12px, 1.2vw, 12.5px);
+  letter-spacing: -0.005em;
+  color: var(--muted);
+}
+
+/* ── Shared entrance animation ────────────────────────────────────────── */
+
+.anim {
+  opacity: 0;
+  transform: translateY(22px) scale(0.98);
+  filter: blur(6px);
+  animation: reveal 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: var(--d, 0s);
+}
+
+@keyframes reveal {
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes revealPulse {
+  0% {
+    opacity: 0;
+    transform: translateY(22px) scale(0.98);
+    filter: blur(6px);
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(0) scale(1.03);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes headlineFade {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes livePulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 9px rgba(255, 255, 255, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+  }
+}
+
+@keyframes overlayIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes menuIn {
+  from {
+    opacity: 0;
+    transform: translateY(-14px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes linkIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Mobile menu ──────────────────────────────────────────────────────── */
+
+.menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.62);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  animation: overlayIn 0.28s ease both;
+}
+
+.menu-overlay[hidden],
+.mobile-menu[hidden] {
+  display: none;
+}
+
+.mobile-menu {
+  position: fixed;
+  top: calc(clamp(16px, 2.4vh, 28px) + 48px + 12px);
+  /* Matches .page's horizontal padding, so the sheet's edges line up with the
+     logo and burger above it rather than sitting 6px wider on each side. */
+  left: clamp(20px, 3vw, 32px);
+  right: clamp(20px, 3vw, 32px);
+  padding: 22px 18px 20px;
+  border-radius: 28px;
+  background: #fff;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+  animation: menuIn 0.38s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.mobile-links {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+}
+
+.mobile-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 12px;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 16px;
+  letter-spacing: -0.01em;
+  color: var(--nav-text);
+  opacity: 0.55;
+  animation: linkIn 0.34s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.mobile-link.is-active {
+  opacity: 1;
+}
+
+.mobile-link.is-active::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 8px;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--nav-text);
+  transform: translateX(-50%);
+  box-shadow: -5px 0 0 var(--nav-text), 5px 0 0 var(--nav-text);
+}
+
+.mobile-link:nth-child(1) {
+  animation-delay: 0.06s;
+}
+.mobile-link:nth-child(2) {
+  animation-delay: 0.12s;
+}
+.mobile-link:nth-child(3) {
+  animation-delay: 0.18s;
+}
+.mobile-link:nth-child(4) {
+  animation-delay: 0.24s;
+}
+
+.mobile-signin {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-top: 12px;
+  padding: 15px 12px;
+  border-radius: 999px;
+  background: var(--pill-dark);
+  color: #fff;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  animation: linkIn 0.34s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both;
+}
+
+/* ── Breakpoints ──────────────────────────────────────────────────────── */
+
+@media (max-width: 720px) {
+  /* 80px was tuned against desktop's vertical slack. On a phone the hero has far
+     less room between header and stats, and the full shift crowds the CTA into
+     the stat grid. */
+  :root {
+    --hero-shift: 56px;
+
+    /* MOBILE ONLY. A visible gap cannot be thinner than 1 CSS px, so a 9-cell
+       grid needs ~3 CSS px cells -- i.e. a 27px mark -- or the blocks end up
+       THINNER than the gaps and the mark reads as unstable dots that appear to
+       shift from phone to phone. 27px is that floor, not a preference.
+       Desktop escapes it only because dpr 1.25 quantises its gap to 0.8px. */
+    --logo-pitch: 3;
+  }
+
+  .site-header {
+    justify-content: space-between;
+    gap: 12px;
+    max-width: none;
+  }
+
+  .nav-pill,
+  .signin {
+    display: none;
+  }
+
+  /* 45 - 27 = 18, so the 27px mark sits at a whole 9px inset. An even circle
+     with an odd mark lands on a half device pixel and gets resampled. */
+  .logo {
+    width: 45px;
+    height: 45px;
+  }
+
+  .burger {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: var(--pill-dark);
+    box-shadow: var(--nav-shadow);
+    cursor: pointer;
+    transition: background 0.28s ease;
+  }
+
+  .burger-bars {
+    display: grid;
+    gap: 5px;
+  }
+
+  .burger-bars i {
+    display: block;
+    width: 18px;
+    height: 1.5px;
+    border-radius: 2px;
+    background: #fff;
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.2s ease, background 0.28s ease;
+  }
+
+  .burger[aria-expanded="true"] {
+    background: #fff;
+  }
+
+  .burger[aria-expanded="true"] .burger-bars i {
+    background: #111;
+  }
+
+  .burger[aria-expanded="true"] .burger-bars i:nth-child(1) {
+    transform: translateY(6.5px) rotate(45deg);
+  }
+
+  .burger[aria-expanded="true"] .burger-bars i:nth-child(2) {
+    opacity: 0;
+  }
+
+  .burger[aria-expanded="true"] .burger-bars i:nth-child(3) {
+    transform: translateY(-6.5px) rotate(-45deg);
+  }
+
+  /* A pure vw size, not a clamp floor. The lines are nowrap, so a fixed size
+     that fits at 375px can overflow at 320px; a vw size scales with the viewport,
+     which means if it fits at ONE width it fits at every width. 7.8vw gives
+     ~29px at 375 (up from a flat 26px) and stays inside the width the old
+     32px/-0.08em version was verified to fit - tracking is now looser, so the
+     same text is wider and the ceiling is ~29.5px. */
+  .headline {
+    font-size: 7.8vw;
+    line-height: 1.05;
+  }
+
+  .stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: clamp(14px, 3vw, 20px);
+  }
+}
+
+@media (max-width: 700px) and (orientation: portrait) {
+  .trust {
+    margin-bottom: clamp(12px, 1.8vh, 18px);
+  }
+
+  .subhead {
+    margin-top: clamp(10px, 1.5vh, 16px);
+  }
+
+  .cta {
+    margin-top: clamp(14px, 2vh, 22px);
+  }
+}
+
+@media (max-height: 700px) {
+  /* A transform doesn't reflow, so on a short screen the full 80px would push the
+     CTA into the stats row. Halved rather than dropped, to keep the look. */
+  :root {
+    --hero-shift: 40px;
+  }
+
+  .trust {
+    margin-bottom: clamp(10px, 1.6vh, 16px);
+  }
+
+  .subhead {
+    margin-top: clamp(8px, 1.2vh, 14px);
+  }
+
+  .cta {
+    margin-top: clamp(12px, 1.8vh, 20px);
+  }
+}
+
+@media (max-width: 420px) {
+  .trust {
+    --trust-size: 34px;
+  }
+
+  .trust-pill {
+    font-size: 12px;
+  }
+
+  .headline {
+    line-height: 1.04;
+  }
+}
+
+/* ── Reduced motion ───────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .anim,
+  .headline .line,
+  .site-header {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+
+  .headline,
+  .headline .line {
+    color: #fff;
+  }
+}
