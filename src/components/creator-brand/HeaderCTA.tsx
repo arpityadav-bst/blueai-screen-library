@@ -5,14 +5,22 @@ import { Sparkle } from '@/components/Sparkle'
 import { useCBModal } from './ModalHost'
 import { useApply } from './creators/ApplyState'
 import AccountMenu from './creators/AccountMenu'
+import { useBrandSession } from './brands/BrandSession'
+import BrandAccountMenu from './brands/BrandAccountMenu'
 import type { NavAudience } from './nav'
 
 // The header's right-hand slot. Pulled out of Header.tsx on 2026-08-13 — that file was at 269 lines
 // against this project's 300-line rule and this slot grew a third state, so it needed to be somewhere
 // rather than pushing the header over.
 //
-// THREE OUTCOMES, not two:
-//   · brands            → "Create a campaign", opens the campaign dialog. Unchanged.
+// FIVE OUTCOMES now (brands grew its own pair on 2026-08-18, FE review: a returning brand had no
+// Sign in and no way to see its active campaigns from this header):
+//   · brands, out       → a quiet "Sign in" link + "Create a campaign". Both open the same campaign
+//                         dialog, which opens at the sign-in gate while signed out; signing in from
+//                         it lands on the campaigns dashboard (see ModalHost).
+//   · brands, in        → "Create a campaign" + the brand account chip (BrandAccountMenu: the
+//                         email, Your campaigns, Log out). The CTA stays, unlike the creators'
+//                         signed-in state, because creating a campaign is not already on the page.
 //   · creators, out     → "Apply Now", opens the sign-in dialog.
 //   · creators, in      → the account chip. No CTA at all, because the action it would offer is
 //                         already on the page: the application IS the top of the page once you're
@@ -37,6 +45,7 @@ export default function HeaderCTA({
 }) {
   const { open } = useCBModal()
   const { signedIn } = useApply()
+  const brand = useBrandSession()
 
   // Was an inert avatar+name row with no hover and no way out of the signed-in state. It is now a
   // real menu control (AccountMenu), following blueai-desktop's kebab pattern — see that file.
@@ -48,7 +57,24 @@ export default function HeaderCTA({
   // way, which is also what makes Log out land on the same Hero from both places.
   if (active === 'creators' && signedIn) return <AccountMenu />
 
-  return (
+  // The signed-out Sign in link is quiet at BOTH scroll states, unlike the CTA next to it: past the
+  // hero image the CTA becomes the gradient pill and this must not compete with it. Desktop only
+  // (hidden lg:), same as the CTA; below lg the Sign in row lives in MobileMenu's popover. It also
+  // waits for brand.ready: first paint is always signed out (see BrandSession), so without the gate
+  // a signed-in brand would see Sign in flash for a frame before the chip replaces it. The chip
+  // itself needs no gate (signedIn only turns true once storage has been read) and is NOT hidden
+  // below lg, matching the creators' AccountMenu: compact enough for every width.
+  const signInLink = (
+    <button
+      type="button"
+      onClick={() => open('campaign')}
+      className="cb-accent-hover hidden min-h-[44px] items-center whitespace-nowrap px-2 py-2.5 text-[14px] font-normal text-ink-body-2 transition-all lg:inline-flex sm:text-[15px]"
+    >
+      Sign in
+    </button>
+  )
+
+  const cta = (
     <button
       type="button"
       onClick={() => open(active === 'creators' ? 'signin' : 'campaign')}
@@ -73,5 +99,16 @@ export default function HeaderCTA({
       {active === 'creators' ? 'Apply Now' : 'Create a campaign'}
       <Arrow size={13} />
     </button>
+  )
+
+  // Order inside the header's gap-4 row: Sign in sits BEFORE the CTA (quiet before loud, reading
+  // toward the action), the account chip sits AFTER it (the account control keeps the row's right
+  // edge, where every account chip on this site lives).
+  return (
+    <>
+      {active === 'brands' && brand.ready && !brand.signedIn && signInLink}
+      {cta}
+      {active === 'brands' && brand.signedIn && <BrandAccountMenu />}
+    </>
   )
 }

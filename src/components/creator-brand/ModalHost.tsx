@@ -3,6 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 import Modal, { ModalHeader } from './Modal'
 import BrandSignIn from './brands/BrandSignIn'
+import { persistBrandSignIn, useBrandSession } from './brands/BrandSession'
 import CampaignForm from './brands/CampaignForm'
 import PricingTable from './brands/PricingTable'
 import SignInDialog from './creators/SignInDialog'
@@ -60,11 +61,12 @@ export default function ModalHost({ children }: { children: ReactNode }) {
   // to live out here rather than inside the form, because the panel's background and the close
   // button's colour are the dialog's, not the form's.
   const [campaignDone, setCampaignDone] = useState(false)
-  // Brand-side session (PR #1). null = signed out; { email } = signed in, where email may itself be
-  // null for the Google stub — which is why this is an object rather than a bare string.
-  const [brand, setBrand] = useState<{ email: string | null } | null>(null)
+  // Brand-side session: lived here as local state (PR #1) until 2026-08-18, when the FE review
+  // pointed out nothing outside this dialog could see it (no header Sign in, no Log out). It is now
+  // the shared BrandSession context, same level as the creators' ApplyState; this host is just one
+  // of its consumers.
+  const { signedIn, email, signIn } = useBrandSession()
   const [createIntent, setCreateIntent] = useState(false)
-  const signedIn = brand !== null
 
   const open = useCallback((k: ModalKind) => {
     // Reset on OPEN, not on close: resetting on close would flip the panel back to white while the
@@ -74,17 +76,12 @@ export default function ModalHost({ children }: { children: ReactNode }) {
   }, [])
   const close = useCallback(() => setKind(null), [])
 
-  // Hydrate the stored brand sign-in, and honour ?create=1 (the dashboard's "+ New campaign"): it
-  // opens the campaign dialog immediately — at the form for a signed-in brand, at the gate otherwise.
-  // In an effect because localStorage and location do not exist server-side.
+  // Honour ?create=1 (the dashboard's "+ New campaign"): it opens the campaign dialog immediately,
+  // at the form for a signed-in brand, at the gate otherwise. The stored sign-in itself hydrates in
+  // BrandSessionProvider now, whose effect runs after this one (parent effects run after children's),
+  // so the dialog opens first and lands on the right panel once both effects have run. In an effect
+  // because location does not exist server-side.
   useEffect(() => {
-    try {
-      const v = localStorage.getItem('cb-brand-email')
-      if (v !== null) setBrand({ email: v || null })
-    } catch {
-      // Private-mode Safari throws on storage access. Staying signed out is the correct fallback and
-      // it must not take the page down with it.
-    }
     if (new URLSearchParams(window.location.search).get('create') === '1') {
       setCreateIntent(true)
       open('campaign')
@@ -107,20 +104,19 @@ export default function ModalHost({ children }: { children: ReactNode }) {
         label={signedIn ? 'Create a campaign' : 'Sign in to continue'}
       >
         {signedIn ? (
-          <CampaignForm onClose={close} onDone={() => setCampaignDone(true)} email={brand?.email ?? null} />
+          <CampaignForm onClose={close} onDone={() => setCampaignDone(true)} email={email} />
         ) : (
           <BrandSignIn
-            onSignedIn={(email) => {
-              try {
-                localStorage.setItem('cb-brand-email', email ?? '')
-              } catch {
-                // As above — the in-memory state is what drives the UI; storage is the convenience.
-              }
-              // Signed in FROM the dashboard's create button: stay put and show the form. Signed in
-              // from the marketing page: the dashboard is the destination, so go there.
+            onSignedIn={(signedEmail) => {
+              // Signed in FROM the dashboard's create button: stay put and show the form, via the
+              // shared session so the header's account menu flips in the same render. Signed in
+              // from the marketing page (the header's Sign in, or a create CTA): the dashboard is
+              // the destination, so persist WITHOUT flipping state (see persistBrandSignIn for why
+              // flipping here would flash the form mid-navigation) and go there.
               if (createIntent) {
-                setBrand({ email: email ?? null })
+                signIn(signedEmail)
               } else {
+                persistBrandSignIn(signedEmail)
                 window.location.assign(
                   `${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/creator-brand/campaign-report.html`,
                 )
