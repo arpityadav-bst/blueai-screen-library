@@ -8,6 +8,9 @@
   <title>BlueAI</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <!-- Space Grotesk — creator-brand's own heading face (globals.css --font-head), loaded for the
+       MoneyMaker welcome screen only (moneymaker.jsx), which borrows that page's design theme. -->
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
   <!-- Best-guess match for BlueStacks App Player's own UI font, used ONLY by the dark
        ("bluestacks" skin) install dialog — see BS_FONT in install_dialog.jsx. Not a
        confirmed match; falls back to Segoe UI if wrong or slow to load. -->
@@ -114,7 +117,22 @@
 <script type="text/babel" src="blueai/chat_compare.jsx"></script>
 <!-- Onboarding welcome for the logged-out cold start (exposes window.Onboarding) -->
 <script type="text/babel" src="blueai/onboarding.jsx"></script>
-<!-- MoneyMaker session variant: welcome + post-login chat home (exposes window.MoneyMaker) -->
+<!-- MoneyMaker welcome screen's background decoration (exposes window.MoneyMakerBackdrop) -->
+<script type="text/babel" src="blueai/moneymaker_backdrop.jsx"></script>
+<!-- MoneyMaker welcome screen's full-color step icons (exposes window.MoneyMakerIcons) — must
+     load before moneymaker.jsx, which reads window.MoneyMakerIcons at its own top level. -->
+<script type="text/babel" src="blueai/moneymaker_icons.jsx"></script>
+<!-- MoneyMaker welcome screen's hero logo — glow, ring, mark, grain (exposes window.MoneyMakerLogo)
+     — must load before moneymaker.jsx, which reads window.MoneyMakerLogo at its own top level. -->
+<script type="text/babel" src="blueai/moneymaker_logo.jsx"></script>
+<!-- MoneyMaker welcome screen's steps card (exposes window.MoneyMakerSteps) — must load before
+     moneymaker.jsx, which reads window.MoneyMakerSteps at its own top level. -->
+<script type="text/babel" src="blueai/moneymaker_steps.jsx"></script>
+<!-- MoneyMaker's post-login in-chat card (exposes window.MoneyMakerHomeCard) — must load before
+     moneymaker.jsx, which reads window.MoneyMakerHomeCard at its own top level to re-export it. -->
+<script type="text/babel" src="blueai/moneymaker_home.jsx"></script>
+<!-- MoneyMaker session variant: the welcome screen, plus the re-export that keeps the post-login
+     card reachable at window.MoneyMaker.MoneyMakerHome (exposes window.MoneyMaker) -->
 <script type="text/babel" src="blueai/moneymaker.jsx"></script>
 <!-- "Needs BlueStacks" chat state + the rule that decides when it fires (exposes window.NeedsBluestacks) -->
 <script type="text/babel" src="blueai/needs_bluestacks.jsx"></script>

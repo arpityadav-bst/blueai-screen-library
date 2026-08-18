@@ -138,7 +138,9 @@
                 <C.IntroCard onboarding={isOnboarding}
                   title={sessionMode === 'moneymaker' && !isOnboarding ? 'Hi, Alex 👋' : undefined}
                   sub={sessionMode === 'moneymaker' && !isOnboarding
-                    ? "You're all set. Run MoneyMaker to get your first job."
+                    /* Value statement, not instruction — the coach tooltip under the card already
+                       says "Run this to begin"; this line instructing as well read as a stutter. */
+                    ? "You're all set. One skill is all it takes to start earning."
                     : isOnboarding
                     ? 'Just send your message whenever you are ready and see me do your work for you!'
                     : 'Your AI worker for BlueStacks — pick a task below or just type what you need.'} />}
@@ -172,7 +174,10 @@
               onFocus={() => setComposerFocused(true)}
               onBlur={() => setComposerFocused(false)}
               onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); run(); } }}
-              placeholder={running ? 'BlueAI is working…' : 'Type your message...'}
+              placeholder={running ? 'BlueAI is working…'
+                /* MoneyMaker home is one card + a lot of air — the placeholder points back up at
+                   it so the composer reads as connected to the screen, not an orphan input. */
+                : (sessionMode === 'moneymaker' && !started ? 'Ask anything, or run MoneyMaker above' : 'Type your message...')}
               style={{ flex: 1, resize: 'none', background: 'transparent', border: 'none', outline: 'none', fontSize: 13.5, color: '#1f2937', padding: '4px 6px', lineHeight: 1.5, fontFamily: 'inherit', maxHeight: 120, overflowY: 'hidden' }} />
             <button onClick={() => (running ? stop() : run())} disabled={!running && !draft.trim()}
               aria-label={running ? 'Stop task' : 'Send message'} title={running ? 'Stop' : 'Send'}
