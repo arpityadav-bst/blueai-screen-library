@@ -5,7 +5,9 @@ import Reveal from '../../Reveal'
 import { useApply } from '../ApplyState'
 import StatCards from './StatCards'
 import CashOutModal from './CashOutModal'
-import { MOCK_STATS } from './mockData'
+import Transactions from './Transactions'
+import HowEarningWorks from './HowEarningWorks'
+import { MOCK_STATS, MOCK_TRANSACTIONS, type Transaction } from './mockData'
 
 // The returning creator's dashboard — CreatorsTop.tsx's third state, replacing both the marketing
 // hero AND the application (a returning creator has nothing to apply for). page.tsx also drops
@@ -28,6 +30,19 @@ export default function Dashboard() {
   const { account } = useApply()
   const [balance, setBalance] = useState(MOCK_STATS.balance)
   const [cashOutOpen, setCashOutOpen] = useState(false)
+  const [transactions, setTransactions] = useState<Transaction[]>(MOCK_TRANSACTIONS)
+
+  // A withdrawal must leave a trace: before this list existed, cashing out zeroed the balance with
+  // no record anywhere on the screen, which read as the money vanishing. "Just now" instead of a
+  // real date because the mock's static rows live in a fixed illustrative "present" (Aug 2026) that
+  // the user's actual clock has no business contradicting.
+  function handleWithdrawn() {
+    setTransactions((prev) => [
+      { id: `txn-out-${prev.length + 1}`, date: 'Just now', label: 'Cash out to PayPal', amount: balance },
+      ...prev,
+    ])
+    setBalance(0)
+  }
 
   return (
     <section id="hero" data-cb-nogate="true" className="relative overflow-hidden pb-20 pt-10 sm:pt-14">
@@ -53,10 +68,27 @@ export default function Dashboard() {
         {/* NO PER-JOB LIST (PM, 2026-08-14 meeting): individual completed jobs — names and the brands
             behind them — must not be shown to creators. Aggregate numbers are fine, so the count tile
             in StatCards stays. JobList.tsx and MOCK_COMPLETED_JOBS remain on disk unimported in case
-            the decision softens; if it becomes final, delete them rather than leaving dead code. */}
+            the decision softens; if it becomes final, delete them rather than leaving dead code.
+            Transactions below is NOT that list coming back: its rows are months and withdrawals. */}
+
+        {/* STACKED FULL-WIDTH BANDS, NOT COLUMNS (2026-08-18, direct feedback: "the layout looks a
+            bit odd"). The first pass put Transactions and the explainer side by side in a 3/2 split,
+            and a 2-row list next to a tall prose card left a dead zone under the shorter column: a
+            growing list and fixed prose can never agree on a height. Stacked, neither has a
+            neighbour to be unequal to. Data before help: Transactions first because a returning
+            creator checks history routinely, the explainer is read once. mt-4 matches the card
+            grid's gap so the bands read as part of one group. NO progress meter toward the 20 days
+            (offered 2026-08-18, cut as dev work the program's stage doesn't justify yet); the
+            requirement is stated as copy in HowEarningWorks instead. */}
+        <Reveal delay={0.16} className="mt-4">
+          <Transactions items={transactions} />
+        </Reveal>
+        <Reveal delay={0.24} className="mt-4">
+          <HowEarningWorks />
+        </Reveal>
       </div>
 
-      <CashOutModal open={cashOutOpen} balance={balance} onClose={() => setCashOutOpen(false)} onWithdrawn={() => setBalance(0)} />
+      <CashOutModal open={cashOutOpen} balance={balance} onClose={() => setCashOutOpen(false)} onWithdrawn={handleWithdrawn} />
     </section>
   )
 }
