@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Arrow } from '@/components/Arrow'
 import { useCBModal } from './ModalHost'
 import { useApply } from './creators/ApplyState'
+import { useBrandSession } from './brands/BrandSession'
 import { HEADER_NAV, OTHER, type NavAudience } from './nav'
 
 // THE DESKTOP HEADER, COLLAPSED INTO ONE TRIGGER (designer, 2026-08-13) — below `lg` there's no
@@ -23,6 +24,7 @@ import { HEADER_NAV, OTHER, type NavAudience } from './nav'
 export default function MobileMenu({ active }: { active: NavAudience }) {
   const { open: openModal } = useCBModal()
   const { signedIn } = useApply()
+  const brand = useBrandSession()
   const [open, setOpen] = useState(false)
   const wrapRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
@@ -112,6 +114,25 @@ export default function MobileMenu({ active }: { active: NavAudience }) {
             {active === 'creators' ? 'For Brands' : 'For Creators'}
             <Arrow size={12} className="-rotate-45" />
           </Link>
+
+          {/* Brands only, signed out only (2026-08-18, FE review): the same Sign in entry the
+              desktop header carries next to its CTA, in the same slot relative to it. Opens the
+              campaign dialog, which opens at the sign-in gate while signed out. Signed in, the row
+              disappears the same way desktop's link does: BrandAccountMenu is on screen at every
+              width and carries Your campaigns and Log out. */}
+          {active === 'brands' && !brand.signedIn && (
+            <button
+              type="button"
+              role="menuitem"
+              onClick={() => {
+                setOpen(false)
+                openModal('campaign')
+              }}
+              className="flex min-h-[44px] items-center rounded-card px-2.5 text-[14px] font-medium text-ink-body-2 transition-colors duration-fast ease-out-bai hover:bg-[var(--cb-hover)] hover:text-ink-heading"
+            >
+              Sign in
+            </button>
+          )}
 
           <div className="my-1 border-t border-divider" />
 

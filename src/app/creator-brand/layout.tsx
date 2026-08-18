@@ -3,6 +3,7 @@ import './creator-brand.css'
 import Backdrop from '@/components/creator-brand/Backdrop'
 import ModalHost from '@/components/creator-brand/ModalHost'
 import ApplyProvider from '@/components/creator-brand/creators/ApplyState'
+import BrandSessionProvider from '@/components/creator-brand/brands/BrandSession'
 
 // Uses the shared blueai-modern design system loaded by the root layout (Inter/Space
 // Grotesk/Bricolage Grotesque fonts, --bai-* tokens), no separate token set here.
@@ -50,8 +51,13 @@ export default function CreatorBrandLayout({ children }: { children: React.React
           calls to open them, at the LAYOUT level because the triggers are spread across both heroes,
           both closing bands, the header and the footer, and because one of them opens a dialog from
           inside another. */}
+      {/* BrandSessionProvider is the brands-side twin of ApplyProvider (see brands/BrandSession.tsx,
+          added 2026-08-18): the header's Sign in / account menu and the campaign dialog's gate read
+          the same session, so it sits above ModalHost for the same reason ApplyProvider does. */}
       <ApplyProvider>
-        <ModalHost>{children}</ModalHost>
+        <BrandSessionProvider>
+          <ModalHost>{children}</ModalHost>
+        </BrandSessionProvider>
       </ApplyProvider>
     </div>
   )

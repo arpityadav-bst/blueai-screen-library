@@ -44,8 +44,20 @@ a:hover{text-decoration:underline}
 .crumb{color:var(--ink-soft);font-size:13px}
 .crumb b{color:var(--ink-heading);font-weight:600}
 .crumb a{color:var(--ink-soft)}
-.account{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink-muted)}
+.account{margin-left:auto;position:relative;display:flex;align-items:center;font-size:13px;color:var(--ink-muted)}
 .avatar{width:28px;height:28px;border-radius:9999px;background:var(--iris-wash);color:var(--iris);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px}
+/* The chip is a menu trigger now (2026-08-18, FE review: this page had no way to sign out). Same
+   recipe as the landing page's account menu: quiet at rest, a background on hover, a small panel
+   hanging 6px below with the identity line and the actions. */
+.acct-btn{display:flex;align-items:center;gap:8px;font:inherit;color:inherit;background:none;border:0;padding:6px 10px 6px 6px;border-radius:var(--r-pill);cursor:pointer;transition:background .15s ease,color .15s ease}
+.acct-btn:hover{background:#EEF1F6;color:var(--ink-heading)}
+.acct-btn .caret{transition:transform .15s ease}
+.acct-btn[aria-expanded="true"] .caret{transform:rotate(180deg)}
+.acct-menu{display:none;position:absolute;right:0;top:calc(100% + 6px);width:224px;flex-direction:column;gap:2px;background:var(--canvas);border:1px solid var(--divider);border-radius:var(--r-md);box-shadow:0 12px 32px rgba(8,10,31,.12);padding:6px;z-index:60}
+.acct-menu.on{display:flex}
+.acct-email{padding:4px 10px 8px;font-size:11.5px;color:var(--ink-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.acct-item{display:flex;align-items:center;gap:8px;min-height:40px;padding:0 10px;border-radius:var(--r-card);border:0;background:none;font-family:var(--sans);font-size:13px;color:var(--ink-muted);cursor:pointer;text-align:left;transition:background .1s ease,color .1s ease}
+.acct-item:hover{background:#EEF1F6;color:var(--ink-heading)}
 
 .wrap{max-width:1100px;margin:0 auto;padding:28px 28px 60px}
 .view{display:none}
@@ -209,7 +221,19 @@ tr:last-child td{border-bottom:none}
 <div class="topbar">
   <div class="wordmark">BlueAI<span class="tag">BRANDS</span></div>
   <div class="crumb" id="crumb"><b>Campaigns</b></div>
-  <div class="account"><div class="avatar" id="acct-avatar">BR</div> <span id="acct-name">Your brand</span></div>
+  <div class="account" id="account">
+    <button class="acct-btn" id="acct-btn" aria-haspopup="menu" aria-expanded="false" onclick="toggleAcct()">
+      <div class="avatar" id="acct-avatar">BR</div> <span id="acct-name">Your brand</span>
+      <svg class="caret" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9.5l6 6 6-6"/></svg>
+    </button>
+    <div class="acct-menu" id="acct-menu" role="menu" aria-label="Brand account">
+      <div class="acct-email" id="acct-email">Signed in with Google</div>
+      <button class="acct-item" role="menuitem" onclick="logOut()">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 4h3.5A1.5 1.5 0 0 1 20 5.5v13A1.5 1.5 0 0 1 18.5 20H15M10 8l-4 4 4 4M6 12h9"/></svg>
+        Log out
+      </button>
+    </div>
+  </div>
 </div>
 
 <div class="wrap">
@@ -696,6 +720,28 @@ var SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFz
 var cd={step:1};
 function brandEmail(){ try{return localStorage.getItem('cb-brand-email')}catch(e){return null} }
 
+// The account chip's menu (2026-08-18): open on click, close on outside click or Escape, and Log
+// out clears the stored sign-in and returns to the brands landing page. The href is relative on
+// purpose so it survives whatever base path this prototype is deployed under.
+function closeAcct(){
+  document.getElementById('acct-menu').classList.remove('on');
+  document.getElementById('acct-btn').setAttribute('aria-expanded','false');
+}
+function toggleAcct(){
+  var m=document.getElementById('acct-menu');
+  var on=!m.classList.contains('on');
+  m.classList.toggle('on',on);
+  document.getElementById('acct-btn').setAttribute('aria-expanded',on?'true':'false');
+}
+document.addEventListener('pointerdown',function(e){
+  if(!document.getElementById('account').contains(e.target)) closeAcct();
+});
+document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeAcct(); });
+function logOut(){
+  try{localStorage.removeItem('cb-brand-email')}catch(e){}
+  location.href='brands';
+}
+
 function openCreate(){
   // A brand normally arrives signed in; otherwise the same sign-in shows inside this dialog
   // first and continues into the form.
@@ -729,6 +775,7 @@ function signinDone(email){
       var handle=em.split('@')[0];
       document.getElementById('acct-name').textContent=handle;
       document.getElementById('acct-avatar').textContent=handle.slice(0,2).toUpperCase();
+      document.getElementById('acct-email').textContent=em;
     }
   }catch(e){}
   document.getElementById('cd-signin').style.display='none';
@@ -839,6 +886,7 @@ try{
     var handle=em.split('@')[0];
     document.getElementById('acct-name').textContent=handle;
     document.getElementById('acct-avatar').textContent=handle.slice(0,2).toUpperCase();
+    document.getElementById('acct-email').textContent=em;
   }
 }catch(e){}
 
