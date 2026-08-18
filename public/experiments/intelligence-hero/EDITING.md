@@ -52,37 +52,44 @@ It is also the thing you must undo to build a real landing page — see §9.
 
 All of it is in `index.html`. Nothing is generated in JS except the stat digits.
 
-Copy across the whole page was rewritten on 2026-08-17 against an investor-audience audit — see
-[COPY-AUDIT.md](COPY-AUDIT.md) for the reasoning behind each line. The short version: the page reframed
-from *"a layer commanding anything autonomous"* (an IoT framing) to **labour** — machines you own that
-earn. Don't reintroduce the words "autonomous", "platform" or "layer" into headline copy.
+Copy was rewritten twice: on 2026-08-17 against an investor-audience audit, then on 2026-08-18 to the
+product's actual **worker storyline** (own an AI worker on your PC → real brand campaigns → $30/month
+via PayPal) — see [COPY-AUDIT.md](COPY-AUDIT.md) for both phases. The labour framing survived; keep it.
+Don't reintroduce the words "autonomous", "platform" or "layer" into headline copy.
 
 | What you see | Line | Notes |
 |---|---|---|
 | Browser tab title | `6` | |
-| Nav: Home / What It Runs / How It Works / Contact | `43–46` | `is-active` on line 43 draws the three dots; hrefs are section anchors |
-| "Sign in" (desktop) | `49` | |
-| Headline — "You Own Machines." / "Now They Earn." | `68`, `69` | |
-| Subhead paragraph | `72–75` | |
-| "Get Access" | `77` | |
-| Stat labels — Paid out / Hours worked / Jobs completed / Verified first try | `84`, `97`, `104`, `116` | money first is deliberate |
-| Nav + Sign in (mobile sheet) | `133–137` | **separate copy** — see the gotcha below |
+| Nav: Home / What It Runs / How It Works / Contact | `45–48` | hrefs are section anchors |
+| "Sign in" (desktop) | `51` | |
+| Headline — "Own an AI That" / "Works For You" | `69`, `70` | |
+| Subhead paragraph | `73–76` | storyline copy, verbatim |
+| "Get Access" (hero) | `78` | scrolls to #contact |
+| Stat labels — the offer's own terms | `92`, `98`, `110`, `122` | money first is deliberate |
+| Scrub — clock / text / foot | `130` / `131` / `137` | see §12 |
+| Machine cards (×4, with badges) | from `142` | Your PC / Home robots / Robotaxis / Whatever's next |
+| Apply steps (×4) | from `207` | storyline copy, verbatim |
+| Closer + live clock | from `257` | |
+| Nav + Sign in (mobile sheet) | from `311` | **separate copy** — see the gotcha below |
 
 ### Gotchas on text
 
-- **The mobile menu duplicates the nav.** Lines `53–56` are desktop, lines `162–166` are the mobile
-  sheet. Change a nav label and you must change it in both places. This is deliberate (two different
-  layouts, not one responsive list) but it is the single easiest thing to forget.
+- **The mobile menu duplicates the nav.** The desktop pill and the mobile sheet are separate markup
+  (grep `nav-link` and `mobile-link`). Change a nav label and you must change it in both places. This
+  is deliberate (two different layouts, not one responsive list) but it is the easiest thing to forget.
 
-- **The headline lines are hard-coded, and each is `white-space: nowrap`** (`styles.css:326`). The line
-  break is structural — two `<span class="line">` elements — not text wrapping. So:
+- **The headline lines are hard-coded, and each is `white-space: nowrap`** (`.headline .line`). The
+  line break is structural — two `<span class="line">` elements — not text wrapping. So:
   - Adding a third line means adding a `<span class="line line-3">` **and** a delay rule alongside
-    `styles.css:335/338`, or it will render with no animation delay.
-  - A **longer** line will not wrap; it will scale down with the viewport and then overflow-hide. If
-    you lengthen a line, re-check it at 360px wide. The tight letter-spacing at small sizes
-    (`-0.08em` at ≤720px, `-0.09em` at ≤420px, `styles.css:613`/`718`) exists precisely to buy that room.
+    the `.line-1`/`.line-2` ones, or it will render with no animation delay.
+  - A **longer** line will not wrap; it scales with the viewport (mobile uses a pure `vw` size) and
+    then overflow-hides. Both current lines are ≤14 characters; re-check anything longer at 360px.
+  - **Do not fit a long line with letter-spacing** — tracking is one shared token pair; fitting is
+    font-size's job. That mistake shipped once already (see §7).
 
-- **Links all point at `#`.** Every `href="#"` (lines 48, 53–56, 59, 102, 162–166) is a placeholder.
+- **Dead links:** the closer's Get Access, both Sign ins, Privacy and Terms are `href="#"`
+  placeholders — there is no application form behind Get Access yet. The hero's Get Access scrolls
+  to `#contact`.
 
 ---
 
@@ -239,89 +246,46 @@ window between displays changes `dpr`.
 
 ---
 
-## 4. The trust row — a liveness signal
+## 4. The trust row — REMOVED
 
-`index.html:68–75`. The row is a single dark pill: a pulsing dot, a count-up number, and a sentence.
+The hero once carried a liveness pill ("1,284 actions taken in the last hour"), which itself replaced
+a Microsoft/Amazon/Google logo cluster. Both are gone from the markup — the hero is now headline /
+subhead / CTA / stats only.
 
-```html
-<span class="trust-pill is-live">
-  <span class="live-dot"></span>
-  <span class="live-text"><span class="live-count" data-target="1284">0</span>
-  actions taken in the last hour</span>
-</span>
-```
-
-It replaced a three-ring Microsoft/Amazon/Google cluster, deliberately: enterprise logos signal
-*"safe vendor,"* which fights the brief. A live count signals *"awake right now,"* which is the brief.
-
-- **The number** is driven by `data-target` exactly like a stat (§5) and gets thousands separators.
-- **The dot** is `.live-dot` (`styles.css:246`), 7px, pulsing on `livePulse` (`:503`) — an expanding
-  `box-shadow` ring every 2.4s. The pulse is what reads as "live"; the colour doesn't have to.
-- **Dot colour is a token** — `--live-dot` (`styles.css:26`). White keeps the page monochrome. Swap it
-  to `#4ade80` for the conventional online-green, and change `livePulse`'s `rgba` to match.
-- **`.is-live`** (`styles.css:287`) is a variant that resets the pill's ring-clearing offsets to
-  symmetric padding. The base `.trust-pill` rule is unchanged and still carries the overlap maths.
-- **`.live-text` matters** — it wraps the number and sentence so they sit in normal inline flow. Without
-  it the pill's `inline-flex` makes the sentence its own flex item and the space before "actions"
-  collapses, giving `1,284actions`.
-
-> **The three-ring cluster's CSS is parked, not deleted** (`styles.css:236`, marked with a comment).
-> If the enterprise logos aren't coming back, delete through `.trust:hover .avatar.a3`. The Font
-> Awesome `<link>` is already gone — restoring it is one line in `<head>`.
-
-### How the cluster was built (still true if you bring the rings back)
-
-The **entire** trust row is driven by one variable — `--trust-size` on `.trust` (`styles.css:229`,
-`clamp(36px, 4.5vw, 42px)`; overridden to `34px` at ≤420px on `:718`). Ring size, icon size, overlap
-distance and the pill's left padding are all computed from it:
-
-| Thing | Formula | Line |
-|---|---|---|
-| Ring diameter | `var(--trust-size)` | `236` |
-| Icon size | `--trust-size × 0.34` | `258` |
-| Overlap between rings | `--trust-size × -0.42` (negative margin) | `267`, `271` |
-| Pill's left padding (clears the overlap) | `--trust-size × 0.58` | `286` |
-
-**Change `--trust-size` alone and the whole cluster rescales in proportion.** That is the intended
-knob. Editing the individual pixel values instead will break the relationship.
-
-**The z-index order is not arbitrary:** rings are `1 / 2 / 4` and the pill is `3`. The pill slides
-*under* the third ring (so the ring overlaps the pill) but *over* the first two. If you add a fourth
-ring, it needs `z-index: 5` and the pill needs to move up too.
-
-**Adding or removing a ring** just means adding/removing an `.avatar` block — but the hover-lift rules
-(`styles.css:276–284`) are per-class (`.a1 -2px`, `.a2 -4px`, `.a3 -2px`, an arc). A new `.a4` gets no
-lift until you add a rule.
+**Their CSS still sits in `styles.css`, orphaned**: `.trust`, `.trust-pill`, `.is-live`, `.live-dot`,
+`.live-count`, the `.avatar` ring cluster, the `--trust-*` / `--live-dot` tokens, and media-query
+tweaks. One piece of it is now LOAD-BEARING again: **`.card-badge`'s dot reuses the `livePulse`
+keyframe** — if that orphan block is ever stripped, move `livePulse` into `sections.css` first.
 
 ---
 
 ## 5. The stats
 
-Each stat is one `<div class="stat">` in `index.html:95–134`:
+Each stat is one `<div class="stat">` in `index.html:83–123`:
 
 ```html
-<div class="stat anim" style="--d: 0.74s">
-  <span class="stat-icon">+</span>                 <!-- ① the glyph -->
+<div class="stat anim" style="--d: 0.5s">
+  <span class="stat-icon">$</span>                 <!-- ① the glyph -->
   <span class="stat-value"
-        data-target="840"                          <!-- ② count up to this -->
+        data-target="30"                           <!-- ② count up to this -->
         data-prefix="$"                            <!-- ③ before the number -->
-        data-suffix="K"                            <!-- ④ after the number -->
-        data-decimals="0">$0K</span>               <!-- ⑤ decimal places -->
-  <span class="stat-label">Paid to creators</span>
+        data-decimals="0">$0</span>                <!-- ④ decimal places -->
+  <span class="stat-label">Every month, via PayPal</span>
 </div>
 ```
 
-**`main.js` reads ②–⑤ off the `data-` attributes — you never edit JS to change a stat.** The current
-four are world-action counts, not platform specs — that reframe is the point (see §4).
+**`main.js` reads the `data-` attributes — you never edit JS to change a stat.** The current four
+state the OFFER's own terms ($30 · 1 PC · 24/7 · 100% approved), not invented world-scale counts —
+each one traces to a sentence in the storyline, which is what makes the row credible.
 
-- **`data-target`** — the number it counts to. `41920`, `2.1`, `18400`, `840`.
+- **`data-target`** — the number it counts to. `30`, `1`, `24`, `100`.
 - **`data-prefix`** — literal text *before* the number. Currently only `$`.
-- **`data-suffix`** — literal text *after* it: `M`, `K`, or `%`, `/7`, `x` — anything.
+- **`data-suffix`** — literal text *after* it: `/7`, `%`, `M`, `K`, `x` — anything.
 - **`data-decimals`** — places shown *during and after* the count. `2.1` needs `1`, or it animates
   as `2`.
-- **`data-group`** — thousands separators, **on by default**. `41920` renders `41,920`. Set
+- **`data-group`** — thousands separators, **on by default** (`41920` would render `41,920`). Set
   `data-group="false"` for a year, a version, or anything that shouldn't be comma'd.
-- **The text content** (`$0K`) is the pre-animation state. Set it to the zero-form of your value so
+- **The text content** (`$0`) is the pre-animation state. Set it to the zero-form of your value so
   there's no flash of the wrong shape before the count starts.
 - **`.stat-icon`** is a single character in the **dot-matrix display font** (`styles.css:405`) — that's
   why `<`, `%`, `*`, `#` read as pixel-art symbols rather than punctuation. `<` must be written as
@@ -468,7 +432,7 @@ Any element with `class="anim"` fades in, rises 22px, and un-blurs (`styles.css:
 <div class="anim" style="--d: 0.9s">…</div>
 ```
 
-The `--d` values currently in use, in fire order: trust `0.05s` → headline lines `0.12s`/`0.3s` →
+The `--d` values currently in use, in fire order: headline lines `0.12s`/`0.3s` →
 subhead `0.28s` → CTA `0.4s` → stats `0.5 / 0.58 / 0.66 / 0.74`. Header runs its own `slideDown` at
 `0.7s` with no delay (`styles.css:100`).
 
@@ -612,14 +576,17 @@ globally. **It becomes load-bearing the moment you make the page scroll** (§9):
 Five sections, all in `index.html` after `</div>` closing `.page`. Their styling is in a **separate
 file** — `sections.css` — so `styles.css` stays the hero's. Behaviour is in `scroll.js`.
 
-| § | Section | `id` | Class | Content lines |
+| § | Section | `id` | Class | Starts at |
 |---|---|---|---|---|
-| 2 | The morning | — | `.scrub` | `index.html:152–164` |
-| 3 | What it runs | `what-it-runs` | `.section` + `.cards` | `167–241` |
-| 4 | How it works | `how-it-works` | `.section` + `.steps` | `244–283` |
-| 5 | While you rest, it earns | `economics` | `.section` + `.earns` | `286–325` |
-| 6 | Closer | `contact` | `.section.closer` | `328–341` |
+| 2 | While you sleep | — | `.scrub` | `index.html:128` |
+| 3 | One worker, any machine | `what-it-runs` | `.section` + `.cards` (×4, badged) | `142` |
+| 4 | How it works | `how-it-works` | `.section` + `.steps` (×4) | `207` |
+| 5 | Closer | `contact` | `.section.closer` + live clock | `257` |
 | — | Closing video band | — | `.closer-video` | after `#contact` |
+
+The economics section (`#economics`, three `.earn` panels) was **removed 2026-08-18**: its
+fleet/storefront earnings claims contradicted the storyline's own "Soon" badges on robotaxis. Its CSS
+went with it.
 
 ### The closing video band
 
@@ -737,9 +704,12 @@ where it starts and ends:
 .scrub        { --from: var(--shade-0); --to: var(--shade-1); }
 #what-it-runs { --from: var(--shade-1); --to: var(--shade-2); }
 #how-it-works { --from: var(--shade-2); --to: var(--shade-3); }
-#economics    { --from: var(--shade-3); --to: var(--shade-2); }
-#contact      { --from: var(--shade-2); --to: var(--shade-0); }
+#contact      { --from: var(--shade-3); --to: var(--shade-0); }
 ```
+
+> When the economics section was removed (2026-08-18), `#contact`'s `--from` had to move
+> `shade-2 → shade-3` in the same edit — deleting a section from the middle of the chain otherwise
+> leaves a hard seam at the join it used to bridge. Same rule applies to any future removal.
 
 **The one invariant that must never break: each section's `--from` has to equal the previous section's
 `--to`.** That identity is what makes the boundary invisible — same colour on both sides, nothing to
@@ -818,13 +788,13 @@ and it stops being special.
 tall parent. `scroll.js` measures how far through you are and lights words up in order.
 
 - **`scroll.js:57` splits the sentence into `.word` spans at load** — you write plain text in the HTML,
-  never per-word markup. Edit `index.html:155–160` like any paragraph.
+  never per-word markup. Edit `index.html:132–135` like any paragraph.
 - **Unlit words are `--ink-dim`** (`rgba(255,255,255,.14)`), lit ones are `--ink-1`. It's a `color`
   transition, not opacity, so the words hold their layout.
 - **`COMPLETE_AT = 0.82`** (`scroll.js:88`) — the fill finishes at 82% of the track so the completed
   sentence holds for a beat. Without it the last word lights up exactly as it scrolls away.
 - **To change the pace,** change `.scrub`'s height (`sections.css:88`). Taller = slower fill.
-- **Length matters.** ~50 words is the sweet spot. Much longer and the fill outruns the track; much
+- **Length matters.** ~40–50 words is the sweet spot (the current scene is 38). Much longer and the fill outruns the track; much
   shorter and each word gets a distractingly large slice of scroll.
 - Scroll handling is rAF-throttled and `passive` (`scroll.js:104`); under
   `prefers-reduced-motion` the track collapses to `height: auto` and every word renders lit
@@ -832,10 +802,13 @@ tall parent. `scroll.js` measures how far through you are and lights words up in
 
 ### Section grids
 
-`.cards` and `.earns` are `repeat(3, 1fr)` → 2 columns under 900px → 1 under 620px. `.steps` is
-`repeat(3, 1fr)` → 1 column under 900px. All in `sections.css:330–352`. **Note these are 900/620px,
-not the hero's 720px** — the hero's breakpoint is about the nav collapsing, which is a different
-question from when a 3-up card grid stops fitting.
+`.cards` (the four machines) and `.steps` (the four apply steps) are both `repeat(4, 1fr)` →
+`repeat(2, 1fr)` under 900px → 1 column under 620px. **Note these are 900/620px, not the hero's
+720px** — the hero's breakpoint is about the nav collapsing, which is a different question from when
+a 4-up grid stops fitting.
+
+**Card badges** (`.card-badge`, `.is-live`, `.badge-dot` in `sections.css`) carry the EARNING NOW /
+SOON status. The live dot's pulse reuses the `livePulse` keyframe from `styles.css` — see §4.
 
 ---
 

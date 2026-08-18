@@ -68,15 +68,9 @@
   --to: var(--shade-3);
 }
 
-/* Comes back down rather than only ever lightening, so the page breathes. */
-#economics {
-  --from: var(--shade-3);
-  --to: var(--shade-2);
-}
-
 #contact {
-  --from: var(--shade-2);
-  --to: var(--shade-0); /* close the loop on black */
+  --from: var(--shade-3);
+  --to: var(--shade-0); /* comes back down and closes the loop on black */
 }
 
 .section {
@@ -237,11 +231,11 @@
   color: var(--ink-3);
 }
 
-/* ── §3 Domain cards ─────────────────────────────────────────────────── */
+/* ── §3 Machine cards ─────────────────────────────────────────────────── */
 
 .cards {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: clamp(12px, 1.6vw, 18px);
   margin-top: clamp(38px, 6vh, 64px);
 }
@@ -264,9 +258,36 @@
   transform: translateY(-3px);
 }
 
-/* The only live domain, given visual weight without a status badge — the
-   designer's call was to present all six as one vision, so this lifts the card
-   rather than labelling it. */
+/* Machine status badges. The live one's pulse reuses the livePulse keyframe
+   that still lives in styles.css (left over from the retired hero trust pill) —
+   if that block is ever stripped, move the keyframe here first. */
+.card-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0 0 10px;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: clamp(10.5px, 1.05vw, 11.5px);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.card-badge.is-live {
+  color: var(--ink-1);
+}
+
+.badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #fff;
+  animation: livePulse 2.4s ease-out infinite;
+}
+
+/* The one machine that is genuinely earning today — lifted AND badged, since
+   the 2026-08-18 storyline carries explicit EARNING NOW / SOON status. */
 .card--lead {
   background: rgba(255, 255, 255, 0.062);
   border-color: var(--hairline-2);
@@ -308,7 +329,7 @@
 
 .steps {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: clamp(20px, 3vw, 44px);
   margin-top: clamp(40px, 6vh, 70px);
 }
@@ -345,87 +366,7 @@
   color: var(--ink-2);
 }
 
-/* ── §5 While you rest, it earns ─────────────────────────────────────── */
-
-.earns {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: clamp(12px, 1.6vw, 18px);
-  margin-top: clamp(38px, 6vh, 64px);
-}
-
-.earn {
-  display: flex;
-  flex-direction: column;
-  padding: clamp(24px, 2.8vw, 34px);
-  border: 1px solid var(--hairline);
-  border-radius: 20px;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.055) 0%,
-    rgba(255, 255, 255, 0.015) 100%
-  );
-}
-
-/* The time window, not a number — the whole point of this section is WHEN it
-   works, so the emphatic slot holds "While you sleep" rather than a figure.
-   Also keeps it from restating the hero's counters verbatim. */
-.earn-when {
-  font-family: var(--font-display);
-  font-size: clamp(16px, 1.9vw, 23px);
-  letter-spacing: var(--display-track);
-  word-spacing: var(--display-word);
-  line-height: 1.2;
-  color: var(--ink-1);
-}
-
-.earn-title {
-  margin: clamp(20px, 2.8vh, 28px) 0 8px;
-  font-family: var(--font-sans);
-  font-weight: 600;
-  font-size: clamp(16.5px, 1.5vw, 17.5px);
-  letter-spacing: -0.015em;
-  color: var(--ink-1);
-}
-
-.earn-copy {
-  margin: 0;
-  font-family: var(--font-sans);
-  font-size: clamp(15px, 1.35vw, 15px);
-  line-height: 1.58;
-  color: var(--ink-2);
-}
-
-/* margin-top:auto pins the figure to the bottom of the panel so all three line
-   up regardless of how long their copy runs. */
-.earn-figure {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  margin: 0;
-  margin-top: auto;
-  padding-top: clamp(18px, 2.6vh, 24px);
-  border-top: 1px solid var(--hairline);
-}
-
-.earn-figure-num {
-  font-family: var(--font-sans);
-  font-weight: 600;
-  font-size: clamp(21px, 2.5vw, 30px);
-  letter-spacing: -0.03em;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink-1);
-}
-
-.earn-figure-label {
-  font-family: var(--font-sans);
-  font-size: clamp(12.5px, 1.2vw, 13px);
-  line-height: 1.4;
-  letter-spacing: 0.01em;
-  color: var(--ink-3);
-}
-
-/* ── §6 Closer ───────────────────────────────────────────────────────── */
+/* ── §5 Closer ───────────────────────────────────────────────────────── */
 
 /* Was min-height:92vh with centred content, which parked ~40vh of void between
    the CTA and the video band below — plus .section's own bottom padding on top of
@@ -467,6 +408,15 @@
 
 .closer .cta {
   margin-top: clamp(26px, 4vh, 40px);
+}
+
+.closer-foot {
+  margin: clamp(30px, 5vh, 56px) 0 0;
+  font-family: var(--font-sans);
+  font-size: clamp(12px, 1.25vw, 13.5px);
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-3);
 }
 
 /* ── Closing video band ──────────────────────────────────────────────── */
@@ -570,20 +520,19 @@
 /* ── Breakpoints ─────────────────────────────────────────────────────── */
 
 @media (max-width: 900px) {
-  .cards,
-  .earns {
+  .cards {
     grid-template-columns: repeat(2, 1fr);
   }
 
   .steps {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
     gap: clamp(18px, 3vh, 28px);
   }
 }
 
 @media (max-width: 620px) {
   .cards,
-  .earns {
+  .steps {
     grid-template-columns: 1fr;
   }
 

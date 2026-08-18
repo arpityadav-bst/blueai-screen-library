@@ -50,8 +50,8 @@ const EXPERIMENTS = [
     // uses relative asset paths, and at /experiments/intelligence-hero the browser
     // would resolve them against /experiments/ and serve the page unstyled.
     href: '/experiments/intelligence-hero/index.html',
-    name: 'You Own Machines — vision page',
-    desc: 'The CEO-brief vision page: BlueAI as a command layer over anything autonomous, digital or physical. Full-bleed video hero, a scroll-scrubbed morning sequence, six capability domains, and the economics. Vanilla HTML/CSS/JS, its own design language — every figure on it is illustrative.',
+    name: 'Own an AI That Works For You',
+    desc: 'The BlueAI worker page: deploy a worker on your own PC, it finds real work from brands, completes it, and pays you $30 a month via PayPal. Four machines (PC earning now, the rest soon), a four-step apply flow, and a scroll-scrubbed overnight scene. Vanilla HTML/CSS/JS, its own design language.',
   },
 ]
 

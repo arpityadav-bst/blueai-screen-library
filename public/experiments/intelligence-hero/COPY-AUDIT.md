@@ -1,5 +1,20 @@
 # Copy audit — the investor lens
 
+> **STATUS 2026-08-18: PARTLY SUPERSEDED by the product's real storyline.** The designer supplied the
+> actual program copy (see README, "The storyline"): an AI worker you deploy on your own PC, real brand
+> campaigns, **$30/month via PayPal**, a four-step apply flow, and four machines carrying explicit
+> EARNING NOW / SOON badges. The page was rewritten to it. Scorecard against this audit:
+>
+> - **Labour framing** — survived, and became literal ("Own an AI That Works For You").
+> - **Status badges** — the storyline itself adopted them, reversing the earlier no-badges decision and
+>   landing on what this audit originally recommended.
+> - **Invented world-scale stats** — gone; the hero stats now state the offer's own terms.
+> - **The §2 cross-domain scene** — superseded in turn: the page is single-machine now, so §2 is the
+>   overnight PC-worker scene. The craft rules (present tense, mundane specificity, ~40 words) carried over.
+> - **Proof point** — still missing; the $30 offer is concrete but no brand or customer is named.
+>
+> Everything below is the 2026-08-17 analysis, kept as history.
+>
 > **STATUS: applied 2026-08-17.** Every verdict below is live in `index.html`, with two exceptions,
 > both recorded at the bottom under **Not applied**: the §2→economics reorder (it breaks the copy —
 > reasoning there) and the named-proof line (needs a real customer; inventing one would be fabricating

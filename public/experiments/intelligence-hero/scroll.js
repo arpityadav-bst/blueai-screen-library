@@ -59,6 +59,25 @@
     closer.addEventListener("play", applyRate);
   }
 
+  /* ── Closer clock ───────────────────────────────────────────────────── */
+
+  /* "It's 4:12 pm. Your worker would be earning right now." — real time,
+     refreshed every half-minute, because a checkable clock reads as a live
+     product and a hardcoded one reads as a mockup the moment it's wrong. */
+  var now = document.querySelector("[data-now]");
+  if (now) {
+    var tickClock = function () {
+      var d = new Date();
+      var h = d.getHours();
+      var m = d.getMinutes();
+      var ap = h >= 12 ? "pm" : "am";
+      h = h % 12 || 12;
+      now.textContent = h + ":" + (m < 10 ? "0" + m : m) + " " + ap;
+    };
+    tickClock();
+    window.setInterval(tickClock, 30000);
+  }
+
   /* ── Scroll-scrubbed word fill ──────────────────────────────────────── */
 
   /* Split on whitespace, wrap each word so it can be lit individually. The
