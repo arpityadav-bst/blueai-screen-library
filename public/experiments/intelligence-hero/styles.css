@@ -485,7 +485,7 @@ body::after {
 /* Subhead */
 
 .subhead {
-  max-width: min(500px, 92%);
+  max-width: min(620px, 92%);
   margin: clamp(14px, 2vh, 22px) auto 0;
   font-family: var(--font-sans);
   font-weight: 400;
