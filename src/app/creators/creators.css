@@ -1,0 +1,1281 @@
+/* /creators — route-scoped stylesheet, ported VERBATIM from the PM's mock
+   (public/experiments/robots/alt-copy.html — the canonical "Join the first wave" variant; see that
+   folder's PLAN.md). Phase 0 is a pixel-faithful port: zero redesign here. The Phase 2 UX audit is
+   where values get questioned, not this file's port.
+
+   THE ONE STRUCTURAL TRANSLATION (everything else is byte-faithful): the mock styles `body` and
+   gates sections on `body.revealed` / `body.revealed.settled`. This app's root layout puts Tailwind
+   utilities (bg-canvas, font-sans, text-ink-body) directly on <body>, and utility classes beat a
+   bare element selector — the mock's body rules would silently lose. So:
+     · body { theme }              → .crx { theme }   (the route's root div, CreatorsHome.tsx)
+     · body.revealed / .settled    → .crx.revealed / .crx.revealed.settled  (state lives on the div)
+     · body:not(.revealed) { overflow: hidden }
+                                   → body.crx-lock { overflow: hidden }  (scroll lock has to stay on
+                                     body to stop page scroll; the class is namespaced and JS-managed
+                                     — added on mount, removed at the intro's finish())
+   Fixed-position children (backdrop, canvas, beats, dock, stars) are unaffected by the wrapper —
+   .crx carries no transform, so they still position against the viewport. */
+
+.crx {
+  --void: #05060f;
+  --sky-top: #070a1e;
+  --sky-mid: #0d1230;
+  --sky-low: #141b42;
+  --ink-inverse: #f2f5ff;
+  --dim: rgba(214, 224, 255, 0.72);
+  --mint: #34e39a;
+  --iris: #7b4cff;
+  --cyan: #0ea4c5;
+  --grad-bright: linear-gradient(92deg, #a78bff 0%, #3fd4f5 100%);
+  --cta-grad: linear-gradient(105deg, #1a90ff 0%, #6b53ff 55%, #7b4cff 100%);
+  --mono: "Cascadia Code", Consolas, ui-monospace, monospace;
+
+  background:
+    radial-gradient(900px 500px at 25% -5%, rgba(123, 76, 255, 0.22), transparent 65%),
+    radial-gradient(800px 480px at 82% 12%, rgba(14, 164, 197, 0.16), transparent 60%),
+    linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 55%, var(--sky-low) 100%);
+  color: var(--ink-inverse);
+  /* FONT SYSTEM = creator-brand's (Appy, 2026-08-19): the mock shipped on Segoe UI/system-ui, but
+     this page is becoming the creator half of the same product whose brand side lives on the
+     marketing DS — one product, one type system. This is the DS's `sans` stack verbatim
+     (tailwind.config.ts fontFamily.sans); headings take the `head` stack in the block at the end
+     of this file. Both faces are already loaded by the root layout's Google Fonts link. */
+  font-family: 'SF Pro', Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+  /* F28: containing block for the stars. Safe for the fixed children (header, backdrop,
+     canvas, dock) — .crx carries no transform, so they still anchor to the viewport. */
+  position: relative;
+}
+.crx * { box-sizing: border-box; }
+body.crx-lock { overflow: hidden; }
+
+/* twinkling stars */
+.crx .star {
+  position: absolute; /* F28: stars belong to the hero sky and scroll away, not every section */
+  border-radius: 50%;
+  background: #cdd8ff; opacity: 0.5;
+  animation: crx-twinkle 3.4s ease-in-out infinite;
+}
+@keyframes crx-twinkle { 0%,100% { opacity: 0.15; } 50% { opacity: 0.65; } }
+
+.crx main {
+  position: relative;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 3.5rem 1.5rem 0;
+  text-align: center;
+}
+
+.crx h1 {
+  font-size: clamp(2.4rem, 5vw, 3.9rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.12;
+  max-width: 820px;
+  margin: 0 auto 1.25rem;
+  text-wrap: balance;
+}
+.crx .grad {
+  font-style: italic;
+  padding-right: 0.15em;
+  background: var(--grad-bright);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 0 24px rgba(123, 76, 255, 0.45));
+}
+.crx .sub {
+  font-size: 1.15rem;
+  line-height: 1.65;
+  color: var(--dim);
+  max-width: 640px;
+  margin: 0 auto 2.2rem;
+}
+.crx .sub b { color: var(--ink-inverse); font-weight: 650; }
+
+.crx .btn {
+  font: inherit; font-weight: 700; font-size: 1.05rem;
+  color: #fff;
+  background: var(--cta-grad);
+  border: none; border-radius: 999px;
+  padding: 1rem 2.2rem;
+  cursor: pointer;
+  /* justify-content:center added 2026-08-19 — the mock's own hero/closer buttons always sized
+     tight to their icon+label+icon content, so flex-start (the unset default) never showed; the
+     form's plain-text Continue/Submit stretches full-width via .crx-grow, and without this its
+     label sat flush-left in the wide pill instead of centred. */
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.6rem;
+  box-shadow: 0 10px 30px -6px rgba(95, 70, 255, 0.65);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.crx .btn:hover { transform: translateY(-2px); box-shadow: 0 18px 40px -8px rgba(95, 70, 255, 0.75); }
+/* F12: press feedback — hover lifts, active plants */
+.crx .btn:active { transform: translateY(0); box-shadow: 0 6px 18px -6px rgba(95, 70, 255, 0.6); }
+.crx .btn:focus-visible { outline: 2px solid #a78bff; outline-offset: 3px; }
+
+/* ---------------- scene: desk + PC, centered ---------------- */
+.crx .scene {
+  position: relative;
+  width: min(980px, 100%); /* F7: 96vw overflowed main's padded box below ~1200px */
+  height: 470px;
+  margin: 1.6rem auto 0;
+}
+.crx .scene::after {
+  content: "";
+  position: absolute; left: 50%; bottom: -30px;
+  transform: translateX(-50%);
+  width: 70%; height: 130px;
+  background: radial-gradient(50% 100% at 50% 0%, rgba(123, 76, 255, 0.18), transparent 75%);
+  pointer-events: none;
+}
+
+.crx .desk { position: absolute; left: 50%; margin-left: -235px; bottom: 20px; height: 134px; width: 470px; z-index: 2; }
+.crx .desk-top {
+  height: 16px; border-radius: 8px;
+  background: linear-gradient(180deg, #2c3468, #1b2148);
+  border-top: 1px solid rgba(180, 196, 255, 0.35);
+  box-shadow: 0 18px 40px -12px rgba(0, 0, 0, 0.6);
+}
+.crx .desk-leg {
+  position: absolute; top: 16px; width: 12px; height: 118px;
+  background: linear-gradient(180deg, #232a55, #161c3e);
+  border-radius: 0 0 5px 5px;
+}
+.crx .desk-leg.l { left: 26px; }
+.crx .desk-leg.r { right: 26px; }
+
+.crx .laptop { position: absolute; left: 50%; margin-left: -200px; bottom: 150px; width: 400px; z-index: 3; }
+.crx .lap-screen {
+  position: relative; overflow: hidden;
+  width: 372px; margin: 0 auto;
+  background: #0a0f26;
+  border: 3px solid #2c3568;
+  border-bottom: none;
+  border-radius: 14px 14px 0 0;
+  padding: 0.85rem 0.9rem 0.9rem;
+  min-height: 258px;
+  box-shadow:
+    0 0 50px rgba(63, 212, 245, 0.14),
+    0 0 110px rgba(123, 76, 255, 0.22),
+    inset 0 0 40px rgba(30, 40, 90, 0.5);
+}
+.crx .lap-deck {
+  width: 400px; height: 22px;
+  background: linear-gradient(180deg, #333c72, #1e2450);
+  border-radius: 3px 3px 16px 16px;
+  position: relative;
+  box-shadow: 0 14px 30px -10px rgba(0, 0, 0, 0.65);
+}
+.crx .lap-deck::before {
+  content: "";
+  position: absolute; left: 46px; right: 46px; top: 5px; height: 7px;
+  border-radius: 3px;
+  background: repeating-linear-gradient(90deg, #454f8c 0 12px, transparent 12px 16px);
+  opacity: 0.7;
+}
+.crx .lap-deck::after {
+  content: "";
+  position: absolute; left: 50%; top: 14px; transform: translateX(-50%);
+  width: 64px; height: 5px; border-radius: 999px;
+  background: #454f8c; opacity: 0.6;
+}
+
+.crx .scr-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+.crx .scr-brand { display: flex; align-items: center; gap: 0.45rem; font-weight: 700; font-size: 0.9rem; color: #fff; }
+.crx .scr-status { display: flex; align-items: center; gap: 0.4rem; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600; color: var(--mint); }
+.crx .dot {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--mint);
+  box-shadow: 0 0 8px var(--mint);
+  animation: crx-pulse 1.6s ease-in-out infinite;
+}
+@keyframes crx-pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+.crx .task {
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 9px;
+  padding: 0.55rem 0.7rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.82rem;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.crx .task .lbl { display: flex; align-items: center; gap: 0.45rem; color: #dbe4ff; font-weight: 600; }
+.crx .task .lbl .tick { color: var(--mint); font-weight: 800; }
+.crx .task .pay { color: var(--mint); font-weight: 800; font-variant-numeric: tabular-nums; }
+.crx .task.working .lbl { color: #9fb0e8; }
+.crx .task .bar { flex: 1; height: 4px; margin-left: 0.8rem; border-radius: 999px; background: rgba(255,255,255,0.1); overflow: hidden; }
+.crx .task .bar > i { display: block; height: 100%; width: 0%; background: var(--grad-bright); border-radius: 999px; transition: width 0.18s linear; }
+
+/* the working slot keeps its height so nothing jumps when a task hands over */
+.crx #working { min-height: 44px; }
+.crx #stack { overflow: hidden; }
+.crx .task.enter { animation: crx-emerge 0.55s cubic-bezier(0.25, 0.8, 0.35, 1); }
+@keyframes crx-emerge {
+  from { margin-top: -46px; opacity: 0.35; }
+  to { margin-top: 0; opacity: 1; }
+}
+.crx #stack .task:nth-child(2) { opacity: 0.7; }
+.crx #stack .task:nth-child(3) { opacity: 0.45; }
+
+/* earnings pill, floats at the PC's shoulder — SLEEKENED 2026-08-19 (Appy: "remove dollar icon
+   here and make this more sleek"): the coin circle is gone, so the pill is now just label+amount
+   stacked tight, no icon column to balance around. Lighter too — the money-tinted glow shadow read
+   as one more heavy glow on a page already carrying several (the anti-slop audit's own flag);
+   a plain, closer, neutral shadow reads as a real UI element rather than another effect. */
+/* SHAPE = rectangle-with-round-radius, NOT a full pill (Appy, 2026-08-19: "slimmer and sleeker
+   and rectangle with round radius") — 14px matches the page's own card radius scale (.slot,
+   .crx-panel), reading as a small card rather than a stadium-shaped badge. Padding tightened for
+   the slimmer ask; gap collapsed to 0 since label+amount now read as one compact block, not two
+   spaced lines. */
+.crx .earnings {
+  position: absolute; left: calc(50% + 170px); top: 26px; z-index: 4;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 0;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 0.4rem 0.85rem;
+  box-shadow: 0 8px 22px -8px rgba(0, 0, 0, 0.35);
+}
+.crx .earnings .label { font-family: var(--mono); font-size: 0.56rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5c6678; /* F10/F17: was 0.56rem #7a8496 — 3.77:1 captioning the money proof */ }
+.crx .earnings .amount { font-size: 1.05rem; font-weight: 800; color: #0f9d58; font-variant-numeric: tabular-nums; }
+.crx .earnings.bump { animation: crx-bump 0.35s ease; }
+@keyframes crx-bump { 40% { transform: scale(1.09); } }
+
+.crx .chip {
+  position: absolute; z-index: 5;
+  font-weight: 800; font-size: 0.9rem; color: var(--mint);
+  text-shadow: 0 0 12px rgba(52, 227, 154, 0.6);
+  pointer-events: none;
+  transition: transform 0.7s cubic-bezier(0.3, 0.7, 0.4, 1), opacity 0.7s ease;
+}
+
+/* the scene's mobile rules live in the consolidated 880px block at the END of the file —
+   several of their base rules (.slot, .time-chip, main's padding) are declared later at equal
+   specificity and would win the source-order tie against a block placed here */
+
+/* ---------------- fleet: the asset slots ----------------
+   One live slot (the PC, earning) and dashed empty slots. The dashes are the
+   vision: sockets this same worker plugs into next. */
+.crx .fleet { margin: 2.6rem auto 0; }
+.crx .fleet-label {
+  font-family: var(--mono);
+  font-size: 0.72rem; font-weight: 600;
+  letter-spacing: 0.2em; text-transform: uppercase; /* F17: eyebrow tracking tier */
+  color: rgba(214, 224, 255, 0.55);
+  margin: 0 0 1rem;
+}
+.crx .fleet-row {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 0.9rem;
+}
+.crx .slot {
+  display: flex; flex-direction: column; align-items: center; gap: 0.45rem;
+  width: 168px; padding: 1.1rem 0.8rem 0.95rem;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px dashed rgba(255, 255, 255, 0.18);
+}
+.crx .slot svg { color: rgba(214, 224, 255, 0.55); }
+.crx .slot-name { font-size: 0.9rem; font-weight: 700; color: var(--dim); }
+.crx .slot-tag {
+  font-family: var(--mono); font-size: 0.6rem; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase; /* F17: tag tracking tier */
+  color: rgba(214, 224, 255, 0.58); /* F11: 0.45 was ~3.6:1 at 9.6px */
+  display: inline-flex; align-items: center; gap: 0.35rem;
+}
+.crx .slot.live {
+  border: 1px solid rgba(52, 227, 154, 0.4);
+  background: rgba(52, 227, 154, 0.06);
+  box-shadow: 0 0 34px rgba(52, 227, 154, 0.12);
+}
+.crx .slot.live svg { color: #7fe9bd; }
+.crx .slot.live .slot-name { color: #fff; }
+.crx .slot.live .slot-tag { color: var(--mint); }
+.crx .tick-dot {
+  display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--mint); box-shadow: 0 0 8px var(--mint);
+}
+
+/* ---------------- boot intro: the agent is born, then docks into the PC ----------------
+   An opaque backdrop hides the page; the pixel logo (boot.js port) assembles huge in the
+   viewport as THE AGENT, introduces itself, then flies down and shrinks into the laptop
+   screen while the backdrop dissolves to reveal the scene. */
+.crx .backdrop {
+  position: fixed; inset: 0; z-index: 70; pointer-events: none;
+  background:
+    radial-gradient(700px 420px at 50% 30%, rgba(123, 76, 255, 0.14), transparent 70%),
+    linear-gradient(180deg, var(--void) 0%, #070a1c 60%, #0a0e26 100%);
+  transition: opacity 1s ease;
+}
+.crx .backdrop.gone { opacity: 0; }
+.crx.revealed .backdrop { display: none; }
+
+.crx #core-cv {
+  /* width/height 100% is load-bearing: without it the canvas renders at its
+     dpr-scaled intrinsic size and every draw lands offset on scaled displays */
+  position: fixed; inset: 0; width: 100%; height: 100%; display: block;
+  z-index: 80; pointer-events: none;
+  transition: opacity 0.45s ease;
+}
+.crx #core-cv.out { opacity: 0; }
+.crx.revealed.settled #core-cv { display: none; }
+
+.crx .beat {
+  position: fixed; left: 0; right: 0; z-index: 85;
+  text-align: center; padding: 0 1.5rem;
+  font-size: clamp(1.45rem, 3.2vw, 2.05rem);
+  font-weight: 800; letter-spacing: -0.015em; line-height: 1.25; color: #fff; /* F4 */
+  opacity: 0; transform: translateY(10px);
+  transition: opacity 0.55s ease, transform 0.55s ease;
+  pointer-events: none;
+  text-wrap: balance;
+}
+.crx .beat.on { opacity: 1; transform: none; }
+.crx.revealed .beat { display: none; }
+
+.crx .skip {
+  position: fixed; bottom: 26px; left: 0; right: 0; z-index: 85;
+  text-align: center;
+  font-family: var(--mono); font-size: 0.66rem; font-weight: 600; /* F17 */
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: rgba(214, 224, 255, 0.55); /* F11: 3.17:1 was illegible for the intro's only escape */
+  opacity: 0; animation: crx-hintIn 0.7s ease 2s forwards;
+  pointer-events: none;
+}
+@keyframes crx-hintIn { to { opacity: 1; } }
+.crx.revealed .skip { display: none; }
+
+.crx .scr-ui { opacity: 0; transition: opacity 0.6s ease 0.25s; }
+.crx.revealed .scr-ui { opacity: 1; }
+
+/* staged reveal of the page copy once the agent has docked */
+.crx .rv {
+  opacity: 0; transform: translateY(18px);
+  transition: opacity 0.8s cubic-bezier(0.25, 0.8, 0.35, 1), transform 0.8s cubic-bezier(0.25, 0.8, 0.35, 1);
+}
+.crx.revealed .rv { opacity: 1; transform: none; }
+.crx .d1 { transition-delay: 0.05s; }
+.crx .d2 { transition-delay: 0.2s; }
+.crx .d3 { transition-delay: 0.32s; }
+.crx .d4 { transition-delay: 0.5s; }
+.crx .d5 { transition-delay: 0.65s; }
+
+/* bottom-right dock: just the time-of-day chip now. It used to also carry a mini earnings counter
+   that reappeared here once the hero's own pill scrolled away — removed (Appy, 2026-08-19: "it
+   shouldn't go down to bottom right once scrolled... only keep the other fixed pill"). The .mini/
+   .coin/.mini-amt rules that styled it are gone with the markup (HomeOverlay.tsx) and the
+   IntersectionObserver that drove it (useHomeFx.ts) — nothing left to dead-style. */
+.crx .dock {
+  position: fixed; right: 18px; bottom: 18px; z-index: 60;
+  display: flex; flex-direction: column; align-items: flex-end; gap: 0.55rem;
+  pointer-events: none;
+}
+.crx .time-chip {
+  display: flex; align-items: center; gap: 0.45rem;
+  background: rgba(13, 18, 48, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  padding: 0.45rem 0.95rem;
+  font-size: 0.82rem; color: var(--dim);
+  backdrop-filter: blur(6px);
+}
+
+/* ---------------- below the fold ---------------- */
+.crx .sleep {
+  max-width: 1100px; /* F23: one content width */ margin: 7rem auto 0; padding: 0 1.5rem;
+  display: grid; grid-template-columns: 1.05fr 1fr; gap: 2.5rem; align-items: center;
+}
+.crx .sleep-copy { text-align: left; }
+.crx .sleep-copy h2 {
+  font-size: clamp(1.9rem, 3.8vw, 2.7rem); font-weight: 800; line-height: 1.15; /* F4 */
+  letter-spacing: -0.02em; margin: 0 0 1rem; text-wrap: balance;
+}
+.crx .sleep-copy p { color: var(--dim); font-size: 1.05rem; line-height: 1.65; margin: 0; max-width: 46ch; }
+.crx .sleep-visual { position: relative; }
+.crx .sleep-visual img {
+  width: 100%; display: block;
+  -webkit-mask-image: radial-gradient(100% 100% at 50% 42%, black 40%, transparent 67%);
+  mask-image: radial-gradient(100% 100% at 50% 42%, black 40%, transparent 67%);
+  filter: drop-shadow(0 26px 50px rgba(0, 0, 0, 0.55));
+}
+.crx .float-chip {
+  position: absolute;
+  font-weight: 800; font-size: 0.9rem; color: var(--mint);
+  background: rgba(10, 15, 38, 0.85);
+  border: 1px solid rgba(52, 227, 154, 0.35);
+  border-radius: 999px; padding: 0.3rem 0.8rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45), 0 0 18px rgba(52, 227, 154, 0.18);
+  animation: crx-bob 6.5s ease-in-out infinite; /* F29: desynced from c3's 8s, subtler travel */
+}
+.crx .float-chip.c1 { top: 12%; right: 6%; }
+.crx .float-chip.c3 { top: 66%; right: 12%; animation-duration: 8s; animation-delay: 3.1s; }
+@keyframes crx-bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+@media (max-width: 880px) { /* F24: was 780px — the page's one breakpoint is 880 */
+  .crx .sleep { grid-template-columns: 1fr; }
+  .crx .sleep-copy { text-align: center; }
+  .crx .sleep-copy p { margin: 0 auto; }
+}
+
+.crx .below { max-width: 1100px; margin: 7rem auto 0; padding: 0 1.5rem; text-align: center; } /* F22/F23 */
+.crx .below h2 {
+  font-size: clamp(1.9rem, 3.8vw, 2.7rem); font-weight: 800; line-height: 1.15; /* F4: same clamp as .sleep-copy h2 */
+  letter-spacing: -0.02em; margin: 0 0 2.2rem; text-wrap: balance;
+}
+.crx .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+/* F9: explicit 4/2/1 — auto-fit orphaned "04 Collect" across the whole 710–935px range */
+@media (max-width: 935px) { .crx .steps { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 520px) { .crx .steps { grid-template-columns: 1fr; } }
+.crx .step {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 16px; padding: 1.4rem 1.3rem; text-align: left;
+}
+.crx .step .n { font-family: var(--mono); font-size: 0.72rem; font-weight: 800; letter-spacing: 0.12em; color: #7da2ff; }
+.crx .step h3 { margin: 0.5rem 0 0.4rem; font-size: 1.05rem; color: #fff; }
+.crx .step p { margin: 0; font-size: 0.9rem; line-height: 1.55; color: var(--dim); }
+
+/* F22: 7rem top unifies the section breaks; F21: bottom trimmed to 5rem — the footer sits below now */
+.crx .closer { max-width: 1100px; margin: 0 auto; /* F23 */ text-align: center; padding: 7rem 1.5rem 5rem; }
+.crx .closer h2 { font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; line-height: 1.15; letter-spacing: -0.025em; margin: 0 0 1.25rem; } /* F4/F22 */
+.crx .closer p { color: var(--dim); font-size: 1.05rem; margin: 0 0 2.2rem; } /* F22: hero's stack rhythm */
+.crx .closer p b { color: var(--mint); font-variant-numeric: tabular-nums; }
+
+/* F21: one-line footer in the page's mono-eyebrow voice */
+.crx .foot {
+  font-family: var(--mono); font-size: 0.72rem; font-weight: 600;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: rgba(214, 224, 255, 0.55);
+  text-align: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 2rem 1.5rem 2.2rem;
+  margin: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .crx .star, .crx .dot, .crx .float-chip, .crx .skip { animation: none; }
+  .crx .chip { transition: none; }
+  .crx .rv, .crx .scr-ui, .crx .beat, .crx #core-cv { transition: none; }
+}
+
+/* ================= header (Phase 1 — NOT part of the mock port) =================
+   The mock shipped headerless; this is the first deliberately-added piece (PLAN.md Phase 1).
+
+   FIXED, NOT STICKY, and that is load-bearing: .crx carries overflow-x:hidden, which makes it a
+   scroll container that never actually scrolls (the body does) — the classic position:sticky
+   killer. Every other floating element on this page (dock, backdrop, stars) is already fixed, so
+   fixed is also the page's own idiom.
+
+   z-index 60 — the dock's tier, deliberately BELOW the intro's backdrop (70) and canvas (80): the
+   header is part of the page, so the intro hides it and the reveal fades it in like everything
+   else (gated on .crx.revealed, same as .rv, but fade-only — a fixed bar sliding 18px like .rv
+   content would read as the chrome animating, not the page).
+
+   Surface recipe when scrolled is the dock's own .time-chip (rgba(13,18,48,.78) + blur + white
+   hairline) — the one "glass over the sky" treatment this page already has, not a new one. */
+.crx .crx-header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 60;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.8s cubic-bezier(0.25, 0.8, 0.35, 1) 0.2s, background 0.3s ease, border-color 0.3s ease;
+  border-bottom: 1px solid transparent;
+}
+.crx.revealed .crx-header { opacity: 1; pointer-events: auto; }
+.crx .crx-header.scrolled {
+  background: rgba(13, 18, 48, 0.78);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+.crx .crx-header-in {
+  max-width: 1100px; /* main's own content width, so the header shares the page grid */
+  margin: 0 auto;
+  padding: 0.7rem 1.5rem;
+  display: flex; align-items: center; justify-content: space-between; gap: 1.5rem;
+  /* position:relative — the containing block for .crx-nav's absolute centering below */
+  position: relative;
+}
+
+/* logo lockup carries the shared Wordmark component, which is global (.bai-wordmark) and renders
+   in the marketing DS's iris->cyan gradient everywhere else on the product. THIS page asked for a
+   plain white wordmark in its own header (Appy, 2026-08-19) — overridden here rather than in the
+   shared component/global class, which would repaint every other surface that uses Wordmark.
+   Specificity (3 classes) beats the global rule's 1 regardless of source order, so no !important. */
+.crx .crx-logo .bai-wordmark {
+  background: none;
+  -webkit-text-fill-color: #fff;
+  color: #fff;
+}
+
+/* NAV, TRUE-CENTERED (Appy, 2026-08-19) — absolutely positioned against crx-header-in rather than
+   just a flex child, so it centers on the header's own midline regardless of how wide the logo
+   lockup is versus the actions group on the right (a plain flex/space-between centers a middle
+   child only in the leftover space between two UNEQUAL siblings, which visibly was not centered).
+   Taken out of flow, so crx-header-in's flex layout is just [logo, actions] — space-between
+   alone puts those at the two edges, no extra margin needed on either. */
+.crx .crx-nav { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
+
+/* the CTA + burger share one right-hand group now that the CTA is no longer nested in .crx-nav */
+.crx .crx-header-actions { display: flex; align-items: center; gap: 1.2rem; }
+
+/* logo lockup — creator-brand's exact structure (icon + [wordmark, audience label] column),
+   copied not imported; the label's gradient is THIS page's --grad-bright, not the marketing DS's */
+.crx .crx-logo {
+  display: flex; align-items: center; gap: 0.55rem;
+  background: none; border: none; padding: 0; cursor: pointer;
+  font: inherit; color: inherit;
+  transition: opacity 0.18s ease;
+}
+.crx .crx-logo:hover { opacity: 0.85; } /* F31: it's a button — the only header control with no hover */
+.crx .crx-logo img { border-radius: 50%; display: block; }
+.crx .crx-logo-col { display: flex; flex-direction: column; align-items: center; }
+.crx .crx-audience {
+  margin-top: -1px;
+  font-size: 9px; font-weight: 800; text-transform: uppercase; line-height: 1;
+  background: var(--grad-bright);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+
+.crx .crx-nav { display: flex; align-items: center; gap: 1.7rem; }
+.crx .crx-nav a {
+  color: var(--dim); text-decoration: none;
+  font-size: 0.95rem; font-weight: 500;
+  transition: color 0.18s ease;
+}
+.crx .crx-nav a:hover { color: #fff; }
+
+/* the CTA's two states mirror creator-brand's header: quiet text while the hero's own CTA is on
+   screen (two loud CTAs at once compete), the gradient pill once it scrolls away */
+.crx .crx-cta {
+  /* font-weight 500, WAS 700 (Appy, 2026-08-19) — matches .crx-nav a exactly while quiet, so the
+     CTA reads as one more item in the row rather than shouting over its neighbours. */
+  font: inherit; font-weight: 500; font-size: 0.95rem;
+  color: var(--ink-inverse);
+  background: none; border: none; border-radius: 999px;
+  padding: 0.55rem 1.2rem; /* F13: same padding in both states, so quiet→pill is a pure fill/shadow fade */
+  cursor: pointer;
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.25s ease, color 0.18s ease, font-weight 0.18s ease;
+}
+.crx .crx-cta:not(.pill) { color: var(--dim); }
+.crx .crx-cta:not(.pill):hover { color: #fff; }
+.crx .crx-cta.pill {
+  /* 600, not the shared 500 — once this is a real filled action (not a nav-styled link any more)
+     it earns a touch more weight, same step .btn's own 700 takes over plain nav-weight text. */
+  font-weight: 600;
+  background: var(--cta-grad); color: #fff;
+  box-shadow: 0 8px 24px -6px rgba(95, 70, 255, 0.6);
+}
+.crx .crx-cta.pill:hover { transform: translateY(-1px); box-shadow: 0 12px 30px -8px rgba(95, 70, 255, 0.7); }
+.crx .crx-cta svg { flex-shrink: 0; }
+.crx .crx-cta.pill:active { transform: translateY(0); box-shadow: 0 6px 16px -6px rgba(95, 70, 255, 0.55); } /* F12 */
+.crx .crx-cta:focus-visible { outline: 2px solid #a78bff; outline-offset: 3px; }
+
+/* mobile: nav + CTA collapse into one hamburger popover at the page's own 880px breakpoint */
+.crx .crx-burger {
+  display: none;
+  background: none; border: none; cursor: pointer; padding: 0.75rem; /* F20: 44px hit area */
+  color: var(--dim); border-radius: 10px;
+  transition: color 0.18s ease, background 0.18s ease;
+}
+.crx .crx-burger:hover { color: #fff; background: rgba(255, 255, 255, 0.06); }
+.crx .crx-burger:active { color: #fff; background: rgba(255, 255, 255, 0.1); } /* F12 */
+.crx .crx-menu {
+  position: absolute; right: 1.5rem; top: calc(100% + 6px);
+  display: flex; flex-direction: column; gap: 2px;
+  width: 230px; padding: 6px;
+  background: rgba(10, 15, 38, 0.92);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  box-shadow: 0 18px 50px -12px rgba(0, 0, 0, 0.65);
+}
+.crx .crx-menu a, .crx .crx-menu button {
+  display: flex; align-items: center; min-height: 44px;
+  padding: 0 0.8rem; border-radius: 9px;
+  color: var(--dim); text-decoration: none;
+  font: inherit; font-size: 0.95rem; font-weight: 500;
+  background: none; border: none; cursor: pointer; text-align: left;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+.crx .crx-menu a:hover, .crx .crx-menu button:hover { color: #fff; background: rgba(255, 255, 255, 0.07); }
+.crx .crx-menu a:active, .crx .crx-menu button:active { color: #fff; background: rgba(255, 255, 255, 0.12); } /* F12 */
+.crx .crx-menu .crx-menu-cta {
+  justify-content: center; font-weight: 700; color: #fff;
+  background: var(--cta-grad); border-radius: 999px; margin-top: 4px;
+  gap: 0.4rem; /* carries the spark + arrow icons; the base row rule has no gap, nav links don't need one */
+}
+/* F2: the row hover/active (0,3,1) beats .crx-menu-cta (0,3,0) and ghosted the gradient on tap */
+.crx .crx-menu button.crx-menu-cta:hover { background: var(--cta-grad); color: #fff; filter: brightness(1.08); }
+.crx .crx-menu button.crx-menu-cta:active { background: var(--cta-grad); color: #fff; filter: brightness(0.96); }
+@media (max-width: 880px) {
+  .crx .crx-nav { display: none; }
+  /* the standalone CTA lived inside .crx-nav until it moved to its own actions group — hide it
+     the same way here; the burger's own popover carries .crx-menu-cta, a separate element */
+  .crx .crx-header-actions .crx-cta { display: none; }
+  .crx .crx-burger { display: flex; }
+}
+
+/* the header exists now, so the hero needs clearance under it, and anchor targets need to land
+   below it rather than underneath it */
+.crx main { padding-top: calc(3.5rem + 66px); }
+.crx #machines, .crx #sleep, .crx #how, .crx #join { scroll-margin-top: 76px; }
+
+/* consolidated mobile block — end of file on purpose: .slot, .time-chip and main's padding are
+   declared above at equal specificity and would win the source-order tie against an earlier block */
+@media (max-width: 880px) {
+  .crx .scene { transform: scale(0.62); transform-origin: top center; height: 292px; } /* F19: 292 = 470 × 0.62 — was 330, a phantom gap */
+  /* F1: counter-scale the demo type so the proof moment survives scale(0.62) */
+  .crx .task { font-size: 1.15rem; }
+  .crx .scr-brand { font-size: 1.3rem; }
+  .crx .scr-status { font-size: 1rem; }
+  .crx .earnings .amount { font-size: 1.8rem; }
+  .crx .earnings .label { font-size: 0.9rem; }
+  .crx .chip { font-size: 1.15rem; }
+  .crx .earnings { right: 8px; left: auto; } /* F7: keep the pill inside the viewport */
+  .crx .slot { width: calc(50% - 0.45rem); max-width: 168px; } /* F5: 2×2, not four stacked cards */
+  /* F8: hidden on mobile because its ~55-char sentence exceeds the ~372px available and becomes a
+     near-edge-to-edge banner occluding content while scrolling — an overflow problem, independent
+     of the mini counter that used to sit beside it (removed 2026-08-19; that comment used to point
+     at "mini carries the dock here", which stopped being true the moment mini was deleted). The
+     dock is simply empty on mobile now; re-enabling this needs a width fix first, not just
+     deleting this rule. */
+  .crx .time-chip { display: none; }
+  .crx main { padding-top: calc(2rem + 66px); } /* F32: was 3.5rem — 122px dead space above the h1 */
+}
+
+/* ================= brand type system (Appy, 2026-08-19 — after the Phase 2 fixes) =================
+   Display headings move onto the marketing DS's `head` stack (tailwind.config.ts fontFamily.head),
+   the same face creator-brand's brand side uses for every heading — one product, one type system.
+   AT THE END OF THE FILE on purpose: these selectors re-declare font-weight against earlier rules
+   of equal specificity, and source order is what lets this block win.
+   WEIGHT 800 -> 700: Space Grotesk's family tops out at 700 (the root layout loads 500/600/700),
+   so the mock's 800 could only ever render as synthetic bold — and 700 is exactly the weight
+   creator-brand's own font-head headings ship at. Not a softening; the honest maximum. */
+.crx h1,
+.crx .sleep-copy h2,
+.crx .below h2,
+.crx .closer h2,
+.crx .beat,
+.crx .step h3 {
+  font-family: 'Space Grotesk', 'SF Pro Display', Inter, sans-serif;
+  font-weight: 700;
+}
+
+/* ================= flow kit (creator flow — sign-in, application, dashboard) =================
+   Dark-language component kit for the creator flow being ported from the FROZEN creator-brand
+   tree (its light originals: ApplyForm/Steps/Milestones, ChoiceGroup/CheckField/fieldClasses,
+   forms.tsx, dashboard/*, AccountMenu, PreviewToggler). Copy is verbatim; only the skin is this
+   page's. Everything derives from vocabulary already above: .task's inset surface, .step's card
+   recipe, .btn's press model (hover lifts, active plants), the mono micro-label voice, --mint
+   strictly for money/success, focus-visible = 2px #a78bff. Selection colour is IRIS, matching
+   creator-brand's own rule that the selected state is a value, not a CTA — the gradient stays
+   reserved for things you press. All transitions 0.15–0.25s. */
+
+.crx {
+  /* danger — creator-brand uses status-danger for invalid fields; this palette had no red.
+     Coral-leaning so it reads warm against the blue-violet sky, ~4.5:1 on the panel surface. */
+  --danger: #ff6b7a;
+  --danger-wash: rgba(255, 107, 122, 0.09);
+  /* iris selection trio — the "chosen" language for choices/checks (ChoiceGroup's iris rule). */
+  --sel-border: rgba(167, 139, 255, 0.45);
+  --sel-wash: rgba(123, 76, 255, 0.14);
+  /* one inset recipe for fields/rows — a step darker than .task so typing surfaces read as wells */
+  --well: rgba(5, 8, 24, 0.45);
+}
+
+/* ---- panel: the card surface (form card, dashboard cards) — .step's recipe, padded up ---- */
+.crx .crx-panel {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 16px;
+  padding: 1.5rem;
+  text-align: left;
+}
+/* card heading — the head stack at panel scale (the type-system block above only covers page h2s) */
+.crx .crx-panel-title {
+  font-family: 'Space Grotesk', 'SF Pro Display', Inter, sans-serif;
+  font-weight: 700; font-size: 1.05rem; line-height: 1.3;
+  color: #fff; margin: 0;
+}
+
+/* ---- field furniture: label / hint / error ---- */
+/* field label — the strongest text next to a field (fieldClasses.ts's darker-labels decision) */
+.crx .crx-label { display: block; font-size: 0.8rem; font-weight: 650; color: var(--ink-inverse); }
+/* muted hint — shares .crx-err's exact box so hint→error swaps colour, never height */
+.crx .crx-hint {
+  display: block; margin-top: 0.35rem; min-height: 15px;
+  font-size: 0.72rem; line-height: 1.35; color: rgba(214, 224, 255, 0.55);
+}
+/* error line — RESERVED height like forms.tsx's FieldError: appearing errors never reflow */
+.crx .crx-err {
+  display: block; margin-top: 0.35rem; min-height: 15px;
+  font-size: 0.72rem; font-weight: 600; line-height: 1.35; color: var(--danger);
+}
+.crx .crx-err:empty { visibility: hidden; }
+
+/* ---- text input / textarea — dark inset like the laptop's task rows, iris focus ring ---- */
+.crx .crx-field {
+  display: block; width: 100%;
+  font: inherit; font-size: 0.95rem; color: var(--ink-inverse);
+  background: var(--well);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 9px;
+  padding: 0.75rem 0.9rem;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+.crx .crx-field::placeholder { color: rgba(214, 224, 255, 0.38); }
+.crx .crx-field:hover { border-color: rgba(255, 255, 255, 0.2); }
+.crx .crx-field:focus {
+  outline: none;
+  border-color: var(--sel-border);
+  box-shadow: 0 0 0 3px rgba(123, 76, 255, 0.22);
+}
+/* invalid — applied on top, beats rest AND hover borders by source order (withErr's contract) */
+.crx .crx-field.err { border-color: var(--danger); }
+.crx .crx-field.err:focus { box-shadow: 0 0 0 3px var(--danger-wash); }
+
+/* ---- choice chip: small factual answers (yes/no, ranges) — ChoiceGroup's chips variant ----
+   Colour alone says "on" (border+fill+ink all change) — no tick, no layout shift. */
+.crx .crx-choice {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  min-height: 44px; padding: 0.7rem 0.9rem;
+  font: inherit; font-size: 0.85rem; font-weight: 500; color: var(--dim);
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 9px; cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+.crx .crx-choice:hover { border-color: rgba(255, 255, 255, 0.24); background: rgba(255, 255, 255, 0.06); color: #fff; }
+.crx .crx-choice:active { background: rgba(255, 255, 255, 0.09); }
+.crx .crx-choice.on {
+  border-color: var(--sel-border); background: var(--sel-wash);
+  color: #fff; font-weight: 650;
+}
+.crx .crx-choice.err { border-color: var(--danger); }
+
+/* ---- choice card: icon + label + hint, for choices that deserve a look (who you are) ---- */
+.crx .crx-choice-card {
+  position: relative;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 0.5rem;
+  height: 100%; padding: 0.9rem;
+  font: inherit; text-align: left; color: var(--dim);
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px; cursor: pointer;
+  transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
+}
+.crx .crx-choice-card:hover { transform: translateY(-1px); border-color: rgba(255, 255, 255, 0.24); background: rgba(255, 255, 255, 0.06); }
+.crx .crx-choice-card:active { transform: translateY(0); }
+.crx .crx-choice-card.on { border-color: var(--sel-border); background: var(--sel-wash); color: #fff; transform: none; }
+.crx .crx-choice-card.err { border-color: var(--danger); }
+.crx .crx-choice-card .crx-choice-ic { color: rgba(214, 224, 255, 0.55); }        /* card icon at rest */
+.crx .crx-choice-card.on .crx-choice-ic { color: #a78bff; }                        /* icon lifts iris when chosen */
+.crx .crx-choice-card .crx-choice-name { font-size: 0.85rem; font-weight: 600; line-height: 1.3; }
+.crx .crx-choice-card .crx-choice-hint { font-size: 0.7rem; line-height: 1.35; color: rgba(214, 224, 255, 0.5); }
+/* corner tick badge — ABSOLUTE so selection costs no layout (ChoiceGroup's own fix), round = radio */
+.crx .crx-choice-card .crx-choice-mark {
+  position: absolute; right: 8px; top: 8px;
+  display: none; align-items: center; justify-content: center;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--iris); color: #fff;
+}
+.crx .crx-choice-card.on .crx-choice-mark { display: flex; }
+/* tone variants — yes reads mint, no reads danger, at REST on the icon and fully once chosen */
+.crx .crx-choice-card.tone-ok .crx-choice-ic, .crx .crx-choice.tone-ok .crx-choice-ic { color: var(--mint); }
+.crx .crx-choice-card.tone-ok.on, .crx .crx-choice.tone-ok.on { border-color: rgba(52, 227, 154, 0.45); background: rgba(52, 227, 154, 0.1); }
+.crx .crx-choice-card.tone-ok.on .crx-choice-mark { background: var(--mint); color: #05060f; }
+.crx .crx-choice-card.tone-danger .crx-choice-ic, .crx .crx-choice.tone-danger .crx-choice-ic { color: var(--danger); }
+.crx .crx-choice-card.tone-danger.on, .crx .crx-choice.tone-danger.on { border-color: rgba(255, 107, 122, 0.45); background: var(--danger-wash); }
+.crx .crx-choice-card.tone-danger.on .crx-choice-mark { background: var(--danger); }
+/* grid containers for card choices — 2-up default, 3-up modifier; collapse handled at 880 below */
+.crx .crx-choice-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.6rem; }
+.crx .crx-choice-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+.crx .crx-choice-row { display: flex; flex-wrap: wrap; gap: 0.5rem; }               /* chip row */
+
+/* ---- checkbox row: the whole row is the target (CheckField's selectable-row decision) ---- */
+.crx .crx-check {
+  display: flex; align-items: flex-start; gap: 0.7rem;
+  padding: 0.9rem; cursor: pointer; text-align: left;
+  font-size: 0.88rem; line-height: 1.55; color: var(--dim);
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  transition: border-color 0.18s ease, background 0.18s ease, color 0.18s ease;
+}
+.crx .crx-check:hover { border-color: rgba(255, 255, 255, 0.24); background: rgba(255, 255, 255, 0.06); }
+.crx .crx-check.on { border-color: var(--sel-border); background: var(--sel-wash); color: #fff; }
+.crx .crx-check.err { border-color: var(--danger); }
+/* subtle variant — boilerplate you tick on the way out (the agree line): no card, just the row */
+.crx .crx-check.subtle { background: none; border-color: transparent; padding: 0.25rem 0; }
+/* the drawn box — real input stays sr-only; box fills iris when checked, never the gradient */
+.crx .crx-check-box {
+  flex-shrink: 0; margin-top: 2px;
+  display: flex; align-items: center; justify-content: center;
+  width: 18px; height: 18px; border-radius: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: var(--well); color: #fff;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.crx .crx-check.on .crx-check-box, .crx .crx-check-box.on { background: var(--iris); border-color: var(--iris); }
+.crx .crx-check.err .crx-check-box { border-color: var(--danger); }
+
+/* ---- buttons ---- */
+/* secondary/back — ghost with a hairline; same press model as .btn (hover lifts, active plants) */
+.crx .crx-btn-quiet {
+  font: inherit; font-weight: 650; font-size: 0.95rem; color: var(--ink-inverse);
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  padding: 0.85rem 1.6rem; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+  transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
+}
+.crx .crx-btn-quiet:hover { border-color: rgba(255, 255, 255, 0.34); background: rgba(255, 255, 255, 0.06); transform: translateY(-1px); }
+.crx .crx-btn-quiet:active { background: rgba(255, 255, 255, 0.09); transform: translateY(0); }
+.crx .crx-btn-quiet:focus-visible { outline: 2px solid #a78bff; outline-offset: 3px; }
+/* full-width modifier for .btn (and .crx-btn-quiet) — form submit rows */
+.crx .btn.btn-block, .crx .crx-btn-quiet.btn-block { display: flex; width: 100%; justify-content: center; }
+
+/* ---- step progress rail: count + 5 segments in the step-title row (ApplyForm's Rail) ---- */
+.crx .crx-rail { display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0; }
+.crx .crx-rail-count {
+  font-family: var(--mono); font-size: 0.7rem; font-weight: 700;
+  letter-spacing: 0.08em; color: rgba(214, 224, 255, 0.55);
+  font-variant-numeric: tabular-nums;
+}
+.crx .crx-rail-segs { display: flex; gap: 4px; }
+/* indicators, not buttons — the light original demoted them for touch-size reasons; same here */
+.crx .crx-rail-seg {
+  width: 16px; height: 4px; border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  transition: background 0.25s ease;
+}
+.crx .crx-rail-seg.on { background: var(--grad-bright); }
+
+/* ---- milestones strip: Apply → We review → Install & earn (Milestones.tsx) ---- */
+.crx .crx-mile { display: flex; max-width: 400px; margin: 0 auto 1.5rem; padding: 0; list-style: none; }
+.crx .crx-mile-step { position: relative; flex: 1; text-align: center; }
+/* connector to the PREVIOUS dot — stops 22px short of each centre (the original's stacking fix) */
+.crx .crx-mile-line {
+  position: absolute; top: 13px; height: 2px;
+  left: calc(-50% + 22px); right: calc(50% + 22px);
+  background: rgba(255, 255, 255, 0.12);
+}
+.crx .crx-mile-step.done .crx-mile-line, .crx .crx-mile-step.current .crx-mile-line { background: var(--grad-bright); }
+/* the dot — todo: inert ring · current: iris ring treatment · done: gradient fill + tick */
+.crx .crx-mile-dot {
+  position: relative;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; border-radius: 50%;
+  font-size: 0.7rem; font-weight: 650;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.045); color: rgba(214, 224, 255, 0.55);
+}
+.crx .crx-mile-step.current .crx-mile-dot {
+  border-color: var(--sel-border); background: var(--sel-wash); color: #cdb9ff;
+  box-shadow: 0 0 0 4px rgba(123, 76, 255, 0.12);
+}
+.crx .crx-mile-step.done .crx-mile-dot { border: none; background: var(--grad-bright); color: #05060f; }
+.crx .crx-mile-label { display: block; margin-top: 0.4rem; font-size: 0.7rem; font-weight: 500; color: rgba(214, 224, 255, 0.55); }
+.crx .crx-mile-step.current .crx-mile-label { color: #fff; font-weight: 600; }
+
+/* ---- modal: scrim + panel (Modal.tsx's slots) ----
+   Deliberately NOT .crx-scoped: a portaled overlay may mount outside the .crx root. Both rules
+   use literal values only for that reason. If the modal's CHILDREN use kit classes (.crx-field,
+   .crx-check, …), the panel or scrim must also carry className="crx" so the tokens resolve. */
+.crx-modal-scrim {
+  position: fixed; inset: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: center;
+  padding: 1.5rem;
+  background: rgba(5, 6, 15, 0.72);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+/* panel — solid (not translucent: it floats over live page copy), deep shadow, kit hairline */
+.crx-modal {
+  width: 100%; max-width: 440px; max-height: calc(100vh - 3rem); overflow-y: auto;
+  background: linear-gradient(180deg, #10163a 0%, #0b1029 100%);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 16px;
+  box-shadow: 0 30px 80px -12px rgba(0, 0, 0, 0.75), 0 0 60px rgba(123, 76, 255, 0.12);
+}
+.crx-modal.wide { max-width: 560px; }  /* CashOutModal's size="md" — the sign-in card stays narrow */
+
+/* ---- dashboard stat card: icon circle + figure + label, horizontal band (StatCards' shape) ---- */
+.crx .crx-stat {
+  display: flex; align-items: center; gap: 1rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 16px; padding: 1.1rem 1.25rem;
+  text-align: left;
+}
+.crx .crx-stat-icon {
+  flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--sel-wash); color: #a78bff;
+}
+.crx .crx-stat-icon.money { background: rgba(52, 227, 154, 0.12); color: var(--mint); }
+.crx .crx-stat-fig {
+  display: block;
+  font-family: 'Space Grotesk', 'SF Pro Display', Inter, sans-serif;
+  font-weight: 700; font-size: 1.5rem; line-height: 1.2; color: #fff;
+  font-variant-numeric: tabular-nums;
+}
+.crx .crx-stat-fig.money { color: var(--mint); }   /* money figures in mint — the page's money colour */
+.crx .crx-stat-label { display: block; margin-top: 2px; font-size: 0.8rem; color: rgba(214, 224, 255, 0.55); }
+.crx .crx-stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+
+/* ---- divided list: transactions (Transactions.tsx) ---- */
+.crx .crx-rows { margin: 0; padding: 0; list-style: none; }
+.crx .crx-row {
+  display: flex; align-items: baseline; gap: 0.8rem;
+  padding: 0.75rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.88rem; color: var(--dim);
+}
+.crx .crx-rows > .crx-row:first-child { border-top: none; }
+/* fixed tabular date column so labels rag into a clean left edge (the original's own trick) */
+.crx .crx-row .crx-row-date { flex-shrink: 0; width: 88px; font-size: 0.78rem; color: rgba(214, 224, 255, 0.5); font-variant-numeric: tabular-nums; }
+.crx .crx-row .crx-row-label { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* amounts neutral ink, NOT mint — a withdrawal is the creator's own money moving, not a gain */
+.crx .crx-row .crx-row-amt { flex-shrink: 0; font-weight: 650; color: var(--ink-inverse); font-variant-numeric: tabular-nums; }
+
+/* ---- preview toggler: deliberately NOT product-looking (PreviewToggler's constraint) ----
+   Flat, small, 11–12px, no gradient anywhere — a reviewer must never mistake it for a page CTA.
+   z-index 110: above the modal (100), because states get flipped WHILE dialogs are open. */
+.crx .crx-toggler {
+  position: fixed; left: 14px; bottom: 14px; z-index: 110;
+  width: 212px; padding: 0.75rem;
+  background: rgba(10, 15, 38, 0.92);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 14px;
+  box-shadow: 0 18px 50px -12px rgba(0, 0, 0, 0.65);
+  text-align: left;
+}
+/* collapsed FAB — same surface, gear-sized */
+.crx .crx-toggler.fab { width: 44px; height: 44px; padding: 0; display: flex; align-items: center; justify-content: center; color: rgba(214, 224, 255, 0.55); cursor: pointer; transition: color 0.15s ease; }
+.crx .crx-toggler.fab:hover { color: #fff; }
+.crx .crx-toggler-head {
+  font-family: var(--mono); font-size: 0.6rem; font-weight: 700;
+  letter-spacing: 0.14em; text-transform: uppercase; color: rgba(214, 224, 255, 0.55);
+}
+/* stacked radio rows in a flat inset track — the classic segmented look, vertical */
+.crx .crx-toggler-track { display: flex; flex-direction: column; gap: 2px; margin-top: 0.4rem; background: var(--well); border-radius: 9px; padding: 2px; }
+.crx .crx-toggler-row {
+  display: flex; align-items: center; gap: 0.5rem;
+  font: inherit; font-size: 0.72rem; font-weight: 600; text-align: left;
+  color: rgba(214, 224, 255, 0.55);
+  background: none; border: none; border-radius: 7px;
+  padding: 0.5rem; cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.crx .crx-toggler-row:hover { color: var(--dim); }
+.crx .crx-toggler-row:active { color: #fff; }
+.crx .crx-toggler-row.on { background: rgba(255, 255, 255, 0.1); color: #fff; }
+/* radio dot indicator */
+.crx .crx-toggler-dot {
+  flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+  width: 14px; height: 14px; border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+}
+.crx .crx-toggler-row.on .crx-toggler-dot { border-color: #a78bff; }
+.crx .crx-toggler-row.on .crx-toggler-dot::after { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #a78bff; }
+.crx .crx-toggler-note { margin: 0.5rem 0 0; font-size: 0.66rem; line-height: 1.4; color: rgba(214, 224, 255, 0.5); }
+
+/* ---- application intro rows: icon + sentence (StepIntro's icon-per-point layout) ---- */
+.crx .crx-intro-row { display: flex; align-items: flex-start; gap: 0.8rem; text-align: left; }
+.crx .crx-intro-row + .crx-intro-row { margin-top: 1.1rem; }
+.crx .crx-intro-row .crx-intro-ic {
+  flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--sel-wash); color: #a78bff;
+}
+.crx .crx-intro-row .crx-intro-body { font-size: 0.95rem; line-height: 1.55; color: var(--dim); margin-top: 6px; }
+.crx .crx-intro-row .crx-intro-body b { color: var(--ink-inverse); font-weight: 650; }
+
+/* ---- danger utilities ---- */
+.crx .crx-danger { color: var(--danger); }
+.crx .crx-danger-border { border-color: var(--danger); }
+
+/* every interactive kit control shares the page's focus treatment */
+.crx .crx-field:focus-visible,
+.crx .crx-choice:focus-visible,
+.crx .crx-choice-card:focus-visible,
+.crx .crx-check:focus-visible,
+.crx .crx-toggler-row:focus-visible,
+.crx .crx-toggler.fab:focus-visible {
+  outline: 2px solid #a78bff; outline-offset: 2px;
+}
+/* sr-only-input pattern (ChoiceGroup/CheckField keep real radios/checkboxes in the DOM):
+   the ring forwards from the hidden input to the painted sibling */
+.crx input.sr-only:focus-visible + .crx-choice,
+.crx input.sr-only:focus-visible + .crx-choice-card,
+.crx input.sr-only:focus-visible + .crx-check {
+  outline: 2px solid #a78bff; outline-offset: 2px;
+}
+
+/* ---- responsive: the page's one breakpoint ---- */
+@media (max-width: 880px) {
+  .crx .crx-panel { padding: 1.1rem 1rem; }
+  .crx .crx-stat-grid { grid-template-columns: 1fr; }            /* stat cards stack */
+  .crx .crx-choice-grid, .crx .crx-choice-grid.cols-3 { grid-template-columns: repeat(2, 1fr); } /* cards 2-up */
+  .crx .crx-modal, .crx-modal { max-width: none; }               /* modal takes the padded width */
+  .crx .crx-row .crx-row-date { width: 68px; }
+}
+@media (max-width: 520px) {
+  .crx .crx-choice-grid, .crx .crx-choice-grid.cols-3 { grid-template-columns: 1fr; } /* cards stack */
+}
+
+/* ================= flow kit part 2 — structural classes the builders referenced =================
+   Rules for every class the ported flow/dashboard components reference that part 1 didn't ship.
+   Same language as part 1: surfaces rgba(255,255,255,.035-.045), hairlines .08-.18, radii 9/14/16,
+   iris = chosen, mint = money/success only, mono micro-labels, focus = 2px #a78bff. All three flow
+   views mount inside `.crx main` (CreatorsHome.tsx), which ALREADY pays the 1100px grid, the 1.5rem
+   gutter and the fixed-header clearance — so the section classes below add only what main doesn't. */
+
+/* ---- ApplyForm: head / body / foot / confirmation ---- */
+/* step title + progress rail on one row, rail pinned right, shared baseline */
+.crx .crx-form-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; }
+/* the shared min-height floor across steps — the original's content-sized 400px desktop floor
+   (its 460/480 mobile numbers served a fixed-height card contract this page doesn't have; density
+   here is the same 28px question gaps, so the floor ports unchanged). If a step overflows this,
+   trim THAT step, not this number — the original raised it twice before learning that. */
+.crx .crx-step-body { margin-top: 1.75rem; min-height: 400px; }
+/* Back + submit row — ONE row at both breakpoints (the quiet Back is compact enough) */
+.crx .crx-form-foot { display: flex; align-items: center; gap: 0.8rem; margin-top: 1.75rem; }
+/* the primary takes the rest of the foot row */
+.crx .crx-grow { flex: 1 1 auto; min-width: 0; }
+/* Back shares the row equally with Continue/Submit (Appy, 2026-08-19) — matches the frozen
+   original's own sm:flex-1 on its Back button; this class is also used bare (StatCards' Cash out
+   pill, which must stay its natural width), so the equal-share rule is scoped to this row only. */
+.crx .crx-form-foot .crx-btn-quiet { flex: 1 1 0; min-width: 0; }
+/* submitted confirmation — min-height matches the form panel it replaces so the card doesn't
+   shrink on submit (the original's own rule): head ~22 + gap 28 + body floor 400 + gap 28 +
+   foot ~52 = 530 content, + the panel's own 2×1.5rem padding (border-box) = 578 */
+.crx .crx-applied {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; min-height: 578px;
+}
+/* confirmation heading — panel-title bumped to celebration scale (original used text-3xl) */
+.crx .crx-applied-title { font-size: 1.5rem; margin-top: 1.2rem; }
+/* confirmation sub-line — quiet, one readable measure, email lifted to ink */
+.crx .crx-applied-sub { margin: 0.6rem 0 0; max-width: 44ch; font-size: 0.95rem; line-height: 1.6; color: var(--dim); }
+.crx .crx-applied-sub b { color: var(--ink-inverse); font-weight: 650; }
+
+/* ---- Steps/controls: gaps, wrappers, resets ---- */
+/* ONE gap value between distinct questions everywhere (Steps.tsx's rule) */
+.crx .crx-qgap { margin-top: 1.75rem; }
+/* step 5's height-budget concession — its four groups compress to this (never copy without the same pressure) */
+.crx .crx-qgap-tight { margin-top: 1.25rem; }
+/* the smallest gap on step 5 — question→boilerplate, riding the field's own reserved error slot */
+.crx .crx-qgap-min { margin-top: 0.5rem; }
+/* label-block wrapper around a field or painted control */
+.crx .crx-ctl { display: block; }
+/* odd 5th card spans the 2-up row so it isn't alone in a half-empty row… */
+.crx .crx-ctl.span-last { grid-column: 1 / -1; }
+/* …but NOT at 3-up desktop, where 5 cards land 3+2 with no orphan (the original cancelled it there too) */
+.crx .crx-choice-grid.cols-3 .crx-ctl.span-last { grid-column: auto; }
+/* label→options gap on a ChoiceGroup's options container */
+.crx .crx-opts { margin-top: 0.6rem; }
+/* halved for step 5's `tight` groups */
+.crx .crx-opts.tight { margin-top: 0.25rem; }
+/* small gap under a label — rides .crx-field via the INPUT class string */
+.crx .crx-gap-label { margin-top: 0.35rem; }
+/* fieldset reset so the radio group carries ONE accessible name with zero UA chrome */
+.crx .crx-fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+/* "That's fine" info note — a quiet panel-ish aside, smaller and dimmer than an answer */
+.crx .crx-aside {
+  margin-bottom: 0; padding: 0.75rem 0.9rem;
+  font-size: 0.85rem; line-height: 1.55; color: var(--dim);
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 9px;
+}
+/* muted normal-weight "(optional)" suffix inside a label */
+.crx .crx-label-opt { color: rgba(214, 224, 255, 0.55); font-weight: 400; }
+/* textarea — resting size capped at rows=3, scrolls internally past it, never user-resized */
+.crx .crx-area { resize: none; line-height: 1.55; min-height: 5.5em; }
+
+/* ---- AccountMenu: chip trigger + popover rows ---- */
+/* positioned anchor so the popover hangs off the chip, not the header */
+.crx .crx-acct { position: relative; }
+/* the .crx-menu popover anchors to the chip now — flush right under it (original: right-0, +6px top) */
+.crx .crx-acct .crx-menu { right: 0; }
+/* the trigger — rides .crx-cta's quiet state; avatar-left padding + a hover surface so it reads as
+   a control (the original's one fix to its own first version), 44px touch height */
+.crx .crx-acct-chip { min-height: 44px; padding: 0.4rem 0.75rem 0.4rem 0.4rem; gap: 0.5rem; }
+.crx .crx-acct-chip:hover { background: rgba(255, 255, 255, 0.06); }
+.crx .crx-acct-chip:active { background: rgba(255, 255, 255, 0.09); }
+/* initials avatar — gradient fill is the one place the chip carries any weight */
+.crx .crx-acct-avatar {
+  flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--cta-grad); color: #fff;
+  font-size: 11px; font-weight: 700;
+}
+/* account name in the chip */
+.crx .crx-acct-name { font-size: 0.95rem; font-weight: 500; color: var(--ink-inverse); }
+/* the popover's email line — the one fact the trigger can't show; truncates, never wraps */
+.crx .crx-acct-email {
+  margin: 0; padding: 0.5rem 0.8rem 0.6rem; min-width: 0;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  font-size: 0.78rem; color: rgba(214, 224, 255, 0.55);
+}
+/* Log out row — .crx-menu's own 44px row recipe, with a danger-tinted hover (it ends the session) */
+.crx .crx-acct-out { gap: 0.5rem; }
+.crx .crx-menu .crx-acct-out:hover { color: var(--danger); background: var(--danger-wash); }
+.crx .crx-menu .crx-acct-out:active { color: var(--danger); background: rgba(255, 107, 122, 0.14); }
+.crx .crx-acct-out:focus-visible { outline: 2px solid #a78bff; outline-offset: 2px; }
+
+/* ---- Dashboard shell ---- */
+/* dashboard column — main already pays the 1100px grid, 1.5rem gutter and header clearance
+   (CreatorsHome's own note), so this only re-caps the width, LEFT-aligns the working screen
+   against main's centered text, and adds bottom room before the footer */
+.crx .crx-dash { max-width: 1100px; margin: 0 auto; padding: 0 0 4rem; text-align: left; }
+/* welcome heading — the head stack at page scale */
+.crx .crx-dash-title {
+  font-family: 'Space Grotesk', 'SF Pro Display', Inter, sans-serif;
+  font-weight: 700; font-size: 1.9rem; line-height: 1.2; letter-spacing: -0.02em;
+  color: #fff; margin: 0 0 0.4rem;
+}
+/* sub-line under the welcome */
+.crx .crx-dash-sub { margin: 0; font-size: 1rem; color: var(--dim); }
+/* vertical gap between dashboard bands — matches the stat grid's own 1rem so bands read as one group */
+.crx .crx-dash-band { margin-top: 1rem; }
+/* figure+label stack beside the stat icon — min-width 0 so long labels can ellipsize, not blow the card */
+.crx .crx-stat-body { min-width: 0; }
+/* Cash out — pushed to the card's right edge; compact quiet pill in a mint tint (the money action) */
+.crx .crx-cashout {
+  margin-left: auto; padding: 0.5rem 1.1rem; font-size: 0.85rem;
+  border-color: rgba(52, 227, 154, 0.3);
+}
+.crx .crx-cashout:hover { border-color: rgba(52, 227, 154, 0.5); background: rgba(52, 227, 154, 0.08); }
+.crx .crx-cashout:active { background: rgba(52, 227, 154, 0.12); }
+/* disabled at $0 (StatCards disables it) — visibly inert, hover model switched off */
+.crx .crx-cashout:disabled { opacity: 0.45; cursor: default; }
+.crx .crx-cashout:disabled:hover { border-color: rgba(52, 227, 154, 0.3); background: none; transform: none; }
+
+/* ---- HowEarningWorks: two vertical lists sharing the band ---- */
+/* two halves sharing the width, hairline divider carried by the second (rules) half */
+.crx .crx-earn-split { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+.crx .crx-earn-half { min-width: 0; }
+.crx .crx-earn-half + .crx-earn-half { border-left: 1px solid rgba(255, 255, 255, 0.08); padding-left: 2rem; }
+/* half titles need their own gap to the list below (panel-title ships margin:0) */
+.crx .crx-earn-half > .crx-panel-title { margin: 0 0 1.1rem; }
+/* ol reset — steps ride .crx-intro-row; flex gap owns the rhythm, so the sibling margin is zeroed */
+.crx .crx-earn-steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 1.1rem; }
+.crx .crx-earn-steps .crx-intro-row + .crx-intro-row { margin-top: 0; }
+/* ul reset — rules ride .crx-rows' own divided-list styling */
+.crx .crx-earn-rules { list-style: none; margin: 0; padding: 0; }
+
+/* ---- CashOutModal (the .crx-modal.wide panel brings no padding of its own) ---- */
+/* title row + balance chip */
+.crx .crx-cash-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1.5rem 1.5rem 0; }
+/* balance chip — the page's mono micro-label voice, figure in mint (it IS money) */
+.crx .crx-cash-balance {
+  flex-shrink: 0; display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 0.35rem 0.7rem;
+  font-family: var(--mono); font-size: 0.7rem; font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: rgba(214, 224, 255, 0.55);
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+}
+.crx .crx-cash-balance b { color: var(--mint); font-weight: 700; font-variant-numeric: tabular-nums; }
+/* the form's padding + vertical rhythm (each block below carries its own top gap) */
+.crx .crx-cash-body { padding: 1.1rem 1.5rem 1.5rem; }
+/* the one payout method — .crx-check.on's chosen language, but a statement, not a control */
+.crx .crx-cash-method { align-items: center; gap: 0.8rem; margin-top: 0.6rem; cursor: default; }
+/* PayPal mini-logo block (brand colours live in the SVG itself) */
+.crx .crx-cash-pp { flex-shrink: 0; display: block; }
+/* method name beside the badge */
+.crx .crx-cash-method-name { font-size: 0.95rem; font-weight: 650; color: #fff; }
+/* selected tick — the choice-mark recipe, pushed to the card's right edge */
+.crx .crx-cash-method-tick {
+  margin-left: auto; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--iris); color: #fff;
+}
+/* email field block — its input ships without crx-gap-label, so the label carries the gap here */
+.crx .crx-cash-field { display: block; margin-top: 1.1rem; }
+.crx .crx-cash-field .crx-label { margin-bottom: 0.35rem; }
+/* the two mini-check rows — each row's reserved ~18px error slot already spaces them; this tops
+   the rhythm to ~0.7rem visual without doubling it */
+.crx .crx-cash-confirms { display: flex; flex-direction: column; gap: 0.35rem; margin-top: 0.5rem; }
+/* one-line minimal check row (paint is .crx-check.subtle's) */
+.crx .crx-cash-mini { display: block; cursor: pointer; }
+.crx .crx-cash-mini .crx-check { font-size: 0.82rem; line-height: 1.45; }
+/* block Withdraw button */
+.crx .crx-cash-submit { margin-top: 0.9rem; }
+/* success state — centered column in the same panel */
+.crx .crx-cash-done {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; padding: 2.5rem 1.5rem 1.75rem;
+}
+.crx .crx-cash-done-title { font-size: 1.35rem; margin-top: 1.1rem; }
+/* confirmation paragraph — one readable measure, centered */
+.crx .crx-cash-copy { margin: 0.6rem 0 0; max-width: 40ch; font-size: 0.92rem; line-height: 1.6; color: var(--dim); }
+.crx .crx-cash-copy b { color: var(--ink-inverse); }
+/* the request id — tabular semibold ink so it reads as a reference, not prose */
+.crx .crx-cash-id { color: var(--ink-inverse); font-weight: 650; font-variant-numeric: tabular-nums; }
+/* support address — iris accent, NOT mint (mint stays strictly money/success; an inbox is neither) */
+.crx .crx-cash-mail { color: #a78bff; font-weight: 650; }
+/* the smaller support line */
+.crx .crx-cash-support { margin: 0.9rem 0 0; font-size: 0.8rem; color: rgba(214, 224, 255, 0.55); }
+/* Close — full-width behaviour capped so it doesn't read as another Withdraw */
+.crx .crx-cash-close { margin-top: 1.5rem; max-width: 280px; }
+
+/* ---- ApplySection ---- */
+/* main already clears the fixed header; this adds only a small settle + bottom room before HomeBelow */
+.crx .crx-apply { padding: 0.5rem 0 3rem; }
+/* centered column at the form's measure; text reads LEFT inside (main centers everything)… */
+.crx .crx-apply-col { max-width: 640px; margin: 0 auto; text-align: left; }
+/* …while the headline block stays centered, per the component */
+.crx .crx-apply-col h1, .crx .crx-apply-col .sub { text-align: center; }
+/* headline → form gap (collapses with .sub's own 2.2rem bottom margin — same value, no doubling) */
+.crx .crx-apply-form { margin-top: 2.2rem; }
+
+/* ---- FullCapacityNotice ---- */
+/* slot wrapper — main pays width + clearance; bottom room before HomeBelow */
+.crx .crx-full { padding: 0.5rem 0 3rem; }
+/* stands in the application's slot at matching visual weight: tall, centered, the form's measure */
+.crx .crx-full-panel {
+  max-width: 640px; margin: 0 auto; min-height: 420px; padding: 2rem;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center;
+}
+/* the mint tick — .crx-stat-icon.money's recipe scaled up to the moment */
+.crx .crx-full-tick { width: 56px; height: 56px; }
+/* notice heading — head stack (this h2 doesn't ride .crx-panel-title) */
+.crx .crx-full-title {
+  font-family: 'Space Grotesk', 'SF Pro Display', Inter, sans-serif;
+  font-weight: 700; font-size: 1.5rem; line-height: 1.3;
+  color: #fff; margin: 1.2rem 0 0;
+}
+/* notice copy — one readable measure, email lifted to ink */
+.crx .crx-full-copy { margin: 0.6rem 0 0; max-width: 44ch; font-size: 0.95rem; line-height: 1.6; color: var(--dim); }
+.crx .crx-full-copy b { color: var(--ink-inverse); font-weight: 650; }
+
+/* ---- part 2 responsive — the page's one breakpoint ---- */
+@media (max-width: 880px) {
+  /* cards collapse to 2-up here (part 1), so the 3-col group's odd 5th is alone again — span it */
+  .crx .crx-choice-grid.cols-3 .crx-ctl.span-last { grid-column: 1 / -1; }
+  /* earn halves stack; the divider turns horizontal and stays on the rules half */
+  .crx .crx-earn-split { grid-template-columns: 1fr; gap: 1.5rem; }
+  .crx .crx-earn-half + .crx-earn-half {
+    border-left: none; padding-left: 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 1.5rem;
+  }
+  /* dashboard bottom room tightens with the rest of the page */
+  .crx .crx-dash { padding-bottom: 3rem; }
+  /* cash-out paddings tighten with the panel */
+  .crx .crx-cash-head { padding: 1.25rem 1.1rem 0; }
+  .crx .crx-cash-body { padding: 1rem 1.1rem 1.25rem; }
+  .crx .crx-cash-done { padding: 2rem 1.1rem 1.5rem; }
+  /* .crx-form-foot stays a ROW at this width by design (ApplyForm's own note) — no rule needed */
+}

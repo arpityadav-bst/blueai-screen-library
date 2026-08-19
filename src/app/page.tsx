@@ -27,9 +27,25 @@ const ACTIVE = [
     ds: true,
   },
   {
-    href: '/creator-brand/creators',
-    name: 'Creator ↔ Brand',
-    desc: 'Pre-launch acquisition site, two audiences sharing one header/switcher: creators (paste your handle, see what you could earn, the real automation loop, a jobs-board preview) and brands (post a job, outcome-based pricing, a live job-post form). On the blueai-modern marketing design system.',
+    // RENAMED + RE-POINTED 2026-08-19 (Appy): was "Creator ↔ Brand" -> /creator-brand/creators,
+    // describing both audiences under one shell. The creator side of that shell is now superseded
+    // by the standalone Creator website below (full flow, its own design language); this card
+    // narrows to what's actually still live and finalized here — the brand side — and points
+    // straight at its own route rather than the creators entry into a shared shell.
+    href: '/creator-brand/brands',
+    name: 'Brand website',
+    desc: 'The brand-side acquisition flow: post a job, outcome-based pricing, a live job-post form. On the blueai-modern marketing design system. (Creators moved to their own site — see Creator website below.)',
+  },
+  {
+    // RENAMED + RE-POINTED 2026-08-19 (Appy): was "Creator Homepage — 'The AI You Own'" ->
+    // /experiments/robots/index.html, the PM's raw pulled mock (Phase 1 of
+    // public/experiments/robots/PLAN.md). All four phases are done now — header, an 8-dimension
+    // visual UX audit + fixes, and the full creator flow (sign-in, 5-step application, dashboard,
+    // logout) built into it, on this site's own dark theme — so the card points at the real route,
+    // not the mock it started from. The mock itself stays on record at /experiments/robots/.
+    href: '/creators',
+    name: 'Creator website',
+    desc: 'The full creator side: an AI-worker homepage ("The AI You Own"), sign in, a 5-step application, a returning-creator dashboard with cash-out, and logout — all in its own dark, futuristic design language. Design-only, same convention as every other page here.',
   },
 ]
 
