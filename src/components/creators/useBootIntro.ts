@@ -20,9 +20,8 @@ import { useEffect, useRef } from 'react'
 //   2. THE HOLD WAS STATIC. The assembled agent just sat there behind a breathing radial glow.
 //      Desktop's hold is alive — a per-pixel twinkle across the logo plus an ambient field of
 //      sparks fading in and out behind it (holdStep / drawCenterLive / drawBgSparks).
-//   3. THE EXIT WAS A CROSSFADE. The whole logo faded at once with a slight scale-up, which is
-//      the most generic way a thing can leave. Desktop bursts it: a wipe front sweeps left to
-//      right and each pixel it passes flies off with its own scatter velocity and fades.
+//   3. THE HOLD RAN OUT INTO NOTHING. The logo faded on the spot. It lands in the laptop's brand
+//      mark now — see the exit note below; that part is this page's own, not desktop's.
 //
 // AND ONE THING DELIBERATELY DROPPED: the radial aura (drawGlow). Desktop has none — the pixels
 // are the whole image — and on a logo made of hard-edged squares a soft glow is exactly the thing
@@ -38,9 +37,28 @@ import { useEffect, useRef } from 'react'
 // an empty screen with a few dots in it. Both are scaled by area against desktop's own density,
 // and the per-spark envelope (life, peak, the sin(t*PI) fade) is byte-identical.
 //
+// THE EXIT IS THIS PAGE'S OWN, and it is the one place the desktop port does not apply. boot.js
+// bursts its logo away because it has nowhere to put it; this page does — the agent travels into
+// the brand mark on the laptop's own screen, shrinking as it goes and fading out as it arrives,
+// so the mark the page already draws is what it leaves behind.
+//
+// ONE MOVE, NOT THREE. The original did this in three phases — descend to the middle of the
+// screen, hold there for a breath, then tuck up into the corner — and restoring it restored that
+// too. Appy cut it the same day: "can it go directly to the logo area instead of that mid step".
+// He is right, and the reason is that the middle of the screen was never a destination. It was a
+// waypoint the animation stopped at, so the exit read as two separate journeys with a pause
+// between them rather than as the agent going where it was always going.
+//
+// WHICH IS WHY THE SCENE ENTERS FIRST. The page's staged entry used to run title -> sub -> CTA ->
+// scene; the agent cannot land in a laptop that has not arrived yet, so the scene now takes the
+// first slot (.d0) and everything else keeps its order behind it. `.revealed` is added when the
+// descent STARTS rather than when the intro ends, so the laptop is rising into place underneath
+// the agent as it comes down.
+//
 // Beats: void hum -> assemble -> shimmer -> the agent holds, alive, over two lines of copy ->
-// pixel-splash exit while the backdrop dissolves -> the page arrives on its own staggered blur
-// entry (creators.css). Click/wheel/touch/key skips. prefers-reduced-motion skips the whole thing.
+// one travel into the screen's brand mark, shrinking and fading, while the page arrives on its
+// own staggered blur entry (creators.css). Click/wheel/touch/key skips. prefers-reduced-motion
+// skips the whole thing.
 //
 // STATE LIVES ON .crx AND body.crx-lock, not on body.revealed like the mock — see creators.css's
 // header for why. onDone is the hero task loop's start (useLaptopFx), the same handoff the mock
@@ -65,10 +83,7 @@ const MAX_CELLS = 120
     ambient sparks. They stay on this lattice, which is what makes the canvas read as one pixel
     grid rather than as a logo sitting on noise. */
 const GRID = 6
-const PH = { dormant: 350, assemble: 1700, shimmer: 150, hold: 250, line1: 1500, line2: 1600, linesOut: 300, burst: 1200 }
-/** boot.js dissolve(): the wipe front runs -0.14 -> 1.14 across the logo, and FADEW is how much of
-    it is mid-burst at any moment. Kept exactly, or the splash stops reading as a sweep. */
-const FADEW = 0.3
+const PH = { dormant: 350, assemble: 1700, shimmer: 150, hold: 250, line1: 1500, line2: 1600, linesOut: 300, land: 1100 }
 
 type Px = {
   lx: number; ly: number; color: string
@@ -78,6 +93,7 @@ type Px = {
 type Spark = { x: number; y: number; born: number; life: number; peak: number; col: string }
 
 const easeOutExpo = (t: number) => (t >= 1 ? 1 : 1 - Math.pow(2, -10 * t))
+const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2)
 const clampT = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v)
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t
 
@@ -121,6 +137,11 @@ export default function useBootIntro(onDone: () => void) {
     const backdropEl = document.getElementById('backdrop')
     const beat1 = document.getElementById('beat1')
     const beat2 = document.getElementById('beat2')
+    // What the agent aims at: the brand mark on the laptop's screen, and nothing else — the
+    // screen's own rect was only ever needed for the middle waypoint that is gone. OPTIONAL,
+    // unlike the rest: it belongs to the hero scene, and a missing scene must degrade to a plain
+    // fade rather than strand the intro, so the guard below deliberately does not include it.
+    const brandIcon = document.querySelector<SVGElement>('.crx .scr-brand svg')
     // FAIL OPEN, NEVER CLOSED. Bailing means finish() never runs, .revealed is never added, and
     // the page stays hidden behind an opaque backdrop forever. A missing decoration must never be
     // able to white-screen the site.
@@ -225,7 +246,9 @@ export default function useBootIntro(onDone: () => void) {
 
     // Assembly + shimmer. Integer device-px rendering with a ~2px gap, so the pixels stay distinct
     // and never merge into a soft mass — boot.js drawLogo().
-    function drawLogo(cx: number, cy: number, cell: number, assembleT: number | null, sweep: number | null) {
+    // `g` is a parameter rather than the closed-over cctx because the landing needs this same
+    // artwork painted once into an offscreen canvas — see the exit phase for why.
+    function drawLogo(g: CanvasRenderingContext2D, cx: number, cy: number, cell: number, assembleT: number | null, sweep: number | null) {
       const DB = Math.max(2, Math.round(cell * dpr) - 2)
       const half = DB >> 1
       for (let k = 0; k < corePixels.length; k++) {
@@ -243,12 +266,12 @@ export default function useBootIntro(onDone: () => void) {
         }
         const px = Math.round(x * dpr) - half
         const py = Math.round(y * dpr) - half
-        cctx!.fillStyle = p.color
-        cctx!.fillRect(px, py, DB, DB)
+        g.fillStyle = p.color
+        g.fillRect(px, py, DB, DB)
         if (assembleT === null && sweep != null) {
           const dpos = (p.lx + p.ly) / cells + 0.5
           const band = 1 - Math.min(1, Math.abs(dpos - sweep) / 0.10)
-          if (band > 0) { cctx!.globalAlpha = band * 0.4; cctx!.fillStyle = '#fff'; cctx!.fillRect(px, py, DB, DB); cctx!.globalAlpha = 1 }
+          if (band > 0) { g.globalAlpha = band * 0.4; g.fillStyle = '#fff'; g.fillRect(px, py, DB, DB); g.globalAlpha = 1 }
         }
       }
     }
@@ -270,44 +293,6 @@ export default function useBootIntro(onDone: () => void) {
       cctx!.globalAlpha = 1
     }
 
-    /** boot.js dissolve(): a wipe front sweeps left -> right and every pixel it reaches bursts off
-        with its own scatter and fades. Prepared once, so the scatter is stable across frames. */
-    function prepBurst() {
-      let minLx = 1e9
-      let maxLx = -1e9
-      for (const p of corePixels) { if (p.lx < minLx) minLx = p.lx; if (p.lx > maxLx) maxLx = p.lx }
-      const span = Math.max(1, maxLx - minLx)
-      for (const p of corePixels) {
-        const hsh = (((p.lx + 99) * 73856093) ^ ((p.ly + 99) * 19349663)) >>> 0
-        p.nx = (p.lx - minLx) / span
-        p.dvx = 12 + ((hsh % 100) / 100) * 30
-        p.dvy = (((hsh >> 7) % 100) / 100) * 40 - 20
-      }
-    }
-
-    /** `scale` converts boot.js's scatter velocities into this logo's terms. dvx/dvy are absolute
-        css distances there (up to 42px across a 130px logo — about a third of it), so passing them
-        through unchanged on a 390px logo would be a third of the travel and the burst would read
-        as a fade. The caller passes logoPx / 130. */
-    function drawBurst(cx: number, cy: number, cell: number, prog: number, scale: number) {
-      const DB = Math.max(2, Math.round(cell * dpr) - 2)
-      const half = DB >> 1
-      const front = -0.14 + prog * 1.28
-      for (let k = 0; k < corePixels.length; k++) {
-        const p = corePixels[k]
-        const d = (front - p.nx!) / FADEW
-        if (d >= 1) continue
-        let bx = cx + p.lx * cell
-        let by = cy + p.ly * cell
-        let a = 1
-        if (d > 0) { const e = d * d; bx += p.dvx! * e * scale; by += p.dvy! * e * scale; a = 1 - d }
-        cctx!.globalAlpha = a < 0 ? 0 : a
-        cctx!.fillStyle = p.color
-        cctx!.fillRect(Math.round(bx * dpr) - half, Math.round(by * dpr) - half, DB, DB)
-      }
-      cctx!.globalAlpha = 1
-    }
-
     function startIntro() {
       coreResize()
       // SIZE FROM GRAIN, NOT GRAIN FROM SIZE. Pick how many 3.25px cells fit the target width and
@@ -317,23 +302,25 @@ export default function useBootIntro(onDone: () => void) {
       cells = Math.max(40, Math.min(MAX_CELLS, Math.round((Math.min(VW, VH) * 0.36) / CELL_CSS)))
       corePixels = genLogo(cells, 0.45, 0.86, 0.92)
       assignSpawns()
-      prepBurst()
       const cx0 = VW / 2
       // 0.40 is boot.js's own CY_FRAC — it sits the logo above centre, which is what leaves the
       // room the two lines of copy need underneath.
       const cy0 = VH * 0.4
       const bigCell = CELL_CSS
       const span = bigCell * cells
-      const burstScale = span / 130   // boot.js tuned its scatter against a 130px logo
       // the declarations sit just under the assembled agent
       const lineTop = Math.min(VH * 0.86, cy0 + span / 2 + 44)
       beat1!.style.top = lineTop + 'px'
       beat2!.style.top = lineTop + 'px'
 
       const T1 = PH.dormant, T2 = T1 + PH.assemble, T3 = T2 + PH.shimmer, T4 = T3 + PH.hold,
-        T5 = T4 + PH.line1, T6 = T5 + PH.line2, T7 = T6 + PH.linesOut, T8 = T7 + PH.burst
+        T5 = T4 + PH.line1, T6 = T5 + PH.line2, T7 = T6 + PH.linesOut,
+        T8 = T7 + PH.land
       let start: number | null = null
-      let fading = false
+      let landing = false
+      let toX = 0, toY = 0, toScale = 1
+      let stamp: HTMLCanvasElement | null = null
+      let stampCss = 0
 
       function step(ts: number) {
         if (start == null) start = ts
@@ -351,9 +338,9 @@ export default function useBootIntro(onDone: () => void) {
           }
           cctx!.globalAlpha = 1
         } else if (t < T2) {
-          drawLogo(cx0, cy0, bigCell, (t - T1) / PH.assemble, null)
+          drawLogo(cctx!, cx0, cy0, bigCell, (t - T1) / PH.assemble, null)
         } else if (t < T3) {
-          drawLogo(cx0, cy0, bigCell, null, (t - T2) / PH.shimmer)
+          drawLogo(cctx!, cx0, cy0, bigCell, null, (t - T2) / PH.shimmer)
         } else if (t < T7) {
           // the agent holds, alive, while it introduces itself — boot.js holdStep()
           drawBgSparks(ts)
@@ -362,11 +349,52 @@ export default function useBootIntro(onDone: () => void) {
           else if (t >= T5 && t < T6) { beat1!.classList.remove('on'); beat2!.classList.add('on') }
           else if (t >= T6) { beat2!.classList.remove('on') }
         } else if (t < T8) {
-          // its work is done: the pixels burst away left to right. The backdrop starts dissolving
-          // on the SAME frame, so the page is already arriving underneath as the agent leaves.
-          if (!fading) { fading = true; backdropEl!.classList.add('gone') }
-          drawBgSparks(ts)
-          drawBurst(cx0, cy0, bigCell, (t - T7) / PH.burst, burstScale)
+          // ONE TRAVEL: out of the hold, into the mark, shrinking the whole way.
+          if (!landing) {
+            landing = true
+            // Measured now, not at mount. The scene is still at opacity 0 at this instant — .rv
+            // hides it until its entry animation runs — but opacity does not affect layout, so the
+            // rect is already the real one, and reading it here means a resize during the intro
+            // cannot leave the agent aiming at a stale position.
+            const b = brandIcon!.getBoundingClientRect()
+            toX = b.left + b.width / 2
+            toY = b.top + b.height / 2
+
+            // A BITMAP, NOT PER-PIXEL RECTS, and this is the whole reason the shrink works.
+            // drawLogo paints each cell at `round(cell * dpr) - 2` device px with a hard floor of
+            // 2, so below a cell of 2/dpr the logo stops getting smaller — at 120 cells that floor
+            // is a ~120px logo against an ~18px mark, and the last third of the travel was spent
+            // visibly not shrinking (Appy: "it doesn't scale down properly... can we scale it down
+            // more, so it feels more like it's going inside the laptop").
+            // Stamping the artwork once into an offscreen canvas and scaling THAT has no floor:
+            // it goes to any size, and the browser's own downsampling softens the pixel grid as it
+            // gets small, which is what something disappearing into a mark should do anyway.
+            stampCss = (cells + 2) * bigCell
+            const c = document.createElement('canvas')
+            c.width = Math.ceil(stampCss * dpr)
+            c.height = c.width
+            const g = c.getContext('2d')
+            if (g) drawLogo(g, stampCss / 2, stampCss / 2, bigCell, null, null)
+            stamp = c
+            toScale = b.width / stampCss
+
+            // Both on the same frame: the backdrop begins its 1s dissolve and the page begins its
+            // staged entry, which starts with the scene (.d0). The laptop is therefore rising into
+            // place underneath the agent while the agent is on its way into it.
+            backdropEl!.classList.add('gone')
+            root!.classList.add('revealed')
+          }
+          if (stamp) {
+            const u = easeInOut((t - T7) / PH.land)
+            const size = stampCss * (1 + (toScale - 1) * u)
+            // Opaque for the first 70%: the SCALE carries the journey now, so fading early would
+            // hide the very thing that makes it read as going into the machine.
+            cctx!.globalAlpha = 1 - clampT((u - 0.7) / 0.3)
+            const x = lerp(cx0, toX, u) - size / 2
+            const y = lerp(cy0, toY, u) - size / 2
+            cctx!.drawImage(stamp, x * dpr, y * dpr, size * dpr, size * dpr)
+            cctx!.globalAlpha = 1
+          }
         } else {
           finish()
           return
@@ -379,7 +407,10 @@ export default function useBootIntro(onDone: () => void) {
       timers.push(setTimeout(finish, T8 + 2600))
     }
 
-    if (reduced) { finish() } else { startIntro() }
+    // NO TARGET, NO LANDING. The scene only exists on the signed-out homepage; if it is ever
+    // absent the agent has nothing to fly into, and travelling to a measured rect of {0,0,0,0}
+    // would send it to the top-left corner. It fades on the spot instead.
+    if (reduced || !brandIcon) { finish() } else { startIntro() }
 
     return () => {
       // Unmount (or StrictMode's dev re-mount): stop everything and put body back. `finished`

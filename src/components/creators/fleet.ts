@@ -1,6 +1,8 @@
-// The fleet roster — DATA ONLY, its own module for the same reason machines.ts is (see that
-// file's header: Fast Refresh preserves module state for non-component exports living in a
-// component file, and that cost a debugging round on 2026-08-19).
+// The fleet roster — DATA ONLY, in its own module rather than inside FleetSection.tsx. The reason
+// is a real defect, not tidiness: Fast Refresh preserves module state for non-component exports
+// that live in a component file, so editing the data left the browser running the OLD array
+// against the NEW markup. That cost a debugging round on 2026-08-19 on the machine roster this
+// pattern was learned from (machines.ts, deleted 2026-08-20 with the rotating stage).
 
 export type FleetCard = {
   id: string

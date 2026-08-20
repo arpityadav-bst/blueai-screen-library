@@ -13,11 +13,12 @@ import { useCallback, useEffect, useRef } from 'react'
 // completed row carries its own "+$X", and the chip that flies out of it makes the running total
 // visibly the sum of those rows rather than a number that just goes up.
 //
-// ONE DELIBERATE OMISSION remains:
-//   · NO "Working:" PREFIX and none of "watching" / "liking" / "commenting" in the task names.
-//     Both rules were set on 2026-08-20 for the machine strip and they are page-wide, not
-//     strip-wide: naming the engagement mechanic turns an AI worker earning from brands into a bot
-//     farming a video, whichever surface says it.
+// THE LOOP IS THE PM BRANCH'S, not a blend of it and this file's earlier version: whole-dollar
+// pays from a base of 118, its faster beats, and its generic "Working on it" work line. Two
+// behaviours are deliberately NOT theirs, and both are Appy's own later instructions rather than
+// my preference — the scene enters first in the staged entry (the intro's agent docks into
+// #lap-screen and cannot land in something that has not arrived), and a completed task goes
+// straight to the stack instead of pausing on an interim "Done" row, which he cut for speed.
 //
 // DIRECT DOM BY ID, EXACTLY LIKE THE MOCK — deliberately not React state. A progress bar ticking
 // every 120ms as state would re-render the page for nothing, and the markup it mutates is static
@@ -26,14 +27,14 @@ import { useCallback, useEffect, useRef } from 'react'
 // WHAT THE PORT ADDS that the mock didn't need: cleanup. The mock's page never unmounts; this
 // component does (and StrictMode mounts twice in dev). Every timer/interval registers into one set
 // and an `alive` flag gates every continuation, so unmount genuinely stops the loop.
-const PAYS = [0.4, 0.6, 1, 1.5]
-const BEATS = { brand: 1500, approvalAsk: 1400, approved: 1100 }
-const TASKS = [
-  'Running the campaign task',
-  'Finishing a three-minute job',
-  'Wrapping a creator collab',
-  'Closing out a Q&A clip',
-]
+/* WHOLE DOLLARS, BASE 118 — the mock's own demo figures, and the PM branch's, which is where the
+   scene markup now comes from: it ships `$118` as the pill's static value, so a loop paying in
+   cents would tick 118 -> 118.60 on the first payout and read as a bug. The two have to agree,
+   and the markup is the half that was taken verbatim. */
+const PAYS = [2, 3, 5, 8, 12, 20, 30]
+/* the PM branch's pacing too — a third quicker than this file's, and the hero is the one place
+   on the page where the loop is competing with a headline for attention */
+const BEATS = { brand: 1000, approvalAsk: 800, approved: 600 }
 
 /* F27: SVG check instead of the &#10003; font glyph (stroke currentColor -> .tick's mint) */
 const TICK =
@@ -47,7 +48,7 @@ export default function useLaptopFx() {
   const intervalsRef = useRef<Set<ReturnType<typeof setInterval>>>(new Set())
   /** The running total behind the pill. A ref, not state: the pill is mutated by id like the rest
       of the scene, so re-rendering the page on every payout would buy nothing. */
-  const earnedRef = useRef(18) /* F3a */
+  const earnedRef = useRef(118)
 
   const later = useCallback((fn: () => void, ms: number) => {
     const id = setTimeout(() => {
@@ -104,7 +105,7 @@ export default function useLaptopFx() {
     // nothing would hide that instead of surfacing it.
     if (!workingEl || !stackEl || !amountEl || !earningsEl || !scene) return
 
-    const fmt = (n: number) => '$' + n.toFixed(2) /* F3a */
+    const fmt = (n: number) => '$' + n
     const pay = () => PAYS[Math.floor(Math.random() * PAYS.length)]
 
     function doneRow(p: number) {
@@ -157,7 +158,6 @@ export default function useLaptopFx() {
       workingEl!.innerHTML = ''
       workingEl!.appendChild(row)
 
-      const task = TASKS[Math.floor(Math.random() * TASKS.length)] /* F15 */
       const label = (html: string) => { row.innerHTML = '<span class="lbl">' + html + '</span>' }
 
       label('Getting a task from a brand&hellip;')
@@ -166,8 +166,13 @@ export default function useLaptopFx() {
       later(work, BEATS.brand + BEATS.approvalAsk + BEATS.approved)
 
       function work() {
+        // "Working on it", not a named task — the PM branch's line, and this file's whole hero
+        // now comes from there. Four rotating task names were my substitution and they were the
+        // wrong call twice over: the strip already says which machine and what it earned, so the
+        // name was the one part carrying no information, and a generic line lets the progress bar
+        // be the thing you read.
         row.innerHTML =
-          '<span class="lbl">' + task + '&hellip;</span>' +
+          '<span class="lbl">Working on it&hellip;</span>' +
           '<span class="bar"><i></i></span>'
         const bar = row.querySelector('.bar > i') as HTMLElement
         let progress = 0

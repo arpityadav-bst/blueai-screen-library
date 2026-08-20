@@ -83,7 +83,8 @@ body.crx-lock { overflow: hidden; }
 .crx main > .rv { position: relative; z-index: 1; }
 
 .crx main {
-  position: relative;
+  /* position/z-index are set with the rest of the page's content lift, further down (see the
+     ambient backdrop block) — kept there so the whole stack is stated in one place. */
   max-width: 1100px;
   margin: 0 auto;
   /* bottom 8rem: the fleet left <main> to become its own section, so this is the hero's half of
@@ -154,6 +155,25 @@ body.crx-lock { overflow: hidden; }
 }
 .crx .sub b { color: var(--ink-inverse); font-weight: 650; }
 
+/* The returning-user door under the CTA (creator-brand Hero.tsx's recipe on this dark page):
+   small, muted, link-styled — findable by the person already looking for it, invisible to
+   everyone else. */
+.crx .hero-signin {
+  margin: 1rem 0 0;
+  font-size: 0.84rem;
+  color: var(--dim);
+}
+.crx .hero-signin button {
+  font: inherit; font-weight: 600;
+  color: var(--ink-inverse);
+  background: none; border: none; padding: 0;
+  cursor: pointer;
+  text-decoration: underline; text-underline-offset: 3px;
+  transition: color 0.15s ease;
+}
+.crx .hero-signin button:hover { color: #fff; }
+.crx .hero-signin button:focus-visible { outline: 2px solid #a78bff; outline-offset: 3px; border-radius: 3px; }
+
 .crx .btn {
   font: inherit; font-weight: 700; font-size: 1.05rem;
   color: #fff;
@@ -174,53 +194,25 @@ body.crx-lock { overflow: hidden; }
 .crx .btn:active { transform: translateY(0); box-shadow: 0 6px 18px -6px rgba(95, 70, 255, 0.6); }
 .crx .btn:focus-visible { outline: 2px solid #a78bff; outline-offset: 3px; }
 
-/* ---------------- machine stage (2026-08-19, rebuilt as cutouts) ----------------
-   Replaced the mock's CSS-drawn desk + laptop + on-screen task rows (all deleted with that edit:
-   the scene, desk, laptop, lap-screen, scr- and task rules are gone, not orphaned).
+/* The rotating machine stage lived here until 2026-08-20 — five cutouts passing left to right
+   under a live task strip, with their own directional-blur transitions, rolling line viewport,
+   progress rail, payout tag and green start-pulse. All of it went when the section became a single
+   still (.sleep-scene, further down): the frame and pool, the images, the strip, the loop
+   (useMachineFx), the roster (machines.ts) and the component. Removed rather than parked — a stage
+   nothing renders is a stage the next reader has to work out is dead. */
 
-   NO EDGE MASK HERE, DELIBERATELY. The first version rendered whole 16:9 images and tried to
-   dissolve their edges with a radial mask; it read as a slide laid on the page, because the
-   image's own rectangle was still there. These are background-removed PNGs cropped to their alpha
-   bbox — the file IS the object. There is no edge to hide, so there is nothing to mask, and
-   re-adding a mask would only eat the object. (The couch photo further down still uses a mask;
-   that one genuinely is a photograph with a background.)
-
-   BOTTOM-ANCHORED, so the five machines share one invisible ground line: object-position centers
-   them horizontally and pins them to the frame's floor. That is what lets a single task bar sit
-   equally close to a tall striding robot and a wide low car without moving. */
-/* No top margin any more: in the hero this hung off the CTA above it, but here it is the first
-   thing in its section and the section's own padding is the space. */
-.crx .crx-stage {
-  position: relative;
-  /* 1180, was 980 — the section widened to 1320 and the stage is what the extra room is for. */
-  width: min(1180px, 100%);
-  margin: 0 auto;
-}
-.crx .crx-stage-frame {
-  position: relative;
-  /* 430, was 360 — scaled with the stage around it so the machines gain height, not just
-     sideways room; the per-machine `fit` values are fractions of this, so all five grow
-     together and none of the framing work has to be redone. */
-  height: 430px;
-}
-/* the cutouts carry no ground of their own, so the page lends them one — a soft violet pool that
-   reads as light pooling under the object rather than as a shadow it cannot cast.
-   RAISED 2026-08-20 with the switch to centred framing: the machines no longer stand on the
-   frame's floor, they end somewhere between 306 and 335 of its 360px, so a pool pinned below the
-   floor sat in empty space with a gap between it and the thing it was meant to be lighting. */
-.crx .crx-stage-pool {
-  position: absolute; left: 50%; bottom: 18px; transform: translateX(-50%);
-  width: 62%; height: 120px; pointer-events: none;
-  background: radial-gradient(50% 100% at 50% 100%, rgba(123, 76, 255, 0.30), rgba(14, 164, 197, 0.10) 45%, transparent 72%);
-  filter: blur(6px);
-}
 /* ---------------- scene: desk + PC, centered ----------------
-   RESTORED 2026-08-20, verbatim from fef5388 (Appy: "bring back what we had in the hero, the CSS
-   laptop implementation"). It was deleted on 2026-08-19 when the rotating photoreal machines took
-   the hero; those now live in the sleep section, and this is the hero again.
-   Two things did NOT come back with it: the .earnings pill that floated at the PC's shoulder
-   (Appy removed it 2026-08-19 and it stays removed), and the .chip flight that only existed to
-   fly money into that pill. Money is told per completed row instead — see .task .pay below. */
+   TAKEN VERBATIM FROM THE PM's apply-form-first-wave BRANCH (Appy, 2026-08-20: "use the hero
+   section laptop implementation from this repo link that the PM shared"). Both branches restored
+   the same mock scene independently, so the geometry already matched; theirs is the one that has
+   been iterated on since, and taking the whole block rather than diffing it is what guarantees
+   the hero looks like the one he was shown.
+
+   IT ALSO FIXES A REAL BUG. The .earnings pill and the .chip money-flight were deleted from this
+   file earlier the same day, as collateral in the removal of the machine stage — the stage's task
+   strip and the pill sat in one contiguous run and the deletion was bounded by the strip's
+   markers, not the pill's. The symptom was the pill rendering as unstyled inline text reading
+   "Earned$44.40" over the sky. They are back here because they are part of this block. */
 .crx .scene {
   position: relative;
   width: min(980px, 100%); /* F7: 96vw overflowed main's padded box below ~1200px */
@@ -328,242 +320,30 @@ body.crx-lock { overflow: hidden; }
 .crx #stack .task:nth-child(2) { opacity: 0.7; }
 .crx #stack .task:nth-child(3) { opacity: 0.45; }
 
-/* THE HANDOFF IS A PASS, NOT A DISSOLVE (Appy, 2026-08-20: "can the rotation be done with some
-   motion blurring... instead of simple fade in fade out"). Three states, not two, because a
-   crossfade has no direction and motion blur without direction is just soft focus:
-     · default  = the NEXT machine, waiting off to the left, blurred;
-     · .on      = arrived, sharp, still;
-     · .out     = the machine that just handed off, continuing away to the right, blurring again.
-   So the fleet reads as one queue moving through the stage in one direction, which is what the
-   loop actually models — each machine finishes its task and hands the job to the next.
+/* THE SCREEN LIGHTS UP SEPARATELY from the laptop arriving — the PM branch's rule, and it came
+   back with their markup (the .scr-ui wrapper would otherwise be a class with nothing behind it).
+   It earns its place here for a reason that did not exist on their branch: .revealed is added the
+   instant the intro agent begins its descent, so the screen fades up over 0.6s while the agent is
+   still on its way into it. The machine boots as the thing that runs it arrives. */
+.crx .scr-ui { opacity: 0; transition: opacity 0.6s ease 0.25s; }
+.crx.revealed .scr-ui { opacity: 1; }
 
-   LEFT TO RIGHT, not right to left (Appy, 2026-08-20). Same direction the page is read in, so the
-   queue moves WITH the eye instead of against it — the first version pushed each machine back
-   against the reading direction, which is what made the motion read as a carousel being scrubbed
-   rather than a line advancing.
-
-   BLUR AND TRAVEL ARE ONE GESTURE. CSS has no directional blur, so the lateral travel is what
-   supplies the direction and blur() supplies the smear; either alone reads wrong (a slide with no
-   blur is a slideshow, a blur with no slide is a lens rack). Peak blur lands where opacity is
-   lowest and the object is moving fastest, which is also where it is least legible — correct both
-   physically and for reading.
-
-   BOTH ENDS DECLARE blur(), one at 0px. A filter list only interpolates against a list with the
-   same functions in the same order — `drop-shadow(…)` transitioning to `drop-shadow(…) blur(18px)`
-   does not animate at all, it snaps.
-
-   EACH STATE OWNS ITS OWN TIMING, which is the fix for "it feels like it's going left and coming
-   from left" (Appy, 2026-08-20) even though the geometry already ran left to right. The first
-   version put one transition on the base rule, so the exit and the entrance were simultaneous and
-   identically eased — and because opacity reached 0 before the travel finished, the departure was
-   over before you could see which way it went. The only motion you could actually read was the
-   arrival, which is ambiguous on its own. Now the outgoing machine LEAVES FIRST, accelerating
-   (ease-in) and holding opacity long enough to be seen crossing to the right, and the incoming one
-   starts a beat later, decelerating into place. Leaving accelerates, arriving decelerates — that
-   asymmetry is what names the direction.
-
-   TRAVEL IS 118px, not 64. Under blur, a short slide reads as a wobble; the distance has to be
-   long enough that the eye tracks it as travel.
-
-   THE BASE RULE HAS NO TRANSITION on purpose: it is also the state a machine returns to when .out
-   is cleared, and that return must be an instant snap back to the waiting slot on the left. With a
-   transition there, every machine quietly slid right-to-left across the stage at opacity 0 after
-   each handoff — invisible, but paying for a composite, and one opacity bug away from visible. */
-.crx .crx-machine {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
-  object-fit: contain;
-  /* TOP-aligned, not bottom: the crop mask (MachineStage's inline style) is expressed in the
-     element box's coordinates, so the cutout has to start at the box's top or the dissolve lands
-     somewhere other than where the data says. At these sizes every cutout is height-bound and
-     fills the box exactly, making the two identical; they diverge only on a narrow viewport, where
-     width binds and top-alignment is what keeps the crop honest. */
-  object-position: center top;
-  opacity: 0;
-  transform: translateX(-118px) scale(0.985);
-  transition: none;
-  /* the cutouts are lit violet/cyan already; this just seats them in the page's own light */
-  filter: drop-shadow(0 26px 42px rgba(0, 0, 0, 0.55)) blur(18px);
-}
-.crx .crx-machine.on {
-  opacity: 1;
-  transform: none;
-  filter: drop-shadow(0 26px 42px rgba(0, 0, 0, 0.55)) blur(0px);
-  /* arrives late and decelerating — the delay is what lets the exit be seen */
-  transition:
-    opacity 0.5s ease 0.26s,
-    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.26s,
-    filter 0.5s ease 0.26s;
-}
-.crx .crx-machine.out {
-  opacity: 0;
-  transform: translateX(118px) scale(0.985);
-  filter: drop-shadow(0 26px 42px rgba(0, 0, 0, 0.55)) blur(18px);
-  /* leaves immediately and accelerating; opacity trails the travel so the exit is legible */
-  transition:
-    opacity 0.52s ease-in 0.14s,
-    transform 0.66s cubic-bezier(0.45, 0, 1, 1),
-    filter 0.5s ease-in 0.1s;
-}
-
-/* The floating money/action badges that hung off each machine's silhouette were REMOVED
-   2026-08-20 (Appy: the stage moved to the sleep section "without badges"). Their whole apparatus
-   went with them rather than being left unstyled or unwired: the .crx-badge rules, the bob
-   keyframes, the per-machine badge data and `ratio` in machines.ts, and the contain-rect maths,
-   generation counter and resize listener in the loop. Every one of those existed only to place a
-   badge. */
-
-/* THE TASK BAR — a status strip belonging to the machine above it.
-   RIDES THE LOWER EDGE of the object (Appy: "shift it a bit up on lower area of the images"): the
-   negative margin pulls it over the bottom of the frame so it reads as that machine's status, not
-   the stage's. Its blur keeps the object legible underneath.
-   FIXED WIDTH, NOT fit-content (Appy, both directions): 560px read as too wide, but fit-content
-   then resized the strip on every beat — the text changes four times a task, so the bar breathed
-   in and out constantly. A fixed 468px is the stable answer: narrow enough to read as a strip,
-   wide enough to hold the longest line without ellipsis — which is now "Finishing a three-minute
-   job…" at 29 characters, next to the longest label, "WHATEVER'S NEXT". A 36-character line is the
-   budget the beat copy in machines.ts is written against; dropping the "Working:" prefix bought
-   most of the headroom the fuller sentences spend. The ellipsis stays as a safety net only.
-   BASELINE-ALIGNED: the label is small-caps mono and the task line is 0.92rem body — centring them
-   left their baselines a couple of px apart, visible as a wobble across one row of text. The mark
-   and the tick opt out, having no baseline of their own.
-   FIXED HEIGHT BY CONSTRUCTION: the progress rail is absolutely pinned to the bar's bottom edge
-   rather than being a child of the text column. That is what stops the bar (and everything under
-   it) from jumping every time a task starts or ends, and it is why the rail spans the whole strip
-   instead of starting wherever the text starts. */
-.crx .crx-taskbar {
-  position: relative; z-index: 4; overflow: hidden;
-  margin: -1.9rem auto 0;
-  /* 520, was 468 — the stage widened, and this only ever ellipsed because it was tight.
-     The ~36-character copy budget in machines.ts is now headroom rather than a ceiling. */
-  width: min(520px, 100%);
-  display: flex; align-items: center; gap: 0.55rem;
-  padding: 0.62rem 0.95rem 0.68rem;
-  border-radius: 14px;
-  background: rgba(13, 18, 48, 0.78);
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 14px 40px -16px rgba(0, 0, 0, 0.7);
-  text-align: left;
-}
-/* NAME — carries the brand now that the logo mark is gone (Appy, 2026-08-19), painted in the
-   page's own gradient. That also settles the "both are bright white" problem structurally: the
-   name is gradient, the task line is plain near-white, so they read as two different KINDS of
-   thing rather than two sizes of the same thing. */
-/* ONE GREEN BLINK when a task starts (Appy, 2026-08-20). Peaks fast and decays slowly, which is
-   what makes it read as an event rather than a throb, and it touches only the border and the glow
-   — tinting the whole strip green would say "success", and step 1 is the opposite of that.
-   The resting values in the 0%/100% frames are copied from .crx-taskbar above; an animation that
-   omits them would snap the border to its own default for a frame at each end. */
-@keyframes crx-bar-pulse {
-  0% {
-    border-color: rgba(255, 255, 255, 0.10);
-    box-shadow: 0 14px 40px -16px rgba(0, 0, 0, 0.7);
-  }
-  20% {
-    border-color: rgba(52, 227, 154, 0.5);
-    box-shadow: 0 14px 40px -16px rgba(0, 0, 0, 0.7), 0 0 20px -4px rgba(52, 227, 154, 0.32);
-  }
-  100% {
-    border-color: rgba(255, 255, 255, 0.10);
-    box-shadow: 0 14px 40px -16px rgba(0, 0, 0, 0.7);
-  }
-}
-.crx .crx-taskbar.pulse { animation: crx-bar-pulse 1.1s ease-out both; }
-.crx .crx-taskbar-machine {
-  flex-shrink: 0;
-  font-family: var(--mono); font-size: 0.68rem; font-weight: 700;
-  letter-spacing: 0.1em; text-transform: uppercase;
-  background: var(--grad-bright);
-  -webkit-background-clip: text; background-clip: text;
-  -webkit-text-fill-color: transparent; color: transparent;
-}
-/* the step marker — 1, 2, 3 through the lifecycle, so the strip reads as progress and not as a
-   status line that happens to keep changing */
-/* The hairline that separates the name from what it is doing — ITS OWN ELEMENT. It was briefly
-   folded onto the step badge as a border-left + padding-left, which deformed that 17px circle into
-   a wide pill (and the badge's own `border` shorthand overrode the rule anyway, so it bought a
-   broken shape and no divider). A separator is a separator; a badge is a badge. */
-.crx .crx-taskbar-sep {
-  flex-shrink: 0; align-self: center;
-  width: 1px; height: 15px;
-  background: rgba(255, 255, 255, 0.16);
-}
-/* The numbered step badge that sat between the hairline and the sentence was removed 2026-08-20
-   (Appy). It counted the lines while the lines were already counting themselves by replacing each
-   other, so it restated the animation in digits. Its rules go with it — including the extra
-   viewport height below, which existed only to clear a 19px circle. */
-/* legibility (Appy): was 0.8rem at --dim (72% alpha) over a busy image — lifted to 0.92rem and a
-   near-solid ink, since this line sits ON the machine rather than on clean background */
-/* A ROLLING VIEWPORT, not a text node (Appy, 2026-08-19): each beat replaces the last by pushing
-   it up and out while the new line rises from below, so the strip reads as a sequence advancing
-   rather than as one label being overwritten. Fixed height + overflow:hidden is what makes the
-   travel clip instead of shoving the bar around.
-   The ROW switched to centre alignment with this: a clipped box has no stable text baseline to
-   share (flexbox synthesises one from its bottom edge), so the earlier baseline alignment would
-   have pulled the whole row crooked the moment this became a viewport. */
-.crx .crx-taskbar-text {
-  position: relative; min-width: 0; flex: 1;
-  display: block; overflow: hidden;
-  height: 1.4em; line-height: 1.4;
-  font-size: 0.92rem; font-weight: 500; color: rgba(232, 238, 255, 0.96);
-}
-.crx .crx-line {
-  position: absolute; inset: 0;
-  display: flex; align-items: center; gap: 0.4rem;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.crx .crx-line .tk { display: inline-flex; flex-shrink: 0; color: var(--mint); }
-@keyframes crx-line-in {
-  from { transform: translateY(115%); opacity: 0; }
-  to { transform: none; opacity: 1; }
-}
-@keyframes crx-line-out {
-  from { transform: none; opacity: 1; }
-  to { transform: translateY(-115%); opacity: 0; }
-}
-.crx .crx-line.in { animation: crx-line-in 0.44s cubic-bezier(0.22, 1, 0.36, 1) both; }
-.crx .crx-line.out { animation: crx-line-out 0.44s cubic-bezier(0.22, 1, 0.36, 1) both; }
-.crx .crx-taskbar-tag {
-  flex-shrink: 0;
-  font-family: var(--mono); font-size: 0.64rem; font-weight: 700;
-  letter-spacing: 0.1em; text-transform: uppercase;
-  font-variant-numeric: tabular-nums;
-}
-.crx .crx-taskbar-tag:empty { display: none; }
-/* only one variant now: the "Soon" tag was removed with the "Working:" prefix (Appy, 2026-08-20,
-   "keeping them simple"), so a non-paying machine simply finishes with no tag at all. */
-.crx .crx-taskbar-tag.pay { color: var(--mint); }
-/* the rail: always present, zero layout cost, full width of the strip */
-.crx .crx-taskbar-track {
-  position: absolute; left: 0; right: 0; bottom: 0;
-  height: 2px; background: rgba(255, 255, 255, 0.07);
-}
-.crx .crx-taskbar-track > i {
-  display: block; height: 100%; width: 0%;
-  background: var(--grad-bright);
-  transition: width 0.18s linear, opacity 0.4s ease;
-}
-/* idle: the fill fades out rather than snapping back to zero width */
-.crx .crx-taskbar-track:not(.on) > i { opacity: 0; }
-
-/* EARNINGS PILL — the white card at the PC's shoulder, and the money chips that fly into it.
-   Removed 2026-08-19, restored 2026-08-20 (Appy: "bring back that white rectangle... which was
-   getting the money added to it"). Verbatim from fef5388, including both of the shaping notes it
-   already carried:
-     · SLEEKENED (Appy, 2026-08-19: "remove dollar icon here and make this more sleek") — the coin
-       circle is gone, so it is label+amount stacked tight with no icon column to balance around.
-       Lighter too: the money-tinted glow read as one more heavy glow on a page already carrying
-       several, and a plain close neutral shadow reads as a real UI element rather than an effect.
-     · SHAPE = rectangle with a round radius, NOT a stadium pill (Appy: "slimmer and sleeker and
-       rectangle with round radius") — 14px is the page's own card radius (.fcard, .crx-panel), so
-       it reads as a small card.
-   The chip is the only reason .scene needs to be a positioning context AND the only consumer of
-   flyChip's scale correction (see useLaptopFx). */
+/* earnings pill, floats at the PC's shoulder — SLEEKENED 2026-08-19 (Appy: "remove dollar icon
+   here and make this more sleek"): the coin circle is gone, so the pill is now just label+amount
+   stacked tight, no icon column to balance around. Lighter too — the money-tinted glow shadow read
+   as one more heavy glow on a page already carrying several (the anti-slop audit's own flag);
+   a plain, closer, neutral shadow reads as a real UI element rather than another effect. */
+/* SHAPE = rectangle-with-round-radius, NOT a full pill (Appy, 2026-08-19: "slimmer and sleeker
+   and rectangle with round radius") — 14px matches the page's own card radius scale (.slot,
+   .crx-panel), reading as a small card rather than a stadium-shaped badge. Padding tightened for
+   the slimmer ask; gap collapsed to 0 since label+amount now read as one compact block, not two
+   spaced lines. */
 .crx .earnings {
-  /* 176px, was 170 (Appy, 2026-08-20: shift it 6px right) — measured off the scene centre, not
-     the laptop, so it holds wherever the lid lands. */
+  /* 176, NOT the source block's 170 (Appy, 2026-08-20, asked twice). This is the one value in this
+     block that is deliberately NOT the PM branch's: he nudged it 6px right, then taking their scene
+     wholesale reset it and he had to ask again. If this block is ever re-copied from there, put the
+     6px back. Offset from the SCENE's centre rather than the laptop, so it holds wherever the lid
+     renders. */
   position: absolute; left: calc(50% + 176px); top: 26px; z-index: 4;
   display: flex; flex-direction: column; align-items: flex-start; gap: 0;
   background: #ffffff;
@@ -571,7 +351,7 @@ body.crx-lock { overflow: hidden; }
   padding: 0.4rem 0.85rem;
   box-shadow: 0 8px 22px -8px rgba(0, 0, 0, 0.35);
 }
-.crx .earnings .label { font-family: var(--mono); font-size: 0.56rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5c6678; /* F10/F17: 3.77:1 captioning the money proof */ }
+.crx .earnings .label { font-family: var(--mono); font-size: 0.56rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5c6678; /* F10/F17: was 0.56rem #7a8496 — 3.77:1 captioning the money proof */ }
 .crx .earnings .amount { font-size: 1.05rem; font-weight: 800; color: #0f9d58; font-variant-numeric: tabular-nums; }
 .crx .earnings.bump { animation: crx-bump 0.35s ease; }
 @keyframes crx-bump { 40% { transform: scale(1.09); } }
@@ -584,8 +364,8 @@ body.crx-lock { overflow: hidden; }
   transition: transform 0.7s cubic-bezier(0.3, 0.7, 0.4, 1), opacity 0.7s ease;
 }
 
-/* the stage's mobile rules live in the consolidated 880px block at the END of the file —
-   several of their base rules (.time-chip, main's padding) are declared later at equal
+/* the scene's mobile rules live in the consolidated 880px block at the END of the file —
+   several of their base rules (.slot, .time-chip, main's padding) are declared later at equal
    specificity and would win the source-order tie against a block placed here */
 
 /* ---------------- fleet: one worker, every machine ----------------
@@ -757,6 +537,83 @@ body.crx-lock { overflow: hidden; }
   background: var(--mint); box-shadow: 0 0 8px var(--mint);
 }
 
+/* ── Ambient backdrop (Backdrop.tsx) — three drifting orbs + the rotating logo star ──
+   A COPY of creator-brand's .cb-backdrop / .cb-orb / .cb-star (Appy, 2026-08-20). Geometry is
+   constant for constant; the COLOUR is not, and could not be: that page is #F9F9FA and this one is
+   a near-black sky, so every alpha there was tuned against the opposite surface.
+     · The orbs read as glows here rather than as washes, so the layer opacity comes down from 0.34
+       — this page already carries two large radial glows in its own background (#crx), and three
+       more at the original strength turn the whole thing to soup.
+     · The star inverts outright. It is rgba(iris, .055) there, a violet ghost on white; the same
+       colour on this sky is not faint, it is absent. It takes the page's own gradient-start
+       lavender instead, at an alpha that keeps it a ghost.
+
+   z-index 0, and the page content is lifted to 1 below. The header (60), the intro backdrop (70)
+   and the intro canvas (80) are all far above it and unaffected. */
+.crx .crx-bd {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  /* starts hidden and is written by the scroll gate — 0 here rather than 1 so the hero is clean
+     on first paint, before any scroll event has ever fired */
+  opacity: 0;
+}
+.crx .crx-orb {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 46vw;
+  height: 46vw;
+  max-width: 720px;
+  max-height: 720px;
+  border-radius: 50%;
+  filter: blur(96px);
+  opacity: 0.26;
+  will-change: transform;
+}
+.crx .crx-orb-iris { background: radial-gradient(circle at center, rgba(123, 76, 255, 0.55), transparent 68%); }
+.crx .crx-orb-cyan { background: radial-gradient(circle at center, rgba(14, 164, 197, 0.5), transparent 68%); }
+.crx .crx-orb-blue { background: radial-gradient(circle at center, rgba(110, 168, 255, 0.44), transparent 68%); }
+.crx .crx-star {
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  width: 36vw;
+  max-width: 460px;
+  height: auto;
+  color: rgba(167, 139, 255, 0.055);
+  /* BLURRED, unlike the original (Appy, 2026-08-20: "can we make the sparkle blur behind things —
+     content cards in this case"). The cards it sits behind are barely-there surfaces
+     (rgba(255,255,255,.035)), so a crisp shape reads straight THROUGH them and its edges cut
+     across the card as if it were on top. Out of focus it stops competing: the eye files it as
+     depth rather than as a second layer of content.
+     Cheap despite the size, because this element is not continuously animated — its transform is
+     written by the scroll handler, so the blur is only recomputed on frames where you are already
+     scrolling. */
+  filter: blur(22px);
+  will-change: transform;
+}
+@media (max-width: 720px) {
+  /* the original's own mobile rule: the star pins to the top-right and goes large, so only its
+     left half is on screen and it reads as a slow gear turning at the edge rather than a shape
+     sitting behind the text */
+  .crx .crx-star { left: 100%; top: 14vh; width: 92vw; max-width: none; color: rgba(167, 139, 255, 0.075); }
+}
+/* CONTENT RIDES ABOVE THE LAYER, and it has to be said explicitly. Every section on this page is
+   static, and static content paints BELOW a positioned sibling whatever the DOM order — so without
+   this a fixed z-index:0 layer would sit on top of the entire page rather than behind it. */
+.crx main,
+.crx .fleet,
+.crx .sleep,
+.crx .below,
+.crx .closer,
+.crx .crx-apply,
+.crx .crx-full,
+.crx .crx-dash,
+.crx .crx-foot { position: relative; z-index: 1; }
+
 /* ---------------- boot intro: the agent is born, then docks into the PC ----------------
    An opaque backdrop hides the page; the pixel logo (boot.js port) assembles huge in the
    viewport as THE AGENT, introduces itself, then flies down and shrinks into the laptop
@@ -769,7 +626,10 @@ body.crx-lock { overflow: hidden; }
   transition: opacity 1s ease;
 }
 .crx .backdrop.gone { opacity: 0; }
-.crx.revealed .backdrop { display: none; }
+/* .settled, NOT .revealed. `.revealed` is added the instant the agent starts its descent — the
+   whole point, since the laptop has to arrive underneath it — and the backdrop is mid-dissolve at
+   that moment. Removing it on .revealed cut its 1s fade to nothing and the page snapped in. */
+.crx.settled .backdrop { display: none; }
 
 .crx #core-cv {
   /* width/height 100% is load-bearing: without it the canvas renders at its
@@ -806,7 +666,6 @@ body.crx-lock { overflow: hidden; }
 @keyframes crx-hintIn { to { opacity: 1; } }
 .crx.revealed .skip { display: none; }
 
-
 /* STAGED BLUR ENTRY once the agent has faded (Appy, 2026-08-19).
    Ported from blueai-product's moneymaker onboarding, values and all: easing
    cubic-bezier(0.22,1,0.36,1), title blurs in from 10px, blocks rise 24-30px out of an 8px blur,
@@ -836,12 +695,20 @@ body.crx-lock { overflow: hidden; }
 
 /* hidden until the agent hands over; `both` holds the from-state so nothing flashes pre-reveal */
 .crx .rv { opacity: 0; }
+/* THE SCENE GOES FIRST NOW (Appy, 2026-08-20). The order was title -> sub -> CTA -> scene until the
+   intro's agent started docking into the laptop again: it cannot land in something that has not
+   arrived yet, so the scene takes slot .d0 at zero delay and everything else keeps its order behind
+   it. The delays are one step later across the board as a result.
+   .d0's 0.85s duration is matched to the intro's 900ms descent — the laptop is settled by roughly
+   the frame the agent reaches it, which is what makes the two read as one movement rather than as
+   a landing on top of an animation. */
 .crx.revealed .rv { animation: crx-rise-in 0.75s cubic-bezier(0.22, 1, 0.36, 1) both; }
-.crx.revealed .d1 { animation: crx-title-in 0.9s cubic-bezier(0.22, 1, 0.36, 1) both; }
-.crx.revealed .d2 { animation-delay: 0.5s; }
-.crx.revealed .d3 { animation: crx-cta-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.95s both; }
-.crx.revealed .d4 { animation-duration: 0.85s; animation-delay: 1.3s; }
-.crx.revealed .d5 { animation-delay: 1.85s; }
+.crx.revealed .d0 { animation-duration: 0.85s; }
+.crx.revealed .d1 { animation: crx-title-in 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.5s both; }
+.crx.revealed .d2 { animation-delay: 0.95s; }
+.crx.revealed .d3 { animation: crx-cta-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) 1.35s both; }
+.crx.revealed .d4 { animation-delay: 1.7s; }
+.crx.revealed .d5 { animation-delay: 2.05s; }
 
 /* SCROLL ENTRY for everything below the hero — the hero's own recipe, triggered by arrival rather
    than by a timeline (useScrollReveal adds `.in` once, then unobserves). Same keyframe, same
@@ -894,6 +761,57 @@ body.crx-lock { overflow: hidden; }
    keeping it ragged. The paragraph also needs `margin: 0 auto`: text-align centres the lines
    inside its box, but the box is capped at 46ch and would otherwise sit hard against the section's
    left edge with the text neatly centred inside it — which looks like a bug, not a measure. */
+/* the picture, and the caption's distance from it. 1000, was 720: the still went from square to
+   16:9, and a landscape frame at a portrait frame's width is a letterbox rather than a scene. */
+.crx .sleep-scene {
+  position: relative;   /* the machine labels are placed against this box */
+  width: min(1000px, 100%);
+  margin: 0 auto;
+  border-radius: 22px;
+  overflow: hidden;
+  /* the render's own corners are near-black and this page's sky is not, so the tile needs an edge
+     of its own or it reads as a hole rather than as a framed image */
+  box-shadow: 0 40px 90px -45px rgba(0, 0, 0, 0.9), inset 0 0 0 1px rgba(255, 255, 255, 0.07);
+}
+.crx .sleep-scene img { display: block; width: 100%; height: auto; }
+
+/* the machine labels. Percentage coords, so they track the image at any width — the frame is
+   fluid and the devices are fixed fractions of it. translate(-50%,-50%) puts the POINT the scan
+   measured at the badge's centre rather than its corner. */
+.crx .sleep-badge {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  padding: 0.3rem 0.66rem;
+  border-radius: 999px;
+  background: rgba(6, 9, 26, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  font-family: var(--mono);
+  font-size: 0.6rem; font-weight: 700;
+  letter-spacing: 0.09em; text-transform: uppercase;
+  color: rgba(226, 233, 255, 0.92);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+}
+/* they arrive after the frame, one at a time. Keyed off the PARENT's reveal class rather than
+   their own, so all five share one observer hit and their order is guaranteed — five independent
+   observers would fire in whatever order the browser happened to notice them. */
+.crx .sleep-scene.in .sleep-badge {
+  animation: crx-badge-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(0.45s + var(--i, 0) * 0.16s);
+}
+@keyframes crx-badge-in {
+  from { opacity: 0; transform: translate(-50%, -50%) translateY(8px) scale(0.94); }
+  to { opacity: 1; transform: translate(-50%, -50%); }
+}
+@media (max-width: 720px) {
+  /* at this width the frame is ~330px and five mono labels across it collide with each other and
+     with the devices they point at; the picture still reads without them */
+  .crx .sleep-badge { display: none; }
+}
 .crx .sleep-copy { margin-top: 3rem; }
 .crx .sleep-copy h2 {
   font-size: clamp(2.05rem, 4.1vw, 3rem); font-weight: 800; line-height: 1.15; /* F4 */
@@ -928,10 +846,6 @@ body.crx-lock { overflow: hidden; }
 .crx .step .n { font-family: var(--mono); font-size: 0.72rem; font-weight: 800; letter-spacing: 0.12em; color: #7da2ff; }
 .crx .step h3 { margin: 0.65rem 0 0.5rem; font-size: 1.2rem; color: #fff; text-wrap: balance; }
 .crx .step p { margin: 0; font-size: 0.98rem; line-height: 1.62; color: var(--dim); text-wrap: pretty; }
-/* the one highlight in the four steps: what you actually get paid. --mint is the page's money
-   colour on dark surfaces; the closer's own "$30 every month" uses #0f9d58 instead because it
-   sits on a light panel. */
-.crx .step p .money { color: var(--mint); font-weight: 700; }
 
 /* F22: 7rem top unifies the section breaks; F21: bottom trimmed to 5rem — the footer sits below now */
 /* SECTION RHYTHM = creator-brand's (Appy, 2026-08-19: "sections are too close... each section
@@ -1105,26 +1019,17 @@ body.crx-lock { overflow: hidden; }
 
 @media (prefers-reduced-motion: reduce) {
   .crx .skip { animation: none; }
-  .crx .rv, .crx .beat, .crx #core-cv { transition: none; }
+  .crx .rv, .crx .scr-ui, .crx .beat, .crx #core-cv { transition: none; }
   /* the staged entry is motion for its own sake — skip straight to the assembled page */
   .crx.revealed .rv, .crx.revealed .d1, .crx.revealed .d3,
   .crx.revealed .crx-header,
   .crx .crx-reveal, .crx .crx-reveal.in { animation: none; opacity: 1; transform: none; filter: none; }
-  .crx .crx-line.in, .crx .crx-line.out { animation: none; }
-  .crx .crx-line.out { display: none; }
-  .crx .crx-taskbar.pulse { animation: none; }
   /* the fleet cards keep their colour reveal — that is information about which machines
      are real — but lose the lift and the pop-out, which are not. */
+  .crx .sleep-scene.in .sleep-badge { animation: none; opacity: 1; }
   .crx .fcard, .crx .fcard:hover { transform: none; }
   .crx .fcard-bay, .crx .fcard:hover .fcard-bay,
   .crx .fcard-bay img, .crx .fcard:hover .fcard-bay img { transform: none; }
-  /* the machine still has to change — it is content, not decoration — so the swap survives as a
-     plain opacity fade with no travel and no blur */
-  .crx .crx-machine, .crx .crx-machine.on, .crx .crx-machine.out {
-    transform: none;
-    filter: drop-shadow(0 26px 42px rgba(0, 0, 0, 0.55));
-    transition: opacity 0.3s ease;
-  }
 }
 
 /* ================= header (Phase 1 — NOT part of the mock port) =================
@@ -1154,7 +1059,7 @@ body.crx-lock { overflow: hidden; }
    the transition fight the keyframe's `both` fill on the first frame. */
 .crx.revealed .crx-header {
   pointer-events: auto;
-  animation: crx-header-drop 0.6s cubic-bezier(0.22, 1, 0.36, 1) 2.35s both;
+  animation: crx-header-drop 0.6s cubic-bezier(0.22, 1, 0.36, 1) 2.5s both;
 }
 .crx .crx-header.scrolled {
   background: rgba(13, 18, 48, 0.78);
@@ -1320,9 +1225,6 @@ body.crx-lock { overflow: hidden; }
   .crx .earnings .label { font-size: 0.9rem; }
   .crx .chip { font-size: 1.15rem; }
   .crx .earnings { right: 8px; left: auto; } /* F7: keep the pill inside the viewport */
-  .crx .crx-taskbar { max-width: 100%; gap: 0.55rem; padding: 0.55rem 0.7rem; }
-  .crx .crx-taskbar-machine { display: none; } /* the image already says which machine it is */
-  .crx .crx-taskbar-text { font-size: 0.78rem; }
   /* the fleet grid folds on its own (auto-fit minmax) and needs no rule here. .slot's old
      2x2 override went with the icon strip it sized. */
   /* F8: hidden on mobile because its ~55-char sentence exceeds the ~372px available and becomes a
