@@ -1,4 +1,4 @@
-// The application's journey strip — Apply → We review → Install & earn — rendered above the form
+// The application's journey strip — Apply → We review → Deploy & earn — rendered above the form
 // card, and above the confirmation panel once submitted, with "We review" lit. Ported from
 // creator-brand/creators/apply/Milestones.tsx (stage prop API unchanged); skin = the kit's .crx-mile
 // family. It exists because the form alone didn't tell a new applicant what the process is (PM
@@ -14,7 +14,9 @@
 // Visual language is borrowed, not invented (kit rules): done dots fill with --grad-bright like the
 // form's own Rail segments, the current ring is the iris selection treatment the choices already
 // use, and pending sits on the page's inert hairline.
-const STEPS = ['Apply', 'We review', 'Install & earn'] as const
+// "Deploy & earn", not "Install & earn" (PM, 2026-08-20): the landing's step 03 is "Deploy it", so
+// the strip and the page use one verb for the same moment.
+const STEPS = ['Apply', 'We review', 'Deploy & earn'] as const
 
 export default function Milestones({ stage }: { stage: 'filling' | 'submitted' }) {
   const active = stage === 'filling' ? 0 : 1

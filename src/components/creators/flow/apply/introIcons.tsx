@@ -1,4 +1,4 @@
-// Glyphs for StepIntro's "About the program" points — SVGs ported verbatim from
+// Glyphs for StepIntro's "About the first wave" points — SVGs ported verbatim from
 // creator-brand/creators/apply/introIcons.tsx. Same conventions as choiceIcons.tsx so the whole
 // form's icon language stays one family: 24 viewBox, currentColor stroke (which is what lets the
 // kit's .crx-intro-ic iris tint colour them for free), round caps/joins, aria-hidden.
@@ -15,6 +15,16 @@ const box = (size: number, className: string) => ({
   'aria-hidden': true,
   className,
 })
+
+/** The first wave ("runs on your PC, phones and robots come next") — two waves, the second still faint. */
+export function WaveIcon({ size = 18, className = '' }: P) {
+  return (
+    <svg {...box(size, className)}>
+      <path d="M3 15c3-4.5 6-4.5 9 0s6 4.5 9 0" />
+      <path d="M3 9c3-4.5 6-4.5 9 0s6 4.5 9 0" opacity="0.45" />
+    </svg>
+  )
+}
 
 /** The run cadence ("at least 20 days each month") — a calendar with one date filled in. */
 export function CadenceIcon({ size = 18, className = '' }: P) {

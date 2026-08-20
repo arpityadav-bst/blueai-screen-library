@@ -50,11 +50,13 @@ export const INITIAL: Draft = {
   agree: false,
 }
 
-// FIVE steps again, not four — "About the program" is its own screen ahead of step 1 (designer,
+// FIVE steps again, not four — "About the first wave" is its own screen ahead of step 1 (designer,
 // 2026-08-13), not folded into it. STEP_FIELDS[0] is empty on purpose: nothing on that screen is a
 // field, so there's nothing to validate before its Continue can advance.
 export const STEPS = [
-  { title: 'About the program' },
+  // "About the first wave" not "About the program" (PM, 2026-08-20): the CTA and the apply headline
+  // both sell the first wave; the intro screen is where that promise gets its honest scope.
+  { title: 'About the first wave' },
   { title: 'Before we start' },
   { title: 'Your channel' },
   { title: 'About you' },

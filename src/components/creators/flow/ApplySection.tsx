@@ -1,9 +1,14 @@
 import ApplyForm from './apply/ApplyForm'
 
 // The top of the page once a NEW creator is signed in — a headline and the application, in place of
-// the marketing hero. Ported from creator-brand/creators/ApplySection.tsx; copy verbatim, skin =
-// this page's own hero vocabulary (kit h1 + .grad gradient line + .sub — the same classes the
-// marketing hero uses, so signing in doesn't drop the reader onto a page that speaks differently).
+// the marketing hero. Ported from creator-brand/creators/ApplySection.tsx; skin = this page's own
+// hero vocabulary (kit h1 + .grad gradient line + .sub — the same classes the marketing hero uses,
+// so signing in doesn't drop the reader onto a page that speaks differently).
+//
+// HEADLINE REFRAMED (PM, 2026-08-20, after the Aug 18 CEO review): the CTA that brought the reader
+// here says "Join the first wave" and the landing says "You get it hired", so this page must not
+// revert to you-as-applicant ("One short application" led before). The sub keeps the review promise
+// but names the SAME scarcity the CTA sold — "a spot in the first wave", not a generic "your spot".
 //
 // IT REPLACES THE HERO RATHER THAN SITTING UNDER IT (source's architecture, kept): signing in means
 // the pitch has landed — leaving the headline/artwork above the form pushes the thing you just
@@ -22,14 +27,12 @@ export default function ApplySection() {
     <section className="crx-apply">
       <div className="crx-apply-col">
         <h1>
-          One short application.
-          <br />
-          <span className="grad">Then we take it from here.</span>
+          Get your worker <span className="grad">hired.</span>
         </h1>
         {/* No time estimate, still (source): "about three minutes" is wrong for the reader who writes
             two paragraphs on question 7, and a form that under-promises its own length is worse than
             one that says nothing. The step count is visible in the rail. */}
-        <p className="sub">We review every application and email you when your spot opens.</p>
+        <p className="sub">One short application. We review every one and email you when a spot in the first wave opens.</p>
 
         <div id="apply" className="crx-apply-form">
           <ApplyForm />

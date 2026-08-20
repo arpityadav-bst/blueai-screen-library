@@ -1,9 +1,10 @@
-import { CadenceIcon, ClockIcon, DocumentIcon, MonitorIcon, WalletIcon } from './introIcons'
+import { CadenceIcon, ClockIcon, DocumentIcon, MonitorIcon, WalletIcon, WaveIcon } from './introIcons'
 
-// STEP 0 — "About the program", its own screen ahead of step 1. Ported from
-// creator-brand/creators/apply/StepIntro.tsx; the five points are the PM's copy VERBATIM, only the
-// skin moved onto the kit's .crx-intro-row rows (icon in an iris-soft circle + a sentence with the
-// one number/name in it bolded — the kit styles the <b>).
+// STEP 0 — "About the first wave", its own screen ahead of step 1. Ported from
+// creator-brand/creators/apply/StepIntro.tsx; the original five points are the PM's copy VERBATIM
+// with one row added ahead of them (the first-wave seam, PM 2026-08-20), only the skin moved onto
+// the kit's .crx-intro-row rows (icon in an iris-soft circle + a sentence with the one number/name
+// in it bolded — the kit styles the <b>).
 //
 // CHRONOLOGICAL ORDER, AND DAYS NOT JOBS (PM, 2026-08-14). The old first point led with "[X] jobs
 // every [Y] days", which failed two ways: an applicant this early doesn't know what a "job" is, and
@@ -15,6 +16,13 @@ import { CadenceIcon, ClockIcon, DocumentIcon, MonitorIcon, WalletIcon } from '.
 // is mentioned because the pilot build is only delivered through it, so line 1 also answers "set it
 // up from where?".
 const INTRO_POINTS = [
+  {
+    // The today/tomorrow seam (PM, 2026-08-20, after the Aug 18 CEO review): the landing acts out
+    // "any machine you own" with five machines, so this screen must say up front which machine the
+    // first wave actually runs on — otherwise the PC requirement two rows down reads as a bait.
+    icon: <WaveIcon />,
+    body: <>The <b>first wave</b> runs on your PC. Phones and robots come next.</>,
+  },
   {
     icon: <MonitorIcon />,
     body: <>Once accepted, we&apos;ll email you a download link. Set up BlueAI on your PC.</>,
