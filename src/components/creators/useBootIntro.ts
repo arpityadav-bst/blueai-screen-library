@@ -3,22 +3,19 @@ import { useEffect, useRef } from 'react'
 // The boot intro, ported 1:1 from the mock (alt-copy.html), which itself ports the pixel logo from
 // blueai-desktop's boot.js: disc minus 4-point astroid, cyan->violet by (lx+ly), edge spawns with
 // staggered delays, easeOutExpo assembly, diagonal shimmer — same genLogo params (0.45/0.86/0.92).
-// Here it plays viewport-big as THE AGENT, introduces itself over two beats, and then dissolves.
+// Here it plays viewport-big as THE AGENT, introduces itself over two beats, then flies down and
+// docks into the laptop screen, and finally tucks into the screen's brand mark as the page reveals.
 //
 // Beats: void -> assemble -> shimmer -> "This is your AI worker." -> "It exists to make you money."
-// -> fade out while the backdrop dissolves -> the page arrives on its own staggered blur entry
-// (creators.css). Click/wheel/touch/key skips. prefers-reduced-motion skips the whole thing.
+// -> descend into the PC's screen -> a breath -> tuck into the top-left corner as the brand mark ->
+// reveal. Click/wheel/touch/key skips. prefers-reduced-motion skips the whole thing.
 //
 // STATE LIVES ON .crx AND body.crx-lock, not on body.revealed like the mock — see creators.css's
 // header for why. onDone is the task loop's start (useHomeFx), the same handoff the mock made.
 // Cleanup (rAF, listeners, timers, the body lock) exists because this component can unmount and
 // StrictMode double-mounts in dev; the mock's page never had either problem.
 const CELLS = 40
-// The agent no longer flies into the machine and tucks into its mark (Appy, 2026-08-19): after
-// its two lines it simply fades, and the page arrives on its own staggered blur entry instead —
-// the same handoff blueai-product's moneymaker onboarding uses. Dropped with the docking:
-// PH.descend / PH.screenHold / PH.tuck, and the dock/tuck element lookups they needed.
-const PH = { dormant: 500, assemble: 1700, shimmer: 150, hold: 250, line1: 1500, line2: 1600, linesOut: 300, fade: 700 }
+const PH = { dormant: 500, assemble: 1700, shimmer: 150, hold: 250, line1: 1500, line2: 1600, linesOut: 300, descend: 900, screenHold: 350, tuck: 500 }
 
 type Px = { lx: number; ly: number; color: string; sx?: number; sy?: number; delay?: number }
 
@@ -62,19 +59,11 @@ export default function useBootIntro(onDone: () => void) {
     const root = document.getElementById('crx')
     const coreCv = document.getElementById('core-cv') as HTMLCanvasElement | null
     const backdropEl = document.getElementById('backdrop')
+    const lapScreen = document.getElementById('lap-screen')
+    const brandIcon = document.querySelector('.crx .scr-brand svg')
     const beat1 = document.getElementById('beat1')
     const beat2 = document.getElementById('beat2')
-    // FAIL OPEN, NEVER CLOSED. This guard used to bail on any missing element — including the
-    // two dock targets — and bailing means finish() never runs, .revealed is never added, and the
-    // page stays hidden behind an opaque backdrop forever. A missing decoration must never be able
-    // to white-screen the site, so: if the pieces the ANIMATION needs are absent, reveal
-    // immediately and hand off; the dock targets themselves are optional and fall back below.
-    if (!root || !coreCv || !backdropEl || !beat1 || !beat2) {
-      root?.classList.add('revealed', 'settled')
-      document.body.classList.remove('crx-lock')
-      onDoneRef.current()
-      return
-    }
+    if (!root || !coreCv || !backdropEl || !lapScreen || !brandIcon || !beat1 || !beat2) return
     const cctx = coreCv.getContext('2d')
     if (!cctx) return
 
@@ -177,10 +166,11 @@ export default function useBootIntro(onDone: () => void) {
 
       const T1 = PH.dormant, T2 = T1 + PH.assemble, T3 = T2 + PH.shimmer, T4 = T3 + PH.hold,
         T5 = T4 + PH.line1, T6 = T5 + PH.line2, T7 = T6 + PH.linesOut,
-        T8 = T7 + PH.fade
+        T8 = T7 + PH.descend, T9 = T8 + PH.screenHold, T10 = T9 + PH.tuck
       let start: number | null = null
       let lastCy = cy0
-      let fading = false
+      let descending = false, dockX = 0, dockY = 0, dockCell = 0, descCyFrom = cy0
+      let tuckX = 0, tuckY = 0, tuckCell = 0
 
       function step(ts: number) {
         if (start == null) start = ts
@@ -211,14 +201,39 @@ export default function useBootIntro(onDone: () => void) {
           else if (t >= T5 && t < T6) { beat1!.classList.remove('on'); beat2!.classList.add('on') }
           else if (t >= T6) { beat2!.classList.remove('on') }
         } else if (t < T8) {
-          // the agent's work is done: it dissolves on the spot and hands the page its entrance.
-          // The backdrop starts dissolving on the SAME frame, so the page is already arriving
-          // underneath as the agent thins out rather than waiting for it to finish.
-          if (!fading) { fading = true; backdropEl!.classList.add('gone') }
-          const u = (t - T7) / PH.fade
-          const a = 1 - easeInOut(u)
-          drawGlow(cx0, lastCy, span * 0.8 * (1 + u * 0.35), a * 0.9)
-          drawLogo(cx0, lastCy, bigCell * (1 + u * 0.06), null, null, a)
+          // deployment: the agent flies down and shrinks into its first machine
+          if (!descending) {
+            descending = true
+            descCyFrom = lastCy
+            const r = lapScreen!.getBoundingClientRect()
+            dockX = r.left + r.width / 2
+            dockY = r.top + r.height / 2
+            dockCell = (r.height * 0.55) / CELLS
+            const b = brandIcon!.getBoundingClientRect()
+            tuckX = b.left + b.width / 2
+            tuckY = b.top + b.height / 2
+            tuckCell = b.width / CELLS
+            backdropEl!.classList.add('gone')
+          }
+          const u = easeInOut((t - T7) / PH.descend)
+          const cx = lerp(cx0, dockX, u)
+          const cy = lerp(descCyFrom, dockY, u)
+          const cell = lerp(bigCell, dockCell, u)
+          drawGlow(cx, cy, cell * CELLS * 0.9, 1 - u * 0.5)
+          drawLogo(cx, cy, cell, null, null, null)
+        } else if (t < T9) {
+          // on-screen for a breath: the machine has its agent
+          drawGlow(dockX, dockY, dockCell * CELLS * 0.9, 0.5)
+          drawLogo(dockX, dockY, dockCell, null, null, null)
+        } else if (t < T10) {
+          // then it tucks itself into the corner and becomes the mark it works under;
+          // the real screen icon fades in over this exact spot on reveal
+          const v = easeInOut((t - T9) / PH.tuck)
+          const cx2 = lerp(dockX, tuckX, v)
+          const cy2 = lerp(dockY, tuckY, v)
+          const cell2 = lerp(dockCell, tuckCell, v)
+          drawGlow(cx2, cy2, cell2 * CELLS * 1.1, (1 - v) * 0.4)
+          drawLogo(cx2, cy2, cell2, null, null, null)
         } else {
           finish()
           return
@@ -228,7 +243,7 @@ export default function useBootIntro(onDone: () => void) {
       introRaf = requestAnimationFrame(step)
       ;(['click', 'wheel', 'touchstart', 'keydown'] as const).forEach((ev) => window.addEventListener(ev, finish))
       // same guard boot.js carries: if rAF is throttled (hidden/background tab), timers still land the page
-      timers.push(setTimeout(finish, T8 + 2600))
+      timers.push(setTimeout(finish, T10 + 2600))
     }
 
     if (reduced) { finish() } else { startIntro() }

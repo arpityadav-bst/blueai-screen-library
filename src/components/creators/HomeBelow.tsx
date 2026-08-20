@@ -1,8 +1,3 @@
-'use client'
-
-import CtaBand from './CtaBand'
-import useScrollReveal from './useScrollReveal'
-
 // Below-the-fold markup, ported 1:1 from the mock (alt-copy.html): the sleep section (couch image
 // extracted from the mock's embedded webp to public/creators/), the four steps, and the closer.
 //
@@ -37,7 +32,7 @@ const STEPS = [
 // drops every other band (CreatorsHome.tsx) — one string, one component, no drift.
 export function HomeFooter() {
   /* F21: one-line footer so the page doesn't just end after the last section */
-  return <footer className="foot crx-reveal">© 2026 BlueAI · A now.gg product</footer>
+  return <footer className="foot">© 2026 BlueAI · A now.gg product</footer>
 }
 
 // Phase 3 props:
@@ -48,17 +43,12 @@ export function HomeFooter() {
 //     (HomepageView threads CreatorsHome's open function through). Optional: when the closer is
 //     hidden no handler is needed, and the button predates Phase 3 as a no-op.
 export default function HomeBelow({ hideCloser = false, onCta }: { hideCloser?: boolean; onCta?: () => void }) {
-  // Everything below the hero enters on scroll in the hero's own language — see useScrollReveal.
-  // Called here rather than in HomepageView so the flow views (application, full-capacity), which
-  // render these same sections under a different top, get the behaviour too.
-  useScrollReveal()
-
   return (
     <>
       {/* ids on these three sections are Phase 1 header anchor targets (scroll-margin in
           creators.css) — the only additions to this file since the 1:1 port. */}
       <section className="sleep" id="sleep">
-        <div className="sleep-copy crx-reveal">
+        <div className="sleep-copy">
           {/* F16: .grad stripped from section h2s — plain white 800 carries them */}
           <h2>It earns while you sleep.</h2>
           <p>
@@ -66,7 +56,7 @@ export default function HomeBelow({ hideCloser = false, onCta }: { hideCloser?: 
             and it keeps at it, adding to your balance.
           </p>
         </div>
-        <div className="sleep-visual crx-reveal">
+        <div className="sleep-visual">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/creators/couch-sleep.webp" alt="Your AI worker typing at a glowing laptop while you sleep" />
           {/* F29: two chips, not three (c2 removed); F3: cents-scale amounts matching the demo */}
@@ -76,11 +66,10 @@ export default function HomeBelow({ hideCloser = false, onCta }: { hideCloser?: 
       </section>
 
       <section className="below" id="how">
-        <h2 className="crx-reveal">You get it hired. It works from then on.</h2>
+        <h2>You get it hired. It works from then on.</h2>
         <div className="steps">
-          {STEPS.map((s, i) => (
-            // --i staggers the cards off one shared observer hit rather than four separate ones
-            <div className="step crx-reveal" key={s.n} style={{ '--i': i } as React.CSSProperties}>
+          {STEPS.map((s) => (
+            <div className="step" key={s.n}>
               <span className="n">{s.n}</span>
               <h3>{s.title}</h3>
               <p>{s.body}</p>
@@ -90,20 +79,16 @@ export default function HomeBelow({ hideCloser = false, onCta }: { hideCloser?: 
       </section>
 
       {!hideCloser && (
-        <section className="closer crx-reveal" id="join">
-          {/* the closing ask sits in creator-brand's own grid-lined band now (CtaBand) — the two
-              sites' final CTAs should read as the same moment in the same product */}
-          <CtaBand>
-            <h2>Everyone will have one.</h2>
-            <p>
-              Yours could be earning you <b>$30 every month</b>.
-            </p>
-            <button className="btn" type="button" onClick={onCta}>
-              <SparkIcon />
-              Join the first wave
-              <ArrowIcon />
-            </button>
-          </CtaBand>
+        <section className="closer" id="join">
+          <h2>Everyone will have one.</h2>
+          <p>
+            Yours could be earning you <b>$30 every month</b>.
+          </p>
+          <button className="btn" type="button" onClick={onCta}>
+            <SparkIcon />
+            Join the first wave
+            <ArrowIcon />
+          </button>
         </section>
       )}
 
