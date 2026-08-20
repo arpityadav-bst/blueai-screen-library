@@ -179,10 +179,11 @@ export default function useLaptopFx() {
             clearInterval(tick)
             intervalsRef.current.delete(tick)
             const p = pay()
-            row.className = 'task'
-            row.innerHTML =
-              '<span class="lbl"><span class="tick">' + TICK + '</span> Done</span>' +
-              '<span class="pay">+' + fmt(p) + '</span>'
+            // STRAIGHT TO THE STACK. The working row used to become "Done +$X" and sit there for
+            // half a second before the identical "Paid +$X" row slid into the stack beneath it —
+            // the same fact, stated twice, half a second apart (Appy, 2026-08-20: remove the Done
+            // step "so the rotation becomes a bit faster").
+            row.remove()
             later(() => {
               workingEl!.innerHTML = ''
               const done = doneRow(p)
@@ -193,7 +194,7 @@ export default function useLaptopFx() {
               flyChip(done, p)
               later(() => credit(p), reduced ? 0 : 550)
               later(runTask, 300)
-            }, reduced ? 0 : 500)
+            }, reduced ? 0 : 120)
           }
           bar.style.width = progress + '%'
         }, 120)

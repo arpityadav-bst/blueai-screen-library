@@ -490,21 +490,10 @@ body.crx-lock { overflow: hidden; }
   width: 1px; height: 15px;
   background: rgba(255, 255, 255, 0.16);
 }
-/* THE BADGE LIVES INSIDE THE LINE (Appy, 2026-08-20: "I wanted the whole thing along with texts"),
-   so it needs no viewport or animation of its own — .crx-line carries both, and one node cannot
-   desynchronise from itself. An intermediate version clipped the circle and rolled only the digit;
-   that is what this replaces. It stays flex-shrink:0 so a long sentence squeezes the text, never
-   the badge. */
-.crx .crx-taskbar-step {
-  flex-shrink: 0; align-self: center;
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 17px; height: 17px; border-radius: 50%;
-  background: rgba(255, 255, 255, 0.09);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  font-family: var(--mono); font-size: 0.6rem; font-weight: 700;
-  color: rgba(232, 238, 255, 0.85);
-  font-variant-numeric: tabular-nums;
-}
+/* The numbered step badge that sat between the hairline and the sentence was removed 2026-08-20
+   (Appy). It counted the lines while the lines were already counting themselves by replacing each
+   other, so it restated the animation in digits. Its rules go with it — including the extra
+   viewport height below, which existed only to clear a 19px circle. */
 /* legibility (Appy): was 0.8rem at --dim (72% alpha) over a busy image — lifted to 0.92rem and a
    near-solid ink, since this line sits ON the machine rather than on clean background */
 /* A ROLLING VIEWPORT, not a text node (Appy, 2026-08-19): each beat replaces the last by pushing
@@ -517,9 +506,7 @@ body.crx-lock { overflow: hidden; }
 .crx .crx-taskbar-text {
   position: relative; min-width: 0; flex: 1;
   display: block; overflow: hidden;
-  /* 1.5em, not 1.4: the step badge rides inside this box now (19px with its border) and 1.4em of
-     0.92rem left it under a pixel of clearance on each side. */
-  height: 1.5em; line-height: 1.5;
+  height: 1.4em; line-height: 1.4;
   font-size: 0.92rem; font-weight: 500; color: rgba(232, 238, 255, 0.96);
 }
 .crx .crx-line {

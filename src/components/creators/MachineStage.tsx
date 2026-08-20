@@ -22,9 +22,9 @@ import { MACHINES } from './machines'
 // CINEMATIC ANGLES, not catalogue shots: each is prompted for a dynamic angle and a sense of
 // motion — mid-stride, banking, floating, wheels turned.
 //
-// HONESTY ABOUT WHAT EARNS TODAY: only the PC is live, and only a live machine ends its task with
-// a payout — the rest simply say "Done". The fleet section further down marks those same machines
-// "Soon", which is what keeps this strip from claiming earnings the page contradicts.
+// HONESTY ABOUT WHAT EARNS TODAY: only the PC is live, and only a live machine's task ends with a
+// "+$X" beside it — the others just finish. The fleet section further down marks those same
+// machines "Soon", which is what keeps this strip from claiming earnings the page contradicts.
 //
 // STATIC MARKUP, MUTATED BY ID — the same contract the hero's scene holds with useLaptopFx. React
 // never re-renders this subtree, so the loop owns the DOM: it swaps `.on`/`.out` between images,
@@ -88,13 +88,12 @@ export default function MachineStage() {
         </span>
         <span className="crx-taskbar-sep" aria-hidden="true" />
         {/* A clipped viewport: each beat's line is its own element so the outgoing one can be
-            pushed up and out while the next rises in behind it (useMachineFx's setLine). The step
-            badge is INSIDE the line, so badge and sentence are one node and move together. */}
+            pushed up and out while the next rises in behind it (useMachineFx's setLine).
+            NO STEP BADGE (Appy, 2026-08-20). It counted the lines, and the lines already count
+            themselves by replacing each other — a number that only ever says "this is the next
+            one" is restating the animation in digits. */}
         <span className="crx-taskbar-text" id="task-text">
-          <span className="crx-line">
-            <span className="crx-taskbar-step">1</span>
-            Getting a task from a brand&hellip;
-          </span>
+          <span className="crx-line">Getting a task from a brand&hellip;</span>
         </span>
         <span className="crx-taskbar-tag" id="task-tag" />
         {/* The progress rail is a SIBLING pinned to the bar's bottom edge, not a child of the text

@@ -4,10 +4,13 @@ import { MACHINES } from './machines'
 // The MACHINE STAGE's loop — the rotating cutouts and the task strip under them.
 //
 // MOVED OUT OF THE HERO 2026-08-20 (Appy), into the "It earns while you sleep" section, and it
-// lost its floating money/action badges on the way. The badge machinery went with them: the
-// generation counter that stopped a previous machine's staggered reveal firing onto the next one,
-// the per-machine contain-rect maths, and the resize listener that kept those px positions honest.
-// All three existed only to place badges, so all three are gone rather than left as scaffolding.
+// lost its floating money/action badges on the way — and, later the same day, its step-number
+// badge and its closing "Done" beat, both for the same reason: each restated something the strip
+// was already showing, and the beat cost the rotation two seconds a machine.
+// The BADGES' machinery went with them rather than being left as scaffolding — the generation
+// counter that stopped a previous machine's staggered reveal firing onto the next one, the
+// per-machine contain-rect maths, and the resize listener that kept those px positions honest.
+// All three existed only to place a badge.
 //
 // IT STARTS WHEN THE SECTION IS SEEN, not when the page loads — the difference between arriving to
 // a machine taking its first job and arriving mid-payout on whichever machine the clock happened
@@ -23,9 +26,10 @@ const PAYS = [0.4, 0.6, 1, 1.5]
     not studied. The floor keeps two-word confirmations from flashing past; the ceiling keeps the
     sequence from stalling if a line is ever written long. */
 const readMs = (line: string) => Math.min(3600, Math.max(1300, 800 + line.length * 48))
-/** How long a finished task holds before the next machine takes over — the payout is the payoff
-    of the whole sequence, so it gets the longest single hold. */
-const HANDOFF = 2100
+/** How long a finished task holds before the next machine takes over. 1200, was 2100: the "Done"
+    beat that used to follow the work line is gone (Appy, 2026-08-20: "so the rotation becomes a
+    bit faster"), so this hold is now the whole ending rather than a pause after one. */
+const HANDOFF = 1200
 /** Progress-bar tick. The INCREMENT is derived per machine from readMs(work) so the bar finishes
     exactly when its line has had its reading time. */
 const WORK_TICK = 130
@@ -75,10 +79,8 @@ export default function useMachineFx() {
       // from below, so the strip reads as a sequence advancing. Each beat is its own element for
       // the duration of the swap — writing innerHTML instead would destroy the outgoing node
       // before it could animate, and would wipe the wrapper the clipping depends on.
-      // The step badge is INSIDE the line's markup, so badge and sentence are one node and cannot
-      // desynchronise; an earlier version rolled them separately and it read as two events.
       let live: HTMLElement | null = textEl.querySelector('.crx-line')
-      const rollLine = (html: string) => {
+      const setLine = (html: string) => {
         if (live && live.innerHTML === html) return
         if (reduced) {
           if (live) live.innerHTML = html
@@ -96,10 +98,6 @@ export default function useMachineFx() {
           later(() => prev.remove(), 600) // outlives the 0.44s animation
         }
       }
-      /** One beat: its step and its line, as a single rolling row. Five steps, one per line — the
-          number counts LINES, not phases, or it sits still through two of the four transitions. */
-      const setLine = (step: number, html: string) =>
-        rollLine('<span class="crx-taskbar-step">' + step + '</span>' + html)
       const setFill = (pct: number) => { fillEl!.style.width = pct + '%' }
 
       let mi = 0
@@ -129,8 +127,8 @@ export default function useMachineFx() {
         tagEl!.className = 'crx-taskbar-tag'
         trackEl!.classList.remove('on')
         setFill(0)
-        // ONE GREEN BLINK ON STEP 1 — the strip changes text continuously, so a new TASK beginning
-        // looked the same as the next beat of the old one. Remove -> force reflow -> add is what
+        // ONE GREEN BLINK WHEN A TASK STARTS — the strip changes text continuously, so a new task
+        // beginning looked the same as the next beat of the old one. Remove -> force reflow -> add is what
         // lets a one-shot animation fire again on a node that already ran it.
         if (!reduced) {
           taskbar!.classList.remove('pulse')
@@ -146,16 +144,16 @@ export default function useMachineFx() {
         const tApprove = readMs(m.beats.approve)
         const tApproved = readMs(m.beats.approved)
 
-        setLine(1, m.beats.intake + '&hellip;')
-        later(() => setLine(2, m.beats.approve + '&hellip;'), tIntake)
+        setLine(m.beats.intake + '&hellip;')
+        later(() => setLine(m.beats.approve + '&hellip;'), tIntake)
         later(
-          () => setLine(3, m.beats.approved + ' <span class="tk">' + TICK + '</span>'),
+          () => setLine(m.beats.approved + ' <span class="tk">' + TICK + '</span>'),
           tIntake + tApprove,
         )
         later(work, tIntake + tApprove + tApproved)
 
         function work() {
-          setLine(4, m.beats.work + '&hellip;')
+          setLine(m.beats.work + '&hellip;')
           trackEl!.classList.add('on')
           // The bar is this beat's clock: size the increment so it reaches 100 in about the
           // reading time its own line asks for. The jitter stays, because a perfectly even fill
@@ -171,14 +169,14 @@ export default function useMachineFx() {
               clearInterval(tick)
               intervals.delete(tick)
               trackEl!.classList.remove('on')
+              // NO CLOSING "Done" / "Paid" LINE (Appy, 2026-08-20). It was a fifth beat that said
+              // what the filled bar had just finished saying, and it cost the rotation about two
+              // seconds a machine. The work line stays up and the payout simply lands beside it —
+              // which is also the more honest picture: the money arrives while the job is being
+              // finished, not as a separate ceremony afterwards.
               if (m.live) {
-                setLine(5, 'Paid <span class="tk">' + TICK + '</span>')
                 tagEl!.textContent = '+' + fmt(pay())
                 tagEl!.className = 'crx-taskbar-tag pay'
-              } else {
-                // No "Soon" tag — the fleet section below still marks these machines as
-                // not-yet-live, so the strip does not need to repeat it every rotation.
-                setLine(5, 'Done <span class="tk">' + TICK + '</span>')
               }
               later(() => { mi = (mi + 1) % MACHINES.length; runTask() }, reduced ? 400 : HANDOFF)
             }
