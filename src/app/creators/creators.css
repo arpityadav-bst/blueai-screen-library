@@ -112,146 +112,157 @@ body.crx-lock { overflow: hidden; }
 .crx .btn:active { transform: translateY(0); box-shadow: 0 6px 18px -6px rgba(95, 70, 255, 0.6); }
 .crx .btn:focus-visible { outline: 2px solid #a78bff; outline-offset: 3px; }
 
-/* ---------------- scene: desk + PC, centered ---------------- */
-.crx .scene {
+/* ---------------- machine stage (2026-08-19, rebuilt as cutouts) ----------------
+   Replaced the mock's CSS-drawn desk + laptop + on-screen task rows (all deleted with that edit:
+   the scene, desk, laptop, lap-screen, scr- and task rules are gone, not orphaned).
+
+   NO EDGE MASK HERE, DELIBERATELY. The first version rendered whole 16:9 images and tried to
+   dissolve their edges with a radial mask; it read as a slide laid on the page, because the
+   image's own rectangle was still there. These are background-removed PNGs cropped to their alpha
+   bbox — the file IS the object. There is no edge to hide, so there is nothing to mask, and
+   re-adding a mask would only eat the object. (The couch photo further down still uses a mask;
+   that one genuinely is a photograph with a background.)
+
+   BOTTOM-ANCHORED, so the five machines share one invisible ground line: object-position centers
+   them horizontally and pins them to the frame's floor. That is what lets a single task bar sit
+   equally close to a tall striding robot and a wide low car without moving. */
+.crx .crx-stage {
   position: relative;
-  width: min(980px, 100%); /* F7: 96vw overflowed main's padded box below ~1200px */
-  height: 470px;
-  margin: 1.6rem auto 0;
+  width: min(980px, 100%);
+  margin: 2.2rem auto 0;
 }
-.crx .scene::after {
-  content: "";
-  position: absolute; left: 50%; bottom: -30px;
-  transform: translateX(-50%);
-  width: 70%; height: 130px;
-  background: radial-gradient(50% 100% at 50% 0%, rgba(123, 76, 255, 0.18), transparent 75%);
+.crx .crx-stage-frame {
+  position: relative;
+  height: 360px;
+}
+/* the cutouts carry no ground of their own, so the page lends them one — a soft violet pool that
+   reads as light pooling under the object rather than as a shadow it cannot cast */
+.crx .crx-stage-pool {
+  position: absolute; left: 50%; bottom: -14px; transform: translateX(-50%);
+  width: 62%; height: 120px; pointer-events: none;
+  background: radial-gradient(50% 100% at 50% 100%, rgba(123, 76, 255, 0.30), rgba(14, 164, 197, 0.10) 45%, transparent 72%);
+  filter: blur(6px);
+}
+.crx .crx-machine {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: contain;
+  object-position: center bottom;
+  opacity: 0;
+  transform: translateY(6px) scale(0.985);
+  transition: opacity 0.85s ease, transform 0.85s ease;
+  /* the cutouts are lit violet/cyan already; this just seats them in the page's own light */
+  filter: drop-shadow(0 26px 42px rgba(0, 0, 0, 0.55));
+}
+.crx .crx-machine.on { opacity: 1; transform: none; }
+
+/* floating money badges — 2-3 per machine, hugging that object's own edges.
+   POSITIONED FROM JS, NOT CSS (Appy, 2026-08-19: "closer to each image visual details separately
+   almost on their edges"). Fixed frame percentages cannot do this: the five cutouts have ratios
+   from 0.73 to 2.02, so object-fit:contain renders each at a different size and a corner of the
+   FRAME is nowhere near the edge of the OBJECT. useHomeFx computes the contain-rect per machine
+   and places each badge at coords measured against that machine's real silhouette.
+   The centring translate lives in the keyframes too, because the bob animation owns `transform`
+   while it runs and would otherwise throw the centring away on its first frame. */
+.crx .crx-badge {
+  position: absolute; z-index: 3;
+  transform: translate(-50%, -50%);
+  font-weight: 800; font-size: 0.8rem; color: var(--mint);
+  background: rgba(10, 15, 38, 0.82);
+  border: 1px solid rgba(52, 227, 154, 0.35);
+  border-radius: 999px; padding: 0.24rem 0.62rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45), 0 0 18px rgba(52, 227, 154, 0.16);
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.5s ease;
   pointer-events: none;
 }
-
-.crx .desk { position: absolute; left: 50%; margin-left: -235px; bottom: 20px; height: 134px; width: 470px; z-index: 2; }
-.crx .desk-top {
-  height: 16px; border-radius: 8px;
-  background: linear-gradient(180deg, #2c3468, #1b2148);
-  border-top: 1px solid rgba(180, 196, 255, 0.35);
-  box-shadow: 0 18px 40px -12px rgba(0, 0, 0, 0.6);
-}
-.crx .desk-leg {
-  position: absolute; top: 16px; width: 12px; height: 118px;
-  background: linear-gradient(180deg, #232a55, #161c3e);
-  border-radius: 0 0 5px 5px;
-}
-.crx .desk-leg.l { left: 26px; }
-.crx .desk-leg.r { right: 26px; }
-
-.crx .laptop { position: absolute; left: 50%; margin-left: -200px; bottom: 150px; width: 400px; z-index: 3; }
-.crx .lap-screen {
-  position: relative; overflow: hidden;
-  width: 372px; margin: 0 auto;
-  background: #0a0f26;
-  border: 3px solid #2c3568;
-  border-bottom: none;
-  border-radius: 14px 14px 0 0;
-  padding: 0.85rem 0.9rem 0.9rem;
-  min-height: 258px;
-  box-shadow:
-    0 0 50px rgba(63, 212, 245, 0.14),
-    0 0 110px rgba(123, 76, 255, 0.22),
-    inset 0 0 40px rgba(30, 40, 90, 0.5);
-}
-.crx .lap-deck {
-  width: 400px; height: 22px;
-  background: linear-gradient(180deg, #333c72, #1e2450);
-  border-radius: 3px 3px 16px 16px;
-  position: relative;
-  box-shadow: 0 14px 30px -10px rgba(0, 0, 0, 0.65);
-}
-.crx .lap-deck::before {
-  content: "";
-  position: absolute; left: 46px; right: 46px; top: 5px; height: 7px;
-  border-radius: 3px;
-  background: repeating-linear-gradient(90deg, #454f8c 0 12px, transparent 12px 16px);
-  opacity: 0.7;
-}
-.crx .lap-deck::after {
-  content: "";
-  position: absolute; left: 50%; top: 14px; transform: translateX(-50%);
-  width: 64px; height: 5px; border-radius: 999px;
-  background: #454f8c; opacity: 0.6;
+/* :empty is the off switch — a machine with two badges leaves the third slot blank, and an empty
+   pill must not render as a stray dot */
+.crx .crx-badge:empty { display: none; }
+.crx .crx-badge.show { opacity: 1; animation: crx-badge-bob 6.5s ease-in-out infinite; }
+.crx .crx-badge[data-badge="1"].show { animation-duration: 8s; }
+.crx .crx-badge[data-badge="2"].show { animation-duration: 7.2s; }
+@keyframes crx-badge-bob {
+  0%, 100% { transform: translate(-50%, -50%) translateY(0); }
+  50% { transform: translate(-50%, -50%) translateY(-5px); }
 }
 
-.crx .scr-head {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 0.75rem;
-}
-.crx .scr-brand { display: flex; align-items: center; gap: 0.45rem; font-weight: 700; font-size: 0.9rem; color: #fff; }
-.crx .scr-status { display: flex; align-items: center; gap: 0.4rem; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600; color: var(--mint); }
-.crx .dot {
-  width: 7px; height: 7px; border-radius: 50%; background: var(--mint);
-  box-shadow: 0 0 8px var(--mint);
-  animation: crx-pulse 1.6s ease-in-out infinite;
-}
-@keyframes crx-pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
-
-.crx .task {
-  display: flex; align-items: center; justify-content: space-between;
-  background: rgba(255, 255, 255, 0.045);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 9px;
-  padding: 0.55rem 0.7rem;
-  margin-bottom: 0.5rem;
-  font-size: 0.82rem;
-  transition: opacity 0.4s ease, transform 0.4s ease;
-}
-.crx .task .lbl { display: flex; align-items: center; gap: 0.45rem; color: #dbe4ff; font-weight: 600; }
-.crx .task .lbl .tick { color: var(--mint); font-weight: 800; }
-.crx .task .pay { color: var(--mint); font-weight: 800; font-variant-numeric: tabular-nums; }
-.crx .task.working .lbl { color: #9fb0e8; }
-.crx .task .bar { flex: 1; height: 4px; margin-left: 0.8rem; border-radius: 999px; background: rgba(255,255,255,0.1); overflow: hidden; }
-.crx .task .bar > i { display: block; height: 100%; width: 0%; background: var(--grad-bright); border-radius: 999px; transition: width 0.18s linear; }
-
-/* the working slot keeps its height so nothing jumps when a task hands over */
-.crx #working { min-height: 44px; }
-.crx #stack { overflow: hidden; }
-.crx .task.enter { animation: crx-emerge 0.55s cubic-bezier(0.25, 0.8, 0.35, 1); }
-@keyframes crx-emerge {
-  from { margin-top: -46px; opacity: 0.35; }
-  to { margin-top: 0; opacity: 1; }
-}
-.crx #stack .task:nth-child(2) { opacity: 0.7; }
-.crx #stack .task:nth-child(3) { opacity: 0.45; }
-
-/* earnings pill, floats at the PC's shoulder — SLEEKENED 2026-08-19 (Appy: "remove dollar icon
-   here and make this more sleek"): the coin circle is gone, so the pill is now just label+amount
-   stacked tight, no icon column to balance around. Lighter too — the money-tinted glow shadow read
-   as one more heavy glow on a page already carrying several (the anti-slop audit's own flag);
-   a plain, closer, neutral shadow reads as a real UI element rather than another effect. */
-/* SHAPE = rectangle-with-round-radius, NOT a full pill (Appy, 2026-08-19: "slimmer and sleeker
-   and rectangle with round radius") — 14px matches the page's own card radius scale (.slot,
-   .crx-panel), reading as a small card rather than a stadium-shaped badge. Padding tightened for
-   the slimmer ask; gap collapsed to 0 since label+amount now read as one compact block, not two
-   spaced lines. */
-.crx .earnings {
-  position: absolute; left: calc(50% + 170px); top: 26px; z-index: 4;
-  display: flex; flex-direction: column; align-items: flex-start; gap: 0;
-  background: #ffffff;
+/* THE TASK BAR — a status strip belonging to the machine above it.
+   RIDES THE LOWER EDGE of the object (Appy: "shift it a bit up on lower area of the images"): the
+   negative margin pulls it over the bottom of the frame so it reads as that machine's status, not
+   the stage's. Its blur keeps the object legible underneath.
+   FIXED WIDTH, NOT fit-content (Appy, both directions): 560px read as too wide, but fit-content
+   then resized the strip on every beat — the text changes four times a task, so the bar breathed
+   in and out constantly. A fixed 468px is the stable answer: narrow enough to read as a strip,
+   wide enough to hold the longest line ("Working: Unpacking the weekly delivery…" next to the
+   longest label, "WHATEVER'S NEXT") without ellipsis. The ellipsis stays as a safety net only.
+   BASELINE-ALIGNED: the label is small-caps mono and the task line is 0.92rem body — centring them
+   left their baselines a couple of px apart, visible as a wobble across one row of text. The mark
+   and the tick opt out, having no baseline of their own.
+   FIXED HEIGHT BY CONSTRUCTION: the progress rail is absolutely pinned to the bar's bottom edge
+   rather than being a child of the text column. That is what stops the bar (and everything under
+   it) from jumping every time a task starts or ends, and it is why the rail spans the whole strip
+   instead of starting wherever the text starts. */
+.crx .crx-taskbar {
+  position: relative; z-index: 4; overflow: hidden;
+  margin: -1.9rem auto 0;
+  width: min(468px, 100%);
+  display: flex; align-items: baseline; gap: 0.6rem;
+  padding: 0.62rem 0.95rem 0.68rem;
   border-radius: 14px;
-  padding: 0.4rem 0.85rem;
-  box-shadow: 0 8px 22px -8px rgba(0, 0, 0, 0.35);
+  background: rgba(13, 18, 48, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 14px 40px -16px rgba(0, 0, 0, 0.7);
+  text-align: left;
 }
-.crx .earnings .label { font-family: var(--mono); font-size: 0.56rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5c6678; /* F10/F17: was 0.56rem #7a8496 — 3.77:1 captioning the money proof */ }
-.crx .earnings .amount { font-size: 1.05rem; font-weight: 800; color: #0f9d58; font-variant-numeric: tabular-nums; }
-.crx .earnings.bump { animation: crx-bump 0.35s ease; }
-@keyframes crx-bump { 40% { transform: scale(1.09); } }
-
-.crx .chip {
-  position: absolute; z-index: 5;
-  font-weight: 800; font-size: 0.9rem; color: var(--mint);
-  text-shadow: 0 0 12px rgba(52, 227, 154, 0.6);
-  pointer-events: none;
-  transition: transform 0.7s cubic-bezier(0.3, 0.7, 0.4, 1), opacity 0.7s ease;
+/* the ONE crisp logo instance on the stage — the cutouts carry the mark only as an on-screen glow */
+.crx .crx-taskbar-mark { display: flex; flex-shrink: 0; align-self: center; }
+.crx .crx-taskbar-mark img { display: block; width: 18px; height: 18px; }
+.crx .crx-taskbar-machine {
+  flex-shrink: 0;
+  font-family: var(--mono); font-size: 0.66rem; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-inverse);
 }
+/* legibility (Appy): was 0.8rem at --dim (72% alpha) over a busy image — lifted to 0.92rem and a
+   near-solid ink, since this line sits ON the machine rather than on clean background */
+.crx .crx-taskbar-text {
+  min-width: 0; flex: 1;
+  display: flex; align-items: baseline; gap: 0.4rem;
+  font-size: 0.92rem; font-weight: 500; color: rgba(232, 238, 255, 0.95);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.crx .crx-taskbar-text .tk { display: inline-flex; align-self: center; flex-shrink: 0; color: var(--mint); }
+.crx .crx-taskbar-tag {
+  flex-shrink: 0; align-self: baseline;
+  font-family: var(--mono); font-size: 0.64rem; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+}
+.crx .crx-taskbar-tag:empty { display: none; }
+.crx .crx-taskbar-tag.pay { color: var(--mint); }
+.crx .crx-taskbar-tag.soon { color: rgba(214, 224, 255, 0.55); }
+/* the rail: always present, zero layout cost, full width of the strip */
+.crx .crx-taskbar-track {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  height: 2px; background: rgba(255, 255, 255, 0.07);
+}
+.crx .crx-taskbar-track > i {
+  display: block; height: 100%; width: 0%;
+  background: var(--grad-bright);
+  transition: width 0.18s linear, opacity 0.4s ease;
+}
+/* idle: the fill fades out rather than snapping back to zero width */
+.crx .crx-taskbar-track:not(.on) > i { opacity: 0; }
 
-/* the scene's mobile rules live in the consolidated 880px block at the END of the file —
+/* The Earned pill and the .chip money-flight styles were REMOVED 2026-08-19 (Appy). Both are gone
+   from the markup and the loop too, not just unstyled: the pill was flyChip's only destination and
+   the running total's only display, so keeping either would have left dead CSS pointing at nothing.
+   Money is now told per task — the "+$X" tag in the task bar and the floating .crx-badge pills. */
+
+/* the stage's mobile rules live in the consolidated 880px block at the END of the file —
    several of their base rules (.slot, .time-chip, main's padding) are declared later at equal
    specificity and would win the source-order tie against a block placed here */
 
@@ -346,8 +357,6 @@ body.crx-lock { overflow: hidden; }
 @keyframes crx-hintIn { to { opacity: 1; } }
 .crx.revealed .skip { display: none; }
 
-.crx .scr-ui { opacity: 0; transition: opacity 0.6s ease 0.25s; }
-.crx.revealed .scr-ui { opacity: 1; }
 
 /* staged reveal of the page copy once the agent has docked */
 .crx .rv {
@@ -454,8 +463,8 @@ body.crx-lock { overflow: hidden; }
 
 @media (prefers-reduced-motion: reduce) {
   .crx .star, .crx .dot, .crx .float-chip, .crx .skip { animation: none; }
-  .crx .chip { transition: none; }
-  .crx .rv, .crx .scr-ui, .crx .beat, .crx #core-cv { transition: none; }
+  .crx .rv, .crx .beat, .crx #core-cv { transition: none; }
+  .crx .crx-badge.show { animation: none; }
 }
 
 /* ================= header (Phase 1 — NOT part of the mock port) =================
@@ -624,15 +633,13 @@ body.crx-lock { overflow: hidden; }
 /* consolidated mobile block — end of file on purpose: .slot, .time-chip and main's padding are
    declared above at equal specificity and would win the source-order tie against an earlier block */
 @media (max-width: 880px) {
-  .crx .scene { transform: scale(0.62); transform-origin: top center; height: 292px; } /* F19: 292 = 470 × 0.62 — was 330, a phantom gap */
-  /* F1: counter-scale the demo type so the proof moment survives scale(0.62) */
-  .crx .task { font-size: 1.15rem; }
-  .crx .scr-brand { font-size: 1.3rem; }
-  .crx .scr-status { font-size: 1rem; }
-  .crx .earnings .amount { font-size: 1.8rem; }
-  .crx .earnings .label { font-size: 0.9rem; }
-  .crx .chip { font-size: 1.15rem; }
-  .crx .earnings { right: 8px; left: auto; } /* F7: keep the pill inside the viewport */
+  /* The scene's scale(0.62) and the F1/F19 rules that compensated for it are GONE with the CSS
+     desk scene (2026-08-19). The machine stage is a fluid aspect-ratio box instead of a fixed
+     470px canvas, so it needs no transform and its type needs no counter-scale — the two audit
+     findings those rules answered cannot recur here. The task bar stacks its own way below. */
+  .crx .crx-taskbar { max-width: 100%; gap: 0.55rem; padding: 0.55rem 0.7rem; }
+  .crx .crx-taskbar-machine { display: none; } /* the image already says which machine it is */
+  .crx .crx-taskbar-text { font-size: 0.78rem; }
   .crx .slot { width: calc(50% - 0.45rem); max-width: 168px; } /* F5: 2×2, not four stacked cards */
   /* F8: hidden on mobile because its ~55-char sentence exceeds the ~372px available and becomes a
      near-edge-to-edge banner occluding content while scrolling — an overflow problem, independent

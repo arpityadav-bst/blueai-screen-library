@@ -59,11 +59,25 @@ export default function useBootIntro(onDone: () => void) {
     const root = document.getElementById('crx')
     const coreCv = document.getElementById('core-cv') as HTMLCanvasElement | null
     const backdropEl = document.getElementById('backdrop')
-    const lapScreen = document.getElementById('lap-screen')
-    const brandIcon = document.querySelector('.crx .scr-brand svg')
+    // RE-POINTED 2026-08-19: the agent used to dock into #lap-screen and tuck into the CSS
+    // laptop's on-screen brand mark. Both belonged to the desk/laptop scene that MachineStage
+    // replaced. It now docks into the machine stage and tucks into the task bar's BlueAI mark —
+    // the same story beat (the agent becomes the mark it works under), new furniture.
+    const dockEl = document.getElementById('dock-target')
+    const tuckEl = document.getElementById('taskbar-mark')
     const beat1 = document.getElementById('beat1')
     const beat2 = document.getElementById('beat2')
-    if (!root || !coreCv || !backdropEl || !lapScreen || !brandIcon || !beat1 || !beat2) return
+    // FAIL OPEN, NEVER CLOSED. This guard used to bail on any missing element — including the
+    // two dock targets — and bailing means finish() never runs, .revealed is never added, and the
+    // page stays hidden behind an opaque backdrop forever. A missing decoration must never be able
+    // to white-screen the site, so: if the pieces the ANIMATION needs are absent, reveal
+    // immediately and hand off; the dock targets themselves are optional and fall back below.
+    if (!root || !coreCv || !backdropEl || !beat1 || !beat2) {
+      root?.classList.add('revealed', 'settled')
+      document.body.classList.remove('crx-lock')
+      onDoneRef.current()
+      return
+    }
     const cctx = coreCv.getContext('2d')
     if (!cctx) return
 
@@ -205,11 +219,11 @@ export default function useBootIntro(onDone: () => void) {
           if (!descending) {
             descending = true
             descCyFrom = lastCy
-            const r = lapScreen!.getBoundingClientRect()
+            const r = (dockEl ?? coreCv!).getBoundingClientRect()
             dockX = r.left + r.width / 2
             dockY = r.top + r.height / 2
             dockCell = (r.height * 0.55) / CELLS
-            const b = brandIcon!.getBoundingClientRect()
+            const b = (tuckEl ?? document.querySelector('.crx .crx-logo img') ?? coreCv!).getBoundingClientRect()
             tuckX = b.left + b.width / 2
             tuckY = b.top + b.height / 2
             tuckCell = b.width / CELLS

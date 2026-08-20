@@ -1,39 +1,41 @@
 import { useCallback, useEffect, useRef } from 'react'
+import { MACHINES } from './machines'
 
-// The mock's page script (alt-copy.html — the canonical variant), ported as a hook: the perpetual
-// task lifecycle inside the laptop screen, the earnings credit + chip flight, and the time-aware
-// dock line. The mock also had a mini ticker that reappeared bottom-right once the hero's earnings
-// pill scrolled away — removed (Appy, 2026-08-19), along with the IntersectionObserver and
-// mini-amount-element plumbing that drove it; the dock is just the time line now.
+// The mock's page script (alt-copy.html), ported as a hook and then re-homed onto the machine
+// stage (2026-08-19): the perpetual task lifecycle, the earnings credit + chip flight, and the
+// time-aware dock line.
 //
-// DIRECT DOM BY ID, EXACTLY LIKE THE MOCK — deliberately not React state. The task rows are
-// transient nodes created/destroyed several times a second in a loop; modelling that as state would
-// re-render the whole page per tick for zero benefit, and every port-drift risk lives in the
-// rewrite, not the transplant. The markup these ids point at (HomeMain/HomeOverlay) is static —
-// React never re-renders it — so mutation cannot fight reconciliation.
+// WHAT MOVED. The mock ran its task rows inside a CSS-drawn laptop screen — a working row plus a
+// stack of three completed rows. That scene is gone (MachineStage.tsx), so the lifecycle now plays
+// in the task bar under the stage, ONE task at a time, and completing a task advances the machine.
+// That is the point rather than a side effect: each machine takes a job, finishes it, hands off to
+// the next — the fleet strip's "One worker · Any machine you own" acted out instead of asserted.
+// The completed-row stack has no equivalent here and is not faked.
+//
+// NO RUNNING TOTAL ANY MORE (Appy, 2026-08-19: the Earned pill was removed). Three things went
+// with it, because each existed only to serve it: the cumulative counter, the bump animation, and
+// flyChip — money chips flew TO the pill, so with no destination there is nothing to fly. Money is
+// now told per task: the "+$X" tag on a paid completion, plus the floating badges around each
+// machine. Deleted rather than left dangling: a guard that still required #earnings would have
+// silently stopped the whole loop from ever starting.
+//
+// ONLY LIVE MACHINES PAY. MACHINES[].live gates the payout: the PC completes and credits the pill,
+// the vision machines complete and show "Soon". The fleet strip 200px below tags those same
+// machines "Soon", and a hero paying out on them would contradict the page a screen later.
+//
+// DIRECT DOM BY ID, EXACTLY LIKE THE MOCK — deliberately not React state. A progress bar ticking
+// every 120ms as state would re-render the page for nothing, and the markup it mutates is static
+// (React never re-renders that subtree), so mutation cannot fight reconciliation.
 //
 // WHAT THE PORT ADDS that the mock didn't need: cleanup. The mock's page never unmounts; this
-// component does (and React StrictMode mounts twice in dev). Every timer/interval registers into
-// one set and an `alive` flag gates every continuation, so unmount genuinely stops the loop.
-//
-// One full task lifecycle per loop (the mock's own comment): a brand hands the task over, YOU
-// approve it, the worker does it, then the pay lands in the stack and flies to the balance. The
-// approval beat is the trust story, so it is named as yours.
-//
-// MONEY MODEL (F3a): cents-level per-task credits on a small base, so the demo sums plausibly
-// toward the copy's flat "$30 every month" instead of contradicting it.
+// component does (and StrictMode mounts twice in dev). Every timer/interval registers into one set
+// and an `alive` flag gates every continuation, so unmount genuinely stops the loop.
 const PAYS = [0.4, 0.6, 1, 1.5]
 const BEATS = { brand: 1000, approvalAsk: 800, approved: 600 }
+/** How long a finished task holds on screen before the next machine takes over. */
+const HANDOFF = 1500
 
-/* F15: name the work — the real watch/like/comment job shape, one per cycle */
-const TASKS = [
-  'Watch — 3-min product demo',
-  'Like + comment — launch video',
-  'Watch — creator collab teaser',
-  'Comment — Q&A livestream clip',
-]
-
-/* F27: SVG check instead of the &#10003; font glyph (stroke currentColor → .tick's mint) */
+/* F27: SVG check instead of the &#10003; font glyph (stroke currentColor picks up the row colour) */
 const TICK =
   '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
   'stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
@@ -42,9 +44,9 @@ const TICK =
 export default function useHomeFx() {
   const aliveRef = useRef(true)
   const timersRef = useRef<Set<ReturnType<typeof setTimeout>>>(new Set())
+  /** Set by the loop each time a machine shows; the resize listener below re-runs it. */
+  const relayoutRef = useRef<(() => void) | null>(null)
   const intervalsRef = useRef<Set<ReturnType<typeof setInterval>>>(new Set())
-  const earnedRef = useRef(18) /* F3a */
-
   const later = useCallback((fn: () => void, ms: number) => {
     const id = setTimeout(() => {
       timersRef.current.delete(id)
@@ -76,7 +78,14 @@ export default function useHomeFx() {
     updateTimeLine()
     intervals.add(setInterval(updateTimeLine, 60000))
 
+    // Badge positions are computed in px from the object's rendered contain-rect, so they are
+    // only correct for the width they were computed at — re-run on resize or they drift off the
+    // object the moment the window changes.
+    const onResize = () => relayoutRef.current?.()
+    window.addEventListener('resize', onResize)
+
     return () => {
+      window.removeEventListener('resize', onResize)
       aliveRef.current = false
       timers.forEach(clearTimeout)
       timers.clear()
@@ -89,75 +98,92 @@ export default function useHomeFx() {
   // the same handoff the mock made (finish() -> setTimeout(runTask)).
   const startLoop = useCallback(() => {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const workingEl = document.getElementById('working')
-    const stackEl = document.getElementById('stack')
-    const amountEl = document.getElementById('amount')
-    const earningsEl = document.getElementById('earnings')
-    const scene = document.getElementById('scene')
-    if (!workingEl || !stackEl || !amountEl || !earningsEl || !scene) return
+    const stage = document.getElementById('scene')
+    const frame = document.getElementById('dock-target')
+    const taskbar = document.getElementById('taskbar')
+    const machineEl = document.getElementById('task-machine')
+    const textEl = document.getElementById('task-text')
+    const fillEl = document.getElementById('task-fill')
+    const trackEl = document.getElementById('task-track')
+    const tagEl = document.getElementById('task-tag')
+    const imgs = Array.from(document.querySelectorAll<HTMLElement>('.crx-machine'))
+    const badges = Array.from(document.querySelectorAll<HTMLElement>('.crx-badge'))
+    if (!stage || !frame || !taskbar || !machineEl || !textEl) return
+    if (!fillEl || !trackEl || !tagEl || imgs.length === 0) return
 
     const fmt = (n: number) => '$' + n.toFixed(2) /* F3a */
     const pay = () => PAYS[Math.floor(Math.random() * PAYS.length)]
+    const setText = (html: string) => { textEl.innerHTML = html }
+    const setFill = (pct: number) => { fillEl.style.width = pct + '%' }
 
-    function doneRow(p: number) {
-      const el = document.createElement('div')
-      el.className = 'task enter'
-      el.innerHTML =
-        '<span class="lbl"><span class="tick">' + TICK + '</span> Paid</span>' +
-        '<span class="pay">+' + fmt(p) + '</span>'
-      return el
+    let mi = 0
+
+    // Where the object ACTUALLY renders inside the frame. The images are object-fit: contain and
+    // bottom-anchored, so for a given frame the object is letterboxed by whichever axis binds —
+    // this reproduces that box so badges can be hung off the object's edges rather than the
+    // frame's. Without it, a 2.02-ratio car and a 0.73-ratio robot would take identical badge
+    // positions and both would look wrong.
+    function objectRect(ratio: number) {
+      const fw = frame!.clientWidth
+      const fh = frame!.clientHeight
+      const objH = Math.min(fh, fw / ratio)
+      const objW = objH * ratio
+      return { left: (fw - objW) / 2, top: fh - objH, w: objW, h: objH }
     }
 
-    function flyChip(fromEl: HTMLElement, p: number) {
-      if (reduced) return
-      const chip = document.createElement('span')
-      chip.className = 'chip'
-      chip.textContent = '+' + fmt(p)
-      const sceneBox = scene!.getBoundingClientRect()
-      /* F6: measured rects are post-transform but left/top/translate apply pre-transform inside
-         the scaled scene — divide by the scene's own scale or chips land at 0.62× their offsets */
-      const scale = sceneBox.width / scene!.offsetWidth
-      const from = fromEl.getBoundingClientRect()
-      const to = earningsEl!.getBoundingClientRect()
-      chip.style.left = (from.right - sceneBox.left - 70) / scale + 'px'
-      chip.style.top = (from.top - sceneBox.top) / scale + 'px'
-      scene!.appendChild(chip)
-      requestAnimationFrame(() => {
-        const dx = ((to.left - sceneBox.left + 40) - (from.right - sceneBox.left - 70)) / scale
-        const dy = ((to.top - sceneBox.top + 10) - (from.top - sceneBox.top)) / scale
-        chip.style.transform = 'translate(' + dx + 'px,' + dy + 'px) scale(0.7)'
-        chip.style.opacity = '0'
+    function placeBadges(i: number) {
+      const m = MACHINES[i]
+      const r = objectRect(m.ratio)
+      badges.forEach((b, k) => {
+        const spec = m.badges[k]
+        if (!spec) return
+        b.style.left = r.left + spec.x * r.w + 'px'
+        b.style.top = r.top + spec.y * r.h + 'px'
       })
-      later(() => chip.remove(), 800)
     }
 
-    const credit = (p: number) => {
-      earnedRef.current += p
-      amountEl!.textContent = fmt(earnedRef.current)
-      earningsEl!.classList.remove('bump')
-      void (earningsEl as HTMLElement).offsetWidth
-      earningsEl!.classList.add('bump')
+    function showMachine(i: number) {
+      imgs.forEach((el, k) => el.classList.toggle('on', k === i))
+      machineEl!.textContent = MACHINES[i].name
+      // Each machine fills as many badge slots as it defines (two or three, by silhouette) and
+      // the rest are emptied — `.crx-badge:empty` hides an unused slot so it cannot render as a
+      // stray dot. They fade in a beat after the machine so the object lands first.
+      const specs = MACHINES[i].badges
+      badges.forEach((b, k) => {
+        b.classList.remove('show')
+        b.textContent = specs[k]?.v ?? ''
+      })
+      placeBadges(i)
+      relayoutRef.current = () => placeBadges(i)
+      later(() => {
+        badges.forEach((b, k) => { if (specs[k]) b.classList.add('show') })
+      }, 260)
     }
 
     function runTask() {
-      const row = document.createElement('div')
-      row.className = 'task working'
-      workingEl!.innerHTML = ''
-      workingEl!.appendChild(row)
+      const m = MACHINES[mi]
+      showMachine(mi)
+      tagEl!.textContent = ''
+      tagEl!.className = 'crx-taskbar-tag'
+      trackEl!.classList.remove('on')
+      setFill(0)
 
-      const task = TASKS[Math.floor(Math.random() * TASKS.length)] /* F15 */
-      const label = (html: string) => { row.innerHTML = '<span class="lbl">' + html + '</span>' }
-
-      label('Getting a task from a brand&hellip;')
-      later(() => label('Sent for your approval&hellip;'), BEATS.brand)
-      later(() => label('<span class="tick">' + TICK + '</span> You approved'), BEATS.brand + BEATS.approvalAsk)
+      // Work arrives, YOU approve it, the machine does it, then it pays (or, on a machine that is
+      // not live yet, simply finishes). The approval beat is the trust story, so it is named as
+      // yours — the mock's own framing, kept. THE WORDS ARE PER MACHINE (MachineStage.beats): a
+      // vacuum does not get a task from a brand, and saying so made the whole strip read as
+      // filler. Only the shape of the sequence is shared.
+      setText(m.beats.intake + '&hellip;')
+      later(() => setText(m.beats.approve + '&hellip;'), BEATS.brand)
+      later(
+        () => setText('<span class="tk">' + TICK + '</span> ' + m.beats.approved),
+        BEATS.brand + BEATS.approvalAsk,
+      )
       later(work, BEATS.brand + BEATS.approvalAsk + BEATS.approved)
 
       function work() {
-        row.innerHTML =
-          '<span class="lbl">Working: ' + task + '&hellip;</span>' +
-          '<span class="bar"><i></i></span>'
-        const bar = row.querySelector('.bar > i') as HTMLElement
+        setText('Working: ' + m.beats.work + '&hellip;')
+        trackEl!.classList.add('on')
         let progress = 0
         const tick = setInterval(() => {
           if (!aliveRef.current) { clearInterval(tick); intervalsRef.current.delete(tick); return }
@@ -166,22 +192,20 @@ export default function useHomeFx() {
             progress = 100
             clearInterval(tick)
             intervalsRef.current.delete(tick)
-            const p = pay()
-            row.className = 'task'
-            row.innerHTML =
-              '<span class="lbl"><span class="tick">' + TICK + '</span> Done</span>' +
-              '<span class="pay">+' + fmt(p) + '</span>'
-            later(() => {
-              workingEl!.innerHTML = ''
-              const done = doneRow(p)
-              stackEl!.prepend(done)
-              while (stackEl!.children.length > 3) stackEl!.removeChild(stackEl!.lastChild!)
-              flyChip(done, p)
-              later(() => credit(p), reduced ? 0 : 550)
-              later(runTask, 300)
-            }, reduced ? 0 : 500)
+            trackEl!.classList.remove('on')
+            if (m.live) {
+              const p = pay()
+              setText('<span class="tk">' + TICK + '</span> Paid')
+              tagEl!.textContent = '+' + fmt(p)
+              tagEl!.className = 'crx-taskbar-tag pay'
+            } else {
+              setText('<span class="tk">' + TICK + '</span> Done')
+              tagEl!.textContent = 'Soon'
+              tagEl!.className = 'crx-taskbar-tag soon'
+            }
+            later(() => { mi = (mi + 1) % MACHINES.length; runTask() }, reduced ? 400 : HANDOFF)
           }
-          bar.style.width = progress + '%'
+          setFill(progress)
         }, 120)
         intervalsRef.current.add(tick)
       }
