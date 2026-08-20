@@ -912,7 +912,9 @@ body.crx-lock { overflow: hidden; }
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   margin-top: 2rem;
 }
-.crx .crx-foot-in { max-width: 1100px; margin: 0 auto; padding: 4rem 1.5rem 2.5rem; }
+/* 4rem bottom, was 2.5: the bottom bar used to add its own 1.5rem beneath this, and taking
+   the bar out left the footer ending tight under the last link. */
+.crx .crx-foot-in { max-width: 1100px; margin: 0 auto; padding: 4rem 1.5rem 4rem; }
 /* ON THE PAGE'S OWN GRID (Appy, 2026-08-20: "the footer should be aligned with the grid"). The
    container was already the page's 1100px content width, but the columns inside it were 1.5fr/1fr
    — a ratio picked to suit the content, which put the nav's left edge at a position no other
@@ -923,8 +925,12 @@ body.crx-lock { overflow: hidden; }
   display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;
   text-align: left;
 }
+/* All four tracks are used now: the brand takes two, the sections one, and Back to top the last
+   (Appy, 2026-08-20). Every column edge still lands on a step card's edge, which is the whole
+   reason this grid matches .steps. */
 .crx .crx-foot-brand { grid-column: 1 / 3; }
-.crx .crx-foot-nav { grid-column: 4; }
+.crx .crx-foot-nav { grid-column: 3; }
+.crx .crx-foot-top-col { grid-column: 4; }
 .crx .crx-foot-logo {
   display: inline-flex; align-items: center; gap: 0.55rem;
   background: none; border: none; padding: 0; cursor: pointer;
@@ -934,9 +940,16 @@ body.crx-lock { overflow: hidden; }
 .crx .crx-foot-logo:hover { opacity: 0.85; }
 .crx .crx-foot-logo img { border-radius: 50%; display: block; }
 .crx .crx-foot-brand p {
-  /* no ch cap: the two-column track IS the measure now, and a 42ch cap inside it was a second,
-     narrower measure that stopped the text short of the grid line it is aligned to */
-  max-width: 100%;
+  /* ONE TRACK WIDE, and the calc is the point (Appy, 2026-08-20: "the description is not according
+     to the grid and it's getting very close to the navigation column").
+     This block spans two tracks plus the gap between them, so `(100% - gap) / 2` is exactly one
+     track — which puts the paragraph's right edge ON a grid line and leaves a full empty track
+     plus two gaps (338px at 1320) before the sections column.
+     It also fixes the measure, which is the same defect seen from the other side: filling both
+     tracks ran the line to ~87 characters, well past readable, and 16px from the next column. An
+     earlier note here claimed "the two-column track IS the measure" and removed a ch cap on that
+     basis; a span is not a measure, and this is what that mistake looked like on screen. */
+  max-width: calc((100% - 1rem) / 2);
   margin: 1rem 0 0;
   font-size: 0.9rem; line-height: 1.65;
   color: rgba(214, 224, 255, 0.62);
@@ -965,56 +978,40 @@ body.crx-lock { overflow: hidden; }
 }
 .crx .crx-foot-nav a:hover { color: #fff; }
 
-/* the rule spans the viewport; its content stays on the content grid */
-.crx .crx-foot-rule { border-top: 1px solid rgba(255, 255, 255, 0.07); }
-.crx .crx-foot-bar {
-  max-width: 1100px; margin: 0 auto;
-  /* SYMMETRIC (Appy, 2026-08-20: "the text is not vertically centred"). When this bar was a child
-     of .crx-foot-in it inherited that container's 2.5rem bottom padding; moving it out to sit under
-     the full-bleed rule took that away and left 1.5rem above the text and nothing below it. */
-  padding: 1.5rem;
-  /* THREE TRACKS, NOT space-between (Appy, 2026-08-20: "back to top" collided with the time chip).
-     The chip is FIXED to the viewport's bottom-right corner, so anything the footer puts in that
-     corner sits under it whenever the page is scrolled to the end — and the end is exactly where
-     "Back to top" is most likely to be read. The equal 1fr side tracks centre the link on the
-     bar's true midline rather than in the space left over beside the copyright, which is what
-     space-between would have given with an empty third slot. */
-  display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 1rem;
-}
-.crx .crx-foot-bar button { justify-self: center; }
-.crx .crx-foot-bar p {
-  margin: 0;
-  font-family: var(--mono); font-size: 0.66rem; font-weight: 600;
-  letter-spacing: 0.12em; text-transform: uppercase;
-  color: rgba(214, 224, 255, 0.5);
-}
-.crx .crx-foot-bar button {
+/* Back to top, alone in the last column. It borrows the section links' ink and hover so the footer
+   has one quiet-link voice, but the recipe is restated rather than shared: one is a page anchor and
+   the other a scroll call, and they will never need to change together.
+   No top padding — it is the first thing in its column, and 0.6rem above it would push it off the
+   line the section heading sits on. */
+.crx .crx-foot-top {
   display: inline-flex; align-items: center; gap: 0.4rem;
-  background: none; border: none; padding: 0.5rem 0; cursor: pointer;
-  font-family: var(--mono); font-size: 0.66rem; font-weight: 600;
-  letter-spacing: 0.12em; text-transform: uppercase;
-  color: rgba(214, 224, 255, 0.5);
+  background: none; border: none; padding: 0 0 0.6rem; cursor: pointer;
+  font: inherit; font-size: 0.9rem;
+  color: rgba(214, 224, 255, 0.62);
   transition: color 0.18s ease;
 }
-.crx .crx-foot-bar button:hover { color: #fff; }
+.crx .crx-foot-top:hover { color: #fff; }
+.crx .crx-foot-top:focus-visible { outline: 2px solid #a78bff; outline-offset: 3px; border-radius: 3px; }
 
 /* the four-column grid folds the same way .steps does, at the same two widths, so the footer and
    the section it is aligned to never disagree about how many columns exist */
 @media (max-width: 935px) {
   .crx .crx-foot-cols { grid-template-columns: repeat(2, 1fr); gap: 2.5rem 1rem; }
+  /* the brand is ONE track here, so halving it again would leave a ~20-character column. A ch cap
+     takes over from the track maths: 46ch is a measure, and min() lets the single-column case at
+     640 fall back to the container when the container is the narrower of the two. */
+  .crx .crx-foot-brand p { max-width: min(100%, 46ch); }
   .crx .crx-foot-brand { grid-column: 1; }
   .crx .crx-foot-nav { grid-column: 2; }
+  /* two tracks, three blocks: Back to top drops under the sections rather than beside them, which
+     keeps it out of the brand column's measure */
+  .crx .crx-foot-top-col { grid-column: 2; }
 }
 @media (max-width: 640px) {
   /* one column, and the bottom bar stacks — at this width "space-between" puts two mono strings at
      opposite edges with nothing between them, which reads as two unrelated fragments */
   .crx .crx-foot-cols { grid-template-columns: 1fr; gap: 2.25rem; }
-  .crx .crx-foot-brand, .crx .crx-foot-nav { grid-column: 1; }
-  /* stacked: at this width the grid's centred middle track puts the link under the copyright with
-     a stray gap either side, and the time chip is hidden below 880px anyway (see its own rule), so
-     the collision the centring solves does not exist here. */
-  .crx .crx-foot-bar { grid-template-columns: 1fr; justify-items: start; gap: 0.25rem; }
-  .crx .crx-foot-bar button { justify-self: start; }
+  .crx .crx-foot-brand, .crx .crx-foot-nav, .crx .crx-foot-top-col { grid-column: 1; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1642,10 +1639,17 @@ body.crx-lock { overflow: hidden; }
 .crx .crx-form-foot { display: flex; align-items: center; gap: 0.8rem; margin-top: 1.75rem; }
 /* the primary takes the rest of the foot row */
 .crx .crx-grow { flex: 1 1 auto; min-width: 0; }
-/* Back shares the row equally with Continue/Submit (Appy, 2026-08-19) — matches the frozen
-   original's own sm:flex-1 on its Back button; this class is also used bare (StatCards' Cash out
-   pill, which must stay its natural width), so the equal-share rule is scoped to this row only. */
-.crx .crx-form-foot .crx-btn-quiet { flex: 1 1 0; min-width: 0; }
+/* EQUAL HALVES ON DESKTOP, and the basis is the whole fix (Appy, 2026-08-19 and again 2026-08-20:
+   "these buttons are of different sizes... they should have equal weightage").
+   Both buttons already said `flex-grow: 1`, which is why this looked done. It was not: .crx-grow
+   carries `flex-basis: auto`, so Continue STARTS at its own content width and grows from there,
+   while Back starts at 0 — equal growth from unequal starts leaves Continue wider by exactly its
+   label. Forcing basis 0 on both makes the free space split evenly, so the two are the same width
+   whatever the label says ("Continue" and "Submit application" now measure identically).
+   Scoped to this row: .crx-grow and .crx-btn-quiet are both used bare elsewhere (StatCards' Cash
+   out pill must keep its natural width). */
+.crx .crx-form-foot .crx-btn-quiet,
+.crx .crx-form-foot .crx-grow { flex: 1 1 0; min-width: 0; }
 /* ---- the two flow confirmations: "Thanks for applying" and "Thanks for your interest" ----
    ONE CLASS FOR BOTH (Appy, 2026-08-20: "both of these containers should have same size"). They
    were two panels with two different min-heights (578 and 420) that happened to look alike; one
@@ -1923,5 +1927,10 @@ body.crx-lock { overflow: hidden; }
   .crx .crx-cash-head { padding: 1.25rem 1.1rem 0; }
   .crx .crx-cash-body { padding: 1rem 1.1rem 1.25rem; }
   .crx .crx-cash-done { padding: 2rem 1.1rem 1.5rem; }
-  /* .crx-form-foot stays a ROW at this width by design (ApplyForm's own note) — no rule needed */
+  /* .crx-form-foot stays a ROW at this width by design (ApplyForm's own note), but NOT equal
+     halves: half of a ~330px form is ~160px, and "Submit application" does not fit that. Back
+     drops back to its natural width and the primary takes what is left — the label that has to be
+     readable gets the room, and the one that is two syllables does not need it. */
+  .crx .crx-form-foot .crx-btn-quiet { flex: 0 0 auto; }
+  .crx .crx-form-foot .crx-grow { flex: 1 1 auto; }
 }

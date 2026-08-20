@@ -11,7 +11,11 @@ import { NAV } from './nav'
 //
 //   · A FOOTER IS WAYFINDING, NOT A TRUST STAMP. The old line had nothing wrong with it except
 //     that it had one job — proving the page ended — when its real job is to get someone who
-//     scrolled all the way here to wherever they actually wanted.
+//     scrolled all the way here to wherever they actually wanted. Taken to its conclusion
+//     2026-08-20: the copyright came out too, and with it the bottom bar and the full-bleed rule
+//     above it. A trust stamp on a design-only replica was the one thing down here doing no work,
+//     and once it was gone the bar held a single button — which is a row of page, and a divider,
+//     spent on one control that fits in the list it belongs to.
 //   · NO CTA BAND. The page already closes on one directly above (CtaBand); a second gradient
 //     pill here would pitch the same offer a third time on one scroll. The links here are the
 //     quieter kind.
@@ -80,43 +84,45 @@ export default function HomeFooter() {
             </p>
           </div>
 
-          {/* Only rendered when there is something to point at — in the dashboard state the whole
-              column is absent rather than present and empty, which would read as a broken list. */}
+          {/* Gated again. It was briefly unconditional, on the reasoning that Back to top gave the
+              column a row that always existed — but that control moved out to its own column, so
+              in the dashboard state (no sections in the DOM) this would be a heading over an empty
+              list once more. */}
           {present.length > 0 && (
-            <nav className="crx-foot-nav" aria-label="Page sections">
-              <h3>On this page</h3>
-              <ul>
-                {present.map((item) => (
-                  <li key={item.href}>
-                    <a href={item.href} onClick={(e) => go(e, item.href)}>
-                      {item.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </nav>
+          <nav className="crx-foot-nav" aria-label="Page sections">
+            <h3>On this page</h3>
+            <ul>
+              {present.map((item) => (
+                <li key={item.href}>
+                  <a href={item.href} onClick={(e) => go(e, item.href)}>
+                    {item.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
           )}
-        </div>
 
-      </div>
-
-      {/* The bottom rule is a FULL-BLEED sibling of the content container, not a border on it
-          (Appy, 2026-08-20: "the divider should go edge to edge"). As a border inside .crx-foot-in
-          it stopped at the 1100px content width, which made it read as a box's edge rather than as
-          the page's last horizontal line — and it disagreed with the footer's own top hairline,
-          which does run the full width. The bar's CONTENT still sits on the content grid; only the
-          rule spans. */}
-      <div className="crx-foot-rule">
-        <div className="crx-foot-bar">
-          <p>© 2026 BlueAI · An AI worker by now.gg, Inc.</p>
-          {/* scrollTo rather than an #anchor: the top of the page is a destination that exists in
-              every state, and no id has to be kept alive to make it true. */}
-          <button type="button" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-            Back to top
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M12 19V5M6 11l6-6 6 6" />
-            </svg>
-          </button>
+          {/* ITS OWN COLUMN, right of the sections (Appy, 2026-08-20). It was briefly the last row
+              of the list above, which was wrong on inspection: that list answers "where on this
+              page", and every other row in it is a section you scroll TO. This is an action on the
+              page as a whole, so putting it among them made it read as a fourth section.
+              No heading, and it sits at the top of the column rather than aligned with the first
+              link — it is a peer of the heading, not of the items under it.
+              scrollTo rather than an #anchor: the top exists in every page state, and no id has to
+              be kept alive to make it true. */}
+          <div className="crx-foot-top-col">
+            <button
+              type="button"
+              className="crx-foot-top"
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            >
+              Back to top
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M12 19V5M6 11l6-6 6 6" />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
     </footer>
