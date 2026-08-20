@@ -99,7 +99,7 @@ export default function useHomeFx() {
   const startLoop = useCallback(() => {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const stage = document.getElementById('scene')
-    const frame = document.getElementById('dock-target')
+    const frame = document.getElementById('stage-frame')
     const taskbar = document.getElementById('taskbar')
     const machineEl = document.getElementById('task-machine')
     const textEl = document.getElementById('task-text')

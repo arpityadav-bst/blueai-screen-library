@@ -358,17 +358,54 @@ body.crx-lock { overflow: hidden; }
 .crx.revealed .skip { display: none; }
 
 
-/* staged reveal of the page copy once the agent has docked */
-.crx .rv {
-  opacity: 0; transform: translateY(18px);
-  transition: opacity 0.8s cubic-bezier(0.25, 0.8, 0.35, 1), transform 0.8s cubic-bezier(0.25, 0.8, 0.35, 1);
+/* STAGED BLUR ENTRY once the agent has faded (Appy, 2026-08-19).
+   Ported from blueai-product's moneymaker onboarding, values and all: easing
+   cubic-bezier(0.22,1,0.36,1), title blurs in from 10px, blocks rise 24-30px out of an 8px blur,
+   the CTA a shorter 16px/5px. Using that file's own recipe rather than inventing a second entrance
+   language keeps the two products' first impressions related.
+   ORDER IS THE POINT and it is Appy's: title -> subtitle -> CTA -> the machine stage with its
+   elements -> the fleet strip -> and the header last, sliding down from the top edge. The page
+   assembles the way you read it, and the chrome only arrives once there is something to frame.
+   ANIMATIONS, NOT TRANSITIONS: this used to be one opacity/transform transition with staggered
+   delays, which cannot express per-step blur or different distances per element. */
+@keyframes crx-title-in {
+  from { opacity: 0; filter: blur(10px); }
+  to { opacity: 1; filter: blur(0); }
 }
-.crx.revealed .rv { opacity: 1; transform: none; }
-.crx .d1 { transition-delay: 0.05s; }
-.crx .d2 { transition-delay: 0.2s; }
-.crx .d3 { transition-delay: 0.32s; }
-.crx .d4 { transition-delay: 0.5s; }
-.crx .d5 { transition-delay: 0.65s; }
+@keyframes crx-rise-in {
+  from { opacity: 0; transform: translateY(26px); filter: blur(8px); }
+  to { opacity: 1; transform: none; filter: blur(0); }
+}
+@keyframes crx-cta-in {
+  from { opacity: 0; transform: translateY(16px); filter: blur(5px); }
+  to { opacity: 1; transform: none; filter: blur(0); }
+}
+@keyframes crx-header-drop {
+  from { opacity: 0; transform: translateY(-100%); }
+  to { opacity: 1; transform: none; }
+}
+
+/* hidden until the agent hands over; `both` holds the from-state so nothing flashes pre-reveal */
+.crx .rv { opacity: 0; }
+.crx.revealed .rv { animation: crx-rise-in 0.75s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.crx.revealed .d1 { animation: crx-title-in 0.9s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.crx.revealed .d2 { animation-delay: 0.5s; }
+.crx.revealed .d3 { animation: crx-cta-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.95s both; }
+.crx.revealed .d4 { animation-duration: 0.85s; animation-delay: 1.3s; }
+.crx.revealed .d5 { animation-delay: 1.85s; }
+
+/* SCROLL ENTRY for everything below the hero — the hero's own recipe, triggered by arrival rather
+   than by a timeline (useScrollReveal adds `.in` once, then unobserves). Same keyframe, same
+   easing, so the page has ONE entrance language top to bottom.
+   The rise is a touch longer here than in the hero: below the fold you are already moving, so a
+   short travel reads as a flicker against your own scroll. */
+.crx .crx-reveal { opacity: 0; }
+.crx .crx-reveal.in {
+  animation: crx-rise-in 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+  /* --i staggers siblings that share one observer hit (the four step cards) so they cascade
+     instead of landing as one slab; unset elements are simply index 0. */
+  animation-delay: calc(var(--i, 0) * 90ms);
+}
 
 /* bottom-right dock: just the time-of-day chip now. It used to also carry a mini earnings counter
    that reappeared here once the hero's own pill scrolled away — removed (Appy, 2026-08-19: "it
@@ -464,6 +501,10 @@ body.crx-lock { overflow: hidden; }
 @media (prefers-reduced-motion: reduce) {
   .crx .star, .crx .dot, .crx .float-chip, .crx .skip { animation: none; }
   .crx .rv, .crx .beat, .crx #core-cv { transition: none; }
+  /* the staged entry is motion for its own sake — skip straight to the assembled page */
+  .crx.revealed .rv, .crx.revealed .d1, .crx.revealed .d3,
+  .crx.revealed .crx-header,
+  .crx .crx-reveal, .crx .crx-reveal.in { animation: none; opacity: 1; transform: none; filter: none; }
   .crx .crx-badge.show { animation: none; }
 }
 
@@ -485,10 +526,17 @@ body.crx-lock { overflow: hidden; }
 .crx .crx-header {
   position: fixed; top: 0; left: 0; right: 0; z-index: 60;
   opacity: 0; pointer-events: none;
-  transition: opacity 0.8s cubic-bezier(0.25, 0.8, 0.35, 1) 0.2s, background 0.3s ease, border-color 0.3s ease;
+  transition: background 0.3s ease, border-color 0.3s ease;
   border-bottom: 1px solid transparent;
 }
-.crx.revealed .crx-header { opacity: 1; pointer-events: auto; }
+/* the header arrives LAST and from the top edge (Appy, 2026-08-19) — the chrome only frames the
+   page once the page is there. 2.35s puts it just after the fleet strip settles. Note the
+   transition above no longer carries opacity: the animation owns it, and leaving both would have
+   the transition fight the keyframe's `both` fill on the first frame. */
+.crx.revealed .crx-header {
+  pointer-events: auto;
+  animation: crx-header-drop 0.6s cubic-bezier(0.22, 1, 0.36, 1) 2.35s both;
+}
 .crx .crx-header.scrolled {
   background: rgba(13, 18, 48, 0.78);
   backdrop-filter: blur(10px);

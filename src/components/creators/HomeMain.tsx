@@ -65,7 +65,7 @@ export default function HomeMain() {
 
         {/* the vision in one strip: the same worker, a growing set of machines.
             id="machines" is a Phase 1 header anchor target (scroll-margin in creators.css). */}
-        <div className="fleet rv d4" id="machines">
+        <div className="fleet rv d5" id="machines">
           <p className="fleet-label">One worker · Any machine you own</p>
           <div className="fleet-row">
             <div className="slot live">

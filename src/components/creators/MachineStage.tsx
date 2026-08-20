@@ -41,10 +41,12 @@ export default function MachineStage() {
     // id="scene" is kept as the stage's stable handle (the loop and the intro both look it up).
     // It carries NO `.scene` class — the mock's desk/laptop rules (fixed 470px
     // height, the 0.62 mobile transform) are gone with the scene they styled.
-    <div className="crx-stage" id="scene">
-      {/* dock-target is where the boot intro's agent flies to and shrinks into — it replaced
-          #lap-screen, which no longer exists. See useBootIntro.ts. */}
-      <div className="crx-stage-frame" id="dock-target">
+    <div className="crx-stage rv d4" id="scene">
+      {/* The box the machines are laid out in. useHomeFx measures it to compute each object's
+          contain-rect and hang the badges off its real edges. (It was briefly #dock-target, back
+          when the boot intro flew the agent into it; the agent just fades now, so the docking name
+          would be describing something that no longer happens.) */}
+      <div className="crx-stage-frame" id="stage-frame">
         {/* the object is a cutout with no ground of its own, so the page gives it one: a soft
             violet pool under it, the same device the mock used to seat its desk in the sky */}
         <span className="crx-stage-pool" aria-hidden="true" />
@@ -73,7 +75,7 @@ export default function MachineStage() {
           so every machine shares that line and the bar is equally close to all five). A rectangle
           with the task written inside it — Appy's own shape brief — carrying the ONE crisp logo
           instance on the stage; the cutouts hold the mark only as an on-screen glow. */}
-      <div className="crx-taskbar rv d5" id="taskbar">
+      <div className="crx-taskbar" id="taskbar">
         <span className="crx-taskbar-mark" id="taskbar-mark">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/blueai-icon-RzIisCsb.png" alt="" width={18} height={18} />
