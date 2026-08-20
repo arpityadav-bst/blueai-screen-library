@@ -4,8 +4,13 @@
 // the #working/#stack/#amount nodes directly, exactly like the mock's script did. React never
 // re-renders any of this, which is what makes that direct mutation safe.
 //
-// The hero CTA is "Join the first wave" (canonical variant, Appy 2026-08-19) and is INERT in
-// Phase 0 — the mock's own buttons did nothing either. Phase 3 wires it to the sign-in flow.
+// The hero CTA is "Join the first wave" (PM, 2026-08-20, settled after a premium-pass detour
+// through "Request yours" and "Request your AI"): the request variants gated without pulling, and
+// cutting "first wave" from the landing orphaned the form's "About the first wave" screen — the
+// CTA is where the term gets introduced, so the page reads join the wave -> here's what the first
+// wave is. The detour's keepers: no scarcity line anywhere on the hero (tried under the button and
+// as an eyebrow chip, cut both times), and the returning-user door below the CTA. Both #hero-cta
+// and #hero-signin are wired by id from HomepageView — this file stays static markup.
 
 const STARS = [
   { left: '8%', top: '12%', size: 3, delay: 0 },
@@ -59,6 +64,14 @@ export default function HomeMain() {
             Join the first wave
             <ArrowIcon />
           </button>
+          {/* The returning-user door (ported from creator-brand Hero.tsx, PM 2026-08-14 rationale
+              kept): "Join the first wave" reads wrong to someone who already has an account — they
+              aren't joining, they're getting back in. Small, muted, link-styled; HomepageView
+              wires #hero-signin to set the returningUser journey before opening the dialog. */}
+          <p className="hero-signin">
+            Already have an account?{' '}
+            <button type="button" id="hero-signin">Sign in</button>
+          </p>
         </div>
 
         <div className="scene" id="scene">
@@ -68,8 +81,8 @@ export default function HomeMain() {
               gone too (see HomeOverlay.tsx); this is now the money proof's only pill on screen. */}
           <div className="earnings rv d5" id="earnings">
             <span className="label">Earned</span>
-            {/* F3(a): base-18, toFixed(2) — matches useHomeFx.ts's cents-level model */}
-            <span className="amount" id="amount">$18.00</span>
+            {/* Base-118, whole dollars — the mock's own demo figures (F3a reverted, PM 2026-08-20) */}
+            <span className="amount" id="amount">$118</span>
           </div>
 
           <div className="desk">

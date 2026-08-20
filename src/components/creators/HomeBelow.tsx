@@ -1,9 +1,10 @@
 // Below-the-fold markup, ported 1:1 from the mock (alt-copy.html): the sleep section (couch image
 // extracted from the mock's embedded webp to public/creators/), the four steps, and the closer.
 //
-// The mock's closer button said "Apply Now" while the hero says "Join the first wave"; that
-// source inconsistency was resolved per audit finding F14 (AUDIT-PHASE2.md) — the closer now
-// matches the hero/header/menu CTA.
+// The mock's closer button said "Apply Now" while the hero said "Join the first wave"; that
+// source inconsistency was resolved per audit finding F14 (AUDIT-PHASE2.md) — the closer matches
+// the hero/header/menu CTA, all "Join the first wave" (settled PM 2026-08-20, after a premium-pass
+// detour through the "Request" variants — see HomeMain.tsx).
 
 function SparkIcon() {
   return (
@@ -59,9 +60,11 @@ export default function HomeBelow({ hideCloser = false, onCta }: { hideCloser?: 
         <div className="sleep-visual">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/creators/couch-sleep.webp" alt="Your AI worker typing at a glowing laptop while you sleep" />
-          {/* F29: two chips, not three (c2 removed); F3: cents-scale amounts matching the demo */}
-          <span className="float-chip c1">+$1.50</span>
-          <span className="float-chip c3">+$2.10</span>
+          {/* The mock's three chips and whole-dollar amounts, restored per the PM (2026-08-20):
+              F29 (c2 removed) and F3 (cents amounts) reverted together with the hero money model. */}
+          <span className="float-chip c1">+$12</span>
+          <span className="float-chip c2">+$5</span>
+          <span className="float-chip c3">+$20</span>
         </div>
       </section>
 

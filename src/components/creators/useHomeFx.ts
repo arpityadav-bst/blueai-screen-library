@@ -20,18 +20,13 @@ import { useCallback, useEffect, useRef } from 'react'
 // approve it, the worker does it, then the pay lands in the stack and flies to the balance. The
 // approval beat is the trust story, so it is named as yours.
 //
-// MONEY MODEL (F3a): cents-level per-task credits on a small base, so the demo sums plausibly
-// toward the copy's flat "$30 every month" instead of contradicting it.
-const PAYS = [0.4, 0.6, 1, 1.5]
+// MONEY MODEL: the mock's own whole-dollar demo figures, restored per the PM (2026-08-20) — the
+// hero must match the approved mock exactly, dollars included. This reverts F3a (cents-level
+// credits) and F15 (named watch/like/comment tasks): naming the engagement mechanic was already
+// banned by the later machine-stage rule, and the work beat reads plain "Working on it…" like the
+// mock. The flat-$30 story lives in the page copy; the task-row $ treatment stays with design.
+const PAYS = [2, 3, 5, 8, 12, 20, 30]
 const BEATS = { brand: 1000, approvalAsk: 800, approved: 600 }
-
-/* F15: name the work — the real watch/like/comment job shape, one per cycle */
-const TASKS = [
-  'Watch — 3-min product demo',
-  'Like + comment — launch video',
-  'Watch — creator collab teaser',
-  'Comment — Q&A livestream clip',
-]
 
 /* F27: SVG check instead of the &#10003; font glyph (stroke currentColor → .tick's mint) */
 const TICK =
@@ -43,7 +38,7 @@ export default function useHomeFx() {
   const aliveRef = useRef(true)
   const timersRef = useRef<Set<ReturnType<typeof setTimeout>>>(new Set())
   const intervalsRef = useRef<Set<ReturnType<typeof setInterval>>>(new Set())
-  const earnedRef = useRef(18) /* F3a */
+  const earnedRef = useRef(118)
 
   const later = useCallback((fn: () => void, ms: number) => {
     const id = setTimeout(() => {
@@ -96,7 +91,7 @@ export default function useHomeFx() {
     const scene = document.getElementById('scene')
     if (!workingEl || !stackEl || !amountEl || !earningsEl || !scene) return
 
-    const fmt = (n: number) => '$' + n.toFixed(2) /* F3a */
+    const fmt = (n: number) => '$' + n
     const pay = () => PAYS[Math.floor(Math.random() * PAYS.length)]
 
     function doneRow(p: number) {
@@ -145,7 +140,6 @@ export default function useHomeFx() {
       workingEl!.innerHTML = ''
       workingEl!.appendChild(row)
 
-      const task = TASKS[Math.floor(Math.random() * TASKS.length)] /* F15 */
       const label = (html: string) => { row.innerHTML = '<span class="lbl">' + html + '</span>' }
 
       label('Getting a task from a brand&hellip;')
@@ -155,7 +149,7 @@ export default function useHomeFx() {
 
       function work() {
         row.innerHTML =
-          '<span class="lbl">Working: ' + task + '&hellip;</span>' +
+          '<span class="lbl">Working on it&hellip;</span>' +
           '<span class="bar"><i></i></span>'
         const bar = row.querySelector('.bar > i') as HTMLElement
         let progress = 0

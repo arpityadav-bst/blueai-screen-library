@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import { useCrx } from './flow/CrxState'
 import HomeMain from './HomeMain'
 import HomeBelow from './HomeBelow'
 import HomeOverlay from './HomeOverlay'
@@ -22,14 +23,30 @@ export default function HomepageView({ onCta }: { onCta: () => void }) {
   // outside — the same addressing-static-markup-by-id idiom useHomeFx already uses on this page.
   // A follow-up can move this into an onCta prop on HomeMain once file ownership relaxes.
   // Ref-forwarded so a re-render with a new closure never re-binds the listener.
+  //
+  // #hero-signin (the "Already have an account?" door, PM 2026-08-20) is wired the same way, with
+  // creator-brand Hero.tsx's exact semantics: someone clicking Sign in has an account by
+  // definition, so the journey is set to returningUser BEFORE the dialog opens — that door
+  // resolves to the dashboard, overriding the preview toggler's persona for this one click.
+  const { setJourney } = useCrx()
   const onCtaRef = useRef(onCta)
   onCtaRef.current = onCta
+  const setJourneyRef = useRef(setJourney)
+  setJourneyRef.current = setJourney
   useEffect(() => {
     const el = document.getElementById('hero-cta')
-    if (!el) return
+    const door = document.getElementById('hero-signin')
     const open = () => onCtaRef.current()
-    el.addEventListener('click', open)
-    return () => el.removeEventListener('click', open)
+    const openReturning = () => {
+      setJourneyRef.current('returningUser')
+      onCtaRef.current()
+    }
+    el?.addEventListener('click', open)
+    door?.addEventListener('click', openReturning)
+    return () => {
+      el?.removeEventListener('click', open)
+      door?.removeEventListener('click', openReturning)
+    }
   }, [])
 
   return (

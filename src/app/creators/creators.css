@@ -92,6 +92,24 @@ body.crx-lock { overflow: hidden; }
 }
 .crx .sub b { color: var(--ink-inverse); font-weight: 650; }
 
+/* The returning-user door under the CTA (creator-brand Hero.tsx's recipe on this dark page):
+   small, muted, link-styled — findable by the person already looking for it, invisible to
+   everyone else. */
+.crx .hero-signin {
+  margin: 1rem 0 0;
+  font-size: 0.84rem;
+  color: var(--dim);
+}
+.crx .hero-signin button {
+  font: inherit; font-weight: 600;
+  color: var(--ink-inverse);
+  background: none; border: none; padding: 0;
+  cursor: pointer;
+  text-decoration: underline; text-underline-offset: 3px;
+  transition: color 0.15s ease;
+}
+.crx .hero-signin button:hover { color: #fff; }
+
 .crx .btn {
   font: inherit; font-weight: 700; font-size: 1.05rem;
   color: #fff;
@@ -409,6 +427,7 @@ body.crx-lock { overflow: hidden; }
   animation: crx-bob 6.5s ease-in-out infinite; /* F29: desynced from c3's 8s, subtler travel */
 }
 .crx .float-chip.c1 { top: 12%; right: 6%; }
+.crx .float-chip.c2 { top: 40%; left: 0; animation-delay: 1.6s; } /* restored with c2 (F29 reverted, PM 2026-08-20) */
 .crx .float-chip.c3 { top: 66%; right: 12%; animation-duration: 8s; animation-delay: 3.1s; }
 @keyframes crx-bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
 @media (max-width: 880px) { /* F24: was 780px — the page's one breakpoint is 880 */
