@@ -75,7 +75,7 @@ export default function ApplyForm() {
           </span>
           <h2 className="crx-panel-title crx-applied-title">Thanks for applying.</h2>
           <p className="crx-applied-sub">
-            We review every application and will email <b>{d.email}</b> when your spot opens.
+            We review every application and will email <b>{d.email}</b> when your access is approved.
           </p>
         </div>
       </>

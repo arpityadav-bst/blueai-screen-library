@@ -4,13 +4,13 @@
 // the #working/#stack/#amount nodes directly, exactly like the mock's script did. React never
 // re-renders any of this, which is what makes that direct mutation safe.
 //
-// The hero CTA is "Join the first wave" (PM, 2026-08-20, settled after a premium-pass detour
-// through "Request yours" and "Request your AI"): the request variants gated without pulling, and
-// cutting "first wave" from the landing orphaned the form's "About the first wave" screen — the
-// CTA is where the term gets introduced, so the page reads join the wave -> here's what the first
-// wave is. The detour's keepers: no scarcity line anywhere on the hero (tried under the button and
-// as an eyebrow chip, cut both times), and the returning-user door below the CTA. Both #hero-cta
-// and #hero-signin are wired by id from HomepageView — this file stays static markup.
+// The hero CTA is "Get access" (PM, 2026-08-20, after a word with the team — the last stop of a
+// day-long tour: Join the first wave -> Request yours -> Request your AI -> Join the first wave ->
+// Get access). "Access" is the thread word now: the apply page pays it off with "when your access
+// is approved" and the form's seam row opens "Access starts on your PC". The tour's keepers: no
+// scarcity line anywhere on the hero (tried under the button and as an eyebrow chip, cut both
+// times), and the returning-user door below the CTA. Both #hero-cta and #hero-signin are wired by
+// id from HomepageView — this file stays static markup.
 
 const STARS = [
   { left: '8%', top: '12%', size: 3, delay: 0 },
@@ -61,13 +61,13 @@ export default function HomeMain() {
               for the gradient pill (HomeHeader.tsx), same IO mechanism the mini ticker uses. */}
           <button className="btn" type="button" id="hero-cta">
             <SparkIcon />
-            Join the first wave
+            Get access
             <ArrowIcon />
           </button>
           {/* The returning-user door (ported from creator-brand Hero.tsx, PM 2026-08-14 rationale
-              kept): "Join the first wave" reads wrong to someone who already has an account — they
-              aren't joining, they're getting back in. Small, muted, link-styled; HomepageView
-              wires #hero-signin to set the returningUser journey before opening the dialog. */}
+              kept): "Get access" reads wrong to someone who already has an account — they have
+              access; they're getting back in. Small, muted, link-styled; HomepageView wires
+              #hero-signin to set the returningUser journey before opening the dialog. */}
           <p className="hero-signin">
             Already have an account?{' '}
             <button type="button" id="hero-signin">Sign in</button>

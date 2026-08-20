@@ -3,8 +3,8 @@
 //
 // The mock's closer button said "Apply Now" while the hero said "Join the first wave"; that
 // source inconsistency was resolved per audit finding F14 (AUDIT-PHASE2.md) — the closer matches
-// the hero/header/menu CTA, all "Join the first wave" (settled PM 2026-08-20, after a premium-pass
-// detour through the "Request" variants — see HomeMain.tsx).
+// the hero/header/menu CTA, all "Get access" (PM 2026-08-20; the full CTA tour is recorded in
+// HomeMain.tsx).
 
 function SparkIcon() {
   return (
@@ -89,7 +89,7 @@ export default function HomeBelow({ hideCloser = false, onCta }: { hideCloser?: 
           </p>
           <button className="btn" type="button" onClick={onCta}>
             <SparkIcon />
-            Join the first wave
+            Get access
             <ArrowIcon />
           </button>
         </section>

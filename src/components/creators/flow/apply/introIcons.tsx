@@ -1,4 +1,4 @@
-// Glyphs for StepIntro's "About the first wave" points — SVGs ported verbatim from
+// Glyphs for StepIntro's intro points — SVGs ported verbatim from
 // creator-brand/creators/apply/introIcons.tsx. Same conventions as choiceIcons.tsx so the whole
 // form's icon language stays one family: 24 viewBox, currentColor stroke (which is what lets the
 // kit's .crx-intro-ic iris tint colour them for free), round caps/joins, aria-hidden.
@@ -16,7 +16,7 @@ const box = (size: number, className: string) => ({
   className,
 })
 
-/** The first wave ("runs on your PC, phones and robots come next") — two waves, the second still faint. */
+/** The rollout seam ("access starts on your PC, phones and robots come next") — two waves, the second still faint. */
 export function WaveIcon({ size = 18, className = '' }: P) {
   return (
     <svg {...box(size, className)}>

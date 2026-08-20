@@ -189,7 +189,7 @@ export default function HomeHeader({ onCta }: { onCta: () => void }) {
                   same mark the hero/closer buttons carry. */}
               <button type="button" className={`crx-cta ${pastHeroCta ? 'pill' : ''}`} onClick={cta}>
                 <SparkIcon />
-                Join the first wave
+                Get access
                 <ArrowIcon />
               </button>
 
@@ -223,7 +223,7 @@ export default function HomeHeader({ onCta }: { onCta: () => void }) {
                 ))}
                 <button type="button" role="menuitem" className="crx-menu-cta" onClick={cta}>
                   <SparkIcon />
-                  Join the first wave
+                  Get access
                   <ArrowIcon />
                 </button>
               </div>
