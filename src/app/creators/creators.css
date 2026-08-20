@@ -30,10 +30,6 @@
   --cta-grad: linear-gradient(105deg, #1a90ff 0%, #6b53ff 55%, #7b4cff 100%);
   --mono: "Cascadia Code", Consolas, ui-monospace, monospace;
 
-  background:
-    radial-gradient(900px 500px at 25% -5%, rgba(123, 76, 255, 0.22), transparent 65%),
-    radial-gradient(800px 480px at 82% 12%, rgba(14, 164, 197, 0.16), transparent 60%),
-    linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 55%, var(--sky-low) 100%);
   color: var(--ink-inverse);
   /* FONT SYSTEM = creator-brand's (Appy, 2026-08-19): the mock shipped on Segoe UI/system-ui, but
      this page is becoming the creator half of the same product whose brand side lives on the
@@ -41,12 +37,27 @@
      (tailwind.config.ts fontFamily.sans); headings take the `head` stack in the block at the end
      of this file. Both faces are already loaded by the root layout's Google Fonts link. */
   font-family: 'SF Pro', Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* THE PAGE BOX IS #crx, NOT EVERY .crx (split out 2026-08-20, and it was a live bug).
+   `.crx` is a TOKEN SCOPE as well as the page root: this stylesheet's own note tells dialogs that
+   mount outside the root to carry className="crx" so their kit classes resolve, and CashOutModal
+   does exactly that. Everything in the rule above is safe to inherit — tokens, ink, type.
+   Everything here is page LAYOUT, and it was landing on that dialog too: `min-height: 100vh`
+   stretched the cash-out confirmation, ~300px of content, into a full-viewport panel with a void
+   under the button.
+   Anything page-shaped added from now on belongs in this block, not in the scope above it. */
+#crx {
+  background:
+    radial-gradient(900px 500px at 25% -5%, rgba(123, 76, 255, 0.22), transparent 65%),
+    radial-gradient(800px 480px at 82% 12%, rgba(14, 164, 197, 0.16), transparent 60%),
+    linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 55%, var(--sky-low) 100%);
   min-height: 100vh;
   overflow-x: hidden;
   /* Positioning context for the page's absolutely-positioned decoration. It was added for the
      .star spans (F28), which are gone — the pixel rain that replaced them anchors to <main>
      instead — but the rule stays: it is still what keeps stray absolute children off <body>.
-     Safe for the fixed children (header, backdrop, canvas, dock) — .crx carries no transform, so
+     Safe for the fixed children (header, backdrop, canvas, dock) — it carries no transform, so
      they still anchor to the viewport. */
   position: relative;
 }
@@ -75,9 +86,12 @@ body.crx-lock { overflow: hidden; }
   position: relative;
   max-width: 1100px;
   margin: 0 auto;
-  /* bottom 6rem: the fleet strip left <main> to become its own section, so this is the hero's
-     half of that boundary — every section join on this page is 6rem + 6rem. */
-  padding: 3.5rem 1.5rem 6rem;
+  /* bottom 8rem: the fleet left <main> to become its own section, so this is the hero's half of
+     that boundary. EVERY SECTION JOIN ON THIS PAGE IS 8rem + 8rem = 16rem — it was 6+6 until
+     2026-08-20, when Appy asked for "more generous spacing". Raised on all six sections rather
+     than only the two he named: this page's whole spacing argument is that every boundary is
+     identical, and a single wider gap in the middle of it reads as a mistake, not as generosity. */
+  padding: 3.5rem 1.5rem 8rem;
   text-align: center;
 }
 
@@ -90,6 +104,37 @@ body.crx-lock { overflow: hidden; }
   margin: 0 auto 1.25rem;
   text-wrap: balance;
 }
+/* ================= LINE WRAPPING — the page's rules =================
+   Written 2026-08-20 after a site-wide audit (Appy: "we are orphaning words and wrapping things
+   where it shouldn't, and sometimes we are making a 3rd line just for 1 word"). Four rules, and
+   every title/lede/body block on this route is checked against them:
+
+   1. EVERY HEADING TAKES `text-wrap: balance`. Headings are short enough for the balancer to run
+      on (Chromium caps it around 6 lines) and it is the only thing that reliably prevents a
+      two-word tail line under a full one.
+
+   2. A CENTRED LEDE TAKES `balance` TOO, NOT `pretty`. They look interchangeable and are not:
+      `pretty` only guarantees the LAST line is not a lone word, so it happily leaves "…the same
+      worker / moves in."; `balance` evens every line. Centred text has no ragged edge to hide an
+      uneven split behind, so it needs the stronger one.
+
+   3. LEFT-ALIGNED BODY COPY TAKES `pretty`. Balancing a long paragraph shortens every line to
+      even them, which fights the measure the column was designed at. Here the only defect worth
+      fixing is the orphan, which is exactly what `pretty` fixes.
+
+   4. IF A LINE HOLDS ONE OR TWO WORDS, WIDEN THE MEASURE — do not accept the tail. A 1-2 word
+      line is a measure that is a few characters too narrow, not a wrapping problem, and no
+      `text-wrap` value can invent room that is not there. This is why `.sub` went 640 -> 700 and
+      `.fleet-sub` went 52ch to a width its whole sentence fits on.
+
+   AND A TRAP, because it cost this page a defect: a hand-placed <br> inside a heading turns the
+   balancer OFF for that whole block in Chromium. The application's h1 has one (the couplet is
+   deliberate), which is why `balance` was on it and doing nothing while "here." sat alone on a
+   third line. A heading with a forced break has to be sized so each segment fits its own measure
+   — see .crx-apply-col h1.
+
+   Firefox has `balance` and not `pretty`; both degrade to normal wrapping, so neither is load
+   bearing for layout. */
 .crx .grad {
   font-style: italic;
   padding-right: 0.15em;
@@ -101,8 +146,11 @@ body.crx-lock { overflow: hidden; }
   font-size: 1.15rem;
   line-height: 1.65;
   color: var(--dim);
-  max-width: 640px;
+  /* 700, was 640 (rule 4): at 640 the hero lede broke as "…from brands, completes / it, and pays
+     you.", splitting a verb from its object to put four words on the second line. */
+  max-width: 700px;
   margin: 0 auto 2.2rem;
+  text-wrap: balance;
 }
 .crx .sub b { color: var(--ink-inverse); font-weight: 650; }
 
@@ -140,14 +188,20 @@ body.crx-lock { overflow: hidden; }
    BOTTOM-ANCHORED, so the five machines share one invisible ground line: object-position centers
    them horizontally and pins them to the frame's floor. That is what lets a single task bar sit
    equally close to a tall striding robot and a wide low car without moving. */
+/* No top margin any more: in the hero this hung off the CTA above it, but here it is the first
+   thing in its section and the section's own padding is the space. */
 .crx .crx-stage {
   position: relative;
-  width: min(980px, 100%);
-  margin: 2.2rem auto 0;
+  /* 1180, was 980 — the section widened to 1320 and the stage is what the extra room is for. */
+  width: min(1180px, 100%);
+  margin: 0 auto;
 }
 .crx .crx-stage-frame {
   position: relative;
-  height: 360px;
+  /* 430, was 360 — scaled with the stage around it so the machines gain height, not just
+     sideways room; the per-machine `fit` values are fractions of this, so all five grow
+     together and none of the framing work has to be redone. */
+  height: 430px;
 }
 /* the cutouts carry no ground of their own, so the page lends them one — a soft violet pool that
    reads as light pooling under the object rather than as a shadow it cannot cast.
@@ -160,6 +214,120 @@ body.crx-lock { overflow: hidden; }
   background: radial-gradient(50% 100% at 50% 100%, rgba(123, 76, 255, 0.30), rgba(14, 164, 197, 0.10) 45%, transparent 72%);
   filter: blur(6px);
 }
+/* ---------------- scene: desk + PC, centered ----------------
+   RESTORED 2026-08-20, verbatim from fef5388 (Appy: "bring back what we had in the hero, the CSS
+   laptop implementation"). It was deleted on 2026-08-19 when the rotating photoreal machines took
+   the hero; those now live in the sleep section, and this is the hero again.
+   Two things did NOT come back with it: the .earnings pill that floated at the PC's shoulder
+   (Appy removed it 2026-08-19 and it stays removed), and the .chip flight that only existed to
+   fly money into that pill. Money is told per completed row instead — see .task .pay below. */
+.crx .scene {
+  position: relative;
+  width: min(980px, 100%); /* F7: 96vw overflowed main's padded box below ~1200px */
+  height: 470px;
+  margin: 1.6rem auto 0;
+}
+.crx .scene::after {
+  content: "";
+  position: absolute; left: 50%; bottom: -30px;
+  transform: translateX(-50%);
+  width: 70%; height: 130px;
+  background: radial-gradient(50% 100% at 50% 0%, rgba(123, 76, 255, 0.18), transparent 75%);
+  pointer-events: none;
+}
+
+.crx .desk { position: absolute; left: 50%; margin-left: -235px; bottom: 20px; height: 134px; width: 470px; z-index: 2; }
+.crx .desk-top {
+  height: 16px; border-radius: 8px;
+  background: linear-gradient(180deg, #2c3468, #1b2148);
+  border-top: 1px solid rgba(180, 196, 255, 0.35);
+  box-shadow: 0 18px 40px -12px rgba(0, 0, 0, 0.6);
+}
+.crx .desk-leg {
+  position: absolute; top: 16px; width: 12px; height: 118px;
+  background: linear-gradient(180deg, #232a55, #161c3e);
+  border-radius: 0 0 5px 5px;
+}
+.crx .desk-leg.l { left: 26px; }
+.crx .desk-leg.r { right: 26px; }
+
+.crx .laptop { position: absolute; left: 50%; margin-left: -200px; bottom: 150px; width: 400px; z-index: 3; }
+.crx .lap-screen {
+  position: relative; overflow: hidden;
+  width: 372px; margin: 0 auto;
+  background: #0a0f26;
+  border: 3px solid #2c3568;
+  border-bottom: none;
+  border-radius: 14px 14px 0 0;
+  padding: 0.85rem 0.9rem 0.9rem;
+  min-height: 258px;
+  box-shadow:
+    0 0 50px rgba(63, 212, 245, 0.14),
+    0 0 110px rgba(123, 76, 255, 0.22),
+    inset 0 0 40px rgba(30, 40, 90, 0.5);
+}
+.crx .lap-deck {
+  width: 400px; height: 22px;
+  background: linear-gradient(180deg, #333c72, #1e2450);
+  border-radius: 3px 3px 16px 16px;
+  position: relative;
+  box-shadow: 0 14px 30px -10px rgba(0, 0, 0, 0.65);
+}
+.crx .lap-deck::before {
+  content: "";
+  position: absolute; left: 46px; right: 46px; top: 5px; height: 7px;
+  border-radius: 3px;
+  background: repeating-linear-gradient(90deg, #454f8c 0 12px, transparent 12px 16px);
+  opacity: 0.7;
+}
+.crx .lap-deck::after {
+  content: "";
+  position: absolute; left: 50%; top: 14px; transform: translateX(-50%);
+  width: 64px; height: 5px; border-radius: 999px;
+  background: #454f8c; opacity: 0.6;
+}
+
+.crx .scr-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+.crx .scr-brand { display: flex; align-items: center; gap: 0.45rem; font-weight: 700; font-size: 0.9rem; color: #fff; }
+.crx .scr-status { display: flex; align-items: center; gap: 0.4rem; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600; color: var(--mint); }
+.crx .dot {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--mint);
+  box-shadow: 0 0 8px var(--mint);
+  animation: crx-pulse 1.6s ease-in-out infinite;
+}
+@keyframes crx-pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+.crx .task {
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 9px;
+  padding: 0.55rem 0.7rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.82rem;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.crx .task .lbl { display: flex; align-items: center; gap: 0.45rem; color: #dbe4ff; font-weight: 600; }
+.crx .task .lbl .tick { color: var(--mint); font-weight: 800; }
+.crx .task .pay { color: var(--mint); font-weight: 800; font-variant-numeric: tabular-nums; }
+.crx .task.working .lbl { color: #9fb0e8; }
+.crx .task .bar { flex: 1; height: 4px; margin-left: 0.8rem; border-radius: 999px; background: rgba(255,255,255,0.1); overflow: hidden; }
+.crx .task .bar > i { display: block; height: 100%; width: 0%; background: var(--grad-bright); border-radius: 999px; transition: width 0.18s linear; }
+
+/* the working slot keeps its height so nothing jumps when a task hands over */
+.crx #working { min-height: 44px; }
+.crx #stack { overflow: hidden; }
+.crx .task.enter { animation: crx-emerge 0.55s cubic-bezier(0.25, 0.8, 0.35, 1); }
+@keyframes crx-emerge {
+  from { margin-top: -46px; opacity: 0.35; }
+  to { margin-top: 0; opacity: 1; }
+}
+.crx #stack .task:nth-child(2) { opacity: 0.7; }
+.crx #stack .task:nth-child(3) { opacity: 0.45; }
+
 /* THE HANDOFF IS A PASS, NOT A DISSOLVE (Appy, 2026-08-20: "can the rotation be done with some
    motion blurring... instead of simple fade in fade out"). Three states, not two, because a
    crossfade has no direction and motion blur without direction is just soft focus:
@@ -238,58 +406,12 @@ body.crx-lock { overflow: hidden; }
     filter 0.5s ease-in 0.1s;
 }
 
-/* floating money badges — 2-3 per machine, hugging that object's own edges.
-   POSITIONED FROM JS, NOT CSS (Appy, 2026-08-19: "closer to each image visual details separately
-   almost on their edges"). Fixed frame percentages cannot do this: the five cutouts have ratios
-   from 0.73 to 2.02, so object-fit:contain renders each at a different size and a corner of the
-   FRAME is nowhere near the edge of the OBJECT. useHomeFx computes the contain-rect per machine
-   and places each badge at coords measured against that machine's real silhouette.
-   The centring translate lives in the keyframes too, because the bob animation owns `transform`
-   while it runs and would otherwise throw the centring away on its first frame. */
-/* TWO KINDS, ONE SHELL (Appy, 2026-08-20). The shared rule is the pill itself — placement, shape,
-   ground and reveal; the money and the action wear it differently, because a machine floating
-   three green amounts read as a price list rather than as something at work. The base carries no
-   colour of its own: .pay and .act each state theirs, so neither inherits the other's. */
-.crx .crx-badge {
-  position: absolute; z-index: 3;
-  transform: translate(-50%, -50%);
-  font-size: 0.8rem;
-  background: rgba(10, 15, 38, 0.82);
-  border: 1px solid transparent;
-  border-radius: 999px; padding: 0.24rem 0.62rem;
-  white-space: nowrap;
-  opacity: 0;
-  transition: opacity 0.5s ease;
-  pointer-events: none;
-}
-/* the claim: heaviest weight, brand mint, and the only badge that glows */
-.crx .crx-badge.pay {
-  font-weight: 800; color: var(--mint);
-  border-color: rgba(52, 227, 154, 0.35);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45), 0 0 18px rgba(52, 227, 154, 0.16);
-  font-variant-numeric: tabular-nums;
-}
-/* the evidence: quieter by a step in every dimension — lighter weight, neutral ink, no glow — so
-   it supports the amount instead of competing with it. Small-caps mono marks it as a label rather
-   than a value, which is also what keeps a one-word action from being mistaken for a heading. */
-.crx .crx-badge.act {
-  font-family: var(--mono);
-  font-size: 0.66rem; font-weight: 700;
-  letter-spacing: 0.08em; text-transform: uppercase;
-  color: rgba(226, 233, 255, 0.9);
-  border-color: rgba(255, 255, 255, 0.16);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
-}
-/* :empty is the off switch — a machine with two badges leaves the third slot blank, and an empty
-   pill must not render as a stray dot */
-.crx .crx-badge:empty { display: none; }
-.crx .crx-badge.show { opacity: 1; animation: crx-badge-bob 6.5s ease-in-out infinite; }
-.crx .crx-badge[data-badge="1"].show { animation-duration: 8s; }
-.crx .crx-badge[data-badge="2"].show { animation-duration: 7.2s; }
-@keyframes crx-badge-bob {
-  0%, 100% { transform: translate(-50%, -50%) translateY(0); }
-  50% { transform: translate(-50%, -50%) translateY(-5px); }
-}
+/* The floating money/action badges that hung off each machine's silhouette were REMOVED
+   2026-08-20 (Appy: the stage moved to the sleep section "without badges"). Their whole apparatus
+   went with them rather than being left unstyled or unwired: the .crx-badge rules, the bob
+   keyframes, the per-machine badge data and `ratio` in machines.ts, and the contain-rect maths,
+   generation counter and resize listener in the loop. Every one of those existed only to place a
+   badge. */
 
 /* THE TASK BAR — a status strip belonging to the machine above it.
    RIDES THE LOWER EDGE of the object (Appy: "shift it a bit up on lower area of the images"): the
@@ -312,7 +434,9 @@ body.crx-lock { overflow: hidden; }
 .crx .crx-taskbar {
   position: relative; z-index: 4; overflow: hidden;
   margin: -1.9rem auto 0;
-  width: min(468px, 100%);
+  /* 520, was 468 — the stage widened, and this only ever ellipsed because it was tight.
+     The ~36-character copy budget in machines.ts is now headroom rather than a ceiling. */
+  width: min(520px, 100%);
   display: flex; align-items: center; gap: 0.55rem;
   padding: 0.62rem 0.95rem 0.68rem;
   border-radius: 14px;
@@ -437,60 +561,210 @@ body.crx-lock { overflow: hidden; }
 /* idle: the fill fades out rather than snapping back to zero width */
 .crx .crx-taskbar-track:not(.on) > i { opacity: 0; }
 
-/* The Earned pill and the .chip money-flight styles were REMOVED 2026-08-19 (Appy). Both are gone
-   from the markup and the loop too, not just unstyled: the pill was flyChip's only destination and
-   the running total's only display, so keeping either would have left dead CSS pointing at nothing.
-   Money is now told per task — the "+$X" tag in the task bar and the floating .crx-badge pills. */
+/* EARNINGS PILL — the white card at the PC's shoulder, and the money chips that fly into it.
+   Removed 2026-08-19, restored 2026-08-20 (Appy: "bring back that white rectangle... which was
+   getting the money added to it"). Verbatim from fef5388, including both of the shaping notes it
+   already carried:
+     · SLEEKENED (Appy, 2026-08-19: "remove dollar icon here and make this more sleek") — the coin
+       circle is gone, so it is label+amount stacked tight with no icon column to balance around.
+       Lighter too: the money-tinted glow read as one more heavy glow on a page already carrying
+       several, and a plain close neutral shadow reads as a real UI element rather than an effect.
+     · SHAPE = rectangle with a round radius, NOT a stadium pill (Appy: "slimmer and sleeker and
+       rectangle with round radius") — 14px is the page's own card radius (.fcard, .crx-panel), so
+       it reads as a small card.
+   The chip is the only reason .scene needs to be a positioning context AND the only consumer of
+   flyChip's scale correction (see useLaptopFx). */
+.crx .earnings {
+  /* 176px, was 170 (Appy, 2026-08-20: shift it 6px right) — measured off the scene centre, not
+     the laptop, so it holds wherever the lid lands. */
+  position: absolute; left: calc(50% + 176px); top: 26px; z-index: 4;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 0;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 0.4rem 0.85rem;
+  box-shadow: 0 8px 22px -8px rgba(0, 0, 0, 0.35);
+}
+.crx .earnings .label { font-family: var(--mono); font-size: 0.56rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5c6678; /* F10/F17: 3.77:1 captioning the money proof */ }
+.crx .earnings .amount { font-size: 1.05rem; font-weight: 800; color: #0f9d58; font-variant-numeric: tabular-nums; }
+.crx .earnings.bump { animation: crx-bump 0.35s ease; }
+@keyframes crx-bump { 40% { transform: scale(1.09); } }
+
+.crx .chip {
+  position: absolute; z-index: 5;
+  font-weight: 800; font-size: 0.9rem; color: var(--mint);
+  text-shadow: 0 0 12px rgba(52, 227, 154, 0.6);
+  pointer-events: none;
+  transition: transform 0.7s cubic-bezier(0.3, 0.7, 0.4, 1), opacity 0.7s ease;
+}
 
 /* the stage's mobile rules live in the consolidated 880px block at the END of the file —
-   several of their base rules (.slot, .time-chip, main's padding) are declared later at equal
+   several of their base rules (.time-chip, main's padding) are declared later at equal
    specificity and would win the source-order tie against a block placed here */
 
-/* ---------------- fleet: the asset slots ----------------
-   One live slot (the PC, earning) and dashed empty slots. The dashes are the
-   vision: sockets this same worker plugs into next. */
-/* THE FLEET IS ITS OWN SECTION (Appy, 2026-08-19: "fleet also deserves its separate section").
-   It used to live inside <main> as a tail on the hero, which is why it never took part in the
-   page's spacing: the joins ran 2.6rem, 6rem, 12rem, 12rem. It is a <section> sibling now and
-   pays the same 6rem/6rem as every other one, so every boundary on the page is 12rem. It also
-   carries its own centring, which it previously inherited from <main>. */
+/* ---------------- fleet: one worker, every machine ----------------
+   REBUILT 2026-08-20 from an icon strip (Appy). It was four line icons with a name and a tag under
+   an all-caps eyebrow, which reads as a legend — and the section's claim, that one worker follows
+   you into every machine you will ever own, is the largest idea on the page. Now: a section title
+   like every other section, a one-line subtitle, and four real cards each carrying a Higgsfield
+   cutout, a name, a line about it and its status.
+
+   THE FLEET IS ITS OWN SECTION (Appy, 2026-08-19). It used to live inside <main> as a tail on the
+   hero, which is why it never took part in the page's spacing: the joins ran 2.6rem, 6rem, 12rem,
+   12rem. It is a <section> sibling now and pays the same 6rem/6rem as every other one. */
+/* WIDER THAN THE PAGE'S 1100px MEASURE, on purpose (Appy, 2026-08-20: "bigger... and with more
+   spacing in between"). Every other section is one column of prose, where 1100 is the right
+   measure; this one is a four-up grid, and four cards inside 1100 with a real gap between them
+   comes out narrower per card than any other section's content. The band widens so the CARDS can,
+   not because the section wants more room. */
 .crx .fleet {
-  max-width: 1100px; margin: 0 auto; padding: 6rem 1.5rem;
+  max-width: 1320px; margin: 0 auto; padding: 8rem 1.5rem;
   text-align: center;
 }
-.crx .fleet-label {
-  font-family: var(--mono);
-  font-size: 0.72rem; font-weight: 600;
-  letter-spacing: 0.2em; text-transform: uppercase; /* F17: eyebrow tracking tier */
-  color: rgba(214, 224, 255, 0.55);
-  margin: 0 0 1rem;
+/* same clamp and face as .below h2 / .sleep-copy h2 — this is a peer of those sections now, not a
+   label, and it has to be typeset as one */
+.crx .fleet h2 {
+  font-size: clamp(2.05rem, 4.1vw, 3rem); font-weight: 800; line-height: 1.15;
+  letter-spacing: -0.02em; margin: 0 0 0.7rem; text-wrap: balance;
 }
-.crx .fleet-row {
-  display: flex; flex-wrap: wrap; justify-content: center; gap: 0.9rem;
+.crx .fleet-sub {
+  /* 60ch, was 52ch (rule 4): this is a one-line subtitle by design and 52ch cut it two words
+     short, hanging "moves in." on a line of its own. It still wraps on a narrow viewport, where
+     balance splits it evenly instead. */
+  max-width: 60ch; margin: 0 auto 2.8rem;
+  font-size: 1.02rem; line-height: 1.6; color: var(--dim);
+  text-wrap: balance;
 }
-.crx .slot {
-  display: flex; flex-direction: column; align-items: center; gap: 0.45rem;
-  width: 168px; padding: 1.1rem 0.8rem 0.95rem;
-  border-radius: 14px;
+/* auto-fit rather than a fixed 4: at 1100px it lays out four, and it folds to two and then one on
+   its own, so the section needs no breakpoint of its own for the grid. */
+.crx .fleet-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(268px, 1fr));
+  gap: 1.75rem;
+}
+
+.crx .fcard {
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column; align-items: center;
+  /* no top padding: the photo tile is full-bleed and supplies the card's own top edge */
+  padding: 0 1.15rem 1.75rem;
+  border-radius: 18px;
   background: rgba(255, 255, 255, 0.035);
   border: 1px dashed rgba(255, 255, 255, 0.18);
+  transition:
+    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.4s ease,
+    background-color 0.4s ease,
+    box-shadow 0.5s ease;
 }
-.crx .slot svg { color: rgba(214, 224, 255, 0.55); }
-.crx .slot-name { font-size: 0.9rem; font-weight: 700; color: var(--dim); }
-.crx .slot-tag {
-  font-family: var(--mono); font-size: 0.6rem; font-weight: 700;
-  letter-spacing: 0.12em; text-transform: uppercase; /* F17: tag tracking tier */
-  color: rgba(214, 224, 255, 0.58); /* F11: 0.45 was ~3.6:1 at 9.6px */
-  display: inline-flex; align-items: center; gap: 0.35rem;
-}
-.crx .slot.live {
-  border: 1px solid rgba(52, 227, 154, 0.4);
+/* the dashes are the vision: sockets this same worker plugs into next. The live one is the only
+   solid card, so "already real" is carried by the border and not only by the pill. */
+.crx .fcard.live {
+  border-style: solid;
+  border-color: rgba(52, 227, 154, 0.4);
   background: rgba(52, 227, 154, 0.06);
   box-shadow: 0 0 34px rgba(52, 227, 154, 0.12);
 }
-.crx .slot.live svg { color: #7fe9bd; }
-.crx .slot.live .slot-name { color: #fff; }
-.crx .slot.live .slot-tag { color: var(--mint); }
+
+/* THE PHOTO TILE. Full-bleed 16:9, pulled out to the card's edges by negative margins so the image
+   is as large as the card allows. Its own radius matches the card's inner corner; the card does NOT
+   clip, because the hover pop is this tile growing out past the card's top and sides, and an
+   overflow:hidden on the card would be the one thing that makes that impossible. */
+.crx .fcard-bay {
+  position: relative;
+  width: auto; align-self: stretch;
+  margin: 0 -1.15rem 1.25rem;
+  /* 4:3 — went 16:9 -> 3:2 -> here as Appy asked for taller cards, and this is the practical floor
+     for these assets: the source renders are 16:9, so a taller output window is a narrower slice of
+     them, and by 4:3 the car's own 71%-of-frame width is already using 94% of the window it gets.
+     1:1 is not reachable at all — the car would need a window wider than the frame it came from.
+     The crop is sized from whichever axis binds per subject (scratchpad reframe.py), which is what
+     keeps that constraint from silently cutting the car's nose off. */
+  aspect-ratio: 4 / 3;
+  overflow: hidden; /* clips the IMAGE to the tile — not the tile to the card */
+  border-radius: 17px 17px 4px 4px;
+  transform-origin: 50% 100%;
+  transition:
+    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.55s ease;
+}
+.crx .fcard-bay img {
+  display: block; width: 100%; height: 100%;
+  object-fit: cover;
+  /* GREY AND DARK AT REST, not merely desaturated. These renders are already low-chroma and
+     mid-toned, so grayscale() alone moved almost nothing — the first version's two states were
+     indistinguishable. Most of the difference now lives in LUMINANCE and CONTRAST, which the eye
+     reads long before it reads chroma.
+     Every function hover changes is present here at its resting value: a filter list only
+     interpolates against the same functions in the same order, or the whole thing snaps. */
+  filter: grayscale(1) contrast(1.4) brightness(0.58) saturate(0);
+  transition: filter 0.55s ease, transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+/* a hairline over the tile: the renders are studio plates, and their light background meets the
+   card's dark edge with nothing between them */
+.crx .fcard-bay::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.09);
+}
+
+/* HOVER IS A REVEAL, and only where hovering exists. On touch there is no way to get the colour
+   version, so it is simply the resting state — a permanently grey card on a phone would look like
+   a loading failure, not like a deliberate before/after. */
+@media (hover: hover) {
+  .crx .fcard:hover {
+    z-index: 3; /* over its neighbours, so the pop-out is not clipped by the next card */
+    transform: translateY(-6px);
+    border-color: rgba(255, 255, 255, 0.32);
+    background-color: rgba(255, 255, 255, 0.07);
+    box-shadow: 0 28px 60px -30px rgba(0, 0, 0, 0.85);
+  }
+  .crx .fcard.live:hover {
+    border-color: rgba(52, 227, 154, 0.62);
+    box-shadow: 0 0 46px rgba(52, 227, 154, 0.2), 0 28px 60px -30px rgba(0, 0, 0, 0.85);
+  }
+  /* origin at the tile's own bottom edge, so it grows UP and OUT through the card's top rather
+     than sinking into the text below it */
+  .crx .fcard:hover .fcard-bay {
+    transform: scale(1.1) translateY(-8px);
+    box-shadow: 0 26px 48px -20px rgba(0, 0, 0, 0.8);
+  }
+  .crx .fcard:hover .fcard-bay img {
+    filter: grayscale(0) contrast(1.04) brightness(1.06) saturate(1.35);
+    transform: scale(1.04); /* a touch of push inside the tile, so the frame is not the only motion */
+  }
+}
+@media (hover: none) {
+  .crx .fcard-bay img { filter: grayscale(0) contrast(1) brightness(1) saturate(1.1); }
+}
+
+.crx .fcard h3 {
+  font-family: 'Space Grotesk', 'SF Pro Display', Inter, sans-serif;
+  font-size: 1.18rem; font-weight: 700; line-height: 1.25;
+  margin: 0 0 0.6rem;
+  color: var(--dim);
+  text-align: center;
+  text-wrap: balance;
+}
+.crx .fcard p {
+  margin: 0 0 1.15rem;
+  font-size: 0.9rem; line-height: 1.62;
+  color: rgba(214, 224, 255, 0.62);
+  text-align: center;
+  /* balance, not pretty (rule 2) — these are centred and only two or three lines long, so an
+     uneven split has nothing to hide behind */
+  text-wrap: balance;
+}
+/* mt:auto pins the pill to the card's floor, so a two-line blurb and a three-line one still end
+   level — without it the tags stagger and the row of cards loses its bottom edge. */
+.crx .fcard-tag {
+  margin-top: auto;
+  font-family: var(--mono); font-size: 0.62rem; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: rgba(214, 224, 255, 0.58); /* F11: 0.45 was ~3.6:1 at 9.6px */
+  display: inline-flex; align-items: center; gap: 0.4rem;
+}
+.crx .fcard.live h3 { color: #fff; }
+.crx .fcard.live .fcard-tag { color: var(--mint); }
 .crx .tick-dot {
   display: inline-block; width: 6px; height: 6px; border-radius: 50%;
   background: var(--mint); box-shadow: 0 0 8px var(--mint);
@@ -616,58 +890,61 @@ body.crx-lock { overflow: hidden; }
 }
 
 /* ---------------- below the fold ---------------- */
+/* STACKED, NOT SPLIT (Appy, 2026-08-20). This was a two-column section — copy left, a photo of
+   someone asleep beside a glowing laptop right. The machine stage replaced that photo and takes
+   the full width, because it is not an illustration of the claim, it IS the claim being played
+   out; the title and subtitle read as its caption and sit underneath. */
 .crx .sleep {
-  max-width: 1100px; /* F23: one content width */ margin: 0 auto; padding: 6rem 1.5rem;
-  display: grid; grid-template-columns: 1.05fr 1fr; gap: 2.5rem; align-items: center;
+  /* 1320, matching the fleet: 1100 is the PROSE measure, and this section's centrepiece is a
+     980px stage, not a column of text (Appy, 2026-08-20: "scale up section 3 and 4"). */
+  max-width: 1320px; margin: 0 auto; padding: 8rem 1.5rem;
+  text-align: center;
 }
-.crx .sleep-copy { text-align: left; }
+/* CENTRED, and it takes two changes rather than one (Appy, 2026-08-20). `.sleep` sets
+   text-align:center, but this block carried an explicit `text-align: left` from the two-column
+   layout — it was the LEFT column then, and left-aligning it against the photo beside it was
+   right. With the copy now sitting under a centred stage, that override was the only thing
+   keeping it ragged. The paragraph also needs `margin: 0 auto`: text-align centres the lines
+   inside its box, but the box is capped at 46ch and would otherwise sit hard against the section's
+   left edge with the text neatly centred inside it — which looks like a bug, not a measure. */
+.crx .sleep-copy { margin-top: 3rem; }
 .crx .sleep-copy h2 {
-  font-size: clamp(1.9rem, 3.8vw, 2.7rem); font-weight: 800; line-height: 1.15; /* F4 */
+  font-size: clamp(2.05rem, 4.1vw, 3rem); font-weight: 800; line-height: 1.15; /* F4 */
   letter-spacing: -0.02em; margin: 0 0 1rem; text-wrap: balance;
 }
-.crx .sleep-copy p { color: var(--dim); font-size: 1.05rem; line-height: 1.65; margin: 0; max-width: 46ch; }
-.crx .sleep-visual { position: relative; }
-.crx .sleep-visual img {
-  width: 100%; display: block;
-  -webkit-mask-image: radial-gradient(100% 100% at 50% 42%, black 40%, transparent 67%);
-  mask-image: radial-gradient(100% 100% at 50% 42%, black 40%, transparent 67%);
-  filter: drop-shadow(0 26px 50px rgba(0, 0, 0, 0.55));
-}
-.crx .float-chip {
-  position: absolute;
-  font-weight: 800; font-size: 0.9rem; color: var(--mint);
-  background: rgba(10, 15, 38, 0.85);
-  border: 1px solid rgba(52, 227, 154, 0.35);
-  border-radius: 999px; padding: 0.3rem 0.8rem;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45), 0 0 18px rgba(52, 227, 154, 0.18);
-  animation: crx-bob 6.5s ease-in-out infinite; /* F29: desynced from c3's 8s, subtler travel */
-}
-.crx .float-chip.c1 { top: 12%; right: 6%; }
-.crx .float-chip.c3 { top: 66%; right: 12%; animation-duration: 8s; animation-delay: 3.1s; }
-@keyframes crx-bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+.crx .sleep-copy p { color: var(--dim); font-size: 1.15rem; line-height: 1.7; margin: 0 auto; max-width: 52ch; text-wrap: pretty; }
+/* .sleep-visual, its radial-masked couch photo and the two .float-chip pills that bobbed over it
+   were deleted 2026-08-20 with the two-column layout they belonged to. Removed with their
+   dependents rather than orphaned: crx-bob animated nothing else. */
 @media (max-width: 880px) { /* F24: was 780px — the page's one breakpoint is 880 */
-  .crx .sleep { grid-template-columns: 1fr; }
-  .crx .sleep-copy { text-align: center; }
-  .crx .sleep-copy p { margin: 0 auto; }
+  /* .sleep is stacked and centred at every width now, so its old grid/centring overrides are gone
+     — there is nothing left here for this breakpoint to undo. */
 }
 
-.crx .below { max-width: 1100px; margin: 0 auto; padding: 6rem 1.5rem; text-align: center; } /* F22/F23 */
+/* also 1320 — four cards in a row is a grid, not prose, and it was paying the prose measure */
+.crx .below { max-width: 1320px; margin: 0 auto; padding: 8rem 1.5rem; text-align: center; }
 .crx .below h2 {
-  font-size: clamp(1.9rem, 3.8vw, 2.7rem); font-weight: 800; line-height: 1.15; /* F4: same clamp as .sleep-copy h2 */
+  font-size: clamp(2.05rem, 4.1vw, 3rem); font-weight: 800; line-height: 1.15; /* F4: same clamp as .sleep-copy h2 */
   letter-spacing: -0.02em; margin: 0 0 2.2rem; text-wrap: balance;
 }
-.crx .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+/* gap 1.5rem, was 1 — the cards grew, and a gutter that does not grow with them turns four
+   cards into one slab */
+.crx .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
 /* F9: explicit 4/2/1 — auto-fit orphaned "04 Collect" across the whole 710–935px range */
 @media (max-width: 935px) { .crx .steps { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 520px) { .crx .steps { grid-template-columns: 1fr; } }
 .crx .step {
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.09);
-  border-radius: 16px; padding: 1.4rem 1.3rem; text-align: left;
+  border-radius: 18px; padding: 1.9rem 1.6rem; text-align: left;
 }
 .crx .step .n { font-family: var(--mono); font-size: 0.72rem; font-weight: 800; letter-spacing: 0.12em; color: #7da2ff; }
-.crx .step h3 { margin: 0.5rem 0 0.4rem; font-size: 1.05rem; color: #fff; }
-.crx .step p { margin: 0; font-size: 0.9rem; line-height: 1.55; color: var(--dim); }
+.crx .step h3 { margin: 0.65rem 0 0.5rem; font-size: 1.2rem; color: #fff; text-wrap: balance; }
+.crx .step p { margin: 0; font-size: 0.98rem; line-height: 1.62; color: var(--dim); text-wrap: pretty; }
+/* the one highlight in the four steps: what you actually get paid. --mint is the page's money
+   colour on dark surfaces; the closer's own "$30 every month" uses #0f9d58 instead because it
+   sits on a light panel. */
+.crx .step p .money { color: var(--mint); font-weight: 700; }
 
 /* F22: 7rem top unifies the section breaks; F21: bottom trimmed to 5rem — the footer sits below now */
 /* SECTION RHYTHM = creator-brand's (Appy, 2026-08-19: "sections are too close... each section
@@ -676,7 +953,9 @@ body.crx-lock { overflow: hidden; }
    bottom padding, which is where the crowding came from: 7rem total between sections instead of
    12rem. Now each section owns its own 6rem/6rem, and no section depends on its neighbour's
    spacing — which is also what stops a rhythm break when one of them is conditionally hidden. */
-.crx .closer { max-width: 1100px; margin: 0 auto; padding: 6rem 1.5rem; }
+/* the closer keeps the 1100 PROSE measure — it is a contained panel of copy, not a grid, and a
+   1320 band would stretch the CTA's own line length past what the two sections above set. */
+.crx .closer { max-width: 1100px; margin: 0 auto; padding: 8rem 1.5rem; }
 .crx .closer h2 { font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; line-height: 1.15; letter-spacing: -0.025em; margin: 0 0 1.25rem; } /* F4/F22 */
 .crx .closer p { color: var(--dim); font-size: 1.05rem; margin: 0 0 2.2rem; } /* F22: hero's stack rhythm */
 .crx .closer p b { color: var(--mint); font-variant-numeric: tabular-nums; }
@@ -712,24 +991,133 @@ body.crx-lock { overflow: hidden; }
 .crx .crx-band-grid { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; color: #2b3585; }
 .crx .crx-band-in { position: relative; z-index: 10; }
 /* the inverted panel's own ink */
-.crx .crx-band h2 { color: #0b1030; }
-.crx .crx-band p { color: #4c5473; }
+.crx .crx-band h2 { color: #0b1030; text-wrap: balance; }
+.crx .crx-band p { color: #4c5473; text-wrap: balance; }
 .crx .crx-band p b { color: #0f9d58; }
 @media (min-width: 640px) { .crx .crx-band { padding: 4rem; } }
 
-/* F21: one-line footer in the page's mono-eyebrow voice */
-.crx .foot {
-  font-family: var(--mono); font-size: 0.72rem; font-weight: 600;
-  letter-spacing: 0.2em; text-transform: uppercase;
-  color: rgba(214, 224, 255, 0.55);
-  text-align: center;
+/* ---------------- footer ----------------
+   Rebuilt 2026-08-20 from a single centred mono line (F21) into a wayfinding footer, on
+   creator-brand's model. See HomeFooter.tsx for which of that footer's principles were ported and
+   which one deliberately was not.
+   A TRANSLUCENT DARKEN, not an opaque panel (Appy, 2026-08-20: "slightly darker bg"). It had none
+   at all before, on the argument that the page's own atmosphere should run underneath rather than
+   be painted over — which still holds, and is why this is a 32% wash of --void rather than a solid
+   fill. The page background is a vertical gradient, so a solid colour would flatten its last
+   screen to one flat tone and put a visible seam at the hairline; a wash darkens it and keeps the
+   gradient reading through. */
+.crx .crx-foot {
+  background: rgba(5, 6, 15, 0.32);
   border-top: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 2rem 1.5rem 2.2rem;
+  margin-top: 2rem;
+}
+.crx .crx-foot-in { max-width: 1100px; margin: 0 auto; padding: 4rem 1.5rem 2.5rem; }
+/* ON THE PAGE'S OWN GRID (Appy, 2026-08-20: "the footer should be aligned with the grid"). The
+   container was already the page's 1100px content width, but the columns inside it were 1.5fr/1fr
+   — a ratio picked to suit the content, which put the nav's left edge at a position no other
+   section shares. This is the SAME four-column grid .steps uses at the same container and the same
+   1rem gutter, so the brand column starts on step 01's edge and the nav column starts on step 04's.
+   The alignment is now structural rather than approximately right. */
+.crx .crx-foot-cols {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;
+  text-align: left;
+}
+.crx .crx-foot-brand { grid-column: 1 / 3; }
+.crx .crx-foot-nav { grid-column: 4; }
+.crx .crx-foot-logo {
+  display: inline-flex; align-items: center; gap: 0.55rem;
+  background: none; border: none; padding: 0; cursor: pointer;
+  font: inherit; color: inherit;
+  transition: opacity 0.18s ease;
+}
+.crx .crx-foot-logo:hover { opacity: 0.85; }
+.crx .crx-foot-logo img { border-radius: 50%; display: block; }
+.crx .crx-foot-brand p {
+  /* no ch cap: the two-column track IS the measure now, and a 42ch cap inside it was a second,
+     narrower measure that stopped the text short of the grid line it is aligned to */
+  max-width: 100%;
+  margin: 1rem 0 0;
+  font-size: 0.9rem; line-height: 1.65;
+  color: rgba(214, 224, 255, 0.62);
+  text-wrap: pretty;
+}
+
+/* the column head keeps the page's eyebrow voice — this is the one place the old footer's mono
+   small-caps survives, now labelling a list instead of being the whole footer */
+.crx .crx-foot-nav h3 {
+  margin: 0 0 0.35rem;
+  font-family: var(--mono); font-size: 0.66rem; font-weight: 700;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: rgba(214, 224, 255, 0.5);
+}
+.crx .crx-foot-nav ul { list-style: none; margin: 0; padding: 0; }
+/* HIT AREA FROM PADDING, NOT TYPE SIZE (creator-brand's own note): inline-block + 0.6rem of
+   vertical padding lifts each row to ~42px while the type stays at 0.9rem, and the list carries no
+   gap of its own so the visual rhythm is unchanged — only the target grows. */
+.crx .crx-foot-nav a {
+  display: inline-block;
+  padding: 0.6rem 0;
+  font-size: 0.9rem;
+  color: rgba(214, 224, 255, 0.62);
+  text-decoration: none;
+  transition: color 0.18s ease;
+}
+.crx .crx-foot-nav a:hover { color: #fff; }
+
+/* the rule spans the viewport; its content stays on the content grid */
+.crx .crx-foot-rule { border-top: 1px solid rgba(255, 255, 255, 0.07); }
+.crx .crx-foot-bar {
+  max-width: 1100px; margin: 0 auto;
+  /* SYMMETRIC (Appy, 2026-08-20: "the text is not vertically centred"). When this bar was a child
+     of .crx-foot-in it inherited that container's 2.5rem bottom padding; moving it out to sit under
+     the full-bleed rule took that away and left 1.5rem above the text and nothing below it. */
+  padding: 1.5rem;
+  /* THREE TRACKS, NOT space-between (Appy, 2026-08-20: "back to top" collided with the time chip).
+     The chip is FIXED to the viewport's bottom-right corner, so anything the footer puts in that
+     corner sits under it whenever the page is scrolled to the end — and the end is exactly where
+     "Back to top" is most likely to be read. The equal 1fr side tracks centre the link on the
+     bar's true midline rather than in the space left over beside the copyright, which is what
+     space-between would have given with an empty third slot. */
+  display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 1rem;
+}
+.crx .crx-foot-bar button { justify-self: center; }
+.crx .crx-foot-bar p {
   margin: 0;
+  font-family: var(--mono); font-size: 0.66rem; font-weight: 600;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: rgba(214, 224, 255, 0.5);
+}
+.crx .crx-foot-bar button {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  background: none; border: none; padding: 0.5rem 0; cursor: pointer;
+  font-family: var(--mono); font-size: 0.66rem; font-weight: 600;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: rgba(214, 224, 255, 0.5);
+  transition: color 0.18s ease;
+}
+.crx .crx-foot-bar button:hover { color: #fff; }
+
+/* the four-column grid folds the same way .steps does, at the same two widths, so the footer and
+   the section it is aligned to never disagree about how many columns exist */
+@media (max-width: 935px) {
+  .crx .crx-foot-cols { grid-template-columns: repeat(2, 1fr); gap: 2.5rem 1rem; }
+  .crx .crx-foot-brand { grid-column: 1; }
+  .crx .crx-foot-nav { grid-column: 2; }
+}
+@media (max-width: 640px) {
+  /* one column, and the bottom bar stacks — at this width "space-between" puts two mono strings at
+     opposite edges with nothing between them, which reads as two unrelated fragments */
+  .crx .crx-foot-cols { grid-template-columns: 1fr; gap: 2.25rem; }
+  .crx .crx-foot-brand, .crx .crx-foot-nav { grid-column: 1; }
+  /* stacked: at this width the grid's centred middle track puts the link under the copyright with
+     a stray gap either side, and the time chip is hidden below 880px anyway (see its own rule), so
+     the collision the centring solves does not exist here. */
+  .crx .crx-foot-bar { grid-template-columns: 1fr; justify-items: start; gap: 0.25rem; }
+  .crx .crx-foot-bar button { justify-self: start; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .crx .float-chip, .crx .skip { animation: none; }
+  .crx .skip { animation: none; }
   .crx .rv, .crx .beat, .crx #core-cv { transition: none; }
   /* the staged entry is motion for its own sake — skip straight to the assembled page */
   .crx.revealed .rv, .crx.revealed .d1, .crx.revealed .d3,
@@ -737,7 +1125,12 @@ body.crx-lock { overflow: hidden; }
   .crx .crx-reveal, .crx .crx-reveal.in { animation: none; opacity: 1; transform: none; filter: none; }
   .crx .crx-line.in, .crx .crx-line.out { animation: none; }
   .crx .crx-line.out { display: none; }
-  .crx .crx-badge.show, .crx .crx-taskbar.pulse { animation: none; }
+  .crx .crx-taskbar.pulse { animation: none; }
+  /* the fleet cards keep their colour reveal — that is information about which machines
+     are real — but lose the lift and the pop-out, which are not. */
+  .crx .fcard, .crx .fcard:hover { transform: none; }
+  .crx .fcard-bay, .crx .fcard:hover .fcard-bay,
+  .crx .fcard-bay img, .crx .fcard:hover .fcard-bay img { transform: none; }
   /* the machine still has to change — it is content, not decoration — so the swap survives as a
      plain opacity fade with no travel and no blur */
   .crx .crx-machine, .crx .crx-machine.on, .crx .crx-machine.out {
@@ -783,7 +1176,13 @@ body.crx-lock { overflow: hidden; }
   border-bottom-color: rgba(255, 255, 255, 0.08);
 }
 .crx .crx-header-in {
-  max-width: 1100px; /* main's own content width, so the header shares the page grid */
+  /* 1320 — the page's WIDEST section measure (Appy, 2026-08-20). It tracked 1100 when that was the
+     only measure on the page; the fleet, sleep and steps sections went to 1320 on 2026-08-20 for
+     their grids, and a header narrower than the content under it makes the logo and the CTA float
+     inboard of every card edge they are supposed to align with. It follows the widest rather than
+     the average because the header spans the whole page — anything narrower is inset from
+     something. .closer and the footer keep 1100: those are prose measures, not the page frame. */
+  max-width: 1320px;
   margin: 0 auto;
   padding: 0.7rem 1.5rem;
   display: flex; align-items: center; justify-content: space-between; gap: 1.5rem;
@@ -917,17 +1316,28 @@ body.crx-lock { overflow: hidden; }
 .crx main { padding-top: calc(3.5rem + 66px); }
 .crx #machines, .crx #sleep, .crx #how, .crx #join { scroll-margin-top: 76px; }
 
-/* consolidated mobile block — end of file on purpose: .slot, .time-chip and main's padding are
-   declared above at equal specificity and would win the source-order tie against an earlier block */
+/* consolidated mobile block — end of file on purpose: .time-chip and main's padding are declared
+   above at equal specificity and would win the source-order tie against an earlier block */
 @media (max-width: 880px) {
-  /* The scene's scale(0.62) and the F1/F19 rules that compensated for it are GONE with the CSS
-     desk scene (2026-08-19). The machine stage is a fluid aspect-ratio box instead of a fixed
-     470px canvas, so it needs no transform and its type needs no counter-scale — the two audit
-     findings those rules answered cannot recur here. The task bar stacks its own way below. */
+  /* THE SCENE'S MOBILE RULES ARE BACK (2026-08-20) with the scene itself. It is a fixed 470px
+     canvas, not a fluid box, so it has to be scaled rather than reflowed — and scaling it shrinks
+     the demo type with it, which is what F1 counter-scales back. F19: 292 = 470 x 0.62; the 330
+     it replaced left a phantom gap under the scene.
+     The machine stage below is a fluid aspect-ratio box and needs none of this; only its task bar
+     has mobile rules, further down. */
+  .crx .scene { transform: scale(0.62); transform-origin: top center; height: 292px; }
+  .crx .task { font-size: 1.15rem; }
+  .crx .scr-brand { font-size: 1.3rem; }
+  .crx .scr-status { font-size: 1rem; }
+  .crx .earnings .amount { font-size: 1.8rem; }
+  .crx .earnings .label { font-size: 0.9rem; }
+  .crx .chip { font-size: 1.15rem; }
+  .crx .earnings { right: 8px; left: auto; } /* F7: keep the pill inside the viewport */
   .crx .crx-taskbar { max-width: 100%; gap: 0.55rem; padding: 0.55rem 0.7rem; }
   .crx .crx-taskbar-machine { display: none; } /* the image already says which machine it is */
   .crx .crx-taskbar-text { font-size: 0.78rem; }
-  .crx .slot { width: calc(50% - 0.45rem); max-width: 168px; } /* F5: 2×2, not four stacked cards */
+  /* the fleet grid folds on its own (auto-fit minmax) and needs no rule here. .slot's old
+     2x2 override went with the icon strip it sized. */
   /* F8: hidden on mobile because its ~55-char sentence exceeds the ~372px available and becomes a
      near-edge-to-edge banner occluding content while scrolling — an overflow problem, independent
      of the mini counter that used to sit beside it (removed 2026-08-19; that comment used to point
@@ -991,6 +1401,7 @@ body.crx-lock { overflow: hidden; }
   font-family: 'Space Grotesk', 'SF Pro Display', Inter, sans-serif;
   font-weight: 700; font-size: 1.05rem; line-height: 1.3;
   color: #fff; margin: 0;
+  text-wrap: balance;
 }
 
 /* ---- field furniture: label / hint / error ---- */
@@ -1346,18 +1757,66 @@ body.crx-lock { overflow: hidden; }
    original's own sm:flex-1 on its Back button; this class is also used bare (StatCards' Cash out
    pill, which must stay its natural width), so the equal-share rule is scoped to this row only. */
 .crx .crx-form-foot .crx-btn-quiet { flex: 1 1 0; min-width: 0; }
-/* submitted confirmation — min-height matches the form panel it replaces so the card doesn't
-   shrink on submit (the original's own rule): head ~22 + gap 28 + body floor 400 + gap 28 +
-   foot ~52 = 530 content, + the panel's own 2×1.5rem padding (border-box) = 578 */
-.crx .crx-applied {
+/* ---- the two flow confirmations: "Thanks for applying" and "Thanks for your interest" ----
+   ONE CLASS FOR BOTH (Appy, 2026-08-20: "both of these containers should have same size"). They
+   were two panels with two different min-heights (578 and 420) that happened to look alike; one
+   shared class is the only version of "same size" that cannot drift apart on the next edit.
+   Both now sit inside a CtaBand — the homepage's closing container — so this rule owns the sizing
+   and the ink, and the band owns the surface, the grid and the padding.
+
+   578px, and the number is derived rather than chosen: it is the height of the form panel the
+   applied state replaces — head ~22 + gap 28 + body floor 400 + gap 28 + foot ~52 = 530 content,
+   plus the panel's own 2x1.5rem padding = 578. Shrinking on submit would jump the page, which is
+   the whole reason the applied state ever had a floor; the full-capacity notice inherits it
+   because it stands in the same slot. */
+.crx .crx-confirm {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  text-align: center; min-height: 578px;
+  text-align: center;
 }
-/* confirmation heading — panel-title bumped to celebration scale (original used text-3xl) */
-.crx .crx-applied-title { font-size: 1.5rem; margin-top: 1.2rem; }
-/* confirmation sub-line — quiet, one readable measure, email lifted to ink */
-.crx .crx-applied-sub { margin: 0.6rem 0 0; max-width: 44ch; font-size: 0.95rem; line-height: 1.6; color: var(--dim); }
-.crx .crx-applied-sub b { color: var(--ink-inverse); font-weight: 650; }
+/* THE 578 SITS ON THE BAND, NOT ON ITS CONTENT (Appy, 2026-08-20: "we made it taller than the
+   submit application form"). It was on .crx-confirm, so the band's own 4rem of padding stacked on
+   top of it and the confirmation came out 706px tall against the form's 578 — the number was right
+   and the box it was measuring was wrong. On the band it is border-box, so padding is inside it and
+   the outer height is exactly the form's. Scoped to the two flow wrappers rather than a third
+   modifier class: these are the only two places a band ever stands in the form's slot. */
+.crx .crx-apply-form > .crx-band,
+.crx .crx-full > .crx-band {
+  min-height: 578px;
+  display: flex; flex-direction: column; justify-content: center;
+}
+
+/* DARK VARIANT — the footer's own surface, not the closer's light panel (Appy, 2026-08-20: "give
+   it the footer bg colour instead of white"). Same translucent wash of --void the footer uses, for
+   the same reason: the page background is a vertical gradient and a solid fill would flatten it.
+   The closer keeps the light treatment — it is a call to action and wants to arrive; a
+   confirmation is the page going quiet, and it should sit into the page rather than off it. */
+.crx .crx-band.dark {
+  background: rgba(5, 6, 15, 0.32);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 30px 80px -50px rgba(0, 0, 0, 0.8);
+}
+/* the grid follows the surface: strokes are currentColor, so this one line re-themes the whole fan
+   and both planes back to the dark-band look */
+.crx .crx-band.dark .crx-band-grid { color: rgba(255, 255, 255, 0.7); }
+.crx .crx-band.dark h2 { color: #fff; }
+.crx .crx-band.dark p { color: var(--dim); }
+.crx .crx-band.dark p b { color: var(--ink-inverse); font-weight: 650; }
+
+.crx .crx-confirm h2 {
+  font-family: 'Space Grotesk', 'SF Pro Display', Inter, sans-serif;
+  font-weight: 700; font-size: 1.6rem; line-height: 1.3;
+  margin: 1.2rem 0 0;
+  text-wrap: balance;
+}
+.crx .crx-confirm p { max-width: 44ch; margin: 0.7rem auto 0; font-size: 1rem; line-height: 1.6; }
+/* mint again, now that the panel is dark — the darker #0f9d58 this briefly used was chosen for a
+   white surface and would disappear here */
+.crx .crx-confirm-tick {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 58px; height: 58px; border-radius: 50%;
+  background: rgba(52, 227, 154, 0.12);
+  color: var(--mint);
+}
 
 /* ---- Steps/controls: gaps, wrappers, resets ---- */
 /* ONE gap value between distinct questions everywhere (Steps.tsx's rule) */
@@ -1434,6 +1893,7 @@ body.crx-lock { overflow: hidden; }
   font-family: 'Space Grotesk', 'SF Pro Display', Inter, sans-serif;
   font-weight: 700; font-size: 1.9rem; line-height: 1.2; letter-spacing: -0.02em;
   color: #fff; margin: 0 0 0.4rem;
+  text-wrap: balance;
 }
 /* sub-line under the welcome */
 .crx .crx-dash-sub { margin: 0; font-size: 1rem; color: var(--dim); }
@@ -1513,7 +1973,7 @@ body.crx-lock { overflow: hidden; }
 }
 .crx .crx-cash-done-title { font-size: 1.35rem; margin-top: 1.1rem; }
 /* confirmation paragraph — one readable measure, centered */
-.crx .crx-cash-copy { margin: 0.6rem 0 0; max-width: 40ch; font-size: 0.92rem; line-height: 1.6; color: var(--dim); }
+.crx .crx-cash-copy { margin: 0.6rem 0 0; max-width: 40ch; font-size: 0.92rem; line-height: 1.6; color: var(--dim); text-wrap: balance; }
 .crx .crx-cash-copy b { color: var(--ink-inverse); }
 /* the request id — tabular semibold ink so it reads as a reference, not prose */
 .crx .crx-cash-id { color: var(--ink-inverse); font-weight: 650; font-variant-numeric: tabular-nums; }
@@ -1529,31 +1989,31 @@ body.crx-lock { overflow: hidden; }
 .crx .crx-apply { padding: 0.5rem 0 3rem; }
 /* centered column at the form's measure; text reads LEFT inside (main centers everything)… */
 .crx .crx-apply-col { max-width: 640px; margin: 0 auto; text-align: left; }
+/* THE APPLICATION'S H1 IS SCALED TO ITS OWN COLUMN, not to the hero's. It inherits `.crx main h1`,
+   which is sized for an 820px measure, while this column is 640 — and because the heading carries
+   a deliberate <br> between its two sentences, `text-wrap: balance` is switched off for the whole
+   block in Chromium and cannot rescue the overflow. At the hero's clamp the second sentence ran a
+   few characters past 640 and dropped "here." onto a line by itself. This clamp is the same shape,
+   sized so each sentence fits its own line at every width. */
+/* .crx-full shares it: its heading sits in the same 640 slot, in the same two-sentence shape,
+   with the same <br>, so it hits the same overflow at the hero clamp. */
+.crx .crx-apply-col h1, .crx .crx-full h1 { font-size: clamp(2.1rem, 4.2vw, 3.05rem); max-width: 100%; }
 /* …while the headline block stays centered, per the component */
-.crx .crx-apply-col h1, .crx .crx-apply-col .sub { text-align: center; }
+.crx .crx-apply-col h1, .crx .crx-apply-col .sub,
+.crx .crx-full h1, .crx .crx-full .sub { text-align: center; }
 /* headline → form gap (collapses with .sub's own 2.2rem bottom margin — same value, no doubling) */
 .crx .crx-apply-form { margin-top: 2.2rem; }
 
-/* ---- FullCapacityNotice ---- */
-/* slot wrapper — main pays width + clearance; bottom room before HomeBelow */
-.crx .crx-full { padding: 0.5rem 0 3rem; }
-/* stands in the application's slot at matching visual weight: tall, centered, the form's measure */
-.crx .crx-full-panel {
-  max-width: 640px; margin: 0 auto; min-height: 420px; padding: 2rem;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  text-align: center;
-}
-/* the mint tick — .crx-stat-icon.money's recipe scaled up to the moment */
-.crx .crx-full-tick { width: 56px; height: 56px; }
-/* notice heading — head stack (this h2 doesn't ride .crx-panel-title) */
-.crx .crx-full-title {
-  font-family: 'Space Grotesk', 'SF Pro Display', Inter, sans-serif;
-  font-weight: 700; font-size: 1.5rem; line-height: 1.3;
-  color: #fff; margin: 1.2rem 0 0;
-}
-/* notice copy — one readable measure, email lifted to ink */
-.crx .crx-full-copy { margin: 0.6rem 0 0; max-width: 44ch; font-size: 0.95rem; line-height: 1.6; color: var(--dim); }
-.crx .crx-full-copy b { color: var(--ink-inverse); font-weight: 650; }
+/* ---- FullCapacityNotice ----
+   Only the slot wrapper is left here. The panel, its tick, its heading and its copy all had their
+   own rules (.crx-full-panel / -tick / -title / -copy) until 2026-08-20; the notice moved into a
+   CtaBand and now shares .crx-confirm with the applied state, so those five rules were describing
+   a card that no longer exists. Deleted rather than left behind — a rule for a removed element is
+   the thing that makes the next reader think there are still two of something. */
+/* slot wrapper — main pays width + clearance; the footer follows directly */
+.crx .crx-full { padding: 0.5rem 0 3rem; max-width: 640px; margin: 0 auto; }
+/* heading -> panel gap, matching .crx-apply-form (collapses with .sub own 2.2rem — same value) */
+.crx .crx-full > .crx-band { margin-top: 2.2rem; }
 
 /* ---- part 2 responsive — the page's one breakpoint ---- */
 @media (max-width: 880px) {

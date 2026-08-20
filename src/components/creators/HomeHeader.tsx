@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Wordmark } from '@/components/Wordmark'
 import AccountMenu from './flow/AccountMenu'
 import { useCrx } from './flow/CrxState'
+import { NAV } from './nav'
 
 // The /creators header — Phase 1 of PLAN.md, rewired for Phase 3's creator flow. The mock shipped
 // headerless; this is the first deliberately-added piece, styled in the page's OWN language (see
@@ -16,7 +17,8 @@ import { useCrx } from './flow/CrxState'
 // OPTICAL_SHIFT 0.7 — see that file for the derivation of both constants and why the trailing
 // letter-spacing increment needs the optical shift), not imported: the frozen-tree rule.
 //
-// NAV: one tab per real homepage section — SIGNED OUT ONLY. The flow views (application,
+// NAV (nav.ts, shared with the footer since 2026-08-20): one tab per real homepage section —
+// SIGNED OUT ONLY. The flow views (application,
 // dashboard, full-capacity) don't render HomeMain, so #machines isn't in the DOM and the tabs
 // would be links to nowhere; they render only when !signedIn.
 //
@@ -26,12 +28,6 @@ import { useCrx } from './flow/CrxState'
 // once it scrolls away. SIGNED IN, the CTA is replaced by <AccountMenu /> — creator-brand's
 // decision, copied: the action the CTA would offer is already on the page, so offering it twice
 // reads as the header not knowing you're in.
-const NAV = [
-  { label: 'The machines', href: '#machines' },
-  { label: 'While you sleep', href: '#sleep' },
-  { label: 'How it works', href: '#how' },
-]
-
 const TRACKING_EASE = 0.92
 const OPTICAL_SHIFT = 0.7
 
@@ -189,7 +185,7 @@ export default function HomeHeader({ onCta }: { onCta: () => void }) {
                   same mark the hero/closer buttons carry. */}
               <button type="button" className={`crx-cta ${pastHeroCta ? 'pill' : ''}`} onClick={cta}>
                 <SparkIcon />
-                Join the first wave
+                Get Access
                 <ArrowIcon />
               </button>
 
@@ -223,7 +219,7 @@ export default function HomeHeader({ onCta }: { onCta: () => void }) {
                 ))}
                 <button type="button" role="menuitem" className="crx-menu-cta" onClick={cta}>
                   <SparkIcon />
-                  Join the first wave
+                  Get Access
                   <ArrowIcon />
                 </button>
               </div>

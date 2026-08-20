@@ -1,38 +1,56 @@
 'use client'
 
+import CtaBand from '../CtaBand'
 import { useCrx } from './CrxState'
 
 // Ported from the frozen creator-brand tree (creator-brand/creators/FullCapacityNotice.tsx).
-// Copy verbatim; presentation re-imagined for this page: the light original stood inside a CTABand
-// (gradient + perspective grid-lines) sized to match the application form it replaces. This page
-// has neither of those props, so the notice is a tall centered .crx-panel — the same card surface
-// the application itself lives on here — with the tick mark in this page's own success language
-// (the mint .crx-stat-icon.money circle; mint = money/success, the kit's one rule about it).
+//
+// BACK IN A GRID-LINED BAND, which is where the original had it. This page had no equivalent when
+// the notice was first ported, so it became a dark .crx-panel; the homepage grew one (CtaBand) and
+// Appy asked for both flow confirmations to use it (2026-08-20). It shares .crx-confirm with
+// ApplyForm's submitted state, so the two are one size by construction rather than by two numbers
+// that agree today.
 //
 // The "full capacity" persona — the signed-in branch alongside ApplySection and Dashboard. A
 // creator signs in exactly like a first-time applicant (same SignInDialog), but instead of the
 // application form they land straight here: BlueAI isn't taking on new creators right now.
 //
-// Tall on purpose (.crx-full-panel min-height): it stands in the application form's slot at the top
-// of the page, so it should feel like the same weight of thing sliding into the same slot — the
-// light original derived its min-height from ApplyForm for exactly this reason.
+// Tall on purpose: it stands in the application form's slot at the top of the page, so it should
+// feel like the same weight of thing sliding into the same slot — which is the same reason
+// .crx-confirm's min-height is derived from ApplyForm's own height.
 export default function FullCapacityNotice() {
   const { account } = useCrx()
 
   return (
     <section className="crx-full">
-      <div className="crx-panel crx-full-panel">
-        <span className="crx-stat-icon money crx-full-tick">
-          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <path d="M4.5 12.5l5 5L19.5 6.5" />
-          </svg>
-        </span>
-        <h2 className="crx-full-title">Thanks for your interest.</h2>
-        <p className="crx-full-copy">
-          We&apos;re at full capacity right now and not onboarding new creators just yet.
-          We&apos;ll email <b>{account.email}</b> the moment a spot opens up.
-        </p>
-      </div>
+      {/* A page heading over the notice (Appy, 2026-08-20), the same shape ApplySection uses: an
+          h1 that names the state, a one-line sub for the expectation, then the panel. Without it
+          this view opened straight onto a card, which read as a dialog someone had left on screen
+          rather than as a page.
+          THE HEADING STATES THE SITUATION, THE PANEL CONFIRMS IT PERSONALLY. That split is why the
+          notice's own copy lost its "we're at full capacity right now and not onboarding new
+          creators just yet" sentence in the same edit — the h1 says it in five words, and having
+          both made the screen say one thing twice in two registers. */}
+      <h1>
+        The first wave is full.
+        <br />
+        <span className="grad">The next one is not.</span>
+      </h1>
+      <p className="sub">We onboard creators in batches, so this is a queue rather than a no.</p>
+
+      <CtaBand className="dark">
+        <div className="crx-confirm">
+          <span className="crx-confirm-tick">
+            <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M4.5 12.5l5 5L19.5 6.5" />
+            </svg>
+          </span>
+          <h2>Thanks for your interest.</h2>
+          <p>
+            We&apos;ll email <b>{account.email}</b> the moment a spot opens up.
+          </p>
+        </div>
+      </CtaBand>
     </section>
   )
 }

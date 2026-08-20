@@ -6,6 +6,7 @@ import Milestones from './Milestones'
 import { INITIAL, STEPS, STEP_FIELDS, validate, type Draft } from './spec'
 import type { Errors } from './forms'
 import { useCrx } from '../CrxState'
+import CtaBand from '../../CtaBand'
 
 // The creator application — flow ported from creator-brand/creators/ApplyForm.tsx. Eleven questions
 // across five steps, the first of which (StepIntro) asks nothing at all. The flow lives here, the
@@ -67,17 +68,26 @@ export default function ApplyForm() {
     return (
       <>
         <Milestones stage="submitted" />
-        <div className="crx-panel crx-applied">
-          <span className="crx-stat-icon money">
-            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        {/* THE HOMEPAGE'S CLOSING-BAND CONTAINER, not a dark .crx-panel (Appy, 2026-08-20: "show
+            these in the final CTA container style like homepage"). The two moments the page ends
+            on — the closing ask and this confirmation — now share one surface, so finishing the
+            application lands you somewhere the page has already taught you to read as an ending.
+            .crx-confirm carries the sizing, and it is the SAME class the full-capacity notice uses:
+            Appy asked for both containers to be one size, and one shared class is the only version
+            of that which cannot drift. */}
+        <CtaBand className="dark">
+          <div className="crx-confirm">
+            <span className="crx-confirm-tick">
+            <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <path d="M4.5 12.5l5 5L19.5 6.5" />
             </svg>
           </span>
-          <h2 className="crx-panel-title crx-applied-title">Thanks for applying.</h2>
-          <p className="crx-applied-sub">
-            We review every application and will email <b>{d.email}</b> when your spot opens.
-          </p>
-        </div>
+            <h2>Thanks for applying.</h2>
+            <p>
+              We review every application and will email <b>{d.email}</b> when your spot opens.
+            </p>
+          </div>
+        </CtaBand>
       </>
     )
   }

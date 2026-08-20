@@ -156,7 +156,12 @@ const ShineStops = () => (
   </>
 )
 
-export default function CtaBand({ children }: { children: React.ReactNode }) {
+// `className` exists for one caller shape: the two flow confirmations, which need this
+// container's grid and geometry on a DARK surface rather than the light one the homepage
+// closer uses (Appy, 2026-08-20: "give it the footer bg colour instead of white"). A modifier
+// rather than a second component, because the geometry — the fan, the masks, the shine, the
+// inset — is the whole file and must not exist twice.
+export default function CtaBand({ children, className = '' }: { children: React.ReactNode; className?: string }) {
   // The FIRST cycle's columns are fixed, not random — unlike the moneymaker original this renders
   // through Next's SSR, and Math.random() in the initial state would hand the server and the client
   // different lines and trip a hydration mismatch. The interval below takes over at the first cycle
@@ -168,7 +173,7 @@ export default function CtaBand({ children }: { children: React.ReactNode }) {
   }, [])
 
   return (
-    <div className="crx-band">
+    <div className={className ? `crx-band ${className}` : 'crx-band'}>
       <svg
         className="crx-band-grid"
         viewBox={`0 0 ${W} ${H}`}

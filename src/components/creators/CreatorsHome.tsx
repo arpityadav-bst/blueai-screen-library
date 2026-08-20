@@ -10,7 +10,7 @@ import FullCapacityNotice from './flow/FullCapacityNotice'
 import Dashboard from './dashboard/Dashboard'
 import HomeHeader from './HomeHeader'
 import HomepageView from './HomepageView'
-import HomeBelow, { HomeFooter } from './HomeBelow'
+import HomeFooter from './HomeFooter'
 
 // The /creators route root — Phase 3 of PLAN.md. Phase 0-2 history (the 1:1 mock port, the header,
 // the audit) lives in HomepageView.tsx now, which carries the signed-out homepage AND its two
@@ -69,9 +69,12 @@ function CreatorsSwitch() {
         <HomepageView onCta={openSignIn} />
       ) : journey === 'returningUser' ? (
         <>
-          {/* Dashboard replaces the whole page body; only the footer line stays — a returning
-              creator's view is their account, not the pitch. <main> gives the flow views the
-              page grid + the fixed-header clearance .crx main already defines. */}
+          {/* EVERY SIGNED-IN VIEW IS FLOW + FOOTER, NOTHING ELSE (Appy, 2026-08-20: "after the
+              login pages, we can just show footer after the form and popup, and the completion").
+              The dashboard always worked this way; the application and full-capacity views used to
+              carry the marketing sections underneath with only the closer suppressed, which put a
+              pitch under someone who had already answered it. <main> gives all three the page grid
+              and the fixed-header clearance .crx main defines. */}
           <main>
             <Dashboard />
           </main>
@@ -82,17 +85,15 @@ function CreatorsSwitch() {
           <main>
             <FullCapacityNotice />
           </main>
-          {/* closer hidden: a band asking you to apply is noise when applying is closed. */}
-          <HomeBelow hideCloser />
+          <HomeFooter />
         </>
       ) : (
         <>
-          {/* newUser — the application. Closer hidden for the same reason creator-brand's
-              ApplyCTA hid it: mid-application, "go apply" is noise (see HomeBelow.tsx). */}
+          {/* newUser — the application. */}
           <main>
             <ApplySection />
           </main>
-          <HomeBelow hideCloser />
+          <HomeFooter />
         </>
       )}
 

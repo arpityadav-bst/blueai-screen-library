@@ -29,55 +29,23 @@ export type Machine = {
   beats: { intake: string; approve: string; approved: string; work: string }
   src: string
   alt: string
-  /** Live machines complete a paid task and credit the pill; the rest show "Soon". */
+  /** A live machine ends its task with a payout; the rest just finish. */
   live: boolean
-  /** The cutout's own width/height, so the loop can compute where the object actually renders
-      inside the frame (object-fit: contain, sized by `fit`/`crop` below) and hang badges off its
-      real edges. */
-  ratio: number
-  /** VISIBLE height as a fraction of the frame, 0-1 (Appy, 2026-08-20: "all the images are too
-      large except mobile and robot"). Every cutout is height-bound in this frame, so contain
-      rendered all five at the SAME 360px height — and at equal height a 2.02-ratio car is nearly
-      three times the width of a 0.73-ratio robot, so the wide ones dominated the stage and the
-      composition lurched every time one arrived. Capping them evens out VISUAL MASS rather than
-      height, which is the thing that was actually unequal.
-      The capped box is CENTRED in the frame, not bottom-anchored (Appy, same day: "sitting too
-      low, doesn't feel like they are at the center"). Bottom-anchoring was there to give the five
-      one shared ground line, which was right while they were all the same height; once three of
-      them were shorter than the frame it just parked them in the lower third under a band of dead
-      air. The task bar no longer overlaps the object's own base, which Appy accepted explicitly. */
+  /** VISIBLE height as a fraction of the stage, 0-1. Every cutout is height-bound in this frame,
+      so contain would render all five at the same height — and at equal height a 2.02-ratio car is
+      nearly three times the width of a 0.73-ratio robot, so the wide ones dominate and the
+      composition lurches every time one arrives. Capping evens VISUAL MASS rather than height. */
   fit: number
-  /** How much of the cutout is SHOWN, measured from its top, 0-1 (Appy, 2026-08-20: "crop and fade
-      them out from 2/3rd of the image height and only show that much, a bit enlarge to match other
-      images visually and also increasing their width"). This is the other half of the evening-out,
-      and it only applies to the two TALL cutouts. Shrinking a tall object to match a wide one's
-      height makes it narrow and weedy; instead the phone and the robot are enlarged until their
-      top two-thirds fills the same height the others do, and the remaining third is dissolved by a
-      mask rather than cut, so there is no hard edge where the object stops. The enlargement is
-      what widens them — that is the whole point: proportions converge instead of heights.
-      1 = the whole cutout, no mask. */
+  /** How much of the cutout is SHOWN, measured from its top, 0-1; 1 = the whole thing, no mask.
+      Shrinking a tall object to match a wide one's height makes it narrow and weedy, so the phone
+      and the robot are instead enlarged until their top two-thirds fills the same height the
+      others do, and the remaining third is dissolved by a mask rather than cut. */
   crop: number
-  /** 2-3 floating labels. x/y are fractions of the OBJECT's own box, not the frame — each one was
-      placed against that machine's measured silhouette (alpha sampled at six heights) so it sits
-      just off a real edge rather than at a generic frame corner. Count varies by shape: a busy
-      silhouette carries three, a simple one two.
 
-      ONE PAYOUT, THE REST ARE ACTIONS (Appy, 2026-08-20: "only one price badge and the other 1 or
-      2 can be related to the task like cleaning, or bringing coffee"). Every machine used to float
-      two or three dollar amounts, which said the same thing several times and made the stage read
-      as a price list. A single amount is the claim; the action labels beside it are what that
-      amount was earned doing, which is the part the machine's own picture cannot say.
-      `pay` FIRST in every list — the reveal below is staggered in array order, so the money lands
-      before the flavour rather than after it. Actions are one or two words: they are glanced at
-      over a moving image, not read.
-
-      NO "WATCHING" / "LIKING" / "COMMENTING", anywhere on this page (Appy, 2026-08-20). Those are
-      the literal mechanics of the engagement work, and naming them turns an AI worker earning from
-      brands into a bot farming a video. The same words were pulled from the task bar's `work`
-      beats in the same pass — leaving them there would have put the exact wording back on screen
-      three seconds later. Say the JOB ("Campaign", "Running the campaign task") or its OUTCOME
-      ("Verified"), never the keystroke. */
-  badges: { v: string; x: number; y: number; kind: 'pay' | 'act' }[]
+  // NO `ratio` AND NO `badges` any more (Appy, 2026-08-20). The stage moved out of the hero into
+  // the "It earns while you sleep" section and lost its floating money/action pills on the way;
+  // `ratio` existed only to compute where those pills hung off each silhouette. Removed rather
+  // than left in place — unused data is a promise the next reader has to disprove.
 }
 
 export const MACHINES: Machine[] = [
@@ -93,15 +61,8 @@ export const MACHINES: Machine[] = [
     src: '/creators/machines/laptop.webp',
     alt: 'A laptop running BlueAI, screen lit with the BlueAI mark',
     live: true,
-    ratio: 1.79,
     fit: 0.8,
     crop: 1,
-    // screen occupies the upper-left (right edge ~0.48 up top); the base runs out to ~0.97 lower
-    badges: [
-      { v: '+$1.50', x: 0.55, y: 0.12, kind: 'pay' },
-      { v: 'Campaign', x: 0.03, y: 0.47, kind: 'act' },
-      { v: 'Verified', x: 0.93, y: 0.74, kind: 'act' },
-    ],
   },
   {
     id: 'phone',
@@ -115,15 +76,8 @@ export const MACHINES: Machine[] = [
     src: '/creators/machines/phone.webp',
     alt: 'A phone running BlueAI, screen lit with the BlueAI mark',
     live: false,
-    ratio: 0.94,
     fit: 0.86,
     crop: 0.68,
-    // the phone lies on a diagonal: top mass sits left, bottom mass swings right. Both badges sit
-    // above the crop line (0.68) — a badge in the dissolved third would hang over nothing.
-    badges: [
-      { v: '+$0.40', x: 0.62, y: 0.11, kind: 'pay' },
-      { v: 'On a job', x: 0.22, y: 0.54, kind: 'act' },
-    ],
   },
   {
     id: 'robot',
@@ -137,16 +91,8 @@ export const MACHINES: Machine[] = [
     src: '/creators/machines/robot.webp',
     alt: 'A humanoid home robot running BlueAI, the mark lit on its chest',
     live: false,
-    ratio: 0.73,
     fit: 0.86,
     crop: 0.68,
-    // arms are widest at y~0.30; torso narrows to ~0.56 right; the legs are in the dissolved third
-    // now, so the third badge moved up to the torso's left instead of hanging off a shin
-    badges: [
-      { v: '+$2.00', x: 0.14, y: 0.12, kind: 'pay' },
-      { v: 'Unpacking', x: 0.82, y: 0.50, kind: 'act' },
-      { v: 'Tidying up', x: 0.24, y: 0.55, kind: 'act' },
-    ],
   },
   {
     id: 'robotaxi',
@@ -160,14 +106,8 @@ export const MACHINES: Machine[] = [
     src: '/creators/machines/robotaxi.webp',
     alt: 'A self-driving robotaxi running BlueAI on its dashboard',
     live: false,
-    ratio: 2.02,
     fit: 0.78,
     crop: 1,
-    // low wide body; the roof is the only place with clear air either side
-    badges: [
-      { v: '+$3.00', x: 0.88, y: 0.13, kind: 'pay' },
-      { v: 'Airport run', x: 0.05, y: 0.15, kind: 'act' },
-    ],
   },
   {
     id: 'roomba',
@@ -182,13 +122,7 @@ export const MACHINES: Machine[] = [
     src: '/creators/machines/roomba.webp',
     alt: 'A robot vacuum running BlueAI, its indicator ring lit',
     live: false,
-    ratio: 1.52,
     fit: 0.76,
     crop: 1,
-    // disc banked to the right, so its clear air is upper-left and lower-right
-    badges: [
-      { v: '+$0.60', x: 0.20, y: 0.13, kind: 'pay' },
-      { v: 'Cleaning', x: 0.90, y: 0.74, kind: 'act' },
-    ],
   },
 ]
