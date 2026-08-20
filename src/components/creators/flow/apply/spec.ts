@@ -50,11 +50,15 @@ export const INITIAL: Draft = {
   agree: false,
 }
 
-// FIVE steps again, not four — "About the program" is its own screen ahead of step 1 (designer,
+// FIVE steps again, not four — the intro is its own screen ahead of step 1 (designer,
 // 2026-08-13), not folded into it. STEP_FIELDS[0] is empty on purpose: nothing on that screen is a
 // field, so there's nothing to validate before its Continue can advance.
 export const STEPS = [
-  { title: 'About the program' },
+  // UNTITLED on purpose (the PM's call, canonical): the icon-row list is self-explanatory, and
+  // every title tried here ("About the program", "About the first wave") just restated it. The
+  // empty string still renders its h2 slot, so the head row's flex keeps the progress rail
+  // pinned right.
+  { title: '' },
   { title: 'Before we start' },
   { title: 'Your channel' },
   { title: 'About you' },

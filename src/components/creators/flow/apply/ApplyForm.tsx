@@ -84,7 +84,7 @@ export default function ApplyForm() {
           </span>
             <h2>Thanks for applying.</h2>
             <p>
-              We review every application and will email <b>{d.email}</b> when your spot opens.
+              We review every application and will email <b>{d.email}</b> when your access is approved.
             </p>
           </div>
         </CtaBand>

@@ -21,15 +21,18 @@ export default function ApplySection() {
   return (
     <section className="crx-apply">
       <div className="crx-apply-col">
+        {/* HEADLINE REFRAMED — the PM's copy, canonical (2026-08-20, after the Aug 18 CEO review).
+            The landing says "You get it hired", so this page must not revert to you-as-applicant;
+            "One short application" led here before and is now demoted into the sub. The sub pays
+            off the CTA's word: you clicked "Get access", so the promise is "when your access is
+            approved" — access is granted after review, not downloaded on click. */}
         <h1>
-          One short application.
-          <br />
-          <span className="grad">Then we take it from here.</span>
+          Get your worker <span className="grad">hired.</span>
         </h1>
         {/* No time estimate, still (source): "about three minutes" is wrong for the reader who writes
             two paragraphs on question 7, and a form that under-promises its own length is worse than
             one that says nothing. The step count is visible in the rail. */}
-        <p className="sub">We review every application and email you when your spot opens.</p>
+        <p className="sub">One short application. We review every one and email you when your access is approved.</p>
 
         <div id="apply" className="crx-apply-form">
           <ApplyForm />

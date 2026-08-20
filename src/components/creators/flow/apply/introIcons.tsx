@@ -16,6 +16,16 @@ const box = (size: number, className: string) => ({
   className,
 })
 
+/** The rollout seam ("access starts on your PC, phones and robots come next") — two waves, the second still faint. */
+export function WaveIcon({ size = 18, className = '' }: P) {
+  return (
+    <svg {...box(size, className)}>
+      <path d="M3 15c3-4.5 6-4.5 9 0s6 4.5 9 0" />
+      <path d="M3 9c3-4.5 6-4.5 9 0s6 4.5 9 0" opacity="0.45" />
+    </svg>
+  )
+}
+
 /** The run cadence ("at least 20 days each month") — a calendar with one date filled in. */
 export function CadenceIcon({ size = 18, className = '' }: P) {
   return (

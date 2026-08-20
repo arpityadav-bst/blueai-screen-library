@@ -1878,12 +1878,15 @@ body.crx-lock { overflow: hidden; }
 .crx .crx-apply { padding: 0.5rem 0 3rem; }
 /* centered column at the form's measure; text reads LEFT inside (main centers everything)… */
 .crx .crx-apply-col { max-width: 640px; margin: 0 auto; text-align: left; }
-/* THE APPLICATION'S H1 IS SCALED TO ITS OWN COLUMN, not to the hero's. It inherits `.crx main h1`,
-   which is sized for an 820px measure, while this column is 640 — and because the heading carries
-   a deliberate <br> between its two sentences, `text-wrap: balance` is switched off for the whole
-   block in Chromium and cannot rescue the overflow. At the hero's clamp the second sentence ran a
-   few characters past 640 and dropped "here." onto a line by itself. This clamp is the same shape,
-   sized so each sentence fits its own line at every width. */
+/* THE APPLICATION'S H1 IS SCALED TO ITS OWN COLUMN, not to the hero's. It inherits `.crx h1`,
+   which is sized for an 820px measure, while this column is 640.
+   The clamp was added for a two-sentence heading with a hand-placed <br> — which also switched
+   `text-wrap: balance` off for the whole block in Chromium and dropped "here." onto a line by
+   itself. That heading is gone (the PM's "Get your worker hired." is canonical now, and carries no
+   <br>, so balance works again here), but the clamp stays and earns its keep differently: at the
+   hero's 3.9rem the short heading still overruns 640 and wraps to "Get your worker / hired.", a
+   15-then-6-character split. At 3.05rem it fits on one line, which is what a three-word headline
+   wants. */
 /* .crx-full shares it: its heading sits in the same 640 slot, in the same two-sentence shape,
    with the same <br>, so it hits the same overflow at the hero clamp. */
 .crx .crx-apply-col h1, .crx .crx-full h1 { font-size: clamp(2.1rem, 4.2vw, 3.05rem); max-width: 100%; }
