@@ -1,5 +1,6 @@
 'use client'
 
+import CtaBand from './CtaBand'
 import useScrollReveal from './useScrollReveal'
 
 // Below-the-fold markup, ported 1:1 from the mock (alt-copy.html): the sleep section (couch image
@@ -90,15 +91,19 @@ export default function HomeBelow({ hideCloser = false, onCta }: { hideCloser?: 
 
       {!hideCloser && (
         <section className="closer crx-reveal" id="join">
-          <h2>Everyone will have one.</h2>
-          <p>
-            Yours could be earning you <b>$30 every month</b>.
-          </p>
-          <button className="btn" type="button" onClick={onCta}>
-            <SparkIcon />
-            Join the first wave
-            <ArrowIcon />
-          </button>
+          {/* the closing ask sits in creator-brand's own grid-lined band now (CtaBand) — the two
+              sites' final CTAs should read as the same moment in the same product */}
+          <CtaBand>
+            <h2>Everyone will have one.</h2>
+            <p>
+              Yours could be earning you <b>$30 every month</b>.
+            </p>
+            <button className="btn" type="button" onClick={onCta}>
+              <SparkIcon />
+              Join the first wave
+              <ArrowIcon />
+            </button>
+          </CtaBand>
         </section>
       )}
 

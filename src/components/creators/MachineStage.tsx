@@ -20,11 +20,11 @@
 // there, it should be something more"). Each is prompted for a dynamic angle and a sense of
 // motion — mid-stride, banking, floating, wheels turned.
 //
-// HONESTY ABOUT WHAT EARNS TODAY: only the PC is live. The fleet strip directly below tags Home
-// robots / Robotaxis / Whatever's next "Soon", so the task bar shows "Soon" on those rather than a
-// payout, and only `live` machines credit the Earned pill. The floating badges are illustrative of
-// what a machine earns — the same convention as the couch section's own +$ chips — and appear on
-// every machine.
+// HONESTY ABOUT WHAT EARNS TODAY: only the PC is live, and only `live` machines end their task
+// with a "+$X" payout — the rest simply say "Done". They used to carry a "Soon" tag as well; that
+// went 2026-08-20, and it was safe to drop because the fleet strip directly below still tags Home
+// robots / Robotaxis / Whatever's next "Soon". The floating badges are illustrative of what a
+// machine earns — the same convention as the couch section's own +$ chips — and appear on all five.
 import { MACHINES } from './machines'
 
 /** Three reusable slots; the loop fills as many as a machine defines, positions them from that
@@ -61,6 +61,31 @@ export default function MachineStage() {
             alt={m.alt}
             loading={i === 0 ? 'eager' : 'lazy'}
             fetchPriority={i === 0 ? 'high' : 'low'}
+            // Per-machine framing (machines.ts `fit` + `crop`), overriding the base rule's inset:0.
+            // Inline rather than a class because the values are data — five machines, five
+            // silhouettes, two numbers each.
+            //
+            // ONE FORMULA COVERS BOTH CASES. The box is `fit / crop` of the frame tall, so the
+            // portion that is actually shown (its top `crop` of it) measures exactly `fit`; and the
+            // box starts at `(1 - fit) / 2`, which centres that shown portion in the frame. With
+            // crop = 1 it reduces to a plain centred cap. Width stays 100%: every cutout is
+            // height-bound at these sizes, so contain settles the width on its own.
+            style={{
+              height: `${(m.fit / m.crop) * 100}%`,
+              top: `${(1 - m.fit) * 50}%`,
+              bottom: 'auto',
+              // The crop is a DISSOLVE, not a cut — a hard edge would put the container back on the
+              // page, which is the exact thing the cutouts exist to avoid. The gradient is in the
+              // image's own coordinates, so the fade band is proportional to the object, and it is
+              // applied after `filter`, so the drop-shadow fades out with the object instead of
+              // pooling under a machine that is no longer there.
+              ...(m.crop < 1
+                ? {
+                    maskImage: `linear-gradient(to bottom, #000 ${(m.crop - 0.16) * 100}%, transparent ${m.crop * 100}%)`,
+                    WebkitMaskImage: `linear-gradient(to bottom, #000 ${(m.crop - 0.16) * 100}%, transparent ${m.crop * 100}%)`,
+                  }
+                : null),
+            }}
           />
         ))}
 
@@ -71,19 +96,32 @@ export default function MachineStage() {
         ))}
       </div>
 
-      {/* The task bar sits tight under the object's own ground line (the frame is bottom-anchored,
-          so every machine shares that line and the bar is equally close to all five). A rectangle
-          with the task written inside it — Appy's own shape brief — carrying the ONE crisp logo
-          instance on the stage; the cutouts hold the mark only as an on-screen glow. */}
+      {/* The task bar sits under the stage, a rectangle with the task written inside it (Appy's own
+          shape brief). It used to ride the object's shared ground line, back when the frame was
+          bottom-anchored; the machines are centred now (machines.ts `fit`), so the bar reads as the
+          stage's status line rather than as something resting on the object. */}
       <div className="crx-taskbar" id="taskbar">
-        <span className="crx-taskbar-mark" id="taskbar-mark">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/blueai-icon-RzIisCsb.png" alt="" width={18} height={18} />
-        </span>
+        {/* Machine name, then a hairline, then the rolling row (step badge + sentence) — the logo
+            mark that used to sit here was removed (Appy, 2026-08-19): the strip already reads as
+            BlueAI's, and a fourth element before the content pushed the actual sentence off to the
+            right. The name carries the brand instead, in the page's own gradient. */}
         <span className="crx-taskbar-machine" id="task-machine">
           {MACHINES[0].name}
         </span>
-        <span className="crx-taskbar-text" id="task-text">Getting a task from a brand…</span>
+        <span className="crx-taskbar-sep" aria-hidden="true" />
+        {/* A clipped viewport: each beat's line is its own element so the outgoing one can be
+            pushed up and out while the next rises in behind it (useHomeFx's setLine).
+            THE STEP BADGE IS INSIDE THE LINE (Appy, 2026-08-20: "I wanted the whole thing along
+            with texts"). It was briefly a viewport of its own with only the digit travelling — the
+            circle stayed put while the sentence beside it moved, which read as two separate events
+            rather than one row advancing. Badge and sentence are one node now, so they can only
+            ever move together. */}
+        <span className="crx-taskbar-text" id="task-text">
+          <span className="crx-line">
+            <span className="crx-taskbar-step">1</span>
+            Getting a task from a brand…
+          </span>
+        </span>
         <span className="crx-taskbar-tag" id="task-tag" />
         {/* The progress rail is a SIBLING pinned to the bar's bottom edge, not a child of the text
             column. As a child it started wherever the text started (so it read as a stray line
