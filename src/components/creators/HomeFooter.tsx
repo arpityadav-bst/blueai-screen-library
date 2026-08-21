@@ -1,8 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import { Wordmark } from '@/components/Wordmark'
-import { NAV } from './nav'
 
 // The footer — rebuilt 2026-08-20 from a single centred mono line (© 2026 BlueAI · A now.gg
 // product) on Appy's brief to take creator-brand's footer as the model. Its PRINCIPLES are ported,
@@ -25,41 +23,26 @@ import { NAV } from './nav'
 //   · HIT AREA FROM PADDING, NOT TYPE SIZE. Each link is inline-block with vertical padding, so
 //     the rows reach ~42px while the type stays where it was designed; the list drops its own
 //     gap to compensate, leaving the visual rhythm unchanged.
-//   · NO LINK TO NOWHERE, and no silent truncation. See the filter below.
+//   · NO LINK TO NOWHERE, and no silent truncation.
 //
-// WHAT DELIBERATELY DID NOT CARRY OVER: the third column. creator-brand's footer devotes one to
-// the other audience's page, which is its single best idea and does not exist here — /creators is
-// one page, and the only cross-audience target is /creator-brand/brands, whose own header links
-// back to the SUPERSEDED creator page. Sending someone into that loop is worse than not offering
-// it. Two columns, and nothing invented to fill a third.
+// AND THEN THE WAYFINDING WENT TOO (Appy, 2026-08-21: "it will be just the logo, description and
+// back to top... make the footer height less and more minimal, slimmer"). Which reads as a
+// contradiction of the first principle above and is not: the sections column answered "where else
+// on this page", and after the fleet cut and the header-nav removal there is no else — one scroll,
+// and a reader down here is already at the end of it. What survives is the identity, what the
+// product is, and the way back up.
 //
-// THE FILTER IS THE POINT. This footer renders in four different page states, and they render
-// different subsets of the sections: signed out has all three, the application and full-capacity
-// views render a different subset (no HomeMain), and the dashboard has none of them. A hardcoded
-// list would be wrong in three of the four. Probing the live DOM cannot go stale the way a per-state prop
-// list would, and it stays correct for any state added later.
-// Filtering AFTER mount rather than during render is deliberate: the server has no DOM, so
-// filtering during render would make the first client paint disagree with the server's HTML.
-// Rendering the full list and then narrowing it in an effect is a state update, not a mismatch.
+// Everything the column needed went with it: the DOM-presence filter (which existed because the
+// four page states render different subsets of the sections), the per-state gating, the
+// smooth-scroll handler, and nav.ts itself. This component now holds no state and runs no effects,
+// which is worth saying out loud - it was a client component only because of them, and the
+// 'use client' at the top is now carried by the two window.scrollTo handlers alone.
 // NO .crx-reveal ON THIS ELEMENT, unlike every other band below the hero. The scroll-entry
 // observer is started by HomeBelow (useScrollReveal), and the dashboard state renders this footer
 // WITHOUT HomeBelow — so a .crx-reveal here would sit at opacity 0 forever in that state, with
 // nothing running to add the .in that unhides it. A footer is the page's ground line; it does not
 // need an entrance badly enough to risk not having an exit from opacity 0.
 export default function HomeFooter() {
-  const [present, setPresent] = useState(NAV)
-
-  useEffect(() => {
-    setPresent(NAV.filter((item) => document.querySelector(item.href)))
-  }, [])
-
-  function go(e: React.MouseEvent<HTMLAnchorElement>, href: string) {
-    const el = document.querySelector(href)
-    if (!el) return
-    e.preventDefault()
-    el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  }
-
   return (
     <footer className="crx-foot">
       <div className="crx-foot-in">
@@ -84,31 +67,9 @@ export default function HomeFooter() {
             </p>
           </div>
 
-          {/* Gated again. It was briefly unconditional, on the reasoning that Back to top gave the
-              column a row that always existed — but that control moved out to its own column, so
-              in the dashboard state (no sections in the DOM) this would be a heading over an empty
-              list once more. */}
-          {present.length > 0 && (
-          <nav className="crx-foot-nav" aria-label="Page sections">
-            <h3>On this page</h3>
-            <ul>
-              {present.map((item) => (
-                <li key={item.href}>
-                  <a href={item.href} onClick={(e) => go(e, item.href)}>
-                    {item.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
-          )}
-
-          {/* ITS OWN COLUMN, right of the sections (Appy, 2026-08-20). It was briefly the last row
-              of the list above, which was wrong on inspection: that list answers "where on this
-              page", and every other row in it is a section you scroll TO. This is an action on the
-              page as a whole, so putting it among them made it read as a fourth section.
-              No heading, and it sits at the top of the column rather than aligned with the first
-              link — it is a peer of the heading, not of the items under it.
+          {/* THE LAST COLUMN, and now the only other one. Back to top kept a column of its own
+              when the sections list was removed rather than folding under the brand: it is an
+              action on the page as a whole, and the far right is where a reader's eye goes for one.
               scrollTo rather than an #anchor: the top exists in every page state, and no id has to
               be kept alive to make it true. */}
           <div className="crx-foot-top-col">

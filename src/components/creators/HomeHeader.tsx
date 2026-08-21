@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react'
 import { Wordmark } from '@/components/Wordmark'
 import AccountMenu from './flow/AccountMenu'
 import { useCrx } from './flow/CrxState'
-import { NAV } from './nav'
 
 // The /creators header — Phase 1 of PLAN.md, rewired for Phase 3's creator flow. The mock shipped
 // headerless; this is the first deliberately-added piece, styled in the page's OWN language (see
@@ -17,10 +16,14 @@ import { NAV } from './nav'
 // OPTICAL_SHIFT 0.7 — see that file for the derivation of both constants and why the trailing
 // letter-spacing increment needs the optical shift), not imported: the frozen-tree rule.
 //
-// NAV (nav.ts, shared with the footer since 2026-08-20): one tab per real homepage section —
-// SIGNED OUT ONLY. The flow views (application,
-// dashboard, full-capacity) don't render the homepage sections, so those anchors aren't in the DOM
-// and the tabs would be links to nowhere; they render only when !signedIn.
+// NO NAV (Appy, 2026-08-21: "remove both the navigation items in the header and the footer").
+// The header is logo + CTA at every width now, and nav.ts is DELETED rather than left holding an
+// empty array — it existed to be shared by two consumers and neither has a list any more.
+//
+// THE BURGER WENT WITH IT, which is the same call this file already makes for the signed-in state
+// twenty lines down: the popover existed to hold the nav links PLUS a CTA at narrow widths, so with
+// the links gone it would be a menu wrapping one control - chrome for chrome's sake. The CTA is
+// simply visible at every width instead; creators.css's header block carries the measured fit.
 //
 // CTA (Phase 3): opens the sign-in dialog via the onCta prop (CreatorsHome owns the modal) —
 // the Phase 1 scroll-to-#join placeholder is retired. Two visual states still mirror
@@ -55,12 +58,9 @@ export default function HomeHeader({ onCta }: { onCta: () => void }) {
   const { signedIn } = useCrx()
   const [scrolled, setScrolled] = useState(false)
   const [pastHeroCta, setPastHeroCta] = useState(false)
-  const [menuOpen, setMenuOpen] = useState(false)
   const [labelTracking, setLabelTracking] = useState<number | undefined>(undefined)
   const wordmarkWrapRef = useRef<HTMLSpanElement>(null)
   const labelRef = useRef<HTMLSpanElement>(null)
-  const menuWrapRef = useRef<HTMLDivElement>(null)
-  const burgerRef = useRef<HTMLButtonElement>(null)
 
   // Surface swap on scroll — same trigger distance creator-brand's header uses.
   useEffect(() => {
@@ -104,40 +104,9 @@ export default function HomeHeader({ onCta }: { onCta: () => void }) {
     return () => { cancelled = true }
   }, [])
 
-  // Outside-click + Escape for the mobile popover — the AccountMenu/MobileMenu recipe, copied:
-  // pointerdown (not mousedown) so iOS taps on plain copy still close it; Escape returns focus.
-  useEffect(() => {
-    if (!menuOpen) return
-    function onDown(e: PointerEvent) {
-      if (!menuWrapRef.current?.contains(e.target as Node)) setMenuOpen(false)
-    }
-    function onKey(e: KeyboardEvent) {
-      if (e.key !== 'Escape') return
-      setMenuOpen(false)
-      burgerRef.current?.focus()
-    }
-    document.addEventListener('pointerdown', onDown)
-    document.addEventListener('keydown', onKey)
-    return () => {
-      document.removeEventListener('pointerdown', onDown)
-      document.removeEventListener('keydown', onKey)
-    }
-  }, [menuOpen])
-
-  function go(e: React.MouseEvent, href: string) {
-    e.preventDefault()
-    setMenuOpen(false)
-    document.querySelector(href)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  }
-
-  function cta() {
-    setMenuOpen(false)
-    onCta()
-  }
-
   return (
     <header className={`crx-header ${scrolled ? 'scrolled' : ''}`}>
-      <div className="crx-header-in" ref={menuWrapRef}>
+      <div className="crx-header-in">
         <button type="button" className="crx-logo" aria-label="BlueAI Creators — top of page" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/blueai-icon-RzIisCsb.png" alt="" width={40} height={40} />
@@ -160,71 +129,20 @@ export default function HomeHeader({ onCta }: { onCta: () => void }) {
         </button>
 
         {signedIn ? (
-          // The account chip replaces nav + CTA + burger entirely. No burger when signed in:
-          // AccountMenu is compact enough at every width (creator-brand's exact reasoning — the
-          // avatar alone identifies the session on a phone), so a menu wrapping one control
-          // would be chrome for chrome's sake.
+          // The account chip replaces the CTA entirely, and NEITHER state has a burger now:
+          // AccountMenu is compact enough at every width (creator-brand's exact reasoning - the
+          // avatar alone identifies the session on a phone), and the signed-out header is down to
+          // a single control, so neither state has a list worth collapsing.
           <AccountMenu />
         ) : (
-          <>
-            {/* Absolutely centered against crx-header-in (creators.css) — a plain flex/
-                space-between only centers a middle child in the leftover space between two
-                UNEQUAL side elements, which visibly wasn't centered once the CTA moved out to its
-                own actions group on the right. Links only now; the CTA used to live in here. */}
-            <nav className="crx-nav" aria-label="Sections">
-              {NAV.map((item) => (
-                <a key={item.href} href={item.href} onClick={(e) => go(e, item.href)}>
-                  {item.label}
-                </a>
-              ))}
-            </nav>
-
-            <div className="crx-header-actions">
-              {/* Font-weight matches .crx-nav a while quiet (Appy, 2026-08-19) — it reads as one
-                  more item in the row rather than shouting over its neighbours; the icon is the
-                  same mark the hero/closer buttons carry. */}
-              <button type="button" className={`crx-cta ${pastHeroCta ? 'pill' : ''}`} onClick={cta}>
-                <SparkIcon />
-                Get Access
-                <ArrowIcon />
-              </button>
-
-              <button
-                type="button"
-                ref={burgerRef}
-                className="crx-burger"
-                aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-                aria-haspopup="menu"
-                aria-expanded={menuOpen}
-                onClick={() => setMenuOpen((o) => !o)}
-              >
-                {menuOpen ? (
-                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
-                    <path d="M6 6l12 12M18 6L6 18" />
-                  </svg>
-                ) : (
-                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
-                    <path d="M4 7h16M4 12h16M4 17h16" />
-                  </svg>
-                )}
-              </button>
-            </div>
-
-            {menuOpen && (
-              <div className="crx-menu" role="menu" aria-label="Menu">
-                {NAV.map((item) => (
-                  <a key={item.href} href={item.href} role="menuitem" onClick={(e) => go(e, item.href)}>
-                    {item.label}
-                  </a>
-                ))}
-                <button type="button" role="menuitem" className="crx-menu-cta" onClick={cta}>
-                  <SparkIcon />
-                  Get Access
-                  <ArrowIcon />
-                </button>
-              </div>
-            )}
-          </>
+          // The header's only control while signed out. It used to sit in a .crx-header-actions
+          // group beside the burger; with the burger gone that group held one child, so the button
+          // is a direct flex child of .crx-header-in and space-between does the rest.
+          <button type="button" className={`crx-cta ${pastHeroCta ? 'pill' : ''}`} onClick={onCta}>
+            <SparkIcon />
+            Get Access
+            <ArrowIcon />
+          </button>
         )}
       </div>
     </header>

@@ -108,6 +108,21 @@ body.crx-lock { overflow: hidden; }
   text-align: center;
 }
 
+/* ================= HEADINGS DO NOT TAKE A FULL STOP =================
+   Appy, 2026-08-21: "no full stop on any section title". A heading is a label, not a sentence — the
+   period is doing no work at the end of a line nothing follows on, and it reads as a leftover from
+   the copy doc. Applies to the hero h1 and every section h2 on the homepage; body copy and ledes
+   keep theirs, because those really are sentences.
+   Two things this rule does NOT reach, so nobody has to re-derive them:
+   · A MULTI-SENTENCE HEADING KEEPS ITS PUNCTUATION, all of it. "You get it hired. It works from
+     then on." is the page's only one. The trailing stop came off with the others and went straight
+     back (Appy): once a heading contains an internal stop, that stop is a separator and the
+     trailing one is its pair, so removing just the second leaves it half-punctuated — worse than
+     either convention applied whole. The rule is really "a heading is not a sentence"; this
+     heading is two, which is the exception that proves it rather than an exception to it.
+   · The FLOW screens' titles ("Thanks for applying.", "The first wave is full.") are the PM's copy,
+     taken as canonical from apply-form-first-wave. They are page titles rather than section titles
+     and are not ours to repunctuate. */
 .crx h1 {
   font-size: clamp(2.4rem, 5vw, 3.9rem);
   font-weight: 800;
@@ -142,10 +157,13 @@ body.crx-lock { overflow: hidden; }
       section was cut 2026-08-20; the rule it taught is the part worth keeping).
 
    AND A TRAP, because it cost this page a defect: a hand-placed <br> inside a heading turns the
-   balancer OFF for that whole block in Chromium. The application's h1 has one (the couplet is
-   deliberate), which is why `balance` was on it and doing nothing while "here." sat alone on a
-   third line. A heading with a forced break has to be sized so each segment fits its own measure
-   — see .crx-apply-col h1.
+   balancer OFF for that whole block in Chromium. TWO headings here carry one, both deliberately
+   (the hero lede briefly had a third and it was reverted — see .sub):
+   the application's h1 (the couplet), which is why `balance` was on it and doing nothing while
+   "here." sat alone on a third line, and — since 2026-08-21 — the hero's own h1, split after "Own
+   an AI that" so the gradient half owns a line. A heading with a forced break has to be sized so
+   each segment fits its own measure. The hero's segments are 13-14 characters against a 820px
+   cap, so it is safe by a wide margin; .crx-apply-col h1 is the one that had to be sized for it.
 
    Firefox has `balance` and not `pretty`; both degrade to normal wrapping, so neither is load
    bearing for layout. */
@@ -161,7 +179,9 @@ body.crx-lock { overflow: hidden; }
   line-height: 1.65;
   color: var(--dim);
   /* 700, was 640 (rule 4): at 640 the hero lede broke as "…from brands, completes / it, and pays
-     you.", splitting a verb from its object to put four words on the second line. */
+     you.", splitting a verb from its object to put four words on the second line. A hand-placed
+     <br> at the full stop was tried and reverted 2026-08-21 (Appy) — the balanced wrap at this
+     measure was already the better split, and the <br> only cost the balancer. */
   max-width: 700px;
   margin: 0 auto 2.2rem;
   text-wrap: balance;
@@ -770,9 +790,12 @@ body.crx-lock { overflow: hidden; }
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   margin-top: 2rem;
 }
-/* 4rem bottom, was 2.5: the bottom bar used to add its own 1.5rem beneath this, and taking
-   the bar out left the footer ending tight under the last link. */
-.crx .crx-foot-in { max-width: var(--content); margin: 0 auto; padding: 4rem 1.5rem 4rem; }
+/* 2.5rem, down from 4 (Appy, 2026-08-21: "make the footer height less and more minimal, slimmer").
+   4rem was right when this held three columns and a list of links — that much air is what stopped a
+   dense block reading as a second page. Two blocks on one line need less of it, and the wider
+   measure below takes the paragraph from three lines to two, so the band comes in around 170px
+   rather than 240. */
+.crx .crx-foot-in { max-width: var(--content); margin: 0 auto; padding: 2.5rem 1.5rem 2.5rem; }
 /* ON THE PAGE'S OWN GRID (Appy, 2026-08-20: "the footer should be aligned with the grid"). The
    container was already the page's 1100px content width, but the columns inside it were 1.5fr/1fr
    — a ratio picked to suit the content, which put the nav's left edge at a position no other
@@ -783,11 +806,12 @@ body.crx-lock { overflow: hidden; }
   display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;
   text-align: left;
 }
-/* All four tracks are used now: the brand takes two, the sections one, and Back to top the last
-   (Appy, 2026-08-20). Every column edge still lands on a step card's edge, which is the whole
-   reason this grid matches .steps. */
-.crx .crx-foot-brand { grid-column: 1 / 3; }
-.crx .crx-foot-nav { grid-column: 3; }
+/* TWO BLOCKS, FOUR TRACKS. The sections column was cut 2026-08-21 and the brand took its track
+   rather than the grid losing one: the four-track grid is the page's grid (it is .steps'), and a
+   footer that re-divided its own container would be off it again the day after the whole page was
+   put on one. So the brand spans 1-3, Back to top keeps 4, and every column edge still lands on a
+   step card's edge. */
+.crx .crx-foot-brand { grid-column: 1 / 4; }
 .crx .crx-foot-top-col { grid-column: 4; }
 .crx .crx-foot-logo {
   display: inline-flex; align-items: center; gap: 0.55rem;
@@ -798,52 +822,39 @@ body.crx-lock { overflow: hidden; }
 .crx .crx-foot-logo:hover { opacity: 0.85; }
 .crx .crx-foot-logo img { border-radius: 50%; display: block; }
 .crx .crx-foot-brand p {
-  /* ONE TRACK WIDE, and the calc is the point (Appy, 2026-08-20: "the description is not according
-     to the grid and it's getting very close to the navigation column").
-     This block spans two tracks plus the gap between them, so `(100% - gap) / 2` is exactly one
-     track — which puts the paragraph's right edge ON a grid line and leaves a full empty track
-     plus two gaps (338px at 1320) before the sections column.
-     It also fixes the measure, which is the same defect seen from the other side: filling both
-     tracks ran the line to ~87 characters, well past readable, and 16px from the next column. An
-     earlier note here claimed "the two-column track IS the measure" and removed a ch cap on that
-     basis; a span is not a measure, and this is what that mistake looked like on screen. */
-  max-width: calc((100% - 1rem) / 2);
+  /* TWO TRACKS WIDE, and the calc is still the point (Appy, 2026-08-21: "we can increase the
+     description column now"). This block spans THREE tracks plus two gaps, so one track is
+     (100% - 2rem) / 3 and two-plus-the-gap-between is that doubled plus 1rem — which puts the
+     paragraph's right edge ON a grid line, 518px at the page's 1052px content, and leaves the last
+     track clear for Back to top.
+     518px is ~72 characters, near the top of the readable band and deliberately there: it is what
+     takes this paragraph from three lines to two, which is most of where the footer's lost height
+     came from. It was one track (251px, ~35ch) while a sections column sat beside it.
+     A CAP, NOT A SPAN — the distinction cost a round trip once already. An earlier note here
+     claimed "the two-column track IS the measure" and dropped a ch cap on that basis; letting the
+     paragraph fill its span ran the line to ~87 characters. Filling THIS span would run it to 110. */
+  max-width: calc((100% - 2rem) / 3 * 2 + 1rem);
   margin: 1rem 0 0;
   font-size: 0.9rem; line-height: 1.65;
   color: rgba(214, 224, 255, 0.62);
   text-wrap: pretty;
 }
 
-/* the column head keeps the page's eyebrow voice — this is the one place the old footer's mono
-   small-caps survives, now labelling a list instead of being the whole footer */
-.crx .crx-foot-nav h3 {
-  margin: 0 0 0.35rem;
-  font-family: var(--mono); font-size: 0.66rem; font-weight: 700;
-  letter-spacing: 0.16em; text-transform: uppercase;
-  color: rgba(214, 224, 255, 0.5);
-}
-.crx .crx-foot-nav ul { list-style: none; margin: 0; padding: 0; }
-/* HIT AREA FROM PADDING, NOT TYPE SIZE (creator-brand's own note): inline-block + 0.6rem of
-   vertical padding lifts each row to ~42px while the type stays at 0.9rem, and the list carries no
-   gap of its own so the visual rhythm is unchanged — only the target grows. */
-.crx .crx-foot-nav a {
-  display: inline-block;
-  padding: 0.6rem 0;
-  font-size: 0.9rem;
-  color: rgba(214, 224, 255, 0.62);
-  text-decoration: none;
-  transition: color 0.18s ease;
-}
-.crx .crx-foot-nav a:hover { color: #fff; }
+/* .crx-foot-nav and its parts were removed 2026-08-21 with the sections list: the "ON THIS PAGE"
+   mono eyebrow (the last survivor of the original one-line footer's voice), the ul reset, and the
+   inline-block link rows that took their 42px hit area from padding rather than type size. That
+   padding recipe is creator-brand's and is worth re-reading there if a list ever comes back here. */
 
-/* Back to top, alone in the last column. It borrows the section links' ink and hover so the footer
-   has one quiet-link voice, but the recipe is restated rather than shared: one is a page anchor and
-   the other a scroll call, and they will never need to change together.
-   No top padding — it is the first thing in its column, and 0.6rem above it would push it off the
-   line the section heading sits on. */
+/* Back to top, and now the only link in the footer — the ink and hover it used to share with the
+   section rows are defined here alone.
+   IT NEEDED A NEW THING TO ALIGN TO. Its old note read "no top padding, 0.6rem above it would push
+   it off the line the section heading sits on" — and that heading was cut, which would have left it
+   hanging at the top of its track against nothing. The column now centres it against the 28px logo
+   row opposite, so the footer's two surviving blocks start on one line. */
+.crx .crx-foot-top-col { display: flex; align-items: center; min-height: 28px; }
 .crx .crx-foot-top {
   display: inline-flex; align-items: center; gap: 0.4rem;
-  background: none; border: none; padding: 0 0 0.6rem; cursor: pointer;
+  background: none; border: none; padding: 0.4rem 0; cursor: pointer;
   font: inherit; font-size: 0.9rem;
   color: rgba(214, 224, 255, 0.62);
   transition: color 0.18s ease;
@@ -855,21 +866,22 @@ body.crx-lock { overflow: hidden; }
    the section it is aligned to never disagree about how many columns exist */
 @media (max-width: 935px) {
   .crx .crx-foot-cols { grid-template-columns: repeat(2, 1fr); gap: 2.5rem 1rem; }
-  /* the brand is ONE track here, so halving it again would leave a ~20-character column. A ch cap
-     takes over from the track maths: 46ch is a measure, and min() lets the single-column case at
-     640 fall back to the container when the container is the narrower of the two. */
+  /* the brand is ONE track here, so the desktop two-track calc would leave a ~20-character column.
+     A ch cap takes over from the track maths: 46ch is a measure, and min() lets the single-column
+     case at 640 fall back to the container when the container is the narrower of the two. */
   .crx .crx-foot-brand p { max-width: min(100%, 46ch); }
   .crx .crx-foot-brand { grid-column: 1; }
-  .crx .crx-foot-nav { grid-column: 2; }
-  /* two tracks, three blocks: Back to top drops under the sections rather than beside them, which
-     keeps it out of the brand column's measure */
+  /* two tracks, two blocks — they fit side by side here, which is the fold this footer wanted all
+     along and only got once the middle column went. */
   .crx .crx-foot-top-col { grid-column: 2; }
 }
 @media (max-width: 640px) {
   /* one column, and the bottom bar stacks — at this width "space-between" puts two mono strings at
      opposite edges with nothing between them, which reads as two unrelated fragments */
-  .crx .crx-foot-cols { grid-template-columns: 1fr; gap: 2.25rem; }
-  .crx .crx-foot-brand, .crx .crx-foot-nav, .crx .crx-foot-top-col { grid-column: 1; }
+  .crx .crx-foot-cols { grid-template-columns: 1fr; gap: 1.75rem; }
+  .crx .crx-foot-brand, .crx .crx-foot-top-col { grid-column: 1; }
+  /* stacked, so there is no logo row opposite to line up with — the centring above becomes a
+     28px floor under a 33px button, i.e. inert, and the gap does the spacing instead. */
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -927,9 +939,11 @@ body.crx-lock { overflow: hidden; }
   max-width: var(--content);
   margin: 0 auto;
   padding: 0.7rem 1.5rem;
+  /* [logo, control] and nothing else since 2026-08-21, so space-between IS the layout — no
+     absolutely-positioned middle child to centre any more, which is why the position:relative that
+     used to be here is gone. The only other absolutely-positioned thing in this header is the
+     account popover, and .crx-acct carries its own position:relative for it. */
   display: flex; align-items: center; justify-content: space-between; gap: 1.5rem;
-  /* position:relative — the containing block for .crx-nav's absolute centering below */
-  position: relative;
 }
 
 /* logo lockup carries the shared Wordmark component, which is global (.bai-wordmark) and renders
@@ -943,16 +957,14 @@ body.crx-lock { overflow: hidden; }
   color: #fff;
 }
 
-/* NAV, TRUE-CENTERED (Appy, 2026-08-19) — absolutely positioned against crx-header-in rather than
-   just a flex child, so it centers on the header's own midline regardless of how wide the logo
-   lockup is versus the actions group on the right (a plain flex/space-between centers a middle
-   child only in the leftover space between two UNEQUAL siblings, which visibly was not centered).
-   Taken out of flow, so crx-header-in's flex layout is just [logo, actions] — space-between
-   alone puts those at the two edges, no extra margin needed on either. */
-.crx .crx-nav { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
-
-/* the CTA + burger share one right-hand group now that the CTA is no longer nested in .crx-nav */
-.crx .crx-header-actions { display: flex; align-items: center; gap: 1.2rem; }
+/* THE NAV IS GONE (Appy, 2026-08-21: "remove both the navigation items in the header and the
+   footer"), and with it .crx-nav, .crx-header-actions, .crx-burger and the .crx-menu-cta row.
+   .crx-menu itself STAYS — the account popover is built on it (see .crx-acct below); it was never
+   the mobile menu's alone.
+   What that nav cost to get right is worth keeping on record, because the next centred thing in a
+   header will hit it again: it was absolutely positioned against .crx-header-in rather than left as
+   a flex child, because space-between centres a middle child only in the leftover space between two
+   UNEQUAL siblings — and a logo lockup is never the width of a CTA, so it read as visibly off. */
 
 /* logo lockup — creator-brand's exact structure (icon + [wordmark, audience label] column),
    copied not imported; the label's gradient is THIS page's --grad-bright, not the marketing DS's */
@@ -972,19 +984,13 @@ body.crx-lock { overflow: hidden; }
   -webkit-background-clip: text; background-clip: text; color: transparent;
 }
 
-.crx .crx-nav { display: flex; align-items: center; gap: 1.7rem; }
-.crx .crx-nav a {
-  color: var(--dim); text-decoration: none;
-  font-size: 0.95rem; font-weight: 500;
-  transition: color 0.18s ease;
-}
-.crx .crx-nav a:hover { color: #fff; }
-
 /* the CTA's two states mirror creator-brand's header: quiet text while the hero's own CTA is on
    screen (two loud CTAs at once compete), the gradient pill once it scrolls away */
 .crx .crx-cta {
-  /* font-weight 500, WAS 700 (Appy, 2026-08-19) — matches .crx-nav a exactly while quiet, so the
-     CTA reads as one more item in the row rather than shouting over its neighbours. */
+  /* font-weight 500, WAS 700 (Appy, 2026-08-19) — it matched .crx-nav a exactly while quiet, so
+     the CTA read as one more item in the row rather than shouting over its neighbours. The row is
+     gone and the value stays: 500 at 0.95rem is what "quiet" means in this header, and the pill
+     state below still needs something to be a step up FROM. */
   font: inherit; font-weight: 500; font-size: 0.95rem;
   color: var(--ink-inverse);
   background: none; border: none; border-radius: 999px;
@@ -1007,15 +1013,10 @@ body.crx-lock { overflow: hidden; }
 .crx .crx-cta.pill:active { transform: translateY(0); box-shadow: 0 6px 16px -6px rgba(95, 70, 255, 0.55); } /* F12 */
 .crx .crx-cta:focus-visible { outline: 2px solid #a78bff; outline-offset: 3px; }
 
-/* mobile: nav + CTA collapse into one hamburger popover at the page's own 880px breakpoint */
-.crx .crx-burger {
-  display: none;
-  background: none; border: none; cursor: pointer; padding: 0.75rem; /* F20: 44px hit area */
-  color: var(--dim); border-radius: 10px;
-  transition: color 0.18s ease, background 0.18s ease;
-}
-.crx .crx-burger:hover { color: #fff; background: rgba(255, 255, 255, 0.06); }
-.crx .crx-burger:active { color: #fff; background: rgba(255, 255, 255, 0.1); } /* F12 */
+/* The popover surface. Built for the mobile burger menu, which is gone; it is now the ACCOUNT
+   menu's surface and nothing else (.crx-acct .crx-menu, further down, is the only consumer).
+   Left general rather than renamed to .crx-acct-menu: the rows, hover and active states here are
+   generic popover behaviour, and the account menu's own block only has to override the anchor. */
 .crx .crx-menu {
   position: absolute; right: 1.5rem; top: calc(100% + 6px);
   display: flex; flex-direction: column; gap: 2px;
@@ -1037,25 +1038,22 @@ body.crx-lock { overflow: hidden; }
 }
 .crx .crx-menu a:hover, .crx .crx-menu button:hover { color: #fff; background: rgba(255, 255, 255, 0.07); }
 .crx .crx-menu a:active, .crx .crx-menu button:active { color: #fff; background: rgba(255, 255, 255, 0.12); } /* F12 */
-.crx .crx-menu .crx-menu-cta {
-  justify-content: center; font-weight: 700; color: #fff;
-  background: var(--cta-grad); border-radius: 999px; margin-top: 4px;
-  gap: 0.4rem; /* carries the spark + arrow icons; the base row rule has no gap, nav links don't need one */
-}
-/* F2: the row hover/active (0,3,1) beats .crx-menu-cta (0,3,0) and ghosted the gradient on tap */
-.crx .crx-menu button.crx-menu-cta:hover { background: var(--cta-grad); color: #fff; filter: brightness(1.08); }
-.crx .crx-menu button.crx-menu-cta:active { background: var(--cta-grad); color: #fff; filter: brightness(0.96); }
-@media (max-width: 880px) {
-  .crx .crx-nav { display: none; }
-  /* the standalone CTA lived inside .crx-nav until it moved to its own actions group — hide it
-     the same way here; the burger's own popover carries .crx-menu-cta, a separate element */
-  .crx .crx-header-actions .crx-cta { display: none; }
-  .crx .crx-burger { display: flex; }
+/* The 880px collapse is gone with the burger: there is no longer a width at which the header hides
+   its CTA, because there is no longer a menu to hide it INTO.
+   MEASURED, since a header that overflows is the one way this could go wrong. At 375px the content
+   box is 327px, the logo lockup takes ~127 and the pill ~151 — about 49px spare. At 320px that
+   comes out at -6, so the pill tightens its side padding below 400px and nothing else changes; it
+   tightens in BOTH states, which is what keeps quiet->pill a pure fill fade (F13). */
+@media (max-width: 400px) {
+  .crx .crx-cta { padding: 0.55rem 0.7rem; }
 }
 
 /* the header exists now, so the hero needs clearance under it, and anchor targets need to land
    below it rather than underneath it */
 .crx main { padding-top: calc(3.5rem + 66px); }
+/* No in-page link targets these any more (the header and footer navs went 2026-08-21). The ids and
+   this rule stay anyway: a pasted or shared /creators#sleep still has to land below the fixed
+   header rather than under it, and that costs one rule. */
 .crx #sleep, .crx #how, .crx #join { scroll-margin-top: 76px; }
 
 /* consolidated mobile block — end of file on purpose: .time-chip and main's padding are declared

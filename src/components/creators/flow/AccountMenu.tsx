@@ -45,9 +45,11 @@ export default function AccountMenu() {
   }, [open])
 
   return (
-    // .crx-acct: the positioned anchor for the popover (needs position:relative in the kit — see
-    // the build report; until then .crx-menu falls back to anchoring on the fixed header, exactly
-    // where the mobile menu already opens, so nothing breaks unstyled).
+    // .crx-acct: the positioned anchor for the popover, and it IS position:relative in the kit
+    // (creators.css, .crx .crx-acct). That stopped being a nicety on 2026-08-21: the fallback this
+    // note used to describe - .crx-menu anchoring on the fixed header instead - died with
+    // .crx-header-in's own position:relative, which was removed when the mobile menu was. This
+    // rule is now the only thing positioning the popover.
     <div ref={wrapRef} className="crx-acct">
       <button
         ref={triggerRef}

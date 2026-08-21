@@ -36,8 +36,14 @@ export default function HomeMain() {
             The six fixed-position .star spans it replaces are gone entirely. */}
         <PixelRain />
 
+        {/* HAND-BROKEN (Appy, 2026-08-21) — the gradient half gets its own line rather than
+            wrapping wherever the measure happens to land. The <br> turns Chromium's balancer off
+            for this heading (creators.css's wrapping notes carry the trap), which is harmless here
+            and only here: both segments are 13-14 characters, so each fits its own measure at every
+            width down to 320px, and there is nothing left for the balancer to decide. */}
         <h1 className="rv d1">
-          Own an AI that <span className="grad">works for you.</span>
+          Own an AI that<br />
+          <span className="grad">works for you</span>
         </h1>
         <p className="sub rv d2">
           BlueAI is an AI worker you own. It finds real work from brands, completes it, and pays you.

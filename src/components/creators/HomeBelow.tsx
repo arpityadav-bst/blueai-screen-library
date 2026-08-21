@@ -151,7 +151,7 @@ export default function HomeBelow({ onCta }: { onCta?: () => void }) {
         </div>
         <div className="sleep-copy crx-reveal">
           {/* F16: .grad stripped from section h2s — plain white 800 carries them */}
-          <h2>It earns while you chill.</h2>
+          <h2>It earns while you chill</h2>
           <p>
             You approve the work. From there your worker doesn&apos;t clock out: leave your machine on
             and it keeps at it, adding to your balance.
@@ -160,6 +160,10 @@ export default function HomeBelow({ onCta }: { onCta?: () => void }) {
       </section>
 
       <section className="below" id="how">
+        {/* THE ONE HEADING THAT KEEPS ITS FULL STOP (Appy, 2026-08-21: "here we can have full stop
+            only here"). It is two sentences, so the internal stop is a separator and the trailing one
+            is its pair — dropping only the second left the heading half-punctuated, which reads worse
+            than either convention applied whole. See the heading note in creators.css. */}
         <h2 className="crx-reveal">You get it hired. It works from then on.</h2>
         <div className="steps">
           {STEPS.map((s, i) => (
@@ -178,7 +182,7 @@ export default function HomeBelow({ onCta }: { onCta?: () => void }) {
             final CTAs should read as the same moment in the same product, and the two flow
             confirmations now use the same container for the same reason */}
         <CtaBand>
-          <h2>Everyone will have one.</h2>
+          <h2>Everyone will have one</h2>
           <p>
             Yours could be earning you <b>$30 every month</b>.
           </p>
