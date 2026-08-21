@@ -17,7 +17,10 @@ import { MOCK_ACCOUNT } from '../flow/CrxState'
 //   · only PayPal shown ("we don't need to show any other option right now") — one payout method,
 //     not a selector with everything else greyed out, since a selector implying choices that don't
 //     exist yet is worse than one that's honest about there being one
-//   · creator-support@blueai.now.gg is an invented illustrative inbox, not a real product's
+//   · the support address is REAL as of 2026-08-21 (Appy) — support@bluestacks.ai, which replaced
+//     the invented creator-support@blueai.now.gg placeholder. It is the one real-world detail on
+//     this design-only surface, so do not "fix" it back to a blueai.now.gg address to match the
+//     product's own domain: it is the address the company actually answers on.
 //
 // WIDENED in the original (2026-08-14, "the width of the pop up is too narrow") — hence .wide here.
 //
@@ -121,7 +124,7 @@ export default function CashOutModal({
               you&apos;ll get an email notification.
             </p>
             <p className="crx-cash-support">
-              Reach out to us on <b className="crx-cash-mail">creator-support@blueai.now.gg</b> for any
+              Reach out to us on <b className="crx-cash-mail">support@bluestacks.ai</b> for any
               queries.
             </p>
             <button type="button" onClick={handleClose} className="btn btn-block crx-cash-close">
