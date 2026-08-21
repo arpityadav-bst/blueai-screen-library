@@ -68,8 +68,9 @@ export default function Backdrop() {
     let queued = false
 
     // The gate is measured off <main>, which on this page IS the hero — the copy, the CTA and the
-    // desk scene. The fleet section begins immediately after it, so "fades in from the second
-    // section" and "fades in as main ends" are the same instant.
+    // desk scene. The next section begins immediately after it, so "fades in from the second
+    // section" and "fades in as main ends" are the same instant. (That second section was the
+    // fleet until 2026-08-20 and is the sleep section now; the gate does not care which.)
     const measure = () => {
       const hero = document.querySelector<HTMLElement>('.crx main')
       heroEnd = hero ? hero.offsetTop + hero.offsetHeight : window.innerHeight

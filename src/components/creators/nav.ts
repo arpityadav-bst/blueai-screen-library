@@ -10,7 +10,17 @@
 // when signed out, and the footer filters the list against the live DOM (see HomeFooter.tsx),
 // because the application, dashboard and full-capacity views each render a different subset.
 export const NAV = [
-  { label: 'The machines', href: '#machines' },
-  { label: 'While you sleep', href: '#sleep' },
+  // "The machines" went with the fleet section it pointed at (Appy, 2026-08-20). A nav item whose
+  // anchor no longer exists is the one kind of dead link this list is built to make impossible.
+  // "Always on", NOT the section's own heading (Appy, 2026-08-21: "While you chill is not
+  // suitable"). The label had been mirroring the heading — "While you sleep", then "While you
+  // chill" when the heading changed — and that was the mistake, not the wording. A nav item NAMES A
+  // DESTINATION, so it has to be a noun phrase that can stand on its own; "While you chill" is a
+  // subordinate clause, half a sentence waiting for the rest of it, which is why it reads as
+  // unfinished next to "How it works".
+  // "Passive earning" (Appy's pick) names the OUTCOME rather than the mechanism, which is the
+  // half a reader scanning a nav is actually looking for, and it stands alone next to "How it
+  // works" in the same register.
+  { label: 'Passive earning', href: '#sleep' },
   { label: 'How it works', href: '#how' },
 ]

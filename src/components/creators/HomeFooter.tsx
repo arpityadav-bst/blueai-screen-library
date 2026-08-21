@@ -35,8 +35,8 @@ import { NAV } from './nav'
 //
 // THE FILTER IS THE POINT. This footer renders in four different page states, and they render
 // different subsets of the sections: signed out has all three, the application and full-capacity
-// views drop #machines (no HomeMain), and the dashboard has none of them. A hardcoded list would
-// be wrong in three of the four. Probing the live DOM cannot go stale the way a per-state prop
+// views render a different subset (no HomeMain), and the dashboard has none of them. A hardcoded
+// list would be wrong in three of the four. Probing the live DOM cannot go stale the way a per-state prop
 // list would, and it stays correct for any state added later.
 // Filtering AFTER mount rather than during render is deliberate: the server has no DOM, so
 // filtering during render would make the first client paint disagree with the server's HTML.

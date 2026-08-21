@@ -30,6 +30,18 @@
   --cta-grad: linear-gradient(105deg, #1a90ff 0%, #6b53ff 55%, #7b4cff 100%);
   --mono: "Cascadia Code", Consolas, ui-monospace, monospace;
 
+  /* ONE GRID FOR THE WHOLE PAGE (Appy, 2026-08-21: "every section should have the same grid, even
+     the header and the footer... I'm liking the final CTA grid width, so finalise according to
+     that"). The closing CTA's own 1100 is the measure everything now shares — the header, every
+     section, the footer and the dashboard.
+     IT IS A TOKEN RATHER THAN A NUMBER for a reason: this page has already had 1100 and 1320 in
+     play at once, with each width carrying a comment arguing for itself (grid sections wanted more
+     room than prose sections). That argument produced a header narrower than the content under it
+     and a footer narrower than the section above it — visible as edges that almost line up. A
+     single variable makes "the same grid" checkable instead of remembered: grep for a hard-coded
+     max-width on a section and you have found a bug. */
+  --content: 1100px;
+
   color: var(--ink-inverse);
   /* FONT SYSTEM = creator-brand's (Appy, 2026-08-19): the mock shipped on Segoe UI/system-ui, but
      this page is becoming the creator half of the same product whose brand side lives on the
@@ -85,10 +97,10 @@ body.crx-lock { overflow: hidden; }
 .crx main {
   /* position/z-index are set with the rest of the page's content lift, further down (see the
      ambient backdrop block) — kept there so the whole stack is stated in one place. */
-  max-width: 1100px;
+  max-width: var(--content);
   margin: 0 auto;
-  /* bottom 8rem: the fleet left <main> to become its own section, so this is the hero's half of
-     that boundary. EVERY SECTION JOIN ON THIS PAGE IS 8rem + 8rem = 16rem — it was 6+6 until
+  /* bottom 8rem: this is the hero's half of its boundary with the section below (the fleet, until
+     that section was cut 2026-08-20; the sleep section now). EVERY SECTION JOIN ON THIS PAGE IS 8rem + 8rem = 16rem — it was 6+6 until
      2026-08-20, when Appy asked for "more generous spacing". Raised on all six sections rather
      than only the two he named: this page's whole spacing argument is that every boundary is
      identical, and a single wider gap in the middle of it reads as a mistake, not as generosity. */
@@ -125,8 +137,9 @@ body.crx-lock { overflow: hidden; }
 
    4. IF A LINE HOLDS ONE OR TWO WORDS, WIDEN THE MEASURE — do not accept the tail. A 1-2 word
       line is a measure that is a few characters too narrow, not a wrapping problem, and no
-      `text-wrap` value can invent room that is not there. This is why `.sub` went 640 -> 700 and
-      `.fleet-sub` went 52ch to a width its whole sentence fits on.
+      `text-wrap` value can invent room that is not there. This is why `.sub` went 640 -> 700, and
+      why the fleet section's own subtitle went 52ch to a width its whole sentence fit on (that
+      section was cut 2026-08-20; the rule it taught is the part worth keeping).
 
    AND A TRAP, because it cost this page a defect: a hand-placed <br> inside a heading turns the
    balancer OFF for that whole block in Chromium. The application's h1 has one (the couplet is
@@ -368,170 +381,12 @@ body.crx-lock { overflow: hidden; }
    several of their base rules (.slot, .time-chip, main's padding) are declared later at equal
    specificity and would win the source-order tie against a block placed here */
 
-/* ---------------- fleet: one worker, every machine ----------------
-   REBUILT 2026-08-20 from an icon strip (Appy). It was four line icons with a name and a tag under
-   an all-caps eyebrow, which reads as a legend — and the section's claim, that one worker follows
-   you into every machine you will ever own, is the largest idea on the page. Now: a section title
-   like every other section, a one-line subtitle, and four real cards each carrying a Higgsfield
-   cutout, a name, a line about it and its status.
-
-   THE FLEET IS ITS OWN SECTION (Appy, 2026-08-19). It used to live inside <main> as a tail on the
-   hero, which is why it never took part in the page's spacing: the joins ran 2.6rem, 6rem, 12rem,
-   12rem. It is a <section> sibling now and pays the same 6rem/6rem as every other one. */
-/* WIDER THAN THE PAGE'S 1100px MEASURE, on purpose (Appy, 2026-08-20: "bigger... and with more
-   spacing in between"). Every other section is one column of prose, where 1100 is the right
-   measure; this one is a four-up grid, and four cards inside 1100 with a real gap between them
-   comes out narrower per card than any other section's content. The band widens so the CARDS can,
-   not because the section wants more room. */
-.crx .fleet {
-  max-width: 1320px; margin: 0 auto; padding: 8rem 1.5rem;
-  text-align: center;
-}
-/* same clamp and face as .below h2 / .sleep-copy h2 — this is a peer of those sections now, not a
-   label, and it has to be typeset as one */
-.crx .fleet h2 {
-  font-size: clamp(2.05rem, 4.1vw, 3rem); font-weight: 800; line-height: 1.15;
-  letter-spacing: -0.02em; margin: 0 0 0.7rem; text-wrap: balance;
-}
-.crx .fleet-sub {
-  /* 60ch, was 52ch (rule 4): this is a one-line subtitle by design and 52ch cut it two words
-     short, hanging "moves in." on a line of its own. It still wraps on a narrow viewport, where
-     balance splits it evenly instead. */
-  max-width: 60ch; margin: 0 auto 2.8rem;
-  font-size: 1.02rem; line-height: 1.6; color: var(--dim);
-  text-wrap: balance;
-}
-/* auto-fit rather than a fixed 4: at 1100px it lays out four, and it folds to two and then one on
-   its own, so the section needs no breakpoint of its own for the grid. */
-.crx .fleet-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(268px, 1fr));
-  gap: 1.75rem;
-}
-
-.crx .fcard {
-  position: relative; z-index: 1;
-  display: flex; flex-direction: column; align-items: center;
-  /* no top padding: the photo tile is full-bleed and supplies the card's own top edge */
-  padding: 0 1.15rem 1.75rem;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.035);
-  border: 1px dashed rgba(255, 255, 255, 0.18);
-  transition:
-    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
-    border-color 0.4s ease,
-    background-color 0.4s ease,
-    box-shadow 0.5s ease;
-}
-/* the dashes are the vision: sockets this same worker plugs into next. The live one is the only
-   solid card, so "already real" is carried by the border and not only by the pill. */
-.crx .fcard.live {
-  border-style: solid;
-  border-color: rgba(52, 227, 154, 0.4);
-  background: rgba(52, 227, 154, 0.06);
-  box-shadow: 0 0 34px rgba(52, 227, 154, 0.12);
-}
-
-/* THE PHOTO TILE. Full-bleed 16:9, pulled out to the card's edges by negative margins so the image
-   is as large as the card allows. Its own radius matches the card's inner corner; the card does NOT
-   clip, because the hover pop is this tile growing out past the card's top and sides, and an
-   overflow:hidden on the card would be the one thing that makes that impossible. */
-.crx .fcard-bay {
-  position: relative;
-  width: auto; align-self: stretch;
-  margin: 0 -1.15rem 1.25rem;
-  /* 4:3 — went 16:9 -> 3:2 -> here as Appy asked for taller cards, and this is the practical floor
-     for these assets: the source renders are 16:9, so a taller output window is a narrower slice of
-     them, and by 4:3 the car's own 71%-of-frame width is already using 94% of the window it gets.
-     1:1 is not reachable at all — the car would need a window wider than the frame it came from.
-     The crop is sized from whichever axis binds per subject (scratchpad reframe.py), which is what
-     keeps that constraint from silently cutting the car's nose off. */
-  aspect-ratio: 4 / 3;
-  overflow: hidden; /* clips the IMAGE to the tile — not the tile to the card */
-  border-radius: 17px 17px 4px 4px;
-  transform-origin: 50% 100%;
-  transition:
-    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 0.55s ease;
-}
-.crx .fcard-bay img {
-  display: block; width: 100%; height: 100%;
-  object-fit: cover;
-  /* GREY AND DARK AT REST, not merely desaturated. These renders are already low-chroma and
-     mid-toned, so grayscale() alone moved almost nothing — the first version's two states were
-     indistinguishable. Most of the difference now lives in LUMINANCE and CONTRAST, which the eye
-     reads long before it reads chroma.
-     Every function hover changes is present here at its resting value: a filter list only
-     interpolates against the same functions in the same order, or the whole thing snaps. */
-  filter: grayscale(1) contrast(1.4) brightness(0.58) saturate(0);
-  transition: filter 0.55s ease, transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
-}
-/* a hairline over the tile: the renders are studio plates, and their light background meets the
-   card's dark edge with nothing between them */
-.crx .fcard-bay::after {
-  content: ''; position: absolute; inset: 0; pointer-events: none;
-  border-radius: inherit;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.09);
-}
-
-/* HOVER IS A REVEAL, and only where hovering exists. On touch there is no way to get the colour
-   version, so it is simply the resting state — a permanently grey card on a phone would look like
-   a loading failure, not like a deliberate before/after. */
-@media (hover: hover) {
-  .crx .fcard:hover {
-    z-index: 3; /* over its neighbours, so the pop-out is not clipped by the next card */
-    transform: translateY(-6px);
-    border-color: rgba(255, 255, 255, 0.32);
-    background-color: rgba(255, 255, 255, 0.07);
-    box-shadow: 0 28px 60px -30px rgba(0, 0, 0, 0.85);
-  }
-  .crx .fcard.live:hover {
-    border-color: rgba(52, 227, 154, 0.62);
-    box-shadow: 0 0 46px rgba(52, 227, 154, 0.2), 0 28px 60px -30px rgba(0, 0, 0, 0.85);
-  }
-  /* origin at the tile's own bottom edge, so it grows UP and OUT through the card's top rather
-     than sinking into the text below it */
-  .crx .fcard:hover .fcard-bay {
-    transform: scale(1.1) translateY(-8px);
-    box-shadow: 0 26px 48px -20px rgba(0, 0, 0, 0.8);
-  }
-  .crx .fcard:hover .fcard-bay img {
-    filter: grayscale(0) contrast(1.04) brightness(1.06) saturate(1.35);
-    transform: scale(1.04); /* a touch of push inside the tile, so the frame is not the only motion */
-  }
-}
-@media (hover: none) {
-  .crx .fcard-bay img { filter: grayscale(0) contrast(1) brightness(1) saturate(1.1); }
-}
-
-.crx .fcard h3 {
-  font-family: 'Space Grotesk', 'SF Pro Display', Inter, sans-serif;
-  font-size: 1.18rem; font-weight: 700; line-height: 1.25;
-  margin: 0 0 0.6rem;
-  color: var(--dim);
-  text-align: center;
-  text-wrap: balance;
-}
-.crx .fcard p {
-  margin: 0 0 1.15rem;
-  font-size: 0.9rem; line-height: 1.62;
-  color: rgba(214, 224, 255, 0.62);
-  text-align: center;
-  /* balance, not pretty (rule 2) — these are centred and only two or three lines long, so an
-     uneven split has nothing to hide behind */
-  text-wrap: balance;
-}
-/* mt:auto pins the pill to the card's floor, so a two-line blurb and a three-line one still end
-   level — without it the tags stagger and the row of cards loses its bottom edge. */
-.crx .fcard-tag {
-  margin-top: auto;
-  font-family: var(--mono); font-size: 0.62rem; font-weight: 700;
-  letter-spacing: 0.12em; text-transform: uppercase;
-  color: rgba(214, 224, 255, 0.58); /* F11: 0.45 was ~3.6:1 at 9.6px */
-  display: inline-flex; align-items: center; gap: 0.4rem;
-}
-.crx .fcard.live h3 { color: #fff; }
-.crx .fcard.live .fcard-tag { color: var(--mint); }
+/* The fleet section — "One worker. Every machine you own.", four photo cards over a title and a
+   subtitle — was cut 2026-08-20 (Appy). Everything it owned went with it: .fleet, .fleet-sub,
+   .fleet-grid, the .fcard family and its photo tiles, the greyscale-to-colour hover and its
+   pop-out, the (hover: none) fallback, and the four reframed WebPs. Removed rather than parked;
+   the component (FleetSection.tsx) and its data (fleet.ts) are gone too.
+   .tick-dot below OUTLIVES it — the dock's time chip uses the same dot (HomeOverlay.tsx). */
 .crx .tick-dot {
   display: inline-block; width: 6px; height: 6px; border-radius: 50%;
   background: var(--mint); box-shadow: 0 0 8px var(--mint);
@@ -605,7 +460,6 @@ body.crx-lock { overflow: hidden; }
    static, and static content paints BELOW a positioned sibling whatever the DOM order — so without
    this a fixed z-index:0 layer would sit on top of the entire page rather than behind it. */
 .crx main,
-.crx .fleet,
 .crx .sleep,
 .crx .below,
 .crx .closer,
@@ -749,9 +603,11 @@ body.crx-lock { overflow: hidden; }
    the full width, because it is not an illustration of the claim, it IS the claim being played
    out; the title and subtitle read as its caption and sit underneath. */
 .crx .sleep {
-  /* 1320, matching the fleet: 1100 is the PROSE measure, and this section's centrepiece is a
-     980px stage, not a column of text (Appy, 2026-08-20: "scale up section 3 and 4"). */
-  max-width: 1320px; margin: 0 auto; padding: 8rem 1.5rem;
+  /* on the page's one grid (--content). It ran at 1320 for a day, on the argument that a section
+     whose centrepiece is a picture wants more room than a column of prose; that argument is retired
+     — a page with two content widths has two grids, and this section is now the same width as the
+     closing CTA, the header and the footer. */
+  max-width: var(--content); margin: 0 auto; padding: 8rem 1.5rem;
   text-align: center;
 }
 /* CENTRED, and it takes two changes rather than one (Appy, 2026-08-20). `.sleep` sets
@@ -826,8 +682,10 @@ body.crx-lock { overflow: hidden; }
      — there is nothing left here for this breakpoint to undo. */
 }
 
-/* also 1320 — four cards in a row is a grid, not prose, and it was paying the prose measure */
-.crx .below { max-width: 1320px; margin: 0 auto; padding: 8rem 1.5rem; text-align: center; }
+/* on --content like everything else. It was 1320 on the "four cards is a grid, not prose" argument;
+   the cards are narrower for it (245px a card rather than 300) and that is the trade the one-grid
+   decision buys. */
+.crx .below { max-width: var(--content); margin: 0 auto; padding: 8rem 1.5rem; text-align: center; }
 .crx .below h2 {
   font-size: clamp(2.05rem, 4.1vw, 3rem); font-weight: 800; line-height: 1.15; /* F4: same clamp as .sleep-copy h2 */
   letter-spacing: -0.02em; margin: 0 0 2.2rem; text-wrap: balance;
@@ -854,9 +712,9 @@ body.crx-lock { overflow: hidden; }
    bottom padding, which is where the crowding came from: 7rem total between sections instead of
    12rem. Now each section owns its own 6rem/6rem, and no section depends on its neighbour's
    spacing — which is also what stops a rhythm break when one of them is conditionally hidden. */
-/* the closer keeps the 1100 PROSE measure — it is a contained panel of copy, not a grid, and a
-   1320 band would stretch the CTA's own line length past what the two sections above set. */
-.crx .closer { max-width: 1100px; margin: 0 auto; padding: 8rem 1.5rem; }
+/* THE CLOSER IS WHERE --content CAME FROM: Appy picked its width as the page's grid, so this is
+   the one container that did not move. */
+.crx .closer { max-width: var(--content); margin: 0 auto; padding: 8rem 1.5rem; }
 .crx .closer h2 { font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; line-height: 1.15; letter-spacing: -0.025em; margin: 0 0 1.25rem; } /* F4/F22 */
 .crx .closer p { color: var(--dim); font-size: 1.05rem; margin: 0 0 2.2rem; } /* F22: hero's stack rhythm */
 .crx .closer p b { color: var(--mint); font-variant-numeric: tabular-nums; }
@@ -914,7 +772,7 @@ body.crx-lock { overflow: hidden; }
 }
 /* 4rem bottom, was 2.5: the bottom bar used to add its own 1.5rem beneath this, and taking
    the bar out left the footer ending tight under the last link. */
-.crx .crx-foot-in { max-width: 1100px; margin: 0 auto; padding: 4rem 1.5rem 4rem; }
+.crx .crx-foot-in { max-width: var(--content); margin: 0 auto; padding: 4rem 1.5rem 4rem; }
 /* ON THE PAGE'S OWN GRID (Appy, 2026-08-20: "the footer should be aligned with the grid"). The
    container was already the page's 1100px content width, but the columns inside it were 1.5fr/1fr
    — a ratio picked to suit the content, which put the nav's left edge at a position no other
@@ -1021,12 +879,9 @@ body.crx-lock { overflow: hidden; }
   .crx.revealed .rv, .crx.revealed .d1, .crx.revealed .d3,
   .crx.revealed .crx-header,
   .crx .crx-reveal, .crx .crx-reveal.in { animation: none; opacity: 1; transform: none; filter: none; }
-  /* the fleet cards keep their colour reveal — that is information about which machines
-     are real — but lose the lift and the pop-out, which are not. */
+  /* the machine labels are information — which machine is doing what — so they stay; only their
+     staggered arrival goes */
   .crx .sleep-scene.in .sleep-badge { animation: none; opacity: 1; }
-  .crx .fcard, .crx .fcard:hover { transform: none; }
-  .crx .fcard-bay, .crx .fcard:hover .fcard-bay,
-  .crx .fcard-bay img, .crx .fcard:hover .fcard-bay img { transform: none; }
 }
 
 /* ================= header (Phase 1 — NOT part of the mock port) =================
@@ -1065,13 +920,11 @@ body.crx-lock { overflow: hidden; }
   border-bottom-color: rgba(255, 255, 255, 0.08);
 }
 .crx .crx-header-in {
-  /* 1320 — the page's WIDEST section measure (Appy, 2026-08-20). It tracked 1100 when that was the
-     only measure on the page; the fleet, sleep and steps sections went to 1320 on 2026-08-20 for
-     their grids, and a header narrower than the content under it makes the logo and the CTA float
-     inboard of every card edge they are supposed to align with. It follows the widest rather than
-     the average because the header spans the whole page — anything narrower is inset from
-     something. .closer and the footer keep 1100: those are prose measures, not the page frame. */
-  max-width: 1320px;
+  /* --content, like everything else. This chased the widest section for a day (1320) on the
+     reasoning that a header narrower than the content under it leaves the logo and CTA inboard of
+     the card edges they should align with. That reasoning was right and the premise was wrong:
+     the fix is not a header that tracks the widest section, it is a page with only one width. */
+  max-width: var(--content);
   margin: 0 auto;
   padding: 0.7rem 1.5rem;
   display: flex; align-items: center; justify-content: space-between; gap: 1.5rem;
@@ -1203,7 +1056,7 @@ body.crx-lock { overflow: hidden; }
 /* the header exists now, so the hero needs clearance under it, and anchor targets need to land
    below it rather than underneath it */
 .crx main { padding-top: calc(3.5rem + 66px); }
-.crx #machines, .crx #sleep, .crx #how, .crx #join { scroll-margin-top: 76px; }
+.crx #sleep, .crx #how, .crx #join { scroll-margin-top: 76px; }
 
 /* consolidated mobile block — end of file on purpose: .time-chip and main's padding are declared
    above at equal specificity and would win the source-order tie against an earlier block */
@@ -1780,7 +1633,7 @@ body.crx-lock { overflow: hidden; }
 /* dashboard column — main already pays the 1100px grid, 1.5rem gutter and header clearance
    (CreatorsHome's own note), so this only re-caps the width, LEFT-aligns the working screen
    against main's centered text, and adds bottom room before the footer */
-.crx .crx-dash { max-width: 1100px; margin: 0 auto; padding: 0 0 4rem; text-align: left; }
+.crx .crx-dash { max-width: var(--content); margin: 0 auto; padding: 0 0 4rem; text-align: left; }
 /* welcome heading — the head stack at page scale */
 .crx .crx-dash-title {
   font-family: 'Space Grotesk', 'SF Pro Display', Inter, sans-serif;

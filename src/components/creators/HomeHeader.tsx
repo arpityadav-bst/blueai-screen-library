@@ -19,8 +19,8 @@ import { NAV } from './nav'
 //
 // NAV (nav.ts, shared with the footer since 2026-08-20): one tab per real homepage section —
 // SIGNED OUT ONLY. The flow views (application,
-// dashboard, full-capacity) don't render HomeMain, so #machines isn't in the DOM and the tabs
-// would be links to nowhere; they render only when !signedIn.
+// dashboard, full-capacity) don't render the homepage sections, so those anchors aren't in the DOM
+// and the tabs would be links to nowhere; they render only when !signedIn.
 //
 // CTA (Phase 3): opens the sign-in dialog via the onCta prop (CreatorsHome owns the modal) —
 // the Phase 1 scroll-to-#join placeholder is retired. Two visual states still mirror

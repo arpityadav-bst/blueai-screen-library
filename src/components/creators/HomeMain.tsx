@@ -1,14 +1,13 @@
 // Above-the-fold markup: the ambient pixel rain, the hero copy + CTA, the machine stage, and the
-// fleet section. Ported 1:1 from the mock (alt-copy.html) EXCEPT the stage — the mock's CSS-drawn desk and
+// hero. Ported 1:1 from the mock (alt-copy.html) EXCEPT the stage — the mock's CSS-drawn desk and
 // laptop were replaced on 2026-08-19 by a rotating photoreal machine stage — and then restored on
 // 2026-08-20 when that stage moved to the sleep section, where it has since been replaced in turn
 // by a single still. This scene is the page's only animated device now. The
-// fleet was an icon strip inline here until 2026-08-20 and is now its own component
-// (FleetSection.tsx); it outgrew this file. Pure markup either way: every behaviour
+// fleet section that used to follow the hero here was cut on 2026-08-20. Pure markup either
+// way: every behaviour
 // (task lifecycle, earnings credit, chip flights) lives in useHomeFx.ts, which mutates nodes by id.
 // React never re-renders this subtree, which is what makes that direct mutation safe.
 
-import FleetSection from './FleetSection'
 import PixelRain from './PixelRain'
 
 function SparkIcon() {
@@ -33,7 +32,7 @@ export default function HomeMain() {
     <>
       <main>
         {/* The sky, and the FIRST child of <main> on purpose: it sizes itself to its parent, so
-            <main> is what decides the rain covers exactly the hero and stops at the fleet strip.
+            <main> is what decides the rain covers exactly the hero and stops where it ends.
             The six fixed-position .star spans it replaces are gone entirely. */}
         <PixelRain />
 
@@ -114,7 +113,6 @@ export default function HomeMain() {
 
       </main>
 
-      <FleetSection />
 
     </>
   )
