@@ -60,12 +60,21 @@ function ArrowIcon() {
 /** x/y are percentages of the frame (from the scan); dx/dy are optional pixel nudges on top. The
     type is explicit so the nudges stay available with none of them set — inferred from the literals
     alone, the array would have no dx/dy at all and adding one would be a type error. */
+// HAND-TUNED, THEN MOVED BY MEASURED DELTA — never re-derived from scratch. These five were placed
+// by eye over two rounds of Appy's own nudges (4px to 80px), so a regeneration must not discard
+// them: every device is re-detected in the new frame by colour blob + connected component, matched
+// against the same detection on the old frame, and only the DIFFERENCE is added to the tuned value.
+// That keeps his placement relative to the object and corrects only what actually moved.
+// Across the 2026-08-21 sofa + scale regenerations: robotaxi, laptop and phone all landed within
+// 1% (under 5px at the rendered size) and were left alone as measurement noise. Two moved for real,
+// because the second pass drew the man bigger and pulled the camera with him — the robot came
+// closer, so its head sits 5.6% higher, and the vacuum shifted 2.7% left.
 const SCENE_TASKS: { t: string; x: number; y: number; dx?: number; dy?: number }[] = [
   { t: 'Airport run', x: 17.4, y: 27 },
-  { t: 'Folding laundry', x: 74, y: 19, dx: 80 },
+  { t: 'Folding laundry', x: 74, y: 13.4, dx: 80 },
   { t: 'Running a campaign', x: 10.3, y: 64 },
   { t: 'On a job', x: 27.5, y: 83 },
-  { t: 'Cleaning', x: 58.8, y: 79 },
+  { t: 'Cleaning', x: 56.1, y: 79 },
 ]
 
 // Plain strings, and step 04 reads like the other three (Appy, 2026-08-20). It briefly carried the
@@ -106,13 +115,29 @@ export default function HomeBelow({ onCta }: { onCta?: () => void }) {
             single frame with the owner idle and every machine working around him says it in one
             look and needs no time to do it.
             CHILLING, NOT SLEEPING, AT GOLDEN HOUR (Appy, 2026-08-21): the frame was regenerated so
-            the owner is leaning back in a gaming chair with his hands behind his head, and the room
+            the owner is leaning back with his hands behind his head, and the room
             is evening rather than night. Evening rather than daylight on purpose — the devices are
             read by their cyan and violet glow, and full daylight washes that out.
             AND FURNISHED, on a second pass the same day (Appy: "the house in the background feels
             like a non-furnished house"). The first evening frame had a bare wall and an empty floor,
             which read as a viewing rather than a home — the whole point of the picture is that this
             is someone's living room and the machines are working in it.
+            ON THE SOFA, NOT THE DESK CHAIR (Appy, 2026-08-21: "will make more sense right?" - yes).
+            Hands behind his head IN A DESK CHAIR, beside the working laptop, reads as taking a
+            break at work: he is still at the desk. On the sofa he is off duty, which is what the
+            heading underneath actually claims. Regenerated as an edit of the previous frame rather
+            than from scratch, so the room, light and every machine carried over; the chair is still
+            there and empty, which does the work of saying he left it.
+            AND SCALED TO THE FURNITURE, one pass later (Appy: "guy feels like a dwarf here, we made
+            its body too small"). The first sofa frame sat his head BELOW the top of the backrest and
+            gave him legs too short for the seat depth, which is exactly how a figure reads as a
+            child no matter how adult the face is. The fix was stated as landmarks rather than as
+            "bigger": head above the backrest, shoulders one cushion wide, feet out onto the rug.
+            THE CROP HAD TO BE REFITTED FOR IT. That pass moved the camera down as well as scaling
+            him, which pushed the foreground phone to 97% of the frame — nearly clipped. The crop
+            offset is not a constant: it is fitted per generation by minimising the device positions'
+            drift against the live frame (top 120px here, 70px before), which is also what keeps the
+            badges above honest.
             LANDSCAPE, NOT SQUARE, and framed with margin (Appy, 2026-08-20). A square crop of a
             room forces the camera in close, which is what put the robot's head and the laptop
             against the edges; 16:9 lets the shot pull back far enough to hold every object whole
@@ -121,7 +146,7 @@ export default function HomeBelow({ onCta }: { onCta?: () => void }) {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/creators/sleep-scene.webp"
-            alt="A man leaning back in a gaming chair with his hands behind his head while a laptop, a phone, a humanoid robot, a robot vacuum and a robotaxi outside all keep working"
+            alt="A man leaning back on a sofa with his hands behind his head while a laptop, a phone, a humanoid robot, a robot vacuum and a robotaxi outside all keep working"
             loading="lazy"
             width={1600}
             height={783}
