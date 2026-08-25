@@ -1405,10 +1405,19 @@ body.crx-lock { overflow: hidden; }
   font-size: 0.85rem; color: rgba(214, 224, 255, 0.55);
 }
 .crx .crx-bal-sub b { font-weight: 650; color: var(--ink-inverse); font-variant-numeric: tabular-nums; }
-/* The rule above the first ledger row IS .crx-row's own border-top, so the ledger separates itself
-   from the hero with the same hairline it uses between rows — one divider weight in the panel
-   rather than a second, heavier one introduced just for this seam. */
+/* THE LEDGER'S OWN TOP HAIRLINE, restored here on purpose (Appy, 2026-08-25: "transaction can have
+   a very subtle divider above it right?"). It should have been free — .crx-row carries a border-top
+   — but .crx-rows > .crx-row:first-child strips it, which is correct everywhere else on the page:
+   every other divided list sits under a heading or a label, where a leading rule would fence the
+   list off from its own title. This one sits under a FIGURE, with nothing between them.
+   An earlier note here claimed the hairline was already doing this job. It was not; the reset above
+   was quietly winning, which is what Appy was looking at.
+   SAME 0.08 AS THE ROW DIVIDERS, not heavier. The hero-to-ledger boundary is a bigger step than
+   row-to-row, and it is carried by the 1.4rem of air above the line rather than by more ink — one
+   divider weight in the panel, so nothing has to be read as "more of a divider" than anything
+   else. */
 .crx .crx-bal-rows { margin-top: 1.4rem; }
+.crx .crx-bal-rows > .crx-row:first-child { border-top: 1px solid rgba(255, 255, 255, 0.08); }
 .crx .crx-cashout { flex-shrink: 0; }
 
 /* ---- divided list: transactions (Transactions.tsx) ---- */
