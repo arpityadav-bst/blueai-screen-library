@@ -73,11 +73,12 @@ export const MOCK_TRANSACTIONS: Transaction[] = [
 ]
 
 export const MOCK_STATS = {
-  // COMPLETED PROGRAMS, NOT JOBS (Abhisht, 2026-08-24): jobs are internal to programs — "the
-  // number of jobs, BlueAI runs etc will be a part of the program" — so the user-facing count is
-  // programs finished. Two, to sit plausibly beside the three active enrollments and the March
-  // cash-out. MOCK_COMPLETED_JOBS stays for the same reason it survived the per-job-list cut.
-  completedPrograms: 2,
+  // completedPrograms was removed 2026-08-25. The count is no longer a figure the dashboard is
+  // handed — the programs section derives it from the enrollments themselves and shows it on the
+  // Past tab, so a hardcoded 2 sitting here could only ever contradict the list beside it. The
+  // reasoning it carried is worth keeping: the user-facing count is programs finished, not jobs,
+  // because "the number of jobs, BlueAI runs etc will be a part of the program" (Abhisht,
+  // 2026-08-24). MOCK_COMPLETED_JOBS stays for the same reason it survived the per-job-list cut.
   /** The withdrawable balance: the 5 qualifying months since the March cash-out, x $30 each. */
   balance: 5 * EARNING.monthlyPayment,
 }

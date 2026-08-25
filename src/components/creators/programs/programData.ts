@@ -107,6 +107,53 @@ export type EnrolledProgram = {
   /** Done-counts keyed by condition index — the API's own contract (conditions[0] reports as
       progress["0"]); the required figure lives on the condition itself. */
   progress: Record<string, number>
+  /** Monthly programs only: when the counting window rolls over. A DISPLAY STRING, same convention
+      as endsLabel — the mock lives in a fixed illustrative present and formatting an epoch through
+      the reader's clock would let it contradict the design. */
+  resetsLabel?: string
+  /** What this program has actually paid this member. Drives 'ended-earned' vs 'ended-missed' —
+      see programState, and note it is what PAID, not what was met: a monthly program can qualify in
+      March and miss in August, and it still earned. */
+  earned?: number
+  /** Ended programs: when it closed. Display string, like endsLabel. */
+  endedLabel?: string
+}
+
+/* ---- program state (2026-08-25, Appy: "what happens when the user reaches the goal, and what
+   happens when the program ends") ----
+
+   THOSE ARE TWO DIFFERENT EVENTS, and the tile modelled neither. The launch program runs on two
+   clocks: the MONTH ("run BlueAI on at least 20 days each month" — the goal recurs, which is why
+   the dashboard balance is 5 x $30 for five qualifying months) and the WINDOW (endAt, after which
+   the program is over for good). Reaching the goal is not the program ending, and one state cannot
+   answer both.
+
+   DERIVED IN ONE PLACE ON PURPOSE. Every render site asking "is this done?" for itself is how two
+   surfaces end up disagreeing about the same enrollment. */
+export type ProgramState = 'in-progress' | 'goal-met' | 'ended-earned' | 'ended-missed'
+
+/** What a condition asks for. Shared so the tile, the sheet and goalMet cannot drift on it. */
+export function required(c: Condition): number {
+  return c.type === 'complete-jobs' ? c.count : c.minDaysCompleted
+}
+
+/** EVERY condition met — a multi-condition program is not "met" on the strength of one of them. */
+export function goalMet(e: EnrolledProgram): boolean {
+  return e.program.conditions.every((c, i) => (e.progress[String(i)] ?? 0) >= required(c))
+}
+
+export function programState(e: EnrolledProgram): ProgramState {
+  // status 'closed' is the API's own word for a program past its window.
+  if (e.program.status !== 'closed') return goalMet(e) ? 'goal-met' : 'in-progress'
+  // Ended: what matters is whether it PAID, not whether the final period was met. A monthly
+  // program that qualified in March and missed in August still earned, and telling that member
+  // "missed" because of the last window would be false.
+  return (e.earned ?? 0) > 0 ? 'ended-earned' : 'ended-missed'
+}
+
+/** Active vs past, the two tabs' contents. One predicate, so the counts and the lists agree. */
+export function isPast(e: EnrolledProgram): boolean {
+  return e.program.status === 'closed'
 }
 
 // Mid-progress on purpose: an all-zeros dashboard (the dev build's screenshot state) shows none of
@@ -117,10 +164,36 @@ export type EnrolledProgram = {
 // The mock keeps endsLabel on the program for simplicity, but on a real user's screen that label
 // is THEIR window's end, not a shared date — and the current API cannot express it (one endAt,
 // one sweep per program), which is flagged for the backend conversation.
+// ONE ENROLLMENT PER STATE (2026-08-25) — a mock whose every card is mid-progress demonstrates one
+// quarter of the design. Starter stays the in-progress case; Spring is at 2 of 2 so the goal-met
+// treatment is on screen; Weekend keeps the two-condition partial. The two past programs below give
+// the Past tab something to hold.
 export const MOCK_ENROLLMENTS: EnrolledProgram[] = [
-  { program: STARTER_PROGRAM, progress: { '0': 12 } },
-  { program: SPRING_PROGRAM, progress: { '0': 1 } },
+  { program: STARTER_PROGRAM, progress: { '0': 12 }, resetsLabel: 'Sep 1', earned: 150 },
+  { program: SPRING_PROGRAM, progress: { '0': 2 }, earned: 0 },
   { program: WEEKEND_PROGRAM, progress: { '0': 2, '1': 3 } },
+]
+
+// PAST PROGRAMS — the two terminal states. Both are 'closed', which is the API's own word for a
+// program past its window; what separates them is whether the member was ever paid.
+// Deliberately not new Program objects with invented names: these reuse the shapes already
+// established above with a closed status, so the Past tab cannot claim a program the rest of the
+// mock has never heard of.
+export const PAST_ENROLLMENTS: EnrolledProgram[] = [
+  {
+    // Earned: qualified twice at $30 before the window closed.
+    program: { ...STARTER_PROGRAM, id: 'program_1782000000_a1b2c3d4', title: 'Winter Starter Program', endsLabel: 'Feb 28, 2026', status: 'closed' },
+    progress: { '0': 20 },
+    earned: 60,
+    endedLabel: 'Feb 28, 2026',
+  },
+  {
+    // Missed: the window closed one job short. Stated as a fact, not a failure — see ProgramTile.
+    program: { ...SPRING_PROGRAM, id: 'program_1781000000_9e8d7c6b', title: 'New Year Boost Program', endsLabel: 'Jan 31, 2026', status: 'closed' },
+    progress: { '0': 1 },
+    earned: 0,
+    endedLabel: 'Jan 31, 2026',
+  },
 ]
 
 // The launch returning member (2026-08-24 meeting: going live with exactly one program) — the

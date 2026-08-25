@@ -2004,6 +2004,93 @@ body.crx-lock { overflow: hidden; }
   color: var(--dim);
 }
 .crx .crx-progtiles { display: flex; flex-direction: column; gap: 0.9rem; }
+
+/* ---- programs: Active / Past tabs + the four tile states (2026-08-25) ----
+
+   THE TABS SIT IN THE SECTION HEAD, in the slot the "N COMPLETED" note used to hold — and they
+   replace it, because "Past 2" already IS the completed count. A segmented pill rather than
+   underlined tabs: this row also carries an h2, and an underline under a control directly beside a
+   heading reads as decoration on the heading. Small and quiet on purpose — it switches a list, it
+   is not a page CTA. */
+.crx .crx-progtabs {
+  flex-shrink: 0; display: inline-flex; gap: 2px;
+  padding: 2px; border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.crx .crx-progtab {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 0.3rem 0.7rem; border: none; border-radius: 999px;
+  background: none; cursor: pointer;
+  font: inherit; font-size: 0.78rem; font-weight: 600;
+  color: var(--dim);
+  transition: color 0.18s ease, background 0.18s ease;
+}
+.crx .crx-progtab:hover { color: var(--ink-inverse); }
+.crx .crx-progtab.on { color: var(--ink-inverse); background: rgba(255, 255, 255, 0.09); }
+.crx .crx-progtab:focus-visible { outline: 2px solid #a78bff; outline-offset: 2px; }
+/* the count rides the tab in the page's mono voice, so it reads as a badge rather than as part of
+   the label — "Past" is the destination, "2" is what is in it */
+.crx .crx-progtab-n {
+  font-family: var(--mono); font-size: 0.68rem; font-weight: 700;
+  color: var(--dim);
+}
+.crx .crx-progtab.on .crx-progtab-n { color: var(--mint); }
+
+/* THE EMPTY TAB — a dashed ghost, borrowing .crx-prog-soon's language verbatim (border, radius,
+   padding), because it is the same kind of object: a statement about the future that is not a thing
+   to press. Not shared as one class because the two live in different sections with different
+   margins, and coupling them would mean one section's rhythm dictating the other's; the values are
+   deliberately identical so they read as one pattern.
+   IT WAS BARE PROSE FIRST, on the reasoning that a box would give emptiness a program's weight.
+   True, and beside the point: the tiles it replaces are contained, so dropping the container made
+   the tab switch look like a layout failure. A LIGHTER container answers the weight concern —
+   dashed and unfilled is visibly not a tile — where no container answered nothing. */
+.crx .crx-progempty {
+  margin-top: 0.9rem;
+  border: 1px dashed rgba(255, 255, 255, 0.16); border-radius: 16px;
+  padding: 1.1rem 1.4rem;
+  /* CENTRED, and this is the one place it diverges from .crx-prog-soon's left-aligned ghost
+     deliberately: that box holds a chip above a paragraph, where a left edge is what lines the two
+     up. This one holds a single sentence in a ~1000px box, and a lone line pinned left leaves the
+     other two thirds visibly empty — which on an EMPTY state reads as the box having failed to
+     fill rather than as there being nothing to fill it with. */
+  text-align: center;
+}
+/* NO ch CAP. It had max-width: 56ch, and that was a prose measure applied to a one-sentence notice:
+   ~403px at this size, so an 82-character line that fits the box with 400px to spare was being
+   folded into two (Appy, 2026-08-25: "it can be single line and centred right?"). A measure exists
+   to stop long text running past readability; it has nothing to defend here. Narrow viewports still
+   wrap it, which is fine — centred wrapped text is a shape, two lines in a wide box is a mistake. */
+.crx .crx-progempty p { margin: 0; font-size: 0.9rem; line-height: 1.6; color: var(--dim); }
+
+/* GOAL MET, WINDOW OPEN — the line the bar cannot say. Mint on the amount only: the page reserves
+   mint for money, and "counting starts again Sep 1" is a date, not a payout. */
+.crx .crx-progtile-met {
+  display: flex; align-items: flex-start; gap: 0.45rem;
+  margin: 0.15rem 0 0;
+  font-size: 0.82rem; line-height: 1.5; color: var(--dim);
+}
+.crx .crx-progtile-met b { color: var(--mint); font-weight: 700; }
+.crx .crx-progtile-met-ic {
+  flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+  width: 16px; height: 16px; margin-top: 2px; border-radius: 50%;
+  background: rgba(52, 227, 154, 0.14); color: var(--mint);
+}
+
+/* ENDED — no bar at all (a bar says "this can still move"), so the middle column holds the outcome
+   as a sentence. .earned puts the amount in mint; the missed variant stays in label ink, because a
+   closed window is not an alarm. */
+.crx .crx-progtile-out { margin: 0; font-size: 0.88rem; line-height: 1.55; color: var(--dim); }
+.crx .crx-progtile-out.earned b { color: var(--mint); font-weight: 700; }
+/* PAST TILES READ QUIETER, one step of surface and border rather than dimmed text — dimming the
+   NAME would make a finished program hard to identify, which is the one thing someone opening this
+   tab is looking for. */
+.crx .crx-progtile.past {
+  background: rgba(255, 255, 255, 0.022);
+  border-color: rgba(255, 255, 255, 0.06);
+}
+.crx .crx-progtile.past .crx-progtile-name { color: var(--dim); }
 .crx .crx-progtile {
   display: grid; grid-template-columns: minmax(170px, 1.1fr) minmax(220px, 1.7fr) auto;
   grid-template-areas: 'id conds reward';

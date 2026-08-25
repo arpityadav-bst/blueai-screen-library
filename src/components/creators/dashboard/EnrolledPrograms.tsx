@@ -2,7 +2,16 @@
 
 import { useState } from 'react'
 import Modal from '../flow/Modal'
-import { MOCK_ENROLLMENTS, type Condition, type EnrolledProgram, type Program } from '../programs/programData'
+import ProgramTile from './ProgramTile'
+import {
+  MOCK_ENROLLMENTS,
+  PAST_ENROLLMENTS,
+  isPast,
+  programState,
+  type Condition,
+  type EnrolledProgram,
+  type Program,
+} from '../programs/programData'
 
 // The dashboard's programs band, quest-tile shape (2026-08-24, Abhisht, after the game-quest
 // convention: each program its own rectangular box, multiple bars allowed inside). Rewards came
@@ -11,78 +20,115 @@ import { MOCK_ENROLLMENTS, type Condition, type EnrolledProgram, type Program } 
 // tile's right slot opens the kit modal with the full sheet (description, reward, conditions,
 // end date). Still no "overall progress" number and no raw condition names anywhere.
 export default function EnrolledPrograms({
-  enrollments = MOCK_ENROLLMENTS,
-  completedPrograms,
+  enrollments = [...MOCK_ENROLLMENTS, ...PAST_ENROLLMENTS],
 }: {
   enrollments?: EnrolledProgram[]
-  /** lifetime count, shown beside this section's own heading — see the note on the head row */
-  completedPrograms?: number
 }) {
-  const [infoFor, setInfoFor] = useState<Program | null>(null)
+  // THE ENROLLMENT, not the program (2026-08-25, Appy: "these inner info popups should also be in
+  // sync and updated according to the programs"). The sheet held a Program, which is the same object
+  // for everyone enrolled — so it could describe the terms and nothing about THIS member's outcome,
+  // and it went on saying "every month you meet the goal" and "Ends Feb 28" about a program that
+  // closed in February. State lives on the enrollment; the sheet needs it to speak in the right
+  // tense, never mind report a result.
+  const [infoFor, setInfoFor] = useState<EnrolledProgram | null>(null)
+  const [tab, setTab] = useState<'active' | 'past'>('active')
+
+  // ONE LIST IN, TWO LISTS DERIVED. The caller passes every enrollment and isPast() splits them, so
+  // the tab counts and the tab contents cannot disagree — which they would the moment a caller was
+  // trusted to hand over two pre-sorted arrays and one of them went stale.
+  const all = enrollments
+  const active = all.filter((e) => !isPast(e))
+  const past = all.filter(isPast)
+  const shown = tab === 'active' ? active : past
 
   return (
     <div>
       <div className="crx-sect-head">
-        {/* Singular when there is one — the launch reality (2026-08-24 meeting) is exactly one
-            program, and "Your programs · 1 ACTIVE" over a single tile reads as an inventory bug. */}
-        <h2 className="crx-panel-title">{enrollments.length === 1 ? 'Your program' : 'Your programs'}</h2>
-        {/* COMPLETED COUNT LIVES HERE NOW (Appy, 2026-08-25), moved out of the money row where it
-            was a program fact filed under money. This is the slot its subject is already named in.
-            AN EYEBROW, NOT A CARD, and the demotion is the point: at launch the value is 0, and a
-            zero rendered as a hero tile is dead weight — it spends the most prominent shape on the
-            page saying nothing happened yet. Beside the heading it reads as a footnote to the
-            program, which is what it is.
-            Both facts share one line when there are several programs, since they answer the same
-            question — how many, in what state. */}
-        {(enrollments.length > 1 || completedPrograms !== undefined) && (
-          <span className="crx-sect-note">
-            {enrollments.length > 1 && <>{enrollments.length} active</>}
-            {enrollments.length > 1 && completedPrograms !== undefined && <> · </>}
-            {completedPrograms !== undefined && <>{completedPrograms} completed</>}
-          </span>
-        )}
-      </div>
-      <div className="crx-progtiles">
-        {enrollments.map((e) => (
-          <ProgramTile key={e.program.id} enrollment={e} onInfo={() => setInfoFor(e.program)} />
-        ))}
+        {/* Plural whenever the member has more than one program IN TOTAL, not more than one in the
+            open tab: the heading names the section, and it would otherwise flip to singular just
+            because you clicked Past. */}
+        <h2 className="crx-panel-title">{all.length === 1 ? 'Your program' : 'Your programs'}</h2>
+
+        {/* THE TABS CARRY THE COUNTS, which is what retires the old "N COMPLETED" eyebrow that used
+            to sit in this slot — "Past 2" IS the completed count, and stating it twice in one row
+            was the redundancy this dashboard has been shedding all day. It also fixes the hollow
+            zero: a lone "0 COMPLETED" spent the head's only note on nothing having happened yet,
+            where "Past 0" is a destination that happens to be empty.
+            ALWAYS BOTH TABS, including at launch with nothing in Past (Appy, 2026-08-25). The
+            alternative was showing the switch only once Past filled up — cheaper, and it is what
+            the burger and the footer nav do here — but this teaches the model instead: a new
+            partner learns on day one that programs end and accumulate, rather than meeting a
+            control that appears out of nowhere months later. The cost is a real one and it is paid
+            in the empty state below, so that copy has to do actual work. */}
+        <div className="crx-progtabs" role="tablist" aria-label="Programs">
+          {(['active', 'past'] as const).map((t) => (
+            <button
+              key={t}
+              type="button"
+              role="tab"
+              aria-selected={tab === t}
+              onClick={() => setTab(t)}
+              className={tab === t ? 'crx-progtab on' : 'crx-progtab'}
+            >
+              {t === 'active' ? 'Active' : 'Past'}
+              <span className="crx-progtab-n">{t === 'active' ? active.length : past.length}</span>
+            </button>
+          ))}
+        </div>
       </div>
 
-      <Modal open={infoFor !== null} onClose={() => setInfoFor(null)} label={infoFor ? `About ${infoFor.title}` : 'About this program'}>
-        {infoFor && <ProgramInfo program={infoFor} onClose={() => setInfoFor(null)} />}
+      {shown.length > 0 ? (
+        <div className="crx-progtiles">
+          {shown.map((e) => (
+            <ProgramTile key={e.program.id} enrollment={e} onInfo={() => setInfoFor(e)} />
+          ))}
+        </div>
+      ) : (
+        /* THE PRICE OF ALWAYS-ON TABS, so it has to earn its place. It says what will appear here
+           rather than that nothing has — "no past programs" tells a new partner only that they
+           clicked a dead tab, where naming the future turns the empty tab into an explanation of how
+           programs work. No illustration and no button: nothing is broken and there is nothing to
+           do about it yet.
+           IT KEEPS A CONTAINER (Appy, 2026-08-25: "empty state is coming without the container, is
+           that intentional?"). It shipped as bare prose on the argument that a bordered box would
+           give nothing the same visual weight as a program. The concern is real and the conclusion
+           was wrong twice over: switching tabs made the panel structure disappear, which reads as a
+           render glitch rather than as a state, and this page already had the right answer — the
+           dashed ghost .crx-prog-soon uses on the programs home for "a fact about the future, not a
+           thing to press". Same idea here, so the same treatment: dashed, no fill, quieter than a
+           tile but still the same shape as the thing that will fill it.
+           The active tab has no empty state on purpose — a member with no active programs is a
+           different screen entirely (the programs home, with offers to apply to), and inventing a
+           second empty state here would be inventing a state the flow never reaches. */
+        <div className="crx-progempty">
+          <p>
+            {tab === 'past'
+              ? 'Nothing here yet. Programs you finish will show up here, with what each one earned.'
+              : 'No active programs right now.'}
+          </p>
+        </div>
+      )}
+
+      <Modal open={infoFor !== null} onClose={() => setInfoFor(null)} label={infoFor ? `About ${infoFor.program.title}` : 'About this program'}>
+        {infoFor && <ProgramInfo enrollment={infoFor} onClose={() => setInfoFor(null)} />}
       </Modal>
     </div>
-  )
-}
-
-function ProgramTile({ enrollment, onInfo }: { enrollment: EnrolledProgram; onInfo: () => void }) {
-  const { program, progress } = enrollment
-  return (
-    <article className="crx-progtile">
-      <div className="crx-progtile-id">
-        <span className="crx-progtile-name">{program.title}</span>
-        <span className="crx-progtile-ends">
-          Ends {program.endsLabel}
-        </span>
-      </div>
-
-      <div className="crx-progtile-conds">
-        {program.conditions.map((c, i) => (
-          <ConditionLine key={i} condition={c} done={progress[String(i)] ?? 0} program={program} />
-        ))}
-      </div>
-
-      <button type="button" className="crx-progtile-info" aria-label={`About ${program.title}`} onClick={onInfo}>
-        <InfoIcon />
-      </button>
-    </article>
   )
 }
 
 // The program sheet — everything the tile deliberately doesn't say. One sentence-shaped line per
 // fact under mono section labels; the reward sentence carries the cadence (monthly vs at-end),
 // which is exactly the nuance the tile's old "$30/mo" glyph compressed away.
-function ProgramInfo({ program, onClose }: { program: Program; onClose: () => void }) {
+function ProgramInfo({ enrollment, onClose }: { enrollment: EnrolledProgram; onClose: () => void }) {
+  const { program } = enrollment
+  const state = programState(enrollment)
+  const past = state === 'ended-earned' || state === 'ended-missed'
+  // Monthly programs pay per qualifying period, so the count is arithmetic on what was actually
+  // paid rather than a number the mock has to remember and keep consistent with `earned`.
+  const months =
+    program.rewardModel.type === 'monthly' && program.rewardModel.amount > 0
+      ? Math.round((enrollment.earned ?? 0) / program.rewardModel.amount)
+      : null
   return (
     <div className="crx crx-modal">
       <div className="crx-proginfo">
@@ -93,15 +139,19 @@ function ProgramInfo({ program, onClose }: { program: Program; onClose: () => vo
 
         <div className="crx-proginfo-sect">
           <span className="crx-proginfo-k">Reward</span>
+          {/* PAST TENSE ON A CLOSED WINDOW. "every month you meet the goal" is a promise, and a
+              promise about a program that ended in February is the kind of copy a member reads as
+              the product not knowing what happened to them. Same terms, same figures — only the
+              verb moves. */}
           <p className="crx-proginfo-v">
             {program.rewardModel.type === 'monthly' && (
               <>
-                <b>${program.rewardModel.amount}</b> every month you meet the goal, paid via PayPal.
+                <b>${program.rewardModel.amount}</b> {past ? 'for every month the goal was met' : 'every month you meet the goal'}, paid via PayPal.
               </>
             )}
             {program.rewardModel.type === 'fixed' && (
               <>
-                <b>${program.rewardModel.amount}</b> when the program ends, paid via PayPal.
+                <b>${program.rewardModel.amount}</b> {past ? 'on completion' : 'when the program ends'}, paid via PayPal.
               </>
             )}
             {program.rewardModel.type === 'per-task' && <>A fixed amount per verified job, paid via PayPal.</>}
@@ -109,7 +159,7 @@ function ProgramInfo({ program, onClose }: { program: Program; onClose: () => vo
         </div>
 
         <div className="crx-proginfo-sect">
-          <span className="crx-proginfo-k">What counts</span>
+          <span className="crx-proginfo-k">{past ? 'What counted' : 'What counts'}</span>
           {program.conditions.map((c, i) => (
             <p key={i} className="crx-proginfo-v">
               <ConditionSentence condition={c} program={program} />
@@ -118,11 +168,37 @@ function ProgramInfo({ program, onClose }: { program: Program; onClose: () => vo
         </div>
 
         <div className="crx-proginfo-sect">
-          <span className="crx-proginfo-k">Ends</span>
+          <span className="crx-proginfo-k">{past ? 'Ended' : 'Ends'}</span>
           <p className="crx-proginfo-v">
-            <b>{program.endsLabel}</b>
+            <b>{past ? (enrollment.endedLabel ?? program.endsLabel) : program.endsLabel}</b>
           </p>
         </div>
+
+        {/* RESULT — the section the sheet could not have had while it only knew the Program. It is
+            the reason someone opens the terms of a FINISHED program: not to re-read the rules, but
+            to check what those rules paid them. Stating the arithmetic ("2 qualifying months at
+            $30") rather than just the total is what makes the figure checkable against the ledger
+            in the earnings section above.
+            Active programs get no such section: the tile is already showing live progress, and a
+            "result" for something still running would be a total that is about to be wrong. */}
+        {past && (
+          <div className="crx-proginfo-sect">
+            <span className="crx-proginfo-k">Result</span>
+            <p className="crx-proginfo-v">
+              {state === 'ended-earned' ? (
+                <>
+                  <b>${enrollment.earned}</b> earned
+                  {months !== null && months > 0 && (
+                    <> — {months} qualifying {months === 1 ? 'month' : 'months'} at ${program.rewardModel.type === 'monthly' ? program.rewardModel.amount : 0}</>
+                  )}
+                  .
+                </>
+              ) : (
+                <>No payout. The goal was not met before the window closed.</>
+              )}
+            </p>
+          </div>
+        )}
 
         <button type="button" className="crx-btn-quiet btn-block" onClick={onClose}>
           Close
@@ -146,43 +222,5 @@ function ConditionSentence({ condition, program }: { condition: Condition; progr
       Run BlueAI on at least <b>{condition.minDaysCompleted} {condition.minDaysCompleted === 1 ? 'day' : 'days'}</b>
       {program.rewardModel.type === 'monthly' ? ' each month.' : '.'}
     </>
-  )
-}
-
-// One line per condition: label + count over a mint bar. Same rules as everywhere: skillId stays
-// internal vocabulary ("Run BlueAI" is the user-facing verb), and monthly programs name the window
-// that counts.
-function ConditionLine({ condition, done, program }: { condition: Condition; done: number; program: Program }) {
-  const required = condition.type === 'complete-jobs' ? condition.count : condition.minDaysCompleted
-  const label =
-    condition.type === 'complete-jobs'
-      ? 'Verified jobs'
-      : program.rewardModel.type === 'monthly'
-        ? 'Run BlueAI this month'
-        : 'Days run'
-  const unit = condition.type === 'complete-jobs' ? (required === 1 ? 'job' : 'jobs') : 'days'
-  const pct = Math.max(0, Math.min(100, (done / required) * 100))
-  return (
-    <div className="crx-cond">
-      <div className="crx-cond-line">
-        <span className="crx-cond-label">{label}</span>
-        <span className="crx-cond-count">
-          <b>{done}</b> of {required} {unit}
-        </span>
-      </div>
-      <div className="crx-bar" role="progressbar" aria-valuenow={done} aria-valuemin={0} aria-valuemax={required} aria-label={label}>
-        <span className="crx-bar-fill" style={{ width: `${pct}%` }} />
-      </div>
-    </div>
-  )
-}
-
-function InfoIcon() {
-  return (
-    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <circle cx="12" cy="12" r="9" />
-      <path d="M12 11v5" />
-      <path d="M12 8h.01" />
-    </svg>
   )
 }

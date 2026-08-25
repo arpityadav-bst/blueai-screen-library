@@ -23,10 +23,8 @@ import type { EnrolledProgram } from '../programs/programData'
 // noise under real numbers reads as noise rather than mood.
 export default function Dashboard({
   enrollments,
-  completedPrograms = MOCK_STATS.completedPrograms,
 }: {
   enrollments?: EnrolledProgram[]
-  completedPrograms?: number
 }) {
   const { account } = useCrx()
   const [balance, setBalance] = useState(MOCK_STATS.balance)
@@ -118,12 +116,13 @@ export default function Dashboard({
       </div>
 
       {/* NO PER-JOB LIST (PM, 2026-08-14 meeting): individual completed jobs — names and the brands
-          behind them — must not be shown to creators. Aggregate numbers are fine, so the completed
-          count survives; it sits beside the programs heading rather than in a money tile.
-          MOCK_COMPLETED_JOBS remains in mockData unimported in case the decision softens. The ledger
-          above is NOT that list coming back: its rows are withdrawals. */}
+          behind them — must not be shown to creators. Aggregate numbers are fine; as of 2026-08-25
+          the completed count is the Past tab's own badge inside this section rather than a figure
+          passed down from here, which is why the prop is gone. MOCK_COMPLETED_JOBS remains in
+          mockData unimported in case the per-job decision softens. The ledger above is NOT that list
+          coming back: its rows are withdrawals. */}
       <div className="crx-dash-band">
-        <EnrolledPrograms enrollments={enrollments} completedPrograms={completedPrograms} />
+        <EnrolledPrograms enrollments={enrollments} />
       </div>
       {/* THE THIRD SECTION LABEL, hoisted out of the panel 2026-08-25 (Appy). All three now sit on
           the page in the same row treatment, so placement encodes hierarchy instead of encoding

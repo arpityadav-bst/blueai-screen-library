@@ -114,7 +114,7 @@ function SignedInView({ journey, nav }: { journey: Journey; nav: NavView }) {
   const view = nav === 'auto' ? (returning ? 'dashboard' : 'programs') : nav
 
   if (view === 'dashboard') {
-    return journey === 'returningMulti' ? <Dashboard /> : <Dashboard enrollments={SINGLE_ENROLLMENT} completedPrograms={0} />
+    return journey === 'returningMulti' ? <Dashboard /> : <Dashboard enrollments={SINGLE_ENROLLMENT} />
   }
 
   switch (journey) {
