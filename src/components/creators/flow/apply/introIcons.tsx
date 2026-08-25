@@ -16,7 +16,13 @@ const box = (size: number, className: string) => ({
   className,
 })
 
-/** The rollout seam ("access starts on your PC, phones and robots come next") — two waves, the second still faint. */
+/** The rollout seam ("access starts on your PC, phones and robots come next") — two waves, the second still faint.
+    UNUSED SINCE 2026-08-24: the row it drew was cut from StepIntro when the apply flow moved under
+    the programs home, which never sells other machines. Kept, not deleted, and parked here rather
+    than left silently orphaned — StepIntro's own note says the row returns if the multi-machine
+    pitch returns to this funnel, and this is the glyph it returns with. Same call, and the same
+    reasoning, as MOCK_COMPLETED_JOBS surviving the per-job-list cut. If that pitch is settled as
+    gone, delete both together. */
 export function WaveIcon({ size = 18, className = '' }: P) {
   return (
     <svg {...box(size, className)}>

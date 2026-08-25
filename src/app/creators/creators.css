@@ -1847,12 +1847,17 @@ body.crx-lock { overflow: hidden; }
 .crx .crx-prog-foot .crx-grow { flex: 1 1 auto; justify-content: center; display: flex; }
 
 /* coming-soon ghost — dashed, dim, deliberately quieter than the panel: a fact about the future,
-   not a thing to press. Sits under the card/headline at the same measure. */
+   not a thing to press. Sits under the card/headline at the same measure.
+   STACKED, NOT A ROW (Appy, 2026-08-25). It was `display: flex; align-items: center` with the chip
+   leading, which is the one arrangement a real program card never uses: .crx-prog-headmain stacks
+   chip over title over description. Matching it costs a flex-direction and buys the block a shape
+   the reader has already learned from the cards above it. The 0.85rem gap is .crx-prog-headmain's
+   own chip margin-bottom, not a new value — same relationship, same spacing. */
 .crx .crx-prog-soon {
   margin-top: 1rem;
   border: 1px dashed rgba(255, 255, 255, 0.16); border-radius: 16px;
   padding: 1.1rem 1.4rem;
-  display: flex; align-items: center; gap: 0.9rem;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 0.85rem;
 }
 .crx .crx-prog-soon p { margin: 0; font-size: 0.88rem; line-height: 1.5; color: var(--dim); }
 

@@ -235,11 +235,20 @@ function FactRow({ icon, children }: { icon: ReactNode; children: ReactNode }) {
 
 // Honest about the future without inventing it: no fake program names, no fake rewards — those
 // read as promises on a money product. A dashed ghost + one sentence is the whole message.
+//
+// CHIP ABOVE THE TEXT, NOT BESIDE IT (Appy, 2026-08-25: "coming badge should come later right?").
+// It led a flex row, which gave the strongest slot on the block — first fixation, uppercase mono,
+// bordered — to the one element carrying no information: the sentence under it opened "More
+// programs are on the way", saying the same thing again. The fix is not to move the chip to the
+// end, which leaves the duplication and only hides it. The chip now stacks above the copy exactly
+// as it does on a real program card (.crx-prog-headmain: chip, then title, then description), and
+// the sentence drops its repeated opening. Chip carries the "coming"; the sentence carries what is
+// coming; neither repeats the other.
 function ComingSoon() {
   return (
     <div className="crx-prog-soon">
       <span className="crx-chip ghost">Coming soon</span>
-      <p>More programs are on the way, with different goals and different rewards. You&apos;ll get an email when one opens.</p>
+      <p>Different goals, different rewards. You&apos;ll get an email when one opens.</p>
     </div>
   )
 }
