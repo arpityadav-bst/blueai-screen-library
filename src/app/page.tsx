@@ -34,7 +34,7 @@ const ACTIVE = [
     // straight at its own route rather than the creators entry into a shared shell.
     href: '/creator-brand/brands',
     name: 'Brand website',
-    desc: 'The brand-side acquisition flow: post a job, outcome-based pricing, a live job-post form. On the blueai-modern marketing design system. (Creators moved to their own site — see Creator website below.)',
+    desc: 'The brand-side acquisition flow: post a job, outcome-based pricing, a live job-post form. On the blueai-modern marketing design system. (The partner side moved to its own site — see Partner website below.)',
   },
   {
     // RENAMED + RE-POINTED 2026-08-19 (Appy): was "Creator Homepage — 'The AI You Own'" ->
@@ -44,8 +44,15 @@ const ACTIVE = [
     // logout) built into it, on this site's own dark theme — so the card points at the real route,
     // not the mock it started from. The mock itself stays on record at /experiments/robots/.
     href: '/creators',
-    name: 'Creator website',
-    desc: 'The full creator side: an AI-worker homepage ("The AI You Own"), sign in, a 5-step application, a returning-creator dashboard with cash-out, and logout — all in its own dark, futuristic design language. Design-only, same convention as every other page here.',
+    // "Partner", not "Creator" (Appy, 2026-08-25), following the audience rename on the route
+    // itself. The cross-reference in the Brand card above moves with it — a card renamed without
+    // its referrer is how an index starts pointing at a name that no longer exists.
+    // DELIBERATELY NOT PROPAGATED to /creator-brand, whose cards, copy and whole For Creators /
+    // For Brands axis keep the old word: that site is frozen, and its two-audience split is its
+    // proposition rather than a label. The two surfaces disagreeing is a real state of the product,
+    // not a miss.
+    name: 'Partner website',
+    desc: 'The full partner side: an AI-worker homepage ("The AI You Own"), sign in, a 5-step application, a returning-partner dashboard with cash-out, and logout — all in its own dark, futuristic design language. Design-only, same convention as every other page here.',
   },
 ]
 

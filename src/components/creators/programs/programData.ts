@@ -41,7 +41,12 @@ export const STARTER_PROGRAM: Program = {
   // month, 20 run-days per month (the PM's canonical figures from StepIntro/the dashboard mock).
   // The description is the PM's own requirement line, since the ops copy for the monthly program
   // doesn't exist yet.
-  title: 'Creator Starter Program',
+  // "Partner", finishing the 2026-08-24 rebrand (Appy, 2026-08-25) — it was the last user-visible
+  // "Creator" left on this surface once the header wordmark changed. Worth a flag: the note above
+  // says this field is ops-owned and the mock must not editorialize it. This is not editorialising
+  // — it is keeping a mock program's name consistent with what the product now calls the people in
+  // it — but if ops has already named the real program, their string wins over this one.
+  title: 'Partner Starter Program',
   description: 'Run BlueAI on at least 20 days each month to earn $30',
   rewardModel: { type: 'monthly', amount: 30, currency: 'USD' },
   conditions: [{ type: 'run-skill', skillId: 'moneymaker', minDaysCompleted: 20 }],
