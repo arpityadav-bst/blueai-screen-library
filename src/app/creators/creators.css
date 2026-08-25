@@ -1385,39 +1385,56 @@ body.crx-lock { overflow: hidden; }
    object. */
 .crx .crx-bal { display: flex; align-items: flex-start; justify-content: space-between; gap: 1.2rem; }
 .crx .crx-bal-main { min-width: 0; }
-.crx .crx-bal-label {
-  display: block;
-  font-size: 0.8rem; color: rgba(214, 224, 255, 0.55);
-}
+/* .crx-bal-label retired 2026-08-25 — "Balance" wears .crx-subhead like every other label on this
+   dashboard.
+   0.55rem BELOW IT, matching .crx-bal-ledger's caption in this same panel: one panel, one caption
+   rhythm. It inherited 2px (the old .crx-bal-label's margin-top on the figure) and kept it through
+   the class swap, which is the same failure as the numbered rows' margin-top:6px — a value tuned
+   for the context it was born in, surviving the context change. Mono small-caps is a caption, not a
+   label: the letterspacing makes it read as a separate layer, so 2px glued it to the figure. The
+   same class gets 8.8px here and 17.6px above a list in .crx-earn-half; 2px was the outlier by
+   4-9x, which is measurable and was checkable at any point. */
+.crx .crx-bal-main > .crx-subhead { display: block; margin-bottom: 0.55rem; }
 /* 2.1rem against the retired tile's 1.5rem — it is carrying the section on its own now, where it
    used to borrow presence from two neighbours in a grid. tabular-nums so cashing out to $0 cannot
-   shift the button beside it. */
+   shift the button beside it.
+   NO margin-top: the caption above owns the gap between them (see .crx-bal-main > .crx-subhead).
+   Two elements both declaring the space between them is how it ends up tuned in one place and read
+   from the other. */
 .crx .crx-bal-fig {
-  display: block; margin-top: 2px;
+  display: block;
   font-family: 'Space Grotesk', 'SF Pro Display', Inter, sans-serif;
   font-weight: 700; font-size: 2.1rem; line-height: 1.1;
   color: var(--mint);
   font-variant-numeric: tabular-nums;
 }
-/* the see-saw's quieter half — same ink as a label, with only the amount in the body colour */
-.crx .crx-bal-sub {
-  display: block; margin-top: 0.5rem;
-  font-size: 0.85rem; color: rgba(214, 224, 255, 0.55);
+/* .crx-bal-sub deleted 2026-08-25 with the "Earned till date" line it styled — that fact moved to
+   the section head (.crx-sect-note). */
+/* THE LEDGER'S TOP HAIRLINE IS .crx-row's OWN border-top — nothing here adds one. What it needed
+   was for the first-child reset further down to stop stripping it, which is now written as an
+   exception on that rule rather than as a competing override here. See it for the history; the
+   short version is that an override at this position could not win and did not.
+/* THE LEDGER BLOCK — its own label, and the hairline that separates it from the balance above.
+   THE DIVIDER LIVES HERE, not on the first row (2026-08-25). Two goes at tuning it on the row both
+   missed, and for the same reason: a rule sitting between two plain text lines has no structure to
+   take its spacing from, so it gets eyeballed. First it was 22.4px above / 12px below, which Appy
+   read as "not UX friendly"; I took that as an asymmetry complaint and evened it to 16/16, which
+   moved the line CLOSER to "Earned till date" — the opposite of what he meant ("it's too close to
+   the earned till date line, why didn't you see it?"). Fair.
+   On the wrapper it is structural instead: the rule closes the balance block and 1.25rem opens the
+   ledger with its own caption under it. Still more above than below, because the space above a
+   divider belongs to the block it is closing.
+   RE-DERIVED FROM 2rem WHEN "Earned till date" LEFT (2026-08-25). That 2rem existed to give a tight
+   0.85rem secondary line room to breathe before the rule; with the line gone the block now ends on
+   the 2.1rem figure itself, which has its own visual mass and needs less compensating air. Leaving
+   the number behind would have been the same mistake as the caption's 2px and the numbered rows'
+   6px — a value outliving the reason it was chosen. */
+.crx .crx-bal-ledger {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
-.crx .crx-bal-sub b { font-weight: 650; color: var(--ink-inverse); font-variant-numeric: tabular-nums; }
-/* THE LEDGER'S OWN TOP HAIRLINE, restored here on purpose (Appy, 2026-08-25: "transaction can have
-   a very subtle divider above it right?"). It should have been free — .crx-row carries a border-top
-   — but .crx-rows > .crx-row:first-child strips it, which is correct everywhere else on the page:
-   every other divided list sits under a heading or a label, where a leading rule would fence the
-   list off from its own title. This one sits under a FIGURE, with nothing between them.
-   An earlier note here claimed the hairline was already doing this job. It was not; the reset above
-   was quietly winning, which is what Appy was looking at.
-   SAME 0.08 AS THE ROW DIVIDERS, not heavier. The hero-to-ledger boundary is a bigger step than
-   row-to-row, and it is carried by the 1.4rem of air above the line rather than by more ink — one
-   divider weight in the panel, so nothing has to be read as "more of a divider" than anything
-   else. */
-.crx .crx-bal-rows { margin-top: 1.4rem; }
-.crx .crx-bal-rows > .crx-row:first-child { border-top: 1px solid rgba(255, 255, 255, 0.08); }
+.crx .crx-bal-ledger > .crx-subhead { margin-bottom: 0.55rem; }
 .crx .crx-cashout { flex-shrink: 0; }
 
 /* ---- divided list: transactions (Transactions.tsx) ---- */
@@ -1428,6 +1445,16 @@ body.crx-lock { overflow: hidden; }
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   font-size: 0.88rem; color: var(--dim);
 }
+/* NO LEADING RULE — every divided list on this page sits under a heading or a label, and a rule
+   above the first row would fence the list off from its own title. NO EXCEPTIONS again as of
+   2026-08-25: the ledger briefly needed one because it had lost its label and sat straight under a
+   figure, and it has a label once more, so the plain rule is right for every consumer.
+   WORTH KEEPING FROM THAT DETOUR: the exception was first written as an override next to
+   .crx-bal-rows, and it could never win — `.crx .crx-bal-rows > .crx-row:first-child` and this
+   selector have IDENTICAL specificity (four class-level components each, :first-child included), so
+   source order decided it and this rule is later in the file. Reading the override said nothing;
+   only counting did. If a list here ever does need a leading rule, put the exception on THIS
+   selector as :not(), never as a competing override. */
 .crx .crx-rows > .crx-row:first-child { border-top: none; }
 /* fixed tabular date column so labels rag into a clean left edge (the original's own trick) */
 .crx .crx-row .crx-row-date { flex-shrink: 0; width: 88px; font-size: 0.78rem; color: rgba(214, 224, 255, 0.5); font-variant-numeric: tabular-nums; }
@@ -1960,6 +1987,9 @@ body.crx-lock { overflow: hidden; }
    1 inside? why?"), so a name that says "programs" was telling the next reader it was special. */
 .crx .crx-sect-head { display: flex; align-items: baseline; justify-content: space-between; gap: 0.8rem; margin-bottom: 0.9rem; }
 .crx .crx-sect-note { font-family: var(--mono); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--dim); }
+/* an amount inside the note reads a step up, the same relationship .crx-cond-count b has to its own
+   label — the words are the caption, the figure is the fact */
+.crx .crx-sect-note b { color: var(--ink-inverse); }
 
 /* IN-PANEL SUB-HEADING — the level that did not exist until 2026-08-25.
    .crx-panel-title was doing three jobs at one size: a section label on the page, a panel's own
@@ -2023,7 +2053,22 @@ body.crx-lock { overflow: hidden; }
 
 /* condition line + bar — the progress unit the program rows repeat */
 .crx .crx-cond-line { display: flex; align-items: baseline; justify-content: space-between; gap: 0.8rem; margin-bottom: 0.45rem; }
-.crx .crx-cond-label { font-size: 0.88rem; font-weight: 600; color: var(--ink-inverse); }
+/* A LABEL, SO IT IS DIM (Appy, 2026-08-25: "too many white titles here right?"). Four things in
+   this band were at --ink-inverse or #fff — the section label, the program name, this, and the
+   count's figure — three of them within 0.88-1.05rem and 600-700 weight. Rank asserted four times
+   is rank asserted nowhere, and the tightest conflict was here: this and the count sit on the SAME
+   row, both bright, so the eye had no reason to prefer the number that answers "am I on track".
+   The page already resolves this exact pair one section down — "Balance" in .crx-subhead's mono
+   small-caps, quiet above .crx-bal-fig's loud "$150". Same shape, same treatment: the label says
+   what is being measured, the figure is the measurement. (This label stays sentence-case rather than
+   joining that mono voice: it is a full clause, "Run BlueAI this month", and mono small-caps is a
+   caption treatment that stops working past two or three words.) Weight stays 600 — it is the colour that was overclaiming, not the
+   weight, and a dim 600 still reads as a label rather than as body copy.
+   WHAT DELIBERATELY STAYS BRIGHT: the program name (a tile needs one title) and the count's figure.
+   One bright thing per column, which is what makes the row scannable left-to-right as identity then
+   status. "Your program" also stays — all three section headings match by design since the heading
+   pass, and this one cannot move alone. */
+.crx .crx-cond-label { font-size: 0.88rem; font-weight: 600; color: var(--dim); }
 .crx .crx-cond-count { font-size: 0.8rem; color: var(--dim); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .crx .crx-cond-count b { color: var(--ink-inverse); font-weight: 700; }
 /* the bar: inset well track (the kit's typing-surface recipe), MINT fill — progress toward money

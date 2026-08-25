@@ -28,15 +28,14 @@
 //
 // BALANCE IS NOT A STAT, it is the screen's primary action: the only tile carrying a control, and
 // on a money product the thing the person came for. It led as one of three equal tiles. Here it is
-// the hero, Earned till date is a secondary line under it, and the ledger follows a rule below.
-// Completed programs moved to the program section, where its subject is.
+// the hero and the ledger follows a rule below it. The other two figures both left for the section
+// heads their subjects belong to — Completed programs to the programs head, Earned till date to this
+// section's own (2026-08-25) — which leaves this panel saying exactly one thing.
 export default function EarningsPanel({
-  earnedTillDate,
   balance,
   onCashOut,
   children,
 }: {
-  earnedTillDate: number
   balance: number
   onCashOut: () => void
   /** the ledger rows — passed in rather than imported so this panel owns layout, not data */
@@ -46,17 +45,16 @@ export default function EarningsPanel({
     <div className="crx-panel crx-bal-panel">
       <div className="crx-bal">
         <div className="crx-bal-main">
-          <span className="crx-bal-label">Balance</span>
+          {/* .crx-subhead, the same mono small-caps every other label on this dashboard wears —
+              STEPS, PAYOUT RULES, the completed-count eyebrow (Appy, 2026-08-25: "both labels
+              should be like how other labels are there on this dashboard"). It was a plain 0.8rem
+              line, which is the one label on the page that looked like body copy. */}
+          <span className="crx-subhead">Balance</span>
           {/* tabular, like the tile figure it replaces: a number that cannot jitter in width as it
               changes (Cash out takes it to $0) reads as more considered than one that can */}
           <span className="crx-bal-fig">${balance}</span>
-          {/* PAID-OUT money (Abhisht, 2026-08-24): "Earned till date" counts what has actually been
-              cashed out, so the two figures are a see-saw — Balance accrues, cashing out moves it
-              here. Secondary ink and half the size, because it answers a question nobody opens this
-              screen to ask; mint stays on the ONE figure that answers "what can I take out now". */}
-          <span className="crx-bal-sub">
-            Earned till date <b>${earnedTillDate}</b>
-          </span>
+          {/* "Earned till date" MOVED OUT to the section head (Dashboard.tsx, 2026-08-25) — see
+              there for why. This panel now holds only the withdrawable figure and its action. */}
         </div>
         {/* Quiet ghost pill, not this page's big gradient CTA — Cash out is a frequent, low-drama
             action checked routinely; the gradient stays reserved for "decide to do this" moments.

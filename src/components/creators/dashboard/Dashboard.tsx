@@ -95,9 +95,21 @@ export default function Dashboard({
       <div className="crx-dash-band">
         <div className="crx-sect-head">
           <h2 className="crx-panel-title">Your earnings</h2>
+          {/* EARNED TILL DATE SITS IN THE HEAD (Appy, 2026-08-25: "just how we have 0 completed on
+              the same row as Your program"), which is the same slot and the same .crx-sect-note
+              voice the programs section uses for its completed count. The two are the same KIND of
+              fact: a lifetime total that qualifies the section without being what the section is
+              for. Inside the panel it was a third line under the balance, competing with the figure
+              nobody opens this screen to ask about; up here it is a footnote to the heading, and
+              the panel is left saying exactly one thing.
+              PAID-OUT money (Abhisht, 2026-08-24) — Balance accrues, cashing out moves it here, so
+              the two figures are a see-saw. That is also why the amount stays in body ink rather
+              than mint: mint belongs to the ONE figure answering "what can I take out now". */}
+          <span className="crx-sect-note">
+            Earned till date <b>${earnedTillDate}</b>
+          </span>
         </div>
         <EarningsPanel
-          earnedTillDate={earnedTillDate}
           balance={balance}
           onCashOut={() => setCashOutOpen(true)}
         >
