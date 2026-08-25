@@ -631,7 +631,12 @@ tr:last-child td{border-bottom:none}
           </label>
           <label class="fld">
             <span class="flabel">YouTube video URL</span>
-            <input class="finput" id="f-url" type="url" placeholder="https://youtube.com/watch?v=...">
+            <!-- type="text", NOT type="url" — the same fix campaign/Steps.tsx took on 2026-08-13. A url
+                 input carries the browser's OWN constraint, which demands a scheme, so a perfectly
+                 good youtube.com/watch?v=... was rejected by an unstyleable native bubble speaking
+                 the browser's words rather than ours, before our validator ran at all. inputmode is
+                 what actually earns the URL keyboard on a phone and carries no validation. -->
+            <input class="finput" id="f-url" type="text" inputmode="url" placeholder="https://youtube.com/watch?v=...">
             <span class="ferr" id="e-url"></span>
             <span class="fhint" id="h-url">A public YouTube video or Short.</span>
           </label>
@@ -803,9 +808,7 @@ function fieldErr(id,msg){
   var h=document.getElementById('h-'+id); if(h) h.style.display=msg?'none':'block';
   return !msg;
 }
-function isYouTube(u){
-  try{var h=new URL(u).hostname.replace(/^(www|m)\./,'');return h==='youtube.com'||h==='youtu.be'}catch(e){return false}
-}
+/* isYouTube() removed 2026-08-25 with its only caller — see the url check in validStep below. */
 function validStep(n){
   var ok=true;
   if(n===1){
@@ -813,9 +816,20 @@ function validStep(n){
     var url=document.getElementById('f-url').value.trim();
     var acts=document.querySelectorAll('#f-actions .selchip.on').length;
     ok=fieldErr('name',name?'':'Give the campaign a name.')&&ok;
-    ok=fieldErr('url',!url?'Add the link to the YouTube video you want promoted.'
-      :!/^https?:\/\/\S+\.\S+/.test(url)?'That doesn’t look like a link. It should start with https://'
-      :!isYouTube(url)?'Campaigns run on YouTube for now. Paste a youtube.com or youtu.be link.':'')&&ok;
+    /* EMPTY CHECK ONLY, matching brands/campaign/spec.ts exactly (Appy, 2026-08-25: "I thought we
+       already solved this link problem?" — we did, on 2026-08-13, in the React form. This page is a
+       hand-written twin of that form and never got the fix.)
+       TWO RULES CAME OFF: a /^https?:\/\/\S+\.\S+/ test demanding a scheme, and an isYouTube()
+       hostname check on top of it — so this page was STRICTER than the form we already fixed.
+       spec.ts's reasoning applies unchanged: a design-only prototype should not hold a validation
+       rule strict enough to reject input a real reader would type, for a field nothing here calls out
+       to. The creator form's channel field takes any non-empty text, and this disagreeing with it on
+       the same site, for a form that submits nowhere real, was the bug.
+       WHY IT DRIFTED is the part worth keeping: this file duplicates the React form BY HAND, so a fix
+       in spec.ts cannot reach it — the same trap nav.ts records about second lists. If this rule
+       changes again it changes in both. And if a live backend ever needs a real video, resolve it
+       there against the real API, not with a hostname guess here. */
+    ok=fieldErr('url',!url?'Add the link to the YouTube video you want promoted.':'')&&ok;
     ok=fieldErr('actions',acts?'':'Pick at least one action.')&&ok;
   }
   if(n===2){
