@@ -2,11 +2,13 @@
 
 import { useState } from 'react'
 import { useCrx } from '../flow/CrxState'
+import EnrolledPrograms from './EnrolledPrograms'
 import StatCards from './StatCards'
 import CashOutModal from './CashOutModal'
 import Transactions from './Transactions'
 import HowEarningWorks from './HowEarningWorks'
 import { MOCK_STATS, MOCK_TRANSACTIONS, type Transaction } from './mockData'
+import type { EnrolledProgram } from '../programs/programData'
 
 // Ported from the frozen creator-brand tree (creator-brand/creators/dashboard/Dashboard.tsx).
 // Logic + copy verbatim; skin swapped to the /creators kit. The returning creator's view — replaces
@@ -19,9 +21,19 @@ import { MOCK_STATS, MOCK_TRANSACTIONS, type Transaction } from './mockData'
 // No ambient animation imported here on purpose (the light original dropped its PixelRain for the
 // same reason): a dashboard someone checks routinely is a working screen, not a pitch, and animated
 // noise under real numbers reads as noise rather than mood.
-export default function Dashboard() {
+export default function Dashboard({
+  enrollments,
+  completedPrograms = MOCK_STATS.completedPrograms,
+}: {
+  enrollments?: EnrolledProgram[]
+  completedPrograms?: number
+}) {
   const { account } = useCrx()
   const [balance, setBalance] = useState(MOCK_STATS.balance)
+  // EARNED TILL DATE COUNTS PAID-OUT MONEY ONLY (Abhisht, 2026-08-24: "make that 0... if i
+  // cashout 150, then i have earned 0 + 150 = 150 till date"). It starts at zero and only a
+  // completed cash-out moves it — balance is money accrued, earned-till-date is money received.
+  const [earnedTillDate, setEarnedTillDate] = useState(0)
   const [cashOutOpen, setCashOutOpen] = useState(false)
   const [transactions, setTransactions] = useState<Transaction[]>(MOCK_TRANSACTIONS)
 
@@ -34,6 +46,7 @@ export default function Dashboard() {
       { id: `txn-out-${prev.length + 1}`, date: 'Just now', label: 'Cash out to PayPal', amount: balance },
       ...prev,
     ])
+    setEarnedTillDate((e) => e + balance)
     setBalance(0)
   }
 
@@ -45,8 +58,20 @@ export default function Dashboard() {
       <h1 className="crx-dash-title">Welcome back, {account.name.split(' ')[0]}.</h1>
       <p className="crx-dash-sub">Here&apos;s how your BlueAI account is doing.</p>
 
+      {/* PROGRAMS FIRST (2026-08-24, the program-workflow pass, matching the dev build's order):
+          the member's question on a routine visit is "am I on track", and the per-condition bars
+          are that answer. Money totals follow. */}
       <div className="crx-dash-band">
-        <StatCards completedJobs={MOCK_STATS.completedJobs} balance={balance} onCashOut={() => setCashOutOpen(true)} />
+        <EnrolledPrograms enrollments={enrollments} />
+      </div>
+
+      <div className="crx-dash-band">
+        <StatCards
+          completedPrograms={completedPrograms}
+          earnedTillDate={earnedTillDate}
+          balance={balance}
+          onCashOut={() => setCashOutOpen(true)}
+        />
       </div>
 
       {/* NO PER-JOB LIST (PM, 2026-08-14 meeting): individual completed jobs — names and the brands

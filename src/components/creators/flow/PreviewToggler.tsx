@@ -29,10 +29,30 @@ import { useCrx, type Journey } from './CrxState'
 // page's own CTAs claim the bottom-right, and a reviewer needs to flip the journey WHILE the
 // sign-in dialog is open and watch where it lands.
 
-const JOURNEYS: { value: Journey; label: string }[] = [
-  { value: 'newUser', label: 'New user' },
-  { value: 'returningUser', label: 'Returning user' },
-  { value: 'fullCapacity', label: 'Full capacity' },
+// GROUPED BY INVENTORY, not flat (Abhisht, 2026-08-24 meeting): launch ships with exactly one
+// program, so the one-program journeys ARE the going-live experience and the many-programs
+// journeys are parked future states. The grouping is the navigation aid the flat list stopped
+// being at eight rows.
+const GROUPS: { heading: string; rows: { value: Journey; label: string }[] }[] = [
+  {
+    heading: 'One program · launch',
+    rows: [
+      { value: 'newUser', label: 'New user' },
+      { value: 'applied', label: 'Applied (in review)' },
+      { value: 'returningUser', label: 'Returning user' },
+      { value: 'fullCapacity', label: 'Full capacity' },
+      { value: 'noPrograms', label: 'No programs open' },
+    ],
+  },
+  {
+    heading: 'Many programs · future',
+    rows: [
+      { value: 'multiPrograms', label: 'New user' },
+      { value: 'appliedMulti', label: 'Applied to one, others open' },
+      { value: 'enrolledMulti', label: 'Accepted in one, others open' },
+      { value: 'returningMulti', label: 'Returning user' },
+    ],
+  },
 ]
 
 function Gear() {
@@ -73,25 +93,30 @@ export default function PreviewToggler() {
       {/* Each row is a radio: dot indicator + full-width hit target, stacked (see file comment).
           The kit paints the chosen dot via .on's ::after — markup only supplies the ring. */}
       <div className="crx-toggler-track" role="radiogroup" aria-label="Journey">
-        {JOURNEYS.map(({ value, label }) => (
-          <button
-            key={value}
-            type="button"
-            role="radio"
-            aria-checked={journey === value}
-            onClick={() => setJourney(value)}
-            className={journey === value ? 'crx-toggler-row on' : 'crx-toggler-row'}
-          >
-            <span className="crx-toggler-dot" />
-            {label}
-          </button>
+        {GROUPS.map(({ heading, rows }) => (
+          <div key={heading} className="crx-toggler-group">
+            <span className="crx-toggler-sect">{heading}</span>
+            {rows.map(({ value, label }) => (
+              <button
+                key={value}
+                type="button"
+                role="radio"
+                aria-checked={journey === value}
+                onClick={() => setJourney(value)}
+                className={journey === value ? 'crx-toggler-row on' : 'crx-toggler-row'}
+              >
+                <span className="crx-toggler-dot" />
+                {label}
+              </button>
+            ))}
+          </div>
         ))}
       </div>
 
       <p className="crx-toggler-note">
-        Sets what signing in leads to — click Apply Now and sign in to see it. New user opens the
-        application; Returning user opens the dashboard; Full capacity shows the &quot;we&apos;ll be
-        back&quot; notice. Survives a reload; resets when the tab closes.
+        Sets what signing in leads to. Click Get Access and sign in to see it. The one-program
+        group is the launch experience; the many-programs group holds the future states. Survives
+        a reload; resets when the tab closes.
       </p>
     </div>
   )

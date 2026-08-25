@@ -42,11 +42,13 @@ function WalletIcon({ size = 18 }: { size?: number }) {
 }
 
 export default function StatCards({
-  completedJobs,
+  completedPrograms,
+  earnedTillDate,
   balance,
   onCashOut,
 }: {
-  completedJobs: number
+  completedPrograms: number
+  earnedTillDate: number
   balance: number
   onCashOut: () => void
 }) {
@@ -58,9 +60,26 @@ export default function StatCards({
         </span>
         <div className="crx-stat-body">
           {/* .crx-stat-fig is tabular already — a figure that can't jitter in width as it changes
-              (Cash out moves Earned's to $0) reads as more considered than one that can. */}
-          <span className="crx-stat-fig">{completedJobs}</span>
-          <span className="crx-stat-label">Completed jobs</span>
+              (Cash out moves Balance's to $0) reads as more considered than one that can. */}
+          {/* Programs, not jobs (Abhisht, 2026-08-24): jobs are internal to programs, so the
+              user-facing count is programs finished — same reasoning that renamed the surface. */}
+          <span className="crx-stat-fig">{completedPrograms}</span>
+          <span className="crx-stat-label">Completed programs</span>
+        </div>
+      </div>
+
+      {/* PAID-OUT money (Abhisht, 2026-08-24): "Earned till date" counts what has actually been
+          cashed out — it starts at $0 and each completed cash-out ADDS the withdrawn amount, so
+          the two money tiles are a see-saw: Balance accrues, cashing out moves it here. Neutral
+          ink and a neutral icon: mint stays on the ONE figure that answers "what can I take out
+          right now", so the two money tiles can't be misread as the same number twice. */}
+      <div className="crx-stat">
+        <span className="crx-stat-icon">
+          <WalletIcon />
+        </span>
+        <div className="crx-stat-body">
+          <span className="crx-stat-fig">${earnedTillDate}</span>
+          <span className="crx-stat-label">Earned till date</span>
         </div>
       </div>
 
@@ -70,7 +89,7 @@ export default function StatCards({
         </span>
         <div className="crx-stat-body">
           <span className="crx-stat-fig money">${balance}</span>
-          <span className="crx-stat-label">Earned</span>
+          <span className="crx-stat-label">Balance</span>
         </div>
         {/* Quiet ghost pill, not this page's big gradient CTA — Cash out is a frequent, low-drama
             action checked routinely; the gradient stays reserved for "decide to do this" moments

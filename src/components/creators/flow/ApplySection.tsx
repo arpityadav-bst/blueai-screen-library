@@ -17,18 +17,27 @@ import ApplyForm from './apply/ApplyForm'
 // animation on the form (source's rule, kept): this section can mount while the viewport is anywhere
 // on the page, and a missed reveal here is an invisible application form, not a late fade — and the
 // thing the reader signed in to do doesn't want noise in front of it.
-export default function ApplySection() {
+export default function ApplySection({ onBack, programTitle }: { onBack?: () => void; programTitle: string }) {
   return (
     <section className="crx-apply">
       <div className="crx-apply-col">
-        {/* HEADLINE REFRAMED — the PM's copy, canonical (2026-08-20, after the Aug 18 CEO review).
-            The landing says "You get it hired", so this page must not revert to you-as-applicant;
-            "One short application" led here before and is now demoted into the sub. The sub pays
-            off the CTA's word: you clicked "Get access", so the promise is "when your access is
-            approved" — access is granted after review, not downloaded on click. */}
-        <h1>
-          Get your worker <span className="grad">hired.</span>
-        </h1>
+        {/* Back to the programs home (2026-08-24 program-workflow pass) — rendered only when the
+            application was reached THROUGH the home, so the card the reader applied from is one
+            click away instead of a browser-back gamble. Quiet text, not a button: it competes
+            with nothing and the form below stays the page's one big action. */}
+        {onBack && (
+          <button type="button" className="crx-apply-back" onClick={onBack}>
+            ← Back to programs
+          </button>
+        )}
+        {/* THE HEADLINE NAMES THE PROGRAM (Abhisht, 2026-08-24) — "Get your worker hired." moved
+            to the programs home, and this page's job is confirming WHAT you just chose: the card
+            said the name, the click said apply, this h1 closes the loop. PLAIN, NO GRADIENT, on
+            purpose (same review): the site's grad goes on chosen words on pitch screens; this is
+            a working screen (the dashboard's plain h1 is the precedent) and the title is
+            ops-authored data — a display treatment on arbitrary data eventually produces a
+            half-wrapped gradient nobody designed. */}
+        <h1>Apply to {programTitle}.</h1>
         {/* No time estimate, still (source): "about three minutes" is wrong for the reader who writes
             two paragraphs on question 7, and a form that under-promises its own length is worse than
             one that says nothing. The step count is visible in the rail. */}

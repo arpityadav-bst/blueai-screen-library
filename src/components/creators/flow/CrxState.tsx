@@ -25,8 +25,18 @@ const KEY = 'crx-signed-in'
 // sign-in entirely — so signOut() (which only clears signedIn) couldn't undo it, and Log out from
 // the dashboard did nothing. signedIn gates first, everywhere; journey only picks WHICH signed-in view.
 const JOURNEY_KEY = 'crx-journey'
-export type Journey = 'newUser' | 'returningUser' | 'fullCapacity'
-const JOURNEYS: Journey[] = ['newUser', 'returningUser', 'fullCapacity']
+// Journeys added for the programs home (2026-08-24, Abhisht's program-workflow pass):
+// 'applied' — signed in, application submitted, review underway; 'noPrograms' — signed in while
+// nothing is open to apply to; 'multiPrograms' — the open home with SEVERAL programs accepting
+// applications at once (same view as newUser, more inventory — a state ops will reach the day a
+// second program activates, so the review kit has to show it). 'newUser' lands on the open home
+// with the single launch program.
+// 'appliedMulti' / 'enrolledMulti' (2026-08-24): the mixed homes — one program in review (or
+// already active) while others stay open to apply to. 'returningUser' is the LAUNCH returning
+// member (dashboard with the one creators program); 'returningMulti' is the future one (dashboard
+// with several). The one-program journeys are the going-live set (2026-08-24 meeting).
+export type Journey = 'newUser' | 'multiPrograms' | 'appliedMulti' | 'enrolledMulti' | 'applied' | 'returningUser' | 'returningMulti' | 'fullCapacity' | 'noPrograms'
+const JOURNEYS: Journey[] = ['newUser', 'multiPrograms', 'appliedMulti', 'enrolledMulti', 'applied', 'returningUser', 'returningMulti', 'fullCapacity', 'noPrograms']
 
 /** Illustrative, like every other name and figure on this site. Not a real account. */
 export const MOCK_ACCOUNT = {
@@ -35,6 +45,12 @@ export const MOCK_ACCOUNT = {
   email: 'maya.fernandes@gmail.com',
   initials: 'MF',
 }
+
+// The account menu's two nav rows (2026-08-24, Abhisht: show Dashboard AND Programs at once).
+// 'auto' = the journey's own default view (returningUser opens the dashboard, everything else the
+// programs home); a menu click overrides it for the session. In-memory only: it is navigation, not
+// identity, and a reload going back to the journey default is the honest reset.
+export type NavView = 'auto' | 'programs' | 'dashboard'
 
 type Ctx = {
   signedIn: boolean
@@ -46,6 +62,9 @@ type Ctx = {
   /** Which signed-in persona a sign-in resolves to — see the JOURNEY_KEY note above. */
   journey: Journey
   setJourney: (v: Journey) => void
+  /** Menu-driven view override — see the NavView note above. */
+  nav: NavView
+  setNav: (v: NavView) => void
 }
 
 const CrxCtx = createContext<Ctx | null>(null)
@@ -61,6 +80,7 @@ export function useCrx() {
 export default function CrxProvider({ children }: { children: ReactNode }) {
   const [signedIn, setSignedIn] = useState(false)
   const [journey, setJourneyState] = useState<Journey>('newUser')
+  const [nav, setNav] = useState<NavView>('auto')
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
@@ -77,6 +97,9 @@ export default function CrxProvider({ children }: { children: ReactNode }) {
 
   const write = useCallback((v: boolean) => {
     setSignedIn(v)
+    // Signing in or out resets any menu-driven view override — the next session starts on the
+    // journey's own default, same as a fresh visitor would.
+    setNav('auto')
     try {
       if (v) sessionStorage.setItem(KEY, '1')
       else sessionStorage.removeItem(KEY)
@@ -90,6 +113,9 @@ export default function CrxProvider({ children }: { children: ReactNode }) {
 
   const setJourney = useCallback((v: Journey) => {
     setJourneyState(v)
+    // A journey flip is the reviewer changing persona — stale nav from the previous persona would
+    // show the wrong screen under the new one's name.
+    setNav('auto')
     try {
       sessionStorage.setItem(JOURNEY_KEY, v)
     } catch {
@@ -98,8 +124,8 @@ export default function CrxProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const value = useMemo(
-    () => ({ signedIn, ready, signIn, signOut, account: MOCK_ACCOUNT, journey, setJourney }),
-    [signedIn, ready, signIn, signOut, journey, setJourney],
+    () => ({ signedIn, ready, signIn, signOut, account: MOCK_ACCOUNT, journey, setJourney, nav, setNav }),
+    [signedIn, ready, signIn, signOut, journey, setJourney, nav],
   )
 
   return <CrxCtx.Provider value={value}>{children}</CrxCtx.Provider>

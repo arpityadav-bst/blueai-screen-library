@@ -1,5 +1,3 @@
-import { EARNING } from './mockData'
-
 // Ported from the frozen creator-brand tree (creator-brand/creators/dashboard/HowEarningWorks.tsx).
 // Copy verbatim; skin swapped to the /creators kit. Steps ride the kit's .crx-intro-row (icon-circle
 // + sentence — the same row anatomy the light original's numbered dots had); rules ride .crx-rows,
@@ -17,27 +15,26 @@ import { EARNING } from './mockData'
 // That works here for the same reason the Transactions pairing failed: both halves are fixed prose
 // of similar length, so neither leaves a dead zone under the other.
 //
-// COPY DECISIONS (2026-08-18, with the PM):
-// - "Moneymaker" is written as a plain feature name with an everyday verb ("turn on"), never "the
-//   Moneymaker skill": "skill" is BlueAI's internal vocabulary and this page's readers haven't
-//   installed the product yet.
-// - "automatically" is BANNED from this copy (PM, 2026-08-18: "we cant say automatically"), which is
-//   also why the marketing step 4's phrasing is not quoted verbatim here any more. Do not sneak a
+// COPY DECISIONS:
+// - GENERIC, NOT ONE PROGRAM'S TERMS (Abhisht, 2026-08-24): the old steps quoted the monthly
+//   Moneymaker program (20 days, $30/month) as if it were the system; earning is program-based
+//   now and the numbers live per-program in the tiles and the info sheet. This band's job moved
+//   from "name the real numbers" (the 2026-08-18 rule, superseded with the PM's numbers) to
+//   "explain the system" — which is what let Moneymaker and the figures come off it.
+// - "automatically" is STILL BANNED (PM, 2026-08-18: "we cant say automatically"). Do not sneak a
 //   synonym in ("on its own", "hands-free", "while you sleep") — the directive is about the claim,
 //   not the word.
-// - Step 3 names the real numbers (20 days, $30) instead of "qualify for a payment": the card exists
-//   to answer "how is my payment calculated", and an answer without the numbers isn't one.
-// - The $30 is the PM's own figure from the marketing page's step 4 (HowItWorks.tsx).
 const STEPS = [
-  'Open BlueAI and turn on Moneymaker. It runs brand campaigns on your account.',
-  `Do this on any ${EARNING.daysRequired} days in a month.`,
-  `Every month you hit ${EARNING.daysRequired} days, $${EARNING.monthlyPayment} is added to your earnings.`,
+  'Join a program. Each one has its own goal and its own reward.',
+  'Run BlueAI. The work it completes counts toward your program goals.',
+  'Meet a program’s goal and its reward is added to your earnings.',
 ]
 
 // Terse on purpose, and nothing here the cash-out modal doesn't already promise: the 7-10 business
 // days and the finality are quoted from its confirmation copy, so the rules list and the modal can
-// never disagree about what happens to a withdrawal.
-const RULES = ['Paid monthly', 'PayPal only', 'Transfers take 7-10 business days', 'Withdrawals are final']
+// never disagree about what happens to a withdrawal. "Paid monthly" (one program's schedule) became
+// the per-program line in the same 2026-08-24 generic pass that rewrote the steps.
+const RULES = ['Each program pays on its own schedule', 'PayPal only', 'Transfers take 7-10 business days', 'Withdrawals are final']
 
 export default function HowEarningWorks() {
   return (

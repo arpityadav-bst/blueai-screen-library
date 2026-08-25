@@ -5,8 +5,10 @@ import CrxProvider, { useCrx } from './flow/CrxState'
 import Modal from './flow/Modal'
 import SignInDialog from './flow/SignInDialog'
 import PreviewToggler from './flow/PreviewToggler'
-import ApplySection from './flow/ApplySection'
 import FullCapacityNotice from './flow/FullCapacityNotice'
+import ProgramsHome from './programs/ProgramsHome'
+import { ALL_ENROLLED, MIXED_APPLIED, MIXED_ENROLLED, OPEN_MULTI_ITEMS, SINGLE_ENROLLMENT } from './programs/programData'
+import type { Journey, NavView } from './flow/CrxState'
 import Dashboard from './dashboard/Dashboard'
 import HomeHeader from './HomeHeader'
 import HomepageView from './HomepageView'
@@ -27,7 +29,7 @@ export default function CreatorsHome() {
 }
 
 function CreatorsSwitch() {
-  const { signedIn, journey } = useCrx()
+  const { signedIn, journey, nav } = useCrx()
   const rootRef = useRef<HTMLDivElement>(null)
 
   // The sign-in dialog is owned here because three CTAs across three files open it: the header's
@@ -67,36 +69,24 @@ function CreatorsSwitch() {
 
       {!signedIn ? (
         <HomepageView onCta={openSignIn} />
-      ) : journey === 'returningUser' ? (
+      ) : (
         <>
           {/* EVERY SIGNED-IN VIEW IS FLOW + FOOTER, NOTHING ELSE (Appy, 2026-08-20: "after the
               login pages, we can just show footer after the form and popup, and the completion").
-              The dashboard always worked this way; the application and full-capacity views used to
-              carry the marketing sections underneath with only the closer suppressed, which put a
-              pitch under someone who had already answered it. <main> gives all three the page grid
-              and the fixed-header clearance .crx main defines. */}
+              <main> gives every view the page grid and the fixed-header clearance .crx main
+              defines. WHAT renders inside is now two decisions, not one (2026-08-24, the account
+              menu's nav rows): the journey picks the persona's screens, and the menu's Dashboard /
+              Programs rows can override WHICH of the persona's two surfaces is up — see
+              SignedInView. */}
           <main>
-            <Dashboard />
-          </main>
-          <HomeFooter />
-        </>
-      ) : journey === 'fullCapacity' ? (
-        <>
-          <main>
-            <FullCapacityNotice />
-          </main>
-          <HomeFooter />
-        </>
-      ) : (
-        <>
-          {/* newUser — the application. */}
-          <main>
-            <ApplySection />
+            <SignedInView journey={journey} nav={nav} />
           </main>
           <HomeFooter />
         </>
       )}
 
+      {/* SignedInView is declared below the component that renders it — reading order follows
+          the switch above. */}
       {/* Both render in ALL states: the toggler is the reviewer's journey switch (z-110, above
           the modal on purpose), and the dialog must be able to open from any signed-out CTA. */}
       <PreviewToggler />
@@ -105,4 +95,46 @@ function CreatorsSwitch() {
       </Modal>
     </div>
   )
+}
+
+// The signed-in switch: journey = persona, nav = which of the persona's surfaces is up.
+// 'auto' resolves to the persona's own landing (returning members open the dashboard, everyone
+// else the programs home). With the menu's nav rows gone (2026-08-24 meeting: launch is one
+// program, the menu is identity + exit), the only nav writer left is the enrolled card's "Track
+// on dashboard" button in the future many-programs states. The programs surface per persona:
+//   newUser        → one open program           multiPrograms → several open
+//   appliedMulti   → one in review, rest open   enrolledMulti → one active, rest open
+//   applied        → the single pending status  noPrograms    → the empty state
+//   returningMulti → everything active (the fully-enrolled member's index)
+//   fullCapacity   → the platform-wide notice (its programs surface IS the notice)
+// The dashboard surface scales the same way: launch personas carry the ONE creators program and
+// no completed-programs history; returningMulti carries the full multi-program mock.
+function SignedInView({ journey, nav }: { journey: Journey; nav: NavView }) {
+  const returning = journey === 'returningUser' || journey === 'returningMulti'
+  const view = nav === 'auto' ? (returning ? 'dashboard' : 'programs') : nav
+
+  if (view === 'dashboard') {
+    return journey === 'returningMulti' ? <Dashboard /> : <Dashboard enrollments={SINGLE_ENROLLMENT} completedPrograms={0} />
+  }
+
+  switch (journey) {
+    case 'returningUser':
+      return <ProgramsHome mode="open" items={[{ program: SINGLE_ENROLLMENT[0].program, relation: 'enrolled' }]} />
+    case 'returningMulti':
+      return <ProgramsHome mode="open" items={ALL_ENROLLED} />
+    case 'fullCapacity':
+      return <FullCapacityNotice />
+    case 'applied':
+      return <ProgramsHome mode="pending" />
+    case 'noPrograms':
+      return <ProgramsHome mode="none" />
+    case 'multiPrograms':
+      return <ProgramsHome mode="open" items={OPEN_MULTI_ITEMS} />
+    case 'appliedMulti':
+      return <ProgramsHome mode="open" items={MIXED_APPLIED} />
+    case 'enrolledMulti':
+      return <ProgramsHome mode="open" items={MIXED_ENROLLED} />
+    default:
+      return <ProgramsHome mode="open" />
+  }
 }

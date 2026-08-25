@@ -116,7 +116,12 @@ export default function ApplyForm() {
               the gate to re-tune here. If a step overflows the floor, that step's content is the
               thing to trim, not the number — the source raised it twice chasing a step before
               learning that. */}
-          <div className="crx-step-body">
+          {/* The intro opts OUT of the shared floor (Abhisht, 2026-08-24: "the box is going down
+              a lot") — the 400px contract keeps Continue steady across the four QUESTION steps,
+              but the intro is a fieldless read-once screen and the floor left it ~130px of dead
+              space above its button. Cost: Continue drops once on the intro→step-1 transition,
+              which is the transition where the card changes character anyway. */}
+          <div className={step === 0 ? 'crx-step-body intro' : 'crx-step-body'}>
             {step === 0 && <StepIntro />}
             {step === 1 && <StepOne {...stepProps} />}
             {step === 2 && <StepTwo {...stepProps} />}

@@ -1,4 +1,4 @@
-import { CadenceIcon, ClockIcon, DocumentIcon, MonitorIcon, WalletIcon, WaveIcon } from './introIcons'
+import { CadenceIcon, ClockIcon, DocumentIcon, MonitorIcon, WalletIcon } from './introIcons'
 
 // STEP 0 — the untitled intro screen ahead of step 1 (title cut per the PM: the list is
 // self-explanatory). Ported from creator-brand/creators/apply/StepIntro.tsx; the original five
@@ -16,14 +16,10 @@ import { CadenceIcon, ClockIcon, DocumentIcon, MonitorIcon, WalletIcon, WaveIcon
 // is mentioned because the pilot build is only delivered through it, so line 1 also answers "set it
 // up from where?".
 const INTRO_POINTS = [
-  {
-    // The today/tomorrow seam (the PM's copy, canonical, after the Aug 18 CEO review): the landing
-    // sells "any machine you own", so this screen must say up front which machine access actually
-    // starts on — otherwise the PC requirement two rows down reads as a bait. "Access" echoes the
-    // CTA so the click and this first sentence speak the same word.
-    icon: <WaveIcon />,
-    body: <>Access starts on your PC. Phones and robots come next.</>,
-  },
+  // The "Access starts on your PC. Phones and robots come next." seam row was CUT (Abhisht,
+  // 2026-08-24): this flow now hangs off the programs home, which never sells other machines, so
+  // the disclaimer defended against a bait this reader never saw — and the download row below
+  // already names the PC. If the multi-machine pitch returns to this funnel, the row returns too.
   {
     icon: <MonitorIcon />,
     body: <>Once accepted, we&apos;ll email you a download link. Set up BlueAI on your PC.</>,

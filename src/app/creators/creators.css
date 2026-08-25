@@ -1366,7 +1366,8 @@ body.crx-lock { overflow: hidden; }
 }
 .crx .crx-stat-fig.money { color: var(--mint); }   /* money figures in mint — the page's money colour */
 .crx .crx-stat-label { display: block; margin-top: 2px; font-size: 0.8rem; color: rgba(214, 224, 255, 0.55); }
-.crx .crx-stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+/* 3-up since Earned till date joined (2026-08-24) — programs / lifetime money / withdrawable */
+.crx .crx-stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
 
 /* ---- divided list: transactions (Transactions.tsx) ---- */
 .crx .crx-rows { margin: 0; padding: 0; list-style: none; }
@@ -1386,6 +1387,13 @@ body.crx-lock { overflow: hidden; }
 /* ---- preview toggler: deliberately NOT product-looking (PreviewToggler's constraint) ----
    Flat, small, 11–12px, no gradient anywhere — a reviewer must never mistake it for a page CTA.
    z-index 110: above the modal (100), because states get flipped WHILE dialogs are open. */
+/* group heading — the head's mono micro voice a step dimmer; the first group hugs the head row */
+.crx .crx-toggler-sect {
+  display: block; margin: 0.5rem 0 0.15rem; padding: 0 0.45rem;
+  font-family: var(--mono); font-size: 0.58rem; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase; color: rgba(214, 224, 255, 0.45);
+}
+.crx .crx-toggler-group:first-child .crx-toggler-sect { margin-top: 0.15rem; }
 .crx .crx-toggler {
   position: fixed; left: 14px; bottom: 14px; z-index: 110;
   width: 212px; padding: 0.75rem;
@@ -1486,6 +1494,10 @@ body.crx-lock { overflow: hidden; }
    here is the same 28px question gaps, so the floor ports unchanged). If a step overflows this,
    trim THAT step, not this number — the original raised it twice before learning that. */
 .crx .crx-step-body { margin-top: 1.75rem; min-height: 400px; }
+/* the intro step sits at its natural height (ApplyForm.tsx carries the reasoning) — the floor's
+   no-jump contract is between the question steps; a fieldless screen padding itself to match them
+   read as a card with a hole in it */
+.crx .crx-step-body.intro { min-height: 0; }
 /* Back + submit row — ONE row at both breakpoints (the quiet Back is compact enough) */
 .crx .crx-form-foot { display: flex; align-items: center; gap: 0.8rem; margin-top: 1.75rem; }
 /* the primary takes the rest of the foot row */
@@ -1641,8 +1653,11 @@ body.crx-lock { overflow: hidden; }
 }
 /* sub-line under the welcome */
 .crx .crx-dash-sub { margin: 0; font-size: 1rem; color: var(--dim); }
-/* vertical gap between dashboard bands — matches the stat grid's own 1rem so bands read as one group */
-.crx .crx-dash-band { margin-top: 1rem; }
+/* vertical gap between dashboard bands — 2.25rem, deliberately BIGGER than the 1rem gaps inside a
+   band (stat grid, tile stack). The first pass matched them "so bands read as one group", and one
+   group is exactly what it read as: a wall (Abhisht, 2026-08-24: "too stacked, crowded"). Two
+   spacing sizes is what makes the sections legible as sections. */
+.crx .crx-dash-band { margin-top: 2.25rem; }
 /* figure+label stack beside the stat icon — min-width 0 so long labels can ellipsize, not blow the card */
 .crx .crx-stat-body { min-width: 0; }
 /* Cash out — pushed to the card's right edge; compact quiet pill in a mint tint (the money action) */
@@ -1762,6 +1777,176 @@ body.crx-lock { overflow: hidden; }
 /* heading -> panel gap, matching .crx-apply-form (collapses with .sub own 2.2rem — same value) */
 .crx .crx-full > .crx-band { margin-top: 2.2rem; }
 
+/* ---- ProgramsHome (signed-in landing: open / pending / none) ----
+   Added 2026-08-24 (Abhisht's program-workflow pass). The section RIDES .crx-apply/.crx-apply-col
+   for its slot, column, h1 clamp and centered headline — the home stands in the application's
+   exact slot, so sharing the classes is what keeps the two states one size by construction.
+   Everything below is only what the program card adds to the kit. */
+
+/* status chip — mono micro-label voice (the earnings pill's label), bordered so it reads as a
+   state, not a button; NO gradient anywhere (that stays reserved for things you press) */
+.crx .crx-chip {
+  display: inline-flex; align-items: center;
+  font-family: var(--mono); font-size: 0.62rem; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 4px 10px; border-radius: 999px;
+  white-space: nowrap;
+}
+/* mint = money/success, the kit's standing rule — an open program is the money state */
+.crx .crx-chip.mint { color: var(--mint); border: 1px solid rgba(52, 227, 154, 0.35); background: rgba(52, 227, 154, 0.08); }
+/* iris = chosen/held, not success: an application in review is a held state, so it borrows the
+   selection trio rather than mint (nothing has been earned yet) */
+.crx .crx-chip.iris { color: #a78bff; border: 1px solid var(--sel-border); background: var(--sel-wash); }
+/* ghost = future: dashed like the coming-soon container it labels */
+.crx .crx-chip.ghost { color: var(--dim); border: 1px dashed rgba(255, 255, 255, 0.28); background: transparent; }
+
+/* the offer card's OWN surface — deliberately not .crx-panel (2026-08-24: card and application
+   form shared the same flat panel at the same width and read as one screen). Iris wash off the
+   top-left corner, iris-tinted border a step brighter than the panel's hairline, r20 vs the
+   panel's 16 — enough that the eye files "offer" and "form" as different objects. */
+.crx .crx-prog {
+  background:
+    radial-gradient(420px 220px at 8% 0%, rgba(123, 76, 255, 0.16), transparent 70%),
+    rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(167, 139, 255, 0.3);
+  border-radius: 20px;
+  padding: 1.6rem;
+  text-align: left;
+}
+
+/* head: chip + title + description left, the reward block right — the reward is the card's
+   visual anchor (it is why the card exists), mint at stat-card weight */
+.crx .crx-prog-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 1.2rem; }
+.crx .crx-prog-headmain { min-width: 0; }
+.crx .crx-prog-headmain .crx-chip { margin-bottom: 0.85rem; }
+.crx .crx-prog-reward { flex-shrink: 0; text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+.crx .crx-prog-reward-label {
+  font-family: var(--mono); font-size: 0.6rem; font-weight: 700;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim);
+}
+.crx .crx-prog-reward-amount {
+  font-family: 'Space Grotesk', 'SF Pro Display', Inter, sans-serif;
+  font-weight: 800; font-size: 1.9rem; line-height: 1;
+  color: var(--mint); font-variant-numeric: tabular-nums;
+}
+
+.crx .crx-prog-title {
+  font-family: 'Space Grotesk', 'SF Pro Display', Inter, sans-serif;
+  font-weight: 700; font-size: 1.35rem; line-height: 1.25;
+  color: #fff; margin: 0 0 0.35rem;
+}
+.crx .crx-prog-desc { font-size: 0.95rem; line-height: 1.55; color: var(--dim); margin: 0 0 1.2rem; }
+
+/* fact rows ride .crx-intro-row (icon circle + sentence); the hairline top is what separates
+   ops-authored prose (the description) from program terms (the rows) */
+.crx .crx-prog-facts { border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 1.2rem; }
+.crx .crx-prog-facts .crx-intro-row + .crx-intro-row { margin-top: 0.95rem; }
+
+/* CTA row — one full-width primary; .crx-grow is the form-foot's flex hook, here it just fills */
+.crx .crx-prog-foot { display: flex; margin-top: 1.4rem; }
+.crx .crx-prog-foot .crx-grow { flex: 1 1 auto; justify-content: center; display: flex; }
+
+/* coming-soon ghost — dashed, dim, deliberately quieter than the panel: a fact about the future,
+   not a thing to press. Sits under the card/headline at the same measure. */
+.crx .crx-prog-soon {
+  margin-top: 1rem;
+  border: 1px dashed rgba(255, 255, 255, 0.16); border-radius: 16px;
+  padding: 1.1rem 1.4rem;
+  display: flex; align-items: center; gap: 0.9rem;
+}
+.crx .crx-prog-soon p { margin: 0; font-size: 0.88rem; line-height: 1.5; color: var(--dim); }
+
+/* headline→card gap matches .crx-apply-form's 2.2rem (collapses with .sub's own margin); the
+   soon-ghost gets the same when it IS the first thing under the headline (none mode), and a
+   tight 1rem when it trails the program card (open mode) */
+.crx .crx-programs .crx-prog { margin-top: 2.2rem; }
+.crx .crx-programs .crx-prog-soon { margin-top: 2.2rem; }
+.crx .crx-programs .crx-prog + .crx-prog-soon { margin-top: 1rem; }
+/* card-to-card in the multi-program state: siblings sit list-tight, only the first card pays the
+   headline gap */
+.crx .crx-programs .crx-prog + .crx-prog { margin-top: 1rem; }
+
+/* ---- dashboard: enrolled programs band (EnrolledPrograms.tsx) ----
+   THIRD SHAPE — quest tiles (Abhisht, 2026-08-24, after the game-quest convention): each program
+   is its own bounded box in a full-width stack, so a program's bars can't bleed into its
+   neighbours' the way the divided-row pass smeared. Interior keeps the row grid's density:
+   identity | progress | reward. The head sits on the page, not in a panel — a panel of boxes
+   would double-border every tile. */
+.crx .crx-progtiles-head { display: flex; align-items: baseline; justify-content: space-between; gap: 0.8rem; margin-bottom: 0.9rem; }
+.crx .crx-progtiles-count { font-family: var(--mono); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--dim); }
+.crx .crx-progtiles { display: flex; flex-direction: column; gap: 0.9rem; }
+.crx .crx-progtile {
+  display: grid; grid-template-columns: minmax(170px, 1.1fr) minmax(220px, 1.7fr) auto;
+  grid-template-areas: 'id conds reward';
+  align-items: center; column-gap: 2rem;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 14px;
+  padding: 1rem 1.4rem;
+}
+.crx .crx-progtile-id { grid-area: id; min-width: 0; }
+.crx .crx-progtile-name { display: block; font-size: 0.95rem; font-weight: 650; color: var(--ink-inverse); }
+.crx .crx-progtile-ends { display: block; margin-top: 0.2rem; font-size: 0.74rem; color: rgba(214, 224, 255, 0.5); }
+.crx .crx-progtile-conds { grid-area: conds; display: flex; flex-direction: column; gap: 0.7rem; min-width: 0; }
+/* the info glyph in the quest slot — rewards came off the tiles (Abhisht, 2026-08-24: louder
+   than the progress); the terms live behind this instead. Ghost circle, dim at rest, ink on
+   hover; 34px hit target on a 16px glyph. */
+.crx .crx-progtile-info {
+  grid-area: reward; justify-self: end;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px; border-radius: 50%;
+  background: none; border: 1px solid rgba(255, 255, 255, 0.16);
+  color: var(--dim); cursor: pointer;
+  transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+}
+.crx .crx-progtile-info:hover { color: var(--ink-inverse); border-color: rgba(255, 255, 255, 0.34); background: rgba(255, 255, 255, 0.06); }
+.crx .crx-progtile-info:focus-visible { outline: 2px solid #a78bff; outline-offset: 3px; }
+
+/* the program sheet inside the kit modal */
+.crx .crx-proginfo { padding: 1.6rem; }
+.crx .crx-proginfo-title {
+  font-family: 'Space Grotesk', 'SF Pro Display', Inter, sans-serif;
+  font-weight: 700; font-size: 1.25rem; line-height: 1.3; color: #fff;
+  /* 1rem to the first section — the ops description that used to fill this gap was cut
+     (2026-08-24, duplicate of "What counts"); its rule went with it */
+  margin: 0 0 1rem;
+}
+.crx .crx-proginfo-sect { border-top: 1px solid rgba(255, 255, 255, 0.08); padding: 0.9rem 0; }
+.crx .crx-proginfo-k {
+  display: block; margin-bottom: 0.35rem;
+  font-family: var(--mono); font-size: 0.62rem; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--dim);
+}
+.crx .crx-proginfo-v { margin: 0; font-size: 0.92rem; line-height: 1.55; color: var(--ink-inverse); }
+.crx .crx-proginfo-v + .crx-proginfo-v { margin-top: 0.4rem; }
+.crx .crx-proginfo-v b { font-weight: 700; }
+.crx .crx-proginfo > .crx-btn-quiet { margin-top: 1rem; }
+
+/* condition line + bar — the progress unit the program rows repeat */
+.crx .crx-cond-line { display: flex; align-items: baseline; justify-content: space-between; gap: 0.8rem; margin-bottom: 0.45rem; }
+.crx .crx-cond-label { font-size: 0.88rem; font-weight: 600; color: var(--ink-inverse); }
+.crx .crx-cond-count { font-size: 0.8rem; color: var(--dim); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.crx .crx-cond-count b { color: var(--ink-inverse); font-weight: 700; }
+/* the bar: inset well track (the kit's typing-surface recipe), MINT fill — progress toward money
+   is the one thing on this page allowed to wear the money colour */
+.crx .crx-bar {
+  height: 6px; border-radius: 999px; overflow: hidden;
+  background: var(--well);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.crx .crx-bar-fill { display: block; height: 100%; border-radius: 999px; background: var(--mint); }
+
+/* back-to-programs — quiet text above the application's h1; ghost-button reset, link posture */
+.crx .crx-apply-back {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  background: none; border: none; padding: 0; cursor: pointer;
+  font: inherit; font-size: 0.85rem; font-weight: 600; color: var(--dim);
+  margin-bottom: 1.2rem;
+  transition: color 0.18s ease;
+}
+.crx .crx-apply-back:hover { color: var(--ink-inverse); }
+.crx .crx-apply-back:focus-visible { outline: 2px solid #a78bff; outline-offset: 3px; }
+
 /* ---- part 2 responsive — the page's one breakpoint ---- */
 @media (max-width: 880px) {
   /* cards collapse to 2-up here (part 1), so the 3-col group's odd 5th is alone again — span it */
@@ -1774,6 +1959,14 @@ body.crx-lock { overflow: hidden; }
   }
   /* dashboard bottom room tightens with the rest of the page */
   .crx .crx-dash { padding-bottom: 3rem; }
+  /* program tiles restack: identity + reward share the top line, progress takes the full width */
+  .crx .crx-progtile {
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      'id reward'
+      'conds conds';
+    row-gap: 0.8rem;
+  }
   /* cash-out paddings tighten with the panel */
   .crx .crx-cash-head { padding: 1.25rem 1.1rem 0; }
   .crx .crx-cash-body { padding: 1rem 1.1rem 1.25rem; }

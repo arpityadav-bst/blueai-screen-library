@@ -26,6 +26,12 @@ export default function AccountMenu() {
   const wrapRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
 
+  // NO NAV ROWS (Abhisht, 2026-08-24 meeting, reversing the same morning's both-rows pass): launch
+  // ships with ONE program, so Dashboard/Programs rows navigate between places the launch user
+  // doesn't have — the menu is identity + exit, nothing else. If they return with the
+  // many-programs release, CrxState's nav machinery is still wired for them (the enrolled card's
+  // "Track on dashboard" button uses it today).
+
   useEffect(() => {
     if (!open) return
     function onDown(e: PointerEvent) {

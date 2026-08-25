@@ -107,7 +107,7 @@ export default function HomeHeader({ onCta }: { onCta: () => void }) {
   return (
     <header className={`crx-header ${scrolled ? 'scrolled' : ''}`}>
       <div className="crx-header-in">
-        <button type="button" className="crx-logo" aria-label="BlueAI Creators — top of page" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+        <button type="button" className="crx-logo" aria-label="BlueAI Partners, top of page" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/blueai-icon-RzIisCsb.png" alt="" width={40} height={40} />
           <span className="crx-logo-col">
@@ -123,7 +123,11 @@ export default function HomeHeader({ onCta }: { onCta: () => void }) {
                   : { letterSpacing: `${labelTracking}px`, marginLeft: `${labelTracking * OPTICAL_SHIFT}px` }
               }
             >
-              Creators
+              {/* "Partners", not "Creators" (2026-08-24 naming review): anyone with a YouTube
+                  account can join now, so "creator" both overpromises (you make content) and
+                  gatekeeps (you need an audience). "Workers" was floated and dropped — calling
+                  users workers invites employment-relationship questions. */}
+              Partners
             </span>
           </span>
         </button>
