@@ -10,16 +10,37 @@ import { MOCK_ENROLLMENTS, type Condition, type EnrolledProgram, type Program } 
 // what a routine visit reads. Program terms live one click away instead: an info glyph in the
 // tile's right slot opens the kit modal with the full sheet (description, reward, conditions,
 // end date). Still no "overall progress" number and no raw condition names anywhere.
-export default function EnrolledPrograms({ enrollments = MOCK_ENROLLMENTS }: { enrollments?: EnrolledProgram[] }) {
+export default function EnrolledPrograms({
+  enrollments = MOCK_ENROLLMENTS,
+  completedPrograms,
+}: {
+  enrollments?: EnrolledProgram[]
+  /** lifetime count, shown beside this section's own heading — see the note on the head row */
+  completedPrograms?: number
+}) {
   const [infoFor, setInfoFor] = useState<Program | null>(null)
 
   return (
     <div>
-      <div className="crx-progtiles-head">
+      <div className="crx-sect-head">
         {/* Singular when there is one — the launch reality (2026-08-24 meeting) is exactly one
             program, and "Your programs · 1 ACTIVE" over a single tile reads as an inventory bug. */}
         <h2 className="crx-panel-title">{enrollments.length === 1 ? 'Your program' : 'Your programs'}</h2>
-        {enrollments.length > 1 && <span className="crx-progtiles-count">{enrollments.length} active</span>}
+        {/* COMPLETED COUNT LIVES HERE NOW (Appy, 2026-08-25), moved out of the money row where it
+            was a program fact filed under money. This is the slot its subject is already named in.
+            AN EYEBROW, NOT A CARD, and the demotion is the point: at launch the value is 0, and a
+            zero rendered as a hero tile is dead weight — it spends the most prominent shape on the
+            page saying nothing happened yet. Beside the heading it reads as a footnote to the
+            program, which is what it is.
+            Both facts share one line when there are several programs, since they answer the same
+            question — how many, in what state. */}
+        {(enrollments.length > 1 || completedPrograms !== undefined) && (
+          <span className="crx-sect-note">
+            {enrollments.length > 1 && <>{enrollments.length} active</>}
+            {enrollments.length > 1 && completedPrograms !== undefined && <> · </>}
+            {completedPrograms !== undefined && <>{completedPrograms} completed</>}
+          </span>
+        )}
       </div>
       <div className="crx-progtiles">
         {enrollments.map((e) => (

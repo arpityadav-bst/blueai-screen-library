@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import Modal from '../flow/Modal'
+import Modal, { ModalClose } from '../flow/Modal'
 import { MOCK_ACCOUNT } from '../flow/CrxState'
 
 // Ported from the frozen creator-brand tree (creator-brand/creators/dashboard/CashOutModal.tsx).
@@ -133,11 +133,20 @@ export default function CashOutModal({
           </div>
         ) : (
           <>
+            {/* THE FORM STATE IS THE ONE WITH NO WAY OUT (Appy, 2026-08-25). The success state
+                below already ends on a full-width Close, which is a better affordance than a 15px
+                glyph, so it does not get one too — two dismissals on a panel whose only purpose is
+                to be dismissed is one more than it needs.
+                A THIRD FLEX ITEM, not an absolute overlay: this row is space-between and its
+                right-hand seat is taken by the balance chip, so an X pinned to the card's corner
+                would land on top of it. In the row it simply takes the end, and .crx-modal needs no
+                positioning context it does not currently have. */}
             <div className="crx-cash-head">
               <h2 className="crx-panel-title">Cash out</h2>
               <span className="crx-cash-balance">
                 Balance <b>${balance}</b>
               </span>
+              <ModalClose onClose={handleClose} />
             </div>
 
             <form noValidate onSubmit={submit} className="crx-cash-body">
@@ -173,7 +182,17 @@ export default function CashOutModal({
 
               {/* MINIMAL ON PURPOSE (2026-08-14, "just a checkmark, a simple line in front of
                   them") — the kit's .crx-check.subtle exists for exactly this: no card, no
-                  background, just the drawn box and one line. Plainest control in the whole flow. */}
+                  background, just the drawn box and one line. Plainest control in the whole flow.
+                  ONE ERROR LINE FOR THE PAIR, NOT ONE EACH (Appy, 2026-08-25: "these checkboxes can
+                  be closer... usually checkboxes are part of a single container"). He read the
+                  symptom exactly right and the cause was not the gap rule: the rows sat 34px apart
+                  and only 8px of that was spacing. The other 26 was a FieldError reserved under
+                  EVERY row — margin 5.6 + min-height 15, hidden but occupying space — a per-field
+                  contract borrowed from the text inputs above and applied to a group.
+                  Two mandatory boxes have ONE failure ("you haven't ticked them"), and their two
+                  messages were near-duplicates of each other. So the group reserves one slot and
+                  shows whichever is outstanding first; the red border stays per-box, so the row
+                  that needs attention is still the one marked. */}
               <div className="crx-cash-confirms">
                 <MiniCheck checked={confirmCorrect} onChange={(v) => { touch('confirmCorrect'); setConfirmCorrect(v) }} err={visible('confirmCorrect')}>
                   I confirm all the details are correct.
@@ -181,6 +200,7 @@ export default function CashOutModal({
                 <MiniCheck checked={confirmFinal} onChange={(v) => { touch('confirmFinal'); setConfirmFinal(v) }} err={visible('confirmFinal')}>
                   I understand my order is non-refundable.
                 </MiniCheck>
+                <FieldError>{visible('confirmCorrect') ?? visible('confirmFinal')}</FieldError>
               </div>
 
               <button type="submit" className="btn btn-block crx-cash-submit">
@@ -205,6 +225,11 @@ function FieldError({ children }: { children?: string }) {
   )
 }
 
+// NO ERROR SLOT OF ITS OWN (2026-08-25) — the group owns one, see .crx-cash-confirms' caller.
+// This used to wrap the label in a div and append a FieldError, which is the right shape for a text
+// field and the wrong one for a member of a checkbox group: it put a reserved 20.6px line under
+// EVERY row, visible or not. `err` still comes in, because the red border belongs on the individual
+// box that was not ticked even when the message is shared.
 function MiniCheck({
   checked,
   onChange,
@@ -219,15 +244,12 @@ function MiniCheck({
   // Real checkbox stays in the DOM (sr-only), the kit's own pattern — its focus-visible ring
   // forwards from the hidden input to the painted .crx-check sibling (creators.css's selector).
   return (
-    <div>
-      <label className="crx-cash-mini">
-        <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} className="sr-only" />
-        <span className={`crx-check subtle${checked ? ' on' : ''}${err ? ' err' : ''}`}>
-          <span className={`crx-check-box${checked ? ' on' : ''}`}>{checked && <TickIcon size={9} />}</span>
-          <span>{children}</span>
-        </span>
-      </label>
-      <FieldError>{err}</FieldError>
-    </div>
+    <label className="crx-cash-mini">
+      <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} className="sr-only" />
+      <span className={`crx-check subtle${checked ? ' on' : ''}${err ? ' err' : ''}`}>
+        <span className={`crx-check-box${checked ? ' on' : ''}`}>{checked && <TickIcon size={9} />}</span>
+        <span>{children}</span>
+      </span>
+    </label>
   )
 }

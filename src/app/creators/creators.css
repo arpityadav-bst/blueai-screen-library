@@ -1344,30 +1344,72 @@ body.crx-lock { overflow: hidden; }
 }
 .crx-modal.wide { max-width: 560px; }  /* CashOutModal's size="md" — the sign-in card stays narrow */
 
-/* ---- dashboard stat card: icon circle + figure + label, horizontal band (StatCards' shape) ---- */
-.crx .crx-stat {
-  display: flex; align-items: center; gap: 1rem;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  border-radius: 16px; padding: 1.1rem 1.25rem;
-  text-align: left;
+/* Dialog dismiss (Modal.tsx's ModalClose). Kit STYLE only — each card decides where it sits, since
+   the shell does not own the cards (see that file).
+   40px, the page's own hit-area floor (the header burger's "F20: 44px hit area" note is the same
+   rule), pulled back by negative margin so a 15px glyph in a 40px box does not make every header
+   row it joins 40px tall. Ink and hovers are .crx-burger's, restated rather than shared: one is
+   page chrome and one is dialog chrome, and they will not need to change together. */
+.crx .crx-modal-x {
+  flex-shrink: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 40px; height: 40px; margin: -6px -8px -6px 0;
+  background: none; border: none; border-radius: 10px; cursor: pointer;
+  color: var(--dim);
+  transition: color 0.18s ease, background 0.18s ease;
 }
+.crx .crx-modal-x:hover { color: #fff; background: rgba(255, 255, 255, 0.06); }
+.crx .crx-modal-x:active { color: #fff; background: rgba(255, 255, 255, 0.1); }
+.crx .crx-modal-x:focus-visible { outline: 2px solid #a78bff; outline-offset: 2px; }
+
+/* THE STAT-CARD FAMILY WENT WITH StatCards, 2026-08-25 — .crx-stat, .crx-stat-body, .crx-stat-fig
+   (and its .money variant), .crx-stat-label and the 3-up .crx-stat-grid are all deleted. See
+   EarningsPanel.tsx for why a row of three equal tiles was the wrong shape for one program fact and
+   two money ones.
+   A first version of this note claimed the family was kept because "the apply flow's own summary
+   tiles still use them". That was wrong, and grepping rather than asserting is what caught it: the
+   ONLY survivor with a live consumer is .crx-stat-icon, which CashOutModal borrows for its mint
+   success circle. It stays below, renamed in intent if not in name — it is a kit icon-circle now,
+   not a piece of a stat card. */
 .crx .crx-stat-icon {
   flex-shrink: 0; display: flex; align-items: center; justify-content: center;
   width: 44px; height: 44px; border-radius: 50%;
   background: var(--sel-wash); color: #a78bff;
 }
 .crx .crx-stat-icon.money { background: rgba(52, 227, 154, 0.12); color: var(--mint); }
-.crx .crx-stat-fig {
+
+/* ---- dashboard: the earnings section (EarningsPanel.tsx) ----
+   Balance leads because it is the screen's primary ACTION, not a statistic: the one figure with a
+   control attached, and on a money product the thing the visit is for. The hero row is figure +
+   button; the ledger rows follow inside the same panel, so the number and its record are one
+   object. */
+.crx .crx-bal { display: flex; align-items: flex-start; justify-content: space-between; gap: 1.2rem; }
+.crx .crx-bal-main { min-width: 0; }
+.crx .crx-bal-label {
   display: block;
+  font-size: 0.8rem; color: rgba(214, 224, 255, 0.55);
+}
+/* 2.1rem against the retired tile's 1.5rem — it is carrying the section on its own now, where it
+   used to borrow presence from two neighbours in a grid. tabular-nums so cashing out to $0 cannot
+   shift the button beside it. */
+.crx .crx-bal-fig {
+  display: block; margin-top: 2px;
   font-family: 'Space Grotesk', 'SF Pro Display', Inter, sans-serif;
-  font-weight: 700; font-size: 1.5rem; line-height: 1.2; color: #fff;
+  font-weight: 700; font-size: 2.1rem; line-height: 1.1;
+  color: var(--mint);
   font-variant-numeric: tabular-nums;
 }
-.crx .crx-stat-fig.money { color: var(--mint); }   /* money figures in mint — the page's money colour */
-.crx .crx-stat-label { display: block; margin-top: 2px; font-size: 0.8rem; color: rgba(214, 224, 255, 0.55); }
-/* 3-up since Earned till date joined (2026-08-24) — programs / lifetime money / withdrawable */
-.crx .crx-stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+/* the see-saw's quieter half — same ink as a label, with only the amount in the body colour */
+.crx .crx-bal-sub {
+  display: block; margin-top: 0.5rem;
+  font-size: 0.85rem; color: rgba(214, 224, 255, 0.55);
+}
+.crx .crx-bal-sub b { font-weight: 650; color: var(--ink-inverse); font-variant-numeric: tabular-nums; }
+/* The rule above the first ledger row IS .crx-row's own border-top, so the ledger separates itself
+   from the hero with the same hairline it uses between rows — one divider weight in the panel
+   rather than a second, heavier one introduced just for this seam. */
+.crx .crx-bal-rows { margin-top: 1.4rem; }
+.crx .crx-cashout { flex-shrink: 0; }
 
 /* ---- divided list: transactions (Transactions.tsx) ---- */
 .crx .crx-rows { margin: 0; padding: 0; list-style: none; }
@@ -1436,14 +1478,25 @@ body.crx-lock { overflow: hidden; }
 .crx .crx-toggler-note { margin: 0.5rem 0 0; font-size: 0.66rem; line-height: 1.4; color: rgba(214, 224, 255, 0.5); }
 
 /* ---- application intro rows: icon + sentence (StepIntro's icon-per-point layout) ---- */
-.crx .crx-intro-row { display: flex; align-items: flex-start; gap: 0.8rem; text-align: left; }
+/* CENTRED ON THE WHOLE BLOCK, not on the first line (Appy, 2026-08-25). This was flex-start with a
+   6px top margin on the body — and that margin was not spacing, it was an optical centring hack
+   tuned for a row of ONE line: at 0.95rem/1.55 a single line's centre lands 17.8px down against the
+   36px circle's 18px, i.e. dead centre. The moment a row wraps it stops working, and by exactly the
+   amount you can see — 2 lines put the text's centre at 29.6px, leaving the circle sitting 11.6px
+   high. Three lines, 23.3px.
+   align-items: center gets the 1-line case right for the same reason the hack did, gets every
+   wrapped case right as well, and removes a magic number that only ever described one of them.
+   THE CAVEAT, since this rule is shared by StepIntro and the program facts too: a marker centred on
+   a very tall block starts to float, because there is nothing beside it to align to. Every consumer
+   here runs to 1-3 lines of fixed copy. If a row ever grows past ~4, revisit rather than re-tune. */
+.crx .crx-intro-row { display: flex; align-items: center; gap: 0.8rem; text-align: left; }
 .crx .crx-intro-row + .crx-intro-row { margin-top: 1.1rem; }
 .crx .crx-intro-row .crx-intro-ic {
   flex-shrink: 0; display: flex; align-items: center; justify-content: center;
   width: 36px; height: 36px; border-radius: 50%;
   background: var(--sel-wash); color: #a78bff;
 }
-.crx .crx-intro-row .crx-intro-body { font-size: 0.95rem; line-height: 1.55; color: var(--dim); margin-top: 6px; }
+.crx .crx-intro-row .crx-intro-body { font-size: 0.95rem; line-height: 1.55; color: var(--dim); }
 .crx .crx-intro-row .crx-intro-body b { color: var(--ink-inverse); font-weight: 650; }
 
 /* ---- danger utilities ---- */
@@ -1470,7 +1523,10 @@ body.crx-lock { overflow: hidden; }
 /* ---- responsive: the page's one breakpoint ---- */
 @media (max-width: 880px) {
   .crx .crx-panel { padding: 1.1rem 1rem; }
-  .crx .crx-stat-grid { grid-template-columns: 1fr; }            /* stat cards stack */
+  /* the balance hero stacks: a 2.1rem figure and a button cannot share a phone row without the
+     button wrapping mid-word, and Cash out reads as the section's action either way */
+  .crx .crx-bal { flex-direction: column; align-items: stretch; gap: 1rem; }
+  .crx .crx-cashout { margin-left: 0; align-self: flex-start; }
   .crx .crx-choice-grid, .crx .crx-choice-grid.cols-3 { grid-template-columns: repeat(2, 1fr); } /* cards 2-up */
   .crx .crx-modal, .crx-modal { max-width: none; }               /* modal takes the padded width */
   .crx .crx-row .crx-row-date { width: 68px; }
@@ -1658,8 +1714,6 @@ body.crx-lock { overflow: hidden; }
    group is exactly what it read as: a wall (Abhisht, 2026-08-24: "too stacked, crowded"). Two
    spacing sizes is what makes the sections legible as sections. */
 .crx .crx-dash-band { margin-top: 2.25rem; }
-/* figure+label stack beside the stat icon — min-width 0 so long labels can ellipsize, not blow the card */
-.crx .crx-stat-body { min-width: 0; }
 /* Cash out — pushed to the card's right edge; compact quiet pill in a mint tint (the money action) */
 .crx .crx-cashout {
   margin-left: auto; padding: 0.5rem 1.1rem; font-size: 0.85rem;
@@ -1677,7 +1731,11 @@ body.crx-lock { overflow: hidden; }
 .crx .crx-earn-half { min-width: 0; }
 .crx .crx-earn-half + .crx-earn-half { border-left: 1px solid rgba(255, 255, 255, 0.08); padding-left: 2rem; }
 /* half titles need their own gap to the list below (panel-title ships margin:0) */
-.crx .crx-earn-half > .crx-panel-title { margin: 0 0 1.1rem; }
+/* BOTH halves carry a mono label, which is what makes their first lines start on the same one. An
+   earlier pass gave the label to the right half only, on the argument that the left column WAS the
+   section and needed no second name — true about naming, wrong about layout: two columns sharing a
+   top edge cannot align if one begins with a label and the other with content. */
+.crx .crx-earn-half > .crx-subhead { margin: 0 0 1.1rem; }
 /* ol reset — steps ride .crx-intro-row; flex gap owns the rhythm, so the sibling margin is zeroed */
 .crx .crx-earn-steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 1.1rem; }
 .crx .crx-earn-steps .crx-intro-row + .crx-intro-row { margin-top: 0; }
@@ -1685,8 +1743,12 @@ body.crx-lock { overflow: hidden; }
 .crx .crx-earn-rules { list-style: none; margin: 0; padding: 0; }
 
 /* ---- CashOutModal (the .crx-modal.wide panel brings no padding of its own) ---- */
-/* title row + balance chip */
-.crx .crx-cash-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1.5rem 1.5rem 0; }
+/* title row + balance chip + dismiss. gap 0.75rem, was 1rem: the X arrived as a third item and
+   brings its own 40px box, so the old gap put ~28px of air between the chip and the glyph. */
+.crx .crx-cash-head { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; padding: 1.5rem 1.5rem 0; }
+/* the title takes the slack so space-between does not push the chip and the X apart from each other
+   — they are one right-hand cluster, not two ends of a row */
+.crx .crx-cash-head .crx-panel-title { margin-right: auto; }
 /* balance chip — the page's mono micro-label voice, figure in mint (it IS money) */
 .crx .crx-cash-balance {
   flex-shrink: 0; display: inline-flex; align-items: center; gap: 0.4rem;
@@ -1717,9 +1779,15 @@ body.crx-lock { overflow: hidden; }
 /* email field block — its input ships without crx-gap-label, so the label carries the gap here */
 .crx .crx-cash-field { display: block; margin-top: 1.1rem; }
 .crx .crx-cash-field .crx-label { margin-bottom: 0.35rem; }
-/* the two mini-check rows — each row's reserved ~18px error slot already spaces them; this tops
-   the rhythm to ~0.7rem visual without doubling it */
-.crx .crx-cash-confirms { display: flex; flex-direction: column; gap: 0.35rem; margin-top: 0.5rem; }
+/* THE TWO MINI-CHECK ROWS ARE ONE CONTROL, so they sit at one control's spacing (Appy, 2026-08-25).
+   The old note here said "each row's reserved ~18px error slot already spaces them" and treated
+   that as a feature — it was the defect. Measured, the rows were 34px apart: 4px of the subtle
+   row's own padding at each end, 5.6px of flex gap, and 20.6px of hidden error line. Two ticks that
+   must BOTH be given before Withdraw read as two unrelated statements at that distance.
+   The error slot moved to the group (CashOutModal.tsx), so the gap is now spacing alone: 8px + the
+   two 4px paddings = 16px between the label baselines, which is a list rather than two paragraphs.
+   0.5rem rather than 0.35: with the phantom line gone, the old value would have jammed them. */
+.crx .crx-cash-confirms { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem; }
 /* one-line minimal check row (paint is .crx-check.subtle's) */
 .crx .crx-cash-mini { display: block; cursor: pointer; }
 .crx .crx-cash-mini .crx-check { font-size: 0.82rem; line-height: 1.45; }
@@ -1877,8 +1945,25 @@ body.crx-lock { overflow: hidden; }
    neighbours' the way the divided-row pass smeared. Interior keeps the row grid's density:
    identity | progress | reward. The head sits on the page, not in a panel — a panel of boxes
    would double-border every tile. */
-.crx .crx-progtiles-head { display: flex; align-items: baseline; justify-content: space-between; gap: 0.8rem; margin-bottom: 0.9rem; }
-.crx .crx-progtiles-count { font-family: var(--mono); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--dim); }
+/* THE DASHBOARD'S SECTION-HEAD ROW — a title on the page, optionally with a mono note at the far
+   end. Was .crx-progtiles-head/.crx-progtiles-count, named after the one section that had it;
+   all three sections use it now (Appy, 2026-08-25: "2 of 3 titles are outside their container and
+   1 inside? why?"), so a name that says "programs" was telling the next reader it was special. */
+.crx .crx-sect-head { display: flex; align-items: baseline; justify-content: space-between; gap: 0.8rem; margin-bottom: 0.9rem; }
+.crx .crx-sect-note { font-family: var(--mono); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--dim); }
+
+/* IN-PANEL SUB-HEADING — the level that did not exist until 2026-08-25.
+   .crx-panel-title was doing three jobs at one size: a section label on the page, a panel's own
+   title, and a sub-heading INSIDE a panel ("Payout rules", an h3 styled identically to the h2 beside
+   it). The first two are the same level in different contexts and can share; the third is a level
+   down and was only readable as one from the markup. Same mono small-caps voice the section note
+   above uses, because a reader already meets that voice as "quiet label" elsewhere on this page. */
+.crx .crx-subhead {
+  margin: 0;
+  font-family: var(--mono); font-size: 0.68rem; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--dim);
+}
 .crx .crx-progtiles { display: flex; flex-direction: column; gap: 0.9rem; }
 .crx .crx-progtile {
   display: grid; grid-template-columns: minmax(170px, 1.1fr) minmax(220px, 1.7fr) auto;

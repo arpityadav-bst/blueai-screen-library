@@ -18,6 +18,26 @@ import { useEffect, useRef, type ReactNode } from 'react'
 //
 // crx-lock is shared with the boot intro (added on mount, removed at the intro's finish). Safe:
 // no dialog can open during the intro — every trigger is inside the reveal-gated page chrome.
+/** The dismiss control, exported rather than rendered by the shell above.
+ *
+ *  WHY NOT IN THE SHELL: children own their cards here (the note above says so — the sign-in dialog
+ *  paints its own now.gg surface, kit dialogs bring .crx-modal). A shell-rendered X would have to be
+ *  positioned against a card it does not create, which means wrapping children in a layout element
+ *  and changing every dialog's box to fix one of them. Shared STYLE, per-card PLACEMENT.
+ *
+ *  Escape and scrim-click already closed these dialogs before this existed. That is not the same as
+ *  having a way out: both are invisible, one needs a keyboard, and a dialog that offers no control
+ *  reads as stuck (Appy, 2026-08-25: "there is no close icon on the popup"). */
+export function ModalClose({ onClose, className = '' }: { onClose: () => void; className?: string }) {
+  return (
+    <button type="button" onClick={onClose} aria-label="Close" className={`crx-modal-x ${className}`.trim()}>
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+        <path d="M6 6l12 12M18 6L6 18" />
+      </svg>
+    </button>
+  )
+}
+
 export default function Modal({
   open,
   onClose,

@@ -40,8 +40,19 @@ export default function HowEarningWorks() {
   return (
     <div className="crx-panel">
       <div className="crx-earn-split">
+        {/* "How earning works" moved out to a page-level section heading in Dashboard.tsx,
+            alongside "Your program" and "Your earnings" — it was the only one of the three sitting
+            inside its panel, which made it read as one card's title rather than as the third
+            section of the page.
+            THIS COLUMN THEN NEEDED A LABEL OF ITS OWN (Appy, 2026-08-25: "payout rules has a label
+            title, but left column doesn't plus it shifted towards top"). Both symptoms, one cause:
+            the two halves start at the same panel padding, so a column that opens on a label and a
+            column that opens on content can never begin on the same line. Leaving one unlabelled
+            was tried for exactly one build and reads as an omission, not as a hierarchy.
+            "Steps" names the FORM of the content, not its topic — "How it works" here would be the
+            section heading said twice, 12px lower, which is what hoisting it was meant to stop. */}
         <div className="crx-earn-half">
-          <h2 className="crx-panel-title">How earning works</h2>
+          <h3 className="crx-subhead">Steps</h3>
           <ol className="crx-earn-steps">
             {STEPS.map((step, i) => (
               <li key={i} className="crx-intro-row">
@@ -55,7 +66,11 @@ export default function HowEarningWorks() {
         </div>
 
         <div className="crx-earn-half">
-          <h3 className="crx-panel-title">Payout rules</h3>
+          {/* A LEVEL DOWN, and now dressed as one: this is a labelled aside inside the section,
+              not a peer of its heading. It was an h3 wearing .crx-panel-title — the same size and
+              weight as the h2 it sat beside — so the markup said "subordinate" and nothing on
+              screen did. */}
+          <h3 className="crx-subhead">Payout rules</h3>
           <ul className="crx-rows crx-earn-rules">
             {RULES.map((rule) => (
               <li key={rule} className="crx-row">
