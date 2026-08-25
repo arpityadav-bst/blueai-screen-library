@@ -240,13 +240,26 @@ export default function Header() {
                 as part of the link — and it was the odd one out in its own row: the header CTA a few
                 pixels to the right pairs the SAME 15px label with a 13px Arrow. One arrow size for the
                 header's 15px labels, and gap-1.5 to match that CTA too. */}
-            <Link
-              href={active === 'creators' ? '/creator-brand/brands' : '/creator-brand/creators'}
-              className="cb-accent-hover inline-flex items-center gap-1.5 text-[15px] font-normal text-ink-muted opacity-70 transition-all hover:opacity-100"
-            >
-              {active === 'creators' ? 'For Brands' : 'For Creators'}
-              <Arrow size={13} className="-rotate-45" />
-            </Link>
+            {/* ONE-WAY SINCE 2026-08-25 (Appy). The brands page no longer links to the creators
+                page; the creators page keeps its link to brands, untouched. DELIBERATELY
+                ASYMMETRIC, not half-finished: the two sides are now finalised from different
+                sources — brands from this site, the creator journey from the separate /creators
+                route — so "For Creators" here would hand a brand the page that is no longer the
+                creator product.
+                Guarded rather than deleted, and the guard is what makes it a no-op on the creators
+                page: `active` can only be 'creators' inside it, which is why the two ternaries
+                that used to pick the direction are gone — a ternary with one reachable branch
+                reads as a choice that isn't one. To restore symmetry, drop the guard and put them
+                back (git history has both). */}
+            {active === 'creators' && (
+              <Link
+                href="/creator-brand/brands"
+                className="cb-accent-hover inline-flex items-center gap-1.5 text-[15px] font-normal text-ink-muted opacity-70 transition-all hover:opacity-100"
+              >
+                For Brands
+                <Arrow size={13} className="-rotate-45" />
+              </Link>
+            )}
           </nav>
         )}
 

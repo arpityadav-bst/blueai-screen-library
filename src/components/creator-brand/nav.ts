@@ -3,11 +3,22 @@
 // REAL in-page anchor: grep the section `id`s under creators/ and brands/ before adding one, since
 // there are no other routes under /creator-brand to link to.
 //
-// TWO CONSUMERS, TWO APPETITES (designer, 2026-08-11: remove Platforms, FAQ and Open jobs "from both
-// pages navigation IN HEADER"). The header is now down to one destination plus the cross-audience
-// link and the CTA; the footer still lists every section, because that is its whole job — it exists
-// to catch someone who scrolled to the bottom and wants to go somewhere, and those sections are all
-// still on the page.
+// TWO CONSUMERS, TWO APPETITES — and as of 2026-08-25, only on the creators page.
+//
+// The 2026-08-11 direction was "remove Platforms, FAQ and Open jobs from BOTH pages navigation IN
+// HEADER", which left one destination plus the cross-audience link and the CTA. On 2026-08-25 Appy
+// reversed it for BRANDS only: "we have How it works on the header but in the footer we have three
+// options... they should have the similar items on the header also". Recorded as a reversal rather
+// than quietly re-flagged, because the next person to read this file should see that BOTH shapes
+// were deliberate and which one is current.
+//
+// WHAT CHANGED UNDERNEATH IT, and why the reversal is not just a change of mind: on 2026-08-11 the
+// brands header carried "For Creators" and the CTA alongside How it works, so it was not sparse.
+// That cross-link was removed on 2026-08-25 (the two audiences no longer interlink — see
+// Header.tsx), which left the brands header with exactly one nav item beside its CTA while its own
+// footer listed three. The header was not over-full any more; it was under-full.
+//
+// The CREATORS list is untouched and still carries the 2026-08-11 shape — that page is finalised.
 //
 // Modelled as a FLAG on one list rather than as two lists. A second array would be a second place to
 // remember, and the first time a section got added to one and not the other the two would disagree
@@ -44,9 +55,11 @@ export const NAV: Record<NavAudience, NavItem[]> = {
     { label: 'FAQ', href: '#faq' },
   ],
   brands: [
+    // all three inHeader since 2026-08-25 — header and footer now offer the same three
+    // destinations on this page, which is the whole point of the reversal noted above
     { label: 'How it works', href: '#how-it-works', inHeader: true },
-    { label: 'Platforms', href: '#platforms' },
-    { label: 'FAQ', href: '#faq' },
+    { label: 'Platforms', href: '#platforms', inHeader: true },
+    { label: 'FAQ', href: '#faq', inHeader: true },
   ],
 }
 

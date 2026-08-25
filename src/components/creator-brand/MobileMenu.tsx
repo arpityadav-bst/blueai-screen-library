@@ -105,15 +105,22 @@ export default function MobileMenu({ active }: { active: NavAudience }) {
             </a>
           ))}
 
+          {/* The desktop cross-link, collapsed — so it carries the same one-way rule (Appy,
+              2026-08-25; see Header.tsx for why). Gating it in both places rather than in nav.ts
+              is deliberate: OTHER still describes a true fact about the site (each audience has an
+              other one), and the footer's own column reads it too. What changed is not the map, it
+              is which pages offer the trip. */}
+          {active === 'creators' && (
           <Link
-            href={`/creator-brand/${OTHER[active]}`}
+            href="/creator-brand/brands"
             role="menuitem"
             onClick={() => setOpen(false)}
             className="flex min-h-[44px] items-center gap-1.5 rounded-card px-2.5 text-[14px] font-medium text-ink-body-2 transition-colors duration-fast ease-out-bai hover:bg-[var(--cb-hover)] hover:text-ink-heading"
           >
-            {active === 'creators' ? 'For Brands' : 'For Creators'}
+            For Brands
             <Arrow size={12} className="-rotate-45" />
           </Link>
+          )}
 
           {/* Brands only, signed out only (2026-08-18, FE review): the same Sign in entry the
               desktop header carries next to its CTA, in the same slot relative to it. Opens the

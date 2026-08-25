@@ -51,7 +51,13 @@ export default function Footer() {
         <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1fr]">
           {/* Brand column — identity + the one sentence of substance, same copy as before. */}
           <div>
-            <Link href="/creator-brand/creators" className="flex items-center gap-2" aria-label="BlueAI home">
+            {/* `active`, not a hard-coded /creators (Appy, 2026-08-25). This was the one link on
+                this site that ignored which page it was on: from the BRANDS page, a logo labelled
+                "BlueAI home" navigated to the creators page — a cross-link, and a wrong one, since
+                home for a brand is the brand page. Now it resolves to the page you are already on,
+                which on the creators page is the identical URL this always emitted: the fix is a
+                no-op there and a correction here. */}
+            <Link href={`/creator-brand/${active}`} className="flex items-center gap-2" aria-label="BlueAI home">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/blueai-icon-RzIisCsb.png" alt="" width={26} height={26} className="rounded-full" />
               <Wordmark size={18} />
@@ -63,6 +69,19 @@ export default function Footer() {
               BlueAI matches creators and brands, verifies the work, and handles the
               payout. No middleman, no back-and-forth.
             </p>
+            {/* BRANDS: the copyright moves up here from the second tier (Appy, 2026-08-25), which
+                is what lets that tier go entirely. It belongs under the identity it is a statement
+                about, and as one quiet line it costs the column nothing. The creators page keeps
+                it in the bar below, untouched. */}
+            {/* "© 2026 BlueAI" alone (Appy, 2026-08-25) — the "· An AI worker by now.gg, Inc."
+                half is dropped here. It was doing two jobs in one line: the legal notice, and a
+                one-line pitch of what BlueAI is. The pitch is already the paragraph directly above
+                it, so as a trailing clause on a copyright it only made a quiet line long enough to
+                read. The creators page's own bar still carries the full string — that page is
+                finalised and untouched, so the two now differ. */}
+            {active === 'brands' && (
+              <p className="bai-caption mt-6 text-ink-muted">© 2026 BlueAI</p>
+            )}
           </div>
 
           {/* This page's own sections — reuses Header's exact NAV list, so a link added
@@ -82,9 +101,21 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* The other journey — the ONE cross-link the header already carries, restated
-              here as a full nav column rather than one line, because a reader who scrolled
-              this far down either audience's page is a plausible click for the other. */}
+          {/* The other journey — the cross-link the header carries, restated here as a full nav
+              column rather than one line, because a reader who scrolled this far down is a
+              plausible click for the other side.
+              CREATORS PAGE ONLY since 2026-08-25 (Appy) — the brands page links nowhere near the
+              creator journey now; see Header.tsx for why. `other` is therefore always 'brands'
+              inside this branch, and the ternary below is kept ONLY because restoring symmetry
+              should be deleting a guard, not re-deriving a direction.
+              THE GRID IS UNCHANGED, and now for a better reason than when this note was first
+              written. It said the third track was "simply empty" on brands and that collapsing to
+              two tracks would leave the site's two footers unaligned. The first half stopped being
+              true hours later — that track carries Back to top on brands now (below) — and the
+              second half was always the weaker argument: the two pages are finalised from
+              different sources and are allowed to differ. What survives is the useful part: one
+              grid shape, so both pages' first two columns land on the same edges. */}
+          {active === 'creators' && (
           <div>
             <h3 className="bai-caption font-semibold uppercase tracking-label text-ink-muted">
               {other === 'brands' ? 'For brands' : 'For creators'}
@@ -99,13 +130,18 @@ export default function Footer() {
                   href={`/creator-brand/${other}`}
                   className="bai-body-sm cb-accent inline-flex items-center gap-1 py-3 font-semibold transition-colors hover:text-ink-heading"
                 >
-                  {/* "Apply now", was "Join the waitlist" (2026-08-13). This label is the one the
-                      BRANDS page shows, pointing at the creators journey — so it was the last live
-                      "Join the waitlist" on the site and the only one the creators-page rewrite could
-                      not reach from inside creators/. The nav COLUMNS either side of it updated for
-                      free because they derive from NAV; a hand-written label does not, which is the
-                      whole argument nav.ts makes about second lists and why it is worth re-reading
-                      when a label changes rather than only when a link does. */}
+                  {/* "Apply now", was "Join the waitlist" (2026-08-13). It was the label the BRANDS
+                      page showed pointing at the creators journey — the last live "Join the
+                      waitlist" on the site, and the only one the creators-page rewrite could not
+                      reach from inside creators/. UNREACHABLE SINCE 2026-08-25: this column no
+                      longer renders on the brands page, so only 'Create a campaign' is ever shown.
+                      Kept with its branch for the reason given on the guard above — restoring
+                      symmetry should be deleting one line, not re-deriving a label that already
+                      cost a round trip to get right.
+                      The lesson it recorded is the part that still applies: the nav COLUMNS either
+                      side of it updated for free because they derive from NAV, and a hand-written
+                      label does not. That is nav.ts's whole argument about second lists, and it is
+                      worth re-reading when a LABEL changes, not only when a link does. */}
                   {other === 'brands' ? 'Create a campaign' : 'Apply now'}
                   <Arrow size={12} />
                 </Link>
@@ -125,8 +161,38 @@ export default function Footer() {
               ))}
             </ul>
           </div>
+          )}
+
+          {/* BRANDS: the third track, which the cross-audience column used to fill. Back to top
+              moved up out of the second tier and is the only thing in here — an action on the page
+              as a whole rather than a destination on it, which is why it gets a column instead of
+              becoming a fourth row under "On this page".
+              NO HEADING, and no top padding: it is the first thing in its column, so its text sits
+              on the same line as the two h3s beside it. That costs ~12px of hit area against the
+              other footer links' 44px and buys the row alignment that makes the three columns read
+              as one band — the same trade, made the same way, as the /creators footer. */}
+          {active === 'brands' && (
+            <div>
+              <a
+                href="#hero"
+                onClick={(e) => scrollToSection(e, '#hero')}
+                className="bai-caption inline-flex items-center gap-1.5 pb-3 text-ink-muted transition-colors hover:text-ink-heading"
+              >
+                Back to top
+                <Arrow size={11} className="-rotate-90" />
+              </a>
+            </div>
+          )}
         </div>
 
+        {/* CREATORS ONLY since 2026-08-25 (Appy: "make the footer slimmer and utilize the columns
+            more properly"). On brands both of its occupants moved into the grid above — copyright
+            under the brand identity, Back to top into the empty third track — so the tier itself,
+            its 56px top margin, its divider and its 24px of padding go with them. That is where
+            most of the height came off; filling the empty column was the smaller half of the win.
+            Left standing on creators because that page is finalised and its third column is the
+            cross-audience one, so it has nowhere to put these two. */}
+        {active === 'creators' && (
         <div className="mt-14 flex flex-col items-center gap-4 border-t border-divider pt-6 sm:flex-row sm:justify-between">
           <p className="bai-caption text-ink-muted">© 2026 BlueAI · An AI worker by now.gg, Inc.</p>
           <a
@@ -138,6 +204,7 @@ export default function Footer() {
             <Arrow size={11} className="-rotate-90" />
           </a>
         </div>
+        )}
       </div>
     </footer>
   )
