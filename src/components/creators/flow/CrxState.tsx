@@ -35,8 +35,12 @@ const JOURNEY_KEY = 'crx-journey'
 // already active) while others stay open to apply to. 'returningUser' is the LAUNCH returning
 // member (dashboard with the one creators program); 'returningMulti' is the future one (dashboard
 // with several). The one-program journeys are the going-live set (2026-08-24 meeting).
-export type Journey = 'newUser' | 'multiPrograms' | 'appliedMulti' | 'enrolledMulti' | 'applied' | 'returningUser' | 'returningMulti' | 'fullCapacity' | 'noPrograms'
-const JOURNEYS: Journey[] = ['newUser', 'multiPrograms', 'appliedMulti', 'enrolledMulti', 'applied', 'returningUser', 'returningMulti', 'fullCapacity', 'noPrograms']
+// 'returningEmpty' (2026-08-25, Abhisht item 2): a member who is enrolled in NOTHING right now and
+// opens the dashboard anyway. Its own journey rather than a variant of returningUser, because the
+// thing being reviewed is what the screen does when it has no programs to show — and that is only
+// visible if a reviewer can land on it.
+export type Journey = 'newUser' | 'multiPrograms' | 'appliedMulti' | 'enrolledMulti' | 'applied' | 'returningUser' | 'returningEmpty' | 'returningMulti' | 'fullCapacity' | 'noPrograms'
+const JOURNEYS: Journey[] = ['newUser', 'multiPrograms', 'appliedMulti', 'enrolledMulti', 'applied', 'returningUser', 'returningEmpty', 'returningMulti', 'fullCapacity', 'noPrograms']
 
 /** Illustrative, like every other name and figure on this site. Not a real account. */
 export const MOCK_ACCOUNT = {

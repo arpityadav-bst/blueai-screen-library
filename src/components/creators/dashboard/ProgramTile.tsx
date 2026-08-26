@@ -67,6 +67,15 @@ export default function ProgramTile({
 // It says two things because the member has two questions at that moment: did this count, and is
 // there anything left to do. Monthly programs answer the second with the reset date; a fixed-reward
 // program has no next window, so it answers with when the money arrives instead.
+//
+// "Added to your wallet when the program ends", not "Paid when..." (Abhisht, 2026-08-25, after a call
+// with Anmol). His wording is more accurate than mine was, and the distinction matters on this
+// product: the reward does NOT reach the member's PayPal when a program ends, it lands in their
+// balance, and a separate cash-out moves it out. "Paid" collapsed those two events into one and
+// would have had someone waiting on a transfer that was never triggered.
+// FLAGGED: "wallet" is a new noun. Nothing else in the product uses it — the earnings section says
+// BALANCE, the ledger says Cash out to PayPal. Either the surface adopts wallet everywhere or this
+// line says balance; two names for one pot is the thing to avoid, not either name.
 function GoalMet({ enrollment }: { enrollment: EnrolledProgram }) {
   const { program, resetsLabel } = enrollment
   const monthly = program.rewardModel.type === 'monthly'
@@ -85,7 +94,7 @@ function GoalMet({ enrollment }: { enrollment: EnrolledProgram }) {
           ? resetsLabel
             ? ` · Counting starts again ${resetsLabel}`
             : ' · The count starts again next month'
-          : ' · Paid when the program ends'}
+          : ' · Added to your wallet when the program ends'}
       </span>
     </p>
   )

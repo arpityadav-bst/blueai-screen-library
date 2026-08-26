@@ -40,6 +40,7 @@ const GROUPS: { heading: string; rows: { value: Journey; label: string }[] }[] =
       { value: 'newUser', label: 'New user' },
       { value: 'applied', label: 'Applied (in review)' },
       { value: 'returningUser', label: 'Returning user' },
+      { value: 'returningEmpty', label: 'Returning, no program' },
       { value: 'fullCapacity', label: 'Full capacity' },
       { value: 'noPrograms', label: 'No programs open' },
     ],

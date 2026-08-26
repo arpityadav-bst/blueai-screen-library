@@ -7,7 +7,8 @@ import SignInDialog from './flow/SignInDialog'
 import PreviewToggler from './flow/PreviewToggler'
 import FullCapacityNotice from './flow/FullCapacityNotice'
 import ProgramsHome from './programs/ProgramsHome'
-import { ALL_ENROLLED, MIXED_APPLIED, MIXED_ENROLLED, OPEN_MULTI_ITEMS, SINGLE_ENROLLMENT } from './programs/programData'
+import { ALL_ENROLLED, MIXED_APPLIED, MIXED_ENROLLED, OPEN_MULTI_ITEMS, PAST_ENROLLMENTS,
+  SINGLE_ENROLLMENT } from './programs/programData'
 import type { Journey, NavView } from './flow/CrxState'
 import Dashboard from './dashboard/Dashboard'
 import HomeHeader from './HomeHeader'
@@ -110,16 +111,25 @@ function CreatorsSwitch() {
 // The dashboard surface scales the same way: launch personas carry the ONE creators program and
 // no completed-programs history; returningMulti carries the full multi-program mock.
 function SignedInView({ journey, nav }: { journey: Journey; nav: NavView }) {
-  const returning = journey === 'returningUser' || journey === 'returningMulti'
+  const returning = journey === 'returningUser' || journey === 'returningMulti' || journey === 'returningEmpty'
   const view = nav === 'auto' ? (returning ? 'dashboard' : 'programs') : nav
 
   if (view === 'dashboard') {
-    return journey === 'returningMulti' ? <Dashboard /> : <Dashboard enrollments={SINGLE_ENROLLMENT} />
+    if (journey === 'returningMulti') return <Dashboard />
+    // Nothing active, two finished: the realistic shape of "no program enrolled" for a member who
+    // has been here a while. Past keeps its contents, so the empty ACTIVE tab is what is under
+    // review rather than an empty dashboard.
+    if (journey === 'returningEmpty') return <Dashboard enrollments={PAST_ENROLLMENTS} />
+    return <Dashboard enrollments={SINGLE_ENROLLMENT} />
   }
 
   switch (journey) {
     case 'returningUser':
       return <ProgramsHome mode="open" items={[{ program: SINGLE_ENROLLMENT[0].program, relation: 'enrolled' }]} />
+    // Where "See open programs" lands from the empty dashboard: the same offer, with no enrolled
+    // relation on it, because this member is not in it.
+    case 'returningEmpty':
+      return <ProgramsHome mode="open" items={[{ program: SINGLE_ENROLLMENT[0].program, relation: 'open' }]} />
     case 'returningMulti':
       return <ProgramsHome mode="open" items={ALL_ENROLLED} />
     case 'fullCapacity':

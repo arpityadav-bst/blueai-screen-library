@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Modal from '../flow/Modal'
+import { useCrx } from '../flow/CrxState'
 import ProgramTile from './ProgramTile'
 import {
   MOCK_ENROLLMENTS,
@@ -32,6 +33,7 @@ export default function EnrolledPrograms({
   // tense, never mind report a result.
   const [infoFor, setInfoFor] = useState<EnrolledProgram | null>(null)
   const [tab, setTab] = useState<'active' | 'past'>('active')
+  const { setNav } = useCrx()
 
   // ONE LIST IN, TWO LISTS DERIVED. The caller passes every enrollment and isPast() splits them, so
   // the tab counts and the tab contents cannot disagree — which they would the moment a caller was
@@ -104,8 +106,29 @@ export default function EnrolledPrograms({
           <p>
             {tab === 'past'
               ? 'Nothing here yet. Programs you finish will show up here, with what each one earned.'
-              : 'No active programs right now.'}
+              : 'You are not in a program right now.'}
           </p>
+          {/* THE WAY BACK (Abhisht item 2, 2026-08-25). A member with nothing active is sitting on
+              the one screen that can do nothing for them, so the empty state carries the exit rather
+              than leaving them to discover it in the account menu.
+              ACTIVE TAB ONLY: an empty Past is a statement about the future and has nowhere to send
+              anyone. A quiet button, not the gradient — this is a way out of a dead end, not the
+              page's headline action.
+              "JOIN A NEW PROGRAM", not "See open programs" (Appy, 2026-08-25). The first names what
+              the member gets to do; the second names what the next screen contains, which is a
+              description of navigation rather than an offer. It also reads correctly for the member
+              this state is really about — someone who has finished a program and is between them.
+              A MEDIUM PRIMARY, not a quiet ghost (Appy, 2026-08-25). I argued the opposite an hour
+              ago — "a way out of a dead end, not the page's headline action" — and that reasoning
+              was about the page, not about this state. In an empty Active tab there IS nothing else
+              competing: joining a program is the only thing a member can do from here, so it is the
+              primary action OF THIS STATE and the hierarchy says so. Medium rather than full size
+              because it sits inside a dashed ghost box, not under a hero. */}
+          {tab === 'active' && (
+            <button type="button" className="btn crx-progempty-cta" onClick={() => setNav('programs')}>
+              Join a new program
+            </button>
+          )}
         </div>
       )}
 

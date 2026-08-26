@@ -1737,6 +1737,36 @@ body.crx-lock { overflow: hidden; }
    against main's centered text, and adds bottom room before the footer */
 .crx .crx-dash { max-width: var(--content); margin: 0 auto; padding: 0 0 4rem; text-align: left; }
 /* welcome heading — the head stack at page scale */
+/* Greeting + refresh on one row (Dashboard.tsx). Same shape as the section heads below it —
+   subject left, quiet note right — so the page has one header grammar rather than two. */
+.crx .crx-dash-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 1.2rem; }
+/* one child since the timestamp was dropped — the gap is kept at 0 rather than the rule being
+   deleted, because the wrapper is what holds the control off the h1's baseline */
+.crx .crx-dash-refresh { flex-shrink: 0; display: flex; align-items: center; padding-top: 0.4rem; }
+/* A LABELLED PILL, was a 30px circle. The circle held a 13px glyph and nothing else, which asked
+   the reader to recognise a symbol; with "Refresh now" beside it the control says what it does and
+   the hit area comes for free from the text. Still deliberately small — caption ink, caption size,
+   no fill — because it sits next to the page's h1 and a real button there would out-weigh it. */
+.crx .crx-refresh {
+  flex-shrink: 0; display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 0.3rem 0.65rem; border-radius: 999px;
+  background: none; border: 1px solid rgba(255, 255, 255, 0.14); cursor: pointer;
+  color: var(--dim);
+  transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+}
+/* the label rides the page's mono caption voice, one step smaller than .crx-subhead's 0.68rem so it
+   reads as the quieter half of the pair it forms with the timestamp */
+.crx .crx-refresh-l {
+  font-family: var(--mono); font-size: 0.64rem; font-weight: 600;
+  letter-spacing: 0.1em; text-transform: uppercase;
+}
+.crx .crx-refresh:hover { color: var(--ink-inverse); border-color: rgba(255, 255, 255, 0.3); background: rgba(255, 255, 255, 0.05); }
+.crx .crx-refresh:focus-visible { outline: 2px solid #a78bff; outline-offset: 3px; }
+/* the ICON spins, not the pill — rotating a word is illegible, and rotating the border would read
+   as the whole control being busy rather than the data being fetched */
+.crx .crx-refresh.spin svg { animation: crx-spin 0.6s linear; }
+@keyframes crx-spin { to { transform: rotate(360deg); } }
+
 .crx .crx-dash-title {
   font-family: 'Space Grotesk', 'SF Pro Display', Inter, sans-serif;
   font-weight: 700; font-size: 1.9rem; line-height: 1.2; letter-spacing: -0.02em;
@@ -2037,18 +2067,28 @@ body.crx-lock { overflow: hidden; }
 }
 .crx .crx-progtab.on .crx-progtab-n { color: var(--mint); }
 
-/* THE EMPTY TAB — a dashed ghost, borrowing .crx-prog-soon's language verbatim (border, radius,
-   padding), because it is the same kind of object: a statement about the future that is not a thing
-   to press. Not shared as one class because the two live in different sections with different
-   margins, and coupling them would mean one section's rhythm dictating the other's; the values are
-   deliberately identical so they read as one pattern.
-   IT WAS BARE PROSE FIRST, on the reasoning that a box would give emptiness a program's weight.
-   True, and beside the point: the tiles it replaces are contained, so dropping the container made
-   the tab switch look like a layout failure. A LIGHTER container answers the weight concern —
-   dashed and unfilled is visibly not a tile — where no container answered nothing. */
+/* THE EMPTY TAB. Three passes, and each one corrected the last:
+   1. Bare prose, on the reasoning that a box would give emptiness a program's weight. True, and
+      beside the point — the tiles it replaces are contained, so dropping the container made the tab
+      switch look like a layout failure.
+   2. A dashed, UNFILLED ghost copied from .crx-prog-soon, on the reasoning that lighter answers the
+      weight concern.
+   3. FILLED, matching the surface it stands in for (Appy, 2026-08-25: "empty state containers should
+      also have that fill color like other containers on dashboard"). Unfilled was still wrong for
+      this screen: every other block on the dashboard is a filled surface, so a transparent box reads
+      as something failing to render rather than as a slot with nothing in it.
+   IT MATCHES .crx-progtile, NOT .crx-panel — 0.035 and 14px, not 0.04 and 16px. This box occupies
+   the place a program tile would, so the tile is the thing it should be mistaken for; the panel is a
+   different unit of the page.
+   The dashed border survives the fill on purpose: filled says "this is a slot in the layout",
+   dashed says "nothing is in it yet". Solid on both would make it a card with no content.
+   NOTE THE DIVERGENCE: this no longer matches .crx-prog-soon, which an earlier version of this
+   comment claimed was deliberate and identical. The programs home's soon-ghost is still unfilled.
+   Worth reconciling in one direction, but not silently from here. */
 .crx .crx-progempty {
   margin-top: 0.9rem;
-  border: 1px dashed rgba(255, 255, 255, 0.16); border-radius: 16px;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px dashed rgba(255, 255, 255, 0.16); border-radius: 14px;
   padding: 1.1rem 1.4rem;
   /* CENTRED, and this is the one place it diverges from .crx-prog-soon's left-aligned ghost
      deliberately: that box holds a chip above a paragraph, where a left edge is what lines the two
@@ -2063,6 +2103,20 @@ body.crx-lock { overflow: hidden; }
    to stop long text running past readability; it has nothing to defend here. Narrow viewports still
    wrap it, which is fine — centred wrapped text is a shape, two lines in a wide box is a mistake. */
 .crx .crx-progempty p { margin: 0; font-size: 0.9rem; line-height: 1.6; color: var(--dim); }
+/* the exit sits under the sentence, centred with it — the empty state is a centred block and a
+   left-pinned button under centred prose reads as two unrelated things in one box.
+   A MEDIUM PRIMARY (Appy, 2026-08-25) — it carries .btn, so the gradient, the shadow and the hover
+   lift all come from there and this rule only sets the size. Two treatments were tried first and
+   both under-sold it: a plain ghost, then a ghost with an iris tint. The tint is retired rather than
+   layered under the gradient, which would have fought it.
+   MEDIUM = .btn's 1rem/2.2rem padding down to 0.72rem/1.5rem and 1.05rem type down to 0.95rem. It
+   sits inside a dashed ghost box roughly 60px tall, where the hero's full-size pill would fill the
+   container it is meant to sit inside. */
+.crx .crx-progempty-cta {
+  margin-top: 1rem;
+  padding: 0.72rem 1.5rem;
+  font-size: 0.95rem;
+}
 
 /* GOAL MET, WINDOW OPEN — the line the bar cannot say. Mint on the amount only: the page reserves
    mint for money, and "counting starts again Sep 1" is a date, not a payout. */

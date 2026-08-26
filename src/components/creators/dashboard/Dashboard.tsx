@@ -21,6 +21,20 @@ import type { EnrolledProgram } from '../programs/programData'
 // No ambient animation imported here on purpose (the light original dropped its PixelRain for the
 // same reason): a dashboard someone checks routinely is a working screen, not a pitch, and animated
 // noise under real numbers reads as noise rather than mood.
+// The first version of this glyph was DISTORTED and the path says why: `a8 8 0 1 0 -2.3 5.7` asked
+// for a large-arc sweep between two points about 6 units apart on a radius of 8, which SVG resolves
+// as a lopsided near-loop nowhere near centred on the box. Replaced with the standard rotate-cw
+// construction — one arc plus a polyline arrowhead, both on the same 9-unit radius — instead of
+// nudging the numbers until it looked less wrong.
+function RefreshIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <polyline points="23 4 23 10 17 10" />
+      <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+    </svg>
+  )
+}
+
 export default function Dashboard({
   enrollments,
 }: {
@@ -29,6 +43,14 @@ export default function Dashboard({
   const { account } = useCrx()
   const [balance, setBalance] = useState(MOCK_STATS.balance)
   const [cashOutOpen, setCashOutOpen] = useState(false)
+  const [spinning, setSpinning] = useState(false)
+
+  function refresh() {
+    setSpinning(true)
+    // 600ms is the spin's own duration — long enough to read as work, short enough that nobody
+    // waits. It resolves to the same figures on purpose; see the note at the control.
+    window.setTimeout(() => setSpinning(false), 600)
+  }
   const [transactions, setTransactions] = useState<Transaction[]>(MOCK_TRANSACTIONS)
 
   // EARNED TILL DATE COUNTS PAID-OUT MONEY ONLY (Abhisht, 2026-08-24: "make that 0... if i cashout
@@ -64,8 +86,51 @@ export default function Dashboard({
       {/* First name only — "Welcome back, Maya." reads as a greeting; the full name is already one
           glance away in the header's own account chip, so repeating it here would be the same fact
           stated twice in the same screen. */}
-      <h1 className="crx-dash-title">Welcome back, {account.name.split(' ')[0]}.</h1>
-      <p className="crx-dash-sub">Here&apos;s how your BlueAI account is doing.</p>
+      {/* THE GREETING NOW SHARES A ROW WITH THE REFRESH (Abhisht item 3, 2026-08-25; Appy: "3 can
+          be subtle and minimal"). It goes here rather than per-section because there is one dataset
+          behind all three sections — a refresh on each would imply they reload independently, which
+          would be a lie about the model.
+          SUBTLE COMES FROM SIZE AND INK, not from hiding the control. It is a caption-scale pill in
+          the page's mono voice, next to an h1 — a prominent Refresh button on a screen whose figures
+          move once a month would suggest the numbers are volatile, and they are not.
+          Two earlier attempts are worth recording because both were wrong in the same direction:
+          first a labelled timestamp doing the talking ("Updated just now") with a bare 30px glyph
+          beside it, then the same glyph alone. The timestamp reported a non-event and the glyph asked
+          the reader to recognise 13px of arrow. The label was the missing piece both times. */}
+      <div className="crx-dash-head">
+        <div>
+          <h1 className="crx-dash-title">Welcome back, {account.name.split(' ')[0]}.</h1>
+          <p className="crx-dash-sub">Here&apos;s how your BlueAI account is doing.</p>
+        </div>
+        {/* NO TIMESTAMP (Appy, 2026-08-25: "updated just now, no need for this text"). It was there
+            to say where the data stood, and on a screen whose figures move once a month that is a
+            caption reporting that nothing has happened — it spent the row's quiet slot on a
+            non-event. The control now carries both states itself, which is one element instead of
+            two saying overlapping things. */}
+        <div className="crx-dash-refresh">
+          {/* STUB, like every other action on this design-only route: there is no endpoint to hit,
+              so it spins, says "Refreshing", and resolves to the same figures. Deliberately NOT
+              faking changed numbers — a mock that invents new ones on click teaches a reviewer
+              something untrue about the product. */}
+          <button
+            type="button"
+            className={`crx-refresh${spinning ? ' spin' : ''}`}
+            aria-label="Refresh dashboard"
+            onClick={refresh}
+          >
+            <RefreshIcon />
+            {/* THE LABEL IS THE WHOLE STATE MODEL NOW — "Refresh now" at rest, "Refreshing" while it
+                spins (Appy). An icon-only button asked the reader to recognise a symbol, and 13px of
+                arrow is a small thing to have to recognise; a label that also reports progress means
+                the spin is decoration rather than the only feedback.
+                aria-live sits on the label rather than the button, so the change is announced without
+                the whole control being re-read on every press. */}
+            <span className="crx-refresh-l" aria-live="polite">
+              {spinning ? 'Refreshing' : 'Refresh now'}
+            </span>
+          </button>
+        </div>
+      </div>
 
       {/* THREE LABELLED SECTIONS, GROUPED BY THE QUESTION BEING ASKED (2026-08-25, Appy) — how much
           can I take out, am I on track, how does this work. It was four bands where one had no
