@@ -7,6 +7,7 @@ import OutcomePricing from '@/components/creator-brand/brands/OutcomePricing'
 import TrustSectionBrand from '@/components/creator-brand/brands/TrustSectionBrand'
 import FAQBrand from '@/components/creator-brand/brands/FAQBrand'
 import ClosingCTA from '@/components/creator-brand/brands/ClosingCTA'
+import BrandPreview from '@/components/creator-brand/brands/BrandPreview'
 
 export default function BrandsPage() {
   return (
@@ -24,6 +25,14 @@ export default function BrandsPage() {
         <ClosingCTA />
       </main>
       <Footer />
+      {/* Brands only — it steps through the agency states (new / registered / approved), and the
+          creators page has its own PreviewToggler for its own. Mounted by the page rather than the
+          shared layout, which is what stops the two from stacking; see layout.tsx.
+          Outside <main> and last, matching creators/page.tsx: it is design-handoff chrome, not part
+          of the document. It still renders above any dialog — BrandPreview positions itself fixed
+          and ModalHost's overlay does not cover it, so a switch stays reachable while a dialog it
+          put you in is open. */}
+      <BrandPreview />
     </>
   )
 }

@@ -3,7 +3,6 @@ import './creator-brand.css'
 import Backdrop from '@/components/creator-brand/Backdrop'
 import ModalHost from '@/components/creator-brand/ModalHost'
 import ApplyProvider from '@/components/creator-brand/creators/ApplyState'
-import BrandPreview from '@/components/creator-brand/brands/BrandPreview'
 import BrandSessionProvider from '@/components/creator-brand/brands/BrandSession'
 
 // Uses the shared blueai-modern design system loaded by the root layout (Inter/Space
@@ -57,14 +56,18 @@ export default function CreatorBrandLayout({ children }: { children: React.React
           the same session, so it sits above ModalHost for the same reason ApplyProvider does. */}
       <ApplyProvider>
         <BrandSessionProvider>
+          {/* NO <BrandPreview/> HERE — it belongs to the brands PAGE and is mounted there
+              (brands/page.tsx), the same way the creators page mounts its own PreviewToggler.
+              It was mounted at this level on 2026-08-26 and that was a straight defect: this layout
+              wraps BOTH routes, so the creators page rendered two state switches at once. The
+              rationale written here was wrong twice over — it claimed the switch was needed on "both
+              brand routes, the marketing page and the dashboard", but the dashboard is the static
+              campaign-report.html, which this layout does not wrap and which carries its own #prev
+              switch. So the mount bought nothing on the dashboard and cost a duplicate on creators.
+              THE RULE, since two pages each want their own: a route-specific control is mounted by
+              its route, never by the shared layout. A layout mount has to be true for every child,
+              and "reviewer chrome for one audience" never is. */}
           <ModalHost>{children}</ModalHost>
-          {/* The reviewer's state switch. INSIDE the providers but OUTSIDE ModalHost's children, so
-              it renders above the page without being something a dialog can cover — a switch you
-              cannot reach while a dialog is open is a switch that cannot get you out of the state
-              the dialog put you in.
-              It is on both brand routes because both are part of the flow it steps through: the
-              marketing page is where registration starts and the dashboard is where it lands. */}
-          <BrandPreview />
         </BrandSessionProvider>
       </ApplyProvider>
     </div>
