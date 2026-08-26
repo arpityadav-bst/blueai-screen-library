@@ -93,7 +93,7 @@ export default function Hero() {
             <span className="text-gradient italic inline-block pr-[0.2em]">into income.</span>
           </h1>
           <p className="bai-body-lg mx-auto mt-5 max-w-[660px]">
-            BlueAI matches you with real brand campaigns, completes them on your account from your own
+            BlueAI matches you with real agency campaigns, completes them on your account from your own
             PC, and pays you.
           </p>
         </Reveal>
@@ -198,7 +198,7 @@ export default function Hero() {
                 // the page colour, and check the mid-height composite at x=0 and x=20. The desktop hero
                 // has broken one or other of these three times running.
                 src="/creator-brand/creator-00-hero-mobile.webp"
-                alt="A woman at a laptop with brand campaign cards, a month calendar and a wallet floating beside her."
+                alt="A woman at a laptop with agency campaign cards, a month calendar and a wallet floating beside her."
                 width={1672}
                 height={941}
                 fetchPriority="high"

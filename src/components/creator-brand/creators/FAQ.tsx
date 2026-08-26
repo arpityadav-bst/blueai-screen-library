@@ -27,7 +27,7 @@ import FAQAccordion from '../FAQAccordion'
 const ITEMS = [
   {
     q: 'What exactly will BlueAI do on my account?',
-    a: 'BlueAI completes brand campaigns on your behalf. You can see every job it runs.',
+    a: 'BlueAI completes agency campaigns on your behalf. You can see every job it runs.',
   },
   {
     q: 'Is my account safe? Can I see what it’s doing?',

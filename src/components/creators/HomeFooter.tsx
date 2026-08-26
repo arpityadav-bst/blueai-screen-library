@@ -62,7 +62,7 @@ export default function HomeFooter() {
               <Wordmark size={18} />
             </button>
             <p>
-              BlueAI is an AI worker you own. It finds real work from brands, completes it, and
+              BlueAI is an AI worker you own. It finds real work from agencies, completes it, and
               pays you every month.
             </p>
           </div>

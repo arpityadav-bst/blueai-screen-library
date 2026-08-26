@@ -2,8 +2,10 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 import Modal, { ModalHeader } from './Modal'
+import BrandRegister from './brands/BrandRegister'
 import BrandSignIn from './brands/BrandSignIn'
-import { persistBrandSignIn, useBrandSession } from './brands/BrandSession'
+import { persistBrandRegistration, persistBrandSignIn, useBrandSession } from './brands/BrandSession'
+import BrandTransition from './brands/BrandTransition'
 import CampaignForm from './brands/CampaignForm'
 import PricingTable from './brands/PricingTable'
 import SignInDialog from './creators/SignInDialog'
@@ -65,8 +67,41 @@ export default function ModalHost({ children }: { children: ReactNode }) {
   // pointed out nothing outside this dialog could see it (no header Sign in, no Log out). It is now
   // the shared BrandSession context, same level as the creators' ApplyState; this host is just one
   // of its consumers.
-  const { signedIn, email, signIn } = useBrandSession()
+  const { signedIn, registration, email, signIn } = useBrandSession()
   const [createIntent, setCreateIntent] = useState(false)
+  // The label of the navigation in flight, or null. Set immediately before window.location.assign
+  // and never cleared — the page unloading is what clears it, which is exactly the property that
+  // stops the loader from ever showing "done" over a navigation that did not happen.
+  const [leaving, setLeaving] = useState<string | null>(null)
+
+  // One place for the dashboard URL. It was written inline in two branches and is about to be three;
+  // the basePath prefix is the part that silently breaks when a copy is missed.
+  const DASH_URL = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/creator-brand/campaign-report.html`
+
+  // THE COVER HAS TO PAINT BEFORE THE NAVIGATION STARTS, and that is why the loader was not
+  // appearing on either navigating branch (Appy, 2026-08-26: "even sign in will have the same
+  // loading as sign out"). setLeaving schedules a render; window.location.assign begins unloading in
+  // the SAME tick. React never got a frame in between, so the state was set and the cover was never
+  // drawn — the code was right and the sequencing was wrong.
+  // Two rAFs, not one: the first fires before the commit paints, the second after it. One frame was
+  // enough in Chrome and not in Safari, and this is a design prototype that gets opened in both.
+  const leaveTo = useCallback((label: string, url: string) => {
+    setLeaving(label)
+    requestAnimationFrame(() => requestAnimationFrame(() => window.location.assign(url)))
+  }, [])
+
+  // The in-dialog variant. Nothing navigates here — the panel swaps from sign-in to Register — so
+  // this one MUST resolve, unlike the navigating cover which is cleared by the page unloading. It
+  // exists because a Google sign-in that returns instantly reads as nothing having happened: the
+  // real thing involves a round trip, and the dialog swapping panels with no beat in between makes
+  // the click feel unacknowledged.
+  const signInThen = useCallback((label: string, run: () => void) => {
+    setLeaving(label)
+    window.setTimeout(() => {
+      run()
+      setLeaving(null)
+    }, 620)
+  }, [])
 
   const open = useCallback((k: ModalKind) => {
     // Reset on OPEN, not on close: resetting on close would flip the panel back to white while the
@@ -96,30 +131,78 @@ export default function ModalHost({ children }: { children: ReactNode }) {
 
       {/* Each dialog is mounted only while it's the open one, so its contents start fresh: the
           campaign form reopens at step 1 rather than mid-flow on a second visit. */}
+      {/* SIZE AND LABEL FOLLOW THE PANEL, not the session (Appy, 2026-08-26: "the register your
+          brand popup is too wide"). `signedIn ? lg : sm` was written when signed-in meant exactly
+          one thing — the campaign form, which has three steps and a two-column review and genuinely
+          wants 720px. Registration is signed-in too, so it inherited that width for three short
+          fields, and three fields in a 720px panel is what made it look wrong. Only the campaign
+          FORM is lg now; sign-in and registration are both sm. The label carried the same bug — it
+          announced "Create a campaign" over the registration dialog. */}
       <Modal
         open={kind === 'campaign'}
         onClose={close}
-        size={signedIn ? 'lg' : 'sm'}
+        size={signedIn && registration ? 'lg' : 'sm'}
         variant={campaignDone ? 'band' : 'light'}
-        label={signedIn ? 'Create a campaign' : 'Sign in to continue'}
+        label={
+          signedIn && registration
+            ? 'Create a campaign'
+            : signedIn
+              ? 'Register your agency'
+              : 'Sign in to continue'
+        }
       >
-        {signedIn ? (
+        {/* THREE STATES NOW, not two (Abhisht, 2026-08-26, after the call with Anmol). Signed in is
+            no longer enough to reach the campaign form: a brand is something BlueAI approves, and
+            the prototype skipped that entirely by dropping a fresh sign-in onto the dashboard.
+              signed out          -> BrandSignIn
+              signed in, no brand -> BrandRegister, then the dashboard's in-review screen
+              registered          -> CampaignForm, as before
+            REGISTRATION GATES THE FORM, NOT THE DASHBOARD. A registered brand whose review is still
+            pending can still open this dialog; what it sees when it lands on the dashboard is the
+            review screen, and that is the dashboard's decision to make, not this host's. */}
+        {signedIn && registration ? (
           <CampaignForm onClose={close} onDone={() => setCampaignDone(true)} email={email} />
+        ) : signedIn ? (
+          <BrandRegister
+            email={email}
+            onDone={(reg) => {
+              // Persist without flipping state, then navigate — persistBrandSignIn's own reasoning:
+              // flipping here would swap this panel to the campaign form for a frame mid-unload.
+              persistBrandRegistration(reg)
+              // "Setting up your agency", not "Signing you in": the wait a reader is looking at here
+              // is their application being filed, and the next thing they see is the review screen.
+              leaveTo('Setting up your agency\u2026', DASH_URL)
+            }}
+          />
         ) : (
           <BrandSignIn
             onSignedIn={(signedEmail) => {
               // Signed in FROM the dashboard's create button: stay put and show the form, via the
-              // shared session so the header's account menu flips in the same render. Signed in
-              // from the marketing page (the header's Sign in, or a create CTA): the dashboard is
-              // the destination, so persist WITHOUT flipping state (see persistBrandSignIn for why
-              // flipping here would flash the form mid-navigation) and go there.
-              if (createIntent) {
-                signIn(signedEmail)
+              // shared session so the header's account menu flips in the same render. Signed in from
+              // the marketing page by a brand that HAS registered: the dashboard is the destination,
+              // so persist WITHOUT flipping state (see persistBrandSignIn for why flipping here
+              // would flash the form mid-navigation) and go there. That second rule used to have no
+              // qualifier — see below for why it needed one.
+              // AN UNREGISTERED BRAND IS NEVER NAVIGATED AWAY (Appy, 2026-08-26: "when the new
+              // user toggle is selected, Create a campaign then Continue with Google opens the
+              // dashboard directly").
+              // That was a hole in the registration step, not an old bug. createIntent is only ever
+              // true for ?create=1 — arriving from the dashboard's "+ New campaign" — and that was
+              // RIGHT for a two-state flow, where signing in from the marketing page had nowhere to
+              // go but the dashboard. Registration was added to the stay-put branch only, so the
+              // navigate-away branch walked straight past it.
+              // Registration decides first now; where the sign-in started decides second:
+              //   no registration            -> stay put, the gate shows BrandRegister
+              //   registered + createIntent  -> stay put, show the campaign form
+              //   registered, from marketing -> the dashboard, as before
+              // BOTH BRANCHES SHOW THE COVER NOW. The stay-put one had none, because nothing
+              // navigates and the cover was built for navigations — but a sign-in that resolves in
+              // the same frame it was clicked reads as a dead button whether or not the page moves.
+              if (!registration || createIntent) {
+                signInThen('Signing you in\u2026', () => signIn(signedEmail))
               } else {
                 persistBrandSignIn(signedEmail)
-                window.location.assign(
-                  `${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/creator-brand/campaign-report.html`,
-                )
+                leaveTo('Signing you in\u2026', DASH_URL)
               }
             }}
           />
@@ -145,6 +228,11 @@ export default function ModalHost({ children }: { children: ReactNode }) {
       <Modal open={kind === 'signin'} onClose={close} size="xs" variant="dark" label="Sign in to apply">
         <SignInDialog onClose={close} />
       </Modal>
+
+      {/* LAST, so it paints over every dialog above it without needing to out-specify their z-index
+          one by one. Rendered rather than portalled for the same reason the modals are: this host is
+          already at the layout level, so there is nothing above it to escape. */}
+      {leaving && <BrandTransition label={leaving} />}
     </ModalCtx.Provider>
   )
 }

@@ -23,7 +23,7 @@ const INTRO_POINTS = [
   },
   {
     icon: <ClockIcon />,
-    body: <>BlueAI completes campaigns and tasks from brands on your YouTube account. Each takes a few minutes.</>,
+    body: <>BlueAI completes campaigns and tasks from agencies on your YouTube account. Each takes a few minutes.</>,
   },
   {
     icon: <CadenceIcon />,

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Campaigns: Brand/Agency Portal Template</title>
+<title>Campaigns: Agency Portal Template</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Bricolage+Grotesque:wght@700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
@@ -214,6 +214,134 @@ tr:last-child td{border-bottom:none}
   .clist .row,.colhead{grid-template-columns:1fr 1fr;grid-auto-rows:auto}
   .frow{grid-template-columns:1fr}
 }
+
+/* ---- brand review gate + the leaving loader (2026-08-26) ----
+   Values are taken from this page's own scale rather than the React site's tokens: this file is
+   standalone by construction and importing a second source of truth for six rules would be worse
+   than restating them next to the thing they style. */
+/* VERTICALLY CENTRED IN THE VIEWPORT (Appy, 2026-08-26), not sitting at the top of a tall empty
+   page. This screen is the whole content of the page while it shows — every .view is hidden behind
+   it — so top-aligning it left the card floating above ~300px of nothing, which reads as a page that
+   failed to finish loading rather than a page whose only job is one message.
+   THE HEIGHT IS COMPUTED, NOT GUESSED: .topbar is 60px and .wrap pays 28px top + 60px bottom, so the
+   content box below the header is 100vh - 148px. If any of those three change this number is what
+   goes stale, which is why the arithmetic is written down rather than the result.
+   min-height, not height: on a short viewport the card is taller than the space and the block should
+   grow and scroll rather than be clipped to fit. */
+#brand-review {
+  display: flex; flex-direction: column; justify-content: center;
+  min-height: calc(100vh - 148px);
+}
+/* MANDATORY WITH THE RULE ABOVE, not defensive. The `hidden` attribute is nothing but a UA
+   `display: none` at specificity (0,0,0); an ID selector is (1,0,0) and beats it. Any element on
+   this page that is both toggled by `hidden` and given a display value needs this line, which is why
+   .cbt and .cbp have theirs. Deleting it makes the review card paint over the approved dashboard. */
+#brand-review[hidden] { display: none; }
+.bsteps {
+  display: flex; align-items: flex-start; justify-content: center; gap: 0;
+  list-style: none; margin: 0 0 28px; padding: 0;
+}
+.bstep { display: flex; flex-direction: column; align-items: center; gap: 7px; position: relative; padding: 0 34px; }
+/* the connector is drawn on the step, not between steps: a separate <li> for each rule would put
+   three empty list items in the accessibility tree of a three-step list */
+.bstep + .bstep::before {
+  content: ''; position: absolute; top: 15px; left: -34px; width: 68px; height: 2px;
+  background: #e3e6ef;
+}
+.bstep.now::before, .bstep.done::before { background: #2563eb; }
+.bsdot {
+  position: relative; z-index: 1;
+  display: flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px; border-radius: 50%;
+  background: #fff; border: 2px solid #e3e6ef;
+  font-size: 12px; font-weight: 700; color: #8a90a2;
+}
+.bstep.done .bsdot { background: #2563eb; border-color: #2563eb; color: #fff; }
+.bstep.now .bsdot { border-color: #2563eb; color: #2563eb; }
+.bslabel { font-size: 12px; font-weight: 600; color: #8a90a2; white-space: nowrap; }
+.bstep.done .bslabel, .bstep.now .bslabel { color: #2c3040; }
+
+/* bg-cta-band's own gradient, token values resolved (--bai-ink-display rgb(8,10,31),
+   --bai-iris #7B4CFF) because this file has no access to the CSS variables. If those tokens move,
+   this line is the one that goes stale — it is the cost of the page being standalone. */
+.bcard {
+  position: relative; overflow: hidden;
+  border-radius: 20px; padding: 56px 32px 60px; text-align: center;
+  background: linear-gradient(120deg, rgb(8, 10, 31), #1D1655 45%, #7B4CFF 120%);
+  color: #fff;
+}
+/* the grid sits behind the copy and takes no clicks; .bcard-in restores a stacking context above it
+   so the button stays pressable */
+.bgrid { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.bcard-in { position: relative; }
+.bcard-ic {
+  width: 56px; height: 56px; margin: 0 auto 26px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(255, 255, 255, 0.12); font-size: 22px;
+}
+.bcard-h { margin: 0 0 14px; font-size: 30px; line-height: 1.2; letter-spacing: -0.02em; }
+.bcard-p { margin: 0 auto; max-width: 46ch; font-size: 15px; line-height: 1.6; color: rgba(255, 255, 255, 0.82); }
+/* white on the gradient, not the site's blue pill — a blue button inside a blue-violet band is the
+   one place this site's primary would disappear into its own background */
+.bcard-btn {
+  margin-top: 30px; padding: 13px 30px; border: none; border-radius: 999px;
+  background: #fff; color: #171a24; font: inherit; font-size: 15px; font-weight: 700;
+  cursor: pointer; transition: transform .18s ease, box-shadow .18s ease;
+}
+.bcard-btn:hover { transform: translateY(-1px); box-shadow: 0 10px 26px -8px rgba(0, 0, 0, .45); }
+.bcard-btn:disabled { opacity: .7; cursor: default; transform: none; box-shadow: none; }
+/* the receipt: caption scale and dim, so it reads as a footnote to the button rather than a second
+   message competing with the headline. 14px above it, against the button's own 30px top margin -
+   it belongs to the button, and the spacing has to say so. */
+.bcard-note {
+  margin: 14px 0 0; font-size: 12px; letter-spacing: .01em;
+  color: rgba(255, 255, 255, 0.62);
+}
+.bcard-note[hidden] { display: none; }
+
+.cbt {
+  position: fixed; inset: 0; z-index: 200;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
+  background: #f9f9fa;
+}
+.cbt[hidden] { display: none; }
+.cbt-dots { display: inline-flex; gap: 7px; }
+.cbt-dots i { width: 8px; height: 8px; border-radius: 50%; background: #2563eb; animation: cbt-dot 1s ease-in-out infinite; }
+.cbt-dots i:nth-child(2) { animation-delay: .16s; }
+.cbt-dots i:nth-child(3) { animation-delay: .32s; }
+.cbt-label { margin: 0; font-size: 14px; color: #565b6b; }
+@keyframes cbt-dot {
+  0%, 60%, 100% { opacity: .28; transform: translateY(0); }
+  30% { opacity: 1; transform: translateY(-3px); }
+}
+@media (prefers-reduced-motion: reduce) { .cbt-dots i { animation: none; opacity: .6; } }
+
+@media (max-width: 560px) {
+  .bstep { padding: 0 22px; }
+  .bstep + .bstep::before { left: -22px; width: 44px; }
+  .bcard { padding: 40px 20px 44px; }
+  .bcard-h { font-size: 23px; }
+}
+
+/* the reviewer's switch — flat, small, never product-looking, bottom-left away from the page's CTAs */
+.cbp, .cbp-fab { position: fixed; left: 16px; bottom: 16px; z-index: 210; font-family: ui-monospace, Menlo, monospace; }
+.cbp[hidden], .cbp-fab[hidden] { display: none; }
+.cbp-fab {
+  width: 34px; height: 34px; border-radius: 50%; font-size: 15px; line-height: 1;
+  background: #fff; border: 1px solid #e3e6ef; color: #6b7080; cursor: pointer;
+  box-shadow: 0 6px 18px -6px rgba(16,20,40,.28);
+}
+.cbp { display: flex; flex-direction: column; gap: 2px; width: 268px; padding: 6px;
+  background: #fff; border: 1px solid #e3e6ef; border-radius: 12px; box-shadow: 0 14px 40px -12px rgba(16,20,40,.3); }
+.cbp-head { padding: 6px 8px 8px; border: none; background: none; cursor: pointer; font: inherit;
+  font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #8a90a2; text-align: left; }
+.cbp-row { display: flex; flex-direction: column; gap: 2px; padding: 7px 8px; border: none;
+  border-radius: 8px; background: none; cursor: pointer; font: inherit; text-align: left; }
+.cbp-row:hover { background: #f4f5f9; }
+.cbp-row.on { background: #eef2ff; }
+.cbp-l { font-size: 12px; font-weight: 600; color: #171a24; }
+.cbp-row.on .cbp-l { color: #2563eb; }
+.cbp-h { font-size: 10px; line-height: 1.4; color: #8a90a2; }
 </style>
 </head>
 <body>
@@ -223,10 +351,10 @@ tr:last-child td{border-bottom:none}
   <div class="crumb" id="crumb"><b>Campaigns</b></div>
   <div class="account" id="account">
     <button class="acct-btn" id="acct-btn" aria-haspopup="menu" aria-expanded="false" onclick="toggleAcct()">
-      <div class="avatar" id="acct-avatar">BR</div> <span id="acct-name">Your brand</span>
+      <div class="avatar" id="acct-avatar">AG</div> <span id="acct-name">Your agency</span>
       <svg class="caret" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9.5l6 6 6-6"/></svg>
     </button>
-    <div class="acct-menu" id="acct-menu" role="menu" aria-label="Brand account">
+    <div class="acct-menu" id="acct-menu" role="menu" aria-label="Agency account">
       <div class="acct-email" id="acct-email">Signed in with Google</div>
       <button class="acct-item" role="menuitem" onclick="logOut()">
         <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 4h3.5A1.5 1.5 0 0 1 20 5.5v13A1.5 1.5 0 0 1 18.5 20H15M10 8l-4 4 4 4M6 12h9"/></svg>
@@ -237,6 +365,120 @@ tr:last-child td{border-bottom:none}
 </div>
 
 <div class="wrap">
+
+<!-- ============ BRAND REVIEW GATE ============
+     Shown INSTEAD of the campaigns app while a registered brand is waiting on approval
+     (Abhisht, 2026-08-26). It is a sibling of the views rather than a fourth .view, because it does
+     not participate in show() — a brand in review cannot navigate to a campaign, so making it one
+     of the switchable views would put it in a list of places you can go back to.
+     THE STEPPER IS THE POINT, not the card. On its own the card says "wait"; with three steps above
+     it the wait has a shape — one behind you, one in progress, one to come — and the screen answers
+     "how long is this" as well as "what is happening". -->
+<div id="brand-review" hidden>
+  <ol class="bsteps" aria-label="Agency setup">
+    <li class="bstep done"><span class="bsdot">&#10003;</span><span class="bslabel">Register</span></li>
+    <li class="bstep now"><span class="bsdot">2</span><span class="bslabel">We review</span></li>
+    <li class="bstep"><span class="bsdot">3</span><span class="bslabel">Start campaigns</span></li>
+  </ol>
+
+  <!-- THE SITE'S OWN CONFIRMATION TREATMENT (Appy, 2026-08-26: "the same grid lines and the same
+       design as other waitlist confirmation screens on the website"), not the hand-made gradient
+       card this replaced. The band is bg-cta-band's gradient and the grid is CTAGrid's geometry.
+       THE SVG IS GENERATED FROM CTAGrid.tsx's OWN CONSTANTS (W/H/DEPTH/ROWS/RATIO/COLS/FADE_END,
+       SPREAD = W*1.9) rather than drawn by hand — this page cannot import a React component, so the
+       duplicate is unavoidable, and a generated one can at least be regenerated and diffed against
+       the original. Its ids carry a cbGridReview prefix for the reason CTAGrid's idPrefix exists at
+       all: two grids in one document sharing four ids resolve to the first one's defs. -->
+  <div class="bcard">
+  <svg class="bgrid" viewBox="0 0 1200 420" preserveAspectRatio="none" aria-hidden="true">
+    <defs>
+      <linearGradient id="cbGridReviewFadeFloor" x1="0" y1="1" x2="0" y2="0">
+        <stop offset="0%" stop-color="#fff" stop-opacity="1"/>
+        <stop offset="27.9%" stop-color="#fff" stop-opacity="0.4"/>
+        <stop offset="62%" stop-color="#fff" stop-opacity="0"/>
+      </linearGradient>
+      <linearGradient id="cbGridReviewFadeCeiling" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#fff" stop-opacity="1"/>
+        <stop offset="27.9%" stop-color="#fff" stop-opacity="0.4"/>
+        <stop offset="62%" stop-color="#fff" stop-opacity="0"/>
+      </linearGradient>
+      <mask id="cbGridReviewMaskFloor" maskUnits="userSpaceOnUse" x="0" y="300" width="1200" height="120">
+        <rect x="0" y="300" width="1200" height="120" fill="url(#cbGridReviewFadeFloor)"/>
+      </mask>
+      <mask id="cbGridReviewMaskCeiling" maskUnits="userSpaceOnUse" x="0" y="0" width="1200" height="120">
+        <rect x="0" y="0" width="1200" height="120" fill="url(#cbGridReviewFadeCeiling)"/>
+      </mask>
+    </defs>
+    <g mask="url(#cbGridReviewMaskCeiling)">
+      <line x1="-540" y1="0" x2="600" y2="120" stroke="#fff" stroke-opacity="0.3" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      <line x1="-377.143" y1="0" x2="600" y2="120" stroke="#fff" stroke-opacity="0.3" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      <line x1="-214.286" y1="0" x2="600" y2="120" stroke="#fff" stroke-opacity="0.3" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      <line x1="-51.4286" y1="0" x2="600" y2="120" stroke="#fff" stroke-opacity="0.3" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      <line x1="111.429" y1="0" x2="600" y2="120" stroke="#fff" stroke-opacity="0.3" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      <line x1="274.286" y1="0" x2="600" y2="120" stroke="#fff" stroke-opacity="0.3" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      <line x1="437.143" y1="0" x2="600" y2="120" stroke="#fff" stroke-opacity="0.3" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      <line x1="600" y1="0" x2="600" y2="120" stroke="#fff" stroke-opacity="0.3" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      <line x1="762.857" y1="0" x2="600" y2="120" stroke="#fff" stroke-opacity="0.3" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      <line x1="925.714" y1="0" x2="600" y2="120" stroke="#fff" stroke-opacity="0.3" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      <line x1="1088.57" y1="0" x2="600" y2="120" stroke="#fff" stroke-opacity="0.3" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      <line x1="1251.43" y1="0" x2="600" y2="120" stroke="#fff" stroke-opacity="0.3" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      <line x1="1414.29" y1="0" x2="600" y2="120" stroke="#fff" stroke-opacity="0.3" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      <line x1="1577.14" y1="0" x2="600" y2="120" stroke="#fff" stroke-opacity="0.3" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      <line x1="1740" y1="0" x2="600" y2="120" stroke="#fff" stroke-opacity="0.3" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      <line x1="0" y1="0" x2="1200" y2="0" stroke="#fff" stroke-opacity="0.420" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      <line x1="0" y1="33.0435" x2="1200" y2="33.0435" stroke="#fff" stroke-opacity="0.367" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      <line x1="0" y1="51.8182" x2="1200" y2="51.8182" stroke="#fff" stroke-opacity="0.315" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      <line x1="0" y1="63.9252" x2="1200" y2="63.9252" stroke="#fff" stroke-opacity="0.263" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      <line x1="0" y1="72.381" x2="1200" y2="72.381" stroke="#fff" stroke-opacity="0.210" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      <line x1="0" y1="78.6207" x2="1200" y2="78.6207" stroke="#fff" stroke-opacity="0.158" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      <line x1="0" y1="83.4146" x2="1200" y2="83.4146" stroke="#fff" stroke-opacity="0.105" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      <line x1="0" y1="87.2131" x2="1200" y2="87.2131" stroke="#fff" stroke-opacity="0.052" stroke-width="1" vector-effect="non-scaling-stroke"/>
+    </g>
+    <g mask="url(#cbGridReviewMaskFloor)">
+      <line x1="-540" y1="420" x2="600" y2="300" stroke="#fff" stroke-opacity="0.3" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      <line x1="-377.143" y1="420" x2="600" y2="300" stroke="#fff" stroke-opacity="0.3" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      <line x1="-214.286" y1="420" x2="600" y2="300" stroke="#fff" stroke-opacity="0.3" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      <line x1="-51.4286" y1="420" x2="600" y2="300" stroke="#fff" stroke-opacity="0.3" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      <line x1="111.429" y1="420" x2="600" y2="300" stroke="#fff" stroke-opacity="0.3" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      <line x1="274.286" y1="420" x2="600" y2="300" stroke="#fff" stroke-opacity="0.3" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      <line x1="437.143" y1="420" x2="600" y2="300" stroke="#fff" stroke-opacity="0.3" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      <line x1="600" y1="420" x2="600" y2="300" stroke="#fff" stroke-opacity="0.3" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      <line x1="762.857" y1="420" x2="600" y2="300" stroke="#fff" stroke-opacity="0.3" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      <line x1="925.714" y1="420" x2="600" y2="300" stroke="#fff" stroke-opacity="0.3" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      <line x1="1088.57" y1="420" x2="600" y2="300" stroke="#fff" stroke-opacity="0.3" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      <line x1="1251.43" y1="420" x2="600" y2="300" stroke="#fff" stroke-opacity="0.3" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      <line x1="1414.29" y1="420" x2="600" y2="300" stroke="#fff" stroke-opacity="0.3" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      <line x1="1577.14" y1="420" x2="600" y2="300" stroke="#fff" stroke-opacity="0.3" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      <line x1="1740" y1="420" x2="600" y2="300" stroke="#fff" stroke-opacity="0.3" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      <line x1="0" y1="420" x2="1200" y2="420" stroke="#fff" stroke-opacity="0.420" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      <line x1="0" y1="386.957" x2="1200" y2="386.957" stroke="#fff" stroke-opacity="0.367" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      <line x1="0" y1="368.182" x2="1200" y2="368.182" stroke="#fff" stroke-opacity="0.315" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      <line x1="0" y1="356.075" x2="1200" y2="356.075" stroke="#fff" stroke-opacity="0.263" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      <line x1="0" y1="347.619" x2="1200" y2="347.619" stroke="#fff" stroke-opacity="0.210" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      <line x1="0" y1="341.379" x2="1200" y2="341.379" stroke="#fff" stroke-opacity="0.158" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      <line x1="0" y1="336.585" x2="1200" y2="336.585" stroke="#fff" stroke-opacity="0.105" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      <line x1="0" y1="332.787" x2="1200" y2="332.787" stroke="#fff" stroke-opacity="0.052" stroke-width="1" vector-effect="non-scaling-stroke"/>
+    </g>
+  </svg>
+    <div class="bcard-in">
+      <div class="bcard-ic">&#10003;</div>
+      <h1 class="bcard-h">Your application is in review.</h1>
+      <p class="bcard-p">We review every agency before approving it. We&rsquo;ll email you once you&rsquo;re
+        approved. There is no need to wait here.</p>
+      <button class="bcard-btn" type="button" onclick="refreshStatus(this)">Refresh status</button>
+      <!-- THE RECEIPT (Appy, 2026-08-26: "a feedback after when the refresh has been done"). The
+           button returning to its resting label was the whole of the old feedback, which is to say
+           there was none: this screen says exactly the same thing before and after a check, so the
+           only honest way to show one happened is to say when it happened.
+           HIDDEN UNTIL THE FIRST CLICK. On load there is nothing to report, and a line saying
+           "checked just now" about a page merely being open is the mistake the /creators dashboard
+           made with "Updated just now" - a caption reporting a non-event, which is why that one was
+           deleted. Same element, opposite verdict, and the difference is entirely whether a person
+           asked for it. -->
+      <p class="bcard-note" id="rv-note" hidden aria-live="polite"></p>
+    </div>
+  </div>
+</div>
 
 <!-- ============ VIEW 1: CAMPAIGNS LIST ============ -->
 <div class="view on" id="view-list">
@@ -588,7 +830,7 @@ tr:last-child td{border-bottom:none}
     <div id="cd-signin" style="display:none">
       <div class="dhead">
         <h2>Sign in to continue</h2>
-        <p>Campaigns belong to your brand account: its reports, its invoices, its review status.</p>
+        <p>Campaigns belong to your agency account: its reports, its invoices, its review status.</p>
       </div>
       <div class="dbody">
         <label class="fld">
@@ -743,8 +985,27 @@ document.addEventListener('pointerdown',function(e){
 });
 document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeAcct(); });
 function logOut(){
-  try{localStorage.removeItem('cb-brand-email')}catch(e){}
-  location.href='brands';
+  // BOTH keys. A session that kept its registration would put the next visitor straight onto
+  // someone else's review screen — the same pairing BrandSession's signOut makes on the React side.
+  try{localStorage.removeItem('cb-brand-email');localStorage.removeItem(REG_KEY)}catch(e){}
+  leaving('Signing you out…','brands');
+}
+
+// The between-pages cover. Never hidden again on purpose: the navigation is what clears it, which
+// is what stops it showing "done" over a page that failed to move.
+function leaving(msg,url){
+  var el=document.getElementById('leaving');
+  if(el){
+    document.getElementById('leaving-label').textContent=msg;
+    el.hidden=false;
+  }
+  if(!url) return;
+  // THE COVER HAS TO PAINT BEFORE THE NAVIGATION STARTS. Unhiding the element only schedules a
+  // paint; assigning location.href in the same tick begins unloading, and the browser is free to
+  // skip a frame it is about to throw away. The React side hit exactly this (ModalHost's leaveTo)
+  // and the fix is the same: two rAFs, one before the paint and one after, because one frame was
+  // enough in Chrome and not in Safari.
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){ location.href=url; }); });
 }
 
 function openCreate(){
@@ -893,6 +1154,114 @@ function doneView(){
 
 var esc=function(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML};
 
+// ---- BRAND REVIEW GATE (2026-08-26) ------------------------------------------------------------
+// A brand that has registered but not yet been approved sees the review screen INSTEAD of the
+// campaigns app. The key and its JSON shape are BrandSession.tsx's, read here rather than restated
+// in meaning: that file writes it at the end of registration and this is the first page the brand
+// lands on afterwards.
+var REG_KEY='cb-brand-registered', APPROVED_KEY='cb-brand-approved';
+function isRegistered(){ try{return !!localStorage.getItem(REG_KEY)}catch(e){return false} }
+function isApproved(){ try{return localStorage.getItem(APPROVED_KEY)==='1'}catch(e){return false} }
+
+// A REVIEWER NEEDS TO SEE BOTH SCREENS, and a prototype that can only ever show "in review" hides
+// the dashboard it is gating. ?approved=1 flips it, matching the ?submitted= convention this page
+// already uses for arriving campaigns; ?approved=0 puts it back. It writes the flag so the state
+// survives the next reload, which is what makes it usable in a walkthrough rather than only in the
+// address bar.
+(function(){
+  try{
+    var q=new URLSearchParams(location.search);
+    if(q.get('approved')==='1') localStorage.setItem(APPROVED_KEY,'1');
+    if(q.get('approved')==='0') localStorage.removeItem(APPROVED_KEY);
+  }catch(e){}
+  if(isRegistered() && !isApproved()){
+    var g=document.getElementById('brand-review');
+    if(g){
+      g.hidden=false;
+      // Hide the app rather than not building it: every view, the create dialog and the account menu
+      // still exist and still work, so flipping the flag reveals the dashboard in its real state
+      // instead of one that has to be reconstructed.
+      var vs=document.querySelectorAll('.view');
+      for(var i=0;i<vs.length;i++) vs[i].style.display='none';
+    }
+  }
+})();
+
+// ---- the reviewer's switch ----------------------------------------------------------------------
+// Writes the same three keys BrandPreview.tsx writes, then reloads. Restated rather than shared for
+// the same reason the review gate's key is: this page imports nothing.
+function prevToggle(open){
+  document.getElementById('prev').hidden=!open;
+  document.getElementById('prev-fab').hidden=open;
+}
+function prevSet(next){
+  try{
+    if(next==='new'){
+      localStorage.removeItem('cb-brand-email');
+      localStorage.removeItem(REG_KEY);
+      localStorage.removeItem(APPROVED_KEY);
+      leaving('Switching state…','brands');
+      return;
+    }
+    localStorage.setItem('cb-brand-email','you@acmegames.com');
+    localStorage.setItem(REG_KEY,JSON.stringify({name:'Acme Games',email:'you@acmegames.com'}));
+    if(next==='approved') localStorage.setItem(APPROVED_KEY,'1'); else localStorage.removeItem(APPROVED_KEY);
+  }catch(e){}
+  // strip ?approved= so the query does not fight the flag the switch just wrote
+  leaving('Switching state…',location.pathname);
+}
+(function(){
+  var cur=isApproved()?'approved':(isRegistered()?'registered':'new');
+  var rows=document.querySelectorAll('#prev .cbp-row');
+  for(var i=0;i<rows.length;i++){
+    var on=rows[i].getAttribute('data-s')===cur;
+    rows[i].setAttribute('aria-checked',on?'true':'false');
+    if(on) rows[i].className='cbp-row on';
+  }
+})();
+
+// Refresh status: a stub, like every other action on this design-only site. It re-reads the flag and
+// restores the button — deliberately NOT approving after a delay, which would teach a reviewer that
+// approval happens on its own when a human does it.
+var rvCheckedAt=null, rvTick=null;
+
+// Relative, not a clock time - and here that is not just the repo's illustrative-present convention
+// talking, it is a different fact. The ledger's dates are pinned to March 2026 because a real clock
+// would contradict them; this one measures from the reader's OWN click, so their clock is the
+// correct authority and "2 minutes ago" cannot disagree with anything on screen.
+function rvAgo(){
+  if(rvCheckedAt===null) return '';
+  var secs=Math.floor((Date.now()-rvCheckedAt)/1000);
+  if(secs<45) return 'Checked just now';
+  var mins=Math.round(secs/60);
+  if(mins<60) return 'Checked '+mins+(mins===1?' minute':' minutes')+' ago';
+  var hrs=Math.round(mins/60);
+  return 'Checked '+hrs+(hrs===1?' hour':' hours')+' ago';
+}
+function rvPaintNote(){
+  var el=document.getElementById('rv-note');
+  if(!el||rvCheckedAt===null) return;
+  el.textContent=rvAgo();
+  el.hidden=false;
+}
+function refreshStatus(btn){
+  if(!btn) return;
+  var original=btn.textContent;
+  btn.disabled=true; btn.textContent='Checking…';
+  setTimeout(function(){
+    // Approved since the last look: reload rather than re-label. The whole screen is wrong now and a
+    // note under a button is not the place to say so.
+    if(isApproved()){ location.reload(); return; }
+    btn.disabled=false; btn.textContent=original;
+    rvCheckedAt=Date.now();
+    rvPaintNote();
+    // AGE IT, do not freeze it. A line still reading "just now" ten minutes later is worse than no
+    // line, because it is the one part of this screen a reader might actually believe. 30s is under
+    // the first threshold, so the text is never more than one step stale.
+    if(!rvTick) rvTick=setInterval(rvPaintNote,30000);
+  },700);
+}
+
 // The signed-in brand, written by the landing page's sign-in gate. Personalizes the account chip.
 try{
   var em=localStorage.getItem('cb-brand-email');
@@ -1024,5 +1393,29 @@ if(location.hash==='#detail') show('detail',{backTo:'list'});
   });
 })();
 </script>
+<!-- THE SAME REVIEWER SWITCH THE REACT SIDE CARRIES (BrandPreview.tsx). It has to exist here too:
+     two of the four states ARE this page, so a switch that only lived on the marketing route could
+     get you into the review screen and not back out of it. Same three rows, same keys, same reload. -->
+<div id="prev" class="cbp" hidden role="radiogroup" aria-label="Agency preview state">
+  <button type="button" class="cbp-head" onclick="prevToggle(false)">Preview &middot; agency state</button>
+  <button type="button" role="radio" class="cbp-row" data-s="new" onclick="prevSet('new')">
+    <span class="cbp-l">New agency</span><span class="cbp-h">Back to the marketing page, signed out</span>
+  </button>
+  <button type="button" role="radio" class="cbp-row" data-s="registered" onclick="prevSet('registered')">
+    <span class="cbp-l">Registered, in review</span><span class="cbp-h">This screen</span>
+  </button>
+  <button type="button" role="radio" class="cbp-row" data-s="approved" onclick="prevSet('approved')">
+    <span class="cbp-l">Approved agency</span><span class="cbp-h">The campaigns dashboard</span>
+  </button>
+</div>
+<button id="prev-fab" class="cbp-fab" type="button" onclick="prevToggle(true)" aria-label="Preview state">&#9881;</button>
+
+<!-- The between-pages loader, matching the React side's BrandTransition. Signing out ends in a
+     navigation, and the gap between the click and the new document was previously nothing at all. -->
+<div id="leaving" class="cbt" hidden role="status" aria-live="polite">
+  <span class="cbt-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+  <p class="cbt-label" id="leaving-label">Signing you out&hellip;</p>
+</div>
+
 </body>
 </html>

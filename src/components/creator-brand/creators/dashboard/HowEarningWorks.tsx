@@ -24,7 +24,7 @@ import { EARNING } from './mockData'
 //   to answer "how is my payment calculated", and an answer without the numbers isn't one.
 // - The $30 is the PM's own figure from the marketing page's step 4 (HowItWorks.tsx).
 const STEPS = [
-  'Open BlueAI and turn on Moneymaker. It runs brand campaigns on your account.',
+  'Open BlueAI and turn on Moneymaker. It runs agency campaigns on your account.',
   `Do this on any ${EARNING.daysRequired} days in a month.`,
   `Every month you hit ${EARNING.daysRequired} days, $${EARNING.monthlyPayment} is added to your earnings.`,
 ]

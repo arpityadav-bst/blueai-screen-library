@@ -111,7 +111,7 @@ export default function Hero() {
                 // asset's 2-8 units, so the same wide fade was fading real image for no reason on
                 // that source specifically.
                 src="/creator-brand/brand-workflow-engagement-mobile.webp"
-                alt="A brand's campaign going live, engagement being verified, and payment settling automatically."
+                alt="An agency's campaign going live, engagement being verified, and payment settling automatically."
                 fetchPriority="high"
                 loading="eager"
                 width={1672}

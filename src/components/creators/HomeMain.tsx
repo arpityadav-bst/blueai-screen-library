@@ -46,7 +46,7 @@ export default function HomeMain() {
           <span className="grad">works for you</span>
         </h1>
         <p className="sub rv d2">
-          BlueAI is an AI worker you own. It finds real work from brands, completes it, and pays you.
+          BlueAI is an AI worker you own. It finds real work from agencies, completes it, and pays you.
         </p>
         <div className="rv d3">
           {/* id="hero-cta" — the header watches this leave the viewport to swap its own quiet CTA

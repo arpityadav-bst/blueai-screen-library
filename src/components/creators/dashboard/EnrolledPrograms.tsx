@@ -235,7 +235,7 @@ function ConditionSentence({ condition, program }: { condition: Condition; progr
   if (condition.type === 'complete-jobs') {
     return (
       <>
-        Your AI completes <b>{condition.count} verified {condition.count === 1 ? 'job' : 'jobs'}</b> from brands on
+        Your AI completes <b>{condition.count} verified {condition.count === 1 ? 'job' : 'jobs'}</b> from agencies on
         your YouTube account.
       </>
     )

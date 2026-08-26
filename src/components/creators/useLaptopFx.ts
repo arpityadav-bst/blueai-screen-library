@@ -160,7 +160,7 @@ export default function useLaptopFx() {
 
       const label = (html: string) => { row.innerHTML = '<span class="lbl">' + html + '</span>' }
 
-      label('Getting a task from a brand&hellip;')
+      label('Getting a task from an agency&hellip;')
       later(() => label('Sent for your approval&hellip;'), BEATS.brand)
       later(() => label('<span class="tick">' + TICK + '</span> You approved it'), BEATS.brand + BEATS.approvalAsk)
       later(work, BEATS.brand + BEATS.approvalAsk + BEATS.approved)

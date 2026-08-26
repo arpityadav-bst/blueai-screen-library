@@ -15,7 +15,7 @@ import PlatformsGrid from '../platforms/PlatformsGrid'
 // format like its neighbours. "Comments" is deliberately not that format, for the same reason the
 // phrase above went.
 const BODIES = {
-  YouTube: 'Brand campaigns, live right now.',
+  YouTube: 'Agency campaigns, live right now.',
   Instagram: 'Reels and posts.',
   TikTok: 'Any clip that hits the brief.',
   X: 'Threads and posts.',

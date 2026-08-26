@@ -66,7 +66,7 @@ const STEPS: Step[] = [
   {
     n: '04',
     title: 'Earn',
-    body: 'BlueAI runs brand campaigns on your account automatically. You earn $30 per month, paid via PayPal.',
+    body: 'BlueAI runs agency campaigns on your account automatically. You earn $30 per month, paid via PayPal.',
     img: '/creator-brand/steps/creator-04-earn-monthly.webp',
     alt: 'A woman at a laptop beside ticked product tiles, a payout calendar, and a wallet showing a $30 payout.',
   },

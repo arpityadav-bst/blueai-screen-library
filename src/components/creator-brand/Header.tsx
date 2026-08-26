@@ -198,19 +198,31 @@ export default function Header() {
                 hand-tuned number the other doesn't. Skipped during the fallback render (no
                 measured tracking yet) — same as the letter-spacing itself, it only applies once
                 real geometry is known. */}
-            <span
-              ref={labelRef}
-              className={`-mt-px text-gradient text-[9px] font-bold uppercase leading-none ${
-                labelTracking === undefined ? 'tracking-label' : ''
-              }`}
-              style={
-                labelTracking === undefined
-                  ? undefined
-                  : { letterSpacing: `${labelTracking}px`, marginLeft: `${labelTracking * OPTICAL_SHIFT}px` }
-              }
-            >
-              {active === 'creators' ? 'Creators' : 'Brands'}
-            </span>
+            {/* CREATORS ONLY since 2026-08-26 (Appy: "only on the brand website in the header we
+                have BlueAI Brands, we have to remove the Brands under the wordmark"). The two sides
+                are no longer symmetrical — the same call as the one-way interlinking on 2026-08-25,
+                and for the same reason: the brand site is the finished surface here, and a brand
+                arriving on it does not need telling which of two audiences it is looking at, because
+                there is no longer anywhere else for it to be.
+                THE MEASURING MACHINERY STAYS WIRED. labelRef, the tracking effect and OPTICAL_SHIFT
+                are all still live and still correct for the creators label; they are not
+                creators-specific and gutting them would be the expensive half of a change whose
+                cheap half is this conditional. */}
+            {active === 'creators' && (
+              <span
+                ref={labelRef}
+                className={`-mt-px text-gradient text-[9px] font-bold uppercase leading-none ${
+                  labelTracking === undefined ? 'tracking-label' : ''
+                }`}
+                style={
+                  labelTracking === undefined
+                    ? undefined
+                    : { letterSpacing: `${labelTracking}px`, marginLeft: `${labelTracking * OPTICAL_SHIFT}px` }
+                }
+              >
+                Creators
+              </span>
+            )}
           </span>
         </Link>
 
@@ -256,7 +268,7 @@ export default function Header() {
                 href="/creator-brand/brands"
                 className="cb-accent-hover inline-flex items-center gap-1.5 text-[15px] font-normal text-ink-muted opacity-70 transition-all hover:opacity-100"
               >
-                For Brands
+                For Agencies
                 <Arrow size={13} className="-rotate-45" />
               </Link>
             )}

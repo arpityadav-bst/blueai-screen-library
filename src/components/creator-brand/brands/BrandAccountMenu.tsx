@@ -54,7 +54,7 @@ export default function BrandAccountMenu() {
       <button
         ref={triggerRef}
         type="button"
-        aria-label={`Brand account: ${handle ?? 'your brand'}`}
+        aria-label={`Agency account: ${handle ?? 'your agency'}`}
         aria-haspopup="menu"
         aria-expanded={open}
         onClick={() => setOpen((o) => !o)}
@@ -65,7 +65,7 @@ export default function BrandAccountMenu() {
         </span>
         {/* Name hides below sm rather than shrinking, same as the creators' chip: the avatar alone
             identifies the session at widths where the header is down to the wordmark and this. */}
-        <span className="hidden text-[14px] font-medium sm:block">{handle ?? 'Your brand'}</span>
+        <span className="hidden text-[14px] font-medium sm:block">{handle ?? 'Your agency'}</span>
         <svg
           viewBox="0 0 24 24"
           width="12"
@@ -87,7 +87,7 @@ export default function BrandAccountMenu() {
         // the creators' 196px because a work email is longer than a person's name; still truncated.
         <div
           role="menu"
-          aria-label="Brand account"
+          aria-label="Agency account"
           className="absolute right-0 top-[calc(100%+6px)] z-[60] flex w-[224px] flex-col gap-0.5 rounded-field border border-divider bg-white p-1.5 shadow-float"
         >
           {/* The one thing the trigger cannot show: the full account identity. No email exists for

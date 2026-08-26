@@ -24,6 +24,43 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 // is the honest default for a fresh visitor anyway.
 const KEY = 'cb-brand-email'
 
+// REGISTRATION IS A SECOND, SEPARATE FACT (2026-08-26). Signing in says who you are; registering
+// says the brand exists and has been submitted for review. The flow now has three states, not two —
+// signed out, signed in but unregistered, registered — and collapsing the last two into one flag
+// would make "signed in" mean different things on different screens.
+// SAME STORE AND THE SAME CONTRACT as cb-brand-email, because the static dashboard
+// (public/creator-brand/campaign-report.html) has to read it too: it is what decides whether that
+// page shows campaigns or the in-review screen. Changing this key without changing it there signs
+// the brand out of its own review state.
+// A JSON blob rather than a bare string: the review screen wants the brand's name, and a second
+// bare key per field is how the pair drifts.
+const REG_KEY = 'cb-brand-registered'
+
+export type BrandReg = { name: string; email: string; site?: string }
+
+function readReg(): BrandReg | null {
+  try {
+    const raw = localStorage.getItem(REG_KEY)
+    if (!raw) return null
+    const v = JSON.parse(raw) as BrandReg
+    return v && typeof v.name === 'string' ? v : null
+  } catch {
+    // Unparseable or unreadable: treat as unregistered rather than throwing on a storage read.
+    return null
+  }
+}
+
+/** Storage only, no state flip — the registration submit navigates straight to the dashboard, and
+ *  flipping in-memory state first would swap the dialog's panel for a frame while the page unloads.
+ *  Exactly the reasoning persistBrandSignIn carries. */
+export function persistBrandRegistration(reg: BrandReg) {
+  try {
+    localStorage.setItem(REG_KEY, JSON.stringify(reg))
+  } catch {
+    // Private-mode Safari throws; nothing useful to do mid-navigation.
+  }
+}
+
 /** Storage only, no state flip. For the one caller that signs in and immediately does a full
  *  navigation (ModalHost's gate redirecting to the dashboard): flipping in-memory state there would
  *  swap the dialog's panel to the campaign form for a frame while the page unloads. The next page
@@ -38,12 +75,15 @@ export function persistBrandSignIn(email?: string) {
 
 type Ctx = {
   signedIn: boolean
+  /** The submitted brand, or null when signed in but not yet registered. */
+  registration: BrandReg | null
   /** True once storage has been read, so nothing animates the signed-in swap on first paint. */
   ready: boolean
   /** The signed-in work email, or null when signed in through the Google stub (or signed out). */
   email: string | null
   signIn: (email?: string) => void
   signOut: () => void
+  register: (reg: BrandReg) => void
 }
 
 const BrandCtx = createContext<Ctx | null>(null)
@@ -58,12 +98,14 @@ export function useBrandSession() {
 
 export default function BrandSessionProvider({ children }: { children: ReactNode }) {
   const [brand, setBrand] = useState<{ email: string | null } | null>(null)
+  const [registration, setRegistration] = useState<BrandReg | null>(null)
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
     try {
       const v = localStorage.getItem(KEY)
       if (v !== null) setBrand({ email: v || null })
+      setRegistration(readReg())
     } catch {
       // Private-mode Safari throws on storage access. Staying signed out is the correct fallback
       // and it must not take the page down with it.
@@ -77,9 +119,18 @@ export default function BrandSessionProvider({ children }: { children: ReactNode
     persistBrandSignIn(email)
   }, [])
 
+  const register = useCallback((reg: BrandReg) => {
+    setRegistration(reg)
+    persistBrandRegistration(reg)
+  }, [])
+
+  // Signing out clears BOTH: a session that kept its registration would put the next visitor
+  // straight onto someone else's review screen.
   const signOut = useCallback(() => {
     setBrand(null)
+    setRegistration(null)
     try {
+      localStorage.removeItem(REG_KEY)
       localStorage.removeItem(KEY)
     } catch {
       // Same fallback as above.
@@ -87,8 +138,8 @@ export default function BrandSessionProvider({ children }: { children: ReactNode
   }, [])
 
   const value = useMemo(
-    () => ({ signedIn: brand !== null, ready, email: brand?.email ?? null, signIn, signOut }),
-    [brand, ready, signIn, signOut],
+    () => ({ signedIn: brand !== null, registration, ready, email: brand?.email ?? null, signIn, signOut, register }),
+    [brand, registration, ready, signIn, signOut, register],
   )
 
   return <BrandCtx.Provider value={value}>{children}</BrandCtx.Provider>

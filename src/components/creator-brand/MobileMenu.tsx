@@ -117,7 +117,7 @@ export default function MobileMenu({ active }: { active: NavAudience }) {
             onClick={() => setOpen(false)}
             className="flex min-h-[44px] items-center gap-1.5 rounded-card px-2.5 text-[14px] font-medium text-ink-body-2 transition-colors duration-fast ease-out-bai hover:bg-[var(--cb-hover)] hover:text-ink-heading"
           >
-            For Brands
+            For Agencies
             <Arrow size={12} className="-rotate-45" />
           </Link>
           )}

@@ -66,7 +66,7 @@ export default function Footer() {
                 in Chromium/Safari; the trailing NBSP is the same Firefox fallback used on
                 every other paragraph on this site. */}
             <p className="bai-body-sm mt-4 max-w-[38ch] text-ink-muted">
-              BlueAI matches creators and brands, verifies the work, and handles the
+              BlueAI matches creators and agencies, verifies the work, and handles the
               payout. No middleman, no back-and-forth.
             </p>
             {/* BRANDS: the copyright moves up here from the second tier (Appy, 2026-08-25), which
@@ -118,7 +118,7 @@ export default function Footer() {
           {active === 'creators' && (
           <div>
             <h3 className="bai-caption font-semibold uppercase tracking-label text-ink-muted">
-              {other === 'brands' ? 'For brands' : 'For creators'}
+              {other === 'brands' ? 'For agencies' : 'For creators'}
             </h3>
             <ul className="mt-1">
               <li>

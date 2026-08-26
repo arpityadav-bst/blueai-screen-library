@@ -34,7 +34,7 @@ export default function FAQBrand() {
       <div className="mx-auto max-w-content">
         <Reveal className="text-center">
           <h2 className="mx-auto max-w-[22ch] font-head text-3xl font-bold text-ink-display sm:text-4xl">
-            Questions brands
+            Questions agencies
             <span className="block text-gradient italic pr-[0.2em]">actually ask.</span>
           </h2>
         </Reveal>

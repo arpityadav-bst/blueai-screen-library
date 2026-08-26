@@ -676,3 +676,75 @@
   0% { transform: translateX(-100%); }
   100% { transform: translateX(300%); }
 }
+
+/* ---- the between-pages loader (BrandTransition.tsx) ----
+   Shown while the brand side signs in or out, both of which end in a full page navigation. It
+   covers the whole viewport on purpose: what it hides is a screen that has stopped being true —
+   a header still saying signed in, a form already submitted — and animating one corner of that
+   would be less honest than painting over it.
+   The page ground, not a scrim: this is a page BECOMING another page, not an overlay on top of one,
+   so a dimmed backdrop with the old screen showing through would tell the wrong story. */
+.cb-transition {
+  position: fixed; inset: 0; z-index: 120;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
+  background: #f9f9fa;
+}
+.cb-transition-dots { display: inline-flex; gap: 7px; }
+.cb-transition-dots i {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #2563eb;
+  animation: cb-dot 1s ease-in-out infinite;
+}
+/* staggered by a third of the cycle, so the three read as one travelling pulse rather than three
+   things blinking together */
+.cb-transition-dots i:nth-child(2) { animation-delay: 0.16s; }
+.cb-transition-dots i:nth-child(3) { animation-delay: 0.32s; }
+.cb-transition-label { margin: 0; font-size: 14px; color: #565b6b; }
+@keyframes cb-dot {
+  0%, 60%, 100% { opacity: 0.28; transform: translateY(0); }
+  30% { opacity: 1; transform: translateY(-3px); }
+}
+/* the label carries the whole message when motion is off — something still has to say the page is
+   working, so the text stays and only the pulse goes */
+@media (prefers-reduced-motion: reduce) {
+  .cb-transition-dots i { animation: none; opacity: 0.6; }
+}
+
+/* ---- brand preview switch (BrandPreview.tsx) ----
+   Deliberately NOT product-looking, the same constraint the creators' PreviewToggler carries: flat,
+   small, no gradient, so a reviewer can never mistake it for a page control. Bottom-LEFT because
+   this site's own CTAs claim the bottom-right. */
+.cb-prev-fab, .cb-prev {
+  position: fixed; left: 16px; bottom: 16px; z-index: 130;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+.cb-prev-fab {
+  display: flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px; border-radius: 50%;
+  background: #fff; border: 1px solid #e3e6ef; color: #6b7080; cursor: pointer;
+  box-shadow: 0 6px 18px -6px rgba(16, 20, 40, .28);
+}
+.cb-prev-fab:hover { color: #171a24; border-color: #c9cede; }
+.cb-prev {
+  display: flex; flex-direction: column; gap: 2px;
+  width: 268px; padding: 6px;
+  background: #fff; border: 1px solid #e3e6ef; border-radius: 12px;
+  box-shadow: 0 14px 40px -12px rgba(16, 20, 40, .3);
+}
+.cb-prev-head {
+  padding: 6px 8px 8px; border: none; background: none; cursor: pointer;
+  font: inherit; font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+  color: #8a90a2; text-align: left;
+}
+.cb-prev-row {
+  display: flex; flex-direction: column; gap: 2px;
+  padding: 7px 8px; border: none; border-radius: 8px; background: none; cursor: pointer;
+  font: inherit; text-align: left;
+}
+.cb-prev-row:hover { background: #f4f5f9; }
+.cb-prev-row.on { background: #eef2ff; }
+.cb-prev-label { font-size: 12px; font-weight: 600; color: #171a24; }
+.cb-prev-row.on .cb-prev-label { color: #2563eb; }
+/* the hint is what makes the switch usable without a key: each row says what it will show, so a
+   reviewer picks a screen rather than guessing which storage state produces it */
+.cb-prev-hint { font-size: 10px; line-height: 1.4; color: #8a90a2; }

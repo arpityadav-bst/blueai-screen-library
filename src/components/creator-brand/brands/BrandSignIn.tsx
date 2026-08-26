@@ -39,7 +39,7 @@ export default function BrandSignIn({ onSignedIn }: { onSignedIn: (email?: strin
     <>
       <ModalHeader
         title={<h2 className="font-head text-[20px] font-bold text-ink-display">Sign in to continue</h2>}
-        sub="Campaigns belong to your brand account: its reports, its invoices, its review status."
+        sub="Campaigns belong to your agency account: its reports, its invoices, its review status."
       />
 
       <form onSubmit={submit} className="px-6 py-6 sm:px-8" noValidate>
@@ -55,7 +55,7 @@ export default function BrandSignIn({ onSignedIn }: { onSignedIn: (email?: strin
                panel right after autoFocus lands here, and an untouched form must not open with
                "Enter your work email." already showing. Submit still forces every error. */
             onBlur={() => email && setTouched(true)}
-            placeholder="you@yourbrand.com"
+            placeholder="you@youragency.com"
             className={withErr(INPUT, visible)}
           />
           <FieldError>{visible}</FieldError>
@@ -85,7 +85,7 @@ export default function BrandSignIn({ onSignedIn }: { onSignedIn: (email?: strin
         </CBButton>
 
         <p className="mt-5 text-center text-[11px] leading-relaxed text-ink-muted">
-          New here? Continuing creates your brand account and accepts the advertiser terms.
+          New here? Continuing creates your agency account and accepts the advertiser terms.
         </p>
       </form>
     </>
