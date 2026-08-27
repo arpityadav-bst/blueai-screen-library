@@ -10,8 +10,10 @@
 import { EARNING } from '../dashboard/mockData'
 
 // COPY DECISIONS (2026-08-18, with the PM — still binding):
-// - "Moneymaker" is a plain feature name with an everyday verb ("turn on"), never "the Moneymaker
-//   skill": "skill" is internal vocabulary.
+// - "Moneymaker" is a plain feature name, never "the Moneymaker skill": "skill" is internal
+//   vocabulary. The verb is "run", not "turn on" (Abhisht, 2026-08-27): Moneymaker is a skill you
+//   run in BlueAI, not a switch you flip, and "run" is also the verb every other line here uses
+//   ("run tasks", "run BlueAI on 20 days") — one verb for one action.
 // - "automatically" is BANNED (PM: "we cant say automatically"), synonyms included.
 // - Step 3 names the real numbers (20 days, $30): the card exists to answer "how is my payment
 //   calculated", and an answer without the numbers isn't one.
@@ -19,7 +21,7 @@ import { EARNING } from '../dashboard/mockData'
 //   comes from varies (brands, agencies, other third parties), so the copy names nobody — and
 //   "tasks" is the home page's own word for the work, kept identical on purpose.
 const STEPS = [
-  'Open BlueAI and turn on Moneymaker. It runs tasks on your account.',
+  'Open BlueAI and run Moneymaker. It runs tasks on your account.',
   `Do this on any ${EARNING.daysRequired} days in a month.`,
   `Every month you hit ${EARNING.daysRequired} days, $${EARNING.monthlyPayment} is added to your earnings.`,
 ]
