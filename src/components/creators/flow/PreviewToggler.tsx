@@ -29,11 +29,30 @@ import { useCrx, type Journey } from './CrxState'
 // page's own CTAs claim the bottom-right, and a reviewer needs to flip the journey WHILE the
 // sign-in dialog is open and watch where it lands.
 
+// THE JOURNEY LIST IS PER VERSION (Appy, 2026-08-27: "some of them may be applicable, some of them
+// may not be... we should keep them relevant under each version"). Version A's ten rows describe
+// program inventory - one program vs many, applied vs accepted - and Version B has no programs, so
+// six of those ten rows resolve to the same screen there. A panel offering ten choices with three
+// outcomes is not a state switch, it is a list of buttons that mostly do nothing - and the two
+// headings would still be saying "program" on the version whose whole point is that the word is
+// gone.
+//
+// `also` IS WHAT MAKES THE FLIP LOSSLESS. B's rows are not new journeys - they are the A journeys
+// collapsed by destination (see CreatorsHome's SignedInViewV1), so each B row names the set it
+// stands for. A row shows as chosen when the live journey is anywhere in its set, which is why
+// flipping A -> B lands on the right row instead of appearing to reset; and clicking a row that is
+// already chosen does nothing, so flipping back to A returns the persona you left rather than the
+// representative B would have written over it.
+type Row = { value: Journey; label: string; also?: Journey[] }
+type Group = { heading: string | null; rows: Row[] }
+
+const isOn = (row: Row, journey: Journey) => journey === row.value || !!row.also?.includes(journey)
+
 // GROUPED BY INVENTORY, not flat (Abhisht, 2026-08-24 meeting): launch ships with exactly one
 // program, so the one-program journeys ARE the going-live experience and the many-programs
 // journeys are parked future states. The grouping is the navigation aid the flat list stopped
 // being at eight rows.
-const GROUPS: { heading: string; rows: { value: Journey; label: string }[] }[] = [
+const GROUPS_A: Group[] = [
   {
     heading: 'One program · launch',
     rows: [
@@ -56,6 +75,38 @@ const GROUPS: { heading: string; rows: { value: Journey; label: string }[] }[] =
   },
 ]
 
+// VERSION B: three rows, because v1 has three signed-in destinations and no inventory to group by.
+// NO HEADINGS - "one program / many programs" is a count of a thing B does not have, and the
+// launch / future split is a roadmap fact about programs specifically. One flat list is also what
+// this panel looked like before programs existed, which is the version this is.
+// Every A journey is covered by exactly one row below (checked against SignedInViewV1: the three
+// returning personas take the dashboard, fullCapacity takes the notice, and the remaining six -
+// newUser, multiPrograms, appliedMulti, enrolledMulti, applied, noPrograms - all land on the
+// application). If a journey is ever added to A it belongs in one of these sets too, or B will
+// quietly show no row selected at all.
+const GROUPS_B: Group[] = [
+  {
+    heading: null,
+    rows: [
+      {
+        value: 'newUser',
+        label: 'New user',
+        // 'applied' and 'noPrograms' sit here rather than getting rows of their own: B has no
+        // in-review screen, and nothing to be open or closed, so both land on the application.
+        also: ['multiPrograms', 'appliedMulti', 'enrolledMulti', 'applied', 'noPrograms'],
+      },
+      {
+        value: 'returningUser',
+        label: 'Returning user',
+        // returningEmpty and returningMulti are program-inventory variants of one person - in B
+        // there is only "you are earning", so the dashboard they all open is the same screen.
+        also: ['returningEmpty', 'returningMulti'],
+      },
+      { value: 'fullCapacity', label: 'Full capacity' },
+    ],
+  },
+]
+
 function Gear() {
   return (
     <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -67,6 +118,7 @@ function Gear() {
 
 export default function PreviewToggler() {
   const { journey, setJourney, variant, setVariant } = useCrx()
+  const groups = variant === 'original' ? GROUPS_B : GROUPS_A
   // MINIMIZED by default (the frozen tree's designer call, 2026-08-11): this governs one optional
   // branch, and the page is reviewed as a page. The FAB keeps it one click away.
   const [openPanel, setOpenPanel] = useState(false)
@@ -118,32 +170,45 @@ export default function PreviewToggler() {
       </div>
 
       {/* Each row is a radio: dot indicator + full-width hit target, stacked (see file comment).
-          The kit paints the chosen dot via .on's ::after — markup only supplies the ring. */}
+          The kit paints the chosen dot via .on's ::after — markup only supplies the ring.
+          `key` on the group is the heading OR the first row's value: B's single group has no
+          heading, and null is not a key. */}
       <div className="crx-toggler-track" role="radiogroup" aria-label="Journey">
-        {GROUPS.map(({ heading, rows }) => (
-          <div key={heading} className="crx-toggler-group">
-            <span className="crx-toggler-sect">{heading}</span>
-            {rows.map(({ value, label }) => (
-              <button
-                key={value}
-                type="button"
-                role="radio"
-                aria-checked={journey === value}
-                onClick={() => setJourney(value)}
-                className={journey === value ? 'crx-toggler-row on' : 'crx-toggler-row'}
-              >
-                <span className="crx-toggler-dot" />
-                {label}
-              </button>
-            ))}
+        {groups.map(({ heading, rows }) => (
+          <div key={heading ?? rows[0].value} className="crx-toggler-group">
+            {heading && <span className="crx-toggler-sect">{heading}</span>}
+            {rows.map((row) => {
+              const on = isOn(row, journey)
+              return (
+                <button
+                  key={row.value}
+                  type="button"
+                  role="radio"
+                  aria-checked={on}
+                  // Already chosen = no-op, deliberately. In B a row stands for a SET of A
+                  // journeys, so re-clicking it would overwrite the live journey with the set's
+                  // representative and quietly change which persona A comes back to.
+                  onClick={() => { if (!on) setJourney(row.value) }}
+                  className={on ? 'crx-toggler-row on' : 'crx-toggler-row'}
+                >
+                  <span className="crx-toggler-dot" />
+                  {row.label}
+                </button>
+              )
+            })}
           </div>
         ))}
       </div>
 
+      {/* The note describes the list above it, so it changes with the list. The A copy explains a
+          grouping B does not have; the B copy says what B's three rows are and, more usefully, that
+          the A persona is not lost while you are over here. */}
       <p className="crx-toggler-note">
-        Sets what signing in leads to. Click Get Access and sign in to see it. The one-program
-        group is the launch experience; the many-programs group holds the future states. Survives
-        a reload; resets when the tab closes.
+        Sets what signing in leads to. Click Get Access and sign in to see it.{' '}
+        {variant === 'original'
+          ? 'Version B has three signed-in screens — the application, the dashboard and the full-capacity notice — so it lists three. Your Version A row is remembered while you are here.'
+          : 'The one-program group is the launch experience; the many-programs group holds the future states.'}{' '}
+        Survives a reload; resets when the tab closes.
       </p>
     </div>
   )
