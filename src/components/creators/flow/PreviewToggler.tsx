@@ -101,6 +101,7 @@ export default function PreviewToggler() {
           [
             { value: 'programs', label: 'A · Programs' },
             { value: 'original', label: 'B · Original, no programs' },
+            { value: 'offers', label: 'C · Chooser, no "program" word' },
           ] as const
         ).map(({ value, label }) => (
           <button

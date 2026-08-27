@@ -40,10 +40,10 @@ export default function ApplyForm() {
   for (const f of fields) {
     if ((touched[f] || forced[step]) && all[f]) visible[f] = all[f]
   }
-  // Version B bans the word "program" everywhere (2026-08-26); spec.ts stays a pure description
-  // with the original wording, so the one message that names the Program Terms is rewritten at
-  // the display edge instead of threading the variant into validate().
-  if (variant === 'original') {
+  // Versions B and C ban the word "program" (2026-08-26/27; only Version A keeps it); spec.ts
+  // stays a pure description with the original wording, so the one message that names the Program
+  // Terms is rewritten at the display edge instead of threading the variant into validate().
+  if (variant !== 'programs') {
     for (const k of Object.keys(visible)) {
       const msg = visible[k]
       if (msg) visible[k] = msg.replace('Program Terms', 'Terms')

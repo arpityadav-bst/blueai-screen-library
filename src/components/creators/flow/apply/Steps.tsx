@@ -208,14 +208,15 @@ export function StepThree(p: Props) {
 export function StepFour(p: Props) {
   const { d, setD, err } = p
   const pick = choiceSetter(p)
-  // Version B bans the word "program" (2026-08-26) — the long-run question is the one label on
-  // the question steps that says it. Found by the 2026-08-27 full-flow sweep; the first B pass
-  // only swept the three landing screens and this string sat on a later step.
+  // Versions B and C ban the word "program" (2026-08-26/27; only A keeps it) — the long-run
+  // question is the one label on the question steps that says it. Found by the 2026-08-27
+  // full-flow sweep; the first B pass only swept the three landing screens and this string sat
+  // on a later step.
   const { variant } = useCrx()
   const longRunLabel =
-    variant === 'original'
-      ? 'Running BlueAI only takes a few minutes a day, but this is a long-term commitment. Are you in for the long run?'
-      : 'Running BlueAI only takes a few minutes a day, but this is a long-term program. Are you in for the long run?'
+    variant === 'programs'
+      ? 'Running BlueAI only takes a few minutes a day, but this is a long-term program. Are you in for the long run?'
+      : 'Running BlueAI only takes a few minutes a day, but this is a long-term commitment. Are you in for the long run?'
   return (
     <>
       <ChoiceGroup
@@ -296,23 +297,23 @@ export function StepFour(p: Props) {
   )
 }
 
-// The closing agreement's copy reads the variant: Version B (2026-08-26) bans the word "program"
-// everywhere, so its terms link says just "Terms" and the outreach clause names BlueAI instead of
-// "the program". Version A keeps the original wording.
+// The closing agreement's copy reads the variant: Versions B and C (2026-08-26/27) ban the word
+// "program", so their terms link says just "Terms" and the outreach clause names BlueAI instead
+// of "the program". Only Version A keeps the original wording.
 function AgreeCopy() {
   const { variant } = useCrx()
-  if (variant === 'original') {
+  if (variant === 'programs') {
     return (
       <>
-        By applying, I agree to the <u>Terms</u> and I&apos;m okay with BlueStacks reaching out to me
-        about BlueAI.
+        By applying, I agree to the <u>Program Terms</u> and I&apos;m okay with BlueStacks reaching
+        out to me about the program.
       </>
     )
   }
   return (
     <>
-      By applying, I agree to the <u>Program Terms</u> and I&apos;m okay with BlueStacks reaching out
-      to me about the program.
+      By applying, I agree to the <u>Terms</u> and I&apos;m okay with BlueStacks reaching out to me
+      about BlueAI.
     </>
   )
 }

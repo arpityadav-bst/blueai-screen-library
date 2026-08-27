@@ -54,17 +54,30 @@ export default function ProgramsHome({ mode, items = DEFAULT_OPEN }: { mode: Pro
     <section className="crx-apply crx-programs">
       <div className="crx-apply-col">
         {mode === 'open' && <ListView items={items} onApply={setApplying} />}
-        {mode === 'pending' && <PendingView program={STARTER_PROGRAM} />}
+        {/* The pending card comes from items now, not from a hardcoded STARTER_PROGRAM — Version C
+            (2026-08-27) hands this screen its own noun-free card, and Version A's callers pass
+            nothing, so the default keeps them exactly as before. */}
+        {mode === 'pending' && <PendingView program={items[0]?.program ?? STARTER_PROGRAM} />}
         {mode === 'none' && <NoneView />}
       </div>
     </section>
   )
 }
 
+// The unit noun, read from the review variant (Version C, 2026-08-27 — Gaurav's chooser concern:
+// the listing page survives, only the word goes). Version A says "program"; C says "offer". B
+// never renders this screen. ONE helper rather than four inline ternaries, so a future rename is
+// one line — the whole point of C is that this word is swappable.
+function useNoun() {
+  const { variant } = useCrx()
+  return variant === 'offers' ? 'offer' : 'program'
+}
+
 /* ---------------- open — a program is accepting applications ---------------- */
 
 function ListView({ items, onApply }: { items: ProgramItem[]; onApply: (p: Program) => void }) {
   const { account, setNav } = useCrx()
+  const noun = useNoun()
   const openCount = items.filter((i) => i.relation === 'open').length
 
   return (
@@ -82,16 +95,16 @@ function ListView({ items, onApply }: { items: ProgramItem[]; onApply: (p: Progr
             Get your worker <span className="grad">hired.</span>
           </h1>
           <p className="sub">
-            Your AI earns through programs: simple goals with fixed rewards. It does the work, you get paid.
+            Your AI earns through {noun}s: simple goals with fixed rewards. It does the work, you get paid.
             {openCount > 1 ? ' Choose one below to get started.' : ' Join one below to get started.'}
           </p>
         </>
       ) : (
         <>
           <h1>
-            Your <span className="grad">programs.</span>
+            Your <span className="grad">{noun}s.</span>
           </h1>
-          <p className="sub">You&apos;re in every open program right now. New ones open in waves.</p>
+          <p className="sub">You&apos;re in every open {noun} right now. New ones open in waves.</p>
         </>
       )}
 
@@ -129,7 +142,7 @@ function ListView({ items, onApply }: { items: ProgramItem[]; onApply: (p: Progr
             <>
               <div className="crx-prog-facts">
                 <FactRow icon={<CheckIcon />}>
-                  You&apos;re in. Your AI is working on this program.
+                  You&apos;re in. Your AI is working on this {noun}.
                 </FactRow>
               </div>
               <div className="crx-prog-foot">
@@ -180,6 +193,7 @@ function PendingView({ program }: { program: Program }) {
 /* ---------------- none — nothing open right now ---------------- */
 
 function NoneView() {
+  const noun = useNoun()
   return (
     <>
       <h1>
@@ -187,7 +201,7 @@ function NoneView() {
         <br />
         <span className="grad">right now.</span>
       </h1>
-      <p className="sub">Programs open in waves. We&apos;ll email you the moment one does.</p>
+      <p className="sub">{noun === 'offer' ? 'Offers' : 'Programs'} open in waves. We&apos;ll email you the moment one does.</p>
 
       <ComingSoon />
     </>
