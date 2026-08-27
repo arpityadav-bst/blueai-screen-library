@@ -61,9 +61,12 @@ export default function HomeFooter() {
               <img src="/blueai-icon-RzIisCsb.png" alt="" width={28} height={28} />
               <Wordmark size={18} />
             </button>
+            {/* Same sentence as the hero, minus the counterparty noun (Appy, 2026-08-27) - see
+                HomeMain.tsx for why neither "brands" nor "agencies" survives. This copy keeps its
+                own "every month" tail, which the hero does not carry. */}
             <p>
-              BlueAI is an AI worker you own. It finds real work from agencies, completes it, and
-              pays you every month.
+              BlueAI is an AI worker you own. It finds real work, completes it, and pays you every
+              month.
             </p>
           </div>
 

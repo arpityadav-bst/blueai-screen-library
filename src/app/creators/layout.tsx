@@ -8,8 +8,11 @@ import './creators.css'
 // nothing leaks into the rest of the Screen Library.
 export const metadata: Metadata = {
   title: 'The AI You Own',
+  // The hero's sentence verbatim, and it has to stay that way: a description that still named the
+  // counterparty after the page stopped doing so would be the search result contradicting the page
+  // it is for (Appy, 2026-08-27).
   description:
-    'BlueAI is an AI worker you own. It finds real work from agencies, completes it, and pays you.',
+    'BlueAI is an AI worker you own. It finds real work, completes it, and pays you.',
 }
 
 export default function CreatorsLayout({ children }: { children: React.ReactNode }) {

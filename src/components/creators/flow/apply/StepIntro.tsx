@@ -13,8 +13,9 @@ import { useCrx } from '../CrxState'
 // every [Y] days", which failed two ways: an applicant this early doesn't know what a "job" is, and
 // job availability isn't in their control, so a job-count obligation was a promise the program
 // couldn't grade fairly. The requirement is phrased as days-run — the same measure the creator
-// dashboard reports — and what BlueAI does is "campaigns and tasks from brands" ("jobs" was tried
-// and cut, PM 2026-08-14: an internal noun an applicant hasn't met yet). Order tells the program as
+// dashboard reports — and what BlueAI does is "campaigns and tasks" with no source named ("jobs"
+// was tried and cut, PM 2026-08-14: an internal noun an applicant hasn't met yet). Order tells the
+// program as
 // a story: invite email → what BlueAI does → your one obligation → the payoff → the terms. The email
 // is mentioned because the pilot build is only delivered through it, so line 1 also answers "set it
 // up from where?".
@@ -29,11 +30,16 @@ const INTRO_POINTS = [
   },
   {
     icon: <ClockIcon />,
-    // "from BRANDS", not agencies (Ashish, 2026-08-27 sync: an applicant knows what a brand is;
-    // "agencies" is our supply-side vocabulary leaking through). This row is also the funnel's
-    // one YouTube seed: it names the account BEFORE step 2 asks about it, which is what keeps
-    // that question from arriving cold (his "second screen cannot be disconnected" rule).
-    body: <>BlueAI completes campaigns and tasks from brands on your YouTube account. Each takes a few minutes.</>,
+    // NO SOURCE NAMED AT ALL (Appy, 2026-08-27). This row went "from agencies" -> "from brands"
+    // (Ashish's 2026-08-27 sync: an applicant knows what a brand is) -> nothing, the same
+    // conclusion the hero sentence reached the same day: the counterparty is BlueAI's side of the
+    // deal, and naming it spends a clause of the reader's attention on a party they never
+    // interact with. What the row is actually promising - work happens on YOUR account, and each
+    // piece is short - is intact and now unencumbered.
+    // The row is still the funnel's one YouTube seed: it names the account BEFORE step 2 asks
+    // about it, which is what keeps that question from arriving cold (Ashish's "second screen
+    // cannot be disconnected" rule). Dropping the source noun does not touch that.
+    body: <>BlueAI completes campaigns and tasks on your YouTube account. Each takes a few minutes.</>,
   },
   {
     icon: <CadenceIcon />,

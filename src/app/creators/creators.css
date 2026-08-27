@@ -157,8 +157,9 @@ body.crx-lock { overflow: hidden; }
       section was cut 2026-08-20; the rule it taught is the part worth keeping).
 
    AND A TRAP, because it cost this page a defect: a hand-placed <br> inside a heading turns the
-   balancer OFF for that whole block in Chromium. TWO headings here carry one, both deliberately
-   (the hero lede briefly had a third and it was reverted — see .sub):
+   balancer OFF for that whole block in Chromium. THREE blocks here carry one, all deliberately
+   (the third is the hero lede, whose <br> was reverted on 2026-08-21 and restored on 2026-08-27
+   once its sentence was short enough not to need the balancer — see .sub):
    the application's h1 (the couplet), which is why `balance` was on it and doing nothing while
    "here." sat alone on a third line, and — since 2026-08-21 — the hero's own h1, split after "Own
    an AI that" so the gradient half owns a line. A heading with a forced break has to be sized so
@@ -179,9 +180,14 @@ body.crx-lock { overflow: hidden; }
   line-height: 1.65;
   color: var(--dim);
   /* 700, was 640 (rule 4): at 640 the hero lede broke as "…from brands, completes / it, and pays
-     you.", splitting a verb from its object to put four words on the second line. A hand-placed
-     <br> at the full stop was tried and reverted 2026-08-21 (Appy) — the balanced wrap at this
-     measure was already the better split, and the <br> only cost the balancer. */
+     you.", splitting a verb from its object to put four words on the second line.
+     THE <br> IS BACK, 2026-08-27 (Appy), having been tried and reverted on 2026-08-21 — and the
+     reversal was correct at the time, which is why this note keeps both. What changed is the
+     sentence, not the preference: "from agencies" came out of the lede the same day, leaving a
+     second half of 46 characters that fits its own line at any width this page is read at. In
+     August the measure had to choose the split and chose better than a hard break; now there is
+     no choice to make, so the break costs the balancer nothing it was still doing. `balance`
+     stays declared below for every OTHER consumer of .sub — only the hero carries the break. */
   max-width: 700px;
   margin: 0 auto 2.2rem;
   text-wrap: balance;

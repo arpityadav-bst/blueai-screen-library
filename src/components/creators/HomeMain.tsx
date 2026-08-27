@@ -45,8 +45,26 @@ export default function HomeMain() {
           Own an AI that<br />
           <span className="grad">works for you</span>
         </h1>
+        {/* NO COUNTERPARTY NOUN (Appy, 2026-08-27). The sentence has now said "brands" and
+    then "agencies", and the third answer is that it should name neither: whoever the work
+    comes from is BlueAI's side of the arrangement, not the reader's, and every noun we tried
+    for it was our own supply-side vocabulary reaching an applicant who has no use for it.
+    "Real work" is the part that was doing the work all along.
+            THIS SENTENCE EXISTS IN THREE PLACES on this route - here, HomeFooter's brand column,
+            and the route metadata's description - so it is changed in three places or it starts
+            disagreeing with itself. */}
+        {/* HAND-BROKEN AT THE FULL STOP (Appy, 2026-08-27): one sentence per line - what BlueAI
+            is, then what it does. The same <br> was tried and REVERTED on 2026-08-21, and the
+            difference is not taste, it is length: the second half then read "It finds real work
+            from agencies, completes it, and pays you" - long enough that the measure had to pick
+            the split, and the balancer picked better than a hard break did. With the counterparty
+            noun gone (same day) that half is 46 characters, so it fits its own line unaided and
+            there is nothing left for the balancer to decide.
+            The <br> does turn Chromium's balancer off for this block - the trap documented in
+            creators.css's wrapping notes - which is harmless here for exactly that reason. */}
         <p className="sub rv d2">
-          BlueAI is an AI worker you own. It finds real work from agencies, completes it, and pays you.
+          BlueAI is an AI worker you own.<br />
+          It finds real work, completes it, and pays you.
         </p>
         <div className="rv d3">
           {/* id="hero-cta" — the header watches this leave the viewport to swap its own quiet CTA
