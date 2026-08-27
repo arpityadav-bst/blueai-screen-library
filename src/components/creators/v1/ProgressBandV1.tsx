@@ -22,17 +22,20 @@ import { EARNING } from '../dashboard/mockData'
 // and were paid out as the $90 row; Mar–Jul qualified and are the $150 balance; Aug in flight).
 // Days above the 20 floor on some months on purpose — running more than the minimum is the
 // normal case, and a column of identical 20s would read as fake.
-type PastMonth = { id: string; month: string; days: number; earned: number }
+// The date is the window's END date, full form (Abhisht, 2026-08-27: "show the entire date
+// instead of month") — same shape as the Transactions rows' own dates ("Mar 8, 2026"), so the
+// page's two ledgers keep one date convention.
+type PastMonth = { id: string; ended: string; days: number; earned: number }
 const PAST_MONTHS: PastMonth[] = [
-  { id: 'm-2026-07', month: 'Jul 2026', days: 22, earned: EARNING.monthlyPayment },
-  { id: 'm-2026-06', month: 'Jun 2026', days: 20, earned: EARNING.monthlyPayment },
-  { id: 'm-2026-05', month: 'May 2026', days: 24, earned: EARNING.monthlyPayment },
-  { id: 'm-2026-04', month: 'Apr 2026', days: 21, earned: EARNING.monthlyPayment },
-  { id: 'm-2026-03', month: 'Mar 2026', days: 20, earned: EARNING.monthlyPayment },
-  { id: 'm-2026-02', month: 'Feb 2026', days: 23, earned: EARNING.monthlyPayment },
-  { id: 'm-2026-01', month: 'Jan 2026', days: 20, earned: EARNING.monthlyPayment },
-  { id: 'm-2025-12', month: 'Dec 2025', days: 21, earned: EARNING.monthlyPayment },
-  { id: 'm-2025-11', month: 'Nov 2025', days: 14, earned: 0 },
+  { id: 'm-2026-07', ended: 'Jul 31, 2026', days: 22, earned: EARNING.monthlyPayment },
+  { id: 'm-2026-06', ended: 'Jun 30, 2026', days: 20, earned: EARNING.monthlyPayment },
+  { id: 'm-2026-05', ended: 'May 31, 2026', days: 24, earned: EARNING.monthlyPayment },
+  { id: 'm-2026-04', ended: 'Apr 30, 2026', days: 21, earned: EARNING.monthlyPayment },
+  { id: 'm-2026-03', ended: 'Mar 31, 2026', days: 20, earned: EARNING.monthlyPayment },
+  { id: 'm-2026-02', ended: 'Feb 28, 2026', days: 23, earned: EARNING.monthlyPayment },
+  { id: 'm-2026-01', ended: 'Jan 31, 2026', days: 20, earned: EARNING.monthlyPayment },
+  { id: 'm-2025-12', ended: 'Dec 31, 2025', days: 21, earned: EARNING.monthlyPayment },
+  { id: 'm-2025-11', ended: 'Nov 30, 2025', days: 14, earned: 0 },
 ]
 
 // The month in flight. 12 of 20 keeps the bar mid-story (the state a routine visit actually
@@ -126,7 +129,7 @@ export default function ProgressBandV1() {
           <ul className="crx-rows crx-bal-rows">
             {PAST_MONTHS.map((m) => (
               <li key={m.id} className="crx-row">
-                <span className="crx-row-date">{m.month}</span>
+                <span className="crx-row-date">{m.ended}</span>
                 <span className="crx-row-label">{m.days} days run</span>
                 {m.earned > 0 ? (
                   <span className="crx-row-amt in">+${m.earned}</span>
