@@ -2159,6 +2159,12 @@ body.crx-lock { overflow: hidden; }
   padding: 1rem 1.4rem;
 }
 .crx .crx-progtile-id { grid-area: id; min-width: 0; }
+/* Version B's single-condition tile (ProgressBandV1, 2026-08-27): no identity column — under a
+   band already named "Your progress", a tile title restated the section — so the conds area is
+   the whole tile and the bar runs full width. The deadline rides the count row instead, in the
+   same quiet ink the id column's "Ends" line wore. */
+.crx .crx-progtile.solo { grid-template-columns: 1fr; grid-template-areas: 'conds'; }
+.crx .crx-cond-when { color: rgba(214, 224, 255, 0.5); font-weight: 400; }
 .crx .crx-progtile-name { display: block; font-size: 0.95rem; font-weight: 650; color: var(--ink-inverse); }
 .crx .crx-progtile-ends { display: block; margin-top: 0.2rem; font-size: 0.74rem; color: rgba(214, 224, 255, 0.5); }
 .crx .crx-progtile-conds { grid-area: conds; display: flex; flex-direction: column; gap: 0.7rem; min-width: 0; }

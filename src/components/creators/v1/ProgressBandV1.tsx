@@ -70,19 +70,21 @@ export default function ProgressBandV1() {
 
       {tab === 'active' ? (
         <div className="crx-progtiles">
-          {/* Version A's quest tile, month-shaped: name + window edge, one bar. No info glyph —
-              there is no per-program sheet to open; the one rule lives in How earning works. */}
-          <article className="crx-progtile">
-            <div className="crx-progtile-id">
-              <span className="crx-progtile-name">This month</span>
-              <span className="crx-progtile-ends">Ends Aug 31</span>
-            </div>
+          {/* Version A's quest tile, month-shaped — and TITLE-LESS (Abhisht, 2026-08-27: "'This
+              month' is not required if we are saying it'll end in 30 days"). With one tile under a
+              band already named "Your progress", the identity column said the same thing a third
+              time, so the whole id slot is gone (.solo collapses the grid) and the bar runs the
+              tile's full width. The deadline SURVIVES, demoted onto the count row: "12 of 20 days"
+              without "by when" would be exactly the disconnected-fact pattern the 2026-08-27 sync
+              flagged on the form. No info glyph — the one rule lives in How earning works. */}
+          <article className="crx-progtile solo">
             <div className="crx-progtile-conds">
               <div className="crx-cond">
                 <div className="crx-cond-line">
                   <span className="crx-cond-label">Days run</span>
                   <span className="crx-cond-count">
                     <b>{DAYS_THIS_MONTH}</b> of {EARNING.daysRequired} days
+                    <span className="crx-cond-when"> · Ends Aug 31</span>
                   </span>
                 </div>
                 <div
