@@ -1,4 +1,7 @@
+'use client'
+
 import ApplyForm from './apply/ApplyForm'
+import { useCrx } from './CrxState'
 
 // The top of the page once a NEW creator is signed in — a headline and the application, in place of
 // the marketing hero. Ported from creator-brand/creators/ApplySection.tsx; copy verbatim, skin =
@@ -18,6 +21,9 @@ import ApplyForm from './apply/ApplyForm'
 // on the page, and a missed reveal here is an invisible application form, not a late fade — and the
 // thing the reader signed in to do doesn't want noise in front of it.
 export default function ApplySection({ onBack, programTitle }: { onBack?: () => void; programTitle: string }) {
+  // Version C says "offers" where A says "programs" (2026-08-27); the back link is this file's
+  // one line that carries the noun.
+  const { variant } = useCrx()
   return (
     <section className="crx-apply">
       <div className="crx-apply-col">
@@ -27,7 +33,7 @@ export default function ApplySection({ onBack, programTitle }: { onBack?: () => 
             with nothing and the form below stays the page's one big action. */}
         {onBack && (
           <button type="button" className="crx-apply-back" onClick={onBack}>
-            ← Back to programs
+            ← Back to {variant === 'offers' ? 'offers' : 'programs'}
           </button>
         )}
         {/* THE HEADLINE NAMES THE PROGRAM (Abhisht, 2026-08-24) — "Get your worker hired." moved

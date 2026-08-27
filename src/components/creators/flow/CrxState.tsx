@@ -50,11 +50,15 @@ export const MOCK_ACCOUNT = {
   initials: 'MF',
 }
 
-// VERSION A/B (2026-08-26, Abhisht): 'programs' is the current build; 'original' is Version B —
-// the v1 experience with no 'program' vocabulary anywhere (the term arrived late via engg and was
-// never agreed internally, so both versions ship for review side by side). The variant gates which
-// signed-in components render (CreatorsHome) and swaps the shared form's "Program Terms" strings.
-export type Variant = 'programs' | 'original'
+// VERSION A/B/C (2026-08-26/27, Abhisht): 'programs' is the current build; 'original' is Version
+// B — the v1 experience with no 'program' vocabulary anywhere (the term arrived late via engg and
+// was never agreed internally, so the versions ship for review side by side); 'offers' is Version
+// C — the hedge for engg's multi-offer concern (Gaurav, 2026-08-27: "we don't want to restrict
+// the product to only one available program at a time"): the CHOOSER screen survives, only the
+// noun goes, so the listing capability stays demonstrably intact without the word. The variant
+// gates which signed-in components render (CreatorsHome) and swaps the shared form's "Program
+// Terms" strings — everywhere except Version A reads plain "Terms".
+export type Variant = 'programs' | 'original' | 'offers'
 
 // The account menu's two nav rows (2026-08-24, Abhisht: show Dashboard AND Programs at once).
 // 'auto' = the journey's own default view (returningUser opens the dashboard, everything else the

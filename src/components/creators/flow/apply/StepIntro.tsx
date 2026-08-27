@@ -52,10 +52,10 @@ const INTRO_POINTS = [
 ]
 
 // Split out of INTRO_POINTS: the terms row is the one line that must not say "Program" in
-// Version B (2026-08-26 — variant B bans the word everywhere), so it reads the variant.
+// Versions B and C (both ban the word; only Version A keeps it), so it reads the variant.
 function TermsPoint() {
   const { variant } = useCrx()
-  return <>Applying means you accept the <u>{variant === 'original' ? 'Terms' : 'Program Terms'}</u>.</>
+  return <>Applying means you accept the <u>{variant === 'programs' ? 'Program Terms' : 'Terms'}</u>.</>
 }
 
 // No fields, so it takes no Props — a static screen, not a question. Its own step (designer,

@@ -7,7 +7,8 @@ import SignInDialog from './flow/SignInDialog'
 import PreviewToggler from './flow/PreviewToggler'
 import FullCapacityNotice from './flow/FullCapacityNotice'
 import ProgramsHome from './programs/ProgramsHome'
-import { ALL_ENROLLED, MIXED_APPLIED, MIXED_ENROLLED, OPEN_MULTI_ITEMS, PAST_ENROLLMENTS,
+import { ALL_ENROLLED, MIXED_APPLIED, MIXED_ENROLLED, OFFER_MIXED_APPLIED, OFFER_MIXED_ENROLLED,
+  OFFER_MULTI_ITEMS, OFFER_SINGLE, OPEN_MULTI_ITEMS, PAST_ENROLLMENTS, STARTER_OFFER,
   SINGLE_ENROLLMENT } from './programs/programData'
 import type { Journey, NavView } from './flow/CrxState'
 import ApplySectionV1 from './v1/ApplySectionV1'
@@ -82,7 +83,13 @@ function CreatorsSwitch() {
               Programs rows can override WHICH of the persona's two surfaces is up — see
               SignedInView. */}
           <main>
-            {variant === 'original' ? <SignedInViewV1 journey={journey} /> : <SignedInView journey={journey} nav={nav} />}
+            {variant === 'original' ? (
+              <SignedInViewV1 journey={journey} />
+            ) : variant === 'offers' ? (
+              <SignedInViewC journey={journey} />
+            ) : (
+              <SignedInView journey={journey} nav={nav} />
+            )}
           </main>
           <HomeFooter />
         </>
@@ -112,6 +119,34 @@ function SignedInViewV1({ journey }: { journey: Journey }) {
   }
   if (journey === 'fullCapacity') return <FullCapacityNotice />
   return <ApplySectionV1 />
+}
+
+// VERSION C's signed-in switch (2026-08-27, Abhisht, after Gaurav's "we don't want to restrict
+// the product to only one available program at a time"): the CHOOSER stays — same ProgramsHome,
+// same cards, same multi-offer states — only the noun goes. ProgramsHome reads the variant for
+// its four "program" strings, and the cards render the C mocks, whose titles carry no unit noun
+// at all. Returning personas reuse Version B's dashboard: the dashboard question was settled
+// there, and C exists to prove the LISTING survives the rename.
+function SignedInViewC({ journey }: { journey: Journey }) {
+  if (journey === 'returningUser' || journey === 'returningMulti' || journey === 'returningEmpty') {
+    return <DashboardV1 />
+  }
+  switch (journey) {
+    case 'fullCapacity':
+      return <FullCapacityNotice />
+    case 'applied':
+      return <ProgramsHome mode="pending" items={[{ program: STARTER_OFFER, relation: 'applied' }]} />
+    case 'noPrograms':
+      return <ProgramsHome mode="none" />
+    case 'multiPrograms':
+      return <ProgramsHome mode="open" items={OFFER_MULTI_ITEMS} />
+    case 'appliedMulti':
+      return <ProgramsHome mode="open" items={OFFER_MIXED_APPLIED} />
+    case 'enrolledMulti':
+      return <ProgramsHome mode="open" items={OFFER_MIXED_ENROLLED} />
+    default:
+      return <ProgramsHome mode="open" items={OFFER_SINGLE} />
+  }
 }
 
 // The signed-in switch: journey = persona, nav = which of the persona's surfaces is up.

@@ -230,3 +230,29 @@ export const MIXED_ENROLLED: ProgramItem[] = [
 // What the "Programs" menu row shows a fully-enrolled returning user (the dashboard persona):
 // everything active, nothing left to apply to.
 export const ALL_ENROLLED: ProgramItem[] = MOCK_ENROLLMENTS.map((e) => ({ program: e.program, relation: 'enrolled' as const }))
+
+/* ---- Version C mocks (2026-08-27, Abhisht: keep the chooser, lose the word) ----
+   The SAME program objects with titles that carry no unit noun at all — not "offer" either, so
+   ops stays free to pick the marketing name later. Everything else (descriptions, rewards,
+   conditions, caps) is untouched: the descriptions never said "program" in the first place, which
+   is itself the argument C exists to make. New ids so React keys and the enrolled/applied
+   relations can't collide with the A objects. */
+const retitled = (p: Program, id: string, title: string): Program => ({ ...p, id, title })
+export const STARTER_OFFER = retitled(STARTER_PROGRAM, 'program_1787558630_c0ffe401', 'Partner Starter')
+export const SPRING_OFFER = retitled(SPRING_PROGRAM, 'program_1786900000_c0ffe402', 'Spring Launch')
+export const WEEKEND_OFFER = retitled(WEEKEND_PROGRAM, 'program_1787200000_c0ffe403', 'Weekend Boost')
+
+export const OFFER_SINGLE: ProgramItem[] = [{ program: STARTER_OFFER, relation: 'open' }]
+export const OFFER_MULTI_ITEMS: ProgramItem[] = [STARTER_OFFER, SPRING_OFFER, WEEKEND_OFFER].map(
+  (program) => ({ program, relation: 'open' as const }),
+)
+export const OFFER_MIXED_APPLIED: ProgramItem[] = [
+  { program: STARTER_OFFER, relation: 'applied' },
+  { program: SPRING_OFFER, relation: 'open' },
+  { program: WEEKEND_OFFER, relation: 'open' },
+]
+export const OFFER_MIXED_ENROLLED: ProgramItem[] = [
+  { program: STARTER_OFFER, relation: 'enrolled' },
+  { program: SPRING_OFFER, relation: 'open' },
+  { program: WEEKEND_OFFER, relation: 'open' },
+]
