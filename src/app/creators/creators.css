@@ -1362,21 +1362,39 @@ body.crx-lock { overflow: hidden; }
 .crx .crx-modal-x:active { color: #fff; background: rgba(255, 255, 255, 0.1); }
 .crx .crx-modal-x:focus-visible { outline: 2px solid #a78bff; outline-offset: 2px; }
 
-/* THE STAT-CARD FAMILY WENT WITH StatCards, 2026-08-25 — .crx-stat, .crx-stat-body, .crx-stat-fig
-   (and its .money variant), .crx-stat-label and the 3-up .crx-stat-grid are all deleted. See
+/* THE STAT-CARD FAMILY WENT WITH StatCards, 2026-08-25 — deleted with that component (see
    EarningsPanel.tsx for why a row of three equal tiles was the wrong shape for one program fact and
-   two money ones.
-   A first version of this note claimed the family was kept because "the apply flow's own summary
-   tiles still use them". That was wrong, and grepping rather than asserting is what caught it: the
-   ONLY survivor with a live consumer is .crx-stat-icon, which CashOutModal borrows for its mint
-   success circle. It stays below, renamed in intent if not in name — it is a kit icon-circle now,
-   not a piece of a stat card. */
+   two money ones) — AND CAME BACK 2026-08-27 with a different consumer: Version B's StatCardsV1
+   (v1/StatCardsV1.tsx), the original no-"program" dashboard restored for the A/B review. Values are
+   the deleted rules verbatim. If Version B is ever retired, this family goes with it again;
+   .crx-stat-icon is the one member Version A also uses (CashOutModal's mint success circle). */
+.crx .crx-stat {
+  display: flex; align-items: center; gap: 1rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 16px; padding: 1.1rem 1.25rem;
+  text-align: left;
+}
 .crx .crx-stat-icon {
   flex-shrink: 0; display: flex; align-items: center; justify-content: center;
   width: 44px; height: 44px; border-radius: 50%;
   background: var(--sel-wash); color: #a78bff;
 }
 .crx .crx-stat-icon.money { background: rgba(52, 227, 154, 0.12); color: var(--mint); }
+.crx .crx-stat-fig {
+  display: block;
+  font-family: 'Space Grotesk', 'SF Pro Display', Inter, sans-serif;
+  font-weight: 700; font-size: 1.5rem; line-height: 1.2; color: #fff;
+  font-variant-numeric: tabular-nums;
+}
+.crx .crx-stat-fig.money { color: var(--mint); }   /* money figures in mint — the page's money colour */
+.crx .crx-stat-label { display: block; margin-top: 2px; font-size: 0.8rem; color: rgba(214, 224, 255, 0.55); }
+/* figure+label stack beside the stat icon — min-width 0 so long labels can ellipsize, not blow the card */
+.crx .crx-stat-body { min-width: 0; }
+.crx .crx-stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+@media (max-width: 720px) {
+  .crx .crx-stat-grid { grid-template-columns: 1fr; }            /* stat cards stack */
+}
 
 /* ---- dashboard: the earnings section (EarningsPanel.tsx) ----
    Balance leads because it is the screen's primary ACTION, not a statistic: the one figure with a

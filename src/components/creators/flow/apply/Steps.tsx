@@ -1,6 +1,7 @@
 'use client'
 
 import type { Dispatch, SetStateAction } from 'react'
+import { useCrx } from '../CrxState'
 import { ChoiceGroup, CheckField, INPUT, LABEL } from './controls'
 import { FieldError, withErr } from './forms'
 import type { Draft } from './spec'
@@ -66,8 +67,14 @@ export function StepOne(p: Props) {
         {/* CARDS, THREE-UP NOT ONE-PER-ROW (designer, 2026-08-13) — five options 2-up (mobile) / 3-up
             (desktop, ChoiceGroup's cols-3) so "Student" keeps the icon and the weight a "who you are"
             question deserves without costing a whole extra screen of height. */}
+        {/* EVERY QUESTION SAYS WHY IT'S ASKED (Ashish, 2026-08-27 sync: "her question is a drop
+            off point... it should be clear from your end why we need this information"). The
+            PayPal group's hint was already this pattern; the three questions he flagged as
+            unexplained (this one, YouTube, PC hours) now carry one each. One honest sentence,
+            not legalese. */}
         <ChoiceGroup
           label="What best describes you?"
+          hint="Helps us get to know applicants. It doesn't decide your application."
           name="apply-describes"
           variant="cards"
           columns={3}
@@ -86,8 +93,12 @@ export function StepTwo(p: Props) {
   const hasChannel = d.hasYouTube === 'Yes'
   return (
     <>
+      {/* The hint ties this back to the intro's own claim ("campaigns... on your YouTube
+          account"), so the question lands as a continuation rather than the cold "do you play
+          cricket" swerve Ashish called out (2026-08-27 sync). */}
       <ChoiceGroup
         label="Do you have a YouTube account?"
+        hint="The campaigns BlueAI completes run on your YouTube account."
         name="apply-has-youtube"
         variant="cards"
         value={d.hasYouTube}
@@ -155,6 +166,7 @@ export function StepThree(p: Props) {
           the effort below the paragraph they replaced and make applications comparable at review. */}
       <ChoiceGroup
         label="How many hours a day is your PC on and connected to the internet?"
+        hint="BlueAI can only work while your PC is on and online."
         name="apply-pc-hours"
         value={d.pcHours}
         options={PC_HOURS_OPTS}
@@ -196,6 +208,14 @@ export function StepThree(p: Props) {
 export function StepFour(p: Props) {
   const { d, setD, err } = p
   const pick = choiceSetter(p)
+  // Version B bans the word "program" (2026-08-26) — the long-run question is the one label on
+  // the question steps that says it. Found by the 2026-08-27 full-flow sweep; the first B pass
+  // only swept the three landing screens and this string sat on a later step.
+  const { variant } = useCrx()
+  const longRunLabel =
+    variant === 'original'
+      ? 'Running BlueAI only takes a few minutes a day, but this is a long-term commitment. Are you in for the long run?'
+      : 'Running BlueAI only takes a few minutes a day, but this is a long-term program. Are you in for the long run?'
   return (
     <>
       <ChoiceGroup
@@ -223,7 +243,7 @@ export function StepFour(p: Props) {
             "jobs" in the form — same cut as StepIntro's; "a few minutes a day" repeats the intro's
             own time claim rather than introducing a new noun. */}
         <ChoiceGroup
-          label="Running BlueAI only takes a few minutes a day, but this is a long-term program. Are you in for the long run?"
+          label={longRunLabel}
           name="apply-full-run"
           value={d.fullRun}
           options={FULL_RUN_OPTS}
@@ -269,10 +289,30 @@ export function StepFour(p: Props) {
           }}
           err={err.agree}
         >
-          By applying, I agree to the <u>Program Terms</u> and I&apos;m okay with BlueStacks reaching
-          out to me about the program.
+          <AgreeCopy />
         </CheckField>
       </div>
+    </>
+  )
+}
+
+// The closing agreement's copy reads the variant: Version B (2026-08-26) bans the word "program"
+// everywhere, so its terms link says just "Terms" and the outreach clause names BlueAI instead of
+// "the program". Version A keeps the original wording.
+function AgreeCopy() {
+  const { variant } = useCrx()
+  if (variant === 'original') {
+    return (
+      <>
+        By applying, I agree to the <u>Terms</u> and I&apos;m okay with BlueStacks reaching out to me
+        about BlueAI.
+      </>
+    )
+  }
+  return (
+    <>
+      By applying, I agree to the <u>Program Terms</u> and I&apos;m okay with BlueStacks reaching out
+      to me about the program.
     </>
   )
 }

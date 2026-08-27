@@ -1,4 +1,7 @@
+'use client'
+
 import { CadenceIcon, ClockIcon, DocumentIcon, MonitorIcon, WalletIcon } from './introIcons'
+import { useCrx } from '../CrxState'
 
 // STEP 0 — the untitled intro screen ahead of step 1 (title cut per the PM: the list is
 // self-explanatory). Ported from creator-brand/creators/apply/StepIntro.tsx; the original five
@@ -26,7 +29,11 @@ const INTRO_POINTS = [
   },
   {
     icon: <ClockIcon />,
-    body: <>BlueAI completes campaigns and tasks from agencies on your YouTube account. Each takes a few minutes.</>,
+    // "from BRANDS", not agencies (Ashish, 2026-08-27 sync: an applicant knows what a brand is;
+    // "agencies" is our supply-side vocabulary leaking through). This row is also the funnel's
+    // one YouTube seed: it names the account BEFORE step 2 asks about it, which is what keeps
+    // that question from arriving cold (his "second screen cannot be disconnected" rule).
+    body: <>BlueAI completes campaigns and tasks from brands on your YouTube account. Each takes a few minutes.</>,
   },
   {
     icon: <CadenceIcon />,
@@ -36,11 +43,14 @@ const INTRO_POINTS = [
     icon: <WalletIcon />,
     body: <>You earn <b>$30 every month</b>, paid via PayPal.</>,
   },
-  {
-    icon: <DocumentIcon />,
-    body: <>Applying means you accept the <u>Program Terms</u>.</>,
-  },
 ]
+
+// Split out of INTRO_POINTS: the terms row is the one line that must not say "Program" in
+// Version B (2026-08-26 — variant B bans the word everywhere), so it reads the variant.
+function TermsPoint() {
+  const { variant } = useCrx()
+  return <>Applying means you accept the <u>{variant === 'original' ? 'Terms' : 'Program Terms'}</u>.</>
+}
 
 // No fields, so it takes no Props — a static screen, not a question. Its own step (designer,
 // 2026-08-13) so the biggest informational block never competes with real questions for the same
@@ -66,6 +76,10 @@ export default function StepIntro() {
           <span className="crx-intro-body">{point.body}</span>
         </div>
       ))}
+      <div className="crx-intro-row">
+        <span className="crx-intro-ic"><DocumentIcon /></span>
+        <span className="crx-intro-body"><TermsPoint /></span>
+      </div>
     </div>
   )
 }

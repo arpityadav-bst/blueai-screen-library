@@ -66,7 +66,7 @@ function Gear() {
 }
 
 export default function PreviewToggler() {
-  const { journey, setJourney } = useCrx()
+  const { journey, setJourney, variant, setVariant } = useCrx()
   // MINIMIZED by default (the frozen tree's designer call, 2026-08-11): this governs one optional
   // branch, and the page is reviewed as a page. The FAB keeps it one click away.
   const [openPanel, setOpenPanel] = useState(false)
@@ -90,6 +90,32 @@ export default function PreviewToggler() {
           <path d="M6 9.5l6 6 6-6" />
         </svg>
       </button>
+
+      {/* VERSION FIRST (2026-08-26, Abhisht): A is the programs build; B is the original v1
+          experience with no "program" vocabulary anywhere — the term arrived via engg without
+          internal agreement, so reviewers need both. In B the journey rows below collapse onto
+          v1's three destinations (application / dashboard / full-capacity). */}
+      <div className="crx-toggler-track" role="radiogroup" aria-label="Version">
+        <span className="crx-toggler-sect">Version</span>
+        {(
+          [
+            { value: 'programs', label: 'A · Programs' },
+            { value: 'original', label: 'B · Original, no programs' },
+          ] as const
+        ).map(({ value, label }) => (
+          <button
+            key={value}
+            type="button"
+            role="radio"
+            aria-checked={variant === value}
+            onClick={() => setVariant(value)}
+            className={variant === value ? 'crx-toggler-row on' : 'crx-toggler-row'}
+          >
+            <span className="crx-toggler-dot" />
+            {label}
+          </button>
+        ))}
+      </div>
 
       {/* Each row is a radio: dot indicator + full-width hit target, stacked (see file comment).
           The kit paints the chosen dot via .on's ::after — markup only supplies the ring. */}

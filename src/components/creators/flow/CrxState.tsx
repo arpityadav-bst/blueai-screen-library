@@ -50,6 +50,12 @@ export const MOCK_ACCOUNT = {
   initials: 'MF',
 }
 
+// VERSION A/B (2026-08-26, Abhisht): 'programs' is the current build; 'original' is Version B —
+// the v1 experience with no 'program' vocabulary anywhere (the term arrived late via engg and was
+// never agreed internally, so both versions ship for review side by side). The variant gates which
+// signed-in components render (CreatorsHome) and swaps the shared form's "Program Terms" strings.
+export type Variant = 'programs' | 'original'
+
 // The account menu's two nav rows (2026-08-24, Abhisht: show Dashboard AND Programs at once).
 // 'auto' = the journey's own default view (returningUser opens the dashboard, everything else the
 // programs home); a menu click overrides it for the session. In-memory only: it is navigation, not
@@ -69,6 +75,9 @@ type Ctx = {
   /** Menu-driven view override — see the NavView note above. */
   nav: NavView
   setNav: (v: NavView) => void
+  /** Which experience renders — see the Variant note above. */
+  variant: Variant
+  setVariant: (v: Variant) => void
 }
 
 const CrxCtx = createContext<Ctx | null>(null)
@@ -85,6 +94,8 @@ export default function CrxProvider({ children }: { children: ReactNode }) {
   const [signedIn, setSignedIn] = useState(false)
   const [journey, setJourneyState] = useState<Journey>('newUser')
   const [nav, setNav] = useState<NavView>('auto')
+  // In-memory like nav — a review switch, and reload returning to Version A is the honest default.
+  const [variant, setVariant] = useState<Variant>('programs')
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
@@ -128,8 +139,8 @@ export default function CrxProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const value = useMemo(
-    () => ({ signedIn, ready, signIn, signOut, account: MOCK_ACCOUNT, journey, setJourney, nav, setNav }),
-    [signedIn, ready, signIn, signOut, journey, setJourney, nav],
+    () => ({ signedIn, ready, signIn, signOut, account: MOCK_ACCOUNT, journey, setJourney, nav, setNav, variant, setVariant }),
+    [signedIn, ready, signIn, signOut, journey, setJourney, nav, variant],
   )
 
   return <CrxCtx.Provider value={value}>{children}</CrxCtx.Provider>

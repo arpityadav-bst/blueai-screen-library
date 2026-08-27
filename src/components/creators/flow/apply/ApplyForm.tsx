@@ -22,7 +22,7 @@ import CtaBand from '../../CtaBand'
 const LAST = STEPS.length - 1
 
 export default function ApplyForm() {
-  const { account } = useCrx()
+  const { account, variant } = useCrx()
   const [step, setStep] = useState(0)
   // The one pre-filled answer, and it comes from the signed-in account rather than from INITIAL —
   // spec.ts stays a pure description of an empty application, with no knowledge of who is filling it.
@@ -39,6 +39,15 @@ export default function ApplyForm() {
   const visible: Errors = {}
   for (const f of fields) {
     if ((touched[f] || forced[step]) && all[f]) visible[f] = all[f]
+  }
+  // Version B bans the word "program" everywhere (2026-08-26); spec.ts stays a pure description
+  // with the original wording, so the one message that names the Program Terms is rewritten at
+  // the display edge instead of threading the variant into validate().
+  if (variant === 'original') {
+    for (const k of Object.keys(visible)) {
+      const msg = visible[k]
+      if (msg) visible[k] = msg.replace('Program Terms', 'Terms')
+    }
   }
   const touch = (k: string) => setTouched((p) => ({ ...p, [k]: true }))
   const stepProps = { d, setD, err: visible, touch }
@@ -82,9 +91,14 @@ export default function ApplyForm() {
               <path d="M4.5 12.5l5 5L19.5 6.5" />
             </svg>
           </span>
+            {/* WAITLIST, SAID OUT LOUD (Ashish, 2026-08-27 PM/design sync): the launch is
+                waitlist-only, and a confirmation that only says "we review" reads as "expect an
+                answer tomorrow". Naming the waitlist and that review takes time is what sets the
+                expectation this screen exists to set. */}
             <h2>Thanks for applying.</h2>
             <p>
-              We review every application and will email <b>{d.email}</b> when your access is approved.
+              You&apos;re on the waitlist. We review every application in detail, so this can take
+              some time. We&apos;ll email <b>{d.email}</b> the moment your access is approved.
             </p>
           </div>
         </CtaBand>

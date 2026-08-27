@@ -10,6 +10,8 @@ import ProgramsHome from './programs/ProgramsHome'
 import { ALL_ENROLLED, MIXED_APPLIED, MIXED_ENROLLED, OPEN_MULTI_ITEMS, PAST_ENROLLMENTS,
   SINGLE_ENROLLMENT } from './programs/programData'
 import type { Journey, NavView } from './flow/CrxState'
+import ApplySectionV1 from './v1/ApplySectionV1'
+import DashboardV1 from './v1/DashboardV1'
 import Dashboard from './dashboard/Dashboard'
 import HomeHeader from './HomeHeader'
 import HomepageView from './HomepageView'
@@ -30,7 +32,7 @@ export default function CreatorsHome() {
 }
 
 function CreatorsSwitch() {
-  const { signedIn, journey, nav } = useCrx()
+  const { signedIn, journey, nav, variant } = useCrx()
   const rootRef = useRef<HTMLDivElement>(null)
 
   // The sign-in dialog is owned here because three CTAs across three files open it: the header's
@@ -80,7 +82,7 @@ function CreatorsSwitch() {
               Programs rows can override WHICH of the persona's two surfaces is up — see
               SignedInView. */}
           <main>
-            <SignedInView journey={journey} nav={nav} />
+            {variant === 'original' ? <SignedInViewV1 journey={journey} /> : <SignedInView journey={journey} nav={nav} />}
           </main>
           <HomeFooter />
         </>
@@ -96,6 +98,20 @@ function CreatorsSwitch() {
       </Modal>
     </div>
   )
+}
+
+// VERSION B's signed-in switch (2026-08-26, Abhisht: a variant with no "program" vocabulary —
+// the term arrived late via engg and was never agreed internally, so both versions stay
+// reviewable side by side). The v1 model has exactly three signed-in destinations: the
+// application, the dashboard, the full-capacity notice. Journeys collapse onto them — every
+// returning persona is the v1 dashboard, full capacity keeps its notice, everything else is a
+// new applicant meeting the form.
+function SignedInViewV1({ journey }: { journey: Journey }) {
+  if (journey === 'returningUser' || journey === 'returningMulti' || journey === 'returningEmpty') {
+    return <DashboardV1 />
+  }
+  if (journey === 'fullCapacity') return <FullCapacityNotice />
+  return <ApplySectionV1 />
 }
 
 // The signed-in switch: journey = persona, nav = which of the persona's surfaces is up.

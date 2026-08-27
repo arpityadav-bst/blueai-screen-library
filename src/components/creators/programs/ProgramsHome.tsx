@@ -158,7 +158,10 @@ function PendingView({ program }: { program: Program }) {
         <br />
         <span className="grad">Now we review.</span>
       </h1>
-      <p className="sub">We review applications in batches and email you the moment your spot opens.</p>
+      {/* "Waitlist", said in so many words (Ashish, 2026-08-27 sync): review copy alone reads as
+          "expect an answer tomorrow". Naming the waitlist and that review takes time is the whole
+          job of this line; the card's mail row below already carries the email promise. */}
+      <p className="sub">You&apos;re on the waitlist. We review every application in detail, so this can take some time.</p>
 
       <ProgramCard program={program} chip={<span className="crx-chip iris">In review</span>}>
         <div className="crx-prog-facts">
