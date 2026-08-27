@@ -94,7 +94,8 @@ export default function CrxProvider({ children }: { children: ReactNode }) {
   const [signedIn, setSignedIn] = useState(false)
   const [journey, setJourneyState] = useState<Journey>('newUser')
   const [nav, setNav] = useState<NavView>('auto')
-  // In-memory like nav — a review switch, and reload returning to Version A is the honest default.
+  // In-memory like nav — a review switch, and reload returning to Version A is the honest default
+  // UNLESS the URL asks for B (see the ?v= block in the mount effect below).
   const [variant, setVariant] = useState<Variant>('programs')
   const [ready, setReady] = useState(false)
 
@@ -106,6 +107,22 @@ export default function CrxProvider({ children }: { children: ReactNode }) {
     } catch {
       // Private-mode Safari throws on sessionStorage access. Staying signed out is the correct
       // fallback, and it must not take the page down with it.
+    }
+    // ?v= MAKES VERSION B A LINK (Appy, 2026-08-27: "make sure that we have a path to see the
+    // default website, the brand website, and this new variant"). Until now B existed only behind
+    // the gear — reachable, but not something you can send to anyone, which matters because these
+    // surfaces get reviewed by people who are handed a URL and nothing else.
+    // ?v=b (or ?v=original) opens on B, ?v=a (or ?v=programs) on A; anything else is ignored rather
+    // than treated as B, so a stray query cannot silently change which build a reviewer is judging.
+    // It SEEDS the initial value only — the toggler still overrides it in-session, and a reload with
+    // no query goes back to A. Read outside the try above: URLSearchParams does not throw where
+    // sessionStorage does, and a storage failure must not cost the URL its meaning.
+    try {
+      const v = new URLSearchParams(window.location.search).get('v')?.toLowerCase()
+      if (v === 'b' || v === 'original') setVariant('original')
+      else if (v === 'a' || v === 'programs') setVariant('programs')
+    } catch {
+      // Nothing to fall back to: the default state IS the fallback.
     }
     setReady(true)
   }, [])

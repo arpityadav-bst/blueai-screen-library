@@ -54,6 +54,17 @@ const ACTIVE = [
     name: 'Partner website',
     desc: 'The full partner side: an AI-worker homepage ("The AI You Own"), sign in, a 5-step application, a returning-partner dashboard with cash-out, and logout — all in its own dark, futuristic design language. Design-only, same convention as every other page here.',
   },
+  {
+    // VERSION B GETS ITS OWN CARD (Appy, 2026-08-27) — PR #4 put the A/B switch in the preview
+    // toggler, which makes B reachable but not sendable: a reviewer handed the Partner website link
+    // sees A and has no way to know a second version exists. The variant now reads ?v= (CrxState),
+    // so it has a URL, and a URL belongs in the index next to the thing it is a version of.
+    // SAME ROUTE, different query, and the card says so — this is one build with two vocabularies,
+    // not two sites, and an index that implied otherwise would misdescribe the work.
+    href: '/creators?v=b',
+    name: 'Partner website — Version B',
+    desc: 'The same partner site with the word "program" gone: sign in leads to the application, returning partners get a dashboard whose unit is the month (Your progress, Active/Past, a days-run bar) instead of a program. Identical structure to Version A on purpose — the A/B flip changes vocabulary, never layout. Switch either way live from the gear, bottom-left.',
+  },
 ]
 
 // MAINTAINED — not where new work happens, but updated from time to time as the real product
