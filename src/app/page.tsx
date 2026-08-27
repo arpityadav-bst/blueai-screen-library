@@ -51,19 +51,14 @@ const ACTIVE = [
     // For Brands axis keep the old word: that site is frozen, and its two-audience split is its
     // proposition rather than a label. The two surfaces disagreeing is a real state of the product,
     // not a miss.
+    // TWO VERSIONS, ONE CARD (Appy, 2026-08-27). Version B briefly had its own row here and that
+    // was a duplicate answer to a question the ?v= URL had already answered: A and B are one route
+    // with two vocabularies, so a second card implied a second site, and left two descriptions to
+    // keep in sync. The switch lives in the page's own toggler, which is better placed than an
+    // index row anyway — it is in context, on the surface being reviewed. The index's job is to
+    // record that B exists and how to link to it, which is one sentence.
     name: 'Partner website',
-    desc: 'The full partner side: an AI-worker homepage ("The AI You Own"), sign in, a 5-step application, a returning-partner dashboard with cash-out, and logout — all in its own dark, futuristic design language. Design-only, same convention as every other page here.',
-  },
-  {
-    // VERSION B GETS ITS OWN CARD (Appy, 2026-08-27) — PR #4 put the A/B switch in the preview
-    // toggler, which makes B reachable but not sendable: a reviewer handed the Partner website link
-    // sees A and has no way to know a second version exists. The variant now reads ?v= (CrxState),
-    // so it has a URL, and a URL belongs in the index next to the thing it is a version of.
-    // SAME ROUTE, different query, and the card says so — this is one build with two vocabularies,
-    // not two sites, and an index that implied otherwise would misdescribe the work.
-    href: '/creators?v=b',
-    name: 'Partner website — Version B',
-    desc: 'The same partner site with the word "program" gone: sign in leads to the application, returning partners get a dashboard whose unit is the month (Your progress, Active/Past, a days-run bar) instead of a program. Identical structure to Version A on purpose — the A/B flip changes vocabulary, never layout. Switch either way live from the gear, bottom-left.',
+    desc: 'The full partner side: an AI-worker homepage ("The AI You Own"), sign in, a 5-step application, a returning-partner dashboard with cash-out, and logout — all in its own dark, futuristic design language. Two versions under review: this is A, and ?v=b opens Version B, the same site with the word "program" gone (the month is the unit) — flip either way from the gear, bottom-left. Design-only, same convention as every other page here.',
   },
 ]
 
