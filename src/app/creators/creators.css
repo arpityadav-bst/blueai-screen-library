@@ -1364,37 +1364,17 @@ body.crx-lock { overflow: hidden; }
 
 /* THE STAT-CARD FAMILY WENT WITH StatCards, 2026-08-25 — deleted with that component (see
    EarningsPanel.tsx for why a row of three equal tiles was the wrong shape for one program fact and
-   two money ones) — AND CAME BACK 2026-08-27 with a different consumer: Version B's StatCardsV1
-   (v1/StatCardsV1.tsx), the original no-"program" dashboard restored for the A/B review. Values are
-   the deleted rules verbatim. If Version B is ever retired, this family goes with it again;
-   .crx-stat-icon is the one member Version A also uses (CashOutModal's mint success circle). */
-.crx .crx-stat {
-  display: flex; align-items: center; gap: 1rem;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  border-radius: 16px; padding: 1.1rem 1.25rem;
-  text-align: left;
-}
+   two money ones). It came back for one morning on 2026-08-27 as Version B's StatCardsV1, then went
+   again the same day when B's dashboard adopted Version A's shell (DashboardV1) — B now differs in
+   vocabulary, never in structure, so no surface renders stat boxes any more.
+   The ONLY survivor with a live consumer is .crx-stat-icon, which CashOutModal borrows for its mint
+   success circle. It stays below, a kit icon-circle now, not a piece of a stat card. */
 .crx .crx-stat-icon {
   flex-shrink: 0; display: flex; align-items: center; justify-content: center;
   width: 44px; height: 44px; border-radius: 50%;
   background: var(--sel-wash); color: #a78bff;
 }
 .crx .crx-stat-icon.money { background: rgba(52, 227, 154, 0.12); color: var(--mint); }
-.crx .crx-stat-fig {
-  display: block;
-  font-family: 'Space Grotesk', 'SF Pro Display', Inter, sans-serif;
-  font-weight: 700; font-size: 1.5rem; line-height: 1.2; color: #fff;
-  font-variant-numeric: tabular-nums;
-}
-.crx .crx-stat-fig.money { color: var(--mint); }   /* money figures in mint — the page's money colour */
-.crx .crx-stat-label { display: block; margin-top: 2px; font-size: 0.8rem; color: rgba(214, 224, 255, 0.55); }
-/* figure+label stack beside the stat icon — min-width 0 so long labels can ellipsize, not blow the card */
-.crx .crx-stat-body { min-width: 0; }
-.crx .crx-stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
-@media (max-width: 720px) {
-  .crx .crx-stat-grid { grid-template-columns: 1fr; }            /* stat cards stack */
-}
 
 /* ---- dashboard: the earnings section (EarningsPanel.tsx) ----
    Balance leads because it is the screen's primary ACTION, not a statistic: the one figure with a
@@ -1479,6 +1459,12 @@ body.crx-lock { overflow: hidden; }
 .crx .crx-row .crx-row-label { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 /* amounts neutral ink, NOT mint — a withdrawal is the creator's own money moving, not a gain */
 .crx .crx-row .crx-row-amt { flex-shrink: 0; font-weight: 650; color: var(--ink-inverse); font-variant-numeric: tabular-nums; }
+/* Ledger-amount variants for Version B's past-months rows (ProgressBandV1, 2026-08-27). The base
+   neutral ink is Transactions' own rule (withdrawals are neither gain nor loss); a qualifying
+   month is money ARRIVING — the one thing mint is reserved for — and a $0 month is a record, not
+   a warning, so it dims rather than reddens. */
+.crx .crx-row .crx-row-amt.in { color: var(--mint); }
+.crx .crx-row .crx-row-amt.dim { color: rgba(214, 224, 255, 0.45); font-weight: 500; }
 
 /* ---- preview toggler: deliberately NOT product-looking (PreviewToggler's constraint) ----
    Flat, small, 11–12px, no gradient anywhere — a reviewer must never mistake it for a page CTA.

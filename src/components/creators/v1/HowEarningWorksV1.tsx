@@ -1,39 +1,25 @@
 // VERSION B (2026-08-26, Abhisht: a variant with no 'program' vocabulary anywhere — the term
-// arrived late via engg and was never agreed internally). This is the ORIGINAL v1 explainer,
-// restored verbatim from origin/main: the monthly Moneymaker copy, which never says 'program'.
-// Version A's generic program copy lives in ../dashboard/HowEarningWorks.tsx untouched.
+// arrived late via engg and was never agreed internally). The ORIGINAL v1 explainer's monthly
+// Moneymaker copy, which never says 'program'; Version A's generic program copy lives in
+// ../dashboard/HowEarningWorks.tsx untouched.
+//
+// RESHAPED 2026-08-27 to Version A's section anatomy when B's dashboard adopted A's shell
+// (DashboardV1): the section title is hoisted to the page level, so both halves here open on the
+// same .crx-subhead labels A's panel uses ("Steps" / "Payout rules") — the two dashboards must
+// differ in vocabulary, never in structure. Split/stacking reasoning inherited from A's file.
 import { EARNING } from '../dashboard/mockData'
 
-// Ported from the frozen creator-brand tree (creator-brand/creators/dashboard/HowEarningWorks.tsx).
-// Copy verbatim; skin swapped to the /creators kit. Steps ride the kit's .crx-intro-row (icon-circle
-// + sentence — the same row anatomy the light original's numbered dots had); rules ride .crx-rows,
-// the kit's divided list.
-//
-// The static explainer band: how the money works (three steps) and the payout rules, one card, not
-// two. All of this is prose that never changes.
-//
-// VERTICAL LISTS IN A FULL-WIDTH BAND (2026-08-18, two rounds of direct feedback). Round one killed
-// the tall card sitting BESIDE Transactions (a growing list and fixed prose can never agree on a
-// height); round two killed the horizontal replacement, steps as three columns and rules as a
-// dot-separated strip ("not a fan of horizontal lists, can u make them vertical"). So: the band
-// stays full width below Transactions, and inside it the steps and the rules are BOTH vertical
-// lists, sharing the width as two halves (.crx-earn-split, stacking at the page's 880 breakpoint).
-// That works here for the same reason the Transactions pairing failed: both halves are fixed prose
-// of similar length, so neither leaves a dead zone under the other.
-//
-// COPY DECISIONS (2026-08-18, with the PM):
-// - "Moneymaker" is written as a plain feature name with an everyday verb ("turn on"), never "the
-//   Moneymaker skill": "skill" is BlueAI's internal vocabulary and this page's readers haven't
-//   installed the product yet.
-// - "automatically" is BANNED from this copy (PM, 2026-08-18: "we cant say automatically"), which is
-//   also why the marketing step 4's phrasing is not quoted verbatim here any more. Do not sneak a
-//   synonym in ("on its own", "hands-free", "while you sleep") — the directive is about the claim,
-//   not the word.
-// - Step 3 names the real numbers (20 days, $30) instead of "qualify for a payment": the card exists
-//   to answer "how is my payment calculated", and an answer without the numbers isn't one.
-// - The $30 is the PM's own figure from the marketing page's step 4 (HowItWorks.tsx).
+// COPY DECISIONS (2026-08-18, with the PM — still binding):
+// - "Moneymaker" is a plain feature name with an everyday verb ("turn on"), never "the Moneymaker
+//   skill": "skill" is internal vocabulary.
+// - "automatically" is BANNED (PM: "we cant say automatically"), synonyms included.
+// - Step 3 names the real numbers (20 days, $30): the card exists to answer "how is my payment
+//   calculated", and an answer without the numbers isn't one.
+// - "It runs TASKS on your account" (Abhisht, 2026-08-27): no counterparty noun — who the work
+//   comes from varies (brands, agencies, other third parties), so the copy names nobody — and
+//   "tasks" is the home page's own word for the work, kept identical on purpose.
 const STEPS = [
-  'Open BlueAI and turn on Moneymaker. It runs brand campaigns on your account.',
+  'Open BlueAI and turn on Moneymaker. It runs tasks on your account.',
   `Do this on any ${EARNING.daysRequired} days in a month.`,
   `Every month you hit ${EARNING.daysRequired} days, $${EARNING.monthlyPayment} is added to your earnings.`,
 ]
@@ -48,7 +34,10 @@ export default function HowEarningWorksV1() {
     <div className="crx-panel">
       <div className="crx-earn-split">
         <div className="crx-earn-half">
-          <h2 className="crx-panel-title">How earning works</h2>
+          {/* "Steps" names the FORM of the content, not its topic — Version A's reasoning: the
+              topic is already the hoisted section heading, and repeating it 12px lower is what
+              hoisting was meant to stop. */}
+          <h3 className="crx-subhead">Steps</h3>
           <ol className="crx-earn-steps">
             {STEPS.map((step, i) => (
               <li key={i} className="crx-intro-row">
@@ -62,7 +51,7 @@ export default function HowEarningWorksV1() {
         </div>
 
         <div className="crx-earn-half">
-          <h3 className="crx-panel-title">Payout rules</h3>
+          <h3 className="crx-subhead">Payout rules</h3>
           <ul className="crx-rows crx-earn-rules">
             {RULES.map((rule) => (
               <li key={rule} className="crx-row">
