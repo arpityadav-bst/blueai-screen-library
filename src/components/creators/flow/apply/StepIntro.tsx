@@ -1,7 +1,6 @@
 'use client'
 
 import { CadenceIcon, ClockIcon, DocumentIcon, MonitorIcon, WalletIcon } from './introIcons'
-import { useCrx } from '../CrxState'
 
 // STEP 0 — the untitled intro screen ahead of step 1 (title cut per the PM: the list is
 // self-explanatory). Ported from creator-brand/creators/apply/StepIntro.tsx; the original five
@@ -45,11 +44,21 @@ const INTRO_POINTS = [
   },
 ]
 
-// Split out of INTRO_POINTS: the terms row is the one line that must not say "Program" in
-// Versions B and C (both ban the word; only Version A keeps it), so it reads the variant.
+// Split out of INTRO_POINTS when the no-"program" variants banned the word (2026-08-26); since
+// 2026-08-31 every variant says the same thing — "Terms of Use" names the document that actually
+// exists (the Program Terms aren't written yet; relabel when finance delivers them) and carries no
+// banned word, so the variant read is gone. A REAL LINK now that /creators/terms exists — new tab
+// on purpose: nobody loses a half-filled application to reading the terms.
 function TermsPoint() {
-  const { variant } = useCrx()
-  return <>Applying means you accept the <u>{variant === 'programs' ? 'Program Terms' : 'Terms'}</u>.</>
+  return (
+    <>
+      Applying means you accept the{' '}
+      <a className="crx-legal-link" href="/creators/terms#terms" target="_blank" rel="noopener">
+        Terms of Use
+      </a>
+      .
+    </>
+  )
 }
 
 // No fields, so it takes no Props — a static screen, not a question. Its own step (designer,

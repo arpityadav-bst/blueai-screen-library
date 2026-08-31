@@ -190,13 +190,16 @@ export default function SignInDialog({ onClose }: { onClose: () => void }) {
             ))}
           </div>
 
-          {/* Underlined and white like the real page, but NOT anchors — they have no destination in
-              this replica, and an <a> with no href is a keyboard trap wearing a link's clothes. */}
+          {/* REAL ANCHORS since 2026-08-31 — the legal page exists now (/creators/terms, tabbed),
+              so the underlines stopped being costume. New tab on purpose: this dialog sits over a
+              page the reader was in the middle of. */}
           {/* Same colour as "Or sign in with" — both are supporting text and should read as one tier;
               full white put a boilerplate consent line at the heading's own weight. */}
           <p className="text-center text-[12px] font-normal leading-[18px]" style={{ color: 'rgba(255,255,255,0.4)' }}>
-            By signing up, you agree to the <u>Terms of Use</u> and <u>Privacy Policy</u>, including{' '}
-            <u>Cookie Use</u>.
+            By signing up, you agree to the{' '}
+            <a className="underline" href="/creators/terms#terms" target="_blank" rel="noopener">Terms of Use</a> and{' '}
+            <a className="underline" href="/creators/terms#privacy" target="_blank" rel="noopener">Privacy Policy</a>, including{' '}
+            <a className="underline" href="/creators/terms#cookies" target="_blank" rel="noopener">Cookie Use</a>.
           </p>
           <p className="text-center text-[10.5px] leading-snug text-white/60">
             Prototype. No account is created and nothing is sent.

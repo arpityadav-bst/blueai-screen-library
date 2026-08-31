@@ -297,23 +297,21 @@ export function StepFour(p: Props) {
   )
 }
 
-// The closing agreement's copy reads the variant: Versions B and C (2026-08-26/27) ban the word
-// "program", so their terms link says just "Terms" and the outreach clause names BlueAI instead
-// of "the program". Only Version A keeps the original wording.
+// The terms name is one label for every variant since 2026-08-31 — "Terms of Use" is the document
+// that actually exists (/creators/terms; relabel to Program Terms when finance delivers those) and
+// carries no word the B/C variants ban. The outreach clause still reads the variant: only Version
+// A may say "the program". The link opens a NEW TAB — this checkbox sits on the last step of an
+// eleven-question form, and in-place navigation here would cost the reader all of it.
 function AgreeCopy() {
   const { variant } = useCrx()
-  if (variant === 'programs') {
-    return (
-      <>
-        By applying, I agree to the <u>Program Terms</u> and I&apos;m okay with BlueStacks reaching
-        out to me about the program.
-      </>
-    )
-  }
   return (
     <>
-      By applying, I agree to the <u>Terms</u> and I&apos;m okay with BlueStacks reaching out to me
-      about BlueAI.
+      By applying, I agree to the{' '}
+      <a className="crx-legal-link" href="/creators/terms#terms" target="_blank" rel="noopener">
+        Terms of Use
+      </a>{' '}
+      and I&apos;m okay with BlueStacks reaching out to me about{' '}
+      {variant === 'programs' ? 'the program' : 'BlueAI'}.
     </>
   )
 }
