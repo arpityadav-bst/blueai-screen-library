@@ -6,6 +6,20 @@ import { Wordmark } from '@/components/Wordmark'
 import HomeFooter from '@/components/creators/HomeFooter'
 import { LEGAL_DOCS } from './legal-content'
 
+// The cookie chart's rows — from the 2026-08-31 live audit of the test site (GTM-MV8WJNCQ /
+// gtag G-0G5JNESDT4; no _gid, no _gcl_au, nothing else third-party). Kept HERE rather than in
+// legal-content.ts because that file is regenerated from legal's documents verbatim, and the
+// chart is the one part of the Cookie Policy that awaits our data, not theirs. Durations are
+// current defaults; rows marked "to be confirmed" await the signed-in audit / prod GTM check
+// (Gaurav Mehta owns the final chart).
+const COOKIE_ROWS: { cookie: string; domain: string; expires: string; purpose: string }[] = [
+  { cookie: 'now.gg sign-in session', domain: 'now.gg', expires: 'Session (to be confirmed)', purpose: 'Essential: keeps you signed in.' },
+  { cookie: 'Cookie consent record', domain: 'bluestacks.ai', expires: '6 months', purpose: 'Essential: remembers your cookie choices.' },
+  { cookie: '_ga', domain: 'bluestacks.ai', expires: '13 months', purpose: 'Analytical: Google Analytics visitor identifier.' },
+  { cookie: '_ga_*', domain: 'bluestacks.ai', expires: '13 months', purpose: 'Analytical: Google Analytics usage measurement.' },
+  { cookie: 'bsai_utm_captured, bsai_first_landing (browser session storage)', domain: 'bluestacks.ai', expires: 'Until the tab closes', purpose: 'Functionality: remembers how you arrived at the site.' },
+]
+
 // /creators/terms — the legal page (2026-08-31, Abhisht: "one line footer, redirected to the
 // layouted page as bluestacks has"). The bluestacks.com pattern: ONE page, the documents as tabs.
 // Three tabs, not bluestacks.com's four: BlueAI has no EU Privacy or Copyright Dispute documents,
@@ -89,10 +103,14 @@ export default function TermsPage() {
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        {/* Placeholder until the cookie inventory lands (Gaurav Mehta) */}
-                        <td colSpan={4}>Cookie details will be listed here.</td>
-                      </tr>
+                      {COOKIE_ROWS.map((r) => (
+                        <tr key={r.cookie}>
+                          <td>{r.cookie}</td>
+                          <td>{r.domain}</td>
+                          <td>{r.expires}</td>
+                          <td>{r.purpose}</td>
+                        </tr>
+                      ))}
                     </tbody>
                   </table>
                 </div>
