@@ -2248,13 +2248,19 @@ body.crx-lock { overflow: hidden; }
    quiet headings, generous line height. */
 .crx .crx-legal-head { max-width: var(--content); margin: 0 auto; padding: 1.4rem 1.5rem 0; }
 .crx .crx-legal-logo { display: inline-flex; align-items: center; gap: 0.6rem; text-decoration: none; }
-.crx .crx-legal { max-width: 760px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
+/* text-align:left is load-bearing: this is a <main>, and .crx main centers everything for the
+   hero — centered legal prose is what the first render shipped (2026-08-31 screenshot). Title
+   and tabs re-center themselves below; the documents read left like documents. */
+.crx .crx-legal { max-width: 760px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; text-align: left; }
 .crx .crx-legal-title {
   font-family: 'Space Grotesk', 'SF Pro Display', Inter, sans-serif;
   font-weight: 700; font-size: 1.9rem; letter-spacing: -0.02em; color: #fff;
   margin: 0 0 1.4rem;
 }
-.crx .crx-legal-tabs { margin-bottom: 2rem; }
+.crx .crx-legal-title { text-align: center; }
+/* full-width flex row (the kit's .crx-progtabs is inline-flex, which shrinks and sits wherever
+   the text flow puts it) so the pills center under the title */
+.crx .crx-legal-tabs { display: flex; margin-bottom: 2rem; justify-content: center; }
 .crx .crx-legal-doc h2 {
   font-family: 'Space Grotesk', 'SF Pro Display', Inter, sans-serif;
   font-weight: 700; font-size: 1.2rem; color: #fff; margin: 0 0 0.2rem;

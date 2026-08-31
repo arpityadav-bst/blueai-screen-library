@@ -55,9 +55,18 @@ export default function TermsPage() {
       <main className="crx-legal">
         <h1 className="crx-legal-title">Terms and Privacy</h1>
 
-        <div className="crx-band-tabs crx-legal-tabs" role="tablist" aria-label="Legal documents">
+        {/* The dashboard band's pill tabs (.crx-progtabs — the kit's one tab control since the
+            2026-08-25 refactor), reused so legal tabs and program tabs stay one vocabulary. */}
+        <div className="crx-progtabs crx-legal-tabs" role="tablist" aria-label="Legal documents">
           {LEGAL_DOCS.map((d) => (
-            <button key={d.id} type="button" role="tab" aria-selected={tab === d.id} className={tab === d.id ? 'on' : ''} onClick={() => pick(d.id)}>
+            <button
+              key={d.id}
+              type="button"
+              role="tab"
+              aria-selected={tab === d.id}
+              className={tab === d.id ? 'crx-progtab on' : 'crx-progtab'}
+              onClick={() => pick(d.id)}
+            >
               {d.tab}
             </button>
           ))}
