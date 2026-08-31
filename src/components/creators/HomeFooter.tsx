@@ -68,6 +68,12 @@ export default function HomeFooter() {
               BlueAI is an AI worker you own. It finds real work, completes it, and pays you every
               month.
             </p>
+            {/* One line, one link (Abhisht, 2026-08-31, following bluestacks.com's footer) — the
+                documents themselves live as tabs on /creators/terms, so the footer never grows a
+                link per document. */}
+            <p className="crx-foot-legal">
+              <a href="/creators/terms">Terms and Privacy</a>
+            </p>
           </div>
 
           {/* THE LAST COLUMN, and now the only other one. Back to top kept a column of its own

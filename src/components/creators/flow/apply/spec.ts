@@ -98,7 +98,9 @@ export function validate(d: Draft): Errors {
   if (!d.email.trim()) e.email = 'Add the email you want to be contacted on.'
   else if (!isEmail(d.email)) e.email = 'That doesn’t look like an email. Check for a typo.'
 
-  if (!d.agree) e.agree = 'You need to agree to the Program Terms to apply.'
+  // "Terms of Use" since 2026-08-31: it names the document that exists (the checkbox links it),
+  // and it needs no per-variant rewriting — no banned word for the no-"program" variants.
+  if (!d.agree) e.agree = 'You need to agree to the Terms of Use to apply.'
 
   return e
 }

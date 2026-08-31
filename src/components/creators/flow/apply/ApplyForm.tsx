@@ -22,7 +22,7 @@ import CtaBand from '../../CtaBand'
 const LAST = STEPS.length - 1
 
 export default function ApplyForm() {
-  const { account, variant } = useCrx()
+  const { account } = useCrx()
   const [step, setStep] = useState(0)
   // The one pre-filled answer, and it comes from the signed-in account rather than from INITIAL —
   // spec.ts stays a pure description of an empty application, with no knowledge of who is filling it.
@@ -40,15 +40,8 @@ export default function ApplyForm() {
   for (const f of fields) {
     if ((touched[f] || forced[step]) && all[f]) visible[f] = all[f]
   }
-  // Versions B and C ban the word "program" (2026-08-26/27; only Version A keeps it); spec.ts
-  // stays a pure description with the original wording, so the one message that names the Program
-  // Terms is rewritten at the display edge instead of threading the variant into validate().
-  if (variant !== 'programs') {
-    for (const k of Object.keys(visible)) {
-      const msg = visible[k]
-      if (msg) visible[k] = msg.replace('Program Terms', 'Terms')
-    }
-  }
+  // (The per-variant "Program Terms" rewrite died 2026-08-31: spec's message says "Terms of Use"
+  // now — the document that exists — which no variant bans.)
   const touch = (k: string) => setTouched((p) => ({ ...p, [k]: true }))
   const stepProps = { d, setD, err: visible, touch }
 

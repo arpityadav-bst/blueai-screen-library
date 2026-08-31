@@ -2248,6 +2248,51 @@ body.crx-lock { overflow: hidden; }
 .crx .crx-apply-back:hover { color: var(--ink-inverse); }
 .crx .crx-apply-back:focus-visible { outline: 2px solid #a78bff; outline-offset: 3px; }
 
+/* ---- the legal page (/creators/terms) + the footer's line to it ----
+   bluestacks.com's pattern in this site's kit: one page, the documents as tabs (2026-08-31).
+   Text is legal's verbatim, so the layout's whole job is readability: one ~72ch prose column,
+   quiet headings, generous line height. */
+.crx .crx-legal-head { max-width: var(--content); margin: 0 auto; padding: 1.4rem 1.5rem 0; }
+.crx .crx-legal-logo { display: inline-flex; align-items: center; gap: 0.6rem; text-decoration: none; }
+.crx .crx-legal { max-width: 760px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
+.crx .crx-legal-title {
+  font-family: 'Space Grotesk', 'SF Pro Display', Inter, sans-serif;
+  font-weight: 700; font-size: 1.9rem; letter-spacing: -0.02em; color: #fff;
+  margin: 0 0 1.4rem;
+}
+.crx .crx-legal-tabs { margin-bottom: 2rem; }
+.crx .crx-legal-doc h2 {
+  font-family: 'Space Grotesk', 'SF Pro Display', Inter, sans-serif;
+  font-weight: 700; font-size: 1.2rem; color: #fff; margin: 0 0 0.2rem;
+}
+.crx .crx-legal-eff { font-size: 0.8rem; color: rgba(214, 224, 255, 0.5); margin: 0 0 1.6rem; }
+.crx .crx-legal-doc h3 {
+  font-family: 'Space Grotesk', 'SF Pro Display', Inter, sans-serif;
+  font-weight: 700; font-size: 1rem; color: #fff; margin: 1.8rem 0 0.6rem;
+}
+.crx .crx-legal-doc p { font-size: 0.92rem; line-height: 1.7; color: var(--dim); margin: 0 0 0.9rem; }
+/* the restriction/data lists — hanging bullets without ul chrome (source paragraphs, not lists) */
+.crx .crx-legal-li { position: relative; padding-left: 1.1rem; margin-bottom: 0.45rem !important; }
+.crx .crx-legal-li::before { content: '·'; position: absolute; left: 0.2rem; color: var(--dim); }
+/* the cookie chart placeholder — filled when the inventory lands */
+.crx .crx-legal-chartwrap { overflow-x: auto; margin: 1rem 0 1.2rem; }
+.crx .crx-legal-chart { width: 100%; border-collapse: collapse; font-size: 0.85rem; color: var(--dim); }
+.crx .crx-legal-chart th {
+  text-align: left; color: var(--ink-inverse); font-weight: 650;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18); padding: 0.5rem 0.8rem 0.5rem 0;
+}
+.crx .crx-legal-chart td { border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding: 0.6rem 0.8rem 0.6rem 0; }
+
+/* footer legal line — one link, per the review ("we add 'Terms and privacy'") */
+.crx .crx-foot-legal { margin-top: 1.1rem; font-size: 0.78rem; }
+.crx .crx-foot-legal a { color: var(--dim); text-decoration: underline; text-underline-offset: 3px; }
+.crx .crx-foot-legal a:hover { color: var(--ink-inverse); }
+
+/* legal links inside flow copy — inherit size, quiet underline (never lose a half-filled form:
+   these always open a new tab, enforced in markup) */
+.crx .crx-legal-link { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.crx .crx-legal-link:hover { color: var(--ink-inverse); }
+
 /* ---- part 2 responsive — the page's one breakpoint ---- */
 @media (max-width: 880px) {
   /* cards collapse to 2-up here (part 1), so the 3-col group's odd 5th is alone again — span it */
