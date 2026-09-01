@@ -107,6 +107,26 @@ const GROUPS_B: Group[] = [
   },
 ]
 
+// VERSION C: A's rows exactly, because C keeps the chooser and therefore keeps every state A has -
+// one open, several open, applied, accepted-with-others-open, nothing open. Only the heading noun
+// differs, so C's list is DERIVED from A's rather than written out again. A row added to A is a row
+// added to C for free, which is the drift this file would otherwise grow: two lists of ten that
+// have to be edited in step, and are discovered out of step months later.
+// "offer" is C's own noun (ProgramsHome picks the same word for its four chooser strings), and one
+// replace covers both headings - "One program" -> "One offer", "Many programs" -> "Many offers".
+const GROUPS_C: Group[] = GROUPS_A.map((g) => ({
+  ...g,
+  heading: g.heading ? g.heading.replace('program', 'offer') : null,
+}))
+
+// The panel's note describes the list above it, so it varies the same way. C's is derived from A's
+// for the same reason its groups are: the sentence differs by one noun, and two hand-written copies
+// of it would eventually disagree.
+const NOTE_A = 'The one-program group is the launch experience; the many-programs group holds the future states.'
+const NOTE_C = NOTE_A.replace(/program/g, 'offer')
+const NOTE_B =
+  'Version B has three signed-in screens — the application, the dashboard and the full-capacity notice — so it lists three. Your Version A row is remembered while you are here.'
+
 function Gear() {
   return (
     <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -118,7 +138,9 @@ function Gear() {
 
 export default function PreviewToggler() {
   const { journey, setJourney, variant, setVariant } = useCrx()
-  const groups = variant === 'original' ? GROUPS_B : GROUPS_A
+  // B collapses to three rows; C keeps all ten under its own noun; A is the default.
+  const groups = variant === 'original' ? GROUPS_B : variant === 'offers' ? GROUPS_C : GROUPS_A
+  const note = variant === 'original' ? NOTE_B : variant === 'offers' ? NOTE_C : NOTE_A
   // MINIMIZED by default (the frozen tree's designer call, 2026-08-11): this governs one optional
   // branch, and the page is reviewed as a page. The FAB keeps it one click away.
   const [openPanel, setOpenPanel] = useState(false)
@@ -206,9 +228,7 @@ export default function PreviewToggler() {
           the A persona is not lost while you are over here. */}
       <p className="crx-toggler-note">
         Sets what signing in leads to. Click Get Access and sign in to see it.{' '}
-        {variant === 'original'
-          ? 'Version B has three signed-in screens — the application, the dashboard and the full-capacity notice — so it lists three. Your Version A row is remembered while you are here.'
-          : 'The one-program group is the launch experience; the many-programs group holds the future states.'}{' '}
+        {note}{' '}
         Survives a reload; resets when the tab closes.
       </p>
     </div>

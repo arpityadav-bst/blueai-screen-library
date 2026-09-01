@@ -116,14 +116,19 @@ export default function CrxProvider({ children }: { children: ReactNode }) {
     // default website, the brand website, and this new variant"). Until now B existed only behind
     // the gear — reachable, but not something you can send to anyone, which matters because these
     // surfaces get reviewed by people who are handed a URL and nothing else.
-    // ?v=b (or ?v=original) opens on B, ?v=a (or ?v=programs) on A; anything else is ignored rather
-    // than treated as B, so a stray query cannot silently change which build a reviewer is judging.
+    // ?v=b opens on B, ?v=c on C, ?v=a on A - the letter a reviewer actually says out loud, with
+    // the internal name (original / offers / programs) accepted as well. Anything else is ignored
+    // rather than resolved to a version, so a stray query cannot silently change which build a
+    // reviewer is judging. EVERY NEW VARIANT NEEDS A LINE HERE: the Variant union is the source of
+    // truth for what exists, and a version that cannot be linked is one nobody outside this panel
+    // gets sent to.
     // It SEEDS the initial value only — the toggler still overrides it in-session, and a reload with
     // no query goes back to A. Read outside the try above: URLSearchParams does not throw where
     // sessionStorage does, and a storage failure must not cost the URL its meaning.
     try {
       const v = new URLSearchParams(window.location.search).get('v')?.toLowerCase()
       if (v === 'b' || v === 'original') setVariant('original')
+      else if (v === 'c' || v === 'offers') setVariant('offers')
       else if (v === 'a' || v === 'programs') setVariant('programs')
     } catch {
       // Nothing to fall back to: the default state IS the fallback.

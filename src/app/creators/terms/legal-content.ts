@@ -2,6 +2,11 @@
 // by the 2026-08-31 legal-pages pass. The text is legal's verbatim (the typo fixes and eligibility
 // section are the v2 edits Steve was sent) - do NOT wordsmith here; when legal revises, regenerate.
 // The cookie tab's chart block renders as a placeholder table until Gaurav Mehta's cookie details land.
+//
+// OVER THE 300-LINE FILE RULE, DELIBERATELY. This is generated data, not code - the rule's own
+// exclusion for auto-generated files (package-lock.json) is the one that applies. Splitting it by
+// document would also be undone by the next regeneration, and a hand-split of a generated file is a
+// split that silently disappears. Do not "fix" the length; regenerate instead.
 
 export type LegalBlock = { t: 'h' | 'p' | 'li'; x: string } | { t: 'chart' }
 export type LegalDoc = { id: string; tab: string; title: string; effective: string; blocks: LegalBlock[] }
