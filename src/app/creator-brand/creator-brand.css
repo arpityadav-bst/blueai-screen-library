@@ -238,6 +238,24 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* DOT GRID for the campaign builder (2026-09-01). Barely there on purpose: 1px dots at ~4.5% ink on
+   22px centres, which at 100% reads as a faint tooth in the paper rather than as a pattern. It is
+   the graph-paper ground the agentic references use under a tool surface - Cursor and Manus both
+   sit their product on one - and it does the same job as this site's paper grain: it stops a large
+   empty light area from reading as an unfinished page.
+   ONE LAYER, not two: the layout's .cb-grain is a fixed full-page texture, and stacking a visible
+   dot pattern on top of it would be two competing grounds. 0.045 first, raised to 0.07 (designer,
+   2026-09-01: "slight less subtle") - the dots are now legible as dots rather than only as tone,
+   and this is about as far as they go while the grain is still under them. Past ~0.08 the two
+   textures start reading as two surfaces and the grain has to come off this route instead.
+   background-position is set so a dot never lands exactly on the viewport corner, where a single
+   dark pixel in the extreme corner reads as a rendering artefact rather than as texture. */
+.cb-dotgrid {
+  background-image: radial-gradient(circle, rgba(17, 24, 51, 0.07) 1px, transparent 1px);
+  background-size: 22px 22px;
+  background-position: 11px 11px;
+}
+
 /* ── Line-breaking: no orphans, no stub lines ──
    This is the real mechanism for "nothing should feel orphaned on a line", rather than
    hand-inserting <br> at widths that only hold for one viewport.

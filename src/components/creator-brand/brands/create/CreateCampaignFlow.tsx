@@ -100,7 +100,11 @@ export default function CreateCampaignFlow() {
   )
 
   return (
-    <div className="min-h-screen">
+    // cb-dotgrid: the faint graph-paper ground this route sits on (creator-brand.css). On the root
+    // rather than the content wrapper so it runs the full height even when a stage is short - the
+    // catalogue is tall and the brief is not, and a texture that stops halfway down the fold is
+    // worse than none.
+    <div className="cb-dotgrid min-h-screen">
       <Topbar />
       <div className="mx-auto max-w-content px-6 py-8 sm:py-10">
         <div>
