@@ -2,11 +2,12 @@
 
 import type { Dispatch, SetStateAction } from 'react'
 import DateField from '../../controls/DateField'
+import Money from './Money'
 import { Check } from '../../controls/icons'
 import { INPUT, LABEL } from '../../controls/fieldClasses'
 import { FieldError, withErr } from '../../forms'
 import { CHANNELS } from '../../platforms/channels'
-import { ACTIONS, type Draft } from './spec'
+import { ACTIONS, COUNTRIES, type Draft } from './spec'
 
 // The one live platform (channels.ts is the logo SSOT; YouTube is the only entry with live: true).
 const YT = CHANNELS[0]
@@ -210,19 +211,40 @@ export function StepTwo({ d, setD, err, touch }: Props) {
 export function StepThree({ d, setD }: Props) {
   return (
     <>
-      {/* Stated, not chosen, same treatment as step 1's Platform row: the pilot cohort is
-          US-based, so United States is the one country a campaign can honestly target. This
-          goes back to being a SelectField the day COUNTRIES grows past one entry. */}
-      <div>
-        <span className={LABEL}>Target country</span>
-        <div className="mt-2 flex flex-wrap items-center gap-3">
-          <span className="flex items-center gap-1.5 rounded-card border border-[rgba(var(--cb-accent-rgb),0.38)] bg-[rgba(var(--cb-accent-rgb),0.07)] px-2.5 py-1.5 text-[12px] font-medium text-ink-heading">
-            <span className="flex w-3 justify-center text-[var(--cb-accent)]"><Check size={11} /></span>
-            {d.country}
-          </span>
-          <span className="text-[11px] text-ink-muted">More countries coming soon.</span>
+      {/* Chosen, no longer stated: Worldwide joined the pilot's US-only targeting (2026-08-31), so
+          this row wears step 1's Action-chip clothes — colour says "on", no check glyph, focus ring
+          forwarded from the sr-only input. Radios, not checkboxes: a campaign targets one region.
+          It becomes a SelectField the day COUNTRIES grows into a real per-country list. No "coming
+          soon" hint here, unlike the Platform row: that line excused a row with no choice, and
+          next to Worldwide it read as a contradiction rather than a promise. */}
+      <fieldset>
+        <legend className={LABEL}>Target country</legend>
+        <div className="mt-2 flex flex-wrap gap-2">
+          {COUNTRIES.map((c) => {
+            const on = d.country === c
+            return (
+              <label key={c} className="cursor-pointer select-none">
+                <input
+                  type="radio"
+                  name="cb-target-country"
+                  checked={on}
+                  onChange={() => setD((p) => ({ ...p, country: c }))}
+                  className="peer sr-only"
+                />
+                <span
+                  className={`flex min-h-[44px] items-center rounded-card border px-3.5 py-2.5 text-[12px] font-medium transition-all duration-base ease-out-bai peer-focus-visible:ring-2 peer-focus-visible:ring-[rgba(var(--cb-accent-rgb),0.30)] peer-focus-visible:ring-offset-2 ${
+                    on
+                      ? 'border-[rgba(var(--cb-accent-rgb),0.38)] bg-[rgba(var(--cb-accent-rgb),0.07)] text-[var(--cb-accent)]'
+                      : 'border-divider text-ink-muted hover:border-stroke-warm hover:text-ink-body-2'
+                  }`}
+                >
+                  {c}
+                </span>
+              </label>
+            )
+          })}
         </div>
-      </div>
+      </fieldset>
 
       {/* The one optional field, and the label says so rather than relying on the absence of
           `required`, which is invisible until you try to submit. */}
@@ -242,47 +264,3 @@ export function StepThree({ d, setD }: Props) {
   )
 }
 
-// The $ is a prefix AFFIX, not typed content, so it sits at placeholder weight (cb-field-affix)
-// and the SHELL carries the border, which is why cb-field-strong is on the wrapper here and the
-// inner input is transparent and borderless. cb-nospin removes the native number spinners: they
-// paint hard against the right edge, the same crowding the custom chevron was built to avoid.
-function Money({
-  label,
-  value,
-  onChange,
-  onBlur,
-  placeholder,
-  step,
-  err,
-}: {
-  label: string
-  value: string
-  onChange: (v: string) => void
-  onBlur: () => void
-  placeholder: string
-  step: string
-  err?: string
-}) {
-  return (
-    <label className="block">
-      <span className={LABEL}>{label}</span>
-      <div
-        className={withErr('cb-field-strong mt-1.5 flex items-center rounded-field border bg-white px-3.5', err)}
-      >
-        <span className="cb-field-affix text-[14px]">$</span>
-        <input
-          type="number"
-          min={0}
-          step={step}
-          inputMode="decimal"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          onBlur={onBlur}
-          placeholder={placeholder}
-          className="cb-nospin cb-tabular w-full bg-transparent py-3 pl-1.5 text-[14px] text-ink-heading outline-none"
-        />
-      </div>
-      <FieldError>{err}</FieldError>
-    </label>
-  )
-}

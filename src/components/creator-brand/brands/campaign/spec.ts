@@ -6,10 +6,10 @@ import type { Errors } from '../../forms'
 
 export const ACTIONS = ['watch', 'like', 'comment'] as const
 
-// US only for the pilot (product decision, 2026-08-12): the worker cohort is US-based, so that is
-// the one country a campaign can honestly target. The list grows as new regions open; until then
-// the form states the country rather than offering a one-item dropdown.
-export const COUNTRIES = ['United States']
+// US or everywhere (2026-08-31). Worldwide is the default — a campaign reaches the whole cohort
+// unless the brand narrows it to the US. Two options are a chip pair, not a dropdown — the row
+// only becomes a SelectField once individual countries beyond the US start opening up.
+export const COUNTRIES = ['United States', 'Worldwide']
 
 export type Draft = {
   name: string
@@ -24,7 +24,7 @@ export type Draft = {
 }
 
 // All three actions on by default because that combination is the unit the rate was built around.
-// Country is fixed to the one region the pilot serves.
+// Worldwide by default; narrowing to the US is the opt-in.
 export const INITIAL: Draft = {
   name: '',
   url: '',
@@ -33,7 +33,7 @@ export const INITIAL: Draft = {
   bid: '',
   start: null,
   end: null,
-  country: 'United States',
+  country: 'Worldwide',
   goal: '',
 }
 

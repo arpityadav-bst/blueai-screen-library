@@ -924,9 +924,9 @@ tr:last-child td{border-bottom:none}
         <div id="cd-s3" style="display:none">
           <div class="fld">
             <span class="flabel">Target country</span>
-            <div class="chiprow">
-              <span class="selchip fixed">&#10003; United States</span>
-              <span class="moresoon">More countries coming soon.</span>
+            <div class="chiprow" id="f-country">
+              <span class="selchip" data-c="United States" onclick="pickCountry(this)">United States</span>
+              <span class="selchip on" data-c="Worldwide" onclick="pickCountry(this)">&#10003; Worldwide</span>
             </div>
           </div>
           <label class="fld">
@@ -1051,6 +1051,19 @@ function toggleAction(el){
   el.classList.toggle('on');
   el.innerHTML=(el.classList.contains('on')?'&#10003; ':'')+el.getAttribute('data-a').replace(/^./,function(c){return c.toUpperCase()});
 }
+// Single-select, unlike the action chips: a campaign targets one region, so picking a country
+// chip always deselects the other.
+function pickCountry(el){
+  Array.prototype.forEach.call(document.querySelectorAll('#f-country .selchip'),function(c){
+    var on=c===el;
+    c.classList.toggle('on',on);
+    c.innerHTML=(on?'&#10003; ':'')+c.getAttribute('data-c');
+  });
+}
+function pickedCountry(){
+  var c=document.querySelector('#f-country .selchip.on');
+  return c?c.getAttribute('data-c'):'Worldwide';
+}
 function setStep(n){
   cd.step=n;
   document.getElementById('cd-s1').style.display=n===1?'block':'none';
@@ -1119,6 +1132,7 @@ function submitCreate(){
     bid:parseFloat(document.getElementById('f-bid').value)||0,
     start:document.getElementById('f-start').value||null,
     end:document.getElementById('f-end').value||null,
+    country:pickedCountry(),
     goal:document.getElementById('f-goal').value.trim()
   };
   // Fire-and-forget with keepalive, so a closed tab cannot lose the write.
@@ -1131,13 +1145,13 @@ function submitCreate(){
         campaign_name:d.name,post_url:d.url,actions:d.actions,
         budget_usd:d.budget||null,bid_usd:d.bid||null,
         start_date:d.start,end_date:d.end,
-        target_country:'United States',goal:d.goal||null,
+        target_country:d.country,goal:d.goal||null,
         email:brandEmail()||null
       })
     }).catch(function(){});
   }catch(e){}
   var mine=loadMine();
-  var entry={name:d.name,budget:d.budget,bid:d.bid,ts:Date.now()};
+  var entry={name:d.name,budget:d.budget,bid:d.bid,country:d.country,ts:Date.now()};
   mine.unshift(entry);
   saveMine(mine);
   renderMine();
@@ -1286,9 +1300,11 @@ function saveMine(l){ try{localStorage.setItem(MY_KEY,JSON.stringify(l))}catch(e
   if(!name) return;
   var budget=parseFloat(q.get('budget'))||500;
   var bid=parseFloat(q.get('bid'))||1;
+  // No country param = a link minted before targeting was a choice, when US was hardcoded.
+  var country=q.get('country')||'United States';
   var mine=loadMine();
   if(!mine.some(function(c){return c.name===name && c.budget===budget && c.bid===bid})){
-    mine.unshift({name:name,budget:budget,bid:bid,ts:Date.now()});
+    mine.unshift({name:name,budget:budget,bid:bid,country:country,ts:Date.now()});
     saveMine(mine);
   }
 })();
@@ -1326,7 +1342,7 @@ function renderMine(){
     row.onclick=function(){openReview(c)};
     row.innerHTML=
       '<div><div class="cname">'+esc(c.name)+'</div>'+
-      '<div class="cmeta">YouTube Short &middot; US &middot; '+fmtWhen(c.ts).toLowerCase()+'</div></div>'+
+      '<div class="cmeta">YouTube Short &middot; '+(c.country==='Worldwide'?'Worldwide':'US')+' &middot; '+fmtWhen(c.ts).toLowerCase()+'</div></div>'+
       '<div class="fillcell"><div class="bar"><i style="width:0%"></i></div>'+
       '<div class="t"><b class="num">0</b> of <span class="num">'+reach+'</span> &middot; starts after review</div></div>'+
       '<div class="cell"><b class="num">$0</b><span class="s num">of $'+c.budget+'</span></div>'+

@@ -109,7 +109,7 @@ export default function CampaignForm({
             it opens on the campaigns LIST with this campaign prepended as IN REVIEW, built from
             the query params. */}
         <a
-          href={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/creator-brand/campaign-report.html?submitted=${encodeURIComponent(d.name)}&budget=${encodeURIComponent(d.budget)}&bid=${encodeURIComponent(d.bid)}`}
+          href={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/creator-brand/campaign-report.html?submitted=${encodeURIComponent(d.name)}&budget=${encodeURIComponent(d.budget)}&bid=${encodeURIComponent(d.bid)}&country=${encodeURIComponent(d.country)}`}
           target="_blank"
           rel="noopener"
           className="mt-8 inline-block w-full max-w-[260px] rounded-pill bg-white px-6 py-3.5 text-[15px] font-semibold text-ink-display transition-transform duration-base ease-out-bai hover:-translate-y-0.5 active:scale-[0.98]"
