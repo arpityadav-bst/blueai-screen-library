@@ -99,6 +99,12 @@ a:hover{text-decoration:underline}
 .clist .row:hover{border-color:var(--iris-line);box-shadow:0 4px 16px rgba(95,70,255,.10);transform:translateY(-1px)}
 .cname{font-size:14.5px;font-weight:600;color:var(--ink-heading);line-height:1.35}
 .cmeta{font-size:12px;color:var(--ink-soft);margin-top:3px}
+/* Campaign short-ID chip (ROB-20983). Duplicate names are allowed — the ID is the identifier —
+   so the last 8 hex of the campaign id render as a chip on EVERY row and on the review header
+   (where it copies the full id). Muted, tabular, deliberately quieter than the status chips:
+   it identifies, it doesn't announce. */
+.cid{display:inline-block;font-size:10.5px;font-weight:600;letter-spacing:.02em;color:var(--ink-muted);background:#EEF1F6;border-radius:var(--r-card);padding:1px 7px;margin-left:8px;vertical-align:2px;white-space:nowrap}
+.doneid{font-size:12px;color:rgba(255,255,255,.65);margin-top:10px}
 .colhead{display:grid;grid-template-columns:minmax(230px,1.4fr) 1fr 130px 120px 110px;gap:18px;padding:0 20px 8px;font-size:10px;font-weight:600;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.08em}
 .fillcell .bar{height:8px;border-radius:9999px;background:var(--iris-wash);overflow:hidden;margin-bottom:5px}
 .fillcell .bar i{display:block;height:100%;background:var(--gradient-r);border-radius:9999px}
@@ -274,8 +280,8 @@ tr:last-child td{border-bottom:none}
   <div class="clist" id="clist">
     <div class="row" onclick="show('detail',{backTo:'list'})">
       <div>
-        <div class="cname">Spring Launch: Product Reveal Short</div>
-        <div class="cmeta">Sample &middot; YouTube Short &middot; Watch + Like + Comment &middot; US</div>
+        <div class="cname">Spring Launch: Product Reveal Short<span class="cid num">#7c2d91e4</span></div>
+        <div class="cmeta">Sample &middot; YouTube Short &middot; US</div>
       </div>
       <div class="fillcell"><div class="bar"><i style="width:42.4%"></i></div><div class="t"><b class="num">212</b> of <span class="num">500</span> &middot; 7 days left</div></div>
       <div class="cell"><b class="num">$212</b><span class="s num">of $500</span></div>
@@ -285,8 +291,8 @@ tr:last-child td{border-bottom:none}
 
     <div class="row" onclick="show('detail',{backTo:'list'})">
       <div>
-        <div class="cname">Creator Collab Teaser</div>
-        <div class="cmeta">Sample &middot; YouTube Short &middot; Watch + Like &middot; US</div>
+        <div class="cname">Creator Collab Teaser<span class="cid num">#4b0a63f7</span></div>
+        <div class="cmeta">Sample &middot; YouTube Short &middot; US</div>
       </div>
       <div class="fillcell"><div class="bar"><i style="width:78.7%"></i></div><div class="t"><b class="num">118</b> of <span class="num">150</span> &middot; 3 days left</div></div>
       <div class="cell"><b class="num">$118</b><span class="s num">of $150</span></div>
@@ -296,8 +302,8 @@ tr:last-child td{border-bottom:none}
 
     <div class="row" onclick="show('detail',{backTo:'list'})">
       <div>
-        <div class="cname">July Brand Anthem</div>
-        <div class="cmeta">Sample &middot; YouTube Short &middot; Watch + Like + Comment &middot; US</div>
+        <div class="cname">July Brand Anthem<span class="cid num">#d21e88ac</span></div>
+        <div class="cmeta">Sample &middot; YouTube Short &middot; US</div>
       </div>
       <div class="fillcell"><div class="bar"><i style="width:100%"></i></div><div class="t"><b class="num">300</b> of <span class="num">300</span> &middot; target met</div></div>
       <div class="cell"><b class="num">$300</b><span class="s num">of $300</span></div>
@@ -307,8 +313,8 @@ tr:last-child td{border-bottom:none}
 
     <div class="row" onclick="show('detail',{backTo:'list'})">
       <div>
-        <div class="cname">Summer Drop Part 1</div>
-        <div class="cmeta">Sample &middot; YouTube Short &middot; Watch + Like + Comment &middot; US</div>
+        <div class="cname">Summer Drop Part 1<span class="cid num">#09c4b3d5</span></div>
+        <div class="cmeta">Sample &middot; YouTube Short &middot; US</div>
       </div>
       <div class="fillcell"><div class="bar"><i style="width:48%"></i></div><div class="t"><b class="num">96</b> of <span class="num">200</span> &middot; make-good applied</div></div>
       <div class="cell"><b class="num">$96</b><span class="s num">of $200</span></div>
@@ -543,7 +549,8 @@ tr:last-child td{border-bottom:none}
         <span class="chip review">&#8635; IN REVIEW</span>
         <span>YouTube Short</span>
         <span>Country: <b>United States</b></span>
-        <span id="rv-when">Submitted just now</span>
+        <span id="rv-when">Created just now</span>
+        <span class="cid num" id="rv-id"></span>
       </div>
     </div>
   </div>
@@ -677,9 +684,9 @@ tr:last-child td{border-bottom:none}
         <div id="cd-s3" style="display:none">
           <div class="fld">
             <span class="flabel">Target country</span>
-            <div class="chiprow">
-              <span class="selchip fixed">&#10003; United States</span>
-              <span class="moresoon">More countries coming soon.</span>
+            <div class="chiprow" id="f-country">
+              <span class="selchip" data-c="United States" onclick="pickCountry(this)">United States</span>
+              <span class="selchip on" data-c="Worldwide" onclick="pickCountry(this)">&#10003; Worldwide</span>
             </div>
           </div>
           <label class="fld">
@@ -700,6 +707,7 @@ tr:last-child td{border-bottom:none}
         <div class="mark">&#10003;</div>
         <h2>Campaign submitted.</h2>
         <p><b id="done-name"></b> is in review. We check every campaign before it goes live; you can follow it right here on your dashboard.</p>
+        <div class="doneid num" id="done-id"></div>
         <button class="wpill" onclick="doneView()">View campaign</button>
         <button class="quiet" onclick="closeCreate()">Done</button>
       </div>
@@ -785,6 +793,19 @@ function toggleAction(el){
   el.classList.toggle('on');
   el.innerHTML=(el.classList.contains('on')?'&#10003; ':'')+el.getAttribute('data-a').replace(/^./,function(c){return c.toUpperCase()});
 }
+// Single-select, unlike the action chips: a campaign targets one region, so picking a country
+// chip always deselects the other.
+function pickCountry(el){
+  Array.prototype.forEach.call(document.querySelectorAll('#f-country .selchip'),function(c){
+    var on=c===el;
+    c.classList.toggle('on',on);
+    c.innerHTML=(on?'&#10003; ':'')+c.getAttribute('data-c');
+  });
+}
+function pickedCountry(){
+  var c=document.querySelector('#f-country .selchip.on');
+  return c?c.getAttribute('data-c'):'Worldwide';
+}
 function setStep(n){
   cd.step=n;
   document.getElementById('cd-s1').style.display=n===1?'block':'none';
@@ -844,6 +865,7 @@ function submitCreate(){
     bid:parseFloat(document.getElementById('f-bid').value)||0,
     start:document.getElementById('f-start').value||null,
     end:document.getElementById('f-end').value||null,
+    country:pickedCountry(),
     goal:document.getElementById('f-goal').value.trim()
   };
   // Fire-and-forget with keepalive, so a closed tab cannot lose the write.
@@ -856,18 +878,22 @@ function submitCreate(){
         campaign_name:d.name,post_url:d.url,actions:d.actions,
         budget_usd:d.budget||null,bid_usd:d.bid||null,
         start_date:d.start,end_date:d.end,
-        target_country:'United States',goal:d.goal||null,
+        target_country:d.country,goal:d.goal||null,
         email:brandEmail()||null
       })
     }).catch(function(){});
   }catch(e){}
   var mine=loadMine();
-  var entry={name:d.name,budget:d.budget,bid:d.bid,ts:Date.now()};
+  var ts=Date.now();
+  var entry={id:genId(ts),name:d.name,budget:d.budget,bid:d.bid,country:d.country,ts:ts};
   mine.unshift(entry);
   saveMine(mine);
   renderMine();
   cd.last=entry;
   document.getElementById('done-name').textContent=d.name;
+  // The confirmation names the exact campaign it just made — the id is what tells this one
+  // apart from an earlier campaign with the same name.
+  document.getElementById('done-id').textContent=shortId(entry.id);
   document.getElementById('cd-form').style.display='none';
   document.getElementById('cdlg-panel').classList.add('dark');
   document.getElementById('cd-done').style.display='block';
@@ -892,7 +918,26 @@ try{
 
 // Your campaigns persist in this browser (design prototype: localStorage is the account).
 var MY_KEY='cb-my-campaigns';
-function loadMine(){ try{return JSON.parse(localStorage.getItem(MY_KEY)||'[]')}catch(e){return []} }
+
+// campaign_{epoch seconds}_{8 hex} — the real product's id format (ROB-20983, confirmed by
+// backend: the id, not the name, is the identifier; names may repeat). The epoch half is why
+// created-date needs no extra field, and the hex tail is the short ref shown when names collide.
+function genId(ts){
+  var hex='';for(var i=0;i<8;i++)hex+='0123456789abcdef'[Math.floor(Math.random()*16)];
+  return 'campaign_'+Math.floor((ts||Date.now())/1000)+'_'+hex;
+}
+function shortId(id){ return id?'#'+id.slice(-8):'' }
+
+function loadMine(){
+  try{
+    var l=JSON.parse(localStorage.getItem(MY_KEY)||'[]');
+    // Entries saved before ids existed get one minted from their own ts, once, then persist.
+    var changed=false;
+    l.forEach(function(c){ if(!c.id){ c.id=genId(c.ts); changed=true; } });
+    if(changed) saveMine(l);
+    return l;
+  }catch(e){return []}
+}
 function saveMine(l){ try{localStorage.setItem(MY_KEY,JSON.stringify(l))}catch(e){} }
 
 // A just-submitted campaign arrives once via query params from the success band's View campaign
@@ -903,27 +948,37 @@ function saveMine(l){ try{localStorage.setItem(MY_KEY,JSON.stringify(l))}catch(e
   if(!name) return;
   var budget=parseFloat(q.get('budget'))||500;
   var bid=parseFloat(q.get('bid'))||1;
+  // No country param = a link minted before targeting was a choice, when US was hardcoded.
+  var country=q.get('country')||'United States';
   var mine=loadMine();
   if(!mine.some(function(c){return c.name===name && c.budget===budget && c.bid===bid})){
-    mine.unshift({name:name,budget:budget,bid:bid,ts:Date.now()});
+    var ts=Date.now();
+    mine.unshift({id:genId(ts),name:name,budget:budget,bid:bid,country:country,ts:ts});
     saveMine(mine);
   }
 })();
 
 var current=null; // the campaign the review view is showing
 
-function fmtWhen(ts){
-  if(!ts) return 'Submitted just now';
+// Progressive disclosure (ROB-20983): date alone normally; time joins it only where it is the
+// tiebreaker — two same-named campaigns created the same day — and on the review header, where
+// precision is free.
+function fmtCreated(ts,withTime){
+  if(!ts) return 'Created just now';
   var d=new Date(ts), now=new Date();
-  if(d.toDateString()===now.toDateString()) return 'Submitted today';
-  return 'Submitted '+d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  var day=d.toDateString()===now.toDateString()?'today'
+    :d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  return 'Created '+day+(withTime?', '+d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}):'');
 }
 
 function openReview(c){
   current=c;
   var reach=c.bid>0?Math.round(c.budget/c.bid):0;
   document.getElementById('rv-name').textContent=c.name;
-  document.getElementById('rv-when').textContent=fmtWhen(c.ts);
+  document.getElementById('rv-when').textContent=fmtCreated(c.ts,true);
+  // The header always carries the short id — this is the handle a support or settlement
+  // conversation reaches for when two campaigns share a name.
+  document.getElementById('rv-id').textContent=shortId(c.id);
   document.getElementById('rv-budget').textContent='$'+Number(c.budget).toFixed(2);
   document.getElementById('rv-bid').textContent='$'+Number(c.bid).toFixed(2);
   document.getElementById('rv-reach').textContent=String(reach);
@@ -936,14 +991,17 @@ function renderMine(){
   list.innerHTML='';
   document.getElementById('my-empty').style.display=mine.length?'none':'block';
   document.getElementById('t-review').textContent=String(mine.length);
+  // Duplicate names are allowed (ROB-20983): the short id renders on EVERY row, not only on
+  // collisions — a constant fixture reads as "this is the campaign's handle" rather than as a
+  // warning that appears when something went wrong.
   mine.forEach(function(c,i){
     var reach=c.bid>0?Math.round(c.budget/c.bid):0;
     var row=document.createElement('div');
     row.className='row';
     row.onclick=function(){openReview(c)};
     row.innerHTML=
-      '<div><div class="cname">'+esc(c.name)+'</div>'+
-      '<div class="cmeta">YouTube Short &middot; US &middot; '+fmtWhen(c.ts).toLowerCase()+'</div></div>'+
+      '<div><div class="cname">'+esc(c.name)+'<span class="cid num">'+esc(shortId(c.id))+'</span></div>'+
+      '<div class="cmeta">YouTube Short &middot; '+(c.country==='Worldwide'?'Worldwide':'US')+'</div></div>'+
       '<div class="fillcell"><div class="bar"><i style="width:0%"></i></div>'+
       '<div class="t"><b class="num">0</b> of <span class="num">'+reach+'</span> &middot; starts after review</div></div>'+
       '<div class="cell"><b class="num">$0</b><span class="s num">of $'+c.budget+'</span></div>'+
