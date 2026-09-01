@@ -789,8 +789,12 @@ tr:last-child td{border-bottom:none}
       <h1 id="rv-name">Your campaign</h1>
       <div class="meta">
         <span class="chip review">&#8635; IN REVIEW</span>
-        <span>YouTube Short</span>
-        <span>Country: <b>United States</b></span>
+        <!-- These two carried hardcoded "YouTube Short" and "Country: United States", which was
+             true while every campaign was a YouTube view campaign. The builder makes nine kinds -
+             a Reddit thread has no country and a research campaign has no platform - so both slots
+             are now written by openReview from the campaign's own type. -->
+        <span id="rv-kind">YouTube Short</span>
+        <span id="rv-geo">Country: <b>United States</b></span>
         <span id="rv-when">Created just now</span>
         <span class="cid num" id="rv-id"></span>
       </div>
@@ -812,10 +816,13 @@ tr:last-child td{border-bottom:none}
     <div class="card">
       <h2>Campaign setup</h2>
       <div class="hint">What you defined. Editable until the campaign goes live.</div>
-      <table class="acct">
+      <!-- id="rv-setup": openReview inserts the type's OWN rows here (its answers, its second bid,
+           its review mode) between the target row and Consumed. They are marked .rv-x and cleared on
+           every open, so switching campaigns cannot leave the previous one's rows behind. -->
+      <table class="acct" id="rv-setup">
         <tr><td>Campaign budget</td><td class="num" id="rv-budget">$500.00</td></tr>
-        <tr><td>Bid per verified completion</td><td class="num" id="rv-bid">$1.00</td></tr>
-        <tr><td>Target reach</td><td class="num" id="rv-reach">500</td></tr>
+        <tr><td><span id="rv-bidlabel">Bid per verified completion</span></td><td class="num" id="rv-bid">$1.00</td></tr>
+        <tr id="rv-reachrow"><td><span id="rv-reachlabel">Target reach</span></td><td class="num" id="rv-reach">500</td></tr>
         <tr><td>Consumed</td><td class="num">$0.00</td></tr>
         <tr><td>Invoice</td><td>After approval</td></tr>
       </table>
@@ -1341,6 +1348,17 @@ function saveMine(l){ try{localStorage.setItem(MY_KEY,JSON.stringify(l))}catch(e
   }
 })();
 
+// ?open=<name> - the builder writes the entry itself and then sends the reader here with it named,
+// so the campaign they just made is the screen they land on rather than a row to go find. Distinct
+// from ?submitted=, which CREATES an entry from query params for the older modal flow; this one only
+// opens what is already stored, and does nothing if the name is not there.
+// Runs after the first renderMine (below) so the list exists behind the view it opens.
+function openByName(name){
+  if(!name) return;
+  var mine=loadMine();
+  for(var i=0;i<mine.length;i++){ if(mine[i].name===name){ openReview(mine[i]); return } }
+}
+
 var current=null; // the campaign the review view is showing
 
 // Progressive disclosure (ROB-20983): date alone normally; time joins it only where it is the
@@ -1354,9 +1372,31 @@ function fmtCreated(ts,withTime){
   return 'Created '+day+(withTime?', '+d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}):'');
 }
 
+// TYPE-AWARE REPORTING (2026-09-01). A campaign made in the builder carries its own unit, its own
+// bid label and its own answers on the entry itself (see saveCampaign.ts - the labels and the unit
+// travel WITH the campaign precisely because this page cannot import the catalogue). Everything
+// below reads those when present and falls back to the original single shape when they are not, so
+// campaigns created before the builder existed keep rendering exactly as they did.
+//
+// The alternative - one hardcoded shape for all nine - is a report that tells a Reddit campaign it
+// bought 'verified completions' and a research campaign that its 'target reach' is 20. The unit IS
+// the product here; getting it wrong on the report undoes the flow that carefully asked for it.
+function unitOf(c){ return c.details&&c.details.outcomeUnit?c.details.outcomeUnit:'verified completions' }
+function targetOf(c){
+  if(!(c.bid>0)) return 0;
+  var per=c.details&&c.details.per?c.details.per:1;
+  return Math.floor(c.budget/c.bid)*per;
+}
+var REVIEW_L={all:'Review everything',first:'Review the first few per creator',auto:'Auto-approve'};
+function fmtDay(d){
+  if(!d) return '';
+  var t=new Date(d+'T00:00:00');
+  return isNaN(t)?d:t.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+}
+
 function openReview(c){
   current=c;
-  var reach=c.bid>0?Math.round(c.budget/c.bid):0;
+  var d=c.details||null;
   document.getElementById('rv-name').textContent=c.name;
   document.getElementById('rv-when').textContent=fmtCreated(c.ts,true);
   // The header always carries the short id — this is the handle a support or settlement
@@ -1364,7 +1404,38 @@ function openReview(c){
   document.getElementById('rv-id').textContent=shortId(c.id);
   document.getElementById('rv-budget').textContent='$'+Number(c.budget).toFixed(2);
   document.getElementById('rv-bid').textContent='$'+Number(c.bid).toFixed(2);
-  document.getElementById('rv-reach').textContent=String(reach);
+  document.getElementById('rv-reach').textContent=targetOf(c).toLocaleString();
+
+  // Header meta: the campaign's kind, and the window it runs in. A typed campaign has no single
+  // platform to name and may have no country at all, so neither slot may keep its old default.
+  document.getElementById('rv-kind').textContent=c.typeName||'YouTube Short';
+  var geo=document.getElementById('rv-geo');
+  if(d&&(d.start||d.end)) geo.textContent=fmtDay(d.start)+' to '+fmtDay(d.end);
+  else geo.innerHTML='Country: <b>'+esc(c.country==='Worldwide'?'Worldwide':'United States')+'</b>';
+
+  // Labels follow the type: the bid names its own unit, and 'Target reach' becomes the unit itself.
+  document.getElementById('rv-bidlabel').textContent=(d&&d.outcomeLabel)?d.outcomeLabel:'Bid per verified completion';
+  document.getElementById('rv-reachlabel').textContent=d?('Target '+unitOf(c)):'Target reach';
+
+  // The type's own rows, rebuilt from scratch each time.
+  var tbl=document.getElementById('rv-setup');
+  Array.prototype.forEach.call(tbl.querySelectorAll('tr.rv-x'),function(r){r.parentNode.removeChild(r)});
+  if(d){
+    var after=document.getElementById('rv-reachrow'), rows=[];
+    if(d.gen&&d.gen.amount) rows.push([d.gen.label,'$'+Number(d.gen.amount).toFixed(2),true]);
+    (d.fieldList||[]).forEach(function(f){ rows.push([f.label,f.value,false]) });
+    rows.push(['Content review',REVIEW_L[d.review]||d.review,false]);
+    if(d.goal) rows.push(['Goal',d.goal,false]);
+    // Inserted in order directly after the target row, so the type's answers sit with the numbers
+    // they qualify rather than below the invoice line.
+    rows.forEach(function(r){
+      var tr=document.createElement('tr');
+      tr.className='rv-x';
+      tr.innerHTML='<td>'+esc(r[0])+'</td><td'+(r[2]?' class="num"':'')+'>'+esc(r[1])+'</td>';
+      after.parentNode.insertBefore(tr,after.nextSibling);
+      after=tr;
+    });
+  }
   show('review');
 }
 
@@ -1378,15 +1449,20 @@ function renderMine(){
   // collisions — a constant fixture reads as "this is the campaign's handle" rather than as a
   // warning that appears when something went wrong.
   mine.forEach(function(c,i){
-    var reach=c.bid>0?Math.round(c.budget/c.bid):0;
+    var reach=targetOf(c);
     var row=document.createElement('div');
     row.className='row';
     row.onclick=function(){openReview(c)};
+    // The row says what KIND of campaign it is and counts in that kind's unit. An untyped entry
+    // (anything made before the builder) keeps the platform-and-geo meta it has always had.
+    var meta=c.typeName?esc(c.typeName)+(c.details&&c.details.family?' &middot; '+esc(c.details.family):'')
+                       :('YouTube Short &middot; '+(c.country==='Worldwide'?'Worldwide':'US'));
     row.innerHTML=
       '<div><div class="cname">'+esc(c.name)+'<span class="cid num">'+esc(shortId(c.id))+'</span></div>'+
-      '<div class="cmeta">YouTube Short &middot; '+(c.country==='Worldwide'?'Worldwide':'US')+'</div></div>'+
+      '<div class="cmeta">'+meta+'</div></div>'+
       '<div class="fillcell"><div class="bar"><i style="width:0%"></i></div>'+
-      '<div class="t"><b class="num">0</b> of <span class="num">'+reach+'</span> &middot; starts after review</div></div>'+
+      '<div class="t"><b class="num">0</b> of <span class="num">'+reach.toLocaleString()+'</span> '+
+      (c.details?esc(unitOf(c))+' ':'')+'&middot; starts after review</div></div>'+
       '<div class="cell"><b class="num">$0</b><span class="s num">of $'+c.budget+'</span></div>'+
       '<div><span class="chip review">&#8635; IN REVIEW</span></div>'+
       '<div class="rowlink">View report &rsaquo;</div>';
@@ -1394,6 +1470,12 @@ function renderMine(){
   });
 }
 renderMine();
+
+// The builder's landing: open the campaign it just filed. AFTER renderMine so the list exists
+// behind it, and harmless under the in-review gate above - that gate sets an inline display:none on
+// every .view, which outranks the class show() toggles, so a brand still waiting on approval keeps
+// seeing the review screen rather than a campaign report behind it.
+try{ openByName(new URLSearchParams(location.search).get('open')); }catch(e){}
 
 function show(which, opts){
   opts=opts||{};

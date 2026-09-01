@@ -37,6 +37,16 @@ const ACTIVE = [
     desc: 'The brand-side acquisition flow: post a job, outcome-based pricing, a live job-post form. On the blueai-modern marketing design system. (The partner side moved to its own site — see Partner website below.)',
   },
   {
+    // THE AGENTIC RE-CUT (Appy, 2026-09-01). Its own card rather than a line on the Brand website
+    // card, and the distinction is real: that card describes the marketing site, this is a
+    // signed-in tool with its own topbar, its own three stages and nine campaign types. It is the
+    // one surface here built to the 2026-08-25 agentic research rather than to the marketing DS's
+    // defaults, which is the thing being reviewed — so it needs to be findable on its own.
+    href: '/creator-brand/create-campaign',
+    name: 'Campaign builder',
+    desc: 'Nine campaign types across four outcomes — boost a post, distribute a video, get content made, Reddit threads, product research — each with its own questions, its own priced unit and its own report. Three stages: pick an outcome, understand the mechanism, set it up. Built to the agentic-web research rather than the marketing defaults: product state instead of illustration, a live work queue, one flat accent and no gradient, mono for every count. Files to the campaign dashboard.',
+  },
+  {
     // RENAMED + RE-POINTED 2026-08-19 (Appy): was "Creator Homepage — 'The AI You Own'" ->
     // /experiments/robots/index.html, the PM's raw pulled mock (Phase 1 of
     // public/experiments/robots/PLAN.md). All four phases are done now — header, an 8-dimension

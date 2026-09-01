@@ -227,6 +227,16 @@
 
 /* Numeric ticker — tabular figures so the earnings estimate doesn't jitter in width */
 .cb-tabular { font-variant-numeric: tabular-nums; }
+/* MONO, for the campaign builder and anything else that reports machine state (2026-09-01). Swap #7
+   of the agentic research: "sans plus mono - mono for state, counts, IDs, logs; it signals a machine
+   reporting". The dashboard already leans on this with its .num rule; this is the same idea given a
+   name on the React side. Tabular figures come with it, because every use here is a number in a
+   column that must not shuffle as it counts. System stack only - no webfont is worth a request for
+   an 11px label. */
+.cb-mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+}
 
 /* ── Line-breaking: no orphans, no stub lines ──
    This is the real mechanism for "nothing should feel orphaned on a line", rather than
