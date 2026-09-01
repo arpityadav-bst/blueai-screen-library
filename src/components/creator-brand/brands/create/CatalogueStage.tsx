@@ -1,8 +1,8 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { CAMPAIGN_TYPES } from './campaignCatalog'
-import { FAMILIES, type CampaignType } from './campaignSpec'
+import { FAMILIES, type CampaignType, type Family } from './campaignSpec'
 
 // STAGE 1 - the catalogue. Two things make this the agentic version of the dev prototype's picker,
 // and both come straight out of the 2026-08-25 research rather than from taste:
@@ -21,6 +21,14 @@ import { FAMILIES, type CampaignType } from './campaignSpec'
 //
 // The samples are illustrative and marked as such on the card, because a number that looks live and
 // isn't is the one thing this pattern can get badly wrong.
+//
+// 3. THE FAMILIES ARE A SIDEBAR, NOT FOUR HEADINGS DOWN THE PAGE (Appy, 2026-09-01). Stacked labels
+//    made the page a scroll: four headings, nine cards, and no way to see only the two campaigns you
+//    came for. As a filter the same four words become a control - "All" first, every card on the
+//    right, and one click narrows it. It also fixes a quieter problem, that a heading and its cards
+//    scroll apart, so by the third group a reader is looking at tiles with the label off-screen.
+//    Selecting a family drops the headings entirely: the sidebar IS the label, and repeating it over
+//    the grid would be the same word twice on one screen.
 
 const MY_KEY = 'cb-my-campaigns'
 
@@ -82,7 +90,29 @@ function SampleReadout({ type }: { type: CampaignType }) {
   )
 }
 
+// 'all' is not a Family, deliberately: it is the absence of a filter, and giving it a place in the
+// Family union would put it in every switch that means "which of the four".
+type Tab = Family | 'all'
+
 export default function CatalogueStage({ onPick }: { onPick: (id: string) => void }) {
+  const [active, setActive] = useState<Tab>('all')
+
+  // Counts come from the catalogue, not from a written-down number - the tabs cannot disagree with
+  // the grid, and a tenth campaign appears in both without an edit here.
+  const TABS = useMemo(
+    () => [
+      { key: 'all' as Tab, label: 'All', n: CAMPAIGN_TYPES.length },
+      ...FAMILIES.map((f) => ({
+        key: f as Tab,
+        label: f,
+        n: CAMPAIGN_TYPES.filter((t) => t.family === f).length,
+      })),
+    ],
+    [],
+  )
+
+  const shown = active === 'all' ? CAMPAIGN_TYPES : CAMPAIGN_TYPES.filter((t) => t.family === active)
+
   return (
     <section>
       {/* SMALL AND FLUSH LEFT (swap #2). The dev page centres a 34px headline over the grid; the
@@ -98,41 +128,74 @@ export default function CatalogueStage({ onPick }: { onPick: (id: string) => voi
 
       <QueueStrip />
 
-      {FAMILIES.map((family) => {
-        const types = CAMPAIGN_TYPES.filter((t) => t.family === family)
-        return (
-          <div key={family} className="mt-10">
-            {/* Family label in mono small-caps: it is a category machine-side, not a headline, and
-                swap #7 puts mono on exactly this kind of label. */}
-            <h2 className="cb-mono text-[11px] font-semibold uppercase tracking-[0.08em] text-ink-muted">
-              {family}
-            </h2>
-            <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {types.map((type) => (
-                <button
-                  key={type.id}
-                  type="button"
-                  onClick={() => onPick(type.id)}
-                  className="group flex flex-col rounded-field border border-divider bg-white p-4 text-left transition-colors hover:border-[var(--cb-accent)]"
-                >
-                  <span className="text-[15px] font-semibold text-ink-heading">{type.name}</span>
-                  <span className="bai-body-sm mt-1 text-ink-body-2">{type.one}</span>
-                  {/* mt-auto so the readouts line up across a row whose one-liners wrap to
-                      different heights - the bars are being compared, so they have to share a
-                      baseline. */}
-                  <span className="mt-auto block">
-                    <SampleReadout type={type} />
-                  </span>
-                </button>
-              ))}
-            </div>
-          </div>
-        )
-      })}
+      {/* THE SPLIT STARTS HERE, below the question, its subtitle and the queue strip - those three
+          are about the whole page and stay its full width. Everything that was one stacked grid is
+          now sidebar + content.
+          168/196px: the longest label, "Learn from real people", fits on one line at 12px mono in
+          196px, and a filter list that wraps is a filter list you re-read every time. */}
+      <div className="mt-8 grid gap-6 md:grid-cols-[168px_1fr] lg:grid-cols-[196px_1fr] lg:gap-8">
+        {/* Sticky on desktop so the filter stays put while the cards scroll - which is most of the
+            point of moving it out of the flow. Below md it is a horizontal strip of the same
+            controls: a vertical sidebar on a phone is a column of buttons eating the fold. */}
+        <nav
+          aria-label="Campaign category"
+          className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 md:sticky md:top-6 md:mx-0 md:block md:space-y-0.5 md:self-start md:overflow-visible md:px-0 md:pb-0"
+        >
+          {TABS.map((tab) => {
+            const on = tab.key === active
+            return (
+              <button
+                key={tab.key}
+                type="button"
+                onClick={() => setActive(tab.key)}
+                aria-current={on ? 'true' : undefined}
+                className={`cb-mono flex flex-none items-center gap-2 whitespace-nowrap rounded-card px-3 py-2 text-[12px] transition-colors md:w-full md:flex-auto ${
+                  on
+                    ? 'bg-[rgba(var(--cb-accent-rgb),0.07)] font-semibold text-[var(--cb-accent)]'
+                    : 'text-ink-muted hover:bg-[var(--cb-hover)] hover:text-ink-heading'
+                }`}
+              >
+                <span className="md:flex-1 md:text-left">{tab.label}</span>
+                {/* The count is the useful half of a filter label: it says whether narrowing to
+                    this one leaves you two cards or nine, before you click it. */}
+                <span className={on ? 'text-[rgba(var(--cb-accent-rgb),0.65)]' : 'text-[rgba(0,0,0,0.28)]'}>
+                  {tab.n}
+                </span>
+              </button>
+            )
+          })}
+        </nav>
 
-      <p className="cb-mono mt-10 text-[11px] text-ink-muted">
-        Progress figures above are illustrative examples of how each campaign reports.
-      </p>
+        <div>
+          {/* NO GROUP HEADINGS. Under "All" the nine sit as one grid: the four words that used to
+              head them are the sidebar now, and printing them again over the cards would be the
+              same label twice on one screen. Two columns at lg rather than three - the sidebar took
+              ~200px and three tracks in what is left makes each card too narrow for its one-liner. */}
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            {shown.map((type) => (
+              <button
+                key={type.id}
+                type="button"
+                onClick={() => onPick(type.id)}
+                className="group flex flex-col rounded-field border border-divider bg-white p-4 text-left transition-colors hover:border-[var(--cb-accent)]"
+              >
+                <span className="text-[15px] font-semibold text-ink-heading">{type.name}</span>
+                <span className="bai-body-sm mt-1 text-ink-body-2">{type.one}</span>
+                {/* mt-auto so the readouts line up across a row whose one-liners wrap to
+                    different heights - the bars are being compared, so they have to share a
+                    baseline. */}
+                <span className="mt-auto block">
+                  <SampleReadout type={type} />
+                </span>
+              </button>
+            ))}
+          </div>
+
+          <p className="cb-mono mt-6 text-[11px] text-ink-muted">
+            Progress figures above are illustrative examples of how each campaign reports.
+          </p>
+        </div>
+      </div>
     </section>
   )
 }

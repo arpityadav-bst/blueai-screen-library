@@ -29,11 +29,12 @@ import { dashboardUrl, saveCampaign } from './saveCampaign'
 
 type Stage = 'pick' | 'brief' | 'setup'
 
-const STEPS: readonly { s: Stage; n: string }[] = [
-  { s: 'pick', n: 'Pick' },
-  { s: 'brief', n: 'Understand' },
-  { s: 'setup', n: 'Set up' },
-]
+// NO STEPPER (Appy, 2026-09-01: "we delete that breadcrumbs at the top... I don't want that"). It
+// was a 1 Pick / 2 Understand / 3 Set up line above every stage, and it earned its removal: each
+// stage already opens with the back link that walks it ("All campaigns", "About this campaign"),
+// the topbar carries the Campaigns > New campaign crumb, and a three-item counter above a page that
+// is never longer than three steps was telling the reader something the page itself already said.
+// The stages are still a machine with a plan; that plan just does not need its own chrome.
 
 function Topbar() {
   const base = process.env.NEXT_PUBLIC_BASE_PATH ?? ''
@@ -57,40 +58,6 @@ function Topbar() {
         </a>
       </div>
     </header>
-  )
-}
-
-// The machine's plan, stated. Three steps, the current one lit, the ones behind it walkable - a
-// reader who can see how many steps remain does not have to guess whether the next click submits.
-function Stepper({ stage, onJump }: { stage: Stage; onJump: (s: Stage) => void }) {
-  const at = STEPS.findIndex((x) => x.s === stage)
-  return (
-    <ol className="cb-mono flex items-center gap-2 text-[11px]">
-      {STEPS.map((step, i) => {
-        const done = i < at
-        const now = i === at
-        return (
-          <li key={step.s} className="flex items-center gap-2">
-            {i > 0 && <span aria-hidden="true" className="text-ink-muted">·</span>}
-            <button
-              type="button"
-              disabled={!done}
-              onClick={() => onJump(step.s)}
-              aria-current={now ? 'step' : undefined}
-              className={`transition-colors ${
-                now
-                  ? 'font-semibold text-[var(--cb-accent)]'
-                  : done
-                    ? 'text-ink-muted hover:text-ink-heading'
-                    : 'text-[rgba(0,0,0,0.22)]'
-              }`}
-            >
-              {i + 1} {step.n}
-            </button>
-          </li>
-        )
-      })}
-    </ol>
   )
 }
 
@@ -136,8 +103,7 @@ export default function CreateCampaignFlow() {
     <div className="min-h-screen">
       <Topbar />
       <div className="mx-auto max-w-content px-6 py-8 sm:py-10">
-        <Stepper stage={stage} onJump={go} />
-        <div className="mt-7">
+        <div>
           {stage === 'pick' || !type ? (
             <CatalogueStage onPick={pick} />
           ) : stage === 'brief' ? (
