@@ -2621,7 +2621,19 @@ body.crx-light .crx .crx-star { color: rgba(8, 10, 31, 0.035); }
    The badge on the sleep render and the .dark band keep theirs: both still sit on dark grounds. */
 body.crx-light .crx .crx-menu,
 body.crx-light .crx .crx-toggler { box-shadow: 0 14px 34px -14px rgba(8, 10, 31, 0.18); }
-body.crx-light .crx-modal { box-shadow: 0 24px 60px -18px rgba(8, 10, 31, 0.22); }
+/* THE DIALOG PANEL. Its fill is a hardcoded linear-gradient (#10163a -> #0b1029), and gradients
+   are the one thing the migration pass deliberately skipped - a two-stop fill cannot be classified
+   by the property it sits in, so every one was left for a human. This is the one that mattered:
+   everything INSIDE the panel is tokenised and flipped to dark ink, so on light it was dark text on
+   a dark panel. The others in that skipped set were already handled - the desk, the deck, the stage
+   bloom, the orbs.
+   Flat, not a light gradient: a 2% vertical ramp on white is invisible, and every other panel on
+   the light page is a flat surface with a hairline. */
+body.crx-light .crx-modal {
+  background: var(--sur);
+  border-color: var(--line);
+  box-shadow: 0 24px 60px -18px rgba(8, 10, 31, 0.22);
+}
 body.crx-light .crx .crx-band.dark { box-shadow: 0 30px 80px -50px rgba(8, 10, 31, 0.4); }
 
 /* ------------------------------------------------------------------------------------------------
