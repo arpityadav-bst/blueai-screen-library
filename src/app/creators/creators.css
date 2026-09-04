@@ -277,9 +277,12 @@ body.crx-lock { overflow: hidden; }
 .crx .desk-note {
   position: absolute; top: 26px; left: 0; right: 0;
   text-align: center;
-  font-size: 0.68rem; font-style: italic; font-weight: 500;
+  font-size: 0.62rem; font-style: italic; font-weight: 400;
   letter-spacing: 0.01em;
-  color: var(--ink-3);
+  /* --ink-4, the faintest legible step, not --ink-3 (Appy, 2026-09-02: "make very subtle"). Three
+     things came down together rather than just the colour - size, weight and ink - because dimming
+     the ink alone on a 500-weight line makes it look washed out rather than quiet. */
+  color: var(--ink-4);
   pointer-events: none;
 }
 .crx .desk-top {
