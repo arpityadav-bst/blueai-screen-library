@@ -2475,11 +2475,14 @@ body.crx-light #crx {
     var(--canvas);
 }
 
-/* ORBS: same colours and same geometry as the agency page already - byte-identical 0.55/0.5/0.44
-   fills, 46vw, blur(96px). The ONLY difference between the two sites was the base opacity, 0.26
-   here against 0.34 there, so light gets theirs (designer, 2026-09-02: "same as agency website").
-   Nothing else about the orbs changes, which is why this is one declaration. */
-body.crx-light .crx .crx-orb { opacity: 0.34; }
+/* ORBS ARE GONE ON LIGHT (designer, 2026-09-02: "remove the bg circulating orbs"). They were
+   briefly matched to the agency page's 0.34 on the earlier answer; on the actual light page they
+   are three slow purple clouds drifting behind the content, which is atmosphere a near-black sky
+   needed and a white one does not - the page already has its two static washes and the pixel rain.
+   display:none rather than opacity:0 so the three elements and their rAF transform loop stop
+   costing anything. Backdrop.tsx itself stays for now because the dark path still renders it; when
+   dark is deleted, the component goes with it. */
+body.crx-light .crx .crx-bd { display: none; }
 
 /* GLOWS DO NOT TRANSLATE. A 24px iris drop-shadow behind the gradient heading and a 12px mint halo
    behind the flying earnings chip are both "make it bloom against black"; on white they are grey
@@ -2603,3 +2606,21 @@ body.crx-light .crx .crx-menu,
 body.crx-light .crx .crx-toggler { box-shadow: 0 14px 34px -14px rgba(8, 10, 31, 0.18); }
 body.crx-light .crx-modal { box-shadow: 0 24px 60px -18px rgba(8, 10, 31, 0.22); }
 body.crx-light .crx .crx-band.dark { box-shadow: 0 30px 80px -50px rgba(8, 10, 31, 0.4); }
+
+/* ------------------------------------------------------------------------------------------------
+   THE BOOT INTRO (designer, 2026-09-02: "intro screen are still dark").
+   ------------------------------------------------------------------------------------------------ */
+
+/* .backdrop is the opaque pane the intro plays on - it hides the page completely, so it is the one
+   surface on the site that cannot be a token step: it has to be fully opaque or the page shows
+   through mid-animation. Light gets the page's own canvas with the same faint iris wash overhead
+   that the ground carries, so the intro dissolves INTO the page rather than fading from one colour
+   to another.
+   The pixel logo itself needs nothing: it is drawn cyan -> violet, both mid-tones that hold on
+   white as well as on black. What did need changing is in useBootIntro.ts - the void-hum flickers
+   and the spark alphas, which were tuned against near-black. */
+body.crx-light .crx .backdrop {
+  background:
+    radial-gradient(700px 420px at 50% 30%, rgba(123, 76, 255, 0.05), transparent 70%),
+    linear-gradient(180deg, var(--canvas) 0%, #f4f6fb 60%, var(--canvas) 100%);
+}

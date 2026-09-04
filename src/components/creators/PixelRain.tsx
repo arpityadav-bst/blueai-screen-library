@@ -57,17 +57,24 @@ export default function PixelRain() {
       ctx!.setTransform(dpr, 0, 0, dpr, 0, 0)
     }
 
+    // Read once per spawn rather than cached at mount: the theme switch is a body class that can
+    // flip while the canvas is already running, and a cached value would leave the rain on the old
+    // theme's alpha until a reload. One classList check per spawned pixel is free.
+    const isLight = () => document.body.classList.contains('crx-light')
+
     function spawn(now: number) {
+      const light = isLight()
       sparks.push({
         x: Math.round((Math.random() * W) / GRID) * GRID,
         y: Math.round((Math.random() * H) / GRID) * GRID,
         born: now,
         life: 1100 + Math.random() * 1700,
-        // BACK TO THE DARK-BACKGROUND VALUES. creator-brand raised this to 0.30-0.60 because its
-        // page is #F9F9FA, where a bright pixel at low alpha is nearly invisible. This page is a
-        // near-black sky, so the same boost would turn ambient weather into a starfield competing
-        // with the headline. These are blueai-desktop's originals, which were tuned on #0b0e19.
-        peak: 0.14 + Math.random() * 0.26,
+        // PER THEME (2026-09-02). 0.14-0.40 are blueai-desktop's originals, tuned on #0b0e19, and
+        // they are right for the dark sky: boosted, ambient weather becomes a starfield competing
+        // with the headline. On light they are nearly invisible - a bright pixel at low alpha on
+        // #F9F9FA is nothing - so light takes the agency page's own 0.30-0.60, which exists for
+        // exactly this reason and is documented there as light-canvas compensation.
+        peak: light ? 0.3 + Math.random() * 0.3 : 0.14 + Math.random() * 0.26,
         col: Math.random() < 0.5 ? COLORS[0] : COLORS[1],
       })
     }

@@ -225,11 +225,13 @@ export default function useBootIntro(onDone: () => void) {
     function drawBgSparks(now: number) {
       if (now - lastSpawn > spawnEvery && sparks.length < sparkCap) {
         lastSpawn = now
+        // its own read: this spawner is not inside step(), so it cannot borrow that frame's value
+        const light = document.body.classList.contains('crx-light')
         sparks.push({
           x: Math.round((Math.random() * VW) / GRID) * GRID,
           y: Math.round((Math.random() * VH) / GRID) * GRID,
           born: now, life: 1100 + Math.random() * 1700,
-          peak: 0.12 + Math.random() * 0.22,
+          peak: light ? 0.28 + Math.random() * 0.28 : 0.12 + Math.random() * 0.22,
           col: Math.random() < 0.5 ? '110,168,255' : '123,76,255',
         })
       }
@@ -322,7 +324,11 @@ export default function useBootIntro(onDone: () => void) {
       let stamp: HTMLCanvasElement | null = null
       let stampCss = 0
 
+      // THE INTRO IS CANVAS, so no amount of CSS reaches it - the two alphas below were tuned
+      // against an opaque near-black backdrop and are invisible on a light one. Read per frame, so
+      // the theme switch takes effect on the next intro without a reload.
       function step(ts: number) {
+        const light = document.body.classList.contains('crx-light')
         if (start == null) start = ts
         const t = ts - start
         // NO frameBase() FILL, unlike boot.js: there the canvas IS the app's background, here the
@@ -332,7 +338,11 @@ export default function useBootIntro(onDone: () => void) {
           // void hum: grid-snapped blue sparks breathing before the agent takes shape
           for (let f = 0; f < flickers.length; f++) {
             const fl = flickers[f]
-            cctx!.globalAlpha = Math.max(0, 0.10 + 0.10 * Math.sin(t * 0.006 + fl.ph))
+            // the void hum. 0.10-0.20 blue glows on black and all but disappears on white, so
+            // light roughly doubles it - the same compensation the pixel rain makes.
+            cctx!.globalAlpha = light
+              ? Math.max(0, 0.2 + 0.18 * Math.sin(t * 0.006 + fl.ph))
+              : Math.max(0, 0.1 + 0.1 * Math.sin(t * 0.006 + fl.ph))
             cctx!.fillStyle = '#3a7bd5'
             cctx!.fillRect(fl.x * dpr, fl.y * dpr, (GRID - 1.5) * dpr, (GRID - 1.5) * dpr)
           }
