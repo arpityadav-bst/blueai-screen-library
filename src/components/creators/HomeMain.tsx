@@ -102,8 +102,13 @@ export default function HomeMain() {
             <span className="amount" id="amount">$118</span>
           </div>
 
+          {/* The one hard limit on the offer, said where the machine is rather than in the copy
+              above it (Appy, 2026-09-02). It sits UNDER the desk surface and above the legs: the
+              stage is the claim being played out, so the caveat belongs on the stage, and a
+              footnote under the table reads as a label for the thing on it. */}
           <div className="desk">
             <div className="desk-top" />
+            <span className="desk-note">only on PC</span>
             <div className="desk-leg l" />
             <div className="desk-leg r" />
           </div>

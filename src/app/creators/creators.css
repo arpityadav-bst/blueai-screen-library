@@ -268,6 +268,20 @@ body.crx-lock { overflow: hidden; }
 }
 
 .crx .desk { position: absolute; left: 50%; margin-left: -235px; bottom: 20px; height: 134px; width: 470px; z-index: 2; }
+/* "only on PC" — the caveat, captioned under the desk surface. top: 26px clears the 16px desk-top
+   plus its near-edge highlight, so the text sits in the shade under the table rather than on its
+   lip; it is inside .desk and spans the full width, so it centres between the legs without knowing
+   where they are. --ink-3 and italic keep it a footnote: it is a limit, not a feature, and it
+   should read as an aside from the stage rather than as a second caption competing with the hero.
+   pointer-events: none, like every other part of the scene — nothing here is clickable. */
+.crx .desk-note {
+  position: absolute; top: 26px; left: 0; right: 0;
+  text-align: center;
+  font-size: 0.68rem; font-style: italic; font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--ink-3);
+  pointer-events: none;
+}
 .crx .desk-top {
   height: 16px; border-radius: 8px;
   background: linear-gradient(180deg, #2c3468, #1b2148);
