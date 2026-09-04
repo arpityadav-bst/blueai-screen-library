@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Wordmark } from '@/components/Wordmark'
 import HomeFooter from '@/components/creators/HomeFooter'
+import { applyTheme, clearTheme, readTheme } from '@/components/creators/flow/theme'
 import { LEGAL_DOCS } from './legal-content'
 
 // The cookie chart's rows — from the 2026-08-31 live audit of the test site (GTM-MV8WJNCQ /
@@ -35,6 +36,17 @@ const COOKIE_ROWS: { cookie: string; domain: string; expires: string; purpose: s
 // them the kit's reveal rules would hold the page at opacity 0 forever.
 export default function TermsPage() {
   const [tab, setTab] = useState(LEGAL_DOCS[0].id)
+
+  // THE THEME, read directly rather than through CrxProvider (2026-09-02). This route has its own
+  // minimal chrome on purpose - no journeys, no variants, no account state - so it has no provider,
+  // and the body class the theme rides on was never being set here: the page stayed dark whatever
+  // the switch said. readTheme() honours ?theme= first and the session second, which is what makes
+  // the flow's "Terms of Use" links carry the theme into the new tab they open.
+  // No switch on this page: it is reached from the flow, and ?theme= forces it when reviewed alone.
+  useEffect(() => {
+    applyTheme(readTheme())
+    return clearTheme
+  }, [])
 
   // Hash → tab on load (and on back/forward); tab click → hash via replaceState so the history
   // doesn't fill with tab flips.

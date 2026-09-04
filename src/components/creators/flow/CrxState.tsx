@@ -1,6 +1,7 @@
 'use client'
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
+import { applyTheme, clearTheme, readTheme, THEME_KEY, type Theme } from './theme'
 
 // /creators' signed-in state + the mock now.gg account behind it. Copied from the frozen
 // creator-brand tree's ApplyState.tsx (never imported — that tree is read-only reference), with the
@@ -66,14 +67,13 @@ export type Variant = 'programs' | 'original' | 'offers'
 // identity, and a reload going back to the journey default is the honest reset.
 export type NavView = 'auto' | 'programs' | 'dashboard'
 
-// THEME (2026-09-02) — the page is being converted to light, and this is the switch that lets the
-// two be compared instead of remembered (designer: "temp with flip switch"). Temporary by design:
-// when light is signed off, the dark path and this whole type go, and the light values stop being
-// overrides and become the only values.
+// THEME (2026-09-02) — the switch that lets dark and light be compared instead of remembered
+// (designer: "temp with flip switch"). The key, the read and the body-class write now live in
+// ./theme so the legal page can use them too: it is a separate route with no CrxProvider, so it
+// could not see the theme at all and rendered dark whatever the switch said.
 // SESSION-BACKED, unlike `variant`. A reviewer reloads constantly while judging a repaint, and
 // being thrown back to dark on every reload would make the light pass unreviewable.
-export type Theme = 'dark' | 'light'
-const THEME_KEY = 'crx-theme'
+export type { Theme } from './theme'
 
 type Ctx = {
   signedIn: boolean
@@ -122,8 +122,8 @@ export default function CrxProvider({ children }: { children: ReactNode }) {
       setSignedIn(sessionStorage.getItem(KEY) === '1')
       const stored = sessionStorage.getItem(JOURNEY_KEY)
       if (stored && (JOURNEYS as string[]).includes(stored)) setJourneyState(stored as Journey)
-      const t = sessionStorage.getItem(THEME_KEY)
-      if (t === 'light' || t === 'dark') setThemeState(t)
+      // readTheme() also honours ?theme=, so the query is handled here rather than twice
+      setThemeState(readTheme())
     } catch {
       // Private-mode Safari throws on sessionStorage access. Staying signed out is the correct
       // fallback, and it must not take the page down with it.
@@ -147,11 +147,6 @@ export default function CrxProvider({ children }: { children: ReactNode }) {
       if (v === 'b' || v === 'original') setVariant('original')
       else if (v === 'c' || v === 'offers') setVariant('offers')
       else if (v === 'a' || v === 'programs') setVariant('programs')
-      // ?theme=light for the same reason ?v= exists: a repaint gets reviewed by people who are
-      // handed a URL. It WINS over the stored value, because a link naming a theme is a more
-      // specific instruction than what this tab happened to be set to earlier.
-      const t = q.get('theme')?.toLowerCase()
-      if (t === 'light' || t === 'dark') setThemeState(t)
     } catch {
       // Nothing to fall back to: the default state IS the fallback.
     }
@@ -176,8 +171,8 @@ export default function CrxProvider({ children }: { children: ReactNode }) {
   // leave the dialogs dark. body.crx-lock is the existing precedent for a body-level flag here.
   // Cleanup removes it so a route change cannot leave the class behind on another page's body.
   useEffect(() => {
-    document.body.classList.toggle('crx-light', theme === 'light')
-    return () => document.body.classList.remove('crx-light')
+    applyTheme(theme)
+    return clearTheme
   }, [theme])
 
   const setTheme = useCallback((v: Theme) => {

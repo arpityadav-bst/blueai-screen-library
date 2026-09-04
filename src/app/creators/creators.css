@@ -2593,10 +2593,16 @@ body.crx-light .crx .sleep-scene {
   box-shadow: 0 24px 60px -40px rgba(8, 10, 31, 0.35), inset 0 0 0 1px var(--line);
 }
 
-/* the machine labels sit ON the render, which is still dark - so they stay a dark pill with light
-   ink in BOTH themes. Only the border comes down, since it no longer has to separate the pill from
-   a dark page behind it. */
-body.crx-light .crx .sleep-badge { border-color: rgba(255, 255, 255, 0.22); }
+/* THE MACHINE LABELS GO LIGHT TOO (designer, 2026-09-02). I had left them a dark pill on the
+   reasoning that they sit ON the render and the render is dark - but the page they are read as part
+   of is light now, and a row of near-black pills is the only dark chrome left on it. White glass at
+   0.9 rather than flat white so the still shows through slightly and they stay labels ON a photo
+   rather than stickers over it; the ink needs nothing, it is var(--ink-inverse) and flips already. */
+body.crx-light .crx .sleep-badge {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: var(--line);
+  box-shadow: 0 6px 18px -8px rgba(8, 10, 31, 0.3);
+}
 
 /* the step numeral: #7da2ff is a light blue for a dark card. On white it needs the DS's marketing
    blue, which is the accent this product already uses for exactly this - eyebrows and small
