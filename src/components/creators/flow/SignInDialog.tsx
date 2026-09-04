@@ -1,7 +1,7 @@
 'use client'
 
 import { useCrx } from './CrxState'
-import { CARD_FONT, CARD_WIDTH, CTA, RING, SKIN } from './signinSkin'
+import { CARD_FONT, CARD_WIDTH, CTA, CTA_SHADOW, RING, SKIN } from './signinSkin'
 
 // COPIED near-verbatim from the frozen creator-brand tree's creators/SignInDialog.tsx (read-only
 // reference, never imported) — designer directive: "the sign in pop up will remain the same". Three
@@ -198,11 +198,13 @@ export default function SignInDialog({
           <button
             type="button"
             onClick={go}
-            // h-[41px] is the MEASURED height, not padding maths: the scraped `padding: 6px 24px`
-            // against a 21px line box gives 33px — 8px short. Colour is #fff explicitly so nothing
-            // in this card's inherited colour chain can tint the label.
-            style={{ background: CTA, color: '#fff' }}
-            className="flex h-[41px] w-full items-center justify-center rounded-[8px] px-6 text-[14px] font-semibold leading-[21px] transition-transform duration-base ease-out-bai hover:-translate-y-0.5 active:translate-y-0"
+            // THE PAGE'S PRIMARY, not the replica's. h-[41px]/8px/600 were now.gg's measured
+            // button; the page's own .btn is a pill at 700 with an iris shadow, and one primary
+            // action should have one appearance whether it is on the hero or in a dialog. 44px
+            // rather than .btn's padding maths, because this one is full-width in a fixed card.
+            // Colour is #fff explicitly so nothing in the card's inherited chain can tint it.
+            style={{ background: CTA, color: '#fff', boxShadow: CTA_SHADOW }}
+            className="flex h-[44px] w-full items-center justify-center rounded-pill px-6 text-[15px] font-bold leading-[21px] transition-[transform,box-shadow] duration-base ease-out-bai hover:-translate-y-0.5 active:translate-y-0"
           >
             Continue
           </button>

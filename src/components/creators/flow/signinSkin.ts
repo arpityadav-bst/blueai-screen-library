@@ -50,8 +50,16 @@ export type Skin = (typeof SKIN)[keyof typeof SKIN]
 /** The 0.8px ring around the card - the one visual the card kept from the now.gg original. */
 export const RING = '#7B4CFF'
 
-/** The gradient CTA. Level 1's "Got it" and level 2's "Continue" are the same button on purpose. */
-export const CTA = 'linear-gradient(270deg, #7B4CFF 0%, #0EA4C5 99.48%)'
+/** THE PAGE'S PRIMARY, not the replica's (Appy, 2026-09-02: "is it the same as the primary cta on
+ *  hero page?" - it was not). The dialog carried now.gg's own auth button: a two-stop iris -> cyan
+ *  gradient at 270deg, an 8px radius, 600 weight, no shadow. It survived because everything about
+ *  the card was once a faithful copy; with the branding, the waves and the dark surface all gone, it
+ *  was the last piece still speaking now.gg's design language.
+ *  These three are creators.css's --cta-grad, .btn's radius and .btn's shadow, copied as literals
+ *  because this card paints outside the .crx scope with inline styles and cannot reach a CSS token.
+ *  THE TOKEN IS THE SOURCE OF TRUTH: if --cta-grad or .btn's shadow changes, change these with it. */
+export const CTA = 'linear-gradient(105deg, #1a90ff 0%, #6b53ff 55%, #7b4cff 100%)'
+export const CTA_SHADOW = '0 10px 30px -6px rgba(95, 70, 255, 0.65)'
 
 /**
  * ONE WIDTH FOR BOTH LEVELS. The card was 360 - the now.gg original's measured width. It is 400 now

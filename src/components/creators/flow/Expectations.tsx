@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useCrx } from './CrxState'
-import { CARD_FONT, CARD_WIDTH, CTA, RING, SKIN } from './signinSkin'
+import { CARD_FONT, CARD_WIDTH, CTA, CTA_SHADOW, RING, SKIN } from './signinSkin'
 import { MonitorIcon, WalletIcon } from './apply/introIcons'
 
 // LEVEL 1 OF THE SIGN-IN DIALOG (Appy, 2026-09-02: "sign up becomes a 2 level thing... where we
@@ -146,13 +146,13 @@ export default function Expectations({
           ))}
         </ul>
 
-        {/* THE SAME BUTTON AS LEVEL 2'S CONTINUE - one CTA treatment across the dialog, so "got it"
-            and "continue" read as two presses of the same control rather than two controls. */}
+        {/* THE PAGE'S PRIMARY - the same button as level 2's Continue and as the hero's Get
+            Access. One primary action, one appearance, on the page or in a dialog. */}
         <button
           type="button"
           onClick={onContinue}
-          className="flex h-[41px] w-full items-center justify-center rounded-[8px] px-6 text-[14px] font-semibold leading-[21px] transition-transform duration-base ease-out-bai hover:-translate-y-0.5 active:translate-y-0"
-          style={{ background: CTA, color: '#fff' }}
+          className="flex h-[44px] w-full items-center justify-center rounded-pill px-6 text-[15px] font-bold leading-[21px] transition-[transform,box-shadow] duration-base ease-out-bai hover:-translate-y-0.5 active:translate-y-0"
+          style={{ background: CTA, color: '#fff', boxShadow: CTA_SHADOW }}
         >
           Got it, continue
         </button>
