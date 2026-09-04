@@ -135,23 +135,37 @@ export default function SignInDialog({ onClose }: { onClose: () => void }) {
       <>
         {/* HEADER — the waves are absolutely positioned so they bleed past it exactly as they do on
             the real card (both SVGs are taller than the header and start above y=0). */}
-        {/* NO BRANDING IN THE BAND (Appy, 2026-09-02): the "One account for" line and the
-            BlueStacks / now.gg lockup are gone, and the card opens on "Login or Sign up".
-            THE HEIGHT DERIVATION CHANGED WITH THEM. It used to be 135px because that is the taller
-            wave's height, and anything shorter let the heading collide with a wave crest somewhere
-            across the card's width - the clearance was structural because there was content sitting
-            in the band. With the band empty there is nothing left to clear, so its height is now
-            purely how much wave you want to see, and 56 is that.
-            The waves come down to match (Waves(), 56/51 from 135/123, the same 1.1:1 ratio). Both
-            SVGs are preserveAspectRatio="none", so this FLATTENS the curve rather than cropping it
-            - the crest still lands at the same fractions of the width, just shallower. */}
-        <div className="relative h-[56px] shrink-0">
-          <Waves />
-        </div>
+        {/* NO BAND AT ALL (Appy, 2026-09-02). It held "One account for" and the BlueStacks /
+            now.gg lockup, then just a flattened wave, and now nothing: the card opens straight on
+            "Login or Sign up". Waves() went with it rather than being left unrendered - a component
+            with no consumer is the thing that makes the next reader look for where it is used. */}
+        {/* The dismiss. This card paints its own surface and is NOT inside the .crx token scope, so
+            it cannot borrow the kit's .crx-modal-x; it is built from the same SKIN the rest of the
+            card uses. Absolutely positioned so it never joins the content flow - the heading stays
+            optically centred in the card's full width rather than being pushed off-centre by a
+            control sharing its row. */}
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Close"
+          className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full transition-colors"
+          style={{ color: skin.ink40 }}
+          onMouseEnter={(e) => { e.currentTarget.style.color = skin.ink }}
+          onMouseLeave={(e) => { e.currentTarget.style.color = skin.ink40 }}
+        >
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+            <path d="M6 6l12 12M18 6L6 18" />
+          </svg>
+        </button>
 
-        {/* BODY — 24px horizontal padding (the real card's 358.4 outer vs 310.4 content), 16px between
-            blocks. pb is ours: the real page has a taller viewport below the legal line. */}
-        <div className="flex flex-col gap-4 px-6 pb-6">
+        {/* BODY. The real card's measurements were 24px sides / 16px between blocks, and both went
+            up when the band was removed (Appy, 2026-09-02: "keep generous padding throughout and
+            around the edges especially top edge"): 28 sides, 28 bottom, 20 between blocks.
+            THE TOP IS 40, not 28, and deliberately unequal. The card used to open with 56px of wave
+            above the heading, so the eye had a run-up; with the band gone, matching the side padding
+            at the top would put the heading almost against the card's edge. 40 also clears the
+            close control at top-3, so the two never crowd. */}
+        <div className="flex flex-col gap-5 px-7 pb-7 pt-10">
           <div>
             <h3 className="text-center text-[20px] font-semibold leading-[30px]">Login or Sign up</h3>
             <h3 className="mt-2 text-center text-[14px] font-normal leading-[21px] opacity-90" style={{ color: skin.ink70 }}>
@@ -229,55 +243,8 @@ export default function SignInDialog({ onClose }: { onClose: () => void }) {
             <a className="underline" href="/creators/terms#privacy" target="_blank" rel="noopener">Privacy Policy</a>, including{' '}
             <a className="underline" href="/creators/terms#cookies" target="_blank" rel="noopener">Cookie Use</a>.
           </p>
-          <p className="text-center text-[10.5px] leading-snug" style={{ color: skin.ink60 }}>
-            Prototype. No account is created and nothing is sent.
-          </p>
         </div>
       </>
-    </div>
-  )
-}
-
-/**
- * The header's two gradient waves, copied path-for-path from the real card's inline SVGs (the
- * portrait pair; the page also ships a landscape pair we don't use at this width).
- *
- * w-full + preserveAspectRatio="none", NOT the scraped width="360": at a 360px viewport the card is
- * 353px and at 320 it is 284, so a hard-coded 360 wave was 71px too wide inside its own card —
- * measured — and the overflow-hidden simply cropped the crest off-centre. The wave now always spans
- * exactly the card it sits in. Non-uniform scaling is safe HERE and would not be for most art:
- * these are two gentle curves with no circles, text or corner radii, so stretching horizontally is
- * imperceptible. Height stays pinned so the header's 135px still clears the crest at every width.
- */
-function Waves() {
-  return (
-    <div className="pointer-events-none absolute inset-x-0 top-0" aria-hidden="true">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 135" fill="none" preserveAspectRatio="none" className="absolute inset-x-0 top-0 h-[56px] w-full">
-        <path
-          opacity="0.4"
-          d="M237.886 105.464C363.827 91.9235 407.104 113.841 413 126.492V-12.5H-41V126.492C31.5221 147.52 80.4597 122.389 237.886 105.464Z"
-          fill="url(#crxNowggWaveA)"
-        />
-        <defs>
-          <linearGradient id="crxNowggWaveA" x1="-41" y1="60.9999" x2="413" y2="60.9999" gradientUnits="userSpaceOnUse">
-            <stop stopColor="#7B4CFF" />
-            <stop offset="0.994792" stopColor="#0EA4C5" />
-          </linearGradient>
-        </defs>
-      </svg>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 123" fill="none" preserveAspectRatio="none" className="absolute inset-x-0 top-0 h-[51px] w-full">
-        <path
-          opacity="0.5"
-          d="M136.8 95.834C31.9418 83.3991 -4.09091 103.527 -9 115.146V-12.5H369V115.146C308.618 134.457 267.873 111.378 136.8 95.834Z"
-          fill="url(#crxNowggWaveB)"
-        />
-        <defs>
-          <linearGradient id="crxNowggWaveB" x1="369" y1="54.9999" x2="-9" y2="54.9999" gradientUnits="userSpaceOnUse">
-            <stop stopColor="#7B4CFF" />
-            <stop offset="0.994792" stopColor="#0EA4C5" />
-          </linearGradient>
-        </defs>
-      </svg>
     </div>
   )
 }
