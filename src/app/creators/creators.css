@@ -2525,7 +2525,12 @@ body.crx-light .crx .chip { text-shadow: none; }
 body.crx-light .crx .desk-top {
   background: linear-gradient(180deg, #e6eaf3, #ccd3e2);
   border-top: 1px solid #ffffff;
-  box-shadow: 0 18px 40px -14px rgba(8, 10, 31, 0.18);
+  /* softer (Appy, 2026-09-02). The dark original is a 0.6 black at 40px blur, which is what it
+     takes to lift a dark surface off a dark page; the first light pass only re-tinted it and kept
+     that weight, so the table sat in a bruise. Half the alpha, tighter blur and a deeper negative
+     spread, so it reads as contact under the near edge rather than as a cast shadow - and the
+     stage already has its own ground ellipse in .scene::after doing the sitting-on-the-page work. */
+  box-shadow: 0 10px 24px -18px rgba(8, 10, 31, 0.09);
 }
 body.crx-light .crx .desk-leg { background: linear-gradient(180deg, #d5dbe8, #bcc4d6); }
 
