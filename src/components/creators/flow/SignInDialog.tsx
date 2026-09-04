@@ -121,12 +121,21 @@ export default function SignInDialog({
           <button
             type="button"
             onClick={onBack}
-            className="absolute left-4 top-4 z-10 flex items-center gap-1 text-[12px] leading-none transition-colors"
+            aria-label="Back"
+            className="absolute left-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full transition-colors"
             style={{ color: skin.ink40 }}
             onMouseEnter={(e) => { e.currentTarget.style.color = skin.ink }}
             onMouseLeave={(e) => { e.currentTarget.style.color = skin.ink40 }}
           >
-            <span aria-hidden="true">&lsaquo;</span> Back
+            {/* A DRAWN CHEVRON, not a glyph. This was &lsaquo; plus the word "Back" - a typographic
+                angle-quote, which is not an arrow: it renders thin and at a different weight in
+                every face, and it left a text link in one corner facing a 32px icon button in the
+                other. Same 32px round target, same stroke width and same hover as the dismiss, so
+                the two corners are actually the pair the comment above claims. Icon-only for the
+                same reason: the label is on the screen it returns to. */}
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M14.5 6l-6 6 6 6" />
+            </svg>
           </button>
         )}
         {/* The dismiss. This card paints its own surface and is NOT inside the .crx token scope, so
