@@ -108,7 +108,9 @@ export default function HomeMain() {
               footnote under the table reads as a label for the thing on it. */}
           <div className="desk">
             <div className="desk-top" />
-            <span className="desk-note">only on PC</span>
+            {/* The asterisk is part of the string, not a ::before: it reads as a footnote MARK, so
+                it belongs to the sentence and gets selected and copied with it. */}
+            <span className="desk-note">*only on PC</span>
             <div className="desk-leg l" />
             <div className="desk-leg r" />
           </div>
