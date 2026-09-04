@@ -1514,6 +1514,29 @@ body.crx-light .crx {
 .crx .crx-modal-x:active { color: var(--ink-inverse); background: var(--sur-hover); }
 .crx .crx-modal-x:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px; }
 
+/* ---- the two-level sign-in dialog (Expectations.tsx -> SignInDialog.tsx, 2026-09-02) ----
+   FORWARD, NOT FADE. Level 2 slides in from the right and level 1, on Back, from the left: the
+   direction is what says "you moved on" and "you went back", and a crossfade says neither. 28px is
+   enough to read as travel and short enough that the card never appears to have come from off-screen.
+   The easing is the header-drop curve this page already uses for arrivals.
+   The dialog is inside .crx (Modal.tsx does not portal), so these resolve on the card roots. */
+@keyframes crx-step-fwd { from { opacity: 0; transform: translateX(28px); } to { opacity: 1; transform: none; } }
+@keyframes crx-step-back { from { opacity: 0; transform: translateX(-28px); } to { opacity: 1; transform: none; } }
+.crx .crx-step-fwd { animation: crx-step-fwd 0.36s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.crx .crx-step-back { animation: crx-step-back 0.36s cubic-bezier(0.22, 1, 0.36, 1) both; }
+/* the expectation rows arrive one after another (delays set inline per row). Same curve as the
+   laptop's crx-emerge, but translating: that keyframe animates margin-top for a stacking list and
+   would make this one jump. */
+@keyframes crx-xp-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.crx .crx-xp-row { animation: crx-xp-in 0.55s cubic-bezier(0.25, 0.8, 0.35, 1) both; }
+@media (prefers-reduced-motion: reduce) {
+  /* the level change still has to be perceptible, so it keeps a plain fade; the row stagger is
+     decoration and goes entirely */
+  .crx .crx-step-fwd, .crx .crx-step-back { animation: crx-step-fade 0.2s ease both; }
+  .crx .crx-xp-row { animation: none; }
+}
+@keyframes crx-step-fade { from { opacity: 0; } to { opacity: 1; } }
+
 /* THE STAT-CARD FAMILY WENT WITH StatCards, 2026-08-25 — deleted with that component (see
    EarningsPanel.tsx for why a row of three equal tiles was the wrong shape for one program fact and
    two money ones). It came back for one morning on 2026-08-27 as Version B's StatCardsV1, then went

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import CrxProvider, { useCrx } from './flow/CrxState'
 import Modal from './flow/Modal'
 import SignInDialog from './flow/SignInDialog'
+import Expectations from './flow/Expectations'
 import PreviewToggler from './flow/PreviewToggler'
 import FullCapacityNotice from './flow/FullCapacityNotice'
 import ProgramsHome from './programs/ProgramsHome'
@@ -32,8 +33,12 @@ export default function CreatorsHome() {
   )
 }
 
+// Read once per session: an applicant who has acknowledged the expectations and closed the dialog
+// should not have to read them again when they reopen it a minute later.
+const SEEN_KEY = 'crx-expectations-seen'
+
 function CreatorsSwitch() {
-  const { signedIn, journey, nav, variant } = useCrx()
+  const { signedIn, journey, nav, variant, setJourney } = useCrx()
   const rootRef = useRef<HTMLDivElement>(null)
 
   // The sign-in dialog is owned here because three CTAs across three files open it: the header's
@@ -41,7 +46,48 @@ function CreatorsSwitch() {
   // onCta). One open function passed down beats three private modals.
   const [signInOpen, setSignInOpen] = useState(false)
   const openSignIn = useCallback(() => setSignInOpen(true), [])
-  const closeSignIn = useCallback(() => setSignInOpen(false), [])
+
+  // THE DIALOG HAS TWO LEVELS (Appy, 2026-09-02): expectations first, then the sign-in card. Which
+  // one shows follows ONE rule, and it is the rule the rest of this page already uses to decide what
+  // sign-in resolves to - the journey. A returning journey resolves to the dashboard, so it skips
+  // straight to sign-in; every other journey resolves to the application, so it reads the
+  // expectations first. The hero's "Sign in" door already sets returningUser BEFORE opening, so it
+  // needed no new plumbing to skip level 1. `acked` is the applicant having pressed "Got it" (kept
+  // for the session); `stepped` records that the current level was reached from the other one, so
+  // it can slide in rather than appear.
+  const returning = journey === 'returningUser' || journey === 'returningMulti' || journey === 'returningEmpty'
+  const [acked, setAcked] = useState(false)
+  const [stepped, setStepped] = useState(false)
+  useEffect(() => {
+    try {
+      if (sessionStorage.getItem(SEEN_KEY) === '1') setAcked(true)
+    } catch {
+      // storage is a convenience here; the in-memory flag still works for this page load
+    }
+  }, [])
+  const level = returning || acked ? 2 : 1
+
+  const closeSignIn = useCallback(() => {
+    setSignInOpen(false)
+    setStepped(false)
+  }, [])
+  const ackExpectations = useCallback(() => {
+    setAcked(true)
+    setStepped(true)
+    try { sessionStorage.setItem(SEEN_KEY, '1') } catch { /* see above */ }
+  }, [])
+  // "Already have an account? Sign in" on level 1 - the same semantics as the hero's door.
+  const signInFromExpectations = useCallback(() => {
+    setJourney('returningUser')
+    setStepped(true)
+  }, [setJourney])
+  // Back from level 2 un-acknowledges, so the expectations show again and will show on the next
+  // open too - going back is a signal the reader wants to see them, not a navigation accident.
+  const backToExpectations = useCallback(() => {
+    setAcked(false)
+    setStepped(true)
+    try { sessionStorage.removeItem(SEEN_KEY) } catch { /* see above */ }
+  }, [])
 
   // REVEAL STATE ON SIGNED-IN VIEWS. The header (and every .rv element) is opacity:0 until the
   // root carries .revealed — a class the boot intro adds via direct DOM and its unmount cleanup
@@ -100,8 +146,22 @@ function CreatorsSwitch() {
       {/* Both render in ALL states: the toggler is the reviewer's journey switch (z-110, above
           the modal on purpose), and the dialog must be able to open from any signed-out CTA. */}
       <PreviewToggler />
-      <Modal open={signInOpen} onClose={closeSignIn} label="Sign in to now.gg">
-        <SignInDialog onClose={closeSignIn} />
+      <Modal open={signInOpen} onClose={closeSignIn} label={level === 1 ? 'Before you start' : 'Sign in'}>
+        {level === 1 ? (
+          <Expectations
+            onContinue={ackExpectations}
+            onSignIn={signInFromExpectations}
+            onClose={closeSignIn}
+            enter={stepped ? 'back' : undefined}
+          />
+        ) : (
+          <SignInDialog
+            onClose={closeSignIn}
+            onBack={returning ? undefined : backToExpectations}
+            returning={returning}
+            enter={stepped ? 'fwd' : undefined}
+          />
+        )}
       </Modal>
     </div>
   )

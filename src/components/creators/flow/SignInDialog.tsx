@@ -1,6 +1,7 @@
 'use client'
 
 import { useCrx } from './CrxState'
+import { CARD_FONT, CARD_WIDTH, CTA, RING, SKIN } from './signinSkin'
 
 // COPIED near-verbatim from the frozen creator-brand tree's creators/SignInDialog.tsx (read-only
 // reference, never imported) — designer directive: "the sign in pop up will remain the same". Three
@@ -51,49 +52,11 @@ import { useCrx } from './CrxState'
 // never visible — the site scrim sits between this card and the page, and a backdrop-filter can
 // only reveal what is behind it. Solid rather than any alpha: a translucent card's read changes
 // with whatever page is behind it, and a solid one is the same card every time.
-// THE CARD IS NO LONGER A STRICT REPLICA (Appy, 2026-09-02: "convert this into the light theme").
-// Everything above still describes the real now.gg card, and it is kept as the record this file was
-// transcribed from - but the surface, the ink and the field now follow the page's theme. That is a
-// deliberate divergence: a dark auth card was the last dark surface on a light page, and matching
-// the product it lives in beats matching the page it was copied from.
-//
-// A PALETTE OBJECT RATHER THAN CSS TOKENS. This component paints with inline styles and Tailwind
-// utilities, not the .crx kit, so var(--sur) would resolve to nothing on most of these and CSS
-// overrides would be fighting utility specificity. Two literal sets, chosen from the same DS values
-// the light block uses, is the honest shape for a component built this way.
-const SKIN = {
-  dark: {
-    card: '#1F1F23',
-    ink: '#fff',
-    ink70: 'rgba(255,255,255,0.7)',   // sub-heading
-    ink80: 'rgba(255,255,255,0.8)',   // field label
-    ink40: 'rgba(255,255,255,0.4)',   // separator + legal
-    ink60: 'rgba(255,255,255,0.6)',   // the prototype line
-    rule: 'rgba(255,255,255,0.2)',    // the hairlines either side of "Or sign in with"
-    tileLine: 'transparent',          // the white provider tiles need no edge on a dark card
-    field:
-      'border-white/50 bg-black/20 text-white placeholder:text-white/40 hover:border-white/80' +
-      ' focus:border-[#7B4CFF] focus:shadow-[0_0_0_3px_rgba(123,76,255,0.25)]',
-  },
-  light: {
-    card: '#ffffff',
-    ink: 'rgb(8,10,31)',
-    ink70: 'rgb(55,58,88)',
-    ink80: 'rgb(43,46,76)',
-    ink40: 'rgb(106,110,136)',
-    ink60: 'rgb(106,110,136)',
-    rule: 'rgb(223,228,238)',
-    // On white, the Apple and Google tiles ARE white - without an edge they are two invisible
-    // buttons in a row of four. Discord and Facebook keep their brand fills and ignore this.
-    tileLine: 'rgb(223,228,238)',
-    field:
-      'border-[#cdd4e2] bg-white text-[rgb(8,10,31)] placeholder:text-[rgb(106,110,136)] hover:border-[#7B4CFF]' +
-      ' focus:border-[#7B4CFF] focus:shadow-[0_0_0_3px_rgba(123,76,255,0.18)]',
-  },
-} as const
-
-const RING = '#7B4CFF'
-const CTA = 'linear-gradient(270deg, #7B4CFF 0%, #0EA4C5 99.48%)'
+// THE CARD IS NO LONGER A STRICT REPLICA (Appy, 2026-09-02). Everything above still describes the
+// real now.gg card and is kept as the record this file was transcribed from - but the surface, the
+// ink and the field follow the page's theme, the band and the branding are gone, and since the
+// dialog grew a first level (Expectations.tsx) the palette lives in ./signinSkin so both levels
+// draw from one set. This is LEVEL 2: the sign-in itself.
 const A = '/creator-brand/nowgg-signin'
 
 const PROVIDERS = [
@@ -103,7 +66,20 @@ const PROVIDERS = [
   { id: 'facebook', icon: `${A}/facebook_light.png`, bg: '#2178FA', w: 20, h: 20, brand: true },
 ]
 
-export default function SignInDialog({ onClose }: { onClose: () => void }) {
+export default function SignInDialog({
+  onClose,
+  onBack,
+  returning,
+  enter,
+}: {
+  onClose: () => void
+  /** Present only on the applicant path - a way back to the expectations they just read. */
+  onBack?: () => void
+  /** Decides the sub-heading: an applicant is here to submit, a returning account to get back in. */
+  returning: boolean
+  /** 'fwd' when reached from level 1, so the card slides in from the right. */
+  enter?: 'fwd'
+}) {
   const { signIn, theme } = useCrx()
   const skin = SKIN[theme]
 
@@ -118,19 +94,17 @@ export default function SignInDialog({ onClose }: { onClose: () => void }) {
   }
 
   return (
-    // Poppins is set here rather than in a Tailwind token: it exists on this page for this one card,
-    // and adding it to the theme would invite it onto surfaces that are on Inter by design.
-    // w-full max-w-[360px]: the frozen Modal's SIZES.xs — 360 is the card's MEASURED width; every
-    // type size, padding and control height here was scraped at it, so changing it rescales a
-    // replica that is supposed to be exact.
+    // Width, face and ring come from signinSkin so level 1 cannot drift from them. 400, not the
+    // measured 360 (see CARD_WIDTH for why): the card stopped being an exact replica when the band
+    // went, and level 1 needs the room.
     <div
       style={{
         background: skin.card,
         color: skin.ink,
         border: `0.8px solid ${RING}`,
-        fontFamily: "'Poppins', sans-serif",
+        fontFamily: CARD_FONT,
       }}
-      className="relative flex w-full max-w-[360px] flex-col overflow-hidden rounded-[12px]"
+      className={`relative flex w-full ${CARD_WIDTH} flex-col overflow-hidden rounded-[12px] ${enter === 'fwd' ? 'crx-step-fwd' : ''}`}
     >
       <>
         {/* HEADER — the waves are absolutely positioned so they bleed past it exactly as they do on
@@ -139,6 +113,22 @@ export default function SignInDialog({ onClose }: { onClose: () => void }) {
             now.gg lockup, then just a flattened wave, and now nothing: the card opens straight on
             "Login or Sign up". Waves() went with it rather than being left unrendered - a component
             with no consumer is the thing that makes the next reader look for where it is used. */}
+        {/* THE WAY BACK, applicant path only. Someone who arrived through the expectations screen
+            may want to re-read it; someone who came in through "Sign in" never saw it and gets no
+            link to a screen that was not there. Top-left, mirroring the dismiss at top-right, so the
+            two controls read as the card's pair of corners rather than as content. */}
+        {onBack && (
+          <button
+            type="button"
+            onClick={onBack}
+            className="absolute left-4 top-4 z-10 flex items-center gap-1 text-[12px] leading-none transition-colors"
+            style={{ color: skin.ink40 }}
+            onMouseEnter={(e) => { e.currentTarget.style.color = skin.ink }}
+            onMouseLeave={(e) => { e.currentTarget.style.color = skin.ink40 }}
+          >
+            <span aria-hidden="true">&lsaquo;</span> Back
+          </button>
+        )}
         {/* The dismiss. This card paints its own surface and is NOT inside the .crx token scope, so
             it cannot borrow the kit's .crx-modal-x; it is built from the same SKIN the rest of the
             card uses. Absolutely positioned so it never joins the content flow - the heading stays
@@ -168,8 +158,11 @@ export default function SignInDialog({ onClose }: { onClose: () => void }) {
         <div className="flex flex-col gap-5 px-7 pb-7 pt-10">
           <div>
             <h3 className="text-center text-[20px] font-semibold leading-[30px]">Login or Sign up</h3>
+            {/* Was now.gg's "Save your progress & earn rewards" - true of their product, not of this
+                flow. Two honest lines instead, one per door: an applicant is here to submit, a
+                returning account is here to get back to its dashboard. */}
             <h3 className="mt-2 text-center text-[14px] font-normal leading-[21px] opacity-90" style={{ color: skin.ink70 }}>
-              Save your progress &amp; earn rewards
+              {returning ? 'Sign in to open your dashboard.' : 'Sign in to submit your application.'}
             </h3>
           </div>
 
