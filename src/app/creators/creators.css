@@ -615,7 +615,7 @@ body.crx-lock { overflow: hidden; }
 }
 .crx .time-chip {
   display: flex; align-items: center; gap: 0.45rem;
-  background: rgba(13, 18, 48, 0.78);
+  background: var(--glass);
   border: 1px solid var(--line-2);
   border-radius: 999px;
   padding: 0.45rem 0.95rem;
@@ -1199,6 +1199,7 @@ body.crx-lock { overflow: hidden; }
   /* an OPAQUE pane - the account menu, a dialog. Not a surface step: its job is to hide what is
      behind it, which is why it is 0.92 rather than one of the card fills. */
   --sur-opaque: rgba(10, 15, 38, 0.92);
+  --scrim: rgba(5, 6, 15, 0.72);      /* dims the page behind a dialog - not a surface, not a line */
 }
 
 /* ------------------------------------------------------------------------------------------------
@@ -1234,6 +1235,7 @@ body.crx-light .crx {
   --positive-wash: rgba(15, 157, 88, 0.1);
   --positive-line: rgba(15, 157, 88, 0.32);
   --sur-opaque: #ffffff;
+  --scrim: rgba(8, 10, 31, 0.45);     /* lighter: at 0.72 a light page reads as switched off */
 
   /* --- the pre-existing tokens, flipped in the same block so the already-tokenised parts of the
          page turn on day one, before any migration --- */
@@ -1358,7 +1360,7 @@ body.crx-light .crx {
 .crx .crx-choice-card.on .crx-choice-mark { display: flex; }
 /* tone variants — yes reads mint, no reads danger, at REST on the icon and fully once chosen */
 .crx .crx-choice-card.tone-ok .crx-choice-ic, .crx .crx-choice.tone-ok .crx-choice-ic { color: var(--mint); }
-.crx .crx-choice-card.tone-ok.on, .crx .crx-choice.tone-ok.on { border-color: rgba(52, 227, 154, 0.45); background: rgba(52, 227, 154, 0.1); }
+.crx .crx-choice-card.tone-ok.on, .crx .crx-choice.tone-ok.on { border-color: var(--positive-line); background: var(--positive-wash); }
 .crx .crx-choice-card.tone-ok.on .crx-choice-mark { background: var(--mint); color: #05060f; }
 .crx .crx-choice-card.tone-danger .crx-choice-ic, .crx .crx-choice.tone-danger .crx-choice-ic { color: var(--danger); }
 .crx .crx-choice-card.tone-danger.on, .crx .crx-choice.tone-danger.on { border-color: rgba(255, 107, 122, 0.45); background: var(--danger-wash); }
@@ -1463,7 +1465,7 @@ body.crx-light .crx {
   position: fixed; inset: 0; z-index: 100;
   display: flex; align-items: center; justify-content: center;
   padding: 1.5rem;
-  background: rgba(5, 6, 15, 0.72);
+  background: var(--scrim);
   backdrop-filter: blur(3px);
   -webkit-backdrop-filter: blur(3px);
 }
@@ -2266,7 +2268,7 @@ body.crx-light .crx {
 .crx .crx-progtile-met-ic {
   flex-shrink: 0; display: flex; align-items: center; justify-content: center;
   width: 16px; height: 16px; margin-top: 2px; border-radius: 50%;
-  background: rgba(52, 227, 154, 0.14); color: var(--mint);
+  background: var(--positive-wash); color: var(--mint);
 }
 
 /* ENDED — no bar at all (a bar says "this can still move"), so the middle column holds the outcome
