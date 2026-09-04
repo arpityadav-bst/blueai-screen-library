@@ -2530,10 +2530,19 @@ body.crx-light .crx .lap-deck {
 body.crx-light .crx .lap-deck::before { background: repeating-linear-gradient(90deg, #a9b2c8 0 12px, transparent 12px 16px); }
 body.crx-light .crx .lap-deck::after { background: #a9b2c8; }
 
-/* the bloom under the stage: 0.18 iris on near-black is a cast light, on white it is a purple
-   bruise. Kept at a third of the strength so the stage still sits on something. */
+/* THE BLOOM UNDER THE STAGE, and lowering its alpha was not enough - the shape itself is wrong on
+   a light ground (designer, 2026-09-02: "weird color division below the table").
+   The original is `at 50% 0%`: the gradient's origin sits ON the top edge of its own box, so that
+   edge is at full strength and one pixel above it, outside the box, there is nothing. That is a
+   hard horizontal line by construction, with the box's 70% width supplying two vertical ones. On
+   dark it was invisible - the desk was dark, the bloom was iris at 0.18, and the seam fell behind
+   the desk - so the geometry was never wrong until the ground turned white.
+   FULLY CONTAINED INSTEAD: 50%/50% radii centred at 50% 50%, transparent by 100%, so the ellipse
+   reaches zero exactly at every edge of its box and there is no boundary to see. Neutral rather
+   than iris, too: a purple cast under furniture is a dark-stage device, and what this needs to do
+   on white is simply sit the desk on the page. */
 body.crx-light .crx .scene::after {
-  background: radial-gradient(50% 100% at 50% 0%, rgba(123, 76, 255, 0.06), transparent 75%);
+  background: radial-gradient(50% 50% at 50% 50%, rgba(8, 10, 31, 0.07), transparent 100%);
 }
 
 /* THE EARNINGS PILL was already a light component - a white pill with #0f9d58 money, floating on
