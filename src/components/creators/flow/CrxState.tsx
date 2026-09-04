@@ -66,6 +66,15 @@ export type Variant = 'programs' | 'original' | 'offers'
 // identity, and a reload going back to the journey default is the honest reset.
 export type NavView = 'auto' | 'programs' | 'dashboard'
 
+// THEME (2026-09-02) — the page is being converted to light, and this is the switch that lets the
+// two be compared instead of remembered (designer: "temp with flip switch"). Temporary by design:
+// when light is signed off, the dark path and this whole type go, and the light values stop being
+// overrides and become the only values.
+// SESSION-BACKED, unlike `variant`. A reviewer reloads constantly while judging a repaint, and
+// being thrown back to dark on every reload would make the light pass unreviewable.
+export type Theme = 'dark' | 'light'
+const THEME_KEY = 'crx-theme'
+
 type Ctx = {
   signedIn: boolean
   /** True once storage has been read, so nothing animates the swap on first paint. */
@@ -78,6 +87,9 @@ type Ctx = {
   setJourney: (v: Journey) => void
   /** Menu-driven view override — see the NavView note above. */
   nav: NavView
+  /** Dark or light — temporary, see the Theme note above. */
+  theme: Theme
+  setTheme: (v: Theme) => void
   setNav: (v: NavView) => void
   /** Which experience renders — see the Variant note above. */
   variant: Variant
@@ -101,6 +113,8 @@ export default function CrxProvider({ children }: { children: ReactNode }) {
   // In-memory like nav — a review switch, and reload returning to Version A is the honest default
   // UNLESS the URL asks for B (see the ?v= block in the mount effect below).
   const [variant, setVariant] = useState<Variant>('programs')
+  // Dark is still the default until the light pass is signed off - the honest state of the work.
+  const [theme, setThemeState] = useState<Theme>('dark')
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
@@ -108,6 +122,8 @@ export default function CrxProvider({ children }: { children: ReactNode }) {
       setSignedIn(sessionStorage.getItem(KEY) === '1')
       const stored = sessionStorage.getItem(JOURNEY_KEY)
       if (stored && (JOURNEYS as string[]).includes(stored)) setJourneyState(stored as Journey)
+      const t = sessionStorage.getItem(THEME_KEY)
+      if (t === 'light' || t === 'dark') setThemeState(t)
     } catch {
       // Private-mode Safari throws on sessionStorage access. Staying signed out is the correct
       // fallback, and it must not take the page down with it.
@@ -126,10 +142,16 @@ export default function CrxProvider({ children }: { children: ReactNode }) {
     // no query goes back to A. Read outside the try above: URLSearchParams does not throw where
     // sessionStorage does, and a storage failure must not cost the URL its meaning.
     try {
-      const v = new URLSearchParams(window.location.search).get('v')?.toLowerCase()
+      const q = new URLSearchParams(window.location.search)
+      const v = q.get('v')?.toLowerCase()
       if (v === 'b' || v === 'original') setVariant('original')
       else if (v === 'c' || v === 'offers') setVariant('offers')
       else if (v === 'a' || v === 'programs') setVariant('programs')
+      // ?theme=light for the same reason ?v= exists: a repaint gets reviewed by people who are
+      // handed a URL. It WINS over the stored value, because a link naming a theme is a more
+      // specific instruction than what this tab happened to be set to earlier.
+      const t = q.get('theme')?.toLowerCase()
+      if (t === 'light' || t === 'dark') setThemeState(t)
     } catch {
       // Nothing to fall back to: the default state IS the fallback.
     }
@@ -149,6 +171,24 @@ export default function CrxProvider({ children }: { children: ReactNode }) {
     }
   }, [])
 
+  // THE CLASS GOES ON <body>, not on #crx. The sign-in dialog and the cash-out modal portal out of
+  // the page root and carry className="crx" of their own; a class on #crx would turn the page and
+  // leave the dialogs dark. body.crx-lock is the existing precedent for a body-level flag here.
+  // Cleanup removes it so a route change cannot leave the class behind on another page's body.
+  useEffect(() => {
+    document.body.classList.toggle('crx-light', theme === 'light')
+    return () => document.body.classList.remove('crx-light')
+  }, [theme])
+
+  const setTheme = useCallback((v: Theme) => {
+    setThemeState(v)
+    try {
+      sessionStorage.setItem(THEME_KEY, v)
+    } catch {
+      // In-memory state still drives the class; storage is only the convenience on reload.
+    }
+  }, [])
+
   const signIn = useCallback(() => write(true), [write])
   const signOut = useCallback(() => write(false), [write])
 
@@ -165,8 +205,8 @@ export default function CrxProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const value = useMemo(
-    () => ({ signedIn, ready, signIn, signOut, account: MOCK_ACCOUNT, journey, setJourney, nav, setNav, variant, setVariant }),
-    [signedIn, ready, signIn, signOut, journey, setJourney, nav, variant],
+    () => ({ signedIn, ready, signIn, signOut, account: MOCK_ACCOUNT, journey, setJourney, nav, setNav, variant, setVariant, theme, setTheme }),
+    [signedIn, ready, signIn, signOut, journey, setJourney, nav, variant, theme, setTheme],
   )
 
   return <CrxCtx.Provider value={value}>{children}</CrxCtx.Provider>

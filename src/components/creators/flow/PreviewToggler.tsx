@@ -137,7 +137,7 @@ function Gear() {
 }
 
 export default function PreviewToggler() {
-  const { journey, setJourney, variant, setVariant } = useCrx()
+  const { journey, setJourney, variant, setVariant, theme, setTheme } = useCrx()
   // B collapses to three rows; C keeps all ten under its own noun; A is the default.
   const groups = variant === 'original' ? GROUPS_B : variant === 'offers' ? GROUPS_C : GROUPS_A
   const note = variant === 'original' ? NOTE_B : variant === 'offers' ? NOTE_C : NOTE_A
@@ -164,6 +164,33 @@ export default function PreviewToggler() {
           <path d="M6 9.5l6 6 6-6" />
         </svg>
       </button>
+
+      {/* THEME ABOVE VERSION (2026-09-02), and it is the one control here that is temporary: the
+          page is being converted to light, and this exists so the two can be compared rather than
+          remembered. It sits first because it governs every other row below it - a version or a
+          journey judged in the wrong theme is judged twice.
+          Session-backed, so a reload while reviewing a repaint keeps the theme it was on. */}
+      <div className="crx-toggler-track" role="radiogroup" aria-label="Theme">
+        <span className="crx-toggler-sect">Theme</span>
+        {(
+          [
+            { value: 'dark', label: 'Dark · current' },
+            { value: 'light', label: 'Light · in progress' },
+          ] as const
+        ).map(({ value, label }) => (
+          <button
+            key={value}
+            type="button"
+            role="radio"
+            aria-checked={theme === value}
+            onClick={() => setTheme(value)}
+            className={theme === value ? 'crx-toggler-row on' : 'crx-toggler-row'}
+          >
+            <span className="crx-toggler-dot" />
+            {label}
+          </button>
+        ))}
+      </div>
 
       {/* VERSION FIRST (2026-08-26, Abhisht): A is the programs build; B is the original v1
           experience with no "program" vocabulary anywhere — the term arrived via engg without
@@ -227,7 +254,8 @@ export default function PreviewToggler() {
           grouping B does not have; the B copy says what B's three rows are and, more usefully, that
           the A persona is not lost while you are over here. */}
       <p className="crx-toggler-note">
-        Sets what signing in leads to. Click Get Access and sign in to see it.{' '}
+        Theme is a work-in-progress switch, not a product setting. Sets what signing in leads to.
+        Click Get Access and sign in to see it.{' '}
         {note}{' '}
         Survives a reload; resets when the tab closes.
       </p>

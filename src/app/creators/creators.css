@@ -210,12 +210,12 @@ body.crx-lock { overflow: hidden; }
   text-decoration: underline; text-underline-offset: 3px;
   transition: color 0.15s ease;
 }
-.crx .hero-signin button:hover { color: #fff; }
-.crx .hero-signin button:focus-visible { outline: 2px solid #a78bff; outline-offset: 3px; border-radius: 3px; }
+.crx .hero-signin button:hover { color: var(--ink-inverse); }
+.crx .hero-signin button:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 3px; border-radius: 3px; }
 
 .crx .btn {
   font: inherit; font-weight: 700; font-size: 1.05rem;
-  color: #fff;
+  color: var(--ink-on-accent);
   background: var(--cta-grad);
   border: none; border-radius: 999px;
   padding: 1rem 2.2rem;
@@ -231,7 +231,7 @@ body.crx-lock { overflow: hidden; }
 .crx .btn:hover { transform: translateY(-2px); box-shadow: 0 18px 40px -8px rgba(95, 70, 255, 0.75); }
 /* F12: press feedback — hover lifts, active plants */
 .crx .btn:active { transform: translateY(0); box-shadow: 0 6px 18px -6px rgba(95, 70, 255, 0.6); }
-.crx .btn:focus-visible { outline: 2px solid #a78bff; outline-offset: 3px; }
+.crx .btn:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 3px; }
 
 /* The rotating machine stage lived here until 2026-08-20 — five cutouts passing left to right
    under a live task strip, with their own directional-blur transitions, rolling line viewport,
@@ -322,7 +322,7 @@ body.crx-lock { overflow: hidden; }
   display: flex; align-items: center; justify-content: space-between;
   margin-bottom: 0.75rem;
 }
-.crx .scr-brand { display: flex; align-items: center; gap: 0.45rem; font-weight: 700; font-size: 0.9rem; color: #fff; }
+.crx .scr-brand { display: flex; align-items: center; gap: 0.45rem; font-weight: 700; font-size: 0.9rem; color: var(--ink-inverse); }
 .crx .scr-status { display: flex; align-items: center; gap: 0.4rem; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600; color: var(--mint); }
 .crx .dot {
   width: 7px; height: 7px; border-radius: 50%; background: var(--mint);
@@ -333,19 +333,19 @@ body.crx-lock { overflow: hidden; }
 
 .crx .task {
   display: flex; align-items: center; justify-content: space-between;
-  background: rgba(255, 255, 255, 0.045);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--sur);
+  border: 1px solid var(--line);
   border-radius: 9px;
   padding: 0.55rem 0.7rem;
   margin-bottom: 0.5rem;
   font-size: 0.82rem;
   transition: opacity 0.4s ease, transform 0.4s ease;
 }
-.crx .task .lbl { display: flex; align-items: center; gap: 0.45rem; color: #dbe4ff; font-weight: 600; }
+.crx .task .lbl { display: flex; align-items: center; gap: 0.45rem; color: var(--ink-inverse); font-weight: 600; }
 .crx .task .lbl .tick { color: var(--mint); font-weight: 800; }
 .crx .task .pay { color: var(--mint); font-weight: 800; font-variant-numeric: tabular-nums; }
-.crx .task.working .lbl { color: #9fb0e8; }
-.crx .task .bar { flex: 1; height: 4px; margin-left: 0.8rem; border-radius: 999px; background: rgba(255,255,255,0.1); overflow: hidden; }
+.crx .task.working .lbl { color: var(--ink-3); }
+.crx .task .bar { flex: 1; height: 4px; margin-left: 0.8rem; border-radius: 999px; background: var(--track); overflow: hidden; }
 .crx .task .bar > i { display: block; height: 100%; width: 0%; background: var(--grad-bright); border-radius: 999px; transition: width 0.18s linear; }
 
 /* the working slot keeps its height so nothing jumps when a task hands over */
@@ -525,7 +525,7 @@ body.crx-lock { overflow: hidden; }
   position: fixed; left: 0; right: 0; z-index: 85;
   text-align: center; padding: 0 1.5rem;
   font-size: clamp(1.45rem, 3.2vw, 2.05rem);
-  font-weight: 800; letter-spacing: -0.015em; line-height: 1.25; color: #fff; /* F4 */
+  font-weight: 800; letter-spacing: -0.015em; line-height: 1.25; color: var(--ink-inverse); /* F4 */
   opacity: 0; transform: translateY(10px);
   transition: opacity 0.55s ease, transform 0.55s ease;
   pointer-events: none;
@@ -539,7 +539,7 @@ body.crx-lock { overflow: hidden; }
   text-align: center;
   font-family: var(--mono); font-size: 0.66rem; font-weight: 600; /* F17 */
   letter-spacing: 0.2em; text-transform: uppercase;
-  color: rgba(214, 224, 255, 0.55); /* F11: 3.17:1 was illegible for the intro's only escape */
+  color: var(--ink-3); /* F11: 3.17:1 was illegible for the intro's only escape */
   opacity: 0; animation: crx-hintIn 0.7s ease 2s forwards;
   pointer-events: none;
 }
@@ -616,7 +616,7 @@ body.crx-lock { overflow: hidden; }
 .crx .time-chip {
   display: flex; align-items: center; gap: 0.45rem;
   background: rgba(13, 18, 48, 0.78);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid var(--line-2);
   border-radius: 999px;
   padding: 0.45rem 0.95rem;
   font-size: 0.82rem; color: var(--dim);
@@ -666,14 +666,14 @@ body.crx-lock { overflow: hidden; }
   padding: 0.3rem 0.66rem;
   border-radius: 999px;
   background: rgba(6, 9, 26, 0.78);
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  border: 1px solid var(--line-3);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   font-family: var(--mono);
   font-size: 0.6rem; font-weight: 700;
   letter-spacing: 0.09em; text-transform: uppercase;
-  color: rgba(226, 233, 255, 0.92);
+  color: var(--ink-inverse);
   white-space: nowrap;
   pointer-events: none;
   opacity: 0;
@@ -723,12 +723,12 @@ body.crx-lock { overflow: hidden; }
 @media (max-width: 935px) { .crx .steps { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 520px) { .crx .steps { grid-template-columns: 1fr; } }
 .crx .step {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.09);
+  background: var(--sur);
+  border: 1px solid var(--line);
   border-radius: 18px; padding: 1.9rem 1.6rem; text-align: left;
 }
 .crx .step .n { font-family: var(--mono); font-size: 0.72rem; font-weight: 800; letter-spacing: 0.12em; color: #7da2ff; }
-.crx .step h3 { margin: 0.65rem 0 0.5rem; font-size: 1.2rem; color: #fff; text-wrap: balance; }
+.crx .step h3 { margin: 0.65rem 0 0.5rem; font-size: 1.2rem; color: var(--ink-inverse); text-wrap: balance; }
 .crx .step p { margin: 0; font-size: 0.98rem; line-height: 1.62; color: var(--dim); text-wrap: pretty; }
 
 /* F22: 7rem top unifies the section breaks; F21: bottom trimmed to 5rem — the footer sits below now */
@@ -792,8 +792,8 @@ body.crx-lock { overflow: hidden; }
    screen to one flat tone and put a visible seam at the hairline; a wash darkens it and keeps the
    gradient reading through. */
 .crx .crx-foot {
-  background: rgba(5, 6, 15, 0.32);
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--sur-sunken);
+  border-top: 1px solid var(--line);
   margin-top: 2rem;
 }
 /* 2.5rem, down from 4 (Appy, 2026-08-21: "make the footer height less and more minimal, slimmer").
@@ -842,7 +842,7 @@ body.crx-lock { overflow: hidden; }
   max-width: calc((100% - 2rem) / 3 * 2 + 1rem);
   margin: 1rem 0 0;
   font-size: 0.9rem; line-height: 1.65;
-  color: rgba(214, 224, 255, 0.62);
+  color: var(--ink-3);
   text-wrap: pretty;
 }
 
@@ -862,11 +862,13 @@ body.crx-lock { overflow: hidden; }
   display: inline-flex; align-items: center; gap: 0.4rem;
   background: none; border: none; padding: 0.4rem 0; cursor: pointer;
   font: inherit; font-size: 0.9rem;
-  color: rgba(214, 224, 255, 0.62);
+  color: var(--ink-3);
   transition: color 0.18s ease;
 }
-.crx .crx-foot-top:hover { color: #fff; }
-.crx .crx-foot-top:focus-visible { outline: 2px solid #a78bff; outline-offset: 3px; border-radius: 3px; }
+.crx .crx-foot-top:hover { color: var(--ink-inverse); }
+/* the focus ring is --accent-2 everywhere on this page: on dark it is the pale lavender that reads
+   against the sky, and on light it collapses to iris (see the --accent-2 note). */
+.crx .crx-foot-top:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 3px; border-radius: 3px; }
 
 /* the four-column grid folds the same way .steps does, at the same two widths, so the footer and
    the section it is aligned to never disagree about how many columns exist */
@@ -932,10 +934,10 @@ body.crx-lock { overflow: hidden; }
   animation: crx-header-drop 0.6s cubic-bezier(0.22, 1, 0.36, 1) 2.5s both;
 }
 .crx .crx-header.scrolled {
-  background: rgba(13, 18, 48, 0.78);
+  background: var(--glass);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border-bottom-color: rgba(255, 255, 255, 0.08);
+  border-bottom-color: var(--line);
 }
 .crx .crx-header-in {
   /* --content, like everything else. This chased the widest section for a day (1320) on the
@@ -959,8 +961,12 @@ body.crx-lock { overflow: hidden; }
    Specificity (3 classes) beats the global rule's 1 regardless of source order, so no !important. */
 .crx .crx-logo .bai-wordmark {
   background: none;
-  -webkit-text-fill-color: #fff;
-  color: #fff;
+  /* THE ONE THAT PAINTS WEBKIT GLYPHS, and the reason it is tokenised rather than left at #fff:
+     creator-brand.css documents this exact trap on its own wordmark - `color` is not what fills
+     text once background-clip has been used, so a wordmark left at #fff here stays white on a
+     white page however the ink token moves. */
+  -webkit-text-fill-color: var(--ink-inverse);
+  color: var(--ink-inverse);
 }
 
 /* THE NAV IS GONE (Appy, 2026-08-21: "remove both the navigation items in the header and the
@@ -1006,18 +1012,18 @@ body.crx-lock { overflow: hidden; }
   transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.25s ease, color 0.18s ease, font-weight 0.18s ease;
 }
 .crx .crx-cta:not(.pill) { color: var(--dim); }
-.crx .crx-cta:not(.pill):hover { color: #fff; }
+.crx .crx-cta:not(.pill):hover { color: var(--ink-inverse); }
 .crx .crx-cta.pill {
   /* 600, not the shared 500 — once this is a real filled action (not a nav-styled link any more)
      it earns a touch more weight, same step .btn's own 700 takes over plain nav-weight text. */
   font-weight: 600;
-  background: var(--cta-grad); color: #fff;
+  background: var(--cta-grad); color: var(--ink-on-accent);
   box-shadow: 0 8px 24px -6px rgba(95, 70, 255, 0.6);
 }
 .crx .crx-cta.pill:hover { transform: translateY(-1px); box-shadow: 0 12px 30px -8px rgba(95, 70, 255, 0.7); }
 .crx .crx-cta svg { flex-shrink: 0; }
 .crx .crx-cta.pill:active { transform: translateY(0); box-shadow: 0 6px 16px -6px rgba(95, 70, 255, 0.55); } /* F12 */
-.crx .crx-cta:focus-visible { outline: 2px solid #a78bff; outline-offset: 3px; }
+.crx .crx-cta:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 3px; }
 
 /* The popover surface. Built for the mobile burger menu, which is gone; it is now the ACCOUNT
    menu's surface and nothing else (.crx-acct .crx-menu, further down, is the only consumer).
@@ -1027,10 +1033,10 @@ body.crx-lock { overflow: hidden; }
   position: absolute; right: 1.5rem; top: calc(100% + 6px);
   display: flex; flex-direction: column; gap: 2px;
   width: 230px; padding: 6px;
-  background: rgba(10, 15, 38, 0.92);
+  background: var(--sur-opaque);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid var(--line-2);
   border-radius: 14px;
   box-shadow: 0 18px 50px -12px rgba(0, 0, 0, 0.65);
 }
@@ -1042,8 +1048,8 @@ body.crx-lock { overflow: hidden; }
   background: none; border: none; cursor: pointer; text-align: left;
   transition: color 0.15s ease, background 0.15s ease;
 }
-.crx .crx-menu a:hover, .crx .crx-menu button:hover { color: #fff; background: rgba(255, 255, 255, 0.07); }
-.crx .crx-menu a:active, .crx .crx-menu button:active { color: #fff; background: rgba(255, 255, 255, 0.12); } /* F12 */
+.crx .crx-menu a:hover, .crx .crx-menu button:hover { color: var(--ink-inverse); background: var(--sur-3); }
+.crx .crx-menu a:active, .crx .crx-menu button:active { color: var(--ink-inverse); background: var(--sur-strong); } /* F12 */
 /* The 880px collapse is gone with the burger: there is no longer a width at which the header hides
    its CTA, because there is no longer a menu to hide it INTO.
    MEASURED, since a header that overflows is the one way this could go wrong. At 375px the content
@@ -1131,10 +1137,131 @@ body.crx-lock { overflow: hidden; }
   --well: rgba(5, 8, 24, 0.45);
 }
 
+/* ================================================================================================
+   THEME LAYER (2026-09-02) — the page is going light, and this is the seam it turns on.
+   ================================================================================================
+   WHY A SEMANTIC LAYER FIRST. An audit of this file found ~281 colour values, of which only about a
+   fifth sat behind a token: 107 hex literals, 174 rgba(), and inside those 82 separate
+   rgba(255,255,255,α) — the "lift by lightening" idiom a dark UI is built on. Inverting the existing
+   tokens alone would have turned a fifth of the page and left the rest dark.
+   The tokens below are named for the ROLE a value plays, never for the value itself, because the
+   82 whites are a mixture of borders, panel fills, bar tracks and hover states that merely happen
+   to share an alpha. On dark they can share one; on light a 0.08 hairline and a 0.08 fill are two
+   different colours. Classifying each consumer by role is the actual work of the migration, and it
+   is why this is a per-screen sweep rather than a find-and-replace.
+
+   DARK VALUES HERE ARE TODAY'S VALUES, byte for byte, so introducing this layer changes nothing on
+   screen. Everything visual happens in the light block below it.
+
+   THE LIGHT VALUES ARE NOT INVENTED. They are the marketing design system's (globals.css --bai-*),
+   the same palette the agency page and the campaign builder already run on — one product, one light
+   system, rather than a second light palette that drifts from the first. */
+.crx {
+  /* surfaces, in the order they stack */
+  --canvas: transparent;              /* the page ground itself is painted on #crx, below */
+  --sur: rgba(255, 255, 255, 0.045);  /* a card or panel */
+  --sur-2: rgba(255, 255, 255, 0.035); /* a panel nested inside a panel */
+  --sur-3: rgba(255, 255, 255, 0.06);  /* a raised fill - chips, the account pill, quiet buttons */
+  --sur-hover: rgba(255, 255, 255, 0.08);
+  --sur-strong: rgba(255, 255, 255, 0.12); /* a pressed or selected fill */
+
+  /* lines, three weights: hairline divider, card edge, emphasis */
+  --line: rgba(255, 255, 255, 0.08);
+  --line-2: rgba(255, 255, 255, 0.12);
+  --line-3: rgba(255, 255, 255, 0.16);
+  --line-4: rgba(255, 255, 255, 0.28);  /* emphasis edge - a focused field, a hovered choice */
+  --track: rgba(255, 255, 255, 0.1);  /* the unfilled half of a progress bar */
+
+  /* ink. The top two steps ALREADY EXIST as --ink-inverse (primary) and --dim (body), declared
+     above and flipped in the light block; adding --ink/--ink-2 beside them would be two names for
+     one role, which is how the next reader ends up guessing which is "the" body ink. These are the
+     two quieter steps below --dim, which until now were written raw as rgba(214,224,255, .42-.62)
+     at eight different alphas. */
+  --ink-3: rgba(214, 224, 255, 0.55);  /* captions, quiet controls, meta */
+  --ink-4: rgba(214, 224, 255, 0.42);  /* the faintest legible step - placeholders, disabled */
+  --ink-on-accent: #fff;               /* text sitting ON an accent fill - white in both themes */
+
+  /* two grounds that are not cards: a recessed panel (the footer) and the header's blur glass.
+     Both are DARKER than the page on dark and LIGHTER than it on light, so neither can be
+     expressed as a surface step - they invert direction, not just value. */
+  --sur-sunken: rgba(5, 6, 15, 0.32);
+  --glass: rgba(13, 18, 48, 0.78);
+
+  /* accents. --accent-2 exists because #a78bff (23 uses) is a real second step on dark and has to
+     COLLAPSE into iris on light, where a pale lavender is invisible. Naming it is what lets that
+     collapse happen in one place instead of 23. */
+  --accent: #7b4cff;
+  --accent-2: #a78bff;
+  /* the positive pair. They are mint DERIVATIVES, so they cannot be left raw: --mint moves to
+     #0f9d58 on light and a wash mixed from #34e39a would still be the old green. */
+  --positive-wash: rgba(52, 227, 154, 0.12);
+  --positive-line: rgba(52, 227, 154, 0.3);
+  /* an OPAQUE pane - the account menu, a dialog. Not a surface step: its job is to hide what is
+     behind it, which is why it is 0.92 rather than one of the card fills. */
+  --sur-opaque: rgba(10, 15, 38, 0.92);
+}
+
+/* ------------------------------------------------------------------------------------------------
+   LIGHT. Applied as a BODY class (see CrxState) rather than on #crx, because the dialogs portal out
+   of the page root and carry className="crx" of their own - a class on #crx would leave the
+   cash-out modal and the sign-in dialog dark while the page behind them turned. body.crx-lock is
+   the existing precedent for a body-level flag on this page.
+   ------------------------------------------------------------------------------------------------ */
+body.crx-light .crx {
+  --canvas: #f9f9fa;                  /* the agency page's own ground, sampled to its artwork */
+  --sur: #ffffff;
+  --sur-2: rgb(247, 250, 255);        /* --bai-surface */
+  --sur-3: #eef2f9;
+  --sur-hover: #f1f4fa;
+  --sur-strong: #e6ebf5;
+
+  --line: rgb(223, 228, 238);         /* --bai-divider */
+  --line-2: rgb(205, 212, 226);
+  --line-3: rgb(182, 184, 205);       /* --bai-stroke-warm */
+  --line-4: rgb(150, 156, 180);
+  --track: #e4e9f2;
+
+  --ink-3: rgb(67, 70, 100);          /* --bai-ink-muted */
+  --ink-4: rgb(106, 110, 136);
+  --ink-on-accent: #fff;
+  /* The footer stops being darker than the page and becomes a tint of it; the header glass stops
+     being a dark pane and becomes a white one. Direction reverses in both cases. */
+  --sur-sunken: #f3f5fa;
+  --glass: rgba(255, 255, 255, 0.82);
+
+  --accent: #7b4cff;                  /* iris holds on white unchanged */
+  --accent-2: var(--accent);          /* the pale step collapses into iris - see the note above */
+  --positive-wash: rgba(15, 157, 88, 0.1);
+  --positive-line: rgba(15, 157, 88, 0.32);
+  --sur-opaque: #ffffff;
+
+  /* --- the pre-existing tokens, flipped in the same block so the already-tokenised parts of the
+         page turn on day one, before any migration --- */
+  --ink-inverse: rgb(8, 10, 31);
+  --dim: rgb(55, 58, 88);
+  --well: #ffffff;                    /* a well stops being darker than its surface: on light an
+                                         input is white and the BORDER does the work. The polarity
+                                         of this token reverses; that is the point of naming it. */
+
+  /* MINT FAILS ON WHITE at #34e39a. #0f9d58 is not a new decision - it is the green this very file
+     already uses for money inside .crx-band, the one light island in the dark sheet. */
+  --mint: #0f9d58;
+  --danger: #ef4444;                  /* --bai-danger; the coral was picked to read on dark */
+  --danger-wash: #fee2e2;
+  --sel-border: rgba(123, 76, 255, 0.38);
+  --sel-wash: rgba(123, 76, 255, 0.07);
+
+  /* THE "BRIGHT" GRADIENT IS THE DARK-MODE ONE. #a78bff -> #3fd4f5 is very nearly
+     .cb-text-gradient-dark (#a98bff -> #5fd3ec), which creator-brand.css documents as the
+     luminance-lifted variant for its dark CTA band. The light-canvas gradient on the agency page is
+     --bai-gradient, iris -> cyan, and that is what this becomes. Same gesture, same direction. */
+  --grad-bright: linear-gradient(92deg, #7b4cff 0%, #0ea4c5 100%);
+}
+
 /* ---- panel: the card surface (form card, dashboard cards) — .step's recipe, padded up ---- */
 .crx .crx-panel {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.09);
+  background: var(--sur-2);
+  border: 1px solid var(--line);
   border-radius: 16px;
   padding: 1.5rem;
   text-align: left;
@@ -1143,7 +1270,7 @@ body.crx-lock { overflow: hidden; }
 .crx .crx-panel-title {
   font-family: 'Space Grotesk', 'SF Pro Display', Inter, sans-serif;
   font-weight: 700; font-size: 1.05rem; line-height: 1.3;
-  color: #fff; margin: 0;
+  color: var(--ink-inverse); margin: 0;
   text-wrap: balance;
 }
 
@@ -1153,7 +1280,7 @@ body.crx-lock { overflow: hidden; }
 /* muted hint — shares .crx-err's exact box so hint→error swaps colour, never height */
 .crx .crx-hint {
   display: block; margin-top: 0.35rem; min-height: 15px;
-  font-size: 0.72rem; line-height: 1.35; color: rgba(214, 224, 255, 0.55);
+  font-size: 0.72rem; line-height: 1.35; color: var(--ink-3);
 }
 /* error line — RESERVED height like forms.tsx's FieldError: appearing errors never reflow */
 .crx .crx-err {
@@ -1167,12 +1294,12 @@ body.crx-lock { overflow: hidden; }
   display: block; width: 100%;
   font: inherit; font-size: 0.95rem; color: var(--ink-inverse);
   background: var(--well);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid var(--line-2);
   border-radius: 9px;
   padding: 0.75rem 0.9rem;
   transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
 }
-.crx .crx-field::placeholder { color: rgba(214, 224, 255, 0.38); }
+.crx .crx-field::placeholder { color: var(--ink-4); }
 .crx .crx-field:hover { border-color: rgba(255, 255, 255, 0.2); }
 .crx .crx-field:focus {
   outline: none;
@@ -1189,16 +1316,16 @@ body.crx-lock { overflow: hidden; }
   display: inline-flex; align-items: center; gap: 0.4rem;
   min-height: 44px; padding: 0.7rem 0.9rem;
   font: inherit; font-size: 0.85rem; font-weight: 500; color: var(--dim);
-  background: rgba(255, 255, 255, 0.035);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--sur-2);
+  border: 1px solid var(--line-2);
   border-radius: 9px; cursor: pointer;
   transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
 }
-.crx .crx-choice:hover { border-color: rgba(255, 255, 255, 0.24); background: rgba(255, 255, 255, 0.06); color: #fff; }
+.crx .crx-choice:hover { border-color: rgba(255, 255, 255, 0.24); background: var(--sur-3); color: var(--ink-inverse); }
 .crx .crx-choice:active { background: rgba(255, 255, 255, 0.09); }
 .crx .crx-choice.on {
   border-color: var(--sel-border); background: var(--sel-wash);
-  color: #fff; font-weight: 650;
+  color: var(--ink-inverse); font-weight: 650;
 }
 .crx .crx-choice.err { border-color: var(--danger); }
 
@@ -1208,25 +1335,25 @@ body.crx-lock { overflow: hidden; }
   display: flex; flex-direction: column; align-items: flex-start; gap: 0.5rem;
   height: 100%; padding: 0.9rem;
   font: inherit; text-align: left; color: var(--dim);
-  background: rgba(255, 255, 255, 0.035);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--sur-2);
+  border: 1px solid var(--line-2);
   border-radius: 14px; cursor: pointer;
   transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
 }
-.crx .crx-choice-card:hover { transform: translateY(-1px); border-color: rgba(255, 255, 255, 0.24); background: rgba(255, 255, 255, 0.06); }
+.crx .crx-choice-card:hover { transform: translateY(-1px); border-color: var(--line-4); background: var(--sur-3); }
 .crx .crx-choice-card:active { transform: translateY(0); }
-.crx .crx-choice-card.on { border-color: var(--sel-border); background: var(--sel-wash); color: #fff; transform: none; }
+.crx .crx-choice-card.on { border-color: var(--sel-border); background: var(--sel-wash); color: var(--ink-inverse); transform: none; }
 .crx .crx-choice-card.err { border-color: var(--danger); }
-.crx .crx-choice-card .crx-choice-ic { color: rgba(214, 224, 255, 0.55); }        /* card icon at rest */
-.crx .crx-choice-card.on .crx-choice-ic { color: #a78bff; }                        /* icon lifts iris when chosen */
+.crx .crx-choice-card .crx-choice-ic { color: var(--ink-3); }        /* card icon at rest */
+.crx .crx-choice-card.on .crx-choice-ic { color: var(--accent-2); }                        /* icon lifts iris when chosen */
 .crx .crx-choice-card .crx-choice-name { font-size: 0.85rem; font-weight: 600; line-height: 1.3; }
-.crx .crx-choice-card .crx-choice-hint { font-size: 0.7rem; line-height: 1.35; color: rgba(214, 224, 255, 0.5); }
+.crx .crx-choice-card .crx-choice-hint { font-size: 0.7rem; line-height: 1.35; color: var(--ink-3); }
 /* corner tick badge — ABSOLUTE so selection costs no layout (ChoiceGroup's own fix), round = radio */
 .crx .crx-choice-card .crx-choice-mark {
   position: absolute; right: 8px; top: 8px;
   display: none; align-items: center; justify-content: center;
   width: 18px; height: 18px; border-radius: 50%;
-  background: var(--iris); color: #fff;
+  background: var(--iris); color: var(--ink-on-accent);
 }
 .crx .crx-choice-card.on .crx-choice-mark { display: flex; }
 /* tone variants — yes reads mint, no reads danger, at REST on the icon and fully once chosen */
@@ -1246,13 +1373,13 @@ body.crx-lock { overflow: hidden; }
   display: flex; align-items: flex-start; gap: 0.7rem;
   padding: 0.9rem; cursor: pointer; text-align: left;
   font-size: 0.88rem; line-height: 1.55; color: var(--dim);
-  background: rgba(255, 255, 255, 0.035);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--sur-2);
+  border: 1px solid var(--line-2);
   border-radius: 14px;
   transition: border-color 0.18s ease, background 0.18s ease, color 0.18s ease;
 }
-.crx .crx-check:hover { border-color: rgba(255, 255, 255, 0.24); background: rgba(255, 255, 255, 0.06); }
-.crx .crx-check.on { border-color: var(--sel-border); background: var(--sel-wash); color: #fff; }
+.crx .crx-check:hover { border-color: rgba(255, 255, 255, 0.24); background: var(--sur-3); }
+.crx .crx-check.on { border-color: var(--sel-border); background: var(--sel-wash); color: var(--ink-inverse); }
 .crx .crx-check.err { border-color: var(--danger); }
 /* subtle variant — boilerplate you tick on the way out (the agree line): no card, just the row */
 .crx .crx-check.subtle { background: none; border-color: transparent; padding: 0.25rem 0; }
@@ -1261,8 +1388,8 @@ body.crx-lock { overflow: hidden; }
   flex-shrink: 0; margin-top: 2px;
   display: flex; align-items: center; justify-content: center;
   width: 18px; height: 18px; border-radius: 5px;
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  background: var(--well); color: #fff;
+  border: 1px solid var(--line-4);
+  background: var(--well); color: var(--ink-on-accent);
   transition: background 0.15s ease, border-color 0.15s ease;
 }
 .crx .crx-check.on .crx-check-box, .crx .crx-check-box.on { background: var(--iris); border-color: var(--iris); }
@@ -1273,15 +1400,15 @@ body.crx-lock { overflow: hidden; }
 .crx .crx-btn-quiet {
   font: inherit; font-weight: 650; font-size: 0.95rem; color: var(--ink-inverse);
   background: none;
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  border: 1px solid var(--line-3);
   border-radius: 999px;
   padding: 0.85rem 1.6rem; cursor: pointer;
   display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
   transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
 }
-.crx .crx-btn-quiet:hover { border-color: rgba(255, 255, 255, 0.34); background: rgba(255, 255, 255, 0.06); transform: translateY(-1px); }
+.crx .crx-btn-quiet:hover { border-color: rgba(255, 255, 255, 0.34); background: var(--sur-3); transform: translateY(-1px); }
 .crx .crx-btn-quiet:active { background: rgba(255, 255, 255, 0.09); transform: translateY(0); }
-.crx .crx-btn-quiet:focus-visible { outline: 2px solid #a78bff; outline-offset: 3px; }
+.crx .crx-btn-quiet:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 3px; }
 /* full-width modifier for .btn (and .crx-btn-quiet) — form submit rows */
 .crx .btn.btn-block, .crx .crx-btn-quiet.btn-block { display: flex; width: 100%; justify-content: center; }
 
@@ -1289,14 +1416,14 @@ body.crx-lock { overflow: hidden; }
 .crx .crx-rail { display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0; }
 .crx .crx-rail-count {
   font-family: var(--mono); font-size: 0.7rem; font-weight: 700;
-  letter-spacing: 0.08em; color: rgba(214, 224, 255, 0.55);
+  letter-spacing: 0.08em; color: var(--ink-3);
   font-variant-numeric: tabular-nums;
 }
 .crx .crx-rail-segs { display: flex; gap: 4px; }
 /* indicators, not buttons — the light original demoted them for touch-size reasons; same here */
 .crx .crx-rail-seg {
   width: 16px; height: 4px; border-radius: 999px;
-  background: rgba(255, 255, 255, 0.12);
+  background: var(--sur-strong);
   transition: background 0.25s ease;
 }
 .crx .crx-rail-seg.on { background: var(--grad-bright); }
@@ -1308,7 +1435,7 @@ body.crx-lock { overflow: hidden; }
 .crx .crx-mile-line {
   position: absolute; top: 13px; height: 2px;
   left: calc(-50% + 22px); right: calc(50% + 22px);
-  background: rgba(255, 255, 255, 0.12);
+  background: var(--sur-strong);
 }
 .crx .crx-mile-step.done .crx-mile-line, .crx .crx-mile-step.current .crx-mile-line { background: var(--grad-bright); }
 /* the dot — todo: inert ring · current: iris ring treatment · done: gradient fill + tick */
@@ -1317,16 +1444,16 @@ body.crx-lock { overflow: hidden; }
   display: inline-flex; align-items: center; justify-content: center;
   width: 28px; height: 28px; border-radius: 50%;
   font-size: 0.7rem; font-weight: 650;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  background: rgba(255, 255, 255, 0.045); color: rgba(214, 224, 255, 0.55);
+  border: 1px solid var(--line-3);
+  background: var(--sur); color: var(--ink-3);
 }
 .crx .crx-mile-step.current .crx-mile-dot {
-  border-color: var(--sel-border); background: var(--sel-wash); color: #cdb9ff;
+  border-color: var(--sel-border); background: var(--sel-wash); color: var(--accent-2);
   box-shadow: 0 0 0 4px rgba(123, 76, 255, 0.12);
 }
 .crx .crx-mile-step.done .crx-mile-dot { border: none; background: var(--grad-bright); color: #05060f; }
-.crx .crx-mile-label { display: block; margin-top: 0.4rem; font-size: 0.7rem; font-weight: 500; color: rgba(214, 224, 255, 0.55); }
-.crx .crx-mile-step.current .crx-mile-label { color: #fff; font-weight: 600; }
+.crx .crx-mile-label { display: block; margin-top: 0.4rem; font-size: 0.7rem; font-weight: 500; color: var(--ink-3); }
+.crx .crx-mile-step.current .crx-mile-label { color: var(--ink-inverse); font-weight: 600; }
 
 /* ---- modal: scrim + panel (Modal.tsx's slots) ----
    Deliberately NOT .crx-scoped: a portaled overlay may mount outside the .crx root. Both rules
@@ -1344,7 +1471,7 @@ body.crx-lock { overflow: hidden; }
 .crx-modal {
   width: 100%; max-width: 440px; max-height: calc(100vh - 3rem); overflow-y: auto;
   background: linear-gradient(180deg, #10163a 0%, #0b1029 100%);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  border: 1px solid var(--line-2);
   border-radius: 16px;
   box-shadow: 0 30px 80px -12px rgba(0, 0, 0, 0.75), 0 0 60px rgba(123, 76, 255, 0.12);
 }
@@ -1364,9 +1491,9 @@ body.crx-lock { overflow: hidden; }
   color: var(--dim);
   transition: color 0.18s ease, background 0.18s ease;
 }
-.crx .crx-modal-x:hover { color: #fff; background: rgba(255, 255, 255, 0.06); }
-.crx .crx-modal-x:active { color: #fff; background: rgba(255, 255, 255, 0.1); }
-.crx .crx-modal-x:focus-visible { outline: 2px solid #a78bff; outline-offset: 2px; }
+.crx .crx-modal-x:hover { color: var(--ink-inverse); background: var(--sur-3); }
+.crx .crx-modal-x:active { color: var(--ink-inverse); background: var(--sur-hover); }
+.crx .crx-modal-x:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px; }
 
 /* THE STAT-CARD FAMILY WENT WITH StatCards, 2026-08-25 — deleted with that component (see
    EarningsPanel.tsx for why a row of three equal tiles was the wrong shape for one program fact and
@@ -1378,9 +1505,9 @@ body.crx-lock { overflow: hidden; }
 .crx .crx-stat-icon {
   flex-shrink: 0; display: flex; align-items: center; justify-content: center;
   width: 44px; height: 44px; border-radius: 50%;
-  background: var(--sel-wash); color: #a78bff;
+  background: var(--sel-wash); color: var(--accent-2);
 }
-.crx .crx-stat-icon.money { background: rgba(52, 227, 154, 0.12); color: var(--mint); }
+.crx .crx-stat-icon.money { background: var(--positive-wash); color: var(--mint); }
 
 /* ---- dashboard: the earnings section (EarningsPanel.tsx) ----
    Balance leads because it is the screen's primary ACTION, not a statistic: the one figure with a
@@ -1436,7 +1563,7 @@ body.crx-lock { overflow: hidden; }
 .crx .crx-bal-ledger {
   margin-top: 1.5rem;
   padding-top: 1.25rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid var(--line);
 }
 .crx .crx-bal-ledger > .crx-subhead { margin-bottom: 0.55rem; }
 .crx .crx-cashout { flex-shrink: 0; }
@@ -1446,7 +1573,7 @@ body.crx-lock { overflow: hidden; }
 .crx .crx-row {
   display: flex; align-items: baseline; gap: 0.8rem;
   padding: 0.75rem 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid var(--line);
   font-size: 0.88rem; color: var(--dim);
 }
 /* NO LEADING RULE — every divided list on this page sits under a heading or a label, and a rule
@@ -1461,7 +1588,7 @@ body.crx-lock { overflow: hidden; }
    selector as :not(), never as a competing override. */
 .crx .crx-rows > .crx-row:first-child { border-top: none; }
 /* fixed tabular date column so labels rag into a clean left edge (the original's own trick) */
-.crx .crx-row .crx-row-date { flex-shrink: 0; width: 88px; font-size: 0.78rem; color: rgba(214, 224, 255, 0.5); font-variant-numeric: tabular-nums; }
+.crx .crx-row .crx-row-date { flex-shrink: 0; width: 88px; font-size: 0.78rem; color: var(--ink-3); font-variant-numeric: tabular-nums; }
 .crx .crx-row .crx-row-label { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 /* amounts neutral ink, NOT mint — a withdrawal is the creator's own money moving, not a gain */
 .crx .crx-row .crx-row-amt { flex-shrink: 0; font-weight: 650; color: var(--ink-inverse); font-variant-numeric: tabular-nums; }
@@ -1470,7 +1597,7 @@ body.crx-lock { overflow: hidden; }
    month is money ARRIVING — the one thing mint is reserved for — and a $0 month is a record, not
    a warning, so it dims rather than reddens. */
 .crx .crx-row .crx-row-amt.in { color: var(--mint); }
-.crx .crx-row .crx-row-amt.dim { color: rgba(214, 224, 255, 0.45); font-weight: 500; }
+.crx .crx-row .crx-row-amt.dim { color: var(--ink-4); font-weight: 500; }
 
 /* ---- preview toggler: deliberately NOT product-looking (PreviewToggler's constraint) ----
    Flat, small, 11–12px, no gradient anywhere — a reviewer must never mistake it for a page CTA.
@@ -1479,49 +1606,49 @@ body.crx-lock { overflow: hidden; }
 .crx .crx-toggler-sect {
   display: block; margin: 0.5rem 0 0.15rem; padding: 0 0.45rem;
   font-family: var(--mono); font-size: 0.58rem; font-weight: 700;
-  letter-spacing: 0.12em; text-transform: uppercase; color: rgba(214, 224, 255, 0.45);
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-4);
 }
 .crx .crx-toggler-group:first-child .crx-toggler-sect { margin-top: 0.15rem; }
 .crx .crx-toggler {
   position: fixed; left: 14px; bottom: 14px; z-index: 110;
   width: 212px; padding: 0.75rem;
-  background: rgba(10, 15, 38, 0.92);
+  background: var(--sur-opaque);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  border: 1px solid var(--line-2);
   border-radius: 14px;
   box-shadow: 0 18px 50px -12px rgba(0, 0, 0, 0.65);
   text-align: left;
 }
 /* collapsed FAB — same surface, gear-sized */
-.crx .crx-toggler.fab { width: 44px; height: 44px; padding: 0; display: flex; align-items: center; justify-content: center; color: rgba(214, 224, 255, 0.55); cursor: pointer; transition: color 0.15s ease; }
-.crx .crx-toggler.fab:hover { color: #fff; }
+.crx .crx-toggler.fab { width: 44px; height: 44px; padding: 0; display: flex; align-items: center; justify-content: center; color: var(--ink-3); cursor: pointer; transition: color 0.15s ease; }
+.crx .crx-toggler.fab:hover { color: var(--ink-inverse); }
 .crx .crx-toggler-head {
   font-family: var(--mono); font-size: 0.6rem; font-weight: 700;
-  letter-spacing: 0.14em; text-transform: uppercase; color: rgba(214, 224, 255, 0.55);
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3);
 }
 /* stacked radio rows in a flat inset track — the classic segmented look, vertical */
 .crx .crx-toggler-track { display: flex; flex-direction: column; gap: 2px; margin-top: 0.4rem; background: var(--well); border-radius: 9px; padding: 2px; }
 .crx .crx-toggler-row {
   display: flex; align-items: center; gap: 0.5rem;
   font: inherit; font-size: 0.72rem; font-weight: 600; text-align: left;
-  color: rgba(214, 224, 255, 0.55);
+  color: var(--ink-3);
   background: none; border: none; border-radius: 7px;
   padding: 0.5rem; cursor: pointer;
   transition: background 0.15s ease, color 0.15s ease;
 }
 .crx .crx-toggler-row:hover { color: var(--dim); }
-.crx .crx-toggler-row:active { color: #fff; }
-.crx .crx-toggler-row.on { background: rgba(255, 255, 255, 0.1); color: #fff; }
+.crx .crx-toggler-row:active { color: var(--ink-inverse); }
+.crx .crx-toggler-row.on { background: var(--sur-hover); color: var(--ink-inverse); }
 /* radio dot indicator */
 .crx .crx-toggler-dot {
   flex-shrink: 0; display: flex; align-items: center; justify-content: center;
   width: 14px; height: 14px; border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.28);
+  border: 1px solid var(--line-4);
 }
-.crx .crx-toggler-row.on .crx-toggler-dot { border-color: #a78bff; }
-.crx .crx-toggler-row.on .crx-toggler-dot::after { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #a78bff; }
-.crx .crx-toggler-note { margin: 0.5rem 0 0; font-size: 0.66rem; line-height: 1.4; color: rgba(214, 224, 255, 0.5); }
+.crx .crx-toggler-row.on .crx-toggler-dot { border-color: var(--accent-2); }
+.crx .crx-toggler-row.on .crx-toggler-dot::after { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--accent-2); }
+.crx .crx-toggler-note { margin: 0.5rem 0 0; font-size: 0.66rem; line-height: 1.4; color: var(--ink-3); }
 
 /* ---- application intro rows: icon + sentence (StepIntro's icon-per-point layout) ---- */
 /* CENTRED ON THE WHOLE BLOCK, not on the first line (Appy, 2026-08-25). This was flex-start with a
@@ -1540,7 +1667,7 @@ body.crx-lock { overflow: hidden; }
 .crx .crx-intro-row .crx-intro-ic {
   flex-shrink: 0; display: flex; align-items: center; justify-content: center;
   width: 36px; height: 36px; border-radius: 50%;
-  background: var(--sel-wash); color: #a78bff;
+  background: var(--sel-wash); color: var(--accent-2);
 }
 .crx .crx-intro-row .crx-intro-body { font-size: 0.95rem; line-height: 1.55; color: var(--dim); }
 .crx .crx-intro-row .crx-intro-body b { color: var(--ink-inverse); font-weight: 650; }
@@ -1556,14 +1683,14 @@ body.crx-lock { overflow: hidden; }
 .crx .crx-check:focus-visible,
 .crx .crx-toggler-row:focus-visible,
 .crx .crx-toggler.fab:focus-visible {
-  outline: 2px solid #a78bff; outline-offset: 2px;
+  outline: 2px solid var(--accent-2); outline-offset: 2px;
 }
 /* sr-only-input pattern (ChoiceGroup/CheckField keep real radios/checkboxes in the DOM):
    the ring forwards from the hidden input to the painted sibling */
 .crx input.sr-only:focus-visible + .crx-choice,
 .crx input.sr-only:focus-visible + .crx-choice-card,
 .crx input.sr-only:focus-visible + .crx-check {
-  outline: 2px solid #a78bff; outline-offset: 2px;
+  outline: 2px solid var(--accent-2); outline-offset: 2px;
 }
 
 /* ---- responsive: the page's one breakpoint ---- */
@@ -1650,13 +1777,13 @@ body.crx-lock { overflow: hidden; }
    confirmation is the page going quiet, and it should sit into the page rather than off it. */
 .crx .crx-band.dark {
   background: rgba(5, 6, 15, 0.32);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--line);
   box-shadow: 0 30px 80px -50px rgba(0, 0, 0, 0.8);
 }
 /* the grid follows the surface: strokes are currentColor, so this one line re-themes the whole fan
    and both planes back to the dark-band look */
-.crx .crx-band.dark .crx-band-grid { color: rgba(255, 255, 255, 0.7); }
-.crx .crx-band.dark h2 { color: #fff; }
+.crx .crx-band.dark .crx-band-grid { color: var(--dim); }
+.crx .crx-band.dark h2 { color: var(--ink-on-accent); }
 .crx .crx-band.dark p { color: var(--dim); }
 .crx .crx-band.dark p b { color: var(--ink-inverse); font-weight: 650; }
 
@@ -1672,7 +1799,7 @@ body.crx-lock { overflow: hidden; }
 .crx .crx-confirm-tick {
   display: inline-flex; align-items: center; justify-content: center;
   width: 58px; height: 58px; border-radius: 50%;
-  background: rgba(52, 227, 154, 0.12);
+  background: var(--positive-wash);
   color: var(--mint);
 }
 
@@ -1701,12 +1828,12 @@ body.crx-lock { overflow: hidden; }
 .crx .crx-aside {
   margin-bottom: 0; padding: 0.75rem 0.9rem;
   font-size: 0.85rem; line-height: 1.55; color: var(--dim);
-  background: rgba(255, 255, 255, 0.035);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--sur-2);
+  border: 1px solid var(--line);
   border-radius: 9px;
 }
 /* muted normal-weight "(optional)" suffix inside a label */
-.crx .crx-label-opt { color: rgba(214, 224, 255, 0.55); font-weight: 400; }
+.crx .crx-label-opt { color: var(--ink-3); font-weight: 400; }
 /* textarea — resting size capped at rows=3, scrolls internally past it, never user-resized */
 .crx .crx-area { resize: none; line-height: 1.55; min-height: 5.5em; }
 
@@ -1724,7 +1851,7 @@ body.crx-lock { overflow: hidden; }
 .crx .crx-acct-avatar {
   flex-shrink: 0; display: flex; align-items: center; justify-content: center;
   width: 28px; height: 28px; border-radius: 50%;
-  background: var(--cta-grad); color: #fff;
+  background: var(--cta-grad); color: var(--ink-on-accent);
   font-size: 11px; font-weight: 700;
 }
 /* account name in the chip */
@@ -1733,13 +1860,13 @@ body.crx-lock { overflow: hidden; }
 .crx .crx-acct-email {
   margin: 0; padding: 0.5rem 0.8rem 0.6rem; min-width: 0;
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-  font-size: 0.78rem; color: rgba(214, 224, 255, 0.55);
+  font-size: 0.78rem; color: var(--ink-3);
 }
 /* Log out row — .crx-menu's own 44px row recipe, with a danger-tinted hover (it ends the session) */
 .crx .crx-acct-out { gap: 0.5rem; }
 .crx .crx-menu .crx-acct-out:hover { color: var(--danger); background: var(--danger-wash); }
 .crx .crx-menu .crx-acct-out:active { color: var(--danger); background: rgba(255, 107, 122, 0.14); }
-.crx .crx-acct-out:focus-visible { outline: 2px solid #a78bff; outline-offset: 2px; }
+.crx .crx-acct-out:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px; }
 
 /* ---- Dashboard shell ---- */
 /* dashboard column — main already pays the 1100px grid, 1.5rem gutter and header clearance
@@ -1760,7 +1887,7 @@ body.crx-lock { overflow: hidden; }
 .crx .crx-refresh {
   flex-shrink: 0; display: inline-flex; align-items: center; gap: 0.4rem;
   padding: 0.3rem 0.65rem; border-radius: 999px;
-  background: none; border: 1px solid rgba(255, 255, 255, 0.14); cursor: pointer;
+  background: none; border: 1px solid var(--line-2); cursor: pointer;
   color: var(--dim);
   transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease;
 }
@@ -1770,8 +1897,8 @@ body.crx-lock { overflow: hidden; }
   font-family: var(--mono); font-size: 0.64rem; font-weight: 600;
   letter-spacing: 0.1em; text-transform: uppercase;
 }
-.crx .crx-refresh:hover { color: var(--ink-inverse); border-color: rgba(255, 255, 255, 0.3); background: rgba(255, 255, 255, 0.05); }
-.crx .crx-refresh:focus-visible { outline: 2px solid #a78bff; outline-offset: 3px; }
+.crx .crx-refresh:hover { color: var(--ink-inverse); border-color: var(--line-4); background: var(--sur); }
+.crx .crx-refresh:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 3px; }
 /* the ICON spins, not the pill — rotating a word is illegible, and rotating the border would read
    as the whole control being busy rather than the data being fetched */
 .crx .crx-refresh.spin svg { animation: crx-spin 0.6s linear; }
@@ -1780,7 +1907,7 @@ body.crx-lock { overflow: hidden; }
 .crx .crx-dash-title {
   font-family: 'Space Grotesk', 'SF Pro Display', Inter, sans-serif;
   font-weight: 700; font-size: 1.9rem; line-height: 1.2; letter-spacing: -0.02em;
-  color: #fff; margin: 0 0 0.4rem;
+  color: var(--ink-inverse); margin: 0 0 0.4rem;
   text-wrap: balance;
 }
 /* sub-line under the welcome */
@@ -1793,19 +1920,19 @@ body.crx-lock { overflow: hidden; }
 /* Cash out — pushed to the card's right edge; compact quiet pill in a mint tint (the money action) */
 .crx .crx-cashout {
   margin-left: auto; padding: 0.5rem 1.1rem; font-size: 0.85rem;
-  border-color: rgba(52, 227, 154, 0.3);
+  border-color: var(--positive-line);
 }
-.crx .crx-cashout:hover { border-color: rgba(52, 227, 154, 0.5); background: rgba(52, 227, 154, 0.08); }
-.crx .crx-cashout:active { background: rgba(52, 227, 154, 0.12); }
+.crx .crx-cashout:hover { border-color: rgba(52, 227, 154, 0.5); background: var(--positive-wash); }
+.crx .crx-cashout:active { background: var(--positive-wash); }
 /* disabled at $0 (StatCards disables it) — visibly inert, hover model switched off */
 .crx .crx-cashout:disabled { opacity: 0.45; cursor: default; }
-.crx .crx-cashout:disabled:hover { border-color: rgba(52, 227, 154, 0.3); background: none; transform: none; }
+.crx .crx-cashout:disabled:hover { border-color: var(--positive-line); background: none; transform: none; }
 
 /* ---- HowEarningWorks: two vertical lists sharing the band ---- */
 /* two halves sharing the width, hairline divider carried by the second (rules) half */
 .crx .crx-earn-split { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
 .crx .crx-earn-half { min-width: 0; }
-.crx .crx-earn-half + .crx-earn-half { border-left: 1px solid rgba(255, 255, 255, 0.08); padding-left: 2rem; }
+.crx .crx-earn-half + .crx-earn-half { border-left: 1px solid var(--line); padding-left: 2rem; }
 /* half titles need their own gap to the list below (panel-title ships margin:0) */
 /* BOTH halves carry a mono label, which is what makes their first lines start on the same one. An
    earlier pass gave the label to the right half only, on the argument that the left column WAS the
@@ -1831,9 +1958,9 @@ body.crx-lock { overflow: hidden; }
   padding: 0.35rem 0.7rem;
   font-family: var(--mono); font-size: 0.7rem; font-weight: 600;
   letter-spacing: 0.08em; text-transform: uppercase;
-  color: rgba(214, 224, 255, 0.55);
-  background: rgba(255, 255, 255, 0.045);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--ink-3);
+  background: var(--sur);
+  border: 1px solid var(--line);
   border-radius: 999px;
 }
 .crx .crx-cash-balance b { color: var(--mint); font-weight: 700; font-variant-numeric: tabular-nums; }
@@ -1844,13 +1971,13 @@ body.crx-lock { overflow: hidden; }
 /* PayPal mini-logo block (brand colours live in the SVG itself) */
 .crx .crx-cash-pp { flex-shrink: 0; display: block; }
 /* method name beside the badge */
-.crx .crx-cash-method-name { font-size: 0.95rem; font-weight: 650; color: #fff; }
+.crx .crx-cash-method-name { font-size: 0.95rem; font-weight: 650; color: var(--ink-inverse); }
 /* selected tick — the choice-mark recipe, pushed to the card's right edge */
 .crx .crx-cash-method-tick {
   margin-left: auto; flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
   width: 18px; height: 18px; border-radius: 50%;
-  background: var(--iris); color: #fff;
+  background: var(--iris); color: var(--ink-on-accent);
 }
 /* email field block — its input ships without crx-gap-label, so the label carries the gap here */
 .crx .crx-cash-field { display: block; margin-top: 1.1rem; }
@@ -1881,9 +2008,9 @@ body.crx-lock { overflow: hidden; }
 /* the request id — tabular semibold ink so it reads as a reference, not prose */
 .crx .crx-cash-id { color: var(--ink-inverse); font-weight: 650; font-variant-numeric: tabular-nums; }
 /* support address — iris accent, NOT mint (mint stays strictly money/success; an inbox is neither) */
-.crx .crx-cash-mail { color: #a78bff; font-weight: 650; }
+.crx .crx-cash-mail { color: var(--accent-2); font-weight: 650; }
 /* the smaller support line */
-.crx .crx-cash-support { margin: 0.9rem 0 0; font-size: 0.8rem; color: rgba(214, 224, 255, 0.55); }
+.crx .crx-cash-support { margin: 0.9rem 0 0; font-size: 0.8rem; color: var(--ink-3); }
 /* Close — full-width behaviour capped so it doesn't read as another Withdraw */
 .crx .crx-cash-close { margin-top: 1.5rem; max-width: 280px; }
 
@@ -1937,12 +2064,12 @@ body.crx-lock { overflow: hidden; }
   white-space: nowrap;
 }
 /* mint = money/success, the kit's standing rule — an open program is the money state */
-.crx .crx-chip.mint { color: var(--mint); border: 1px solid rgba(52, 227, 154, 0.35); background: rgba(52, 227, 154, 0.08); }
+.crx .crx-chip.mint { color: var(--mint); border: 1px solid rgba(52, 227, 154, 0.35); background: var(--positive-wash); }
 /* iris = chosen/held, not success: an application in review is a held state, so it borrows the
    selection trio rather than mint (nothing has been earned yet) */
-.crx .crx-chip.iris { color: #a78bff; border: 1px solid var(--sel-border); background: var(--sel-wash); }
+.crx .crx-chip.iris { color: var(--accent-2); border: 1px solid var(--sel-border); background: var(--sel-wash); }
 /* ghost = future: dashed like the coming-soon container it labels */
-.crx .crx-chip.ghost { color: var(--dim); border: 1px dashed rgba(255, 255, 255, 0.28); background: transparent; }
+.crx .crx-chip.ghost { color: var(--dim); border: 1px dashed var(--line-4); background: transparent; }
 
 /* the offer card's OWN surface — deliberately not .crx-panel (2026-08-24: card and application
    form shared the same flat panel at the same width and read as one screen). Iris wash off the
@@ -1977,13 +2104,13 @@ body.crx-lock { overflow: hidden; }
 .crx .crx-prog-title {
   font-family: 'Space Grotesk', 'SF Pro Display', Inter, sans-serif;
   font-weight: 700; font-size: 1.35rem; line-height: 1.25;
-  color: #fff; margin: 0 0 0.35rem;
+  color: var(--ink-inverse); margin: 0 0 0.35rem;
 }
 .crx .crx-prog-desc { font-size: 0.95rem; line-height: 1.55; color: var(--dim); margin: 0 0 1.2rem; }
 
 /* fact rows ride .crx-intro-row (icon circle + sentence); the hairline top is what separates
    ops-authored prose (the description) from program terms (the rows) */
-.crx .crx-prog-facts { border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 1.2rem; }
+.crx .crx-prog-facts { border-top: 1px solid var(--line); padding-top: 1.2rem; }
 .crx .crx-prog-facts .crx-intro-row + .crx-intro-row { margin-top: 0.95rem; }
 
 /* CTA row — one full-width primary; .crx-grow is the form-foot's flex hook, here it just fills */
@@ -1999,7 +2126,7 @@ body.crx-lock { overflow: hidden; }
    own chip margin-bottom, not a new value — same relationship, same spacing. */
 .crx .crx-prog-soon {
   margin-top: 1rem;
-  border: 1px dashed rgba(255, 255, 255, 0.16); border-radius: 16px;
+  border: 1px dashed var(--line-3); border-radius: 16px;
   padding: 1.1rem 1.4rem;
   display: flex; flex-direction: column; align-items: flex-start; gap: 0.85rem;
 }
@@ -2055,8 +2182,8 @@ body.crx-lock { overflow: hidden; }
 .crx .crx-progtabs {
   flex-shrink: 0; display: inline-flex; gap: 2px;
   padding: 2px; border-radius: 999px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--sur);
+  border: 1px solid var(--line);
 }
 .crx .crx-progtab {
   display: inline-flex; align-items: center; gap: 0.4rem;
@@ -2067,8 +2194,8 @@ body.crx-lock { overflow: hidden; }
   transition: color 0.18s ease, background 0.18s ease;
 }
 .crx .crx-progtab:hover { color: var(--ink-inverse); }
-.crx .crx-progtab.on { color: var(--ink-inverse); background: rgba(255, 255, 255, 0.09); }
-.crx .crx-progtab:focus-visible { outline: 2px solid #a78bff; outline-offset: 2px; }
+.crx .crx-progtab.on { color: var(--ink-inverse); background: var(--sur-hover); }
+.crx .crx-progtab:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px; }
 /* the count rides the tab in the page's mono voice, so it reads as a badge rather than as part of
    the label — "Past" is the destination, "2" is what is in it */
 .crx .crx-progtab-n {
@@ -2097,8 +2224,8 @@ body.crx-lock { overflow: hidden; }
    Worth reconciling in one direction, but not silently from here. */
 .crx .crx-progempty {
   margin-top: 0.9rem;
-  background: rgba(255, 255, 255, 0.035);
-  border: 1px dashed rgba(255, 255, 255, 0.16); border-radius: 14px;
+  background: var(--sur-2);
+  border: 1px dashed var(--line-3); border-radius: 14px;
   padding: 1.1rem 1.4rem;
   /* CENTRED, and this is the one place it diverges from .crx-prog-soon's left-aligned ghost
      deliberately: that box holds a chip above a paragraph, where a left edge is what lines the two
@@ -2151,16 +2278,16 @@ body.crx-lock { overflow: hidden; }
    NAME would make a finished program hard to identify, which is the one thing someone opening this
    tab is looking for. */
 .crx .crx-progtile.past {
-  background: rgba(255, 255, 255, 0.022);
-  border-color: rgba(255, 255, 255, 0.06);
+  background: var(--sur-2);
+  border-color: var(--line);
 }
 .crx .crx-progtile.past .crx-progtile-name { color: var(--dim); }
 .crx .crx-progtile {
   display: grid; grid-template-columns: minmax(170px, 1.1fr) minmax(220px, 1.7fr) auto;
   grid-template-areas: 'id conds reward';
   align-items: center; column-gap: 2rem;
-  background: rgba(255, 255, 255, 0.035);
-  border: 1px solid rgba(255, 255, 255, 0.09);
+  background: var(--sur-2);
+  border: 1px solid var(--line);
   border-radius: 14px;
   padding: 1rem 1.4rem;
 }
@@ -2170,9 +2297,9 @@ body.crx-lock { overflow: hidden; }
    the whole tile and the bar runs full width. The deadline rides the count row instead, in the
    same quiet ink the id column's "Ends" line wore. */
 .crx .crx-progtile.solo { grid-template-columns: 1fr; grid-template-areas: 'conds'; }
-.crx .crx-cond-when { color: rgba(214, 224, 255, 0.5); font-weight: 400; }
+.crx .crx-cond-when { color: var(--ink-3); font-weight: 400; }
 .crx .crx-progtile-name { display: block; font-size: 0.95rem; font-weight: 650; color: var(--ink-inverse); }
-.crx .crx-progtile-ends { display: block; margin-top: 0.2rem; font-size: 0.74rem; color: rgba(214, 224, 255, 0.5); }
+.crx .crx-progtile-ends { display: block; margin-top: 0.2rem; font-size: 0.74rem; color: var(--ink-3); }
 .crx .crx-progtile-conds { grid-area: conds; display: flex; flex-direction: column; gap: 0.7rem; min-width: 0; }
 /* the info glyph in the quest slot — rewards came off the tiles (Abhisht, 2026-08-24: louder
    than the progress); the terms live behind this instead. Ghost circle, dim at rest, ink on
@@ -2181,23 +2308,23 @@ body.crx-lock { overflow: hidden; }
   grid-area: reward; justify-self: end;
   display: inline-flex; align-items: center; justify-content: center;
   width: 34px; height: 34px; border-radius: 50%;
-  background: none; border: 1px solid rgba(255, 255, 255, 0.16);
+  background: none; border: 1px solid var(--line-3);
   color: var(--dim); cursor: pointer;
   transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease;
 }
-.crx .crx-progtile-info:hover { color: var(--ink-inverse); border-color: rgba(255, 255, 255, 0.34); background: rgba(255, 255, 255, 0.06); }
-.crx .crx-progtile-info:focus-visible { outline: 2px solid #a78bff; outline-offset: 3px; }
+.crx .crx-progtile-info:hover { color: var(--ink-inverse); border-color: var(--line-4); background: var(--sur-3); }
+.crx .crx-progtile-info:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 3px; }
 
 /* the program sheet inside the kit modal */
 .crx .crx-proginfo { padding: 1.6rem; }
 .crx .crx-proginfo-title {
   font-family: 'Space Grotesk', 'SF Pro Display', Inter, sans-serif;
-  font-weight: 700; font-size: 1.25rem; line-height: 1.3; color: #fff;
+  font-weight: 700; font-size: 1.25rem; line-height: 1.3; color: var(--ink-inverse);
   /* 1rem to the first section — the ops description that used to fill this gap was cut
      (2026-08-24, duplicate of "What counts"); its rule went with it */
   margin: 0 0 1rem;
 }
-.crx .crx-proginfo-sect { border-top: 1px solid rgba(255, 255, 255, 0.08); padding: 0.9rem 0; }
+.crx .crx-proginfo-sect { border-top: 1px solid var(--line); padding: 0.9rem 0; }
 .crx .crx-proginfo-k {
   display: block; margin-bottom: 0.35rem;
   font-family: var(--mono); font-size: 0.62rem; font-weight: 700;
@@ -2233,7 +2360,7 @@ body.crx-lock { overflow: hidden; }
 .crx .crx-bar {
   height: 6px; border-radius: 999px; overflow: hidden;
   background: var(--well);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--line);
 }
 .crx .crx-bar-fill { display: block; height: 100%; border-radius: 999px; background: var(--mint); }
 
@@ -2246,7 +2373,7 @@ body.crx-lock { overflow: hidden; }
   transition: color 0.18s ease;
 }
 .crx .crx-apply-back:hover { color: var(--ink-inverse); }
-.crx .crx-apply-back:focus-visible { outline: 2px solid #a78bff; outline-offset: 3px; }
+.crx .crx-apply-back:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 3px; }
 
 /* ---- the legal page (/creators/terms) + the footer's line to it ----
    bluestacks.com's pattern in this site's kit: one page, the documents as tabs (2026-08-31).
@@ -2260,7 +2387,7 @@ body.crx-lock { overflow: hidden; }
 .crx .crx-legal { max-width: 760px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; text-align: left; }
 .crx .crx-legal-title {
   font-family: 'Space Grotesk', 'SF Pro Display', Inter, sans-serif;
-  font-weight: 700; font-size: 1.9rem; letter-spacing: -0.02em; color: #fff;
+  font-weight: 700; font-size: 1.9rem; letter-spacing: -0.02em; color: var(--ink-inverse);
   margin: 0 0 1.4rem;
 }
 .crx .crx-legal-title { text-align: center; }
@@ -2269,12 +2396,12 @@ body.crx-lock { overflow: hidden; }
 .crx .crx-legal-tabs { display: flex; margin-bottom: 2rem; justify-content: center; }
 .crx .crx-legal-doc h2 {
   font-family: 'Space Grotesk', 'SF Pro Display', Inter, sans-serif;
-  font-weight: 700; font-size: 1.2rem; color: #fff; margin: 0 0 0.2rem;
+  font-weight: 700; font-size: 1.2rem; color: var(--ink-inverse); margin: 0 0 0.2rem;
 }
-.crx .crx-legal-eff { font-size: 0.8rem; color: rgba(214, 224, 255, 0.5); margin: 0 0 1.6rem; }
+.crx .crx-legal-eff { font-size: 0.8rem; color: var(--ink-3); margin: 0 0 1.6rem; }
 .crx .crx-legal-doc h3 {
   font-family: 'Space Grotesk', 'SF Pro Display', Inter, sans-serif;
-  font-weight: 700; font-size: 1rem; color: #fff; margin: 1.8rem 0 0.6rem;
+  font-weight: 700; font-size: 1rem; color: var(--ink-inverse); margin: 1.8rem 0 0.6rem;
 }
 .crx .crx-legal-doc p { font-size: 0.92rem; line-height: 1.7; color: var(--dim); margin: 0 0 0.9rem; }
 /* the restriction/data lists — hanging bullets without ul chrome (source paragraphs, not lists) */
@@ -2285,9 +2412,9 @@ body.crx-lock { overflow: hidden; }
 .crx .crx-legal-chart { width: 100%; border-collapse: collapse; font-size: 0.85rem; color: var(--dim); }
 .crx .crx-legal-chart th {
   text-align: left; color: var(--ink-inverse); font-weight: 650;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.18); padding: 0.5rem 0.8rem 0.5rem 0;
+  border-bottom: 1px solid var(--line-3); padding: 0.5rem 0.8rem 0.5rem 0;
 }
-.crx .crx-legal-chart td { border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding: 0.6rem 0.8rem 0.6rem 0; }
+.crx .crx-legal-chart td { border-bottom: 1px solid var(--line); padding: 0.6rem 0.8rem 0.6rem 0; }
 
 /* footer legal line — one link, per the review ("we add 'Terms and privacy'") */
 .crx .crx-foot-legal { margin-top: 1.1rem; font-size: 0.78rem; }
@@ -2307,7 +2434,7 @@ body.crx-lock { overflow: hidden; }
   .crx .crx-earn-split { grid-template-columns: 1fr; gap: 1.5rem; }
   .crx .crx-earn-half + .crx-earn-half {
     border-left: none; padding-left: 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 1.5rem;
+    border-top: 1px solid var(--line); padding-top: 1.5rem;
   }
   /* dashboard bottom room tightens with the rest of the page */
   .crx .crx-dash { padding-bottom: 3rem; }
@@ -2330,3 +2457,149 @@ body.crx-lock { overflow: hidden; }
   .crx .crx-form-foot .crx-btn-quiet { flex: 0 0 auto; }
   .crx .crx-form-foot .crx-grow { flex: 1 1 auto; }
 }
+
+/* ================================================================================================
+   LIGHT THEME — the parts that are a repaint rather than a token swap.
+   Collected here rather than scattered so the dark path stays readable while both exist, and so
+   deleting the dark path later is deleting the ORIGINAL rules and this whole block's overrides
+   go back to being the only values. Every rule below has a one-line reason.
+   ================================================================================================ */
+
+/* THE GROUND. The dark page is a three-stop sky with two coloured washes at 0.22 and 0.16 - alphas
+   that read as atmosphere on near-black and as stains on white. Flat canvas plus the same two
+   washes at a fifth of the strength, which is roughly where the agency page's orbs sit. */
+body.crx-light #crx {
+  background:
+    radial-gradient(900px 500px at 25% -5%, rgba(123, 76, 255, 0.055), transparent 65%),
+    radial-gradient(800px 480px at 82% 12%, rgba(14, 164, 197, 0.045), transparent 60%),
+    var(--canvas);
+}
+
+/* ORBS: same colours and same geometry as the agency page already - byte-identical 0.55/0.5/0.44
+   fills, 46vw, blur(96px). The ONLY difference between the two sites was the base opacity, 0.26
+   here against 0.34 there, so light gets theirs (designer, 2026-09-02: "same as agency website").
+   Nothing else about the orbs changes, which is why this is one declaration. */
+body.crx-light .crx .crx-orb { opacity: 0.34; }
+
+/* GLOWS DO NOT TRANSLATE. A 24px iris drop-shadow behind the gradient heading and a 12px mint halo
+   behind the flying earnings chip are both "make it bloom against black"; on white they are grey
+   smudge. Removed rather than re-tuned - there is no light-ground equivalent of a glow. */
+body.crx-light .crx .grad { filter: none; }
+body.crx-light .crx .chip { text-shadow: none; }
+
+/* ------------------------------------------------------------------------------------------------
+   THE MACHINE STAGE, repainted (designer, 2026-09-02: "use light only" - the screen goes light too,
+   so there is no dark device left as a contrast anchor).
+   The desk and the laptop are drawn in CSS, not photographed, so they are the one part of this page
+   that has no light equivalent to borrow from the agency page - these values are new. They are
+   picked as cool light greys off the DS line ramp rather than a warm desk, because every other
+   neutral on this page is blue-grey and a warm object would read as a different render.
+   THE HARDWARE KEEPS ITS TWO-STOP GRADIENTS. A flat fill reads as a rectangle; the top-to-bottom
+   step is what makes a 16px strip read as a surface with a near edge, and that is true on white as
+   much as on black - only the direction of the light changes, not the fact of it. */
+
+/* the desk: top surface lighter than its front edge, legs a step deeper still, so the three planes
+   still separate without a shadow doing the work */
+body.crx-light .crx .desk-top {
+  background: linear-gradient(180deg, #e6eaf3, #ccd3e2);
+  border-top: 1px solid #ffffff;
+  box-shadow: 0 18px 40px -14px rgba(8, 10, 31, 0.18);
+}
+body.crx-light .crx .desk-leg { background: linear-gradient(180deg, #d5dbe8, #bcc4d6); }
+
+/* THE SCREEN. A dark panel here was carrying the whole scene's contrast; with it light, the bezel
+   has to do that job instead - hence a visible 3px bezel in the line ramp rather than the dark
+   #2c3568 one, which would now be the single darkest thing on the page.
+   ALL THREE GLOWS GO. Two outer blooms (cyan, iris) and an inset navy vignette: on black they are
+   the machine being on, on white they are smudge. The screen reads as on because its CONTENT is
+   on, which is the honest version of the same signal. */
+body.crx-light .crx .lap-screen {
+  background: var(--sur-2);
+  border-color: #ccd3e2;
+  box-shadow: 0 10px 30px -12px rgba(8, 10, 31, 0.16);
+}
+
+/* the deck, keys and trackpad: silver body, keys a couple of steps down so they read as recesses */
+body.crx-light .crx .lap-deck {
+  background: linear-gradient(180deg, #eef1f7, #d3d9e6);
+  box-shadow: 0 14px 30px -12px rgba(8, 10, 31, 0.2);
+}
+body.crx-light .crx .lap-deck::before { background: repeating-linear-gradient(90deg, #a9b2c8 0 12px, transparent 12px 16px); }
+body.crx-light .crx .lap-deck::after { background: #a9b2c8; }
+
+/* the bloom under the stage: 0.18 iris on near-black is a cast light, on white it is a purple
+   bruise. Kept at a third of the strength so the stage still sits on something. */
+body.crx-light .crx .scene::after {
+  background: radial-gradient(50% 100% at 50% 0%, rgba(123, 76, 255, 0.06), transparent 75%);
+}
+
+/* THE EARNINGS PILL was already a light component - a white pill with #0f9d58 money, floating on
+   the dark scene. On a light page white-on-white has no edge, so it gains the hairline it never
+   needed, and its shadow comes down to match the rest of the page's elevation. */
+body.crx-light .crx .earnings {
+  border: 1px solid var(--line);
+  box-shadow: 0 6px 18px -8px rgba(8, 10, 31, 0.14);
+}
+
+/* the status dot's halo, same argument as the other two glows */
+body.crx-light .crx .dot { box-shadow: none; }
+
+/* ------------------------------------------------------------------------------------------------
+   SECTIONS.
+   ------------------------------------------------------------------------------------------------ */
+
+/* THE CLOSING BAND IS THE ONE RULE THE FLIP WOULD HAVE BROKEN SILENTLY, and it is worth naming: its
+   gradient uses var(--ink-inverse) as its MIDDLE STOP. On dark that token is #f2f5ff, so the band
+   reads white -> near-white -> pale, i.e. the one light block on a dark page. Flip the ink token to
+   near-black and the same declaration paints white -> near-black -> pale: a dark stripe through the
+   middle of a light band. Nothing in the token names warns you; only reading the consumer does.
+   SO IT INVERTS INSTEAD. On a light page a light closing band is no longer a contrast event - it is
+   the page. The agency page answers this exact question with a DARK band (CTABand.tsx,
+   bg-cta-band), so this takes that gradient verbatim from globals.css --bai-cta-band rather than
+   inventing a second one, and the ink inside it goes light. Same gesture on both halves of the
+   product, one gradient declared once. */
+body.crx-light .crx .crx-band {
+  background: linear-gradient(120deg, rgb(8, 10, 31), #1D1655 45%, #7b4cff 120%);
+  box-shadow: 0 30px 80px -44px rgba(8, 10, 31, 0.45);
+}
+/* the band's ink is now ON a dark ground, so it is the one place on the light page that inverts */
+body.crx-light .crx .crx-band h2 { color: #ffffff; }
+body.crx-light .crx .crx-band p { color: rgba(255, 255, 255, 0.82); }
+/* money inside the band goes back to the bright mint: on the dark band #0f9d58 is unreadable, and
+   this is the same luminance-lift argument the gradient text uses in reverse. */
+body.crx-light .crx .crx-band p b { color: #34e39a; }
+/* the ruling was a faint indigo on a light field; on the dark band it has to be white and faint */
+body.crx-light .crx .crx-band-grid { color: rgba(255, 255, 255, 0.5); }
+
+/* THE SLEEP STILL keeps its image untouched (designer: "no need to do anything here"), but its
+   FRAME does not survive: a 90px black drop and a white inset hairline are both devices for lifting
+   a near-black render off a near-black sky. On white the render is the darkest thing in view and
+   needs no lift at all - just an edge, in the page's own line ramp. */
+body.crx-light .crx .sleep-scene {
+  box-shadow: 0 24px 60px -40px rgba(8, 10, 31, 0.35), inset 0 0 0 1px var(--line);
+}
+
+/* the machine labels sit ON the render, which is still dark - so they stay a dark pill with light
+   ink in BOTH themes. Only the border comes down, since it no longer has to separate the pill from
+   a dark page behind it. */
+body.crx-light .crx .sleep-badge { border-color: rgba(255, 255, 255, 0.22); }
+
+/* the step numeral: #7da2ff is a light blue for a dark card. On white it needs the DS's marketing
+   blue, which is the accent this product already uses for exactly this - eyebrows and small
+   labels. */
+body.crx-light .crx .step .n { color: #2f6dff; }
+
+/* THE AMBIENT STAR is the logo mark blown up to 92vw behind the page, drawn in currentColor at
+   5-8% lavender - a value that only exists because it is being read against near-black. At the
+   same alpha on white it is nothing at all, and at a legible alpha it is a giant purple shape, so
+   it goes to the ink channel instead and stays a texture rather than becoming a graphic. */
+body.crx-light .crx .crx-star { color: rgba(8, 10, 31, 0.035); }
+
+/* THE THREE FLOATING PANES. Their drops are 0.65-0.75 black, which is what it takes to separate a
+   dark pane from a dark page; on white the same shadow is a bruise. Navy-tinted and a quarter of
+   the alpha - enough to say "this floats", which is all a shadow on a light ground has to do.
+   The badge on the sleep render and the .dark band keep theirs: both still sit on dark grounds. */
+body.crx-light .crx .crx-menu,
+body.crx-light .crx .crx-toggler { box-shadow: 0 14px 34px -14px rgba(8, 10, 31, 0.18); }
+body.crx-light .crx-modal { box-shadow: 0 24px 60px -18px rgba(8, 10, 31, 0.22); }
+body.crx-light .crx .crx-band.dark { box-shadow: 0 30px 80px -50px rgba(8, 10, 31, 0.4); }
