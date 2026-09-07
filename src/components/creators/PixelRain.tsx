@@ -15,15 +15,25 @@ import { useEffect, useRef } from 'react'
 // Itself a port of blueai-desktop's boot.js (bgSparks / spawnBgSpark / drawBgSparks) — same grid,
 // same sin(t*PI) envelope so each pixel fades in, peaks and fades out, same two brand colours.
 //
-// FINER THAN THE SOURCE (Appy, 2026-08-20: "can the pixel rain here be more smaller in size, like
-// each pixel is more smaller"). GRID 6 -> 4 makes each mark 2px instead of 4px, which is a quarter
-// of the area — so the count and the cadence rise with it, or the same field reads as a handful of
-// specks instead of rain. The peak alpha lifts a little for the same reason: a smaller mark carries
-// less colour, so the identical alpha reads dimmer.
-const GRID = 4
+// IDENTICAL TO THE BOOT INTRO'S FIELD (Appy, 2026-09-07: "the same pixel rain exactly how we have
+// it in the intro animation same size and amount"). This REVERSES the 2026-08-20 call that made the
+// hero's rain finer than the intro's ("can the pixel rain here be more smaller in size") — the two
+// fields now match, because the intro dissolves straight into the hero and a mark that changes size
+// across that handover reads as two different weathers.
+//
+// All four numbers below are useBootIntro's, not new ones:
+//   GRID 6      — a 4x4px mark (it draws GRID - 2), where this was 4 and drew 2x2
+//   24 / 420x760 and 110ms — boot.js's densities, which the intro re-derives per unit area
+//   life and peak — copied verbatim, so the alpha envelope matches too
+// THE DENSITY IS PER UNIT AREA, not a fixed count. This used to be a flat 110 sparks every 34ms,
+// which is a different rain at every viewport: dense on a laptop, sparse on a wide monitor. The
+// intro scales both against a 420x760 base, so the field reads the same everywhere - and "same
+// amount" as the intro is only true if it scales the same way the intro does.
+const GRID = 6
 const COLORS = ['110,168,255', '123,76,255'] // blue, iris (byte-identical to --iris's rgb)
-const SPAWN_MS = 34
-const MAX_SPARKS = 110
+const BASE_AREA = 420 * 760
+const BASE_CAP = 24
+const BASE_SPAWN_MS = 110
 
 type Spark = { x: number; y: number; born: number; life: number; peak: number; col: string }
 
@@ -45,6 +55,10 @@ export default function PixelRain() {
     const sparks: Spark[] = []
     let lastSpawn = 0
     let raf = 0
+    // Recomputed in resize(), exactly as the intro does it — same sparks per unit area, floored at
+    // boot.js's originals so a small viewport never drops below the density it was tuned at.
+    let cap = BASE_CAP
+    let spawnEvery = BASE_SPAWN_MS
 
     function resize() {
       const host = canvas!.parentElement
@@ -55,6 +69,12 @@ export default function PixelRain() {
       canvas!.width = Math.round(W * dpr)
       canvas!.height = Math.round(H * dpr)
       ctx!.setTransform(dpr, 0, 0, dpr, 0, 0)
+      // AREA IS THIS CANVAS'S, not the viewport's: the hero rain sizes to <main> while the intro
+      // covers the whole screen. Same sparks per unit area is what makes the two fields match, so
+      // the ratio has to be taken against whatever each one actually covers.
+      const areaRatio = (W * H) / BASE_AREA
+      cap = Math.max(BASE_CAP, Math.round(BASE_CAP * areaRatio))
+      spawnEvery = Math.max(24, Math.round(BASE_SPAWN_MS / Math.max(1, areaRatio)))
     }
 
     // Read once per spawn rather than cached at mount: the theme switch is a body class that can
@@ -69,19 +89,18 @@ export default function PixelRain() {
         y: Math.round((Math.random() * H) / GRID) * GRID,
         born: now,
         life: 1100 + Math.random() * 1700,
-        // PER THEME (2026-09-02). 0.14-0.40 are blueai-desktop's originals, tuned on #0b0e19, and
-        // they are right for the dark sky: boosted, ambient weather becomes a starfield competing
-        // with the headline. On light they are nearly invisible - a bright pixel at low alpha on
-        // #F9F9FA is nothing - so light takes the agency page's own 0.30-0.60, which exists for
-        // exactly this reason and is documented there as light-canvas compensation.
-        peak: light ? 0.3 + Math.random() * 0.3 : 0.14 + Math.random() * 0.26,
+        // THE INTRO'S ENVELOPE, verbatim (2026-09-07). These were 0.30-0.60 light / 0.14-0.40 dark,
+        // lifted on 2026-09-02 to compensate for the finer 2px mark this file used to draw. With the
+        // mark back at the intro's 4px there is nothing left to compensate for, and matching the
+        // intro's alphas is what makes the handover from intro to hero invisible.
+        peak: light ? 0.28 + Math.random() * 0.28 : 0.12 + Math.random() * 0.22,
         col: Math.random() < 0.5 ? COLORS[0] : COLORS[1],
       })
     }
 
     function step(now: number) {
       ctx!.clearRect(0, 0, W, H)
-      if (now - lastSpawn > SPAWN_MS && sparks.length < MAX_SPARKS) {
+      if (now - lastSpawn > spawnEvery && sparks.length < cap) {
         lastSpawn = now
         spawn(now)
       }
