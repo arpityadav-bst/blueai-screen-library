@@ -60,12 +60,15 @@ export default function Expectations({
   // pause condition that is true by default is a stopped carousel. 8s instead of 5 is what buys
   // back the reading time the pause was meant to protect.
   //
-  // AUTO-ADVANCE STOPS AT THE LAST SLIDE rather than looping. This is a thing to read once, not a
-  // billboard: cycling back to point one implies there is more to see and quietly asks the reader
-  // to keep watching instead of pressing the button. The ARROW still wraps — see next().
+  // IT LOOPS (Appy, 2026-09-08: "once the carousel is over... it should go back to the first one").
+  // This shipped stopping at the last card, on the argument that a screen you read once should
+  // settle rather than keep asking for attention. Reversed, and the reason it was wrong is worth
+  // keeping: this dialog is not a page you scroll past — it sits and waits for you to press a
+  // button, so a carousel frozen on card three is not "settled", it is a control that has visibly
+  // stopped working while you are still looking at it.
   useEffect(() => {
-    if (held || reduced.current || i >= SLIDES.length - 1) return
-    const t = window.setTimeout(() => setI((n) => n + 1), DWELL)
+    if (held || reduced.current) return
+    const t = window.setTimeout(() => setI((n) => (n + 1) % SLIDES.length), DWELL)
     return () => window.clearTimeout(t)
   }, [i, held])
 
@@ -74,9 +77,8 @@ export default function Expectations({
     setI(n)
   }, [])
 
-  // The arrow WRAPS where the timer stops. The timer stopping is the screen settling; an arrow that
-  // dies on the last card is a control the reader is still looking at and can no longer use, and
-  // re-reading point one is a real thing to want here.
+  // Same wrap as the timer, for the same reason — and so the two never disagree about what comes
+  // after card three.
   const next = useCallback(() => {
     setHeld(true)
     setI((n) => (n + 1) % SLIDES.length)
@@ -164,7 +166,11 @@ export default function Expectations({
             onMouseEnter={(e) => { e.currentTarget.style.color = skin.accent }}
             onMouseLeave={(e) => { e.currentTarget.style.color = skin.ink40 }}
           >
-            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            {/* THE VIEWBOX IS CROPPED TO THE INK, stroke included, so the svg box IS the chevron
+                with no built-in left padding. That is what lets the rail space evenly: a chevron
+                centred in a square box carries ~11px of empty box on its left, which reads as a
+                gap nobody wrote and cannot be tuned away with the flex gap. */}
+            <svg viewBox="7.9 3.9 9.2 16.2" width="6.8" height="12" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <path d="M9 5l7 7-7 7" />
             </svg>
           </button>

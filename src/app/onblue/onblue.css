@@ -1591,9 +1591,11 @@ body.crx-light .crx {
    The active one stretches to a pill rather than only changing colour - position in a set of three
    should survive being seen in greyscale or at a glance. Colours are inline from the SKIN. */
 .crx .crx-xp-dots { display: flex; align-items: center; justify-content: center; gap: 7px; }
-/* the arrow is separated from the dots by more than the dots are from each other, so the rail reads
-   as "three of these, then a control" rather than as four things in a row */
-.crx .crx-xp-dots .crx-xp-next { margin-left: 7px; }
+/* ONE GAP FOR THE WHOLE RAIL, dots and arrow alike (Appy, 2026-09-08: "they need to be together
+   with equal spacing and in the center"). The arrow had an extra 7px on the theory that it should
+   read as "three of these, then a control"; with the chevron's own box padding on top of it the
+   real gap was nearly three times the one between dots, which reads as a mistake, not as a group
+   boundary. The rail centres as one unit because the arrow's layout box is now exactly its ink. */
 .crx .crx-xp-dot {
   width: 7px; height: 7px; padding: 0; border: none; border-radius: 128px; cursor: pointer;
   transition: width 0.32s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.32s ease, opacity 0.2s ease;
@@ -1602,11 +1604,14 @@ body.crx-light .crx {
 .crx .crx-xp-dot.on { width: 20px; }
 .crx .crx-xp-dot:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 3px; }
 
-/* The next control. 26px so it is a real target next to 7px dots without towering over them, and
-   round because everything else in this rail is. Its ink comes inline from the SKIN. */
+/* The next control. PADDING GIVES IT A REAL HIT AREA and an equal negative margin takes that
+   padding back out of the layout, so it is a ~23x28 target that occupies exactly its 7x12 chevron
+   in the rail. Sizing the box itself instead would put the empty half of the box into the spacing
+   and pull the centred group off-centre — the thing this rail was just corrected for.
+   Its ink comes inline from the SKIN. */
 .crx .crx-xp-next {
   display: inline-flex; align-items: center; justify-content: center;
-  width: 26px; height: 26px; padding: 0;
+  padding: 8px; margin: -8px;
   background: none; border: none; border-radius: 128px; cursor: pointer;
   transition: color 0.18s ease, transform 0.18s cubic-bezier(0.22, 1, 0.36, 1);
 }
