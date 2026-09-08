@@ -2791,19 +2791,22 @@ body.crx-lock { overflow: hidden; }
   background: var(--accent);
   flex-shrink: 0;
 }
-.crx .pw-top-right { display: flex; align-items: center; gap: 12px; }
-.crx .pw-state { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; color: var(--ink-3); }
-/* .dot is the page's own live pulse (mint, 7px) - reused rather than restated, because "the machine
-   is running" is one idea and it should not have two implementations */
-.crx .pw-state .dot { width: 6px; height: 6px; box-shadow: none; }
-.crx .pw-ctl { display: inline-flex; align-items: center; gap: 10px; color: var(--ink-4); }
+/* THE TRAFFIC LIGHTS. Literal Apple values, because a near-miss on colours this recognisable reads
+   as a bad copy rather than as a restrained one - it is the single most quoted piece of UI there is.
+   No inner glyphs and no hover: they are a shape everyone knows, and this window is not clickable.
+   Right-hand side, which macOS is not - the aesthetic was the ask, not the platform. */
+.crx .pw-ctl { display: inline-flex; align-items: center; gap: 8px; }
+.crx .pw-light { display: block; width: 11px; height: 11px; border-radius: 50%; }
+.crx .pw-light.r { background: #ff5f57; }
+.crx .pw-light.y { background: #febc2e; }
+.crx .pw-light.g { background: #28c840; }
 
 /* ---- body: sidebar + detail ---- */
 /* A FIXED HEIGHT, not a minimum. Every other height in this window is now constant (the subtitle
    is static copy, the bar reserves its own box), and stating it here is what says so out loud: if
    a future row makes the content taller than this, it clips instead of silently resizing the hero
    on a timer, which is the failure that is hard to see and easy to ship. */
-.crx .pw-body { display: flex; align-items: stretch; height: 266px; }
+.crx .pw-body { display: flex; align-items: stretch; height: 366px; }
 .crx .pw-side {
   width: 148px; flex-shrink: 0;
   display: flex; flex-direction: column; gap: 1px;
@@ -2827,10 +2830,8 @@ body.crx-lock { overflow: hidden; }
 .crx .pw-nav.on svg { color: var(--accent); }
 .crx .pw-nav svg { flex-shrink: 0; }
 .crx .pw-side-foot {
-  margin-top: auto; padding-top: 9px;
-  border-top: 1px solid var(--line);
-  display: flex; align-items: center; gap: 7px;
-  font-size: 11px; color: var(--ink-3);
+  margin-top: auto; padding: 0 8px;
+  display: flex; align-items: center; gap: 8px;
 }
 .crx .pw-avatar {
   display: inline-flex; align-items: center; justify-content: center;
@@ -2842,6 +2843,11 @@ body.crx-lock { overflow: hidden; }
    bar the eye can barely find reads as a rendering fault instead. 7px is the x-height of the 11.5px
    labels it stands in for, so the rows keep their rhythm. */
 .crx .pw-sk { display: block; height: 7px; border-radius: 3.5px; background: var(--line-2); }
+/* the icon's placeholder, in the icon's own 13px box so every row shares one grid */
+.crx .pw-navdot {
+  display: block; width: 13px; height: 13px; border-radius: 50%;
+  background: var(--line-2); flex-shrink: 0;
+}
 
 .crx .pw-main { flex: 1; min-width: 0; padding: 14px 16px 16px; }
 .crx .pw-main-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }

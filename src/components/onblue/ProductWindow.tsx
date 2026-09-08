@@ -8,12 +8,14 @@
 // launch. Both are mounted behind the preview toggler's Hero rows for now, so the two can be
 // compared rather than argued about.
 //
-// "APPLE-LIKE" AS CRAFT, NOT AS macOS. Appy said "Mac-like", and the reference image he sent does
-// NOT do the literal thing: it has a Windows-style minimise/close pair and says "Running on your
-// PC" at the foot. That is the right call and this copies it — three red/amber/green traffic lights
-// would contradict the page's one hard caveat, which used to be a footnote under the desk and is
-// now that footer strip. So: a floating rounded window, one hairline, one soft shadow, generous
-// padding, and no chrome that is not load-bearing.
+// TRAFFIC LIGHTS AFTER ALL, on the right (Appy, 2026-09-08: "what I wanted was the icons of a Mac
+// window... three circles of different color, on the right side"). This shipped with a Windows
+// minimise/close pair, copied from his own reference image, on the argument that three Mac dots
+// would contradict the footer's "Running on your PC" — he has now asked for the dots twice, so they
+// are his call and the tension is his to hold. Right-hand side, which is not where macOS puts them:
+// the aesthetic is the ask, not the platform.
+// Everything else stays the craft rather than the costume: a floating rounded window, one hairline,
+// one soft shadow, generous padding, and no chrome that is not load-bearing.
 //
 // CAMPAIGN, NOT PROGRAM (Appy, 2026-09-08, overruling my note here). I had argued for the
 // dashboard's own word: it says "Your program", campaign is the AGENCY side's term, and a hero
@@ -46,6 +48,15 @@ const NAV = [
 /** A bar standing in for chrome text nobody needs to read. */
 function Skel({ w }: { w: number }) {
   return <span className="pw-sk" style={{ width: w }} />
+}
+
+/** The icon's placeholder on a skeleton row (Appy, 2026-09-08: "circles, just to give an idea that
+ *  okay, there will be an icon here"). It reserves the icon's own box, so the rows stay on one
+ *  grid: the selected row is a real icon and a real label, and the other three are the same two
+ *  slots out of focus. A drawn icon beside an unreadable label was the odd pairing — half the row
+ *  legible, half not. */
+function IconDot() {
+  return <span className="pw-navdot" />
 }
 
 /** The campaign's own facts, which is what the subtitle area is for now (Appy: "instead of
@@ -99,17 +110,15 @@ export default function ProductWindow() {
             </span>
             onBlue
           </span>
-          <span className="pw-top-right">
-            {/* THE DOT SAYS "WORKING" ON ITS OWN — a pulsing green dot is the one status signal
-                that needs no label, which is what makes the word beside it safe to drop with the
-                rest of the chrome text. */}
-            <span className="pw-state"><span className="dot" /><Skel w={40} /></span>
-            {/* Inert on purpose — window controls that did something would invite a click that
-                dismisses the one thing the hero is there to show. */}
-            <span className="pw-ctl" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M5 12h14" /></svg>
-              <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
-            </span>
+          {/* The status word AND its green dot are gone with the rest of the chrome text: the
+              timeline's own live row is pulsing eight lines below, so "Working" was the second
+              place on one screen saying the same thing. Inert dots on purpose — window controls
+              that did something would invite a click that dismisses the thing the hero exists to
+              show. */}
+          <span className="pw-ctl" aria-hidden="true">
+            <i className="pw-light r" />
+            <i className="pw-light y" />
+            <i className="pw-light g" />
           </span>
         </div>
 
@@ -117,17 +126,16 @@ export default function ProductWindow() {
           <nav className="pw-side" aria-hidden="true">
             {NAV.map((n) => (
               <span key={n.id} className={n.on ? 'pw-nav on' : 'pw-nav'}>
-                <NavIcon d={n.d} />
+                {n.label ? <NavIcon d={n.d} /> : <IconDot />}
                 {n.label ?? <Skel w={n.w!} />}
               </span>
             ))}
+            {/* No rule above it and no settings gear (Appy, 2026-09-08). The account row is already
+                the only thing at the foot of a column of nav rows — the whitespace between them
+                separates it, and a hairline was a second separator doing the same job. */}
             <span className="pw-side-foot">
               <span className="pw-avatar">A</span>
               <Skel w={46} />
-              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <circle cx="12" cy="12" r="3" />
-                <path d="M12 3v2M12 19v2M4.2 7.5l1.7 1M18.1 15.5l1.7 1M4.2 16.5l1.7-1M18.1 8.5l1.7-1" />
-              </svg>
             </span>
           </nav>
 
