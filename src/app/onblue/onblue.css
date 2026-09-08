@@ -2883,15 +2883,23 @@ body.crx-lock { overflow: hidden; }
    on a timer, which is the failure that is hard to see and easy to ship. */
 .crx .pw-body { display: flex; align-items: stretch; height: 366px; }
 .crx .pw-side {
-  width: 148px; flex-shrink: 0;
-  display: flex; flex-direction: column; gap: 1px;
-  padding: 10px 8px;
+  width: 152px; flex-shrink: 0;
+  /* ONE PITCH FOR ALL FOUR ROWS (Appy, 2026-09-08: "the spacing between the campaign row is not
+     equal... generous equal spacing between all four"). They were already the same height at a 1px
+     gap, so the inequality was not in the numbers - it is that the selected row is FILLED. Its
+     surface runs the full 26px, so the gap you see under it is the pill's edge to the next bar
+     (~10px) while the gap between two bars is bar to bar (~19px): two different measurements, both
+     correct, reading as a mistake. A 1px gap is what let the two diverge that far in relative
+     terms. Taller rows and a real gap put every row on one 36px pitch, which is a rhythm you can
+     see whether a row is filled or not. */
+  display: flex; flex-direction: column; gap: 6px;
+  padding: 14px 10px;
   background: var(--sur-2);
   border-right: 1px solid var(--line);
 }
 .crx .pw-nav {
   display: flex; align-items: center; gap: 8px;
-  height: 26px; padding: 0 8px; border-radius: 7px;
+  height: 30px; padding: 0 9px; border-radius: 8px;
   font-size: 10px; font-weight: 400; color: var(--ink-4);
 }
 /* SELECTED IS A SURFACE, not a colour. The row goes white with a hairline - it lifts out of the
@@ -2905,8 +2913,8 @@ body.crx-lock { overflow: hidden; }
 .crx .pw-nav.on svg { color: var(--accent); }
 .crx .pw-nav svg { flex-shrink: 0; }
 .crx .pw-side-foot {
-  margin-top: auto; padding: 0 8px;
-  display: flex; align-items: center; gap: 8px;
+  margin-top: auto; padding: 0 9px;
+  display: flex; align-items: center; gap: 9px;
 }
 .crx .pw-avatar {
   display: inline-flex; align-items: center; justify-content: center;
@@ -2924,10 +2932,14 @@ body.crx-lock { overflow: hidden; }
   background: var(--line-2); flex-shrink: 0;
 }
 
-.crx .pw-main { flex: 1; min-width: 0; padding: 14px 16px 16px; }
+/* GENEROUS ON EVERY EDGE (Appy, 2026-09-08). The pane was on a 14/16 box, which is a real app's
+   density - and this is not a real app, it is a picture of one with four short blocks in it. At
+   this scale tight padding does not read as efficient, it reads as cramped, and the window has
+   366px of height to spend. */
+.crx .pw-main { flex: 1; min-width: 0; padding: 22px 24px 24px; }
 .crx .pw-eyebrow {
   display: inline-flex; align-items: center; gap: 5px;
-  margin-bottom: 9px;
+  margin-bottom: 13px;
   font-size: 8px; font-weight: 500;
   letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-4);
 }
@@ -2940,17 +2952,17 @@ body.crx-lock { overflow: hidden; }
 .crx .pw-earned.bump b { animation: pw-bump 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
 @keyframes pw-bump { 0% { transform: none; } 35% { transform: scale(1.16); } 100% { transform: none; } }
 
-.crx .pw-say { margin: 4px 0 13px; font-size: 10.5px; font-weight: 400; line-height: 1.5; color: var(--ink-4); }
+.crx .pw-say { margin: 7px 0 20px; font-size: 10.5px; font-weight: 400; line-height: 1.5; color: var(--ink-4); }
 
 /* THE CAMPAIGN'S FACTS. Subtle by construction rather than by opacity: the page's quietest surface
    and its hairline, no shadow, no accent, and the LABEL is smaller than the value so the eye reads
    three numbers with captions rather than three captions with numbers. They are the reason the
    subtitle stopped narrating - between them they say what the campaign is, and the timeline says
    what is happening to it. */
-.crx .pw-facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 18px; }
+.crx .pw-facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 24px; }
 .crx .pw-fact {
-  display: flex; flex-direction: column; gap: 3px;
-  padding: 8px 10px;
+  display: flex; flex-direction: column; gap: 4px;
+  padding: 10px 12px;
   background: var(--sur-2);
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -2963,7 +2975,7 @@ body.crx-lock { overflow: hidden; }
 
 /* ---- the activity timeline ---- */
 .crx .pw-steps { margin-top: 0; }
-.crx .pw-step { position: relative; display: grid; grid-template-columns: 18px 1fr; gap: 11px; padding-bottom: 14px; }
+.crx .pw-step { position: relative; display: grid; grid-template-columns: 18px 1fr; gap: 13px; padding-bottom: 18px; }
 .crx .pw-step:last-child { padding-bottom: 0; }
 /* the connector, drawn from each node to the next rather than as one rule behind them all: a single
    line would run past the last node and need masking at both ends */
