@@ -5,6 +5,7 @@ import HomeMain from './HomeMain'
 import HomeBelow from './HomeBelow'
 import HomeOverlay from './HomeOverlay'
 import useLaptopFx from './useLaptopFx'
+import useProductFx from './useProductFx'
 import useBootIntro from './useBootIntro'
 import { useCrx } from './flow/CrxState'
 
@@ -15,8 +16,14 @@ import { useCrx } from './flow/CrxState'
 // body crx-lock) tear the show down — no new teardown code needed. CreatorsHome keeps the .crx
 // root and the branching; this file is the homepage and nothing else.
 export default function HomepageView({ onCta }: { onCta: () => void }) {
-  const startLoop = useLaptopFx()
-  useBootIntro(startLoop)
+  // BOTH HOOKS RUN, one loop starts. Hooks cannot be called conditionally, and they do not need
+  // to be: each startLoop looks up its own stage's nodes and returns immediately if they are not
+  // in the document, so only the mounted stage can do anything. The intro is handed the one that
+  // matches what HomeMain rendered.
+  const { hero, setJourney } = useCrx()
+  const startDesk = useLaptopFx()
+  const startWindow = useProductFx()
+  useBootIntro(hero === 'window' ? startWindow : startDesk)
 
   // HERO CTA WIRING BY ID, not by prop: HomeMain is owned by another agent in this parallel build,
   // so its #hero-cta button (which today has no onClick at all) gets its handler attached from the
@@ -28,7 +35,6 @@ export default function HomepageView({ onCta }: { onCta: () => void }) {
   // semantics: someone clicking Sign in has an account by definition, so the journey is set to
   // returningUser BEFORE the dialog opens — that door resolves to the dashboard, overriding the
   // preview toggler's persona for this one click.
-  const { setJourney } = useCrx()
   const onCtaRef = useRef(onCta)
   onCtaRef.current = onCta
   const setJourneyRef = useRef(setJourney)
@@ -54,7 +60,7 @@ export default function HomepageView({ onCta }: { onCta: () => void }) {
       {/* The room the homepage sits in — three drifting orbs and the logo star, held back over the
           hero and fading in as it leaves. HOMEPAGE ONLY: it is mounted here rather than in
           CreatorsHome so the application, dashboard and full-capacity views never get it. */}
-      <HomeMain />
+      <HomeMain hero={hero} />
       {/* The closer stays on the signed-out homepage (its ask — apply — is exactly right here),
           and its button opens the same sign-in dialog the header/hero CTAs do. */}
       <HomeBelow onCta={onCta} />

@@ -9,6 +9,8 @@
 // React never re-renders this subtree, which is what makes that direct mutation safe.
 
 import PixelRain from './PixelRain'
+import ProductWindow from './ProductWindow'
+import type { Hero } from './flow/CrxState'
 
 function SparkIcon() {
   return (
@@ -27,7 +29,7 @@ function ArrowIcon() {
   )
 }
 
-export default function HomeMain() {
+export default function HomeMain({ hero }: { hero: Hero }) {
   return (
     <>
       <main>
@@ -91,6 +93,12 @@ export default function HomeMain() {
             Two things this page keeps that the source does not know about: the scene carries
             `rv d0` so it is FIRST in the staged entry (the intro's agent lands in #lap-screen and
             cannot land in something that has not arrived), and the pill sits at d4 behind it. */}
+        {/* TWO STAGES, ONE AT A TIME (2026-09-08). ProductWindow is a miniature of the real
+            dashboard and is what the page now opens on; the desk and laptop below it are the
+            original, kept mounted behind the preview toggler's Hero rows so the two can be
+            compared. Both answer to #scene and both hand their own startLoop to the boot intro,
+            so nothing outside this branch knows which one is up. */}
+        {hero === 'window' ? <ProductWindow /> : (
         <div className="scene rv d0" id="scene">
           {/* Coin icon removed (Appy, 2026-08-19: "remove dollar icon here and make this more
               sleek") — label + amount stacked directly, no icon column, tighter pill in
@@ -137,6 +145,7 @@ export default function HomeMain() {
             <div className="lap-deck" />
           </div>
         </div>
+        )}
 
       </main>
 

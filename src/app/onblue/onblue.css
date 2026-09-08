@@ -2724,3 +2724,193 @@ body.crx-lock { overflow: hidden; }
   color: #2f6dff;
 }
 .crx .onb-wordmark-on { color: var(--ink-inverse); }
+
+
+/* ================================================================================================
+   THE PRODUCT WINDOW (ProductWindow.tsx + useProductFx.ts, 2026-09-08) - the hero stage as a
+   miniature of the real dashboard, standing beside the desk-and-laptop scene until one wins.
+
+   WHAT "APPLE-LIKE" MEANT HERE, since Appy asked for it by name and it is easy to cargo-cult: one
+   surface, one hairline, one shadow, and no second device doing a job the first already does. The
+   window has no gradient, no inner border, no coloured header, no divider that a whitespace step
+   could have made instead. Everything that separates is either 1px of --line or a change of
+   surface, never both at once. What is left to carry the polish is spacing and type scale, which
+   is the actual content of that aesthetic.
+   IT IS EXPLICITLY NOT macOS. No traffic lights - the reference image Appy sent uses a Windows
+   minimise/close pair and a "Running on your PC" footer, and it is right to: this product runs on
+   PC only, and three coloured dots would contradict the caveat printed inside the same window.
+
+   EVERY VALUE IS A TOKEN except the miniature's own geometry. The window is a scale model - 11-13px
+   type, 17px nodes, a 148px sidebar - and those numbers belong to the model, not to the page's
+   scales; borrowing the real kit's 0.95rem/44px would make a window that is a miniature of nothing.
+   ================================================================================================ */
+
+.crx .pw-scene {
+  position: relative;
+  width: min(980px, 100%);
+  margin: 2.2rem auto 0;
+  display: flex;
+  justify-content: center;
+}
+
+.crx .pw {
+  width: 560px;
+  max-width: 100%;
+  background: var(--sur);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+  text-align: left;
+  /* TWO SHADOWS READING AS ONE: a tight contact shadow so the window has an edge against a white
+     page, and a wide soft one so it floats. A single mid shadow can do one or the other. */
+  box-shadow: 0 1px 2px rgba(8, 10, 31, 0.05), 0 24px 60px -24px rgba(8, 10, 31, 0.22);
+}
+
+/* ---- title bar ---- */
+.crx .pw-top {
+  display: flex; align-items: center; justify-content: space-between;
+  height: 40px; padding: 0 12px;
+  border-bottom: 1px solid var(--line);
+}
+.crx .pw-brand { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--ink-inverse); }
+/* the app tile - and the boot intro's landing pad, see ProductWindow's note */
+.crx .pw-tile {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px; border-radius: 7px;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+.crx .pw-top-right { display: flex; align-items: center; gap: 12px; }
+.crx .pw-state { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; color: var(--ink-3); }
+/* .dot is the page's own live pulse (mint, 7px) - reused rather than restated, because "the machine
+   is running" is one idea and it should not have two implementations */
+.crx .pw-state .dot { width: 6px; height: 6px; box-shadow: none; }
+.crx .pw-ctl { display: inline-flex; align-items: center; gap: 10px; color: var(--ink-4); }
+
+/* ---- body: sidebar + detail ---- */
+.crx .pw-body { display: flex; align-items: stretch; min-height: 226px; }
+.crx .pw-side {
+  width: 148px; flex-shrink: 0;
+  display: flex; flex-direction: column; gap: 1px;
+  padding: 10px 8px;
+  background: var(--sur-2);
+  border-right: 1px solid var(--line);
+}
+.crx .pw-nav {
+  display: flex; align-items: center; gap: 8px;
+  height: 27px; padding: 0 8px; border-radius: 7px;
+  font-size: 11.5px; font-weight: 500; color: var(--ink-3);
+}
+/* SELECTED IS A SURFACE, not a colour. The row goes white with a hairline - it lifts out of the
+   tinted sidebar the way a real app's selected row does - and only the ICON takes the accent. A
+   fully accented row would be the loudest thing in a window whose job is to look calm. */
+.crx .pw-nav.on {
+  background: var(--sur);
+  box-shadow: inset 0 0 0 1px var(--line);
+  color: var(--ink-inverse); font-weight: 650;
+}
+.crx .pw-nav.on svg { color: var(--accent); }
+.crx .pw-nav svg { flex-shrink: 0; }
+.crx .pw-side-foot {
+  margin-top: auto; padding-top: 9px;
+  border-top: 1px solid var(--line);
+  display: flex; align-items: center; gap: 7px;
+  font-size: 11px; color: var(--ink-3);
+}
+.crx .pw-avatar {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 19px; height: 19px; border-radius: 50%;
+  background: var(--accent); color: var(--ink-on-accent);
+  font-size: 9.5px; font-weight: 800; flex-shrink: 0;
+}
+.crx .pw-side-name { flex: 1; min-width: 0; }
+
+.crx .pw-main { flex: 1; min-width: 0; padding: 14px 16px 16px; }
+.crx .pw-main-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.crx .pw-main-title { font-size: 13px; font-weight: 700; color: var(--ink-inverse); }
+.crx .pw-earned { display: flex; flex-direction: column; align-items: flex-end; gap: 1px; flex-shrink: 0; }
+.crx .pw-earned i {
+  font-style: normal; font-size: 8.5px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-4);
+}
+/* money is mint, the one rule this page holds everywhere */
+.crx .pw-earned b { font-size: 15px; font-weight: 800; color: var(--mint); line-height: 1.1; }
+/* the credit's own beat: the figure takes the payment rather than merely displaying a new one */
+.crx .pw-earned.bump b { animation: pw-bump 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
+@keyframes pw-bump { 0% { transform: none; } 35% { transform: scale(1.16); } 100% { transform: none; } }
+
+.crx .pw-say { margin: 11px 0 15px; font-size: 12.5px; font-weight: 500; color: var(--ink-inverse); }
+.crx .pw-lab {
+  display: block; font-size: 8.5px; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-4);
+}
+
+/* ---- the activity timeline ---- */
+.crx .pw-steps { margin-top: 11px; }
+.crx .pw-step { position: relative; display: grid; grid-template-columns: 17px 1fr; gap: 10px; padding-bottom: 13px; }
+.crx .pw-step:last-child { padding-bottom: 0; }
+/* the connector, drawn from each node to the next rather than as one rule behind them all: a single
+   line would run past the last node and need masking at both ends */
+.crx .pw-step:not(:last-child)::before {
+  content: ""; position: absolute; left: 8px; top: 18px; bottom: 1px;
+  width: 1px; background: var(--line-2);
+}
+.crx .pw-node {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 17px; height: 17px; border-radius: 50%;
+  border: 1.5px solid var(--line-3); background: var(--sur);
+  position: relative; z-index: 1;
+  transition: background 0.25s ease, border-color 0.25s ease;
+}
+.crx .pw-tick { opacity: 0; transition: opacity 0.2s ease; }
+/* DONE IS MINT, LIVE IS ACCENT, and that split is the page's own vocabulary rather than a choice
+   made here: mint means a thing completed and paid, the accent means a thing marked or in hand. */
+.crx .pw-step.done .pw-node { background: var(--mint); border-color: var(--mint); }
+.crx .pw-step.done .pw-tick { opacity: 1; }
+.crx .pw-step.live .pw-node { border-color: var(--accent); }
+.crx .pw-step.live .pw-node::after {
+  content: ""; width: 7px; height: 7px; border-radius: 50%;
+  background: var(--accent);
+  animation: crx-pulse 1.6s ease-in-out infinite;
+}
+.crx .pw-step-body { min-width: 0; padding-top: 1px; }
+.crx .pw-step-t { display: block; font-size: 12px; color: var(--ink-4); transition: color 0.25s ease; }
+.crx .pw-step.done .pw-step-t { color: var(--ink-3); }
+.crx .pw-step.live .pw-step-t { color: var(--ink-inverse); font-weight: 600; }
+/* the bar exists only while its own step is live or finished - a track sitting under a step that
+   has not started is a progress bar claiming there is progress */
+.crx .pw-prog { display: none; height: 4px; margin-top: 8px; border-radius: 999px; background: var(--track); overflow: hidden; }
+.crx .pw-step.live .pw-prog, .crx .pw-step.done .pw-prog { display: block; }
+.crx .pw-prog > i { display: block; height: 100%; width: 0%; border-radius: 999px; background: var(--accent); }
+
+/* ---- footer: the caveat, as the app's own statement about itself ---- */
+.crx .pw-foot {
+  display: flex; align-items: center; gap: 8px;
+  height: 34px; padding: 0 14px;
+  border-top: 1px solid var(--line);
+  background: var(--sur-2);
+  font-size: 11px; color: var(--ink-3);
+}
+
+/* the payout in flight. Short travel by design - it goes from the paid row to a figure in the same
+   window, where the desk scene's chip crossed open space to a pill outside the device. */
+.crx .pw-chip {
+  position: absolute; z-index: 5;
+  font-size: 12px; font-weight: 800; color: var(--mint);
+  pointer-events: none;
+  transition: transform 0.7s cubic-bezier(0.3, 0.7, 0.4, 1), opacity 0.7s ease;
+}
+
+@media (max-width: 880px) {
+  /* the window does not reflow, it scales. Its whole claim is "this is the product" - a sidebar
+     that collapses at 700px would be a responsive design OF the miniature, which is a different
+     and less true object. */
+  .crx .pw-scene { transform: scale(0.82); transform-origin: top center; margin-bottom: -3rem; }
+}
+@media (max-width: 620px) {
+  .crx .pw-scene { transform: scale(0.58); margin-bottom: -8rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .crx .pw-step.live .pw-node::after { animation: none; }
+  .crx .pw-earned.bump b { animation: none; }
+}

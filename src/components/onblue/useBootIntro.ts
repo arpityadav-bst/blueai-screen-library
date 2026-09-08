@@ -136,7 +136,10 @@ export default function useBootIntro(onDone: () => void) {
     // screen's own rect was only ever needed for the middle waypoint that is gone. OPTIONAL,
     // unlike the rest: it belongs to the hero scene, and a missing scene must degrade to a plain
     // fade rather than strand the intro, so the guard below deliberately does not include it.
-    const brandIcon = document.querySelector<SVGElement>('.crx .scr-brand svg')
+    // EITHER STAGE'S APP MARK. The agent shrinks into the laptop screen's brand icon on the desk
+    // stage and into the product window's title-bar tile on the new one; which is mounted is
+    // HomeMain's business, not the intro's, so it asks for both and takes whichever exists.
+    const brandIcon = document.querySelector<SVGElement>('.crx .scr-brand svg, .crx .pw-tile svg')
     // FAIL OPEN, NEVER CLOSED. Bailing means finish() never runs, .revealed is never added, and
     // the page stays hidden behind an opaque backdrop forever. A missing decoration must never be
     // able to white-screen the site.

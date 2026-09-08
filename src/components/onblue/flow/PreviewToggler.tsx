@@ -137,7 +137,7 @@ function Gear() {
 }
 
 export default function PreviewToggler() {
-  const { journey, setJourney, variant, setVariant } = useCrx()
+  const { journey, setJourney, variant, setVariant, hero, setHero } = useCrx()
   // B collapses to three rows; C keeps all ten under its own noun; A is the default.
   const groups = variant === 'original' ? GROUPS_B : variant === 'offers' ? GROUPS_C : GROUPS_A
   const note = variant === 'original' ? NOTE_B : variant === 'offers' ? NOTE_C : NOTE_A
@@ -165,10 +165,36 @@ export default function PreviewToggler() {
         </svg>
       </button>
 
-      {/* THE THEME ROWS ARE GONE (2026-09-08). They were the one control here that was always
-          temporary - "temp with flip switch", so dark and light could be compared - and the
-          comparison is over: the site is light-only and there is nothing left to switch between.
-          A radio group with one option is not a choice, it is a label. */}
+      {/* THE THEME ROWS ARE GONE (2026-09-08). They were temporary - "temp with flip switch", so
+          dark and light could be compared - and the comparison is over: the site is light-only and
+          there is nothing left to switch between. A radio group with one option is not a choice,
+          it is a label.
+          HERO TAKES THEIR PLACE, and is temporary in exactly the same way: two stagings of the same
+          hero animation, mounted together so they can be looked at rather than described. When one
+          wins, these rows and the loser's markup, hook and CSS go together. It sits first for the
+          same reason Theme did - it governs the first thing on the page. */}
+      <div className="crx-toggler-track" role="radiogroup" aria-label="Hero">
+        <span className="crx-toggler-sect">Hero</span>
+        {(
+          [
+            { value: 'window', label: 'Product window \u00b7 new' },
+            { value: 'desk', label: 'Desk & laptop \u00b7 current' },
+          ] as const
+        ).map(({ value, label }) => (
+          <button
+            key={value}
+            type="button"
+            role="radio"
+            aria-checked={hero === value}
+            onClick={() => setHero(value)}
+            className={hero === value ? 'crx-toggler-row on' : 'crx-toggler-row'}
+          >
+            <span className="crx-toggler-dot" />
+            {label}
+          </button>
+        ))}
+      </div>
+
 
       {/* VERSION FIRST (2026-08-26, Abhisht): A is the programs build; B is the original v1
           experience with no "program" vocabulary anywhere — the term arrived via engg without

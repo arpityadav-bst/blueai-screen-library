@@ -66,6 +66,15 @@ export type Variant = 'programs' | 'original' | 'offers'
 // identity, and a reload going back to the journey default is the honest reset.
 export type NavView = 'auto' | 'programs' | 'dashboard'
 
+// HERO STAGE (2026-09-08) — which of the two hero animations renders. 'desk' is the CSS desk and
+// laptop the page shipped with; 'window' is the miniature of the actual product (ProductWindow),
+// which is what Appy asked for and what this defaults to. Temporary, exactly the way the theme
+// switch below was temporary: it exists so the two can be COMPARED rather than argued about, and
+// when one wins the other's markup, hook and CSS get deleted along with this field.
+// In-memory, not session-backed: it is a review switch, and reload returning to the new stage is
+// the honest default while the new stage is the thing being reviewed.
+export type Hero = 'desk' | 'window'
+
 // THERE IS NO THEME ANY MORE (2026-09-08). The switch here was explicitly temporary — "temp with
 // flip switch", so the dark page and the light repaint could be compared rather than remembered —
 // and it ended the way it was meant to: light won and dark was deleted, taking ./theme, the body
@@ -91,6 +100,9 @@ type Ctx = {
   /** Which experience renders — see the Variant note above. */
   variant: Variant
   setVariant: (v: Variant) => void
+  /** Which hero animation renders — see the Hero note above. */
+  hero: Hero
+  setHero: (v: Hero) => void
 }
 
 const CrxCtx = createContext<Ctx | null>(null)
@@ -110,6 +122,7 @@ export default function CrxProvider({ children }: { children: ReactNode }) {
   // In-memory like nav — a review switch, and reload returning to Version A is the honest default
   // UNLESS the URL asks for B (see the ?v= block in the mount effect below).
   const [variant, setVariant] = useState<Variant>('programs')
+  const [hero, setHero] = useState<Hero>('window')
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
@@ -175,8 +188,8 @@ export default function CrxProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const value = useMemo(
-    () => ({ signedIn, ready, signIn, signOut, account: MOCK_ACCOUNT, journey, setJourney, nav, setNav, variant, setVariant }),
-    [signedIn, ready, signIn, signOut, journey, setJourney, nav, variant],
+    () => ({ signedIn, ready, signIn, signOut, account: MOCK_ACCOUNT, journey, setJourney, nav, setNav, variant, setVariant, hero, setHero }),
+    [signedIn, ready, signIn, signOut, journey, setJourney, nav, variant, hero],
   )
 
   return <CrxCtx.Provider value={value}>{children}</CrxCtx.Provider>
