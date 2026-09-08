@@ -17,8 +17,19 @@
    .crx carries no transform, so they still position against the viewport. */
 
 .crx {
-  --ink-inverse: rgb(8, 10, 31);
-  --dim: rgb(55, 58, 88);
+  /* THE NEUTRALS ARE CHARCOAL'S, NOT THE DS's (Appy, 2026-09-08: "instead of blue themed colors we
+     should use charcoal theme colors... the light bluish fills... in this complete website like
+     forms and pills and all").
+     Every grey on this page was the marketing DS's, and that system is built on a BLUE-BLACK -
+     rgb(8,10,31) ink, rgb(247,250,255) surfaces, rgb(223,228,238) lines. Read alone they look
+     neutral; read next to a charcoal button they are visibly cool, and the page had a blue accent,
+     blue-grey furniture and one neutral charcoal, with the charcoal as the odd one out.
+     So the ramp is re-derived off --primary. These are the same steps at the same lightnesses,
+     desaturated onto charcoal's own near-neutral axis, which is what makes the greys read as
+     belonging to the button rather than to a palette it was dropped into. The ACCENT stays blue:
+     it is the logo's, and it is supposed to be the only hue on the page. */
+  --ink-inverse: #23262c;
+  --dim: #565a63;
   --mint: #0f9d58;
 
   /* THE TWO ACCENTS (Appy, 2026-09-08) - and there is no longer a gradient among them.
@@ -78,7 +89,7 @@
      flat colour, not to add a second hue. */
   background:
     radial-gradient(900px 500px at 25% -5%, rgba(47, 109, 255, 0.05), transparent 65%),
-    radial-gradient(800px 480px at 82% 12%, rgba(8, 10, 31, 0.035), transparent 60%),
+    radial-gradient(800px 480px at 82% 12%, rgba(35, 38, 44, 0.035), transparent 60%),
     var(--canvas);
   min-height: 100vh;
   overflow-x: hidden;
@@ -241,12 +252,12 @@ body.crx-lock { overflow: hidden; }
      form's plain-text Continue/Submit stretches full-width via .crx-grow, and without this its
      label sat flush-left in the wide pill instead of centred. */
   display: inline-flex; align-items: center; justify-content: center; gap: 0.6rem;
-  box-shadow: 0 10px 30px -10px rgba(8, 10, 31, 0.28);
+  box-shadow: 0 10px 30px -10px rgba(35, 38, 44, 0.28);
   transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
-.crx .btn:hover { transform: translateY(-2px); box-shadow: 0 18px 40px -12px rgba(8, 10, 31, 0.34); }
+.crx .btn:hover { transform: translateY(-2px); box-shadow: 0 18px 40px -12px rgba(35, 38, 44, 0.34); }
 /* F12: press feedback — hover lifts, active plants */
-.crx .btn:active { transform: translateY(0); box-shadow: 0 6px 18px -8px rgba(8, 10, 31, 0.22); }
+.crx .btn:active { transform: translateY(0); box-shadow: 0 6px 18px -8px rgba(35, 38, 44, 0.22); }
 .crx .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
 /* The rotating machine stage lived here until 2026-08-20 — five cutouts passing left to right
@@ -1001,11 +1012,11 @@ body.crx-lock { overflow: hidden; }
      it earns a touch more weight, same step .btn's own 700 takes over plain nav-weight text. */
   font-weight: 600;
   background: var(--primary); color: var(--ink-on-accent);
-  box-shadow: 0 8px 24px -10px rgba(8, 10, 31, 0.24);
+  box-shadow: 0 8px 24px -10px rgba(35, 38, 44, 0.24);
 }
-.crx .crx-cta.pill:hover { transform: translateY(-1px); box-shadow: 0 12px 30px -12px rgba(8, 10, 31, 0.3); }
+.crx .crx-cta.pill:hover { transform: translateY(-1px); box-shadow: 0 12px 30px -12px rgba(35, 38, 44, 0.3); }
 .crx .crx-cta svg { flex-shrink: 0; }
-.crx .crx-cta.pill:active { transform: translateY(0); box-shadow: 0 6px 16px -8px rgba(8, 10, 31, 0.2); } /* F12 */
+.crx .crx-cta.pill:active { transform: translateY(0); box-shadow: 0 6px 16px -8px rgba(35, 38, 44, 0.2); } /* F12 */
 .crx .crx-cta:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
 /* The popover surface. Built for the mobile burger menu, which is gone; it is now the ACCOUNT
@@ -1143,33 +1154,33 @@ body.crx-lock { overflow: hidden; }
    system, rather than a second light palette that drifts from the first. */
 .crx {
   /* surfaces, in the order they stack */
-  --canvas: #f9f9fa;                  /* the agency page's own ground, sampled to its artwork */
+  --canvas: #fafafa;                  /* the ground */
   --sur: #ffffff;                     /* a card or panel */
-  --sur-2: rgb(247, 250, 255);        /* --bai-surface: a panel nested inside a panel */
-  --sur-3: #eef2f9;                   /* a raised fill - chips, the account pill, quiet buttons */
-  --sur-hover: #f1f4fa;
-  --sur-strong: #e6ebf5;              /* a pressed or selected fill */
+  --sur-2: #f6f7f8;                   /* a panel nested inside a panel */
+  --sur-3: #f0f1f3;                   /* a raised fill - chips, the account pill, quiet buttons */
+  --sur-hover: #f2f3f5;
+  --sur-strong: #e8e9ec;              /* a pressed or selected fill */
 
   /* lines, three weights: hairline divider, card edge, emphasis */
-  --line: rgb(223, 228, 238);         /* --bai-divider */
-  --line-2: rgb(205, 212, 226);
-  --line-3: rgb(182, 184, 205);       /* --bai-stroke-warm */
-  --line-4: rgb(150, 156, 180);       /* emphasis edge - a focused field, a hovered choice */
-  --track: #e4e9f2;                   /* the unfilled half of a progress bar */
+  --line: #e6e7ea;
+  --line-2: #d8dade;
+  --line-3: #c3c6cc;
+  --line-4: #a4a7af;                  /* emphasis edge - a focused field, a hovered choice */
+  --track: #e9eaec;                   /* the unfilled half of a progress bar */
 
   /* ink. The top two steps ALREADY EXIST as --ink-inverse (primary) and --dim (body), declared
      above and flipped in the light block; adding --ink/--ink-2 beside them would be two names for
      one role, which is how the next reader ends up guessing which is "the" body ink. These are the
      two quieter steps below --dim, which until now were written raw as rgba(214,224,255, .42-.62)
      at eight different alphas. */
-  --ink-3: rgb(67, 70, 100);          /* --bai-ink-muted: captions, quiet controls, meta */
-  --ink-4: rgb(106, 110, 136);        /* the faintest legible step - placeholders, disabled */
+  --ink-3: #71757e;                   /* captions, quiet controls, meta */
+  --ink-4: #9a9da6;                   /* the faintest legible step - placeholders, disabled */
   --ink-on-accent: #fff;              /* text sitting ON --primary or --accent */
 
   /* two grounds that are not cards: a recessed panel (the footer) and the header's blur glass.
      Both are DARKER than the page on dark and LIGHTER than it on light, so neither can be
      expressed as a surface step - they invert direction, not just value. */
-  --sur-sunken: #f3f5fa;
+  --sur-sunken: #f4f5f6;
   --glass: rgba(255, 255, 255, 0.82);
 
   /* --accent-2 IS GONE, not renamed. It existed because #a78bff was a real second accent step on
@@ -1181,7 +1192,7 @@ body.crx-lock { overflow: hidden; }
   /* an OPAQUE pane - the account menu, a dialog. Not a surface step: its job is to hide what is
      behind it, which is why it is named for that job and not for a fill. */
   --sur-opaque: #ffffff;
-  --scrim: rgba(8, 10, 31, 0.45);     /* dims the page behind a dialog - not a surface, not a line */
+  --scrim: rgba(35, 38, 44, 0.45);    /* dims the page behind a dialog - not a surface, not a line */
 }
 
 /* ---- panel: the card surface (form card, dashboard cards) — .step's recipe, padded up ---- */
@@ -2565,16 +2576,16 @@ body.crx-lock { overflow: hidden; }
 /* the desk: top surface lighter than its front edge, legs a step deeper still, so the three planes
    still separate without a shadow doing the work */
 .crx .desk-top {
-  background: linear-gradient(180deg, #e6eaf3, #ccd3e2);
+  background: linear-gradient(180deg, #eeeef0, #d5d6da);
   border-top: 1px solid #ffffff;
   /* softer (Appy, 2026-09-02). The dark original is a 0.6 black at 40px blur, which is what it
      takes to lift a dark surface off a dark page; the first light pass only re-tinted it and kept
      that weight, so the table sat in a bruise. Half the alpha, tighter blur and a deeper negative
      spread, so it reads as contact under the near edge rather than as a cast shadow - and the
      stage already has its own ground ellipse in .scene::after doing the sitting-on-the-page work. */
-  box-shadow: 0 10px 24px -18px rgba(8, 10, 31, 0.09);
+  box-shadow: 0 10px 24px -18px rgba(35, 38, 44, 0.09);
 }
-.crx .desk-leg { background: linear-gradient(180deg, #d5dbe8, #bcc4d6); }
+.crx .desk-leg { background: linear-gradient(180deg, #dcdde1, #c3c5ca); }
 
 /* THE SCREEN. A dark panel here was carrying the whole scene's contrast; with it light, the bezel
    has to do that job instead - hence a visible 3px bezel in the line ramp rather than the dark
@@ -2584,17 +2595,17 @@ body.crx-lock { overflow: hidden; }
    on, which is the honest version of the same signal. */
 .crx .lap-screen {
   background: var(--sur-2);
-  border-color: #ccd3e2;
-  box-shadow: 0 10px 30px -12px rgba(8, 10, 31, 0.16);
+  border-color: #d5d6da;
+  box-shadow: 0 10px 30px -12px rgba(35, 38, 44, 0.16);
 }
 
 /* the deck, keys and trackpad: silver body, keys a couple of steps down so they read as recesses */
 .crx .lap-deck {
-  background: linear-gradient(180deg, #eef1f7, #d3d9e6);
-  box-shadow: 0 14px 30px -12px rgba(8, 10, 31, 0.2);
+  background: linear-gradient(180deg, #f3f3f5, #dadbdf);
+  box-shadow: 0 14px 30px -12px rgba(35, 38, 44, 0.2);
 }
-.crx .lap-deck::before { background: repeating-linear-gradient(90deg, #a9b2c8 0 12px, transparent 12px 16px); }
-.crx .lap-deck::after { background: #a9b2c8; }
+.crx .lap-deck::before { background: repeating-linear-gradient(90deg, #b3b5bc 0 12px, transparent 12px 16px); }
+.crx .lap-deck::after { background: #b3b5bc; }
 
 /* THE BLOOM UNDER THE STAGE, and lowering its alpha was not enough - the shape itself is wrong on
    a light ground (designer, 2026-09-02: "weird color division below the table").
@@ -2608,7 +2619,7 @@ body.crx-lock { overflow: hidden; }
    than iris, too: a purple cast under furniture is a dark-stage device, and what this needs to do
    on white is simply sit the desk on the page. */
 .crx .scene::after {
-  background: radial-gradient(50% 50% at 50% 50%, rgba(8, 10, 31, 0.07), transparent 100%);
+  background: radial-gradient(50% 50% at 50% 50%, rgba(35, 38, 44, 0.07), transparent 100%);
 }
 
 /* THE EARNINGS PILL was already a light component - a white pill with #0f9d58 money, floating on
@@ -2616,7 +2627,7 @@ body.crx-lock { overflow: hidden; }
    needed, and its shadow comes down to match the rest of the page's elevation. */
 .crx .earnings {
   border: 1px solid var(--line);
-  box-shadow: 0 6px 18px -8px rgba(8, 10, 31, 0.14);
+  box-shadow: 0 6px 18px -8px rgba(35, 38, 44, 0.14);
 }
 
 /* the status dot's halo, same argument as the other two glows */
@@ -2638,7 +2649,7 @@ body.crx-lock { overflow: hidden; }
    on a light page, and darkness is not a thing a second hue helps with. */
 .crx .crx-band {
   background: var(--primary);
-  box-shadow: 0 30px 80px -44px rgba(8, 10, 31, 0.45);
+  box-shadow: 0 30px 80px -44px rgba(35, 38, 44, 0.45);
 }
 /* the band's ink is now ON a dark ground, so it is the one place on the light page that inverts */
 .crx .crx-band h2 { color: #ffffff; }
@@ -2668,7 +2679,7 @@ body.crx-lock { overflow: hidden; }
    a near-black render off a near-black sky. On white the render is the darkest thing in view and
    needs no lift at all - just an edge, in the page's own line ramp. */
 .crx .sleep-scene {
-  box-shadow: 0 24px 60px -40px rgba(8, 10, 31, 0.35), inset 0 0 0 1px var(--line);
+  box-shadow: 0 24px 60px -40px rgba(35, 38, 44, 0.35), inset 0 0 0 1px var(--line);
 }
 
 /* THE MACHINE LABELS GO LIGHT TOO (designer, 2026-09-02). I had left them a dark pill on the
@@ -2679,7 +2690,7 @@ body.crx-lock { overflow: hidden; }
 .crx .sleep-badge {
   background: rgba(255, 255, 255, 0.9);
   border-color: var(--line);
-  box-shadow: 0 6px 18px -8px rgba(8, 10, 31, 0.3);
+  box-shadow: 0 6px 18px -8px rgba(35, 38, 44, 0.3);
 }
 
 /* the step numeral: #7da2ff is a light blue for a dark card. On white it needs the DS's marketing
@@ -2692,7 +2703,7 @@ body.crx-lock { overflow: hidden; }
    the alpha - enough to say "this floats", which is all a shadow on a light ground has to do.
    The badge on the sleep render and the .dark band keep theirs: both still sit on dark grounds. */
 .crx .crx-menu,
-.crx .crx-toggler { box-shadow: 0 14px 34px -14px rgba(8, 10, 31, 0.18); }
+.crx .crx-toggler { box-shadow: 0 14px 34px -14px rgba(35, 38, 44, 0.18); }
 /* THE DIALOG PANEL. Its fill is a hardcoded linear-gradient (#10163a -> #0b1029), and gradients
    are the one thing the migration pass deliberately skipped - a two-stop fill cannot be classified
    by the property it sits in, so every one was left for a human. This is the one that mattered:
@@ -2704,9 +2715,9 @@ body.crx-lock { overflow: hidden; }
 .crx-modal {
   background: var(--sur);
   border-color: var(--line);
-  box-shadow: 0 24px 60px -18px rgba(8, 10, 31, 0.22);
+  box-shadow: 0 24px 60px -18px rgba(35, 38, 44, 0.22);
 }
-.crx .crx-band.dark { box-shadow: 0 30px 80px -50px rgba(8, 10, 31, 0.4); }
+.crx .crx-band.dark { box-shadow: 0 30px 80px -50px rgba(35, 38, 44, 0.4); }
 
 /* ---- the onBlue wordmark (OnBlueWordmark.tsx) ----
    The head face at 800, which is the heaviest weight this page already loads - the artwork is a
@@ -2754,7 +2765,7 @@ body.crx-lock { overflow: hidden; }
 }
 
 .crx .pw {
-  width: 560px;
+  width: 700px;
   max-width: 100%;
   background: var(--sur);
   border: 1px solid var(--line);
@@ -2763,7 +2774,7 @@ body.crx-lock { overflow: hidden; }
   text-align: left;
   /* TWO SHADOWS READING AS ONE: a tight contact shadow so the window has an edge against a white
      page, and a wide soft one so it floats. A single mid shadow can do one or the other. */
-  box-shadow: 0 1px 2px rgba(8, 10, 31, 0.05), 0 24px 60px -24px rgba(8, 10, 31, 0.22);
+  box-shadow: 0 1px 2px rgba(35, 38, 44, 0.05), 0 24px 60px -24px rgba(35, 38, 44, 0.22);
 }
 
 /* ---- title bar ---- */
@@ -2788,7 +2799,11 @@ body.crx-lock { overflow: hidden; }
 .crx .pw-ctl { display: inline-flex; align-items: center; gap: 10px; color: var(--ink-4); }
 
 /* ---- body: sidebar + detail ---- */
-.crx .pw-body { display: flex; align-items: stretch; min-height: 226px; }
+/* A FIXED HEIGHT, not a minimum. Every other height in this window is now constant (the subtitle
+   is static copy, the bar reserves its own box), and stating it here is what says so out loud: if
+   a future row makes the content taller than this, it clips instead of silently resizing the hero
+   on a timer, which is the failure that is hard to see and easy to ship. */
+.crx .pw-body { display: flex; align-items: stretch; height: 296px; }
 .crx .pw-side {
   width: 148px; flex-shrink: 0;
   display: flex; flex-direction: column; gap: 1px;
@@ -2827,7 +2842,7 @@ body.crx-lock { overflow: hidden; }
 
 .crx .pw-main { flex: 1; min-width: 0; padding: 14px 16px 16px; }
 .crx .pw-main-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
-.crx .pw-main-title { font-size: 13px; font-weight: 700; color: var(--ink-inverse); }
+.crx .pw-main-title { font-size: 13.5px; font-weight: 700; color: var(--ink-inverse); min-width: 0; }
 .crx .pw-earned { display: flex; flex-direction: column; align-items: flex-end; gap: 1px; flex-shrink: 0; }
 .crx .pw-earned i {
   font-style: normal; font-size: 8.5px; font-weight: 700;
@@ -2839,7 +2854,26 @@ body.crx-lock { overflow: hidden; }
 .crx .pw-earned.bump b { animation: pw-bump 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
 @keyframes pw-bump { 0% { transform: none; } 35% { transform: scale(1.16); } 100% { transform: none; } }
 
-.crx .pw-say { margin: 11px 0 15px; font-size: 12.5px; font-weight: 500; color: var(--ink-inverse); }
+.crx .pw-say { margin: 9px 0 13px; font-size: 12.5px; line-height: 1.5; color: var(--dim); }
+
+/* THE CAMPAIGN'S FACTS. Subtle by construction rather than by opacity: the page's quietest surface
+   and its hairline, no shadow, no accent, and the LABEL is smaller than the value so the eye reads
+   three numbers with captions rather than three captions with numbers. They are the reason the
+   subtitle stopped narrating - between them they say what the campaign is, and the timeline says
+   what is happening to it. */
+.crx .pw-facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px; }
+.crx .pw-fact {
+  display: flex; flex-direction: column; gap: 3px;
+  padding: 8px 10px;
+  background: var(--sur-2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.crx .pw-fact i {
+  font-style: normal; font-size: 8.5px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-4);
+}
+.crx .pw-fact b { font-size: 12.5px; font-weight: 650; color: var(--ink-inverse); line-height: 1.1; }
 .crx .pw-lab {
   display: block; font-size: 8.5px; font-weight: 700;
   letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-4);
@@ -2847,29 +2881,39 @@ body.crx-lock { overflow: hidden; }
 
 /* ---- the activity timeline ---- */
 .crx .pw-steps { margin-top: 11px; }
-.crx .pw-step { position: relative; display: grid; grid-template-columns: 17px 1fr; gap: 10px; padding-bottom: 13px; }
+.crx .pw-step { position: relative; display: grid; grid-template-columns: 18px 1fr; gap: 11px; padding-bottom: 14px; }
 .crx .pw-step:last-child { padding-bottom: 0; }
 /* the connector, drawn from each node to the next rather than as one rule behind them all: a single
    line would run past the last node and need masking at both ends */
 .crx .pw-step:not(:last-child)::before {
-  content: ""; position: absolute; left: 8px; top: 18px; bottom: 1px;
+  content: ""; position: absolute; left: 8.5px; top: 19px; bottom: 1px;
   width: 1px; background: var(--line-2);
 }
+/* BOTH MARKS ARE ABSOLUTE, and that is the fix rather than a nicety (Appy, 2026-09-08: "fix the dot
+   in the circle"). The node is a flex box holding the tick, which is always in the DOM at opacity 0
+   so it can fade rather than pop - so when the live state added its dot as ::after, the node had TWO
+   flow children and centred the pair, pushing the dot up and left out of its own ring. Taking both
+   out of flow means neither can move the other, whatever states are on at once. */
 .crx .pw-node {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 17px; height: 17px; border-radius: 50%;
+  display: inline-block;
+  width: 18px; height: 18px; border-radius: 50%;
   border: 1.5px solid var(--line-3); background: var(--sur);
   position: relative; z-index: 1;
   transition: background 0.25s ease, border-color 0.25s ease;
 }
-.crx .pw-tick { opacity: 0; transition: opacity 0.2s ease; }
+.crx .pw-tick {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  opacity: 0; transition: opacity 0.2s ease;
+}
 /* DONE IS MINT, LIVE IS ACCENT, and that split is the page's own vocabulary rather than a choice
    made here: mint means a thing completed and paid, the accent means a thing marked or in hand. */
 .crx .pw-step.done .pw-node { background: var(--mint); border-color: var(--mint); }
 .crx .pw-step.done .pw-tick { opacity: 1; }
 .crx .pw-step.live .pw-node { border-color: var(--accent); }
 .crx .pw-step.live .pw-node::after {
-  content: ""; width: 7px; height: 7px; border-radius: 50%;
+  content: "";
+  position: absolute; top: 50%; left: 50%;
+  width: 8px; height: 8px; margin: -4px 0 0 -4px; border-radius: 50%;
   background: var(--accent);
   animation: crx-pulse 1.6s ease-in-out infinite;
 }
@@ -2877,10 +2921,17 @@ body.crx-lock { overflow: hidden; }
 .crx .pw-step-t { display: block; font-size: 12px; color: var(--ink-4); transition: color 0.25s ease; }
 .crx .pw-step.done .pw-step-t { color: var(--ink-3); }
 .crx .pw-step.live .pw-step-t { color: var(--ink-inverse); font-weight: 600; }
-/* the bar exists only while its own step is live or finished - a track sitting under a step that
-   has not started is a progress bar claiming there is progress */
-.crx .pw-prog { display: none; height: 4px; margin-top: 8px; border-radius: 999px; background: var(--track); overflow: hidden; }
-.crx .pw-step.live .pw-prog, .crx .pw-step.done .pw-prog { display: block; }
+/* HIDDEN, NOT REMOVED (Appy, 2026-09-08: "fix the height so the miniature dashboard doesn't resize
+   according to the animation inside"). The bar should not be VISIBLE under a step that has not
+   started - a track sitting there is a progress bar claiming there is progress - but `display:none`
+   made the window 12px shorter for the first two beats of every cycle and then grow, which is the
+   resize. visibility keeps the box and drops the paint, so the layout is settled at first render
+   and nothing the loop does can change it. */
+.crx .pw-prog {
+  visibility: hidden;
+  height: 4px; margin-top: 8px; border-radius: 999px; background: var(--track); overflow: hidden;
+}
+.crx .pw-step.live .pw-prog, .crx .pw-step.done .pw-prog { visibility: visible; }
 .crx .pw-prog > i { display: block; height: 100%; width: 0%; border-radius: 999px; background: var(--accent); }
 
 /* ---- footer: the caveat, as the app's own statement about itself ---- */
@@ -2901,14 +2952,18 @@ body.crx-lock { overflow: hidden; }
   transition: transform 0.7s cubic-bezier(0.3, 0.7, 0.4, 1), opacity 0.7s ease;
 }
 
-@media (max-width: 880px) {
+@media (max-width: 1000px) {
   /* the window does not reflow, it scales. Its whole claim is "this is the product" - a sidebar
      that collapses at 700px would be a responsive design OF the miniature, which is a different
-     and less true object. */
-  .crx .pw-scene { transform: scale(0.82); transform-origin: top center; margin-bottom: -3rem; }
+     and less true object. The negative margin takes back the space the transform does not: a
+     scaled element still reserves its unscaled box. */
+  .crx .pw-scene { transform: scale(0.8); transform-origin: top center; margin-bottom: -4rem; }
 }
-@media (max-width: 620px) {
-  .crx .pw-scene { transform: scale(0.58); margin-bottom: -8rem; }
+@media (max-width: 760px) {
+  .crx .pw-scene { transform: scale(0.62); margin-bottom: -9rem; }
+}
+@media (max-width: 560px) {
+  .crx .pw-scene { transform: scale(0.46); margin-bottom: -13rem; }
 }
 @media (prefers-reduced-motion: reduce) {
   .crx .pw-step.live .pw-node::after { animation: none; }

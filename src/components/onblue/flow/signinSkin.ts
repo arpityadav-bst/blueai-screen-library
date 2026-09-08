@@ -13,22 +13,25 @@
 /* ONE SKIN, NOT TWO (2026-09-08). It was keyed by theme until the site went light-only; a map
    with one entry is a lookup that can only ever return the same thing, so the key went with the
    theme it was keyed on. The dark values are in git if a dark surface ever comes back. */
+/* THE NEUTRALS ARE CHARCOAL'S here too (2026-09-08). This card paints with inline styles outside
+   the .crx token scope, so the ramp it restates has to be re-derived with the tokens or the one
+   dialog on the site stays blue-grey while everything behind it turns. */
 export const SKIN = {
   card: '#ffffff',
-  ink: 'rgb(8,10,31)',
-  ink70: 'rgb(55,58,88)',
-  ink80: 'rgb(43,46,76)',
-  ink40: 'rgb(106,110,136)',
-  rule: 'rgb(223,228,238)',
+  ink: '#23262C',
+  ink70: '#565A63',
+  ink80: '#42464E',
+  ink40: '#9A9DA6',
+  rule: '#E6E7EA',
   // On white, the Apple and Google tiles ARE white - without an edge they are two invisible
   // buttons in a row of four. Discord and Facebook keep their brand fills and ignore this.
-  tileLine: 'rgb(223,228,238)',
+  tileLine: '#E6E7EA',
   // THE PAGE'S SECONDARY ACCENT, which is the logo's own blue - onblue.css --accent, restated here
   // because this card paints with inline styles outside the .crx token scope.
   accent: '#2F6DFF',
   wash: 'rgba(47,109,255,0.08)',      // the tint behind an icon
   field:
-    'border-[#cdd4e2] bg-white text-[rgb(8,10,31)] placeholder:text-[rgb(106,110,136)] hover:border-[#2F6DFF]' +
+    'border-[#d8dade] bg-white text-[#23262C] placeholder:text-[#9A9DA6] hover:border-[#2F6DFF]' +
     ' focus:border-[#2F6DFF] focus:shadow-[0_0_0_3px_rgba(47,109,255,0.18)]',
 } as const
 
@@ -47,7 +50,7 @@ export const RING = '#2F6DFF'
  *  because this card paints outside the .crx scope with inline styles and cannot reach a CSS token.
  *  THE TOKEN IS THE SOURCE OF TRUTH: if --cta-grad or .btn's shadow changes, change these with it. */
 export const CTA = '#2E3138'
-export const CTA_SHADOW = '0 10px 30px -10px rgba(8, 10, 31, 0.28)'
+export const CTA_SHADOW = '0 10px 30px -10px rgba(35, 38, 44, 0.28)'
 
 /**
  * ONE WIDTH FOR BOTH LEVELS. The card was 360 - the now.gg original's measured width. It is 400 now

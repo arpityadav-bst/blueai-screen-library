@@ -15,11 +15,12 @@
 // now that footer strip. So: a floating rounded window, one hairline, one soft shadow, generous
 // padding, and no chrome that is not load-bearing.
 //
-// THE SIDEBAR IS THIS PRODUCT'S REAL SECTIONS. Appy's sketch said "Campaigns / Reports" — campaign
-// is the AGENCY side's word, and reports do not exist here. These four are what the signed-in
-// dashboard actually has (Dashboard.tsx: Your program, Your earnings, Transactions, How earning
-// works). Showing sections a visitor will not find after signing in would make this an illustration
-// again, only a more detailed one.
+// CAMPAIGN, NOT PROGRAM (Appy, 2026-09-08, overruling my note here). I had argued for the
+// dashboard's own word: it says "Your program", campaign is the AGENCY side's term, and a hero
+// showing sections a visitor will not find after signing in is an illustration again. He has picked
+// campaign twice now, so the two surfaces DISAGREE until the dashboard follows — worth naming here
+// rather than letting the next reader find it. Everything else stays the dashboard's: Earnings,
+// Transactions, How it works.
 //
 // STATIC MARKUP, MUTATED BY ID — the same contract the desk scene has with useLaptopFx. The loop in
 // useProductFx.ts ticks a progress bar every 120ms; as React state that would re-render the page
@@ -27,10 +28,24 @@
 
 const NAV = [
   // d = the icon path, drawn on a 24 box at stroke 1.7 like the rest of this page's line icons
-  { id: 'program', label: 'Your program', d: 'M4 6h16M4 12h16M4 18h9', on: true },
+  { id: 'campaigns', label: 'Campaigns', d: 'M4 6h16M4 12h16M4 18h9', on: true },
   { id: 'earnings', label: 'Your earnings', d: 'M3 7h18v11H3zM3 11h18M7 15h3' },
   { id: 'tx', label: 'Transactions', d: 'M4 8h13l-3-3M20 16H7l3 3' },
   { id: 'how', label: 'How it works', d: 'M12 17v.01M12 14a2.5 2.5 0 1 0-2.5-2.5' },
+]
+
+/** The campaign's own facts, which is what the subtitle area is for now (Appy: "instead of
+ *  repeating the step in the subtitle make the subtitle around the info on the campaign, add
+ *  subtle cards for duration of campaign, campaign budget, day of the campaign").
+ *  REWARD, NOT BUDGET. The brand's budget is the agency side's figure and a creator never sees it;
+ *  what belongs on this screen is what the creator gets, and $30/month is the number every other
+ *  surface on this site quotes (EARNING.monthlyPayment). Say so if the budget was meant literally.
+ *  Illustrative like every other figure on this site, and consistent with each other: a 30-day
+ *  campaign seen on day 12, which is why the timeline shows work mid-flight rather than a first run. */
+const FACTS = [
+  { k: 'Duration', v: '30 days' },
+  { k: 'Day', v: '12 of 30' },
+  { k: 'Your reward', v: '$30' },
 ]
 
 /** The four beats, in the order the loop plays them. `bar` marks the one that carries progress. */
@@ -101,7 +116,10 @@ export default function ProductWindow() {
 
           <div className="pw-main">
             <div className="pw-main-head">
-              <span className="pw-main-title">Your program</span>
+              {/* The campaign's own name, and it is not invented: this exact string is the brand
+                  side's report mock and the dashboard's completed-jobs list (mockData.ts), reused
+                  so the surfaces read as one world rather than two sets of placeholders. */}
+              <span className="pw-main-title">Spring Launch: Product Reveal Short</span>
               {/* WHERE THE MONEY LANDS, and the reason this stage is better than the one it stands
                   beside. The desk scene flies its +$X chip into a pill floating in space next to
                   the laptop; here it lands on a figure that is part of the product. Same motion,
@@ -112,11 +130,22 @@ export default function ProductWindow() {
               </span>
             </div>
 
-            {/* The status sentence from the reference image, in this side's language: the creator
-                approves, onBlue runs it. Rewritten per beat by the loop. */}
-            <p className="pw-say" id="pw-say">Finding work for you&hellip;</p>
+            {/* WHAT THE CAMPAIGN IS, not what the worker is doing this second. This line used to
+                restate the live timeline row underneath it, which is the same fact told twice and
+                the reason it read as filler. Static now — the timeline is the moving part, and a
+                subtitle that changes every two seconds is a second thing to track. */}
+            <p className="pw-say">Fernweh Coffee &middot; short-form video, watched and reviewed on your own account.</p>
 
-            <span className="pw-lab">Today&rsquo;s activity</span>
+            <div className="pw-facts">
+              {FACTS.map((f) => (
+                <span key={f.k} className="pw-fact">
+                  <i>{f.k}</i>
+                  <b>{f.v}</b>
+                </span>
+              ))}
+            </div>
+
+            <span className="pw-lab">Campaign activity</span>
             <div className="pw-steps" id="pw-steps">
               {STEPS.map((s) => (
                 <div key={s.k} className="pw-step" data-k={s.k}>

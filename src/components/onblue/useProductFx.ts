@@ -5,6 +5,10 @@ import { useCallback, useEffect, useRef } from 'react'
 // THE PRODUCT WINDOW'S LOOP (2026-09-08) — the same story useLaptopFx tells, played on a timeline
 // instead of a task strip. ProductWindow.tsx holds the markup; this holds every behaviour.
 //
+// NOTHING HERE WRITES COPY any more (2026-09-08). It used to rewrite a status line per beat, which
+// restated the timeline row directly beneath it; that line is now the campaign's own description and
+// is static. The loop only moves states, which is also what makes the window's height constant.
+//
 // IT IS THE OLD BEATS, RE-STAGED, not a new script. The desk scene already narrates work found ->
 // sent for approval -> approved -> working -> paid, and that sequence is the page's argument; what
 // was wrong with it was the venue, a three-line strip inside a drawn laptop. Each beat is now a row
@@ -30,13 +34,6 @@ const PAYS = [2, 3, 5, 8, 12, 20, 30]
 const AT = { found: 0, approved: 950, running: 1800, paid: 4600, reset: 6100 }
 const FILL_MS = 2500        // how long `running` takes to fill, inside its own 2800ms slot
 const FILL_TICK = 120
-
-const SAY = {
-  found: 'Finding work for you…',
-  approved: 'Sent for your approval…',
-  running: 'I’m working on a task you approved.',
-  paid: 'Paid. It’s in your balance.',
-}
 
 export default function useProductFx() {
   const aliveRef = useRef(true)
@@ -73,21 +70,19 @@ export default function useProductFx() {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const scene = document.getElementById('scene')
     const stepsEl = document.getElementById('pw-steps')
-    const sayEl = document.getElementById('pw-say')
     const amountEl = document.getElementById('pw-amount')
     const earnedEl = document.getElementById('pw-earned')
     // Required rather than optional, deliberately: a missing #pw-earned means the figure was taken
     // out again, and a loop that quietly kept paying into nothing would hide that instead of
     // surfacing it. It is also what makes this hook a no-op when the DESK stage is the one mounted,
     // since HomepageView calls both hooks and only hands one of them to the intro.
-    if (!scene || !stepsEl || !sayEl || !amountEl || !earnedEl) return
+    if (!scene || !stepsEl || !amountEl || !earnedEl) return
 
     const steps = Array.from(stepsEl.querySelectorAll<HTMLElement>('.pw-step'))
     const fill = stepsEl.querySelector<HTMLElement>('.pw-prog > i')
     if (steps.length !== 4 || !fill) return
 
     const fmt = (n: number) => '$' + n
-    const say = (s: string) => { sayEl.textContent = s }
     const mark = (i: number, state: '' | 'live' | 'done') => {
       steps[i].classList.remove('live', 'done')
       if (state) steps[i].classList.add(state)
@@ -103,7 +98,7 @@ export default function useProductFx() {
       const box = scene!.getBoundingClientRect()
       // Measured rects are POST-transform, but left/top and translate apply PRE-transform inside a
       // scaled scene — divide by the scene's own scale or the chip lands short wherever .pw-scene
-      // carries a transform (it does, below 880px). The desk scene's F6 fix, same trap.
+      // carries a transform (it does, below 1000px). The desk scene's F6 fix, same trap.
       const scale = box.width / scene!.offsetWidth
       const from = steps[3].getBoundingClientRect()
       const to = earnedEl!.getBoundingClientRect()
@@ -154,16 +149,14 @@ export default function useProductFx() {
 
     function cycle() {
       steps.forEach((_, i) => mark(i, ''))
-      say(SAY.found)
       mark(0, 'live')
 
-      later(() => { mark(0, 'done'); mark(1, 'live'); say(SAY.approved) }, AT.approved)
-      later(() => { mark(1, 'done'); mark(2, 'live'); say(SAY.running); runProgress() }, AT.running)
+      later(() => { mark(0, 'done'); mark(1, 'live') }, AT.approved)
+      later(() => { mark(1, 'done'); mark(2, 'live'); runProgress() }, AT.running)
       later(() => {
         const p = PAYS[Math.floor(Math.random() * PAYS.length)]
         mark(2, 'done')
         mark(3, 'done')
-        say(SAY.paid)
         flyChip(p)
         // The credit lands as the chip arrives, not when it leaves — the number going up before
         // the money gets there reads as two separate events.
