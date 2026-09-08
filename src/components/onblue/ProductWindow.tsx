@@ -153,6 +153,21 @@ export default function ProductWindow() {
           </nav>
 
           <div className="pw-main">
+            {/* THE CAVEAT, AS AN EYEBROW (Appy, 2026-09-08). It was a footer strip, and the
+                window's bottom now dissolves — so the one fact the page is legally careful about
+                would have faded out with it. Above the title instead, where it reads as the
+                condition the campaign runs under.
+                IT KEEPS ITS ICON, which is not decoration here: three uppercase micro-labels sit
+                twenty pixels below it on the fact cards, and without the glyph this becomes a
+                fourth one. */}
+            <span className="pw-eyebrow">
+              <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <rect x="3" y="4" width="18" height="12" rx="2" />
+                <path d="M9 20h6" />
+              </svg>
+              Running on your PC
+            </span>
+
             <div className="pw-main-head">
               {/* The campaign's own name, and it is not invented: this exact string is the brand
                   side's report mock and the dashboard's completed-jobs list (mockData.ts), reused
@@ -207,16 +222,6 @@ export default function ProductWindow() {
           </div>
         </div>
 
-        {/* The caveat's new home. It was `*only on PC`, a footnote under the desk; as a line the
-            app states about itself it is the same fact doing more work, and it is what lets the
-            window controls be Windows-shaped without anyone having to explain why. */}
-        <div className="pw-foot">
-          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <rect x="3" y="4" width="18" height="12" rx="2" />
-            <path d="M9 20h6" />
-          </svg>
-          Running on your PC
-        </div>
       </div>
     </div>
   )
