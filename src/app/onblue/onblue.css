@@ -2785,13 +2785,17 @@ body.crx-lock { overflow: hidden; }
 
    NOTHING IN HERE IS BOLD, and nothing is at full ink (Appy, 2026-09-08: "the text needs to
    decrease in size... nothing should be bold, everything should be subtle, nothing too
-   contrasting"). It is worth stating as a rule rather than a set of values, because the pull is
-   always the other way: each label, taken alone, looks like it wants a bit more weight. But this
-   window is not a screen anyone uses - it is a picture of one, standing behind a headline and a
-   button that ARE meant to be read. A miniature at full contrast competes with the thing it was
-   put there to support. So: 600 is the ceiling, most of it sits at 500, and the ink steps are one
-   below what a real screen would use. The campaign title and the mint figure are the only two
-   things allowed to hold their own.
+   contrasting", and then again when the first pass was too timid: "i thought i said smaller text
+   size and thinner text style"). It is worth stating as a RULE rather than a set of values,
+   because the pull is always the other way, and I felt it: the first pass went 700 -> 600 and
+   13px -> 12.5px, which is tuning, not the instruction. Each label taken alone looks like it wants
+   a bit more weight, and it does not - this window is not a screen anyone uses, it is a PICTURE of
+   one, standing behind a headline and a button that are meant to be read. A miniature at full
+   contrast competes with the thing it was put there to support.
+   So: 500 is the ceiling, nothing is heavier than that, most of the copy sits at 400, and NOTHING
+   is at --ink-inverse - the campaign title runs at --dim and the quiet ends of the window at
+   --ink-4. The mint figure is the one saturated thing, because the payout is the point.
+   The window is scaled 1.3x, so 10px renders at 13 - these are small values, not illegible ones.
 
    EVERY VALUE IS A TOKEN except the miniature's own geometry. The window is a scale model - 11-13px
    type, 17px nodes, a 148px sidebar - and those numbers belong to the model, not to the page's
@@ -2854,7 +2858,7 @@ body.crx-lock { overflow: hidden; }
   height: 40px; padding: 0 12px;
   border-bottom: 1px solid var(--line);
 }
-.crx .pw-brand { display: flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 600; color: var(--dim); }
+.crx .pw-brand { display: flex; align-items: center; gap: 7px; font-size: 11px; font-weight: 500; color: var(--ink-3); }
 /* the app tile - and the boot intro's landing pad, see ProductWindow's note */
 .crx .pw-tile {
   display: inline-flex; align-items: center; justify-content: center;
@@ -2888,7 +2892,7 @@ body.crx-lock { overflow: hidden; }
 .crx .pw-nav {
   display: flex; align-items: center; gap: 8px;
   height: 26px; padding: 0 8px; border-radius: 7px;
-  font-size: 10.5px; font-weight: 500; color: var(--ink-4);
+  font-size: 10px; font-weight: 400; color: var(--ink-4);
 }
 /* SELECTED IS A SURFACE, not a colour. The row goes white with a hairline - it lifts out of the
    tinted sidebar the way a real app's selected row does - and only the ICON takes the accent. A
@@ -2896,7 +2900,7 @@ body.crx-lock { overflow: hidden; }
 .crx .pw-nav.on {
   background: var(--sur);
   box-shadow: inset 0 0 0 1px var(--line);
-  color: var(--dim); font-weight: 500;
+  color: var(--ink-3); font-weight: 500;
 }
 .crx .pw-nav.on svg { color: var(--accent); }
 .crx .pw-nav svg { flex-shrink: 0; }
@@ -2908,7 +2912,7 @@ body.crx-lock { overflow: hidden; }
   display: inline-flex; align-items: center; justify-content: center;
   width: 18px; height: 18px; border-radius: 50%;
   background: var(--accent); color: var(--ink-on-accent);
-  font-size: 9px; font-weight: 600; flex-shrink: 0;
+  font-size: 8px; font-weight: 500; flex-shrink: 0;
 }
 /* THE SKELETON. --line-2 rather than a lighter step: it has to read as "text, out of focus", and a
    bar the eye can barely find reads as a rendering fault instead. 7px is the x-height of the 11.5px
@@ -2924,19 +2928,19 @@ body.crx-lock { overflow: hidden; }
 .crx .pw-eyebrow {
   display: inline-flex; align-items: center; gap: 5px;
   margin-bottom: 9px;
-  font-size: 8.5px; font-weight: 600;
+  font-size: 8px; font-weight: 500;
   letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-4);
 }
 .crx .pw-main-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
-.crx .pw-main-title { font-size: 12.5px; font-weight: 600; color: var(--ink-inverse); min-width: 0; }
+.crx .pw-main-title { font-size: 11.5px; font-weight: 500; color: var(--dim); min-width: 0; }
 .crx .pw-earned { flex-shrink: 0; }
 /* money is mint, the one rule this page holds everywhere */
-.crx .pw-earned b { font-size: 14px; font-weight: 600; color: var(--mint); line-height: 1.1; }
+.crx .pw-earned b { font-size: 13px; font-weight: 500; color: var(--mint); line-height: 1.1; }
 /* the credit's own beat: the figure takes the payment rather than merely displaying a new one */
 .crx .pw-earned.bump b { animation: pw-bump 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
 @keyframes pw-bump { 0% { transform: none; } 35% { transform: scale(1.16); } 100% { transform: none; } }
 
-.crx .pw-say { margin: 4px 0 13px; font-size: 11.5px; line-height: 1.5; color: var(--ink-3); }
+.crx .pw-say { margin: 4px 0 13px; font-size: 10.5px; font-weight: 400; line-height: 1.5; color: var(--ink-4); }
 
 /* THE CAMPAIGN'S FACTS. Subtle by construction rather than by opacity: the page's quietest surface
    and its hairline, no shadow, no accent, and the LABEL is smaller than the value so the eye reads
@@ -2952,10 +2956,10 @@ body.crx-lock { overflow: hidden; }
   border-radius: 8px;
 }
 .crx .pw-fact i {
-  font-style: normal; font-size: 8px; font-weight: 600;
+  font-style: normal; font-size: 7.5px; font-weight: 500;
   letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-4);
 }
-.crx .pw-fact b { font-size: 11.5px; font-weight: 500; color: var(--dim); line-height: 1.1; }
+.crx .pw-fact b { font-size: 10.5px; font-weight: 400; color: var(--ink-3); line-height: 1.1; }
 
 /* ---- the activity timeline ---- */
 .crx .pw-steps { margin-top: 0; }
@@ -2996,9 +3000,9 @@ body.crx-lock { overflow: hidden; }
   animation: crx-pulse 1.6s ease-in-out infinite;
 }
 .crx .pw-step-body { min-width: 0; padding-top: 1px; }
-.crx .pw-step-t { display: block; font-size: 11px; color: var(--ink-4); transition: color 0.25s ease; }
+.crx .pw-step-t { display: block; font-size: 10px; font-weight: 400; color: var(--ink-4); transition: color 0.25s ease; }
 .crx .pw-step.done .pw-step-t { color: var(--ink-4); }
-.crx .pw-step.live .pw-step-t { color: var(--dim); font-weight: 500; }
+.crx .pw-step.live .pw-step-t { color: var(--ink-3); font-weight: 500; }
 /* HIDDEN, NOT REMOVED (Appy, 2026-09-08: "fix the height so the miniature dashboard doesn't resize
    according to the animation inside"). The bar should not be VISIBLE under a step that has not
    started - a track sitting there is a progress bar claiming there is progress - but `display:none`
