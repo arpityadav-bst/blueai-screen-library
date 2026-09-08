@@ -58,29 +58,15 @@ export default function useLaptopFx() {
     timersRef.current.add(id)
   }, [])
 
-  // Time-aware line — the mock ran this at parse time; here it runs on mount. Idempotent, so
-  // StrictMode's double-run is harmless. It lives with this hook rather than the machine one
-  // because this is the hook the homepage always mounts.
+  // THE HOOK'S LIFECYCLE, and only that since 2026-09-08. It used to carry the dock's time-aware
+  // line as well — a clock re-read every 60s, phrased three ways by hour — which is why this effect
+  // exists in a file otherwise made of a start callback. The chip it wrote into is gone
+  // (HomeOverlay.tsx); the effect stays, because the alive flag and the timer cleanup below are
+  // what make unmount actually stop the task loop.
   useEffect(() => {
     aliveRef.current = true
     const timers = timersRef.current
     const intervals = intervalsRef.current
-
-    /* F8: computed once, the clock was wrong within minutes — now refreshed every 60s */
-    const updateTimeLine = () => {
-      const d = new Date()
-      const h = d.getHours()
-      const m = ('0' + d.getMinutes()).slice(-2)
-      const t = (((h + 11) % 12) + 1) + ':' + m + ' ' + (h < 12 ? 'am' : 'pm')
-      let msg: string
-      if (h >= 5 && h < 12) msg = "It's " + t + ". Your worker would've been earning all night."
-      else if (h >= 12 && h < 18) msg = "It's " + t + ". Your worker would be earning right now."
-      else msg = "It's " + t + ". Your worker would still be on the clock."
-      const timeMsg = document.getElementById('time-msg')
-      if (timeMsg) timeMsg.textContent = msg
-    }
-    updateTimeLine()
-    intervals.add(setInterval(updateTimeLine, 60000))
 
     return () => {
       aliveRef.current = false

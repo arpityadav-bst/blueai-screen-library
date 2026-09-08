@@ -1,10 +1,12 @@
-// The boot-intro overlay + the bottom-right dock, ported 1:1 from the mock (alt-copy.html), then
-// trimmed (Appy, 2026-08-19): the dock originally also carried a mini earnings counter that
-// reappeared bottom-right once the hero's own pill scrolled away — removed outright ("no need of
-// that... only keep the other fixed pill"), so the dock is just the time-aware line now. The
-// matching IntersectionObserver + mini-amount logic that drove it is removed from useHomeFx.ts too
-// — there is nothing left to toggle. All remaining behaviour lives in useBootIntro.ts / useHomeFx.ts
-// — this is markup only, addressed by the same ids the mock's script used.
+// The boot-intro overlay. Markup only, addressed by the same ids the mock's script used; all
+// behaviour lives in useBootIntro.ts.
+//
+// THE BOTTOM-RIGHT DOCK IS GONE (Appy, 2026-09-08). It was the last survivor of a two-part fixture:
+// a mini earnings counter that reappeared once the hero's pill scrolled away (cut 2026-08-19) and a
+// time-aware line — "It's 11:41 pm. Your worker would still be on the clock." A fixed chip that
+// follows you down every section has to earn that position on every one of them, and this one made
+// the same nudge over the legal copy as over the hero. Its clock, its dock, its .time-chip and
+// .tick-dot rules and the .d5 entry slot went with it; /creators keeps its own copy of all of it.
 export default function HomeOverlay() {
   return (
     <>
@@ -20,12 +22,6 @@ export default function HomeOverlay() {
         Click anywhere to skip
       </p>
 
-      <div className="dock">
-        <p className="time-chip rv d5" id="time-line" style={{ margin: 0 }}>
-          <span className="tick-dot" />
-          <span id="time-msg" />
-        </p>
-      </div>
     </>
   )
 }

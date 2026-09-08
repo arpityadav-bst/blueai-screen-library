@@ -479,20 +479,17 @@ body.crx-lock { overflow: hidden; }
   transition: transform 0.7s cubic-bezier(0.3, 0.7, 0.4, 1), opacity 0.7s ease;
 }
 
-/* the scene's mobile rules live in the consolidated 880px block at the END of the file —
-   several of their base rules (.slot, .time-chip, main's padding) are declared later at equal
-   specificity and would win the source-order tie against a block placed here */
+/* the scene's mobile rules live in the consolidated 880px block at the END of the file — main's
+   padding is declared later at equal specificity and would win the source-order tie against a
+   block placed here */
 
 /* The fleet section — "One worker. Every machine you own.", four photo cards over a title and a
    subtitle — was cut 2026-08-20 (Appy). Everything it owned went with it: .fleet, .fleet-sub,
    .fleet-grid, the .fcard family and its photo tiles, the greyscale-to-colour hover and its
    pop-out, the (hover: none) fallback, and the four reframed WebPs. Removed rather than parked;
    the component (FleetSection.tsx) and its data (fleet.ts) are gone too.
-   .tick-dot below OUTLIVES it — the dock's time chip uses the same dot (HomeOverlay.tsx). */
-.crx .tick-dot {
-  display: inline-block; width: 6px; height: 6px; border-radius: 50%;
-  background: var(--mint); box-shadow: 0 0 8px var(--mint);
-}
+   .tick-dot outlived it by one consumer, the dock's time chip, and went when that did (2026-09-08).
+   The page's live pulse is .dot, in the scene — a different dot with a different job. */
 
 /* THE AMBIENT BACKDROP IS GONE (2026-09-08) - three drifting orbs and the rotating logo star,
    fixed behind every section, faded in as the hero left. It had been drawing nothing since the
@@ -613,7 +610,7 @@ body.crx-lock { overflow: hidden; }
 .crx.revealed .d2 { animation-delay: 0.95s; }
 .crx.revealed .d3 { animation: crx-cta-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) 1.35s both; }
 .crx.revealed .d4 { animation-delay: 1.7s; }
-.crx.revealed .d5 { animation-delay: 2.05s; }
+/* .d5 was the dock chip's slot and went with it (2026-09-08); d4 is the last one in use. */
 
 /* SCROLL ENTRY for everything below the hero — the hero's own recipe, triggered by arrival rather
    than by a timeline (useScrollReveal adds `.in` once, then unobserves). Same keyframe, same
@@ -628,25 +625,6 @@ body.crx-lock { overflow: hidden; }
   animation-delay: calc(var(--i, 0) * 90ms);
 }
 
-/* bottom-right dock: just the time-of-day chip now. It used to also carry a mini earnings counter
-   that reappeared here once the hero's own pill scrolled away — removed (Appy, 2026-08-19: "it
-   shouldn't go down to bottom right once scrolled... only keep the other fixed pill"). The .mini/
-   .coin/.mini-amt rules that styled it are gone with the markup (HomeOverlay.tsx) and the
-   IntersectionObserver that drove it (useHomeFx.ts) — nothing left to dead-style. */
-.crx .dock {
-  position: fixed; right: 18px; bottom: 18px; z-index: 60;
-  display: flex; flex-direction: column; align-items: flex-end; gap: 0.55rem;
-  pointer-events: none;
-}
-.crx .time-chip {
-  display: flex; align-items: center; gap: 0.45rem;
-  background: var(--glass);
-  border: 1px solid var(--line-2);
-  border-radius: 999px;
-  padding: 0.45rem 0.95rem;
-  font-size: 0.82rem; color: var(--dim);
-  backdrop-filter: blur(6px);
-}
 
 /* ---------------- below the fold ---------------- */
 /* STACKED, NOT SPLIT (Appy, 2026-08-20). This was a two-column section — copy left, a photo of
@@ -939,13 +917,14 @@ body.crx-lock { overflow: hidden; }
    killer. Every other floating element on this page (dock, backdrop, stars) is already fixed, so
    fixed is also the page's own idiom.
 
-   z-index 60 — the dock's tier, deliberately BELOW the intro's backdrop (70) and canvas (80): the
+   z-index 60 — deliberately BELOW the intro's backdrop (70) and canvas (80): the
    header is part of the page, so the intro hides it and the reveal fades it in like everything
    else (gated on .crx.revealed, same as .rv, but fade-only — a fixed bar sliding 18px like .rv
    content would read as the chrome animating, not the page).
 
-   Surface recipe when scrolled is the dock's own .time-chip (rgba(13,18,48,.78) + blur + white
-   hairline) — the one "glass over the sky" treatment this page already has, not a new one. */
+   Surface recipe when scrolled is --glass plus a hairline — the page's one "glass over the ground"
+   treatment. It was shared with the dock's time chip until that was removed (2026-09-08), which
+   leaves the header as its only consumer rather than making it a new invention. */
 .crx .crx-header {
   position: fixed; top: 0; left: 0; right: 0; z-index: 60;
   opacity: 0; pointer-events: none;
@@ -1094,8 +1073,8 @@ body.crx-lock { overflow: hidden; }
    header rather than under it, and that costs one rule. */
 .crx #sleep, .crx #how, .crx #join { scroll-margin-top: 76px; }
 
-/* consolidated mobile block — end of file on purpose: .time-chip and main's padding are declared
-   above at equal specificity and would win the source-order tie against an earlier block */
+/* consolidated mobile block — end of file on purpose: main's padding is declared above at equal
+   specificity and would win the source-order tie against an earlier block */
 @media (max-width: 880px) {
   /* THE SCENE'S MOBILE RULES ARE BACK (2026-08-20) with the scene itself. It is a fixed 470px
      canvas, not a fluid box, so it has to be scaled rather than reflowed — and scaling it shrinks
@@ -1113,13 +1092,6 @@ body.crx-lock { overflow: hidden; }
   .crx .earnings { right: 8px; left: auto; } /* F7: keep the pill inside the viewport */
   /* the fleet grid folds on its own (auto-fit minmax) and needs no rule here. .slot's old
      2x2 override went with the icon strip it sized. */
-  /* F8: hidden on mobile because its ~55-char sentence exceeds the ~372px available and becomes a
-     near-edge-to-edge banner occluding content while scrolling — an overflow problem, independent
-     of the mini counter that used to sit beside it (removed 2026-08-19; that comment used to point
-     at "mini carries the dock here", which stopped being true the moment mini was deleted). The
-     dock is simply empty on mobile now; re-enabling this needs a width fix first, not just
-     deleting this rule. */
-  .crx .time-chip { display: none; }
   .crx main { padding-top: calc(2rem + 66px); } /* F32: was 3.5rem — 122px dead space above the h1 */
 }
 
