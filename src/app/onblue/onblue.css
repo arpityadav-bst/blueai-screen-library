@@ -633,9 +633,10 @@ body.crx-lock { overflow: hidden; }
   margin: 0 auto;
   border-radius: 22px;
   overflow: hidden;
-  /* the render's own corners are near-black and this page's sky is not, so the tile needs an edge
-     of its own or it reads as a hole rather than as a framed image */
-  box-shadow: 0 40px 90px -45px rgba(0, 0, 0, 0.9), inset 0 0 0 1px rgba(255, 255, 255, 0.07);
+  /* the render's own corners are near-black and this page's ground is not, so the tile needs an
+     edge of its own or it reads as a hole rather than as a framed image. The value is in the
+     repaint block at the end of the file - a light drop plus a --line inset, where this was a black
+     drop plus a white one. */
 }
 .crx .sleep-scene img { display: block; width: 100%; height: auto; }
 
@@ -1225,7 +1226,13 @@ body.crx-lock { overflow: hidden; }
   transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
 }
 .crx .crx-field::placeholder { color: var(--ink-4); }
-.crx .crx-field:hover { border-color: rgba(255, 255, 255, 0.2); }
+/* HOVER DARKENS, it does not lighten (2026-09-08). Eight states across the kit still stepped by
+   adding white - the dark page's whole idiom for "more" - which on a white ground is a state
+   change you cannot see. They are the tail of the dark->light migration: it classified colours by
+   the property they sat in, and rgba(255,255,255,.24) is a legible border on one ground and
+   nothing on the other, with no way to tell which from the value. Each now steps the way its base
+   does - a border one weight down the line ramp, a fill one step up the surface ramp. */
+.crx .crx-field:hover { border-color: var(--line-4); }
 .crx .crx-field:focus {
   outline: none;
   border-color: var(--sel-border);
@@ -1246,8 +1253,8 @@ body.crx-lock { overflow: hidden; }
   border-radius: 9px; cursor: pointer;
   transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
 }
-.crx .crx-choice:hover { border-color: rgba(255, 255, 255, 0.24); background: var(--sur-3); color: var(--ink-inverse); }
-.crx .crx-choice:active { background: rgba(255, 255, 255, 0.09); }
+.crx .crx-choice:hover { border-color: var(--line-4); background: var(--sur-3); color: var(--ink-inverse); }
+.crx .crx-choice:active { background: var(--sur-strong); }
 .crx .crx-choice.on {
   border-color: var(--sel-border); background: var(--sel-wash);
   color: var(--ink-inverse); font-weight: 650;
@@ -1303,7 +1310,7 @@ body.crx-lock { overflow: hidden; }
   border-radius: 14px;
   transition: border-color 0.18s ease, background 0.18s ease, color 0.18s ease;
 }
-.crx .crx-check:hover { border-color: rgba(255, 255, 255, 0.24); background: var(--sur-3); }
+.crx .crx-check:hover { border-color: var(--line-4); background: var(--sur-3); }
 .crx .crx-check.on { border-color: var(--sel-border); background: var(--sel-wash); color: var(--ink-inverse); }
 .crx .crx-check.err { border-color: var(--danger); }
 /* subtle variant — boilerplate you tick on the way out (the agree line): no card, just the row */
@@ -1331,8 +1338,8 @@ body.crx-lock { overflow: hidden; }
   display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
   transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
 }
-.crx .crx-btn-quiet:hover { border-color: rgba(255, 255, 255, 0.34); background: var(--sur-3); transform: translateY(-1px); }
-.crx .crx-btn-quiet:active { background: rgba(255, 255, 255, 0.09); transform: translateY(0); }
+.crx .crx-btn-quiet:hover { border-color: var(--line-4); background: var(--sur-3); transform: translateY(-1px); }
+.crx .crx-btn-quiet:active { background: var(--sur-strong); transform: translateY(0); }
 .crx .crx-btn-quiet:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 /* full-width modifier for .btn (and .crx-btn-quiet) — form submit rows */
 .crx .btn.btn-block, .crx .crx-btn-quiet.btn-block { display: flex; width: 100%; justify-content: center; }
@@ -1902,8 +1909,9 @@ body.crx-lock { overflow: hidden; }
 /* the trigger — rides .crx-cta's quiet state; avatar-left padding + a hover surface so it reads as
    a control (the original's one fix to its own first version), 44px touch height */
 .crx .crx-acct-chip { min-height: 44px; padding: 0.4rem 0.75rem 0.4rem 0.4rem; gap: 0.5rem; }
-.crx .crx-acct-chip:hover { background: rgba(255, 255, 255, 0.06); }
-.crx .crx-acct-chip:active { background: rgba(255, 255, 255, 0.09); }
+/* see the hover-state note on .crx-field: these lightened, which is not a state change on white */
+.crx .crx-acct-chip:hover { background: var(--sur-hover); }
+.crx .crx-acct-chip:active { background: var(--sur-strong); }
 /* initials avatar — gradient fill is the one place the chip carries any weight */
 .crx .crx-acct-avatar {
   flex-shrink: 0; display: flex; align-items: center; justify-content: center;
@@ -2129,13 +2137,17 @@ body.crx-lock { overflow: hidden; }
 .crx .crx-chip.ghost { color: var(--dim); border: 1px dashed var(--line-4); background: transparent; }
 
 /* the offer card's OWN surface — deliberately not .crx-panel (2026-08-24: card and application
-   form shared the same flat panel at the same width and read as one screen). Iris wash off the
-   top-left corner, iris-tinted border a step brighter than the panel's hairline, r20 vs the
-   panel's 16 — enough that the eye files "offer" and "form" as different objects. */
+   form shared the same flat panel at the same width and read as one screen). A tinted border a
+   step brighter than the panel's hairline, and r20 vs the panel's 16 — enough that the eye files
+   "offer" and "form" as different objects.
+   FLAT, since 2026-09-08 (Appy: "we can remove the bg gradient of these cards"). It was a coloured
+   wash off the top-left corner over rgba(255,255,255,.045) — and that base is the DARK page's card
+   fill, a 4.5% white which is all but invisible on a light ground. So the wash was not decoration
+   on a surface, it had become the only surface the card had, which is why it read as a stain
+   across the corner rather than as a tint. Both go: --sur is the fill and the border does the
+   distinguishing, which was always the half of the recipe carrying the idea. */
 .crx .crx-prog {
-  background:
-    radial-gradient(420px 220px at 8% 0%, rgba(47, 109, 255, 0.16), transparent 70%),
-    rgba(255, 255, 255, 0.045);
+  background: var(--sur);
   border: 1px solid rgba(47, 109, 255, 0.3);
   border-radius: 20px;
   padding: 1.6rem;
