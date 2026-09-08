@@ -27,6 +27,10 @@
   --danger:#EF4444;  --danger-soft:#FEE2E2;  --danger-ink:#991B1B;
   --info:#3B82F6;    --info-soft:#DBEAFE;    --info-ink:#1E40AF;
 
+  --ink-body-2:#373A58;   /* --bai-ink-body-2, the calendar's ordinary day ink */
+  --hover:#EEF1F6;        /* the fill a row or a day takes on hover - the page's own, already
+                             hardcoded on the account menu before this named it */
+
   --r-card:8px; --r-md:12px; --r-pill:128px;
   --sans:'Inter','SF Pro',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
   --head:'Space Grotesk','SF Pro Display','Inter',sans-serif;
@@ -276,6 +280,82 @@ tr:last-child td{border-bottom:none}
   border-radius:var(--r-pill);background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
   font-size:12px;color:rgba(255,255,255,.85)}
 .doneid .dlab{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.55)}
+
+/* ================================================================================================
+   THE DATE PICKER (2026-09-09) - a port of controls/DateField.tsx, which the React brands form has
+   used since it was built and this page never got. It is the same drift the url check had: this
+   file is a HAND-WRITTEN twin of that form, so nothing in it can be reached by a fix over there.
+   <input type="date"> was the visible symptom - a black OS panel with its own type, its own week
+   layout and its own idea of what a date looks like, dropped into the middle of a designed dialog.
+
+   PORTED, NOT REDESIGNED, with three deliberate divergences from the source, each because this page
+   is not that page:
+     1. SELECTED IS IRIS, not the React component's #2258c9. That value is the marketing site's
+        accent; inside this file every selected thing - .selchip.on, links, the primary button - is
+        iris, and introducing a third blue for one control would make the calendar the odd object in
+        its own dialog. Match the room, not the component's birthplace.
+     2. THE TRIGGER IS .finput's shell, not the React field's. The two sit side by side in a two-up
+        row with real inputs; a 1px/neutral-halo field beside a tinted/iris-halo one reads as a bug.
+     3. Errors keep this page's .ferr rather than the source's always-reserved line.
+
+   AND ONE BUG NOT PORTED. In the React original `text-ink-muted/30` and `/70` compile to NOTHING -
+   the DS colours are bare var() strings that Tailwind's colour parser cannot read, so the utility
+   is dropped and disabled days inherit body ink, rendering DARKER than enabled ones. Here they are
+   the values that were meant: 30% and 70% of --ink-muted.
+   ================================================================================================ */
+.dt{display:flex;align-items:center;gap:10px;width:100%;margin-top:7px;padding:12px 14px;
+  text-align:left;font-family:var(--sans);font-size:14px;line-height:21px;
+  background:var(--surface);border:1px solid var(--divider);border-radius:var(--r-md);
+  cursor:pointer;outline:none;
+  transition:background .15s ease,border-color .15s ease,box-shadow .15s ease}
+.dt:hover{border-color:var(--stroke-warm)}
+.dt:focus{background:var(--canvas);border-color:var(--iris);box-shadow:0 0 0 3px rgba(var(--iris-rgb),.14)}
+.dt.err{border-color:var(--danger);background:rgba(239,68,68,.04)}
+.dt.err:focus{box-shadow:0 0 0 3px rgba(239,68,68,.14)}
+.dt .dtcal{flex-shrink:0;color:var(--iris)}
+.dt .dtv{flex:1;min-width:0;color:var(--ink-heading);font-variant-numeric:tabular-nums}
+.dt .dtv.ph{color:var(--ink-soft);font-variant-numeric:normal}
+.dt .dtc{flex-shrink:0;color:var(--ink-muted);transition:transform .18s cubic-bezier(.22,.61,.36,1)}
+.dt[aria-expanded="true"] .dtc{transform:rotate(180deg)}
+
+/* PORTALLED AND FIXED, for the reason the source records: the dialog panel carries overflow:hidden
+   so its corners crop, and that cropped the popover off at the dialog's bottom edge. Widening the
+   clip moves the boundary; the next scroll container brings it straight back. z-index 105 sits over
+   the dialog scrim (100) and under the preview toggler (110). */
+.cal{position:fixed;z-index:105;width:340px;max-width:calc(100vw - 32px);padding:12px;
+  background:var(--canvas);border:1px solid var(--divider);border-radius:var(--r-md);
+  box-shadow:0 4px 16px -4px rgba(var(--ink-rgb),.08), 0 1px 2px rgba(var(--ink-rgb),.04);
+  animation:cal-in .18s cubic-bezier(.22,.61,.36,1) both}
+@keyframes cal-in{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
+.cal-head{display:flex;align-items:center;justify-content:space-between}
+.cal-m{font-size:13px;font-weight:700;color:var(--ink-heading)}
+.cal-nav{display:flex;align-items:center;justify-content:center;width:44px;height:44px;
+  border:0;background:none;border-radius:var(--r-card);color:var(--ink-muted);cursor:pointer;
+  transition:color .12s cubic-bezier(.22,.61,.36,1),background-color .12s cubic-bezier(.22,.61,.36,1)}
+.cal-nav:disabled{pointer-events:none;opacity:.3}
+.cal-wk{margin-top:12px;display:grid;grid-template-columns:repeat(7,1fr);text-align:center;
+  font-size:10px;font-weight:700;line-height:1.5;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-muted)}
+/* SIX ROWS ALWAYS, never five: a grid sized to the month makes the popover grow and shrink as you
+   page through it. */
+.cal-grid{margin-top:6px;display:grid;grid-template-columns:repeat(7,1fr);row-gap:2px}
+.cal-d{margin-inline:auto;display:flex;align-items:center;justify-content:center;
+  width:44px;height:44px;border:0;background:none;border-radius:9999px;
+  font-family:var(--sans);font-size:13px;color:var(--ink-body-2);font-variant-numeric:tabular-nums;
+  cursor:pointer;outline:none;
+  transition:color .12s cubic-bezier(.22,.61,.36,1),background-color .12s cubic-bezier(.22,.61,.36,1)}
+.cal-d:focus-visible{box-shadow:0 0 0 2px rgba(var(--iris-rgb),.4)}
+.cal-d.today{color:var(--iris);font-weight:700}
+.cal-d.out{color:rgba(67,70,100,.7)}
+.cal-d:disabled{color:rgba(67,70,100,.3);cursor:not-allowed}
+.cal-d.on{background:var(--iris);color:#fff;font-weight:600}
+/* hover is gated on a real pointer: without it Android and iOS latch the fill after a tap and the
+   tapped day keeps reading as selected when it is not. A disabled day gets none - lighting up a day
+   you cannot pick is worse than no feedback at all. */
+@media (hover:hover){
+  .cal-nav:hover{background:var(--hover);color:var(--ink-heading)}
+  .cal-d:hover:not(:disabled):not(.on){background:var(--hover)}
+}
+@media (prefers-reduced-motion:reduce){ .cal{animation:none} .dt .dtc{transition:none} }
 
 .dsuccess{padding:52px 40px;text-align:center}
 .dsuccess .mark{margin:0 auto;width:56px;height:56px;border-radius:9999px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;color:#fff;font-size:24px}
@@ -1118,12 +1198,14 @@ tr:last-child td{border-bottom:none}
           <div class="frow">
             <label class="fld">
               <span class="flabel">Start date</span>
-              <input class="finput" id="f-start" type="date">
+              <button type="button" class="dt" id="t-start" aria-haspopup="dialog" aria-expanded="false" onclick="calOpen('start')"><svg class="dtcal" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5.5" width="18" height="15.5" rx="2.5"/><path d="M8 3v4.5M16 3v4.5M3 11h18"/></svg><span class="dtv ph" id="v-start">Pick a day</span><svg class="dtc" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9.5l6 6 6-6"/></svg></button>
+              <input type="hidden" id="f-start">
               <span class="ferr" id="e-start"></span>
             </label>
             <label class="fld">
               <span class="flabel">End date</span>
-              <input class="finput" id="f-end" type="date">
+              <button type="button" class="dt" id="t-end" aria-haspopup="dialog" aria-expanded="false" onclick="calOpen('end')"><svg class="dtcal" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5.5" width="18" height="15.5" rx="2.5"/><path d="M8 3v4.5M16 3v4.5M3 11h18"/></svg><span class="dtv ph" id="v-end">Pick a day</span><svg class="dtc" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9.5l6 6 6-6"/></svg></button>
+              <input type="hidden" id="f-end">
               <span class="ferr" id="e-end"></span>
             </label>
           </div>
@@ -1220,12 +1302,14 @@ tr:last-child td{border-bottom:none}
           <div class="frow">
             <label class="fld">
               <span class="flabel">Start date</span>
-              <input class="finput" id="f-bstart" type="date">
+              <button type="button" class="dt" id="t-bstart" aria-haspopup="dialog" aria-expanded="false" onclick="calOpen('bstart')"><svg class="dtcal" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5.5" width="18" height="15.5" rx="2.5"/><path d="M8 3v4.5M16 3v4.5M3 11h18"/></svg><span class="dtv ph" id="v-bstart">Pick a day</span><svg class="dtc" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9.5l6 6 6-6"/></svg></button>
+              <input type="hidden" id="f-bstart">
               <span class="ferr" id="e-bstart"></span>
             </label>
             <label class="fld">
               <span class="flabel">End date</span>
-              <input class="finput" id="f-bend" type="date">
+              <button type="button" class="dt" id="t-bend" aria-haspopup="dialog" aria-expanded="false" onclick="calOpen('bend')"><svg class="dtcal" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5.5" width="18" height="15.5" rx="2.5"/><path d="M8 3v4.5M16 3v4.5M3 11h18"/></svg><span class="dtv ph" id="v-bend">Pick a day</span><svg class="dtc" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9.5l6 6 6-6"/></svg></button>
+              <input type="hidden" id="f-bend">
               <span class="ferr" id="e-bend"></span>
             </label>
           </div>
@@ -1345,6 +1429,7 @@ function openCreate(){
   document.getElementById('cdlg-panel').classList.remove('dark');
   setStep(1);
   bvStep(1);
+  ['start','end','bstart','bend'].forEach(calPaint);
   document.getElementById('cdlg').classList.add('on');
   document.body.style.overflow='hidden';
 }
@@ -1411,8 +1496,11 @@ function setStep(n){
 }
 function fieldErr(id,msg){
   var e=document.getElementById('e-'+id), f=document.getElementById('f-'+id);
-  if(msg){ e.textContent=msg; e.style.display='block'; if(f)f.classList.add('err'); }
-  else { e.style.display='none'; if(f)f.classList.remove('err'); }
+  // t-<id> is a date field's trigger button. The input it replaces is still there and still holds
+  // the value, but it is hidden, so the error state has to be painted on the thing you can see.
+  var t=document.getElementById('t-'+id);
+  if(msg){ e.textContent=msg; e.style.display='block'; if(f)f.classList.add('err'); if(t)t.classList.add('err'); }
+  else { e.style.display='none'; if(f)f.classList.remove('err'); if(t)t.classList.remove('err'); }
   var h=document.getElementById('h-'+id); if(h) h.style.display=msg?'none':'block';
   return !msg;
 }
@@ -1629,6 +1717,199 @@ function doneView(){
 }
 
 var esc=function(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML};
+
+/* ================================================================================================
+   THE DATE PICKER. A vanilla port of controls/DateField.tsx - see the CSS block for what diverges
+   and why. One module drives all four fields; each is a hidden input holding an ISO string and a
+   button showing it.
+   ================================================================================================ */
+// align: the calendar is wider than the half-width field it hangs off, so the right-hand field of
+// each pair opens INWARD across the card rather than off the edge of the dialog.
+// min: a day floor. 'today' for a start date; the paired start field for an end date, so an end
+// date can never precede its own start.
+var CAL_F={
+  start:{align:'left', min:'today'},
+  end:{align:'right', min:'start'},
+  bstart:{align:'left', min:'today'},
+  bend:{align:'right', min:'bstart'}
+};
+var CAL_WK=['Su','Mo','Tu','We','Th','Fr','Sa'];   // two letters: S-M-T-W-T-F-S makes the two S and
+                                                   // the two T columns a guessing game
+var calKey=null, calView=null, calEl=null;
+
+function dayKey(d){ return d.getFullYear()*10000+d.getMonth()*100+d.getDate() }
+function isoOf(d){ var m=d.getMonth()+1,y=d.getDate(); return d.getFullYear()+'-'+(m<10?'0':'')+m+'-'+(y<10?'0':'')+y }
+function fromIso(v){ if(!v) return null; var t=new Date(v+'T00:00:00'); return isNaN(t)?null:t }
+// en-GB explicitly, never the visitor's locale: a numeric format silently means two different days
+// on either side of the Atlantic, and a fixed locale keeps the output deterministic.
+function calFmt(d){ return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}) }
+function calVal(k){ return fromIso(document.getElementById('f-'+k).value) }
+function calFloor(k){
+  var m=CAL_F[k].min;
+  if(m==='today') return new Date();
+  return calVal(m)||new Date();
+}
+// The trigger's own face, rewritten whenever the value changes.
+function calPaint(k){
+  var d=calVal(k), el=document.getElementById('v-'+k);
+  el.textContent=d?calFmt(d):'Pick a day';
+  el.className='dtv'+(d?'':' ph');
+}
+
+function calClose(reason){
+  if(!calEl) return;
+  var k=calKey;
+  calEl.parentNode.removeChild(calEl); calEl=null;
+  // view resets on EVERY close, so reopening always recomputes the month from the data - which is
+  // exactly what should happen to an end date after its start (its floor) moved.
+  calView=null; calKey=null;
+  var t=document.getElementById('t-'+k);
+  if(t){ t.setAttribute('aria-expanded','false'); if(reason!=='outside') t.focus(); }
+}
+function calOpen(k){
+  if(calKey===k){ calClose('toggle'); return; }
+  calClose('switch');
+  calKey=k;
+  document.getElementById('t-'+k).setAttribute('aria-expanded','true');
+  calEl=document.createElement('div');
+  calEl.className='cal';
+  // role + label, which the React original omits while its trigger promises aria-haspopup="dialog"
+  calEl.setAttribute('role','dialog');
+  calEl.setAttribute('aria-label','Choose a date');
+  calEl.style.visibility='hidden';
+  document.body.appendChild(calEl);
+  calRender(true);
+}
+function calMonth(){
+  if(calView) return calView;
+  var base=calVal(calKey)||calFloor(calKey)||new Date();
+  return new Date(base.getFullYear(),base.getMonth(),1);
+}
+function calNav(delta){
+  var m=calMonth();
+  calView=new Date(m.getFullYear(),m.getMonth()+delta,1);
+  calRender(false);
+  // Every cell was replaced, so the focused button left the DOM and focus fell to <body> - which
+  // silently kills the arrow keys. Re-anchor after a month change, and only after one.
+  var a=calEl.querySelector('.cal-d[data-auto]')||calEl.querySelector('.cal-d:not(:disabled)');
+  if(a) a.focus();
+}
+function calPick(iso){
+  var k=calKey;
+  document.getElementById('f-'+k).value=iso;
+  calPaint(k);
+  fieldErr(k,'');
+  // An end date that now precedes its own start is cleared rather than left to fail validation:
+  // the field it depended on moved under it, which is not the reader's mistake to be told about.
+  var dep=k==='start'?'end':k==='bstart'?'bend':null;
+  if(dep){
+    var e=calVal(dep);
+    if(e && dayKey(e)<=dayKey(fromIso(iso))){ document.getElementById('f-'+dep).value=''; calPaint(dep); }
+  }
+  calClose('pick');
+}
+function calRender(first){
+  var m=calMonth(), floorD=calFloor(calKey), floor=floorD?dayKey(floorD):null;
+  var sel=calVal(calKey), selK=sel?dayKey(sel):null, todayK=dayKey(new Date());
+  var f1=new Date(m.getFullYear(),m.getMonth(),1);
+  var prevLast=new Date(m.getFullYear(),m.getMonth(),0);
+  // Paging into a month with nothing selectable in it is a dead end, so back is closed off there.
+  var canBack=floor===null||dayKey(prevLast)>=floor;
+
+  var h='<div class="cal-head">'+
+    '<button type="button" class="cal-nav" aria-label="Previous month"'+(canBack?'':' disabled')+' onclick="calNav(-1)">'+
+      '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform:rotate(90deg)"><path d="M6 9.5l6 6 6-6"/></svg>'+
+    '</button>'+
+    '<span class="cal-m">'+esc(m.toLocaleDateString('en-GB',{month:'long',year:'numeric'}))+'</span>'+
+    '<button type="button" class="cal-nav" aria-label="Next month" onclick="calNav(1)">'+
+      '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform:rotate(-90deg)"><path d="M6 9.5l6 6 6-6"/></svg>'+
+    '</button></div><div class="cal-wk">';
+  for(var w=0;w<7;w++) h+='<span>'+CAL_WK[w]+'</span>';
+  h+='</div><div class="cal-grid" id="cal-grid">';
+
+  // 42 cells, always. Back up to the Sunday of the week holding the 1st, then 42 consecutive days.
+  var autoIso=null, firstInMonth=null, firstAny=null;
+  var cells=[];
+  for(var i=0;i<42;i++){
+    var d=new Date(f1.getFullYear(),f1.getMonth(),1-f1.getDay()+i);
+    var k=dayKey(d), off=floor!==null&&k<floor, out=d.getMonth()!==m.getMonth();
+    cells.push({d:d,k:k,off:off,out:out});
+    if(!off){
+      if(firstAny===null) firstAny=isoOf(d);
+      if(!out && firstInMonth===null) firstInMonth=isoOf(d);
+    }
+  }
+  // Which cell takes focus: the selected day, else today, else the first selectable day OF THE
+  // DISPLAYED MONTH - not simply the grid's first, which usually belongs to the previous month, and
+  // paging forward to September to land on 30 August is not where Next promised to take you.
+  for(var j=0;j<42;j++){
+    if(selK!==null&&cells[j].k===selK&&!cells[j].off){ autoIso=isoOf(cells[j].d); break; }
+  }
+  if(autoIso===null) for(var j2=0;j2<42;j2++){
+    if(cells[j2].k===todayK&&!cells[j2].off&&!cells[j2].out){ autoIso=isoOf(cells[j2].d); break; }
+  }
+  if(autoIso===null) autoIso=firstInMonth||firstAny;
+
+  for(var c=0;c<42;c++){
+    var x=cells[c], iso=isoOf(x.d), cls='cal-d';
+    // one branch wins, in this order: selected, disabled, outside, today, ordinary
+    if(selK!==null&&x.k===selK) cls+=' on';
+    else if(x.off) cls+='';
+    else if(x.out) cls+=' out';
+    else if(x.k===todayK) cls+=' today';
+    h+='<button type="button" class="'+cls+'"'+(x.off?' disabled':'')+
+       (x.k===todayK?' data-today="y"':'')+(iso===autoIso?' data-auto':'')+
+       (selK!==null&&x.k===selK?' aria-current="date"':'')+
+       ' aria-label="'+esc(calFmt(x.d))+'" onclick="calPick(\''+iso+'\')">'+x.d.getDate()+'</button>';
+  }
+  h+='</div>';
+  calEl.innerHTML=h;
+  calEl.querySelector('#cal-grid').addEventListener('keydown',calKeys);
+  if(first){ calPlace(); var a=calEl.querySelector('.cal-d[data-auto]'); if(a) a.focus(); }
+}
+// Arrows rove the grid. Tab is deliberately not trapped: the panel is a child of <body>, so Tab
+// leaves for the next form field - which is why the arrows have to exist at all.
+function calKeys(ev){
+  var step=ev.key==='ArrowRight'?1:ev.key==='ArrowLeft'?-1:ev.key==='ArrowDown'?7:ev.key==='ArrowUp'?-7:0;
+  if(!step) return;
+  ev.preventDefault();
+  var days=Array.prototype.slice.call(calEl.querySelectorAll('.cal-d'));
+  var i=days.indexOf(document.activeElement);
+  if(i<0) return;
+  // step once, then walk one cell at a time past any disabled ones: the past days at the start of a
+  // floor month would otherwise be a wall you cannot arrow through.
+  for(var n=i+step;n>=0&&n<days.length;n+=(step>0?1:-1)){
+    if(!days[n].disabled){ days[n].focus(); return; }
+  }
+}
+// Measure, place, THEN reveal - all in one frame. A panel revealed before it is placed plays the
+// first frames of its entry animation in the wrong corner.
+function calPlace(){
+  if(!calEl||!calKey) return;
+  var t=document.getElementById('t-'+calKey);
+  if(!t) return;
+  var GAP=6, M=8;
+  var r=t.getBoundingClientRect(), h=calEl.offsetHeight, w=calEl.offsetWidth;
+  // flip up ONLY if up actually fits, or a tall calendar in a short window flips and is clipped by
+  // the top instead of the bottom
+  var above=(window.innerHeight-r.bottom-GAP<h)&&(r.top-GAP>h);
+  var raw=CAL_F[calKey].align==='right'?(r.right-w):r.left;
+  // clamp both axes: a fixed element off the viewport is unreachable, not merely awkward
+  calEl.style.left=Math.min(Math.max(M,raw),Math.max(M,window.innerWidth-w-M))+'px';
+  calEl.style.top=(above?(r.top-GAP-h):(r.bottom+GAP))+'px';
+  calEl.style.visibility='visible';
+}
+// capture:true - the scroll that matters is usually an ancestor's (the dialog body), and scroll
+// does not bubble. It repositions rather than closing.
+window.addEventListener('scroll',function(){ if(calEl) calPlace() },true);
+window.addEventListener('resize',function(){ if(calEl) calPlace() });
+document.addEventListener('pointerdown',function(ev){
+  if(!calEl) return;
+  var t=document.getElementById('t-'+calKey);
+  if(calEl.contains(ev.target)||(t&&t.contains(ev.target))) return;
+  calClose('outside');   // focus is NOT pulled back: they just clicked something else
+});
+document.addEventListener('keydown',function(ev){ if(calEl&&ev.key==='Escape'){ ev.stopPropagation(); calClose('escape'); } },true);
 
 // ---- BRAND REVIEW GATE (2026-08-26) ------------------------------------------------------------
 // A brand that has registered but not yet been approved sees the review screen INSTEAD of the
