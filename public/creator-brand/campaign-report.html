@@ -113,7 +113,6 @@ a:hover{text-decoration:underline}
    (where it copies the full id). Muted, tabular, deliberately quieter than the status chips:
    it identifies, it doesn't announce. */
 .cid{display:inline-block;font-size:10.5px;font-weight:600;letter-spacing:.02em;color:var(--ink-muted);background:#EEF1F6;border-radius:var(--r-card);padding:1px 7px;margin-left:8px;vertical-align:2px;white-space:nowrap}
-.doneid{font-size:12px;color:rgba(255,255,255,.65);margin-top:10px}
 .colhead{display:grid;grid-template-columns:minmax(230px,1.4fr) 1fr 130px 120px 110px;gap:18px;padding:0 20px 8px;font-size:10px;font-weight:600;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.08em}
 .fillcell .bar{height:8px;border-radius:9999px;background:var(--iris-wash);overflow:hidden;margin-bottom:5px}
 .fillcell .bar i{display:block;height:100%;background:var(--gradient-r);border-radius:9999px}
@@ -275,8 +274,12 @@ tr:last-child td{border-bottom:none}
 .drop .dtxt b{display:block;color:var(--ink-heading);font-weight:600;font-size:13px}
 
 /* the campaign id, named. It is the handle a support or settlement conversation reaches for, and
-   on a success screen with no label it was eight hex characters explaining nothing. */
-.doneid{display:inline-flex;align-items:center;gap:7px;margin-top:20px;padding:6px 12px;
+   on a success screen with no label it was eight hex characters explaining nothing.
+   FLEX + fit-content + auto MARGINS, not inline-flex. It was inline-flex for one commit and shared
+   a line with the View campaign button, which .dsuccess's text-align:center then centred as a PAIR
+   - a reference chip sitting where a secondary action would be. An inline box cannot take a line of
+   its own; a block-level flex box narrowed to its content can, and still centres. */
+.doneid{display:flex;width:fit-content;align-items:center;gap:7px;margin:18px auto 0;padding:6px 12px;
   border-radius:var(--r-pill);background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
   font-size:12px;color:rgba(255,255,255,.85)}
 .doneid .dlab{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.55)}
@@ -362,7 +365,7 @@ tr:last-child td{border-bottom:none}
 .dsuccess h2{font-family:var(--head);font-size:24px;font-weight:700;color:#fff;margin-top:18px}
 .dsuccess p{max-width:42ch;margin:10px auto 0;font-size:14px;color:rgba(255,255,255,.75);line-height:1.6}
 .dsuccess p b{color:#fff}
-.dsuccess .wpill{display:inline-block;margin-top:26px;min-width:240px;padding:13px 26px;border-radius:var(--r-pill);background:#fff;color:var(--ink-display);font-size:14px;font-weight:600;cursor:pointer;border:none}
+.dsuccess .wpill{display:inline-block;margin-top:22px;min-width:240px;padding:13px 26px;border-radius:var(--r-pill);background:#fff;color:var(--ink-display);font-size:14px;font-weight:600;cursor:pointer;border:none}
 .dsuccess .quiet{display:block;margin:14px auto 0;background:none;border:none;color:rgba(255,255,255,.7);font-size:13px;font-weight:500;cursor:pointer}
 .dsuccess .quiet:hover{color:#fff}
 
