@@ -70,6 +70,14 @@ const ACTIVE = [
     name: 'Partner website',
     desc: 'The full partner side: an AI-worker homepage ("The AI You Own"), sign in, a 5-step application, a returning-partner dashboard with cash-out, and logout — all in its own dark, futuristic design language. Two versions under review: this is A, and ?v=b opens Version B, the same site with the word "program" gone (the month is the unit) — flip either way from the gear, bottom-left. Design-only, same convention as every other page here.',
   },
+  {
+    // THE onBlue FORK (Appy, 2026-09-08). Its own card and not a line on the Partner website card,
+    // because unlike Versions A/B/C — which are one route with a query — this is a second route and
+    // a second brand. Two entries is the honest shape when there are genuinely two sites.
+    href: '/onblue',
+    name: 'Partner website — onBlue',
+    desc: 'The Partner website under the new onBlue brand: the wordmark replaces the BlueAI lockup (no symbol) and every mention of the product reads onBlue. A complete duplicate otherwise — same hero, application, dashboard, legal page, dialogs and A/B/C versions, and the same ?theme= switch — so the two can be compared screen for screen.',
+  },
 ]
 
 // MAINTAINED — not where new work happens, but updated from time to time as the real product
