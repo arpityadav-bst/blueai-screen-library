@@ -1524,16 +1524,102 @@ body.crx-light .crx {
 @keyframes crx-step-back { from { opacity: 0; transform: translateX(-28px); } to { opacity: 1; transform: none; } }
 .crx .crx-step-fwd { animation: crx-step-fwd 0.36s cubic-bezier(0.22, 1, 0.36, 1) both; }
 .crx .crx-step-back { animation: crx-step-back 0.36s cubic-bezier(0.22, 1, 0.36, 1) both; }
-/* the expectation rows arrive one after another (delays set inline per row). Same curve as the
-   laptop's crx-emerge, but translating: that keyframe animates margin-top for a stacking list and
-   would make this one jump. */
-@keyframes crx-xp-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
-.crx .crx-xp-row { animation: crx-xp-in 0.55s cubic-bezier(0.25, 0.8, 0.35, 1) both; }
+/* ---- LEVEL 1'S CAROUSEL (Expectations.tsx + flow/expectationSlides.tsx, 2026-09-08) ----
+   Three staggered rows became three timed cards (Appy: "three cards like a carousal, timed
+   carousal... illustration at the top... then a title, then a subtitle, then three dots"). The old
+   .crx-xp-row stagger went with the rows it staggered.
+
+   THE STAGE IS ONE GRID CELL WITH ALL THREE SLIDES IN IT. That is the whole trick and the reason
+   there is no min-height anywhere below: the cell is as tall as the tallest slide, so the dialog is
+   sized once at mount and never resizes as it advances. A min-height would have to be guessed, and
+   would go stale the first time the copy changed. */
+.crx .crx-xp-stage { display: grid; }
+.crx .crx-xp-slide {
+  grid-area: 1 / 1;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(10px);
+  /* visibility, not display: display:none would collapse the slide out of the grid and the cell
+     would shrink to whichever one is showing - the jump this layout exists to prevent. It is here
+     at all so the resting slides leave the accessibility tree; the 0s delay is what holds them
+     visible through their own fade-out. */
+  visibility: hidden;
+  transition: opacity 0.42s ease, transform 0.42s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s linear 0.42s;
+}
+.crx .crx-xp-slide.on { opacity: 1; transform: none; visibility: visible; transition-delay: 0s, 0s, 0s; }
+
+/* The icon plate. Its fill and ink are the dialog SKIN's wash and accent, set inline - this card
+   paints outside the .crx token kit (see signinSkin.ts), so a var() here would resolve to nothing. */
+.crx .crx-xp-icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 92px; height: 92px; border-radius: 26px;
+}
+
+/* THE DRAWINGS PLAY ONCE, ON ARRIVAL, and then rest - started by the .on class rather than on
+   mount, so nothing animates on a slide nobody is looking at. Every shape that draws itself carries
+   pathLength=1, so 1 -> 0 is the whole dash animation regardless of the shape's real perimeter.
+   The 0.18s delay lets the card land before its illustration starts; both at once reads as one
+   blurry event rather than an arrival followed by a demonstration. */
+.crx .crx-xp-draw { stroke-dasharray: 1; stroke-dashoffset: 1; }
+.crx .crx-xp-slide.on .crx-xp-draw { animation: crx-xp-draw 0.72s ease-out 0.1s forwards; }
+@keyframes crx-xp-draw { to { stroke-dashoffset: 0; } }
+
+/* the arrow travels down INTO the monitor - it starts above where it ends, and lands */
+.crx .crx-xp-drop { opacity: 0; }
+.crx .crx-xp-slide.on .crx-xp-drop { animation: crx-xp-drop 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.42s forwards; }
+@keyframes crx-xp-drop {
+  from { opacity: 0; transform: translateY(-12px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* the tick draws itself across the post, after the post exists */
+.crx .crx-xp-tick { stroke-dasharray: 1; stroke-dashoffset: 1; }
+.crx .crx-xp-slide.on .crx-xp-tick { animation: crx-xp-draw 0.46s cubic-bezier(0.4, 0, 0.2, 1) 0.5s forwards; }
+
+/* the coin falls into the wallet, and overshoots slightly on the way in - a coin that decelerates
+   to a stop reads as being placed, not dropped */
+.crx .crx-xp-coin { opacity: 0; }
+.crx .crx-xp-slide.on .crx-xp-coin { animation: crx-xp-coin 0.66s cubic-bezier(0.34, 1.4, 0.64, 1) 0.4s forwards; }
+@keyframes crx-xp-coin {
+  from { opacity: 0; transform: translateY(-16px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* THE DOTS ARE CONTROLS. The previous version of this screen had two inert pips and they were
+   deleted for exactly that reason ("what is the meaning of the 2 dots", 2026-09-04), so these are
+   real buttons with a real hit area: the visible dot is 7px, the button around it is 20px tall.
+   The active one stretches to a pill rather than only changing colour - position in a set of three
+   should survive being seen in greyscale or at a glance. Colours are inline from the SKIN. */
+.crx .crx-xp-dots { display: flex; align-items: center; justify-content: center; gap: 7px; }
+.crx .crx-xp-dot {
+  width: 7px; height: 7px; padding: 0; border: none; border-radius: 128px; cursor: pointer;
+  transition: width 0.32s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.32s ease, opacity 0.2s ease;
+}
+.crx .crx-xp-dot:hover { opacity: 0.75; }
+.crx .crx-xp-dot.on { width: 20px; }
+.crx .crx-xp-dot:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 3px; }
+
+/* THE GRID, at dialog scale (BandGrid, idPrefix crxXp). Fainter than the band's: the band is a
+   full-width closer you scroll past and the lines are the surface, here they sit behind 40 words
+   of copy that has to stay first. Dark card by default, white card under crx-light - the two
+   values are the same lines against opposite grounds. */
+.crx .crx-xp-grid { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; color: rgba(255, 255, 255, 0.28); }
+body.crx-light .crx .crx-xp-grid { color: rgba(43, 53, 133, 0.34); }
+
 @media (prefers-reduced-motion: reduce) {
-  /* the level change still has to be perceptible, so it keeps a plain fade; the row stagger is
-     decoration and goes entirely */
+  /* the level change still has to be perceptible, so it keeps a plain fade. Everything else here is
+     a demonstration of something the words already say, so all of it goes: the slide arrives without
+     travelling, and each drawing is simply present. The illustration is information; its arrival is
+     not. */
   .crx .crx-step-fwd, .crx .crx-step-back { animation: crx-step-fade 0.2s ease both; }
-  .crx .crx-xp-row { animation: none; }
+  .crx .crx-xp-slide { transform: none; transition: opacity 0.2s ease, visibility 0s linear 0.2s; }
+  .crx .crx-xp-draw, .crx .crx-xp-tick { stroke-dashoffset: 0; }
+  .crx .crx-xp-drop, .crx .crx-xp-coin { opacity: 1; }
+  .crx .crx-xp-slide.on .crx-xp-draw,
+  .crx .crx-xp-slide.on .crx-xp-tick,
+  .crx .crx-xp-slide.on .crx-xp-drop,
+  .crx .crx-xp-slide.on .crx-xp-coin { animation: none; }
+  .crx .crx-xp-dot { transition: none; }
 }
 @keyframes crx-step-fade { from { opacity: 0; } to { opacity: 1; } }
 

@@ -1,38 +1,29 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useCrx } from './CrxState'
 import { CARD_FONT, CARD_WIDTH, CTA, CTA_SHADOW, RING, SKIN } from './signinSkin'
-import { MonitorIcon, WalletIcon } from './apply/introIcons'
+import BandGrid from '../BandGrid'
+import { PHONE_SLIDE, SLIDES, type Slide } from './expectationSlides'
 
-// LEVEL 1 OF THE SIGN-IN DIALOG (Appy, 2026-09-02: "sign up becomes a 2 level thing... where we
-// set the right expectations for the user"). It shows before the sign-in card, to applicants only:
-// the "Sign in" door for returning accounts skips straight past it.
+// LEVEL 1 OF THE SIGN-IN DIALOG — the three things you are agreeing to, before anyone types an
+// email. Shown to applicants only; the "Sign in" door for returning accounts skips it.
 //
-// WHAT THIS IS FOR, AND WHAT IT IS NOT. The homepage's four cards (Apply, Get accepted, Deploy it,
-// Collect) explain what HAPPENS. This has a different job: what you are AGREEING TO - the three
-// constraints people misread and then drop out over, pulled to the front before anyone types an
-// email. So it is not the four cards again in a popup, and it is not a form either: the application
-// already asks the qualifying questions, and ticking them here too would be friction dressed as
-// diligence. Three facts, then one "got it".
+// WHAT THIS IS FOR, AND WHAT IT IS NOT. The homepage's four cards explain what HAPPENS. This has a
+// different job: what you are AGREEING TO — the three constraints people misread and then drop out
+// over. It is not a form either: the application already asks the qualifying questions, and ticking
+// them here too would be friction dressed as diligence.
 //
-// EVERY FACT IS SOURCED from copy already on the site - the 20 days and the $30 via PayPal from the
-// application's intro step, "you approve each campaign" from card 04, the waitlist from the
-// confirmation. Nothing new is claimed here. And the copy carries NO UNIT NOUN - not "program", not
-// "offer" - so it is correct under Versions A, B and C without a variant branch. "Windows" is not
-// said because the site never says it; "PC" is what the desk caption and the application say.
+// A CAROUSEL, NOT A LIST (Appy, 2026-09-08: "three cards... timed carousel"). Three points stacked
+// as rows are read as one block and skimmed as one; one at a time, each with its own illustration,
+// they are read as three. The cost is that a reader must wait or click for points two and three,
+// which is why the dwell is generous, the dots are real controls, and the CTA never depends on
+// having seen all three — the acknowledgement stays passive.
+//
+// THE PARENT OWNS EVERYTHING THAT DOES NOT CHANGE: the close control, the grid, the dots, the CTA
+// and the sign-in line all sit outside the moving part. Only the card slides.
 
-type Platform = 'phone' | 'desktop' | null
-
-/** A play glyph in the introIcons stroke style - a YouTube-account row needs one and the set had none. */
-function PlayIcon({ size = 18 }: { size?: number }) {
-  return (
-    <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <rect x="3" y="5" width="18" height="14" rx="3.5" />
-      <path d="M10 9.2v5.6l4.6-2.8z" fill="currentColor" stroke="none" />
-    </svg>
-  )
-}
+const DWELL = 5000
 
 export default function Expectations({
   onContinue,
@@ -41,7 +32,7 @@ export default function Expectations({
   enter,
 }: {
   onContinue: () => void
-  /** "Already have an account? Sign in" - jumps to level 2 as a returning account. */
+  /** "Already have an account? Sign in" — jumps to level 2 as a returning account. */
   onSignIn: () => void
   onClose: () => void
   /** 'back' when reached from level 2's Back link, so it slides in from the left. */
@@ -50,55 +41,58 @@ export default function Expectations({
   const { theme } = useCrx()
   const skin = SKIN[theme]
 
-  // THE FIRST ROW KNOWS WHAT YOU ARE ON. Read after mount (never during render - the server cannot
-  // know, and a mismatch is a hydration error), and only for the one distinction that is
-  // unambiguous: a phone or tablet is not a PC. A hint, never a gate - the sentence changes, the
-  // path does not. Nothing is said about Macs, because the site itself only ever says "PC".
-  const [platform, setPlatform] = useState<Platform>(null)
+  const [i, setI] = useState(0)
+  // Set once a dot is clicked. A reader who took the wheel does not get it taken back — an
+  // auto-advance that resumes after a manual choice moves the card out from under them.
+  const [held, setHeld] = useState(false)
+  const [paused, setPaused] = useState(false)
+  const [phone, setPhone] = useState(false)
+  const reduced = useRef(false)
+
   useEffect(() => {
-    const ua = navigator.userAgent
-    setPlatform(/Android|iPhone|iPad|iPod|Mobile/i.test(ua) ? 'phone' : 'desktop')
+    reduced.current = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    setPhone(/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent))
   }, [])
 
-  const rows = [
-    {
-      icon: <MonitorIcon size={18} />,
-      fact:
-        platform === 'phone'
-          ? 'It lives on a PC. You are on a phone right now.'
-          : 'It lives on your PC.',
-      detail:
-        platform === 'phone'
-          ? 'That is fine for applying. onBlue itself runs on a PC, and you will set it up there.'
-          : 'You install onBlue and keep it running at least 20 days a month. A few minutes of your day.',
-    },
-    {
-      icon: <PlayIcon />,
-      // PLATFORM, NOT YOUTUBE (Appy, 2026-09-08). The row's job is "the work happens on YOUR
-      // account, and you see it first" - naming one platform narrows a promise that is about
-      // ownership and consent, not about which app. It also dates: the site lists Instagram,
-      // TikTok, X and Reddit as soon, and this line would need editing the day any of them ships.
-      fact: 'It works on your platform accounts.',
-      detail: 'You approve each campaign before your worker runs it.',
-    },
-    {
-      icon: <WalletIcon size={18} />,
-      fact: 'You get $30 a month, via PayPal.',
-      detail: 'Once your application is approved. There is a waitlist, so it can take a little time.',
-    },
-  ]
+  // AUTO-ADVANCE STOPS AT THE LAST SLIDE rather than looping. This is a thing to read once, not a
+  // billboard: cycling back to point one implies there is more to see and quietly asks the reader
+  // to keep watching instead of pressing the button.
+  useEffect(() => {
+    if (held || paused || reduced.current || i >= SLIDES.length - 1) return
+    const t = window.setTimeout(() => setI((n) => n + 1), DWELL)
+    return () => window.clearTimeout(t)
+  }, [i, held, paused])
+
+  const go = useCallback((n: number) => {
+    setHeld(true)
+    setI(n)
+  }, [])
+
+  const slides: Slide[] = phone ? [PHONE_SLIDE, SLIDES[1], SLIDES[2]] : [...SLIDES]
 
   return (
     <div
       style={{ background: skin.card, color: skin.ink, border: `0.8px solid ${RING}`, fontFamily: CARD_FONT }}
-      className={`relative flex w-full ${CARD_WIDTH} flex-col overflow-hidden rounded-[12px] ${enter === 'back' ? 'crx-step-back' : ''}`}
+      className={`crx-xp relative flex w-full ${CARD_WIDTH} flex-col overflow-hidden rounded-[12px] ${enter === 'back' ? 'crx-step-back' : ''}`}
+      // Pause while the pointer is over the card or focus is inside it: someone reading point one
+      // slowly, or tabbing to a dot, should not have it replaced mid-sentence.
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      onFocusCapture={() => setPaused(true)}
+      onBlurCapture={() => setPaused(false)}
     >
-      {/* Same dismiss as level 2, same place - the two levels have to feel like one card. */}
+      {/* THE GRID, top and bottom, the closer's own (Appy, 2026-09-08). Same fans, no shine — the
+          travelling wave belongs to a full-width band you scroll past; behind 40 words of dialog
+          copy it competes with the thing it frames. Its own idPrefix because the closer's grid is
+          on the page behind this one, and two grids sharing mask ids break as soon as their sizes
+          differ. Colour comes from .crx-xp-grid in onblue.css. */}
+      <BandGrid idPrefix="crxXp" className="crx-xp-grid" />
+
       <button
         type="button"
         onClick={onClose}
         aria-label="Close"
-        className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full transition-colors"
+        className="absolute right-3 top-3 z-20 flex h-8 w-8 items-center justify-center rounded-full transition-colors"
         style={{ color: skin.ink40 }}
         onMouseEnter={(e) => { e.currentTarget.style.color = skin.ink }}
         onMouseLeave={(e) => { e.currentTarget.style.color = skin.ink40 }}
@@ -108,42 +102,49 @@ export default function Expectations({
         </svg>
       </button>
 
-      {/* 56 TOP, not level 2's 40. The close control sits at top-3 and is 32px tall, so its bottom
-          edge is at 44 - with a heading above them the rows never came near it, and without one the
-          first row's text would run under it on the right. 56 clears it by 12 and reads as the
-          generous top edge this card was asked for. Sides, bottom and the block gap stay level 2's. */}
-      <div className="flex flex-col gap-5 px-7 pb-7 pt-14">
-        {/* NO HEADER AT ALL (Appy, 2026-09-08). This carried an eyebrow, a heading and a sub -
-            "Before you start", "Three things, then you're in.", "Takes ten seconds." - plus a
-            two-dot step indicator, all removed across this pass and the one before it. Every one of
-            them described the screen instead of being it: three facts and a button need no
-            announcement, and a card that spends its first three lines saying it will be quick is
-            not being quick.
-            THE CARD IS NOT UNNAMED. Modal.tsx sets aria-label="Before you start" on the dialog, so
-            the accessible name survives the visible heading - a screen reader still hears what this
-            is, which is the one thing the deleted copy was doing that mattered. */}
-        {/* STAGGERED ARRIVAL. Each row lands 90ms after the one above it, on the same easing the
-            laptop's task rows use (crx-emerge's curve) but translating rather than growing - that
-            keyframe animates margin-top for a stacking list, which would make this one jump. Three
-            rows arriving in sequence read as being told three things, not shown a block. */}
-        <ul className="flex flex-col gap-4">
-          {rows.map((r, i) => (
-            <li key={r.fact} className="crx-xp-row flex items-start gap-3.5" style={{ animationDelay: `${120 + i * 90}ms` }}>
-              <span
-                className="mt-0.5 flex h-8 w-8 flex-none items-center justify-center rounded-[8px]"
-                style={{ background: skin.wash, color: skin.accent }}
-              >
-                {r.icon}
-              </span>
-              <p className="text-[14px] leading-[21px]" style={{ color: skin.ink70 }}>
-                <b className="font-semibold" style={{ color: skin.ink }}>{r.fact}</b> {r.detail}
-              </p>
-            </li>
-          ))}
-        </ul>
+      <div className="relative z-10 flex flex-col gap-5 px-7 pb-7 pt-14">
+        {/* THE SLIDES ARE STACKED IN ONE GRID CELL, all three always rendered. That is what keeps
+            the card from resizing as it advances: the container is as tall as the TALLEST slide, so
+            no magic min-height has to be guessed and none goes stale when the copy changes.
+            aria-live announces the change for a screen reader, since the visible swap is silent. */}
+        <div className="crx-xp-stage" aria-live="polite">
+          {slides.map((s, n) => {
+            const Art = s.art
+            const on = n === i
+            return (
+              <div key={s.key} className={`crx-xp-slide ${on ? 'on' : ''}`} aria-hidden={!on}>
+                <span className="crx-xp-icon" style={{ background: skin.wash, color: skin.accent }}>
+                  <Art />
+                </span>
+                <h3 className="mt-4 text-[17px] font-semibold leading-[24px]">{s.title}</h3>
+                <p className="mt-1.5 text-[14px] leading-[21px]" style={{ color: skin.ink70 }}>{s.body}</p>
+              </div>
+            )
+          })}
+        </div>
 
-        {/* THE PAGE'S PRIMARY - the same button as level 2's Continue and as the hero's Get
-            Access. One primary action, one appearance, on the page or in a dialog. */}
+        {/* The dots are CONTROLS, not decoration — they were two inert pips on the version before
+            this and got deleted for exactly that reason. Real buttons, real labels, and clicking
+            one takes the wheel for good. */}
+        {/* A group of plain buttons, NOT a tablist: role="tab" is a promise of a tabpanel to point
+            at, and the slides are one aria-live region rather than three panels. A half-applied tab
+            pattern navigates worse than no pattern. */}
+        <div className="crx-xp-dots" role="group" aria-label="Which point is showing">
+          {slides.map((s, n) => (
+            <button
+              key={s.key}
+              type="button"
+              aria-current={n === i}
+              aria-label={`Point ${n + 1} of ${slides.length}`}
+              onClick={() => go(n)}
+              className={`crx-xp-dot ${n === i ? 'on' : ''}`}
+              style={{ background: n === i ? skin.accent : skin.rule }}
+            />
+          ))}
+        </div>
+
+        {/* NEVER GATED ON HAVING SEEN ALL THREE. The acknowledgement is passive by design, and a
+            button that waits for a carousel is a button that punishes you for reading fast. */}
         <button
           type="button"
           onClick={onContinue}
@@ -153,9 +154,6 @@ export default function Expectations({
           Got it, continue
         </button>
 
-        {/* The returning-account door, here too: a reader who already has an account should not
-            have to read what they are agreeing to a second time. Same semantics as the hero's door -
-            the journey becomes returningUser before level 2 opens. */}
         <p className="text-center text-[12px] leading-[18px]" style={{ color: skin.ink40 }}>
           Already have an account?{' '}
           <button type="button" onClick={onSignIn} className="underline underline-offset-2" style={{ color: skin.ink70 }}>
