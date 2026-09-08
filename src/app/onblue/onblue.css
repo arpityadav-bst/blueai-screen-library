@@ -2637,6 +2637,20 @@ body.crx-lock { overflow: hidden; }
 /* the ruling was a faint indigo on a light field; on the dark band it has to be white and faint */
 .crx .crx-band-grid { color: rgba(255, 255, 255, 0.5); }
 
+/* THE BUTTON INSIDE THE BAND IS THE ACCENT, not --primary (Appy, 2026-09-08). This is the one
+   place the two-accent split breaks down: --primary is "what you press", but the band's own ground
+   IS --primary, so the closer's CTA was a charcoal pill on a charcoal panel with nothing but a
+   shadow to say it was a button - and a shadow does almost no work on a dark ground.
+   The rule is really about CONTRAST, not about the band: a --primary button needs a light ground
+   under it, and the accent is what the page has for the case where there isn't one. Scoped to
+   .crx-band so it covers the closer and the two flow confirmations (.crx-band.dark) together,
+   which are the only dark grounds on the page.
+   The shadow goes too - ink at 0.28 is invisible here - and is replaced by the button's own colour
+   thrown down, which is what reads as lift on a dark panel. */
+.crx .crx-band .btn { background: var(--accent); box-shadow: 0 10px 30px -12px rgba(47, 109, 255, 0.75); }
+.crx .crx-band .btn:hover { box-shadow: 0 18px 40px -14px rgba(47, 109, 255, 0.85); }
+.crx .crx-band .btn:active { box-shadow: 0 6px 18px -10px rgba(47, 109, 255, 0.7); }
+
 /* THE SLEEP STILL keeps its image untouched (designer: "no need to do anything here"), but its
    FRAME does not survive: a 90px black drop and a white inset hairline are both devices for lifting
    a near-black render off a near-black sky. On white the render is the darkest thing in view and
