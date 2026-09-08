@@ -67,8 +67,13 @@ a:hover{text-decoration:underline}
 .pagehead h1{font-family:var(--head);font-size:26px;font-weight:700;color:var(--ink-display);letter-spacing:-.02em;line-height:1.15}
 .pagehead .right{margin-left:auto;display:flex;gap:10px}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 18px;border-radius:var(--r-pill);font-size:13px;font-weight:600;cursor:pointer;border:0.5px solid var(--stroke-warm);background:var(--canvas);color:var(--ink-heading);font-family:var(--sans);transition:transform .15s ease}
-.btn:hover{transform:translateY(-1px)}
-.btn.primary{background:var(--gradient);border:none;color:#fff;box-shadow:0 4px 14px rgba(95,70,255,.25)}
+.btn:hover{transform:translateY(-1px);border-color:var(--stroke-warm)}
+.btn:active{transform:translateY(0)}
+.btn:focus-visible{outline:2px solid var(--iris);outline-offset:2px}
+.btn.primary{background:var(--gradient);border:none;color:#fff;box-shadow:0 4px 14px rgba(95,70,255,.25);
+  transition:transform .15s ease,box-shadow .15s ease}
+.btn.primary:hover{box-shadow:0 10px 26px rgba(95,70,255,.34)}
+.btn.primary:active{box-shadow:0 3px 10px rgba(95,70,255,.28)}
 .back{font-size:13px;font-weight:600;color:var(--ink-muted);cursor:pointer}
 .back:hover{color:var(--ink-heading)}
 
@@ -171,40 +176,107 @@ tr:last-child td{border-bottom:none}
 /* create-campaign dialog (in-page port of the landing page's React dialog, same DS) */
 .scrim{position:fixed;inset:0;z-index:100;background:rgba(8,10,31,.45);display:none;align-items:flex-start;justify-content:center;overflow-y:auto;padding:40px 16px}
 .scrim.on{display:flex}
-.dlg{position:relative;background:var(--canvas);border-radius:18px;width:100%;max-width:620px;box-shadow:0 24px 64px rgba(8,10,31,.25);margin:auto}
+/* WHY THIS LOOKED BARE, and it was not the absence of a style (2026-09-09). Four things, all
+   craft: fields were white-on-white bounded by a 0.5px hairline that half-rounds away to nothing on
+   a 1x display, so they read as bare rectangles; focus changed a border colour and nothing else;
+   the labels were lighter than the hints under them; and two controls were raw OS chrome. Adding
+   glassmorphism or neumorphism over that - which is what a style database offers - would have been
+   a costume on top of the same problems, and would have forked this page off the marketing DS it
+   shares with the rest of the product. Everything below is the same palette, spaced and weighted
+   properly. */
+.dlg{position:relative;background:var(--canvas);border-radius:20px;width:100%;max-width:620px;
+  /* three shadows reading as one: a hairline edge so the panel has a boundary on a light scrim, a
+     close contact shadow, and a wide soft one for the lift. One mid shadow can only do one. */
+  box-shadow:0 0 0 1px rgba(8,10,31,.05), 0 2px 8px rgba(8,10,31,.06), 0 32px 64px -16px rgba(8,10,31,.28);
+  margin:auto}
 .dlg.dark{background:linear-gradient(135deg,#241a5e 0%,#3d2b96 55%,#4a35b4 100%);color:#fff}
-.dclose{position:absolute;top:16px;right:16px;width:36px;height:36px;border:none;background:none;font-size:18px;color:var(--ink-muted);cursor:pointer;border-radius:var(--r-card)}
+.dclose{position:absolute;top:16px;right:16px;width:36px;height:36px;border:none;background:none;font-size:18px;color:var(--ink-soft);cursor:pointer;border-radius:var(--r-pill);
+  display:flex;align-items:center;justify-content:center;transition:background .15s ease,color .15s ease}
+.dclose:hover{background:var(--surface);color:var(--ink-display)}
+.dclose:focus-visible{outline:2px solid var(--iris);outline-offset:2px}
 .dlg.dark .dclose{color:rgba(255,255,255,.7)}
-.dhead{padding:24px 28px 18px;border-bottom:1px solid var(--divider)}
-.dhead h2{font-family:var(--head);font-size:20px;font-weight:700;color:var(--ink-display)}
-.dhead p{font-size:13px;color:var(--ink-muted);margin-top:4px}
-.dbody{padding:22px 28px 26px}
-.steprow{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:18px}
-.steprow h3{font-family:var(--head);font-size:17px;font-weight:700;color:var(--ink-display)}
-.prog{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-muted)}
-.prog .seg{width:26px;height:4px;border-radius:9999px;background:#E7EAF2;display:inline-block}
+.dhead{padding:26px 30px 20px;border-bottom:1px solid var(--divider)}
+.dhead h2{font-family:var(--head);font-size:21px;font-weight:700;letter-spacing:-.015em;color:var(--ink-display)}
+.dhead p{font-size:13px;color:var(--ink-muted);margin-top:5px;max-width:46ch}
+.dbody{padding:24px 30px 28px}
+.steprow{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:20px}
+.steprow h3{font-family:var(--head);font-size:16px;font-weight:700;letter-spacing:-.01em;color:var(--ink-display)}
+/* the counter goes mono and quiet, and the segments get a transition so advancing a step is a
+   movement rather than a repaint */
+.prog{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:600;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+.prog .seg{width:22px;height:3px;border-radius:9999px;background:#E7EAF2;display:inline-block;transition:background .25s ease}
 .prog .seg.on{background:var(--gradient-r)}
-.fld{display:block;margin-top:16px}
+.fld{display:block;margin-top:18px}
 .fld:first-child{margin-top:0}
-.flabel{display:block;font-size:12px;font-weight:500;color:var(--ink-muted)}
-.finput{width:100%;margin-top:6px;padding:12px 14px;font-size:14px;font-family:var(--sans);color:var(--ink-heading);background:var(--canvas);border:0.5px solid var(--stroke-warm);border-radius:var(--r-md);outline:none}
-.finput:focus{border-color:var(--iris-line)}
-.finput.err{border-color:var(--danger)}
-.ferr{display:none;margin-top:6px;font-size:11px;font-weight:500;color:var(--danger-ink)}
-.fhint{display:block;margin-top:6px;font-size:11px;color:var(--ink-soft)}
-.frow{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px;align-items:start}
+/* the label was LIGHTER than the hint below it, which inverts the two - a label names the thing
+   and a hint qualifies it, so the label has to win */
+.flabel{display:block;font-size:12.5px;font-weight:600;color:var(--ink-heading);letter-spacing:-.005em}
+/* A FIELD NEEDS A FILL. White on white bounded by a 0.5px hairline is not a field, it is a hairline
+   - and at 1x that hairline half-rounds away, which is most of why this read as unstyled. A tinted
+   ground plus a real 1px edge makes the input an object you can see before you click it, and the
+   focus state then has something to invert FROM: it turns white, takes the accent edge and a 3px
+   halo, so focus is three signals rather than one border-colour change nobody notices. */
+.finput{width:100%;margin-top:7px;padding:12px 14px;font-size:14px;font-family:var(--sans);
+  color:var(--ink-heading);background:var(--surface);border:1px solid var(--divider);
+  border-radius:var(--r-md);outline:none;
+  transition:background .15s ease,border-color .15s ease,box-shadow .15s ease}
+.finput::placeholder{color:var(--ink-soft)}
+.finput:hover{border-color:var(--stroke-warm)}
+.finput:focus{background:var(--canvas);border-color:var(--iris);box-shadow:0 0 0 3px rgba(var(--iris-rgb),.14)}
+.finput.err{border-color:var(--danger);background:rgba(239,68,68,.04)}
+.finput.err:focus{box-shadow:0 0 0 3px rgba(239,68,68,.14)}
+/* the error owns a row of its own with its own mark, so it is not mistaken for a hint */
+.ferr{display:none;margin-top:7px;font-size:11.5px;font-weight:500;color:var(--danger-ink)}
+.ferr::before{content:"!";display:inline-flex;align-items:center;justify-content:center;
+  width:13px;height:13px;margin-right:5px;border-radius:9999px;background:var(--danger);color:#fff;
+  font-size:9px;font-weight:700;vertical-align:-2px}
+.fhint{display:block;margin-top:7px;font-size:11.5px;color:var(--ink-soft);line-height:1.5}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px;align-items:start}
 .frow:first-child{margin-top:0}
 .frow .fld{margin-top:0}
 .chiprow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:8px}
-.selchip{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:var(--r-card);font-size:12px;font-weight:500;border:0.5px solid var(--divider);color:var(--ink-muted);cursor:pointer;user-select:none;background:var(--canvas)}
+/* chips are a hit target, so they get a real one: 34px tall, pill, and a hover that moves. They
+   were 26px with a 0.5px edge - the same hairline problem the fields had. */
+.selchip{display:inline-flex;align-items:center;gap:6px;min-height:34px;padding:7px 14px;border-radius:var(--r-pill);
+  font-size:12.5px;font-weight:500;border:1px solid var(--divider);color:var(--ink-muted);cursor:pointer;
+  user-select:none;background:var(--canvas);transition:border-color .15s ease,background .15s ease,color .15s ease}
+.selchip:hover{border-color:var(--stroke-warm);background:var(--surface)}
 .selchip.on{background:var(--iris-wash);border-color:var(--iris-line);color:var(--iris);font-weight:600}
+.selchip.on:hover{background:rgba(var(--iris-rgb),.11)}
 .selchip.fixed{background:var(--iris-wash);border-color:var(--iris-line);color:var(--ink-heading);font-weight:600;cursor:default}
+.selchip.fixed:hover{background:var(--iris-wash)}
 .moresoon{font-size:11px;color:var(--ink-soft)}
-.dbtns{display:flex;gap:10px;margin-top:24px}
+.dbtns{display:flex;gap:10px;margin-top:26px}
 .dbtns .btn{flex:1;padding:13px 18px;font-size:14px}
+/* Back takes its own width and the primary takes the rest: two equal halves said the two choices
+   were equally weighted, and they are not - one continues the task, the other undoes a step. */
+.dbtns .btn:not(.primary){flex:0 0 auto;min-width:96px}
 .moneywrap{position:relative;display:block;margin-top:6px}
 .moneywrap .cur{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--ink-soft);font-size:14px;line-height:1;pointer-events:none}
 .moneywrap .finput{margin-top:0;padding-left:30px}
+/* THE DROP ROW. <input type="file"> renders the OS's own "Choose Files / No file chosen" - grey
+   system button, system type, unstyleable - which is the same complaint as the date input and the
+   same answer: hide the control, keep it as the thing that actually opens the picker, and label it
+   ourselves. The real input stays in the DOM and stays focusable, so the keyboard path and the
+   form semantics are untouched; only the paint changes. */
+.drop{display:flex;align-items:center;gap:11px;margin-top:8px;padding:11px 13px;
+  border:1px dashed var(--stroke-warm);border-radius:var(--r-md);background:var(--surface);
+  cursor:pointer;transition:border-color .15s ease,background .15s ease}
+.drop:hover{border-color:var(--iris-line);background:rgba(var(--iris-rgb),.04)}
+.drop input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.drop:focus-within{border-color:var(--iris);box-shadow:0 0 0 3px rgba(var(--iris-rgb),.14)}
+.drop .dico{flex-shrink:0;width:30px;height:30px;border-radius:var(--r-card);background:var(--canvas);
+  border:1px solid var(--divider);display:flex;align-items:center;justify-content:center;color:var(--ink-soft)}
+.drop .dtxt{font-size:12.5px;color:var(--ink-muted);line-height:1.4}
+.drop .dtxt b{display:block;color:var(--ink-heading);font-weight:600;font-size:13px}
+
+/* the campaign id, named. It is the handle a support or settlement conversation reaches for, and
+   on a success screen with no label it was eight hex characters explaining nothing. */
+.doneid{display:inline-flex;align-items:center;gap:7px;margin-top:20px;padding:6px 12px;
+  border-radius:var(--r-pill);background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
+  font-size:12px;color:rgba(255,255,255,.85)}
+.doneid .dlab{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.55)}
+
 .dsuccess{padding:52px 40px;text-align:center}
 .dsuccess .mark{margin:0 auto;width:56px;height:56px;border-radius:9999px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;color:#fff;font-size:24px}
 .dsuccess h2{font-family:var(--head);font-size:24px;font-weight:700;color:#fff;margin-top:18px}
@@ -373,6 +445,11 @@ tr:last-child td{border-bottom:none}
 .bvtile { border: 0.8px solid var(--stroke-warm); border-radius: var(--r-md); overflow: hidden; background: #fff; }
 .bvthumb { aspect-ratio: 9 / 16; background: linear-gradient(160deg, #eef1f7, #dfe4ee);
   display: flex; align-items: center; justify-content: center; color: #a7adc0; font-size: 20px; }
+/* pending tiles: the same frame, drained - a dashed edge and no fill, so the empty state reads as
+   "this will hold something" rather than as three broken thumbnails */
+#rv-videos .bvtile{border-style:dashed;background:transparent}
+#rv-videos .bvthumb{background:var(--surface);color:#c3c8d6;font-size:16px}
+#rv-videos .bvcap b{color:var(--ink-soft);font-weight:600}
 .bvcap { padding: 8px 9px; font-size: 11px; line-height: 1.4; color: var(--ink-muted); }
 .bvcap b { display: block; color: var(--ink-display); font-weight: 600; font-size: 11.5px; }
 .cbp-row.on { background: #eef2ff; }
@@ -906,6 +983,21 @@ tr:last-child td{border-bottom:none}
       <div class="footnote">Nothing is charged while the campaign is in review.</div>
     </div>
 
+    <!-- THE SAME CARD, IN ITS EMPTY STATE, on the agency's own campaign. A place that only appears
+         once it has something in it is a place nobody knows to come back to; this is how they learn
+         where the videos will be while there are none. Brand-video campaigns only - written by
+         openReview, hidden for every other kind. -->
+    <div class="card" id="rv-videos" hidden>
+      <h2>Videos</h2>
+      <div class="hint">Our agent makes these, our team checks every one, and the approved ones appear here.</div>
+      <div class="bvgrid" style="margin-top:12px">
+        <div class="bvtile"><div class="bvthumb">&#8230;</div><div class="bvcap"><b>Not yet</b>Waiting on the brief check</div></div>
+        <div class="bvtile"><div class="bvthumb">&#8230;</div><div class="bvcap"><b>Not yet</b>Waiting on the brief check</div></div>
+        <div class="bvtile"><div class="bvthumb">&#8230;</div><div class="bvcap"><b>Not yet</b>Waiting on the brief check</div></div>
+      </div>
+      <div class="footnote">You will get an email when the first ones are ready to look at.</div>
+    </div>
+
   </div>
 
 </div>
@@ -1095,8 +1187,13 @@ tr:last-child td{border-bottom:none}
                  A link is what an agency has to hand when the reference is someone else's video; a
                  file is what they have when it is their own and unpublished. Neither covers both
                  cases, so neither one alone is the answer. -->
-            <span class="fhint">Or upload them &mdash; two or three is plenty.</span>
-            <input class="finput" id="f-brefsfile" type="file" accept="video/*,image/*" multiple style="padding:9px 11px">
+            <label class="drop" id="brefs-drop">
+              <span class="dico">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>
+              </span>
+              <span class="dtxt" id="brefs-label"><b>Upload instead</b>Two or three videos is plenty.</span>
+              <input id="f-brefsfile" type="file" accept="video/*,image/*" multiple onchange="brefsPicked(this)">
+            </label>
             <span class="ferr" id="e-brefs"></span>
           </div>
           <label class="fld">
@@ -1170,7 +1267,7 @@ tr:last-child td{border-bottom:none}
         <div class="mark">&#10003;</div>
         <h2>Campaign submitted.</h2>
         <p><b id="done-name"></b> is in review. We check every campaign before it goes live; you can follow it right here on your dashboard.</p>
-        <div class="doneid num" id="done-id"></div>
+        <div class="doneid"><span class="dlab">Campaign ID</span><span class="num" id="done-id"></span></div>
         <button class="wpill" onclick="doneView()">View campaign</button>
         <button class="quiet" onclick="closeCreate()">Done</button>
       </div>
@@ -1407,6 +1504,16 @@ function bvValid(n){
     ok=fieldErr('bend',!en?'Pick an end date.':(st&&en<=st)?'The end date has to be after the start.':'')&&ok;
   }
   return ok;
+}
+// The drop row's own label, since the native control's is hidden with it. Names the files rather
+// than counting them when there are few enough to read - "brand-reel.mp4" tells you what you picked
+// and "3 files" only tells you that you picked.
+function brefsPicked(inp){
+  var el=document.getElementById('brefs-label'), n=inp.files?inp.files.length:0;
+  if(!n){ el.innerHTML='<b>Upload instead</b>Two or three videos is plenty.'; return; }
+  var names=[];for(var i=0;i<Math.min(n,2);i++)names.push(inp.files[i].name);
+  el.innerHTML='<b>'+esc(names.join(', '))+(n>2?' +'+(n-2)+' more':'')+'</b>'+n+' file'+(n===1?'':'s')+' ready. Click to change.';
+  fieldErr('brefs','');
 }
 function bvBack(){ if(cd.bstep>1) bvStep(cd.bstep-1); }
 function bvNext(){
@@ -1806,6 +1913,10 @@ function openReview(c){
       after=tr;
     });
   }
+  // The videos card belongs to this kind and no other - an engagement campaign promotes a video the
+  // agency already owns, so a card showing it back to them would say nothing.
+  var rvv=document.getElementById('rv-videos');
+  if(rvv) rvv.hidden = c.typeName!=='Brand video growth';
   show('review');
 }
 
