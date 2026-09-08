@@ -2764,7 +2764,22 @@ body.crx-lock { overflow: hidden; }
   justify-content: center;
 }
 
+/* THE SCALE LIVES ON .pw, NOT ON .pw-scene, and that is a bug fix as much as a placement (2026-09-08).
+   .pw-scene carries `rv d0`, the staged entry - and crx-rise-in ends at `transform: none` with
+   fill-mode `both`, so once it has played the element keeps that declaration forever. A CSS
+   animation outranks a normal rule in the cascade whatever the source order, so every
+   `transform: scale()` written on .pw-scene was being overridden a second after load and the
+   responsive steps below had never once taken effect. The window carries no animation, so the
+   scale holds. (.scene, the desk stage, has the identical latent bug with its own 0.62 mobile
+   step; it needs an inner wrapper to fix and is behind the review flip, so it is flagged here
+   rather than restructured.)
+   THE MARGIN IS THE OTHER HALF. A transform paints outside the layout box without reserving it,
+   so each step pays back the difference by hand: window height is 40 + 366 + 34 = 440, and the
+   margin is 440 x (scale - 1). Positive when it grows, negative when it shrinks. */
 .crx .pw {
+  transform: scale(1.3);
+  transform-origin: top center;
+  margin-bottom: 132px;
   width: 700px;
   max-width: 100%;
   background: var(--sur);
@@ -2958,18 +2973,21 @@ body.crx-lock { overflow: hidden; }
   transition: transform 0.7s cubic-bezier(0.3, 0.7, 0.4, 1), opacity 0.7s ease;
 }
 
-@media (max-width: 1000px) {
-  /* the window does not reflow, it scales. Its whole claim is "this is the product" - a sidebar
-     that collapses at 700px would be a responsive design OF the miniature, which is a different
-     and less true object. The negative margin takes back the space the transform does not: a
-     scaled element still reserves its unscaled box. */
-  .crx .pw-scene { transform: scale(0.8); transform-origin: top center; margin-bottom: -4rem; }
+/* The window does not reflow, it scales. Its whole claim is "this is the product" - a sidebar that
+   collapses at 700px would be a responsive design OF the miniature, which is a different and less
+   true object. Each step is chosen so the PAINTED width (700 x scale) still clears the viewport's
+   padding, and each carries its own margin by the 440 x (scale - 1) rule above. */
+@media (max-width: 960px) {
+  .crx .pw { transform: scale(1.05); margin-bottom: 22px; }
 }
-@media (max-width: 760px) {
-  .crx .pw-scene { transform: scale(0.62); margin-bottom: -9rem; }
+@media (max-width: 820px) {
+  .crx .pw { transform: scale(0.85); margin-bottom: -66px; }
 }
-@media (max-width: 560px) {
-  .crx .pw-scene { transform: scale(0.46); margin-bottom: -13rem; }
+@media (max-width: 640px) {
+  .crx .pw { transform: scale(0.62); margin-bottom: -167px; }
+}
+@media (max-width: 480px) {
+  .crx .pw { transform: scale(0.46); margin-bottom: -238px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .crx .pw-step.live .pw-node::after { animation: none; }
