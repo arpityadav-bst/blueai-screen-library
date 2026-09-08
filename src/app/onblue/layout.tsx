@@ -3,8 +3,9 @@ import './onblue.css'
 
 // /onblue — A COMPLETE FORK OF /creators UNDER THE onBlue BRAND (Appy, 2026-09-08).
 //
-// Same site, one difference: the logo is the onBlue wordmark (no symbol) and every "BlueAI" reads
-// "onBlue". It is a literal duplicate - src/app/onblue + src/components/onblue - because the brief
+// Same site, one difference: the logo is the onBlue wordmark (no symbol) and every mention of the
+// product reads onBlue. It is a literal duplicate - src/app/onblue + src/components/onblue - because
+// the brief
 // ruled out touching the live creators site, and parameterising that site with a brand token would
 // have meant editing every file of it.
 //

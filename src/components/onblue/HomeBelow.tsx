@@ -144,6 +144,11 @@ export default function HomeBelow({ onCta }: { onCta?: () => void }) {
             with air around it, which is the actual requirement. */}
         <div className="sleep-scene crx-reveal">
           {/* eslint-disable-next-line @next/next/no-img-element */}
+          {/* THE FORK OWNS ITS OWN COPY of the still (public/onblue/). It could have pointed at
+              public/creators/ - the photo carries no brand and the two are identical - but then the
+              fork would have a live dependency on the other site's assets, and the leak check that
+              proves this tree references nothing under /creators would need an exception. A 213KB
+              duplicate is cheaper than an allowlist. */}
           <img
             src="/onblue/sleep-scene.webp"
             alt="A man leaning back on a sofa with his hands behind his head while a laptop, a phone, a humanoid robot, a robot vacuum and a robotaxi outside all keep working"
