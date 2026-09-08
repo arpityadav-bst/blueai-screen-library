@@ -2805,7 +2805,11 @@ body.crx-lock { overflow: hidden; }
 .crx .pw-scene {
   position: relative;
   width: min(980px, 100%);
-  margin: 2.2rem auto 0;
+  /* +40px over the hero's own 2.2rem (Appy, 2026-09-08), measured from the "Already have an
+     account?" line above it. No scale correction needed: .pw's transform-origin is `top center`,
+     so the window's painted top edge and its layout top edge are the same line and this margin is
+     the gap you actually see. */
+  margin: calc(2.2rem + 40px) auto 0;
   display: flex;
   justify-content: center;
 }
