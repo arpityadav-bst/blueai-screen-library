@@ -10,43 +10,33 @@
 // CSS overrides would be fighting utility specificity. Two literal sets, taken from the same DS
 // values the light block uses, is the honest shape for components built this way.
 
+/* ONE SKIN, NOT TWO (2026-09-08). It was keyed by theme until the site went light-only; a map
+   with one entry is a lookup that can only ever return the same thing, so the key went with the
+   theme it was keyed on. The dark values are in git if a dark surface ever comes back. */
 export const SKIN = {
-  dark: {
-    card: '#1F1F23',
-    ink: '#fff',
-    ink70: 'rgba(255,255,255,0.7)',   // sub-heading
-    ink80: 'rgba(255,255,255,0.8)',   // field label
-    ink40: 'rgba(255,255,255,0.4)',   // separator + legal
-    rule: 'rgba(255,255,255,0.2)',    // hairlines
-    tileLine: 'transparent',          // the white provider tiles need no edge on a dark card
-    accent: '#7B4CFF',
-    wash: 'rgba(123,76,255,0.16)',    // the tint behind an icon
-    field:
-      'border-white/50 bg-black/20 text-white placeholder:text-white/40 hover:border-white/80' +
-      ' focus:border-[#7B4CFF] focus:shadow-[0_0_0_3px_rgba(123,76,255,0.25)]',
-  },
-  light: {
-    card: '#ffffff',
-    ink: 'rgb(8,10,31)',
-    ink70: 'rgb(55,58,88)',
-    ink80: 'rgb(43,46,76)',
-    ink40: 'rgb(106,110,136)',
-    rule: 'rgb(223,228,238)',
-    // On white, the Apple and Google tiles ARE white - without an edge they are two invisible
-    // buttons in a row of four. Discord and Facebook keep their brand fills and ignore this.
-    tileLine: 'rgb(223,228,238)',
-    accent: '#7B4CFF',
-    wash: 'rgba(123,76,255,0.08)',
-    field:
-      'border-[#cdd4e2] bg-white text-[rgb(8,10,31)] placeholder:text-[rgb(106,110,136)] hover:border-[#7B4CFF]' +
-      ' focus:border-[#7B4CFF] focus:shadow-[0_0_0_3px_rgba(123,76,255,0.18)]',
-  },
+  card: '#ffffff',
+  ink: 'rgb(8,10,31)',
+  ink70: 'rgb(55,58,88)',
+  ink80: 'rgb(43,46,76)',
+  ink40: 'rgb(106,110,136)',
+  rule: 'rgb(223,228,238)',
+  // On white, the Apple and Google tiles ARE white - without an edge they are two invisible
+  // buttons in a row of four. Discord and Facebook keep their brand fills and ignore this.
+  tileLine: 'rgb(223,228,238)',
+  // THE PAGE'S SECONDARY ACCENT, which is the logo's own blue - onblue.css --accent, restated here
+  // because this card paints with inline styles outside the .crx token scope.
+  accent: '#2F6DFF',
+  wash: 'rgba(47,109,255,0.08)',      // the tint behind an icon
+  field:
+    'border-[#cdd4e2] bg-white text-[rgb(8,10,31)] placeholder:text-[rgb(106,110,136)] hover:border-[#2F6DFF]' +
+    ' focus:border-[#2F6DFF] focus:shadow-[0_0_0_3px_rgba(47,109,255,0.18)]',
 } as const
 
-export type Skin = (typeof SKIN)[keyof typeof SKIN]
+export type Skin = typeof SKIN
 
-/** The 0.8px ring around the card - the one visual the card kept from the now.gg original. */
-export const RING = '#7B4CFF'
+/** The 0.8px ring around the card - the one visual the card kept from the now.gg original. It was
+ *  the brand iris; it is the accent blue now, for the same reason every other flat accent moved. */
+export const RING = '#2F6DFF'
 
 /** THE PAGE'S PRIMARY, not the replica's (Appy, 2026-09-02: "is it the same as the primary cta on
  *  hero page?" - it was not). The dialog carried now.gg's own auth button: a two-stop iris -> cyan
@@ -56,8 +46,8 @@ export const RING = '#7B4CFF'
  *  These three are onblue.css's --cta-grad, .btn's radius and .btn's shadow, copied as literals
  *  because this card paints outside the .crx scope with inline styles and cannot reach a CSS token.
  *  THE TOKEN IS THE SOURCE OF TRUTH: if --cta-grad or .btn's shadow changes, change these with it. */
-export const CTA = 'linear-gradient(105deg, #1a90ff 0%, #6b53ff 55%, #7b4cff 100%)'
-export const CTA_SHADOW = '0 10px 30px -6px rgba(95, 70, 255, 0.65)'
+export const CTA = '#2E3138'
+export const CTA_SHADOW = '0 10px 30px -10px rgba(8, 10, 31, 0.28)'
 
 /**
  * ONE WIDTH FOR BOTH LEVELS. The card was 360 - the now.gg original's measured width. It is 400 now

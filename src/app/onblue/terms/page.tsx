@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { OnBlueWordmark } from '@/components/onblue/OnBlueWordmark'
 import HomeFooter from '@/components/onblue/HomeFooter'
-import { applyTheme, clearTheme, readTheme } from '@/components/onblue/flow/theme'
 import { LEGAL_DOCS } from './legal-content'
 
 // The cookie chart's rows — from the 2026-08-31 live audit of the test site (GTM-MV8WJNCQ /
@@ -37,16 +36,11 @@ const COOKIE_ROWS: { cookie: string; domain: string; expires: string; purpose: s
 export default function TermsPage() {
   const [tab, setTab] = useState(LEGAL_DOCS[0].id)
 
-  // THE THEME, read directly rather than through CrxProvider (2026-09-02). This route has its own
-  // minimal chrome on purpose - no journeys, no variants, no account state - so it has no provider,
-  // and the body class the theme rides on was never being set here: the page stayed dark whatever
-  // the switch said. readTheme() honours ?theme= first and the session second, which is what makes
-  // the flow's "Terms of Use" links carry the theme into the new tab they open.
-  // No switch on this page: it is reached from the flow, and ?theme= forces it when reviewed alone.
-  useEffect(() => {
-    applyTheme(readTheme())
-    return clearTheme
-  }, [])
+  // NO THEME EFFECT ANY MORE (2026-09-08). This route has no provider by design - no journeys, no
+  // variants, no account state - so when the page could be dark or light it had to read the theme
+  // itself and write the body class, or it rendered dark whatever the switch said. The site is
+  // light-only now, the light values are the base tokens, and the correct amount of theme code on
+  // a page with one ground is none.
 
   // Hash → tab on load (and on back/forward); tab click → hash via replaceState so the history
   // doesn't fill with tab flips.

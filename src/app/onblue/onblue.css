@@ -17,17 +17,28 @@
    .crx carries no transform, so they still position against the viewport. */
 
 .crx {
-  --void: #05060f;
-  --sky-top: #070a1e;
-  --sky-mid: #0d1230;
-  --sky-low: #141b42;
-  --ink-inverse: #f2f5ff;
-  --dim: rgba(214, 224, 255, 0.72);
-  --mint: #34e39a;
-  --iris: #7b4cff;
-  --cyan: #0ea4c5;
-  --grad-bright: linear-gradient(92deg, #a78bff 0%, #3fd4f5 100%);
-  --cta-grad: linear-gradient(105deg, #1a90ff 0%, #6b53ff 55%, #7b4cff 100%);
+  --ink-inverse: rgb(8, 10, 31);
+  --dim: rgb(55, 58, 88);
+  --mint: #0f9d58;
+
+  /* THE TWO ACCENTS (Appy, 2026-09-08) - and there is no longer a gradient among them.
+     This page ran on a blue->purple gradient (--cta-grad on every button, --grad-bright on the
+     hero's second line, the progress bars and the badges) plus iris #7b4cff as the flat accent
+     underneath it. Both are gone: "we have to get rid of the gradient on this website and then we
+     have to convert all the gradient color to the dark gray color".
+
+     --primary is what every gradient became. A charcoal, deliberately NOT the ink (rgb(8,10,31)) -
+     the ink is a blue-black and this is neutral, which is what keeps a charcoal button from
+     reading as a navy one.
+     --accent is THE LOGO'S OWN BLUE, promoted (Appy: "that bright blue color now becomes our
+     secondary accent color... all the icons and everything will be in that bright blue color").
+     It is the same #2f6dff OnBlueWordmark paints "Blue" in, so the accent on this page and the
+     accent in its name are one value rather than two that nearly match.
+     THE DIVISION OF LABOUR: --primary is what you PRESS and what a heading is set in; --accent is
+     what reads as MARKED - icons, numerals, selected states, focus. Nothing uses both. */
+  --primary: #2e3138;
+  --accent: #2f6dff;
+
   --mono: "Cascadia Code", Consolas, ui-monospace, monospace;
 
   /* ONE GRID FOR THE WHOLE PAGE (Appy, 2026-08-21: "every section should have the same grid, even
@@ -60,10 +71,15 @@
    under the button.
    Anything page-shaped added from now on belongs in this block, not in the scope above it. */
 #crx {
+  /* THE GROUND. Flat canvas with two faint washes overhead - what the light theme had, with the
+     iris and cyan tints taken out (Appy, 2026-09-08: "there must be no space... which still has
+     that gradient"). One wash in the page's own accent and one neutral: two tints of the SAME blue
+     would only be a stronger single wash, and the second is there to keep the sky off being one
+     flat colour, not to add a second hue. */
   background:
-    radial-gradient(900px 500px at 25% -5%, rgba(123, 76, 255, 0.22), transparent 65%),
-    radial-gradient(800px 480px at 82% 12%, rgba(14, 164, 197, 0.16), transparent 60%),
-    linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 55%, var(--sky-low) 100%);
+    radial-gradient(900px 500px at 25% -5%, rgba(47, 109, 255, 0.05), transparent 65%),
+    radial-gradient(800px 480px at 82% 12%, rgba(8, 10, 31, 0.035), transparent 60%),
+    var(--canvas);
   min-height: 100vh;
   overflow-x: hidden;
   /* Positioning context for the page's absolutely-positioned decoration. It was added for the
@@ -171,9 +187,9 @@ body.crx-lock { overflow: hidden; }
 .crx .grad {
   font-style: italic;
   padding-right: 0.15em;
-  background: var(--grad-bright);
-  -webkit-background-clip: text; background-clip: text; color: transparent;
-  filter: drop-shadow(0 0 24px rgba(123, 76, 255, 0.45));
+  /* NO COLOUR OF ITS OWN. It inherits the heading's, which is the whole point of the change - see
+     the block comment above. The padding-right stays: an italic's last glyph leans past its own
+     advance width and clips against whatever follows, fill or no fill. */
 }
 .crx .sub {
   font-size: 1.15rem;
@@ -211,12 +227,12 @@ body.crx-lock { overflow: hidden; }
   transition: color 0.15s ease;
 }
 .crx .hero-signin button:hover { color: var(--ink-inverse); }
-.crx .hero-signin button:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 3px; border-radius: 3px; }
+.crx .hero-signin button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 3px; }
 
 .crx .btn {
   font: inherit; font-weight: 700; font-size: 1.05rem;
   color: var(--ink-on-accent);
-  background: var(--cta-grad);
+  background: var(--primary);
   border: none; border-radius: 999px;
   padding: 1rem 2.2rem;
   cursor: pointer;
@@ -225,13 +241,13 @@ body.crx-lock { overflow: hidden; }
      form's plain-text Continue/Submit stretches full-width via .crx-grow, and without this its
      label sat flush-left in the wide pill instead of centred. */
   display: inline-flex; align-items: center; justify-content: center; gap: 0.6rem;
-  box-shadow: 0 10px 30px -6px rgba(95, 70, 255, 0.65);
+  box-shadow: 0 10px 30px -10px rgba(8, 10, 31, 0.28);
   transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
-.crx .btn:hover { transform: translateY(-2px); box-shadow: 0 18px 40px -8px rgba(95, 70, 255, 0.75); }
+.crx .btn:hover { transform: translateY(-2px); box-shadow: 0 18px 40px -12px rgba(8, 10, 31, 0.34); }
 /* F12: press feedback — hover lifts, active plants */
-.crx .btn:active { transform: translateY(0); box-shadow: 0 6px 18px -6px rgba(95, 70, 255, 0.6); }
-.crx .btn:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 3px; }
+.crx .btn:active { transform: translateY(0); box-shadow: 0 6px 18px -8px rgba(8, 10, 31, 0.22); }
+.crx .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
 /* The rotating machine stage lived here until 2026-08-20 — five cutouts passing left to right
    under a live task strip, with their own directional-blur transitions, rolling line viewport,
@@ -263,7 +279,7 @@ body.crx-lock { overflow: hidden; }
   position: absolute; left: 50%; bottom: -30px;
   transform: translateX(-50%);
   width: 70%; height: 130px;
-  background: radial-gradient(50% 100% at 50% 0%, rgba(123, 76, 255, 0.18), transparent 75%);
+  background: radial-gradient(50% 100% at 50% 0%, rgba(47, 109, 255, 0.18), transparent 75%);
   pointer-events: none;
 }
 
@@ -310,8 +326,8 @@ body.crx-lock { overflow: hidden; }
   padding: 0.85rem 0.9rem 0.9rem;
   min-height: 258px;
   box-shadow:
-    0 0 50px rgba(63, 212, 245, 0.14),
-    0 0 110px rgba(123, 76, 255, 0.22),
+    0 0 50px rgba(47, 109, 255, 0.14),
+    0 0 110px rgba(47, 109, 255, 0.22),
     inset 0 0 40px rgba(30, 40, 90, 0.5);
 }
 .crx .lap-deck {
@@ -363,7 +379,7 @@ body.crx-lock { overflow: hidden; }
 .crx .task .pay { color: var(--mint); font-weight: 800; font-variant-numeric: tabular-nums; }
 .crx .task.working .lbl { color: var(--ink-3); }
 .crx .task .bar { flex: 1; height: 4px; margin-left: 0.8rem; border-radius: 999px; background: var(--track); overflow: hidden; }
-.crx .task .bar > i { display: block; height: 100%; width: 0%; background: var(--grad-bright); border-radius: 999px; transition: width 0.18s linear; }
+.crx .task .bar > i { display: block; height: 100%; width: 0%; background: var(--primary); border-radius: 999px; transition: width 0.18s linear; }
 
 /* the working slot keeps its height so nothing jumps when a task hands over */
 .crx #working { min-height: 44px; }
@@ -435,70 +451,16 @@ body.crx-lock { overflow: hidden; }
   background: var(--mint); box-shadow: 0 0 8px var(--mint);
 }
 
-/* ── Ambient backdrop (Backdrop.tsx) — three drifting orbs + the rotating logo star ──
-   A COPY of creator-brand's .cb-backdrop / .cb-orb / .cb-star (Appy, 2026-08-20). Geometry is
-   constant for constant; the COLOUR is not, and could not be: that page is #F9F9FA and this one is
-   a near-black sky, so every alpha there was tuned against the opposite surface.
-     · The orbs read as glows here rather than as washes, so the layer opacity comes down from 0.34
-       — this page already carries two large radial glows in its own background (#crx), and three
-       more at the original strength turn the whole thing to soup.
-     · The star inverts outright. It is rgba(iris, .055) there, a violet ghost on white; the same
-       colour on this sky is not faint, it is absent. It takes the page's own gradient-start
-       lavender instead, at an alpha that keeps it a ghost.
+/* THE AMBIENT BACKDROP IS GONE (2026-09-08) - three drifting orbs and the rotating logo star,
+   fixed behind every section, faded in as the hero left. It had been drawing nothing since the
+   light pass, which set .crx-bd to display:none to remove the orbs (designer: "remove the bg
+   circulating orbs") and took the star inside it along with them. Both halves were finished
+   anyway: the orbs were the brand gradient's two hues blurred to 96px, and the star was BlueAI's
+   logo mark at 92vw - a symbol this brand does not have, the whole point of a wordmark-only
+   lockup. Backdrop.tsx went with these rules.
+   z-index 0 IS STILL SPOKEN FOR: the rule below is what keeps static page content above any
+   positioned layer, and it outlived the layer it was written for. */
 
-   z-index 0, and the page content is lifted to 1 below. The header (60), the intro backdrop (70)
-   and the intro canvas (80) are all far above it and unaffected. */
-.crx .crx-bd {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  overflow: hidden;
-  /* starts hidden and is written by the scroll gate — 0 here rather than 1 so the hero is clean
-     on first paint, before any scroll event has ever fired */
-  opacity: 0;
-}
-.crx .crx-orb {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 46vw;
-  height: 46vw;
-  max-width: 720px;
-  max-height: 720px;
-  border-radius: 50%;
-  filter: blur(96px);
-  opacity: 0.26;
-  will-change: transform;
-}
-.crx .crx-orb-iris { background: radial-gradient(circle at center, rgba(123, 76, 255, 0.55), transparent 68%); }
-.crx .crx-orb-cyan { background: radial-gradient(circle at center, rgba(14, 164, 197, 0.5), transparent 68%); }
-.crx .crx-orb-blue { background: radial-gradient(circle at center, rgba(110, 168, 255, 0.44), transparent 68%); }
-.crx .crx-star {
-  position: absolute;
-  left: 50%;
-  top: 42%;
-  width: 36vw;
-  max-width: 460px;
-  height: auto;
-  color: rgba(167, 139, 255, 0.055);
-  /* BLURRED, unlike the original (Appy, 2026-08-20: "can we make the sparkle blur behind things —
-     content cards in this case"). The cards it sits behind are barely-there surfaces
-     (rgba(255,255,255,.035)), so a crisp shape reads straight THROUGH them and its edges cut
-     across the card as if it were on top. Out of focus it stops competing: the eye files it as
-     depth rather than as a second layer of content.
-     Cheap despite the size, because this element is not continuously animated — its transform is
-     written by the scroll handler, so the blur is only recomputed on frames where you are already
-     scrolling. */
-  filter: blur(22px);
-  will-change: transform;
-}
-@media (max-width: 720px) {
-  /* the original's own mobile rule: the star pins to the top-right and goes large, so only its
-     left half is on screen and it reads as a slow gear turning at the edge rather than a shape
-     sitting behind the text */
-  .crx .crx-star { left: 100%; top: 14vh; width: 92vw; max-width: none; color: rgba(167, 139, 255, 0.075); }
-}
 /* CONTENT RIDES ABOVE THE LAYER, and it has to be said explicitly. Every section on this page is
    static, and static content paints BELOW a positioned sibling whatever the DOM order — so without
    this a fixed z-index:0 layer would sit on top of the entire page rather than behind it. */
@@ -517,9 +479,12 @@ body.crx-lock { overflow: hidden; }
    screen while the backdrop dissolves to reveal the scene. */
 .crx .backdrop {
   position: fixed; inset: 0; z-index: 70; pointer-events: none;
+  /* Opaque, so it cannot be a token step - it has to hide the page completely. The page's own
+     canvas with the same faint accent wash the ground carries, so the intro dissolves INTO the
+     page rather than fading between two colours. */
   background:
-    radial-gradient(700px 420px at 50% 30%, rgba(123, 76, 255, 0.14), transparent 70%),
-    linear-gradient(180deg, var(--void) 0%, #070a1c 60%, #0a0e26 100%);
+    radial-gradient(700px 420px at 50% 30%, rgba(47, 109, 255, 0.05), transparent 70%),
+    linear-gradient(180deg, var(--canvas) 0%, #f4f6fb 60%, var(--canvas) 100%);
   transition: opacity 1s ease;
 }
 .crx .backdrop.gone { opacity: 0; }
@@ -782,8 +747,8 @@ body.crx-lock { overflow: hidden; }
   position: relative; overflow: hidden;
   border-radius: 24px;
   background:
-    radial-gradient(820px 380px at 85% 118%, rgba(123, 76, 255, 0.18), transparent 68%),
-    radial-gradient(640px 300px at 8% -25%, rgba(14, 164, 197, 0.12), transparent 62%),
+    radial-gradient(820px 380px at 85% 118%, rgba(47, 109, 255, 0.18), transparent 68%),
+    radial-gradient(640px 300px at 8% -25%, rgba(47, 109, 255, 0.12), transparent 62%),
     linear-gradient(155deg, #ffffff 0%, var(--ink-inverse) 45%, #e6eaff 100%);
   padding: 4rem 2rem;
   text-align: center;
@@ -804,7 +769,7 @@ body.crx-lock { overflow: hidden; }
    which one deliberately was not.
    A TRANSLUCENT DARKEN, not an opaque panel (Appy, 2026-08-20: "slightly darker bg"). It had none
    at all before, on the argument that the page's own atmosphere should run underneath rather than
-   be painted over — which still holds, and is why this is a 32% wash of --void rather than a solid
+   be painted over — which still holds, and is why this is a wash rather than a solid
    fill. The page background is a vertical gradient, so a solid colour would flatten its last
    screen to one flat tone and put a visible seam at the hairline; a wash darkens it and keeps the
    gradient reading through. */
@@ -883,9 +848,10 @@ body.crx-lock { overflow: hidden; }
   transition: color 0.18s ease;
 }
 .crx .crx-foot-top:hover { color: var(--ink-inverse); }
-/* the focus ring is --accent-2 everywhere on this page: on dark it is the pale lavender that reads
-   against the sky, and on light it collapses to iris (see the --accent-2 note). */
-.crx .crx-foot-top:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 3px; border-radius: 3px; }
+/* the focus ring is --accent everywhere on this page - one ring colour, so a focused control looks
+   focused in the same way wherever it is. It was --accent-2, a paler second step that existed only
+   because a dark sky needed one; see that token's own note where it was removed. */
+.crx .crx-foot-top:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 3px; }
 
 /* the four-column grid folds the same way .steps does, at the same two widths, so the footer and
    the section it is aligned to never disagree about how many columns exist */
@@ -996,7 +962,7 @@ body.crx-lock { overflow: hidden; }
    UNEQUAL siblings — and a logo lockup is never the width of a CTA, so it read as visibly off. */
 
 /* logo lockup — creator-brand's exact structure (icon + [wordmark, audience label] column),
-   copied not imported; the label's gradient is THIS page's --grad-bright, not the marketing DS's */
+   copied not imported; the label is THIS page's --primary, where the original had a gradient */
 .crx .crx-logo {
   display: flex; align-items: center; gap: 0.55rem;
   background: none; border: none; padding: 0; cursor: pointer;
@@ -1009,8 +975,7 @@ body.crx-lock { overflow: hidden; }
 .crx .crx-audience {
   margin-top: -1px;
   font-size: 9px; font-weight: 800; text-transform: uppercase; line-height: 1;
-  background: var(--grad-bright);
-  -webkit-background-clip: text; background-clip: text; color: transparent;
+  color: var(--primary);
 }
 
 /* the CTA's two states mirror creator-brand's header: quiet text while the hero's own CTA is on
@@ -1034,13 +999,13 @@ body.crx-lock { overflow: hidden; }
   /* 600, not the shared 500 — once this is a real filled action (not a nav-styled link any more)
      it earns a touch more weight, same step .btn's own 700 takes over plain nav-weight text. */
   font-weight: 600;
-  background: var(--cta-grad); color: var(--ink-on-accent);
-  box-shadow: 0 8px 24px -6px rgba(95, 70, 255, 0.6);
+  background: var(--primary); color: var(--ink-on-accent);
+  box-shadow: 0 8px 24px -10px rgba(8, 10, 31, 0.24);
 }
-.crx .crx-cta.pill:hover { transform: translateY(-1px); box-shadow: 0 12px 30px -8px rgba(95, 70, 255, 0.7); }
+.crx .crx-cta.pill:hover { transform: translateY(-1px); box-shadow: 0 12px 30px -12px rgba(8, 10, 31, 0.3); }
 .crx .crx-cta svg { flex-shrink: 0; }
-.crx .crx-cta.pill:active { transform: translateY(0); box-shadow: 0 6px 16px -6px rgba(95, 70, 255, 0.55); } /* F12 */
-.crx .crx-cta:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 3px; }
+.crx .crx-cta.pill:active { transform: translateY(0); box-shadow: 0 6px 16px -8px rgba(8, 10, 31, 0.2); } /* F12 */
+.crx .crx-cta:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
 /* The popover surface. Built for the mobile burger menu, which is gone; it is now the ACCOUNT
    menu's surface and nothing else (.crx-acct .crx-menu, further down, is the only consumer).
@@ -1145,13 +1110,15 @@ body.crx-lock { overflow: hidden; }
 .crx {
   /* danger — creator-brand uses status-danger for invalid fields; this palette had no red.
      Coral-leaning so it reads warm against the blue-violet sky, ~4.5:1 on the panel surface. */
-  --danger: #ff6b7a;
-  --danger-wash: rgba(255, 107, 122, 0.09);
-  /* iris selection trio — the "chosen" language for choices/checks (ChoiceGroup's iris rule). */
-  --sel-border: rgba(167, 139, 255, 0.45);
-  --sel-wash: rgba(123, 76, 255, 0.14);
-  /* one inset recipe for fields/rows — a step darker than .task so typing surfaces read as wells */
-  --well: rgba(5, 8, 24, 0.45);
+  --danger: #ef4444;                  /* --bai-danger */
+  --danger-wash: #fee2e2;
+  /* the selection pair, derived from --accent - which is why they cannot be left raw: they were
+     mixed from iris and would still be purple after every other rule had turned. */
+  --sel-border: rgba(47, 109, 255, 0.38);
+  --sel-wash: rgba(47, 109, 255, 0.07);
+  /* a field is WHITE on this ground and the BORDER does the work. The polarity of this token is
+     the opposite of what its name suggests, which is why it is named for the role. */
+  --well: #ffffff;
 }
 
 /* ================================================================================================
@@ -1175,106 +1142,45 @@ body.crx-lock { overflow: hidden; }
    system, rather than a second light palette that drifts from the first. */
 .crx {
   /* surfaces, in the order they stack */
-  --canvas: transparent;              /* the page ground itself is painted on #crx, below */
-  --sur: rgba(255, 255, 255, 0.045);  /* a card or panel */
-  --sur-2: rgba(255, 255, 255, 0.035); /* a panel nested inside a panel */
-  --sur-3: rgba(255, 255, 255, 0.06);  /* a raised fill - chips, the account pill, quiet buttons */
-  --sur-hover: rgba(255, 255, 255, 0.08);
-  --sur-strong: rgba(255, 255, 255, 0.12); /* a pressed or selected fill */
+  --canvas: #f9f9fa;                  /* the agency page's own ground, sampled to its artwork */
+  --sur: #ffffff;                     /* a card or panel */
+  --sur-2: rgb(247, 250, 255);        /* --bai-surface: a panel nested inside a panel */
+  --sur-3: #eef2f9;                   /* a raised fill - chips, the account pill, quiet buttons */
+  --sur-hover: #f1f4fa;
+  --sur-strong: #e6ebf5;              /* a pressed or selected fill */
 
   /* lines, three weights: hairline divider, card edge, emphasis */
-  --line: rgba(255, 255, 255, 0.08);
-  --line-2: rgba(255, 255, 255, 0.12);
-  --line-3: rgba(255, 255, 255, 0.16);
-  --line-4: rgba(255, 255, 255, 0.28);  /* emphasis edge - a focused field, a hovered choice */
-  --track: rgba(255, 255, 255, 0.1);  /* the unfilled half of a progress bar */
+  --line: rgb(223, 228, 238);         /* --bai-divider */
+  --line-2: rgb(205, 212, 226);
+  --line-3: rgb(182, 184, 205);       /* --bai-stroke-warm */
+  --line-4: rgb(150, 156, 180);       /* emphasis edge - a focused field, a hovered choice */
+  --track: #e4e9f2;                   /* the unfilled half of a progress bar */
 
   /* ink. The top two steps ALREADY EXIST as --ink-inverse (primary) and --dim (body), declared
      above and flipped in the light block; adding --ink/--ink-2 beside them would be two names for
      one role, which is how the next reader ends up guessing which is "the" body ink. These are the
      two quieter steps below --dim, which until now were written raw as rgba(214,224,255, .42-.62)
      at eight different alphas. */
-  --ink-3: rgba(214, 224, 255, 0.55);  /* captions, quiet controls, meta */
-  --ink-4: rgba(214, 224, 255, 0.42);  /* the faintest legible step - placeholders, disabled */
-  --ink-on-accent: #fff;               /* text sitting ON an accent fill - white in both themes */
+  --ink-3: rgb(67, 70, 100);          /* --bai-ink-muted: captions, quiet controls, meta */
+  --ink-4: rgb(106, 110, 136);        /* the faintest legible step - placeholders, disabled */
+  --ink-on-accent: #fff;              /* text sitting ON --primary or --accent */
 
   /* two grounds that are not cards: a recessed panel (the footer) and the header's blur glass.
      Both are DARKER than the page on dark and LIGHTER than it on light, so neither can be
      expressed as a surface step - they invert direction, not just value. */
-  --sur-sunken: rgba(5, 6, 15, 0.32);
-  --glass: rgba(13, 18, 48, 0.78);
-
-  /* accents. --accent-2 exists because #a78bff (23 uses) is a real second step on dark and has to
-     COLLAPSE into iris on light, where a pale lavender is invisible. Naming it is what lets that
-     collapse happen in one place instead of 23. */
-  --accent: #7b4cff;
-  --accent-2: #a78bff;
-  /* the positive pair. They are mint DERIVATIVES, so they cannot be left raw: --mint moves to
-     #0f9d58 on light and a wash mixed from #34e39a would still be the old green. */
-  --positive-wash: rgba(52, 227, 154, 0.12);
-  --positive-line: rgba(52, 227, 154, 0.3);
-  /* an OPAQUE pane - the account menu, a dialog. Not a surface step: its job is to hide what is
-     behind it, which is why it is 0.92 rather than one of the card fills. */
-  --sur-opaque: rgba(10, 15, 38, 0.92);
-  --scrim: rgba(5, 6, 15, 0.72);      /* dims the page behind a dialog - not a surface, not a line */
-}
-
-/* ------------------------------------------------------------------------------------------------
-   LIGHT. Applied as a BODY class (see CrxState) rather than on #crx, because the dialogs portal out
-   of the page root and carry className="crx" of their own - a class on #crx would leave the
-   cash-out modal and the sign-in dialog dark while the page behind them turned. body.crx-lock is
-   the existing precedent for a body-level flag on this page.
-   ------------------------------------------------------------------------------------------------ */
-body.crx-light .crx {
-  --canvas: #f9f9fa;                  /* the agency page's own ground, sampled to its artwork */
-  --sur: #ffffff;
-  --sur-2: rgb(247, 250, 255);        /* --bai-surface */
-  --sur-3: #eef2f9;
-  --sur-hover: #f1f4fa;
-  --sur-strong: #e6ebf5;
-
-  --line: rgb(223, 228, 238);         /* --bai-divider */
-  --line-2: rgb(205, 212, 226);
-  --line-3: rgb(182, 184, 205);       /* --bai-stroke-warm */
-  --line-4: rgb(150, 156, 180);
-  --track: #e4e9f2;
-
-  --ink-3: rgb(67, 70, 100);          /* --bai-ink-muted */
-  --ink-4: rgb(106, 110, 136);
-  --ink-on-accent: #fff;
-  /* The footer stops being darker than the page and becomes a tint of it; the header glass stops
-     being a dark pane and becomes a white one. Direction reverses in both cases. */
   --sur-sunken: #f3f5fa;
   --glass: rgba(255, 255, 255, 0.82);
 
-  --accent: #7b4cff;                  /* iris holds on white unchanged */
-  --accent-2: var(--accent);          /* the pale step collapses into iris - see the note above */
+  /* --accent-2 IS GONE, not renamed. It existed because #a78bff was a real second accent step on
+     the dark page and had to collapse into iris on light; with one ground and one accent there is
+     no second step left for it to be, and a token that is only ever an alias is a name the next
+     reader has to look up in order to learn it means nothing. Its 23 consumers now say --accent. */
   --positive-wash: rgba(15, 157, 88, 0.1);
   --positive-line: rgba(15, 157, 88, 0.32);
+  /* an OPAQUE pane - the account menu, a dialog. Not a surface step: its job is to hide what is
+     behind it, which is why it is named for that job and not for a fill. */
   --sur-opaque: #ffffff;
-  --scrim: rgba(8, 10, 31, 0.45);     /* lighter: at 0.72 a light page reads as switched off */
-
-  /* --- the pre-existing tokens, flipped in the same block so the already-tokenised parts of the
-         page turn on day one, before any migration --- */
-  --ink-inverse: rgb(8, 10, 31);
-  --dim: rgb(55, 58, 88);
-  --well: #ffffff;                    /* a well stops being darker than its surface: on light an
-                                         input is white and the BORDER does the work. The polarity
-                                         of this token reverses; that is the point of naming it. */
-
-  /* MINT FAILS ON WHITE at #34e39a. #0f9d58 is not a new decision - it is the green this very file
-     already uses for money inside .crx-band, the one light island in the dark sheet. */
-  --mint: #0f9d58;
-  --danger: #ef4444;                  /* --bai-danger; the coral was picked to read on dark */
-  --danger-wash: #fee2e2;
-  --sel-border: rgba(123, 76, 255, 0.38);
-  --sel-wash: rgba(123, 76, 255, 0.07);
-
-  /* THE "BRIGHT" GRADIENT IS THE DARK-MODE ONE. #a78bff -> #3fd4f5 is very nearly
-     .cb-text-gradient-dark (#a98bff -> #5fd3ec), which creator-brand.css documents as the
-     luminance-lifted variant for its dark CTA band. The light-canvas gradient on the agency page is
-     --bai-gradient, iris -> cyan, and that is what this becomes. Same gesture, same direction. */
-  --grad-bright: linear-gradient(92deg, #7b4cff 0%, #0ea4c5 100%);
+  --scrim: rgba(8, 10, 31, 0.45);     /* dims the page behind a dialog - not a surface, not a line */
 }
 
 /* ---- panel: the card surface (form card, dashboard cards) — .step's recipe, padded up ---- */
@@ -1323,7 +1229,7 @@ body.crx-light .crx {
 .crx .crx-field:focus {
   outline: none;
   border-color: var(--sel-border);
-  box-shadow: 0 0 0 3px rgba(123, 76, 255, 0.22);
+  box-shadow: 0 0 0 3px rgba(47, 109, 255, 0.22);
 }
 /* invalid — applied on top, beats rest AND hover borders by source order (withErr's contract) */
 .crx .crx-field.err { border-color: var(--danger); }
@@ -1364,7 +1270,7 @@ body.crx-light .crx {
 .crx .crx-choice-card.on { border-color: var(--sel-border); background: var(--sel-wash); color: var(--ink-inverse); transform: none; }
 .crx .crx-choice-card.err { border-color: var(--danger); }
 .crx .crx-choice-card .crx-choice-ic { color: var(--ink-3); }        /* card icon at rest */
-.crx .crx-choice-card.on .crx-choice-ic { color: var(--accent-2); }                        /* icon lifts iris when chosen */
+.crx .crx-choice-card.on .crx-choice-ic { color: var(--accent); }                        /* icon lifts iris when chosen */
 .crx .crx-choice-card .crx-choice-name { font-size: 0.85rem; font-weight: 600; line-height: 1.3; }
 .crx .crx-choice-card .crx-choice-hint { font-size: 0.7rem; line-height: 1.35; color: var(--ink-3); }
 /* corner tick badge — ABSOLUTE so selection costs no layout (ChoiceGroup's own fix), round = radio */
@@ -1372,7 +1278,7 @@ body.crx-light .crx {
   position: absolute; right: 8px; top: 8px;
   display: none; align-items: center; justify-content: center;
   width: 18px; height: 18px; border-radius: 50%;
-  background: var(--iris); color: var(--ink-on-accent);
+  background: var(--accent); color: var(--ink-on-accent);
 }
 .crx .crx-choice-card.on .crx-choice-mark { display: flex; }
 /* tone variants — yes reads mint, no reads danger, at REST on the icon and fully once chosen */
@@ -1411,7 +1317,7 @@ body.crx-light .crx {
   background: var(--well); color: var(--ink-on-accent);
   transition: background 0.15s ease, border-color 0.15s ease;
 }
-.crx .crx-check.on .crx-check-box, .crx .crx-check-box.on { background: var(--iris); border-color: var(--iris); }
+.crx .crx-check.on .crx-check-box, .crx .crx-check-box.on { background: var(--accent); border-color: var(--accent); }
 .crx .crx-check.err .crx-check-box { border-color: var(--danger); }
 
 /* ---- buttons ---- */
@@ -1427,7 +1333,7 @@ body.crx-light .crx {
 }
 .crx .crx-btn-quiet:hover { border-color: rgba(255, 255, 255, 0.34); background: var(--sur-3); transform: translateY(-1px); }
 .crx .crx-btn-quiet:active { background: rgba(255, 255, 255, 0.09); transform: translateY(0); }
-.crx .crx-btn-quiet:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 3px; }
+.crx .crx-btn-quiet:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 /* full-width modifier for .btn (and .crx-btn-quiet) — form submit rows */
 .crx .btn.btn-block, .crx .crx-btn-quiet.btn-block { display: flex; width: 100%; justify-content: center; }
 
@@ -1445,7 +1351,7 @@ body.crx-light .crx {
   background: var(--sur-strong);
   transition: background 0.25s ease;
 }
-.crx .crx-rail-seg.on { background: var(--grad-bright); }
+.crx .crx-rail-seg.on { background: var(--primary); }
 
 /* ---- milestones strip: Apply → We review → Install & earn (Milestones.tsx) ---- */
 .crx .crx-mile { display: flex; max-width: 400px; margin: 0 auto 1.5rem; padding: 0; list-style: none; }
@@ -1456,7 +1362,7 @@ body.crx-light .crx {
   left: calc(-50% + 22px); right: calc(50% + 22px);
   background: var(--sur-strong);
 }
-.crx .crx-mile-step.done .crx-mile-line, .crx .crx-mile-step.current .crx-mile-line { background: var(--grad-bright); }
+.crx .crx-mile-step.done .crx-mile-line, .crx .crx-mile-step.current .crx-mile-line { background: var(--primary); }
 /* the dot — todo: inert ring · current: iris ring treatment · done: gradient fill + tick */
 .crx .crx-mile-dot {
   position: relative;
@@ -1467,10 +1373,10 @@ body.crx-light .crx {
   background: var(--sur); color: var(--ink-3);
 }
 .crx .crx-mile-step.current .crx-mile-dot {
-  border-color: var(--sel-border); background: var(--sel-wash); color: var(--accent-2);
-  box-shadow: 0 0 0 4px rgba(123, 76, 255, 0.12);
+  border-color: var(--sel-border); background: var(--sel-wash); color: var(--accent);
+  box-shadow: 0 0 0 4px rgba(47, 109, 255, 0.12);
 }
-.crx .crx-mile-step.done .crx-mile-dot { border: none; background: var(--grad-bright); color: #05060f; }
+.crx .crx-mile-step.done .crx-mile-dot { border: none; background: var(--primary); color: var(--ink-on-accent); }
 .crx .crx-mile-label { display: block; margin-top: 0.4rem; font-size: 0.7rem; font-weight: 500; color: var(--ink-3); }
 .crx .crx-mile-step.current .crx-mile-label { color: var(--ink-inverse); font-weight: 600; }
 
@@ -1492,7 +1398,7 @@ body.crx-light .crx {
   background: linear-gradient(180deg, #10163a 0%, #0b1029 100%);
   border: 1px solid var(--line-2);
   border-radius: 16px;
-  box-shadow: 0 30px 80px -12px rgba(0, 0, 0, 0.75), 0 0 60px rgba(123, 76, 255, 0.12);
+  box-shadow: 0 30px 80px -12px rgba(0, 0, 0, 0.75), 0 0 60px rgba(47, 109, 255, 0.12);
 }
 .crx-modal.wide { max-width: 560px; }  /* CashOutModal's size="md" — the sign-in card stays narrow */
 
@@ -1512,7 +1418,7 @@ body.crx-light .crx {
 }
 .crx .crx-modal-x:hover { color: var(--ink-inverse); background: var(--sur-3); }
 .crx .crx-modal-x:active { color: var(--ink-inverse); background: var(--sur-hover); }
-.crx .crx-modal-x:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px; }
+.crx .crx-modal-x:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 /* ---- the two-level sign-in dialog (Expectations.tsx -> SignInDialog.tsx, 2026-09-02) ----
    FORWARD, NOT FADE. Level 2 slides in from the right and level 1, on Back, from the left: the
@@ -1602,7 +1508,7 @@ body.crx-light .crx {
 }
 .crx .crx-xp-dot:hover { opacity: 0.75; }
 .crx .crx-xp-dot.on { width: 20px; }
-.crx .crx-xp-dot:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 3px; }
+.crx .crx-xp-dot:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
 /* The next control. PADDING GIVES IT A REAL HIT AREA and an equal negative margin takes that
    padding back out of the layout, so it is a ~23x28 target that occupies exactly its 7x12 chevron
@@ -1617,14 +1523,15 @@ body.crx-light .crx {
 }
 .crx .crx-xp-next:hover { transform: translateX(2px); }
 .crx .crx-xp-next:active { transform: translateX(0); }
-.crx .crx-xp-next:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px; }
+.crx .crx-xp-next:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 /* THE GRID, at dialog scale (BandGrid, idPrefix crxXp). Fainter than the band's: the band is a
    full-width closer you scroll past and the lines are the surface, here they sit behind 40 words
-   of copy that has to stay first. Dark card by default, white card under crx-light - the two
-   values are the same lines against opposite grounds. */
-.crx .crx-xp-grid { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; color: rgba(255, 255, 255, 0.28); }
-body.crx-light .crx .crx-xp-grid { color: rgba(43, 53, 133, 0.34); }
+   of copy that has to stay first. */
+.crx .crx-xp-grid {
+  position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none;
+  color: rgba(43, 53, 133, 0.34);
+}
 
 @media (prefers-reduced-motion: reduce) {
   /* the level change still has to be perceptible, so it keeps a plain fade. Everything else here is
@@ -1655,7 +1562,7 @@ body.crx-light .crx .crx-xp-grid { color: rgba(43, 53, 133, 0.34); }
 .crx .crx-stat-icon {
   flex-shrink: 0; display: flex; align-items: center; justify-content: center;
   width: 44px; height: 44px; border-radius: 50%;
-  background: var(--sel-wash); color: var(--accent-2);
+  background: var(--sel-wash); color: var(--accent);
 }
 .crx .crx-stat-icon.money { background: var(--positive-wash); color: var(--mint); }
 
@@ -1796,8 +1703,8 @@ body.crx-light .crx .crx-xp-grid { color: rgba(43, 53, 133, 0.34); }
   width: 14px; height: 14px; border-radius: 50%;
   border: 1px solid var(--line-4);
 }
-.crx .crx-toggler-row.on .crx-toggler-dot { border-color: var(--accent-2); }
-.crx .crx-toggler-row.on .crx-toggler-dot::after { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--accent-2); }
+.crx .crx-toggler-row.on .crx-toggler-dot { border-color: var(--accent); }
+.crx .crx-toggler-row.on .crx-toggler-dot::after { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
 .crx .crx-toggler-note { margin: 0.5rem 0 0; font-size: 0.66rem; line-height: 1.4; color: var(--ink-3); }
 
 /* ---- application intro rows: icon + sentence (StepIntro's icon-per-point layout) ---- */
@@ -1817,7 +1724,7 @@ body.crx-light .crx .crx-xp-grid { color: rgba(43, 53, 133, 0.34); }
 .crx .crx-intro-row .crx-intro-ic {
   flex-shrink: 0; display: flex; align-items: center; justify-content: center;
   width: 36px; height: 36px; border-radius: 50%;
-  background: var(--sel-wash); color: var(--accent-2);
+  background: var(--sel-wash); color: var(--accent);
 }
 .crx .crx-intro-row .crx-intro-body { font-size: 0.95rem; line-height: 1.55; color: var(--dim); }
 .crx .crx-intro-row .crx-intro-body b { color: var(--ink-inverse); font-weight: 650; }
@@ -1833,14 +1740,14 @@ body.crx-light .crx .crx-xp-grid { color: rgba(43, 53, 133, 0.34); }
 .crx .crx-check:focus-visible,
 .crx .crx-toggler-row:focus-visible,
 .crx .crx-toggler.fab:focus-visible {
-  outline: 2px solid var(--accent-2); outline-offset: 2px;
+  outline: 2px solid var(--accent); outline-offset: 2px;
 }
 /* sr-only-input pattern (ChoiceGroup/CheckField keep real radios/checkboxes in the DOM):
    the ring forwards from the hidden input to the painted sibling */
 .crx input.sr-only:focus-visible + .crx-choice,
 .crx input.sr-only:focus-visible + .crx-choice-card,
 .crx input.sr-only:focus-visible + .crx-check {
-  outline: 2px solid var(--accent-2); outline-offset: 2px;
+  outline: 2px solid var(--accent); outline-offset: 2px;
 }
 
 /* ---- responsive: the page's one breakpoint ---- */
@@ -1921,7 +1828,7 @@ body.crx-light .crx .crx-xp-grid { color: rgba(43, 53, 133, 0.34); }
 }
 
 /* DARK VARIANT — the footer's own surface, not the closer's light panel (Appy, 2026-08-20: "give
-   it the footer bg colour instead of white"). Same translucent wash of --void the footer uses, for
+   it the footer bg colour instead of white"). Same translucent wash the footer uses, for
    the same reason: the page background is a vertical gradient and a solid fill would flatten it.
    The closer keeps the light treatment — it is a call to action and wants to arrive; a
    confirmation is the page going quiet, and it should sit into the page rather than off it. */
@@ -2001,7 +1908,7 @@ body.crx-light .crx .crx-xp-grid { color: rgba(43, 53, 133, 0.34); }
 .crx .crx-acct-avatar {
   flex-shrink: 0; display: flex; align-items: center; justify-content: center;
   width: 28px; height: 28px; border-radius: 50%;
-  background: var(--cta-grad); color: var(--ink-on-accent);
+  background: var(--primary); color: var(--ink-on-accent);
   font-size: 11px; font-weight: 700;
 }
 /* account name in the chip */
@@ -2016,7 +1923,7 @@ body.crx-light .crx .crx-xp-grid { color: rgba(43, 53, 133, 0.34); }
 .crx .crx-acct-out { gap: 0.5rem; }
 .crx .crx-menu .crx-acct-out:hover { color: var(--danger); background: var(--danger-wash); }
 .crx .crx-menu .crx-acct-out:active { color: var(--danger); background: rgba(255, 107, 122, 0.14); }
-.crx .crx-acct-out:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px; }
+.crx .crx-acct-out:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 /* ---- Dashboard shell ---- */
 /* dashboard column — main already pays the 1100px grid, 1.5rem gutter and header clearance
@@ -2048,7 +1955,7 @@ body.crx-light .crx .crx-xp-grid { color: rgba(43, 53, 133, 0.34); }
   letter-spacing: 0.1em; text-transform: uppercase;
 }
 .crx .crx-refresh:hover { color: var(--ink-inverse); border-color: var(--line-4); background: var(--sur); }
-.crx .crx-refresh:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 3px; }
+.crx .crx-refresh:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 /* the ICON spins, not the pill — rotating a word is illegible, and rotating the border would read
    as the whole control being busy rather than the data being fetched */
 .crx .crx-refresh.spin svg { animation: crx-spin 0.6s linear; }
@@ -2127,7 +2034,7 @@ body.crx-light .crx .crx-xp-grid { color: rgba(43, 53, 133, 0.34); }
   margin-left: auto; flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
   width: 18px; height: 18px; border-radius: 50%;
-  background: var(--iris); color: var(--ink-on-accent);
+  background: var(--accent); color: var(--ink-on-accent);
 }
 /* email field block — its input ships without crx-gap-label, so the label carries the gap here */
 .crx .crx-cash-field { display: block; margin-top: 1.1rem; }
@@ -2158,7 +2065,7 @@ body.crx-light .crx .crx-xp-grid { color: rgba(43, 53, 133, 0.34); }
 /* the request id — tabular semibold ink so it reads as a reference, not prose */
 .crx .crx-cash-id { color: var(--ink-inverse); font-weight: 650; font-variant-numeric: tabular-nums; }
 /* support address — iris accent, NOT mint (mint stays strictly money/success; an inbox is neither) */
-.crx .crx-cash-mail { color: var(--accent-2); font-weight: 650; }
+.crx .crx-cash-mail { color: var(--accent); font-weight: 650; }
 /* the smaller support line */
 .crx .crx-cash-support { margin: 0.9rem 0 0; font-size: 0.8rem; color: var(--ink-3); }
 /* Close — full-width behaviour capped so it doesn't read as another Withdraw */
@@ -2217,7 +2124,7 @@ body.crx-light .crx .crx-xp-grid { color: rgba(43, 53, 133, 0.34); }
 .crx .crx-chip.mint { color: var(--mint); border: 1px solid rgba(52, 227, 154, 0.35); background: var(--positive-wash); }
 /* iris = chosen/held, not success: an application in review is a held state, so it borrows the
    selection trio rather than mint (nothing has been earned yet) */
-.crx .crx-chip.iris { color: var(--accent-2); border: 1px solid var(--sel-border); background: var(--sel-wash); }
+.crx .crx-chip.iris { color: var(--accent); border: 1px solid var(--sel-border); background: var(--sel-wash); }
 /* ghost = future: dashed like the coming-soon container it labels */
 .crx .crx-chip.ghost { color: var(--dim); border: 1px dashed var(--line-4); background: transparent; }
 
@@ -2227,9 +2134,9 @@ body.crx-light .crx .crx-xp-grid { color: rgba(43, 53, 133, 0.34); }
    panel's 16 — enough that the eye files "offer" and "form" as different objects. */
 .crx .crx-prog {
   background:
-    radial-gradient(420px 220px at 8% 0%, rgba(123, 76, 255, 0.16), transparent 70%),
+    radial-gradient(420px 220px at 8% 0%, rgba(47, 109, 255, 0.16), transparent 70%),
     rgba(255, 255, 255, 0.045);
-  border: 1px solid rgba(167, 139, 255, 0.3);
+  border: 1px solid rgba(47, 109, 255, 0.3);
   border-radius: 20px;
   padding: 1.6rem;
   text-align: left;
@@ -2345,7 +2252,7 @@ body.crx-light .crx .crx-xp-grid { color: rgba(43, 53, 133, 0.34); }
 }
 .crx .crx-progtab:hover { color: var(--ink-inverse); }
 .crx .crx-progtab.on { color: var(--ink-inverse); background: var(--sur-hover); }
-.crx .crx-progtab:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px; }
+.crx .crx-progtab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 /* the count rides the tab in the page's mono voice, so it reads as a badge rather than as part of
    the label — "Past" is the destination, "2" is what is in it */
 .crx .crx-progtab-n {
@@ -2463,7 +2370,7 @@ body.crx-light .crx .crx-xp-grid { color: rgba(43, 53, 133, 0.34); }
   transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease;
 }
 .crx .crx-progtile-info:hover { color: var(--ink-inverse); border-color: var(--line-4); background: var(--sur-3); }
-.crx .crx-progtile-info:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 3px; }
+.crx .crx-progtile-info:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
 /* the program sheet inside the kit modal */
 .crx .crx-proginfo { padding: 1.6rem; }
@@ -2523,7 +2430,7 @@ body.crx-light .crx .crx-xp-grid { color: rgba(43, 53, 133, 0.34); }
   transition: color 0.18s ease;
 }
 .crx .crx-apply-back:hover { color: var(--ink-inverse); }
-.crx .crx-apply-back:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 3px; }
+.crx .crx-apply-back:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
 /* ---- the legal page (/creators/terms) + the footer's line to it ----
    bluestacks.com's pattern in this site's kit: one page, the documents as tabs (2026-08-31).
@@ -2609,21 +2516,15 @@ body.crx-light .crx .crx-xp-grid { color: rgba(43, 53, 133, 0.34); }
 }
 
 /* ================================================================================================
-   LIGHT THEME — the parts that are a repaint rather than a token swap.
-   Collected here rather than scattered so the dark path stays readable while both exist, and so
-   deleting the dark path later is deleting the ORIGINAL rules and this whole block's overrides
-   go back to being the only values. Every rule below has a one-line reason.
+   THE REPAINT BLOCK — what the dark page's own values became when the site went light-only
+   (Appy, 2026-09-08: "go light-only"). These were written as overrides while both paths existed;
+   the dark path is gone and these are simply the values now. They still sit at the END OF THE FILE
+   because that is what keeps them winning: each one is the same specificity as the original rule
+   it replaces, and the original is still up there supplying every property these do not set, which
+   is why deleting the theme did not mean deleting them.
+   Every rule below has its reason. Where a reason argues against a dark ground, that is history
+   rather than instruction - it records why the value is what it is.
    ================================================================================================ */
-
-/* THE GROUND. The dark page is a three-stop sky with two coloured washes at 0.22 and 0.16 - alphas
-   that read as atmosphere on near-black and as stains on white. Flat canvas plus the same two
-   washes at a fifth of the strength, which is roughly where the agency page's orbs sit. */
-body.crx-light #crx {
-  background:
-    radial-gradient(900px 500px at 25% -5%, rgba(123, 76, 255, 0.055), transparent 65%),
-    radial-gradient(800px 480px at 82% 12%, rgba(14, 164, 197, 0.045), transparent 60%),
-    var(--canvas);
-}
 
 /* ORBS ARE GONE ON LIGHT (designer, 2026-09-02: "remove the bg circulating orbs"). They were
    briefly matched to the agency page's 0.34 on the earlier answer; on the actual light page they
@@ -2632,13 +2533,11 @@ body.crx-light #crx {
    display:none rather than opacity:0 so the three elements and their rAF transform loop stop
    costing anything. Backdrop.tsx itself stays for now because the dark path still renders it; when
    dark is deleted, the component goes with it. */
-body.crx-light .crx .crx-bd { display: none; }
 
 /* GLOWS DO NOT TRANSLATE. A 24px iris drop-shadow behind the gradient heading and a 12px mint halo
    behind the flying earnings chip are both "make it bloom against black"; on white they are grey
    smudge. Removed rather than re-tuned - there is no light-ground equivalent of a glow. */
-body.crx-light .crx .grad { filter: none; }
-body.crx-light .crx .chip { text-shadow: none; }
+.crx .chip { text-shadow: none; }
 
 /* ------------------------------------------------------------------------------------------------
    THE MACHINE STAGE, repainted (designer, 2026-09-02: "use light only" - the screen goes light too,
@@ -2653,7 +2552,7 @@ body.crx-light .crx .chip { text-shadow: none; }
 
 /* the desk: top surface lighter than its front edge, legs a step deeper still, so the three planes
    still separate without a shadow doing the work */
-body.crx-light .crx .desk-top {
+.crx .desk-top {
   background: linear-gradient(180deg, #e6eaf3, #ccd3e2);
   border-top: 1px solid #ffffff;
   /* softer (Appy, 2026-09-02). The dark original is a 0.6 black at 40px blur, which is what it
@@ -2663,7 +2562,7 @@ body.crx-light .crx .desk-top {
      stage already has its own ground ellipse in .scene::after doing the sitting-on-the-page work. */
   box-shadow: 0 10px 24px -18px rgba(8, 10, 31, 0.09);
 }
-body.crx-light .crx .desk-leg { background: linear-gradient(180deg, #d5dbe8, #bcc4d6); }
+.crx .desk-leg { background: linear-gradient(180deg, #d5dbe8, #bcc4d6); }
 
 /* THE SCREEN. A dark panel here was carrying the whole scene's contrast; with it light, the bezel
    has to do that job instead - hence a visible 3px bezel in the line ramp rather than the dark
@@ -2671,19 +2570,19 @@ body.crx-light .crx .desk-leg { background: linear-gradient(180deg, #d5dbe8, #bc
    ALL THREE GLOWS GO. Two outer blooms (cyan, iris) and an inset navy vignette: on black they are
    the machine being on, on white they are smudge. The screen reads as on because its CONTENT is
    on, which is the honest version of the same signal. */
-body.crx-light .crx .lap-screen {
+.crx .lap-screen {
   background: var(--sur-2);
   border-color: #ccd3e2;
   box-shadow: 0 10px 30px -12px rgba(8, 10, 31, 0.16);
 }
 
 /* the deck, keys and trackpad: silver body, keys a couple of steps down so they read as recesses */
-body.crx-light .crx .lap-deck {
+.crx .lap-deck {
   background: linear-gradient(180deg, #eef1f7, #d3d9e6);
   box-shadow: 0 14px 30px -12px rgba(8, 10, 31, 0.2);
 }
-body.crx-light .crx .lap-deck::before { background: repeating-linear-gradient(90deg, #a9b2c8 0 12px, transparent 12px 16px); }
-body.crx-light .crx .lap-deck::after { background: #a9b2c8; }
+.crx .lap-deck::before { background: repeating-linear-gradient(90deg, #a9b2c8 0 12px, transparent 12px 16px); }
+.crx .lap-deck::after { background: #a9b2c8; }
 
 /* THE BLOOM UNDER THE STAGE, and lowering its alpha was not enough - the shape itself is wrong on
    a light ground (designer, 2026-09-02: "weird color division below the table").
@@ -2696,20 +2595,20 @@ body.crx-light .crx .lap-deck::after { background: #a9b2c8; }
    reaches zero exactly at every edge of its box and there is no boundary to see. Neutral rather
    than iris, too: a purple cast under furniture is a dark-stage device, and what this needs to do
    on white is simply sit the desk on the page. */
-body.crx-light .crx .scene::after {
+.crx .scene::after {
   background: radial-gradient(50% 50% at 50% 50%, rgba(8, 10, 31, 0.07), transparent 100%);
 }
 
 /* THE EARNINGS PILL was already a light component - a white pill with #0f9d58 money, floating on
    the dark scene. On a light page white-on-white has no edge, so it gains the hairline it never
    needed, and its shadow comes down to match the rest of the page's elevation. */
-body.crx-light .crx .earnings {
+.crx .earnings {
   border: 1px solid var(--line);
   box-shadow: 0 6px 18px -8px rgba(8, 10, 31, 0.14);
 }
 
 /* the status dot's halo, same argument as the other two glows */
-body.crx-light .crx .dot { box-shadow: none; }
+.crx .dot { box-shadow: none; }
 
 /* ------------------------------------------------------------------------------------------------
    SECTIONS.
@@ -2721,28 +2620,28 @@ body.crx-light .crx .dot { box-shadow: none; }
    near-black and the same declaration paints white -> near-black -> pale: a dark stripe through the
    middle of a light band. Nothing in the token names warns you; only reading the consumer does.
    SO IT INVERTS INSTEAD. On a light page a light closing band is no longer a contrast event - it is
-   the page. The agency page answers this exact question with a DARK band (CTABand.tsx,
-   bg-cta-band), so this takes that gradient verbatim from globals.css --bai-cta-band rather than
-   inventing a second one, and the ink inside it goes light. Same gesture on both halves of the
-   product, one gradient declared once. */
-body.crx-light .crx .crx-band {
-  background: linear-gradient(120deg, rgb(8, 10, 31), #1D1655 45%, #7b4cff 120%);
+   the page. It took the agency page's dark CTA band verbatim, gradient and all, until 2026-09-08;
+   now it is flat --primary, the same charcoal every other gradient on this page became. A flat
+   panel loses nothing here that the gradient was doing: the band's job is to be the one dark block
+   on a light page, and darkness is not a thing a second hue helps with. */
+.crx .crx-band {
+  background: var(--primary);
   box-shadow: 0 30px 80px -44px rgba(8, 10, 31, 0.45);
 }
 /* the band's ink is now ON a dark ground, so it is the one place on the light page that inverts */
-body.crx-light .crx .crx-band h2 { color: #ffffff; }
-body.crx-light .crx .crx-band p { color: rgba(255, 255, 255, 0.82); }
+.crx .crx-band h2 { color: #ffffff; }
+.crx .crx-band p { color: rgba(255, 255, 255, 0.82); }
 /* money inside the band goes back to the bright mint: on the dark band #0f9d58 is unreadable, and
    this is the same luminance-lift argument the gradient text uses in reverse. */
-body.crx-light .crx .crx-band p b { color: #34e39a; }
+.crx .crx-band p b { color: #34e39a; }
 /* the ruling was a faint indigo on a light field; on the dark band it has to be white and faint */
-body.crx-light .crx .crx-band-grid { color: rgba(255, 255, 255, 0.5); }
+.crx .crx-band-grid { color: rgba(255, 255, 255, 0.5); }
 
 /* THE SLEEP STILL keeps its image untouched (designer: "no need to do anything here"), but its
    FRAME does not survive: a 90px black drop and a white inset hairline are both devices for lifting
    a near-black render off a near-black sky. On white the render is the darkest thing in view and
    needs no lift at all - just an edge, in the page's own line ramp. */
-body.crx-light .crx .sleep-scene {
+.crx .sleep-scene {
   box-shadow: 0 24px 60px -40px rgba(8, 10, 31, 0.35), inset 0 0 0 1px var(--line);
 }
 
@@ -2751,7 +2650,7 @@ body.crx-light .crx .sleep-scene {
    of is light now, and a row of near-black pills is the only dark chrome left on it. White glass at
    0.9 rather than flat white so the still shows through slightly and they stay labels ON a photo
    rather than stickers over it; the ink needs nothing, it is var(--ink-inverse) and flips already. */
-body.crx-light .crx .sleep-badge {
+.crx .sleep-badge {
   background: rgba(255, 255, 255, 0.9);
   border-color: var(--line);
   box-shadow: 0 6px 18px -8px rgba(8, 10, 31, 0.3);
@@ -2760,20 +2659,14 @@ body.crx-light .crx .sleep-badge {
 /* the step numeral: #7da2ff is a light blue for a dark card. On white it needs the DS's marketing
    blue, which is the accent this product already uses for exactly this - eyebrows and small
    labels. */
-body.crx-light .crx .step .n { color: #2f6dff; }
-
-/* THE AMBIENT STAR is the logo mark blown up to 92vw behind the page, drawn in currentColor at
-   5-8% lavender - a value that only exists because it is being read against near-black. At the
-   same alpha on white it is nothing at all, and at a legible alpha it is a giant purple shape, so
-   it goes to the ink channel instead and stays a texture rather than becoming a graphic. */
-body.crx-light .crx .crx-star { color: rgba(8, 10, 31, 0.035); }
+.crx .step .n { color: #2f6dff; }
 
 /* THE THREE FLOATING PANES. Their drops are 0.65-0.75 black, which is what it takes to separate a
    dark pane from a dark page; on white the same shadow is a bruise. Navy-tinted and a quarter of
    the alpha - enough to say "this floats", which is all a shadow on a light ground has to do.
    The badge on the sleep render and the .dark band keep theirs: both still sit on dark grounds. */
-body.crx-light .crx .crx-menu,
-body.crx-light .crx .crx-toggler { box-shadow: 0 14px 34px -14px rgba(8, 10, 31, 0.18); }
+.crx .crx-menu,
+.crx .crx-toggler { box-shadow: 0 14px 34px -14px rgba(8, 10, 31, 0.18); }
 /* THE DIALOG PANEL. Its fill is a hardcoded linear-gradient (#10163a -> #0b1029), and gradients
    are the one thing the migration pass deliberately skipped - a two-stop fill cannot be classified
    by the property it sits in, so every one was left for a human. This is the one that mattered:
@@ -2782,30 +2675,12 @@ body.crx-light .crx .crx-toggler { box-shadow: 0 14px 34px -14px rgba(8, 10, 31,
    bloom, the orbs.
    Flat, not a light gradient: a 2% vertical ramp on white is invisible, and every other panel on
    the light page is a flat surface with a hairline. */
-body.crx-light .crx-modal {
+.crx-modal {
   background: var(--sur);
   border-color: var(--line);
   box-shadow: 0 24px 60px -18px rgba(8, 10, 31, 0.22);
 }
-body.crx-light .crx .crx-band.dark { box-shadow: 0 30px 80px -50px rgba(8, 10, 31, 0.4); }
-
-/* ------------------------------------------------------------------------------------------------
-   THE BOOT INTRO (designer, 2026-09-02: "intro screen are still dark").
-   ------------------------------------------------------------------------------------------------ */
-
-/* .backdrop is the opaque pane the intro plays on - it hides the page completely, so it is the one
-   surface on the site that cannot be a token step: it has to be fully opaque or the page shows
-   through mid-animation. Light gets the page's own canvas with the same faint iris wash overhead
-   that the ground carries, so the intro dissolves INTO the page rather than fading from one colour
-   to another.
-   The pixel logo itself needs nothing: it is drawn cyan -> violet, both mid-tones that hold on
-   white as well as on black. What did need changing is in useBootIntro.ts - the void-hum flickers
-   and the spark alphas, which were tuned against near-black. */
-body.crx-light .crx .backdrop {
-  background:
-    radial-gradient(700px 420px at 50% 30%, rgba(123, 76, 255, 0.05), transparent 70%),
-    linear-gradient(180deg, var(--canvas) 0%, #f4f6fb 60%, var(--canvas) 100%);
-}
+.crx .crx-band.dark { box-shadow: 0 30px 80px -50px rgba(8, 10, 31, 0.4); }
 
 /* ---- the onBlue wordmark (OnBlueWordmark.tsx) ----
    The head face at 800, which is the heaviest weight this page already loads - the artwork is a

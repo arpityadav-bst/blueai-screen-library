@@ -75,17 +75,21 @@ const streakPct = (FAST / DUR) * 100
 
 /* Stop-width is FAST/DUR of the tile, so a fixed point sees the streak for FAST and sits dark for
    the remaining GAP of every DUR cycle. Purely additive — the base grid supplies the resting look —
-   so it stays at 0 opacity everywhere outside the streak. The literal iris/cyan does NOT follow the
-   theme: that layer IS the logo gradient. */
+   so it stays at 0 opacity everywhere outside the streak.
+   ONE HUE, NOT TWO (2026-09-08). This ran iris -> cyan because the layer WAS the logo gradient; the
+   page has no gradient any more, so the streak is the accent blue throughout and only its opacity
+   moves. The stops stay asymmetric — 0.6 rising, 0.3 falling — which is what still gives the wave
+   a leading edge and a tail now that the hue shift is not doing it. */
+const SHINE = '#2F6DFF'
 const ShineStops = () => (
   <>
-    <stop offset="0%" stopColor="#7B4CFF" stopOpacity="0" />
-    <stop offset={`${(50 - streakPct / 2).toFixed(1)}%`} stopColor="#7B4CFF" stopOpacity="0" />
-    <stop offset={`${(50 - streakPct / 2 + 3).toFixed(1)}%`} stopColor="#7B4CFF" stopOpacity="0.6" />
-    <stop offset="50%" stopColor="#0EA4C5" stopOpacity="0.6" />
-    <stop offset={`${(50 + streakPct / 2 - 3).toFixed(1)}%`} stopColor="#0EA4C5" stopOpacity="0.3" />
-    <stop offset={`${(50 + streakPct / 2).toFixed(1)}%`} stopColor="#0EA4C5" stopOpacity="0" />
-    <stop offset="100%" stopColor="#0EA4C5" stopOpacity="0" />
+    <stop offset="0%" stopColor={SHINE} stopOpacity="0" />
+    <stop offset={`${(50 - streakPct / 2).toFixed(1)}%`} stopColor={SHINE} stopOpacity="0" />
+    <stop offset={`${(50 - streakPct / 2 + 3).toFixed(1)}%`} stopColor={SHINE} stopOpacity="0.6" />
+    <stop offset="50%" stopColor={SHINE} stopOpacity="0.6" />
+    <stop offset={`${(50 + streakPct / 2 - 3).toFixed(1)}%`} stopColor={SHINE} stopOpacity="0.3" />
+    <stop offset={`${(50 + streakPct / 2).toFixed(1)}%`} stopColor={SHINE} stopOpacity="0" />
+    <stop offset="100%" stopColor={SHINE} stopOpacity="0" />
   </>
 )
 

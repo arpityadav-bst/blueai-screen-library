@@ -30,7 +30,10 @@ import { useEffect, useRef } from 'react'
 // intro scales both against a 420x760 base, so the field reads the same everywhere - and "same
 // amount" as the intro is only true if it scales the same way the intro does.
 const GRID = 6
-const COLORS = ['110,168,255', '123,76,255'] // blue, iris (byte-identical to --iris's rgb)
+// ONE COLOUR since 2026-09-08. It was blue + iris, the two ends of the old brand gradient; the
+// accent is the whole palette now, and a second hue in the rain would be the only place on the
+// page still saying there are two.
+const COLORS = ['47,109,255']
 const BASE_AREA = 420 * 760
 const BASE_CAP = 24
 const BASE_SPAWN_MS = 110

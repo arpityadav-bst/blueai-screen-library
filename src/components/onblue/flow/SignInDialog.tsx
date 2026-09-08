@@ -80,8 +80,7 @@ export default function SignInDialog({
   /** 'fwd' when reached from level 1, so the card slides in from the right. */
   enter?: 'fwd'
 }) {
-  const { signIn, theme } = useCrx()
-  const skin = SKIN[theme]
+  const { signIn } = useCrx()
 
   // TOP OF THE PAGE, not the form (designer, 2026-08-13). This used to scroll the form into view,
   // which landed it under the header with the headline already gone — you arrived mid-page at
@@ -99,8 +98,8 @@ export default function SignInDialog({
     // went, and level 1 needs the room.
     <div
       style={{
-        background: skin.card,
-        color: skin.ink,
+        background: SKIN.card,
+        color: SKIN.ink,
         border: `0.8px solid ${RING}`,
         fontFamily: CARD_FONT,
       }}
@@ -123,9 +122,9 @@ export default function SignInDialog({
             onClick={onBack}
             aria-label="Back"
             className="absolute left-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full transition-colors"
-            style={{ color: skin.ink40 }}
-            onMouseEnter={(e) => { e.currentTarget.style.color = skin.ink }}
-            onMouseLeave={(e) => { e.currentTarget.style.color = skin.ink40 }}
+            style={{ color: SKIN.ink40 }}
+            onMouseEnter={(e) => { e.currentTarget.style.color = SKIN.ink }}
+            onMouseLeave={(e) => { e.currentTarget.style.color = SKIN.ink40 }}
           >
             {/* A DRAWN CHEVRON, not a glyph. This was &lsaquo; plus the word "Back" - a typographic
                 angle-quote, which is not an arrow: it renders thin and at a different weight in
@@ -148,9 +147,9 @@ export default function SignInDialog({
           onClick={onClose}
           aria-label="Close"
           className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full transition-colors"
-          style={{ color: skin.ink40 }}
-          onMouseEnter={(e) => { e.currentTarget.style.color = skin.ink }}
-          onMouseLeave={(e) => { e.currentTarget.style.color = skin.ink40 }}
+          style={{ color: SKIN.ink40 }}
+          onMouseEnter={(e) => { e.currentTarget.style.color = SKIN.ink }}
+          onMouseLeave={(e) => { e.currentTarget.style.color = SKIN.ink40 }}
         >
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
             <path d="M6 6l12 12M18 6L6 18" />
@@ -170,14 +169,14 @@ export default function SignInDialog({
             {/* Was now.gg's "Save your progress & earn rewards" - true of their product, not of this
                 flow. Two honest lines instead, one per door: an applicant is here to submit, a
                 returning account is here to get back to its dashboard. */}
-            <h3 className="mt-2 text-center text-[14px] font-normal leading-[21px] opacity-90" style={{ color: skin.ink70 }}>
+            <h3 className="mt-2 text-center text-[14px] font-normal leading-[21px] opacity-90" style={{ color: SKIN.ink70 }}>
               {returning ? 'Sign in to open your dashboard.' : 'Sign in to submit your application.'}
             </h3>
           </div>
 
           {/* 4px between the label and its field — the real .form-field gap. */}
           <div className="flex flex-col gap-1">
-            <span className="text-[10px] font-semibold uppercase leading-[14.4px] tracking-[1.5px]" style={{ color: skin.ink80 }}>
+            <span className="text-[10px] font-semibold uppercase leading-[14.4px] tracking-[1.5px]" style={{ color: SKIN.ink80 }}>
               Email
             </span>
             {/* Every visual is a class, none in `style` — an inline border would beat the hover/focus
@@ -191,7 +190,7 @@ export default function SignInDialog({
               placeholder="abc@xyz.com"
               // text-[16px] BELOW sm, 14px above. iOS Safari zooms the whole page when a focused
               // field is under 16px; 14 is the scraped value, kept everywhere that isn't a phone.
-              className={`w-full rounded-[8px] border-[0.8px] px-4 py-2 text-[16px] font-normal leading-[21px] shadow-[0_2px_8px_rgba(0,0,0,0.04)] outline-none transition-[border-color,box-shadow] duration-base ease-out-bai sm:text-[14px] ${skin.field}`}
+              className={`w-full rounded-[8px] border-[0.8px] px-4 py-2 text-[16px] font-normal leading-[21px] shadow-[0_2px_8px_rgba(0,0,0,0.04)] outline-none transition-[border-color,box-shadow] duration-base ease-out-bai sm:text-[14px] ${SKIN.field}`}
             />
           </div>
 
@@ -210,11 +209,11 @@ export default function SignInDialog({
           </button>
 
           <div className="flex flex-row items-center justify-center gap-4">
-            <span className="h-px flex-auto" style={{ background: skin.rule }} />
-            <span className="flex-none text-[14px] font-normal leading-[14px]" style={{ color: skin.ink40 }}>
+            <span className="h-px flex-auto" style={{ background: SKIN.rule }} />
+            <span className="flex-none text-[14px] font-normal leading-[14px]" style={{ color: SKIN.ink40 }}>
               Or sign in with
             </span>
-            <span className="h-px flex-auto" style={{ background: skin.rule }} />
+            <span className="h-px flex-auto" style={{ background: SKIN.rule }} />
           </div>
 
           {/* gap-2 below sm. MEASURED: each button floors at ~68px (20px icon + px-6), so four plus
@@ -227,7 +226,7 @@ export default function SignInDialog({
                 type="button"
                 onClick={go}
                 aria-label={`Continue with ${p.id}`}
-                style={{ background: p.bg, border: `1px solid ${'brand' in p ? 'transparent' : skin.tileLine}` }}
+                style={{ background: p.bg, border: `1px solid ${'brand' in p ? 'transparent' : SKIN.tileLine}` }}
                 className="flex h-11 min-w-0 flex-auto items-center justify-center rounded-[8px] px-2 transition-transform duration-base ease-out-bai hover:-translate-y-0.5 active:translate-y-0 sm:px-6"
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -241,7 +240,7 @@ export default function SignInDialog({
               page the reader was in the middle of. */}
           {/* Same colour as "Or sign in with" — both are supporting text and should read as one tier;
               full white put a boilerplate consent line at the heading's own weight. */}
-          <p className="text-center text-[12px] font-normal leading-[18px]" style={{ color: skin.ink40 }}>
+          <p className="text-center text-[12px] font-normal leading-[18px]" style={{ color: SKIN.ink40 }}>
             By signing up, you agree to the{' '}
             <a className="underline" href="/onblue/terms#terms" target="_blank" rel="noopener">Terms of Use</a> and{' '}
             <a className="underline" href="/onblue/terms#privacy" target="_blank" rel="noopener">Privacy Policy</a>, including{' '}

@@ -38,8 +38,6 @@ export default function Expectations({
   /** 'back' when reached from level 2's Back link, so it slides in from the left. */
   enter?: 'back'
 }) {
-  const { theme } = useCrx()
-  const skin = SKIN[theme]
 
   const [i, setI] = useState(0)
   // Set once a dot or the arrow is used. A reader who took the wheel does not get it taken back —
@@ -88,7 +86,7 @@ export default function Expectations({
 
   return (
     <div
-      style={{ background: skin.card, color: skin.ink, border: `0.8px solid ${RING}`, fontFamily: CARD_FONT }}
+      style={{ background: SKIN.card, color: SKIN.ink, border: `0.8px solid ${RING}`, fontFamily: CARD_FONT }}
       className={`crx-xp relative flex w-full ${CARD_WIDTH} flex-col overflow-hidden rounded-[12px] ${enter === 'back' ? 'crx-step-back' : ''}`}
     >
       {/* THE GRID, top and bottom, the closer's own (Appy, 2026-09-08). Same fans, no shine — the
@@ -103,9 +101,9 @@ export default function Expectations({
         onClick={onClose}
         aria-label="Close"
         className="absolute right-3 top-3 z-20 flex h-8 w-8 items-center justify-center rounded-full transition-colors"
-        style={{ color: skin.ink40 }}
-        onMouseEnter={(e) => { e.currentTarget.style.color = skin.ink }}
-        onMouseLeave={(e) => { e.currentTarget.style.color = skin.ink40 }}
+        style={{ color: SKIN.ink40 }}
+        onMouseEnter={(e) => { e.currentTarget.style.color = SKIN.ink }}
+        onMouseLeave={(e) => { e.currentTarget.style.color = SKIN.ink40 }}
       >
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
           <path d="M6 6l12 12M18 6L6 18" />
@@ -123,11 +121,11 @@ export default function Expectations({
             const on = n === i
             return (
               <div key={s.key} className={`crx-xp-slide ${on ? 'on' : ''}`} aria-hidden={!on}>
-                <span className="crx-xp-icon" style={{ background: skin.wash, color: skin.accent }}>
+                <span className="crx-xp-icon" style={{ background: SKIN.wash, color: SKIN.accent }}>
                   <Art />
                 </span>
                 <h3 className="mt-4 text-[17px] font-semibold leading-[24px]">{s.title}</h3>
-                <p className="mt-1.5 text-[14px] leading-[21px]" style={{ color: skin.ink70 }}>{s.body}</p>
+                <p className="mt-1.5 text-[14px] leading-[21px]" style={{ color: SKIN.ink70 }}>{s.body}</p>
               </div>
             )
           })}
@@ -148,7 +146,7 @@ export default function Expectations({
               aria-label={`Point ${n + 1} of ${slides.length}`}
               onClick={() => go(n)}
               className={`crx-xp-dot ${n === i ? 'on' : ''}`}
-              style={{ background: n === i ? skin.accent : skin.rule }}
+              style={{ background: n === i ? SKIN.accent : SKIN.rule }}
             />
           ))}
 
@@ -162,9 +160,9 @@ export default function Expectations({
             onClick={next}
             aria-label="Next point"
             className="crx-xp-next"
-            style={{ color: skin.ink40 }}
-            onMouseEnter={(e) => { e.currentTarget.style.color = skin.accent }}
-            onMouseLeave={(e) => { e.currentTarget.style.color = skin.ink40 }}
+            style={{ color: SKIN.ink40 }}
+            onMouseEnter={(e) => { e.currentTarget.style.color = SKIN.accent }}
+            onMouseLeave={(e) => { e.currentTarget.style.color = SKIN.ink40 }}
           >
             {/* THE VIEWBOX IS CROPPED TO THE INK, stroke included, so the svg box IS the chevron
                 with no built-in left padding. That is what lets the rail space evenly: a chevron
@@ -187,9 +185,9 @@ export default function Expectations({
           Got it, continue
         </button>
 
-        <p className="text-center text-[12px] leading-[18px]" style={{ color: skin.ink40 }}>
+        <p className="text-center text-[12px] leading-[18px]" style={{ color: SKIN.ink40 }}>
           Already have an account?{' '}
-          <button type="button" onClick={onSignIn} className="underline underline-offset-2" style={{ color: skin.ink70 }}>
+          <button type="button" onClick={onSignIn} className="underline underline-offset-2" style={{ color: SKIN.ink70 }}>
             Sign in
           </button>
         </p>

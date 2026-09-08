@@ -98,8 +98,11 @@ const clampT = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v)
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t
 
 // A clean pixel disc minus a 4-point NSEW sparkle (astroid) — boot.js's genLogo, same relative
-// shape at any resolution. ex<1 makes the sparkle concave; the colour ramps cyan -> violet along
-// (lx+ly), so the gradient is diagonal rather than flat.
+// shape at any resolution. ex<1 makes the sparkle concave.
+// FLAT COLOUR since 2026-09-08. It carried a diagonal cyan -> violet ramp across (lx+ly), which was
+// the brand gradient drawn one pixel at a time - the most literal instance of the thing being
+// removed. The disc reads as a form without it because the intro varies each pixel's ALPHA as it
+// assembles; that envelope was always doing more of the work than the hue was.
 function genLogo(cells: number, ex: number, starFac: number, discFac: number): Px[] {
   const arr: Px[] = []
   const C = (cells - 1) / 2
@@ -107,21 +110,13 @@ function genLogo(cells: number, ex: number, starFac: number, discFac: number): P
   const circleR = R * discFac
   const starR = R * starFac
   const thr = Math.pow(starR, ex)
-  const cyan = [14, 164, 197]
-  const violet = [123, 76, 255]
   for (let j = 0; j < cells; j++) {
     for (let i = 0; i < cells; i++) {
       const lx = i - C
       const ly = j - C
       if (Math.sqrt(lx * lx + ly * ly) > circleR) continue
       if (Math.pow(Math.abs(lx), ex) + Math.pow(Math.abs(ly), ex) <= thr) continue
-      const t = clampT(((lx + ly) / (2 * circleR)) * 0.5 + 0.5)
-      arr.push({
-        lx, ly,
-        color: 'rgb(' + Math.round(cyan[0] + (violet[0] - cyan[0]) * t) + ',' +
-          Math.round(cyan[1] + (violet[1] - cyan[1]) * t) + ',' +
-          Math.round(cyan[2] + (violet[2] - cyan[2]) * t) + ')',
-      })
+      arr.push({ lx, ly, color: 'rgb(47, 109, 255)' })
     }
   }
   return arr
@@ -232,7 +227,7 @@ export default function useBootIntro(onDone: () => void) {
           y: Math.round((Math.random() * VH) / GRID) * GRID,
           born: now, life: 1100 + Math.random() * 1700,
           peak: light ? 0.28 + Math.random() * 0.28 : 0.12 + Math.random() * 0.22,
-          col: Math.random() < 0.5 ? '110,168,255' : '123,76,255',
+          col: '47,109,255',   // one accent, same as PixelRain - see its COLORS note
         })
       }
       for (let i = sparks.length - 1; i >= 0; i--) {

@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import Backdrop from './Backdrop'
 import HomeMain from './HomeMain'
 import HomeBelow from './HomeBelow'
 import HomeOverlay from './HomeOverlay'
@@ -55,7 +54,6 @@ export default function HomepageView({ onCta }: { onCta: () => void }) {
       {/* The room the homepage sits in — three drifting orbs and the logo star, held back over the
           hero and fading in as it leaves. HOMEPAGE ONLY: it is mounted here rather than in
           CreatorsHome so the application, dashboard and full-capacity views never get it. */}
-      <Backdrop />
       <HomeMain />
       {/* The closer stays on the signed-out homepage (its ask — apply — is exactly right here),
           and its button opens the same sign-in dialog the header/hero CTAs do. */}

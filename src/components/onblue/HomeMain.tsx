@@ -119,14 +119,10 @@ export default function HomeMain() {
               <div className="scr-ui">
                 <div className="scr-head">
                   <span className="scr-brand">
+                    {/* the mock app's own favicon, flat in the accent now that the page has no
+                        gradient to fill it with (2026-09-08) */}
                     <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
-                      <defs>
-                        <linearGradient id="bg1" x1="0" y1="0" x2="1" y2="1">
-                          <stop offset="0" stopColor="#a78bff" />
-                          <stop offset="1" stopColor="#3fd4f5" />
-                        </linearGradient>
-                      </defs>
-                      <path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z" fill="url(#bg1)" />
+                      <path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z" fill="#2F6DFF" />
                     </svg>
                     onBlue
                   </span>
