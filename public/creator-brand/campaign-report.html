@@ -344,6 +344,37 @@ tr:last-child td{border-bottom:none}
 .cbp-row { display: flex; flex-direction: column; gap: 2px; padding: 7px 8px; border: none;
   border-radius: 8px; background: none; cursor: pointer; font: inherit; text-align: left; }
 .cbp-row:hover { background: #f4f5f9; }
+.cbp-sect { padding: 9px 8px 3px; font-size: 10px; font-weight: 700; letter-spacing: .1em;
+  text-transform: uppercase; color: #8a8fa6; }
+
+/* the campaign-kind chooser. Cards, not radios: the choice is between two DIFFERENT products with
+   different inputs and different economics, and a radio row would present it as a setting. */
+.kindcard { display: flex; flex-direction: column; gap: 5px; width: 100%; text-align: left;
+  padding: 15px 16px; border: 0.8px solid var(--stroke-warm); border-radius: var(--r-md);
+  background: #fff; cursor: pointer; font: inherit; transition: border-color .15s, background .15s; }
+.kindcard + .kindcard { margin-top: 10px; }
+.kindcard:hover { border-color: var(--accent); background: #fafbff; }
+.kindcard .kt { font-family: var(--head); font-size: 15px; font-weight: 700; color: var(--ink-display); }
+.kindcard .kd { font-size: 13px; line-height: 1.5; color: var(--ink-muted); }
+.kindcard .km { font-size: 12px; color: var(--ink-muted); opacity: .85; }
+.kindcard .km b { color: var(--ink-display); font-weight: 600; }
+
+/* "what happens next" - the ops gate and the generation run are the two things this campaign type
+   does that the other does not, and both happen after Create. Said once, on the last step. */
+.nextbox { border: 0.8px solid var(--stroke-warm); border-radius: var(--r-md); background: #fafbff;
+  padding: 13px 15px; margin-bottom: 16px; }
+.nextbox h4 { margin: 0 0 7px; font-size: 12px; font-weight: 700; color: var(--ink-display); }
+.nextbox ol { margin: 0; padding-left: 17px; }
+.nextbox li { font-size: 12.5px; line-height: 1.65; color: var(--ink-muted); }
+
+/* the videos the agency can see: the ones our team approved internally. Placeholder tiles - this is
+   a design library, and what goes here is a real player once there is a real video to play. */
+.bvgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.bvtile { border: 0.8px solid var(--stroke-warm); border-radius: var(--r-md); overflow: hidden; background: #fff; }
+.bvthumb { aspect-ratio: 9 / 16; background: linear-gradient(160deg, #eef1f7, #dfe4ee);
+  display: flex; align-items: center; justify-content: center; color: #a7adc0; font-size: 20px; }
+.bvcap { padding: 8px 9px; font-size: 11px; line-height: 1.4; color: var(--ink-muted); }
+.bvcap b { display: block; color: var(--ink-display); font-weight: 600; font-size: 11.5px; }
 .cbp-row.on { background: #eef2ff; }
 .cbp-l { font-size: 12px; font-weight: 600; color: #171a24; }
 .cbp-row.on .cbp-l { color: #2563eb; }
@@ -520,7 +551,35 @@ tr:last-child td{border-bottom:none}
   <div class="seghead" style="margin-top:26px">Sample reports <span class="note">illustrative data showing what a live campaign report looks like</span></div>
   <div class="colhead"><span>Campaign</span><span>Fill</span><span>Spend</span><span>Status</span><span></span></div>
   <div class="clist" id="clist">
-    <div class="row" onclick="show('detail',{backTo:'list'})">
+    <!-- BOTH STATES OF THE NEW KIND (Appy, 2026-09-09: "we should showcase both approved and in
+         review state"). In review first, because that is the one the engagement type has no
+         equivalent of: a human ops gate sits between brief and build here, so a brand-video
+         campaign spends real time in a state where there is nothing to show yet, and a dashboard
+         that only ever illustrates the happy end of that hides the wait. Hidden in v1, which cannot
+         create them. -->
+    <div class="row bv-sample" hidden onclick="openSample(false)">
+      <div>
+        <div class="cname">Fernweh Coffee: category films<span class="cid num">#3e81b0c5</span></div>
+        <div class="cmeta">Sample &middot; Brand video growth &middot; Worldwide</div>
+      </div>
+      <div class="fillcell"><div class="bar"><i style="width:0%"></i></div><div class="t"><b class="num">0</b> of <span class="num">400,000</span> verified views &middot; brief with our team</div></div>
+      <div class="cell"><b class="num">$0</b><span class="s num">of $2,000</span></div>
+      <div><span class="chip review">&#8635; IN REVIEW</span></div>
+      <div class="rowlink">View report &rsaquo;</div>
+    </div>
+
+    <div class="row bv-sample" hidden onclick="openSample(true)">
+      <div>
+        <div class="cname">Northline Skate Co.: format tests<span class="cid num">#a15d7f22</span></div>
+        <div class="cmeta">Sample &middot; Brand video growth &middot; US</div>
+      </div>
+      <div class="fillcell"><div class="bar"><i style="width:34%"></i></div><div class="t"><b class="num">102,000</b> of <span class="num">300,000</span> verified views &middot; 6 videos live</div></div>
+      <div class="cell"><b class="num">$510</b><span class="s num">of $1,500</span></div>
+      <div><span class="chip live"><span class="dot"></span> LIVE</span></div>
+      <div class="rowlink">View report &rsaquo;</div>
+    </div>
+
+    <div class="row" onclick="openSample(false)">
       <div>
         <div class="cname">Spring Launch: Product Reveal Short<span class="cid num">#7c2d91e4</span></div>
         <div class="cmeta">Sample &middot; YouTube Short &middot; US</div>
@@ -531,7 +590,7 @@ tr:last-child td{border-bottom:none}
       <div class="rowlink">View report &rsaquo;</div>
     </div>
 
-    <div class="row" onclick="show('detail',{backTo:'list'})">
+    <div class="row" onclick="openSample(false)">
       <div>
         <div class="cname">Creator Collab Teaser<span class="cid num">#4b0a63f7</span></div>
         <div class="cmeta">Sample &middot; YouTube Short &middot; US</div>
@@ -542,7 +601,7 @@ tr:last-child td{border-bottom:none}
       <div class="rowlink">View report &rsaquo;</div>
     </div>
 
-    <div class="row" onclick="show('detail',{backTo:'list'})">
+    <div class="row" onclick="openSample(false)">
       <div>
         <div class="cname">July Brand Anthem<span class="cid num">#d21e88ac</span></div>
         <div class="cmeta">Sample &middot; YouTube Short &middot; US</div>
@@ -553,7 +612,7 @@ tr:last-child td{border-bottom:none}
       <div class="rowlink">View report &rsaquo;</div>
     </div>
 
-    <div class="row" onclick="show('detail',{backTo:'list'})">
+    <div class="row" onclick="openSample(false)">
       <div>
         <div class="cname">Summer Drop Part 1<span class="cid num">#09c4b3d5</span></div>
         <div class="cmeta">Sample &middot; YouTube Short &middot; US</div>
@@ -680,6 +739,24 @@ tr:last-child td{border-bottom:none}
     </div>
 
     <div>
+      <!-- THE VIDEOS THE AGENCY CAN SEE (Appy, 2026-09-09: "they should be able to see the ones we
+           approve internally"). Only the approved ones: the agent generates and our team accepts,
+           edits or rejects before anything reaches this card, so what an agency sees here is the
+           set that is actually going out - not a review queue, which would imply an approval they
+           do not have.
+           PLACEHOLDER TILES ON PURPOSE. This is a design library and there is no video to play; a
+           tile with a duration and a state says what the card IS without pretending to hold real
+           footage. A real player goes here when there is real footage. -->
+      <div class="card" id="bv-videos" hidden>
+        <h2>Videos</h2>
+        <div class="bvgrid">
+          <div class="bvtile"><div class="bvthumb">&#9654;</div><div class="bvcap"><b>Format A &middot; 0:24</b>Approved &middot; 41 posts</div></div>
+          <div class="bvtile"><div class="bvthumb">&#9654;</div><div class="bvcap"><b>Format B &middot; 0:31</b>Approved &middot; 38 posts</div></div>
+          <div class="bvtile"><div class="bvthumb">&#9654;</div><div class="bvcap"><b>Format C &middot; 0:18</b>Approved &middot; 29 posts</div></div>
+        </div>
+        <div class="footnote">Six videos were approved for this campaign; three are shown. Every video is checked by our team before any member posts it.</div>
+      </div>
+
       <div class="card">
         <h2>Accounting</h2>
         <table class="acct">
@@ -857,6 +934,31 @@ tr:last-child td{border-bottom:none}
       </div>
     </div>
 
+    <!-- THE CHOOSER, v2 only. Only ONE box on the PM's brand-video flow is a form - the brief. The
+         rest of that diagram (the agent studying the category, generating the videos, our own
+         review, the distribution plan, day-3/day-7 verification, the receipt) is machinery the
+         agency never touches, so none of it is a field here; it is status on the row and lines in
+         the report. What the two types genuinely differ on is what the agency BRINGS, which is
+         what these two cards say and what splits the forms below. -->
+    <div id="cd-pick" style="display:none">
+      <div class="dhead">
+        <h2>What kind of campaign?</h2>
+        <p>Two ways to get views. Pick the one that matches what you already have.</p>
+      </div>
+      <div class="dbody">
+        <button type="button" class="kindcard" onclick="pickKind('engagement')">
+          <span class="kt">Video engagement driver</span>
+          <span class="kd">You already posted a video. Real people watch it, like it and comment on it from their own accounts.</span>
+          <span class="km">You bring: <b>the video</b></span>
+        </button>
+        <button type="button" class="kindcard" onclick="pickKind('brandvideo')">
+          <span class="kt">Brand video growth</span>
+          <span class="kd">You have no video yet. Our agent studies your category, makes the videos, and members post them from their own accounts.</span>
+          <span class="km">You bring: <b>your site and a few references</b></span>
+        </button>
+      </div>
+    </div>
+
     <div id="cd-form">
       <div class="dhead">
         <h2>Create a campaign</h2>
@@ -956,6 +1058,113 @@ tr:last-child td{border-bottom:none}
       </div>
     </div>
 
+    <!-- BRAND VIDEO GROWTH. Same three-beat shape as the form above - what it is, what it costs,
+         who it is for - so the money model does not fork into two shapes a reader has to learn
+         twice. What changes is step 1: there is no video to link, because not having one is the
+         whole reason to pick this type, so it asks for the things the agent needs in order to make
+         them instead - the site to read, the look to match, and the channels in play. -->
+    <div id="cd-bform" style="display:none">
+      <div class="dhead">
+        <h2>Brand video growth</h2>
+        <p>Nothing is charged now. You&rsquo;re only defining the campaign.</p>
+      </div>
+      <div class="dbody">
+        <div class="steprow">
+          <h3 id="bv-title">Your brand</h3>
+          <div class="prog"><span><span class="num" id="bv-n">1</span>/3</span>
+            <i class="seg on" id="bs1"></i><i class="seg" id="bs2"></i><i class="seg" id="bs3"></i>
+          </div>
+        </div>
+
+        <div id="bv-s1">
+          <label class="fld">
+            <span class="flabel">Campaign name</span>
+            <input class="finput" id="f-bname" placeholder="Fernweh Coffee: category films">
+            <span class="ferr" id="e-bname"></span>
+          </label>
+          <label class="fld">
+            <span class="flabel">Brand website</span>
+            <input class="finput" id="f-bsite" type="text" inputmode="url" placeholder="fernwehcoffee.com">
+            <span class="ferr" id="e-bsite"></span>
+            <span class="fhint" id="h-bsite">Our agent reads this to learn the brand and the category.</span>
+          </label>
+          <div class="fld">
+            <span class="flabel">Reference videos</span>
+            <textarea class="finput" id="f-brefs" rows="2" placeholder="Paste links, one per line" style="resize:none"></textarea>
+            <!-- LINKS AND FILES BOTH (Appy, 2026-09-09: "I guess both should be an option here").
+                 A link is what an agency has to hand when the reference is someone else's video; a
+                 file is what they have when it is their own and unpublished. Neither covers both
+                 cases, so neither one alone is the answer. -->
+            <span class="fhint">Or upload them &mdash; two or three is plenty.</span>
+            <input class="finput" id="f-brefsfile" type="file" accept="video/*,image/*" multiple style="padding:9px 11px">
+            <span class="ferr" id="e-brefs"></span>
+          </div>
+          <label class="fld">
+            <span class="flabel">Your channels <span style="font-weight:400">(optional)</span></span>
+            <input class="finput" id="f-bchan" type="text" placeholder="youtube.com/@fernweh, instagram.com/fernweh">
+            <span class="fhint">Where you post today, so the videos match what your audience already sees.</span>
+          </label>
+        </div>
+
+        <div id="bv-s2" style="display:none">
+          <div class="frow">
+            <label class="fld">
+              <span class="flabel">Campaign budget</span>
+              <span class="moneywrap"><span class="cur">$</span><input class="finput" id="f-bbudget" type="number" min="0" step="1" placeholder="2000"></span>
+              <span class="ferr" id="e-bbudget"></span>
+            </label>
+            <label class="fld">
+              <span class="flabel">Price per 1,000 views</span>
+              <span class="moneywrap"><span class="cur">$</span><input class="finput" id="f-bbid" type="number" min="0" step="0.5" placeholder="5"></span>
+              <span class="ferr" id="e-bbid"></span>
+            </label>
+          </div>
+          <span class="fhint">You are billed per 1,000 verified views, capped at your budget. Illustrative, not a rate card.</span>
+          <div class="frow">
+            <label class="fld">
+              <span class="flabel">Start date</span>
+              <input class="finput" id="f-bstart" type="date">
+              <span class="ferr" id="e-bstart"></span>
+            </label>
+            <label class="fld">
+              <span class="flabel">End date</span>
+              <input class="finput" id="f-bend" type="date">
+              <span class="ferr" id="e-bend"></span>
+            </label>
+          </div>
+        </div>
+
+        <div id="bv-s3" style="display:none">
+          <div class="nextbox">
+            <h4>What happens after you create this</h4>
+            <ol>
+              <li>Our team reads the brief and either takes it or comes back to you.</li>
+              <li>Our agent studies your category and makes the videos.</li>
+              <li>We review every video ourselves &mdash; you see the approved ones here.</li>
+              <li>Members post them and watch, from their own accounts.</li>
+              <li>Views are verified before they bill, capped at your budget.</li>
+            </ol>
+          </div>
+          <div class="fld">
+            <span class="flabel">Target country</span>
+            <div class="chiprow" id="f-bcountry">
+              <span class="selchip" data-c="United States" onclick="pickBCountry(this)">United States</span>
+              <span class="selchip on" data-c="Worldwide" onclick="pickBCountry(this)">&#10003; Worldwide</span>
+            </div>
+          </div>
+          <label class="fld">
+            <span class="flabel">What&rsquo;s the goal? <span style="font-weight:400">(optional)</span></span>
+            <textarea class="finput" id="f-bgoal" rows="3" placeholder="Get the new roast in front of people who don't know us yet." style="resize:none"></textarea>
+          </label>
+        </div>
+
+        <div class="dbtns">
+          <button class="btn" id="bv-back" onclick="bvBack()" style="display:none">Back</button>
+          <button class="btn primary" id="bv-next" onclick="bvNext()">Continue</button>
+        </div>
+      </div>
+    </div>
+
     <div id="cd-done" style="display:none">
       <div class="dsuccess">
         <div class="mark">&#10003;</div>
@@ -1027,13 +1236,26 @@ function openCreate(){
   // A brand normally arrives signed in; otherwise the same sign-in shows inside this dialog
   // first and continues into the form.
   var signed=brandEmail()!==null;
+  // IN v2 THE DIALOG OPENS ON THE CHOOSER, not on a form. There is no sensible default between two
+  // campaign types that want different things from you - picking one FOR the reader and letting
+  // them discover the other later is how the second type stays unused.
+  var pick = signed && workflow()==='v2';
   document.getElementById('cd-signin').style.display=signed?'none':'block';
-  document.getElementById('cd-form').style.display=signed?'block':'none';
+  document.getElementById('cd-pick').style.display=pick?'block':'none';
+  document.getElementById('cd-form').style.display=(signed&&!pick)?'block':'none';
+  document.getElementById('cd-bform').style.display='none';
   document.getElementById('cd-done').style.display='none';
   document.getElementById('cdlg-panel').classList.remove('dark');
   setStep(1);
+  bvStep(1);
   document.getElementById('cdlg').classList.add('on');
   document.body.style.overflow='hidden';
+}
+function pickKind(k){
+  cd.kind=k;
+  document.getElementById('cd-pick').style.display='none';
+  document.getElementById('cd-form').style.display=k==='engagement'?'block':'none';
+  document.getElementById('cd-bform').style.display=k==='brandvideo'?'block':'none';
 }
 function closeCreate(){
   document.getElementById('cdlg').classList.remove('on');
@@ -1133,6 +1355,120 @@ function validStep(n){
   return ok;
 }
 function stepBack(){ if(cd.step>1) setStep(cd.step-1); }
+
+// ---- BRAND VIDEO GROWTH: its own step machine ---------------------------------------------------
+// Deliberately a SECOND set of functions rather than a parameterised one. The two forms share a
+// shape, not a field: nothing in step 1 is the same, and the engagement form's validators are named
+// for its own inputs. Folding them together would mean every rule carrying an "if this type" clause,
+// which is how the fix to one type stops reaching the other - the exact drift this file's own url
+// check already suffered against the React form it duplicates.
+function bvStep(n){
+  cd.bstep=n;
+  document.getElementById('bv-s1').style.display=n===1?'block':'none';
+  document.getElementById('bv-s2').style.display=n===2?'block':'none';
+  document.getElementById('bv-s3').style.display=n===3?'block':'none';
+  document.getElementById('bv-n').textContent=String(n);
+  for(var i=1;i<=3;i++) document.getElementById('bs'+i).className='seg'+(i<=n?' on':'');
+  document.getElementById('bv-title').textContent=['Your brand','Budget and schedule','Audience and goal'][n-1];
+  document.getElementById('bv-back').style.display=n>1?'inline-flex':'none';
+  document.getElementById('bv-next').textContent=n===3?'Create this campaign':'Continue';
+}
+function pickBCountry(el){
+  Array.prototype.forEach.call(document.querySelectorAll('#f-bcountry .selchip'),function(c){
+    var on=c===el;
+    c.classList.toggle('on',on);
+    c.innerHTML=(on?'&#10003; ':'')+c.getAttribute('data-c');
+  });
+}
+function bvValid(n){
+  var ok=true;
+  if(n===1){
+    var nm=document.getElementById('f-bname').value.trim();
+    var site=document.getElementById('f-bsite').value.trim();
+    var refs=document.getElementById('f-brefs').value.trim();
+    var files=document.getElementById('f-brefsfile').files;
+    ok=fieldErr('bname',nm?'':'Give the campaign a name.')&&ok;
+    // Same empty-only rule the video URL takes, and for the same reason recorded there: a
+    // design-only prototype must not reject input a real reader would type, for a field nothing
+    // here resolves.
+    ok=fieldErr('bsite',site?'':'Add your website so the agent can read the brand.')&&ok;
+    // EITHER SOURCE SATISFIES IT. Requiring both would make the link field useless to anyone whose
+    // reference is a video they do not own, and the upload useless to anyone whose reference is
+    // unpublished; the campaign needs a reference, not a particular way of giving one.
+    ok=fieldErr('brefs',(refs||(files&&files.length))?'':'Add at least one reference - a link or a file.')&&ok;
+  }
+  if(n===2){
+    var b=parseFloat(document.getElementById('f-bbudget').value);
+    var bid=parseFloat(document.getElementById('f-bbid').value);
+    var st=document.getElementById('f-bstart').value, en=document.getElementById('f-bend').value;
+    ok=fieldErr('bbudget',!(b>0)?'Set a budget above $0.':'')&&ok;
+    ok=fieldErr('bbid',!(bid>0)?'Set a price above $0.':'')&&ok;
+    ok=fieldErr('bstart',st?'':'Pick a start date.')&&ok;
+    ok=fieldErr('bend',!en?'Pick an end date.':(st&&en<=st)?'The end date has to be after the start.':'')&&ok;
+  }
+  return ok;
+}
+function bvBack(){ if(cd.bstep>1) bvStep(cd.bstep-1); }
+function bvNext(){
+  if(!bvValid(cd.bstep)) return;
+  if(cd.bstep<3){ bvStep(cd.bstep+1); return; }
+  bvSubmit();
+}
+function bvSubmit(){
+  var files=document.getElementById('f-brefsfile').files;
+  var refs=document.getElementById('f-brefs').value.trim();
+  var refLabel=[refs?refs.split('\n').filter(function(x){return x.trim()}).length+' link'+(refs.split('\n').filter(function(x){return x.trim()}).length===1?'':'s'):'',
+                files&&files.length?files.length+' file'+(files.length===1?'':'s'):''].filter(Boolean).join(' + ');
+  var cn=document.querySelector('#f-bcountry .selchip.on');
+  var d={
+    name:document.getElementById('f-bname').value.trim(),
+    site:document.getElementById('f-bsite').value.trim(),
+    chan:document.getElementById('f-bchan').value.trim(),
+    budget:parseFloat(document.getElementById('f-bbudget').value)||0,
+    bid:parseFloat(document.getElementById('f-bbid').value)||0,
+    start:document.getElementById('f-bstart').value||null,
+    end:document.getElementById('f-bend').value||null,
+    country:cn?cn.getAttribute('data-c'):'Worldwide',
+    goal:document.getElementById('f-bgoal').value.trim()
+  };
+  // NO NETWORK WRITE FOR THIS TYPE, and that is deliberate rather than forgotten. The table the
+  // engagement form posts to has that campaign's columns - post_url, actions - and none of this
+  // one's. Posting a brand-video brief into it would either drop the half that matters or write it
+  // into a column that means something else. Whether this kind gets columns, its own table, or is
+  // never stored at all is a backend decision, and inventing one here is how a prototype quietly
+  // becomes a schema.
+  var mine=loadMine();
+  var ts=Date.now();
+  // Shaped for openReview's typed-campaign path (see unitOf/targetOf), so the report renders this
+  // kind with no changes: the bid names its own unit and the brief's answers list under the numbers.
+  var entry={
+    id:genId(ts), name:d.name, budget:d.budget, bid:d.bid, country:d.country, ts:ts,
+    typeName:'Brand video growth',
+    details:{
+      family:'We make the videos',
+      outcomeLabel:'Price per 1,000 verified views',
+      outcomeUnit:'verified views',
+      per:1000,
+      review:'all',
+      start:d.start, end:d.end,
+      goal:d.goal,
+      fieldList:[
+        {label:'Brand website',value:d.site},
+        {label:'References',value:refLabel||'-'},
+        {label:'Your channels',value:d.chan||'-'}
+      ]
+    }
+  };
+  mine.unshift(entry);
+  saveMine(mine);
+  renderMine();
+  cd.last=entry;
+  document.getElementById('done-name').textContent=d.name;
+  document.getElementById('done-id').textContent=shortId(entry.id);
+  document.getElementById('cd-bform').style.display='none';
+  document.getElementById('cdlg-panel').classList.add('dark');
+  document.getElementById('cd-done').style.display='block';
+}
 function stepNext(){
   if(!validStep(cd.step)) return;
   if(cd.step<3){ setStep(cd.step+1); return; }
@@ -1220,6 +1556,31 @@ function isApproved(){ try{return localStorage.getItem(APPROVED_KEY)==='1'}catch
   }
 })();
 
+// ---- WHICH WORKFLOW (2026-09-09) ----------------------------------------------------------------
+// v1 is today's build: New campaign opens straight into the engagement form. v2 adds the chooser and
+// the brand-video type. Same convention as the review gate above - a query flips it and the flag
+// persists, so it is usable in a walkthrough rather than only in the address bar.
+var WF_KEY='cb-brand-workflow';
+function workflow(){ try{ return localStorage.getItem(WF_KEY)==='v2'?'v2':'v1' }catch(e){ return 'v1' } }
+function wfSet(v){ try{ localStorage.setItem(WF_KEY,v) }catch(e){} leaving('Switching workflow\u2026',location.pathname); }
+(function(){
+  try{
+    var q=new URLSearchParams(location.search);
+    if(q.get('wf')==='v2') localStorage.setItem(WF_KEY,'v2');
+    if(q.get('wf')==='v1') localStorage.removeItem(WF_KEY);
+  }catch(e){}
+  var v2=workflow()==='v2';
+  var rows=document.querySelectorAll('#prev .cbp-row[data-w]');
+  for(var i=0;i<rows.length;i++){
+    var on=rows[i].getAttribute('data-w')===(v2?'v2':'v1');
+    rows[i].setAttribute('aria-checked',on?'true':'false');
+    rows[i].className='cbp-row'+(on?' on':'');
+  }
+  // The two brand-video sample rows only exist in the workflow that can create their kind.
+  var bv=document.querySelectorAll('.bv-sample');
+  for(var j=0;j<bv.length;j++) bv[j].hidden=!v2;
+})();
+
 // ---- the reviewer's switch ----------------------------------------------------------------------
 // Writes the same three keys BrandPreview.tsx writes, then reloads. Restated rather than shared for
 // the same reason the review gate's key is: this page imports nothing.
@@ -1245,7 +1606,7 @@ function prevSet(next){
 }
 (function(){
   var cur=isApproved()?'approved':(isRegistered()?'registered':'new');
-  var rows=document.querySelectorAll('#prev .cbp-row');
+  var rows=document.querySelectorAll('#prev .cbp-row[data-s]');
   for(var i=0;i<rows.length;i++){
     var on=rows[i].getAttribute('data-s')===cur;
     rows[i].setAttribute('aria-checked',on?'true':'false');
@@ -1394,6 +1755,15 @@ function fmtDay(d){
   return isNaN(t)?d:t.toLocaleDateString('en-US',{month:'short',day:'numeric'});
 }
 
+// One opener for every sample row, so the report can differ by kind. The videos card belongs to
+// brand-video campaigns only - an engagement campaign promotes a video the agency already has, so a
+// card showing it back to them would say nothing.
+function openSample(isBrandVideo){
+  show('detail',{backTo:'list'});
+  var v=document.getElementById('bv-videos');
+  if(v) v.hidden=!isBrandVideo;
+}
+
 function openReview(c){
   current=c;
   var d=c.details||null;
@@ -1536,8 +1906,24 @@ if(location.hash==='#detail') show('detail',{backTo:'list'});
 <!-- THE SAME REVIEWER SWITCH THE REACT SIDE CARRIES (BrandPreview.tsx). It has to exist here too:
      two of the four states ARE this page, so a switch that only lived on the marketing route could
      get you into the review screen and not back out of it. Same three rows, same keys, same reload. -->
-<div id="prev" class="cbp" hidden role="radiogroup" aria-label="Agency preview state">
+<div id="prev" class="cbp" hidden role="group" aria-label="Preview">
   <button type="button" class="cbp-head" onclick="prevToggle(false)">Preview &middot; agency state</button>
+
+  <!-- WORKFLOW FIRST, because it governs the rows under it: an agency state judged in the wrong
+       workflow is judged twice. v2 is the build with two campaign types; v1 is today's, one type
+       and no chooser, kept so the two can be compared rather than described. -->
+  <div class="cbp-sect">Workflow</div>
+  <div role="radiogroup" aria-label="Workflow">
+    <button type="button" role="radio" class="cbp-row" data-w="v1" onclick="wfSet('v1')">
+      <span class="cbp-l">Engagement only</span><span class="cbp-h">Today&rsquo;s build &middot; one campaign type</span>
+    </button>
+    <button type="button" role="radio" class="cbp-row" data-w="v2" onclick="wfSet('v2')">
+      <span class="cbp-l">Two campaign types</span><span class="cbp-h">Adds brand video growth</span>
+    </button>
+  </div>
+
+  <div class="cbp-sect">Agency state</div>
+  <div role="radiogroup" aria-label="Agency state">
   <button type="button" role="radio" class="cbp-row" data-s="new" onclick="prevSet('new')">
     <span class="cbp-l">New agency</span><span class="cbp-h">Back to the marketing page, signed out</span>
   </button>
@@ -1547,6 +1933,7 @@ if(location.hash==='#detail') show('detail',{backTo:'list'});
   <button type="button" role="radio" class="cbp-row" data-s="approved" onclick="prevSet('approved')">
     <span class="cbp-l">Approved agency</span><span class="cbp-h">The campaigns dashboard</span>
   </button>
+  </div>
 </div>
 <button id="prev-fab" class="cbp-fab" type="button" onclick="prevToggle(true)" aria-label="Preview state">&#9881;</button>
 
