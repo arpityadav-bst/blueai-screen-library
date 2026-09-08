@@ -100,6 +100,38 @@
      they still anchor to the viewport. */
   position: relative;
 }
+/* THE GRAIN (Appy, 2026-09-08: "very subtle noise, grainy effect, to the background"). A flat white
+   page has no material - it is the absence of a surface rather than a light one - and a speck of
+   noise is what makes it read as paper the content sits ON. Both routes get it: #crx is the page
+   root on the homepage and on the legal page.
+
+   GENERATED, NOT AN ASSET. feTurbulence in a data URI costs no request, no file in public/ that a
+   later route-rename can break (which is exactly how the sleep still broke), and no decision about
+   what resolution to ship it at - it is resolution-independent by construction. fractalNoise rather
+   than turbulence, because turbulence's default type produces visible cell structure at this scale;
+   baseFrequency 0.8 puts the grain at roughly a pixel, and stitchTiles keeps the 160px tile from
+   showing its own seams when it repeats.
+
+   FIXED, NOT SCROLLING. Grain that scrolls with the page reads as texture printed on the content;
+   grain that stays put reads as the surface everything is on, which is the one being asked for. It
+   also means the tile never has to be larger than the viewport.
+
+   0.035 AND NO BLEND MODE. Two decisions that go together: at this alpha, mid-grey noise darkens
+   the ground by under 2% - below the threshold where the canvas colour looks changed - so `overlay`
+   is not worth its cost to avoid a shift nobody can see. If it needs to be stronger, this number is
+   the only thing to touch.
+   z-index 0 puts it over the ground and under the content, every part of which is already lifted
+   to 1 (see the note on .crx main > .rv). pointer-events:none so it cannot eat a click. */
+#crx::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23g)'/%3E%3C/svg%3E");
+}
+
 .crx * { box-sizing: border-box; }
 body.crx-lock { overflow: hidden; }
 
