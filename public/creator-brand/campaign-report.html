@@ -521,7 +521,12 @@ tr:last-child td{border-bottom:none}
 
 /* the videos the agency can see: the ones our team approved internally. Placeholder tiles - this is
    a design library, and what goes here is a real player once there is a real video to play. */
-.bvgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+/* THE RATIO WAS ALREADY RIGHT - 9:16 is a Short, and the tiles measured 0.55 against 0.5625. What
+   read as wrong was the SIZE: at 86px wide in the rail, a two-line caption wrapped to three and the
+   whole tile became a 1:2.4 sliver, which is what the eye judges, not the thumbnail alone. Given
+   the main column they land at ~150-180px and the caption sits on two lines as designed.
+   auto-fill rather than a fixed six, so the row reflows on a laptop instead of squeezing. */
+.bvgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); gap: 12px; }
 .bvtile { border: 0.8px solid var(--stroke-warm); border-radius: var(--r-md); overflow: hidden; background: #fff; }
 .bvthumb { aspect-ratio: 9 / 16; background: linear-gradient(160deg, #eef1f7, #dfe4ee);
   display: flex; align-items: center; justify-content: center; color: #a7adc0; font-size: 20px; }
@@ -529,7 +534,7 @@ tr:last-child td{border-bottom:none}
    "this will hold something" rather than as three broken thumbnails */
 #rv-videos .bvtile{border-style:dashed;background:transparent}
 #rv-videos .bvthumb{background:var(--surface);color:#c3c8d6;font-size:16px}
-#rv-videos .bvcap b{color:var(--ink-soft);font-weight:600}
+#rv-videos .bvcap{display:none}
 .bvcap { padding: 8px 9px; font-size: 11px; line-height: 1.4; color: var(--ink-muted); }
 .bvcap b { display: block; color: var(--ink-display); font-weight: 600; font-size: 11.5px; }
 .cbp-row.on { background: #eef2ff; }
@@ -896,24 +901,6 @@ tr:last-child td{border-bottom:none}
     </div>
 
     <div>
-      <!-- THE VIDEOS THE AGENCY CAN SEE (Appy, 2026-09-09: "they should be able to see the ones we
-           approve internally"). Only the approved ones: the agent generates and our team accepts,
-           edits or rejects before anything reaches this card, so what an agency sees here is the
-           set that is actually going out - not a review queue, which would imply an approval they
-           do not have.
-           PLACEHOLDER TILES ON PURPOSE. This is a design library and there is no video to play; a
-           tile with a duration and a state says what the card IS without pretending to hold real
-           footage. A real player goes here when there is real footage. -->
-      <div class="card" id="bv-videos" hidden>
-        <h2>Videos</h2>
-        <div class="bvgrid">
-          <div class="bvtile"><div class="bvthumb">&#9654;</div><div class="bvcap"><b>Format A &middot; 0:24</b>Approved &middot; 41 posts</div></div>
-          <div class="bvtile"><div class="bvthumb">&#9654;</div><div class="bvcap"><b>Format B &middot; 0:31</b>Approved &middot; 38 posts</div></div>
-          <div class="bvtile"><div class="bvthumb">&#9654;</div><div class="bvcap"><b>Format C &middot; 0:18</b>Approved &middot; 29 posts</div></div>
-        </div>
-        <div class="footnote">Six videos were approved for this campaign; three are shown. Every video is checked by our team before any member posts it.</div>
-      </div>
-
       <div class="card">
         <h2>Accounting</h2>
         <table class="acct">
@@ -937,6 +924,24 @@ tr:last-child td{border-bottom:none}
       </div>
     </div>
 
+  </div>
+
+  <!-- FULL WIDTH, BELOW THE TWO-COLUMN ROW (Appy, 2026-09-09: "this does not belong to the right
+       widget but centre widget"). It was in the 320px rail, which gave three portrait tiles about
+       86px each - the captions wrapped to three lines and the tile read as a sliver. The rail is
+       for numbers; anything you are meant to LOOK at needs the main column. All six now, since
+       there is room for them, which also retires the "three are shown" hedge. -->
+  <div class="card" id="bv-videos" hidden>
+    <h2>Videos</h2>
+    <div class="bvgrid">
+      <div class="bvtile"><div class="bvthumb">&#9654;</div><div class="bvcap"><b>Format A &middot; 0:24</b>Approved &middot; 41 posts</div></div>
+      <div class="bvtile"><div class="bvthumb">&#9654;</div><div class="bvcap"><b>Format B &middot; 0:31</b>Approved &middot; 38 posts</div></div>
+      <div class="bvtile"><div class="bvthumb">&#9654;</div><div class="bvcap"><b>Format C &middot; 0:18</b>Approved &middot; 29 posts</div></div>
+      <div class="bvtile"><div class="bvthumb">&#9654;</div><div class="bvcap"><b>Format D &middot; 0:22</b>Approved &middot; 34 posts</div></div>
+      <div class="bvtile"><div class="bvthumb">&#9654;</div><div class="bvcap"><b>Format E &middot; 0:27</b>Approved &middot; 26 posts</div></div>
+      <div class="bvtile"><div class="bvthumb">&#9654;</div><div class="bvcap"><b>Format F &middot; 0:15</b>Approved &middot; 22 posts</div></div>
+    </div>
+    <div class="footnote">Every video is checked by our team before any member posts it.</div>
   </div>
 
   <div class="card">
@@ -1063,21 +1068,24 @@ tr:last-child td{border-bottom:none}
       <div class="footnote">Nothing is charged while the campaign is in review.</div>
     </div>
 
-    <!-- THE SAME CARD, IN ITS EMPTY STATE, on the agency's own campaign. A place that only appears
-         once it has something in it is a place nobody knows to come back to; this is how they learn
-         where the videos will be while there are none. Brand-video campaigns only - written by
-         openReview, hidden for every other kind. -->
-    <div class="card" id="rv-videos" hidden>
-      <h2>Videos</h2>
-      <div class="hint">Our agent makes these, our team checks every one, and the approved ones appear here.</div>
-      <div class="bvgrid" style="margin-top:12px">
-        <div class="bvtile"><div class="bvthumb">&#8230;</div><div class="bvcap"><b>Not yet</b>Waiting on the brief check</div></div>
-        <div class="bvtile"><div class="bvthumb">&#8230;</div><div class="bvcap"><b>Not yet</b>Waiting on the brief check</div></div>
-        <div class="bvtile"><div class="bvthumb">&#8230;</div><div class="bvcap"><b>Not yet</b>Waiting on the brief check</div></div>
-      </div>
-      <div class="footnote">You will get an email when the first ones are ready to look at.</div>
-    </div>
+  </div>
 
+  <!-- THE SAME CARD IN ITS EMPTY STATE, in the same place, which is the point: a card that moves
+       between the state where it is empty and the state where it is full teaches nothing about
+       where to come back to. Six frames because six is what will arrive, and NO per-tile caption -
+       "Not yet" six times is repetition, where six bare dashed frames read as six waiting slots. -->
+  <div class="card" id="rv-videos" hidden>
+    <h2>Videos</h2>
+    <div class="hint">Our agent makes these, our team checks every one, and the approved ones appear here.</div>
+    <div class="bvgrid" style="margin-top:12px">
+      <div class="bvtile"><div class="bvthumb">&#8230;</div></div>
+      <div class="bvtile"><div class="bvthumb">&#8230;</div></div>
+      <div class="bvtile"><div class="bvthumb">&#8230;</div></div>
+      <div class="bvtile"><div class="bvthumb">&#8230;</div></div>
+      <div class="bvtile"><div class="bvthumb">&#8230;</div></div>
+      <div class="bvtile"><div class="bvthumb">&#8230;</div></div>
+    </div>
+    <div class="footnote">You will get an email when the first ones are ready to look at.</div>
   </div>
 
 </div>
