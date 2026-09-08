@@ -17,7 +17,6 @@ export const SKIN = {
     ink70: 'rgba(255,255,255,0.7)',   // sub-heading
     ink80: 'rgba(255,255,255,0.8)',   // field label
     ink40: 'rgba(255,255,255,0.4)',   // separator + legal
-    ink60: 'rgba(255,255,255,0.6)',   // quiet supporting text
     rule: 'rgba(255,255,255,0.2)',    // hairlines
     tileLine: 'transparent',          // the white provider tiles need no edge on a dark card
     accent: '#7B4CFF',
@@ -32,7 +31,6 @@ export const SKIN = {
     ink70: 'rgb(55,58,88)',
     ink80: 'rgb(43,46,76)',
     ink40: 'rgb(106,110,136)',
-    ink60: 'rgb(106,110,136)',
     rule: 'rgb(223,228,238)',
     // On white, the Apple and Google tiles ARE white - without an edge they are two invisible
     // buttons in a row of four. Discord and Facebook keep their brand fills and ignore this.

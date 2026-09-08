@@ -108,26 +108,20 @@ export default function Expectations({
         </svg>
       </button>
 
-      {/* Same padding budget as level 2: 28 sides, 28 bottom, 40 top, 20 between blocks. */}
-      <div className="flex flex-col gap-5 px-7 pb-7 pt-10">
-        {/* NO STEP INDICATOR (Appy, 2026-09-08: "what is the meaning of the 2 dots"). There were two
-            6px dots here saying step 1 of 2, and the question was the verdict: an indicator that has
-            to be explained is not indicating. They sat beside an eyebrow, which reads as a label
-            rather than a counter, so nothing nearby said they were about progress at all.
-            Not replaced with "1 of 2" either - a two-step dialog whose CTA says "continue" and whose
-            whole pitch is "takes ten seconds" does not need a progress model. The eyebrow carries
-            the context on its own. */}
-        <span className="block text-[10px] font-semibold uppercase tracking-[1.5px]" style={{ color: skin.ink60 }}>
-          Before you start
-        </span>
-
-        <div>
-          <h3 className="text-[20px] font-semibold leading-[30px]">Three things, then you&apos;re in.</h3>
-          <p className="mt-1 text-[14px] leading-[21px]" style={{ color: skin.ink70 }}>
-            Takes ten seconds.
-          </p>
-        </div>
-
+      {/* 56 TOP, not level 2's 40. The close control sits at top-3 and is 32px tall, so its bottom
+          edge is at 44 - with a heading above them the rows never came near it, and without one the
+          first row's text would run under it on the right. 56 clears it by 12 and reads as the
+          generous top edge this card was asked for. Sides, bottom and the block gap stay level 2's. */}
+      <div className="flex flex-col gap-5 px-7 pb-7 pt-14">
+        {/* NO HEADER AT ALL (Appy, 2026-09-08). This carried an eyebrow, a heading and a sub -
+            "Before you start", "Three things, then you're in.", "Takes ten seconds." - plus a
+            two-dot step indicator, all removed across this pass and the one before it. Every one of
+            them described the screen instead of being it: three facts and a button need no
+            announcement, and a card that spends its first three lines saying it will be quick is
+            not being quick.
+            THE CARD IS NOT UNNAMED. Modal.tsx sets aria-label="Before you start" on the dialog, so
+            the accessible name survives the visible heading - a screen reader still hears what this
+            is, which is the one thing the deleted copy was doing that mattered. */}
         {/* STAGGERED ARRIVAL. Each row lands 90ms after the one above it, on the same easing the
             laptop's task rows use (crx-emerge's curve) but translating rather than growing - that
             keyframe animates margin-top for a stacking list, which would make this one jump. Three
