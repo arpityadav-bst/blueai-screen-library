@@ -110,18 +110,16 @@ export default function Expectations({
 
       {/* Same padding budget as level 2: 28 sides, 28 bottom, 40 top, 20 between blocks. */}
       <div className="flex flex-col gap-5 px-7 pb-7 pt-10">
-        {/* The eyebrow says where you are, and the two dots say how far there is to go - which is
-            the whole reason to have a level 1 at all: the reader knows the next screen is the last
-            one before they have even seen it. pr-8 keeps the dots clear of the close control. */}
-        <div className="flex items-center justify-between pr-8">
-          <span className="text-[10px] font-semibold uppercase tracking-[1.5px]" style={{ color: skin.ink60 }}>
-            Before you start
-          </span>
-          <span className="flex items-center gap-1.5" aria-label="Step 1 of 2">
-            <span className="h-1.5 w-1.5 rounded-full" style={{ background: skin.accent }} />
-            <span className="h-1.5 w-1.5 rounded-full" style={{ background: skin.rule }} />
-          </span>
-        </div>
+        {/* NO STEP INDICATOR (Appy, 2026-09-08: "what is the meaning of the 2 dots"). There were two
+            6px dots here saying step 1 of 2, and the question was the verdict: an indicator that has
+            to be explained is not indicating. They sat beside an eyebrow, which reads as a label
+            rather than a counter, so nothing nearby said they were about progress at all.
+            Not replaced with "1 of 2" either - a two-step dialog whose CTA says "continue" and whose
+            whole pitch is "takes ten seconds" does not need a progress model. The eyebrow carries
+            the context on its own. */}
+        <span className="block text-[10px] font-semibold uppercase tracking-[1.5px]" style={{ color: skin.ink60 }}>
+          Before you start
+        </span>
 
         <div>
           <h3 className="text-[20px] font-semibold leading-[30px]">Three things, then you&apos;re in.</h3>
