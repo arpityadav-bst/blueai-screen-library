@@ -26,13 +26,27 @@
 // useProductFx.ts ticks a progress bar every 120ms; as React state that would re-render the page
 // for nothing. React never re-renders this subtree, so the mutation cannot fight reconciliation.
 
+// ONE ROW IS SET, THE OTHER THREE ARE SKELETON (Appy, 2026-09-08: "a lot of text is actually not
+// usable here... we can actually have a skeleton bar there"). It is right, and worth saying why it
+// is right rather than just smaller: this window is a HERO, and every word in it is a word the
+// visitor has to read before finding the one sentence that matters. "Transactions" tells them
+// nothing they did not already assume. The skeleton keeps what those rows are FOR — the app has
+// sections, this is one of several — and spends none of the reading budget on it. Icons stay, since
+// they carry the same "real app" signal at no reading cost at all.
+// `w` is the skeleton's width. Varied deliberately: three identical bars read as a loading state,
+// three unequal ones read as text that is simply out of focus.
 const NAV = [
   // d = the icon path, drawn on a 24 box at stroke 1.7 like the rest of this page's line icons
   { id: 'campaigns', label: 'Campaigns', d: 'M4 6h16M4 12h16M4 18h9', on: true },
-  { id: 'earnings', label: 'Your earnings', d: 'M3 7h18v11H3zM3 11h18M7 15h3' },
-  { id: 'tx', label: 'Transactions', d: 'M4 8h13l-3-3M20 16H7l3 3' },
-  { id: 'how', label: 'How it works', d: 'M12 17v.01M12 14a2.5 2.5 0 1 0-2.5-2.5' },
+  { id: 'earnings', w: 62, d: 'M3 7h18v11H3zM3 11h18M7 15h3' },
+  { id: 'tx', w: 48, d: 'M4 8h13l-3-3M20 16H7l3 3' },
+  { id: 'how', w: 56, d: 'M12 17v.01M12 14a2.5 2.5 0 1 0-2.5-2.5' },
 ]
+
+/** A bar standing in for chrome text nobody needs to read. */
+function Skel({ w }: { w: number }) {
+  return <span className="pw-sk" style={{ width: w }} />
+}
 
 /** The campaign's own facts, which is what the subtitle area is for now (Appy: "instead of
  *  repeating the step in the subtitle make the subtitle around the info on the campaign, add
@@ -86,7 +100,10 @@ export default function ProductWindow() {
             onBlue
           </span>
           <span className="pw-top-right">
-            <span className="pw-state"><span className="dot" /> Working</span>
+            {/* THE DOT SAYS "WORKING" ON ITS OWN — a pulsing green dot is the one status signal
+                that needs no label, which is what makes the word beside it safe to drop with the
+                rest of the chrome text. */}
+            <span className="pw-state"><span className="dot" /><Skel w={40} /></span>
             {/* Inert on purpose — window controls that did something would invite a click that
                 dismisses the one thing the hero is there to show. */}
             <span className="pw-ctl" aria-hidden="true">
@@ -101,12 +118,12 @@ export default function ProductWindow() {
             {NAV.map((n) => (
               <span key={n.id} className={n.on ? 'pw-nav on' : 'pw-nav'}>
                 <NavIcon d={n.d} />
-                {n.label}
+                {n.label ?? <Skel w={n.w!} />}
               </span>
             ))}
             <span className="pw-side-foot">
               <span className="pw-avatar">A</span>
-              <span className="pw-side-name">Alex</span>
+              <Skel w={46} />
               <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <circle cx="12" cy="12" r="3" />
                 <path d="M12 3v2M12 19v2M4.2 7.5l1.7 1M18.1 15.5l1.7 1M4.2 16.5l1.7-1M18.1 8.5l1.7-1" />
@@ -124,8 +141,10 @@ export default function ProductWindow() {
                   beside. The desk scene flies its +$X chip into a pill floating in space next to
                   the laptop; here it lands on a figure that is part of the product. Same motion,
                   and now it says the thing the page is arguing. */}
+              {/* No "EARNED" caption (Appy, 2026-09-08). A mint dollar figure in a dashboard's
+                  top-right corner is not ambiguous, and the caption was the smallest text in the
+                  window doing the least work. */}
               <span className="pw-earned" id="pw-earned">
-                <i>Earned</i>
                 <b id="pw-amount">$118</b>
               </span>
             </div>
@@ -145,7 +164,10 @@ export default function ProductWindow() {
               ))}
             </div>
 
-            <span className="pw-lab">Campaign activity</span>
+            {/* No "CAMPAIGN ACTIVITY" label either: a vertical list of ticks under a campaign's
+                facts is self-evidently that campaign's activity. The fact cards keep THEIR labels,
+                because a bare "30 days" beside a bare "12 of 30" would be two numbers with no
+                subject. */}
             <div className="pw-steps" id="pw-steps">
               {STEPS.map((s) => (
                 <div key={s.k} className="pw-step" data-k={s.k}>

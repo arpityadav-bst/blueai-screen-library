@@ -2803,7 +2803,7 @@ body.crx-lock { overflow: hidden; }
    is static copy, the bar reserves its own box), and stating it here is what says so out loud: if
    a future row makes the content taller than this, it clips instead of silently resizing the hero
    on a timer, which is the failure that is hard to see and easy to ship. */
-.crx .pw-body { display: flex; align-items: stretch; height: 296px; }
+.crx .pw-body { display: flex; align-items: stretch; height: 266px; }
 .crx .pw-side {
   width: 148px; flex-shrink: 0;
   display: flex; flex-direction: column; gap: 1px;
@@ -2838,30 +2838,29 @@ body.crx-lock { overflow: hidden; }
   background: var(--accent); color: var(--ink-on-accent);
   font-size: 9.5px; font-weight: 800; flex-shrink: 0;
 }
-.crx .pw-side-name { flex: 1; min-width: 0; }
+/* THE SKELETON. --line-2 rather than a lighter step: it has to read as "text, out of focus", and a
+   bar the eye can barely find reads as a rendering fault instead. 7px is the x-height of the 11.5px
+   labels it stands in for, so the rows keep their rhythm. */
+.crx .pw-sk { display: block; height: 7px; border-radius: 3.5px; background: var(--line-2); }
 
 .crx .pw-main { flex: 1; min-width: 0; padding: 14px 16px 16px; }
 .crx .pw-main-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
 .crx .pw-main-title { font-size: 13.5px; font-weight: 700; color: var(--ink-inverse); min-width: 0; }
-.crx .pw-earned { display: flex; flex-direction: column; align-items: flex-end; gap: 1px; flex-shrink: 0; }
-.crx .pw-earned i {
-  font-style: normal; font-size: 8.5px; font-weight: 700;
-  letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-4);
-}
+.crx .pw-earned { flex-shrink: 0; }
 /* money is mint, the one rule this page holds everywhere */
-.crx .pw-earned b { font-size: 15px; font-weight: 800; color: var(--mint); line-height: 1.1; }
+.crx .pw-earned b { font-size: 16px; font-weight: 800; color: var(--mint); line-height: 1.1; }
 /* the credit's own beat: the figure takes the payment rather than merely displaying a new one */
 .crx .pw-earned.bump b { animation: pw-bump 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
 @keyframes pw-bump { 0% { transform: none; } 35% { transform: scale(1.16); } 100% { transform: none; } }
 
-.crx .pw-say { margin: 9px 0 13px; font-size: 12.5px; line-height: 1.5; color: var(--dim); }
+.crx .pw-say { margin: 4px 0 14px; font-size: 12.5px; line-height: 1.5; color: var(--dim); }
 
 /* THE CAMPAIGN'S FACTS. Subtle by construction rather than by opacity: the page's quietest surface
    and its hairline, no shadow, no accent, and the LABEL is smaller than the value so the eye reads
    three numbers with captions rather than three captions with numbers. They are the reason the
    subtitle stopped narrating - between them they say what the campaign is, and the timeline says
    what is happening to it. */
-.crx .pw-facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px; }
+.crx .pw-facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 18px; }
 .crx .pw-fact {
   display: flex; flex-direction: column; gap: 3px;
   padding: 8px 10px;
@@ -2874,13 +2873,9 @@ body.crx-lock { overflow: hidden; }
   letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-4);
 }
 .crx .pw-fact b { font-size: 12.5px; font-weight: 650; color: var(--ink-inverse); line-height: 1.1; }
-.crx .pw-lab {
-  display: block; font-size: 8.5px; font-weight: 700;
-  letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-4);
-}
 
 /* ---- the activity timeline ---- */
-.crx .pw-steps { margin-top: 11px; }
+.crx .pw-steps { margin-top: 0; }
 .crx .pw-step { position: relative; display: grid; grid-template-columns: 18px 1fr; gap: 11px; padding-bottom: 14px; }
 .crx .pw-step:last-child { padding-bottom: 0; }
 /* the connector, drawn from each node to the next rather than as one rule behind them all: a single
@@ -2928,6 +2923,11 @@ body.crx-lock { overflow: hidden; }
    resize. visibility keeps the box and drops the paint, so the layout is settled at first render
    and nothing the loop does can change it. */
 .crx .pw-prog {
+  /* display:block IS LOAD-BEARING, not tidiness. This is a <span>, and an inline box ignores
+     `height` — so when the live state stopped supplying `display: block` (it used to, back when the
+     bar was display:none until its step ran) the 4px silently stopped applying and the fill's
+     height:100% resolved against auto instead. The bar rendered ~3x too thick and nothing failed. */
+  display: block;
   visibility: hidden;
   height: 4px; margin-top: 8px; border-radius: 999px; background: var(--track); overflow: hidden;
 }
