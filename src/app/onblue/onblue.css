@@ -2866,12 +2866,23 @@ body.crx-lock { overflow: hidden; }
   background: var(--accent);
   flex-shrink: 0;
 }
-/* THE TRAFFIC LIGHTS. Literal Apple values, because a near-miss on colours this recognisable reads
-   as a bad copy rather than as a restrained one - it is the single most quoted piece of UI there is.
-   No inner glyphs and no hover: they are a shape everyone knows, and this window is not clickable.
-   Right-hand side, which macOS is not - the aesthetic was the ask, not the platform. */
-.crx .pw-ctl { display: inline-flex; align-items: center; gap: 8px; }
-.crx .pw-light { display: block; width: 11px; height: 11px; border-radius: 50%; }
+/* THE TRAFFIC LIGHTS. Literal Apple values and Apple's own geometry - 12px on an 8px gap - because
+   a near-miss on the single most quoted piece of UI there is reads as a bad copy rather than as a
+   restrained one. No inner glyphs and no hover: the shape is universally known and this window is
+   not clickable. Right-hand side, which macOS is not - the aesthetic was the ask, not the platform.
+
+   flex-shrink: 0 IS WHY THEY WERE OVALS (Appy, 2026-09-08: "they are not completely round"). They
+   are flex items in the title bar's right-hand group; a flex item's default is to give up width
+   under pressure, and it takes the width WITHOUT touching the height, so three circles quietly
+   became three ellipses whenever the bar was tight. border-radius: 50% cannot save a box that is
+   no longer square - it just makes a rounder ellipse.
+
+   SUBTLE VIA OPACITY, not via softer colours. Mixing each hue toward white by hand would be three
+   new values to keep in step and would break the "these are the real ones" claim; one opacity keeps
+   the exact Apple hues and their relationship to each other, and simply turns them down. They are
+   the only saturated thing in a window where nothing else is allowed to contrast. */
+.crx .pw-ctl { display: inline-flex; align-items: center; gap: 8px; opacity: 0.55; }
+.crx .pw-light { display: block; width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
 .crx .pw-light.r { background: #ff5f57; }
 .crx .pw-light.y { background: #febc2e; }
 .crx .pw-light.g { background: #28c840; }
@@ -3028,8 +3039,15 @@ body.crx-lock { overflow: hidden; }
      height:100% resolved against auto instead. The bar rendered ~3x too thick and nothing failed. */
   display: block;
   visibility: hidden;
-  height: 4px; margin-top: 8px; border-radius: 999px; background: var(--track); overflow: hidden;
+  height: 4px; margin-top: 6px; border-radius: 999px; background: var(--track); overflow: hidden;
 }
+/* THE RUNNING ROW PAYS FOR ITS OWN BAR (Appy, 2026-09-08: "the spacing between watching and
+   reviewing and paid to your balance is higher than the other spacing"). Every other row is text
+   plus 18px of padding; this one is text plus a 6px margin, a 4px bar and the same 18px, so the gap
+   under it was 28 where the others were 18. The bar is CONTENT, not spacing - so the row's own
+   padding comes down by exactly what the bar costs (6 + 4) and the four rows sit on one rhythm
+   again. Keyed off data-k rather than :has(), so it is legible in the markup which row this is. */
+.crx .pw-step[data-k="running"] { padding-bottom: 8px; }
 .crx .pw-step.live .pw-prog, .crx .pw-step.done .pw-prog { visibility: visible; }
 .crx .pw-prog > i { display: block; height: 100%; width: 0%; border-radius: 999px; background: var(--accent); }
 
