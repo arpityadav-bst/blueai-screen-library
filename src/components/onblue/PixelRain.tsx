@@ -30,15 +30,19 @@ import { useEffect, useRef } from 'react'
 // intro scales both against a 420x760 base, so the field reads the same everywhere - and "same
 // amount" as the intro is only true if it scales the same way the intro does.
 const GRID = 6
-// ONE COLOUR since 2026-09-08. It was blue + iris, the two ends of the old brand gradient; the
-// accent is the whole palette now, and a second hue in the rain would be the only place on the
-// page still saying there are two.
-const COLORS = ['47,109,255']
+// ONE COLOUR since 2026-09-08. It was a coin flip between blue and iris, the two ends of the old
+// brand gradient; the accent is the whole palette now, and a second hue in the rain would be the
+// only place on the page still saying there are two.
+// A CONSTANT, NOT A ONE-ELEMENT ARRAY. Shortening the array first left the `COLORS[1]` pick in
+// place, which is undefined - and an undefined fillStyle is not an error, the canvas silently
+// keeps whatever colour it was last given. Half the rain drew in the wrong colour and nothing
+// failed. A shape that cannot be indexed past its end is what stops that happening again.
+const RAIN = '47,109,255'
 const BASE_AREA = 420 * 760
 const BASE_CAP = 24
 const BASE_SPAWN_MS = 110
 
-type Spark = { x: number; y: number; born: number; life: number; peak: number; col: string }
+type Spark = { x: number; y: number; born: number; life: number; peak: number }
 
 export default function PixelRain() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -97,7 +101,6 @@ export default function PixelRain() {
         // mark back at the intro's 4px there is nothing left to compensate for, and matching the
         // intro's alphas is what makes the handover from intro to hero invisible.
         peak: light ? 0.28 + Math.random() * 0.28 : 0.12 + Math.random() * 0.22,
-        col: Math.random() < 0.5 ? COLORS[0] : COLORS[1],
       })
     }
 
@@ -115,7 +118,7 @@ export default function PixelRain() {
           continue
         }
         ctx!.globalAlpha = Math.sin(t * Math.PI) * s.peak // fade in -> peak -> fade out
-        ctx!.fillStyle = `rgb(${s.col})`
+        ctx!.fillStyle = `rgb(${RAIN})`
         ctx!.fillRect(s.x, s.y, GRID - 2, GRID - 2)
       }
       ctx!.globalAlpha = 1
