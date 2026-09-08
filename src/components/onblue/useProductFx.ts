@@ -26,8 +26,14 @@ import { useCallback, useEffect, useRef } from 'react'
 // flag gates every continuation, so unmount really stops the loop — StrictMode mounts twice in dev,
 // and signing in unmounts the whole homepage.
 
-/** Whole dollars, the desk scene's own demo pays (PAYS in useLaptopFx) so both stages agree. */
-const PAYS = [2, 3, 5, 8, 12, 20, 30]
+/** ONE FIGURE, NOT A RANDOM ONE (2026-09-08). This started as useLaptopFx's PAYS - seven amounts
+ *  from $2 to $30, picked at random per cycle - which is the desk scene's PER-TASK model and predates
+ *  the site's move to a flat monthly payment. In a window that states "Your reward $30" on a fact
+ *  card, an animation crediting $12 contradicts the card beside it, and the surrounding site as well:
+ *  EARNING.monthlyPayment is 30 and mockData's own note says every dollar figure must be a multiple
+ *  of it, "under the monthly model any other number is money that cannot exist". The desk scene keeps
+ *  its randomness; it is the older model's stage and is going away with it. */
+const PAY = 30
 
 /** Cumulative offsets from the top of a cycle. The gaps are useLaptopFx's, slowed a touch: a
  *  timeline row is read, where a strip line was glanced at. */
@@ -39,8 +45,10 @@ export default function useProductFx() {
   const aliveRef = useRef(true)
   const timersRef = useRef<Set<ReturnType<typeof setTimeout>>>(new Set())
   const intervalsRef = useRef<Set<ReturnType<typeof setInterval>>>(new Set())
-  /** Base-118, the figure the desk scene starts from — the two stages must not disagree. */
-  const earnedRef = useRef(118)
+  /** 150, which is MOCK_STATS.balance — the five qualifying months the signed-in dashboard shows.
+   *  The desk scene's own 118 is not a multiple of the monthly payment and could not be a real
+   *  balance; starting from the dashboard's figure means the hero and the dashboard agree. */
+  const earnedRef = useRef(150)
 
   const later = useCallback((fn: () => void, ms: number) => {
     const id = setTimeout(() => {
@@ -154,13 +162,12 @@ export default function useProductFx() {
       later(() => { mark(0, 'done'); mark(1, 'live') }, AT.approved)
       later(() => { mark(1, 'done'); mark(2, 'live'); runProgress() }, AT.running)
       later(() => {
-        const p = PAYS[Math.floor(Math.random() * PAYS.length)]
         mark(2, 'done')
         mark(3, 'done')
-        flyChip(p)
+        flyChip(PAY)
         // The credit lands as the chip arrives, not when it leaves — the number going up before
         // the money gets there reads as two separate events.
-        later(() => credit(p), reduced ? 0 : 620)
+        later(() => credit(PAY), reduced ? 0 : 620)
       }, AT.paid)
       later(cycle, AT.reset)
     }

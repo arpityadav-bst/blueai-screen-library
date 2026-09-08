@@ -73,12 +73,25 @@ const FACTS = [
   { k: 'Your reward', v: '$30' },
 ]
 
-/** The four beats, in the order the loop plays them. `bar` marks the one that carries progress. */
+/** The four beats, in the order the loop plays them. `bar` marks the one that carries progress.
+ *
+ *  THE VOICE IS AN EVENT LOG, and it is one voice now (Appy, 2026-09-08: "work found for you feels
+ *  like 12 yr old guy copy"). The first pass had four rows in four registers - a passive phrase
+ *  addressed to the reader, a past-tense sentence about them, a present participle about the
+ *  machine, and a bare noun - which is what made it read as written rather than as recorded. A real
+ *  dashboard's activity list is terse and factual, and every row is the same KIND of statement.
+ *  So: completed rows are past, the live row is present continuous, and none of them explain.
+ *  "for you" went with the register. It is the tell in the original: the timeline is a record of
+ *  what happened, and a record does not reassure you that it happened on your behalf.
+ *  TWO OF THESE WERE ALSO WRONG, not just flat. "Running on your PC" is the footer's exact string,
+ *  eleven lines below in the same 900px frame - the window said one thing twice and neither
+ *  instance knew about the other. And "Payment added" named no payee while the figure it credits
+ *  sits in the top-right corner. */
 const STEPS = [
-  { k: 'found', label: 'Work found for you' },
+  { k: 'found', label: 'Matched to this campaign' },
   { k: 'approved', label: 'You approved it' },
-  { k: 'running', label: 'Running on your PC', bar: true },
-  { k: 'paid', label: 'Payment added' },
+  { k: 'running', label: 'Watching and reviewing', bar: true },
+  { k: 'paid', label: 'Paid to your balance' },
 ]
 
 function NavIcon({ d }: { d: string }) {
@@ -153,7 +166,7 @@ export default function ProductWindow() {
                   top-right corner is not ambiguous, and the caption was the smallest text in the
                   window doing the least work. */}
               <span className="pw-earned" id="pw-earned">
-                <b id="pw-amount">$118</b>
+                <b id="pw-amount">$150</b>
               </span>
             </div>
 
