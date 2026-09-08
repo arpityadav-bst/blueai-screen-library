@@ -74,7 +74,11 @@ export default function Expectations({
     },
     {
       icon: <PlayIcon />,
-      fact: 'It works on your YouTube account.',
+      // PLATFORM, NOT YOUTUBE (Appy, 2026-09-08). The row's job is "the work happens on YOUR
+      // account, and you see it first" - naming one platform narrows a promise that is about
+      // ownership and consent, not about which app. It also dates: the site lists Instagram,
+      // TikTok, X and Reddit as soon, and this line would need editing the day any of them ships.
+      fact: 'It works on your platform accounts.',
       detail: 'You approve each campaign before your worker runs it.',
     },
     {
