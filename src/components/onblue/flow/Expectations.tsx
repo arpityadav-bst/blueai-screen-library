@@ -23,7 +23,7 @@ import { PHONE_SLIDE, SLIDES, type Slide } from './expectationSlides'
 // THE PARENT OWNS EVERYTHING THAT DOES NOT CHANGE: the close control, the grid, the dots, the CTA
 // and the sign-in line all sit outside the moving part. Only the card slides.
 
-const DWELL = 5000
+const DWELL = 8000
 
 export default function Expectations({
   onContinue,
@@ -42,10 +42,9 @@ export default function Expectations({
   const skin = SKIN[theme]
 
   const [i, setI] = useState(0)
-  // Set once a dot is clicked. A reader who took the wheel does not get it taken back — an
-  // auto-advance that resumes after a manual choice moves the card out from under them.
+  // Set once a dot or the arrow is used. A reader who took the wheel does not get it taken back —
+  // an auto-advance that resumes after a manual choice moves the card out from under them.
   const [held, setHeld] = useState(false)
-  const [paused, setPaused] = useState(false)
   const [phone, setPhone] = useState(false)
   const reduced = useRef(false)
 
@@ -54,18 +53,33 @@ export default function Expectations({
     setPhone(/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent))
   }, [])
 
+  // IT DOES NOT PAUSE ON HOVER, and that is a correction, not an omission (Appy, 2026-09-08: "they
+  // are not moving towards the next item by itself"). A hover pause is the obvious kindness and it
+  // was wrong here for a reason worth keeping: this card opens under the pointer that clicked
+  // "Apply now", so the pause fired on the first frame and the carousel never advanced once. A
+  // pause condition that is true by default is a stopped carousel. 8s instead of 5 is what buys
+  // back the reading time the pause was meant to protect.
+  //
   // AUTO-ADVANCE STOPS AT THE LAST SLIDE rather than looping. This is a thing to read once, not a
   // billboard: cycling back to point one implies there is more to see and quietly asks the reader
-  // to keep watching instead of pressing the button.
+  // to keep watching instead of pressing the button. The ARROW still wraps — see next().
   useEffect(() => {
-    if (held || paused || reduced.current || i >= SLIDES.length - 1) return
+    if (held || reduced.current || i >= SLIDES.length - 1) return
     const t = window.setTimeout(() => setI((n) => n + 1), DWELL)
     return () => window.clearTimeout(t)
-  }, [i, held, paused])
+  }, [i, held])
 
   const go = useCallback((n: number) => {
     setHeld(true)
     setI(n)
+  }, [])
+
+  // The arrow WRAPS where the timer stops. The timer stopping is the screen settling; an arrow that
+  // dies on the last card is a control the reader is still looking at and can no longer use, and
+  // re-reading point one is a real thing to want here.
+  const next = useCallback(() => {
+    setHeld(true)
+    setI((n) => (n + 1) % SLIDES.length)
   }, [])
 
   const slides: Slide[] = phone ? [PHONE_SLIDE, SLIDES[1], SLIDES[2]] : [...SLIDES]
@@ -74,12 +88,6 @@ export default function Expectations({
     <div
       style={{ background: skin.card, color: skin.ink, border: `0.8px solid ${RING}`, fontFamily: CARD_FONT }}
       className={`crx-xp relative flex w-full ${CARD_WIDTH} flex-col overflow-hidden rounded-[12px] ${enter === 'back' ? 'crx-step-back' : ''}`}
-      // Pause while the pointer is over the card or focus is inside it: someone reading point one
-      // slowly, or tabbing to a dot, should not have it replaced mid-sentence.
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-      onFocusCapture={() => setPaused(true)}
-      onBlurCapture={() => setPaused(false)}
     >
       {/* THE GRID, top and bottom, the closer's own (Appy, 2026-09-08). Same fans, no shine — the
           travelling wave belongs to a full-width band you scroll past; behind 40 words of dialog
@@ -141,6 +149,25 @@ export default function Expectations({
               style={{ background: n === i ? skin.accent : skin.rule }}
             />
           ))}
+
+          {/* THE ARROW SITS IN THE DOT RAIL, after the dots (Appy, 2026-09-08) — the rail is where
+              "where am I / where next" already lives, so the control that answers the second half
+              belongs beside the thing that answers the first. The whole rail centres as one group
+              rather than centring the dots and pinning the arrow to the edge: an arrow parked in the
+              corner reads as page chrome, not as this carousel's own next. */}
+          <button
+            type="button"
+            onClick={next}
+            aria-label="Next point"
+            className="crx-xp-next"
+            style={{ color: skin.ink40 }}
+            onMouseEnter={(e) => { e.currentTarget.style.color = skin.accent }}
+            onMouseLeave={(e) => { e.currentTarget.style.color = skin.ink40 }}
+          >
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
         </div>
 
         {/* NEVER GATED ON HAVING SEEN ALL THREE. The acknowledgement is passive by design, and a

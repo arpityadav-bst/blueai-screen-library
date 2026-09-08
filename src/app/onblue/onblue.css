@@ -1591,6 +1591,9 @@ body.crx-light .crx {
    The active one stretches to a pill rather than only changing colour - position in a set of three
    should survive being seen in greyscale or at a glance. Colours are inline from the SKIN. */
 .crx .crx-xp-dots { display: flex; align-items: center; justify-content: center; gap: 7px; }
+/* the arrow is separated from the dots by more than the dots are from each other, so the rail reads
+   as "three of these, then a control" rather than as four things in a row */
+.crx .crx-xp-dots .crx-xp-next { margin-left: 7px; }
 .crx .crx-xp-dot {
   width: 7px; height: 7px; padding: 0; border: none; border-radius: 128px; cursor: pointer;
   transition: width 0.32s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.32s ease, opacity 0.2s ease;
@@ -1598,6 +1601,18 @@ body.crx-light .crx {
 .crx .crx-xp-dot:hover { opacity: 0.75; }
 .crx .crx-xp-dot.on { width: 20px; }
 .crx .crx-xp-dot:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 3px; }
+
+/* The next control. 26px so it is a real target next to 7px dots without towering over them, and
+   round because everything else in this rail is. Its ink comes inline from the SKIN. */
+.crx .crx-xp-next {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 26px; height: 26px; padding: 0;
+  background: none; border: none; border-radius: 128px; cursor: pointer;
+  transition: color 0.18s ease, transform 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.crx .crx-xp-next:hover { transform: translateX(2px); }
+.crx .crx-xp-next:active { transform: translateX(0); }
+.crx .crx-xp-next:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px; }
 
 /* THE GRID, at dialog scale (BandGrid, idPrefix crxXp). Fainter than the band's: the band is a
    full-width closer you scroll past and the lines are the surface, here they sit behind 40 words
@@ -1620,6 +1635,8 @@ body.crx-light .crx .crx-xp-grid { color: rgba(43, 53, 133, 0.34); }
   .crx .crx-xp-slide.on .crx-xp-drop,
   .crx .crx-xp-slide.on .crx-xp-coin { animation: none; }
   .crx .crx-xp-dot { transition: none; }
+  .crx .crx-xp-next { transition: color 0.18s ease; }
+  .crx .crx-xp-next:hover { transform: none; }
 }
 @keyframes crx-step-fade { from { opacity: 0; } to { opacity: 1; } }
 
