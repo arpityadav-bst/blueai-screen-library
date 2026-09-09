@@ -148,6 +148,30 @@
       { role: 'final', tone: 'success', content: successContent(text), d: 900 }];
   }
 
+  /* Scheduled BlueAI-worker run that dies mid-job because credits ran out (designer, 2026-09-09).
+     A scheduled run happens in its OWN chat with no user message — that's why this script opens on
+     a status line instead of a 'user' bubble, unlike makeTaskSteps/makeResumeSteps.
+
+     Reuses the EXISTING bubble roles: 'warning' -> the amber WarningBubble, 'final'+tone:'fail' ->
+     the red FinalBubble. The PM's mock showed these two states plus a placeholder change; it was a
+     COPY spec, not new UI, so nothing new is drawn here — only the strings are new.
+
+     The warning lands BEFORE the failure on purpose: the run is what noticed the balance hit zero,
+     so it announces the condition first and only then reports the job it couldn't finish. Flipped,
+     the error would read as the cause rather than the consequence. */
+  function makeScheduledOocSteps() {
+    return [
+      { role: 'status', content: 'Scheduled run started — finding a job that fits you…', d: 900 },
+      { role: 'thinking', d: 1200 },
+      { role: 'status', content: 'Found one. Opening the app and getting started…', d: 1100 },
+      { role: 'status', content: 'Running the job step by step…', d: 1100 },
+      /* PM's copy verbatim. WarningBubble has no title slot, so the mock's bold "Out of credits"
+         heading becomes the opening sentence rather than being dropped — the amber bubble and its
+         icon already carry the severity a heading would have signalled. */
+      { role: 'warning', content: 'BlueAI is out of credits. It can’t earn money right now. Credits arrive tomorrow, or top up to keep earning.', d: 1100 },
+      { role: 'final', tone: 'fail', content: 'Not enough credits for this job. Top up now or come back tomorrow.', d: 900 }];
+  }
+
   /* Dev-preview only: one example bubble per chat message state, rendered instantly (no
      scripted delay) so success / warning / human-input-required / error are all visible side
      by side without having to type + send a message per state. */
@@ -179,6 +203,6 @@
 
   window.ChatBubbles = {
     UserBubble, StatusBubble, WarningBubble, FinalBubble, ThinkingBubble,
-    ChatStatesPreview, makeTaskSteps, makeResumeSteps
+    ChatStatesPreview, makeTaskSteps, makeResumeSteps, makeScheduledOocSteps
   };
 })();

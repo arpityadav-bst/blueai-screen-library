@@ -47,7 +47,10 @@
   // component got its value. Requires moneymaker_icons.jsx's <script> to run before this one.
   const STEPS = [
     { n: 1, NumeralIcon: window.MoneyMakerIcons.IcoProfile, node: 'Sign in with the same now.gg account you applied with.' },
-    { n: 2, NumeralIcon: window.MoneyMakerIcons.IcoCodeFolder, node: 'Run the MoneyMaker skill: it finds jobs and runs them for you.' }
+    // Copy renamed 2026-09-09 (designer directive: MoneyMaker -> "BlueAI worker") — dropped
+    // "skill" from the wording too, not just swapped the name: now that Skills is hidden and this
+    // is the only worker, "skill" framing no longer matches what the product shows anywhere else.
+    { n: 2, NumeralIcon: window.MoneyMakerIcons.IcoCodeFolder, node: 'Run the BlueAI worker: it finds jobs and runs them for you.' }
   ];
 
   /* Steps card (StepHalf + StepsCard, the single divided card replacing two square ones) lives

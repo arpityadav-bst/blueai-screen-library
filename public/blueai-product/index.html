@@ -422,26 +422,35 @@ function AICreditsScreen({ credits, isPrime, primeGeo, keyAdded, byokOn, keyInfo
               <div style={{ height: '100%', width: '100%', borderRadius: 999, background: 'linear-gradient(90deg,#0EA4C5,#1990FF)' }} />
             </div>
           </div>
-          {/* Breakdown divider */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '28px 18px 8px' }}>
-            <div style={{ flex: 1, height: 1, background: '#e2e8f0' }} />
-            <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', color: '#94a3b8' }}>CREDIT BREAKDOWN</span>
-            <div style={{ flex: 1, height: 1, background: '#e2e8f0' }} />
-          </div>
-          {/* Breakdown rows */}
-          <div style={{ padding: '0 18px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '13px 0', borderBottom: '1px solid #eef2f6' }}>
-              <div>
-                <p style={{ fontSize: 15, fontWeight: 700, color: '#111827' }}>Prime</p>
-                <p style={{ fontSize: 12.5, color: '#94a3b8', marginTop: 2 }}>Renews in 11 days</p>
+          {/* One note about the worker, in two versions of itself — replaced the "WORKER ACTIVITY"
+             rows (jobs completed / credits spent) 2026-09-09 on the designer's call. Those rows
+             invented usage data this prototype has no source for, and a tally answers a question
+             nobody on this screen is asking; what the screen actually has to explain is the LINK
+             between the balance above and whether the worker keeps running.
+
+             Out of credits gets the loud version (tinted, stated as a condition); with credits it
+             gets the quiet one (grey, stated as how it works). Same sentence underneath both: the
+             worker spends credits, at zero it stops, credits come back tomorrow. Deliberately NOT
+             a second Top Up button on the zero state — the screen's own "Top Up or Manage Credits"
+             CTA sits directly below it, and two top-up buttons a few pixels apart is one too many.
+             Say the word and I'll add it to match the mock exactly. */}
+          {credits === 0 ? (
+            <div style={{ padding: '26px 18px 0' }}>
+              <div style={{ display: 'flex', gap: 11, background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: 14, padding: '14px 15px' }}>
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 1 }}><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="13" /><line x1="12" y1="16.5" x2="12" y2="16.5" /></svg>
+                <div>
+                  <p style={{ fontSize: 13.5, fontWeight: 700, color: '#1e3a8a', lineHeight: 1.3 }}>Out of credits</p>
+                  <p style={{ fontSize: 12.5, color: '#1e40af', lineHeight: 1.5, marginTop: 3 }}>BlueAI can&rsquo;t do jobs or earn money without credits. Credits arrive tomorrow, or top up now to keep earning.</p>
+                </div>
               </div>
-              <span style={{ fontSize: 15, fontWeight: 700, color: '#111827' }}>0</span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '13px 0', borderBottom: '1px solid #eef2f6' }}>
-              <p style={{ fontSize: 15, fontWeight: 700, color: '#111827' }}>Top-ups</p>
-              <span style={{ fontSize: 15, fontWeight: 700, color: '#111827' }}>{credits.toLocaleString('en-US')}</span>
+          ) : (
+            <div style={{ padding: '26px 18px 0' }}>
+              <p style={{ fontSize: 12.5, color: '#94a3b8', lineHeight: 1.55, textAlign: 'center', padding: '0 6px' }}>
+                Your BlueAI worker spends credits to run jobs. When the balance reaches zero, jobs pause until your next credits arrive.
+              </p>
             </div>
-          </div>
+          )}
           {/* CTA */}
           <div style={{ padding: '22px 18px 4px' }}>
             <button style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7, background: '#1990FF', border: 'none', borderRadius: 12, padding: '14px 0', fontSize: 15, fontWeight: 700, color: 'white', cursor: 'pointer', fontFamily: 'inherit', transition: 'opacity 0.15s' }}
@@ -549,6 +558,7 @@ function App() {
   const [byokOn, setByokOn] = useState(false);             // BYOK toggle in Settings
   const [highlightByok, setHighlightByok] = useState(false); // pulse the Settings BYOK card when routed there
   const [zeroCredits, setZeroCredits] = useState(false);   // preview "out of credits" (drives the on-send popup)
+  const [scheduledOoc, setScheduledOoc] = useState(false); // preview: a SCHEDULED worker run that dies mid-job on zero credits (its own chat, no user message)
   const [showChatStates, setShowChatStates] = useState(false); // preview: show one example bubble per chat message state (success/warning/error) instead of the live scripted task
   const [aiHwSupported, setAiHwSupported] = useState(true);    // preview: does this PC meet Hybrid AI Mode's hardware requirements
   const [aiConflict, setAiConflict] = useState(false);         // preview: another local model (e.g. LM Studio) already running
@@ -782,32 +792,14 @@ function App() {
         <HistoryScreen />
       ) : creditsOpen ? (
         <AICreditsScreen credits={credits} isPrime={creditsPrime} primeGeo={primeGeo} keyAdded={keyAdded} byokOn={byokOn} keyInfo={keyInfo} onManageByok={goToByokSettings} />
-      ) : activeTab === 'skills' ? (
-        <div key="skills" className="tab-anim" style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-          <div data-skills-scroll style={{ flex: 1, overflowY: 'auto', padding: '0 16px 8px', scrollbarWidth: 'thin', scrollbarColor: 'rgba(0,0,0,0.15) #e2e8f0' }}>
-            <SkillsScreen onTrySkill={handleTrySkill} isLoading={isLoading} layout={CONFIG.skillsLayout} />
-          </div>
-          <div style={{ flexShrink: 0, background: 'white', borderTop: '1px solid #e2e8f0', boxShadow: '0 -4px 12px rgba(0,0,0,0.06)', padding: '10px 14px' }}>
-            <button onClick={() => window.__skillsOpenCreate?.('instruction')}
-              style={{ display: 'flex', alignItems: 'center', gap: 12, width: '100%', padding: '11px 16px', background: 'linear-gradient(135deg,#0EA4C5,#7B4CFF)', border: 'none', borderRadius: 12, cursor: 'pointer', fontFamily: 'inherit', textAlign: 'left', transition: 'opacity 0.15s' }}
-              onMouseEnter={e => e.currentTarget.style.opacity = '0.9'}
-              onMouseLeave={e => e.currentTarget.style.opacity = '1'}>
-              <div style={{ width: 34, height: 34, borderRadius: '50%', background: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
-                </svg>
-              </div>
-              <div style={{ flex: 1 }}>
-                <p style={{ fontSize: 13.5, fontWeight: 800, color: 'white', lineHeight: 1.2, margin: 0 }}>Build a custom skill</p>
-                <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.78)', lineHeight: 1.3, margin: 0 }}>Design your own automation</p>
-              </div>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.75)" strokeWidth="2.5" strokeLinecap="round"><polyline points="9 18 15 12 9 6"/></svg>
-            </button>
-          </div>
-        </div>
+      /* activeTab === 'skills' branch removed 2026-09-09 (designer directive, hide not delete) —
+         SkillsScreen, handleTrySkill and CONFIG.skillsLayout below are all left defined; nothing
+         reaches 'skills' as an activeTab any more now that BottomNavbar's NAV dropped it in
+         shared.jsx, so this is dead-but-intact, not broken. */
       ) : isChat ? (
         <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column', width: '420px' }}>
           <ProductChatScreen sessionKey={sessionKey} seed={seed} loading={!homeReady} zeroCredits={zeroCredits && !byokActive} onNoCredits={() => setOocOpen(true)} isOnboarding={!isLoggedIn} sessionMode={sessionMode} onNeedLogin={(text) => { setLoginFlow('onboarding'); setPendingMessage(text); setShowLoginModal(true); }} showStates={showChatStates}
+            scheduledOoc={scheduledOoc && !byokActive}
             bsInstalled={bsInstalled} onBsInstalled={completeBluestacksInstall} />
         </div>
       ) : (
@@ -898,10 +890,23 @@ function App() {
           </div>
           {baiInstalled && <div style={{ height: 1, background: DEV.divider }} />}
           {baiInstalled && (() => {
+            // Session row's display label only, renamed 2026-09-09 — the 'moneymaker' VALUE stays
+            // as the internal session-mode identifier on purpose (code/filenames weren't part of
+            // this rename), so switchSession/sessionMode wiring is untouched.
             const rows = [
-              <PreviewRow key="session" label="Session" opts={[['Onboarding', 'onboarding'], ['Default', 'default'], ['MoneyMaker', 'moneymaker']]} val={sessionMode} set={switchSession} />
+              <PreviewRow key="session" label="Session" opts={[['Onboarding', 'onboarding'], ['Default', 'default'], ['BlueAI worker', 'moneymaker']]} val={sessionMode} set={switchSession} />
             ];
             if (isChat) rows.push(<PreviewRow key="states" label="Chat states" opts={[['Off', false], ['On', true]]} val={showChatStates} set={setShowChatStates} />);
+            /* The scheduled-run-out-of-credits scenario. Its own row rather than a 4th Session
+               option on purpose: sessionMode picks which WELCOME + LOGIN + home screen renders,
+               and this is none of those — it's a chat that plays itself. Folding it into
+               sessionMode would have made it mutually exclusive with the BlueAI-worker session and
+               dragged the login wiring along for a state that never signs anyone in.
+               Selecting it also flips zeroCredits, because a run dying for lack of credits while
+               the top bar still shows a balance is an incoherent screenshot; bumping sessionKey
+               replays the script from the top. */
+            if (isChat) rows.push(<PreviewRow key="schedooc" label="Scheduled job" opts={[['Off', false], ['Out of credits', true]]} val={scheduledOoc}
+              set={(v) => { setScheduledOoc(v); if (v) setZeroCredits(true); setSessionKey((k) => k + 1); }} />);
             if (activeTab === 'settings') {
               rows.push(<PreviewRow key="aihw" label="Hardware" opts={[['Yes', true], ['No', false]]} val={aiHwSupported} set={setAiHwSupported} />);
               rows.push(<PreviewRow key="aiconflict" label="AI conflict" opts={[['None', false], ['Detected', true]]} val={aiConflict} set={setAiConflict} />);

@@ -64,7 +64,10 @@
       </div>);
   }
 
-  const PROMPT = 'Run the MoneyMaker skill to find and complete my first paid job.';
+  // Renamed 2026-09-09 (designer directive: MoneyMaker -> "BlueAI worker") — copy only, this
+  // string still gets pushed into the conversation as the simulated user message, so it had to
+  // read naturally, not just find/replace the name in place.
+  const PROMPT = 'Run the BlueAI worker to find and complete my first paid job.';
 
   /* Renders in ChatScreen's !started home slot in place of ProductHome, when sessionMode is
      'moneymaker'. The greeting above it is IntroCard (chat_compare.jsx) with its title/sub
@@ -123,7 +126,8 @@
                 <IcoDollar size={26} color="#1BA07A" />
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <p style={{ fontSize: 14.5, fontWeight: 800, color: '#111827', lineHeight: 1.2, marginBottom: 3 }}>MoneyMaker</p>
+                {/* Renamed 2026-09-09 (designer directive: MoneyMaker -> "BlueAI worker"). */}
+                <p style={{ fontSize: 14.5, fontWeight: 800, color: '#111827', lineHeight: 1.2, marginBottom: 3 }}>BlueAI worker</p>
                 <p style={{ fontSize: 11.5, color: '#6b7280', lineHeight: 1.4 }}>Finds jobs that fit you and runs them on your account.</p>
               </div>
               <button onClick={(e) => { e.stopPropagation(); run(); }}

@@ -20,9 +20,10 @@
   const ProductHome = (p) => React.createElement(window.ProductHomeScreen.ProductHome, p);
   const makeTaskSteps = (t) => B().makeTaskSteps(t);
   const makeResumeSteps = (t, app) => B().makeResumeSteps(t, app);
+  const makeScheduledOocSteps = () => B().makeScheduledOocSteps();
 
   /* ───────── Merged chat screen: ProductHome (empty) → task-progress + feedback (active) ───────── */
-  function ChatScreen({ sessionKey, seed, loading, zeroCredits, onNoCredits, isOnboarding, sessionMode = 'default', onNeedLogin, showStates, bsInstalled = true, onBsInstalled }) {
+  function ChatScreen({ sessionKey, seed, loading, zeroCredits, onNoCredits, isOnboarding, sessionMode = 'default', onNeedLogin, showStates, bsInstalled = true, onBsInstalled, scheduledOoc = false }) {
     const C = window.ChatCompare;
     const [convo, setConvo] = useState([]);
     const [visible, setVisible] = useState(0);
@@ -42,6 +43,15 @@
 
     // Onboarding chat lands here from the picker → focus the composer (prefilled or empty).
     useEffect(() => { if (isOnboarding) taRef.current && taRef.current.focus(); }, [isOnboarding, sessionKey]);
+
+    /* Scheduled-run-out-of-credits scenario: plays ITSELF on mount, with no user message and no
+       send, because that's the whole point of the state — a scheduled BlueAI worker run happens in
+       its own chat while nobody is typing. Keyed on sessionKey as well as the flag so flipping the
+       preview toggle (which bumps sessionKey) replays it from the top instead of appending a
+       second copy onto the first. */
+    useEffect(() => {
+      if (scheduledOoc && !isOnboarding) push(makeScheduledOocSteps());
+    }, [scheduledOoc, sessionKey, isOnboarding]);
 
     // Seed → either prefill the composer ("Try this skill") or auto-run it. Auto-run is the
     // onboarding → sign-in handoff: the message that opened the login gate gets SENT once the
@@ -139,8 +149,11 @@
                   title={sessionMode === 'moneymaker' && !isOnboarding ? 'Hi, Alex 👋' : undefined}
                   sub={sessionMode === 'moneymaker' && !isOnboarding
                     /* Value statement, not instruction — the coach tooltip under the card already
-                       says "Run this to begin"; this line instructing as well read as a stutter. */
-                    ? "You're all set. One skill is all it takes to start earning."
+                       says "Run this to begin"; this line instructing as well read as a stutter.
+                       "skill" -> "worker" 2026-09-09: the Skills tab is hidden now and this is the
+                       one worker in the product, so "skill" framing no longer matches anything
+                       else the product says. */
+                    ? "You're all set. The BlueAI worker is all it takes to start earning."
                     : isOnboarding
                     ? 'Just send your message whenever you are ready and see me do your work for you!'
                     : 'Your AI worker for BlueStacks — pick a task below or just type what you need.'} />}
@@ -154,7 +167,24 @@
                           ? <window.HomeSkeleton />
                           : <ProductHome onRun={(p, cat) => run(p, cat)} onOpenHistory={() => window.__openChatHistory && window.__openChatHistory()} />)}
                   </div>
-                : <div style={{ marginTop: 4 }}>{convo.slice(0, visible).map(renderStep)}</div>}
+                /* Conversation is BOTTOM-anchored, like every real messaging app: a short thread
+                   rests on the composer and grows upward, rather than hanging from the top of an
+                   empty panel (designer, 2026-09-09 — this was wrong in every chat mode, not just
+                   the scheduled run, since they all render through here).
+
+                   minHeight:100% + marginTop:auto, NOT justifyContent:'flex-end' on the scroll
+                   container. Two reasons. (1) flex-end on a scrolling container is the classic
+                   trap — once the content is taller than the box, the overflowing top gets
+                   clipped and can't be scrolled back to in Chrome and Firefox. Here the wrapper
+                   simply grows past 100%, marginTop:auto collapses to 0, and it scrolls normally.
+                   (2) It leaves the scroll container a plain block, so the pre-conversation home
+                   (greeting + cards) and the ChatStatesPreview keep their existing top-aligned
+                   layout untouched — making the container itself flex would have changed all
+                   three at once. The old marginTop:4 is dropped: it spaced the thread off the
+                   greeting, which isn't rendered once a conversation exists. */
+                : <div style={{ minHeight: '100%', display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ marginTop: 'auto' }}>{convo.slice(0, visible).map(renderStep)}</div>
+                  </div>}
             </>}
           </div>
         </div>
@@ -175,9 +205,17 @@
               onBlur={() => setComposerFocused(false)}
               onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); run(); } }}
               placeholder={running ? 'BlueAI is working…'
+                /* Out-of-credits placeholder comes AFTER the running check on purpose: while the
+                   scheduled run is still playing, "BlueAI is working…" is the honest label, and it
+                   only flips to the credits prompt at the moment the run actually dies. The field
+                   stays typeable — sending still opens the out-of-credits popup via run()'s own
+                   zeroCredits guard, which is the same escape hatch the main chat has. */
+                : scheduledOoc ? 'Add credits to put BlueAI back to work'
                 /* MoneyMaker home is one card + a lot of air — the placeholder points back up at
-                   it so the composer reads as connected to the screen, not an orphan input. */
-                : (sessionMode === 'moneymaker' && !started ? 'Ask anything, or run MoneyMaker above' : 'Type your message...')}
+                   it so the composer reads as connected to the screen, not an orphan input.
+                   Copy renamed 2026-09-09 (MoneyMaker -> "BlueAI worker"); sessionMode value
+                   stays 'moneymaker' internally, this is a display-string-only change. */
+                : (sessionMode === 'moneymaker' && !started ? 'Ask anything, or run the BlueAI worker above' : 'Type your message...')}
               style={{ flex: 1, resize: 'none', background: 'transparent', border: 'none', outline: 'none', fontSize: 13.5, color: '#1f2937', padding: '4px 6px', lineHeight: 1.5, fontFamily: 'inherit', maxHeight: 120, overflowY: 'hidden' }} />
             <button onClick={() => (running ? stop() : run())} disabled={!running && !draft.trim()}
               aria-label={running ? 'Stop task' : 'Send message'} title={running ? 'Stop' : 'Send'}

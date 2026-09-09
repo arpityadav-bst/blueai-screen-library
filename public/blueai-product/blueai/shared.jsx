@@ -217,9 +217,9 @@ function TopNavbar({ onNewChat, isLoggedIn, creditsNudge = null, onEarnCredits, 
 
 /* ─── BOTTOM NAVBAR ──────────────────────────────────────────── */
 function BottomNavbar({ activeTab, onTabChange, compact }) {
+  // 'skills' dropped 2026-09-09 (designer directive) — hide, not delete; see index.html's activeTab==='skills' note for what stayed. NAV_TOP below still lists it, but that branch is dead: nothing here ever passes `compact`.
   const NAV = [
   { id: 'jobs', label: 'Jobs', Icon: IcoBriefcase },
-  { id: 'skills', label: 'Skills', Icon: IcoLightbulb },
   { id: 'chat', label: 'Chat', Icon: IcoChatBubble },
   { id: 'schedule', label: 'Schedule', Icon: IcoCalendar },
   { id: 'settings', label: 'Settings', Icon: IcoGear }];

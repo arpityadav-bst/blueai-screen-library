@@ -65,21 +65,33 @@
     );
   }
 
-  // Prime MEMBER, out of credits — TOP-UP (not a re-pitch of Prime).
+  /* Prime MEMBER, out of credits — TOP-UP (not a re-pitch of Prime). Rebuilt 2026-09-09 to the
+     PM's out-of-credits design: a zero balance stated as a NUMBER first, then the consequence,
+     then the way out. The old version buried the state in a caption ("You've used all your
+     credits") above a headline about the remedy; leading with a big ✦ 0 makes the situation
+     unmissable and the sentence beneath it does the explaining.
+
+     The modal's red "NOT ENOUGH CREDITS" banner is NOT touched — that chrome lives in
+     OutOfCreditsModal and is shared with the byok and prime modes, so removing it here would have
+     meant either breaking it for them or forking the wrapper. Only this card's contents changed.
+
+     "Your next credits arrive tomorrow" replaces the old "Prime credits renew in 11 days" pill:
+     Prime tops up DAILY (designer, 2026-09-09), and the 11-day figure is the subscription's
+     renewal date, not the credits'. Stating a monthly date next to a daily refill was the actual
+     error — the two were describing different clocks as if they were one. */
   function TopUpCard() {
     return (
       <div>
-        <div style={{ textAlign: 'center', padding: '2px 4px 12px' }}>
-          <p style={{ fontSize: 13, color: '#565977' }}>You&rsquo;ve used all your credits</p>
-          <p style={{ fontSize: 18, fontWeight: 800, color: '#080a1f', marginTop: 3 }}>Top up to keep going</p>
-        </div>
-        <Divider />
-        <div style={{ textAlign: 'center', padding: '16px 10px 14px' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '7px 14px', borderRadius: 999, background: '#f1f5f9' }}>
-            <span style={{ display: 'inline-block', width: 14, height: 14, background: 'linear-gradient(135deg,#0EA4C5,#7B4CFF)', WebkitMaskImage: 'url(assets/Credits.svg)', WebkitMaskSize: 'contain', WebkitMaskRepeat: 'no-repeat', maskImage: 'url(assets/Credits.svg)', maskSize: 'contain', maskRepeat: 'no-repeat' }} />
-            <span style={{ fontSize: 12.5, fontWeight: 600, color: '#565977' }}>Prime credits renew in 11 days</span>
+        <div style={{ textAlign: 'center', padding: '6px 4px 14px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+            <span style={{ display: 'inline-block', width: 26, height: 26, background: 'linear-gradient(135deg,#0EA4C5,#7B4CFF)', WebkitMaskImage: 'url(assets/Credits.svg)', WebkitMaskSize: 'contain', WebkitMaskRepeat: 'no-repeat', WebkitMaskPosition: 'center', maskImage: 'url(assets/Credits.svg)', maskSize: 'contain', maskRepeat: 'no-repeat', maskPosition: 'center' }} />
+            <span style={{ fontSize: 38, fontWeight: 800, lineHeight: 1, letterSpacing: '-1px', background: 'linear-gradient(90deg,#0EA4C5,#7B4CFF)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>0</span>
           </div>
-          <p style={{ fontSize: 13, color: '#565977', lineHeight: 1.5, margin: '14px auto 0', maxWidth: 240 }}>Top up now to keep BlueAI working, or manage your plan.</p>
+          <p style={{ fontSize: 18, fontWeight: 800, color: '#080a1f', marginTop: 12 }}>Out of credits</p>
+          {/* PM's copy verbatim. An earlier pass quietly reworded it four ways ("do jobs"->"run
+             jobs", "earn money"->"earn", "Credits"->"Your next credits", comma->em dash); the copy
+             was supplied, not delegated, so it is reproduced exactly. */}
+          <p style={{ fontSize: 13, color: '#565977', lineHeight: 1.5, margin: '7px auto 0', maxWidth: 244 }}>BlueAI can&rsquo;t do jobs or earn money without credits. Credits arrive tomorrow, or top up now to keep earning.</p>
         </div>
         <Divider />
         <div style={{ textAlign: 'center', padding: '16px 4px 2px' }}>
@@ -117,17 +129,26 @@
   // On-send out-of-credits popup. mode: 'prime' | 'topup' | 'byok'. Banner + white card (Figma chrome).
   function OutOfCreditsModal({ mode, onClose, onAddKey }) {
     const body = mode === 'byok' ? <ByokUpsell onAddKey={onAddKey} /> : mode === 'topup' ? <TopUpCard /> : <PrimeUpsellCard />;
+    /* The "NOT ENOUGH CREDITS" banner is hidden for TOPUP only (designer, 2026-09-09): that card
+       now opens with its own "Out of credits" headline, so the banner just says the same thing
+       twice, louder. It STAYS for the other two modes and that is not an oversight — 'prime' and
+       'byok' show upsell cards ("Get AI Credits with Prime", "Bring your own key") that never
+       state what went wrong, so the banner is the only thing telling those users why a modal
+       appeared. Removing it outright would have silently broken both. */
+    const showBanner = mode !== 'topup';
     return (
       <div onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
         style={{ position: 'absolute', inset: 0, zIndex: 130, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(15,23,42,0.5)', padding: 22 }}>
         <div style={{ width: '100%', maxWidth: 300, position: 'relative' }}>
           {/* frosted "NOT ENOUGH CREDITS" banner — sits BEHIND the card, only its labelled strip shows */}
+          {showBanner &&
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 9, background: 'linear-gradient(180deg,#f8dade,#eef0f4)', border: '1px solid #f2c9cf', borderBottom: 'none', borderRadius: '12px 12px 0 0', padding: '9px 14px 20px', WebkitBackdropFilter: 'blur(8px)', backdropFilter: 'blur(8px)', position: 'relative', zIndex: 0 }}>
             <svg width="15" height="15" viewBox="0 0 24 24" style={{ flexShrink: 0 }}><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" fill="#eb553e" /><rect x="11.1" y="8.5" width="1.8" height="5.2" rx="0.9" fill="#fff" /><rect x="11.1" y="15.4" width="1.8" height="1.9" rx="0.9" fill="#fff" /></svg>
             <span style={{ fontSize: 11.5, fontWeight: 500, letterSpacing: '1.4px', color: '#3d2029', textTransform: 'uppercase' }}>Not enough credits</span>
-          </div>
-          {/* the offer card — overlaps the banner's lower half */}
-          <div style={{ position: 'relative', zIndex: 1, marginTop: -12, background: 'white', border: '1px solid ' + CARD_BORDER, borderRadius: 12, boxShadow: CARD_SHADOW, padding: '16px 18px 18px' }}>
+          </div>}
+          {/* the offer card — overlaps the banner's lower half when there is one; with the banner
+             hidden the negative margin has nothing to overlap and would just crop the card. */}
+          <div style={{ position: 'relative', zIndex: 1, marginTop: showBanner ? -12 : 0, background: 'white', border: '1px solid ' + CARD_BORDER, borderRadius: 12, boxShadow: CARD_SHADOW, padding: '16px 18px 18px' }}>
             <button aria-label="Close" onClick={onClose} style={{ position: 'absolute', top: 10, right: 10, zIndex: 2, background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8', padding: 4, display: 'flex', borderRadius: 8 }}
               onMouseEnter={(e) => e.currentTarget.style.color = '#475569'} onMouseLeave={(e) => e.currentTarget.style.color = '#94a3b8'}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
