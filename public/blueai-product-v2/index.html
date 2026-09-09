@@ -279,17 +279,26 @@ function ProductTopBar({ credits, lowDot, isLoggedIn, onNewChat, onOpenHistory, 
    LAYOUT (2026-09-09, option A of three put to the designer). Removing the upsell stack left the
    content floating on the bare canvas with roughly 55% of the panel empty below it, which read as
    a page that had stopped early rather than a page that was finished. The fix is not spacing, it
-   is EDGES: everything now lives in ONE card that fills the panel. Three reasons it is one card
-   and not two, and not centered bare content:
+   is EDGES: the balance lives in ONE card that fills the panel, rather than floating bare. Two
+   reasons, both still true after the meter was removed:
 
-     1. The balance and the daily meter are the same subject, today's allowance and how much of it
-        is gone. Splitting them into two cards would divide one fact into two.
-     2. Cards are this product's own idiom (chat cards, settings cards, and this screen's own BYOK
+     1. Cards are this product's own idiom (chat cards, settings cards, and this screen's own BYOK
         branch below). Bare content on canvas was the outlier here, not the norm.
-     3. A card that FILLS the height turns the empty region into card interior. The balance sits
-        optically centered in the upper mass and the meter anchors the foot, so the space is
-        composition rather than absence. minHeight keeps it honest in a short window, where the
-        container scrolls instead of crushing the card.
+     2. A card that FILLS the height turns the empty region into card interior, with the balance
+        optically centered in it, so the space is composition rather than absence. minHeight keeps
+        it honest in a short window, where the container scrolls instead of crushing the card.
+
+   A third reason is deliberately struck out rather than kept: the original argument for one card
+   and not two was that the balance and the daily meter were the same subject, so splitting them
+   would divide one fact in two. With the meter gone there is only one thing in the card, so that
+   reason no longer carries any weight and leaving it would misrepresent why this is one card.
+
+   DAILY SPEND LIMIT REMOVED (2026-09-10, Appy). It was the last thing in the card besides the
+   balance, and it went with its divider: a rule whose only job was separating the meter from the
+   balance divides nothing once the meter is gone. V2 grants a flat 2000 a day with no way to
+   change it, so a user-set spend cap described a control that does not exist here. The card's
+   padding is symmetric now that nothing anchors its foot. It was the only such reference in V2;
+   "anywhere else" turned out to be nowhere else.
 
    BYOK survives as a STATUS, not an invite. Adding a key lives in Settings now, but a key being
    on changes what the balance MEANS (credits stop being consumed), so the screen still reports it.
@@ -304,7 +313,7 @@ function AICreditsScreen({ credits, keyAdded, byokOn, keyInfo, onManageByok }) {
   const star = { background: 'linear-gradient(135deg,#0EA4C5,#7B4CFF)', WebkitMaskImage: 'url(assets/Credits.svg)', WebkitMaskSize: 'contain', WebkitMaskRepeat: 'no-repeat', WebkitMaskPosition: 'center', maskImage: 'url(assets/Credits.svg)', maskSize: 'contain', maskRepeat: 'no-repeat', maskPosition: 'center' };
   const gradText = { background: 'linear-gradient(90deg,#0EA4C5,#7B4CFF)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' };
   const CARD = { background: 'white', border: '1px solid #e8edf3', borderRadius: 16, boxShadow: '0 1px 3px rgba(0,0,0,0.04)' };
-  const PAD = 22; // card's horizontal padding, reused by the full-bleed divider below
+  const PAD = 22; // card's horizontal padding
 
   return (
     <div className="tab-anim" style={{ flex: 1, overflowY: 'auto', background: '#f8fafc', display: 'flex', flexDirection: 'column' }}>
@@ -378,10 +387,10 @@ function AICreditsScreen({ credits, keyAdded, byokOn, keyInfo, onManageByok }) {
               </p>
             </div>}
 
-          <div style={{ ...CARD, flex: 1, minHeight: 260, display: 'flex', flexDirection: 'column', padding: '28px ' + PAD + 'px ' + PAD + 'px' }}>
-            {/* Balance + explainer, optically centered in whatever height is left after the meter
-               claims the foot. This is the region that absorbs the panel's spare space. */}
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', paddingBottom: 22 }}>
+          <div style={{ ...CARD, flex: 1, minHeight: 200, display: 'flex', flexDirection: 'column', padding: '28px ' + PAD + 'px' }}>
+            {/* Balance + explainer, optically centered in the card. This region is the whole card
+               body now and is what absorbs the panel's spare space. */}
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: out ? 9 : 12 }}>
                 <div style={{ ...star, width: out ? 30 : 44, height: out ? 30 : 44, flexShrink: 0 }} />
                 <span style={{ ...gradText, fontSize: out ? 38 : 54, fontWeight: 800, letterSpacing: out ? '-0.7px' : '-1px', lineHeight: 1 }}>{credits.toLocaleString('en-US')}</span>
@@ -399,24 +408,7 @@ function AICreditsScreen({ credits, keyAdded, byokOn, keyInfo, onManageByok }) {
                 </div>}
             </div>
 
-            {/* Full-bleed hairline: the negative margin cancels the card's own padding so the rule
-               spans edge to edge, which reads as a division of the card rather than a line drawn
-               inside it. */}
-            <div style={{ height: 1, background: '#eef2f6', margin: '0 -' + PAD + 'px 18px', flexShrink: 0 }} />
 
-            {/* Daily spend limit, anchored at the card's foot. Kept on both states: it was not part
-               of the upsell stack, and the designer's out-of-credits mock still shows it, so it is
-               account information rather than an offer. 150/200 and the part-filled bar are the
-               mock's own numbers. */}
-            <div style={{ flexShrink: 0 }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-                <span style={{ fontSize: 13.5, fontWeight: 600, color: '#475569' }}>Daily Spend Limit</span>
-                <span style={{ fontSize: 13.5, fontWeight: 600, color: '#94a3b8' }}>150/200</span>
-              </div>
-              <div style={{ height: 8, borderRadius: 999, background: '#e2e8f0', overflow: 'hidden' }}>
-                <div style={{ height: '100%', width: '75%', borderRadius: 999, background: 'linear-gradient(90deg,#0EA4C5,#1990FF)' }} />
-              </div>
-            </div>
           </div>
         </div>
       )}
