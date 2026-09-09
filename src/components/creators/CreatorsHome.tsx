@@ -33,9 +33,17 @@ export default function CreatorsHome() {
   )
 }
 
-// Read once per session: an applicant who has acknowledged the expectations and closed the dialog
-// should not have to read them again when they reopen it a minute later.
-const SEEN_KEY = 'crx-expectations-seen'
+// THE DIALOG ALWAYS OPENS ON LEVEL 1 (Appy, 2026-09-10: "I want it to always open the first pop-up
+// first and then the second"). It used to remember the acknowledgement in sessionStorage under
+// 'crx-expectations-seen', on the reasoning that an applicant who had read the expectations and
+// closed the dialog should not have to read them again a minute later. That reasoning is wrong for
+// this screen: what it produced is a dialog whose FIRST screen is unreachable for the rest of the
+// session, so the CTA quietly changes what it does the second time you press it - and the reader who
+// closed on the sign-in card is exactly the reader who did not finish, and most likely to come back
+// for the terms rather than the form.
+// So `acked` is now a per-open flag and nothing else: it moves you to level 2 within one open and
+// resets when the dialog closes. Nothing about it is persisted, which also means a reload can no
+// longer land you on level 2 either.
 
 function CreatorsSwitch() {
   const { signedIn, journey, nav, variant, setJourney } = useCrx()
@@ -58,35 +66,27 @@ function CreatorsSwitch() {
   const returning = journey === 'returningUser' || journey === 'returningMulti' || journey === 'returningEmpty'
   const [acked, setAcked] = useState(false)
   const [stepped, setStepped] = useState(false)
-  useEffect(() => {
-    try {
-      if (sessionStorage.getItem(SEEN_KEY) === '1') setAcked(true)
-    } catch {
-      // storage is a convenience here; the in-memory flag still works for this page load
-    }
-  }, [])
   const level = returning || acked ? 2 : 1
 
   const closeSignIn = useCallback(() => {
     setSignInOpen(false)
     setStepped(false)
+    // the reset that makes the next open start at level 1
+    setAcked(false)
   }, [])
   const ackExpectations = useCallback(() => {
     setAcked(true)
     setStepped(true)
-    try { sessionStorage.setItem(SEEN_KEY, '1') } catch { /* see above */ }
   }, [])
   // "Already have an account? Sign in" on level 1 - the same semantics as the hero's door.
   const signInFromExpectations = useCallback(() => {
     setJourney('returningUser')
     setStepped(true)
   }, [setJourney])
-  // Back from level 2 un-acknowledges, so the expectations show again and will show on the next
-  // open too - going back is a signal the reader wants to see them, not a navigation accident.
+  // Back from level 2 un-acknowledges, which is now the same reset that closing does.
   const backToExpectations = useCallback(() => {
     setAcked(false)
     setStepped(true)
-    try { sessionStorage.removeItem(SEEN_KEY) } catch { /* see above */ }
   }, [])
 
   // REVEAL STATE ON SIGNED-IN VIEWS. The header (and every .rv element) is opacity:0 until the
