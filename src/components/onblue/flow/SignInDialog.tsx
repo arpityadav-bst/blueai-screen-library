@@ -40,8 +40,9 @@ import { CARD_FONT, CTA, CTA_SHADOW, FORM_WIDTH, RING, SKIN } from './signinSkin
 //   Continue    14/21 · 600 · linear-gradient(270deg,#7B4CFF 0%,#0EA4C5 99.48%) · radius 8 ·
 //               padding 6 24 · 41px tall
 //   separator   row gap 16 · rule + "Or sign in with" at 14/14 · 400 · rgba(255,255,255,.4)
-//   providers   row gap 16 · each 68x40 · radius 8 · padding 10 24 · Apple/Google rgba(255,255,255,.9),
-//               Discord #8061FF, Facebook #2178FA
+//   providers   Google only since 2026-09-10 - ONE full-width pill. The scrape's row was four
+//               68x40 tiles (Apple/Google white, Discord #8061FF, Facebook #2178FA); this is
+//               the one line in the block that is deliberately not the replica any more.
 //   legal       12/18 · 400 · #fff · links underlined, same colour
 //   form gaps   16 between blocks, 4 between a label and its input, 24 horizontal padding
 //
@@ -59,12 +60,13 @@ import { CARD_FONT, CTA, CTA_SHADOW, FORM_WIDTH, RING, SKIN } from './signinSkin
 // draw from one set. This is LEVEL 2: the sign-in itself.
 const A = '/creator-brand/nowgg-signin'
 
-const PROVIDERS = [
-  { id: 'apple', icon: `${A}/apple_dark.png`, bg: 'rgba(255,255,255,0.9)', w: 21, h: 20 },
-  { id: 'discord', icon: `${A}/discord_light.png`, bg: '#8061FF', w: 20, h: 20, brand: true },
-  { id: 'google', icon: `${A}/google_light.png`, bg: 'rgba(255,255,255,0.9)', w: 20, h: 20 },
-  { id: 'facebook', icon: `${A}/facebook_light.png`, bg: '#2178FA', w: 20, h: 20, brand: true },
-]
+// GOOGLE ONLY, matching the creators card (Appy, 2026-09-10: "the login pop-up will be the same as
+// what is there on the BlueAI creators screens... we will also not be needing Discord, Facebook,
+// Apple options there too"). Those three came from the now.gg card this was a replica of, and being
+// a replica is the only reason they were ever here - nothing on this site signs in with Discord.
+// Four icon-only tiles also asked the reader to identify each provider by logo alone; one
+// full-width labelled button says what it does.
+const GOOGLE = `${A}/google_light.png`
 
 export default function SignInDialog({
   onClose,
@@ -208,6 +210,8 @@ export default function SignInDialog({
             Continue
           </button>
 
+          {/* Kept even though it now introduces ONE option: without it the Google button reads as a
+              second primary action stacked under Continue, rather than as the other way in. */}
           <div className="flex flex-row items-center justify-center gap-4">
             <span className="h-px flex-auto" style={{ background: SKIN.rule }} />
             <span className="flex-none text-[14px] font-normal leading-[14px]" style={{ color: SKIN.ink40 }}>
@@ -216,24 +220,24 @@ export default function SignInDialog({
             <span className="h-px flex-auto" style={{ background: SKIN.rule }} />
           </div>
 
-          {/* gap-2 below sm. MEASURED: each button floors at ~68px (20px icon + px-6), so four plus
-              three 16px gaps need 316px against 236px of usable width at a 320px viewport. Tighter
-              padding and gap on small screens drops the floor to ~36px each and the row fits. */}
-          <div className="flex flex-row justify-center gap-2 sm:gap-4">
-            {PROVIDERS.map((p) => (
-              <button
-                key={p.id}
-                type="button"
-                onClick={go}
-                aria-label={`Continue with ${p.id}`}
-                style={{ background: p.bg, border: `1px solid ${'brand' in p ? 'transparent' : SKIN.tileLine}` }}
-                className="flex h-11 min-w-0 flex-auto items-center justify-center rounded-[8px] px-2 transition-transform duration-base ease-out-bai hover:-translate-y-0.5 active:translate-y-0 sm:px-6"
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={p.icon} alt="" width={p.w} height={p.h} className="shrink-0" />
-              </button>
-            ))}
-          </div>
+          {/* FULL WIDTH AND LABELLED, the same shape the creators card takes. With one provider left
+              there is no row to lay out, and a lone 68px tile floating in a 400px card would read as
+              an afterthought. It takes Continue's pill shape so the two read as the same KIND of
+              control - the fill is what says which of them is primary. The measured-widths note that
+              used to live here went with the four tiles it was measuring.
+              THE INK IS THIS FORK'S. Google's own button is dark text on white, so the tile stays
+              white either way; the text takes SKIN.ink, which on this page is the charcoal-derived
+              #23262C rather than creators' blue-black. */}
+          <button
+            type="button"
+            onClick={go}
+            style={{ background: '#fff', border: `1px solid ${SKIN.tileLine}`, color: SKIN.ink }}
+            className="flex h-[44px] w-full items-center justify-center gap-2.5 rounded-pill px-6 text-[15px] font-semibold leading-[21px] transition-transform duration-base ease-out-bai hover:-translate-y-0.5 active:translate-y-0"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={GOOGLE} alt="" width={20} height={20} className="shrink-0" />
+            Continue with Google
+          </button>
 
           {/* REAL ANCHORS since 2026-08-31 — the legal page exists now (/creators/terms, tabbed),
               so the underlines stopped being costume. New tab on purpose: this dialog sits over a

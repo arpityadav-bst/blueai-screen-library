@@ -40,8 +40,9 @@ import { CARD_FONT, CTA, CTA_SHADOW, FORM_WIDTH, RING, SKIN } from './signinSkin
 //   Continue    14/21 · 600 · linear-gradient(270deg,#7B4CFF 0%,#0EA4C5 99.48%) · radius 8 ·
 //               padding 6 24 · 41px tall
 //   separator   row gap 16 · rule + "Or sign in with" at 14/14 · 400 · rgba(255,255,255,.4)
-//   providers   row gap 16 · each 68x40 · radius 8 · padding 10 24 · Apple/Google rgba(255,255,255,.9),
-//               Discord #8061FF, Facebook #2178FA
+//   providers   Google only since 2026-09-10 - ONE full-width pill. The scrape's row was four
+//               68x40 tiles (Apple/Google white, Discord #8061FF, Facebook #2178FA); this is
+//               the one line in the block that is deliberately not the replica any more.
 //   legal       12/18 · 400 · #fff · links underlined, same colour
 //   form gaps   16 between blocks, 4 between a label and its input, 24 horizontal padding
 //
