@@ -84,7 +84,21 @@ const ACTIVE = [
 // and the marketing system move. Distinct from DORMANT: these are expected to change again.
 const MAINTAINED = [
   { href: '/style-guide', name: 'Marketing Design System', desc: 'Tokens, type and components behind the marketing pages below. Governs those pages only — the active prototype has its own design system, linked at the top.' },
-  { href: '/blueai-product', name: 'BlueAI Product', desc: 'Exact clone of the live BlueAI desktop app — the new-variant chat, task-progress + feedback, and all five tabs. Standalone replica, not on the marketing design system.' },
+  {
+    // THE V2 FORK (Appy, 2026-09-09). Its own card, not a line on V1's, for the same reason the
+    // onBlue fork above has one: there are genuinely two surfaces now, so two entries is the
+    // honest shape. V1 stays listed because it is the rollback point, not because it is current.
+    href: '/blueai-product-v2',
+    name: 'BlueAI Product V2',
+    desc: 'Where product-clone work happens now. Forked as a byte-identical duplicate of V1 below (only the base href differs, so each serves correctly at its own clean URL) and diverges from here: the new-variant chat, task-progress + feedback, all five tabs. Standalone replica, not on the marketing design system.',
+  },
+  {
+    // FROZEN 2026-09-09 when V2 forked off it. Deliberately not deleted and deliberately not
+    // updated: it is the comparison point and the way back. Changes belong in V2 above.
+    href: '/blueai-product',
+    name: 'BlueAI Product (V1, frozen)',
+    desc: 'V1 as it stood when V2 forked off it, kept as the backup: the new-variant chat, task-progress + feedback, all five tabs, Skills hidden and the BlueAI worker session. Nothing here changes again. Standalone replica, not on the marketing design system.',
+  },
 ]
 
 // EXPERIMENTS — deliberately not a product surface. Standalone static pages that
