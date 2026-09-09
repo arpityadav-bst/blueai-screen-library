@@ -1,29 +1,39 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { useCrx } from './CrxState'
 import { CARD_FONT, CARD_WIDTH, CTA, CTA_SHADOW, RING, SKIN } from './signinSkin'
 import BandGrid from '../BandGrid'
-import { PHONE_SLIDE, SLIDES, type Slide } from './expectationSlides'
+import { CARDS } from './expectationCards'
 
-// LEVEL 1 OF THE SIGN-IN DIALOG — the three things you are agreeing to, before anyone types an
-// email. Shown to applicants only; the "Sign in" door for returning accounts skips it.
+// LEVEL 1 OF THE SIGN-IN DIALOG (Appy, 2026-09-02: "sign up becomes a 2 level thing... where we
+// set the right expectations for the user"). It shows before the sign-in card, to applicants only:
+// the "Sign in" door for returning accounts skips straight past it.
 //
-// WHAT THIS IS FOR, AND WHAT IT IS NOT. The homepage's four cards explain what HAPPENS. This has a
-// different job: what you are AGREEING TO — the three constraints people misread and then drop out
-// over. It is not a form either: the application already asks the qualifying questions, and ticking
-// them here too would be friction dressed as diligence.
+// WHAT THIS IS FOR, AND WHAT IT IS NOT. The homepage's four cards (Apply, Get accepted, Deploy it,
+// Collect) explain what HAPPENS. This has a different job: what you are AGREEING TO — the three
+// constraints people misread and then drop out over, pulled to the front before anyone types an
+// email. So it is not the four cards again in a popup, and it is not a form either: the application
+// already asks the qualifying questions, and ticking them here too would be friction dressed as
+// diligence. Three facts, then one "got it".
 //
-// A CAROUSEL, NOT A LIST (Appy, 2026-09-08: "three cards... timed carousel"). Three points stacked
-// as rows are read as one block and skimmed as one; one at a time, each with its own illustration,
-// they are read as three. The cost is that a reader must wait or click for points two and three,
-// which is why the dwell is generous, the dots are real controls, and the CTA never depends on
-// having seen all three — the acknowledgement stays passive.
+// THREE CARDS AT ONCE, AND THE CAROUSEL IS GONE (Appy, 2026-09-10: "we are not going to use the
+// carousel one"). This page had the timed version — one card, one illustration, dots and an arrow —
+// and it is deleted rather than parked behind a switch, because nothing is being compared any more.
+// The reason the three-up wins: a carousel makes the second and third facts cost a wait or a click,
+// and these three are a SET. "Runs on your PC, you approve it, you get paid" is one sentence in
+// three parts, and a reader who has seen only the first part has not seen the offer.
+// Each card carries ONE line — the crux of the old bold lead-in and its detail, said once. The note
+// in expectationCards records why it is not a title plus a caption.
 //
-// THE PARENT OWNS EVERYTHING THAT DOES NOT CHANGE: the close control, the grid, the dots, the CTA
-// and the sign-in line all sit outside the moving part. Only the card slides.
-
-const DWELL = 8000
+// EVERY FACT IS SOURCED from copy already on the site — the 20 days and the $30 via PayPal from the
+// application's intro step, "you approve each campaign" from card 04, the waitlist from the
+// confirmation. Nothing new is claimed here.
+//
+// onBlue'S COLOURS (Appy, 2026-09-10: "the only difference here is the colors, those will be onBlue
+// oriented"). Same markup as the creators dialog, painted from THIS fork's palette: the charcoal
+// CTA, #2f6dff on the icons, and the card surfaces from --sur-2 / --line, which on this page are
+// the charcoal-derived neutrals rather than the DS's blue-greys.
+// ONE SKIN, NO THEME READ. creators keeps a dark path and so reads SKIN[theme]; this fork is
+// light-only, so SKIN is a single object and there is no useCrx() here at all.
 
 export default function Expectations({
   onContinue,
@@ -38,62 +48,16 @@ export default function Expectations({
   /** 'back' when reached from level 2's Back link, so it slides in from the left. */
   enter?: 'back'
 }) {
-
-  const [i, setI] = useState(0)
-  // Set once a dot or the arrow is used. A reader who took the wheel does not get it taken back —
-  // an auto-advance that resumes after a manual choice moves the card out from under them.
-  const [held, setHeld] = useState(false)
-  const [phone, setPhone] = useState(false)
-  const reduced = useRef(false)
-
-  useEffect(() => {
-    reduced.current = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    setPhone(/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent))
-  }, [])
-
-  // IT DOES NOT PAUSE ON HOVER, and that is a correction, not an omission (Appy, 2026-09-08: "they
-  // are not moving towards the next item by itself"). A hover pause is the obvious kindness and it
-  // was wrong here for a reason worth keeping: this card opens under the pointer that clicked
-  // "Apply now", so the pause fired on the first frame and the carousel never advanced once. A
-  // pause condition that is true by default is a stopped carousel. 8s instead of 5 is what buys
-  // back the reading time the pause was meant to protect.
-  //
-  // IT LOOPS (Appy, 2026-09-08: "once the carousel is over... it should go back to the first one").
-  // This shipped stopping at the last card, on the argument that a screen you read once should
-  // settle rather than keep asking for attention. Reversed, and the reason it was wrong is worth
-  // keeping: this dialog is not a page you scroll past — it sits and waits for you to press a
-  // button, so a carousel frozen on card three is not "settled", it is a control that has visibly
-  // stopped working while you are still looking at it.
-  useEffect(() => {
-    if (held || reduced.current) return
-    const t = window.setTimeout(() => setI((n) => (n + 1) % SLIDES.length), DWELL)
-    return () => window.clearTimeout(t)
-  }, [i, held])
-
-  const go = useCallback((n: number) => {
-    setHeld(true)
-    setI(n)
-  }, [])
-
-  // Same wrap as the timer, for the same reason — and so the two never disagree about what comes
-  // after card three.
-  const next = useCallback(() => {
-    setHeld(true)
-    setI((n) => (n + 1) % SLIDES.length)
-  }, [])
-
-  const slides: Slide[] = phone ? [PHONE_SLIDE, SLIDES[1], SLIDES[2]] : [...SLIDES]
-
   return (
     <div
       style={{ background: SKIN.card, color: SKIN.ink, border: `0.8px solid ${RING}`, fontFamily: CARD_FONT }}
       className={`crx-xp relative flex w-full ${CARD_WIDTH} flex-col overflow-hidden rounded-[12px] ${enter === 'back' ? 'crx-step-back' : ''}`}
     >
-      {/* THE GRID, top and bottom, the closer's own (Appy, 2026-09-08). Same fans, no shine — the
-          travelling wave belongs to a full-width band you scroll past; behind 40 words of dialog
-          copy it competes with the thing it frames. Its own idPrefix because the closer's grid is
-          on the page behind this one, and two grids sharing mask ids break as soon as their sizes
-          differ. Colour comes from .crx-xp-grid in onblue.css. */}
+      {/* THE GRID, top and bottom — the closer's own fans at dialog scale. No shine: the travelling
+          wave belongs to a full-width band you scroll past, and behind three cards and a button it
+          competes with the thing it frames. Its own idPrefix because the closer's grid is on the
+          page behind this one, and two grids sharing mask ids break the moment their sizes differ.
+          Colour comes from .crx-xp-grid in onblue.css. */}
       <BandGrid idPrefix="crxXp" className="crx-xp-grid" />
 
       <button
@@ -110,72 +74,39 @@ export default function Expectations({
         </svg>
       </button>
 
+      {/* 56 TOP, not level 2's 40. The close control sits at top-3 and is 32px tall, so its bottom
+          edge is at 44; 56 clears it by 12 and reads as the generous top edge this card was asked
+          for. Sides, bottom and the block gap stay level 2's. */}
       <div className="relative z-10 flex flex-col gap-5 px-7 pb-7 pt-14">
-        {/* THE SLIDES ARE STACKED IN ONE GRID CELL, all three always rendered. That is what keeps
-            the card from resizing as it advances: the container is as tall as the TALLEST slide, so
-            no magic min-height has to be guessed and none goes stale when the copy changes.
-            aria-live announces the change for a screen reader, since the visible swap is silent. */}
-        <div className="crx-xp-stage" aria-live="polite">
-          {slides.map((s, n) => {
-            const Art = s.art
-            const on = n === i
+        {/* NO HEADER AT ALL (Appy, 2026-09-08). This carried an eyebrow, a heading, a sub and a
+            two-dot step indicator, all removed across earlier passes: every one described the
+            screen instead of being it, and a card that spends its first three lines saying it will
+            be quick is not being quick.
+            THE CARD IS NOT UNNAMED — Modal.tsx sets aria-label="Before you start" on the dialog, so
+            the accessible name survives the visible heading. */}
+        <ul className="crx-xp-cards">
+          {CARDS.map((c) => {
+            const Art = c.art
             return (
-              <div key={s.key} className={`crx-xp-slide ${on ? 'on' : ''}`} aria-hidden={!on}>
-                <span className="crx-xp-icon" style={{ background: SKIN.wash, color: SKIN.accent }}>
+              // A LIST ITEM, NOT A BUTTON. Nothing here is pressable — the hover only plays a
+              // drawing — so a <button> would promise an action that does not exist and put three
+              // dead stops in the tab order before the one control that matters. tabIndex 0 on a
+              // group role gives a keyboard reader the same access to the animation without
+              // claiming it does something. The label is the FULL sentence rather than the two
+              // visible lines: the trim to fit a 136px column dropped the waitlist and the "nothing
+              // goes out unseen", and a visual decision should not also cost a blind reader a fact.
+              <li key={c.key} className="crx-xp-card" tabIndex={0} role="group" aria-label={c.full}>
+                <span className="crx-xp-icon" style={{ color: SKIN.accent }}>
                   <Art />
                 </span>
-                <h3 className="mt-4 text-[17px] font-semibold leading-[24px]">{s.title}</h3>
-                <p className="mt-1.5 text-[14px] leading-[21px]" style={{ color: SKIN.ink70 }}>{s.body}</p>
-              </div>
+                <span className="crx-xp-l" style={{ color: SKIN.ink70 }}>{c.line}</span>
+              </li>
             )
           })}
-        </div>
+        </ul>
 
-        {/* The dots are CONTROLS, not decoration — they were two inert pips on the version before
-            this and got deleted for exactly that reason. Real buttons, real labels, and clicking
-            one takes the wheel for good. */}
-        {/* A group of plain buttons, NOT a tablist: role="tab" is a promise of a tabpanel to point
-            at, and the slides are one aria-live region rather than three panels. A half-applied tab
-            pattern navigates worse than no pattern. */}
-        <div className="crx-xp-dots" role="group" aria-label="Which point is showing">
-          {slides.map((s, n) => (
-            <button
-              key={s.key}
-              type="button"
-              aria-current={n === i}
-              aria-label={`Point ${n + 1} of ${slides.length}`}
-              onClick={() => go(n)}
-              className={`crx-xp-dot ${n === i ? 'on' : ''}`}
-              style={{ background: n === i ? SKIN.accent : SKIN.rule }}
-            />
-          ))}
-
-          {/* THE ARROW SITS IN THE DOT RAIL, after the dots (Appy, 2026-09-08) — the rail is where
-              "where am I / where next" already lives, so the control that answers the second half
-              belongs beside the thing that answers the first. The whole rail centres as one group
-              rather than centring the dots and pinning the arrow to the edge: an arrow parked in the
-              corner reads as page chrome, not as this carousel's own next. */}
-          <button
-            type="button"
-            onClick={next}
-            aria-label="Next point"
-            className="crx-xp-next"
-            style={{ color: SKIN.ink40 }}
-            onMouseEnter={(e) => { e.currentTarget.style.color = SKIN.accent }}
-            onMouseLeave={(e) => { e.currentTarget.style.color = SKIN.ink40 }}
-          >
-            {/* THE VIEWBOX IS CROPPED TO THE INK, stroke included, so the svg box IS the chevron
-                with no built-in left padding. That is what lets the rail space evenly: a chevron
-                centred in a square box carries ~11px of empty box on its left, which reads as a
-                gap nobody wrote and cannot be tuned away with the flex gap. */}
-            <svg viewBox="7.9 3.9 9.2 16.2" width="6.8" height="12" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-        </div>
-
-        {/* NEVER GATED ON HAVING SEEN ALL THREE. The acknowledgement is passive by design, and a
-            button that waits for a carousel is a button that punishes you for reading fast. */}
+        {/* THE PAGE'S PRIMARY — the same button as level 2's Continue and as the hero's Get
+            Access. One primary action, one appearance, on the page or in a dialog. */}
         <button
           type="button"
           onClick={onContinue}
@@ -185,9 +116,22 @@ export default function Expectations({
           Got it, continue
         </button>
 
+        {/* The returning-account door, here too: a reader who already has an account should not
+            have to read what they are agreeing to a second time. Same semantics as the hero's door —
+            the journey becomes returningUser before level 2 opens. */}
         <p className="text-center text-[12px] leading-[18px]" style={{ color: SKIN.ink40 }}>
           Already have an account?{' '}
-          <button type="button" onClick={onSignIn} className="underline underline-offset-2" style={{ color: SKIN.ink70 }}>
+          {/* It had no hover at all - an underlined word that does nothing on approach reads as
+              emphasis rather than as a link. It goes to full ink, which is the only move available
+              to text that is already underlined. */}
+          <button
+            type="button"
+            onClick={onSignIn}
+            className="underline underline-offset-2 transition-colors duration-fast ease-out-bai"
+            style={{ color: SKIN.ink70 }}
+            onMouseEnter={(e) => { e.currentTarget.style.color = SKIN.ink }}
+            onMouseLeave={(e) => { e.currentTarget.style.color = SKIN.ink70 }}
+          >
             Sign in
           </button>
         </p>

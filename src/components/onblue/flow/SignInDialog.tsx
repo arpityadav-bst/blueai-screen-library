@@ -1,7 +1,7 @@
 'use client'
 
 import { useCrx } from './CrxState'
-import { CARD_FONT, CARD_WIDTH, CTA, CTA_SHADOW, RING, SKIN } from './signinSkin'
+import { CARD_FONT, CTA, CTA_SHADOW, FORM_WIDTH, RING, SKIN } from './signinSkin'
 
 // COPIED near-verbatim from the frozen creator-brand tree's creators/SignInDialog.tsx (read-only
 // reference, never imported) — designer directive: "the sign in pop up will remain the same". Three
@@ -94,7 +94,7 @@ export default function SignInDialog({
 
   return (
     // Width, face and ring come from signinSkin so level 1 cannot drift from them. 400, not the
-    // measured 360 (see CARD_WIDTH for why): the card stopped being an exact replica when the band
+    // measured 360 (see FORM_WIDTH for why): the card stopped being an exact replica when the band
     // went, and level 1 needs the room.
     <div
       style={{
@@ -103,7 +103,7 @@ export default function SignInDialog({
         border: `0.8px solid ${RING}`,
         fontFamily: CARD_FONT,
       }}
-      className={`relative flex w-full ${CARD_WIDTH} flex-col overflow-hidden rounded-[12px] ${enter === 'fwd' ? 'crx-step-fwd' : ''}`}
+      className={`relative flex w-full ${FORM_WIDTH} flex-col overflow-hidden rounded-[12px] ${enter === 'fwd' ? 'crx-step-fwd' : ''}`}
     >
       <>
         {/* HEADER — the waves are absolutely positioned so they bleed past it exactly as they do on

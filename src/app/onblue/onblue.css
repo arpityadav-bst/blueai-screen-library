@@ -1452,130 +1452,107 @@ body.crx-lock { overflow: hidden; }
 @keyframes crx-step-back { from { opacity: 0; transform: translateX(-28px); } to { opacity: 1; transform: none; } }
 .crx .crx-step-fwd { animation: crx-step-fwd 0.36s cubic-bezier(0.22, 1, 0.36, 1) both; }
 .crx .crx-step-back { animation: crx-step-back 0.36s cubic-bezier(0.22, 1, 0.36, 1) both; }
-/* ---- LEVEL 1'S CAROUSEL (Expectations.tsx + flow/expectationSlides.tsx, 2026-09-08) ----
-   Three staggered rows became three timed cards (Appy: "three cards like a carousal, timed
-   carousal... illustration at the top... then a title, then a subtitle, then three dots"). The old
-   .crx-xp-row stagger went with the rows it staggered.
+/* ---- LEVEL 1'S THREE CARDS (Expectations.tsx + flow/expectationCards.tsx, 2026-09-09) ----
+   LIFTED FROM creators.css (2026-09-10), where this shape was designed. This page had a timed
+   carousel in its place - one slide visible, dots, a next arrow - and that is deleted rather than
+   switched off: three cards at once is what the page opens on now and nothing is being compared.
+   The two files are twins by intent; the palette is the difference, and the palette is in the
+   tokens these rules reference, not in the rules.
 
-   THE STAGE IS ONE GRID CELL WITH ALL THREE SLIDES IN IT. That is the whole trick and the reason
-   there is no min-height anywhere below: the cell is as tall as the tallest slide, so the dialog is
-   sized once at mount and never resizes as it advances. A min-height would have to be guessed, and
-   would go stale the first time the copy changed. */
-.crx .crx-xp-stage { display: grid; }
-.crx .crx-xp-slide {
-  grid-area: 1 / 1;
-  text-align: center;
-  opacity: 0;
-  transform: translateY(10px);
-  /* visibility, not display: display:none would collapse the slide out of the grid and the cell
-     would shrink to whichever one is showing - the jump this layout exists to prevent. It is here
-     at all so the resting slides leave the accessibility tree; the 0s delay is what holds them
-     visible through their own fade-out. */
-  visibility: hidden;
-  transition: opacity 0.42s ease, transform 0.42s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s linear 0.42s;
+   THREE UP AT 480px, which is the constraint everything here answers. The dialog keeps one width
+   across both levels (signinSkin's note: a width that changed between them would jar as they
+   slide), so px-7 leaves 424 and each card gets about 136. That is why the titles are three or four
+   words long, why the icon is 40 rather than the carousel's 56, and why the copy runs at 11.5 - at
+   13 these sentences wrap to five lines. */
+.crx .crx-xp-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; align-items: stretch; }
+.crx .crx-xp-card {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 10px;
+  padding: 15px 11px 14px;
+  border-radius: 11px;
+  border: 1px solid var(--line);
+  background: var(--sur-2);
+  text-align: left;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
 }
-.crx .crx-xp-slide.on { opacity: 1; transform: none; visibility: visible; transition-delay: 0s, 0s, 0s; }
-
-/* The icon plate. Its fill and ink are the dialog SKIN's wash and accent, set inline - this card
-   paints outside the .crx token kit (see signinSkin.ts), so a var() here would resolve to nothing. */
-.crx .crx-xp-icon {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 92px; height: 92px; border-radius: 26px;
+/* THE HOVER IS A STATE, not just a trigger. If the only thing hovering did was start a drawing,
+   nothing would tell a reader the card was worth hovering in the first place - so the card itself
+   lifts and takes the accent edge, which is the invitation, and the drawing is the reward. */
+.crx .crx-xp-card:hover, .crx .crx-xp-card:focus-visible {
+  border-color: var(--sel-border);
+  background: var(--sel-wash);
+  transform: translateY(-2px);
+  outline: none;
 }
+.crx .crx-xp-icon { display: inline-flex; }
+/* THE CARD'S ONLY COPY. The detail line's own voice - regular weight, muted ink - because that is
+   what it is: the caption grew up and swallowed the heading, rather than a heading shrinking. It
+   runs at 11.5 rather than the row's 11, which is the one concession to it being the only text in
+   the card and not a note under something else.
+   TOP-ALIGNED, not bottom. When the cards carried a title and a caption the captions hung from a
+   shared baseline so three unequal cards read as a row; with one block of text per card the copy
+   belongs directly under the icon it explains, and the leftover space falls to the bottom where
+   nobody reads it. */
+.crx .crx-xp-l { font-size: 11.5px; font-weight: 400; line-height: 1.5; text-wrap: balance; }
 
-/* THE DRAWINGS PLAY ONCE, ON ARRIVAL, and then rest - started by the .on class rather than on
-   mount, so nothing animates on a slide nobody is looking at. Every shape that draws itself carries
-   pathLength=1, so 1 -> 0 is the whole dash animation regardless of the shape's real perimeter.
-   The 0.18s delay lets the card land before its illustration starts; both at once reads as one
-   blurry event rather than an arrival followed by a demonstration. */
+/* THE DRAWINGS PLAY ON HOVER, once, and rest. Every shape that draws itself carries pathLength=1,
+   so 1 -> 0 is the whole dash animation whatever the shape's real perimeter. The delays are the
+   carousel's, shortened: there it had a card arrival to wait for, here the reader is already
+   looking at the thing they pointed at. */
 /* the drawing itself. display:block because an inline svg sits on the text baseline and leaves a
    few px of descender gap under it inside the icon plate - which reads as the glyph being
    off-centre rather than as a line-height artefact. */
 .crx .crx-xp-art { display: block; }
-.crx .crx-xp-draw { stroke-dasharray: 1; stroke-dashoffset: 1; }
-.crx .crx-xp-slide.on .crx-xp-draw { animation: crx-xp-draw 0.72s ease-out 0.1s forwards; }
-@keyframes crx-xp-draw { to { stroke-dashoffset: 0; } }
+.crx .crx-xp-draw { stroke-dasharray: 1; stroke-dashoffset: 0; }
+.crx .crx-xp-card:hover .crx-xp-draw,
+.crx .crx-xp-card:focus-visible .crx-xp-draw { animation: crx-xp-draw 0.6s ease-out both; }
+@keyframes crx-xp-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
 
 /* the arrow travels down INTO the monitor - it starts above where it ends, and lands */
-.crx .crx-xp-drop { opacity: 0; }
-.crx .crx-xp-slide.on .crx-xp-drop { animation: crx-xp-drop 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.42s forwards; }
+.crx .crx-xp-card:hover .crx-xp-drop,
+.crx .crx-xp-card:focus-visible .crx-xp-drop { animation: crx-xp-drop 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.22s both; }
 @keyframes crx-xp-drop {
   from { opacity: 0; transform: translateY(-12px); }
   to { opacity: 1; transform: none; }
 }
 
 /* the tick draws itself across the post, after the post exists */
-.crx .crx-xp-tick { stroke-dasharray: 1; stroke-dashoffset: 1; }
-.crx .crx-xp-slide.on .crx-xp-tick { animation: crx-xp-draw 0.46s cubic-bezier(0.4, 0, 0.2, 1) 0.5s forwards; }
+.crx .crx-xp-tick { stroke-dasharray: 1; stroke-dashoffset: 0; }
+.crx .crx-xp-card:hover .crx-xp-tick,
+.crx .crx-xp-card:focus-visible .crx-xp-tick { animation: crx-xp-draw 0.42s cubic-bezier(0.4, 0, 0.2, 1) 0.3s both; }
 
-/* the coin falls into the wallet, and overshoots slightly on the way in - a coin that decelerates
-   to a stop reads as being placed, not dropped */
-.crx .crx-xp-coin { opacity: 0; }
-.crx .crx-xp-slide.on .crx-xp-coin { animation: crx-xp-coin 0.66s cubic-bezier(0.34, 1.4, 0.64, 1) 0.4s forwards; }
+/* the coin falls into the wallet and overshoots slightly on the way in - a coin that decelerates to
+   a stop reads as being placed, not dropped */
+.crx .crx-xp-card:hover .crx-xp-coin,
+.crx .crx-xp-card:focus-visible .crx-xp-coin { animation: crx-xp-coin 0.58s cubic-bezier(0.34, 1.4, 0.64, 1) 0.2s both; }
 @keyframes crx-xp-coin {
   from { opacity: 0; transform: translateY(-16px); }
   to { opacity: 1; transform: none; }
 }
 
-/* THE DOTS ARE CONTROLS. The previous version of this screen had two inert pips and they were
-   deleted for exactly that reason ("what is the meaning of the 2 dots", 2026-09-04), so these are
-   real buttons with a real hit area: the visible dot is 7px, the button around it is 20px tall.
-   The active one stretches to a pill rather than only changing colour - position in a set of three
-   should survive being seen in greyscale or at a glance. Colours are inline from the SKIN. */
-.crx .crx-xp-dots { display: flex; align-items: center; justify-content: center; gap: 7px; }
-/* ONE GAP FOR THE WHOLE RAIL, dots and arrow alike (Appy, 2026-09-08: "they need to be together
-   with equal spacing and in the center"). The arrow had an extra 7px on the theory that it should
-   read as "three of these, then a control"; with the chevron's own box padding on top of it the
-   real gap was nearly three times the one between dots, which reads as a mistake, not as a group
-   boundary. The rail centres as one unit because the arrow's layout box is now exactly its ink. */
-.crx .crx-xp-dot {
-  width: 7px; height: 7px; padding: 0; border: none; border-radius: 128px; cursor: pointer;
-  transition: width 0.32s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.32s ease, opacity 0.2s ease;
-}
-.crx .crx-xp-dot:hover { opacity: 0.75; }
-.crx .crx-xp-dot.on { width: 20px; }
-.crx .crx-xp-dot:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-
-/* The next control. PADDING GIVES IT A REAL HIT AREA and an equal negative margin takes that
-   padding back out of the layout, so it is a ~23x28 target that occupies exactly its 7x12 chevron
-   in the rail. Sizing the box itself instead would put the empty half of the box into the spacing
-   and pull the centred group off-centre — the thing this rail was just corrected for.
-   Its ink comes inline from the SKIN. */
-.crx .crx-xp-next {
-  display: inline-flex; align-items: center; justify-content: center;
-  padding: 8px; margin: -8px;
-  background: none; border: none; border-radius: 128px; cursor: pointer;
-  transition: color 0.18s ease, transform 0.18s cubic-bezier(0.22, 1, 0.36, 1);
-}
-.crx .crx-xp-next:hover { transform: translateX(2px); }
-.crx .crx-xp-next:active { transform: translateX(0); }
-.crx .crx-xp-next:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-
 /* THE GRID, at dialog scale (BandGrid, idPrefix crxXp). Fainter than the band's: the band is a
-   full-width closer you scroll past and the lines are the surface, here they sit behind 40 words
-   of copy that has to stay first. */
+   full-width closer you scroll past and the lines are the surface; here they sit behind three cards
+   and a button that have to stay first. */
 .crx .crx-xp-grid {
-  position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none;
-  color: rgba(43, 53, 133, 0.34);
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  pointer-events: none;
+  /* creators declares a dark value here and flips it under body.crx-light; this fork is light-only,
+     so it takes the light one directly and there is nothing to flip. */
+  color: rgba(43, 53, 133, 0.3);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  /* the level change still has to be perceptible, so it keeps a plain fade. Everything else here is
-     a demonstration of something the words already say, so all of it goes: the slide arrives without
-     travelling, and each drawing is simply present. The illustration is information; its arrival is
-     not. */
+  /* the level change still has to be perceptible, so it keeps a plain fade. Everything else here
+     demonstrates something the words already say, so all of it goes: the card still takes its
+     hover state, and each drawing is simply present. */
   .crx .crx-step-fwd, .crx .crx-step-back { animation: crx-step-fade 0.2s ease both; }
-  .crx .crx-xp-slide { transform: none; transition: opacity 0.2s ease, visibility 0s linear 0.2s; }
-  .crx .crx-xp-draw, .crx .crx-xp-tick { stroke-dashoffset: 0; }
-  .crx .crx-xp-drop, .crx .crx-xp-coin { opacity: 1; }
-  .crx .crx-xp-slide.on .crx-xp-draw,
-  .crx .crx-xp-slide.on .crx-xp-tick,
-  .crx .crx-xp-slide.on .crx-xp-drop,
-  .crx .crx-xp-slide.on .crx-xp-coin { animation: none; }
-  .crx .crx-xp-dot { transition: none; }
-  .crx .crx-xp-next { transition: color 0.18s ease; }
-  .crx .crx-xp-next:hover { transform: none; }
+  .crx .crx-xp-card { transition: border-color 0.2s ease, background 0.2s ease; }
+  .crx .crx-xp-card:hover, .crx .crx-xp-card:focus-visible { transform: none; }
+  .crx .crx-xp-card:hover .crx-xp-draw, .crx .crx-xp-card:focus-visible .crx-xp-draw,
+  .crx .crx-xp-card:hover .crx-xp-tick, .crx .crx-xp-card:focus-visible .crx-xp-tick,
+  .crx .crx-xp-card:hover .crx-xp-drop, .crx .crx-xp-card:focus-visible .crx-xp-drop,
+  .crx .crx-xp-card:hover .crx-xp-coin, .crx .crx-xp-card:focus-visible .crx-xp-coin { animation: none; }
 }
+
 @keyframes crx-step-fade { from { opacity: 0; } to { opacity: 1; } }
 
 /* THE STAT-CARD FAMILY WENT WITH StatCards, 2026-08-25 — deleted with that component (see
