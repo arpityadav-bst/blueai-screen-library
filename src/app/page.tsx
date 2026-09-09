@@ -123,37 +123,49 @@ const DORMANT = [
   { href: '/ai-video-creator-v2', name: 'AI Video Creator — Studio (v2)', desc: 'Creative-tool concept for the Video Creator landing — WebGL hero, GSAP format galleries, templates, models and a parallax example reel. On the blueAI design system.' },
 ]
 
+/* COMPACT ROWS (Appy, 2026-09-09). Titles only. With descriptions each row ran about 90px, so
+   roughly six fitted in a viewport and every group below Active needed scrolling to find. A row
+   is now a single line at about 40px, so the whole library reads at a glance, which is the job
+   of an index page.
+
+   The desc strings are deliberately NOT deleted. They move to the title attribute and surface on
+   hover, because they carry real handoff context (why a surface exists, what superseded what,
+   which of two versions is current) and trading permanent information for vertical space is a bad
+   swap. Keeping them addressable also stops them going dead in the arrays above.
+
+   The design-system row also drops its "Design system" eyebrow: it forced a second line, and the
+   name it sat above already ends in "Design System". */
 function Card({ p }: { p: { href: string; name: string; desc: string; ds?: boolean } }) {
+  const row =
+    'group flex items-center justify-between gap-4 rounded-card px-4 py-2.5 transition-all hover:-translate-y-px'
+  const title = 'min-w-0 truncate font-head text-h4 font-semibold tracking-tight text-ink-display'
+  const link = 'shrink-0 font-mono text-sm transition-transform group-hover:translate-x-0.5'
+
   if (p.ds) {
     return (
       <a
         href={p.href}
-        className="group flex items-center justify-between gap-6 rounded-field bg-bai-wash px-6 py-5 ring-1 ring-inset ring-[rgba(var(--bai-iris-rgb),.22)] transition-all hover:-translate-y-0.5 hover:shadow-float"
+        title={p.desc}
+        className={`${row} bg-bai-wash ring-1 ring-inset ring-[rgba(var(--bai-iris-rgb),.22)] hover:shadow-float`}
       >
-        <div className="flex min-w-0 items-center gap-4">
-          <span className="grid size-11 shrink-0 place-items-center rounded-card bg-bai-gradient text-white shadow-cta">
-            <svg viewBox="0 0 24 24" className="size-5" fill="currentColor" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="2" /><rect x="13" y="3" width="8" height="8" rx="2" /><rect x="3" y="13" width="8" height="8" rx="2" /><rect x="13" y="13" width="8" height="8" rx="2" /></svg>
+        <span className="flex min-w-0 items-center gap-2.5">
+          <span className="grid size-6 shrink-0 place-items-center rounded-badge bg-bai-gradient text-white">
+            <svg viewBox="0 0 24 24" className="size-3.5" fill="currentColor" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="2" /><rect x="13" y="3" width="8" height="8" rx="2" /><rect x="3" y="13" width="8" height="8" rx="2" /><rect x="13" y="13" width="8" height="8" rx="2" /></svg>
           </span>
-          <div className="min-w-0">
-            <p className="bai-section-label text-iris">Design system</p>
-            <p className="font-head text-lg font-semibold tracking-tight text-ink-display">{p.name}</p>
-            <p className="mt-0.5 text-sm text-ink-muted">{p.desc}</p>
-          </div>
-        </div>
-        <span className="shrink-0 font-mono text-sm text-iris transition-transform group-hover:translate-x-0.5">{p.href} →</span>
+          <span className={title}>{p.name}</span>
+        </span>
+        <span className={`${link} text-iris`}>{p.href} →</span>
       </a>
     )
   }
   return (
     <a
       href={p.href}
-      className="group flex items-center justify-between gap-6 rounded-field border border-divider bg-canvas px-6 py-5 shadow-hairline transition-all hover:-translate-y-0.5 hover:border-[rgba(var(--bai-iris-rgb),.35)] hover:shadow-float"
+      title={p.desc}
+      className={`${row} border border-divider bg-canvas shadow-hairline hover:border-[rgba(var(--bai-iris-rgb),.35)] hover:shadow-float`}
     >
-      <div className="min-w-0">
-        <p className="font-head text-lg font-semibold tracking-tight text-ink-display">{p.name}</p>
-        <p className="mt-0.5 text-sm text-ink-muted">{p.desc}</p>
-      </div>
-      <span className="shrink-0 font-mono text-sm text-ink-muted transition-colors group-hover:text-iris">{p.href} →</span>
+      <span className={title}>{p.name}</span>
+      <span className={`${link} text-ink-muted group-hover:text-iris`}>{p.href} →</span>
     </a>
   )
 }
@@ -175,27 +187,27 @@ export default function Home() {
           </p>
         </header>
 
-        <p className="bai-section-label mb-3 text-iris">Active — where work is happening</p>
-        <div className="space-y-3">
+        <p className="bai-section-label mb-2 text-iris">Active — where work is happening</p>
+        <div className="space-y-1.5">
           {ACTIVE.map((p) => <Card key={p.href} p={p} />)}
         </div>
 
-        <p className="bai-section-label mb-3 mt-12 text-ink-muted">Maintained — updated from time to time</p>
-        <div className="space-y-3">
+        <p className="bai-section-label mb-2 mt-8 text-ink-muted">Maintained — updated from time to time</p>
+        <div className="space-y-1.5">
           {MAINTAINED.map((p) => <Card key={p.href} p={p} />)}
         </div>
 
-        <p className="bai-section-label mb-3 mt-12 text-ink-muted">Experiments — outside every product surface</p>
-        <div className="space-y-3">
+        <p className="bai-section-label mb-2 mt-8 text-ink-muted">Experiments — outside every product surface</p>
+        <div className="space-y-1.5">
           {EXPERIMENTS.map((p) => <Card key={p.href} p={p} />)}
         </div>
 
-        <p className="bai-section-label mb-3 mt-12 text-ink-muted">Dormant — kept on record</p>
-        <div className="space-y-3 opacity-80">
+        <p className="bai-section-label mb-2 mt-8 text-ink-muted">Dormant — kept on record</p>
+        <div className="space-y-1.5 opacity-80">
           {DORMANT.map((p) => <Card key={p.href} p={p} />)}
         </div>
 
-        <footer className="mt-12 text-2xs text-ink-muted">An AI worker by now.gg, Inc. · design-only handoff replica</footer>
+        <footer className="mt-10 text-2xs text-ink-muted">An AI worker by now.gg, Inc. · design-only handoff replica</footer>
       </div>
     </main>
   )
