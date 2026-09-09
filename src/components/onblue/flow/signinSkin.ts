@@ -57,7 +57,7 @@ export const CTA_SHADOW = '0 10px 30px -10px rgba(35, 38, 44, 0.28)'
  * (Appy, 2026-09-02): level 1 needs the room for three explained rows, and a width that changed
  * between the two levels would jar as they slide, so both moved together.
  */
-export const CARD_WIDTH = 'max-w-[660px]'      // level 1, the three expectation cards
+export const CARD_WIDTH = 'max-w-[620px]'      // level 1, the three expectation cards
 export const FORM_WIDTH = 'max-w-[400px]'      // level 2, the sign-in form
 
 /** Poppins is the card's face because the now.gg original set it; both levels share it so the slide
