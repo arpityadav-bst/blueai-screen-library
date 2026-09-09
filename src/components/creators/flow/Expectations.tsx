@@ -101,7 +101,7 @@ export default function Expectations({
               // visible lines: the trim to fit a 136px column dropped the waitlist and the "nothing
               // goes out unseen", and a visual decision should not also cost a blind reader a fact.
               <li key={c.key} className="crx-xp-card" tabIndex={0} role="group" aria-label={c.full}>
-                <span className="crx-xp-icon" style={{ background: skin.wash, color: skin.accent }}>
+                <span className="crx-xp-icon" style={{ color: skin.accent }}>
                   <Art />
                 </span>
                 <span className="crx-xp-l" style={{ color: skin.ink70 }}>{c.line}</span>

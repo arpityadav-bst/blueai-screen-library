@@ -1536,12 +1536,12 @@ body.crx-light .crx {
    13 these sentences wrap to five lines. */
 .crx .crx-xp-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; align-items: stretch; }
 .crx .crx-xp-card {
-  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 10px;
   padding: 15px 11px 14px;
   border-radius: 11px;
   border: 1px solid var(--line);
   background: var(--sur-2);
-  text-align: center;
+  text-align: left;
   transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
 }
 /* THE HOVER IS A STATE, not just a trigger. If the only thing hovering did was start a drawing,
@@ -1553,10 +1553,7 @@ body.crx-light .crx {
   transform: translateY(-2px);
   outline: none;
 }
-.crx .crx-xp-icon {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 62px; height: 62px; border-radius: 18px;
-}
+.crx .crx-xp-icon { display: inline-flex; }
 /* THE CARD'S ONLY COPY. The detail line's own voice - regular weight, muted ink - because that is
    what it is: the caption grew up and swallowed the heading, rather than a heading shrinking. It
    runs at 11.5 rather than the row's 11, which is the one concession to it being the only text in
