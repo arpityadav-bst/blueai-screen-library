@@ -1459,10 +1459,10 @@ body.crx-lock { overflow: hidden; }
    The two files are twins by intent; the palette is the difference, and the palette is in the
    tokens these rules reference, not in the rules.
 
-   FOUR UP AT 720px (2026-09-10, the PM's layout). Each card gets about 159 - px-7 leaves 664, less
-   three 9px gaps, over four columns. The dialog went 480 -> 720 for the fourth card rather than
-   squeezing four into a box built for three: at 540 each card would be ~127, and these lines are
-   longer than the ones they replace, not shorter. The icon came down 40 -> 34 in the same move,
+   FOUR UP AT 660px (2026-09-10, the PM's layout, trimmed the same day). Each card gets about 144 -
+   px-7 leaves 604, less three 9px gaps, over four columns. It landed at 720 and came back to 660 on
+   the ask; the floor is roughly 620, below which these lines start taking five rows and the row's
+   bottom edge goes ragged again. The icon came down 40 -> 34 when the fourth column arrived,
    because an icon that does not shrink with its card stops being an icon and becomes the subject. */
 /* THE INTRO LINE. Centred, because it addresses the reader rather than labelling the row under
    it - a left-aligned sentence over four left-aligned cards reads as the first card's heading. */
