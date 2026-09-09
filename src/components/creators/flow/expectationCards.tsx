@@ -15,7 +15,7 @@
 // it on. "Runs on your PC" alone is a feature; "at least 20 days a month" alone is a rule; together
 // in one line they are the deal.
 //
-// THEY ARE WITHIN TWO CHARACTERS OF EACH OTHER (45 / 47 / 46), and that is maintained, not luck.
+// THEY ARE WITHIN ONE CHARACTER OF EACH OTHER (45 / 46 / 46), and that is maintained, not luck.
 // Three cards side by side are read as a row, so one of them wrapping to two lines while its
 // neighbours take three makes the row look broken rather than the card look brief - the eye reads
 // the ragged bottom edge before it reads any of the words. text-wrap:balance evens out each line
@@ -105,13 +105,13 @@ export const CARDS: readonly Card[] = [
     key: 'pc',
     art: InstallArt,
     line: 'Runs on your PC, at least 20 days each month.',
-    full: 'Runs on your PC. You install BlueAI and keep it running at least 20 days a month — a few minutes of your day.',
+    full: 'Runs on your PC. You install BlueAI and keep it running at least 20 days a month, which is a few minutes of your day.',
   },
   {
     key: 'approve',
     art: ApproveArt,
-    line: 'Uses your accounts — you approve each campaign.',
-    full: 'You approve it first. It works on your platform accounts, and you approve each campaign before your worker runs it — nothing goes out unseen.',
+    line: 'Uses your accounts. You approve each campaign.',
+    full: 'Uses your accounts. You approve each campaign before your worker runs it, and nothing goes out unseen.',
   },
   {
     key: 'paid',

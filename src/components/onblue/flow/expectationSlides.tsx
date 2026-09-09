@@ -81,7 +81,7 @@ export const SLIDES: readonly Slide[] = [
     key: 'pc',
     art: InstallArt,
     title: 'It lives on your PC.',
-    body: 'You install onBlue and keep it running at least 20 days a month — a few minutes of your day.',
+    body: 'You install onBlue and keep it running at least 20 days a month, which is a few minutes of your day.',
   },
   {
     key: 'accounts',
@@ -106,5 +106,5 @@ export const PHONE_SLIDE: Slide = {
   key: 'pc',
   art: InstallArt,
   title: 'It lives on a PC.',
-  body: 'You are on a phone right now, which is fine for applying — onBlue itself runs on a PC, and you will set it up there.',
+  body: 'You are on a phone right now, which is fine for applying. onBlue itself runs on a PC, and you will set it up there.',
 }

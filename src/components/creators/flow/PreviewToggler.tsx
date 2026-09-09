@@ -125,7 +125,7 @@ const GROUPS_C: Group[] = GROUPS_A.map((g) => ({
 const NOTE_A = 'The one-program group is the launch experience; the many-programs group holds the future states.'
 const NOTE_C = NOTE_A.replace(/program/g, 'offer')
 const NOTE_B =
-  'Version B has three signed-in screens — the application, the dashboard and the full-capacity notice — so it lists three. Your Version A row is remembered while you are here.'
+  'Version B has three signed-in screens (the application, the dashboard and the full-capacity notice), so it lists three. Your Version A row is remembered while you are here.'
 
 function Gear() {
   return (
