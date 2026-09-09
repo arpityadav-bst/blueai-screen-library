@@ -1532,12 +1532,12 @@ body.crx-light .crx {
    THREE UP AT 480px, which is the constraint everything here answers. The dialog keeps one width
    across both levels (signinSkin's note: a width that changed between them would jar as they
    slide), so px-7 leaves 424 and each card gets about 136. That is why the titles are three or four
-   words, why the icon is 40 rather than the carousel's 56, and why the qualifying line runs at 11px
-   - at 12.5 it wraps to three. */
+   words long, why the icon is 40 rather than the carousel's 56, and why the copy runs at 11.5 - at
+   13 these sentences wrap to five lines. */
 .crx .crx-xp-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; align-items: stretch; }
 .crx .crx-xp-card {
-  display: flex; flex-direction: column; align-items: center; gap: 8px;
-  padding: 14px 10px 13px;
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  padding: 15px 11px 14px;
   border-radius: 11px;
   border: 1px solid var(--line);
   background: var(--sur-2);
@@ -1557,11 +1557,15 @@ body.crx-light .crx {
   display: inline-flex; align-items: center; justify-content: center;
   width: 62px; height: 62px; border-radius: 18px;
 }
-.crx .crx-xp-t { font-size: 12.5px; font-weight: 600; line-height: 1.35; }
-/* the qualifier. margin-top:auto is what keeps three cards of unequal copy tidy: the titles sit
-   under their icons and the lines all hang from the same baseline, so the row reads as three cards
-   rather than three heights. */
-.crx .crx-xp-l { margin-top: auto; padding-top: 4px; font-size: 11px; font-weight: 400; line-height: 1.45; }
+/* THE CARD'S ONLY COPY. The detail line's own voice - regular weight, muted ink - because that is
+   what it is: the caption grew up and swallowed the heading, rather than a heading shrinking. It
+   runs at 11.5 rather than the row's 11, which is the one concession to it being the only text in
+   the card and not a note under something else.
+   TOP-ALIGNED, not bottom. When the cards carried a title and a caption the captions hung from a
+   shared baseline so three unequal cards read as a row; with one block of text per card the copy
+   belongs directly under the icon it explains, and the leftover space falls to the bottom where
+   nobody reads it. */
+.crx .crx-xp-l { font-size: 11.5px; font-weight: 400; line-height: 1.5; text-wrap: balance; }
 
 /* THE DRAWINGS PLAY ON HOVER, once, and rest. Every shape that draws itself carries pathLength=1,
    so 1 -> 0 is the whole dash animation whatever the shape's real perimeter. The delays are the

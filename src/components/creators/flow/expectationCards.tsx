@@ -1,21 +1,22 @@
 'use client'
 
-// THE THREE CARDS — an animated line illustration, a title, and the one line that qualifies it.
+// THE THREE CARDS — an animated line illustration and one line of copy.
 //
-// A TITLE AND ONE LINE. This shipped title-only for a day, on the instruction "only the title and
-// the icon in a card" — and that was too far (Appy, 2026-09-09: "the messaging in this pop-up is
-// pretty short... you really just convert it into three to four words"). The instruction was to
-// SHORTEN the messaging, and four words is not a short version of a sentence, it is a label where a
-// sentence used to be. So each card keeps its title and gains back the qualifier that title was
-// standing in for, cut to its core: the number, the limit, the condition.
+// ONE LINE, NO TITLE, and it took three passes to land on that. The original rows were a bold
+// lead-in plus two or three lines of detail ("It lives on your PC. You install BlueAI and keep it
+// running at least 20 days a month..."). Compressing that to a four-word title lost the substance;
+// putting a title AND a qualifier back reproduced the original two-part shape in a 136px column,
+// where a two-word heading over a three-word line is a hierarchy with nothing to be hierarchical
+// about. What was actually being asked for (Appy, 2026-09-09) is the CRUX of the pair as a single
+// sentence, in the detail line's voice — so that is what each card carries.
 //
-// THE SPLIT IS FACT THEN QUALIFIER. The title is the thing being agreed to; the line is what makes
-// it true — "Runs on your PC" / "At least 20 days a month." Read the titles alone and you have the
-// offer; read the lines too and you have the terms. That is also why the titles carry the
-// CONSTRAINT rather than the topic: "Your PC" is a subject, "Runs on your PC" is an agreement.
+// EACH LINE IS FACT PLUS CONDITION, joined. Not the heading and not the caveat but the sentence a
+// reader would write if they had to say the whole thing once: what it does, and the terms it does
+// it on. "Runs on your PC" alone is a feature; "at least 20 days a month" alone is a rule; together
+// in one line they are the deal.
 //
-// It cost the dialog 80px of width to hold this (see signinSkin's CARD_WIDTH note). At 400 each
-// card had ~105px and a five-word line wrapped to four; at 480 it sits on two.
+// THE DIALOG KEPT ITS 480 (see signinSkin's CARD_WIDTH note). One line needs the width more than
+// two did — at 400 each card is ~105px and these sentences wrap to five lines.
 //
 // ONE DRAWING LANGUAGE, INHERITED: the introIcons stroke style scaled up — 1.8 stroke, round caps
 // and joins, no fills. A dialog that suddenly speaks a second visual language reads as a screen
@@ -79,7 +80,7 @@ function PaidArt() {
   )
 }
 
-export type Card = { key: string; art: () => JSX.Element; title: string; line: string; full: string }
+export type Card = { key: string; art: () => JSX.Element; line: string; full: string }
 
 /**
  * `full` is not shown. It is the whole sentence the pair compresses, and it goes to the card's
@@ -96,22 +97,19 @@ export const CARDS: readonly Card[] = [
   {
     key: 'pc',
     art: InstallArt,
-    title: 'Runs on your PC',
-    line: 'At least 20 days a month.',
+    line: 'Runs on your PC, at least 20 days a month.',
     full: 'Runs on your PC. You install BlueAI and keep it running at least 20 days a month — a few minutes of your day.',
   },
   {
     key: 'approve',
     art: ApproveArt,
-    title: 'You approve it first',
-    line: 'Nothing runs on your accounts unseen.',
+    line: 'Uses your accounts — you approve each campaign first.',
     full: 'You approve it first. It works on your platform accounts, and you approve each campaign before your worker runs it — nothing goes out unseen.',
   },
   {
     key: 'paid',
     art: PaidArt,
-    title: '$30 a month',
-    line: 'Via PayPal, after approval.',
+    line: '$30 a month via PayPal, once you are approved.',
     full: '$30 a month, via PayPal, once your application is approved. There is a waitlist, so it can take a little time.',
   },
 ]
