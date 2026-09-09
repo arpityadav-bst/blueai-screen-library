@@ -64,11 +64,11 @@ export const CTA_SHADOW = '0 10px 30px -6px rgba(95, 70, 255, 0.65)'
  * original's measured width; 400 came on 2026-09-02 when level 1 needed room for three explained
  * rows; 480 comes on 2026-09-09 when those rows became three side-by-side cards. At 400 each card
  * had about 105px, which is a title and nothing else - and a title alone turned out to be too
- * little (Appy: "the messaging in this pop-up is pretty short"). 480 gives each card ~136px, which
- * is what a short qualifying line needs in order to sit on two lines rather than four.
+ * little (Appy: "the messaging in this pop-up is pretty short"). 480 gave each card ~136px; 540,
+ * the same day, gives ~155, which is what these one-line sentences need to stop wrapping to four.
  * BOTH LEVELS MOVE TOGETHER. A width that changed between them would jar as they slide.
  */
-export const CARD_WIDTH = 'max-w-[480px]'
+export const CARD_WIDTH = 'max-w-[540px]'
 
 /** Poppins is the card's face because the now.gg original set it; both levels share it so the slide
  *  between them does not change typeface mid-dialog. Whether the dialog should move to the site's
