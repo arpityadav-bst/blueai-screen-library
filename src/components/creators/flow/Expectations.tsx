@@ -1,38 +1,38 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import { useCrx } from './CrxState'
 import { CARD_FONT, CARD_WIDTH, CTA, CTA_SHADOW, RING, SKIN } from './signinSkin'
-import { MonitorIcon, WalletIcon } from './apply/introIcons'
+import BandGrid from '../BandGrid'
+import { CARDS } from './expectationCards'
 
 // LEVEL 1 OF THE SIGN-IN DIALOG (Appy, 2026-09-02: "sign up becomes a 2 level thing... where we
 // set the right expectations for the user"). It shows before the sign-in card, to applicants only:
 // the "Sign in" door for returning accounts skips straight past it.
 //
 // WHAT THIS IS FOR, AND WHAT IT IS NOT. The homepage's four cards (Apply, Get accepted, Deploy it,
-// Collect) explain what HAPPENS. This has a different job: what you are AGREEING TO - the three
+// Collect) explain what HAPPENS. This has a different job: what you are AGREEING TO — the three
 // constraints people misread and then drop out over, pulled to the front before anyone types an
 // email. So it is not the four cards again in a popup, and it is not a form either: the application
 // already asks the qualifying questions, and ticking them here too would be friction dressed as
 // diligence. Three facts, then one "got it".
 //
-// EVERY FACT IS SOURCED from copy already on the site - the 20 days and the $30 via PayPal from the
+// THREE CARDS AT ONCE, NOT A CAROUSEL (Appy, 2026-09-09). The onBlue fork got the same three points
+// as a timed carousel — one card, one illustration, dots and an arrow. This takes that treatment's
+// FRAME and drops its mechanism: same grid-lined container, same CTA and returning-account door,
+// but all three cards standing side by side. The reason to prefer it here is not novelty, it is
+// that a carousel makes the second and third facts cost a wait or a click, and these three are a
+// SET — "runs on your PC, you approve it, you get paid" is one sentence in three parts, and a
+// reader who has seen only the first part has not seen the offer. What it costs is the detail line
+// under each title, which is why expectationCards keeps the full sentence for the label.
+//
+// EVERY FACT IS SOURCED from copy already on the site — the 20 days and the $30 via PayPal from the
 // application's intro step, "you approve each campaign" from card 04, the waitlist from the
-// confirmation. Nothing new is claimed here. And the copy carries NO UNIT NOUN - not "program", not
-// "offer" - so it is correct under Versions A, B and C without a variant branch. "Windows" is not
-// said because the site never says it; "PC" is what the desk caption and the application say.
-
-type Platform = 'phone' | 'desktop' | null
-
-/** A play glyph in the introIcons stroke style - a YouTube-account row needs one and the set had none. */
-function PlayIcon({ size = 18 }: { size?: number }) {
-  return (
-    <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <rect x="3" y="5" width="18" height="14" rx="3.5" />
-      <path d="M10 9.2v5.6l4.6-2.8z" fill="currentColor" stroke="none" />
-    </svg>
-  )
-}
+// confirmation. Nothing new is claimed here.
+//
+// THIS FORK'S COLOURS, NOT onBlue'S (Appy: "the color will be according to the BlueAI creators, not
+// the onBlue website"). Everything paints from SKIN and the iris CTA — the fork that went charcoal
+// went charcoal alone. This one also still has two themes, so nothing here may assume a white
+// ground: the card surfaces come from SKIN.tile, which flips.
 
 export default function Expectations({
   onContinue,
@@ -41,7 +41,7 @@ export default function Expectations({
   enter,
 }: {
   onContinue: () => void
-  /** "Already have an account? Sign in" - jumps to level 2 as a returning account. */
+  /** "Already have an account? Sign in" — jumps to level 2 as a returning account. */
   onSignIn: () => void
   onClose: () => void
   /** 'back' when reached from level 2's Back link, so it slides in from the left. */
@@ -50,55 +50,23 @@ export default function Expectations({
   const { theme } = useCrx()
   const skin = SKIN[theme]
 
-  // THE FIRST ROW KNOWS WHAT YOU ARE ON. Read after mount (never during render - the server cannot
-  // know, and a mismatch is a hydration error), and only for the one distinction that is
-  // unambiguous: a phone or tablet is not a PC. A hint, never a gate - the sentence changes, the
-  // path does not. Nothing is said about Macs, because the site itself only ever says "PC".
-  const [platform, setPlatform] = useState<Platform>(null)
-  useEffect(() => {
-    const ua = navigator.userAgent
-    setPlatform(/Android|iPhone|iPad|iPod|Mobile/i.test(ua) ? 'phone' : 'desktop')
-  }, [])
-
-  const rows = [
-    {
-      icon: <MonitorIcon size={18} />,
-      fact:
-        platform === 'phone'
-          ? 'It lives on a PC. You are on a phone right now.'
-          : 'It lives on your PC.',
-      detail:
-        platform === 'phone'
-          ? 'That is fine for applying. BlueAI itself runs on a PC, and you will set it up there.'
-          : 'You install BlueAI and keep it running at least 20 days a month. A few minutes of your day.',
-    },
-    {
-      icon: <PlayIcon />,
-      // PLATFORM, NOT YOUTUBE (Appy, 2026-09-08). The row's job is "the work happens on YOUR
-      // account, and you see it first" - naming one platform narrows a promise that is about
-      // ownership and consent, not about which app. It also dates: the site lists Instagram,
-      // TikTok, X and Reddit as soon, and this line would need editing the day any of them ships.
-      fact: 'It works on your platform accounts.',
-      detail: 'You approve each campaign before your worker runs it.',
-    },
-    {
-      icon: <WalletIcon size={18} />,
-      fact: 'You get $30 a month, via PayPal.',
-      detail: 'Once your application is approved. There is a waitlist, so it can take a little time.',
-    },
-  ]
-
   return (
     <div
       style={{ background: skin.card, color: skin.ink, border: `0.8px solid ${RING}`, fontFamily: CARD_FONT }}
-      className={`relative flex w-full ${CARD_WIDTH} flex-col overflow-hidden rounded-[12px] ${enter === 'back' ? 'crx-step-back' : ''}`}
+      className={`crx-xp relative flex w-full ${CARD_WIDTH} flex-col overflow-hidden rounded-[12px] ${enter === 'back' ? 'crx-step-back' : ''}`}
     >
-      {/* Same dismiss as level 2, same place - the two levels have to feel like one card. */}
+      {/* THE GRID, top and bottom — the closer's own fans at dialog scale. No shine: the travelling
+          wave belongs to a full-width band you scroll past, and behind three cards and a button it
+          competes with the thing it frames. Its own idPrefix because the closer's grid is on the
+          page behind this one, and two grids sharing mask ids break the moment their sizes differ.
+          Colour comes from .crx-xp-grid in creators.css, which flips with the theme. */}
+      <BandGrid idPrefix="crxXp" className="crx-xp-grid" />
+
       <button
         type="button"
         onClick={onClose}
         aria-label="Close"
-        className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full transition-colors"
+        className="absolute right-3 top-3 z-20 flex h-8 w-8 items-center justify-center rounded-full transition-colors"
         style={{ color: skin.ink40 }}
         onMouseEnter={(e) => { e.currentTarget.style.color = skin.ink }}
         onMouseLeave={(e) => { e.currentTarget.style.color = skin.ink40 }}
@@ -109,40 +77,37 @@ export default function Expectations({
       </button>
 
       {/* 56 TOP, not level 2's 40. The close control sits at top-3 and is 32px tall, so its bottom
-          edge is at 44 - with a heading above them the rows never came near it, and without one the
-          first row's text would run under it on the right. 56 clears it by 12 and reads as the
-          generous top edge this card was asked for. Sides, bottom and the block gap stay level 2's. */}
-      <div className="flex flex-col gap-5 px-7 pb-7 pt-14">
-        {/* NO HEADER AT ALL (Appy, 2026-09-08). This carried an eyebrow, a heading and a sub -
-            "Before you start", "Three things, then you're in.", "Takes ten seconds." - plus a
-            two-dot step indicator, all removed across this pass and the one before it. Every one of
-            them described the screen instead of being it: three facts and a button need no
-            announcement, and a card that spends its first three lines saying it will be quick is
-            not being quick.
-            THE CARD IS NOT UNNAMED. Modal.tsx sets aria-label="Before you start" on the dialog, so
-            the accessible name survives the visible heading - a screen reader still hears what this
-            is, which is the one thing the deleted copy was doing that mattered. */}
-        {/* STAGGERED ARRIVAL. Each row lands 90ms after the one above it, on the same easing the
-            laptop's task rows use (crx-emerge's curve) but translating rather than growing - that
-            keyframe animates margin-top for a stacking list, which would make this one jump. Three
-            rows arriving in sequence read as being told three things, not shown a block. */}
-        <ul className="flex flex-col gap-4">
-          {rows.map((r, i) => (
-            <li key={r.fact} className="crx-xp-row flex items-start gap-3.5" style={{ animationDelay: `${120 + i * 90}ms` }}>
-              <span
-                className="mt-0.5 flex h-8 w-8 flex-none items-center justify-center rounded-[8px]"
-                style={{ background: skin.wash, color: skin.accent }}
-              >
-                {r.icon}
-              </span>
-              <p className="text-[14px] leading-[21px]" style={{ color: skin.ink70 }}>
-                <b className="font-semibold" style={{ color: skin.ink }}>{r.fact}</b> {r.detail}
-              </p>
-            </li>
-          ))}
+          edge is at 44; 56 clears it by 12 and reads as the generous top edge this card was asked
+          for. Sides, bottom and the block gap stay level 2's. */}
+      <div className="relative z-10 flex flex-col gap-5 px-7 pb-7 pt-14">
+        {/* NO HEADER AT ALL (Appy, 2026-09-08). This carried an eyebrow, a heading, a sub and a
+            two-dot step indicator, all removed across earlier passes: every one described the
+            screen instead of being it, and a card that spends its first three lines saying it will
+            be quick is not being quick.
+            THE CARD IS NOT UNNAMED — Modal.tsx sets aria-label="Before you start" on the dialog, so
+            the accessible name survives the visible heading. */}
+        <ul className="crx-xp-cards">
+          {CARDS.map((c) => {
+            const Art = c.art
+            return (
+              // A LIST ITEM, NOT A BUTTON. Nothing here is pressable — the hover only plays a
+              // drawing — so a <button> would promise an action that does not exist and put three
+              // dead stops in the tab order before the one control that matters. tabIndex 0 on a
+              // group role gives a keyboard reader the same access to the animation without
+              // claiming it does something. The label is the FULL sentence, not the title: the
+              // detail line was dropped for a 100px column, and a visual decision should not also
+              // cost a blind reader the fact.
+              <li key={c.key} className="crx-xp-card" tabIndex={0} role="group" aria-label={c.full}>
+                <span className="crx-xp-icon" style={{ background: skin.wash, color: skin.accent }}>
+                  <Art />
+                </span>
+                <span className="crx-xp-t" style={{ color: skin.ink }}>{c.title}</span>
+              </li>
+            )
+          })}
         </ul>
 
-        {/* THE PAGE'S PRIMARY - the same button as level 2's Continue and as the hero's Get
+        {/* THE PAGE'S PRIMARY — the same button as level 2's Continue and as the hero's Get
             Access. One primary action, one appearance, on the page or in a dialog. */}
         <button
           type="button"
@@ -154,7 +119,7 @@ export default function Expectations({
         </button>
 
         {/* The returning-account door, here too: a reader who already has an account should not
-            have to read what they are agreeing to a second time. Same semantics as the hero's door -
+            have to read what they are agreeing to a second time. Same semantics as the hero's door —
             the journey becomes returningUser before level 2 opens. */}
         <p className="text-center text-[12px] leading-[18px]" style={{ color: skin.ink40 }}>
           Already have an account?{' '}

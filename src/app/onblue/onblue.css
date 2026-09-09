@@ -1488,6 +1488,10 @@ body.crx-lock { overflow: hidden; }
    pathLength=1, so 1 -> 0 is the whole dash animation regardless of the shape's real perimeter.
    The 0.18s delay lets the card land before its illustration starts; both at once reads as one
    blurry event rather than an arrival followed by a demonstration. */
+/* the drawing itself. display:block because an inline svg sits on the text baseline and leaves a
+   few px of descender gap under it inside the icon plate - which reads as the glyph being
+   off-centre rather than as a line-height artefact. */
+.crx .crx-xp-art { display: block; }
 .crx .crx-xp-draw { stroke-dasharray: 1; stroke-dashoffset: 1; }
 .crx .crx-xp-slide.on .crx-xp-draw { animation: crx-xp-draw 0.72s ease-out 0.1s forwards; }
 @keyframes crx-xp-draw { to { stroke-dashoffset: 0; } }
