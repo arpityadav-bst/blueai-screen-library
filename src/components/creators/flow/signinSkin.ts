@@ -74,7 +74,7 @@ export const CTA_SHADOW = '0 10px 30px -6px rgba(95, 70, 255, 0.65)'
  * they are a row of cards and a form, and a form has its own right measure. The slide between them
  * now resizes, which is the cost and is visible; it is the smaller of the two.
  */
-export const CARD_WIDTH = 'max-w-[540px]'      // level 1, the three expectation cards
+export const CARD_WIDTH = 'max-w-[720px]'      // level 1, the three expectation cards
 export const FORM_WIDTH = 'max-w-[400px]'      // level 2, the sign-in form
 
 /** Poppins is the card's face because the now.gg original set it; both levels share it so the slide

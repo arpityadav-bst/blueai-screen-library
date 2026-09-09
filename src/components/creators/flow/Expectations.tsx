@@ -3,7 +3,7 @@
 import { useCrx } from './CrxState'
 import { CARD_FONT, CARD_WIDTH, CTA, CTA_SHADOW, RING, SKIN } from './signinSkin'
 import BandGrid from '../BandGrid'
-import { CARDS } from './expectationCards'
+import { CARDS, INTRO } from './expectationCards'
 
 // LEVEL 1 OF THE SIGN-IN DIALOG (Appy, 2026-09-02: "sign up becomes a 2 level thing... where we
 // set the right expectations for the user"). It shows before the sign-in card, to applicants only:
@@ -89,6 +89,11 @@ export default function Expectations({
             be quick is not being quick.
             THE CARD IS NOT UNNAMED — Modal.tsx sets aria-label="Before you start" on the dialog, so
             the accessible name survives the visible heading. */}
+        {/* WHAT IT IS, BEFORE WHAT IT ASKS. See expectationCards for why a heading is back on a
+            screen that had one deleted: this one names the product, which the stripped version
+            never did. */}
+        <p className="crx-xp-intro" style={{ color: skin.ink }}>{INTRO}</p>
+
         <ul className="crx-xp-cards">
           {CARDS.map((c) => {
             const Art = c.art
@@ -104,7 +109,13 @@ export default function Expectations({
                 <span className="crx-xp-icon" style={{ color: skin.accent }}>
                   <Art />
                 </span>
-                <span className="crx-xp-l" style={{ color: skin.ink70 }}>{c.line}</span>
+                {/* ONE PARAGRAPH, TWO WEIGHTS - not two elements. The lead and the rest are a
+                    single sentence that happens to change colour partway through, so they wrap as
+                    one; a separate line for the lead would break mid-sentence at every card width
+                    and put a ragged gap between halves that belong together. */}
+                <p className="crx-xp-l" style={{ color: skin.ink70 }}>
+                  <b style={{ color: skin.ink }}>{c.lead}</b> {c.rest}
+                </p>
               </li>
             )
           })}

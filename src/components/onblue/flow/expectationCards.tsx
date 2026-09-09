@@ -1,128 +1,128 @@
 'use client'
 
-// THE THREE CARDS — an animated line illustration and one line of copy.
+// THE FOUR CARDS — an animated line illustration and one line of copy, in two voices.
 //
-// ONE LINE, NO TITLE, and it took three passes to land on that. The original rows were a bold
-// lead-in plus two or three lines of detail ("It lives on your PC. You install onBlue and keep it
-// running at least 20 days a month..."). Compressing that to a four-word title lost the substance;
-// putting a title AND a qualifier back reproduced the original two-part shape in a 136px column,
-// where a two-word heading over a three-word line is a hierarchy with nothing to be hierarchical
-// about. What was actually being asked for (Appy, 2026-09-09) is the CRUX of the pair as a single
-// sentence, in the detail line's voice — so that is what each card carries.
+// THIS IS THE PM'S LAYOUT (2026-09-10), and it changes three things at once: a fourth card, new
+// copy, and a bold lead-in inside each line rather than one flat sentence. The lead is the STEP
+// ("Apply.", "Set up onBlue.") and the remainder is the condition or the consequence, so the four
+// leads read on their own as the whole arc — works on your PC, apply, set up, earn — and the grey
+// half is there for the reader who stops on one card.
 //
-// EACH LINE IS FACT PLUS CONDITION, joined. Not the heading and not the caveat but the sentence a
-// reader would write if they had to say the whole thing once: what it does, and the terms it does
-// it on. "Runs on your PC" alone is a feature; "at least 20 days a month" alone is a rule; together
-// in one line they are the deal.
+// A HEADING CAME BACK WITH IT, and that is a reversal worth naming. This screen carried "Before you
+// start / Three things, then you're in / Takes ten seconds" until it was stripped on 2026-09-08 for
+// describing the screen instead of being it. The PM's line does something the old one did not: it
+// says what the product IS before listing what it asks of you, which is the one thing a first-time
+// reader does not already have. It is not the deleted header returning, it is a different job.
 //
-// THEY ARE WITHIN ONE CHARACTER OF EACH OTHER (45 / 46 / 46), and that is maintained, not luck.
-// Three cards side by side are read as a row, so one of them wrapping to two lines while its
-// neighbours take three makes the row look broken rather than the card look brief - the eye reads
-// the ragged bottom edge before it reads any of the words. text-wrap:balance evens out each line
-// WITHIN a card; only the character count evens them out ACROSS cards. If a line is reworded, count
-// it.
+// ONE DRAWING LANGUAGE, INHERITED: the introIcons stroke style — 1.8 stroke, round caps and joins,
+// no fills. A dialog that suddenly speaks a second visual language reads as a screen from another
+// product. They are 34px rather than the three-card version's 40: a fourth column takes ~20px off
+// each card, and an icon that does not shrink with its card stops being an icon and becomes the
+// card's subject.
 //
-// THE DIALOG KEPT ITS 480 (see signinSkin's CARD_WIDTH note). One line needs the width more than
-// two did — at 400 each card is ~105px and these sentences wrap to five lines.
+// EACH ANIMATION SHOWS ITS OWN SENTENCE, which is the only rule they follow. The monitor draws
+// itself, the envelope folds shut, the arrow travels down into the tray, and the coin lands on the
+// card. If a line changed, its drawing would have to.
 //
-// ONE DRAWING LANGUAGE, INHERITED: the introIcons stroke style scaled up — 1.8 stroke, round caps
-// and joins, no fills. A dialog that suddenly speaks a second visual language reads as a screen
-// from another product.
-//
-// THIS IS THE CREATORS FILE'S TWIN (2026-09-10). onBlue carried the same three points as a timed
-// carousel - one card at a time, dots and an arrow - and that is deleted, not switched off: the
-// three-up version is what this page opens on now and there is nothing left to compare it against.
-// The copy is identical apart from the brand name; the difference between the forks is the palette,
-// which lives in the stylesheet and the SKIN, not here.
-//
-// EACH ANIMATION SHOWS ITS OWN SENTENCE, which is the only rule they follow. The arrow travels DOWN
-// INTO the monitor because the line says it runs there, the tick DRAWS ITSELF because the line says
-// you approve it, and the coin FALLS INTO the wallet because the line says you get paid. If a title
-// changed, its drawing would have to.
-//
-// THEY PLAY ON HOVER (Appy: "hover over them the animation will happen), not on arrival. Three
-// illustrations animating at once the moment a dialog opens is a fireworks display in front of a
-// button; on hover each one answers a reader who went looking. Under prefers-reduced-motion every
-// one is switched off in creators.css and the drawing simply sits there — the illustration is the
-// information, its arrival is not.
+// THEY PLAY ON HOVER, not on arrival. Four illustrations animating at once the moment a dialog
+// opens is a fireworks display in front of a button; on hover each one answers a reader who went
+// looking. Under prefers-reduced-motion every one is switched off in onblue.css and the drawing simply
+// sits there — the illustration is the information, its arrival is not.
 //
 // pathLength=1 on everything that DRAWS ITSELF, so the dash animation is written once in CSS as
-// 1 -> 0 and never has to know a shape's real perimeter. Without it every drawn shape needs its own
-// dasharray, and every edit to a rect's size silently breaks its own animation.
+// 1 -> 0 and never has to know a shape's real perimeter.
 
 const S = { fill: 'none', stroke: 'currentColor', strokeWidth: 1.8, strokeLinecap: 'round', strokeLinejoin: 'round' } as const
 
-/** Runs on your PC: an arrow travels down into a monitor. */
-function InstallArt() {
+/** Works on your PC: a monitor, drawing itself. */
+function MonitorArt() {
   return (
-    <svg viewBox="0 0 64 64" width="40" height="40" aria-hidden="true" className="crx-xp-art">
+    <svg viewBox="0 0 64 64" width="34" height="34" aria-hidden="true" className="crx-xp-art">
       <rect x="8" y="12" width="48" height="34" rx="4" {...S} pathLength={1} className="crx-xp-draw" />
       <path d="M24 56h16" {...S} />
       <path d="M32 46v10" {...S} />
-      {/* its own group, so the arrow can travel independently of the frame it lands in */}
+    </svg>
+  )
+}
+
+/** Apply: an envelope, and its flap folding shut. */
+function MailArt() {
+  return (
+    <svg viewBox="0 0 64 64" width="34" height="34" aria-hidden="true" className="crx-xp-art">
+      <rect x="7" y="15" width="50" height="34" rx="4" {...S} pathLength={1} className="crx-xp-draw" />
+      {/* the flap is its own group so it can fold independently of the envelope it closes */}
       <g className="crx-xp-drop">
-        <path d="M32 20v12" {...S} />
-        <path d="M26.5 27.5 32 33l5.5-5.5" {...S} />
+        <path d="M9 18 32 36 55 18" {...S} />
       </g>
     </svg>
   )
 }
 
-/** You approve it first: a post, and a tick that draws itself across it. */
-function ApproveArt() {
+/** Set up: an arrow travelling down into a tray. */
+function InstallArt() {
   return (
-    <svg viewBox="0 0 64 64" width="40" height="40" aria-hidden="true" className="crx-xp-art">
-      <rect x="9" y="14" width="46" height="32" rx="5" {...S} pathLength={1} className="crx-xp-draw" />
-      <path d="M20 54h24" {...S} strokeOpacity="0.45" />
-      <path d="M21 26.5 29 34.5 43 20.5" {...S} strokeWidth="2.4" pathLength={1} className="crx-xp-tick" />
+    <svg viewBox="0 0 64 64" width="34" height="34" aria-hidden="true" className="crx-xp-art">
+      <path d="M10 40v8a4 4 0 0 0 4 4h36a4 4 0 0 0 4-4v-8" {...S} pathLength={1} className="crx-xp-draw" />
+      <g className="crx-xp-drop">
+        <path d="M32 12v24" {...S} />
+        <path d="M22 27 32 37l10-10" {...S} />
+      </g>
     </svg>
   )
 }
 
-/** $30 a month: a coin falls into a wallet. */
+/** Earn: a card, and a coin landing on it. */
 function PaidArt() {
   return (
-    <svg viewBox="0 0 64 64" width="40" height="40" aria-hidden="true" className="crx-xp-art">
+    <svg viewBox="0 0 64 64" width="34" height="34" aria-hidden="true" className="crx-xp-art">
+      <rect x="7" y="18" width="50" height="32" rx="5" {...S} pathLength={1} className="crx-xp-draw" />
+      <path d="M7 28h50" {...S} strokeOpacity="0.45" />
       <g className="crx-xp-coin">
-        <circle cx="32" cy="16" r="7" {...S} />
-        <path d="M32 12.5v7" {...S} strokeWidth="1.6" />
+        <circle cx="44" cy="40" r="6" {...S} strokeWidth="1.6" />
       </g>
-      <path d="M10 30h44a3 3 0 0 1 3 3v17a4 4 0 0 1-4 4H11a4 4 0 0 1-4-4V34a4 4 0 0 1 4-4Z" {...S} pathLength={1} className="crx-xp-draw" />
-      <path d="M57 39h-9a4 4 0 0 0 0 8h9" {...S} />
     </svg>
   )
 }
 
-export type Card = { key: string; art: () => JSX.Element; line: string; full: string }
+/** The line above the cards: what the product is, before what it asks of you. */
+export const INTRO = 'onBlue is an AI worker that earns for you. Here’s how it works:'
+
+export type Card = { key: string; art: () => JSX.Element; lead: string; rest: string; full: string }
 
 /**
- * `full` is not shown. It is the whole sentence the pair compresses, and it goes to the card's
- * aria-label — so a screen reader still gets the waitlist and the "nothing goes out unseen" that
- * the visible line had to drop. Trimming for a 136px column is a visual decision, and a visual
- * decision should not also cost a blind reader the fact.
- * EVERY FACT IS ALREADY ON THE SITE: the 20 days and the $30 via PayPal from the application's
- * intro step, the approval from card 04, the waitlist from the confirmation. Nothing new is claimed
- * here; this screen exists to have them acknowledged together, not to teach them.
- * NO UNIT NOUN anywhere — not "program", not "offer" — so all three are correct under Versions A,
- * B and C with no variant branch. "PC", never "Windows": the site does not say Windows.
+ * `lead` is bold and `rest` is not; `full` is the pair as one string for the card's aria-label — a
+ * screen reader should hear a sentence, not two fragments that happen to be styled apart.
+ * COPY IS THE PM'S, verbatim. It replaces a set this side had already put through four rounds of
+ * shortening; the figures it keeps ($30, PayPal) are the ones every other surface quotes.
+ * "PC", never "Windows": the site does not say Windows.
  */
 export const CARDS: readonly Card[] = [
   {
     key: 'pc',
+    art: MonitorArt,
+    lead: 'Works on your PC.',
+    rest: 'Other devices coming soon.',
+    full: 'Works on your PC. Other devices coming soon.',
+  },
+  {
+    key: 'apply',
+    art: MailArt,
+    lead: 'Apply.',
+    rest: 'We review and email you when you’re in.',
+    full: 'Apply. We review and email you when you’re in.',
+  },
+  {
+    key: 'setup',
     art: InstallArt,
-    line: 'Runs on your PC, at least 20 days each month.',
-    full: 'Runs on your PC. You install onBlue and keep it running at least 20 days a month, which is a few minutes of your day.',
+    lead: 'Set up onBlue.',
+    rest: 'It runs campaigns you approve.',
+    full: 'Set up onBlue. It runs campaigns you approve.',
   },
   {
-    key: 'approve',
-    art: ApproveArt,
-    line: 'Uses your accounts. You approve each campaign.',
-    full: 'Uses your accounts. You approve each campaign before your worker runs it, and nothing goes out unseen.',
-  },
-  {
-    key: 'paid',
+    key: 'earn',
     art: PaidArt,
-    line: '$30 a month via PayPal, once you are approved.',
-    full: '$30 a month, via PayPal, once your application is approved. There is a waitlist, so it can take a little time.',
+    lead: 'Earn $30 a month,',
+    rest: 'paid via PayPal.',
+    full: 'Earn $30 a month, paid via PayPal.',
   },
 ]
