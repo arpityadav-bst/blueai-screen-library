@@ -1529,15 +1529,15 @@ body.crx-light .crx {
    carousel will be visible at once, only with the icon and the title"). The old .crx-xp-row stagger
    went with the rows it staggered; what arrives now is the whole set at once, which is the point.
 
-   THREE UP AT 400px, which is the constraint everything here answers. The dialog is 400 wide and
-   keeps that width across both levels (signinSkin's note: a width that changed between them would
-   jar as they slide), so px-7 leaves 344 and each card gets about 105. That is why the titles are
-   three or four words, why the icon is 40 rather than the carousel's 56, and why the card padding
-   is 10 rather than the 16 a wider dialog would take. */
-.crx .crx-xp-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+   THREE UP AT 480px, which is the constraint everything here answers. The dialog keeps one width
+   across both levels (signinSkin's note: a width that changed between them would jar as they
+   slide), so px-7 leaves 424 and each card gets about 136. That is why the titles are three or four
+   words, why the icon is 40 rather than the carousel's 56, and why the qualifying line runs at 11px
+   - at 12.5 it wraps to three. */
+.crx .crx-xp-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; align-items: stretch; }
 .crx .crx-xp-card {
-  display: flex; flex-direction: column; align-items: center; gap: 9px;
-  padding: 13px 8px 12px;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  padding: 14px 10px 13px;
   border-radius: 11px;
   border: 1px solid var(--line);
   background: var(--sur-2);
@@ -1558,6 +1558,10 @@ body.crx-light .crx {
   width: 62px; height: 62px; border-radius: 18px;
 }
 .crx .crx-xp-t { font-size: 12.5px; font-weight: 600; line-height: 1.35; }
+/* the qualifier. margin-top:auto is what keeps three cards of unequal copy tidy: the titles sit
+   under their icons and the lines all hang from the same baseline, so the row reads as three cards
+   rather than three heights. */
+.crx .crx-xp-l { margin-top: auto; padding-top: 4px; font-size: 11px; font-weight: 400; line-height: 1.45; }
 
 /* THE DRAWINGS PLAY ON HOVER, once, and rest. Every shape that draws itself carries pathLength=1,
    so 1 -> 0 is the whole dash animation whatever the shape's real perimeter. The delays are the

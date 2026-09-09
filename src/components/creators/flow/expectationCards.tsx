@@ -1,19 +1,21 @@
 'use client'
 
-// THE THREE CARDS — an animated line illustration and a title, and nothing else.
+// THE THREE CARDS — an animated line illustration, a title, and the one line that qualifies it.
 //
-// TITLE ONLY (Appy, 2026-09-09: "we will only have the title and the icon in a card"). The onBlue
-// fork carries the same three points as a timed carousel with a title AND a body; here all three
-// stand side by side, which buys the reader the whole picture at a glance and costs them the detail
-// line. That trade is the instruction, and it is survivable for one reason: none of these three
-// facts is NEW at this point in the flow — the homepage said all of them, and the application
-// restates the ones with numbers in them. This screen exists to have them acknowledged together,
-// not to teach them.
+// A TITLE AND ONE LINE. This shipped title-only for a day, on the instruction "only the title and
+// the icon in a card" — and that was too far (Appy, 2026-09-09: "the messaging in this pop-up is
+// pretty short... you really just convert it into three to four words"). The instruction was to
+// SHORTEN the messaging, and four words is not a short version of a sentence, it is a label where a
+// sentence used to be. So each card keeps its title and gains back the qualifier that title was
+// standing in for, cut to its core: the number, the limit, the condition.
 //
-// SO THE TITLES CARRY THE CONSTRAINT, not the topic. "Your PC" is a subject; "Runs on your PC" is
-// the thing being agreed to. Three or four words each, because at 400px a row of three cards gives
-// each of them about 100px and a fifth word starts a third line — which is also why the numbers
-// that survive are the ones short enough to stay on their own line.
+// THE SPLIT IS FACT THEN QUALIFIER. The title is the thing being agreed to; the line is what makes
+// it true — "Runs on your PC" / "At least 20 days a month." Read the titles alone and you have the
+// offer; read the lines too and you have the terms. That is also why the titles carry the
+// CONSTRAINT rather than the topic: "Your PC" is a subject, "Runs on your PC" is an agreement.
+//
+// It cost the dialog 80px of width to hold this (see signinSkin's CARD_WIDTH note). At 400 each
+// card had ~105px and a five-word line wrapped to four; at 480 it sits on two.
 //
 // ONE DRAWING LANGUAGE, INHERITED: the introIcons stroke style scaled up — 1.8 stroke, round caps
 // and joins, no fills. A dialog that suddenly speaks a second visual language reads as a screen
@@ -77,13 +79,16 @@ function PaidArt() {
   )
 }
 
-export type Card = { key: string; art: () => JSX.Element; title: string; full: string }
+export type Card = { key: string; art: () => JSX.Element; title: string; line: string; full: string }
 
 /**
- * `full` is not shown. It is the sentence the title compresses, and it goes to the card's
- * aria-label: a screen reader gets "Runs on your PC. You install onBlue and keep it running at
- * least 20 days a month." where the eye gets four words. Losing the detail was a visual decision
- * about a 100px column, and a visual decision should not also cost a blind reader the fact.
+ * `full` is not shown. It is the whole sentence the pair compresses, and it goes to the card's
+ * aria-label — so a screen reader still gets the waitlist and the "nothing goes out unseen" that
+ * the visible line had to drop. Trimming for a 136px column is a visual decision, and a visual
+ * decision should not also cost a blind reader the fact.
+ * EVERY FACT IS ALREADY ON THE SITE: the 20 days and the $30 via PayPal from the application's
+ * intro step, the approval from card 04, the waitlist from the confirmation. Nothing new is claimed
+ * here; this screen exists to have them acknowledged together, not to teach them.
  * NO UNIT NOUN anywhere — not "program", not "offer" — so all three are correct under Versions A,
  * B and C with no variant branch. "PC", never "Windows": the site does not say Windows.
  */
@@ -92,18 +97,21 @@ export const CARDS: readonly Card[] = [
     key: 'pc',
     art: InstallArt,
     title: 'Runs on your PC',
-    full: 'Runs on your PC. You install BlueAI and keep it running at least 20 days a month.',
+    line: 'At least 20 days a month.',
+    full: 'Runs on your PC. You install BlueAI and keep it running at least 20 days a month — a few minutes of your day.',
   },
   {
     key: 'approve',
     art: ApproveArt,
     title: 'You approve it first',
-    full: 'You approve it first. It works on your platform accounts, and nothing goes out unseen.',
+    line: 'Nothing runs on your accounts unseen.',
+    full: 'You approve it first. It works on your platform accounts, and you approve each campaign before your worker runs it — nothing goes out unseen.',
   },
   {
     key: 'paid',
     art: PaidArt,
     title: '$30 a month',
-    full: '$30 a month, via PayPal, once your application is approved. There is a waitlist.',
+    line: 'Via PayPal, after approval.',
+    full: '$30 a month, via PayPal, once your application is approved. There is a waitlist, so it can take a little time.',
   },
 ]

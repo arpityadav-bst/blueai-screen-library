@@ -22,17 +22,20 @@ import { CARDS } from './expectationCards'
 // but all three cards standing side by side. The reason to prefer it here is not novelty, it is
 // that a carousel makes the second and third facts cost a wait or a click, and these three are a
 // SET — "runs on your PC, you approve it, you get paid" is one sentence in three parts, and a
-// reader who has seen only the first part has not seen the offer. What it costs is the detail line
-// under each title, which is why expectationCards keeps the full sentence for the label.
+// reader who has seen only the first part has not seen the offer.
+// Each card carries a title AND a short qualifying line. It was title-only for a day and that was
+// too little; the note in expectationCards records what changed and what it cost in width.
 //
 // EVERY FACT IS SOURCED from copy already on the site — the 20 days and the $30 via PayPal from the
 // application's intro step, "you approve each campaign" from card 04, the waitlist from the
 // confirmation. Nothing new is claimed here.
 //
 // THIS FORK'S COLOURS, NOT onBlue'S (Appy: "the color will be according to the BlueAI creators, not
-// the onBlue website"). Everything paints from SKIN and the iris CTA — the fork that went charcoal
-// went charcoal alone. This one also still has two themes, so nothing here may assume a white
-// ground: the card surfaces come from SKIN.tile, which flips.
+// the onBlue website"). The ink, the icon wash and the CTA paint from SKIN and the iris gradient —
+// the fork that went charcoal went charcoal alone. This one also still has two themes, so nothing
+// here may assume a white ground: the card's own surface and edge are --sur-2 and --line in
+// creators.css, and its grid has a value under body.crx-light as well. Anything hard-coded white
+// would be invisible on the dark path and nobody would notice until the switch was flipped.
 
 export default function Expectations({
   onContinue,
@@ -94,14 +97,15 @@ export default function Expectations({
               // drawing — so a <button> would promise an action that does not exist and put three
               // dead stops in the tab order before the one control that matters. tabIndex 0 on a
               // group role gives a keyboard reader the same access to the animation without
-              // claiming it does something. The label is the FULL sentence, not the title: the
-              // detail line was dropped for a 100px column, and a visual decision should not also
-              // cost a blind reader the fact.
+              // claiming it does something. The label is the FULL sentence rather than the two
+              // visible lines: the trim to fit a 136px column dropped the waitlist and the "nothing
+              // goes out unseen", and a visual decision should not also cost a blind reader a fact.
               <li key={c.key} className="crx-xp-card" tabIndex={0} role="group" aria-label={c.full}>
                 <span className="crx-xp-icon" style={{ background: skin.wash, color: skin.accent }}>
                   <Art />
                 </span>
                 <span className="crx-xp-t" style={{ color: skin.ink }}>{c.title}</span>
+                <span className="crx-xp-l" style={{ color: skin.ink70 }}>{c.line}</span>
               </li>
             )
           })}
