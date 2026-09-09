@@ -172,13 +172,16 @@ export default function PreviewToggler() {
           HERO TAKES THEIR PLACE, and is temporary in exactly the same way: two stagings of the same
           hero animation, mounted together so they can be looked at rather than described. When one
           wins, these rows and the loser's markup, hook and CSS go together. It sits first for the
-          same reason Theme did - it governs the first thing on the page. */}
+          same reason Theme did - it governs the first thing on the page.
+          DEFAULT-FIRST ORDER, and relabelled when the default moved (2026-09-10): the rows read
+          "new" and "current", which is a claim about TIME rather than about state, and it inverted
+          the day the desk scene became the one the page opens on. */}
       <div className="crx-toggler-track" role="radiogroup" aria-label="Hero">
         <span className="crx-toggler-sect">Hero</span>
         {(
           [
-            { value: 'window', label: 'Product window \u00b7 new' },
-            { value: 'desk', label: 'Desk & laptop \u00b7 current' },
+            { value: 'desk', label: 'Desk & laptop · default' },
+            { value: 'window', label: 'Product window' },
           ] as const
         ).map(({ value, label }) => (
           <button

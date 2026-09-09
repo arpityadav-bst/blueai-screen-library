@@ -66,13 +66,14 @@ export type Variant = 'programs' | 'original' | 'offers'
 // identity, and a reload going back to the journey default is the honest reset.
 export type NavView = 'auto' | 'programs' | 'dashboard'
 
-// HERO STAGE (2026-09-08) — which of the two hero animations renders. 'desk' is the CSS desk and
-// laptop the page shipped with; 'window' is the miniature of the actual product (ProductWindow),
-// which is what Appy asked for and what this defaults to. Temporary, exactly the way the theme
-// switch below was temporary: it exists so the two can be COMPARED rather than argued about, and
-// when one wins the other's markup, hook and CSS get deleted along with this field.
-// In-memory, not session-backed: it is a review switch, and reload returning to the new stage is
-// the honest default while the new stage is the thing being reviewed.
+// HERO STAGE — which of the two hero animations renders. 'desk' is the CSS desk and laptop; 'window'
+// is the miniature of the actual product (ProductWindow).
+// THE DEFAULT IS BACK TO 'desk' (Appy, 2026-09-10). The window shipped as the default on 2026-09-08
+// while it was the thing being reviewed; the ask now is for this page to open on the desk scene,
+// with the window still reachable. So the switch stays and only the default moves — which is the
+// whole reason it was built as a switch rather than a replacement.
+// In-memory, not session-backed: it is a review switch, and a reload returning to the page's real
+// default is the honest reset.
 export type Hero = 'desk' | 'window'
 
 // THERE IS NO THEME ANY MORE (2026-09-08). The switch here was explicitly temporary — "temp with
@@ -122,7 +123,7 @@ export default function CrxProvider({ children }: { children: ReactNode }) {
   // In-memory like nav — a review switch, and reload returning to Version A is the honest default
   // UNLESS the URL asks for B (see the ?v= block in the mount effect below).
   const [variant, setVariant] = useState<Variant>('programs')
-  const [hero, setHero] = useState<Hero>('window')
+  const [hero, setHero] = useState<Hero>('desk')
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
