@@ -1,7 +1,7 @@
 'use client'
 
 import { useCrx } from './CrxState'
-import { CARD_FONT, CARD_WIDTH, CTA, CTA_SHADOW, RING, SKIN } from './signinSkin'
+import { CARD_FONT, CTA, CTA_SHADOW, FORM_WIDTH, RING, SKIN } from './signinSkin'
 
 // COPIED near-verbatim from the frozen creator-brand tree's creators/SignInDialog.tsx (read-only
 // reference, never imported) — designer directive: "the sign in pop up will remain the same". Three
@@ -59,12 +59,11 @@ import { CARD_FONT, CARD_WIDTH, CTA, CTA_SHADOW, RING, SKIN } from './signinSkin
 // draw from one set. This is LEVEL 2: the sign-in itself.
 const A = '/creator-brand/nowgg-signin'
 
-const PROVIDERS = [
-  { id: 'apple', icon: `${A}/apple_dark.png`, bg: 'rgba(255,255,255,0.9)', w: 21, h: 20 },
-  { id: 'discord', icon: `${A}/discord_light.png`, bg: '#8061FF', w: 20, h: 20, brand: true },
-  { id: 'google', icon: `${A}/google_light.png`, bg: 'rgba(255,255,255,0.9)', w: 20, h: 20 },
-  { id: 'facebook', icon: `${A}/facebook_light.png`, bg: '#2178FA', w: 20, h: 20, brand: true },
-]
+// GOOGLE ONLY (Appy, 2026-09-09). Apple, Discord and Facebook came from the now.gg card this was a
+// replica of, and being a replica is the only reason they were ever here - nothing on this site
+// signs in with Discord. Four icon-only tiles also asked the reader to identify each provider by
+// logo alone; one full-width labelled button says what it does.
+const GOOGLE = `${A}/google_light.png`
 
 export default function SignInDialog({
   onClose,
@@ -95,7 +94,7 @@ export default function SignInDialog({
 
   return (
     // Width, face and ring come from signinSkin so level 1 cannot drift from them. 400, not the
-    // measured 360 (see CARD_WIDTH for why): the card stopped being an exact replica when the band
+    // measured 360 (see FORM_WIDTH for why): the card stopped being an exact replica when the band
     // went, and level 1 needs the room.
     <div
       style={{
@@ -104,7 +103,7 @@ export default function SignInDialog({
         border: `0.8px solid ${RING}`,
         fontFamily: CARD_FONT,
       }}
-      className={`relative flex w-full ${CARD_WIDTH} flex-col overflow-hidden rounded-[12px] ${enter === 'fwd' ? 'crx-step-fwd' : ''}`}
+      className={`relative flex w-full ${FORM_WIDTH} flex-col overflow-hidden rounded-[12px] ${enter === 'fwd' ? 'crx-step-fwd' : ''}`}
     >
       <>
         {/* HEADER — the waves are absolutely positioned so they bleed past it exactly as they do on
@@ -209,6 +208,8 @@ export default function SignInDialog({
             Continue
           </button>
 
+          {/* Kept even though it now introduces ONE option: without it the Google button reads as a
+              second primary action stacked under Continue, rather than as the other way in. */}
           <div className="flex flex-row items-center justify-center gap-4">
             <span className="h-px flex-auto" style={{ background: skin.rule }} />
             <span className="flex-none text-[14px] font-normal leading-[14px]" style={{ color: skin.ink40 }}>
@@ -217,24 +218,21 @@ export default function SignInDialog({
             <span className="h-px flex-auto" style={{ background: skin.rule }} />
           </div>
 
-          {/* gap-2 below sm. MEASURED: each button floors at ~68px (20px icon + px-6), so four plus
-              three 16px gaps need 316px against 236px of usable width at a 320px viewport. Tighter
-              padding and gap on small screens drops the floor to ~36px each and the row fits. */}
-          <div className="flex flex-row justify-center gap-2 sm:gap-4">
-            {PROVIDERS.map((p) => (
-              <button
-                key={p.id}
-                type="button"
-                onClick={go}
-                aria-label={`Continue with ${p.id}`}
-                style={{ background: p.bg, border: `1px solid ${'brand' in p ? 'transparent' : skin.tileLine}` }}
-                className="flex h-11 min-w-0 flex-auto items-center justify-center rounded-[8px] px-2 transition-transform duration-base ease-out-bai hover:-translate-y-0.5 active:translate-y-0 sm:px-6"
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={p.icon} alt="" width={p.w} height={p.h} className="shrink-0" />
-              </button>
-            ))}
-          </div>
+          {/* FULL WIDTH AND LABELLED, per the reference. With one provider left there is no row to
+              lay out, and a lone 68px tile floating in a 400px card would read as an afterthought.
+              It takes Continue's pill shape so the two read as the same KIND of control - the fill
+              is what says which of them is primary. The measured-widths note that used to live here
+              went with the four tiles it was measuring. */}
+          <button
+            type="button"
+            onClick={go}
+            style={{ background: '#fff', border: `1px solid ${skin.tileLine}`, color: 'rgb(8,10,31)' }}
+            className="flex h-[44px] w-full items-center justify-center gap-2.5 rounded-pill px-6 text-[15px] font-semibold leading-[21px] transition-transform duration-base ease-out-bai hover:-translate-y-0.5 active:translate-y-0"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={GOOGLE} alt="" width={20} height={20} className="shrink-0" />
+            Continue with Google
+          </button>
 
           {/* REAL ANCHORS since 2026-08-31 — the legal page exists now (/creators/terms, tabbed),
               so the underlines stopped being costume. New tab on purpose: this dialog sits over a

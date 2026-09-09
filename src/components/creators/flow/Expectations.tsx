@@ -126,7 +126,17 @@ export default function Expectations({
             the journey becomes returningUser before level 2 opens. */}
         <p className="text-center text-[12px] leading-[18px]" style={{ color: skin.ink40 }}>
           Already have an account?{' '}
-          <button type="button" onClick={onSignIn} className="underline underline-offset-2" style={{ color: skin.ink70 }}>
+          {/* It had no hover at all - an underlined word that does nothing on approach reads as
+              emphasis rather than as a link. It goes to full ink, which is the only move available
+              to text that is already underlined. */}
+          <button
+            type="button"
+            onClick={onSignIn}
+            className="underline underline-offset-2 transition-colors duration-fast ease-out-bai"
+            style={{ color: skin.ink70 }}
+            onMouseEnter={(e) => { e.currentTarget.style.color = skin.ink }}
+            onMouseLeave={(e) => { e.currentTarget.style.color = skin.ink70 }}
+          >
             Sign in
           </button>
         </p>

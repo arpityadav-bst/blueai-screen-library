@@ -15,6 +15,13 @@
 // it on. "Runs on your PC" alone is a feature; "at least 20 days a month" alone is a rule; together
 // in one line they are the deal.
 //
+// THEY ARE WITHIN TWO CHARACTERS OF EACH OTHER (45 / 47 / 46), and that is maintained, not luck.
+// Three cards side by side are read as a row, so one of them wrapping to two lines while its
+// neighbours take three makes the row look broken rather than the card look brief - the eye reads
+// the ragged bottom edge before it reads any of the words. text-wrap:balance evens out each line
+// WITHIN a card; only the character count evens them out ACROSS cards. If a line is reworded, count
+// it.
+//
 // THE DIALOG KEPT ITS 480 (see signinSkin's CARD_WIDTH note). One line needs the width more than
 // two did — at 400 each card is ~105px and these sentences wrap to five lines.
 //
@@ -97,13 +104,13 @@ export const CARDS: readonly Card[] = [
   {
     key: 'pc',
     art: InstallArt,
-    line: 'Runs on your PC, at least 20 days a month.',
+    line: 'Runs on your PC, at least 20 days each month.',
     full: 'Runs on your PC. You install BlueAI and keep it running at least 20 days a month — a few minutes of your day.',
   },
   {
     key: 'approve',
     art: ApproveArt,
-    line: 'Uses your accounts — you approve each campaign first.',
+    line: 'Uses your accounts — you approve each campaign.',
     full: 'You approve it first. It works on your platform accounts, and you approve each campaign before your worker runs it — nothing goes out unseen.',
   },
   {

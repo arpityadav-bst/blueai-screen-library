@@ -60,15 +60,22 @@ export const CTA = 'linear-gradient(105deg, #1a90ff 0%, #6b53ff 55%, #7b4cff 100
 export const CTA_SHADOW = '0 10px 30px -6px rgba(95, 70, 255, 0.65)'
 
 /**
- * ONE WIDTH FOR BOTH LEVELS, and it has now moved twice for the same reason. 360 was the now.gg
- * original's measured width; 400 came on 2026-09-02 when level 1 needed room for three explained
- * rows; 480 comes on 2026-09-09 when those rows became three side-by-side cards. At 400 each card
- * had about 105px, which is a title and nothing else - and a title alone turned out to be too
- * little (Appy: "the messaging in this pop-up is pretty short"). 480 gave each card ~136px; 540,
- * the same day, gives ~155, which is what these one-line sentences need to stop wrapping to four.
- * BOTH LEVELS MOVE TOGETHER. A width that changed between them would jar as they slide.
+ * TWO WIDTHS NOW, and the shared one is gone (Appy, 2026-09-09: "the login and sign up width is
+ * pretty big... we need the same width which was there earlier").
+ *
+ * The history is worth keeping because it explains why they were ever one number. 360 was the
+ * now.gg original's measured width; 400 came on 2026-09-02 when level 1 needed room for three
+ * explained rows; both levels moved together on the argument that a width changing mid-slide would
+ * jar. Level 1 then became three side-by-side cards and needed 540 to hold a sentence in each, and
+ * dragging the sign-in card to 540 with it made a single email field and one button sit in a box
+ * nearly half again too wide - which jars more than the slide ever did.
+ *
+ * SO THE RULE IS RETIRED, not bent: the two levels are no longer the same object at two stages,
+ * they are a row of cards and a form, and a form has its own right measure. The slide between them
+ * now resizes, which is the cost and is visible; it is the smaller of the two.
  */
-export const CARD_WIDTH = 'max-w-[540px]'
+export const CARD_WIDTH = 'max-w-[540px]'      // level 1, the three expectation cards
+export const FORM_WIDTH = 'max-w-[400px]'      // level 2, the sign-in form
 
 /** Poppins is the card's face because the now.gg original set it; both levels share it so the slide
  *  between them does not change typeface mid-dialog. Whether the dialog should move to the site's
