@@ -34,7 +34,11 @@ export function readTheme(): Theme {
   } catch {
     /* fall through to the default */
   }
-  return 'dark'
+  // LIGHT IS THE DEFAULT (Appy, 2026-09-10). It was dark while the light repaint was the work in
+  // progress; the repaint is done and light is what this page IS now. Dark stays reachable through
+  // the switch and through ?theme=dark, both of which are read above this line, so nothing that
+  // pointed at the dark page stops working.
+  return 'light'
 }
 
 /**

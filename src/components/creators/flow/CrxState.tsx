@@ -113,8 +113,10 @@ export default function CrxProvider({ children }: { children: ReactNode }) {
   // In-memory like nav — a review switch, and reload returning to Version A is the honest default
   // UNLESS the URL asks for B (see the ?v= block in the mount effect below).
   const [variant, setVariant] = useState<Variant>('programs')
-  // Dark is still the default until the light pass is signed off - the honest state of the work.
-  const [theme, setThemeState] = useState<Theme>('dark')
+  // LIGHT, matching readTheme's fallback (2026-09-10). This is the value the FIRST render uses,
+  // before the mount effect reads the query and the session, so it has to agree with that fallback
+  // or the page paints one theme and immediately repaints the other.
+  const [theme, setThemeState] = useState<Theme>('light')
   const [ready, setReady] = useState(false)
 
   useEffect(() => {

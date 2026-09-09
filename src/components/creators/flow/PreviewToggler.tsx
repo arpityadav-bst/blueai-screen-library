@@ -166,16 +166,18 @@ export default function PreviewToggler() {
       </button>
 
       {/* THEME ABOVE VERSION (2026-09-02), and it is the one control here that is temporary: the
-          page is being converted to light, and this exists so the two can be compared rather than
-          remembered. It sits first because it governs every other row below it - a version or a
-          journey judged in the wrong theme is judged twice.
-          Session-backed, so a reload while reviewing a repaint keeps the theme it was on. */}
+          page was being converted to light and this existed so the two could be compared rather
+          than remembered. The conversion is done and LIGHT IS THE DEFAULT (2026-09-10); dark stays
+          here because the dark path is still built, not because it is still the page. It sits first
+          because it governs every other row below it - a version or a journey judged in the wrong
+          theme is judged twice.
+          Session-backed, so a reload while reviewing keeps the theme it was on. */}
       <div className="crx-toggler-track" role="radiogroup" aria-label="Theme">
         <span className="crx-toggler-sect">Theme</span>
         {(
           [
-            { value: 'dark', label: 'Dark · current' },
-            { value: 'light', label: 'Light · in progress' },
+            { value: 'light', label: 'Light · default' },
+            { value: 'dark', label: 'Dark' },
           ] as const
         ).map(({ value, label }) => (
           <button
@@ -254,7 +256,7 @@ export default function PreviewToggler() {
           grouping B does not have; the B copy says what B's three rows are and, more usefully, that
           the A persona is not lost while you are over here. */}
       <p className="crx-toggler-note">
-        Theme is a work-in-progress switch, not a product setting. Sets what signing in leads to.
+        Theme is a review switch, not a product setting. Sets what signing in leads to.
         Click Get Access and sign in to see it.{' '}
         {note}{' '}
         Survives a reload; resets when the tab closes.
