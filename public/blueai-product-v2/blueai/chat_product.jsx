@@ -121,7 +121,7 @@
     const renderStep = (step, i) => {
       if (step.role === 'user') return <UserBubble key={i} content={step.content} />;
       if (step.role === 'status') return <StatusBubble key={i} content={step.content} />;
-      if (step.role === 'warning') return <WarningBubble key={i} content={step.content} />;
+      if (step.role === 'warning') return <WarningBubble key={i} title={step.title} content={step.content} />;
       /* "Needs BlueStacks" → click Get BlueStacks → an inline progress card, no modal (designer,
          2026-08-10). Clicking pushes the NEXT step into this same conversation rather than
          opening anything outside it; when that step's own timer finishes, it tells the parent to
@@ -199,18 +199,24 @@
               Send a message to watch BlueAI work
             </div>}
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, border: '1.5px solid ' + (isOnboarding ? '#60a5fa' : (composerFocused ? '#1990FF' : '#c7dcf5')), borderRadius: isOnboarding ? 18 : 14, background: 'white', padding: '8px 10px', boxShadow: composerFocused ? '0 0 0 3px rgba(25,144,255,0.12)' : (isOnboarding && !started ? '0 0 0 4px rgba(25,144,255,0.12)' : '0 1px 4px rgba(0,0,0,0.04)'), transition: 'border-color 0.15s ease, box-shadow 0.15s ease' }}>
-            <textarea ref={taRef} value={draft} disabled={running} rows={1}
+            <textarea ref={taRef} value={draft} disabled={running || scheduledOoc} rows={1}
               onChange={(e) => setDraft(e.target.value)}
               onFocus={() => setComposerFocused(true)}
               onBlur={() => setComposerFocused(false)}
               onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); run(); } }}
               placeholder={running ? 'BlueAI is working…'
-                /* Out-of-credits placeholder comes AFTER the running check on purpose: while the
-                   scheduled run is still playing, "BlueAI is working…" is the honest label, and it
-                   only flips to the credits prompt at the moment the run actually dies. The field
-                   stays typeable — sending still opens the out-of-credits popup via run()'s own
-                   zeroCredits guard, which is the same escape hatch the main chat has. */
-                : scheduledOoc ? 'Add credits to put BlueAI back to work'
+                /* Ordered AFTER the running check on purpose: while the scheduled run is still
+                   playing, "BlueAI is working…" is the honest label, and it only flips to the
+                   credits line at the moment the run actually dies.
+
+                   The field is DISABLED here, reversing the earlier call to keep it typeable
+                   (designer's spec, 2026-09-09). It is coherent because the two zero-balance
+                   moments live in different chats: this is the scheduled run's own chat, where
+                   nobody was typing and there is nothing to buy, so an input that accepts text
+                   would only invite a message the product cannot act on. Typing in the MAIN chat
+                   still routes to the out-of-credits popup through run()'s zeroCredits guard,
+                   which is where that dismiss-only card belongs. */
+                : scheduledOoc ? 'BlueAI is out of credits until tomorrow...'
                 /* MoneyMaker home is one card + a lot of air — the placeholder points back up at
                    it so the composer reads as connected to the screen, not an orphan input.
                    Copy renamed 2026-09-09 (MoneyMaker -> "BlueAI worker"); sessionMode value

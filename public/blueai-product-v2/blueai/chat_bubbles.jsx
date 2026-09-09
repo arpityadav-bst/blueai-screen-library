@@ -55,12 +55,28 @@
       </svg>);
   }
 
-  function WarningBubble({ content }) {
+  /* Two additive changes, both from the designer's out-of-credits spec (2026-09-09).
+
+     `title` is optional: the credits warning wants a bold lead ("Out of credits") over its body,
+     while the older mid-task warning is one sentence and wants no heading.
+
+     `content` accepts an ARRAY as well as a string. This copy is written as short declaratives,
+     and one per line reads as a list rather than a paragraph wrapping wherever the 290px cap
+     falls. An array rather than splitting a string on full stops, so the break points are the
+     author's decision and stay visible in the source instead of depending on a regex getting
+     punctuation right. String callers are unaffected. */
+  function WarningBubble({ title, content }) {
+    const body = Array.isArray(content) ? content : [content];
     return (
       <div className="ba-msg-in" style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: 10 }}>
         <div style={{ maxWidth: 290, display: 'flex', alignItems: 'flex-start', gap: 8, background: '#fff7ed', border: '1px solid #fed7aa', borderRadius: 16, padding: '10px 13px', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
           <WarningIcon size={15} color="#c2410c" />
-          <p style={{ fontSize: 13, lineHeight: 1.45, color: '#9a3412' }}>{content}</p>
+          <div style={{ minWidth: 0 }}>
+            {title && <p style={{ fontSize: 13, fontWeight: 800, color: '#7c2d12', lineHeight: 1.3, marginBottom: 2 }}>{title}</p>}
+            <p style={{ fontSize: 13, lineHeight: 1.45, color: '#9a3412' }}>
+              {body.map((line, k) => <span key={k} style={{ display: 'block' }}>{line}</span>)}
+            </p>
+          </div>
         </div>
       </div>);
   }
@@ -161,15 +177,16 @@
      the error would read as the cause rather than the consequence. */
   function makeScheduledOocSteps() {
     return [
-      { role: 'status', content: 'Scheduled run started — finding a job that fits you…', d: 900 },
+      { role: 'status', content: 'Scheduled run started: finding a job that fits you…', d: 900 },
       { role: 'thinking', d: 1200 },
       { role: 'status', content: 'Found one. Opening the app and getting started…', d: 1100 },
       { role: 'status', content: 'Running the job step by step…', d: 1100 },
-      /* PM's copy verbatim. WarningBubble has no title slot, so the mock's bold "Out of credits"
-         heading becomes the opening sentence rather than being dropped — the amber bubble and its
-         icon already carry the severity a heading would have signalled. */
-      { role: 'warning', content: 'BlueAI is out of credits. It can’t earn money right now. Credits arrive tomorrow, or top up to keep earning.', d: 1100 },
-      { role: 'final', tone: 'fail', content: 'Not enough credits for this job. Top up now or come back tomorrow.', d: 900 }];
+      /* Designer's final copy (2026-09-09). Both messages now close the same way, and that
+         is the point: V2 has no top-up, so "refreshed tomorrow" is the only resolution the
+         product can honour. The previous wording offered "top up now", advice V2 cannot
+         deliver on. The warning takes the bold title slot WarningBubble just grew. */
+      { role: 'warning', title: 'Out of credits', content: ['You’ve used all of today’s AI credits.', 'Credits will be refreshed tomorrow.'], d: 1100 },
+      { role: 'final', tone: 'fail', content: 'Not enough credits for this job. Credits will be refreshed tomorrow.', d: 900 }];
   }
 
   /* Dev-preview only: one example bubble per chat message state, rendered instantly (no
