@@ -2,7 +2,7 @@
 
 import { CARD_FONT, CARD_WIDTH, CTA, CTA_SHADOW, RING, SKIN } from './signinSkin'
 import BandGrid from '../BandGrid'
-import { CARDS, INTRO } from './expectationCards'
+import { CARDS, FOOTNOTE, INTRO } from './expectationCards'
 
 // LEVEL 1 OF THE SIGN-IN DIALOG (Appy, 2026-09-02: "sign up becomes a 2 level thing... where we
 // set the right expectations for the user"). It shows before the sign-in card, to applicants only:
@@ -115,6 +115,11 @@ export default function Expectations({
             )
           })}
         </ul>
+
+        {/* The asterisk's other half, under the row rather than in the card that carries the mark:
+            it qualifies a figure, and a qualifier inside a 169px column would take two of that
+            card's lines to say something none of the other three need. */}
+        <p className="crx-xp-note" style={{ color: SKIN.ink40 }}>{FOOTNOTE}</p>
 
         {/* THE PAGE'S PRIMARY — the same button as level 2's Continue and as the hero's Get
             Access. One primary action, one appearance, on the page or in a dialog. */}

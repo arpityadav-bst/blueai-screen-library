@@ -735,6 +735,9 @@ body.crx-lock { overflow: hidden; }
 }
 /* gap 1.5rem, was 1 — the cards grew, and a gutter that does not grow with them turns four
    cards into one slab */
+/* the asterisk's footnote under the four boxes. Right-aligned to the grid's own edge rather than
+   centred: it belongs to the last box's figure, not to the section. */
+.crx .steps-note { margin-top: 14px; font-size: 11.5px; color: var(--ink-4); }
 .crx .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
 /* F9: explicit 4/2/1 — auto-fit orphaned "04 Collect" across the whole 710–935px range */
 @media (max-width: 935px) { .crx .steps { grid-template-columns: repeat(2, 1fr); } }
@@ -1529,17 +1532,22 @@ body.crx-light .crx {
    carousel will be visible at once, only with the icon and the title"). The old .crx-xp-row stagger
    went with the rows it staggered; what arrives now is the whole set at once, which is the point.
 
-   FOUR UP AT 620px, AND THAT IS THE FLOOR (2026-09-10). Each card gets about 134 - px-7 leaves 564,
-   less three 9px gaps, over four columns. It landed at 720 from the PM's layout and came down twice
-   on the ask; 620 is where the arithmetic runs out, because "We review and email you when you're
-   in." needs four rows at this measure and takes a fifth below it - and one card growing a row while
-   its neighbours do not is the ragged bottom edge the balanced copy exists to prevent. Going
-   narrower than this means shorter copy, not a smaller number here.
-   The icon came down 40 -> 34 when the fourth column arrived, because an icon that does not shrink
-   with its card stops being an icon and becomes the subject. */
+   FOUR UP AT 760px. It was trimmed to 620 on 2026-09-10 and went back out the same day, and the
+   reason is not indecision: the copy changed underneath it. The cards now carry the third fold's
+   bodies verbatim, and the longest of those is 96 characters against the 46 it replaced, at 13px
+   instead of 11.5. 620 would have put that card on nine lines. Each card is about 169 now: px-7
+   leaves 704, less three 9px gaps, over four columns.
+   The icon went back to 40 with the type. It had been cut to 34 when the fourth column arrived,
+   which was the right call at 620 and stops being one here. */
 /* THE INTRO LINE. Centred, because it addresses the reader rather than labelling the row under
    it - a left-aligned sentence over four left-aligned cards reads as the first card's heading. */
-.crx .crx-xp-intro { text-align: center; font-size: 13.5px; font-weight: 600; line-height: 1.45; margin-bottom: 2px; }
+/* THE WHOLE DIALOG STEPPED UP (Appy, 2026-09-10: "everything is small but the moment you sign in
+   the screen seems big"). It was right: this card ran at 11.5-13.5px against a signed-in app at
+   14-16, so the dialog read as a different, smaller product than the one behind it. Nothing here is
+   below 13 now, and the icons are back to 40 from the 34 the four-column squeeze had forced. */
+.crx .crx-xp-intro { text-align: center; font-size: 15px; font-weight: 600; line-height: 1.45; margin-bottom: 2px; }
+/* the asterisk's footnote: the quietest thing in the card, because it qualifies rather than tells */
+.crx .crx-xp-note { text-align: center; font-size: 11px; line-height: 1.5; margin-top: -6px; }
 .crx .crx-xp-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 9px; align-items: stretch; }
 .crx .crx-xp-card {
   display: flex; flex-direction: column; align-items: flex-start; gap: 10px;
@@ -1568,7 +1576,7 @@ body.crx-light .crx {
    shared baseline so three unequal cards read as a row; with one block of text per card the copy
    belongs directly under the icon it explains, and the leftover space falls to the bottom where
    nobody reads it. */
-.crx .crx-xp-l { font-size: 11.5px; font-weight: 400; line-height: 1.5; }
+.crx .crx-xp-l { font-size: 13px; font-weight: 400; line-height: 1.5; }
 /* the lead. 600 and full ink against the rest's 400 and muted - two voices in one sentence, which
    is what lets the four leads read across the row as the whole arc while the grey halves stay
    available to whoever stops on one card.
