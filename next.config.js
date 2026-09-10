@@ -33,6 +33,9 @@ const nextConfig = {
             { source: '/blueai-product', destination: '/blueai-product/index.html' },
             { source: '/blueai-product-v2', destination: '/blueai-product-v2/index.html' },
             { source: '/blueai-desktop', destination: '/blueai-desktop/index.html' },
+            // Option 1 mock (chat terminal flow) is standalone: fonts from CDN, image inlined,
+            // so it needs no <base> tag.
+            { source: '/creators/option-1', destination: '/creators/option-1/index.html' },
           ]
         },
       }),
