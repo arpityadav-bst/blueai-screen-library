@@ -92,7 +92,9 @@ export default function Expectations({
         {/* WHAT IT IS, BEFORE WHAT IT ASKS. See expectationCards for why a heading is back on a
             screen that had one deleted: this one names the product, which the stripped version
             never did. */}
-        <p className="crx-xp-intro" style={{ color: skin.ink }}>{INTRO}</p>
+        <p className="crx-xp-intro" style={{ color: skin.ink }}>
+          {INTRO[0]}<br />{INTRO[1]}
+        </p>
 
         <ul className="crx-xp-cards">
           {CARDS.map((c) => {
@@ -113,8 +115,15 @@ export default function Expectations({
                     single sentence that happens to change colour partway through, so they wrap as
                     one; a separate line for the lead would break mid-sentence at every card width
                     and put a ragged gap between halves that belong together. */}
+                {/* THE NUMERAL IS PART OF THE LEAD (Appy, 2026-09-10: "in front of the body text, same
+                    colour as Apply, simple text"). It sat in the top-right corner for one pass and
+                    came back inside the sentence: in the corner it was a separate mark the eye had
+                    to reconcile with the words, and here it is simply how the line starts. Same ink,
+                    same weight, inside the same <b> - no size, colour or spacing of its own, which
+                    is what "simple text" means. The label still opens with "Step 1." in words for a
+                    screen reader, so the digit is not read twice. */}
                 <p className="crx-xp-l" style={{ color: skin.ink70 }}>
-                  <b style={{ color: skin.ink }}>{c.lead}</b> {c.rest}
+                  <b style={{ color: skin.ink }}>{c.n}. {c.lead}</b> {c.rest}
                 </p>
               </li>
             )

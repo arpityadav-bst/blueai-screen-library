@@ -170,6 +170,16 @@ export default function useBootIntro(onDone: () => void) {
     let finished = false
     const timers: ReturnType<typeof setTimeout>[] = []
 
+    // THE INTRO SAYS SO ITSELF (Appy, 2026-09-10: "that initial animation was supposed to happen
+    // on the home page once, never again, anywhere"). The header's staged arrival used to hang off
+    // `.revealed`, which is not a boot signal at all - CreatorsHome adds it on every signed-in view
+    // and this hook's own cleanup removes it - so re-adding it restarted a 0.6s animation with a
+    // 2.5s DELAY on it, and the delay is what he saw: an empty header bar for two and a half
+    // seconds on every screen after the homepage. This class is added once, here, only when the
+    // intro genuinely runs, and removed on unmount. Nothing else may set it.
+    // The fail-open branch above returns BEFORE this line, so a bailed intro leaves a header that
+    // is simply there - which is the correct degradation.
+    root.classList.add('crx-booting')
     document.body.classList.add('crx-lock')
 
     function finish() {
@@ -430,7 +440,7 @@ export default function useBootIntro(onDone: () => void) {
       ;(['click', 'wheel', 'touchstart', 'keydown'] as const).forEach((ev) => window.removeEventListener(ev, finish))
       timers.forEach(clearTimeout)
       document.body.classList.remove('crx-lock')
-      root.classList.remove('revealed', 'settled')
+      root.classList.remove('revealed', 'settled', 'crx-booting')
       coreCv.classList.remove('out')
     }
   }, [])

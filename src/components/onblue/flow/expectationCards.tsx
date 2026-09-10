@@ -1,54 +1,46 @@
 'use client'
 
-// THE FOUR CARDS — an animated line illustration and one line of copy, in two voices.
+// THE FOUR CARDS, and their copy is NOT this file's own any more.
 //
-// THIS IS THE PM'S LAYOUT (2026-09-10), and it changes three things at once: a fourth card, new
-// copy, and a bold lead-in inside each line rather than one flat sentence. The lead is the STEP
-// ("Apply.", "Set up onBlue.") and the remainder is the condition or the consequence, so the four
-// leads read on their own as the whole arc — works on your PC, apply, set up, earn — and the grey
-// half is there for the reader who stops on one card.
+// IT IS THE THIRD FOLD'S, VERBATIM (Appy, 2026-09-10: "use the same 4 box copies in the third fold
+// for the popup"). HomeBelow's STEPS array is the source: Apply / Get accepted / Deploy it /
+// Collect, with its bodies unchanged. Two surfaces telling the same four-step story in two
+// different sets of words is how a reader ends up counting whether they are the same four steps,
+// and this dialog opens ON that page, sometimes with the section still behind it.
 //
-// A HEADING CAME BACK WITH IT, and that is a reversal worth naming. This screen carried "Before you
-// start / Three things, then you're in / Takes ten seconds" until it was stripped on 2026-09-08 for
-// describing the screen instead of being it. The PM's line does something the old one did not: it
-// says what the product IS before listing what it asks of you, which is the one thing a first-time
-// reader does not already have. It is not the deleted header returning, it is a different job.
+// SO THIS FILE IS A COPY, AND THAT IS A LIABILITY worth naming: edit HomeBelow's STEPS and these do
+// not follow. They are not imported from there because the two render differently (that section has
+// numerals and a heading per card; this has an icon and one flowing line), and because the popup
+// splits each box into a bold lead and a muted remainder. If they drift, this is the file that is
+// wrong.
 //
-// ONE DRAWING LANGUAGE, INHERITED: the introIcons stroke style — 1.8 stroke, round caps and joins,
-// no fills. A dialog that suddenly speaks a second visual language reads as a screen from another
-// product. They are 34px rather than the three-card version's 40: a fourth column takes ~20px off
-// each card, and an icon that does not shrink with its card stops being an icon and becomes the
-// card's subject.
+// THE LEAD IS THE BOX TITLE and the remainder is its body, which is what makes the split honest
+// rather than invented: the four leads read across the row as the arc (apply, get accepted, deploy,
+// collect) and the grey half is there for the reader who stops on one card.
 //
-// EACH ANIMATION SHOWS ITS OWN SENTENCE, which is the only rule they follow. The monitor draws
-// itself, the envelope folds shut, the arrow travels down into the tray, and the coin lands on the
-// card. If a line changed, its drawing would have to.
+// ONE DRAWING LANGUAGE, INHERITED: the introIcons stroke style, 1.8 stroke, round caps and joins, no
+// fills. A dialog that suddenly speaks a second visual language reads as a screen from another
+// product.
 //
-// THEY PLAY ON HOVER, not on arrival. Four illustrations animating at once the moment a dialog
-// opens is a fireworks display in front of a button; on hover each one answers a reader who went
-// looking. Under prefers-reduced-motion every one is switched off in onblue.css and the drawing simply
-// sits there — the illustration is the information, its arrival is not.
+// EACH ANIMATION SHOWS ITS OWN SENTENCE, which is the only rule they follow, and all four changed
+// when the copy did: the envelope folds shut for Apply, the tick draws itself for Get accepted, the
+// arrow travels into the tray for Deploy it, and the coin lands on the card for Collect. The
+// monitor went with "Works on your PC", which is not one of the four boxes.
+//
+// THEY PLAY ON HOVER, not on arrival. Four illustrations animating at once the moment a dialog opens
+// is a fireworks display in front of a button; on hover each one answers a reader who went looking.
+// Under prefers-reduced-motion every one is switched off in onblue.css and the drawing simply sits
+// there: the illustration is the information, its arrival is not.
 //
 // pathLength=1 on everything that DRAWS ITSELF, so the dash animation is written once in CSS as
 // 1 -> 0 and never has to know a shape's real perimeter.
 
 const S = { fill: 'none', stroke: 'currentColor', strokeWidth: 1.8, strokeLinecap: 'round', strokeLinejoin: 'round' } as const
 
-/** Works on your PC: a monitor, drawing itself. */
-function MonitorArt() {
-  return (
-    <svg viewBox="0 0 64 64" width="34" height="34" aria-hidden="true" className="crx-xp-art">
-      <rect x="8" y="12" width="48" height="34" rx="4" {...S} pathLength={1} className="crx-xp-draw" />
-      <path d="M24 56h16" {...S} />
-      <path d="M32 46v10" {...S} />
-    </svg>
-  )
-}
-
 /** Apply: an envelope, and its flap folding shut. */
 function MailArt() {
   return (
-    <svg viewBox="0 0 64 64" width="34" height="34" aria-hidden="true" className="crx-xp-art">
+    <svg viewBox="0 0 64 64" width="40" height="40" aria-hidden="true" className="crx-xp-art">
       <rect x="7" y="15" width="50" height="34" rx="4" {...S} pathLength={1} className="crx-xp-draw" />
       {/* the flap is its own group so it can fold independently of the envelope it closes */}
       <g className="crx-xp-drop">
@@ -58,10 +50,21 @@ function MailArt() {
   )
 }
 
-/** Set up: an arrow travelling down into a tray. */
+/** Get accepted: a reply, with a tick drawing itself across it. */
+function AcceptArt() {
+  return (
+    <svg viewBox="0 0 64 64" width="40" height="40" aria-hidden="true" className="crx-xp-art">
+      <rect x="9" y="14" width="46" height="32" rx="5" {...S} pathLength={1} className="crx-xp-draw" />
+      <path d="M20 54h24" {...S} strokeOpacity="0.45" />
+      <path d="M21 26.5 29 34.5 43 20.5" {...S} strokeWidth="2.4" pathLength={1} className="crx-xp-tick" />
+    </svg>
+  )
+}
+
+/** Deploy it: an arrow travelling down into a tray. */
 function InstallArt() {
   return (
-    <svg viewBox="0 0 64 64" width="34" height="34" aria-hidden="true" className="crx-xp-art">
+    <svg viewBox="0 0 64 64" width="40" height="40" aria-hidden="true" className="crx-xp-art">
       <path d="M10 40v8a4 4 0 0 0 4 4h36a4 4 0 0 0 4-4v-8" {...S} pathLength={1} className="crx-xp-draw" />
       <g className="crx-xp-drop">
         <path d="M32 12v24" {...S} />
@@ -71,10 +74,10 @@ function InstallArt() {
   )
 }
 
-/** Earn: a card, and a coin landing on it. */
+/** Collect: a card, and a coin landing on it. */
 function PaidArt() {
   return (
-    <svg viewBox="0 0 64 64" width="34" height="34" aria-hidden="true" className="crx-xp-art">
+    <svg viewBox="0 0 64 64" width="40" height="40" aria-hidden="true" className="crx-xp-art">
       <rect x="7" y="18" width="50" height="32" rx="5" {...S} pathLength={1} className="crx-xp-draw" />
       <path d="M7 28h50" {...S} strokeOpacity="0.45" />
       <g className="crx-xp-coin">
@@ -84,45 +87,62 @@ function PaidArt() {
   )
 }
 
-/** The line above the cards: what the product is, before what it asks of you. */
-export const INTRO = 'onBlue is an AI worker that earns for you. Here’s how it works:'
+/** The line above the cards: what the product is, before what it asks of you.
+ *  TWO STRINGS, NOT ONE WITH A BREAK IN IT (Appy, 2026-09-10: "in two lines"). The split is
+ *  the sentence boundary, so it is the copy's own break rather than one placed to balance a
+ *  measure: line one says what the product is, line two hands over to the cards. Keeping them
+ *  as separate strings means the break cannot land mid-sentence when the copy is edited. */
+export const INTRO = [
+  'onBlue is an AI worker that earns for you.',
+  'Here’s how it works:',
+] as const
 
-export type Card = { key: string; art: () => JSX.Element; lead: string; rest: string; full: string }
+/** `n` is a SINGLE DIGIT here, not the third fold's 01-04 (Appy, 2026-09-10: "1, 2, 3, 4 on the
+ *  top right, very subtle"). The two-digit form existed to keep four inline leads aligned; in the
+ *  corner nothing follows it, so the leading zero is just an extra mark competing with the words. */
+export type Card = { key: string; n: string; art: () => JSX.Element; lead: string; rest: string; full: string }
 
 /**
- * `lead` is bold and `rest` is not; `full` is the pair as one string for the card's aria-label — a
- * screen reader should hear a sentence, not two fragments that happen to be styled apart.
- * COPY IS THE PM'S, verbatim. It replaces a set this side had already put through four rounds of
- * shortening; the figures it keeps ($30, PayPal) are the ones every other surface quotes.
- * "PC", never "Windows": the site does not say Windows.
+ * `lead` is the third fold's box TITLE and `rest` is its BODY, unchanged. `full` is the pair as one
+ * string for the card's aria-label: a screen reader should hear a sentence, not two fragments that
+ * happen to be styled apart.
+ * THE $30 CARRIES AN ASTERISK (Appy, 2026-09-10: "that can change"), AND NOTHING NOW EXPLAINS IT.
+ * The footnote under the row was removed the same day ("we can just remove the line"); the mark was
+ * kept because it was asked for separately and "rest is fine". So this is a deliberate orphan: it
+ * reads as a soft qualifier on the figure without spending a line saying so. If it ever looks like
+ * an error rather than a hedge, the mark is what goes, not a note coming back.
  */
 export const CARDS: readonly Card[] = [
   {
-    key: 'pc',
-    art: MonitorArt,
-    lead: 'Works on your PC.',
-    rest: 'Other devices coming soon.',
-    full: 'Works on your PC. Other devices coming soon.',
-  },
-  {
     key: 'apply',
+    n: '1',
     art: MailArt,
     lead: 'Apply.',
-    rest: 'We review and email you when you’re in.',
-    full: 'Apply. We review and email you when you’re in.',
+    rest: 'Tell us about yourself and the PC it will run on.',
+    full: 'Step 1. Apply. Tell us about yourself and the PC it will run on.',
   },
   {
-    key: 'setup',
+    key: 'accepted',
+    n: '2',
+    art: AcceptArt,
+    lead: 'Get accepted.',
+    rest: 'We review every application and email you when your worker is ready.',
+    full: 'Step 2. Get accepted. We review every application and email you when your worker is ready.',
+  },
+  {
+    key: 'deploy',
+    n: '3',
     art: InstallArt,
-    lead: 'Set up onBlue.',
-    rest: 'It runs campaigns you approve.',
-    full: 'Set up onBlue. It runs campaigns you approve.',
+    lead: 'Deploy it.',
+    rest: "Install onBlue on your PC and sign in. That's the whole setup.",
+    full: "Step 3. Deploy it. Install onBlue on your PC and sign in. That's the whole setup.",
   },
   {
-    key: 'earn',
+    key: 'collect',
+    n: '4',
     art: PaidArt,
-    lead: 'Earn $30 a month,',
-    rest: 'paid via PayPal.',
-    full: 'Earn $30 a month, paid via PayPal.',
+    lead: 'Collect.',
+    rest: 'You approve each campaign, your worker completes it, and you collect $30* every month via PayPal.',
+    full: 'Step 4. Collect. You approve each campaign, your worker completes it, and you collect $30 every month via PayPal. The monthly amount can change.',
   },
 ]

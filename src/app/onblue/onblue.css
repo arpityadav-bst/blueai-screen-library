@@ -16,6 +16,46 @@
    Fixed-position children (backdrop, canvas, beats, dock, stars) are unaffected by the wrapper —
    .crx carries no transform, so they still position against the viewport. */
 
+/* ============================================================================
+   THE PRODUCT TYPE RAMP (Ambreesh via Appy, 2026-09-10: "everything is small in the
+   popup but the moment you sign in the screen seems big").
+
+   THE DIAGNOSIS, because the obvious reading was wrong. It is not that the dialog is
+   undersized: it is that EVERYTHING PAST SIGN-IN WAS STILL WEARING THE MARKETING SCALE.
+   This stylesheet was ported verbatim from a landing-page mock, so the programs home,
+   the application and the dashboard inherited a display ramp built for one message per
+   fold: a 48.8px page title, 21.6px card titles, a 30.4px reward figure, 15.2px body.
+   Those are billboard sizes. They are correct on a page you scroll past once and wrong
+   on a screen you WORK in, where the job is scanning a list of programs and filling a
+   form. The 20/13 dialog was not small; the product behind it was large.
+
+   THE PRINCIPLE: a marketing page and a signed-in product are two different type
+   contexts and should not share a ramp. Marketing optimises for impact at a glance and
+   earns its display sizes. A product optimises for density and scanning: page title
+   28-34, one figure at 24, card titles 17, body 14, secondary 13, labels 12. Anything
+   larger inside a product reads as a slide, not a screen.
+
+   SO THE MARKETING FOLDS ARE UNTOUCHED - the hero, .below h2, .closer h2, .beat and the
+   third fold's .step keep their clamps, because they are still marketing and shrinking
+   them would fix nothing and cost the page its voice. The line is sign-in: past it,
+   these tokens rule.
+
+   ONE LADDER, NAMED BY ROLE, so the next size question is answered by picking a rung
+   rather than by inventing a value. Every rung below was previously an ad-hoc rem
+   figure repeated across 16 selectors; that is how the drift happened in the first
+   place and it is what this block exists to stop. */
+.crx {
+  --t-page: clamp(1.75rem, 3vw, 2.125rem);  /* 28 -> 34. Was 33.6 -> 48.8 */
+  --t-screen: 1.375rem;                     /* 22. A screen's own title, past sign-in */
+  --t-figure: 1.5rem;                       /* 24. The ONE big number on a screen. Above
+                                               --t-screen on purpose: on a dashboard the
+                                               balance outranks the greeting over it. */
+  --t-card: 1.0625rem;                      /* 17. Card and panel titles */
+  --t-body: 0.875rem;                       /* 14. Body, fields, descriptions */
+  --t-body-2: 0.8125rem;                    /* 13. Secondary body, quiet notes */
+  --t-meta: 0.75rem;                        /* 12. Labels, timestamps, meta */
+}
+
 .crx {
   /* THE NEUTRALS ARE CHARCOAL'S, NOT THE DS's (Appy, 2026-09-08: "instead of blue themed colors we
      should use charcoal theme colors... the light bluish fills... in this complete website like
@@ -722,6 +762,9 @@ body.crx-lock { overflow: hidden; }
 }
 /* gap 1.5rem, was 1 — the cards grew, and a gutter that does not grow with them turns four
    cards into one slab */
+/* the asterisk's footnote under the four boxes. Right-aligned to the grid's own edge rather than
+   centred: it belongs to the last box's figure, not to the section. */
+.crx .steps-note { margin-top: 14px; font-size: 11.5px; color: var(--ink-4); }
 .crx .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
 /* F9: explicit 4/2/1 — auto-fit orphaned "04 Collect" across the whole 710–935px range */
 @media (max-width: 935px) { .crx .steps { grid-template-columns: repeat(2, 1fr); } }
@@ -927,17 +970,32 @@ body.crx-lock { overflow: hidden; }
    leaves the header as its only consumer rather than making it a new invention. */
 .crx .crx-header {
   position: fixed; top: 0; left: 0; right: 0; z-index: 60;
-  opacity: 0; pointer-events: none;
+  /* PRESENT BY DEFAULT (Appy, 2026-09-10). This was opacity:0 with the only route back to visible
+     being a delayed animation gated on `.revealed`, which meant every surface that was not the
+     booting homepage - signed in, the programs home, the application, anything that re-added the
+     class - inherited a 2.5s wait before its own chrome appeared. A header is not content that
+     arrives; it is the frame the content arrives INTO, and it should be there before anything else
+     is. The entrance below is now the exception, scoped to the one screen that earns it. */
+  opacity: 1; pointer-events: auto;
   transition: background 0.3s ease, border-color 0.3s ease;
   border-bottom: 1px solid transparent;
 }
+/* ...except while the boot intro is playing, where the header is one of the things the intro is
+   covering. .crx-booting is set by useBootIntro and by nothing else, so this cannot leak. */
+.crx.crx-booting .crx-header { opacity: 0; pointer-events: none; }
 /* the header arrives LAST and from the top edge (Appy, 2026-08-19) — the chrome only frames the
    page once the page is there. 2.35s puts it just after the fleet strip settles. Note the
    transition above no longer carries opacity: the animation owns it, and leaving both would have
    the transition fight the keyframe's `both` fill on the first frame. */
-.crx.revealed .crx-header {
+.crx.crx-booting.revealed .crx-header {
   pointer-events: auto;
   animation: crx-header-drop 0.6s cubic-bezier(0.22, 1, 0.36, 1) 2.5s both;
+}
+/* Reduced motion: stated AFTER the rules above rather than inside the block near the top of the
+   file, because .crx.crx-booting .crx-header and that block's .crx.revealed .crx-header carry the
+   same specificity and source order would otherwise leave the header hidden for the whole intro. */
+@media (prefers-reduced-motion: reduce) {
+  .crx.crx-booting .crx-header { opacity: 1; pointer-events: auto; animation: none; }
 }
 .crx .crx-header.scrolled {
   background: var(--glass);
@@ -1049,7 +1107,7 @@ body.crx-lock { overflow: hidden; }
   display: flex; align-items: center; min-height: 44px;
   padding: 0 0.8rem; border-radius: 9px;
   color: var(--dim); text-decoration: none;
-  font: inherit; font-size: 0.95rem; font-weight: 500;
+  font: inherit; font-size: var(--t-body); font-weight: 500;
   background: none; border: none; cursor: pointer; text-align: left;
   transition: color 0.15s ease, background 0.15s ease;
 }
@@ -1134,7 +1192,14 @@ body.crx-lock { overflow: hidden; }
   --sel-wash: rgba(47, 109, 255, 0.07);
   /* a field is WHITE on this ground and the BORDER does the work. The polarity of this token is
      the opposite of what its name suggests, which is why it is named for the role. */
-  --well: #ffffff;
+  /* THE WELL IS TINTED, NOT WHITE (Appy, 2026-09-10). It was #ffffff back when every panel it sat
+     in was #f6f7f8, which made a field a lighter inset in a grey sheet. The apply panel going white
+     inverted that: a white field on a white sheet is held together by its border alone, and a well
+     that does not read as recessed is just a rectangle. #f8f9fa sits between the white sheet and
+     the #f6f7f8 choice cards, so on this screen the order reads sheet -> control -> page.
+     Every other --well user is the same idea at another size (checkbox box, toggler track, progress
+     track), so this is the token and not a one-off override. */
+  --well: #f8f9fa;
 }
 
 /* ================================================================================================
@@ -1207,17 +1272,26 @@ body.crx-lock { overflow: hidden; }
   padding: 1.5rem;
   text-align: left;
 }
+/* THE FORM SITS ON WHITE (Appy, 2026-09-10, onBlue only). --sur-2 is #f6f7f8 and this fork's page
+   is #fafafa: four points apart, which is not a surface change, it is a printing error. The panel
+   read as a slightly dirty patch of the page rather than as a sheet on top of it, and the form is
+   the one thing on this screen that should look like a document you are filling in.
+   It also fixes the stack downward: the choice cards stay --sur-2, so against white they finally
+   read as tiles inset INTO the sheet rather than as the same grey as the thing holding them.
+   ONBLUE ONLY, as asked. creators keeps --sur-2 - it still has a dark path where a hard white
+   would be a hole punched in the page. */
+.crx .crx-apply .crx-panel { background: #ffffff; }
 /* card heading — the head stack at panel scale (the type-system block above only covers page h2s) */
 .crx .crx-panel-title {
   font-family: 'Space Grotesk', 'SF Pro Display', Inter, sans-serif;
-  font-weight: 700; font-size: 1.05rem; line-height: 1.3;
+  font-weight: 700; font-size: var(--t-card); line-height: 1.3;
   color: var(--ink-inverse); margin: 0;
   text-wrap: balance;
 }
 
 /* ---- field furniture: label / hint / error ---- */
 /* field label — the strongest text next to a field (fieldClasses.ts's darker-labels decision) */
-.crx .crx-label { display: block; font-size: 0.8rem; font-weight: 650; color: var(--ink-inverse); }
+.crx .crx-label { display: block; font-size: var(--t-meta); font-weight: 650; color: var(--ink-inverse); }
 /* muted hint — shares .crx-err's exact box so hint→error swaps colour, never height */
 .crx .crx-hint {
   display: block; margin-top: 0.35rem; min-height: 15px;
@@ -1233,7 +1307,7 @@ body.crx-lock { overflow: hidden; }
 /* ---- text input / textarea — dark inset like the laptop's task rows, iris focus ring ---- */
 .crx .crx-field {
   display: block; width: 100%;
-  font: inherit; font-size: 0.95rem; color: var(--ink-inverse);
+  font: inherit; font-size: var(--t-body); color: var(--ink-inverse);
   background: var(--well);
   border: 1px solid var(--line-2);
   border-radius: 9px;
@@ -1262,7 +1336,7 @@ body.crx-lock { overflow: hidden; }
 .crx .crx-choice {
   display: inline-flex; align-items: center; gap: 0.4rem;
   min-height: 44px; padding: 0.7rem 0.9rem;
-  font: inherit; font-size: 0.85rem; font-weight: 500; color: var(--dim);
+  font: inherit; font-size: var(--t-body-2); font-weight: 500; color: var(--dim);
   background: var(--sur-2);
   border: 1px solid var(--line-2);
   border-radius: 9px; cursor: pointer;
@@ -1345,7 +1419,7 @@ body.crx-lock { overflow: hidden; }
 /* ---- buttons ---- */
 /* secondary/back — ghost with a hairline; same press model as .btn (hover lifts, active plants) */
 .crx .crx-btn-quiet {
-  font: inherit; font-weight: 650; font-size: 0.95rem; color: var(--ink-inverse);
+  font: inherit; font-weight: 650; font-size: var(--t-body); color: var(--ink-inverse);
   background: none;
   border: 1px solid var(--line-3);
   border-radius: 999px;
@@ -1459,21 +1533,39 @@ body.crx-lock { overflow: hidden; }
    The two files are twins by intent; the palette is the difference, and the palette is in the
    tokens these rules reference, not in the rules.
 
-   FOUR UP AT 620px, AND THAT IS THE FLOOR (2026-09-10). Each card gets about 134 - px-7 leaves 564,
-   less three 9px gaps, over four columns. It landed at 720 from the PM's layout and came down twice
-   on the ask; 620 is where the arithmetic runs out, because "We review and email you when you're
-   in." needs four rows at this measure and takes a fifth below it - and one card growing a row while
-   its neighbours do not is the ragged bottom edge the balanced copy exists to prevent. Going
-   narrower than this means shorter copy, not a smaller number here.
-   The icon came down 40 -> 34 when the fourth column arrived, because an icon that does not shrink
-   with its card stops being an icon and becomes the subject. */
+   TWO BY TWO, NOT FOUR ACROSS (Appy, 2026-09-10: "two rows, one row having two"). Widening the
+   dialog to 880 had bought each column 199px and it was still a tall thin well, because the problem
+   was never the total width: four columns of a 96-character sentence is a shape that cannot be
+   fixed by growing the room it sits in. Two columns at 560 give each card about 247 and, more to
+   the point, HALF the rows, so a body lands in three or four lines instead of six.
+   The order still reads: a 2x2 is read left to right, top to bottom, so Apply / Get accepted sit
+   above Deploy / Collect and the arc survives the fold. gap goes 9 -> 12 because two large tiles
+   with a hairline between them read as one split panel.
+
+   THE HISTORY, because this number has moved four times in a day: 720 from the PM's layout, 620 on
+   the trim, 760 when the copy became the third fold's verbatim, 880 on "too compact", 560 here. It was trimmed to 620 on 2026-09-10 and went back out the same day, and the
+   reason is not indecision: the copy changed underneath it. The cards now carry the third fold's
+   bodies verbatim, and the longest of those is 96 characters against the 46 it replaced, at 13px
+   instead of 11.5. 620 would have put that card on nine lines. Each card is about 169 now: px-7
+   leaves 704, less three 9px gaps, over four columns.
+   The icon went back to 40 with the type. It had been cut to 34 when the fourth column arrived,
+   which was the right call at 620 and stops being one here. */
 /* THE INTRO LINE. Centred, because it addresses the reader rather than labelling the row under
    it - a left-aligned sentence over four left-aligned cards reads as the first card's heading. */
-.crx .crx-xp-intro { text-align: center; font-size: 13.5px; font-weight: 600; line-height: 1.45; margin-bottom: 2px; }
-.crx .crx-xp-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 9px; align-items: stretch; }
+/* THE WHOLE DIALOG STEPPED UP (Appy, 2026-09-10: "everything is small but the moment you sign in
+   the screen seems big"). It was right: this card ran at 11.5-13.5px against a signed-in app at
+   14-16, so the dialog read as a different, smaller product than the one behind it. Nothing here is
+   below 13 now, and the icons are back to 40 from the 34 the four-column squeeze had forced. */
+/* THE SIGN-IN CARD'S OWN HEADING SIZE (Appy, 2026-09-10: "larger, like the login screen"):
+   20/30 at 600, which is exactly what level 2's h3 runs at. The two levels slide into each
+   other, so their headings being different sizes read as two screens rather than two steps.
+   The break is hard, from two strings in expectationCards, so the balancer is off for this
+   block by design: the split is the sentence boundary and should not move with the measure. */
+.crx .crx-xp-intro { text-align: center; font-size: 20px; font-weight: 600; line-height: 30px; margin-bottom: 4px; }
+.crx .crx-xp-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; align-items: stretch; }
 .crx .crx-xp-card {
   display: flex; flex-direction: column; align-items: flex-start; gap: 10px;
-  padding: 15px 11px 14px;
+  padding: 16px 15px 15px;
   border-radius: 11px;
   border: 1px solid var(--line);
   background: var(--sur-2);
@@ -1498,7 +1590,7 @@ body.crx-lock { overflow: hidden; }
    shared baseline so three unequal cards read as a row; with one block of text per card the copy
    belongs directly under the icon it explains, and the leftover space falls to the bottom where
    nobody reads it. */
-.crx .crx-xp-l { font-size: 11.5px; font-weight: 400; line-height: 1.5; }
+.crx .crx-xp-l { font-size: var(--t-body); font-weight: 400; line-height: 1.5; }
 /* the lead. 600 and full ink against the rest's 400 and muted - two voices in one sentence, which
    is what lets the four leads read across the row as the whole arc while the grey halves stay
    available to whoever stops on one card.
@@ -1608,7 +1700,7 @@ body.crx-lock { overflow: hidden; }
 .crx .crx-bal-fig {
   display: block;
   font-family: 'Space Grotesk', 'SF Pro Display', Inter, sans-serif;
-  font-weight: 700; font-size: 2.1rem; line-height: 1.1;
+  font-weight: 700; font-size: var(--t-figure); line-height: 1.1;
   color: var(--mint);
   font-variant-numeric: tabular-nums;
 }
@@ -1742,7 +1834,7 @@ body.crx-lock { overflow: hidden; }
   width: 36px; height: 36px; border-radius: 50%;
   background: var(--sel-wash); color: var(--accent);
 }
-.crx .crx-intro-row .crx-intro-body { font-size: 0.95rem; line-height: 1.55; color: var(--dim); }
+.crx .crx-intro-row .crx-intro-body { font-size: var(--t-body); line-height: 1.55; color: var(--dim); }
 .crx .crx-intro-row .crx-intro-body b { color: var(--ink-inverse); font-weight: 650; }
 
 /* ---- danger utilities ---- */
@@ -1862,11 +1954,11 @@ body.crx-lock { overflow: hidden; }
 
 .crx .crx-confirm h2 {
   font-family: 'Space Grotesk', 'SF Pro Display', Inter, sans-serif;
-  font-weight: 700; font-size: 1.6rem; line-height: 1.3;
+  font-weight: 700; font-size: var(--t-screen); line-height: 1.3;
   margin: 1.2rem 0 0;
   text-wrap: balance;
 }
-.crx .crx-confirm p { max-width: 44ch; margin: 0.7rem auto 0; font-size: 1rem; line-height: 1.6; }
+.crx .crx-confirm p { max-width: 44ch; margin: 0.7rem auto 0; font-size: var(--t-body); line-height: 1.6; }
 /* mint again, now that the panel is dark — the darker #0f9d58 this briefly used was chosen for a
    white surface and would disappear here */
 .crx .crx-confirm-tick {
@@ -1929,7 +2021,7 @@ body.crx-lock { overflow: hidden; }
   font-size: 11px; font-weight: 700;
 }
 /* account name in the chip */
-.crx .crx-acct-name { font-size: 0.95rem; font-weight: 500; color: var(--ink-inverse); }
+.crx .crx-acct-name { font-size: var(--t-body); font-weight: 500; color: var(--ink-inverse); }
 /* the popover's email line — the one fact the trigger can't show; truncates, never wraps */
 .crx .crx-acct-email {
   margin: 0; padding: 0.5rem 0.8rem 0.6rem; min-width: 0;
@@ -1980,12 +2072,12 @@ body.crx-lock { overflow: hidden; }
 
 .crx .crx-dash-title {
   font-family: 'Space Grotesk', 'SF Pro Display', Inter, sans-serif;
-  font-weight: 700; font-size: 1.9rem; line-height: 1.2; letter-spacing: -0.02em;
+  font-weight: 700; font-size: var(--t-screen); line-height: 1.2; letter-spacing: -0.02em;
   color: var(--ink-inverse); margin: 0 0 0.4rem;
   text-wrap: balance;
 }
 /* sub-line under the welcome */
-.crx .crx-dash-sub { margin: 0; font-size: 1rem; color: var(--dim); }
+.crx .crx-dash-sub { margin: 0; font-size: var(--t-body); color: var(--dim); }
 /* vertical gap between dashboard bands — 2.25rem, deliberately BIGGER than the 1rem gaps inside a
    band (stat grid, tile stack). The first pass matched them "so bands read as one group", and one
    group is exactly what it read as: a wall (Abhisht, 2026-08-24: "too stacked, crowded"). Two
@@ -2045,7 +2137,7 @@ body.crx-lock { overflow: hidden; }
 /* PayPal mini-logo block (brand colours live in the SVG itself) */
 .crx .crx-cash-pp { flex-shrink: 0; display: block; }
 /* method name beside the badge */
-.crx .crx-cash-method-name { font-size: 0.95rem; font-weight: 650; color: var(--ink-inverse); }
+.crx .crx-cash-method-name { font-size: var(--t-body); font-weight: 650; color: var(--ink-inverse); }
 /* selected tick — the choice-mark recipe, pushed to the card's right edge */
 .crx .crx-cash-method-tick {
   margin-left: auto; flex-shrink: 0;
@@ -2075,9 +2167,9 @@ body.crx-lock { overflow: hidden; }
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   text-align: center; padding: 2.5rem 1.5rem 1.75rem;
 }
-.crx .crx-cash-done-title { font-size: 1.35rem; margin-top: 1.1rem; }
+.crx .crx-cash-done-title { font-size: var(--t-card); margin-top: 1.1rem; }
 /* confirmation paragraph — one readable measure, centered */
-.crx .crx-cash-copy { margin: 0.6rem 0 0; max-width: 40ch; font-size: 0.92rem; line-height: 1.6; color: var(--dim); text-wrap: balance; }
+.crx .crx-cash-copy { margin: 0.6rem 0 0; max-width: 40ch; font-size: var(--t-body); line-height: 1.6; color: var(--dim); text-wrap: balance; }
 .crx .crx-cash-copy b { color: var(--ink-inverse); }
 /* the request id — tabular semibold ink so it reads as a reference, not prose */
 .crx .crx-cash-id { color: var(--ink-inverse); font-weight: 650; font-variant-numeric: tabular-nums; }
@@ -2104,7 +2196,17 @@ body.crx-lock { overflow: hidden; }
    wants. */
 /* .crx-full shares it: its heading sits in the same 640 slot, in the same two-sentence shape,
    with the same <br>, so it hits the same overflow at the hero clamp. */
-.crx .crx-apply-col h1, .crx .crx-full h1 { font-size: clamp(2.1rem, 4.2vw, 3.05rem); max-width: 100%; }
+.crx .crx-apply-col h1, .crx .crx-full h1 { font-size: var(--t-page); max-width: 100%; }
+
+/* THE TWO CLASSES THE PRODUCT BORROWS FROM THE MARKETING PAGE. `.sub` and `.btn` are the hero's
+   own, and the signed-in screens reuse them so that signing in does not drop the reader onto a page
+   that speaks differently. That was the right call for VOICE and the wrong one for SIZE: an 18.4px
+   sub and a 16.8px button are hero furniture, and inside .crx-apply they were two of the things
+   that made the product read as scaled up. Scoped here rather than changed at the source, because
+   the hero still wants them at hero size. */
+.crx .crx-apply .sub { font-size: var(--t-body); }
+.crx .crx-apply .btn { font-size: var(--t-body); }
+
 /* …while the headline block stays centered, per the component */
 .crx .crx-apply-col h1, .crx .crx-apply-col .sub,
 .crx .crx-full h1, .crx .crx-full .sub { text-align: center; }
@@ -2158,8 +2260,11 @@ body.crx-lock { overflow: hidden; }
 .crx .crx-prog {
   background: var(--sur);
   border: 1px solid rgba(47, 109, 255, 0.3);
-  border-radius: 20px;
-  padding: 1.6rem;
+  /* THE BOX FOLLOWS THE TYPE (2026-09-10 ramp pass). 20/1.6rem was in proportion to a 21.6px
+     title; against 17 it was a large empty frame around small words, which is the other half of
+     "feels scaled up". 16 matches .crx-panel, so the two card kinds on these screens agree. */
+  border-radius: 16px;
+  padding: 1.35rem;
   text-align: left;
 }
 
@@ -2175,24 +2280,24 @@ body.crx-lock { overflow: hidden; }
 }
 .crx .crx-prog-reward-amount {
   font-family: 'Space Grotesk', 'SF Pro Display', Inter, sans-serif;
-  font-weight: 800; font-size: 1.9rem; line-height: 1;
+  font-weight: 800; font-size: var(--t-figure); line-height: 1;
   color: var(--mint); font-variant-numeric: tabular-nums;
 }
 
 .crx .crx-prog-title {
   font-family: 'Space Grotesk', 'SF Pro Display', Inter, sans-serif;
-  font-weight: 700; font-size: 1.35rem; line-height: 1.25;
+  font-weight: 700; font-size: var(--t-card); line-height: 1.25;
   color: var(--ink-inverse); margin: 0 0 0.35rem;
 }
-.crx .crx-prog-desc { font-size: 0.95rem; line-height: 1.55; color: var(--dim); margin: 0 0 1.2rem; }
+.crx .crx-prog-desc { font-size: var(--t-body); line-height: 1.55; color: var(--dim); margin: 0 0 1.2rem; }
 
 /* fact rows ride .crx-intro-row (icon circle + sentence); the hairline top is what separates
    ops-authored prose (the description) from program terms (the rows) */
-.crx .crx-prog-facts { border-top: 1px solid var(--line); padding-top: 1.2rem; }
+.crx .crx-prog-facts { border-top: 1px solid var(--line); padding-top: 1rem; }
 .crx .crx-prog-facts .crx-intro-row + .crx-intro-row { margin-top: 0.95rem; }
 
 /* CTA row — one full-width primary; .crx-grow is the form-foot's flex hook, here it just fills */
-.crx .crx-prog-foot { display: flex; margin-top: 1.4rem; }
+.crx .crx-prog-foot { display: flex; margin-top: 1.15rem; }
 .crx .crx-prog-foot .crx-grow { flex: 1 1 auto; justify-content: center; display: flex; }
 
 /* coming-soon ghost — dashed, dim, deliberately quieter than the panel: a fact about the future,
@@ -2208,7 +2313,7 @@ body.crx-lock { overflow: hidden; }
   padding: 1.1rem 1.4rem;
   display: flex; flex-direction: column; align-items: flex-start; gap: 0.85rem;
 }
-.crx .crx-prog-soon p { margin: 0; font-size: 0.88rem; line-height: 1.5; color: var(--dim); }
+.crx .crx-prog-soon p { margin: 0; font-size: var(--t-body-2); line-height: 1.5; color: var(--dim); }
 
 /* headline→card gap matches .crx-apply-form's 2.2rem (collapses with .sub's own margin); the
    soon-ghost gets the same when it IS the first thing under the headline (none mode), and a
@@ -2317,7 +2422,7 @@ body.crx-lock { overflow: hidden; }
    folded into two (Appy, 2026-08-25: "it can be single line and centred right?"). A measure exists
    to stop long text running past readability; it has nothing to defend here. Narrow viewports still
    wrap it, which is fine — centred wrapped text is a shape, two lines in a wide box is a mistake. */
-.crx .crx-progempty p { margin: 0; font-size: 0.9rem; line-height: 1.6; color: var(--dim); }
+.crx .crx-progempty p { margin: 0; font-size: var(--t-body); line-height: 1.6; color: var(--dim); }
 /* the exit sits under the sentence, centred with it — the empty state is a centred block and a
    left-pinned button under centred prose reads as two unrelated things in one box.
    A MEDIUM PRIMARY (Appy, 2026-08-25) — it carries .btn, so the gradient, the shadow and the hover
@@ -2330,7 +2435,7 @@ body.crx-lock { overflow: hidden; }
 .crx .crx-progempty-cta {
   margin-top: 1rem;
   padding: 0.72rem 1.5rem;
-  font-size: 0.95rem;
+  font-size: var(--t-body);
 }
 
 /* GOAL MET, WINDOW OPEN — the line the bar cannot say. Mint on the amount only: the page reserves
@@ -2338,7 +2443,7 @@ body.crx-lock { overflow: hidden; }
 .crx .crx-progtile-met {
   display: flex; align-items: flex-start; gap: 0.45rem;
   margin: 0.15rem 0 0;
-  font-size: 0.82rem; line-height: 1.5; color: var(--dim);
+  font-size: var(--t-body-2); line-height: 1.5; color: var(--dim);
 }
 .crx .crx-progtile-met b { color: var(--mint); font-weight: 700; }
 .crx .crx-progtile-met-ic {
@@ -2350,7 +2455,7 @@ body.crx-lock { overflow: hidden; }
 /* ENDED — no bar at all (a bar says "this can still move"), so the middle column holds the outcome
    as a sentence. .earned puts the amount in mint; the missed variant stays in label ink, because a
    closed window is not an alarm. */
-.crx .crx-progtile-out { margin: 0; font-size: 0.88rem; line-height: 1.55; color: var(--dim); }
+.crx .crx-progtile-out { margin: 0; font-size: var(--t-body-2); line-height: 1.55; color: var(--dim); }
 .crx .crx-progtile-out.earned b { color: var(--mint); font-weight: 700; }
 /* PAST TILES READ QUIETER, one step of surface and border rather than dimmed text — dimming the
    NAME would make a finished program hard to identify, which is the one thing someone opening this
@@ -2376,8 +2481,8 @@ body.crx-lock { overflow: hidden; }
    same quiet ink the id column's "Ends" line wore. */
 .crx .crx-progtile.solo { grid-template-columns: 1fr; grid-template-areas: 'conds'; }
 .crx .crx-cond-when { color: var(--ink-3); font-weight: 400; }
-.crx .crx-progtile-name { display: block; font-size: 0.95rem; font-weight: 650; color: var(--ink-inverse); }
-.crx .crx-progtile-ends { display: block; margin-top: 0.2rem; font-size: 0.74rem; color: var(--ink-3); }
+.crx .crx-progtile-name { display: block; font-size: var(--t-body); font-weight: 650; color: var(--ink-inverse); }
+.crx .crx-progtile-ends { display: block; margin-top: 0.2rem; font-size: var(--t-meta); color: var(--ink-3); }
 .crx .crx-progtile-conds { grid-area: conds; display: flex; flex-direction: column; gap: 0.7rem; min-width: 0; }
 /* the info glyph in the quest slot — rewards came off the tiles (Abhisht, 2026-08-24: louder
    than the progress); the terms live behind this instead. Ghost circle, dim at rest, ink on
@@ -2397,7 +2502,7 @@ body.crx-lock { overflow: hidden; }
 .crx .crx-proginfo { padding: 1.6rem; }
 .crx .crx-proginfo-title {
   font-family: 'Space Grotesk', 'SF Pro Display', Inter, sans-serif;
-  font-weight: 700; font-size: 1.25rem; line-height: 1.3; color: var(--ink-inverse);
+  font-weight: 700; font-size: var(--t-card); line-height: 1.3; color: var(--ink-inverse);
   /* 1rem to the first section — the ops description that used to fill this gap was cut
      (2026-08-24, duplicate of "What counts"); its rule went with it */
   margin: 0 0 1rem;
@@ -2408,7 +2513,7 @@ body.crx-lock { overflow: hidden; }
   font-family: var(--mono); font-size: 0.62rem; font-weight: 700;
   letter-spacing: 0.12em; text-transform: uppercase; color: var(--dim);
 }
-.crx .crx-proginfo-v { margin: 0; font-size: 0.92rem; line-height: 1.55; color: var(--ink-inverse); }
+.crx .crx-proginfo-v { margin: 0; font-size: var(--t-body); line-height: 1.55; color: var(--ink-inverse); }
 .crx .crx-proginfo-v + .crx-proginfo-v { margin-top: 0.4rem; }
 .crx .crx-proginfo-v b { font-weight: 700; }
 .crx .crx-proginfo > .crx-btn-quiet { margin-top: 1rem; }

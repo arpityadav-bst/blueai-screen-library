@@ -166,12 +166,20 @@ export default function SignInDialog({
             close control at top-3, so the two never crowd. */}
         <div className="flex flex-col gap-5 px-7 pb-7 pt-10">
           <div>
-            <h3 className="text-center text-[20px] font-semibold leading-[30px]">Login or Sign up</h3>
+            {/* "APPLY", NOT "LOGIN OR SIGN UP" (Ambreesh via Appy, 2026-09-10: the screen did not
+                say that signing in is how you APPLY). The old heading named the mechanism, which the
+                reader can already see - an email field and a Google button - and said nothing about
+                what the mechanism is for. This names the errand.
+                THE SAME HEADING ON BOTH PATHS, as asked. It sits oddly over a returning creator's
+                sign-in, and the sub line underneath is what keeps that honest: it still says
+                dashboard for them and application for an applicant. Flagged rather than quietly
+                split, because "for all" was explicit. */}
+            <h3 className="text-center text-[20px] font-semibold leading-[30px]">Apply to BlueAI</h3>
             {/* Was now.gg's "Save your progress & earn rewards" - true of their product, not of this
                 flow. Two honest lines instead, one per door: an applicant is here to submit, a
                 returning account is here to get back to its dashboard. */}
             <h3 className="mt-2 text-center text-[14px] font-normal leading-[21px] opacity-90" style={{ color: skin.ink70 }}>
-              {returning ? 'Sign in to open your dashboard.' : 'Sign in to submit your application.'}
+              {returning ? 'Sign in to open your dashboard.' : 'Sign in to start your application.'}
             </h3>
           </div>
 
