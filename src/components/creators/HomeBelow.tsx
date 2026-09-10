@@ -203,7 +203,6 @@ export default function HomeBelow({ onCta }: { onCta?: () => void }) {
             </div>
           ))}
         </div>
-        <p className="steps-note">*The monthly amount can change.</p>
       </section>
 
       <section className="closer crx-reveal" id="join">

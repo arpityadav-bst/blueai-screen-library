@@ -87,49 +87,62 @@ function PaidArt() {
   )
 }
 
-/** The line above the cards: what the product is, before what it asks of you. */
-export const INTRO = 'BlueAI is an AI worker that earns for you. Here’s how it works:'
+/** The line above the cards: what the product is, before what it asks of you.
+ *  TWO STRINGS, NOT ONE WITH A BREAK IN IT (Appy, 2026-09-10: "in two lines"). The split is
+ *  the sentence boundary, so it is the copy's own break rather than one placed to balance a
+ *  measure: line one says what the product is, line two hands over to the cards. Keeping them
+ *  as separate strings means the break cannot land mid-sentence when the copy is edited. */
+export const INTRO = [
+  'BlueAI is an AI worker that earns for you.',
+  'Here’s how it works:',
+] as const
 
-/** The asterisk's other half. A mark with nothing to point at is worse than no mark. */
-export const FOOTNOTE = '*The monthly amount can change.'
-
-export type Card = { key: string; art: () => JSX.Element; lead: string; rest: string; full: string }
+/** `n` is a SINGLE DIGIT here, not the third fold's 01-04 (Appy, 2026-09-10: "1, 2, 3, 4 on the
+ *  top right, very subtle"). The two-digit form existed to keep four inline leads aligned; in the
+ *  corner nothing follows it, so the leading zero is just an extra mark competing with the words. */
+export type Card = { key: string; n: string; art: () => JSX.Element; lead: string; rest: string; full: string }
 
 /**
  * `lead` is the third fold's box TITLE and `rest` is its BODY, unchanged. `full` is the pair as one
  * string for the card's aria-label: a screen reader should hear a sentence, not two fragments that
  * happen to be styled apart.
- * THE $30 CARRIES AN ASTERISK (Appy, 2026-09-10: "that can change"). It is on the figure itself and
- * FOOTNOTE below the row explains it. Every other surface still quotes $30 flat, so if the figure
- * ever does move, this note is the only place that has already said it might.
+ * THE $30 CARRIES AN ASTERISK (Appy, 2026-09-10: "that can change"), AND NOTHING NOW EXPLAINS IT.
+ * The footnote under the row was removed the same day ("we can just remove the line"); the mark was
+ * kept because it was asked for separately and "rest is fine". So this is a deliberate orphan: it
+ * reads as a soft qualifier on the figure without spending a line saying so. If it ever looks like
+ * an error rather than a hedge, the mark is what goes, not a note coming back.
  */
 export const CARDS: readonly Card[] = [
   {
     key: 'apply',
+    n: '1',
     art: MailArt,
     lead: 'Apply.',
     rest: 'Tell us about yourself and the PC it will run on.',
-    full: 'Apply. Tell us about yourself and the PC it will run on.',
+    full: 'Step 1. Apply. Tell us about yourself and the PC it will run on.',
   },
   {
     key: 'accepted',
+    n: '2',
     art: AcceptArt,
     lead: 'Get accepted.',
     rest: 'We review every application and email you when your worker is ready.',
-    full: 'Get accepted. We review every application and email you when your worker is ready.',
+    full: 'Step 2. Get accepted. We review every application and email you when your worker is ready.',
   },
   {
     key: 'deploy',
+    n: '3',
     art: InstallArt,
     lead: 'Deploy it.',
     rest: "Install BlueAI on your PC and sign in. That's the whole setup.",
-    full: "Deploy it. Install BlueAI on your PC and sign in. That's the whole setup.",
+    full: "Step 3. Deploy it. Install BlueAI on your PC and sign in. That's the whole setup.",
   },
   {
     key: 'collect',
+    n: '4',
     art: PaidArt,
     lead: 'Collect.',
     rest: 'You approve each campaign, your worker completes it, and you collect $30* every month via PayPal.',
-    full: 'Collect. You approve each campaign, your worker completes it, and you collect $30 every month via PayPal. The monthly amount can change.',
+    full: 'Step 4. Collect. You approve each campaign, your worker completes it, and you collect $30 every month via PayPal. The monthly amount can change.',
   },
 ]
