@@ -287,7 +287,10 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
   --wash-5: rgba(0, 0, 0, 0.16);
   --wash-hover: rgba(0, 0, 0, 0.045);
 
-  --tile-bg: rgba(18, 32, 64, 0.02);
+  /* these tiles overlap the illustration, so the fill has to veil it rather than
+     tint the card: near-opaque off-white, which lands about 2% under white once
+     composited and so keeps the same recess on the plain part of the card. */
+  --tile-bg: rgba(249, 250, 252, 0.88);
   --tile-bg-2: rgba(12, 18, 32, 0.028);
   /* the caption bubbles float over the diagram rather than sitting in a card,
      so they stay opaque white and lift off it */
