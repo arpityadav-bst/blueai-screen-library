@@ -11,7 +11,7 @@ import { Wordmark } from '@/components/Wordmark'
 export const metadata: Metadata = {
   title: 'BlueAI — Screen Library',
   description:
-    'Design-only handoff — the active BlueAI Terminal Modern prototype + its design system, and the dormant marketing pages kept on record.',
+    'Design-only handoff — the active BlueAI Terminal Modern prototype + its design system, the maintained product replicas, and the standalone experiments.',
 }
 
 const ACTIVE = [
@@ -35,16 +35,6 @@ const ACTIVE = [
     href: '/creator-brand/brands',
     name: 'Brand website',
     desc: 'The brand-side acquisition flow: post a job, outcome-based pricing, a live job-post form. On the blueai-modern marketing design system. (The partner side moved to its own site — see Partner website below.)',
-  },
-  {
-    // THE AGENTIC RE-CUT (Appy, 2026-09-01). Its own card rather than a line on the Brand website
-    // card, and the distinction is real: that card describes the marketing site, this is a
-    // signed-in tool with its own topbar, its own three stages and nine campaign types. It is the
-    // one surface here built to the 2026-08-25 agentic research rather than to the marketing DS's
-    // defaults, which is the thing being reviewed — so it needs to be findable on its own.
-    href: '/creator-brand/create-campaign',
-    name: 'Campaign builder',
-    desc: 'Nine campaign types across four outcomes — boost a post, distribute a video, get content made, Reddit threads, product research — each with its own questions, its own priced unit and its own report. Three stages: pick an outcome, understand the mechanism, set it up. Built to the agentic-web research rather than the marketing defaults: product state instead of illustration, a live work queue, one flat accent and no gradient, mono for every count. Files to the campaign dashboard.',
   },
   {
     // RENAMED + RE-POINTED 2026-08-19 (Appy): was "Creator Homepage — 'The AI You Own'" ->
@@ -107,6 +97,14 @@ const MAINTAINED = [
 // only so they can be navigated to; grouping them apart is the point.
 const EXPERIMENTS = [
   {
+    // THE onBlue LANDING (Appy, 2026-09-11). Built outside this repo at N:\Antigravity Main\
+    // onblue-landing and copied in, so the source of truth is there, not here. Linked at
+    // index.html for the same reason as the hero below: its assets are relative.
+    href: '/experiments/onblue-dark-v1/index.html',
+    name: 'onBlue Dark V1',
+    desc: 'The onBlue marketing landing on pure black: hero video under a particle hands layer, the digital/physical agent cards with per-agent illustration swapping, a wired dispatch diagram, FAQ, and an oversized footer wordmark. One static HTML file, inline CSS and a single IIFE, its own design language.',
+  },
+  {
     // Linked at index.html deliberately, NOT via an extensionless rewrite: this page
     // uses relative asset paths, and at /experiments/intelligence-hero the browser
     // would resolve them against /experiments/ and serve the page unstyled.
@@ -116,12 +114,6 @@ const EXPERIMENTS = [
   },
 ]
 
-const DORMANT = [
-  { href: '/seo', name: 'SEO Homepage', desc: 'Search-optimized marketing homepage — full sections + FAQ schema' },
-  { href: '/hero-options', name: 'Hero Options', desc: 'The three hero directions, compared side by side' },
-  { href: '/live-demo-v2', name: 'Live Demo Homepage', desc: 'The hire-a-worker funnel on the BlueAI design system — live widget, agent scenes, parallax, docking widget' },
-  { href: '/ai-video-creator-v2', name: 'AI Video Creator — Studio (v2)', desc: 'Creative-tool concept for the Video Creator landing — WebGL hero, GSAP format galleries, templates, models and a parallax example reel. On the blueAI design system.' },
-]
 
 /* COMPACT ROWS (Appy, 2026-09-09). Titles only. With descriptions each row ran about 90px, so
    roughly six fitted in a viewport and every group below Active needed scrolling to find. A row
@@ -182,8 +174,8 @@ export default function Home() {
           <h1 className="mt-3 font-head text-4xl font-semibold tracking-tight-3 text-ink-display">Screen Library</h1>
           <p className="mt-2 max-w-xl text-[15px] leading-relaxed text-ink-muted">
             Design-only handoff. Active work lives in the Terminal Modern prototype and the
-            Creator&nbsp;↔&nbsp;Brand site; below that, pages are maintained occasionally, run as
-            standalone experiments, or kept on record.
+            Creator&nbsp;↔&nbsp;Brand site; below that, pages are maintained occasionally or
+            run as standalone experiments.
           </p>
         </header>
 
@@ -200,11 +192,6 @@ export default function Home() {
         <p className="bai-section-label mb-2 mt-8 text-ink-muted">Experiments — outside every product surface</p>
         <div className="space-y-1.5">
           {EXPERIMENTS.map((p) => <Card key={p.href} p={p} />)}
-        </div>
-
-        <p className="bai-section-label mb-2 mt-8 text-ink-muted">Dormant — kept on record</p>
-        <div className="space-y-1.5 opacity-80">
-          {DORMANT.map((p) => <Card key={p.href} p={p} />)}
         </div>
 
         <footer className="mt-10 text-2xs text-ink-muted">An AI worker by now.gg, Inc. · design-only handoff replica</footer>

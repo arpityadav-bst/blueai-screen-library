@@ -54,3 +54,6 @@ design-source/blueai-uiux/
 # deliverable. Ignored (not just untracked) because a `git add -A visual-designer/` swept it into
 # a commit once — untracking alone wouldn't stop that happening again.
 visual-designer/audits/
+
+# onBlue Dark V1 image masters (42MB of PNG sources, not needed to serve the page)
+public/experiments/onblue-dark-v1/_src/
