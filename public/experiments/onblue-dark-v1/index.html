@@ -372,10 +372,10 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
      beats stacking, which would have the innermost element darkest and the
      nesting reading as depth rather than as structure. */
   --panel-bg: #fdfdfd;
-  /* the unearned bars, at the same 2% step as everything else. --wash-4 is not
-     the place for it: the rail's flow line shares that token and would go
-     invisible at this weight. */
-  --bar-bg: #fafbfb;
+  /* the unearned bars. deeper than the page's 2% step: they sit on a 1% panel
+     and have to read as data against the blue one, not as surface. --wash-4 is
+     not the place for it, the rail's flow line shares that token. */
+  --bar-bg: #f6f6f8;
   --card-shadow-hover: 0 2px 5px rgba(18, 32, 64, 0.05), 0 24px 46px -20px rgba(21, 110, 254, 0.2);
   /* a cast, not a glow: the button sits on the page rather than emitting. the
      colour is a deep desaturated version of the button's own blue, because a
