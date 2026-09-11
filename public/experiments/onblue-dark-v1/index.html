@@ -115,6 +115,8 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
   --skill-ink: #cfcfcf;
   --dim-ink: #8f8f8f;
   --green-ink: #a9f5dd;
+  --green-line: rgba(69, 237, 188, 0.38);
+  --green-fill: rgba(69, 237, 188, 0.13);
 
   --hair: rgba(255, 255, 255, 0.07);
   --hair-2: rgba(255, 255, 255, 0.12);
@@ -250,7 +252,7 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
   --border: rgba(0, 0, 0, 0.15);
   --border-soft: rgba(0, 0, 0, 0.1);
 
-  --green: #12a37f;
+
 
   /* white cards on a tinted band, the reverse of dark's charcoal-on-black.
      the one lifted section is the only place a card meets a fill, so the band
@@ -278,7 +280,14 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
   --mini-ink: #3c4049;
   --skill-ink: #42464e;
   --dim-ink: #767b85;
-  --green-ink: #0b7355;
+  /* mint is the dark theme's green: it glows against black and goes chalky on
+     white. light takes a grass green instead. the tick keeps the bright value,
+     the label takes a darker one, because 3.3:1 is fine for a 20px icon and not
+     for 13px type. */
+  --green: #16a34a;
+  --green-ink: #15803d;
+  --green-line: rgba(22, 163, 74, 0.32);
+  --green-fill: rgba(22, 163, 74, 0.1);
 
   --hair: rgba(0, 0, 0, 0.08);
   --hair-2: rgba(0, 0, 0, 0.13);
@@ -1776,9 +1785,9 @@ body.menu-open { overflow: hidden; }
   gap: 10px;
   margin-top: auto;
   padding: 11px 14px;
-  border: 1px solid rgba(69, 237, 188, 0.38);
+  border: 1px solid var(--green-line);
   border-radius: 10px;
-  background: rgba(69, 237, 188, 0.13);
+  background: var(--green-fill);
   color: var(--green-ink);
   font-size: 13px;
   font-weight: 500;
