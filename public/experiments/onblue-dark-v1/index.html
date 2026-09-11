@@ -199,7 +199,6 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
   --close-shadow: drop-shadow(0 0 14px var(--close-glow));
   --spark-shadow: drop-shadow(0 0 24px var(--spark-glow))
                   drop-shadow(0 0 66px var(--spark-glow-2));
-  --ca-spark: url(#ca-spark);
   --ca-foot: url(#ca-foot);
   --foot-shadow: drop-shadow(0 0 24px var(--spark-glow))
                  drop-shadow(0 0 66px var(--spark-glow-2));
@@ -383,11 +382,10 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
   --foot-shadow: drop-shadow(0 0 0.33em rgba(90, 195, 255, 0.14))
                  drop-shadow(0 0 0.73em rgba(90, 195, 255, 0.09));
   --beam-shadow: drop-shadow(0 0 8px rgba(21, 110, 254, 0.75));
-  --ca-spark: url(#ca-spark-mono);
-  --ca-foot: url(#ca-foot-mono);
-  --fringe-l: #000000;
-  --fringe-r: #ffffff;
-  --ca-opacity: 0.32;
+  --ca-foot: url(#ca-foot-soft);
+  --fringe-l: #f7a9ad;
+  --fringe-r: #a8e2ea;
+  --ca-opacity: 0.2;
 
   --blend-lift: multiply;
   --blend-hero: multiply;
@@ -403,24 +401,17 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
 /* The footer wordmark is near-black in light, and a channel filter on black
    returns black, so the two aberration copies would vanish. Painting them
    directly and letting multiply do the work gives the same split fringe. */
-/* a monochrome split instead of a chromatic one. black multiplies down into
-   the page, white has nothing to lighten on a white page and so reads only
-   where it crosses the dark letterforms, which is exactly where a highlight
-   fringe belongs. that is why the two sides need different blend modes. */
+/* the wordmark is near-black in light, and a channel filter on black returns
+   black, so these two are painted rather than filtered. the colours are pulled
+   well off full saturation: at full strength on white the fringe stops reading
+   as an edge artifact and starts reading as a coloured shadow. */
 :root[data-theme="light"] .fw--l { filter: none; color: var(--fringe-l); }
-:root[data-theme="light"] .fw--r {
-  filter: none;
-  color: var(--fringe-r);
-  mix-blend-mode: screen;
-}
+:root[data-theme="light"] .fw--r { filter: none; color: var(--fringe-r); }
 
-/* same split on the illustrations: brightness(0) flattens the art to a black
-   silhouette and invert lifts that to a white one, both keeping their alpha. */
-:root[data-theme="light"] .art-ca--l { filter: brightness(0); }
-:root[data-theme="light"] .art-ca--r {
-  filter: brightness(0) invert(1);
-  mix-blend-mode: screen;
-}
+/* the illustration split keeps its channel filters and is softened by opacity
+   and by a shorter travel instead. */
+:root[data-theme="light"] .eco-panel:hover .art-ca--l { transform: translateX(-2px); }
+:root[data-theme="light"] .eco-panel:hover .art-ca--r { transform: translateX(2px); }
 :root[data-theme="light"] .fw--l .logo-on,
 :root[data-theme="light"] .fw--r .logo-on { color: inherit; }
 
@@ -1809,7 +1800,7 @@ body.menu-open { overflow: hidden; }
   width: clamp(112px, 13vw, 172px);
   height: clamp(112px, 13vw, 172px);
   color: var(--spark-ink);
-  filter: var(--ca-spark) var(--spark-shadow);
+  filter: url(#ca-spark) var(--spark-shadow);
 }
 .demand-node svg {
   display: block;
@@ -2497,27 +2488,15 @@ body.menu-open { overflow: hidden; }
       <feColorMatrix in="fgo" type="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0" result="fgc"/>
       <feBlend in="frc" in2="fgc" mode="screen"/>
     </filter>
-    <filter id="ca-foot-mono" color-interpolation-filters="sRGB" x="-4%" y="-6%" width="108%" height="112%">
-      <feOffset in="SourceGraphic" dx="-1.1" result="fmlo"/>
-      <feColorMatrix in="fmlo" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="fmblack"/>
-      <feOffset in="SourceGraphic" dx="1.1" result="fmro"/>
-      <feColorMatrix in="fmro" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1 0" result="fmwhite"/>
-      <feMerge>
-        <feMergeNode in="fmblack"/>
-        <feMergeNode in="fmwhite"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
-    <filter id="ca-spark-mono" color-interpolation-filters="sRGB" x="-8%" y="-8%" width="116%" height="116%">
-      <feOffset class="ca-r" in="SourceGraphic" dx="-0.8" dy="0" result="smlo"/>
-      <feColorMatrix in="smlo" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="smblack"/>
-      <feOffset class="ca-g" in="SourceGraphic" dx="0.8" dy="0" result="smro"/>
-      <feColorMatrix in="smro" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1 0" result="smwhite"/>
-      <feMerge>
-        <feMergeNode in="smblack"/>
-        <feMergeNode in="smwhite"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
+    <!-- the same split as ca-foot at less than half the offset. white swallows a
+         wide fringe into something that reads as a gradient, so light needs the
+         effect at the scale of an edge artifact, not of a shadow. -->
+    <filter id="ca-foot-soft" color-interpolation-filters="sRGB" x="-4%" y="-6%" width="108%" height="112%">
+      <feOffset in="SourceGraphic" dx="-0.45" result="fsro"/>
+      <feColorMatrix in="fsro" type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="fsrc"/>
+      <feOffset in="SourceGraphic" dx="0.45" result="fsgo"/>
+      <feColorMatrix in="fsgo" type="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0" result="fsgc"/>
+      <feBlend in="fsrc" in2="fsgc" mode="screen"/>
     </filter>
     <filter id="ca-spark" color-interpolation-filters="sRGB" x="-8%" y="-8%" width="116%" height="116%">
       <feOffset id="ca-spark-r" class="ca-r" in="SourceGraphic" dx="-0.8" dy="0" result="sro"/>
@@ -3586,15 +3565,21 @@ body.menu-open { overflow: hidden; }
   (function sparkLens() {
     var host = document.getElementById('companies');
     var node = document.querySelector('.demand-node');
-    /* both the chromatic filter and its monochrome twin are in the document;
-       driving every offset in each means the lens keeps working across a theme
-       flip without having to know which one is currently mounted. */
+    /* selected by class rather than id: the split lives in one filter today but
+       was briefly two, and a lens that drives every offset it finds cannot go
+       quietly stale against the one that happens to be mounted. */
     var lead = document.querySelectorAll('#defs-ca .ca-r');
     var trail = document.querySelectorAll('#defs-ca .ca-g');
     if (!host || !node || !lead.length || !trail.length) { return; }
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { return; }
 
+    /* white gives the fringe nothing to hide in, so the same offsets that read
+       as an optical edge on black read as a coloured shadow here. */
+    var SOFT = 0.42;
     var REST = 0.35, PEAK = 2.1, FALLOFF = 430;
+    function scale() {
+      return document.documentElement.getAttribute('data-theme') === 'light' ? SOFT : 1;
+    }
     var mx = 0, my = 0, queued = false;
 
     function split(dx, dy) {
@@ -3617,6 +3602,7 @@ body.menu-open { overflow: hidden; }
       var d = Math.sqrt(ox * ox + oy * oy) || 1;
       var near = Math.max(0, 1 - d / FALLOFF);
       var amp = REST + PEAK * near * near;
+      amp *= scale();
       split((ox / d) * amp, (oy / d) * amp);
     }
 
