@@ -68,7 +68,7 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
   --nav-h: 40px;
   --btn: 13.5px;
   --btn-h: 34px;
-  --hero-btn-h: 36px;
+  --hero-btn-h: 44px;
   --h1: 48px;
   --lede: 15.5px;
   --badge: 11.5px;
@@ -80,7 +80,7 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
 
   --nav-pad: 18px;
   --btn-pad: 16px;
-  --hero-btn-pad: 18px;
+  --hero-btn-pad: 26px;
   --badge-pad: 5px 12px;
   --badge-star: 14px;
   --badge-mb: 22px;
@@ -171,6 +171,7 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
   --card-shadow-hover: inset 0 1px 0 var(--hair);
   /* hover on black emits light; hover on white casts one. same token, two
      entirely different physics. */
+  --solid-shadow: none;
   --solid-shadow-hover: 0 0 22px var(--solid-glow), 0 8px 18px var(--solid-glow-2);
   --hero-shadow-hover: 0 0 26px var(--hero-glow), 0 8px 18px var(--hero-glow-2);
   --core-glow: 0 0 16px rgba(21, 110, 254, 0.22);
@@ -178,6 +179,27 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
   /* the brand mark is neutral against black and blue against white: inverting
      it to near-black is the single loudest "this is a negative" tell. */
   --spark-ink: #ffffff;
+
+  /* the terminal window: body, chrome strip, and the two hairlines. dark reads
+     as a terminal from the monospace alone, so its chrome is invisible. */
+  --term-bar-bg: transparent;
+  --term-line: var(--border-soft);
+  --term-bar-line: var(--hair);
+  --skill-fill: var(--wash-1);
+  --badge-line: var(--border-soft);
+
+  /* whole shadow lists, not just their colours: on black a glow is tight and
+     bright because the ground swallows spread; on white the same radius reads
+     as a grey smudge, so light spends its light on width instead. */
+  --mark-shadow: drop-shadow(0 0 3px var(--mark-glow));
+  --star-shadow: drop-shadow(0 0 2px var(--star-glow));
+  --em-shadow: 0 0 18px var(--em-glow), 0 0 46px var(--em-glow-2);
+  --close-shadow: drop-shadow(0 0 14px var(--close-glow));
+  --spark-shadow: drop-shadow(0 0 24px var(--spark-glow))
+                  drop-shadow(0 0 66px var(--spark-glow-2));
+  --foot-shadow: drop-shadow(0 0 24px var(--spark-glow))
+                 drop-shadow(0 0 66px var(--spark-glow-2));
+  --beam-shadow: drop-shadow(0 0 5px var(--beam-glow));
   --fringe-l: none;
   --fringe-r: none;
 
@@ -216,14 +238,16 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
   --border: rgba(0, 0, 0, 0.15);
   --border-soft: rgba(0, 0, 0, 0.1);
 
-  --blue-ink: #1257c9;
   --green: #12a37f;
 
   /* white cards on a tinted band, the reverse of dark's charcoal-on-black.
      the one lifted section is the only place a card meets a fill, so the band
      has to carry the tint or the cards have nothing to sit on. */
   --charcoal: #ffffff;
-  --charcoal-2: #f2f4f8;
+  /* the hero badge sits over the video and the particle hands, so this one is
+     an opaque composite rather than a translucent fill that would let the
+     artwork read through it. one step lighter than the other surfaces. */
+  --charcoal-2: #fdfdfd;
   --charcoal-3: #e7eaf1;
   --band-lift: #f2f5f9;
   --band-grain: 0.045;
@@ -247,18 +271,18 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
   --link-underline: rgba(0, 0, 0, 0.32);
 
   --wash-1: rgba(12, 18, 32, 0.03);
-  --wash-2: rgba(12, 18, 32, 0.038);
+  --wash-2: rgba(18, 32, 64, 0.02);
   --wash-3: rgba(12, 18, 32, 0.045);
   --wash-4: rgba(0, 0, 0, 0.09);
   --wash-5: rgba(0, 0, 0, 0.16);
   --wash-hover: rgba(0, 0, 0, 0.045);
 
-  --tile-bg: rgba(12, 18, 32, 0.035);
+  --tile-bg: rgba(18, 32, 64, 0.02);
   --tile-bg-2: rgba(12, 18, 32, 0.028);
   /* the caption bubbles float over the diagram rather than sitting in a card,
      so they stay opaque white and lift off it */
   --bubble-bg: #ffffff;
-  --art-scrim: rgba(0, 0, 0, 0.035);
+  --art-scrim: #ffffff;
   --glass: rgba(255, 255, 255, 0.7);
   --glass-line: rgba(0, 0, 0, 0.08);
   --scrim: rgba(246, 247, 249, 0.72);
@@ -281,25 +305,69 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
   --star-glow: rgba(21, 110, 254, 0.3);
   --em-glow: rgba(21, 110, 254, 0.16);
   --em-glow-2: rgba(21, 110, 254, 0.07);
-  --caret-glow: rgba(21, 110, 254, 0.45);
+  --caret-glow: rgba(90, 195, 255, 0.55);
   --spark-glow: rgba(21, 110, 254, 0.3);
   --spark-glow-2: rgba(21, 110, 254, 0.16);
   --close-glow: rgba(21, 110, 254, 0.3);
-  --beam-glow: rgba(21, 110, 254, 0.7);
+  --beam-glow: rgba(90, 195, 255, 0.8);
 
   --card-line-hover: rgba(0, 0, 0, 0.2);
   --sheen-a: rgba(21, 110, 254, 0.55);
   --sheen-b: rgba(21, 110, 254, 0.16);
   --faq-line-open: rgba(0, 0, 0, 0.24);
 
-  --card-shadow: 0 1px 2px rgba(12, 18, 32, 0.04), 0 8px 20px -10px rgba(12, 18, 32, 0.1);
-  --card-shadow-hover: 0 2px 4px rgba(12, 18, 32, 0.06), 0 16px 32px -12px rgba(12, 18, 32, 0.16);
-  --solid-shadow-hover: 0 2px 5px -2px rgba(11, 11, 13, 0.22), 0 10px 20px -8px rgba(11, 11, 13, 0.3);
-  --hero-shadow-hover: 0 3px 7px -2px rgba(11, 11, 13, 0.24), 0 14px 28px -10px rgba(11, 11, 13, 0.34);
+  --card-shadow: 0 1px 2px rgba(18, 32, 64, 0.035), 0 14px 32px -16px rgba(18, 32, 64, 0.1);
+  --card-shadow-hover: 0 2px 5px rgba(18, 32, 64, 0.05), 0 24px 46px -20px rgba(21, 110, 254, 0.2);
+  /* neutral black, no tint, three stops of penumbra so the cast is diffuse
+     rather than drawn. hover keeps every colour and only tightens the radii,
+     so the button settles toward the surface instead of changing character. */
+  --solid-shadow: 0 1px 2px rgba(0, 0, 0, 0.07),
+                  0 3px 7px -2px rgba(0, 0, 0, 0.1),
+                  0 8px 17px -8px rgba(0, 0, 0, 0.16);
+  --solid-shadow-hover: 0 1px 2px rgba(0, 0, 0, 0.07),
+                        0 2px 4px -1px rgba(0, 0, 0, 0.09),
+                        0 4px 8px -5px rgba(0, 0, 0, 0.14);
+  --hero-shadow-hover: 0 1px 2px rgba(0, 0, 0, 0.07),
+                        0 2px 5px -1px rgba(0, 0, 0, 0.09),
+                        0 5px 10px -6px rgba(0, 0, 0, 0.14);
   /* a 16px halo on white is a smudge; the ring reads as the same pulse */
   --core-glow: 0 0 0 4px rgba(21, 110, 254, 0.08);
   --core-glow-lit: 0 0 0 9px rgba(21, 110, 254, 0.12);
   --spark-ink: var(--blue);
+  /* the accent is the brand blue itself, not a darkened version of it: #156efe
+     clears 4.5:1 on white, so there was never a reason to dim it. */
+  --blue-ink: var(--blue);
+
+  /* paper content under a chrome strip stepped down from it. kept as an
+     overlay rather than a flat hex so the bar tracks the window body instead of
+     drifting if that surface moves. */
+  --term-bar-bg: rgba(18, 32, 64, 0.02);
+  --term-line: #d5d9e2;
+  --term-bar-line: #d5d9e2;
+  /* the skill tiles sit at the same 2% step as the terminal chrome */
+  --skill-fill: rgba(18, 32, 64, 0.02);
+  --badge-line: rgba(0, 0, 0, 0.04);
+
+  /* one glow, sized to each element. 0.33x and 0.73x of the element's own
+     dimension, which is the ratio the hero words settled at, with the colour
+     and both alphas held constant: same material, different sized object. */
+  --mark-shadow: drop-shadow(0 0 9px rgba(90, 195, 255, 0.14))
+                 drop-shadow(0 0 20px rgba(90, 195, 255, 0.09));
+  --star-shadow: drop-shadow(0 0 5px rgba(90, 195, 255, 0.14))
+                 drop-shadow(0 0 10px rgba(90, 195, 255, 0.09));
+  /* text-shadow layers each draw from the original glyphs rather than from
+     each other, so these do not compound the way a stacked drop-shadow does. */
+  --em-shadow: 0 0 20px rgba(90, 195, 255, 0.14),
+               0 0 44px rgba(90, 195, 255, 0.09);
+  --close-shadow: drop-shadow(0 0 15px rgba(90, 195, 255, 0.14))
+                  drop-shadow(0 0 32px rgba(90, 195, 255, 0.09));
+  --spark-shadow: drop-shadow(0 0 48px rgba(90, 195, 255, 0.14))
+                  drop-shadow(0 0 105px rgba(90, 195, 255, 0.09));
+  /* the footer spark is sized in em off a clamped 84-300px wordmark, so its
+     glow is em too and tracks the type instead of going slack at one end. */
+  --foot-shadow: drop-shadow(0 0 0.33em rgba(90, 195, 255, 0.14))
+                 drop-shadow(0 0 0.73em rgba(90, 195, 255, 0.09));
+  --beam-shadow: drop-shadow(0 0 8px rgba(21, 110, 254, 0.75));
   --fringe-l: #f4757c;
   --fringe-r: #6fd3de;
 
@@ -321,6 +389,14 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
 :root[data-theme="light"] .fw--r { filter: none; color: var(--fringe-r); }
 :root[data-theme="light"] .fw--l .logo-on,
 :root[data-theme="light"] .fw--r .logo-on { color: inherit; }
+
+/* the partnered-agent terminals take the macOS traffic lights in light: on
+   white the three controls are the thing that says "terminal", where on black
+   the monospace and the scrolling log already said it. dark keeps its grey
+   dots. */
+:root[data-theme="light"] .term-bar i:nth-child(1) { background: #ff5f57; }
+:root[data-theme="light"] .term-bar i:nth-child(2) { background: #febc2e; }
+:root[data-theme="light"] .term-bar i:nth-child(3) { background: #28c840; }
 
 
 html { scroll-behavior: smooth; }
@@ -556,7 +632,7 @@ body.menu-open .header {
   position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 9px;
+  gap: 5px;
   justify-self: start;
   font-size: var(--logo);
   font-weight: 600;
@@ -568,7 +644,7 @@ body.menu-open .header {
   width: var(--logo-mark);
   height: var(--logo-mark);
   flex: none;
-  filter: drop-shadow(0 0 3px var(--mark-glow));
+  filter: var(--mark-shadow);
 }
 .logo-on { color: var(--blue-ink); }
 
@@ -609,11 +685,12 @@ body.menu-open .header {
   position: relative;
   display: grid;
   place-items: center;
-  width: 30px;
-  height: 30px;
+  /* the same box as the CTA beside it, so the two read as one control pair */
+  width: var(--btn-h);
+  height: var(--btn-h);
   padding: 0;
   border: 0;
-  border-radius: 8px;
+  border-radius: 6px;
   background: none;
   color: var(--muted);
   cursor: pointer;
@@ -657,6 +734,7 @@ body.menu-open .header {
   background: var(--solid-bg);
   color: var(--solid-ink);
   border: 1px solid var(--solid-bg);
+  box-shadow: var(--solid-shadow);
 }
 .btn-solid:hover {
   background: var(--solid-bg-hover);
@@ -676,7 +754,11 @@ body.menu-open .header {
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 0 20px rgba(170, 200, 255, 0.22);
 }
 
-.hero-actions .btn, .band-actions .btn { height: var(--hero-btn-h); padding: 0 var(--hero-btn-pad); }
+.hero-actions .btn, .band-actions .btn {
+  height: var(--hero-btn-h);
+  padding: 0 var(--hero-btn-pad);
+  font-size: calc(var(--btn) + 1.5px);
+}
 .band-actions .btn svg { margin-left: 9px; }
 
 .hero-solid:hover {
@@ -751,7 +833,7 @@ body.menu-open .burger span:nth-child(3) { transform: translateY(-6.5px) rotate(
   gap: 7px;
   margin-bottom: var(--badge-mb);
   padding: var(--badge-pad);
-  border: 1px solid var(--border-soft);
+  border: 1px solid var(--badge-line);
   border-radius: 999px;
   background: var(--charcoal-2);
   color: var(--ink-soft);
@@ -764,7 +846,7 @@ body.menu-open .burger span:nth-child(3) { transform: translateY(-6.5px) rotate(
   flex: none;
   width: var(--badge-star);
   height: var(--badge-star);
-  filter: drop-shadow(0 0 2px var(--star-glow));
+  filter: var(--star-shadow);
 }
 
 .hero h1 {
@@ -816,7 +898,7 @@ body.menu-open .burger span:nth-child(3) { transform: translateY(-6.5px) rotate(
   font-size: 1.08em;
   letter-spacing: -0.03em;
   color: var(--blue-ink);
-  text-shadow: 0 0 18px var(--em-glow), 0 0 46px var(--em-glow-2);
+  text-shadow: var(--em-shadow);
   animation: in-em 1.2s var(--ease) 0.72s both;
 }
 
@@ -858,7 +940,9 @@ body.menu-open .burger span:nth-child(3) { transform: translateY(-6.5px) rotate(
 }
 
 .hero-alt {
-  margin-top: 64px;
+  /* the same token that sets the gap above the button, so the CTA always sits
+     centred between the lede and this line rather than at two tuned values */
+  margin-top: var(--actions-mt);
   color: var(--muted);
   font-size: 13.5px;
   letter-spacing: -0.01em;
@@ -1297,7 +1381,7 @@ body.menu-open { overflow: hidden; }
 }
 .agent-art {
   margin: 26px 0;
-  border: 1px solid var(--border-soft);
+  border: 1px solid var(--term-line);
   border-radius: 10px;
   background: var(--art-scrim);
   overflow: hidden;
@@ -1308,7 +1392,8 @@ body.menu-open { overflow: hidden; }
   align-items: center;
   gap: 5px;
   padding: 9px 12px;
-  border-bottom: 1px solid var(--hair);
+  background: var(--term-bar-bg);
+  border-bottom: 1px solid var(--term-bar-line);
 }
 .term-bar i {
   width: 7px;
@@ -1359,7 +1444,7 @@ body.menu-open { overflow: hidden; }
   padding: 13px 6px 11px;
   border: 1px solid var(--border-soft);
   border-radius: 10px;
-  background: var(--wash-1);
+  background: var(--skill-fill);
   color: var(--skill-ink);
   font-size: 12px;
   letter-spacing: -0.005em;
@@ -1664,7 +1749,7 @@ body.menu-open { overflow: hidden; }
   stroke-linecap: round;
   vector-effect: non-scaling-stroke;
   stroke-dasharray: 6 94;
-  filter: drop-shadow(0 0 5px var(--beam-glow));
+  filter: var(--beam-shadow);
   animation: beam-run 3.2s linear infinite;
   animation-delay: var(--t);
 }
@@ -1685,9 +1770,7 @@ body.menu-open { overflow: hidden; }
   width: clamp(112px, 13vw, 172px);
   height: clamp(112px, 13vw, 172px);
   color: var(--spark-ink);
-  filter: url(#ca-spark)
-          drop-shadow(0 0 24px var(--spark-glow))
-          drop-shadow(0 0 66px var(--spark-glow-2));
+  filter: url(#ca-spark) var(--spark-shadow);
 }
 .demand-node svg {
   display: block;
@@ -1798,7 +1881,7 @@ body.menu-open { overflow: hidden; }
   width: 44px;
   height: 44px;
   margin: 0 auto 24px;
-  filter: drop-shadow(0 0 14px var(--close-glow));
+  filter: var(--close-shadow);
 }
 .close-mark svg { display: block; width: 100%; height: 100%; }
 .band h2.close-title {
@@ -1808,7 +1891,7 @@ body.menu-open { overflow: hidden; }
   letter-spacing: -0.045em;
 }
 .close-title em {
-  text-shadow: 0 0 18px var(--em-glow), 0 0 46px var(--em-glow-2);
+  text-shadow: var(--em-shadow);
 }
 .close-alt {
   margin-top: 34px;
@@ -1975,8 +2058,7 @@ body.menu-open { overflow: hidden; }
   height: 1.05em;
   margin-left: -0.525em;
   /* glow only, on the outer box, so it is free to spread past the edges */
-  filter: drop-shadow(0 0 24px var(--spark-glow))
-          drop-shadow(0 0 66px var(--spark-glow-2));
+  filter: var(--foot-shadow);
 }
 
 /* the fade and the split live on an inner box. sharing an element with the glow
@@ -2073,7 +2155,7 @@ body.menu-open { overflow: hidden; }
     --nav-h: 44px;
     --btn: 15px;
     --btn-h: 38px;
-    --hero-btn-h: 40px;
+    --hero-btn-h: 48px;
     --h1: 64px;
     --lede: 18px;
     --badge: 12.5px;
@@ -2099,7 +2181,7 @@ body.menu-open { overflow: hidden; }
     --nav-h: 48px;
     --btn: 16px;
     --btn-h: 40px;
-    --hero-btn-h: 44px;
+    --hero-btn-h: 52px;
     --h1: 76px;
     --lede: 20px;
     --badge: 13.5px;
@@ -2110,7 +2192,7 @@ body.menu-open { overflow: hidden; }
     --lede-max: 620px;
     --nav-pad: 22px;
     --btn-pad: 22px;
-    --hero-btn-pad: 22px;
+    --hero-btn-pad: 30px;
     --badge-pad: 6px 13px;
     --band-max: 1340px;
   }
@@ -2135,7 +2217,7 @@ body.menu-open { overflow: hidden; }
     --nav-h: 36px;
     --btn: 13px;
     --btn-h: 32px;
-    --hero-btn-h: 34px;
+    --hero-btn-h: 42px;
     --h1: 42px;
     --lede: 15px;
     --badge: 11px;
@@ -2174,7 +2256,7 @@ body.menu-open { overflow: hidden; }
     --hero-gap: 32px;
     --nav-h: 30px;
     --btn-h: 30px;
-    --hero-btn-h: 32px;
+    --hero-btn-h: 40px;
     --badge-mb: 8px;
   }
 }
@@ -2208,7 +2290,7 @@ body.menu-open { overflow: hidden; }
     --logo: 20px;
     --btn: 15px;
     --btn-h: 44px;
-    --hero-btn-h: 46px;
+    --hero-btn-h: 52px;
     --h1: 36px;
     --lede: 16.5px;
     --badge: 12px;
@@ -2430,7 +2512,7 @@ body.menu-open { overflow: hidden; }
           <path d="M12 2.4v2.2M12 19.4v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.4 12h2.2M19.4 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/>
         </svg>
       </button>
-      <a class="btn btn-solid header-cta appear appear--fade" href="#start" style="--d:0.06s">Get access</a>
+      <a class="btn btn-solid header-cta appear appear--fade" href="#start" style="--d:0.06s">Start earning</a>
     </div>
 
     <button class="burger appear appear--fade" type="button"
@@ -2462,7 +2544,7 @@ body.menu-open { overflow: hidden; }
       <p class="lede appear appear--soft" style="--d:0.80s">Individuals can own an agent, customize it, <br class="lede-br">and earn from the work it does.</p>
 
       <div class="hero-actions">
-        <a class="btn btn-solid hero-solid appear appear--btn" href="#start" style="--d:0.88s"><span class="scramble">Get access</span></a>
+        <a class="btn btn-solid hero-solid appear appear--btn" href="#start" style="--d:0.88s"><span class="scramble">Start earning</span></a>
       </div>
 
       <p class="hero-alt appear appear--soft" style="--d:0.94s">Already part of onBlue? <a href="#start">Sign in</a></p>
@@ -3019,7 +3101,7 @@ body.menu-open { overflow: hidden; }
         <h2 class="close-title">You could be<br><em>one of them.</em></h2>
         <p class="band-sub">Take your place in the onBlue economy.</p>
         <div class="band-actions" id="start">
-          <a class="btn btn-solid hero-solid" href="#get-access">Get access <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.4 17.6 17.6 6.4"/><path d="M9.4 6.4h8.2v8.2"/></svg></a>
+          <a class="btn btn-solid hero-solid" href="#get-access">Start earning <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.4 17.6 17.6 6.4"/><path d="M9.4 6.4h8.2v8.2"/></svg></a>
         </div>
         <p class="close-alt">Already have an account? <a href="#get-access">Sign in</a></p>
       </div>
@@ -3051,7 +3133,7 @@ body.menu-open { overflow: hidden; }
 
         <nav class="foot-col" aria-label="Get started">
           <h3>Your next chapter</h3>
-          <a href="#get-access">Get access <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.4 17.6 17.6 6.4"/><path d="M9.4 6.4h8.2v8.2"/></svg></a>
+          <a href="#get-access">Start earning <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.4 17.6 17.6 6.4"/><path d="M9.4 6.4h8.2v8.2"/></svg></a>
           <a href="#get-access">Sign in</a>
         </nav>
 
