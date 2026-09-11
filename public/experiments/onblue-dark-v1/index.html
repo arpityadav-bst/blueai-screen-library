@@ -174,6 +174,7 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
   --card-shadow: none;
   --faq-shadow: none;
   --faq-line: var(--border-soft);
+  --panel-bg: var(--wash-1);
   --card-shadow-hover: inset 0 1px 0 var(--hair);
   /* hover on black emits light; hover on white casts one. same token, two
      entirely different physics. */
@@ -285,7 +286,7 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
   --link-underline: rgba(0, 0, 0, 0.32);
   --link-hover: var(--blue-ink);
 
-  --wash-1: rgba(12, 18, 32, 0.03);
+  --wash-1: #ffffff;
   --wash-2: rgba(18, 32, 64, 0.02);
   /* .rail-node only, and the illustration overlaps it, so it takes the same
      opaque 2% step as the tiles rather than a translucent wash. */
@@ -351,6 +352,11 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
      border weight the list reads as a grid. half of it, with the open state
      coming down to match so opening is still a step. */
   --faq-line: rgba(0, 0, 0, 0.05);
+  /* How it works nests three deep: the step card is white, the panel inside it
+     steps down 1%, and the rows inside that come back to white. alternating
+     beats stacking, which would have the innermost element darkest and the
+     nesting reading as depth rather than as structure. */
+  --panel-bg: #fdfdfd;
   --card-shadow-hover: 0 2px 5px rgba(18, 32, 64, 0.05), 0 24px 46px -20px rgba(21, 110, 254, 0.2);
   /* a cast, not a glow: the button sits on the page rather than emitting. the
      colour is a deep desaturated version of the button's own blue, because a
@@ -1587,7 +1593,7 @@ body.menu-open { overflow: hidden; }
   padding: 20px 18px;
   border: 1px solid var(--border-soft);
   border-radius: 12px;
-  background: var(--wash-1);
+  background: var(--panel-bg);
   flex: 1;
 }
 
