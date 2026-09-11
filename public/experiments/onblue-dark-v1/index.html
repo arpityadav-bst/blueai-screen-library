@@ -95,6 +95,7 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
   --charcoal-2: #1f1f1f;
   --charcoal-3: #2a2a2a;
   --band-lift: #0a0a0a;
+  --band-tint: transparent;
   --band-grain: 0.08;
   --grain-hero: 0.035;
   --card-bg: var(--charcoal);
@@ -257,6 +258,9 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
   --charcoal-2: #fdfdfd;
   --charcoal-3: #e7eaf1;
   --band-lift: #f2f5f9;
+  /* the economy band sits a step off the white hero so the page reads as
+     alternating rather than as one continuous sheet. */
+  --band-tint: #f8f8f9;
   --band-grain: 0.045;
   --grain-hero: 0.022;
   --hero-hands: 0.5;
@@ -1047,6 +1051,7 @@ body.menu-open { overflow: hidden; }
 .band + .band { border-top: 1px solid var(--hair); }
 
 /* one step off pure black, just enough to separate this band from the one above */
+#benefits { background: var(--band-tint); }
 #agents { background: var(--band-lift); }
 
 /* the closing statement runs straight on from the FAQs, no rule between */
