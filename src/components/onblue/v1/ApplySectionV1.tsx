@@ -13,7 +13,7 @@ export default function ApplySectionV1() {
         {/* The PM's canonical headline (2026-08-20, after the Aug 18 CEO review) — in v1 it lives
             HERE; in Version A it moved to the programs home. Both are true in their own variant. */}
         <h1>
-          Get your worker <span className="grad">hired.</span>
+          Get your agent <span className="grad">hired.</span>
         </h1>
         <p className="sub">One short application. We review every one and email you when your access is approved.</p>
 

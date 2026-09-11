@@ -36,7 +36,7 @@ export default function ApplySection({ onBack, programTitle }: { onBack?: () => 
             ← Back to {variant === 'offers' ? 'offers' : 'programs'}
           </button>
         )}
-        {/* THE HEADLINE NAMES THE PROGRAM (Abhisht, 2026-08-24) — "Get your worker hired." moved
+        {/* THE HEADLINE NAMES THE PROGRAM (Abhisht, 2026-08-24) — "Get your agent hired." moved
             to the programs home, and this page's job is confirming WHAT you just chose: the card
             said the name, the click said apply, this h1 closes the loop. PLAIN, NO GRADIENT, on
             purpose (same review): the site's grad goes on chosen words on pitch screens; this is

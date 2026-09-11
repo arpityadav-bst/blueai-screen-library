@@ -35,7 +35,7 @@ export const metadata: Metadata = {
        The PM's 2026-09-11 copy pass renamed the hero to BlueAI and the rest of the fork was
        still saying onBlue in 21 places, which is what forced the rule to be written down. If a
        new line is about something a reader DOES with the software, it says BlueAI. */
-    'BlueAI is an AI worker you own. It finds real work, completes it, and pays you.',
+    'BlueAI is an AI agent you own. It finds real work, completes it, and pays you.',
 }
 
 export default function CreatorsLayout({ children }: { children: React.ReactNode }) {
