@@ -406,21 +406,19 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
   --skill-fill: rgba(18, 32, 64, 0.02);
   --badge-line: rgba(0, 0, 0, 0.04);
 
-  /* one glow, sized to each element. 0.33x and 0.73x of the element's own
-     dimension, which is the ratio the hero words settled at, with the colour
-     and both alphas held constant: same material, different sized object. */
-  --mark-shadow: drop-shadow(0 0 9px rgba(90, 195, 255, 0.14))
-                 drop-shadow(0 0 20px rgba(90, 195, 255, 0.09));
-  --star-shadow: drop-shadow(0 0 5px rgba(90, 195, 255, 0.14))
-                 drop-shadow(0 0 10px rgba(90, 195, 255, 0.09));
+  /* one glow sized to each element, at 0.45x of its own dimension.
+     SINGLE pass, unlike dark. two stacked passes each carry their own falloff
+     edge and on white the eye finds where the inner one ends, as a ring; and a
+     low alpha spread over a long radius has too few 8-bit steps to cover the
+     distance, so the gradient bands into circles. one shorter, stronger pass
+     fixes both: 46 steps over 63px is 1.4px a band instead of 4.6px. */
+  --mark-shadow: drop-shadow(0 0 12px rgba(90, 195, 255, 0.18));
+  --star-shadow: drop-shadow(0 0 6px rgba(90, 195, 255, 0.18));
   /* text-shadow layers each draw from the original glyphs rather than from
      each other, so these do not compound the way a stacked drop-shadow does. */
-  --em-shadow: 0 0 20px rgba(90, 195, 255, 0.14),
-               0 0 44px rgba(90, 195, 255, 0.09);
-  --close-shadow: drop-shadow(0 0 15px rgba(90, 195, 255, 0.14))
-                  drop-shadow(0 0 32px rgba(90, 195, 255, 0.09));
-  --spark-shadow: drop-shadow(0 0 48px rgba(90, 195, 255, 0.14))
-                  drop-shadow(0 0 105px rgba(90, 195, 255, 0.09));
+  --em-shadow: 0 0 26px rgba(90, 195, 255, 0.18);
+  --close-shadow: drop-shadow(0 0 19px rgba(90, 195, 255, 0.18));
+  --spark-shadow: drop-shadow(0 0 63px rgba(90, 195, 255, 0.18));
   /* the footer spark is sized in em off a clamped 84-300px wordmark, so its
      glow is em too and tracks the type instead of going slack at one end. */
   /* solid through the top half, then a long fall to nothing. fading from the
