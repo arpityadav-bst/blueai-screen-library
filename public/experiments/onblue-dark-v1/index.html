@@ -282,7 +282,9 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
 
   --wash-1: rgba(12, 18, 32, 0.03);
   --wash-2: rgba(18, 32, 64, 0.02);
-  --wash-3: rgba(12, 18, 32, 0.045);
+  /* .rail-node only, and the illustration overlaps it, so it takes the same
+     opaque 2% step as the tiles rather than a translucent wash. */
+  --wash-3: #fafbfb;
   --wash-4: rgba(0, 0, 0, 0.09);
   --wash-5: rgba(0, 0, 0, 0.16);
   --wash-hover: rgba(0, 0, 0, 0.045);
