@@ -212,7 +212,7 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
   --blend-hero: overlay;
   --ascii-a: 255, 255, 255;
   --ascii-b: 135, 185, 195;
-  --hands-invert: invert(1);
+  --hands-filter: invert(1);
   --hands-ca: 1;
   --art-base-filter: grayscale(1) brightness(0.94) contrast(1.06);
 
@@ -230,7 +230,7 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
       copies) blends with `screen`, which is a no-op on white. --blend-lift
       turns them all into `multiply`, which darkens instead.
    2. the hands art is natively dark particles on a pale ground. Dark inverts
-      it; light uses it as shot, so --hands-invert goes to none. Its aberration
+      it; light uses it as shot, so --hands-filter only lifts contrast. Its aberration
       pass has no pale ground left to tint, so --hands-ca parks it.
    3. --blue-ink and --green are tuned for black. At 4.5:1 on white they fail,
       so both step down a few stops. --blue (the brand fill) does not move.
@@ -257,7 +257,7 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
   --band-lift: #f2f5f9;
   --band-grain: 0.045;
   --grain-hero: 0.022;
-  --hero-hands: 0.5;
+  --hero-hands: 0.95;
 
   --ink: #0b0b0d;
   --ink-soft: #16171b;
@@ -393,7 +393,11 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
   --blend-hero: multiply;
   --ascii-a: 18, 20, 26;
   --ascii-b: 21, 110, 254;
-  --hands-invert: none;
+  /* the art's ground sits at 246 and covers 93% of the frame. contrast pivots
+     at mid grey, so 1.45 pushes that ground past pure white, where multiply is
+     a no-op: the rectangle cannot tint the page however far opacity goes, and
+     only the particles darken. */
+  --hands-filter: contrast(1.45);
   --hands-ca: 0;
   /* the illustrations are mid-tone art on transparent, so white needs no
      inversion: drop the brightness knock-back and let contrast carry them. */
@@ -560,7 +564,7 @@ button { font-family: inherit; }
   position: absolute;
   inset: 0;
   background: url("hero-hands.webp") center / cover no-repeat;
-  filter: var(--hands-invert);
+  filter: var(--hands-filter);
   transform: translate(-4%, -21%) rotate(17deg);
   animation: hands-drift 19s ease-in-out infinite;
 }
@@ -569,7 +573,7 @@ button { font-family: inherit; }
   position: absolute;
   inset: 0;
   background: url("hero-hands.webp") center / cover no-repeat;
-  filter: var(--hands-invert) url(#ca-hands);
+  filter: var(--hands-filter) url(#ca-hands);
   opacity: var(--hands-ca);
   transform: translate(-4%, -21%) rotate(17deg);
   animation: hands-drift 19s ease-in-out infinite;
