@@ -414,15 +414,13 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
                   drop-shadow(0 0 105px rgba(90, 195, 255, 0.09));
   /* the footer spark is sized in em off a clamped 84-300px wordmark, so its
      glow is em too and tracks the type instead of going slack at one end. */
-  /* the fade starts at the very top and runs the whole height, so the spark
-     reads as light rising out of the wordmark rather than as a blue shape with
-     its bottom cut off. */
-  --foot-fade: linear-gradient(180deg, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.45) 40%,
-               rgba(0, 0, 0, 0.16) 68%, transparent 92%);
-  /* and the glow carries colour rather than light, since there is no darkness
-     here for a pale halo to register against. */
-  --foot-shadow: drop-shadow(0 0 0.2em rgba(21, 110, 254, 0.22))
-                 drop-shadow(0 0 0.55em rgba(21, 110, 254, 0.13));
+  /* solid through the top half, then a long fall to nothing. fading from the
+     very top made the whole spark translucent instead of dissolving its base. */
+  --foot-fade: linear-gradient(180deg, #000 0%, #000 38%,
+               rgba(0, 0, 0, 0.34) 66%, transparent 92%);
+  /* one pass, not two. each drop-shadow has its own falloff edge, and on white
+     at low alpha you see where the inner one ends, as a ring around the spark. */
+  --foot-shadow: drop-shadow(0 0 0.3em rgba(21, 110, 254, 0.16));
   --beam-shadow: drop-shadow(0 0 8px rgba(21, 110, 254, 0.75));
   --ca-spark: url(#ca-spark-soft);
   --ca-foot: url(#ca-foot-soft);
