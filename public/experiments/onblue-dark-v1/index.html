@@ -199,6 +199,7 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
   --close-shadow: drop-shadow(0 0 14px var(--close-glow));
   --spark-shadow: drop-shadow(0 0 24px var(--spark-glow))
                   drop-shadow(0 0 66px var(--spark-glow-2));
+  --ca-spark: url(#ca-spark);
   --ca-foot: url(#ca-foot);
   --foot-shadow: drop-shadow(0 0 24px var(--spark-glow))
                  drop-shadow(0 0 66px var(--spark-glow-2));
@@ -382,6 +383,7 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
   --foot-shadow: drop-shadow(0 0 0.33em rgba(90, 195, 255, 0.14))
                  drop-shadow(0 0 0.73em rgba(90, 195, 255, 0.09));
   --beam-shadow: drop-shadow(0 0 8px rgba(21, 110, 254, 0.75));
+  --ca-spark: url(#ca-spark-soft);
   --ca-foot: url(#ca-foot-soft);
   --fringe-l: #f7a9ad;
   --fringe-r: #a8e2ea;
@@ -1800,7 +1802,7 @@ body.menu-open { overflow: hidden; }
   width: clamp(112px, 13vw, 172px);
   height: clamp(112px, 13vw, 172px);
   color: var(--spark-ink);
-  filter: url(#ca-spark) var(--spark-shadow);
+  filter: var(--ca-spark) var(--spark-shadow);
 }
 .demand-node svg {
   display: block;
@@ -2488,15 +2490,37 @@ body.menu-open { overflow: hidden; }
       <feColorMatrix in="fgo" type="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0" result="fgc"/>
       <feBlend in="frc" in2="fgc" mode="screen"/>
     </filter>
-    <!-- the same split as ca-foot at less than half the offset. white swallows a
-         wide fringe into something that reads as a gradient, so light needs the
-         effect at the scale of an edge artifact, not of a shadow. -->
-    <filter id="ca-foot-soft" color-interpolation-filters="sRGB" x="-4%" y="-6%" width="108%" height="112%">
-      <feOffset in="SourceGraphic" dx="-0.45" result="fsro"/>
-      <feColorMatrix in="fsro" type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="fsrc"/>
-      <feOffset in="SourceGraphic" dx="0.45" result="fsgo"/>
-      <feColorMatrix in="fsgo" type="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0" result="fsgc"/>
-      <feBlend in="fsrc" in2="fsgc" mode="screen"/>
+    <!-- Light's sparks are blue, and a channel split of blue has no red in it to
+         give: the red side renders near-black and the whole thing reads as a
+         shadow. These paint the fringe rather than deriving it. SourceAlpha is
+         the silhouette, feFlood is an infinite plane of colour, and compositing
+         one "in" the other clips the colour to the offset shape. Merged under
+         the untouched source, only the slivers show. -->
+    <filter id="ca-foot-soft" color-interpolation-filters="sRGB" x="-5%" y="-6%" width="110%" height="112%">
+      <feOffset in="SourceAlpha" dx="-0.55" result="fsl"/>
+      <feFlood flood-color="#ff4d4d" flood-opacity="0.5" result="fslc"/>
+      <feComposite in="fslc" in2="fsl" operator="in" result="fslf"/>
+      <feOffset in="SourceAlpha" dx="0.55" result="fsr"/>
+      <feFlood flood-color="#2ad4e6" flood-opacity="0.5" result="fsrc"/>
+      <feComposite in="fsrc" in2="fsr" operator="in" result="fsrf"/>
+      <feMerge>
+        <feMergeNode in="fslf"/>
+        <feMergeNode in="fsrf"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="ca-spark-soft" color-interpolation-filters="sRGB" x="-10%" y="-10%" width="120%" height="120%">
+      <feOffset class="ca-r" in="SourceAlpha" dx="-0.8" dy="0" result="ssl"/>
+      <feFlood flood-color="#ff4d4d" flood-opacity="0.55" result="sslc"/>
+      <feComposite in="sslc" in2="ssl" operator="in" result="sslf"/>
+      <feOffset class="ca-g" in="SourceAlpha" dx="0.8" dy="0" result="ssr"/>
+      <feFlood flood-color="#2ad4e6" flood-opacity="0.55" result="ssrc"/>
+      <feComposite in="ssrc" in2="ssr" operator="in" result="ssrf"/>
+      <feMerge>
+        <feMergeNode in="sslf"/>
+        <feMergeNode in="ssrf"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
     </filter>
     <filter id="ca-spark" color-interpolation-filters="sRGB" x="-8%" y="-8%" width="116%" height="116%">
       <feOffset id="ca-spark-r" class="ca-r" in="SourceGraphic" dx="-0.8" dy="0" result="sro"/>
