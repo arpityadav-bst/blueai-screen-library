@@ -65,7 +65,7 @@ export default function HomeMain({ hero }: { hero: Hero }) {
             The <br> does turn Chromium's balancer off for this block - the trap documented in
             onblue.css's wrapping notes - which is harmless here for exactly that reason. */}
         <p className="sub rv d2">
-          onBlue is an AI worker you own.<br />
+          BlueAI is an AI agent that you own.<br />
           It finds real work, completes it, and pays you.
         </p>
         <div className="rv d3">
