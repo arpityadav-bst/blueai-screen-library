@@ -2611,7 +2611,7 @@ body.menu-open { overflow: hidden; }
               </li>
             </ul>
           </div>
-          <figure class="eco-art" aria-hidden="true" style="--art:url('digital-ai.webp')">
+          <figure class="eco-art" aria-hidden="true" data-art="digital-ai.webp" style="--art:url('digital-ai.webp')">
             <span class="art-base"></span>
             <span class="art-ca art-ca--l"></span>
             <span class="art-ca art-ca--r"></span>
@@ -2641,7 +2641,7 @@ body.menu-open { overflow: hidden; }
               </li>
             </ul>
           </div>
-          <figure class="eco-art" aria-hidden="true" style="--art:url('physical-ai.webp')">
+          <figure class="eco-art" aria-hidden="true" data-art="physical-ai.webp" style="--art:url('physical-ai.webp')">
             <span class="art-base"></span>
             <span class="art-ca art-ca--l"></span>
             <span class="art-ca art-ca--r"></span>
@@ -3612,6 +3612,19 @@ body.menu-open { overflow: hidden; }
     }).observe(probe);
   }
 
+  /* six of the nine illustrations have a light-theme twin; the other three are
+     light enough on white already. the tiles carry the base name and the theme
+     picks the file at paint time, so the markup does not have to hold two
+     attributes and nothing has to be rewritten when a twin is added. */
+  var LIGHT_ART = {
+    'digital-ai.webp': 1, 'test-agent.webp': 1, 'growth-agent.webp': 1,
+    'research-agent.webp': 1, 'physical-ai.webp': 1, 'delivery-drone.webp': 1
+  };
+  function artFile(name) {
+    var light = document.documentElement.getAttribute('data-theme') === 'light';
+    return (light && LIGHT_ART[name]) ? name.replace('.webp', '-light.webp') : name;
+  }
+
   /* hovering a single agent swaps the card's artwork to that agent's own, while
      the card's existing hover keeps driving the colour and the aberration.
      variants are fetched once, on first entry to the card. */
@@ -3619,14 +3632,23 @@ body.menu-open { overflow: hidden; }
     var art = panel.querySelector('.eco-art');
     var tiles = panel.querySelectorAll('.agent-row li[data-art]');
     if (!art || !tiles.length) { return; }
-    var fallback = art.style.getPropertyValue('--art');
+
+    /* the name of what is showing, not its url: the url is derived, so a theme
+       flip repaints whatever the reader had landed on rather than snapping the
+       card back to its default. */
+    var fallback = art.getAttribute('data-art');
+    var current = fallback;
     var warmed = false;
+
+    function paint() { art.style.setProperty('--art', "url('" + artFile(current) + "')"); }
+    paint();
+    window.addEventListener('onblue:theme', function () { warmed = false; paint(); });
 
     panel.addEventListener('mouseenter', function () {
       if (warmed) { return; }
       warmed = true;
       Array.prototype.forEach.call(tiles, function (tile) {
-        new Image().src = tile.getAttribute('data-art');
+        new Image().src = artFile(tile.getAttribute('data-art'));
       });
     });
 
@@ -3636,29 +3658,31 @@ body.menu-open { overflow: hidden; }
     var IDLE_MS = 10000, FADE_MS = 380;
     var idle = null;
 
-    function show(url) {
+    function show(name) {
       window.clearTimeout(idle);
       idle = null;
       art.classList.remove('is-fading');
-      art.style.setProperty('--art', url);
+      current = name;
+      paint();
     }
 
     function restLater() {
       window.clearTimeout(idle);
       idle = window.setTimeout(function () {
         idle = null;
-        if (art.style.getPropertyValue('--art') === fallback) { return; }
+        if (current === fallback) { return; }
         art.classList.add('is-fading');
         window.setTimeout(function () {
-          art.style.setProperty('--art', fallback);
+          current = fallback;
+          paint();
           art.classList.remove('is-fading');
         }, FADE_MS);
       }, IDLE_MS);
     }
 
     Array.prototype.forEach.call(tiles, function (tile) {
-      var url = "url('" + tile.getAttribute('data-art') + "')";
-      tile.addEventListener('mouseenter', function () { show(url); });
+      var name = tile.getAttribute('data-art');
+      tile.addEventListener('mouseenter', function () { show(name); });
       tile.addEventListener('mouseleave', restLater);
     });
   });
