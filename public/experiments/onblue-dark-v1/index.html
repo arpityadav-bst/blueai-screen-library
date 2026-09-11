@@ -436,6 +436,10 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
   background: var(--blue);
   border-color: var(--blue);
   filter: var(--mark-shadow);
+  /* the pulse existed to give a tinted disc some presence against black. a
+     filled mark with the header's glow already has it, and the pulse only
+     animated a border that is now the same blue as the fill. */
+  animation: none;
 }
 :root[data-theme="light"] .rail-core svg { color: #ffffff; }
 
