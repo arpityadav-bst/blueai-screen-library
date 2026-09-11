@@ -48,7 +48,7 @@ export const INITIAL: Draft = {
 export const STEPS = [
   { title: 'What to promote' },
   { title: 'Budget and schedule' },
-  { title: 'Who and why' },
+  { title: 'Audience and extras' },
 ] as const
 
 // Which fields each step owns. Advancing validates only its own step's fields, otherwise step 1's
