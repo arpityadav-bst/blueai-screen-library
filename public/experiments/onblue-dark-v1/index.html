@@ -204,6 +204,7 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
   --beam-shadow: drop-shadow(0 0 5px var(--beam-glow));
   --fringe-l: none;
   --fringe-r: none;
+  --ca-opacity: 0.5;
 
   --blend-lift: screen;
   --blend-hero: overlay;
@@ -380,8 +381,9 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
   --foot-shadow: drop-shadow(0 0 0.33em rgba(90, 195, 255, 0.14))
                  drop-shadow(0 0 0.73em rgba(90, 195, 255, 0.09));
   --beam-shadow: drop-shadow(0 0 8px rgba(21, 110, 254, 0.75));
-  --fringe-l: #f4757c;
-  --fringe-r: #6fd3de;
+  --fringe-l: #000000;
+  --fringe-r: #ffffff;
+  --ca-opacity: 0.32;
 
   --blend-lift: multiply;
   --blend-hero: multiply;
@@ -397,8 +399,24 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
 /* The footer wordmark is near-black in light, and a channel filter on black
    returns black, so the two aberration copies would vanish. Painting them
    directly and letting multiply do the work gives the same split fringe. */
+/* a monochrome split instead of a chromatic one. black multiplies down into
+   the page, white has nothing to lighten on a white page and so reads only
+   where it crosses the dark letterforms, which is exactly where a highlight
+   fringe belongs. that is why the two sides need different blend modes. */
 :root[data-theme="light"] .fw--l { filter: none; color: var(--fringe-l); }
-:root[data-theme="light"] .fw--r { filter: none; color: var(--fringe-r); }
+:root[data-theme="light"] .fw--r {
+  filter: none;
+  color: var(--fringe-r);
+  mix-blend-mode: screen;
+}
+
+/* same split on the illustrations: brightness(0) flattens the art to a black
+   silhouette and invert lifts that to a white one, both keeping their alpha. */
+:root[data-theme="light"] .art-ca--l { filter: brightness(0); }
+:root[data-theme="light"] .art-ca--r {
+  filter: brightness(0) invert(1);
+  mix-blend-mode: screen;
+}
 :root[data-theme="light"] .fw--l .logo-on,
 :root[data-theme="light"] .fw--r .logo-on { color: inherit; }
 
@@ -1248,7 +1266,7 @@ body.menu-open { overflow: hidden; }
   mask-image: linear-gradient(270deg, #000 0%, transparent 28%);
 }
 .eco-panel:hover .art-base { filter: none; }
-.eco-panel:hover .art-ca { opacity: 0.5; }
+.eco-panel:hover .art-ca { opacity: var(--ca-opacity); }
 .eco-panel:hover .art-ca--l { transform: translateX(-4px); }
 .eco-panel:hover .art-ca--r { transform: translateX(4px); }
 
