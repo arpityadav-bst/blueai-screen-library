@@ -10,11 +10,15 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900&family=Instrument+Serif:ital@1&display=swap">
 <script>
+/* the attribute is written before the stylesheet parses, so the first paint is
+   already the right theme. dark is the design and the default: only a reader who
+   has worked the toggle gets anything else, which is why the OS setting is
+   deliberately not consulted. */
 (function () {
   try {
-    var stored = localStorage.getItem('onblue-theme');
-    var theme = stored || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
-    if (theme === 'light') { document.documentElement.setAttribute('data-theme', 'light'); }
+    if (localStorage.getItem('onblue-theme') === 'light') {
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
   } catch (e) {}
 })();
 </script>
@@ -3490,16 +3494,6 @@ body.menu-open { overflow: hidden; }
       try { localStorage.setItem('onblue-theme', next); } catch (e) {}
       window.dispatchEvent(new CustomEvent('onblue:theme'));
     });
-
-    /* only follow the OS while the reader has never chosen for themselves */
-    var mq = window.matchMedia('(prefers-color-scheme: light)');
-    var onOs = function (e) {
-      try { if (localStorage.getItem('onblue-theme')) { return; } } catch (err) { return; }
-      paint(e.matches ? 'light' : 'dark');
-      window.dispatchEvent(new CustomEvent('onblue:theme'));
-    };
-    if (mq.addEventListener) { mq.addEventListener('change', onOs); }
-    else if (mq.addListener) { mq.addListener(onOs); }
   })();
 
   /* blur the bar once the page has moved off the top */
