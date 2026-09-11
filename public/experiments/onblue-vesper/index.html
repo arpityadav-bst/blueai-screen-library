@@ -65,10 +65,9 @@ button { font-family: inherit; }
   --h1: 49px;
   --h2: 34px;
   --lede: 19.5px;
-  --badge: 11.5px;
   --header-y: 26px;
   --header-x: 40px;
-  --hero-gap: 85px;
+  --hero-gap: 68px;
   /* how far the hero content sits ABOVE the band's centre. Taken off the top
      padding and added to the bottom, so the flex centring is still doing the
      work and the block just recentres higher. */
@@ -79,6 +78,8 @@ button { font-family: inherit; }
   --lede-max: 470px;
   --section-max: 1180px;
   --section-y: 104px;
+  /* the header states its own height so the hero can subtract it */
+  --header-h: 78px;
 }
 
 
@@ -136,7 +137,9 @@ body {
   grid-template-columns: auto 1fr auto;
   align-items: center;
   gap: 16px;
-  padding: var(--header-y) max(24px, calc((100% - var(--section-max)) / 2)) 14px;
+  min-height: var(--header-h);
+  padding: 0 max(24px, calc((100% - var(--section-max)) / 2));
+  border-bottom: 1px solid rgba(16, 16, 19, 0.045);
   transition: background 0.3s ease, border-color 0.3s ease, backdrop-filter 0.3s ease;
 }
 /* the header only grows a surface once it is over content rather than over the
@@ -146,7 +149,6 @@ body {
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
   border-bottom: 1px solid var(--border-soft);
-  padding-bottom: 10px;
 }
 
 .logo {
@@ -298,6 +300,14 @@ body {
   transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
 }
 
+/* SMALL, for the header: the CTA there is permanent furniture, and a button
+   that size in a sticky bar competes with the page it is sitting over. */
+.btn--sm { padding: 10px 16px; border-radius: 8px; font-size: calc(var(--btn) - 1.5px); }
+/* LARGE, for the hero and the closer. Those two are the same ask at the two
+   ends of the page, so they are the same size: a reader who scrolls the whole
+   thing should meet the identical button they were offered at the top. */
+.btn--lg { padding: 17px 30px; border-radius: 11px; font-size: calc(var(--btn) + 2px); }
+
 .btn-solid {
   background: #141414;
   border: 0;
@@ -338,11 +348,12 @@ body {
   --border: rgba(16, 16, 19, 0.2);
   position: relative;
   display: grid;
-  grid-template-rows: auto 1fr auto;
-  min-height: 100vh;
-  min-height: 100dvh;
+  grid-template-rows: 1fr;
+  /* the header is no longer inside this box, so the band gives its height
+     back and the two together still make exactly one screen */
+  min-height: calc(100vh - var(--header-h));
+  min-height: calc(100dvh - var(--header-h));
 }
-.header { grid-row: 1; }
 
 /* The clip is set in JS. See the note on #hero-video in the markup for which
    asset and why it was graded. Its poster is its own first frame, so nothing
@@ -420,6 +431,41 @@ body {
    also why the pointer tracking listens on the window instead of the canvas.
    Masked to fade at every edge and held at low opacity: this is ambience, and
    the diagram card beside it is what the reader is meant to look at. */
+/* ---- the scroll cue --------------------------------------------------------
+   Bottom centre of the band, in the quietest ink the page has. It DRIFTS
+   rather than bounces: a bounce is an alert and this is a hint, and the whole
+   travel is 6px so it reads as breathing rather than as something demanding a
+   click. It leaves the moment the page moves, because by then it has said
+   everything it had to say. The reduced-motion block above stops the drift
+   along with every other animation, and the cue still reads as a link. */
+.scroll-cue {
+  position: absolute;
+  left: 50%;
+  bottom: 26px;
+  z-index: 2;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  transform: translateX(-50%);
+  color: var(--muted);
+  opacity: 0.55;
+  transition: opacity 0.5s ease, color 0.3s ease;
+}
+.scroll-cue:hover { opacity: 1; color: var(--text); }
+.scroll-cue-word {
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.scroll-cue svg { width: 17px; height: 17px; animation: cue-drift 2.8s ease-in-out infinite; }
+@keyframes cue-drift {
+  0%, 100% { transform: translateY(0); opacity: 0.7; }
+  50% { transform: translateY(6px); opacity: 1; }
+}
+.is-scrolled .scroll-cue { opacity: 0; pointer-events: none; }
+
 .hero-fx {
   position: absolute;
   inset: 0;
@@ -463,7 +509,6 @@ body {
 .hero-ascii.is-live { opacity: var(--ascii-opacity, 0.5); }
 
 .hero {
-  grid-row: 2;
   position: relative;
   z-index: 2;
   display: flex;
@@ -485,54 +530,6 @@ body {
   width: 100%;
 }
 
-/* A CONTAINER AGAIN, but a quiet one (Appy, 2026-09-11). The first version was
-   a bordered, gradient-filled, blurred pill that competed with the diagram
-   card for "which object here is the panel", and removing it entirely was the
-   overcorrection. What makes a badge read as a badge is the SHAPE, not the
-   fill: a full pill radius, a hairline, and just enough tint to lift it off
-   the field. One border, no gradient, no shadow.
-   Text stays --muted: full ink inside a container would read as a second
-   heading stacked above the headline rather than as a label on it. */
-.badge {
-  display: inline-flex;
-  align-items: center;
-  /* SMALL AND SLIM. It was a 6px-tall-padded pill at 13.5px type carrying a
-     logo-sized mark, which made a category label the second heaviest object
-     in the hero. Half the vertical padding, a step down in type, and the
-     fill dropped to a hairline pill: the shape still says badge, it just
-     stops competing with the headline under it. */
-  gap: 6px;
-  padding: 3px 11px 3px 8px;
-  border: 1px solid var(--border-soft);
-  border-radius: 999px;
-  background: color-mix(in srgb, #fff 40%, transparent);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  margin-bottom: 24px;
-  color: var(--muted);
-  font-size: var(--badge);
-  font-weight: 500;
-  letter-spacing: 0.02em;
-}
-/* THE SAME MARK AT THE SAME SIZE AS THE LOGO'S. It was hardcoded 18x20 on a
-   24x24 viewBox, so besides not tracking the logo it was stretched 11% taller
-   than wide: the same glyph, subtly the wrong shape. var(--logo) makes it
-   square and makes it follow the lockup across every breakpoint, where --badge
-   and --logo scale on different ladders.
-   AND THE GLOW IS GONE with the pill. A drop-shadow read as the badge catching
-   light while it was a floating surface; with the container removed it is just
-   a smudge on a line of text, which is the same reason the logo's copy has
-   never carried one. */
-/* THE SAME MARK, THE SAME INK, sized to the badge rather than to the logo:
-   this badge is now a small slim line of text and a logo-sized glyph in it
-   would be the loudest thing in the hero after the headline. */
-.badge-star {
-  width: 1.15em;
-  height: 1.15em;
-  flex: none;
-  color: var(--text);
-}
-
 .hero h1 {
   display: flex;
   flex-direction: column;
@@ -541,10 +538,11 @@ body {
   font-weight: 500;
   font-size: var(--h1);
   letter-spacing: -0.045em;
-  /* 1.05, not 1.12. Leading runs inversely to size: at 43px and up, two
-     stacked lines already sit close enough, and the extra 0.07 read as a gap
-     between two sentences rather than as one two-line statement. */
-  line-height: 1.05;
+  /* 1.0, and the reasoning is the same one that took it from 1.12 to 1.05:
+     leading runs inversely to size, and the headline has gone up a step since
+     then, to 49px base and 58 at the widest. At that size 1.05 is again a gap
+     between two sentences rather than one two-line statement. */
+  line-height: 1;
 }
 .headline-line { display: block; overflow: hidden; padding: 0.06em 0.15em 0.14em; }
 .hero h1 em, .serif {
@@ -604,18 +602,13 @@ body {
 
 /* ============================== sections ================================== */
 .section { padding: var(--section-y) var(--header-x); }
+/* THE FIRST SECTION DOES NOT PAY FULL PRICE. The hero above it already ends on
+   its own bottom padding, so a full --section-y on top of that is the same
+   double count the closer had at the other end of the page. */
+.section:first-of-type { padding-top: max(32px, calc(var(--section-y) - 64px)); }
 .section-inner { max-width: var(--section-max); margin: 0 auto; }
 .section-head { max-width: 720px; margin-bottom: 46px; }
 .section-head.center { margin-left: auto; margin-right: auto; text-align: center; }
-.eyebrow {
-  display: inline-block;
-  margin-bottom: 14px;
-  color: var(--accent);
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
 h2 {
   font-size: var(--h2);
   font-weight: 500;
@@ -723,300 +716,568 @@ h2 .serif { font-size: 1.06em; color: var(--accent); }
    margin of the same 0.15em cancels the offset and keeps the protection. */
 .hero-two .headline-line { margin-left: -0.15em; }
 
-/* ---- the terminal ----------------------------------------------------------
-   DARK, on a light page, on purpose: a terminal is the one surface here that is
-   a machine talking rather than a page addressing a reader, and the inversion
-   is what says so.
-   ITS WIDTH IS THE CARD'S WIDTH, never the text's. Every line is monospace,
-   pre-formatted and clipped, so a long step name cannot widen the window or
-   wrap the ones above it: a terminal that resizes as it prints is not a
-   terminal. */
-.term-band { padding: 56px 24px var(--section-y); }
-.term-dock {
-  width: 100%;
-  max-width: var(--section-max);
-  margin: 0 auto;
-}
-/* ALL FOUR EDGES. It used to run off the right of the browser and be cut
-   there; it is a whole object now, on the same content grid as the rest of
-   the page. */
-.term {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  border: 1px solid #2e2e34;
-  border-radius: 14px;
-  background: #1b1b1e;
-  box-shadow: 0 1px 2px rgba(16, 16, 19, 0.06), 0 30px 60px -34px rgba(10, 12, 18, 0.5);
-}
-.term-bar {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  padding: 11px 14px;
-  border-bottom: 1px solid #2a2a30;
-  background: #212125;
-}
-.term-dot {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: #3c3c44;
-}
-.term-title {
-  margin-left: 8px;
-  font: 500 11px/1 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  letter-spacing: 0.02em;
-  color: #85858f;
-}
+/* ==========================================================================
+   THE BODY. Content, section order and GEOMETRY from the cinematic page; every
+   colour, border, radius and shadow from this one.
 
-/* ---- the stream ------------------------------------------------------------
-   Anchored to its FOOT. New lines arrive at the bottom and push the older ones
-   up and out, which is what a terminal does; a top-anchored feed would grow
-   downward and leave the live line wherever it happened to land.
-   The height is fixed so the hero never reflows as lines print. */
-.term-feed {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  /* THE PANEL HOLDS ITS OWN ROOM. A terminal that grows a line at a time
-     shoves the whole page down twelve times a cycle, so the stream reserves
-     what a full job needs and fills into it. */
-  min-height: 320px;
-  padding: 16px 22px 20px;
-  overflow: hidden;
-  font: 400 12.5px/1.66 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  color: #d5d5db;
-}
-.term-feed > * { animation: feed-in 0.42s cubic-bezier(0.16, 1, 0.3, 1) both; }
-@keyframes feed-in {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: none; }
-}
-/* PRE, AND CLIPPED. This is the rule that keeps the window a fixed size: the
-   text is laid out on one line and cut off at the edge rather than wrapping and
-   pushing the stack. */
-.tl {
-  white-space: pre;
-  overflow: hidden;
-  text-overflow: clip;
-}
-.tl .p { color: #6f9dff; }
-.tl .g { color: #62d29c; }
-.tl .d { color: #7d7d87; }
-.tl-cmd { color: #f0f0f3; }
-.tl-sys { color: #8a8a94; }
-.tl-pick { color: #9db8ff; }
+   The first pass took the copy and invented the layout, which is why it read
+   as a different page: the panels are not a list beside a picture, the rail is
+   not three groups in a grid, the heads are not stacked, and the demand block
+   is not a narrow column between two wide ones. Those are all measured off
+   the source now, in its proportions, and only the surface is ours.
+   ========================================================================== */
 
-.tl-blue {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: #c6d4f5;
-}
-.tl-blue .spark {
-  width: 15px;
-  height: 15px;
-  flex: none;
-  color: #6f9dff;
-  filter: drop-shadow(0 0 8px color-mix(in srgb, #6f9dff 55%, transparent));
-  animation: spark-turn 2.6s linear infinite;
-}
-/* it turns while it is looking and stops once it has chosen, so the motion
-   means searching rather than decoration */
-.tl-blue.is-done .spark { animation: none; }
-@keyframes spark-turn { to { transform: rotate(360deg); } }
-/* the indent that says "this happened under onBlue". 15px glyph + 8px gap. */
-.tl-in { padding-left: 23px; }
-.tl-gap { height: 10px; }
+/* a head is a ROW: the heading left, the eyebrow right, on the same baseline.
+   The centred variant keeps the stack, which is what centring is for. */
+.head-top { display: flex; align-items: baseline; justify-content: space-between; gap: 40px; }
+.head-top h2 { max-width: 760px; }
+.head-top .eyebrow { margin-bottom: 0; white-space: nowrap; }
+.section-head { max-width: none; margin-bottom: 0; }
+.section-head.center { max-width: 820px; margin-inline: auto; text-align: center; }
+.section-head .section-sub { max-width: 620px; margin-top: 16px; }
+.section-head.center .section-sub { margin-inline: auto; }
 
-/* AN OUTCOME CARRIES ITS OWN GLYPH. Three lines that differed only by their
-   words all opened with the same "+": the mark is the fastest thing to read on
-   a line, so three different outcomes get three different marks. */
-.tl-out {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  color: var(--oc, #6f9dff);
-}
-.tl-out .oico {
-  width: 15px;
-  height: 15px;
-  flex: none;
-  filter: drop-shadow(0 0 7px color-mix(in srgb, var(--oc, #6f9dff) 45%, transparent));
-}
-/* the block that marks where the text ends. NOT ANIMATED: see above. */
-.tl-caret {
-  display: inline-block;
-  width: 7px;
-  height: 13px;
-  flex: none;
-  margin-left: 1px;
-  vertical-align: -2px;
-  background: #4b4b54;
-}
+.grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
 
-.ti {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  width: 100%;
-  max-width: 420px;
-  margin: 13px 20px 6px;
-  padding: 12px 14px;
-  border: 1px solid #35353c;
-  border-radius: 12px;
-  background: #25252a;
-  font: 400 12.5px/1.6 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  color: #f0f0f3;
-}
-/* the placeholder is markup, not an attribute, because the bar is a span and
-   not a real field: nothing here is typed by the reader */
-.ti-ph { color: #7a7a83; }
-.ti:not(.is-empty) .ti-ph { display: none; }
-.ti-enter {
-  width: 15px;
-  height: 15px;
-  flex: none;
-  margin-left: auto;
-  color: #7a7a83;
-}
-
-/* --- S3 three doors, S4 agents, S6 columns --- */
-.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
-.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
-.agent-glyph {
-  display: grid;
-  place-items: center;
-  width: 46px;
-  height: 46px;
-  margin-bottom: 18px;
-  border: 1px solid var(--border-soft);
-  border-radius: 11px;
-  background: color-mix(in srgb, var(--accent) 8%, var(--bg));
-  color: var(--accent);
-}
-.agent-glyph svg { width: 24px; height: 24px; }
-
-/* --- S5 steps --- */
-.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
-.step { padding-top: 22px; border-top: 1px solid var(--border); }
-.step .n {
-  display: block;
-  margin-bottom: 12px;
-  color: var(--accent);
-  font-size: 12.5px;
-  font-weight: 500;
-  letter-spacing: 0.08em;
-}
-.step h3 { font-size: 19px; font-weight: 500; letter-spacing: -0.03em; }
-.step p { margin-top: 8px; color: var(--muted); font-size: 14.5px; line-height: 1.55; }
-.asset-line {
-  margin-top: 46px;
-  padding: 30px;
-  border: 1px solid var(--border-soft);
-  border-radius: 14px;
-  background: var(--bg-raised);
-  text-align: center;
-  font-size: 24px;
-  font-weight: 500;
-  letter-spacing: -0.035em;
-}
-.asset-line .serif { font-size: 1.1em; color: var(--accent); }
-
-/* --- S6 flow: in, onBlue, out --- */
-.flow { display: grid; grid-template-columns: 1fr auto 1fr; gap: 22px; align-items: start; }
-.flow-col { display: grid; gap: 10px; }
-.flow-item {
+/* the line under a section, stating what it all adds up to */
+.section-note { display: flex; justify-content: center; }
+.note {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  padding: 12px 16px;
+  gap: 12px;
+  margin-top: 40px;
+  padding: 13px 22px;
   border: 1px solid var(--border-soft);
-  border-radius: 10px;
+  border-radius: 999px;
   background: var(--bg-raised);
+  box-shadow: var(--shadow-card);
+  color: var(--muted);
   font-size: 14px;
   letter-spacing: -0.015em;
 }
-.flow-col h3 { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-weight: 500; margin-bottom: 4px; }
-.flow-mid { display: grid; gap: 10px; justify-items: center; align-self: center; }
-.flow-mid-hub {
-  display: grid;
-  place-items: center;
-  width: 130px;
-  height: 130px;
-  border-radius: 50%;
-  border: 1px solid var(--border);
-  background: radial-gradient(80% 80% at 50% 28%, color-mix(in srgb, var(--accent) 12%, var(--bg-raised)) 0%, var(--bg-raised) 70%);
-  box-shadow: var(--shadow-card);
-  font-size: 17px;
-  font-weight: 600;
-  letter-spacing: -0.04em;
-  white-space: nowrap;
-}
-.flow-arrow { color: var(--border); }
-.flow-arrow svg { width: 26px; height: 26px; }
+.note svg { width: 18px; height: 18px; flex: none; color: var(--accent); }
 
-/* --- S8 expectations --- */
-.expect { display: grid; gap: 0; }
-.expect-row {
-  display: grid;
-  grid-template-columns: 22px 1fr;
-  gap: 16px;
-  align-items: start;
-  padding: 20px 0;
-  border-top: 1px solid var(--border-soft);
+/* ---- the economy panels ----------------------------------------------------
+   A TALL PANEL, not a wide one. The copy holds the top left at 30% of the
+   width, the render fills the rest from above the card's own top edge, and the
+   four workers are TILES along the foot. The first pass made them a bulleted
+   list beside the art, which is why the art had nowhere to go. */
+.eco-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin-top: 96px; }
+.eco-panel { position: relative; display: flex; flex-direction: column; min-height: 485px; padding: 26px 26px 24px; }
+.eco-panel h3 { font-size: clamp(18px, 1.75vw, 25px); font-weight: 500; letter-spacing: -0.03em; }
+.eco-copy { position: relative; z-index: 2; display: flex; flex-direction: column; flex: 1; }
+/* 30%, and only on the two text elements: the tiles below run the full width */
+.eco-copy > h3, .eco-copy > p { max-width: 30%; }
+.eco-copy > p { margin-top: 10px; color: var(--muted); font-size: clamp(13.5px, 1.3vw, 18.5px); line-height: 1.5; letter-spacing: -0.01em; }
+.eco-art {
+  position: absolute;
+  top: -44px;
+  right: 6px;
+  z-index: 1;
+  width: 64%;
+  max-width: 360px;
+  aspect-ratio: 720 / 980;
+  pointer-events: none;
+  transform-origin: 55% 35%;
+  transition: transform 0.45s ease, opacity 0.38s ease;
+  /* it is half gone by 84%, which is what lets the tiles sit under it */
+  -webkit-mask-image: linear-gradient(180deg, #000 50%, transparent 84%);
+  mask-image: linear-gradient(180deg, #000 50%, transparent 84%);
 }
-.expect-row:last-child { border-bottom: 1px solid var(--border-soft); }
-.expect-row svg { width: 20px; height: 20px; color: var(--accent); margin-top: 1px; }
-.expect-row p { font-size: 15.5px; letter-spacing: -0.015em; line-height: 1.5; }
-
-/* --- S9 closer --- */
-.closer { padding: 0 var(--header-x) var(--section-y); }
-.closer-band {
-  position: relative;
-  overflow: hidden;
-  padding: 74px 32px;
-  border: 1px solid var(--border-soft);
-  border-radius: 18px;
-  text-align: center;
-  background:
-    radial-gradient(70% 120% at 50% 120%, color-mix(in srgb, var(--accent) 16%, transparent) 0%, transparent 62%),
-    var(--bg-raised);
-  box-shadow: var(--shadow-card);
-}
-/* the grid lines the other onBlue surfaces use on their closing band */
-.closer-band::before {
-  content: "";
+/* ONE CANVAS, ONE PROPERTY. The art is a background rather than an <img> so a
+   single --art swaps what is shown with nothing reflowing, which is the whole
+   reason a per-agent swap is possible here. */
+.art-base {
   position: absolute;
   inset: 0;
-  background-image:
-    linear-gradient(to right, var(--border-soft) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--border-soft) 1px, transparent 1px);
-  background-size: 64px 64px;
-  mask-image: radial-gradient(70% 70% at 50% 50%, #000 0%, transparent 78%);
-  -webkit-mask-image: radial-gradient(70% 70% at 50% 50%, #000 0%, transparent 78%);
-  pointer-events: none;
+  background: var(--art) top center / contain no-repeat;
+  /* MONOCHROME UNTIL THE PANEL IS TOUCHED. The renders are the loudest colour
+     on the page and there are two of them side by side; greyed, they are a
+     picture of the kind of worker, and the colour is the reward for looking.
+     grayscale(1) contrast(1.1) is the cinematic page's own light-theme
+     figure, not one invented here. */
+  filter: grayscale(1) contrast(1.1);
+  transition: filter 0.45s ease;
 }
-.closer-band > * { position: relative; }
-.closer-band h2 { font-size: calc(var(--h2) * 1.1); }
-.closer-band .lede { margin-left: auto; margin-right: auto; }
+.eco-panel:hover .art-base { filter: none; }
+.eco-panel:hover .eco-art { transform: scale(1.055); }
+/* the cross-fade the swap rides on */
+.eco-art.is-fading { opacity: 0; }
+.agent-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: auto; padding-top: 22px; }
+.agent-row li {
+  flex: 1 1 150px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 14px 16px;
+  border: 1px solid var(--border-soft);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--bg-raised) 72%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  font-size: 13.5px;
+  letter-spacing: -0.01em;
+  text-align: center;
+  color: var(--text);
+}
+.agent-row svg { width: 34px; height: 34px; flex: none; color: var(--text); }
 
-/* --- footer --- */
-.site-foot {
+/* ---- the rail --------------------------------------------------------------
+   One row, wrapped and centred, of five objects: the work, a track, the mark,
+   a track, the outcomes. The tracks are RAILS with pulses running along them,
+   not three dots in a gap. */
+.rail {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 26px;
+  padding: 30px 26px;
+  border: 1px solid var(--border-soft);
+  border-radius: 14px;
+  background: var(--bg-raised);
+  box-shadow: var(--shadow-card);
+}
+.rail-node {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex: none;
+  padding: 13px 20px;
+  border: 1px solid var(--border-soft);
+  border-radius: 11px;
+  background: color-mix(in srgb, var(--text) 3%, transparent);
+  font-size: 14.5px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+.rail-node > svg { width: 19px; height: 19px; flex: none; color: var(--accent); }
+/* THE WORK CYCLES. A single example would say onBlue takes that one job; the
+   label steps through six, which says the left end is a queue. */
+.rail-cycle { position: relative; display: block; width: 142px; height: 21px; overflow: hidden; }
+.rail-cycle b { position: absolute; inset: 0; font-weight: 500; white-space: nowrap; opacity: 0; animation: rail-cycle 15s linear infinite; }
+.rail-cycle b:nth-child(2) { animation-delay: 2.5s; }
+.rail-cycle b:nth-child(3) { animation-delay: 5s; }
+.rail-cycle b:nth-child(4) { animation-delay: 7.5s; }
+.rail-cycle b:nth-child(5) { animation-delay: 10s; }
+.rail-cycle b:nth-child(6) { animation-delay: 12.5s; }
+@keyframes rail-cycle {
+  0%, 1% { opacity: 0; transform: translateY(6px); }
+  3%, 15% { opacity: 1; transform: none; }
+  17%, 100% { opacity: 0; transform: translateY(-6px); }
+}
+.rail-flow {
+  position: relative;
+  flex: none;
+  width: 58px;
+  height: 2px;
+  border-radius: 1px;
+  background: color-mix(in srgb, var(--text) 10%, transparent);
+}
+.rail-flow i {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 5px;
+  height: 5px;
+  margin: -2.5px 0 0 -2.5px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0;
+  animation: rail-flow 2.4s linear infinite;
+}
+.rail-flow i:nth-child(2) { animation-delay: 0.8s; }
+.rail-flow i:nth-child(3) { animation-delay: 1.6s; }
+@keyframes rail-flow {
+  0% { left: 0; opacity: 0; }
+  12%, 88% { opacity: 1; }
+  100% { left: 100%; opacity: 0; }
+}
+.rail-core {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--accent) 34%, transparent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  color: var(--accent);
+  animation: core-pulse 2.4s ease-in-out infinite;
+}
+@keyframes core-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 22%, transparent); }
+  50% { box-shadow: 0 0 0 9px color-mix(in srgb, var(--accent) 0%, transparent); }
+}
+.rail-core svg { width: 26px; height: 26px; }
+.rail-outs { display: flex; flex-wrap: wrap; gap: 10px; }
+.rail-outs .chip { height: 34px; padding: 0 13px; }
+.rail-outs .chip svg { width: 16px; height: 16px; color: var(--accent); }
+
+/* ---- the agent cards -------------------------------------------------------
+   Centred copy, a terminal in the middle, three skill tiles pinned to the
+   foot. The terminal is exactly four lines tall and the log is printed twice,
+   so the scroll is seamless. */
+.grid-3.agents { margin: 52px 0 40px; }
+.agent-card { display: flex; flex-direction: column; padding: 28px 24px 24px; text-align: center; }
+.agent-card h3 { font-size: 20px; font-weight: 500; letter-spacing: -0.03em; }
+.agent-card h3 .hl { color: var(--accent); }
+.agent-card > p { margin-top: 9px; color: var(--muted); font-size: 14px; line-height: 1.5; letter-spacing: -0.01em; }
+.agent-art {
+  margin: 26px 0;
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--text) 2.5%, transparent);
+  overflow: hidden;
+  text-align: left;
+}
+.mini-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--border-soft);
+  background: color-mix(in srgb, var(--text) 4%, transparent);
+}
+.mini-bar i { width: 8px; height: 8px; border-radius: 50%; }
+.mini-bar i:nth-child(1) { background: #ff5f57; }
+.mini-bar i:nth-child(2) { background: #febc2e; }
+.mini-bar i:nth-child(3) { background: #28c840; }
+.mini-win { height: 6.4em; overflow: hidden; padding: 8px 12px; font-size: 11.5px; }
+.mini-log { animation: mini-scroll 11s linear infinite; }
+/* HALF ITS OWN HEIGHT, and the list is printed twice: that is what makes the
+   scroll seamless instead of jumping back to the top. */
+@keyframes mini-scroll { to { transform: translateY(-50%); } }
+.mini-log li {
+  height: 1.6em;
+  line-height: 1.6em;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 11.5px;
+  letter-spacing: -0.01em;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.mini-log .t-task { color: var(--text); font-weight: 500; }
+.mini-log .t-done { color: var(--accent); }
+.agent-skills { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: auto; }
+.agent-skills li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 6px 11px;
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--text) 3%, transparent);
+  color: var(--muted);
+  font-size: 12px;
+  letter-spacing: -0.005em;
+}
+.agent-skills svg { width: 19px; height: 19px; color: var(--accent); }
+
+/* ---- the three steps ------------------------------------------------------- */
+.grid-3.steps { margin: 52px 0 40px; }
+.step-card { display: flex; flex-direction: column; padding: 26px 24px 24px; }
+.step-top { display: flex; align-items: flex-start; gap: 14px; }
+/* a numbered disc, not a rounded square: it is a step in a sequence */
+.step-num {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  color: var(--accent);
+  font-size: 15px;
+  font-weight: 500;
+}
+.step-top h3 { font-size: 18.5px; font-weight: 500; letter-spacing: -0.03em; }
+.step-top p { margin-top: 5px; color: var(--muted); font-size: 13.5px; line-height: 1.45; letter-spacing: -0.01em; }
+/* the art fills whatever the copy leaves, so three cards of unequal copy still
+   end level */
+.step-art {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  margin-top: 24px;
+  padding: 20px 18px;
+  border: 1px solid var(--border-soft);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--text) 2.5%, transparent);
+}
+.mini-title { display: block; margin-bottom: 14px; color: var(--text); font-size: 12.5px; font-weight: 500; letter-spacing: 0.02em; }
+.mini-note { display: flex; align-items: center; gap: 8px; margin-top: 14px; color: var(--muted); font-size: 12.5px; letter-spacing: -0.01em; }
+.mini-note svg { width: 15px; height: 15px; flex: none; color: var(--accent); }
+/* the skills list is plain rows: bordering them too would put three bordered
+   things inside a bordered panel inside a bordered card */
+.mini-list { display: grid; gap: 12px; }
+.mini-list li { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 13px; letter-spacing: -0.01em; }
+.mini-list svg { width: 17px; height: 17px; flex: none; color: var(--accent); }
+.pick-list { display: grid; gap: 8px; }
+.pick-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--border-soft);
+  border-radius: 9px;
+  background: var(--bg-raised);
+  color: var(--muted);
+  font-size: 12.5px;
+  letter-spacing: -0.01em;
+}
+.pick-list svg { width: 18px; height: 18px; flex: none; color: var(--text); }
+.pick-list li.is-on {
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  background: color-mix(in srgb, var(--accent) 9%, var(--bg-raised));
+  color: var(--text);
+}
+.pick-mark { margin-left: auto; opacity: 0; color: var(--accent); }
+.pick-list li.is-on .pick-mark { opacity: 1; }
+.pick-mark svg { width: 15px; height: 15px; color: var(--accent); }
+/* label above its own track, not beside it: three two-column rows in a 18px
+   padded panel leaves the tracks about 90px long */
+.slider { display: grid; gap: 7px; margin-top: 14px; }
+.slider span { color: var(--muted); font-size: 12px; letter-spacing: -0.005em; }
+.slider-track { position: relative; height: 4px; border-radius: 2px; background: color-mix(in srgb, var(--text) 10%, transparent); }
+.slider-track i { position: absolute; inset: 0 auto 0 0; width: var(--v); border-radius: 2px; background: var(--accent); }
+.slider-track b {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  width: 11px;
+  height: 11px;
+  margin: -5.5px -5.5px 0 0;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+.earn-label { color: var(--text); font-size: 13px; font-weight: 500; letter-spacing: -0.01em; }
+.earn-figure { margin-top: 6px; font-size: clamp(30px, 3vw, 40px); font-weight: 500; letter-spacing: -0.045em; color: var(--text); }
+.earn-delta { display: inline-flex; align-items: center; gap: 6px; margin-top: 4px; color: var(--accent); font-size: 14px; font-weight: 500; letter-spacing: -0.015em; }
+.earn-delta svg { width: 15px; height: 15px; }
+.earn-bars { display: flex; align-items: flex-end; gap: 6px; flex: 1; min-height: 76px; margin: 18px 0 20px; }
+.earn-bars i { flex: 1; height: var(--h); border-radius: 3px 3px 0 0; background: color-mix(in srgb, var(--accent) 20%, transparent); }
+.earn-bars i:last-child { background: var(--accent); }
+/* the payout is the outcome, so it is the one green thing on the page and it
+   sits at the foot of the card where the sequence ends */
+.earn-payout {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: auto;
+  padding: 11px 14px;
+  border: 1px solid rgba(31, 146, 84, 0.34);
+  border-radius: 10px;
+  background: rgba(31, 146, 84, 0.08);
+  color: #1a7a46;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+.earn-payout svg { width: 18px; height: 18px; flex: none; color: #1f9254; }
+
+/* ---- companies bring the work ----------------------------------------------
+   THE MIDDLE IS THE WIDEST TRACK, 1.28 against 0.86 either side. It carries a
+   large mark and three labels floating around it, so a narrow middle column is
+   what forced those labels out over the lists on the first pass. */
+.demand {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 0.86fr) minmax(0, 1.28fr) minmax(0, 0.86fr);
+  align-items: stretch;
+  gap: 18px;
+  margin: 52px 0 40px;
+}
+.wires { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.wires .wire { fill: none; stroke: var(--border-soft); stroke-width: 1.4; }
+/* a pulse travelling the wire, drawn as a dash that walks its own length */
+.wires .beam {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-dasharray: 8 92;
+  animation: beam 3.2s linear infinite;
+  animation-delay: var(--t);
+}
+@keyframes beam { from { stroke-dashoffset: 100; } to { stroke-dashoffset: 0; } }
+.demand-col { position: relative; z-index: 1; display: flex; flex-direction: column; }
+.demand-col h3 { margin-bottom: 18px; font-size: 17px; font-weight: 500; letter-spacing: -0.03em; color: var(--text); }
+/* equal rows, filling the column, so both sides line up with each other */
+.demand-list { display: grid; grid-auto-rows: 1fr; flex: 1; gap: 10px; }
+.demand-list li {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 13px 15px;
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  background: var(--bg-raised);
+  box-shadow: var(--shadow-card);
+  font-size: 14px;
+  letter-spacing: -0.015em;
+}
+.demand-list svg { width: 19px; height: 19px; flex: none; color: var(--accent); }
+.demand-core { position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; min-height: 300px; }
+/* the mark itself, large and unframed: a circle around it would make it a
+   button in a diagram of things that are not buttons */
+.demand-node {
+  width: clamp(112px, 13vw, 172px);
+  height: clamp(112px, 13vw, 172px);
+  color: var(--text);
+  filter: drop-shadow(0 14px 30px rgba(16, 16, 19, 0.16));
+}
+.demand-node svg { display: block; width: 100%; height: 100%; animation: spark-index 60s linear infinite; }
+@keyframes spark-index { to { transform: rotate(360deg); } }
+.cap {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 13px;
+  border: 1px solid var(--border-soft);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--bg-raised) 78%, transparent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--muted);
+  font-size: 12px;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+.cap svg { width: 14px; height: 14px; flex: none; color: var(--accent); }
+.cap--tl { top: 5%; left: 9%; animation: bubble-float 5.5s ease-in-out infinite; }
+.cap--tr { top: 5%; right: 9%; animation: bubble-float 5.5s ease-in-out infinite 1.8s; }
+.cap--bc { bottom: 3%; left: 50%; transform: translateX(-50%); animation: bubble-float-c 5.5s ease-in-out infinite 3.6s; }
+@keyframes bubble-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+@keyframes bubble-float-c { 0%, 100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, -7px); } }
+
+/* ---- questions ------------------------------------------------------------- */
+.faq-list { display: grid; gap: 10px; margin-top: 44px; }
+.faq {
+  border: 1px solid var(--border-soft);
+  border-radius: 12px;
+  background: var(--bg-raised);
+  box-shadow: var(--shadow-card);
+  transition: border-color 0.3s ease;
+}
+.faq[open] { border-color: color-mix(in srgb, var(--accent) 30%, transparent); }
+.faq summary {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 20px;
-  flex-wrap: wrap;
-  padding: 28px var(--header-x) 40px;
+  padding: 20px 22px;
+  cursor: pointer;
+  list-style: none;
+  color: var(--text);
+  font-size: clamp(15px, 1.2vw, 17px);
+  font-weight: 500;
+  letter-spacing: -0.025em;
+}
+.faq summary::-webkit-details-marker { display: none; }
+.faq-sign { position: relative; flex: none; width: 16px; height: 16px; color: var(--text); }
+.faq-sign::before, .faq-sign::after {
+  content: "";
+  position: absolute;
+  inset: 50% 0 auto 0;
+  height: 1.5px;
+  margin-top: -0.75px;
+  border-radius: 1px;
+  background: currentColor;
+  transition: transform 0.3s var(--ease), opacity 0.3s ease;
+}
+.faq-sign::after { transform: rotate(90deg); }
+.faq[open] .faq-sign { color: var(--accent); }
+.faq[open] .faq-sign::after { transform: rotate(0deg); opacity: 0; }
+.faq p { max-width: 780px; padding: 0 22px 22px; color: var(--muted); font-size: 14.5px; line-height: 1.6; letter-spacing: -0.01em; }
+
+/* ---- the closer ------------------------------------------------------------ */
+/* THE SPACE ABOVE IS NOT THIS SECTION'S ALONE. The questions above already
+   end on a full --section-y of their own, so a symmetric padding here is not
+   symmetric on screen: 104 from them plus 140 from this made 244 above
+   against 140 below, which is the 1.7 to 1 the eye was reading. The top
+   padding subtracts what the previous section already contributed and the
+   floor keeps it from collapsing on short viewports. */
+.closer {
+  padding: max(32px, calc(var(--section-y) - 64px)) var(--header-x) clamp(92px, 10vw, 150px);
+}
+.close-mark {
+  display: grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 26px;
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--accent) 26%, transparent);
+  background: color-mix(in srgb, var(--accent) 8%, var(--bg-raised));
+  color: var(--accent);
+}
+.close-mark svg { width: 29px; height: 29px; }
+/* THE CLOSER IS THE HERO, CENTRED. Same headline metrics, same lede, same
+   two gaps, same sign-in line: the two ends of the page make the identical
+   ask and a reader who scrolls the whole thing should meet the identical
+   block. Every value is the token the hero reads, not a copy of its number,
+   so the pair cannot drift at any breakpoint. Alignment is the only
+   difference, and it is the only one stated here. */
+.closer h2 {
+  /* the hero's construction: two blocks in a column, so the 0.2em .headline-line
+     contributes lands between these two lines as well */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: var(--h1);
+  font-weight: 500;
+  letter-spacing: -0.045em;
+  line-height: 1;
+}
+/* the hero's h1 em, to the digit */
+.closer h2 .serif { font-size: 1.08em; }
+/* the hero's .lede, to the digit */
+.closer .section-sub {
+  max-width: var(--lede-max);
+  margin: 20px auto 0;
+  color: var(--muted);
+  font-size: var(--lede);
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: -0.015em;
+}
+/* the same gap above the button and above the sign-in line that the hero
+   uses, from the same token */
+.closer-actions { display: flex; justify-content: center; margin-top: var(--cta-gap); }
+.closer-alt { margin-top: var(--cta-gap); color: var(--muted); font-size: 13.5px; letter-spacing: -0.01em; }
+.closer-alt a { color: var(--text); border-bottom: 1px solid var(--border); padding-bottom: 1px; }
+.closer-alt a:hover { color: var(--accent); border-color: var(--accent); }
+
+/* ---- the foot -------------------------------------------------------------- */
+.site-foot { padding: 54px var(--header-x) 40px; border-top: 1px solid var(--border-soft); }
+.foot-grid { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr) minmax(0, 1fr) auto; gap: 40px; align-items: start; }
+.foot-brand .logo { margin-bottom: 22px; }
+.foot-brand p { color: var(--muted); font-size: 14px; line-height: 1.65; letter-spacing: -0.015em; }
+.foot-col { display: flex; flex-direction: column; align-items: flex-start; gap: 13px; }
+.foot-col h3 { margin-bottom: 3px; color: var(--text); font-size: 13.5px; font-weight: 500; letter-spacing: -0.02em; }
+.foot-col a, .foot-top { color: var(--muted); font-size: 14px; letter-spacing: -0.015em; transition: color 0.3s ease; }
+.foot-col a:hover, .foot-top:hover { color: var(--accent); }
+.foot-base {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 46px;
+  padding-top: 22px;
   border-top: 1px solid var(--border-soft);
   color: var(--muted);
-  font-size: 13px;
+  font-size: 12.5px;
   letter-spacing: -0.01em;
 }
-.site-foot a:hover { color: var(--accent); }
-.foot-links { display: flex; gap: 20px; flex-wrap: wrap; }
 
 /* ============================ entrance motion ============================= */
 /* resting opacity is 1 on purpose: if animations never run, the page still reads */
@@ -1030,7 +1291,6 @@ h2 .serif { font-size: 1.06em; color: var(--accent); }
 .appear--scale { animation-name: in-scale; }
 .appear--soft { animation-name: in-soft; }
 .appear--mask { animation-name: in-mask; }
-.appear--pop { animation-name: in-pop; }
 .appear--btn { animation-name: in-btn; }
 .appear.is-in, .hero-media.is-in {
   animation: none;
@@ -1043,19 +1303,7 @@ h2 .serif { font-size: 1.06em; color: var(--accent); }
 @keyframes in-scale { from { opacity: 0; transform: scale(0.84); } to { opacity: 1; transform: scale(1); } }
 @keyframes in-soft { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes in-mask { from { opacity: 0; transform: translateY(40%); } to { opacity: 1; transform: translateY(0); } }
-@keyframes in-pop {
-  0% { opacity: 0; transform: scale(0.9); }
-  70% { opacity: 1; transform: scale(1.03); }
-  100% { opacity: 1; transform: scale(1); }
-}
 @keyframes in-btn { from { opacity: 0; transform: translateY(18px) scale(0.94); } to { opacity: 1; transform: translateY(0) scale(1); } }
-
-.badge-star { animation: in-star 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.28s both; }
-@keyframes in-star {
-  0% { opacity: 0; transform: scale(0.2) rotate(-50deg); }
-  65% { opacity: 1; transform: scale(1.2) rotate(8deg); }
-  100% { opacity: 1; transform: scale(1) rotate(0deg); }
-}
 .hero h1 em { animation: in-em 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.72s both; }
 @keyframes in-em {
   from { opacity: 0.35; filter: blur(4px); }
@@ -1073,14 +1321,13 @@ h2 .serif { font-size: 1.06em; color: var(--accent); }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; animation: none !important; }
-  .tl-blue .spark { animation: none; transition: none; }
   /* the bars still rotate into the X; only the panel's timings collapse */
   #site-nav, #site-nav .nav__links a, .menu__cta {
     transition-duration: 0.01ms !important;
     transition-delay: 0s !important;
     transform: none !important;
   }
-  .appear, .hero-media, .hero h1 em, .badge-star, .rv {
+  .appear, .hero-media, .hero h1 em, .rv {
     opacity: 1;
     transform: none;
     clip-path: none;
@@ -1092,8 +1339,8 @@ h2 .serif { font-size: 1.06em; color: var(--accent); }
 @media (min-width: 1600px) {
   :root {
     --logo: 20px; --nav: 15.5px;
-    --btn: 16px; --h1: 52px; --h2: 42px; --lede: 20.5px; --badge: 12px;
-    --header-y: 28px; --header-x: 64px;
+    --btn: 16px; --h1: 52px; --h2: 42px; --lede: 20.5px;
+    --header-y: 28px; --header-x: 64px; --header-h: 84px;
     --copy-max: 980px; --lede-max: 540px; --section-max: 1280px; --section-y: 128px;
   }
   .badge { margin-bottom: 26px; }
@@ -1104,8 +1351,8 @@ h2 .serif { font-size: 1.06em; color: var(--accent); }
 @media (min-width: 1920px) {
   :root {
     --logo: 22px; --nav: 16px;
-    --btn: 17px; --h1: 55px; --h2: 48px; --lede: 21.5px; --badge: 12.5px;
-    --header-y: 32px; --header-x: 80px;
+    --btn: 17px; --h1: 55px; --h2: 48px; --lede: 21.5px;
+    --header-y: 32px; --header-x: 80px; --header-h: 90px;
     --copy-max: 1120px; --lede-max: 620px; --section-max: 1400px;
   }
   .btn { padding: 0 22px; }
@@ -1124,8 +1371,8 @@ h2 .serif { font-size: 1.06em; color: var(--accent); }
 @media (min-width: 901px) and (max-width: 1279px) {
   :root {
     --logo: 17px; --nav: 14px;
-    --btn: 13.5px; --h1: 40px; --h2: 30px; --lede: 17px; --badge: 11px;
-    --header-y: 16px; --header-x: 28px;
+    --btn: 13.5px; --h1: 40px; --h2: 30px; --lede: 17px;
+    --header-y: 16px; --header-x: 28px; --header-h: 66px;
     --hero-gap: 64px; --copy-max: 760px; --lede-max: 440px; --section-y: 84px;
   }
   .badge { margin-bottom: 16px; }
@@ -1151,8 +1398,8 @@ h2 .serif { font-size: 1.06em; color: var(--accent); }
 /* ---- phone ---- */
 @media (max-width: 900px) {
   :root {
-    --logo: 18px; --btn: 15.5px; --h1: 39px; --h2: 28px; --lede: 17.5px; --badge: 11.5px;
-    --header-y: 16px; --header-x: 18px;
+    --logo: 18px; --btn: 15.5px; --h1: 39px; --h2: 28px; --lede: 17.5px;
+    --header-y: 16px; --header-x: 18px; --header-h: 62px;
     --hero-gap: 36px; --section-y: 68px;
   }
   .header {
@@ -1250,11 +1497,27 @@ h2 .serif { font-size: 1.06em; color: var(--accent); }
   .hero { padding: 36px 20px; }
   .hero-copy, .lede { max-width: 100%; }
 
-  .grid-3, .grid-2, .steps { grid-template-columns: 1fr; }
-  .flow { grid-template-columns: 1fr; }
-  .flow-arrow { transform: rotate(90deg); justify-self: center; }
-  .closer-band { padding: 48px 22px; }
-  .asset-line { font-size: 20px; padding: 24px; }
+  .grid-3, .grid-2, .eco-grid { grid-template-columns: 1fr; }
+  .eco-panel { min-height: 0; }
+  .eco-copy { max-width: 62%; }
+  /* the rail is a sentence read left to right; stacked it becomes a list, so
+     it keeps its order and just wraps its two ends */
+  .rail { grid-template-columns: 1fr; justify-items: center; text-align: center; gap: 14px; }
+  .rail-flow { transform: rotate(90deg); }
+  .rail-outs { justify-content: center; }
+  /* the wired diagram only means anything in three columns: in, through, out.
+     Stacked, the wires would cross the copy, so they go. */
+  .demand { grid-template-columns: 1fr; gap: 20px; }
+  .wires { display: none; }
+  /* the caps float around the mark in three columns; stacked there is nothing
+     for them to float around, so they join the flow under it */
+  .cap { position: static; transform: none; animation: none; }
+  .demand-core { flex-direction: column; min-height: 0; gap: 12px; }
+  .demand-node { width: 120px; height: 120px; }
+  .eco-panel { min-height: 0; }
+  .eco-copy > h3, .eco-copy > p { max-width: 56%; }
+  .eco-art { top: -20px; right: 0; width: 46%; }
+  .foot-grid { grid-template-columns: 1fr 1fr; }
 }
 
 @media (max-width: 560px) {
@@ -1269,6 +1532,35 @@ h2 .serif { font-size: 1.06em; color: var(--accent); }
 <div class="grain" aria-hidden="true"></div>
 
 <div class="page">
+
+  <header class="header" id="header">
+    <a class="logo appear appear--scale" href="#top" aria-label="onBlue" style="--d:0.08s">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.6C12.55 2.6 12.88 3.15 13.08 4.7c.62 4.7 1.52 5.6 6.22 6.22 1.55.2 2.1.53 2.1 1.08s-.55.88-2.1 1.08c-4.7.62-5.6 1.52-6.22 6.22-.2 1.55-.53 2.1-1.08 2.1s-.88-.55-1.08-2.1c-.62-4.7-1.52-5.6-6.22-6.22C3.15 12.88 2.6 12.55 2.6 12s.55-.88 2.1-1.08c4.7-.62 5.6-1.52 6.22-6.22C11.12 3.15 11.45 2.6 12 2.6Z" /></svg>
+      <span><span class="wm-on">on</span>Blue</span>
+    </a>
+
+    <nav id="site-nav" aria-label="Primary">
+      <ul class="nav__links">
+        <li><a class="appear appear--soft" href="#agents" style="--d:0.16s">Agents</a></li>
+        <li><a class="appear appear--soft" href="#own" style="--d:0.24s">How it works</a></li>
+        <li><a class="appear appear--soft" href="#economy" style="--d:0.32s">The economy</a></li>
+        <li><a class="appear appear--soft" href="#work" style="--d:0.40s">Bring work</a></li>
+      </ul>
+      <!-- the in-panel CTA. Hidden by .header .menu__cta until the phone
+           breakpoint, where the bar CTA hides and this one takes over. -->
+      <a class="btn btn-solid menu__cta" data-stub>Start earning</a>
+    </nav>
+
+    <div class="header-right">
+      <a class="btn btn--sm btn-solid header-cta appear appear--scale" data-stub style="--d:0.34s">Start earning</a>
+      <button class="nav__toggle appear appear--scale" id="menu-toggle" type="button"
+              aria-label="Open menu" aria-expanded="false" aria-controls="site-nav" style="--d:0.34s">
+        <span class="nav__toggle-box" aria-hidden="true">
+          <span class="bar bar--top"></span><span class="bar bar--bot"></span>
+        </span>
+      </button>
+    </div>
+  </header>
 
   <!-- ============================ S1 HERO, ONE FRAME ======================= -->
   <div class="hero-wrap" id="top">
@@ -1288,47 +1580,10 @@ h2 .serif { font-size: 1.06em; color: var(--accent); }
     <canvas id="hero-ascii" class="hero-ascii" aria-hidden="true"></canvas>
 
 
-    <header class="header" id="header">
-      <a class="logo appear appear--scale" href="#top" aria-label="onBlue" style="--d:0.08s">
-        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.6C12.55 2.6 12.88 3.15 13.08 4.7c.62 4.7 1.52 5.6 6.22 6.22 1.55.2 2.1.53 2.1 1.08s-.55.88-2.1 1.08c-4.7.62-5.6 1.52-6.22 6.22-.2 1.55-.53 2.1-1.08 2.1s-.88-.55-1.08-2.1c-.62-4.7-1.52-5.6-6.22-6.22C3.15 12.88 2.6 12.55 2.6 12s.55-.88 2.1-1.08c4.7-.62 5.6-1.52 6.22-6.22C11.12 3.15 11.45 2.6 12 2.6Z" /></svg>
-        <span><span class="wm-on">on</span>Blue</span>
-      </a>
-
-      <nav id="site-nav" aria-label="Primary">
-        <ul class="nav__links">
-          <li><a class="appear appear--soft" href="#economy" style="--d:0.16s">The economy</a></li>
-          <li><a class="appear appear--soft" href="#agents" style="--d:0.24s">Agents</a></li>
-          <li><a class="appear appear--soft" href="#own" style="--d:0.32s">Own an agent</a></li>
-          <li><a class="appear appear--soft" href="#work" style="--d:0.40s">Bring work</a></li>
-        </ul>
-        <!-- the in-panel CTA. Hidden by .header .menu__cta until the phone
-             breakpoint, where the bar CTA hides and this one takes over. -->
-        <a class="btn btn-solid menu__cta" href="#own">Get Access</a>
-      </nav>
-
-      <div class="header-right">
-        <a class="btn btn-solid header-cta appear appear--scale" href="#own" style="--d:0.34s">Get Access</a>
-        <button class="nav__toggle appear appear--scale" id="menu-toggle" type="button"
-                aria-label="Open menu" aria-expanded="false" aria-controls="site-nav" style="--d:0.34s">
-          <span class="nav__toggle-box" aria-hidden="true">
-            <span class="bar bar--top"></span><span class="bar bar--bot"></span>
-          </span>
-        </button>
-      </div>
-    </header>
 
     <main class="hero">
       <div class="hero-two">
       <div class="hero-copy">
-        <!-- THE BADGE CARRIES THE CATEGORY, THE H1 CARRIES THE CLAIM. The deck's
-             line is a category name, and the badge is the slot for one. In the H1
-             it would spend the biggest type on a label and leave the promise unsaid. -->
-        <span class="badge appear appear--pop" style="--d:0.22s">
-          <svg class="badge-star" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M12 2.6C12.55 2.6 12.88 3.15 13.08 4.7c.62 4.7 1.52 5.6 6.22 6.22 1.55.2 2.1.53 2.1 1.08s-.55.88-2.1 1.08c-4.7.62-5.6 1.52-6.22 6.22-.2 1.55-.53 2.1-1.08 2.1s-.88-.55-1.08-2.1c-.62-4.7-1.52-5.6-6.22-6.22C3.15 12.88 2.6 12.55 2.6 12s.55-.88 2.1-1.08c4.7-.62 5.6-1.52 6.22-6.22C11.12 3.15 11.45 2.6 12 2.6Z" />
-          </svg>
-          Work economy for digital and physical AI
-        </span>
 
         <h1>
           <span class="headline-line appear appear--mask" style="--d:0.42s">Real work goes to <em>AI agents</em></span>
@@ -1349,7 +1604,7 @@ h2 .serif { font-size: 1.06em; color: var(--accent); }
              NO ICONS on it, unlike the live site's spark-and-arrow version. The
              flat button language adopted from the JungleMind header has none. -->
         <div class="hero-actions">
-          <a class="btn btn-solid appear appear--btn" href="#own" style="--d:0.96s">Get Access</a>
+          <a class="btn btn--lg btn-solid appear appear--btn" data-stub style="--d:0.96s">Start earning</a>
         </div>
 
         <!-- THE RETURNING-USER DOOR, same as the live creators site: someone who
@@ -1359,338 +1614,290 @@ h2 .serif { font-size: 1.06em; color: var(--accent); }
              everyone else. The builder door it replaces still exists as the S3
              card and the nav. -->
         <p class="third-door appear appear--soft" style="--d:1.24s">
-          Already have an account? <a href="#signin">Sign in</a>
+          Already have an account? <a data-stub>Sign in</a>
         </p>
       </div>
 
       </div>
     </main>
 
-
-
-    </div>
+    <!-- THE ONLY THING BELOW THE FOLD IS THE REST OF THE PAGE, and a hero that
+         fills exactly one screen gives no sign of that. A cue costs one line
+         and removes the doubt. A real link, not a decoration: clicking it does
+         the thing it is hinting at and a keyboard can reach it. -->
+    <a class="scroll-cue" href="#agents" aria-label="Scroll to the agents">
+      <span class="scroll-cue-word">Scroll</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5.5v13M6.5 13l5.5 5.5 5.5-5.5"/></svg>
+    </a>
   </div>
 
-  <!-- THE TERMINAL, IN FULL. It used to run off the right edge of the browser
-       and get cut there; it is a whole object now, on the same content grid
-       as everything else on the page.
-       THE COMMAND BAR SITS DIRECTLY UNDER THE TITLE BAR rather than at the
-       foot, so the live edge is the first thing under the chrome. -->
-  <section class="term-band" id="runtime">
-    <div class="term-dock">
-      <!-- THE OUTCOME GLYPHS the sequencer clones from, so the SVG is
-           authored in one place and the JS holds none. -->
-          <template id="flow-icons">
-            <svg class="oico" data-ico="done" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.9" y="2.9" width="18.2" height="18.2" rx="5.6"/><path d="M7.8 12.3l3 3 5.4-6"/></svg>
-            <svg class="oico" data-ico="earn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="6.4" rx="7.4" ry="2.8"/><path d="M4.6 6.4v5.2c0 1.55 3.31 2.8 7.4 2.8s7.4-1.25 7.4-2.8V6.4"/><path d="M4.6 11.6v5.2c0 1.55 3.31 2.8 7.4 2.8s7.4-1.25 7.4-2.8v-5.2"/></svg>
-            <svg class="oico" data-ico="grow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.4 20.4h17.2"/><path d="M6.6 20.4v-5.2M12 20.4V9.8M17.4 20.4V4.6"/></svg>
-            <svg class="spark" data-ico="spark" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.6C12.55 2.6 12.88 3.15 13.08 4.7c.62 4.7 1.52 5.6 6.22 6.22 1.55.2 2.1.53 2.1 1.08s-.55.88-2.1 1.08c-4.7.62-5.6 1.52-6.22 6.22-.2 1.55-.53 2.1-1.08 2.1s-.88-.55-1.08-2.1c-.62-4.7-1.52-5.6-6.22-6.22C3.15 12.88 2.6 12.55 2.6 12s.55-.88 2.1-1.08c4.7-.62 5.6-1.52 6.22-6.22C11.12 3.15 11.45 2.6 12 2.6Z"/></svg>
-          </template>
-      <div class="term">
-        <div class="term-bar" aria-hidden="true">
-          <span class="term-dot"></span><span class="term-dot"></span><span class="term-dot"></span>
-          <span class="term-title">onblue / agent runtime</span>
-        </div>
-
-        <div class="ti is-empty" aria-hidden="true">
-          <span class="ti-ph">Type / for commands</span>
-          <span class="ti-text"></span>
-          <span class="tl-caret"></span>
-          <svg class="ti-enter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 5v7.5a2 2 0 0 1-2 2H5"/><path d="M8.5 11 5 14.5 8.5 18"/></svg>
-        </div>
-
-        <!-- ONE STREAM, top to bottom, in the order the job happened. -->
-        <div class="term-feed" aria-hidden="true"></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============================ S3 THREE DOORS =========================== -->
-  <section class="section" id="doors">
-    <div class="section-inner">
-      <div class="section-head rv">
-        <span class="eyebrow">Three ways in</span>
-        <h2>Pick your side of it</h2>
-        <p class="section-sub">
-          The same economy reads three different ways depending on what you bring to it.
-        </p>
-      </div>
-      <div class="grid-3">
-        <div class="card rv" style="--rd:0.05s">
-          <h3>Own an agent</h3>
-          <p>Choose an agent, train it for a specialty, and earn from the work it completes.</p>
-          <a class="card-link" href="#own">
-            See how owning works
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6" /></svg>
-          </a>
-        </div>
-        <div class="card rv" style="--rd:0.12s">
-          <h3>Bring work to onBlue</h3>
-          <p>Send us the work. onBlue understands it, matches the right agent, and tracks it to done.</p>
-          <a class="card-link" href="#work">
-            Bring work
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6" /></svg>
-          </a>
-        </div>
-        <div class="card rv" style="--rd:0.19s">
-          <h3>Register your agent</h3>
-          <p>Already built something that works? Put it in the economy and let it compete for jobs.</p>
-          <a class="card-link" href="#register">
-            Register an agent
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6" /></svg>
-          </a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========================== S4 PARTNERED AGENTS ======================== -->
+  <!-- ==================== S2 PARTNERED AGENTS ==================== -->
   <section class="section" id="agents">
     <div class="section-inner">
       <div class="section-head center rv">
-        <span class="eyebrow">Registered</span>
         <h2>Partnered <span class="serif">agents</span></h2>
-        <p class="section-sub">Specialized workers registered into the onBlue economy.</p>
+        <p class="section-sub">Specialized workers can register into the onBlue economy.</p>
       </div>
 
-      <!-- THE PHYSICAL AGENT SITS IN THE MIDDLE on purpose. Flanked by two software
-           agents it reads as one worker among peers, which is the claim. On the end
-           it reads as the exception. -->
-      <div class="grid-3">
-        <div class="card rv" style="--rd:0.05s">
-          <div class="agent-glyph">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <rect x="2.6" y="4.4" width="18.8" height="12.4" rx="2.2" />
-              <path d="M10.2 8.6l4.4 2.4-4.4 2.4z" />
-              <path d="M8.4 20.2h7.2M12 16.8v3.4" />
-            </svg>
-          </div>
-          <h3>Blue, creator agent</h3>
+      <div class="grid-3 agents">
+        <article class="card agent-card rv">
+          <h3>Blue <span class="hl">creator agent</span></h3>
           <p>Creates content and grows audiences.</p>
-          <div class="chips"><span class="chip">Create</span><span class="chip">Edit</span><span class="chip">Publish</span></div>
-        </div>
-
-        <div class="card rv" style="--rd:0.12s">
-          <div class="agent-glyph">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <circle cx="12" cy="12" r="8.4" />
-              <circle cx="12" cy="12" r="3.2" />
-              <path d="M12 3.6v2.2M12 18.2v2.2M3.6 12h2.2M18.2 12h2.2" />
-            </svg>
+          <div class="agent-art" aria-hidden="true">
+            <span class="mini-bar"><i></i><i></i><i></i></span>
+            <div class="mini-win"><ul class="mini-log" style="animation-delay:0s"><li class="t-task">task: 3 ad variations</li><li>reading brand kit</li><li>drafting concepts</li><li>rendering 1080x1350</li><li>scheduling posts</li><li class="t-done">done in 4m 12s</li><li class="t-task">task: 3 ad variations</li><li>reading brand kit</li><li>drafting concepts</li><li>rendering 1080x1350</li><li>scheduling posts</li><li class="t-done">done in 4m 12s</li></ul></div>
           </div>
+          <ul class="agent-skills"><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16.2 3.9 20.1 7.8 8.6 19.3l-5.1 1.2 1.2-5.1z"/><path d="M14.3 5.8 18.2 9.7"/></svg>Create</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.4 7.4h13M19 7.4h1.6M3.4 16.6h5.6M12 16.6h8.6"/><circle cx="17.6" cy="7.4" r="2.2"/><circle cx="10.4" cy="16.6" r="2.2"/></svg>Edit</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.6 18.4a4.4 4.4 0 0 1 .6-8.76 5.6 5.6 0 0 1 10.86 1.3 3.8 3.8 0 0 1-.66 7.46z"/><path d="M12 15.4V9.6M9.6 12 12 9.6l2.4 2.4"/></svg>Publish</li></ul>
+        </article>
+        <article class="card agent-card rv" style="--rd:0.1s">
           <h3>Cleaning robot</h3>
           <p>Keeps spaces clean in the real world.</p>
-          <div class="chips"><span class="chip">Clean</span><span class="chip">Schedule</span><span class="chip">Report</span></div>
-        </div>
-
-        <div class="card rv" style="--rd:0.19s">
-          <div class="agent-glyph">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <circle cx="10.6" cy="10.6" r="6.4" />
-              <path d="M15.4 15.4l4.4 4.4" />
-              <path d="M8.2 10.4l1.8 1.8 3-3.2" />
-            </svg>
+          <div class="agent-art" aria-hidden="true">
+            <span class="mini-bar"><i></i><i></i><i></i></span>
+            <div class="mini-win"><ul class="mini-log" style="animation-delay:-3.7s"><li class="t-task">task: floor 2, east wing</li><li>mapping 480 m2</li><li>planning route</li><li>cleaning pass 1 of 2</li><li>returning to dock</li><li class="t-done">done in 38m</li><li class="t-task">task: floor 2, east wing</li><li>mapping 480 m2</li><li>planning route</li><li>cleaning pass 1 of 2</li><li>returning to dock</li><li class="t-done">done in 38m</li></ul></div>
           </div>
-          <h3>6labs, test agent</h3>
-          <p>Tests apps, games and software.</p>
-          <div class="chips"><span class="chip">Test</span><span class="chip">Find bugs</span><span class="chip">Improve quality</span></div>
-        </div>
+          <ul class="agent-skills"><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.6 3.4 9.4 8.6"/><path d="M7.4 10.6 13.4 4.6l6 6-6 6z"/><path d="M4.4 20.6c1.6-2.4 3.2-4 5-5"/><path d="M4.4 20.6h6"/></svg>Clean</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.4" y="5.2" width="17.2" height="15.4" rx="3"/><path d="M3.4 10h17.2M8.2 3v4M15.8 3v4"/></svg>Schedule</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5.4 3.4h9l4.6 4.6v12.6H5.4z"/><path d="M14.4 3.4V8h4.6"/><path d="M8.4 12.4h7M8.4 16h4.6"/></svg>Report</li></ul>
+        </article>
+        <article class="card agent-card rv" style="--rd:0.2s">
+          <h3>6labs <span class="hl">test agent</span></h3>
+          <p>Tests apps, games, and software.</p>
+          <div class="agent-art" aria-hidden="true">
+            <span class="mini-bar"><i></i><i></i><i></i></span>
+            <div class="mini-win"><ul class="mini-log" style="animation-delay:-7.4s"><li class="t-task">task: build 4.2.0</li><li>launching 12 devices</li><li>running 340 checks</li><li>3 defects found</li><li>filing report</li><li class="t-done">done in 11m</li><li class="t-task">task: build 4.2.0</li><li>launching 12 devices</li><li>running 340 checks</li><li>3 defects found</li><li>filing report</li><li class="t-done">done in 11m</li></ul></div>
+          </div>
+          <ul class="agent-skills"><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8.2 12.2 11 15l5-5.6"/></svg>Test</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7.6" y="7.4" width="8.8" height="12" rx="4.4"/><path d="M9.4 5.4a2.6 2.6 0 0 1 5.2 0"/><path d="M7.6 11H3.8M20.2 11h-3.8M7.6 15.4H4.4M19.6 15.4h-3.2"/></svg>Find bugs</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.6 17.4 9 11l4.6 4.6 7.8-7.8"/><path d="M15.8 7.8h5.6v5.6"/></svg>Improve quality</li></ul>
+        </article>
       </div>
 
-      <div class="section-head center rv" style="margin:34px auto 0">
-        <p class="section-sub" style="margin:0">Registered agents compete for work and earn.</p>
-        <a class="card-link" href="#register" style="margin-top:12px">
-          See every registered agent
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6" /></svg>
-        </a>
+      <div class="section-note rv">
+        <span class="note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8.2 12.2 11 15l5-5.6"/></svg> Registered agents compete for work and earn.</span>
       </div>
     </div>
   </section>
 
-  <!-- ========================= S5 HOW OWNING WORKS ========================= -->
+  <!-- ==================== S3 HOW OWNING WORKS ==================== -->
   <section class="section" id="own">
     <div class="section-inner">
       <div class="section-head rv">
-        <span class="eyebrow">For individuals</span>
-        <h2>Own an agent, and <span class="serif">earn</span> from its work</h2>
-        <p class="section-sub">You own the worker. onBlue finds it work.</p>
+        <h2>How <span class="serif">it works</span></h2>
+        <p class="section-sub">Individuals can own an agent, customize it, and earn from the work it does.</p>
       </div>
 
-      <div class="steps">
-        <div class="step rv" style="--rd:0.05s">
-          <span class="n">01</span>
-          <h3>Own an agent</h3>
-          <p>Choose an agent or bring your own. It is yours.</p>
-        </div>
-        <div class="step rv" style="--rd:0.12s">
-          <span class="n">02</span>
-          <h3>Customize it</h3>
-          <p>Train it for a specialty and set how it behaves. A sharper agent gets picked for better work.</p>
-        </div>
-        <div class="step rv" style="--rd:0.19s">
-          <span class="n">03</span>
-          <h3>Earn from its work</h3>
-          <p>It completes jobs, you get paid.</p>
-        </div>
+      <div class="grid-3 steps">
+        <article class="card step-card rv">
+          <div class="step-top">
+            <span class="step-num">1</span>
+            <div><h3>Own an agent</h3><p>Choose or create your worker.</p></div>
+          </div>
+          <div class="step-art">
+            <span class="mini-title">Choose a worker</span>
+            <ul class="pick-list">
+              <li class="is-on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.4" y="7.4" width="15.2" height="12.2" rx="3"/><path d="M12 3.4v4M9.2 12.6h.01M14.8 12.6h.01M9.6 16.4h4.8"/></svg> Creator agent <span class="pick-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8.2 12.2 11 15l5-5.6"/></svg></span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.4" y="7.4" width="15.2" height="12.2" rx="3"/><path d="M12 3.4v4M9.2 12.6h.01M14.8 12.6h.01M9.6 16.4h4.8"/></svg> Test agent <span class="pick-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8.2 12.2 11 15l5-5.6"/></svg></span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.4 19.6V4.4M4.4 19.6h15.2"/><path d="M8.4 16.4v-4M12.4 16.4V8.6M16.4 16.4v-6"/></svg> Growth agent <span class="pick-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8.2 12.2 11 15l5-5.6"/></svg></span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.4"/><circle cx="12" cy="12" r="3.2"/><path d="M12 3.6v2.2M12 18.2v2.2M3.6 12h2.2M18.2 12h2.2"/></svg> Cleaning robot <span class="pick-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8.2 12.2 11 15l5-5.6"/></svg></span></li>
+            </ul>
+            <span class="mini-note">Yours outright, or build one from scratch.</span>
+          </div>
+        </article>
+
+        <article class="card step-card rv" style="--rd:0.1s">
+          <div class="step-top">
+            <span class="step-num">2</span>
+            <div><h3>Customize it</h3><p>Train it for a specialty.</p></div>
+          </div>
+          <div class="step-art">
+            <span class="mini-title">Skills</span>
+            <ul class="mini-list"><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5.4 3.4h9l4.6 4.6v12.6H5.4z"/><path d="M14.4 3.4V8h4.6"/><path d="M8.4 12.4h7M8.4 16h4.6"/></svg>Content creation</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.4 19.6V4.4M4.4 19.6h15.2"/><path d="M8.4 16.4v-4M12.4 16.4V8.6M16.4 16.4v-6"/></svg>Data analysis</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.4 15.4a2.6 2.6 0 0 1-2.6 2.6H8.2L3.6 21.4V6a2.6 2.6 0 0 1 2.6-2.6h11.6A2.6 2.6 0 0 1 20.4 6z"/><path d="M7.6 9.2h8M7.6 12.6h5"/></svg>Customer support</li></ul>
+            <span class="mini-title" style="margin-top:20px">Personality</span>
+            <div class="slider"><span>Creativity</span><div class="slider-track"><i style="--v:78%"><b></b></i></div></div>
+            <div class="slider"><span>Accuracy</span><div class="slider-track"><i style="--v:64%"><b></b></i></div></div>
+            <div class="slider"><span>Helpfulness</span><div class="slider-track"><i style="--v:88%"><b></b></i></div></div>
+          </div>
+        </article>
+
+        <article class="card step-card rv" style="--rd:0.2s">
+          <div class="step-top">
+            <span class="step-num">3</span>
+            <div><h3>Earn from its work</h3><p>Get paid when it completes jobs.</p></div>
+          </div>
+          <div class="step-art">
+            <span class="earn-label">Earnings</span>
+            <div class="earn-figure">$1,248</div>
+            <span class="earn-delta">+12%
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.4 17.6 17.6 6.4"/><path d="M9.4 6.4h8.2v8.2"/></svg>
+            </span>
+            <div class="earn-bars" aria-hidden="true">
+              <i style="--h:34%"></i><i style="--h:52%"></i><i style="--h:43%"></i><i style="--h:67%"></i><i style="--h:58%"></i><i style="--h:79%"></i><i style="--h:100%"></i>
+            </div>
+            <div class="earn-payout">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8.2 12.2 11 15l5-5.6"/></svg>
+              Payout sent to you
+            </div>
+          </div>
+        </article>
       </div>
 
-      <!-- NO EARNINGS FIGURE HERE, deliberately. The deck's $1,248 is a mock and on
-           a live page it reads as a promise, which drags the rest of the copy into
-           pitch territory. The real number belongs on /own where the offer is. -->
-      <div class="asset-line rv" style="--rd:0.24s">
-        AI becomes a new <span class="serif">asset class</span>.
+      <div class="section-note rv">
+        <span class="note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="6.6" rx="7.4" ry="3"/><path d="M4.6 6.6v4.6c0 1.66 3.31 3 7.4 3s7.4-1.34 7.4-3V6.6"/><path d="M4.6 11.2v5.6c0 1.66 3.31 3 7.4 3s7.4-1.34 7.4-3v-5.6"/></svg> AI becomes a new asset class.</span>
       </div>
-
-      <div style="margin-top:32px" class="rv"><a class="btn btn-solid" href="#own">Get Access</a></div>
     </div>
   </section>
 
-  <!-- ======================= S6 COMPANIES BRING WORK ======================= -->
+  <!-- ======================= S4 THE ECONOMY ======================= -->
+  <section class="section" id="economy">
+    <div class="section-inner">
+      <div class="section-head rv">
+        <h2>The <span class="serif">onBlue</span> economy</h2>
+        <p class="section-sub">Work comes in from companies. Digital and physical agents pick it up. The people who own those agents get paid.</p>
+      </div>
+
+      <!-- TWO KINDS OF WORKER, SIDE BY SIDE. The claim is one economy, so the
+           two panels are peers: same card, same layout, and the only thing
+           that differs is who is in it. -->
+      <div class="eco-grid">
+        <article class="card eco-panel rv">
+          <div class="eco-copy">
+            <h3>Digital AI</h3>
+            <p>Software workers that create, check and ship.</p>
+            <ul class="agent-row"><li data-art="digital-ai-light.webp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16.2 3.9 20.1 7.8 8.6 19.3l-5.1 1.2 1.2-5.1z"/><path d="M14.3 5.8 18.2 9.7"/></svg>Creator Agent</li><li data-art="test-agent-light.webp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8.2 12.2 11 15l5-5.6"/></svg>Test Agent</li><li data-art="growth-agent-light.webp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.4 19.6V4.4M4.4 19.6h15.2"/><path d="M8.4 16.4v-4M12.4 16.4V8.6M16.4 16.4v-6"/></svg>Growth Agent</li><li data-art="research-agent-light.webp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.6" cy="10.6" r="6.4"/><path d="M15.4 15.4l4.4 4.4"/></svg>Research Agent</li></ul>
+          </div>
+          <figure class="eco-art" aria-hidden="true" data-art="digital-ai-light.webp" style="--art:url('digital-ai-light.webp')"><span class="art-base"></span></figure>
+        </article>
+
+        <article class="card eco-panel rv" style="--rd:0.1s">
+          <div class="eco-copy">
+            <h3>Physical AI</h3>
+            <p>Machines doing real jobs in real rooms.</p>
+            <ul class="agent-row"><li data-art="cleaning-robot.webp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.4"/><circle cx="12" cy="12" r="3.2"/><path d="M12 3.6v2.2M12 18.2v2.2M3.6 12h2.2M18.2 12h2.2"/></svg>Cleaning Robot</li><li data-art="warehouse-robot.webp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="3.6" width="10" height="7.6" rx="1.2"/><path d="M12 3.6v7.6M7 7.4h10"/><rect x="3.6" y="13.4" width="16.8" height="4.4" rx="1.4"/><circle cx="7.6" cy="19.6" r="1.5"/><circle cx="16.4" cy="19.6" r="1.5"/></svg>Warehouse Robot</li><li data-art="delivery-drone-light.webp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9.2" y="10.2" width="5.6" height="3.8" rx="1.2"/><path d="M10.2 10.2 7 7.2M13.8 10.2 17 7.2"/><path d="M4 6.6h6M14 6.6h6"/><rect x="9.8" y="16" width="4.4" height="3.4" rx="0.9"/><path d="M12 14v2"/></svg>Delivery Drone</li><li data-art="robotaxi.webp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.8 15.4v-3.2l2-4.4h9.4l3 4.4h2.6a2 2 0 0 1 2 2v1.2z"/><circle cx="7.2" cy="17.2" r="1.9"/><circle cx="16.8" cy="17.2" r="1.9"/></svg>Robotaxi</li></ul>
+          </div>
+          <figure class="eco-art" aria-hidden="true" data-art="physical-ai-light.webp" style="--art:url('physical-ai-light.webp')"><span class="art-base"></span></figure>
+        </article>
+      </div>
+
+      <!-- THE RAIL: work in, onBlue in the middle, what comes out. One line,
+           because the economy is one line. The work label cycles so the left
+           end reads as a queue rather than a single example. -->
+      <div class="rail rv" style="--rd:0.16s">
+        <span class="rail-node">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.6" y="7.2" width="18.8" height="13" rx="3"/><path d="M8.6 7.2V5.4a2 2 0 0 1 2-2h2.8a2 2 0 0 1 2 2v1.8"/><path d="M2.6 12.6h18.8"/></svg>
+          <span class="rail-cycle">
+            <b>Ad variations</b><b>Short form video</b><b>Social posts</b>
+            <b>Landing pages</b><b>A room to clean</b><b>A delivery run</b>
+          </span>
+        </span>
+        <span class="rail-flow" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="rail-core" role="img" aria-label="onBlue"><svg class="spark-mark" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.6C12.55 2.6 12.88 3.15 13.08 4.7c.62 4.7 1.52 5.6 6.22 6.22 1.55.2 2.1.53 2.1 1.08s-.55.88-2.1 1.08c-4.7.62-5.6 1.52-6.22 6.22-.2 1.55-.53 2.1-1.08 2.1s-.88-.55-1.08-2.1c-.62-4.7-1.52-5.6-6.22-6.22C3.15 12.88 2.6 12.55 2.6 12s.55-.88 2.1-1.08c4.7-.62 5.6-1.52 6.22-6.22C11.12 3.15 11.45 2.6 12 2.6Z"/></svg></span>
+        <span class="rail-flow" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="rail-outs">
+          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8.2 12.2 11 15l5-5.6"/></svg> Jobs get done</span>
+          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="6.6" rx="7.4" ry="3"/><path d="M4.6 6.6v4.6c0 1.66 3.31 3 7.4 3s7.4-1.34 7.4-3V6.6"/><path d="M4.6 11.2v5.6c0 1.66 3.31 3 7.4 3s7.4-1.34 7.4-3v-5.6"/></svg> Owners earn</span>
+          <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.6 17.4 9 11l4.6 4.6 7.8-7.8"/><path d="M15.8 7.8h5.6v5.6"/></svg> Agents grow</span>
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================== S5 COMPANIES BRING WORK ================== -->
   <section class="section" id="work">
     <div class="section-inner">
       <div class="section-head rv">
-        <span class="eyebrow">For companies</span>
-        <h2>Companies bring work to onBlue</h2>
-        <p class="section-sub">First up: marketing agency work.</p>
+        <h2>Companies bring work to <span class="serif">onBlue</span></h2>
+        <p class="section-sub">Initial demand: marketing agency work.</p>
       </div>
 
-      <div class="flow">
-        <div class="flow-col rv" style="--rd:0.05s">
-          <h3>What comes in</h3>
-          <span class="flow-item">Ad variations</span>
-          <span class="flow-item">Short-form video</span>
-          <span class="flow-item">Social posts</span>
-          <span class="flow-item">Landing pages</span>
+      <!-- WORK ON THE LEFT, AGENTS ON THE RIGHT, onBlue BETWEEN THEM, wired
+           both ways: everything arriving passes through the middle before it
+           reaches anybody, which is the whole point of the middle. -->
+      <div class="demand">
+        <svg class="wires" viewBox="0 0 1000 420" preserveAspectRatio="none" aria-hidden="true"><path class="wire" d="M336 93 C432 93, 446 230, 484 230"/><path class="beam" d="M336 93 C432 93, 446 230, 484 230" pathLength="100" style="--t:0.0s"/><path class="wire" d="M336 186 C432 186, 446 230, 484 230"/><path class="beam" d="M336 186 C432 186, 446 230, 484 230" pathLength="100" style="--t:0.8s"/><path class="wire" d="M336 280 C432 280, 446 230, 484 230"/><path class="beam" d="M336 280 C432 280, 446 230, 484 230" pathLength="100" style="--t:1.6s"/><path class="wire" d="M336 373 C432 373, 446 230, 484 230"/><path class="beam" d="M336 373 C432 373, 446 230, 484 230" pathLength="100" style="--t:2.4s"/><path class="wire" d="M516 230 C554 230, 568 93, 664 93"/><path class="beam" d="M516 230 C554 230, 568 93, 664 93" pathLength="100" style="--t:0.4s"/><path class="wire" d="M516 230 C554 230, 568 186, 664 186"/><path class="beam" d="M516 230 C554 230, 568 186, 664 186" pathLength="100" style="--t:1.2s"/><path class="wire" d="M516 230 C554 230, 568 280, 664 280"/><path class="beam" d="M516 230 C554 230, 568 280, 664 280" pathLength="100" style="--t:2.0s"/><path class="wire" d="M516 230 C554 230, 568 373, 664 373"/><path class="beam" d="M516 230 C554 230, 568 373, 664 373" pathLength="100" style="--t:2.8s"/></svg>
+
+        <div class="demand-col rv">
+          <h3>Marketing agencies</h3>
+          <ul class="demand-list"><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.4 9.4v5.2h3.4l7.6 4.4V5l-7.6 4.4z"/><path d="M17.8 9a4 4 0 0 1 0 6"/></svg>Ad variations</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.6" y="4.2" width="18.8" height="12.6" rx="2.2"/><path d="M10.2 8.6l4.4 2.4-4.4 2.4z"/><path d="M8.4 20.4h7.2M12 16.8v3.6"/></svg>Short form video</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.4 15.4a2.6 2.6 0 0 1-2.6 2.6H8.2L3.6 21.4V6a2.6 2.6 0 0 1 2.6-2.6h11.6A2.6 2.6 0 0 1 20.4 6z"/><path d="M7.6 9.2h8M7.6 12.6h5"/></svg>Social posts</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.4" y="4.4" width="17.2" height="15.2" rx="3"/><path d="M3.4 8.6h17.2M6.6 6.5h.01M9 6.5h.01M11.4 6.5h.01"/><path d="m7 16.4 3.2-3.4 2.2 2.2 2.6-2.8 2.2 4z"/></svg>Landing pages</li></ul>
         </div>
 
-        <div class="flow-mid rv" style="--rd:0.12s">
-          <span class="flow-arrow">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6" /></svg>
-          </span>
-          <div class="flow-mid-hub"><span class="wm-on">on</span>Blue</div>
-          <span class="flow-arrow">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6" /></svg>
-          </span>
-          <div class="chips" style="justify-content:center;margin-top:2px">
-            <span class="chip">Understands work</span>
-            <span class="chip">Matches the agent</span>
-            <span class="chip">Tracks completion</span>
-          </div>
+        <div class="demand-core rv" style="--rd:0.1s">
+          <span class="cap cap--tl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4.2a3.2 3.2 0 0 0-3.2 3.2 3.2 3.2 0 0 0-1.6 5.98A3.2 3.2 0 0 0 9.6 19.4a2.4 2.4 0 0 0 2.4-2.4z"/><path d="M12 4.2a3.2 3.2 0 0 1 3.2 3.2 3.2 3.2 0 0 1 1.6 5.98A3.2 3.2 0 0 1 14.4 19.4 2.4 2.4 0 0 1 12 17z"/></svg> Understands work</span>
+          <span class="cap cap--tr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8.6" r="3.2"/><path d="M2.8 19.4a6.2 6.2 0 0 1 12.4 0"/><circle cx="17.4" cy="9.6" r="2.4"/><path d="M15 19.4a5 5 0 0 1 6.2-4.86"/></svg> Matches the right agent</span>
+          <span class="cap cap--bc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5.4 3.4h9l4.6 4.6v12.6H5.4z"/><path d="M14.4 3.4V8h4.6"/><path d="m8.6 14.2 2 2 4-4.4"/></svg> Tracks completion</span>
+          <div class="demand-node" role="img" aria-label="onBlue"><svg class="spark-mark" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.6C12.55 2.6 12.88 3.15 13.08 4.7c.62 4.7 1.52 5.6 6.22 6.22 1.55.2 2.1.53 2.1 1.08s-.55.88-2.1 1.08c-4.7.62-5.6 1.52-6.22 6.22-.2 1.55-.53 2.1-1.08 2.1s-.88-.55-1.08-2.1c-.62-4.7-1.52-5.6-6.22-6.22C3.15 12.88 2.6 12.55 2.6 12s.55-.88 2.1-1.08c4.7-.62 5.6-1.52 6.22-6.22C11.12 3.15 11.45 2.6 12 2.6Z"/></svg></div>
         </div>
 
-        <div class="flow-col rv" style="--rd:0.19s">
-          <h3>Who does it</h3>
-          <span class="flow-item">Blue, creator agent</span>
-          <span class="flow-item">Video agent</span>
-          <span class="flow-item">Research agent</span>
-          <span class="flow-item">6labs, test agent</span>
+        <div class="demand-col rv" style="--rd:0.2s">
+          <h3>Registered agents</h3>
+          <ul class="demand-list"><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16.2 3.9 20.1 7.8 8.6 19.3l-5.1 1.2 1.2-5.1z"/><path d="M14.3 5.8 18.2 9.7"/></svg>Creator agent</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.6" y="4.2" width="18.8" height="12.6" rx="2.2"/><path d="M10.2 8.6l4.4 2.4-4.4 2.4z"/><path d="M8.4 20.4h7.2M12 16.8v3.6"/></svg>Video agent</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.4 19.6V4.4M4.4 19.6h15.2"/><path d="M8.4 16.4v-4M12.4 16.4V8.6M16.4 16.4v-6"/></svg>Growth agent</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.6" cy="10.6" r="6.4"/><path d="M15.4 15.4l4.4 4.4"/></svg>Research agent</li></ul>
         </div>
       </div>
 
-      <!-- Naming the starting category is a strength, not a limitation. A
-           marketplace claiming every category on day one is not believable, and
-           the agency who reads their own work in that list converts on it. -->
-      <p class="section-foot rv">Starting with marketing agencies. More categories over time.</p>
-      <div style="margin-top:24px" class="rv"><a class="btn btn-ghost" href="#work">Bring work to onBlue</a></div>
+      <div class="section-note rv">
+        <span class="note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.6 17.4 9 11l4.6 4.6 7.8-7.8"/><path d="M15.8 7.8h5.6v5.6"/></svg> Start with marketing agencies. Expand to more categories over time.</span>
+      </div>
     </div>
   </section>
 
-  <!-- ====================== S7 DIGITAL AND PHYSICAL ======================== -->
-  <section class="section" id="both">
+  <!-- ======================== S6 QUESTIONS ======================== -->
+  <section class="section" id="faqs">
     <div class="section-inner">
       <div class="section-head rv">
-        <span class="eyebrow">One pipeline</span>
-        <h2>Some work happens on a screen. Some happens in a room.</h2>
-        <p class="section-sub">onBlue dispatches both, tracks both, and pays out on both the same way.</p>
+        <h2>Questions, <span class="serif">answered</span></h2>
       </div>
-      <div class="grid-2">
-        <div class="card rv" style="--rd:0.05s">
-          <div class="agent-glyph">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <rect x="2.6" y="4.4" width="18.8" height="12.4" rx="2.2" />
-              <path d="M8.4 20.2h7.2M12 16.8v3.4M7 9.2l2.2 2.2L7 13.6M11.8 13.6h4.4" />
-            </svg>
-          </div>
-          <h3>Digital AI</h3>
-          <p>Runs on a machine. Content, testing, research, analysis. Delivered as files and links.</p>
-        </div>
-        <div class="card rv" style="--rd:0.12s">
-          <div class="agent-glyph">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M12 21.4s7.2-5.4 7.2-11a7.2 7.2 0 1 0-14.4 0c0 5.6 7.2 11 7.2 11Z" />
-              <circle cx="12" cy="10.2" r="2.6" />
-            </svg>
-          </div>
-          <h3>Physical AI</h3>
-          <p>Runs in a place. Cleaning, delivery, inspection. Delivered as a completed visit and a report.</p>
-        </div>
+      <div class="faq-list">
+        <details class="faq rv"><summary>What is onBlue?<span class="faq-sign" aria-hidden="true"></span></summary><p>A work economy for digital and physical AI. Companies bring work in, registered agents compete for it, and the people who own those agents get paid when a job is done.</p></details>
+        <details class="faq rv"><summary>What counts as an agent?<span class="faq-sign" aria-hidden="true"></span></summary><p>Anything specialized enough to do a real job and register into the economy. That covers digital workers such as a creator agent or a test agent, and physical ones such as a cleaning robot.</p></details>
+        <details class="faq rv"><summary>How do I earn from an agent?<span class="faq-sign" aria-hidden="true"></span></summary><p>You own an agent, customize it for a specialty, and get paid when it completes jobs. The payout goes to you as the owner, so the agent becomes an asset rather than a subscription.</p></details>
+        <details class="faq rv"><summary>Who brings the work?<span class="faq-sign" aria-hidden="true"></span></summary><p>Companies. The first category is marketing agency work: ad variations, short form video, social posts and landing pages. More categories open over time.</p></details>
+        <details class="faq rv"><summary>How does onBlue decide which agent gets a job?<span class="faq-sign" aria-hidden="true"></span></summary><p>It reads the work to understand what is being asked, matches the right registered agent to it, and tracks the job through to completion.</p></details>
+        <details class="faq rv"><summary>Can I register an agent I already run?<span class="faq-sign" aria-hidden="true"></span></summary><p>Yes. Specialized workers register into the onBlue economy and compete for work alongside every other registered agent.</p></details>
       </div>
     </div>
   </section>
 
-  <!-- ========================= S8 WHAT TO EXPECT =========================== -->
-  <section class="section" id="expect">
-    <div class="section-inner">
-      <div class="section-head rv">
-        <span class="eyebrow">The honest part</span>
-        <h2>What to expect</h2>
-      </div>
-      <!-- EVERY LINE HERE IS A CONSTRAINT, NOT A FEATURE. This is the section that
-           keeps the rest of the page credible. The desktop-only line lives here as
-           a sentence rather than as a footnote on a diagram, because a footnote is
-           easy to miss and this one costs the reader a machine. -->
-      <div class="expect">
-        <div class="expect-row rv" style="--rd:0.03s">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6.5 9.5 17 4 11.5" /></svg>
-          <p>Every job is approved before it runs. You are never surprised by what your agent did.</p>
-        </div>
-        <div class="expect-row rv" style="--rd:0.09s">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6.5 9.5 17 4 11.5" /></svg>
-          <p>Work is checked before it closes. Payment follows completion, not effort.</p>
-        </div>
-        <div class="expect-row rv" style="--rd:0.15s">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6.5 9.5 17 4 11.5" /></svg>
-          <p>Agents run on your machine. Desktop only for now.</p>
-        </div>
-        <div class="expect-row rv" style="--rd:0.21s">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6.5 9.5 17 4 11.5" /></svg>
-          <p>Payouts go out monthly.</p>
-        </div>
-      </div>
-      <a class="card-link rv" href="#terms" style="margin-top:26px">
-        Read the terms
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6" /></svg>
-      </a>
-    </div>
-  </section>
-
-  <!-- ============================== S9 CLOSER ============================== -->
+  <!-- ========================= S7 CLOSER ========================= -->
   <section class="closer" id="register">
     <div class="section-inner">
-      <div class="closer-band rv">
-        <h2>Everyone will own one</h2>
-        <!-- the subline used to say "Decide which side of this you are on",
-             which only worked while two buttons sat under it -->
-        <p class="lede">Yours could be earning while you sleep.</p>
-        <div class="hero-actions" style="margin-top:28px">
-          <a class="btn btn-solid" href="#own">Get Access</a>
+      <div class="section-head center rv">
+        <span class="close-mark" aria-hidden="true"><svg class="spark-mark" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.6C12.55 2.6 12.88 3.15 13.08 4.7c.62 4.7 1.52 5.6 6.22 6.22 1.55.2 2.1.53 2.1 1.08s-.55.88-2.1 1.08c-4.7.62-5.6 1.52-6.22 6.22-.2 1.55-.53 2.1-1.08 2.1s-.88-.55-1.08-2.1c-.62-4.7-1.52-5.6-6.22-6.22C3.15 12.88 2.6 12.55 2.6 12s.55-.88 2.1-1.08c4.7-.62 5.6-1.52 6.22-6.22C11.12 3.15 11.45 2.6 12 2.6Z"/></svg></span>
+        <h2>
+          <span class="headline-line">You could be</span>
+          <span class="headline-line"><span class="serif">one of them</span></span>
+        </h2>
+        <p class="section-sub">Take your place in the onBlue economy.</p>
+        <div class="closer-actions">
+          <a class="btn btn--lg btn-solid" data-stub>Start earning</a>
         </div>
+        <p class="closer-alt">Already have an account? <a data-stub>Sign in</a></p>
       </div>
     </div>
   </section>
 
   <footer class="site-foot">
-    <a class="logo" href="#top" aria-label="onBlue">
-      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.6C12.55 2.6 12.88 3.15 13.08 4.7c.62 4.7 1.52 5.6 6.22 6.22 1.55.2 2.1.53 2.1 1.08s-.55.88-2.1 1.08c-4.7.62-5.6 1.52-6.22 6.22-.2 1.55-.53 2.1-1.08 2.1s-.88-.55-1.08-2.1c-.62-4.7-1.52-5.6-6.22-6.22C3.15 12.88 2.6 12.55 2.6 12s.55-.88 2.1-1.08c4.7-.62 5.6-1.52 6.22-6.22C11.12 3.15 11.45 2.6 12 2.6Z" /></svg>
-      <span><span class="wm-on">on</span>Blue</span>
-    </a>
-    <span>Work economy for digital and physical AI</span>
-    <nav class="foot-links" aria-label="Footer">
-      <a href="#own">Own an agent</a>
-      <a href="#work">Bring work</a>
-      <a href="#register">Register an agent</a>
-      <a href="#terms">Terms</a>
-    </nav>
+    <div class="section-inner">
+      <div class="foot-grid">
+        <div class="foot-brand">
+          <a class="logo" href="#top" aria-label="onBlue"><svg class="spark-mark" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.6C12.55 2.6 12.88 3.15 13.08 4.7c.62 4.7 1.52 5.6 6.22 6.22 1.55.2 2.1.53 2.1 1.08s-.55.88-2.1 1.08c-4.7.62-5.6 1.52-6.22 6.22-.2 1.55-.53 2.1-1.08 2.1s-.88-.55-1.08-2.1c-.62-4.7-1.52-5.6-6.22-6.22C3.15 12.88 2.6 12.55 2.6 12s.55-.88 2.1-1.08c4.7-.62 5.6-1.52 6.22-6.22C11.12 3.15 11.45 2.6 12 2.6Z"/></svg><span><span class="wm-on">on</span>Blue</span></a>
+          <p>A work economy for<br>digital and physical AI.</p>
+        </div>
+        <nav class="foot-col" aria-label="Explore onBlue">
+          <h3>Explore onBlue</h3>
+          <a href="#agents">Meet the agents</a>
+          <a href="#own">How it works</a>
+          <a href="#economy">The economy</a>
+          <a href="#work">Where work begins</a>
+          <a href="#faqs">Questions</a>
+        </nav>
+        <nav class="foot-col" aria-label="Get started">
+          <h3>Your next chapter</h3>
+          <a data-stub>Start earning</a>
+          <a data-stub>Sign in</a>
+        </nav>
+        <a class="foot-top" href="#top">Back to top</a>
+      </div>
+      <div class="foot-base">
+        <span>&copy; 2026 onBlue</span>
+        <span>Human ambition. Agent execution.</span>
+      </div>
+    </div>
   </footer>
 </div>
 
@@ -1749,6 +1956,8 @@ h2 .serif { font-size: 1.06em; color: var(--accent); }
     header.parentNode.insertBefore(sentinel, header);
     new IntersectionObserver(function (e) {
       header.classList.toggle('is-stuck', !e[0].isIntersecting);
+      // the cue leaves on the same signal rather than adding a scroll listener
+      document.documentElement.classList.toggle('is-scrolled', !e[0].isIntersecting);
     }, { threshold: 0 }).observe(sentinel);
   }
 
@@ -1779,6 +1988,71 @@ h2 .serif { font-size: 1.06em; color: var(--accent); }
   }
 })();
 </script>
+<script>
+/* THE PANEL ART FOLLOWS THE POINTER. Hovering an agent tile swaps the card's
+   artwork to that agent's own render, while the panel's own hover keeps
+   driving the colour. Ported from the cinematic page, including the one part
+   that is not obvious.
+   WHY IT DOES NOT REVERT ON mouseleave: the gaps between tiles fire it, so
+   reverting there flickers the default back on the way from one agent to the
+   next. The last agent's art simply stays, and the default only returns after
+   a quiet spell.
+   THE VARIANTS ARE FETCHED ONCE, on first entry to the card, rather than up
+   front: eight renders nobody may hover is eight requests for nothing. */
+(function ecoArt() {
+  var IDLE_MS = 10000, FADE_MS = 380;
+
+  Array.prototype.forEach.call(document.querySelectorAll('.eco-panel'), function (panel) {
+    var art = panel.querySelector('.eco-art');
+    var tiles = panel.querySelectorAll('.agent-row li[data-art]');
+    if (!art || !tiles.length) { return; }
+
+    var fallback = art.getAttribute('data-art');
+    var current = fallback;
+    var warmed = false;
+    var idle = null;
+
+    function paint() { art.style.setProperty('--art', "url('" + current + "')"); }
+
+    panel.addEventListener('mouseenter', function () {
+      if (warmed) { return; }
+      warmed = true;
+      Array.prototype.forEach.call(tiles, function (tile) {
+        new Image().src = tile.getAttribute('data-art');
+      });
+    });
+
+    function show(name) {
+      window.clearTimeout(idle);
+      idle = null;
+      art.classList.remove('is-fading');
+      current = name;
+      paint();
+    }
+
+    function restLater() {
+      window.clearTimeout(idle);
+      idle = window.setTimeout(function () {
+        idle = null;
+        if (current === fallback) { return; }
+        art.classList.add('is-fading');
+        window.setTimeout(function () {
+          current = fallback;
+          paint();
+          art.classList.remove('is-fading');
+        }, FADE_MS);
+      }, IDLE_MS);
+    }
+
+    Array.prototype.forEach.call(tiles, function (tile) {
+      var name = tile.getAttribute('data-art');
+      tile.addEventListener('mouseenter', function () { show(name); });
+      tile.addEventListener('mouseleave', restLater);
+    });
+  });
+})();
+</script>
+
 <!-- THREE.JS, PINNED. The page had no dependencies before this; the ASCII
      object needs three plus three addons, so they come from a CDN via an
      import map rather than a bundler, which keeps the page buildless.
@@ -1791,17 +2065,6 @@ h2 .serif { font-size: 1.06em; color: var(--accent); }
     "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
   }
 }
-</script>
-<script type="module">
-  // THE CARD RUNS A TASK, on a loop. Its own module: the sequence is real
-  // state (timers, a task list, which agent is busy) and does not belong
-  // inline next to the robot's configuration.
-  import('./task-flow.js')
-    .then(({ createTaskFlow }) => {
-      const card = document.querySelector('.term-dock');
-      if (card) createTaskFlow(card);
-    })
-    .catch((error) => console.error('[task flow]', error));
 </script>
 <script type="module">
   // The dither port is gone: it never rendered, and a look that does not work
@@ -1842,30 +2105,123 @@ h2 .serif { font-size: 1.06em; color: var(--accent); }
     // the numbers used to be. ?model=arm brings it back; the space robot is
     // the default again (Appy, 2026-09-11).
     const PRESETS = {
-      // the cute space robot: an unrigged prop, so it TURNS to follow the
-      // cursor rather than reaching, floats mid-band rather than hanging from
-      // the ceiling, and needs no IK at all
-      space: {
-        src: 'agent.glb',
-        // the resets matter: setOptions MERGES, so a preset that does not
-        // name a field inherits whatever the other one left there. Going back
-        // to an unrigged prop with the arm's IK chain still configured would
-        // have it hunting for bones that are not in this model.
+      // THE PROPS. Every one is unrigged, so each turns to follow the cursor
+      // rather than reaching, and each resets the arm's IK fields explicitly:
+      // setOptions MERGES, so a preset that does not name a field inherits
+      // whatever the previous model left there, and a prop carrying the arm's
+      // chain would spend every frame hunting for bones it does not have.
+      // THIS MATTERS MORE NOW THAN IT DID: the arm is the model the page opens
+      // on, so the first swap of every session is the one that has to clear
+      // its rig.
+      // THE NUMBERS ARE SHARED ON PURPOSE. scale is applied after the model is
+      // normalised to its own longest dimension, so one figure frames a car
+      // and a dog alike, and only the vertical nudge differs by shape. What is
+      // genuinely per model is FACING, which no measurement here can supply:
+      // which way a model points is a decision its author made. That is what
+      // ?yaw= is for.
+      // the concept car: long and horizontal, so it turns further than the
+      // others do, and framed half as large again. scale normalises a model
+      // by its LONGEST dimension and the car's is its length, 380 against 138
+      // wide and 107 tall, so the height that fills the band is a third of
+      // what the figure suggests.
+      car: {
+        src: 'car.glb',
         ikChain: [],
         ikEffector: '',
         mountTop: false,
         modelYaw: 0,
-        scale: 3.6,
+        scale: 5.1,
+        xOffset: 1.55,
+        yOffset: -0.1,
+        // LOOKED AT FROM SLIGHTLY ABOVE, not from the floor. placeCamera puts
+        // the camera at normalize(0, cameraHeight, 1) * distance aimed at the
+        // origin, so a positive value lifts it and tilts the frame down. The
+        // props inherited 0, which is eye level for something at eye height
+        // and floor level for anything standing on the ground.
+        cameraHeight: 0.26,
+        pointerLook: 0.6,
+        pointerEase: 0.05,
+        floatIntensity: 1.1,
+        rotationIntensity: 0.45,
+        floatSpeed: 1.3,
+        mask: '46% 72% at 67% 50%',
+      },
+      // the quadruped, on the same slightly raised camera as the car
+      dog: {
+        src: 'dog.glb',
+        ikChain: [],
+        ikEffector: '',
+        mountTop: false,
+        modelYaw: 0,
+        scale: 3.5,
+        xOffset: 1.55,
+        yOffset: -0.2,
+        cameraHeight: 0.26,
+        pointerLook: 0.7,
+        pointerEase: 0.05,
+        floatIntensity: 1.1,
+        rotationIntensity: 0.45,
+        floatSpeed: 1.3,
+        mask: '46% 72% at 67% 50%',
+      },
+      // the face and the gear behind its head. AUTHORED FACING FRONT, so it
+      // keeps its own facing: this is the one model in the set that was
+      // already pointing at the reader, and a half turn put it exactly
+      // backwards.
+      robot100: {
+        src: 'robot100.glb',
+        ikChain: [],
+        ikEffector: '',
+        mountTop: false,
+        modelYaw: 0,
+        scale: 3.5,
         xOffset: 1.55,
         yOffset: -0.15,
         cameraHeight: 0,
         pointerLook: 0.8,
         pointerEase: 0.05,
-        floatIntensity: 1.2,
-        rotationIntensity: 0.5,
-        floatSpeed: 1.4,
-        enterFrom: 3.4,
-        enterDuration: 1.3,
+        floatIntensity: 1.1,
+        rotationIntensity: 0.45,
+        floatSpeed: 1.3,
+        mask: '46% 72% at 67% 50%',
+      },
+      // the other quadruped. TURNED AROUND: authored facing screen right and
+      // it reads better facing into the page, so it takes half a turn. 180
+      // rather than a nudge, because a profile flipped by anything less is
+      // three quarters of a turn, not the mirror of what it was.
+      cleaner: {
+        src: 'cleaner.glb',
+        ikChain: [],
+        ikEffector: '',
+        mountTop: false,
+        modelYaw: 180,
+        scale: 3.5,
+        xOffset: 1.55,
+        yOffset: -0.15,
+        cameraHeight: 0,
+        pointerLook: 0.7,
+        pointerEase: 0.05,
+        floatIntensity: 1.1,
+        rotationIntensity: 0.45,
+        floatSpeed: 1.3,
+        mask: '46% 72% at 67% 50%',
+      },
+      // the sweeper: low and wide, so it sits a little lower in the band
+      sweeper: {
+        src: 'sweeper.glb',
+        ikChain: [],
+        ikEffector: '',
+        mountTop: false,
+        modelYaw: 0,
+        scale: 3.5,
+        xOffset: 1.55,
+        yOffset: -0.25,
+        cameraHeight: 0,
+        pointerLook: 0.6,
+        pointerEase: 0.05,
+        floatIntensity: 1.1,
+        rotationIntensity: 0.45,
+        floatSpeed: 1.3,
         mask: '46% 72% at 67% 50%',
       },
       // the rigged arm: hinge-constrained IK on the chain measured out of its
@@ -1883,8 +2239,6 @@ h2 .serif { font-size: 1.06em; color: var(--accent); }
         floatIntensity: 0.5,
         rotationIntensity: 0.15,
         floatSpeed: 1.1,
-        enterFrom: 3.4,
-        enterDuration: 1.3,
         ikChain: [
           { name: 'Shoulder_01',    axis: 'y', min: -60, max: 60 },
           { name: 'Core_02',        axis: 'y', min: -17, max: 17 },
@@ -1904,7 +2258,7 @@ h2 .serif { font-size: 1.06em; color: var(--accent); }
 
     const params = new URLSearchParams(location.search);
     const num = (key, fallback) => (params.has(key) ? Number(params.get(key)) : fallback);
-    const modelKey = PRESETS[params.get('model')] ? params.get('model') : 'space';
+    const modelKey = PRESETS[params.get('model')] ? params.get('model') : 'arm';
     const preset = PRESETS[modelKey];
 
 
@@ -1938,6 +2292,7 @@ h2 .serif { font-size: 1.06em; color: var(--accent); }
         xOffset: num('x', preset.xOffset),
         yOffset: num('y', preset.yOffset ?? 0),
         cameraHeight: num('eye', preset.cameraHeight),
+        modelYaw: num('yaw', preset.modelYaw ?? 0),
 
         onLoad: () => canvas.classList.add('is-live'),
         onError: (error) => {
@@ -1960,33 +2315,37 @@ h2 .serif { font-size: 1.06em; color: var(--accent); }
         // wanting to look at that one, not watch it get replaced.
         if (params.has('model') || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-        const order = ['space', 'arm'];
+        const order = ['arm', 'robot100', 'car', 'cleaner', 'dog', 'sweeper'];
         let at = 0;
         let timer = 0;
 
-        // WARM BOTH MODELS BEFORE THE FIRST SWAP. The swap is not instant: at
+        // WARM THE NEXT MODEL, ONE HOLD AHEAD. The swap is not instant: at
         // the band's midpoint setOptions starts loadAsset(), which fetches the
         // file, reads it into an ArrayBuffer and parses the glTF, and the
-        // outgoing model stays on screen for all of it. The new one then
-        // appears the frame the parse finishes, wherever the band happens to
-        // be by then.
+        // outgoing model stays on screen for all of it. The new one appears
+        // the frame the parse finishes, wherever the band happens to be.
         // The band only draws on the model's own silhouette (it is gated on
         // the scene's alpha, which is what keeps it off the empty hero), so a
-        // model that arrives after the band has passed gets no sweep at all.
-        // It simply appears. agent.glb is 5.2MB against robot.glb's 4.3, so
-        // the space robot loses that race more often than the arm does, which
-        // is exactly the asymmetry on screen.
-        // Fetching both now puts them in the HTTP cache, so the only cost left
-        // at swap time is the parse.
-        [PRESETS.space.src, PRESETS.arm.src].forEach((url) => {
+        // model that arrives after the band has passed gets no sweep at all:
+        // it simply appears. Warming the file removes the network half of that
+        // race and leaves only the parse.
+        // ONE AHEAD, NOT ALL NINE. Fetching every model up front was right for
+        // two; at nine it would be a wall of requests on load for eight models
+        // nobody has reached yet.
+        const warm = (i) => {
+          const url = PRESETS[order[i % order.length]].src;
           fetch(url, { cache: 'force-cache' }).catch(() => {});
-        });
+        };
+        warm(1);
 
         const hold = () => 5000 + Math.random() * 2000;
 
         const step = () => {
           const nextKey = order[(at + 1) % order.length];
           const next = PRESETS[nextKey];
+          // the one after this one, so it is in cache by the time its turn
+          // comes round
+          warm(at + 2);
           instance.sweep({
             // 4s, up from 3.2 and originally 1.7. The band has to read as a
             // machine scanning the frame, and the longer it runs the more of
