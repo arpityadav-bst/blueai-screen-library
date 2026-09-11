@@ -119,6 +119,7 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
   --green-fill: rgba(69, 237, 188, 0.13);
 
   --hair: rgba(255, 255, 255, 0.07);
+  --band-line: var(--hair);
   --hair-2: rgba(255, 255, 255, 0.12);
   --rule: rgba(255, 255, 255, 0.4);
   --link-underline: rgba(255, 255, 255, 0.35);
@@ -290,6 +291,10 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
   --green-fill: rgba(22, 163, 74, 0.1);
 
   --hair: rgba(0, 0, 0, 0.08);
+  /* the section joins run the full width of the page, so they carry far more
+     ink than the same weight does around a card. half of --hair, which the
+     footer's two rules keep. */
+  --band-line: rgba(0, 0, 0, 0.04);
   --hair-2: rgba(0, 0, 0, 0.13);
   --rule: rgba(0, 0, 0, 0.32);
   --link-underline: rgba(0, 0, 0, 0.32);
@@ -1084,7 +1089,7 @@ body.menu-open { overflow: hidden; }
    sibling selector never fired for the first one: every join had a stroke
    except the one under the hero. */
 .band + .band,
-.content > .band:first-child { border-top: 1px solid var(--hair); }
+.content > .band:first-child { border-top: 1px solid var(--band-line); }
 
 /* one step off pure black, just enough to separate this band from the one above */
 /* the light page alternates rather than running as one white sheet. #companies
