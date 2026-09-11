@@ -2681,7 +2681,7 @@ body.menu-open { overflow: hidden; }
           <path d="M12 2.4v2.2M12 19.4v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.4 12h2.2M19.4 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/>
         </svg>
       </button>
-      <a class="btn btn-solid header-cta appear appear--fade" href="#start" style="--d:0.06s">Start earning</a>
+      <a class="btn btn-solid header-cta appear appear--fade" data-stub href="#start" style="--d:0.06s">Start earning</a>
     </div>
 
     <button class="burger appear appear--fade" type="button"
@@ -2713,10 +2713,10 @@ body.menu-open { overflow: hidden; }
       <p class="lede appear appear--soft" style="--d:0.80s">Individuals can own an agent, customize it, <br class="lede-br">and earn from the work it does.</p>
 
       <div class="hero-actions">
-        <a class="btn btn-solid hero-solid appear appear--btn" href="#start" style="--d:0.88s"><span class="scramble">Start earning</span></a>
+        <a class="btn btn-solid hero-solid appear appear--btn" data-stub href="#start" style="--d:0.88s"><span class="scramble">Start earning</span></a>
       </div>
 
-      <p class="hero-alt appear appear--soft" style="--d:0.94s">Already part of onBlue? <a href="#start">Sign in</a></p>
+      <p class="hero-alt appear appear--soft" style="--d:0.94s">Already part of onBlue? <a data-stub href="#start">Sign in</a></p>
 
     </div>
   </main>
@@ -3270,9 +3270,9 @@ body.menu-open { overflow: hidden; }
         <h2 class="close-title">You could be<br><em>one of them.</em></h2>
         <p class="band-sub">Take your place in the onBlue economy.</p>
         <div class="band-actions" id="start">
-          <a class="btn btn-solid hero-solid" href="#get-access"><span class="scramble">Start earning</span> <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.4 17.6 17.6 6.4"/><path d="M9.4 6.4h8.2v8.2"/></svg></a>
+          <a class="btn btn-solid hero-solid" data-stub href="#get-access"><span class="scramble">Start earning</span></a>
         </div>
-        <p class="close-alt">Already have an account? <a href="#get-access">Sign in</a></p>
+        <p class="close-alt">Already have an account? <a data-stub href="#get-access">Sign in</a></p>
       </div>
 
     </div>
@@ -3302,8 +3302,8 @@ body.menu-open { overflow: hidden; }
 
         <nav class="foot-col" aria-label="Get started">
           <h3>Your next chapter</h3>
-          <a href="#get-access">Start earning <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.4 17.6 17.6 6.4"/><path d="M9.4 6.4h8.2v8.2"/></svg></a>
-          <a href="#get-access">Sign in</a>
+          <a data-stub href="#get-access">Start earning <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.4 17.6 17.6 6.4"/><path d="M9.4 6.4h8.2v8.2"/></svg></a>
+          <a data-stub href="#get-access">Sign in</a>
         </nav>
 
         <a class="foot-top" href="#top">Back to top <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="M6 11l6-6 6 6"/></svg></a>
@@ -3772,6 +3772,14 @@ body.menu-open { overflow: hidden; }
       window.dispatchEvent(new CustomEvent('onblue:theme'));
     });
   })();
+
+  /* the CTAs and the sign-in links have nowhere to go yet. they stay anchors so
+     they keep their focus order, their keyboard behaviour and their styling,
+     and one handler swallows the navigation. preventDefault covers Enter as
+     well as the pointer, which is why this is not a pointer-events rule. */
+  Array.prototype.forEach.call(document.querySelectorAll('[data-stub]'), function (el) {
+    el.addEventListener('click', function (e) { e.preventDefault(); });
+  });
 
   /* blur the bar once the page has moved off the top */
   var bar = document.querySelector('.header');
