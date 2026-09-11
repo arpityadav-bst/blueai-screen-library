@@ -285,9 +285,10 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
   --wash-5: rgba(0, 0, 0, 0.16);
   --wash-hover: rgba(0, 0, 0, 0.045);
 
-  /* opaque, at the same 2% step as the terminal chrome and the skill tiles.
-     these overlap the illustration, so anything translucent lets it through. */
-  --tile-bg: #fafbfb;
+  /* translucent white, like the skill tiles in Partnered agents: enough fill to
+     settle the artwork behind them without sealing it off. white rather than a
+     dark wash, so raising it veils instead of tinting. */
+  --tile-bg: rgba(250, 251, 253, 0.62);
   --tile-bg-2: rgba(12, 18, 32, 0.028);
   /* the caption bubbles float over the diagram rather than sitting in a card,
      so they stay opaque white and lift off it */
@@ -416,11 +417,6 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
 
 /* the illustration split keeps its channel filters and is softened by opacity
    and by a shorter travel instead. */
-:root[data-theme="light"] .agent-row li {
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-}
-
 /* the rail's core reads as the mark here: a filled blue disc with a white spark
    and the header mark's own glow. dark keeps the tinted disc, which works
    against black but on white reads as a pale wash rather than as a logo. */
