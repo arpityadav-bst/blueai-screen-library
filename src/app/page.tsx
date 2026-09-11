@@ -110,7 +110,7 @@ const EXPERIMENTS = [
     // index.html for the same reason as the hero below: its assets are relative.
     href: '/experiments/onblue-dark-v1/index.html',
     name: 'onBlue Cinematic Hero',
-    desc: 'The onBlue marketing landing on pure black: hero video under a particle hands layer, the digital/physical agent cards with per-agent illustration swapping, a wired dispatch diagram, FAQ, and an oversized footer wordmark. One static HTML file, inline CSS and a single IIFE, its own design language.',
+    desc: 'The onBlue marketing landing, in two themes off one token set: a particle hands layer over the hero, the digital/physical agent cards with per-agent illustration swapping, a wired dispatch diagram, terminal agents, FAQ, and an oversized footer wordmark. The header toggle switches the page whole, dark by default. Light is not the negative of dark: surfaces separate by elevation rather than by lightness, hovers cast a shadow rather than emit a glow, the brand mark goes blue, six illustrations have their own light twins, and the glows run one pass instead of two because white shows the seam. One static HTML file, inline CSS and a single IIFE, its own design language.',
   },
   {
     // Linked at index.html deliberately, NOT via an extensionless rewrite: this page
