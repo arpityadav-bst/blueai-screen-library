@@ -2501,11 +2501,11 @@ body.menu-open { overflow: hidden; }
          one "in" the other clips the colour to the offset shape. Merged under
          the untouched source, only the slivers show. -->
     <filter id="ca-foot-soft" color-interpolation-filters="sRGB" x="-5%" y="-6%" width="110%" height="112%">
-      <feOffset in="SourceAlpha" dx="-0.55" result="fsl"/>
-      <feFlood flood-color="#ff4d4d" flood-opacity="0.5" result="fslc"/>
+      <feOffset in="SourceAlpha" dx="-2.4" result="fsl"/>
+      <feFlood flood-color="#ff3b3b" flood-opacity="0.8" result="fslc"/>
       <feComposite in="fslc" in2="fsl" operator="in" result="fslf"/>
-      <feOffset in="SourceAlpha" dx="0.55" result="fsr"/>
-      <feFlood flood-color="#2ad4e6" flood-opacity="0.5" result="fsrc"/>
+      <feOffset in="SourceAlpha" dx="2.4" result="fsr"/>
+      <feFlood flood-color="#00c4de" flood-opacity="0.8" result="fsrc"/>
       <feComposite in="fsrc" in2="fsr" operator="in" result="fsrf"/>
       <feMerge>
         <feMergeNode in="fslf"/>
@@ -2515,10 +2515,10 @@ body.menu-open { overflow: hidden; }
     </filter>
     <filter id="ca-spark-soft" color-interpolation-filters="sRGB" x="-10%" y="-10%" width="120%" height="120%">
       <feOffset class="ca-r" in="SourceAlpha" dx="-0.8" dy="0" result="ssl"/>
-      <feFlood flood-color="#ff4d4d" flood-opacity="0.55" result="sslc"/>
+      <feFlood flood-color="#ff3b3b" flood-opacity="0.85" result="sslc"/>
       <feComposite in="sslc" in2="ssl" operator="in" result="sslf"/>
       <feOffset class="ca-g" in="SourceAlpha" dx="0.8" dy="0" result="ssr"/>
-      <feFlood flood-color="#2ad4e6" flood-opacity="0.55" result="ssrc"/>
+      <feFlood flood-color="#00c4de" flood-opacity="0.85" result="ssrc"/>
       <feComposite in="ssrc" in2="ssr" operator="in" result="ssrf"/>
       <feMerge>
         <feMergeNode in="sslf"/>
@@ -3601,12 +3601,15 @@ body.menu-open { overflow: hidden; }
     if (!host || !node || !lead.length || !trail.length) { return; }
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { return; }
 
-    /* white gives the fringe nothing to hide in, so the same offsets that read
-       as an optical edge on black read as a coloured shadow here. */
-    var SOFT = 0.42;
-    var REST = 0.35, PEAK = 2.1, FALLOFF = 430;
-    function scale() {
-      return document.documentElement.getAttribute('data-theme') === 'light' ? SOFT : 1;
+    /* dark splits a white spark, so its fringe is bright at a fraction of a
+       pixel. light paints the fringe onto a blue one, where the same travel is
+       sub-pixel and reads as little more than an edge that changed colour, so
+       light travels several times further to say the same thing. */
+    var FALLOFF = 430;
+    var DARK = { rest: 0.35, peak: 2.1 };
+    var LIGHT = { rest: 1.7, peak: 5.2 };
+    function reach() {
+      return document.documentElement.getAttribute('data-theme') === 'light' ? LIGHT : DARK;
     }
     var mx = 0, my = 0, queued = false;
 
@@ -3629,8 +3632,8 @@ body.menu-open { overflow: hidden; }
       var oy = my - (box.top + box.height / 2);
       var d = Math.sqrt(ox * ox + oy * oy) || 1;
       var near = Math.max(0, 1 - d / FALLOFF);
-      var amp = REST + PEAK * near * near;
-      amp *= scale();
+      var r = reach();
+      var amp = r.rest + r.peak * near * near;
       split((ox / d) * amp, (oy / d) * amp);
     }
 
