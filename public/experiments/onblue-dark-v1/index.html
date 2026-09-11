@@ -161,6 +161,8 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
   --card-line-hover: rgba(255, 255, 255, 0.18);
   --sheen-a: rgba(168, 200, 255, 0.9);
   --sheen-b: rgba(140, 180, 255, 0.28);
+  --sheen-w: 1px;
+  --sheen-bloom: none;
   --faq-line-open: rgba(255, 255, 255, 0.24);
 
   /* effect switches. these are what actually break between themes: a layer
@@ -323,8 +325,15 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
   --beam-glow: rgba(90, 195, 255, 0.8);
 
   --card-line-hover: rgba(0, 0, 0, 0.2);
-  --sheen-a: rgba(21, 110, 254, 0.55);
-  --sheen-b: rgba(21, 110, 254, 0.16);
+  /* on black the sheen swaps a dim hairline for a bright one, a big jump in
+     lightness. on white it swaps a dark hairline for a blue one of roughly the
+     same lightness, so the same values barely register. it gets full-strength
+     colour, half a pixel more stroke, and a bloom outside the ring to carry the
+     difference instead. */
+  --sheen-a: var(--blue);
+  --sheen-b: rgba(21, 110, 254, 0.3);
+  --sheen-w: 1.5px;
+  --sheen-bloom: drop-shadow(0 0 7px rgba(21, 110, 254, 0.5));
   --faq-line-open: rgba(0, 0, 0, 0.24);
 
   --card-shadow: 0 1px 2px rgba(18, 32, 64, 0.035), 0 14px 32px -16px rgba(18, 32, 64, 0.1);
@@ -1147,10 +1156,11 @@ body.menu-open { overflow: hidden; }
 .card::after {
   content: "";
   position: absolute;
-  inset: -1px;
+  inset: calc(var(--sheen-w) * -1);
   z-index: 3;
-  padding: 1px;
-  border-radius: calc(var(--card-radius) + 1px);
+  padding: var(--sheen-w);
+  border-radius: calc(var(--card-radius) + var(--sheen-w));
+  filter: var(--sheen-bloom);
   background: radial-gradient(260px circle at var(--gx, 50%) var(--gy, 50%),
     var(--sheen-a), var(--sheen-b) 34%, transparent 68%);
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
