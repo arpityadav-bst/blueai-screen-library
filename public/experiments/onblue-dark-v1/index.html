@@ -178,6 +178,7 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
   --faq-shadow: none;
   --faq-line: var(--border-soft);
   --panel-bg: var(--wash-1);
+  --bar-bg: var(--wash-4);
   --card-shadow-hover: inset 0 1px 0 var(--hair);
   /* hover on black emits light; hover on white casts one. same token, two
      entirely different physics. */
@@ -371,6 +372,10 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
      beats stacking, which would have the innermost element darkest and the
      nesting reading as depth rather than as structure. */
   --panel-bg: #fdfdfd;
+  /* the unearned bars, at the same 2% step as everything else. --wash-4 is not
+     the place for it: the rail's flow line shares that token and would go
+     invisible at this weight. */
+  --bar-bg: #fafbfb;
   --card-shadow-hover: 0 2px 5px rgba(18, 32, 64, 0.05), 0 24px 46px -20px rgba(21, 110, 254, 0.2);
   /* a cast, not a glow: the button sits on the page rather than emitting. the
      colour is a deep desaturated version of the button's own blue, because a
@@ -1695,7 +1700,7 @@ body.menu-open { overflow: hidden; }
   flex: 1;
   height: var(--h);
   border-radius: 3px 3px 0 0;
-  background: var(--wash-4);
+  background: var(--bar-bg);
 }
 .earn-bars i:last-child { background: var(--blue); }
 
