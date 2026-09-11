@@ -498,6 +498,23 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
 :root[data-theme="light"] .btn-solid:hover { transform: translateY(1px); }
 :root[data-theme="light"] .btn-solid:active { transform: translateY(2px); }
 
+/* the wave mask expands past the element by the end of its cycle, so its outer
+   fade stop falls outside the box and the plateau covers the whole rectangle
+   with hard edges. on black nothing shows; on white the art's own pale ground
+   tints that rectangle under multiply and the frame appears. a vignette on the
+   layer that carries the image softens its four edges without touching the
+   wave, which keeps animating the mask-size above it. */
+:root[data-theme="light"] .hero-hands::before {
+  -webkit-mask-image: radial-gradient(ellipse 82% 78% at 50% 45%,
+    #000 52%, rgba(0, 0, 0, 0.5) 78%, transparent 100%);
+  mask-image: radial-gradient(ellipse 82% 78% at 50% 45%,
+    #000 52%, rgba(0, 0, 0, 0.5) 78%, transparent 100%);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+}
+
 :root[data-theme="light"] .term-bar i:nth-child(1) { background: #ff5f57; }
 :root[data-theme="light"] .term-bar i:nth-child(2) { background: #febc2e; }
 :root[data-theme="light"] .term-bar i:nth-child(3) { background: #28c840; }
