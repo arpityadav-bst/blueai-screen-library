@@ -287,10 +287,9 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
   --wash-5: rgba(0, 0, 0, 0.16);
   --wash-hover: rgba(0, 0, 0, 0.045);
 
-  /* these tiles overlap the illustration, so the fill has to veil it rather than
-     tint the card: near-opaque off-white, which lands about 2% under white once
-     composited and so keeps the same recess on the plain part of the card. */
-  --tile-bg: rgba(249, 250, 252, 0.88);
+  /* opaque, at the same 2% step as the terminal chrome and the skill tiles.
+     these overlap the illustration, so anything translucent lets it through. */
+  --tile-bg: #fafbfb;
   --tile-bg-2: rgba(12, 18, 32, 0.028);
   /* the caption bubbles float over the diagram rather than sitting in a card,
      so they stay opaque white and lift off it */
@@ -423,6 +422,25 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
 
 /* the illustration split keeps its channel filters and is softened by opacity
    and by a shorter travel instead. */
+:root[data-theme="light"] .agent-row li {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* the rail's core reads as the mark here: a filled blue disc with a white spark
+   and the header mark's own glow. dark keeps the tinted disc, which works
+   against black but on white reads as a pale wash rather than as a logo. */
+:root[data-theme="light"] .rail-core {
+  background: var(--blue);
+  border-color: var(--blue);
+  filter: var(--mark-shadow);
+}
+:root[data-theme="light"] .rail-core svg { color: #ffffff; }
+
+/* the travelling dots are already the accent against white; a glow on each one
+   only smudges them */
+:root[data-theme="light"] .rail-flow i { box-shadow: none; }
+
 :root[data-theme="light"] .eco-panel:hover .art-ca--l { transform: translateX(-2px); }
 :root[data-theme="light"] .eco-panel:hover .art-ca--r { transform: translateX(2px); }
 :root[data-theme="light"] .fw--l .logo-on,
