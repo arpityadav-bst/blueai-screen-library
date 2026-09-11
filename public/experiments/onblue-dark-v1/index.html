@@ -1080,7 +1080,11 @@ body.menu-open { overflow: hidden; }
 /* ============================================================== SECTIONS */
 
 .band { padding: var(--band-y) max(var(--header-x), 20px); }
-.band + .band { border-top: 1px solid var(--hair); }
+/* the hero lives in .page rather than in .content, so it is not a .band and the
+   sibling selector never fired for the first one: every join had a stroke
+   except the one under the hero. */
+.band + .band,
+.content > .band:first-child { border-top: 1px solid var(--hair); }
 
 /* one step off pure black, just enough to separate this band from the one above */
 /* the light page alternates rather than running as one white sheet. #companies
