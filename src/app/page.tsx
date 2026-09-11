@@ -101,7 +101,7 @@ const EXPERIMENTS = [
     // reason as the two below: it uses relative asset paths, and an extensionless
     // rewrite would resolve them against /experiments/ and serve the page unstyled.
     href: '/experiments/onblue-vesper/index.html',
-    name: 'onBlue Vesper Hero',
+    name: 'onBlue Agentic Hero',
     desc: 'The light onBlue hero, transformed off the Vesper.ai theme: a sampled-clay gradient field, an ambient ascii glyph field with a cursor pool, and an ascii-rendered robot alternating with a rigged robot arm through an ascii sweep, the arm reaching for the cursor on a hinge-constrained IK chain measured out of its own animation clip. Under it a charcoal agent-runtime terminal running one job at a time: command typed, agent assigned, steps opening and closing, three outcomes. Standalone HTML plus three ES modules, three.js pinned via importmap, its own design language.',
   },
   {
@@ -109,7 +109,7 @@ const EXPERIMENTS = [
     // onblue-landing and copied in, so the source of truth is there, not here. Linked at
     // index.html for the same reason as the hero below: its assets are relative.
     href: '/experiments/onblue-dark-v1/index.html',
-    name: 'onBlue Dark V1',
+    name: 'onBlue Cinematic Hero',
     desc: 'The onBlue marketing landing on pure black: hero video under a particle hands layer, the digital/physical agent cards with per-agent illustration swapping, a wired dispatch diagram, FAQ, and an oversized footer wordmark. One static HTML file, inline CSS and a single IIFE, its own design language.',
   },
   {
