@@ -199,6 +199,8 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
   --close-shadow: drop-shadow(0 0 14px var(--close-glow));
   --spark-shadow: drop-shadow(0 0 24px var(--spark-glow))
                   drop-shadow(0 0 66px var(--spark-glow-2));
+  --ca-spark: url(#ca-spark);
+  --ca-foot: url(#ca-foot);
   --foot-shadow: drop-shadow(0 0 24px var(--spark-glow))
                  drop-shadow(0 0 66px var(--spark-glow-2));
   --beam-shadow: drop-shadow(0 0 5px var(--beam-glow));
@@ -381,6 +383,8 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
   --foot-shadow: drop-shadow(0 0 0.33em rgba(90, 195, 255, 0.14))
                  drop-shadow(0 0 0.73em rgba(90, 195, 255, 0.09));
   --beam-shadow: drop-shadow(0 0 8px rgba(21, 110, 254, 0.75));
+  --ca-spark: url(#ca-spark-mono);
+  --ca-foot: url(#ca-foot-mono);
   --fringe-l: #000000;
   --fringe-r: #ffffff;
   --ca-opacity: 0.32;
@@ -1805,7 +1809,7 @@ body.menu-open { overflow: hidden; }
   width: clamp(112px, 13vw, 172px);
   height: clamp(112px, 13vw, 172px);
   color: var(--spark-ink);
-  filter: url(#ca-spark) var(--spark-shadow);
+  filter: var(--ca-spark) var(--spark-shadow);
 }
 .demand-node svg {
   display: block;
@@ -2103,7 +2107,7 @@ body.menu-open { overflow: hidden; }
   display: block;
   width: 100%;
   height: 100%;
-  filter: url(#ca-foot);
+  filter: var(--ca-foot);
   -webkit-mask-image: linear-gradient(180deg, #000 26%, rgba(0, 0, 0, 0.3) 58%, transparent 86%);
   mask-image: linear-gradient(180deg, #000 26%, rgba(0, 0, 0, 0.3) 58%, transparent 86%);
   -webkit-mask-repeat: no-repeat;
@@ -2426,7 +2430,7 @@ body.menu-open { overflow: hidden; }
 
 <!-- shared icon definitions, drawn once and referenced by <use> -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
-  <defs>
+  <defs id="defs-ca">
     <g id="i-robot">
       <circle cx="12" cy="3.3" r="1.15"/>
       <path d="M12 4.5v2"/>
@@ -2493,10 +2497,32 @@ body.menu-open { overflow: hidden; }
       <feColorMatrix in="fgo" type="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0" result="fgc"/>
       <feBlend in="frc" in2="fgc" mode="screen"/>
     </filter>
+    <filter id="ca-foot-mono" color-interpolation-filters="sRGB" x="-4%" y="-6%" width="108%" height="112%">
+      <feOffset in="SourceGraphic" dx="-1.1" result="fmlo"/>
+      <feColorMatrix in="fmlo" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="fmblack"/>
+      <feOffset in="SourceGraphic" dx="1.1" result="fmro"/>
+      <feColorMatrix in="fmro" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1 0" result="fmwhite"/>
+      <feMerge>
+        <feMergeNode in="fmblack"/>
+        <feMergeNode in="fmwhite"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="ca-spark-mono" color-interpolation-filters="sRGB" x="-8%" y="-8%" width="116%" height="116%">
+      <feOffset class="ca-r" in="SourceGraphic" dx="-0.8" dy="0" result="smlo"/>
+      <feColorMatrix in="smlo" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="smblack"/>
+      <feOffset class="ca-g" in="SourceGraphic" dx="0.8" dy="0" result="smro"/>
+      <feColorMatrix in="smro" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1 0" result="smwhite"/>
+      <feMerge>
+        <feMergeNode in="smblack"/>
+        <feMergeNode in="smwhite"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
     <filter id="ca-spark" color-interpolation-filters="sRGB" x="-8%" y="-8%" width="116%" height="116%">
-      <feOffset id="ca-spark-r" in="SourceGraphic" dx="-0.8" dy="0" result="sro"/>
+      <feOffset id="ca-spark-r" class="ca-r" in="SourceGraphic" dx="-0.8" dy="0" result="sro"/>
       <feColorMatrix in="sro" type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="src"/>
-      <feOffset id="ca-spark-g" in="SourceGraphic" dx="0.8" dy="0" result="sgo"/>
+      <feOffset id="ca-spark-g" class="ca-g" in="SourceGraphic" dx="0.8" dy="0" result="sgo"/>
       <feColorMatrix in="sgo" type="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0" result="sgc"/>
       <feBlend in="src" in2="sgc" mode="screen"/>
     </filter>
@@ -3560,19 +3586,27 @@ body.menu-open { overflow: hidden; }
   (function sparkLens() {
     var host = document.getElementById('companies');
     var node = document.querySelector('.demand-node');
-    var red = document.getElementById('ca-spark-r');
-    var cyan = document.getElementById('ca-spark-g');
-    if (!host || !node || !red || !cyan) { return; }
+    /* both the chromatic filter and its monochrome twin are in the document;
+       driving every offset in each means the lens keeps working across a theme
+       flip without having to know which one is currently mounted. */
+    var lead = document.querySelectorAll('#defs-ca .ca-r');
+    var trail = document.querySelectorAll('#defs-ca .ca-g');
+    if (!host || !node || !lead.length || !trail.length) { return; }
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { return; }
 
     var REST = 0.35, PEAK = 2.1, FALLOFF = 430;
     var mx = 0, my = 0, queued = false;
 
     function split(dx, dy) {
-      red.setAttribute('dx', (-dx).toFixed(2));
-      red.setAttribute('dy', (-dy).toFixed(2));
-      cyan.setAttribute('dx', dx.toFixed(2));
-      cyan.setAttribute('dy', dy.toFixed(2));
+      var i;
+      for (i = 0; i < lead.length; i++) {
+        lead[i].setAttribute('dx', (-dx).toFixed(2));
+        lead[i].setAttribute('dy', (-dy).toFixed(2));
+      }
+      for (i = 0; i < trail.length; i++) {
+        trail[i].setAttribute('dx', dx.toFixed(2));
+        trail[i].setAttribute('dy', dy.toFixed(2));
+      }
     }
 
     function apply() {
