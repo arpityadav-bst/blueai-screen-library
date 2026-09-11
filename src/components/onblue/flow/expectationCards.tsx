@@ -93,7 +93,7 @@ function PaidArt() {
  *  measure: line one says what the product is, line two hands over to the cards. Keeping them
  *  as separate strings means the break cannot land mid-sentence when the copy is edited. */
 export const INTRO = [
-  'onBlue is an AI worker that earns for you.',
+  'BlueAI is an AI worker that earns for you.',
   'Here’s how it works:',
 ] as const
 
@@ -134,8 +134,8 @@ export const CARDS: readonly Card[] = [
     n: '3',
     art: InstallArt,
     lead: 'Deploy it.',
-    rest: "Install onBlue on your PC and sign in. That's the whole setup.",
-    full: "Step 3. Deploy it. Install onBlue on your PC and sign in. That's the whole setup.",
+    rest: "Install BlueAI on your PC and sign in. That's the whole setup.",
+    full: "Step 3. Deploy it. Install BlueAI on your PC and sign in. That's the whole setup.",
   },
   {
     key: 'collect',

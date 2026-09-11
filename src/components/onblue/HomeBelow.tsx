@@ -85,7 +85,7 @@ const SCENE_TASKS: { t: string; x: number; y: number; dx?: number; dy?: number }
 const STEPS = [
   { n: '01', title: 'Apply', body: 'Tell us about yourself and the PC it will run on.' },
   { n: '02', title: 'Get accepted', body: 'We review every application and email you when your worker is ready.' },
-  { n: '03', title: 'Deploy it', body: "Install onBlue on your PC and sign in. That's the whole setup." },
+  { n: '03', title: 'Deploy it', body: "Install BlueAI on your PC and sign in. That's the whole setup." },
   // THE ASTERISK IS ON BOTH SURFACES (Appy, 2026-09-10: "that can change"). The sign-in
   // dialog now carries these same four boxes verbatim, so a mark on one and not the other
   // would make the two reads disagree about whether the figure is fixed.

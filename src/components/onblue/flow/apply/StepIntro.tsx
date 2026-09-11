@@ -25,7 +25,7 @@ const INTRO_POINTS = [
   // already names the PC. If the multi-machine pitch returns to this funnel, the row returns too.
   {
     icon: <MonitorIcon />,
-    body: <>Once accepted, we&apos;ll email you a download link. Set up onBlue on your PC.</>,
+    body: <>Once accepted, we&apos;ll email you a download link. Set up BlueAI on your PC.</>,
   },
   {
     icon: <ClockIcon />,
@@ -38,11 +38,11 @@ const INTRO_POINTS = [
     // The row is still the funnel's one YouTube seed: it names the account BEFORE step 2 asks
     // about it, which is what keeps that question from arriving cold (Ashish's "second screen
     // cannot be disconnected" rule). Dropping the source noun does not touch that.
-    body: <>onBlue completes campaigns and tasks on your YouTube account. Each takes a few minutes.</>,
+    body: <>BlueAI completes campaigns and tasks on your YouTube account. Each takes a few minutes.</>,
   },
   {
     icon: <CadenceIcon />,
-    body: <>All you do: run onBlue on at least <b>20 days</b> each month.</>,
+    body: <>All you do: run BlueAI on at least <b>20 days</b> each month.</>,
   },
   {
     icon: <WalletIcon />,

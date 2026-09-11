@@ -23,7 +23,19 @@ export const metadata: Metadata = {
   // counterparty after the page stopped doing so would be the search result contradicting the page
   // it is for (Appy, 2026-08-27).
   description:
-    'onBlue is an AI worker you own. It finds real work, completes it, and pays you.',
+    /* THE THREE NAMES, AND WHICH ONE GOES WHERE (Appy, 2026-09-11). They are not
+       interchangeable and this fork had been using them as if they were:
+         · BlueAI  - THE PRODUCT. Anything you install, run, own, or that completes work is
+                     BlueAI. Every sentence on this site that has a verb attached to the thing
+                     uses this name.
+         · onblue.ai - the website.
+         · onBlue  - the site's NAME, and it earns a capital B because that is how the mark is
+                     drawn. It belongs to the top-left label, the legal documents, the Partner
+                     Program, and your account. Nothing runs on your PC called onBlue.
+       The PM's 2026-09-11 copy pass renamed the hero to BlueAI and the rest of the fork was
+       still saying onBlue in 21 places, which is what forced the rule to be written down. If a
+       new line is about something a reader DOES with the software, it says BlueAI. */
+    'BlueAI is an AI worker you own. It finds real work, completes it, and pays you.',
 }
 
 export default function CreatorsLayout({ children }: { children: React.ReactNode }) {

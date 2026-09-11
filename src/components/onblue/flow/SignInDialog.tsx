@@ -175,7 +175,7 @@ export default function SignInDialog({
                 sign-in, and the sub line underneath is what keeps that honest: it still says
                 dashboard for them and application for an applicant. Flagged rather than quietly
                 split, because "for all" was explicit. */}
-            <h3 className="text-center text-[20px] font-semibold leading-[30px]">Apply to onBlue</h3>
+            <h3 className="text-center text-[20px] font-semibold leading-[30px]">Apply to BlueAI</h3>
             {/* Was now.gg's "Save your progress & earn rewards" - true of their product, not of this
                 flow. Two honest lines instead, one per door: an applicant is here to submit, a
                 returning account is here to get back to its dashboard. */}

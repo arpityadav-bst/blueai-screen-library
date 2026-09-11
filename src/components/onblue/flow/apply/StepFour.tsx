@@ -24,8 +24,8 @@ export function StepFour(p: Props) {
   const { variant } = useCrx()
   const longRunLabel =
     variant === 'programs'
-      ? 'Running onBlue only takes a few minutes a day, but this is a long-term program. Are you in for the long run?'
-      : 'Running onBlue only takes a few minutes a day, but this is a long-term commitment. Are you in for the long run?'
+      ? 'Running BlueAI only takes a few minutes a day, but this is a long-term program. Are you in for the long run?'
+      : 'Running BlueAI only takes a few minutes a day, but this is a long-term commitment. Are you in for the long run?'
   return (
     <>
       <ChoiceGroup
