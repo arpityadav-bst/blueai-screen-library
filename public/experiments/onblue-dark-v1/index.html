@@ -321,17 +321,27 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
 
   --card-shadow: 0 1px 2px rgba(18, 32, 64, 0.035), 0 14px 32px -16px rgba(18, 32, 64, 0.1);
   --card-shadow-hover: 0 2px 5px rgba(18, 32, 64, 0.05), 0 24px 46px -20px rgba(21, 110, 254, 0.2);
-  /* the logo's glow at button scale. hover collapses it to roughly half, which
-     is what reads as a press: the object settles toward the surface and its
-     halo shortens with it. nothing else about the button moves. */
-  --solid-shadow: 0 0 14px rgba(90, 195, 255, 0.32),
-                  0 0 32px rgba(90, 195, 255, 0.18);
-  --hero-shadow: 0 0 18px rgba(90, 195, 255, 0.32),
-                 0 0 40px rgba(90, 195, 255, 0.18);
-  --solid-shadow-hover: 0 0 7px rgba(90, 195, 255, 0.32),
-                        0 0 16px rgba(90, 195, 255, 0.18);
-  --hero-shadow-hover: 0 0 9px rgba(90, 195, 255, 0.32),
-                        0 0 20px rgba(90, 195, 255, 0.18);
+  /* a cast, not a glow: the button sits on the page rather than emitting. the
+     colour is a deep desaturated version of the button's own blue, because a
+     coloured object casts a coloured shadow, and neutral black on white reads
+     as dirt. three stops: contact, near falloff, ambient body.
+
+     hover moves it toward the surface. the contact stop sharpens and darkens,
+     the ambient one shrinks and lifts its offset, and the button itself drops
+     1px. shadow alone reads as the light changing; the 1px is what makes it a
+     press. */
+  --solid-shadow: 0 1px 2px rgba(11, 52, 134, 0.16),
+                  0 4px 9px -2px rgba(11, 52, 134, 0.2),
+                  0 10px 22px -8px rgba(11, 52, 134, 0.24);
+  --hero-shadow: 0 1px 2px rgba(11, 52, 134, 0.16),
+                 0 5px 12px -2px rgba(11, 52, 134, 0.2),
+                 0 14px 28px -10px rgba(11, 52, 134, 0.26);
+  --solid-shadow-hover: 0 1px 1px rgba(11, 52, 134, 0.24),
+                        0 2px 4px -1px rgba(11, 52, 134, 0.2),
+                        0 5px 10px -7px rgba(11, 52, 134, 0.16);
+  --hero-shadow-hover: 0 1px 1px rgba(11, 52, 134, 0.24),
+                        0 3px 6px -1px rgba(11, 52, 134, 0.2),
+                        0 6px 13px -8px rgba(11, 52, 134, 0.16);
   /* a 16px halo on white is a smudge; the ring reads as the same pulse */
   --core-glow: 0 0 0 4px rgba(21, 110, 254, 0.08);
   --core-glow-lit: 0 0 0 9px rgba(21, 110, 254, 0.12);
@@ -396,6 +406,10 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
    white the three controls are the thing that says "terminal", where on black
    the monospace and the scrolling log already said it. dark keeps its grey
    dots. */
+/* the press itself. short, because a press is not an ease-in-out glide. */
+:root[data-theme="light"] .btn-solid:hover { transform: translateY(1px); }
+:root[data-theme="light"] .btn-solid:active { transform: translateY(2px); }
+
 :root[data-theme="light"] .term-bar i:nth-child(1) { background: #ff5f57; }
 :root[data-theme="light"] .term-bar i:nth-child(2) { background: #febc2e; }
 :root[data-theme="light"] .term-bar i:nth-child(3) { background: #28c840; }
@@ -729,7 +743,7 @@ body.menu-open .header {
   white-space: nowrap;
   cursor: pointer;
   transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease,
-              color 0.35s ease, filter 0.35s ease;
+              color 0.35s ease, filter 0.35s ease, transform 0.18s ease;
 }
 
 .btn-solid {
