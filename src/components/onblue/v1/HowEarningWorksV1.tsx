@@ -21,7 +21,7 @@ import { EARNING } from '../dashboard/mockData'
 //   comes from varies (brands, agencies, other third parties), so the copy names nobody — and
 //   "tasks" is the home page's own word for the work, kept identical on purpose.
 const STEPS = [
-  'Open onBlue and run Moneymaker. It runs tasks on your account.',
+  'Open BlueAI and run Moneymaker. It runs tasks on your account.',
   `Do this on any ${EARNING.daysRequired} days in a month.`,
   `Every month you hit ${EARNING.daysRequired} days, $${EARNING.monthlyPayment} is added to your earnings.`,
 ]

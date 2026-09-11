@@ -84,12 +84,12 @@ const SCENE_TASKS: { t: string; x: number; y: number; dx?: number; dy?: number }
 // dashboard figures, the hero's completed rows), not inside a sentence about a process.
 const STEPS = [
   { n: '01', title: 'Apply', body: 'Tell us about yourself and the PC it will run on.' },
-  { n: '02', title: 'Get accepted', body: 'We review every application and email you when your worker is ready.' },
-  { n: '03', title: 'Deploy it', body: "Install onBlue on your PC and sign in. That's the whole setup." },
+  { n: '02', title: 'Get accepted', body: 'We review every application and email you when your agent is ready.' },
+  { n: '03', title: 'Deploy it', body: "Install BlueAI on your PC and sign in. That's the whole setup." },
   // THE ASTERISK IS ON BOTH SURFACES (Appy, 2026-09-10: "that can change"). The sign-in
   // dialog now carries these same four boxes verbatim, so a mark on one and not the other
   // would make the two reads disagree about whether the figure is fixed.
-  { n: '04', title: 'Collect', body: 'You approve each campaign, your worker completes it, and you collect $30* every month via PayPal.' },
+  { n: '04', title: 'Collect', body: 'You approve each campaign, your agent completes it, and you collect $30* every month via PayPal.' },
 ]
 
 // ONE CALLER NOW: the signed-out homepage. `hideCloser` went with the change that gave every
@@ -186,7 +186,7 @@ export default function HomeBelow({ onCta }: { onCta?: () => void }) {
           {/* F16: .grad stripped from section h2s — plain white 800 carries them */}
           <h2>It earns while you chill</h2>
           <p>
-            You approve the work. From there your worker doesn&apos;t clock out: leave your machine on
+            You approve the work. From there your agent doesn&apos;t clock out: leave your machine on
             and it keeps at it, adding to your balance.
           </p>
         </div>

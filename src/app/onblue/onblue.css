@@ -2189,9 +2189,9 @@ body.crx-lock { overflow: hidden; }
    which is sized for an 820px measure, while this column is 640.
    The clamp was added for a two-sentence heading with a hand-placed <br> — which also switched
    `text-wrap: balance` off for the whole block in Chromium and dropped "here." onto a line by
-   itself. That heading is gone (the PM's "Get your worker hired." is canonical now, and carries no
+   itself. That heading is gone (the PM's "Get your agent hired." is canonical now, and carries no
    <br>, so balance works again here), but the clamp stays and earns its keep differently: at the
-   hero's 3.9rem the short heading still overruns 640 and wraps to "Get your worker / hired.", a
+   hero's 3.9rem the short heading still overruns 640 and wraps to "Get your agent / hired.", a
    15-then-6-character split. At 3.05rem it fits on one line, which is what a three-word headline
    wants. */
 /* .crx-full shares it: its heading sits in the same 640 slot, in the same two-sentence shape,

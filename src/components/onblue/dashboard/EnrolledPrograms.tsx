@@ -242,7 +242,7 @@ function ConditionSentence({ condition, program }: { condition: Condition; progr
   }
   return (
     <>
-      Run onBlue on at least <b>{condition.minDaysCompleted} {condition.minDaysCompleted === 1 ? 'day' : 'days'}</b>
+      Run BlueAI on at least <b>{condition.minDaysCompleted} {condition.minDaysCompleted === 1 ? 'day' : 'days'}</b>
       {program.rewardModel.type === 'monthly' ? ' each month.' : '.'}
     </>
   )

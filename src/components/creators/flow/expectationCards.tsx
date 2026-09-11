@@ -93,7 +93,7 @@ function PaidArt() {
  *  measure: line one says what the product is, line two hands over to the cards. Keeping them
  *  as separate strings means the break cannot land mid-sentence when the copy is edited. */
 export const INTRO = [
-  'BlueAI is an AI worker that earns for you.',
+  'BlueAI is an AI agent that earns for you.',
   'Here’s how it works:',
 ] as const
 
@@ -126,8 +126,8 @@ export const CARDS: readonly Card[] = [
     n: '2',
     art: AcceptArt,
     lead: 'Get accepted.',
-    rest: 'We review every application and email you when your worker is ready.',
-    full: 'Step 2. Get accepted. We review every application and email you when your worker is ready.',
+    rest: 'We review every application and email you when your agent is ready.',
+    full: 'Step 2. Get accepted. We review every application and email you when your agent is ready.',
   },
   {
     key: 'deploy',
@@ -142,7 +142,7 @@ export const CARDS: readonly Card[] = [
     n: '4',
     art: PaidArt,
     lead: 'Collect.',
-    rest: 'You approve each campaign, your worker completes it, and you collect $30* every month via PayPal.',
-    full: 'Step 4. Collect. You approve each campaign, your worker completes it, and you collect $30 every month via PayPal. The monthly amount can change.',
+    rest: 'You approve each campaign, your agent completes it, and you collect $30* every month via PayPal.',
+    full: 'Step 4. Collect. You approve each campaign, your agent completes it, and you collect $30 every month via PayPal. The monthly amount can change.',
   },
 ]

@@ -127,7 +127,7 @@ function ConditionLine({ condition, done, program }: { condition: Condition; don
     condition.type === 'complete-jobs'
       ? 'Verified jobs'
       : program.rewardModel.type === 'monthly'
-        ? 'Run onBlue this month'
+        ? 'Run BlueAI this month'
         : 'Days run'
   const unit = condition.type === 'complete-jobs' ? (need === 1 ? 'job' : 'jobs') : 'days'
   const pct = Math.max(0, Math.min(100, (done / need) * 100))

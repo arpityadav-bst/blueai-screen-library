@@ -111,7 +111,7 @@ export default function SetupStage({
         Set up your campaign
       </h1>
       <p className="bai-body-sm mt-2 max-w-[62ch] text-ink-body-2">
-        Nothing is charged now. We check every campaign before it goes live.
+        We check every campaign before it goes live.
       </p>
 
       <form onSubmit={submit} className="mt-6 max-w-[640px] rounded-field border border-divider bg-white p-5 sm:p-6" noValidate>
@@ -218,13 +218,13 @@ export default function SetupStage({
 
         <label className="mt-6 block">
           <span className={LABEL}>
-            What is the goal? <span className="font-normal text-ink-muted">(optional)</span>
+            Any additional info <span className="font-normal text-ink-muted">(optional)</span>
           </span>
           <textarea
             rows={2}
             value={goal}
             onChange={(e) => setGoal(e.target.value)}
-            placeholder="Awareness for our new roast, ahead of the summer range."
+            placeholder="Anything else we should know before we start."
             className={`${INPUT} resize-y`}
           />
         </label>

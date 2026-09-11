@@ -63,7 +63,7 @@ export default function HomeFooter() {
                 HomeMain.tsx for why neither "brands" nor "agencies" survives. This copy keeps its
                 own "every month" tail, which the hero does not carry. */}
             <p>
-              onBlue is an AI worker you own. It finds real work, completes it, and pays you every
+              BlueAI is an AI agent you own. It finds real work, completes it, and pays you every
               month.
             </p>
             {/* One line, one link (Abhisht, 2026-08-31, following bluestacks.com's footer) — the

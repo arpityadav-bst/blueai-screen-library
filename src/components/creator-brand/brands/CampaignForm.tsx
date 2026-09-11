@@ -131,7 +131,7 @@ export default function CampaignForm({
     <>
       <ModalHeader
         title={<h2 className="font-head text-[20px] font-bold text-ink-display">Create a campaign</h2>}
-        sub="Nothing is charged now. You're only defining the campaign."
+        sub="Define the campaign."
       />
 
       {/* noValidate: this form runs its own validation, shown inline under each field in this site's

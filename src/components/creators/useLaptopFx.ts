@@ -73,9 +73,9 @@ export default function useLaptopFx() {
       const m = ('0' + d.getMinutes()).slice(-2)
       const t = (((h + 11) % 12) + 1) + ':' + m + ' ' + (h < 12 ? 'am' : 'pm')
       let msg: string
-      if (h >= 5 && h < 12) msg = "It's " + t + ". Your worker would've been earning all night."
-      else if (h >= 12 && h < 18) msg = "It's " + t + ". Your worker would be earning right now."
-      else msg = "It's " + t + ". Your worker would still be on the clock."
+      if (h >= 5 && h < 12) msg = "It's " + t + ". Your agent would've been earning all night."
+      else if (h >= 12 && h < 18) msg = "It's " + t + ". Your agent would be earning right now."
+      else msg = "It's " + t + ". Your agent would still be on the clock."
       const timeMsg = document.getElementById('time-msg')
       if (timeMsg) timeMsg.textContent = msg
     }

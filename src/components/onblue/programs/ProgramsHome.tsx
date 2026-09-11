@@ -82,9 +82,9 @@ function ListView({ items, onApply }: { items: ProgramItem[]; onApply: (p: Progr
 
   return (
     <>
-      {/* HEADLINE SWAP (Abhisht, 2026-08-24): "Get your worker hired." moved HERE from the
+      {/* HEADLINE SWAP (Abhisht, 2026-08-24): "Get your agent hired." moved HERE from the
           application page — the pitch belongs where the choice is made, and "hired" pairs with
-          what the cards below are: openings your worker gets hired into. The teaching line
+          what the cards below are: openings your agent gets hired into. The teaching line
           ("your AI earns through programs") demoted into the sub, where it defines the noun and
           ends on the action. The action verb tracks the OPEN inventory (join for one, choose for
           a menu); a list with nothing left to apply to drops the pitch entirely — "get hired" is
@@ -92,7 +92,7 @@ function ListView({ items, onApply }: { items: ProgramItem[]; onApply: (p: Progr
       {openCount > 0 ? (
         <>
           <h1>
-            Get your worker <span className="grad">hired.</span>
+            Get your agent <span className="grad">hired.</span>
           </h1>
           <p className="sub">
             Your AI earns through {noun}s: simple goals with fixed rewards. It does the work, you get paid.

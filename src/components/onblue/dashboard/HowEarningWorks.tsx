@@ -26,7 +26,7 @@
 //   not the word.
 const STEPS = [
   'Join a program. Each one has its own goal and its own reward.',
-  'Run onBlue. The work it completes counts toward your program goals.',
+  'Run BlueAI. The work it completes counts toward your program goals.',
   'Meet a program’s goal and its reward is added to your earnings.',
 ]
 

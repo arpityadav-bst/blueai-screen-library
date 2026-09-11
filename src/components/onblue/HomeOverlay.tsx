@@ -13,7 +13,7 @@ export default function HomeOverlay() {
       <div className="backdrop" id="backdrop" aria-hidden="true" />
       <canvas id="core-cv" aria-hidden="true" />
       <div className="beat" id="beat1">
-        This is your <span className="grad">AI worker.</span>
+        This is your <span className="grad">AI agent.</span>
       </div>
       <div className="beat" id="beat2">
         It exists to <span className="grad">make you money.</span>

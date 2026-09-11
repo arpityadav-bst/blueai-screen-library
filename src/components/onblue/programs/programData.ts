@@ -47,7 +47,7 @@ export const STARTER_PROGRAM: Program = {
   // — it is keeping a mock program's name consistent with what the product now calls the people in
   // it — but if ops has already named the real program, their string wins over this one.
   title: 'Partner Starter Program',
-  description: 'Run onBlue on at least 20 days each month to earn $30',
+  description: 'Run BlueAI on at least 20 days each month to earn $30',
   rewardModel: { type: 'monthly', amount: 30, currency: 'USD' },
   conditions: [{ type: 'run-skill', skillId: 'moneymaker', minDaysCompleted: 20 }],
   cap: { type: 'first-n', value: 100 },
@@ -89,7 +89,7 @@ export const SPRING_PROGRAM: Program = {
 export const WEEKEND_PROGRAM: Program = {
   id: 'program_1787200000_9f31da22',
   title: 'Weekend Boost Program',
-  description: 'Complete 3 verified jobs and run onBlue on 5 days to earn $10',
+  description: 'Complete 3 verified jobs and run BlueAI on 5 days to earn $10',
   rewardModel: { type: 'fixed', amount: 10, currency: 'USD' },
   conditions: [
     { type: 'complete-jobs', count: 3 },
@@ -123,7 +123,7 @@ export type EnrolledProgram = {
    happens when the program ends") ----
 
    THOSE ARE TWO DIFFERENT EVENTS, and the tile modelled neither. The launch program runs on two
-   clocks: the MONTH ("run onBlue on at least 20 days each month" — the goal recurs, which is why
+   clocks: the MONTH ("run BlueAI on at least 20 days each month" — the goal recurs, which is why
    the dashboard balance is 5 x $30 for five qualifying months) and the WINDOW (endAt, after which
    the program is over for good). Reaching the goal is not the program ending, and one state cannot
    answer both.

@@ -250,13 +250,13 @@ export function StepThree({ d, setD }: Props) {
           `required`, which is invisible until you try to submit. */}
       <label className="mt-5 block">
         <span className={LABEL}>
-          What&apos;s the goal? <span className="font-normal">(optional)</span>
+          Any additional info <span className="font-normal">(optional)</span>
         </span>
         <textarea
           rows={3}
           value={d.goal}
           onChange={(e) => setD((p) => ({ ...p, goal: e.target.value }))}
-          placeholder="Awareness for our new roast, ahead of the summer range."
+          placeholder="Anything else we should know before we start."
           className={`${INPUT} resize-none py-3`}
         />
       </label>

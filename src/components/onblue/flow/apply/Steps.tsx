@@ -78,7 +78,7 @@ export function StepTwo(p: Props) {
           cricket" swerve Ashish called out (2026-08-27 sync). */}
       <ChoiceGroup
         label="Do you have a YouTube account?"
-        hint="The campaigns onBlue completes run on your YouTube account."
+        hint="The campaigns BlueAI completes run on your YouTube account."
         name="apply-has-youtube"
         variant="cards"
         value={d.hasYouTube}
@@ -146,7 +146,7 @@ export function StepThree(p: Props) {
           the effort below the paragraph they replaced and make applications comparable at review. */}
       <ChoiceGroup
         label="How many hours a day is your PC on and connected to the internet?"
-        hint="onBlue can only work while your PC is on and online."
+        hint="BlueAI can only work while your PC is on and online."
         name="apply-pc-hours"
         value={d.pcHours}
         options={PC_HOURS_OPTS}
@@ -159,7 +159,7 @@ export function StepThree(p: Props) {
           card contract lands on this page too. */}
       <div className="crx-qgap">
         <ChoiceGroup
-          label="How many days a week could you run onBlue?"
+          label="How many days a week could you run BlueAI?"
           name="apply-run-days"
           value={d.runDays}
           options={RUN_DAYS_OPTS}
