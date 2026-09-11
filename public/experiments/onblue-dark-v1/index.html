@@ -459,12 +459,16 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
 /* the illustration split keeps its channel filters and is softened by opacity
    and by a shorter travel instead. */
 /* the rail's core reads as the mark here: a filled blue disc with a white spark
-   and the header mark's own glow. dark keeps the tinted disc, which works
-   against black but on white reads as a pale wash rather than as a logo. */
+   and a glow on the disc itself. dark keeps the tinted disc, which works against
+   black but on white reads as a pale wash rather than as a logo.
+
+   it cannot borrow --mark-shadow: that glow is pale sky blue at .18, which is
+   what a small blue spark needs on white and is nothing at all around a
+   saturated disc. the disc glows in its own colour instead. */
 :root[data-theme="light"] .rail-core {
   background: var(--blue);
   border-color: var(--blue);
-  filter: var(--mark-shadow);
+  filter: drop-shadow(0 0 16px rgba(21, 110, 254, 0.42));
   /* the pulse existed to give a tinted disc some presence against black. a
      filled mark with the header's glow already has it, and the pulse only
      animated a border that is now the same blue as the fill. */
