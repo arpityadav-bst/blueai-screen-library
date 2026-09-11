@@ -3118,7 +3118,7 @@ body.menu-open { overflow: hidden; }
         <h2 class="close-title">You could be<br><em>one of them.</em></h2>
         <p class="band-sub">Take your place in the onBlue economy.</p>
         <div class="band-actions" id="start">
-          <a class="btn btn-solid hero-solid" href="#get-access">Start earning <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.4 17.6 17.6 6.4"/><path d="M9.4 6.4h8.2v8.2"/></svg></a>
+          <a class="btn btn-solid hero-solid" href="#get-access"><span class="scramble">Start earning</span> <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.4 17.6 17.6 6.4"/><path d="M9.4 6.4h8.2v8.2"/></svg></a>
         </div>
         <p class="close-alt">Already have an account? <a href="#get-access">Sign in</a></p>
       </div>
@@ -3296,72 +3296,80 @@ body.menu-open { overflow: hidden; }
     setTimeout(typeNext, 1600);
   }
 
-  var scrambleWrap = document.querySelector('.hero-actions .scramble');
-  if (scrambleWrap && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    var target = scrambleWrap.textContent;
-    var GLYPHS = 'ΛΔΣΞΨΩØ#%&@$*+=~<>/|?!§';
-    var PER = 58, HOLD = 230, TICK = 45;
-    var cells = null, locked = [], frame = null, began = 0, lastRoll = 0;
+  /* the CTA label decodes out of alien glyphs on hover. one decoder per
+     .scramble with its own state, so the hero and the closing CTA run
+     independently rather than sharing a single frame loop. */
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    Array.prototype.forEach.call(document.querySelectorAll('.scramble'), function (wrap) {
+      var cta = wrap.closest('.btn');
+      if (!cta) { return; }
 
-    function glyph() {
-      return GLYPHS.charAt((Math.random() * GLYPHS.length) | 0);
-    }
+      var target = wrap.textContent;
+      var GLYPHS = 'ΛΔΣΞΨΩØ#%&@$*+=~<>/|?!§';
+      var PER = 32, HOLD = 120, TICK = 30;
+      var cells = null, locked = [], frame = null, began = 0, lastRoll = 0;
 
-    function build() {
-      if (cells) { return; }
-      scrambleWrap.textContent = '';
-      cells = [];
-      for (var i = 0; i < target.length; i++) {
-        var cell = document.createElement('span');
-        cell.className = 'scramble-ch';
-        cell.textContent = target.charAt(i);
-        scrambleWrap.appendChild(cell);
-        cells.push(cell);
+      function glyph() {
+        return GLYPHS.charAt((Math.random() * GLYPHS.length) | 0);
       }
-      var widths = cells.map(function (c) { return c.getBoundingClientRect().width; });
-      for (var k = 0; k < cells.length; k++) { cells[k].style.width = widths[k] + 'px'; }
-    }
 
-    function step(now) {
-      if (!began) { began = now; lastRoll = -TICK; }
-      var t = now - began;
-      var reroll = (t - lastRoll) >= TICK;
-      if (reroll) { lastRoll = t; }
-
-      var done = 0;
-      for (var i = 0; i < cells.length; i++) {
-        if (locked[i]) { done++; continue; }
-        if (target.charAt(i) === ' ') { locked[i] = 1; done++; continue; }
-        if (t >= HOLD + i * PER) {
-          cells[i].textContent = target.charAt(i);
-          cells[i].classList.add('is-set');
-          locked[i] = 1;
-          done++;
-        } else if (reroll) {
-          cells[i].textContent = glyph();
+      /* each character is frozen at its real width before the glyphs start, so
+         a wide substitute cannot reflow the button mid-decode */
+      function build() {
+        if (cells) { return; }
+        wrap.textContent = '';
+        cells = [];
+        for (var i = 0; i < target.length; i++) {
+          var cell = document.createElement('span');
+          cell.className = 'scramble-ch';
+          cell.textContent = target.charAt(i);
+          wrap.appendChild(cell);
+          cells.push(cell);
         }
+        var widths = cells.map(function (c) { return c.getBoundingClientRect().width; });
+        for (var k = 0; k < cells.length; k++) { cells[k].style.width = widths[k] + 'px'; }
       }
 
-      if (done < cells.length) { frame = requestAnimationFrame(step); }
-      else { frame = null; began = 0; }
-    }
+      function step(now) {
+        if (!began) { began = now; lastRoll = -TICK; }
+        var t = now - began;
+        var reroll = (t - lastRoll) >= TICK;
+        if (reroll) { lastRoll = t; }
 
-    function decode() {
-      if (frame) { return; }
-      build();
-      locked = [];
-      for (var i = 0; i < cells.length; i++) {
-        cells[i].classList.remove('is-set');
-        if (target.charAt(i) !== ' ') { cells[i].textContent = glyph(); }
+        var done = 0;
+        for (var i = 0; i < cells.length; i++) {
+          if (locked[i]) { done++; continue; }
+          if (target.charAt(i) === ' ') { locked[i] = 1; done++; continue; }
+          if (t >= HOLD + i * PER) {
+            cells[i].textContent = target.charAt(i);
+            cells[i].classList.add('is-set');
+            locked[i] = 1;
+            done++;
+          } else if (reroll) {
+            cells[i].textContent = glyph();
+          }
+        }
+
+        if (done < cells.length) { frame = requestAnimationFrame(step); }
+        else { frame = null; began = 0; }
       }
-      void scrambleWrap.offsetWidth;
-      began = 0;
-      frame = requestAnimationFrame(step);
-    }
 
-    var cta = scrambleWrap.closest('.btn');
-    cta.addEventListener('mouseenter', decode);
-    cta.addEventListener('focus', decode);
+      function decode() {
+        if (frame) { return; }
+        build();
+        locked = [];
+        for (var i = 0; i < cells.length; i++) {
+          cells[i].classList.remove('is-set');
+          if (target.charAt(i) !== ' ') { cells[i].textContent = glyph(); }
+        }
+        void wrap.offsetWidth;
+        began = 0;
+        frame = requestAnimationFrame(step);
+      }
+
+      cta.addEventListener('mouseenter', decode);
+      cta.addEventListener('focus', decode);
+    });
   }
 
   /* feed the pointer position to whichever card it is over, one style write per
