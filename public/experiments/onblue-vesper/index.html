@@ -234,6 +234,24 @@ body {
   justify-self: end;
 }
 
+/* the business door beside the CTA: the nav's metrics but muted ink, so the
+   solid button keeps all the weight. Its phone twin (.nav__biz) lives in the
+   panel and is hidden until the 900px breakpoint swaps them. */
+.header-biz {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-right: 8px;
+  font-size: var(--nav);
+  font-weight: 400;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.18s ease;
+}
+.header-biz:hover { color: var(--text); }
+.header-biz svg { width: 12px; height: 12px; }
+.nav__biz { display: none; }
+
 /* ---- the hamburger: two bars, the lower one short ------------------------- */
 .nav__toggle {
   display: none;
@@ -1240,6 +1258,35 @@ h2 .serif { font-size: 1.06em; color: var(--accent); }
 }
 /* the hero's h1 em, to the digit */
 .closer h2 .serif { font-size: 1.08em; }
+/* THE CLOSING LINE TYPES ITS ENDINGS, ported from the Agentic (dark v1) page.
+   The caret is positioned from the h2's own frame, so the h2 is the anchor.
+   .typed is only added once the script has built the character cells: a dead
+   script leaves the static line fully visible. */
+.closer h2 { position: relative; }
+.closer h2.typed .serif .tw { opacity: 0; transition: opacity 140ms ease; }
+.closer h2.typed .serif .tw.on { opacity: 1; }
+.type-caret {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 2px;
+  border-radius: 1px;
+  background: var(--accent);
+  /* the dark page glows the caret hard; on this light ground half that reads
+     as the same brightness */
+  box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 45%, transparent);
+  pointer-events: none;
+  animation: caret-blink 0.9s linear infinite;
+}
+.type-caret.is-done { animation: caret-hide 260ms ease forwards; }
+
+@keyframes caret-blink {
+  0%, 49%   { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+@keyframes caret-hide {
+  to { opacity: 0; }
+}
 /* the hero's .lede, to the digit */
 .closer .section-sub {
   max-width: var(--lede-max);
@@ -1408,6 +1455,7 @@ h2 .serif { font-size: 1.06em; color: var(--accent); }
   /* z-index 80 so the brand and the X paint ABOVE the fixed panel at 60 */
   .logo, .header-right { position: relative; z-index: 80; }
   .header-cta { display: none; }
+  .header-biz { display: none; }
   .nav__toggle { display: inline-flex; }
 
   /* FULL-SCREEN PANEL, fully opaque. Opaque rather than blurred on purpose: a
@@ -1464,6 +1512,11 @@ h2 .serif { font-size: 1.06em; color: var(--accent); }
   #site-nav.is-open .nav__links li:nth-child(4) a { transition-delay: 0.30s; }
   /* the load-in animation would fight the closed-menu hide on the same nodes */
   .nav__links .appear { animation: none; }
+
+  /* the business door joins the panel as the fourth link, so the existing
+     nth-child(4) stagger delay is already its delay */
+  .nav__biz { display: block; }
+  .nav__biz svg { width: 0.5em; height: 0.5em; }
 
   .menu__cta {
     opacity: 0;
@@ -1540,15 +1593,28 @@ h2 .serif { font-size: 1.06em; color: var(--accent); }
         <li><a class="appear appear--soft" href="#agents" style="--d:0.16s">Agents</a></li>
         <li><a class="appear appear--soft" href="#own" style="--d:0.24s">How it works</a></li>
         <li><a class="appear appear--soft" href="#economy" style="--d:0.32s">The economy</a></li>
-        <li><a class="appear appear--soft" href="#work" style="--d:0.40s">Bring work</a></li>
+        <!-- THE BUSINESS DOOR, PANEL COPY. Hidden on desktop, where the door
+             lives in .header-right; below 900px that corner collapses into the
+             burger, so the panel carries its own copy, the same duplication the
+             Start earning CTA already uses (header-cta / menu__cta).
+             A real page link to the brands site, not a section anchor. Decided
+             in the 2026-09-11 call: one primary CTA, and the businesses link at
+             the top rather than a second competing button. -->
+        <li class="nav__biz"><a href="/creator-brand/brands">For businesses<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a></li>
       </ul>
       <!-- the in-panel CTA. Hidden by .header .menu__cta until the phone
            breakpoint, where the bar CTA hides and this one takes over. -->
-      <a class="btn btn-solid menu__cta" data-stub>Start earning</a>
+      <a class="btn btn-solid menu__cta" href="apply.html">Start earning</a>
     </nav>
 
     <div class="header-right">
-      <a class="btn btn--sm btn-solid header-cta appear appear--scale" data-stub style="--d:0.34s">Start earning</a>
+      <!-- THE BUSINESS DOOR (2026-09-11 call). An audience switch, not a page
+           section, so it sits beside the primary CTA rather than in the section
+           nav, and stays quiet against the solid button. The diagonal arrow
+           marks it as leading off this page, the same convention the creators
+           site's For Agencies link uses. -->
+      <a class="header-biz appear appear--soft" href="/creator-brand/brands" style="--d:0.30s">For businesses<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+      <a class="btn btn--sm btn-solid header-cta appear appear--scale" href="apply.html" style="--d:0.34s">Start earning</a>
       <button class="nav__toggle appear appear--scale" id="menu-toggle" type="button"
               aria-label="Open menu" aria-expanded="false" aria-controls="site-nav" style="--d:0.34s">
         <span class="nav__toggle-box" aria-hidden="true">
@@ -1582,13 +1648,12 @@ h2 .serif { font-size: 1.06em; color: var(--accent); }
       <div class="hero-copy">
 
         <h1>
-          <span class="headline-line appear appear--mask" style="--d:0.42s">Real work goes to <em>AI agents</em></span>
-          <span class="headline-line appear appear--mask" style="--d:0.62s">Own one and earn from it</span>
+          <span class="headline-line appear appear--mask" style="--d:0.42s">The work economy for</span>
+          <span class="headline-line appear appear--mask" style="--d:0.62s"><em>digital and physical</em> AI.</span>
         </h1>
 
         <p class="lede appear appear--soft" style="--d:0.82s; animation-duration:1.25s">
-          Companies bring work to onBlue. Digital and physical agents compete for it, complete it, and
-          their owners get paid.
+          Individuals can own an agent, customize it, and earn from the work it does.
         </p>
 
         <!-- ONE CTA, "Get Access", as on the live creators site (Appy, 2026-09-10).
@@ -1600,7 +1665,7 @@ h2 .serif { font-size: 1.06em; color: var(--accent); }
              NO ICONS on it, unlike the live site's spark-and-arrow version. The
              flat button language adopted from the JungleMind header has none. -->
         <div class="hero-actions">
-          <a class="btn btn--lg btn-solid appear appear--btn" data-stub style="--d:0.96s">Start earning</a>
+          <a class="btn btn--lg btn-solid appear appear--btn" href="apply.html" style="--d:0.96s">Start earning</a>
         </div>
 
         <!-- THE RETURNING-USER DOOR, same as the live creators site: someone who
@@ -1676,7 +1741,7 @@ h2 .serif { font-size: 1.06em; color: var(--accent); }
     <div class="section-inner">
       <div class="section-head rv">
         <h2>How <span class="serif">it works</span></h2>
-        <p class="section-sub">Individuals can own an agent, customize it, and earn from the work it does.</p>
+        <p class="section-sub">Choose an agent, make it yours, and get paid every time it completes a job.</p>
       </div>
 
       <div class="grid-3 steps">
@@ -1856,11 +1921,11 @@ h2 .serif { font-size: 1.06em; color: var(--accent); }
         <span class="close-mark" aria-hidden="true"><svg class="spark-mark" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.6C12.55 2.6 12.88 3.15 13.08 4.7c.62 4.7 1.52 5.6 6.22 6.22 1.55.2 2.1.53 2.1 1.08s-.55.88-2.1 1.08c-4.7.62-5.6 1.52-6.22 6.22-.2 1.55-.53 2.1-1.08 2.1s-.88-.55-1.08-2.1c-.62-4.7-1.52-5.6-6.22-6.22C3.15 12.88 2.6 12.55 2.6 12s.55-.88 2.1-1.08c4.7-.62 5.6-1.52 6.22-6.22C11.12 3.15 11.45 2.6 12 2.6Z"/></svg></span>
         <h2>
           <span class="headline-line">You could be</span>
-          <span class="headline-line"><span class="serif">one of them</span></span>
+          <span class="headline-line"><span class="serif">one of them.</span></span>
         </h2>
         <p class="section-sub">Take your place in the onBlue economy.</p>
         <div class="closer-actions">
-          <a class="btn btn--lg btn-solid" data-stub>Start earning</a>
+          <a class="btn btn--lg btn-solid" href="apply.html">Start earning</a>
         </div>
         <p class="closer-alt">Already have an account? <a data-stub>Sign in</a></p>
       </div>
@@ -1884,7 +1949,7 @@ h2 .serif { font-size: 1.06em; color: var(--accent); }
         </nav>
         <nav class="foot-col" aria-label="Get started">
           <h3>Your next chapter</h3>
-          <a data-stub>Start earning</a>
+          <a href="apply.html">Start earning</a>
           <a data-stub>Sign in</a>
         </nav>
         <a class="foot-top" href="#top">Back to top</a>
@@ -1982,6 +2047,124 @@ h2 .serif { font-size: 1.06em; color: var(--accent); }
       if (window.innerWidth > 900 && isOpen()) setMenu(false);
     });
   }
+
+  /* ------------- the closing line types itself ------------- */
+  /* Ported from the Agentic (dark v1) page. The closing line runs through its
+     endings once, typed and erased behind a caret, then settles on the written
+     line and stops. Characters are laid out invisible and faded in, so nothing
+     reflows mid-phrase the way a textContent typewriter would. It only runs
+     again if the section has been off screen for a while, so it never loops at
+     a reader sitting on it. */
+  (function closingType() {
+    var title = document.querySelector('#register h2');
+    var slot = title && title.querySelector('.serif');
+    if (!slot || window.matchMedia('(prefers-reduced-motion: reduce)').matches) { return; }
+
+    var PHRASES = [
+      'one of them.',
+      'owning agents.',
+      'earning while they work.',
+      'running a workforce.',
+      'paid for every job.'
+    ];
+    /* ends back on the first, so the page at rest shows the written headline */
+    var ORDER = PHRASES.map(function (_, i) { return i; }).concat(0);
+    var TYPE = 52, ERASE = 26, HOLD = 2400, GAP = 520, REARM = 10000;
+
+    var caret = document.createElement('span');
+    caret.className = 'type-caret';
+    caret.setAttribute('aria-hidden', 'true');
+
+    var cells = [], at = 0, step = 0;
+    var running = false, mounted = false, leftAt = 0;
+
+    function build(text) {
+      slot.textContent = '';
+      cells = [];
+      for (var i = 0; i < text.length; i++) {
+        var cell = document.createElement('span');
+        cell.className = 'tw';
+        cell.textContent = text.charAt(i);
+        slot.appendChild(cell);
+        cells.push(cell);
+      }
+    }
+
+    /* caret sits after the last visible character, or at the very start */
+    function placeCaret() {
+      var frame = title.getBoundingClientRect();
+      var box, x;
+      if (at > 0) {
+        box = cells[at - 1].getBoundingClientRect();
+        x = box.right;
+      } else {
+        box = cells[0].getBoundingClientRect();
+        x = box.left;
+      }
+      caret.style.height = (box.height * 0.7) + 'px';
+      caret.style.left = (x - frame.left) + 'px';
+      caret.style.top = (box.top - frame.top + box.height * 0.15) + 'px';
+    }
+
+    function typeOn() {
+      if (at >= cells.length) {
+        if (step >= ORDER.length - 1) { settle(); }
+        else { window.setTimeout(eraseOff, HOLD); }
+        return;
+      }
+      cells[at].classList.add('on');
+      at++;
+      placeCaret();
+      window.setTimeout(typeOn, TYPE);
+    }
+
+    function eraseOff() {
+      if (at <= 0) {
+        step++;
+        window.setTimeout(nextPhrase, GAP);
+        return;
+      }
+      at--;
+      cells[at].classList.remove('on');
+      placeCaret();
+      window.setTimeout(eraseOff, ERASE);
+    }
+
+    function nextPhrase() {
+      build(PHRASES[ORDER[step]]);
+      at = 0;
+      placeCaret();
+      typeOn();
+    }
+
+    function settle() {
+      running = false;
+      window.setTimeout(function () { caret.classList.add('is-done'); }, 700);
+    }
+
+    function begin() {
+      running = true;
+      step = 0;
+      caret.classList.remove('is-done');
+      if (!mounted) {
+        mounted = true;
+        title.classList.add('typed');
+        title.appendChild(caret);
+      }
+      nextPhrase();
+    }
+
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (entries) {
+        var showing = entries[entries.length - 1].isIntersecting;
+        if (!showing) { leftAt = Date.now(); return; }
+        if (running) { return; }
+        if (!mounted || (leftAt && Date.now() - leftAt >= REARM)) { begin(); }
+      }, { threshold: 0.4 }).observe(title);
+    } else {
+      begin();
+    }
+  })();
 })();
 </script>
 <script>
