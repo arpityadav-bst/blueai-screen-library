@@ -18,140 +18,189 @@
 <style id="sg-product"></style>
 
 <style>
-/* ---------------------------------------------------------------------------
-   THE GUIDE'S OWN CHROME. Every selector in this block is sg- prefixed so the
-   injected product sheet and this one can never collide. If you find yourself
-   restyling a product class from here, stop: that is the drift this file
-   exists to prevent.
-   --------------------------------------------------------------------------- */
-.sg-boot {
-  display: grid;
-  place-items: center;
-  min-height: 100vh;
-  padding: 40px;
-  text-align: center;
-  font: 400 14px/1.6 system-ui, sans-serif;
-  color: #5f636b;
-}
-.sg-boot code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
-.sg-boot b { display: block; margin-bottom: 8px; color: #0b0b0d; font-weight: 600; }
+/* ============================================================================
+   STYLE-GUIDE CHROME ONLY. Every selector here is sg- prefixed so it can never
+   collide with the injected product sheet. Nothing in this block is part of the
+   design system.
 
-.sg-wrap { max-width: 1180px; margin: 0 auto; padding: 0 max(20px, 4vw) 140px; }
-
-.sg-mast { padding: 72px 0 34px; }
-.sg-mast h1 { font-size: clamp(30px, 4vw, 46px); font-weight: 500; letter-spacing: -0.04em; line-height: 1.06; }
-.sg-mast h1 em { font-family: "Instrument Serif", Times, serif; font-style: italic; font-weight: 400; font-size: 1.06em; color: #156efe; }
-.sg-mast p { margin-top: 16px; max-width: 680px; color: #3c4049; font-size: 15px; line-height: 1.6; letter-spacing: -0.01em; }
-.sg-mast p + p { margin-top: 10px; }
-.sg-mast a { color: #156efe; text-decoration: underline; text-underline-offset: 3px; }
-
-.sg-stats { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
-.sg-stat {
-  padding: 12px 16px; border: 1px solid rgba(0,0,0,0.1); border-radius: 10px; background: #fdfdfd;
-}
-.sg-stat b { display: block; font-size: 22px; font-weight: 600; letter-spacing: -0.03em; color: #0b0b0d; }
-.sg-stat span { display: block; margin-top: 2px; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: #767b85; }
-
-.sg-toc { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 26px; padding-top: 26px; border-top: 1px solid rgba(0,0,0,0.08); }
-.sg-toc a {
-  padding: 7px 12px; border: 1px solid rgba(0,0,0,0.1); border-radius: 999px;
-  font-size: 12.5px; color: #3c4049; letter-spacing: -0.01em;
-}
-.sg-toc a:hover { border-color: #156efe; color: #156efe; }
-
-.sg-sec { padding-top: 64px; scroll-margin-top: 24px; }
-.sg-sec > h2 {
-  font-size: 13px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #156efe;
-  padding-bottom: 12px; border-bottom: 1px solid rgba(0,0,0,0.1);
-}
-.sg-sec > p { margin-top: 16px; max-width: 760px; color: #3c4049; font-size: 14px; line-height: 1.65; letter-spacing: -0.01em; }
-.sg-sec > p code, .sg-note code, .sg-tbl code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.92em; background: #f4f5f7; padding: 1px 5px; border-radius: 4px; }
-
-.sg-sub { margin-top: 34px; }
-.sg-sub > h3 { font-size: 17px; font-weight: 600; letter-spacing: -0.025em; color: #0b0b0d; }
-.sg-sub > p { margin-top: 8px; max-width: 760px; color: #5f636b; font-size: 13.5px; line-height: 1.6; letter-spacing: -0.01em; }
-
-/* the frame every specimen sits in. transform makes it a containing block, so a
-   position:fixed product component (the header, the menu) stays inside it. */
-.sg-frame {
-  position: relative;
-  transform: translate(0);
-  margin-top: 16px;
-  padding: 26px;
-  border: 1px solid rgba(0,0,0,0.1);
-  border-radius: 12px;
-  background: #ffffff;
-  overflow: hidden;
-}
-.sg-frame--tint { background: #fafbfb; }
-.sg-frame--tall { min-height: 220px; }
-.sg-frame--flow { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; }
-.sg-frame--pad0 { padding: 0; }
-
-.sg-label {
-  margin-top: 10px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 11.5px; color: #767b85; letter-spacing: -0.01em;
+   First job, as on the Terminal Modern guide: undo the product's page-level
+   globals. index.html opens with `html, body { background: var(--bg) !important }`
+   so the hero can never flash the wrong ground. Correct for that page, wrong for
+   a two-column document that wants its own chrome, and !important means the
+   guide has to answer in kind.
+   ============================================================================ */
+html, body { height: auto; overflow: visible; }
+body {
+  background: var(--sg-bg) !important;
+  color: var(--sg-ink) !important;
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
-.sg-grid { display: grid; gap: 16px; margin-top: 16px; }
+:root {
+  --sg-bg: #f7f8fa; --sg-panel: #ffffff; --sg-line: #e4e7ec; --sg-line-2: #ccd2da;
+  --sg-ink: #12161d; --sg-ink-2: #4e5765; --sg-ink-3: #7c8694; --sg-accent: #1b5fd0;
+  --sg-code-bg: #f0f2f6;
+}
+body.sg-darkpage {
+  --sg-bg: #0d1017; --sg-panel: #14181f; --sg-line: #242a35; --sg-line-2: #333b49;
+  --sg-ink: #e8ecf3; --sg-ink-2: #a6b0c0; --sg-ink-3: #6f7a8b; --sg-accent: #6fa8ff;
+  --sg-code-bg: #0a0d13;
+}
+
+.sg-shell { display: grid; grid-template-columns: 240px minmax(0, 1fr); align-items: start; }
+@media (max-width: 900px) {
+  .sg-shell { grid-template-columns: 1fr; }
+  .sg-nav { position: static !important; height: auto !important; border-right: none !important; border-bottom: 1px solid var(--sg-line); }
+}
+
+/* ---- sidebar ---- */
+.sg-nav {
+  position: sticky; top: 0; height: 100vh; overflow-y: auto;
+  padding: 22px 16px 40px; border-right: 1px solid var(--sg-line); background: var(--sg-panel);
+}
+.sg-brand { display: flex; align-items: center; gap: 7px; font-size: 13.5px; font-weight: 700; letter-spacing: -0.2px; margin-bottom: 3px; color: var(--sg-ink); }
+.sg-brand svg { width: 17px; height: 17px; color: var(--sg-accent); flex: none; }
+.sg-brand span { color: var(--sg-accent); }
+.sg-brandsub { font-size: 10.5px; color: var(--sg-ink-3); line-height: 1.55; margin-bottom: 16px; }
+.sg-navgroup { font-size: 9px; font-weight: 700; letter-spacing: 0.7px; text-transform: uppercase; color: var(--sg-ink-3); margin: 18px 0 7px; }
+.sg-nav a { display: block; padding: 5px 8px; margin: 0 -8px; border-radius: 6px; font-size: 11.5px; color: var(--sg-ink-2); text-decoration: none; transition: background 0.14s, color 0.14s; }
+.sg-nav a:hover { background: var(--sg-line); color: var(--sg-ink); }
+.sg-nav a.is-here { background: var(--sg-line); color: var(--sg-ink); font-weight: 600; }
+
+/* ---- main column ---- */
+.sg-main { padding: 0 30px 120px; min-width: 0; }
+
+/* Sticky at the top of the scrolling column, same reasoning as the Terminal
+   guide: you flip themes constantly while reviewing, and scrolling back up for
+   the control every time makes the page tiring to use. */
+.sg-toggles {
+  position: sticky; top: 0; z-index: 20; display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+  margin: 0 -30px; padding: 10px 30px;
+  background: color-mix(in srgb, var(--sg-bg) 88%, transparent);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--sg-line);
+}
+.sg-togglabel { font-size: 10px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; color: var(--sg-ink-3); margin-right: 2px; }
+.sg-tbtn {
+  display: flex; align-items: center; gap: 7px; border: 1px solid var(--sg-line-2); background: var(--sg-panel);
+  color: var(--sg-ink); font-family: inherit; font-size: 11px; font-weight: 600; padding: 7px 12px;
+  border-radius: 8px; cursor: pointer; white-space: nowrap; transition: border-color 0.14s, background 0.14s;
+}
+.sg-tbtn:hover { border-color: var(--sg-accent); }
+.sg-tbtn i { width: 8px; height: 8px; border-radius: 50%; background: #e6b84a; flex: none; transition: background 0.14s; }
+.sg-tbtn.is-dark i { background: var(--sg-accent); }
+.sg-stats { display: flex; flex-wrap: wrap; gap: 6px; margin-left: auto; }
+.sg-stat { display: flex; align-items: baseline; gap: 5px; padding: 6px 10px; border: 1px solid var(--sg-line); border-radius: 7px; background: var(--sg-panel); }
+.sg-stat b { font-size: 12px; font-weight: 700; color: var(--sg-ink); }
+.sg-stat span { font-size: 9.5px; letter-spacing: 0.4px; text-transform: uppercase; color: var(--sg-ink-3); }
+
+.sg-head { padding: 22px 0 20px; margin-bottom: 8px; border-bottom: 1px solid var(--sg-line); }
+.sg-h1 { font-size: 21px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 6px; }
+.sg-lede { font-size: 12px; line-height: 1.65; color: var(--sg-ink-2); max-width: 70ch; }
+.sg-lede + .sg-lede { margin-top: 8px; }
+.sg-lede a { color: var(--sg-accent); text-decoration: underline; text-underline-offset: 2px; }
+
+.sg-sec { margin-top: 40px; scroll-margin-top: 62px; }
+.sg-sech { font-size: 15px; font-weight: 700; letter-spacing: -0.2px; padding-bottom: 9px; border-bottom: 1px solid var(--sg-line); margin-bottom: 4px; color: var(--sg-ink); }
+.sg-sec > p { font-size: 11.5px; line-height: 1.6; color: var(--sg-ink-2); margin: 10px 0 16px; max-width: 78ch; }
+.sg-sec > p b, .sg-sec > p strong { color: var(--sg-ink); font-weight: 600; }
+
+.sg-sub { margin-top: 26px; }
+.sg-sub > h3 { font-size: 12.5px; font-weight: 700; letter-spacing: 0.3px; text-transform: uppercase; color: var(--sg-ink-3); margin-bottom: 9px; }
+.sg-sub > p { font-size: 11.5px; line-height: 1.6; color: var(--sg-ink-2); margin: 0 0 12px; max-width: 78ch; }
+.sg-sub > p b { color: var(--sg-ink); font-weight: 600; }
+
+code { background: var(--sg-code-bg); border: 1px solid var(--sg-line); border-radius: 4px; padding: 1px 5px; font-size: 0.92em; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+
+/* ---- the specimen primitive ------------------------------------------------
+   A spec is the real component, on the real ground, with its classes named
+   above it. The head carries WHAT it is; the role sentence carries WHY it is
+   that way. The canvas takes the product's own --bg so a component is judged
+   against the surface it actually ships on, not against the guide's panel. */
+/* transform makes a spec a CONTAINING BLOCK, which is what keeps a position:fixed
+   product component inside its own box. .header is fixed, and without this the two
+   header specimens escape and pin themselves to the top of the guide, over the
+   content. overflow:hidden does not do this job; only transform/filter/contain do. */
+.sg-spec { position: relative; transform: translate(0); border: 1px solid var(--sg-line); border-radius: 10px; overflow: hidden; margin-bottom: 14px; background: var(--sg-panel); }
+.sg-spechead { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; padding: 9px 13px; border-bottom: 1px solid var(--sg-line); }
+.sg-cls { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 11px; color: var(--sg-accent); font-weight: 600; }
+.sg-role { flex: 1 1 260px; font-size: 11px; line-height: 1.55; color: var(--sg-ink-2); }
+.sg-role code { font-size: 10.5px; }
+.sg-canvas { padding: 22px; background: var(--bg); color: var(--text); }
+.sg-canvas--flow { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; }
+.sg-canvas--tint { background: var(--band-lift); }
+.sg-canvas--tall { min-height: 220px; }
+.sg-canvas--pad0 { padding: 0; }
+.sg-canvas--grid3 { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
+.sg-label { margin-top: 8px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 10.5px; color: var(--muted); }
+
+.sg-grid { display: grid; gap: 14px; }
 .sg-grid--2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
 .sg-grid--3 { grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
-.sg-grid--sw { grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); }
+.sg-grid--sw { grid-template-columns: repeat(auto-fill, minmax(216px, 1fr)); }
 
-/* token swatch */
-.sg-tok { border: 1px solid rgba(0,0,0,0.08); border-radius: 10px; overflow: hidden; background: #fff; }
-.sg-tok i { display: block; height: 52px; border-bottom: 1px solid rgba(0,0,0,0.06);
-  background-image: linear-gradient(45deg,#eceef2 25%,transparent 25%,transparent 75%,#eceef2 75%),
-                    linear-gradient(45deg,#eceef2 25%,transparent 25%,transparent 75%,#eceef2 75%);
-  background-size: 12px 12px; background-position: 0 0, 6px 6px; }
-.sg-tok i span { display: block; height: 100%; }
-.sg-tok dl { padding: 9px 11px 11px; }
-.sg-tok dt { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 11.5px; color: #0b0b0d; word-break: break-all; }
-.sg-tok dd { margin-top: 3px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 11px; color: #767b85; word-break: break-all; }
+/* ---- token swatches, on the product ground so a value is read against it ---- */
+.sg-tokgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(216px, 1fr)); gap: 8px; padding: 16px; background: var(--bg); border: 1px solid var(--sg-line); border-radius: 10px; }
+.sg-tok { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border: 1px solid var(--border-soft); border-radius: 8px; background: var(--card-bg); min-width: 0; }
+.sg-swatch { width: 30px; height: 30px; border-radius: 7px; flex: none; border: 1px solid var(--border); position: relative; overflow: hidden;
+  background-image: linear-gradient(45deg, #8884 25%, transparent 25%, transparent 75%, #8884 75%), linear-gradient(45deg, #8884 25%, transparent 25%, transparent 75%, #8884 75%);
+  background-size: 10px 10px; background-position: 0 0, 5px 5px; }
+.sg-swatch i { position: absolute; inset: 0; }
+.sg-tokmeta { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.sg-tokname { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 10px; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sg-tokval { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 9.5px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-/* token row, for values that are not colours */
-.sg-rows { margin-top: 16px; border: 1px solid rgba(0,0,0,0.1); border-radius: 10px; overflow: hidden; }
-.sg-row { display: grid; grid-template-columns: minmax(150px, 0.8fr) minmax(0, 2fr); gap: 16px; padding: 10px 14px; border-top: 1px solid rgba(0,0,0,0.06); }
-.sg-row:first-child { border-top: 0; }
-.sg-row > b { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 11.5px; font-weight: 400; color: #0b0b0d; word-break: break-all; }
-.sg-row > span { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 11.5px; color: #5f636b; word-break: break-all; }
+/* ---- scale tables ---- */
+.sg-scale { padding: 14px 16px; background: var(--bg); border: 1px solid var(--sg-line); border-radius: 10px; display: flex; flex-direction: column; }
+.sg-scalerow { display: flex; align-items: baseline; gap: 14px; padding: 6px 0; border-bottom: 1px solid var(--border-soft); min-width: 0; }
+.sg-scalerow:last-child { border-bottom: none; }
+.sg-scaleval { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 10px; color: var(--blue-ink); width: 118px; flex: none; word-break: break-all; }
+.sg-scaleuse { font-size: 9.5px; color: var(--dim-ink); width: 62px; flex: none; }
+.sg-scalesample { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 10px; color: var(--muted); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-.sg-tbl { width: 100%; margin-top: 16px; border-collapse: collapse; font-size: 13px; }
-.sg-tbl th, .sg-tbl td { padding: 9px 12px; border-bottom: 1px solid rgba(0,0,0,0.07); text-align: left; vertical-align: top; letter-spacing: -0.01em; }
-.sg-tbl th { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #767b85; }
-.sg-tbl td { color: #3c4049; }
+.sg-tbl { width: 100%; margin-top: 4px; border-collapse: collapse; font-size: 11.5px; }
+.sg-tbl th, .sg-tbl td { padding: 7px 10px; border-bottom: 1px solid var(--sg-line); text-align: left; vertical-align: top; }
+.sg-tbl th { font-size: 9px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; color: var(--sg-ink-3); }
+.sg-tbl td { color: var(--sg-ink-2); line-height: 1.5; }
 .sg-scroll { overflow-x: auto; }
 
-.sg-note {
-  margin-top: 16px; padding: 14px 16px; border-left: 2px solid #156efe; border-radius: 0 8px 8px 0;
-  background: #f7f9ff; color: #3c4049; font-size: 13px; line-height: 1.6; letter-spacing: -0.01em;
+/* the amber caveat, same role as the Terminal guide's: something true about this
+   page that a specimen cannot show you */
+.sg-flag, .sg-note {
+  border: 1px solid color-mix(in srgb, #f0b429 42%, var(--sg-line));
+  background: color-mix(in srgb, #f0b429 9%, var(--sg-panel));
+  border-radius: 9px; padding: 11px 13px; font-size: 11.5px; line-height: 1.6; color: var(--sg-ink-2); margin: 0 0 14px;
 }
-.sg-note--warn { border-left-color: #d0870a; background: #fffaf2; }
-.sg-note b { color: #0b0b0d; }
+.sg-note { margin-top: -2px; }
+.sg-flag b, .sg-note b { color: var(--sg-ink); font-weight: 600; }
+.sg-note--warn { border-color: color-mix(in srgb, #e5484d 40%, var(--sg-line)); background: color-mix(in srgb, #e5484d 8%, var(--sg-panel)); }
 
-.sg-btn {
-  margin-top: 14px; padding: 8px 14px; border: 1px solid rgba(0,0,0,0.15); border-radius: 7px;
-  background: #fff; color: #0b0b0d; font: 500 12.5px/1 inherit; cursor: pointer;
-}
-.sg-btn:hover { border-color: #156efe; color: #156efe; }
+.sg-btn { margin-bottom: 14px; padding: 7px 12px; border: 1px solid var(--sg-line-2); border-radius: 8px; background: var(--sg-panel); color: var(--sg-ink); font: 600 11px/1 inherit; cursor: pointer; }
+.sg-btn:hover { border-color: var(--sg-accent); }
 
-.sg-list { margin-top: 14px; padding-left: 18px; color: #3c4049; font-size: 13.5px; line-height: 1.7; letter-spacing: -0.01em; }
+.sg-list { margin: 0 0 6px; padding-left: 18px; color: var(--sg-ink-2); font-size: 11.5px; line-height: 1.7; }
 .sg-list li + li { margin-top: 5px; }
-.sg-list b { color: #0b0b0d; }
+.sg-list b { color: var(--sg-ink); font-weight: 600; }
 
-.sg-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
-.sg-chips code {
-  padding: 4px 8px; border: 1px solid rgba(0,0,0,0.1); border-radius: 6px; background: #fafbfb;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 11px; color: #5f636b;
-}
+.sg-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+.sg-chips code { padding: 3px 7px; font-size: 10px; }
 
-.sg-ico { display: grid; place-items: center; gap: 9px; padding: 18px 8px; border: 1px solid rgba(0,0,0,0.08); border-radius: 10px; background: #fff; }
-.sg-ico svg { width: 28px; height: 28px; color: #0b0b0d; }
-.sg-ico span { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 10.5px; color: #767b85; }
+.sg-ico { display: grid; place-items: center; gap: 9px; padding: 16px 8px; border: 1px solid var(--border-soft); border-radius: 9px; background: var(--card-bg); }
+.sg-ico svg { width: 26px; height: 26px; color: var(--ink); }
+.sg-ico span { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 10px; color: var(--dim-ink); }
+.sg-icogrid { padding: 16px; background: var(--bg); border: 1px solid var(--sg-line); border-radius: 10px; display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
 
-.sg-swatch-fx { height: 120px; border-radius: 10px; border: 1px solid rgba(0,0,0,0.08); position: relative; overflow: hidden; }
+.sg-rows { border: 1px solid var(--sg-line); border-radius: 10px; overflow: hidden; background: var(--sg-panel); }
+.sg-row { display: grid; grid-template-columns: minmax(140px, 0.7fr) minmax(0, 2fr); gap: 14px; padding: 8px 13px; border-top: 1px solid var(--sg-line); }
+.sg-row:first-child { border-top: 0; }
+.sg-row > b { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 10.5px; font-weight: 600; color: var(--sg-accent); word-break: break-all; }
+.sg-row > span { font-size: 11px; line-height: 1.5; color: var(--sg-ink-2); }
 
-.sg-foot { margin-top: 90px; padding-top: 26px; border-top: 1px solid rgba(0,0,0,0.1); color: #767b85; font-size: 12.5px; letter-spacing: -0.01em; }
+.sg-foot { margin-top: 56px; padding-top: 18px; border-top: 1px solid var(--sg-line); font-size: 11px; line-height: 1.7; color: var(--sg-ink-3); max-width: 80ch; }
+
+.sg-boot { display: grid; place-items: center; min-height: 100vh; padding: 40px; text-align: center; font: 400 13px/1.7 system-ui, sans-serif; color: var(--sg-ink-2); }
+.sg-boot b { display: block; margin-bottom: 8px; color: var(--sg-ink); font-weight: 600; }
 </style>
 </head>
 
@@ -161,45 +210,101 @@
   <div>
     <b>Loading the homepage's own stylesheet</b>
     This guide renders <code>index.html</code>'s CSS rather than a copy of it, so it has to
-    fetch that file. Over <code>file://</code> the browser blocks that. Serve the folder
-    (<code>python -m http.server</code>) and reload.
+    fetch that file. Over <code>file://</code> the browser blocks that. Serve the folder and reload.
   </div>
 </div>
 
-<div class="sg-wrap" id="sg-app" hidden>
+<div class="sg-shell" id="sg-app" hidden>
 
-  <header class="sg-mast">
-    <h1>onBlue Agentic<br><em>design system</em></h1>
-    <p>
-      The reference for <a href="index.html">the homepage</a>. It is a view onto that page's CSS,
-      not a second copy of it: the guide fetches <code>index.html</code> at load, lifts its inline
-      <code>&lt;style&gt;</code> block into this document and its shared icon <code>&lt;defs&gt;</code>
-      into this body, then renders real components with real class names. A restyle of anything
-      specimened here shows up on this page on reload, with nothing to propagate.
-    </p>
-    <p>
-      What that does <b>not</b> cover, and what you therefore own by hand: a component's markup,
-      its copy and its set of states. Those are written here and can drift from the page. Before
-      adding or editing a specimen, read how <code>index.html</code> builds it.
-      Longform reasoning lives in <a href="design.md">design.md</a>.
-    </p>
-    <div class="sg-stats" id="sg-stats"></div>
-    <nav class="sg-toc">
-      <a href="#tokens">Tokens</a>
-      <a href="#type">Type</a>
-      <a href="#scales">Scales</a>
-      <a href="#motion">Motion</a>
-      <a href="#icons">Icons</a>
-      <a href="#effects">Effects</a>
-      <a href="#components">Components</a>
-      <a href="#coverage">Coverage</a>
-      <a href="#gaps">Known gaps</a>
-    </nav>
-  </header>
+  <nav class="sg-nav">
+    <div class="sg-brand">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.6C12.55 2.6 12.88 3.15 13.08 4.7c.62 4.7 1.52 5.6 6.22 6.22 1.55.2 2.1.53 2.1 1.08s-.55.88-2.1 1.08c-4.7.62-5.6 1.52-6.22 6.22-.2 1.55-.53 2.1-1.08 2.1s-.88-.55-1.08-2.1c-.62-4.7-1.52-5.6-6.22-6.22C3.15 12.88 2.6 12.55 2.6 12s.55-.88 2.1-1.08c4.7-.62 5.6-1.52 6.22-6.22C11.12 3.15 11.45 2.6 12 2.6Z"/></svg>
+      onBlue <span>Agentic</span>
+    </div>
+    <div class="sg-brandsub">Design system. Live specimens rendered from the homepage's own stylesheet.</div>
 
-  <!-- ==================================================== 1. TOKENS ======= -->
+    <div class="sg-navgroup">Foundations</div>
+    <a href="#tokens">Tokens</a>
+    <a href="#type">Type scale</a>
+    <a href="#ladder">Responsive ladder</a>
+    <a href="#radius">Radius scale</a>
+    <a href="#stroke">Stroke and shadow</a>
+    <a href="#icons">Icons</a>
+
+    <div class="sg-navgroup">Motion</div>
+    <a href="#entrance">Entrance and reveal</a>
+    <a href="#loops">Ambient loops</a>
+
+    <div class="sg-navgroup">Background systems</div>
+    <a href="#layers">Layer stack</a>
+    <a href="#grain">Grain</a>
+    <a href="#field">The hero field</a>
+    <a href="#aberration">Chromatic aberration</a>
+    <a href="#glyphs">Glyph field</a>
+    <a href="#model">The ASCII model</a>
+
+    <div class="sg-navgroup">Shell</div>
+    <a href="#identity">Logo and navigation</a>
+    <a href="#header">Header</a>
+    <a href="#footer">Footer</a>
+
+    <div class="sg-navgroup">Components</div>
+    <a href="#buttons">Buttons</a>
+    <a href="#pills">Badge, chip, note</a>
+    <a href="#bandhead">Section head</a>
+    <a href="#card">Card and edge sheen</a>
+    <a href="#tiles">Tiles</a>
+    <a href="#terminal">Terminal</a>
+    <a href="#steps">Step card</a>
+    <a href="#rail">Flow rail</a>
+    <a href="#faq">FAQ row</a>
+    <a href="#closing">Closing statement</a>
+    <a href="#cue">Scroll cue and burger</a>
+
+    <div class="sg-navgroup">Meta</div>
+    <a href="#coverage">Coverage</a>
+    <a href="#gaps">Known gaps</a>
+  </nav>
+
+  <main class="sg-main">
+
+    <div class="sg-toggles">
+      <span class="sg-togglabel">Theme</span>
+      <button class="sg-tbtn" id="sgSpec" type="button"><i></i><span>Specimens: light</span></button>
+      <button class="sg-tbtn" id="sgPage" type="button"><i></i><span>Page: light</span></button>
+      <div class="sg-stats" id="sg-stats"></div>
+    </div>
+
+    <header class="sg-head">
+      <div class="sg-h1">onBlue Agentic Design System</div>
+      <p class="sg-lede">
+        Every specimen on this page is the <b>real component</b>, rendered with the real class names
+        from <a href="index.html">index.html</a>'s own stylesheet. Nothing is re-implemented here, so
+        this page cannot silently drift from what ships. Token values are read live via
+        <code>getComputedStyle</code> rather than typed in.
+      </p>
+      <p class="sg-lede">
+        What that does <b>not</b> cover, and what you therefore own by hand: a component's markup, its
+        copy and its set of states. Those are written here and can drift. Before adding or editing a
+        specimen, read how <code>index.html</code> builds it. Longform reasoning lives in
+        <a href="design.md">design.md</a>.
+      </p>
+    </header>
+
+    <div class="sg-flag">
+      <b>How the stylesheet gets here.</b> The homepage keeps its CSS inline, so there is no file to
+      <code>&lt;link&gt;</code>. This guide fetches <code>index.html</code> at load, lifts its
+      <code>&lt;style&gt;</code> block into its own head and its shared <code>&lt;defs&gt;</code>
+      sprite into its body, then renders real components against them. A restyle of anything
+      specimened here lands on this page on reload, with nothing to propagate. The guide's own chrome
+      is <code>sg-</code> prefixed throughout so it can never restyle a product class, and every
+      specimen canvas takes the product's own <code>--bg</code> so a component is judged against the
+      surface it actually ships on.
+    </div>
+
+<!-- ==================================================== 1. TOKENS ======= -->
   <section class="sg-sec" id="tokens">
-    <h2>1. Tokens</h2>
+    <h2 class="sg-sech">Tokens</h2>
     <p>
       Every value below is read at load with <code>getComputedStyle</code> off
       <code>:root</code>, so it is the live value and cannot be written down wrong here. The page
@@ -214,7 +319,7 @@
 
   <!-- ====================================================== 2. TYPE ======= -->
   <section class="sg-sec" id="type">
-    <h2>2. Type</h2>
+    <h2 class="sg-sech">Type</h2>
     <p>
       Two families. <code>Inter</code> carries everything; <code>Instrument Serif</code> italic has
       exactly one job, the emphasised phrase inside a heading, always blue and always a touch larger
@@ -227,7 +332,7 @@
     </p>
     <div id="sg-type"></div>
 
-    <div class="sg-sub">
+    <div class="sg-sub" id="ladder">
       <h3>The responsive ladder</h3>
       <p>Sizes are tokens, not rules, so one block per breakpoint rescales the whole page.</p>
       <div class="sg-scroll">
@@ -257,26 +362,29 @@
 
   <!-- ==================================================== 3. SCALES ======= -->
   <section class="sg-sec" id="scales">
-    <h2>3. Scales</h2>
+    <h2 class="sg-sech">Scales</h2>
     <p>
       Tallied out of the injected stylesheet at load. A value appearing once is usually a value that
       wanted a token; a value appearing many times is the scale doing its job.
     </p>
 
-    <div class="sg-sub">
+    <div class="sg-sub" id="radius">
       <h3>Radius</h3>
-      <div class="sg-rows" id="sg-radii"></div>
+      <div class="sg-scale" id="sg-radii"></div>
     </div>
 
-    <div class="sg-sub">
+    <div class="sg-sub" id="stroke">
       <h3>Stroke and hairline</h3>
       <p>One pixel everywhere. The only exception is the card sheen at <code>--sheen-w</code>, which
         takes half a pixel more in light because a dark-to-blue swap on white reads weaker than a
         dim-to-bright swap on black.</p>
-      <div class="sg-frame sg-frame--flow" id="sg-strokes"></div>
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">--border</span><span class="sg-cls">--border-soft</span><span class="sg-cls">--hair</span><span class="sg-cls">--band-line</span><span class="sg-cls">--faq-line</span><span class="sg-cls">--hair-2</span><span class="sg-cls">--rule</span><span class="sg-role">Every stroke on the page is one pixel. The section joins take the lightest weight of the set, because they run the full page width and carry far more ink than the same value does around a card.</span></div>
+        <div class="sg-canvas sg-canvas--flow" id="sg-strokes"></div>
+      </div>
     </div>
 
-    <div class="sg-sub">
+    <div class="sg-sub" id="shadow">
       <h3>Shadow</h3>
       <p>
         Dark emits light, light casts it, and both readings live in the same token names. In light
@@ -284,20 +392,20 @@
         <code>rgba(16, 16, 19, …)</code> rather than neutral black, because a coloured object casts a
         coloured shadow and pure black on white reads as dirt.
       </p>
-      <div class="sg-grid sg-grid--3" id="sg-shadows"></div>
+      <div class="sg-tokgrid" id="sg-shadows"></div>
     </div>
   </section>
 
   <!-- ==================================================== 4. MOTION ======= -->
   <section class="sg-sec" id="motion">
-    <h2>4. Motion</h2>
+    <h2 class="sg-sech">Motion</h2>
     <p>
       One easing curve, <code>--ease</code> = <code>cubic-bezier(0.16, 1, 0.3, 1)</code>, on every
       entrance and every transform. 0.35s is the standard for a state change, 0.3s for links and
       small marks, 0.18s for transforms.
     </p>
 
-    <div class="sg-sub">
+    <div class="sg-sub" id="entrance">
       <h3>Entrance variants</h3>
       <p>
         <code>.appear</code> plus a modifier, with <code>--d</code> as the per-element delay. Each
@@ -305,7 +413,9 @@
         finished state; a double <code>requestAnimationFrame</code> catches anything whose animation
         never started, so a missed frame cannot leave content invisible.
       </p>
-      <div class="sg-frame" id="sg-appear">
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.appear</span><span class="sg-cls">.appear--fade</span><span class="sg-cls">.appear--soft</span><span class="sg-cls">.appear--mask</span><span class="sg-cls">.appear--btn</span><span class="sg-role">The four entrance variants, each with its <code>--d</code> delay. Replay runs them again.</span></div>
+        <div class="sg-canvas" id="sg-appear">
         <div class="sg-grid sg-grid--2">
           <div><span class="appear appear--fade" style="display:inline-block">appear--fade</span><div class="sg-label">opacity only, 0.7s</div></div>
           <div><span class="appear appear--soft" style="display:inline-block">appear--soft</span><div class="sg-label">opacity + 14px rise, 1.05s</div></div>
@@ -313,10 +423,11 @@
           <div><span class="appear appear--btn" style="display:inline-block">appear--btn</span><div class="sg-label">opacity + 18px rise + scale(0.94), 1.05s</div></div>
         </div>
       </div>
+      </div>
       <button class="sg-btn" type="button" data-replay="#sg-appear">Replay</button>
     </div>
 
-    <div class="sg-sub">
+    <div class="sg-sub" id="cascade">
       <h3>The hero cascade</h3>
       <div class="sg-scroll">
         <table class="sg-tbl">
@@ -334,7 +445,7 @@
       </div>
     </div>
 
-    <div class="sg-sub">
+    <div class="sg-sub" id="reveal">
       <h3>Scroll reveal</h3>
       <p>
         <code>.reveal</code> starts at <code>opacity: 0; translateY(22px)</code> and transitions over
@@ -346,7 +457,7 @@
       </p>
     </div>
 
-    <div class="sg-sub">
+    <div class="sg-sub" id="loops">
       <h3>Ambient loops</h3>
       <p>Everything that runs unattended, and nothing else does. The step demos, the closing
         typewriter and the CTA decode all wait for attention.</p>
@@ -371,7 +482,7 @@
       </div>
     </div>
 
-    <div class="sg-sub">
+    <div class="sg-sub" id="reducedmo">
       <h3>Reduced motion</h3>
       <p>
         <code>prefers-reduced-motion: reduce</code> kills every transition and animation globally with
@@ -387,7 +498,7 @@
 
   <!-- ===================================================== 5. ICONS ======= -->
   <section class="sg-sec" id="icons">
-    <h2>5. Icons</h2>
+    <h2 class="sg-sech">Icons</h2>
     <p>
       One sprite, drawn once in <code>index.html</code> as <code>&lt;defs id="defs-ca"&gt;</code> and
       referenced everywhere by <code>&lt;use href="#i-name"/&gt;</code>. The glyphs below are rendered
@@ -395,7 +506,7 @@
       Consumers set <code>fill="none" stroke="currentColor"</code> at 1.4 to 1.8 weight; the spark is
       the one filled glyph.
     </p>
-    <div class="sg-grid sg-grid--sw" id="sg-icons"></div>
+    <div class="sg-icogrid" id="sg-icons"></div>
     <div class="sg-note">
       <b>The mark is <code>#i-spark</code>.</b> It appears at four sizes with four different
       treatments: 28px in the header logo with <code>--mark-shadow</code>, 44px above the closing
@@ -408,13 +519,13 @@
 
   <!-- =================================================== 6. EFFECTS ======= -->
   <section class="sg-sec" id="effects">
-    <h2>6. Effects</h2>
+    <h2 class="sg-sech">Effects</h2>
     <p>
       Four background systems, all of them ambience: each sits at low alpha behind the thing the
       reader is meant to read, and each parks itself when off screen.
     </p>
 
-    <div class="sg-sub">
+    <div class="sg-sub" id="layers">
       <h3>Layer stack</h3>
       <div class="sg-rows">
         <div class="sg-row"><b>0</b><span>.hero-media, the clay field (hero only) &middot; .band::before, per-band grain</span></div>
@@ -428,7 +539,7 @@
       </div>
     </div>
 
-    <div class="sg-sub">
+    <div class="sg-sub" id="grain">
       <h3>Grain</h3>
       <p>
         One <code>feTurbulence</code> SVG as a data URI, <code>fractalNoise</code>,
@@ -438,7 +549,9 @@
         hero gets its own sheet at <code>--grain-hero</code>. In light both blend
         <code>multiply</code>; in dark they lift with <code>screen</code> and <code>overlay</code>.
       </p>
-      <div class="sg-frame sg-frame--pad0">
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.band::before</span><span class="sg-role">A band’s own grain layer at the live <code>--band-grain</code>. It rides each section rather than the page, so a band can carry its own amount and <code>#companies</code> can carry none.</span></div>
+        <div class="sg-canvas sg-canvas--pad0">
         <div class="band" style="padding:0">
           <div style="position:relative;height:150px;background:#ffffff">
             <div style="position:absolute;inset:0;display:grid;place-items:center;font-size:12.5px;color:#767b85;letter-spacing:-0.01em">
@@ -447,10 +560,10 @@
           </div>
         </div>
       </div>
-      <div class="sg-label">.band::before, live token</div>
+      </div>
     </div>
 
-    <div class="sg-sub">
+    <div class="sg-sub" id="field">
       <h3>The hero field</h3>
       <p>
         Three gradient layers plus two overlays, not a video. The stops were sampled off the clay
@@ -460,15 +573,17 @@
         load-bearing: without it the last stop meets the page in one pixel across the full width and
         that step reads as a ruled line under the hero.
       </p>
-      <div class="sg-frame sg-frame--pad0">
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.hero-media</span><span class="sg-role">The hero field, real element. Three gradient layers plus two overlays, masked to dissolve into the page at 68 per cent; without that mask the last stop meets the page in one pixel across the full width and reads as a ruled line.</span></div>
+        <div class="sg-canvas sg-canvas--pad0">
         <div style="position:relative;height:210px">
           <div class="hero-media" style="position:absolute;inset:0"></div>
         </div>
       </div>
-      <div class="sg-label">.hero-media, real element</div>
+      </div>
     </div>
 
-    <div class="sg-sub">
+    <div class="sg-sub" id="aberration">
       <h3>Chromatic aberration</h3>
       <p>
         Four filters in the injected sprite. <code>#ca-spark</code> and <code>#ca-foot</code> split
@@ -478,7 +593,10 @@
         <code>#ca-red</code> and <code>#ca-cyan</code> are the flat channel isolators the illustration
         hover and the footer wordmark use.
       </p>
-      <div class="sg-frame sg-frame--flow" id="sg-ca"></div>
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">#ca-spark</span><span class="sg-cls">#ca-spark-soft</span><span class="sg-cls">#ca-red</span><span class="sg-cls">#ca-cyan</span><span class="sg-role">The four aberration filters from the injected sprite, on the same mark. The live one is marked: light runs the painted pair, because a channel split of a blue spark has no red to give and renders the red side near black.</span></div>
+        <div class="sg-canvas sg-canvas--flow" id="sg-ca"></div>
+      </div>
       <div class="sg-note">
         The spark's split is <b>driven by the pointer</b> on the live page: moving inside
         <code>#companies</code> rewrites <code>dx</code>/<code>dy</code> on the <code>.ca-r</code> and
@@ -488,7 +606,7 @@
       </div>
     </div>
 
-    <div class="sg-sub">
+    <div class="sg-sub" id="glyphs">
       <h3>The ambient glyph field</h3>
       <p>
         One implementation, two hosts: <code>#agents</code> and <code>.hero-wrap</code>. A 2D canvas
@@ -508,7 +626,7 @@
       </div>
     </div>
 
-    <div class="sg-sub">
+    <div class="sg-sub" id="model">
       <h3>The WebGL ASCII model</h3>
       <p>
         <code>ascii-object.js</code>, three.js 0.169.0 pinned through an importmap, mounted only at
@@ -535,16 +653,18 @@
 
   <!-- ================================================ 7. COMPONENTS ======= -->
   <section class="sg-sec" id="components">
-    <h2>7. Components</h2>
+    <h2 class="sg-sech">Components</h2>
     <p>
       Real classes, styled by the injected sheet. Copy is quoted from <code>index.html</code> wherever
       the component carries any; where a specimen needs filler it is obviously filler.
     </p>
 
-    <!-- 7.1 identity -->
-    <div class="sg-sub">
-      <h3>7.1 Logo and navigation</h3>
-      <div class="sg-frame sg-frame--flow">
+    <!-- identity -->
+    <div class="sg-sub" id="identity">
+      <h3>Logo and navigation</h3>
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.logo</span><span class="sg-cls">#site-nav a</span><span class="sg-cls">.nav__biz</span><span class="sg-role">Nav hover recedes, ink to <code>--muted</code>, rather than brightening. The businesses arrow is sized in <code>em</code> so it tracks its label, and it marks the one link that leaves the page.</span></div>
+        <div class="sg-canvas sg-canvas--flow">
         <a class="logo" href="#components" aria-label="onBlue">
           <svg class="logo-mark" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><use href="#i-spark"/></svg>
           <span><span class="logo-on">on</span>Blue</span>
@@ -556,7 +676,7 @@
           <a class="nav__biz" href="#components">For businesses<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
         </nav>
       </div>
-      <div class="sg-label">.logo &middot; #site-nav a &middot; .nav__biz</div>
+      </div>
       <div class="sg-note">
         Nav hover <b>recedes</b>: ink fades to <code>--muted</code> over 0.35s rather than
         brightening. The businesses arrow is sized in <code>em</code> (<code>1.6em</code>) so it
@@ -565,14 +685,16 @@
       </div>
     </div>
 
-    <!-- 7.2 header -->
-    <div class="sg-sub">
-      <h3>7.2 Header</h3>
+    <!-- header -->
+    <div class="sg-sub" id="header">
+      <h3>Header</h3>
       <p>Fixed, on the same <code>--band-max</code> grid as every section, three columns
         <code>1fr auto 1fr</code> so the nav is optically centred whatever the two ends weigh. The
         frame below is a containing block, so the fixed bar stays inside it.</p>
 
-      <div class="sg-frame sg-frame--pad0 sg-frame--tall" style="background:#f4f4f7">
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.header</span><span class="sg-role">At rest: transparent, no fill, and the CTA is an outline while the hero’s own primary is still on screen. Three columns, <code>1fr auto 1fr</code>, on the same <code>--band-max</code> grid as every section, so the nav is optically centred whatever the two ends weigh.</span></div>
+        <div class="sg-canvas sg-canvas--pad0 sg-canvas--tall" style="background:var(--band-lift)">
         <header class="header">
           <div class="header-inner">
             <a class="logo" href="#components" aria-label="onBlue">
@@ -588,9 +710,11 @@
           </div>
         </header>
       </div>
-      <div class="sg-label">.header, at rest &mdash; transparent, outline CTA</div>
+      </div>
 
-      <div class="sg-frame sg-frame--pad0 sg-frame--tall" style="background:#f4f4f7">
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.header.is-stuck</span><span class="sg-role">Stuck: glass fill, <code>blur(18px)</code>, a hairline, and padding down to 62 per cent. Set by a 40px probe at the top of the document leaving the viewport, which is cheaper than listening to scroll.</span></div>
+        <div class="sg-canvas sg-canvas--pad0 sg-canvas--tall" style="background:var(--band-lift)">
         <header class="header is-stuck">
           <div class="header-inner">
             <a class="logo" href="#components" aria-label="onBlue">
@@ -606,7 +730,7 @@
           </div>
         </header>
       </div>
-      <div class="sg-label">.header.is-stuck &mdash; glass, blur(18px), hairline, padding at 62%</div>
+      </div>
 
       <div class="sg-note">
         Two independent switches, both driven by an <code>IntersectionObserver</code> rather than by a
@@ -619,28 +743,32 @@
       </div>
     </div>
 
-    <!-- 7.3 buttons -->
-    <div class="sg-sub">
-      <h3>7.3 Buttons</h3>
+    <!-- buttons -->
+    <div class="sg-sub" id="buttons">
+      <h3>Buttons</h3>
       <p>Two sizes from one base, two treatments. The press is a 1px drop on hover and 2px on
         <code>:active</code>, with the shadow tightening toward the surface: shadow alone reads as the
         light changing, the 1px is what makes it a press.</p>
 
-      <div class="sg-frame sg-frame--flow">
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.btn</span><span class="sg-cls">.btn-solid</span><span class="sg-cls">.btn-ghost</span><span class="sg-cls">.header-cta</span><span class="sg-cls">.is-past-cta</span><span class="sg-role">Small: <code>--btn-h</code>, <code>--btn-pad</code>, <code>--btn</code>. The header CTA carries two states, an outline above the hero’s button and a fill past it.</span></div>
+        <div class="sg-canvas sg-canvas--flow">
         <a class="btn btn-solid" href="#components">Start earning</a>
         <a class="btn btn-ghost" href="#components">Secondary</a>
         <a class="btn btn-solid header-cta" href="#components">Header, at rest</a>
         <span class="is-past-cta" style="display:inline-flex"><a class="btn btn-solid header-cta" href="#components">Header, past CTA</a></span>
       </div>
-      <div class="sg-label">small &mdash; --btn-h, --btn-pad, --btn</div>
+      </div>
 
-      <div class="sg-frame sg-frame--flow">
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.hero-actions .btn</span><span class="sg-cls">.band-actions .btn</span><span class="sg-cls">.hero-solid</span><span class="sg-cls">.hero-ghost</span><span class="sg-role">Large: <code>--hero-btn-h</code>, <code>--hero-btn-pad</code>, <code>--btn + 1.5px</code>. That selector is two classes deep, so a size modifier written as a single class loses to it. This collision has landed twice.</span></div>
+        <div class="sg-canvas sg-canvas--flow">
         <div class="hero-actions" style="margin-top:0">
           <a class="btn btn-solid hero-solid" href="#components"><span class="scramble">Start earning</span></a>
           <a class="btn btn-ghost hero-ghost" href="#components">Secondary</a>
         </div>
       </div>
-      <div class="sg-label">large &mdash; .hero-actions .btn / .band-actions .btn: --hero-btn-h, --hero-btn-pad, --btn + 1.5px</div>
+      </div>
 
       <div class="sg-note">
         <b>Specificity is deliberately flat.</b> <code>.hero-actions .btn</code> is a two-class
@@ -656,10 +784,12 @@
       </div>
     </div>
 
-    <!-- 7.4 small surfaces -->
-    <div class="sg-sub">
-      <h3>7.4 Badge, chip, note</h3>
-      <div class="sg-frame sg-frame--flow">
+    <!-- small surfaces -->
+    <div class="sg-sub" id="pills">
+      <h3>Badge, chip, note</h3>
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.badge</span><span class="sg-cls">.chip</span><span class="sg-cls">.band-note</span><span class="sg-role">The three pill surfaces. All take the 999px radius and differ by weight and by what they sit on.</span></div>
+        <div class="sg-canvas sg-canvas--flow">
         <span class="badge">
           <svg class="badge-star" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><use href="#i-spark"/></svg>
           A work economy for AI
@@ -670,13 +800,15 @@
           The pill that closes a section
         </span>
       </div>
-      <div class="sg-label">.badge &middot; .chip &middot; .band-note</div>
+      </div>
     </div>
 
-    <!-- 7.5 band head -->
-    <div class="sg-sub">
-      <h3>7.5 Section head</h3>
-      <div class="sg-frame">
+    <!-- band head -->
+    <div class="sg-sub" id="bandhead">
+      <h3>Section head</h3>
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.band-head</span><span class="sg-cls">.band-top</span><span class="sg-cls">.eyebrow</span><span class="sg-cls">.band-sub</span><span class="sg-role">Left-aligned head. The eyebrow’s rule is a gradient from transparent to <code>--rule</code>, so it is darkest where it meets the label and dissolves at its far end.</span></div>
+        <div class="sg-canvas">
         <div class="band-head">
           <div class="band-top">
             <h2>The <em>onBlue</em> economy</h2>
@@ -685,16 +817,18 @@
           <p class="band-sub">Work comes in from companies. Digital and physical agents pick it up. The people who own those agents get paid.</p>
         </div>
       </div>
-      <div class="sg-label">.band-head &middot; .band-top &middot; .eyebrow &middot; .band-sub</div>
+      </div>
 
-      <div class="sg-frame">
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.band-head--center</span><span class="sg-role">Centred variant at 820px, with the eyebrow above the heading and the rule mirrored on both sides.</span></div>
+        <div class="sg-canvas">
         <div class="band-head band-head--center">
           <span class="eyebrow">Centred variant</span>
           <h2>Partnered <em>agents</em></h2>
           <p class="band-sub">Specialized workers can register into the onBlue economy.</p>
         </div>
       </div>
-      <div class="sg-label">.band-head--center &mdash; 820px, mirrored eyebrow rule</div>
+      </div>
 
       <div class="sg-note">
         The eyebrow's rule is a gradient from transparent to <code>--rule</code>, so it is
@@ -703,12 +837,14 @@
       </div>
     </div>
 
-    <!-- 7.6 card -->
-    <div class="sg-sub">
-      <h3>7.6 Card and the edge sheen</h3>
+    <!-- card -->
+    <div class="sg-sub" id="card">
+      <h3>Card and the edge sheen</h3>
       <p>The one surface primitive. Hover raises the border, swaps in the blue-tinted shadow and
         lifts the card 2px. Move the pointer across the cards below to see the sheen travel.</p>
-      <div class="sg-grid sg-grid--3" id="sg-cards">
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.card</span><span class="sg-cls">.card::after</span><span class="sg-role">The ring is the card’s own stroke, not a border over it: a box 1.5px larger with its interior subtracted by <code>mask-composite: exclude</code>. One <code>mousemove</code> listener finds the card under the pointer and writes <code>--gx</code> / <code>--gy</code> once per frame.</span></div>
+        <div class="sg-canvas sg-canvas--grid3" id="sg-cards">
         <div class="card" style="padding:24px">
           <h3 style="font-size:17px;font-weight:600;letter-spacing:-0.03em;color:var(--ink)">Resting</h3>
           <p style="margin-top:8px;color:var(--muted);font-size:13.5px;line-height:1.5">1px --border-soft, 16px radius, --card-bg, --card-shadow.</p>
@@ -722,7 +858,7 @@
           <p style="margin-top:8px;color:var(--muted);font-size:13.5px;line-height:1.5">A 260px radial on a box 1.5px larger than the card, with the inside subtracted.</p>
         </div>
       </div>
-      <div class="sg-label">.card &middot; .card::after (--gx / --gy written once per frame)</div>
+      </div>
       <div class="sg-note">
         The ring is the card's own stroke, not a border on top of it: <code>mask-composite: exclude</code>
         removes the interior of a slightly larger box. In light it also takes a
@@ -732,10 +868,12 @@
       </div>
     </div>
 
-    <!-- 7.7 tiles -->
-    <div class="sg-sub">
-      <h3>7.7 Tiles</h3>
-      <div class="sg-frame sg-frame--tint">
+    <!-- tiles -->
+    <div class="sg-sub" id="tiles">
+      <h3>Tiles</h3>
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.agent-row li</span><span class="sg-role">Translucent white at 62 per cent with <code>backdrop-filter: blur(10px)</code>, so the illustration behind settles without being sealed off.</span></div>
+        <div class="sg-canvas sg-canvas--tint">
         <ul class="agent-row" style="margin-top:0;padding-top:0">
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-pencil"/></svg>Creator Agent</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-check"/></svg>Test Agent</li>
@@ -743,41 +881,49 @@
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-search"/></svg>Research Agent</li>
         </ul>
       </div>
-      <div class="sg-label">.agent-row li &mdash; translucent white at 62% with backdrop-filter: blur(10px), so the illustration behind settles without being sealed off</div>
+      </div>
 
-      <div class="sg-frame">
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.agent-skills li</span><span class="sg-role">Stacked above 560px, reflowing to a row below it.</span></div>
+        <div class="sg-canvas">
         <ul class="agent-skills" style="margin-top:0">
           <li><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-pencil"/></svg>Write</li>
           <li><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-play"/></svg>Edit</li>
           <li><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-chart"/></svg>Report</li>
         </ul>
       </div>
-      <div class="sg-label">.agent-skills li &mdash; stacked above 560px, horizontal below it</div>
+      </div>
 
-      <div class="sg-frame">
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.demand-list li</span><span class="sg-role">The dispatch rows. <code>.demand-list--agents</code> takes full ink at 500 weight; the work side stays at <code>--chip-ink</code>.</span></div>
+        <div class="sg-canvas">
         <ul class="demand-list" style="display:grid;gap:10px">
           <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-pencil"/></svg>Campaign creative</li>
           <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-search"/></svg>Market research</li>
         </ul>
       </div>
-      <div class="sg-label">.demand-list li</div>
+      </div>
 
-      <div class="sg-frame sg-frame--flow" style="min-height:90px">
-        <span class="cap-bubble" style="position:static;opacity:1;visibility:visible;padding:0;background:none">
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.cap-bubble</span><span class="sg-role">Absolute and floating over the diagram on the page, static here. Opaque white in light so it lifts off the artwork rather than tinting it.</span></div>
+        <div class="sg-canvas sg-canvas--flow" style="min-height:90px">
+        <span class="cap-bubble" style="position:static">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-check"/></svg>
           Verified on delivery
         </span>
       </div>
-      <div class="sg-label">.cap-bubble &mdash; absolute and floating on the page, static here</div>
+      </div>
     </div>
 
-    <!-- 7.8 terminal -->
-    <div class="sg-sub">
-      <h3>7.8 Terminal</h3>
+    <!-- terminal -->
+    <div class="sg-sub" id="terminal">
+      <h3>Terminal</h3>
       <p>A four-row window over a six-row log. The keyframe holds each frame then slides quickly, and
         its final frame is one full period, pixel-identical to the first, so the loop wraps without a
         jump.</p>
-      <div class="sg-frame">
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.agent-art</span><span class="sg-cls">.term-bar</span><span class="sg-cls">.term-win</span><span class="sg-cls">.term-log</span><span class="sg-cls">.t-task</span><span class="sg-cls">.t-done</span><span class="sg-role">A four-row window over a six-row log. The keyframe holds each frame then slides quickly, and its final frame is one full period, pixel-identical to the first, so the loop wraps without a jump. In light the chrome strip is what says “terminal”; on black the monospace already said it, so dark drops the strip fill.</span></div>
+        <div class="sg-canvas">
         <div class="agent-art" style="margin:0">
           <div class="term-bar"><i></i><i></i><i></i></div>
           <div class="term-win">
@@ -796,20 +942,22 @@
           </div>
         </div>
       </div>
-      <div class="sg-label">.agent-art &middot; .term-bar &middot; .term-win &middot; .term-log (.t-task, .t-done)</div>
+      </div>
       <div class="sg-note">
         In light the chrome strip is what says "terminal": on black the monospace and the scrolling log
         already said it, so dark keeps three neutral dots and drops the strip fill entirely.
       </div>
     </div>
 
-    <!-- 7.9 step internals -->
-    <div class="sg-sub">
-      <h3>7.9 Step card and its three demonstrations</h3>
+    <!-- step internals -->
+    <div class="sg-sub" id="steps">
+      <h3>Step card and its three demonstrations</h3>
       <p>Nesting <b>alternates</b> rather than stacking: the card is white, the panel inside steps down
         1%, and the rows inside come back to white. Stacking would make the innermost element darkest
         and read the nesting as depth rather than as structure. Hover a card to run its demo.</p>
-      <div class="sg-grid sg-grid--3">
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.step</span><span class="sg-cls">.step-num</span><span class="sg-cls">.step-art</span><span class="sg-cls">.pick-list</span><span class="sg-cls">.slider</span><span class="sg-cls">.earn-bars</span><span class="sg-cls">.earn-payout</span><span class="sg-role">Nesting alternates rather than stacking: the card is white, the panel inside steps down one per cent, the rows inside come back to white. Stacking would put the darkest surface innermost and read the nesting as depth rather than as structure.</span></div>
+        <div class="sg-canvas sg-canvas--grid3">
 
         <article class="card step">
           <div class="step-top">
@@ -857,7 +1005,7 @@
         </article>
 
       </div>
-      <div class="sg-label">.step &middot; .step-num &middot; .step-art &middot; .pick-list &middot; .slider &middot; .earn-bars &middot; .earn-payout</div>
+      </div>
       <div class="sg-note">
         All three demos are <b>off by default</b> so nothing loops unattended. They run while hovered,
         and once for four seconds when the card first scrolls into view (<code>.demo</code>). The bars
@@ -865,10 +1013,12 @@
       </div>
     </div>
 
-    <!-- 7.10 rail -->
-    <div class="sg-sub">
-      <h3>7.10 The flow rail</h3>
-      <div class="sg-frame sg-frame--tint">
+    <!-- rail -->
+    <div class="sg-sub" id="rail">
+      <h3>The flow rail</h3>
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.rail</span><span class="sg-cls">.rail-node</span><span class="sg-cls">.work-cycle</span><span class="sg-cls">.rail-flow</span><span class="sg-cls">.rail-core</span><span class="sg-cls">.rail-outs .chip</span><span class="sg-role">In light <code>.rail-core</code> becomes the mark: a filled blue disc with a white spark and its own coloured drop-shadow, pulse off. Dark keeps a tinted disc with a breathing border, which works on black and would read as a pale wash on white.</span></div>
+        <div class="sg-canvas sg-canvas--tint">
         <div class="rail" style="margin-top:0">
           <span class="rail-node rail-node--work">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-box"/></svg>
@@ -884,7 +1034,7 @@
           </span>
         </div>
       </div>
-      <div class="sg-label">.rail &middot; .rail-node &middot; .work-cycle &middot; .rail-flow &middot; .rail-core &middot; .rail-outs .chip</div>
+      </div>
       <div class="sg-note">
         In light <code>.rail-core</code> becomes <b>the mark</b>: a filled blue disc with a white
         spark and its own coloured drop-shadow, and the pulse is switched off. Dark keeps a tinted
@@ -895,10 +1045,12 @@
       </div>
     </div>
 
-    <!-- 7.11 faq -->
-    <div class="sg-sub">
-      <h3>7.11 FAQ row</h3>
-      <div class="sg-frame">
+    <!-- faq -->
+    <div class="sg-sub" id="faq">
+      <h3>FAQ row</h3>
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.faq</span><span class="sg-cls">.faq[open]</span><span class="sg-cls">.faq-sign</span><span class="sg-role">The border here is half the page’s usual hairline: six of these stack ten pixels apart and at the shared weight their outlines add up until the list reads as a grid. The marker is suppressed and replaced by two bars, the second rotating back to zero and fading on open.</span></div>
+        <div class="sg-canvas">
         <div class="faq-list" style="margin-top:0">
           <details class="faq">
             <summary>What does it cost to own an agent?<span class="faq-sign"></span></summary>
@@ -910,7 +1062,7 @@
           </details>
         </div>
       </div>
-      <div class="sg-label">.faq &middot; .faq[open] &middot; .faq-sign</div>
+      </div>
       <div class="sg-note">
         The border here is <b>half</b> the page's usual hairline. Six of these stack ten pixels apart
         and at the shared weight their outlines add up until the list reads as a grid; the open state
@@ -919,16 +1071,18 @@
       </div>
     </div>
 
-    <!-- 7.12 closing -->
-    <div class="sg-sub">
-      <h3>7.12 Closing statement</h3>
-      <div class="sg-frame" style="text-align:center">
+    <!-- closing -->
+    <div class="sg-sub" id="closing">
+      <h3>Closing statement</h3>
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.close-mark</span><span class="sg-cls">.band h2.close-title</span><span class="sg-cls">.band-actions</span><span class="sg-cls">.close-alt</span><span class="sg-role">The serif slot is typed on the live page, five endings ending back on the first so the page at rest shows the written headline. It builds character cells rather than rewriting <code>textContent</code>, so the layout never reflows.</span></div>
+        <div class="sg-canvas" style="text-align:center">
         <span class="close-mark"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><use href="#i-spark"/></svg></span>
         <h2 class="close-title" style="font-weight:500;color:var(--ink)">You could be<br><em>one of them.</em></h2>
         <div class="band-actions"><a class="btn btn-solid" href="#components">Start earning</a></div>
         <p class="close-alt">Already have an account? <a href="#components">Sign in</a></p>
       </div>
-      <div class="sg-label">.close-mark &middot; .band h2.close-title &middot; .band-actions &middot; .close-alt</div>
+      </div>
       <div class="sg-note">
         The serif slot is typed on the live page: five endings, 52ms on, 26ms off, 2400ms hold, 520ms
         gap, ending back on the first so the page at rest shows the written headline. It builds
@@ -938,10 +1092,12 @@
       </div>
     </div>
 
-    <!-- 7.13 cue and burger -->
-    <div class="sg-sub">
-      <h3>7.13 Scroll cue and burger</h3>
-      <div class="sg-frame sg-frame--flow" style="min-height:120px">
+    <!-- cue and burger -->
+    <div class="sg-sub" id="cue">
+      <h3>Scroll cue and burger</h3>
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.scroll-cue</span><span class="sg-cls">.burger</span><span class="sg-role">The cue drifts 6px rather than bouncing, because a bounce is an alert and this is a hint, and it is a real anchor so a keyboard can reach it. The burger is forced visible here; it is <code>display:none</code> above 900px.</span></div>
+        <div class="sg-canvas sg-canvas--flow" style="min-height:120px">
         <span style="position:relative;display:inline-block;width:120px;height:70px">
           <a class="scroll-cue" href="#components" style="bottom:0" aria-label="Scroll">
             <span class="scroll-cue-word">Scroll</span>
@@ -950,7 +1106,7 @@
         </span>
         <button class="burger" type="button" style="display:grid" aria-label="Menu specimen"><span></span><span></span><span></span></button>
       </div>
-      <div class="sg-label">.scroll-cue &middot; .burger (forced visible; it is display:none above 900px)</div>
+      </div>
       <div class="sg-note">
         The cue <b>drifts</b> 6px rather than bouncing, because a bounce is an alert and this is a
         hint, and it is a real anchor so a keyboard can reach it. It leaves on
@@ -959,10 +1115,12 @@
       </div>
     </div>
 
-    <!-- 7.14 footer -->
-    <div class="sg-sub">
-      <h3>7.14 Footer</h3>
-      <div class="sg-frame sg-frame--pad0">
+    <!-- footer -->
+    <div class="sg-sub" id="footer">
+      <h3>Footer</h3>
+      <div class="sg-spec">
+        <div class="sg-spechead"><span class="sg-cls">.site-foot</span><span class="sg-cls">.foot-grid</span><span class="sg-cls">.foot-col</span><span class="sg-cls">.foot-mark</span><span class="sg-cls">.foot-word</span><span class="sg-cls">.fw--base</span><span class="sg-cls">.fw--l</span><span class="sg-cls">.fw--r</span><span class="sg-cls">.foot-sun</span><span class="sg-role">The wordmark is deliberately cropped: a <code>0.9em</code> box against a 1em line, so roughly the lowest tenth of the letterforms is cut by the edge of the page. Three copies stack and the two fringe copies are masked to the outer 16 per cent at each end, so the split shows at the ends of the word and nowhere in the middle. Scaled down here; on the page it clamps to 300px.</span></div>
+        <div class="sg-canvas sg-canvas--pad0">
         <footer class="site-foot">
           <div class="foot-inner">
             <div class="foot-grid">
@@ -996,7 +1154,7 @@
           </div>
         </footer>
       </div>
-      <div class="sg-label">.site-foot &middot; .foot-grid &middot; .foot-col &middot; .foot-mark &middot; .foot-word (.fw--base / .fw--l / .fw--r) &middot; .foot-sun</div>
+      </div>
       <div class="sg-note">
         The wordmark is deliberately <b>cropped</b>: a <code>0.9em</code> box against a 1em line box,
         so roughly the lowest tenth of the letterforms is cut by the edge of the page. Three copies are
@@ -1010,7 +1168,7 @@
 
   <!-- ================================================== 8. COVERAGE ======= -->
   <section class="sg-sec" id="coverage">
-    <h2>8. Coverage</h2>
+    <h2 class="sg-sech">Coverage</h2>
     <p>
       Measured at load by diffing every class the injected stylesheet declares against every class this
       document actually renders. It is a floor, not a proof: a class can be covered here and still
@@ -1026,9 +1184,9 @@
 
   <!-- ====================================================== 9. GAPS ======= -->
   <section class="sg-sec" id="gaps">
-    <h2>9. Known gaps and house conventions</h2>
+    <h2 class="sg-sech">Known gaps and house conventions</h2>
 
-    <div class="sg-sub">
+    <div class="sg-sub" id="cannotcatch">
       <h3>What this guide cannot catch</h3>
       <ul class="sg-list">
         <li><b>Markup, copy and states.</b> Specimens are hand-written here while the page writes its
@@ -1039,12 +1197,17 @@
           documented here rather than re-run. Their parameters can go stale.</li>
         <li><b>The right token.</b> Coverage counts whether a class is rendered, not whether it used
           the correct value. A raw pixel where a token existed passes everything on this page.</li>
-        <li><b>Dark.</b> The page is forced to light. Every token has a dark reading in the sheet and
-          none of them are exercised here.</li>
+        <li><b>Dark is exercised, but only here.</b> The homepage is forced to light. The Specimens
+          toggle above flips <code>data-theme</code> so every token's dark reading can be read, but no
+          page on the site renders it.</li>
+        <li><b>Three specimens share <code>#site-nav</code>.</b> The product styles that nav by ID, so a
+          specimen without the ID would render differently from the page, which is worse in a reference
+          than an invalid duplicate. The real finding is the ID selector itself: <code>#site-nav a</code>
+          is 1-0-1 and has already beaten a one-class modifier that tried to hide a link.</li>
       </ul>
     </div>
 
-    <div class="sg-sub">
+    <div class="sg-sub" id="conventions">
       <h3>Conventions the page is actually built on</h3>
       <ul class="sg-list">
         <li><b>One token, one value.</b> A colour that is not a token cannot switch themes. Anything
@@ -1057,7 +1220,7 @@
           of its animation clip.</li>
         <li><b>Effects are ambience.</b> Everything decorative sits at low alpha behind the content and
           parks itself off screen.</li>
-        <li><b>Nothing loops unattended</b> beyond the ambient set in section 4.</li>
+        <li><b>Nothing loops unattended</b> beyond the ambient loops listed under Motion.</li>
         <li><b>A dead script leaves a readable page.</b> Reveal hiding is gated on <code>.js</code>,
           the typed headline engages only once its cells exist, and the WebGL canvas stays invisible
           until a model has loaded.</li>
@@ -1065,9 +1228,10 @@
     </div>
   </section>
 
-  <div class="sg-foot" id="sg-foot"></div>
-</div>
 
+    <div class="sg-foot" id="sg-foot"></div>
+  </main>
+</div>
 <script>
 /* ---------------------------------------------------------------------------
    The guide is a VIEW, so the first thing it does is go and read the thing it
@@ -1080,7 +1244,7 @@
   var SOURCE = 'index.html';
 
   /* the token groups. a token the product declares that no group claims is
-     reported at the end of section 1, which is how a new token announces
+     reported at the end of this section, which is how a new token announces
      itself instead of sitting unseen for a release. */
   var GROUPS = [
     { name: 'Ground and ink', note: 'The page surface and every weight of text on it.',
@@ -1110,6 +1274,28 @@
 
   var boot = document.getElementById('sg-boot');
   var app = document.getElementById('sg-app');
+
+  /* THEME-DEPENDENT RENDERS ARE RE-RUN, NOT PATCHED. Every value in them is read
+     off :root, so flipping data-theme makes all of them wrong at once; clearing
+     and rebuilding is both shorter and impossible to leave half-updated. */
+  var productRules = [];
+  var declaredNames = [];
+
+  function refresh() {
+    var cs = getComputedStyle(document.documentElement);
+    ['sg-token-groups', 'sg-token-orphans', 'sg-ladder', 'sg-radii',
+     'sg-strokes', 'sg-shadows', 'sg-ca'].forEach(function (id) {
+      var node = document.getElementById(id);
+      if (node) { node.innerHTML = ''; }
+    });
+    renderTokens(cs, declaredNames);
+    renderLadder(cs);
+    renderScales(productRules, cs);
+    renderShadows();
+    renderStrokes(cs);
+    renderCa();
+    renderTypeMetrics();
+  }
 
   fetch(SOURCE, { cache: 'no-store' })
     .then(function (r) {
@@ -1153,19 +1339,19 @@
     var rules = sheet ? flatten(sheet) : [];
 
     var declared = declaredTokens(rules);
-    renderTokens(cs, declared);
+    productRules = rules;
+    declaredNames = declared;
+
     renderType();
-    renderLadder(cs);
-    renderScales(rules, cs);
-    renderShadows();
-    renderStrokes(cs);
     renderIcons(defs);
-    renderCa();
     renderReducedMotion();
     renderCoverage(rules);
     renderStats(declared, rules);
+    refresh();
     wireSheen();
     wireReplay();
+    wireThemes();
+    wireSpy();
 
     document.getElementById('sg-foot').textContent =
       'Measured from ' + SOURCE + ' at ' + new Date().toLocaleString() +
@@ -1224,19 +1410,19 @@
       var others = live.filter(function (k) { return !isColourToken(k); });
 
       if (colours.length) {
-        var grid = el('div', 'sg-grid sg-grid--sw');
+        var grid = el('div', 'sg-tokgrid');
         colours.forEach(function (k) {
           var value = cs.getPropertyValue(k).trim();
           var tok = el('div', 'sg-tok');
-          var swatch = el('i');
-          var fill = el('span');
+          var swatch = el('span', 'sg-swatch');
+          var fill = el('i');
           fill.style.background = value;
           swatch.appendChild(fill);
-          var dl = document.createElement('dl');
-          dl.appendChild(el('dt', '', k));
-          dl.appendChild(el('dd', '', value || '(empty)'));
+          var meta = el('span', 'sg-tokmeta');
+          meta.appendChild(el('span', 'sg-tokname', k));
+          meta.appendChild(el('span', 'sg-tokval', value || '(empty)'));
           tok.appendChild(swatch);
-          tok.appendChild(dl);
+          tok.appendChild(meta);
           grid.appendChild(tok);
         });
         sub.appendChild(grid);
@@ -1266,7 +1452,7 @@
       sub2.appendChild(el('p', '', 'Every token the sheet declares is claimed by a group above.'));
     } else {
       var p = el('p', '', orphans.length + ' token' + (orphans.length === 1 ? '' : 's') +
-        ' declared by the sheet that no group in this guide claims. Add each to a GROUPS entry, or delete it from the sheet if it is dead.');
+        ' declared by the sheet that no group in this guide claims. Add each to a GROUPS entry in this file, or delete it from the sheet if it is dead.');
       sub2.appendChild(p);
       var chips = el('div', 'sg-chips');
       orphans.forEach(function (k) { chips.appendChild(el('code', '', k)); });
@@ -1312,24 +1498,35 @@
 
     specimens.forEach(function (spec) {
       if (spec.skip) { return; }
-      var frame = el('div', 'sg-frame');
-      var node;
-      if (spec.build) { node = spec.build(); frame.appendChild(node); }
-      else { frame.innerHTML = spec.html; }
-      host.appendChild(frame);
+      var box = el('div', 'sg-spec');
+      var head = el('div', 'sg-spechead');
+      head.appendChild(el('span', 'sg-cls', '.' + spec.cls));
+      var role = el('span', 'sg-role sg-metrics');
+      head.appendChild(role);
+      var canvas = el('div', 'sg-canvas');
+      if (spec.build) { canvas.appendChild(spec.build()); }
+      else { canvas.innerHTML = spec.html; }
+      box.appendChild(head);
+      box.appendChild(canvas);
+      host.appendChild(box);
+      box.setAttribute('data-sel', spec.sel);
+    });
+    renderTypeMetrics();
+  }
 
-      var target = frame.querySelector(spec.sel);
-      var label = el('div', 'sg-label');
-      if (target) {
-        var s = getComputedStyle(target);
-        label.textContent = '.' + spec.cls + '  ·  ' + s.fontSize + ' / ' + s.fontWeight +
-          '  ·  tracking ' + (s.letterSpacing === 'normal' ? '0' : s.letterSpacing) +
-          '  ·  leading ' + s.lineHeight +
-          '  ·  ' + shortFamily(s.fontFamily);
-      } else {
-        label.textContent = '.' + spec.cls;
-      }
-      host.appendChild(label);
+  /* MEASURED OFF THE RENDERED ELEMENT, not transcribed, and re-measured whenever
+     the specimen theme flips: --h1 and friends are re-declared per breakpoint, so
+     these numbers are only true for the viewport reading them. */
+  function renderTypeMetrics() {
+    Array.prototype.forEach.call(document.querySelectorAll('#sg-type .sg-spec'), function (box) {
+      var target = box.querySelector(box.getAttribute('data-sel'));
+      var out = box.querySelector('.sg-metrics');
+      if (!target || !out) { return; }
+      var cs = getComputedStyle(target);
+      out.textContent = cs.fontSize + ' / ' + cs.fontWeight +
+        '  ·  tracking ' + (cs.letterSpacing === 'normal' ? '0' : cs.letterSpacing) +
+        '  ·  leading ' + cs.lineHeight +
+        '  ·  ' + shortFamily(cs.fontFamily);
     });
   }
 
@@ -1366,14 +1563,17 @@
       (map[v] = map[v] || []).push(rule.selectorText);
     });
     var keys = Object.keys(map).sort(function (a, b) { return map[b].length - map[a].length; });
-    if (!keys.length) { host.appendChild(el('div', 'sg-row', 'nothing declared')); return; }
+    if (!keys.length) { host.appendChild(el('div', 'sg-scalerow', 'nothing declared')); return; }
     keys.forEach(function (k) {
-      var row = el('div', 'sg-row');
-      row.appendChild(el('b', '', k));
       var uses = map[k];
-      var text = uses.length + (uses.length === 1 ? ' use  ·  ' : ' uses  ·  ') +
-        uses.slice(0, 4).join(', ') + (uses.length > 4 ? ', +' + (uses.length - 4) + ' more' : '');
-      row.appendChild(el('span', '', text));
+      var row = el('div', 'sg-scalerow');
+      row.appendChild(el('span', 'sg-scaleval', k));
+      row.appendChild(el('span', 'sg-scaleuse', uses.length + (uses.length === 1 ? ' use' : ' uses')));
+      var box = el('span');
+      box.style.cssText = 'width:64px;height:26px;flex:none;background:var(--card-bg);border:1px solid var(--border);border-radius:' + k;
+      row.appendChild(box);
+      row.appendChild(el('span', 'sg-scalesample',
+        uses.slice(0, 4).join(', ') + (uses.length > 4 ? ', +' + (uses.length - 4) + ' more' : '')));
       host.appendChild(row);
     });
   }
@@ -1393,10 +1593,9 @@
     ].forEach(function (pair) {
       var box = el('div');
       var swatch = el('div');
-      swatch.style.cssText = 'height:74px;border-radius:12px;background:#fff;border:1px solid rgba(0,0,0,0.06);box-shadow:var(' + pair[0] + ')';
+      swatch.style.cssText = 'height:70px;border-radius:12px;background:var(--card-bg);border:1px solid var(--border-soft);box-shadow:var(' + pair[0] + ')';
       box.appendChild(swatch);
       var lab = el('div', 'sg-label', pair[0] + '  ·  ' + pair[1]);
-      lab.style.marginTop = '12px';
       box.appendChild(lab);
       host.appendChild(box);
     });
@@ -1574,6 +1773,60 @@
         });
       });
     });
+  }
+
+  /* TWO INDEPENDENT TOGGLES, as on the Terminal Modern guide. They are not one
+     control because they answer different questions: the specimen theme asks
+     what the PRODUCT looks like, the page theme asks what is comfortable to
+     read a long document in. The page ships forced to light and every token has
+     a dark reading that nothing here would otherwise exercise, which is the gap
+     this control closes. */
+  function wireThemes() {
+    var specBtn = document.getElementById('sgSpec');
+    var pageBtn = document.getElementById('sgPage');
+
+    specBtn.addEventListener('click', function () {
+      var dark = document.documentElement.getAttribute('data-theme') !== 'dark';
+      document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+      specBtn.classList.toggle('is-dark', dark);
+      specBtn.querySelector('span').textContent = 'Specimens: ' + (dark ? 'dark' : 'light');
+      /* the page's own script broadcasts this when its toggle runs; the ascii
+         field and the illustration swap both listen for it */
+      window.dispatchEvent(new Event('onblue:theme'));
+      refresh();
+    });
+
+    pageBtn.addEventListener('click', function () {
+      var dark = !document.body.classList.contains('sg-darkpage');
+      document.body.classList.toggle('sg-darkpage', dark);
+      pageBtn.classList.toggle('is-dark', dark);
+      pageBtn.querySelector('span').textContent = 'Page: ' + (dark ? 'dark' : 'light');
+    });
+  }
+
+  /* the sidebar marks where you are. One observer over every addressable block,
+     and the topmost intersecting one wins, so a short section between two long
+     ones still gets its turn. */
+  function wireSpy() {
+    var links = Array.prototype.slice.call(document.querySelectorAll('.sg-nav a'));
+    var byId = Object.create(null);
+    links.forEach(function (a) { byId[a.getAttribute('href').slice(1)] = a; });
+    var targets = Object.keys(byId)
+      .map(function (id) { return document.getElementById(id); })
+      .filter(Boolean);
+    if (!targets.length || !('IntersectionObserver' in window)) { return; }
+
+    var seen = Object.create(null);
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { seen[e.target.id] = e.isIntersecting; });
+      var here = null;
+      for (var i = 0; i < targets.length; i++) {
+        if (seen[targets[i].id]) { here = targets[i].id; break; }
+      }
+      links.forEach(function (a) { a.classList.remove('is-here'); });
+      if (here && byId[here]) { byId[here].classList.add('is-here'); }
+    }, { rootMargin: '-64px 0px -70% 0px' });
+    targets.forEach(function (t) { io.observe(t); });
   }
 
   function el(tag, cls, text) {
