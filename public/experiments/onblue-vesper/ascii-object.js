@@ -1334,14 +1334,6 @@ export function createAsciiObject(elements, options = {}) {
   let lastTime = 0;
   let elapsed = Math.random() * 100;
 
-  // REACTIONS (added for the application page's companion — see apply.html).
-  // Additive on top of the ambient float and ZERO when idle, so a page that
-  // never calls them renders exactly as before. nod() kicks a damped pitch
-  // spring; turn() runs one eased full turn on the fit group (which nothing
-  // else rotates per frame); calm() eases the pointer-look down while a form
-  // field has focus, so the object settles instead of tracking mid-thought.
-  const react = { pitch: 0, pitchVel: 0, spinT: -1, spinDur: 1.15, calm: 0, calmTarget: 0 };
-
   function tick(time) {
     if (!inView) { lastTime = 0; stopLoop(); return; }
     const delta = lastTime ? Math.min((time - lastTime) / 1000, 0.1) : 0;
@@ -1371,34 +1363,6 @@ export function createAsciiObject(elements, options = {}) {
       floatGroup.rotation.x = (Math.cos(elapsed / 4) / 8) * config.rotationIntensity;
       floatGroup.rotation.y = (Math.sin(elapsed / 4) / 8) * config.rotationIntensity;
       floatGroup.rotation.z = (Math.sin(elapsed / 4) / 20) * config.rotationIntensity;
-
-      // REACTIONS (added): integrated in real time so they read the same at
-      // any frame rate. The nod is an underdamped spring — one dip, a small
-      // overshoot, still — added to the float's own pitch rather than
-      // replacing it, the same composition rule the entrance uses below.
-      if (react.pitch || react.pitchVel) {
-        react.pitchVel += (-90 * react.pitch - 13 * react.pitchVel) * delta;
-        react.pitch += react.pitchVel * delta;
-        if (Math.abs(react.pitch) < 0.0004 && Math.abs(react.pitchVel) < 0.0004) {
-          react.pitch = 0;
-          react.pitchVel = 0;
-        }
-        floatGroup.rotation.x += react.pitch;
-      }
-      // the turn borrows fitGroup.rotation.y, which only load() writes — it
-      // eases through one full revolution and lands back on the model's own
-      // yaw exactly, so there is nothing to undo afterwards
-      if (react.spinT >= 0) {
-        react.spinT += delta / react.spinDur;
-        const t = Math.min(react.spinT, 1);
-        const eased = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-        fitGroup.rotation.y = THREE.MathUtils.degToRad(config.modelYaw) + eased * Math.PI * 2;
-        if (t >= 1) {
-          react.spinT = -1;
-          fitGroup.rotation.y = THREE.MathUtils.degToRad(config.modelYaw);
-        }
-      }
-      react.calm += (react.calmTarget - react.calm) * Math.min(delta * 4, 1);
       // ENTRANCE (added): an expo ease-out, added to whatever the float is
       // doing rather than replacing it, so the two compose and there is no
       // jump at the hand-off. At t >= duration the term is exactly 0.
@@ -1424,11 +1388,8 @@ export function createAsciiObject(elements, options = {}) {
       if (config.pointerLook && !ikReady) {
         pointer.x += (pointer.tx - pointer.x) * config.pointerEase;
         pointer.y += (pointer.ty - pointer.y) * config.pointerEase;
-        // calm scales the look DOWN rather than freezing it: a companion that
-        // stops dead reads as broken, one that quiets down reads as waiting
-        const lookScale = 1 - react.calm * 0.75;
-        lookGroup.rotation.y = pointer.x * config.pointerLook * lookScale;
-        lookGroup.rotation.x = pointer.y * config.pointerLook * 0.6 * lookScale;
+        lookGroup.rotation.y = pointer.x * config.pointerLook;
+        lookGroup.rotation.x = pointer.y * config.pointerLook * 0.6;
       }
     }
 
@@ -1518,22 +1479,6 @@ export function createAsciiObject(elements, options = {}) {
       if (ink) postMaterial.uniforms.uSweepInk.value.setStyle(ink, THREE.NoColorSpace);
       postMaterial.uniforms.uSweep.value = 0;
       startLoop();
-    },
-    // REACTIONS (added) — the companion verbs; see the react state above.
-    // Safe on any model, and inert under reduced motion because the whole
-    // ambient block is.
-    nod(strength = 1) {
-      react.pitchVel += 1.5 * strength;
-      startLoop();
-    },
-    turn(duration = 1.15) {
-      if (react.spinT >= 0) return;
-      react.spinDur = Math.max(duration, 0.3);
-      react.spinT = 0;
-      startLoop();
-    },
-    calm(on) {
-      react.calmTarget = on ? 1 : 0;
     },
     setOptions(next) {
       let changed = false;

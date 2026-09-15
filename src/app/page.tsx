@@ -8,16 +8,10 @@ import { Wordmark } from '@/components/Wordmark'
 // ACTIVE surface (blueai-desktop) buried sixth and described as a "JS experiment", and the pinned
 // design-system card pointing at the DORMANT marketing style guide. An index that misstates which
 // work is current misleads every reviewer who lands here — grouping by status IS the information.
-//
-// REORGANISED AGAIN 2026-09-14 (Abhisht): the acquisition surfaces now group by AUDIENCE — creator
-// page experiments and brand page experiments — because that is how they are reviewed. Nothing is
-// deleted while its deployed page is still used for comparison: earlier creator/partner pages stay
-// listed, including the frozen creator side of the creator-brand shell, which returns to the index
-// after being dropped from it on 2026-08-19.
 export const metadata: Metadata = {
   title: 'BlueAI — Screen Library',
   description:
-    'Design-only handoff — the active BlueAI Terminal Modern prototype + its design system, the creator and brand page experiments, and the maintained product replicas.',
+    'Design-only handoff — the active BlueAI Terminal Modern prototype + its design system, the maintained product replicas, and the standalone experiments.',
 }
 
 const ACTIVE = [
@@ -32,69 +26,47 @@ const ACTIVE = [
     desc: 'Live style guide onto the product’s own stylesheet and icon set — tokens, scales and specimens are computed from the real files at load, and ds-drift-check.js gates every change.',
     ds: true,
   },
-]
-
-// BRAND PAGE EXPERIMENTS — the brand/agency-facing acquisition pages.
-const BRAND_EXPERIMENTS = [
   {
     // RENAMED + RE-POINTED 2026-08-19 (Appy): was "Creator ↔ Brand" -> /creator-brand/creators,
-    // describing both audiences under one shell. The creator side of that shell moved to its own
-    // group below; this card narrows to the brand side and points straight at its own route.
+    // describing both audiences under one shell. The creator side of that shell is now superseded
+    // by the standalone Creator website below (full flow, its own design language); this card
+    // narrows to what's actually still live and finalized here — the brand side — and points
+    // straight at its own route rather than the creators entry into a shared shell.
     href: '/creator-brand/brands',
     name: 'Brand website',
-    desc: 'The brand-side acquisition flow: post a job, outcome-based pricing, a live job-post form. On the blueai-modern marketing design system. Now carries the agent-made 9:16 sample-video strip under review: three placements (after the hero, after How it works, in the hero) switchable from the gear at bottom left.',
+    desc: 'The brand-side acquisition flow: post a job, outcome-based pricing, a live job-post form. On the blueai-modern marketing design system. (The partner side moved to its own site — see Partner website below.)',
   },
-]
-
-// CREATOR PAGE EXPERIMENTS — every creator/partner/worker-facing page, the current sites first,
-// then the standalone hero experiments (each owns its own stylesheet and README; the .html hrefs
-// are deliberate — those pages use relative asset paths, and an extensionless rewrite would
-// resolve them against /experiments/ and serve the page unstyled), then the frozen page kept for
-// comparison.
-const CREATOR_EXPERIMENTS = [
   {
-    // "Partner", not "Creator" (Appy, 2026-08-25), following the audience rename on the route
-    // itself. DELIBERATELY NOT PROPAGATED to /creator-brand, whose cards, copy and whole
-    // For Creators / For Brands axis keep the old word: that site is frozen, and its two-audience
-    // split is its proposition rather than a label.
-    // TWO VERSIONS, ONE CARD (Appy, 2026-08-27): A and B are one route with two vocabularies, so a
-    // second card implied a second site. The switch lives in the page's own toggler.
+    // RENAMED + RE-POINTED 2026-08-19 (Appy): was "Creator Homepage — 'The AI You Own'" ->
+    // /experiments/robots/index.html, the PM's raw pulled mock (Phase 1 of
+    // public/experiments/robots/PLAN.md). All four phases are done now — header, an 8-dimension
+    // visual UX audit + fixes, and the full creator flow (sign-in, 5-step application, dashboard,
+    // logout) built into it, on this site's own dark theme — so the card points at the real route,
+    // not the mock it started from. The mock itself stays on record at /experiments/robots/.
     href: '/creators',
+    // "Partner", not "Creator" (Appy, 2026-08-25), following the audience rename on the route
+    // itself. The cross-reference in the Brand card above moves with it — a card renamed without
+    // its referrer is how an index starts pointing at a name that no longer exists.
+    // DELIBERATELY NOT PROPAGATED to /creator-brand, whose cards, copy and whole For Creators /
+    // For Brands axis keep the old word: that site is frozen, and its two-audience split is its
+    // proposition rather than a label. The two surfaces disagreeing is a real state of the product,
+    // not a miss.
+    // TWO VERSIONS, ONE CARD (Appy, 2026-08-27). Version B briefly had its own row here and that
+    // was a duplicate answer to a question the ?v= URL had already answered: A and B are one route
+    // with two vocabularies, so a second card implied a second site, and left two descriptions to
+    // keep in sync. The switch lives in the page's own toggler, which is better placed than an
+    // index row anyway — it is in context, on the surface being reviewed. The index's job is to
+    // record that B exists and how to link to it, which is one sentence.
     name: 'Partner website',
     desc: 'The full partner side: an AI-worker homepage ("The AI You Own"), sign in, a 5-step application, a returning-partner dashboard with cash-out, and logout — all in its own dark, futuristic design language. Two versions under review: this is A, and ?v=b opens Version B, the same site with the word "program" gone (the month is the unit) — flip either way from the gear, bottom-left. Design-only, same convention as every other page here.',
   },
   {
-    // THE onBlue FORK (Appy, 2026-09-08). Its own card because it is a second route and a second
-    // brand: two entries is the honest shape when there are genuinely two sites.
+    // THE onBlue FORK (Appy, 2026-09-08). Its own card and not a line on the Partner website card,
+    // because unlike Versions A/B/C — which are one route with a query — this is a second route and
+    // a second brand. Two entries is the honest shape when there are genuinely two sites.
     href: '/onblue',
     name: 'Partner website — onBlue',
     desc: 'The Partner website under the new onBlue brand: the wordmark replaces the BlueAI lockup (no symbol) and every mention of the product reads onBlue. A complete duplicate otherwise — same hero, application, dashboard, legal page, dialogs and A/B/C versions, and the same ?theme= switch — so the two can be compared screen for screen.',
-  },
-  {
-    // THE onBlue HERO EXPERIMENT (Appy, 2026-09-11).
-    href: '/experiments/onblue-vesper/index.html',
-    name: 'onBlue Agentic Hero',
-    desc: 'The light onBlue hero, transformed off the Vesper.ai theme: a sampled-clay gradient field, an ambient ascii glyph field with a cursor pool, and an ascii-rendered robot alternating with a rigged robot arm through an ascii sweep, the arm reaching for the cursor on a hinge-constrained IK chain measured out of its own animation clip. Under it a charcoal agent-runtime terminal running one job at a time: command typed, agent assigned, steps opening and closing, three outcomes. Standalone HTML plus three ES modules, three.js pinned via importmap, its own design language.',
-  },
-  {
-    // THE onBlue LANDING (Appy, 2026-09-11). Built outside this repo at N:\Antigravity Main\
-    // onblue-landing and copied in, so the source of truth is there, not here.
-    href: '/experiments/onblue-dark-v1/index.html',
-    name: 'onBlue Cinematic Hero',
-    desc: 'The onBlue marketing landing, in two themes off one token set: a particle hands layer over the hero, the digital/physical agent cards with per-agent illustration swapping, a wired dispatch diagram, terminal agents, FAQ, and an oversized footer wordmark. The header toggle switches the page whole, dark by default. Light is not the negative of dark: surfaces separate by elevation rather than by lightness, hovers cast a shadow rather than emit a glow, the brand mark goes blue, six illustrations have their own light twins, and the glows run one pass instead of two because white shows the seam. One static HTML file, inline CSS and a single IIFE, its own design language.',
-  },
-  {
-    href: '/experiments/intelligence-hero/index.html',
-    name: 'Own an AI That Works For You',
-    desc: 'The BlueAI worker page: deploy a worker on your own PC, it finds real work from brands, completes it, and pays you $30 a month via PayPal. Four machines (PC earning now, the rest soon), a four-step apply flow, and a scroll-scrubbed overnight scene. Vanilla HTML/CSS/JS, its own design language.',
-  },
-  {
-    // RETURNED TO THE INDEX 2026-09-14 (Abhisht): dropped on 2026-08-19 as superseded by the
-    // Partner website, but the deployed page is still used for comparison and the ask is that
-    // nothing already live disappears from the index yet. Frozen: changes belong to the sites above.
-    href: '/creator-brand/creators',
-    name: 'Creator website — creator-brand shell (frozen)',
-    desc: 'The original creator side of the two-audience creator-brand shell: apply flow, dashboard, cash-out, on the blueai-modern marketing design system. Superseded by the Partner website above; kept listed while the deployed page is still compared against.',
   },
 ]
 
@@ -116,6 +88,37 @@ const MAINTAINED = [
     href: '/blueai-product',
     name: 'BlueAI Product (V1, frozen)',
     desc: 'V1 as it stood when V2 forked off it, kept as the backup: the new-variant chat, task-progress + feedback, all five tabs, Skills hidden and the BlueAI worker session. Nothing here changes again. Standalone replica, not on the marketing design system.',
+  },
+]
+
+// EXPERIMENTS — deliberately not a product surface. Standalone static pages that
+// share nothing with the products: no --bai-* tokens, no marketing design system,
+// no VDA scope. Each one owns its own stylesheet and its own README. They live here
+// only so they can be navigated to; grouping them apart is the point.
+const EXPERIMENTS = [
+  {
+    // THE onBlue HERO EXPERIMENT (Appy, 2026-09-11). Linked at index.html for the same
+    // reason as the two below: it uses relative asset paths, and an extensionless
+    // rewrite would resolve them against /experiments/ and serve the page unstyled.
+    href: '/experiments/onblue-vesper/index.html',
+    name: 'onBlue Agentic Hero',
+    desc: 'The light onBlue hero, transformed off the Vesper.ai theme: a sampled-clay gradient field, an ambient ascii glyph field with a cursor pool, and an ascii-rendered robot alternating with a rigged robot arm through an ascii sweep, the arm reaching for the cursor on a hinge-constrained IK chain measured out of its own animation clip. Under it a charcoal agent-runtime terminal running one job at a time: command typed, agent assigned, steps opening and closing, three outcomes. Standalone HTML plus three ES modules, three.js pinned via importmap, its own design language.',
+  },
+  {
+    // THE onBlue LANDING (Appy, 2026-09-11). Built outside this repo at N:\Antigravity Main\
+    // onblue-landing and copied in, so the source of truth is there, not here. Linked at
+    // index.html for the same reason as the hero below: its assets are relative.
+    href: '/experiments/onblue-dark-v1/index.html',
+    name: 'onBlue Cinematic Hero',
+    desc: 'The onBlue marketing landing, in two themes off one token set: a particle hands layer over the hero, the digital/physical agent cards with per-agent illustration swapping, a wired dispatch diagram, terminal agents, FAQ, and an oversized footer wordmark. The header toggle switches the page whole, dark by default. Light is not the negative of dark: surfaces separate by elevation rather than by lightness, hovers cast a shadow rather than emit a glow, the brand mark goes blue, six illustrations have their own light twins, and the glows run one pass instead of two because white shows the seam. One static HTML file, inline CSS and a single IIFE, its own design language.',
+  },
+  {
+    // Linked at index.html deliberately, NOT via an extensionless rewrite: this page
+    // uses relative asset paths, and at /experiments/intelligence-hero the browser
+    // would resolve them against /experiments/ and serve the page unstyled.
+    href: '/experiments/intelligence-hero/index.html',
+    name: 'Own an AI That Works For You',
+    desc: 'The BlueAI worker page: deploy a worker on your own PC, it finds real work from brands, completes it, and pays you $30 a month via PayPal. Four machines (PC earning now, the rest soon), a four-step apply flow, and a scroll-scrubbed overnight scene. Vanilla HTML/CSS/JS, its own design language.',
   },
 ]
 
@@ -178,30 +181,25 @@ export default function Home() {
           <Wordmark size={26} />
           <h1 className="mt-3 font-head text-4xl font-semibold tracking-tight-3 text-ink-display">Screen Library</h1>
           <p className="mt-2 max-w-xl text-[15px] leading-relaxed text-ink-muted">
-            Design-only handoff. Product work lives in the Terminal Modern prototype. The
-            acquisition pages are grouped by audience below, creator first, and earlier pages
-            stay listed while they are still compared against.
+            Design-only handoff. Active work lives in the Terminal Modern prototype and the
+            Creator&nbsp;↔&nbsp;Brand site; below that, pages are maintained occasionally or
+            run as standalone experiments.
           </p>
         </header>
 
-        <p className="bai-section-label mb-2 text-iris">Active — the product prototype</p>
+        <p className="bai-section-label mb-2 text-iris">Active — where work is happening</p>
         <div className="space-y-1.5">
           {ACTIVE.map((p) => <Card key={p.href} p={p} />)}
-        </div>
-
-        <p className="bai-section-label mb-2 mt-8 text-ink-muted">Creator page experiments</p>
-        <div className="space-y-1.5">
-          {CREATOR_EXPERIMENTS.map((p) => <Card key={p.href} p={p} />)}
-        </div>
-
-        <p className="bai-section-label mb-2 mt-8 text-ink-muted">Brand page experiments</p>
-        <div className="space-y-1.5">
-          {BRAND_EXPERIMENTS.map((p) => <Card key={p.href} p={p} />)}
         </div>
 
         <p className="bai-section-label mb-2 mt-8 text-ink-muted">Maintained — updated from time to time</p>
         <div className="space-y-1.5">
           {MAINTAINED.map((p) => <Card key={p.href} p={p} />)}
+        </div>
+
+        <p className="bai-section-label mb-2 mt-8 text-ink-muted">Experiments — outside every product surface</p>
+        <div className="space-y-1.5">
+          {EXPERIMENTS.map((p) => <Card key={p.href} p={p} />)}
         </div>
 
         <footer className="mt-10 text-2xs text-ink-muted">An AI worker by now.gg, Inc. · design-only handoff replica</footer>
