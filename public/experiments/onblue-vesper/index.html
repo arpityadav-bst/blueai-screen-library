@@ -174,26 +174,12 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
   --panel-bg: var(--wash-1);
   --bar-bg: var(--wash-4);
   --card-shadow-hover: inset 0 1px 0 var(--hair);
-  /* A MODAL IS NOT A CARD AT A HIGHER NUMBER. The card shadow describes
-     something resting on the page; this describes something held above it, so
-     it gets its own token rather than a multiplied one. Dark emits, light
-     casts, same as every other pair here. */
-  --gate-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06), 0 30px 80px -20px rgba(0, 0, 0, 0.8);
   /* NOT --scrim. That one is the mobile menu's, and the menu replaces the page,
      so obliterating what is behind it is correct there and wrong here: at 0.72
      over blur(24px) the homepage went to a featureless wash and the reader lost
      every landmark. A dialog is a thing on top of a page you are still in. */
-  --gate-scrim: rgba(6, 6, 8, 0.52);
-  --gate-blur: 6px;
-  /* THE PANEL IS LIT BY ITS OWN MARK. A flat fill left the spark sitting on the
-     card rather than shining on it, and the hero earns its depth from exactly
-     this: a light source in one corner and a cool fall-off in the other. Both
-     stops are quoted, the blue from the brand and the cool from the hero
-     field's own bottom-right corner, so the dialog reads as a piece of that
-     frame rather than as a second opinion about the light. */
-  --gate-field:
-    radial-gradient(130% 62% at 50% -8%, rgba(74, 141, 255, 0.11), rgba(74, 141, 255, 0) 64%),
-    radial-gradient(90% 75% at 97% 94%, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0) 62%);
+  --gate-scrim: rgba(8, 8, 10, 0.88);
+  --gate-blur: 14px;
   /* red is the one hue that has to be re-tuned rather than re-mixed: the light
      value goes muddy on black and the dark one glares on white */
   --err-ink: #ff8d92;
@@ -396,18 +382,13 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
      not the place for it, the rail's flow line shares that token. */
   --bar-bg: #f6f6f8;
   --card-shadow-hover: 0 2px 5px rgba(18, 32, 64, 0.05), 0 24px 46px -20px rgba(21, 110, 254, 0.2);
-  /* three stops at modal distance: contact, near falloff, ambient body, tinted
-     the same rgba(16, 16, 19) as the button so the page casts one light */
-  --gate-shadow: 0 1px 2px rgba(16, 16, 19, 0.08),
-                 0 14px 30px -12px rgba(16, 16, 19, 0.16),
-                 0 44px 88px -36px rgba(16, 16, 19, 0.24);
-  /* light dims by veiling rather than by darkening, which is this page's own
-     move, but at a strength that leaves the layout behind it readable */
-  --gate-scrim: rgba(232, 234, 238, 0.62);
-  --gate-blur: 6px;
-  --gate-field:
-    radial-gradient(130% 62% at 50% -8%, rgba(21, 110, 254, 0.06), rgba(21, 110, 254, 0) 64%),
-    radial-gradient(90% 75% at 97% 94%, rgba(210, 213, 222, 0.5), rgba(210, 213, 222, 0) 62%);
+  /* HEAVIER THAN A CARD NEEDED. There is no panel between the type and the
+     homepage any more, so this is the only thing holding the contrast, and a
+     veil tuned to sit behind a white card is not the same value as one the
+     words themselves sit on. Near-opaque and blurred hard: the page reads as
+     washed out behind rather than as a competing layout. */
+  --gate-scrim: rgba(248, 249, 251, 0.88);
+  --gate-blur: 14px;
   --err-ink: #c03a40;
   --err-line: #d0454a;
   --err-ring: rgba(208, 69, 74, 0.16);
@@ -590,7 +571,6 @@ button { font-family: inherit; }
    carry its own amount. the hero keeps its own layer on the old overlay blend. */
 .grain-hero,
 .band::before,
-.gate-panel::before,
 .site-foot::before {
   position: absolute;
   inset: 0;
@@ -599,7 +579,6 @@ button { font-family: inherit; }
   background-size: 200px 200px;
 }
 .band::before,
-.gate-panel::before,
 .site-foot::before {
   content: "";
   z-index: 0;
@@ -873,8 +852,7 @@ body.menu-open .header {
    because a comment saying "same as the theme toggle" does not survive the first
    edit to either of them. */
 .theme-toggle,
-.gate-x,
-.gate-back {
+.gate-x {
   position: relative;
   display: grid;
   place-items: center;
@@ -890,8 +868,8 @@ body.menu-open .header {
   -webkit-tap-highlight-color: transparent;
   transition: color 0.3s ease, background 0.3s ease;
 }
-.theme-toggle:hover, .gate-x:hover, .gate-back:hover { color: var(--ink); background: var(--wash-hover); }
-.theme-toggle:focus-visible, .gate-x:focus-visible, .gate-back:focus-visible { outline: 2px solid var(--blue-ink); outline-offset: 2px; }
+.theme-toggle:hover, .gate-x:hover { color: var(--ink); background: var(--wash-hover); }
+.theme-toggle:focus-visible, .gate-x:focus-visible { outline: 2px solid var(--blue-ink); outline-offset: 2px; }
 .tt-icon {
   grid-area: 1 / 1;
   width: 17px;
@@ -1768,13 +1746,15 @@ body.menu-open { overflow: hidden; }
   height: var(--h);
   border-radius: 3px 3px 0 0;
   background: var(--bar-bg);
+  /* the base is the base: a bar is measured from the axis it stands on, so
+     every scaleY anywhere grows the top edge and leaves the bottom where it is */
+  transform-origin: bottom;
 }
 .earn-bars i:last-child { background: var(--blue); }
 
 /* bars grow as the card reveals, same trigger the sections already use */
 .js .reveal .earn-bars i {
   transform: scaleY(0);
-  transform-origin: bottom;
   transition: transform 0.7s var(--ease);
 }
 .js .reveal.in .earn-bars i { transform: scaleY(1); }
@@ -2866,42 +2846,28 @@ body.menu-open { overflow: hidden; }
 
 /* ==========================================================================
    THE ACCESS GATE
-   The partner site's login popup, rebuilt on this page's own system. What was
-   inherited is the SHAPE of the flow: two levels, expectations before the ask,
-   a returning-user door that skips the first. What was not inherited is every
-   value, because the two pages do not share physics.
+   NO CONTAINER (Appy, 2026-09-16). It was a 460px card on a veil. The card was a
+   second surface competing with the field behind it, and it boxed the glyph
+   canvas into something too small for the effect to be anything but texture.
+   Losing it makes the whole viewport the surface: the field runs edge to edge,
+   the band can cross the entire screen, and the only objects left are the four
+   cards and the two doors, which is all this ever had to say.
 
-   THE SCRIM WASHES OUT, IT DOES NOT DARKEN. This page has exactly one existing
-   overlay, .menu-backdrop, and it dims by raising a pale veil at blur(24px).
-   The partner site drops a dark one at blur(3px). Same job, opposite direction,
-   and copying it would have been the loudest tell that the dialog came from
-   another site.
-
-   THE PANEL IS NOT .card, ON PURPOSE. It takes the same SURFACE tokens (fill,
-   stroke, radius) and the same edge sheen, because those describe a treatment.
-   It does not take .card's hover lift, because that describes a ROLE: one of
-   several browsable things. A modal is not something you pick up, and reusing
-   the class for the resemblance would have brought the lift along with it.
+   WHAT CHANGES WITHOUT A PANEL: legibility stops being the card's job. Nothing
+   sits between the type and a blurred homepage now, so the veil carries all of
+   it and is deliberately heavier than the one a card needed.
    ========================================================================== */
 
 .gate {
-  /* A NATIVE DIALOG CENTRES ITSELF WITH THE UA'S margin: auto, AND THIS PAGE
-     DELETES THAT. The reset at the top of this sheet is `* { margin: 0 }`, which
-     reaches <dialog> like everything else, so the box fell to the top-left
-     corner. Putting the margin back is the whole fix; nothing about the sizing
-     was wrong. */
-  margin: auto;
-  /* WIDTH BELONGS TO THE LEVEL, NOT TO THE DIALOG. Four cards two across need a
-     wider box than two stacked buttons do, and holding both at one width means
-     either the grid is cramped or the two doors are a 500px stretch of nothing.
-     The source made the same split for the same reason, 560 against 400. */
-  width: min(var(--gate-w, 460px), calc(100vw - 32px));
-  transition: width 0.34s var(--ease);
-  max-height: calc(100dvh - 48px);
+  width: 100vw;
+  max-width: 100vw;
+  height: 100dvh;
+  max-height: 100dvh;
+  margin: 0;
   padding: 0;
   border: 0;
   background: none;
-  overflow: visible;
+  overflow: hidden;
   color: var(--ink);
 }
 .gate::backdrop {
@@ -2911,107 +2877,91 @@ body.menu-open { overflow: hidden; }
   opacity: 0;
   transition: opacity 0.3s ease;
 }
-.gate[data-level="1"] { --gate-w: 560px; }
-.gate[data-level="2"] { --gate-w: 420px; }
 .gate.is-open::backdrop { opacity: 1; }
 /* the dialog is in the top layer, which does not stop the document behind it
    scrolling; body.menu-open cannot be reused because it also restyles the header */
 .gate-lock { overflow: hidden; }
 
-.gate-panel {
+/* the field's host, and the centring frame for everything on top of it */
+.gate-field {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  max-height: calc(100dvh - 48px);
-  overflow: hidden;
-  padding: 34px 28px 26px;
-  border: 1px solid var(--border-soft);
-  border-radius: var(--card-radius);
-  background: var(--gate-field), var(--card-bg);
-  box-shadow: var(--gate-shadow);
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 72px max(var(--header-x), 20px);
+  overflow-y: auto;
+  opacity: 0;
   /* THE END STATE IS A DECLARATION, NOT A KEYFRAME. Under reduced motion the
-     page kills every transition with !important, so a panel that only reached
-     opacity 1 through one would never arrive. .is-open sets the state; the
-     transition only decides how long it takes to get there. */
-  opacity: 0;
-  transform: translateY(14px) scale(0.985);
-  transition: opacity 0.34s var(--ease), transform 0.34s var(--ease);
+     page kills every transition with !important, so content that only reached
+     opacity 1 through one would never arrive. */
+  transition: opacity 0.34s var(--ease);
 }
-.gate.is-open .gate-panel { opacity: 1; transform: none; }
+.gate.is-open .gate-field { opacity: 1; }
+.gate-field > .ascii-bg { z-index: 0; --ascii: 0.42; }
 
-/* the ambient glyph field is injected here as a third host, so the pool follows
-   the pointer inside the dialog exactly as it does in the hero. Lower than the
-   0.4 a full band carries: the same alpha over a 460px box is a third of the
-   distance from the reader's eye to the text it sits behind. */
-.gate-panel > .ascii-bg { z-index: 0; --ascii: 0.3; }
-
-/* the same light travelling along the stroke that every card gets. a treatment,
-   not an affordance, which is why it comes across and the hover lift does not */
-.gate-panel::after {
-  content: "";
-  position: absolute;
-  inset: calc(var(--sheen-w) * -1);
-  z-index: 3;
-  padding: var(--sheen-w);
-  border-radius: calc(var(--card-radius) + var(--sheen-w));
-  filter: var(--sheen-bloom);
-  background: radial-gradient(260px circle at var(--gx, 50%) var(--gy, 50%),
-    var(--sheen-a), var(--sheen-b) 34%, transparent 68%);
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  mask-composite: exclude;
-  opacity: 0;
-  transition: opacity 0.4s ease;
-  pointer-events: none;
-}
-.gate-panel:hover::after { opacity: 1; }
-
-.gate-x, .gate-back {
+/* ONE INSET, BOTH EDGES. It sat at 20px from the top and --header-x from the
+   right, which is 48px at this width, so the one control in the corner was not
+   in the corner of anything. The value is the section gutter either way, since
+   that is the margin every other thing on this page measures from. */
+.gate-x {
   position: absolute;
   z-index: 4;
-  /* ON THE PANEL'S OWN PADDING GRID. At a flat 12px they sat inside the 28px
-     side padding everything else lines up to, which read as two loose objects
-     in the corners rather than as part of the card. */
-  top: 14px;
+  top: max(var(--header-x), 20px, env(safe-area-inset-top));
+  right: max(var(--header-x), 20px);
 }
-.gate-x { right: 16px; }
-.gate-back { left: 16px; }
-/* the shared icon-button rule above sets display: grid, and a class beats the
-   UA's [hidden] { display: none }, so hiding these needs saying out loud */
-.gate-x[hidden], .gate-back[hidden] { display: none; }
-.gate-x svg, .gate-back svg { width: 17px; height: 17px; }
+/* the shared icon-button rule sets display: grid, and a class beats the UA's
+   [hidden] { display: none }, so hiding it needs saying out loud */
+.gate-x[hidden] { display: none; }
+.gate-x svg { width: 18px; height: 18px; }
 
 .gate-level {
   position: relative;
   z-index: 2;
+  /* BOTH LEVELS OCCUPY THE SAME CELL, so they can be on screen together while
+     the band crosses them: one wiping out, one wiping in, at the same edge. */
+  grid-area: 1 / 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  /* min-height:0 is what lets a flex child shrink below its content and scroll */
-  min-height: 0;
-  overflow-y: auto;
+  width: 100%;
 }
 .gate-level[hidden] { display: none; }
 
+/* THE WIPE IS THE TRANSITION, and the band is its edge. --wipe-a and --wipe-b
+   are written per frame from the band's own head position, converted into this
+   box's coordinates, so the content dissolves exactly where the glyphs are and
+   nowhere else. The band trails the head, so what it has passed is what has
+   changed: the outgoing level keeps the side ahead of the head, the incoming
+   one keeps the side behind it. */
+.gate-level[data-wipe="out"] {
+  -webkit-mask-image: linear-gradient(90deg, transparent var(--wipe-a, -60%), #000 var(--wipe-b, -48%));
+  mask-image: linear-gradient(90deg, transparent var(--wipe-a, -60%), #000 var(--wipe-b, -48%));
+}
+.gate-level[data-wipe="in"] {
+  -webkit-mask-image: linear-gradient(90deg, #000 var(--wipe-a, -60%), transparent var(--wipe-b, -48%));
+  mask-image: linear-gradient(90deg, #000 var(--wipe-a, -60%), transparent var(--wipe-b, -48%));
+}
+.gate-level[data-wipe] { pointer-events: none; }
+
 .gate-mark {
   display: block;
-  width: 34px;
-  height: 34px;
-  margin-bottom: 18px;
+  width: 38px;
+  height: 38px;
+  margin-bottom: 20px;
   color: var(--spark-ink);
   filter: var(--mark-shadow);
 }
 .gate-mark svg { display: block; width: 100%; height: 100%; }
 
-/* the page's own section-head device, scaled to a 460px box: the eyebrow keeps
-   its gradient rule, the heading keeps exactly one serif italic phrase */
-.gate-level .eyebrow { margin-bottom: 14px; }
+/* the page's own section head, now at the page's own scale: there is no 460px
+   box forcing it down a step any more */
+.gate-level .eyebrow { margin-bottom: 16px; }
 .gate-title {
   font-weight: 500;
-  font-size: clamp(24px, 3.4vw, 30px);
-  line-height: 1.1;
+  font-size: var(--h2);
+  line-height: 1.08;
   letter-spacing: -0.04em;
   color: var(--ink);
 }
@@ -3023,162 +2973,62 @@ body.menu-open { overflow: hidden; }
   letter-spacing: -0.03em;
   color: var(--blue-ink);
 }
-.gate-sub {
-  margin-top: 12px;
-  max-width: 34ch;
-  color: var(--muted);
-  font-size: 14px;
-  line-height: 1.55;
-  letter-spacing: -0.015em;
-}
 
-/* THE STEPS ARE THE PAGE'S OWN, not the partner site's 2x2 grid of four. Three,
-   because that is what apply.html's progress rail already names, and a modal
-   that promises four stages in front of a wizard that shows three is a defect
-   the reader meets one click later. */
+/* FOUR OF THE PAGE'S OWN STEP CARDS (Appy, 2026-09-16). They were four boxes
+   holding a number and a sentence. How it works, two sections down, holds the
+   same information and also SHOWS it: a list being picked through, sliders being
+   retuned, bars growing into a payout. Saying a thing and demonstrating it are
+   not the same amount of explaining, and the section that demonstrates is the
+   better one, so these are literally those cards. `.card .step` on the <li> and
+   every part inside it is the page's: .step-top, .step-num, .step-art,
+   .pick-list, .mini-list, .term-log, .earn-bars, .earn-payout. Nothing here
+   re-implements any of it, which is also why the hover demos work without a line
+   of new script: those keyframes are keyed on .step, and this IS a .step.
+   THE GRID IS --band-max, so the four line up with every section on the page
+   rather than sitting on a width invented for them. */
 .gate-steps {
   width: 100%;
-  margin-top: 24px;
+  max-width: var(--band-max);
+  margin-top: 44px;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
   list-style: none;
   text-align: left;
 }
-.gate-steps li {
-  display: flex;
-  align-items: flex-start;
-  gap: 13px;
-  padding: 13px 15px;
-  border: 1px solid var(--border-soft);
-  border-radius: 12px;
-  background: var(--panel-bg);
-}
-.gate-steps .step-num { width: 30px; height: 30px; font-size: 13px; }
-.gate-steps b {
+.gate-steps .step { padding: 22px 20px 20px; }
+.gate-steps .step-top { gap: 12px; }
+.gate-steps .step-top h3 { font-size: 17px; }
+.gate-steps .step-top p { margin-top: 3px; white-space: nowrap; }
+.gate-steps .step-num { width: 34px; height: 34px; font-size: 14px; }
+.gate-steps .step-art { margin-top: 18px; padding: 16px 15px; }
+.gate-steps .mini-title { margin-bottom: 11px; }
+.gate-steps .pick-list { gap: 7px; }
+.gate-steps .pick-list li { padding: 9px 11px; }
+.gate-steps .mini-list { gap: 10px; }
+.gate-steps .term-win { height: 4.8em; }
+.gate-steps .earn-figure { font-size: 30px; margin-top: 2px; }
+.gate-steps .earn-sub {
   display: block;
-  color: var(--ink);
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-}
-.gate-steps p {
-  margin-top: 3px;
+  margin-top: 2px;
   color: var(--muted);
-  font-size: 12.5px;
-  line-height: 1.5;
+  font-size: 11.5px;
   letter-spacing: -0.01em;
 }
+.gate-steps .earn-bars { min-height: 54px; margin-top: 14px; margin-bottom: 14px; }
+/* the panel is the flex remainder of a card the grid has already made equal to
+   its tallest sibling, so once every head is one line tall the four panels are
+   the same height without a number being chosen for them */
+.gate-steps .step-art { flex: 1; }
 
-/* ---- the two doors ---------------------------------------------------------
-   TWO OPTIONS, ONE GEOMETRY. They do the same job, so they are the same box:
-   same width, same height, same icon slot at the same size. Making one of them
-   the solid black CTA would have said one is the real way in and the other is a
-   fallback, which is not true, so BOTH are outlines and the black moves to the
-   send control, which is the only thing here that actually commits.
-   Level one's Continue is still solid, so the dialog still opens on the page's
-   primary button rather than on two outlines. */
-.gate-opts { width: 100%; margin-top: 24px; display: grid; gap: 10px; }
-.gate-opt {
-  width: 100%;
-  height: var(--hero-btn-h);
-  gap: 10px;
-  font-size: calc(var(--btn) + 1.5px);
-}
-.gate-opt svg { width: 18px; height: 18px; flex: none; }
-
-/* THE BUTTON BECOMES THE FIELD, it does not reveal one. A field appearing above
-   the button leaves the button behind as a second thing to reason about, and
-   pushes everything under it down. Both states live in one box of fixed height
-   and cross-fade, so the row never moves and the object you clicked is the
-   object you are now typing in. */
-.gate-mail { position: relative; height: var(--hero-btn-h); }
-.gate-mail > * {
-  position: absolute;
-  inset: 0;
-  transition: opacity 0.26s var(--ease), transform 0.26s var(--ease);
-}
-.gate-mailfield { opacity: 0; transform: translateY(5px); pointer-events: none; }
-.gate-mail.is-open > .gate-opt { opacity: 0; transform: translateY(-5px); pointer-events: none; }
-.gate-mail.is-open > .gate-mailfield { opacity: 1; transform: none; pointer-events: auto; }
-
-.gate-input {
-  width: 100%;
-  height: 100%;
-  /* right padding clears the send control and its gutter, so a long address
-     scrolls under the arrow instead of behind it */
-  padding: 0 calc(var(--hero-btn-h) + 16px) 0 15px;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  background: var(--panel-bg);
-  color: var(--ink);
-  font-family: inherit;
-  /* 16px below 560 is an iOS zoom guard, not a type decision */
-  font-size: 16px;
-  letter-spacing: -0.01em;
-  transition: border-color 0.25s ease, box-shadow 0.25s ease;
-}
-/* quieter than the label it replaced: it is an example, not an instruction */
-.gate-input::placeholder { color: var(--dim-ink); opacity: 0.55; }
-.gate-input:focus {
-  outline: none;
-  border-color: var(--blue-ink);
-  box-shadow: 0 0 0 3px rgba(21, 110, 254, 0.16);
-}
-.gate-input.is-bad { border-color: var(--err-line); }
-.gate-input.is-bad:focus { box-shadow: 0 0 0 3px var(--err-ring); }
-
-/* THE HOME PAGE'S BUTTON, AT THIS SIZE (Appy's call, 2026-09-15). It was a
-   circle, on the reasoning that an equal 6px inset inside a 6px-radius field
-   leaves r_inner = r_outer - inset = 0, so a rounded rect cannot be concentric
-   with the box it sits in. The counter-argument won and is the better one: this
-   is a CTA, the page has exactly one button shape, and a lone circle in a
-   dialog full of 6px rectangles reads as a different control from a different
-   system. The two curves are not parallel, which at a 32px inner height inside
-   a 44px outer is a smaller cost than speaking a second button language.
-   Landscape rather than square, at the same proportion the hero CTA runs, so it
-   reads as a button and not as an icon target. The 6px inset on all three edges
-   it touches is unchanged. */
-.gate-send {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  bottom: 6px;
-  width: var(--hero-btn-h);
-  display: grid;
-  place-items: center;
-  padding: 0;
-  border: 1px solid var(--solid-bg);
-  border-radius: 6px;
-  background: var(--solid-bg);
-  color: var(--solid-ink);
-  cursor: pointer;
-  transition: background 0.3s ease, border-color 0.3s ease, transform 0.18s ease;
-}
-.gate-send:hover { background: var(--solid-bg-hover); border-color: var(--solid-line-hover); }
-.gate-send:active { transform: translateY(1px); }
-.gate-send:focus-visible { outline: 2px solid var(--blue-ink); outline-offset: 2px; }
-.gate-send svg { width: 16px; height: 16px; }
-
-.gate-err {
-  align-self: flex-start;
-  margin-top: 9px;
-  color: var(--err-ink);
-  font-size: 12.5px;
-  letter-spacing: -0.01em;
-  text-align: left;
-}
-.gate-err[hidden] { display: none; }
-
-.gate-actions { width: 100%; margin-top: 22px; }
+.gate-actions { margin-top: 40px; }
 .gate-actions .btn {
-  width: 100%;
   height: var(--hero-btn-h);
   padding: 0 var(--hero-btn-pad);
   font-size: calc(var(--btn) + 1.5px);
+  box-shadow: var(--hero-shadow);
 }
-.gate-actions .btn-solid { box-shadow: var(--hero-shadow); }
-.gate-actions .btn-solid:hover { box-shadow: var(--hero-shadow-hover); }
+.gate-actions .btn:hover { box-shadow: var(--hero-shadow-hover); }
 
 .gate-alt {
   margin-top: var(--actions-mt);
@@ -3202,9 +3052,97 @@ body.menu-open { overflow: hidden; }
 }
 .gate-alt button:hover { color: var(--link-hover); text-decoration-color: var(--link-hover); }
 
+/* ---- the two doors ---------------------------------------------------------
+   TWO OPTIONS, ONE GEOMETRY. They do the same job, so they are the same box.
+   Making one of them the solid black CTA would say one is the real way in and
+   the other is a fallback, so both are outlines and the black moves to the send
+   control, which is the only thing here that actually commits. */
+.gate-opts { width: 100%; max-width: 380px; margin-top: 40px; display: grid; gap: 10px; }
+.gate-opt {
+  width: 100%;
+  height: var(--hero-btn-h);
+  gap: 10px;
+  font-size: calc(var(--btn) + 1.5px);
+}
+.gate-opt svg { width: 18px; height: 18px; flex: none; }
+
+/* THE BUTTON BECOMES THE FIELD, it does not reveal one. Both states live in one
+   box of fixed height and cross-fade, so the row never moves and the object you
+   clicked is the object you are now typing in. */
+.gate-mail { position: relative; height: var(--hero-btn-h); }
+.gate-mail > * {
+  position: absolute;
+  inset: 0;
+  transition: opacity 0.26s var(--ease), transform 0.26s var(--ease);
+}
+.gate-mailfield { opacity: 0; transform: translateY(5px); pointer-events: none; }
+.gate-mail.is-open > .gate-opt { opacity: 0; transform: translateY(-5px); pointer-events: none; }
+.gate-mail.is-open > .gate-mailfield { opacity: 1; transform: none; pointer-events: auto; }
+
+.gate-input {
+  width: 100%;
+  height: 100%;
+  /* right padding clears the send control and its gutter, so a long address
+     scrolls under the arrow instead of behind it */
+  padding: 0 calc(var(--hero-btn-h) + 16px) 0 15px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--card-bg);
+  color: var(--ink);
+  font-family: inherit;
+  /* 16px below 560 is an iOS zoom guard, not a type decision */
+  font-size: 16px;
+  letter-spacing: -0.01em;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+/* quieter than the label it replaced: it is an example, not an instruction */
+.gate-input::placeholder { color: var(--dim-ink); opacity: 0.55; }
+.gate-input:focus {
+  outline: none;
+  border-color: var(--blue-ink);
+  box-shadow: 0 0 0 3px rgba(21, 110, 254, 0.16);
+}
+.gate-input.is-bad { border-color: var(--err-line); }
+.gate-input.is-bad:focus { box-shadow: 0 0 0 3px var(--err-ring); }
+
+/* the page's button, at this size: one button shape, so a circle here would be
+   a control from a different system. The 6px inset on the three edges it touches
+   is what makes the spacing read, and the radius matches the hero CTA. */
+.gate-send {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  bottom: 6px;
+  width: var(--hero-btn-h);
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid var(--solid-bg);
+  border-radius: 6px;
+  background: var(--solid-bg);
+  color: var(--solid-ink);
+  cursor: pointer;
+  transition: background 0.3s ease, border-color 0.3s ease, transform 0.18s ease;
+}
+.gate-send:hover { background: var(--solid-bg-hover); border-color: var(--solid-line-hover); }
+.gate-send:active { transform: translateY(1px); }
+.gate-send:focus-visible { outline: 2px solid var(--blue-ink); outline-offset: 2px; }
+.gate-send svg { width: 16px; height: 16px; }
+
+.gate-err {
+  width: 100%;
+  max-width: 380px;
+  margin-top: 9px;
+  color: var(--err-ink);
+  font-size: 12.5px;
+  letter-spacing: -0.01em;
+  text-align: left;
+}
+.gate-err[hidden] { display: none; }
+
 .gate-legal {
-  margin-top: 20px;
-  max-width: 36ch;
+  margin-top: 26px;
+  max-width: 42ch;
   color: var(--dim-ink);
   font-size: 11.5px;
   line-height: 1.6;
@@ -3219,16 +3157,19 @@ body.menu-open { overflow: hidden; }
 }
 .gate-legal a:hover { color: var(--ink); }
 
-/* two across needs about 240px a cell to hold four lines of 12.5px text beside
-   a 30px disc; below that the row wins the width argument and the reading loses */
-@media (max-width: 620px) {
-  .gate-steps { grid-template-columns: minmax(0, 1fr); }
+/* a card holding a terminal or three sliders needs about 240px of inner width;
+   below that the demo stops demonstrating and becomes decoration, so the row
+   gives up before the contents do. Same two thresholds the page's own .steps and
+   .agents-grid use, for the same reason. */
+@media (max-width: 1100px) {
+  .gate-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 720px; }
 }
-
+@media (max-width: 700px) {
+  .gate-steps { grid-template-columns: minmax(0, 1fr); max-width: 400px; margin-top: 30px; }
+  .gate-actions { margin-top: 30px; }
+}
 @media (max-width: 560px) {
-  .gate-panel { padding: 30px 20px 22px; }
-  .gate-input { font-size: 16px; }
-  .gate-steps li { padding: 12px 13px; }
+  .gate-field { padding: 64px 20px 40px; }
 }
 </style>
 </head>
@@ -4086,11 +4027,8 @@ body.menu-open { overflow: hidden; }
      apply.html's own intro and progress rail.
      ===================================================================== -->
 <dialog class="gate" id="gate" aria-labelledby="gate-title-1">
-  <div class="gate-panel" id="gate-panel">
+  <div class="gate-field" id="gate-field">
 
-    <button class="gate-back" type="button" data-gate="back" aria-label="Back" hidden>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5.5 8.5 12l6.5 6.5"/></svg>
-    </button>
     <button class="gate-x" type="button" data-gate="close" aria-label="Close">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
     </button>
@@ -4100,38 +4038,103 @@ body.menu-open { overflow: hidden; }
       <span class="gate-mark"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><use href="#i-spark"/></svg></span>
       <span class="eyebrow">Before you start</span>
       <h2 class="gate-title" id="gate-title-1">What happens <em>after you apply</em>.</h2>
-      <p class="gate-sub">One short application. We review every one and email you when your access is approved.</p>
+      <p class="lede">One short application. We review every one and email you when your access is approved.</p>
 
-      <!-- FOUR, AND THE COPY IS THE PARTNER SITE'S OWN (restored 2026-09-15).
-           This was briefly cut to three and reworded, on the reasoning that
-           apply.html's progress rail names three stages and a modal promising
-           four in front of a wizard showing three contradicts itself one click
-           later. That reasoning stands but the call was not mine to make quietly,
-           so the source copy is back. The only edits to it are two the brand
-           forces: BlueAI reads onBlue on this site, and the orphan asterisk after
-           $30 is dropped because the footnote it pointed at was deleted from the
-           source and never replaced. -->
+      <!-- FOUR, AND THE COPY IS THE PARTNER SITE'S OWN. The only edits to it
+           are two the brand forces: BlueAI reads onBlue on this site, and the
+           orphan asterisk after $30 is dropped because the footnote it pointed
+           at was deleted from the source and never replaced.
+           EVERY PANEL IS BUILT FROM COMPONENTS THAT ALREADY SHIP. Nothing below
+           is drawn for this dialog: the pick list is Own an agent's, the
+           terminal is Partnered agents', the bars and the payout pill are Earn
+           from its work's. A demo assembled out of the page's own parts cannot
+           drift from the page. -->
       <ol class="gate-steps">
-        <li>
-          <span class="step-num">1</span>
-          <div><b>Apply.</b><p>Tell us about yourself and the PC it will run on.</p></div>
+
+        <li class="card step">
+          <div class="step-top">
+            <span class="step-num">1</span>
+            <div><h3>Apply.</h3><p>One short form.</p></div>
+          </div>
+          <div class="step-art">
+            <span class="mini-title">Your application</span>
+            <ul class="pick-list">
+              <li class="is-on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-pencil"/></svg>About you<span class="pick-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg></span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-box"/></svg>Your PC details<span class="pick-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg></span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-chart"/></svg>PayPal email<span class="pick-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg></span></li>
+            </ul>
+            <span class="pick-note">About two minutes.</span>
+          </div>
         </li>
-        <li>
-          <span class="step-num">2</span>
-          <div><b>Get accepted.</b><p>We review every application and email you when your agent is ready.</p></div>
+
+        <li class="card step">
+          <div class="step-top">
+            <span class="step-num">2</span>
+            <div><h3>Get accepted.</h3><p>We read every one.</p></div>
+          </div>
+          <div class="step-art">
+            <span class="mini-title">Review</span>
+            <ul class="mini-list">
+              <li><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-check"/></svg>Application read</li>
+              <li><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-check"/></svg>PC checked</li>
+              <li><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-spark"/></svg>Agent assigned</li>
+            </ul>
+            <span class="earn-payout"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-mail"/></svg>Approval emailed</span>
+          </div>
         </li>
-        <li>
-          <span class="step-num">3</span>
-          <div><b>Deploy it.</b><p>Install onBlue on your PC and sign in. That's the whole setup.</p></div>
+
+        <li class="card step">
+          <div class="step-top">
+            <span class="step-num">3</span>
+            <div><h3>Deploy it.</h3><p>One install, then go.</p></div>
+          </div>
+          <div class="step-art">
+            <span class="mini-title">Setup</span>
+            <div class="agent-art" style="margin:0">
+              <div class="term-bar"><i></i><i></i><i></i></div>
+              <div class="term-win">
+                <ul class="term-log">
+                  <li class="t-task">installing onBlue</li>
+                  <li>checking this machine</li>
+                  <li>signing you in</li>
+                  <li class="t-done">agent online</li>
+                  <li class="t-task">waiting for work</li>
+                  <li>first job assigned</li>
+                  <li class="t-task">installing onBlue</li>
+                  <li>checking this machine</li>
+                  <li>signing you in</li>
+                  <li class="t-done">agent online</li>
+                </ul>
+              </div>
+            </div>
+            <span class="pick-note">Windows and Mac.</span>
+          </div>
         </li>
-        <li>
-          <span class="step-num">4</span>
-          <div><b>Collect.</b><p>You approve each campaign, your agent completes it, and you collect $30 every month via PayPal.</p></div>
+
+        <li class="card step">
+          <div class="step-top">
+            <span class="step-num">4</span>
+            <div><h3>Collect.</h3><p>You approve, it pays.</p></div>
+          </div>
+          <div class="step-art">
+            <span class="earn-label">Every month</span>
+            <span class="earn-sub">for every job it finishes</span>
+            <div class="earn-figure">$30</div>
+            <div class="earn-bars">
+              <i style="--h:38%"></i><i style="--h:54%"></i><i style="--h:46%"></i><i style="--h:70%"></i><i style="--h:62%"></i><i style="--h:84%"></i><i style="--h:100%"></i>
+            </div>
+            <span class="earn-payout"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-check"/></svg>Sent via PayPal</span>
+          </div>
         </li>
+
       </ol>
 
+      <!-- THE HERO'S BUTTON, not a smaller relative of it: same class, same
+           height, same padding, and the same decode on hover. There is no card
+           shrinking it any more, so there is no reason for it to be a step down
+           from the one this page opens with. -->
       <div class="gate-actions">
-        <button class="btn btn-solid" type="button" data-gate="next">Got it, continue</button>
+        <button class="btn btn-solid hero-solid" type="button" data-gate="next"><span class="scramble">Got it, continue</span></button>
       </div>
       <p class="gate-alt">Already have an account? <button type="button" data-gate="signin">Sign in</button></p>
     </section>
@@ -4141,7 +4144,7 @@ body.menu-open { overflow: hidden; }
       <span class="gate-mark"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><use href="#i-spark"/></svg></span>
       <span class="eyebrow" id="gate-eyebrow">Get started</span>
       <h2 class="gate-title" id="gate-title-2">Sign in to <em>onBlue</em>.</h2>
-      <p class="gate-sub" id="gate-sub-2">Sign in to start your application.</p>
+      <p class="lede" id="gate-sub-2">Sign in to start your application.</p>
 
       <div class="gate-opts">
 
@@ -4182,6 +4185,8 @@ body.menu-open { overflow: hidden; }
            site and 404s from this experiment. A dead link that looks live is
            worse than one that is plainly a stub, so these use the same
            [data-stub] handler the hero's Sign in link already uses. -->
+      <p class="gate-alt" id="gate-back-line">First time here? <button type="button" data-gate="back">See how it works</button></p>
+
       <p class="gate-legal">By signing up, you agree to the <a data-stub>Terms of Use</a>
         and <a data-stub>Privacy Policy</a>, including <a data-stub>Cookie Use</a>.</p>
     </section>
@@ -4408,6 +4413,10 @@ body.menu-open { overflow: hidden; }
     if (!litQueued) { litQueued = true; requestAnimationFrame(paintEdge); }
   }, { passive: true });
 
+  /* filled in by the field mounted on the gate, so the dialog can run a band
+     across the whole viewport between its two levels */
+  var gateField = null;
+
   /* an ascii lens for the partnered agents band: a sparse ambient glyph field
      that brightens and churns in a soft pool around the pointer, with a little
      red/cyan fringing at the pool's edge. throttled to ~14fps, which is what an
@@ -4427,8 +4436,9 @@ body.menu-open { overflow: hidden; }
      red and cyan edges stop being an artifact and start being a decoration. */
   [{ host: document.getElementById('agents') },
    { host: document.querySelector('.hero-wrap') },
-   { host: document.getElementById('gate-panel'),
-     cell: 12, reach: 104, lens: 0.15, ambient: 0.055, fringe: false }]
+   { host: document.getElementById('gate-field'),
+     cell: 13, reach: 150, lens: 0.16, ambient: 0.05, fringe: false,
+     expose: function (api) { gateField = api; } }]
     .forEach(function asciiField(spec) {
     var host = spec.host;
     if (!host || !('requestAnimationFrame' in window)) { return; }
@@ -4451,6 +4461,24 @@ body.menu-open { overflow: hidden; }
     var w = 0, h = 0, cols = 0, rows = 0, seed = null;
     var px = 0, py = 0, tracking = false;
     var onScreen = false, frame = 0, painted = 0;
+    var sweepT = -1, sweepDur = 0, sweepBand = 0.34, sweepMid = null, sweepEnd = null;
+    var sweepLast = 0, sweepClip = null, sweepStep = null;
+
+    /* THE BAND'S OWN RANDOMNESS. The shader rerolls every swept cell off
+       hash21(cell + floor(uTime * 14)); this is the same idea in two dimensions,
+       and 14 rolls a second is what makes the band read as characters churning
+       rather than as a gradient sliding. */
+    function hash2(x, y) {
+      var n = Math.sin(x * 12.9898 + y * 78.233) * 43758.5453;
+      return n - Math.floor(n);
+    }
+    function sstep(a, b, x) {
+      if (b === a) { return x < a ? 0 : 1; }
+      var t = Math.min(Math.max((x - a) / (b - a), 0), 1);
+      return t * t * (3 - 2 * t);
+    }
+    /* #2f6dff, the ink the hero passes its own sweep */
+    var BAND_INK = [47, 109, 255];
 
     function measure() {
       var box = host.getBoundingClientRect();
@@ -4517,6 +4545,43 @@ body.menu-open { overflow: hidden; }
               lens = t * t;
             }
           }
+          /* THE BAND, LIFTED FROM THE SHADER RATHER THAN APPROXIMATED. Its
+             falloff is the same two smoothsteps: up over the first 35 per cent
+             of the band behind the head, then away between 55 and 100, so the
+             leading edge is hard and the tail dissolves. It TRAILS the head,
+             which is why the content is erased on the side it has passed.
+             CONFINED TO THE CONTENT, for the reason the shader gives for
+             confining itself to the model: a band across the whole frame reads
+             as the viewport dissolving rather than as the thing being replaced. */
+          var band = 0;
+          if (sweepT >= 0 && (!sweepClip ||
+              (cx >= sweepClip.x0 && cx <= sweepClip.x1 && cy >= sweepClip.y0 && cy <= sweepClip.y1))) {
+            var behind = (sweepT * (1 + 2 * sweepBand) - sweepBand) - cx / w;
+            band = sstep(0, sweepBand * 0.35, behind) *
+                   (1 - sstep(sweepBand * 0.55, sweepBand, behind));
+          }
+
+          /* AND IT SUPERSEDES THE CELL. In the shader the band is a max() over
+             the resting mask, so a swept cell is the band's glyph and the band's
+             ink, not the ambient one tinted. 82 per cent of cells light, which is
+             the density that makes it a wall of characters. */
+          if (band > 0.002) {
+            var k = Math.floor(now * 0.014);
+            if (hash2(x * 1.31 + 5.7, y * 1.31 + 2.3) < 0.82) {
+              var roll2 = hash2(x * 0.73 + k, y * 0.73 + k * 0.37);
+              var gi = (hash2(x + k * 0.37, y + k * 0.61) * RAMP.length) | 0;
+              /* the brightest cells burn toward white, the way a phosphor tube does */
+              var m = roll2 * 0.35;
+              ctx.fillStyle = 'rgba(' +
+                Math.round(BAND_INK[0] + (255 - BAND_INK[0]) * m) + ',' +
+                Math.round(BAND_INK[1] + (255 - BAND_INK[1]) * m) + ',' +
+                Math.round(BAND_INK[2] + (255 - BAND_INK[2]) * m) + ',' +
+                Math.min(band * 1.2, 1).toFixed(3) + ')';
+              ctx.fillText(RAMP.charAt(gi), cx, cy);
+            }
+            continue;
+          }
+
           var alpha = ambient + lens * LENS;
           if (alpha < 0.02) { continue; }
 
@@ -4542,10 +4607,61 @@ body.menu-open { overflow: hidden; }
     function tick(now) {
       frame = 0;
       if (!onScreen) { return; }
-      if (now - painted >= 68) { painted = now; paint(now); }
-      if (!still || tracking) { frame = requestAnimationFrame(tick); }
+
+      /* THE THROTTLE COMES OFF WHILE THE BAND IS TRAVELLING. 14fps is what an
+         ascii readout wants at rest and is visibly stepped on something crossing
+         the screen in under a second. */
+      var sweeping = sweepT >= 0;
+      if (sweeping) {
+        var delta = sweepLast ? Math.min((now - sweepLast) / 1000, 0.05) : 0;
+        sweepLast = now;
+        var before = sweepT;
+        sweepT += delta / sweepDur;
+        if (sweepStep) { sweepStep(Math.min(sweepT, 1) * (1 + 2 * sweepBand) - sweepBand); }
+        if (before < 0.5 && sweepT >= 0.5 && sweepMid) { sweepMid(); sweepMid = null; }
+        if (sweepT >= 1) {
+          sweepT = -1;
+          sweepLast = 0;
+          sweepStep = null;
+          sweepClip = null;
+          if (sweepEnd) { var done = sweepEnd; sweepEnd = null; done(); }
+        }
+        paint(now);
+        painted = now;
+      } else if (now - painted >= 68) {
+        painted = now;
+        paint(now);
+      }
+
+      if (sweeping || !still || tracking) { frame = requestAnimationFrame(tick); }
     }
     function wake() { if (onScreen && !frame) { frame = requestAnimationFrame(tick); } }
+
+    /* 0.85s, not the hero's 4. That one is an ambient scan nobody is waiting on;
+       this one sits between a click and the thing the click asked for, and four
+       seconds of it would be the interface taking its time with someone else's. */
+    function runSweep(opts) {
+      opts = opts || {};
+      sweepDur = opts.duration || 0.85;
+      sweepBand = opts.band || 0.34;
+      sweepMid = opts.onMid || null;
+      sweepEnd = opts.onEnd || null;
+      sweepStep = opts.onStep || null;
+      sweepClip = opts.clip || null;
+      sweepLast = 0;
+      sweepT = 0;
+      if (still) {
+        /* reduced motion gets the swap, not the scan */
+        sweepT = -1;
+        sweepStep = null;
+        sweepClip = null;
+        if (sweepMid) { sweepMid(); sweepMid = null; }
+        if (sweepEnd) { var e = sweepEnd; sweepEnd = null; e(); }
+        return;
+      }
+      wake();
+    }
+    if (spec.expose) { spec.expose({ sweep: runSweep }); }
 
     measure();
 
@@ -4589,10 +4705,10 @@ body.menu-open { overflow: hidden; }
     var gate = document.getElementById('gate');
     if (!gate || typeof gate.showModal !== 'function') { return; }
 
-    var panel = document.getElementById('gate-panel');
+    var field = document.getElementById('gate-field');
     var lv1 = gate.querySelector('[data-level="1"]');
     var lv2 = gate.querySelector('[data-level="2"]');
-    var back = gate.querySelector('[data-gate="back"]');
+    var backLine = document.getElementById('gate-back-line');
     var mail = document.getElementById('gate-mail');
     var email = document.getElementById('gate-email');
     var err = document.getElementById('gate-email-err');
@@ -4600,31 +4716,102 @@ body.menu-open { overflow: hidden; }
     var sub2 = document.getElementById('gate-sub-2');
     var returning = false;
     var closing = 0;
+    var demoing = 0;
+    var sweeping = false;
 
     /* the same test apply.html validates with, so the two cannot disagree about
        what an address is */
     function isEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim()); }
 
-    /* LEVEL CHANGES USE THE PAGE'S OWN MOTION. The partner site slides 28px
-       sideways; nothing on this page moves horizontally, so a level arrives the
-       way every other block does, rising out of a clipped line. Re-adding the
-       class is what restarts it. */
+    /* THE BAND IS THE TRANSITION. The hero swaps its models under a travelling
+       ascii sweep rather than cross-fading them, and this is the same move in
+       the layer that can do it to DOM: the field runs a band across the whole
+       viewport and the level changes underneath it, at the midpoint, where it
+       is covered. On the first show there is nothing to hide, so it just
+       appears; reduced motion gets the swap with no scan, which runSweep
+       handles by firing both callbacks immediately. */
+    /* BOTH LEVELS LIVE THROUGH THE SWEEP. The old one is not hidden and then
+       replaced; it is on screen, masked, losing ground to the new one at the
+       band's edge, which is the only way the transition can be ON the content
+       rather than behind it. The swap of which is which still happens at the
+       midpoint, so the reader never sees a level change without the band over
+       the place it changed. */
+    function step(to) {
+      if (!gateField || sweeping) { show(to); return; }
+      var from = to === 2 ? lv1 : lv2;
+      var next = to === 2 ? lv2 : lv1;
+      var BAND = 0.34;
+
+      /* set first, so show() skips the entrance animation */
+      sweeping = true;
+      show(to);
+      from.hidden = false;
+
+      /* MEASURED ONCE, NOT EVERY FRAME. Reading a rect inside the loop forced a
+         layout per frame for numbers that cannot change while the band travels. */
+      var box = field.getBoundingClientRect();
+      var live = next.getBoundingClientRect();
+      var gone = from.getBoundingClientRect();
+
+      function wipeAt(head) {
+        var at = ((head * box.width) - (live.left - box.left)) / Math.max(live.width, 1);
+        field.style.setProperty('--wipe-a', ((at - 0.06) * 100).toFixed(2) + '%');
+        field.style.setProperty('--wipe-b', ((at + 0.06) * 100).toFixed(2) + '%');
+      }
+
+      /* THE EDGE IS IN PLACE BEFORE EITHER LEVEL IS MASKED. Everything from here
+         to the end of this function is one synchronous block, so no frame can be
+         painted between the attribute landing and the value it depends on. At
+         t = 0 the head sits one band-width off the left, which leaves the
+         outgoing level whole and the incoming one entirely gone, which is
+         exactly the state the reader was already looking at. */
+      wipeAt(-BAND);
+      from.setAttribute('data-wipe', 'out');
+      next.setAttribute('data-wipe', 'in');
+
+      gateField.sweep({
+        duration: 0.85,
+        band: BAND,
+        /* the band paints only where the content is, for the reason the shader
+           gives for gating on the model's own alpha */
+        clip: {
+          x0: Math.min(live.left, gone.left) - box.left - 24,
+          x1: Math.max(live.right, gone.right) - box.left + 24,
+          y0: Math.min(live.top, gone.top) - box.top - 24,
+          y1: Math.max(live.bottom, gone.bottom) - box.top + 24
+        },
+        /* the head is a fraction of the CANVAS; the mask is a fraction of the
+           CONTENT, so it has to be re-expressed in the box it is masking */
+        onStep: wipeAt,
+        onEnd: function () {
+          sweeping = false;
+          from.hidden = true;
+          from.removeAttribute('data-wipe');
+          next.removeAttribute('data-wipe');
+          field.style.removeProperty('--wipe-a');
+          field.style.removeProperty('--wipe-b');
+        }
+      });
+    }
+
     function enter(level) {
-      level.classList.remove('appear', 'appear--mask');
+      level.classList.remove('appear', 'appear--fade');
       void level.offsetWidth;
-      level.classList.add('appear', 'appear--mask');
+      level.classList.add('appear', 'appear--fade');
     }
 
     function show(which) {
       var toL2 = which === 2;
       lv1.hidden = toL2;
       lv2.hidden = !toL2;
-      /* back is the applicant's way out of the ask; a returning user never saw
-         level one, so offering it would walk them somewhere they did not come from */
-      back.hidden = !toL2 || returning;
+      /* the way back is the applicant's; a returning user never saw level one,
+         so offering it would walk them somewhere they did not come from */
+      backLine.hidden = returning;
       gate.setAttribute('aria-labelledby', toL2 ? 'gate-title-2' : 'gate-title-1');
-      gate.setAttribute('data-level', toL2 ? '2' : '1');
-      enter(toL2 ? lv2 : lv1);
+      /* the entrance is for arriving at a level, not for changing between
+         them: while the band is crossing, the wipe IS the transition and a
+         second opacity animation under it only fights it */
+      if (!sweeping) { enter(toL2 ? lv2 : lv1); }
     }
 
     /* THE CARET IS THE POINT. Clicking the email door has to leave you typing,
@@ -4647,6 +4834,11 @@ body.menu-open { overflow: hidden; }
       clearError();
       /* both doors again on every open: a field left standing from last time is
          a half-finished sentence the reader did not write */
+      sweeping = false;
+      lv1.removeAttribute('data-wipe');
+      lv2.removeAttribute('data-wipe');
+      field.style.removeProperty('--wipe-a');
+      field.style.removeProperty('--wipe-b');
       mail.classList.remove('is-open');
       email.value = '';
       if (!gate.open) { gate.showModal(); }
@@ -4655,6 +4847,22 @@ body.menu-open { overflow: hidden; }
          expectation remembered, and the partner site made the same call */
       show(returning ? 2 : 1);
       requestAnimationFrame(function () { gate.classList.add('is-open'); });
+
+      /* THE SAME ONE-SHOT THE PAGE GIVES THESE CARDS. In How it works a step
+         runs its demo once when it first scrolls into view, then stops, so the
+         reader sees what the panel does without the page looping at them. A
+         dialog has no scroll to be revealed by, so opening is the equivalent
+         moment. .demo is the page's class and these are the page's cards, so
+         this is four lines rather than four animations. */
+      window.clearTimeout(demoing);
+      Array.prototype.forEach.call(gate.querySelectorAll('.step'), function (card) {
+        card.classList.add('demo');
+      });
+      demoing = window.setTimeout(function () {
+        Array.prototype.forEach.call(gate.querySelectorAll('.step'), function (card) {
+          card.classList.remove('demo');
+        });
+      }, 4000);
     }
 
     function close() {
@@ -4705,9 +4913,9 @@ body.menu-open { overflow: hidden; }
       if (!act) { return; }
       var what = act.getAttribute('data-gate');
       if (what === 'close') { close(); }
-      else if (what === 'next') { show(2); }
+      else if (what === 'next') { step(2); }
       else if (what === 'signin') { returning = true; open(true); }
-      else if (what === 'back') { show(1); }
+      else if (what === 'back') { step(1); }
       else if (what === 'email') { openMail(); }
       else if (what === 'continue') { proceed(); }
       else if (what === 'google') {
