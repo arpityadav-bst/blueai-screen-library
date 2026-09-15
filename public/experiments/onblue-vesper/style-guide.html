@@ -1,0 +1,1589 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>onBlue Agentic | design system</title>
+<meta name="description" content="The design system reference for the onBlue Agentic homepage. Renders the page's own stylesheet rather than a copy of it.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900&family=Instrument+Serif:ital@1&display=swap">
+
+<!-- THE PRODUCT STYLESHEET LANDS HERE AT RUNTIME.
+     index.html holds its CSS inline, so there is no file to <link>. The guide
+     fetches the page, lifts its <style> block verbatim into this slot and lifts
+     its shared <defs> sprite into the body. Nothing below re-implements a
+     product rule: every specimen is the real class, styled by the real sheet,
+     and a token read here is the value the homepage is actually running. -->
+<style id="sg-product"></style>
+
+<style>
+/* ---------------------------------------------------------------------------
+   THE GUIDE'S OWN CHROME. Every selector in this block is sg- prefixed so the
+   injected product sheet and this one can never collide. If you find yourself
+   restyling a product class from here, stop: that is the drift this file
+   exists to prevent.
+   --------------------------------------------------------------------------- */
+.sg-boot {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  padding: 40px;
+  text-align: center;
+  font: 400 14px/1.6 system-ui, sans-serif;
+  color: #5f636b;
+}
+.sg-boot code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+.sg-boot b { display: block; margin-bottom: 8px; color: #0b0b0d; font-weight: 600; }
+
+.sg-wrap { max-width: 1180px; margin: 0 auto; padding: 0 max(20px, 4vw) 140px; }
+
+.sg-mast { padding: 72px 0 34px; }
+.sg-mast h1 { font-size: clamp(30px, 4vw, 46px); font-weight: 500; letter-spacing: -0.04em; line-height: 1.06; }
+.sg-mast h1 em { font-family: "Instrument Serif", Times, serif; font-style: italic; font-weight: 400; font-size: 1.06em; color: #156efe; }
+.sg-mast p { margin-top: 16px; max-width: 680px; color: #3c4049; font-size: 15px; line-height: 1.6; letter-spacing: -0.01em; }
+.sg-mast p + p { margin-top: 10px; }
+.sg-mast a { color: #156efe; text-decoration: underline; text-underline-offset: 3px; }
+
+.sg-stats { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+.sg-stat {
+  padding: 12px 16px; border: 1px solid rgba(0,0,0,0.1); border-radius: 10px; background: #fdfdfd;
+}
+.sg-stat b { display: block; font-size: 22px; font-weight: 600; letter-spacing: -0.03em; color: #0b0b0d; }
+.sg-stat span { display: block; margin-top: 2px; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: #767b85; }
+
+.sg-toc { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 26px; padding-top: 26px; border-top: 1px solid rgba(0,0,0,0.08); }
+.sg-toc a {
+  padding: 7px 12px; border: 1px solid rgba(0,0,0,0.1); border-radius: 999px;
+  font-size: 12.5px; color: #3c4049; letter-spacing: -0.01em;
+}
+.sg-toc a:hover { border-color: #156efe; color: #156efe; }
+
+.sg-sec { padding-top: 64px; scroll-margin-top: 24px; }
+.sg-sec > h2 {
+  font-size: 13px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #156efe;
+  padding-bottom: 12px; border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+.sg-sec > p { margin-top: 16px; max-width: 760px; color: #3c4049; font-size: 14px; line-height: 1.65; letter-spacing: -0.01em; }
+.sg-sec > p code, .sg-note code, .sg-tbl code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.92em; background: #f4f5f7; padding: 1px 5px; border-radius: 4px; }
+
+.sg-sub { margin-top: 34px; }
+.sg-sub > h3 { font-size: 17px; font-weight: 600; letter-spacing: -0.025em; color: #0b0b0d; }
+.sg-sub > p { margin-top: 8px; max-width: 760px; color: #5f636b; font-size: 13.5px; line-height: 1.6; letter-spacing: -0.01em; }
+
+/* the frame every specimen sits in. transform makes it a containing block, so a
+   position:fixed product component (the header, the menu) stays inside it. */
+.sg-frame {
+  position: relative;
+  transform: translate(0);
+  margin-top: 16px;
+  padding: 26px;
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 12px;
+  background: #ffffff;
+  overflow: hidden;
+}
+.sg-frame--tint { background: #fafbfb; }
+.sg-frame--tall { min-height: 220px; }
+.sg-frame--flow { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; }
+.sg-frame--pad0 { padding: 0; }
+
+.sg-label {
+  margin-top: 10px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 11.5px; color: #767b85; letter-spacing: -0.01em;
+}
+
+.sg-grid { display: grid; gap: 16px; margin-top: 16px; }
+.sg-grid--2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+.sg-grid--3 { grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
+.sg-grid--sw { grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); }
+
+/* token swatch */
+.sg-tok { border: 1px solid rgba(0,0,0,0.08); border-radius: 10px; overflow: hidden; background: #fff; }
+.sg-tok i { display: block; height: 52px; border-bottom: 1px solid rgba(0,0,0,0.06);
+  background-image: linear-gradient(45deg,#eceef2 25%,transparent 25%,transparent 75%,#eceef2 75%),
+                    linear-gradient(45deg,#eceef2 25%,transparent 25%,transparent 75%,#eceef2 75%);
+  background-size: 12px 12px; background-position: 0 0, 6px 6px; }
+.sg-tok i span { display: block; height: 100%; }
+.sg-tok dl { padding: 9px 11px 11px; }
+.sg-tok dt { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 11.5px; color: #0b0b0d; word-break: break-all; }
+.sg-tok dd { margin-top: 3px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 11px; color: #767b85; word-break: break-all; }
+
+/* token row, for values that are not colours */
+.sg-rows { margin-top: 16px; border: 1px solid rgba(0,0,0,0.1); border-radius: 10px; overflow: hidden; }
+.sg-row { display: grid; grid-template-columns: minmax(150px, 0.8fr) minmax(0, 2fr); gap: 16px; padding: 10px 14px; border-top: 1px solid rgba(0,0,0,0.06); }
+.sg-row:first-child { border-top: 0; }
+.sg-row > b { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 11.5px; font-weight: 400; color: #0b0b0d; word-break: break-all; }
+.sg-row > span { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 11.5px; color: #5f636b; word-break: break-all; }
+
+.sg-tbl { width: 100%; margin-top: 16px; border-collapse: collapse; font-size: 13px; }
+.sg-tbl th, .sg-tbl td { padding: 9px 12px; border-bottom: 1px solid rgba(0,0,0,0.07); text-align: left; vertical-align: top; letter-spacing: -0.01em; }
+.sg-tbl th { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #767b85; }
+.sg-tbl td { color: #3c4049; }
+.sg-scroll { overflow-x: auto; }
+
+.sg-note {
+  margin-top: 16px; padding: 14px 16px; border-left: 2px solid #156efe; border-radius: 0 8px 8px 0;
+  background: #f7f9ff; color: #3c4049; font-size: 13px; line-height: 1.6; letter-spacing: -0.01em;
+}
+.sg-note--warn { border-left-color: #d0870a; background: #fffaf2; }
+.sg-note b { color: #0b0b0d; }
+
+.sg-btn {
+  margin-top: 14px; padding: 8px 14px; border: 1px solid rgba(0,0,0,0.15); border-radius: 7px;
+  background: #fff; color: #0b0b0d; font: 500 12.5px/1 inherit; cursor: pointer;
+}
+.sg-btn:hover { border-color: #156efe; color: #156efe; }
+
+.sg-list { margin-top: 14px; padding-left: 18px; color: #3c4049; font-size: 13.5px; line-height: 1.7; letter-spacing: -0.01em; }
+.sg-list li + li { margin-top: 5px; }
+.sg-list b { color: #0b0b0d; }
+
+.sg-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.sg-chips code {
+  padding: 4px 8px; border: 1px solid rgba(0,0,0,0.1); border-radius: 6px; background: #fafbfb;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 11px; color: #5f636b;
+}
+
+.sg-ico { display: grid; place-items: center; gap: 9px; padding: 18px 8px; border: 1px solid rgba(0,0,0,0.08); border-radius: 10px; background: #fff; }
+.sg-ico svg { width: 28px; height: 28px; color: #0b0b0d; }
+.sg-ico span { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 10.5px; color: #767b85; }
+
+.sg-swatch-fx { height: 120px; border-radius: 10px; border: 1px solid rgba(0,0,0,0.08); position: relative; overflow: hidden; }
+
+.sg-foot { margin-top: 90px; padding-top: 26px; border-top: 1px solid rgba(0,0,0,0.1); color: #767b85; font-size: 12.5px; letter-spacing: -0.01em; }
+</style>
+</head>
+
+<body>
+
+<div class="sg-boot" id="sg-boot">
+  <div>
+    <b>Loading the homepage's own stylesheet</b>
+    This guide renders <code>index.html</code>'s CSS rather than a copy of it, so it has to
+    fetch that file. Over <code>file://</code> the browser blocks that. Serve the folder
+    (<code>python -m http.server</code>) and reload.
+  </div>
+</div>
+
+<div class="sg-wrap" id="sg-app" hidden>
+
+  <header class="sg-mast">
+    <h1>onBlue Agentic<br><em>design system</em></h1>
+    <p>
+      The reference for <a href="index.html">the homepage</a>. It is a view onto that page's CSS,
+      not a second copy of it: the guide fetches <code>index.html</code> at load, lifts its inline
+      <code>&lt;style&gt;</code> block into this document and its shared icon <code>&lt;defs&gt;</code>
+      into this body, then renders real components with real class names. A restyle of anything
+      specimened here shows up on this page on reload, with nothing to propagate.
+    </p>
+    <p>
+      What that does <b>not</b> cover, and what you therefore own by hand: a component's markup,
+      its copy and its set of states. Those are written here and can drift from the page. Before
+      adding or editing a specimen, read how <code>index.html</code> builds it.
+      Longform reasoning lives in <a href="design.md">design.md</a>.
+    </p>
+    <div class="sg-stats" id="sg-stats"></div>
+    <nav class="sg-toc">
+      <a href="#tokens">Tokens</a>
+      <a href="#type">Type</a>
+      <a href="#scales">Scales</a>
+      <a href="#motion">Motion</a>
+      <a href="#icons">Icons</a>
+      <a href="#effects">Effects</a>
+      <a href="#components">Components</a>
+      <a href="#coverage">Coverage</a>
+      <a href="#gaps">Known gaps</a>
+    </nav>
+  </header>
+
+  <!-- ==================================================== 1. TOKENS ======= -->
+  <section class="sg-sec" id="tokens">
+    <h2>1. Tokens</h2>
+    <p>
+      Every value below is read at load with <code>getComputedStyle</code> off
+      <code>:root</code>, so it is the live value and cannot be written down wrong here. The page
+      ships forced to <code>data-theme="light"</code>; the dark block is still in the sheet and
+      every token has a reading in both. Groups are declared in this file: any token the product
+      declares that no group claims is listed at the end of this section, which is how a new token
+      announces itself rather than sitting unseen.
+    </p>
+    <div id="sg-token-groups"></div>
+    <div id="sg-token-orphans"></div>
+  </section>
+
+  <!-- ====================================================== 2. TYPE ======= -->
+  <section class="sg-sec" id="type">
+    <h2>2. Type</h2>
+    <p>
+      Two families. <code>Inter</code> carries everything; <code>Instrument Serif</code> italic has
+      exactly one job, the emphasised phrase inside a heading, always blue and always a touch larger
+      than its host so the x-heights line up. Negative tracking scales with size. The eyebrow is the
+      only uppercase and the only positive tracking on the page.
+    </p>
+    <p>
+      Each specimen below is the product class. The metrics beside it are measured off the rendered
+      element, not transcribed.
+    </p>
+    <div id="sg-type"></div>
+
+    <div class="sg-sub">
+      <h3>The responsive ladder</h3>
+      <p>Sizes are tokens, not rules, so one block per breakpoint rescales the whole page.</p>
+      <div class="sg-scroll">
+        <table class="sg-tbl">
+          <thead><tr><th>Breakpoint</th><th>--h1</th><th>--btn-h / --hero-btn-h</th><th>--header-x</th><th>--band-max</th></tr></thead>
+          <tbody>
+            <tr><td>under 560</td><td>34px</td><td>44 / 52</td><td>16px</td><td>1180px</td></tr>
+            <tr><td>561 to 900</td><td>36px</td><td>44 / 52</td><td>18px</td><td>1180px</td></tr>
+            <tr><td>901 to 1279</td><td>42px</td><td>32 / 42</td><td>28px</td><td>1180px</td></tr>
+            <tr><td>1280 to 1599 (base)</td><td>54px</td><td>34 / 44</td><td>48px</td><td>1180px</td></tr>
+            <tr><td>1600 to 1919</td><td>64px</td><td>38 / 48</td><td>64px</td><td>1240px</td></tr>
+            <tr><td>1920 to 2559</td><td>76px</td><td>40 / 52</td><td>80px</td><td>1340px</td></tr>
+            <tr><td>2560 and up</td><td>88px</td><td>40 / 52</td><td>120px</td><td>1480px</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="sg-note">
+        Two <b>height</b> breakpoints also exist, at <code>max-height: 850px</code> and
+        <code>720px</code>, because above 900px wide the hero is locked to exactly one frame. They
+        pull the header padding, the hero gap and the headline down so a short laptop still fits it.
+        Touch targets move the other way: <code>--btn-h</code> goes up to 44px below 900px.
+      </div>
+      <p style="margin-top:14px">Your viewport is resolving the ladder to:</p>
+      <div class="sg-rows" id="sg-ladder"></div>
+    </div>
+  </section>
+
+  <!-- ==================================================== 3. SCALES ======= -->
+  <section class="sg-sec" id="scales">
+    <h2>3. Scales</h2>
+    <p>
+      Tallied out of the injected stylesheet at load. A value appearing once is usually a value that
+      wanted a token; a value appearing many times is the scale doing its job.
+    </p>
+
+    <div class="sg-sub">
+      <h3>Radius</h3>
+      <div class="sg-rows" id="sg-radii"></div>
+    </div>
+
+    <div class="sg-sub">
+      <h3>Stroke and hairline</h3>
+      <p>One pixel everywhere. The only exception is the card sheen at <code>--sheen-w</code>, which
+        takes half a pixel more in light because a dark-to-blue swap on white reads weaker than a
+        dim-to-bright swap on black.</p>
+      <div class="sg-frame sg-frame--flow" id="sg-strokes"></div>
+    </div>
+
+    <div class="sg-sub">
+      <h3>Shadow</h3>
+      <p>
+        Dark emits light, light casts it, and both readings live in the same token names. In light
+        the button carries three stops: contact, near falloff, ambient body, all tinted
+        <code>rgba(16, 16, 19, …)</code> rather than neutral black, because a coloured object casts a
+        coloured shadow and pure black on white reads as dirt.
+      </p>
+      <div class="sg-grid sg-grid--3" id="sg-shadows"></div>
+    </div>
+  </section>
+
+  <!-- ==================================================== 4. MOTION ======= -->
+  <section class="sg-sec" id="motion">
+    <h2>4. Motion</h2>
+    <p>
+      One easing curve, <code>--ease</code> = <code>cubic-bezier(0.16, 1, 0.3, 1)</code>, on every
+      entrance and every transform. 0.35s is the standard for a state change, 0.3s for links and
+      small marks, 0.18s for transforms.
+    </p>
+
+    <div class="sg-sub">
+      <h3>Entrance variants</h3>
+      <p>
+        <code>.appear</code> plus a modifier, with <code>--d</code> as the per-element delay. Each
+        element takes <code>.is-in</code> on <code>animationend</code>, which freezes it at the
+        finished state; a double <code>requestAnimationFrame</code> catches anything whose animation
+        never started, so a missed frame cannot leave content invisible.
+      </p>
+      <div class="sg-frame" id="sg-appear">
+        <div class="sg-grid sg-grid--2">
+          <div><span class="appear appear--fade" style="display:inline-block">appear--fade</span><div class="sg-label">opacity only, 0.7s</div></div>
+          <div><span class="appear appear--soft" style="display:inline-block">appear--soft</span><div class="sg-label">opacity + 14px rise, 1.05s</div></div>
+          <div><span class="appear appear--mask" style="display:inline-block">appear--mask</span><div class="sg-label">opacity + 40% rise in a clipped line, 1.05s</div></div>
+          <div><span class="appear appear--btn" style="display:inline-block">appear--btn</span><div class="sg-label">opacity + 18px rise + scale(0.94), 1.05s</div></div>
+        </div>
+      </div>
+      <button class="sg-btn" type="button" data-replay="#sg-appear">Replay</button>
+    </div>
+
+    <div class="sg-sub">
+      <h3>The hero cascade</h3>
+      <div class="sg-scroll">
+        <table class="sg-tbl">
+          <thead><tr><th>Element</th><th>Delay</th><th>Variant</th></tr></thead>
+          <tbody>
+            <tr><td>header (logo, nav, CTA)</td><td>0.06s</td><td>fade</td></tr>
+            <tr><td>headline line 1</td><td>0.42s</td><td>mask</td></tr>
+            <tr><td>headline line 2</td><td>0.62s</td><td>mask</td></tr>
+            <tr><td>the blue serif phrase</td><td>0.72s</td><td>in-em, its own fade and unblur</td></tr>
+            <tr><td>lede</td><td>0.82s</td><td>soft, stretched to 1.25s</td></tr>
+            <tr><td>CTA</td><td>0.96s</td><td>btn</td></tr>
+            <tr><td>sign-in line</td><td>1.24s</td><td>soft</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="sg-sub">
+      <h3>Scroll reveal</h3>
+      <p>
+        <code>.reveal</code> starts at <code>opacity: 0; translateY(22px)</code> and transitions over
+        0.75s with an optional <code>--rd</code> delay. The hidden state is applied only under
+        <code>.js</code> on <code>&lt;html&gt;</code>, so a dead script leaves the page readable
+        rather than blank. An <code>IntersectionObserver</code> adds <code>.in</code>; on a
+        <code>.step</code> card it also adds <code>.demo</code> for four seconds so the step
+        demonstrates itself once.
+      </p>
+    </div>
+
+    <div class="sg-sub">
+      <h3>Ambient loops</h3>
+      <p>Everything that runs unattended, and nothing else does. The step demos, the closing
+        typewriter and the CTA decode all wait for attention.</p>
+      <div class="sg-scroll">
+        <table class="sg-tbl">
+          <thead><tr><th>Element</th><th>Duration</th><th>Shape</th></tr></thead>
+          <tbody>
+            <tr><td>work label cycle</td><td>13.2s</td><td>six labels, 2.2s apart, 8px slide</td></tr>
+            <tr><td>rail flow dots</td><td>2.4s</td><td>three dots, 0.8s apart, left 0 to 100%</td></tr>
+            <tr><td>rail core pulse</td><td>2.4s</td><td>shadow and border; a ring in light, a halo in dark</td></tr>
+            <tr><td>output chips</td><td>2.4s</td><td>border and fill light in 0.2s sequence</td></tr>
+            <tr><td>terminal log</td><td>11s</td><td>six frames, hold then slide, final frame identical to the first</td></tr>
+            <tr><td>demand beams</td><td>3.2s</td><td>dash offset on a normalised path length</td></tr>
+            <tr><td>spark index</td><td>60s</td><td>one full rotation</td></tr>
+            <tr><td>caption bubbles</td><td>5.5s</td><td>7px float, three phases</td></tr>
+            <tr><td>scroll cue</td><td>2.8s</td><td>6px drift, not a bounce</td></tr>
+            <tr><td>step demos</td><td>3.9s</td><td>pick, slider and bar, staggered</td></tr>
+            <tr><td>model rotation</td><td>5 to 7s hold + 4s sweep</td><td>six GLBs</td></tr>
+            <tr><td>glyph field</td><td>about 14fps</td><td>ambient breath plus the pointer lens</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="sg-sub">
+      <h3>Reduced motion</h3>
+      <p>
+        <code>prefers-reduced-motion: reduce</code> kills every transition and animation globally with
+        <code>!important</code>, drops the particle mask, hides the flow dots, shows only the first
+        work label and forces every entrance and reveal to its finished state. The closing typewriter
+        and the spark lens bail out entirely and the model rotation never starts. The glyph field
+        keeps its pointer lens and stops its own churn, because a lens that follows the cursor is a
+        response rather than an animation.
+      </p>
+      <div class="sg-note" id="sg-rm"></div>
+    </div>
+  </section>
+
+  <!-- ===================================================== 5. ICONS ======= -->
+  <section class="sg-sec" id="icons">
+    <h2>5. Icons</h2>
+    <p>
+      One sprite, drawn once in <code>index.html</code> as <code>&lt;defs id="defs-ca"&gt;</code> and
+      referenced everywhere by <code>&lt;use href="#i-name"/&gt;</code>. The glyphs below are rendered
+      from that injected sprite, so an icon that is not in the sprite cannot appear here.
+      Consumers set <code>fill="none" stroke="currentColor"</code> at 1.4 to 1.8 weight; the spark is
+      the one filled glyph.
+    </p>
+    <div class="sg-grid sg-grid--sw" id="sg-icons"></div>
+    <div class="sg-note">
+      <b>The mark is <code>#i-spark</code>.</b> It appears at four sizes with four different
+      treatments: 28px in the header logo with <code>--mark-shadow</code>, 44px above the closing
+      headline with <code>--close-shadow</code>, <code>clamp(112px, 13vw, 172px)</code> in the
+      dispatch diagram wearing the pointer-driven aberration filter, and <code>1.05em</code> behind
+      the footer wordmark with a masked fade. It is never recoloured away from
+      <code>--spark-ink</code>.
+    </div>
+  </section>
+
+  <!-- =================================================== 6. EFFECTS ======= -->
+  <section class="sg-sec" id="effects">
+    <h2>6. Effects</h2>
+    <p>
+      Four background systems, all of them ambience: each sits at low alpha behind the thing the
+      reader is meant to read, and each parks itself when off screen.
+    </p>
+
+    <div class="sg-sub">
+      <h3>Layer stack</h3>
+      <div class="sg-rows">
+        <div class="sg-row"><b>0</b><span>.hero-media, the clay field (hero only) &middot; .band::before, per-band grain</span></div>
+        <div class="sg-row"><b>1</b><span>.ascii-bg, the 2D glyph field &middot; .hero-ascii, the WebGL model &middot; .band-inner, section content</span></div>
+        <div class="sg-row"><b>2</b><span>.hero, the copy and CTA &middot; .content, everything below the hero</span></div>
+        <div class="sg-row"><b>3</b><span>.card::after, the travelling edge sheen</span></div>
+        <div class="sg-row"><b>40</b><span>.menu-backdrop</span></div>
+        <div class="sg-row"><b>50</b><span>.header</span></div>
+        <div class="sg-row"><b>60</b><span>.burger</span></div>
+        <div class="sg-row"><b>100</b><span>.grain-hero, the hero grain sheet</span></div>
+      </div>
+    </div>
+
+    <div class="sg-sub">
+      <h3>Grain</h3>
+      <p>
+        One <code>feTurbulence</code> SVG as a data URI, <code>fractalNoise</code>,
+        <code>baseFrequency 0.75</code>, four octaves, tiled at 200px. It rides each band rather than
+        the whole page, so a section can carry its own amount: <code>--band-grain</code> is 0.045 in
+        light, and <code>#companies</code> sets it to 0 so that band stays clean under the spark. The
+        hero gets its own sheet at <code>--grain-hero</code>. In light both blend
+        <code>multiply</code>; in dark they lift with <code>screen</code> and <code>overlay</code>.
+      </p>
+      <div class="sg-frame sg-frame--pad0">
+        <div class="band" style="padding:0">
+          <div style="position:relative;height:150px;background:#ffffff">
+            <div style="position:absolute;inset:0;display:grid;place-items:center;font-size:12.5px;color:#767b85;letter-spacing:-0.01em">
+              a band's own grain layer, at the live <code>--band-grain</code>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="sg-label">.band::before, live token</div>
+    </div>
+
+    <div class="sg-sub">
+      <h3>The hero field</h3>
+      <p>
+        Three gradient layers plus two overlays, not a video. The stops were sampled off the clay
+        backdrop of the <code>amb-opening</code> clip, then swapped for neutrals of the same luminance
+        with a faint cool cast and mixed twice toward the page ground, so the light falls the way it
+        did while the field sits within about fifteen levels of the page. The bottom mask is
+        load-bearing: without it the last stop meets the page in one pixel across the full width and
+        that step reads as a ruled line under the hero.
+      </p>
+      <div class="sg-frame sg-frame--pad0">
+        <div style="position:relative;height:210px">
+          <div class="hero-media" style="position:absolute;inset:0"></div>
+        </div>
+      </div>
+      <div class="sg-label">.hero-media, real element</div>
+    </div>
+
+    <div class="sg-sub">
+      <h3>Chromatic aberration</h3>
+      <p>
+        Four filters in the injected sprite. <code>#ca-spark</code> and <code>#ca-foot</code> split
+        channels, which is right on black; their <code>-soft</code> twins paint the fringe instead,
+        because light's marks are blue and a channel split of blue has no red to give, so the red side
+        renders near black and the whole thing reads as a shadow. Light runs the painted pair.
+        <code>#ca-red</code> and <code>#ca-cyan</code> are the flat channel isolators the illustration
+        hover and the footer wordmark use.
+      </p>
+      <div class="sg-frame sg-frame--flow" id="sg-ca"></div>
+      <div class="sg-note">
+        The spark's split is <b>driven by the pointer</b> on the live page: moving inside
+        <code>#companies</code> rewrites <code>dx</code>/<code>dy</code> on the <code>.ca-r</code> and
+        <code>.ca-g</code> <code>feOffset</code> nodes so the axis points along the cursor-to-mark line
+        and the amount grows quadratically as you approach, over a 430px falloff. Light travels 1.1 to
+        3.4, dark 0.35 to 2.1. Not re-implemented here; see the homepage.
+      </div>
+    </div>
+
+    <div class="sg-sub">
+      <h3>The ambient glyph field</h3>
+      <p>
+        One implementation, two hosts: <code>#agents</code> and <code>.hero-wrap</code>. A 2D canvas
+        inserted as the first child of each, <code>aria-hidden</code>,
+        <code>pointer-events: none</code>, at 0.4 opacity. Documented rather than re-rendered here,
+        because the guide never re-implements product behaviour.
+      </p>
+      <div class="sg-rows">
+        <div class="sg-row"><b>ramp</b><span>' .,:;i1tfLCG08@' &mdash; 15 steps</span></div>
+        <div class="sg-row"><b>cell</b><span>15px grid, 11px monospace glyphs</span></div>
+        <div class="sg-row"><b>ambient</b><span>only cells seeded above 0.948 draw at all, at 0.075 alpha, breathing +/- 0.035</span></div>
+        <div class="sg-row"><b>lens</b><span>190px radius at the pointer, quadratic falloff, +0.42 alpha</span></div>
+        <div class="sg-row"><b>churn</b><span>the glyph index rolls on time and on lens strength, so the pool brightens and reshuffles</span></div>
+        <div class="sg-row"><b>fringe</b><span>lens * (1 - lens) * 4, so it peaks at the RIM and is absent at the centre: red at -1px, cyan at +1px</span></div>
+        <div class="sg-row"><b>tint</b><span>lerps --ascii-a to --ascii-b by lens strength</span></div>
+        <div class="sg-row"><b>budget</b><span>68ms throttle (about 14fps), parked off screen, re-seeded on resize</span></div>
+      </div>
+    </div>
+
+    <div class="sg-sub">
+      <h3>The WebGL ASCII model</h3>
+      <p>
+        <code>ascii-object.js</code>, three.js 0.169.0 pinned through an importmap, mounted only at
+        <code>window.innerWidth &gt;= 640</code>. The canvas stays at <code>opacity: 0</code> until a
+        model has actually loaded, so a failed asset leaves no trace.
+      </p>
+      <div class="sg-rows">
+        <div class="sg-row"><b>pass</b><span>GLB to an offscreen target, then a glyph-cell pass, then an atlas pass</span></div>
+        <div class="sg-row"><b>cell</b><span>cellSize 11, cellAspect 0.55</span></div>
+        <div class="sg-row"><b>tone</b><span>contrast 1.6, edgeContrast 3, exposure 1.05</span></div>
+        <div class="sg-row"><b>ink</b><span>colored false, color #3d3d44 &mdash; one ink, so texture colour never drags onto the page</span></div>
+        <div class="sg-row"><b>camera</b><span>fov 32, distance 9.8, orbit off, zoom off</span></div>
+        <div class="sg-row"><b>rotation</b><span>arm, robot100, car, cleaner, dog, sweeper &mdash; 5 to 7s hold, 4s sweep</span></div>
+        <div class="sg-row"><b>swap</b><span>solved from the shader's own head equation against the model's projected x, so the exchange happens under the band</span></div>
+        <div class="sg-row"><b>rig</b><span>the arm runs hinge-constrained CCD IK on six joints read out of its own clip, clamped to 92% of measured reach; the five props turn to follow the cursor instead</span></div>
+      </div>
+      <div class="sg-note sg-note--warn">
+        Every preset <b>resets the IK fields explicitly</b>. <code>setOptions</code> merges, so a prop
+        that does not name <code>ikChain</code> inherits the arm's and spends every frame hunting for
+        bones it does not have.
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================ 7. COMPONENTS ======= -->
+  <section class="sg-sec" id="components">
+    <h2>7. Components</h2>
+    <p>
+      Real classes, styled by the injected sheet. Copy is quoted from <code>index.html</code> wherever
+      the component carries any; where a specimen needs filler it is obviously filler.
+    </p>
+
+    <!-- 7.1 identity -->
+    <div class="sg-sub">
+      <h3>7.1 Logo and navigation</h3>
+      <div class="sg-frame sg-frame--flow">
+        <a class="logo" href="#components" aria-label="onBlue">
+          <svg class="logo-mark" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><use href="#i-spark"/></svg>
+          <span><span class="logo-on">on</span>Blue</span>
+        </a>
+        <nav id="site-nav" aria-label="Specimen" style="position:static;justify-self:auto;opacity:1;visibility:visible;padding:0;background:none">
+          <a href="#components">Benefits</a>
+          <a href="#components">How It Works</a>
+          <a href="#components">FAQs</a>
+          <a class="nav__biz" href="#components">For businesses<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+        </nav>
+      </div>
+      <div class="sg-label">.logo &middot; #site-nav a &middot; .nav__biz</div>
+      <div class="sg-note">
+        Nav hover <b>recedes</b>: ink fades to <code>--muted</code> over 0.35s rather than
+        brightening. The businesses arrow is sized in <code>em</code> (<code>1.6em</code>) so it
+        tracks the label instead of sitting at a fixed pixel size beside it, and it marks the one
+        link that leaves the page.
+      </div>
+    </div>
+
+    <!-- 7.2 header -->
+    <div class="sg-sub">
+      <h3>7.2 Header</h3>
+      <p>Fixed, on the same <code>--band-max</code> grid as every section, three columns
+        <code>1fr auto 1fr</code> so the nav is optically centred whatever the two ends weigh. The
+        frame below is a containing block, so the fixed bar stays inside it.</p>
+
+      <div class="sg-frame sg-frame--pad0 sg-frame--tall" style="background:#f4f4f7">
+        <header class="header">
+          <div class="header-inner">
+            <a class="logo" href="#components" aria-label="onBlue">
+              <svg class="logo-mark" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><use href="#i-spark"/></svg>
+              <span><span class="logo-on">on</span>Blue</span>
+            </a>
+            <nav id="site-nav" aria-label="At rest" style="position:static;opacity:1;visibility:visible;padding:0;background:none">
+              <a href="#components">Benefits</a><a href="#components">How It Works</a><a href="#components">FAQs</a>
+            </nav>
+            <div class="header-end">
+              <a class="btn btn-solid header-cta" href="#components">Start earning</a>
+            </div>
+          </div>
+        </header>
+      </div>
+      <div class="sg-label">.header, at rest &mdash; transparent, outline CTA</div>
+
+      <div class="sg-frame sg-frame--pad0 sg-frame--tall" style="background:#f4f4f7">
+        <header class="header is-stuck">
+          <div class="header-inner">
+            <a class="logo" href="#components" aria-label="onBlue">
+              <svg class="logo-mark" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><use href="#i-spark"/></svg>
+              <span><span class="logo-on">on</span>Blue</span>
+            </a>
+            <nav id="site-nav" aria-label="Stuck" style="position:static;opacity:1;visibility:visible;padding:0;background:none">
+              <a href="#components">Benefits</a><a href="#components">How It Works</a><a href="#components">FAQs</a>
+            </nav>
+            <div class="header-end">
+              <a class="btn btn-solid header-cta" href="#components">Start earning</a>
+            </div>
+          </div>
+        </header>
+      </div>
+      <div class="sg-label">.header.is-stuck &mdash; glass, blur(18px), hairline, padding at 62%</div>
+
+      <div class="sg-note">
+        Two independent switches, both driven by an <code>IntersectionObserver</code> rather than by a
+        scroll distance. A 40px <code>.scroll-probe</code> at the top of the document leaving the
+        viewport sets <code>.is-stuck</code> on the bar and <code>.is-scrolled</code> on
+        <code>&lt;html&gt;</code>. The hero's own CTA leaving the viewport (with
+        <code>rootMargin: -72px</code>) sets <code>.is-past-cta</code>, which fills the header button
+        in. Watching the button rather than a distance is what makes it hold at whatever height the
+        hero resolves to.
+      </div>
+    </div>
+
+    <!-- 7.3 buttons -->
+    <div class="sg-sub">
+      <h3>7.3 Buttons</h3>
+      <p>Two sizes from one base, two treatments. The press is a 1px drop on hover and 2px on
+        <code>:active</code>, with the shadow tightening toward the surface: shadow alone reads as the
+        light changing, the 1px is what makes it a press.</p>
+
+      <div class="sg-frame sg-frame--flow">
+        <a class="btn btn-solid" href="#components">Start earning</a>
+        <a class="btn btn-ghost" href="#components">Secondary</a>
+        <a class="btn btn-solid header-cta" href="#components">Header, at rest</a>
+        <span class="is-past-cta" style="display:inline-flex"><a class="btn btn-solid header-cta" href="#components">Header, past CTA</a></span>
+      </div>
+      <div class="sg-label">small &mdash; --btn-h, --btn-pad, --btn</div>
+
+      <div class="sg-frame sg-frame--flow">
+        <div class="hero-actions" style="margin-top:0">
+          <a class="btn btn-solid hero-solid" href="#components"><span class="scramble">Start earning</span></a>
+          <a class="btn btn-ghost hero-ghost" href="#components">Secondary</a>
+        </div>
+      </div>
+      <div class="sg-label">large &mdash; .hero-actions .btn / .band-actions .btn: --hero-btn-h, --hero-btn-pad, --btn + 1.5px</div>
+
+      <div class="sg-note">
+        <b>Specificity is deliberately flat.</b> <code>.hero-actions .btn</code> is a two-class
+        selector and any size modifier written as a single class will lose to it. That exact collision
+        has landed twice. If a button needs a new size, add it where the height already lives rather
+        than beside it.
+      </div>
+      <div class="sg-note">
+        The hero label decodes on <code>mouseenter</code> and on <code>focus</code>: every character is
+        first frozen at its real measured width, then glyph noise settles into the real letters left to
+        right, so nothing reflows while it runs. Behaviour lives in <code>index.html</code>; the
+        <code>.scramble</code> wrapper above is the markup it needs.
+      </div>
+    </div>
+
+    <!-- 7.4 small surfaces -->
+    <div class="sg-sub">
+      <h3>7.4 Badge, chip, note</h3>
+      <div class="sg-frame sg-frame--flow">
+        <span class="badge">
+          <svg class="badge-star" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><use href="#i-spark"/></svg>
+          A work economy for AI
+        </span>
+        <span class="chip"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-check"/></svg>Verified work</span>
+        <span class="band-note">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-spark"/></svg>
+          The pill that closes a section
+        </span>
+      </div>
+      <div class="sg-label">.badge &middot; .chip &middot; .band-note</div>
+    </div>
+
+    <!-- 7.5 band head -->
+    <div class="sg-sub">
+      <h3>7.5 Section head</h3>
+      <div class="sg-frame">
+        <div class="band-head">
+          <div class="band-top">
+            <h2>The <em>onBlue</em> economy</h2>
+            <span class="eyebrow">A more productive tomorrow</span>
+          </div>
+          <p class="band-sub">Work comes in from companies. Digital and physical agents pick it up. The people who own those agents get paid.</p>
+        </div>
+      </div>
+      <div class="sg-label">.band-head &middot; .band-top &middot; .eyebrow &middot; .band-sub</div>
+
+      <div class="sg-frame">
+        <div class="band-head band-head--center">
+          <span class="eyebrow">Centred variant</span>
+          <h2>Partnered <em>agents</em></h2>
+          <p class="band-sub">Specialized workers can register into the onBlue economy.</p>
+        </div>
+      </div>
+      <div class="sg-label">.band-head--center &mdash; 820px, mirrored eyebrow rule</div>
+
+      <div class="sg-note">
+        The eyebrow's rule is a gradient from transparent to <code>--rule</code>, so it is
+        <b>darkest where it meets the label</b> and dissolves at its far end. Centred heads get the
+        mirror on the other side. The serif emphasis is the only place either font changes.
+      </div>
+    </div>
+
+    <!-- 7.6 card -->
+    <div class="sg-sub">
+      <h3>7.6 Card and the edge sheen</h3>
+      <p>The one surface primitive. Hover raises the border, swaps in the blue-tinted shadow and
+        lifts the card 2px. Move the pointer across the cards below to see the sheen travel.</p>
+      <div class="sg-grid sg-grid--3" id="sg-cards">
+        <div class="card" style="padding:24px">
+          <h3 style="font-size:17px;font-weight:600;letter-spacing:-0.03em;color:var(--ink)">Resting</h3>
+          <p style="margin-top:8px;color:var(--muted);font-size:13.5px;line-height:1.5">1px --border-soft, 16px radius, --card-bg, --card-shadow.</p>
+        </div>
+        <div class="card" style="padding:24px">
+          <h3 style="font-size:17px;font-weight:600;letter-spacing:-0.03em;color:var(--ink)">Hovered</h3>
+          <p style="margin-top:8px;color:var(--muted);font-size:13.5px;line-height:1.5">--card-line-hover, --card-shadow-hover, translateY(-2px), 0.35s.</p>
+        </div>
+        <div class="card" style="padding:24px">
+          <h3 style="font-size:17px;font-weight:600;letter-spacing:-0.03em;color:var(--ink)">Sheen</h3>
+          <p style="margin-top:8px;color:var(--muted);font-size:13.5px;line-height:1.5">A 260px radial on a box 1.5px larger than the card, with the inside subtracted.</p>
+        </div>
+      </div>
+      <div class="sg-label">.card &middot; .card::after (--gx / --gy written once per frame)</div>
+      <div class="sg-note">
+        The ring is the card's own stroke, not a border on top of it: <code>mask-composite: exclude</code>
+        removes the interior of a slightly larger box. In light it also takes a
+        <code>drop-shadow</code> bloom and half a pixel more width, because on white it swaps a dark
+        hairline for a blue one of roughly the same lightness, where on black it swaps a dim hairline
+        for a bright one.
+      </div>
+    </div>
+
+    <!-- 7.7 tiles -->
+    <div class="sg-sub">
+      <h3>7.7 Tiles</h3>
+      <div class="sg-frame sg-frame--tint">
+        <ul class="agent-row" style="margin-top:0;padding-top:0">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-pencil"/></svg>Creator Agent</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-check"/></svg>Test Agent</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-chart"/></svg>Growth Agent</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-search"/></svg>Research Agent</li>
+        </ul>
+      </div>
+      <div class="sg-label">.agent-row li &mdash; translucent white at 62% with backdrop-filter: blur(10px), so the illustration behind settles without being sealed off</div>
+
+      <div class="sg-frame">
+        <ul class="agent-skills" style="margin-top:0">
+          <li><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-pencil"/></svg>Write</li>
+          <li><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-play"/></svg>Edit</li>
+          <li><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-chart"/></svg>Report</li>
+        </ul>
+      </div>
+      <div class="sg-label">.agent-skills li &mdash; stacked above 560px, horizontal below it</div>
+
+      <div class="sg-frame">
+        <ul class="demand-list" style="display:grid;gap:10px">
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-pencil"/></svg>Campaign creative</li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-search"/></svg>Market research</li>
+        </ul>
+      </div>
+      <div class="sg-label">.demand-list li</div>
+
+      <div class="sg-frame sg-frame--flow" style="min-height:90px">
+        <span class="cap-bubble" style="position:static;opacity:1;visibility:visible;padding:0;background:none">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-check"/></svg>
+          Verified on delivery
+        </span>
+      </div>
+      <div class="sg-label">.cap-bubble &mdash; absolute and floating on the page, static here</div>
+    </div>
+
+    <!-- 7.8 terminal -->
+    <div class="sg-sub">
+      <h3>7.8 Terminal</h3>
+      <p>A four-row window over a six-row log. The keyframe holds each frame then slides quickly, and
+        its final frame is one full period, pixel-identical to the first, so the loop wraps without a
+        jump.</p>
+      <div class="sg-frame">
+        <div class="agent-art" style="margin:0">
+          <div class="term-bar"><i></i><i></i><i></i></div>
+          <div class="term-win">
+            <ul class="term-log">
+              <li class="t-task">job 4812 assigned</li>
+              <li>drafting three variants</li>
+              <li>checking brand rules</li>
+              <li class="t-done">delivered, verified</li>
+              <li class="t-task">job 4813 assigned</li>
+              <li>researching the brief</li>
+              <li class="t-task">job 4812 assigned</li>
+              <li>drafting three variants</li>
+              <li>checking brand rules</li>
+              <li class="t-done">delivered, verified</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="sg-label">.agent-art &middot; .term-bar &middot; .term-win &middot; .term-log (.t-task, .t-done)</div>
+      <div class="sg-note">
+        In light the chrome strip is what says "terminal": on black the monospace and the scrolling log
+        already said it, so dark keeps three neutral dots and drops the strip fill entirely.
+      </div>
+    </div>
+
+    <!-- 7.9 step internals -->
+    <div class="sg-sub">
+      <h3>7.9 Step card and its three demonstrations</h3>
+      <p>Nesting <b>alternates</b> rather than stacking: the card is white, the panel inside steps down
+        1%, and the rows inside come back to white. Stacking would make the innermost element darkest
+        and read the nesting as depth rather than as structure. Hover a card to run its demo.</p>
+      <div class="sg-grid sg-grid--3">
+
+        <article class="card step">
+          <div class="step-top">
+            <span class="step-num">1</span>
+            <div><h3>Own an agent</h3><p>Pick the worker you want to put into the economy.</p></div>
+          </div>
+          <div class="step-art">
+            <ul class="pick-list">
+              <li class="is-on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-pencil"/></svg>Creator Agent<span class="pick-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg></span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-cleanbot"/></svg>Cleaning robot<span class="pick-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg></span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-car"/></svg>Robotaxi<span class="pick-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg></span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-drone"/></svg>Delivery drone<span class="pick-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg></span></li>
+            </ul>
+            <span class="pick-note">Selection walks the list while hovered.</span>
+          </div>
+        </article>
+
+        <article class="card step">
+          <div class="step-top">
+            <span class="step-num">2</span>
+            <div><h3>Customize it</h3><p>Tune how it works before it takes a job.</p></div>
+          </div>
+          <div class="step-art">
+            <span class="mini-title">TUNING</span>
+            <div class="slider"><span>Tone</span><div class="slider-track" style="--v:62%"><i></i><b></b></div></div>
+            <div class="slider"><span>Speed</span><div class="slider-track" style="--v:44%"><i></i><b></b></div></div>
+            <div class="slider"><span>Scope</span><div class="slider-track" style="--v:78%"><i></i><b></b></div></div>
+          </div>
+        </article>
+
+        <article class="card step">
+          <div class="step-top">
+            <span class="step-num">3</span>
+            <div><h3>Earn from its work</h3><p>Every completed job pays out to the owner.</p></div>
+          </div>
+          <div class="step-art">
+            <span class="earn-label">This month</span>
+            <div class="earn-figure">$1,840</div>
+            <span class="earn-delta"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-chart"/></svg>+18%</span>
+            <div class="earn-bars">
+              <i style="--h:34%"></i><i style="--h:52%"></i><i style="--h:41%"></i><i style="--h:66%"></i><i style="--h:58%"></i><i style="--h:79%"></i><i style="--h:100%"></i>
+            </div>
+            <span class="earn-payout"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-check"/></svg>Paid out weekly</span>
+          </div>
+        </article>
+
+      </div>
+      <div class="sg-label">.step &middot; .step-num &middot; .step-art &middot; .pick-list &middot; .slider &middot; .earn-bars &middot; .earn-payout</div>
+      <div class="sg-note">
+        All three demos are <b>off by default</b> so nothing loops unattended. They run while hovered,
+        and once for four seconds when the card first scrolls into view (<code>.demo</code>). The bars
+        also grow on the reveal itself, <code>scaleY</code> from a bottom origin with a 50ms stagger.
+      </div>
+    </div>
+
+    <!-- 7.10 rail -->
+    <div class="sg-sub">
+      <h3>7.10 The flow rail</h3>
+      <div class="sg-frame sg-frame--tint">
+        <div class="rail" style="margin-top:0">
+          <span class="rail-node rail-node--work">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-box"/></svg>
+            <span class="work-cycle"><b>Creative work</b><b>Research</b><b>Delivery</b><b>Cleaning</b><b>Inspection</b><b>Transport</b></span>
+          </span>
+          <span class="rail-flow"><i></i><i></i><i></i></span>
+          <span class="rail-core"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><use href="#i-spark"/></svg></span>
+          <span class="rail-flow"><i></i><i></i><i></i></span>
+          <span class="rail-outs">
+            <span class="chip"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-pencil"/></svg>Digital agent</span>
+            <span class="chip"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-cleanbot"/></svg>Physical agent</span>
+            <span class="chip"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-check"/></svg>Paid owner</span>
+          </span>
+        </div>
+      </div>
+      <div class="sg-label">.rail &middot; .rail-node &middot; .work-cycle &middot; .rail-flow &middot; .rail-core &middot; .rail-outs .chip</div>
+      <div class="sg-note">
+        In light <code>.rail-core</code> becomes <b>the mark</b>: a filled blue disc with a white
+        spark and its own coloured drop-shadow, and the pulse is switched off. Dark keeps a tinted
+        disc with a breathing border, which works against black but on white would read as a pale wash
+        rather than as a logo. It cannot borrow <code>--mark-shadow</code>: that glow is pale sky blue
+        at 0.18, which is what a small blue spark needs on white and nothing at all around a saturated
+        disc.
+      </div>
+    </div>
+
+    <!-- 7.11 faq -->
+    <div class="sg-sub">
+      <h3>7.11 FAQ row</h3>
+      <div class="sg-frame">
+        <div class="faq-list" style="margin-top:0">
+          <details class="faq">
+            <summary>What does it cost to own an agent?<span class="faq-sign"></span></summary>
+            <p>Filler answer. The marker is suppressed and replaced by two 1.5px bars; the second rotates back to zero and fades on open, so a plus becomes a minus in one 0.3s move.</p>
+          </details>
+          <details class="faq" open>
+            <summary>How is work verified?<span class="faq-sign"></span></summary>
+            <p>Filler answer, shown open so the border step and the sign state are both visible.</p>
+          </details>
+        </div>
+      </div>
+      <div class="sg-label">.faq &middot; .faq[open] &middot; .faq-sign</div>
+      <div class="sg-note">
+        The border here is <b>half</b> the page's usual hairline. Six of these stack ten pixels apart
+        and at the shared weight their outlines add up until the list reads as a grid; the open state
+        comes down to match so opening is still a step. Their shadow keeps only the contact stop for
+        the same reason.
+      </div>
+    </div>
+
+    <!-- 7.12 closing -->
+    <div class="sg-sub">
+      <h3>7.12 Closing statement</h3>
+      <div class="sg-frame" style="text-align:center">
+        <span class="close-mark"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><use href="#i-spark"/></svg></span>
+        <h2 class="close-title" style="font-weight:500;color:var(--ink)">You could be<br><em>one of them.</em></h2>
+        <div class="band-actions"><a class="btn btn-solid" href="#components">Start earning</a></div>
+        <p class="close-alt">Already have an account? <a href="#components">Sign in</a></p>
+      </div>
+      <div class="sg-label">.close-mark &middot; .band h2.close-title &middot; .band-actions &middot; .close-alt</div>
+      <div class="sg-note">
+        The serif slot is typed on the live page: five endings, 52ms on, 26ms off, 2400ms hold, 520ms
+        gap, ending back on the first so the page at rest shows the written headline. It builds
+        character cells rather than rewriting <code>textContent</code>, so the layout never reflows,
+        and it re-arms only after the section has been off screen for ten seconds, so it never loops
+        at a reader sitting on it.
+      </div>
+    </div>
+
+    <!-- 7.13 cue and burger -->
+    <div class="sg-sub">
+      <h3>7.13 Scroll cue and burger</h3>
+      <div class="sg-frame sg-frame--flow" style="min-height:120px">
+        <span style="position:relative;display:inline-block;width:120px;height:70px">
+          <a class="scroll-cue" href="#components" style="bottom:0" aria-label="Scroll">
+            <span class="scroll-cue-word">Scroll</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5.5v13M6.5 13l5.5 5.5 5.5-5.5"/></svg>
+          </a>
+        </span>
+        <button class="burger" type="button" style="display:grid" aria-label="Menu specimen"><span></span><span></span><span></span></button>
+      </div>
+      <div class="sg-label">.scroll-cue &middot; .burger (forced visible; it is display:none above 900px)</div>
+      <div class="sg-note">
+        The cue <b>drifts</b> 6px rather than bouncing, because a bounce is an alert and this is a
+        hint, and it is a real anchor so a keyboard can reach it. It leaves on
+        <code>.is-scrolled</code>, the moment the page moves, because by then it has said everything
+        it had to say.
+      </div>
+    </div>
+
+    <!-- 7.14 footer -->
+    <div class="sg-sub">
+      <h3>7.14 Footer</h3>
+      <div class="sg-frame sg-frame--pad0">
+        <footer class="site-foot">
+          <div class="foot-inner">
+            <div class="foot-grid">
+              <div class="foot-brand">
+                <a class="logo" href="#components" aria-label="onBlue">
+                  <svg class="logo-mark" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><use href="#i-spark"/></svg>
+                  <span><span class="logo-on">on</span>Blue</span>
+                </a>
+                <p>A work economy for<br>digital and physical AI.</p>
+              </div>
+              <nav class="foot-col" aria-label="Explore specimen">
+                <h3>Explore onBlue</h3>
+                <a href="#components">The economy</a>
+                <a href="#components">Meet the agents</a>
+                <a href="#components">How it works</a>
+              </nav>
+              <nav class="foot-col" aria-label="Start specimen">
+                <h3>Your next chapter</h3>
+                <a href="#components">Start earning <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.4 17.6 17.6 6.4"/><path d="M9.4 6.4h8.2v8.2"/></svg></a>
+                <a href="#components">Sign in</a>
+              </nav>
+              <a class="foot-top" href="#components">Back to top <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="M6 11l6-6 6 6"/></svg></a>
+            </div>
+          </div>
+          <div class="foot-mark" aria-hidden="true" style="font-size:clamp(64px, 12vw, 150px)">
+            <span class="foot-sun"><span class="foot-sun-in"><svg viewBox="0 0 24 24" fill="currentColor"><use href="#i-spark"/></svg></span></span>
+            <span class="foot-crop"><span class="foot-word"><span class="fw fw--base"><span class="logo-on">on</span>Blue</span><span class="fw fw--l" aria-hidden="true"><span class="logo-on">on</span>Blue</span><span class="fw fw--r" aria-hidden="true"><span class="logo-on">on</span>Blue</span></span></span>
+          </div>
+          <div class="foot-tail">
+            <div class="foot-base"><span>&copy; 2026 onBlue</span><span>Human ambition. Agent execution.</span></div>
+          </div>
+        </footer>
+      </div>
+      <div class="sg-label">.site-foot &middot; .foot-grid &middot; .foot-col &middot; .foot-mark &middot; .foot-word (.fw--base / .fw--l / .fw--r) &middot; .foot-sun</div>
+      <div class="sg-note">
+        The wordmark is deliberately <b>cropped</b>: a <code>0.9em</code> box against a 1em line box,
+        so roughly the lowest tenth of the letterforms is cut by the edge of the page. Three copies are
+        stacked and the two fringe copies are masked to the outer 16% at each end, so the split shows
+        at the ends of the word and nowhere in the middle. In light they are painted rather than
+        channel-filtered, because a channel filter on a near-black wordmark returns black. The
+        specimen above is scaled down; on the page it clamps to 300px.
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================== 8. COVERAGE ======= -->
+  <section class="sg-sec" id="coverage">
+    <h2>8. Coverage</h2>
+    <p>
+      Measured at load by diffing every class the injected stylesheet declares against every class this
+      document actually renders. It is a floor, not a proof: a class can be covered here and still
+      carry markup or copy that has drifted from the page. Read the uncovered list as a worklist.
+    </p>
+    <div class="sg-stats" id="sg-cov-stats"></div>
+    <div class="sg-sub">
+      <h3>Not specimened</h3>
+      <p id="sg-cov-note"></p>
+      <div class="sg-chips" id="sg-cov-list"></div>
+    </div>
+  </section>
+
+  <!-- ====================================================== 9. GAPS ======= -->
+  <section class="sg-sec" id="gaps">
+    <h2>9. Known gaps and house conventions</h2>
+
+    <div class="sg-sub">
+      <h3>What this guide cannot catch</h3>
+      <ul class="sg-list">
+        <li><b>Markup, copy and states.</b> Specimens are hand-written here while the page writes its
+          own. A component restyled in the sheet updates here for free; a component whose markup or copy
+          changed does not. Quote from <code>index.html</code>, never author.</li>
+        <li><b>Behaviour.</b> The CTA decode, the closing typewriter, the glyph field, the spark lens,
+          the illustration swap and the model rotation all live in the page's scripts and are
+          documented here rather than re-run. Their parameters can go stale.</li>
+        <li><b>The right token.</b> Coverage counts whether a class is rendered, not whether it used
+          the correct value. A raw pixel where a token existed passes everything on this page.</li>
+        <li><b>Dark.</b> The page is forced to light. Every token has a dark reading in the sheet and
+          none of them are exercised here.</li>
+      </ul>
+    </div>
+
+    <div class="sg-sub">
+      <h3>Conventions the page is actually built on</h3>
+      <ul class="sg-list">
+        <li><b>One token, one value.</b> A colour that is not a token cannot switch themes. Anything
+          needing two readings is expressed as a switch, not as a duplicated rule.</li>
+        <li><b>Specificity stays flat.</b> The hero block is appended last rather than escalating
+          selectors. Two defects have come from a two-class selector quietly outranking a one-class
+          modifier.</li>
+        <li><b>Measure, do not eyeball.</b> The hero field's stops were sampled off a frame, the model
+          swap point is solved from the shader's own equation, and the arm's joint limits were read out
+          of its animation clip.</li>
+        <li><b>Effects are ambience.</b> Everything decorative sits at low alpha behind the content and
+          parks itself off screen.</li>
+        <li><b>Nothing loops unattended</b> beyond the ambient set in section 4.</li>
+        <li><b>A dead script leaves a readable page.</b> Reveal hiding is gated on <code>.js</code>,
+          the typed headline engages only once its cells exist, and the WebGL canvas stays invisible
+          until a model has loaded.</li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="sg-foot" id="sg-foot"></div>
+</div>
+
+<script>
+/* ---------------------------------------------------------------------------
+   The guide is a VIEW, so the first thing it does is go and read the thing it
+   is a view of. Nothing renders until that has landed: a half-styled specimen
+   is worse than a loading message, because it looks like a design decision.
+   --------------------------------------------------------------------------- */
+(function () {
+  'use strict';
+
+  var SOURCE = 'index.html';
+
+  /* the token groups. a token the product declares that no group claims is
+     reported at the end of section 1, which is how a new token announces
+     itself instead of sitting unseen for a release. */
+  var GROUPS = [
+    { name: 'Ground and ink', note: 'The page surface and every weight of text on it.',
+      keys: ['--bg', '--text', '--ink', '--ink-soft', '--lede-ink', '--muted', '--note-ink', '--tile-ink', '--chip-ink', '--mini-ink', '--skill-ink', '--dim-ink'] },
+    { name: 'Brand', note: 'The blue is the fill; blue-ink is the same colour cleared for type on white.',
+      keys: ['--blue', '--blue-ink', '--accent', '--green', '--green-ink', '--green-line', '--green-fill', '--spark-ink'] },
+    { name: 'Surfaces', note: 'Fractions of a percent apart. Alternation, not elevation by lightness.',
+      keys: ['--charcoal', '--charcoal-2', '--charcoal-3', '--card-bg', '--band-lift', '--band-tint', '--panel-bg', '--bar-bg', '--tile-bg', '--tile-bg-2', '--bubble-bg', '--skill-fill', '--term-bar-bg', '--art-scrim', '--glass', '--scrim', '--burger-bg'] },
+    { name: 'Strokes', note: 'Section joins take the lightest: they run the full width and carry far more ink than the same weight around a card.',
+      keys: ['--border', '--border-soft', '--hair', '--hair-2', '--band-line', '--rule', '--faq-line', '--faq-line-open', '--term-line', '--term-bar-line', '--badge-line', '--glass-line', '--card-line-hover', '--link-underline', '--link-hover', '--burger-line-hover', '--green-line'] },
+    { name: 'Washes', note: 'Translucent steps used where a fill has to sit over artwork.',
+      keys: ['--wash-1', '--wash-2', '--wash-3', '--wash-4', '--wash-5', '--wash-hover'] },
+    { name: 'Button', note: 'Solid is ink in light, white in dark. Hover deepens the fill and drops the button 1px.',
+      keys: ['--solid-bg', '--solid-ink', '--solid-bg-hover', '--solid-line-hover', '--solid-glow', '--solid-glow-2', '--hero-glow', '--hero-glow-2', '--scramble-ink'] },
+    { name: 'Shadow', note: 'Whole shadow lists, not just their colours: dark emits, light casts.',
+      keys: ['--card-shadow', '--card-shadow-hover', '--faq-shadow', '--solid-shadow', '--solid-shadow-hover', '--hero-shadow', '--hero-shadow-hover', '--core-glow', '--core-glow-lit'] },
+    { name: 'Glow and fringe', note: 'One pass in light, two in dark: on white the eye finds the inner pass’s falloff edge as a ring.',
+      keys: ['--mark-glow', '--star-glow', '--em-glow', '--em-glow-2', '--caret-glow', '--spark-glow', '--spark-glow-2', '--close-glow', '--beam-glow', '--mark-shadow', '--star-shadow', '--em-shadow', '--close-shadow', '--spark-shadow', '--foot-shadow', '--beam-shadow', '--ca-spark', '--ca-foot', '--foot-fade', '--fringe-l', '--fringe-r', '--ca-opacity', '--sheen-a', '--sheen-b', '--sheen-w', '--sheen-bloom'] },
+    { name: 'Effect switches', note: 'The four values that genuinely break when the ground flips.',
+      keys: ['--blend-lift', '--blend-hero', '--hands-filter', '--hands-ca', '--art-base-filter', '--ascii-a', '--ascii-b', '--band-grain', '--grain-hero', '--hero-video', '--hero-hands', '--hands-wave', '--hero-scrim'] },
+    { name: 'Type scale', note: 'Every one of these is re-declared per breakpoint; the ladder is in section 2.',
+      keys: ['--ui-font', '--serif-font', '--h1', '--h2', '--lede', '--nav', '--btn', '--badge', '--badge-star', '--logo', '--logo-mark'] },
+    { name: 'Geometry', note: 'Header, sections and footer all resolve their width from --band-max and one gutter.',
+      keys: ['--band-max', '--section-max', '--band-y', '--header-x', '--header-y', '--header-h', '--nav-h', '--nav-pad', '--btn-h', '--btn-pad', '--hero-btn-h', '--hero-btn-pad', '--badge-pad', '--badge-mb', '--lede-mt', '--lede-max', '--actions-mt', '--actions-gap', '--copy-max', '--hero-gap', '--hero-rise', '--cta-gap', '--card-radius'] },
+    { name: 'Motion', note: 'One curve.', keys: ['--ease'] }
+  ];
+
+  var boot = document.getElementById('sg-boot');
+  var app = document.getElementById('sg-app');
+
+  fetch(SOURCE, { cache: 'no-store' })
+    .then(function (r) {
+      if (!r.ok) { throw new Error(SOURCE + ' returned ' + r.status); }
+      return r.text();
+    })
+    .then(function (html) {
+      var doc = new DOMParser().parseFromString(html, 'text/html');
+
+      /* THE STYLESHEET. index.html carries two <style>-adjacent blocks: the
+         theme-priming <script> and the one real <style>. Take the longest, so
+         a future second block cannot silently win. */
+      var blocks = Array.prototype.slice.call(doc.querySelectorAll('style'));
+      if (!blocks.length) { throw new Error('no <style> block found in ' + SOURCE); }
+      blocks.sort(function (a, b) { return b.textContent.length - a.textContent.length; });
+      document.getElementById('sg-product').textContent = blocks[0].textContent;
+
+      /* THE SPRITE, so every icon and every filter below is the real one. */
+      var defs = doc.querySelector('#defs-ca');
+      if (defs) {
+        var holder = defs.closest('svg');
+        if (holder) { document.body.appendChild(document.importNode(holder, true)); }
+      }
+
+      boot.remove();
+      app.hidden = false;
+      build(defs);
+    })
+    .catch(function (err) {
+      boot.innerHTML = '<div><b>Could not read ' + SOURCE + '</b>' +
+        String(err.message || err) +
+        '<br><br>This guide renders the homepage’s own CSS rather than a copy of it, so it needs ' +
+        'to fetch that file. Serve the folder over http and reload.</div>';
+    });
+
+  /* ------------------------------------------------------------------ build */
+  function build(defs) {
+    var root = document.documentElement;
+    var cs = getComputedStyle(root);
+    var sheet = findProductSheet();
+    var rules = sheet ? flatten(sheet) : [];
+
+    var declared = declaredTokens(rules);
+    renderTokens(cs, declared);
+    renderType();
+    renderLadder(cs);
+    renderScales(rules, cs);
+    renderShadows();
+    renderStrokes(cs);
+    renderIcons(defs);
+    renderCa();
+    renderReducedMotion();
+    renderCoverage(rules);
+    renderStats(declared, rules);
+    wireSheen();
+    wireReplay();
+
+    document.getElementById('sg-foot').textContent =
+      'Measured from ' + SOURCE + ' at ' + new Date().toLocaleString() +
+      '. Every number on this page is read from that file, never transcribed.';
+  }
+
+  function findProductSheet() {
+    var node = document.getElementById('sg-product');
+    for (var i = 0; i < document.styleSheets.length; i++) {
+      if (document.styleSheets[i].ownerNode === node) { return document.styleSheets[i]; }
+    }
+    return null;
+  }
+
+  /* every style rule, media queries walked into */
+  function flatten(sheet) {
+    var out = [];
+    (function walk(list) {
+      for (var i = 0; i < list.length; i++) {
+        var rule = list[i];
+        if (rule.style && rule.selectorText) { out.push(rule); }
+        if (rule.cssRules) { walk(rule.cssRules); }
+      }
+    })(sheet.cssRules || []);
+    return out;
+  }
+
+  function declaredTokens(rules) {
+    var seen = Object.create(null);
+    rules.forEach(function (rule) {
+      if (!/(^|,)\s*:root/.test(rule.selectorText)) { return; }
+      for (var i = 0; i < rule.style.length; i++) {
+        var name = rule.style[i];
+        if (name.indexOf('--') === 0) { seen[name] = 1; }
+      }
+    });
+    return Object.keys(seen).sort();
+  }
+
+  /* ------------------------------------------------------------- 1. tokens */
+  function renderTokens(cs, declared) {
+    var host = document.getElementById('sg-token-groups');
+    var claimed = Object.create(null);
+    var frag = document.createDocumentFragment();
+
+    GROUPS.forEach(function (group) {
+      var live = group.keys.filter(function (k) { return declared.indexOf(k) !== -1; });
+      if (!live.length) { return; }
+      live.forEach(function (k) { claimed[k] = 1; });
+
+      var sub = el('div', 'sg-sub');
+      sub.appendChild(el('h3', '', group.name));
+      if (group.note) { sub.appendChild(el('p', '', group.note)); }
+
+      var colours = live.filter(isColourToken);
+      var others = live.filter(function (k) { return !isColourToken(k); });
+
+      if (colours.length) {
+        var grid = el('div', 'sg-grid sg-grid--sw');
+        colours.forEach(function (k) {
+          var value = cs.getPropertyValue(k).trim();
+          var tok = el('div', 'sg-tok');
+          var swatch = el('i');
+          var fill = el('span');
+          fill.style.background = value;
+          swatch.appendChild(fill);
+          var dl = document.createElement('dl');
+          dl.appendChild(el('dt', '', k));
+          dl.appendChild(el('dd', '', value || '(empty)'));
+          tok.appendChild(swatch);
+          tok.appendChild(dl);
+          grid.appendChild(tok);
+        });
+        sub.appendChild(grid);
+      }
+
+      if (others.length) {
+        var rows = el('div', 'sg-rows');
+        others.forEach(function (k) {
+          var row = el('div', 'sg-row');
+          row.appendChild(el('b', '', k));
+          row.appendChild(el('span', '', cs.getPropertyValue(k).trim() || '(empty)'));
+          rows.appendChild(row);
+        });
+        sub.appendChild(rows);
+      }
+
+      frag.appendChild(sub);
+    });
+
+    host.appendChild(frag);
+
+    var orphans = declared.filter(function (k) { return !claimed[k]; });
+    var note = document.getElementById('sg-token-orphans');
+    var sub2 = el('div', 'sg-sub');
+    sub2.appendChild(el('h3', '', 'Ungrouped'));
+    if (!orphans.length) {
+      sub2.appendChild(el('p', '', 'Every token the sheet declares is claimed by a group above.'));
+    } else {
+      var p = el('p', '', orphans.length + ' token' + (orphans.length === 1 ? '' : 's') +
+        ' declared by the sheet that no group in this guide claims. Add each to a GROUPS entry, or delete it from the sheet if it is dead.');
+      sub2.appendChild(p);
+      var chips = el('div', 'sg-chips');
+      orphans.forEach(function (k) { chips.appendChild(el('code', '', k)); });
+      sub2.appendChild(chips);
+    }
+    note.appendChild(sub2);
+  }
+
+  function isColourToken(name) {
+    return !/^--(ui-font|serif-font|ease|h1|h2|lede$|nav$|btn$|badge$|badge-star|logo|band-max|section-max|band-y|header-|nav-h|nav-pad|btn-h|btn-pad|hero-btn|badge-pad|badge-mb|lede-mt|lede-max|actions-|copy-max|hero-gap|hero-rise|cta-gap|card-radius|blend-|hands-filter|hands-ca|hands-wave|art-base-filter|ascii-|band-grain|grain-hero|hero-video|hero-hands|hero-scrim|sheen-w|sheen-bloom|ca-opacity|ca-spark|ca-foot|foot-fade|mark-shadow|star-shadow|em-shadow|close-shadow|spark-shadow|foot-shadow|beam-shadow|card-shadow|faq-shadow|solid-shadow|hero-shadow|core-glow)/.test(name);
+  }
+
+  /* --------------------------------------------------------------- 2. type */
+  function renderType() {
+    var host = document.getElementById('sg-type');
+    var specimens = [
+      { cls: 'hero h1', build: function () {
+          var h = document.createElement('div'); h.className = 'hero';
+          h.style.cssText = 'display:block;padding:0;min-height:0';
+          h.innerHTML = '<h1 style="align-items:flex-start"><span class="headline-line">The work economy for</span><span class="headline-line"><em>digital and physical</em> AI.</span></h1>';
+          return h;
+        }, sel: 'h1' },
+      { cls: 'band h2', build: function () {
+          var d = document.createElement('div'); d.className = 'band'; d.style.padding = '0';
+          d.innerHTML = '<h2>Companies bring work to <em>onBlue</em></h2>';
+          return d;
+        }, sel: 'h2' },
+      { cls: 'band h2.close-title', build: function () {
+          var d = document.createElement('div'); d.className = 'band'; d.style.padding = '0';
+          d.innerHTML = '<h2 class="close-title" style="font-weight:500;color:var(--ink)">You could be <em>one of them.</em></h2>';
+          return d;
+        }, sel: 'h2' },
+      { cls: 'lede', html: '<p class="lede">Individuals can own an agent, customize it, and earn from the work it does.</p>', sel: '.lede' },
+      { cls: 'band-sub', html: '<p class="band-sub">Work comes in from companies. Digital and physical agents pick it up.</p>', sel: '.band-sub' },
+      { cls: 'eyebrow', html: '<span class="eyebrow">A more productive tomorrow</span>', sel: '.eyebrow' },
+      { cls: 'agent-card h3', html: '<div class="agent-card" style="padding:0;text-align:left"><h3>Blue <span>creator agent</span></h3></div>', sel: 'h3' },
+      { cls: 'step-top h3', html: '<div class="step-top"><div><h3>Own an agent</h3><p>Pick the worker you want to put into the economy.</p></div></div>', sel: 'h3' },
+      { cls: 'earn-figure', html: '<div class="earn-figure">$1,840</div>', sel: '.earn-figure' },
+      { cls: 'btn', html: '<a class="btn btn-solid" href="#type">Start earning</a>', sel: '.btn' },
+      { cls: 'term-log li', html: '<ul class="term-log" style="animation:none"><li class="t-task">job 4812 assigned</li></ul>', sel: 'li' },
+      { cls: 'foot-brand p', html: '<div class="foot-brand"><p>A work economy for digital and physical AI.</p></div>', sel: 'p' }
+    ];
+
+    specimens.forEach(function (spec) {
+      if (spec.skip) { return; }
+      var frame = el('div', 'sg-frame');
+      var node;
+      if (spec.build) { node = spec.build(); frame.appendChild(node); }
+      else { frame.innerHTML = spec.html; }
+      host.appendChild(frame);
+
+      var target = frame.querySelector(spec.sel);
+      var label = el('div', 'sg-label');
+      if (target) {
+        var s = getComputedStyle(target);
+        label.textContent = '.' + spec.cls + '  ·  ' + s.fontSize + ' / ' + s.fontWeight +
+          '  ·  tracking ' + (s.letterSpacing === 'normal' ? '0' : s.letterSpacing) +
+          '  ·  leading ' + s.lineHeight +
+          '  ·  ' + shortFamily(s.fontFamily);
+      } else {
+        label.textContent = '.' + spec.cls;
+      }
+      host.appendChild(label);
+    });
+  }
+
+  function shortFamily(stack) {
+    var first = String(stack).split(',')[0].replace(/["']/g, '').trim();
+    return first;
+  }
+
+  function renderLadder(cs) {
+    var host = document.getElementById('sg-ladder');
+    ['--h1', '--h2', '--lede', '--btn', '--btn-h', '--hero-btn-h', '--nav', '--nav-h', '--header-x', '--header-y', '--band-max', '--band-y', '--copy-max'].forEach(function (k) {
+      var row = el('div', 'sg-row');
+      row.appendChild(el('b', '', k));
+      row.appendChild(el('span', '', cs.getPropertyValue(k).trim() || '(empty)'));
+      host.appendChild(row);
+    });
+    var w = el('div', 'sg-row');
+    w.appendChild(el('b', '', 'viewport'));
+    w.appendChild(el('span', '', window.innerWidth + ' x ' + window.innerHeight));
+    host.appendChild(w);
+  }
+
+  /* ------------------------------------------------------------- 3. scales */
+  function renderScales(rules, cs) {
+    tally(rules, 'border-radius', document.getElementById('sg-radii'));
+  }
+
+  function tally(rules, prop, host) {
+    var map = Object.create(null);
+    rules.forEach(function (rule) {
+      var v = rule.style.getPropertyValue(prop);
+      if (!v) { return; }
+      v = v.trim();
+      (map[v] = map[v] || []).push(rule.selectorText);
+    });
+    var keys = Object.keys(map).sort(function (a, b) { return map[b].length - map[a].length; });
+    if (!keys.length) { host.appendChild(el('div', 'sg-row', 'nothing declared')); return; }
+    keys.forEach(function (k) {
+      var row = el('div', 'sg-row');
+      row.appendChild(el('b', '', k));
+      var uses = map[k];
+      var text = uses.length + (uses.length === 1 ? ' use  ·  ' : ' uses  ·  ') +
+        uses.slice(0, 4).join(', ') + (uses.length > 4 ? ', +' + (uses.length - 4) + ' more' : '');
+      row.appendChild(el('span', '', text));
+      host.appendChild(row);
+    });
+  }
+
+  function renderShadows() {
+    var host = document.getElementById('sg-shadows');
+    [
+      ['--card-shadow', 'card at rest'],
+      ['--card-shadow-hover', 'card hovered'],
+      ['--faq-shadow', 'faq row, contact stop only'],
+      ['--solid-shadow', 'button, small'],
+      ['--solid-shadow-hover', 'button hovered, light at the surface'],
+      ['--hero-shadow', 'button, large'],
+      ['--hero-shadow-hover', 'large button hovered'],
+      ['--core-glow', 'rail core at rest'],
+      ['--core-glow-lit', 'rail core lit']
+    ].forEach(function (pair) {
+      var box = el('div');
+      var swatch = el('div');
+      swatch.style.cssText = 'height:74px;border-radius:12px;background:#fff;border:1px solid rgba(0,0,0,0.06);box-shadow:var(' + pair[0] + ')';
+      box.appendChild(swatch);
+      var lab = el('div', 'sg-label', pair[0] + '  ·  ' + pair[1]);
+      lab.style.marginTop = '12px';
+      box.appendChild(lab);
+      host.appendChild(box);
+    });
+  }
+
+  function renderStrokes(cs) {
+    var host = document.getElementById('sg-strokes');
+    [['--border', '15% black'], ['--border-soft', '10%'], ['--hair', '8%'], ['--band-line', '4%, section joins'], ['--faq-line', '7%, half weight'], ['--hair-2', '13%'], ['--rule', '32%, the eyebrow gradient']].forEach(function (pair) {
+      var box = el('div');
+      box.style.cssText = 'flex:1 1 150px;min-width:140px';
+      var line = el('div');
+      line.style.cssText = 'height:52px;border:1px solid var(' + pair[0] + ');border-radius:8px';
+      box.appendChild(line);
+      var lab = el('div', 'sg-label', pair[0]);
+      lab.style.marginTop = '8px';
+      box.appendChild(lab);
+      var val = el('div', 'sg-label', cs.getPropertyValue(pair[0]).trim() + ' · ' + pair[1]);
+      val.style.marginTop = '2px';
+      box.appendChild(val);
+      host.appendChild(box);
+    });
+  }
+
+  /* -------------------------------------------------------------- 5. icons */
+  function renderIcons(defs) {
+    var host = document.getElementById('sg-icons');
+    if (!defs) {
+      host.appendChild(el('p', 'sg-label', 'the sprite was not found in ' + SOURCE));
+      return;
+    }
+    var groups = defs.querySelectorAll('g[id]');
+    if (!groups.length) {
+      host.appendChild(el('p', 'sg-label', 'the sprite carries no <g id> glyphs'));
+      return;
+    }
+    Array.prototype.forEach.call(groups, function (g) {
+      var id = g.id;
+      var filled = id === 'i-spark';
+      var cell = el('div', 'sg-ico');
+      cell.innerHTML =
+        '<svg viewBox="0 0 24 24" ' +
+        (filled ? 'fill="currentColor"' : 'fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"') +
+        ' aria-hidden="true"><use href="#' + id + '"/></svg>' +
+        '<span>#' + id + '</span>';
+      host.appendChild(cell);
+    });
+  }
+
+  function renderCa() {
+    var host = document.getElementById('sg-ca');
+    var live = getComputedStyle(document.documentElement).getPropertyValue('--ca-spark').trim();
+    [
+      ['none', 'no filter'],
+      ['url(#ca-spark)', '#ca-spark, channel split (dark)'],
+      ['url(#ca-spark-soft)', '#ca-spark-soft, painted fringe (light)'],
+      ['url(#ca-red)', '#ca-red'],
+      ['url(#ca-cyan)', '#ca-cyan']
+    ].forEach(function (pair) {
+      var box = el('div');
+      box.style.cssText = 'flex:0 0 auto;text-align:center';
+      box.innerHTML = '<span style="display:inline-block;width:76px;height:76px;color:var(--spark-ink);filter:' + pair[0] + '">' +
+        '<svg viewBox="0 0 24 24" fill="currentColor" style="display:block;width:100%;height:100%"><use href="#i-spark"/></svg></span>';
+      var lab = el('div', 'sg-label', pair[1] + (pair[0] === live ? '  ← live' : ''));
+      lab.style.marginTop = '8px';
+      box.appendChild(lab);
+      host.appendChild(box);
+    });
+  }
+
+  function renderReducedMotion() {
+    var on = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    document.getElementById('sg-rm').innerHTML = on
+      ? 'Your system is asking for <b>reduced motion</b>, so every animation on this page is already suppressed. What you see above is the reduced reading, not the full one.'
+      : 'Your system is <b>not</b> asking for reduced motion, so the specimens above are running the full reading.';
+  }
+
+  /* ----------------------------------------------------------- 8. coverage */
+  function renderCoverage(rules) {
+    var declared = Object.create(null);
+    rules.forEach(function (rule) {
+      var m = rule.selectorText.match(/\.-?[_a-zA-Z][_a-zA-Z0-9-]*/g);
+      if (!m) { return; }
+      m.forEach(function (c) { declared[c.slice(1)] = 1; });
+    });
+
+    var present = Object.create(null);
+    Array.prototype.forEach.call(document.querySelectorAll('*'), function (node) {
+      if (!node.classList) { return; }
+      Array.prototype.forEach.call(node.classList, function (c) { present[c] = 1; });
+    });
+
+    var all = Object.keys(declared).filter(function (c) { return c.indexOf('sg-') !== 0; }).sort();
+    var missing = all.filter(function (c) { return !present[c]; });
+    var pct = all.length ? Math.round(((all.length - missing.length) / all.length) * 100) : 0;
+
+    stat(document.getElementById('sg-cov-stats'), pct + '%', 'class coverage');
+    stat(document.getElementById('sg-cov-stats'), String(all.length - missing.length), 'specimened');
+    stat(document.getElementById('sg-cov-stats'), String(missing.length), 'not specimened');
+    stat(document.getElementById('sg-cov-stats'), String(all.length), 'classes in the sheet');
+
+    document.getElementById('sg-cov-note').textContent = missing.length
+      ? missing.length + ' class' + (missing.length === 1 ? '' : 'es') + ' the sheet styles that this guide never renders. ' +
+        'Most are page states, hero-only scaffolding and mid-gesture modifiers, but read the list rather than assuming that: a component root in here is a real gap.'
+      : 'Every class the sheet styles is rendered somewhere on this page.';
+
+    var chips = document.getElementById('sg-cov-list');
+    missing.forEach(function (c) { chips.appendChild(el('code', '', '.' + c)); });
+  }
+
+  function renderStats(declared, rules) {
+    var host = document.getElementById('sg-stats');
+    var sizes = Object.create(null), radii = Object.create(null), kf = 0;
+    rules.forEach(function (rule) {
+      var fs = rule.style.getPropertyValue('font-size');
+      if (fs) { sizes[fs.trim()] = 1; }
+      var br = rule.style.getPropertyValue('border-radius');
+      if (br) { radii[br.trim()] = 1; }
+    });
+    var sheet = findProductSheet();
+    if (sheet) {
+      (function walk(list) {
+        for (var i = 0; i < list.length; i++) {
+          if (list[i].type === 7 || (list[i].constructor && list[i].constructor.name === 'CSSKeyframesRule')) { kf++; }
+          if (list[i].cssRules && !list[i].name) { walk(list[i].cssRules); }
+        }
+      })(sheet.cssRules || []);
+    }
+    stat(host, String(declared.length), 'tokens');
+    stat(host, String(rules.length), 'style rules');
+    stat(host, String(Object.keys(sizes).length), 'font sizes');
+    stat(host, String(Object.keys(radii).length), 'radii');
+    stat(host, String(kf), 'keyframe sets');
+  }
+
+  function stat(host, value, label) {
+    var box = el('div', 'sg-stat');
+    box.appendChild(el('b', '', value));
+    box.appendChild(el('span', '', label));
+    host.appendChild(box);
+  }
+
+  /* ------------------------------------------------------------- behaviour */
+
+  /* the only product behaviour re-run here, because a card without its sheen
+     is not the card. ten lines, and it is the page's own mechanism: find the
+     card under the pointer, write two custom properties, once per frame. */
+  function wireSheen() {
+    var hit = null, x = 0, y = 0, queued = false;
+    function paint() {
+      queued = false;
+      if (!hit) { return; }
+      var box = hit.getBoundingClientRect();
+      hit.style.setProperty('--gx', (x - box.left) + 'px');
+      hit.style.setProperty('--gy', (y - box.top) + 'px');
+    }
+    document.addEventListener('mousemove', function (e) {
+      var card = e.target.closest ? e.target.closest('.card') : null;
+      hit = card;
+      if (!card) { return; }
+      x = e.clientX; y = e.clientY;
+      if (!queued) { queued = true; requestAnimationFrame(paint); }
+    }, { passive: true });
+  }
+
+  function wireReplay() {
+    Array.prototype.forEach.call(document.querySelectorAll('[data-replay]'), function (btn) {
+      btn.addEventListener('click', function () {
+        var host = document.querySelector(btn.getAttribute('data-replay'));
+        if (!host) { return; }
+        Array.prototype.forEach.call(host.querySelectorAll('.appear'), function (node) {
+          var cls = node.className;
+          node.className = '';
+          void node.offsetWidth;
+          node.className = cls;
+        });
+      });
+    });
+  }
+
+  function el(tag, cls, text) {
+    var node = document.createElement(tag);
+    if (cls) { node.className = cls; }
+    if (text != null) { node.textContent = text; }
+    return node;
+  }
+})();
+</script>
+
+</body>
+</html>

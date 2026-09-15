@@ -2574,7 +2574,7 @@ body.menu-open { overflow: hidden; }
    asset and why it was graded. Its poster is its own first frame, so nothing
    flashes before play. */
 /* THE HERO FIELD (Appy, 2026-09-10). This is the clay backdrop from
-   amb-opening — the one he liked behind the giant blueAI mark — rebuilt as a
+   amb-opening (the one he liked behind the giant blueAI mark) rebuilt as a
    gradient rather than played as a clip.
    WHY REBUILT AND NOT REUSED: the mark fills the centre of that frame, so there
    is no crop of it that keeps the backdrop and loses the logo. The stops below
@@ -2779,12 +2779,17 @@ body.menu-open { overflow: hidden; }
 .hero-two .lede { margin-left: 0; }
 .hero-two .hero-actions { justify-content: flex-start; }
 .hero-two h1 { align-items: flex-start; }
-/* PULL THE HEADLINE BACK TO THE COLUMN EDGE. .headline-line carries 0.15em of
-   side padding so the mask (overflow:hidden, which the entrance slide needs)
-   cannot clip the italic's overhang. That padding pushed the text ~6px right of
-   the badge, lede, button and sign-in line, which all sit flush. A negative
-   margin of the same 0.15em cancels the offset and keeps the protection. */
-.hero-two .headline-line { margin-left: -0.15em; }
+/* THE HEADLINE SITS FLUSH WITH EVERYTHING UNDER IT, and that needs no rule.
+   It used to: .headline-line carried 0.15em of side padding so a clipping mask
+   could not cut the italic's overhang, and a matching -0.15em pulled the text
+   back to the column edge the badge, lede, button and sign-in line all share.
+   Both the padding and the overflow:hidden it was protecting against are gone
+   from this sheet; only the correction survived, so the headline hung 0.15em
+   (about 8px at --h1) LEFT of every line below it. Removed rather than
+   re-padded: with nothing clipping the line there is no overhang to protect.
+   If the masked entrance is ever given its overflow back, the padding and a
+   matching negative margin come back TOGETHER, as a pair, or the column edge
+   breaks again. */
 
 
 /* the businesses door, in the nav with the other destinations. The arrow is

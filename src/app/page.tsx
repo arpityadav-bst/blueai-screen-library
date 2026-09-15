@@ -71,10 +71,18 @@ const CREATOR_EXPERIMENTS = [
     desc: 'The Partner website under the new onBlue brand: the wordmark replaces the BlueAI lockup (no symbol) and every mention of the product reads onBlue. A complete duplicate otherwise — same hero, application, dashboard, legal page, dialogs and A/B/C versions, and the same ?theme= switch — so the two can be compared screen for screen.',
   },
   {
-    // THE onBlue HERO EXPERIMENT (Appy, 2026-09-11).
+    // THE onBlue HERO EXPERIMENT (Appy, 2026-09-11; rewritten 2026-09-15 after the terminal and
+    // the agent carousel were removed and the page was rebased onto the Cinematic light theme).
     href: '/experiments/onblue-vesper/index.html',
     name: 'onBlue Agentic Hero',
-    desc: 'The light onBlue hero, transformed off the Vesper.ai theme: a sampled-clay gradient field, an ambient ascii glyph field with a cursor pool, and an ascii-rendered robot alternating with a rigged robot arm through an ascii sweep, the arm reaching for the cursor on a hinge-constrained IK chain measured out of its own animation clip. Under it a charcoal agent-runtime terminal running one job at a time: command typed, agent assigned, steps opening and closing, three outcomes. Standalone HTML plus three ES modules, three.js pinned via importmap, its own design language.',
+    desc: 'One agentic hero on the Cinematic light theme. The hero is a sampled-clay gradient field, an ambient ascii glyph field that brightens and churns in a pool around the cursor, and six ascii-rendered 3D models that exchange under a travelling ascii sweep band, the swap point solved from the shader’s own equation against each model’s projected x so it happens while the band covers it; one of the six is a rigged arm that hangs from the top of frame and reaches for the cursor on a hinge-constrained IK chain measured out of its own animation clip. Everything below is the Cinematic system verbatim: the economy panels with per-agent illustration swapping, partnered agents with looping terminals, three self-demonstrating how-it-works steps, a wired dispatch diagram whose spark splits its channels along the cursor-to-mark line, FAQs, a typed closing line and a cropped oversized footer wordmark. Standalone HTML plus one ES module, three.js pinned via importmap. Its design system is the next entry.',
+  },
+  {
+    // ITS DESIGN SYSTEM (Appy, 2026-09-15). Its own entry, beside the page rather than only
+    // linked from it: a reference nobody can find is a reference nobody reads.
+    href: '/experiments/onblue-vesper/style-guide.html',
+    name: 'onBlue Agentic Design System',
+    desc: 'The design reference for the onBlue Agentic homepage, built the way blueai-desktop’s is: a view onto the page’s own CSS rather than a second copy of it. The guide fetches index.html at load, lifts its inline stylesheet and its shared icon sprite into itself, then renders real components with real class names, so a restyle lands here on reload with nothing to propagate. Every number is measured, not transcribed: token values via getComputedStyle, the radius scale tallied off the live sheet, the type specimens reporting their own rendered metrics, and a self-measured class coverage that lists by name every class the sheet styles and the guide does not. Sections for tokens, type and the responsive ladder, scales, motion, icons, the four background effect systems, fourteen component families, and a known-gaps note saying what this kind of guide structurally cannot catch.',
   },
   {
     // THE onBlue LANDING (Appy, 2026-09-11). Built outside this repo at N:\Antigravity Main\
