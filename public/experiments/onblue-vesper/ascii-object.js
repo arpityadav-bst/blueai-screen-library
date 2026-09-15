@@ -1027,6 +1027,7 @@ export function createAsciiObject(elements, options = {}) {
       ikReachLen = ikRoot.distanceTo(ikTarget);
     }
     measureAnchor();
+    revealPending = true;
   }
 
   // IK (added): find the bones by name once, on load. Names rather than
@@ -1075,6 +1076,50 @@ export function createAsciiObject(elements, options = {}) {
     if (ikBones.length && ikTip) ikReady = true;
   }
 
+  // FETCH AND PARSE, WITHOUT TOUCHING THE SCENE. Split out of loadAsset so the
+  // same work can happen AHEAD of a swap rather than during it: every visible
+  // glitch at a model change traces to this running while the band is already
+  // crossing the frame.
+  async function buildAsset(src) {
+    const response = await fetch(src);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const buffer = await response.arrayBuffer();
+    const bytes = new Uint8Array(buffer);
+    const kind = sniffKind(bytes);
+    if (!kind) throw new Error('Unrecognized asset format');
+    if (kind === 'glb' || kind === 'gltf') {
+      draco.setDecoderPath(config.dracoDecoderPath);
+      const resourcePath = src.slice(0, src.lastIndexOf('/') + 1);
+      const data = kind === 'glb' ? buffer : new TextDecoder().decode(bytes);
+      const gltf = await loader.parseAsync(data, resourcePath);
+      return gltf.scene;
+    }
+    const blob = new Blob([buffer], { type: kind === 'svg' ? 'image/svg+xml' : '' });
+    const source = await decodeImage(blob, kind);
+    return createImageObject(source, renderer.capabilities.getMaxAnisotropy());
+  }
+
+  // WHAT IS READY TO GO IN. prepare() fills this during a hold; commit()
+  // spends it inside a single frame.
+  let pending = null;
+  let preparing = null;
+
+  async function prepareAsset(src) {
+    if (!src || src === loadedSrc || preparing === src) return;
+    if (pending && pending.src === src) return;
+    preparing = src;
+    try {
+      const object = await buildAsset(src);
+      if (disposed) { disposeObject(object); return; }
+      if (pending) disposeObject(pending.object);
+      pending = { src, object };
+    } catch (error) {
+      if (!disposed) config.onError?.(error);
+    } finally {
+      if (preparing === src) preparing = null;
+    }
+  }
+
   async function loadAsset() {
     const src = config.src;
     if (src === loadedSrc) return;
@@ -1082,27 +1127,9 @@ export function createAsciiObject(elements, options = {}) {
     const token = ++loadToken;
     if (!src) { clearModel(); return; }
     try {
-      const response = await fetch(src);
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      const buffer = await response.arrayBuffer();
-      if (disposed || token !== loadToken) return;
-      const bytes = new Uint8Array(buffer);
-      const kind = sniffKind(bytes);
-      if (!kind) throw new Error('Unrecognized asset format');
-
-      if (kind === 'glb' || kind === 'gltf') {
-        draco.setDecoderPath(config.dracoDecoderPath);
-        const resourcePath = src.slice(0, src.lastIndexOf('/') + 1);
-        const data = kind === 'glb' ? buffer : new TextDecoder().decode(bytes);
-        const gltf = await loader.parseAsync(data, resourcePath);
-        if (disposed || token !== loadToken) { disposeObject(gltf.scene); return; }
-        adoptModel(gltf.scene);
-      } else {
-        const blob = new Blob([buffer], { type: kind === 'svg' ? 'image/svg+xml' : '' });
-        const source = await decodeImage(blob, kind);
-        if (disposed || token !== loadToken) return;
-        adoptModel(createImageObject(source, renderer.capabilities.getMaxAnisotropy()));
-      }
+      const object = await buildAsset(src);
+      if (disposed || token !== loadToken) { disposeObject(object); return; }
+      adoptModel(object);
       config.onLoad?.();
     } catch (error) {
       if (disposed || token !== loadToken) return;
@@ -1203,6 +1230,13 @@ export function createAsciiObject(elements, options = {}) {
   // duration once finished so the eased offset resolves to exactly 0 and the
   // float animation owns the height from then on.
   let enterT = 0;
+  // REVEAL GUARD (added): a newly adopted model stays hidden until one whole
+  // update pass has run for it. applyOptions() fits the OUTGOING model with
+  // the INCOMING scale before adoptModel replaces it, and restingY, the float
+  // and the IK seed are all computed in the frame loop rather than at adopt
+  // time. Without the guard any frame that lands in that window draws the
+  // object at the wrong size, which is the one-frame flash.
+  let revealPending = false;
 
   const pointer = { x: 0, y: 0, tx: 0, ty: 0 };
   // TRACK UNCONDITIONALLY. This used to early-return unless config.pointerLook
@@ -1327,6 +1361,7 @@ export function createAsciiObject(elements, options = {}) {
   let sweepT = -1;
   let sweepDur = 1.6;
   let sweepMid = null;
+  let sweepMidAt = 0.5;
   let sweepDone = null;
 
   let inView = true;
@@ -1353,8 +1388,8 @@ export function createAsciiObject(elements, options = {}) {
     if (sweepT >= 0) {
       const before = sweepT;
       sweepT += delta / sweepDur;
-      // the swap happens once, as the band passes the middle
-      if (before < 0.5 && sweepT >= 0.5 && sweepMid) {
+      // the swap happens once, as the band passes the point the caller named
+      if (before < sweepMidAt && sweepT >= sweepMidAt && sweepMid) {
         const fn = sweepMid;
         sweepMid = null;
         fn();
@@ -1467,6 +1502,13 @@ export function createAsciiObject(elements, options = {}) {
       solveIK();
     }
 
+    // REVEAL (added): the model is shown only here, once the float, the
+    // resting height and the IK solve above have all run for it this frame.
+    if (revealPending) {
+      revealPending = false;
+      fitGroup.visible = true;
+    }
+
     renderer.setRenderTarget(target);
     renderer.render(scene, camera);
     if (config.ascii) {
@@ -1502,13 +1544,16 @@ export function createAsciiObject(elements, options = {}) {
   return {
     // SWEEP (added). Runs a band across the frame; onMid fires as it crosses
     // the middle, which is when the caller should change the model.
-    sweep({ duration = 1.6, angle = 0, band = 0.3, ink, onMid, onEnd } = {}) {
+    sweep({ duration = 1.6, angle = 0, band = 0.3, ink, mid = 0.5, onMid, onEnd } = {}) {
       if (reducedMotion) {
         if (onMid) onMid();
         if (onEnd) onEnd();
         return;
       }
       sweepDur = Math.max(duration, 0.1);
+      // clamped off both ends so a caller cannot ask for a swap before the
+      // band exists or after it has left
+      sweepMidAt = Math.min(Math.max(mid, 0.05), 0.95);
       sweepMid = onMid || null;
       sweepDone = onEnd || null;
       sweepT = 0;
@@ -1556,10 +1601,52 @@ export function createAsciiObject(elements, options = {}) {
       loadAsset();
       startLoop();
     },
+    // PREPARE AHEAD, COMMIT IN ONE FRAME. setOptions cannot do this job: it
+    // assigns the incoming preset's scale, yaw and offsets immediately and
+    // only then loads, asynchronously, so the OUTGOING model spends the whole
+    // fetch and parse wearing the incoming model's numbers. That is the jump
+    // in size. The late and early swaps are the same asynchrony landing
+    // wherever it lands against a band of fixed length.
+    prepare(next) {
+      prepareAsset(next && next.src);
+    },
+    commit(next) {
+      const src = next && next.src;
+      const previousDistance = config.cameraDistance;
+      const previousHeight = config.cameraHeight;
+      const previousHighlight = config.highlight;
+      // HIDE FIRST. applyOptions() below re-fits whatever is currently mounted
+      // with the incoming preset's scale, and on the fallback path that model
+      // stays mounted for the whole of a fetch. Hiding under the band costs
+      // nothing visible; showing a wrongly scaled model costs the flash.
+      fitGroup.visible = false;
+      Object.assign(config, next);
+      if (config.highlight !== previousHighlight) envDirty = true;
+      if (config.cameraDistance !== previousDistance || config.cameraHeight !== previousHeight) {
+        placeCamera();
+      }
+      applyOptions();
+      resize();
+      if (pending && pending.src === src) {
+        // the prepared object goes in synchronously, so no frame renders
+        // between the config landing and the model it belongs to
+        loadedSrc = src;
+        loadToken += 1;
+        const object = pending.object;
+        pending = null;
+        adoptModel(object);
+        config.onLoad?.();
+      } else {
+        // nothing was ready: fall back rather than show an empty frame
+        loadAsset();
+      }
+      startLoop();
+    },
     resize,
     destroy() {
       disposed = true;
       loadToken += 1;
+      if (pending) { disposeObject(pending.object); pending = null; }
       stopLoop();
       observer.disconnect();
       viewObserver?.disconnect();

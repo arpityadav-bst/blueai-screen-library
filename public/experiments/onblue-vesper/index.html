@@ -4549,33 +4549,41 @@ body.menu-open { overflow: hidden; }
         let at = 0;
         let timer = 0;
 
-        // WARM THE NEXT MODEL, ONE HOLD AHEAD. The swap is not instant: at
-        // the band's midpoint setOptions starts loadAsset(), which fetches the
-        // file, reads it into an ArrayBuffer and parses the glTF, and the
-        // outgoing model stays on screen for all of it. The new one appears
-        // the frame the parse finishes, wherever the band happens to be.
-        // The band only draws on the model's own silhouette (it is gated on
-        // the scene's alpha, which is what keeps it off the empty hero), so a
-        // model that arrives after the band has passed gets no sweep at all:
-        // it simply appears. Warming the file removes the network half of that
-        // race and leaves only the parse.
-        // ONE AHEAD, NOT ALL NINE. Fetching every model up front was right for
-        // two; at nine it would be a wall of requests on load for eight models
-        // nobody has reached yet.
-        const warm = (i) => {
-          const url = PRESETS[order[i % order.length]].src;
-          fetch(url, { cache: 'force-cache' }).catch(() => {});
-        };
-        warm(1);
+        // BUILD THE NEXT MODEL DURING THE HOLD, NOT DURING THE SWEEP. Warming
+        // the file was only half the problem: the parse still happened inside
+        // the band, and setOptions applied the incoming scale and yaw to the
+        // OUTGOING model while it waited. prepare() does the fetch AND the
+        // parse against a held object that never touches the scene, so the
+        // swap itself is one synchronous call with nothing left to wait for.
+        // ONE AHEAD, NOT ALL SIX: preparing every model up front would hold
+        // five parsed scenes in memory for machines nobody has reached.
+        const prepare = (i) => instance.prepare(PRESETS[order[i % order.length]]);
+        prepare(1);
 
         const hold = () => 5000 + Math.random() * 2000;
+
+        // WHERE ALONG THE TRAVEL THE BAND ACTUALLY COVERS THE MODEL. The
+        // shader runs its head at head = t * (1 + 2 * band) - band, measured
+        // along the sweep axis, so t = 0.5 puts it at the middle of the FRAME.
+        // The model is not there: it sits at about 70% of the width. Solving
+        // the same line for the model's own position, with half a band added
+        // so it is mid-band rather than on the leading edge, gives the moment
+        // the change is genuinely hidden. A right-to-left sweep reads the axis
+        // reversed, so it gets 1 - x.
+        const BAND = 0.34;
+        const midFor = (key, angle) => {
+          const box = canvas.getBoundingClientRect();
+          const halfH = Math.tan((num('fov', 32) * Math.PI) / 360) * num('dist', 9.8);
+          const halfW = halfH * (box.width / Math.max(box.height, 1));
+          const p = PRESETS[key];
+          let x = 0.5 + (0.5 * num('x', p.xOffset)) / halfW;
+          if (angle === 180) x = 1 - x;
+          return (x + BAND * 0.5 + BAND) / (1 + 2 * BAND);
+        };
 
         const step = () => {
           const nextKey = order[(at + 1) % order.length];
           const next = PRESETS[nextKey];
-          // the one after this one, so it is in cache by the time its turn
-          // comes round
-          warm(at + 2);
           instance.sweep({
             // 4s, up from 3.2 and originally 1.7. The band has to read as a
             // machine scanning the frame, and the longer it runs the more of
@@ -4587,14 +4595,23 @@ body.menu-open { overflow: hidden; }
             // back so the pair reads as one movement out and back rather than
             // as the same wipe twice
             angle: at === 0 ? 0 : 180,
-            band: 0.34,
+            band: BAND,
+            // not 0.5: the swap fires when the band is over the MODEL
+            mid: midFor(nextKey, at === 0 ? 0 : 180),
             ink: '#2f6dff',
             onMid: () => {
               at = (at + 1) % order.length;
               canvas.style.setProperty('--ascii-mask', next.mask);
-              instance.setOptions({ ...next });
+              // one frame: the config and the model it belongs to land
+              // together, under the middle of the band
+              instance.commit({ ...next });
             },
-            onEnd: () => { timer = window.setTimeout(step, hold()); },
+            onEnd: () => {
+              // the hold is the only quiet stretch in the cycle, so the next
+              // model is built in it rather than in the next sweep
+              prepare(at + 1);
+              timer = window.setTimeout(step, hold());
+            },
           });
         };
 
