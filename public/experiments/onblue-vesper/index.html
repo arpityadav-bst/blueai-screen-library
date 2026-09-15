@@ -174,6 +174,31 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
   --panel-bg: var(--wash-1);
   --bar-bg: var(--wash-4);
   --card-shadow-hover: inset 0 1px 0 var(--hair);
+  /* A MODAL IS NOT A CARD AT A HIGHER NUMBER. The card shadow describes
+     something resting on the page; this describes something held above it, so
+     it gets its own token rather than a multiplied one. Dark emits, light
+     casts, same as every other pair here. */
+  --gate-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06), 0 30px 80px -20px rgba(0, 0, 0, 0.8);
+  /* NOT --scrim. That one is the mobile menu's, and the menu replaces the page,
+     so obliterating what is behind it is correct there and wrong here: at 0.72
+     over blur(24px) the homepage went to a featureless wash and the reader lost
+     every landmark. A dialog is a thing on top of a page you are still in. */
+  --gate-scrim: rgba(6, 6, 8, 0.52);
+  --gate-blur: 6px;
+  /* THE PANEL IS LIT BY ITS OWN MARK. A flat fill left the spark sitting on the
+     card rather than shining on it, and the hero earns its depth from exactly
+     this: a light source in one corner and a cool fall-off in the other. Both
+     stops are quoted, the blue from the brand and the cool from the hero
+     field's own bottom-right corner, so the dialog reads as a piece of that
+     frame rather than as a second opinion about the light. */
+  --gate-field:
+    radial-gradient(130% 62% at 50% -8%, rgba(74, 141, 255, 0.11), rgba(74, 141, 255, 0) 64%),
+    radial-gradient(90% 75% at 97% 94%, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0) 62%);
+  /* red is the one hue that has to be re-tuned rather than re-mixed: the light
+     value goes muddy on black and the dark one glares on white */
+  --err-ink: #ff8d92;
+  --err-line: #e0646a;
+  --err-ring: rgba(224, 100, 106, 0.2);
   /* hover on black emits light; hover on white casts one. same token, two
      entirely different physics. */
   --solid-shadow: none;
@@ -371,6 +396,21 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
      not the place for it, the rail's flow line shares that token. */
   --bar-bg: #f6f6f8;
   --card-shadow-hover: 0 2px 5px rgba(18, 32, 64, 0.05), 0 24px 46px -20px rgba(21, 110, 254, 0.2);
+  /* three stops at modal distance: contact, near falloff, ambient body, tinted
+     the same rgba(16, 16, 19) as the button so the page casts one light */
+  --gate-shadow: 0 1px 2px rgba(16, 16, 19, 0.08),
+                 0 14px 30px -12px rgba(16, 16, 19, 0.16),
+                 0 44px 88px -36px rgba(16, 16, 19, 0.24);
+  /* light dims by veiling rather than by darkening, which is this page's own
+     move, but at a strength that leaves the layout behind it readable */
+  --gate-scrim: rgba(232, 234, 238, 0.62);
+  --gate-blur: 6px;
+  --gate-field:
+    radial-gradient(130% 62% at 50% -8%, rgba(21, 110, 254, 0.06), rgba(21, 110, 254, 0) 64%),
+    radial-gradient(90% 75% at 97% 94%, rgba(210, 213, 222, 0.5), rgba(210, 213, 222, 0) 62%);
+  --err-ink: #c03a40;
+  --err-line: #d0454a;
+  --err-ring: rgba(208, 69, 74, 0.16);
   /* a cast, not a glow: the button sits on the page rather than emitting. the
      colour is a deep desaturated version of the button's own blue, because a
      coloured object casts a coloured shadow, and neutral black on white reads
@@ -494,8 +534,10 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
    the monospace and the scrolling log already said it. dark keeps its grey
    dots. */
 /* the press itself. short, because a press is not an ease-in-out glide. */
-:root[data-theme="light"] .btn-solid:hover { transform: translateY(1px); }
-:root[data-theme="light"] .btn-solid:active { transform: translateY(2px); }
+:root[data-theme="light"] .btn-solid:hover,
+:root[data-theme="light"] .btn-ghost:hover { transform: translateY(1px); }
+:root[data-theme="light"] .btn-solid:active,
+:root[data-theme="light"] .btn-ghost:active { transform: translateY(2px); }
 
 /* the wave mask expands past the element by the end of its cycle, so its outer
    fade stop falls outside the box and the plateau covers the whole rectangle
@@ -548,6 +590,7 @@ button { font-family: inherit; }
    carry its own amount. the hero keeps its own layer on the old overlay blend. */
 .grain-hero,
 .band::before,
+.gate-panel::before,
 .site-foot::before {
   position: absolute;
   inset: 0;
@@ -556,6 +599,7 @@ button { font-family: inherit; }
   background-size: 200px 200px;
 }
 .band::before,
+.gate-panel::before,
 .site-foot::before {
   content: "";
   z-index: 0;
@@ -823,10 +867,14 @@ body.menu-open .header {
   box-shadow: var(--solid-shadow-hover);
 }
 
-/* deliberately no chrome: a bare icon at muted weight, the same presence as a
-   nav link. the two glyphs share one box and cross-fade on a quarter turn, so
-   the switch reads as one object changing rather than two icons swapping. */
-.theme-toggle {
+/* ICON BUTTON, one base rule for every member. Deliberately no chrome: a bare
+   icon at muted weight, the same presence as a nav link. The gate's close and
+   back controls join it here rather than repeating the values behind a comment,
+   because a comment saying "same as the theme toggle" does not survive the first
+   edit to either of them. */
+.theme-toggle,
+.gate-x,
+.gate-back {
   position: relative;
   display: grid;
   place-items: center;
@@ -842,8 +890,8 @@ body.menu-open .header {
   -webkit-tap-highlight-color: transparent;
   transition: color 0.3s ease, background 0.3s ease;
 }
-.theme-toggle:hover { color: var(--ink); background: var(--wash-hover); }
-.theme-toggle:focus-visible { outline: 2px solid var(--blue-ink); outline-offset: 2px; }
+.theme-toggle:hover, .gate-x:hover, .gate-back:hover { color: var(--ink); background: var(--wash-hover); }
+.theme-toggle:focus-visible, .gate-x:focus-visible, .gate-back:focus-visible { outline: 2px solid var(--blue-ink); outline-offset: 2px; }
 .tt-icon {
   grid-area: 1 / 1;
   width: 17px;
@@ -890,14 +938,14 @@ body.menu-open .header {
 .btn-ghost {
   background: var(--charcoal-2);
   color: var(--ink);
-  border: 1px solid rgba(198, 198, 198, 0.45);
-  box-shadow: inset 0 1px 0 var(--hair-2);
+  border: 1px solid var(--border);
+  box-shadow: var(--card-shadow);
 }
 .btn-ghost:hover {
-  background: var(--charcoal-3);
-  border-color: rgba(220, 230, 255, 0.75);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 0 20px rgba(170, 200, 255, 0.22);
+  background: var(--wash-hover);
+  border-color: var(--card-line-hover);
 }
+.btn-ghost:active { background: var(--charcoal-3); }
 
 .hero-actions .btn-solid, .band-actions .btn-solid { box-shadow: var(--hero-shadow); }
 .hero-actions .btn, .band-actions .btn {
@@ -1168,7 +1216,8 @@ body.menu-open { overflow: hidden; }
 /* a hairline running into the label: dark at its far end, brightest where it
    meets the text. centred heads get the mirrored one on the other side. */
 .eyebrow::before,
-.band-head--center .eyebrow::after {
+.band-head--center .eyebrow::after,
+.gate-level .eyebrow::after {
   content: "";
   display: inline-block;
   vertical-align: middle;
@@ -1180,7 +1229,8 @@ body.menu-open { overflow: hidden; }
   background: linear-gradient(90deg, transparent, var(--rule));
 }
 .band-head--center .eyebrow { margin-bottom: 18px; }
-.band-head--center .eyebrow::after {
+.band-head--center .eyebrow::after,
+.gate-level .eyebrow::after {
   margin-left: 14px;
   background: linear-gradient(90deg, var(--rule), transparent);
 }
@@ -2128,6 +2178,23 @@ body.menu-open { overflow: hidden; }
   border-top: 1px solid var(--hair);
   padding-bottom: max(30px, env(safe-area-inset-bottom));
 }
+.foot-legal {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 18px;
+}
+.foot-legal a {
+  color: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  text-decoration-color: var(--link-underline);
+  transition: color 0.3s ease, text-decoration-color 0.3s ease;
+}
+.foot-legal a:hover { color: var(--ink); text-decoration-color: var(--ink); }
+
 .foot-base {
   max-width: var(--band-max);
   margin: 0 auto;
@@ -2795,6 +2862,374 @@ body.menu-open { overflow: hidden; }
 /* the businesses door, in the nav with the other destinations. The arrow is
    the PM's, and it marks the one link that leaves this page. */
 .nav__biz svg { width: 1.6em; height: 1.6em; flex: none; margin-left: 0.14em; opacity: 0.8; stroke-width: 1.5; }
+
+
+/* ==========================================================================
+   THE ACCESS GATE
+   The partner site's login popup, rebuilt on this page's own system. What was
+   inherited is the SHAPE of the flow: two levels, expectations before the ask,
+   a returning-user door that skips the first. What was not inherited is every
+   value, because the two pages do not share physics.
+
+   THE SCRIM WASHES OUT, IT DOES NOT DARKEN. This page has exactly one existing
+   overlay, .menu-backdrop, and it dims by raising a pale veil at blur(24px).
+   The partner site drops a dark one at blur(3px). Same job, opposite direction,
+   and copying it would have been the loudest tell that the dialog came from
+   another site.
+
+   THE PANEL IS NOT .card, ON PURPOSE. It takes the same SURFACE tokens (fill,
+   stroke, radius) and the same edge sheen, because those describe a treatment.
+   It does not take .card's hover lift, because that describes a ROLE: one of
+   several browsable things. A modal is not something you pick up, and reusing
+   the class for the resemblance would have brought the lift along with it.
+   ========================================================================== */
+
+.gate {
+  /* A NATIVE DIALOG CENTRES ITSELF WITH THE UA'S margin: auto, AND THIS PAGE
+     DELETES THAT. The reset at the top of this sheet is `* { margin: 0 }`, which
+     reaches <dialog> like everything else, so the box fell to the top-left
+     corner. Putting the margin back is the whole fix; nothing about the sizing
+     was wrong. */
+  margin: auto;
+  /* WIDTH BELONGS TO THE LEVEL, NOT TO THE DIALOG. Four cards two across need a
+     wider box than two stacked buttons do, and holding both at one width means
+     either the grid is cramped or the two doors are a 500px stretch of nothing.
+     The source made the same split for the same reason, 560 against 400. */
+  width: min(var(--gate-w, 460px), calc(100vw - 32px));
+  transition: width 0.34s var(--ease);
+  max-height: calc(100dvh - 48px);
+  padding: 0;
+  border: 0;
+  background: none;
+  overflow: visible;
+  color: var(--ink);
+}
+.gate::backdrop {
+  background: var(--gate-scrim);
+  backdrop-filter: blur(var(--gate-blur));
+  -webkit-backdrop-filter: blur(var(--gate-blur));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.gate[data-level="1"] { --gate-w: 560px; }
+.gate[data-level="2"] { --gate-w: 420px; }
+.gate.is-open::backdrop { opacity: 1; }
+/* the dialog is in the top layer, which does not stop the document behind it
+   scrolling; body.menu-open cannot be reused because it also restyles the header */
+.gate-lock { overflow: hidden; }
+
+.gate-panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100dvh - 48px);
+  overflow: hidden;
+  padding: 34px 28px 26px;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--card-radius);
+  background: var(--gate-field), var(--card-bg);
+  box-shadow: var(--gate-shadow);
+  /* THE END STATE IS A DECLARATION, NOT A KEYFRAME. Under reduced motion the
+     page kills every transition with !important, so a panel that only reached
+     opacity 1 through one would never arrive. .is-open sets the state; the
+     transition only decides how long it takes to get there. */
+  opacity: 0;
+  transform: translateY(14px) scale(0.985);
+  transition: opacity 0.34s var(--ease), transform 0.34s var(--ease);
+}
+.gate.is-open .gate-panel { opacity: 1; transform: none; }
+
+/* the ambient glyph field is injected here as a third host, so the pool follows
+   the pointer inside the dialog exactly as it does in the hero. Lower than the
+   0.4 a full band carries: the same alpha over a 460px box is a third of the
+   distance from the reader's eye to the text it sits behind. */
+.gate-panel > .ascii-bg { z-index: 0; --ascii: 0.3; }
+
+/* the same light travelling along the stroke that every card gets. a treatment,
+   not an affordance, which is why it comes across and the hover lift does not */
+.gate-panel::after {
+  content: "";
+  position: absolute;
+  inset: calc(var(--sheen-w) * -1);
+  z-index: 3;
+  padding: var(--sheen-w);
+  border-radius: calc(var(--card-radius) + var(--sheen-w));
+  filter: var(--sheen-bloom);
+  background: radial-gradient(260px circle at var(--gx, 50%) var(--gy, 50%),
+    var(--sheen-a), var(--sheen-b) 34%, transparent 68%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+.gate-panel:hover::after { opacity: 1; }
+
+.gate-x, .gate-back {
+  position: absolute;
+  z-index: 4;
+  /* ON THE PANEL'S OWN PADDING GRID. At a flat 12px they sat inside the 28px
+     side padding everything else lines up to, which read as two loose objects
+     in the corners rather than as part of the card. */
+  top: 14px;
+}
+.gate-x { right: 16px; }
+.gate-back { left: 16px; }
+/* the shared icon-button rule above sets display: grid, and a class beats the
+   UA's [hidden] { display: none }, so hiding these needs saying out loud */
+.gate-x[hidden], .gate-back[hidden] { display: none; }
+.gate-x svg, .gate-back svg { width: 17px; height: 17px; }
+
+.gate-level {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  /* min-height:0 is what lets a flex child shrink below its content and scroll */
+  min-height: 0;
+  overflow-y: auto;
+}
+.gate-level[hidden] { display: none; }
+
+.gate-mark {
+  display: block;
+  width: 34px;
+  height: 34px;
+  margin-bottom: 18px;
+  color: var(--spark-ink);
+  filter: var(--mark-shadow);
+}
+.gate-mark svg { display: block; width: 100%; height: 100%; }
+
+/* the page's own section-head device, scaled to a 460px box: the eyebrow keeps
+   its gradient rule, the heading keeps exactly one serif italic phrase */
+.gate-level .eyebrow { margin-bottom: 14px; }
+.gate-title {
+  font-weight: 500;
+  font-size: clamp(24px, 3.4vw, 30px);
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+  color: var(--ink);
+}
+.gate-title em {
+  font-family: var(--serif-font);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.06em;
+  letter-spacing: -0.03em;
+  color: var(--blue-ink);
+}
+.gate-sub {
+  margin-top: 12px;
+  max-width: 34ch;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.55;
+  letter-spacing: -0.015em;
+}
+
+/* THE STEPS ARE THE PAGE'S OWN, not the partner site's 2x2 grid of four. Three,
+   because that is what apply.html's progress rail already names, and a modal
+   that promises four stages in front of a wizard that shows three is a defect
+   the reader meets one click later. */
+.gate-steps {
+  width: 100%;
+  margin-top: 24px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  list-style: none;
+  text-align: left;
+}
+.gate-steps li {
+  display: flex;
+  align-items: flex-start;
+  gap: 13px;
+  padding: 13px 15px;
+  border: 1px solid var(--border-soft);
+  border-radius: 12px;
+  background: var(--panel-bg);
+}
+.gate-steps .step-num { width: 30px; height: 30px; font-size: 13px; }
+.gate-steps b {
+  display: block;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.gate-steps p {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 12.5px;
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+}
+
+/* ---- the two doors ---------------------------------------------------------
+   TWO OPTIONS, ONE GEOMETRY. They do the same job, so they are the same box:
+   same width, same height, same icon slot at the same size. Making one of them
+   the solid black CTA would have said one is the real way in and the other is a
+   fallback, which is not true, so BOTH are outlines and the black moves to the
+   send control, which is the only thing here that actually commits.
+   Level one's Continue is still solid, so the dialog still opens on the page's
+   primary button rather than on two outlines. */
+.gate-opts { width: 100%; margin-top: 24px; display: grid; gap: 10px; }
+.gate-opt {
+  width: 100%;
+  height: var(--hero-btn-h);
+  gap: 10px;
+  font-size: calc(var(--btn) + 1.5px);
+}
+.gate-opt svg { width: 18px; height: 18px; flex: none; }
+
+/* THE BUTTON BECOMES THE FIELD, it does not reveal one. A field appearing above
+   the button leaves the button behind as a second thing to reason about, and
+   pushes everything under it down. Both states live in one box of fixed height
+   and cross-fade, so the row never moves and the object you clicked is the
+   object you are now typing in. */
+.gate-mail { position: relative; height: var(--hero-btn-h); }
+.gate-mail > * {
+  position: absolute;
+  inset: 0;
+  transition: opacity 0.26s var(--ease), transform 0.26s var(--ease);
+}
+.gate-mailfield { opacity: 0; transform: translateY(5px); pointer-events: none; }
+.gate-mail.is-open > .gate-opt { opacity: 0; transform: translateY(-5px); pointer-events: none; }
+.gate-mail.is-open > .gate-mailfield { opacity: 1; transform: none; pointer-events: auto; }
+
+.gate-input {
+  width: 100%;
+  height: 100%;
+  /* right padding clears the send control and its gutter, so a long address
+     scrolls under the arrow instead of behind it */
+  padding: 0 calc(var(--hero-btn-h) + 16px) 0 15px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--panel-bg);
+  color: var(--ink);
+  font-family: inherit;
+  /* 16px below 560 is an iOS zoom guard, not a type decision */
+  font-size: 16px;
+  letter-spacing: -0.01em;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+/* quieter than the label it replaced: it is an example, not an instruction */
+.gate-input::placeholder { color: var(--dim-ink); opacity: 0.55; }
+.gate-input:focus {
+  outline: none;
+  border-color: var(--blue-ink);
+  box-shadow: 0 0 0 3px rgba(21, 110, 254, 0.16);
+}
+.gate-input.is-bad { border-color: var(--err-line); }
+.gate-input.is-bad:focus { box-shadow: 0 0 0 3px var(--err-ring); }
+
+/* THE HOME PAGE'S BUTTON, AT THIS SIZE (Appy's call, 2026-09-15). It was a
+   circle, on the reasoning that an equal 6px inset inside a 6px-radius field
+   leaves r_inner = r_outer - inset = 0, so a rounded rect cannot be concentric
+   with the box it sits in. The counter-argument won and is the better one: this
+   is a CTA, the page has exactly one button shape, and a lone circle in a
+   dialog full of 6px rectangles reads as a different control from a different
+   system. The two curves are not parallel, which at a 32px inner height inside
+   a 44px outer is a smaller cost than speaking a second button language.
+   Landscape rather than square, at the same proportion the hero CTA runs, so it
+   reads as a button and not as an icon target. The 6px inset on all three edges
+   it touches is unchanged. */
+.gate-send {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  bottom: 6px;
+  width: var(--hero-btn-h);
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid var(--solid-bg);
+  border-radius: 6px;
+  background: var(--solid-bg);
+  color: var(--solid-ink);
+  cursor: pointer;
+  transition: background 0.3s ease, border-color 0.3s ease, transform 0.18s ease;
+}
+.gate-send:hover { background: var(--solid-bg-hover); border-color: var(--solid-line-hover); }
+.gate-send:active { transform: translateY(1px); }
+.gate-send:focus-visible { outline: 2px solid var(--blue-ink); outline-offset: 2px; }
+.gate-send svg { width: 16px; height: 16px; }
+
+.gate-err {
+  align-self: flex-start;
+  margin-top: 9px;
+  color: var(--err-ink);
+  font-size: 12.5px;
+  letter-spacing: -0.01em;
+  text-align: left;
+}
+.gate-err[hidden] { display: none; }
+
+.gate-actions { width: 100%; margin-top: 22px; }
+.gate-actions .btn {
+  width: 100%;
+  height: var(--hero-btn-h);
+  padding: 0 var(--hero-btn-pad);
+  font-size: calc(var(--btn) + 1.5px);
+}
+.gate-actions .btn-solid { box-shadow: var(--hero-shadow); }
+.gate-actions .btn-solid:hover { box-shadow: var(--hero-shadow-hover); }
+
+.gate-alt {
+  margin-top: var(--actions-mt);
+  color: var(--muted);
+  font-size: 13.5px;
+  letter-spacing: -0.01em;
+}
+.gate-alt button {
+  border: 0;
+  padding: 0;
+  background: none;
+  color: var(--ink);
+  font-size: inherit;
+  letter-spacing: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  text-decoration-color: var(--link-underline);
+  transition: text-decoration-color 0.3s ease, color 0.3s ease;
+}
+.gate-alt button:hover { color: var(--link-hover); text-decoration-color: var(--link-hover); }
+
+.gate-legal {
+  margin-top: 20px;
+  max-width: 36ch;
+  color: var(--dim-ink);
+  font-size: 11.5px;
+  line-height: 1.6;
+  letter-spacing: -0.005em;
+}
+.gate-legal a {
+  color: var(--muted);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-color: var(--link-underline);
+}
+.gate-legal a:hover { color: var(--ink); }
+
+/* two across needs about 240px a cell to hold four lines of 12.5px text beside
+   a 30px disc; below that the row wins the width argument and the reading loses */
+@media (max-width: 620px) {
+  .gate-steps { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 560px) {
+  .gate-panel { padding: 30px 20px 22px; }
+  .gate-input { font-size: 16px; }
+  .gate-steps li { padding: 12px 13px; }
+}
 </style>
 </head>
 <body style="background:var(--bg);color:var(--text)">
@@ -2845,6 +3280,10 @@ body.menu-open { overflow: hidden; }
     <g id="i-pencil">
       <path d="M16.2 3.9 20.1 7.8 8.6 19.3l-5.1 1.2 1.2-5.1z"/>
       <path d="M14.3 5.8 18.2 9.7"/>
+    </g>
+    <g id="i-mail">
+      <rect x="2.8" y="5.4" width="18.4" height="13.2" rx="2.6"/>
+      <path d="m3.7 7.3 7.2 5.1a2 2 0 0 0 2.2 0l7.2-5.1"/>
     </g>
     <g id="i-check">
       <circle cx="12" cy="12" r="9"/>
@@ -3620,11 +4059,135 @@ body.menu-open { overflow: hidden; }
 
     <div class="foot-tail">
       <div class="foot-base">
-        <span>&copy; 2026 onBlue</span>
+        <span class="foot-legal">
+          <span>&copy; 2026 onBlue</span>
+          <!-- a stub, like every other legal link on this page. apply.html points
+               its copies at /onblue/terms#terms, an absolute path belonging to the
+               partner site that 404s from this experiment, and a dead link that
+               looks live is worse than one that is plainly a stub. -->
+          <a data-stub>Terms and conditions</a>
+        </span>
         <span>Human ambition. Agent execution.</span>
       </div>
     </div>
   </footer>
+
+<!-- ============================ THE ACCESS GATE =========================
+     A native <dialog>, not a div with role="dialog". showModal() gives the
+     focus trap, the Escape handler, the top layer and an inert background for
+     free. The partner site's version hand-rolls Escape and has NO focus trap at
+     all, so Tab walks out of it and behind the scrim; that is a defect to leave
+     behind rather than a convention to inherit.
+
+     BOTH LEVELS ARE IN THE MARKUP, toggled with [hidden], rather than built by
+     the script. Copy that exists in a template string is copy nobody reads in a
+     diff, and every line here is quoted: the sub-headings come from the partner
+     modal, the level-one paragraph and the three step names come from
+     apply.html's own intro and progress rail.
+     ===================================================================== -->
+<dialog class="gate" id="gate" aria-labelledby="gate-title-1">
+  <div class="gate-panel" id="gate-panel">
+
+    <button class="gate-back" type="button" data-gate="back" aria-label="Back" hidden>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5.5 8.5 12l6.5 6.5"/></svg>
+    </button>
+    <button class="gate-x" type="button" data-gate="close" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+
+    <!-- LEVEL 1: what happens, before anything is asked for -->
+    <section class="gate-level" data-level="1">
+      <span class="gate-mark"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><use href="#i-spark"/></svg></span>
+      <span class="eyebrow">Before you start</span>
+      <h2 class="gate-title" id="gate-title-1">What happens <em>after you apply</em>.</h2>
+      <p class="gate-sub">One short application. We review every one and email you when your access is approved.</p>
+
+      <!-- FOUR, AND THE COPY IS THE PARTNER SITE'S OWN (restored 2026-09-15).
+           This was briefly cut to three and reworded, on the reasoning that
+           apply.html's progress rail names three stages and a modal promising
+           four in front of a wizard showing three contradicts itself one click
+           later. That reasoning stands but the call was not mine to make quietly,
+           so the source copy is back. The only edits to it are two the brand
+           forces: BlueAI reads onBlue on this site, and the orphan asterisk after
+           $30 is dropped because the footnote it pointed at was deleted from the
+           source and never replaced. -->
+      <ol class="gate-steps">
+        <li>
+          <span class="step-num">1</span>
+          <div><b>Apply.</b><p>Tell us about yourself and the PC it will run on.</p></div>
+        </li>
+        <li>
+          <span class="step-num">2</span>
+          <div><b>Get accepted.</b><p>We review every application and email you when your agent is ready.</p></div>
+        </li>
+        <li>
+          <span class="step-num">3</span>
+          <div><b>Deploy it.</b><p>Install onBlue on your PC and sign in. That's the whole setup.</p></div>
+        </li>
+        <li>
+          <span class="step-num">4</span>
+          <div><b>Collect.</b><p>You approve each campaign, your agent completes it, and you collect $30 every month via PayPal.</p></div>
+        </li>
+      </ol>
+
+      <div class="gate-actions">
+        <button class="btn btn-solid" type="button" data-gate="next">Got it, continue</button>
+      </div>
+      <p class="gate-alt">Already have an account? <button type="button" data-gate="signin">Sign in</button></p>
+    </section>
+
+    <!-- LEVEL 2: the ask -->
+    <section class="gate-level" data-level="2" hidden>
+      <span class="gate-mark"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><use href="#i-spark"/></svg></span>
+      <span class="eyebrow" id="gate-eyebrow">Get started</span>
+      <h2 class="gate-title" id="gate-title-2">Sign in to <em>onBlue</em>.</h2>
+      <p class="gate-sub" id="gate-sub-2">Sign in to start your application.</p>
+
+      <div class="gate-opts">
+
+        <div class="gate-mail" id="gate-mail">
+          <button class="btn btn-ghost gate-opt" type="button" data-gate="email">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-mail"/></svg>
+            Continue with email
+          </button>
+          <div class="gate-mailfield">
+            <input class="gate-input" id="gate-email" type="email" inputmode="email"
+                   autocomplete="email" placeholder="you@example.com"
+                   aria-label="Email" aria-describedby="gate-email-err">
+            <!-- the arrow is drawn here rather than named in the sprite, following
+                 the page's own split: object glyphs live in #defs-ca, directional
+                 ones are inline at the call site, as on the scroll cue, the
+                 footer's back-to-top and the businesses link -->
+            <button class="gate-send" type="button" data-gate="continue" aria-label="Continue">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.8 12h13.4M12.4 6.2 18.6 12l-6.2 5.8"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <button class="btn btn-ghost gate-opt" type="button" data-gate="google">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="#4285F4" d="M21.6 12.23c0-.73-.07-1.43-.19-2.1H12v3.98h5.38a4.6 4.6 0 0 1-2 3.02v2.51h3.24c1.89-1.74 2.98-4.3 2.98-7.41Z"/>
+            <path fill="#34A853" d="M12 22c2.7 0 4.96-.9 6.62-2.43l-3.24-2.51c-.9.6-2.05.96-3.38.96-2.6 0-4.8-1.76-5.59-4.12H3.06v2.59A10 10 0 0 0 12 22Z"/>
+            <path fill="#FBBC05" d="M6.41 13.9a5.99 5.99 0 0 1 0-3.8V7.51H3.06a10 10 0 0 0 0 8.98l3.35-2.59Z"/>
+            <path fill="#EA4335" d="M12 5.98c1.47 0 2.79.5 3.83 1.5l2.87-2.87C16.95 2.99 14.7 2 12 2a10 10 0 0 0-8.94 5.51l3.35 2.59C7.2 7.74 9.4 5.98 12 5.98Z"/>
+          </svg>
+          Continue with Google
+        </button>
+
+      </div>
+      <span class="gate-err" id="gate-email-err" role="alert" hidden></span>
+
+      <!-- THE LEGAL LINKS ARE STUBS, deliberately. apply.html points its copies
+           at /onblue/terms#terms, an absolute path that belongs to the partner
+           site and 404s from this experiment. A dead link that looks live is
+           worse than one that is plainly a stub, so these use the same
+           [data-stub] handler the hero's Sign in link already uses. -->
+      <p class="gate-legal">By signing up, you agree to the <a data-stub>Terms of Use</a>
+        and <a data-stub>Privacy Policy</a>, including <a data-stub>Cookie Use</a>.</p>
+    </section>
+
+  </div>
+</dialog>
 
 </div>
 
@@ -3852,8 +4415,22 @@ body.menu-open { overflow: hidden; }
   /* TWO HOSTS, ONE FIELD: the partnered-agents band and the hero. Taking a
      host rather than looking one up is the whole change; every number
      below is the band's own. */
-  [document.getElementById('agents'), document.querySelector('.hero-wrap')]
-    .forEach(function asciiField(host) {
+  /* THREE HOSTS NOW: the partnered-agents band, the hero, and the gate's panel.
+     The dialog gets the field for the same reason the hero has it, and taking a
+     host rather than looking one up is what made a third one free. */
+  /* TUNED PER HOST, because the numbers below are a function of how big the
+     surface is. A 190px pool is a soft glow across a full-bleed hero band and
+     most of the width of a 460px dialog, where the same alpha reads as a
+     spotlight following the cursor. The dialog gets a pool a third the area at
+     roughly a third the strength, a finer cell so the glyphs read as grain
+     rather than as characters, and no channel fringe at all: at that size the
+     red and cyan edges stop being an artifact and start being a decoration. */
+  [{ host: document.getElementById('agents') },
+   { host: document.querySelector('.hero-wrap') },
+   { host: document.getElementById('gate-panel'),
+     cell: 12, reach: 104, lens: 0.15, ambient: 0.055, fringe: false }]
+    .forEach(function asciiField(spec) {
+    var host = spec.host;
     if (!host || !('requestAnimationFrame' in window)) { return; }
 
     var canvas = document.createElement('canvas');
@@ -3864,8 +4441,11 @@ body.menu-open { overflow: hidden; }
     host.insertBefore(canvas, host.firstChild);
 
     var RAMP = ' .,:;i1tfLCG08@';
-    var CELL = 15;
-    var REACH = 190;
+    var CELL = spec.cell || 15;
+    var REACH = spec.reach || 190;
+    var LENS = spec.lens || 0.42;
+    var AMB = spec.ambient || 0.075;
+    var FRINGE = spec.fringe !== false;
     var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     var w = 0, h = 0, cols = 0, rows = 0, seed = null;
@@ -3893,7 +4473,11 @@ body.menu-open { overflow: hidden; }
        blend with the page, so the glyphs have to be told which way to go. */
     var tintA = [255, 255, 255], tintB = [135, 185, 195];
     function readTint() {
-      var cs = getComputedStyle(document.documentElement);
+      /* OFF THE HOST, NOT THE ROOT. These inherit, so for the two full-width
+         bands this is the same value it always was; for a host that scopes its
+         own palette it is the difference between the field being drawn in that
+         box's ink and being drawn in the page's. */
+      var cs = getComputedStyle(host);
       function trip(name, fallback) {
         var raw = cs.getPropertyValue(name).split(',');
         if (raw.length !== 3) { return fallback; }
@@ -3924,7 +4508,7 @@ body.menu-open { overflow: hidden; }
           var cx = x * CELL + CELL * 0.5;
           var cy = y * CELL + CELL * 0.5;
 
-          var ambient = s > 0.948 ? 0.075 + (still ? 0 : 0.035 * Math.sin(now * 0.0011 + s * 40)) : 0;
+          var ambient = s > 0.948 ? AMB + (still ? 0 : AMB * 0.47 * Math.sin(now * 0.0011 + s * 40)) : 0;
           var lens = 0;
           if (tracking) {
             var dx = cx - px, dy = cy - py, d2 = dx * dx + dy * dy;
@@ -3933,13 +4517,13 @@ body.menu-open { overflow: hidden; }
               lens = t * t;
             }
           }
-          var alpha = ambient + lens * 0.42;
+          var alpha = ambient + lens * LENS;
           if (alpha < 0.02) { continue; }
 
           var roll = (s + (still ? 0 : now * 0.00012) + lens * 0.35) % 1;
           var glyph = RAMP.charAt((roll * RAMP.length) | 0);
 
-          var fringe = lens * (1 - lens) * 4;
+          var fringe = FRINGE ? lens * (1 - lens) * 4 : 0;
           if (fringe > 0.18) {
             var f = (alpha * 0.14 * fringe).toFixed(3);
             ctx.fillStyle = 'rgba(255,90,90,' + f + ')';
@@ -3991,6 +4575,176 @@ body.menu-open { overflow: hidden; }
 
     wake();
   });
+
+  /* ---------------------------------------------------------- the gate ----
+     TWO LEVELS, and the shape is inherited from the partner site because it
+     carries real information: say what happens before asking for an email, and
+     let someone who already has an account skip straight past it. Everything
+     else is this page's own.
+
+     THE PAGE STILL WORKS WITHOUT THIS. Every CTA keeps href="apply.html", so a
+     dead script means the buttons simply go where they always went. That is the
+     same convention the reveal hiding and the typed headline already follow. */
+  (function accessGate() {
+    var gate = document.getElementById('gate');
+    if (!gate || typeof gate.showModal !== 'function') { return; }
+
+    var panel = document.getElementById('gate-panel');
+    var lv1 = gate.querySelector('[data-level="1"]');
+    var lv2 = gate.querySelector('[data-level="2"]');
+    var back = gate.querySelector('[data-gate="back"]');
+    var mail = document.getElementById('gate-mail');
+    var email = document.getElementById('gate-email');
+    var err = document.getElementById('gate-email-err');
+    var eyebrow = document.getElementById('gate-eyebrow');
+    var sub2 = document.getElementById('gate-sub-2');
+    var returning = false;
+    var closing = 0;
+
+    /* the same test apply.html validates with, so the two cannot disagree about
+       what an address is */
+    function isEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim()); }
+
+    /* LEVEL CHANGES USE THE PAGE'S OWN MOTION. The partner site slides 28px
+       sideways; nothing on this page moves horizontally, so a level arrives the
+       way every other block does, rising out of a clipped line. Re-adding the
+       class is what restarts it. */
+    function enter(level) {
+      level.classList.remove('appear', 'appear--mask');
+      void level.offsetWidth;
+      level.classList.add('appear', 'appear--mask');
+    }
+
+    function show(which) {
+      var toL2 = which === 2;
+      lv1.hidden = toL2;
+      lv2.hidden = !toL2;
+      /* back is the applicant's way out of the ask; a returning user never saw
+         level one, so offering it would walk them somewhere they did not come from */
+      back.hidden = !toL2 || returning;
+      gate.setAttribute('aria-labelledby', toL2 ? 'gate-title-2' : 'gate-title-1');
+      gate.setAttribute('data-level', toL2 ? '2' : '1');
+      enter(toL2 ? lv2 : lv1);
+    }
+
+    /* THE CARET IS THE POINT. Clicking the email door has to leave you typing,
+       not looking at a box you then have to click as well, so focus moves with
+       the morph rather than after it. The 30ms is the cross-fade's head start:
+       focusing a control still at opacity 0 scrolls some browsers to it. */
+    function openMail() {
+      if (mail.classList.contains('is-open')) { email.focus(); return; }
+      mail.classList.add('is-open');
+      window.setTimeout(function () { email.focus(); }, 30);
+    }
+
+    function open(asReturning) {
+      window.clearTimeout(closing);
+      returning = !!asReturning;
+      eyebrow.textContent = returning ? 'Welcome back' : 'Get started';
+      sub2.textContent = returning
+        ? 'Sign in to open your dashboard.'
+        : 'Sign in to start your application.';
+      clearError();
+      /* both doors again on every open: a field left standing from last time is
+         a half-finished sentence the reader did not write */
+      mail.classList.remove('is-open');
+      email.value = '';
+      if (!gate.open) { gate.showModal(); }
+      document.documentElement.classList.add('gate-lock');
+      /* the level always resets on open: an expectation read once is not an
+         expectation remembered, and the partner site made the same call */
+      show(returning ? 2 : 1);
+      requestAnimationFrame(function () { gate.classList.add('is-open'); });
+    }
+
+    function close() {
+      gate.classList.remove('is-open');
+      document.documentElement.classList.remove('gate-lock');
+      closing = window.setTimeout(function () { if (gate.open) { gate.close(); } }, 260);
+    }
+
+    function clearError() {
+      err.hidden = true;
+      err.textContent = '';
+      email.classList.remove('is-bad');
+    }
+
+    /* THE BUTTON IS NEVER DISABLED. A disabled control states that something is
+       wrong and refuses to say what; this reveals the reason instead, which is
+       the rule apply.html already follows field for field, and the message is
+       quoted from it rather than written again. */
+    function check() {
+      var v = email.value;
+      if (!v.trim()) { return 'Add the email you want to be contacted on.'; }
+      if (!isEmail(v)) { return 'That doesn\u2019t look like an email. Check for a typo.'; }
+      return '';
+    }
+
+    function proceed() {
+      var bad = check();
+      if (bad) {
+        err.textContent = bad;
+        err.hidden = false;
+        email.classList.add('is-bad');
+        email.focus();
+        return;
+      }
+      /* HANDED OVER IN sessionStorage, NEVER IN THE URL. apply.html's own note
+         says its email starts empty because this page has no auth; this closes
+         that loop without putting an address in a query string, in history, or
+         in a referrer. */
+      try { window.sessionStorage.setItem('onblue:email', email.value.trim()); } catch (e) {}
+      window.location.href = 'apply.html';
+    }
+
+    gate.addEventListener('click', function (e) {
+      /* the dialog element IS the backdrop hit area: a click that lands on it
+         rather than on the panel came from outside */
+      if (e.target === gate) { close(); return; }
+      var act = e.target.closest('[data-gate]');
+      if (!act) { return; }
+      var what = act.getAttribute('data-gate');
+      if (what === 'close') { close(); }
+      else if (what === 'next') { show(2); }
+      else if (what === 'signin') { returning = true; open(true); }
+      else if (what === 'back') { show(1); }
+      else if (what === 'email') { openMail(); }
+      else if (what === 'continue') { proceed(); }
+      else if (what === 'google') {
+        try { window.sessionStorage.removeItem('onblue:email'); } catch (e2) {}
+        window.location.href = 'apply.html';
+      }
+    });
+
+    /* Escape is the dialog's own, so all this does is let the exit animation run
+       before the element leaves the top layer */
+    gate.addEventListener('cancel', function (e) { e.preventDefault(); close(); });
+
+    /* the error appears on blur, not on every keystroke: telling someone their
+       address is malformed while they are still typing it is noise */
+    email.addEventListener('blur', function () {
+      if (!email.value.trim()) { return; }
+      var bad = check();
+      if (bad) { err.textContent = bad; err.hidden = false; email.classList.add('is-bad'); }
+    });
+    email.addEventListener('input', clearError);
+    email.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') { e.preventDefault(); proceed(); }
+    });
+
+    /* EVERY DOOR INTO THE PRODUCT COMES THROUGH HERE. The CTAs keep their href,
+       so this only intercepts while the script is alive; the sign-in links open
+       straight at level two because someone who has an account is not being
+       told what happens after they apply. */
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest('a[href="apply.html"], .hero-alt a[data-stub]');
+      if (!a || gate.open) { return; }
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.button > 0) { return; }
+      e.preventDefault();
+      var label = (a.textContent || '').trim().toLowerCase();
+      open(label.indexOf('sign in') === 0);
+    });
+  })();
 
   /* the spark's channel split follows the pointer: the axis points along the
      cursor-to-mark line and the amount grows as you approach. the filter lives on

@@ -631,10 +631,13 @@ textarea.field { resize: none; line-height: 1.55; }
      Same machinery: per-step validation, errors only once touched or once a
      submit has forced them, a never-disabled submit that reveals the reason
      instead of refusing silently.
-     TWO deliberate departures from the Next version, both design-only calls:
-     no sign-in gate (this static page has no auth, so email starts empty
-     instead of pre-filled) and submit is a stub (the confirmation renders, no
-     data goes anywhere) — the repo-wide design-only convention.
+     TWO deliberate departures from the Next version, both design-only calls.
+     The sign-in gate is not on this page: it is the homepage's access dialog,
+     which asks for an email and hands it over in sessionStorage rather than in
+     the URL, so this form starts prefilled for anyone who came through it and
+     empty for anyone who landed here directly. And submit is a stub: the
+     confirmation renders, no data goes anywhere, which is the repo-wide
+     design-only convention.
      ========================================================================== */
 
   /* ---- icons: quoted from choiceIcons.tsx / introIcons.tsx ---- */
@@ -723,10 +726,19 @@ textarea.field { resize: none; line-height: 1.55; }
   }
 
   /* ---- state ---- */
+  function gateEmail() {
+    try { return window.sessionStorage.getItem('onblue:email') || ''; } catch (e) { return ''; }
+  }
+
   var d = {
     adult: false, describes: '', hasYouTube: '', channel: '',
     pcHours: '', runDays: '', earnedBefore: '',
-    hasPaypal: '', fullRun: '', email: '', agree: false
+    /* PREFILLED FROM THE GATE. The homepage's access dialog asks for an email
+       before sending anyone here, and hands it over in sessionStorage rather
+       than in the URL, so it never lands in history or a referrer. Empty when
+       someone arrives at this page directly, which is what the note below the
+       form head describes. */
+    hasPaypal: '', fullRun: '', email: gateEmail(), agree: false
   };
   var touched = {};
   var forced = {};      /* per STEP, not global (the source's rule) */
