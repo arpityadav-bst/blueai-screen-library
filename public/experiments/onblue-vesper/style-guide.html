@@ -9,13 +9,14 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900&family=Instrument+Serif:ital@1&display=swap">
 
-<!-- THE PRODUCT STYLESHEET LANDS HERE AT RUNTIME.
-     index.html holds its CSS inline, so there is no file to <link>. The guide
-     fetches the page, lifts its <style> block verbatim into this slot and lifts
-     its shared <defs> sprite into the body. Nothing below re-implements a
-     product rule: every specimen is the real class, styled by the real sheet,
-     and a token read here is the value the homepage is actually running. -->
-<style id="sg-product"></style>
+<!-- THE PRODUCT STYLESHEET, LINKED. It used to be lifted out of index.html at
+     runtime, because the page carried its CSS inline and there was no file to
+     point at. There is now: onblue.css is the same sheet the homepage and the
+     application both link, so this guide reads the bytes they render rather
+     than a copy or a snapshot. Nothing below re-implements a product rule:
+     every specimen is the real class, styled by the real sheet, and a token
+     read here is the value those pages are actually running. -->
+<link rel="stylesheet" href="onblue.css" id="sg-product">
 
 <style>
 /* ============================================================================
@@ -209,8 +210,9 @@ code { background: var(--sg-code-bg); border: 1px solid var(--sg-line); border-r
 <div class="sg-boot" id="sg-boot">
   <div>
     <b>Loading the homepage's own stylesheet</b>
-    This guide renders <code>index.html</code>'s CSS rather than a copy of it, so it has to
-    fetch that file. Over <code>file://</code> the browser blocks that. Serve the folder and reload.
+    The stylesheet is linked, but the icon sprite has to be fetched out of
+    <code>index.html</code>, and over <code>file://</code> the browser blocks that. Serve the
+    folder and reload.
   </div>
 </div>
 
@@ -279,7 +281,8 @@ code { background: var(--sg-code-bg); border: 1px solid var(--sg-line); border-r
       <div class="sg-h1">onBlue Agentic Design System</div>
       <p class="sg-lede">
         Every specimen on this page is the <b>real component</b>, rendered with the real class names
-        from <a href="index.html">index.html</a>'s own stylesheet. Nothing is re-implemented here, so
+        from <code>onblue.css</code>, the one sheet <a href="index.html">the homepage</a> and
+        <a href="apply.html">the application</a> both link. Nothing is re-implemented here, so
         this page cannot silently drift from what ships. Token values are read live via
         <code>getComputedStyle</code> rather than typed in.
       </p>
@@ -292,11 +295,11 @@ code { background: var(--sg-code-bg); border: 1px solid var(--sg-line); border-r
     </header>
 
     <div class="sg-flag">
-      <b>How the stylesheet gets here.</b> The homepage keeps its CSS inline, so there is no file to
-      <code>&lt;link&gt;</code>. This guide fetches <code>index.html</code> at load, lifts its
-      <code>&lt;style&gt;</code> block into its own head and its shared <code>&lt;defs&gt;</code>
-      sprite into its body, then renders real components against them. A restyle of anything
-      specimened here lands on this page on reload, with nothing to propagate. The guide's own chrome
+      <b>How the stylesheet gets here.</b> It is <code>&lt;link&gt;</code>ed.
+      <code>onblue.css</code> is a real file now, shared by the homepage, the application and this
+      page, so a restyle of anything specimened here lands on all three at once with nothing to
+      propagate. The only thing still fetched is <code>index.html</code>, for its shared
+      <code>&lt;defs&gt;</code> icon sprite, which lives in markup rather than in CSS. The guide's own chrome
       is <code>sg-</code> prefixed throughout so it can never restyle a product class, and every
       specimen canvas takes the product's own <code>--bg</code> so a component is judged against the
       surface it actually ships on.
@@ -1305,14 +1308,6 @@ code { background: var(--sg-code-bg); border: 1px solid var(--sg-line); border-r
     .then(function (html) {
       var doc = new DOMParser().parseFromString(html, 'text/html');
 
-      /* THE STYLESHEET. index.html carries two <style>-adjacent blocks: the
-         theme-priming <script> and the one real <style>. Take the longest, so
-         a future second block cannot silently win. */
-      var blocks = Array.prototype.slice.call(doc.querySelectorAll('style'));
-      if (!blocks.length) { throw new Error('no <style> block found in ' + SOURCE); }
-      blocks.sort(function (a, b) { return b.textContent.length - a.textContent.length; });
-      document.getElementById('sg-product').textContent = blocks[0].textContent;
-
       /* THE SPRITE, so every icon and every filter below is the real one. */
       var defs = doc.querySelector('#defs-ca');
       if (defs) {
@@ -1327,8 +1322,8 @@ code { background: var(--sg-code-bg); border: 1px solid var(--sg-line); border-r
     .catch(function (err) {
       boot.innerHTML = '<div><b>Could not read ' + SOURCE + '</b>' +
         String(err.message || err) +
-        '<br><br>This guide renders the homepage’s own CSS rather than a copy of it, so it needs ' +
-        'to fetch that file. Serve the folder over http and reload.</div>';
+        '<br><br>The stylesheet itself is linked and fine; this fetch is only for the icon ' +
+        'sprite, which lives in that page’s markup. Serve the folder over http and reload.</div>';
     });
 
   /* ------------------------------------------------------------------ build */

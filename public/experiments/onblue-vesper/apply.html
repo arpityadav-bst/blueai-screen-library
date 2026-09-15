@@ -9,624 +9,792 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900&family=Instrument+Serif:ital@1&display=swap" />
+<!-- THE PAGE IS ON THE SAME SHEET AS THE HOMEPAGE (Appy, 2026-09-16). It used
+     to carry 548 lines of its own CSS, starting with its own copy of the token
+     block, which is how a second design system starts. Everything shared now
+     comes from onblue.css: the tokens, the grain, the header, the buttons, the
+     card, the section heading, the text field, the eyebrow, the wipe. What is
+     left below is only what exists on this page and nowhere else, which is the
+     form controls and the journey rail. -->
+<script>document.documentElement.setAttribute('data-theme', 'light');</script>
+<link rel="stylesheet" href="onblue.css" />
+<script src="ascii-field.js"></script>
+<script src="onblue-chrome.js"></script>
+
 <style>
-/* ============================================================================
-   onBlue, Vesper theme — THE APPLICATION.
-   A sibling of index.html, on the same tokens, so the two pages read as one
-   site. The FLOW is the Next app's creator application (src/components/onblue/
-   flow/apply/), ported to vanilla HTML/CSS/JS: every question, option set,
-   hint, validation message and ordering rule is quoted from there, not
-   re-authored — that copy is the PM's, with history. What is new here is only
-   the skin (Vesper's) and the page around the card.
-   FOCUSED-FLOW PAGE, deliberately: no nav, no sections, no competing CTA. The
-   homepage sells; this page only asks. The right-hand ASCII companion arrives
-   in a second pass; the grid already leaves it a seat.
-   ============================================================================ */
+/* ==========================================================================
+   THE APPLICATION, on the homepage's system.
+   Only the form controls live here. If a rule below could be written without
+   the word "choice", "chip", "check" or "mile" in its selector, it belongs in
+   onblue.css instead.
+   ========================================================================== */
 
-html, body { background: #f3f3f5 !important; color: #101013; }
+body { min-height: 100vh; }
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-a { color: inherit; text-decoration: none; }
-button { font-family: inherit; }
-
-/* ---- tokens: Vesper's, verbatim where shared ------------------------------- */
-:root {
-  --bg: #f3f3f5;
-  --bg-raised: #fafafc;
-  --text: #101013;
-  --muted: #6a6a72;
-  --border: rgba(16, 16, 19, 0.14);
-  --border-soft: rgba(16, 16, 19, 0.09);
-  --accent: #2f6dff;
-  --shadow-card: 0 1px 2px rgba(16, 16, 19, 0.05), 0 12px 28px -18px rgba(16, 16, 19, 0.22);
-  --ease: cubic-bezier(0.16, 1, 0.3, 1);
-  --grain-opacity: 0.075;
-  --grain-blend: multiply;
-  --logo: 18px;
-  --nav: 15px;
-  --btn: 15.5px;
-  --header-y: 26px;
-  --header-x: 40px;
-  --header-h: 78px;
-
-  /* the flow's own semantics. ok/danger exist because a yes/no answer is not a
-     neutral pick (the source's tone rule); they colour icons at rest, never
-     whole cards. */
-  --ok: #1e9e5a;
-  --danger: #d0453c;
+/* ---- the ground -------------------------------------------------------------
+   Fixed, because the band it copies is one section of a scrolling page and this
+   is the whole of one. The fill is the band's own step off white; the grain is
+   the shared ::before at --band-grain on --blend-lift, which is the same amount
+   and the same blend that band carries.
+   POINTER-EVENTS OFF, and the field listens on the window instead. A host behind
+   the content never sees the pointer, because the content is on top and the
+   events stop there; a fixed viewport-sized host does not need to see it, since
+   clientX and clientY are already the coordinates its canvas is drawn in. */
+.apply-bg { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; background: var(--band-lift); }
+.apply-bg > .ascii-bg { z-index: 1; }
+.apply-wrap, .site-foot { position: relative; z-index: 2; }
+/* the page ends on the footer, so the column above it does not also need to
+   hold the bottom of the screen open */
+.apply-wrap { padding-bottom: clamp(48px, 6vw, 84px); }
+/* A RESTING SHADOW, NOT A HOVER ONE. .card carries both an elevation and a
+   browse affordance: a shadow that deepens on hover and a 2px lift under it.
+   The lift is the part that does not belong here. This is the only thing on the
+   page and you are typing into it, so it should sit on the ground and stay
+   there; a box that rises while you read it is movement with no cause.
+   THE VALUE IS DELIBERATELY ONE-OFF and about half of --card-shadow: the same
+   two stops, the same rgba(18, 32, 64) tint, the same contact-and-body shape,
+   at roughly 70 per cent of the alphas and a shorter throw. A card in a grid of
+   six needs enough shadow to separate from the five beside it. This one has
+   nothing to separate from except the ground, and only needs to not be printed
+   on it. */
+.form-card {
+  background: var(--card-bg);
+  box-shadow: 0 1px 2px rgba(18, 32, 64, 0.025),
+              0 10px 24px -18px rgba(18, 32, 64, 0.07);
 }
+/* no lift, and no deepening: the surface answers on hover through its border
+   and its sheen, which are treatments of the surface rather than claims about
+   its height */
+.form-card:hover { transform: none; box-shadow: 0 1px 2px rgba(18, 32, 64, 0.025), 0 10px 24px -18px rgba(18, 32, 64, 0.07); }
 
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
-  overflow-x: hidden;
-}
+/* NO NAV MEANS TWO COLUMNS, NOT THREE WITH A HOLE. The shared header is a
+   1fr auto 1fr grid, which is what optically centres a nav between two unequal
+   ends. Take the middle child away and the end control does not stay at the
+   right edge: it is simply the second grid item now, so it lands in that middle
+   auto column and sits in the centre of the bar. Two children, two columns, and
+   the 1fr on the left is what pushes the action to the edge the gutter defines.
+   Page-scoped, because the homepage still has three. */
+.header-inner { grid-template-columns: 1fr auto; }
 
-.grain {
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  pointer-events: none;
-  opacity: var(--grain-opacity);
-  mix-blend-mode: var(--grain-blend);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: 180px 180px;
-}
-
-.serif {
-  font-family: "Instrument Serif", Georgia, serif;
-  font-style: italic;
-  font-weight: 400;
-  color: var(--accent);
-}
-
-/* ---- header: the focused-flow reduction of the homepage's ------------------ */
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: var(--header-h);
-  padding: 0 var(--header-x);
-}
-.logo {
+/* ---- the header's one control -----------------------------------------------
+   Nav weight, not button weight: logging out is a way out, not the thing this
+   page is for, and a solid CTA up here would compete with the one at the foot
+   of the form. It recedes on hover the way every nav link on this site does,
+   ink to muted, rather than brightening.
+   NO SIDE PADDING, so the label is flush to the grid's right edge instead of
+   sitting a gutter inside it. The 40px height is the hit target; a negative
+   margin to cancel padding would have been a number to maintain. */
+.logout {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-size: var(--logo);
-  font-weight: 600;
-  letter-spacing: -0.03em;
-}
-.logo .spark-mark { width: 21px; height: 21px; color: var(--accent); }
-.wm-on { color: var(--accent); }
-.header-back {
-  font-size: calc(var(--nav) - 1px);
-  color: var(--muted);
-  transition: color 0.18s ease;
-}
-.header-back:hover { color: var(--text); }
-
-/* ---- buttons: the homepage's flat language, verbatim values ---------------- */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 13px 22px;
-  border-radius: 9px;
-  font-size: var(--btn);
-  font-weight: 500;
-  letter-spacing: -0.02em;
-  line-height: 1;
-  white-space: nowrap;
+  height: var(--nav-h);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font-family: inherit;
+  font-size: var(--nav);
+  font-weight: 400;
+  letter-spacing: -0.01em;
   cursor: pointer;
-  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
+  transition: color 0.35s ease;
 }
-.btn-solid { background: #141414; border: 0; color: #fff; }
-.btn-solid:hover { background: #000; transform: translateY(-1px); }
-.btn-ghost { background: #fff; border: 1px solid rgba(0, 0, 0, 0.1); color: var(--text); }
-.btn-ghost:hover { background: #f1f1ef; border-color: rgba(0, 0, 0, 0.16); transform: translateY(-1px); }
+/* LEAVING IS THE ONE ACTION ON THIS PAGE THAT UNDOES BEING HERE, so it is the
+   one control that does not recede on hover like every other link. It reddens.
+   --err-ink rather than a new token: this codebase already treats danger and
+   error as one hue, at .tone-danger, where the "No" option's mark takes the
+   error red for exactly this reason. A --danger-ink alias would be a name
+   pretending to be a decision until the two genuinely need to diverge.
+   ONE RULE FOR BOTH DOORS. The header button and the footer link are the same
+   action, so they are the same selector rather than two that agree today. */
+.logout:hover,
+.foot-col a[data-logout]:hover { color: var(--err-ink); }
+.logout:focus-visible { outline: 2px solid var(--blue-ink); outline-offset: 3px; }
+.logout svg { width: 17px; height: 17px; flex: none; }
+@media (max-width: 560px) {
+  /* the glyph still says it; the word is what gives way first */
+  .logout { gap: 0; font-size: 0; }
+  .logout svg { width: 19px; height: 19px; }
+}
 
-/* ---- page columns -------------------------------------------------------------
-   One centred column below 1020px; from there, the form takes the left track
-   and the ASCII companion the right — the homepage hero's left-and-right
-   arrangement, carried through to the application. */
-.apply-main {
-  max-width: 640px;
+/* ---- the page frame -------------------------------------------------------- */
+.apply-wrap {
+  position: relative;
+  /* THE FOOTER STARTS BELOW THE FOLD, ALWAYS. Without a floor the column is as
+     tall as whatever step is showing, so on the short ones the footer came up
+     into the first screen and the page read as finished while the form was
+     still being filled in. One viewport here is what keeps the footer an
+     ending. dvh first in intent, vh underneath it for engines that do not have
+     it, which is the pattern the homepage already uses for its hero. */
+  min-height: 100vh;
+  min-height: 100dvh;
+  max-width: var(--band-max);
   margin: 0 auto;
-  padding: 28px var(--header-x) 96px;
+  padding: calc(var(--header-h) + clamp(18px, 2.6vw, 22px)) max(var(--header-x), 20px) clamp(64px, 9vw, 120px);
 }
-.agent-side { display: none; }
+/* 1fr to 0fr is the one collapse that animates without a height to guess at:
+   the row simply has no space to give, and the overflow hidden on the child is
+   what lets it be clipped rather than squashed. */
+/* ONE MOVEMENT, NOT TWO BEATS. Sequencing the fade and the collapse made the
+   title disappear and the form move afterwards, which reads as two events for
+   one decision. They start together, and the crop that makes the naive version
+   look wrong is solved by SPEED rather than by order: the words are gone well
+   before the box is short enough to be cutting anything.
 
-@media (min-width: 1020px) {
-  .apply-grid {
-    display: grid;
-    grid-template-columns: minmax(0, 640px) minmax(340px, 1fr);
-    max-width: 1180px;
-    margin: 0 auto;
-  }
-  .apply-grid .apply-main { margin: 0; }
-  /* STICKY, ONE VIEWPORT TALL: the form column scrolls, the companion stays.
-     position: sticky is a positioned box, so the canvas can fill it with
-     inset: 0 and no extra wrapper. */
-  .agent-side {
-    display: block;
-    position: sticky;
-    top: 0;
-    height: calc(100vh - var(--header-h));
-    min-height: 480px;
-  }
-  .agent-ascii {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    display: block;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 1.2s ease;
-    /* the hero's fade pool, centred for a column the model sits alone in */
-    -webkit-mask-image: radial-gradient(var(--ascii-mask, 46% 62% at 50% 46%), #000 0%, rgba(0, 0, 0, 0.55) 58%, transparent 86%);
-    mask-image: radial-gradient(var(--ascii-mask, 46% 62% at 50% 46%), #000 0%, rgba(0, 0, 0, 0.55) 58%, transparent 86%);
-  }
-  .agent-ascii.is-live { opacity: 0.5; }
+   A SYMMETRIC CURVE, NOT --ease, AND THIS IS THE ONE PLACE THAT IS RIGHT.
+   --ease is cubic-bezier(0.16, 1, 0.3, 1), an expo-OUT: it spends most of its
+   distance in the first fifth and then settles for the rest. That is exactly
+   what an arrival wants, which is every other animation on this site, and it is
+   why this one felt abrupt at any duration: the block had essentially finished
+   moving 100ms in, and lengthening it only made the tail longer rather than the
+   movement slower. A departure needs its weight spread across the whole travel.
+   0.8s to close, and the words out in 0.3s so the crop never shows: a third of
+   the way through this curve is only about a quarter of the height gone. */
+.apply-head-wrap, .mile-wrap {
+  display: grid;
+  grid-template-rows: 1fr;
 }
+.apply-head-wrap > *, .mile-wrap > * { overflow: hidden; }
+/* the title's two beats overlap: the words are gone in 0.3s while the row takes
+   0.8s to close, so the crop never gets far enough into the block to show */
+.apply-head-wrap { transition: grid-template-rows 0.8s cubic-bezier(0.45, 0, 0.25, 1), opacity 0.3s ease; }
+/* THE RAIL'S DO NOT OVERLAP, and the reason is the shape rather than the size.
+   A collapsing row clips from the bottom, and clipping a CIRCLE is visible at
+   the very first pixel: a disc with a flat edge stops being a disc, where a
+   paragraph losing its last few pixels still reads as a paragraph. Speed cannot
+   beat that, so the rail fades out completely first and closes afterwards,
+   which is the thing that was asked for: no crop, only a fade. */
+.mile-wrap { transition: grid-template-rows 0.5s cubic-bezier(0.45, 0, 0.25, 1) 0.28s, opacity 0.26s ease; }
+.apply-head { transition: transform 0.8s cubic-bezier(0.45, 0, 0.25, 1); }
+.is-underway .apply-head-wrap { grid-template-rows: 0fr; opacity: 0; }
+/* THE RAIL GOES WITH THE FORM. It answers "how far through am I", and once the
+   application is in there is no further to be: the closing line says what
+   happens next and the green strip says the thing landed, so three discs above
+   them are a third telling of the same news. It leaves the way the title does,
+   on the same rule, so the page has one way of putting something aside. */
+.is-submitted .mile-wrap { grid-template-rows: 0fr; opacity: 0; }
+/* upward, which is the direction the form is arriving from */
+.is-underway .apply-head { transform: translateY(-16px); }
+.apply-head { text-align: center; }
+.apply-head .eyebrow { margin-bottom: 16px; }
+.apply-head .lede { margin-inline: auto; }
 
-.apply-head h1 {
-  font-size: 38px;
-  font-weight: 500;
-  letter-spacing: -0.04em;
-  line-height: 1.1;
-}
-.apply-head h1 .serif { font-size: 1.08em; }
-.apply-head .sub {
-  margin-top: 12px;
-  color: var(--muted);
-  font-size: 16px;
-  line-height: 1.55;
-  letter-spacing: -0.015em;
-}
-
-/* ---- the journey strip: Apply → We review → Deploy & earn ------------------ */
+/* ---- the journey rail: Apply, We review, Deploy and earn -------------------
+   The three stages of the PROGRAM, which is a different thing from the five
+   steps of the form and has to look it. The form's progress is a hairline
+   inside the card; this is discs and a connector above it, built on the same
+   .step-num the homepage numbers its How it works cards with. */
 .mile {
   display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 34px;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0;
+  margin: clamp(26px, 3.8vw, 40px) auto 0;
   list-style: none;
 }
-.mile-step { display: flex; align-items: center; gap: 8px; }
-.mile-line { width: 26px; height: 1px; background: var(--border); }
+.mile-step {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  color: var(--dim-ink);
+  font-size: 13px;
+  letter-spacing: -0.015em;
+}
+.mile-line {
+  width: clamp(28px, 6vw, 72px);
+  height: 1px;
+  margin: 0 14px;
+  background: var(--hair-2);
+}
 .mile-dot {
   display: grid;
   place-items: center;
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  border: 1px solid var(--border);
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 500;
-  background: #fff;
-  transition: background 0.35s ease, border-color 0.35s ease, color 0.35s ease;
-}
-.mile-label { font-size: 13px; color: var(--muted); letter-spacing: -0.01em; }
-.mile-step.current .mile-dot {
-  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
-  color: var(--accent);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 12%, transparent);
-}
-.mile-step.current .mile-label { color: var(--text); }
-.mile-step.done .mile-dot { background: var(--accent); border-color: var(--accent); color: #fff; }
-
-/* ---- the card --------------------------------------------------------------- */
-.form-card {
-  margin-top: 18px;
-  padding: 32px 34px 30px;
-  border-radius: 18px;
-  border: 1px solid var(--border-soft);
-  background: var(--bg-raised);
-  box-shadow: var(--shadow-card);
-}
-.form-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 16px;
-  min-height: 26px;
-  margin-bottom: 22px;
-}
-.form-head h2 { font-size: 18px; font-weight: 500; letter-spacing: -0.02em; }
-
-/* the progress rail: a count and five segments, indicators not buttons
-   (the source's mobile rule: backward navigation is the Back button's job) */
-.rail { display: inline-flex; align-items: center; gap: 10px; }
-.rail-count { font-size: 12.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
-.rail-segs { display: inline-flex; gap: 5px; }
-.rail-seg {
-  position: relative;
-  width: 16px;
-  height: 3px;
-  border-radius: 2px;
-  background: var(--border-soft);
-  overflow: hidden;
-}
-/* the fill sweeps in rather than snapping — the reward beat for finishing a step */
-.rail-seg::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: var(--accent);
-  transform: translateX(-101%);
-  transition: transform 0.45s var(--ease);
-}
-.rail-seg.on::before { transform: translateX(0); }
-
-/* ---- step body ---------------------------------------------------------------
-   The question steps share one min-height floor so Continue doesn't jump
-   between them; the intro opts out (the source's 2026-08-24 call: a fieldless
-   read-once screen under the floor carried ~130px of dead air). */
-.step-body { min-height: 400px; }
-.step-body.intro { min-height: 0; }
-
-/* forward transitions rise with a stagger; Back plays it subtler. --i is set
-   per child by the renderer. */
-@keyframes rise {
-  from { opacity: 0; transform: translateY(14px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.step-body.swap-fwd > * { animation: rise 0.45s var(--ease) both; animation-delay: calc(var(--i, 0) * 60ms); }
-.step-body.swap-back > * { animation: rise 0.3s var(--ease) both; }
-
-/* ---- the intro's icon rows -------------------------------------------------- */
-.intro-row { display: flex; align-items: flex-start; gap: 14px; }
-.intro-row + .intro-row { margin-top: 18px; }
-.intro-ic {
-  display: grid;
-  place-items: center;
   flex: none;
-  width: 36px;
-  height: 36px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
-  border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
-  background: color-mix(in srgb, var(--accent) 8%, transparent);
-  color: var(--accent);
+  border: 1px solid var(--border-soft);
+  background: var(--card-bg);
+  color: var(--dim-ink);
+  font-size: 12.5px;
+  font-weight: 600;
 }
-.intro-ic svg { width: 18px; height: 18px; }
-.intro-body { font-size: 15.5px; line-height: 1.55; letter-spacing: -0.01em; padding-top: 6px; }
-.intro-body b { font-weight: 600; }
-.legal-link { text-decoration: underline; text-underline-offset: 2px; }
-.legal-link:hover { color: var(--accent); }
-
-/* ---- questions --------------------------------------------------------------- */
-.q + .q { margin-top: 28px; }        /* one gap between distinct questions… */
-.q.tight-gap { margin-top: 20px; }    /* …except step 5's budgeted exceptions */
-.q.min-gap { margin-top: 12px; }
-fieldset.q { border: 0; }
-.q-label { display: block; font-size: 15px; font-weight: 500; letter-spacing: -0.015em; line-height: 1.45; }
-.q-label .opt { color: var(--muted); font-weight: 400; }
-.opts { margin-top: 12px; }
-.opts.tight { margin-top: 7px; }
-
-/* hint and error share ONE reserved slot (the source's rule: an error appearing
-   swaps text in a held box instead of growing the card) */
-.msg {
-  display: block;
-  min-height: 19px;
-  margin-top: 8px;
-  font-size: 13px;
-  line-height: 1.45;
-  color: var(--muted);
-  letter-spacing: -0.005em;
+.mile-step.current .mile-dot {
+  border-color: rgba(21, 110, 254, 0.45);
+  background: rgba(21, 110, 254, 0.16);
+  color: var(--ink);
 }
-.msg.is-err { color: var(--danger); animation: msg-in 0.3s var(--ease) both; }
-@keyframes msg-in {
-  from { opacity: 0; transform: translateY(-3px); }
-  to { opacity: 1; transform: translateY(0); }
+.mile-step.current { color: var(--ink); font-weight: 500; }
+.mile-step.done .mile-dot { border-color: var(--green-line); background: var(--green-fill); color: var(--green-ink); }
+.mile-step.done { color: var(--green-ink); }
+
+/* ---- the card ---------------------------------------------------------------- */
+.form-stage { position: relative; max-width: 640px; margin: clamp(20px, 2.8vw, 30px) auto 0; }
+.form-card { padding: 26px 26px 22px; }
+
+/* the step head: the form's own progress, at hairline weight, because the rail
+   above already carries the part of the journey worth a disc */
+.form-head { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin-bottom: 20px; }
+.form-head:empty { display: none; }
+.form-head h2 { color: var(--ink); font-size: 16px; font-weight: 600; letter-spacing: -0.03em; }
+.form-head h2:empty { display: none; }
+.step-rail { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+.rail-count { color: var(--dim-ink); font-size: 11.5px; letter-spacing: 0.06em; }
+.rail-segs { display: flex; gap: 4px; }
+.rail-seg { width: 18px; height: 3px; border-radius: 2px; background: var(--wash-4); transition: background 0.35s var(--ease); }
+.rail-seg.on { background: var(--blue); }
+
+/* PACKED TO THE TOP, NOT SPREAD THROUGH THE FLOOR. A grid's default
+   align-content is stretch, so the moment min-height gave these rows more space
+   than they needed they took it, and the 22px gap between two questions became
+   whatever was left over divided between them. The floor exists to stop the
+   buttons moving, not to rewrite the rhythm of the questions above them: the
+   slack belongs at the bottom, in one piece, where it reads as room rather than
+   as spacing nobody chose. */
+/* ---- the work, in a panel of its own -----------------------------------------
+   How it works nests exactly this way: a card whose heading sits on the card and
+   whose substance sits in a panel inset into it. Here the step title and the
+   progress rail are the chrome, the buttons are the action, and everything
+   between them is the work, so that is what the panel holds.
+   ALTERNATION, NOT STACKING, which is the rule that makes the nesting readable:
+   the card is white, the panel steps down one per cent, and every control inside
+   the panel comes back to white. Stacking would put the darkest surface
+   innermost and the depth would read as murk instead of as structure, which is
+   why the five controls below all move off --panel-bg in the same edit. */
+.step-panel {
+  position: relative;
+  padding: 20px 18px;
+  border: 1px solid var(--border-soft);
+  border-radius: 12px;
+  background: var(--panel-bg);
+}
+.form-card.is-done .step-panel { padding: 0; border: 0; background: none; }
+
+.step-body { display: grid; align-content: start; gap: 22px; }
+.step-body.intro { gap: 14px; }
+/* THE FLOOR IS MEASURED, NOT CHOSEN. Every step is a different height, so the
+   card grew and shrank under the reader and the buttons moved every time, which
+   is the one thing in a five-step form that should never move. The value is the
+   tallest step at this width, taken at load and again on resize, because a
+   number typed in here would be wrong the first time a question is reworded.
+   A floor, not a height: a step that runs past it is still allowed to. */
+.step-body.has-floor { min-height: var(--step-floor, 0px); }
+/* the probe renders each step off-screen to be measured, at the real width,
+   which is the PANEL's inner width now rather than the card's */
+.step-probe {
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  top: 0;
+  visibility: hidden;
+  pointer-events: none;
 }
 
-/* the aside that answers a "No" on the channel step */
-.aside { margin-top: 16px; font-size: 14px; line-height: 1.55; color: var(--muted); }
+/* ---- the intro rows ---------------------------------------------------------- */
+/* CENTRED, NOT TOP-ALIGNED. A row of mixed heights aligns on the axis that
+   survives a content change, and the diagnostic for getting it wrong is the
+   compensation: this had align-items: flex-start with a 6px top padding on the
+   text to drag it back level, which is only correct while the line does not
+   wrap. It wraps on most of these. */
+.intro-row { display: flex; align-items: center; gap: 13px; }
+.intro-ic { flex: none; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 10px; border: 1px solid var(--border-soft); background: var(--card-bg); color: var(--blue-ink); }
+.intro-ic svg { width: 17px; height: 17px; }
+.intro-body { color: var(--lede-ink); font-size: 14px; line-height: 1.55; letter-spacing: -0.01em; }
+.intro-body b { color: var(--ink); font-weight: 600; }
+.row-br { display: inline; }
+@media (max-width: 700px) { .row-br { display: none; } }
 
-/* ---- choice cards ------------------------------------------------------------ */
+/* ---- a question -------------------------------------------------------------- */
+.q { display: block; border: 0; padding: 0; margin: 0; }
+/* THE CONSENT ROW NEEDS MORE GAP THAN THE GRID GIVES, and the reason is the
+   same ink-versus-box distinction that made the captions look uneven. Every
+   other control on this step is a bordered box with 13px of padding, so its
+   first ink sits 13px inside its own top edge: 22px of grid gap reads as 35px
+   of space. The consent row is deliberately unboxed, being a legal line rather
+   than a question, so its ink starts at its edge and the same 22px reads as 22.
+   12px here puts its ink the same distance from the field above it as every
+   other pair on the page, which is what makes the rhythm look even rather than
+   what makes the numbers match. */
+.q--consent { margin-top: 12px; }
+
+/* AN EMPTY SLOT NO LONGER TAKES ITS SPACE. .msg reserves 1.15em so a validation
+   error can appear without shifting what is under it, which is a good trade for
+   a slot that is about to hold something and a bad one for a group that has no
+   caption and never will: it left 25px of nothing between that group's last
+   control and the next label, against 25px of caption under the group beside
+   it. The distance between the BOXES was identical all along, which is why this
+   looked like a mystery; the distance between the INK was not, and ink is what
+   gets read. The cost is honest and small: an error appearing on blur now
+   nudges what is below it, which is feedback rather than a defect.
+   THE STEP-FIVE EXCEPTIONS ARE GONE WITH IT. Three negative margins compensated
+   for exactly this, on exactly the groups that had no caption. */
+.msg:empty { min-height: 0; margin-top: 0; }
+/* the tick and the radio itself: reachable by keyboard and screen reader,
+   invisible to everything else, because the card beside it is the control */
 .sr-only {
   position: absolute;
-  width: 1px; height: 1px;
-  padding: 0; margin: -1px;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
   overflow: hidden;
   clip: rect(0 0 0 0);
+  clip-path: inset(50%);
   white-space: nowrap;
   border: 0;
 }
+/* two options carry a reading rather than just a label: the affirmative one is
+   the page's green, the one that rules you out is its error red */
+.tone-ok .choice-ic { color: var(--green); }
+.tone-danger .choice-ic { color: var(--err-line); }
+.q-label { display: block; margin-bottom: 11px; color: var(--ink); font-size: 14px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.45; }
+.q-label .opt { color: var(--dim-ink); font-weight: 400; }
+/* ---- the two kinds of text under a control ----------------------------------
+   THEY WERE THE SAME TEXT IN TWO SIZES, 12.5 and 13, which is not a hierarchy
+   step, it is tuning residue: half a pixel and the same colour reads as one
+   voice that cannot decide how loud it is. They are different things and now
+   they look it.
+
+   A HINT belongs TO the control. It is always there, it describes the thing
+   above it, and nobody needs to read it twice. It sits at caption weight in the
+   quietest ink the page has, close enough to the control to be part of it.
+
+   AN ASIDE is the system answering. It appeared because of a choice, it is new
+   information, and it changes what the reader should expect, so the one thing
+   it must not do is look like more small print. It gets a surface, a mark and
+   the reading ink, and it stands off on its own gap rather than trailing the
+   hint. The distinction is carried by SURFACE, not by size: both are 12.5px, so
+   nothing about the type hierarchy is being asked to say "this one matters", a
+   panel with a blue mark in it already said that. */
+.msg { display: block; min-height: 1.15em; margin-top: 7px; color: var(--dim-ink); font-size: 12.5px; line-height: 1.45; letter-spacing: -0.01em; }
+.msg.is-err { color: var(--err-ink); }
+
+.aside {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  padding: 13px 15px;
+  border: 1px solid var(--border-soft);
+  border-radius: 11px;
+  background: var(--card-bg);
+  color: var(--lede-ink);
+  font-size: 12.5px;
+  line-height: 1.55;
+  letter-spacing: -0.01em;
+}
+.aside-ic { flex: none; display: grid; place-items: center; color: var(--blue-ink); }
+.aside-ic svg { display: block; }
+.legal-link { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--link-underline); }
+.legal-link:hover { color: var(--link-hover); text-decoration-color: var(--link-hover); }
+
+/* ---- choice cards ------------------------------------------------------------
+   The selected state is the homepage's, to the value: .pick-list li.is-on is a
+   blue-tinted fill on a blue border with the label at full ink, and a picked
+   option should not look like one thing here and another there. */
 .choice-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
 .choice-grid.cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-/* an odd number of cards leaves the last alone in a half-empty row */
-.choice-grid .span-last { grid-column: 1 / -1; }
-.choice-grid.cols-3 .span-last { grid-column: auto; }
-
+.span-last { grid-column: 1 / -1; }
+.opts label { display: block; cursor: pointer; }
 .choice-card {
   position: relative;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 7px;
-  padding: 15px 10px 13px;
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  background: #fff;
-  cursor: pointer;
-  text-align: center;
-  transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
-}
-.choice-card:hover { border-color: rgba(16, 16, 19, 0.26); transform: translateY(-1px); }
-.choice-ic { color: var(--muted); transition: color 0.18s ease; }
-.choice-ic svg { display: block; width: 20px; height: 20px; }
-.choice-name { font-size: 14px; font-weight: 500; letter-spacing: -0.015em; }
-.choice-hint { font-size: 12px; color: var(--muted); }
-/* tones read at REST on the icon alone — waiting for selection would mean the
-   colour only appears once it's no longer needed to tell the options apart */
-.tone-ok .choice-ic { color: var(--ok); }
-.tone-danger .choice-ic { color: var(--danger); }
-
-/* the corner mark: absolute so selection costs no layout. Round because these
-   are radios; the checkbox below is the square one. */
-.choice-mark {
-  position: absolute;
-  top: 7px;
-  right: 7px;
-  display: grid;
-  place-items: center;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: var(--accent);
-  color: #fff;
-  opacity: 0;
-  transform: scale(0.5);
-  transition: opacity 0.2s var(--ease), transform 0.3s var(--ease);
-}
-.choice-card.on {
-  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
-  background: color-mix(in srgb, var(--accent) 8%, #fff);
-}
-.choice-card.on .choice-ic { color: var(--accent); }
-.choice-card.on .choice-mark { opacity: 1; transform: scale(1); }
-.choice-card.err-ring { border-color: color-mix(in srgb, var(--danger) 45%, transparent); }
-
-/* ---- chips -------------------------------------------------------------------- */
-.chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
-.chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 10px 15px;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  background: #fff;
-  font-size: 14px;
-  font-weight: 450;
-  letter-spacing: -0.01em;
-  cursor: pointer;
-  transition: border-color 0.18s ease, background 0.18s ease, color 0.18s ease, transform 0.18s ease;
-}
-.chip:hover { border-color: rgba(16, 16, 19, 0.26); transform: translateY(-1px); }
-.chip .choice-ic svg { width: 15px; height: 15px; }
-.chip.on {
-  border-color: color-mix(in srgb, var(--accent) 50%, transparent);
-  background: color-mix(in srgb, var(--accent) 9%, #fff);
-  color: var(--accent);
-}
-.chip.on .choice-ic { color: var(--accent); }
-.chip.err-ring { border-color: color-mix(in srgb, var(--danger) 45%, transparent); }
-
-/* the keyboard's focus ring, forwarded from the sr-only input */
-input.sr-only:focus-visible + .choice-card,
-input.sr-only:focus-visible + .chip,
-input.sr-only:focus-visible + .check {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
-
-/* ---- the checkbox rows -------------------------------------------------------- */
-.check {
-  display: flex;
   align-items: flex-start;
-  gap: 11px;
-  padding: 14px 16px;
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  background: #fff;
-  cursor: pointer;
-  font-size: 14.5px;
-  line-height: 1.5;
+  gap: 7px;
+  height: 100%;
+  padding: 13px 13px 12px;
+  border: 1px solid var(--border-soft);
+  border-radius: 11px;
+  background: var(--card-bg);
+  color: var(--mini-ink);
+  font-size: 13px;
   letter-spacing: -0.01em;
-  transition: border-color 0.18s ease, background 0.18s ease;
+  transition: border-color 0.25s ease, background 0.25s ease, color 0.25s ease;
 }
-.check:hover { border-color: rgba(16, 16, 19, 0.26); }
-.check.on {
-  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
-  background: color-mix(in srgb, var(--accent) 6%, #fff);
+label:hover .choice-card:not(.on) {
+  border-color: var(--card-line-hover);
+  background: var(--wash-hover);
 }
-.check.err-ring { border-color: color-mix(in srgb, var(--danger) 45%, transparent); }
-/* the closing consent line is boilerplate ticked on the way out, not a decision
-   like the age gate — no card at all (the source's `subtle`) */
-.check.subtle { border: 0; background: transparent; padding: 0; }
-.check.subtle:hover { border: 0; }
-.check-box {
-  display: grid;
-  place-items: center;
-  flex: none;
-  width: 20px;
-  height: 20px;
-  margin-top: 1px;
-  border-radius: 6px;
-  border: 1px solid var(--border);
-  background: #fff;
-  color: #fff;
-  transition: background 0.18s ease, border-color 0.18s ease;
-}
-.check.on .check-box { background: var(--accent); border-color: var(--accent); }
-.check-box svg { width: 11px; height: 11px; }
+.choice-card.on { border-color: rgba(21, 110, 254, 0.5); background: rgba(21, 110, 254, 0.12); color: var(--ink); }
+.choice-card.err-ring { border-color: var(--err-line); }
+.choice-ic { display: grid; place-items: center; color: var(--blue-ink); }
+.choice-ic svg { width: 19px; height: 19px; }
+.choice-name { font-weight: 500; }
+.choice-hint { color: var(--dim-ink); font-size: 12px; line-height: 1.4; }
+.choice-mark { position: absolute; top: 11px; right: 11px; display: inline-flex; color: var(--blue-ink); opacity: 0; transition: opacity 0.25s ease; }
+.choice-card.on .choice-mark { opacity: 1; }
+input:focus-visible + .choice-card,
+input:focus-visible + .chip,
+input:focus-visible + .check { outline: 2px solid var(--blue-ink); outline-offset: 2px; }
 
-/* ---- text fields --------------------------------------------------------------- */
-.field {
+/* ---- chips: the homepage's, plus the states a form needs -------------------- */
+.chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip-row .chip { background: var(--card-bg); cursor: pointer; transition: border-color 0.25s ease, background 0.25s ease, color 0.25s ease; }
+.chip-row label:hover .chip:not(.on) {
+  border-color: var(--card-line-hover);
+  background: var(--wash-hover);
+}
+.chip.on { border-color: rgba(21, 110, 254, 0.5); background: rgba(21, 110, 254, 0.12); color: var(--ink); }
+.chip.err-ring { border-color: var(--err-line); }
+
+/* ---- the agreement rows ------------------------------------------------------ */
+.check { display: flex; align-items: flex-start; gap: 11px; padding: 13px 14px; border: 1px solid var(--border-soft); border-radius: 11px; background: var(--card-bg); color: var(--mini-ink); font-size: 13.5px; line-height: 1.5; letter-spacing: -0.01em; cursor: pointer; transition: border-color 0.25s ease, background 0.25s ease; }
+.check.subtle { padding: 0; border: 0; background: none; font-size: 12.5px; color: var(--muted); }
+.check:hover:not(.on) { border-color: var(--card-line-hover); background: var(--wash-hover); }
+/* the consent row is legal text with a box drawn on nothing, so it takes
+   neither half of the hover: a wash behind a sentence you cannot press would be
+   the page offering an affordance it does not have */
+.check.subtle:hover { border-color: transparent; background: none; }
+.check.on { border-color: rgba(21, 110, 254, 0.5); background: rgba(21, 110, 254, 0.12); color: var(--ink); }
+.check.subtle.on { background: none; border-color: transparent; color: var(--muted); }
+.check.err-ring { border-color: var(--err-line); }
+.check-box { flex: none; display: grid; place-items: center; width: 19px; height: 19px; margin-top: 1px; border: 1px solid var(--border); border-radius: 6px; background: var(--card-bg); color: var(--solid-ink); transition: background 0.2s ease, border-color 0.2s ease; }
+.check.on .check-box { background: var(--blue); border-color: var(--blue); color: #fff; }
+.check.err-ring .check-box { border-color: var(--err-line); }
+
+/* ---- fields ------------------------------------------------------------------- */
+/* the shared rule sets --panel-bg, which is the panel's own step now */
+.field { height: var(--hero-btn-h); padding: 0 14px; background: var(--card-bg); }
+textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: vertical; min-height: 84px; }
+
+/* ---- the foot ------------------------------------------------------------------ */
+/* NO RULE ANY MORE. It was there to divide the buttons from the questions, and
+   the panel's own edge does that now; keeping both would be two devices drawing
+   the same line eight pixels apart. */
+.form-foot { display: flex; align-items: center; gap: var(--actions-gap); margin-top: 20px; }
+.form-foot .btn { height: var(--hero-btn-h); padding: 0 var(--hero-btn-pad); font-size: calc(var(--btn) + 1.5px); }
+.form-foot .btn-solid { box-shadow: var(--hero-shadow); }
+.form-foot .btn-solid:hover { box-shadow: var(--hero-shadow-hover); }
+.form-foot .btn { flex: 1 1 0; }
+
+/* ---- the confirmation --------------------------------------------------------
+   NO CONTAINER (Appy, 2026-09-16). A card is a place to do something, and there
+   is nothing left to do here: the form is over, and boxing four centred lines in
+   the same frame the questions came in says otherwise. The stage keeps its width
+   so the line lengths do not change under the band, and everything that made it
+   a card, the stroke, the fill, the shadow and the padding, goes at the moment
+   the form does, as part of what the band is crossing.
+   THE CLASS IS ON THE CARD, NOT ON THE STAGE, and that is what makes the
+   transition work rather than merely look like it does. The outgoing card is a
+   CLONE, and it lives inside the stage: while this state hung off the stage,
+   every rule under it reached the clone as well, so the instant the
+   confirmation committed the form being wiped away lost its own frame and
+   re-laid itself out bare, and only then did the band start travelling. The
+   reader saw the container vanish, the content reflow, and a transition arrive
+   afterwards to explain it.
+   Excluding the clone by name fixed that and left a trap: an exclusion is
+   something you have to remember to repeat on the next rule you add. On the
+   card itself the trap does not exist. The clone is taken BEFORE the class is
+   applied, and a class added to an element afterwards cannot reach a copy made
+   of it earlier, so the snapshot is unreachable by construction.
+   The stage also no longer widens from 640 to 720 on this state: the ghost is
+   absolute inside it and was being stretched at the same instant. The closing
+   block does not need the width anyway, since the title fits 640 at --h1 and
+   the line under it is capped at --lede-max regardless. */
+.form-card.is-done {
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  background: none;
+  box-shadow: none;
+}
+/* and the closing state drops the sheen too, since there is no surface left
+   under it to run along */
+.form-card.is-done::after { display: none; }
+
+/* 100px lower at the wide end. The card sat where the reader was working; the
+   closing statement is not work, and standing it off the top of the column is
+   what lets it read as an ending rather than as the next step. */
+.confirm { display: flex; flex-direction: column; align-items: center; text-align: center; padding: clamp(60px, 10vw, 144px) 4px 0; }
+/* ---- the spark behind the line ----------------------------------------------
+   SIZED OFF --h1, not in em of its own box. It has to track the title through
+   every step of the type ladder, and the box it sits in inherits body size, so
+   em here would have measured the wrong thing. 1.7 times the title's own size
+   is roughly the width of the emphasised word, which is the scale that reads as
+   light behind three words rather than as a fourth thing in the line.
+   MASKED AND LIT EXACTLY AS THE FOOTER'S IS: --foot-fade dissolves it downward
+   so it crests rather than floats, --foot-shadow is the bloom, and --ca-foot
+   splits its edge. Under the words at z-index 0, and it arrives on its own fade
+   a beat before the typing starts. */
+/* PLACED BY ARITHMETIC, NOT BY EYE. Two numbers describe this glyph and both
+   are read off the path rather than guessed: the star fills about 78 per cent of
+   its 24-unit box, and --foot-fade stops showing it at 92 per cent, so the
+   lowest ink in the box sits at roughly 0.75 of its height. Everything else
+   follows from wanting that ink 4px INSIDE the title's top edge.
+     head padding      0.62 x size   is what pushes the title down
+     sun top          -0.13 x size   = 0.62 - 0.75, so 0.75 lands on the title
+     plus 4px                        the overlap asked for
+   Change the size and the relationship holds, which is the point of writing it
+   this way: nothing here is a number that only works at one breakpoint. */
+.confirm-head {
+  --sun-size: calc(var(--h1) * 2.4);
+  position: relative;
+  padding-top: calc(var(--sun-size) * 0.62);
+}
+.confirm-sun {
+  position: absolute;
+  left: 50%;
+  top: calc(var(--sun-size) * -0.13 + 4px);
+  z-index: 0;
+  width: var(--sun-size);
+  height: var(--sun-size);
+  margin-left: calc(var(--sun-size) * -0.5);
+  color: var(--spark-ink);
+  filter: var(--foot-shadow);
+  opacity: 0.55;
+  animation: in-fade 1.2s var(--ease) 0.1s both;
+  pointer-events: none;
+}
+.confirm-sun-in {
   display: block;
   width: 100%;
-  margin-top: 12px;
-  padding: 12px 14px;
-  border-radius: 10px;
-  border: 1px solid var(--border);
-  background: #fff;
-  color: var(--text);
-  font-family: inherit;
-  font-size: 15px;
-  letter-spacing: -0.01em;
-  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+  height: 100%;
+  /* --ca-spark, not --ca-foot: the driven one */
+  filter: var(--ca-spark);
+  -webkit-mask-image: var(--foot-fade);
+  mask-image: var(--foot-fade);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
 }
-.field::placeholder { color: color-mix(in srgb, var(--muted) 72%, transparent); }
-.field:hover { border-color: rgba(16, 16, 19, 0.26); }
-.field:focus {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 15%, transparent);
-}
-.field.err {
-  border-color: var(--danger);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--danger) 10%, transparent);
-}
-textarea.field { resize: none; line-height: 1.55; }
+.confirm-sun svg { display: block; width: 100%; height: 100%; }
+.confirm h2 { position: relative; z-index: 1; min-height: 1.2em; }
+.confirm .lede { margin-top: 18px; }
+.confirm .lede b { color: var(--ink); font-weight: 600; }
+/* the receipt, and the last thing read: the sentence above explains what
+   happens next, this confirms that the thing itself landed */
+.confirm .earn-payout { margin-top: 30px; }
+/* THE HERO'S HIERARCHY, WHICH MEANS THE LEDE DOES NOT MOVE. The title goes up
+   to --h1 and the line under it stays where it is, because that pairing is the
+   site's loudest statement standing next to its quietest explanation; scaling
+   both would only make a bigger copy of the same relationship. --lede-max is
+   what keeps the measure honest under a title that wide. */
+.confirm .lede { max-width: var(--lede-max); }
 
-/* ---- the foot -------------------------------------------------------------------- */
-.form-foot { display: flex; gap: 10px; margin-top: 26px; }
-.form-foot .grow { flex: 1; }
-
-/* ---- confirmation ------------------------------------------------------------------ */
-.confirm { text-align: center; padding: 26px 6px 14px; }
-.confirm-tick {
-  display: grid;
-  place-items: center;
-  width: 58px;
-  height: 58px;
-  margin: 0 auto 22px;
-  border-radius: 50%;
-  border: 1px solid color-mix(in srgb, var(--ok) 30%, transparent);
-  background: color-mix(in srgb, var(--ok) 9%, transparent);
-  color: var(--ok);
-}
-.confirm-tick svg { width: 26px; height: 26px; }
-/* the tick draws itself — the one place the page spends a real flourish */
-.confirm-tick path {
-  stroke-dasharray: 30;
-  stroke-dashoffset: 30;
-  animation: tick-draw 0.6s var(--ease) 0.25s forwards;
-}
-@keyframes tick-draw { to { stroke-dashoffset: 0; } }
-.confirm h2 {
-  position: relative;
-  font-size: 27px;
-  font-weight: 500;
-  letter-spacing: -0.035em;
-  min-height: 1.2em;
-}
-.confirm p {
-  max-width: 400px;
-  margin: 14px auto 0;
-  color: var(--muted);
-  font-size: 15px;
-  line-height: 1.6;
-  letter-spacing: -0.01em;
-}
-.confirm p b { color: var(--text); font-weight: 550; }
-
-/* the homepage closer's typed caret, same construction */
-.typed .tw { opacity: 0; transition: opacity 140ms ease; }
-.typed .tw.on { opacity: 1; }
-.type-caret {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 2px;
-  border-radius: 1px;
-  background: var(--accent);
-  box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 45%, transparent);
-  pointer-events: none;
-  animation: caret-blink 0.9s linear infinite;
-}
-.type-caret.is-done { animation: caret-hide 260ms ease forwards; }
-@keyframes caret-blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
-@keyframes caret-hide { to { opacity: 0; } }
-
-/* ---- responsive --------------------------------------------------------------------- */
-@media (max-width: 640px) {
-  :root { --header-x: 18px; --header-h: 62px; }
-  .apply-main { padding-bottom: 64px; }
-  .apply-head h1 { font-size: 31px; }
-  .form-card { padding: 24px 20px 22px; }
-  .step-body { min-height: 0; }   /* phones scroll; the floor only serves fixed layouts */
-  .choice-grid.cols-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+/* ---- responsive ---------------------------------------------------------------- */
+@media (max-width: 700px) {
+  .choice-grid, .choice-grid.cols-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .choice-grid.cols-3 .span-last { grid-column: 1 / -1; }
-  .mile-label { display: none; }  /* dots and lines still tell the story */
-  .mile-step.current .mile-label { display: inline; }
 }
+/* THE OUTGOING CARD, not the outgoing form. The card itself is part of what
+   changes at the end, so cloning only the form left its frame standing through
+   the transition and then vanishing afterwards on its own. */
+.is-ghost { position: absolute; left: 0; right: 0; top: 0; }
 
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { transition: none !important; animation: none !important; }
-  .rail-seg.on::before { transform: translateX(0); }
-  .confirm-tick path { stroke-dashoffset: 0; }
+/* A STEP CHANGE IS A SMALL EVENT AND GETS A SMALL MOTION. The band was doing
+   this job and was far too big for it. Forward, the rows rise in sequence off
+   the page's own in-soft, because arriving somewhere new reads bottom-up; back,
+   everything fades at once, because returning is not an arrival and staggering
+   it would make retreating feel like progress. --i is set by render(). */
+.step-body.swap-fwd > * { animation: in-soft 0.45s var(--ease) both; animation-delay: calc(var(--i, 0) * 38ms); }
+.step-body.swap-back > * { animation: in-fade 0.32s var(--ease) both; }
+
+@media (max-width: 560px) {
+  .form-card { padding: 22px 18px 18px; }
+  .step-panel { padding: 16px 14px; }
+  .step-probe { left: 14px; right: 14px; }
+  .mile-label { display: none; }
+  .mile-step.current .mile-label { display: inline; }
+  .form-foot { flex-direction: column-reverse; }
+  .form-foot .btn { width: 100%; }
 }
 </style>
 </head>
 <body>
 
-<div class="grain" aria-hidden="true"></div>
+<!-- PARTNERED AGENTS' GROUND, BEHIND THE WHOLE PAGE (Appy, 2026-09-16). It was
+     the hero's for a day, which was the wrong half of the homepage to borrow:
+     the hero's ground is a lit clay gradient built to sit under one enormous
+     headline, and this page is a long column of small print. The agents band is
+     the homepage's WORKING surface, and it is what a form should stand on. So
+     this takes that band whole: its lifted fill, its grain at its own amount and
+     blend, and its glyph field at full strength with the pointer pool and the
+     fringe that the hero's tuning turns down.
+     One div, because the grain is the shared ::before and the field inserts its
+     own canvas; nothing here draws anything. -->
+<div class="apply-bg" id="apply-bg" aria-hidden="true"></div>
+
+<!-- THE HOMEPAGE'S HEADER, not a reduction of it. The old one was a private
+     copy with its own height, its own logo rule and its own back link; a page
+     you reach by pressing a button on the homepage should not have a different
+     header from the homepage. The probe underneath is the same six lines that
+     page uses, so the bar glasses over at the same moment for the same reason. -->
+<span class="scroll-probe" id="top" aria-hidden="true"></span>
+
+<!-- THE FOOTER SPARK'S FILTER. The homepage keeps every filter in its shared
+     <defs> sprite, which lives in markup and so cannot be linked the way the
+     stylesheet is. This page needs exactly one of them: --ca-foot resolves to
+     #ca-foot-soft in light, and a CSS filter pointing at an id that does not
+     exist is not always ignored, it can take the element with it. The dark
+     readings are not carried, because this page is light and asks for it in the
+     first line of its head. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <!-- THE SAME SPLIT, DRIVEN. #ca-foot-soft below is static and the footer's;
+         this one carries ca-r and ca-g on its offsets, which is the pair the
+         lens rewrites every frame, exactly as the homepage's dispatch mark does
+         inside its own section. Two definitions rather than one because they
+         genuinely differ: one spark is being pointed at and the other is not,
+         and a shared filter would have moved both from wherever the cursor was. -->
+    <filter id="ca-spark-soft" color-interpolation-filters="sRGB" x="-10%" y="-10%" width="120%" height="120%">
+      <feOffset class="ca-r" in="SourceAlpha" dx="-0.8" dy="0" result="ssl"/>
+      <feFlood flood-color="#ff3b3b" flood-opacity="0.85" result="sslc"/>
+      <feComposite in="sslc" in2="ssl" operator="in" result="sslf"/>
+      <feOffset class="ca-g" in="SourceAlpha" dx="0.8" dy="0" result="ssr"/>
+      <feFlood flood-color="#00c4de" flood-opacity="0.85" result="ssrc"/>
+      <feComposite in="ssrc" in2="ssr" operator="in" result="ssrf"/>
+      <feMerge>
+        <feMergeNode in="sslf"/>
+        <feMergeNode in="ssrf"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="ca-foot-soft" color-interpolation-filters="sRGB" x="-5%" y="-6%" width="110%" height="112%">
+      <feOffset in="SourceAlpha" dx="-2.4" result="fsl"/>
+      <feFlood flood-color="#ff3b3b" flood-opacity="0.8" result="fslc"/>
+      <feComposite in="fslc" in2="fsl" operator="in" result="fslf"/>
+      <feOffset in="SourceAlpha" dx="2.4" result="fsr"/>
+      <feFlood flood-color="#00c4de" flood-opacity="0.8" result="fsrc"/>
+      <feComposite in="fsrc" in2="fsr" operator="in" result="fsrf"/>
+      <feMerge>
+        <feMergeNode in="fslf"/>
+        <feMergeNode in="fsrf"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+</svg>
 
 <header class="header">
-  <a class="logo" href="index.html" aria-label="onBlue home">
-    <svg class="spark-mark" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.6C12.55 2.6 12.88 3.15 13.08 4.7c.62 4.7 1.52 5.6 6.22 6.22 1.55.2 2.1.53 2.1 1.08s-.55.88-2.1 1.08c-4.7.62-5.6 1.52-6.22 6.22-.2 1.55-.53 2.1-1.08 2.1s-.88-.55-1.08-2.1c-.62-4.7-1.52-5.6-6.22-6.22C3.15 12.88 2.6 12.55 2.6 12s.55-.88 2.1-1.08c4.7-.62 5.6-1.52 6.22-6.22C11.12 3.15 11.45 2.6 12 2.6Z" /></svg>
-    <span><span class="wm-on">on</span>Blue</span>
-  </a>
-  <a class="header-back" href="index.html">Back to home</a>
+  <div class="header-inner">
+    <a class="logo" href="index.html" aria-label="onBlue home">
+      <svg class="logo-mark" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.6C12.55 2.6 12.88 3.15 13.08 4.7c.62 4.7 1.52 5.6 6.22 6.22 1.55.2 2.1.53 2.1 1.08s-.55.88-2.1 1.08c-4.7.62-5.6 1.52-6.22 6.22-.2 1.55-.53 2.1-1.08 2.1s-.88-.55-1.08-2.1c-.62-4.7-1.52-5.6-6.22-6.22C3.15 12.88 2.6 12.55 2.6 12s.55-.88 2.1-1.08c4.7-.62 5.6-1.52 6.22-6.22C11.12 3.15 11.45 2.6 12 2.6Z"/></svg>
+      <span><span class="logo-on">on</span>Blue</span>
+    </a>
+    <!-- NO NAV. This is a signed-in flow with one thing to do, and a row of
+         destinations at the top of it is an invitation to leave. The grid's
+         middle column simply collapses; nothing about the header changes shape.
+         THE ACTION IS IN .header-end, which is the slot the homepage puts its
+         own right-hand control in, so both pages hang that corner off the same
+         column rather than two measurements that happen to agree. -->
+    <div class="header-end">
+      <button class="logout" type="button" data-logout>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 6V4.4A1.6 1.6 0 0 0 12.9 2.8H5.6A1.6 1.6 0 0 0 4 4.4v15.2a1.6 1.6 0 0 0 1.6 1.6h7.3a1.6 1.6 0 0 0 1.6-1.6V18"/><path d="M10 12h10.5M17.2 8.7 20.5 12l-3.3 3.3"/></svg>
+        Log out
+      </button>
+    </div>
+  </div>
 </header>
 
-<div class="apply-grid">
-<main class="apply-main">
-  <div class="apply-head">
-    <h1>Apply to <span class="serif">onBlue</span>.</h1>
-    <p class="sub">One short application. We review every one and email you when your access is approved.</p>
+<main class="apply-wrap">
+
+  <!-- THE TITLE INTRODUCES THE PAGE AND THEN GETS OUT OF THE WAY. It is the
+       answer to "where am I", which is a question you ask once; past the first
+       step the rail says where you are and the card says what to do, and a
+       headline still holding the top of the screen is just pushing the work
+       down. It collapses rather than hiding, so the form rises into the space
+       instead of the space staying behind as a hole, and it comes back if you
+       walk back to the start. -->
+  <div class="apply-head-wrap">
+    <div class="apply-head">
+      <h1 class="title-lg">Apply to <em>onBlue</em>.</h1>
+      <p class="lede">One short application. We review every one and email you when your access is approved.</p>
+    </div>
   </div>
 
-  <!-- Apply → We review → Deploy & earn. Three steps, not four (the invite email
-       is how "We review" ends, not a stage), and no accepted state (an accepted
-       creator never lands back on this page). -->
-  <ol class="mile" id="mile" aria-label="How the program starts"></ol>
-
-  <div class="form-card">
-    <form id="apply-form" novalidate>
-      <div class="form-head" id="form-head"></div>
-      <div class="step-body" id="step-body"></div>
-      <div class="form-foot" id="form-foot"></div>
-    </form>
+  <!-- Apply, We review, Deploy and earn. Three stages, not four: the invite
+       email is how "We review" ends rather than a stage of its own, and there is
+       no accepted state because an accepted applicant never lands back here.
+       THIS IS THE PROGRAM'S SHAPE, which is a different thing from the five
+       steps of the form below it, so it is drawn differently: discs and a
+       connector up here, a hairline inside the card down there. -->
+  <div class="mile-wrap">
+    <ol class="mile" id="mile" aria-label="How the program starts"></ol>
   </div>
+
+  <!-- THE BAND CROSSES THE CARD. The stage is the field's host and the form is
+       what gets wiped, the same construction the homepage's access dialog uses
+       between its two levels, because a step change here is the same event. -->
+  <div class="form-stage" id="form-stage">
+    <div class="card form-card" id="form-card">
+      <form id="apply-form" novalidate>
+        <!-- head and foot are the card's chrome: where you are, and what you
+             can do about it. The panel between them is the work. -->
+        <div class="form-head" id="form-head"></div>
+        <div class="step-panel" id="step-panel">
+          <div class="step-body" id="step-body"></div>
+        </div>
+        <div class="form-foot" id="form-foot"></div>
+      </form>
+    </div>
+  </div>
+
 </main>
 
-<!-- THE COMPANION. The agent you are applying to own, standing beside the form
-     with the hero's own rig: it follows the cursor while you read, quiets down
-     while a field has focus, nods when a step is done, and takes one full turn
-     when the application is in. Desktop only, and decorative throughout. -->
-<aside class="agent-side" aria-hidden="true">
-  <canvas id="agent-ascii" class="agent-ascii"></canvas>
-</aside>
-</div>
+<!-- THE HOMEPAGE'S FOOTER, with this page's destinations. Every class is the
+     shared sheet's, so the brand block, the columns, the cropped wordmark and
+     its cresting spark all come across without a line of CSS here; what is
+     rewritten is only where the links go, because a footer that offers "Start
+     earning" to somebody halfway through earning is the same page not knowing
+     who is reading it.
+     The section links carry index.html in front of the fragment: on the
+     homepage they are anchors, from here they are a destination. -->
+<footer class="site-foot">
+  <div class="foot-inner">
+    <div class="foot-grid">
+
+      <div class="foot-brand">
+        <a class="logo" href="index.html" aria-label="onBlue">
+          <svg class="logo-mark" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.6C12.55 2.6 12.88 3.15 13.08 4.7c.62 4.7 1.52 5.6 6.22 6.22 1.55.2 2.1.53 2.1 1.08s-.55.88-2.1 1.08c-4.7.62-5.6 1.52-6.22 6.22-.2 1.55-.53 2.1-1.08 2.1s-.88-.55-1.08-2.1c-.62-4.7-1.52-5.6-6.22-6.22C3.15 12.88 2.6 12.55 2.6 12s.55-.88 2.1-1.08c4.7-.62 5.6-1.52 6.22-6.22C11.12 3.15 11.45 2.6 12 2.6Z"/></svg>
+          <span><span class="logo-on">on</span>Blue</span>
+        </a>
+        <p>A work economy for<br>digital and physical AI.</p>
+      </div>
+
+      <nav class="foot-col" aria-label="Explore onBlue">
+        <h3>Explore onBlue</h3>
+        <a href="index.html#benefits">The economy</a>
+        <a href="index.html#agents">Meet the agents</a>
+        <a href="index.html#how-it-works">How it works</a>
+        <a href="index.html#companies">Where work begins</a>
+        <a href="index.html#faqs">Questions</a>
+      </nav>
+
+      <nav class="foot-col" aria-label="Your application">
+        <h3>Your application</h3>
+        <a href="index.html">Back to home</a>
+        <a href="index.html" data-logout>Log out</a>
+      </nav>
+
+      <a class="foot-top" href="#top">Back to top <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="M6 11l6-6 6 6"/></svg></a>
+
+    </div>
+  </div>
+
+  <div class="foot-mark" aria-hidden="true">
+    <span class="foot-sun"><span class="foot-sun-in"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.6C12.55 2.6 12.88 3.15 13.08 4.7c.62 4.7 1.52 5.6 6.22 6.22 1.55.2 2.1.53 2.1 1.08s-.55.88-2.1 1.08c-4.7.62-5.6 1.52-6.22 6.22-.2 1.55-.53 2.1-1.08 2.1s-.88-.55-1.08-2.1c-.62-4.7-1.52-5.6-6.22-6.22C3.15 12.88 2.6 12.55 2.6 12s.55-.88 2.1-1.08c4.7-.62 5.6-1.52 6.22-6.22C11.12 3.15 11.45 2.6 12 2.6Z"/></svg></span></span>
+    <span class="foot-crop"><span class="foot-word"><span class="fw fw--base"><span class="logo-on">on</span>Blue</span><span class="fw fw--l" aria-hidden="true"><span class="logo-on">on</span>Blue</span><span class="fw fw--r" aria-hidden="true"><span class="logo-on">on</span>Blue</span></span></span>
+  </div>
+
+  <div class="foot-tail">
+    <div class="foot-base">
+      <span class="foot-legal">
+        <span>&copy; 2026 onBlue</span>
+        <a data-stub>Terms and conditions</a>
+      </span>
+      <span>Human ambition. Agent execution.</span>
+    </div>
+  </div>
+</footer>
 
 <script>
 (function () {
   'use strict';
 
   /* ==========================================================================
-     THE FLOW, ported from src/components/onblue/flow/apply/ — spec.ts,
+     THE FLOW, ported from src/components/onblue/flow/apply/: spec.ts,
      ApplyForm.tsx, Steps.tsx, StepFour.tsx, options.tsx, StepIntro.tsx.
      Same machinery: per-step validation, errors only once touched or once a
      submit has forced them, a never-disabled submit that reveals the reason
@@ -658,6 +826,7 @@ textarea.field { resize: none; line-height: 1.55; }
     clock: svg('<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>', 18),
     cadence: svg('<rect x="4" y="5.5" width="16" height="14" rx="2"/><path d="M4 9.5h16M8.5 3.5v3M15.5 3.5v3"/><rect x="13.2" y="13" width="3.4" height="3.2" rx="0.6" fill="currentColor" stroke="none"/>', 18),
     wallet: svg('<rect x="3" y="6.5" width="18" height="12.5" rx="2.2"/><path d="M3 10.2h13.5a2.3 2.3 0 0 1 0 4.6H3"/><circle cx="16" cy="12.5" r="1" fill="currentColor" stroke="none"/>', 18),
+    info: svg('<circle cx="12" cy="12" r="8.5"/><path d="M12 11v5.5"/><path d="M12 7.8h.01"/>', 17),
     document: svg('<path d="M7 3.5h7l4 4v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-16a1 1 0 0 1 1-1Z"/><path d="M14 3.5v4h4"/><path d="M8.5 12h7M8.5 15.3h7M8.5 8.7h3"/>', 18)
   };
   var TICK = '<svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.5l5 5L19.5 6.5"/></svg>';
@@ -670,9 +839,12 @@ textarea.field { resize: none; line-height: 1.55; }
     { value: 'Freelancer', icon: ICON.laptop },
     { value: 'Other', icon: ICON.dots }
   ];
+  /* NO HINTS. They read "I have a channel" and "Not yet" under a Yes and a No,
+     which is the same answer written twice: the second line told the reader
+     nothing the first had not, and gave the pair a height it had not earned. */
   var HAS_YT_OPTS = [
-    { value: 'Yes', icon: ICON.yes, hint: 'I have a channel', tone: 'ok' },
-    { value: 'No', icon: ICON.no, hint: 'Not yet', tone: 'danger' }
+    { value: 'Yes', icon: ICON.yes, tone: 'ok' },
+    { value: 'No', icon: ICON.no, tone: 'danger' }
   ];
   var YES_NO_CHIPS = [
     { value: 'Yes', icon: ICON.yesSm, tone: 'ok' },
@@ -713,7 +885,7 @@ textarea.field { resize: none; line-height: 1.55; }
     if (!d.adult) e.adult = 'You need to be 18 or older to apply.';
     if (!d.describes) e.describes = 'Pick the one that fits best.';
     if (!d.hasYouTube) e.hasYouTube = 'Let us know if you have a YouTube account.';
-    /* the channel link itself is OPTIONAL — a "Yes" without a pasted link is a valid application */
+    /* the channel link itself is OPTIONAL. A "Yes" without a pasted link is a valid application */
     if (!d.pcHours) e.pcHours = 'Pick the closest option.';
     if (!d.runDays) e.runDays = 'Pick the closest option.';
     if (!d.earnedBefore.trim()) e.earnedBefore = 'Tell us what you have tried. “Nothing yet” is an answer.';
@@ -744,9 +916,10 @@ textarea.field { resize: none; line-height: 1.55; }
   var forced = {};      /* per STEP, not global (the source's rule) */
   var step = 0;
   var submitted = false;
-  var swapDir = '';     /* 'fwd' | 'back' | '' — how the next render animates */
+  var swapDir = '';     /* 'fwd' | 'back' | '' is how the next render animates */
 
   var headEl = document.getElementById('form-head');
+  var panelEl = document.getElementById('step-panel');
   var bodyEl = document.getElementById('step-body');
   var footEl = document.getElementById('form-foot');
   var mileEl = document.getElementById('mile');
@@ -774,16 +947,19 @@ textarea.field { resize: none; line-height: 1.55; }
 
   function choiceGroup(o) {
     var err = o.err;
-    var html = '<fieldset class="q' + (o.gap ? ' ' + o.gap : '') + '" data-field="' + o.field + '">';
+    /* no gap option any more: every group is spaced by the grid, and the one
+       exception, the consent row, declares itself rather than being told */
+    var html = '<fieldset class="q" data-field="' + o.field + '">';
     html += '<legend class="q-label">' + esc(o.label) + '</legend>';
     var isCards = o.variant === 'cards';
-    html += '<div class="opts' + (o.tight ? ' tight' : '') + ' ' + (isCards ? 'choice-grid' + (o.columns === 3 ? ' cols-3' : '') : 'chip-row') + '">';
+    html += '<div class="opts' + ' ' + (isCards ? 'choice-grid' + (o.columns === 3 ? ' cols-3' : '') : 'chip-row') + '">';
     o.options.forEach(function (opt, i) {
       var on = opt.value === d[o.field];
       var tone = opt.tone ? ' tone-' + opt.tone : '';
       var state = (on ? ' on' : '') + (err && !on ? ' err-ring' : '');
-      var lastOdd = isCards && o.options.length % 2 === 1 && i === o.options.length - 1;
-      html += '<label' + (lastOdd ? ' class="span-last"' : '') + '>';
+      var cols = o.columns || 2;
+      var standsAlone = isCards && o.options.length % cols === 1 && i === o.options.length - 1;
+      html += '<label' + (standsAlone ? ' class="span-last"' : '') + '>';
       html += '<input type="radio" class="sr-only" name="' + o.name + '" value="' + esc(opt.value) + '"' + (on ? ' checked' : '') + '>';
       if (isCards) {
         html += '<span class="choice-card' + tone + state + '">'
@@ -806,7 +982,7 @@ textarea.field { resize: none; line-height: 1.55; }
   function checkField(o) {
     var on = !!d[o.field];
     var state = (on ? ' on' : '') + (o.err && !on ? ' err-ring' : '');
-    return '<div class="q' + (o.gap ? ' ' + o.gap : '') + '" data-field="' + o.field + '">'
+    return '<div class="q' + (o.subtle ? ' q--consent' : '') + '" data-field="' + o.field + '">'
       + '<label><input type="checkbox" class="sr-only" name="' + o.field + '"' + (on ? ' checked' : '') + '>'
       + '<span class="check' + (o.subtle ? ' subtle' : '') + state + '">'
       + '<span class="check-box">' + (on ? TICK : '') + '</span>'
@@ -822,7 +998,7 @@ textarea.field { resize: none; line-height: 1.55; }
 
   /* TWO ROWS DIVERGE FROM THE NEXT APP'S COPY (Abhisht, 2026-09-14): the form
      syncs to the homepage, which is the vision as Rosen shared it. "PC" became
-     "PC or Mac" (Mac is supported, and the platform is stated upfront — Wei's
+     "PC or Mac" (Mac is supported, and the platform is stated upfront, Wei's
      standing feedback), and the flat "$30 every month" became the homepage's
      own per-job model ("get paid every time it completes a job", the
      how-it-works line). The PayPal seed survives the rewrite on purpose:
@@ -830,16 +1006,26 @@ textarea.field { resize: none; line-height: 1.55; }
      arriving cold. */
   function renderStep0() {
     return introRow(ICON.monitor, 'Once accepted, we’ll email you a download link. Set up BlueAI on your PC or Mac.')
-      + introRow(ICON.clock, 'BlueAI completes campaigns and tasks on your YouTube account. Each takes a few minutes.')
+      /* the break is authored rather than left to the wrap: the second sentence
+         is a caveat about the first, and a caveat that starts mid-line reads as
+         part of the claim it is qualifying. Dropped below 700px, where the
+         column is narrow enough that both sentences wrap anyway and a forced
+         break would only make a third line. */
+      + introRow(ICON.clock, 'BlueAI completes campaigns and tasks on your YouTube account.<br class="row-br">Each takes a few minutes.')
       + introRow(ICON.cadence, 'All you do: run BlueAI on at least <b>20 days</b> each month.')
-      + introRow(ICON.wallet, 'You get paid for <b>every job</b> your agent completes, via PayPal.')
-      + introRow(ICON.document, 'Applying means you accept the <a class="legal-link" href="/onblue/terms#terms" target="_blank" rel="noopener">Terms of Use</a>.');
+      + introRow(ICON.wallet, 'You get paid for <b>every job</b> your agent completes, via PayPal.');
+    /* THE TERMS ROW IS GONE. It said "Applying means you accept the Terms of
+       Use", and the last step carries a required checkbox saying "By applying, I
+       agree to the Terms of Use". The checkbox is the one that binds and the one
+       that cannot be skipped; the row was a weaker copy of it four steps early,
+       and the only thing it added was a fifth line to the first thing anyone
+       reads. */
   }
 
   function renderStep1(err) {
     return checkField({ field: 'adult', body: 'I’m 18 or older.', err: err.adult })
       + choiceGroup({
-        field: 'describes', name: 'apply-describes', variant: 'cards', columns: 3, gap: 'q',
+        field: 'describes', name: 'apply-describes', variant: 'cards', columns: 3,
         label: 'What best describes you?',
         hint: 'Helps us get to know applicants. It doesn’t decide your application.',
         options: DESCRIBES_OPTS, err: err.describes
@@ -853,7 +1039,7 @@ textarea.field { resize: none; line-height: 1.55; }
       hint: 'The campaigns BlueAI completes run on your YouTube account.',
       options: HAS_YT_OPTS, err: err.hasYouTube
     });
-    /* rendered only when it applies — a disabled-but-visible field still reads
+    /* rendered only when it applies, because a disabled-but-visible field still reads
        as work left undone (Steps.tsx) */
     if (d.hasYouTube === 'Yes') {
       html += '<label class="q" data-field="channel">'
@@ -862,14 +1048,17 @@ textarea.field { resize: none; line-height: 1.55; }
         + 'class="field" name="channel" placeholder="youtube.com/@yourchannel" value="' + esc(d.channel) + '">'
         + msgSlot('') + '</label>';
     } else if (d.hasYouTube === 'No') {
-      html += '<p class="aside">That’s fine. YouTube is the only platform live today, so campaigns will be limited for now. Instagram, TikTok, X and Reddit are next.</p>';
+      /* A RESPONSE, NOT A FOOTNOTE. This paragraph only exists because of the
+         answer just given, and it changes what the applicant should expect, so
+         it is the one thing on the step that must not read as small print. */
+      html += '<p class="aside"><span class="aside-ic">' + ICON.info + '</span>That’s fine. YouTube is the only platform live today, so campaigns will be limited for now. Instagram, TikTok, X and Reddit are next.</p>';
     }
     return html;
   }
 
   function renderStep3(err) {
     /* "computer", not "PC" (Abhisht, 2026-09-14): Mac is supported, and the
-       intro row already says "PC or Mac" — repeating the pair mid-question
+       intro row already says "PC or Mac", and repeating the pair mid-question
        reads as legalese where one plain word does the job */
     return choiceGroup({
       field: 'pcHours', name: 'apply-pc-hours',
@@ -878,7 +1067,7 @@ textarea.field { resize: none; line-height: 1.55; }
       options: PC_HOURS_OPTS, err: err.pcHours
     })
     + choiceGroup({
-      field: 'runDays', name: 'apply-run-days', gap: 'q',
+      field: 'runDays', name: 'apply-run-days',
       label: 'How many days a week could you run BlueAI?',
       options: RUN_DAYS_OPTS, err: err.runDays
     })
@@ -894,23 +1083,25 @@ textarea.field { resize: none; line-height: 1.55; }
        step, and the PayPal → long-run break keeps its full weight while the two
        after it give way */
     return choiceGroup({
-      field: 'hasPaypal', name: 'apply-paypal', tight: true,
+      /* the hint said "Payouts go out via PayPal", which is the question again
+         with the answer in it, and step one has already said the same thing in
+         the row about getting paid */
+      field: 'hasPaypal', name: 'apply-paypal',
       label: 'Do you have a PayPal account?',
-      hint: 'Payouts go out via PayPal.',
       options: YES_NO_CHIPS, err: err.hasPaypal
     })
     + choiceGroup({
-      field: 'fullRun', name: 'apply-full-run', tight: true, gap: 'tight-gap',
+      field: 'fullRun', name: 'apply-full-run',
       label: 'Running BlueAI only takes a few minutes a day, but this is a long-term commitment. Are you in for the long run?',
       options: FULL_RUN_OPTS, err: err.fullRun
     })
-    + '<label class="q min-gap" data-field="email">'
+    + '<labelclass="q" data-field="email">'
     + '<span class="q-label">What email should we contact you on?</span>'
     + '<input type="email" inputmode="email" autocomplete="email" class="field' + (err.email ? ' err' : '') + '" '
     + 'name="email" placeholder="you@example.com" value="' + esc(d.email) + '">'
     + msgSlot(err.email) + '</label>'
     + checkField({
-      field: 'agree', subtle: true, gap: 'min-gap',
+      field: 'agree', subtle: true,
       body: 'By applying, I agree to the <a class="legal-link" href="/onblue/terms#terms" target="_blank" rel="noopener">Terms of Use</a> and I’m okay with BlueStacks reaching out to me about onBlue.',
       err: err.agree
     });
@@ -935,38 +1126,146 @@ textarea.field { resize: none; line-height: 1.55; }
   function renderConfirm() {
     headEl.innerHTML = '';
     headEl.style.display = 'none';
+    /* EMPTIED IS NOT HIDDEN. The foot kept its top border, its margin and its
+       padding after its buttons were removed, which drew a rule across the page
+       under the closing line and held 47px of space no content was asking for. */
     footEl.innerHTML = '';
+    footEl.style.display = 'none';
+    cardEl.classList.add('is-done');
+    document.body.classList.add('is-underway');
     bodyEl.className = 'step-body intro';
+    /* THE CLOSING SHAPE IS THE GATE'S: the mark, then the typed heading, then
+       the lede, then one pill. A green tick in a circle was the old one, and it
+       said "done" about a form rather than "you are in the queue" about a
+       person. The spark is what this site puts above a closing statement. */
     bodyEl.innerHTML = '<div class="confirm">'
-      + '<span class="confirm-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.5l5 5L19.5 6.5"/></svg></span>'
-      + '<h2 id="confirm-title">Thanks for applying.</h2>'
-      + '<p>You’re on the waitlist. We review every application in detail, so this can take some time. We’ll email <b>' + esc(d.email) + '</b> the moment your access is approved.</p>'
+      /* THE MARK MOVED BEHIND THE WORDS. It was a 44px spark standing above
+         the line, which is a label saying "something good happened". The
+         footer does the better version of the same idea: one large spark
+         cresting from behind the type, masked so it dissolves downward, so
+         the brand is the light the statement sits in rather than a badge
+         pinned over it.
+         THE FULL STOP IS INSIDE THE EMPHASIS, as it is on the homepage's
+         closer, so the caret finishes after the sentence rather than
+         between the last word and its own punctuation. */
+      + '<div class="confirm-head">'
+      + '<span class="confirm-sun" aria-hidden="true"><span class="confirm-sun-in"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.6C12.55 2.6 12.88 3.15 13.08 4.7c.62 4.7 1.52 5.6 6.22 6.22 1.55.2 2.1.53 2.1 1.08s-.55.88-2.1 1.08c-4.7.62-5.6 1.52-6.22 6.22-.2 1.55-.53 2.1-1.08 2.1s-.88-.55-1.08-2.1c-.62-4.7-1.52-5.6-6.22-6.22C3.15 12.88 2.6 12.55 2.6 12s.55-.88 2.1-1.08c4.7-.62 5.6-1.52 6.22-6.22C11.12 3.15 11.45 2.6 12 2.6Z"/></svg></span></span>'
+      + '<h2 class="title-xl" id="confirm-title">Thanks for <em>applying.</em></h2>'
+      + '</div>'
+      + '<p class="lede">You’re on the waitlist. We review every application in detail, so this can take some time. We’ll email <b>' + esc(d.email) + '</b> the moment your access is approved.</p>'
+      + '<span class="earn-payout"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.5l5 5L19.5 6.5"/></svg>Application received</span>'
       + '</div>';
     renderMile();
-    typeTitle();
+    /* PREPARED HERE, TYPED LATER, and the split is the whole fix for the flash.
+       Both used to happen in one call, and that call had to wait for the band to
+       finish crossing, so for the length of the sweep the finished line sat
+       there fully written and then rewrote itself. Preparing inside the same
+       synchronous block as the innerHTML means no frame is ever painted with
+       those words in it. */
+    prepTitle();
+    sunLens();
   }
 
   /* the closer's typing treatment, run once: the heading types itself in and
-     the caret settles — the last thing an applicant sees rhymes with the
+     the caret settles, so the last thing an applicant sees rhymes with the
      homepage's ending */
-  function typeTitle() {
-    if (reduced) return;
+  /* ---- the closing line ----------------------------------------------------
+     ONLY THE EMPHASIS IS TYPED. A whole sentence typing itself out reads as a
+     machine printing a receipt; the homepage's closer types just the phrase set
+     in the serif and leaves the rest standing, which reads as the sentence
+     arriving at its point. This is the same treatment on the same kind of line. */
+  var titleCells = null;
+  var titleCaret = null;
+
+  function prepTitle() {
+    if (reduced) { return; }
     var h = document.getElementById('confirm-title');
-    var text = h.textContent;
-    h.textContent = '';
+    var em = h && h.querySelector('em');
+    if (!em) { return; }
+
     h.classList.add('typed');
-    var caret = document.createElement('span');
-    caret.className = 'type-caret';
-    caret.setAttribute('aria-hidden', 'true');
-    var cells = [];
+    titleCells = [];
+    var text = em.textContent;
+    em.textContent = '';
     for (var i = 0; i < text.length; i++) {
       var cell = document.createElement('span');
       cell.className = 'tw';
       cell.textContent = text.charAt(i);
-      h.appendChild(cell);
-      cells.push(cell);
+      em.appendChild(cell);
+      titleCells.push(cell);
     }
-    h.appendChild(caret);
+
+    titleCaret = document.createElement('span');
+    titleCaret.className = 'type-caret';
+    titleCaret.setAttribute('aria-hidden', 'true');
+    h.appendChild(titleCaret);
+
+    runTitle();
+  }
+
+  /* THE SPLIT FOLLOWS THE POINTER, the same construction the homepage runs on
+     its dispatch mark: the axis points along the cursor-to-mark line and the
+     amount grows quadratically as you approach, over a 430px falloff. The
+     values are that page's light readings verbatim, 1.1 at rest to 3.4 at the
+     peak, because light paints the fringe onto a blue spark where the same
+     travel is sub-pixel and would read as little more than an edge that
+     changed colour. */
+  function sunLens() {
+    if (reduced) { return; }
+    var node = document.querySelector('.confirm-sun');
+    var lead = document.querySelectorAll('.ca-r');
+    var trail = document.querySelectorAll('.ca-g');
+    if (!node || !lead.length || !trail.length) { return; }
+
+    var FALLOFF = 430, REST = 1.1, PEAK = 3.4;
+    var mx = 0, my = 0, queued = false;
+
+    function split(dx, dy) {
+      var i;
+      for (i = 0; i < lead.length; i++) {
+        lead[i].setAttribute('dx', (-dx).toFixed(2));
+        lead[i].setAttribute('dy', (-dy).toFixed(2));
+      }
+      for (i = 0; i < trail.length; i++) {
+        trail[i].setAttribute('dx', dx.toFixed(2));
+        trail[i].setAttribute('dy', dy.toFixed(2));
+      }
+    }
+
+    function apply() {
+      queued = false;
+      var box = node.getBoundingClientRect();
+      var ox = mx - (box.left + box.width / 2);
+      var oy = my - (box.top + box.height / 2);
+      var d = Math.sqrt(ox * ox + oy * oy) || 1;
+      var near = Math.max(0, 1 - d / FALLOFF);
+      var amp = REST + PEAK * near * near;
+      split((ox / d) * amp, (oy / d) * amp);
+    }
+
+    window.addEventListener('pointermove', function (e) {
+      mx = e.clientX;
+      my = e.clientY;
+      if (!queued) { queued = true; requestAnimationFrame(apply); }
+    }, { passive: true });
+  }
+
+  function runTitle() {
+    if (!titleCells) { return; }
+    /* the band and the typing were running over each other: the letters were
+       arriving through a mask that was still moving, which read as a stutter */
+    if (sweeping) { window.setTimeout(runTitle, 100); return; }
+    typeTitle();
+  }
+
+  function typeTitle() {
+    if (reduced) return;
+    /* the wait moved to runTitle, which is what defers; by the time this runs
+       the band has landed and the cells are already in place */
+    var h = document.getElementById('confirm-title');
+    var cells = titleCells;
+    var caret = titleCaret;
+
     var at = 0;
     function place() {
       var frame = h.getBoundingClientRect();
@@ -988,20 +1287,68 @@ textarea.field { resize: none; line-height: 1.55; }
     })();
   }
 
+  /* ---- the tallest step ---------------------------------------------------
+     Rendered into a hidden probe at the card's real width, because a step's
+     height is a function of how its questions wrap and that is a function of
+     the column. Step 3 is measured twice, once with the channel field its "Yes"
+     reveals, so the floor covers the tallest thing the form can actually be
+     rather than the tallest thing it happens to be right now. */
+  function measureFloor() {
+    if (!panelEl || !bodyEl) { return; }
+    var probe = document.createElement('div');
+    probe.className = 'step-probe';
+    /* into the panel, not the card: a step's height is a function of the column
+       it wraps in, and that column is 45px narrower than it was */
+    panelEl.appendChild(probe);
+
+    var held = d.hasYouTube;
+    var tallest = 0;
+    /* from 1, because step 0 keeps its own height and including it could only
+       ever raise a floor it does not use */
+    for (var i = 1; i < STEPS.length; i++) {
+      var passes = i === 2 ? ['Yes', held] : [held];
+      for (var j = 0; j < passes.length; j++) {
+        d.hasYouTube = passes[j];
+        probe.className = 'step-probe step-body' + (i === 0 ? ' intro' : '');
+        probe.innerHTML = STEP_RENDER[i]({});
+        tallest = Math.max(tallest, probe.offsetHeight);
+      }
+    }
+    d.hasYouTube = held;
+
+    probe.remove();
+    bodyEl.style.setProperty('--step-floor', tallest + 'px');
+  }
+
+  /* the first measurement is taken before the webfonts land, and Inter is not
+     the fallback's metrics, so every height it produced would be a little wrong */
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(measureFloor);
+  }
+  var remeasure = 0;
+  window.addEventListener('resize', function () {
+    window.clearTimeout(remeasure);
+    remeasure = window.setTimeout(measureFloor, 180);
+  });
+
   /* ---- render ---- */
   function render(focusSel) {
     if (submitted) { renderConfirm(); return; }
     var err = visibleErrors();
 
     headEl.style.display = '';
+    footEl.style.display = '';
+    cardEl.classList.remove('is-done');
     headEl.innerHTML = '<h2>' + esc(STEPS[step].title) + '</h2>'
-      + '<div class="rail"><span class="rail-count">' + (step + 1) + '/' + STEPS.length
+      + '<div class="step-rail"><span class="rail-count">' + (step + 1) + '/' + STEPS.length
       + '<span class="sr-only">, step ' + (step + 1) + ' of ' + STEPS.length + '</span></span>'
       + '<span class="rail-segs">' + STEPS.map(function (_, i) {
         return '<span class="rail-seg' + (i <= step ? ' on' : '') + '"></span>';
       }).join('') + '</span></div>';
 
-    bodyEl.className = 'step-body' + (step === 0 ? ' intro' : '') + (swapDir ? ' swap-' + swapDir : '');
+    document.body.classList.toggle('is-underway', step > 0);
+    document.body.classList.remove('is-submitted');
+    bodyEl.className = 'step-body' + (step === 0 ? ' intro' : ' has-floor') + (swapDir ? ' swap-' + swapDir : '');
     bodyEl.innerHTML = STEP_RENDER[step](err);
     if (swapDir === 'fwd') {
       Array.prototype.forEach.call(bodyEl.children, function (el, i) { el.style.setProperty('--i', i); });
@@ -1009,7 +1356,7 @@ textarea.field { resize: none; line-height: 1.55; }
     swapDir = '';
 
     footEl.innerHTML = (step > 0 ? '<button type="button" class="btn btn-ghost" id="back-btn">Back</button>' : '')
-      + '<button type="submit" class="btn btn-solid grow">' + (step === LAST ? 'Submit application' : 'Continue') + '</button>';
+      + '<button type="submit" class="btn btn-solid">' + (step === LAST ? 'Submit application' : 'Continue') + '</button>';
 
     wire();
     if (focusSel) {
@@ -1035,7 +1382,7 @@ textarea.field { resize: none; line-height: 1.55; }
         var field = input.closest('[data-field]').getAttribute('data-field');
         touched[field] = true;
         d[field] = input.value;
-        /* answering "No" clears whatever was typed — a stale link behind a
+        /* answering "No" clears whatever was typed, because a stale link behind a
            changed answer reaches the reviewer looking like real data */
         if (field === 'hasYouTube' && input.value !== 'Yes') d.channel = '';
         render('input[name="' + input.name + '"][value="' + CSS.escape(input.value) + '"]');
@@ -1051,7 +1398,7 @@ textarea.field { resize: none; line-height: 1.55; }
     });
 
     /* text surfaces update state silently while typing; validation waits for
-       blur (touch) or a forced submit — never while first typing */
+       blur (touch) or a forced submit, never while first typing */
     bodyEl.querySelectorAll('input.field, textarea.field').forEach(function (input) {
       input.addEventListener('input', function () { d[input.name] = input.value; });
       input.addEventListener('blur', function () {
@@ -1066,6 +1413,148 @@ textarea.field { resize: none; line-height: 1.55; }
       });
     });
   }
+
+  /* ---- the field, and the band that carries a step change ----------------
+     The same construction the access dialog uses between its two levels, for
+     the same reason: a step change is one block of content becoming another,
+     and this page already says that is what the band is for.
+
+     THE OUTGOING STEP IS A CLONE. The form renders into one element, so there
+     is no second live copy to wipe out; a snapshot of the old body sits over
+     the new one and loses ground to it at the band's edge. Cheaper than a
+     second render and impossible to desynchronise from the first.
+
+     ONLY STEP CHANGES SWEEP. render() also runs on every radio and checkbox,
+     because picking an option can reveal a field, and a band across the card
+     every time someone answers a question would be an interface celebrating
+     itself. */
+  var stageEl = document.getElementById('form-stage');
+  var cardEl = document.getElementById('form-card');
+  var bgEl = document.getElementById('apply-bg');
+  var field = null;
+  var sweeping = false;
+
+  /* THE GROUND IS THE BAND'S, THE POOL IS THE OVERLAY'S. Two decisions, and
+     only one of them wanted the Partnered agents defaults: the fill, the grain
+     and the resting field are that band's, because that is the homepage's
+     working surface and it is what a form should stand on. Its pointer pool is
+     not, because it is tuned for a section you scroll past rather than a page
+     you are reading a form on top of. These are the access dialog's numbers to
+     the digit, so the two places a reader meets this chrome behave the same. */
+  if (window.onblueField && bgEl) {
+    window.onblueField({
+      host: bgEl, track: window,
+      cell: 13, reach: 150, lens: 0.16, ambient: 0.05, fringe: false,
+      expose: function (api) { field = api; }
+    });
+  }
+
+  /* ONE SWEEP, AT THE ONE MOMENT THAT EARNS IT (Appy, 2026-09-16). It used to
+     run on every step change, which made a scan across the card the punctuation
+     for answering a question: five of them on the way through, and by the third
+     it is a thing the interface does rather than a thing that happened. It runs
+     once now, at submit, where the form genuinely stops being a form.
+
+     AND IT CROSSES THE FORM, NOT THE CARD. The clone was of .step-body alone,
+     so the heading and the buttons sat still while a band travelled behind them
+     and a strip in the middle dissolved: the effect read as a background, which
+     is what it looked like because that is what it was. The whole <form> is what
+     is replaced, so the whole <form> is what gets wiped. */
+  /* the rail collapses once the band has finished, never during it: the card's
+     height is pinned for the length of the sweep precisely so nothing moves
+     under a band that is still crossing, and lifting the whole stage from above
+     would undo that at the one moment it matters */
+  function railAside() { document.body.classList.add('is-submitted'); }
+
+  function sweepForm(commit) {
+    if (!field || reduced) { commit(); railAside(); return; }
+
+    var live = cardEl;
+    var ghost = cardEl.cloneNode(true);
+    ghost.removeAttribute('id');
+    ghost.classList.add('is-ghost');
+    /* ids inside a clone would collide with the originals for the length of the
+       sweep, and render() looks its elements up by id */
+    Array.prototype.forEach.call(ghost.querySelectorAll('[id]'), function (n) {
+      n.removeAttribute('id');
+    });
+    live.parentNode.insertBefore(ghost, live);
+    var gone = ghost.getBoundingClientRect();
+
+    sweeping = true;
+    commit();
+
+    var box = bgEl.getBoundingClientRect();
+    var now = live.getBoundingClientRect();
+    /* the stage is free to change height, but not underneath a band still
+       crossing it: hold the taller of the two until the wipe is done, so the
+       settle happens once, after, rather than as a jump during */
+    stageEl.style.minHeight = Math.max(gone.height, now.height) + 'px';
+
+    /* the vars live on the stage, which is the one element that is an ancestor
+       of both the card and the clone standing over it */
+    function wipeAt(head) {
+      var at = ((head * box.width) - (now.left - box.left)) / Math.max(now.width, 1);
+      stageEl.style.setProperty('--wipe-a', ((at - 0.06) * 100).toFixed(2) + '%');
+      stageEl.style.setProperty('--wipe-b', ((at + 0.06) * 100).toFixed(2) + '%');
+    }
+
+    /* the edge is placed before either element is masked, so no frame can be
+       painted with data-wipe set and nothing for it to resolve against */
+    wipeAt(-0.34);
+    ghost.setAttribute('data-wipe', 'out');
+    live.setAttribute('data-wipe', 'in');
+
+    field.sweep({
+      duration: 0.9,
+      band: 0.34,
+      /* confined to the form, for the reason ascii-object.js gives for confining
+         itself to the model: a band across the whole frame reads as the viewport
+         dissolving rather than as the thing being replaced */
+      clip: {
+        x0: Math.min(gone.left, now.left) - box.left - 20,
+        x1: Math.max(gone.right, now.right) - box.left + 20,
+        y0: Math.min(gone.top, now.top) - box.top - 20,
+        y1: Math.max(gone.bottom, now.bottom) - box.top + 20
+      },
+      onStep: wipeAt,
+      onEnd: function () {
+        sweeping = false;
+        railAside();
+        ghost.remove();
+        live.removeAttribute('data-wipe');
+        stageEl.style.minHeight = '';
+        stageEl.style.removeProperty('--wipe-a');
+        stageEl.style.removeProperty('--wipe-b');
+      }
+    });
+  }
+
+  /* LOGGING OUT DROPS WHAT WAS KEPT. There is no session to end, but there is
+     one thing this flow stored: the address the access dialog handed over, which
+     prefills the form. Leaving it behind for the next person at this browser
+     would be the only real consequence a stub could have, so this clears it and
+     goes back to the homepage. */
+  /* by attribute, not by id: the footer offers the same way out and there is no
+     reason for two copies of what it does */
+  Array.prototype.forEach.call(document.querySelectorAll('[data-logout]'), function (el) {
+    el.addEventListener('click', function (e) {
+      e.preventDefault();
+      try { window.sessionStorage.removeItem('onblue:email'); } catch (e2) {}
+      window.location.href = 'index.html';
+    });
+  });
+
+  /* the homepage's own probe, so the bar glasses over at the same moment and
+     for the same reason rather than on a scroll distance picked for this page */
+  (function stick() {
+    var bar = document.querySelector('.header');
+    var probe = document.querySelector('.scroll-probe');
+    if (!bar || !probe || !('IntersectionObserver' in window)) { return; }
+    new IntersectionObserver(function (entries) {
+      bar.classList.toggle('is-stuck', !entries[entries.length - 1].isIntersecting);
+    }).observe(probe);
+  })();
 
   document.getElementById('apply-form').addEventListener('submit', function (e) {
     e.preventDefault();
@@ -1089,99 +1578,26 @@ textarea.field { resize: none; line-height: 1.55; }
       window.dispatchEvent(new CustomEvent('apply:step', { detail: { step: step, dir: 'fwd' } }));
       return;
     }
-    submitted = true;
-    render();
+    sweepForm(function () {
+      submitted = true;
+      render();
+    });
     window.dispatchEvent(new CustomEvent('apply:submitted'));
   });
 
   renderMile();
   render();
+  measureFloor();
 })();
 </script>
 
-<!-- THREE.JS, PINNED — the same exact version the homepage pins, for the same
-     reason: the addons are only guaranteed to match the core of one release. -->
-<script type="importmap">
-{
-  "imports": {
-    "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
-    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
-  }
-}
-</script>
-<script type="module">
-  /* THE COMPANION RIG. The homepage hero's renderer (ascii-object.js), pointed
-     at the face robot and wired to the form's own events:
-       apply:step fwd   → a nod, the acknowledgment beat
-       apply:step back  → a smaller nod
-       apply:submitted  → one full turn, the biggest motion the page grants it
-       a field focused  → calm(): the look eases down to a quarter, waiting
-     Gated to the two-column width AND on reduced motion — below either, the
-     canvas never mounts and the page is simply the form. */
-  const canvas = document.getElementById('agent-ascii');
-  const wide = window.matchMedia('(min-width: 1020px)').matches;
-  const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  if (canvas && wide && !still) {
-    canvas.style.setProperty('--ascii-mask', '46% 62% at 50% 46%');
-    import('./ascii-object.js')
-      .then(({ createAsciiObject }) => createAsciiObject({ canvas }, {
-        /* the hero's ASCII look, verbatim */
-        cellSize: 11,
-        cellAspect: 0.55,
-        contrast: 1.6,
-        edgeContrast: 3,
-        exposure: 1.05,
-        colored: false,
-        color: '#3d3d44',
-        highlight: '#ffffff',
-        background: '',
-        fov: 32,
-        cameraDistance: 9.8,
-        orbit: false,
-        zoom: false,
-        /* the face robot (the hero's robot100 preset), centred in its own
-           column instead of pushed right — it is the only thing here */
-        src: 'robot100.glb',
-        ikChain: [],
-        ikEffector: '',
-        mountTop: false,
-        modelYaw: 0,
-        scale: 3.2,
-        xOffset: 0,
-        yOffset: -0.1,
-        cameraHeight: 0,
-        pointerLook: 0.8,
-        pointerEase: 0.05,
-        floatIntensity: 1.1,
-        rotationIntensity: 0.45,
-        floatSpeed: 1.3,
-        onLoad: () => canvas.classList.add('is-live'),
-        onError: (error) => {
-          console.error('[companion] model failed:', error);
-          canvas.style.display = 'none';
-        },
-      }))
-      .then((instance) => {
-        if (!instance) { canvas.style.display = 'none'; return; }
-
-        window.addEventListener('apply:step', (e) => {
-          instance.nod(e.detail && e.detail.dir === 'back' ? 0.45 : 1);
-        });
-        window.addEventListener('apply:submitted', () => instance.turn());
-
-        /* focusin/focusout bubble, unlike focus/blur, so one pair of listeners
-           covers fields the form re-renders */
-        document.addEventListener('focusin', (e) => {
-          if (e.target.classList && e.target.classList.contains('field')) instance.calm(true);
-        });
-        document.addEventListener('focusout', (e) => {
-          if (e.target.classList && e.target.classList.contains('field')) instance.calm(false);
-        });
-      })
-      .catch((error) => console.error('[companion]', error));
-  }
-</script>
+<!-- THE 3D COMPANION IS GONE WITH ITS COLUMN (Appy, 2026-09-16). It stood in a
+     right-hand aside that the centred layout no longer has, and a WebGL rig
+     rendered behind a form is noise rather than company. What replaced it is
+     the same ambient glyph field the hero and the access dialog run, mounted on
+     the card, with the band carrying the step changes. ascii-object.js is
+     untouched and the homepage still uses it; nothing here imports it any more. -->
 
 </body>
 </html>
