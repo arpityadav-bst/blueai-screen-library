@@ -3118,19 +3118,19 @@ body.menu-open { overflow: hidden; }
 /* the marker rides above the baseline without opening the line, which is what
    an unstyled <sup> does to a heading it sits in */
 .step-star { margin-left: 2px; font-size: 0.62em; font-weight: 400; line-height: 0; vertical-align: super; color: var(--dim-ink); }
-/* on the dialog's own centre line, immediately above the button: it is the last
-   condition anyone reads before committing, not a note filed under the grid.
+/* IN THE SLOT UNDER THE CTA, which is --actions-mt, the same distance the
+   sign-in line it replaced was held at. Every level of this dialog keeps one
+   line there and this is now level one's.
    BLUE AND 500, NOT UNDERLINED. Blue on this page means a link, so the weight
-   does the highlighting and the absence of an underline, plus sitting centred
-   under a grid rather than inside a sentence, says this is not one. */
+   does the highlighting, and the absence of an underline plus sitting centred
+   under a button rather than inside a sentence says this is not one. */
 .gate-note {
-  margin-top: 34px;
+  margin-top: var(--actions-mt);
   color: var(--notice-ink);
   font-size: 12.5px;
   font-weight: 500;
   letter-spacing: -0.01em;
 }
-.gate-note + .gate-actions { margin-top: 16px; }
 /* THE TERMINAL IS THE ONE PANEL THAT NEVER ASKED. Every other demo here is
    already hover-driven; this one scrolls on a loop from the moment it exists,
    because on the homepage it is ambient detail in a section you pass. In a
