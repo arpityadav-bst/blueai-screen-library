@@ -2579,6 +2579,9 @@ body.menu-open { overflow: hidden; }
 
   .hero { padding: 20px 20px 64px; align-items: flex-end; }
   .hero-copy, .lede { max-width: 100%; }
+  /* one column and a much longer wrap down here: the headline is several lines
+     by design, so binding it to the width would only shrink it for nothing */
+  .hero-two h1 { font-size: var(--h1); }
   .lede-br { display: none; }
 
 
@@ -2862,11 +2865,28 @@ body.menu-open { overflow: hidden; }
      section below it. */
   max-width: var(--band-max);
 }
+/* THE COLUMN GROWS WITH THE SECTION, AND THE HEADLINE IS BOUND TO THE COLUMN.
+   Two bugs, one cause: the type ladder is far steeper than the width ladder.
+   --h1 runs 54, 64, 76, 88 across the breakpoints, a 63 per cent climb, while
+   --band-max runs 1180, 1240, 1340, 1480, a 25 per cent one. The headline was
+   therefore asking for more room at every step than the step gave it, and a
+   hard max-width of 620px on this column pinned it flat on top of that, which
+   is exactly what the note on .hero-two says not to do. The first line needs
+   about 9.9em: at 1600 it wanted 636px of a 619px column, at 1920 it wanted 755
+   of 620, and on an ultrawide 874 of 620, which is how a two-line headline
+   became four.
+   The cap is gone, so the column takes its share of --band-max as intended, and
+   the size is clamped to what that column can actually hold: 9.4cqw is the
+   column divided by 10.6, which is the 9.9em line plus seven per cent of
+   headroom for font loading and rounding. Below the point where the ladder
+   still fits, min() leaves it alone; above it, the column governs. Nothing here
+   can be made wrong by editing the ladder or the section width later. */
 .hero-two .hero-copy {
+  container-type: inline-size;
   align-items: flex-start;
   text-align: left;
-  max-width: 620px;
 }
+.hero-two h1 { font-size: min(var(--h1), 9.4cqw); }
 .hero-two .lede { margin-left: 0; }
 .hero-two .hero-actions { justify-content: flex-start; }
 .hero-two h1 { align-items: flex-start; }
