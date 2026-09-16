@@ -24,11 +24,20 @@
 
   var css = document.createElement('style');
   css.textContent = [
-    '.devbar{position:fixed;left:14px;bottom:14px;z-index:60;display:flex;gap:4px;',
+    /* THE DOCK IS FIXED, THE BARS ARE NOT. Two bars each positioning itself
+       would have landed one on top of the other at the same corner. */
+    /* THE DOCK IS FIXED, THE BARS ARE NOT. Two bars each positioning itself
+       would have landed one on top of the other at the same corner. Stacked
+       rather than in a row, so a bar that only applies in one state sits above
+       the switch that reaches that state and reads as belonging to it. */
+    '.devdock{position:fixed;left:14px;bottom:14px;z-index:60;display:flex;flex-direction:column;align-items:flex-start;gap:6px}',
+    '.devbar{display:flex;gap:4px;',
     'padding:5px;border:1px solid var(--border);border-radius:10px;',
     'background:var(--card-bg);box-shadow:0 6px 20px -12px rgba(18,32,64,.25);',
     'opacity:.32;transition:opacity .22s ease}',
     '.devbar:hover,.devbar:focus-within{opacity:1}',
+    /* a class sets display here, so [hidden] has to say it too */
+    '.devbar[hidden]{display:none}',
     '.devbar b{align-self:center;padding:0 7px 0 5px;color:var(--dim-ink);',
     'font-size:10px;font-weight:600;letter-spacing:.09em;text-transform:uppercase}',
     '.devbar button{padding:6px 10px;border:1px solid transparent;border-radius:6px;',
@@ -47,7 +56,10 @@
      default" and the other being the state of a control. */
   function build(spec) {
     var bar = document.createElement('div');
-    var on = spec.states[0].id;
+    /* the spec names its own default rather than it falling out of button
+       order: which state a screen opens in and which order the buttons read in
+       are two different decisions */
+    var on = spec.initial || spec.states[0].id;
     try { on = window.localStorage.getItem(spec.store) || on; } catch (e) {}
     if (!spec.states.some(function (st) { return st.id === on; })) { on = spec.states[0].id; }
 
@@ -74,12 +86,23 @@
     return bar;
   }
 
+  /* EVERY BAR GOES IN A DOCK, because the dock is what positions it. The two
+     were one element until the application needed a second bar; splitting them
+     left the dialog's bar with no position of its own and it laid out inside the
+     panel as ordinary content. A helper rather than a rule to remember. */
+  function dock(bars) {
+    var d = document.createElement('div');
+    d.className = 'devdock';
+    bars.forEach(function (b) { d.appendChild(b); });
+    return d;
+  }
+
   if (gate) {
-    var steps = build({
-      label: 'Steps', store: 'onblue:dev-steps',
+    var steps = dock([build({
+      label: 'Steps', store: 'onblue:dev-steps', initial: 'min',
       states: [{ id: 'full', name: 'Full' }, { id: 'min', name: 'Minimal' }],
       apply: function (on) { gate.classList.toggle('is-min', on === 'min'); }
-    });
+    })]);
     /* only while the dialog is open, which is the only time its steps exist */
     var place = function () {
       if (gate.open) { gate.appendChild(steps); } else { steps.remove(); }
@@ -89,16 +112,31 @@
   }
 
   if (dash) {
-    /* THE PAGE OWNS THE SWITCH, NOT THIS FILE. Flipping the class here would
+    /* THE PAGE OWNS BOTH SWITCHES, NOT THIS FILE. Flipping a class here would
        leave the application's own script believing it was still the thing on
-       screen; window.onblueApproved is the page's one door into that state, and
-       going through it is what keeps the two in agreement. */
-    document.body.appendChild(build({
+       screen, and writing figures here would leave the dashboard's two datasets
+       with a third opinion. window.onblueApproved and window.onblueAccount are
+       the page's doors into those states, and going through them is what keeps
+       the toggler and the page in agreement about what is true. */
+    /* BUILT FIRST SO IT EXISTS TO BE HIDDEN. build() paints on construction, and
+       the page switch's paint is what decides whether this one is showing, so
+       the order here is a dependency rather than a layout choice. Which states
+       an account has is a question only the dashboard asks; on the application
+       the control would be a switch with nothing on the other end. */
+    var account = build({
       label: 'Account', store: 'onblue:dev-account',
-      states: [{ id: 'apply', name: 'Application' }, { id: 'dash', name: 'Approved' }],
+      states: [{ id: 'empty', name: 'Empty' }, { id: 'one', name: 'One program' }],
       apply: function (on) {
+        if (window.onblueAccount) { window.onblueAccount(on); }
+      }
+    });
+    document.body.appendChild(dock([account, build({
+      label: 'Page', store: 'onblue:dev-page',
+      states: [{ id: 'apply', name: 'Application' }, { id: 'dash', name: 'Dashboard' }],
+      apply: function (on) {
+        account.hidden = on !== 'dash';
         if (window.onblueApproved) { window.onblueApproved(on === 'dash'); }
       }
-    }));
+    })]));
   }
 })();

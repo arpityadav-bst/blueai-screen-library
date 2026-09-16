@@ -515,6 +515,187 @@ body { min-height: 100vh; }
   }
 }
 
+/* ---- the programme tile -----------------------------------------------------
+   One row, three parts: which programme, how far through, and a way to the
+   terms. It is a .card because it is a thing on the ground rather than a thing
+   inside a panel, and it takes the stage family's shadow with no hover, for the
+   reason the dashboard panels do: nothing here is pressable except the one
+   control that looks like one. */
+.progtile {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) minmax(220px, 1.5fr) auto;
+  align-items: center;
+  gap: clamp(20px, 3vw, 44px);
+  padding: 18px 20px;
+}
+.progtile[hidden] { display: none; }
+.progtile-id { display: grid; gap: 4px; min-width: 0; }
+.progtile-name { color: var(--ink); font-size: 14.5px; font-weight: 600; letter-spacing: -0.02em; }
+.progtile-ends { color: var(--dim-ink); font-size: 12.5px; letter-spacing: -0.01em; }
+.progtile-cond { min-width: 0; }
+.cond-line { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 9px; }
+.cond-label { color: var(--ink); font-size: 13.5px; letter-spacing: -0.01em; }
+.cond-count { flex: none; color: var(--muted); font-size: 12.5px; letter-spacing: -0.01em; }
+.cond-count b { color: var(--ink); font-weight: 600; }
+/* GREEN, WHICH IS THE ONE PLACE IT BELONGS HERE. It means a state that has been
+   reached, on the Open chip and on progress toward a goal; the balance keeps its
+   ink, because money is a figure rather than a state. */
+.bar { height: 5px; border-radius: 3px; background: var(--wash-2); overflow: hidden; }
+.bar-fill { display: block; height: 100%; border-radius: 3px; background: var(--green-ink); }
+.progtile-info {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--card-bg);
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+}
+.progtile-info:hover { color: var(--ink); border-color: var(--card-line-hover); background: var(--surface-hover); }
+
+/* ---- the ledger -------------------------------------------------------------
+   A fixed date column so the labels rag into one left edge whatever the dates
+   are, which is the source's own trick and the only thing about these rows that
+   is not a plain three-part line. */
+.txn-rows { list-style: none; display: grid; }
+.txn-rows[hidden] { display: none; }
+.txn-rows li {
+  display: grid;
+  grid-template-columns: 96px 1fr auto;
+  align-items: baseline;
+  gap: 16px;
+  padding: 11px 0;
+  font-size: 13.5px;
+  letter-spacing: -0.01em;
+}
+.txn-rows li + li { border-top: 1px solid var(--border-soft); }
+.txn-rows li:first-child { padding-top: 0; }
+.txn-rows li:last-child { padding-bottom: 0; }
+.txn-date { color: var(--dim-ink); }
+.txn-label { color: var(--muted); min-width: 0; }
+.txn-amt { color: var(--ink); font-weight: 600; }
+
+/* ---- the sheets -------------------------------------------------------------
+   Small dialogs, where the access gate is a full-viewport one: that one replaces
+   the page because it is asking you to start something, and these two sit over
+   it because the page is what you came back to.
+   THE MARGIN IS LOAD-BEARING. This page's reset zeroes every margin, which kills
+   the UA's own `margin: auto` on a <dialog> and parks it in the top left. */
+.sheet {
+  width: min(430px, calc(100vw - 32px));
+  margin: auto;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--card-bg);
+  color: var(--ink);
+  box-shadow: 0 30px 70px -30px rgba(18, 32, 64, 0.35);
+  opacity: 0;
+  transform: translateY(6px) scale(0.985);
+  transition: opacity 0.22s var(--ease), transform 0.22s var(--ease);
+}
+.sheet.is-open { opacity: 1; transform: none; }
+.sheet::backdrop { background: var(--gate-scrim); backdrop-filter: var(--gate-blur); -webkit-backdrop-filter: var(--gate-blur); }
+.sheet-in { padding: 24px 24px 22px; }
+/* A STEP BELOW THE TITLE. The sheet head is 18px/600 and the field labels were
+   14px/600: four pixels and no weight change between the name of the sheet and
+   the name of a field left three bold lines stacked with no hierarchy between
+   them. The amount inside a label keeps its weight, because that is the one
+   word in it worth landing on. */
+.sheet .q-label { font-size: 13.5px; font-weight: 500; }
+.sheet .q-label b { font-weight: 600; }
+.sheet-title { color: var(--ink); font-size: 18px; font-weight: 600; letter-spacing: -0.03em; }
+.sheet-head { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+.sheet-bal { margin-left: auto; padding: 6px 11px; font-size: 12.5px; }
+.sheet-bal b { color: var(--ink); font-weight: 600; }
+.sheet-x {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 7px;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.25s ease, background 0.25s ease;
+}
+.sheet-x:hover { color: var(--ink); background: var(--surface-hover); }
+.sheet-sect { padding: 15px 0; border-top: 1px solid var(--border-soft); }
+.sheet-sect:first-of-type { margin-top: 18px; }
+.sheet-sect p { margin-top: 7px; color: var(--muted); font-size: 13.5px; line-height: 1.5; letter-spacing: -0.01em; }
+.sheet-sect p b { color: var(--ink); font-weight: 600; }
+.sheet-close, .sheet-go { width: 100%; height: 44px; margin-top: 20px; }
+
+/* one option, presented as a choice, because "PayPal only" is a fact of the
+   product rather than something to leave a reader guessing about */
+.pay-opt {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  /* QUIETER THAN IT WAS, AND THE REASON IS THAT IT CANNOT CHANGE. A blue fill,
+     a blue border and a blue tick are three signals of selection on the one row
+     in this sheet with nothing to select against, and together they out-shouted
+     the Withdraw button, which is the only thing here that does anything. The
+     tick alone still says chosen; the row goes back to being a surface. */
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--panel-bg);
+}
+.pay-mark {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 28px;
+  border-radius: 5px;
+  background: #003087;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.pay-name { color: var(--ink); font-size: 14px; font-weight: 500; letter-spacing: -0.01em; }
+.pay-tick { margin-left: auto; display: grid; place-items: center; width: 19px; height: 19px; border-radius: 50%; background: var(--blue); color: #fff; }
+
+#cash-out-form .q + .q { margin-top: 20px; }
+/* THE PAIR IS ONE GROUP, so it is spaced like one: .q--consent carries a 12px
+   top margin for rows that stand alone in the form, and inside a group that is
+   a second gap on top of the grid's. Zeroed here, not there, because the form's
+   own consent row is still a row that stands alone. */
+.cash-confirms { margin-top: 20px; display: grid; gap: 10px; }
+.cash-confirms .q, .cash-confirms .q--consent { margin: 0; }
+/* the button is the one thing in this sheet that does something, and it should
+   not look like the next item in a list of controls */
+.sheet-go { margin-top: 26px; }
+
+.cash-done { text-align: center; }
+.cash-done[hidden] { display: none; }
+.cash-done-ic {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  margin: 6px auto 16px;
+  border-radius: 50%;
+  background: var(--green-fill);
+  color: var(--green-ink);
+}
+.cash-done p { margin-top: 10px; color: var(--muted); font-size: 13.5px; line-height: 1.55; letter-spacing: -0.01em; }
+.cash-done p b { color: var(--ink); font-weight: 600; }
+.cash-support { font-size: 12.5px; }
+
+@media (max-width: 720px) {
+  .progtile { grid-template-columns: 1fr auto; gap: 16px 18px; }
+  .progtile-cond { grid-column: 1 / -1; }
+}
+
 /* ---- the card ---------------------------------------------------------------- */
 .form-stage { position: relative; max-width: 640px; margin: clamp(20px, 2.8vw, 30px) auto 0; }
 .form-card { padding: 26px 26px 22px; }
@@ -1119,7 +1300,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
            it is a lifetime total that qualifies the section without being what
            the section is for, and inside it competed with the one figure
            anybody opens this screen to read -->
-      <span class="dash-note">Earned till date <b>$0</b></span>
+      <span class="dash-note">Earned till date <b data-fig="earned">$0</b></span>
     </div>
     <div class="card dash-panel">
       <div class="bal-top">
@@ -1129,16 +1310,20 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
                stands alone in a panel; two different label styles inside one
                card read as two different kinds of thing. -->
           <span class="mini-title">Balance</span>
-          <span class="earn-figure">$0</span>
+          <span class="earn-figure" data-fig="balance">$0</span>
         </div>
         <!-- quiet, not the page's solid CTA: cashing out is a frequent,
              low-drama action, and the black button on this page belongs to the
              one thing that commits you to something -->
-        <button class="btn btn-ghost" type="button" data-stub>Cash out</button>
+        <button class="btn btn-ghost" type="button" data-sheet="cash-out">Cash out</button>
       </div>
       <div class="bal-ledger">
         <span class="mini-title">Transactions</span>
-        <p class="dash-quiet">No transactions yet.</p>
+        <p class="dash-quiet" data-ledger-empty>No transactions yet.</p>
+        <!-- A DATE COLUMN OF FIXED WIDTH, so the labels rag into one left edge
+             however long the dates are. It is the ledger's own trick and it is
+             the only thing about this row that is not a plain three-part line. -->
+        <ul class="txn-rows" data-ledger hidden></ul>
       </div>
     </div>
   </div>
@@ -1153,14 +1338,33 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
            months later. The price is paid in the empty copy below, which is why
            that copy names what will appear rather than that nothing has. -->
       <div class="progtabs" role="tablist" aria-label="Programs">
-        <button class="progtab on" type="button" role="tab" aria-selected="true" data-tab="active">Active<span class="progtab-n">0</span></button>
-        <button class="progtab" type="button" role="tab" aria-selected="false" data-tab="past">Past<span class="progtab-n">0</span></button>
+        <button class="progtab on" type="button" role="tab" aria-selected="true" data-tab="active">Active<span class="progtab-n" data-count="active">0</span></button>
+        <button class="progtab" type="button" role="tab" aria-selected="false" data-tab="past">Past<span class="progtab-n" data-count="past">0</span></button>
       </div>
     </div>
     <!-- THE DASHED GHOST, WHICH IS ALREADY ON THIS PAGE. The programmes screen
          uses it for "a thing will be here"; an empty tab is the same statement,
          so it is the same treatment rather than a second invention of it. -->
-    <div class="prog-soon dash-empty" data-pane="active">
+    <!-- THE TILE IS ONE ROW, NOT A CARD OF SECTIONS: which programme, how far
+         through, and a way to the terms. Everything it deliberately does not
+         say is one press away, which is what the info control is for. -->
+    <article class="card progtile" data-pane="active" data-when="one" hidden>
+      <div class="progtile-id">
+        <span class="progtile-name">Partner Starter Program</span>
+        <span class="progtile-ends">Ends Aug 31, 2026</span>
+      </div>
+      <div class="progtile-cond">
+        <div class="cond-line">
+          <span class="cond-label">Run BlueAI this month</span>
+          <span class="cond-count"><b>12</b> of 20 days</span>
+        </div>
+        <div class="bar" role="progressbar" aria-valuenow="12" aria-valuemin="0" aria-valuemax="20" aria-label="Run BlueAI this month">
+          <span class="bar-fill" style="width: 60%"></span>
+        </div>
+      </div>
+      <button class="progtile-info" type="button" aria-label="About Partner Starter Program" data-sheet="prog-info"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></svg></button>
+    </article>
+    <div class="prog-soon dash-empty" data-pane="active" data-when="empty">
       <p>You are not in a program right now.</p>
       <button class="btn btn-solid" type="button" data-join>Join a new program</button>
     </div>
@@ -1195,6 +1399,100 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
   </div>
 
 </section>
+
+<!-- TWO SHEETS, AND THEY ARE NATIVE <dialog>s FOR THE SAME REASONS THE ACCESS
+     GATE IS ONE: showModal() traps focus, closes on Escape, inerts the page
+     behind it and puts the panel in the top layer, all of which would otherwise
+     be a few hundred lines of listener that gets one case wrong.
+     THE MARGIN IS NOT DECORATION. This page's reset zeroes every margin, which
+     kills the UA's own `margin: auto` on a dialog and drops it against the top
+     left corner. It cost a round of review the last time. -->
+<dialog class="sheet" id="sheet-prog-info" aria-labelledby="prog-info-title">
+  <div class="sheet-in">
+    <h2 class="sheet-title" id="prog-info-title">Partner Starter Program</h2>
+    <!-- ONE SENTENCE-SHAPED LINE PER FACT under a mono label. The reward line
+         carries the cadence, which is the nuance a "$30/mo" badge on the tile
+         would have compressed away, and no description of the programme is
+         repeated here: on an offer card the description is the pitch, on this
+         sheet it would say the same thing "What counts" says at length. -->
+    <div class="sheet-sect">
+      <span class="mini-title">Reward</span>
+      <p><b>$30</b> every month you meet the goal, paid via PayPal.</p>
+    </div>
+    <div class="sheet-sect">
+      <span class="mini-title">What counts</span>
+      <p>Run BlueAI on at least <b>20 days</b> each month.</p>
+    </div>
+    <div class="sheet-sect">
+      <span class="mini-title">Ends</span>
+      <p><b>Aug 31, 2026</b></p>
+    </div>
+    <button class="btn btn-ghost sheet-close" type="button" data-sheet-close>Close</button>
+  </div>
+</dialog>
+
+<dialog class="sheet" id="sheet-cash-out" aria-labelledby="cash-out-title">
+  <div class="sheet-in">
+    <div class="sheet-head">
+      <h2 class="sheet-title" id="cash-out-title">Cash out</h2>
+      <span class="chip sheet-bal">Balance <b data-fig="balance">$0</b></span>
+      <button class="sheet-x" type="button" aria-label="Close" data-sheet-close><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    </div>
+
+    <form id="cash-out-form" novalidate>
+      <div class="q">
+        <span class="q-label">Choose your payout method</span>
+        <!-- ONE METHOD, AND IT IS STILL PRESENTED AS A CHOICE. Payout rules say
+             PayPal only; showing the single option selected states that as a
+             fact of the product rather than leaving a reader to wonder what the
+             alternatives were. -->
+        <span class="pay-opt is-on">
+          <span class="pay-mark" aria-hidden="true">PayPal</span>
+          <span class="pay-name">PayPal</span>
+          <span class="pay-tick" aria-hidden="true"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.5l5 5L19.5 6.5"/></svg></span>
+        </span>
+      </div>
+
+      <div class="q" data-field="payoutEmail">
+        <label class="q-label" for="cash-email">PayPal email to receive <b data-fig="balance">$0</b></label>
+        <input class="field" id="cash-email" name="payoutEmail" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com">
+        <span class="msg" data-msg="payoutEmail"></span>
+      </div>
+
+      <!-- ONE ERROR SLOT FOR THE PAIR, NOT ONE EACH. Two mandatory boxes have a
+           single failure, "you have not ticked them", and their two messages
+           were near-duplicates; the red edge stays per box, so the row that
+           needs attention is still the marked one. A slot reserved under every
+           row is also what put 26px of invisible space between them. -->
+      <div class="cash-confirms">
+        <div class="q q--consent" data-field="confirmCorrect">
+          <label><input type="checkbox" class="sr-only" name="confirmCorrect">
+            <span class="check subtle"><span class="check-box"></span><span>I confirm all the details are correct.</span></span>
+          </label>
+        </div>
+        <div class="q q--consent" data-field="confirmFinal">
+          <label><input type="checkbox" class="sr-only" name="confirmFinal">
+            <span class="check subtle"><span class="check-box"></span><span>I understand my order is non-refundable.</span></span>
+          </label>
+        </div>
+        <span class="msg" data-msg="confirms"></span>
+      </div>
+
+      <button class="btn btn-solid sheet-go" type="submit">Withdraw</button>
+    </form>
+
+    <!-- THE SAME SHEET, AFTER. A withdrawal that closed its own dialog and left
+         a changed number behind would be the one moment on this screen where
+         money moved with nothing said about it. -->
+    <div class="cash-done" id="cash-done" hidden>
+      <span class="cash-done-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.5l5 5L19.5 6.5"/></svg></span>
+      <h2 class="sheet-title">Request submitted</h2>
+      <p>Your withdrawal request of <b data-withdrawn>$0</b> is received. Funds will transfer in 7-10 business days, and you’ll get an email notification.</p>
+      <p class="cash-support">Reach out to us on <b>support@bluestacks.ai</b> for any queries.</p>
+      <button class="btn btn-ghost sheet-close" type="button" data-sheet-close>Close</button>
+    </div>
+  </div>
+</dialog>
 
 </main>
 
@@ -1868,6 +2166,104 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     });
   }
 
+/* ---- the sheets -----------------------------------------------------------
+     One opener for both, by attribute: they are the same kind of object and the
+     page should not have two ways of putting one on the screen. The class that
+     fades them in is added a frame after showModal(), so the dialog exists to
+     transition FROM something rather than appearing already arrived. */
+  (function sheets() {
+    var open = null;
+    function close() {
+      if (!open) { return; }
+      var d = open;
+      open = null;
+      d.classList.remove('is-open');
+      window.setTimeout(function () { if (d.open) { d.close(); } }, 220);
+    }
+    document.addEventListener('click', function (e) {
+      var go = e.target.closest ? e.target.closest('[data-sheet]') : null;
+      if (go) {
+        var d = document.getElementById('sheet-' + go.getAttribute('data-sheet'));
+        if (d && typeof d.showModal === 'function') {
+          open = d;
+          d.showModal();
+          requestAnimationFrame(function () { d.classList.add('is-open'); });
+        }
+        return;
+      }
+      if (e.target.closest && e.target.closest('[data-sheet-close]')) { close(); }
+    });
+    /* Escape is the dialog's own, so it is intercepted rather than reimplemented:
+       letting it close natively would skip the fade and snap the panel away */
+    document.addEventListener('cancel', function (e) {
+      if (e.target.classList.contains('sheet')) { e.preventDefault(); close(); }
+    });
+    window.onblueSheetClose = close;
+  })();
+
+  /* ---- the two accounts -----------------------------------------------------
+     A dashboard with nothing in it and a dashboard with something in it are not
+     one screen with a row hidden: the balance, the ledger, the tab counts and
+     the programmes section all say different things, and they have to agree
+     with each other or the screen teaches a reviewer something false. So they
+     are two datasets and the screen is rendered from whichever is current.
+     THE FIGURES ARE THE SOURCE'S. $150 is five qualifying months at $30 since
+     the March cash-out, which is what the $90 already paid out and the one
+     ledger row are the record of. Nothing here is a number picked to look busy. */
+  var ACCOUNTS = {
+    empty: { balance: 0, earned: 0, active: 0, past: 0, txns: [] },
+    one: {
+      balance: 150, earned: 90, active: 1, past: 0,
+      txns: [{ date: 'Mar 8, 2026', label: 'Cash out to PayPal', amount: 90 }]
+    }
+  };
+  var acct = 'empty';
+
+  function money(n) { return '$' + n; }
+
+  function renderDash() {
+    var dash = document.getElementById('dash');
+    if (!dash) { return; }
+    var a = ACCOUNTS[acct];
+    var tab = (dash.querySelector('.progtab.on') || {}).getAttribute
+      ? dash.querySelector('.progtab.on').getAttribute('data-tab') : 'active';
+
+    /* every figure on the page and in the sheets reads the same attribute, so a
+       withdrawal cannot leave one of them stating the old amount */
+    Array.prototype.forEach.call(document.querySelectorAll('[data-fig="balance"]'), function (el) {
+      el.textContent = money(a.balance);
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-fig="earned"]'), function (el) {
+      el.textContent = money(a.earned);
+    });
+    dash.querySelector('[data-count="active"]').textContent = a.active;
+    dash.querySelector('[data-count="past"]').textContent = a.past;
+
+    var ledger = dash.querySelector('[data-ledger]');
+    var none = dash.querySelector('[data-ledger-empty]');
+    ledger.innerHTML = a.txns.map(function (t) {
+      return '<li><span class="txn-date">' + esc(t.date) + '</span>'
+        + '<span class="txn-label">' + esc(t.label) + '</span>'
+        + '<span class="txn-amt">' + money(t.amount) + '</span></li>';
+    }).join('');
+    ledger.hidden = !a.txns.length;
+    none.hidden = !!a.txns.length;
+
+    /* TWO CONDITIONS, ONE PLACE. A block shows when it belongs to the open tab
+       AND to the current account; written as two independent `hidden` writes
+       they raced, and whichever ran last won. */
+    Array.prototype.forEach.call(dash.querySelectorAll('[data-pane]'), function (el) {
+      var when = el.getAttribute('data-when');
+      el.hidden = el.getAttribute('data-pane') !== tab || (when !== null && when !== acct);
+    });
+  }
+
+  function setAccount(id) {
+    acct = ACCOUNTS[id] ? id : 'empty';
+    renderDash();
+  }
+  window.onblueAccount = setAccount;
+
   (function dashboard() {
     var dash = document.getElementById('dash');
     if (!dash) { return; }
@@ -1888,9 +2284,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
           t.classList.toggle('on', on);
           t.setAttribute('aria-selected', on ? 'true' : 'false');
         });
-        Array.prototype.forEach.call(dash.querySelectorAll('[data-pane]'), function (pane) {
-          pane.hidden = pane.getAttribute('data-pane') !== want;
-        });
+        renderDash();
       });
     });
 
@@ -1899,6 +2293,70 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
        join are already on this page, one state away. */
     var join = dash.querySelector('[data-join]');
     if (join) join.addEventListener('click', function () { setApproved(false); });
+
+    /* ---- the withdrawal ----------------------------------------------------
+       THE TWO BOXES SHARE ONE MESSAGE, because they share one failure. The
+       email is the form's own rule, validated by the same isEmail the
+       application uses, so the two places this page asks for an address cannot
+       disagree about what one is. */
+    var cash = document.getElementById('cash-out-form');
+    var done = document.getElementById('cash-done');
+    var mail = document.getElementById('cash-email');
+    if (cash) {
+      var sheet = document.getElementById('sheet-cash-out');
+      /* the address the gate handed over, which is the only one this flow knows */
+      mail.value = d.email || '';
+
+      sheet.addEventListener('close', function () {
+        cash.hidden = false;
+        done.hidden = true;
+        cash.reset();
+        mail.value = d.email || '';
+        Array.prototype.forEach.call(cash.querySelectorAll('.check'), function (c) { c.classList.remove('on'); });
+        Array.prototype.forEach.call(cash.querySelectorAll('.msg'), function (m) { m.textContent = ''; });
+        cash.querySelector('#cash-email').classList.remove('is-bad');
+      });
+
+      Array.prototype.forEach.call(cash.querySelectorAll('input[type="checkbox"]'), function (box) {
+        box.addEventListener('change', function () {
+          box.closest('label').querySelector('.check').classList.toggle('on', box.checked);
+          box.closest('label').querySelector('.check-box').innerHTML = box.checked ? TICK : '';
+        });
+      });
+
+      cash.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var boxes = cash.querySelectorAll('input[type="checkbox"]');
+        var bad = !isEmail(mail.value.trim());
+        cash.querySelector('[data-msg="payoutEmail"]').textContent = !mail.value.trim()
+          ? 'Add the PayPal email to receive this into.'
+          : bad ? 'That doesn\u2019t look like an email. Check for a typo.' : '';
+        mail.classList.toggle('is-bad', bad);
+        var unticked = !boxes[0].checked ? 'Confirm the details above are correct.'
+          : !boxes[1].checked ? 'Confirm you understand this before withdrawing.' : '';
+        cash.querySelector('[data-msg="confirms"]').textContent = unticked;
+        Array.prototype.forEach.call(boxes, function (b) {
+          b.closest('label').querySelector('.check').classList.toggle('err-ring', !b.checked);
+        });
+        if (bad || unticked) { return; }
+
+        /* THE MONEY ACTUALLY MOVES. A withdrawal that congratulated you and left
+           the balance where it was would be the one place on this screen where a
+           figure and a statement disagree. It goes to the ledger rather than
+           vanishing, which is where the reader would look for it. */
+        var a = ACCOUNTS[acct];
+        /* THE SHEET REPORTS WHAT MOVED, NOT WHAT IS LEFT. Written as another
+           data-fig="balance" it would have read "your request of $0" the
+           instant the balance it was describing became zero. */
+        done.querySelector('[data-withdrawn]').textContent = money(a.balance);
+        a.txns = [{ date: 'Just now', label: 'Cash out to PayPal', amount: a.balance }].concat(a.txns);
+        a.earned += a.balance;
+        a.balance = 0;
+        cash.hidden = true;
+        done.hidden = false;
+        renderDash();
+      });
+    }
   })();
 
   /* ONE SWITCH, TWO STATES OF THE PAGE. Applying and being in are not two steps
@@ -2213,6 +2671,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
   });
 
   renderMile();
+  renderDash();
   render();
   measureFloor();
 })();

@@ -876,7 +876,12 @@ document.documentElement.setAttribute('data-theme', 'light');
      modal, the level-one paragraph and the three step names come from
      apply.html's own intro and progress rail.
      ===================================================================== -->
-<dialog class="gate" id="gate" aria-labelledby="gate-title-1">
+<!-- is-min IS THE DEFAULT, AND IT IS IN THE MARKUP. Putting it here rather than
+     letting the review toggler apply it means the dialog opens minimal on the
+     first paint, before any script has run: the class arriving a frame later
+     would show the full version's four panels and then take them away. The
+     toggler reads this as its starting state rather than overriding it. -->
+<dialog class="gate is-min" id="gate" aria-labelledby="gate-title-1">
   <div class="gate-field" id="gate-field">
 
     <button class="gate-x" type="button" data-gate="close" aria-label="Close">
@@ -887,7 +892,10 @@ document.documentElement.setAttribute('data-theme', 'light');
     <section class="gate-level" data-level="1">
       <span class="gate-mark"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><use href="#i-spark"/></svg></span>
       <span class="eyebrow">Before you start</span>
-      <h2 class="title-lg" id="gate-title-1">What happens <em>after you apply</em>.</h2>
+      <!-- THE FULL STOP IS INSIDE THE EMPHASIS, as it is on the homepage's
+           closer and the confirmation's: the sentence finishes in the serif
+           rather than handing back to the sans for one mark. -->
+      <h2 class="title-lg" id="gate-title-1">One short application and <em>you’re in.</em></h2>
       <!-- NO LEDE HERE (Appy, 2026-09-16). It said "One short application. We
            review every one and email you when your access is approved", which is
            the four cards below it in sentence form: apply, we read every one,
