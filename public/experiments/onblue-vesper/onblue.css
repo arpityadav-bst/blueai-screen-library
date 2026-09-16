@@ -45,6 +45,13 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
   /* deck palette, sampled from onBlue_work_economy_v5.pdf */
   --blue: #156efe;
   --blue-ink: #4a8dff;
+  /* THE NOTICE BLUE IS ITS OWN VALUE FOR ONE REASON: CONTRAST. --blue-ink is
+     read at chip size or larger, or as an icon; this is 12.5px legal copy, and
+     in light mode --blue-ink resolves to --blue, which measures 4.47:1 on the
+     ground. That is under the 4.5 floor for small text, on the one line whose
+     whole job is to be read before someone commits. Dark already clears it at
+     6.55:1, so only light needs a deeper value. */
+  --notice-ink: var(--blue-ink);
   --green: #45edbc;
 
   --logo: 19.5px;
@@ -417,6 +424,7 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
   /* the accent is the brand blue itself, not a darkened version of it: #156efe
      clears 4.5:1 on white, so there was never a reason to dim it. */
   --blue-ink: var(--blue);
+  --notice-ink: #0d5ad6;  /* 6.09:1 on the light ground */
 
   /* paper content under a chrome strip stepped down from it. kept as an
      overlay rather than a flat hex so the bar tracks the window body instead of
@@ -3046,6 +3054,56 @@ body.menu-open { overflow: hidden; }
   text-align: left;
 }
 .gate-steps .step { padding: 22px 20px 20px; }
+
+/* ---- THE MINIMAL VARIANT ------------------------------------------------
+   The same four steps with the demonstration taken out: number, name, one
+   line. The rich version argues that the panels ARE the explanation and the
+   text is a caption; this one takes the opposite position, that four short
+   sentences are the whole of it and a reader on the way into a form does not
+   want a demo first.
+   IT IS A CLASS ON THE DIALOG, NOT A SECOND SET OF CARDS. Nothing is
+   duplicated and no copy can drift, because the only difference between the
+   two is whether .step-art is drawn. The padding goes symmetric because the
+   asymmetry existed to sit a panel lower in the box than the heading. */
+.gate-steps .step-min { display: none; }
+.gate.is-min .step-art,
+.gate.is-min .gate-steps .step-num,
+.gate.is-min .gate-steps .step-sub { display: none; }
+.gate.is-min .gate-steps .step-min { display: block; }
+.gate.is-min .gate-steps .step { padding: 20px 20px 21px; }
+/* NARROWER, BECAUSE THE CARD HAS LESS TO HOLD. --band-max exists to line the
+   grid up with the sections of the page behind it, which is worth having when
+   each card contains a panel; with four sentences in it, that width leaves the
+   text sitting in a wide short box. Capped rather than replaced, so a small
+   viewport still gets whatever --band-max allows.
+   IT ALSO EVENS THE WRAPPING. The four lines are written within nine characters
+   of each other (57, 59, 61, 66); at this column that band lands them all on
+   three lines, where at 1180px the shortest and the longest fall on different
+   counts and the row looks ragged. */
+.gate.is-min .gate-steps { max-width: min(var(--band-max), 1000px); }
+/* THE HIERARCHY IS CARRIED TWICE, BY SIZE AND BY INK. In the full version the
+   heading labels a panel and the caption is one short line under it, so 17/13.5
+   is enough separation. Here the body is four lines of prose and the heading has
+   to stay clearly above it, and 17/15 in two inks a step apart was not doing
+   that: they read as one block with a bold first line.
+     size   20 / 14.5, a ratio of 1.38, where 17 / 15 was 1.13
+     ink    --ink at 19.7:1 over --muted at 6.0:1, where it was --lede-ink at 10.4
+   --muted rather than --dim-ink for the body: the next step down measures 4.25:1
+   on the light ground, under the 4.5 floor for text this size, and this is the
+   only place the step is explained.
+   THE BODY IS SELECTED THROUGH .step-top so it outranks that block's
+   `white-space: nowrap`, which exists to hold the full version's caption on one
+   line and would hold this one on one line too. */
+.gate.is-min .gate-steps .step-top h3 { font-size: 20px; }
+.gate-steps .step-top .step-min {
+  margin-top: 8px;
+  white-space: normal;
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.55;
+  letter-spacing: -0.015em;
+  color: var(--muted);
+}
 .gate-steps .step-top { gap: 12px; }
 .gate-steps .step-top h3 { font-size: 17px; }
 .gate-steps .step-top p { margin-top: 3px; white-space: nowrap; }
@@ -3056,6 +3114,30 @@ body.menu-open { overflow: hidden; }
 .gate-steps .pick-list li { padding: 9px 11px; }
 .gate-steps .mini-list { gap: 10px; }
 .gate-steps .term-win { height: 4.8em; }
+
+/* the marker rides above the baseline without opening the line, which is what
+   an unstyled <sup> does to a heading it sits in */
+.step-star { margin-left: 2px; font-size: 0.62em; font-weight: 400; line-height: 0; vertical-align: super; color: var(--dim-ink); }
+/* on the dialog's own centre line, immediately above the button: it is the last
+   condition anyone reads before committing, not a note filed under the grid.
+   BLUE AND 500, NOT UNDERLINED. Blue on this page means a link, so the weight
+   does the highlighting and the absence of an underline, plus sitting centred
+   under a grid rather than inside a sentence, says this is not one. */
+.gate-note {
+  margin-top: 34px;
+  color: var(--notice-ink);
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+.gate-note + .gate-actions { margin-top: 16px; }
+/* THE TERMINAL IS THE ONE PANEL THAT NEVER ASKED. Every other demo here is
+   already hover-driven; this one scrolls on a loop from the moment it exists,
+   because on the homepage it is ambient detail in a section you pass. In a
+   dialog it is the only thing moving, and it moves at someone who is reading.
+   Paused holds it at the top of the log, which is where it should be found. */
+.gate-steps .term-log { animation-play-state: paused; }
+.gate-steps .step:hover .term-log { animation-play-state: running; }
 .gate-steps .earn-figure { font-size: 30px; margin-top: 2px; }
 .gate-steps .earn-sub {
   display: block;

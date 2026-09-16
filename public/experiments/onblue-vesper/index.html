@@ -19,6 +19,9 @@ document.documentElement.setAttribute('data-theme', 'light');
 <link rel="stylesheet" href="onblue.css">
 <script src="ascii-field.js"></script>
 <script src="onblue-chrome.js"></script>
+<!-- THE STATE TOGGLER, for review. Self-contained and self-styled: deleting
+     this one line removes the control and nothing else. -->
+<script src="onblue-dev.js" defer></script>
 </head>
 <body style="background:var(--bg);color:var(--text)">
 
@@ -885,7 +888,11 @@ document.documentElement.setAttribute('data-theme', 'light');
       <span class="gate-mark"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><use href="#i-spark"/></svg></span>
       <span class="eyebrow">Before you start</span>
       <h2 class="title-lg" id="gate-title-1">What happens <em>after you apply</em>.</h2>
-      <p class="lede">One short application. We review every one and email you when your access is approved.</p>
+      <!-- NO LEDE HERE (Appy, 2026-09-16). It said "One short application. We
+           review every one and email you when your access is approved", which is
+           the four cards below it in sentence form: apply, we read every one,
+           and an approval email. The cards show it; the line only said it
+           first. -->
 
       <!-- FOUR, AND THE COPY IS THE PARTNER SITE'S OWN. The only edits to it
            are two the brand forces: BlueAI reads onBlue on this site, and the
@@ -896,12 +903,18 @@ document.documentElement.setAttribute('data-theme', 'light');
            terminal is Partnered agents', the bars and the payout pill are Earn
            from its work's. A demo assembled out of the page's own parts cannot
            drift from the page. -->
+      <!-- ONE NAME, TWO BODIES. The step keeps its heading in both versions;
+           what changes underneath it is a caption in the full one, where the
+           panel does the explaining, and the whole explanation in the minimal
+           one, where there is no panel. Both sit in the markup and the dialog's
+           class picks one, which is why neither can quietly go stale against
+           the other. -->
       <ol class="gate-steps">
 
         <li class="card step">
           <div class="step-top">
             <span class="step-num">1</span>
-            <div><h3>Apply.</h3><p>One short form.</p></div>
+            <div><h3>Apply<sup class="step-star" aria-hidden="true">*</sup></h3><p class="step-sub">One short form.</p><p class="step-min">Tell us about yourself and the PC your agent will run on.</p></div>
           </div>
           <div class="step-art">
             <span class="mini-title">Your application</span>
@@ -917,7 +930,7 @@ document.documentElement.setAttribute('data-theme', 'light');
         <li class="card step">
           <div class="step-top">
             <span class="step-num">2</span>
-            <div><h3>Get accepted.</h3><p>We read every one.</p></div>
+            <div><h3>Get accepted</h3><p class="step-sub">We read every one.</p><p class="step-min">We review every one and email you when your agent is ready.</p></div>
           </div>
           <div class="step-art">
             <span class="mini-title">Review</span>
@@ -933,7 +946,7 @@ document.documentElement.setAttribute('data-theme', 'light');
         <li class="card step">
           <div class="step-top">
             <span class="step-num">3</span>
-            <div><h3>Deploy it.</h3><p>One install, then go.</p></div>
+            <div><h3>Deploy it</h3><p class="step-sub">One install, then go.</p><p class="step-min">Install BlueAI on your PC and sign in. That’s the whole setup.</p></div>
           </div>
           <div class="step-art">
             <span class="mini-title">Setup</span>
@@ -961,7 +974,7 @@ document.documentElement.setAttribute('data-theme', 'light');
         <li class="card step">
           <div class="step-top">
             <span class="step-num">4</span>
-            <div><h3>Collect.</h3><p>You approve, it pays.</p></div>
+            <div><h3>Collect</h3><p class="step-sub">You approve, it pays.</p><p class="step-min">Your agent runs each campaign you approve. $30 monthly via PayPal.</p></div>
           </div>
           <div class="step-art">
             <span class="earn-label">Every month</span>
@@ -976,10 +989,24 @@ document.documentElement.setAttribute('data-theme', 'light');
 
       </ol>
 
+
       <!-- THE HERO'S BUTTON, not a smaller relative of it: same class, same
            height, same padding, and the same decode on hover. There is no card
            shrinking it any more, so there is no reason for it to be a step down
            from the one this page opens with. -->
+      <!-- THE FOOTNOTE SITS ON APPLY, not on the $30. Eligibility is not a
+           qualification of the money, it is a qualification of whether any of
+           this is for you, and the place a reader decides that is the first
+           card rather than the last. It reads directly above the button because
+           that is the last thing anyone sees before committing, and it works
+           unchanged in both versions because the heading that carries the
+           marker is in both.
+           DESKTOP, NOT "PC AND MAC". The line those two are drawing together is
+           desktop against phone, and both halves of it fall on the same side.
+           One word says it and does not invite the question of which one you
+           are. -->
+      <p class="gate-note">* Exclusive to desktop. Currently available in the US only.</p>
+
       <div class="gate-actions">
         <button class="btn btn-solid hero-solid" type="button" data-gate="next"><span class="scramble">Got it, continue</span></button>
       </div>
@@ -1034,7 +1061,7 @@ document.documentElement.setAttribute('data-theme', 'light');
            [data-stub] handler the hero's Sign in link already uses. -->
       <p class="gate-alt" id="gate-back-line">First time here? <button type="button" data-gate="back">See how it works</button></p>
 
-      <p class="gate-legal">By signing up, you agree to the <a data-stub>Terms of Use</a>
+      <p class="gate-legal">By signing up, you agree to the <a data-stub>Program Terms</a>
         and <a data-stub>Privacy Policy</a>, including <a data-stub>Cookie Use</a>.</p>
     </section>
 
@@ -1290,7 +1317,6 @@ document.documentElement.setAttribute('data-theme', 'light');
     var sub2 = document.getElementById('gate-sub-2');
     var returning = false;
     var closing = 0;
-    var demoing = 0;
     var sweeping = false;
 
     /* the same test apply.html validates with, so the two cannot disagree about
@@ -1422,21 +1448,13 @@ document.documentElement.setAttribute('data-theme', 'light');
       show(returning ? 2 : 1);
       requestAnimationFrame(function () { gate.classList.add('is-open'); });
 
-      /* THE SAME ONE-SHOT THE PAGE GIVES THESE CARDS. In How it works a step
-         runs its demo once when it first scrolls into view, then stops, so the
-         reader sees what the panel does without the page looping at them. A
-         dialog has no scroll to be revealed by, so opening is the equivalent
-         moment. .demo is the page's class and these are the page's cards, so
-         this is four lines rather than four animations. */
-      window.clearTimeout(demoing);
-      Array.prototype.forEach.call(gate.querySelectorAll('.step'), function (card) {
-        card.classList.add('demo');
-      });
-      demoing = window.setTimeout(function () {
-        Array.prototype.forEach.call(gate.querySelectorAll('.step'), function (card) {
-          card.classList.remove('demo');
-        });
-      }, 4000);
+      /* NOTHING RUNS ON ARRIVAL (Appy, 2026-09-16). These cards used to take the
+         page's .demo one-shot when the dialog opened, on the argument that
+         opening is a dialog's version of scrolling into view. On the homepage
+         that lands on a reader who is passing through; here it lands on one who
+         has just asked for something and is being shown four panels moving at
+         once before they have read a word of them. They still play on hover,
+         which is the reader choosing to look. */
     }
 
     function close() {
