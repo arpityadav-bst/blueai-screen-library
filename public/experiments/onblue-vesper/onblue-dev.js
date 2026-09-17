@@ -125,7 +125,10 @@
        the control would be a switch with nothing on the other end. */
     var account = build({
       label: 'Account', store: 'onblue:dev-account',
-      states: [{ id: 'empty', name: 'Empty' }, { id: 'one', name: 'One program' }],
+      /* the label is the page's, not this file's: the creator dashboard has one
+         programme and the brands one has one campaign, and a bar that said the
+         same word on both would be describing only one of them */
+      states: [{ id: 'empty', name: 'Empty' }, { id: 'one', name: dash.getAttribute('data-one') || 'One program' }],
       apply: function (on) {
         if (window.onblueAccount) { window.onblueAccount(on); }
       }
