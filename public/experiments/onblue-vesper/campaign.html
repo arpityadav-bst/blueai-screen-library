@@ -90,7 +90,6 @@
   text-align: left;
   cursor: pointer;
 }
-.type-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; }
 .type-card .chip { padding: 5px 10px; font-size: 11.5px; }
 /* the unit sits where the programme card put its reward figure, and says what a
    bid would be measured in rather than what it would be */
@@ -482,11 +481,23 @@ body { min-height: 100vh; }
 }
 .type-card:focus-visible { outline: 2px solid var(--blue-ink); outline-offset: 2px; }
 .type-card::after { content: none; }
-/* THE LAST LINE SITS ON THE FLOOR OF BOTH CARDS. It is the one line a reader is
-   comparing across them - what each one asks you to bring - and the two
-   descriptions above it are different lengths, so left where it fell it sat at
-   two different heights and the comparison had to be hunted for. */
-.type-card .type-fam { margin-top: auto; padding-top: 10px; }
+/* THE TWO FACTS THAT DECIDE THE CHOICE SIT ON THE FLOOR OF BOTH CARDS. What you
+   bring and what you are charged for are the only things here a reader weighs
+   one against the other, and the descriptions above them are different lengths,
+   so left where they fell they sat at two different heights and the comparison
+   had to be hunted for. A hairline separates them from the pitch, because they
+   are answers to a question rather than more of the sentence. */
+.type-card .type-foot {
+  display: grid;
+  gap: 3px;
+  width: 100%;
+  margin-top: auto;
+  padding-top: 13px;
+  border-top: 1px solid var(--border-soft);
+}
+.type-card .type-fam { margin: 0; color: var(--ink-soft); font-size: 13px; }
+.type-card .type-fam b { font-weight: 600; }
+.type-card .type-unit { color: var(--dim-ink); font-size: 12px; letter-spacing: -0.005em; }
 .apply-bg > .ascii-bg { z-index: 1; }
 .step-body.swap-fwd > * { animation: in-soft 0.45s var(--ease) both; animation-delay: calc(var(--i, 0) * 38ms); }
 .step-body.swap-back > * { animation: in-fade 0.32s var(--ease) both; }
@@ -1568,24 +1579,35 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
          of them has not shipped is a question with one answer, so that build
          goes straight to the form. -->
     <div class="type-list" id="prog-list">
+      <!-- THE NAME IS WHAT THE CAMPAIGN GROWS, NOT WHAT IT MAKES (Appy,
+           2026-09-17). "Video growth" named the input: we make videos on both
+           sides of this chooser, so it separated nothing and described the half
+           of the work the agency never touches. What this type grows is the
+           brand, which is the reason anybody buys it.
+           THE "Live" CHIP IS GONE. It said which types had shipped, which was
+           worth saying when four of nine were marked soon; on a pair where both
+           are live it is a badge repeated twice that rules nothing out.
+           AND THE PRICE LINE NOW SAYS WHAT EACH ONE CHARGES FOR. Both cards read
+           "1,000 verified views", which is true of one of them: engagement bills
+           per verified completion and growth per thousand views. The unit is the
+           product on this page, and the chooser was giving the same answer for
+           two different things. -->
       <div class="type-grid type-grid--pair">
         <button class="card type-card" type="button" data-pick="engagement" data-kind="Video engagement driver">
-          <span class="type-top">
-            <span class="chip chip--open">Live</span>
-            <span class="type-unit">1,000 verified views</span>
-          </span>
           <span class="type-name">Video engagement driver</span>
           <span class="type-one">You already posted a video. People watch it, like it and comment on it from their own accounts.</span>
-          <span class="type-fam">You bring: <b>the video</b></span>
-        </button>
-        <button class="card type-card" type="button" data-pick="growth" data-kind="Video growth" data-v2>
-          <span class="type-top">
-            <span class="chip chip--open">Live</span>
-            <span class="type-unit">1,000 verified views</span>
+          <span class="type-foot">
+            <span class="type-fam">You bring <b>the video</b></span>
+            <span class="type-unit">Priced per verified completion</span>
           </span>
-          <span class="type-name">Video growth</span>
+        </button>
+        <button class="card type-card" type="button" data-pick="growth" data-kind="Brand growth" data-v2>
+          <span class="type-name">Brand growth</span>
           <span class="type-one">You have no video yet. Our agent studies your category, makes the videos, and members post them from their own accounts.</span>
-          <span class="type-fam">You bring: <b>your site and a few references</b></span>
+          <span class="type-foot">
+            <span class="type-fam">You bring <b>your site and a few references</b></span>
+            <span class="type-unit">Priced per 1,000 verified views</span>
+          </span>
         </button>
       </div>
     </div>
@@ -2287,7 +2309,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
       ]
     },
     growth: {
-      name: "Video growth",
+      name: "Brand growth",
       tag: "You have no video yet. Our agent studies your category, makes the videos, and members post them from their own accounts.",
       steps: ["Our team reads the brief and either takes it or comes back to you.",
               "Our agent studies your category and makes the videos.",
@@ -2869,7 +2891,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     }
   ];
   /* ---- THE SECOND KIND (from the portal's own samples) ----------------------
-     Video growth is not a variant of an engagement campaign, it is the other
+     Brand growth is not a variant of an engagement campaign, it is the other
      half of the product: the agency brings no video, our agent makes them, and
      what gets counted is verified VIEWS rather than verified completions. So it
      counts in its own unit, prices per thousand rather than per one, and its
@@ -2887,7 +2909,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
       unit: 'verified views', rate: '$5', per: '1,000 verified views',
       state: 'live', label: 'Live', ends: 'Sep 30, 2026', charged: 'Sep 12, 2026',
       short: 'Northline formats',
-      brief: 'Video growth. Our agent studies the category, makes the films, and members post them.'
+      brief: 'Brand growth. Our agent studies the category, makes the films, and members post them.'
     },
     {
       id: 'fernweh', kind: 'growth', name: 'Fernweh Coffee: category films', ref: '#3e81b0c5',
@@ -2895,7 +2917,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
       unit: 'verified views', rate: '$5', per: '1,000 verified views',
       state: 'review', label: 'In review', ends: 'Oct 14, 2026', charged: 'Oct 14, 2026',
       short: 'Fernweh films',
-      brief: 'Video growth. Our agent studies the category, makes the films, and members post them.'
+      brief: 'Brand growth. Our agent studies the category, makes the films, and members post them.'
     }
   );
   /* THE KIND IS A FACT ABOUT EVERY ROW, so the four that predate the second one
@@ -2919,7 +2941,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
      words, and where it ran. The kind is a key, not a label, because the key is
      what the report branches on and a row that named itself would be a second
      place for the two to disagree. */
-  var KIND_L = { engagement: 'YouTube Short', growth: 'Video growth' };
+  var KIND_L = { engagement: 'YouTube Short', growth: 'Brand growth' };
   CAMPAIGNS.forEach(function (c) {
     if (c.sample === undefined) { c.sample = true; }
     if (!c.geo) { c.geo = c.kind === 'growth' && c.state === 'review' ? 'Worldwide' : 'US'; }
@@ -2953,13 +2975,13 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
       unit: 'verified views', rate: '$5', per: '1,000 verified views',
       state: 'review', label: 'In review', ends: 'Oct 20, 2026', charged: 'Oct 20, 2026',
       short: 'Harbour films',
-      brief: 'Video growth. Our agent studies the category, makes the films, and members post them.'
+      brief: 'Brand growth. Our agent studies the category, makes the films, and members post them.'
     }
   );
 
   /* EVERY ENGAGEMENT ROW IS 1:1, so the rate is read off the data rather than
      asserted beside it. A bid quoted in the sheet that the row's own two figures
-     contradict is the one error on this screen nobody would catch. Video growth
+     contradict is the one error on this screen nobody would catch. Brand growth
      carries its own, because a thousand views for five dollars cannot be read
      off a pair of totals. */
   var RATE = '$1';
