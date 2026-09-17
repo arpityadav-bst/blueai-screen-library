@@ -557,6 +557,16 @@ body { min-height: 100vh; }
   min-height: 0;
   overflow-y: auto;
   scrollbar-gutter: stable;
+  /* ROOM INSIDE THE CLIP FOR WHAT THE FIELDS DRAW OUTSIDE THEMSELVES. A focused
+     field is a 3px box-shadow ring, and a box-shadow is painted beyond the
+     border box, so on a scroller with no padding the ring on the leftmost field
+     was cut off flush. Same fault as the button shadow at the foot, one level
+     down: the clip is the box's edge, and anything drawn past that edge is gone.
+     THE NEGATIVE MARGIN PUTS THE CONTENT BACK WHERE IT WAS. The 4px is slack for
+     the ring, not indentation - without the margin every question would sit 4px
+     in from the title above it and the buttons below. */
+  padding: 4px;
+  margin: -4px -4px 0;
 }
 .sheet--wide .form-foot { flex: none; }
 
