@@ -69,6 +69,18 @@
       if (!d || typeof d.showModal !== 'function') { return; }
       open = d;
       if (!d.open) { d.showModal(); }
+      /* THE DIALOG TAKES THE FOCUS, NOT ITS CLOSE BUTTON. The autofocus attribute
+         on the <dialog> is supposed to arrange that, and the stylesheet already
+         suppresses the ring on dialog:focus for exactly this reason - but a
+         <dialog> is not focusable without a tabindex, so on the sheets the
+         attribute was quietly doing nothing and showModal() fell back to its
+         default: the first focusable descendant, which is the X. Opening a panel
+         with the mouse put a blue ring on the one control you were least likely
+         to want, in the corner, before you had looked at what you opened.
+         -1, so it takes focus programmatically and never sits in the tab order.
+         Tab from here still reaches the close button first. */
+      if (!d.hasAttribute('tabindex')) { d.setAttribute('tabindex', '-1'); }
+      try { d.focus({ preventScroll: true }); } catch (e) { d.focus(); }
       requestAnimationFrame(function () { d.classList.add('is-open'); });
     }
 

@@ -497,7 +497,17 @@ body { min-height: 100vh; }
 }
 .type-card .type-fam { margin: 0; color: var(--ink-soft); font-size: 13px; }
 .type-card .type-fam b { font-weight: 600; }
-.type-card .type-unit { color: var(--dim-ink); font-size: 12px; letter-spacing: -0.005em; }
+/* LEFT, LIKE EVERYTHING ELSE IN THE CARD. .type-unit carries text-align: right
+   from when it sat at the end of a flex row opposite a badge; in a stacked
+   footer that put "Priced per verified completion" on the right edge under a
+   left-aligned "You bring", so the two lines a reader compares had two different
+   starting points and neither lined up with the card. */
+.type-card .type-unit {
+  color: var(--dim-ink);
+  font-size: 12px;
+  letter-spacing: -0.005em;
+  text-align: left;
+}
 .apply-bg > .ascii-bg { z-index: 1; }
 .step-body.swap-fwd > * { animation: in-soft 0.45s var(--ease) both; animation-delay: calc(var(--i, 0) * 38ms); }
 .step-body.swap-back > * { animation: in-fade 0.32s var(--ease) both; }
@@ -517,6 +527,15 @@ body { min-height: 100vh; }
    reach them. */
 .sheet--wide { width: min(620px, calc(100vw - 32px)); max-height: min(86vh, 860px); }
 .sheet--wide .sheet-in { display: flex; flex-direction: column; max-height: inherit; padding: 22px 22px 20px; }
+/* the sheet's head already carries its own bottom margin, so this sits between
+   the two rather than adding to one of them */
+.sheet-lede {
+  margin: -8px 0 18px;
+  color: var(--muted);
+  font-size: 13.5px;
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+}
 /* THE BUTTONS ARE NOT PART OF THE SCROLL. Padding the box was treating the
    symptom: a control inside an overflow box has its shadow clipped by that box
    however much room you leave, because the clip is the box's edge and the shadow
@@ -1566,6 +1585,14 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
       <h2 class="sheet-title" id="create-title">Create a campaign</h2>
       <button class="sheet-x" type="button" aria-label="Close" data-sheet-close><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
     </div>
+    <!-- ONE LINE SAYING WHAT THE CHOICE IS. The dialog opened on its title and
+         two cards, which asks a reader to work out from the cards themselves
+         that they are alternatives rather than steps. It was on the page this
+         builder used to be and it left with the page. It shows only where there
+         is a choice: with one campaign type the next thing under the title is
+         the form, and a sentence about picking between two would be describing
+         a screen that is not there. -->
+    <p class="sheet-lede">Two ways to get views. Pick the one that matches what you already have.</p>
   <!-- THE BAND CROSSES THE CARD. The stage is the field's host and the form is
        what gets wiped, the same construction the homepage's access dialog uses
        between its two levels, because a step change here is the same event. -->
@@ -3739,6 +3766,13 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
        them. A class nothing styles is a fact being published to nobody. */
     listEl.hidden = chosen;
     cardEl.hidden = !chosen;
+    /* AND THE LINE ABOVE THEM GOES WITH THE CHOOSER. "Pick the one that matches
+       what you already have" is the question the two cards are asking; once one
+       has been picked it is a caption over a form, telling a reader to make a
+       choice they have made. Set here rather than inferred in CSS, because this
+       is the one function that knows which of the two is showing. */
+    var lede = document.querySelector('#sheet-create .sheet-lede');
+    if (lede) { lede.hidden = chosen || flow === 'v1'; }
     /* THE DIALOG TITLES ITSELF, so the two page headings this used to swap are
        gone with the page. It says what it is on the way in and keeps saying it;
        a dialog that renames itself halfway through is a dialog you are no longer
