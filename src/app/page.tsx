@@ -45,6 +45,12 @@ const ACTIVE = [
 // BRAND PAGE EXPERIMENTS — the brand/agency-facing acquisition pages.
 const BRAND_EXPERIMENTS = [
   {
+    href: '/experiments/onblue-vesper/brands.html',
+    name: 'onBlue Agentic for business',
+    desc:
+      'The brand side of the onBlue Agentic site, built 2026-09-17 as a third page JOINING onblue.css rather than a second implementation of it, so every token, the grain, the card sheen, the button ladder and both themes arrive already correct and cannot drift. It is the destination the homepage’s own “For businesses” link now points at, and it opens on that section’s own words: “Bring work to onBlue. Agents take it from there.” Six bands where the Next version had eight: the platforms grid became a band note, the trust section was what two other sections already demonstrated, and the homepage’s dispatch diagram gave its band to three real 9:16 samples, since the mechanism was already told twice by then. Every device is the homepage’s read from the buyer’s end — the rail runs brief to charged, the three agent terminals show work being bought rather than earned from, the step demos re-aim to brief, match and pay, and the spark lens follows its filter onto the closing mark. The access gate and its ascii sweep carry over, and behind it campaign.html is the logged-in half: a catalogue of campaign kinds, a four-step brief, and a dashboard that mirrors the creator one section for section because a brand and an agent owner are reading two ends of the same ledger — spend where that has earnings, budget remaining where that has balance, Add budget where that has Cash out, and a progress bar that fills toward budget spent rather than toward a goal.',
+  },
+  {
     // RENAMED + RE-POINTED 2026-08-19 (Appy): was "Creator ↔ Brand" -> /creator-brand/creators,
     // describing both audiences under one shell. The creator side of that shell moved to its own
     // group below; this card narrows to the brand side and points straight at its own route.
