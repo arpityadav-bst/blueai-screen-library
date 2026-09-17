@@ -38,7 +38,13 @@
    Everything the confirmation needs to say fits there, which is the other half
    of the argument: centring only works when there is nothing below the fold to
    go looking for. */
-.rev {
+/* .dash.rev, NOT .rev, AND THE EXTRA CLASS IS LOAD-BEARING. #review wears both,
+   and .dash sets the padding SHORTHAND 154 lines below this, which resets all
+   four sides: the bottom padding that makes this box symmetrical about the area
+   under the fixed header was being thrown away, so the notice was centred on a
+   box with the page's own 64-120px floor and sat higher than the middle. That is
+   the same complaint this rule was written to answer, half-answered. */
+.dash.rev {
   display: grid;
   align-content: center;
   padding-bottom: calc(var(--header-h) + clamp(18px, 2.6vw, 22px));
@@ -297,7 +303,17 @@ body { min-height: 100vh; }
   font-size: 15px;
   pointer-events: none;
 }
-.field--pre { padding-left: 28px; }
+/* .field.field--pre, NOT .field--pre, AND THE EXTRA CLASS IS THE FIX. A
+   modifier written as one class ties with the base it modifies, so the winner is
+   whichever comes later in the file - and .field sets the padding SHORTHAND 676
+   lines below this, which resets padding-left to 14px. The $ sits at left: 14px,
+   so the money fields had their prefix printed underneath the first character of
+   the amount.
+   A LONGHAND CAN ONLY BE SAFE FROM A SHORTHAND BY OUTRANKING IT. Moving this
+   rule below .field would work today and break the next time either one moves;
+   .field.field--pre is two classes against one and cannot lose wherever it
+   sits. */
+.field.field--pre { padding-left: 28px; }
 
 /* two dates are one question asked twice, so they share a row until the column
    is too narrow to hold both without hyphenating a month */
