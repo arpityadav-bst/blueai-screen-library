@@ -609,15 +609,45 @@ document.documentElement.setAttribute('data-theme', 'light');
    as it comes in, and splits again on its way out.
    SEVEN PIXELS AT ITS WIDEST, on a frame about 270px across. It is meant to be
    noticed on the way past, not looked at. */
+/* ---- AND THE SAME TRAVEL BRINGS IT INTO FOCUS -------------------------------
+   A LENS, NOT A VIGNETTE. The frames at the left and right of the viewport are
+   the ones deep in the ring, turned away and far from the eye, and a wall of
+   video that is equally sharp all the way across has no depth in it at all: the
+   perspective divide makes them smaller and nothing makes them further. Blur is
+   what says further. It is on the same clock as the split for the same reason
+   the split is on a clock at all - each frame's phase is its position, so a
+   frame is soft because of where it is rather than because a script measured it.
+
+   THE RAMP IS LONGER THAN THE SPLIT'S AND ITS STEPS SHORTEN AS THEY GO
+   (6.0, 4.8, 3.5, 2.3, 1.2, 0.45, 0): linear interpolation between evenly
+   falling values would arrive at the centre with a visible corner, and the
+   whole of the ask here is that nothing announces where clear becomes soft.
+
+   THE SPLIT'S OWN TIMINGS ARE UNTOUCHED. Its shape lives at 0, 32, 36, 41, 59,
+   64, 68 and 100, and every stop added between them repeats the split value of
+   the span it sits inside, so those spans still interpolate flat and the
+   aberration is frame-for-frame what it was before focus existed.
+   MATCHING FILTER LISTS AT EVERY STOP, or none of this interpolates: a keyframe
+   whose filter list differs in length or order from its neighbour's makes the
+   browser fall back to swapping the two whole values, and the transition this
+   is entirely about would become a jump. */
 @keyframes ca-edge {
-  0%     { filter: drop-shadow(7px 0 0 rgba(255, 36, 36, 0.8)) drop-shadow(-7px 0 0 rgba(0, 224, 255, 0.8)); }
-  32%    { filter: drop-shadow(7px 0 0 rgba(255, 36, 36, 0.8)) drop-shadow(-7px 0 0 rgba(0, 224, 255, 0.8)); }
-  36%    { filter: drop-shadow(2px 0 0 rgba(255, 36, 36, 0.8)) drop-shadow(-2px 0 0 rgba(0, 224, 255, 0.8)); }
-  41%    { filter: drop-shadow(0 0 0 rgba(255, 36, 36, 0.8)) drop-shadow(0 0 0 rgba(0, 224, 255, 0.8)); }
-  59%    { filter: drop-shadow(0 0 0 rgba(255, 36, 36, 0.8)) drop-shadow(0 0 0 rgba(0, 224, 255, 0.8)); }
-  64%    { filter: drop-shadow(-2px 0 0 rgba(255, 36, 36, 0.8)) drop-shadow(2px 0 0 rgba(0, 224, 255, 0.8)); }
-  68%    { filter: drop-shadow(-7px 0 0 rgba(255, 36, 36, 0.8)) drop-shadow(7px 0 0 rgba(0, 224, 255, 0.8)); }
-  100%   { filter: drop-shadow(-7px 0 0 rgba(255, 36, 36, 0.8)) drop-shadow(7px 0 0 rgba(0, 224, 255, 0.8)); }
+  0%     { filter: blur(6px) drop-shadow(7px 0 0 rgba(255, 36, 36, 0.8)) drop-shadow(-7px 0 0 rgba(0, 224, 255, 0.8)); }
+  12%    { filter: blur(6px) drop-shadow(7px 0 0 rgba(255, 36, 36, 0.8)) drop-shadow(-7px 0 0 rgba(0, 224, 255, 0.8)); }
+  20%    { filter: blur(4.8px) drop-shadow(7px 0 0 rgba(255, 36, 36, 0.8)) drop-shadow(-7px 0 0 rgba(0, 224, 255, 0.8)); }
+  26%    { filter: blur(3.5px) drop-shadow(7px 0 0 rgba(255, 36, 36, 0.8)) drop-shadow(-7px 0 0 rgba(0, 224, 255, 0.8)); }
+  32%    { filter: blur(2.3px) drop-shadow(7px 0 0 rgba(255, 36, 36, 0.8)) drop-shadow(-7px 0 0 rgba(0, 224, 255, 0.8)); }
+  36%    { filter: blur(1.2px) drop-shadow(2px 0 0 rgba(255, 36, 36, 0.8)) drop-shadow(-2px 0 0 rgba(0, 224, 255, 0.8)); }
+  41%    { filter: blur(0.45px) drop-shadow(0 0 0 rgba(255, 36, 36, 0.8)) drop-shadow(0 0 0 rgba(0, 224, 255, 0.8)); }
+  47%    { filter: blur(0px) drop-shadow(0 0 0 rgba(255, 36, 36, 0.8)) drop-shadow(0 0 0 rgba(0, 224, 255, 0.8)); }
+  53%    { filter: blur(0px) drop-shadow(0 0 0 rgba(255, 36, 36, 0.8)) drop-shadow(0 0 0 rgba(0, 224, 255, 0.8)); }
+  59%    { filter: blur(0.45px) drop-shadow(0 0 0 rgba(255, 36, 36, 0.8)) drop-shadow(0 0 0 rgba(0, 224, 255, 0.8)); }
+  64%    { filter: blur(1.2px) drop-shadow(-2px 0 0 rgba(255, 36, 36, 0.8)) drop-shadow(2px 0 0 rgba(0, 224, 255, 0.8)); }
+  68%    { filter: blur(2.3px) drop-shadow(-7px 0 0 rgba(255, 36, 36, 0.8)) drop-shadow(7px 0 0 rgba(0, 224, 255, 0.8)); }
+  74%    { filter: blur(3.5px) drop-shadow(-7px 0 0 rgba(255, 36, 36, 0.8)) drop-shadow(7px 0 0 rgba(0, 224, 255, 0.8)); }
+  80%    { filter: blur(4.8px) drop-shadow(-7px 0 0 rgba(255, 36, 36, 0.8)) drop-shadow(7px 0 0 rgba(0, 224, 255, 0.8)); }
+  88%    { filter: blur(6px) drop-shadow(-7px 0 0 rgba(255, 36, 36, 0.8)) drop-shadow(7px 0 0 rgba(0, 224, 255, 0.8)); }
+  100%   { filter: blur(6px) drop-shadow(-7px 0 0 rgba(255, 36, 36, 0.8)) drop-shadow(7px 0 0 rgba(0, 224, 255, 0.8)); }
 }
 /* it stops when the ring stops, for the reason everything else on this card
    does: a split still sliding across a frame that has come to rest for you would
@@ -626,6 +656,11 @@ document.documentElement.setAttribute('data-theme', 'light');
 .work-arc:focus-within .work-shot { animation-play-state: paused; }
 /* and it goes entirely on the frame you are looking at, which is the same
    statement the grayscale makes: this one is being shown to you properly.
+   THE BLUR GOES WITH IT, which is the whole of why it belongs in this one
+   declaration rather than in a second rule beside it. Pointing at a frame is
+   asking to see it, and a frame that sharpened its colour but stayed out of
+   focus would be answering half the question. One filter: none clears both,
+   and it clears them together.
    IT IS SUPPRESSED, NOT STOPPED, AND THAT DISTINCTION IS A BUG I SHIPPED. This
    read animation-name: none, which does not pause the animation, it REMOVES it:
    the moment the pointer left, the animation was added back and started again
