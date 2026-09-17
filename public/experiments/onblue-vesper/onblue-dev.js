@@ -97,7 +97,7 @@
     return d;
   }
 
-  if (gate) {
+  if (gate && gate.querySelector('.gate-steps')) {
     var steps = dock([build({
       label: 'Steps', store: 'onblue:dev-steps', initial: 'min',
       states: [{ id: 'full', name: 'Full' }, { id: 'min', name: 'Minimal' }],

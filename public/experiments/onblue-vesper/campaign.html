@@ -2920,7 +2920,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
      THE NAME AND THE ADDRESS ARE WRITTEN INTO THE COPY, not just held. A screen
      that says "your agency is in review" without naming it is a screen that
      could be about anybody. */
-  (function fromGate() {
+  function fromGate() {
     var name = '', mail = '', fresh = false;
     try {
       name = window.sessionStorage.getItem('onblue:agency') || '';
@@ -2949,7 +2949,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
       });
     }
     if (fresh) { setStage('review'); }
-  })();
+  }
 
   /* ---- render ---- */
   /* the two blocks of the stage and the two heads move together, because they
@@ -3282,6 +3282,14 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
   renderDash();
   render();
   measureFloor();
+  /* LAST, BECAUSE IT IS THE ONLY THING HERE THAT CHANGES WHICH SCREEN YOU ARE
+     ON. It used to run where it is declared, a few hundred lines above the two
+     lookups for #review and #dash; `var` hoists the names but not the values,
+     so on the one load that mattered, the first after registering, setStage
+     threw on an undefined element and took the rest of this file with it. The
+     page came up blank, and the reload after it came up fine because the
+     handover is one-shot and the second load never called this at all. */
+  fromGate();
 })();
 </script>
 

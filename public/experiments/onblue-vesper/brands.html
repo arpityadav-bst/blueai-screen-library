@@ -28,6 +28,18 @@ document.documentElement.setAttribute('data-theme', 'light');
    columns because the creator homepage has three; the brands site has four, and
    the system already knows how to lay four of these out, because the access
    dialog's own step row does exactly that. Same figures. */
+/* 80px OFF THE TOP. There is no rule and no change of ground between the hero
+   and this band any more, so the shared --band-y was spacing it away from
+   nothing; the two read as one opening and the gap between them is now the
+   hero's own bottom padding doing the work. */
+/* THE AUTHORED BREAK IS THE ONLY BREAK. h2 carries text-wrap: balance from the
+   orphans block, which exists to stop a heading leaving one word on its own
+   line; hand it a <br> as well and the two are both deciding where the lines
+   fall, on a heading whose second half is the point. Same exemption the closing
+   title takes, for the same reason. */
+#trust .band-top h2 { text-wrap: wrap; }
+
+#how-it-works { padding-top: calc(var(--band-y) - 80px); }
 #how-it-works .steps { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
 #how-it-works .step { padding: 22px 20px 20px; }
 /* THE TITLE AND ITS LINE ADD UP TO THE DISC BESIDE THEM, EXACTLY. .step-num is
@@ -57,6 +69,19 @@ document.documentElement.setAttribute('data-theme', 'light');
 .gate-reg .field { height: var(--hero-btn-h); }
 .gate-go { width: 100%; height: var(--hero-btn-h); margin-top: 4px; font-size: calc(var(--btn) + 1.5px); }
 .gate-opts[hidden], .gate-reg[hidden], .gate-alt[hidden] { display: none; }
+/* ONE CELL, TWO PANES. grid-area 1/1 on both puts them on top of each other, so
+   the arriving one cannot add its height to the departing one; align-items:
+   start keeps each sized to its own content so the script can measure them
+   apart. The height between the two is animated on .gate-ask itself. */
+.gate-ask { display: grid; align-items: start; width: 100%; }
+.gate-pane {
+  grid-area: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+.gate-pane[hidden] { display: none; }
 
 /* ---- platforms --------------------------------------------------------------
    Five across, because five is what there are and a row that wraps to 3+2 would
@@ -205,16 +230,6 @@ document.documentElement.setAttribute('data-theme', 'light');
   }
 }
 
-/* THE COPY COLUMN IS WIDER HERE, AND IT HAS TO BE. onblue.css caps .eco-copy's
-   heading and paragraph at 30% of the panel so the render behind has room, and
-   that is right for the homepage, whose copy is "Digital AI" over seven words.
-   These say more: at 30% the heading broke after two words and the paragraph
-   came out five lines deep and about four words wide, which is a column of
-   orphans rather than a paragraph. 42% still leaves the render most of the
-   panel, because the render is anchored right and fades out below half height.
-   THE COPY CAME DOWN TO MEET IT. Widening alone would have made two long lines
-   where the homepage has two short ones. */
-#outcomes .eco-copy > h3, #outcomes .eco-copy > p { max-width: 42%; }
 
 /* ---- the sample ring --------------------------------------------------------
    THE GEOMETRY IS TWO NUMBERS AND A RATIO, and everything else falls out of it.
@@ -671,16 +686,6 @@ document.documentElement.setAttribute('data-theme', 'light');
   .leaving-sun svg { animation: none; opacity: 0.8; }
 }
 
-/* A SIGNED-IN AGENCY IS NOT A VISITOR, and the marketing page is where it lands
-   every time it presses this site's logo or logs out. Every "Sign in" on the
-   page is then an offer to do a thing that has already been done, so they go;
-   the "Create a campaign" controls stay, because creating one is still exactly
-   what that reader came to do, and the script points them at the tool instead of
-   at a register dialog. */
-.is-known .close-alt,
-.is-known .hero-alt,
-.is-known [data-gate="signin"] { display: none; }
-
 /* THREE PROPERTIES CENTRE A MODAL DIALOG AND ALL THREE HAVE TO BE THERE.
    The UA gives one `width: fit-content; height: fit-content; inset: 0; margin:
    auto`, and each part is doing a job: fit-content makes the box the size of the
@@ -755,24 +760,84 @@ document.documentElement.setAttribute('data-theme', 'light');
    field has to composite its wash onto the same value or the hover comes out a
    different shade from its own surroundings. One token, declared here, so moving
    this section to a tinted slot moves both. */
-#work { --band-own: var(--band-lift); background: var(--band-own); }
-#how-it-works { background: var(--band-tint); }
-/* THE GLYPH FIELD BELONGS TO THE THIRD BAND, NOT TO A SECTION. How it works and
-   the campaigns swapped places and the field stayed where it was, which is the
-   point: it is the page's one ambient surface and its job is to break up the
-   run of flat bands at a fixed depth down the scroll. Tying it to a section
-   would mean it moved every time the order did.
-   It goes behind .band-inner, which already declares z-index 1, and it does not
-   take the pointer: the field listens on its host and brightens the cells
-   nearest the cursor, so it follows a reader who is reading rather than one who
-   is aiming at it.
-   QUIETER THAN THE DEFAULT. 0.4 is tuned against the page's darkest step; this
-   is the lighter of the two tints and the glyphs read harder on it for the same
-   alpha. */
-#work > .ascii-bg { --ascii: 0.3; }
-#platforms { background: var(--band-tint); }
-#outcomes { background: var(--band-lift); }
-#trust { background: var(--band-tint); }
+/* ---- the grounds -----------------------------------------------------------
+   ONE RAMP, NOT AN ALTERNATION. The page used to step between two tints down its
+   length, which reads as stripes: every join is the same size and the eye counts
+   them. These are four steps of the same mix, deepening to the middle of the
+   page and coming back, so the page has a centre of gravity and the top and the
+   bottom are the same white. The hero and the section under it share that white
+   and the rule between them is gone, so they read as one opening rather than as
+   a hero with something bolted beneath it.
+   MIXED WITH --bg, NOT WITH transparent. These have to be opaque: the campaigns
+   band has a glyph field behind it and a tab hovering over that field composites
+   its wash onto --band-own, so a translucent ground would let the glyphs through
+   the hover. Mixing --ink into --bg keeps it opaque AND keeps it correct in both
+   themes, because on a dark page the same mix lightens instead of darkening.
+   --band-own IS READ BY MORE THAN THE BACKGROUND. .cat-btn:hover needs the exact
+   value its band is painted with, so the band names it once and uses it.
+   EACH BAND PAINTS ITSELF, AND THAT IS NOT A STYLE CHOICE. onblue.css carries
+   #how-it-works { background: var(--band-tint) } for the creator homepage, and
+   an id beats any number of classes: a single `.content > .band` rule setting
+   the background lost to it, so the one band that had to be white stayed tinted
+   and the hero still had a visible seam under it. Declaring the paint in the
+   same id rule as the value puts them at equal specificity, and this sheet loads
+   second. */
+#how-it-works { --band-own: var(--bg); background: var(--band-own); }
+#work         { --band-own: color-mix(in srgb, var(--ink) 1.3%, var(--bg)); background: var(--band-own); }
+#platforms    { --band-own: color-mix(in srgb, var(--ink) 2.6%, var(--bg)); background: var(--band-own); }
+/* A PLATEAU IN THE MIDDLE, NOT A PEAK. The three middle bands share one ground
+   rather than stepping to a darkest one and back: platforms, trust and pricing
+   are the part of the page where a reader is being convinced, and breaking that
+   into three tones made it three arguments instead of one.
+   THE DARKEST STEP IS GONE WITH IT. 3.9% existed to mark a centre; the centre is
+   now a block rather than a line, so the deepest tone on the page is the 2.6%
+   these three share.
+   POSITIONAL, STILL. The ramp describes the shape of the scroll, not the
+   sections standing in it, which is why trust and pricing swapping places left
+   these values where they were. */
+#trust        { --band-own: color-mix(in srgb, var(--ink) 2.6%, var(--bg)); background: var(--band-own); }
+#pricing      { --band-own: color-mix(in srgb, var(--ink) 2.6%, var(--bg)); background: var(--band-own); }
+#faqs         { --band-own: color-mix(in srgb, var(--ink) 1.3%, var(--bg)); background: var(--band-own); }
+#get-access   { --band-own: var(--bg); background: var(--band-own); }
+/* HALF THE AIR AT THE JOINS INSIDE THE BLOCK. --band-y is the space a section
+   needs from the ones around it, and it was being spent twice at every join:
+   the bottom of one plus the top of the next, about 260px at full size. That is
+   the right distance between two sections and much too far between two halves
+   of one, which is what platforms, trust and pricing now are.
+   ONLY THE INSIDE. The block's own top and bottom keep the full measure, so it
+   is still set apart from the campaigns band above and the questions below; what
+   closed up is the space within it. */
+.content > .band { --band-join: calc(var(--band-y) * 0.5); }
+#platforms { padding-bottom: var(--band-join); }
+#trust     { padding-top: var(--band-join); padding-bottom: var(--band-join); }
+#pricing   { padding-top: var(--band-join); }
+
+/* A HAIRLINE MARKS A CHANGE OF GROUND, so the two joins inside the middle block
+   do not get one: platforms, trust and pricing are painted the same colour, and
+   a rule between them would be dividing a section from a section it is already
+   continuous with. The joins on either side of the block keep theirs, because
+   the tone does change there.
+   ID SELECTORS, because .band + .band in the shared sheet is what draws them. */
+#trust, #pricing { border-top: 0; }
+
+/* AND THE CLOSING JOIN GETS ONE BACK. onblue.css zeroes it, and there that is
+   right: on the creator homepage questions and the closing statement are both
+   pure white, so a rule would be drawn across no change at all. Here the page
+   climbs a tonal ramp and comes back down, questions sits a step above white
+   and the closing statement is white, so this join is a change of ground like
+   every other one and was the only one not saying so. */
+#get-access { border-top: 1px solid var(--band-line); }
+
+/* ONE JOIN LOSES ITS HAIRLINE, NOT ALL OF THEM. Taking every rule out was my
+   call and it was one step too far: at a per-band step of about one per cent the
+   tone alone is not enough to say where a section ends, and the page came out
+   as one long wash. The hairlines are the system's own --band-line and they stay
+   everywhere the tone changes.
+   THE HERO'S JOIN IS THE EXCEPTION, and the only one. The band under it is
+   painted the same white, so a rule there would be dividing a section from
+   nothing; that is the seam this was asked to remove. .band + .band in the
+   shared sheet still draws the rest. */
+.content > .band:first-child { border-top: 0; }
 
 /* A LONGER MEASURE FOR THIS ONE SUBTITLE. .band-sub caps at 620px, which at the
    18px this page sets holds about 73 characters; the line here is 80, so it
@@ -1210,9 +1275,17 @@ document.documentElement.setAttribute('data-theme', 'light');
          to once you are already interested, and the footer still lists them.
          IN PAGE ORDER, so the bar and the scroll agree about what comes next. -->
     <nav id="site-nav" aria-label="Primary">
+      <!-- IN THE ORDER THE PAGE IS IN. These three used to run Campaigns,
+           Pricing, How it works while the page runs How it works, Campaigns,
+           Pricing, so the first link jumped past the section the reader was
+           already looking at and the last one sent them backwards. A one-page
+           nav is a table of contents; the only order it can be in without
+           having to be learned is the order of the contents. It also happens to
+           be the order of the question: what is this, what does it make, what
+           does it cost. -->
+      <a class="appear appear--fade" href="#how-it-works" style="--d:0.06s">How It Works</a>
       <a class="appear appear--fade" href="#work" style="--d:0.06s">Campaigns</a>
       <a class="appear appear--fade" href="#pricing" style="--d:0.06s">Pricing</a>
-      <a class="appear appear--fade" href="#how-it-works" style="--d:0.06s">How It Works</a>
       <a class="nav__biz appear appear--fade" href="index.html" style="--d:0.06s">For creators<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
     </nav>
 
@@ -1531,11 +1604,14 @@ document.documentElement.setAttribute('data-theme', 'light');
   <section class="band" id="how-it-works">
     <div class="band-inner">
 
-      <div class="band-head reveal">
-        <div class="band-top">
-          <h2>How <em>it works</em></h2>
-          <span class="eyebrow">Four steps, no outreach</span>
-        </div>
+      <!-- CENTRED, LIKE THE PRICING AND TRUST BANDS. A title left with its label
+           out on the right is a header over a table, which is what Platforms and
+           Questions are; this one opens the page under a hero it now shares a
+           ground with, so it carries on the hero's own centred voice rather than
+           starting a new column. -->
+      <div class="band-head band-head--center reveal">
+        <span class="eyebrow">Four steps, no outreach</span>
+        <h2>How <em>it works</em></h2>
         <p class="band-sub">Set your terms once. We handle the matching, the running and the checking, and you are only charged for what passes.</p>
       </div>
 
@@ -1711,13 +1787,6 @@ document.documentElement.setAttribute('data-theme', 'light');
   <section class="band" id="work">
     <div class="band-inner">
 
-      <!-- THE BAND'S OWN HEAD, not the centred one. Centred heads belong to the
-           two places on this page that are addressing a reader directly, the
-           hero and the closing statement; every band that is introducing
-           something below it runs the title left with its label out on the
-           right, which is what How it works, Platforms and Questions already do.
-           This was the odd one out, and a centred head over a left rail and a
-           left grid was the section disagreeing with itself. -->
       <div class="band-head reveal">
         <div class="band-top">
           <h2>What your budget <em>actually buys</em></h2>
@@ -1820,79 +1889,6 @@ document.documentElement.setAttribute('data-theme', 'light');
     </div>
   </section>
 
-  <!-- ============================================ WHAT IT COSTS
-       THIS REPLACES "You pay for outcomes", which said the same thing at
-       length and in the abstract: two panels of claims about outcome pricing,
-       above a page that then hid the actual numbers in a dialog. The table below
-       was that dialog's whole content and it is the better answer, because it is
-       the only thing on the page that says what the alternative was.
-       ONE ACCOUNT OF THE PRICE, IN ONE PLACE. The nav's Pricing item, the hero's
-       second button and the closing section now all arrive here, rather than two
-       of them opening an overlay and the third scrolling somewhere else. -->
-  <section class="band" id="pricing">
-    <div class="band-inner">
-
-      <div class="band-head band-head--center reveal">
-        <span class="eyebrow">What it costs</span>
-        <h2>One flat rate, <em>per verified engagement</em></h2>
-        <p class="band-sub">You set the budget and the window. onBlue spreads it across accounts and pays out only as each engagement clears.</p>
-      </div>
-
-      <!-- ONE CONTAINER, ONE RULE. The comparison itself is the right shape and
-           always was: six questions, what happens today, what happens here, read
-           across. What it did not have was anything to sit in. It was six ruled
-           rows on the open page, so the only thing holding it together was the
-           rules, and there were seven of them.
-           THE SURFACES DO THAT WORK NOW. The card gives the whole thing an edge,
-           and the onBlue column carries a ground from the top of the card to the
-           bottom, which is what separates the two sides and what makes a row a
-           row. The one rule left is under the header, where it is dividing the
-           labels from the answers rather than six answers from each other. -->
-      <div class="card cmp">
-        <div class="cmp-head">
-          <span></span>
-          <span class="mini-title">The old way</span>
-          <span class="mini-title cmp-mine">With onBlue</span>
-        </div>
-        <div class="cmp-row">
-          <span class="cmp-k">What you pay for</span>
-          <span class="cmp-was"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></i>Follower count</span>
-          <span class="cmp-now"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg></i>A flat rate per verified engagement</span>
-        </div>
-        <div class="cmp-row">
-          <span class="cmp-k">Who you reach</span>
-          <span class="cmp-was"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></i>One large influencer</span>
-          <span class="cmp-now"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg></i>Thousands of accounts, spread out</span>
-        </div>
-        <div class="cmp-row">
-          <span class="cmp-k">How it feels to viewers</span>
-          <span class="cmp-was"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></i>Reads as an ad</span>
-          <span class="cmp-now"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg></i>Nobody can tell it was paid for</span>
-        </div>
-        <div class="cmp-row">
-          <span class="cmp-k">Negotiating rates</span>
-          <span class="cmp-was"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></i>Back-and-forth over email or DM</span>
-          <span class="cmp-now"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg></i>You set the budget and window</span>
-        </div>
-        <div class="cmp-row">
-          <span class="cmp-k">Checking the work happened</span>
-          <span class="cmp-was"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></i>Manual, on trust</span>
-          <span class="cmp-now"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg></i>onBlue verifies every interaction</span>
-        </div>
-        <div class="cmp-row">
-          <span class="cmp-k">Paying out</span>
-          <span class="cmp-was"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></i>Invoices, manual transfers</span>
-          <span class="cmp-now"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg></i>Automatic, once engagement clears</span>
-        </div>
-      </div>
-
-      <div class="band-actions band-actions--center reveal">
-        <a class="btn btn-solid hero-solid" href="#post" data-gate="open"><span class="scramble">Create a campaign</span></a>
-      </div>
-
-    </div>
-  </section>
-
   <section class="band" id="trust">
     <div class="band-inner">
 
@@ -1911,9 +1907,15 @@ document.documentElement.setAttribute('data-theme', 'light');
            evidence for it: a claim about checking is best made by showing the
            checking happen. The heading, the three claims and their lines are
            the brands site's own, quoted from TrustSectionBrand.tsx. -->
-      <div class="band-head band-head--center reveal">
-        <span class="eyebrow">Why it holds up</span>
-        <h2>Every engagement is <em>checked, not assumed</em></h2>
+      <!-- LEFT, LIKE PLATFORMS AND QUESTIONS. A centred head is the page
+           addressing a reader directly; this band answers a question they
+           arrived with and then shows three cards doing it, which is a header
+           over a list. -->
+      <div class="band-head reveal">
+        <div class="band-top">
+          <h2>Every engagement is <em>checked,<br>not assumed</em></h2>
+          <span class="eyebrow">Why it holds up</span>
+        </div>
         <p class="band-sub">A growing pool of approved creators, every interaction verified before your budget moves, and the whole run visible while it happens.</p>
       </div>
 
@@ -2044,6 +2046,79 @@ document.documentElement.setAttribute('data-theme', 'light');
 
     </div>
   </section>
+  <!-- ============================================ WHAT IT COSTS
+       THIS REPLACES "You pay for outcomes", which said the same thing at
+       length and in the abstract: two panels of claims about outcome pricing,
+       above a page that then hid the actual numbers in a dialog. The table below
+       was that dialog's whole content and it is the better answer, because it is
+       the only thing on the page that says what the alternative was.
+       ONE ACCOUNT OF THE PRICE, IN ONE PLACE. The nav's Pricing item, the hero's
+       second button and the closing section now all arrive here, rather than two
+       of them opening an overlay and the third scrolling somewhere else. -->
+  <section class="band" id="pricing">
+    <div class="band-inner">
+
+      <div class="band-head band-head--center reveal">
+        <span class="eyebrow">What it costs</span>
+        <h2>One flat rate, <em>per verified engagement</em></h2>
+        <p class="band-sub">You set the budget and the window. onBlue spreads it across accounts and pays out only as each engagement clears.</p>
+      </div>
+
+      <!-- ONE CONTAINER, ONE RULE. The comparison itself is the right shape and
+           always was: six questions, what happens today, what happens here, read
+           across. What it did not have was anything to sit in. It was six ruled
+           rows on the open page, so the only thing holding it together was the
+           rules, and there were seven of them.
+           THE SURFACES DO THAT WORK NOW. The card gives the whole thing an edge,
+           and the onBlue column carries a ground from the top of the card to the
+           bottom, which is what separates the two sides and what makes a row a
+           row. The one rule left is under the header, where it is dividing the
+           labels from the answers rather than six answers from each other. -->
+      <div class="card cmp">
+        <div class="cmp-head">
+          <span></span>
+          <span class="mini-title">The old way</span>
+          <span class="mini-title cmp-mine">With onBlue</span>
+        </div>
+        <div class="cmp-row">
+          <span class="cmp-k">What you pay for</span>
+          <span class="cmp-was"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></i>Follower count</span>
+          <span class="cmp-now"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg></i>A flat rate per verified engagement</span>
+        </div>
+        <div class="cmp-row">
+          <span class="cmp-k">Who you reach</span>
+          <span class="cmp-was"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></i>One large influencer</span>
+          <span class="cmp-now"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg></i>Thousands of accounts, spread out</span>
+        </div>
+        <div class="cmp-row">
+          <span class="cmp-k">How it feels to viewers</span>
+          <span class="cmp-was"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></i>Reads as an ad</span>
+          <span class="cmp-now"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg></i>Nobody can tell it was paid for</span>
+        </div>
+        <div class="cmp-row">
+          <span class="cmp-k">Negotiating rates</span>
+          <span class="cmp-was"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></i>Back-and-forth over email or DM</span>
+          <span class="cmp-now"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg></i>You set the budget and window</span>
+        </div>
+        <div class="cmp-row">
+          <span class="cmp-k">Checking the work happened</span>
+          <span class="cmp-was"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></i>Manual, on trust</span>
+          <span class="cmp-now"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg></i>onBlue verifies every interaction</span>
+        </div>
+        <div class="cmp-row">
+          <span class="cmp-k">Paying out</span>
+          <span class="cmp-was"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></i>Invoices, manual transfers</span>
+          <span class="cmp-now"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg></i>Automatic, once engagement clears</span>
+        </div>
+      </div>
+
+      <div class="band-actions band-actions--center reveal">
+        <a class="btn btn-solid hero-solid" href="#post" data-gate="open"><span class="scramble">Create a campaign</span></a>
+      </div>
+
+    </div>
+  </section>
+
 
   <section class="band" id="faqs">
     <div class="band-inner">
@@ -2253,148 +2328,23 @@ document.documentElement.setAttribute('data-theme', 'light');
   </div>
 </dialog>
 
-<dialog class="gate is-min" id="gate" aria-labelledby="gate-title-1" autofocus>
+<dialog class="gate" id="gate" aria-labelledby="gate-title-2" autofocus>
   <div class="gate-field" id="gate-field">
 
     <button class="gate-x" type="button" data-gate="close" aria-label="Close">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
     </button>
 
-    <!-- LEVEL 1: what happens, before anything is asked for -->
-    <section class="gate-level" data-level="1">
-      <span class="gate-mark"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><use href="#i-spark"/></svg></span>
-      <span class="eyebrow">Before you start</span>
-      <!-- THE FULL STOP IS INSIDE THE EMPHASIS, as it is on the homepage's
-           closer and the confirmation's: the sentence finishes in the serif
-           rather than handing back to the sans for one mark. -->
-      <h2 class="title-lg" id="gate-title-1">One brief and <em>it starts running.</em></h2>
-      <!-- NO LEDE HERE (Appy, 2026-09-16). It said "One short application. We
-           review every one and email you when your access is approved", which is
-           the four cards below it in sentence form: apply, we read every one,
-           and an approval email. The cards show it; the line only said it
-           first. -->
-
-      <!-- FOUR, AND THE COPY IS THE PARTNER SITE'S OWN. The only edits to it
-           are two the brand forces: BlueAI reads onBlue on this site, and the
-           orphan asterisk after $30 is dropped because the footnote it pointed
-           at was deleted from the source and never replaced.
-           EVERY PANEL IS BUILT FROM COMPONENTS THAT ALREADY SHIP. Nothing below
-           is drawn for this dialog: the pick list is Own an agent's, the
-           terminal is Partnered agents', the bars and the payout pill are Earn
-           from its work's. A demo assembled out of the page's own parts cannot
-           drift from the page. -->
-      <!-- ONE NAME, TWO BODIES. The step keeps its heading in both versions;
-           what changes underneath it is a caption in the full one, where the
-           panel does the explaining, and the whole explanation in the minimal
-           one, where there is no panel. Both sit in the markup and the dialog's
-           class picks one, which is why neither can quietly go stale against
-           the other. -->
-      <ol class="gate-steps">
-
-        <li class="card step">
-          <div class="step-top">
-            <span class="step-num">1</span>
-            <div><h3>Post it<sup class="step-star" aria-hidden="true">*</sup></h3><p class="step-sub">Brief, budget, window.</p><p class="step-min">Tell us the video, what it is worth to you, and how long it runs.</p></div>
-          </div>
-          <div class="step-art">
-            <span class="mini-title">Your brief</span>
-            <ul class="pick-list">
-              <li class="is-on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-pencil"/></svg>The video<span class="pick-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg></span></li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-box"/></svg>Budget and window<span class="pick-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg></span></li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-chart"/></svg>Who it is for<span class="pick-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg></span></li>
-            </ul>
-            <span class="pick-note">About two minutes.</span>
-          </div>
-        </li>
-
-        <li class="card step">
-          <div class="step-top">
-            <span class="step-num">2</span>
-            <div><h3>We match it</h3><p class="step-sub">Agents by niche.</p><p class="step-min">onBlue puts the brief in front of agents whose audience fits it.</p></div>
-          </div>
-          <div class="step-art">
-            <span class="mini-title">Matching</span>
-            <ul class="mini-list">
-              <li><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-check"/></svg>Brief read</li>
-              <li><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-check"/></svg>PC checked</li>
-              <li><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-spark"/></svg>Agents assigned</li>
-            </ul>
-            <span class="earn-payout"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-mail"/></svg>Campaign live</span>
-          </div>
-        </li>
-
-        <li class="card step">
-          <div class="step-top">
-            <span class="step-num">3</span>
-            <div><h3>They run it</h3><p class="step-sub">On accounts people own.</p><p class="step-min">Each agent watches, likes and comments from its owner’s own account.</p></div>
-          </div>
-          <div class="step-art">
-            <span class="mini-title">Running</span>
-            <div class="agent-art" style="margin:0">
-              <div class="term-bar"><i></i><i></i><i></i></div>
-              <div class="term-win">
-                <ul class="term-log">
-                  <li class="t-task">opening the video</li>
-                  <li>watching in full</li>
-                  <li>liking and commenting</li>
-                  <li class="t-done">action logged</li>
-                  <li class="t-task">sending for checks</li>
-                  <li>first job assigned</li>
-                  <li class="t-task">opening the video</li>
-                  <li>watching in full</li>
-                  <li>liking and commenting</li>
-                  <li class="t-done">action logged</li>
-                </ul>
-              </div>
-            </div>
-            <span class="pick-note">Every action, logged.</span>
-          </div>
-        </li>
-
-        <li class="card step">
-          <div class="step-top">
-            <span class="step-num">4</span>
-            <div><h3>You pay on pass</h3><p class="step-sub">Verified, then charged.</p><p class="step-min">onBlue checks every action, and only the ones that pass touch your budget.</p></div>
-          </div>
-          <div class="step-art">
-            <span class="earn-label">This campaign</span>
-            <span class="earn-sub">for every action that passed</span>
-            <div class="earn-figure">$30</div>
-            <div class="earn-bars">
-              <i style="--h:38%"></i><i style="--h:54%"></i><i style="--h:46%"></i><i style="--h:70%"></i><i style="--h:62%"></i><i style="--h:84%"></i><i style="--h:100%"></i>
-            </div>
-            <span class="earn-payout"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-check"/></svg>Charged on pass</span>
-          </div>
-        </li>
-
-      </ol>
-
-
-      <!-- THE HERO'S BUTTON, not a smaller relative of it: same class, same
-           height, same padding, and the same decode on hover. There is no card
-           shrinking it any more, so there is no reason for it to be a step down
-           from the one this page opens with. -->
-      <!-- THE FOOTNOTE SITS ON APPLY, not on the $30. Eligibility is not a
-           qualification of the money, it is a qualification of whether any of
-           this is for you, and the place a reader decides that is the first
-           card rather than the last.
-           IT SITS UNDER THE BUTTON, IN THE SLOT THE SIGN-IN LINE HAD. That line
-           is gone from this level: every door into the product on the homepage
-           already routes a "sign in" through to level two, so it was a second
-           way to do a thing the page does anyway, spending the one quiet slot
-           under the CTA on a detour. A condition of the offer earns that slot;
-           an alternative route does not. It works unchanged in both versions,
-           because the heading carrying the marker is in both.
-           DESKTOP, NOT "PC AND MAC". The line those two are drawing together is
-           desktop against phone, and both halves of it fall on the same side.
-           One word says it and does not invite the question of which one you
-           are. -->
-      <div class="gate-actions">
-        <button class="btn btn-solid hero-solid" type="button" data-gate="next"><span class="scramble">Got it, continue</span></button>
-      </div>
-      <p class="gate-note">* YouTube campaigns only, for now. The rest are next.</p>
-    </section>
-
+    <!-- LEVEL ONE IS GONE, and with it the only reason this dialog had two.
+         It explained what happens before asking for anything: four steps, a
+         demo panel each, and a Got it, continue. Every one of those four is How
+         it works, three sections up the page the reader pressed the button on,
+         so the dialog was making them read it twice and putting a screen
+         between them and the thing they had asked for.
+         WHAT WENT WITH IT: the Full/Minimal steps switch in onblue-dev.js,
+         which existed to review those four cards, and the back and next
+         handlers, which had nowhere left to go. The creator homepage still has
+         its own level one and keeps both. -->
     <!-- LEVEL 2: the ask -->
     <section class="gate-level" data-level="2" hidden>
       <span class="gate-mark"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><use href="#i-spark"/></svg></span>
@@ -2404,66 +2354,96 @@ document.documentElement.setAttribute('data-theme', 'light');
            neither is a stage of the other. The level carries both panes and the
            link between them swaps which is showing, so the heading, the mark and
            the legal line above and below stay put while only the ask changes. -->
-      <span class="eyebrow" id="gate-eyebrow">Get started</span>
-      <h2 class="title-lg" id="gate-title-2">Register your <em>agency</em>.</h2>
-      <p class="lede" id="gate-sub-2">One quick step before you can create campaigns. We review every agency before approving it.</p>
+      <!-- TWO PANES, AND EACH ONE OWNS ITS OWN HEADING. They shared one before,
+           with the level holding the eyebrow, the title and the lede above both
+           forms and a function rewriting them on the swap. That is exactly why
+           the transition glitched: the band travels across the CONTENT, and the
+           heading was not part of the content, so it changed instantly at the
+           start of the sweep while the band was still off to the left. The
+           reader saw the new title over the old form.
+           STACKED, NOT SEQUENCED. Both panes sit in one grid cell, so the one
+           that is arriving never adds its height to the one that is leaving and
+           there is nothing for the legal line below to be pushed down by. The
+           box's own height is animated from one to the other across the sweep,
+           which is the only thing on this screen that is allowed to move. -->
+      <div class="gate-ask" id="gate-ask">
 
-      <!-- THE AGENCY FORM, quoted from BrandRegister.tsx down to the
-           placeholders. Three fields on .field, which is the same control the
-           application's own email question uses, so this inherits the large
-           surface hover and the error ring without asking for either. -->
-      <form class="gate-reg" id="gate-reg" novalidate>
-        <label class="q" data-field="agency">
-          <span class="q-label">Agency name</span>
-          <input class="field" id="reg-name" name="agency" type="text" autocomplete="organization" placeholder="Acme Games">
-          <span class="msg" data-msg="agency"></span>
-        </label>
-        <label class="q" data-field="work">
-          <span class="q-label">Work email</span>
-          <input class="field" id="reg-mail" name="work" type="email" inputmode="email" autocomplete="email" placeholder="you@youragency.com">
-          <span class="msg" data-msg="work"></span>
-        </label>
-        <label class="q" data-field="site">
-          <span class="q-label">Agency website <span class="opt">(optional)</span></span>
-          <input class="field" id="reg-site" name="site" type="text" inputmode="url" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="https://youragency.com">
-          <span class="msg" data-msg="site"></span>
-        </label>
-        <button class="btn btn-solid hero-solid gate-go" type="submit"><span class="scramble">Continue</span></button>
-      </form>
-
-      <div class="gate-opts" id="gate-opts" hidden>
-
-        <div class="gate-mail" id="gate-mail">
-          <button class="btn gate-opt" type="button" data-gate="email">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-mail"/></svg>
-            Continue with email
-          </button>
-          <div class="gate-mailfield">
-            <input class="gate-input" id="gate-email" type="email" inputmode="email"
-                   autocomplete="email" placeholder="you@example.com"
-                   aria-label="Email" aria-describedby="gate-email-err">
-            <!-- the arrow is drawn here rather than named in the sprite, following
-                 the page's own split: object glyphs live in #defs-ca, directional
-                 ones are inline at the call site, as on the scroll cue, the
-                 footer's back-to-top and the businesses link -->
-            <button class="gate-send" type="button" data-gate="continue" aria-label="Continue">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.8 12h13.4M12.4 6.2 18.6 12l-6.2 5.8"/></svg>
-            </button>
-          </div>
+        <div class="gate-pane" id="pane-reg">
+          <span class="eyebrow">Get started</span>
+          <h2 class="title-lg" id="gate-title-2">Register your <em>agency</em>.</h2>
+          <p class="lede">One quick step before you can create campaigns. We review every agency before approving it.</p>
+        <!-- THE AGENCY FORM, quoted from BrandRegister.tsx down to the
+             placeholders. Three fields on .field, which is the same control the
+             application's own email question uses, so this inherits the large
+             surface hover and the error ring without asking for either. -->
+        <form class="gate-reg" id="gate-reg" novalidate>
+          <label class="q" data-field="agency">
+            <span class="q-label">Agency name</span>
+            <input class="field" id="reg-name" name="agency" type="text" autocomplete="organization" placeholder="Acme Games">
+            <span class="msg" data-msg="agency"></span>
+          </label>
+          <label class="q" data-field="work">
+            <span class="q-label">Work email</span>
+            <input class="field" id="reg-mail" name="work" type="email" inputmode="email" autocomplete="email" placeholder="you@youragency.com">
+            <span class="msg" data-msg="work"></span>
+          </label>
+          <label class="q" data-field="site">
+            <span class="q-label">Agency website <span class="opt">(optional)</span></span>
+            <input class="field" id="reg-site" name="site" type="text" inputmode="url" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="https://youragency.com">
+            <span class="msg" data-msg="site"></span>
+          </label>
+          <button class="btn btn-solid hero-solid gate-go" type="submit"><span class="scramble">Continue</span></button>
+        </form>
+          <!-- THE WAY TO THE OTHER ASK, BACK AGAIN. It was dropped when this level
+               still had a level one in front of it and three Sign in links on
+               the page behind it; with level one gone this pane IS the gate's
+               front door, and a front door that only lets you register is a
+               door with one hinge. It sits inside the pane so the band wipes it
+               with everything else. -->
+          <p class="gate-alt"><button type="button" data-gate="signin-pane">Already have an account? <b>Sign in</b></button></p>
         </div>
 
-        <button class="btn gate-opt" type="button" data-gate="google">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path fill="#4285F4" d="M21.6 12.23c0-.73-.07-1.43-.19-2.1H12v3.98h5.38a4.6 4.6 0 0 1-2 3.02v2.51h3.24c1.89-1.74 2.98-4.3 2.98-7.41Z"/>
-            <path fill="#34A853" d="M12 22c2.7 0 4.96-.9 6.62-2.43l-3.24-2.51c-.9.6-2.05.96-3.38.96-2.6 0-4.8-1.76-5.59-4.12H3.06v2.59A10 10 0 0 0 12 22Z"/>
-            <path fill="#FBBC05" d="M6.41 13.9a5.99 5.99 0 0 1 0-3.8V7.51H3.06a10 10 0 0 0 0 8.98l3.35-2.59Z"/>
-            <path fill="#EA4335" d="M12 5.98c1.47 0 2.79.5 3.83 1.5l2.87-2.87C16.95 2.99 14.7 2 12 2a10 10 0 0 0-8.94 5.51l3.35 2.59C7.2 7.74 9.4 5.98 12 5.98Z"/>
-          </svg>
-          Continue with Google
-        </button>
+        <div class="gate-pane" id="pane-opts" hidden>
+          <span class="eyebrow" id="gate-eyebrow">Get started</span>
+          <h2 class="title-lg" id="gate-title-alt">Choose how to <em>sign in</em>.</h2>
+          <p class="lede" id="gate-sub-2">This is how you will get back to your campaigns.</p>
+        <div class="gate-opts" id="gate-opts" hidden>
+
+          <div class="gate-mail" id="gate-mail">
+            <button class="btn gate-opt" type="button" data-gate="email">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-mail"/></svg>
+              Continue with email
+            </button>
+            <div class="gate-mailfield">
+              <input class="gate-input" id="gate-email" type="email" inputmode="email"
+                     autocomplete="email" placeholder="you@example.com"
+                     aria-label="Email" aria-describedby="gate-email-err">
+              <!-- the arrow is drawn here rather than named in the sprite, following
+                   the page's own split: object glyphs live in #defs-ca, directional
+                   ones are inline at the call site, as on the scroll cue, the
+                   footer's back-to-top and the businesses link -->
+              <button class="gate-send" type="button" data-gate="continue" aria-label="Continue">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.8 12h13.4M12.4 6.2 18.6 12l-6.2 5.8"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <button class="btn gate-opt" type="button" data-gate="google">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="#4285F4" d="M21.6 12.23c0-.73-.07-1.43-.19-2.1H12v3.98h5.38a4.6 4.6 0 0 1-2 3.02v2.51h3.24c1.89-1.74 2.98-4.3 2.98-7.41Z"/>
+              <path fill="#34A853" d="M12 22c2.7 0 4.96-.9 6.62-2.43l-3.24-2.51c-.9.6-2.05.96-3.38.96-2.6 0-4.8-1.76-5.59-4.12H3.06v2.59A10 10 0 0 0 12 22Z"/>
+              <path fill="#FBBC05" d="M6.41 13.9a5.99 5.99 0 0 1 0-3.8V7.51H3.06a10 10 0 0 0 0 8.98l3.35-2.59Z"/>
+              <path fill="#EA4335" d="M12 5.98c1.47 0 2.79.5 3.83 1.5l2.87-2.87C16.95 2.99 14.7 2 12 2a10 10 0 0 0-8.94 5.51l3.35 2.59C7.2 7.74 9.4 5.98 12 5.98Z"/>
+            </svg>
+            Continue with Google
+          </button>
+
+        </div>
+          <span class="gate-err" id="gate-email-err" role="alert" hidden></span>
+          <p class="gate-alt" id="gate-back-line" hidden>New here? <button type="button" data-gate="reg-pane">Register your agency</button></p>
+        </div>
 
       </div>
-      <span class="gate-err" id="gate-email-err" role="alert" hidden></span>
 
       <!-- THE LEGAL LINKS ARE STUBS, deliberately. apply.html points its copies
            at /onblue/terms#terms, an absolute path that belongs to the partner
@@ -2478,8 +2458,6 @@ document.documentElement.setAttribute('data-theme', 'light');
            THIS ONE SURVIVES BECAUSE ITS DIRECTION IS REAL. Somebody who opened
            the gate from Sign in and finds they have no account has nowhere else
            to go; it shows on that pane and on no other. -->
-      <p class="gate-alt" id="gate-back-line" hidden>New here? <button type="button" data-gate="reg-pane">Register your agency</button></p>
-
       <!-- "By registering" was true when this level had one ask. It now sits
            under three, one of which is a sign-in. -->
       <p class="gate-legal">By continuing, you agree to the <a data-stub>Program Terms</a>
@@ -2726,15 +2704,16 @@ document.documentElement.setAttribute('data-theme', 'light');
       .forEach(window.onblueField);
   }
 
-  /* ---- coming back signed in ------------------------------------------------
-     The email is what both ways in leave behind: registering stores it beside an
-     agency name, signing in asks for nothing else. Its presence is the only
-     thing this page can honestly read as "you have been through the gate", and
-     it is enough to stop showing somebody a register dialog on their way back to
-     work. */
-  function signedIn() {
-    try { return !!window.sessionStorage.getItem('onblue:email'); } catch (e) { return ''; }
-  }
+  /* THE PAGE HAS ONE STATE: SOMEBODY LOOKING AT IT. There was a second, read
+     off an email left in sessionStorage by the gate, which retired every Create
+     a campaign into a link to the tool and hid all three Sign in links. It is a
+     fair thing for a live site to do and it was wrong here twice over. It made
+     the page's behaviour depend on something invisible that a reviewer had no
+     way to see or clear, so registering once turned the marketing page into a
+     different page for the rest of the session; and it needed a switch in the
+     review dock to undo it, which is a control that exists only to cancel
+     another feature.
+     Both are gone. Create a campaign opens the gate, every time, for everyone. */
 
   /* SHOWN, THEN NAVIGATE. Every caller ends in a document change, so nothing
      ever has to take it down again; the one job is to be on screen before the
@@ -2744,23 +2723,6 @@ document.documentElement.setAttribute('data-theme', 'light');
     if (cover) { cover.hidden = false; }
     window.location.href = url;
   }
-
-  (function known() {
-    if (!signedIn()) { return; }
-    document.body.classList.add('is-known');
-    Array.prototype.forEach.call(document.querySelectorAll('[data-gate="open"]'), function (el) {
-      el.removeAttribute('data-gate');
-      /* THE WORDS CHANGE ON THE CONTROLS THAT LEAD SOMEWHERE ELSE NOW. A button
-         reading "Create a campaign" that opens the builder is still honest; one
-         reading it that opens a register dialog is not, and that is the only
-         difference this makes. The header's is the exception: it is the one
-         control a returning agency uses to get back to its own work, so it says
-         so. */
-      if (el.classList.contains('header-cta')) { el.textContent = 'Your campaigns'; }
-      if (el.tagName === 'A') { el.setAttribute('href', 'campaign.html'); }
-      el.addEventListener('click', function (e) { e.preventDefault(); leave('campaign.html'); });
-    });
-  })();
 
   /* ---------------------------------------------------------- the gate ----
      TWO LEVELS, and the shape is inherited from the partner site because it
@@ -2778,7 +2740,6 @@ document.documentElement.setAttribute('data-theme', 'light');
     if (!gate || typeof gate.showModal !== 'function') { return; }
 
     var field = document.getElementById('gate-field');
-    var lv1 = gate.querySelector('[data-level="1"]');
     var lv2 = gate.querySelector('[data-level="2"]');
     var backLine = document.getElementById('gate-back-line');
     var title2 = document.getElementById('gate-title-2');
@@ -2794,6 +2755,10 @@ document.documentElement.setAttribute('data-theme', 'light');
        for. The heading and the lede move with it: a level that swapped its form
        but kept its title would be telling the reader they are doing one thing
        while asking them to do another. */
+    var ask = document.getElementById('gate-ask');
+    var regPane = document.getElementById('pane-reg');
+    var optsPane = document.getElementById('pane-opts');
+    var altTitle = document.getElementById('gate-title-alt');
     var regForm = document.getElementById('gate-reg');
     var optsEl = document.getElementById('gate-opts');
     /* THREE ASKS, NOT TWO, because the doors are reached two different ways and
@@ -2809,23 +2774,28 @@ document.documentElement.setAttribute('data-theme', 'light');
     function pane(which) {
       mode = which;
       var reg = which === 'register';
-      if (regForm) { regForm.hidden = !reg; }
-      if (optsEl) { optsEl.hidden = reg; }
+      if (regPane) { regPane.hidden = !reg; }
+      if (optsPane) { optsPane.hidden = reg; }
       /* on the sign-in pane and nowhere else: after registering there is no
          "new here" left to be */
       if (backLine) { backLine.hidden = which !== 'signin'; }
-      if (eyebrow) { eyebrow.textContent = which === 'signin' ? 'Welcome back' : 'Get started'; }
-      if (title2) {
-        title2.innerHTML = reg ? 'Register your <em>agency</em>.'
-          : which === 'signin' ? 'Sign in to <em>onBlue</em>.'
-          : 'Choose how to <em>sign in</em>.';
+      /* THE REGISTER PANE'S HEADING IS MARKUP AND NEVER MOVES. Only the doors
+         pane is reached two ways, so it is the only one with anything to say
+         that depends on how you got there. */
+      if (!reg) {
+        if (eyebrow) { eyebrow.textContent = which === 'signin' ? 'Welcome back' : 'Get started'; }
+        if (altTitle) {
+          altTitle.innerHTML = which === 'signin'
+            ? 'Sign in to <em>onBlue</em>.'
+            : 'Choose how to <em>sign in</em>.';
+        }
+        if (sub2) {
+          sub2.textContent = which === 'signin'
+            ? 'Sign in to open your dashboard.'
+            : 'This is how you will get back to your campaigns.';
+        }
       }
-      if (sub2) {
-        sub2.textContent = reg
-          ? 'One quick step before you can create campaigns. We review every agency before approving it.'
-          : which === 'signin' ? 'Sign in to open your dashboard.'
-          : 'This is how you will get back to your campaigns.';
-      }
+      gate.setAttribute('aria-labelledby', reg ? 'gate-title-2' : 'gate-title-alt');
       /* the address is already known at this point, so asking for it again would
          be the form making somebody restate what they just told it */
       if (which === 'choose' && email) {
@@ -2859,14 +2829,32 @@ document.documentElement.setAttribute('data-theme', 'light');
        midpoint, and step() is a two-line caller of it. A second copy of the
        measuring, the clip and the wipe maths is how the two would start
        disagreeing about what a transition on this page looks like. */
+    var SWEEP = 1.15;
+
     function sweep(from, next, swap) {
       if (!gateField || sweeping) { swap(); return; }
       var BAND = 0.34;
+
+      /* THE BOX IS PINNED FIRST, BEFORE A SINGLE THING CHANGES. The last
+         version measured, then swapped, then set the height, and in that order
+         the box is briefly free to be whatever the new pane wants: the content
+         under it dropped, and only then did the band start. Pin, then swap.
+         Nothing can move in between because nothing is allowed to.
+         AND IT MOVES ON THE BAND'S OWN CLOCK. A CSS transition alongside the
+         sweep is a second animation with its own start, and it started first;
+         the height is interpolated inside onStep now, so the two cannot come
+         apart by even a frame. */
+      var box0 = 0, box1 = 0;
+      if (ask) {
+        box0 = from.offsetHeight;
+        ask.style.height = box0 + 'px';
+      }
 
       /* set first, so show() skips the entrance animation */
       sweeping = true;
       swap();
       from.hidden = false;
+      if (ask) { box1 = next.offsetHeight; }
 
       /* MEASURED ONCE, NOT EVERY FRAME. Reading a rect inside the loop forced a
          layout per frame for numbers that cannot change while the band travels. */
@@ -2878,6 +2866,14 @@ document.documentElement.setAttribute('data-theme', 'light');
         var at = ((head * box.width) - (live.left - box.left)) / Math.max(live.width, 1);
         field.style.setProperty('--wipe-a', ((at - 0.06) * 100).toFixed(2) + '%');
         field.style.setProperty('--wipe-b', ((at + 0.06) * 100).toFixed(2) + '%');
+        /* THE HEIGHT FOLLOWS THE EDGE, not a clock of its own. `at` is where the
+           band's edge sits across the content, 0 to 1, which is exactly the
+           fraction of the new pane that is showing: the box is that far between
+           the two heights by definition rather than by coincidence. */
+        if (ask && box1) {
+          var k = at < 0 ? 0 : at > 1 ? 1 : at;
+          ask.style.height = (box0 + (box1 - box0) * k).toFixed(1) + 'px';
+        }
       }
 
       /* THE EDGE IS IN PLACE BEFORE EITHER LEVEL IS MASKED. Everything from here
@@ -2891,7 +2887,11 @@ document.documentElement.setAttribute('data-theme', 'light');
       next.setAttribute('data-wipe', 'in');
 
       gateField.sweep({
-        duration: 0.85,
+        /* SLOWER THAN THE LEVEL SWEEP WAS. This one crosses a form rather than a
+           row of cards, and a reader is being asked to follow one block of
+           fields becoming another; at 0.85 the band was past the heading before
+           the eye had found it. */
+        duration: SWEEP,
         band: BAND,
         /* the band paints only where the content is, for the reason the shader
            gives for gating on the model's own alpha */
@@ -2906,6 +2906,7 @@ document.documentElement.setAttribute('data-theme', 'light');
         onStep: wipeAt,
         onEnd: function () {
           sweeping = false;
+          if (ask) { ask.style.height = ''; }
           from.hidden = true;
           from.removeAttribute('data-wipe');
           next.removeAttribute('data-wipe');
@@ -2915,29 +2916,21 @@ document.documentElement.setAttribute('data-theme', 'light');
       });
     }
 
-    function step(to) {
-      sweep(to === 2 ? lv1 : lv2, to === 2 ? lv2 : lv1, function () { show(to); });
-    }
-
     function enter(level) {
       level.classList.remove('appear', 'appear--fade');
       void level.offsetWidth;
       level.classList.add('appear', 'appear--fade');
     }
 
-    function show(which) {
-      var toL2 = which === 2;
-      lv1.hidden = toL2;
-      lv2.hidden = !toL2;
-      /* NOT backLine. This used to set it, from a version where that line meant
-         "back to level one"; it means "go and register" now, and this write ran
-         after pane()'s and with the opposite sense, which is why the register
-         pane was offering a link to itself. pane() owns it. */
-      gate.setAttribute('aria-labelledby', toL2 ? 'gate-title-2' : 'gate-title-1');
-      /* the entrance is for arriving at a level, not for changing between
-         them: while the band is crossing, the wipe IS the transition and a
-         second opacity animation under it only fights it */
-      if (!sweeping) { enter(toL2 ? lv2 : lv1); }
+    /* ONE LEVEL, SO THIS ONLY HAS TO REVEAL IT. It used to decide between two
+       and set the dialog's label to whichever heading was showing; pane() owns
+       that now, because the heading moved inside the panes. */
+    function show() {
+      lv2.hidden = false;
+      /* the entrance is for arriving, not for changing between panes: while the
+         band is crossing, the wipe IS the transition and a second opacity
+         animation under it only fights it */
+      if (!sweeping) { enter(lv2); }
     }
 
     /* THE CARET IS THE POINT. Clicking the email door has to leave you typing,
@@ -2962,7 +2955,6 @@ document.documentElement.setAttribute('data-theme', 'light');
       /* both doors again on every open: a field left standing from last time is
          a half-finished sentence the reader did not write */
       sweeping = false;
-      lv1.removeAttribute('data-wipe');
       lv2.removeAttribute('data-wipe');
       field.style.removeProperty('--wipe-a');
       field.style.removeProperty('--wipe-b');
@@ -2972,7 +2964,7 @@ document.documentElement.setAttribute('data-theme', 'light');
       document.documentElement.classList.add('gate-lock');
       /* the level always resets on open: an expectation read once is not an
          expectation remembered, and the partner site made the same call */
-      show(returning ? 2 : 1);
+      show();
       requestAnimationFrame(function () { gate.classList.add('is-open'); });
 
       /* NOTHING RUNS ON ARRIVAL (Appy, 2026-09-16). These cards used to take the
@@ -3064,7 +3056,10 @@ document.documentElement.setAttribute('data-theme', 'light');
          back into, and until one of these is pressed there is no way in. It
          crosses under the band for the reason every other change on this field
          does, which is the whole argument for having a band. */
-      sweep(regForm, optsEl, function () { pane('choose'); });
+      /* THE PANES, NOT THE FORMS. pane() hides and shows the two panes, so those
+         are what the band has to be crossing; sweeping the form and the doors
+         left their headings unmasked, which was the whole bug. */
+      sweep(regPane, optsPane, function () { pane('choose'); });
     });
 
     gate.addEventListener('click', function (e) {
@@ -3075,10 +3070,9 @@ document.documentElement.setAttribute('data-theme', 'light');
       if (!act) { return; }
       var what = act.getAttribute('data-gate');
       if (what === 'close') { close(); }
-      else if (what === 'next') { step(2); }
       else if (what === 'signin') { open(true); }
       else if (what === 'reg-pane') { pane('register'); }
-      else if (what === 'back') { step(1); }
+      else if (what === 'signin-pane') { pane('signin'); }
       else if (what === 'email') { openMail(); }
       else if (what === 'continue') { proceed(); }
       else if (what === 'google') {
