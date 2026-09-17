@@ -68,12 +68,31 @@ document.documentElement.setAttribute('data-theme', 'light');
 .gate-reg .q-label { font-size: 13.5px; font-weight: 500; }
 .gate-reg .field { height: var(--hero-btn-h); }
 .gate-go { width: 100%; height: var(--hero-btn-h); margin-top: 4px; font-size: calc(var(--btn) + 1.5px); }
-.gate-opts[hidden], .gate-reg[hidden], .gate-alt[hidden] { display: none; }
-/* ONE CELL, TWO PANES. grid-area 1/1 on both puts them on top of each other, so
-   the arriving one cannot add its height to the departing one; align-items:
-   start keeps each sized to its own content so the script can measure them
-   apart. The height between the two is animated on .gate-ask itself. */
-.gate-ask { display: grid; align-items: start; width: 100%; }
+/* ONLY THE ONE THAT IS ACTUALLY TOGGLED. This carried .gate-opts and .gate-reg
+   too, from when the level swapped the doors for the form inside one box. The
+   panes do that now, and neither of those two is ever given the attribute, so
+   both were rules waiting for a state that no longer exists, which is how the
+   doors stayed invisible for a whole redesign without anything looking wrong in
+   the code. .gate-alt is the "New here?" line, which pane() really does hide. */
+.gate-alt[hidden] { display: none; }
+/* ONE CELL, TWO PANES, AND A HEIGHT THAT IS ALREADY THE TALLER OF THEM. Both
+   sit at grid-area 1/1, so the row is as tall as the taller pane whether or not
+   either is showing, which means the box is the same size before the swap,
+   during it and after it. Nothing below has anything to be pushed by and there
+   is no height left to animate: the previous version measured the two panes and
+   interpolated between them, and an interpolated height is a thing moving, which
+   is the one thing this transition is not supposed to contain.
+   CENTRED IN THE CELL, NOT PARKED AT ITS TOP. start put both panes' first line
+   on the same line, which sounded like the steadiest thing to do and was not:
+   the row is as tall as the TALLER pane, so the shorter one hung from the top of
+   a box sized for the longer one with a few hundred pixels of nothing under it,
+   reading as a screen that had been shoved upwards. Each pane is composed to sit
+   in the middle of this dialog and centring is what puts it there.
+   THE TWO HEADINGS THEREFORE LAND IN DIFFERENT PLACES, and that is correct. The
+   ask was for nothing to MOVE, which means nothing animating from one position
+   to another; where a screen rests is a property of that screen, and the band is
+   what the change happens under. */
+.gate-ask { display: grid; align-items: center; width: 100%; }
 .gate-pane {
   grid-area: 1 / 1;
   display: flex;
@@ -81,7 +100,11 @@ document.documentElement.setAttribute('data-theme', 'light');
   align-items: center;
   width: 100%;
 }
-.gate-pane[hidden] { display: none; }
+/* HIDDEN, NOT REMOVED. display: none would take the pane out of the grid and
+   the row would shrink to whichever one is showing, which is the height change
+   this is avoiding. visibility keeps the cell occupied while taking the pane
+   out of the picture, out of the tab order and out of the accessibility tree. */
+.gate-pane[hidden] { display: flex; visibility: hidden; pointer-events: none; }
 
 /* ---- platforms --------------------------------------------------------------
    Five across, because five is what there are and a row that wraps to 3+2 would
@@ -2347,7 +2370,19 @@ document.documentElement.setAttribute('data-theme', 'light');
          its own level one and keeps both. -->
     <!-- LEVEL 2: the ask -->
     <section class="gate-level" data-level="2" hidden>
-      <span class="gate-mark"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><use href="#i-spark"/></svg></span>
+      <!-- THE MARK AND THE LEGAL LINE MOVED INTO THE PANES. They stood out here,
+           one above the ask and one below it, on the argument that they are the
+           same on both screens and so should not move. That holds only while the
+           box is the size of whatever is showing. It is not: the row is as tall
+           as the TALLER pane, so out here the mark was pinned to the top of a box
+           sized for the register form and the legal line to the bottom of it, and
+           the sign-in screen came up with its spark stranded a hundred pixels
+           above it and its terms line most of the way down the viewport.
+           A PANE IS A WHOLE SCREEN NOW, mark to legal line, and it is centred in
+           the cell as one piece. Two copies of one sentence is the price, and it
+           buys the other half of what was asked for as well: the band wipes the
+           mark and the terms with everything else, where before they were the two
+           things on screen it travelled straight past. -->
       <!-- TWO ASKS IN ONE LEVEL, NOT TWO LEVELS. The brands site branches here
            rather than stepping: pressing Create a campaign with no account is a
            request to register, and pressing Sign in is a request to sign in, and
@@ -2369,6 +2404,7 @@ document.documentElement.setAttribute('data-theme', 'light');
       <div class="gate-ask" id="gate-ask">
 
         <div class="gate-pane" id="pane-reg">
+          <span class="gate-mark"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><use href="#i-spark"/></svg></span>
           <span class="eyebrow">Get started</span>
           <h2 class="title-lg" id="gate-title-2">Register your <em>agency</em>.</h2>
           <p class="lede">One quick step before you can create campaigns. We review every agency before approving it.</p>
@@ -2401,13 +2437,22 @@ document.documentElement.setAttribute('data-theme', 'light');
                door with one hinge. It sits inside the pane so the band wipes it
                with everything else. -->
           <p class="gate-alt"><button type="button" data-gate="signin-pane">Already have an account? <b>Sign in</b></button></p>
+          <p class="gate-legal">By continuing, you agree to the <a data-stub>Program Terms</a>
+            and <a data-stub>Privacy Policy</a>, including <a data-stub>Cookie Use</a>.</p>
         </div>
 
         <div class="gate-pane" id="pane-opts" hidden>
+          <span class="gate-mark"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><use href="#i-spark"/></svg></span>
           <span class="eyebrow" id="gate-eyebrow">Get started</span>
           <h2 class="title-lg" id="gate-title-alt">Choose how to <em>sign in</em>.</h2>
           <p class="lede" id="gate-sub-2">This is how you will get back to your campaigns.</p>
-        <div class="gate-opts" id="gate-opts" hidden>
+        <!-- NOT HIDDEN. This attribute was how the level used to choose between
+             the form and the doors when both lived in one box. The panes took
+             that job when they were split apart, and pane() toggles #pane-opts;
+             nothing ever came back for this one, so the doors sat behind a
+             display: none that no code owned. Registering took you to a screen
+             that offered you no way to sign in. -->
+        <div class="gate-opts" id="gate-opts">
 
           <div class="gate-mail" id="gate-mail">
             <button class="btn gate-opt" type="button" data-gate="email">
@@ -2441,6 +2486,8 @@ document.documentElement.setAttribute('data-theme', 'light');
         </div>
           <span class="gate-err" id="gate-email-err" role="alert" hidden></span>
           <p class="gate-alt" id="gate-back-line" hidden>New here? <button type="button" data-gate="reg-pane">Register your agency</button></p>
+          <p class="gate-legal">By continuing, you agree to the <a data-stub>Program Terms</a>
+            and <a data-stub>Privacy Policy</a>, including <a data-stub>Cookie Use</a>.</p>
         </div>
 
       </div>
@@ -2460,8 +2507,6 @@ document.documentElement.setAttribute('data-theme', 'light');
            to go; it shows on that pane and on no other. -->
       <!-- "By registering" was true when this level had one ask. It now sits
            under three, one of which is a sign-in. -->
-      <p class="gate-legal">By continuing, you agree to the <a data-stub>Program Terms</a>
-        and <a data-stub>Privacy Policy</a>, including <a data-stub>Cookie Use</a>.</p>
     </section>
 
   </div>
@@ -2755,12 +2800,10 @@ document.documentElement.setAttribute('data-theme', 'light');
        for. The heading and the lede move with it: a level that swapped its form
        but kept its title would be telling the reader they are doing one thing
        while asking them to do another. */
-    var ask = document.getElementById('gate-ask');
     var regPane = document.getElementById('pane-reg');
     var optsPane = document.getElementById('pane-opts');
     var altTitle = document.getElementById('gate-title-alt');
     var regForm = document.getElementById('gate-reg');
-    var optsEl = document.getElementById('gate-opts');
     /* THREE ASKS, NOT TWO, because the doors are reached two different ways and
        they are not the same moment. Arriving from Sign in, they are a sign-in.
        Arriving from Continue, they are the last step of registering, and telling
@@ -2829,32 +2872,24 @@ document.documentElement.setAttribute('data-theme', 'light');
        midpoint, and step() is a two-line caller of it. A second copy of the
        measuring, the clip and the wipe maths is how the two would start
        disagreeing about what a transition on this page looks like. */
-    var SWEEP = 1.15;
+    var SWEEP = 0.85;
 
     function sweep(from, next, swap) {
       if (!gateField || sweeping) { swap(); return; }
       var BAND = 0.34;
 
-      /* THE BOX IS PINNED FIRST, BEFORE A SINGLE THING CHANGES. The last
-         version measured, then swapped, then set the height, and in that order
-         the box is briefly free to be whatever the new pane wants: the content
-         under it dropped, and only then did the band start. Pin, then swap.
-         Nothing can move in between because nothing is allowed to.
-         AND IT MOVES ON THE BAND'S OWN CLOCK. A CSS transition alongside the
-         sweep is a second animation with its own start, and it started first;
-         the height is interpolated inside onStep now, so the two cannot come
-         apart by even a frame. */
-      var box0 = 0, box1 = 0;
-      if (ask) {
-        box0 = from.offsetHeight;
-        ask.style.height = box0 + 'px';
-      }
+      /* NOTHING IS MEASURED AND NOTHING IS PINNED, because there is no longer
+         anything that could move. The box is the taller of the two panes at all
+         times, by grid, so this function's only job is to put both panes on
+         screen and hand the field the extent to cross. Whatever this used to do
+         to .gate-ask height, stopped: an animated height is the form sliding
+         down while the doors rise into it, which reads as the two screens
+         trading parts rather than one becoming the other. */
 
       /* set first, so show() skips the entrance animation */
       sweeping = true;
       swap();
       from.hidden = false;
-      if (ask) { box1 = next.offsetHeight; }
 
       /* MEASURED ONCE, NOT EVERY FRAME. Reading a rect inside the loop forced a
          layout per frame for numbers that cannot change while the band travels. */
@@ -2862,18 +2897,44 @@ document.documentElement.setAttribute('data-theme', 'light');
       var live = next.getBoundingClientRect();
       var gone = from.getBoundingClientRect();
 
+      /* THE COLUMN, NOT THE PANE. Both panes are width: 100%, so their rects are
+         the width of the dialog while the words inside them are a column down the
+         middle perhaps four hundred pixels across. Handing those rects to the
+         field as the thing to sweep is what made the band spend most of its
+         travel over blank page to the left and right and cross the actual
+         content in a fraction of a second: a scan going past the content rather
+         than a scan of it. So the extent is the union of what is DRAWN in the
+         two panes, which is their children's boxes. */
+      function column(pane) {
+        var r = null, kids = pane.children, i, k;
+        for (i = 0; i < kids.length; i++) {
+          if (kids[i].hidden) { continue; }
+          k = kids[i].getBoundingClientRect();
+          if (!k.width || !k.height) { continue; }
+          r = r ? { left: Math.min(r.left, k.left), right: Math.max(r.right, k.right),
+                    top: Math.min(r.top, k.top), bottom: Math.max(r.bottom, k.bottom) }
+                : { left: k.left, right: k.right, top: k.top, bottom: k.bottom };
+        }
+        return r;
+      }
+      var cA = column(next), cB = column(from);
+      var col = (cA && cB)
+        ? { left: Math.min(cA.left, cB.left), right: Math.max(cA.right, cB.right),
+            top: Math.min(cA.top, cB.top), bottom: Math.max(cA.bottom, cB.bottom) }
+        : (cA || cB || { left: Math.min(live.left, gone.left), right: Math.max(live.right, gone.right),
+                         top: Math.min(live.top, gone.top), bottom: Math.max(live.bottom, gone.bottom) });
+
+      /* the stretch the head crosses, in the field's own fractions, and the band
+         width that follows from it, which the clip is padded by so the glyphs can
+         fade in before the edge arrives and out after it has gone */
+      var x0 = (col.left - box.left) / box.width;
+      var x1 = (col.right - box.left) / box.width;
+      var pad = BAND * (x1 - x0) * box.width;
+
       function wipeAt(head) {
         var at = ((head * box.width) - (live.left - box.left)) / Math.max(live.width, 1);
         field.style.setProperty('--wipe-a', ((at - 0.06) * 100).toFixed(2) + '%');
         field.style.setProperty('--wipe-b', ((at + 0.06) * 100).toFixed(2) + '%');
-        /* THE HEIGHT FOLLOWS THE EDGE, not a clock of its own. `at` is where the
-           band's edge sits across the content, 0 to 1, which is exactly the
-           fraction of the new pane that is showing: the box is that far between
-           the two heights by definition rather than by coincidence. */
-        if (ask && box1) {
-          var k = at < 0 ? 0 : at > 1 ? 1 : at;
-          ask.style.height = (box0 + (box1 - box0) * k).toFixed(1) + 'px';
-        }
       }
 
       /* THE EDGE IS IN PLACE BEFORE EITHER LEVEL IS MASKED. Everything from here
@@ -2887,26 +2948,32 @@ document.documentElement.setAttribute('data-theme', 'light');
       next.setAttribute('data-wipe', 'in');
 
       gateField.sweep({
-        /* SLOWER THAN THE LEVEL SWEEP WAS. This one crosses a form rather than a
-           row of cards, and a reader is being asked to follow one block of
-           fields becoming another; at 0.85 the band was past the heading before
-           the eye had found it. */
+        /* BACK TO THE FIELD'S OWN 0.85. It was slowed to 1.15 to compensate for
+           a band that spent most of its travel off the content; now that the
+           head crosses the column and nothing else, the default reads at the
+           speed it was tuned for. */
         duration: SWEEP,
         band: BAND,
         /* the band paints only where the content is, for the reason the shader
            gives for gating on the model's own alpha */
         clip: {
-          x0: Math.min(live.left, gone.left) - box.left - 24,
-          x1: Math.max(live.right, gone.right) - box.left + 24,
-          y0: Math.min(live.top, gone.top) - box.top - 24,
-          y1: Math.max(live.bottom, gone.bottom) - box.top + 24
+          x0: col.left - box.left - pad - 24,
+          x1: col.right - box.left + pad + 24,
+          y0: col.top - box.top - 24,
+          y1: col.bottom - box.top + 24
         },
+        /* AND THE HEAD IS GIVEN THE SAME STRETCH. Without this the clip only
+           stops the glyphs printing outside the column while the head still
+           crosses the whole viewport, so the band is off the content for most of
+           the duration and the mask, which follows the head, changes the words
+           while nothing is over them. */
+        x0: x0,
+        x1: x1,
         /* the head is a fraction of the CANVAS; the mask is a fraction of the
            CONTENT, so it has to be re-expressed in the box it is masking */
         onStep: wipeAt,
         onEnd: function () {
           sweeping = false;
-          if (ask) { ask.style.height = ''; }
           from.hidden = true;
           from.removeAttribute('data-wipe');
           next.removeAttribute('data-wipe');

@@ -51,6 +51,12 @@
     var onScreen = false, frame = 0, painted = 0;
     var sweepT = -1, sweepDur = 0, sweepBand = 0.34, sweepMid = null, sweepEnd = null;
     var sweepLast = 0, sweepClip = null, sweepStep = null;
+    /* THE STRETCH OF CANVAS THE HEAD CROSSES, as a pair of fractions. The
+       default is the whole width, which is what an ambient scan wants. A
+       caller sweeping one column of content passes that column instead, so
+       the band spends its whole duration crossing the thing being replaced
+       rather than most of it crossing the empty page on either side. */
+    var sweepX0 = 0, sweepX1 = 1;
 
     /* THE BAND'S OWN RANDOMNESS. The shader rerolls every swept cell off
        hash21(cell + floor(uTime * 14)); this is the same idea in two dimensions,
@@ -144,9 +150,14 @@
           var band = 0;
           if (sweepT >= 0 && (!sweepClip ||
               (cx >= sweepClip.x0 && cx <= sweepClip.x1 && cy >= sweepClip.y0 && cy <= sweepClip.y1))) {
-            var behind = (sweepT * (1 + 2 * sweepBand) - sweepBand) - cx / w;
-            band = sstep(0, sweepBand * 0.35, behind) *
-                   (1 - sstep(sweepBand * 0.55, sweepBand, behind));
+            /* THE BAND NARROWS WITH THE TRAVEL. sweepBand is a fraction of
+               what is being crossed, not of the canvas: held at 0.34 of the
+               viewport while the head crosses a 400px column, one band would
+               cover the column whole and there would be no edge to read. */
+            var eBand = sweepBand * (sweepX1 - sweepX0);
+            var behind = sweepHead() - cx / w;
+            band = sstep(0, eBand * 0.35, behind) *
+                   (1 - sstep(eBand * 0.55, eBand, behind));
           }
 
           /* AND IT SUPERSEDES THE CELL. In the shader the band is a max() over
@@ -205,13 +216,14 @@
         sweepLast = now;
         var before = sweepT;
         sweepT += delta / sweepDur;
-        if (sweepStep) { sweepStep(Math.min(sweepT, 1) * (1 + 2 * sweepBand) - sweepBand); }
+        if (sweepStep) { sweepStep(sweepHead()); }
         if (before < 0.5 && sweepT >= 0.5 && sweepMid) { sweepMid(); sweepMid = null; }
         if (sweepT >= 1) {
           sweepT = -1;
           sweepLast = 0;
           sweepStep = null;
           sweepClip = null;
+          sweepX0 = 0; sweepX1 = 1;
           if (sweepEnd) { var done = sweepEnd; sweepEnd = null; done(); }
         }
         paint(now);
@@ -228,6 +240,16 @@
     /* 0.85s, not the hero's 4. That one is an ambient scan nobody is waiting on;
        this one sits between a click and the thing the click asked for, and four
        seconds of it would be the interface taking its time with someone else's. */
+    /* ONE DEFINITION OF WHERE THE HEAD IS, in canvas fractions, read by the
+       shader that paints the band and by the onStep that drives whatever the
+       caller is masking. Two copies of this expression is how the glyphs and the
+       content they are supposed to be dissolving drift apart. */
+    function sweepHead() {
+      var span = sweepX1 - sweepX0;
+      var eBand = sweepBand * span;
+      return sweepX0 - eBand + Math.min(sweepT, 1) * (span + 2 * eBand);
+    }
+
     function runSweep(opts) {
       opts = opts || {};
       sweepDur = opts.duration || 0.85;
@@ -236,6 +258,8 @@
       sweepEnd = opts.onEnd || null;
       sweepStep = opts.onStep || null;
       sweepClip = opts.clip || null;
+      sweepX0 = typeof opts.x0 === 'number' ? opts.x0 : 0;
+      sweepX1 = typeof opts.x1 === 'number' ? opts.x1 : 1;
       sweepLast = 0;
       sweepT = 0;
       if (still) {
@@ -243,6 +267,7 @@
         sweepT = -1;
         sweepStep = null;
         sweepClip = null;
+        sweepX0 = 0; sweepX1 = 1;
         if (sweepMid) { sweepMid(); sweepMid = null; }
         if (sweepEnd) { var e = sweepEnd; sweepEnd = null; e(); }
         return;
