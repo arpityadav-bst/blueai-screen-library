@@ -77,8 +77,6 @@
    listEl.hidden and nothing happened. Same trap .gate-x carries a note about,
    two hundred lines up. */
 .type-list[hidden] { display: none; }
-.type-fam { margin-top: 26px; }
-.type-fam:first-child { margin-top: 0; }
 .type-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
 .type-card {
   display: flex;
@@ -93,7 +91,6 @@
 .type-card .chip { padding: 5px 10px; font-size: 11.5px; }
 /* the unit sits where the programme card put its reward figure, and says what a
    bid would be measured in rather than what it would be */
-.type-unit { color: var(--dim-ink); font-size: 12px; letter-spacing: -0.01em; text-align: right; }
 .type-name { color: var(--ink); font-size: 16px; font-weight: 600; letter-spacing: -0.03em; }
 .type-one { color: var(--muted); font-size: 13.5px; line-height: 1.5; letter-spacing: -0.01em; }
 /* not yet pressable, and it recedes rather than greys out: a disabled control
@@ -251,14 +248,6 @@ body { min-height: 100vh; }
    steps of the form and has to look it. The form's progress is a hairline
    inside the card; this is discs and a connector above it, built on the same
    .step-num the homepage numbers its How it works cards with. */
-.mile-step.current .mile-dot {
-  border-color: rgba(21, 110, 254, 0.45);
-  background: rgba(21, 110, 254, 0.16);
-  color: var(--ink);
-}
-.mile-step.current { color: var(--ink); font-weight: 500; }
-.mile-step.done .mile-dot { border-color: var(--green-line); background: var(--green-fill); color: var(--green-ink); }
-.mile-step.done { color: var(--green-ink); }
 
 /* ---- the programs -----------------------------------------------------------
    A programme is an offer you accept, which is not a thing this site had a
@@ -283,8 +272,6 @@ body { min-height: 100vh; }
    with the rest of the row empty, which reads as a grid that ran out rather
    than as a choice between two things. */
 .type-grid--pair { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.type-card .type-fam { margin-top: 10px; color: var(--muted); font-size: 13px; }
-.type-card .type-fam b { color: var(--ink-soft); font-weight: 600; }
 /* and in the build that has one kind, the other is not there to be chosen */
 .is-v1 [data-v2] { display: none; }
 .is-v1 .type-grid--pair { grid-template-columns: minmax(0, 1fr); max-width: 520px; }
@@ -481,33 +468,35 @@ body { min-height: 100vh; }
 }
 .type-card:focus-visible { outline: 2px solid var(--blue-ink); outline-offset: 2px; }
 .type-card::after { content: none; }
-/* THE TWO FACTS THAT DECIDE THE CHOICE SIT ON THE FLOOR OF BOTH CARDS. What you
-   bring and what you are charged for are the only things here a reader weighs
-   one against the other, and the descriptions above them are different lengths,
-   so left where they fell they sat at two different heights and the comparison
-   had to be hunted for. A hairline separates them from the pitch, because they
-   are answers to a question rather than more of the sentence. */
+/* THE TWO FACTS THAT DECIDE THE CHOICE SIT ON THE FLOOR OF BOTH CARDS, AS TWO
+   ROWS YOU READ ACROSS. What you bring and what you pay for are the only things
+   here a reader weighs one against the other, and they were two sentences in
+   different voices - "You bring the video" and "Priced per verified completion"
+   - so comparing them meant reading four lines and holding two of them. A label
+   and a value, on a shared column, turns that into two glances.
+   THE LABELS ARE THE SAME TWO WORDS ON BOTH CARDS, which is what makes the
+   column worth having: the eye travels down one card and straight across to the
+   other without re-reading what it is looking at.
+   ON THE FLOOR, because the pitches above are different lengths and a comparison
+   sitting at two different heights has to be hunted for. A hairline separates
+   them from the pitch: they are answers to a question rather than more of the
+   sentence. */
 .type-card .type-foot {
   display: grid;
-  gap: 3px;
+  gap: 6px;
   width: 100%;
   margin-top: auto;
   padding-top: 13px;
   border-top: 1px solid var(--border-soft);
 }
-.type-card .type-fam { margin: 0; color: var(--ink-soft); font-size: 13px; }
-.type-card .type-fam b { font-weight: 600; }
-/* LEFT, LIKE EVERYTHING ELSE IN THE CARD. .type-unit carries text-align: right
-   from when it sat at the end of a flex row opposite a badge; in a stacked
-   footer that put "Priced per verified completion" on the right edge under a
-   left-aligned "You bring", so the two lines a reader compares had two different
-   starting points and neither lined up with the card. */
-.type-card .type-unit {
-  color: var(--dim-ink);
-  font-size: 12px;
-  letter-spacing: -0.005em;
-  text-align: left;
+.type-spec {
+  display: grid;
+  grid-template-columns: 62px minmax(0, 1fr);
+  gap: 10px;
+  align-items: baseline;
 }
+.type-spec i { color: var(--dim-ink); font-size: 12px; font-style: normal; letter-spacing: -0.005em; }
+.type-spec b { color: var(--ink-soft); font-size: 13px; font-weight: 600; letter-spacing: -0.01em; }
 .apply-bg > .ascii-bg { z-index: 1; }
 .step-body.swap-fwd > * { animation: in-soft 0.45s var(--ease) both; animation-delay: calc(var(--i, 0) * 38ms); }
 .step-body.swap-back > * { animation: in-fade 0.32s var(--ease) both; }
@@ -1465,8 +1454,6 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
   .form-card { padding: 22px 18px 18px; }
   .step-panel { padding: 16px 14px; }
   .step-probe { left: 14px; right: 14px; }
-  .mile-label { display: none; }
-  .mile-step.current .mile-label { display: inline; }
   .form-foot { flex-direction: column-reverse; }
   .form-foot .btn { width: 100%; }
 }
@@ -1650,20 +1637,20 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
            product on this page, and the chooser was giving the same answer for
            two different things. -->
       <div class="type-grid type-grid--pair">
-        <button class="card type-card" type="button" data-pick="engagement" data-kind="Video engagement driver">
-          <span class="type-name">Video engagement driver</span>
+        <button class="card type-card" type="button" data-pick="engagement" data-kind="Video engagement">
+          <span class="type-name">Video engagement</span>
           <span class="type-one">You already posted a video. People watch it, like it and comment on it from their own accounts.</span>
           <span class="type-foot">
-            <span class="type-fam">You bring <b>the video</b></span>
-            <span class="type-unit">Priced per verified completion</span>
+            <span class="type-spec"><i>You bring</i><b>the video</b></span>
+            <span class="type-spec"><i>You pay</i><b>per verified completion</b></span>
           </span>
         </button>
         <button class="card type-card" type="button" data-pick="growth" data-kind="Brand growth" data-v2>
           <span class="type-name">Brand growth</span>
           <span class="type-one">You have no video yet. Our agent studies your category, makes the videos, and members post them from their own accounts.</span>
           <span class="type-foot">
-            <span class="type-fam">You bring <b>your site and a few references</b></span>
-            <span class="type-unit">Priced per 1,000 verified views</span>
+            <span class="type-spec"><i>You bring</i><b>your site and a few references</b></span>
+            <span class="type-spec"><i>You pay</i><b>per 1,000 verified views</b></span>
           </span>
         </button>
       </div>
@@ -2350,7 +2337,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
      their own accounts, and checked before it bills. */
   var BRIEFS = {
     engagement: {
-      name: "Video engagement driver",
+      name: "Video engagement",
       tag: "You already posted a video. People watch it, like it and comment on it from their own accounts.",
       steps: ["Paste the link to your video.",
               "Community members open it and watch it, the way any viewer would.",
@@ -3023,7 +3010,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
       done: 0, target: 400, spent: 0, budget: 400, note: 'starts after review',
       state: 'review', label: 'In review', ends: 'Oct 8, 2026', charged: 'Oct 8, 2026',
       short: 'Autumn Drop',
-      brief: 'Video engagement driver. Members watch the teaser on their own accounts.'
+      brief: 'Video engagement. Members watch the teaser on their own accounts.'
     },
     {
       id: 'mine-films', kind: 'growth', sample: false,
@@ -4090,7 +4077,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     resetDraft();
     var one = flow === 'v1';
     chosen = false;
-    if (one) { setType('engagement', 'Video engagement driver'); chosen = true; }
+    if (one) { setType('engagement', 'Video engagement'); chosen = true; }
     step = 0;
     submitted = false;
     swapDir = '';
