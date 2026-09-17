@@ -84,7 +84,6 @@
   align-items: flex-start;
   gap: 10px;
   padding: 18px 18px 16px;
-  border: 0;
   text-align: left;
   cursor: pointer;
 }
@@ -546,16 +545,28 @@ body { min-height: 100vh; }
   min-height: 0;
   overflow-y: auto;
   scrollbar-gutter: stable;
-  /* ROOM INSIDE THE CLIP FOR WHAT THE FIELDS DRAW OUTSIDE THEMSELVES. A focused
-     field is a 3px box-shadow ring, and a box-shadow is painted beyond the
-     border box, so on a scroller with no padding the ring on the leftmost field
-     was cut off flush. Same fault as the button shadow at the foot, one level
-     down: the clip is the box's edge, and anything drawn past that edge is gone.
-     THE NEGATIVE MARGIN PUTS THE CONTENT BACK WHERE IT WAS. The 4px is slack for
-     the ring, not indentation - without the margin every question would sit 4px
-     in from the title above it and the buttons below. */
+  /* THE BOX INSIDE THE BOX GOES. .step-panel drew its own border, ground and
+     radius, which was right when it sat on a page: the panel was the form's
+     surface and the page was behind it. In a dialog the dialog is that surface,
+     so it was a second stroke 22px inside the first around the same questions.
+     THE RADIUS IS THE ONE THAT MATTERED. overflow-y: auto makes this a clipping
+     box, and a clipping box with a 12px radius clips to a rounded rectangle -
+     harmless while 18px of padding held the contents off the corners, and not
+     harmless the moment the padding went.
+     AND 4px OF SLACK FOR WHAT THE FIELDS DRAW OUTSIDE THEMSELVES. A focused
+     field is a 3px box-shadow ring painted beyond its border box, so against a
+     clip with no padding the ring on the leftmost field was cut off flush. The
+     negative margin makes that slack rather than indentation: without it every
+     question would sit 4px in from the title above and the buttons below.
+     ONE RULE, BECAUSE THERE WERE TWO. The second said padding: 0 and, being
+     later at the same specificity, quietly cancelled the 4px the first one had
+     just been given for exactly this. Two rules for one selector is two places
+     to keep one decision, and they disagreed within a single commit. */
   padding: 4px;
   margin: -4px -4px 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
 }
 .sheet--wide .form-foot { flex: none; }
 
@@ -571,20 +582,6 @@ body { min-height: 100vh; }
 .sheet--wide .form-card[hidden],
 .sheet--wide .type-list[hidden],
 .sheet--wide .form-stage[hidden] { display: none; }
-
-/* AND THE BOX INSIDE THE BOX GOES. .step-panel draws its own border and ground,
-   which was right when it sat on a page: the panel was the form's surface and
-   the page was behind it. In a dialog the dialog is that surface, so the panel
-   drew a second stroke 22px inside the first around the same questions. The
-   scroll still works; it just does not announce itself with an outline.
-   BORDER-RADIUS GOES WITH THEM, AND THAT IS THE LINE THAT MATTERS. overflow-y:
-   auto makes this a clipping box, and a clipping box with a 12px radius clips to
-   a rounded rectangle. That was invisible while the panel had 18px of padding
-   holding its contents away from the corners; taking the padding off put the
-   first label and the field edges right against the curve, and the curve cut
-   them. A radius on a box that clips is only ever as safe as the padding inside
-   it, and this one no longer has any. */
-.sheet--wide .step-panel { padding: 0; border: 0; border-radius: 0; background: none; }
 
 /* THE DIALOG IS THE CARD, SO THE CARD INSIDE IT IS NOT ONE. It kept its own
    border, its own ground and its own lift, which put a raised surface 22px
@@ -831,7 +828,6 @@ body { min-height: 100vh; }
    crosses tells a reader that something is available there, and nothing is.
    It joins the form card's family instead, which is the same shadow and
    deliberately no hover at all. */
-.dash-panel::after { content: none; }
 
 /* BOTH CHILDREN ARE SPANS, so they laid out inline and sat on one baseline with
    the label reading as part of the number. .earn-figure's own margin-top could
