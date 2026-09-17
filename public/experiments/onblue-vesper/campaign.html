@@ -315,6 +315,47 @@ body { min-height: 100vh; }
    sits. */
 .field.field--pre { padding-left: 28px; }
 
+/* ---- the filed panel --------------------------------------------------------
+   DIALOG SCALE, NOT PAGE SCALE. What stood here was .title-xl, the homepage's
+   closing-statement size, which wraps to two lines in a 620px panel and reads as
+   an announcement rather than a receipt. A confirmation inside the thing you
+   were just filling in is the quieter of the two. */
+.filed { display: grid; justify-items: center; padding: 8px 0 4px; text-align: center; }
+.filed-mark {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  background: var(--green-fill, rgba(22, 163, 74, 0.1));
+  color: var(--green-ink);
+}
+.filed-h { margin-top: 16px; color: var(--ink); font-size: 21px; font-weight: 600; letter-spacing: -0.03em; }
+.filed-p { margin-top: 8px; max-width: 46ch; color: var(--muted); font-size: 13.5px; line-height: 1.6; letter-spacing: -0.01em; }
+.filed-p b { color: var(--ink); font-weight: 600; }
+/* THE ID IS A FIXTURE, NOT A WARNING. It reads as a labelled value because that
+   is what it is: the handle a support or settlement conversation reaches for,
+   printed the same way here, on the row and on the report. */
+.filed-id {
+  display: inline-grid;
+  grid-auto-flow: column;
+  gap: 10px;
+  align-items: baseline;
+  margin-top: 18px;
+  padding: 8px 14px;
+  border: 1px solid var(--border-soft);
+  border-radius: 999px;
+}
+.filed-id i { color: var(--dim-ink); font-size: 11px; font-style: normal; letter-spacing: 0.06em; text-transform: uppercase; }
+.filed-id b {
+  color: var(--ink);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12.5px;
+  font-weight: 600;
+}
+.filed-cta { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 22px; }
+.filed-cta .btn { height: var(--hero-btn-h); padding: 0 20px; }
+
 /* ---- the date trigger and its calendar --------------------------------------
    BORROWED FROM THE PORTAL AND RE-TOKENISED. Its own version is built on --iris
    and a warm stroke; every colour here is one this page already defines, so the
@@ -2994,75 +3035,60 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
      about the agency; afterwards they are about a campaign. Same discs, same
      connector, and the only thing that changes is what they are counting. */
   /* ---- the confirmation (ApplyForm.tsx, copy verbatim) ---- */
+  /* ---- the campaign is filed --------------------------------------------------
+     THIS WAS THE CREATOR APPLICATION'S CONFIRMATION, WORN BY A CAMPAIGN. It came
+     with .title-xl, which is the homepage's closing-statement size and wraps to
+     two lines inside a 620px dialog; with a Refresh control, which belongs to
+     the screen where an AGENCY is waiting on us and has nothing to poll for
+     here; and with a sentence that named the address we would write to, which on
+     this page is often empty, so it read "we'll email the moment it is
+     approved".
+     WHAT A CONFIRMATION OWES THE READER IS THREE THINGS: that it worked, what it
+     is called and how to find it again, and the way onward. The id is the handle
+     a support conversation reaches for, and it is on the row and the report too.
+     TWO ACTIONS, AND THE FIRST ONE IS REAL. View campaign closes this and opens
+     the campaign that now exists on the dashboard behind it; Done just closes.
+     The old panel offered neither, so the only way out of a finished form was
+     the X in the corner. */
   function renderConfirm() {
     headEl.innerHTML = '';
     headEl.style.display = 'none';
-    /* EMPTIED IS NOT HIDDEN. The foot kept its top border, its margin and its
-       padding after its buttons were removed, which drew a rule across the page
-       under the closing line and held 47px of space no content was asking for. */
     footEl.innerHTML = '';
     footEl.style.display = 'none';
     cardEl.classList.add('is-done');
-    bodyEl.className = 'step-body intro';
-    /* THE CLOSING SHAPE IS THE GATE'S: the mark, then the typed heading, then
-       the lede, then one pill. A green tick in a circle was the old one, and it
-       said "done" about a form rather than "you are in the queue" about a
-       person. The spark is what this site puts above a closing statement. */
-    bodyEl.innerHTML = '<div class="confirm">'
-      /* THE MARK MOVED BEHIND THE WORDS. It was a 44px spark standing above
-         the line, which is a label saying "something good happened". The
-         footer does the better version of the same idea: one large spark
-         cresting from behind the type, masked so it dissolves downward, so
-         the brand is the light the statement sits in rather than a badge
-         pinned over it.
-         THE FULL STOP IS INSIDE THE EMPHASIS, as it is on the homepage's
-         closer, so the caret finishes after the sentence rather than
-         between the last word and its own punctuation. */
-      + '<div class="confirm-head">'
-      + '<span class="confirm-sun" aria-hidden="true"><span class="confirm-sun-in"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.6C12.55 2.6 12.88 3.15 13.08 4.7c.62 4.7 1.52 5.6 6.22 6.22 1.55.2 2.1.53 2.1 1.08s-.55.88-2.1 1.08c-4.7.62-5.6 1.52-6.22 6.22-.2 1.55-.53 2.1-1.08 2.1s-.88-.55-1.08-2.1c-.62-4.7-1.52-5.6-6.22-6.22C3.15 12.88 2.6 12.55 2.6 12s.55-.88 2.1-1.08c4.7-.62 5.6-1.52 6.22-6.22C11.12 3.15 11.45 2.6 12 2.6Z"/></svg></span></span>'
-      /* IN REVIEW, NOT LIVE. Nothing reaches the community until we have read
-         it, which is the promise the whole approval flow is built on, and a
-         confirmation announcing a campaign is live the second it is filed
-         contradicts the row it is about to appear as: that row says IN REVIEW,
-         and one of the two would have been lying. */
-      + '<h2 class="title-xl" id="confirm-title">Your campaign <em>is in review.</em></h2>'
-      + '</div>'
-      + '<p class="lede">We check every campaign before it goes live, usually within one business day. <b>'
-      + esc(d.name || d.kind || 'Your campaign') + '</b> is on your dashboard now, and we’ll email <b>'
-      + esc(d.email) + '</b> the moment it is approved.</p>'
-      + '<span class="earn-payout"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.5l5 5L19.5 6.5"/></svg>Campaign created</span>'
-      /* THE SAME SHAPE AS THE GATE'S "Already have an account? Sign in": one
-         quiet line under the last thing on the screen, in --muted, with the
-         only word you can act on underlined. It reuses .gate-alt rather than
-         copying it, which is also where the spacing comes from.
-         THE ICON SITS OUTSIDE THE BUTTON. A text-decoration on an ancestor
-         draws through everything inside it and cannot be switched off on a
-         child, so an icon in the button would have had the underline run
-         straight through it. Out here it reads as the prose half of the pair. */
-      + '<p class="gate-alt confirm-alt"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.4 11.7a8.4 8.4 0 1 1-2.5-5.4"/><path d="M20.4 3.1v4.8h-4.8"/></svg><button type="button" data-refresh>Refresh</button></p>'
-      + '</div>';
-    /* PREPARED HERE, TYPED LATER, and the split is the whole fix for the flash.
-       Both used to happen in one call, and that call had to wait for the band to
-       finish crossing, so for the length of the sweep the finished line sat
-       there fully written and then rewrote itself. Preparing inside the same
-       synchronous block as the innerHTML means no frame is ever painted with
-       those words in it. */
-    /* THREE STATES, AND THE CONTROL NARRATES ITSELF THROUGH THEM. Refresh ->
-       Refreshing, turning -> Refreshed, still -> Refresh. There is no status
-       endpoint behind this page, and a reload would be worse than useless: it
-       would drop the reader back on the programmes and take away the
-       confirmation they just earned. What a stub can honestly do is show the
-       shape of the interaction, and the shape is the part that has to be right.
-       IT STOPS BEING A CONTROL WHILE IT IS REPORTING. Underline and pointer come
-       off for the two status words, because "Refreshing" is not something you
-       can press, and the guard means a second click cannot restart the run. */
-    wireRefresh(bodyEl.querySelector('[data-refresh]'),
-                bodyEl.querySelector('[data-refresh]'),
-                bodyEl.querySelector('.confirm-alt'));
+    document.body.classList.add('is-submitted');
+    bodyEl.className = 'step-body';
 
-    prepTitle();
-    sunLens();
+    var c = filed;
+    var who = esc((c && c.name) || d.name || 'Your campaign');
+    bodyEl.innerHTML = '<div class="filed">'
+      + '<span class="filed-mark" aria-hidden="true">'
+      + '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"'
+      + ' stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l5 5L19.5 6.5"/></svg>'
+      + '</span>'
+      + '<h2 class="filed-h">Campaign filed.</h2>'
+      /* IN REVIEW, NOT LIVE. Nothing reaches the community until we have read it,
+         and the row this becomes says IN REVIEW - one of the two would be lying. */
+      + '<p class="filed-p"><b>' + who + '</b> is on your dashboard, in review. '
+      + 'We check every campaign before it goes live, usually within one business day.</p>'
+      + (c ? '<span class="filed-id"><i>Campaign ID</i><b>' + esc(c.ref) + '</b></span>' : '')
+      + '<div class="filed-cta">'
+      + '<button class="btn btn-solid" type="button" data-filed="view">View campaign</button>'
+      + '<button class="btn btn-ghost" type="button" data-filed="done">Done</button>'
+      + '</div></div>';
   }
+
+  /* delegated, because this panel is written and rewritten by render() */
+  document.addEventListener('click', function (ev) {
+    var b = ev.target.closest ? ev.target.closest('[data-filed]') : null;
+    if (!b) { return; }
+    var go = b.getAttribute('data-filed') === 'view' ? filed : null;
+    if (window.onblueSheetClose) { window.onblueSheetClose(); }
+    /* AFTER THE PANEL HAS GONE, not with it. The dialog fades out over 220ms and
+       the view behind it changes underneath; doing both in the same frame shows
+       the reader the new screen through the old one. */
+    if (go) { window.setTimeout(function () { openCampaign(go); }, 230); }
+  });
 
   /* the closer's typing treatment, run once: the heading types itself in and
      the caret settles, so the last thing an applicant sees rhymes with the
@@ -3477,7 +3503,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
   function renderDash() {
     var dash = document.getElementById('dash');
     if (!dash) { return; }
-    var mine = visible(ACCOUNTS[acct].camps);
+    var mine = visible(MADE.concat(ACCOUNTS[acct].camps));
     var samples = visible(SAMPLES);
 
     /* IN REVIEW COUNTS THE ONES WAITING, not the ones that exist. On this
@@ -4436,6 +4462,57 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     measureFloor();
   }
 
+  /* ---- what the builder leaves behind ---------------------------------------
+     A SUBMITTED CAMPAIGN BECOMES A ROW. The confirmation used to end at a
+     sentence: the dashboard behind it was unchanged, so "it is on your
+     dashboard now" was a claim the next screen contradicted, and View campaign
+     had nothing to open. Filing it here is what makes both true.
+     THEY LIVE BESIDE THE ACCOUNT RATHER THAN IN IT, because the Campaigns
+     switch in the review dock owns what the account holds - none, one, two - and
+     a campaign a reviewer just made is not one of those three. It is theirs, and
+     it survives them changing the switch. */
+  var MADE = [];
+  var filed = null;
+
+  function fileCampaign() {
+    var growth = d.type === 'growth';
+    var per = growth ? 1000 : 1;
+    var bid = Number(d.bid) || (growth ? 5 : 1);
+    var budget = Number(d.budget) || 0;
+    var end = fromIso(d.endAt);
+    var start = fromIso(d.startAt);
+    var c = {
+      id: 'made-' + Date.now(),
+      kind: growth ? 'growth' : 'engagement',
+      sample: false,
+      name: d.name || 'Untitled campaign',
+      /* THE SHORT ID IS THE HANDLE a support or settlement conversation reaches
+         for, so it is generated once and printed on the row, the report and
+         this panel rather than made up again in each place. */
+      /* EIGHT HEX CHARACTERS THAT LOOK LIKE THE OTHER EIGHT. Padding a timestamp
+         out to length produced #a7a70000 - a trailing run of zeros that reads as
+         a placeholder next to #7c2d91e4 and #4b0a63f7 on the rows above it. An
+         id a reader suspects is fake is an id they will not quote back. */
+      ref: '#' + ('0000000' + Math.floor(Math.random() * 0xfffffff).toString(16)).slice(-8),
+      geo: d.country === 'Worldwide' ? 'Worldwide' : 'US',
+      done: 0, spent: 0,
+      budget: budget,
+      target: bid > 0 ? Math.floor(budget / bid) * per : 0,
+      note: 'starts after review',
+      state: 'review', label: 'In review',
+      ends: end ? end.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '',
+      charged: '',
+      days: (start && end) ? Math.max(1, Math.round((end - start) / 86400000)) : 14,
+      short: d.name || 'Campaign',
+      brief: (growth ? 'Brand growth.' : 'Video engagement.') + ' Filed just now.'
+    };
+    if (growth) { c.unit = 'verified views'; c.rate = '$' + bid; c.per = '1,000 verified views'; }
+    MADE.unshift(c);
+    CAMPAIGNS.push(c);
+    renderDash();
+    return c;
+  }
+
   /* ---- opening the builder --------------------------------------------------
      A PICKER WITH ONE OPTION IS NOT A CHOICE, IT IS A DOOR WITH A DOORMAN. In
      the build that has only the engagement type, the chooser was one card on its
@@ -4533,10 +4610,15 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
       window.dispatchEvent(new CustomEvent('apply:step', { detail: { step: step, dir: 'fwd' } }));
       return;
     }
-    sweepForm(function () {
-      submitted = true;
-      render();
-    });
+    /* NO BAND ACROSS THIS. The ascii sweep was written for a full-page form
+       swapping to a full-page confirmation, where it reads as the page turning
+       over. In a 620px dialog it is a stripe of characters crossing a panel that
+       is already framed, already floating and already the only thing lit - three
+       ways of saying "look here" arguing with each other. The panel simply
+       becomes the confirmation. */
+    filed = fileCampaign();
+    submitted = true;
+    render();
     window.dispatchEvent(new CustomEvent('apply:submitted'));
   });
 
