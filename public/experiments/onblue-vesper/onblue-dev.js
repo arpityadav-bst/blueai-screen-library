@@ -164,8 +164,16 @@
       label: 'Agency', store: 'onblue:dev-stage',
       states: [{ id: 'review', name: 'In review' },
                { id: 'approved', name: 'Approved' }],
+      /* A SWITCH IS ONLY ON THE SCREEN IT CAN CHANGE. Both of the bars above
+         describe the campaigns app: how many campaigns the account holds, and
+         which build's campaign types exist. An agency still waiting on approval
+         cannot see either - it gets one screen saying so - and a control sitting
+         over that screen doing nothing is worse than a missing one, because a
+         reviewer presses it and learns that this product ignores them. */
       apply: function (on) {
-        account.hidden = on !== 'approved';
+        var app = on === 'approved';
+        account.hidden = !app;
+        flow.hidden = !app;
         if (window.onblueStage) { window.onblueStage(on); }
       }
     })]));

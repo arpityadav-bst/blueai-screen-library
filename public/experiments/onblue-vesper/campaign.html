@@ -56,6 +56,12 @@
    THE CARDS ARE BUTTONS, so a keyboard reaches them in order and a disabled one
    genuinely cannot be pressed rather than merely looking like it. */
 .type-list { display: grid; gap: 8px; }
+/* A CLASS SETS display HERE, AND A CLASS BEATS THE UA'S [hidden] RULE, so
+   hiding it needs saying out loud. Without this the two type cards stayed on
+   screen above the form for the type you had just picked: renderShell set
+   listEl.hidden and nothing happened. Same trap .gate-x carries a note about,
+   two hundred lines up. */
+.type-list[hidden] { display: none; }
 .type-fam { margin-top: 26px; }
 .type-fam:first-child { margin-top: 0; }
 .type-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
@@ -255,6 +261,14 @@ body { min-height: 100vh; }
    nobody has asked yet. It collapses by the same rows trick the confirmation
    uses, so the stage rises into the space rather than the rail vanishing. */
 .is-choosing .mile-wrap { grid-template-rows: 0fr; opacity: 0; }
+/* EXCEPT WHILE THE AGENCY IS IN REVIEW, where the rail is the whole point of the
+   screen. It is the one thing a wait needs: Register behind you, We review now,
+   Start campaigns to come, so the wait has a shape and the screen answers "how
+   long is this" as well as "what is happening". It was collapsed because the
+   body still carries .is-choosing on that screen - nothing has been chosen, and
+   nothing is going to be - so the rule written for the catalogue was hiding the
+   rail on a screen that has no catalogue. Two classes beat one. */
+.is-review.is-choosing .mile-wrap { grid-template-rows: 1fr; opacity: 1; }
 /* upward, which is the direction the form is arriving from */
 .is-underway .apply-head { transform: translateY(-16px); }
 .apply-head { text-align: center; }
@@ -456,13 +470,32 @@ body { min-height: 100vh; }
    onto a canvas by ascii-field.js, and .swap-fwd / .swap-back are assembled in a
    string here, so neither appears as a class attribute anywhere a scan could
    see it. */
-.form-card, .dash-panel {
+/* THE LIFT BELONGS TO THE ONE THING BEING FILLED IN, NOT TO EVERY PANEL ON THE
+   PAGE. .card brings a shadow, a hover lift and a travelling highlight along its
+   own stroke, and all three say the same thing: this is a surface you are doing
+   something with. The campaign form is that. A report's Accounting table, its
+   Verification panel, its Videos card and the two campaign lists are not - they
+   are places to read, they cannot be pressed, and twelve of them on one screen
+   each promising to be handled turns the promise into wallpaper.
+   SO THE PANELS KEEP THE GROUND AND THE HAIRLINE and give up the rest, which is
+   the same cut .plat took on the marketing page for the same reason. */
+.form-card {
   --stage-shadow: 0 1px 2px rgba(18, 32, 64, 0.025),
                   0 10px 24px -18px rgba(18, 32, 64, 0.07);
   background: var(--card-bg);
   box-shadow: var(--stage-shadow);
 }
-.form-card:hover, .dash-panel:hover { transform: none; box-shadow: var(--stage-shadow); }
+.form-card:hover { transform: none; box-shadow: var(--stage-shadow); }
+.dash-panel { background: var(--card-bg); box-shadow: none; }
+.dash-panel:hover { border-color: var(--border-soft); box-shadow: none; transform: none; }
+.dash-panel::after { content: none; }
+
+/* AND THE TWO TYPE CARDS KEEP THEIR HOVER AND LOSE THE HIGHLIGHT. They ARE
+   controls, so the border firming up is right and the travelling sheen on top of
+   it is the surface treatment arguing with the control treatment. */
+.type-card { box-shadow: none; }
+.type-card:hover { box-shadow: none; transform: none; }
+.type-card::after { content: none; }
 .apply-bg > .ascii-bg { z-index: 1; }
 .step-body.swap-fwd > * { animation: in-soft 0.45s var(--ease) both; animation-delay: calc(var(--i, 0) * 38ms); }
 .step-body.swap-back > * { animation: in-fade 0.32s var(--ease) both; }
@@ -1443,7 +1476,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
       </div>
       <div class="apply-head-pane" data-head="form" hidden>
         <h1 class="title-lg">Write the <em>brief</em>.</h1>
-        <p class="lede">Four short steps. Nothing is charged until onBlue has verified the work.</p>
+        <p class="lede">Three short steps. Nothing is charged until onBlue has verified the work.</p>
       </div>
     </div>
   </div>
@@ -1945,7 +1978,15 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
   var LAST = STEPS.length - 1;
 
   var isEmail = function (v) { return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim()); };
-  var money = function (v) { return /^\d+(\.\d{1,2})?$/.test(String(v).trim()) && Number(v) > 0; };
+  /* isMoney, NOT money, AND THE RENAME IS THE BUG FIX. There were two functions
+     called money in this scope: this one, which answers whether a string is a
+     positive amount, and a formatter three hundred lines down that turns a
+     number into "$500". A function declaration is hoisted and then overwritten
+     by a var assignment, so from the moment this line ran there was only the
+     validator, and every currency figure on the dashboard printed what a
+     validator returns: Spend this month said false, and each row said "true of
+     true". It sits beside isEmail now, which is what it is. */
+  var isMoney = function (v) { return /^\d+(\.\d{1,2})?$/.test(String(v).trim()) && Number(v) > 0; };
 
   function validate(d) {
     var e = {};
@@ -1960,10 +2001,10 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     /* NO CEILING AND NO FLOOR STATED. The page promises outcome pricing and
        names no rate anywhere, so a minimum invented here would be the one number
        on the whole site, and it would be invented. */
-    if (!money(d.bid)) e.bid = 'Set a bid above $0.';
-    if (!money(d.budget)) e.budget = 'Set a budget above $0.';
-    else if (money(d.bid) && Number(d.budget) < Number(d.bid)) e.budget = 'The budget has to cover at least one bid.';
-    if (b && b.gen && !money(d.gen)) e.gen = 'Set a bid above $0.';
+    if (!isMoney(d.bid)) e.bid = 'Set a bid above $0.';
+    if (!isMoney(d.budget)) e.budget = 'Set a budget above $0.';
+    else if (isMoney(d.bid) && Number(d.budget) < Number(d.bid)) e.budget = 'The budget has to cover at least one bid.';
+    if (b && b.gen && !isMoney(d.gen)) e.gen = 'Set a bid above $0.';
     if (!d.startAt) e.startAt = 'Pick a start date.';
     if (!d.endAt) e.endAt = 'Pick an end date.';
     else if (d.startAt && d.endAt <= d.startAt) e.endAt = 'The end date has to be after the start.';
@@ -2312,14 +2353,14 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     }
     html += moneyQ('budget', 'And the most you want to spend on it?', '500',
       'Nothing is taken now. The budget is a ceiling, not a payment.', err.budget);
-    if (money(d.bid) && money(d.budget) && Number(d.budget) >= Number(d.bid)) {
+    if (isMoney(d.bid) && isMoney(d.budget) && Number(d.budget) >= Number(d.bid)) {
       /* PER, NOT ONE. A view bid buys a thousand views, so dividing the budget
          by the bid and calling the answer "views" understated it by three orders
          of magnitude; floor, not round, because the number is a promise about
          what the money covers. */
       var buys = Math.floor(Number(d.budget) / Number(d.bid)) * (b.per || 1);
       html += '<p class="aside"><span class="aside-ic">' + ICON.info + '</span>That buys about <b>'
-        + buys.toLocaleString() + '</b> ' + esc(b.unit || 'verified results')
+        + buys.toLocaleString('en-US') + '</b> ' + esc(b.unit || 'verified results')
         + ', if every one of them passes.'
         + (b.gen ? ' Making the videos comes out of the same budget.' : '') + '</p>';
     }
@@ -2900,7 +2941,13 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
   var SAMPLES = CAMPAIGNS.filter(function (c) { return c.sample; });
   var acct = 'none';
 
-  function money(n) { return '$' + n; }
+  /* EN-US, NAMED, ON EVERY FIGURE ON THIS PAGE. toLocaleString() with no locale
+     follows the machine, so a browser set to en-IN grouped a target of 151,000
+     as 1,51,000 - correct for that reader and wrong for a page whose other
+     figures are written out in the markup in thousands. A prototype that shows
+     different numbers to different reviewers cannot be reviewed. */
+  function num(n) { return Number(n).toLocaleString('en-US'); }
+  function money(n) { return '$' + num(n); }
 
   /* TWO LISTS AND THREE FIGURES, and every one of them is derived from the
      same place. The version this replaces wrote a balance, a lifetime total, two
@@ -2921,7 +2968,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     var done = 0, spend = 0;
     mine.forEach(function (c) { done += c.done; spend += c.spent; });
     dash.querySelector('[data-tile="review"]').textContent = String(waiting.length);
-    dash.querySelector('[data-tile="done"]').textContent = done.toLocaleString();
+    dash.querySelector('[data-tile="done"]').textContent = done.toLocaleString('en-US');
     dash.querySelector('[data-tile="spend"]').textContent = money(spend);
 
     dash.querySelector('[data-list="mine"]').innerHTML = mine.map(crow).join('');
@@ -2960,7 +3007,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
       + '<span class="crow-meta">' + meta + '</span>'
       + '</span>'
       + '<span class="crow-fill">'
-      + '<span class="crow-note"><b>' + c.done.toLocaleString() + '</b> of ' + c.target.toLocaleString()
+      + '<span class="crow-note"><b>' + c.done.toLocaleString('en-US') + '</b> of ' + c.target.toLocaleString('en-US')
       + unit + ' &middot; ' + esc(c.note) + '</span>'
       + '<span class="bar" role="progressbar" aria-valuenow="' + c.done + '" aria-valuemin="0"'
       + ' aria-valuemax="' + c.target + '" aria-label="' + esc(c.name) + ' fill">'
@@ -3119,7 +3166,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
       var gy = T + (H - T - B) * (i / 4);
       grid += '<line x1="' + L + '" y1="' + gy.toFixed(1) + '" x2="' + (W - R) + '" y2="' + gy.toFixed(1) + '"/>';
       grid += '<text x="' + (L - 8) + '" y="' + (gy + 3.5).toFixed(1) + '" text-anchor="end">'
-        + Math.round(top * (1 - i / 4)).toLocaleString() + '</text>';
+        + Math.round(top * (1 - i / 4)).toLocaleString('en-US') + '</text>';
     }
 
     var line = vals.map(function (v, k) { return (k ? 'L' : 'M') + x(k).toFixed(1) + ' ' + y(v).toFixed(1); }).join(' ');
@@ -3129,7 +3176,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
 
     return '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Cumulative '
       + esc(unitOf(c)) + ' by day against the pace needed to reach '
-      + c.target.toLocaleString() + '">'
+      + c.target.toLocaleString('en-US') + '">'
       + '<g stroke="var(--border-soft)" stroke-width="1" fill="none">' + grid.replace(/<text[^]*?<\/text>/g, '') + '</g>'
       + '<g fill="var(--dim-ink)" font-size="10">'
       + grid.replace(/<line[^>]*\/>/g, '') + '</g>'
@@ -3236,15 +3283,15 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     rep.querySelector('[data-rep="meta"]').innerHTML = meta.join('');
 
     rep.querySelector('[data-rep="tiles"]').innerHTML =
-        tile('Fill', pct + '%', c.done.toLocaleString() + ' of ' + c.target.toLocaleString() + ' target')
-      + tile('Verified', v.ok.toLocaleString(), 'only verified runs bill')
+        tile('Fill', pct + '%', c.done.toLocaleString('en-US') + ' of ' + c.target.toLocaleString('en-US') + ' target')
+      + tile('Verified', v.ok.toLocaleString('en-US'), 'only verified runs bill')
       + tile('Spend', money(c.spent), 'of ' + money(c.budget))
-      + tile('Under review', v.wait.toLocaleString(), 'not billed until resolved', true)
+      + tile('Under review', v.wait.toLocaleString('en-US'), 'not billed until resolved', true)
       + tile('Days remaining', String(left), 'ends ' + esc(c.ends));
 
     rep.querySelector('[data-rep="chart-hint"]').textContent =
       'Cumulative ' + unitOf(c) + ' against the pace needed to reach '
-      + c.target.toLocaleString() + ' by ' + c.ends + '.';
+      + c.target.toLocaleString('en-US') + ' by ' + c.ends + '.';
     rep.querySelector('[data-rep="chart"]').innerHTML = chart(c);
 
     /* THE BOARD ADDS UP TO THE TARGET, which is the only way three numbers about
@@ -3255,15 +3302,15 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     var today = Math.max(1, Math.round(c.done * 0.104));
     var open = Math.max(0, c.target - c.done - claimed);
     rep.querySelector('[data-rep="board"]').innerHTML =
-        '<span class="rep-state"><b>' + open.toLocaleString() + '</b><span>Open on the board</span></span>'
-      + '<span class="rep-state"><b>' + claimed.toLocaleString() + '</b><span>Claimed, in progress</span></span>'
-      + '<span class="rep-state"><b>' + today.toLocaleString() + '</b><span>Completed today</span></span>';
+        '<span class="rep-state"><b>' + open.toLocaleString('en-US') + '</b><span>Open on the board</span></span>'
+      + '<span class="rep-state"><b>' + claimed.toLocaleString('en-US') + '</b><span>Claimed, in progress</span></span>'
+      + '<span class="rep-state"><b>' + today.toLocaleString('en-US') + '</b><span>Completed today</span></span>';
 
     var consumed = c.spent;
     var bidLabel = growth ? 'Price per 1,000 verified views' : 'Bid per verified completion';
     var shows = growth
-      ? '(' + c.done.toLocaleString() + ' \u00f7 1,000 \u00d7 ' + moneyF(bid) + ')'
-      : '(' + c.done.toLocaleString() + ' \u00d7 ' + moneyF(bid) + ')';
+      ? '(' + c.done.toLocaleString('en-US') + ' \u00f7 1,000 \u00d7 ' + moneyF(bid) + ')'
+      : '(' + c.done.toLocaleString('en-US') + ' \u00d7 ' + moneyF(bid) + ')';
     rep.querySelector('[data-rep="acct"]').innerHTML =
         '<tr><td>Campaign budget</td><td>' + moneyF(c.budget) + '</td></tr>'
       + '<tr><td>' + bidLabel + '</td><td>' + moneyF(bid) + '</td></tr>'
@@ -3272,16 +3319,16 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
       + '<tr><td>Invoice <span class="is-num">INV-2026-0' + c.ref.slice(-2) + '</span></td><td>PAID</td></tr>';
 
     rep.querySelector('[data-rep="ver"]').innerHTML =
-        '<span class="rep-state is-ok"><b>' + v.ok.toLocaleString() + '</b><span>Verified</span></span>'
-      + '<span class="rep-state"><b>' + v.wait.toLocaleString() + '</b><span>Under review</span></span>'
-      + '<span class="rep-state is-bad"><b>' + v.bad.toLocaleString() + '</b><span>Did not verify</span></span>';
+        '<span class="rep-state is-ok"><b>' + v.ok.toLocaleString('en-US') + '</b><span>Verified</span></span>'
+      + '<span class="rep-state"><b>' + v.wait.toLocaleString('en-US') + '</b><span>Under review</span></span>'
+      + '<span class="rep-state is-bad"><b>' + v.bad.toLocaleString('en-US') + '</b><span>Did not verify</span></span>';
 
     var all = v.ok + v.wait + v.bad;
     rep.querySelector('[data-rep="filters"]').innerHTML =
-        '<span class="rep-filter is-on">All (' + all.toLocaleString() + ')</span>'
-      + '<span class="rep-filter">Verified (' + v.ok.toLocaleString() + ')</span>'
-      + '<span class="rep-filter">Under review (' + v.wait.toLocaleString() + ')</span>'
-      + '<span class="rep-filter">Did not verify (' + v.bad.toLocaleString() + ')</span>';
+        '<span class="rep-filter is-on">All (' + all.toLocaleString('en-US') + ')</span>'
+      + '<span class="rep-filter">Verified (' + v.ok.toLocaleString('en-US') + ')</span>'
+      + '<span class="rep-filter">Under review (' + v.wait.toLocaleString('en-US') + ')</span>'
+      + '<span class="rep-filter">Did not verify (' + v.bad.toLocaleString('en-US') + ')</span>';
     rep.querySelector('[data-rep="runs"]').innerHTML = runsTable(c);
 
     /* THE VIDEOS CARD BELONGS TO ONE KIND AND NO OTHER. An engagement campaign
@@ -3319,7 +3366,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
         '<tr><td>Campaign budget</td><td>' + moneyF(c.budget) + '</td></tr>'
       + '<tr><td>' + (growth ? 'Price per 1,000 verified views' : 'Bid per verified completion')
       + '</td><td>' + moneyF(bidOf(c)) + '</td></tr>'
-      + '<tr><td>Target ' + unitOf(c) + '</td><td>' + reach.toLocaleString() + '</td></tr>'
+      + '<tr><td>Target ' + unitOf(c) + '</td><td>' + reach.toLocaleString('en-US') + '</td></tr>'
       + '<tr><td>Content review</td><td>' + (growth ? 'Review everything' : 'Auto-approve') + '</td></tr>'
       + '<tr><td>Consumed</td><td>' + moneyF(0) + '</td></tr>'
       + '<tr><td>Invoice</td><td>After approval</td></tr>';
