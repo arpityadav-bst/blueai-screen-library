@@ -541,6 +541,19 @@ body { min-height: 100vh; }
 }
 .sheet--wide .form-foot { flex: none; }
 
+/* AND HIDDEN STILL MEANS HIDDEN. Every rule above sets display on a class, and a
+   class beats the UA's [hidden] { display: none }: .form-card[hidden] is one
+   class and one attribute, .sheet--wide .form-card is two classes, so the form
+   card kept its display: flex while renderShell was telling it to go away. The
+   chooser and the form appeared side by side, each in half a dialog.
+   THIS IS THE THIRD TIME THIS FILE HAS BEEN BITTEN BY IT - .gate-x, .type-list,
+   and now these two - and the first two are each carrying a comment saying so.
+   The rule is simple and I keep rediscovering it: if you set display, you own
+   [hidden] from then on. */
+.sheet--wide .form-card[hidden],
+.sheet--wide .type-list[hidden],
+.sheet--wide .form-stage[hidden] { display: none; }
+
 /* AND THE BOX INSIDE THE BOX GOES. .step-panel draws its own border and ground,
    which was right when it sat on a page: the panel was the form's surface and
    the page was behind it. In a dialog the dialog is that surface, so the panel
