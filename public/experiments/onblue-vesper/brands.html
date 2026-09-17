@@ -35,6 +35,18 @@ document.documentElement.setAttribute('data-theme', 'light');
 @media (max-width: 1080px) { #how-it-works .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 620px) { #how-it-works .steps { grid-template-columns: 1fr; } }
 
+/* ---- the agency form --------------------------------------------------------
+   The same column the two doors occupy, so the level does not change shape when
+   the panes swap: a form that was wider or narrower than the buttons it
+   alternates with would make the swap read as a navigation rather than as a
+   choice. */
+.gate-reg { width: 100%; max-width: 380px; margin-top: 40px; display: grid; gap: 16px; text-align: left; }
+.gate-reg .q { margin: 0; }
+.gate-reg .q-label { font-size: 13.5px; font-weight: 500; }
+.gate-reg .field { height: var(--hero-btn-h); }
+.gate-go { width: 100%; height: var(--hero-btn-h); margin-top: 4px; font-size: calc(var(--btn) + 1.5px); }
+.gate-opts[hidden], .gate-reg[hidden], .gate-alt[hidden] { display: none; }
+
 /* ---- platforms --------------------------------------------------------------
    Five across, because five is what there are and a row that wraps to 3+2 would
    invent a hierarchy the content does not have. The live one is not bigger, only
@@ -57,13 +69,29 @@ document.documentElement.setAttribute('data-theme', 'light');
    sides is identical, so the surface does the arguing rather than colour or
    weight, and the row reads left to right as a before and an after. */
 .sheet--wide { width: min(820px, calc(100vw - 32px)); }
-.sheet-lede { margin: -6px 0 22px; color: var(--muted); font-size: 14px; line-height: 1.55; letter-spacing: -0.01em; }
+/* A MEASURE, BECAUSE THIS SHEET IS TWICE THE WIDTH OF THE OTHERS. Every other
+   sheet is 430px, where a paragraph cannot run long; here the same rule gave a
+   four-sentence lede a 772px column, about 105 characters a line, roughly half
+   as wide again as anything is comfortable to read. The table below wants the
+   full width. The prose does not, and they do not have to agree. */
+.sheet-lede { max-width: 64ch; margin: -6px 0 22px; color: var(--muted); font-size: 14px; line-height: 1.55; letter-spacing: -0.01em; }
+/* IT IS NOT A FORM SUBMIT, SO IT IS NOT FULL WIDTH. The shared rule sizes this
+   button to a column of fields; there are no fields here, so nothing on the
+   screen was setting that width and it read as a band across the foot of the
+   panel rather than as the one thing to press. Left, where every other line in
+   this sheet starts. */
+.sheet--wide .sheet-go { width: auto; }
 .cmp { border-top: 1px solid var(--border-soft); }
+/* THE COLUMNS ARE SIZED BY WHAT IS IN THEM, which they were not. The widest
+   label is 26 characters, the widest old-way line is 30 and the widest onBlue
+   line is 37 with an icon in front of it, so the shortest content had the widest
+   column and the longest had a narrow one: two cells wrapped to a second line
+   inside a panel with room for neither wrap. These ratios are the content's. */
 .cmp-head, .cmp-row {
   display: grid;
-  grid-template-columns: 1.15fr 1fr 1.25fr;
+  grid-template-columns: 1fr 1.2fr 1.45fr;
   align-items: center;
-  gap: 18px;
+  gap: 16px;
 }
 .cmp-head { padding: 12px 16px; }
 .cmp-head .mini-title { margin: 0; }
@@ -206,9 +234,11 @@ document.documentElement.setAttribute('data-theme', 'light');
      where the divide has only scaled it to 0.80, so the tallest thing this band
      ever has to hold is 0.80 x 1.778 x W. 1.50 covers it with room, and the ends
      are still never cut.
-     +34px IS THE TITLE, added rather than absorbed: extra room can only delay a
-     crop, never bring one forward. */
-  height: calc(var(--ring-w) * 1.50 + 34px);
+     THE +34px WENT WITH THE TITLES. It was the caption's own line and the gap
+     above it, added rather than absorbed so that extra room could only ever
+     delay a crop; with no caption to hold, keeping it would be 34px of band
+     with nothing in it, split above and below a card that centres itself. */
+  height: calc(var(--ring-w) * 1.50);
   transform-style: preserve-3d;
   /* SLOW ENOUGH TO BE AMBIENT. 180s is one full turn, so a frame takes about
      seven and a half seconds to hand its place to the next one and roughly a
@@ -229,18 +259,19 @@ document.documentElement.setAttribute('data-theme', 'light');
 .work-arc.is-held .work-stage,
 .work-arc:focus-within .work-stage { animation-play-state: paused; }
 
-/* THE CARD IS NOW A COLUMN, NOT A SURFACE: the frame and its name, stacked.
-   The radius, the clip and the ground moved to .work-shot, so the caption sits
-   on the page rather than on a panel, and NOTHING CASTS A SHADOW. A drop shadow
-   is a claim about height, and these are already at different depths for real;
-   saying it twice, once by perspective and once by a blur, is the one place the
-   band could start looking like a slideshow. */
+/* THE CARD IS THE FRAME AND NOTHING ELSE NOW. It was a column, the frame with
+   its name under it, and the names have gone: 24 captions under a wall of film
+   is a second thing to read on a band whose whole job is to be looked at, and
+   the name a reader might actually want is one press away in the player.
+   NOTHING CASTS A SHADOW. A drop shadow is a claim about height, and these are
+   already at different depths for real; saying it twice, once by perspective and
+   once by a blur, is the one place the band could start looking like a
+   slideshow. */
 .work-card {
   position: absolute;
   left: 50%;
   top: 50%;
-  display: flex;
-  flex-direction: column;
+  display: block;
   width: var(--ring-w);
   padding: 0;
   border: 0;
@@ -265,6 +296,17 @@ document.documentElement.setAttribute('data-theme', 'light');
   border-radius: 12px;
   overflow: hidden;
   background: var(--panel-bg);
+  /* THE BAND SITS BACK AT 70%, AND IT IS EACH FRAME'S OWN, not the band's. It
+     was on .work-arc's mask, which dims the whole turning ring as one composited
+     result: correct for a wall, impossible for one frame to step out of. Here it
+     is a property of the frame, so the one you point at can come forward to full
+     while the rest stay back.
+     NOT ON .work-card. That is the element carrying the 3D transform and
+     backface-visibility: hidden, which is what culls the near half of the ring;
+     opacity groups an element, and grouping is the thing that puts that culling
+     at risk. The frame inside it is flat and takes it for free. */
+  opacity: 0.7;
+  transition: opacity 0.35s ease;
 }
 /* NO pointer-events: none HERE ANY MORE. It was defensive, to make sure a
    click landed on the button rather than on the video, and a click on a <video>
@@ -273,12 +315,25 @@ document.documentElement.setAttribute('data-theme', 'light');
    making it transparent to the pointer means every hover has to fall through it
    and find something else, and inside a 3D layer with backface culling that is
    exactly the hit test least worth relying on. */
+/* GREY UNTIL YOU POINT AT ONE, and the colour coming back IS the hover. The
+   band is a wall of other people's footage in every palette there is, and at
+   full colour 24 of them at once compete with each other and with the page; one
+   frame in colour on a grey wall is the clearest possible answer to "which one
+   am I on". It is also the cheapest: the state was already being computed for
+   the pause, the scrim and the play mark.
+   GREY, NOT A TINT. A blue laid over all of them was a treatment applied to
+   somebody else's work, and it read as a brand filter rather than as footage
+   waiting to be looked at. */
 .work-video {
   display: block;
   width: 100%;
   aspect-ratio: 9 / 16;
   object-fit: cover;
+  filter: grayscale(1);
+  transition: filter 0.35s ease;
 }
+.work-card.is-lit .work-video,
+.work-card:focus-visible .work-video { filter: none; }
 /* THE HIGHLIGHT IS A SCRIM, and it is doing two jobs at once: it says which
    frame the pointer is on, and it gives the play mark something to be legible
    against. These films are other people's footage, so any given frame's middle
@@ -301,23 +356,69 @@ document.documentElement.setAttribute('data-theme', 'light');
 .work-card.is-lit .work-shot::after,
 .work-card:focus-visible .work-shot::after { opacity: 1; }
 
-/* A TITLE, AND IT HANGS OFF THE FRAME'S LEFT EDGE. Centred under a frame that
-   is itself rotated, the text drifts away from the picture it belongs to as the
-   ring turns, because the only edge a reader can line it up against is the one
-   nearest them. Flush left it stays attached to a fixed point.
-   IT ALSO STOPPED WHISPERING. --dim-ink at 12px was quieter than the band note
-   underneath it, which made a caption about the work read as smaller print than
-   a caption about the page. */
-.work-name {
-  display: block;
-  margin-top: 12px;
-  padding-inline: 2px;
-  color: var(--ink);
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  text-align: left;
+/* ---- the lens fringe --------------------------------------------------------
+   THE TILE SPLITS, NOTHING IS PAINTED ON IT. Two goes at this were overlays: a
+   gradient inside the frame's rectangle, which is a coloured strip lying on a
+   picture rather than a lens misbehaving. What a lens actually does is put the
+   channels in different places, so the FRAME lands twice, a few pixels apart,
+   and what you see of the two ghosts is the sliver either side of it.
+   drop-shadow, NOT A SECOND COPY OF THE FILM. A shadow is cast from the alpha
+   silhouette, which here is the frame's own rounded rectangle, and it paints
+   behind: at zero offset it is hidden by the frame exactly, and every pixel of
+   offset reveals that much of it down one edge. Two of them in opposite
+   directions is the whole effect, at the cost of no extra element and no second
+   video decoding anywhere.
+   ON .work-shot, NOT ON .work-card. The card carries the 3D transform and
+   backface-visibility: hidden, which is what culls the near half of the ring; a
+   filter on it would make it a containing block and put that culling at risk.
+   The frame inside it is flat, so filtering it costs nothing.
+   RED GOES OUTWARD AT BOTH ENDS, which is what radial aberration does: away from
+   the centre of the field. So the offsets are signed and pass through zero in
+   the middle of the band, and the direction reverses itself there without any
+   flip to hide, because at zero there is nothing to see. */
+.work-shot {
+  animation: ca-edge 180s linear infinite;
+  animation-delay: calc(var(--i) * -7.5s);
 }
+/* THE TIMING IS THE RING'S OWN, AND CSS CAN KNOW IT WITHOUT MEASURING. A frame's
+   place on screen looks like something only script could find, because the band
+   is turning; but the turn is linear and every frame is a fixed 15 degrees from
+   its neighbour, so each one's phase is a constant offset from the ring's. The
+   same 180s, delayed -7.5s per step, is in exact lockstep with where that frame
+   actually is. No rect reads, no frame loop.
+   THE STOPS ARE THE VIEWPORT'S EDGES, NOT THE RING'S. A frame sits at angle
+   a = turn + 15 x i, and a is 180deg when it is dead centre and farthest away.
+   It does not reach 90 or 270: at this radius it leaves the viewport at about
+   63 degrees either side of centre, which is a = 117 and a = 243, or 32.5% and
+   67.5% of the turn. Those are where the split is full. Peaking at 90/270 would
+   have put the effect at its strongest on frames that had already left.
+   NOTHING AT ALL THROUGH THE MIDDLE. It used to ease all the way down from the
+   edge to the centre, which meant a little of it everywhere: a band permanently
+   wearing a light colour fringe reads as a treatment, not as an edge of a lens.
+   It is flat zero from 42% to 58%, the middle half of what you can see, and only
+   climbs over the outer stretch either side. So a frame arrives split, settles
+   as it comes in, and splits again on its way out.
+   SEVEN PIXELS AT ITS WIDEST, on a frame about 270px across. It is meant to be
+   noticed on the way past, not looked at. */
+@keyframes ca-edge {
+  0%     { filter: drop-shadow(7px 0 0 rgba(255, 36, 36, 0.8)) drop-shadow(-7px 0 0 rgba(0, 224, 255, 0.8)); }
+  34%    { filter: drop-shadow(7px 0 0 rgba(255, 36, 36, 0.8)) drop-shadow(-7px 0 0 rgba(0, 224, 255, 0.8)); }
+  38%    { filter: drop-shadow(2px 0 0 rgba(255, 36, 36, 0.8)) drop-shadow(-2px 0 0 rgba(0, 224, 255, 0.8)); }
+  42%    { filter: drop-shadow(0 0 0 rgba(255, 36, 36, 0.8)) drop-shadow(0 0 0 rgba(0, 224, 255, 0.8)); }
+  58%    { filter: drop-shadow(0 0 0 rgba(255, 36, 36, 0.8)) drop-shadow(0 0 0 rgba(0, 224, 255, 0.8)); }
+  62%    { filter: drop-shadow(-2px 0 0 rgba(255, 36, 36, 0.8)) drop-shadow(2px 0 0 rgba(0, 224, 255, 0.8)); }
+  66%    { filter: drop-shadow(-7px 0 0 rgba(255, 36, 36, 0.8)) drop-shadow(7px 0 0 rgba(0, 224, 255, 0.8)); }
+  100%   { filter: drop-shadow(-7px 0 0 rgba(255, 36, 36, 0.8)) drop-shadow(7px 0 0 rgba(0, 224, 255, 0.8)); }
+}
+/* it stops when the ring stops, for the reason everything else on this card
+   does: a split still sliding across a frame that has come to rest for you would
+   be the one thing on the band that had not noticed */
+.work-arc.is-held .work-shot,
+.work-arc:focus-within .work-shot { animation-play-state: paused; }
+/* and it goes entirely on the frame you are looking at, which is the same
+   statement the grayscale makes: this one is being shown to you properly */
+.work-card.is-lit .work-shot,
+.work-card:focus-visible .work-shot { animation-name: none; filter: none; opacity: 1; }
 
 /* the play mark appears only once the ring has stopped for you, so it is never
    a control chasing a moving target.
@@ -353,6 +454,46 @@ document.documentElement.setAttribute('data-theme', 'light');
    A <dialog> for the same reasons every other overlay on this site is one, and
    sized off the viewport's SHORT side so a 9:16 film is never taller than the
    screen it is being watched on. */
+/* ---- leaving ----------------------------------------------------------------
+   THE PAGE'S OWN GROUND, NOT A SCRIM. A translucent wash over the old screen
+   would leave the stale header and the submitted form legible underneath, which
+   is the thing this exists to stop showing. Opaque, and the only thing on it is
+   the mark that is on every other surface of this site.
+   IT FADES IN OVER 140ms so a navigation that resolves immediately never paints
+   it, and a slow one is covered before anybody reads the screen behind it. */
+.leaving {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  background: var(--bg);
+  opacity: 0;
+  animation: leaving-in 0.14s ease-out 0.06s forwards;
+}
+.leaving[hidden] { display: none; }
+.leaving-sun { display: grid; place-items: center; width: 34px; height: 34px; color: var(--blue-ink); }
+.leaving-sun svg { width: 100%; height: 100%; animation: leaving-pulse 1.1s ease-in-out infinite; }
+@keyframes leaving-in { to { opacity: 1; } }
+@keyframes leaving-pulse {
+  0%, 100% { opacity: 0.35; transform: scale(0.86); }
+  50% { opacity: 1; transform: scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .leaving { animation: none; opacity: 1; }
+  .leaving-sun svg { animation: none; opacity: 0.8; }
+}
+
+/* A SIGNED-IN AGENCY IS NOT A VISITOR, and the marketing page is where it lands
+   every time it presses this site's logo or logs out. Every "Sign in" on the
+   page is then an offer to do a thing that has already been done, so they go;
+   the "Create a campaign" controls stay, because creating one is still exactly
+   what that reader came to do, and the script points them at the tool instead of
+   at a register dialog. */
+.is-known .close-alt,
+.is-known .hero-alt,
+.is-known [data-gate="signin"] { display: none; }
+
 /* THREE PROPERTIES CENTRE A MODAL DIALOG AND ALL THREE HAVE TO BE THERE.
    The UA gives one `width: fit-content; height: fit-content; inset: 0; margin:
    auto`, and each part is doing a job: fit-content makes the box the size of the
@@ -407,6 +548,10 @@ document.documentElement.setAttribute('data-theme', 'light');
   transition: background 0.25s ease;
 }
 .lightbox-x:hover { background: rgba(255, 255, 255, 0.26); }
+/* the page's own focus ring, on the one close control that is not in the shared
+   sheet: it never shows on a click now that the dialog takes the focus itself,
+   and a keyboard still gets told where it is */
+.lightbox-x:focus-visible { outline: 2px solid var(--blue-ink); outline-offset: 2px; }
 .lightbox-in { position: relative; }
 
 /* THE ALTERNATION, RESTORED. onblue.css tints #benefits, #agents and
@@ -461,7 +606,18 @@ document.documentElement.setAttribute('data-theme', 'light');
   }
   /* seven films, not 24: the duplicates exist to fill a ring */
   .work-card:nth-child(n+8) { display: none; }
+  /* NO POINTER, SO NO HOVER TO WAIT FOR. A phone would otherwise hold a wall of
+     grey frames with no way on earth to bring the colour back, which is a state
+     this design only has because a mouse can leave it. */
   .work-play { opacity: 1; transform: none; }
+  .work-video { filter: none; }
+  /* full strength for the same reason it is full colour: there is no hover here
+     to bring a frame forward with, so none of them is held back */
+  .work-shot { opacity: 1; }
+  /* A SWIPE ROW IS NOT A LENS. There are no ends of a field of view here, only
+     the ends of a list, and a frame's place in that list says nothing about
+     where it is on screen. */
+  .work-shot { animation: none; }
   .lightbox video { height: auto; width: min(92vw, 420px); }
   .lightbox-x { top: -44px; right: 0; }
 }
@@ -825,168 +981,144 @@ document.documentElement.setAttribute('data-theme', 'light');
               <video class="work-video" src="samples/airtap-red-eye.mp4" poster="samples/airtap-red-eye.jpg" muted loop playsinline preload="none"></video>
               <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
             </span>
-            <span class="work-name">Airtap, red eye</span>
           </button>
           <button class="work-card" type="button" style="--i:1" data-play="samples/hunter-raid-awaken.mp4" aria-label="Play Hunter Raid, awaken">
             <span class="work-shot">
               <video class="work-video" src="samples/hunter-raid-awaken.mp4" poster="samples/hunter-raid-awaken.jpg" muted loop playsinline preload="none"></video>
               <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
             </span>
-            <span class="work-name">Hunter Raid, awaken</span>
           </button>
           <button class="work-card" type="button" style="--i:2" data-play="samples/sandbar-the-menu.mp4" aria-label="Play Sandbar, the menu">
             <span class="work-shot">
               <video class="work-video" src="samples/sandbar-the-menu.mp4" poster="samples/sandbar-the-menu.jpg" muted loop playsinline preload="none"></video>
               <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
             </span>
-            <span class="work-name">Sandbar, the menu</span>
           </button>
           <button class="work-card" type="button" style="--i:3" data-play="samples/airtap-first-date.mp4" aria-label="Play Airtap, first date">
             <span class="work-shot">
               <video class="work-video" src="samples/airtap-first-date.mp4" poster="samples/airtap-first-date.jpg" muted loop playsinline preload="none"></video>
               <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
             </span>
-            <span class="work-name">Airtap, first date</span>
           </button>
           <button class="work-card" type="button" style="--i:4" data-play="samples/sandbar-think-out-loud.mp4" aria-label="Play Sandbar, think out loud">
             <span class="work-shot">
               <video class="work-video" src="samples/sandbar-think-out-loud.mp4" poster="samples/sandbar-think-out-loud.jpg" muted loop playsinline preload="none"></video>
               <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
             </span>
-            <span class="work-name">Sandbar, think out loud</span>
           </button>
           <button class="work-card" type="button" style="--i:5" data-play="samples/hunter-raid-first-hour.mp4" aria-label="Play Hunter Raid, first hour">
             <span class="work-shot">
               <video class="work-video" src="samples/hunter-raid-first-hour.mp4" poster="samples/hunter-raid-first-hour.jpg" muted loop playsinline preload="none"></video>
               <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
             </span>
-            <span class="work-name">Hunter Raid, first hour</span>
           </button>
           <button class="work-card" type="button" style="--i:6" data-play="samples/airtap-pasta.mp4" aria-label="Play Airtap, pasta">
             <span class="work-shot">
               <video class="work-video" src="samples/airtap-pasta.mp4" poster="samples/airtap-pasta.jpg" muted loop playsinline preload="none"></video>
               <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
             </span>
-            <span class="work-name">Airtap, pasta</span>
           </button>
           <button class="work-card" type="button" style="--i:7" data-play="samples/airtap-red-eye.mp4" aria-label="Play Airtap, red eye">
             <span class="work-shot">
               <video class="work-video" src="samples/airtap-red-eye.mp4" poster="samples/airtap-red-eye.jpg" muted loop playsinline preload="none"></video>
               <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
             </span>
-            <span class="work-name">Airtap, red eye</span>
           </button>
           <button class="work-card" type="button" style="--i:8" data-play="samples/hunter-raid-awaken.mp4" aria-label="Play Hunter Raid, awaken">
             <span class="work-shot">
               <video class="work-video" src="samples/hunter-raid-awaken.mp4" poster="samples/hunter-raid-awaken.jpg" muted loop playsinline preload="none"></video>
               <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
             </span>
-            <span class="work-name">Hunter Raid, awaken</span>
           </button>
           <button class="work-card" type="button" style="--i:9" data-play="samples/sandbar-the-menu.mp4" aria-label="Play Sandbar, the menu">
             <span class="work-shot">
               <video class="work-video" src="samples/sandbar-the-menu.mp4" poster="samples/sandbar-the-menu.jpg" muted loop playsinline preload="none"></video>
               <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
             </span>
-            <span class="work-name">Sandbar, the menu</span>
           </button>
           <button class="work-card" type="button" style="--i:10" data-play="samples/airtap-first-date.mp4" aria-label="Play Airtap, first date">
             <span class="work-shot">
               <video class="work-video" src="samples/airtap-first-date.mp4" poster="samples/airtap-first-date.jpg" muted loop playsinline preload="none"></video>
               <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
             </span>
-            <span class="work-name">Airtap, first date</span>
           </button>
           <button class="work-card" type="button" style="--i:11" data-play="samples/sandbar-think-out-loud.mp4" aria-label="Play Sandbar, think out loud">
             <span class="work-shot">
               <video class="work-video" src="samples/sandbar-think-out-loud.mp4" poster="samples/sandbar-think-out-loud.jpg" muted loop playsinline preload="none"></video>
               <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
             </span>
-            <span class="work-name">Sandbar, think out loud</span>
           </button>
           <button class="work-card" type="button" style="--i:12" data-play="samples/hunter-raid-first-hour.mp4" aria-label="Play Hunter Raid, first hour">
             <span class="work-shot">
               <video class="work-video" src="samples/hunter-raid-first-hour.mp4" poster="samples/hunter-raid-first-hour.jpg" muted loop playsinline preload="none"></video>
               <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
             </span>
-            <span class="work-name">Hunter Raid, first hour</span>
           </button>
           <button class="work-card" type="button" style="--i:13" data-play="samples/airtap-pasta.mp4" aria-label="Play Airtap, pasta">
             <span class="work-shot">
               <video class="work-video" src="samples/airtap-pasta.mp4" poster="samples/airtap-pasta.jpg" muted loop playsinline preload="none"></video>
               <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
             </span>
-            <span class="work-name">Airtap, pasta</span>
           </button>
           <button class="work-card" type="button" style="--i:14" data-play="samples/airtap-red-eye.mp4" aria-label="Play Airtap, red eye">
             <span class="work-shot">
               <video class="work-video" src="samples/airtap-red-eye.mp4" poster="samples/airtap-red-eye.jpg" muted loop playsinline preload="none"></video>
               <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
             </span>
-            <span class="work-name">Airtap, red eye</span>
           </button>
           <button class="work-card" type="button" style="--i:15" data-play="samples/hunter-raid-awaken.mp4" aria-label="Play Hunter Raid, awaken">
             <span class="work-shot">
               <video class="work-video" src="samples/hunter-raid-awaken.mp4" poster="samples/hunter-raid-awaken.jpg" muted loop playsinline preload="none"></video>
               <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
             </span>
-            <span class="work-name">Hunter Raid, awaken</span>
           </button>
           <button class="work-card" type="button" style="--i:16" data-play="samples/sandbar-the-menu.mp4" aria-label="Play Sandbar, the menu">
             <span class="work-shot">
               <video class="work-video" src="samples/sandbar-the-menu.mp4" poster="samples/sandbar-the-menu.jpg" muted loop playsinline preload="none"></video>
               <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
             </span>
-            <span class="work-name">Sandbar, the menu</span>
           </button>
           <button class="work-card" type="button" style="--i:17" data-play="samples/airtap-first-date.mp4" aria-label="Play Airtap, first date">
             <span class="work-shot">
               <video class="work-video" src="samples/airtap-first-date.mp4" poster="samples/airtap-first-date.jpg" muted loop playsinline preload="none"></video>
               <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
             </span>
-            <span class="work-name">Airtap, first date</span>
           </button>
           <button class="work-card" type="button" style="--i:18" data-play="samples/sandbar-think-out-loud.mp4" aria-label="Play Sandbar, think out loud">
             <span class="work-shot">
               <video class="work-video" src="samples/sandbar-think-out-loud.mp4" poster="samples/sandbar-think-out-loud.jpg" muted loop playsinline preload="none"></video>
               <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
             </span>
-            <span class="work-name">Sandbar, think out loud</span>
           </button>
           <button class="work-card" type="button" style="--i:19" data-play="samples/hunter-raid-first-hour.mp4" aria-label="Play Hunter Raid, first hour">
             <span class="work-shot">
               <video class="work-video" src="samples/hunter-raid-first-hour.mp4" poster="samples/hunter-raid-first-hour.jpg" muted loop playsinline preload="none"></video>
               <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
             </span>
-            <span class="work-name">Hunter Raid, first hour</span>
           </button>
           <button class="work-card" type="button" style="--i:20" data-play="samples/airtap-pasta.mp4" aria-label="Play Airtap, pasta">
             <span class="work-shot">
               <video class="work-video" src="samples/airtap-pasta.mp4" poster="samples/airtap-pasta.jpg" muted loop playsinline preload="none"></video>
               <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
             </span>
-            <span class="work-name">Airtap, pasta</span>
           </button>
           <button class="work-card" type="button" style="--i:21" data-play="samples/airtap-red-eye.mp4" aria-label="Play Airtap, red eye">
             <span class="work-shot">
               <video class="work-video" src="samples/airtap-red-eye.mp4" poster="samples/airtap-red-eye.jpg" muted loop playsinline preload="none"></video>
               <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
             </span>
-            <span class="work-name">Airtap, red eye</span>
           </button>
           <button class="work-card" type="button" style="--i:22" data-play="samples/hunter-raid-awaken.mp4" aria-label="Play Hunter Raid, awaken">
             <span class="work-shot">
               <video class="work-video" src="samples/hunter-raid-awaken.mp4" poster="samples/hunter-raid-awaken.jpg" muted loop playsinline preload="none"></video>
               <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
             </span>
-            <span class="work-name">Hunter Raid, awaken</span>
           </button>
           <button class="work-card" type="button" style="--i:23" data-play="samples/sandbar-the-menu.mp4" aria-label="Play Sandbar, the menu">
             <span class="work-shot">
               <video class="work-video" src="samples/sandbar-the-menu.mp4" poster="samples/sandbar-the-menu.jpg" muted loop playsinline preload="none"></video>
               <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
             </span>
-            <span class="work-name">Sandbar, the menu</span>
           </button>
         </div>
       </div>
@@ -1523,7 +1655,7 @@ document.documentElement.setAttribute('data-theme', 'light');
       <div class="faq-list">
 
         <details class="faq reveal">
-          <summary>Does posting a campaign cost anything?<span class="faq-sign" aria-hidden="true"></span></summary>
+          <summary>Does creating a campaign cost anything?<span class="faq-sign" aria-hidden="true"></span></summary>
           <p>No. A campaign only sets the terms: the video, the budget and the window. Your budget is only ever spent against actions onBlue has verified.</p>
         </details>
 
@@ -1657,7 +1789,7 @@ document.documentElement.setAttribute('data-theme', 'light');
                its copies at /onblue/terms#terms, an absolute path belonging to the
                partner site that 404s from this experiment, and a dead link that
                looks live is worse than one that is plainly a stub. -->
-          <a data-stub>Terms and conditions</a>
+          <a data-stub>Program Terms</a>
         </span>
         <span>Human ambition. Agent execution.</span>
       </div>
@@ -1694,7 +1826,7 @@ document.documentElement.setAttribute('data-theme', 'light');
      because verifying is the platform's job.
      A DIALOG, NOT A SECTION, which is the brands site's own call and the right
      one: it is an argument a reader asks for, not one the page makes at them. -->
-<dialog class="sheet sheet--wide" id="sheet-pricing" aria-labelledby="pricing-title">
+<dialog class="sheet sheet--wide" id="sheet-pricing" aria-labelledby="pricing-title" autofocus>
   <div class="sheet-in">
     <div class="sheet-head">
       <h2 class="sheet-title" id="pricing-title">How pricing works</h2>
@@ -1744,14 +1876,26 @@ document.documentElement.setAttribute('data-theme', 'light');
   </div>
 </dialog>
 
-<dialog class="lightbox" id="lightbox" aria-label="Sample video">
+<!-- THE GAP BETWEEN A PRESS AND A PAGE. Registering, signing in and logging
+     out all end in a full navigation, and until this there was nothing between
+     the click and the new document: the dialog sat there with a form that had
+     already been submitted, under a header that still said signed out. On a slow
+     connection that reads as a dead button.
+     IT COVERS EVERYTHING, rather than spinning inside the dialog. What it is
+     covering is the moment the whole screen stops being true, and animating one
+     corner of a page whose other corners are lying is the weaker answer. -->
+<div class="leaving" id="leaving" hidden aria-hidden="true">
+  <span class="leaving-sun"><svg viewBox="0 0 24 24" fill="currentColor"><use href="#i-spark"/></svg></span>
+</div>
+
+<dialog class="lightbox" id="lightbox" aria-label="Sample video" autofocus>
   <div class="lightbox-in">
     <button class="lightbox-x" type="button" data-lightbox-close aria-label="Close"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
     <video id="lightbox-video" controls playsinline preload="none"></video>
   </div>
 </dialog>
 
-<dialog class="gate is-min" id="gate" aria-labelledby="gate-title-1">
+<dialog class="gate is-min" id="gate" aria-labelledby="gate-title-1" autofocus>
   <div class="gate-field" id="gate-field">
 
     <button class="gate-x" type="button" data-gate="close" aria-label="Close">
@@ -1896,11 +2040,40 @@ document.documentElement.setAttribute('data-theme', 'light');
     <!-- LEVEL 2: the ask -->
     <section class="gate-level" data-level="2" hidden>
       <span class="gate-mark"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><use href="#i-spark"/></svg></span>
+      <!-- TWO ASKS IN ONE LEVEL, NOT TWO LEVELS. The brands site branches here
+           rather than stepping: pressing Create a campaign with no account is a
+           request to register, and pressing Sign in is a request to sign in, and
+           neither is a stage of the other. The level carries both panes and the
+           link between them swaps which is showing, so the heading, the mark and
+           the legal line above and below stay put while only the ask changes. -->
       <span class="eyebrow" id="gate-eyebrow">Get started</span>
-      <h2 class="title-lg" id="gate-title-2">Sign in to <em>onBlue</em>.</h2>
-      <p class="lede" id="gate-sub-2">Sign in to start your application.</p>
+      <h2 class="title-lg" id="gate-title-2">Register your <em>agency</em>.</h2>
+      <p class="lede" id="gate-sub-2">One quick step before you can create campaigns. We review every agency before approving it.</p>
 
-      <div class="gate-opts">
+      <!-- THE AGENCY FORM, quoted from BrandRegister.tsx down to the
+           placeholders. Three fields on .field, which is the same control the
+           application's own email question uses, so this inherits the large
+           surface hover and the error ring without asking for either. -->
+      <form class="gate-reg" id="gate-reg" novalidate>
+        <label class="q" data-field="agency">
+          <span class="q-label">Agency name</span>
+          <input class="field" id="reg-name" name="agency" type="text" autocomplete="organization" placeholder="Acme Games">
+          <span class="msg" data-msg="agency"></span>
+        </label>
+        <label class="q" data-field="work">
+          <span class="q-label">Work email</span>
+          <input class="field" id="reg-mail" name="work" type="email" inputmode="email" autocomplete="email" placeholder="you@youragency.com">
+          <span class="msg" data-msg="work"></span>
+        </label>
+        <label class="q" data-field="site">
+          <span class="q-label">Agency website <span class="opt">(optional)</span></span>
+          <input class="field" id="reg-site" name="site" type="text" inputmode="url" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="https://youragency.com">
+          <span class="msg" data-msg="site"></span>
+        </label>
+        <button class="btn btn-solid hero-solid gate-go" type="submit"><span class="scramble">Continue</span></button>
+      </form>
+
+      <div class="gate-opts" id="gate-opts" hidden>
 
         <div class="gate-mail" id="gate-mail">
           <button class="btn gate-opt" type="button" data-gate="email">
@@ -1939,9 +2112,19 @@ document.documentElement.setAttribute('data-theme', 'light');
            site and 404s from this experiment. A dead link that looks live is
            worse than one that is plainly a stub, so these use the same
            [data-stub] handler the hero's Sign in link already uses. -->
-      <p class="gate-alt" id="gate-back-line">First time here? <button type="button" data-gate="back">See how it works</button></p>
+<!-- ONE CROSS-LINK, NOT TWO, AND IT ONLY POINTS ONE WAY. "Already have an
+           account? Sign in" stood here offering a detour to a screen that
+           Continue now leads to anyway, which made it a second route to the same
+           place taking up the one quiet slot under the button. It is also the
+           argument level one already makes about its own sign-in line.
+           THIS ONE SURVIVES BECAUSE ITS DIRECTION IS REAL. Somebody who opened
+           the gate from Sign in and finds they have no account has nowhere else
+           to go; it shows on that pane and on no other. -->
+      <p class="gate-alt" id="gate-back-line" hidden>New here? <button type="button" data-gate="reg-pane">Register your agency</button></p>
 
-      <p class="gate-legal">By signing up, you agree to the <a data-stub>Program Terms</a>
+      <!-- "By registering" was true when this level had one ask. It now sits
+           under three, one of which is a sign-in. -->
+      <p class="gate-legal">By continuing, you agree to the <a data-stub>Program Terms</a>
         and <a data-stub>Privacy Policy</a>, including <a data-stub>Cookie Use</a>.</p>
     </section>
 
@@ -2173,6 +2356,42 @@ document.documentElement.setAttribute('data-theme', 'light');
       .forEach(window.onblueField);
   }
 
+  /* ---- coming back signed in ------------------------------------------------
+     The email is what both ways in leave behind: registering stores it beside an
+     agency name, signing in asks for nothing else. Its presence is the only
+     thing this page can honestly read as "you have been through the gate", and
+     it is enough to stop showing somebody a register dialog on their way back to
+     work. */
+  function signedIn() {
+    try { return !!window.sessionStorage.getItem('onblue:email'); } catch (e) { return ''; }
+  }
+
+  /* SHOWN, THEN NAVIGATE. Every caller ends in a document change, so nothing
+     ever has to take it down again; the one job is to be on screen before the
+     old one can be misread. */
+  function leave(url) {
+    var cover = document.getElementById('leaving');
+    if (cover) { cover.hidden = false; }
+    window.location.href = url;
+  }
+
+  (function known() {
+    if (!signedIn()) { return; }
+    document.body.classList.add('is-known');
+    Array.prototype.forEach.call(document.querySelectorAll('[data-gate="open"]'), function (el) {
+      el.removeAttribute('data-gate');
+      /* THE WORDS CHANGE ON THE CONTROLS THAT LEAD SOMEWHERE ELSE NOW. A button
+         reading "Create a campaign" that opens the builder is still honest; one
+         reading it that opens a register dialog is not, and that is the only
+         difference this makes. The header's is the exception: it is the one
+         control a returning agency uses to get back to its own work, so it says
+         so. */
+      if (el.classList.contains('header-cta')) { el.textContent = 'Your campaigns'; }
+      if (el.tagName === 'A') { el.setAttribute('href', 'campaign.html'); }
+      el.addEventListener('click', function (e) { e.preventDefault(); leave('campaign.html'); });
+    });
+  })();
+
   /* ---------------------------------------------------------- the gate ----
      TWO LEVELS, and the shape is inherited from the partner site because it
      carries real information: say what happens before asking for an email, and
@@ -2192,12 +2411,57 @@ document.documentElement.setAttribute('data-theme', 'light');
     var lv1 = gate.querySelector('[data-level="1"]');
     var lv2 = gate.querySelector('[data-level="2"]');
     var backLine = document.getElementById('gate-back-line');
+    var title2 = document.getElementById('gate-title-2');
     var mail = document.getElementById('gate-mail');
     var email = document.getElementById('gate-email');
     var err = document.getElementById('gate-email-err');
     var eyebrow = document.getElementById('gate-eyebrow');
     var sub2 = document.getElementById('gate-sub-2');
     var returning = false;
+
+    /* WHICH ASK IS SHOWING. Register is the default because Create a campaign is
+       what most readers press, and signing in is the exception they go looking
+       for. The heading and the lede move with it: a level that swapped its form
+       but kept its title would be telling the reader they are doing one thing
+       while asking them to do another. */
+    var regForm = document.getElementById('gate-reg');
+    var optsEl = document.getElementById('gate-opts');
+    /* THREE ASKS, NOT TWO, because the doors are reached two different ways and
+       they are not the same moment. Arriving from Sign in, they are a sign-in.
+       Arriving from Continue, they are the last step of registering, and telling
+       an agency that just typed its name to "pick up where you left off" is the
+       screen asserting a history that does not exist.
+       ONE PLACE WRITES THE HEADING, THE LEDE AND THE EYEBROW. open() used to
+       write the eyebrow and the lede too, with the creator site's wording, and
+       it ran after this did: a register form asking for an agency name was
+       sitting under "Sign in to start your application". */
+    var mode = 'register';
+    function pane(which) {
+      mode = which;
+      var reg = which === 'register';
+      if (regForm) { regForm.hidden = !reg; }
+      if (optsEl) { optsEl.hidden = reg; }
+      /* on the sign-in pane and nowhere else: after registering there is no
+         "new here" left to be */
+      if (backLine) { backLine.hidden = which !== 'signin'; }
+      if (eyebrow) { eyebrow.textContent = which === 'signin' ? 'Welcome back' : 'Get started'; }
+      if (title2) {
+        title2.innerHTML = reg ? 'Register your <em>agency</em>.'
+          : which === 'signin' ? 'Sign in to <em>onBlue</em>.'
+          : 'Choose how to <em>sign in</em>.';
+      }
+      if (sub2) {
+        sub2.textContent = reg
+          ? 'One quick step before you can create campaigns. We review every agency before approving it.'
+          : which === 'signin' ? 'Sign in to open your dashboard.'
+          : 'This is how you will get back to your campaigns.';
+      }
+      /* the address is already known at this point, so asking for it again would
+         be the form making somebody restate what they just told it */
+      if (which === 'choose' && email) {
+        try { email.value = window.sessionStorage.getItem('onblue:email') || ''; } catch (e) {}
+      }
+    }
     var closing = 0;
     var sweeping = false;
 
@@ -2218,15 +2482,20 @@ document.documentElement.setAttribute('data-theme', 'light');
        rather than behind it. The swap of which is which still happens at the
        midpoint, so the reader never sees a level change without the band over
        the place it changed. */
-    function step(to) {
-      if (!gateField || sweeping) { show(to); return; }
-      var from = to === 2 ? lv1 : lv2;
-      var next = to === 2 ? lv2 : lv1;
+    /* WRITTEN FOR THE TWO LEVELS, NEEDED AGAIN ONE LAYER DOWN. Register to
+       sign-in is the same move as level one to level two: one block of content
+       becoming another, in place, with the band over the moment it changes. So
+       what was step() now takes the two boxes and the swap to run at the
+       midpoint, and step() is a two-line caller of it. A second copy of the
+       measuring, the clip and the wipe maths is how the two would start
+       disagreeing about what a transition on this page looks like. */
+    function sweep(from, next, swap) {
+      if (!gateField || sweeping) { swap(); return; }
       var BAND = 0.34;
 
       /* set first, so show() skips the entrance animation */
       sweeping = true;
-      show(to);
+      swap();
       from.hidden = false;
 
       /* MEASURED ONCE, NOT EVERY FRAME. Reading a rect inside the loop forced a
@@ -2276,6 +2545,10 @@ document.documentElement.setAttribute('data-theme', 'light');
       });
     }
 
+    function step(to) {
+      sweep(to === 2 ? lv1 : lv2, to === 2 ? lv2 : lv1, function () { show(to); });
+    }
+
     function enter(level) {
       level.classList.remove('appear', 'appear--fade');
       void level.offsetWidth;
@@ -2286,9 +2559,10 @@ document.documentElement.setAttribute('data-theme', 'light');
       var toL2 = which === 2;
       lv1.hidden = toL2;
       lv2.hidden = !toL2;
-      /* the way back is the applicant's; a returning user never saw level one,
-         so offering it would walk them somewhere they did not come from */
-      backLine.hidden = returning;
+      /* NOT backLine. This used to set it, from a version where that line meant
+         "back to level one"; it means "go and register" now, and this write ran
+         after pane()'s and with the opposite sense, which is why the register
+         pane was offering a link to itself. pane() owns it. */
       gate.setAttribute('aria-labelledby', toL2 ? 'gate-title-2' : 'gate-title-1');
       /* the entrance is for arriving at a level, not for changing between
          them: while the band is crossing, the wipe IS the transition and a
@@ -2309,10 +2583,11 @@ document.documentElement.setAttribute('data-theme', 'light');
     function open(asReturning) {
       window.clearTimeout(closing);
       returning = !!asReturning;
-      eyebrow.textContent = returning ? 'Welcome back' : 'Get started';
-      sub2.textContent = returning
-        ? 'Sign in to open your dashboard.'
-        : 'Sign in to start your application.';
+      /* THE ASK IS RESET ON EVERY OPEN, like the level below it and for the same
+         reason: which pane you were on last time is not something to inherit,
+         and without this a reader who looked at sign-in once found it again
+         behind a button that said Create a campaign. */
+      pane(returning ? 'signin' : 'register');
       clearError();
       /* both doors again on every open: a field left standing from last time is
          a half-finished sentence the reader did not write */
@@ -2376,8 +2651,51 @@ document.documentElement.setAttribute('data-theme', 'light');
          that loop without putting an address in a query string, in history, or
          in a referrer. */
       try { window.sessionStorage.setItem('onblue:email', email.value.trim()); } catch (e) {}
-      window.location.href = 'campaign.html';
+      leave('campaign.html');
     }
+
+    /* ---- registering an agency -------------------------------------------
+       THREE FIELDS AND TWO RULES, which is what the brands site asks for: a name
+       it can call you, an address it can reply to, and a site it can look at,
+       the last of which is optional and so is not checked.
+       THE EMAIL TEST IS THE ONE THE APPLICATION USES, character for character,
+       because the two places this product accepts an address cannot be allowed
+       to disagree about what one is.
+       WHAT IT HANDS OVER IS THE AGENCY, not just the address. The creator gate
+       passes an email in sessionStorage so the application can prefill it; this
+       passes the name too, because the screen on the other side opens by telling
+       you your agency is in review and has to be able to name it. */
+    var isEmail = function (v) { return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim()); };
+    if (regForm) regForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var name = document.getElementById('reg-name');
+      var mail = document.getElementById('reg-mail');
+      var site = document.getElementById('reg-site');
+      function fail(el, msg) {
+        var slot = el.parentNode.querySelector('.msg');
+        if (slot) { slot.textContent = msg || ''; slot.classList.toggle('is-err', !!msg); }
+        el.classList.toggle('is-bad', !!msg);
+        return !!msg;
+      }
+      var bad = fail(name, name.value.trim() ? '' : 'Tell us what the agency is called.');
+      bad = fail(mail, !mail.value.trim() ? 'Add the email we should reply to.'
+                     : !isEmail(mail.value) ? 'That does not look like an email. Check for a typo.' : '') || bad;
+      if (bad) { (name.value.trim() ? mail : name).focus(); return; }
+      try {
+        window.sessionStorage.setItem('onblue:agency', name.value.trim());
+        /* ONE-SHOT: this is what puts the next page on the in-review screen, and
+           it is separate from the name because the name has to survive it. */
+        window.sessionStorage.setItem('onblue:new', '1');
+        window.sessionStorage.setItem('onblue:email', mail.value.trim());
+        if (site.value.trim()) { window.sessionStorage.setItem('onblue:site', site.value.trim()); }
+      } catch (e2) {}
+      /* THE LAST STEP OF REGISTERING IS PICKING A DOOR, so Continue crosses to
+         them rather than leaving: an account has to be something you can get
+         back into, and until one of these is pressed there is no way in. It
+         crosses under the band for the reason every other change on this field
+         does, which is the whole argument for having a band. */
+      sweep(regForm, optsEl, function () { pane('choose'); });
+    });
 
     gate.addEventListener('click', function (e) {
       /* the dialog element IS the backdrop hit area: a click that lands on it
@@ -2388,13 +2706,20 @@ document.documentElement.setAttribute('data-theme', 'light');
       var what = act.getAttribute('data-gate');
       if (what === 'close') { close(); }
       else if (what === 'next') { step(2); }
-      else if (what === 'signin') { returning = true; open(true); }
+      else if (what === 'signin') { open(true); }
+      else if (what === 'reg-pane') { pane('register'); }
       else if (what === 'back') { step(1); }
       else if (what === 'email') { openMail(); }
       else if (what === 'continue') { proceed(); }
       else if (what === 'google') {
-        try { window.sessionStorage.removeItem('onblue:email'); } catch (e2) {}
-        window.location.href = 'campaign.html';
+        /* THE STUB HAS NO ADDRESS TO OFFER, so it clears whatever was typed
+           rather than carrying a wrong one forward. Unless the agency has just
+           registered, in which case its work email is known, was not guessed,
+           and is the address the approval is going to. */
+        if (mode !== 'choose') {
+          try { window.sessionStorage.removeItem('onblue:email'); } catch (e2) {}
+        }
+        leave('campaign.html');
       }
     });
 

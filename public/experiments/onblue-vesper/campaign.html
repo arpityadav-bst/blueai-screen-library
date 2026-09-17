@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Post a campaign on onBlue</title>
+<title>Create a campaign on onBlue</title>
 <meta name="description" content="Write a brief, set a budget, and onBlue puts it in front of agents that run it." />
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22%232f6dff%22%3E%3Cpath%20d%3D%22M12%202.6C12.55%202.6%2012.88%203.15%2013.08%204.7c.62%204.7%201.52%205.6%206.22%206.22%201.55.2%202.1.53%202.1%201.08s-.55.88-2.1%201.08c-4.7.62-5.6%201.52-6.22%206.22-.2%201.55-.53%202.1-1.08%202.1s-.88-.55-1.08-2.1c-.62-4.7-1.52-5.6-6.22-6.22C3.15%2012.88%202.6%2012.55%202.6%2012s.55-.88%202.1-1.08c4.7-.62%205.6-1.52%206.22-6.22C11.12%203.15%2011.45%202.6%2012%202.6Z%22%2F%3E%3C%2Fsvg%3E" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -25,6 +25,71 @@
 <script src="onblue-dev.js" defer></script>
 
 <style>
+/* the review screen borrows the dashboard's column and the confirmation's
+   centring, and needs nothing of its own beyond saying so */
+.rev[hidden] { display: none; }
+.rev .confirm { padding-top: clamp(40px, 7vw, 96px); }
+
+/* THE APPLICATION'S OWN MACHINERY STEPS ASIDE FOR IT, the same way it does for
+   the dashboard. Three states now hide the head, the rail and the stage, so the
+   rule lists them rather than growing a third copy of itself. */
+.is-review .apply-head-wrap,
+.is-review .form-stage { display: none; }
+
+/* ---- the brief --------------------------------------------------------------
+   Three facts in a row, then the steps, then the example. The facts are the one
+   new shape and they are barely one: a .mini-title over a value, which is what
+   every labelled figure on this site already is. */
+.brief-tag { color: var(--muted); font-size: 14.5px; line-height: 1.55; letter-spacing: -0.01em; }
+.brief-facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin: 20px 0 22px;
+  padding: 16px 18px;
+  border-radius: 12px;
+  background: var(--panel-bg);
+}
+.brief-fact { display: grid; gap: 5px; min-width: 0; }
+.brief-fact > span:last-child { color: var(--ink); font-size: 13.5px; font-weight: 500; letter-spacing: -0.01em; line-height: 1.4; }
+.brief-facts .mini-title { margin: 0; }
+@media (max-width: 600px) { .brief-facts { grid-template-columns: 1fr; } }
+
+/* ---- the catalogue ----------------------------------------------------------
+   A FAMILY LABEL AND A ROW UNDER IT, repeated four times, which is the shape the
+   band system already uses for a head over a grid. The label is .mini-title, the
+   same one the panels inside the step cards wear, because it is doing the same
+   job: naming what the things under it have in common.
+   THE CARDS ARE BUTTONS, so a keyboard reaches them in order and a disabled one
+   genuinely cannot be pressed rather than merely looking like it. */
+.type-list { display: grid; gap: 8px; }
+.type-fam { margin-top: 26px; }
+.type-fam:first-child { margin-top: 0; }
+.type-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
+.type-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 18px 18px 16px;
+  border: 0;
+  text-align: left;
+  cursor: pointer;
+}
+.type-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; }
+.type-card .chip { padding: 5px 10px; font-size: 11.5px; }
+/* the unit sits where the programme card put its reward figure, and says what a
+   bid would be measured in rather than what it would be */
+.type-unit { color: var(--dim-ink); font-size: 12px; letter-spacing: -0.01em; text-align: right; }
+.type-name { color: var(--ink); font-size: 16px; font-weight: 600; letter-spacing: -0.03em; }
+.type-one { color: var(--muted); font-size: 13.5px; line-height: 1.5; letter-spacing: -0.01em; }
+/* not yet pressable, and it recedes rather than greys out: a disabled control
+   that keeps full contrast reads as broken, one that loses it reads as later */
+.type-card.is-soon { cursor: default; opacity: 0.62; }
+.type-card.is-soon:hover { transform: none; box-shadow: var(--stage-shadow); border-color: var(--border-soft); }
+
+@media (max-width: 720px) { .type-grid { grid-template-columns: 1fr; } }
+
 /* ==========================================================================
    THE APPLICATION, on the homepage's system.
    Only the form controls live here. If a rule below could be written without
@@ -93,6 +158,22 @@ body { min-height: 100vh; }
    NO SIDE PADDING, so the label is flush to the grid's right edge instead of
    sitting a gutter inside it. The 40px height is the hit target; a negative
    margin to cancel padding would have been a number to maintain. */
+/* QUIET, AND IT TRUNCATES RATHER THAN WRAPS. It is a label on the page, not a
+   control: at full ink beside Log out it would read as the more important of the
+   two, and an agency called something long would otherwise push the one real
+   control off the row. */
+.who {
+  max-width: 26ch;
+  overflow: hidden;
+  color: var(--dim-ink);
+  font-size: 12.5px;
+  letter-spacing: -0.01em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.who[hidden] { display: none; }
+@media (max-width: 560px) { .who { display: none; } }
+
 .logout {
   display: inline-flex;
   align-items: center;
@@ -541,34 +622,63 @@ body { min-height: 100vh; }
   }
 }
 
-/* ---- the programme tile -----------------------------------------------------
-   One row, three parts: which programme, how far through, and a way to the
-   terms. It is a .card because it is a thing on the ground rather than a thing
-   inside a panel, and it takes the stage family's shadow with no hover, for the
-   reason the dashboard panels do: nothing here is pressable except the one
-   control that looks like one. */
-.progtile {
+/* ---- the campaigns list -----------------------------------------------------
+   FOUR COLUMNS ON HAIRLINES, which is what every other list on this page already
+   is once you stop calling it a table: the charges ledger, the billing rules and
+   the brief's three facts are all this shape. It replaced a card per campaign,
+   which is the creator side's programme tile; a tile is right for one thing you
+   are in and wrong for four you are comparing, and comparing is the whole reason
+   an agency opens this screen.
+   THE HEADER IS FOUR CELLS OVER A FIVE-COLUMN GRID, so the info control's column
+   simply stays empty rather than needing a labelled placeholder. */
+.clist-panel { padding: 18px 22px; }
+.clist-panel[hidden] { display: none; }
+.clist-head, .crow {
   display: grid;
-  grid-template-columns: minmax(180px, 1fr) minmax(220px, 1.5fr) auto;
+  grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.5fr) minmax(0, 0.7fr) auto auto;
   align-items: center;
-  gap: clamp(20px, 3vw, 44px);
-  padding: 18px 20px;
+  gap: clamp(16px, 2.4vw, 32px);
 }
-.progtile[hidden] { display: none; }
-.progtile-id { display: grid; gap: 4px; min-width: 0; }
-.progtile-name { color: var(--ink); font-size: 14.5px; font-weight: 600; letter-spacing: -0.02em; }
-.progtile-ends { color: var(--dim-ink); font-size: 12.5px; letter-spacing: -0.01em; }
-.progtile-cond { min-width: 0; }
-.cond-line { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 9px; }
-.cond-label { color: var(--ink); font-size: 13.5px; letter-spacing: -0.01em; }
-.cond-count { flex: none; color: var(--muted); font-size: 12.5px; letter-spacing: -0.01em; }
-.cond-count b { color: var(--ink); font-weight: 600; }
-/* GREEN, WHICH IS THE ONE PLACE IT BELONGS HERE. It means a state that has been
-   reached, on the Open chip and on progress toward a goal; the balance keeps its
-   ink, because money is a figure rather than a state. */
-.bar { height: 5px; border-radius: 3px; background: var(--wash-2); overflow: hidden; }
-.bar-fill { display: block; height: 100%; border-radius: 3px; background: var(--green-ink); }
-.progtile-info {
+.clist-head { padding-bottom: 13px; border-bottom: 1px solid var(--border-soft); }
+/* the column headings are labels for a scan, not titles: the same .mini-title
+   the panels wear, dropped to the quietest ink so the rows read first */
+.clist-head .mini-title { margin: 0; color: var(--dim-ink); font-weight: 500; }
+.clist { list-style: none; display: grid; }
+.crow { padding: 15px 0; }
+.crow + .crow { border-top: 1px solid var(--border-soft); }
+.crow:last-child { padding-bottom: 0; }
+.crow-id { display: grid; gap: 4px; min-width: 0; }
+.crow-name { color: var(--ink); font-size: 14px; font-weight: 600; letter-spacing: -0.02em; }
+/* THE REFERENCE IS NOT PART OF THE NAME. It is the string you read out to
+   support, so it is monospaced and the quietest ink on the row: findable when
+   wanted, invisible when not. */
+.crow-name i {
+  margin-left: 8px;
+  color: var(--dim-ink);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 11.5px;
+  font-style: normal;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.crow-meta { color: var(--dim-ink); font-size: 12px; letter-spacing: -0.01em; }
+/* the count line sits above its bar, which is the arrangement the tile used and
+   the only one that reads: a bar with its figure underneath is a caption to a
+   shape nobody has been told the meaning of yet */
+.crow-fill { display: grid; gap: 9px; min-width: 0; }
+.crow-note { color: var(--muted); font-size: 12.5px; letter-spacing: -0.01em; }
+.crow-note b { color: var(--ink); font-weight: 600; }
+.crow-spend { display: grid; gap: 2px; color: var(--dim-ink); font-size: 12px; letter-spacing: -0.01em; }
+.crow-spend b { color: var(--ink); font-size: 14px; font-weight: 600; }
+.crow-state { justify-self: start; }
+.crow-state .chip { padding: 6px 11px; font-size: 11.5px; }
+/* A THIRD STATE, AND IT GETS NO NEW COLOUR. Green already means running, here
+   and on the catalogue and on the platforms row, and the plain chip already
+   means settled. Under target is the row worth noticing, so it is the only one
+   at full ink on an open background: it stands out by contrast rather than by a
+   warning hue this design system does not have. */
+.chip--under { border-color: var(--border); background: none; color: var(--ink); }
+.crow-info {
   flex: none;
   display: grid;
   place-items: center;
@@ -581,7 +691,13 @@ body { min-height: 100vh; }
   cursor: pointer;
   transition: color 0.25s ease, border-color 0.25s ease, background 0.25s ease;
 }
-.progtile-info:hover { color: var(--ink); border-color: var(--card-line-hover); background: var(--surface-hover); }
+.crow-info:hover { color: var(--ink); border-color: var(--card-line-hover); background: var(--surface-hover); }
+
+/* GREEN, WHICH IS THE ONE PLACE IT BELONGS HERE. It means a state that has been
+   reached, on the Open chip and on progress toward a goal; the balance keeps its
+   ink, because money is a figure rather than a state. */
+.bar { height: 5px; border-radius: 3px; background: var(--wash-2); overflow: hidden; }
+.bar-fill { display: block; height: 100%; border-radius: 3px; background: var(--green-ink); }
 
 /* ---- the ledger -------------------------------------------------------------
    A fixed date column so the labels rag into one left edge whatever the dates
@@ -664,9 +780,16 @@ body { min-height: 100vh; }
 .cash-done p b { color: var(--ink); font-weight: 600; }
 .cash-support { font-size: 12.5px; }
 
-@media (max-width: 720px) {
-  .progtile { grid-template-columns: 1fr auto; gap: 16px 18px; }
-  .progtile-cond { grid-column: 1 / -1; }
+/* THE HEADINGS GO, THE ROWS STAY WHOLE. A four-column table on a phone either
+   scrolls sideways or turns into four stacked labelled lines per campaign; this
+   keeps the identity, the chip and the control on one line and drops the two
+   measured cells underneath, where their own wording already names them. */
+@media (max-width: 860px) {
+  .clist-panel { padding: 16px 18px; }
+  .clist-head { display: none; }
+  .crow { grid-template-columns: 1fr auto auto; gap: 12px 16px; }
+  .crow-fill, .crow-spend { grid-column: 1 / -1; }
+  .crow-spend { grid-auto-flow: column; justify-content: start; align-items: baseline; gap: 6px; }
 }
 
 /* ---- the card ---------------------------------------------------------------- */
@@ -746,7 +869,6 @@ body { min-height: 100vh; }
 @media (max-width: 700px) { .row-br { display: none; } }
 
 /* ---- a question -------------------------------------------------------------- */
-.q { display: block; border: 0; padding: 0; margin: 0; }
 /* THE CONSENT ROW NEEDS MORE GAP THAN THE GRID GIVES, and the reason is the
    same ink-versus-box distinction that made the captions look uneven. Every
    other control on this step is a bordered box with 13px of padding, so its
@@ -769,7 +891,6 @@ body { min-height: 100vh; }
    nudges what is below it, which is feedback rather than a defect.
    THE STEP-FIVE EXCEPTIONS ARE GONE WITH IT. Three negative margins compensated
    for exactly this, on exactly the groups that had no caption. */
-.msg:empty { min-height: 0; margin-top: 0; }
 /* the tick and the radio itself: reachable by keyboard and screen reader,
    invisible to everything else, because the card beside it is the control */
 .sr-only {
@@ -788,8 +909,6 @@ body { min-height: 100vh; }
    the page's green, the one that rules you out is its error red */
 .tone-ok .choice-ic { color: var(--green); }
 .tone-danger .choice-ic { color: var(--err-line); }
-.q-label { display: block; margin-bottom: 11px; color: var(--ink); font-size: 14px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.45; }
-.q-label .opt { color: var(--dim-ink); font-weight: 400; }
 /* ---- the two kinds of text under a control ----------------------------------
    THEY WERE THE SAME TEXT IN TWO SIZES, 12.5 and 13, which is not a hierarchy
    step, it is tuning residue: half a pixel and the same colour reads as one
@@ -807,8 +926,6 @@ body { min-height: 100vh; }
    hint. The distinction is carried by SURFACE, not by size: both are 12.5px, so
    nothing about the type hierarchy is being asked to say "this one matters", a
    panel with a blue mark in it already said that. */
-.msg { display: block; min-height: 1.15em; margin-top: 7px; color: var(--dim-ink); font-size: 12.5px; line-height: 1.45; letter-spacing: -0.01em; }
-.msg.is-err { color: var(--err-ink); }
 
 .aside {
   display: flex;
@@ -876,6 +993,22 @@ input:focus-visible + .check { outline: 2px solid var(--blue-ink); outline-offse
   background: var(--wash-hover);
 }
 .chip.on { border-color: rgba(21, 110, 254, 0.5); background: rgba(21, 110, 254, 0.12); color: var(--ink); }
+/* A GROUP THAT ACCUMULATES, MARKED AS ONE. Single-select chips and multi-select
+   chips are the same row of the same component, so without this the only way to
+   learn that Platforms takes several and Pacing takes one is to press twice and
+   watch. The tick collapses to nothing when the chip is off, so an unselected
+   row still reads as plain chips rather than as empty boxes. */
+.chip--multi { gap: 0; }
+.chip--multi .chip-tick {
+  display: grid;
+  place-items: center;
+  width: 0;
+  margin-right: 0;
+  overflow: hidden;
+  color: var(--blue-ink);
+  transition: width 0.2s ease, margin-right 0.2s ease;
+}
+.chip--multi.on .chip-tick { width: 11px; margin-right: 7px; }
 .chip.err-ring { border-color: var(--err-line); }
 
 /* ---- the agreement rows ------------------------------------------------------ */
@@ -1144,6 +1277,13 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
          own right-hand control in, so both pages hang that corner off the same
          column rather than two measurements that happen to agree. -->
     <div class="header-end">
+      <!-- THE AGENCY, NAMED, and it falls back to the address because the two
+           ways in give different things: registering hands over an agency name,
+           signing in only ever asked for an email. Something true is better than
+           a blank where an identity should be, and an email is what the other
+           path actually knows. It hides itself when neither is there rather than
+           holding an empty slot. -->
+      <span class="who" data-who hidden></span>
       <button class="logout" type="button" data-logout>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 6V4.4A1.6 1.6 0 0 0 12.9 2.8H5.6A1.6 1.6 0 0 0 4 4.4v15.2a1.6 1.6 0 0 0 1.6 1.6h7.3a1.6 1.6 0 0 0 1.6-1.6V18"/><path d="M10 12h10.5M17.2 8.7 20.5 12l-3.3 3.3"/></svg>
         Log out
@@ -1170,8 +1310,8 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
   <div class="apply-head-wrap">
     <div class="apply-head">
       <div class="apply-head-pane" data-head="programs">
-        <h1 class="title-lg">Put your work <em>in front of agents.</em></h1>
-        <p class="lede">A campaign is a goal with a price on it: what you want done, what it is worth, and how long it runs. Pick a kind below to start.</p>
+        <h1 class="title-lg">What do you want <em>to happen?</em></h1>
+        <p class="lede">Nine kinds of campaign, grouped by what they are for. Each one is priced on the result it produces, and you set the bid.</p>
       </div>
       <div class="apply-head-pane" data-head="form" hidden>
         <h1 class="title-lg">Write the <em>brief</em>.</h1>
@@ -1201,58 +1341,113 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
          ProgramsHome.tsx and programData.ts, with one edit the brand forces,
          "agent" for "worker", which is the word this site uses everywhere and
          which the source itself now uses too. -->
-    <!-- THE CATALOGUE, in the slot the programmes screen holds on the creator
-         side, and for the same reason: you are choosing which of several deals
-         you are entering before you fill anything in. Three that run today, and
-         the dashed ghost for the rest, which is the same component the brands
-         page and the creator dashboard both use for "a thing will be here".
-         NAMES AND PRICING UNITS ARE THE SOURCE'S, quoted from campaignCatalog.ts
-         rather than from a screenshot, so what a bid buys is whatever the
-         product says it buys. -->
-    <div class="prog-list" id="prog-list">
-
-      <article class="card prog-card">
-        <div class="prog-top">
-          <span class="chip chip--open">Live</span>
-          <span class="prog-reward">
-            <span class="earn-label">Priced on</span>
-            <span class="prog-unit">1,000 verified views</span>
+    <!-- NINE TYPES IN FOUR FAMILIES, which is the catalogue the product
+         actually has. What stood here before was three, invented, wearing the
+         creator side's programme card with a Reward pill on it: a programme is
+         a deal with a fixed payout, and a campaign type is a shape of work with
+         a bid you set. They are not the same object and they should not have
+         looked like one.
+         THE FAMILY IS THE POINT, not decoration. It is what makes the bid units
+         legible: per 1,000 verified views and per surviving comment are not
+         alternatives, they are what "more views" and "get talked about" each
+         measure. Names, one-liners and units are campaignCatalog.ts verbatim,
+         which its own header asks for by name, because the PM is showing that
+         wording to people.
+         FOUR ARE MARKED SOON, the same four the platforms section says are
+         next: Reddit needs Reddit. A card that could be pressed into a campaign
+         that cannot run is worse than one that says so. -->
+    <div class="type-list" id="prog-list">
+      <div class="type-fam reveal">
+        <span class="mini-title">Get more views</span>
+      </div>
+      <div class="type-grid">
+        <button class="card type-card" type="button" data-pick="engagement-boost" data-kind="Boost a post">
+          <span class="type-top">
+            <span class="chip chip--open">Live</span>
+            <span class="type-unit">1,000 verified views</span>
           </span>
-        </div>
-        <h2>Boost a post</h2>
-        <p>Agents watch, like and comment on one video you already have.</p>
-        <button class="btn btn-solid" type="button" data-pick="Boost a post">Write the brief</button>
-      </article>
-
-      <article class="card prog-card">
-        <div class="prog-top">
-          <span class="chip chip--open">Live</span>
-          <span class="prog-reward">
-            <span class="earn-label">Priced on</span>
-            <span class="prog-unit">1,000 verified views</span>
+          <span class="type-name">Boost a post</span>
+          <span class="type-one">Real people watch and like a video you already posted.</span>
+        </button>
+        <button class="card type-card" type="button" data-pick="video-distribution" data-kind="Distribute one video">
+          <span class="type-top">
+            <span class="chip chip--open">Live</span>
+            <span class="type-unit">1,000 verified views</span>
           </span>
-        </div>
-        <h2>Distribute one video</h2>
-        <p>One video, posted by many agents on their own accounts.</p>
-        <button class="btn btn-solid" type="button" data-pick="Distribute one video">Write the brief</button>
-      </article>
-
-      <article class="card prog-card">
-        <div class="prog-top">
-          <span class="chip chip--open">Live</span>
-          <span class="prog-reward">
-            <span class="earn-label">Priced on</span>
-            <span class="prog-unit">each finished video</span>
+          <span class="type-name">Distribute one video</span>
+          <span class="type-one">Your best video, posted again and again by many real accounts.</span>
+        </button>
+      </div>
+      <div class="type-fam reveal">
+        <span class="mini-title">Get videos made</span>
+      </div>
+      <div class="type-grid">
+        <button class="card type-card" type="button" data-pick="template-creators" data-kind="Creators make videos">
+          <span class="type-top">
+            <span class="chip chip--open">Live</span>
+            <span class="type-unit">1,000 verified views</span>
           </span>
-        </div>
-        <h2>Creators make videos</h2>
-        <p>Agents make their own version of an example you give them.</p>
-        <button class="btn btn-solid" type="button" data-pick="Creators make videos">Write the brief</button>
-      </article>
-
-      <div class="prog-soon">
-        <span class="chip chip--soon">Coming soon</span>
-        <p>Reddit threads, product research and community presence. You&#8217;ll get an email when one opens.</p>
+          <span class="type-name">Creators make videos</span>
+          <span class="type-one">Creators copy your winning video style and post their own versions.</span>
+        </button>
+        <button class="card type-card" type="button" data-pick="template-blueai" data-kind="BlueAI makes videos">
+          <span class="type-top">
+            <span class="chip chip--open">Live</span>
+            <span class="type-unit">1,000 verified views</span>
+          </span>
+          <span class="type-name">BlueAI makes videos</span>
+          <span class="type-one">BlueAI makes the videos for you, creators post them.</span>
+        </button>
+        <button class="card type-card" type="button" data-pick="ugc-deliverable" data-kind="Get content made">
+          <span class="type-top">
+            <span class="chip chip--open">Live</span>
+            <span class="type-unit">finished piece</span>
+          </span>
+          <span class="type-name">Get content made</span>
+          <span class="type-one">Creators make videos and hand you the files. Nothing is posted.</span>
+        </button>
+      </div>
+      <div class="type-fam reveal">
+        <span class="mini-title">Get talked about</span>
+      </div>
+      <div class="type-grid">
+        <button class="card type-card is-soon" type="button" data-pick="reddit-comments" data-kind="Reddit comments" disabled>
+          <span class="type-top">
+            <span class="chip chip--soon">Soon</span>
+            <span class="type-unit">surviving comment</span>
+          </span>
+          <span class="type-name">Reddit comments</span>
+          <span class="type-one">Strong Reddit accounts mention you inside real conversations.</span>
+        </button>
+        <button class="card type-card is-soon" type="button" data-pick="reddit-thread" data-kind="Reddit thread" disabled>
+          <span class="type-top">
+            <span class="chip chip--soon">Soon</span>
+            <span class="type-unit">surviving reply</span>
+          </span>
+          <span class="type-name">Reddit thread</span>
+          <span class="type-one">One strong account starts a thread, others keep it alive.</span>
+        </button>
+      </div>
+      <div class="type-fam reveal">
+        <span class="mini-title">Learn from real people</span>
+      </div>
+      <div class="type-grid">
+        <button class="card type-card is-soon" type="button" data-pick="research" data-kind="Product research" disabled>
+          <span class="type-top">
+            <span class="chip chip--soon">Soon</span>
+            <span class="type-unit">completed report</span>
+          </span>
+          <span class="type-name">Product research</span>
+          <span class="type-one">Real people try your product and tell you the truth.</span>
+        </button>
+        <button class="card type-card is-soon" type="button" data-pick="community-retainer" data-kind="Community presence" disabled>
+          <span class="type-top">
+            <span class="chip chip--soon">Soon</span>
+            <span class="type-unit">Monthly retainer</span>
+          </span>
+          <span class="type-name">Community presence</span>
+          <span class="type-one">A small team keeps you part of the conversation, every month.</span>
+        </button>
       </div>
     </div>
 
@@ -1280,7 +1475,30 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
      screenshot, which is how "your onBlue account" survived (the picture still
      says BlueAI; the source does not). Nothing about how it looks came with it.
      ============================================================================ -->
-<section class="dash" id="dash" data-one="One campaign" hidden>
+<!-- ============================================================================
+     IN REVIEW. What a newly registered agency lands on, and the one screen of
+     the brands site this page had no answer for at all.
+     IT IS ASSEMBLED, NOT DRAWN. Three things already on this page turned out to
+     be exactly what it needs: the journey rail, which has three steps and a
+     current one; the confirmation treatment, which is a spark over a typed line
+     and a green strip; and the refresh control, whose three states are already
+     Refresh / Refreshing / Refreshed. The only new thing is the arrangement.
+     THE RAIL SAYS SOMETHING DIFFERENT HERE. Brief it / Agents run it / Pay on
+     pass describes a campaign; this screen is before any campaign exists, so it
+     runs Register / We review / Start campaigns, with the second one current. -->
+<section class="dash rev" id="review" hidden>
+  <div class="confirm">
+    <div class="confirm-head">
+      <span class="confirm-sun" aria-hidden="true"><span class="confirm-sun-in"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.6C12.55 2.6 12.88 3.15 13.08 4.7c.62 4.7 1.52 5.6 6.22 6.22 1.55.2 2.1.53 2.1 1.08s-.55.88-2.1 1.08c-4.7.62-5.6 1.52-6.22 6.22-.2 1.55-.53 2.1-1.08 2.1s-.88-.55-1.08-2.1c-.62-4.7-1.52-5.6-6.22-6.22C3.15 12.88 2.6 12.55 2.6 12s.55-.88 2.1-1.08c4.7-.62 5.6-1.52 6.22-6.22C11.12 3.15 11.45 2.6 12 2.6Z"/></svg></span></span>
+      <h2 class="title-xl" id="review-title">Your application <em>is in review.</em></h2>
+    </div>
+    <p class="lede">We review every agency before approving it, usually within a working day. We&#8217;ll email <b data-agency-mail>you</b> the moment <b data-agency-name>your agency</b> is cleared to create campaigns.</p>
+    <span class="earn-payout"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.5l5 5L19.5 6.5"/></svg>Registration received</span>
+    <p class="gate-alt confirm-alt"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.4 11.7a8.4 8.4 0 1 1-2.5-5.4"/><path d="M20.4 3.1v4.8h-4.8"/></svg><button type="button" data-refresh>Refresh status</button></p>
+  </div>
+</section>
+
+<section class="dash" id="dash" data-one="With campaigns" hidden>
 
   <!-- THE ONLY LEFT-ALIGNED HEAD ON THE PAGE, and the reason is what it is
        for. Every other title here is an address to a reader who is deciding
@@ -1353,37 +1571,46 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
         <button class="progtab" type="button" role="tab" aria-selected="false" data-tab="past">Ended<span class="progtab-n" data-count="past">0</span></button>
       </div>
     </div>
+    <!-- FOUR COLUMNS, WHICH IS WHAT THE REPORT HAS: which campaign, how full,
+         how much of the budget went, and what state it is in. Fill and Spend are
+         two questions, not one: a campaign can be half filled and fully spent,
+         or filled and under budget, and that is exactly the case somebody opens
+         this screen to find. Collapsing them into a single percentage would hide
+         it. What stood here was one card per campaign, which is the creator
+         side's programme tile: fine for a creator with one programme, wrong for
+         an agency reading four at once.
+         EVERY ROW SAYS "SAMPLE" IN ITS OWN META LINE. Nothing has launched, so
+         every figure here is illustrative; saying so once in a caption above the
+         list is how a reader ends up quoting one of them back at you. -->
+    <div class="card dash-panel clist-panel" data-pane="active" data-when="one" hidden>
+      <div class="clist-head">
+        <span class="mini-title">Campaign</span>
+        <span class="mini-title">Fill</span>
+        <span class="mini-title">Spend</span>
+        <span class="mini-title">Status</span>
+      </div>
+      <ul class="clist" data-list="active"></ul>
+    </div>
+    <div class="card dash-panel clist-panel" data-pane="past" data-when="one" hidden>
+      <div class="clist-head">
+        <span class="mini-title">Campaign</span>
+        <span class="mini-title">Fill</span>
+        <span class="mini-title">Spend</span>
+        <span class="mini-title">Status</span>
+      </div>
+      <ul class="clist" data-list="past"></ul>
+    </div>
     <!-- THE DASHED GHOST, WHICH IS ALREADY ON THIS PAGE. The programmes screen
          uses it for "a thing will be here"; an empty tab is the same statement,
-         so it is the same treatment rather than a second invention of it. -->
-    <!-- THE TILE IS ONE ROW, NOT A CARD OF SECTIONS: which programme, how far
-         through, and a way to the terms. Everything it deliberately does not
-         say is one press away, which is what the info control is for. -->
-    <article class="card progtile" data-pane="active" data-when="one" hidden>
-      <div class="progtile-id">
-        <span class="progtile-name">Fernweh Coffee: spring launch</span>
-        <span class="progtile-ends">Ends Aug 31, 2026</span>
-      </div>
-      <div class="progtile-cond">
-        <div class="cond-line">
-          <!-- THE BAR FILLS THE OTHER WAY AND MEANS THE SAME THING. On the
-               creator side it runs toward a goal; here it runs toward a budget
-               spent, and green still marks a state reached rather than a good
-               one. -->
-          <span class="cond-label">Budget spent</span>
-          <span class="cond-count"><b>$90</b> of $150</span>
-        </div>
-        <div class="bar" role="progressbar" aria-valuenow="90" aria-valuemin="0" aria-valuemax="150" aria-label="Budget spent">
-          <span class="bar-fill" style="width: 60%"></span>
-        </div>
-      </div>
-      <button class="progtile-info" type="button" aria-label="About Fernweh Coffee: spring launch" data-sheet="prog-info"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></svg></button>
-    </article>
+         so it is the same treatment rather than a second invention of it.
+         THE COPY NAMES THE ORDER, not just the absence. "In review first, then
+         live" is the one thing a first-time agency does not know and will
+         otherwise learn by watching nothing happen for a day. -->
     <div class="prog-soon dash-empty" data-pane="active" data-when="empty">
-      <p>You have nothing running right now.</p>
-      <button class="btn btn-solid" type="button" data-join>Post a campaign</button>
+      <p>No campaigns yet. Create your first campaign and it appears here, in review first, then live.</p>
+      <button class="btn btn-solid" type="button" data-join>Create a campaign</button>
     </div>
-    <div class="prog-soon dash-empty" data-pane="past" hidden>
+    <div class="prog-soon dash-empty" data-pane="past" data-when="empty">
       <p>Nothing here yet. Campaigns that finish will show up here, with what each one cost.</p>
     </div>
   </div>
@@ -1396,7 +1623,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
              works" here would be the section heading said twice, 12px lower -->
         <span class="mini-title">Steps</span>
         <ol class="dash-steps">
-          <li><span class="step-num">1</span><p>Post a campaign. Each one has its own brief, its own budget and its own window.</p></li>
+          <li><span class="step-num">1</span><p>Create a campaign. Each one has its own brief, its own budget and its own window.</p></li>
           <li><span class="step-num">2</span><p>Agents pick it up and run it on their own accounts, inside onBlue.</p></li>
           <li><span class="step-num">3</span><p>onBlue verifies each action, and only the ones that pass are charged to your budget.</p></li>
         </ol>
@@ -1422,31 +1649,38 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
      THE MARGIN IS NOT DECORATION. This page's reset zeroes every margin, which
      kills the UA's own `margin: auto` on a dialog and drops it against the top
      left corner. It cost a round of review the last time. -->
-<dialog class="sheet" id="sheet-prog-info" aria-labelledby="prog-info-title">
+<dialog class="sheet" id="sheet-prog-info" aria-labelledby="prog-info-title" autofocus>
   <div class="sheet-in">
-    <h2 class="sheet-title" id="prog-info-title">Fernweh Coffee: spring launch</h2>
-    <!-- ONE SENTENCE-SHAPED LINE PER FACT under a mono label. The reward line
-         carries the cadence, which is the nuance a "$30/mo" badge on the tile
-         would have compressed away, and no description of the programme is
-         repeated here: on an offer card the description is the pitch, on this
-         sheet it would say the same thing "What counts" says at length. -->
+    <h2 class="sheet-title" id="prog-info-title">Campaign</h2>
+    <!-- ONE SENTENCE-SHAPED LINE PER FACT under a mono label, and the lines are
+         WRITTEN AT OPEN TIME. There is one dialog and there are four campaigns,
+         so the alternative was four dialogs saying the same three things about
+         different numbers, or one dialog quietly describing whichever campaign
+         happened to be hardcoded into it. The row hands over which one it is. -->
     <div class="sheet-sect">
       <span class="mini-title">The brief</span>
-      <p>Boost a post. Agents watch, like and comment on one video.</p>
+      <p data-info="brief"></p>
     </div>
     <div class="sheet-sect">
       <span class="mini-title">What counts</span>
-      <p><b>$4</b> per 1,000 verified views, charged as they land.</p>
+      <p data-info="counts"></p>
     </div>
     <div class="sheet-sect">
       <span class="mini-title">Ends</span>
-      <p><b>Aug 31, 2026</b>, or when the budget runs out.</p>
+      <p data-info="ends"></p>
+    </div>
+    <!-- THE SOURCE'S OWN BANNER, IN THE PLACE IT BELONGS. The report page says
+         this across the top of a detail screen; here the detail screen is the
+         sheet, so it is the last fact rather than a fifth chrome element. -->
+    <div class="sheet-sect">
+      <span class="mini-title">Report</span>
+      <p>Sample report. Illustrative data showing what your report looks like once your campaign is live.</p>
     </div>
     <button class="btn btn-ghost sheet-close" type="button" data-sheet-close>Close</button>
   </div>
 </dialog>
 
-<dialog class="sheet" id="sheet-cash-out" aria-labelledby="cash-out-title">
+<dialog class="sheet" id="sheet-cash-out" aria-labelledby="cash-out-title" autofocus>
   <div class="sheet-in">
     <div class="sheet-head">
       <h2 class="sheet-title" id="cash-out-title">Add budget</h2>
@@ -1574,7 +1808,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     <div class="foot-base">
       <span class="foot-legal">
         <span>&copy; 2026 onBlue</span>
-        <a data-stub>Terms and conditions</a>
+        <a data-stub>Program Terms</a>
       </span>
       <span>Human ambition. Agent execution.</span>
     </div>
@@ -1605,88 +1839,90 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     return '<svg viewBox="0 0 24 24" width="' + size + '" height="' + size + '" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + inner + '</svg>';
   }
   var ICON = {
-    cap: svg('<path d="M12 4 22 9l-10 5L2 9l10-5Z"/><path d="M6 11.2V16c0 1.4 2.7 2.6 6 2.6s6-1.2 6-2.6v-4.8"/>', 20),
-    briefcase: svg('<rect x="2.5" y="7.5" width="19" height="12.5" rx="2.2"/><path d="M8.5 7.5V6a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v1.5M2.5 12.5h19"/>', 20),
     creator: svg('<rect x="2.5" y="5" width="14" height="14" rx="2.5"/><path d="m16.5 10.5 5-2.8v8.6l-5-2.8"/><path d="m8 9.6 3.4 2.4L8 14.4V9.6Z"/>', 20),
-    laptop: svg('<rect x="4" y="5" width="16" height="10.5" rx="1.8"/><path d="M2 19h20"/>', 20),
-    dots: svg('<circle cx="5.5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="18.5" cy="12" r="1.3"/>', 20),
     yes: svg('<circle cx="12" cy="12" r="9"/><path d="m8 12.3 2.7 2.7L16 9.7"/>', 20),
-    no: svg('<circle cx="12" cy="12" r="9"/><path d="m9.2 9.2 5.6 5.6M14.8 9.2l-5.6 5.6"/>', 20),
-    yesSm: svg('<circle cx="12" cy="12" r="9"/><path d="m8 12.3 2.7 2.7L16 9.7"/>', 15),
-    noSm: svg('<circle cx="12" cy="12" r="9"/><path d="m9.2 9.2 5.6 5.6M14.8 9.2l-5.6 5.6"/>', 15),
-    monitor: svg('<rect x="3" y="4" width="18" height="12.5" rx="2"/><path d="M9.5 20.5h5M12 16.5v4"/><path d="M12 7v5M9.8 10l2.2 2 2.2-2"/>', 18),
     clock: svg('<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>', 18),
-    cadence: svg('<rect x="4" y="5.5" width="16" height="14" rx="2"/><path d="M4 9.5h16M8.5 3.5v3M15.5 3.5v3"/><rect x="13.2" y="13" width="3.4" height="3.2" rx="0.6" fill="currentColor" stroke="none"/>', 18),
     wallet: svg('<rect x="3" y="6.5" width="18" height="12.5" rx="2.2"/><path d="M3 10.2h13.5a2.3 2.3 0 0 1 0 4.6H3"/><circle cx="16" cy="12.5" r="1" fill="currentColor" stroke="none"/>', 18),
     pencil: svg('<path d="M4 20h4l10-10-4-4L4 16Z"/><path d="M14.4 5.6 18.4 9.6"/>', 18),
     info: svg('<circle cx="12" cy="12" r="8.5"/><path d="M12 11v5.5"/><path d="M12 7.8h.01"/>', 17),
-    play: svg('<circle cx="12" cy="12" r="9"/><path d="M10.4 8.8 15.6 12l-5.2 3.2Z"/>', 18),
     document: svg('<path d="M7 3.5h7l4 4v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-16a1 1 0 0 1 1-1Z"/><path d="M14 3.5v4h4"/><path d="M8.5 12h7M8.5 15.3h7M8.5 8.7h3"/>', 18)
   };
   var TICK = '<svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.5l5 5L19.5 6.5"/></svg>';
 
-  /* ---- option sets ---------------------------------------------------------
-     WHAT AN AGENT DOES IS A CHOICE, NOT A TEXT FIELD. The source's catalogue
-     offers it as a fixed set per campaign type, and the reason holds here: a
-     brief that let a buyer type anything would be promising work onBlue has no
-     way to verify, and verification is the whole product. */
-  var ACTION_OPTS = [
-    { value: 'Watch', icon: ICON.play },
-    { value: 'Watch and like', icon: ICON.yes, tone: 'ok' },
-    { value: 'Watch, like and comment', icon: ICON.pencil }
-  ];
-  /* Untoned on purpose: neither pace is the right answer, they are two different
-     campaigns. Green on "as fast as possible" would read as advice. */
-  var PACE_OPTS = [{ value: 'Steady across the window' }, { value: 'As fast as agents pick it up' }];
+  /* ---- the review ladder ----------------------------------------------------
+     THREE RUNGS, NOT A YES AND A NO. What stood here was "Do you want to see the
+     work before it is charged? Yes / No", which is a question about invoices;
+     the real one is how much work goes out under the buyer's name without a
+     human seeing it first, and it has a middle answer that most campaigns want.
+     The three come from the source's REVIEW_MODES and each type arrives on its
+     own default: a boost of a video you already posted needs no approval, a
+     comment written in your words does.
+     UNTONED. None of the three is the right answer, and a green tick on
+     auto-approve would be the form giving advice about the buyer's own risk.
+     ONBLUE DOES THE CHECKING, not BlueAI. The source says BlueAI because on that
+     site BlueAI is the product; here onBlue is the platform the agents run in,
+     and this page says "onBlue verifies" everywhere else. */
   var REVIEW_OPTS = [
-    { value: 'Yes', icon: ICON.yesSm, tone: 'ok' },
-    { value: 'No', icon: ICON.noSm, tone: 'danger' }
+    { value: 'Review everything', hint: 'Every item waits for your yes before it posts.', icon: ICON.document },
+    { value: 'Review the first few per creator', hint: 'Approve a creator once, then their later work auto-clears.', icon: ICON.creator },
+    { value: 'Auto-approve', hint: 'onBlue checks against your brief. Nothing waits on you.', icon: ICON.yes }
   ];
 
   /* ---- spec.ts, verbatim ---- */
   var STEPS = [
-    { title: '' },                     /* untitled on purpose: the icon rows are self-explanatory */
+    /* NAMED AT RUNTIME. Step zero is the brief for whichever type was picked,
+       so its title is that type's name; leaving it blank was right when the step
+       was the same for everyone. */
+    { title: '' },
     { title: 'What to run' },
     { title: 'What it is worth' },
     { title: 'The window' },
     { title: 'Contact and terms' }
   ];
-  var STEP_FIELDS = [
-    [],
-    ['videoUrl', 'actions'],
-    ['bid', 'budget'],
-    ['startAt', 'endAt', 'pace'],
-    ['review', 'email', 'agree']
-  ];
+  /* WHICH FIELDS BELONG TO A STEP IS NOW A QUESTION, NOT A CONSTANT. It was a
+     fixed table, and the table described one campaign: a video URL and a set of
+     actions, which is "Boost a post" and none of the other eight. Step one now
+     carries whatever the chosen type declares, so the answer depends on the
+     type and a lookup table would be a second place to keep that right. */
+  function stepFields(i) {
+    var b = BRIEFS[d.type];
+    if (i === 1) { return ['name']; }
+    if (i === 2) { return b && b.gen ? ['bid', 'gen', 'budget'] : ['bid', 'budget']; }
+    if (i === 3) { return ['startAt', 'endAt']; }
+    if (i === 4) { return ['email', 'agree']; }
+    return [];
+  }
   var LAST = STEPS.length - 1;
 
   var isEmail = function (v) { return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim()); };
-  /* A URL, LOOSELY. The application's email test is deliberately loose for the
-     same reason: a brief rejected because someone left off the scheme is a form
-     being clever at a buyer's expense, and the real check happens server-side on
-     a page that has a server. */
-  var isUrl = function (v) { return /^(https?:\/\/)?[^\s.]+\.[^\s]{2,}$/.test(v.trim()); };
   var money = function (v) { return /^\d+(\.\d{1,2})?$/.test(String(v).trim()) && Number(v) > 0; };
 
   function validate(d) {
     var e = {};
-    if (!d.videoUrl.trim()) e.videoUrl = 'Add the link to the video this campaign is about.';
-    else if (!isUrl(d.videoUrl)) e.videoUrl = 'That does not look like a link. Check for a typo.';
-    if (!d.actions) e.actions = 'Pick what each agent should do.';
+    var b = BRIEFS[d.type];
+    if (!d.name.trim()) e.name = 'Give the campaign a name.';
+    /* THE TYPE'S OWN FIELDS ARE NOT VALIDATED, and that is the source's call
+       kept rather than an omission. Nothing in the catalogue says which of them
+       are required, so a rule here would be one this page invented, and it
+       differs per type: a boost needs its URL, a retainer's digest cadence has a
+       sensible default. If they should be required the flag belongs on the field
+       in the catalogue, next to its label and its hint. */
     /* NO CEILING AND NO FLOOR STATED. The page promises outcome pricing and
        names no rate anywhere, so a minimum invented here would be the one number
        on the whole site, and it would be invented. */
     if (!money(d.bid)) e.bid = 'Set a bid above $0.';
     if (!money(d.budget)) e.budget = 'Set a budget above $0.';
     else if (money(d.bid) && Number(d.budget) < Number(d.bid)) e.budget = 'The budget has to cover at least one bid.';
+    if (b && b.gen && !money(d.gen)) e.gen = 'Set a bid above $0.';
     if (!d.startAt) e.startAt = 'Pick a start date.';
     if (!d.endAt) e.endAt = 'Pick an end date.';
     else if (d.startAt && d.endAt <= d.startAt) e.endAt = 'The end date has to be after the start.';
-    if (!d.pace) e.pace = 'Pick how it should run.';
-    if (!d.review) e.review = 'Let us know whether you want to review the work.';
+    /* NO RULE FOR THE REVIEW LADDER. Every type arrives on a default, so there
+       is no state in which it is unanswered, and an error that cannot fire is a
+       sentence nobody will ever read and everybody will keep maintaining. */
     if (!d.email.trim()) e.email = 'Add the email you want to be contacted on.';
     else if (!isEmail(d.email)) e.email = 'That doesn\u2019t look like an email. Check for a typo.';
-    if (!d.agree) e.agree = 'You need to agree to the Program Terms to post a campaign.';
+    if (!d.agree) e.agree = 'You need to agree to the Program Terms to create a campaign.';
     return e;
   }
 
@@ -1698,11 +1934,14 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
   var d = {
     /* set by the catalogue before the form is ever shown, so the brief always
        knows which deal it is describing */
-    kind: '',
-    videoUrl: '', actions: '',
-    bid: '', budget: '',
-    startAt: '', endAt: '', pace: '',
-    review: '',
+    type: '', kind: '', unit: '',
+    /* the campaign's own name, which is what the dashboard lists it under and
+       the one thing on this form nobody else can supply */
+    name: '',
+    bid: '', gen: '', budget: '',
+    startAt: '', endAt: '',
+    /* set when a type is picked, from that type's default rung */
+    review: '', note: '',
     /* PREFILLED FROM THE GATE. The brands page's access dialog asks for an email
        before sending anyone here and hands it over in sessionStorage rather than
        in the URL, so it never lands in history or a referrer. */
@@ -1732,10 +1971,32 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
+  /* PICKING A TYPE IS PICKING A FORM, so it clears the last one's answers. The
+     keys differ per type, and a subreddit left behind from a Reddit campaign
+     would have travelled silently into a UGC brief and been submitted with it.
+     THE BID UNIT AND THE REVIEW DEFAULT COME FROM THE SAME PLACE AS THE
+     QUESTIONS. The unit used to be read off the card's own text, which was one
+     source of truth at the cost of the form depending on a label's wording. */
+  function setType(id, kind) {
+    var prev = BRIEFS[d.type];
+    if (prev) { prev.fields.forEach(function (f) { delete d[f.key]; }); }
+    var b = BRIEFS[id];
+    d.type = id;
+    d.kind = kind || (b ? b.name : '');
+    d.unit = b ? b.label.replace(/^Bid per /, '').replace(/^Monthly retainer bid$/, 'month') : '1,000 verified views';
+    d.review = b ? b.review : '';
+    d.gen = '';
+    if (b) {
+      b.fields.forEach(function (f) { d[f.key] = f.kind === 'chips' ? [] : ''; });
+    }
+    touched = {};
+    forced = {};
+  }
+
   function visibleErrors() {
     var all = validate(d);
     var out = {};
-    STEP_FIELDS[step].forEach(function (f) {
+    stepFields(step).forEach(function (f) {
       if ((touched[f] || forced[step]) && all[f]) out[f] = all[f];
     });
     return out;
@@ -1817,31 +2078,148 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
        - the terms row is back. It was cut as a weaker copy of the last step's
          required checkbox, which is still true of it, but it is in the source
          list and the list is the authority. */
+  /* ---- the nine briefs ------------------------------------------------------
+     THE CATALOGUE'S OWN DATA, and it is data here for the same reason it is data
+     there: its header asks for the wording to be left alone, because the PM is
+     showing it to people, and nine paragraphs typed into markup is nine chances
+     to improve one of them by accident.
+     EVERY FIGURE IS ILLUSTRATIVE, which the source says too. The worked examples
+     are not a rate card. */
+  var BRIEFS = {
+    "engagement-boost": { name: "Boost a post", tag: "You already posted a video. We send real people to watch it, like it, and comment on it, from their own phones and their own accounts.", steps: ["Paste the link to your video.", "Community members open it and watch it, like normal viewers.", "You pay only for views that are checked and real."], ex: "You set a $200 budget and bid $4 per 1,000 views. If it all fills, that is about 50,000 checked views.", unit: "checked views", per: 1000, review: "Auto-approve", label: "Bid per 1,000 verified views", ph: "4", gen: null, fields: [{"key": "postUrl", "label": "Post URL", "kind": "text", "ph": "https://youtube.com/watch?v=...", "hint": "The public video to boost."}, {"key": "actions", "label": "Actions", "kind": "chips", "options": ["Watch", "Like", "Comment"], "hint": "What each member does."}] },
+    "video-distribution": { name: "Distribute one video", tag: "You give us one finished video. Many community members post that same video from their own real accounts, so it shows up all over.", steps: ["Upload your video once.", "Members post it from their own accounts, with their own captions.", "You pay for the views all those posts get, checked first."], ex: "$500 at $5 per 1,000 views is about 100,000 checked views across every post.", unit: "checked views", per: 1000, review: "Review the first few per creator", label: "Bid per 1,000 verified views", ph: "5", gen: null, fields: [{"key": "videoAsset", "label": "Your video", "kind": "filelink", "ph": "or paste a link to it", "hint": "The one video everyone posts."}, {"key": "platforms", "label": "Platforms", "kind": "chips", "options": ["YouTube", "Instagram", "TikTok", "X", "Reddit"], "hint": "Where members post it."}, {"key": "captionMode", "label": "Captions", "kind": "chips", "options": ["Same caption", "Varied per account"], "hint": "Varied reads more natural."}] },
+    "template-creators": { name: "Creators make videos", tag: "You found a video style that works. Show it to us once, and creators make their own versions of it and post them from their accounts.", steps: ["Share the example video and say what must stay the same.", "Each creator films their own version and posts it.", "You pay a little for each video made, plus the views it earns."], ex: "10 creators make a video each at your $20 per video bid, then every 1,000 checked views costs your view bid on top.", unit: "checked views", per: 1000, review: "Review the first few per creator", label: "Bid per 1,000 verified views", ph: "5", gen: {"label": "Bid per video a creator makes", "ph": "20"}, fields: [{"key": "referenceUrl", "label": "Example video", "kind": "filelink", "ph": "or paste a link to it", "hint": "The style creators copy."}, {"key": "templateBrief", "label": "What must stay the same", "kind": "textarea", "ph": "The hook, the length, what must appear, what to avoid."}, {"key": "platforms", "label": "Platforms", "kind": "chips", "options": ["YouTube", "Instagram", "TikTok", "X", "Reddit"]}, {"key": "perWorker", "label": "Videos per creator", "kind": "number", "ph": "3"}] },
+    "template-blueai": { name: "BlueAI makes videos", tag: "You show one example. BlueAI generates many versions of it, you can check them first, and creators post them from their own accounts.", steps: ["Share the example video or template.", "BlueAI generates the versions. You can review them before anything posts.", "Creators post them. You pay per video generated, plus checked views."], ex: "$300 could generate 15 videos at an $8 per video bid and still leave budget for views.", unit: "checked views", per: 1000, review: "Review the first few per creator", label: "Bid per 1,000 verified views", ph: "5", gen: {"label": "Bid per video BlueAI generates", "ph": "8"}, fields: [{"key": "referenceUrl", "label": "Example video or template", "kind": "filelink", "ph": "or paste a link to it", "hint": "BlueAI makes versions of this."}, {"key": "templateBrief", "label": "What the videos must do", "kind": "textarea", "ph": "The hook, the length, what must appear, what to avoid."}, {"key": "platforms", "label": "Platforms", "kind": "chips", "options": ["YouTube", "Instagram", "TikTok", "X", "Reddit"]}] },
+    "ugc-deliverable": { name: "Get content made", tag: "Creators make content for you and send you the files. Nothing gets posted anywhere. You use it however you like.", steps: ["Write down what you need and the style you want.", "Creators make it and send in their files.", "You pay per finished piece you accept."], ex: "10 short videos at a $25 per video bid is $250.", unit: "finished pieces", per: 1, review: "Review everything", label: "Bid per finished piece", ph: "25", gen: null, fields: [{"key": "deliverableType", "label": "What kind", "kind": "select", "options": ["Short-form video", "Long-form video", "Image set", "Written copy"], "ph": "Pick a format"}, {"key": "brief", "label": "The brief", "kind": "textarea", "ph": "What you need made, the style, the references."}, {"key": "quantity", "label": "How many", "kind": "number", "ph": "10"}] },
+    "reddit-comments": { name: "Reddit comments", tag: "Members with strong, old Reddit accounts talk about you inside real conversations, in their own words, where people already ask about things like yours.", steps: ["Tell us the subreddits or threads, and what to get across.", "High karma members write their own comments there.", "You pay per comment that is still up after 3 days."], ex: "$150 at $3 per surviving comment is up to 50 comments.", unit: "surviving comments", per: 1, review: "Review everything", label: "Bid per surviving comment", ph: "3", gen: null, fields: [{"key": "targets", "label": "Threads or subreddits", "kind": "textarea", "ph": "r/coffee, r/espresso, or paste thread links."}, {"key": "messageIntent", "label": "What to get across", "kind": "textarea", "ph": "The point to make, not word-for-word copy.", "hint": "Identical text from many accounts looks fake."}, {"key": "minKarma", "label": "Minimum account karma", "kind": "select", "options": ["1,000+ karma", "5,000+ karma", "10,000+ karma", "25,000+ karma"], "ph": "Pick a karma floor"}, {"key": "pacing", "label": "Pacing", "kind": "select", "options": ["Over a few hours", "Over a day", "Over a few days", "Across the whole window"], "ph": "How fast comments land"}] },
+    "reddit-thread": { name: "Reddit thread", tag: "One member with a strong account starts a conversation about your topic, and other members reply over time so it reads like a real, living thread.", steps: ["Pick the subreddit and the topic.", "A high karma member starts the thread. Others reply over hours or days.", "You pay per reply that is still up after 3 days."], ex: "$100 at $2 per surviving reply is up to 50 replies under your thread.", unit: "surviving replies", per: 1, review: "Review everything", label: "Bid per surviving reply", ph: "2", gen: null, fields: [{"key": "subreddit", "label": "Subreddit", "kind": "text", "ph": "r/smallbusiness"}, {"key": "topicAngle", "label": "Topic and angle", "kind": "textarea", "ph": "What the thread is about and what it should surface."}, {"key": "minKarma", "label": "Minimum karma for the starter", "kind": "select", "options": ["1,000+ karma", "5,000+ karma", "10,000+ karma", "25,000+ karma"], "ph": "Pick a karma floor"}, {"key": "pacing", "label": "Pacing", "kind": "select", "options": ["Over a few hours", "Over a day", "Over a few days", "Across the whole window"], "ph": "How replies spread out"}] },
+    "research": { name: "Product research", tag: "Real people use your product on their own devices, then answer your questions honestly. You get structured reports, not guesses.", steps: ["Tell us what to try and what to ask.", "Members use your product like normal users.", "You pay per finished report you receive."], ex: "$160 at $8 per report gets you 20 honest write-ups.", unit: "reports", per: 1, review: "Auto-approve", label: "Bid per completed report", ph: "8", gen: null, fields: [{"key": "taskScript", "label": "What to try", "kind": "textarea", "ph": "The task or flow you want each member to run."}, {"key": "questions", "label": "Questions to answer", "kind": "textarea", "ph": "One per line."}] },
+    "community-retainer": { name: "Community presence", tag: "A small pod of members stays active in the communities that matter to you, answers where you are relevant, and sends you a digest.", steps: ["List the communities that matter to you.", "A pod of members stays present there and joins in where you fit.", "You pay one monthly amount. Stop any month you like."], ex: "$300 a month keeps a pod present in 3 communities.", unit: "months of presence", per: 1, review: "Review everything", label: "Monthly retainer bid", ph: "300", gen: null, fields: [{"key": "communities", "label": "Communities to cover", "kind": "textarea", "ph": "Subreddits, forums, or Discords."}, {"key": "cadence", "label": "Digest cadence", "kind": "select", "options": ["Weekly", "Bi-weekly", "Monthly"], "ph": "How often we report back"}] }
+  };
+
   /* ---- the five steps -------------------------------------------------------
      FOUR QUESTIONS AND AN INTRO, which is the application's shape because it is
      the right shape: one thing asked per screen, and the first screen asks for
      nothing at all. What changed is only what is being described. */
+  /* STEP ZERO IS THE BRIEF, AND IT IS DIFFERENT EVERY TIME. It used to be five
+     fixed rows about how onBlue works, which is the creator application's shape:
+     one flow, one explainer. Nine campaign types have nine different answers to
+     what you pay for and when work arrives, and a reader who picked "Reddit
+     comments" is owed the Reddit answer rather than the average of nine.
+     IT REUSES introRow AND .aside, both of which already exist for exactly this:
+     a short list of icon rows, then one paragraph that responds to a choice. */
   function renderStep0() {
-    return introRow(ICON.pencil, 'Tell us the video, what each agent should do, and what that is worth to you.')
-      + introRow(ICON.clock, 'onBlue puts the brief in front of agents whose audience fits it.<br class="row-br">Matching takes minutes, not days.')
-      + introRow(ICON.cadence, 'Every action is checked before it counts. Anything under the bar is <b>not charged</b>.')
-      + introRow(ICON.wallet, 'You are billed against your budget as verified work lands, never upfront.')
-      + introRow(ICON.document, 'Posting a campaign means you accept the <a class="legal-link" href="/onblue/terms#terms" target="_blank" rel="noopener">Program Terms</a>.');
+    var b = BRIEFS[d.type] || null;
+    if (!b) {
+      return introRow(ICON.info, 'Pick a campaign type to see how it works.');
+    }
+    var per = b.per > 1 ? 'Per ' + b.per.toLocaleString() + ' results' : 'Per result';
+    return '<p class="brief-tag">' + esc(b.tag) + '</p>'
+      + '<div class="brief-facts">'
+      + fact('You pay for', b.unit)
+      + fact('Priced', per)
+      + fact('Arrives on', b.review)
+      + '</div>'
+      + b.steps.map(function (line, i) {
+          return introRow([ICON.pencil, ICON.clock, ICON.wallet][i] || ICON.info, esc(line));
+        }).join('')
+      + '<p class="aside"><span class="aside-ic">' + ICON.info + '</span>'
+      + '<b>Example.</b> ' + esc(b.ex) + '</p>';
+  }
+
+  function fact(k, v) {
+    return '<span class="brief-fact"><span class="mini-title">' + esc(k) + '</span>'
+      + '<span>' + esc(v) + '</span></span>';
+  }
+
+  /* ---- the type's own questions ---------------------------------------------
+     NINE CAMPAIGNS ASK NINE DIFFERENT THINGS: a post URL, a karma floor, a
+     subreddit, a brief, how many pieces. This step used to ask one campaign's
+     two questions of all nine, so a buyer setting up Reddit comments was asked
+     for a video link and which of Watch / Like / Comment agents should do.
+     THE CONTROLS ARE THE PAGE'S OWN, NOT NEW ONES. Five of the six kinds the
+     catalogue declares already had a control here; the sixth, a multi-select,
+     is the chip row it already draws with a checkbox behind it instead of a
+     radio, and a tick on the selected ones so a group that accumulates does not
+     look exactly like one that replaces. */
+  function typeField(f, err) {
+    var e = err[f.key];
+    if (f.kind === 'chips') {
+      return chipMulti({ field: f.key, label: f.label, hint: f.hint, options: f.options, err: e });
+    }
+    /* A DROPDOWN'S WORTH OF OPTIONS IS FOUR HERE AT MOST, so it is a chip row
+       rather than a select: this page has no select control, and adding one to
+       ask "1,000+ karma or 5,000+" would be a new component for a question the
+       chip row answers in one press. */
+    if (f.kind === 'select') {
+      return choiceGroup({
+        field: f.key, name: 'brief-' + f.key, label: f.label, hint: f.hint, err: e,
+        options: f.options.map(function (v) { return { value: v }; })
+      });
+    }
+    var val = typeof d[f.key] === 'string' ? d[f.key] : '';
+    if (f.kind === 'textarea') {
+      return '<label class="q" data-field="' + f.key + '">'
+        + '<span class="q-label">' + esc(f.label) + '</span>'
+        + '<textarea class="field' + (e ? ' err' : '') + '" name="' + f.key + '" rows="3"'
+        + ' placeholder="' + esc(f.ph || '') + '">' + esc(val) + '</textarea>'
+        + msgSlot(e, f.hint) + '</label>';
+    }
+    /* A LINK, NOT AN UPLOAD. There is nowhere on this page to put a file, and a
+       picker that drops what you gave it is a control that lies about what it
+       did. The source asks for a link too, but builds its placeholder by
+       prefixing "Paste a link " to a phrase that already says it. */
+    var num = f.kind === 'number';
+    var ph = f.kind === 'filelink' ? 'Paste a link to it' : (f.ph || '');
+    return '<label class="q" data-field="' + f.key + '">'
+      + '<span class="q-label">' + esc(f.label) + '</span>'
+      + '<input type="text"' + (num ? ' inputmode="numeric"' : '')
+      + (f.kind === 'text' || f.kind === 'filelink' ? ' autocapitalize="none" autocorrect="off" spellcheck="false"' : '')
+      + ' class="field' + (e ? ' err' : '') + '" name="' + f.key + '"'
+      + ' placeholder="' + esc(ph) + '" value="' + esc(val) + '">'
+      + msgSlot(e, f.hint) + '</label>';
+  }
+
+  /* SEVERAL CHECKBOXES UNDER ONE NAME, and the answer is which of them are on.
+     choiceGroup draws the same row with radios, so this is that function's
+     markup with the input swapped and the selected chips marked. */
+  function chipMulti(o) {
+    var on = Array.isArray(d[o.field]) ? d[o.field] : [];
+    var html = '<fieldset class="q" data-field="' + o.field + '">'
+      + '<legend class="q-label">' + esc(o.label) + '</legend>'
+      + '<div class="opts chip-row">';
+    o.options.forEach(function (v) {
+      var sel = on.indexOf(v) !== -1;
+      html += '<label><input type="checkbox" class="sr-only" name="' + o.field + '" value="' + esc(v) + '"'
+        + (sel ? ' checked' : '') + '>'
+        + '<span class="chip chip--multi' + (sel ? ' on' : '') + (o.err && !sel ? ' err-ring' : '') + '">'
+        + '<span class="chip-tick" aria-hidden="true">' + TICK + '</span>' + esc(v) + '</span></label>';
+    });
+    return html + '</div>' + msgSlot(o.err, o.hint) + '</fieldset>';
   }
 
   function renderStep1(err) {
-    return '<label class="q" data-field="videoUrl">'
-      + '<span class="q-label">Which video is this campaign about?</span>'
-      + '<input type="text" inputmode="url" autocapitalize="none" autocorrect="off" spellcheck="false" '
-      + 'class="field' + (err.videoUrl ? ' err' : '') + '" name="videoUrl" '
-      + 'placeholder="youtube.com/watch?v=..." value="' + esc(d.videoUrl) + '">'
-      + msgSlot(err.videoUrl, 'It has to be public, or the agents cannot reach it.') + '</label>'
-      + choiceGroup({
-        field: 'actions', name: 'brief-actions', variant: 'cards',
-        label: 'What should each agent do?',
-        hint: 'onBlue verifies whichever of these you pick, and nothing else counts.',
-        options: ACTION_OPTS, err: err.actions
-      });
+    var b = BRIEFS[d.type];
+    /* THE NAME IS THE ONE FIXED QUESTION ON THIS STEP, and it is first because
+       it is the only thing on the form nobody but the buyer can supply. It is
+       also what the dashboard lists the campaign under, so a campaign without
+       one would arrive on that screen as a row with a blank left column. */
+    var html = '<label class="q" data-field="name">'
+      + '<span class="q-label">What do you want to call this campaign?</span>'
+      + '<input type="text" class="field' + (err.name ? ' err' : '') + '" name="name" '
+      + 'placeholder="Fernweh Coffee: spring launch" value="' + esc(d.name) + '">'
+      + msgSlot(err.name, 'Only you and onBlue see this. It is how you will find it later.') + '</label>';
+    if (b) {
+      html += b.fields.map(function (f) { return typeField(f, err); }).join('');
+    }
+    /* LAST, AND OPTIONAL, which is the only honest place for a free-text box on
+       a form whose whole promise is that it asks the right questions. */
+    html += '<label class="q" data-field="note">'
+      + '<span class="q-label">Anything else we should know? <span class="opt">(optional)</span></span>'
+      + '<textarea class="field" name="note" rows="2" '
+      + 'placeholder="Anything we should know before we start.">' + esc(d.note) + '</textarea>'
+      + msgSlot('', '') + '</label>';
+    return html;
   }
 
   function renderStep2(err) {
@@ -1849,27 +2227,46 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
        price with no scale and a budget on its own is a scale with no price. The
        line under them multiplies the pair, which is the only arithmetic this
        form does and the only thing a buyer actually wants to know. */
-    var html = '<label class="q" data-field="bid">'
-      + '<span class="q-label">What is a result worth to you?</span>'
-      + '<span class="field-wrap"><span class="field-pre">$</span>'
-      + '<input type="text" inputmode="decimal" class="field field--pre' + (err.bid ? ' err' : '') + '" name="bid" '
-      + 'placeholder="4" value="' + esc(d.bid) + '"></span>'
-      + msgSlot(err.bid, unitHint()) + '</label>'
-      + '<label class="q" data-field="budget">'
-      + '<span class="q-label">And the most you want to spend on it?</span>'
-      + '<span class="field-wrap"><span class="field-pre">$</span>'
-      + '<input type="text" inputmode="decimal" class="field field--pre' + (err.budget ? ' err' : '') + '" name="budget" '
-      + 'placeholder="500" value="' + esc(d.budget) + '"></span>'
-      + msgSlot(err.budget, 'Nothing is taken now. The budget is a ceiling, not a payment.') + '</label>';
+    var b = BRIEFS[d.type] || {};
+    var html = moneyQ('bid', 'What is a result worth to you?', b.ph || '4', unitHint(), err.bid);
+    /* A SECOND BID, AND ONLY TWO TYPES HAVE ONE. Something has to be MADE before
+       it can earn a view, and the making is priced separately out of the same
+       budget. Asking for it on the nine types that do not make anything would be
+       a field with no answer. */
+    if (b.gen) {
+      html += moneyQ('gen', b.gen.label + '?', b.gen.ph, 'This comes out of the same budget as the views.', err.gen);
+    }
+    html += moneyQ('budget', 'And the most you want to spend on it?', '500',
+      'Nothing is taken now. The budget is a ceiling, not a payment.', err.budget);
     if (money(d.bid) && money(d.budget) && Number(d.budget) >= Number(d.bid)) {
+      /* PER, NOT ONE. A view bid buys a thousand views, so dividing the budget
+         by the bid and calling the answer "views" understated it by three orders
+         of magnitude; floor, not round, because the number is a promise about
+         what the money covers. */
+      var buys = Math.floor(Number(d.budget) / Number(d.bid)) * (b.per || 1);
       html += '<p class="aside"><span class="aside-ic">' + ICON.info + '</span>That buys about <b>'
-        + Math.floor(Number(d.budget) / Number(d.bid)).toLocaleString() + '</b> ' + unitPlural()
-        + ', if every one of them passes.</p>';
+        + buys.toLocaleString() + '</b> ' + esc(b.unit || 'verified results')
+        + ', if every one of them passes.'
+        + (b.gen ? ' Making the videos comes out of the same budget.' : '') + '</p>';
     }
     return html;
   }
 
+  function moneyQ(field, label, ph, hint, err) {
+    return '<label class="q" data-field="' + field + '">'
+      + '<span class="q-label">' + esc(label) + '</span>'
+      + '<span class="field-wrap"><span class="field-pre">$</span>'
+      + '<input type="text" inputmode="decimal" class="field field--pre' + (err ? ' err' : '') + '" '
+      + 'name="' + field + '" placeholder="' + esc(ph) + '" value="' + esc(d[field]) + '"></span>'
+      + msgSlot(err, hint) + '</label>';
+  }
+
   function renderStep3(err) {
+    /* TWO DATES AND NOTHING ELSE. There was a "How should it run?" pair here,
+       steady or as fast as agents pick it up, and it was invented: the two types
+       that actually have a pacing question declare it themselves, so those
+       buyers were being asked it twice in different words and the other seven
+       were answering a question their campaign has no notion of. */
     return '<div class="q-pair">'
       + '<label class="q" data-field="startAt">'
       + '<span class="q-label">Start</span>'
@@ -1880,18 +2277,13 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
       + '<input type="date" class="field' + (err.endAt ? ' err' : '') + '" name="endAt" value="' + esc(d.endAt) + '">'
       + msgSlot(err.endAt) + '</label>'
       + '</div>'
-      + choiceGroup({
-        field: 'pace', name: 'brief-pace',
-        label: 'How should it run?',
-        hint: 'Either way it stops when the budget is spent or the window closes, whichever comes first.',
-        options: PACE_OPTS, err: err.pace
-      });
+      + '<p class="aside"><span class="aside-ic">' + ICON.clock + '</span>It stops when the budget is spent or the window closes, whichever comes first.</p>';
   }
 
   function renderStep4(err) {
     return choiceGroup({
-      field: 'review', name: 'brief-review',
-      label: 'Do you want to see the work before it is charged?',
+      field: 'review', name: 'brief-review', variant: 'cards',
+      label: 'How much do you want to see before it posts?',
       hint: 'onBlue checks every action either way. This adds your own pass on top.',
       options: REVIEW_OPTS, err: err.review
     })
@@ -1902,7 +2294,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     + msgSlot(err.email) + '</label>'
     + checkField({
       field: 'agree', subtle: true,
-      body: 'By posting this campaign, I agree to the <a class="legal-link" href="/onblue/terms#terms" target="_blank" rel="noopener">Program Terms</a> and I\u2019m okay with BlueStacks reaching out to me about onBlue.',
+      body: 'By creating this campaign, I agree to the <a class="legal-link" href="/onblue/terms#terms" target="_blank" rel="noopener">Program Terms</a> and I\u2019m okay with BlueStacks reaching out to me about onBlue.',
       err: err.agree
     });
   }
@@ -1910,22 +2302,20 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
   /* THE UNIT COMES FROM THE CAMPAIGN KIND, not from a field. The catalogue
      already said what a bid buys, and asking again would be the form making the
      buyer restate a choice they have made. */
-  function unitHint() {
-    return d.kind === 'Creators make videos'
-      ? 'Per finished video an agent makes.'
-      : 'Per 1,000 verified views.';
-  }
-  function unitPlural() {
-    return d.kind === 'Creators make videos' ? 'videos' : 'thousand verified views';
-  }
+  function unitHint() { return 'Per ' + (d.unit || '1,000 verified views') + '.'; }
 
   var STEP_RENDER = [renderStep0, renderStep1, renderStep2, renderStep3, renderStep4];
 
   /* ---- the journey strip ---- */
-  var MILE_STEPS = ['Brief it', 'Agents run it', 'Pay on pass'];
+  /* TWO RAILS, ONE COMPONENT. Before an agency is approved the three stages are
+     about the agency; afterwards they are about a campaign. Same discs, same
+     connector, and the only thing that changes is what they are counting. */
+  var MILE_APPLY = ['Brief it', 'Agents run it', 'Pay on pass'];
+  var MILE_REVIEW = ['Register', 'We review', 'Start campaigns'];
 
   function renderMile() {
-    var active = submitted ? 1 : 0;
+    var MILE_STEPS = stage === 'review' ? MILE_REVIEW : MILE_APPLY;
+    var active = stage === 'review' ? 1 : (submitted ? 1 : 0);
     mileEl.innerHTML = MILE_STEPS.map(function (label, i) {
       var state = i < active ? ' done' : i === active ? ' current' : '';
       return '<li class="mile-step' + state + '"' + (i === active ? ' aria-current="step"' : '') + '>'
@@ -1965,8 +2355,8 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
       + '<span class="confirm-sun" aria-hidden="true"><span class="confirm-sun-in"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.6C12.55 2.6 12.88 3.15 13.08 4.7c.62 4.7 1.52 5.6 6.22 6.22 1.55.2 2.1.53 2.1 1.08s-.55.88-2.1 1.08c-4.7.62-5.6 1.52-6.22 6.22-.2 1.55-.53 2.1-1.08 2.1s-.88-.55-1.08-2.1c-.62-4.7-1.52-5.6-6.22-6.22C3.15 12.88 2.6 12.55 2.6 12s.55-.88 2.1-1.08c4.7-.62 5.6-1.52 6.22-6.22C11.12 3.15 11.45 2.6 12 2.6Z"/></svg></span></span>'
       + '<h2 class="title-xl" id="confirm-title">Your campaign <em>is live.</em></h2>'
       + '</div>'
-      + '<p class="lede">onBlue is matching <b>' + esc(d.kind || 'your campaign') + '</b> to agents now. Nothing is charged until work is verified, and we’ll email <b>' + esc(d.email) + '</b> as the first results land.</p>'
-      + '<span class="earn-payout"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.5l5 5L19.5 6.5"/></svg>Campaign posted</span>'
+      + '<p class="lede">onBlue is matching <b>' + esc(d.name || d.kind || 'your campaign') + '</b> to agents now. Nothing is charged until work is verified, and we’ll email <b>' + esc(d.email) + '</b> as the first results land.</p>'
+      + '<span class="earn-payout"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.5l5 5L19.5 6.5"/></svg>Campaign created</span>'
       /* THE SAME SHAPE AS THE GATE'S "Already have an account? Sign in": one
          quiet line under the last thing on the screen, in --muted, with the
          only word you can act on underlined. It reuses .gate-alt rather than
@@ -2214,12 +2604,75 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
      tile shows: $150 of budget put in, $90 of it charged against verified work,
      $60 left. A dashboard whose remaining budget and whose progress bar disagree
      is worse than one with no numbers at all, so they come from one place. */
-  var ACCOUNTS = {
-    empty: { balance: 0, earned: 0, active: 0, past: 0, txns: [] },
-    one: {
-      balance: 60, earned: 90, active: 1, past: 0,
-      txns: [{ date: 'Mar 8, 2026', label: 'Verified views, spring launch', amount: 90 }]
+  var CAMPAIGNS = [
+    {
+      id: 'spring', name: 'Spring Launch: Product Reveal Short', ref: '#7c2d91e4',
+      done: 212, target: 500, spent: 212, budget: 500, note: '7 days left',
+      state: 'live', label: 'Live', ends: 'Sep 24, 2026', charged: 'Sep 16, 2026',
+      short: 'Spring Launch',
+      brief: 'Boost a post. Agents watch the reveal Short on their own accounts.'
+    },
+    {
+      id: 'collab', name: 'Creator Collab Teaser', ref: '#4b0a63f7',
+      done: 118, target: 150, spent: 118, budget: 150, note: '3 days left',
+      state: 'live', label: 'Live', ends: 'Sep 20, 2026', charged: 'Sep 15, 2026',
+      short: 'Creator Collab',
+      brief: 'Boost a post. Agents watch the teaser and leave a comment on it.'
+    },
+    {
+      id: 'anthem', name: 'July Brand Anthem', ref: '#d21e88ac',
+      done: 300, target: 300, spent: 300, budget: 300, note: 'target met',
+      state: 'done', label: 'Completed', ends: 'Aug 31, 2026', charged: 'Aug 31, 2026',
+      short: 'July Anthem',
+      brief: 'Boost a post. Agents watch the anthem film from start to finish.'
+    },
+    {
+      id: 'summer', name: 'Summer Drop Part 1', ref: '#09c4b3d5',
+      done: 96, target: 200, spent: 96, budget: 200, note: 'make-good applied',
+      state: 'under', label: 'Under target', ends: 'Sep 6, 2026', charged: 'Sep 6, 2026',
+      short: 'Summer Drop',
+      brief: 'Boost a post. Agents watch part one of the drop on their own accounts.'
     }
+  ];
+  /* EVERY ROW IS 1:1, so the rate is read off the data rather than asserted
+     beside it. A bid quoted in the sheet that the row's own two figures
+     contradict is the one error on this screen nobody would catch. */
+  var RATE = '$1';
+  function camp(id) {
+    for (var i = 0; i < CAMPAIGNS.length; i++) {
+      if (CAMPAIGNS[i].id === id) { return CAMPAIGNS[i]; }
+    }
+    return null;
+  }
+
+  /* ---- the two accounts -----------------------------------------------------
+     A dashboard with nothing in it and a dashboard with something in it are not
+     one screen with a row hidden: the balance, the ledger, the tab counts and
+     the campaigns section all say different things, and they have to agree with
+     each other or the screen teaches a reviewer something false.
+     THEY AGREE BY CONSTRUCTION NOW, rather than by my having added them up once.
+     Budget remaining is what was committed minus what has been charged, spent
+     till date is what has been charged, and the ledger is one row per charge.
+     Three figures typed separately is three chances for the screen to contradict
+     itself, and it did: the old pair described one campaign the list no longer
+     shows. */
+  function account(ids) {
+    var cs = ids.map(camp), committed = 0, charged = 0;
+    cs.forEach(function (c) { committed += c.budget; charged += c.spent; });
+    return {
+      camps: cs,
+      balance: committed - charged,
+      earned: charged,
+      txns: cs.slice().sort(function (x, y) {
+        return Date.parse(y.charged) - Date.parse(x.charged);
+      }).map(function (c) {
+        return { date: c.charged, label: 'Verified views, ' + c.short, amount: c.spent };
+      })
+    };
+  }
+  var ACCOUNTS = {
+    empty: account([]),
+    one: account(['spring', 'collab', 'anthem', 'summer'])
   };
   var acct = 'empty';
 
@@ -2240,8 +2693,15 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     Array.prototype.forEach.call(document.querySelectorAll('[data-fig="earned"]'), function (el) {
       el.textContent = money(a.earned);
     });
-    dash.querySelector('[data-count="active"]').textContent = a.active;
-    dash.querySelector('[data-count="past"]').textContent = a.past;
+    /* THE COUNTS ARE THE LISTS' OWN LENGTHS. They were two numbers written
+       beside the data they were counting, which is how a tab came to read 0 over
+       a pane holding a campaign. */
+    var live = a.camps.filter(function (c) { return c.state === 'live'; });
+    var ended = a.camps.filter(function (c) { return c.state !== 'live'; });
+    dash.querySelector('[data-count="active"]').textContent = live.length;
+    dash.querySelector('[data-count="past"]').textContent = ended.length;
+    dash.querySelector('[data-list="active"]').innerHTML = live.map(crow).join('');
+    dash.querySelector('[data-list="past"]').innerHTML = ended.map(crow).join('');
 
     var ledger = dash.querySelector('[data-ledger]');
     var none = dash.querySelector('[data-ledger-empty]');
@@ -2262,11 +2722,64 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     });
   }
 
+  var INFO_MARK = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></svg>';
+
+  /* ONE ROW, FIVE CELLS, and the percentage is computed rather than carried:
+     a width written next to the two numbers it is supposed to represent is a
+     third figure that can disagree with them. */
+  function crow(c) {
+    var pct = Math.round(c.done / c.target * 1000) / 10;
+    var chip = c.state === 'live' ? 'chip chip--open'
+      : c.state === 'under' ? 'chip chip--under' : 'chip';
+    return '<li class="crow">'
+      + '<span class="crow-id">'
+      + '<span class="crow-name">' + esc(c.name) + ' <i>' + esc(c.ref) + '</i></span>'
+      + '<span class="crow-meta">Sample &middot; YouTube Short &middot; US</span>'
+      + '</span>'
+      + '<span class="crow-fill">'
+      + '<span class="crow-note"><b>' + c.done + '</b> of ' + c.target + ' &middot; ' + esc(c.note) + '</span>'
+      + '<span class="bar" role="progressbar" aria-valuenow="' + c.done + '" aria-valuemin="0"'
+      + ' aria-valuemax="' + c.target + '" aria-label="' + esc(c.name) + ' fill">'
+      + '<span class="bar-fill" style="width: ' + pct + '%"></span></span>'
+      + '</span>'
+      + '<span class="crow-spend"><b>' + money(c.spent) + '</b><span>of ' + money(c.budget) + '</span></span>'
+      + '<span class="crow-state"><span class="' + chip + '">' + esc(c.label) + '</span></span>'
+      + '<button class="crow-info" type="button" aria-label="About ' + esc(c.name) + '"'
+      + ' data-sheet="prog-info" data-camp="' + esc(c.id) + '">' + INFO_MARK + '</button>'
+      + '</li>';
+  }
+
+  /* THE SHEET IS FILLED BEFORE IT IS SHOWN, and it has to be: the opener that
+     shows it lives in the shared chrome and listens on the document, so this one
+     runs in the capture phase to get there first. Registering a second bubble
+     listener would have raced it, and lost half the time. */
+  document.addEventListener('click', function (e) {
+    var go = e.target.closest ? e.target.closest('[data-camp]') : null;
+    if (!go) { return; }
+    var c = camp(go.getAttribute('data-camp'));
+    var sheet = document.getElementById('sheet-prog-info');
+    if (!c || !sheet) { return; }
+    sheet.querySelector('#prog-info-title').textContent = c.name;
+    sheet.querySelector('[data-info="brief"]').textContent = c.brief;
+    sheet.querySelector('[data-info="counts"]').innerHTML =
+      '<b>' + RATE + '</b> per 1,000 verified views, charged as they land.';
+    sheet.querySelector('[data-info="ends"]').innerHTML = c.state === 'live'
+      ? '<b>' + esc(c.ends) + '</b>, or when the budget runs out.'
+      : 'Ended <b>' + esc(c.ends) + '</b>.';
+  }, true);
+
   function setAccount(id) {
     acct = ACCOUNTS[id] ? id : 'empty';
     renderDash();
   }
   window.onblueAccount = setAccount;
+
+  /* the same control the confirmation and the dashboard use, on the same three
+     states, because a reader who has seen one of them has learned all three */
+  (function reviewRefresh() {
+    var host = document.querySelector('#review [data-refresh]');
+    if (host) { wireRefresh(host, host, document.querySelector('#review .confirm-alt')); }
+  })();
 
   (function dashboard() {
     var dash = document.getElementById('dash');
@@ -2376,17 +2889,67 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
      of one sequence, so this is not a step counter: it is which of the two
      things this page is right now. Everything the application owns goes away
      together, by class, rather than element by element. */
-  function setApproved(on) {
-    approved = on;
-    document.body.classList.toggle('is-approved', on);
-    dashEl.hidden = !on;
-    if (!on) { render(); }
+  /* ONE FUNCTION, THREE STAGES, because they are three values of one thing
+     rather than three independent switches. It was two booleans and they could
+     both be true, which is a state this page has no screen for. */
+  function setStage(next) {
+    stage = next;
+    var body = document.body.classList;
+    body.toggle('is-review', stage === 'review');
+    body.toggle('is-approved', stage === 'dash');
+    revEl.hidden = stage !== 'review';
+    dashEl.hidden = stage !== 'dash';
+    approved = stage === 'dash';
+    renderMile();
+    if (stage === 'apply') { render(); }
   }
+  function setApproved(on) { setStage(on ? 'dash' : 'apply'); }
   /* THE ONE DOOR INTO THIS STATE, published so the review toggler goes through
      it rather than setting the class itself. A switch that flipped the class
      from outside would leave everything above believing the application was
      still on screen. */
   window.onblueApproved = setApproved;
+  window.onblueStage = setStage;
+
+  /* ---- what the gate handed over ------------------------------------------
+     REGISTERING IS WHAT PUTS AN AGENCY IN REVIEW, so the page opens there when
+     it finds a name it was given rather than one it has always had. The flag is
+     consumed on read: a reload is not a second registration, and leaving it set
+     would strand a returning agency on a screen about something that happened
+     days ago.
+     THE NAME AND THE ADDRESS ARE WRITTEN INTO THE COPY, not just held. A screen
+     that says "your agency is in review" without naming it is a screen that
+     could be about anybody. */
+  (function fromGate() {
+    var name = '', mail = '', fresh = false;
+    try {
+      name = window.sessionStorage.getItem('onblue:agency') || '';
+      mail = window.sessionStorage.getItem('onblue:email') || '';
+      /* THE NAME STAYS, A FLAG IS WHAT GETS SPENT. The name used to be the
+         trigger AND the fact, so reading it once to write it into the review
+         copy also threw it away, and every screen after that had no idea whose
+         account it was on. One flag says "you have just registered"; the name
+         says who you are, and only the first of those is true once. */
+      fresh = window.sessionStorage.getItem('onblue:new') === '1';
+      if (fresh) { window.sessionStorage.removeItem('onblue:new'); }
+    } catch (e) {}
+    var who = document.querySelector('[data-who]');
+    if (who && (name || mail)) {
+      who.textContent = name || mail;
+      who.hidden = false;
+    }
+    if (name) {
+      Array.prototype.forEach.call(document.querySelectorAll('[data-agency-name]'), function (el) {
+        el.textContent = name;
+      });
+    }
+    if (mail) {
+      Array.prototype.forEach.call(document.querySelectorAll('[data-agency-mail]'), function (el) {
+        el.textContent = mail;
+      });
+    }
+    if (fresh) { setStage('review'); }
+  })();
 
   /* ---- render ---- */
   /* the two blocks of the stage and the two heads move together, because they
@@ -2408,7 +2971,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     headEl.style.display = '';
     footEl.style.display = '';
     cardEl.classList.remove('is-done');
-    headEl.innerHTML = '<h2>' + esc(STEPS[step].title) + '</h2>'
+    headEl.innerHTML = '<h2>' + esc(step === 0 ? (d.kind || 'The brief') : STEPS[step].title) + '</h2>'
       + '<div class="step-rail"><span class="rail-count">' + (step + 1) + '/' + STEPS.length
       + '<span class="sr-only">, step ' + (step + 1) + ' of ' + STEPS.length + '</span></span>'
       + '<span class="rail-segs">' + STEPS.map(function (_, i) {
@@ -2471,6 +3034,20 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
       input.addEventListener('change', function () {
         var field = input.closest('[data-field]').getAttribute('data-field');
         touched[field] = true;
+        /* THE ATTRIBUTE, NOT THE PROPERTY. A checkbox with no value attribute
+           reports "on" from .value, so the consent box would have been read as a
+           one-item multi-select and stored the string "on" where a boolean was
+           expected. Only a group member carries a real value. */
+        var val = input.getAttribute('value');
+        if (val !== null) {
+          var on = Array.isArray(d[field]) ? d[field].slice() : [];
+          var at = on.indexOf(val);
+          if (input.checked) { if (at === -1) { on.push(val); } }
+          else if (at !== -1) { on.splice(at, 1); }
+          d[field] = on;
+          render('input[name="' + CSS.escape(field) + '"][value="' + CSS.escape(val) + '"]');
+          return;
+        }
         d[field] = input.checked;
         render('input[name="' + CSS.escape(input.name) + '"]');
       });
@@ -2511,6 +3088,11 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
   var cardEl = document.getElementById('form-card');
   var listEl = document.getElementById('prog-list');
   var dashEl = document.getElementById('dash');
+  var revEl = document.getElementById('review');
+  /* 'review' | 'apply' | 'dash'. It opens on review when the gate has just
+     registered an agency and handed one over, which is the only way this page
+     is reached from the brands site by someone who does not have an account. */
+  var stage = 'apply';
   var headProg = document.querySelector('[data-head="programs"]');
   var headForm = document.querySelector('[data-head="form"]');
   var bgEl = document.getElementById('apply-bg');
@@ -2626,7 +3208,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
      later with nothing on the page admitting where it came from. */
   Array.prototype.forEach.call(document.querySelectorAll('[data-pick]'), function (btn) {
     btn.addEventListener('click', function () {
-      d.kind = btn.getAttribute('data-pick');
+      setType(btn.getAttribute('data-pick'), btn.getAttribute('data-kind'));
       chosen = true;
       swapDir = 'fwd';
       render();
@@ -2644,7 +3226,14 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
   Array.prototype.forEach.call(document.querySelectorAll('[data-logout]'), function (el) {
     el.addEventListener('click', function (e) {
       e.preventDefault();
-      try { window.sessionStorage.removeItem('onblue:email'); } catch (e2) {}
+      /* everything the gate handed over, not just the address: the agency
+         name outlives the review screen now, so it has to be dropped here
+         too or the next person at this browser inherits it. */
+      try {
+        window.sessionStorage.removeItem('onblue:email');
+        window.sessionStorage.removeItem('onblue:agency');
+        window.sessionStorage.removeItem('onblue:new');
+      } catch (e2) {}
       window.location.href = 'brands.html';
     });
   });
@@ -2663,7 +3252,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
   document.getElementById('apply-form').addEventListener('submit', function (e) {
     e.preventDefault();
     var all = validate(d);
-    var bad = STEP_FIELDS[step].some(function (f) { return all[f]; });
+    var bad = stepFields(step).some(function (f) { return all[f]; });
     if (bad) {
       forced[step] = true;
       render();

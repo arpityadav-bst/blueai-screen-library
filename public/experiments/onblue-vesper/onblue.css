@@ -920,6 +920,24 @@ body.menu-open .header {
 }
 .theme-toggle:hover, .gate-x:hover { color: var(--ink); background: var(--wash-hover); }
 .theme-toggle:focus-visible, .gate-x:focus-visible { outline: 2px solid var(--blue-ink); outline-offset: 2px; }
+
+/* ---- what a dialog focuses when it opens ---------------------------------
+   EVERY DIALOG ON THIS SITE WAS AUTOFOCUSING ITS OWN CLOSE BUTTON, because that
+   is what showModal() does when nothing claims the focus: it takes the first
+   focusable descendant, and on all six of them that is the X. So opening a video
+   or a pricing sheet with the mouse put a focus ring on the one control you were
+   least likely to want, before you had looked at the thing you opened.
+   THE DIALOG TAKES IT INSTEAD. autofocus on the <dialog> itself makes the dialog
+   the focus target, which keeps focus inside the modal where it has to be, keeps
+   Escape and Tab working, and draws nothing: it is a container, not a control.
+   Tab from there still reaches the close button first.
+   THE KEYBOARD RING STAYS, and is added here for the close controls that never
+   had one. Suppressing the ring on open and suppressing it altogether are not
+   the same fix, and only the first one was asked for. */
+dialog:focus { outline: none; }
+.sheet-x:focus-visible,
+.sheet-close:focus-visible,
+.sheet-go:focus-visible { outline: 2px solid var(--blue-ink); outline-offset: 2px; }
 .tt-icon {
   grid-area: 1 / 1;
   width: 17px;
@@ -993,10 +1011,23 @@ body.menu-open .header {
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
 }
+/* THE SECOND HALF OF THE SAME FIX. The base of this button was a dark literal
+   until it was tokenised; its hover was left behind, so on a light page the one
+   ghost CTA on the site went from near-white to rgba(42,42,42) with a blue glow
+   around it. That is not a hover, that is a different button.
+   IT JOINS THE SURFACE FAMILY, the one the Google button, the fields and the FAQ
+   rows share: a hairline that firms up and the faintest wash, and nothing else.
+   THE WASH IS LAYERED, NOT SUBSTITUTED, which is the only difference from the
+   rest of that family. They sit on an opaque card; this one is a frosted panel
+   with its own translucency and a blur behind it, so writing --surface-hover as
+   the background would have dissolved the ghost instead of shading it. Two
+   gradient stops of the same colour is how you composite one over the other and
+   keep both. */
 .hero-ghost:hover {
-  background: rgba(42, 42, 42, 0.62);
-  border-color: rgba(220, 230, 255, 0.8);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 0 24px rgba(170, 200, 255, 0.28);
+  border-color: var(--card-line-hover);
+  background:
+    linear-gradient(var(--surface-hover), var(--surface-hover)),
+    var(--hero-ghost-bg);
 }
 
 /* ---------------------------------------------------------------- burger */
@@ -1264,6 +1295,23 @@ body.menu-open { overflow: hidden; }
   background: linear-gradient(90deg, var(--rule), transparent);
 }
 
+/* ---- the question ------------------------------------------------------------
+   A LABEL, A CONTROL AND A SLOT, which is every question any form on this site
+   asks. It lived inside the application while the application was the only page
+   with a form; the brands gate now registers an agency and the campaign flow
+   writes a brief, so three surfaces were reaching for rules that existed in one
+   of them.
+   .msg RESERVES ITS LINE SO AN ERROR DOES NOT SHIFT WHAT IS UNDER IT, and gives
+   the line back when it is empty: reserving space for a caption that will never
+   come is how a group with no hint ended up 25px taller than the one beside it. */
+.q { display: block; border: 0; padding: 0; margin: 0; }
+.q-label { display: block; margin-bottom: 11px; color: var(--ink); font-size: 14px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.45; }
+.q-label .opt { color: var(--dim-ink); font-weight: 400; }
+.msg { display: block; min-height: 1.15em; margin-top: 7px; color: var(--dim-ink); font-size: 12.5px; line-height: 1.45; letter-spacing: -0.01em; }
+.msg.is-err { color: var(--err-ink); }
+.msg:empty { min-height: 0; margin-top: 0; }
+.field { height: var(--hero-btn-h); padding: 0 14px; background: var(--card-bg); }
+
 /* ---- the sheet ---------------------------------------------------------------
    A SMALL DIALOG, WHERE THE ACCESS GATE IS A FULL-VIEWPORT ONE. That one
    replaces the page because it is asking you to start something; a sheet sits
@@ -1302,9 +1350,19 @@ body.menu-open { overflow: hidden; }
    word in it worth landing on. */
 .sheet .q-label { font-size: 13.5px; font-weight: 500; }
 .sheet .q-label b { font-weight: 600; }
-.sheet-title { color: var(--ink); font-size: 18px; font-weight: 600; letter-spacing: -0.03em; }
+/* THE TITLE TAKES THE ROW, WHICH IS WHAT PINS THE CLOSE BUTTON. Without this
+   .sheet-head is three items packed left on a 12px gap, so the X sat wherever
+   the title happened to stop: on the pricing sheet, immediately after the words
+   "How pricing works", reading as punctuation on the heading rather than as the
+   panel's dismiss. Rename the sheet and the control moves. The cash-out sheet
+   looked right only by accident, because the balance chip between them carried a
+   margin-left: auto and pushed the X out for it.
+   ONE AUTO, NOT TWO. That chip's own auto margin is gone with this: two auto
+   margins in a flex row split the free space between them, which would have
+   parked the chip in the middle of the header instead of beside the X. */
+.sheet-title { flex: 1; min-width: 0; color: var(--ink); font-size: 18px; font-weight: 600; letter-spacing: -0.03em; }
 .sheet-head { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
-.sheet-bal { margin-left: auto; padding: 6px 11px; font-size: 12.5px; }
+.sheet-bal { padding: 6px 11px; font-size: 12.5px; }
 .sheet-bal b { color: var(--ink); font-weight: 600; }
 .sheet-x {
   flex: none;
@@ -1324,6 +1382,11 @@ body.menu-open { overflow: hidden; }
 .sheet-sect:first-of-type { margin-top: 18px; }
 .sheet-sect p { margin-top: 7px; color: var(--muted); font-size: 13.5px; line-height: 1.5; letter-spacing: -0.01em; }
 .sheet-sect p b { color: var(--ink); font-weight: 600; }
+/* FULL WIDTH IS A FORM'S ANSWER, and that is where this rule came from: in the
+   cash-out sheet the submit closes a column of full-width fields, so matching
+   them is right. It is inherited by any sheet that has no form at all, and there
+   it is 770px of solid black closing a comparison table that never asked for it:
+   a footer band, not a button. See .sheet--wide's own override. */
 .sheet-close, .sheet-go { width: 100%; height: 44px; margin-top: 20px; }
 
 /* ---- ORPHANS, HANDLED ONCE ------------------------------------------------

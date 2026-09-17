@@ -134,11 +134,17 @@
       }
     });
     document.body.appendChild(dock([account, build({
-      label: 'Page', store: 'onblue:dev-page',
-      states: [{ id: 'apply', name: 'Application' }, { id: 'dash', name: 'Dashboard' }],
+      /* THREE STAGES, NOT TWO, and they are values of one thing rather than a
+         pair of switches: in review, creating a campaign, and managing them.
+         window.onblueStage is the page's own door into all three. */
+      label: 'Stage', store: 'onblue:dev-stage',
+      states: [{ id: 'review', name: 'In review' },
+               { id: 'apply', name: 'Create' },
+               { id: 'dash', name: 'Campaigns' }],
       apply: function (on) {
         account.hidden = on !== 'dash';
-        if (window.onblueApproved) { window.onblueApproved(on === 'dash'); }
+        if (window.onblueStage) { window.onblueStage(on); }
+        else if (window.onblueApproved) { window.onblueApproved(on === 'dash'); }
       }
     })]));
   }

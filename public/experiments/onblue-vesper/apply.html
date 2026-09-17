@@ -773,7 +773,6 @@ body { min-height: 100vh; }
 @media (max-width: 700px) { .row-br { display: none; } }
 
 /* ---- a question -------------------------------------------------------------- */
-.q { display: block; border: 0; padding: 0; margin: 0; }
 /* THE CONSENT ROW NEEDS MORE GAP THAN THE GRID GIVES, and the reason is the
    same ink-versus-box distinction that made the captions look uneven. Every
    other control on this step is a bordered box with 13px of padding, so its
@@ -796,7 +795,6 @@ body { min-height: 100vh; }
    nudges what is below it, which is feedback rather than a defect.
    THE STEP-FIVE EXCEPTIONS ARE GONE WITH IT. Three negative margins compensated
    for exactly this, on exactly the groups that had no caption. */
-.msg:empty { min-height: 0; margin-top: 0; }
 /* the tick and the radio itself: reachable by keyboard and screen reader,
    invisible to everything else, because the card beside it is the control */
 .sr-only {
@@ -815,8 +813,6 @@ body { min-height: 100vh; }
    the page's green, the one that rules you out is its error red */
 .tone-ok .choice-ic { color: var(--green); }
 .tone-danger .choice-ic { color: var(--err-line); }
-.q-label { display: block; margin-bottom: 11px; color: var(--ink); font-size: 14px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.45; }
-.q-label .opt { color: var(--dim-ink); font-weight: 400; }
 /* ---- the two kinds of text under a control ----------------------------------
    THEY WERE THE SAME TEXT IN TWO SIZES, 12.5 and 13, which is not a hierarchy
    step, it is tuning residue: half a pixel and the same colour reads as one
@@ -834,8 +830,6 @@ body { min-height: 100vh; }
    hint. The distinction is carried by SURFACE, not by size: both are 12.5px, so
    nothing about the type hierarchy is being asked to say "this one matters", a
    panel with a blue mark in it already said that. */
-.msg { display: block; min-height: 1.15em; margin-top: 7px; color: var(--dim-ink); font-size: 12.5px; line-height: 1.45; letter-spacing: -0.01em; }
-.msg.is-err { color: var(--err-ink); }
 
 .aside {
   display: flex;
@@ -1545,7 +1539,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     <div class="foot-base">
       <span class="foot-legal">
         <span>&copy; 2026 onBlue</span>
-        <a data-stub>Terms and conditions</a>
+        <a data-stub>Program Terms</a>
       </span>
       <span>Human ambition. Agent execution.</span>
     </div>
