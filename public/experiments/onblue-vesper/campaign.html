@@ -506,23 +506,36 @@ body { min-height: 100vh; }
    reach them. */
 .sheet--wide { width: min(620px, calc(100vw - 32px)); max-height: min(86vh, 860px); }
 .sheet--wide .sheet-in { display: flex; flex-direction: column; max-height: inherit; padding: 22px 22px 20px; }
-/* A SCROLLBAR THAT APPEARS ON HOVER IS A LAYOUT THAT MOVES ON HOVER. The panel
-   scrolls, and the buttons at its foot lift and cast a shadow when a pointer
-   reaches them; that extra height was enough to bring a scrollbar in, which took
-   its width out of the content, which resized the two buttons and reflowed the
-   form under the very pointer that was aiming at one of them. scrollbar-gutter
-   reserves the track whether or not it is in use, so nothing moves either way.
-   AND ROOM AT THE FOOT FOR WHAT THE BUTTONS DRAW. overflow-y: auto clips on both
-   axes, so a shadow under the last element in the box was being cut off square. */
-.sheet--wide .form-stage {
+/* THE BUTTONS ARE NOT PART OF THE SCROLL. Padding the box was treating the
+   symptom: a control inside an overflow box has its shadow clipped by that box
+   however much room you leave, because the clip is the box's edge and the shadow
+   is drawn beyond the element. Moving the questions into the scroller and
+   leaving the foot outside it fixes the crop and is the better shape anyway -
+   Back and Continue stay where they are on every step and on every length of
+   step, instead of being something you scroll down to find.
+   AND NOTHING MOVES WHEN THE SCROLLBAR ARRIVES. It appeared on hover, because
+   the buttons lift, and took its width out of the content, which resized the two
+   buttons and reflowed the form under the pointer aiming at one of them. With
+   the foot outside, hover cannot change the scroller's height at all; the gutter
+   is reserved anyway, for the steps that genuinely overflow. */
+.sheet--wide .form-stage { flex: 1; min-height: 0; max-width: none; margin: 0; display: flex; }
+.sheet--wide #prog-list { flex: 1; min-width: 0; }
+.sheet--wide .form-card { flex: 1; min-width: 0; min-height: 0; display: flex; }
+.sheet--wide #apply-form { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.sheet--wide .step-panel {
   flex: 1;
   min-height: 0;
-  max-width: none;
-  margin: 0;
   overflow-y: auto;
   scrollbar-gutter: stable;
-  padding: 3px 3px 10px;
 }
+.sheet--wide .form-foot { flex: none; }
+
+/* AND THE BOX INSIDE THE BOX GOES. .step-panel draws its own border and ground,
+   which was right when it sat on a page: the panel was the form's surface and
+   the page was behind it. In a dialog the dialog is that surface, so the panel
+   drew a second stroke 22px inside the first around the same questions. The
+   scroll still works; it just does not announce itself with an outline. */
+.sheet--wide .step-panel { padding: 0; border: 0; background: none; }
 
 /* THE DIALOG IS THE CARD, SO THE CARD INSIDE IT IS NOT ONE. It kept its own
    border, its own ground and its own lift, which put a raised surface 22px
@@ -2145,7 +2158,13 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     d.review = b ? b.review : '';
     d.gen = '';
     if (b) {
-      b.fields.forEach(function (f) { d[f.key] = f.kind === 'chips' ? [] : ''; });
+      /* CHIPS START ON, ALL OF THEM. An engagement campaign asks for a watch, a
+         like and a comment; that is the product, not a preference, and opening
+         with three empty boxes makes a reader configure their way back to the
+         default before they can continue. The portal ships them ticked. Taking
+         one off is the choice worth making, so that is the one the form asks
+         for. */
+      b.fields.forEach(function (f) { d[f.key] = f.kind === 'chips' ? (f.options || []).slice() : ''; });
     }
     touched = {};
     forced = {};
@@ -2392,6 +2411,15 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
        the form knows how to ask, which is the only honest place for "anything
        else". */
     return html;
+  }
+
+  /* WHAT THE FIRST BUTTON IS FOR DEPENDS ON WHETHER THERE IS ANYTHING BEHIND IT.
+     Past step one it is Back, and it goes back a step. On step one it depends on
+     the build: with two campaign types there is a chooser behind this form and
+     Back returns to it; with one there is nothing behind it at all, and a button
+     labelled Back that shuts the dialog is lying about where it takes you. */
+  function backLabel() {
+    return step > 0 || flow === 'v2' ? 'Back' : 'Cancel';
   }
 
   function renderStep2(err) {
@@ -3705,9 +3733,11 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     }
     swapDir = '';
 
-    /* Back is unconditional now: at step 0 it leads out of the form and back to
-       the programmes, which is a real place rather than nowhere */
-    footEl.innerHTML = '<button type="button" class="btn btn-ghost" id="back-btn">Back</button>'
+    /* IT SAYS WHERE IT GOES. Past step one, back a step. On step one it depends
+       on the build: with two campaign types the chooser is behind this form and
+       Back returns to it; with one there is nothing behind it, and a button
+       labelled Back that closes the dialog is lying about where it takes you. */
+    footEl.innerHTML = '<button type="button" class="btn btn-ghost" id="back-btn">' + backLabel() + '</button>'
       /* CREATE CAMPAIGN, NOT "Submit application". An application is the thing an
          agency files once to be let in, and it has its own screen; this button
          is at the end of a form that makes a campaign, and the panel it leads to
