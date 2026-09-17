@@ -1,242 +1,164 @@
-# onBlue Agentic, the brands site — plan
+# The BlueAI brands site, redesigned on onBlue Agentic
 
-Decided with Appy 2026-09-17: a standalone page in this folder that links
-`onblue.css`, agents as the actor, the inventory re-planned on the homepage's
-section system rather than restyled one for one, and all four pieces of machinery
-rethought rather than ported.
-
-Nothing below is built yet. This is the thing to argue with before it is.
+Replaces the earlier plan in this file, which was wrong in a way worth stating
+plainly: it planned a page rather than a site, and it planned it from the agentic
+side.
 
 ---
 
-## 0. The anchor
+## 0. What went wrong, so it does not repeat
 
-The homepage already names this page's subject in its own words. Section 7.4 is
-headed **"Companies bring work to onBlue"**, eyebrow "Where the work comes from",
-and the header's fourth nav link is **"For businesses"**, wearing the north-east
-arrow that marks the one destination leaving that page.
+The brief was *redesign the BlueAI brands website in the onBlue Agentic design
+system*. What was built is **the onBlue Agentic site with brand copy in it**.
 
-So this is not a sibling site. It is the other end of a link the homepage already
-draws, and the page should open on the sentence the homepage used to describe it.
-That also means **one wiring change on index.html**: "For businesses" currently
-goes nowhere in particular and should point here.
+The mechanism was a shortcut that looked like rigour at the time: `brands.html`
+was copied from `index.html` and `campaign.html` from `apply.html`, then the copy
+was swapped. That guarantees the chrome is identical, which is what it was chosen
+for. It also guarantees the **structure, the flows and the screens are the
+creator site's**, which nobody chose.
 
-**The mirror, stated once.** The homepage sells owning an agent. This page sells
-hiring the fleet. Every section is the same economy read from the buyer's end, and
-where the homepage has a device that says something, this page uses the same
-device to say the opposite half of it.
+Three things fell out of it, and each one is a thing the brands site has and the
+rebuild does not:
+
+| Brands site has | Rebuild has | What happened |
+|---|---|---|
+| A pricing comparison dialog | nothing | dropped |
+| Register your agency, then in-review | nothing | dropped |
+| Pick a campaign TYPE from nine | "pick a programme" from three | the creator site's programmes screen, wearing brand words |
+| A campaign report with proof of work | a spend dashboard | the creator dashboard, mirrored |
+
+The last row is the clearest tell. The creator dashboard is about **earning**, so
+its mirror is about **spending**, and that is what got built. But the brands site
+does not have a spend dashboard: it has a **campaign report**, and the thing a
+buyer opens it for is proof that the work happened.
+
+**The rule this plan runs on:** every screen below exists because the brands site
+has it. Nothing is here because the agentic site has it.
 
 ---
 
-## 1. Page-level
+## 1. The site, in full
 
-| | |
+Read off `/creator-brand/brands`, `create-campaign`, `campaign-report.html` and
+`ModalHost`.
+
+### 1.1 Marketing page, eight sections
+
+1. **Hero** — two CTAs: `Create a campaign` (solid) and `See how pricing works`
+   (opens a dialog)
+2. **Video examples** — the 9:16 strip
+3. **How it works** — **four** steps: create the campaign / BlueAI matches
+   creators / real engagement, verified / you watch it run, live
+4. **Platforms** — YouTube live, four more coming
+5. **Outcome pricing**
+6. **Trust** — checked not assumed, a real pool, live status
+7. **FAQ** — five questions
+8. **Closing CTA**
+
+### 1.2 Three dialogs, hosted centrally
+
+- **`pricing`** — "How pricing works". A six-row comparison, **The old way** vs
+  **With BlueAI**: what you pay for, who you reach, how it feels to viewers,
+  negotiating rates, checking the work happened, paying out.
+- **`signin`** — brand sign in.
+- **`campaign`** — branches on session state, which is the important part:
+  - signed out → sign in
+  - signed in, no agency → **Register your agency** (name, work email, website),
+    then the in-review screen
+  - registered → the campaign form
+
+### 1.3 Create a campaign, three stages, its own route
+
+`pick` → `brief` → `setup`. The catalogue is **nine types across four families**:
+*Get more views*, *Get videos made*, *Get talked about*, *Learn from real
+people*. Each type carries its own fields and its own bid unit (per 1,000
+verified views, per finished piece, per surviving comment, per completed report,
+a monthly retainer).
+
+### 1.4 The campaign report
+
+- **In review** — "Your application is in review."
+- **Campaigns** — the list, plus its empty state
+- **Campaign detail** — Progress (a chart), Accounting, Verification, Videos,
+  **Proof of work**
+
+### 1.5 States
+
+`new` → `registered` → `approved`, switchable from the review gear.
+
+---
+
+## 2. What each becomes on the agentic system
+
+The system is the vocabulary; the brands site is the content. Nothing below
+invents a screen.
+
+| Brands screen | On onBlue Agentic |
 |---|---|
-| File | `brands.html`, this folder, beside `index.html` and `apply.html` |
-| Links | `onblue.css`, `ascii-field.js`, `onblue-chrome.js`, `onblue-dev.js` |
-| Theme | light, forced by the same inline script before the stylesheet parses |
-| Grid | `--band-max`, the same one every section on both pages uses |
-
-Joining the stylesheet is the whole point of the standalone choice: the grain, the
-scrollbar, the card sheen, the large-surface hover family, the button ladder, the
-type ladder and both themes arrive already correct and cannot drift.
-
-**Header.** Identical chrome, identical logo (the spark at `--logo-mark`, "on" in
-blue, "Blue" in ink). Three changes, all of them content:
-
-- Nav: `Outcomes`, `The fleet`, `How it works`, then **"For creators"** carrying
-  the north-east arrow, pointing back at `index.html`. The arrow marks leaving
-  the page, so it moves with the destination.
-- CTA: **"Post a campaign"**, small step, with the same two-state behaviour tied
-  to the hero CTA by `IntersectionObserver`.
-- Signed in: the CTA slot becomes the account control, the way `apply.html`'s
-  header carries its logout.
-
-**Footer.** The shared footer verbatim, with this page's destinations and the
-wordmark reading `onBlue` as it does everywhere.
+| Hero | `.hero` two-column, the type ladder, the masked headline entrance. **Two** CTAs, which the ladder already has: `.btn-solid .hero-solid` and `.btn-ghost .hero-ghost` beside it |
+| Video examples | the turning ring (**built, keep**) |
+| How it works, 4 steps | `.step` cards with `.step-art` demos. Four, not three: the grid takes it |
+| Platforms | the `.chip` row, or the band note. Its own section only if the four coming platforms are worth a band |
+| Outcome pricing | the `.eco-panel` pair with the illustration swap (**built, keep**) |
+| Trust | `.agent-card` row, or folded into How it works. Its three claims are demonstrated elsewhere, so this one is a real question rather than a translation |
+| FAQ | `.faq` rows (**built, keep**) |
+| Closing | `.band-close` with the typed line (**built, keep**) |
+| **Pricing comparison** | a wide `.sheet` dialog. The system has no table component: two columns of `.mini-list` rows with the tick and cross icons it already ships, the "with" column on `--panel-bg` |
+| **Sign in** | the access gate's level two: two equal doors, the email door morphing into a field |
+| **Register your agency** | the gate's level one slot, as a three-field form on `.field` |
+| **In review** | the confirmation treatment: spark, typed line, green strip |
+| **Catalogue, 9 types / 4 families** | four `.band`-headed groups of `.card`s, or one grid with family eyebrows. Each card carries its bid unit the way the programme card carried `$30` |
+| **Brief stage** | the explainer: `.step` cards showing what this type does |
+| **Setup stage** | `.form-card` with the measured floor and the band at submit |
+| **Campaigns list** | `.dash` section with `.progtile` rows |
+| **Campaign detail** | the one genuinely new screen. Progress needs the `.earn-bars` chart re-aimed; Verification and Proof of work need a component the system does not have |
 
 ---
 
-## 2. Hero
+## 3. What to keep and what to throw away
 
-Same construction as the homepage's: two columns at `1.06fr / 0.94fr`, copy capped
-at 620px on the left, the ASCII model column on the right, the asymmetric
-`--hero-rise` padding, the scroll cue anchored to the first band.
+**Keep** (these are the brands site's content on the agentic system, which is the
+brief): the ring, the outcome panels and their renders, the FAQs, the closing
+band, the header and footer, the whole of `onblue.css` and the light twins.
 
-**Headline** — one serif-italic blue phrase, the site's one-emphasis rule:
+**Throw away** (these are the creator site wearing brand words):
 
-> Bring work to onBlue. *Agents take it from there.*
+- `campaign.html`'s programme catalogue: three "programmes" with a Reward pill.
+  The brands site picks a campaign **type** from nine, grouped in four families.
+- `campaign.html`'s four-step wizard. The brands flow is pick → brief → setup.
+- `campaign.html`'s dashboard. Balance, Add budget, Charges and "How spending
+  works" are the creator dashboard reflected; the brands site has a campaign
+  report whose subject is proof.
 
-It is the homepage's own section head promoted to a headline, which is what ties
-the two pages together at a glance.
-
-**Lede** — the exact mirror of the homepage's, clause for clause:
-
-| Homepage | Here |
-|---|---|
-| Individuals can own an agent, customize it, and earn from the work it does. | Businesses post a campaign, onBlue matches it to agents, and you pay only for the work it verifies. |
-
-**CTA** — one button, the large step, label "Post a campaign", inside the
-`.scramble` decode wrapper. Under it the quiet line: `Already have an account?
-Sign in`.
-
-**The right column.** Reuse `ascii-object.js` and its sweep band unchanged, with
-the existing six models. It is the same workforce seen from the buyer's side, and
-the rig, the fit solve and the band handoff are all already correct. *Open
-question below if you want brand-specific models instead.*
+**Restore**: the pricing dialog, agency registration, in-review, and the campaign
+detail screen.
 
 ---
 
-## 3. Section inventory
+## 4. What the marketing page needs decided
 
-Six bands. The homepage's alternating grounds and hairline joins are kept, so the
-two pages stack the same way.
+Three of its eight sections were cut in the first pass on arguments that were
+about the agentic page, not about this one.
 
-### 3.1 `#outcomes` — "You pay for outcomes" · eyebrow: *What it costs*
-
-The buyer's half of `#benefits`. Two `.eco-panel` cards on the same 2-column grid,
-copy capped at 30% so the artwork has room, and the same three-layer chromatic
-hover.
-
-- **Left, "Nothing to start."** Creating a campaign costs nothing upfront. Set a
-  budget and a window, that is the whole commitment.
-- **Right, "Nothing wasted."** Budget only moves against engagement onBlue has
-  verified. Anything below the bar is not paid for.
-
-Below them, the `.rail` card, re-aimed: on the homepage the flow runs *work → core
-→ agents*. Here it runs **brief → core → verified → charged**, so the one device
-that shows the mechanism shows the buyer's mechanism.
-
-### 3.2 `#fleet` — "The agents who take your work" · eyebrow: *Who runs it*
-
-`#agents` re-aimed from recruitment to proof of supply. Three `.agent-card`s with
-their looping terminals, each showing an agent type a brand would actually hire
-(creator / video / growth). The terminal log lines become campaign work rather
-than personal work.
-
-Closed with the **band note** pill, which is the page's device for a constraint:
-
-> YouTube campaigns run today. Instagram, TikTok, X and Reddit are next.
-
-That retires the whole `PlatformsBrand` section. It was a six-tile grid saying one
-sentence, and the system already has a component for one sentence.
-
-### 3.3 `#how-it-works` — "Brief it, run it, verify it" · eyebrow: *Three steps*
-
-Three `.step` cards with self-demonstrating `.step-art` panels, the same nesting
-rule (card white, panel down 1%, rows back to white) and the same demo policy:
-nothing loops unattended, hover to run, once for four seconds on first reveal.
-
-1. **Write the brief** — a `.pick-list` of campaign settings lighting in sequence.
-2. **onBlue dispatches** — a terminal taking the brief and assigning agents.
-3. **You pay for what passed** — the seven-bar chart re-aimed at verified actions,
-   with the figure as spend and the green pill reading *verified*.
-
-### 3.4 `#work` — "What the agents actually make" · eyebrow: *Sample output*
-
-The 9:16 strip, rethought. Today it is three candidate placements switchable from
-a review gear; that was scaffolding for a decision, not a design. It becomes one
-band: a row of 9:16 cards on the card primitive, each playing on hover only,
-nothing autoplaying. Proof beats description, and this is the only section that
-shows the actual product of a campaign.
-
-### 3.5 `#faqs` — "Questions, answered"
-
-Native `<details>` rows on `--faq-line`, the plus-to-minus sign, the same
-large-surface hover the fields and doors take. The five existing questions, nouns
-moved to agents.
-
-### 3.6 `#start` — closing
-
-Centred, 44px spark, the typed serif phrase. The line runs through its endings
-once and settles on the first, so the page at rest reads as written:
-
-> Your next campaign *runs itself.* / *starts in two minutes.* / *pays only for
-> proof.* / *needs no outreach.* / *is already staffed.*
-
-No top hairline, so it runs straight on from the FAQs.
-
-**What is gone and why:** `PlatformsBrand` (one sentence, now a band note),
-`TrustSectionBrand` (its three claims are what `#outcomes` and step 3 already
-demonstrate; a section restating them is the page telling you twice), and
-`OutcomePricing` as a separate band (it is `#outcomes`).
+1. **Platforms** was removed because "the system has a component for one
+   sentence". True, and the brands site gives it a section because scope is the
+   thing agencies ask about first.
+2. **Trust** was removed because two other sections demonstrate its claims. Also
+   true, and also the section a buyer who has been sold bot traffic reads first.
+3. **The second hero CTA**, "See how pricing works", went with the dialog.
 
 ---
 
-## 4. Machinery, rethought
+## 5. Open questions, in the order they block work
 
-**The campaign dialog.** The access gate's construction, not a popup: a
-full-viewport `<dialog>`, the ascii sweep band as the transition between levels,
-the page's own step cards as the explainer level. Stages brief → setup →
-catalogue, on `apply.html`'s wizard: measured floor so the card never resizes
-under you, one band at submit and nowhere else, the collapsing title.
-
-**The gate.** Two equal doors, the email door morphing into a field with a
-rectangular send control, exactly as `index.html` does it. Registered and approved
-are the two states after.
-
-**The dev dock.** `onblue-dev.js` already docks bars per page. This page adds
-**Account — New | Registered | Approved**, replacing the bottom-left gear.
-
----
-
-## 5. Answered, 2026-09-17
-
-1. **Hero models: reuse the existing six.** It is the same workforce seen from the
-   buyer's side, and the rig, the fit solve and the band handoff are already
-   correct.
-2. **The logged-in surface: everything.** The brands side gets its campaign
-   dashboard in this phase, not a later one. Section 6 below.
-3. **Pricing: mechanism only, no figures.** "Nothing upfront, you pay only for
-   engagement onBlue verifies." No rate and no minimum appears on the page.
-4. **Vocabulary: onBlue is the platform, BlueAI is an agent on it.** Appy's own
-   analogy: onBlue is Apple, BlueAI is the Mac. 6Labs and others run on onBlue
-   too. This was never an inconsistency to sweep, it is a product hierarchy, and
-   picking one word would have flattened a structure with more agents coming.
-
-   | Layer | Word | Sentences it owns |
-   |---|---|---|
-   | The environment | **onBlue** | the account, programs, the marketplace, matching, verification, payouts, the terms |
-   | The software an agent owner runs | **BlueAI** | install it, run it on your PC, the days it ran |
-
-   **This page is almost entirely platform-layer**, so it says onBlue nearly
-   throughout: brands bring work to onBlue, onBlue matches it, onBlue verifies it.
-   BlueAI appears only where a specific agent is named.
-
-   **One line on the creator site is now known wrong**: the access gate says
-   "Install onBlue on your PC and sign in". You install BlueAI. The application's
-   own step 1 was already right.
-
-   Still open, and neither blocks: `campaign` vs `job` (this page says campaign
-   throughout), and both footers saying "Terms and conditions" where everything
-   else now says "Program Terms".
-
----
-
-## 6. The brands dashboard
-
-Built in this phase, on `apply.html`'s construction: one page that is two things,
-switched by state rather than by route, so the ground, header and footer never
-rebuild.
-
-**The states.** New (no campaigns) → the marketing page and the gate. Registered →
-the campaign dialog. Approved with campaigns running → the dashboard. The dev dock
-carries **Account — New | Registered | Running**.
-
-**The sections**, mirroring the creator dashboard section for section, because a
-brand and an agent owner are looking at two ends of the same ledger:
-
-| Creator dashboard | Brands dashboard |
-|---|---|
-| Welcome back. / your onBlue account | Welcome back. / your campaigns |
-| Your earnings: balance, cash out, transactions | Your spend: budget remaining, add budget, the charge ledger |
-| Your programs: Active / Past, the progress tile | Your campaigns: Live / Ended, budget spent against verified actions |
-| How earning works: steps + payout rules | How spending works: steps + billing rules |
-
-The progress tile inverts cleanly: where the creator's bar fills toward a goal,
-the brand's fills toward budget spent, and the same green means the same thing on
-both, a state reached.
-
-**Sheets.** Two, on the same `<dialog>` shell the creator dashboard uses: **Add
-budget** (the cash-out sheet run backwards) and **campaign detail** (the info
-sheet: what the brief said, what counts, what it has paid for).
+1. **The marketing page: eight sections or six?** Restoring Platforms and Trust
+   is cheap. The argument for cutting them was a design argument; the argument
+   for keeping them is that they are what this audience asks about.
+2. **The catalogue: all nine types, or the three that are live?** Nine is what
+   the product offers and four families is a real structure. Three was invented.
+3. **The campaign report: how far?** The list and the in-review screen are close
+   to what exists. Progress, Accounting, Verification, Videos and Proof of work
+   are five screens' worth of new component work, and Proof of work has no
+   equivalent anywhere in the system.
+4. **Live or pre-launch?** The marketing page now says "the day we launch"; the
+   report says campaigns are running. Both cannot be true on one site.

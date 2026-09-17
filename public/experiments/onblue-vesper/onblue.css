@@ -85,6 +85,14 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
   --h2: clamp(30px, 3.4vw, 52px);
   --charcoal: #131313;
   --charcoal-2: #1f1f1f;
+  /* THE LARGE GHOST WAS DARK-ONLY AND NOBODY HAD NOTICED. .hero-ghost carried
+     rgba(31,31,31,0.55) as a literal, which is glass on a dark ground and a
+     mid-grey slab on a white one. It went unseen because no page had ever used
+     it: the creator hero has one CTA and the application has none, so the first
+     time this rule ran in light was the brands hero. Tokens now, so the theme
+     that made it wrong is the theme that fixes it. */
+  --hero-ghost-bg: rgba(31, 31, 31, 0.55);
+  --hero-ghost-line: rgba(198, 198, 198, 0.55);
   --charcoal-3: #2a2a2a;
   --band-lift: #0a0a0a;
   --band-tint: transparent;
@@ -272,6 +280,10 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
      an opaque composite rather than a translucent fill that would let the
      artwork read through it. one step lighter than the other surfaces. */
   --charcoal-2: #fdfdfd;
+  /* glass on white: enough fill to separate from the hero field behind it,
+     enough transparency for the field to still show through */
+  --hero-ghost-bg: rgba(255, 255, 255, 0.62);
+  --hero-ghost-line: var(--border);
   --charcoal-3: #e7eaf1;
   --band-lift: #fafbfb;
   /* the economy band sits a step off the white hero so the page reads as
@@ -976,8 +988,8 @@ body.menu-open .header {
 }
 
 .hero-ghost {
-  background: rgba(31, 31, 31, 0.55);
-  border: 1px solid rgba(198, 198, 198, 0.55);
+  background: var(--hero-ghost-bg);
+  border: 1px solid var(--hero-ghost-line);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
 }
@@ -1252,6 +1264,94 @@ body.menu-open { overflow: hidden; }
   background: linear-gradient(90deg, var(--rule), transparent);
 }
 
+/* ---- the sheet ---------------------------------------------------------------
+   A SMALL DIALOG, WHERE THE ACCESS GATE IS A FULL-VIEWPORT ONE. That one
+   replaces the page because it is asking you to start something; a sheet sits
+   over the page because the page is what you came back to.
+   IT LIVES HERE BECAUSE TWO PAGES USE IT. It was written inside the application
+   when only the application had one, and stayed there while the brands page grew
+   a pricing comparison and a film overlay of its own. A component with two
+   consumers that lives in one of them is a component the other one has to copy,
+   and the copy is what drifts.
+   THE MARGIN IS LOAD-BEARING. Every page on this site zeroes margins, which
+   kills the UA's own `margin: auto` on a <dialog> and parks it in the top left
+   corner. So is `width: fit-content` on any sheet that sizes to its content:
+   writing `width: auto` instead lets the box stretch to the viewport and takes
+   the close button to the far right of the screen with it. Both have cost a
+   round of review. */
+.sheet {
+  width: min(430px, calc(100vw - 32px));
+  margin: auto;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--card-bg);
+  color: var(--ink);
+  box-shadow: 0 30px 70px -30px rgba(18, 32, 64, 0.35);
+  opacity: 0;
+  transform: translateY(6px) scale(0.985);
+  transition: opacity 0.22s var(--ease), transform 0.22s var(--ease);
+}
+.sheet.is-open { opacity: 1; transform: none; }
+.sheet::backdrop { background: var(--gate-scrim); backdrop-filter: var(--gate-blur); -webkit-backdrop-filter: var(--gate-blur); }
+.sheet-in { padding: 24px 24px 22px; }
+/* A STEP BELOW THE TITLE. The sheet head is 18px/600 and the field labels were
+   14px/600: four pixels and no weight change between the name of the sheet and
+   the name of a field left three bold lines stacked with no hierarchy between
+   them. The amount inside a label keeps its weight, because that is the one
+   word in it worth landing on. */
+.sheet .q-label { font-size: 13.5px; font-weight: 500; }
+.sheet .q-label b { font-weight: 600; }
+.sheet-title { color: var(--ink); font-size: 18px; font-weight: 600; letter-spacing: -0.03em; }
+.sheet-head { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+.sheet-bal { margin-left: auto; padding: 6px 11px; font-size: 12.5px; }
+.sheet-bal b { color: var(--ink); font-weight: 600; }
+.sheet-x {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 7px;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.25s ease, background 0.25s ease;
+}
+.sheet-x:hover { color: var(--ink); background: var(--surface-hover); }
+.sheet-sect { padding: 15px 0; border-top: 1px solid var(--border-soft); }
+.sheet-sect:first-of-type { margin-top: 18px; }
+.sheet-sect p { margin-top: 7px; color: var(--muted); font-size: 13.5px; line-height: 1.5; letter-spacing: -0.01em; }
+.sheet-sect p b { color: var(--ink); font-weight: 600; }
+.sheet-close, .sheet-go { width: 100%; height: 44px; margin-top: 20px; }
+
+/* ---- ORPHANS, HANDLED ONCE ------------------------------------------------
+   Every ragged last line on these pages was being fixed, or not fixed, one
+   authored <br> at a time, and an authored break is a guess about a column
+   width that changes. These two properties are the general answer:
+
+     balance  spreads a heading evenly across its lines, so a two-line title
+              never leaves one word on the second
+     pretty   forbids a paragraph's last line from being a single word, at the
+              cost of reflowing the line above it
+
+   THE TYPED LINES ARE EXCLUDED. .close-title and #confirm-title are built from
+   per-character spans that fade in one at a time; asking the browser to balance
+   a heading whose character count changes every 52ms is asking it to relayout
+   the line under the caret, which is the one place reflow is visible. Their
+   breaks stay authored, which is why both carry a <br> in the markup. */
+h1, h2, h3, h4, .title-lg, .title-xl { text-wrap: balance; }
+.close-title, #confirm-title { text-wrap: wrap; }
+/* balance FOR THE DISPLAY PARAGRAPHS, pretty FOR THE BODY ONES. They are not
+   the same job: balance evens every line, which is what a short centred lede
+   under a headline wants and is why the closing sub kept coming out as one full
+   line and two words. pretty only forbids a one-word last line, which is the
+   right and cheaper rule for a FAQ answer or a panel paragraph that runs long
+   enough for balance to be both wasteful and unnecessary. */
+.lede, .band-sub, .close-alt, .hero-alt { text-wrap: balance; }
+.faq p, .eco-copy > p, .step-top p, .aside { text-wrap: pretty; }
+
 .band h2, .title-lg {
   font-weight: 500;
   font-size: var(--h2);
@@ -1352,6 +1452,14 @@ body.menu-open { overflow: hidden; }
   letter-spacing: -0.01em;
 }
 .chip svg { flex: none; color: var(--blue-ink); }
+
+/* TWO STATES A CHIP CAN BE IN, and they are the system's because three surfaces
+   now ask for them: the programme card's Open, the campaign catalogue's Live,
+   and the platforms row's Live and Soon. Green for something that is running,
+   the quietest ink for something that is only a fact about the future. They were
+   written inside one page while only that page had a chip with a state. */
+.chip--open { border-color: var(--green-line); background: var(--green-fill); color: var(--green-ink); }
+.chip--soon { background: none; color: var(--dim-ink); }
 
 /* ------------------------------------------------- benefits: the economy */
 

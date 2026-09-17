@@ -38,6 +38,46 @@
     if (e.clientX > root.clientWidth) { moving(); }
   }, { passive: true });
 
+  /* ---- the sheets ---------------------------------------------------------
+     ONE OPENER FOR EVERY <dialog class="sheet"> ON EVERY PAGE. This lived inside
+     the application, which was fine while the application was the only page that
+     had one; the brands page then grew a pricing comparison, wired it the same
+     way in markup, and nothing happened, because the code that listens for
+     data-sheet was in a file it does not load. A behaviour two pages declare in
+     markup has to live where both of them can reach it.
+     THE CLASS THAT FADES THEM IN is added a frame after showModal(), so the
+     dialog exists to transition FROM something rather than appearing already
+     arrived. */
+  (function sheets() {
+    var open = null;
+    function close() {
+      if (!open) { return; }
+      var d = open;
+      open = null;
+      d.classList.remove('is-open');
+      window.setTimeout(function () { if (d.open) { d.close(); } }, 220);
+    }
+    document.addEventListener('click', function (e) {
+      var go = e.target.closest ? e.target.closest('[data-sheet]') : null;
+      if (go) {
+        var d = document.getElementById('sheet-' + go.getAttribute('data-sheet'));
+        if (d && typeof d.showModal === 'function') {
+          open = d;
+          d.showModal();
+          requestAnimationFrame(function () { d.classList.add('is-open'); });
+        }
+        return;
+      }
+      if (e.target.closest && e.target.closest('[data-sheet-close]')) { close(); }
+    });
+    /* Escape is the dialog's own, so it is intercepted rather than reimplemented:
+       letting it close natively would skip the fade and snap the panel away */
+    document.addEventListener('cancel', function (e) {
+      if (e.target.classList.contains('sheet')) { e.preventDefault(); close(); }
+    });
+    window.onblueSheetClose = close;
+  })();
+
   /* ---- the travelling stroke ---------------------------------------------
      ONE LISTENER FOR THE WHOLE DOCUMENT, and one style write per frame. A
      handler per surface would be dozens of them on a page of cards, all firing

@@ -1244,7 +1244,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
 
       <div class="prog-soon">
         <span class="chip chip--soon">Coming soon</span>
-        <p>Different goals, different rewards. You'll get an email when one opens.</p>
+        <p>Different goals, different rewards. New programs are on the way.</p>
       </div>
     </div>
 
@@ -1776,7 +1776,11 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
      arriving cold. */
   /* FIVE ROWS, QUOTED (Appy, 2026-09-16). Three of these changed, and two of
      the changes are about the money rather than the wording:
-       - "PC or Mac" is "PC". The download is one platform.
+       - "PC or Mac" WENT TO "PC" AND CAME BACK (PM, 2026-09-17). It was cut on
+         the reading that the download is one platform; the PM's eligibility line
+         says "Available on Windows and macOS only", so it is two, and a footnote
+         naming both platforms over a step naming one is the page disagreeing
+         with itself in the space of four cards.
        - "paid for every job your agent completes" is "You earn 30 USD, paid via
          PayPal". Per-job and per-month are different offers, and the programme
          card one screen earlier promises $30 for 20 days: the old row was
@@ -1785,7 +1789,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
          required checkbox, which is still true of it, but it is in the source
          list and the list is the authority. */
   function renderStep0() {
-    return introRow(ICON.monitor, 'Once accepted, we’ll email you a download link. Set up BlueAI on your PC.')
+    return introRow(ICON.monitor, 'Once accepted, we’ll email you a download link. Set up BlueAI on your PC or Mac.')
       /* the break is authored rather than left to the wrap: the second sentence
          is a caveat about the first, and a caveat that starts mid-line reads as
          part of the claim it is qualifying. Dropped below 700px, where the

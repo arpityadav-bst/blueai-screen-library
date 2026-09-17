@@ -323,10 +323,6 @@ body { min-height: 100vh; }
 }
 .prog-card .btn:hover { box-shadow: var(--hero-shadow-hover); }
 
-/* the chip carries the state, in the page's own green pair for something live
-   and its quietest ink for something that is not yet anything */
-.chip--open { border-color: var(--green-line); background: var(--green-fill); color: var(--green-ink); }
-.chip--soon { background: none; color: var(--dim-ink); }
 
 /* A DASHED HAIRLINE IS THE ONE NEW VALUE ON THIS SCREEN, and it is carrying
    meaning rather than decoration: a solid edge says "here is a thing", a dashed
@@ -608,59 +604,6 @@ body { min-height: 100vh; }
 .txn-date { color: var(--dim-ink); }
 .txn-label { color: var(--muted); min-width: 0; }
 .txn-amt { color: var(--ink); font-weight: 600; }
-
-/* ---- the sheets -------------------------------------------------------------
-   Small dialogs, where the access gate is a full-viewport one: that one replaces
-   the page because it is asking you to start something, and these two sit over
-   it because the page is what you came back to.
-   THE MARGIN IS LOAD-BEARING. This page's reset zeroes every margin, which kills
-   the UA's own `margin: auto` on a <dialog> and parks it in the top left. */
-.sheet {
-  width: min(430px, calc(100vw - 32px));
-  margin: auto;
-  padding: 0;
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  background: var(--card-bg);
-  color: var(--ink);
-  box-shadow: 0 30px 70px -30px rgba(18, 32, 64, 0.35);
-  opacity: 0;
-  transform: translateY(6px) scale(0.985);
-  transition: opacity 0.22s var(--ease), transform 0.22s var(--ease);
-}
-.sheet.is-open { opacity: 1; transform: none; }
-.sheet::backdrop { background: var(--gate-scrim); backdrop-filter: var(--gate-blur); -webkit-backdrop-filter: var(--gate-blur); }
-.sheet-in { padding: 24px 24px 22px; }
-/* A STEP BELOW THE TITLE. The sheet head is 18px/600 and the field labels were
-   14px/600: four pixels and no weight change between the name of the sheet and
-   the name of a field left three bold lines stacked with no hierarchy between
-   them. The amount inside a label keeps its weight, because that is the one
-   word in it worth landing on. */
-.sheet .q-label { font-size: 13.5px; font-weight: 500; }
-.sheet .q-label b { font-weight: 600; }
-.sheet-title { color: var(--ink); font-size: 18px; font-weight: 600; letter-spacing: -0.03em; }
-.sheet-head { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
-.sheet-bal { margin-left: auto; padding: 6px 11px; font-size: 12.5px; }
-.sheet-bal b { color: var(--ink); font-weight: 600; }
-.sheet-x {
-  flex: none;
-  display: grid;
-  place-items: center;
-  width: 30px;
-  height: 30px;
-  border: 0;
-  border-radius: 7px;
-  background: none;
-  color: var(--muted);
-  cursor: pointer;
-  transition: color 0.25s ease, background 0.25s ease;
-}
-.sheet-x:hover { color: var(--ink); background: var(--surface-hover); }
-.sheet-sect { padding: 15px 0; border-top: 1px solid var(--border-soft); }
-.sheet-sect:first-of-type { margin-top: 18px; }
-.sheet-sect p { margin-top: 7px; color: var(--muted); font-size: 13.5px; line-height: 1.5; letter-spacing: -0.01em; }
-.sheet-sect p b { color: var(--ink); font-weight: 600; }
-.sheet-close, .sheet-go { width: 100%; height: 44px; margin-top: 20px; }
 
 /* one option, presented as a choice, because "PayPal only" is a fact of the
    product rather than something to leave a reader guessing about */
@@ -1597,7 +1540,9 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
           <svg class="logo-mark" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.6C12.55 2.6 12.88 3.15 13.08 4.7c.62 4.7 1.52 5.6 6.22 6.22 1.55.2 2.1.53 2.1 1.08s-.55.88-2.1 1.08c-4.7.62-5.6 1.52-6.22 6.22-.2 1.55-.53 2.1-1.08 2.1s-.88-.55-1.08-2.1c-.62-4.7-1.52-5.6-6.22-6.22C3.15 12.88 2.6 12.55 2.6 12s.55-.88 2.1-1.08c4.7-.62 5.6-1.52 6.22-6.22C11.12 3.15 11.45 2.6 12 2.6Z"/></svg>
           <span><span class="logo-on">on</span>Blue</span>
         </a>
-        <p>A work economy for<br>digital and physical AI.</p>
+        <!-- this was still the creator homepage's statement, inherited when
+             the page was forked from apply.html and never re-aimed -->
+        <p>Real reach, from real accounts.<br>Verified before you are charged.</p>
       </div>
 
       <nav class="foot-col" aria-label="Explore onBlue">
@@ -2258,41 +2203,6 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
       }, 1400);
     });
   }
-
-/* ---- the sheets -----------------------------------------------------------
-     One opener for both, by attribute: they are the same kind of object and the
-     page should not have two ways of putting one on the screen. The class that
-     fades them in is added a frame after showModal(), so the dialog exists to
-     transition FROM something rather than appearing already arrived. */
-  (function sheets() {
-    var open = null;
-    function close() {
-      if (!open) { return; }
-      var d = open;
-      open = null;
-      d.classList.remove('is-open');
-      window.setTimeout(function () { if (d.open) { d.close(); } }, 220);
-    }
-    document.addEventListener('click', function (e) {
-      var go = e.target.closest ? e.target.closest('[data-sheet]') : null;
-      if (go) {
-        var d = document.getElementById('sheet-' + go.getAttribute('data-sheet'));
-        if (d && typeof d.showModal === 'function') {
-          open = d;
-          d.showModal();
-          requestAnimationFrame(function () { d.classList.add('is-open'); });
-        }
-        return;
-      }
-      if (e.target.closest && e.target.closest('[data-sheet-close]')) { close(); }
-    });
-    /* Escape is the dialog's own, so it is intercepted rather than reimplemented:
-       letting it close natively would skip the fade and snap the panel away */
-    document.addEventListener('cancel', function (e) {
-      if (e.target.classList.contains('sheet')) { e.preventDefault(); close(); }
-    });
-    window.onblueSheetClose = close;
-  })();
 
   /* ---- the two accounts -----------------------------------------------------
      A dashboard with nothing in it and a dashboard with something in it are not
