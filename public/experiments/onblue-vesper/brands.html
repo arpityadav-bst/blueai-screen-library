@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>onBlue for business | Turn your budget into real reach</title>
-<meta name="description" content="Set a goal and a budget. onBlue matches thousands of real accounts that genuinely engage with your video, verifies every interaction, and pays out for you. Nothing upfront, and you are only charged for engagement we verify.">
+<title>onBlue for business | Turn your budget into reach</title>
+<meta name="description" content="Set a goal and a budget. onBlue matches thousands of accounts that engage with your video, verifies every interaction, and pays out for you. Nothing upfront, and you are only charged for engagement we verify.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M12 2.6C12.55 2.6 12.88 3.15 13.08 4.7c.62 4.7 1.52 5.6 6.22 6.22 1.55.2 2.1.53 2.1 1.08s-.55.88-2.1 1.08c-4.7.62-5.6 1.52-6.22 6.22-.2 1.55-.53 2.1-1.08 2.1s-.88-.55-1.08-2.1c-.62-4.7-1.52-5.6-6.22-6.22C3.15 12.88 2.6 12.55 2.6 12s.55-.88 2.1-1.08c4.7-.62 5.6-1.52 6.22-6.22C11.12 3.15 11.45 2.6 12 2.6Z'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -30,7 +30,18 @@ document.documentElement.setAttribute('data-theme', 'light');
    dialog's own step row does exactly that. Same figures. */
 #how-it-works .steps { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
 #how-it-works .step { padding: 22px 20px 20px; }
-#how-it-works .step-top h3 { font-size: 17px; }
+/* THE TITLE AND ITS LINE ADD UP TO THE DISC BESIDE THEM, EXACTLY. .step-num is
+   38px, and the pair next to it was coming out near 50: an h3 on the body's own
+   leading is about 25px at this size, then a 5px gap, then a 13.5px line at
+   1.45. The two sat top-aligned with the number and then ran on past the bottom
+   of it, which reads as the heading having slipped out of its row.
+   STATED IN PIXELS, NOT IN RATIOS. 19 + 2 + 17 is 38 whatever the page's
+   inherited line-height happens to be, and the number it has to match is itself
+   a pixel value rather than a multiple of anything. Both lines are single lines
+   here, so tightening their leading changes the box and not the type; if a
+   title ever wraps, the block grows, which is correct. */
+#how-it-works .step-top h3 { font-size: 17px; line-height: 19px; }
+#how-it-works .step-top p { margin-top: 2px; line-height: 17px; }
 #how-it-works .step-art { margin-top: 18px; padding: 16px 15px; }
 @media (max-width: 1080px) { #how-it-works .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 620px) { #how-it-works .steps { grid-template-columns: 1fr; } }
@@ -52,12 +63,39 @@ document.documentElement.setAttribute('data-theme', 'light');
    invent a hierarchy the content does not have. The live one is not bigger, only
    differently chipped: scope is a fact about each row, not a ranking of them. */
 .plat-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; margin-top: 52px; }
-.plat { padding: 20px 18px 18px; }
+/* THE CARD WITHOUT ITS CARD BEHAVIOUR. .card brings a drop shadow, a lift, a
+   hairline that firms up and the travelling sheen on its ::after, and all four
+   are the same statement: this is a thing you can press. Four of these five
+   cannot be pressed and the fifth is not a control either, it is a row saying
+   where campaigns run. A surface that rises to meet a pointer and then does
+   nothing is the page making a promise on the content's behalf.
+   THE GROUND AND THE HAIRLINE STAY, because they are what makes five of them
+   read as one set. Only the motion goes. */
+.plat { padding: 20px 18px 18px; box-shadow: none; }
+.plat:hover { border-color: var(--border-soft); box-shadow: none; transform: none; }
+.plat::after { content: none; }
+/* THE MARK AND THE BADGE SHARE THE TOP LINE, mark left and badge right. The
+   badge used to have that line to itself, which made every card open on a status
+   before it said what it was a status about; the logo names the platform in the
+   time it takes to see it, and the badge is the qualifier on it.
+   NO TILE BEHIND THE MARK. The partner site sets each logo in a filled rounded
+   square, which is how you make five logos look like one set when they are
+   different shapes and weights; this page already has a card doing that job
+   around them, and a second container inside the first is a box in a box. */
+.plat-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.plat-logo { flex: none; display: grid; place-items: center; width: 30px; height: 30px; }
+.plat-logo svg { width: 26px; height: 26px; }
+/* X and TikTok are black marks and follow the ink; the other three carry their
+   own hue and ignore this */
+.plat-logo { color: var(--ink); }
 .plat .chip { padding: 6px 11px; font-size: 12px; }
-.plat h3 { margin-top: 16px; color: var(--ink); font-size: 17px; font-weight: 600; letter-spacing: -0.03em; }
+.plat h3 { margin-top: 14px; color: var(--ink); font-size: 17px; font-weight: 600; letter-spacing: -0.03em; }
 .plat p { margin-top: 6px; color: var(--muted); font-size: 13px; line-height: 1.45; letter-spacing: -0.01em; }
-/* the four that are not live recede, and the one that is does not shout */
-.plat:not(.is-live) h3 { color: var(--muted); }
+/* NOTHING RECEDES ANY MORE. The four that are not live used to hold their logo
+   at 55% and their heading in --muted, which is the card saying "soon" a third
+   time: the badge says it, the copy says it, and then the whole card says it
+   again by going quiet. One statement is enough, and it is the one that is
+   actually a label. Every platform is at full strength. */
 @media (max-width: 1080px) { .plat-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 680px) { .plat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
@@ -68,55 +106,103 @@ document.documentElement.setAttribute('data-theme', 'light');
    THE "WITH" COLUMN IS THE ONLY ONE ON A GROUND. Everything else about the two
    sides is identical, so the surface does the arguing rather than colour or
    weight, and the row reads left to right as a before and an after. */
-.sheet--wide { width: min(820px, calc(100vw - 32px)); }
-/* A MEASURE, BECAUSE THIS SHEET IS TWICE THE WIDTH OF THE OTHERS. Every other
-   sheet is 430px, where a paragraph cannot run long; here the same rule gave a
-   four-sentence lede a 772px column, about 105 characters a line, roughly half
-   as wide again as anything is comfortable to read. The table below wants the
-   full width. The prose does not, and they do not have to agree. */
-.sheet-lede { max-width: 64ch; margin: -6px 0 22px; color: var(--muted); font-size: 14px; line-height: 1.55; letter-spacing: -0.01em; }
-/* IT IS NOT A FORM SUBMIT, SO IT IS NOT FULL WIDTH. The shared rule sizes this
-   button to a column of fields; there are no fields here, so nothing on the
-   screen was setting that width and it read as a band across the foot of the
-   panel rather than as the one thing to press. Left, where every other line in
-   this sheet starts. */
-.sheet--wide .sheet-go { width: auto; }
-.cmp { border-top: 1px solid var(--border-soft); }
-/* THE COLUMNS ARE SIZED BY WHAT IS IN THEM, which they were not. The widest
-   label is 26 characters, the widest old-way line is 30 and the widest onBlue
-   line is 37 with an icon in front of it, so the shortest content had the widest
-   column and the longest had a narrow one: two cells wrapped to a second line
-   inside a panel with room for neither wrap. These ratios are the content's. */
+
+.band-actions--center { justify-content: center; margin-top: clamp(28px, 3.4vw, 40px); }
+/* ---- the comparison ---------------------------------------------------------
+   A TABLE IN A CARD, WITH ONE RULE IN IT. Seven hairlines on the open page made
+   the grid the only thing holding six rows together; a card holds them instead,
+   and the onBlue column's ground runs the full height inside it, so the two
+   sides are separated by a surface rather than by more ink. The rows need no
+   rules between them once a continuous ground is running down one side of them.
+   overflow: hidden IS LOAD-BEARING. That ground bleeds to the card's right edge
+   on a negative margin, so without the clip it would square off the two corners
+   the card's radius is rounding.
+   NO LIFT AND NO SHEEN. .card brings both, and they mean "press me"; this is an
+   880px panel of prose. */
+.cmp {
+  /* THREE GROUNDS, AND THE IMPORTANT ONE IS NOT MADE OF INK. The stripes and the
+     header are ink at low percentages, which on a white page means darker; that
+     was fine for the rows and exactly backwards for the onBlue column, because
+     on a light ground DARKER READS AS RECEDED and that column is the answer the
+     whole section exists to give. It was being shaded like a footnote.
+     SO THE COLUMN IS BLUE, NOT GREY. Same mechanism, different pigment: a 7%
+     wash of the brand blue reads as lit rather than shaded, it says whose column
+     it is without a word, and it still stacks over a stripe.
+     ALL THREE ARE MIXED OFF A TOKEN SO THEY FLIP WITH THE THEME. A stripe that
+     is 2.4% black on a white page has to be 2.4% WHITE on a black one, and a
+     hard-coded rgba can only ever be one of those. */
+  --zebra: color-mix(in srgb, var(--ink) 2.4%, transparent);
+  --head: color-mix(in srgb, var(--ink) 4%, transparent);
+  --col: color-mix(in srgb, var(--blue) 7%, transparent);
+  max-width: 880px;
+  margin: clamp(30px, 4vw, 44px) auto 0;
+  overflow: hidden;
+  box-shadow: none;
+}
+.cmp:hover { border-color: var(--border-soft); box-shadow: none; transform: none; }
+.cmp::after { content: none; }
 .cmp-head, .cmp-row {
   display: grid;
   grid-template-columns: 1fr 1.2fr 1.45fr;
   align-items: center;
-  gap: 16px;
+  /* 28, NOT 16. The onBlue column's ground now begins 18px to the left of its
+     text, so the gap has to cover that and still leave clear air between the
+     ground's edge and the sentence ending in the column before it. 28 less 18
+     leaves 10. */
+  gap: 28px;
+  padding: 15px 20px;
 }
-.cmp-head { padding: 12px 16px; }
+/* NO LINES AT ALL NOW, INCLUDING THE HEADER'S. What makes a spreadsheet read as
+   a grid is not its rules, it is that alternate rows are shaded and the header
+   sits on a band of its own; the rules are what you turn OFF when you want it to
+   look designed. So the header is a filled band and every other row is striped,
+   and the eye tracks across a row on the shading rather than between two lines.
+   THE STRIPES START ON THE FIRST ROW. .cmp-head is child one, so even children
+   are rows one, three and five. */
+/* the header stays neutral, so the blue below it is the only blue in the
+   component and reads as the column rather than as the table */
+.cmp-head { background: var(--head); }
+.cmp-row:nth-child(even) { background: var(--zebra); }
 .cmp-head .mini-title { margin: 0; }
-.cmp-row { padding: 14px 16px; border-top: 1px solid var(--border-soft); font-size: 14px; letter-spacing: -0.01em; }
+.cmp-row { font-size: 14px; letter-spacing: -0.01em; }
 .cmp-k { color: var(--ink); font-weight: 600; }
 .cmp-was, .cmp-now { display: flex; align-items: flex-start; gap: 9px; line-height: 1.45; }
 .cmp-was { color: var(--dim-ink); }
 .cmp-now { color: var(--ink); }
 .cmp-was i, .cmp-now i { flex: none; margin-top: 1px; }
 .cmp-was i { color: var(--dim-ink); }
+/* green for the thing that has been reached, which is the rule the chips and the
+   progress bars already follow */
 .cmp-now i { color: var(--green-ink); }
-/* the ground runs the full height of the column, head included, so the two
-   sides are a before and an after rather than six unrelated pairs */
-.cmp-head > :last-child, .cmp-row > :last-child {
-  margin: -14px -16px;
-  padding: 14px 16px;
-  background: var(--panel-bg);
+/* THE GROUND IS THE COLUMN, TOP TO BOTTOM. Each cell's negative margins eat its
+   row's own padding, so consecutive cells meet with no seam and the header's
+   cell carries it to the top edge. */
+/* THE GROUND STARTS BEFORE THE WORD, NOT AT IT. The left margin was 0, so the
+   tint began exactly at the W of "With onBlue" and the column read as a block of
+   colour somebody had painted up to the text and stopped. 18px of it now sits to
+   the left of the first letter, which is close to the 20px the card gives its
+   own edges.
+   THE OTHER THREE OFFSETS ARE THE ROW'S OWN PADDING, negated, so consecutive
+   cells meet with no seam and the header's carries the column to the top edge. */
+.cmp-head > :last-child,
+.cmp-row > :last-child {
+  margin: -15px -20px -15px -18px;
+  padding: 15px 20px 15px 18px;
+  background: var(--col);
 }
-.cmp-head > :last-child { margin: -12px -16px; padding: 12px 16px; }
 .cmp-mine { color: var(--notice-ink); }
 
 @media (max-width: 720px) {
+  /* three columns of one sentence each do not fit a phone, so the row becomes a
+     block: the label, then today, then the panel it is being compared with */
   .cmp-head { display: none; }
-  .cmp-row { grid-template-columns: 1fr; gap: 6px; padding: 16px; }
-  .cmp-head > :last-child, .cmp-row > :last-child { margin: 0; padding: 10px 12px; border-radius: 8px; }
+  .cmp-row { grid-template-columns: minmax(0, 1fr); gap: 7px; padding: 16px; }
+  .cmp-row:nth-child(even) { background: none; }
+  .cmp-head > :last-child, .cmp-row > :last-child {
+    margin: 4px 0 0;
+    padding: 12px 13px;
+    border-radius: 10px;
+  }
 }
 
 /* THE COPY COLUMN IS WIDER HERE, AND IT HAS TO BE. onblue.css caps .eco-copy's
@@ -181,23 +267,101 @@ document.documentElement.setAttribute('data-theme', 'light');
    and below the ring is a function of it: a frame is centred in a stage taller
    than itself, so the visible gap to the text is the margin PLUS that slack, and
    only something that can see --ring-w can subtract it. */
-#work {
+/* A COLUMN, BECAUSE THE HERO HAS TWO THINGS IN IT NOW. .hero is a flex row in
+   the shared sheet, which was right while it held one block of copy; with the
+   ring added as a second child the two would have been laid out side by side.
+   THE BAND KEEPS ITS FULL BLEED WITHOUT THE NEGATIVE MARGIN. It is 100vw inside
+   a padded container, and a flex item wider than its line overflows evenly on
+   both sides when it is centre-aligned, which is the same result the margin was
+   buying and one fewer thing to keep in step with the padding. */
+/* IT STARTS AT THE TOP, IT DOES NOT CENTRE. The shared rule centres the hero in
+   a box one screen tall, which was right when the hero was a block of copy
+   shorter than that box. Copy plus a band of film is taller than it, and
+   centring something taller than its container overflows it equally at both
+   ends: the headline went up under the header and the band went off the bottom.
+   Anchored to the top, only the band runs past the fold, which is what it is
+   supposed to do.
+   THE TOP PADDING CLEARS THE HEADER FIRST, AND THAT IS WHY THE LAST ATTEMPT AT
+   THIS DID NOTHING. .header is position: fixed, so .hero-wrap starts at the top
+   of the viewport with 78px of chrome floating over it; a padding of roughly
+   that much put the headline exactly at the header's bottom edge, which reads as
+   no space at all rather than as space. --header-h is the first term for that
+   reason and the air after it is the second term, so the number that was asked
+   for is the number in the rule rather than one measured against an overlap.
+   56px, WHICH IS THE 80 IT STARTED AT LESS THE 24 IT CAME BACK DOWN BY. Kept as
+   one figure rather than as a subtraction, because the next person to move this
+   wants to know where the copy sits, not the history of how it got there. */
+.hero {
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: calc(var(--header-h) + 56px);
+}
+/* 100vw IS WIDER THAN THE PAGE WHENEVER THERE IS A SCROLLBAR, and that is what
+   was pushing the headline right of centre. .work-arc declares width: 100vw;
+   .hero is a flex container holding it and a grid item in .hero-wrap, and a grid
+   item's automatic minimum is its max-content contribution, so the one implicit
+   column was being forced out to 100vw. The whole hero box ended up wider than
+   the page and anchored at its left edge, and .hero-copy dutifully centred
+   itself inside THAT, which puts its middle half a scrollbar right of the
+   viewport's.
+   SO THE BAND STOPS MEASURING ITSELF AGAINST THE VIEWPORT. It stretches to the
+   hero's own width and cancels the hero's padding with a negative margin, which
+   lands it on exactly the same edges 100vw was aiming at, minus the overshoot.
+   The mask's stops are percentages of the band, so they do not care.
+   min-width: 0 IS THE BELT TO THAT BRACE: with nothing left asking for 100vw the
+   track cannot be forced, and this makes sure it stays that way.
+
+   flex: none IS THE FIX FOR THE CROP, and the band's own height never was.
+   .hero is a flex column, so .work-arc is a flex item and shrinks by default;
+   .hero declares min-height: 0 inside a grid row of one screen, which lets that
+   row be shorter than its contents, and the flex pass then takes the shortfall
+   out of the only item that will give it. Because this one is overflow: hidden,
+   giving means cutting, and it cuts the frames near the ends first because
+   those are the tallest. Three different band heights made no difference for
+   exactly this reason: whatever it was told to be, it was shrunk back to
+   whatever was left over.
+   IT IS ALLOWED TO RUN PAST THE FOLD. That is what the band is for. */
+.hero { min-width: 0; }
+.hero .work-arc {
+  flex: none;
+  align-self: stretch;
+  width: auto;
+  margin-inline: calc(-1 * max(var(--header-x), 20px));
+}
+.hero {
+  /* SMALLER FRAMES FROM A FINER STEP, NOT A SHORTER RADIUS, and the first
+     attempt at this got it the wrong way round. Dropping R to 58vw did make the
+     frames smaller, and it also pulled the whole ring closer to the axis, which
+     puts MORE of it across the viewport: frames were still on screen at nearly
+     90 degrees off centre, where the divide has scaled them to almost full size
+     and they are taller than any band that is worth having. That is what was
+     cropping them at top and bottom near the ends.
+     THIRTY FRAMES AT 12 DEGREES INSTEAD OF TWENTY-FOUR AT 15. The radius goes
+     back to 70vw, where a frame leaves the viewport while it is still well
+     foreshortened, and the frames get smaller because their neighbours are
+     closer: the gap solve gives a narrower W for a finer step at the same R.
+     Smaller frames AND a shorter band, which the other way round could not
+     do. */
   --ring-r: 70vw;
   /* THE WIDTH IS SOLVED FOR THE GAP, not picked and measured afterwards. Two
      neighbouring frames sit 15 degrees apart, which after the divide puts
      their centres 11.79vw apart on screen and renders them at 0.643 and 0.651 of
      --ring-w. So the space between their edges is
         11.79vw - (0.643 + 0.651) / 2 * W
-     and setting that to 16px gives W = 18.23vw - 24.74px. The px term is what
-     holds the gap at 16 pixels rather than at a share of the viewport: a gap
-     that grew with the screen would be the one thing on this band that is not
-     self-similar, and it is the one thing that should not be. */
-  --ring-w: calc(18.23vw - 24.74px);
-  --ring-step: 15deg;          /* 360 / 24 */
+     and setting that to 16px gives W = (dx/R x R - 16) / avg, which at a 12
+     degree step works out as W = 0.2087 R - 24.79px, or 14.61vw - 24.79px at
+     70vw. At 15 degrees the same solve gave 18.23vw, which is where the old
+     figure came from: the step is the lever, and it is the one that shrinks a
+     frame without moving the ring. The px term holds the gap at 16 pixels
+     rather than at a share of the viewport, because a gap that grew with the
+     screen would be the one thing on this band that is not self-similar. */
+  --ring-w: calc(14.61vw - 24.79px);
+  --ring-step: 12deg;          /* 360 / 30 */
 }
 .work-arc {
   width: 100vw;
-  /* THE SLACK IS SUBTRACTED, NOT GUESSED AT. The stage is 1.50 x W tall so it
+  /* THE SLACK IS SUBTRACTED, NOT GUESSED AT. The stage is 1.62 x W tall so it
      can hold the turned frames at the ends, but the frames in the middle are
      only about 1.14 x W, so each floats with roughly 0.18 x W of nothing above
      and below it. A flat 56px margin was therefore reading as about 104px at
@@ -205,7 +369,7 @@ document.documentElement.setAttribute('data-theme', 'light');
      not move. Subtracting a share of --ring-w holds what the reader actually
      sees at a figure that barely drifts: 28px of base reads as 40, 44px reads as
      55, and the arithmetic is the same either way. */
-  margin: calc(44px - var(--ring-w) * 0.14) 0 0 calc(50% - 50vw);
+  margin: calc(44px - var(--ring-w) * 0.186) 0 0 calc(50% - 50vw);
   perspective: calc(var(--ring-r) * 1.8);
   overflow: hidden;
   /* THE ENDS DISSOLVE, THEY ARE NOT CUT. A frame near the viewport edge is at
@@ -230,15 +394,26 @@ document.documentElement.setAttribute('data-theme', 'light');
      frame's own ratio, chosen because scale reaches 1.0 at 90 degrees and a band
      any shorter would clip the ends: at a radius of half the viewport the ends
      really did reach 90 degrees on screen.
-     They do not any more. A frame leaves the viewport at about 63 degrees now,
-     where the divide has only scaled it to 0.80, so the tallest thing this band
-     ever has to hold is 0.80 x 1.778 x W. 1.50 covers it with room, and the ends
-     are still never cut.
+     They do not any more, and the sum is now taken on the frame's EDGE rather
+     than on its centre, which is what the last two versions of this number got
+     wrong. A frame is still on screen for as long as its near edge is, not its
+     middle, so the angle to solve for is where
+        scale(b) x (R sin b - W/2) = 50vw
+     At 70vw and a 12 degree step that is about 71 degrees off centre, where the
+     divide has scaled it to 0.848, so the tallest thing this band ever holds is
+     0.848 x 1.778 x W, or 1.508 W. 1.55 covers it with room.
+     THE CENTRE-BASED SUM IS WHY THE BAND WAS CROPPING. It answered "where does a
+     frame's middle cross the edge", which is several degrees earlier and several
+     per cent smaller, so the band was built for a frame that had already left.
      THE +34px WENT WITH THE TITLES. It was the caption's own line and the gap
      above it, added rather than absorbed so that extra room could only ever
      delay a crop; with no caption to hold, keeping it would be 34px of band
-     with nothing in it, split above and below a card that centres itself. */
-  height: calc(var(--ring-w) * 1.50);
+     with nothing in it, split above and below a card that centres itself.
+     1.62 IS THE SOLVE PLUS MARGIN, and it was never the problem. Walking every
+     point of every frame and keeping only the ones on screen puts the tallest
+     thing this band ever holds at 1.42 x W; the crop that outlived three
+     attempts at this number was the flex shrink above, not the number. */
+  height: calc(var(--ring-w) * 1.62);
   transform-style: preserve-3d;
   /* SLOW ENOUGH TO BE AMBIENT. 180s is one full turn, so a frame takes about
      seven and a half seconds to hand its place to the next one and roughly a
@@ -296,17 +471,15 @@ document.documentElement.setAttribute('data-theme', 'light');
   border-radius: 12px;
   overflow: hidden;
   background: var(--panel-bg);
-  /* THE BAND SITS BACK AT 70%, AND IT IS EACH FRAME'S OWN, not the band's. It
-     was on .work-arc's mask, which dims the whole turning ring as one composited
-     result: correct for a wall, impossible for one frame to step out of. Here it
-     is a property of the frame, so the one you point at can come forward to full
-     while the rest stay back.
-     NOT ON .work-card. That is the element carrying the 3D transform and
-     backface-visibility: hidden, which is what culls the near half of the ring;
-     opacity groups an element, and grouping is the thing that puts that culling
-     at risk. The frame inside it is flat and takes it for free. */
-  opacity: 0.7;
-  transition: opacity 0.35s ease;
+  /* NO DIMMING EITHER. The band sat at 70% so the frame you pointed at could
+     come forward to full, and that was the last thing the hover was taking away
+     from the content in order to hand it back. The film is simply the film now,
+     in colour and at full strength; pointing at one stops the ring, lands the
+     scrim and shows the play mark, which is enough for a control whose whole job
+     is to say "this one".
+     THE MASK IS WHAT HOLDS THE BAND BACK FROM THE COPY, not this: the ends
+     dissolve into the page and the whole thing sits behind .hero-copy in the
+     stack. Opacity was never doing that job. */
 }
 /* NO pointer-events: none HERE ANY MORE. It was defensive, to make sure a
    click landed on the button rather than on the video, and a click on a <video>
@@ -315,25 +488,21 @@ document.documentElement.setAttribute('data-theme', 'light');
    making it transparent to the pointer means every hover has to fall through it
    and find something else, and inside a 3D layer with backface culling that is
    exactly the hit test least worth relying on. */
-/* GREY UNTIL YOU POINT AT ONE, and the colour coming back IS the hover. The
-   band is a wall of other people's footage in every palette there is, and at
-   full colour 24 of them at once compete with each other and with the page; one
-   frame in colour on a grey wall is the clearest possible answer to "which one
-   am I on". It is also the cheapest: the state was already being computed for
-   the pause, the scrim and the play mark.
-   GREY, NOT A TINT. A blue laid over all of them was a treatment applied to
-   somebody else's work, and it read as a brand filter rather than as footage
-   waiting to be looked at. */
+/* THE FILM IS IN COLOUR, EVERYWHERE. It was grey until you pointed at one, on
+   the argument that thirty frames at full colour compete with each other and
+   with the headline; the answer to that turned out to be the opacity below, not
+   draining the work. A wall of somebody else's footage rendered in grey is a
+   treatment applied to it, which is the same objection that retired the blue
+   tint before it.
+   THE HOVER STILL HAS PLENTY TO SAY: the ring stops, the frame comes to full
+   strength, the scrim lands and the play mark appears. Four things, none of them
+   taking anything away from the content to do it. */
 .work-video {
   display: block;
   width: 100%;
   aspect-ratio: 9 / 16;
   object-fit: cover;
-  filter: grayscale(1);
-  transition: filter 0.35s ease;
 }
-.work-card.is-lit .work-video,
-.work-card:focus-visible .work-video { filter: none; }
 /* THE HIGHLIGHT IS A SCRIM, and it is doing two jobs at once: it says which
    frame the pointer is on, and it gives the play mark something to be legible
    against. These films are other people's footage, so any given frame's middle
@@ -378,20 +547,22 @@ document.documentElement.setAttribute('data-theme', 'light');
    flip to hide, because at zero there is nothing to see. */
 .work-shot {
   animation: ca-edge 180s linear infinite;
-  animation-delay: calc(var(--i) * -7.5s);
+  animation-delay: calc(var(--i) * -6s);   /* 180s / 30 */
 }
 /* THE TIMING IS THE RING'S OWN, AND CSS CAN KNOW IT WITHOUT MEASURING. A frame's
    place on screen looks like something only script could find, because the band
-   is turning; but the turn is linear and every frame is a fixed 15 degrees from
+   is turning; but the turn is linear and every frame is a fixed 12 degrees from
    its neighbour, so each one's phase is a constant offset from the ring's. The
-   same 180s, delayed -7.5s per step, is in exact lockstep with where that frame
+   same 180s, delayed one thirtieth of it per step, is in lockstep with where
    actually is. No rect reads, no frame loop.
    THE STOPS ARE THE VIEWPORT'S EDGES, NOT THE RING'S. A frame sits at angle
-   a = turn + 15 x i, and a is 180deg when it is dead centre and farthest away.
-   It does not reach 90 or 270: at this radius it leaves the viewport at about
-   63 degrees either side of centre, which is a = 117 and a = 243, or 32.5% and
-   67.5% of the turn. Those are where the split is full. Peaking at 90/270 would
-   have put the effect at its strongest on frames that had already left.
+   a = turn + 12 x i, and a is 180deg when it is dead centre and farthest away.
+   It does not reach 90 or 270: at this radius and step its near edge leaves the
+   viewport at about 71 degrees either side of centre, which is a = 109 and
+   a = 251, or 30% and 70% of the turn. Those are where the split is full.
+   Peaking at 90/270 would have put the effect at its strongest on frames that
+   had already left. These move whenever the geometry does, and they have to:
+   they are a fact about where the edge of the screen falls on the ring.
    NOTHING AT ALL THROUGH THE MIDDLE. It used to ease all the way down from the
    edge to the centre, which meant a little of it everywhere: a band permanently
    wearing a light colour fringe reads as a treatment, not as an edge of a lens.
@@ -402,12 +573,12 @@ document.documentElement.setAttribute('data-theme', 'light');
    noticed on the way past, not looked at. */
 @keyframes ca-edge {
   0%     { filter: drop-shadow(7px 0 0 rgba(255, 36, 36, 0.8)) drop-shadow(-7px 0 0 rgba(0, 224, 255, 0.8)); }
-  34%    { filter: drop-shadow(7px 0 0 rgba(255, 36, 36, 0.8)) drop-shadow(-7px 0 0 rgba(0, 224, 255, 0.8)); }
-  38%    { filter: drop-shadow(2px 0 0 rgba(255, 36, 36, 0.8)) drop-shadow(-2px 0 0 rgba(0, 224, 255, 0.8)); }
-  42%    { filter: drop-shadow(0 0 0 rgba(255, 36, 36, 0.8)) drop-shadow(0 0 0 rgba(0, 224, 255, 0.8)); }
-  58%    { filter: drop-shadow(0 0 0 rgba(255, 36, 36, 0.8)) drop-shadow(0 0 0 rgba(0, 224, 255, 0.8)); }
-  62%    { filter: drop-shadow(-2px 0 0 rgba(255, 36, 36, 0.8)) drop-shadow(2px 0 0 rgba(0, 224, 255, 0.8)); }
-  66%    { filter: drop-shadow(-7px 0 0 rgba(255, 36, 36, 0.8)) drop-shadow(7px 0 0 rgba(0, 224, 255, 0.8)); }
+  32%    { filter: drop-shadow(7px 0 0 rgba(255, 36, 36, 0.8)) drop-shadow(-7px 0 0 rgba(0, 224, 255, 0.8)); }
+  36%    { filter: drop-shadow(2px 0 0 rgba(255, 36, 36, 0.8)) drop-shadow(-2px 0 0 rgba(0, 224, 255, 0.8)); }
+  41%    { filter: drop-shadow(0 0 0 rgba(255, 36, 36, 0.8)) drop-shadow(0 0 0 rgba(0, 224, 255, 0.8)); }
+  59%    { filter: drop-shadow(0 0 0 rgba(255, 36, 36, 0.8)) drop-shadow(0 0 0 rgba(0, 224, 255, 0.8)); }
+  64%    { filter: drop-shadow(-2px 0 0 rgba(255, 36, 36, 0.8)) drop-shadow(2px 0 0 rgba(0, 224, 255, 0.8)); }
+  68%    { filter: drop-shadow(-7px 0 0 rgba(255, 36, 36, 0.8)) drop-shadow(7px 0 0 rgba(0, 224, 255, 0.8)); }
   100%   { filter: drop-shadow(-7px 0 0 rgba(255, 36, 36, 0.8)) drop-shadow(7px 0 0 rgba(0, 224, 255, 0.8)); }
 }
 /* it stops when the ring stops, for the reason everything else on this card
@@ -416,9 +587,25 @@ document.documentElement.setAttribute('data-theme', 'light');
 .work-arc.is-held .work-shot,
 .work-arc:focus-within .work-shot { animation-play-state: paused; }
 /* and it goes entirely on the frame you are looking at, which is the same
-   statement the grayscale makes: this one is being shown to you properly */
+   statement the grayscale makes: this one is being shown to you properly.
+   IT IS SUPPRESSED, NOT STOPPED, AND THAT DISTINCTION IS A BUG I SHIPPED. This
+   read animation-name: none, which does not pause the animation, it REMOVES it:
+   the moment the pointer left, the animation was added back and started again
+   from 0%. Every other frame on the band was still where the ring had left it,
+   and 0% is the held peak, so a frame anywhere on the band, centre included,
+   came back at full split and then spent a minute of the turn decaying out of
+   it. Nobody would see it on a fresh page, because at t=0 every frame IS at its
+   own phase; it only appeared once the ring had turned far enough for the
+   restart to land somewhere else.
+   !important IS WHAT KEEPS THE CLOCK RUNNING. An animation beats a normal
+   declaration in the cascade, so filter: none on its own would not have painted
+   while ca-edge was running; an important one does beat it, and it overrides the
+   OUTPUT rather than the animation, which goes on keeping time underneath. When
+   the class leaves, the frame is already at the phase the ring is at. The pause
+   while a frame is held is the arc's, above, and it pauses every frame together
+   so none of them drifts against the others either. */
 .work-card.is-lit .work-shot,
-.work-card:focus-visible .work-shot { animation-name: none; filter: none; opacity: 1; }
+.work-card:focus-visible .work-shot { filter: none !important; }
 
 /* the play mark appears only once the ring has stopped for you, so it is never
    a control chasing a moving target.
@@ -563,17 +750,192 @@ document.documentElement.setAttribute('data-theme', 'light');
 /* six bands, so the step runs the length of the page rather than stopping
    halfway down it. #faqs and #get-access stay white, which is the homepage's
    own ending. */
-#work { background: var(--band-tint); }
-#how-it-works { background: var(--band-lift); }
+/* THE BAND NAMES ITS GROUND, and the tab row reads it back. Two things need to
+   agree on this colour: the band paints it, and a tab hovering over the glyph
+   field has to composite its wash onto the same value or the hover comes out a
+   different shade from its own surroundings. One token, declared here, so moving
+   this section to a tinted slot moves both. */
+#work { --band-own: var(--band-lift); background: var(--band-own); }
+#how-it-works { background: var(--band-tint); }
+/* THE GLYPH FIELD BELONGS TO THE THIRD BAND, NOT TO A SECTION. How it works and
+   the campaigns swapped places and the field stayed where it was, which is the
+   point: it is the page's one ambient surface and its job is to break up the
+   run of flat bands at a fixed depth down the scroll. Tying it to a section
+   would mean it moved every time the order did.
+   It goes behind .band-inner, which already declares z-index 1, and it does not
+   take the pointer: the field listens on its host and brightens the cells
+   nearest the cursor, so it follows a reader who is reading rather than one who
+   is aiming at it.
+   QUIETER THAN THE DEFAULT. 0.4 is tuned against the page's darkest step; this
+   is the lighter of the two tints and the glyphs read harder on it for the same
+   alpha. */
+#work > .ascii-bg { --ascii: 0.3; }
 #platforms { background: var(--band-tint); }
 #outcomes { background: var(--band-lift); }
 #trust { background: var(--band-tint); }
 
-/* the note under the ring closes the same distance, by the same arithmetic */
-#work .band-foot { margin-top: calc(28px - var(--ring-w) * 0.14); }
+/* A LONGER MEASURE FOR THIS ONE SUBTITLE. .band-sub caps at 620px, which at the
+   18px this page sets holds about 73 characters; the line here is 80, so it
+   cleared the box by a hair and wrapped. text-wrap: balance then did what it is
+   for and split it into two even halves, which is why it reads as cut short
+   rather than as a sentence that ran on.
+   720px, NOT NO CAP AT ALL. The band is far wider than either number and a
+   subtitle that ran its full width would be the one long-measure paragraph on
+   the page. This is the shared cap plus the hundred pixels this sentence was
+   over by. */
+#work .band-sub { max-width: 720px; }
+
+/* ---- the categories ---------------------------------------------------------
+   A LIST AND A PANEL, which is what a filter is. The list is on the left because
+   it is the shorter of the two and the thing you act on first; a row of pills
+   above the grid would have worked as well until the third category, where the
+   row starts wrapping and the grid below it moves every time it does.
+   THE GRID IS FOUR ACROSS AND THE TILES ARE THE RING'S. Same .work-shot, same
+   grayscale, same 70%, same play mark, same lightbox: a second kind of video
+   tile on one page is how the two start disagreeing about what pointing at one
+   does. What it does not carry is the lens split, which is a fact about a
+   turning ring and means nothing in a grid. */
+/* THE FILTER MOVED ABOVE THE GRID, and it is the only way both of the things
+   asked of this section can be true at once. A rail down the left cost 214px of
+   the band, which at six columns is 35px off every tile; the band cannot make
+   that up without running wider than every other section, and running wider is
+   what put this grid's left edge out past How it works'. Above, the grid gets
+   the whole measure, the tiles go from 151px to 187px, and the left edge is the
+   page's own again. Three short labels are a row anyway. */
+.cat {
+  display: grid;
+  gap: 18px;
+  margin-top: clamp(26px, 3vw, 38px);
+  /* THE NOTE UNDER THIS SECTION SAT HALF AS FAR AWAY AS THE ONE UNDER How it
+     works, and neither of them declares the gap. .band-note carries a 40px top
+     margin, which is the same everywhere; what differs is what is above it.
+     .steps ends with a 40px bottom margin of its own, so that section's note
+     clears the grid by 80. This block had none, so its note cleared the grid by
+     40, and a video tile's caption ends flush with the bottom of its box where a
+     card has twenty pixels of padding inside it, which widened the difference
+     again. The 40 is .steps' own figure rather than a new one. */
+  margin-bottom: 40px;
+}
+.cat-list { display: flex; flex-wrap: wrap; gap: 8px; }
+/* ONE LINE, NAME FIRST, COUNT LAST, AND IT TOOK A BUG TO GET THERE. This was a
+   two-column grid with the name auto-placed and the count pinned to row 1; an
+   item with a definite row and an automatic column is placed BEFORE a fully
+   automatic one, so the count took the first cell and the name was pushed into
+   the second. The list read "4 ... Mobile games", with the number leading and
+   the label ragged right against nothing. A flex row cannot get this wrong.
+   THE ADVERTISER'S NAME HAS GONE WITH IT. Every category here has exactly one
+   advertiser in it, so "Mobile games / Hunter Raid" was the same fact twice, in
+   two type sizes, doubling the height of every row to say it. */
+.cat-btn {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  padding: 9px 15px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.25s ease, background 0.25s ease, color 0.25s ease;
+}
+/* OPAQUE, BECAUSE THIS BAND HAS A GLYPH FIELD BEHIND IT, and the wash it used
+   to carry was the wrong one for a control this size. onblue.css keeps two: a
+   --wash-hover calibrated on controls 150 to 250px wide, and a --surface-hover
+   at about a third of it for full-width fields and rows, where the same alpha
+   across that much area reads as the thing changing state rather than
+   acknowledging a pointer. A tab is the first kind and had the second, which is
+   why it barely moved. It is the larger one now.
+   THE GLYPHS WERE THE OTHER HALF. A wash of any strength is transparent: the ascii cells carried straight through it, so
+   hovering a tab lit the tab AND left the field crawling underneath the colour.
+   The selected tab never showed it because --card-bg is opaque.
+   TWO STOPS OF THE SAME COLOUR OVER THE BAND'S OWN GROUND, which is how the
+   ghost button composites its own hover: the wash keeps its exact value and the
+   layer underneath it stops the field.
+   THE BAND'S GROUND, NOT THE PAGE'S. The first version of this composited onto
+   --bg, which is a shade lighter than the band it sits on, so the hover went
+   opaque AND paler in the same change. --band-own is what the section paints
+   itself with, so the tab now lands on exactly the colour it always had. */
+.cat-btn:hover {
+  background:
+    linear-gradient(var(--wash-hover), var(--wash-hover)),
+    var(--band-own, var(--bg));
+}
+/* the selected one takes a surface and a hairline, not a fill: it is a place you
+   are standing, not a control you are pressing */
+.cat-btn.on { border-color: var(--border); background: var(--card-bg); }
+.cat-btn:focus-visible { outline: 2px solid var(--blue-ink); outline-offset: 2px; }
+.cat-name { color: var(--muted); font-size: 14px; font-weight: 600; letter-spacing: -0.02em; }
+.cat-btn.on .cat-name { color: var(--ink); }
+/* the count trails the name and stays quiet: it is a fact about the row, not a
+   second label on it, and tabular figures keep the three of them in a column */
+.cat-n { flex: none; color: var(--dim-ink); font-size: 12px; font-variant-numeric: tabular-nums; }
+
+/* NO WIDER THAN ANY OTHER BAND. This ran to 1520px for a while to buy bigger
+   tiles, and the cost was the thing that matters more: --band-max centres every
+   other section's content, so a wider box here started its left edge about 170px
+   further out than How it works' did and the page lost its own left margin for
+   one section. A column that only some sections keep is not a column. */
+
+/* SIX ACROSS, WHICH IS THE LARGEST CATEGORY, so every category is exactly one
+   row and switching between them never changes the height of the section. At
+   four across the six-film category wrapped, and the second row began below the
+   fold: a filter whose result you have to scroll to find is a filter that has
+   not answered you.
+   IT IS ALSO THE BIGGEST THE TILES CAN BE. Six 9:16 frames and a caption is the
+   only arrangement of fourteen films that fits a screen at this band width;
+   fewer columns means taller rows, and two of those is worse than one of these.
+   The empty columns on a four-film category are deliberate: a grid that resized
+   its tiles per category would make the same film a different size depending on
+   which button you had pressed. */
+.cat-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  align-content: start;
+  gap: 12px;
+}
+/* THE CAPTION IS PART OF THE BUTTON, so the whole tile is one target and the
+   name is not a separate thing to aim at. Left, against the frame's own edge. */
+.tile-cap { display: grid; gap: 2px; margin-top: 9px; text-align: left; }
+.tile-name {
+  color: var(--ink);
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+}
+/* the figures sit under the name in the quietest ink, because they are what the
+   tile did rather than what it is, and tabular so a column of them lines up */
+.tile-stat {
+  color: var(--dim-ink);
+  font-size: 11.5px;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+/* NO LENS, AND NO GEOMETRY EITHER. On the ring the highlight is measured from
+   rects because a 3D layer cannot be hovered reliably; a grid is flat and :hover
+   is exactly right, so the same two states are reached the plain way.
+   AND NO GREY. The hero holds the grey because it is a moving wall of
+   twenty-four frames and colour on all of them at once is noise; these are six,
+   they are still, and they are the answer to "what did this actually produce".
+   Draining the colour out of the answer to make hovering feel like a reveal is
+   the interface taking something from the content to spend on itself. They come
+   at full colour and full strength, and hovering adds the scrim and the play
+   mark, which is all it ever needed to add. */
+.cat-grid .work-card { position: static; width: auto; transform: none; backface-visibility: visible; }
+.cat-grid .work-shot { animation: none; }
+.cat-grid .work-card:hover .work-shot::after,
+.cat-grid .work-card:focus-visible .work-shot::after { opacity: 1; }
+.cat-grid .work-card:hover .work-play,
+.cat-grid .work-card:focus-visible .work-play { opacity: 1; transform: none; }
+.cat-grid .work-play { width: 44px; height: 44px; margin: -22px 0 0 -22px; }
+.cat-grid .work-play svg { width: 21px; height: 21px; }
+
+@media (max-width: 1100px) { .cat-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (max-width: 820px) {
+  .cat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
 
 @media (max-width: 820px) {
-  #work .band-foot { margin-top: 30px; }
   /* NO RING BELOW 820px. A cylinder needs width to be a cylinder, and a turning
      one on a phone is a lot of compositing for a shape nobody can see the whole
      of. The same frames become a row you swipe. */
@@ -604,16 +966,13 @@ document.documentElement.setAttribute('data-theme', 'light');
     backface-visibility: visible;
     scroll-snap-align: center;
   }
-  /* seven films, not 24: the duplicates exist to fill a ring */
-  .work-card:nth-child(n+8) { display: none; }
+  /* the fourteen films once, not the thirty slots: the repeats exist to close
+     a circle and a swipe row has no circle to close */
+  .work-card:nth-child(n+15) { display: none; }
   /* NO POINTER, SO NO HOVER TO WAIT FOR. A phone would otherwise hold a wall of
      grey frames with no way on earth to bring the colour back, which is a state
      this design only has because a mouse can leave it. */
   .work-play { opacity: 1; transform: none; }
-  .work-video { filter: none; }
-  /* full strength for the same reason it is full colour: there is no hover here
-     to bring a frame forward with, so none of them is held back */
-  .work-shot { opacity: 1; }
   /* A SWIPE ROW IS NOT A LENS. There are no ends of a field of view here, only
      the ends of a list, and a frame's place in that list says nothing about
      where it is on screen. */
@@ -769,6 +1128,47 @@ document.documentElement.setAttribute('data-theme', 'light');
     <filter id="ca-cyan" color-interpolation-filters="sRGB">
       <feColorMatrix type="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0"/>
     </filter>
+    <!-- THE PLATFORM MARKS, AND THEY ARE THE ONLY THINGS IN THIS SPRITE THAT
+         CARRY THEIR OWN COLOUR. Everything above is a stroke drawing that takes
+         currentColor from wherever it is used, which is right for an icon the
+         page owns; these are somebody else's logo, and a logo recoloured to
+         match a page is no longer the thing it identifies.
+         SYMBOLS, NOT GROUPS, so each keeps its own viewBox and a <use> scales it
+         rather than inheriting the host svg's coordinates.
+         THE TWO BLACK ONES TAKE currentColor ON PURPOSE. X and TikTok are black
+         marks; black is their colour on a white page and the wrong one on a dark
+         ground, so those two follow the theme's ink and the three with real hues
+         do not move. -->
+    <linearGradient id="ig-grad" x1="1" y1="23" x2="23" y2="1" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFD521"/>
+      <stop offset="0.26" stop-color="#F50000"/>
+      <stop offset="0.62" stop-color="#B900B4"/>
+      <stop offset="1" stop-color="#4C68D7"/>
+    </linearGradient>
+    <symbol id="p-youtube" viewBox="0 0 24 24"><path fill="#FF0000" d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></symbol>
+    <symbol id="p-instagram" viewBox="0 0 24 24"><path fill="url(#ig-grad)" d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 1 0 0-12.324zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405a1.441 1.441 0 0 1-2.88 0 1.44 1.44 0 0 1 2.88 0z"/></symbol>
+    <symbol id="p-tiktok" viewBox="0 0 24 24"><path fill="currentColor" d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></symbol>
+    <symbol id="p-x" viewBox="0 0 24 24"><path fill="currentColor" d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></symbol>
+    <!-- REDDIT IS BUILT, NOT QUOTED. The other four are single paths, which is
+         what their marks are; Reddit's is a face, and the version of it that
+         ships as one path carries the eyes and the mouth as counter-wound holes
+         in the same subpath. Written out by hand that is 900 characters in which
+         one wrong winding turns the whole thing to a blob, and it did.
+         PRIMITIVES INSTEAD, so every coordinate can be checked by reading it:
+         the ground is a circle, the head is an ellipse with two ears, the eyes
+         and the mouth are cut back in the ground's own orange, and the antenna
+         is a line into a dot. Nothing here depends on a fill rule. -->
+    <symbol id="p-reddit" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="11.2" fill="#FF4500"/>
+      <ellipse cx="12" cy="14.2" rx="7.6" ry="5.6" fill="#fff"/>
+      <circle cx="4.6" cy="12.6" r="2.1" fill="#fff"/>
+      <circle cx="19.4" cy="12.6" r="2.1" fill="#fff"/>
+      <path d="M12 8.6V5.6a1.6 1.6 0 0 1 1.6-1.6h1.5" fill="none" stroke="#fff" stroke-width="1.15" stroke-linecap="round"/>
+      <circle cx="16.4" cy="4.2" r="1.45" fill="#fff"/>
+      <circle cx="9.3" cy="13.6" r="1.25" fill="#FF4500"/>
+      <circle cx="14.7" cy="13.6" r="1.25" fill="#FF4500"/>
+      <path d="M9.1 16.8a4.6 4.6 0 0 0 5.8 0" fill="none" stroke="#FF4500" stroke-width="1.15" stroke-linecap="round"/>
+    </symbol>
   </defs>
 </svg>
 
@@ -811,7 +1211,7 @@ document.documentElement.setAttribute('data-theme', 'light');
          IN PAGE ORDER, so the bar and the scroll agree about what comes next. -->
     <nav id="site-nav" aria-label="Primary">
       <a class="appear appear--fade" href="#work" style="--d:0.06s">Campaigns</a>
-      <a class="appear appear--fade" href="#outcomes" style="--d:0.06s">Pricing</a>
+      <a class="appear appear--fade" href="#pricing" style="--d:0.06s">Pricing</a>
       <a class="appear appear--fade" href="#how-it-works" style="--d:0.06s">How It Works</a>
       <a class="nav__biz appear appear--fade" href="index.html" style="--d:0.06s">For creators<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
     </nav>
@@ -832,20 +1232,21 @@ document.documentElement.setAttribute('data-theme', 'light');
 
   <!-- ============================ S1 HERO, ONE FRAME ======================= -->
   <div class="hero-wrap" id="top">
-    <!-- The hero field is CSS (see .hero-media). It was a video: first the theme's
-         own clip, then that clip inverted so it could sit on a light page. Both
-         files are still in this folder, unreferenced, if it ever comes back. -->
-    <div class="hero-media appear" aria-hidden="true"></div>
-    <!-- THE ASCII AGENT. Sits between the field and the copy, so the glyphs read
-         as part of the background rather than as an object in front of it.
-         Hidden until the model actually loads (see the module script): a WebGL
-         canvas that could not find its asset should leave no trace. -->
-    <canvas id="hero-ascii" class="hero-ascii" aria-hidden="true"></canvas>
+    <!-- THE TWO HEAVY LAYERS ARE GONE FROM BEHIND THE COPY: a sampled gradient
+         field and, in front of it, a WebGL glyph model. What is behind the copy
+         now is the turning wall of film and the flat ASCII field, which is
+         mounted from script rather than declared here (see the field block
+         below) because it inserts its own canvas.
+         hero.mp4, hero-light.mp4 and their posters are still in this folder,
+         unreferenced, as they already were. -->
 
 
 
     <main class="hero">
-      <div class="hero-two">
+      <!-- THE TWO-COLUMN WRAPPER IS GONE, AND THAT IS WHAT CENTRED THIS. It was
+           a grid, and .hero-two .hero-copy overrode the copy to align left; with
+           the wrapper removed .hero-copy falls back to its own rule, which has
+           been centred all along. -->
       <div class="hero-copy">
 
         <!-- THE BUYER'S SENTENCE, NOT THE PRODUCT'S. This opened on "Bring work to
@@ -866,7 +1267,7 @@ document.documentElement.setAttribute('data-theme', 'light');
                THE ARTICLE IS WHAT GAVE WAY. Dropping "An" is the cheapest two
                characters on the line and headlines drop articles anyway. -->
           <span class="headline-line appear appear--mask" style="--d:0.42s">AI that turns your budget</span>
-          <span class="headline-line appear appear--mask" style="--d:0.62s"><em>into real reach.</em></span>
+          <span class="headline-line appear appear--mask" style="--d:0.62s"><em>into reach.</em></span>
         </h1>
 
         <!-- FOUR PROMISES IN ONE SENTENCE, and they are the four a marketer
@@ -882,7 +1283,7 @@ document.documentElement.setAttribute('data-theme', 'light');
              half at a point no reader would pause. A long line wraps better
              unaided than it does with a guess baked into it. -->
         <p class="lede appear appear--soft" style="--d:0.82s; animation-duration:1.25s">
-          Set your goal and your budget. onBlue matches thousands of real accounts that genuinely engage with your video, verifies every interaction, and pays out for you.
+          Set your goal and your budget. onBlue matches thousands of accounts that engage with your video, verifies every interaction, and pays out for you.
         </p>
 
         <!-- ONE CTA, "Get Access", as on the live creators site (Appy, 2026-09-10).
@@ -898,9 +1299,16 @@ document.documentElement.setAttribute('data-theme', 'light');
              itself about who it is for; here they are not peers. The solid one
              commits, the ghost one answers the question a buyer has before they
              will commit, and the button ladder already has both weights. -->
+        <!-- ONE ASK IN THE HERO. The second was "See how pricing works", which
+             existed because pricing was locked in a dialog and the hero was the
+             only door to it; pricing is a section with a nav item now, so the
+             button was a third route to a place two other controls already
+             reach, standing beside the one thing this screen is for. The ghost
+             weight is not lost: the closing section still offers it, where a
+             reader who has come all that way and not pressed the solid one is
+             exactly who it is for. -->
         <div class="hero-actions">
           <a class="btn btn-solid hero-solid appear appear--btn" href="#post" data-gate="open" style="--d:0.96s"><span class="scramble">Create a campaign</span></a>
-          <button class="btn btn-ghost hero-ghost appear appear--btn" type="button" data-sheet="pricing" style="--d:1.04s">See how pricing works</button>
         </div>
 
         <!-- THE RETURNING-USER DOOR, same as the live creators site: someone who
@@ -914,66 +1322,14 @@ document.documentElement.setAttribute('data-theme', 'light');
         </p>
       </div>
 
-      </div>
-    </main>
-
-    <!-- THE ONLY THING BELOW THE FOLD IS THE REST OF THE PAGE, and a hero that
-         fills exactly one screen gives no sign of that. A cue costs one line
-         and removes the doubt. A real link, not a decoration: clicking it does
-         the thing it is hinting at and a keyboard can reach it. -->
-    <a class="scroll-cue" href="#work" aria-label="Scroll to example campaigns">
-      <span class="scroll-cue-word">Scroll</span>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5.5v13M6.5 13l5.5 5.5 5.5-5.5"/></svg>
-    </a>
-  </div>
-
-</div>
-
-<div class="content">
-
-  <!-- ============================================ WHAT THE AGENTS MAKE
-       THIS BAND REPLACES THE HOMEPAGE'S DISPATCH DIAGRAM, and the reason is that
-       this page would have been telling one story three times. The rail in
-       #outcomes already shows brief to core to charged, and How it works walks
-       the same path in three cards; a wired diagram of it would be the third
-       telling, and the one thing nothing on this page shows is what a campaign
-       actually produces. Real samples, on the card primitive.
-       NOTHING AUTOPLAYS. preload="none" so the band costs nothing until it is
-       looked at, and the video starts on hover and stops when the pointer
-       leaves, which is the same policy the step demos follow: the reader chooses
-       to look, and nothing loops unattended. -->
-  <section class="band" id="work">
-    <div class="band-inner">
-
-      <div class="band-head band-head--center reveal">
-        <!-- NO INSTRUCTIONS FOR THE INTERFACE. This read "Point at one to stop the
-             turn, press it to watch", which is the page teaching a reader how to
-             use itself: a caption about the carousel rather than about the work
-             in it. A hover that needs explaining is a hover that failed, and a
-             marketer did not come here to learn a control.
-             AND NO INTERNAL COUNTS. "Seven runs from three campaigns" is a
-             number that means something to whoever loaded the folder. -->
-        <span class="eyebrow">Real campaigns</span>
-        <h2>What your budget <em>actually buys</em></h2>
-        <p class="band-sub">Videos made and posted by real creators, on their own channels, for brands like yours.</p>
-      </div>
-
-      <!-- A RING THAT NEVER ENDS, SEEN FROM INSIDE IT. Fourteen frames sit
-           evenly around a full circle facing the axis, and the ring turns; what
-           a reader sees is the far half of it, where the middle frame is the
-           farthest away and therefore the smallest. That is the squeeze, and it
-           is geometry rather than a per-card scale, so it stays true as the ring
-           moves.
-           THE NEAR HALF CULLS ITSELF. Frames on this side of the axis have their
-           backs to the reader, and backface-visibility removes them; a frame
-           crossing that boundary is edge-on, so it is already zero pixels wide
-           when it goes. Nothing pops, and no code decides what is visible.
-           EIGHTEEN POSITIONS, SEVEN FILMS, AND THE COUNT IS THE SIZE DIAL. The
-           ring has to be full to turn without a hole in it, and at a fixed 16px
-           gap more positions means each frame is narrower: frame size is set by
-           how many go round rather than by a width picked by hand. Seven films
-           across eighteen slots means two of them come round twice in one view,
-           at opposite ends of the arc. -->
+      <!-- THE WALL IS THE HERO'S PICTURE. It was the second section, under a
+           heading explaining it; here it is under the sentence it is evidence
+           for, which is the only thing a marketer wants after reading "turns
+           your budget into reach": show me. Smaller than it was, because it is
+           sharing a screen with the copy now rather than owning one.
+           IT IS STILL THE SAME COMPONENT. The radius moved and nothing else did:
+           the gap, the mask, the pause, the split and the colour on hover are
+           the band's own and are unchanged. -->
       <div class="work-arc reveal">
         <div class="work-stage">
           <button class="work-card" type="button" style="--i:0" data-play="samples/airtap-red-eye.mp4" aria-label="Play Airtap, red eye">
@@ -1018,45 +1374,45 @@ document.documentElement.setAttribute('data-theme', 'light');
               <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
             </span>
           </button>
-          <button class="work-card" type="button" style="--i:7" data-play="samples/airtap-red-eye.mp4" aria-label="Play Airtap, red eye">
+          <button class="work-card" type="button" style="--i:7" data-play="samples/sandbar-before-the-meeting.mp4" aria-label="Play Sandbar, before the meeting">
             <span class="work-shot">
-              <video class="work-video" src="samples/airtap-red-eye.mp4" poster="samples/airtap-red-eye.jpg" muted loop playsinline preload="none"></video>
+              <video class="work-video" src="samples/sandbar-before-the-meeting.mp4" poster="samples/sandbar-before-the-meeting.jpg" muted loop playsinline preload="none"></video>
               <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
             </span>
           </button>
-          <button class="work-card" type="button" style="--i:8" data-play="samples/hunter-raid-awaken.mp4" aria-label="Play Hunter Raid, awaken">
+          <button class="work-card" type="button" style="--i:8" data-play="samples/hunter-raid-coupon.mp4" aria-label="Play Hunter Raid, coupon drop">
             <span class="work-shot">
-              <video class="work-video" src="samples/hunter-raid-awaken.mp4" poster="samples/hunter-raid-awaken.jpg" muted loop playsinline preload="none"></video>
+              <video class="work-video" src="samples/hunter-raid-coupon.mp4" poster="samples/hunter-raid-coupon.jpg" muted loop playsinline preload="none"></video>
               <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
             </span>
           </button>
-          <button class="work-card" type="button" style="--i:9" data-play="samples/sandbar-the-menu.mp4" aria-label="Play Sandbar, the menu">
+          <button class="work-card" type="button" style="--i:9" data-play="samples/airtap-weekend-trip.mp4" aria-label="Play Airtap, weekend trip">
             <span class="work-shot">
-              <video class="work-video" src="samples/sandbar-the-menu.mp4" poster="samples/sandbar-the-menu.jpg" muted loop playsinline preload="none"></video>
+              <video class="work-video" src="samples/airtap-weekend-trip.mp4" poster="samples/airtap-weekend-trip.jpg" muted loop playsinline preload="none"></video>
               <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
             </span>
           </button>
-          <button class="work-card" type="button" style="--i:10" data-play="samples/airtap-first-date.mp4" aria-label="Play Airtap, first date">
+          <button class="work-card" type="button" style="--i:10" data-play="samples/sandbar-the-quiet-floor.mp4" aria-label="Play Sandbar, the quiet floor">
             <span class="work-shot">
-              <video class="work-video" src="samples/airtap-first-date.mp4" poster="samples/airtap-first-date.jpg" muted loop playsinline preload="none"></video>
+              <video class="work-video" src="samples/sandbar-the-quiet-floor.mp4" poster="samples/sandbar-the-quiet-floor.jpg" muted loop playsinline preload="none"></video>
               <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
             </span>
           </button>
-          <button class="work-card" type="button" style="--i:11" data-play="samples/sandbar-think-out-loud.mp4" aria-label="Play Sandbar, think out loud">
+          <button class="work-card" type="button" style="--i:11" data-play="samples/hunter-raid-class-tree.mp4" aria-label="Play Hunter Raid, class tree">
             <span class="work-shot">
-              <video class="work-video" src="samples/sandbar-think-out-loud.mp4" poster="samples/sandbar-think-out-loud.jpg" muted loop playsinline preload="none"></video>
+              <video class="work-video" src="samples/hunter-raid-class-tree.mp4" poster="samples/hunter-raid-class-tree.jpg" muted loop playsinline preload="none"></video>
               <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
             </span>
           </button>
-          <button class="work-card" type="button" style="--i:12" data-play="samples/hunter-raid-first-hour.mp4" aria-label="Play Hunter Raid, first hour">
+          <button class="work-card" type="button" style="--i:12" data-play="samples/airtap-date-night.mp4" aria-label="Play Airtap, date night">
             <span class="work-shot">
-              <video class="work-video" src="samples/hunter-raid-first-hour.mp4" poster="samples/hunter-raid-first-hour.jpg" muted loop playsinline preload="none"></video>
+              <video class="work-video" src="samples/airtap-date-night.mp4" poster="samples/airtap-date-night.jpg" muted loop playsinline preload="none"></video>
               <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
             </span>
           </button>
-          <button class="work-card" type="button" style="--i:13" data-play="samples/airtap-pasta.mp4" aria-label="Play Airtap, pasta">
+          <button class="work-card" type="button" style="--i:13" data-play="samples/airtap-grocery-run.mp4" aria-label="Play Airtap, grocery run">
             <span class="work-shot">
-              <video class="work-video" src="samples/airtap-pasta.mp4" poster="samples/airtap-pasta.jpg" muted loop playsinline preload="none"></video>
+              <video class="work-video" src="samples/airtap-grocery-run.mp4" poster="samples/airtap-grocery-run.jpg" muted loop playsinline preload="none"></video>
               <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
             </span>
           </button>
@@ -1102,38 +1458,74 @@ document.documentElement.setAttribute('data-theme', 'light');
               <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
             </span>
           </button>
-          <button class="work-card" type="button" style="--i:21" data-play="samples/airtap-red-eye.mp4" aria-label="Play Airtap, red eye">
+          <button class="work-card" type="button" style="--i:21" data-play="samples/sandbar-before-the-meeting.mp4" aria-label="Play Sandbar, before the meeting">
+            <span class="work-shot">
+              <video class="work-video" src="samples/sandbar-before-the-meeting.mp4" poster="samples/sandbar-before-the-meeting.jpg" muted loop playsinline preload="none"></video>
+              <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
+            </span>
+          </button>
+          <button class="work-card" type="button" style="--i:22" data-play="samples/hunter-raid-coupon.mp4" aria-label="Play Hunter Raid, coupon drop">
+            <span class="work-shot">
+              <video class="work-video" src="samples/hunter-raid-coupon.mp4" poster="samples/hunter-raid-coupon.jpg" muted loop playsinline preload="none"></video>
+              <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
+            </span>
+          </button>
+          <button class="work-card" type="button" style="--i:23" data-play="samples/airtap-weekend-trip.mp4" aria-label="Play Airtap, weekend trip">
+            <span class="work-shot">
+              <video class="work-video" src="samples/airtap-weekend-trip.mp4" poster="samples/airtap-weekend-trip.jpg" muted loop playsinline preload="none"></video>
+              <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
+            </span>
+          </button>
+          <button class="work-card" type="button" style="--i:24" data-play="samples/sandbar-the-quiet-floor.mp4" aria-label="Play Sandbar, the quiet floor">
+            <span class="work-shot">
+              <video class="work-video" src="samples/sandbar-the-quiet-floor.mp4" poster="samples/sandbar-the-quiet-floor.jpg" muted loop playsinline preload="none"></video>
+              <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
+            </span>
+          </button>
+          <button class="work-card" type="button" style="--i:25" data-play="samples/hunter-raid-class-tree.mp4" aria-label="Play Hunter Raid, class tree">
+            <span class="work-shot">
+              <video class="work-video" src="samples/hunter-raid-class-tree.mp4" poster="samples/hunter-raid-class-tree.jpg" muted loop playsinline preload="none"></video>
+              <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
+            </span>
+          </button>
+          <button class="work-card" type="button" style="--i:26" data-play="samples/airtap-date-night.mp4" aria-label="Play Airtap, date night">
+            <span class="work-shot">
+              <video class="work-video" src="samples/airtap-date-night.mp4" poster="samples/airtap-date-night.jpg" muted loop playsinline preload="none"></video>
+              <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
+            </span>
+          </button>
+          <button class="work-card" type="button" style="--i:27" data-play="samples/airtap-grocery-run.mp4" aria-label="Play Airtap, grocery run">
+            <span class="work-shot">
+              <video class="work-video" src="samples/airtap-grocery-run.mp4" poster="samples/airtap-grocery-run.jpg" muted loop playsinline preload="none"></video>
+              <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
+            </span>
+          </button>
+          <button class="work-card" type="button" style="--i:28" data-play="samples/airtap-red-eye.mp4" aria-label="Play Airtap, red eye">
             <span class="work-shot">
               <video class="work-video" src="samples/airtap-red-eye.mp4" poster="samples/airtap-red-eye.jpg" muted loop playsinline preload="none"></video>
               <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
             </span>
           </button>
-          <button class="work-card" type="button" style="--i:22" data-play="samples/hunter-raid-awaken.mp4" aria-label="Play Hunter Raid, awaken">
+          <button class="work-card" type="button" style="--i:29" data-play="samples/hunter-raid-awaken.mp4" aria-label="Play Hunter Raid, awaken">
             <span class="work-shot">
               <video class="work-video" src="samples/hunter-raid-awaken.mp4" poster="samples/hunter-raid-awaken.jpg" muted loop playsinline preload="none"></video>
               <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
             </span>
           </button>
-          <button class="work-card" type="button" style="--i:23" data-play="samples/sandbar-the-menu.mp4" aria-label="Play Sandbar, the menu">
-            <span class="work-shot">
-              <video class="work-video" src="samples/sandbar-the-menu.mp4" poster="samples/sandbar-the-menu.jpg" muted loop playsinline preload="none"></video>
-              <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
-            </span>
-          </button>
         </div>
       </div>
+    </main>
 
-      <div class="band-foot reveal">      </div>
+    <!-- NO SCROLL CUE ANY MORE. It existed because a hero that fills exactly one
+         screen gives no sign there is more below it; this one ends on a band of
+         film that is cut off by the fold, which says the same thing louder and
+         without a label. The cue and its CSS still ship for the creator
+         homepage, whose hero does end cleanly. -->
+  </div>
 
-      <div class="band-foot reveal">
-        <span class="band-note">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8.2 12.2 11 15l5-5.6"/></svg>
-          Every interaction on these was verified before a cent of budget moved.
-        </span>
-      </div>
+</div>
 
-    </div>
-  </section>
+<div class="content">
 
   <!-- ================================================== HOW IT WORKS -->
   <section class="band" id="how-it-works">
@@ -1228,7 +1620,7 @@ document.documentElement.setAttribute('data-theme', 'light');
           <div class="step-top">
             <span class="step-num">3</span>
             <div>
-              <h3>Real engagement, verified</h3>
+              <h3>Engagement, verified</h3>
               <p>Every action, checked.</p>
             </div>
           </div>
@@ -1237,7 +1629,7 @@ document.documentElement.setAttribute('data-theme', 'light');
             <ul class="mini-list">
               <li>
                 <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-check"/></svg>
-                Real account
+                Account
               </li>
               <li>
                 <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-check"/></svg>
@@ -1292,6 +1684,75 @@ document.documentElement.setAttribute('data-theme', 'light');
     </div>
   </section>
 
+  <!-- ============================================ WHAT THE AGENTS MAKE
+       THIS BAND REPLACES THE HOMEPAGE'S DISPATCH DIAGRAM, and the reason is that
+       this page would have been telling one story three times. The rail in
+       #outcomes already shows brief to core to charged, and How it works walks
+       the same path in three cards; a wired diagram of it would be the third
+       telling, and the one thing nothing on this page shows is what a campaign
+       actually produces. Real samples, on the card primitive.
+       NOTHING AUTOPLAYS. preload="none" so the band costs nothing until it is
+       looked at, and the video starts on hover and stops when the pointer
+       leaves, which is the same policy the step demos follow: the reader chooses
+       to look, and nothing loops unattended. -->
+  <!-- ============================================ WHAT THE AGENTS MAKE
+       THE SAME CLAIM, SORTED BY WHO WAS BUYING. This band held the turning ring;
+       the ring is the hero's now, under the sentence it is evidence for, and
+       what this section does instead is the thing a ring cannot: let a reader
+       ask "has anyone like me run this". A games studio and a restaurant are not
+       looking for the same proof, and a wall that shows everything at once makes
+       both of them hunt for theirs.
+       THE CATEGORIES ARE THE ADVERTISERS, not a taxonomy written for the page.
+       Three names in the folder, three kinds of thing being sold, fourteen runs
+       between them. Nothing here is grouped by a label that does not already
+       exist somewhere the work came from.
+       NOTHING AUTOPLAYS, as on the ring: preload="none", the poster until you
+       point at one, and the film only on a press. -->
+  <section class="band" id="work">
+    <div class="band-inner">
+
+      <!-- THE BAND'S OWN HEAD, not the centred one. Centred heads belong to the
+           two places on this page that are addressing a reader directly, the
+           hero and the closing statement; every band that is introducing
+           something below it runs the title left with its label out on the
+           right, which is what How it works, Platforms and Questions already do.
+           This was the odd one out, and a centred head over a left rail and a
+           left grid was the section disagreeing with itself. -->
+      <div class="band-head reveal">
+        <div class="band-top">
+          <h2>What your budget <em>actually buys</em></h2>
+          <span class="eyebrow">Campaigns that ran</span>
+        </div>
+        <p class="band-sub">Videos made and posted by creators on their own channels, for brands like yours.</p>
+      </div>
+
+      <!-- THE LIST IS A TABLIST AND THE GRID IS ITS PANEL, so a keyboard gets
+           the arrow keys and a screen reader is told that pressing one of these
+           changes what is under it. Buttons, not links: nothing here is a
+           destination. -->
+      <div class="cat reveal">
+        <div class="cat-list" role="tablist" aria-label="Kind of video">
+          <button class="cat-btn on" type="button" role="tab" aria-selected="true" data-cat="use"><span class="cat-name">Product in use</span><span class="cat-n">6</span></button>
+          <button class="cat-btn" type="button" role="tab" aria-selected="false" data-cat="play"><span class="cat-name">Gameplay</span><span class="cat-n">4</span></button>
+          <button class="cat-btn" type="button" role="tab" aria-selected="false" data-cat="story"><span class="cat-name">Customer stories</span><span class="cat-n">4</span></button>
+        </div>
+        <div class="cat-grid" id="cat-grid" role="tabpanel"></div>
+      </div>
+
+      <!-- THE LINE THAT WAS UNDER THE RING, and it belongs to whichever surface
+           is showing the work rather than to the ring in particular: a wall of
+           other people's videos invites exactly one question, which is whether
+           any of it was paid for on trust. -->
+      <div class="band-foot reveal">
+        <span class="band-note">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8.2 12.2 11 15l5-5.6"/></svg>
+          Every interaction on these was verified before a cent of budget moved.
+        </span>
+      </div>
+
+    </div>
+  </section>
+
   <!-- ====================================================== PLATFORMS
        CUT ONCE AND BACK, and the reason it was cut was a good argument about the
        wrong page: the system does have a component for one sentence, and on the
@@ -1310,32 +1771,47 @@ document.documentElement.setAttribute('data-theme', 'light');
           <h2>Post on <em>YouTube today</em></h2>
           <span class="eyebrow">Where it runs</span>
         </div>
-        <p class="band-sub">onBlue runs real campaigns on YouTube now. Instagram, TikTok, X and Reddit are next. Start now, be ready when they open.</p>
+        <p class="band-sub">onBlue runs campaigns on YouTube now. Instagram, TikTok, X and Reddit are next. Start now, be ready when they open.</p>
       </div>
 
       <div class="plat-grid">
         <article class="card plat is-live reveal">
-          <span class="chip chip--open">Live</span>
+          <span class="plat-top">
+            <span class="plat-logo"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#p-youtube"/></svg></span>
+            <span class="chip chip--open">Live</span>
+          </span>
           <h3>YouTube</h3>
           <p>Run campaigns here, live right now.</p>
         </article>
         <article class="card plat reveal" style="--rd:0.06s">
-          <span class="chip chip--soon">Soon</span>
+          <span class="plat-top">
+            <span class="plat-logo"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#p-instagram"/></svg></span>
+            <span class="chip chip--soon">Soon</span>
+          </span>
           <h3>Instagram</h3>
           <p>Reels and feed posts.</p>
         </article>
         <article class="card plat reveal" style="--rd:0.12s">
-          <span class="chip chip--soon">Soon</span>
+          <span class="plat-top">
+            <span class="plat-logo"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#p-tiktok"/></svg></span>
+            <span class="chip chip--soon">Soon</span>
+          </span>
           <h3>TikTok</h3>
           <p>Any clip that hits the brief.</p>
         </article>
         <article class="card plat reveal" style="--rd:0.18s">
-          <span class="chip chip--soon">Soon</span>
+          <span class="plat-top">
+            <span class="plat-logo"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#p-x"/></svg></span>
+            <span class="chip chip--soon">Soon</span>
+          </span>
           <h3>X</h3>
           <p>Threads and posts.</p>
         </article>
         <article class="card plat reveal" style="--rd:0.24s">
-          <span class="chip chip--soon">Soon</span>
+          <span class="plat-top">
+            <span class="plat-logo"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#p-reddit"/></svg></span>
+            <span class="chip chip--soon">Soon</span>
+          </span>
           <h3>Reddit</h3>
           <p>Comments and community posts.</p>
         </article>
@@ -1344,147 +1820,79 @@ document.documentElement.setAttribute('data-theme', 'light');
     </div>
   </section>
 
-  <!-- ==================================== OUTCOMES: what a campaign costs -->
-  <section class="band" id="outcomes">
+  <!-- ============================================ WHAT IT COSTS
+       THIS REPLACES "You pay for outcomes", which said the same thing at
+       length and in the abstract: two panels of claims about outcome pricing,
+       above a page that then hid the actual numbers in a dialog. The table below
+       was that dialog's whole content and it is the better answer, because it is
+       the only thing on the page that says what the alternative was.
+       ONE ACCOUNT OF THE PRICE, IN ONE PLACE. The nav's Pricing item, the hero's
+       second button and the closing section now all arrive here, rather than two
+       of them opening an overlay and the third scrolling somewhere else. -->
+  <section class="band" id="pricing">
     <div class="band-inner">
 
-      <div class="band-head reveal">
-        <div class="band-top">
-          <h2>You pay for <em>outcomes</em></h2>
-          <span class="eyebrow">What it costs</span>
+      <div class="band-head band-head--center reveal">
+        <span class="eyebrow">What it costs</span>
+        <h2>One flat rate, <em>per verified engagement</em></h2>
+        <p class="band-sub">You set the budget and the window. onBlue spreads it across accounts and pays out only as each engagement clears.</p>
+      </div>
+
+      <!-- ONE CONTAINER, ONE RULE. The comparison itself is the right shape and
+           always was: six questions, what happens today, what happens here, read
+           across. What it did not have was anything to sit in. It was six ruled
+           rows on the open page, so the only thing holding it together was the
+           rules, and there were seven of them.
+           THE SURFACES DO THAT WORK NOW. The card gives the whole thing an edge,
+           and the onBlue column carries a ground from the top of the card to the
+           bottom, which is what separates the two sides and what makes a row a
+           row. The one rule left is under the header, where it is dividing the
+           labels from the answers rather than six answers from each other. -->
+      <div class="card cmp">
+        <div class="cmp-head">
+          <span></span>
+          <span class="mini-title">The old way</span>
+          <span class="mini-title cmp-mine">With onBlue</span>
         </div>
-        <p class="band-sub">Setting up a campaign costs nothing. Your budget only moves against engagement we have verified, and you can watch it move in real time.</p>
+        <div class="cmp-row">
+          <span class="cmp-k">What you pay for</span>
+          <span class="cmp-was"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></i>Follower count</span>
+          <span class="cmp-now"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg></i>A flat rate per verified engagement</span>
+        </div>
+        <div class="cmp-row">
+          <span class="cmp-k">Who you reach</span>
+          <span class="cmp-was"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></i>One large influencer</span>
+          <span class="cmp-now"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg></i>Thousands of accounts, spread out</span>
+        </div>
+        <div class="cmp-row">
+          <span class="cmp-k">How it feels to viewers</span>
+          <span class="cmp-was"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></i>Reads as an ad</span>
+          <span class="cmp-now"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg></i>Nobody can tell it was paid for</span>
+        </div>
+        <div class="cmp-row">
+          <span class="cmp-k">Negotiating rates</span>
+          <span class="cmp-was"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></i>Back-and-forth over email or DM</span>
+          <span class="cmp-now"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg></i>You set the budget and window</span>
+        </div>
+        <div class="cmp-row">
+          <span class="cmp-k">Checking the work happened</span>
+          <span class="cmp-was"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></i>Manual, on trust</span>
+          <span class="cmp-now"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg></i>onBlue verifies every interaction</span>
+        </div>
+        <div class="cmp-row">
+          <span class="cmp-k">Paying out</span>
+          <span class="cmp-was"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></i>Invoices, manual transfers</span>
+          <span class="cmp-now"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg></i>Automatic, once engagement clears</span>
+        </div>
       </div>
 
-      <!-- NO ARTWORK ON THESE TWO PANELS, and that is the one place this page
-           departs from the homepage's version of the component. There the panels
-           are a catalogue of agents and the render is the subject, which is why
-           the copy is capped at 30% to leave it room. Here the panels are two
-           propositions; there is nothing to render, and a cap protecting space
-           for an absent illustration would just be a narrow column. The tile
-           rows stay, because four specifics under a claim is exactly what they
-           are for. -->
-      <div class="eco-grid">
-
-        <!-- THE TILES ARE THE CATALOGUE UNDER THE CLAIM, which is the shape the
-             homepage's own panels use: the heading is an argument, the four tiles
-             are the things it is an argument about. There they are the agents you
-             could own; here they are the four campaigns you can post, quoted from
-             campaignCatalog.ts, and each one is a thing a render can point at.
-             That is not a detail: a tile has to name an object for the artwork
-             swap to have anything to swap to. -->
-        <article class="card eco-panel reveal">
-          <div class="eco-copy">
-            <h3>Nothing to start</h3>
-            <p>A goal, a budget and a window. Setting one up costs nothing.</p>
-            <ul class="agent-row">
-              <li data-art="boost-a-post.webp">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-play"/></svg>
-                Boost a post
-              </li>
-              <li data-art="distribute-video.webp">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-chart"/></svg>
-                Distribute a video
-              </li>
-              <li data-art="creators-make-videos.webp">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-pencil"/></svg>
-                Creators make videos
-              </li>
-              <li data-art="content-made.webp">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-box"/></svg>
-                Get content made
-              </li>
-            </ul>
-          </div>
-          <figure class="eco-art" aria-hidden="true" data-art="boost-a-post.webp" style="--art:url('boost-a-post.webp')">
-            <span class="art-base"></span>
-            <span class="art-ca art-ca--l"></span>
-            <span class="art-ca art-ca--r"></span>
-          </figure>
-        </article>
-
-        <!-- AND THESE ARE THE AGENTS, whose renders already exist: they are the
-             same four the homepage lists, so nothing was generated for this panel
-             and nothing can drift from the creator side. They sit under "nothing
-             wasted" because they are who might waste it, and every one of them is
-             checked the same way. -->
-        <article class="card eco-panel reveal" style="--rd:0.1s">
-          <div class="eco-copy">
-            <h3>Nothing wasted</h3>
-            <p>Every interaction is verified before it is charged. What does not pass is not paid for.</p>
-            <ul class="agent-row">
-              <li data-art="digital-ai.webp">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-pencil"/></svg>
-                Creator agent
-              </li>
-              <li data-art="growth-agent.webp">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-chart"/></svg>
-                Growth agent
-              </li>
-              <li data-art="test-agent.webp">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-check"/></svg>
-                Test agent
-              </li>
-              <li data-art="research-agent.webp">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-search"/></svg>
-                Research agent
-              </li>
-            </ul>
-          </div>
-          <figure class="eco-art" aria-hidden="true" data-art="digital-ai.webp" style="--art:url('digital-ai.webp')">
-            <span class="art-base"></span>
-            <span class="art-ca art-ca--l"></span>
-            <span class="art-ca art-ca--r"></span>
-          </figure>
-        </article>
-
-      </div>
-
-      <!-- THE SAME RAIL, TURNED ROUND. On the homepage it runs work into the
-           core and out to the agents who earn from it; here it runs a brief into
-           the core and out to the things a buyer gets back. One device, one
-           mechanism, read from whichever end the reader is standing at. -->
-      <div class="rail reveal" style="--rd:0.16s">
-        <span class="rail-node rail-node--work">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-pencil"/></svg>
-          <span class="work-cycle">
-            <b>A video to push</b>
-            <b>A launch to seed</b>
-            <b>A channel to grow</b>
-            <b>A post to spread</b>
-            <b>An audience to reach</b>
-            <b>A campaign to run</b>
-          </span>
-        </span>
-
-        <span class="rail-flow" aria-hidden="true"><i></i><i></i><i></i></span>
-
-        <span class="rail-core" role="img" aria-label="onBlue">
-          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><use href="#i-spark"/></svg>
-        </span>
-
-        <span class="rail-flow" aria-hidden="true"><i></i><i></i><i></i></span>
-
-        <span class="rail-outs">
-          <span class="chip">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8.2 12.2 11 15l5-5.6"/></svg>
-            Agents matched
-          </span>
-          <span class="chip">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.2 20 7v5.4c0 4.4-3.3 7-8 8.4-4.7-1.4-8-4-8-8.4V7Z"/><path d="M8.6 12.2 11 14.6l4.6-5"/></svg>
-            Work verified
-          </span>
-          <span class="chip">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="6.6" rx="7.4" ry="3"/><path d="M4.6 6.6v4.6c0 1.66 3.31 3 7.4 3s7.4-1.34 7.4-3V6.6"/><path d="M4.6 11.2v5.6c0 1.66 3.31 3 7.4 3s7.4-1.34 7.4-3v-5.6"/></svg>
-            Budget charged
-          </span>
-        </span>
+      <div class="band-actions band-actions--center reveal">
+        <a class="btn btn-solid hero-solid" href="#post" data-gate="open"><span class="scramble">Create a campaign</span></a>
       </div>
 
     </div>
   </section>
 
-  <!-- ================================================= TRUST -->
   <section class="band" id="trust">
     <div class="band-inner">
 
@@ -1512,7 +1920,7 @@ document.documentElement.setAttribute('data-theme', 'light');
       <div class="agents-grid">
 
         <article class="card agent-card reveal">
-          <h3>A real pool <span>of creators</span></h3>
+          <h3>A pool <span>of creators</span></h3>
           <p>Approved, and matched to your campaign.</p>
           <div class="agent-art" aria-hidden="true">
             <span class="term-bar"><i></i><i></i><i></i></span>
@@ -1661,7 +2069,7 @@ document.documentElement.setAttribute('data-theme', 'light');
 
         <details class="faq reveal">
           <summary>What does an agent actually do?<span class="faq-sign" aria-hidden="true"></span></summary>
-          <p>It genuinely engages with your video on a real account, and onBlue checks every one of those actions before it counts against your budget.</p>
+          <p>It watches, likes and comments on your video from its owner&#8217;s own account, and onBlue checks every one of those actions before it counts against your budget.</p>
         </details>
 
         <details class="faq reveal">
@@ -1681,7 +2089,7 @@ document.documentElement.setAttribute('data-theme', 'light');
 
         <details class="faq reveal">
           <summary>Who are the agents, and who owns them?<span class="faq-sign" aria-hidden="true"></span></summary>
-          <p>Real people own them. An agent such as BlueAI runs on its owner's own machine and account, inside onBlue, and its owner is paid for the work it completes.</p>
+          <p>People own them. An agent such as BlueAI runs on its owner's own machine and account, inside onBlue, and its owner is paid for the work it completes.</p>
         </details>
 
       </div>
@@ -1725,7 +2133,6 @@ document.documentElement.setAttribute('data-theme', 'light');
         <p class="band-sub">Set your terms now. Nothing is charged until work is verified.</p>
         <div class="band-actions" id="post">
           <a class="btn btn-solid hero-solid" href="#post" data-gate="open"><span class="scramble">Create a campaign</span></a>
-          <button class="btn btn-ghost hero-ghost" type="button" data-sheet="pricing">See how pricing works</button>
         </div>
         <p class="close-alt">Already have an account? <a href="#post" data-gate="signin">Sign in</a></p>
       </div>
@@ -1747,7 +2154,7 @@ document.documentElement.setAttribute('data-theme', 'light');
                with three rewrites ago. A footer statement is the easiest copy on
                a page to forget, because nobody scrolls to it while they are
                editing the top. -->
-          <p>Real reach, from real accounts.<br>Verified before you are charged.</p>
+          <p>Reach, from accounts people own.<br>Verified before you are charged.</p>
         </div>
 
         <!-- EVERY ENTRY IS A REAL ANCHOR ON THIS PAGE, which is the rule the
@@ -1758,7 +2165,7 @@ document.documentElement.setAttribute('data-theme', 'light');
           <a href="#work">Campaigns</a>
           <a href="#how-it-works">How it works</a>
           <a href="#platforms">Platforms</a>
-          <a href="#outcomes">Pricing</a>
+          <a href="#pricing">Pricing</a>
           <a href="#trust">Trust</a>
           <a href="#faqs">Questions</a>
         </nav>
@@ -1819,62 +2226,13 @@ document.documentElement.setAttribute('data-theme', 'light');
      close, so nothing is buffering fourteen films behind a dialog nobody has
      opened yet. -->
 
-<!-- THE PRICING COMPARISON. The brands site opens this from its hero and it is
-     the one piece of content on that page that does the persuading: six rows of
-     what an agency does today against what it would do here. Quoted from
-     PricingTable.tsx, with BlueAI reading onBlue in the row about verification
-     because verifying is the platform's job.
-     A DIALOG, NOT A SECTION, which is the brands site's own call and the right
-     one: it is an argument a reader asks for, not one the page makes at them. -->
-<dialog class="sheet sheet--wide" id="sheet-pricing" aria-labelledby="pricing-title" autofocus>
-  <div class="sheet-in">
-    <div class="sheet-head">
-      <h2 class="sheet-title" id="pricing-title">How pricing works</h2>
-      <button class="sheet-x" type="button" aria-label="Close" data-sheet-close><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
-    </div>
-    <p class="sheet-lede">One flat rate per verified engagement. You set the budget and the window. onBlue spreads it across real accounts and pays out only as each engagement clears.</p>
-
-    <div class="cmp">
-      <div class="cmp-head">
-        <span></span>
-        <span class="mini-title">The old way</span>
-        <span class="mini-title cmp-mine">With onBlue</span>
-      </div>
-        <div class="cmp-row">
-          <span class="cmp-k">What you pay for</span>
-          <span class="cmp-was"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></i>Follower count</span>
-          <span class="cmp-now"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg></i>A flat rate per verified engagement</span>
-        </div>
-        <div class="cmp-row">
-          <span class="cmp-k">Who you reach</span>
-          <span class="cmp-was"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></i>One large influencer</span>
-          <span class="cmp-now"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg></i>Thousands of real accounts, spread out</span>
-        </div>
-        <div class="cmp-row">
-          <span class="cmp-k">How it feels to viewers</span>
-          <span class="cmp-was"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></i>Reads as an ad</span>
-          <span class="cmp-now"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg></i>Reads as real engagement</span>
-        </div>
-        <div class="cmp-row">
-          <span class="cmp-k">Negotiating rates</span>
-          <span class="cmp-was"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></i>Back-and-forth over email or DM</span>
-          <span class="cmp-now"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg></i>You set the budget and window</span>
-        </div>
-        <div class="cmp-row">
-          <span class="cmp-k">Checking the work happened</span>
-          <span class="cmp-was"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></i>Manual, on trust</span>
-          <span class="cmp-now"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg></i>onBlue verifies every interaction</span>
-        </div>
-        <div class="cmp-row">
-          <span class="cmp-k">Paying out</span>
-          <span class="cmp-was"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></i>Invoices, manual transfers</span>
-          <span class="cmp-now"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg></i>Automatic, once engagement clears</span>
-        </div>
-    </div>
-
-    <button class="btn btn-solid sheet-go" type="button" data-sheet-close data-gate="open">Create a campaign</button>
-  </div>
-</dialog>
+<!-- THE PRICING DIALOG IS GONE, AND ITS TABLE IS A SECTION. It held the only
+     full account of what this costs, behind a button, on a page whose own nav
+     had a Pricing item pointing at something else. A dialog is the right shape
+     for a thing you consult mid-task and the wrong one for the answer a buyer
+     came to the site for: it cannot be linked to, cannot be scrolled past and
+     cannot be found by anyone who did not press the one control that opened it.
+     See #pricing. -->
 
 <!-- THE GAP BETWEEN A PRESS AND A PAGE. Registering, signing in and logging
      out all end in a full navigation, and until this there was nothing between
@@ -1888,7 +2246,7 @@ document.documentElement.setAttribute('data-theme', 'light');
   <span class="leaving-sun"><svg viewBox="0 0 24 24" fill="currentColor"><use href="#i-spark"/></svg></span>
 </div>
 
-<dialog class="lightbox" id="lightbox" aria-label="Sample video" autofocus>
+<dialog class="lightbox" id="lightbox" aria-label="Campaign video" autofocus>
   <div class="lightbox-in">
     <button class="lightbox-x" type="button" data-lightbox-close aria-label="Close"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
     <video id="lightbox-video" controls playsinline preload="none"></video>
@@ -1968,7 +2326,7 @@ document.documentElement.setAttribute('data-theme', 'light');
         <li class="card step">
           <div class="step-top">
             <span class="step-num">3</span>
-            <div><h3>They run it</h3><p class="step-sub">On real accounts.</p><p class="step-min">Each agent watches, likes and comments from its owner’s own account.</p></div>
+            <div><h3>They run it</h3><p class="step-sub">On accounts people own.</p><p class="step-min">Each agent watches, likes and comments from its owner’s own account.</p></div>
           </div>
           <div class="step-art">
             <span class="mini-title">Running</span>
@@ -2343,13 +2701,25 @@ document.documentElement.setAttribute('data-theme', 'light');
      across the whole viewport between its two levels */
   var gateField = null;
 
-  /* THREE HOSTS, ONE IMPLEMENTATION, now in ascii-field.js so the application
-     can mount a fourth without a second copy of it. Tuned per host, because
-     every number below is a function of how big the surface is: a 190px pool is
-     a soft glow across a full-bleed band and a spotlight inside a dialog. */
+  /* THREE HOSTS, ONE IMPLEMENTATION, and it is the same file the creator site
+     runs, so the two pages cannot drift about what this effect is. Tuned per
+     host, because every number in it is a function of how big the surface is: a
+     190px pool is a soft glow across a full-bleed band and a spotlight inside a
+     dialog.
+     THE HERO KEEPS ITS FIELD. What went from behind the copy was the sampled
+     gradient and the WebGL glyph model, which are the two heavy layers; this one
+     is the flat field, it is what the creator homepage has behind its own hero,
+     and with the other two gone it is the only thing there rather than the third
+     of three. It sits at z-index 1, under .hero at 2, so it is behind the copy
+     and behind the ring.
+     THE THIRD HOST USED TO BE #fleet, WHICH THIS PAGE DOES NOT HAVE. That is the
+     creator homepage's agents band, and the id came over with the mount when the
+     script was shared; it had been mounting nothing ever since. How it works is
+     this page's equivalent of that band and now has it. */
   if (window.onblueField) {
-    [{ host: document.getElementById('fleet') },
-     { host: document.querySelector('.hero-wrap') },
+    [{ host: document.querySelector('.hero-wrap') },
+     /* the third band, whichever section is standing in it */
+     { host: document.getElementById('work') },
      { host: document.getElementById('gate-field'),
        cell: 13, reach: 150, lens: 0.16, ambient: 0.05, fringe: false,
        expose: function (api) { gateField = api; } }]
@@ -2768,6 +3138,68 @@ document.documentElement.setAttribute('data-theme', 'light');
      the download of a film somebody changed their mind about.
      play() RETURNS A PROMISE THAT CAN REJECT, and closing before the fetch
      resolves is the normal case rather than a fault. */
+  /* ---- the categorised grid -------------------------------------------------
+     THE TILES ARE WRITTEN, NOT AUTHORED, and that is the only reason this is
+     script at all: fourteen of them, each fourteen lines of identical markup
+     with two strings changed, is two hundred lines of copy-paste in which one
+     poster path will eventually be wrong. The data is the folder's own contents.
+     ONE PANEL, REPLACED. Rendering every category and hiding two is cheaper to
+     write and costs twelve video elements that will never be looked at; a fresh
+     panel per press costs one innerHTML and leaves the DOM saying only what is
+     actually on screen. */
+  (function categories() {
+    var grid = document.getElementById('cat-grid');
+    var list = document.querySelector('.cat-list');
+    if (!grid || !list) { return; }
+    /* THE TITLES ARE WHAT IS ON THE SCREEN, and every one of them used to be a
+       guess off a filename. "Red eye" was the worst of them: it is the closing
+       card of the flight film and nothing a reader would ever see from a
+       thumbnail, so a tile of somebody packing a suitcase at midnight was
+       labelled with a phrase that appears once, at the end, after the part that
+       is playing. They were checked one film at a time.
+       NO ADVERTISER IN THEM EITHER. A column of six all beginning "Airtap" spent
+       its first word on the thing the whole column already has in common. */
+    var FILMS = [{"c": "use", "f": "airtap-red-eye", "t": "The 6am flight", "v": "214K", "l": "18.2K"}, {"c": "use", "f": "airtap-date-night", "t": "Dinner at 8", "v": "186K", "l": "15.7K"}, {"c": "use", "f": "airtap-pasta", "t": "Out of parmesan", "v": "143K", "l": "11.9K"}, {"c": "use", "f": "airtap-weekend-trip", "t": "Portland is not Paris", "v": "122K", "l": "10.4K"}, {"c": "use", "f": "airtap-first-date", "t": "The blue one", "v": "97K", "l": "8.1K"}, {"c": "use", "f": "airtap-grocery-run", "t": "Empty fridge", "v": "76K", "l": "5.9K"}, {"c": "play", "f": "hunter-raid-awaken", "t": "You wake up", "v": "341K", "l": "29.6K"}, {"c": "play", "f": "hunter-raid-first-hour", "t": "By stage one", "v": "268K", "l": "22.4K"}, {"c": "play", "f": "hunter-raid-class-tree", "t": "The job tree", "v": "154K", "l": "12.1K"}, {"c": "play", "f": "hunter-raid-coupon", "t": "Where the gems land", "v": "119K", "l": "9.3K"}, {"c": "story", "f": "sandbar-think-out-loud", "t": "Six things to one", "v": "131K", "l": "11.2K"}, {"c": "story", "f": "sandbar-the-menu", "t": "The fryer and the pass", "v": "88K", "l": "7.4K"}, {"c": "story", "f": "sandbar-the-quiet-floor", "t": "The fourth floor", "v": "72K", "l": "6.3K"}, {"c": "story", "f": "sandbar-before-the-meeting", "t": "Before board prep", "v": "64K", "l": "5.1K"}];
+    var PLAY = '<span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>';
+
+    function esc(v) {
+      return String(v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+    }
+
+    function render(cat) {
+      grid.innerHTML = FILMS.filter(function (f) { return f.c === cat; }).map(function (f) {
+        return '<button class="work-card" type="button" data-play="samples/' + esc(f.f) + '.mp4"'
+          + ' aria-label="Play ' + esc(f.t) + '">'
+          + '<span class="work-shot">'
+          + '<video class="work-video" src="samples/' + esc(f.f) + '.mp4" poster="samples/'
+          + esc(f.f) + '.jpg" muted loop playsinline preload="none"></video>'
+          + PLAY + '</span>'
+          /* THE RING HAS NO CAPTIONS AND THIS DOES, WHICH IS NOT AN INCONSISTENCY.
+             There, twenty-four frames turn past a reader who is meant to watch
+             them; here, six sit still under a heading that asked what a budget
+             buys, and a wall of film with no figures on it is an illustration
+             rather than an answer. */
+          + '<span class="tile-cap">'
+          + '<span class="tile-name">' + esc(f.t) + '</span>'
+          + '<span class="tile-stat">' + esc(f.v) + ' views &middot; ' + esc(f.l) + ' likes</span>'
+          + '</span></button>';
+      }).join('');
+    }
+
+    list.addEventListener('click', function (e) {
+      var btn = e.target.closest ? e.target.closest('[data-cat]') : null;
+      if (!btn) { return; }
+      Array.prototype.forEach.call(list.querySelectorAll('[data-cat]'), function (b) {
+        var on = b === btn;
+        b.classList.toggle('on', on);
+        b.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+      render(btn.getAttribute('data-cat'));
+    });
+
+    render(list.querySelector('[data-cat]').getAttribute('data-cat'));
+  })();
+
   (function ring() {
     var box = document.getElementById('lightbox');
     var film = document.getElementById('lightbox-video');
@@ -2846,6 +3278,15 @@ document.documentElement.setAttribute('data-theme', 'light');
       card.addEventListener('keydown', function (e) {
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(card); }
       });
+    });
+
+    /* THE GRID'S TILES ARE NOT THE ARC'S, and they do not exist yet when this
+       runs: a category is rendered on press. So this is delegated on the
+       document rather than bound per element, which is also what keeps the two
+       surfaces opening the same player rather than each owning one. */
+    document.addEventListener('click', function (e) {
+      var card = e.target.closest ? e.target.closest('.cat-grid [data-play]') : null;
+      if (card) { open(card); }
     });
 
     box.addEventListener('click', function (e) {
@@ -3205,320 +3646,10 @@ document.documentElement.setAttribute('data-theme', 'light');
      import map rather than a bundler, which keeps the page buildless.
      PINNED TO AN EXACT VERSION on purpose: the addons under three/addons/ are
      only guaranteed to match the core of the same release. -->
-<script type="importmap">
-{
-  "imports": {
-    "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
-    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
-  }
-}
-</script>
-<script type="module">
-  // The dither port is gone: it never rendered, and a look that does not work
-  // is not worth carrying. ascii-object.js is the only renderer now.
-  const canvas = document.getElementById('hero-ascii');
-
-
-  // 640, not the hero's 900px layout breakpoint. Two different questions, and
-  // answering both with one number meant a narrow pane silently skipped this.
-  if (canvas && window.innerWidth >= 640) {
-    // A DYNAMIC import, so a failure inside the module is catchable here. A
-    // static import at the top of a module aborts the whole script when it
-    // fails, taking any error handling in it down too.
-    // TWO MODELS, BOTH KEPT. The arm's tuning was expensive to arrive at, so
-    // it lives here as a preset rather than as a paragraph describing what
-    // the numbers used to be. ?model=arm brings it back; the space robot is
-    // the default again (Appy, 2026-09-11).
-    const PRESETS = {
-      // THE PROPS. Every one is unrigged, so each turns to follow the cursor
-      // rather than reaching, and each resets the arm's IK fields explicitly:
-      // setOptions MERGES, so a preset that does not name a field inherits
-      // whatever the previous model left there, and a prop carrying the arm's
-      // chain would spend every frame hunting for bones it does not have.
-      // THIS MATTERS MORE NOW THAN IT DID: the arm is the model the page opens
-      // on, so the first swap of every session is the one that has to clear
-      // its rig.
-      // THE NUMBERS ARE SHARED ON PURPOSE. scale is applied after the model is
-      // normalised to its own longest dimension, so one figure frames a car
-      // and a dog alike, and only the vertical nudge differs by shape. What is
-      // genuinely per model is FACING, which no measurement here can supply:
-      // which way a model points is a decision its author made. That is what
-      // ?yaw= is for.
-      // the concept car: long and horizontal, so it turns further than the
-      // others do, and framed half as large again. scale normalises a model
-      // by its LONGEST dimension and the car's is its length, 380 against 138
-      // wide and 107 tall, so the height that fills the band is a third of
-      // what the figure suggests.
-      car: {
-        src: 'car.glb',
-        ikChain: [],
-        ikEffector: '',
-        mountTop: false,
-        modelYaw: 0,
-        scale: 5.1,
-        xOffset: 1.85,
-        yOffset: -0.1,
-        // LOOKED AT FROM SLIGHTLY ABOVE, not from the floor. placeCamera puts
-        // the camera at normalize(0, cameraHeight, 1) * distance aimed at the
-        // origin, so a positive value lifts it and tilts the frame down. The
-        // props inherited 0, which is eye level for something at eye height
-        // and floor level for anything standing on the ground.
-        cameraHeight: 0.26,
-        pointerLook: 0.6,
-        pointerEase: 0.05,
-        floatIntensity: 1.1,
-        rotationIntensity: 0.45,
-        floatSpeed: 1.3,
-        mask: '46% 72% at 70% 50%',
-      },
-      // the quadruped, on the same slightly raised camera as the car
-      dog: {
-        src: 'dog.glb',
-        ikChain: [],
-        ikEffector: '',
-        mountTop: false,
-        modelYaw: 0,
-        scale: 3.1,
-        xOffset: 1.85,
-        yOffset: -0.2,
-        cameraHeight: 0.26,
-        pointerLook: 0.7,
-        pointerEase: 0.05,
-        floatIntensity: 1.1,
-        rotationIntensity: 0.45,
-        floatSpeed: 1.3,
-        mask: '46% 72% at 70% 50%',
-      },
-      // the face and the gear behind its head. AUTHORED FACING FRONT, so it
-      // keeps its own facing: this is the one model in the set that was
-      // already pointing at the reader, and a half turn put it exactly
-      // backwards.
-      robot100: {
-        src: 'robot100.glb',
-        ikChain: [],
-        ikEffector: '',
-        mountTop: false,
-        modelYaw: 0,
-        scale: 3.15,
-        xOffset: 1.85,
-        yOffset: -0.15,
-        cameraHeight: 0,
-        pointerLook: 0.8,
-        pointerEase: 0.05,
-        floatIntensity: 1.1,
-        rotationIntensity: 0.45,
-        floatSpeed: 1.3,
-        mask: '46% 72% at 70% 50%',
-      },
-      // the other quadruped. TURNED AROUND: authored facing screen right and
-      // it reads better facing into the page, so it takes half a turn. 180
-      // rather than a nudge, because a profile flipped by anything less is
-      // three quarters of a turn, not the mirror of what it was.
-      cleaner: {
-        src: 'cleaner.glb',
-        ikChain: [],
-        ikEffector: '',
-        mountTop: false,
-        modelYaw: 180,
-        scale: 3.1,
-        xOffset: 1.85,
-        yOffset: -0.15,
-        cameraHeight: 0,
-        pointerLook: 0.7,
-        pointerEase: 0.05,
-        floatIntensity: 1.1,
-        rotationIntensity: 0.45,
-        floatSpeed: 1.3,
-        mask: '46% 72% at 70% 50%',
-      },
-      // the sweeper: low and wide, so it sits a little lower in the band
-      sweeper: {
-        src: 'sweeper.glb',
-        ikChain: [],
-        ikEffector: '',
-        mountTop: false,
-        modelYaw: 0,
-        scale: 3.1,
-        xOffset: 1.85,
-        yOffset: -0.1,
-        cameraHeight: 0,
-        pointerLook: 0.6,
-        pointerEase: 0.05,
-        floatIntensity: 1.1,
-        rotationIntensity: 0.45,
-        floatSpeed: 1.3,
-        mask: '46% 72% at 70% 50%',
-      },
-      // the rigged arm: hinge-constrained IK on the chain measured out of its
-      // own animation clip, bolted to the ceiling, facing front at 81 degrees
-      arm: {
-        src: 'robot.glb',
-        scale: 3.9,
-        xOffset: 2.05,
-        cameraHeight: 0,
-        modelYaw: 81,
-        mountTop: true,
-        mountOverlap: 0.05,
-        mountAnchor: 'Base_00',
-        pointerLook: 0,
-        floatIntensity: 0.5,
-        rotationIntensity: 0.15,
-        floatSpeed: 1.1,
-        ikChain: [
-          { name: 'Shoulder_01',    axis: 'y', min: -60, max: 60 },
-          { name: 'Core_02',        axis: 'y', min: -17, max: 17 },
-          { name: 'ArmLong_05',     axis: 'y', min: -21, max: 21 },
-          { name: 'ArmShort_07',    axis: 'x', min: -25, max: 51 },
-          { name: 'ArmShorter_08',  axis: 'x', min: -20, max: 88 },
-          { name: 'ArmShortest_09', axis: 'x', min: -50, max: 26 },
-        ],
-        ikEffector: 'ArmShortest_end_010',
-        ikIterations: 5,
-        ikMaxStep: 0.3,
-        ikEase: 0.18,
-        ikReach: 0.8,
-        mask: '54% 96% at 73% 30%',
-      },
-    };
-
-    const params = new URLSearchParams(location.search);
-    const num = (key, fallback) => (params.has(key) ? Number(params.get(key)) : fallback);
-    const modelKey = PRESETS[params.get('model')] ? params.get('model') : 'arm';
-    const preset = PRESETS[modelKey];
-
-
-    canvas.style.setProperty('--ascii-mask', preset.mask);
-    canvas.style.setProperty('--ascii-opacity', String(num('op', 0.5)));
-
-    import('./ascii-object.js')
-      .then(({ createAsciiObject }) => createAsciiObject({ canvas }, {
-        // THE ASCII LOOK, tuned for a pale page rather than the demo's dark
-        // one, and shared by both models.
-        cellSize: 11,
-        cellAspect: 0.55,
-        contrast: 1.6,
-        edgeContrast: 3,
-        exposure: 1.05,
-        // one colour, not the scene's own: per-character tinting drags the
-        // model's texture colours onto the page and stops it receding
-        colored: false,
-        color: '#3d3d44',
-        highlight: '#ffffff',
-        background: '',
-        fov: num('fov', 32),
-        cameraDistance: num('dist', 9.8),
-        orbit: false,
-        zoom: false,
-
-        ...preset,
-
-        // dials still win, so either model can be nudged without an edit
-        scale: num('scale', preset.scale),
-        xOffset: num('x', preset.xOffset),
-        yOffset: num('y', preset.yOffset ?? 0),
-        cameraHeight: num('eye', preset.cameraHeight),
-        modelYaw: num('yaw', preset.modelYaw ?? 0),
-
-        onLoad: () => canvas.classList.add('is-live'),
-        onError: (error) => {
-          console.error('[hero robot] model failed:', error);
-          canvas.style.display = 'none';
-        },
-      }))
-      .then((instance) => {
-        if (!instance) {
-          console.error('[hero robot] no WebGL context');
-          canvas.style.display = 'none';
-          return;
-        }
-
-        // THE ALTERNATION. Hold a model for 5 to 7 seconds, sweep, swap under
-        // the band, hold the other, sweep back. The dwell is randomised in
-        // that window so the loop never falls into a metronome the eye can
-        // predict and start ignoring.
-        // Only runs when no ?model= was pinned: asking for one model means
-        // wanting to look at that one, not watch it get replaced.
-        if (params.has('model') || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-        const order = ['arm', 'robot100', 'car', 'cleaner', 'dog', 'sweeper'];
-        let at = 0;
-        let timer = 0;
-
-        // BUILD THE NEXT MODEL DURING THE HOLD, NOT DURING THE SWEEP. Warming
-        // the file was only half the problem: the parse still happened inside
-        // the band, and setOptions applied the incoming scale and yaw to the
-        // OUTGOING model while it waited. prepare() does the fetch AND the
-        // parse against a held object that never touches the scene, so the
-        // swap itself is one synchronous call with nothing left to wait for.
-        // ONE AHEAD, NOT ALL SIX: preparing every model up front would hold
-        // five parsed scenes in memory for machines nobody has reached.
-        const prepare = (i) => instance.prepare(PRESETS[order[i % order.length]]);
-        prepare(1);
-
-        const hold = () => 5000 + Math.random() * 2000;
-
-        // WHERE ALONG THE TRAVEL THE BAND ACTUALLY COVERS THE MODEL. The
-        // shader runs its head at head = t * (1 + 2 * band) - band, measured
-        // along the sweep axis, so t = 0.5 puts it at the middle of the FRAME.
-        // The model is not there: it sits at about 70% of the width. Solving
-        // the same line for the model's own position, with half a band added
-        // so it is mid-band rather than on the leading edge, gives the moment
-        // the change is genuinely hidden. A right-to-left sweep reads the axis
-        // reversed, so it gets 1 - x.
-        const BAND = 0.34;
-        const midFor = (key, angle) => {
-          const box = canvas.getBoundingClientRect();
-          const halfH = Math.tan((num('fov', 32) * Math.PI) / 360) * num('dist', 9.8);
-          const halfW = halfH * (box.width / Math.max(box.height, 1));
-          const p = PRESETS[key];
-          let x = 0.5 + (0.5 * num('x', p.xOffset)) / halfW;
-          if (angle === 180) x = 1 - x;
-          return (x + BAND * 0.5 + BAND) / (1 + 2 * BAND);
-        };
-
-        const step = () => {
-          const nextKey = order[(at + 1) % order.length];
-          const next = PRESETS[nextKey];
-          instance.sweep({
-            // 4s, up from 3.2 and originally 1.7. The band has to read as a
-            // machine scanning the frame, and the longer it runs the more of
-            // it is left after the midpoint swap for the incoming model to be
-            // swept in by. The dwell either side is unchanged, so the cycle
-            // just spends more of itself on the part worth watching.
-            duration: 4,
-            // travelling the way the reader reads, and reversing on the way
-            // back so the pair reads as one movement out and back rather than
-            // as the same wipe twice
-            angle: at === 0 ? 0 : 180,
-            band: BAND,
-            // not 0.5: the swap fires when the band is over the MODEL
-            mid: midFor(nextKey, at === 0 ? 0 : 180),
-            ink: '#2f6dff',
-            onMid: () => {
-              at = (at + 1) % order.length;
-              canvas.style.setProperty('--ascii-mask', next.mask);
-              // one frame: the config and the model it belongs to land
-              // together, under the middle of the band
-              instance.commit({ ...next });
-            },
-            onEnd: () => {
-              // the hold is the only quiet stretch in the cycle, so the next
-              // model is built in it rather than in the next sweep
-              prepare(at + 1);
-              timer = window.setTimeout(step, hold());
-            },
-          });
-        };
-
-        timer = window.setTimeout(step, hold());
-        window.addEventListener('pagehide', () => window.clearTimeout(timer));
-      })
-      .catch((error) => {
-        console.error('[hero robot] module failed to load:', error);
-        canvas.style.display = 'none';
-      });
-  }
-</script>
+<!-- THE THREE IMPORT MAP AND THE ASCII OBJECT RENDERER WENT WITH THE MODEL.
+     They existed for one canvas in the hero; with that canvas gone the page was
+     pulling three.js off a CDN to render nothing. ascii-field.js stays: it is
+     the flat glyph field and the sweep, which the gate and How it works use. -->
 
 </body>
 </html>

@@ -1367,7 +1367,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
             <span class="type-unit">1,000 verified views</span>
           </span>
           <span class="type-name">Boost a post</span>
-          <span class="type-one">Real people watch and like a video you already posted.</span>
+          <span class="type-one">People watch and like a video you already posted.</span>
         </button>
         <button class="card type-card" type="button" data-pick="video-distribution" data-kind="Distribute one video">
           <span class="type-top">
@@ -1375,7 +1375,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
             <span class="type-unit">1,000 verified views</span>
           </span>
           <span class="type-name">Distribute one video</span>
-          <span class="type-one">Your best video, posted again and again by many real accounts.</span>
+          <span class="type-one">Your best video, posted again and again by many accounts.</span>
         </button>
       </div>
       <div class="type-fam reveal">
@@ -1417,7 +1417,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
             <span class="type-unit">surviving comment</span>
           </span>
           <span class="type-name">Reddit comments</span>
-          <span class="type-one">Strong Reddit accounts mention you inside real conversations.</span>
+          <span class="type-one">Strong Reddit accounts mention you inside conversations already happening.</span>
         </button>
         <button class="card type-card is-soon" type="button" data-pick="reddit-thread" data-kind="Reddit thread" disabled>
           <span class="type-top">
@@ -1429,7 +1429,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
         </button>
       </div>
       <div class="type-fam reveal">
-        <span class="mini-title">Learn from real people</span>
+        <span class="mini-title">Learn from people</span>
       </div>
       <div class="type-grid">
         <button class="card type-card is-soon" type="button" data-pick="research" data-kind="Product research" disabled>
@@ -1438,7 +1438,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
             <span class="type-unit">completed report</span>
           </span>
           <span class="type-name">Product research</span>
-          <span class="type-one">Real people try your product and tell you the truth.</span>
+          <span class="type-one">People try your product and tell you the truth.</span>
         </button>
         <button class="card type-card is-soon" type="button" data-pick="community-retainer" data-kind="Community presence" disabled>
           <span class="type-top">
@@ -1776,7 +1776,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
         </a>
         <!-- this was still the creator homepage's statement, inherited when
              the page was forked from apply.html and never re-aimed -->
-        <p>Real reach, from real accounts.<br>Verified before you are charged.</p>
+        <p>Reach, from accounts people own.<br>Verified before you are charged.</p>
       </div>
 
       <nav class="foot-col" aria-label="Explore onBlue">
@@ -2091,7 +2091,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     "template-creators": { name: "Creators make videos", tag: "You found a video style that works. Show it to us once, and creators make their own versions of it and post them from their accounts.", steps: ["Share the example video and say what must stay the same.", "Each creator films their own version and posts it.", "You pay a little for each video made, plus the views it earns."], ex: "10 creators make a video each at your $20 per video bid, then every 1,000 checked views costs your view bid on top.", unit: "checked views", per: 1000, review: "Review the first few per creator", label: "Bid per 1,000 verified views", ph: "5", gen: {"label": "Bid per video a creator makes", "ph": "20"}, fields: [{"key": "referenceUrl", "label": "Example video", "kind": "filelink", "ph": "or paste a link to it", "hint": "The style creators copy."}, {"key": "templateBrief", "label": "What must stay the same", "kind": "textarea", "ph": "The hook, the length, what must appear, what to avoid."}, {"key": "platforms", "label": "Platforms", "kind": "chips", "options": ["YouTube", "Instagram", "TikTok", "X", "Reddit"]}, {"key": "perWorker", "label": "Videos per creator", "kind": "number", "ph": "3"}] },
     "template-blueai": { name: "BlueAI makes videos", tag: "You show one example. BlueAI generates many versions of it, you can check them first, and creators post them from their own accounts.", steps: ["Share the example video or template.", "BlueAI generates the versions. You can review them before anything posts.", "Creators post them. You pay per video generated, plus checked views."], ex: "$300 could generate 15 videos at an $8 per video bid and still leave budget for views.", unit: "checked views", per: 1000, review: "Review the first few per creator", label: "Bid per 1,000 verified views", ph: "5", gen: {"label": "Bid per video BlueAI generates", "ph": "8"}, fields: [{"key": "referenceUrl", "label": "Example video or template", "kind": "filelink", "ph": "or paste a link to it", "hint": "BlueAI makes versions of this."}, {"key": "templateBrief", "label": "What the videos must do", "kind": "textarea", "ph": "The hook, the length, what must appear, what to avoid."}, {"key": "platforms", "label": "Platforms", "kind": "chips", "options": ["YouTube", "Instagram", "TikTok", "X", "Reddit"]}] },
     "ugc-deliverable": { name: "Get content made", tag: "Creators make content for you and send you the files. Nothing gets posted anywhere. You use it however you like.", steps: ["Write down what you need and the style you want.", "Creators make it and send in their files.", "You pay per finished piece you accept."], ex: "10 short videos at a $25 per video bid is $250.", unit: "finished pieces", per: 1, review: "Review everything", label: "Bid per finished piece", ph: "25", gen: null, fields: [{"key": "deliverableType", "label": "What kind", "kind": "select", "options": ["Short-form video", "Long-form video", "Image set", "Written copy"], "ph": "Pick a format"}, {"key": "brief", "label": "The brief", "kind": "textarea", "ph": "What you need made, the style, the references."}, {"key": "quantity", "label": "How many", "kind": "number", "ph": "10"}] },
-    "reddit-comments": { name: "Reddit comments", tag: "Members with strong, old Reddit accounts talk about you inside real conversations, in their own words, where people already ask about things like yours.", steps: ["Tell us the subreddits or threads, and what to get across.", "High karma members write their own comments there.", "You pay per comment that is still up after 3 days."], ex: "$150 at $3 per surviving comment is up to 50 comments.", unit: "surviving comments", per: 1, review: "Review everything", label: "Bid per surviving comment", ph: "3", gen: null, fields: [{"key": "targets", "label": "Threads or subreddits", "kind": "textarea", "ph": "r/coffee, r/espresso, or paste thread links."}, {"key": "messageIntent", "label": "What to get across", "kind": "textarea", "ph": "The point to make, not word-for-word copy.", "hint": "Identical text from many accounts looks fake."}, {"key": "minKarma", "label": "Minimum account karma", "kind": "select", "options": ["1,000+ karma", "5,000+ karma", "10,000+ karma", "25,000+ karma"], "ph": "Pick a karma floor"}, {"key": "pacing", "label": "Pacing", "kind": "select", "options": ["Over a few hours", "Over a day", "Over a few days", "Across the whole window"], "ph": "How fast comments land"}] },
+    "reddit-comments": { name: "Reddit comments", tag: "Members with strong, old Reddit accounts talk about you inside conversations already happening, in their own words, where people already ask about things like yours.", steps: ["Tell us the subreddits or threads, and what to get across.", "High karma members write their own comments there.", "You pay per comment that is still up after 3 days."], ex: "$150 at $3 per surviving comment is up to 50 comments.", unit: "surviving comments", per: 1, review: "Review everything", label: "Bid per surviving comment", ph: "3", gen: null, fields: [{"key": "targets", "label": "Threads or subreddits", "kind": "textarea", "ph": "r/coffee, r/espresso, or paste thread links."}, {"key": "messageIntent", "label": "What to get across", "kind": "textarea", "ph": "The point to make, not word-for-word copy.", "hint": "Identical text from many accounts looks fake."}, {"key": "minKarma", "label": "Minimum account karma", "kind": "select", "options": ["1,000+ karma", "5,000+ karma", "10,000+ karma", "25,000+ karma"], "ph": "Pick a karma floor"}, {"key": "pacing", "label": "Pacing", "kind": "select", "options": ["Over a few hours", "Over a day", "Over a few days", "Across the whole window"], "ph": "How fast comments land"}] },
     "reddit-thread": { name: "Reddit thread", tag: "One member with a strong account starts a conversation about your topic, and other members reply over time so it reads like a real, living thread.", steps: ["Pick the subreddit and the topic.", "A high karma member starts the thread. Others reply over hours or days.", "You pay per reply that is still up after 3 days."], ex: "$100 at $2 per surviving reply is up to 50 replies under your thread.", unit: "surviving replies", per: 1, review: "Review everything", label: "Bid per surviving reply", ph: "2", gen: null, fields: [{"key": "subreddit", "label": "Subreddit", "kind": "text", "ph": "r/smallbusiness"}, {"key": "topicAngle", "label": "Topic and angle", "kind": "textarea", "ph": "What the thread is about and what it should surface."}, {"key": "minKarma", "label": "Minimum karma for the starter", "kind": "select", "options": ["1,000+ karma", "5,000+ karma", "10,000+ karma", "25,000+ karma"], "ph": "Pick a karma floor"}, {"key": "pacing", "label": "Pacing", "kind": "select", "options": ["Over a few hours", "Over a day", "Over a few days", "Across the whole window"], "ph": "How replies spread out"}] },
     "research": { name: "Product research", tag: "Real people use your product on their own devices, then answer your questions honestly. You get structured reports, not guesses.", steps: ["Tell us what to try and what to ask.", "Members use your product like normal users.", "You pay per finished report you receive."], ex: "$160 at $8 per report gets you 20 honest write-ups.", unit: "reports", per: 1, review: "Auto-approve", label: "Bid per completed report", ph: "8", gen: null, fields: [{"key": "taskScript", "label": "What to try", "kind": "textarea", "ph": "The task or flow you want each member to run."}, {"key": "questions", "label": "Questions to answer", "kind": "textarea", "ph": "One per line."}] },
     "community-retainer": { name: "Community presence", tag: "A small pod of members stays active in the communities that matter to you, answers where you are relevant, and sends you a digest.", steps: ["List the communities that matter to you.", "A pod of members stays present there and joins in where you fit.", "You pay one monthly amount. Stop any month you like."], ex: "$300 a month keeps a pod present in 3 communities.", unit: "months of presence", per: 1, review: "Review everything", label: "Monthly retainer bid", ph: "300", gen: null, fields: [{"key": "communities", "label": "Communities to cover", "kind": "textarea", "ph": "Subreddits, forums, or Discords."}, {"key": "cadence", "label": "Digest cadence", "kind": "select", "options": ["Weekly", "Bi-weekly", "Monthly"], "ph": "How often we report back"}] }
