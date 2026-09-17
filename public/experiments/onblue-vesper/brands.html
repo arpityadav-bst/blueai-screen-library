@@ -32,81 +32,157 @@ document.documentElement.setAttribute('data-theme', 'light');
    specifics under a claim is exactly what it is for. */
 .eco-panel--bare { min-height: 0; }
 .eco-panel--bare .eco-copy > h3, .eco-panel--bare .eco-copy > p { max-width: 34ch; }
-/* ---- the sample strip, as a panorama ----------------------------------------
-   THE GEOMETRY IS ONE NUMBER AND FOUR RATIOS, so the whole arc stays the same
-   shape at every width instead of being re-tuned per breakpoint.
+/* ---- the sample ring --------------------------------------------------------
+   THE GEOMETRY IS TWO NUMBERS AND A RATIO, and everything else falls out of it.
 
-     --arc-w     a card's own width, and the only figure with a unit
-     --arc-r     the cylinder's radius, 4.11 x --arc-w
-     --arc-step  14deg between neighbours
-     perspective 1.2 x --arc-r
+     --ring-r  50vw   the radius, which is also exactly half the viewport, so the
+                      arc reaches both edges by construction rather than by a
+                      figure someone tuned
+     --ring-w  15vw   a frame's own width
+     perspective      1.2 x --ring-r
 
-   Why those four. A card at angle t sits at x = R sin t, z = -R cos t, and the
-   perspective divide scales it by P / (P + R cos t). Tying P to R means that
-   scale depends only on t, never on the viewport, so the arc is self-similar:
-   the middle frame always renders at 0.55 of its CSS size and the outermost at
-   0.62, an eleven per cent difference that is the visible squeeze. R = 4.11 x W
-   is the radius at which neighbouring frames just touch after that divide,
-   which is what makes the row read as one surface.
-
-   --arc-w IS CAPPED, AND IT COSTS SOMETHING. At 24.9vw the outermost frame
-   reaches the viewport edge exactly; past about 1450px the cap holds the arc
-   short of the edges rather than letting a 9:16 frame grow past 400px tall. The
-   band would otherwise be half a screen high on an ultrawide, which is a worse
-   answer to "edge to edge" than a centred arc. */
+   A frame at angle a from the far point sits at x = -R sin a, z = -R cos a, and
+   the perspective divide scales it by P / (P + R cos a). Tying P to R means that
+   scale depends only on a and never on the viewport, so the ring is the same
+   shape at every width: the middle frame renders at 0.55 of its CSS size, its
+   neighbour at 0.57, and the outermost visible one at 0.84. That spread is the
+   curve, and the frames grow as they travel outward because they are genuinely
+   coming closer.
+   AS a APPROACHES 90 DEGREES the divide approaches 1 and x approaches R, which
+   is the viewport edge: the arc always has something at the very edge, turned
+   almost fully away. The band clips it, and that is what makes the ring read as
+   continuing past the screen rather than stopping at it. */
 .work-arc {
-  --arc-w: min(24.9vw, 360px);
-  --arc-r: calc(var(--arc-w) * 4.11);
-  --arc-step: 14deg;
+  --ring-r: 50vw;
+  --ring-w: 15vw;
+  --ring-step: 25.714deg;      /* 360 / 14 */
   width: 100vw;
   margin: 56px 0 0 calc(50% - 50vw);
-  perspective: calc(var(--arc-r) * 1.2);
-  /* the clip is the band's own edge: an outermost frame that bleeds past the
-     viewport would give the page a horizontal scrollbar for two pixels of arc */
+  perspective: calc(var(--ring-r) * 1.2);
   overflow: hidden;
 }
-/* the stage is as tall as the TALLEST rendered frame, which is an outer one, and
-   every card is centred on its midline by the perspective origin */
 .work-stage {
   position: relative;
-  height: calc(var(--arc-w) * 1.1);
+  height: calc(var(--ring-w) * 1.85);
   transform-style: preserve-3d;
+  /* SLOW ENOUGH TO BE AMBIENT. 96s is one full turn, which puts a given frame
+     back where it started about every minute and a half; anything brisker reads
+     as a carousel demanding to be watched rather than as a wall going past. */
+  animation: ring-turn 96s linear infinite;
 }
+@keyframes ring-turn { to { transform: rotateY(360deg); } }
+
+/* POINTING AT A FRAME STOPS THE WHOLE RING, not just that frame. A wall that
+   kept moving under the one thing you were trying to look at would be the
+   interface disagreeing with the reader. */
+.work-arc:hover .work-stage,
+.work-arc:focus-within .work-stage { animation-play-state: paused; }
+
 .work-card {
   position: absolute;
   left: 50%;
   top: 50%;
-  width: var(--arc-w);
+  width: var(--ring-w);
   padding: 0;
-  overflow: hidden;
+  border: 0;
   border-radius: 12px;
-  /* THE ORDER MATTERS AND IT IS NOT THE OBVIOUS ONE. rotateY first, then
-     translateZ, puts the card on the cylinder's surface facing the axis;
-     translateZ first would move it straight back and then spin it in place.
-     The -50% pair is plain centring and has to come before either, because
-     after a rotate a percentage translate is measured on the rotated axis. */
+  overflow: hidden;
+  background: var(--panel-bg);
+  box-shadow: 0 24px 50px -30px rgba(18, 32, 64, 0.45);
+  cursor: pointer;
+  /* rotateY first, then translateZ, puts the frame ON the ring; the second
+     rotateY turns it to face the axis, which is what makes the far half of the
+     ring the half you can see. The -50% pair is plain centring and has to come
+     first, because after a rotate a percentage translate is measured on the
+     rotated axis. */
   transform:
     translate(-50%, -50%)
-    rotateY(calc(var(--i) * var(--arc-step)))
-    translateZ(calc(var(--arc-r) * -1))
-    translateZ(var(--arc-lift, 0px));
-  transition: transform 0.45s var(--ease);
+    rotateY(calc(var(--i) * var(--ring-step)))
+    translateZ(var(--ring-r))
+    rotateY(180deg);
+  backface-visibility: hidden;
 }
-/* a frame steps out of the wall when you point at it, which is the only motion
-   the arc has and the only thing that says it can be touched */
-.work-card:hover { --arc-lift: 56px; z-index: 2; }
 .work-video {
   display: block;
   width: 100%;
   aspect-ratio: 9 / 16;
-  background: var(--panel-bg);
   object-fit: cover;
+  pointer-events: none;
 }
 
-/* NO 3D BELOW 820px. A cylinder needs width to be a cylinder; at phone size the
-   same seven frames become a row you swipe, which is what a panorama is for on a
-   surface you can only see a slice of anyway. */
+/* the play mark appears only once the ring has stopped for you, so it is never
+   a control chasing a moving target */
+.work-play {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  margin: -27px 0 0 -27px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  color: #16161a;
+  opacity: 0;
+  transform: scale(0.82);
+  transition: opacity 0.25s ease, transform 0.25s var(--ease);
+}
+.work-play svg { width: 26px; height: 26px; margin-left: 2px; }
+.work-card:hover .work-play,
+.work-card:focus-visible .work-play { opacity: 1; transform: none; }
+.work-card:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
+
+/* ---- the frame, opened ------------------------------------------------------
+   A <dialog> for the same reasons every other overlay on this site is one, and
+   sized off the viewport's SHORT side so a 9:16 film is never taller than the
+   screen it is being watched on. */
+.lightbox {
+  width: auto;
+  max-width: none;
+  margin: auto;
+  padding: 0;
+  border: 0;
+  background: none;
+  overflow: visible;
+  opacity: 0;
+  transform: scale(0.97);
+  transition: opacity 0.24s var(--ease), transform 0.24s var(--ease);
+}
+.lightbox.is-open { opacity: 1; transform: none; }
+.lightbox::backdrop { background: rgba(10, 12, 18, 0.72); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.lightbox video {
+  display: block;
+  height: min(82vh, 900px);
+  width: auto;
+  aspect-ratio: 9 / 16;
+  border-radius: 16px;
+  background: #000;
+}
+/* THE CLOSE SITS OUTSIDE THE FRAME'S TOP RIGHT, not on it: a control drawn over
+   the first seconds of a film is covering the thing it was opened to show. */
+.lightbox-x {
+  position: absolute;
+  right: -6px;
+  top: -46px;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.25s ease;
+}
+.lightbox-x:hover { background: rgba(255, 255, 255, 0.26); }
+.lightbox-in { position: relative; }
+
 @media (max-width: 820px) {
+  /* NO RING BELOW 820px. A cylinder needs width to be a cylinder, and a turning
+     one on a phone is a lot of compositing for a shape nobody can see the whole
+     of. The same frames become a row you swipe. */
   .work-arc {
     width: auto;
     margin-inline: 0;
@@ -122,15 +198,25 @@ document.documentElement.setAttribute('data-theme', 'light');
     gap: 12px;
     padding-bottom: 4px;
     transform-style: flat;
+    animation: none;
   }
   .work-card {
     position: static;
     flex: none;
     width: 58%;
     transform: none;
+    backface-visibility: visible;
     scroll-snap-align: center;
   }
-  .work-card:hover { --arc-lift: 0px; }
+  /* seven films, not fourteen: the duplicates exist to fill a ring */
+  .work-card:nth-child(n+8) { display: none; }
+  .work-play { opacity: 1; transform: none; }
+  .lightbox video { height: auto; width: min(92vw, 420px); }
+  .lightbox-x { top: -44px; right: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .work-stage { animation: none; }
 }
 
 /* THE SPARK LENS FOLLOWS ITS FILTER, NOT ITS SECTION. --ca-spark is what the
@@ -792,49 +878,80 @@ document.documentElement.setAttribute('data-theme', 'light');
       <div class="band-head band-head--center reveal">
         <span class="eyebrow">Sample output</span>
         <h2>What the agents <em>actually make</em></h2>
-        <p class="band-sub">Seven runs from three campaigns, on real channels.</p>
+        <p class="band-sub">Seven runs from three campaigns, on real channels. Point at one to stop the turn, press it to watch.</p>
       </div>
 
-      <!-- SEVEN FRAMES ON THE INSIDE OF A CYLINDER. Each card is rotated about
-           the band's vertical axis and pushed away from the viewer, so the one
-           in the middle is the FARTHEST and therefore the smallest: that is the
-           whole squeeze. The outer frames come back toward the reader and turn
-           to face the centre, which is what makes it read as one continuous
-           surface rather than as seven cards that happen to be tilted.
-           SEVEN, NOT FIVE, AND THE ASPECT IS WHY. These are 9:16, so a card wide
-           enough for five of them to reach both edges would be taller than the
-           screen. Seven narrower frames span the same width at two thirds the
-           height, and the arc reads deeper for having more of it. -->
+      <!-- A RING THAT NEVER ENDS, SEEN FROM INSIDE IT. Fourteen frames sit
+           evenly around a full circle facing the axis, and the ring turns; what
+           a reader sees is the far half of it, where the middle frame is the
+           farthest away and therefore the smallest. That is the squeeze, and it
+           is geometry rather than a per-card scale, so it stays true as the ring
+           moves.
+           THE NEAR HALF CULLS ITSELF. Frames on this side of the axis have their
+           backs to the reader, and backface-visibility removes them; a frame
+           crossing that boundary is edge-on, so it is already zero pixels wide
+           when it goes. Nothing pops, and no code decides what is visible.
+           FOURTEEN POSITIONS, SEVEN FILMS. The ring has to be full to turn
+           without a hole in it. Seven frames would sit 51 degrees apart and show
+           three at a time with more gap than frame between them. -->
       <div class="work-arc reveal">
         <div class="work-stage">
-          <figure class="card work-card" style="--i:-3">
-            <video class="work-video" src="samples/airtap-red-eye.mp4" poster="samples/airtap-red-eye.jpg"
-                   muted loop playsinline preload="none" aria-label="Airtap, red eye"></video>
-          </figure>
-          <figure class="card work-card" style="--i:-2">
-            <video class="work-video" src="samples/hunter-raid-awaken.mp4" poster="samples/hunter-raid-awaken.jpg"
-                   muted loop playsinline preload="none" aria-label="Hunter Raid, awaken"></video>
-          </figure>
-          <figure class="card work-card" style="--i:-1">
-            <video class="work-video" src="samples/sandbar-the-menu.mp4" poster="samples/sandbar-the-menu.jpg"
-                   muted loop playsinline preload="none" aria-label="Sandbar, the menu"></video>
-          </figure>
-          <figure class="card work-card" style="--i:0">
-            <video class="work-video" src="samples/airtap-first-date.mp4" poster="samples/airtap-first-date.jpg"
-                   muted loop playsinline preload="none" aria-label="Airtap, first date"></video>
-          </figure>
-          <figure class="card work-card" style="--i:1">
-            <video class="work-video" src="samples/sandbar-think-out-loud.mp4" poster="samples/sandbar-think-out-loud.jpg"
-                   muted loop playsinline preload="none" aria-label="Sandbar, think out loud"></video>
-          </figure>
-          <figure class="card work-card" style="--i:2">
-            <video class="work-video" src="samples/hunter-raid-first-hour.mp4" poster="samples/hunter-raid-first-hour.jpg"
-                   muted loop playsinline preload="none" aria-label="Hunter Raid, first hour"></video>
-          </figure>
-          <figure class="card work-card" style="--i:3">
-            <video class="work-video" src="samples/airtap-pasta.mp4" poster="samples/airtap-pasta.jpg"
-                   muted loop playsinline preload="none" aria-label="Airtap, pasta"></video>
-          </figure>
+          <button class="work-card" type="button" style="--i:0" data-play="samples/airtap-red-eye.mp4" aria-label="Play Airtap, red eye">
+            <video class="work-video" src="samples/airtap-red-eye.mp4" poster="samples/airtap-red-eye.jpg" muted loop playsinline preload="none"></video>
+            <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
+          </button>
+          <button class="work-card" type="button" style="--i:1" data-play="samples/hunter-raid-awaken.mp4" aria-label="Play Hunter Raid, awaken">
+            <video class="work-video" src="samples/hunter-raid-awaken.mp4" poster="samples/hunter-raid-awaken.jpg" muted loop playsinline preload="none"></video>
+            <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
+          </button>
+          <button class="work-card" type="button" style="--i:2" data-play="samples/sandbar-the-menu.mp4" aria-label="Play Sandbar, the menu">
+            <video class="work-video" src="samples/sandbar-the-menu.mp4" poster="samples/sandbar-the-menu.jpg" muted loop playsinline preload="none"></video>
+            <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
+          </button>
+          <button class="work-card" type="button" style="--i:3" data-play="samples/airtap-first-date.mp4" aria-label="Play Airtap, first date">
+            <video class="work-video" src="samples/airtap-first-date.mp4" poster="samples/airtap-first-date.jpg" muted loop playsinline preload="none"></video>
+            <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
+          </button>
+          <button class="work-card" type="button" style="--i:4" data-play="samples/sandbar-think-out-loud.mp4" aria-label="Play Sandbar, think out loud">
+            <video class="work-video" src="samples/sandbar-think-out-loud.mp4" poster="samples/sandbar-think-out-loud.jpg" muted loop playsinline preload="none"></video>
+            <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
+          </button>
+          <button class="work-card" type="button" style="--i:5" data-play="samples/hunter-raid-first-hour.mp4" aria-label="Play Hunter Raid, first hour">
+            <video class="work-video" src="samples/hunter-raid-first-hour.mp4" poster="samples/hunter-raid-first-hour.jpg" muted loop playsinline preload="none"></video>
+            <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
+          </button>
+          <button class="work-card" type="button" style="--i:6" data-play="samples/airtap-pasta.mp4" aria-label="Play Airtap, pasta">
+            <video class="work-video" src="samples/airtap-pasta.mp4" poster="samples/airtap-pasta.jpg" muted loop playsinline preload="none"></video>
+            <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
+          </button>
+          <button class="work-card" type="button" style="--i:7" data-play="samples/airtap-red-eye.mp4" aria-label="Play Airtap, red eye">
+            <video class="work-video" src="samples/airtap-red-eye.mp4" poster="samples/airtap-red-eye.jpg" muted loop playsinline preload="none"></video>
+            <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
+          </button>
+          <button class="work-card" type="button" style="--i:8" data-play="samples/hunter-raid-awaken.mp4" aria-label="Play Hunter Raid, awaken">
+            <video class="work-video" src="samples/hunter-raid-awaken.mp4" poster="samples/hunter-raid-awaken.jpg" muted loop playsinline preload="none"></video>
+            <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
+          </button>
+          <button class="work-card" type="button" style="--i:9" data-play="samples/sandbar-the-menu.mp4" aria-label="Play Sandbar, the menu">
+            <video class="work-video" src="samples/sandbar-the-menu.mp4" poster="samples/sandbar-the-menu.jpg" muted loop playsinline preload="none"></video>
+            <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
+          </button>
+          <button class="work-card" type="button" style="--i:10" data-play="samples/airtap-first-date.mp4" aria-label="Play Airtap, first date">
+            <video class="work-video" src="samples/airtap-first-date.mp4" poster="samples/airtap-first-date.jpg" muted loop playsinline preload="none"></video>
+            <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
+          </button>
+          <button class="work-card" type="button" style="--i:11" data-play="samples/sandbar-think-out-loud.mp4" aria-label="Play Sandbar, think out loud">
+            <video class="work-video" src="samples/sandbar-think-out-loud.mp4" poster="samples/sandbar-think-out-loud.jpg" muted loop playsinline preload="none"></video>
+            <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
+          </button>
+          <button class="work-card" type="button" style="--i:12" data-play="samples/hunter-raid-first-hour.mp4" aria-label="Play Hunter Raid, first hour">
+            <video class="work-video" src="samples/hunter-raid-first-hour.mp4" poster="samples/hunter-raid-first-hour.jpg" muted loop playsinline preload="none"></video>
+            <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
+          </button>
+          <button class="work-card" type="button" style="--i:13" data-play="samples/airtap-pasta.mp4" aria-label="Play Airtap, pasta">
+            <video class="work-video" src="samples/airtap-pasta.mp4" poster="samples/airtap-pasta.jpg" muted loop playsinline preload="none"></video>
+            <span class="work-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 6.6 17.4 12l-9 5.4Z" fill="currentColor" stroke="none"/></svg></span>
+          </button>
         </div>
       </div>
 
@@ -998,6 +1115,17 @@ document.documentElement.setAttribute('data-theme', 'light');
      first paint, before any script has run: the class arriving a frame later
      would show the full version's four panels and then take them away. The
      toggler reads this as its starting state rather than overriding it. -->
+<!-- ONE OVERLAY FOR FOURTEEN FRAMES, because only one can be open. The <video>
+     has no src in the markup: it takes the pressed frame's and gives it back on
+     close, so nothing is buffering fourteen films behind a dialog nobody has
+     opened yet. -->
+<dialog class="lightbox" id="lightbox" aria-label="Sample video">
+  <div class="lightbox-in">
+    <button class="lightbox-x" type="button" data-lightbox-close aria-label="Close"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    <video id="lightbox-video" controls playsinline preload="none"></video>
+  </div>
+</dialog>
+
 <dialog class="gate is-min" id="gate" aria-labelledby="gate-title-1">
   <div class="gate-field" id="gate-field">
 
@@ -1677,27 +1805,51 @@ document.documentElement.setAttribute('data-theme', 'light');
     });
   })();
 
-  /* ---- the sample strip ----------------------------------------------------
-     THE SAME POLICY THE STEP DEMOS FOLLOW: nothing runs unattended. preload is
-     "none" in the markup so three videos cost nothing until one is looked at,
-     the play starts on pointerenter and the frame is returned to its poster on
-     leave rather than left parked mid-shot, and a touch device gets a tap
-     instead, where there is no hover to give.
-     play() RETURNS A PROMISE THAT CAN REJECT, and an unhandled rejection here is
-     a console error every time a pointer crosses the strip quickly: leaving
-     before the fetch resolves is the normal case, not a fault. */
-  (function samples() {
-    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    Array.prototype.forEach.call(document.querySelectorAll('.work-video'), function (v) {
-      function play() { var p = v.play(); if (p && p.catch) { p.catch(function () {}); } }
-      function stop() { v.pause(); v.currentTime = 0; }
-      if (!reduced) {
-        v.addEventListener('pointerenter', play);
-        v.addEventListener('pointerleave', stop);
-      }
-      /* a tap toggles, because a touch screen never sends the pair above */
-      v.addEventListener('click', function () { if (v.paused) { play(); } else { stop(); } });
+  /* ---- the sample ring ------------------------------------------------------
+     THE RING STOPS IN CSS, NOT HERE. :hover on the band pauses the animation,
+     which is one rule and cannot get out of step with what the pointer is
+     actually doing; this file only handles the part CSS cannot, which is opening
+     a film.
+     THE OVERLAY BORROWS THE src RATHER THAN OWNING ONE. Fourteen <video>
+     elements already exist on the ring with preload="none", so nothing is
+     fetched until a frame is pressed; giving the dialog its own copy of every
+     source would undo that. It hands the src back on close, which also stops
+     the download of a film somebody changed their mind about.
+     play() RETURNS A PROMISE THAT CAN REJECT, and closing before the fetch
+     resolves is the normal case rather than a fault. */
+  (function ring() {
+    var box = document.getElementById('lightbox');
+    var film = document.getElementById('lightbox-video');
+    if (!box || !film || typeof box.showModal !== 'function') { return; }
+
+    function close() {
+      box.classList.remove('is-open');
+      film.pause();
+      window.setTimeout(function () {
+        film.removeAttribute('src');
+        film.load();
+        if (box.open) { box.close(); }
+      }, 240);
+    }
+
+    Array.prototype.forEach.call(document.querySelectorAll('[data-play]'), function (card) {
+      card.addEventListener('click', function () {
+        film.src = card.getAttribute('data-play');
+        box.showModal();
+        requestAnimationFrame(function () { box.classList.add('is-open'); });
+        var p = film.play();
+        if (p && p.catch) { p.catch(function () {}); }
+      });
     });
+
+    box.addEventListener('click', function (e) {
+      /* the dialog element IS the backdrop hit area: a click that lands on it
+         rather than on the panel came from outside */
+      if (e.target === box || e.target.closest('[data-lightbox-close]')) { close(); }
+    });
+    /* Escape is intercepted rather than reimplemented: letting it close natively
+       would skip the fade and leave a film still playing behind nothing */
+    box.addEventListener('cancel', function (e) { e.preventDefault(); close(); });
   })();
 
   /* the spark's channel split follows the pointer: the axis points along the
