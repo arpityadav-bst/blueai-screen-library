@@ -28,11 +28,22 @@
 /* the review screen borrows the dashboard's column and the confirmation's
    centring, and needs nothing of its own beyond saying so */
 .rev[hidden] { display: none; }
-/* THE CONFIRMATION SITS HIGH IN ITS OWN VIEWPORT rather than centred in a
-   column that is a whole screen tall: centring a six-line notice inside 100vh
-   puts it below the fold's midpoint on a laptop and leaves the reader scrolling
-   to find out that there is nothing else. */
-.rev .confirm { padding-top: clamp(24px, 4vw, 56px); }
+/* THE CONFIRMATION SITS IN THE MIDDLE OF THE SPACE IT HAS. It is six lines on a
+   screen with nothing else on it, and a short notice parked under the header
+   reads as the top of a page whose rest has not loaded.
+   CENTRED ON THE SPACE BELOW THE HEADER, NOT ON THE VIEWPORT. .dash already
+   reserves the header's height as top padding; matching it at the bottom makes
+   the box symmetrical about the area a reader can actually see, so align-content
+   lands the notice on the optical centre rather than a header's height below it.
+   Everything the confirmation needs to say fits there, which is the other half
+   of the argument: centring only works when there is nothing below the fold to
+   go looking for. */
+.rev {
+  display: grid;
+  align-content: center;
+  padding-bottom: calc(var(--header-h) + clamp(18px, 2.6vw, 22px));
+}
+.rev .confirm { padding-top: 0; }
 
 /* NOTHING HIDES THE BUILDER PER STAGE ANY MORE. Three rules did - one for
    review, one for approved, one collapsing its rail on submit - because it was a
@@ -3678,8 +3689,9 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
          at the card they were just filling in. */
       if (step === 0) {
         if (flow === 'v1') {
-          var dlg = document.getElementById('sheet-create');
-          if (dlg && dlg.open) { dlg.close(); }
+          /* and out the way everything else goes out, so the panel fades rather
+             than being snatched away and the controller stops tracking it */
+          if (window.onblueSheetClose) { window.onblueSheetClose(); }
           return;
         }
         chosen = false;
@@ -3923,8 +3935,11 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     forced = {};
     document.body.classList.remove('is-submitted');
     render();
-    var dlg = document.getElementById('sheet-create');
-    if (dlg && !dlg.open) { dlg.showModal(); }
+    /* THROUGH THE CHROME'S OWN OPENER, not showModal(). That call alone gets you
+       a backdrop over a panel still at opacity 0, and leaves the sheet
+       controller not knowing anything is open, so the close button and Escape
+       both do nothing. */
+    if (window.onblueSheetOpen) { window.onblueSheetOpen('create'); }
     measureFloor();
   }
 

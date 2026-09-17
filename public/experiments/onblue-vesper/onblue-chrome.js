@@ -57,15 +57,25 @@
       d.classList.remove('is-open');
       window.setTimeout(function () { if (d.open) { d.close(); } }, 220);
     }
+    /* THE ONE PLACE A SHEET IS OPENED, published for the same reason close() is.
+       A page that needs to do something of its own before the panel appears - the
+       campaign builder resets its draft and decides whether to show the type
+       chooser - used to call showModal() itself, and a bare showModal() is not
+       opening a sheet: .sheet rests at opacity 0 and is faded in by the class
+       added a frame later, and `open` here is what the close button and Escape
+       act on. The builder got a backdrop over an invisible panel that could not
+       be closed. Two ways to do one thing, and the second knew a third of it. */
+    function show(d) {
+      if (!d || typeof d.showModal !== 'function') { return; }
+      open = d;
+      if (!d.open) { d.showModal(); }
+      requestAnimationFrame(function () { d.classList.add('is-open'); });
+    }
+
     document.addEventListener('click', function (e) {
       var go = e.target.closest ? e.target.closest('[data-sheet]') : null;
       if (go) {
-        var d = document.getElementById('sheet-' + go.getAttribute('data-sheet'));
-        if (d && typeof d.showModal === 'function') {
-          open = d;
-          d.showModal();
-          requestAnimationFrame(function () { d.classList.add('is-open'); });
-        }
+        show(document.getElementById('sheet-' + go.getAttribute('data-sheet')));
         return;
       }
       if (e.target.closest && e.target.closest('[data-sheet-close]')) { close(); }
@@ -75,6 +85,7 @@
     document.addEventListener('cancel', function (e) {
       if (e.target.classList.contains('sheet')) { e.preventDefault(); close(); }
     });
+    window.onblueSheetOpen = function (name) { show(document.getElementById('sheet-' + name)); };
     window.onblueSheetClose = close;
   })();
 
