@@ -1,29 +1,3 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Create a campaign on onBlue</title>
-<meta name="description" content="Write a brief, set a budget, and onBlue puts it in front of agents that run it." />
-<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22%232f6dff%22%3E%3Cpath%20d%3D%22M12%202.6C12.55%202.6%2012.88%203.15%2013.08%204.7c.62%204.7%201.52%205.6%206.22%206.22%201.55.2%202.1.53%202.1%201.08s-.55.88-2.1%201.08c-4.7.62-5.6%201.52-6.22%206.22-.2%201.55-.53%202.1-1.08%202.1s-.88-.55-1.08-2.1c-.62-4.7-1.52-5.6-6.22-6.22C3.15%2012.88%202.6%2012.55%202.6%2012s.55-.88%202.1-1.08c4.7-.62%205.6-1.52%206.22-6.22C11.12%203.15%2011.45%202.6%2012%202.6Z%22%2F%3E%3C%2Fsvg%3E" />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900&family=Instrument+Serif:ital@1&display=swap" />
-<!-- THE PAGE IS ON THE SAME SHEET AS THE HOMEPAGE (Appy, 2026-09-16). It used
-     to carry 548 lines of its own CSS, starting with its own copy of the token
-     block, which is how a second design system starts. Everything shared now
-     comes from onblue.css: the tokens, the grain, the header, the buttons, the
-     card, the section heading, the text field, the eyebrow, the wipe. What is
-     left below is only what exists on this page and nowhere else, which is the
-     form controls and the journey rail. -->
-<script>document.documentElement.setAttribute('data-theme', 'light');</script>
-<link rel="stylesheet" href="onblue.css" />
-<script src="ascii-field.js"></script>
-<script src="onblue-chrome.js"></script>
-<!-- THE STATE TOGGLER, for review. Self-contained and self-styled: deleting
-     this one line removes the control and nothing else. -->
-<script src="onblue-dev.js" defer></script>
-
 <style>
 /* the review screen borrows the dashboard's column and the confirmation's
    centring, and needs nothing of its own beyond saying so */
@@ -35,24 +9,17 @@
    rule lists them rather than growing a third copy of itself. */
 .is-review .apply-head-wrap,
 .is-review .form-stage { display: none; }
+/* the receipt sits under the refresh line in the confirmation's own quiet
+   voice: it is a footnote to a control, not a second thing to read */
+.rev-note { margin: 10px 0 0; color: var(--dim-ink); font-size: 12.5px; letter-spacing: -0.005em; }
+.rev-note[hidden] { display: none; }
 
 /* ---- the brief --------------------------------------------------------------
    Three facts in a row, then the steps, then the example. The facts are the one
    new shape and they are barely one: a .mini-title over a value, which is what
    every labelled figure on this site already is. */
-.brief-tag { color: var(--muted); font-size: 14.5px; line-height: 1.55; letter-spacing: -0.01em; }
-.brief-facts {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
-  margin: 20px 0 22px;
-  padding: 16px 18px;
-  border-radius: 12px;
-  background: var(--panel-bg);
-}
 .brief-fact { display: grid; gap: 5px; min-width: 0; }
 .brief-fact > span:last-child { color: var(--ink); font-size: 13.5px; font-weight: 500; letter-spacing: -0.01em; line-height: 1.4; }
-.brief-facts .mini-title { margin: 0; }
 @media (max-width: 600px) { .brief-facts { grid-template-columns: 1fr; } }
 
 /* ---- the catalogue ----------------------------------------------------------
@@ -109,7 +76,6 @@ body { min-height: 100vh; }
    events stop there; a fixed viewport-sized host does not need to see it, since
    clientX and clientY are already the coordinates its canvas is drawn in. */
 .apply-bg { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; background: var(--band-lift); }
-.apply-bg > .ascii-bg { z-index: 1; }
 .apply-wrap, .site-foot { position: relative; z-index: 2; }
 /* the page ends on the footer, so the column above it does not also need to
    hold the bottom of the screen open */
@@ -130,16 +96,9 @@ body { min-height: 100vh; }
    with nothing beside it to separate from. They are listed together and the
    shadow is written once, so "the same" is enforced by the rule rather than by
    two literals agreeing. */
-.form-card, .prog-card, .dash-panel {
-  --stage-shadow: 0 1px 2px rgba(18, 32, 64, 0.025),
-                  0 10px 24px -18px rgba(18, 32, 64, 0.07);
-  background: var(--card-bg);
-  box-shadow: var(--stage-shadow);
-}
 /* no lift, and no deepening: the surface answers on hover through its border
    and its sheen, which are treatments of the surface rather than claims about
    its height */
-.form-card:hover, .prog-card:hover, .dash-panel:hover { transform: none; box-shadow: var(--stage-shadow); }
 
 /* NO NAV MEANS TWO COLUMNS, NOT THREE WITH A HOLE. The shared header is a
    1fr auto 1fr grid, which is what optically centres a nav between two unequal
@@ -274,7 +233,6 @@ body { min-height: 100vh; }
 .is-underway .apply-head { transform: translateY(-16px); }
 .apply-head { text-align: center; }
 .apply-head-pane[hidden] { display: none; }
-.apply-head .eyebrow { margin-bottom: 16px; }
 .apply-head .lede { margin-inline: auto; }
 
 /* ---- the journey rail: Apply, We review, Deploy and earn -------------------
@@ -341,19 +299,25 @@ body { min-height: 100vh; }
    that take turns in this stage both set display, so both say it here. */
 .prog-list[hidden], .form-card[hidden] { display: none; }
 .prog-list { display: grid; gap: 14px; }
-.prog-card { padding: 24px 26px 22px; }
-.prog-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; }
-.prog-reward { display: flex; flex-direction: column; align-items: flex-end; text-align: right; }
 /* .earn-figure's own 30-40px is a hero stat filling a panel of its own; here it
    is one of two things a card says, and the programme's name is the other. Sized
    to be the title's peer rather than to beat it. */
-.prog-reward .earn-figure { margin-top: 4px; font-size: clamp(24px, 2.2vw, 30px); }
+/* TWO CARDS, HALF THE ROW EACH. .type-grid is an auto-fill track sized for a
+   catalogue of nine; with two in it they would sit at a catalogue card's width
+   with the rest of the row empty, which reads as a grid that ran out rather
+   than as a choice between two things. */
+.type-grid--pair { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.type-card .type-fam { margin-top: 10px; color: var(--muted); font-size: 13px; }
+.type-card .type-fam b { color: var(--ink-soft); font-weight: 600; }
+/* and in the build that has one kind, the other is not there to be chosen */
+.is-v1 [data-v2] { display: none; }
+.is-v1 .type-grid--pair { grid-template-columns: minmax(0, 1fr); max-width: 520px; }
+
 /* THE CATALOGUE CARDS NAME A UNIT, NOT A FIGURE. On the creator side the same
    slot holds $30, because a programme's reward is a number the product sets.
    Here the number is the buyer's own and they are about to type it; what the
    card can tell them is what it will be measured against. So the slot keeps its
    label and drops to reading weight, since a unit is prose. */
-.prog-unit { margin-top: 4px; max-width: 14ch; color: var(--ink); font-size: 13.5px; font-weight: 500; line-height: 1.35; letter-spacing: -0.01em; }
 
 /* ---- a field with a unit in front of it ------------------------------------
    THE DOLLAR SIGN IS NOT A PLACEHOLDER. A placeholder disappears the moment
@@ -378,32 +342,6 @@ body { min-height: 100vh; }
 .q-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .q-pair .q { margin: 0; }
 @media (max-width: 520px) { .q-pair { grid-template-columns: 1fr; } }
-.prog-card h2 {
-  margin-top: 20px;
-  color: var(--ink);
-  font-size: clamp(20px, 1.9vw, 25px);
-  font-weight: 600;
-  letter-spacing: -0.03em;
-  line-height: 1.2;
-}
-.prog-card > p {
-  margin-top: 9px;
-  max-width: 52ch;
-  color: var(--muted);
-  font-size: 14.5px;
-  line-height: 1.55;
-  letter-spacing: -0.01em;
-}
-.prog-card .btn {
-  width: 100%;
-  height: var(--hero-btn-h);
-  margin-top: 24px;
-  padding: 0 var(--hero-btn-pad);
-  font-size: calc(var(--btn) + 1.5px);
-  box-shadow: var(--hero-shadow);
-}
-.prog-card .btn:hover { box-shadow: var(--hero-shadow-hover); }
-
 
 /* A DASHED HAIRLINE IS THE ONE NEW VALUE ON THIS SCREEN, and it is carrying
    meaning rather than decoration: a solid edge says "here is a thing", a dashed
@@ -450,12 +388,246 @@ body { min-height: 100vh; }
 .dash-head .lede { margin-inline: 0; margin-top: 8px; font-size: 14.5px; }
 /* caption-scale, not a headline control: a prominent Refresh on a screen whose
    figures move once a month would suggest the numbers are volatile */
-.dash-refresh { height: 38px; gap: 8px; padding: 0 15px; font-size: 13.5px; }
-.dash-refresh svg { transition: transform 0.3s ease; }
-.dash-refresh.is-busy svg { animation: refresh-turn 0.85s linear infinite; }
-.dash-refresh.is-busy, .dash-refresh.is-settled { pointer-events: none; color: var(--muted); }
 
 .dash-band + .dash-band { margin-top: clamp(32px, 3.8vw, 46px); }
+
+/* ---- the three figures ------------------------------------------------------
+   A ROW OF THREE, NOT CARDS. They carry one number each and no action, so the
+   card's hairline, lift and shadow would all be promising something to press.
+   The ground is the panel's, which is enough to read them as one set.
+   THE NUMBER IS THE PAGE'S LARGEST TYPE that is not a heading, because it is the
+   one thing on this screen somebody is looking FOR. */
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: clamp(26px, 3vw, 34px);
+}
+.tile {
+  display: grid;
+  gap: 5px;
+  padding: 17px 19px 18px;
+  border: 1px solid var(--border-soft);
+  border-radius: 14px;
+  background: var(--card-bg);
+}
+.tile-l { color: var(--muted); font-size: 12.5px; letter-spacing: -0.005em; }
+.tile-v { color: var(--ink); font-size: 27px; font-weight: 600; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+.tile-s { color: var(--dim-ink); font-size: 12px; letter-spacing: -0.005em; }
+@media (max-width: 720px) { .tiles { grid-template-columns: minmax(0, 1fr); } }
+
+/* the caption on Sample reports is a qualifier to the heading, not a second
+   heading: it says what the rows under it are, in the heading's own row */
+.dash-sect .dash-note { font-size: 12.5px; }
+
+/* ---- the three views --------------------------------------------------------
+   DISPLAY, NOT [hidden]. Two of these carry a table and a chart whose widths are
+   measured when they are painted; a view kept in the layout and merely made
+   invisible would still cost a layout pass on every render of a screen nobody is
+   looking at. */
+.view { display: none; }
+.view.is-on { display: block; }
+
+.back {
+  display: inline-block;
+  margin-bottom: 14px;
+  color: var(--muted);
+  font-size: 13.5px;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+}
+.back:hover { color: var(--ink); }
+
+/* THE BANNER IS A CAPTION, NOT AN ALERT. What it says is that these numbers are
+   made up, which qualifies everything below it and warns of nothing, so it takes
+   the page's quiet blue rather than the amber a warning would. */
+.banner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding: 12px 16px;
+  border: 1px solid rgba(21, 110, 254, 0.2);
+  border-radius: 12px;
+  background: rgba(21, 110, 254, 0.05);
+  color: var(--lede-ink);
+  font-size: 13px;
+  line-height: 1.5;
+  letter-spacing: -0.005em;
+}
+.banner b { color: var(--ink); font-weight: 600; }
+.banner button {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--blue-ink);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.banner[hidden] { display: none; }
+
+.rep-head { align-items: flex-start; }
+/* THE META LINE IS ONE ROW OF FACTS AND IT WRAPS AS ONE: a campaign carries
+   between four and six of them depending on its kind, so a fixed column count
+   would leave a hole on one kind and crowd the other. */
+.rep-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  align-items: center;
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 13px;
+  letter-spacing: -0.005em;
+}
+.rep-meta b { color: var(--ink-soft); font-weight: 600; }
+
+.tiles--five { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+@media (max-width: 1080px) { .tiles--five { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 720px) { .tiles--five { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.tile-s.is-warn { color: #b45309; }
+
+/* the main column and a rail, which is the shape of every report: the thing you
+   read, and the numbers that qualify it */
+.rep-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 12px;
+  margin-top: 12px;
+  align-items: start;
+}
+.rep-side { display: grid; gap: 12px; }
+.view > .card { margin-top: 12px; }
+@media (max-width: 960px) { .rep-grid { grid-template-columns: minmax(0, 1fr); } }
+
+.rep-h { color: var(--ink); font-size: 15px; font-weight: 600; letter-spacing: -0.015em; }
+.rep-hint { margin-top: 5px; color: var(--muted); font-size: 12.5px; line-height: 1.55; letter-spacing: -0.005em; }
+.rep-foot { margin-top: 12px; color: var(--dim-ink); font-size: 11.5px; line-height: 1.55; }
+
+.rep-chart { margin-top: 16px; }
+.rep-chart svg { display: block; width: 100%; height: auto; }
+
+.rep-states { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 18px; }
+.rep-states--col { grid-template-columns: minmax(0, 1fr); margin-top: 14px; }
+.rep-state {
+  display: grid;
+  gap: 2px;
+  padding: 12px 14px;
+  border: 1px solid var(--border-soft);
+  border-radius: 11px;
+}
+.rep-state b {
+  color: var(--ink);
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.rep-state span { color: var(--muted); font-size: 12px; letter-spacing: -0.005em; }
+.rep-state.is-ok b { color: var(--green-ink); }
+.rep-state.is-bad b { color: #b42318; }
+
+.acct { width: 100%; margin-top: 12px; border-collapse: collapse; }
+.acct td { padding: 8px 0; color: var(--muted); font-size: 12.5px; letter-spacing: -0.005em; vertical-align: top; }
+.acct td + td { text-align: right; color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+.acct tr + tr td { border-top: 1px solid var(--border-soft); }
+.acct tr.is-total td { color: var(--ink); font-weight: 600; }
+
+.rep-filters { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+.rep-filter {
+  padding: 6px 11px;
+  border: 1px solid var(--border-soft);
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 12px;
+  letter-spacing: -0.005em;
+}
+.rep-filter.is-on { border-color: var(--card-line-hover); background: var(--wash-hover); color: var(--ink); }
+
+/* THE TABLE SCROLLS, THE PAGE DOES NOT. Six columns of evidence do not fit a
+   phone, and the alternative to a scroller here is dropping the column that
+   carries the proof, which is the one thing this table is for. */
+.rep-tablewrap { margin-top: 14px; overflow-x: auto; }
+.runs { width: 100%; min-width: 660px; border-collapse: collapse; }
+.runs th {
+  padding: 0 14px 9px 0;
+  border-bottom: 1px solid var(--border-soft);
+  color: var(--dim-ink);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  text-align: left;
+}
+.runs td { padding: 11px 14px 11px 0; color: var(--lede-ink); font-size: 12.5px; letter-spacing: -0.005em; vertical-align: top; }
+.runs tr + tr td { border-top: 1px solid var(--border-soft); }
+.runs .is-num { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+.runs .is-quote { max-width: 260px; color: var(--muted); font-style: italic; }
+.run-acts { display: flex; flex-wrap: wrap; gap: 4px; }
+.run-act {
+  padding: 2px 6px;
+  border: 1px solid var(--border-soft);
+  border-radius: 5px;
+  color: var(--dim-ink);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+.run-evd { display: grid; gap: 3px; }
+.run-evd a { color: var(--blue-ink); font-size: 12px; text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
+.rep-privacy { margin-top: 18px; color: var(--dim-ink); font-size: 11.5px; line-height: 1.6; }
+
+/* ---- the videos card --------------------------------------------------------
+   9:16, BECAUSE THAT IS WHAT THEY ARE. A grid of landscape frames would be
+   showing a set of vertical films in a shape none of them is. */
+.bvgrid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; margin-top: 14px; }
+@media (max-width: 860px) { .bvgrid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.bvtile { display: grid; gap: 7px; }
+.bvthumb {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 9 / 16;
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  background: var(--band-lift);
+  color: var(--dim-ink);
+}
+.bvcap { display: grid; gap: 1px; color: var(--dim-ink); font-size: 11px; letter-spacing: -0.005em; }
+.bvcap b { color: var(--ink-soft); font-size: 11.5px; font-weight: 600; }
+/* the waiting state is the same frame with nothing in it and no caption: six
+   dashed slots say six will arrive, without saying not yet six times */
+.bvgrid--wait .bvtile {
+  aspect-ratio: 9 / 16;
+  border: 1px dashed var(--border);
+  border-radius: 10px;
+}
+
+.rep-empty { display: grid; justify-items: start; }
+.rep-empty-ic {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  margin-bottom: 14px;
+  border-radius: 10px;
+  background: rgba(21, 110, 254, 0.08);
+  color: var(--blue-ink);
+  font-size: 17px;
+}
+.rep-empty p { margin-top: 8px; max-width: 54ch; color: var(--muted); font-size: 13.5px; line-height: 1.6; letter-spacing: -0.01em; }
+.rep-empty-cta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+
+/* IN REVIEW IS A THIRD THING, not a quieter Live and not a failed one. It gets
+   the blue the page already uses for work that is underway rather than the
+   green of work that has passed or the amber of work that fell short. */
+.chip--wait {
+  border-color: rgba(21, 110, 254, 0.28);
+  background: rgba(21, 110, 254, 0.08);
+  color: var(--blue-ink);
+}
 /* the heading and its footnote share a baseline row, which is the slot both the
    earnings total and the programme tabs sit in: two different kinds of thing
    qualifying their section in the same place, rather than each finding its own */
@@ -484,19 +656,13 @@ body { min-height: 100vh; }
    deliberately no hover at all. */
 .dash-panel::after { content: none; }
 
-.bal-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; }
 /* BOTH CHILDREN ARE SPANS, so they laid out inline and sat on one baseline with
    the label reading as part of the number. .earn-figure's own margin-top could
    not fix it: margins do not apply vertically to an inline box. The wrapper is
    the fix, not a display change on the figure, because the figure is inline in
    every other place it is used and that is correct there. */
-.bal-fig { display: grid; }
-.bal-fig .mini-title { margin-bottom: 8px; }
 /* the balance is the one figure on this screen answering "what can I take out
    now", so it keeps the money scale the programme card gives its reward */
-.bal-top .earn-figure { font-size: clamp(26px, 2.4vw, 32px); }
-.bal-ledger { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--border-soft); }
-.dash-quiet { color: var(--muted); font-size: 13.5px; letter-spacing: -0.01em; }
 
 /* ---- the tabs ---------------------------------------------------------------
    A switch between two views of one section, so it is one track with a lit
@@ -515,39 +681,9 @@ body { min-height: 100vh; }
         which one you are on.
    The whole control also came down a size: it sits beside a 19px heading, and it
    was reading as a peer of the section rather than as its switch. */
-.progtabs {
-  display: flex;
-  gap: 2px;
-  padding: 3px;
-  border: 1px solid var(--border-soft);
-  border-radius: 9px;
-  background: var(--panel-bg);
-}
-.progtab {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 5px 11px;
-  border: 1px solid transparent;
-  border-radius: 6px;
-  background: none;
-  color: var(--muted);
-  font: inherit;
-  font-size: 12.5px;
-  letter-spacing: -0.01em;
-  cursor: pointer;
-  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
-}
-.progtab:hover { color: var(--ink); background: var(--surface-hover); }
-.progtab.on {
-  border-color: var(--border);
-  background: var(--card-bg);
-  color: var(--ink);
-  font-weight: 550;
-  box-shadow: var(--card-shadow);
-}
-.progtab-n { color: var(--dim-ink); font-size: 12px; font-weight: 400; }
-.progtab.on .progtab-n { color: var(--muted); }
+/* THE LIVE / ENDED TABS ARE GONE. One list, and the Status column says which
+   state a row is in; a campaign in review is neither live nor ended, which
+   is exactly the state those two had no room for. */
 
 .dash-empty { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 28px 24px; text-align: center; }
 .dash-empty[hidden] { display: none; }
@@ -568,39 +704,18 @@ body { min-height: 100vh; }
    THE LEFT COLUMN TAKES THE EXTRA WIDTH because its content wraps and the
    right's does not: a rule is one short line whatever you give it, so width
    spent there is width the steps would have used to lose a line break. */
-.earn-split { display: grid; grid-template-columns: 1.25fr 1fr; }
-.earn-half:first-child { padding-right: clamp(22px, 2.8vw, 36px); }
-.earn-half + .earn-half {
-  padding-left: clamp(22px, 2.8vw, 36px);
-  border-left: 1px solid var(--border-soft);
-}
 /* a grid child sizes to min-content by default, which lets a long unbroken
    token push the column wider than its track */
-.earn-half { min-width: 0; }
-.dash-steps { list-style: none; display: grid; gap: 14px; }
 /* CENTRED ON THE WHOLE ITEM, not on its first line. A number that belongs to
    two lines of text and sits against the top of them reads as attached to the
    first line only, which is the correction this page already took once on its
    own icon rows. */
-.dash-steps li { display: flex; align-items: center; gap: 13px; }
 /* numbered discs, not editorial numerals: that treatment sells a narrative,
    this band answers a support question on a working screen */
-.dash-steps .step-num { width: 26px; height: 26px; font-size: 12.5px; }
-.dash-steps p { color: var(--muted); font-size: 13.5px; line-height: 1.5; letter-spacing: -0.01em; }
-.dash-rules { list-style: none; display: grid; }
-.dash-rules li {
-  padding: 11px 0;
-  color: var(--muted);
-  font-size: 13.5px;
-  letter-spacing: -0.01em;
-}
 /* THE LINE GOES BETWEEN THE ROWS, WHICH IS WHERE IT MEANS SOMETHING, and the
    two outer paddings go with it. Drawn under each row instead, the first rule
    started 11px lower than the first step and the two columns never shared an
    opening line, even though both opened on a label at the same height. */
-.dash-rules li + li { border-top: 1px solid var(--border-soft); }
-.dash-rules li:first-child { padding-top: 0; }
-.dash-rules li:last-child { padding-bottom: 0; }
 
 /* THE APPLICATION STEPS ASIDE WHOLE. Approved is not a further step of applying,
    it is the other thing this page can be, so the head, the rail and the stage go
@@ -610,16 +725,7 @@ body { min-height: 100vh; }
 .is-approved .form-stage { display: none; }
 
 @media (max-width: 820px) {
-  .dash-head { flex-direction: column; gap: 20px; }
-  /* stacked, the rule between them is no longer between them */
-  .earn-split { grid-template-columns: 1fr; }
-  .earn-half:first-child { padding-right: 0; padding-bottom: 26px; }
-  .earn-half + .earn-half {
-    padding-left: 0;
-    padding-top: 26px;
-    border-left: 0;
-    border-top: 1px solid var(--border-soft);
-  }
+  .dash-head { flex-direction: column; gap: 20px; align-items: flex-start; }
 }
 
 /* ---- the campaigns list -----------------------------------------------------
@@ -635,7 +741,10 @@ body { min-height: 100vh; }
 .clist-panel[hidden] { display: none; }
 .clist-head, .crow {
   display: grid;
-  grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.5fr) minmax(0, 0.7fr) auto auto;
+  /* THE LAST COLUMN HOLDS A PHRASE NOW. It was `auto` for a 34px icon button;
+     "View report" is about 90px, and auto on a track that wide lets it take
+     space from the campaign name, which is the column doing the most work. */
+  grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.5fr) minmax(0, 0.7fr) auto 104px;
   align-items: center;
   gap: clamp(16px, 2.4vw, 32px);
 }
@@ -644,7 +753,7 @@ body { min-height: 100vh; }
    the panels wear, dropped to the quietest ink so the rows read first */
 .clist-head .mini-title { margin: 0; color: var(--dim-ink); font-weight: 500; }
 .clist { list-style: none; display: grid; }
-.crow { padding: 15px 0; }
+.crow { padding: 15px 10px; margin: 0 -10px; }
 .crow + .crow { border-top: 1px solid var(--border-soft); }
 .crow:last-child { padding-bottom: 0; }
 .crow-id { display: grid; gap: 4px; min-width: 0; }
@@ -678,20 +787,28 @@ body { min-height: 100vh; }
    at full ink on an open background: it stands out by contrast rather than by a
    warning hue this design system does not have. */
 .chip--under { border-color: var(--border); background: none; color: var(--ink); }
-.crow-info {
-  flex: none;
-  display: grid;
-  place-items: center;
-  width: 34px;
-  height: 34px;
-  border: 1px solid var(--border);
-  border-radius: 50%;
-  background: var(--card-bg);
-  color: var(--muted);
-  cursor: pointer;
-  transition: color 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+/* THE ROW IS A CONTROL, so it says so the way every other control on this page
+   does: the ground lifts under the pointer and the chevron firms up. It replaces
+   .crow-info, a 34px icon button at the end of each row that opened a sheet. */
+.crow.is-link { cursor: pointer; border-radius: 10px; transition: background .18s ease; }
+.crow.is-link:hover { background: var(--wash-hover); }
+.crow.is-link:focus-visible { outline: 2px solid var(--blue-ink); outline-offset: 2px; }
+.crow-go {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+  justify-content: flex-end;
+  color: var(--dim-ink);
+  font-size: 12.5px;
+  letter-spacing: -0.005em;
+  white-space: nowrap;
 }
-.crow-info:hover { color: var(--ink); border-color: var(--card-line-hover); background: var(--surface-hover); }
+.crow.is-link:hover .crow-go { color: var(--blue-ink); }
+
+/* the three verdicts a run can carry, on the chip the rest of the page uses */
+.pill-ok { border-color: rgba(22, 163, 74, 0.3); background: rgba(22, 163, 74, 0.08); color: var(--green-ink); }
+.pill-wait { border-color: rgba(21, 110, 254, 0.28); background: rgba(21, 110, 254, 0.08); color: var(--blue-ink); }
+.pill-bad { border-color: rgba(180, 35, 24, 0.28); background: rgba(180, 35, 24, 0.07); color: #b42318; }
 
 /* GREEN, WHICH IS THE ONE PLACE IT BELONGS HERE. It means a state that has been
    reached, on the Open chip and on progress toward a goal; the balance keeps its
@@ -703,82 +820,14 @@ body { min-height: 100vh; }
    A fixed date column so the labels rag into one left edge whatever the dates
    are, which is the source's own trick and the only thing about these rows that
    is not a plain three-part line. */
-.txn-rows { list-style: none; display: grid; }
-.txn-rows[hidden] { display: none; }
-.txn-rows li {
-  display: grid;
-  grid-template-columns: 96px 1fr auto;
-  align-items: baseline;
-  gap: 16px;
-  padding: 11px 0;
-  font-size: 13.5px;
-  letter-spacing: -0.01em;
-}
-.txn-rows li + li { border-top: 1px solid var(--border-soft); }
-.txn-rows li:first-child { padding-top: 0; }
-.txn-rows li:last-child { padding-bottom: 0; }
-.txn-date { color: var(--dim-ink); }
-.txn-label { color: var(--muted); min-width: 0; }
-.txn-amt { color: var(--ink); font-weight: 600; }
 
 /* one option, presented as a choice, because "PayPal only" is a fact of the
    product rather than something to leave a reader guessing about */
-.pay-opt {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 14px;
-  /* QUIETER THAN IT WAS, AND THE REASON IS THAT IT CANNOT CHANGE. A blue fill,
-     a blue border and a blue tick are three signals of selection on the one row
-     in this sheet with nothing to select against, and together they out-shouted
-     the Withdraw button, which is the only thing here that does anything. The
-     tick alone still says chosen; the row goes back to being a surface. */
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  background: var(--panel-bg);
-}
-.pay-mark {
-  flex: none;
-  display: grid;
-  place-items: center;
-  width: 46px;
-  height: 28px;
-  border-radius: 5px;
-  background: #003087;
-  color: #fff;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-}
-.pay-name { color: var(--ink); font-size: 14px; font-weight: 500; letter-spacing: -0.01em; }
-.pay-tick { margin-left: auto; display: grid; place-items: center; width: 19px; height: 19px; border-radius: 50%; background: var(--blue); color: #fff; }
 
-#cash-out-form .q + .q { margin-top: 20px; }
 /* THE PAIR IS ONE GROUP, so it is spaced like one: .q--consent carries a 12px
    top margin for rows that stand alone in the form, and inside a group that is
    a second gap on top of the grid's. Zeroed here, not there, because the form's
    own consent row is still a row that stands alone. */
-.cash-confirms { margin-top: 20px; display: grid; gap: 10px; }
-.cash-confirms .q, .cash-confirms .q--consent { margin: 0; }
-/* the button is the one thing in this sheet that does something, and it should
-   not look like the next item in a list of controls */
-.sheet-go { margin-top: 26px; }
-
-.cash-done { text-align: center; }
-.cash-done[hidden] { display: none; }
-.cash-done-ic {
-  display: grid;
-  place-items: center;
-  width: 42px;
-  height: 42px;
-  margin: 6px auto 16px;
-  border-radius: 50%;
-  background: var(--green-fill);
-  color: var(--green-ink);
-}
-.cash-done p { margin-top: 10px; color: var(--muted); font-size: 13.5px; line-height: 1.55; letter-spacing: -0.01em; }
-.cash-done p b { color: var(--ink); font-weight: 600; }
-.cash-support { font-size: 12.5px; }
 
 /* THE HEADINGS GO, THE ROWS STAY WHOLE. A four-column table on a phone either
    scrolls sideways or turns into four stacked labelled lines per campaign; this
@@ -865,7 +914,6 @@ body { min-height: 100vh; }
 .intro-ic svg { width: 17px; height: 17px; }
 .intro-body { color: var(--lede-ink); font-size: 14px; line-height: 1.55; letter-spacing: -0.01em; }
 .intro-body b { color: var(--ink); font-weight: 600; }
-.row-br { display: inline; }
 @media (max-width: 700px) { .row-br { display: none; } }
 
 /* ---- a question -------------------------------------------------------------- */
@@ -907,8 +955,6 @@ body { min-height: 100vh; }
 }
 /* two options carry a reading rather than just a label: the affirmative one is
    the page's green, the one that rules you out is its error red */
-.tone-ok .choice-ic { color: var(--green); }
-.tone-danger .choice-ic { color: var(--err-line); }
 /* ---- the two kinds of text under a control ----------------------------------
    THEY WERE THE SAME TEXT IN TWO SIZES, 12.5 and 13, which is not a hierarchy
    step, it is tuning residue: half a pixel and the same colour reads as one
@@ -942,8 +988,6 @@ body { min-height: 100vh; }
 }
 .aside-ic { flex: none; display: grid; place-items: center; color: var(--blue-ink); }
 .aside-ic svg { display: block; }
-.legal-link { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--link-underline); }
-.legal-link:hover { color: var(--link-hover); text-decoration-color: var(--link-hover); }
 
 /* ---- choice cards ------------------------------------------------------------
    The selected state is the homepage's, to the value: .pick-list li.is-on is a
@@ -987,6 +1031,45 @@ input:focus-visible + .check { outline: 2px solid var(--blue-ink); outline-offse
 
 /* ---- chips: the homepage's, plus the states a form needs -------------------- */
 .chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* A CHIP THAT IS A BUTTON, not a label wrapping a hidden radio. The country pair
+   is written by the renderer and answered by a delegated click, so there is no
+   input to associate with and .chip's label-based hover rule has nothing to
+   hang on. Same shape, same two states, its own selector. */
+.selchip {
+  display: inline-flex;
+  gap: 5px;
+  align-items: center;
+  padding: 7px 13px;
+  border: 1px solid var(--border-soft);
+  border-radius: 999px;
+  background: var(--card-bg);
+  color: var(--muted);
+  font: inherit;
+  font-size: 13px;
+  letter-spacing: -0.005em;
+  cursor: pointer;
+  transition: border-color .22s ease, background .22s ease, color .22s ease;
+}
+.selchip:hover:not(.is-on) {
+  border-color: var(--card-line-hover);
+  background: linear-gradient(var(--wash-hover), var(--wash-hover)), var(--card-bg);
+  color: var(--ink);
+}
+.selchip.is-on { border-color: rgba(21, 110, 254, 0.42); background: rgba(21, 110, 254, 0.09); color: var(--blue-ink); }
+.selchip:focus-visible { outline: 2px solid var(--blue-ink); outline-offset: 2px; }
+
+/* WHAT HAPPENS NEXT reads as a note the form is handing you, not as a question
+   it is asking, so it takes the panel ground rather than a field's. */
+.nextbox {
+  margin-bottom: 26px;
+  padding: 16px 18px;
+  border: 1px solid var(--border-soft);
+  border-radius: 12px;
+  background: var(--band-lift);
+}
+.nextbox ol { margin: 10px 0 0; padding-left: 18px; display: grid; gap: 6px; }
+.nextbox li { color: var(--muted); font-size: 13px; line-height: 1.55; letter-spacing: -0.005em; }
 .chip-row .chip { background: var(--card-bg); cursor: pointer; transition: border-color 0.25s ease, background 0.25s ease, color 0.25s ease; }
 .chip-row label:hover .chip:not(.on) {
   border-color: var(--card-line-hover);
@@ -1179,8 +1262,6 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
    the page's own in-soft, because arriving somewhere new reads bottom-up; back,
    everything fades at once, because returning is not an arrival and staggering
    it would make retreating feel like progress. --i is set by render(). */
-.step-body.swap-fwd > * { animation: in-soft 0.45s var(--ease) both; animation-delay: calc(var(--i, 0) * 38ms); }
-.step-body.swap-back > * { animation: in-fade 0.32s var(--ease) both; }
 
 @media (max-width: 560px) {
   .form-card { padding: 22px 18px 18px; }
@@ -1311,7 +1392,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     <div class="apply-head">
       <div class="apply-head-pane" data-head="programs">
         <h1 class="title-lg">What do you want <em>to happen?</em></h1>
-        <p class="lede">Nine kinds of campaign, grouped by what they are for. Each one is priced on the result it produces, and you set the bid.</p>
+        <p class="lede">Two ways to get views. Pick the one that matches what you already have.</p>
       </div>
       <div class="apply-head-pane" data-head="form" hidden>
         <h1 class="title-lg">Write the <em>brief</em>.</h1>
@@ -1341,112 +1422,39 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
          ProgramsHome.tsx and programData.ts, with one edit the brand forces,
          "agent" for "worker", which is the word this site uses everywhere and
          which the source itself now uses too. -->
-    <!-- NINE TYPES IN FOUR FAMILIES, which is the catalogue the product
-         actually has. What stood here before was three, invented, wearing the
-         creator side's programme card with a Reward pill on it: a programme is
-         a deal with a fixed payout, and a campaign type is a shape of work with
-         a bid you set. They are not the same object and they should not have
-         looked like one.
-         THE FAMILY IS THE POINT, not decoration. It is what makes the bid units
-         legible: per 1,000 verified views and per surviving comment are not
-         alternatives, they are what "more views" and "get talked about" each
-         measure. Names, one-liners and units are campaignCatalog.ts verbatim,
-         which its own header asks for by name, because the PM is showing that
-         wording to people.
-         FOUR ARE MARKED SOON, the same four the platforms section says are
-         next: Reddit needs Reddit. A card that could be pressed into a campaign
-         that cannot run is worse than one that says so. -->
+    <!-- TWO KINDS, WHICH IS WHAT THE PORTAL HAS (Appy, 2026-09-17: "in the
+         brands website we don't have these many campaigns"). Nine cards stood
+         here, in three families, four of them disabled. They came from
+         campaignCatalog.ts, which belongs to /creator-brand/create-campaign, a
+         different surface: the agency portal this page is being rebuilt from
+         offers exactly two, and only in the build that has both.
+         WHAT THE TWO GENUINELY DIFFER ON IS WHAT THE AGENCY BRINGS. Everything
+         else on that diagram - the agent studying the category, our own review,
+         the distribution plan, the verification, the receipt - is machinery an
+         agency never touches, so none of it is a card here; it is status on the
+         row and lines in the report.
+         IN v1 THIS SCREEN DOES NOT EXIST. A chooser between two things when one
+         of them has not shipped is a question with one answer, so that build
+         goes straight to the form. -->
     <div class="type-list" id="prog-list">
-      <div class="type-fam reveal">
-        <span class="mini-title">Get more views</span>
-      </div>
-      <div class="type-grid">
-        <button class="card type-card" type="button" data-pick="engagement-boost" data-kind="Boost a post">
+      <div class="type-grid type-grid--pair">
+        <button class="card type-card" type="button" data-pick="engagement" data-kind="Video engagement driver">
           <span class="type-top">
             <span class="chip chip--open">Live</span>
             <span class="type-unit">1,000 verified views</span>
           </span>
-          <span class="type-name">Boost a post</span>
-          <span class="type-one">People watch and like a video you already posted.</span>
+          <span class="type-name">Video engagement driver</span>
+          <span class="type-one">You already posted a video. People watch it, like it and comment on it from their own accounts.</span>
+          <span class="type-fam">You bring: <b>the video</b></span>
         </button>
-        <button class="card type-card" type="button" data-pick="video-distribution" data-kind="Distribute one video">
+        <button class="card type-card" type="button" data-pick="growth" data-kind="Video growth" data-v2>
           <span class="type-top">
             <span class="chip chip--open">Live</span>
             <span class="type-unit">1,000 verified views</span>
           </span>
-          <span class="type-name">Distribute one video</span>
-          <span class="type-one">Your best video, posted again and again by many accounts.</span>
-        </button>
-      </div>
-      <div class="type-fam reveal">
-        <span class="mini-title">Get videos made</span>
-      </div>
-      <div class="type-grid">
-        <button class="card type-card" type="button" data-pick="template-creators" data-kind="Creators make videos">
-          <span class="type-top">
-            <span class="chip chip--open">Live</span>
-            <span class="type-unit">1,000 verified views</span>
-          </span>
-          <span class="type-name">Creators make videos</span>
-          <span class="type-one">Creators copy your winning video style and post their own versions.</span>
-        </button>
-        <button class="card type-card" type="button" data-pick="template-blueai" data-kind="BlueAI makes videos">
-          <span class="type-top">
-            <span class="chip chip--open">Live</span>
-            <span class="type-unit">1,000 verified views</span>
-          </span>
-          <span class="type-name">BlueAI makes videos</span>
-          <span class="type-one">BlueAI makes the videos for you, creators post them.</span>
-        </button>
-        <button class="card type-card" type="button" data-pick="ugc-deliverable" data-kind="Get content made">
-          <span class="type-top">
-            <span class="chip chip--open">Live</span>
-            <span class="type-unit">finished piece</span>
-          </span>
-          <span class="type-name">Get content made</span>
-          <span class="type-one">Creators make videos and hand you the files. Nothing is posted.</span>
-        </button>
-      </div>
-      <div class="type-fam reveal">
-        <span class="mini-title">Get talked about</span>
-      </div>
-      <div class="type-grid">
-        <button class="card type-card is-soon" type="button" data-pick="reddit-comments" data-kind="Reddit comments" disabled>
-          <span class="type-top">
-            <span class="chip chip--soon">Soon</span>
-            <span class="type-unit">surviving comment</span>
-          </span>
-          <span class="type-name">Reddit comments</span>
-          <span class="type-one">Strong Reddit accounts mention you inside conversations already happening.</span>
-        </button>
-        <button class="card type-card is-soon" type="button" data-pick="reddit-thread" data-kind="Reddit thread" disabled>
-          <span class="type-top">
-            <span class="chip chip--soon">Soon</span>
-            <span class="type-unit">surviving reply</span>
-          </span>
-          <span class="type-name">Reddit thread</span>
-          <span class="type-one">One strong account starts a thread, others keep it alive.</span>
-        </button>
-      </div>
-      <div class="type-fam reveal">
-        <span class="mini-title">Learn from people</span>
-      </div>
-      <div class="type-grid">
-        <button class="card type-card is-soon" type="button" data-pick="research" data-kind="Product research" disabled>
-          <span class="type-top">
-            <span class="chip chip--soon">Soon</span>
-            <span class="type-unit">completed report</span>
-          </span>
-          <span class="type-name">Product research</span>
-          <span class="type-one">People try your product and tell you the truth.</span>
-        </button>
-        <button class="card type-card is-soon" type="button" data-pick="community-retainer" data-kind="Community presence" disabled>
-          <span class="type-top">
-            <span class="chip chip--soon">Soon</span>
-            <span class="type-unit">Monthly retainer</span>
-          </span>
-          <span class="type-name">Community presence</span>
-          <span class="type-one">A small team keeps you part of the conversation, every month.</span>
+          <span class="type-name">Video growth</span>
+          <span class="type-one">You have no video yet. Our agent studies your category, makes the videos, and members post them from their own accounts.</span>
+          <span class="type-fam">You bring: <b>your site and a few references</b></span>
         </button>
       </div>
     </div>
@@ -1495,265 +1503,251 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     <p class="lede">We review every agency before approving it, usually within a working day. We&#8217;ll email <b data-agency-mail>you</b> the moment <b data-agency-name>your agency</b> is cleared to create campaigns.</p>
     <span class="earn-payout"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.5l5 5L19.5 6.5"/></svg>Registration received</span>
     <p class="gate-alt confirm-alt"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.4 11.7a8.4 8.4 0 1 1-2.5-5.4"/><path d="M20.4 3.1v4.8h-4.8"/></svg><button type="button" data-refresh>Refresh status</button></p>
+    <!-- THE RECEIPT. The button returning to its resting label was the whole of
+         the old feedback, which is to say there was none: this screen says
+         exactly the same thing before a check and after one, so the only honest
+         way to show that a check happened is to say WHEN it happened.
+         HIDDEN UNTIL THE FIRST PRESS. On load there is nothing to report, and a
+         line reading "checked just now" about a page merely being open is a
+         caption reporting a non-event. Same element, opposite verdict, and the
+         difference is entirely whether a person asked for it. -->
+    <p class="rev-note" id="rev-note" hidden aria-live="polite"></p>
   </div>
 </section>
 
-<section class="dash" id="dash" data-one="With campaigns" hidden>
+<section class="dash" id="dash" hidden>
 
-  <!-- THE ONLY LEFT-ALIGNED HEAD ON THE PAGE, and the reason is what it is
-       for. Every other title here is an address to a reader who is deciding
-       something, so it is centred over the thing being decided. This one labels
-       a working screen and shares its row with a control, and a centred title
-       with a button pushed out to the right is two alignments in one line. -->
+  <!-- THREE VIEWS, ONE AT A TIME. The list, a sample report, and a campaign of
+       your own that is still in review. They are siblings rather than pages
+       because nothing about this is a navigation: the header, the account and
+       the ground do not change, only which of the three is showing. -->
+  <div class="view is-on" id="view-list">
+
+  <!-- THE PORTAL'S LIST VIEW (public/creator-brand/campaign-report.html, #view-list).
+       What stood here was the creator dashboard's furniture wearing agency words:
+       a balance with an Add budget button, a charges ledger, Live and Ended tabs
+       and a How spending works explainer. None of those four is on the screen
+       this page is a rebuild of, and the reason is not taste. An agency does not
+       hold a balance with us, it commits a budget per campaign; there is no
+       cash-out because there is nothing to take back out; and a campaign in
+       review is neither live nor ended, which is the state those two tabs had no
+       room for.
+       THE HEAD IS THE PAGE'S NAME AND ITS ONE ACTION. "Welcome back" greeted a
+       reader who is here to do something, and the Refresh beside it fetched
+       nothing on a screen with nothing to fetch. -->
   <div class="dash-head">
-    <div>
-      <h1 class="title-lg">Welcome <em>back.</em></h1>
-      <p class="lede">Here’s how your campaigns are doing.</p>
-    </div>
-    <!-- THE SAME THREE STATES AS THE CONFIRMATION'S REFRESH, in the same words,
-         because it is the same promise: there is nothing behind either of them
-         to fetch, and a control that reported differently in two places would
-         be teaching two different models of one product. -->
-    <button class="btn btn-ghost dash-refresh" type="button" data-dash-refresh>
-      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.4 11.7a8.4 8.4 0 1 1-2.5-5.4"/><path d="M20.4 3.1v4.8h-4.8"/></svg><span data-dash-label>Refresh now</span>
-    </button>
+    <div><h1 class="title-lg">Campaigns</h1></div>
+    <button class="btn btn-solid" type="button" data-join>+ New campaign</button>
   </div>
 
-  <div class="dash-band">
-    <div class="dash-sect">
-      <h2>Your spend</h2>
-      <!-- a footnote to the heading rather than a third line inside the panel:
-           it is a lifetime total that qualifies the section without being what
-           the section is for, and inside it competed with the one figure
-           anybody opens this screen to read -->
-      <!-- THE MIRROR OF "Earned till date". Same slot, same voice, and the same
-           kind of fact: a lifetime total that qualifies the section without
-           being what anyone opens it to read. -->
-      <span class="dash-note">Spent till date <b data-fig="earned">$0</b></span>
+  <!-- THREE FIGURES, AND ALL THREE READ ZERO ON A NEW ACCOUNT ON PURPOSE. Each
+       one's caption says what will make it move rather than apologising for the
+       nought, which is the difference between a screen that looks broken and one
+       that is telling you where you are in a process. -->
+  <div class="tiles">
+    <div class="tile">
+      <span class="tile-l">In review</span>
+      <span class="tile-v" data-tile="review">0</span>
+      <span class="tile-s">campaigns awaiting approval</span>
     </div>
-    <div class="card dash-panel">
-      <div class="bal-top">
-        <div class="bal-fig">
-          <!-- .mini-title, the same label "Transactions" wears below it. It was
-               .earn-label, which is How it works' treatment for a figure that
-               stands alone in a panel; two different label styles inside one
-               card read as two different kinds of thing. -->
-          <span class="mini-title">Budget remaining</span>
-          <span class="earn-figure" data-fig="balance">$0</span>
-        </div>
-        <!-- quiet, not the page's solid CTA: cashing out is a frequent,
-             low-drama action, and the black button on this page belongs to the
-             one thing that commits you to something -->
-        <button class="btn btn-ghost" type="button" data-sheet="cash-out">Add budget</button>
-      </div>
-      <div class="bal-ledger">
-        <span class="mini-title">Charges</span>
-        <p class="dash-quiet" data-ledger-empty>Nothing charged yet.</p>
-        <!-- A DATE COLUMN OF FIXED WIDTH, so the labels rag into one left edge
-             however long the dates are. It is the ledger's own trick and it is
-             the only thing about this row that is not a plain three-part line. -->
-        <ul class="txn-rows" data-ledger hidden></ul>
-      </div>
+    <div class="tile">
+      <span class="tile-l">Verified completions, all time</span>
+      <span class="tile-v" data-tile="done">0</span>
+      <span class="tile-s">they appear as campaigns go live</span>
+    </div>
+    <div class="tile">
+      <span class="tile-l">Spend this month</span>
+      <span class="tile-v" data-tile="spend">$0</span>
+      <span class="tile-s">only verified completions bill</span>
     </div>
   </div>
 
   <div class="dash-band">
-    <div class="dash-sect">
-      <h2>Your campaigns</h2>
-      <!-- BOTH TABS FROM DAY ONE, including the empty one. Showing the switch
-           only once Past fills up is cheaper, but this teaches the model
-           instead: on the first visit you learn that programmes end and
-           accumulate, rather than meeting a control that appears out of nowhere
-           months later. The price is paid in the empty copy below, which is why
-           that copy names what will appear rather than that nothing has. -->
-      <div class="progtabs" role="tablist" aria-label="Programs">
-        <button class="progtab on" type="button" role="tab" aria-selected="true" data-tab="active">Live<span class="progtab-n" data-count="active">0</span></button>
-        <button class="progtab" type="button" role="tab" aria-selected="false" data-tab="past">Ended<span class="progtab-n" data-count="past">0</span></button>
-      </div>
-    </div>
-    <!-- FOUR COLUMNS, WHICH IS WHAT THE REPORT HAS: which campaign, how full,
-         how much of the budget went, and what state it is in. Fill and Spend are
-         two questions, not one: a campaign can be half filled and fully spent,
-         or filled and under budget, and that is exactly the case somebody opens
-         this screen to find. Collapsing them into a single percentage would hide
-         it. What stood here was one card per campaign, which is the creator
-         side's programme tile: fine for a creator with one programme, wrong for
-         an agency reading four at once.
-         EVERY ROW SAYS "SAMPLE" IN ITS OWN META LINE. Nothing has launched, so
-         every figure here is illustrative; saying so once in a caption above the
-         list is how a reader ends up quoting one of them back at you. -->
-    <div class="card dash-panel clist-panel" data-pane="active" data-when="one" hidden>
+    <div class="dash-sect"><h2>Your campaigns</h2></div>
+    <!-- ONE LIST, NO TABS. Everything an agency has made is here, and what state
+         each is in is what the Status column is for. -->
+    <div class="card dash-panel clist-panel" data-mine hidden>
       <div class="clist-head">
         <span class="mini-title">Campaign</span>
         <span class="mini-title">Fill</span>
         <span class="mini-title">Spend</span>
         <span class="mini-title">Status</span>
       </div>
-      <ul class="clist" data-list="active"></ul>
+      <ul class="clist" data-list="mine"></ul>
     </div>
-    <div class="card dash-panel clist-panel" data-pane="past" data-when="one" hidden>
-      <div class="clist-head">
-        <span class="mini-title">Campaign</span>
-        <span class="mini-title">Fill</span>
-        <span class="mini-title">Spend</span>
-        <span class="mini-title">Status</span>
-      </div>
-      <ul class="clist" data-list="past"></ul>
-    </div>
-    <!-- THE DASHED GHOST, WHICH IS ALREADY ON THIS PAGE. The programmes screen
-         uses it for "a thing will be here"; an empty tab is the same statement,
-         so it is the same treatment rather than a second invention of it.
-         THE COPY NAMES THE ORDER, not just the absence. "In review first, then
+    <!-- THE COPY NAMES THE ORDER, not just the absence. "In review first, then
          live" is the one thing a first-time agency does not know and will
          otherwise learn by watching nothing happen for a day. -->
-    <div class="prog-soon dash-empty" data-pane="active" data-when="empty">
+    <div class="prog-soon dash-empty" data-mine-empty>
       <p>No campaigns yet. Create your first campaign and it appears here, in review first, then live.</p>
       <button class="btn btn-solid" type="button" data-join>Create a campaign</button>
     </div>
-    <div class="prog-soon dash-empty" data-pane="past" data-when="empty">
-      <p>Nothing here yet. Campaigns that finish will show up here, with what each one cost.</p>
-    </div>
   </div>
 
   <div class="dash-band">
-    <div class="dash-sect"><h2>How spending works</h2></div>
-    <div class="card dash-panel earn-split">
-      <div class="earn-half">
-        <!-- "Steps" names the FORM of the content, not its topic: "How it
-             works" here would be the section heading said twice, 12px lower -->
-        <span class="mini-title">Steps</span>
-        <ol class="dash-steps">
-          <li><span class="step-num">1</span><p>Create a campaign. Each one has its own brief, its own budget and its own window.</p></li>
-          <li><span class="step-num">2</span><p>Agents pick it up and run it on their own accounts, inside onBlue.</p></li>
-          <li><span class="step-num">3</span><p>onBlue verifies each action, and only the ones that pass are charged to your budget.</p></li>
-        </ol>
+    <div class="dash-sect">
+      <h2>Sample reports</h2>
+      <span class="dash-note">illustrative data showing what a live campaign report looks like</span>
+    </div>
+    <!-- SEPARATE FROM YOUR OWN, AND SAID SO IN EVERY ROW'S META LINE. A new
+         agency has nothing of its own to look at, and a report is the thing this
+         product is hardest to imagine without seeing; six of them sit here so it
+         can be seen on day one. Saying "sample" once in a caption above the list
+         is how a reader ends up quoting one of these figures back at you. -->
+    <div class="card dash-panel clist-panel">
+      <div class="clist-head">
+        <span class="mini-title">Campaign</span>
+        <span class="mini-title">Fill</span>
+        <span class="mini-title">Spend</span>
+        <span class="mini-title">Status</span>
       </div>
-      <div class="earn-half">
-        <span class="mini-title">Billing rules</span>
-        <ul class="dash-rules">
-          <li>Each campaign draws on its own budget</li>
-          <li>Charged only on verified work</li>
-          <li>Unspent budget is never taken</li>
-          <li>A campaign stops at its budget or its window</li>
-        </ul>
+      <ul class="clist" data-list="samples"></ul>
+    </div>
+  </div>
+  </div>
+
+  <!-- ============ THE REPORT ============
+       ONE VIEW FOR BOTH KINDS, and the differences are written by the script
+       from the campaign's own record rather than by a second copy of this
+       markup. Two report layouts would be two places to keep one report right,
+       and the day they part company is the day one of them starts lying about
+       the other kind.
+       WHAT ACTUALLY DIFFERS: the unit everything counts in, what the bid buys,
+       what the proof-of-work rows carry as evidence, and whether there is a
+       Videos card at all. An engagement campaign promotes a video the agency
+       already owns, so a card showing it back to them would say nothing. -->
+  <div class="view" id="view-report">
+
+    <a class="back" data-back="list">&lsaquo; All campaigns</a>
+
+    <!-- SAID ON THE SCREEN ITSELF, not only in the heading above the list it
+         came from. A report opened from a row is a report you are now looking at
+         alone, and "sample" has to survive that trip or the figures arrive
+         unqualified. -->
+    <div class="banner" data-rep="banner">
+      <span><b>Sample report.</b> Illustrative data showing what your report looks like once your campaign is live.</span>
+      <button type="button" data-back="list">Back to campaigns</button>
+    </div>
+
+    <div class="dash-head rep-head">
+      <div>
+        <h1 class="title-lg" data-rep="name">Campaign</h1>
+        <div class="rep-meta" data-rep="meta"></div>
       </div>
     </div>
+
+    <div class="tiles tiles--five" data-rep="tiles"></div>
+
+    <div class="rep-grid">
+      <div class="rep-main">
+        <div class="card dash-panel">
+          <h2 class="rep-h">Progress</h2>
+          <p class="rep-hint" data-rep="chart-hint"></p>
+          <div class="rep-chart" data-rep="chart"></div>
+          <div class="rep-states" data-rep="board"></div>
+        </div>
+      </div>
+      <div class="rep-side">
+        <div class="card dash-panel">
+          <h2 class="rep-h">Accounting</h2>
+          <table class="acct" data-rep="acct"></table>
+          <p class="rep-foot">If the campaign closes under target, unconsumed budget is settled per the make-good policy in your agreement.</p>
+        </div>
+        <div class="card dash-panel">
+          <h2 class="rep-h">Verification</h2>
+          <div class="rep-states rep-states--col" data-rep="ver"></div>
+          <p class="rep-foot">Every completion is checked before it bills. You are never charged for one that does not verify.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- FULL WIDTH, BELOW THE TWO COLUMNS. Six portrait frames in a 320px rail
+         are about 86px each: the captions wrap to three lines and the tile reads
+         as a sliver. The rail is for numbers; anything you are meant to LOOK at
+         needs the main column. -->
+    <div class="card dash-panel" data-rep="videos" hidden>
+      <h2 class="rep-h">Videos</h2>
+      <div class="bvgrid" data-rep="vgrid"></div>
+      <p class="rep-foot">Every video is checked by our team before any member posts it.</p>
+    </div>
+
+    <div class="card dash-panel">
+      <h2 class="rep-h">Proof of work</h2>
+      <p class="rep-hint">Every verified run carries evidence. Runs are numbered; the community members who complete jobs stay anonymous.</p>
+      <div class="rep-filters" data-rep="filters"></div>
+      <div class="rep-tablewrap"><table class="runs" data-rep="runs"></table></div>
+    </div>
+
+    <p class="rep-privacy">Work on this campaign is completed by community members on their own devices and accounts, paced like normal use. Their identities are never shared; runs are numbered. Evidence is retained for the period stated in your agreement.</p>
+
+  </div>
+
+  <!-- ============ A CAMPAIGN OF YOUR OWN, STILL IN REVIEW ============
+       THE SAME CARD IN ITS EMPTY STATE, IN THE SAME PLACE, which is the point: a
+       card that moves between the state where it is empty and the state where it
+       is full teaches nothing about where to come back to. So this screen is the
+       report's shape with nothing in it yet, rather than a different screen. -->
+  <div class="view" id="view-campaign">
+
+    <a class="back" data-back="list">&lsaquo; All campaigns</a>
+
+    <div class="dash-head rep-head">
+      <div>
+        <h1 class="title-lg" data-cam="name">Your campaign</h1>
+        <div class="rep-meta" data-cam="meta"></div>
+      </div>
+    </div>
+
+    <div class="rep-grid">
+      <div class="rep-main">
+        <div class="card dash-panel rep-empty">
+          <span class="rep-empty-ic" aria-hidden="true">&#8635;</span>
+          <h2 class="rep-h">This campaign is in review.</h2>
+          <p>We check every campaign before it reaches the community, usually within one business day. Once it is approved and live, verified completions, spend and proof of work appear here as they happen.</p>
+          <div class="rep-empty-cta">
+            <button class="btn btn-solid" type="button" data-sample>View a sample report</button>
+            <button class="btn btn-ghost" type="button" data-back="list">Back to campaigns</button>
+          </div>
+        </div>
+      </div>
+      <div class="rep-side">
+        <div class="card dash-panel">
+          <h2 class="rep-h">Campaign setup</h2>
+          <p class="rep-hint">What you defined. Editable until the campaign goes live.</p>
+          <table class="acct" data-cam="setup"></table>
+          <p class="rep-foot">Nothing is charged while the campaign is in review.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SIX BARE FRAMES AND NO PER-TILE CAPTION. "Not yet" six times is
+         repetition; six dashed frames read as six waiting slots. -->
+    <div class="card dash-panel" data-cam="videos" hidden>
+      <h2 class="rep-h">Videos</h2>
+      <p class="rep-hint">Our agent makes these, our team checks every one, and the approved ones appear here.</p>
+      <div class="bvgrid bvgrid--wait">
+        <span class="bvtile"></span><span class="bvtile"></span><span class="bvtile"></span>
+        <span class="bvtile"></span><span class="bvtile"></span><span class="bvtile"></span>
+      </div>
+      <p class="rep-foot">You will get an email when the first ones are ready to look at.</p>
+    </div>
+
   </div>
 
 </section>
 
-<!-- TWO SHEETS, AND THEY ARE NATIVE <dialog>s FOR THE SAME REASONS THE ACCESS
-     GATE IS ONE: showModal() traps focus, closes on Escape, inerts the page
-     behind it and puts the panel in the top layer, all of which would otherwise
-     be a few hundred lines of listener that gets one case wrong.
-     THE MARGIN IS NOT DECORATION. This page's reset zeroes every margin, which
-     kills the UA's own `margin: auto` on a dialog and drops it against the top
-     left corner. It cost a round of review the last time. -->
-<dialog class="sheet" id="sheet-prog-info" aria-labelledby="prog-info-title" autofocus>
-  <div class="sheet-in">
-    <h2 class="sheet-title" id="prog-info-title">Campaign</h2>
-    <!-- ONE SENTENCE-SHAPED LINE PER FACT under a mono label, and the lines are
-         WRITTEN AT OPEN TIME. There is one dialog and there are four campaigns,
-         so the alternative was four dialogs saying the same three things about
-         different numbers, or one dialog quietly describing whichever campaign
-         happened to be hardcoded into it. The row hands over which one it is. -->
-    <div class="sheet-sect">
-      <span class="mini-title">The brief</span>
-      <p data-info="brief"></p>
-    </div>
-    <div class="sheet-sect">
-      <span class="mini-title">What counts</span>
-      <p data-info="counts"></p>
-    </div>
-    <div class="sheet-sect">
-      <span class="mini-title">Ends</span>
-      <p data-info="ends"></p>
-    </div>
-    <!-- THE SOURCE'S OWN BANNER, IN THE PLACE IT BELONGS. The report page says
-         this across the top of a detail screen; here the detail screen is the
-         sheet, so it is the last fact rather than a fifth chrome element. -->
-    <div class="sheet-sect">
-      <span class="mini-title">Report</span>
-      <p>Sample report. Illustrative data showing what your report looks like once your campaign is live.</p>
-    </div>
-    <button class="btn btn-ghost sheet-close" type="button" data-sheet-close>Close</button>
-  </div>
-</dialog>
+<!-- THE ABOUT-THIS-CAMPAIGN SHEET IS GONE, and the report is what replaced it.
+     It held three lines - the brief, what a bid buys, when the campaign ends -
+     behind a small glyph at the end of every row, which is a second, quieter
+     answer to the question the row itself is asking. All three are on the report
+     now, beside the figures that make them mean something, and the row opens
+     that instead. -->
 
-<dialog class="sheet" id="sheet-cash-out" aria-labelledby="cash-out-title" autofocus>
-  <div class="sheet-in">
-    <div class="sheet-head">
-      <h2 class="sheet-title" id="cash-out-title">Add budget</h2>
-      <span class="chip sheet-bal">Remaining <b data-fig="balance">$0</b></span>
-      <button class="sheet-x" type="button" aria-label="Close" data-sheet-close><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
-    </div>
-
-    <form id="cash-out-form" novalidate>
-      <div class="q">
-        <span class="q-label">Choose your payment method</span>
-        <!-- ONE METHOD, AND IT IS STILL PRESENTED AS A CHOICE. Billing rules
-             say PayPal only; showing the single option selected states that as a
-             fact of the product rather than leaving a reader to wonder what the
-             alternatives were. -->
-        <span class="pay-opt is-on">
-          <span class="pay-mark" aria-hidden="true">PayPal</span>
-          <span class="pay-name">PayPal</span>
-          <span class="pay-tick" aria-hidden="true"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.5l5 5L19.5 6.5"/></svg></span>
-        </span>
-      </div>
-
-      <!-- THE AMOUNT IS AN INPUT HERE, AND IT IS THE WHOLE INVERSION. Cashing
-           out has one possible figure, the balance, so the creator sheet only
-           ever reports it; adding budget is the buyer naming a number, so this
-           side has to ask. Everything around it is unchanged, which is the point
-           of the two sheets being one component. -->
-      <div class="q" data-field="topUp">
-        <label class="q-label" for="cash-amount">How much do you want to add?</label>
-        <span class="field-wrap"><span class="field-pre">$</span>
-        <input class="field field--pre" id="cash-amount" name="topUp" type="text" inputmode="decimal" placeholder="500"></span>
-        <span class="msg" data-msg="topUp"></span>
-      </div>
-
-      <div class="q" data-field="payoutEmail">
-        <label class="q-label" for="cash-email">PayPal account to bill</label>
-        <input class="field" id="cash-email" name="payoutEmail" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com">
-        <span class="msg" data-msg="payoutEmail"></span>
-      </div>
-
-      <!-- ONE ERROR SLOT FOR THE PAIR, NOT ONE EACH. Two mandatory boxes have a
-           single failure, "you have not ticked them", and their two messages
-           were near-duplicates; the red edge stays per box, so the row that
-           needs attention is still the marked one. A slot reserved under every
-           row is also what put 26px of invisible space between them. -->
-      <div class="cash-confirms">
-        <div class="q q--consent" data-field="confirmCorrect">
-          <label><input type="checkbox" class="sr-only" name="confirmCorrect">
-            <span class="check subtle"><span class="check-box"></span><span>I confirm all the details are correct.</span></span>
-          </label>
-        </div>
-        <div class="q q--consent" data-field="confirmFinal">
-          <label><input type="checkbox" class="sr-only" name="confirmFinal">
-            <span class="check subtle"><span class="check-box"></span><span>I understand budget added is spent against verified work only.</span></span>
-          </label>
-        </div>
-        <span class="msg" data-msg="confirms"></span>
-      </div>
-
-      <button class="btn btn-solid sheet-go" type="submit">Add budget</button>
-    </form>
-
-    <!-- THE SAME SHEET, AFTER. A withdrawal that closed its own dialog and left
-         a changed number behind would be the one moment on this screen where
-         money moved with nothing said about it. -->
-    <div class="cash-done" id="cash-done" hidden>
-      <span class="cash-done-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.5l5 5L19.5 6.5"/></svg></span>
-      <h2 class="sheet-title">Budget added</h2>
-      <p><b data-withdrawn>$0</b> is on your account and available to campaigns now. Nothing is charged against it until onBlue has verified work.</p>
-      <p class="cash-support">Reach out to us on <b>support@bluestacks.ai</b> for any queries.</p>
-      <button class="btn btn-ghost sheet-close" type="button" data-sheet-close>Close</button>
-    </div>
-  </div>
-</dialog>
+<!-- THE ADD BUDGET SHEET IS GONE, with the balance it topped up. An agency
+     does not hold a float with us: it commits a budget per campaign, in that
+     campaign's own form, and nothing is charged against it until a completion
+     verifies. A control for adding money to an account with no balance was
+     the creator dashboard's cash-out read backwards. -->
 
 </main>
 
@@ -1869,15 +1863,24 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
   ];
 
   /* ---- spec.ts, verbatim ---- */
+  /* THREE STEPS, WHICH IS WHAT THE PORTAL ASKS. There were five, and two of
+     them did not survive the comparison.
+     THE EXPLAINER WENT because the chooser now explains: with nine types on the
+     screen before this one, a card could only give a name and a line, so a whole
+     step was spent saying what the thing you had just picked was. With two, each
+     card carries its own description and what it asks you to bring, and a step
+     that repeats it is a screen between a reader and the form they asked for.
+     CONTACT AND TERMS WENT because the agency is signed in. It asked for an
+     email we already have and a consent the registration already took, which is
+     a form making somebody restate what they have already told it.
+     AND THE MONEY AND THE WINDOW ARE ONE STEP, not two. What it costs and how
+     long it runs are the two halves of one decision - a budget over a fortnight
+     is a different campaign from the same budget over a quarter - and splitting
+     them made the buyer commit to one before seeing the other. */
   var STEPS = [
-    /* NAMED AT RUNTIME. Step zero is the brief for whichever type was picked,
-       so its title is that type's name; leaving it blank was right when the step
-       was the same for everyone. */
-    { title: '' },
-    { title: 'What to run' },
-    { title: 'What it is worth' },
-    { title: 'The window' },
-    { title: 'Contact and terms' }
+    { title: 'What to promote' },
+    { title: 'What it costs' },
+    { title: 'Where it runs' }
   ];
   /* WHICH FIELDS BELONG TO A STEP IS NOW A QUESTION, NOT A CONSTANT. It was a
      fixed table, and the table described one campaign: a video URL and a set of
@@ -1886,10 +1889,10 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
      type and a lookup table would be a second place to keep that right. */
   function stepFields(i) {
     var b = BRIEFS[d.type];
-    if (i === 1) { return ['name']; }
-    if (i === 2) { return b && b.gen ? ['bid', 'gen', 'budget'] : ['bid', 'budget']; }
-    if (i === 3) { return ['startAt', 'endAt']; }
-    if (i === 4) { return ['email', 'agree']; }
+    if (i === 0) { return ['name']; }
+    if (i === 1) {
+      return (b && b.gen ? ['bid', 'gen', 'budget'] : ['bid', 'budget']).concat(['startAt', 'endAt']);
+    }
     return [];
   }
   var LAST = STEPS.length - 1;
@@ -1920,9 +1923,12 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     /* NO RULE FOR THE REVIEW LADDER. Every type arrives on a default, so there
        is no state in which it is unanswered, and an error that cannot fire is a
        sentence nobody will ever read and everybody will keep maintaining. */
-    if (!d.email.trim()) e.email = 'Add the email you want to be contacted on.';
-    else if (!isEmail(d.email)) e.email = 'That doesn\u2019t look like an email. Check for a typo.';
-    if (!d.agree) e.agree = 'You need to agree to the Program Terms to create a campaign.';
+    /* THE EMAIL AND THE CONSENT ARE NOT ASKED HERE ANY MORE, so they are not
+       checked here either. Both belong to registering: the address came through
+       the gate and is still on the draft for the confirmation to name, and the
+       Program Terms were agreed to when the agency registered. A validator
+       guarding a question nobody is asked is a form that can fail on a field
+       with no way to fix it. */
     return e;
   }
 
@@ -1942,6 +1948,11 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     startAt: '', endAt: '',
     /* set when a type is picked, from that type's default rung */
     review: '', note: '',
+    /* WORLDWIDE IS THE DEFAULT, and it is the honest one: a campaign with no
+       country named is not a campaign in no country, it is a campaign anywhere.
+       The alternative default, the United States, would have this form quietly
+       deciding an agency's market for it. */
+    country: 'Worldwide',
     /* PREFILLED FROM THE GATE. The brands page's access dialog asks for an email
        before sending anyone here and hands it over in sessionStorage rather than
        in the URL, so it never lands in history or a referrer. */
@@ -2078,54 +2089,70 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
        - the terms row is back. It was cut as a weaker copy of the last step's
          required checkbox, which is still true of it, but it is in the source
          list and the list is the authority. */
-  /* ---- the nine briefs ------------------------------------------------------
-     THE CATALOGUE'S OWN DATA, and it is data here for the same reason it is data
-     there: its header asks for the wording to be left alone, because the PM is
-     showing it to people, and nine paragraphs typed into markup is nine chances
-     to improve one of them by accident.
-     EVERY FIGURE IS ILLUSTRATIVE, which the source says too. The worked examples
-     are not a rate card. */
+  /* TWO BRIEFS, ONE PER KIND, QUOTED FROM THE PORTAL'S OWN TWO FORMS
+     (public/creator-brand/campaign-report.html, #cd-form and #cd-bform). What
+     stood here was the nine-entry catalogue from campaignCatalog.ts, which is
+     another surface's data; its header asks for its wording to be left alone,
+     and the right way to honour that is to stop quoting it on a page it does
+     not describe rather than to keep a copy of it up to date.
+     THE TWO DIFFER ON WHAT THE AGENCY BRINGS, so that is what `fields` holds.
+     Everything after it - the budget, the bid, the window, the country - is the
+     same two questions asked of both, and a second copy of them per kind would
+     be the money model forking into two shapes a reader has to learn twice.
+     "REAL" IS GONE FROM BOTH. The source says "real people" and "checked and
+     real"; if we are genuine we do not have to say so, and the word is out
+     across this site. What replaced it says the same thing by being specific:
+     their own accounts, and checked before it bills. */
   var BRIEFS = {
-    "engagement-boost": { name: "Boost a post", tag: "You already posted a video. We send real people to watch it, like it, and comment on it, from their own phones and their own accounts.", steps: ["Paste the link to your video.", "Community members open it and watch it, like normal viewers.", "You pay only for views that are checked and real."], ex: "You set a $200 budget and bid $4 per 1,000 views. If it all fills, that is about 50,000 checked views.", unit: "checked views", per: 1000, review: "Auto-approve", label: "Bid per 1,000 verified views", ph: "4", gen: null, fields: [{"key": "postUrl", "label": "Post URL", "kind": "text", "ph": "https://youtube.com/watch?v=...", "hint": "The public video to boost."}, {"key": "actions", "label": "Actions", "kind": "chips", "options": ["Watch", "Like", "Comment"], "hint": "What each member does."}] },
-    "video-distribution": { name: "Distribute one video", tag: "You give us one finished video. Many community members post that same video from their own real accounts, so it shows up all over.", steps: ["Upload your video once.", "Members post it from their own accounts, with their own captions.", "You pay for the views all those posts get, checked first."], ex: "$500 at $5 per 1,000 views is about 100,000 checked views across every post.", unit: "checked views", per: 1000, review: "Review the first few per creator", label: "Bid per 1,000 verified views", ph: "5", gen: null, fields: [{"key": "videoAsset", "label": "Your video", "kind": "filelink", "ph": "or paste a link to it", "hint": "The one video everyone posts."}, {"key": "platforms", "label": "Platforms", "kind": "chips", "options": ["YouTube", "Instagram", "TikTok", "X", "Reddit"], "hint": "Where members post it."}, {"key": "captionMode", "label": "Captions", "kind": "chips", "options": ["Same caption", "Varied per account"], "hint": "Varied reads more natural."}] },
-    "template-creators": { name: "Creators make videos", tag: "You found a video style that works. Show it to us once, and creators make their own versions of it and post them from their accounts.", steps: ["Share the example video and say what must stay the same.", "Each creator films their own version and posts it.", "You pay a little for each video made, plus the views it earns."], ex: "10 creators make a video each at your $20 per video bid, then every 1,000 checked views costs your view bid on top.", unit: "checked views", per: 1000, review: "Review the first few per creator", label: "Bid per 1,000 verified views", ph: "5", gen: {"label": "Bid per video a creator makes", "ph": "20"}, fields: [{"key": "referenceUrl", "label": "Example video", "kind": "filelink", "ph": "or paste a link to it", "hint": "The style creators copy."}, {"key": "templateBrief", "label": "What must stay the same", "kind": "textarea", "ph": "The hook, the length, what must appear, what to avoid."}, {"key": "platforms", "label": "Platforms", "kind": "chips", "options": ["YouTube", "Instagram", "TikTok", "X", "Reddit"]}, {"key": "perWorker", "label": "Videos per creator", "kind": "number", "ph": "3"}] },
-    "template-blueai": { name: "BlueAI makes videos", tag: "You show one example. BlueAI generates many versions of it, you can check them first, and creators post them from their own accounts.", steps: ["Share the example video or template.", "BlueAI generates the versions. You can review them before anything posts.", "Creators post them. You pay per video generated, plus checked views."], ex: "$300 could generate 15 videos at an $8 per video bid and still leave budget for views.", unit: "checked views", per: 1000, review: "Review the first few per creator", label: "Bid per 1,000 verified views", ph: "5", gen: {"label": "Bid per video BlueAI generates", "ph": "8"}, fields: [{"key": "referenceUrl", "label": "Example video or template", "kind": "filelink", "ph": "or paste a link to it", "hint": "BlueAI makes versions of this."}, {"key": "templateBrief", "label": "What the videos must do", "kind": "textarea", "ph": "The hook, the length, what must appear, what to avoid."}, {"key": "platforms", "label": "Platforms", "kind": "chips", "options": ["YouTube", "Instagram", "TikTok", "X", "Reddit"]}] },
-    "ugc-deliverable": { name: "Get content made", tag: "Creators make content for you and send you the files. Nothing gets posted anywhere. You use it however you like.", steps: ["Write down what you need and the style you want.", "Creators make it and send in their files.", "You pay per finished piece you accept."], ex: "10 short videos at a $25 per video bid is $250.", unit: "finished pieces", per: 1, review: "Review everything", label: "Bid per finished piece", ph: "25", gen: null, fields: [{"key": "deliverableType", "label": "What kind", "kind": "select", "options": ["Short-form video", "Long-form video", "Image set", "Written copy"], "ph": "Pick a format"}, {"key": "brief", "label": "The brief", "kind": "textarea", "ph": "What you need made, the style, the references."}, {"key": "quantity", "label": "How many", "kind": "number", "ph": "10"}] },
-    "reddit-comments": { name: "Reddit comments", tag: "Members with strong, old Reddit accounts talk about you inside conversations already happening, in their own words, where people already ask about things like yours.", steps: ["Tell us the subreddits or threads, and what to get across.", "High karma members write their own comments there.", "You pay per comment that is still up after 3 days."], ex: "$150 at $3 per surviving comment is up to 50 comments.", unit: "surviving comments", per: 1, review: "Review everything", label: "Bid per surviving comment", ph: "3", gen: null, fields: [{"key": "targets", "label": "Threads or subreddits", "kind": "textarea", "ph": "r/coffee, r/espresso, or paste thread links."}, {"key": "messageIntent", "label": "What to get across", "kind": "textarea", "ph": "The point to make, not word-for-word copy.", "hint": "Identical text from many accounts looks fake."}, {"key": "minKarma", "label": "Minimum account karma", "kind": "select", "options": ["1,000+ karma", "5,000+ karma", "10,000+ karma", "25,000+ karma"], "ph": "Pick a karma floor"}, {"key": "pacing", "label": "Pacing", "kind": "select", "options": ["Over a few hours", "Over a day", "Over a few days", "Across the whole window"], "ph": "How fast comments land"}] },
-    "reddit-thread": { name: "Reddit thread", tag: "One member with a strong account starts a conversation about your topic, and other members reply over time so it reads like a real, living thread.", steps: ["Pick the subreddit and the topic.", "A high karma member starts the thread. Others reply over hours or days.", "You pay per reply that is still up after 3 days."], ex: "$100 at $2 per surviving reply is up to 50 replies under your thread.", unit: "surviving replies", per: 1, review: "Review everything", label: "Bid per surviving reply", ph: "2", gen: null, fields: [{"key": "subreddit", "label": "Subreddit", "kind": "text", "ph": "r/smallbusiness"}, {"key": "topicAngle", "label": "Topic and angle", "kind": "textarea", "ph": "What the thread is about and what it should surface."}, {"key": "minKarma", "label": "Minimum karma for the starter", "kind": "select", "options": ["1,000+ karma", "5,000+ karma", "10,000+ karma", "25,000+ karma"], "ph": "Pick a karma floor"}, {"key": "pacing", "label": "Pacing", "kind": "select", "options": ["Over a few hours", "Over a day", "Over a few days", "Across the whole window"], "ph": "How replies spread out"}] },
-    "research": { name: "Product research", tag: "Real people use your product on their own devices, then answer your questions honestly. You get structured reports, not guesses.", steps: ["Tell us what to try and what to ask.", "Members use your product like normal users.", "You pay per finished report you receive."], ex: "$160 at $8 per report gets you 20 honest write-ups.", unit: "reports", per: 1, review: "Auto-approve", label: "Bid per completed report", ph: "8", gen: null, fields: [{"key": "taskScript", "label": "What to try", "kind": "textarea", "ph": "The task or flow you want each member to run."}, {"key": "questions", "label": "Questions to answer", "kind": "textarea", "ph": "One per line."}] },
-    "community-retainer": { name: "Community presence", tag: "A small pod of members stays active in the communities that matter to you, answers where you are relevant, and sends you a digest.", steps: ["List the communities that matter to you.", "A pod of members stays present there and joins in where you fit.", "You pay one monthly amount. Stop any month you like."], ex: "$300 a month keeps a pod present in 3 communities.", unit: "months of presence", per: 1, review: "Review everything", label: "Monthly retainer bid", ph: "300", gen: null, fields: [{"key": "communities", "label": "Communities to cover", "kind": "textarea", "ph": "Subreddits, forums, or Discords."}, {"key": "cadence", "label": "Digest cadence", "kind": "select", "options": ["Weekly", "Bi-weekly", "Monthly"], "ph": "How often we report back"}] }
+    engagement: {
+      name: "Video engagement driver",
+      tag: "You already posted a video. People watch it, like it and comment on it from their own accounts.",
+      steps: ["Paste the link to your video.",
+              "Community members open it and watch it, the way any viewer would.",
+              "You pay for the ones that are checked."],
+      ex: "You set a $500 budget and bid $1 per verified completion. If it all fills, that is 500 completions.",
+      unit: "verified completions", per: 1, review: "Auto-approve",
+      label: "Bid per verified completion", ph: "1.00", gen: null,
+      fields: [
+        { key: "postUrl", label: "YouTube video URL", kind: "text",
+          ph: "https://youtube.com/watch?v=...", hint: "A public YouTube video or Short." },
+        { key: "actions", label: "Action", kind: "chips",
+          options: ["Watch", "Like", "Comment"], hint: "What each member does." }
+      ]
+    },
+    growth: {
+      name: "Video growth",
+      tag: "You have no video yet. Our agent studies your category, makes the videos, and members post them from their own accounts.",
+      steps: ["Our team reads the brief and either takes it or comes back to you.",
+              "Our agent studies your category and makes the videos.",
+              "We review every video ourselves, and you see the approved ones here.",
+              "Members post them and watch, from their own accounts.",
+              "Views are verified before they count, capped at your budget."],
+      ex: "You set a $2,000 budget at $5 per 1,000 views. If it all fills, that is about 400,000 verified views.",
+      unit: "verified views", per: 1000, review: "Review everything",
+      label: "Price per 1,000 views", ph: "5", gen: null,
+      fields: [
+        { key: "site", label: "Website", kind: "text", ph: "fernwehcoffee.com",
+          hint: "Our agent reads this to learn the category and what to promote." },
+        { key: "refs", label: "Reference videos", kind: "filelink", ph: "Paste links, one per line",
+          hint: "Two or three videos is plenty." },
+        { key: "channels", label: "Your channels", kind: "text", opt: true,
+          ph: "youtube.com/@fernweh, instagram.com/fernweh",
+          hint: "Where you post today, so the videos match what your audience already sees." }
+      ]
+    }
   };
+
 
   /* ---- the five steps -------------------------------------------------------
      FOUR QUESTIONS AND AN INTRO, which is the application's shape because it is
      the right shape: one thing asked per screen, and the first screen asks for
      nothing at all. What changed is only what is being described. */
-  /* STEP ZERO IS THE BRIEF, AND IT IS DIFFERENT EVERY TIME. It used to be five
-     fixed rows about how onBlue works, which is the creator application's shape:
-     one flow, one explainer. Nine campaign types have nine different answers to
-     what you pay for and when work arrives, and a reader who picked "Reddit
-     comments" is owed the Reddit answer rather than the average of nine.
-     IT REUSES introRow AND .aside, both of which already exist for exactly this:
-     a short list of icon rows, then one paragraph that responds to a choice. */
-  function renderStep0() {
-    var b = BRIEFS[d.type] || null;
-    if (!b) {
-      return introRow(ICON.info, 'Pick a campaign type to see how it works.');
-    }
-    var per = b.per > 1 ? 'Per ' + b.per.toLocaleString() + ' results' : 'Per result';
-    return '<p class="brief-tag">' + esc(b.tag) + '</p>'
-      + '<div class="brief-facts">'
-      + fact('You pay for', b.unit)
-      + fact('Priced', per)
-      + fact('Arrives on', b.review)
-      + '</div>'
-      + b.steps.map(function (line, i) {
-          return introRow([ICON.pencil, ICON.clock, ICON.wallet][i] || ICON.info, esc(line));
-        }).join('')
-      + '<p class="aside"><span class="aside-ic">' + ICON.info + '</span>'
-      + '<b>Example.</b> ' + esc(b.ex) + '</p>';
-  }
+  /* THE TYPE EXPLAINER IS GONE. It was a whole step spent saying what the thing
+     you had just chosen was, which a catalogue of nine made necessary: a card in
+     a grid that size can carry a name and one line, so the description had to go
+     somewhere. Two cards can each carry their own, and they do, so this step had
+     become the form repeating the screen before it. */
 
   function fact(k, v) {
     return '<span class="brief-fact"><span class="mini-title">' + esc(k) + '</span>'
@@ -2280,23 +2307,49 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
       + '<p class="aside"><span class="aside-ic">' + ICON.clock + '</span>It stops when the budget is spent or the window closes, whichever comes first.</p>';
   }
 
+  /* ---- where it runs, and anything we have not thought to ask ---------------
+     THE COUNTRY IS TWO CHIPS, NOT A LIST OF TWO HUNDRED. The portal offers a
+     market or the world, and a select holding every country would be a control
+     promising a precision this product does not have: the answer changes who
+     picks the job up, not which passport they hold.
+     AND THE FREE-TEXT BOX IS LAST AND OPTIONAL, which is the only honest place
+     for one on a form whose whole promise is that it asks the right questions.
+     It moved here from step one, where it sat under the questions the kind
+     actually needs and invited an answer before the reader knew what would be
+     asked next. */
+  var COUNTRIES = ['United States', 'Worldwide'];
   function renderStep4(err) {
-    return choiceGroup({
-      field: 'review', name: 'brief-review', variant: 'cards',
-      label: 'How much do you want to see before it posts?',
-      hint: 'onBlue checks every action either way. This adds your own pass on top.',
-      options: REVIEW_OPTS, err: err.review
-    })
-    + '<label class="q" data-field="email">'
-    + '<span class="q-label">What email should we contact you on?</span>'
-    + '<input type="email" inputmode="email" autocomplete="email" class="field' + (err.email ? ' err' : '') + '" '
-    + 'name="email" placeholder="you@example.com" value="' + esc(d.email) + '">'
-    + msgSlot(err.email) + '</label>'
-    + checkField({
-      field: 'agree', subtle: true,
-      body: 'By creating this campaign, I agree to the <a class="legal-link" href="/onblue/terms#terms" target="_blank" rel="noopener">Program Terms</a> and I\u2019m okay with BlueStacks reaching out to me about onBlue.',
-      err: err.agree
-    });
+    var b = BRIEFS[d.type] || {};
+    var html = '';
+
+    /* WHAT HAPPENS NEXT, AND ONLY WHERE IT IS NOT OBVIOUS. An engagement
+       campaign starts when we approve it; a growth campaign has five stages
+       between this button and the first view, four of which are ours, and an
+       agency that does not know that reads the silence of the next fortnight as
+       nothing happening. */
+    if (b.steps && b.steps.length > 3) {
+      html += '<div class="nextbox"><span class="mini-title">What happens after you create this</span><ol>'
+        + b.steps.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('')
+        + '</ol></div>';
+    }
+
+    html += '<div class="q" data-field="country">'
+      + '<span class="q-label">Target country</span>'
+      + '<div class="chip-row">'
+      + COUNTRIES.map(function (c) {
+          var on = d.country === c;
+          return '<button type="button" class="selchip' + (on ? ' is-on' : '') + '"'
+            + ' aria-pressed="' + (on ? 'true' : 'false') + '" data-country="' + esc(c) + '">'
+            + (on ? TICK : '') + esc(c) + '</button>';
+        }).join('')
+      + '</div></div>';
+
+    html += '<label class="q" data-field="note">'
+      + '<span class="q-label">Anything else we should know? <span class="opt">(optional)</span></span>'
+      + '<textarea class="field" name="note" rows="3" '
+      + 'placeholder="Anything we should know before we start.">' + esc(d.note) + '</textarea>'
+      + msgSlot('', '') + '</label>';
+    return html;
   }
 
   /* THE UNIT COMES FROM THE CAMPAIGN KIND, not from a field. The catalogue
@@ -2304,7 +2357,25 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
      buyer restate a choice they have made. */
   function unitHint() { return 'Per ' + (d.unit || '1,000 verified views') + '.'; }
 
-  var STEP_RENDER = [renderStep0, renderStep1, renderStep2, renderStep3, renderStep4];
+  /* THREE RENDERERS, AND TWO OF THE OLD FIVE ARE FOLDED RATHER THAN DELETED.
+     Step one is the kind's own questions, step two is the money and the window
+     together, step three is where it runs. renderStep0, the type explainer, and
+     the old contact-and-terms step are gone; renderStep3 is called by step two
+     for the half of it that is dates. */
+  /* ONE OF TWO, NOT A SET OF MANY. The actions row on step one is a
+     multi-select because a campaign can ask for a watch AND a like; a campaign
+     runs in one market or in all of them, so picking a country un-picks the
+     other rather than adding to it. */
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest ? e.target.closest('[data-country]') : null;
+    if (!b) { return; }
+    d.country = b.getAttribute('data-country');
+    render();
+  });
+
+  var STEP_RENDER = [renderStep1, function (err) {
+    return renderStep2(err) + renderStep3(err);
+  }, renderStep4];
 
   /* ---- the journey strip ---- */
   /* TWO RAILS, ONE COMPONENT. Before an agency is approved the three stages are
@@ -2353,9 +2424,16 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
          between the last word and its own punctuation. */
       + '<div class="confirm-head">'
       + '<span class="confirm-sun" aria-hidden="true"><span class="confirm-sun-in"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.6C12.55 2.6 12.88 3.15 13.08 4.7c.62 4.7 1.52 5.6 6.22 6.22 1.55.2 2.1.53 2.1 1.08s-.55.88-2.1 1.08c-4.7.62-5.6 1.52-6.22 6.22-.2 1.55-.53 2.1-1.08 2.1s-.88-.55-1.08-2.1c-.62-4.7-1.52-5.6-6.22-6.22C3.15 12.88 2.6 12.55 2.6 12s.55-.88 2.1-1.08c4.7-.62 5.6-1.52 6.22-6.22C11.12 3.15 11.45 2.6 12 2.6Z"/></svg></span></span>'
-      + '<h2 class="title-xl" id="confirm-title">Your campaign <em>is live.</em></h2>'
+      /* IN REVIEW, NOT LIVE. Nothing reaches the community until we have read
+         it, which is the promise the whole approval flow is built on, and a
+         confirmation announcing a campaign is live the second it is filed
+         contradicts the row it is about to appear as: that row says IN REVIEW,
+         and one of the two would have been lying. */
+      + '<h2 class="title-xl" id="confirm-title">Your campaign <em>is in review.</em></h2>'
       + '</div>'
-      + '<p class="lede">onBlue is matching <b>' + esc(d.name || d.kind || 'your campaign') + '</b> to agents now. Nothing is charged until work is verified, and we’ll email <b>' + esc(d.email) + '</b> as the first results land.</p>'
+      + '<p class="lede">We check every campaign before it goes live, usually within one business day. <b>'
+      + esc(d.name || d.kind || 'Your campaign') + '</b> is on your dashboard now, and we’ll email <b>'
+      + esc(d.email) + '</b> the moment it is approved.</p>'
       + '<span class="earn-payout"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.5l5 5L19.5 6.5"/></svg>Campaign created</span>'
       /* THE SAME SHAPE AS THE GATE'S "Already have an account? Sign in": one
          quiet line under the last thing on the screen, in --muted, with the
@@ -2634,9 +2712,87 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
       brief: 'Boost a post. Agents watch part one of the drop on their own accounts.'
     }
   ];
-  /* EVERY ROW IS 1:1, so the rate is read off the data rather than asserted
-     beside it. A bid quoted in the sheet that the row's own two figures
-     contradict is the one error on this screen nobody would catch. */
+  /* ---- THE SECOND KIND (from the portal's own samples) ----------------------
+     Video growth is not a variant of an engagement campaign, it is the other
+     half of the product: the agency brings no video, our agent makes them, and
+     what gets counted is verified VIEWS rather than verified completions. So it
+     counts in its own unit, prices per thousand rather than per one, and its
+     report carries a Videos card that an engagement campaign has no equivalent
+     of - showing an agency back the video they gave us would say nothing.
+     BOTH OF ITS STATES, because in review is the one an engagement campaign has
+     no equivalent of either: a human ops gate sits between the brief and the
+     build, so this kind spends real days in a state where there is nothing yet
+     to show, and a dashboard that only ever illustrates the happy end of that
+     hides the wait. */
+  CAMPAIGNS.push(
+    {
+      id: 'northline', kind: 'growth', name: 'Northline Skate Co.: format tests', ref: '#a15d7f22',
+      done: 102000, target: 300000, spent: 510, budget: 1500, note: '6 videos live',
+      unit: 'verified views', rate: '$5', per: '1,000 verified views',
+      state: 'live', label: 'Live', ends: 'Sep 30, 2026', charged: 'Sep 12, 2026',
+      short: 'Northline formats',
+      brief: 'Video growth. Our agent studies the category, makes the films, and members post them.'
+    },
+    {
+      id: 'fernweh', kind: 'growth', name: 'Fernweh Coffee: category films', ref: '#3e81b0c5',
+      done: 0, target: 400000, spent: 0, budget: 2000, note: 'brief with our team',
+      unit: 'verified views', rate: '$5', per: '1,000 verified views',
+      state: 'review', label: 'In review', ends: 'Oct 14, 2026', charged: 'Oct 14, 2026',
+      short: 'Fernweh films',
+      brief: 'Video growth. Our agent studies the category, makes the films, and members post them.'
+    }
+  );
+  /* THE KIND IS A FACT ABOUT EVERY ROW, so the four that predate the second one
+     get it here rather than each carrying a line saying what they all are. */
+  CAMPAIGNS.forEach(function (c) { if (!c.kind) { c.kind = 'engagement'; } });
+  /* SAMPLES UNTIL SOMETHING SAYS OTHERWISE, and each carries the two facts its
+     row prints beside the name: what kind of campaign it is in the reader's
+     words, and where it ran. The kind is a key, not a label, because the key is
+     what the report branches on and a row that named itself would be a second
+     place for the two to disagree. */
+  var KIND_L = { engagement: 'YouTube Short', growth: 'Video growth' };
+  CAMPAIGNS.forEach(function (c) {
+    if (c.sample === undefined) { c.sample = true; }
+    if (!c.geo) { c.geo = c.kind === 'growth' && c.state === 'review' ? 'Worldwide' : 'US'; }
+  });
+
+  /* ---- AND THE ONES THE AGENCY MADE ITSELF ---------------------------------
+     Your campaigns and Sample reports are two lists of different things, and the
+     portal keeps them apart for a reason a shared list would destroy: a campaign
+     you created is always IN REVIEW, because you just created it and we have not
+     looked at it yet, while every sample is a finished story with a report
+     behind it. One list holding both would have to show a row you made beside a
+     row showing what it will look like in three weeks, with nothing saying which
+     is which.
+     TWO OF THEM, ONE PER KIND, because that is the difference the Campaigns
+     switch above exists to show: one is an engagement campaign, two is that plus
+     a video growth campaign, and the second one is what puts the videos card on
+     screen in its waiting state. */
+  CAMPAIGNS.push(
+    {
+      id: 'mine-boost', kind: 'engagement', sample: false,
+      name: 'Autumn Drop: Teaser Short', ref: '#5f1c72ab', geo: 'US',
+      done: 0, target: 400, spent: 0, budget: 400, note: 'starts after review',
+      state: 'review', label: 'In review', ends: 'Oct 8, 2026', charged: 'Oct 8, 2026',
+      short: 'Autumn Drop',
+      brief: 'Video engagement driver. Members watch the teaser on their own accounts.'
+    },
+    {
+      id: 'mine-films', kind: 'growth', sample: false,
+      name: 'Harbour Goods: category films', ref: '#b7e04d19', geo: 'Worldwide',
+      done: 0, target: 200000, spent: 0, budget: 1000, note: 'brief with our team',
+      unit: 'verified views', rate: '$5', per: '1,000 verified views',
+      state: 'review', label: 'In review', ends: 'Oct 20, 2026', charged: 'Oct 20, 2026',
+      short: 'Harbour films',
+      brief: 'Video growth. Our agent studies the category, makes the films, and members post them.'
+    }
+  );
+
+  /* EVERY ENGAGEMENT ROW IS 1:1, so the rate is read off the data rather than
+     asserted beside it. A bid quoted in the sheet that the row's own two figures
+     contradict is the one error on this screen nobody would catch. Video growth
+     carries its own, because a thousand views for five dollars cannot be read
+     off a pair of totals. */
   var RATE = '$1';
   function camp(id) {
     for (var i = 0; i < CAMPAIGNS.length; i++) {
@@ -2656,11 +2812,20 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
      Three figures typed separately is three chances for the screen to contradict
      itself, and it did: the old pair described one campaign the list no longer
      shows. */
-  function account(ids) {
-    var cs = ids.map(camp), committed = 0, charged = 0;
+  /* THE TOTALS ARE DERIVED AT PAINT, NOT AT CONSTRUCTION. They used to be
+     added up once when the account was built, which was correct while every
+     campaign in it was always on screen. It is not any more: v1 does not have
+     video growth, so in that build a row is filtered out of the list while its
+     budget was still inside a figure computed before the filter existed. The
+     screen would have shown one campaign and a remaining balance that only
+     makes sense with two, which is precisely the kind of quiet disagreement the
+     construction-time version was written to prevent. Same rule, applied one
+     step later: totals are a function of what is SHOWN. */
+  function account(ids) { return { camps: ids.map(camp) }; }
+  function totals(cs) {
+    var committed = 0, charged = 0;
     cs.forEach(function (c) { committed += c.budget; charged += c.spent; });
     return {
-      camps: cs,
       balance: committed - charged,
       earned: charged,
       txns: cs.slice().sort(function (x, y) {
@@ -2670,59 +2835,54 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
       })
     };
   }
+  /* THREE COUNTS, AND THE THIRD IS NOT MORE OF THE SECOND. One campaign is an
+     engagement campaign. Two is that one plus a video growth campaign, so the
+     step between them is what puts the other KIND on screen with its own unit,
+     its own row wording and its own report. A second account that only added
+     more rows of the same kind would leave half of this product unreachable
+     from the switch that exists to reach it.
+     'none' RATHER THAN 'empty': what the account has none OF is campaigns, and
+     the bar above it says Campaigns. */
   var ACCOUNTS = {
-    empty: account([]),
-    one: account(['spring', 'collab', 'anthem', 'summer'])
+    none: account([]),
+    one: account(['mine-boost']),
+    two: account(['mine-boost', 'mine-films'])
   };
-  var acct = 'empty';
+  /* THE SIX ARE A FIXTURE, NOT AN ACCOUNT. They are on the screen whatever the
+     agency has, because the reason they exist is the agency that has nothing. */
+  var SAMPLES = CAMPAIGNS.filter(function (c) { return c.sample; });
+  var acct = 'none';
 
   function money(n) { return '$' + n; }
 
+  /* TWO LISTS AND THREE FIGURES, and every one of them is derived from the
+     same place. The version this replaces wrote a balance, a lifetime total, two
+     tab counts and a ledger, five figures about four campaigns, and each was a
+     chance for the screen to contradict itself. What is left is what the portal
+     shows, and each of the three says what will move it. */
   function renderDash() {
     var dash = document.getElementById('dash');
     if (!dash) { return; }
-    var a = ACCOUNTS[acct];
-    var tab = (dash.querySelector('.progtab.on') || {}).getAttribute
-      ? dash.querySelector('.progtab.on').getAttribute('data-tab') : 'active';
+    var mine = visible(ACCOUNTS[acct].camps);
+    var samples = visible(SAMPLES);
 
-    /* every figure on the page and in the sheets reads the same attribute, so a
-       withdrawal cannot leave one of them stating the old amount */
-    Array.prototype.forEach.call(document.querySelectorAll('[data-fig="balance"]'), function (el) {
-      el.textContent = money(a.balance);
-    });
-    Array.prototype.forEach.call(document.querySelectorAll('[data-fig="earned"]'), function (el) {
-      el.textContent = money(a.earned);
-    });
-    /* THE COUNTS ARE THE LISTS' OWN LENGTHS. They were two numbers written
-       beside the data they were counting, which is how a tab came to read 0 over
-       a pane holding a campaign. */
-    var live = a.camps.filter(function (c) { return c.state === 'live'; });
-    var ended = a.camps.filter(function (c) { return c.state !== 'live'; });
-    dash.querySelector('[data-count="active"]').textContent = live.length;
-    dash.querySelector('[data-count="past"]').textContent = ended.length;
-    dash.querySelector('[data-list="active"]').innerHTML = live.map(crow).join('');
-    dash.querySelector('[data-list="past"]').innerHTML = ended.map(crow).join('');
+    /* IN REVIEW COUNTS THE ONES WAITING, not the ones that exist. On this
+       screen every campaign an agency has just made is in review, so the two
+       are the same number today and would part company the day one is
+       approved; counting the thing the label names is what keeps that true. */
+    var waiting = mine.filter(function (c) { return c.state === 'review'; });
+    var done = 0, spend = 0;
+    mine.forEach(function (c) { done += c.done; spend += c.spent; });
+    dash.querySelector('[data-tile="review"]').textContent = String(waiting.length);
+    dash.querySelector('[data-tile="done"]').textContent = done.toLocaleString();
+    dash.querySelector('[data-tile="spend"]').textContent = money(spend);
 
-    var ledger = dash.querySelector('[data-ledger]');
-    var none = dash.querySelector('[data-ledger-empty]');
-    ledger.innerHTML = a.txns.map(function (t) {
-      return '<li><span class="txn-date">' + esc(t.date) + '</span>'
-        + '<span class="txn-label">' + esc(t.label) + '</span>'
-        + '<span class="txn-amt">' + money(t.amount) + '</span></li>';
-    }).join('');
-    ledger.hidden = !a.txns.length;
-    none.hidden = !!a.txns.length;
-
-    /* TWO CONDITIONS, ONE PLACE. A block shows when it belongs to the open tab
-       AND to the current account; written as two independent `hidden` writes
-       they raced, and whichever ran last won. */
-    Array.prototype.forEach.call(dash.querySelectorAll('[data-pane]'), function (el) {
-      var when = el.getAttribute('data-when');
-      el.hidden = el.getAttribute('data-pane') !== tab || (when !== null && when !== acct);
-    });
+    dash.querySelector('[data-list="mine"]').innerHTML = mine.map(crow).join('');
+    dash.querySelector('[data-mine]').hidden = !mine.length;
+    dash.querySelector('[data-mine-empty]').hidden = !!mine.length;
+    dash.querySelector('[data-list="samples"]').innerHTML = samples.map(crow).join('');
   }
 
-  var INFO_MARK = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></svg>';
 
   /* ONE ROW, FIVE CELLS, and the percentage is computed rather than carried:
      a width written next to the two numbers it is supposed to represent is a
@@ -2730,160 +2890,475 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
   function crow(c) {
     var pct = Math.round(c.done / c.target * 1000) / 10;
     var chip = c.state === 'live' ? 'chip chip--open'
-      : c.state === 'under' ? 'chip chip--under' : 'chip';
-    return '<li class="crow">'
+      : c.state === 'under' ? 'chip chip--under'
+      : c.state === 'review' ? 'chip chip--wait' : 'chip';
+    /* THE ROW SAYS WHAT KIND IT IS AND COUNTS IN THAT KIND'S UNIT. A video
+       growth row reading "102,000 of 300,000" with no noun is a row that could
+       be counting anything; the unit IS the product on this half of it. */
+    var unit = c.unit ? ' ' + c.unit : '';
+    /* THE META LINE IS THE ROW'S THREE FACTS, and it was three words typed into
+       the template: "Sample, YouTube Short, US" on every row of both lists,
+       including the ones that are neither samples nor YouTube nor American. A
+       constant standing where a fact belongs is worse than a blank, because it
+       reads as an answer. Sample leads when it is one, because whether a figure
+       is real is the first thing to know about it. */
+    var meta = (c.sample ? 'Sample &middot; ' : '') + esc(KIND_L[c.kind]) + ' &middot; ' + esc(c.geo);
+    /* THE WHOLE ROW IS THE TARGET, not a 34px glyph at the end of it. What it
+       opens is the campaign's report, which is the only thing anybody wants from
+       a row in this list, so a control that has to be found and aimed at is a
+       toll on the one action. The chevron stays as the affordance. */
+    return '<li class="crow is-link" role="button" tabindex="0" data-open="' + esc(c.id) + '">'
       + '<span class="crow-id">'
       + '<span class="crow-name">' + esc(c.name) + ' <i>' + esc(c.ref) + '</i></span>'
-      + '<span class="crow-meta">Sample &middot; YouTube Short &middot; US</span>'
+      + '<span class="crow-meta">' + meta + '</span>'
       + '</span>'
       + '<span class="crow-fill">'
-      + '<span class="crow-note"><b>' + c.done + '</b> of ' + c.target + ' &middot; ' + esc(c.note) + '</span>'
+      + '<span class="crow-note"><b>' + c.done.toLocaleString() + '</b> of ' + c.target.toLocaleString()
+      + unit + ' &middot; ' + esc(c.note) + '</span>'
       + '<span class="bar" role="progressbar" aria-valuenow="' + c.done + '" aria-valuemin="0"'
       + ' aria-valuemax="' + c.target + '" aria-label="' + esc(c.name) + ' fill">'
       + '<span class="bar-fill" style="width: ' + pct + '%"></span></span>'
       + '</span>'
       + '<span class="crow-spend"><b>' + money(c.spent) + '</b><span>of ' + money(c.budget) + '</span></span>'
       + '<span class="crow-state"><span class="' + chip + '">' + esc(c.label) + '</span></span>'
-      + '<button class="crow-info" type="button" aria-label="About ' + esc(c.name) + '"'
-      + ' data-sheet="prog-info" data-camp="' + esc(c.id) + '">' + INFO_MARK + '</button>'
+      + '<span class="crow-go">View report<svg viewBox="0 0 24 24" width="13" height="13" fill="none"'
+      + ' stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"'
+      + ' aria-hidden="true"><path d="M9 5.5l6.5 6.5L9 18.5"/></svg></span>'
       + '</li>';
   }
 
-  /* THE SHEET IS FILLED BEFORE IT IS SHOWN, and it has to be: the opener that
-     shows it lives in the shared chrome and listens on the document, so this one
-     runs in the capture phase to get there first. Registering a second bubble
-     listener would have raced it, and lost half the time. */
-  document.addEventListener('click', function (e) {
-    var go = e.target.closest ? e.target.closest('[data-camp]') : null;
-    if (!go) { return; }
-    var c = camp(go.getAttribute('data-camp'));
-    var sheet = document.getElementById('sheet-prog-info');
-    if (!c || !sheet) { return; }
-    sheet.querySelector('#prog-info-title').textContent = c.name;
-    sheet.querySelector('[data-info="brief"]').textContent = c.brief;
-    sheet.querySelector('[data-info="counts"]').innerHTML =
-      '<b>' + RATE + '</b> per 1,000 verified views, charged as they land.';
-    sheet.querySelector('[data-info="ends"]').innerHTML = c.state === 'live'
-      ? '<b>' + esc(c.ends) + '</b>, or when the budget runs out.'
-      : 'Ended <b>' + esc(c.ends) + '</b>.';
-  }, true);
 
+
+  /* BACK TO THE LIST ON EVERY CHANGE. A report is about one campaign, and both
+     of these switches can take that campaign off the account: leaving the report
+     up would be a screen describing something that, one click earlier, stopped
+     existing. The list is the only view that is true whatever these two say. */
   function setAccount(id) {
-    acct = ACCOUNTS[id] ? id : 'empty';
+    acct = ACCOUNTS[id] ? id : 'none';
     renderDash();
+    showView('list');
   }
   window.onblueAccount = setAccount;
+
+  /* ---- which build ----------------------------------------------------------
+     v1 is the portal as it ships: one campaign type and no chooser. v2 adds
+     video growth. It is a separate axis from how many campaigns an account
+     holds because it is a fact about the PRODUCT rather than about the account,
+     and the two have to be set independently or half the combinations a
+     reviewer needs are unreachable.
+     IT FILTERS RATHER THAN SWITCHING DATASETS. A v1 copy of every account would
+     be the same rows written twice, and the two copies would drift the first
+     time a figure changed. A campaign of a kind this build does not have simply
+     is not there, which is also what it means. */
+  var flow = 'v2';
+  function setWorkflow(v) {
+    flow = v === 'v1' ? 'v1' : 'v2';
+    document.body.classList.toggle('is-v1', flow === 'v1');
+    renderDash();
+    showView('list');
+  }
+  window.onblueWorkflow = setWorkflow;
+  function visible(cs) {
+    return flow === 'v2' ? cs : cs.filter(function (c) { return c.kind !== 'growth'; });
+  }
 
   /* the same control the confirmation and the dashboard use, on the same three
      states, because a reader who has seen one of them has learned all three */
   (function reviewRefresh() {
     var host = document.querySelector('#review [data-refresh]');
-    if (host) { wireRefresh(host, host, document.querySelector('#review .confirm-alt')); }
+    if (!host) { return; }
+    wireRefresh(host, host, document.querySelector('#review .confirm-alt'));
+
+    /* CHECKED AT, IN WORDS THAT AGE. A timestamp is the wrong unit here: what a
+       reader wants to know is not the time of day it happened but whether it
+       has just happened, so the line counts in minutes and repaints itself on a
+       slow tick rather than being written once and then quietly becoming a lie.
+       IT DOES NOT APPROVE AFTER A DELAY, deliberately. Approval is a person
+       reading an application; a prototype that granted it on a timer would
+       teach a reviewer that it happens on its own. */
+    var note = document.getElementById('rev-note');
+    var at = 0, tick = 0;
+    function ago() {
+      var m = Math.floor((Date.now() - at) / 60000);
+      return m < 1 ? 'just now' : m === 1 ? '1 minute ago' : m + ' minutes ago';
+    }
+    function paint() {
+      if (!note || !at) { return; }
+      note.textContent = 'Checked ' + ago() + '. Still in review.';
+      note.hidden = false;
+    }
+    host.addEventListener('click', function () {
+      /* AFTER THE CONTROL HAS SETTLED, not on the press. The button spends 1.4s
+         saying Refreshing, and a receipt landing while it still says so would be
+         reporting the end of something the screen is still showing the middle
+         of. */
+      window.setTimeout(function () { at = Date.now(); paint(); }, 1400);
+      if (!tick) { tick = window.setInterval(paint, 30000); }
+    });
+  })();
+
+  /* ==========================================================================
+     THE REPORT
+
+     ONE BUILDER FOR BOTH KINDS. Everything on this screen that differs between
+     an engagement campaign and a video growth one is derived from the record
+     rather than authored twice: the unit, what a bid buys, what a run carries as
+     evidence, and whether there is a Videos card at all.
+
+     AND EVERY FIGURE IS DERIVED FROM THE TWO THE ROW ALREADY SHOWED. The source
+     this is rebuilt from types its numbers in - 212 verified, 6 under review, 9
+     failed, 270 open on the board, $288 remaining - and every one of those is a
+     chance for the report to disagree with the list that led to it. Here the
+     only inputs are done, target, spent and budget, which are the two pairs the
+     row prints, so the report cannot say something the row denies.
+     ========================================================================== */
+
+  /* per verified completion, or per thousand verified views: the only two prices
+     this product has, and which one applies is a fact about the kind */
+  function bidOf(c) { return c.kind === 'growth' ? 5 : 1; }
+  function perOf(c) { return c.kind === 'growth' ? 1000 : 1; }
+  function unitOf(c) { return c.kind === 'growth' ? 'verified views' : 'verified completions'; }
+
+  /* THE SHARE THAT NEEDS A SECOND LOOK, AND THE SHARE THAT FAILED. Two ratios
+     rather than two typed numbers, so a campaign at any size gets a verification
+     panel that adds up against its own total. They are the source's own
+     proportions, read off its worked example: 6 and 9 against 212. */
+  function checks(c) {
+    return {
+      ok: c.done,
+      wait: Math.round(c.done * 0.028),
+      bad: Math.round(c.done * 0.042)
+    };
+  }
+
+  function daysLeft(c) {
+    var end = Date.parse(c.ends);
+    if (isNaN(end)) { return 0; }
+    return Math.max(0, Math.round((end - Date.now()) / 86400000));
+  }
+
+  function moneyF(n) {
+    return '$' + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  }
+
+  /* ---- the curve ------------------------------------------------------------
+     TWO LINES: what has been verified, day by day, and the straight pace that
+     reaches the target by the closing date. The gap between them is the whole
+     point of the chart, and it is the one thing a row of totals cannot show.
+     THE SERIES IS GENERATED, NOT TYPED. It has to end exactly on `done` or the
+     chart contradicts the tile above it, and a hand-written series that happens
+     to end there today stops doing so the moment a figure changes. */
+  function series(c, n) {
+    var out = [], i, t;
+    for (i = 1; i <= n; i++) {
+      t = i / n;
+      /* slightly behind a straight line early and catching up, which is what a
+         campaign that has to find its audience actually does */
+      out.push(Math.round(c.done * (0.82 * t + 0.18 * t * t)));
+    }
+    out[n - 1] = c.done;
+    return out;
+  }
+
+  function chart(c) {
+    var N = 8, vals = series(c, N);
+    var W = 640, H = 240, L = 46, R = 16, T = 16, B = 30;
+    var top = Math.max(c.target, c.done) || 1;
+    var x = function (i) { return L + (W - L - R) * (N === 1 ? 0 : i / (N - 1)); };
+    var y = function (v) { return T + (H - T - B) * (1 - v / top); };
+
+    var grid = '', i;
+    for (i = 0; i <= 4; i++) {
+      var gy = T + (H - T - B) * (i / 4);
+      grid += '<line x1="' + L + '" y1="' + gy.toFixed(1) + '" x2="' + (W - R) + '" y2="' + gy.toFixed(1) + '"/>';
+      grid += '<text x="' + (L - 8) + '" y="' + (gy + 3.5).toFixed(1) + '" text-anchor="end">'
+        + Math.round(top * (1 - i / 4)).toLocaleString() + '</text>';
+    }
+
+    var line = vals.map(function (v, k) { return (k ? 'L' : 'M') + x(k).toFixed(1) + ' ' + y(v).toFixed(1); }).join(' ');
+    var area = line + ' L' + x(N - 1).toFixed(1) + ' ' + y(0).toFixed(1) + ' L' + x(0).toFixed(1) + ' ' + y(0).toFixed(1) + ' Z';
+    var pace = 'M' + x(0).toFixed(1) + ' ' + y(c.target / N).toFixed(1)
+      + ' L' + x(N - 1).toFixed(1) + ' ' + y(c.target).toFixed(1);
+
+    return '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Cumulative '
+      + esc(unitOf(c)) + ' by day against the pace needed to reach '
+      + c.target.toLocaleString() + '">'
+      + '<g stroke="var(--border-soft)" stroke-width="1" fill="none">' + grid.replace(/<text[^]*?<\/text>/g, '') + '</g>'
+      + '<g fill="var(--dim-ink)" font-size="10">'
+      + grid.replace(/<line[^>]*\/>/g, '') + '</g>'
+      + '<path d="' + area + '" fill="rgba(21,110,254,0.07)" stroke="none"/>'
+      + '<path d="' + pace + '" fill="none" stroke="var(--dim-ink)" stroke-width="1.4" stroke-dasharray="5 5"/>'
+      + '<path d="' + line + '" fill="none" stroke="var(--blue-ink)" stroke-width="2.2"'
+      + ' stroke-linecap="round" stroke-linejoin="round"/>'
+      + '</svg>';
+  }
+
+  /* ---- proof of work --------------------------------------------------------
+     SIX RUNS, AND THE COLUMNS FOLLOW THE KIND. An engagement run is one person
+     watching, liking and commenting on the agency's video, so the evidence is a
+     screenshot and a permalink to what they wrote. A growth run is one person
+     POSTING one of our films and it accruing views, so what qualifies it is
+     which film and where it went up. The same six columns asked of both would
+     make one of the two answer a question it has no answer to. */
+  var RUNS_E = [
+    { d: 'Aug 11, 09:42', acts: ['WATCH', 'LIKE', 'COMMENT'], q: 'The reveal at the end got me, did not expect that finish', ev: 2, st: 'ok' },
+    { d: 'Aug 11, 09:17', acts: ['WATCH', 'LIKE', 'COMMENT'], q: 'Watched this twice, the pacing is so clean', ev: 2, st: 'ok' },
+    { d: 'Aug 11, 08:55', acts: ['WATCH', 'LIKE', 'COMMENT'], q: 'Comment posted, awaiting platform indexing', ev: 1, st: 'wait' },
+    { d: 'Aug 11, 08:31', acts: ['WATCH', 'LIKE'], q: '', ev: 1, st: 'ok' },
+    { d: 'Aug 10, 21:06', acts: ['WATCH', 'LIKE', 'COMMENT'], q: 'This is the kind of ad I actually finish', ev: 2, st: 'ok' },
+    { d: 'Aug 10, 19:48', acts: ['WATCH'], q: 'Like action did not register on retry', ev: 1, st: 'bad' }
+  ];
+  var RUNS_G = [
+    { d: 'Sep 12, 11:20', acts: ['POST', 'WATCH'], q: 'Format B', ev: 2, st: 'ok' },
+    { d: 'Sep 12, 10:04', acts: ['POST', 'WATCH'], q: 'Format A', ev: 2, st: 'ok' },
+    { d: 'Sep 12, 09:38', acts: ['POST'], q: 'Format D, views still accruing', ev: 1, st: 'wait' },
+    { d: 'Sep 11, 22:15', acts: ['POST', 'WATCH'], q: 'Format C', ev: 2, st: 'ok' },
+    { d: 'Sep 11, 20:47', acts: ['POST', 'WATCH'], q: 'Format A', ev: 2, st: 'ok' },
+    { d: 'Sep 11, 18:02', acts: ['POST'], q: 'Format F, post removed by the account holder', ev: 1, st: 'bad' }
+  ];
+  var RUN_ST = {
+    ok: ['pill-ok', '\u2713 Verified'],
+    wait: ['pill-wait', '\u21bb Under review'],
+    bad: ['pill-bad', '\u2715 Did not verify']
+  };
+
+  function runsTable(c) {
+    var growth = c.kind === 'growth';
+    var rows = growth ? RUNS_G : RUNS_E;
+    var n = checks(c).ok;
+    var head = '<thead><tr><th>Run</th><th>Completed</th><th>Actions</th><th>'
+      + (growth ? 'Video' : 'Comment') + '</th><th>Evidence</th><th>Status</th></tr></thead>';
+    var body = rows.map(function (r, i) {
+      var st = RUN_ST[r.st];
+      var ev = growth
+        ? ['Screenshot', 'Post permalink']
+        : ['Screenshot', 'Comment permalink'];
+      return '<tr>'
+        + '<td class="is-num">#' + String(n - i).slice(-4) + '</td>'
+        + '<td>' + esc(r.d) + '</td>'
+        + '<td><span class="run-acts">' + r.acts.map(function (a) {
+            return '<span class="run-act">' + a + '</span>';
+          }).join('') + '</span></td>'
+        + '<td class="is-quote">' + (r.q ? (growth ? esc(r.q) : '\u201c' + esc(r.q) + '\u201d') : '\u2014') + '</td>'
+        + '<td><span class="run-evd">' + ev.slice(0, r.ev).map(function (e) {
+            return '<a data-stub>' + e + '</a>';
+          }).join('') + '</span></td>'
+        + '<td><span class="chip ' + st[0] + '">' + st[1] + '</span></td>'
+        + '</tr>';
+    }).join('');
+    return head + '<tbody>' + body + '</tbody>';
+  }
+
+  /* ---- the six films --------------------------------------------------------
+     ALL SIX, NOT THREE WITH A NOTE SAYING SO. Six is what arrives, there is room
+     for six, and a hedge about how many are shown is a sentence that exists only
+     because the layout could not hold them. */
+  var FORMATS = [
+    ['Format A', '0:24', 41], ['Format B', '0:31', 38], ['Format C', '0:18', 29],
+    ['Format D', '0:22', 34], ['Format E', '0:27', 26], ['Format F', '0:15', 22]
+  ];
+  var PLAY = '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>';
+
+  function tile(label, value, sub, warn) {
+    return '<span class="tile"><span class="tile-l">' + esc(label) + '</span>'
+      + '<span class="tile-v">' + value + '</span>'
+      + '<span class="tile-s' + (warn ? ' is-warn' : '') + '">' + sub + '</span></span>';
+  }
+
+  function openReport(c) {
+    var rep = document.getElementById('view-report');
+    var growth = c.kind === 'growth';
+    var v = checks(c);
+    var per = perOf(c), bid = bidOf(c);
+    var pct = c.target ? Math.round(c.done / c.target * 100) : 0;
+    var left = daysLeft(c);
+    var chipCls = c.state === 'live' ? 'chip chip--open'
+      : c.state === 'under' ? 'chip chip--under'
+      : c.state === 'review' ? 'chip chip--wait' : 'chip';
+
+    rep.querySelector('[data-rep="name"]').textContent = c.name;
+
+    /* THE META LINE CARRIES WHAT THE KIND HAS, and nothing it does not. An
+       engagement campaign has one post to link and a set of actions asked of it;
+       a growth campaign has neither yet, because the films are what we are
+       making, so it names how many are live instead. */
+    var meta = ['<span class="' + chipCls + '">' + esc(c.label) + '</span>'];
+    if (growth) { meta.push('Films: <b>' + esc(c.note) + '</b>'); }
+    else { meta.push('Post: <a data-stub>youtube.com/shorts/xK9\u2026q2w</a>', 'Actions: <b>Watch + Like + Comment</b>'); }
+    meta.push(esc(c.ends.replace(',', '')) + ' close', 'Country: <b>' + esc(c.geo === 'US' ? 'United States' : c.geo) + '</b>');
+    rep.querySelector('[data-rep="meta"]').innerHTML = meta.join('');
+
+    rep.querySelector('[data-rep="tiles"]').innerHTML =
+        tile('Fill', pct + '%', c.done.toLocaleString() + ' of ' + c.target.toLocaleString() + ' target')
+      + tile('Verified', v.ok.toLocaleString(), 'only verified runs bill')
+      + tile('Spend', money(c.spent), 'of ' + money(c.budget))
+      + tile('Under review', v.wait.toLocaleString(), 'not billed until resolved', true)
+      + tile('Days remaining', String(left), 'ends ' + esc(c.ends));
+
+    rep.querySelector('[data-rep="chart-hint"]').textContent =
+      'Cumulative ' + unitOf(c) + ' against the pace needed to reach '
+      + c.target.toLocaleString() + ' by ' + c.ends + '.';
+    rep.querySelector('[data-rep="chart"]').innerHTML = chart(c);
+
+    /* THE BOARD ADDS UP TO THE TARGET, which is the only way three numbers about
+       one campaign can be read together. Claimed and completed-today are shares
+       of what has landed; open is what is left, so the three and the verified
+       total account for every unit of the target and none twice. */
+    var claimed = Math.max(1, Math.round(c.done * 0.057));
+    var today = Math.max(1, Math.round(c.done * 0.104));
+    var open = Math.max(0, c.target - c.done - claimed);
+    rep.querySelector('[data-rep="board"]').innerHTML =
+        '<span class="rep-state"><b>' + open.toLocaleString() + '</b><span>Open on the board</span></span>'
+      + '<span class="rep-state"><b>' + claimed.toLocaleString() + '</b><span>Claimed, in progress</span></span>'
+      + '<span class="rep-state"><b>' + today.toLocaleString() + '</b><span>Completed today</span></span>';
+
+    var consumed = c.spent;
+    var bidLabel = growth ? 'Price per 1,000 verified views' : 'Bid per verified completion';
+    var shows = growth
+      ? '(' + c.done.toLocaleString() + ' \u00f7 1,000 \u00d7 ' + moneyF(bid) + ')'
+      : '(' + c.done.toLocaleString() + ' \u00d7 ' + moneyF(bid) + ')';
+    rep.querySelector('[data-rep="acct"]').innerHTML =
+        '<tr><td>Campaign budget</td><td>' + moneyF(c.budget) + '</td></tr>'
+      + '<tr><td>' + bidLabel + '</td><td>' + moneyF(bid) + '</td></tr>'
+      + '<tr><td>Consumed ' + shows + '</td><td>' + moneyF(consumed) + '</td></tr>'
+      + '<tr class="is-total"><td>Remaining</td><td>' + moneyF(c.budget - consumed) + '</td></tr>'
+      + '<tr><td>Invoice <span class="is-num">INV-2026-0' + c.ref.slice(-2) + '</span></td><td>PAID</td></tr>';
+
+    rep.querySelector('[data-rep="ver"]').innerHTML =
+        '<span class="rep-state is-ok"><b>' + v.ok.toLocaleString() + '</b><span>Verified</span></span>'
+      + '<span class="rep-state"><b>' + v.wait.toLocaleString() + '</b><span>Under review</span></span>'
+      + '<span class="rep-state is-bad"><b>' + v.bad.toLocaleString() + '</b><span>Did not verify</span></span>';
+
+    var all = v.ok + v.wait + v.bad;
+    rep.querySelector('[data-rep="filters"]').innerHTML =
+        '<span class="rep-filter is-on">All (' + all.toLocaleString() + ')</span>'
+      + '<span class="rep-filter">Verified (' + v.ok.toLocaleString() + ')</span>'
+      + '<span class="rep-filter">Under review (' + v.wait.toLocaleString() + ')</span>'
+      + '<span class="rep-filter">Did not verify (' + v.bad.toLocaleString() + ')</span>';
+    rep.querySelector('[data-rep="runs"]').innerHTML = runsTable(c);
+
+    /* THE VIDEOS CARD BELONGS TO ONE KIND AND NO OTHER. An engagement campaign
+       promotes a video the agency already owns; a card showing it back to them
+       would say nothing. */
+    var vid = rep.querySelector('[data-rep="videos"]');
+    vid.hidden = !growth;
+    if (growth) {
+      vid.querySelector('[data-rep="vgrid"]').innerHTML = FORMATS.map(function (f) {
+        return '<span class="bvtile"><span class="bvthumb">' + PLAY + '</span>'
+          + '<span class="bvcap"><b>' + f[0] + ' \u00b7 ' + f[1] + '</b>Approved \u00b7 ' + f[2] + ' posts</span></span>';
+      }).join('');
+    }
+    showView('report');
+  }
+
+  /* ---- and the same screen with nothing in it yet --------------------------- */
+  function openCampaign(c) {
+    var cam = document.getElementById('view-campaign');
+    var growth = c.kind === 'growth';
+    var reach = c.target;
+    cam.querySelector('[data-cam="name"]').textContent = c.name;
+    cam.querySelector('[data-cam="meta"]').innerHTML =
+        '<span class="chip chip--wait">' + esc(c.label) + '</span>'
+      + esc(KIND_L[c.kind])
+      + 'Country: <b>' + esc(c.geo === 'US' ? 'United States' : c.geo) + '</b>'
+      + 'Created just now'
+      + '<span class="is-num">' + esc(c.ref) + '</span>';
+
+    /* THE SETUP TABLE NAMES THE KIND'S OWN UNIT in both the bid row and the
+       target row. "Target reach: 200,000" on a campaign that counts views and
+       "Bid per verified completion" on one that prices per thousand are the two
+       ways this table can quietly describe the other product. */
+    cam.querySelector('[data-cam="setup"]').innerHTML =
+        '<tr><td>Campaign budget</td><td>' + moneyF(c.budget) + '</td></tr>'
+      + '<tr><td>' + (growth ? 'Price per 1,000 verified views' : 'Bid per verified completion')
+      + '</td><td>' + moneyF(bidOf(c)) + '</td></tr>'
+      + '<tr><td>Target ' + unitOf(c) + '</td><td>' + reach.toLocaleString() + '</td></tr>'
+      + '<tr><td>Content review</td><td>' + (growth ? 'Review everything' : 'Auto-approve') + '</td></tr>'
+      + '<tr><td>Consumed</td><td>' + moneyF(0) + '</td></tr>'
+      + '<tr><td>Invoice</td><td>After approval</td></tr>';
+
+    cam.querySelector('[data-cam="videos"]').hidden = !growth;
+    /* THE SAMPLE IT OFFERS IS ITS OWN KIND'S. Sending an agency waiting on a
+       video growth campaign to an engagement report would answer a question they
+       did not ask with a screen that has no Videos card. */
+    cam.querySelector('[data-sample]').setAttribute('data-sample', c.kind);
+    showView('campaign');
+  }
+
+  /* ---- which of the three ---------------------------------------------------
+     THE LIST IS THE ONLY ONE THAT CAN BE ARRIVED AT, so it is the only one the
+     others go back to. Changing the account or the workflow drops you here too:
+     a report for a campaign that the build you just switched to does not have is
+     a screen about something that no longer exists. */
+  var view = 'list';
+  function showView(which) {
+    view = which;
+    ['list', 'report', 'campaign'].forEach(function (v) {
+      document.getElementById('view-' + v).classList.toggle('is-on', v === which);
+    });
+    window.scrollTo(0, 0);
+  }
+
+  (function reportWiring() {
+    var dash = document.getElementById('dash');
+    if (!dash) { return; }
+
+    /* ONE LISTENER ON THE SECTION, because the rows are rebuilt on every render
+       and a listener per row would have to be re-attached each time - which is
+       the bug where the first render's rows work and the second render's do
+       not. */
+    /* ENTER AND SPACE, BECAUSE IT SAYS role="button". A div claiming to be a
+       button and then answering only to a pointer is worse than a div that
+       claims nothing: the role is a promise to a keyboard and to a screen
+       reader, and this is what keeps it. Space is defaulted out because on a
+       scrollable page its resting job is to page down. */
+    dash.addEventListener('keydown', function (e) {
+      if (e.key !== 'Enter' && e.key !== ' ') { return; }
+      var row = e.target.closest ? e.target.closest('[data-open]') : null;
+      if (!row) { return; }
+      e.preventDefault();
+      row.click();
+    });
+
+    dash.addEventListener('click', function (e) {
+      var back = e.target.closest('[data-back]');
+      if (back) { showView(back.getAttribute('data-back')); return; }
+
+      var sample = e.target.closest('[data-sample]');
+      if (sample) {
+        var kind = sample.getAttribute('data-sample');
+        var pick = SAMPLES.filter(function (x) { return x.kind === kind && x.state !== 'review'; })[0] || SAMPLES[0];
+        openReport(pick);
+        return;
+      }
+
+      var row = e.target.closest('[data-open]');
+      if (!row) { return; }
+      var c = camp(row.getAttribute('data-open'));
+      if (!c) { return; }
+      /* A SAMPLE OPENS ITS REPORT; YOUR OWN OPENS ITSELF. They are two different
+         screens because they are two different questions: what does a finished
+         campaign look like, and what is happening to mine. */
+      if (c.sample) { openReport(c); } else { openCampaign(c); }
+    });
   })();
 
   (function dashboard() {
     var dash = document.getElementById('dash');
     if (!dash) { return; }
-
-    var refresh = dash.querySelector('[data-dash-refresh]');
-    if (refresh) {
-      wireRefresh(refresh, refresh.querySelector('[data-dash-label]'), refresh);
-    }
-
-    /* the tabs are the section's own, so they switch panes and nothing else:
-       no route, no scroll, no re-render of anything above them */
-    var tabs = dash.querySelectorAll('[data-tab]');
-    Array.prototype.forEach.call(tabs, function (tab) {
-      tab.addEventListener('click', function () {
-        var want = tab.getAttribute('data-tab');
-        Array.prototype.forEach.call(tabs, function (t) {
-          var on = t === tab;
-          t.classList.toggle('on', on);
-          t.setAttribute('aria-selected', on ? 'true' : 'false');
-        });
-        renderDash();
-      });
+    /* WHAT THIS USED TO HOLD AND NO LONGER DOES: a Refresh control on a screen
+       with nothing to fetch, the Live / Ended tab switch, and the Add budget
+       flow. The first two went with the head and the tabs; the third went with
+       the balance it topped up, because an agency commits a budget per campaign
+       rather than holding a float with us.
+       THE WAY OUT OF A DEAD END IS THE ONE THING WORTH KEEPING. Someone with no
+       campaigns is on the one screen that can do nothing for them, and both the
+       empty state and the head offer the same way off it. */
+    Array.prototype.forEach.call(dash.querySelectorAll('[data-join]'), function (b) {
+      b.addEventListener('click', function () { setApproved(false); });
     });
-
-    /* THE WAY OUT OF A DEAD END. Someone with nothing active is sitting on the
-       one screen that can do nothing for them, and the programmes they could
-       join are already on this page, one state away. */
-    var join = dash.querySelector('[data-join]');
-    if (join) join.addEventListener('click', function () { setApproved(false); });
-
-    /* ---- the withdrawal ----------------------------------------------------
-       THE TWO BOXES SHARE ONE MESSAGE, because they share one failure. The
-       email is the form's own rule, validated by the same isEmail the
-       application uses, so the two places this page asks for an address cannot
-       disagree about what one is. */
-    var cash = document.getElementById('cash-out-form');
-    var done = document.getElementById('cash-done');
-    var mail = document.getElementById('cash-email');
-    if (cash) {
-      var sheet = document.getElementById('sheet-cash-out');
-      var amount = document.getElementById('cash-amount');
-      /* the address the gate handed over, which is the only one this flow knows */
-      mail.value = d.email || '';
-
-      sheet.addEventListener('close', function () {
-        cash.hidden = false;
-        done.hidden = true;
-        cash.reset();
-        mail.value = d.email || '';
-        Array.prototype.forEach.call(cash.querySelectorAll('.check'), function (c) { c.classList.remove('on'); });
-        Array.prototype.forEach.call(cash.querySelectorAll('.msg'), function (m) { m.textContent = ''; });
-        cash.querySelector('#cash-email').classList.remove('is-bad');
-        amount.classList.remove('is-bad');
-      });
-
-      Array.prototype.forEach.call(cash.querySelectorAll('input[type="checkbox"]'), function (box) {
-        box.addEventListener('change', function () {
-          box.closest('label').querySelector('.check').classList.toggle('on', box.checked);
-          box.closest('label').querySelector('.check-box').innerHTML = box.checked ? TICK : '';
-        });
-      });
-
-      cash.addEventListener('submit', function (e) {
-        e.preventDefault();
-        var boxes = cash.querySelectorAll('input[type="checkbox"]');
-        /* the same money test the brief validates a bid with, so the two places
-           this page accepts an amount cannot disagree about what one is */
-        var badAmt = !money(amount.value);
-        cash.querySelector('[data-msg="topUp"]').textContent = badAmt ? 'Add an amount above $0.' : '';
-        amount.classList.toggle('is-bad', badAmt);
-        var bad = !isEmail(mail.value.trim());
-        cash.querySelector('[data-msg="payoutEmail"]').textContent = !mail.value.trim()
-          ? 'Add the PayPal email to receive this into.'
-          : bad ? 'That doesn\u2019t look like an email. Check for a typo.' : '';
-        mail.classList.toggle('is-bad', bad);
-        var unticked = !boxes[0].checked ? 'Confirm the details above are correct.'
-          : !boxes[1].checked ? 'Confirm you understand this before withdrawing.' : '';
-        cash.querySelector('[data-msg="confirms"]').textContent = unticked;
-        Array.prototype.forEach.call(boxes, function (b) {
-          b.closest('label').querySelector('.check').classList.toggle('err-ring', !b.checked);
-        });
-        if (badAmt || bad || unticked) { return; }
-
-        /* THE MONEY ACTUALLY MOVES, AND ON THIS SIDE IT MOVES IN. The creator
-           sheet empties a balance into a ledger of withdrawals; this one adds to
-           a balance and records what was put in, so the ledger holds both kinds
-           of row and each says which it is. Spent till date is untouched:
-           putting budget on an account is not spending it. */
-        var a = ACCOUNTS[acct];
-        var add = Number(amount.value.trim());
-        /* THE SHEET REPORTS WHAT MOVED, NOT WHAT IS LEFT, which matters more
-           here than it did there: the balance after a top-up is the old one plus
-           this, and reporting that would be telling the buyer a different
-           number from the one they just typed. */
-        done.querySelector('[data-withdrawn]').textContent = money(add);
-        a.txns = [{ date: 'Just now', label: 'Budget added', amount: add }].concat(a.txns);
-        a.balance += add;
-        cash.hidden = true;
-        done.hidden = false;
-        renderDash();
-      });
-    }
   })();
+
 
   /* ONE SWITCH, TWO STATES OF THE PAGE. Applying and being in are not two steps
      of one sequence, so this is not a step counter: it is which of the two
@@ -2896,14 +3371,14 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     stage = next;
     var body = document.body.classList;
     body.toggle('is-review', stage === 'review');
-    body.toggle('is-approved', stage === 'dash');
+    body.toggle('is-approved', stage === 'approved');
     revEl.hidden = stage !== 'review';
-    dashEl.hidden = stage !== 'dash';
-    approved = stage === 'dash';
+    dashEl.hidden = stage !== 'approved';
+    approved = stage === 'approved';
     renderMile();
     if (stage === 'apply') { render(); }
   }
-  function setApproved(on) { setStage(on ? 'dash' : 'apply'); }
+  function setApproved(on) { setStage(on ? 'approved' : 'apply'); }
   /* THE ONE DOOR INTO THIS STATE, published so the review toggler goes through
      it rather than setting the class itself. A switch that flipped the class
      from outside would leave everything above believing the application was
@@ -3089,9 +3564,16 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
   var listEl = document.getElementById('prog-list');
   var dashEl = document.getElementById('dash');
   var revEl = document.getElementById('review');
-  /* 'review' | 'apply' | 'dash'. It opens on review when the gate has just
+  /* 'review' | 'apply' | 'approved'. It opens on review when the gate has just
      registered an agency and handed one over, which is the only way this page
-     is reached from the brands site by someone who does not have an account. */
+     is reached from the brands site by someone who does not have an account.
+     THE THIRD VALUE IS NAMED FOR THE AGENCY, NOT FOR THE ELEMENT. It was 'dash'
+     after the section it reveals, which made the one axis a reviewer actually
+     switches read as a list of page fragments: in review, creating, and the
+     name of a div. What it describes is whether we have approved this agency.
+     'apply' survives as a value because the builder is still a screen here; the
+     portal makes it a dialog over the list, and pass 5 of PLAN-portal.md is
+     where it stops being a stage at all. */
   var stage = 'apply';
   var headProg = document.querySelector('[data-head="programs"]');
   var headForm = document.querySelector('[data-head="form"]');

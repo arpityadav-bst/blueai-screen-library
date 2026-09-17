@@ -112,39 +112,61 @@
   }
 
   if (dash) {
-    /* THE PAGE OWNS BOTH SWITCHES, NOT THIS FILE. Flipping a class here would
+    /* THE PAGE OWNS EVERY SWITCH, NOT THIS FILE. Flipping a class here would
        leave the application's own script believing it was still the thing on
-       screen, and writing figures here would leave the dashboard's two datasets
-       with a third opinion. window.onblueApproved and window.onblueAccount are
-       the page's doors into those states, and going through them is what keeps
-       the toggler and the page in agreement about what is true. */
-    /* BUILT FIRST SO IT EXISTS TO BE HIDDEN. build() paints on construction, and
-       the page switch's paint is what decides whether this one is showing, so
-       the order here is a dependency rather than a layout choice. Which states
-       an account has is a question only the dashboard asks; on the application
-       the control would be a switch with nothing on the other end. */
-    var account = build({
-      label: 'Account', store: 'onblue:dev-account',
-      /* the label is the page's, not this file's: the creator dashboard has one
-         programme and the brands one has one campaign, and a bar that said the
-         same word on both would be describing only one of them */
-      states: [{ id: 'empty', name: 'Empty' }, { id: 'one', name: dash.getAttribute('data-one') || 'One program' }],
-      apply: function (on) {
-        if (window.onblueAccount) { window.onblueAccount(on); }
-      }
+       screen, and writing figures here would leave the dashboard's datasets with
+       a second opinion. window.onblueWorkflow, window.onblueStage and
+       window.onblueAccount are the page's doors, and going through them is what
+       keeps the toggler and the page agreeing about what is true. */
+
+    /* THREE AXES, NOT ONE LIST OF SCREENS. The brands portal this is rebuilt
+       from (public/creator-brand/campaign-report.html) carries two switches and
+       they are independent: which BUILD you are looking at, and how far along
+       the agency is. A single flat list would have to enumerate the product of
+       them and would still not say which is which.
+       WORKFLOW IS FIRST BECAUSE IT GOVERNS THE OTHERS. Video growth does not
+       exist in v1, so an agency state judged in the wrong workflow is judged
+       twice: the same Campaigns setting shows two rows in one build and one in
+       the other, and the reviewer cannot tell which fact they are looking at
+       unless the thing that decides it is above it. */
+    var flow = build({
+      label: 'Workflow', store: 'onblue:dev-workflow', initial: 'v2',
+      states: [{ id: 'v1', name: 'Engagement only' },
+               { id: 'v2', name: 'Two types' }],
+      apply: function (on) { if (window.onblueWorkflow) { window.onblueWorkflow(on); } }
     });
-    document.body.appendChild(dock([account, build({
-      /* THREE STAGES, NOT TWO, and they are values of one thing rather than a
-         pair of switches: in review, creating a campaign, and managing them.
-         window.onblueStage is the page's own door into all three. */
-      label: 'Stage', store: 'onblue:dev-stage',
+
+    /* BUILT BEFORE THE SWITCH THAT HIDES IT. build() paints on construction and
+       the agency switch's paint is what decides whether this one shows, so the
+       order is a dependency rather than a layout choice. How many campaigns an
+       account holds is a question only the approved dashboard asks; on the
+       review screen it would be a control with nothing on the other end.
+       THREE COUNTS, AND THE THIRD IS NOT "MORE OF THE SECOND". One campaign is
+       an engagement campaign; two is that one plus a video growth campaign, so
+       the step from one to two is what puts the second KIND on screen, with its
+       own row wording, its own report and its own videos card. A count that
+       only added another row of the same kind would leave the half of this
+       product that differs unreachable from here. */
+    var account = build({
+      label: 'Campaigns', store: 'onblue:dev-account',
+      states: [{ id: 'none', name: 'None' },
+               { id: 'one', name: 'One' },
+               { id: 'two', name: 'Two' }],
+      apply: function (on) { if (window.onblueAccount) { window.onblueAccount(on); } }
+    });
+
+    document.body.appendChild(dock([flow, account, build({
+      /* TWO STATES, BECAUSE CREATING IS NOT ONE OF THEM. It used to be three,
+         with Create sitting beside In review and Campaigns as though the three
+         were places you could be. Creating a campaign is a dialog over the
+         list now, the way the portal does it, so it is something you DO from
+         the approved state rather than a state you are in. */
+      label: 'Agency', store: 'onblue:dev-stage',
       states: [{ id: 'review', name: 'In review' },
-               { id: 'apply', name: 'Create' },
-               { id: 'dash', name: 'Campaigns' }],
+               { id: 'approved', name: 'Approved' }],
       apply: function (on) {
-        account.hidden = on !== 'dash';
+        account.hidden = on !== 'approved';
         if (window.onblueStage) { window.onblueStage(on); }
-        else if (window.onblueApproved) { window.onblueApproved(on === 'dash'); }
       }
     })]));
   }

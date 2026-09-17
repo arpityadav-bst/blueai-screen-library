@@ -1414,7 +1414,13 @@ document.documentElement.setAttribute('data-theme', 'light');
              everyone else. The builder door it replaces still exists as the S3
              card and the nav. -->
         <p class="hero-alt appear appear--soft" style="--d:1.24s">
-          Already have an account? <a data-stub>Sign in</a>
+          <!-- THE SAME LINK THE FOOTER AND THE FINAL CALL ALREADY HAVE. This one
+               was a data-stub, a dead link, from when the hero had nowhere to send
+               it; the handler below caught it by that and opened the gate, but with
+               no data-gate to read it opened on Register your agency. So the one
+               line on the page addressed to somebody who says they already have an
+               account answered by asking them to make one. -->
+          Already have an account? <a href="#post" data-gate="signin">Sign in</a>
         </p>
       </div>
 
@@ -2430,13 +2436,16 @@ document.documentElement.setAttribute('data-theme', 'light');
           </label>
           <button class="btn btn-solid hero-solid gate-go" type="submit"><span class="scramble">Continue</span></button>
         </form>
-          <!-- THE WAY TO THE OTHER ASK, BACK AGAIN. It was dropped when this level
-               still had a level one in front of it and three Sign in links on
-               the page behind it; with level one gone this pane IS the gate's
-               front door, and a front door that only lets you register is a
-               door with one hinge. It sits inside the pane so the band wipes it
-               with everything else. -->
-          <p class="gate-alt"><button type="button" data-gate="signin-pane">Already have an account? <b>Sign in</b></button></p>
+          <!-- NO SIGN-IN LINE UNDER THIS FORM. I put one back arguing that with
+               level one gone this pane is the gate's front door and a front door
+               that only lets you register has one hinge. The premise was wrong:
+               the page behind it carries Sign in three times, in the hero, in the
+               final call and in the footer, and all three now open this dialog
+               already on the doors. So the line was a fourth route to a place
+               three routes already reach, sitting in the one quiet slot under the
+               button, on the screen of somebody who has just been asked for their
+               agency name. The one on the other pane stays, because somebody who
+               came in through Sign in and has no account has nowhere else to go. -->
           <p class="gate-legal">By continuing, you agree to the <a data-stub>Program Terms</a>
             and <a data-stub>Privacy Policy</a>, including <a data-stub>Cookie Use</a>.</p>
         </div>
@@ -3139,7 +3148,6 @@ document.documentElement.setAttribute('data-theme', 'light');
       if (what === 'close') { close(); }
       else if (what === 'signin') { open(true); }
       else if (what === 'reg-pane') { pane('register'); }
-      else if (what === 'signin-pane') { pane('signin'); }
       else if (what === 'email') { openMail(); }
       else if (what === 'continue') { proceed(); }
       else if (what === 'google') {
@@ -3175,10 +3183,16 @@ document.documentElement.setAttribute('data-theme', 'light');
        on a[href="apply.html"] because its CTAs were links to a real page; these
        are not, and inferring intent from a label ("does it start with sign in")
        was always the weaker half of that selector. data-gate names it.
-       Sign-in opens straight at level two: someone who has an account is not
-       being told what happens after they post. */
+       Sign-in opens on the doors, not the form: someone who has an account is
+       not being asked to register.
+       AND THE HERO'S LINK IS NOT AN EXCEPTION. This selector carried a third
+       clause, .hero-alt a[data-stub], to catch that one by where it sits and
+       what it lacks, which is the inference the paragraph above rejects; it
+       matched, so the gate opened, and then data-gate came back null and it
+       opened on the wrong pane. The link says data-gate="signin" now and the
+       clause is gone. */
     document.addEventListener('click', function (e) {
-      var a = e.target.closest('[data-gate="open"], [data-gate="signin"], .hero-alt a[data-stub]');
+      var a = e.target.closest('[data-gate="open"], [data-gate="signin"]');
       if (!a || gate.open || gate.contains(a)) { return; }
       if (e.metaKey || e.ctrlKey || e.shiftKey || e.button > 0) { return; }
       e.preventDefault();
