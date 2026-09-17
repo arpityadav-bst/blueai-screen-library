@@ -315,6 +315,115 @@ body { min-height: 100vh; }
    sits. */
 .field.field--pre { padding-left: 28px; }
 
+/* ---- the date trigger and its calendar --------------------------------------
+   BORROWED FROM THE PORTAL AND RE-TOKENISED. Its own version is built on --iris
+   and a warm stroke; every colour here is one this page already defines, so the
+   panel is the same object in this theme rather than a visitor from another. */
+.dt {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  width: 100%;
+  height: var(--hero-btn-h);
+  padding: 0 14px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--card-bg);
+  color: var(--ink);
+  font: inherit;
+  font-size: 15px;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
+}
+.dt:hover:not(:focus) {
+  border-color: var(--card-line-hover);
+  background: linear-gradient(var(--wash-hover), var(--wash-hover)), var(--card-bg);
+}
+/* THE SAME RING THE FIELDS USE, because this is a field: a control that opens a
+   panel is still the thing the label is pointing at, and a second focus
+   treatment would say it is a different kind of answer. */
+.dt:focus { outline: none; border-color: var(--blue-ink); box-shadow: 0 0 0 3px rgba(21, 110, 254, 0.16); }
+.dt.err { border-color: var(--err-line, #b42318); }
+.dt.err:focus { box-shadow: 0 0 0 3px var(--err-ring); }
+.dt-ico { flex: none; color: var(--blue-ink); }
+.dt-v { flex: 1; min-width: 0; font-variant-numeric: tabular-nums; }
+/* the placeholder reads as a prompt, not as an answer already given */
+.dt-v.is-ph { color: var(--dim-ink); font-variant-numeric: normal; }
+.dt-c { flex: none; color: var(--dim-ink); transition: transform .18s var(--ease); }
+.dt[aria-expanded="true"] .dt-c { transform: rotate(180deg); }
+
+/* FIXED AND MEASURED AGAINST THE VIEWPORT, so the panel is never clipped by the
+   scroller the trigger sits in - which is the whole reason it is not a child of
+   the field. */
+.cal {
+  position: fixed;
+  z-index: 105;
+  width: 320px;
+  max-width: calc(100vw - 32px);
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--card-bg);
+  box-shadow: 0 18px 44px -20px rgba(18, 32, 64, 0.28), 0 2px 6px rgba(18, 32, 64, 0.05);
+}
+.cal-head { display: flex; align-items: center; justify-content: space-between; }
+.cal-m { color: var(--ink); font-size: 13.5px; font-weight: 600; letter-spacing: -0.015em; }
+.cal-nav {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+  transition: background .18s ease, color .18s ease;
+}
+.cal-nav:hover { background: var(--wash-hover); color: var(--ink); }
+.cal-nav:disabled { opacity: 0.3; pointer-events: none; }
+.cal-nav:focus-visible { outline: 2px solid var(--blue-ink); outline-offset: 2px; }
+.cal-wk {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-top: 10px;
+  color: var(--dim-ink);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-align: center;
+  text-transform: uppercase;
+}
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); row-gap: 2px; margin-top: 6px; }
+.cal-d {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 36px;
+  margin-inline: auto;
+  border: 0;
+  border-radius: 9px;
+  background: none;
+  color: var(--ink-soft);
+  font: inherit;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  transition: background .15s ease, color .15s ease;
+}
+.cal-d:hover:not(:disabled):not(.is-on) { background: var(--wash-hover); color: var(--ink); }
+.cal-d:focus-visible { outline: 2px solid var(--blue-ink); outline-offset: -2px; }
+/* the days either side of the month are shown, not hidden: a calendar that ends
+   mid-row makes you count to find where the next week starts */
+.cal-d.is-out { color: var(--dim-ink); }
+.cal-d.is-today { color: var(--blue-ink); font-weight: 700; }
+.cal-d.is-on { background: var(--blue-ink); color: #fff; font-weight: 600; }
+.cal-d:disabled { color: var(--border); cursor: not-allowed; }
+@media (prefers-reduced-motion: reduce) {
+  .dt-c, .cal-d, .cal-nav { transition: none; }
+}
+
 /* two dates are one question asked twice, so they share a row until the column
    is too narrow to hold both without hyphenating a month */
 .q-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
@@ -2545,15 +2654,15 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
        that actually have a pacing question declare it themselves, so those
        buyers were being asked it twice in different words and the other seven
        were answering a question their campaign has no notion of. */
+    /* A BUTTON AND A PANEL, NOT <input type="date">. The native control is the
+       browser's, not this site's: Chrome draws a dark grey calendar with its own
+       type, its own blue and its own idea of a weekend whatever theme the page
+       is in, and it prints dd-mm-yyyy into a field whose neighbours all speak in
+       words. The portal this page is rebuilt from has its own, and it is the one
+       borrowed here. */
     return '<div class="q-pair">'
-      + '<label class="q" data-field="startAt">'
-      + '<span class="q-label">Start</span>'
-      + '<input type="date" class="field' + (err.startAt ? ' err' : '') + '" name="startAt" value="' + esc(d.startAt) + '">'
-      + msgSlot(err.startAt) + '</label>'
-      + '<label class="q" data-field="endAt">'
-      + '<span class="q-label">End</span>'
-      + '<input type="date" class="field' + (err.endAt ? ' err' : '') + '" name="endAt" value="' + esc(d.endAt) + '">'
-      + msgSlot(err.endAt) + '</label>'
+      + dateQ('startAt', 'Start', err.startAt)
+      + dateQ('endAt', 'End', err.endAt)
       + '</div>'
       + '<p class="aside"><span class="aside-ic">' + ICON.clock + '</span>It stops when the budget is spent or the window closes, whichever comes first.</p>';
   }
@@ -2568,6 +2677,258 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
      It moved here from step one, where it sat under the questions the kind
      actually needs and invited an answer before the reader knew what would be
      asked next. */
+  /* ---- the date trigger ------------------------------------------------------
+     THE VALUE IS SPELLED OUT, NOT NUMBERED. "01/10/2026" is two different days
+     depending on which side of the Atlantic reads it, and this form is quoting
+     money against a window; "01 Oct 2026" cannot be misread by anybody. */
+  function dateQ(key, label, err) {
+    var v = fromIso(d[key]);
+    return '<div class="q" data-field="' + key + '">'
+      + '<span class="q-label">' + esc(label) + '</span>'
+      + '<button type="button" class="dt' + (err ? ' err' : '') + '" data-cal="' + key + '"'
+      + ' aria-haspopup="dialog" aria-expanded="false">'
+      + '<svg class="dt-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor"'
+      + ' stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+      + '<rect x="3" y="5.5" width="18" height="15.5" rx="2.5"/><path d="M8 3v4.5M16 3v4.5M3 11h18"/></svg>'
+      + '<span class="dt-v' + (v ? '' : ' is-ph') + '">' + (v ? esc(calFmt(v)) : 'Pick a day') + '</span>'
+      + '<svg class="dt-c" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor"'
+      + ' stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+      + '<path d="M6 9.5l6 6 6-6"/></svg>'
+      + '</button>'
+      + msgSlot(err) + '</div>';
+  }
+
+  /* ---- the calendar, ported from the portal's own ---------------------------
+     TWO LETTERS PER WEEKDAY, because S-M-T-W-T-F-S makes the two S columns and
+     the two T columns a guessing game. */
+  var CAL_WK = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+  var CAL_F = { startAt: { align: 'left', min: 'today' }, endAt: { align: 'right', min: 'startAt' } };
+  var calKey = null, calView = null, calEl = null;
+
+  function dayKey(x) { return x.getFullYear() * 10000 + x.getMonth() * 100 + x.getDate(); }
+  function isoOf(x) {
+    var m = x.getMonth() + 1, day = x.getDate();
+    return x.getFullYear() + '-' + (m < 10 ? '0' : '') + m + '-' + (day < 10 ? '0' : '') + day;
+  }
+  function fromIso(v) { if (!v) { return null; } var t = new Date(v + 'T00:00:00'); return isNaN(t) ? null : t; }
+  /* en-GB EXPLICITLY, never the visitor's locale: a date this form will quote a
+     price against must read the same to everyone who opens the page. */
+  function calFmt(x) { return x.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }); }
+  function calVal(k) { return fromIso(d[k]); }
+  /* THE FLOOR AND THE VALIDATOR HAVE TO AGREE. validate() rejects an end that is
+     not AFTER the start, so a floor set to the start itself offers a day the
+     form will then refuse - the picker handing you an answer and the field
+     calling it wrong. The end's floor is the day after its start. */
+  function calFloor(k) {
+    var m = CAL_F[k].min;
+    if (m === 'today') { return new Date(); }
+    var base = calVal(m);
+    if (!base) { return new Date(); }
+    return new Date(base.getFullYear(), base.getMonth(), base.getDate() + 1);
+  }
+
+  function calClose(reason) {
+    if (!calEl) { return; }
+    var k = calKey;
+    calEl.parentNode.removeChild(calEl);
+    calEl = null;
+    /* THE VIEW RESETS ON EVERY CLOSE, so reopening recomputes the month from the
+       data - which is exactly what should happen to an end date after its start,
+       and therefore its floor, has moved. */
+    calView = null; calKey = null;
+    var t = document.querySelector('[data-cal="' + k + '"]');
+    if (t) {
+      t.setAttribute('aria-expanded', 'false');
+      if (reason !== 'outside') { t.focus(); }
+    }
+  }
+
+  /* INSIDE THE DIALOG WHEN THERE IS ONE, and this is the part the portal never
+     had to solve. Its builder is a div behind a scrim; ours is a real <dialog>
+     opened with showModal(), which puts it in the top layer and makes everything
+     outside it inert - so a panel appended to <body> would paint behind the
+     backdrop and refuse every click. position: fixed still measures against the
+     viewport in there, because an open .sheet has transform: none. */
+  function calHost() {
+    var dlg = document.getElementById('sheet-create');
+    return (dlg && dlg.open) ? dlg : document.body;
+  }
+
+  function calOpen(k) {
+    if (calKey === k) { calClose('toggle'); return; }
+    calClose('switch');
+    calKey = k;
+    var t = document.querySelector('[data-cal="' + k + '"]');
+    if (t) { t.setAttribute('aria-expanded', 'true'); }
+    calEl = document.createElement('div');
+    calEl.className = 'cal';
+    calEl.setAttribute('role', 'dialog');
+    calEl.setAttribute('aria-label', 'Choose a date');
+    calEl.style.visibility = 'hidden';
+    calHost().appendChild(calEl);
+    calRender(true);
+  }
+
+  function calMonth() {
+    if (calView) { return calView; }
+    var base = calVal(calKey) || calFloor(calKey) || new Date();
+    return new Date(base.getFullYear(), base.getMonth(), 1);
+  }
+
+  function calNav(delta) {
+    var m = calMonth();
+    calView = new Date(m.getFullYear(), m.getMonth() + delta, 1);
+    calRender(false);
+    /* every cell was replaced, so the focused button left the DOM and focus fell
+       to the host - which silently kills the arrow keys */
+    var a = calEl.querySelector('.cal-d[data-auto]') || calEl.querySelector('.cal-d:not(:disabled)');
+    if (a) { a.focus(); }
+  }
+
+  function calPick(iso) {
+    var k = calKey;
+    d[k] = iso;
+    touched[k] = true;
+    /* AN END DATE THAT NOW PRECEDES ITS OWN START IS CLEARED rather than left to
+       fail validation: the field it depended on moved under it, which is not the
+       reader's mistake to be told about. */
+    if (k === 'startAt' && d.endAt) {
+      var e = fromIso(d.endAt);
+      if (e && dayKey(e) <= dayKey(fromIso(iso))) { d.endAt = ''; }
+    }
+    calClose('pick');
+    render('[data-cal="' + k + '"]');
+  }
+
+  function calRender(first) {
+    var m = calMonth(), floorD = calFloor(calKey), floor = floorD ? dayKey(floorD) : null;
+    var sel = calVal(calKey), selK = sel ? dayKey(sel) : null, todayK = dayKey(new Date());
+    var f1 = new Date(m.getFullYear(), m.getMonth(), 1);
+    var prevLast = new Date(m.getFullYear(), m.getMonth(), 0);
+    /* paging into a month with nothing selectable in it is a dead end */
+    var canBack = floor === null || dayKey(prevLast) >= floor;
+    var CH = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor"'
+      + ' stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"';
+
+    var h = '<div class="cal-head">'
+      + '<button type="button" class="cal-nav" aria-label="Previous month"' + (canBack ? '' : ' disabled')
+      + ' data-cal-nav="-1">' + CH + ' style="transform:rotate(90deg)"><path d="M6 9.5l6 6 6-6"/></svg></button>'
+      + '<span class="cal-m">' + esc(m.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })) + '</span>'
+      + '<button type="button" class="cal-nav" aria-label="Next month" data-cal-nav="1">'
+      + CH + ' style="transform:rotate(-90deg)"><path d="M6 9.5l6 6 6-6"/></svg></button>'
+      + '</div><div class="cal-wk">';
+    for (var w = 0; w < 7; w++) { h += '<span>' + CAL_WK[w] + '</span>'; }
+    h += '</div><div class="cal-grid">';
+
+    /* 42 CELLS, ALWAYS. Six rows whether or not the month needs them, so the
+       panel does not change height when you page between a month that starts on
+       a Saturday and one that does not. */
+    var cells = [], autoIso = null, firstInMonth = null, firstAny = null, i, j;
+    for (i = 0; i < 42; i++) {
+      var x = new Date(f1.getFullYear(), f1.getMonth(), 1 - f1.getDay() + i);
+      var k = dayKey(x), off = floor !== null && k < floor, out = x.getMonth() !== m.getMonth();
+      cells.push({ d: x, k: k, off: off, out: out });
+      if (!off) {
+        if (firstAny === null) { firstAny = isoOf(x); }
+        if (!out && firstInMonth === null) { firstInMonth = isoOf(x); }
+      }
+    }
+    /* which cell takes focus: the selected day, else today, else the first
+       selectable day OF THE DISPLAYED MONTH - not the grid's first, which
+       usually belongs to the previous one, and paging to October to land on 28
+       September is not where Next promised to take you */
+    for (j = 0; j < 42; j++) {
+      if (selK !== null && cells[j].k === selK && !cells[j].off) { autoIso = isoOf(cells[j].d); break; }
+    }
+    if (autoIso === null) {
+      for (j = 0; j < 42; j++) {
+        if (cells[j].k === todayK && !cells[j].off && !cells[j].out) { autoIso = isoOf(cells[j].d); break; }
+      }
+    }
+    if (autoIso === null) { autoIso = firstInMonth || firstAny; }
+
+    for (i = 0; i < 42; i++) {
+      var c = cells[i], iso = isoOf(c.d), cls = 'cal-d';
+      /* one branch wins, in this order: selected, disabled, outside, today */
+      if (selK !== null && c.k === selK) { cls += ' is-on'; }
+      else if (!c.off && c.out) { cls += ' is-out'; }
+      else if (!c.off && c.k === todayK) { cls += ' is-today'; }
+      h += '<button type="button" class="' + cls + '"' + (c.off ? ' disabled' : '')
+        + (iso === autoIso ? ' data-auto' : '')
+        + (selK !== null && c.k === selK ? ' aria-current="date"' : '')
+        + ' aria-label="' + esc(calFmt(c.d)) + '" data-cal-pick="' + iso + '">' + c.d.getDate() + '</button>';
+    }
+    calEl.innerHTML = h + '</div>';
+    if (first) {
+      calPlace();
+      var a = calEl.querySelector('.cal-d[data-auto]');
+      if (a) { a.focus(); }
+    }
+  }
+
+  /* MEASURE, PLACE, THEN REVEAL, all in one frame: a panel revealed before it is
+     placed plays the first frames of its entrance in the wrong corner. */
+  function calPlace() {
+    if (!calEl || !calKey) { return; }
+    var t = document.querySelector('[data-cal="' + calKey + '"]');
+    if (!t) { return; }
+    var GAP = 6, M = 8;
+    var r = t.getBoundingClientRect(), h = calEl.offsetHeight, w = calEl.offsetWidth;
+    /* flip up ONLY if up actually fits, or a tall panel in a short window flips
+       and is clipped by the top instead of the bottom */
+    var above = (window.innerHeight - r.bottom - GAP < h) && (r.top - GAP > h);
+    var raw = CAL_F[calKey].align === 'right' ? (r.right - w) : r.left;
+    /* clamp both axes: a fixed element off the viewport is unreachable, not
+       merely awkward */
+    calEl.style.left = Math.min(Math.max(M, raw), Math.max(M, window.innerWidth - w - M)) + 'px';
+    calEl.style.top = (above ? (r.top - GAP - h) : (r.bottom + GAP)) + 'px';
+    calEl.style.visibility = 'visible';
+  }
+
+  /* ARROWS ROVE THE GRID, and Tab is deliberately not trapped: the panel is not
+     a child of the form, so Tab leaves for the next field - which is why the
+     arrows have to exist at all. */
+  function calKeys(ev) {
+    var step = ev.key === 'ArrowRight' ? 1 : ev.key === 'ArrowLeft' ? -1
+      : ev.key === 'ArrowDown' ? 7 : ev.key === 'ArrowUp' ? -7 : 0;
+    if (!step || !calEl) { return; }
+    ev.preventDefault();
+    var days = Array.prototype.slice.call(calEl.querySelectorAll('.cal-d'));
+    var at = days.indexOf(document.activeElement);
+    if (at < 0) { return; }
+    /* step once, then walk past any disabled ones: the past days at the start of
+       a floor month would otherwise be a wall you cannot arrow through */
+    for (var n = at + step; n >= 0 && n < days.length; n += (step > 0 ? 1 : -1)) {
+      if (!days[n].disabled) { days[n].focus(); return; }
+    }
+  }
+
+  /* ONE LISTENER FOR ALL OF IT, on the document, because every control it owns
+     is written into the DOM after this runs and half of them are replaced on
+     every render. */
+  document.addEventListener('click', function (ev) {
+    var t = ev.target.closest ? ev.target.closest('[data-cal]') : null;
+    if (t) { ev.preventDefault(); calOpen(t.getAttribute('data-cal')); return; }
+    var nav = ev.target.closest ? ev.target.closest('[data-cal-nav]') : null;
+    if (nav) { ev.preventDefault(); calNav(Number(nav.getAttribute('data-cal-nav'))); return; }
+    var pick = ev.target.closest ? ev.target.closest('[data-cal-pick]') : null;
+    if (pick) { ev.preventDefault(); calPick(pick.getAttribute('data-cal-pick')); }
+  });
+  document.addEventListener('keydown', function (ev) {
+    if (!calEl) { return; }
+    if (ev.key === 'Escape') { ev.preventDefault(); ev.stopPropagation(); calClose('esc'); return; }
+    calKeys(ev);
+  }, true);
+  /* capture, because the scroll that matters is usually an ancestor's - the
+     dialog's own body - and scroll does not bubble. It repositions, not closes. */
+  window.addEventListener('scroll', function () { if (calEl) { calPlace(); } }, true);
+  window.addEventListener('resize', function () { if (calEl) { calPlace(); } });
+  document.addEventListener('pointerdown', function (ev) {
+    if (!calEl) { return; }
+    if (calEl.contains(ev.target) || (ev.target.closest && ev.target.closest('[data-cal]'))) { return; }
+    calClose('outside');
+  }, true);
+
   var COUNTRIES = ['United States', 'Worldwide'];
   function renderStep4(err) {
     var b = BRIEFS[d.type] || {};
