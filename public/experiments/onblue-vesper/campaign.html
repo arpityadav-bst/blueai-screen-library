@@ -30,11 +30,11 @@
 .rev[hidden] { display: none; }
 .rev .confirm { padding-top: clamp(40px, 7vw, 96px); }
 
-/* THE APPLICATION'S OWN MACHINERY STEPS ASIDE FOR IT, the same way it does for
-   the dashboard. Three states now hide the head, the rail and the stage, so the
-   rule lists them rather than growing a third copy of itself. */
-.is-review .apply-head-wrap,
-.is-review .form-stage { display: none; }
+/* NOTHING HIDES THE BUILDER PER STAGE ANY MORE. Three rules did - one for
+   review, one for approved, one collapsing its rail on submit - because it was a
+   screen sharing the page with the others and each state had to say it was not
+   showing. A dialog is closed unless something opens it, which is the same
+   statement made once, by the element. */
 /* the receipt sits under the refresh line in the confirmation's own quiet
    voice: it is a footnote to a control, not a second thing to read */
 .rev-note { margin: 10px 0 0; color: var(--dim-ink); font-size: 12.5px; letter-spacing: -0.005em; }
@@ -108,10 +108,9 @@ body { min-height: 100vh; }
    events stop there; a fixed viewport-sized host does not need to see it, since
    clientX and clientY are already the coordinates its canvas is drawn in. */
 .apply-bg { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; background: var(--band-lift); }
-.apply-wrap, .site-foot { position: relative; z-index: 2; }
+.site-foot { position: relative; z-index: 2; }
 /* the page ends on the footer, so the column above it does not also need to
    hold the bottom of the screen open */
-.apply-wrap { padding-bottom: clamp(48px, 6vw, 84px); }
 /* A RESTING SHADOW, NOT A HOVER ONE. .card carries both an elevation and a
    browse affordance: a shadow that deepens on hover and a 2px lift under it.
    The lift is the part that does not belong here. This is the only thing on the
@@ -200,20 +199,6 @@ body { min-height: 100vh; }
 }
 
 /* ---- the page frame -------------------------------------------------------- */
-.apply-wrap {
-  position: relative;
-  /* THE FOOTER STARTS BELOW THE FOLD, ALWAYS. Without a floor the column is as
-     tall as whatever step is showing, so on the short ones the footer came up
-     into the first screen and the page read as finished while the form was
-     still being filled in. One viewport here is what keeps the footer an
-     ending. dvh first in intent, vh underneath it for engines that do not have
-     it, which is the pattern the homepage already uses for its hero. */
-  min-height: 100vh;
-  min-height: 100dvh;
-  max-width: var(--band-max);
-  margin: 0 auto;
-  padding: calc(var(--header-h) + clamp(18px, 2.6vw, 22px)) max(var(--header-x), 20px) clamp(64px, 9vw, 120px);
-}
 /* 1fr to 0fr is the one collapse that animates without a height to guess at:
    the row simply has no space to give, and the overflow hidden on the child is
    what lets it be clipped rather than squashed. */
@@ -232,89 +217,26 @@ body { min-height: 100vh; }
    movement slower. A departure needs its weight spread across the whole travel.
    0.8s to close, and the words out in 0.3s so the crop never shows: a third of
    the way through this curve is only about a quarter of the height gone. */
-.apply-head-wrap, .mile-wrap {
-  display: grid;
-  grid-template-rows: 1fr;
-}
-.apply-head-wrap > *, .mile-wrap > * { overflow: hidden; }
 /* the title's two beats overlap: the words are gone in 0.3s while the row takes
    0.8s to close, so the crop never gets far enough into the block to show */
-.apply-head-wrap { transition: grid-template-rows 0.8s cubic-bezier(0.45, 0, 0.25, 1), opacity 0.3s ease; }
 /* THE RAIL'S DO NOT OVERLAP, and the reason is the shape rather than the size.
    A collapsing row clips from the bottom, and clipping a CIRCLE is visible at
    the very first pixel: a disc with a flat edge stops being a disc, where a
    paragraph losing its last few pixels still reads as a paragraph. Speed cannot
    beat that, so the rail fades out completely first and closes afterwards,
    which is the thing that was asked for: no crop, only a fade. */
-.mile-wrap { transition: grid-template-rows 0.5s cubic-bezier(0.45, 0, 0.25, 1) 0.28s, opacity 0.26s ease; }
-.apply-head { transition: transform 0.8s cubic-bezier(0.45, 0, 0.25, 1); }
-.is-underway .apply-head-wrap { grid-template-rows: 0fr; opacity: 0; }
-/* THE RAIL GOES WITH THE FORM. It answers "how far through am I", and once the
-   application is in there is no further to be: the closing line says what
-   happens next and the green strip says the thing landed, so three discs above
-   them are a third telling of the same news. It leaves the way the title does,
-   on the same rule, so the page has one way of putting something aside. */
-.is-submitted .mile-wrap { grid-template-rows: 0fr; opacity: 0; }
 /* THE RAIL IS THE APPLICATION'S, AND THE PROGRAMMES ARE NOT IT. Apply / We
    review / Deploy & earn describes what happens once you have applied; on the
    screen where you are still deciding whether to, it is answering a question
    nobody has asked yet. It collapses by the same rows trick the confirmation
    uses, so the stage rises into the space rather than the rail vanishing. */
-.is-choosing .mile-wrap { grid-template-rows: 0fr; opacity: 0; }
-/* EXCEPT WHILE THE AGENCY IS IN REVIEW, where the rail is the whole point of the
-   screen. It is the one thing a wait needs: Register behind you, We review now,
-   Start campaigns to come, so the wait has a shape and the screen answers "how
-   long is this" as well as "what is happening". It was collapsed because the
-   body still carries .is-choosing on that screen - nothing has been chosen, and
-   nothing is going to be - so the rule written for the catalogue was hiding the
-   rail on a screen that has no catalogue. Two classes beat one. */
-.is-review.is-choosing .mile-wrap { grid-template-rows: 1fr; opacity: 1; }
 /* upward, which is the direction the form is arriving from */
-.is-underway .apply-head { transform: translateY(-16px); }
-.apply-head { text-align: center; }
-.apply-head-pane[hidden] { display: none; }
-.apply-head .lede { margin-inline: auto; }
 
 /* ---- the journey rail: Apply, We review, Deploy and earn -------------------
    The three stages of the PROGRAM, which is a different thing from the five
    steps of the form and has to look it. The form's progress is a hairline
    inside the card; this is discs and a connector above it, built on the same
    .step-num the homepage numbers its How it works cards with. */
-.mile {
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  gap: 0;
-  margin: clamp(26px, 3.8vw, 40px) auto 0;
-  list-style: none;
-}
-.mile-step {
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  color: var(--dim-ink);
-  font-size: 13px;
-  letter-spacing: -0.015em;
-}
-.mile-line {
-  width: clamp(28px, 6vw, 72px);
-  height: 1px;
-  margin: 0 14px;
-  background: var(--hair-2);
-}
-.mile-dot {
-  display: grid;
-  place-items: center;
-  flex: none;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  border: 1px solid var(--border-soft);
-  background: var(--card-bg);
-  color: var(--dim-ink);
-  font-size: 12.5px;
-  font-weight: 600;
-}
 .mile-step.current .mile-dot {
   border-color: rgba(21, 110, 254, 0.45);
   background: rgba(21, 110, 254, 0.16);
@@ -409,7 +331,15 @@ body { min-height: 100vh; }
    page's own: .card for the panels, .earn-label and .earn-figure for the money,
    .mini-title for the column labels, .step-num for the numbered steps,
    .prog-soon for the empty tabs, .btn for every control. */
-.dash { width: 100%; max-width: min(var(--band-max), 920px); margin: 0 auto; }
+/* THE VIEWS SET THEIR OWN WIDTH, BECAUSE THEY ARE NOT THE SAME KIND OF SCREEN.
+   920px is right for two lists of four columns: wider and the campaign name
+   drifts away from its own figures. It is wrong for a report, which carries five
+   tiles in a row, a chart, and a six-column table of evidence - all of which
+   were being squeezed into a column narrower than the table wanted while a
+   third of the viewport sat empty on either side. */
+.dash { width: 100%; margin: 0 auto; }
+#view-list, #view-campaign { max-width: min(var(--band-max), 920px); margin: 0 auto; }
+#view-report { max-width: var(--band-max); margin: 0 auto; }
 .dash[hidden] { display: none; }
 
 .dash-head {
@@ -429,7 +359,12 @@ body { min-height: 100vh; }
 /* caption-scale, not a headline control: a prominent Refresh on a screen whose
    figures move once a month would suggest the numbers are volatile */
 
-.dash-band + .dash-band { margin-top: clamp(32px, 3.8vw, 46px); }
+/* EVERY BAND, NOT ONLY THE ONES AFTER ANOTHER BAND. The sibling selector gave
+   the second and third sections their space and left the first with none, so
+   "Your campaigns" sat hard against the row of figures above it while the same
+   heading further down had 46px. One rule, one distance, and the first band gets
+   it from .tiles rather than from a band that is not there. */
+.dash-band { margin-top: clamp(32px, 3.8vw, 46px); }
 
 /* ---- the three figures ------------------------------------------------------
    A ROW OF THREE, NOT CARDS. They carry one number each and no action, so the
@@ -455,10 +390,6 @@ body { min-height: 100vh; }
 .tile-v { color: var(--ink); font-size: 27px; font-weight: 600; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
 .tile-s { color: var(--dim-ink); font-size: 12px; letter-spacing: -0.005em; }
 @media (max-width: 720px) { .tiles { grid-template-columns: minmax(0, 1fr); } }
-
-/* the caption on Sample reports is a qualifier to the heading, not a second
-   heading: it says what the rows under it are, in the heading's own row */
-.dash-sect .dash-note { font-size: 12.5px; }
 
 /* PUT BACK AFTER A BAD SWEEP (2026-09-17). These four were deleted by a pass
    removing rules for classes nothing wears any more. Two of them name a dead
@@ -499,6 +430,36 @@ body { min-height: 100vh; }
 .apply-bg > .ascii-bg { z-index: 1; }
 .step-body.swap-fwd > * { animation: in-soft 0.45s var(--ease) both; animation-delay: calc(var(--i, 0) * 38ms); }
 .step-body.swap-back > * { animation: in-fade 0.32s var(--ease) both; }
+
+/* ---- the three views --------------------------------------------------------
+   DISPLAY, NOT [hidden]. Two of these carry a table and a chart whose widths are
+   measured when they are painted; a view kept in the layout and merely made
+   invisible would still cost a layout pass on every render of a screen nobody is
+   looking at. */
+/* ---- the builder's dialog ---------------------------------------------------
+   WIDER THAN THE OTHER SHEETS, because they carry a fact and this carries a
+   form: 430px is right for "Budget added" and wrong for two money fields side
+   by side with a date pair under them.
+   AND TALL SHEETS SCROLL THEMSELVES rather than the page behind them. A dialog
+   is already holding the scroll lock; without a height ceiling here, a long step
+   pushes its own buttons past the bottom of the viewport with nothing able to
+   reach them. */
+.sheet--wide { width: min(620px, calc(100vw - 32px)); max-height: min(86vh, 860px); }
+.sheet--wide .sheet-in { display: flex; flex-direction: column; max-height: inherit; padding: 22px 22px 20px; }
+.sheet--wide .form-stage { flex: 1; min-height: 0; max-width: none; margin: 0; overflow-y: auto; }
+
+/* THE DIALOG IS THE CARD, SO THE CARD INSIDE IT IS NOT ONE. It kept its own
+   border, its own ground and its own lift, which put a raised surface 22px
+   inside a raised surface and drew two strokes around one form. The dialog is
+   the outline that earns the treatment now; what is inside it is just the form. */
+#sheet-create .form-card {
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+#sheet-create .form-card::after { content: none; }
+#sheet-create .type-list { margin: 0; }
 
 /* ---- the three views --------------------------------------------------------
    DISPLAY, NOT [hidden]. Two of these carry a table and a chart whose widths are
@@ -574,7 +535,7 @@ body { min-height: 100vh; }
    read, and the numbers that qualify it */
 .rep-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 320px;
+  grid-template-columns: minmax(0, 1fr) 340px;
   gap: 12px;
   margin-top: 12px;
   align-items: start;
@@ -591,7 +552,6 @@ body { min-height: 100vh; }
 .rep-chart svg { display: block; width: 100%; height: auto; }
 
 .rep-states { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 18px; }
-.rep-states--col { grid-template-columns: minmax(0, 1fr); margin-top: 14px; }
 .rep-state {
   display: grid;
   gap: 2px;
@@ -665,6 +625,7 @@ body { min-height: 100vh; }
    showing a set of vertical films in a shape none of them is. */
 .bvgrid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; margin-top: 14px; }
 @media (max-width: 860px) { .bvgrid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .rep-states { grid-template-columns: minmax(0, 1fr); } }
 .bvtile { display: grid; gap: 7px; }
 .bvthumb {
   display: grid;
@@ -724,8 +685,6 @@ body { min-height: 100vh; }
   font-weight: 600;
   letter-spacing: -0.03em;
 }
-.dash-note { color: var(--muted); font-size: 12.5px; letter-spacing: -0.01em; }
-.dash-note b { color: var(--ink); font-weight: 600; }
 .dash-panel { padding: 20px 22px; }
 /* NO TRAVELLING STROKE HERE, AND NO LIFT. The sheen is the page's answer to
    "this surface is responding to you", which is worth saying on a card you might
@@ -797,13 +756,6 @@ body { min-height: 100vh; }
    started 11px lower than the first step and the two columns never shared an
    opening line, even though both opened on a label at the same height. */
 
-/* THE APPLICATION STEPS ASIDE WHOLE. Approved is not a further step of applying,
-   it is the other thing this page can be, so the head, the rail and the stage go
-   together rather than one at a time. */
-.is-approved .apply-head-wrap,
-.is-approved .mile-wrap,
-.is-approved .form-stage { display: none; }
-
 @media (max-width: 820px) {
   .dash-head { flex-direction: column; gap: 20px; align-items: flex-start; }
 }
@@ -817,7 +769,14 @@ body { min-height: 100vh; }
    an agency opens this screen.
    THE HEADER IS FOUR CELLS OVER A FIVE-COLUMN GRID, so the info control's column
    simply stays empty rather than needing a labelled placeholder. */
-.clist-panel { padding: 18px 22px; }
+/* THE PANEL HOLDS NO PADDING AND THE ROWS CARRY THEIR OWN. It had two padding
+   declarations, 18px 22px here and 16px 18px further down, and the second quietly
+   won; more to the point, a padded panel means a hovered row lights a band that
+   stops 22px short of the card's edge and floats. With the padding on the rows,
+   hover reaches the edge and the card's own radius clips it, so the first and
+   last rows round off against the corners without either of them needing to know
+   which one it is. */
+.clist-panel { padding: 0; overflow: hidden; }
 .clist-panel[hidden] { display: none; }
 .clist-head, .crow {
   display: grid;
@@ -828,14 +787,13 @@ body { min-height: 100vh; }
   align-items: center;
   gap: clamp(16px, 2.4vw, 32px);
 }
-.clist-head { padding-bottom: 13px; border-bottom: 1px solid var(--border-soft); }
+.clist-head { padding: 15px 22px 13px; border-bottom: 1px solid var(--border-soft); }
 /* the column headings are labels for a scan, not titles: the same .mini-title
    the panels wear, dropped to the quietest ink so the rows read first */
 .clist-head .mini-title { margin: 0; color: var(--dim-ink); font-weight: 500; }
 .clist { list-style: none; display: grid; }
-.crow { padding: 15px 10px; margin: 0 -10px; }
+.crow { padding: 16px 22px; }
 .crow + .crow { border-top: 1px solid var(--border-soft); }
-.crow:last-child { padding-bottom: 0; }
 .crow-id { display: grid; gap: 4px; min-width: 0; }
 .crow-name { color: var(--ink); font-size: 14px; font-weight: 600; letter-spacing: -0.02em; }
 /* THE REFERENCE IS NOT PART OF THE NAME. It is the string you read out to
@@ -870,9 +828,16 @@ body { min-height: 100vh; }
 /* THE ROW IS A CONTROL, so it says so the way every other control on this page
    does: the ground lifts under the pointer and the chevron firms up. It replaces
    .crow-info, a 34px icon button at the end of each row that opened a sheet. */
-.crow.is-link { cursor: pointer; border-radius: 10px; transition: background .18s ease; }
+/* NO RADIUS OF ITS OWN. A rounded band inside a rounded card is two radii
+   disagreeing at four corners; the card's overflow does the rounding, and it
+   gets it right on the two rows where it matters without any row knowing its own
+   position in the list. */
+.crow.is-link { cursor: pointer; transition: background .18s ease; }
 .crow.is-link:hover { background: var(--wash-hover); }
-.crow.is-link:focus-visible { outline: 2px solid var(--blue-ink); outline-offset: 2px; }
+/* INSET, BECAUSE THE ROW NOW REACHES THE CARD'S EDGE. An outset ring on a
+   full-bleed row is drawn outside the card and clipped away by the same overflow
+   that rounds the hover, which would leave a keyboard with no focus at all. */
+.crow.is-link:focus-visible { outline: 2px solid var(--blue-ink); outline-offset: -2px; }
 .crow-go {
   display: inline-flex;
   gap: 4px;
@@ -893,8 +858,12 @@ body { min-height: 100vh; }
 /* GREEN, WHICH IS THE ONE PLACE IT BELONGS HERE. It means a state that has been
    reached, on the Open chip and on progress toward a goal; the balance keeps its
    ink, because money is a figure rather than a state. */
-.bar { height: 5px; border-radius: 3px; background: var(--wash-2); overflow: hidden; }
-.bar-fill { display: block; height: 100%; border-radius: 3px; background: var(--green-ink); }
+/* A PILL, NOT A 3px CORNER ON A 5px BAR. Both ends of the fill were being cut
+   square against the track's own clip, so a bar reading 42% ended on a flat edge
+   while the track it sits in curved: two shapes for one line. 999px resolves to
+   half the height whatever the height becomes. */
+.bar { height: 5px; border-radius: 999px; background: var(--wash-2); overflow: hidden; }
+.bar-fill { display: block; height: 100%; border-radius: 999px; background: var(--green-ink); }
 
 /* ---- the ledger -------------------------------------------------------------
    A fixed date column so the labels rag into one left edge whatever the dates
@@ -914,9 +883,9 @@ body { min-height: 100vh; }
    keeps the identity, the chip and the control on one line and drops the two
    measured cells underneath, where their own wording already names them. */
 @media (max-width: 860px) {
-  .clist-panel { padding: 16px 18px; }
+  .clist-panel { padding: 0; }
   .clist-head { display: none; }
-  .crow { grid-template-columns: 1fr auto auto; gap: 12px 16px; }
+  .crow { grid-template-columns: 1fr auto auto; gap: 12px 16px; padding: 16px 18px; }
   .crow-fill, .crow-spend { grid-column: 1 / -1; }
   .crow-spend { grid-auto-flow: column; justify-content: start; align-items: baseline; gap: 6px; }
 }
@@ -1360,7 +1329,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
      steps at full height and the first frame of script animated them shut. A
      reader saw the thing being taken away rather than never having been there.
      Starting in the state the page starts in means no transition runs at all. -->
-<body class="is-choosing">
+<body>
 
 <!-- PARTNERED AGENTS' GROUND, BEHIND THE WHOLE PAGE (Appy, 2026-09-16). It was
      the hero's for a day, which was the wrong half of the homepage to borrow:
@@ -1453,44 +1422,37 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
   </div>
 </header>
 
-<main class="apply-wrap">
+<!-- THE BUILDER IS A DIALOG NOW, NOT A PAGE (Appy, 2026-09-17). Creating a
+     campaign was a second full screen: its own title, its own three-disc rail,
+     its own ascii ground, reached by leaving the campaigns list and returning to
+     it afterwards. Nothing about that is a change of place. You are on your
+     campaigns, you make one more, you are still on your campaigns - and a
+     navigation that ends where it began is a navigation that should have been an
+     overlay, which is what the portal this is rebuilt from uses.
+     WHAT WENT WITH THE PAGE: the "Write the brief" headline, which a dialog
+     titles itself; the Brief it / Agents run it / Pay on pass rail, which is the
+     marketing page's promise rather than a position in this form; and the
+     collapsing-headline machinery that existed to get the first out of the way
+     of the second. -->
 
-  <!-- THE TITLE INTRODUCES THE PAGE AND THEN GETS OUT OF THE WAY. It is the
-       answer to "where am I", which is a question you ask once; past the first
-       step the rail says where you are and the card says what to do, and a
-       headline still holding the top of the screen is just pushing the work
-       down. It collapses rather than hiding, so the form rises into the space
-       instead of the space staying behind as a hole, and it comes back if you
-       walk back to the start. -->
-  <!-- TWO HEADS, BOTH IN THE MARKUP. The screen before the form asks a
-       different question from the form itself, so it says a different thing;
-       toggling two authored blocks keeps that copy in the file where a diff can
-       see it, rather than in a template string inside the script. They share the
-       one collapsing wrapper, so the way the title steps aside once the form is
-       underway is unchanged. -->
-  <div class="apply-head-wrap">
-    <div class="apply-head">
-      <div class="apply-head-pane" data-head="programs">
-        <h1 class="title-lg">What do you want <em>to happen?</em></h1>
-        <p class="lede">Two ways to get views. Pick the one that matches what you already have.</p>
-      </div>
-      <div class="apply-head-pane" data-head="form" hidden>
-        <h1 class="title-lg">Write the <em>brief</em>.</h1>
-        <p class="lede">Three short steps. Nothing is charged until onBlue has verified the work.</p>
-      </div>
+<!-- THE HOMEPAGE'S FOOTER, with this page's destinations. Every class is the
+     shared sheet's, so the brand block, the columns, the cropped wordmark and
+     its cresting spark all come across without a line of CSS here; what is
+     rewritten is only where the links go, because a footer that offers "Start
+     earning" to somebody halfway through earning is the same page not knowing
+     who is reading it.
+     The section links carry index.html in front of the fragment: on the
+     homepage they are anchors, from here they are a destination. -->
+<!-- THE CAMPAIGN BUILDER. Wider than the page's other sheets because it holds a
+     form rather than a fact, and it keeps .form-card's lift: this is the one
+     surface on the product you are actually filling in, which is the argument
+     that rule was reduced to in the first place. -->
+<dialog class="sheet sheet--wide" id="sheet-create" aria-labelledby="create-title" autofocus>
+  <div class="sheet-in">
+    <div class="sheet-head">
+      <h2 class="sheet-title" id="create-title">Create a campaign</h2>
+      <button class="sheet-x" type="button" aria-label="Close" data-sheet-close><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
     </div>
-  </div>
-
-  <!-- Apply, We review, Deploy and earn. Three stages, not four: the invite
-       email is how "We review" ends rather than a stage of its own, and there is
-       no accepted state because an accepted applicant never lands back here.
-       THIS IS THE PROGRAM'S SHAPE, which is a different thing from the five
-       steps of the form below it, so it is drawn differently: discs and a
-       connector up here, a hairline inside the card down there. -->
-  <div class="mile-wrap">
-    <ol class="mile" id="mile" aria-label="How the program starts"></ol>
-  </div>
-
   <!-- THE BAND CROSSES THE CARD. The stage is the field's host and the form is
        what gets wiped, the same construction the homepage's access dialog uses
        between its two levels, because a step change here is the same event. -->
@@ -1552,6 +1514,9 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     </div>
   </div>
 
+  </div>
+</dialog>
+
 <!-- ============================================================================
      THE SECOND STATE OF THIS PAGE. Everything above is for someone on their way
      in; this is for someone already in. They are one page rather than two
@@ -1595,7 +1560,15 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
   </div>
 </section>
 
-<section class="dash" id="dash" hidden>
+<!-- NOT HIDDEN IN THE MARKUP. Both screens used to start hidden and wait for
+     script to reveal one, which makes the useful state of this page conditional
+     on every line above it running: one throw, one stale cached file, one
+     browser with script off, and the document renders a header, a footer and
+     nothing at all. The resting state of a document should be the screen most
+     readers want, and script should HIDE what does not apply rather than reveal
+     what does. #review still starts hidden, because being in review is the
+     exception and the dashboard is the rule. -->
+<section class="dash" id="dash">
 
   <!-- THREE VIEWS, ONE AT A TIME. The list, a sample report, and a campaign of
        your own that is still in review. They are siblings rather than pages
@@ -1665,9 +1638,15 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
   </div>
 
   <div class="dash-band">
+    <!-- NO CAPTION BESIDE THE HEADING. It read "illustrative data showing what a
+         live campaign report looks like", which is a sentence explaining a thing
+         that every row underneath already says in its own meta line: Sample,
+         first word, on all six. A caption that repeats what the content states
+         is not context, it is a second voice, and this one was long enough to
+         set the heading row's height and push the panel out of rhythm with the
+         one above it. -->
     <div class="dash-sect">
       <h2>Sample reports</h2>
-      <span class="dash-note">illustrative data showing what a live campaign report looks like</span>
     </div>
     <!-- SEPARATE FROM YOUR OWN, AND SAID SO IN EVERY ROW'S META LINE. A new
          agency has nothing of its own to look at, and a report is the thing this
@@ -1733,12 +1712,20 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
           <table class="acct" data-rep="acct"></table>
           <p class="rep-foot">If the campaign closes under target, unconsumed budget is settled per the make-good policy in your agreement.</p>
         </div>
-        <div class="card dash-panel">
-          <h2 class="rep-h">Verification</h2>
-          <div class="rep-states rep-states--col" data-rep="ver"></div>
-          <p class="rep-foot">Every completion is checked before it bills. You are never charged for one that does not verify.</p>
-        </div>
       </div>
+    </div>
+
+    <!-- VERIFICATION CAME OUT OF THE RAIL AND ACROSS THE PAGE. Stacked beside
+         Accounting it made the right column half again as tall as the left, so
+         the chart ended and the page carried a column of dead white down to the
+         next card. Three numbers that are shares of one total are also a row by
+         nature, not a stack: side by side you read 212 against 6 against 9 at a
+         glance, and stacked you read them one at a time and do the comparing
+         yourself. Its own card, full width, three across. -->
+    <div class="card dash-panel">
+      <h2 class="rep-h">Verification</h2>
+      <div class="rep-states" data-rep="ver"></div>
+      <p class="rep-foot">Every completion is checked before it bills. You are never charged for one that does not verify.</p>
     </div>
 
     <!-- FULL WIDTH, BELOW THE TWO COLUMNS. Six portrait frames in a 320px rail
@@ -1829,16 +1816,6 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
      verifies. A control for adding money to an account with no balance was
      the creator dashboard's cash-out read backwards. -->
 
-</main>
-
-<!-- THE HOMEPAGE'S FOOTER, with this page's destinations. Every class is the
-     shared sheet's, so the brand block, the columns, the cropped wordmark and
-     its cresting spark all come across without a line of CSS here; what is
-     rewritten is only where the links go, because a footer that offers "Start
-     earning" to somebody halfway through earning is the same page not knowing
-     who is reading it.
-     The section links carry index.html in front of the fragment: on the
-     homepage they are anchors, from here they are a destination. -->
 <footer class="site-foot">
   <div class="foot-inner">
     <div class="foot-grid">
@@ -2063,7 +2040,6 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
   var panelEl = document.getElementById('step-panel');
   var bodyEl = document.getElementById('step-body');
   var footEl = document.getElementById('form-foot');
-  var mileEl = document.getElementById('mile');
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   function esc(s) {
@@ -2230,7 +2206,6 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
       ]
     }
   };
-
 
   /* ---- the five steps -------------------------------------------------------
      FOUR QUESTIONS AND AN INTRO, which is the application's shape because it is
@@ -2469,21 +2444,6 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
   /* TWO RAILS, ONE COMPONENT. Before an agency is approved the three stages are
      about the agency; afterwards they are about a campaign. Same discs, same
      connector, and the only thing that changes is what they are counting. */
-  var MILE_APPLY = ['Brief it', 'Agents run it', 'Pay on pass'];
-  var MILE_REVIEW = ['Register', 'We review', 'Start campaigns'];
-
-  function renderMile() {
-    var MILE_STEPS = stage === 'review' ? MILE_REVIEW : MILE_APPLY;
-    var active = stage === 'review' ? 1 : (submitted ? 1 : 0);
-    mileEl.innerHTML = MILE_STEPS.map(function (label, i) {
-      var state = i < active ? ' done' : i === active ? ' current' : '';
-      return '<li class="mile-step' + state + '"' + (i === active ? ' aria-current="step"' : '') + '>'
-        + (i > 0 ? '<span class="mile-line" aria-hidden="true"></span>' : '')
-        + '<span class="mile-dot">' + (i < active ? TICK : i + 1) + '</span>'
-        + '<span class="mile-label">' + label + '</span></li>';
-    }).join('');
-  }
-
   /* ---- the confirmation (ApplyForm.tsx, copy verbatim) ---- */
   function renderConfirm() {
     headEl.innerHTML = '';
@@ -2494,7 +2454,6 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     footEl.innerHTML = '';
     footEl.style.display = 'none';
     cardEl.classList.add('is-done');
-    document.body.classList.add('is-underway');
     bodyEl.className = 'step-body intro';
     /* THE CLOSING SHAPE IS THE GATE'S: the mark, then the typed heading, then
        the lede, then one pill. A green tick in a circle was the old one, and it
@@ -2533,7 +2492,6 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
          straight through it. Out here it reads as the prose half of the pair. */
       + '<p class="gate-alt confirm-alt"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.4 11.7a8.4 8.4 0 1 1-2.5-5.4"/><path d="M20.4 3.1v4.8h-4.8"/></svg><button type="button" data-refresh>Refresh</button></p>'
       + '</div>';
-    renderMile();
     /* PREPARED HERE, TYPED LATER, and the split is the whole fix for the flash.
        Both used to happen in one call, and that call had to wait for the band to
        finish crossing, so for the length of the sweep the finished line sat
@@ -2833,6 +2791,19 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
   /* THE KIND IS A FACT ABOUT EVERY ROW, so the four that predate the second one
      get it here rather than each carrying a line saying what they all are. */
   CAMPAIGNS.forEach(function (c) { if (!c.kind) { c.kind = 'engagement'; } });
+  /* HOW LONG EACH ONE RUNS, IN DAYS, because the chart's x axis is the window
+     and a window guessed at fourteen days for all of them drew nonsense. A video
+     growth campaign closing in a fortnight had one day of elapsed time to plot
+     against a third of its target already delivered: a single point, and a story
+     that says the whole thing happened yesterday.
+     CHOSEN SO ELAPSED TIME RUNS A LITTLE AHEAD OF FILL, which is what "behind
+     pace" means and what the dashed line exists to show. Spring is half through
+     its fortnight and 42 per cent filled; Northline is two thirds through three
+     weeks and 34 per cent. They are illustrative, like every other figure on
+     these six, and they are here rather than derived so the story each row tells
+     is one somebody chose. */
+  var WINDOW = { spring: 14, collab: 20, anthem: 21, summer: 21, northline: 22, fernweh: 30 };
+  CAMPAIGNS.forEach(function (c) { c.days = WINDOW[c.id] || 14; });
   /* SAMPLES UNTIL SOMETHING SAYS OTHERWISE, and each carries the two facts its
      row prints beside the name: what kind of campaign it is in the reader's
      words, and where it ran. The kind is a key, not a label, because the key is
@@ -2977,7 +2948,6 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     dash.querySelector('[data-list="samples"]').innerHTML = samples.map(crow).join('');
   }
 
-
   /* ONE ROW, FIVE CELLS, and the percentage is computed rather than carried:
      a width written next to the two numbers it is supposed to represent is a
      third figure that can disagree with them. */
@@ -3020,8 +2990,6 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
       + ' aria-hidden="true"><path d="M9 5.5l6.5 6.5L9 18.5"/></svg></span>'
       + '</li>';
   }
-
-
 
   /* BACK TO THE LIST ON EVERY CHANGE. A report is about one campaign, and both
      of these switches can take that campaign off the account: leaving the report
@@ -3125,10 +3093,18 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     };
   }
 
+  function invoiceNo(c) {
+    var n = parseInt(c.ref.replace(/[^0-9a-f]/gi, '').slice(-4), 16) % 900 + 100;
+    return String(n);
+  }
+
   function daysLeft(c) {
     var end = Date.parse(c.ends);
     if (isNaN(end)) { return 0; }
-    return Math.max(0, Math.round((end - Date.now()) / 86400000));
+    /* CEIL, NOT ROUND. Seven days out at two in the afternoon is 6.4 days, and
+       rounding it printed "6 days remaining, ends Sep 24" beside a date seven
+       days away. A campaign closing on the 24th is still running on the 24th. */
+    return Math.max(0, Math.ceil((end - Date.now()) / 86400000));
   }
 
   function moneyF(n) {
@@ -3154,36 +3130,89 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     return out;
   }
 
+  /* ---- the curve ------------------------------------------------------------
+     THE X AXIS IS THE CAMPAIGN'S WINDOW, NOT THE PART OF IT THAT HAS HAPPENED.
+     It used to stretch the days so far across the whole frame, which drew a line
+     arriving at the right-hand edge on a campaign that is 42 per cent filled:
+     the one picture on this screen said finished while the five tiles above it
+     said not yet. The window is the axis, the verified line stops where today
+     is, and the space to the right of it is the time left - which is the thing a
+     reader came to this card to see.
+     AND THE PACE LINE IS WHAT MAKES IT A CHART rather than a decoration. Two
+     lines from the same origin, one where you are and one where you need to be:
+     the gap between them is the campaign's whole story, and it cannot be told by
+     a number. */
   function chart(c) {
-    var N = 8, vals = series(c, N);
-    var W = 640, H = 240, L = 46, R = 16, T = 16, B = 30;
+    var W = 660, H = 250, L = 48, R = 16, T = 16, B = 34;
+    var span = c.days || 14;                        // the window, in days
+    var left = Math.min(daysLeft(c), span - 1);
+    var done = span - left;                         // days elapsed
+    var vals = c.done > 0 ? series(c, done) : [];
     var top = Math.max(c.target, c.done) || 1;
-    var x = function (i) { return L + (W - L - R) * (N === 1 ? 0 : i / (N - 1)); };
+    var endMs = Date.parse(c.ends);
+
+    var x = function (d) { return L + (W - L - R) * (d / (span - 1)); };
     var y = function (v) { return T + (H - T - B) * (1 - v / top); };
+    var day = function (d) {
+      var t = new Date(endMs - (span - 1 - d) * 86400000);
+      return t.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    };
 
-    var grid = '', i;
+    var rules = '', ticks = '', i, gy;
     for (i = 0; i <= 4; i++) {
-      var gy = T + (H - T - B) * (i / 4);
-      grid += '<line x1="' + L + '" y1="' + gy.toFixed(1) + '" x2="' + (W - R) + '" y2="' + gy.toFixed(1) + '"/>';
-      grid += '<text x="' + (L - 8) + '" y="' + (gy + 3.5).toFixed(1) + '" text-anchor="end">'
-        + Math.round(top * (1 - i / 4)).toLocaleString('en-US') + '</text>';
+      gy = T + (H - T - B) * (i / 4);
+      rules += '<line x1="' + L + '" y1="' + gy.toFixed(1) + '" x2="' + (W - R) + '" y2="' + gy.toFixed(1) + '"/>';
+      ticks += '<text x="' + (L - 9) + '" y="' + (gy + 3.5).toFixed(1) + '" text-anchor="end">'
+        + num(Math.round(top * (1 - i / 4))) + '</text>';
     }
+    /* FOUR DATES, NOT FOURTEEN. The axis needs to say which fortnight this is
+       and roughly where today sits in it; a label per day would be a wall of
+       text under a line that has eight bends in it. */
+    var days = '';
+    [0, Math.round((span - 1) / 3), Math.round((span - 1) * 2 / 3), span - 1].forEach(function (d) {
+      days += '<text x="' + x(d).toFixed(1) + '" y="' + (H - 12) + '" text-anchor="middle">' + day(d) + '</text>';
+    });
 
+    /* A CAMPAIGN WITH NOTHING VERIFIED YET GETS NO LINE. The frame, the dates
+       and the pace it has to meet are all still true and all still worth seeing;
+       a flat line along the floor would be drawing a measurement that has not
+       been taken, and a dot on it would put a reader at a position nobody is in
+       yet. */
+    var has = vals.length > 0;
     var line = vals.map(function (v, k) { return (k ? 'L' : 'M') + x(k).toFixed(1) + ' ' + y(v).toFixed(1); }).join(' ');
-    var area = line + ' L' + x(N - 1).toFixed(1) + ' ' + y(0).toFixed(1) + ' L' + x(0).toFixed(1) + ' ' + y(0).toFixed(1) + ' Z';
-    var pace = 'M' + x(0).toFixed(1) + ' ' + y(c.target / N).toFixed(1)
-      + ' L' + x(N - 1).toFixed(1) + ' ' + y(c.target).toFixed(1);
+    var lastX = has ? x(vals.length - 1) : 0, lastY = y(c.done);
+    var area = has
+      ? line + ' L' + lastX.toFixed(1) + ' ' + y(0).toFixed(1) + ' L' + x(0).toFixed(1) + ' ' + y(0).toFixed(1) + ' Z'
+      : '';
+    var pace = 'M' + x(0).toFixed(1) + ' ' + y(0).toFixed(1) + ' L' + x(span - 1).toFixed(1) + ' ' + y(c.target).toFixed(1);
+
+    /* THE READER IS PUT AT THE END OF THE LINE. A curve with no value on it asks
+       you to run your eye back to the axis and estimate; the one number anybody
+       wants off this chart is where the line has got to, so it is written there.
+       It sits ABOVE the point and left of the edge, because at 42 per cent the
+       point is mid-frame and at 100 per cent it is against the right margin. */
+    var anchor = lastX > W - 90 ? 'end' : 'start';
+    var tipX = anchor === 'end' ? lastX - 8 : lastX + 8;
 
     return '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Cumulative '
       + esc(unitOf(c)) + ' by day against the pace needed to reach '
-      + c.target.toLocaleString('en-US') + '">'
-      + '<g stroke="var(--border-soft)" stroke-width="1" fill="none">' + grid.replace(/<text[^]*?<\/text>/g, '') + '</g>'
-      + '<g fill="var(--dim-ink)" font-size="10">'
-      + grid.replace(/<line[^>]*\/>/g, '') + '</g>'
-      + '<path d="' + area + '" fill="rgba(21,110,254,0.07)" stroke="none"/>'
-      + '<path d="' + pace + '" fill="none" stroke="var(--dim-ink)" stroke-width="1.4" stroke-dasharray="5 5"/>'
-      + '<path d="' + line + '" fill="none" stroke="var(--blue-ink)" stroke-width="2.2"'
-      + ' stroke-linecap="round" stroke-linejoin="round"/>'
+      + num(c.target) + ' by ' + esc(c.ends) + '">'
+      + '<g stroke="var(--border-soft)" stroke-width="1" fill="none">' + rules + '</g>'
+      + '<g fill="var(--dim-ink)" font-size="10">' + ticks + days + '</g>'
+      + (has ? '<path d="' + area + '" fill="rgba(21,110,254,0.08)" stroke="none"/>' : '')
+      + '<path d="' + pace + '" fill="none" stroke="var(--dim-ink)" stroke-width="1.3"'
+      + ' stroke-dasharray="5 5" opacity="0.7"/>'
+      + '<text x="' + (x(span - 1) - 6) + '" y="' + (y(c.target) - 8) + '" text-anchor="end"'
+      + ' fill="var(--dim-ink)" font-size="10">Target pace</text>'
+      + (has
+          ? '<path d="' + line + '" fill="none" stroke="var(--blue-ink)" stroke-width="2.2"'
+            + ' stroke-linecap="round" stroke-linejoin="round"/>'
+            + '<circle cx="' + lastX.toFixed(1) + '" cy="' + lastY.toFixed(1) + '" r="3.5"'
+            + ' fill="var(--card-bg)" stroke="var(--blue-ink)" stroke-width="2"/>'
+            + '<text x="' + tipX.toFixed(1) + '" y="' + (lastY - 11).toFixed(1) + '" text-anchor="' + anchor + '"'
+            + ' fill="var(--ink)" font-size="11.5" font-weight="600">' + num(c.done) + '</text>'
+          : '<text x="' + ((L + W - R) / 2) + '" y="' + ((T + H - B) / 2) + '" text-anchor="middle"'
+            + ' fill="var(--dim-ink)" font-size="11.5">Nothing verified yet</text>')
       + '</svg>';
   }
 
@@ -3253,6 +3282,20 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
   ];
   var PLAY = '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>';
 
+  /* EVERY FACT IN ITS OWN ELEMENT, WHICH IS WHY THE LINE READ
+     "Sep 24 2026 closeCountry: United States". The row is a flex container with
+     a 16px gap, and a gap falls BETWEEN ELEMENTS: two plain strings joined into
+     the same innerHTML become one anonymous text box with nothing between them,
+     so the two facts that happened to have no markup of their own ran together
+     while the ones wrapped in <b> looked fine. A separator typed into the
+     strings would have fixed the symptom and left the next unwrapped fact to do
+     it again. */
+  function metaRow(parts) {
+    return parts.map(function (p) {
+      return p.indexOf('<span class="chip') === 0 ? p : '<span>' + p + '</span>';
+    }).join('');
+  }
+
   function tile(label, value, sub, warn) {
     return '<span class="tile"><span class="tile-l">' + esc(label) + '</span>'
       + '<span class="tile-v">' + value + '</span>'
@@ -3279,8 +3322,11 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     var meta = ['<span class="' + chipCls + '">' + esc(c.label) + '</span>'];
     if (growth) { meta.push('Films: <b>' + esc(c.note) + '</b>'); }
     else { meta.push('Post: <a data-stub>youtube.com/shorts/xK9\u2026q2w</a>', 'Actions: <b>Watch + Like + Comment</b>'); }
-    meta.push(esc(c.ends.replace(',', '')) + ' close', 'Country: <b>' + esc(c.geo === 'US' ? 'United States' : c.geo) + '</b>');
-    rep.querySelector('[data-rep="meta"]').innerHTML = meta.join('');
+    /* ENDS, NOT "close". It read "Sep 24 2026 close", a date with a verb stuck
+       to the end of it that says nothing the word Ends does not say first. */
+    meta.push('Ends <b>' + esc(c.ends) + '</b>',
+              'Country: <b>' + esc(c.geo === 'US' ? 'United States' : c.geo) + '</b>');
+    rep.querySelector('[data-rep="meta"]').innerHTML = metaRow(meta);
 
     rep.querySelector('[data-rep="tiles"]').innerHTML =
         tile('Fill', pct + '%', c.done.toLocaleString('en-US') + ' of ' + c.target.toLocaleString('en-US') + ' target')
@@ -3316,7 +3362,13 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
       + '<tr><td>' + bidLabel + '</td><td>' + moneyF(bid) + '</td></tr>'
       + '<tr><td>Consumed ' + shows + '</td><td>' + moneyF(consumed) + '</td></tr>'
       + '<tr class="is-total"><td>Remaining</td><td>' + moneyF(c.budget - consumed) + '</td></tr>'
-      + '<tr><td>Invoice <span class="is-num">INV-2026-0' + c.ref.slice(-2) + '</span></td><td>PAID</td></tr>';
+      /* DIGITS, BECAUSE AN INVOICE NUMBER IS ONE. This took the last two
+         characters of the campaign's short id, which is hex, so a perfectly
+         ordinary report carried "INV-2026-0e4" - a reference nobody could read
+         back over a phone and nothing would accept as an invoice. The id is
+         still what ties the two together; it is just converted to base ten
+         first, and zero-padded so every invoice on the page is the same shape. */
+      + '<tr><td>Invoice <span class="is-num">INV-2026-' + invoiceNo(c) + '</span></td><td>PAID</td></tr>';
 
     rep.querySelector('[data-rep="ver"]').innerHTML =
         '<span class="rep-state is-ok"><b>' + v.ok.toLocaleString('en-US') + '</b><span>Verified</span></span>'
@@ -3351,12 +3403,13 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     var growth = c.kind === 'growth';
     var reach = c.target;
     cam.querySelector('[data-cam="name"]').textContent = c.name;
-    cam.querySelector('[data-cam="meta"]').innerHTML =
-        '<span class="chip chip--wait">' + esc(c.label) + '</span>'
-      + esc(KIND_L[c.kind])
-      + 'Country: <b>' + esc(c.geo === 'US' ? 'United States' : c.geo) + '</b>'
-      + 'Created just now'
-      + '<span class="is-num">' + esc(c.ref) + '</span>';
+    cam.querySelector('[data-cam="meta"]').innerHTML = metaRow([
+      '<span class="chip chip--wait">' + esc(c.label) + '</span>',
+      esc(KIND_L[c.kind]),
+      'Country: <b>' + esc(c.geo === 'US' ? 'United States' : c.geo) + '</b>',
+      'Created just now',
+      '<span class="is-num">' + esc(c.ref) + '</span>'
+    ]);
 
     /* THE SETUP TABLE NAMES THE KIND'S OWN UNIT in both the bid row and the
        target row. "Target reach: 200,000" on a campaign that counts views and
@@ -3421,8 +3474,12 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
       var sample = e.target.closest('[data-sample]');
       if (sample) {
         var kind = sample.getAttribute('data-sample');
-        var pick = SAMPLES.filter(function (x) { return x.kind === kind && x.state !== 'review'; })[0] || SAMPLES[0];
-        openReport(pick);
+        /* not `pick`: that is the builder's function for choosing a campaign
+           TYPE, two hundred lines down and in this same closure. A local var of
+           the same name shadows it harmlessly today and is a trap the first time
+           something in here needs the other one. */
+        var shown = SAMPLES.filter(function (x) { return x.kind === kind && x.state !== 'review'; })[0] || SAMPLES[0];
+        openReport(shown);
         return;
       }
 
@@ -3449,10 +3506,9 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
        campaigns is on the one screen that can do nothing for them, and both the
        empty state and the head offer the same way off it. */
     Array.prototype.forEach.call(dash.querySelectorAll('[data-join]'), function (b) {
-      b.addEventListener('click', function () { setApproved(false); });
+      b.addEventListener('click', openCreate);
     });
   })();
-
 
   /* ONE SWITCH, TWO STATES OF THE PAGE. Applying and being in are not two steps
      of one sequence, so this is not a step counter: it is which of the two
@@ -3461,7 +3517,19 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
   /* ONE FUNCTION, THREE STAGES, because they are three values of one thing
      rather than three independent switches. It was two booleans and they could
      both be true, which is a state this page has no screen for. */
+  var STAGES = ['review', 'approved'];
   function setStage(next) {
+    /* A STAGE THIS PAGE DOES NOT KNOW IS NOT A THIRD STAGE, IT IS A TYPO. Both
+       screens hide on anything that is not their own name, so one unrecognised
+       value emptied the page down to the header and the footer - which is what
+       a browser holding a cached copy of the review dock did: that dock still
+       offered 'apply' and 'dash', the two values this page retired, and sent one
+       of them through the door as if nothing had changed.
+       A SWITCH CANNOT BE ALLOWED TO PRODUCE A SCREEN THAT DOES NOT EXIST. The
+       dock validates its own stored value against its own states, which is the
+       right check in the wrong place: it only defends the dock from itself, and
+       the page is what has to survive being told something false. */
+    if (STAGES.indexOf(next) === -1) { next = 'approved'; }
     stage = next;
     var body = document.body.classList;
     body.toggle('is-review', stage === 'review');
@@ -3469,15 +3537,11 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     revEl.hidden = stage !== 'review';
     dashEl.hidden = stage !== 'approved';
     approved = stage === 'approved';
-    renderMile();
-    if (stage === 'apply') { render(); }
   }
-  function setApproved(on) { setStage(on ? 'approved' : 'apply'); }
   /* THE ONE DOOR INTO THIS STATE, published so the review toggler goes through
      it rather than setting the class itself. A switch that flipped the class
      from outside would leave everything above believing the application was
      still on screen. */
-  window.onblueApproved = setApproved;
   window.onblueStage = setStage;
 
   /* ---- what the gate handed over ------------------------------------------
@@ -3525,11 +3589,15 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
      are one fact stated twice; anything that changes `chosen` calls this and
      nothing else has to remember the other half */
   function renderShell() {
-    document.body.classList.toggle('is-choosing', !chosen);
+    /* .is-choosing AND .is-underway ARE GONE. Both existed to tell the page's
+       headline and rail to step aside at the right moment, and both left with
+       them. A class nothing styles is a fact being published to nobody. */
     listEl.hidden = chosen;
     cardEl.hidden = !chosen;
-    headProg.hidden = chosen;
-    headForm.hidden = !chosen;
+    /* THE DIALOG TITLES ITSELF, so the two page headings this used to swap are
+       gone with the page. It says what it is on the way in and keeps saying it;
+       a dialog that renames itself halfway through is a dialog you are no longer
+       sure you opened. */
   }
 
   function render(focusSel) {
@@ -3547,7 +3615,6 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
         return '<span class="rail-seg' + (i <= step ? ' on' : '') + '"></span>';
       }).join('') + '</span></div>';
 
-    document.body.classList.toggle('is-underway', step > 0);
     document.body.classList.remove('is-submitted');
     bodyEl.className = 'step-body' + (step === 0 ? ' intro' : ' has-floor') + (swapDir ? ' swap-' + swapDir : '');
     bodyEl.innerHTML = STEP_RENDER[step](err);
@@ -3575,7 +3642,17 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
       /* out of the form entirely, by the same band that brought you in: the
          step change and the screen change are different sizes of the same
          move, and only the larger one is worth punctuating */
+      /* AT STEP ZERO, BACK IS THE WAY OUT. Where there are two types it goes to
+         the chooser, which is the screen before this one. Where there is one it
+         goes nowhere, because there is no screen before this one, so it closes
+         the dialog rather than emptying the form and leaving the reader looking
+         at the card they were just filling in. */
       if (step === 0) {
+        if (flow === 'v1') {
+          var dlg = document.getElementById('sheet-create');
+          if (dlg && dlg.open) { dlg.close(); }
+          return;
+        }
         chosen = false;
         render();
         return;
@@ -3658,19 +3735,18 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
   var listEl = document.getElementById('prog-list');
   var dashEl = document.getElementById('dash');
   var revEl = document.getElementById('review');
-  /* 'review' | 'apply' | 'approved'. It opens on review when the gate has just
+  /* 'review' | 'approved'. It opens on review when the gate has just
      registered an agency and handed one over, which is the only way this page
      is reached from the brands site by someone who does not have an account.
      THE THIRD VALUE IS NAMED FOR THE AGENCY, NOT FOR THE ELEMENT. It was 'dash'
      after the section it reveals, which made the one axis a reviewer actually
      switches read as a list of page fragments: in review, creating, and the
      name of a div. What it describes is whether we have approved this agency.
-     'apply' survives as a value because the builder is still a screen here; the
-     portal makes it a dialog over the list, and pass 5 of PLAN-portal.md is
-     where it stops being a stage at all. */
-  var stage = 'apply';
-  var headProg = document.querySelector('[data-head="programs"]');
-  var headForm = document.querySelector('[data-head="form"]');
+     AND THERE ARE TWO OF THEM NOW, NOT THREE. 'apply' was the builder, which
+     has become a dialog over the approved list: making a campaign is something
+     you do from a state rather than a state you are in, and it was the last
+     thing keeping this a three-way switch. */
+  var stage = 'approved';
   var bgEl = document.getElementById('apply-bg');
   var field = null;
   var sweeping = false;
@@ -3784,13 +3860,56 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
      later with nothing on the page admitting where it came from. */
   Array.prototype.forEach.call(document.querySelectorAll('[data-pick]'), function (btn) {
     btn.addEventListener('click', function () {
-      setType(btn.getAttribute('data-pick'), btn.getAttribute('data-kind'));
-      chosen = true;
-      swapDir = 'fwd';
-      render();
-      measureFloor();
+      pick(btn.getAttribute('data-pick'), btn.getAttribute('data-kind'));
     });
   });
+
+  function pick(id, kind) {
+    setType(id, kind);
+    chosen = true;
+    swapDir = 'fwd';
+    render();
+    measureFloor();
+  }
+
+  /* ---- opening the builder --------------------------------------------------
+     A PICKER WITH ONE OPTION IS NOT A CHOICE, IT IS A DOOR WITH A DOORMAN. In
+     the build that has only the engagement type, the chooser was one card on its
+     own asking to be pressed before the form it was always going to open; that
+     is a click spent on a question the reader cannot answer wrongly. So v1 opens
+     on the form, and the chooser exists only in the build where the two types
+     genuinely differ.
+     IT IS READ AT OPEN, NOT AT LOAD. The workflow switch can change under the
+     page, and a builder that decided once at boot would keep offering a chooser
+     for a type the current build does not have. */
+  function openCreate() {
+    resetDraft();
+    var one = flow === 'v1';
+    chosen = false;
+    if (one) { setType('engagement', 'Video engagement driver'); chosen = true; }
+    step = 0;
+    submitted = false;
+    swapDir = '';
+    touched = {};
+    forced = {};
+    document.body.classList.remove('is-submitted');
+    render();
+    var dlg = document.getElementById('sheet-create');
+    if (dlg && !dlg.open) { dlg.showModal(); }
+    measureFloor();
+  }
+
+  /* A NEW CAMPAIGN IS A NEW CAMPAIGN. The draft used to live for the page's
+     lifetime because the page died when you left the builder; a dialog does not,
+     so without this the second campaign an agency makes opens holding the
+     first's budget, dates and answers. The address stays: it came from the gate
+     and it is who you are, not something you typed here. */
+  function resetDraft() {
+    d.type = ''; d.kind = ''; d.unit = ''; d.review = '';
+    d.name = ''; d.bid = ''; d.gen = ''; d.budget = '';
+    d.startAt = ''; d.endAt = ''; d.note = '';
+    d.country = 'Worldwide';
+  }
 
   /* LOGGING OUT DROPS WHAT WAS KEPT. There is no session to end, but there is
      one thing this flow stored: the address the access dialog handed over, which
@@ -3854,10 +3973,18 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     window.dispatchEvent(new CustomEvent('apply:submitted'));
   });
 
-  renderMile();
   renderDash();
   render();
   measureFloor();
+  /* THE PAGE SHOWS ITSELF. Until now the first thing to put a screen on this
+     page was the review dock, because #review and #dash both start hidden in the
+     markup and only setStage clears that. Delete onblue-dev.js, or let a browser
+     serve a stale copy of it, and the page came up as a header and a footer with
+     nothing in between - which is exactly what it did.
+     A REVIEW TOOL IS A SHORTCUT, NOT A DEPENDENCY. That is the whole claim in
+     its header comment: delete this file and the page loses a shortcut, not a
+     variant. It was not true here, and this is the line that makes it true. */
+  setStage(stage);
   /* LAST, BECAUSE IT IS THE ONLY THING HERE THAT CHANGES WHICH SCREEN YOU ARE
      ON. It used to run where it is declared, a few hundred lines above the two
      lookups for #review and #dash; `var` hoists the names but not the values,
@@ -3868,7 +3995,6 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
   fromGate();
 })();
 </script>
-
 
 <!-- THE 3D COMPANION IS GONE WITH ITS COLUMN (Appy, 2026-09-16). It stood in a
      right-hand aside that the centred layout no longer has, and a WebGL rig
