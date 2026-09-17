@@ -461,12 +461,32 @@ body { min-height: 100vh; }
 .dash-panel:hover { border-color: var(--border-soft); box-shadow: none; transform: none; }
 .dash-panel::after { content: none; }
 
-/* AND THE TWO TYPE CARDS KEEP THEIR HOVER AND LOSE THE HIGHLIGHT. They ARE
-   controls, so the border firming up is right and the travelling sheen on top of
-   it is the surface treatment arguing with the control treatment. */
-.type-card { box-shadow: none; }
-.type-card:hover { box-shadow: none; transform: none; }
+/* THE TWO TYPE CARDS GET AN EDGE OF THEIR OWN. Taking the shadow off them was
+   right in intent and wrong in fact: .type-card sets border: 0, so the shadow
+   WAS its edge, and removing it left two blocks of text side by side with
+   nothing saying either one is a thing you can press. "The border firming up is
+   right" was the argument, and there was no border.
+   A HAIRLINE AND A WASH, which is what every other control on this page answers
+   a pointer with. The sheen still goes: a highlight travelling around a surface
+   is for a surface, and this is a choice between two of them. */
+.type-card {
+  border: 1px solid var(--border-soft);
+  box-shadow: none;
+  transition: border-color .2s ease, background .2s ease;
+}
+.type-card:hover {
+  border-color: var(--card-line-hover);
+  background: linear-gradient(var(--wash-hover), var(--wash-hover)), var(--card-bg);
+  box-shadow: none;
+  transform: none;
+}
+.type-card:focus-visible { outline: 2px solid var(--blue-ink); outline-offset: 2px; }
 .type-card::after { content: none; }
+/* THE LAST LINE SITS ON THE FLOOR OF BOTH CARDS. It is the one line a reader is
+   comparing across them - what each one asks you to bring - and the two
+   descriptions above it are different lengths, so left where it fell it sat at
+   two different heights and the comparison had to be hunted for. */
+.type-card .type-fam { margin-top: auto; padding-top: 10px; }
 .apply-bg > .ascii-bg { z-index: 1; }
 .step-body.swap-fwd > * { animation: in-soft 0.45s var(--ease) both; animation-delay: calc(var(--i, 0) * 38ms); }
 .step-body.swap-back > * { animation: in-fade 0.32s var(--ease) both; }
@@ -486,7 +506,23 @@ body { min-height: 100vh; }
    reach them. */
 .sheet--wide { width: min(620px, calc(100vw - 32px)); max-height: min(86vh, 860px); }
 .sheet--wide .sheet-in { display: flex; flex-direction: column; max-height: inherit; padding: 22px 22px 20px; }
-.sheet--wide .form-stage { flex: 1; min-height: 0; max-width: none; margin: 0; overflow-y: auto; }
+/* A SCROLLBAR THAT APPEARS ON HOVER IS A LAYOUT THAT MOVES ON HOVER. The panel
+   scrolls, and the buttons at its foot lift and cast a shadow when a pointer
+   reaches them; that extra height was enough to bring a scrollbar in, which took
+   its width out of the content, which resized the two buttons and reflowed the
+   form under the very pointer that was aiming at one of them. scrollbar-gutter
+   reserves the track whether or not it is in use, so nothing moves either way.
+   AND ROOM AT THE FOOT FOR WHAT THE BUTTONS DRAW. overflow-y: auto clips on both
+   axes, so a shadow under the last element in the box was being cut off square. */
+.sheet--wide .form-stage {
+  flex: 1;
+  min-height: 0;
+  max-width: none;
+  margin: 0;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  padding: 3px 3px 10px;
+}
 
 /* THE DIALOG IS THE CARD, SO THE CARD INSIDE IT IS NOT ONE. It kept its own
    border, its own ground and its own lift, which put a raised surface 22px
@@ -2098,7 +2134,14 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     var b = BRIEFS[id];
     d.type = id;
     d.kind = kind || (b ? b.name : '');
-    d.unit = b ? b.label.replace(/^Bid per /, '').replace(/^Monthly retainer bid$/, 'month') : '1,000 verified views';
+    /* THE UNIT COMES FROM THE BRIEF'S OWN unit AND per, not from chopping words
+       off its price label. The label used to always start "Bid per ", so
+       stripping that prefix produced the noun; video growth prices per thousand
+       and its label reads "Price per 1,000 views", which the strip left intact,
+       and the hint under the bid field rendered "Per Price per 1,000 views."
+       A DERIVED STRING IS FINE, A DERIVED STRING THAT DEPENDS ON THE OTHER ONE'S
+       WORDING IS NOT. Both facts are already on the brief, spelled out. */
+    d.unit = b ? (b.per > 1 ? num(b.per) + ' ' + b.unit : b.unit.replace(/s$/, '')) : '1,000 verified views';
     d.review = b ? b.review : '';
     d.gen = '';
     if (b) {
@@ -2342,13 +2385,12 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     if (b) {
       html += b.fields.map(function (f) { return typeField(f, err); }).join('');
     }
-    /* LAST, AND OPTIONAL, which is the only honest place for a free-text box on
-       a form whose whole promise is that it asks the right questions. */
-    html += '<label class="q" data-field="note">'
-      + '<span class="q-label">Anything else we should know? <span class="opt">(optional)</span></span>'
-      + '<textarea class="field" name="note" rows="2" '
-      + 'placeholder="Anything we should know before we start.">' + esc(d.note) + '</textarea>'
-      + msgSlot('', '') + '</label>';
+    /* THE FREE-TEXT BOX IS ASKED ONCE, AND IT IS ASKED LAST. It was here and on
+       the final step at the same time, so the form put the same question to a
+       reader twice - and whichever one they answered, the other still sat there
+       empty looking unanswered. It belongs where it is now: after the questions
+       the form knows how to ask, which is the only honest place for "anything
+       else". */
     return html;
   }
 
@@ -3666,7 +3708,12 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     /* Back is unconditional now: at step 0 it leads out of the form and back to
        the programmes, which is a real place rather than nowhere */
     footEl.innerHTML = '<button type="button" class="btn btn-ghost" id="back-btn">Back</button>'
-      + '<button type="submit" class="btn btn-solid">' + (step === LAST ? 'Submit application' : 'Continue') + '</button>';
+      /* CREATE CAMPAIGN, NOT "Submit application". An application is the thing an
+         agency files once to be let in, and it has its own screen; this button
+         is at the end of a form that makes a campaign, and the panel it leads to
+         says "Your campaign is in review". The word was left over from the
+         creator flow this form was adapted from. */
+      + '<button type="submit" class="btn btn-solid">' + (step === LAST ? 'Create campaign' : 'Continue') + '</button>';
 
     wire();
     if (focusSel) {
