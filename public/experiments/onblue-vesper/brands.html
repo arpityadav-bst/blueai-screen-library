@@ -32,30 +32,106 @@ document.documentElement.setAttribute('data-theme', 'light');
    specifics under a claim is exactly what it is for. */
 .eco-panel--bare { min-height: 0; }
 .eco-panel--bare .eco-copy > h3, .eco-panel--bare .eco-copy > p { max-width: 34ch; }
+/* ---- the sample strip, as a panorama ----------------------------------------
+   THE GEOMETRY IS ONE NUMBER AND FOUR RATIOS, so the whole arc stays the same
+   shape at every width instead of being re-tuned per breakpoint.
 
-/* ---- the sample strip -------------------------------------------------------
-   Three 9:16 frames on the card primitive, so they hover, light their stroke and
-   cast the same shadow as every other surface on the page. */
-.work-grid {
-  margin-top: 52px;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 18px;
-  max-width: 760px;
-  margin-inline: auto;
+     --arc-w     a card's own width, and the only figure with a unit
+     --arc-r     the cylinder's radius, 4.11 x --arc-w
+     --arc-step  14deg between neighbours
+     perspective 1.2 x --arc-r
+
+   Why those four. A card at angle t sits at x = R sin t, z = -R cos t, and the
+   perspective divide scales it by P / (P + R cos t). Tying P to R means that
+   scale depends only on t, never on the viewport, so the arc is self-similar:
+   the middle frame always renders at 0.55 of its CSS size and the outermost at
+   0.62, an eleven per cent difference that is the visible squeeze. R = 4.11 x W
+   is the radius at which neighbouring frames just touch after that divide,
+   which is what makes the row read as one surface.
+
+   --arc-w IS CAPPED, AND IT COSTS SOMETHING. At 24.9vw the outermost frame
+   reaches the viewport edge exactly; past about 1450px the cap holds the arc
+   short of the edges rather than letting a 9:16 frame grow past 400px tall. The
+   band would otherwise be half a screen high on an ultrawide, which is a worse
+   answer to "edge to edge" than a centred arc. */
+.work-arc {
+  --arc-w: min(24.9vw, 360px);
+  --arc-r: calc(var(--arc-w) * 4.11);
+  --arc-step: 14deg;
+  width: 100vw;
+  margin: 56px 0 0 calc(50% - 50vw);
+  perspective: calc(var(--arc-r) * 1.2);
+  /* the clip is the band's own edge: an outermost frame that bleeds past the
+     viewport would give the page a horizontal scrollbar for two pixels of arc */
+  overflow: hidden;
 }
-.work-card { overflow: hidden; padding: 10px 10px 14px; }
+/* the stage is as tall as the TALLEST rendered frame, which is an outer one, and
+   every card is centred on its midline by the perspective origin */
+.work-stage {
+  position: relative;
+  height: calc(var(--arc-w) * 1.1);
+  transform-style: preserve-3d;
+}
+.work-card {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--arc-w);
+  padding: 0;
+  overflow: hidden;
+  border-radius: 12px;
+  /* THE ORDER MATTERS AND IT IS NOT THE OBVIOUS ONE. rotateY first, then
+     translateZ, puts the card on the cylinder's surface facing the axis;
+     translateZ first would move it straight back and then spin it in place.
+     The -50% pair is plain centring and has to come before either, because
+     after a rotate a percentage translate is measured on the rotated axis. */
+  transform:
+    translate(-50%, -50%)
+    rotateY(calc(var(--i) * var(--arc-step)))
+    translateZ(calc(var(--arc-r) * -1))
+    translateZ(var(--arc-lift, 0px));
+  transition: transform 0.45s var(--ease);
+}
+/* a frame steps out of the wall when you point at it, which is the only motion
+   the arc has and the only thing that says it can be touched */
+.work-card:hover { --arc-lift: 56px; z-index: 2; }
 .work-video {
   display: block;
   width: 100%;
   aspect-ratio: 9 / 16;
-  border-radius: 10px;
   background: var(--panel-bg);
   object-fit: cover;
 }
-.work-card figcaption { display: grid; gap: 3px; padding: 12px 6px 0; }
-.work-name { color: var(--ink); font-size: 13.5px; font-weight: 600; letter-spacing: -0.02em; }
-.work-meta { color: var(--dim-ink); font-size: 12px; letter-spacing: -0.01em; }
+
+/* NO 3D BELOW 820px. A cylinder needs width to be a cylinder; at phone size the
+   same seven frames become a row you swipe, which is what a panorama is for on a
+   surface you can only see a slice of anyway. */
+@media (max-width: 820px) {
+  .work-arc {
+    width: auto;
+    margin-inline: 0;
+    perspective: none;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+  .work-arc::-webkit-scrollbar { display: none; }
+  .work-stage {
+    height: auto;
+    display: flex;
+    gap: 12px;
+    padding-bottom: 4px;
+    transform-style: flat;
+  }
+  .work-card {
+    position: static;
+    flex: none;
+    width: 58%;
+    transform: none;
+    scroll-snap-align: center;
+  }
+  .work-card:hover { --arc-lift: 0px; }
+}
 
 /* THE SPARK LENS FOLLOWS ITS FILTER, NOT ITS SECTION. --ca-spark is what the
    homepage's dispatch mark wears and what the pointer rewrites; this page gave
@@ -64,9 +140,6 @@ document.documentElement.setAttribute('data-theme', 'light');
    mark and only its channel split is borrowed. */
 #get-access .close-mark { filter: var(--ca-spark) var(--close-shadow); }
 
-@media (max-width: 820px) {
-  .work-grid { grid-template-columns: 1fr; max-width: 320px; }
-}
 </style>
 <script src="ascii-field.js"></script>
 <script src="onblue-chrome.js"></script>
@@ -719,32 +792,53 @@ document.documentElement.setAttribute('data-theme', 'light');
       <div class="band-head band-head--center reveal">
         <span class="eyebrow">Sample output</span>
         <h2>What the agents <em>actually make</em></h2>
-        <p class="band-sub">Three runs from real campaigns, on real channels.</p>
+        <p class="band-sub">Seven runs from three campaigns, on real channels.</p>
       </div>
 
-      <div class="work-grid">
-        <figure class="card work-card reveal">
-          <video class="work-video" src="samples/calm.mp4" poster="samples/calm.jpg" muted loop playsinline preload="none"></video>
-          <figcaption>
-            <span class="work-name">Calm-down routine</span>
-            <span class="work-meta">Wellness channel</span>
-          </figcaption>
-        </figure>
-        <figure class="card work-card reveal" style="--rd:0.1s">
-          <video class="work-video" src="samples/meal.mp4" poster="samples/meal.jpg" muted loop playsinline preload="none"></video>
-          <figcaption>
-            <span class="work-name">One-pan dinner</span>
-            <span class="work-meta">Food channel</span>
-          </figcaption>
-        </figure>
-        <figure class="card work-card reveal" style="--rd:0.2s">
-          <video class="work-video" src="samples/reply.mp4" poster="samples/reply.jpg" muted loop playsinline preload="none"></video>
-          <figcaption>
-            <span class="work-name">Reply to a comment</span>
-            <span class="work-meta">Creator channel</span>
-          </figcaption>
-        </figure>
+      <!-- SEVEN FRAMES ON THE INSIDE OF A CYLINDER. Each card is rotated about
+           the band's vertical axis and pushed away from the viewer, so the one
+           in the middle is the FARTHEST and therefore the smallest: that is the
+           whole squeeze. The outer frames come back toward the reader and turn
+           to face the centre, which is what makes it read as one continuous
+           surface rather than as seven cards that happen to be tilted.
+           SEVEN, NOT FIVE, AND THE ASPECT IS WHY. These are 9:16, so a card wide
+           enough for five of them to reach both edges would be taller than the
+           screen. Seven narrower frames span the same width at two thirds the
+           height, and the arc reads deeper for having more of it. -->
+      <div class="work-arc reveal">
+        <div class="work-stage">
+          <figure class="card work-card" style="--i:-3">
+            <video class="work-video" src="samples/airtap-red-eye.mp4" poster="samples/airtap-red-eye.jpg"
+                   muted loop playsinline preload="none" aria-label="Airtap, red eye"></video>
+          </figure>
+          <figure class="card work-card" style="--i:-2">
+            <video class="work-video" src="samples/hunter-raid-awaken.mp4" poster="samples/hunter-raid-awaken.jpg"
+                   muted loop playsinline preload="none" aria-label="Hunter Raid, awaken"></video>
+          </figure>
+          <figure class="card work-card" style="--i:-1">
+            <video class="work-video" src="samples/sandbar-the-menu.mp4" poster="samples/sandbar-the-menu.jpg"
+                   muted loop playsinline preload="none" aria-label="Sandbar, the menu"></video>
+          </figure>
+          <figure class="card work-card" style="--i:0">
+            <video class="work-video" src="samples/airtap-first-date.mp4" poster="samples/airtap-first-date.jpg"
+                   muted loop playsinline preload="none" aria-label="Airtap, first date"></video>
+          </figure>
+          <figure class="card work-card" style="--i:1">
+            <video class="work-video" src="samples/sandbar-think-out-loud.mp4" poster="samples/sandbar-think-out-loud.jpg"
+                   muted loop playsinline preload="none" aria-label="Sandbar, think out loud"></video>
+          </figure>
+          <figure class="card work-card" style="--i:2">
+            <video class="work-video" src="samples/hunter-raid-first-hour.mp4" poster="samples/hunter-raid-first-hour.jpg"
+                   muted loop playsinline preload="none" aria-label="Hunter Raid, first hour"></video>
+          </figure>
+          <figure class="card work-card" style="--i:3">
+            <video class="work-video" src="samples/airtap-pasta.mp4" poster="samples/airtap-pasta.jpg"
+                   muted loop playsinline preload="none" aria-label="Airtap, pasta"></video>
+          </figure>
+        </div>
       </div>
+
+      <div class="band-foot reveal">      </div>
 
       <div class="band-foot reveal">
         <span class="band-note">
