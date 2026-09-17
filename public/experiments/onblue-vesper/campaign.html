@@ -28,7 +28,11 @@
 /* the review screen borrows the dashboard's column and the confirmation's
    centring, and needs nothing of its own beyond saying so */
 .rev[hidden] { display: none; }
-.rev .confirm { padding-top: clamp(40px, 7vw, 96px); }
+/* THE CONFIRMATION SITS HIGH IN ITS OWN VIEWPORT rather than centred in a
+   column that is a whole screen tall: centring a six-line notice inside 100vh
+   puts it below the fold's midpoint on a laptop and leaves the reader scrolling
+   to find out that there is nothing else. */
+.rev .confirm { padding-top: clamp(24px, 4vw, 56px); }
 
 /* NOTHING HIDES THE BUILDER PER STAGE ANY MORE. Three rules did - one for
    review, one for approved, one collapsing its rail on submit - because it was a
@@ -337,7 +341,32 @@ body { min-height: 100vh; }
    tiles in a row, a chart, and a six-column table of evidence - all of which
    were being squeezed into a column narrower than the table wanted while a
    third of the viewport sat empty on either side. */
-.dash { width: 100%; margin: 0 auto; }
+/* ---- THE PAGE'S COLUMN, WHICH THE DELETED <main> USED TO OWN -----------------
+   #review and #dash were inside <main class="apply-wrap">, and when the builder
+   became a dialog that wrapper went with the builder's screen. Everything it was
+   doing for the other two went with it: they became direct children of <body>
+   with no gutter, no top inset and no stacking context, so the dashboard's
+   heading and figures sat UNDER the fixed header and behind .apply-bg, which is
+   position: fixed at z-index 0. The rows and the buttons showed because they
+   happen to start their own stacking; the headings did not. It looked like
+   content going missing and it was content being covered.
+   Z-INDEX 2 IS THE LOAD-BEARING LINE. .apply-bg is fixed across the whole
+   viewport, so anything that does not lift above it is behind it, whatever its
+   position in the document. The footer kept this and rendered perfectly, which
+   is exactly why the footer was the only thing that looked right.
+   THE FLOOR TOO. One viewport of minimum height is what keeps the footer an
+   ending rather than something that rides up into the first screen on the states
+   that are short - the empty dashboard and the in-review notice are both short. */
+.dash {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  max-width: var(--band-max);
+  margin: 0 auto;
+  padding: calc(var(--header-h) + clamp(18px, 2.6vw, 22px)) max(var(--header-x), 20px) clamp(64px, 9vw, 120px);
+}
 #view-list, #view-campaign { max-width: min(var(--band-max), 920px); margin: 0 auto; }
 #view-report { max-width: var(--band-max); margin: 0 auto; }
 .dash[hidden] { display: none; }
