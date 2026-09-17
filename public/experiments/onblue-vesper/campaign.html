@@ -577,8 +577,15 @@ body { min-height: 100vh; }
    which was right when it sat on a page: the panel was the form's surface and
    the page was behind it. In a dialog the dialog is that surface, so the panel
    drew a second stroke 22px inside the first around the same questions. The
-   scroll still works; it just does not announce itself with an outline. */
-.sheet--wide .step-panel { padding: 0; border: 0; background: none; }
+   scroll still works; it just does not announce itself with an outline.
+   BORDER-RADIUS GOES WITH THEM, AND THAT IS THE LINE THAT MATTERS. overflow-y:
+   auto makes this a clipping box, and a clipping box with a 12px radius clips to
+   a rounded rectangle. That was invisible while the panel had 18px of padding
+   holding its contents away from the corners; taking the padding off put the
+   first label and the field edges right against the curve, and the curve cut
+   them. A radius on a box that clips is only ever as safe as the padding inside
+   it, and this one no longer has any. */
+.sheet--wide .step-panel { padding: 0; border: 0; border-radius: 0; background: none; }
 
 /* THE DIALOG IS THE CARD, SO THE CARD INSIDE IT IS NOT ONE. It kept its own
    border, its own ground and its own lift, which put a raised surface 22px
