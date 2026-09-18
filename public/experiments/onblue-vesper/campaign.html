@@ -315,6 +315,81 @@ body { min-height: 100vh; }
    sits. */
 .field.field--pre { padding-left: 28px; }
 
+/* ---- the posts a growth campaign produced -----------------------------------
+   THREE COLUMNS, AND THE MIDDLE ONE IS THE POINT. Who posted it and what it
+   earned are facts you scan; the title and the description are what an agency
+   actually reads to judge whether the films are any good, so they get the width
+   and the other two get only what they need. */
+.tiles--four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (max-width: 860px) { .tiles--four { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+.posts { margin-top: 6px; }
+.post {
+  display: grid;
+  grid-template-columns: 210px minmax(0, 1fr) 150px;
+  gap: 20px;
+  align-items: center;
+  padding: 18px 0;
+}
+.post + .post { border-top: 1px solid var(--border-soft); }
+.post-who { display: flex; gap: 10px; align-items: center; min-width: 0; }
+.post-av {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  background: var(--band-lift);
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+.post-id { display: grid; gap: 1px; min-width: 0; }
+.post-id b { color: var(--ink); font-size: 13px; font-weight: 600; letter-spacing: -0.01em; }
+/* SUBSCRIBER COUNTS ARE SHOWN, AND THEY ARE SMALL. That is the product rather
+   than an embarrassment: these are ordinary accounts posting to the people who
+   follow them, which is the whole reason the views count for anything. */
+.post-id span { color: var(--dim-ink); font-size: 11.5px; letter-spacing: -0.005em; }
+
+.post-body { display: grid; gap: 2px; min-width: 0; }
+.post-lab { color: var(--dim-ink); font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+.post-lab + * { margin-bottom: 8px; }
+.post-title { color: var(--ink-soft); font-size: 13px; line-height: 1.5; letter-spacing: -0.005em; }
+.post-desc { color: var(--muted); font-size: 12.5px; line-height: 1.5; letter-spacing: -0.005em; }
+
+.post-aside { display: grid; grid-template-columns: 1fr auto; gap: 8px 10px; align-items: start; justify-items: end; }
+/* 9:16, because that is what these are, and empty, because there is no film
+   behind a prototype and a stock frame would be pretending there is */
+.post-thumb {
+  width: 76px;
+  aspect-ratio: 9 / 16;
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  background: var(--band-lift);
+}
+.post-out {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--border-soft);
+  border-radius: 999px;
+  color: var(--muted);
+  cursor: pointer;
+  transition: border-color .18s ease, color .18s ease;
+}
+.post-out:hover { border-color: var(--card-line-hover); color: var(--ink); }
+.post-stats { grid-column: 1 / -1; display: flex; gap: 12px; color: var(--dim-ink); font-size: 12px; font-variant-numeric: tabular-nums; }
+.post-stats span { display: inline-flex; gap: 4px; align-items: center; }
+@media (max-width: 860px) {
+  .post { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .post-aside { justify-items: start; grid-template-columns: auto auto; }
+}
+
+/* the working under a figure, in the figure's own column */
+.acct-work { display: block; margin-top: 2px; color: var(--dim-ink); font-size: 11px; font-variant-numeric: tabular-nums; }
+
 /* ---- the time field ---------------------------------------------------------
    THE NATIVE CONTROL, DRESSED AS ONE OF OURS. It is the same .field as every
    other box; all this does is stop the browser's own clock glyph fighting the
@@ -719,11 +794,6 @@ body { min-height: 100vh; }
 .step-body.swap-fwd > * { animation: in-soft 0.45s var(--ease) both; animation-delay: calc(var(--i, 0) * 38ms); }
 .step-body.swap-back > * { animation: in-fade 0.32s var(--ease) both; }
 
-/* ---- the three views --------------------------------------------------------
-   DISPLAY, NOT [hidden]. Two of these carry a table and a chart whose widths are
-   measured when they are painted; a view kept in the layout and merely made
-   invisible would still cost a layout pass on every render of a screen nobody is
-   looking at. */
 /* ---- the builder's dialog ---------------------------------------------------
    WIDER THAN THE OTHER SHEETS, because they carry a fact and this carries a
    form: 430px is right for "Budget added" and wrong for two money fields side
@@ -980,18 +1050,6 @@ body { min-height: 100vh; }
 .bvgrid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; margin-top: 14px; }
 @media (max-width: 860px) { .bvgrid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 560px) { .rep-states { grid-template-columns: minmax(0, 1fr); } }
-.bvtile { display: grid; gap: 7px; }
-.bvthumb {
-  display: grid;
-  place-items: center;
-  aspect-ratio: 9 / 16;
-  border: 1px solid var(--border-soft);
-  border-radius: 10px;
-  background: var(--band-lift);
-  color: var(--dim-ink);
-}
-.bvcap { display: grid; gap: 1px; color: var(--dim-ink); font-size: 11px; letter-spacing: -0.005em; }
-.bvcap b { color: var(--ink-soft); font-size: 11.5px; font-weight: 600; }
 
 .rep-empty { display: grid; justify-items: start; }
 .rep-empty-ic {
@@ -2096,30 +2154,43 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
          nature, not a stack: side by side you read 212 against 6 against 9 at a
          glance, and stacked you read them one at a time and do the comparing
          yourself. Its own card, full width, three across. -->
-    <div class="card dash-panel">
+    <!-- VERIFICATION AND PROOF OF WORK ARE THE ENGAGEMENT REPORT'S. They answer
+         "did this actually happen", which is the whole question when the work is
+         a private action on somebody else's video. A growth campaign's work is a
+         public post with its own view count on it: the answer is the post. -->
+    <div class="card dash-panel" data-rep="ver-card">
       <h2 class="rep-h">Verification</h2>
       <div class="rep-states" data-rep="ver"></div>
       <p class="rep-foot">Every completion is checked before it bills. You are never charged for one that does not verify.</p>
     </div>
 
-    <!-- FULL WIDTH, BELOW THE TWO COLUMNS. Six portrait frames in a 320px rail
-         are about 86px each: the captions wrap to three lines and the tile reads
-         as a sliver. The rail is for numbers; anything you are meant to LOOK at
-         needs the main column. -->
-    <div class="card dash-panel" data-rep="videos" hidden>
-      <h2 class="rep-h">Videos</h2>
-      <div class="bvgrid" data-rep="vgrid"></div>
-      <p class="rep-foot">Every video is checked by our team before any member posts it.</p>
+    <!-- WHAT THE POSTS ADDED UP TO, AND THEN THE POSTS. Video growth only: an
+         engagement campaign has one post and the agency already owns it, so a
+         count of posts would always read 1 and a list of them would be showing
+         somebody their own video back. -->
+    <div class="tiles tiles--four" data-rep="counts" hidden></div>
+
+    <div class="card dash-panel" data-rep="posts" hidden>
+      <h2 class="rep-h">Posts</h2>
+      <p class="rep-hint" data-rep="posts-hint"></p>
+      <div class="posts" data-rep="post-list"></div>
     </div>
 
-    <div class="card dash-panel">
+    <!-- THE VIDEOS CARD IS GONE (PM, 2026-09-18, point 15). Six approved
+         formats with a post count each was our answer to "what did you make";
+         the posts list below answers it better, by showing each film where it
+         actually went, whose account it is on and what it has earned. A grid of
+         the same films with no destination was the same information with the
+         interesting half removed. -->
+
+    <div class="card dash-panel" data-rep="proof">
       <h2 class="rep-h">Proof of work</h2>
       <p class="rep-hint">Every verified run carries evidence. Runs are numbered; the community members who complete jobs stay anonymous.</p>
       <div class="rep-filters" data-rep="filters"></div>
       <div class="rep-tablewrap"><table class="runs" data-rep="runs"></table></div>
     </div>
 
-    <p class="rep-privacy">Work on this campaign is completed by community members on their own devices and accounts, paced like normal use. Their identities are never shared; runs are numbered. Evidence is retained for the period stated in your agreement.</p>
+    <p class="rep-privacy" data-rep="privacy">Work on this campaign is completed by community members on their own devices and accounts, paced like normal use. Their identities are never shared; runs are numbered. Evidence is retained for the period stated in your agreement.</p>
 
   </div>
 
@@ -4045,15 +4116,60 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     return head + '<tbody>' + body + '</tbody>';
   }
 
-  /* ---- the six films --------------------------------------------------------
-     ALL SIX, NOT THREE WITH A NOTE SAYING SO. Six is what arrives, there is room
-     for six, and a hedge about how many are shown is a sentence that exists only
-     because the layout could not hold them. */
-  var FORMATS = [
-    ['Format A', '0:24', 41], ['Format B', '0:31', 38], ['Format C', '0:18', 29],
-    ['Format D', '0:22', 34], ['Format E', '0:27', 26], ['Format F', '0:15', 22]
+  /* ---- the posts ------------------------------------------------------------
+     THE WORK A GROWTH CAMPAIGN PRODUCES IS PUBLIC, which is what makes this
+     section possible and the proof-of-work table unnecessary. Each row is one
+     member's post: who, when, what it says, and what it has earned.
+     SUBSCRIBER COUNTS ARE SHOWN AND THEY ARE SMALL. That is the product, not an
+     embarrassment: these are ordinary accounts posting to the people who follow
+     them, which is the whole reason the views count for anything.
+     WRITTEN AS DATA rather than generated, because the titles and descriptions
+     are what an agency reads to judge whether the films are any good, and
+     three lorem strings would make the one part of this screen that is about
+     taste unreadable as taste. */
+  var POSTS = [
+    { who: 'Priya N.', subs: '0 subscribers',
+      title: 'I left my PC on for 30 days. This is what it paid me.',
+      desc: '41 jobs approved, most under a dollar, one paid four. On day 30 the payout landed in my\u2026',
+      views: 25, likes: 0, comments: 1 },
+    { who: 'Dan W.', subs: '0 subscribers',
+      title: 'How much does an AI worker make you in a month?',
+      desc: 'He guessed a hundred and fifty at dinner, so we fact checked it. onBlue does brand jobs o\u2026',
+      views: 24, likes: 0, comments: 2 },
+    { who: 'mara.builds', subs: '12 subscribers',
+      title: 'It pays you $30 a month. But what does it cost?',
+      desc: 'onBlue works on your PC and pays you about $30 a month. Electricity, interest, wear on th\u2026',
+      views: 196, likes: 1, comments: 7 }
   ];
-  var PLAY = '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>';
+
+  var POST_IC = {
+    eye: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="2.6"/></svg>',
+    like: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 11v9H4a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1z"/><path d="M7 11l4.2-7.4a2 2 0 0 1 3.6 1.5L14 9h5a2 2 0 0 1 2 2.4l-1.4 7A2 2 0 0 1 17.6 20H7"/></svg>',
+    chat: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L3.5 20.5l1.4-5.9A8 8 0 1 1 21 12z"/></svg>',
+    out: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg>'
+  };
+
+  function postRows(c) {
+    var when = c.ends || '';
+    return POSTS.map(function (p) {
+      return '<div class="post">'
+        + '<span class="post-who"><span class="post-av" aria-hidden="true">' + esc(p.who.slice(0, 1).toUpperCase()) + '</span>'
+        + '<span class="post-id"><b>' + esc(p.who) + '</b><span>' + esc(when) + ' \u00b7 ' + esc(p.subs) + '</span></span></span>'
+        + '<span class="post-body">'
+        + '<span class="post-lab">Video title</span><span class="post-title">' + esc(p.title) + '</span>'
+        + '<span class="post-lab">Video description</span><span class="post-desc">' + esc(p.desc) + '</span>'
+        + '</span>'
+        + '<span class="post-aside">'
+        + '<span class="post-thumb" aria-hidden="true"></span>'
+        + '<a class="post-out" data-stub aria-label="Open the post">' + POST_IC.out + '</a>'
+        + '<span class="post-stats">'
+        + '<span>' + POST_IC.eye + num(p.views) + '</span>'
+        + '<span>' + POST_IC.like + num(p.likes) + '</span>'
+        + '<span>' + POST_IC.chat + num(p.comments) + '</span>'
+        + '</span></span>'
+        + '</div>';
+    }).join('');
+  }
 
   /* EVERY FACT IN ITS OWN ELEMENT, WHICH IS WHY THE LINE READ
      "Sep 24 2026 closeCountry: United States". The row is a flex container with
@@ -4101,16 +4217,26 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
               'Country: <b>' + esc(c.geo === 'US' ? 'United States' : c.geo) + '</b>');
     rep.querySelector('[data-rep="meta"]').innerHTML = metaRow(meta);
 
-    rep.querySelector('[data-rep="tiles"]').innerHTML =
-        tile('Fill', pct + '%', c.done.toLocaleString('en-US') + ' of ' + c.target.toLocaleString('en-US') + ' target')
-      + tile('Verified', v.ok.toLocaleString('en-US'), 'only verified runs bill')
-      + tile('Spend', money(c.spent), 'of ' + money(c.budget))
-      + tile('Under review', v.wait.toLocaleString('en-US'), 'not billed until resolved', true)
-      + tile('Days remaining', String(left), 'ends ' + esc(c.ends));
+    /* THE FIVE FIGURES DIFFER BY KIND, because what a buyer is watching differs.
+       An engagement campaign is being checked, so it shows what passed and what
+       is still being looked at. A growth campaign is being watched, so it shows
+       the views and the money left. */
+    rep.querySelector('[data-rep="tiles"]').innerHTML = growth
+      ? tile('Fill', pct + '%', num(c.done) + ' of ' + num(c.target) + ' target')
+        + tile('Views', num(c.done), 'YouTube views on published posts')
+        + tile('Spend', money(c.spent), 'of ' + money(c.budget))
+        + tile('Remaining', money(c.budget - c.spent), 'budget left to spend')
+        + tile('Time left', left ? left + ' days' : 'Ended', left ? 'ends ' + esc(c.ends) : 'ended ' + esc(c.ends))
+      : tile('Fill', pct + '%', num(c.done) + ' of ' + num(c.target) + ' target')
+        + tile('Verified', num(v.ok), 'only verified runs bill')
+        + tile('Spend', money(c.spent), 'of ' + money(c.budget))
+        + tile('Under review', num(v.wait), 'not billed until resolved', true)
+        + tile('Days remaining', String(left), 'ends ' + esc(c.ends));
 
-    rep.querySelector('[data-rep="chart-hint"]').textContent =
-      'Cumulative ' + unitOf(c) + ' against the pace needed to reach '
-      + c.target.toLocaleString('en-US') + ' by ' + c.ends + '.';
+    rep.querySelector('[data-rep="chart-hint"]').textContent = (growth
+      ? 'Cumulative views on published posts against the pace needed to reach '
+      : 'Cumulative ' + unitOf(c) + ' against the pace needed to reach ')
+      + num(c.target) + ' by ' + c.ends + '.';
     rep.querySelector('[data-rep="chart"]').innerHTML = chart(c);
 
     /* THE BOARD ADDS UP TO THE TARGET, which is the only way three numbers about
@@ -4125,23 +4251,22 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
       + '<span class="rep-state"><b>' + claimed.toLocaleString('en-US') + '</b><span>Claimed, in progress</span></span>'
       + '<span class="rep-state"><b>' + today.toLocaleString('en-US') + '</b><span>Completed today</span></span>';
 
+    /* LIVE'S ACCOUNTING FOR GROWTH: the budget, the cost per thousand, what has
+       been spent with its arithmetic beside it, and what is left. No invoice
+       line - a campaign still running has not been billed, and the engagement
+       report has one because those runs bill as they land. */
     var consumed = c.spent;
-    var bidLabel = growth ? 'Price per 1,000 verified views' : 'Bid per verified completion';
-    var shows = growth
-      ? '(' + c.done.toLocaleString('en-US') + ' \u00f7 1,000 \u00d7 ' + moneyF(bid) + ')'
-      : '(' + c.done.toLocaleString('en-US') + ' \u00d7 ' + moneyF(bid) + ')';
-    rep.querySelector('[data-rep="acct"]').innerHTML =
-        '<tr><td>Campaign budget</td><td>' + moneyF(c.budget) + '</td></tr>'
-      + '<tr><td>' + bidLabel + '</td><td>' + moneyF(bid) + '</td></tr>'
-      + '<tr><td>Consumed ' + shows + '</td><td>' + moneyF(consumed) + '</td></tr>'
-      + '<tr class="is-total"><td>Remaining</td><td>' + moneyF(c.budget - consumed) + '</td></tr>'
-      /* DIGITS, BECAUSE AN INVOICE NUMBER IS ONE. This took the last two
-         characters of the campaign's short id, which is hex, so a perfectly
-         ordinary report carried "INV-2026-0e4" - a reference nobody could read
-         back over a phone and nothing would accept as an invoice. The id is
-         still what ties the two together; it is just converted to base ten
-         first, and zero-padded so every invoice on the page is the same shape. */
-      + '<tr><td>Invoice <span class="is-num">INV-2026-' + invoiceNo(c) + '</span></td><td>PAID</td></tr>';
+    rep.querySelector('[data-rep="acct"]').innerHTML = growth
+      ? '<tr><td>Campaign budget</td><td>' + moneyF(c.budget) + '</td></tr>'
+        + '<tr><td>Cost per 1,000 views</td><td>' + moneyF(bid) + '</td></tr>'
+        + '<tr><td>Amount spent<span class="acct-work">' + num(c.done) + ' \u00d7 $' + (bid / 1000).toFixed(4) + '</span></td><td>'
+        + moneyF(consumed) + '</td></tr>'
+        + '<tr class="is-total"><td>Remaining</td><td>' + moneyF(c.budget - consumed) + '</td></tr>'
+      : '<tr><td>Campaign budget</td><td>' + moneyF(c.budget) + '</td></tr>'
+        + '<tr><td>Bid per verified completion</td><td>' + moneyF(bid) + '</td></tr>'
+        + '<tr><td>Consumed (' + num(c.done) + ' \u00d7 ' + moneyF(bid) + ')</td><td>' + moneyF(consumed) + '</td></tr>'
+        + '<tr class="is-total"><td>Remaining</td><td>' + moneyF(c.budget - consumed) + '</td></tr>'
+        + '<tr><td>Invoice <span class="is-num">INV-2026-' + invoiceNo(c) + '</span></td><td>PAID</td></tr>';
 
     rep.querySelector('[data-rep="ver"]').innerHTML =
         '<span class="rep-state is-ok"><b>' + v.ok.toLocaleString('en-US') + '</b><span>Verified</span></span>'
@@ -4156,16 +4281,44 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
       + '<span class="rep-filter">Did not verify (' + v.bad.toLocaleString('en-US') + ')</span>';
     rep.querySelector('[data-rep="runs"]').innerHTML = runsTable(c);
 
-    /* THE VIDEOS CARD BELONGS TO ONE KIND AND NO OTHER. An engagement campaign
-       promotes a video the agency already owns; a card showing it back to them
-       would say nothing. */
-    var vid = rep.querySelector('[data-rep="videos"]');
-    vid.hidden = !growth;
+    /* TWO REPORTS, AND THE SECTIONS THEY DO NOT SHARE (PM, 2026-09-18, point 15).
+       A GROWTH CAMPAIGN'S WORK IS PUBLIC. Every film we made is a post with a
+       name, a date and its own view count on it, so the report is that list, and
+       the totals above it are posts, views, likes and comments. Proof of work
+       and Verification answer "did this actually happen", which is the question
+       when the work is a private action on somebody else's video and no question
+       at all when it is a video you can go and watch. The Videos card went the
+       same way: six approved formats is what we made, and the posts say that
+       better by showing where each one went.
+       AN ENGAGEMENT CAMPAIGN KEEPS ALL THREE for the same reason in reverse. */
+    var show = {
+      counts: growth, posts: growth,
+      videos: false, 'ver-card': !growth, proof: !growth, privacy: !growth
+    };
+    Object.keys(show).forEach(function (k) {
+      var el = rep.querySelector('[data-rep="' + k + '"]');
+      if (el) { el.hidden = !show[k]; }
+    });
+
     if (growth) {
-      vid.querySelector('[data-rep="vgrid"]').innerHTML = FORMATS.map(function (f) {
-        return '<span class="bvtile"><span class="bvthumb">' + PLAY + '</span>'
-          + '<span class="bvcap"><b>' + f[0] + ' \u00b7 ' + f[1] + '</b>Approved \u00b7 ' + f[2] + ' posts</span></span>';
-      }).join('');
+      /* THE FOUR TOTALS ARE THE POSTS' OWN, ADDED UP, so the section under them
+         cannot disagree with the row above it. Views is the campaign's figure
+         because that is what bills; the other three are what the posts carry. */
+      var pv = 0, pl = 0, pc = 0;
+      POSTS.forEach(function (p) { pv += p.views; pl += p.likes; pc += p.comments; });
+      rep.querySelector('[data-rep="counts"]').innerHTML =
+          tile('Total posts', num(POSTS.length), 'live on members\u2019 own accounts')
+        + tile('Views', num(c.done), 'counted toward your target')
+        + tile('Likes', num(pl), 'on those posts')
+        + tile('Comments', num(pc), 'on those posts');
+      rep.querySelector('[data-rep="posts-hint"]').textContent =
+        POSTS.length + ' posts driving engagement for this campaign.';
+      rep.querySelector('[data-rep="post-list"]').innerHTML = postRows(c);
+    } else {
+      /* EMPTIED WHEN IT IS NOT SHOWING. A hidden section holding the last
+         campaign's posts is three rows of somebody else's data sitting in the
+         document, one display property away from being read. */
+      rep.querySelector('[data-rep="post-list"]').innerHTML = '';
     }
     showView('report');
   }

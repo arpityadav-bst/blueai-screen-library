@@ -70,9 +70,25 @@ LIKES · COMMENTS / Posts — "3 posts driving engagement for this campaign."
 
 ## Passes
 
-- [ ] 1. Copy-only: 1, 3, 4, 5, 7, 8, 11, 12, 13, 14, 18
-- [ ] 2. The table alignment: 2
-- [ ] 3. Growth step 1: 6, 9
-- [ ] 4. Engagement step 1: 16
-- [ ] 5. Step 2 and the time control: 10, 17
-- [ ] 6. The growth report: 15
+- [x] 1. Copy-only: 1, 3, 4, 5, 7, 8, 11, 12, 13, 14, 18
+- [x] 2. The table alignment: 2
+- [x] 3. Growth step 1: 6, 9
+- [x] 4. Engagement step 1: 16
+- [x] 5. Step 2 and the time control: 10, 17
+- [x] 6. The growth report: 15
+
+## Done, 2026-09-18
+
+All 18 points are in. Two things worth the PM knowing:
+
+- **Point 15 went further than the report.** Matching live meant the growth
+  report stops carrying Proof of work, Verification and the privacy note, and
+  the Videos card went with them: six approved formats with a post count each
+  is the same information as the posts list with the interesting half removed.
+  An engagement report keeps all three, because its work is a private action on
+  somebody else's video and "did this happen" is the whole question. A growth
+  campaign's work is a public post with its own view count on it.
+- **"real" is out of the copy we borrowed.** Live's Views tile reads "real
+  YouTube views on published posts"; this site dropped that word everywhere in
+  September, so the tile reads "YouTube views on published posts". Same claim,
+  one fewer word asking to be believed.
