@@ -315,6 +315,23 @@ body { min-height: 100vh; }
    sits. */
 .field.field--pre { padding-left: 28px; }
 
+/* ---- the time field ---------------------------------------------------------
+   THE NATIVE CONTROL, DRESSED AS ONE OF OURS. It is the same .field as every
+   other box; all this does is stop the browser's own clock glyph fighting the
+   text and give the digits the tabular figures the rest of the form uses. */
+.field--time { font-variant-numeric: tabular-nums; }
+.field--time::-webkit-calendar-picker-indicator { opacity: 0.45; cursor: pointer; }
+.field--time::-webkit-calendar-picker-indicator:hover { opacity: 0.8; }
+
+/* the one line under a pair of fields, explaining the one of them that needs it */
+.q-note {
+  margin-top: -10px;
+  color: var(--muted);
+  font-size: 12.5px;
+  line-height: 1.5;
+  letter-spacing: -0.005em;
+}
+
 /* ---- the upload, under the box it is an alternative to ----------------------
    A STRIP, NOT A BUTTON. The whole thing is the target, because a small button
    beside a paste box reads as a second, lesser way in; side by side and the same
@@ -2290,7 +2307,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
      them made the buyer commit to one before seeing the other. */
   var STEPS = [
     { title: 'What to promote' },
-    { title: 'What it costs' },
+    { title: 'Budget and schedule' },
     { title: 'Where it runs' }
   ];
   /* WHICH FIELDS BELONG TO A STEP IS NOW A QUESTION, NOT A CONSTANT. It was a
@@ -2302,7 +2319,8 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     var b = BRIEFS[d.type];
     if (i === 0) { return ['name']; }
     if (i === 1) {
-      return (b && b.gen ? ['bid', 'gen', 'budget'] : ['bid', 'budget']).concat(['startAt', 'endAt']);
+      return (b && b.gen ? ['bid', 'gen', 'budget'] : ['bid', 'budget'])
+        .concat(['startAt', 'endAt', 'startAtTime', 'endAtTime']);
     }
     return [];
   }
@@ -2369,6 +2387,10 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     name: '',
     bid: '', gen: '', budget: '',
     startAt: '', endAt: '',
+    /* NOON, NOT EMPTY. A time field with nothing in it is a question; a campaign
+       window has to start at some hour whether or not anybody chose it, and the
+       middle of the day is the one default that is not a statement. */
+    startAtTime: '12:00', endAtTime: '12:00',
     /* set when a type is picked, from that type's default rung */
     review: '', note: '',
     /* WORLDWIDE IS THE DEFAULT, and it is the honest one: a campaign with no
@@ -2792,27 +2814,41 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     return step > 0 || flow === 'v2' ? 'Back' : 'Cancel';
   }
 
+  /* ---- budget and schedule --------------------------------------------------
+     LIVE'S LABELS AND LIVE'S ORDER (PM, 2026-09-18, points 10 and 17). Ours
+     asked "What is a result worth to you?" and "And the most you want to spend
+     on it?" - two conversational questions stacked, the price first. Live puts
+     the budget first and names both plainly, side by side, with one line under
+     the pair explaining the one of them that needs explaining. The budget is
+     the number an agency arrives with; the rate is the one they are deciding.
+     ONE HINT, NOT TWO. Ours carried a sentence under each field and then a
+     third line doing the arithmetic. The arithmetic stays, because it is the
+     only thing on this form that tells a buyer what their money actually buys,
+     but the per-field hints collapse into live's single line. */
   function renderStep2(err) {
-    /* TWO FIGURES ON ONE STEP, and they belong together: a bid on its own is a
-       price with no scale and a budget on its own is a scale with no price. The
-       line under them multiplies the pair, which is the only arithmetic this
-       form does and the only thing a buyer actually wants to know. */
     var b = BRIEFS[d.type] || {};
-    var html = moneyQ('bid', 'What is a result worth to you?', b.ph || '4', unitHint(), err.bid);
-    /* A SECOND BID, AND ONLY TWO TYPES HAVE ONE. Something has to be MADE before
-       it can earn a view, and the making is priced separately out of the same
-       budget. Asking for it on the nine types that do not make anything would be
-       a field with no answer. */
+    var growth = d.type === 'growth';
+    var html = '<div class="q-pair">'
+      + moneyQ('budget', 'Campaign budget', '500', '', err.budget)
+      + moneyQ('bid', growth ? 'Rate per 1,000 views' : 'Bid price', b.ph || '1.00', '', err.bid)
+      + '</div>'
+      + '<p class="q-note">' + (growth
+        ? 'Your rate is what you pay for every 1,000 views the campaign earns while it runs. You never pay more than your budget.'
+        : 'The bid is what you pay for each verified action. Illustrative, not a rate card.')
+      + '</p>';
+
+    /* A SECOND BID, AND ONLY SOME TYPES HAVE ONE. Something has to be MADE
+       before it can earn a view, and the making is priced separately out of the
+       same budget. */
     if (b.gen) {
-      html += moneyQ('gen', b.gen.label + '?', b.gen.ph, 'This comes out of the same budget as the views.', err.gen);
+      html += moneyQ('gen', b.gen.label, b.gen.ph, 'This comes out of the same budget as the views.', err.gen);
     }
-    html += moneyQ('budget', 'And the most you want to spend on it?', '500',
-      'Nothing is taken now. The budget is a ceiling, not a payment.', err.budget);
+
     if (isMoney(d.bid) && isMoney(d.budget) && Number(d.budget) >= Number(d.bid)) {
-      /* PER, NOT ONE. A view bid buys a thousand views, so dividing the budget
-         by the bid and calling the answer "views" understated it by three orders
-         of magnitude; floor, not round, because the number is a promise about
-         what the money covers. */
+      /* PER, NOT ONE. A view rate buys a thousand views, so dividing the budget
+         by it and calling the answer "views" understates it by three orders of
+         magnitude; floor, not round, because the number is a promise about what
+         the money covers. */
       var buys = Math.floor(Number(d.budget) / Number(d.bid)) * (b.per || 1);
       html += '<p class="aside"><span class="aside-ic">' + ICON.info + '</span>That buys about <b>'
         + buys.toLocaleString('en-US') + '</b> ' + esc(b.unit || 'verified results')
@@ -2831,23 +2867,39 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
       + msgSlot(err, hint) + '</label>';
   }
 
+  /* ---- the window ------------------------------------------------------------
+     A TIME BESIDE EACH DATE (PM, 2026-09-18). Live asks for four, and it is not
+     over-precision: a campaign that opens at nine tomorrow and one that opens at
+     one minute past midnight are different buys, and the agency running a launch
+     is the one who knows which. Ours asked for two and started everything at
+     whatever the day means.
+     AND THE ASIDE IS GONE. "It stops when the budget is spent or the window
+     closes, whichever comes first" is on the step above, in the line about the
+     budget being a ceiling, and live does not say it twice. */
   function renderStep3(err) {
-    /* TWO DATES AND NOTHING ELSE. There was a "How should it run?" pair here,
-       steady or as fast as agents pick it up, and it was invented: the two types
-       that actually have a pacing question declare it themselves, so those
-       buyers were being asked it twice in different words and the other seven
-       were answering a question their campaign has no notion of. */
-    /* A BUTTON AND A PANEL, NOT <input type="date">. The native control is the
-       browser's, not this site's: Chrome draws a dark grey calendar with its own
-       type, its own blue and its own idea of a weekend whatever theme the page
-       is in, and it prints dd-mm-yyyy into a field whose neighbours all speak in
-       words. The portal this page is rebuilt from has its own, and it is the one
-       borrowed here. */
     return '<div class="q-pair">'
-      + dateQ('startAt', 'Start', err.startAt)
-      + dateQ('endAt', 'End', err.endAt)
+      + dateQ('startAt', 'Start date', err.startAt)
+      + timeQ('startAtTime', 'Start time')
       + '</div>'
-      + '<p class="aside"><span class="aside-ic">' + ICON.clock + '</span>It stops when the budget is spent or the window closes, whichever comes first.</p>';
+      + '<div class="q-pair">'
+      + dateQ('endAt', 'End date', err.endAt)
+      + timeQ('endAtTime', 'End time')
+      + '</div>';
+  }
+
+  /* THE NATIVE TIME CONTROL, WHICH IS NOT THE SAME CALL AS THE DATE ONE. A date
+     picker had to be replaced because the browser draws a whole calendar in its
+     own theme; a time input draws a text field with a small clock, takes typing,
+     and the only chrome it adds is a stepper. Writing our own to gain a clock
+     glyph would be a second month of somebody's attention for no reader's gain.
+     STEP 300, so the wheel moves in five-minute jumps: nobody schedules a
+     fortnight-long campaign to the second. */
+  function timeQ(key, label) {
+    return '<label class="q" data-field="' + key + '">'
+      + '<span class="q-label">' + esc(label) + '</span>'
+      + '<input type="time" step="300" class="field field--time" name="' + key + '"'
+      + ' value="' + esc(d[key] || '') + '">'
+      + msgSlot('') + '</label>';
   }
 
   /* ---- where it runs, and anything we have not thought to ask ---------------
@@ -4697,6 +4749,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     d.type = ''; d.kind = ''; d.unit = ''; d.review = '';
     d.name = ''; d.bid = ''; d.gen = ''; d.budget = '';
     d.startAt = ''; d.endAt = ''; d.note = '';
+    d.startAtTime = '12:00'; d.endAtTime = '12:00';
     d.country = 'Worldwide';
   }
 
