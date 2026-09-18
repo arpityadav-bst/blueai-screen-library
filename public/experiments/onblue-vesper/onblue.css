@@ -3411,12 +3411,28 @@ h1, h2, h3, h4, .title-lg, .title-xl { text-wrap: balance; }
   background: var(--card-bg);
   color: var(--ink);
   font-family: inherit;
-  /* 16px below 560 is an iOS zoom guard, not a type decision */
   font-size: 16px;
   letter-spacing: -0.01em;
   transition: border-color 0.25s ease, box-shadow 0.25s ease;
 }
 .gate-input { height: 100%; }
+/* 14px FOR A FORM FIELD, AND THE 16 STAYS ON THE DOOR. The rule above is
+   shared, and its 16 was sized for the access dialog's email box: one
+   hero-scale control on a marketing page, sitting beside a 16px CTA. A form is
+   a column of controls under 14px semibold captions, and at 16 the value a
+   person types is larger than the label naming it - the field shouts and the
+   caption whispers, which is backwards.
+   HERE RATHER THAN IN ONE PAGE'S <style>. It lived in campaign.html for a
+   session, which left the businesses form at 14 and the creators application at
+   16: the same control, two sizes, decided by which file it happened to be
+   edited in. An input is an input on both sides of this product.
+   THE 16 COMES BACK ON TOUCH, where it is not a type decision at all - iOS
+   Safari zooms the viewport on focus for anything under 16px. Guarded by
+   pointer type rather than by width, because that is the actual condition; the
+   note this replaces said "below 560", which is a proxy for it and wrong on a
+   1024px tablet. */
+.field { font-size: 14px; }
+@media (hover: none) and (pointer: coarse) { .field { font-size: 16px; } }
 /* A PLACEHOLDER IS AN EXAMPLE, NOT A WATERMARK. This carried opacity: 0.55,
    which composites --dim-ink onto the field to #b3b6bb: 2.0:1 against the fill,
    where the value typed into the same box lands at 19:1. It was written to make

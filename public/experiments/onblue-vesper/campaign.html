@@ -1777,17 +1777,9 @@ input:focus-visible + .check { outline: 2px solid var(--blue-ink); outline-offse
 
 /* ---- fields ------------------------------------------------------------------- */
 /* the shared rule sets --panel-bg, which is the panel's own step now */
-/* 14px, NOT THE 16px THE SHARED RULE SETS. That 16 belongs to the access
-   dialog's email door: one hero-scale box on a marketing page, sized to sit
-   beside a 16px CTA. A campaign form is eight controls in a dialog, and at 16px
-   the value a person types is larger than the caption naming it - the field
-   shouts and the label whispers, which is backwards. 14px matches .q-label, so
-   caption and answer read as one pair.
-   THE 16px IS KEPT ON TOUCH, where it is not a type decision at all: iOS Safari
-   zooms the viewport on focus for anything under 16px. Guarded by pointer type
-   rather than width, because that is the actual condition. */
-.field { height: var(--hero-btn-h); padding: 0 14px; background: var(--card-bg); font-size: 14px; }
-@media (hover: none) and (pointer: coarse) { .field { font-size: 16px; } }
+/* the size lives in onblue.css with the rule it overrides, so both sides of
+   the product get it */
+.field { height: var(--hero-btn-h); padding: 0 14px; background: var(--card-bg); }
 textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: vertical; min-height: 84px; }
 
 /* ---- the foot ------------------------------------------------------------------ */

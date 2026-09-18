@@ -704,8 +704,18 @@ body { min-height: 100vh; }
    --h1 takes past 1920, so it broke after "for" on exactly the screens with the
    most room for it. Every other thing in .confirm carries its own limit - the
    lede has --lede-max, the pill and the mark are their own size - so lifting
-   this one only ever gives the headline the room it was short of. */
-body.is-underway .form-stage { max-width: none; }
+   this one only ever gives the headline the room it was short of.
+   KEYED ON THE CLOSER ITSELF, NOT ON A BODY CLASS. This first read
+   body.is-underway, which sounded like it meant "finished" and means "past step
+   zero", so the form widened from step one onward - every step of the
+   application, at the width written for the one screen that is not a form.
+   The two body classes here are both about the rail rather than the stage:
+   is-underway is set by render() from the step number, and is-submitted is set
+   by railAside() after EVERY sweep, not only the last one. Neither says what
+   this rule needs to know. The stage containing a .confirm does, it cannot
+   drift out of agreement with the thing it is describing, and if :has() is ever
+   unavailable the fallback is the old wrap rather than a broken layout. */
+.form-stage:has(.confirm) { max-width: none; }
 .form-card { padding: 26px 26px 22px; }
 
 /* the step head: the form's own progress, at hairline weight, because the rail
