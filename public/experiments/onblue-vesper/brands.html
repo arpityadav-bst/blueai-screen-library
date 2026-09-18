@@ -2481,10 +2481,15 @@ document.documentElement.setAttribute('data-theme', 'light');
                button, on the screen of somebody who has just been asked for their
                agency name. The one on the other pane stays, because somebody who
                came in through Sign in and has no account has nowhere else to go. -->
-          <p class="gate-legal">By continuing, you agree to the <a data-stub>Program Terms</a>
-            and <a data-stub>Privacy Policy</a>, including <a data-stub>Cookie Use</a>.</p>
         </div>
 
+        <!-- NO TERMS LINE UNDER EITHER ASK (PM, 2026-09-18). Both panes carried
+             "By continuing, you agree to the Program Terms and Privacy Policy,
+             including Cookie Use." It is not required here: nothing on this
+             dialog commits an agency to anything, the terms are agreed at the
+             point the application is reviewed, and a legal sentence under a
+             three-field form is the screen asking to be trusted before it has
+             asked for anything. -->
         <div class="gate-pane" id="pane-opts" hidden>
           <span class="gate-mark"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><use href="#i-spark"/></svg></span>
           <span class="eyebrow" id="gate-eyebrow">Get started</span>
@@ -2530,8 +2535,6 @@ document.documentElement.setAttribute('data-theme', 'light');
         </div>
           <span class="gate-err" id="gate-email-err" role="alert" hidden></span>
           <p class="gate-alt" id="gate-back-line" hidden>New here? <button type="button" data-gate="reg-pane">Register your agency</button></p>
-          <p class="gate-legal">By continuing, you agree to the <a data-stub>Program Terms</a>
-            and <a data-stub>Privacy Policy</a>, including <a data-stub>Cookie Use</a>.</p>
         </div>
 
       </div>

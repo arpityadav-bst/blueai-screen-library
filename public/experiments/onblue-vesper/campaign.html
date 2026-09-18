@@ -315,6 +315,42 @@ body { min-height: 100vh; }
    sits. */
 .field.field--pre { padding-left: 28px; }
 
+/* ---- the upload, under the box it is an alternative to ----------------------
+   A STRIP, NOT A BUTTON. The whole thing is the target, because a small button
+   beside a paste box reads as a second, lesser way in; side by side and the same
+   width, the two are what they are - paste a link, or hand us the file. */
+.drop {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 8px;
+  padding: 11px 13px;
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  background: var(--panel-bg);
+  cursor: pointer;
+  transition: border-color .2s ease, background .2s ease;
+}
+.drop:hover { border-color: var(--card-line-hover); background: var(--wash-hover); }
+.drop:focus-within { border-color: var(--blue-ink); box-shadow: 0 0 0 3px rgba(21, 110, 254, 0.16); }
+.drop-ic { flex: none; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 7px; background: var(--card-bg); color: var(--blue-ink); }
+.drop-t { display: grid; gap: 1px; min-width: 0; color: var(--dim-ink); font-size: 12px; line-height: 1.45; }
+/* the file names wrap rather than truncate: which three you picked is the whole
+   reason to show them back */
+.drop-t b { color: var(--ink-soft); font-size: 13px; font-weight: 600; overflow-wrap: anywhere; }
+/* the input is the label's, so the strip is one target and the picker opens from
+   anywhere on it */
+.drop input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+
+/* ---- the platform row -------------------------------------------------------
+   IT STATES A FACT, SO IT CANNOT BE PRESSED. Same shape as the chips that can
+   be, because it is the same kind of thing, and no pointer or hover because
+   there is nothing on the other side of a press. */
+.selchip.is-fixed { cursor: default; }
+.selchip.is-fixed:hover { border-color: rgba(21, 110, 254, 0.42); background: rgba(21, 110, 254, 0.09); color: var(--blue-ink); }
+.chip-yt { flex: none; }
+.chip-note { align-self: center; color: var(--dim-ink); font-size: 12px; letter-spacing: -0.005em; }
+
 /* ---- the filed panel --------------------------------------------------------
    DIALOG SCALE, NOT PAGE SCALE. What stood here was .title-xl, the homepage's
    closing-statement size, which wraps to two lines in a 620px panel and reads as
@@ -939,13 +975,6 @@ body { min-height: 100vh; }
 }
 .bvcap { display: grid; gap: 1px; color: var(--dim-ink); font-size: 11px; letter-spacing: -0.005em; }
 .bvcap b { color: var(--ink-soft); font-size: 11.5px; font-weight: 600; }
-/* the waiting state is the same frame with nothing in it and no caption: six
-   dashed slots say six will arrive, without saying not yet six times */
-.bvgrid--wait .bvtile {
-  aspect-ratio: 9 / 16;
-  border: 1px dashed var(--border);
-  border-radius: 10px;
-}
 
 .rep-empty { display: grid; justify-items: start; }
 .rep-empty-ic {
@@ -1080,10 +1109,19 @@ body { min-height: 100vh; }
 .clist-panel[hidden] { display: none; }
 .clist-head, .crow {
   display: grid;
-  /* THE LAST COLUMN HOLDS A PHRASE NOW. It was `auto` for a 34px icon button;
-     "View report" is about 90px, and auto on a track that wide lets it take
-     space from the campaign name, which is the column doing the most work. */
-  grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.5fr) minmax(0, 0.7fr) auto 104px;
+  /* EVERY ROW IS ITS OWN GRID, SO NO TRACK MAY BE SIZED BY ITS CONTENT (PM,
+     2026-09-18: "Alignment issue"). The Status track was `auto`, and `auto`
+     asks the content how wide it wants to be - which is fine in a table, where
+     one grid spans every row, and wrong here, where the head and each .crow are
+     separate grid containers that never see each other. "Live" is narrow,
+     "Completed" is wider, "Under target" wider again, so every row resolved a
+     different width for that track and then divided the leftover among the fr
+     tracks differently too. Six rows, six sets of column positions, none of
+     them under the heading.
+     116px IS THE WIDEST CHIP PLUS ITS PADDING, so nothing wraps and nothing
+     depends on what happens to be in it. The last column is the same: a fixed
+     104px for a phrase that was `auto` when it was a 34px icon. */
+  grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.5fr) minmax(0, 0.7fr) 116px 104px;
   align-items: center;
   gap: clamp(16px, 2.4vw, 32px);
 }
@@ -1786,10 +1824,12 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
          goes straight to the form. -->
     <div class="type-list" id="prog-list">
       <!-- THE NAME IS WHAT THE CAMPAIGN GROWS, NOT WHAT IT MAKES (Appy,
-           2026-09-17). "Video growth" named the input: we make videos on both
-           sides of this chooser, so it separated nothing and described the half
-           of the work the agency never touches. What this type grows is the
-           brand, which is the reason anybody buys it.
+           2026-09-18). It was briefly Brand growth, on the argument that the
+           name should be the outcome rather than the input, since we make
+           videos on both
+           sides of this chooser. The PM has it back to Video growth: it is
+           what ships today, it is what the team says out loud, and a prototype
+           that renames a live product is describing something else.
            THE "Live" CHIP IS GONE. It said which types had shipped, which was
            worth saying when four of nine were marked soon; on a pair where both
            are live it is a badge repeated twice that rules nothing out.
@@ -1807,11 +1847,11 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
             <span class="type-spec"><i>You pay</i><b>per verified completion</b></span>
           </span>
         </button>
-        <button class="card type-card" type="button" data-pick="growth" data-kind="Brand growth" data-v2>
-          <span class="type-name">Brand growth</span>
+        <button class="card type-card" type="button" data-pick="growth" data-kind="Video growth" data-v2>
+          <span class="type-name">Video growth</span>
           <span class="type-one">You have no video yet. Our agent studies your category, makes the videos, and members post them from their own accounts.</span>
           <span class="type-foot">
-            <span class="type-spec"><i>You bring</i><b>your site and a few references</b></span>
+            <span class="type-spec"><i>You bring</i><b>a few reference sites and videos</b></span>
             <span class="type-spec"><i>You pay</i><b>per 1,000 verified views</b></span>
           </span>
         </button>
@@ -2097,24 +2137,21 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
       <div class="rep-side">
         <div class="card dash-panel">
           <h2 class="rep-h">Campaign setup</h2>
-          <p class="rep-hint">What you defined. Editable until the campaign goes live.</p>
+          <!-- NOT "Editable until the campaign goes live" (PM, 2026-09-18): it
+               is not, and a line offering an edit that no control on this screen
+               performs is a promise the page cannot keep. -->
+          <p class="rep-hint">What you defined.</p>
           <table class="acct" data-cam="setup"></table>
           <p class="rep-foot">Nothing is charged while the campaign is in review.</p>
         </div>
       </div>
     </div>
 
-    <!-- SIX BARE FRAMES AND NO PER-TILE CAPTION. "Not yet" six times is
-         repetition; six dashed frames read as six waiting slots. -->
-    <div class="card dash-panel" data-cam="videos" hidden>
-      <h2 class="rep-h">Videos</h2>
-      <p class="rep-hint">Our agent makes these, our team checks every one, and the approved ones appear here.</p>
-      <div class="bvgrid bvgrid--wait">
-        <span class="bvtile"></span><span class="bvtile"></span><span class="bvtile"></span>
-        <span class="bvtile"></span><span class="bvtile"></span><span class="bvtile"></span>
-      </div>
-      <p class="rep-foot">You will get an email when the first ones are ready to look at.</p>
-    </div>
+    <!-- NO VIDEOS GRID HERE (PM, 2026-09-18). Six dashed frames sat under the
+         setup table promising the films our agent will make. It is the right
+         idea on a campaign that is running and the wrong one on a campaign
+         nobody has approved yet: nothing has been commissioned, so the frames
+         were counting out work that has not been asked for. -->
 
   </div>
 
@@ -2286,12 +2323,16 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     var e = {};
     var b = BRIEFS[d.type];
     if (!d.name.trim()) e.name = 'Give the campaign a name.';
-    /* THE TYPE'S OWN FIELDS ARE NOT VALIDATED, and that is the source's call
-       kept rather than an omission. Nothing in the catalogue says which of them
-       are required, so a rule here would be one this page invented, and it
-       differs per type: a boost needs its URL, a retainer's digest cadence has a
-       sensible default. If they should be required the flag belongs on the field
-       in the catalogue, next to its label and its hint. */
+    /* THE TYPE'S OWN FIELDS CARRY THEIR OWN FLAG, which is where this comment
+       said it belonged: nothing in the catalogue used to say which were
+       required, so a rule here would have been one this page invented. Product
+       name now says it, because live does - "Name the product you're promoting."
+       - and one field asking is not a rule about all of them. */
+    if (b) {
+      (b.fields || []).forEach(function (f) {
+        if (f.req && !String(d[f.key] || '').trim()) { e[f.key] = f.req; }
+      });
+    }
     /* NO CEILING AND NO FLOOR STATED. The page promises outcome pricing and
        names no rate anywhere, so a minimum invented here would be the one number
        on the whole site, and it would be invented. */
@@ -2507,7 +2548,15 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
       ex: "You set a $500 budget and bid $1 per verified completion. If it all fills, that is 500 completions.",
       unit: "verified completions", per: 1, review: "Auto-approve",
       label: "Bid per verified completion", ph: "1.00", gen: null,
+      /* MATCHED TO LIVE (PM, 2026-09-18, point 16). The platform chip and the
+         product name are both live's and both missing here; the chip is fixed
+         because YouTube is the only one that runs today, and saying so is what
+         stops a reader looking for the others. */
       fields: [
+        { key: "platform", label: "Platform", kind: "fixed", value: "YouTube",
+          hint: "More platforms coming soon." },
+        { key: "product", label: "Product name", kind: "text", ph: "Fernweh Coffee",
+          req: "Name the product you're promoting.", hint: "" },
         { key: "postUrl", label: "YouTube video URL", kind: "text",
           ph: "https://youtube.com/watch?v=...", hint: "A public YouTube video or Short." },
         { key: "actions", label: "Action", kind: "chips",
@@ -2515,24 +2564,42 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
       ]
     },
     growth: {
-      name: "Brand growth",
+      name: "Video growth",
       tag: "You have no video yet. Our agent studies your category, makes the videos, and members post them from their own accounts.",
       steps: ["Our team reads the brief and either takes it or comes back to you.",
               "Our agent studies your category and makes the videos.",
               "We review every video ourselves, and you see the approved ones here.",
               "Members post them and watch, from their own accounts.",
-              "Views are verified before they count, capped at your budget."],
+              /* NOT "capped at your budget" (PM, 2026-09-18). The budget is
+                 already named as a ceiling on the step before this one, and
+                 saying it again at the end of the list makes the last promise
+                 in the sequence a limit rather than the thing the reader came
+                 for. */
+              "Views are verified before they count."],
       ex: "You set a $2,000 budget at $5 per 1,000 views. If it all fills, that is about 400,000 verified views.",
       unit: "verified views", per: 1000, review: "Review everything",
       label: "Price per 1,000 views", ph: "5", gen: null,
+      /* MATCHED TO LIVE (PM, 2026-09-18, points 6 to 9).
+         PRODUCT NAME IS NEW. The agent has to know what it is promoting, and
+         the campaign's own name is what the agency files it under - "Fernweh
+         Coffee: category films" names a job, not a product.
+         WEBSITE BECAME REFERENCE WEBSITES, which is the PM's point 6: what we
+         want here is sites to take cues from, not the brand's own address. The
+         old hint said our agent reads it to learn the category, which is the
+         brand's site describing itself, and that job belongs to Product name
+         now.
+         AND YOUR CHANNELS IS GONE, replaced by the upload. Where an agency
+         posts today is a question this form cannot use: the films are made for
+         the members' accounts, not for the agency's. */
       fields: [
-        { key: "site", label: "Website", kind: "text", ph: "fernwehcoffee.com",
-          hint: "Our agent reads this to learn the category and what to promote." },
-        { key: "refs", label: "Reference videos", kind: "filelink", ph: "Paste links, one per line",
-          hint: "Two or three videos is plenty." },
-        { key: "channels", label: "Your channels", kind: "text", opt: true,
-          ph: "youtube.com/@fernweh, instagram.com/fernweh",
-          hint: "Where you post today, so the videos match what your audience already sees." }
+        { key: "product", label: "Product name", kind: "text", ph: "Fernweh Coffee",
+          req: "Name the product you're promoting.", hint: "" },
+        { key: "site", label: "Reference websites", kind: "text",
+          ph: "fernwehcoffee.com, another-brand.com",
+          hint: "Sites whose look and tone we should take cues from." },
+        { key: "refs", label: "Reference videos <span class=\"opt\">(optional)</span>",
+          kind: "filelink", ph: "Paste links, one per line",
+          upload: "Two or three videos is plenty.", hint: "" }
       ]
     }
   };
@@ -2562,8 +2629,53 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
      is the chip row it already draws with a checkbox behind it instead of a
      radio, and a tick on the selected ones so a group that accumulates does not
      look exactly like one that replaces. */
+  /* THE UPLOAD, UNDER THE BOX IT IS AN ALTERNATIVE TO. A label wrapping a
+     hidden file input, so the whole strip is the target rather than a small
+     button beside it, and the caption changes to what was chosen. */
+  function uploadSlot(f) {
+    var picked = d[f.key + 'Files'];
+    return '<span class="drop">'
+      + '<span class="drop-ic"><svg viewBox="0 0 24 24" width="15" height="15" fill="none"'
+      + ' stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"'
+      + ' aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5"/>'
+      + '<path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg></span>'
+      + '<span class="drop-t"><b>' + (picked ? esc(picked) : 'Upload instead') + '</b>'
+      + esc(f.upload || '') + '</span>'
+      + '<input type="file" accept="video/*,image/*" multiple data-upload="' + f.key + '">'
+      + '</span>';
+  }
+
+  /* NAMED BACK, NOT COUNTED. "3 files" tells an agency nothing about whether
+     they picked the right three. */
+  document.addEventListener('change', function (ev) {
+    var inp = ev.target.closest ? ev.target.closest('[data-upload]') : null;
+    if (!inp) { return; }
+    var key = inp.getAttribute('data-upload');
+    var names = Array.prototype.map.call(inp.files || [], function (x) { return x.name; });
+    d[key + 'Files'] = names.join(', ');
+    touched[key] = true;
+    render();
+  });
+
   function typeField(f, err) {
     var e = err[f.key];
+    /* A CHIP THAT CANNOT BE UNPICKED. YouTube is the only platform that runs,
+       so this is the form stating a fact rather than asking a question - and
+       the sentence beside it is what stops a reader hunting for the others.
+       IT IS NOT A CONTROL, so it is not a button: nothing here responds to a
+       press, and a chip that looks pressable and is not is worse than a label. */
+    if (f.kind === 'fixed') {
+      return '<div class="q" data-field="' + f.key + '">'
+        + '<span class="q-label">' + esc(f.label) + '</span>'
+        + '<span class="chip-row">'
+        + '<span class="selchip is-on is-fixed">' + TICK
+        + '<svg class="chip-yt" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">'
+        + '<path fill="#FF0000" d="M23.5 6.2a3 3 0 0 0-2.12-2.14C19.5 3.55 12 3.55 12 3.55s-7.5 0-9.38.51A3 3 0 0 0 .5 6.2C0 8.07 0 12 0 12s0 3.93.5 5.8a3 3 0 0 0 2.12 2.14c1.88.51 9.38.51 9.38.51s7.5 0 9.38-.51A3 3 0 0 0 23.5 17.8C24 15.93 24 12 24 12s0-3.93-.5-5.8z"/>'
+        + '<path fill="#fff" d="M9.55 15.57V8.43L15.82 12l-6.27 3.57z"/></svg>'
+        + esc(f.value) + '</span>'
+        + '<span class="chip-note">' + esc(f.hint || '') + '</span>'
+        + '</span></div>';
+    }
     if (f.kind === 'chips') {
       return chipMulti({ field: f.key, label: f.label, hint: f.hint, options: f.options, err: e });
     }
@@ -2578,25 +2690,40 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
       });
     }
     var val = typeof d[f.key] === 'string' ? d[f.key] : '';
+    /* THE ONE PIECE OF MARKUP A LABEL IS ALLOWED. "(optional)" is set quieter
+       than the label it qualifies, which the fixed questions already do inline;
+       escaping the whole label would print the span at the reader. Rebuilt from
+       the escaped text rather than trusted, so the only thing a brief can put in
+       a label is this. */
+    var lab = esc(f.label).replace(
+      '&lt;span class=&quot;opt&quot;&gt;(optional)&lt;/span&gt;',
+      '<span class="opt">(optional)</span>');
     if (f.kind === 'textarea') {
       return '<label class="q" data-field="' + f.key + '">'
-        + '<span class="q-label">' + esc(f.label) + '</span>'
+        + '<span class="q-label">' + lab + '</span>'
         + '<textarea class="field' + (e ? ' err' : '') + '" name="' + f.key + '" rows="3"'
         + ' placeholder="' + esc(f.ph || '') + '">' + esc(val) + '</textarea>'
         + msgSlot(e, f.hint) + '</label>';
     }
-    /* A LINK, NOT AN UPLOAD. There is nowhere on this page to put a file, and a
-       picker that drops what you gave it is a control that lies about what it
-       did. The source asks for a link too, but builds its placeholder by
-       prefixing "Paste a link " to a phrase that already says it. */
+    /* LINKS AND FILES BOTH (PM, 2026-09-18, points 8 and 9). A link is what an
+       agency has to hand when the reference is somebody else's video; a file is
+       what they have when it is their own and unpublished, and neither case
+       covers the other. Live offers the two together, the paste box with the
+       upload under it, and the sentence about how many to send belongs to the
+       upload rather than floating under the box as a hint.
+       IT IS A REAL <input type="file">, so the picker opens and the chosen names
+       are shown back. Nothing is uploaded anywhere, which is true of every other
+       control on this prototype, and a control that opens and then forgets what
+       you handed it would be the one thing here that lies about what it did. */
     var num = f.kind === 'number';
-    var ph = f.kind === 'filelink' ? 'Paste a link to it' : (f.ph || '');
+    var ph = f.ph || '';
     return '<label class="q" data-field="' + f.key + '">'
-      + '<span class="q-label">' + esc(f.label) + '</span>'
+      + '<span class="q-label">' + lab + '</span>'
       + '<input type="text"' + (num ? ' inputmode="numeric"' : '')
       + (f.kind === 'text' || f.kind === 'filelink' ? ' autocapitalize="none" autocorrect="off" spellcheck="false"' : '')
       + ' class="field' + (e ? ' err' : '') + '" name="' + f.key + '"'
       + ' placeholder="' + esc(ph) + '" value="' + esc(val) + '">'
+      + (f.kind === 'filelink' ? uploadSlot(f) : '')
       + msgSlot(e, f.hint) + '</label>';
   }
 
@@ -2620,17 +2747,32 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
 
   function renderStep1(err) {
     var b = BRIEFS[d.type];
+    /* THE PLATFORM COMES FIRST, ABOVE THE NAME. It is the only answer on this
+       step that is already decided, and live opens with it: what you are about
+       to fill in is a YouTube campaign, and everything under it reads in that
+       light. Asked after the name it would be an afterthought about a decision
+       already made.
+       SO IT IS LIFTED OUT OF THE FIELD LIST rather than reordered inside it -
+       the name is a fixed question this renderer owns, and the type's fields are
+       appended after it, so a `fixed` field has nowhere to sit unless it is
+       pulled to the front. */
+    var pre = b ? b.fields.filter(function (f) { return f.kind === 'fixed'; }) : [];
     /* THE NAME IS THE ONE FIXED QUESTION ON THIS STEP, and it is first because
        it is the only thing on the form nobody but the buyer can supply. It is
        also what the dashboard lists the campaign under, so a campaign without
        one would arrive on that screen as a row with a blank left column. */
-    var html = '<label class="q" data-field="name">'
-      + '<span class="q-label">What do you want to call this campaign?</span>'
+    var html = pre.map(function (f) { return typeField(f, err); }).join('')
+      + '<label class="q" data-field="name">'
+      + '<span class="q-label">Campaign name</span>'
       + '<input type="text" class="field' + (err.name ? ' err' : '') + '" name="name" '
       + 'placeholder="Fernweh Coffee: spring launch" value="' + esc(d.name) + '">'
-      + msgSlot(err.name, 'Only you and onBlue see this. It is how you will find it later.') + '</label>';
+      /* NO HINT UNDER IT (PM, 2026-09-18, point 16). "Only you and onBlue see
+         this" answers a question nobody asked of a field called Campaign name,
+         and live does not say it. */
+      + msgSlot(err.name) + '</label>';
     if (b) {
-      html += b.fields.map(function (f) { return typeField(f, err); }).join('');
+      html += b.fields.filter(function (f) { return f.kind !== 'fixed'; })
+        .map(function (f) { return typeField(f, err); }).join('');
     }
     /* THE FREE-TEXT BOX IS ASKED ONCE, AND IT IS ASKED LAST. It was here and on
        the final step at the same time, so the form put the same question to a
@@ -3066,11 +3208,15 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
       + '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"'
       + ' stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l5 5L19.5 6.5"/></svg>'
       + '</span>'
-      + '<h2 class="filed-h">Campaign filed.</h2>'
+      + '<h2 class="filed-h">Campaign submitted.</h2>'
       /* IN REVIEW, NOT LIVE. Nothing reaches the community until we have read it,
          and the row this becomes says IN REVIEW - one of the two would be lying. */
-      + '<p class="filed-p"><b>' + who + '</b> is on your dashboard, in review. '
-      + 'We check every campaign before it goes live, usually within one business day.</p>'
+      /* LIVE'S OWN SENTENCE (PM, 2026-09-18). Ours said the same thing in a
+         different order and stopped at "one business day"; live's ends by
+         telling the reader where to watch it, which is the only thing they can
+         actually do next. */
+      + '<p class="filed-p"><b>' + who + '</b> is in review. We check every campaign '
+      + 'before it goes live; you can follow it right here on your dashboard.</p>'
       + (c ? '<span class="filed-id"><i>Campaign ID</i><b>' + esc(c.ref) + '</b></span>' : '')
       + '<div class="filed-cta">'
       + '<button class="btn btn-solid" type="button" data-filed="view">View campaign</button>'
@@ -3334,7 +3480,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     }
   ];
   /* ---- THE SECOND KIND (from the portal's own samples) ----------------------
-     Brand growth is not a variant of an engagement campaign, it is the other
+     Video growth is not a variant of an engagement campaign, it is the other
      half of the product: the agency brings no video, our agent makes them, and
      what gets counted is verified VIEWS rather than verified completions. So it
      counts in its own unit, prices per thousand rather than per one, and its
@@ -3352,7 +3498,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
       unit: 'verified views', rate: '$5', per: '1,000 verified views',
       state: 'live', label: 'Live', ends: 'Sep 30, 2026', charged: 'Sep 12, 2026',
       short: 'Northline formats',
-      brief: 'Brand growth. Our agent studies the category, makes the films, and members post them.'
+      brief: 'Video growth. Our agent studies the category, makes the films, and members post them.'
     },
     {
       id: 'fernweh', kind: 'growth', name: 'Fernweh Coffee: category films', ref: '#3e81b0c5',
@@ -3360,7 +3506,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
       unit: 'verified views', rate: '$5', per: '1,000 verified views',
       state: 'review', label: 'In review', ends: 'Oct 14, 2026', charged: 'Oct 14, 2026',
       short: 'Fernweh films',
-      brief: 'Brand growth. Our agent studies the category, makes the films, and members post them.'
+      brief: 'Video growth. Our agent studies the category, makes the films, and members post them.'
     }
   );
   /* THE KIND IS A FACT ABOUT EVERY ROW, so the four that predate the second one
@@ -3384,7 +3530,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
      words, and where it ran. The kind is a key, not a label, because the key is
      what the report branches on and a row that named itself would be a second
      place for the two to disagree. */
-  var KIND_L = { engagement: 'YouTube Short', growth: 'Brand growth' };
+  var KIND_L = { engagement: 'YouTube Short', growth: 'Video growth' };
   CAMPAIGNS.forEach(function (c) {
     if (c.sample === undefined) { c.sample = true; }
     if (!c.geo) { c.geo = c.kind === 'growth' && c.state === 'review' ? 'Worldwide' : 'US'; }
@@ -3418,13 +3564,13 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
       unit: 'verified views', rate: '$5', per: '1,000 verified views',
       state: 'review', label: 'In review', ends: 'Oct 20, 2026', charged: 'Oct 20, 2026',
       short: 'Harbour films',
-      brief: 'Brand growth. Our agent studies the category, makes the films, and members post them.'
+      brief: 'Video growth. Our agent studies the category, makes the films, and members post them.'
     }
   );
 
   /* EVERY ENGAGEMENT ROW IS 1:1, so the rate is read off the data rather than
      asserted beside it. A bid quoted in the sheet that the row's own two figures
-     contradict is the one error on this screen nobody would catch. Brand growth
+     contradict is the one error on this screen nobody would catch. Video growth
      carries its own, because a thousand views for five dollars cannot be read
      off a pair of totals. */
   var RATE = '$1';
@@ -3999,7 +4145,6 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
       + '<tr><td>Consumed</td><td>' + moneyF(0) + '</td></tr>'
       + '<tr><td>Invoice</td><td>After approval</td></tr>';
 
-    cam.querySelector('[data-cam="videos"]').hidden = !growth;
     /* THE SAMPLE IT OFFERS IS ITS OWN KIND'S. Sending an agency waiting on a
        video growth campaign to an engagement report would answer a question they
        did not ask with a screen that has no Videos card. */
@@ -4504,7 +4649,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
       charged: '',
       days: (start && end) ? Math.max(1, Math.round((end - start) / 86400000)) : 14,
       short: d.name || 'Campaign',
-      brief: (growth ? 'Brand growth.' : 'Video engagement.') + ' Filed just now.'
+      brief: (growth ? 'Video growth.' : 'Video engagement.') + ' Filed just now.'
     };
     if (growth) { c.unit = 'verified views'; c.rate = '$' + bid; c.per = '1,000 verified views'; }
     MADE.unshift(c);
