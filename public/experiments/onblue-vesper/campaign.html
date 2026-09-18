@@ -2637,10 +2637,24 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
         if (f.req && !String(d[f.key] || '').trim()) { e[f.key] = f.req; }
       });
     }
-    /* NO CEILING AND NO FLOOR STATED. The page promises outcome pricing and
-       names no rate anywhere, so a minimum invented here would be the one number
-       on the whole site, and it would be invented. */
-    if (!isMoney(d.bid)) e.bid = 'Set a bid above $0.';
+    /* A FLOOR WHERE THE KIND HAS ONE, AND NOWHERE ELSE. This used to say that a
+       minimum stated here would be the only rate named anywhere on the site and
+       would therefore be invented. That was right until the PM supplied the real
+       one; it is live's number, not ours, and it lives on the brief with the
+       rate the field opens at rather than being written into this function.
+       Engagement has no min, so the branch never runs for it. */
+    /* ONE SENTENCE FOR ONE FIELD. Empty and below-the-floor were answered
+       separately - "Set a bid above $0." and then the minimum - which is two
+       messages for what is, to the reader, the same unfinished answer. The
+       first one was also quietly wrong once a floor existed: it named $0 as the
+       bar in a field that will not accept anything under $1.20, so a reader who
+       did as it asked got told off again. Where a kind has a floor, the floor
+       is the only thing the field ever has to say. */
+    if (b && b.min) {
+      if (!isMoney(d.bid) || Number(d.bid) < b.min) {
+        e.bid = 'The minimum rate is $' + b.min.toFixed(2) + '. ' + b.minNote;
+      }
+    } else if (!isMoney(d.bid)) { e.bid = 'Set a bid above $0.'; }
     if (!isMoney(d.budget)) e.budget = 'Set a budget above $0.';
     else if (isMoney(d.bid) && Number(d.budget) < Number(d.bid)) e.budget = 'The budget has to cover at least one bid.';
     if (b && b.gen && !isMoney(d.gen)) e.gen = 'Set a bid above $0.';
@@ -2743,6 +2757,11 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
          for. */
       b.fields.forEach(function (f) { d[f.key] = f.kind === 'chips' ? (f.options || []).slice() : ''; });
     }
+    /* AND THE RATE OPENS ON THE FLOOR, from the same number that enforces it.
+       Cleared for a kind that has no floor, because picking the other type has
+       to leave nothing of this one behind - which is what the rest of this
+       function is for. */
+    d.bid = (b && b.min) ? b.min.toFixed(2) : '';
     touched = {};
     forced = {};
   }
@@ -2886,7 +2905,18 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
               "Views are verified before they count."],
       ex: "You set a $2,000 budget at $5 per 1,000 views. If it all fills, that is about 400,000 verified views.",
       unit: "verified views", per: 1000, review: "Review everything",
-      label: "Price per 1,000 views", ph: "5", gen: null,
+      label: "Price per 1,000 views", ph: "1.20", gen: null,
+      /* THE FLOOR, AND THEREFORE THE OPENING RATE (PM, 2026-09-18). Live refuses
+         anything under $1.20 and starts the box there, so the form opens on a
+         rate that already works rather than on an empty box that will be told
+         off for the first number anybody types.
+         THE NUMBER IS WRITTEN ONCE. The message quotes it and setType seeds the
+         field from it, because a floor and a prefill that can disagree is a form
+         that rejects its own default. Only the sentence after it is authored,
+         and it is authored because it is growth's own argument: what a higher
+         rate buys here is reach, which is not what a higher bid buys on an
+         engagement campaign. */
+      min: 1.2, minNote: "Higher rates can get your videos seen more.",
       /* MATCHED TO LIVE (PM, 2026-09-18, points 6 to 9).
          PRODUCT NAME IS NEW. The agent has to know what it is promoting, and
          the campaign's own name is what the agency files it under - "Fernweh
@@ -5190,7 +5220,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
   function fileCampaign() {
     var growth = d.type === 'growth';
     var per = growth ? 1000 : 1;
-    var bid = Number(d.bid) || (growth ? 5 : 1);
+    var bid = Number(d.bid) || (growth ? 1.2 : 1);
     var budget = Number(d.budget) || 0;
     var end = fromIso(d.endAt);
     var start = fromIso(d.startAt);
