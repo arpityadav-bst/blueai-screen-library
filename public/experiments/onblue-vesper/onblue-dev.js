@@ -67,7 +67,17 @@
        order: which state a screen opens in and which order the buttons read in
        are two different decisions */
     var on = spec.initial || spec.states[0].id;
-    try { on = window.localStorage.getItem(spec.store) || on; } catch (e) {}
+    /* A BAR WITH NO STORE STARTS FROM THE PAGE, EVERY LOAD. Persisting is right
+       for a bar whose state exists only in this file's head, and wrong for one
+       whose state is written into the markup: index.html ships <dialog class=
+       "gate is-min"> and says in a comment that the toggler reads that as its
+       starting state rather than overriding it. That was not true - the stored
+       value won - so one press of Full in one session made Full the default
+       from then on, on a screen whose default is a decision recorded in the
+       HTML. Pressing still works; it just stops outliving the tab. */
+    if (spec.store) {
+      try { on = window.localStorage.getItem(spec.store) || on; } catch (e) {}
+    }
     if (!spec.states.some(function (st) { return st.id === on; })) { on = spec.states[0].id; }
 
     bar.className = 'devbar';
@@ -87,7 +97,9 @@
       var btn = e.target.closest('button');
       if (!btn) { return; }
       on = btn.getAttribute('data-dev');
-      try { window.localStorage.setItem(spec.store, on); } catch (e2) {}
+      if (spec.store) {
+        try { window.localStorage.setItem(spec.store, on); } catch (e2) {}
+      }
       paint();
     });
     return bar;
@@ -106,7 +118,13 @@
 
   if (gate && gate.querySelector('.gate-steps')) {
     var steps = dock([build({
-      label: 'Steps', store: 'onblue:dev-steps', initial: 'min',
+      /* NO STORE, AND THE INITIAL IS READ OFF THE DIALOG. is-min is in the
+         markup so the gate opens minimal on the first paint, before any script
+         runs - the class arriving a frame later would show the full version's
+         four panels and take them away again. Reading it back here is what
+         makes this bar agree with that rather than compete with it. */
+      label: 'Steps', store: null,
+      initial: gate.classList.contains('is-min') ? 'min' : 'full',
       states: [{ id: 'full', name: 'Full' }, { id: 'min', name: 'Minimal' }],
       apply: function (on) { gate.classList.toggle('is-min', on === 'min'); }
     })]);
