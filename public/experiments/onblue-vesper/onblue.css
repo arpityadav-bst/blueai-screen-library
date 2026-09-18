@@ -114,6 +114,10 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
   --mini-ink: #d4d4d4;
   --skill-ink: #cfcfcf;
   --dim-ink: #8f8f8f;
+  /* ONE STEP QUIETER THAN --dim-ink, AND ONLY FOR FIELDS THAT HAVE A LABEL.
+     See the note at .field::placeholder for why that condition is what makes
+     it legitimate rather than a repeat of the opacity: 0.55 mistake. */
+  --ph-ink: #6f7075;
   --green-ink: #a9f5dd;
   --green-line: rgba(69, 237, 188, 0.38);
   --green-fill: rgba(69, 237, 188, 0.13);
@@ -302,6 +306,7 @@ html, body { background: var(--bg, #000000) !important; color: var(--text, #ffff
   --mini-ink: #3c4049;
   --skill-ink: #42464e;
   --dim-ink: #767b85;
+  --ph-ink: #9ca2ad;
   /* mint is the dark theme's green: it glows against black and goes chalky on
      white. light takes a grass green instead. the tick keeps the bright value,
      the label takes a darker one, because 3.3:1 is fine for a 20px icon and not
@@ -3420,7 +3425,17 @@ h1, h2, h3, h4, .title-lg, .title-xl { text-wrap: balance; }
    at full strength it still is by a factor of four, and legible on its own,
    which it was not. --dim-ink flat is 4.18:1, the ink every caption and eyebrow
    on this site is already set in. */
-.gate-input::placeholder, .field::placeholder { color: var(--dim-ink); }
+.gate-input::placeholder { color: var(--dim-ink); }
+/* THE FORM'S PLACEHOLDERS ARE NOT THE GATE'S, because the gate's replaces a
+   label and a form field's sits under one. The note above is about the access
+   dialog: its box has no caption, so the placeholder is the only thing naming
+   what goes in it, and at 2.0:1 it was failing the job it was the sole holder
+   of. Every field in the campaign form has a visible 14px semibold caption
+   above it doing that naming, which frees the placeholder to be what it
+   actually is - an example of the answer, sitting in the slot the answer will
+   take. At --dim-ink it was the same ink as the captions and read as content
+   already entered. One step down, and an empty field looks empty. */
+.field::placeholder { color: var(--ph-ink); }
 /* ---- THE LARGE-SURFACE FAMILY -------------------------------------------------
    A text field, a FAQ row and a sign-in door are the same kind of object: full
    width, low emphasis, and something you act on rather than press. They are not

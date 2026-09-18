@@ -359,15 +359,24 @@ body { min-height: 100vh; }
 .post-desc { color: var(--muted); font-size: 12.5px; line-height: 1.5; letter-spacing: -0.005em; }
 
 .post-aside { display: grid; grid-template-columns: 1fr auto; gap: 8px 10px; align-items: start; justify-items: end; }
-/* 9:16, because that is what these are, and empty, because there is no film
-   behind a prototype and a stock frame would be pretending there is */
+/* 9:16, BECAUSE THAT IS WHAT THESE ARE, AND NO LONGER EMPTY. It was empty on
+   the argument that there is no film behind a prototype and a stock frame would
+   be pretending there is. Both halves have stopped being true: samples/ holds
+   28 clips, and the businesses homepage presents them as this product's own
+   output two screens away. A frame from one of those is not a stand-in for the
+   work, it IS the work being shown in a second place.
+   THE POSTER CARRIES IT AND THE FILM ANSWERS A HOVER, so a list of three costs
+   three jpgs until somebody asks for more. */
 .post-thumb {
+  position: relative;
+  overflow: hidden;
   width: 76px;
   aspect-ratio: 9 / 16;
   border: 1px solid var(--border-soft);
   border-radius: 8px;
   background: var(--band-lift);
 }
+.post-vid { display: block; width: 100%; height: 100%; object-fit: cover; }
 .post-out {
   display: grid;
   place-items: center;
@@ -394,9 +403,6 @@ body { min-height: 100vh; }
    THE NATIVE CONTROL, DRESSED AS ONE OF OURS. It is the same .field as every
    other box; all this does is stop the browser's own clock glyph fighting the
    text and give the digits the tabular figures the rest of the form uses. */
-.field--time { font-variant-numeric: tabular-nums; }
-.field--time::-webkit-calendar-picker-indicator { opacity: 0.45; cursor: pointer; }
-.field--time::-webkit-calendar-picker-indicator:hover { opacity: 0.8; }
 
 /* the one line under a pair of fields, explaining the one of them that needs it */
 .q-note {
@@ -419,11 +425,15 @@ body { min-height: 100vh; }
   padding: 11px 13px;
   border: 1px dashed var(--border);
   border-radius: 8px;
-  background: var(--panel-bg);
+  /* A SHADE DOWN FROM THE PANEL it sits on, so the strip reads as a surface at
+     rest rather than only on hover. --wash-2 is the lightest wash in the set,
+     which is the whole intent: visible, and barely. */
+  background: linear-gradient(var(--wash-2), var(--wash-2)), var(--panel-bg);
   cursor: pointer;
+  position: relative;
   transition: border-color .2s ease, background .2s ease;
 }
-.drop:hover { border-color: var(--card-line-hover); background: var(--wash-hover); }
+.drop:hover { border-color: var(--card-line-hover); background: linear-gradient(var(--wash-hover), var(--wash-hover)), var(--panel-bg); }
 .drop:focus-within { border-color: var(--blue-ink); box-shadow: 0 0 0 3px rgba(21, 110, 254, 0.16); }
 .drop-ic { flex: none; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 7px; background: var(--card-bg); color: var(--blue-ink); }
 .drop-t { display: grid; gap: 1px; min-width: 0; color: var(--dim-ink); font-size: 12px; line-height: 1.45; }
@@ -448,41 +458,163 @@ body { min-height: 100vh; }
    closing-statement size, which wraps to two lines in a 620px panel and reads as
    an announcement rather than a receipt. A confirmation inside the thing you
    were just filling in is the quieter of the two. */
-.filed { display: grid; justify-items: center; padding: 8px 0 4px; text-align: center; }
-.filed-mark {
+/* ---- the confirmation, which is the portal's own closing band ----------------
+   TAKEN FROM CampaignForm.tsx's submitted state, not approximated from a
+   screenshot: there the dialog switches to Modal variant="band", which is the
+   closing-CTA surface plus CTAGrid's receding floor and ceiling. Three rounds
+   got here - a white card with a green disc read as a form that had not noticed
+   it was finished, and a flat accent fill read as a different surface rather
+   than the same one an instant later. The band is neither, because the grid
+   gives the fill somewhere to go.
+   THE HUE AND THE TRAVEL BOTH CHANGED. --bai-cta-band runs near-black into a
+   deep indigo into iris - a long way, which works there because it crosses a
+   1440px band where the eye never sees both ends at once. Transplanted into a
+   520px panel that same travel put black in one corner and bright blue in the
+   other with nothing between them, and read as a lighting effect rather than a
+   surface. This is the accent with a short trip either side of it: one step
+   down at the top left, one step up at the bottom right, so the panel is
+   plainly one colour that happens to be lit. The grid is what gives it depth
+   now, which is the job the long gradient was doing badly. */
+body.is-submitted #sheet-create {
+  /* SQUARER, BECAUSE THE CONTENT IS. 740px is a width for two columns of form;
+     a mark, two lines and a button in a box that wide leaves the eye travelling
+     across empty panel to read a 40ch paragraph. */
+  width: min(520px, calc(100vw - 32px));
+  overflow: hidden;
+  border-color: transparent;
+  background: linear-gradient(120deg, #0d52d6 0%, var(--blue) 50%, #4589ff 100%);
+  color: #fff;
+  /* CLOSER TO THE PANEL AND FAINTER. A 84px blur thrown 34px down is a page
+     shadow, and this sits on a scrim that is already separating it from what is
+     behind. */
+  box-shadow: 0 16px 38px -20px rgba(12, 44, 124, 0.34);
+}
+body.is-submitted #sheet-create .sheet-in {
+  position: relative;
+  z-index: 1;
+  padding: 16px 28px clamp(38px, 6vw, 54px);
+}
+/* THE SHEET STOPS INTRODUCING ITSELF. "Create a campaign" is the name of a task
+   being carried out; once it has been, the heading under it is the only title
+   the panel needs and two of them read as a form that did not notice it was
+   finished. Hidden rather than removed, because the dialog is named by it. */
+body.is-submitted #create-title {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+body.is-submitted #sheet-create .sheet-head { margin-bottom: 0; }
+/* THE X SITS AT THE SAME INSET ON BOTH EDGES, WHICH MEANS LEAVING THE ROW. In
+   flow it inherits .sheet-in's padding, and that padding is asymmetric on
+   purpose - 28px at the sides is the measure the paragraph wants, 16px at the
+   top is all the space a panel with no title needs - so the button was 16 from
+   the top and 28 from the right and looked pushed inward. Taken out of flow it
+   answers to one number instead of two. .sheet-in is already position:
+   relative, so 16/16 is 16px from the panel's own corner. */
+body.is-submitted #sheet-create .sheet-x {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 2;
+  color: rgba(255, 255, 255, 0.5);
+}
+body.is-submitted #sheet-create .sheet-x:hover { background: rgba(255, 255, 255, 0.1); color: #fff; }
+body.is-submitted #sheet-create .sheet-x:focus-visible { outline-color: #fff; }
+
+/* BEHIND EVERYTHING AND CLIPPED BY THE PANEL'S OWN RADIUS, which is what the
+   overflow above is for. preserveAspectRatio="none" means it stretches to the
+   panel rather than depending on its measured height, and the viewBox was
+   re-proportioned for a near-square box - see grid.py. */
+.filed-grid { display: none; position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; pointer-events: none; }
+body.is-submitted .filed-grid { display: block; }
+
+.filed { display: grid; justify-items: center; padding: clamp(16px, 3vw, 28px) 0 0; text-align: center; }
+/* THE MARK IS BACK ABOVE THE LINE AND BACK TO FULL SIZE. Inline at 27px it was
+   punctuation on a claim, which was right on a white card where the claim was
+   doing all the work. On the band the mark is the first thing the panel says
+   and the type follows it, so it takes the portal's 56px disc: a tenth-opacity
+   white fill inside a fifth-opacity ring, which on a gradient reads as a hole
+   cut in the panel rather than a shape laid on it. */
+.filed-tick {
   display: grid;
   place-items: center;
-  width: 42px;
-  height: 42px;
+  width: 56px;
+  height: 56px;
   border-radius: 999px;
-  background: var(--green-fill, rgba(22, 163, 74, 0.1));
-  color: var(--green-ink);
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+  color: #fff;
 }
-.filed-h { margin-top: 16px; color: var(--ink); font-size: 21px; font-weight: 600; letter-spacing: -0.03em; }
-.filed-p { margin-top: 8px; max-width: 46ch; color: var(--muted); font-size: 13.5px; line-height: 1.6; letter-spacing: -0.01em; }
-.filed-p b { color: var(--ink); font-weight: 600; }
+.filed-h { margin-top: 20px; color: #fff; font-size: 26px; font-weight: 700; letter-spacing: -0.03em; }
+.filed-p { margin-top: 11px; max-width: 40ch; color: rgba(255, 255, 255, 0.8); font-size: 14px; line-height: 1.6; letter-spacing: -0.01em; }
+.filed-p b { color: #fff; font-weight: 600; }
 /* THE ID IS A FIXTURE, NOT A WARNING. It reads as a labelled value because that
    is what it is: the handle a support or settlement conversation reaches for,
-   printed the same way here, on the row and on the report. */
+   printed the same way here, on the row and on the report.
+   ONE EMPHASIS, NOT TWO. The label was uppercase and tracked out and the value
+   was 600 in mono, both shouting inside a pill whose job is to sit quietly
+   until somebody needs to quote it. Ink and the monospace face carry the
+   difference now; neither of them is bold. */
 .filed-id {
   display: inline-grid;
   grid-auto-flow: column;
   gap: 10px;
   align-items: baseline;
-  margin-top: 18px;
+  margin-top: 22px;
   padding: 8px 14px;
-  border: 1px solid var(--border-soft);
+  border: 1px solid rgba(255, 255, 255, 0.22);
   border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
 }
-.filed-id i { color: var(--dim-ink); font-size: 11px; font-style: normal; letter-spacing: 0.06em; text-transform: uppercase; }
+.filed-id i { color: rgba(255, 255, 255, 0.62); font-size: 11px; font-style: normal; letter-spacing: 0.06em; text-transform: uppercase; }
 .filed-id b {
-  color: var(--ink);
+  color: #fff;
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   font-size: 12.5px;
-  font-weight: 600;
+  font-weight: 500;
 }
-.filed-cta { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 22px; }
-.filed-cta .btn { height: var(--hero-btn-h); padding: 0 20px; }
+/* ONE BUTTON, THEN A WAY OUT. Two buttons side by side made a decision out of
+   what is not one: View campaign is the thing to do and Done is only the door.
+   A hairline outline button on a dark band reads as disabled, which is the
+   portal's own reason for giving the door to text instead. */
+.filed-cta { display: flex; justify-content: center; width: 100%; margin-top: 28px; }
+.filed-go {
+  width: 100%;
+  max-width: 260px;
+  height: var(--hero-btn-h);
+  border: 0;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 600;
+  transition: transform .18s var(--ease), background .2s ease;
+}
+.filed-go:hover { background: rgba(255, 255, 255, 0.92); transform: translateY(-2px); }
+.filed-go:active { transform: scale(0.985); }
+.filed-go:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+.filed-done {
+  margin-top: 16px;
+  padding: 4px 8px;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  color: rgba(255, 255, 255, 0.8);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  transition: color .2s ease;
+}
+.filed-done:hover { color: #fff; }
+.filed-done:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  .filed-go:hover { transform: none; }
+}
 
 /* ---- the date trigger and its calendar --------------------------------------
    BORROWED FROM THE PORTAL AND RE-TOKENISED. Its own version is built on --iris
@@ -500,7 +632,9 @@ body { min-height: 100vh; }
   background: var(--card-bg);
   color: var(--ink);
   font: inherit;
-  font-size: 15px;
+  /* 14px, with .field: a date button and a money box in the same row are two
+     answers to the same form and cannot be set a step apart */
+  font-size: 14px;
   text-align: left;
   cursor: pointer;
   transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
@@ -536,6 +670,55 @@ body { min-height: 100vh; }
   background: var(--card-bg);
   box-shadow: 0 18px 44px -20px rgba(18, 32, 64, 0.28), 0 2px 6px rgba(18, 32, 64, 0.05);
 }
+/* THE TIME PANEL IS THE CALENDAR'S SHAPE AT ANOTHER WIDTH, deliberately: two
+   controls sitting in the same row of the same form, one of which opened a
+   themed panel and the other the browser's own stepper, read as two different
+   promises about who built this. Same surface, same stroke, same shadow, same
+   focus ring - only the contents differ, because a day is a grid and a time is
+   a list. */
+/* NO WIDTH HERE ON PURPOSE - calPlace sets it from the trigger. A menu that is
+   exactly as wide as the control it drops out of cannot be said to be aligned
+   left or right; it is simply the field, continued downward. */
+.cal--time { padding: 6px; }
+.tm-list {
+  display: grid;
+  gap: 2px;
+  /* EIGHT ROWS AND THE NINTH CUT, which is what tells a reader the list scrolls
+     without a scrollbar having to say it. */
+  max-height: 268px;
+  overflow-y: auto;
+  /* so a row's offsetTop is the list's own, which is what centres it on open */
+  position: relative;
+  scrollbar-gutter: stable;
+}
+.tm-o {
+  display: block;
+  width: 100%;
+  padding: 7px 10px;
+  border: 0;
+  border-radius: 7px;
+  background: none;
+  color: var(--ink-soft);
+  font: inherit;
+  /* the same size as the trigger: it is the same value, before and after */
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  text-align: left;
+  cursor: pointer;
+  transition: background .15s ease, color .15s ease;
+}
+.tm-o:hover:not(.is-on) { background: var(--wash-hover); color: var(--ink); }
+.tm-o:focus-visible { outline: 2px solid var(--blue-ink); outline-offset: -2px; }
+/* ONE WEIGHT FOR FORTY-EIGHT EQUAL ANSWERS. The hour marks were semibold, on
+   the theory that a fast scroll wants something to land on. It made half the
+   list look like headings and the other half like their contents, which is a
+   hierarchy this list does not have: 10:30 is not subordinate to 10:00, it is
+   the next option. And the aid was redundant anyway - a row on the hour already
+   says so, in the two characters after the colon.
+   THE ONLY ROW THAT DIFFERS IS THE ONE YOU CHOSE, which is a difference in
+   state, not in rank. */
+.tm-o.is-on { background: var(--blue-ink); color: #fff; font-weight: 600; }
+
 .cal-head { display: flex; align-items: center; justify-content: space-between; }
 .cal-m { color: var(--ink); font-size: 13.5px; font-weight: 600; letter-spacing: -0.015em; }
 .cal-nav {
@@ -590,7 +773,7 @@ body { min-height: 100vh; }
 .cal-d.is-on { background: var(--blue-ink); color: #fff; font-weight: 600; }
 .cal-d:disabled { color: var(--border); cursor: not-allowed; }
 @media (prefers-reduced-motion: reduce) {
-  .dt-c, .cal-d, .cal-nav { transition: none; }
+  .dt-c, .cal-d, .cal-nav, .tm-o { transition: none; }
 }
 
 /* two dates are one question asked twice, so they share a row until the column
@@ -1594,7 +1777,17 @@ input:focus-visible + .check { outline: 2px solid var(--blue-ink); outline-offse
 
 /* ---- fields ------------------------------------------------------------------- */
 /* the shared rule sets --panel-bg, which is the panel's own step now */
-.field { height: var(--hero-btn-h); padding: 0 14px; background: var(--card-bg); }
+/* 14px, NOT THE 16px THE SHARED RULE SETS. That 16 belongs to the access
+   dialog's email door: one hero-scale box on a marketing page, sized to sit
+   beside a 16px CTA. A campaign form is eight controls in a dialog, and at 16px
+   the value a person types is larger than the caption naming it - the field
+   shouts and the label whispers, which is backwards. 14px matches .q-label, so
+   caption and answer read as one pair.
+   THE 16px IS KEPT ON TOUCH, where it is not a type decision at all: iOS Safari
+   zooms the viewport on focus for anything under 16px. Guarded by pointer type
+   rather than width, because that is the actual condition. */
+.field { height: var(--hero-btn-h); padding: 0 14px; background: var(--card-bg); font-size: 14px; }
+@media (hover: none) and (pointer: coarse) { .field { font-size: 16px; } }
 textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: vertical; min-height: 84px; }
 
 /* ---- the foot ------------------------------------------------------------------ */
@@ -1880,6 +2073,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
      surface on the product you are actually filling in, which is the argument
      that rule was reduced to in the first place. -->
 <dialog class="sheet sheet--wide" id="sheet-create" aria-labelledby="create-title" autofocus>
+  <svg class="filed-grid" viewBox="0 0 1000 900" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="fgFade-floor" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#fff" stop-opacity="1"/><stop offset="27.9%" stop-color="#fff" stop-opacity=".4"/><stop offset="62%" stop-color="#fff" stop-opacity="0"/></linearGradient><linearGradient id="fgFade-ceiling" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fff" stop-opacity="1"/><stop offset="27.9%" stop-color="#fff" stop-opacity=".4"/><stop offset="62%" stop-color="#fff" stop-opacity="0"/></linearGradient><mask id="fgMask-floor" maskUnits="userSpaceOnUse" x="0" y="640" width="1000" height="260"><rect x="0" y="640" width="1000" height="260" fill="url(#fgFade-floor)"/></mask><mask id="fgMask-ceiling" maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="260"><rect x="0" y="0" width="1000" height="260" fill="url(#fgFade-ceiling)"/></mask></defs><g mask="url(#fgMask-floor)"><line x1="-450" y1="900" x2="500" y2="640" stroke="#fff" stroke-opacity=".3" stroke-width="1" vector-effect="non-scaling-stroke"/><line x1="-314.29" y1="900" x2="500" y2="640" stroke="#fff" stroke-opacity=".3" stroke-width="1" vector-effect="non-scaling-stroke"/><line x1="-178.57" y1="900" x2="500" y2="640" stroke="#fff" stroke-opacity=".3" stroke-width="1" vector-effect="non-scaling-stroke"/><line x1="-42.86" y1="900" x2="500" y2="640" stroke="#fff" stroke-opacity=".3" stroke-width="1" vector-effect="non-scaling-stroke"/><line x1="92.86" y1="900" x2="500" y2="640" stroke="#fff" stroke-opacity=".3" stroke-width="1" vector-effect="non-scaling-stroke"/><line x1="228.57" y1="900" x2="500" y2="640" stroke="#fff" stroke-opacity=".3" stroke-width="1" vector-effect="non-scaling-stroke"/><line x1="364.29" y1="900" x2="500" y2="640" stroke="#fff" stroke-opacity=".3" stroke-width="1" vector-effect="non-scaling-stroke"/><line x1="500" y1="900" x2="500" y2="640" stroke="#fff" stroke-opacity=".3" stroke-width="1" vector-effect="non-scaling-stroke"/><line x1="635.71" y1="900" x2="500" y2="640" stroke="#fff" stroke-opacity=".3" stroke-width="1" vector-effect="non-scaling-stroke"/><line x1="771.43" y1="900" x2="500" y2="640" stroke="#fff" stroke-opacity=".3" stroke-width="1" vector-effect="non-scaling-stroke"/><line x1="907.14" y1="900" x2="500" y2="640" stroke="#fff" stroke-opacity=".3" stroke-width="1" vector-effect="non-scaling-stroke"/><line x1="1042.86" y1="900" x2="500" y2="640" stroke="#fff" stroke-opacity=".3" stroke-width="1" vector-effect="non-scaling-stroke"/><line x1="1178.57" y1="900" x2="500" y2="640" stroke="#fff" stroke-opacity=".3" stroke-width="1" vector-effect="non-scaling-stroke"/><line x1="1314.29" y1="900" x2="500" y2="640" stroke="#fff" stroke-opacity=".3" stroke-width="1" vector-effect="non-scaling-stroke"/><line x1="1450" y1="900" x2="500" y2="640" stroke="#fff" stroke-opacity=".3" stroke-width="1" vector-effect="non-scaling-stroke"/><line x1="0" y1="900" x2="1000" y2="900" stroke="#fff" stroke-opacity="0.420" stroke-width="1" vector-effect="non-scaling-stroke"/><line x1="0" y1="828.41" x2="1000" y2="828.41" stroke="#fff" stroke-opacity="0.367" stroke-width="1" vector-effect="non-scaling-stroke"/><line x1="0" y1="787.73" x2="1000" y2="787.73" stroke="#fff" stroke-opacity="0.315" stroke-width="1" vector-effect="non-scaling-stroke"/><line x1="0" y1="761.5" x2="1000" y2="761.5" stroke="#fff" stroke-opacity="0.263" stroke-width="1" vector-effect="non-scaling-stroke"/><line x1="0" y1="743.17" x2="1000" y2="743.17" stroke="#fff" stroke-opacity="0.210" stroke-width="1" vector-effect="non-scaling-stroke"/><line x1="0" y1="729.66" x2="1000" y2="729.66" stroke="#fff" stroke-opacity="0.158" stroke-width="1" vector-effect="non-scaling-stroke"/><line x1="0" y1="719.27" x2="1000" y2="719.27" stroke="#fff" stroke-opacity="0.105" stroke-width="1" vector-effect="non-scaling-stroke"/><line x1="0" y1="711.04" x2="1000" y2="711.04" stroke="#fff" stroke-opacity="0.052" stroke-width="1" vector-effect="non-scaling-stroke"/></g><g mask="url(#fgMask-ceiling)"><line x1="-450" y1="0" x2="500" y2="260" stroke="#fff" stroke-opacity=".3" stroke-width="1" vector-effect="non-scaling-stroke"/><line x1="-314.29" y1="0" x2="500" y2="260" stroke="#fff" stroke-opacity=".3" stroke-width="1" vector-effect="non-scaling-stroke"/><line x1="-178.57" y1="0" x2="500" y2="260" stroke="#fff" stroke-opacity=".3" stroke-width="1" vector-effect="non-scaling-stroke"/><line x1="-42.86" y1="0" x2="500" y2="260" stroke="#fff" stroke-opacity=".3" stroke-width="1" vector-effect="non-scaling-stroke"/><line x1="92.86" y1="0" x2="500" y2="260" stroke="#fff" stroke-opacity=".3" stroke-width="1" vector-effect="non-scaling-stroke"/><line x1="228.57" y1="0" x2="500" y2="260" stroke="#fff" stroke-opacity=".3" stroke-width="1" vector-effect="non-scaling-stroke"/><line x1="364.29" y1="0" x2="500" y2="260" stroke="#fff" stroke-opacity=".3" stroke-width="1" vector-effect="non-scaling-stroke"/><line x1="500" y1="0" x2="500" y2="260" stroke="#fff" stroke-opacity=".3" stroke-width="1" vector-effect="non-scaling-stroke"/><line x1="635.71" y1="0" x2="500" y2="260" stroke="#fff" stroke-opacity=".3" stroke-width="1" vector-effect="non-scaling-stroke"/><line x1="771.43" y1="0" x2="500" y2="260" stroke="#fff" stroke-opacity=".3" stroke-width="1" vector-effect="non-scaling-stroke"/><line x1="907.14" y1="0" x2="500" y2="260" stroke="#fff" stroke-opacity=".3" stroke-width="1" vector-effect="non-scaling-stroke"/><line x1="1042.86" y1="0" x2="500" y2="260" stroke="#fff" stroke-opacity=".3" stroke-width="1" vector-effect="non-scaling-stroke"/><line x1="1178.57" y1="0" x2="500" y2="260" stroke="#fff" stroke-opacity=".3" stroke-width="1" vector-effect="non-scaling-stroke"/><line x1="1314.29" y1="0" x2="500" y2="260" stroke="#fff" stroke-opacity=".3" stroke-width="1" vector-effect="non-scaling-stroke"/><line x1="1450" y1="0" x2="500" y2="260" stroke="#fff" stroke-opacity=".3" stroke-width="1" vector-effect="non-scaling-stroke"/><line x1="0" y1="0" x2="1000" y2="0" stroke="#fff" stroke-opacity="0.420" stroke-width="1" vector-effect="non-scaling-stroke"/><line x1="0" y1="71.59" x2="1000" y2="71.59" stroke="#fff" stroke-opacity="0.367" stroke-width="1" vector-effect="non-scaling-stroke"/><line x1="0" y1="112.27" x2="1000" y2="112.27" stroke="#fff" stroke-opacity="0.315" stroke-width="1" vector-effect="non-scaling-stroke"/><line x1="0" y1="138.5" x2="1000" y2="138.5" stroke="#fff" stroke-opacity="0.263" stroke-width="1" vector-effect="non-scaling-stroke"/><line x1="0" y1="156.83" x2="1000" y2="156.83" stroke="#fff" stroke-opacity="0.210" stroke-width="1" vector-effect="non-scaling-stroke"/><line x1="0" y1="170.34" x2="1000" y2="170.34" stroke="#fff" stroke-opacity="0.158" stroke-width="1" vector-effect="non-scaling-stroke"/><line x1="0" y1="180.73" x2="1000" y2="180.73" stroke="#fff" stroke-opacity="0.105" stroke-width="1" vector-effect="non-scaling-stroke"/><line x1="0" y1="188.96" x2="1000" y2="188.96" stroke="#fff" stroke-opacity="0.052" stroke-width="1" vector-effect="non-scaling-stroke"/></g></svg>
   <div class="sheet-in">
     <div class="sheet-head">
       <h2 class="sheet-title" id="create-title">Create a campaign</h2>
@@ -2748,7 +2942,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
      button beside it, and the caption changes to what was chosen. */
   function uploadSlot(f) {
     var picked = d[f.key + 'Files'];
-    return '<span class="drop">'
+    return '<label class="drop">'
       + '<span class="drop-ic"><svg viewBox="0 0 24 24" width="15" height="15" fill="none"'
       + ' stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"'
       + ' aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5"/>'
@@ -2756,7 +2950,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
       + '<span class="drop-t"><b>' + (picked ? esc(picked) : 'Upload instead') + '</b>'
       + esc(f.upload || '') + '</span>'
       + '<input type="file" accept="video/*,image/*" multiple data-upload="' + f.key + '">'
-      + '</span>';
+      + '</label>';
   }
 
   /* NAMED BACK, NOT COUNTED. "3 files" tells an agency nothing about whether
@@ -2831,14 +3025,29 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
        you handed it would be the one thing here that lies about what it did. */
     var num = f.kind === 'number';
     var ph = f.ph || '';
+    /* A FIELD WITH AN UPLOAD UNDER IT IS TWO CONTROLS, SO IT IS TWO LABELS.
+       The strip used to sit inside the <label> wrapping the paste box, which
+       made it part of that box's label: hovering the strip lit the paste field
+       up as well, and clicking it put the caret in the paste field instead of
+       opening the picker - the upload could not be operated at all. A <label>
+       belongs to one control. Here the wrapper is a plain <div>, the caption
+       points at the text input by id, and the strip is its own <label> owning
+       the file input. */
+    var two = f.kind === 'filelink';
+    var id = 'q-' + f.key;
+    var inp = '<input type="text"' + (num ? ' inputmode="numeric"' : '')
+      + (f.kind === 'text' || two ? ' autocapitalize="none" autocorrect="off" spellcheck="false"' : '')
+      + (two ? ' id="' + id + '"' : '')
+      + ' class="field' + (e ? ' err' : '') + '" name="' + f.key + '"'
+      + ' placeholder="' + esc(ph) + '" value="' + esc(val) + '">';
+    if (two) {
+      return '<div class="q" data-field="' + f.key + '">'
+        + '<label class="q-label" for="' + id + '">' + lab + '</label>'
+        + inp + uploadSlot(f) + msgSlot(e, f.hint) + '</div>';
+    }
     return '<label class="q" data-field="' + f.key + '">'
       + '<span class="q-label">' + lab + '</span>'
-      + '<input type="text"' + (num ? ' inputmode="numeric"' : '')
-      + (f.kind === 'text' || f.kind === 'filelink' ? ' autocapitalize="none" autocorrect="off" spellcheck="false"' : '')
-      + ' class="field' + (e ? ' err' : '') + '" name="' + f.key + '"'
-      + ' placeholder="' + esc(ph) + '" value="' + esc(val) + '">'
-      + (f.kind === 'filelink' ? uploadSlot(f) : '')
-      + msgSlot(e, f.hint) + '</label>';
+      + inp + msgSlot(e, f.hint) + '</label>';
   }
 
   /* SEVERAL CHECKBOXES UNDER ONE NAME, and the answer is which of them are on.
@@ -2979,19 +3188,33 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
       + '</div>';
   }
 
-  /* THE NATIVE TIME CONTROL, WHICH IS NOT THE SAME CALL AS THE DATE ONE. A date
-     picker had to be replaced because the browser draws a whole calendar in its
-     own theme; a time input draws a text field with a small clock, takes typing,
-     and the only chrome it adds is a stepper. Writing our own to gain a clock
-     glyph would be a second month of somebody's attention for no reader's gain.
-     STEP 300, so the wheel moves in five-minute jumps: nobody schedules a
-     fortnight-long campaign to the second. */
+  /* THE TIME NOW ANSWERS THE WAY THE DATE DOES. This was <input type="time">,
+     and the argument for keeping it was that the browser only adds a stepper
+     where for a date it draws a whole calendar in its own theme. That was true
+     and beside the point: the two sit in one row of one form, and a row where
+     the left control opens a panel in this theme and the right one opens
+     Chrome's grey stepper reads as two different promises about who built the
+     page. The date's own note says a control that opens a panel is still the
+     thing the label points at. So is this one.
+     HALF-HOURS, NOT FIVE-MINUTE STEPS. The native input stepped by 300s because
+     a stepper costs nothing per extra stop; a list pays 288 rows for the same
+     range. Nobody schedules a fortnight-long campaign to the minute, and the
+     stops a reader would actually reach for are all here. */
   function timeQ(key, label) {
-    return '<label class="q" data-field="' + key + '">'
+    var v = d[key] || '';
+    return '<div class="q" data-field="' + key + '">'
       + '<span class="q-label">' + esc(label) + '</span>'
-      + '<input type="time" step="300" class="field field--time" name="' + key + '"'
-      + ' value="' + esc(d[key] || '') + '">'
-      + msgSlot('') + '</label>';
+      + '<button type="button" class="dt" data-cal="' + key + '"'
+      + ' aria-haspopup="dialog" aria-expanded="false">'
+      + '<svg class="dt-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor"'
+      + ' stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+      + '<circle cx="12" cy="12" r="9"/><path d="M12 7v5.2l3.4 2"/></svg>'
+      + '<span class="dt-v' + (v ? '' : ' is-ph') + '">' + (v ? esc(timeFmt(v)) : 'Pick a time') + '</span>'
+      + '<svg class="dt-c" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor"'
+      + ' stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+      + '<path d="M6 9.5l6 6 6-6"/></svg>'
+      + '</button>'
+      + msgSlot('') + '</div>';
   }
 
   /* ---- where it runs, and anything we have not thought to ask ---------------
@@ -3029,8 +3252,37 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
      TWO LETTERS PER WEEKDAY, because S-M-T-W-T-F-S makes the two S columns and
      the two T columns a guessing game. */
   var CAL_WK = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
-  var CAL_F = { startAt: { align: 'left', min: 'today' }, endAt: { align: 'right', min: 'startAt' } };
+  /* ONE TABLE FOR FOUR TRIGGERS, because the panel's open/place/close/dismiss
+     behaviour is the same object whatever it holds, and the two things that
+     differ - what it renders and what the arrows do - are the only two that
+     branch. */
+  var CAL_F = {
+    startAt:     { kind: 'date', align: 'left',  min: 'today' },
+    endAt:       { kind: 'date', align: 'right', min: 'startAt' },
+    startAtTime: { kind: 'time' },
+    endAtTime:   { kind: 'time' }
+  };
   var calKey = null, calView = null, calEl = null;
+  function calKind(k) { return (CAL_F[k] || {}).kind === 'time' ? 'time' : 'date'; }
+
+  /* THE VALUE IS STORED AS 24-HOUR AND SHOWN AS 12, which is not a compromise:
+     "14:30" is what anything downstream should ever have to parse, and "2:30 PM"
+     is what a reader scheduling a US campaign does not have to convert. */
+  function timeFmt(v) {
+    var p = String(v).split(':'), h = Number(p[0]), hh = h % 12;
+    return (hh || 12) + ':' + p[1] + ' ' + (h < 12 ? 'AM' : 'PM');
+  }
+  /* EVERY HALF HOUR OF THE DAY, built rather than written: 48 hand-typed strings
+     is 48 chances to fat-finger one, and nobody would find it until somebody's
+     campaign started at 3:60 PM. */
+  function timeStops() {
+    var out = [], i, h, m;
+    for (i = 0; i < 48; i++) {
+      h = Math.floor(i / 2); m = i % 2 ? '30' : '00';
+      out.push((h < 10 ? '0' : '') + h + ':' + m);
+    }
+    return out;
+  }
 
   function dayKey(x) { return x.getFullYear() * 10000 + x.getMonth() * 100 + x.getDate(); }
   function isoOf(x) {
@@ -3087,10 +3339,11 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     calKey = k;
     var t = document.querySelector('[data-cal="' + k + '"]');
     if (t) { t.setAttribute('aria-expanded', 'true'); }
+    var time = calKind(k) === 'time';
     calEl = document.createElement('div');
-    calEl.className = 'cal';
+    calEl.className = 'cal' + (time ? ' cal--time' : '');
     calEl.setAttribute('role', 'dialog');
-    calEl.setAttribute('aria-label', 'Choose a date');
+    calEl.setAttribute('aria-label', time ? 'Choose a time' : 'Choose a date');
     calEl.style.visibility = 'hidden';
     calHost().appendChild(calEl);
     calRender(true);
@@ -3116,6 +3369,11 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     var k = calKey;
     d[k] = iso;
     touched[k] = true;
+    /* A TIME HAS NOTHING DOWNSTREAM OF IT. The cascade below exists because an
+       end DATE can be left behind by its start; an end time cannot, because
+       validate() already requires the end day to be strictly after the start
+       day, so the two times never share one. */
+    if (calKind(k) === 'time') { calClose('pick'); render('[data-cal="' + k + '"]'); return; }
     /* AN END DATE THAT NOW PRECEDES ITS OWN START IS CLEARED rather than left to
        fail validation: the field it depended on moved under it, which is not the
        reader's mistake to be told about. */
@@ -3127,7 +3385,30 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     render('[data-cal="' + k + '"]');
   }
 
+  /* THE LIST OPENS ON THE ANSWER IT IS HOLDING, centred rather than scrolled to
+     the top: a time panel that opens at midnight makes the reader scroll past
+     the small hours every single time to reach the ones anybody picks. */
+  function calRenderTime(first) {
+    var cur = d[calKey] || '';
+    calEl.innerHTML = '<div class="tm-list" role="listbox">' + timeStops().map(function (t) {
+      var on = t === cur;
+      return '<button type="button" class="tm-o' + (on ? ' is-on' : '')
+        + '" role="option" aria-selected="' + (on ? 'true' : 'false')
+        + '" data-cal-pick="' + t + '">' + timeFmt(t) + '</button>';
+    }).join('') + '</div>';
+    if (!first) { return; }
+    calPlace();
+    var list = calEl.querySelector('.tm-list');
+    var a = calEl.querySelector('.tm-o.is-on') || calEl.querySelector('.tm-o');
+    if (!a) { return; }
+    list.scrollTop = Math.max(0, a.offsetTop - (list.clientHeight - a.offsetHeight) / 2);
+    /* preventScroll, or focus undoes the centring it was just given and, in the
+       dialog, drags the form behind the panel as well */
+    try { a.focus({ preventScroll: true }); } catch (e) { a.focus(); }
+  }
+
   function calRender(first) {
+    if (calKind(calKey) === 'time') { return calRenderTime(first); }
     var m = calMonth(), floorD = calFloor(calKey), floor = floorD ? dayKey(floorD) : null;
     var sel = calVal(calKey), selK = sel ? dayKey(sel) : null, todayK = dayKey(new Date());
     var f1 = new Date(m.getFullYear(), m.getMonth(), 1);
@@ -3200,11 +3481,24 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     var t = document.querySelector('[data-cal="' + calKey + '"]');
     if (!t) { return; }
     var GAP = 6, M = 8;
-    var r = t.getBoundingClientRect(), h = calEl.offsetHeight, w = calEl.offsetWidth;
+    var r = t.getBoundingClientRect();
+    /* SET THE WIDTH BEFORE MEASURING THE HEIGHT, because the height depends on
+       it. The time list takes the trigger's width; the calendar keeps its own,
+       which is fixed by seven columns of two-digit days and would be squeezed
+       unreadable by a narrow field. */
+    if (calKind(calKey) === 'time') { calEl.style.width = r.width + 'px'; }
+    var h = calEl.offsetHeight, w = calEl.offsetWidth;
     /* flip up ONLY if up actually fits, or a tall panel in a short window flips
        and is clipped by the top instead of the bottom */
     var above = (window.innerHeight - r.bottom - GAP < h) && (r.top - GAP > h);
-    var raw = CAL_F[calKey].align === 'right' ? (r.right - w) : r.left;
+    /* ALIGN IS A CALENDAR PROBLEM AND NOT A LIST ONE. A 320px panel under a
+       narrow right-hand field has to hang off its right edge or leave the
+       dialog, which is why endAt asks for it. A panel the width of its own
+       trigger has no overhang to choose a side for, and honouring the flag
+       anyway is what made the two time menus mirror each other - one hugging
+       the left edge of its field, one the right, for no reason a reader could
+       see. */
+    var raw = (CAL_F[calKey].align === 'right' && calKind(calKey) !== 'time') ? (r.right - w) : r.left;
     /* clamp both axes: a fixed element off the viewport is unreachable, not
        merely awkward */
     calEl.style.left = Math.min(Math.max(M, raw), Math.max(M, window.innerWidth - w - M)) + 'px';
@@ -3216,6 +3510,19 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
      a child of the form, so Tab leaves for the next field - which is why the
      arrows have to exist at all. */
   function calKeys(ev) {
+    /* ONE AXIS FOR A LIST, TWO FOR A GRID. Left and right are left alone in the
+       time panel rather than mapped to anything: there is nothing beside a row,
+       and an arrow that does something arbitrary is worse than one that does
+       nothing. */
+    if (calKind(calKey) === 'time') {
+      var d1 = ev.key === 'ArrowDown' ? 1 : ev.key === 'ArrowUp' ? -1 : 0;
+      if (!d1 || !calEl) { return; }
+      ev.preventDefault();
+      var os = Array.prototype.slice.call(calEl.querySelectorAll('.tm-o'));
+      var at1 = os.indexOf(document.activeElement);
+      if (at1 > -1 && os[at1 + d1]) { os[at1 + d1].focus(); }
+      return;
+    }
     var step = ev.key === 'ArrowRight' ? 1 : ev.key === 'ArrowLeft' ? -1
       : ev.key === 'ArrowDown' ? 7 : ev.key === 'ArrowUp' ? -7 : 0;
     if (!step || !calEl) { return; }
@@ -3348,10 +3655,10 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     var c = filed;
     var who = esc((c && c.name) || d.name || 'Your campaign');
     bodyEl.innerHTML = '<div class="filed">'
-      + '<span class="filed-mark" aria-hidden="true">'
-      + '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"'
-      + ' stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l5 5L19.5 6.5"/></svg>'
-      + '</span>'
+      + '<span class="filed-tick" aria-hidden="true">'
+      + '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor"'
+      + ' stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">'
+      + '<path d="M4.5 12.5l5 5L19.5 6.5"/></svg></span>'
       + '<h2 class="filed-h">Campaign submitted.</h2>'
       /* IN REVIEW, NOT LIVE. Nothing reaches the community until we have read it,
          and the row this becomes says IN REVIEW - one of the two would be lying. */
@@ -3363,9 +3670,10 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
       + 'before it goes live; you can follow it right here on your dashboard.</p>'
       + (c ? '<span class="filed-id"><i>Campaign ID</i><b>' + esc(c.ref) + '</b></span>' : '')
       + '<div class="filed-cta">'
-      + '<button class="btn btn-solid" type="button" data-filed="view">View campaign</button>'
-      + '<button class="btn btn-ghost" type="button" data-filed="done">Done</button>'
-      + '</div></div>';
+      + '<button class="btn filed-go" type="button" data-filed="view">View campaign</button>'
+      + '</div>'
+      + '<button class="filed-done" type="button" data-filed="done">Done</button>'
+      + '</div>';
   }
 
   /* delegated, because this panel is written and rewritten by render() */
@@ -3637,11 +3945,11 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
      hides the wait. */
   CAMPAIGNS.push(
     {
-      id: 'northline', kind: 'growth', name: 'Northline Skate Co.: format tests', ref: '#a15d7f22',
+      id: 'northline', kind: 'growth', name: 'Airtap: format tests', ref: '#a15d7f22',
       done: 102000, target: 300000, spent: 510, budget: 1500, note: '6 videos live',
       unit: 'verified views', rate: '$5', per: '1,000 verified views',
       state: 'live', label: 'Live', ends: 'Sep 30, 2026', charged: 'Sep 12, 2026',
-      short: 'Northline formats',
+      short: 'Airtap formats',
       brief: 'Video growth. Our agent studies the category, makes the films, and members post them.'
     },
     {
@@ -3663,7 +3971,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
      that says the whole thing happened yesterday.
      CHOSEN SO ELAPSED TIME RUNS A LITTLE AHEAD OF FILL, which is what "behind
      pace" means and what the dashed line exists to show. Spring is half through
-     its fortnight and 42 per cent filled; Northline is two thirds through three
+     its fortnight and 42 per cent filled; Airtap is two thirds through three
      weeks and 34 per cent. They are illustrative, like every other figure on
      these six, and they are here rather than derived so the story each row tells
      is one somebody chose. */
@@ -4148,18 +4456,27 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
      are what an agency reads to judge whether the films are any good, and
      three lorem strings would make the one part of this screen that is about
      taste unreadable as taste. */
+  /* THE FILMS ARE THE ONES IN samples/, AND THE CAMPAIGN IS NAMED FOR THEM.
+     This list used to be about onBlue itself - a PC left on for 30 days - sitting
+     under a campaign for a skate company, which made the one screen that is
+     supposed to show an agency its own work show somebody else's. The footage
+     decides: the library holds Airtap, Hunter Raid and Sandbar, so the live
+     growth campaign is Airtap's.
+     THE CLIP IS NAMED, NOT THE FILE. postRows builds both paths off it, because
+     a poster and a film that can disagree about which post they belong to are
+     two chances to be wrong where there should be one. */
   var POSTS = [
-    { who: 'Priya N.', subs: '0 subscribers',
-      title: 'I left my PC on for 30 days. This is what it paid me.',
-      desc: '41 jobs approved, most under a dollar, one paid four. On day 30 the payout landed in my\u2026',
+    { who: 'Priya N.', subs: '0 subscribers', clip: 'airtap-grocery-run',
+      title: 'A whole week of groceries, paid for with one tap.',
+      desc: 'No card out, no app to open, no queue at the self checkout. I filmed the entire run to see\u2026',
       views: 25, likes: 0, comments: 1 },
-    { who: 'Dan W.', subs: '0 subscribers',
-      title: 'How much does an AI worker make you in a month?',
-      desc: 'He guessed a hundred and fifty at dinner, so we fact checked it. onBlue does brand jobs o\u2026',
+    { who: 'Dan W.', subs: '0 subscribers', clip: 'airtap-first-date',
+      title: 'Splitting a first date bill without making it weird.',
+      desc: 'He reached for his wallet, I had already tapped. We argued about it for the whole walk ho\u2026',
       views: 24, likes: 0, comments: 2 },
-    { who: 'mara.builds', subs: '12 subscribers',
-      title: 'It pays you $30 a month. But what does it cost?',
-      desc: 'onBlue works on your PC and pays you about $30 a month. Electricity, interest, wear on th\u2026',
+    { who: 'mara.builds', subs: '12 subscribers', clip: 'airtap-red-eye',
+      title: 'Buying coffee at 5am in a country I had just landed in.',
+      desc: 'Red eye, no local cash, and a card my bank had already frozen twice this year. This was th\u2026',
       views: 196, likes: 1, comments: 7 }
   ];
 
@@ -4181,7 +4498,10 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
         + '<span class="post-lab">Video description</span><span class="post-desc">' + esc(p.desc) + '</span>'
         + '</span>'
         + '<span class="post-aside">'
-        + '<span class="post-thumb" aria-hidden="true"></span>'
+        + '<span class="post-thumb">'
+        + '<video class="post-vid" src="samples/' + esc(p.clip) + '.mp4"'
+        + ' poster="samples/' + esc(p.clip) + '.jpg"'
+        + ' muted loop playsinline preload="none" aria-hidden="true"></video></span>'
         + '<a class="post-out" data-stub aria-label="Open the post">' + POST_IC.out + '</a>'
         + '<span class="post-stats">'
         + '<span>' + POST_IC.eye + num(p.views) + '</span>'
@@ -4191,6 +4511,28 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
         + '</div>';
     }).join('');
   }
+
+  /* A POSTER UNTIL YOU LOOK AT IT. preload="none" means nothing is fetched for
+     a list nobody hovers, and pointerover rather than pointerenter because this
+     list is rewritten on every report open and only a delegated listener
+     survives that. pointerout fires on every move between the thumb's own
+     children, so the relatedTarget check is what stops it stuttering. */
+  var POST_STILL = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.addEventListener('pointerover', function (ev) {
+    if (POST_STILL) { return; }
+    var t = ev.target.closest ? ev.target.closest('.post-thumb') : null;
+    if (!t) { return; }
+    var v = t.querySelector('video');
+    if (!v || !v.paused) { return; }
+    var go = v.play();
+    if (go && go.catch) { go.catch(function () {}); }
+  });
+  document.addEventListener('pointerout', function (ev) {
+    var t = ev.target.closest ? ev.target.closest('.post-thumb') : null;
+    if (!t || (ev.relatedTarget && t.contains(ev.relatedTarget))) { return; }
+    var v = t.querySelector('video');
+    if (v) { v.pause(); v.currentTime = 0; }
+  });
 
   /* EVERY FACT IN ITS OWN ELEMENT, WHICH IS WHY THE LINE READ
      "Sep 24 2026 closeCountry: United States". The row is a flex container with
