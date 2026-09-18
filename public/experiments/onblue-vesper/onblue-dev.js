@@ -6,10 +6,17 @@
    page loses a shortcut, not a variant. The minimal steps still exist and are
    still reachable by putting .is-min on the dialog by hand.
 
-   TWO PAGES, ONE BAR, AND IT ONLY APPEARS WHERE ITS STATES ARE. On the homepage
-   it switches the access dialog's four steps between Full and Minimal, and it
-   exists only while that dialog is open. On the application it switches the page
-   between the application flow and the approved dashboard.
+   TWO PAGES, TWO DOCKS, AND EACH ONLY APPEARS WHERE ITS STATES ARE. On the
+   homepage it switches the access dialog's four steps between Full and Minimal,
+   and it exists only while that dialog is open.
+   THE OTHER TWO ARE DIFFERENT PRODUCTS AND THE PAGE SAYS WHICH. apply.html is
+   the creators' side - an application that becomes a creator dashboard - and
+   campaign.html is the agencies' - a review gate in front of a campaigns app.
+   They share the word "dash" and nothing else, and for one commit this file
+   keyed off that word alone and built the agency's three bars on both. On
+   apply.html two of those three called doors that page does not have, so the
+   creator dashboard became unreachable from its own toggler. #dash declares
+   data-dock now; a page that does not is not guessed at.
    The dialog case also solves the top layer: a <dialog> opened with showModal()
    sits above everything, and no z-index outside it can reach, so a bar parked on
    <body> would be buried at exactly the moment it is needed. Inside the dialog
@@ -111,7 +118,36 @@
     new MutationObserver(place).observe(gate, { attributes: true, attributeFilter: ['open'] });
   }
 
-  if (dash) {
+  /* ---- the creators' page ----------------------------------------------------
+     ONE AXIS AND A PASSENGER. Applying and being in are the two things this
+     page can be; how much is in the account is a question only the second one
+     asks, so that bar rides with it rather than beside it.
+     ITS OWN STORAGE KEYS. The two docks both have an account bar and the state
+     ids differ - empty/one here, none/one/two there - so a shared key would
+     hand each page the other's last answer to fall back from. */
+  function creatorDock() {
+    var account = build({
+      label: 'Account', store: 'onblue:dev-cr-account',
+      /* the second name is the page's, not this file's: a creator holds a
+         programme and an agency holds campaigns, and a bar saying the same word
+         on both would be describing only one of them */
+      states: [{ id: 'empty', name: 'Empty' },
+               { id: 'one', name: dash.getAttribute('data-one') || 'One program' }],
+      apply: function (on) { if (window.onblueAccount) { window.onblueAccount(on); } }
+    });
+    document.body.appendChild(dock([account, build({
+      label: 'Creator', store: 'onblue:dev-creator', initial: 'apply',
+      states: [{ id: 'apply', name: 'Application' },
+               { id: 'in', name: 'Approved' }],
+      apply: function (on) {
+        account.hidden = on !== 'in';
+        if (window.onblueApproved) { window.onblueApproved(on === 'in'); }
+      }
+    })]));
+  }
+
+  /* ---- the agencies' page ---------------------------------------------------- */
+  function agencyDock() {
     /* THE PAGE OWNS EVERY SWITCH, NOT THIS FILE. Flipping a class here would
        leave the application's own script believing it was still the thing on
        screen, and writing figures here would leave the dashboard's datasets with
@@ -177,5 +213,9 @@
         if (window.onblueStage) { window.onblueStage(on); }
       }
     })]));
+  }
+
+  if (dash) {
+    if (dash.getAttribute('data-dock') === 'creator') { creatorDock(); } else { agencyDock(); }
   }
 })();

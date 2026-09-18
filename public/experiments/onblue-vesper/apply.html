@@ -698,6 +698,14 @@ body { min-height: 100vh; }
 
 /* ---- the card ---------------------------------------------------------------- */
 .form-stage { position: relative; max-width: 640px; margin: clamp(20px, 2.8vw, 30px) auto 0; }
+/* THE CLOSER IS NOT A FORM AND STOPS WEARING THE FORM'S MEASURE. 640px is the
+   width of a column of questions, and the confirmation replaces the questions
+   with a --h1 statement: "Thanks for applying." needs about 690px at the 64px
+   --h1 takes past 1920, so it broke after "for" on exactly the screens with the
+   most room for it. Every other thing in .confirm carries its own limit - the
+   lede has --lede-max, the pill and the mark are their own size - so lifting
+   this one only ever gives the headline the room it was short of. */
+body.is-underway .form-stage { max-width: none; }
 .form-card { padding: 26px 26px 22px; }
 
 /* the step head: the form's own progress, at hairline weight, because the rail
@@ -1266,7 +1274,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
      screenshot, which is how "your onBlue account" survived (the picture still
      says BlueAI; the source does not). Nothing about how it looks came with it.
      ============================================================================ -->
-<section class="dash" id="dash" hidden>
+<section class="dash" id="dash" data-dock="creator" data-one="One program" hidden>
 
   <!-- THE ONLY LEFT-ALIGNED HEAD ON THE PAGE, and the reason is what it is
        for. Every other title here is an address to a reader who is deciding
