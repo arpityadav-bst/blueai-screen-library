@@ -808,7 +808,22 @@ body { min-height: 100vh; }
    is already holding the scroll lock; without a height ceiling here, a long step
    pushes its own buttons past the bottom of the viewport with nothing able to
    reach them. */
-.sheet--wide { width: min(620px, calc(100vw - 32px)); max-height: min(86vh, 860px); }
+/* 740px, SO THE LONGEST VALUE IN THE PICKER HOLDS ONE LINE. Measured rather
+   than guessed: "A few reference sites and videos" sets at 215px in Inter
+   SemiBold 13, which is what .type-spec b is. At 620px that column resolved to
+   174px, so the line broke after "and" and the two footers stopped being two
+   rows you read across.
+   THE CHAIN, SO THE NUMBER CAN BE RE-DERIVED WHEN SOMETHING MOVES: the dialog
+   loses 44px of its own padding, the pair splits the rest across a 12px gap,
+   each card takes 36px, and the spec row gives 72px to the label and its
+   gutter - so the value gets (W - 56) / 2 - 108. At 740 that is 234px, 19px
+   clear of the line. The slack is deliberate: a browser that misses Inter falls
+   back to a system sans that can set the same string several per cent wider, and
+   a value column with two pixels to spare is one font away from wrapping again.
+   WIDER THAN THE OTHER SHEETS BY DESIGN. They carry a fact; this carries a
+   choice between two things and then a form, and 430px is right for "Budget
+   added" and wrong for either of those. */
+.sheet--wide { width: min(740px, calc(100vw - 32px)); max-height: min(86vh, 860px); }
 .sheet--wide .sheet-in { display: flex; flex-direction: column; max-height: inherit; padding: 22px 22px 20px; }
 /* the sheet's head already carries its own bottom margin, so this sits between
    the two rather than adding to one of them */
