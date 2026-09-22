@@ -1061,6 +1061,22 @@ dialog:focus { outline: none; }
   background: var(--ink);
   transition: transform 0.25s ease, opacity 0.2s ease;
 }
+/* ---- the menu button's open state ------------------------------------------
+   THE X WAS DRAWING AS A CHEVRON. .burger is a 42px grid of three 1.5px bars
+   with 5px gaps, and the rules below move the outer two by 6.5px to meet in the
+   middle before rotating them - which is the right distance ONLY if the three
+   rows are as tall as the bars. A grid's align-content is stretch by default,
+   so the rows grew to fill the button, the bars sat 15px apart instead of 6.5,
+   and after the move they still missed each other by 17px: two bars rotated 45
+   degrees that do not share a centre meet at one end, which is a ">" pointing
+   right. Centring the rows puts the bars where the arithmetic assumed they
+   were. Measured on the creators page at 820: -15.00 and +15.00 from the
+   button's centre closed, -8.50 and +8.50 open.
+   IT LIVED IN brands.html, scoped there while the creators bar still used the
+   full-screen overlay and had no such button. Both bars are this button now, so
+   the fix belongs with it. */
+.burger { align-content: center; }
+
 body.menu-open .burger span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
 body.menu-open .burger span:nth-child(2) { opacity: 0; }
 body.menu-open .burger span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
@@ -2697,10 +2713,60 @@ h1, h2, h3, h4, .title-lg, .title-xl { text-wrap: balance; }
 }
 
 @media (max-width: 1100px) {
-  .agents-grid, .steps { grid-template-columns: minmax(0, 1fr); }
-  .demand { grid-template-columns: minmax(0, 1fr); }
+  /* TWO, NOT ONE. This read `minmax(0, 1fr)` and took both grids from three
+     and four columns straight to a single column at 1100 - no rung in between,
+     so every screen from a large tablet down to a phone got the phone's layout.
+     Measured on an iPad Mini in landscape that is one 965px card per row with
+     the rest of the width empty, and it is the same rule behind the agents
+     stacking on a 1032 iPad Pro and on a 960 Surface.
+     THE CARDS HOLD TWO AT THIS WIDTH. Each carries a heading, a line of prose
+     and a terminal panel; at 1100 a half column is 530px and at 768 it is 360,
+     which is wider than the same card gets on a phone and it reads there. One
+     column is what a phone needs, and it is now asked for at the phone's width
+     rather than at every width below a desktop. */
+  .agents-grid, .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  /* THE SAME MISSING RUNG AS THE GRIDS ABOVE, and it read worse here. This took
+     three columns - who brings the work, the matcher, the agents - straight to
+     one, which left the matcher as a 718px band holding three chips and a 112px
+     spark stacked down the middle of it. Measured at 768 and again at 960: 287px
+     and 300px tall, most of it empty, with the two lists reading as full-width
+     paragraphs above and below it.
+     TWO ABREAST, AND THE MATCHER UNDER BOTH. The lists are short labelled items
+     and hold at half width; putting them side by side is also what makes the
+     matcher legible, because it becomes the thing they both arrive at rather
+     than a third block in a queue. No child selectors needed: two auto-placed
+     columns fill row one and the core is told to span row two. */
+  .demand {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 34px 18px;
+    /* AND THE BLOCK STOPS GROWING WITH THE PAGE. Two columns of a 966px band are
+       474px each, wider than the 328px the same column gets on a desktop, and
+       every item in them is two or three words in a pill - "Social posts" in a
+       474px box reads as a stretched bar rather than a labelled item. 780px puts
+       the columns at 371px, near the width the design was drawn at, and centres
+       the block under a heading that keeps the full band. Below 780 the cap does
+       nothing, so a 768 tablet is untouched. */
+    max-width: 780px;
+    margin-inline: auto;
+  }
+  .demand-col { grid-row: 1; }
   .wires { display: none; }
-  .demand-core { flex-direction: column; gap: 12px; min-height: 0; padding: 20px 0; }
+  .demand-core {
+    grid-row: 2;
+    grid-column: 1 / -1;
+    /* THE THREE CHIPS SIT IN A ROW OVER THE SPARK. Stacked, they were a 287px
+       ladder under two short lists and read as a fourth section rather than the
+       point the other two arrive at. Side by side they measure 509px together,
+       so a 540px cap holds them on one line and pushes the spark - 112px, which
+       would not fit beside them - onto its own line underneath. Wrapping does
+       the arrangement; no element is positioned. */
+    max-width: 540px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+    gap: 12px;
+    min-height: 0;
+    padding: 16px 0 0;
+  }
   .cap-bubble, .cap-bubble--bc {
     position: static;
     transform: none;
@@ -2709,10 +2775,38 @@ h1, h2, h3, h4, .title-lg, .title-xl { text-wrap: balance; }
 }
 
 @media (max-width: 700px) {
+  /* AND BACK TO ONE AT THE PHONE. Half of 390px is 175px for a list whose items
+     are an icon and a label, which is the mirror of the fault above. The row and
+     column placements have to be released too, or the core keeps a row the grid
+     no longer has. */
+  .demand { grid-template-columns: minmax(0, 1fr); }
+  .demand-col { grid-row: auto; }
+  .demand-core { grid-row: auto; grid-column: auto; max-width: none; }
+  .eco-grid { grid-template-columns: minmax(0, 1fr); }
+  /* AND ONE COLUMN WHERE ONE COLUMN IS ACTUALLY RIGHT. 700 is the line the rest
+     of this work already uses for a phone: below it the creators homepage is a
+     single message and the businesses page is laid out for a thumb. Two cards
+     abreast of each other at 390 would be the mirror of the fault above. */
+  .agents-grid, .steps { grid-template-columns: minmax(0, 1fr); }
   .eco-panel { min-height: 420px; }
   .agent-row li { flex: 1 1 calc(50% - 6px); }
   .eco-art { top: -20px; right: 2px; width: 54%; max-width: 175px; }
   .eco-copy > h3, .eco-copy > p { max-width: 36%; }
+}
+
+/* THE TAIL CENTRES ONCE IT WRAPS. .foot-base is space-between, which puts the
+   copyright at one end and the line about who this is at the other - right while
+   they share a row. Below 900 they do not: the row goes to two lines, and
+   space-between on a line holding one item is indistinguishable from left, so
+   both lines stack against the left edge under a centred wordmark. Measured at
+   768: 70px tall instead of 46, which is the wrap. */
+@media (max-width: 900px) {
+  .foot-base { justify-content: center; text-align: center; }
+  .foot-legal { justify-content: center; }
+  /* AND THE WORDMARK COMES UP. 100px of clear air above it is a figure for a
+     footer whose columns run the full width of a desktop; under two short lists
+     in a 758px frame it reads as the page having stopped before it finished. */
+  .foot-mark { margin-top: calc(52px + 0.3em); }
 }
 
 @media (max-width: 900px) {
@@ -2769,16 +2863,140 @@ h1, h2, h3, h4, .title-lg, .title-xl { text-wrap: balance; }
   .lede-br { display: none; }
 
 
-  .eco-grid { grid-template-columns: minmax(0, 1fr); margin-top: 56px; }
+  /* THE PANELS STAY TWO-UP, AND ONLY THE MARGIN CHANGES HERE. Dropping them to
+     one column made each panel 718px wide and 485 tall while its artwork stayed
+     a share of the width - measured at 768, a 360x490 image inside a 485px card,
+     taller than the card holding it, with the copy pushed into a strip beside
+     it and the middle of the panel empty. The same panel at 438px wide reads
+     correctly, which is what two columns give at this width. One column is for
+     the phone, where it is handled below. */
+  .eco-grid { margin-top: 56px; }
   .band-top { flex-direction: column-reverse; align-items: flex-start; gap: 14px; }
   .rail-flow { width: 2px; height: 42px; }
   .rail-outs { flex-direction: column; width: 100%; }
   .rail-outs .chip { justify-content: flex-start; }
   .foot-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 34px; }
   .foot-brand { grid-column: 1 / -1; }
+  /* AND THE SENTENCE UNDER THE MARK KEEPS A MEASURE. Spanning both columns took
+     it from the 313px it has on a desktop to 718px at 768, which is roughly 130
+     characters a line - past the point where an eye finds the next line, and the
+     single widest thing in a footer that otherwise reads as short columns. It is
+     what makes the whole block look flush left. */
+  .foot-brand p { max-width: 46ch; }
   .foot-top { grid-column: 1 / -1; justify-self: start; }
   .foot-base { flex-direction: column; gap: 8px; }
 }
+
+/* ============================================================================
+   THE SMALL-SCREEN MENU, FOR BOTH SITES (2026-09-22)
+   IT LIVED IN brands.html AND ONLY ONE NAV HAD IT. index.html and brands.html
+   are the only two pages here with a #site-nav and a burger - the application
+   and the portal have neither - so a rule written for one of them was always a
+   rule half-applied, and the creators bar kept the full-screen overlay this
+   replaced. Moving it here is what makes the two headers the same object.
+   IT HAS TO SIT AFTER THE BLOCK ABOVE, which is what turns #site-nav into that
+   overlay. Same specificity, so source order is the whole of what decides it.
+   ============================================================================ */
+/* THE HEADER KEEPS ITS OWN BUTTON UNTIL THE BAR GIVES IT UP AT 900, and this
+   has to be said through the id to be heard: #site-nav a sets display at (1,0,1)
+   and a bare .nav-cta answers at (0,1,0), so the link rendered in the DESKTOP
+   nav - 743px of nav instead of 558 at 1920, and a header 18px taller, which is
+   what moved everything below it. Same trap as the colour two rules down; a
+   class alone cannot answer an id. */
+#site-nav .nav-cta { display: none; }
+
+/* ---- the mobile header, and its menu (2026-09-22) ---------------------------
+   TWO THINGS IN THE BAR, NOT FOUR. The wordmark and the way in, which is what a
+   phone header is for; the campaign button moves into the menu, where it is the
+   thing you came to press rather than a second black block competing with the
+   logo across 360px.
+   THE MENU STOPS BEING A ROOM. It was a full-viewport overlay with a blurred
+   scrim and a scroll lock - the treatment for a menu with somewhere to go, and
+   this one has four links and a button. A popover under the control that opened
+   it says the same thing, keeps the page behind it visible, and costs no
+   scroll lock to dismiss.
+   RIGHT-ALIGNED AND ANCHORED TO THE HEADER'S OWN BOX, so it hangs off the burger
+   rather than off the viewport, and the transform origin is that corner so it
+   grows out of the button.
+   AND A PORTRAIT TABLET IS A TABLET. 900 was the whole condition, which left a
+   960 Surface and a 1032 iPad Pro showing the full desktop bar over a hero that
+   had already stacked itself - four links and a black button sitting above a
+   single centred column, which is the one part of those screens still claiming
+   to be a desktop. The hero uses portrait-and-1080 to decide it is a tablet and
+   the header now uses the same test, so one answer covers the whole screen.
+   .burger IS REPEATED HERE because the rule that shows it lives in the 900
+   block above and does not reach this far; without it the bar would give up its
+   button and offer nothing to open the menu with. */
+@media (max-width: 900px), (min-width: 901px) and (max-width: 1080px) and (orientation: portrait) {
+  .header-inner { position: relative; grid-template-columns: 1fr auto; }
+  .header-end { display: none; }
+  .burger { display: grid; }
+
+  /* MINIMAL MEANS NO BOX. The 42px hit area stays, because a thumb needs it; the
+     border and the fill go, because a three-bar glyph has never needed a frame
+     to say what it is. */
+  .burger { border-color: transparent; background: none; }
+  .burger span { width: 18px; }
+
+  /* no scrim and no lock: a popover is not a room */
+  .menu-backdrop { display: none; }
+  body.menu-open { overflow: visible; }
+
+  /* AND THE BAR KEEPS ITS GLASS. onblue.css drops the header's backdrop-filter
+     while the menu is open, for a stated reason: the filter makes the bar a
+     containing block, which would have trapped the old full-screen FIXED menu
+     inside it. This menu is absolutely positioned inside the header on purpose,
+     so being contained by it is the arrangement rather than the bug - and with
+     the scrim gone there is nothing else covering the page, so dropping the blur
+     just let the hero read straight through the bar. */
+  body.menu-open .header.is-stuck {
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+  }
+
+  #site-nav {
+    position: absolute;
+    inset: auto 0 auto auto;
+    top: calc(100% + 10px);
+    z-index: 80;
+    width: min(264px, calc(100vw - 2 * max(var(--header-x), 20px)));
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 2px;
+    padding: 8px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--card-bg);
+    box-shadow: 0 18px 44px -20px rgba(18, 32, 64, 0.3), 0 2px 6px rgba(18, 32, 64, 0.06);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-6px) scale(0.98);
+    transform-origin: 100% 0;
+    transition: opacity 0.2s ease, transform 0.2s var(--ease), visibility 0.2s ease;
+  }
+  body.menu-open #site-nav { opacity: 1; visibility: visible; transform: none; }
+  #site-nav a {
+    width: 100%;
+    height: 44px;
+    justify-content: flex-start;
+    padding: 0 12px;
+    border-radius: 9px;
+    font-size: 15px;
+  }
+  /* THE ONE THING IN THE LIST THAT IS AN ACTION RATHER THAN A DESTINATION, and
+     it has to be selected through the id to be one. #site-nav a sets colour at
+     (1,0,1) and .btn-solid sets it at (0,1,0), so the nav's ink won and the
+     button rendered --ink on --solid-bg: the right size, the right shape, and
+     invisible. Naming the class under the id puts it back at (1,1,0). */
+  #site-nav .nav-cta {
+    display: inline-flex;
+    justify-content: center;
+    margin-top: 6px;
+    color: var(--solid-ink);
+  }
+}
+
 
 @media (max-width: 560px) {
   :root {

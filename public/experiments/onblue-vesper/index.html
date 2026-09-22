@@ -17,6 +17,267 @@
 document.documentElement.setAttribute('data-theme', 'light');
 </script>
 <link rel="stylesheet" href="onblue.css">
+
+<!-- THIS PAGE HAD NO STYLES OF ITS OWN UNTIL NOW, and the block below is the
+     reason it needs some: everything in it is about one width band and belongs
+     to this page alone. Putting it in onblue.css would carry it to the
+     businesses site and the portal, which have their own answers for a phone. -->
+<style>
+/* ============================================================================
+   THE CREATORS PAGE ON A PHONE (2026-09-22)
+   IT DOES NOT SHOW THE HOMEPAGE AT ALL. Owning an agent, customising it and
+   watching what it earns happen in a workspace built for a large screen, and a
+   phone-sized version of that argument would be six sections of prose selling
+   something the reader cannot then do. So the phone gets the one thing that
+   travels - the agent itself, turning - and the address to open it at.
+   700px, NOT 900. The rest of this site treats 900 as the line where a desktop
+   stops; here a tablet still shows the full page by instruction, and 700 sits
+   below the narrowest tablet in use (768) and above every phone.
+   ============================================================================ */
+/* THE RESTING RULES COME FIRST, AND THAT ORDER IS LOAD-BEARING. They sat after
+   the media query on the first pass, so `display: none` and `display: flex` met
+   at equal specificity and the later one won: the block was hidden at exactly
+   the width it exists for. A default has to be declared before the rule that
+   overrides it. */
+.hero-small { display: none; flex-direction: column; align-items: center; text-align: center; width: 100%; }
+.hero-small h1 { margin: 0; }
+.hero-small .lede { margin-top: 16px; }
+.hero-small .hero-actions { margin-top: 26px; }
+/* THE ADDRESS ITSELF WHEN THE COPY WAS REFUSED. A clipboard write can fail for
+   reasons the reader cannot fix, and a note claiming success is worse than one
+   that hands over the thing it failed to copy. */
+.hero-small-note { margin: 14px 0 0; color: var(--dim-ink); font-size: 12.5px; letter-spacing: -0.005em; overflow-wrap: anywhere; }
+.hero-small-note[hidden] { display: none; }
+
+/* ---- the hero stops being two columns before it runs out of room ----------
+   .hero-two holds the copy beside the agent and never gives that up: at 768 the
+   copy takes 55% of the width and the model, which is drawn to the right of the
+   frame so it clears the headline, is left hanging off the screen edge with
+   half of it cut away. Measured on an iPad Mini in portrait, which is where it
+   was reported.
+   THE SAME ARRANGEMENT THE PHONE ALREADY USES, WITH THE REAL COPY. The agent
+   takes a band of its own at the top and the headline, the lede and the button
+   sit under it - one column, nothing clipped, and the reader still gets the
+   page rather than a message.
+   AND A HEIGHT CONDITION, because 900px wide also describes a phone lying on
+   its side, where there is no room to stack anything and the two-column hero is
+   the better of the two bad options. */
+/* PORTRAIT IS THE CONDITION, NOT A WIDTH. This asked for 900px and a height,
+   which describes an iPad Mini and misses every tablet above it: a Surface at
+   960x1440 and an iPad Pro at 1032x1376 kept the two-column hero, which put the
+   agent against the right edge with half of it cut off and left 620px and 588px
+   of empty page under the copy. Measured.
+   THE SHAPE OF THE SCREEN IS WHAT DECIDES IT. A frame taller than it is wide has
+   room to stack and not much room to sit side by side; one wider than it is tall
+   is the layout the two-column hero was drawn for. 1024x768 is the same iPad
+   turned over and it keeps the desktop hero, which is the point.
+   1080 IS THE CAP, and it is the same one the businesses page uses: 1032 is the
+   widest portrait tablet in use and 1100 is the narrowest width in the frozen
+   desktop baseline. */
+@media (max-width: 1080px) and (orientation: portrait) {
+  /* TWO EQUAL ROWS OF THE WRAP, which is the arrangement the phone already
+     proved: the agent takes the top, the copy is centred in the bottom, and the
+     canvas gets the same 50% by its own height because it is out of flow and
+     takes no row. The first attempt put the hero in row two of `auto 1fr` and
+     pushed it down with padding-top: 46vh - two different halves, one measured
+     off the wrap and one off the viewport, which only lined up by luck. */
+  /* AND THE HERO STOPS GROWING WITH THE SCREEN. .hero-wrap is a full viewport
+     less the header, which is the right instruction on a laptop and turns into
+     1362px on a 960x1440 Surface: two 680px bands holding a 580px agent and four
+     lines of copy, with the difference showing as a void between them. Measured
+     there before this, 332px of nothing between the agent and the headline.
+     A CEILING, NOT A HEIGHT. min() keeps the shorter screens exactly as they
+     are - an iPad Mini's wrap is 946px and never reaches this - and only the
+     very tall ones are held to a proportion a person has actually looked at.
+     The page showing a little of what is below it is what the cue underneath
+     was already saying in words. */
+  /* THE CEILING GOES ON .page, NOT ON .hero-wrap. The wrap is a stretched grid
+     item of .page, whose own min-height is 100dvh, so capping the child changed
+     nothing: the row it sits in was still a full viewport tall and stretch is
+     what fills it. Measured after the first attempt - 1440 still, unmoved.
+     940 PLUS THE HEADER, so the wrap under it lands on the figure this is
+     actually about. */
+  /* height: auto FIRST, AND IT IS THE WHOLE FIX. onblue.css carries
+     `@media (min-width: 901px) { .page { height: 100dvh } }` - an explicit
+     HEIGHT, not a floor - so a cap written as min-height was simply outranked
+     by a definite height above it, and 960 and 1032 stayed a full viewport tall
+     while 768 and 820, below that query, obeyed. Nothing in the computed values
+     showed it either: getComputedStyle reports the USED height in pixels, so
+     both the capped and the uncapped case read back as a number that looked
+     like the answer. The rule list is what named it. */
+  .page {
+    height: auto;
+    min-height: min(100dvh, calc(940px + var(--header-h)));
+  }
+  .hero-wrap { grid-template-rows: 1fr 1fr; min-height: 0; }
+  .hero { grid-row: 2; }
+  /* THE BAND STARTS UNDER THE HEADER AND STOPS SHORT OF THE COPY. At `top: 0`
+     it began behind a fixed 78px bar, so the model was centred in a box whose
+     top eighth nobody can see: measured at 390, the ink ran from y=60 - above
+     the header's own bottom edge - and left 151px of nothing between itself and
+     the headline. All of the breathing room was at the wrong end.
+     THE HEADER'S HEIGHT IS THE OFFSET, because that is exactly what was being
+     lost, and 30px comes off the height so the band stops before the copy's row
+     rather than running to the fold. Every model then centres in the space a
+     reader can actually see, and the ones with different proportions - the car
+     is wide and low, the agents are tall - share the same frame instead of each
+     needing a number. */
+  /* 24px UNDER THE HEADER, AND THAT NUMBER IS NOT THE MODEL'S CENTRE. Every
+     agent sits high in its own bounding box - measured, 13px from the band's top
+     against 70px from its bottom - so centring the BAND leaves the ink high and
+     the gap to the headline long. The offset pays for that bias once, in the
+     frame, rather than six times in six presets. */
+  .hero-ascii { top: calc(var(--header-h) + 24px); height: calc(50% - 30px); }
+  .hero-two { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  /* THROUGH .hero-two, BECAUSE THAT IS WHO SET IT. .hero-two .hero-copy pins the
+     copy left at (0,2,0) and a bare .hero-copy answers at (0,1,0), so the first
+     version of this asked politely and was ignored. With one column there is no
+     second column to be flush against, and left-aligned copy under a centred
+     agent reads as two designs stacked. */
+  /* AND THE BLOCK ITSELF IS CENTRED, not only the text inside it. .hero-copy
+     carries max-width: var(--copy-max) - 760px - to keep a readable measure, and
+     as a grid item that cap makes it 760px wide in a 966px column and parks it
+     at the column's start. Everything in it then centres on 408 while the page
+     centres on 511: measured at 1032, the headline sat 103px left of centre,
+     which is the layout still reading as left-aligned after being told to
+     centre. Below 900 a separate rule releases the cap to 100%, which is why
+     the same page looks right at 820 and wrong at 960. The cap is worth
+     keeping, so the block is centred rather than widened. */
+  .hero-two .hero-copy { align-items: center; text-align: center; justify-self: center; }
+  .hero-two h1 { align-items: center; }
+  .hero-two .hero-actions { justify-content: center; }
+}
+
+/* ---- the copy sits in the middle of its own half ---------------------------
+   .hero's padding is asymmetric by design: --hero-rise makes the bottom heavier
+   so the block rides up, which is right when the block is the only thing in the
+   box. Here it shares the screen with the agent above it, and the lift left the
+   copy 47px under its half's top edge and 103px above the bottom - reading as
+   the whole screen having slipped upward. Equal padding is all the row needs;
+   the row itself is already half the wrap. */
+@media (max-width: 1080px) and (orientation: portrait), (max-width: 700px) {
+  /* A MODEST FIXED PAD, NOT --hero-gap. Equalising the two sides fixed the lift
+     but kept the desktop figure, which on a 960 tablet is about 230px a side:
+     .hero then wanted 716px for 256px of copy, row two grew to hold it, and
+     `1fr 1fr` doubled that into a 1432px wrap - straight through the 1018px
+     ceiling set one rule above. A row that is already half the wrap does not
+     need the padding to give the copy room; it needs the padding to stop the
+     copy touching the edges when the wrap is short. */
+  .hero { padding-top: 28px; padding-bottom: 28px; }
+}
+
+@media (max-width: 700px) {
+  /* ---- the bar: the wordmark, and the one door that still leads somewhere ---
+     No burger, because there is no menu: the sections it would list are not on
+     the page. What is left is the crossing to the businesses site, which has a
+     phone layout of its own, so it stays as a plain link where the burger was. */
+  .burger { display: none; }
+  .header-end { display: none; }
+  .header-inner { grid-template-columns: 1fr auto; }
+  #site-nav {
+    position: static;
+    inset: auto;
+    z-index: auto;
+    justify-self: end;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0;
+    padding: 0;
+    background: none;
+    opacity: 1;
+    visibility: visible;
+    /* AND THE REST OF THE CARD GOES WITH IT. This rule was written against a
+       #site-nav that was a full-screen overlay, where clearing the position and
+       the fill was the whole job. It is a popover now - a bordered, rounded,
+       shadowed 264px box - and everything not named here survived: the one link
+       left on a phone sat inside a floating card pinned to the right of the bar.
+       Named rather than shorthanded so each property says which one it undoes. */
+    width: auto;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    transform: none;
+  }
+  #site-nav > a { display: none; }
+  #site-nav > a.nav__biz { display: inline-flex; width: auto; height: auto; padding: 0; font-size: 13.5px; }
+  /* AND THE ACTION IS NOT ONE OF THEM. The menu's button is shown by
+     #site-nav .nav-cta at (1,1,0) in the shared sheet, and the line above
+     answers at (1,0,1) - an id and a type - so it lost, and a phone that is
+     meant to carry a wordmark and one link carried a black Start earning button
+     beside it. There is nothing here to start: the phone shows the agent and the
+     address to open onBlue at. The same trap as the colour and the display two
+     fixes back, one level up: a descendant class outranks a child type. */
+  #site-nav .nav-cta { display: none; }
+
+  /* ---- the hero: the agent above, the reason below -------------------------
+     TWO EQUAL ROWS OF THE WRAP, not two halves of the viewport. The wrap is
+     100dvh less the header, so 50vh would not be half of it and the canvas and
+     the copy would disagree about where the middle is. The canvas is absolutely
+     positioned and takes no row, which is why it is given the same 50% by its
+     own inset instead. */
+  .hero-wrap { grid-template-rows: 1fr 1fr; }
+  .hero { grid-row: 2; }
+  /* AN EXPLICIT HEIGHT, NOT auto BETWEEN TWO OFFSETS. A canvas is a replaced
+     element, so height: auto resolves to its INTRINSIC height - the width and
+     height attributes the renderer writes - and the bottom offset is dropped as
+     over-constrained. The renderer sizes its buffer from the box it measures, so
+     the box was taking its height from the buffer and the buffer from the box:
+     it settled at 195px and stayed there. 50% of the wrap cannot be fed by
+     anything the renderer does. */
+  /* THE BAND STARTS UNDER THE HEADER AND STOPS SHORT OF THE COPY. At `top: 0`
+     it began behind a fixed 78px bar, so the model was centred in a box whose
+     top eighth nobody can see: measured at 390, the ink ran from y=60 - above
+     the header's own bottom edge - and left 151px of nothing between itself and
+     the headline. All of the breathing room was at the wrong end.
+     THE HEADER'S HEIGHT IS THE OFFSET, because that is exactly what was being
+     lost, and 30px comes off the height so the band stops before the copy's row
+     rather than running to the fold. Every model then centres in the space a
+     reader can actually see, and the ones with different proportions - the car
+     is wide and low, the agents are tall - share the same frame instead of each
+     needing a number. */
+  /* 24px UNDER THE HEADER, AND THAT NUMBER IS NOT THE MODEL'S CENTRE. Every
+     agent sits high in its own bounding box - measured, 13px from the band's top
+     against 70px from its bottom - so centring the BAND leaves the ink high and
+     the gap to the headline long. The offset pays for that bias once, in the
+     frame, rather than six times in six presets. */
+  .hero-ascii { top: calc(var(--header-h) + 24px); height: calc(50% - 30px); }
+  .hero-two { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .hero-copy { display: none; }
+  .hero-small { display: flex; }
+  /* a cue promising more below is wrong on a page whose more is a footer */
+  .scroll-cue { display: none; }
+
+  /* ---- everything else goes ------------------------------------------------
+     .content holds the six bands AND the footer, so the bands are named rather
+     than the wrapper: hiding .content would take the footer with them. */
+  .content > .band { display: none; }
+
+  /* ---- and the footer keeps only what still works --------------------------
+     "Explore onBlue" links to five sections that are no longer on the page, and
+     a column of anchors that land nowhere is worse than no column. The mark and
+     the line about who this is are the parts that still mean something. */
+  .foot-col, .foot-top, .foot-mark { display: none; }
+  .foot-grid { grid-template-columns: minmax(0, 1fr); }
+  /* ---- and what is left is composed rather than merely surviving -----------
+     CENTRED, BECAUSE EVERYTHING ABOVE IT IS. The footer keeps the four-column
+     grid's left alignment, which was right when three columns sat beside it and
+     reads as a stray edge once they are gone: a left-aligned mark under a
+     centred headline and a centred button is the one thing on the screen not
+     agreeing with the rest.
+     AND SHORTER. 60px of lead-in and a 22px rule gap were sized for a footer
+     with two navs and a wordmark in it. What is here is a mark, a line about
+     who this is for, and the legal row - about a third of the content, holding
+     258px. */
+  .foot-inner { padding-top: 40px; }
+  .foot-grid { justify-items: center; text-align: center; gap: 0; }
+  .foot-brand .logo { margin-bottom: 14px; }
+  .foot-tail { margin-top: 34px; padding-bottom: max(24px, env(safe-area-inset-bottom)); }
+  .foot-base { justify-content: center; text-align: center; gap: 10px; padding-top: 18px; }
+  .foot-legal { justify-content: center; }
+}
+
+</style>
 <script src="ascii-field.js"></script>
 <script src="onblue-chrome.js"></script>
 <!-- THE STATE TOGGLER, for review. Self-contained and self-styled: deleting
@@ -174,6 +435,12 @@ document.documentElement.setAttribute('data-theme', 'light');
       <a class="appear appear--fade" href="#how-it-works" style="--d:0.06s">How It Works</a>
       <a class="appear appear--fade" href="#faqs" style="--d:0.06s">FAQs</a>
       <a class="nav__biz appear appear--fade" href="brands.html" style="--d:0.06s">For businesses<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+      <!-- THE ACTION MOVES INTO THE MENU ON A SMALL SCREEN, and this is a second
+           copy rather than the header's own moved: .header-end is a grid item of
+           the bar and the menu is a different box, so no arrangement of one
+           element is both. It is display: none until the bar gives its button
+           up at 900, so only one of the two is ever on the page. -->
+      <a class="btn btn-solid nav-cta" href="apply.html">Start earning</a>
     </nav>
 
     <div class="header-end">
@@ -238,6 +505,19 @@ document.documentElement.setAttribute('data-theme', 'light');
         <p class="hero-alt appear appear--soft" style="--d:1.24s">
           Already have an account? <a data-stub>Sign in</a>
         </p>
+      </div>
+
+      <!-- THE PHONE'S WHOLE PAGE. It stands beside .hero-copy rather than
+           replacing its contents, so the desktop headline keeps its own mask
+           animation and its authored line break and neither has to serve two
+           layouts. Only one of the two is ever displayed. -->
+      <div class="hero-small">
+        <h1>onBlue <em>opens on a desktop.</em></h1>
+        <p class="lede">Owning an agent, customising it and watching what it earns all happen in a workspace built for a large screen. Copy the link and open onBlue on a desktop or a laptop.</p>
+        <div class="hero-actions">
+          <button class="btn btn-solid hero-solid" type="button" data-copy-link>Copy the link</button>
+        </div>
+        <p class="hero-small-note" id="hero-small-note" hidden aria-live="polite"></p>
       </div>
 
       </div>
@@ -1867,6 +2147,37 @@ document.documentElement.setAttribute('data-theme', 'light');
     if (e.key === 'Escape') { setMenu(false); }
   });
 
+  /* PRESSING AWAY CLOSES IT. The overlay this replaced never needed it: its
+     scrim covered the page and nothing else was reachable. A popover leaves the
+     page live, so the page has to be able to take the press back. Capture, so a
+     control underneath cannot swallow it first. */
+  document.addEventListener('pointerdown', function (e) {
+    if (!body.classList.contains('menu-open')) { return; }
+    if (e.target.closest && (e.target.closest('#site-nav') || e.target.closest('.burger'))) { return; }
+    setMenu(false);
+  }, true);
+
+  /* ---- the address, for the screen this page actually wants ----------------
+     THE HASH IS DROPPED. Whatever anchor the page is sitting on is a position in
+     a document, not part of what somebody needs to type on a laptop.
+     AND IT SAYS WHAT HAPPENED. navigator.clipboard is refused often enough that
+     a button always reporting success is a button that sometimes lies; when it
+     is refused the note prints the address so it can still be selected by hand. */
+  var copyLink = document.querySelector('[data-copy-link]');
+  var copyNote = document.getElementById('hero-small-note');
+  if (copyLink && copyNote) {
+    copyLink.addEventListener('click', function () {
+      var url = window.location.href.split('#')[0];
+      var say = function (t) { copyNote.textContent = t; copyNote.hidden = false; };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(
+          function () { say('Link copied. Paste it into a browser on your computer.'); },
+          function () { say(url); }
+        );
+      } else { say(url); }
+    });
+  }
+
   var wide = window.matchMedia('(min-width: 901px)');
   function onWide(e) { if (e.matches) { setMenu(false); } }
   if (wide.addEventListener) { wide.addEventListener('change', onWide); }
@@ -1893,9 +2204,12 @@ document.documentElement.setAttribute('data-theme', 'light');
   const canvas = document.getElementById('hero-ascii');
 
 
-  // 640, not the hero's 900px layout breakpoint. Two different questions, and
-  // answering both with one number meant a narrow pane silently skipped this.
-  if (canvas && window.innerWidth >= 640) {
+  // NO WIDTH GATE ANY MORE. It was 640, on the reasoning that a narrow pane
+  // should not pay for a renderer it cannot show - which held while a phone got
+  // the whole homepage and the model was a decoration on the side of it. Below
+  // 700 the model is now the only thing on the first screen, so skipping it
+  // would leave the page with nothing to say before its own explanation.
+  if (canvas) {
     // A DYNAMIC import, so a failure inside the module is catchable here. A
     // static import at the top of a module aborts the whole script when it
     // fails, taking any error handling in it down too.
@@ -1903,6 +2217,26 @@ document.documentElement.setAttribute('data-theme', 'light');
     // it lives here as a preset rather than as a paragraph describing what
     // the numbers used to be. ?model=arm brings it back; the space robot is
     // the default again (Appy, 2026-09-11).
+    // CENTRED ON A PHONE. xOffset pushes each model to the right of the frame
+    // so it clears the headline beside it; on a phone it has the frame to
+    // itself and the same figure would park it half off the edge. Applied to
+    // every preset at once because the swap cycle walks all of them.
+    /* BOTH LAYOUTS THAT GIVE THE MODEL A BAND OF ITS OWN, and it has to be both.
+       This was the phone's 700 alone, which left a portrait tablet with the model
+       still shoved right; widening it to the tablet's condition then carried the
+       tablet's min-height with it, and a 360x640 phone - which takes the phone
+       layout and no height test - lost the centring instead. Measured there: the
+       model's ink sat at x 183..359 of a 360 frame, hard against the edge.
+       ONE LIST, TWO CONDITIONS, WHICH IS WHAT A COMMA IS FOR. */
+    const NARROW = window.matchMedia(
+      '(max-width: 700px), (max-width: 1080px) and (orientation: portrait)'
+    ).matches;
+    /* THE HALF OF NARROW THAT IS NOT A PHONE. Both get the model a band of its
+       own; they do not get the same band, and the scale below is the one thing
+       that has to tell them apart. */
+    const TABLET = window.matchMedia(
+      '(min-width: 701px) and (max-width: 1080px) and (orientation: portrait)'
+    ).matches;
     const PRESETS = {
       // THE PROPS. Every one is unrigged, so each turns to follow the cursor
       // rather than reaching, and each resets the arm's IK fields explicitly:
@@ -2055,9 +2389,49 @@ document.documentElement.setAttribute('data-theme', 'light');
       },
     };
 
+    /* AND EVERY PRESET IS RE-CENTRED BEFORE ANY OF THEM IS READ. The swap cycle
+       walks the whole table, so setting this on the opening model alone would
+       centre one agent and throw the next one off the edge. The mask travels
+       with them: it is written as a position over the frame, and a lens aimed at
+       73% across is aimed at where the model used to be. */
+    if (NARROW) {
+      Object.keys(PRESETS).forEach((k) => {
+        PRESETS[k].xOffset = 0;
+        PRESETS[k].yOffset = 0;
+        /* AND HALF AGAIN AS LARGE. Every scale here was chosen against a frame
+           the model shared with a headline, where filling it would have been
+           crowding. With a band to itself the same figure left the agent at 54
+           per cent of the height - measured, 227px of ink in a 422px band - and
+           the rest read as the page not knowing what to put there. A multiplier
+           rather than six new numbers, because what each model is worth RELATIVE
+           to the others was the expensive part to arrive at and none of that
+           changes when the frame does. */
+        /* AND A TABLET ASKS FOR MORE THAN A PHONE DOES. The renderer frames a
+           model against the band's HEIGHT, so one multiplier gives the same
+           figure on both - about 380px tall either way. On a 390px phone that
+           fills the band; on a 1022px tablet band the same figure is 215px of
+           ink in a strip five times its width, which is the grey blob in the
+           report. Measured at 1032, and 5.6 against this model's 3.15 is the
+           value that reads as an agent rather than a smudge. */
+        PRESETS[k].scale = PRESETS[k].scale * (TABLET ? 1.78 : 1.42);
+        /* THE LENS FOLLOWS THE MODEL. Each mask is a radial written over the
+           frame - 73% across and 30% down is aimed at where a model sat beside
+           a headline. With the frame to itself the model is in the middle of
+           it, and a lens still pointing at the old corner would fade the agent
+           and light the empty air next to it. */
+        PRESETS[k].mask = '80% 92% at 50% 50%';
+      });
+    }
+
     const params = new URLSearchParams(location.search);
     const num = (key, fallback) => (params.has(key) ? Number(params.get(key)) : fallback);
-    const modelKey = PRESETS[params.get('model')] ? params.get('model') : 'arm';
+    /* THE ARM IS A CEILING RIG AND THERE IS NO CEILING HERE. mountTop pins it to
+       the top of the canvas and its IK chain reaches down from there, which is
+       the whole of its design; in a frame half the height it is a fragment
+       hanging off the top edge. The phone opens on a model that stands in its
+       own space instead, and the swap cycle below drops the arm for the same
+       reason rather than letting it come round every sixth turn. */
+    const modelKey = PRESETS[params.get('model')] ? params.get('model') : (NARROW ? 'robot100' : 'arm');
     const preset = PRESETS[modelKey];
 
 
@@ -2114,7 +2488,9 @@ document.documentElement.setAttribute('data-theme', 'light');
         // wanting to look at that one, not watch it get replaced.
         if (params.has('model') || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-        const order = ['arm', 'robot100', 'car', 'cleaner', 'dog', 'sweeper'];
+        const order = NARROW
+          ? ['robot100', 'car', 'cleaner', 'dog', 'sweeper']
+          : ['arm', 'robot100', 'car', 'cleaner', 'dog', 'sweeper'];
         let at = 0;
         let timer = 0;
 

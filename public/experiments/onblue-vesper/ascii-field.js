@@ -22,6 +22,15 @@
                     stop there. A fixed, viewport-sized host can listen on the
                     window instead, because clientX/clientY are already in the
                     coordinates its canvas is drawn in.
+     spec.pointer   false to leave the pointer pool unwired (default true).
+                    A TOUCHSCREEN HAS NO HOVER AND NO WAY OUT OF ONE. It does
+                    fire a pointermove on the way into a tap, which sets
+                    tracking and lights the pool, and it never fires
+                    pointerleave, so the pool lights once at wherever the first
+                    tap landed and stays there for the life of the page. Not
+                    listening at all is the only state that is honest about a
+                    device with no cursor; the ambient field is unaffected,
+                    because the ambient field is not a hover effect.
      spec.expose    called with { sweep } once the field is live
    ========================================================================== */
 (function (root) {
@@ -290,18 +299,24 @@
       onScreen = true;
     }
 
-    var watcher = spec.track || host;
-    watcher.addEventListener('pointermove', function (e) {
-      var box = host.getBoundingClientRect();
-      px = e.clientX - box.left;
-      py = e.clientY - box.top;
-      tracking = true;
-      wake();
-    }, { passive: true });
-    watcher.addEventListener('pointerleave', function () {
-      tracking = false;
-      wake();
-    }, { passive: true });
+    /* DEFAULTED ON, so a caller that says nothing behaves exactly as before.
+       paint() already gates the whole pool on `tracking`, so leaving these two
+       unbound is all it takes: tracking never turns true and not one pool
+       branch runs. */
+    if (spec.pointer !== false) {
+      var watcher = spec.track || host;
+      watcher.addEventListener('pointermove', function (e) {
+        var box = host.getBoundingClientRect();
+        px = e.clientX - box.left;
+        py = e.clientY - box.top;
+        tracking = true;
+        wake();
+      }, { passive: true });
+      watcher.addEventListener('pointerleave', function () {
+        tracking = false;
+        wake();
+      }, { passive: true });
+    }
 
     wake();
   }

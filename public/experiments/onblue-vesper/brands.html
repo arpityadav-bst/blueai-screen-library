@@ -55,6 +55,53 @@ document.documentElement.setAttribute('data-theme', 'light');
 #how-it-works .step-top h3 { font-size: 17px; line-height: 19px; }
 #how-it-works .step-top p { margin-top: 2px; line-height: 17px; }
 #how-it-works .step-art { margin-top: 18px; padding: 16px 15px; }
+/* A FLOOR UNDER THE GAP THE GRID USED TO PROVIDE. .earn-payout is pushed to the
+   bottom of .step-art by margin-top: auto, so the space above it is whatever the
+   card has spare. In the four-across grid every card is the tallest card's
+   height and the third one has the least in it, so auto hands it 138px at 1440
+   and 91px at 820. In one column each card is its own height, auto resolves to
+   nothing, and the strip closes right up against "Comment is its own" - measured
+   at exactly 0px on a 390.
+   20px, WHICH IS NOT A NEW NUMBER. The fourth card sits its strip 20px under the
+   bars and is the only other card with one, so this is that gap stated as a
+   minimum rather than a second opinion about it.
+   ON THE LIST, NOT ON THE STRIP. A margin-top here would replace auto and drop
+   the strip to the top of the spare space on every wide screen; a margin-bottom
+   on the element before it is simply consumed out of what auto had, so the strip
+   does not move by a pixel anywhere it was already spaced.
+   :has(+ .earn-payout) PICKS THE ONE LIST THIS IS ABOUT. The second card's list
+   is followed by "Fit" and its sliders, and a blanket rule on .mini-list would
+   have opened a gap there that nobody asked for. */
+#how-it-works .step-art > .mini-list:has(+ .earn-payout) { margin-bottom: 20px; }
+
+/* ---- the three skills stay in one row as far down as they fit ---------------
+   THE SHARED SHEET DROPS THEM TO A STACK AT 560px, and for most of the range
+   below that they do not need to be. The binding constraint is one string:
+   "Protect budget" is 83px at 12px, and a cell hands its text the cell width
+   less its own side padding, so three across need about 95px each before that
+   label breaks.
+   390 IS WHERE THAT LANDS, MEASURED, and it is worth two pixels to get there.
+   At the shared 8px gap and 6px side padding the label wraps at every width
+   below 400; at a 6px gap and 4px padding it fits at 390 with 5px to spare and
+   at 393 with 6. Those two widths are most of the phones in use - iPhone 12
+   through 16, Pixel - so the difference between missing and making them is a
+   pixel of gutter nobody can see.
+   375 AND 360 KEEP THE STACK, and not by choice: 375 still wraps with the side
+   padding taken all the way down to 3px, which is closer to the border than
+   text should sit. Where it cannot be one row honestly it stays three, which is
+   the fallback that was already there.
+   IN THIS FILE, NOT THE SHARED ONE. .agent-skills is the creators homepage's
+   band too, and its labels are not these. */
+@media (min-width: 390px) and (max-width: 560px) {
+  .agent-skills { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+  .agent-skills li {
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 8px;
+    padding: 13px 4px 11px;
+  }
+}
 @media (max-width: 1080px) { #how-it-works .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 620px) { #how-it-works .steps { grid-template-columns: 1fr; } }
 
@@ -120,6 +167,11 @@ document.documentElement.setAttribute('data-theme', 'light');
    THE GROUND AND THE HAIRLINE STAY, because they are what makes five of them
    read as one set. Only the motion goes. */
 .plat { padding: 20px 18px 18px; box-shadow: none; }
+/* NOT GATED, AND THE SHARED SHEET IS WHY. onblue.css carries
+   .card:hover, which this site cannot put behind (hover: hover) without
+   doing it to the creators pages too. Gating only this one would not remove
+   a hover on touch, it would hand the element back to .card:hover, which is the lift
+   this rule exists to cancel. */
 .plat:hover { border-color: var(--border-soft); box-shadow: none; transform: none; }
 .plat::after { content: none; }
 /* THE MARK AND THE BADGE SHARE THE TOP LINE, mark left and badge right. The
@@ -187,6 +239,11 @@ document.documentElement.setAttribute('data-theme', 'light');
   overflow: hidden;
   box-shadow: none;
 }
+/* NOT GATED, AND THE SHARED SHEET IS WHY. onblue.css carries
+   .card:hover, which this site cannot put behind (hover: hover) without
+   doing it to the creators pages too. Gating only this one would not remove
+   a hover on touch, it would hand the element back to .card:hover, which is the lift
+   this rule exists to cancel. */
 .cmp:hover { border-color: var(--border-soft); box-shadow: none; transform: none; }
 .cmp::after { content: none; }
 .cmp-head, .cmp-row {
@@ -239,17 +296,88 @@ document.documentElement.setAttribute('data-theme', 'light');
   background: var(--col);
 }
 .cmp-mine { color: var(--notice-ink); }
-
+/* the sentence version waits for the narrow layout; the wide one is the default
+   so that a browser that never matches the media query still reads correctly */
+.cmp-sole { display: none; }
 @media (max-width: 720px) {
-  /* three columns of one sentence each do not fit a phone, so the row becomes a
-     block: the label, then today, then the panel it is being compared with */
-  .cmp-head { display: none; }
-  .cmp-row { grid-template-columns: minmax(0, 1fr); gap: 7px; padding: 16px; }
+  /* ---- IT STAYS A TABLE, IT JUST LOSES A COLUMN (2026-09-22) ----------------
+     TWO THINGS WENT WRONG BEFORE THIS. First the row was stacked into a single
+     column, which put eighteen lines in one card with nothing between them and
+     hid .cmp-head, the only thing naming the two sides. Then it was split into
+     six cards, which fixed the grouping and cost 810px of height to do it, put
+     a tinted panel inside every card, and still had no header: the two halves of
+     each comparison stopped being parallel, one bare line against one filled
+     box, so the one thing the section is for - reading across - was the thing
+     that did not survive.
+     THE CONTENT IS SIX QUESTIONS WITH TWO ANSWERS EACH, and that is a table at
+     any width. What does not fit a phone is THREE columns, so the label comes
+     out of the row and sits over its own answer. Two columns left: what happens
+     today, and what happens here, side by side, which is the comparison the
+     reader came to make.
+     THE ONBLUE CELL SPANS BOTH ROWS OF ITS OWN CELL. That is what keeps its
+     ground unbroken from the header to the last row, the way it runs on the wide
+     layout, so the column still reads as a column with no header in sight. It
+     needs align-self: stretch to do it - the row is align-items: start so the
+     label and the old value sit at their tops, and a spanning cell inherits that
+     and would leave a white band under itself wherever the left side is taller.
+     AND THE HEADER COMES BACK, minus its empty first cell. Naming the columns
+     costs one 11px line for the whole block, where labelling them per row would
+     have cost twelve.
+     465px AT 390, against 810 for the six cards and 638 for the stack. */
+  .cmp-head, .cmp-row {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr);
+    gap: 12px;
+    align-items: start;
+    padding: 12px 14px;
+  }
+  /* THE LABEL IS IN THE SENTENCE NOW, so the column it used to need is gone and
+     the row is two cells in one line instead of three across two. That also
+     retires the row span below: with a single row there is nothing for the
+     onBlue cell to span, and stretch alone keeps its ground unbroken. */
+  .cmp-k { display: none; }
+  .cmp-wide { display: none; }
+  .cmp-sole { display: inline; }
+  .cmp-head { padding: 11px 14px; }
+  /* the empty cell held the label column open; there is no label column now */
+  .cmp-head > :first-child { display: none; }
+  .cmp-row { font-size: 13px; }
+  /* HAIRLINES, NOT STRIPES. The zebra exists on the wide layout to carry the eye
+     across three columns; across two it is noise, and it would fight the one
+     ground that is doing real work. */
   .cmp-row:nth-child(even) { background: none; }
-  .cmp-head > :last-child, .cmp-row > :last-child {
-    margin: 4px 0 0;
-    padding: 12px 13px;
-    border-radius: 10px;
+  .cmp-row + .cmp-row { border-top: 1px solid var(--border-soft); }
+  .cmp-k {
+    grid-column: 1;
+    grid-row: 1;
+    color: var(--dim-ink);
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .cmp-was { font-size: 13px; }
+  /* THE GROUND STOPS EATING THE GAP. The wide layout pulls this cell's tint
+     18px to the left of its text so the column does not look painted up to the
+     word, and pays for it out of a 28px gap, leaving 10px of clear air between
+     the sentence before it and the tint. Here the gap was 10 and the pull was
+     also 10, so the tint began exactly where the old-way column ended and any
+     line long enough to fill its column touched it - the fourth and sixth rows
+     do, at 390 and at 360.
+     SO THE PULL GOES TO ZERO AND THE PADDING KEEPS THE INTENT. The tint now
+     starts at the cell's own edge, which leaves the whole 12px gap clear, and
+     12px of padding inside it still puts colour to the left of the tick. Same
+     two effects the wide layout is after, paid for the other way round. */
+  .cmp-head > :last-child { margin: -11px -14px -11px 0; padding: 11px 14px 11px 12px; }
+  /* BOTH MARKS SIT AT THE FIRST LINE. The cell is stretched so its ground runs
+     unbroken, and centring its contents inside that stretch put the tick halfway
+     down while the cross stayed at the top of the sentence opposite it. Reading
+     across is the whole job here, so the two first lines start at the same
+     height and the marks go with them; flex-start is what .cmp-was already does
+     and what the 1px nudge on the icons was measured against. */
+  .cmp-row > :last-child {
+    align-self: stretch;
+    margin: -12px -14px -12px 0;
+    padding: 12px 14px 12px 12px;
   }
 }
 
@@ -797,7 +925,7 @@ document.documentElement.setAttribute('data-theme', 'light');
   cursor: pointer;
   transition: background 0.25s ease;
 }
-.lightbox-x:hover { background: rgba(255, 255, 255, 0.26); }
+@media (hover: hover) { .lightbox-x:hover { background: rgba(255, 255, 255, 0.26); } }
 /* the page's own focus ring, on the one close control that is not in the shared
    sheet: it never shows on a click now that the dialog takes the focus itself,
    and a keyboard still gets told where it is */
@@ -978,11 +1106,11 @@ document.documentElement.setAttribute('data-theme', 'light');
    --bg, which is a shade lighter than the band it sits on, so the hover went
    opaque AND paler in the same change. --band-own is what the section paints
    itself with, so the tab now lands on exactly the colour it always had. */
-.cat-btn:hover {
+@media (hover: hover) { .cat-btn:hover {
   background:
     linear-gradient(var(--wash-hover), var(--wash-hover)),
     var(--band-own, var(--bg));
-}
+} }
 /* the selected one takes a surface and a hairline, not a fill: it is a place you
    are standing, not a control you are pressing */
 .cat-btn.on { border-color: var(--border); background: var(--card-bg); }
@@ -1046,12 +1174,27 @@ document.documentElement.setAttribute('data-theme', 'light');
    mark, which is all it ever needed to add. */
 .cat-grid .work-card { position: static; width: auto; transform: none; backface-visibility: visible; }
 .cat-grid .work-shot { animation: none; }
-.cat-grid .work-card:hover .work-shot::after,
 .cat-grid .work-card:focus-visible .work-shot::after { opacity: 1; }
-.cat-grid .work-card:hover .work-play,
+@media (hover: hover) { .cat-grid .work-card:hover .work-shot::after { opacity: 1; } }
 .cat-grid .work-card:focus-visible .work-play { opacity: 1; transform: none; }
+@media (hover: hover) { .cat-grid .work-card:hover .work-play { opacity: 1; transform: none; } }
 .cat-grid .work-play { width: 44px; height: 44px; margin: -22px 0 0 -22px; }
 .cat-grid .work-play svg { width: 21px; height: 21px; }
+
+/* NO HOVER, SO THE MARK IS JUST THERE. .cat-grid's play mark is revealed by
+   :hover, and a phone has none: these six tiles are the one place on the page
+   where a film can still be pressed once the hero band has stopped offering
+   it, so a tile with nothing on it would be a dead end rather than a restraint.
+   THE SCRIM IS NOT REVEALED WITH IT. On desktop the two arrive together
+   because the mark needs contrast against whatever frame it lands on; the mark
+   is a 92%-white disc and carries itself, and a permanent wash over all six
+   tiles would be the grid dimming its own contents to light a control.
+   THIS IS A REGRESSION OF MINE, PUT BACK. The old swipe-row block revealed it
+   with an unscoped .work-play { opacity: 1 }, which reached the grid as well as
+   the band; scoping that to the band took the grid's affordance with it. */
+@media (hover: none) {
+  .cat-grid .work-play { opacity: 1; transform: none; }
+}
 
 @media (max-width: 1100px) { .cat-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 @media (max-width: 820px) {
@@ -1059,49 +1202,157 @@ document.documentElement.setAttribute('data-theme', 'light');
 }
 
 @media (max-width: 820px) {
-  /* NO RING BELOW 820px. A cylinder needs width to be a cylinder, and a turning
-     one on a phone is a lot of compositing for a shape nobody can see the whole
-     of. The same frames become a row you swipe. */
-  .work-arc {
-    width: auto;
-    margin: 30px 0 0;
-    perspective: none;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none;
+  /* THE RING STAYS A RING (2026-09-22). Below this width it used to flatten
+     into a swipe row, on the argument that a cylinder needs width to be a
+     cylinder. What that produced on a phone was two 58%-wide frames sitting
+     square on the screen: the one band whose whole job is to read as a wall of
+     film became a pair of thumbnails, and the curve, the focus falloff and the
+     colour split - the three things that make this the site's band rather than
+     anybody's carousel - were switched off together.
+     ONLY THE STEP CHANGES, BECAUSE THE GEOMETRY IS SELF-SIMILAR. The radius
+     stays 70vw and the perspective stays 1.8 x R, and that pair is the whole of
+     what fixes the mapping from a frame's angle to its place and its size on
+     screen. ca-edge's stops are written in that mapping - 30 and 70 per cent of
+     the turn are where the viewport edge falls on the ring - so leaving both
+     alone is what lets the split and the blur go on meaning what they meant.
+     A COARSER STEP IS FEWER, BIGGER FRAMES ON THE SAME ARC, and --ring-w is
+     re-solved from it by the sum the desktop one uses: the chord between
+     neighbours, 2R sin(step / 2), less the same 24.79px that leaves a 16px gap
+     once the divide has scaled it. Twenty degrees puts six across a tablet.
+     THE DELAY IS THE PERIOD OVER THE SLOT COUNT, always: 180s x step / 360. It
+     is not a taste value and it has to move with the step, or every frame's
+     phase stops matching where that frame actually is and the effect that the
+     whole band is built on comes apart.
+     EVERY RULE IS SCOPED TO THE ARC. .work-card, .work-shot and .work-play are
+     also the category grid's, two screens down, and the unscoped
+     nth-child(n+15) above was already hiding that grid's fifteenth tile on
+     every phone. Hiding its play marks would have been worse, because the grid
+     is where tapping a film belongs once this band has stopped offering it. */
+  .hero {
+    --ring-w: calc(24.31vw - 24.79px);   /* 2 x 70 x sin(10deg) */
+    --ring-step: 20deg;                  /* 360 / 18 */
   }
-  .work-arc::-webkit-scrollbar { display: none; }
-  /* a swipe row has real ends and should look like it */
-  .work-arc { -webkit-mask-image: none; mask-image: none; }
-  .work-stage {
-    height: auto;
-    display: flex;
-    gap: 12px;
-    padding-bottom: 4px;
-    transform-style: flat;
-    animation: none;
-  }
-  .work-card {
-    position: static;
-    flex: none;
-    width: 58%;
-    transform: none;
-    backface-visibility: visible;
-    scroll-snap-align: center;
-  }
-  /* the fourteen films once, not the thirty slots: the repeats exist to close
-     a circle and a swipe row has no circle to close */
-  .work-card:nth-child(n+15) { display: none; }
-  /* NO POINTER, SO NO HOVER TO WAIT FOR. A phone would otherwise hold a wall of
-     grey frames with no way on earth to bring the colour back, which is a state
-     this design only has because a mouse can leave it. */
-  .work-play { opacity: 1; transform: none; }
-  /* A SWIPE ROW IS NOT A LENS. There are no ends of a field of view here, only
-     the ends of a list, and a frame's place in that list says nothing about
-     where it is on screen. */
-  .work-shot { animation: none; }
+  .work-stage .work-shot { animation-delay: calc(var(--i) * -10s); }   /* 180s / 18 */
+  /* EIGHTEEN SLOTS, SO THE NINETEENTH IS THE FIRST ONE AGAIN. The spare cards
+     exist to close a circle of thirty; a circle of eighteen closes sooner, and
+     the rest would stack on the frames they repeat. */
+  .work-stage > .work-card:nth-child(n+19) { display: none; }
+  /* NO PLAY MARK, AND NOTHING TO PRESS. The mark was written to appear only
+     once the ring had stopped for you, so that it was never a control chasing
+     a moving target. On touch there is no hover to stop it with, so every tap
+     here would be exactly that chase. The films sit in a grid further down with
+     a still mark on each, which is where pressing one belongs, so this band is
+     ambient on touch and says so by offering nothing.
+     POINTERS ONLY. Keyboard focus still lights a frame, still pauses the ring
+     and still opens it on Enter: none of the moving-target problem is the
+     keyboard's, and pointer-events does not touch focusability. */
+  .work-arc .work-play { display: none; }
   .lightbox video { height: auto; width: min(92vw, 420px); }
   .lightbox-x { top: -44px; right: 0; }
+}
+
+/* AMBIENT WHEREVER THERE IS NO POINTER, WHICH IS NOT A WIDTH. This was keyed
+   to 820px, so a portrait tablet at 1032 still offered a moving tap target with
+   no mark on it. The reason was never the width: it is that the play mark only
+   appears once the ring has stopped for you, and a screen with no hover has no
+   way to stop it, so every tap is the chase the mark was written to avoid. */
+@media (hover: none) {
+  .work-arc { pointer-events: none; }
+  .work-arc .work-play { display: none; }
+}
+
+/* FOUR ACROSS ON A PHONE. Six frames at 390px would be 51px each, which is a
+   filmstrip rather than a wall; at thirty degrees they are about 75px and read
+   as what they are. Twelve slots also means twelve of the fourteen films and
+   no repeats at all, where eighteen carries four. */
+@media (max-width: 620px) {
+  .hero {
+    --ring-w: calc(36.23vw - 24.79px);   /* 2 x 70 x sin(15deg) */
+    --ring-step: 30deg;                  /* 360 / 12 */
+  }
+  .work-stage .work-shot { animation-delay: calc(var(--i) * -15s); }   /* 180s / 12 */
+  .work-stage > .work-card:nth-child(n+13) { display: none; }
+}
+
+/* ---- and the step answers the HEIGHT as well (2026-09-22) --------------------
+   WIDTH ALONE WAS SIZING THIS BAND, AND HEIGHT IS HALF THE QUESTION. Every tier
+   above is a width rule, so a 390px phone got the same band whether the screen
+   was 640 tall or 932. Measured, that is a hero 95px TALLER than a 640 viewport
+   at one end and 250px of white under the band at the other: the same design
+   overflowing and rattling around.
+   THE STEP IS THE DIAL, AGAIN. It is the only one: frame size is the chord
+   between neighbours, so bigger frames and more of them are the same dial
+   turned opposite ways, and a band that fills more height is a band with fewer,
+   larger frames on it. Three at 104px on a tall phone rather than four at 75.
+   THE SHORT PHONES ARE LEFT ALONE ON PURPOSE. Nothing here lowers a floor;
+   these only fire where there is measured room going spare, so a 640 screen
+   keeps the smallest band this page has. */
+/* AND THE SAME TIER CARRIES THE PORTRAIT TABLETS (2026-09-22). Everything
+   above stops at 820px, and the devices just past it are not desktops: an
+   iPad Pro 13 is 1032x1376 and a Surface Pro is 960x1440, both of them taller
+   than they are wide. They were getting the desktop ring, and the cliff at the
+   boundary was absurd - 820x1180 rendered 177px frames with the hero centred,
+   834x1194 rendered 63px frames with 604px of white underneath.
+   THE SAME 30 DEGREES, WHICH IS WHAT MAKES THE BOUNDARY DISAPPEAR. Frame size
+   is a share of the width, so one step either side of 820 now differs by about
+   a pixel instead of by a factor of three.
+   PORTRAIT, NOT JUST WIDTH, IS WHAT NAMES THESE SCREENS. A desktop window 1000
+   wide is landscape and keeps the desktop band; a tablet held upright is not,
+   and it is the height going spare that this is for.
+   AND THE CAP IS 1080, NOT 1100. 1032 is the widest portrait tablet in common
+   use, and 1100 is the narrowest width in the frozen desktop baseline. Setting
+   the cap between them covers every device and leaves that baseline provably
+   untouched. */
+@media (max-width: 820px) and (min-height: 900px),
+       (min-width: 821px) and (max-width: 1080px) and (orientation: portrait) {
+  .hero {
+    --ring-w: calc(36.23vw - 24.79px);   /* 2 x 70 x sin(15deg) */
+    --ring-step: 30deg;                  /* 360 / 12 */
+  }
+  .work-stage .work-shot { animation-delay: calc(var(--i) * -15s); }
+  .work-stage > .work-card:nth-child(n+13) { display: none; }
+}
+@media (max-width: 620px) and (min-height: 780px) {
+  .hero {
+    --ring-w: calc(47.88vw - 24.79px);   /* 2 x 70 x sin(20deg) */
+    --ring-step: 40deg;                  /* 360 / 9 */
+  }
+  .work-stage .work-shot { animation-delay: calc(var(--i) * -20s); }   /* 180s / 9 */
+  .work-stage > .work-card:nth-child(n+10) { display: none; }
+}
+
+/* THE CUE IS THIS PAGE'S ONLY OVERRIDE OF A SHARED COMPONENT, and it is a
+   visibility one: onblue.css owns how it looks, this owns where it belongs.
+   TWO CONDITIONS, AND BOTH ARE LOAD-BEARING. Width, because at 821px and up the
+   band still runs off the bottom edge and a label under it would be answering a
+   question the page has already answered. Height, because the cue is absolutely
+   positioned at the hero's bottom, and on a screen the hero is already taller
+   than - 640 and 667 both measure that way - its bottom is below the fold and a
+   cue there is a control nobody can see. 720px is above both. */
+.scroll-cue { display: none; }
+@media (max-width: 1080px) and (min-height: 720px) and (orientation: portrait) {
+  .scroll-cue { display: inline-flex; }
+
+  /* AND THE CONTENT SITS IN THE MIDDLE OF WHAT IS LEFT. This page overrides the
+     shared hero with justify-content: flex-start and a padding-top of the
+     header plus 56, which pins the top gap at a constant 63px and lets every
+     spare pixel pile up underneath: measured, 54px of it on a 390x844 and 276
+     on an 820x1180, from the same rule. Centring is the fix, but only once the
+     padding stops doing the job by hand - so the top padding drops to exactly
+     the header's height, the bottom keeps the 64px the cue needs, and the free
+     space divides itself.
+     LONGHANDS, NOT THE SHORTHAND. The shared rule sets padding with a shorthand
+     whose middle value is the page gutter; writing `padding` here would take
+     that with it and let the copy run to the screen edge.
+     safe, SO A SHORT SCREEN STILL STARTS AT THE TOP. Plain centring overflows
+     equally at both ends, and the end that overflows upward goes under a fixed
+     header where nobody can reach it. `safe` falls back to start exactly then.
+     A browser without it drops the declaration and keeps flex-start, which is
+     today's behaviour, so the failure mode is the status quo. */
+  .hero {
+    justify-content: safe center;
+    padding-top: var(--header-h);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1114,6 +1365,7 @@ document.documentElement.setAttribute('data-theme', 'light');
    there. The shadow stays --close-shadow, because the mark is still the closing
    mark and only its channel split is borrowed. */
 #get-access .close-mark { filter: var(--ca-spark) var(--close-shadow); }
+
 
 </style>
 <script src="ascii-field.js"></script>
@@ -1345,6 +1597,12 @@ document.documentElement.setAttribute('data-theme', 'light');
       <a class="appear appear--fade" href="#work" style="--d:0.06s">Campaigns</a>
       <a class="appear appear--fade" href="#pricing" style="--d:0.06s">Pricing</a>
       <a class="nav__biz appear appear--fade" href="index.html" style="--d:0.06s">For creators<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+      <!-- THE ACTION LIVES IN THE MENU ON A PHONE, and this is the second copy of
+           it rather than the first one moved: .header-end is a grid item of the
+           header and the menu is a different box, so there is no arrangement of
+           one element that is both. It is display: none until the header gives
+           up its own button, so only ever one of the two is on the page. -->
+      <a class="btn btn-solid nav-cta" href="#post" data-gate="open">Create a campaign</a>
     </nav>
 
     <div class="header-end">
@@ -1654,11 +1912,24 @@ document.documentElement.setAttribute('data-theme', 'light');
       </div>
     </main>
 
-    <!-- NO SCROLL CUE ANY MORE. It existed because a hero that fills exactly one
-         screen gives no sign there is more below it; this one ends on a band of
-         film that is cut off by the fold, which says the same thing louder and
-         without a label. The cue and its CSS still ship for the creator
-         homepage, whose hero does end cleanly. -->
+    <!-- THE CUE IS BACK, AND ONLY WHERE THE BAND STOPS SHORT (2026-09-22).
+         It was taken out because this hero ends on a band of film cut off by the
+         fold, which says "there is more below" louder than any label. That is
+         still true wherever the band runs off the bottom of the screen, and it
+         stopped being true on a phone the moment the ring stopped being two
+         frames the width of the screen: a band of four small ones ends about
+         180px above the fold on a tall phone, and the rest is white. So the cue
+         is shown at exactly the sizes that have that gap and nowhere else, which
+         is what the two conditions on its media query are for. Desktop never
+         sees it.
+         NOTHING NEW RUNS FOR THE FADE. The probe at the top of this page already
+         toggles .is-scrolled on <html>, and onblue.css already fades
+         .scroll-cue out on it. The cue is a real link, so it also does the thing
+         it is hinting at and a keyboard can reach it. -->
+    <a class="scroll-cue" href="#how-it-works" aria-label="Scroll to how it works">
+      <span class="scroll-cue-word">Scroll</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5.5v13M6.5 13l5.5 5.5 5.5-5.5"/></svg>
+    </a>
   </div>
 
 </div>
@@ -2139,6 +2410,18 @@ document.documentElement.setAttribute('data-theme', 'light');
            bottom, which is what separates the two sides and what makes a row a
            row. The one rule left is under the header, where it is dividing the
            labels from the answers rather than six answers from each other. -->
+      <!-- TWO PHRASINGS OF THE OLD WAY, AND ONLY ONE IS EVER ON SCREEN.
+           .cmp-wide is the value as a table cell, which is what it is when the
+           label column is standing next to it. .cmp-sole is the same fact as a
+           sentence, for the narrow layout where the label has gone and the left
+           column has to carry the question itself: "Follower count" needs a
+           heading to mean anything, "Pay for follower count" does not.
+           THEY SAY THE SAME THING AND HAVE TO GO ON SAYING IT. This is the one
+           place on the page where a fact is written twice, and it is here
+           because the wide table's stub column is worth keeping and the phone's
+           third text level is not. If the wide layout ever gives up its label
+           column, these collapse back into one string and .cmp-k goes with
+           them. -->
       <div class="card cmp">
         <div class="cmp-head">
           <span></span>
@@ -2147,32 +2430,32 @@ document.documentElement.setAttribute('data-theme', 'light');
         </div>
         <div class="cmp-row">
           <span class="cmp-k">What you pay for</span>
-          <span class="cmp-was"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></i>Follower count</span>
+          <span class="cmp-was"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></i><span class="cmp-wide">Follower count</span><span class="cmp-sole">Pay for follower count</span></span>
           <span class="cmp-now"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg></i>A flat rate per verified engagement</span>
         </div>
         <div class="cmp-row">
           <span class="cmp-k">Who you reach</span>
-          <span class="cmp-was"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></i>One large influencer</span>
+          <span class="cmp-was"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></i><span class="cmp-wide">One large influencer</span><span class="cmp-sole">Reach one large influencer</span></span>
           <span class="cmp-now"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg></i>Thousands of accounts, spread out</span>
         </div>
         <div class="cmp-row">
           <span class="cmp-k">How it feels to viewers</span>
-          <span class="cmp-was"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></i>Reads as an ad</span>
+          <span class="cmp-was"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></i><span class="cmp-wide">Reads as an ad</span><span class="cmp-sole">Look like an ad</span></span>
           <span class="cmp-now"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg></i>Nobody can tell it was paid for</span>
         </div>
         <div class="cmp-row">
           <span class="cmp-k">Negotiating rates</span>
-          <span class="cmp-was"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></i>Back-and-forth over email or DM</span>
+          <span class="cmp-was"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></i><span class="cmp-wide">Back-and-forth over email or DM</span><span class="cmp-sole">Negotiate rates over email or DM</span></span>
           <span class="cmp-now"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg></i>You set the budget and window</span>
         </div>
         <div class="cmp-row">
           <span class="cmp-k">Checking the work happened</span>
-          <span class="cmp-was"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></i>Manual, on trust</span>
+          <span class="cmp-was"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></i><span class="cmp-wide">Manual, on trust</span><span class="cmp-sole">Check the work by hand, on trust</span></span>
           <span class="cmp-now"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg></i>onBlue verifies every interaction</span>
         </div>
         <div class="cmp-row">
           <span class="cmp-k">Paying out</span>
-          <span class="cmp-was"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></i>Invoices, manual transfers</span>
+          <span class="cmp-was"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></i><span class="cmp-wide">Invoices, manual transfers</span><span class="cmp-sole">Pay out by invoice and transfer</span></span>
           <span class="cmp-now"><i aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg></i>Automatic, once engagement clears</span>
         </div>
       </div>
@@ -2787,11 +3070,16 @@ document.documentElement.setAttribute('data-theme', 'light');
      creator homepage's agents band, and the id came over with the mount when the
      script was shared; it had been mounting nothing ever since. How it works is
      this page's equivalent of that band and now has it. */
+  /* THE POOL IS A POINTER EFFECT, SO IT IS ONLY WIRED WHERE THERE IS ONE.
+     The ambient glyph field stays on every device - it is the page's ground,
+     not a hover state. See spec.pointer in ascii-field.js for what a tap does
+     to a pool that has no pointerleave to turn it off again. */
+  var POINTER = window.matchMedia('(hover: hover)').matches;
   if (window.onblueField) {
-    [{ host: document.querySelector('.hero-wrap') },
+    [{ host: document.querySelector('.hero-wrap'), pointer: POINTER },
      /* the third band, whichever section is standing in it */
-     { host: document.getElementById('work') },
-     { host: document.getElementById('gate-field'),
+     { host: document.getElementById('work'), pointer: POINTER },
+     { host: document.getElementById('gate-field'), pointer: POINTER,
        cell: 13, reach: 150, lens: 0.16, ambient: 0.05, fringe: false,
        expose: function (api) { gateField = api; } }]
       .forEach(window.onblueField);
@@ -3747,6 +4035,16 @@ document.documentElement.setAttribute('data-theme', 'light');
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') { setMenu(false); }
   });
+
+  /* PRESSING AWAY CLOSES IT, which the overlay never needed because its scrim
+     covered everything and nothing else was reachable. A popover leaves the page
+     live, so the page has to be able to take the press back. Capture, so a
+     control underneath cannot swallow it first. */
+  document.addEventListener('pointerdown', function (e) {
+    if (!body.classList.contains('menu-open')) { return; }
+    if (e.target.closest && (e.target.closest('#site-nav') || e.target.closest('.burger'))) { return; }
+    setMenu(false);
+  }, true);
 
   var wide = window.matchMedia('(min-width: 901px)');
   function onWide(e) { if (e.matches) { setMenu(false); } }

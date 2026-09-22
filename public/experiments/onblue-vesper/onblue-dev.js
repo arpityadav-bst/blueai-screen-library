@@ -165,6 +165,8 @@
   }
 
   /* ---- the agencies' page ---------------------------------------------------- */
+  var SMALL = window.matchMedia('(max-width: 900px)');
+
   function agencyDock() {
     /* THE PAGE OWNS EVERY SWITCH, NOT THIS FILE. Flipping a class here would
        leave the application's own script believing it was still the thing on
@@ -225,12 +227,26 @@
          over that screen doing nothing is worse than a missing one, because a
          reviewer presses it and learns that this product ignores them. */
       apply: function (on) {
-        var app = on === 'approved';
+        /* AND NEITHER OF THEM EXISTS ON A PHONE. Both describe the campaigns
+           app, and below 900 the approved state is a message saying that app
+           needs a bigger screen - so a switch for how many campaigns the
+           account holds would be a control over something not on the page, which
+           is the exact fault the note above this bar is about. */
+        var app = on === 'approved' && !SMALL.matches;
         account.hidden = !app;
         flow.hidden = !app;
         if (window.onblueStage) { window.onblueStage(on); }
       }
     })]));
+
+    /* crossing the line has to move the bars too, not wait for a reload */
+    var resize = function () {
+      var app = !SMALL.matches && document.body.classList.contains('is-approved');
+      account.hidden = !app;
+      flow.hidden = !app;
+    };
+    if (SMALL.addEventListener) { SMALL.addEventListener('change', resize); }
+    else if (SMALL.addListener) { SMALL.addListener(resize); }
   }
 
   if (dash) {

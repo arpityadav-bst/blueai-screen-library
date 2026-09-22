@@ -58,6 +58,17 @@
    statement made once, by the element. */
 /* the receipt sits under the refresh line in the confirmation's own quiet
    voice: it is a footnote to a control, not a second thing to read */
+/* 30px, WHICH IS THE PILL'S OWN. The receipt that used to sit between the lede
+   and this button is gone, so the button inherits the gap rather than closing
+   it: the distance from the sentence to the thing you press is a measurement
+   about reading, not about what happens to be in between. */
+.desk-cta { margin-top: 30px; }
+.desk-cta .btn { height: var(--hero-btn-h); padding: 0 22px; }
+/* THE ADDRESS ITSELF WHEN THE COPY DID NOT HAPPEN. A clipboard write can be
+   refused, and a note that says "copied" when nothing was is worse than no note;
+   the fallback prints the link so it can still be selected by hand, and it wraps
+   rather than truncating because half an address is no address. */
+#desk-note { overflow-wrap: anywhere; }
 .rev-note { margin: 10px 0 0; color: var(--dim-ink); font-size: 12.5px; letter-spacing: -0.005em; }
 .rev-note[hidden] { display: none; }
 
@@ -101,6 +112,11 @@
 /* not yet pressable, and it recedes rather than greys out: a disabled control
    that keeps full contrast reads as broken, one that loses it reads as later */
 .type-card.is-soon { cursor: default; opacity: 0.62; }
+/* NOT GATED, AND THE SHARED SHEET IS WHY. onblue.css carries
+   .card:hover, which this site cannot put behind (hover: hover) without
+   doing it to the creators pages too. Gating only this one would not remove
+   a hover on touch, it would hand the card back to .card:hover, which is the lift
+   this rule exists to cancel. */
 .type-card.is-soon:hover { transform: none; box-shadow: var(--stage-shadow); border-color: var(--border-soft); }
 
 @media (max-width: 720px) { .type-grid { grid-template-columns: 1fr; } }
@@ -204,6 +220,10 @@ body { min-height: 100vh; }
    pretending to be a decision until the two genuinely need to diverge.
    ONE RULE FOR BOTH DOORS. The header button and the footer link are the same
    action, so they are the same selector rather than two that agree today. */
+/* NOT GATED, AND THE SHARED SHEET IS WHY. onblue.css carries
+   .foot-col a:hover, which this site cannot put behind (hover: hover) without
+   doing it to the creators pages too. Gating only this one would not remove
+   a hover on touch, it would swap the red for that rule's ink. */
 .logout:hover,
 .foot-col a[data-logout]:hover { color: var(--err-ink); }
 .logout:focus-visible { outline: 2px solid var(--blue-ink); outline-offset: 3px; }
@@ -388,7 +408,7 @@ body { min-height: 100vh; }
   cursor: pointer;
   transition: border-color .18s ease, color .18s ease;
 }
-.post-out:hover { border-color: var(--card-line-hover); color: var(--ink); }
+@media (hover: hover) { .post-out:hover { border-color: var(--card-line-hover); color: var(--ink); } }
 .post-stats { grid-column: 1 / -1; display: flex; gap: 12px; color: var(--dim-ink); font-size: 12px; font-variant-numeric: tabular-nums; }
 .post-stats span { display: inline-flex; gap: 4px; align-items: center; }
 @media (max-width: 860px) {
@@ -433,7 +453,7 @@ body { min-height: 100vh; }
   position: relative;
   transition: border-color .2s ease, background .2s ease;
 }
-.drop:hover { border-color: var(--card-line-hover); background: linear-gradient(var(--wash-hover), var(--wash-hover)), var(--panel-bg); }
+@media (hover: hover) { .drop:hover { border-color: var(--card-line-hover); background: linear-gradient(var(--wash-hover), var(--wash-hover)), var(--panel-bg); } }
 .drop:focus-within { border-color: var(--blue-ink); box-shadow: 0 0 0 3px rgba(21, 110, 254, 0.16); }
 .drop-ic { flex: none; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 7px; background: var(--card-bg); color: var(--blue-ink); }
 .drop-t { display: grid; gap: 1px; min-width: 0; color: var(--dim-ink); font-size: 12px; line-height: 1.45; }
@@ -449,7 +469,7 @@ body { min-height: 100vh; }
    be, because it is the same kind of thing, and no pointer or hover because
    there is nothing on the other side of a press. */
 .selchip.is-fixed { cursor: default; }
-.selchip.is-fixed:hover { border-color: rgba(21, 110, 254, 0.42); background: rgba(21, 110, 254, 0.09); color: var(--blue-ink); }
+@media (hover: hover) { .selchip.is-fixed:hover { border-color: rgba(21, 110, 254, 0.42); background: rgba(21, 110, 254, 0.09); color: var(--blue-ink); } }
 .chip-yt { flex: none; }
 .chip-note { align-self: center; color: var(--dim-ink); font-size: 12px; letter-spacing: -0.005em; }
 
@@ -521,6 +541,11 @@ body.is-submitted #sheet-create .sheet-x {
   z-index: 2;
   color: rgba(255, 255, 255, 0.5);
 }
+/* NOT GATED, AND THE SHARED SHEET IS WHY. onblue.css carries
+   .sheet-x:hover, which this site cannot put behind (hover: hover) without
+   doing it to the creators pages too. Gating only this one would not remove
+   a hover on touch, it would swap this band's white for that rule's dark ink, on a
+   blue ground. */
 body.is-submitted #sheet-create .sheet-x:hover { background: rgba(255, 255, 255, 0.1); color: #fff; }
 body.is-submitted #sheet-create .sheet-x:focus-visible { outline-color: #fff; }
 
@@ -593,7 +618,7 @@ body.is-submitted .filed-grid { display: block; }
   font-weight: 600;
   transition: transform .18s var(--ease), background .2s ease;
 }
-.filed-go:hover { background: rgba(255, 255, 255, 0.92); transform: translateY(-2px); }
+@media (hover: hover) { .filed-go:hover { background: rgba(255, 255, 255, 0.92); transform: translateY(-2px); } }
 .filed-go:active { transform: scale(0.985); }
 .filed-go:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
 .filed-done {
@@ -610,10 +635,10 @@ body.is-submitted .filed-grid { display: block; }
   cursor: pointer;
   transition: color .2s ease;
 }
-.filed-done:hover { color: #fff; }
+@media (hover: hover) { .filed-done:hover { color: #fff; } }
 .filed-done:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) {
-  .filed-go:hover { transform: none; }
+  @media (hover: hover) { .filed-go:hover { transform: none; } }
 }
 
 /* ---- the date trigger and its calendar --------------------------------------
@@ -639,10 +664,10 @@ body.is-submitted .filed-grid { display: block; }
   cursor: pointer;
   transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
 }
-.dt:hover:not(:focus) {
+@media (hover: hover) { .dt:hover:not(:focus) {
   border-color: var(--card-line-hover);
   background: linear-gradient(var(--wash-hover), var(--wash-hover)), var(--card-bg);
-}
+} }
 /* THE SAME RING THE FIELDS USE, because this is a field: a control that opens a
    panel is still the thing the label is pointing at, and a second focus
    treatment would say it is a different kind of answer. */
@@ -707,7 +732,7 @@ body.is-submitted .filed-grid { display: block; }
   cursor: pointer;
   transition: background .15s ease, color .15s ease;
 }
-.tm-o:hover:not(.is-on) { background: var(--wash-hover); color: var(--ink); }
+@media (hover: hover) { .tm-o:hover:not(.is-on) { background: var(--wash-hover); color: var(--ink); } }
 .tm-o:focus-visible { outline: 2px solid var(--blue-ink); outline-offset: -2px; }
 /* ONE WEIGHT FOR FORTY-EIGHT EQUAL ANSWERS. The hour marks were semibold, on
    the theory that a fast scroll wants something to land on. It made half the
@@ -733,7 +758,7 @@ body.is-submitted .filed-grid { display: block; }
   cursor: pointer;
   transition: background .18s ease, color .18s ease;
 }
-.cal-nav:hover { background: var(--wash-hover); color: var(--ink); }
+@media (hover: hover) { .cal-nav:hover { background: var(--wash-hover); color: var(--ink); } }
 .cal-nav:disabled { opacity: 0.3; pointer-events: none; }
 .cal-nav:focus-visible { outline: 2px solid var(--blue-ink); outline-offset: 2px; }
 .cal-wk {
@@ -764,7 +789,7 @@ body.is-submitted .filed-grid { display: block; }
   cursor: pointer;
   transition: background .15s ease, color .15s ease;
 }
-.cal-d:hover:not(:disabled):not(.is-on) { background: var(--wash-hover); color: var(--ink); }
+@media (hover: hover) { .cal-d:hover:not(:disabled):not(.is-on) { background: var(--wash-hover); color: var(--ink); } }
 .cal-d:focus-visible { outline: 2px solid var(--blue-ink); outline-offset: -2px; }
 /* the days either side of the month are shown, not hidden: a calendar that ends
    mid-row makes you count to find where the next week starts */
@@ -918,8 +943,18 @@ body.is-submitted .filed-grid { display: block; }
   background: var(--card-bg);
   box-shadow: var(--stage-shadow);
 }
+/* NOT GATED, AND THE SHARED SHEET IS WHY. onblue.css carries
+   .card:hover, which this site cannot put behind (hover: hover) without
+   doing it to the creators pages too. Gating only this one would not remove
+   a hover on touch, it would hand the card back to .card:hover, which is the lift
+   this rule exists to cancel. */
 .form-card:hover { transform: none; box-shadow: var(--stage-shadow); }
 .dash-panel { background: var(--card-bg); box-shadow: none; }
+/* NOT GATED, AND THE SHARED SHEET IS WHY. onblue.css carries
+   .card:hover, which this site cannot put behind (hover: hover) without
+   doing it to the creators pages too. Gating only this one would not remove
+   a hover on touch, it would hand the panel back to .card:hover, which is the lift
+   this rule exists to cancel. */
 .dash-panel:hover { border-color: var(--border-soft); box-shadow: none; transform: none; }
 .dash-panel::after { content: none; }
 
@@ -936,6 +971,10 @@ body.is-submitted .filed-grid { display: block; }
   box-shadow: none;
   transition: border-color .2s ease, background .2s ease;
 }
+/* NOT GATED, AND THE SHARED SHEET IS WHY. onblue.css carries
+   .card:hover, which this site cannot put behind (hover: hover) without
+   doing it to the creators pages too. Gating only this one would not remove
+   a hover on touch, it would leave .card:hover applying underneath it. */
 .type-card:hover {
   border-color: var(--card-line-hover);
   background: linear-gradient(var(--wash-hover), var(--wash-hover)), var(--card-bg);
@@ -1105,7 +1144,7 @@ body.is-submitted .filed-grid { display: block; }
   letter-spacing: -0.01em;
   cursor: pointer;
 }
-.back:hover { color: var(--ink); }
+@media (hover: hover) { .back:hover { color: var(--ink); } }
 
 /* THE BANNER IS A CAPTION, NOT AN ALERT. What it says is that these numbers are
    made up, which qualifies everything below it and warns of nothing, so it takes
@@ -1450,7 +1489,7 @@ body.is-submitted .filed-grid { display: block; }
    gets it right on the two rows where it matters without any row knowing its own
    position in the list. */
 .crow.is-link { cursor: pointer; transition: background .18s ease; }
-.crow.is-link:hover { background: var(--wash-hover); }
+@media (hover: hover) { .crow.is-link:hover { background: var(--wash-hover); } }
 /* INSET, BECAUSE THE ROW NOW REACHES THE CARD'S EDGE. An outset ring on a
    full-bleed row is drawn outside the card and clipped away by the same overflow
    that rounds the hover, which would leave a keyboard with no focus at all. */
@@ -1465,7 +1504,7 @@ body.is-submitted .filed-grid { display: block; }
   letter-spacing: -0.005em;
   white-space: nowrap;
 }
-.crow.is-link:hover .crow-go { color: var(--blue-ink); }
+@media (hover: hover) { .crow.is-link:hover .crow-go { color: var(--blue-ink); } }
 
 /* the three verdicts a run can carry, on the chip the rest of the page uses */
 .pill-ok { border-color: rgba(22, 163, 74, 0.3); background: rgba(22, 163, 74, 0.08); color: var(--green-ink); }
@@ -1679,10 +1718,10 @@ body.is-submitted .filed-grid { display: block; }
   letter-spacing: -0.01em;
   transition: border-color 0.25s ease, background 0.25s ease, color 0.25s ease;
 }
-label:hover .choice-card:not(.on) {
+@media (hover: hover) { label:hover .choice-card:not(.on) {
   border-color: var(--card-line-hover);
   background: var(--wash-hover);
-}
+} }
 .choice-card.on { border-color: rgba(21, 110, 254, 0.5); background: rgba(21, 110, 254, 0.12); color: var(--ink); }
 .choice-card.err-ring { border-color: var(--err-line); }
 .choice-ic { display: grid; place-items: center; color: var(--blue-ink); }
@@ -1717,11 +1756,11 @@ input:focus-visible + .check { outline: 2px solid var(--blue-ink); outline-offse
   cursor: pointer;
   transition: border-color .22s ease, background .22s ease, color .22s ease;
 }
-.selchip:hover:not(.is-on) {
+@media (hover: hover) { .selchip:hover:not(.is-on) {
   border-color: var(--card-line-hover);
   background: linear-gradient(var(--wash-hover), var(--wash-hover)), var(--card-bg);
   color: var(--ink);
-}
+} }
 .selchip.is-on { border-color: rgba(21, 110, 254, 0.42); background: rgba(21, 110, 254, 0.09); color: var(--blue-ink); }
 .selchip:focus-visible { outline: 2px solid var(--blue-ink); outline-offset: 2px; }
 
@@ -1737,10 +1776,10 @@ input:focus-visible + .check { outline: 2px solid var(--blue-ink); outline-offse
 .nextbox ol { margin: 10px 0 0; padding-left: 18px; display: grid; gap: 6px; }
 .nextbox li { color: var(--muted); font-size: 13px; line-height: 1.55; letter-spacing: -0.005em; }
 .chip-row .chip { background: var(--card-bg); cursor: pointer; transition: border-color 0.25s ease, background 0.25s ease, color 0.25s ease; }
-.chip-row label:hover .chip:not(.on) {
+@media (hover: hover) { .chip-row label:hover .chip:not(.on) {
   border-color: var(--card-line-hover);
   background: var(--wash-hover);
-}
+} }
 .chip.on { border-color: rgba(21, 110, 254, 0.5); background: rgba(21, 110, 254, 0.12); color: var(--ink); }
 /* A GROUP THAT ACCUMULATES, MARKED AS ONE. Single-select chips and multi-select
    chips are the same row of the same component, so without this the only way to
@@ -1763,11 +1802,11 @@ input:focus-visible + .check { outline: 2px solid var(--blue-ink); outline-offse
 /* ---- the agreement rows ------------------------------------------------------ */
 .check { display: flex; align-items: flex-start; gap: 11px; padding: 13px 14px; border: 1px solid var(--border-soft); border-radius: 11px; background: var(--card-bg); color: var(--mini-ink); font-size: 13.5px; line-height: 1.5; letter-spacing: -0.01em; cursor: pointer; transition: border-color 0.25s ease, background 0.25s ease; }
 .check.subtle { padding: 0; border: 0; background: none; font-size: 12.5px; color: var(--muted); }
-.check:hover:not(.on) { border-color: var(--card-line-hover); background: var(--wash-hover); }
+@media (hover: hover) { .check:hover:not(.on) { border-color: var(--card-line-hover); background: var(--wash-hover); } }
 /* the consent row is legal text with a box drawn on nothing, so it takes
    neither half of the hover: a wash behind a sentence you cannot press would be
    the page offering an affordance it does not have */
-.check.subtle:hover { border-color: transparent; background: none; }
+@media (hover: hover) { .check.subtle:hover { border-color: transparent; background: none; } }
 .check.on { border-color: rgba(21, 110, 254, 0.5); background: rgba(21, 110, 254, 0.12); color: var(--ink); }
 .check.subtle.on { background: none; border-color: transparent; color: var(--muted); }
 .check.err-ring { border-color: var(--err-line); }
@@ -1789,6 +1828,11 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
 .form-foot { display: flex; align-items: center; gap: var(--actions-gap); margin-top: 20px; }
 .form-foot .btn { height: var(--hero-btn-h); padding: 0 var(--hero-btn-pad); font-size: calc(var(--btn) + 1.5px); }
 .form-foot .btn-solid { box-shadow: var(--hero-shadow); }
+/* NOT GATED, AND THE SHARED SHEET IS WHY. onblue.css carries
+   .btn-solid:hover, which this site cannot put behind (hover: hover) without
+   doing it to the creators pages too. Gating only this one would not remove
+   a hover on touch, it would leave that rule's background change applying with only
+   this shadow removed, which is half a hover rather than none. */
 .form-foot .btn-solid:hover { box-shadow: var(--hero-shadow-hover); }
 .form-foot .btn { flex: 1 1 0; }
 
@@ -1896,11 +1940,11 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
    halves say the same thing and sit 7px apart, so lighting only whichever one
    the pointer happened to land on would read as a miss rather than a state.
    Excluded while it is reporting, because nothing there is pressable. */
-.confirm-alt:not(.is-busy):not(.is-settled):hover svg,
+@media (hover: hover) { .confirm-alt:not(.is-busy):not(.is-settled):hover svg,
 .confirm-alt:not(.is-busy):not(.is-settled):hover button {
   color: var(--link-hover);
   text-decoration-color: var(--link-hover);
-}
+} }
 .confirm-alt.is-busy button, .confirm-alt.is-settled button {
   color: var(--muted);
   text-decoration: none;
@@ -1936,7 +1980,62 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
   .step-panel { padding: 16px 14px; }
   .step-probe { left: 14px; right: 14px; }
   .form-foot { flex-direction: column-reverse; }
-  .form-foot .btn { width: 100%; }
+  /* flex: 1 1 0 IS A ROW RULE, and this block turns the row into a column. On
+     the row the zero basis is what makes Back and Continue share the width
+     evenly; on the column the same basis is a zero HEIGHT, and the button's
+     own height loses to it - both buttons collapsed to a 30px bar of text
+     with no padding, stacked, on every phone. auto puts the height back in
+     charge, and the width is already 100% below. */
+  .form-foot .btn { flex: 0 0 auto; width: 100%; }
+}
+
+/* ---- phones and small tablets (2026-09-22) -----------------------------------
+   Every rule below fires at 720px and under, which is where the survey found
+   the four things the existing breakpoints did not cover. Nothing here can
+   reach a desktop: the narrowest desktop this site recognises is 901px, and
+   the pixel diff at 1100, 1280, 1440 and 1920 is what proves it. */
+@media (max-width: 720px) {
+  /* THE TWO TYPE CARDS STACK. .type-grid already goes to one column at this
+     width, but .type-grid--pair re-declares two columns later in the sheet
+     and won on source order, so the pair sat side by side in 160px columns:
+     "Per verified completion" ran out of its card and "A few reference sites
+     and videos" broke onto four lines. One column, and the dialog's list
+     scrolls, because two full cards are taller than 86vh on a phone and a
+     list that cannot scroll hides its second option. */
+  .type-grid--pair { grid-template-columns: minmax(0, 1fr); }
+  .sheet--wide #prog-list { min-height: 0; overflow-y: auto; }
+  /* THE EVIDENCE TABLE BECOMES A LIST OF RUNS. Six columns with a 660px floor
+     cannot fit a 350px card: the card clipped them, so the COMMENT column ended
+     at the panel edge mid-word and EVIDENCE and STATUS did not exist. A
+     sideways scroll would have made them reachable and still asked a thumb to
+     pan a spreadsheet. Each row already IS one record - a run, when, what was
+     done, what was said, the proof, the verdict - so on a phone each row lays
+     out as one: number and verdict on the first line, then the rest in reading
+     order, full width. Nothing is added, no labels are needed, because every
+     cell explains itself once it has the room. The header row goes, since
+     there are no columns left for it to head. */
+  .runs { min-width: 0; }
+  .runs thead { display: none; }
+  .runs, .runs tbody { display: block; }
+  .runs tr {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 7px 12px;
+    align-items: start;
+    padding: 14px 0;
+  }
+  .runs tr + tr { border-top: 1px solid var(--border-soft); }
+  .runs td { display: block; padding: 0; }
+  .runs tr + tr td { border-top: 0; }
+  .runs td.is-num { grid-column: 1; grid-row: 1; align-self: center; }
+  .runs td:nth-child(6) { grid-column: 2; grid-row: 1; justify-self: end; }
+  .runs td:nth-child(2) { grid-column: 1 / -1; color: var(--dim-ink); }
+  .runs td:nth-child(3), .runs td:nth-child(5) { grid-column: 1 / -1; }
+  .runs td.is-quote { grid-column: 1 / -1; max-width: none; }
+  /* FIVE TILES IN TWO COLUMNS LEAVES ONE ALONE. It sat in the left column
+     with an empty right cell beside it, which reads as something missing
+     rather than as the end of the row. Spanning the odd one closes the grid. */
+  .tiles--five > :last-child { grid-column: 1 / -1; }
 }
 </style>
 </head>
@@ -2207,6 +2306,38 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
      readers want, and script should HIDE what does not apply rather than reveal
      what does. #review still starts hidden, because being in review is the
      exception and the dashboard is the rule. -->
+<!-- ============================================================================
+     APPROVED, ON A SCREEN THAT CANNOT HOLD THE DASHBOARD.
+     THE PORTAL STOPS HERE ON A PHONE, and that is a decision rather than a gap.
+     What sits behind this point is a campaigns table, a six-column evidence log
+     and a builder with a calendar in it: work that is done sitting down, on a
+     screen with room for two things at once. Shipping a cramped version of it
+     would be offering something nobody would choose to use.
+     SO THE SECOND MESSAGE IS THE SAME SHAPE AS THE FIRST. In review and approved
+     are the two things this page has to be able to say on a phone, and saying
+     the second one in the first one's clothes is what makes them read as two
+     states of one screen rather than a screen and an apology.
+     AND IT HANDS OVER SOMETHING TO ACT ON. A message that ends at "use a
+     computer" leaves the reader to retype an address later; the link is the
+     whole of what they need carried across, so the primary action copies it. -->
+<section class="dash rev" id="deskonly" hidden>
+  <div class="confirm">
+    <div class="confirm-head">
+      <span class="confirm-sun" aria-hidden="true"><span class="confirm-sun-in"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.6C12.55 2.6 12.88 3.15 13.08 4.7c.62 4.7 1.52 5.6 6.22 6.22 1.55.2 2.1.53 2.1 1.08s-.55.88-2.1 1.08c-4.7.62-5.6 1.52-6.22 6.22-.2 1.55-.53 2.1-1.08 2.1s-.88-.55-1.08-2.1c-.62-4.7-1.52-5.6-6.22-6.22C3.15 12.88 2.6 12.55 2.6 12s.55-.88 2.1-1.08c4.7-.62 5.6-1.52 6.22-6.22C11.12 3.15 11.45 2.6 12 2.6Z"/></svg></span></span>
+      <h2 class="title-xl" id="deskonly-title">Your agency <em>is approved.</em></h2>
+    </div>
+    <p class="lede">Campaigns are set up and monitored from a full dashboard, which needs more room than a phone can give it. Open onBlue on a desktop or laptop to create your first campaign.</p>
+    <!-- NO PILL HERE. The review screen has one because "Registration received"
+         is a receipt: it reports a thing that happened which the heading does not
+         state. "Approved to create campaigns" reports the heading, in smaller
+         type, one line under it - a badge whose only job was to agree. -->
+    <div class="desk-cta">
+      <button class="btn btn-solid" type="button" data-copy>Copy the dashboard link</button>
+    </div>
+    <p class="rev-note" id="desk-note" hidden aria-live="polite"></p>
+  </div>
+</section>
+
 <section class="dash" id="dash" data-dock="agency">
 
   <!-- THREE VIEWS, ONE AT A TIME. The list, a sample report, and a campaign of
@@ -4828,6 +4959,8 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
      rather than three independent switches. It was two booleans and they could
      both be true, which is a state this page has no screen for. */
   var STAGES = ['review', 'approved'];
+  /* the same line the header crosses to become a burger */
+  var SMALL = window.matchMedia('(max-width: 900px)');
   function setStage(next) {
     /* A STAGE THIS PAGE DOES NOT KNOW IS NOT A THIRD STAGE, IT IS A TYPO. Both
        screens hide on anything that is not their own name, so one unrecognised
@@ -4844,8 +4977,15 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     var body = document.body.classList;
     body.toggle('is-review', stage === 'review');
     body.toggle('is-approved', stage === 'approved');
+    /* APPROVED IS TWO DIFFERENT SCREENS, AND THE SCREEN DECIDES WHICH. 900px is
+       where this site already stops being a desktop - it is where the nav
+       becomes a burger - so it is where the dashboard stops being offered too.
+       The stage is unchanged either way: it is still 'approved', the body still
+       carries is-approved, and nothing downstream has to learn a third value. */
+    var narrow = SMALL.matches;
     revEl.hidden = stage !== 'review';
-    dashEl.hidden = stage !== 'approved';
+    deskEl.hidden = !(stage === 'approved' && narrow);
+    dashEl.hidden = !(stage === 'approved' && !narrow);
     approved = stage === 'approved';
   }
   /* THE ONE DOOR INTO THIS STATE, published so the review toggler goes through
@@ -4853,6 +4993,34 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
      from outside would leave everything above believing the application was
      still on screen. */
   window.onblueStage = setStage;
+  /* AND IT ANSWERS A ROTATION. A phone turned into landscape, or a window
+     dragged past 900, has to arrive at the other screen rather than at whichever
+     one it happened to load on. */
+  if (SMALL.addEventListener) { SMALL.addEventListener('change', function () { setStage(stage); }); }
+  else if (SMALL.addListener) { SMALL.addListener(function () { setStage(stage); }); }
+
+  /* ---- the link, carried across ---------------------------------------------
+     THE HASH IS LEFT BEHIND. Whatever fragment this page is sitting on is a
+     position in a document, not part of the address somebody needs on a laptop.
+     AND IT REPORTS WHAT ACTUALLY HAPPENED. navigator.clipboard is refused often
+     enough - no permission, no secure context - that a button which always says
+     "copied" is a button that sometimes lies. */
+  var copyBtn = document.querySelector('#deskonly [data-copy]');
+  var deskNote = document.getElementById('desk-note');
+  if (copyBtn && deskNote) {
+    copyBtn.addEventListener('click', function () {
+      var url = window.location.href.split('#')[0];
+      var say = function (text) { deskNote.textContent = text; deskNote.hidden = false; };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(
+          function () { say('Link copied. Paste it into a browser on your computer.'); },
+          function () { say(url); }
+        );
+      } else {
+        say(url);
+      }
+    });
+  }
 
   /* ---- what the gate handed over ------------------------------------------
      REGISTERING IS WHAT PUTS AN AGENCY IN REVIEW, so the page opens there when
@@ -5060,6 +5228,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
   var listEl = document.getElementById('prog-list');
   var dashEl = document.getElementById('dash');
   var revEl = document.getElementById('review');
+  var deskEl = document.getElementById('deskonly');
   /* 'review' | 'approved'. It opens on review when the gate has just
      registered an agency and handed one over, which is the only way this page
      is reached from the brands site by someone who does not have an account.
@@ -5083,9 +5252,13 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
      not, because it is tuned for a section you scroll past rather than a page
      you are reading a form on top of. These are the access dialog's numbers to
      the digit, so the two places a reader meets this chrome behave the same. */
+  /* THE POOL IS A POINTER EFFECT (see spec.pointer in ascii-field.js). The
+     resting field is the page's ground and stays; the pool is a hover state
+     and a touchscreen has no way out of one. */
   if (window.onblueField && bgEl) {
     window.onblueField({
       host: bgEl, track: window,
+      pointer: window.matchMedia('(hover: hover)').matches,
       cell: 13, reach: 150, lens: 0.16, ambient: 0.05, fringe: false,
       expose: function (api) { field = api; }
     });
