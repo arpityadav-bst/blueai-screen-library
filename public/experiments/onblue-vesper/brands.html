@@ -115,13 +115,6 @@ document.documentElement.setAttribute('data-theme', 'light');
 .gate-reg .q-label { font-size: 13.5px; font-weight: 500; }
 .gate-reg .field { height: var(--hero-btn-h); }
 .gate-go { width: 100%; height: var(--hero-btn-h); margin-top: 4px; font-size: calc(var(--btn) + 1.5px); }
-/* ONLY THE ONE THAT IS ACTUALLY TOGGLED. This carried .gate-opts and .gate-reg
-   too, from when the level swapped the doors for the form inside one box. The
-   panes do that now, and neither of those two is ever given the attribute, so
-   both were rules waiting for a state that no longer exists, which is how the
-   doors stayed invisible for a whole redesign without anything looking wrong in
-   the code. .gate-alt is the "New here?" line, which pane() really does hide. */
-.gate-alt[hidden] { display: none; }
 /* ONE CELL, TWO PANES, AND A HEIGHT THAT IS ALREADY THE TALLER OF THEM. Both
    sit at grid-area 1/1, so the row is as tall as the taller pane whether or not
    either is showing, which means the box is the same size before the swap,
@@ -872,6 +865,25 @@ document.documentElement.setAttribute('data-theme', 'light');
   .leaving-sun svg { animation: none; opacity: 0.8; }
 }
 
+/* ---- and the same ground inside the dialog ----------------------------------
+   THE MARK IS BORROWED, THE BOX IS NOT. .leaving is a fixed cover at z-index
+   200, which the dialog outranks by being in the top layer rather than by any
+   number; this is the same surface reached from inside, so the pulse comes from
+   .leaving-sun and only the container is written again.
+   FIXED, NOT ABSOLUTE. .gate-field scrolls when a pane is taller than the
+   viewport, and a cover pinned to a scrolling box slides off the top of what it
+   is covering. Nothing here creates a containing block for it, so fixed is the
+   viewport. */
+.gate-load {
+  position: fixed;
+  inset: 0;
+  z-index: 4;
+  display: grid;
+  place-items: center;
+  background: var(--bg);
+}
+.gate-load[hidden] { display: none; }
+
 /* THREE PROPERTIES CENTRE A MODAL DIALOG AND ALL THREE HAVE TO BE THERE.
    The UA gives one `width: fit-content; height: fit-content; inset: 0; margin:
    auto`, and each part is doing a job: fit-content makes the box the size of the
@@ -1366,6 +1378,135 @@ document.documentElement.setAttribute('data-theme', 'light');
    mark and only its channel split is borrowed. */
 #get-access .close-mark { filter: var(--ca-spark) var(--close-shadow); }
 
+/* ============================================================================
+   THE PAGE AFTER SOMEBODY HAS SIGNED IN (2026-09-25)
+   THREE THINGS CHANGE AND NOTHING ELSE DOES. The header's action becomes the
+   way out; the two lines offering a way in stop being offered to somebody who
+   is already in; the rest of the page is an argument for the product and is
+   just as true once you have an account.
+   THE FOOTER'S SIGN IN GOES TOO, which was not asked for and is the same fault
+   one column over: a door into a room the reader is standing in. Said out loud
+   rather than left, because it reads as an oversight whichever way it goes.
+   ============================================================================ */
+.nav-logout { display: none; }
+body.is-signed-in .header-cta { display: none; }
+
+/* ---- the account chip -------------------------------------------------------
+   THE PILL IS THE PAGE'S OWN, NOT THE REFERENCE'S. Same idea, a round avatar, a
+   name and a chevron over a menu, drawn in this site's tokens: the bordered
+   secondary surface every other quiet control here uses, a 999px radius because
+   an avatar in a 6px box reads as two shapes arguing, and the brand blue for
+   the disc because it is the one saturated thing in the bar.
+   THE MENU IS THE NAV'S POPOVER, ONE SIZE DOWN. Same border, same card fill,
+   same shadow, same corner it grows from, so the header has one popover
+   treatment rather than two that nearly match. */
+.acct { position: relative; display: none; }
+body.is-signed-in .acct { display: block; }
+.acct-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  height: var(--btn-h);
+  /* tighter on the left, because the disc brings its own edge */
+  padding: 0 12px 0 5px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--charcoal-2);
+  color: var(--ink);
+  box-shadow: var(--card-shadow);
+  cursor: pointer;
+  transition: background 0.25s ease, border-color 0.25s ease;
+}
+.acct-btn:hover { background: var(--wash-hover); border-color: var(--card-line-hover); }
+.acct-av {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 27px;
+  height: 27px;
+  border-radius: 50%;
+  background: var(--blue);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+/* AN AGENCY NAME IS NOT A PERSON'S NAME AND CAN BE ANY LENGTH, so the label has
+   a ceiling and ends in an ellipsis rather than pushing the bar wider. */
+.acct-name {
+  max-width: 168px;
+  overflow: hidden;
+  font-size: 13.5px;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.acct-chev { flex: none; color: var(--muted); transition: transform 0.2s var(--ease); }
+.acct.is-open .acct-chev { transform: rotate(180deg); }
+.acct-menu {
+  position: absolute;
+  top: calc(100% + 9px);
+  right: 0;
+  z-index: 80;
+  min-width: 186px;
+  padding: 6px;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  background: var(--card-bg);
+  box-shadow: 0 18px 44px -20px rgba(18, 32, 64, 0.3), 0 2px 6px rgba(18, 32, 64, 0.06);
+}
+.acct-menu[hidden] { display: none; }
+.acct-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  height: 40px;
+  padding: 0 11px;
+  border: 0;
+  border-radius: 9px;
+  background: none;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.18s ease;
+}
+.acct-item:hover { background: var(--wash-hover); }
+.acct-item svg { flex: none; color: var(--muted); }
+body.is-signed-in .hero-alt,
+body.is-signed-in .close-alt,
+body.is-signed-in .foot-col a[data-gate="signin"] { display: none; }
+
+/* THE MENU'S COPY OF IT, AND THE SPECIFICITY IS THE WHOLE POINT. onblue.css
+   both hides and shows the menu's action through #site-nav .nav-cta at (1,1,0),
+   so a class on its own cannot answer either: these add body.is-signed-in to
+   reach (1,2,1), and are read after the shared sheet besides. The same trap
+   that made the button invisible once and leaked it onto the desktop once. */
+#site-nav .nav-logout { display: none; }
+body.is-signed-in #site-nav .nav-cta { display: none; }
+@media (max-width: 900px), (min-width: 901px) and (max-width: 1080px) and (orientation: portrait) {
+  /* AND IT HAS TO BE MEASURED BY HAND. The menu sizes its contents through
+     #site-nav a: full width, 44px tall, 9px corners, 15px type. The action
+     beside it is an anchor and picks all of that up for free; this is a button,
+     because it ends a session rather than going anywhere, so it matches none of
+     that selector and would have stood in the popover at the header's own
+     button size, narrower and shorter than every row above it. The values are
+     the ones that rule gives, repeated rather than inherited. */
+  body.is-signed-in #site-nav .nav-logout {
+    display: inline-flex;
+    justify-content: center;
+    width: 100%;
+    height: 44px;
+    padding: 0 12px;
+    border-radius: 9px;
+    font-size: 15px;
+    margin-top: 6px;
+  }
+}
 
 </style>
 <script src="ascii-field.js"></script>
@@ -1603,10 +1744,34 @@ document.documentElement.setAttribute('data-theme', 'light');
            one element that is both. It is display: none until the header gives
            up its own button, so only ever one of the two is on the page. -->
       <a class="btn btn-solid nav-cta" href="#post" data-gate="open">Create a campaign</a>
+      <!-- AND THE SAME SLOT SAYS THE OPPOSITE ONCE THERE IS SOMETHING TO LEAVE.
+           A second element rather than a relabelled one: the action is a link to
+           a dialog and this is a button that ends a session, and one element
+           being both would mean a click handler deciding which it is. -->
+      <button class="btn btn-ghost nav-logout" type="button" data-logout>Log out</button>
     </nav>
 
     <div class="header-end">
       <a class="btn btn-solid header-cta appear appear--fade" href="#post" data-gate="open" style="--d:0.06s">Create a campaign</a>
+      <!-- THE ACCOUNT, WHICH IS WHAT A HEADER CARRIES ONCE THERE IS ONE. A bare
+           Log out button announces the exit without ever saying who is leaving,
+           and puts the most destructive thing on the page in its most reachable
+           slot. This says who, and keeps the exit one press further in.
+           THE NAME IS READ, NOT WRITTEN. paintAccount fills both the letter and
+           the label from whatever the session actually knows. -->
+      <div class="acct" id="acct">
+        <button class="acct-btn" type="button" id="acct-btn" aria-haspopup="menu" aria-expanded="false" aria-controls="acct-menu">
+          <span class="acct-av" id="acct-av" aria-hidden="true">A</span>
+          <span class="acct-name" id="acct-name">Account</span>
+          <svg class="acct-chev" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="acct-menu" id="acct-menu" role="menu" hidden>
+          <button class="acct-item" type="button" role="menuitem" data-logout>
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 17 5 12l5-5"/><path d="M5 12h11"/><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/></svg>
+            Log out
+          </button>
+        </div>
+      </div>
     </div>
 
     <button class="burger appear appear--fade" type="button"
@@ -2683,6 +2848,19 @@ document.documentElement.setAttribute('data-theme', 'light');
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
     </button>
 
+    <!-- THE ROUND TRIP THAT IS NOT HAPPENING. Pressing a door in the real
+         product leaves this page for a provider and comes back to a fresh load,
+         and the agency form is what that load lands on. Two screens with a
+         navigation between them, in other words, which is why the band that
+         used to carry one into the other was wrong: a wipe says these two things
+         are the same surface changing its mind.
+         IT COVERS THE CLOSE BUTTON ON PURPOSE. There is nothing to cancel during
+         a sign-in you have already committed to, and the provider's own page
+         would not offer it either. -->
+    <div class="gate-load" id="gate-load" hidden aria-hidden="true">
+      <span class="leaving-sun"><svg viewBox="0 0 24 24" fill="currentColor"><use href="#i-spark"/></svg></span>
+    </div>
+
     <!-- LEVEL ONE IS GONE, and with it the only reason this dialog had two.
          It explained what happens before asking for anything: four steps, a
          demo panel each, and a Got it, continue. Every one of those four is How
@@ -2818,7 +2996,6 @@ document.documentElement.setAttribute('data-theme', 'light');
 
         </div>
           <span class="gate-err" id="gate-email-err" role="alert" hidden></span>
-          <p class="gate-alt" id="gate-back-line" hidden>New here? <button type="button" data-gate="reg-pane">Register your agency</button></p>
         </div>
 
       </div>
@@ -3047,14 +3224,6 @@ document.documentElement.setAttribute('data-theme', 'light');
   /* the travelling stroke moved to onblue-chrome.js, so the application gets
      the same behaviour on its own surfaces without a second copy of it */
 
-  /* filled in by the field mounted on the gate, so the dialog can run a band
-     across the whole viewport between its two levels */
-  var gateField = null;
-
-  /* filled in by the field mounted on the gate, so the dialog can run a band
-     across the whole viewport between its two levels */
-  var gateField = null;
-
   /* THREE HOSTS, ONE IMPLEMENTATION, and it is the same file the creator site
      runs, so the two pages cannot drift about what this effect is. Tuned per
      host, because every number in it is a function of how big the surface is: a
@@ -3079,9 +3248,12 @@ document.documentElement.setAttribute('data-theme', 'light');
     [{ host: document.querySelector('.hero-wrap'), pointer: POINTER },
      /* the third band, whichever section is standing in it */
      { host: document.getElementById('work'), pointer: POINTER },
+     /* NO expose HERE ANY MORE. It handed the dialog's field back so the gate
+        could drive a band across it between panes; the gate does not do that
+        now, and the handle it was assigned to was declared twice by an old
+        copy-paste, so both went with it. What is left is the ambient ground. */
      { host: document.getElementById('gate-field'), pointer: POINTER,
-       cell: 13, reach: 150, lens: 0.16, ambient: 0.05, fringe: false,
-       expose: function (api) { gateField = api; } }]
+       cell: 13, reach: 150, lens: 0.16, ambient: 0.05, fringe: false }]
       .forEach(window.onblueField);
   }
 
@@ -3105,6 +3277,97 @@ document.documentElement.setAttribute('data-theme', 'light');
     window.location.href = url;
   }
 
+  /* ---- being signed in ------------------------------------------------------
+     THE FLAG IS THE DOOR BEING PRESSED, not the agency being registered. Those
+     were one act while registering came first; now a reader can sign in and then
+     close the agency form, and the page they land back on has to know they are
+     in. Registering is a separate fact and keeps its own keys.
+     sessionStorage, LIKE EVERYTHING ELSE THIS PROTOTYPE HANDS ACROSS. It has no
+     auth; what it has is a tab's memory of what you did in it, which is what
+     makes the dashboard and the in-review screen work, and this is one more of
+     the same. It ends with the tab, which is the honest lifetime for a stub. */
+  function signedIn() {
+    try { return window.sessionStorage.getItem('onblue:signedin') === '1'; } catch (e) { return false; }
+  }
+  function markSignedIn() {
+    try { window.sessionStorage.setItem('onblue:signedin', '1'); } catch (e) {}
+    document.body.classList.add('is-signed-in');
+    /* THE LABEL IS PAINTED AT THE MOMENT IT BECOMES TRUE, not only on load: the
+       reader who signs in and closes the agency form never reloads, so a chip
+       filled in at startup would still be showing the placeholder. */
+    paintAccount();
+  }
+
+  /* WHO IS SIGNED IN, AS FAR AS THIS PROTOTYPE CAN HONESTLY SAY. The agency
+     name once one has been registered, because that is what a brands product
+     addresses you as. Failing that the local part of the address typed at the
+     email door. Failing that a stub, because the Google door is a stub and a
+     provider would have returned a profile: one string, one place to change it,
+     and it is the only invented thing on the screen. */
+  var ACCOUNT_STUB = 'Arpit Yadav';
+  function acctLabel() {
+    try {
+      var a = window.sessionStorage.getItem('onblue:agency');
+      if (a && a.trim()) { return a.trim(); }
+      var e = window.sessionStorage.getItem('onblue:email');
+      if (e && e.indexOf('@') > 0) { return e.split('@')[0]; }
+    } catch (err) {}
+    return ACCOUNT_STUB;
+  }
+  function paintAccount() {
+    var label = acctLabel();
+    var n = document.getElementById('acct-name');
+    var av = document.getElementById('acct-av');
+    if (n) { n.textContent = label; }
+    if (av) { av.textContent = label.charAt(0).toUpperCase(); }
+  }
+
+  (function session() {
+    var acct = document.getElementById('acct');
+    var acctBtn = document.getElementById('acct-btn');
+    var acctMenu = document.getElementById('acct-menu');
+
+    function setAcct(on) {
+      if (!acct || !acctBtn || !acctMenu) { return; }
+      acct.classList.toggle('is-open', on);
+      acctMenu.hidden = !on;
+      acctBtn.setAttribute('aria-expanded', on ? 'true' : 'false');
+    }
+
+    if (acctBtn) {
+      acctBtn.addEventListener('click', function () { setAcct(acctMenu.hidden); });
+    }
+    /* PRESSING AWAY CLOSES IT, in capture, for the reason the nav's popover
+       gives: the page stays live under an open menu, so it has to be able to
+       take the press back before a control underneath swallows it. */
+    document.addEventListener('pointerdown', function (e) {
+      if (!acctMenu || acctMenu.hidden) { return; }
+      if (e.target.closest && e.target.closest('#acct')) { return; }
+      setAcct(false);
+    }, true);
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') { setAcct(false); }
+    });
+
+    if (signedIn()) { document.body.classList.add('is-signed-in'); paintAccount(); }
+    /* DELEGATED, because there are two copies of the control and only one of
+       them is on the page at a time: the header's and the menu's. */
+    document.addEventListener('click', function (e) {
+      var b = e.target.closest ? e.target.closest('[data-logout]') : null;
+      if (!b) { return; }
+      e.preventDefault();
+      /* THE WHOLE SESSION, NOT THE FLAG. Leaving the agency name behind would
+         put the next sign-in straight back into a state the reader just left,
+         and the in-review one-shot is the worst of them to leave lying around. */
+      try {
+        ['onblue:signedin', 'onblue:agency', 'onblue:new', 'onblue:email', 'onblue:site']
+          .forEach(function (k) { window.sessionStorage.removeItem(k); });
+      } catch (e2) {}
+      setAcct(false);
+      document.body.classList.remove('is-signed-in');
+    });
+  })();
+
   /* ---------------------------------------------------------- the gate ----
      TWO LEVELS, and the shape is inherited from the partner site because it
      carries real information: say what happens before asking for an email, and
@@ -3120,9 +3383,7 @@ document.documentElement.setAttribute('data-theme', 'light');
     var gate = document.getElementById('gate');
     if (!gate || typeof gate.showModal !== 'function') { return; }
 
-    var field = document.getElementById('gate-field');
     var lv2 = gate.querySelector('[data-level="2"]');
-    var backLine = document.getElementById('gate-back-line');
     var title2 = document.getElementById('gate-title-2');
     var mail = document.getElementById('gate-mail');
     var email = document.getElementById('gate-email');
@@ -3142,22 +3403,25 @@ document.documentElement.setAttribute('data-theme', 'light');
     var regForm = document.getElementById('gate-reg');
     /* THREE ASKS, NOT TWO, because the doors are reached two different ways and
        they are not the same moment. Arriving from Sign in, they are a sign-in.
-       Arriving from Continue, they are the last step of registering, and telling
-       an agency that just typed its name to "pick up where you left off" is the
+       Arriving from Create a campaign, they are a first visit, and telling
+       somebody who has never been here to "pick up where you left off" is the
        screen asserting a history that does not exist.
        ONE PLACE WRITES THE HEADING, THE LEDE AND THE EYEBROW. open() used to
        write the eyebrow and the lede too, with the creator site's wording, and
        it ran after this did: a register form asking for an agency name was
-       sitting under "Sign in to start your application". */
-    var mode = 'register';
+       sitting under "Sign in to start your application".
+       AND THE NAME IS NOT KEPT. A `mode` variable held whichever pane was last
+       shown, for one reader: the Google door, which used it to decide whether
+       the address on file had been typed by the agency or guessed. Registering
+       happens after that door now, so there is never an address to keep and
+       nothing else ever asked. A variable written on every pane change and read
+       nowhere is a fact the file is maintaining on behalf of no one. */
     function pane(which) {
-      mode = which;
       var reg = which === 'register';
       if (regPane) { regPane.hidden = !reg; }
       if (optsPane) { optsPane.hidden = reg; }
       /* on the sign-in pane and nowhere else: after registering there is no
          "new here" left to be */
-      if (backLine) { backLine.hidden = which !== 'signin'; }
       /* THE REGISTER PANE'S HEADING IS MARKUP AND NEVER MOVES. Only the doors
          pane is reached two ways, so it is the only one with anything to say
          that depends on how you got there. */
@@ -3182,7 +3446,8 @@ document.documentElement.setAttribute('data-theme', 'light');
       }
     }
     var closing = 0;
-    var sweeping = false;
+    var loadEl = document.getElementById('gate-load');
+    var loading = false;
 
     /* the same test apply.html validates with, so the two cannot disagree about
        what an address is */
@@ -3208,116 +3473,22 @@ document.documentElement.setAttribute('data-theme', 'light');
        midpoint, and step() is a two-line caller of it. A second copy of the
        measuring, the clip and the wipe maths is how the two would start
        disagreeing about what a transition on this page looks like. */
-    var SWEEP = 0.85;
-
-    function sweep(from, next, swap) {
-      if (!gateField || sweeping) { swap(); return; }
-      var BAND = 0.34;
-
-      /* NOTHING IS MEASURED AND NOTHING IS PINNED, because there is no longer
-         anything that could move. The box is the taller of the two panes at all
-         times, by grid, so this function's only job is to put both panes on
-         screen and hand the field the extent to cross. Whatever this used to do
-         to .gate-ask height, stopped: an animated height is the form sliding
-         down while the doors rise into it, which reads as the two screens
-         trading parts rather than one becoming the other. */
-
-      /* set first, so show() skips the entrance animation */
-      sweeping = true;
-      swap();
-      from.hidden = false;
-
-      /* MEASURED ONCE, NOT EVERY FRAME. Reading a rect inside the loop forced a
-         layout per frame for numbers that cannot change while the band travels. */
-      var box = field.getBoundingClientRect();
-      var live = next.getBoundingClientRect();
-      var gone = from.getBoundingClientRect();
-
-      /* THE COLUMN, NOT THE PANE. Both panes are width: 100%, so their rects are
-         the width of the dialog while the words inside them are a column down the
-         middle perhaps four hundred pixels across. Handing those rects to the
-         field as the thing to sweep is what made the band spend most of its
-         travel over blank page to the left and right and cross the actual
-         content in a fraction of a second: a scan going past the content rather
-         than a scan of it. So the extent is the union of what is DRAWN in the
-         two panes, which is their children's boxes. */
-      function column(pane) {
-        var r = null, kids = pane.children, i, k;
-        for (i = 0; i < kids.length; i++) {
-          if (kids[i].hidden) { continue; }
-          k = kids[i].getBoundingClientRect();
-          if (!k.width || !k.height) { continue; }
-          r = r ? { left: Math.min(r.left, k.left), right: Math.max(r.right, k.right),
-                    top: Math.min(r.top, k.top), bottom: Math.max(r.bottom, k.bottom) }
-                : { left: k.left, right: k.right, top: k.top, bottom: k.bottom };
-        }
-        return r;
-      }
-      var cA = column(next), cB = column(from);
-      var col = (cA && cB)
-        ? { left: Math.min(cA.left, cB.left), right: Math.max(cA.right, cB.right),
-            top: Math.min(cA.top, cB.top), bottom: Math.max(cA.bottom, cB.bottom) }
-        : (cA || cB || { left: Math.min(live.left, gone.left), right: Math.max(live.right, gone.right),
-                         top: Math.min(live.top, gone.top), bottom: Math.max(live.bottom, gone.bottom) });
-
-      /* the stretch the head crosses, in the field's own fractions, and the band
-         width that follows from it, which the clip is padded by so the glyphs can
-         fade in before the edge arrives and out after it has gone */
-      var x0 = (col.left - box.left) / box.width;
-      var x1 = (col.right - box.left) / box.width;
-      var pad = BAND * (x1 - x0) * box.width;
-
-      function wipeAt(head) {
-        var at = ((head * box.width) - (live.left - box.left)) / Math.max(live.width, 1);
-        field.style.setProperty('--wipe-a', ((at - 0.06) * 100).toFixed(2) + '%');
-        field.style.setProperty('--wipe-b', ((at + 0.06) * 100).toFixed(2) + '%');
-      }
-
-      /* THE EDGE IS IN PLACE BEFORE EITHER LEVEL IS MASKED. Everything from here
-         to the end of this function is one synchronous block, so no frame can be
-         painted between the attribute landing and the value it depends on. At
-         t = 0 the head sits one band-width off the left, which leaves the
-         outgoing level whole and the incoming one entirely gone, which is
-         exactly the state the reader was already looking at. */
-      wipeAt(-BAND);
-      from.setAttribute('data-wipe', 'out');
-      next.setAttribute('data-wipe', 'in');
-
-      gateField.sweep({
-        /* BACK TO THE FIELD'S OWN 0.85. It was slowed to 1.15 to compensate for
-           a band that spent most of its travel off the content; now that the
-           head crosses the column and nothing else, the default reads at the
-           speed it was tuned for. */
-        duration: SWEEP,
-        band: BAND,
-        /* the band paints only where the content is, for the reason the shader
-           gives for gating on the model's own alpha */
-        clip: {
-          x0: col.left - box.left - pad - 24,
-          x1: col.right - box.left + pad + 24,
-          y0: col.top - box.top - 24,
-          y1: col.bottom - box.top + 24
-        },
-        /* AND THE HEAD IS GIVEN THE SAME STRETCH. Without this the clip only
-           stops the glyphs printing outside the column while the head still
-           crosses the whole viewport, so the band is off the content for most of
-           the duration and the mask, which follows the head, changes the words
-           while nothing is over them. */
-        x0: x0,
-        x1: x1,
-        /* the head is a fraction of the CANVAS; the mask is a fraction of the
-           CONTENT, so it has to be re-expressed in the box it is masking */
-        onStep: wipeAt,
-        onEnd: function () {
-          sweeping = false;
-          from.hidden = true;
-          from.removeAttribute('data-wipe');
-          next.removeAttribute('data-wipe');
-          field.style.removeProperty('--wipe-a');
-          field.style.removeProperty('--wipe-b');
-        }
-      });
-    }
+    /* THE BAND IS GONE, AND SO IS WHAT IT CROSSED BETWEEN.
+       WHAT IT WAS. A travelling ascii wipe ran across the whole viewport while
+       one pane became another underneath it, so the change happened ON the
+       content rather than behind it. It was written for level one becoming
+       level two, and reused when the agency form became the doors.
+       WHY IT HAS NOTHING LEFT TO DO. Level one went first. Then the order
+       reversed: the doors come first and the agency form follows a sign-in,
+       which in the real product is a trip to a provider and a fresh page load.
+       A wipe says two screens are one surface changing its mind, and these two
+       are not: there is a loader between them now, which is what a round trip
+       actually looks like.
+       THE FIELD ITSELF STAYS. .gate-field still mounts the ambient glyph
+       ground, which is the dialog's background and was never part of this; only
+       the sweep API it exposed is dropped. The other three pages still run this
+       transition and still need the [data-wipe] rules in onblue.css, so those
+       stay shared and untouched. */
 
     function enter(level) {
       level.classList.remove('appear', 'appear--fade');
@@ -3330,10 +3501,7 @@ document.documentElement.setAttribute('data-theme', 'light');
        that now, because the heading moved inside the panes. */
     function show() {
       lv2.hidden = false;
-      /* the entrance is for arriving, not for changing between panes: while the
-         band is crossing, the wipe IS the transition and a second opacity
-         animation under it only fights it */
-      if (!sweeping) { enter(lv2); }
+      enter(lv2);
     }
 
     /* THE CARET IS THE POINT. Clicking the email door has to leave you typing,
@@ -3352,15 +3520,21 @@ document.documentElement.setAttribute('data-theme', 'light');
       /* THE ASK IS RESET ON EVERY OPEN, like the level below it and for the same
          reason: which pane you were on last time is not something to inherit,
          and without this a reader who looked at sign-in once found it again
-         behind a button that said Create a campaign. */
-      pane(returning ? 'signin' : 'register');
+         behind a button that said Create a campaign.
+         AND THE DOORS ARE WHAT IT RESETS TO. Create a campaign used to open on
+         the agency form with a sign-in line under it, which asked a reader to
+         declare which kind of person they were before either answer had been
+         given a screen of its own. One screen now: pick a door. What the press
+         was called still chooses the wording, because "Welcome back" under a
+         Sign in link and "Get started" under Create a campaign are both true.
+         UNLESS THEY ARE ALREADY IN, in which case the doors are a question with
+         its answer already given and the agency form is the step that is left. */
+      pane(signedIn() ? 'register' : (returning ? 'signin' : 'choose'));
       clearError();
       /* both doors again on every open: a field left standing from last time is
          a half-finished sentence the reader did not write */
-      sweeping = false;
-      lv2.removeAttribute('data-wipe');
-      field.style.removeProperty('--wipe-a');
-      field.style.removeProperty('--wipe-b');
+      loading = false;
+      if (loadEl) { loadEl.hidden = true; }
       mail.classList.remove('is-open');
       email.value = '';
       if (!gate.open) { gate.showModal(); }
@@ -3380,6 +3554,7 @@ document.documentElement.setAttribute('data-theme', 'light');
     }
 
     function close() {
+      if (loading) { return; }
       gate.classList.remove('is-open');
       document.documentElement.classList.remove('gate-lock');
       closing = window.setTimeout(function () { if (gate.open) { gate.close(); } }, 260);
@@ -3416,7 +3591,28 @@ document.documentElement.setAttribute('data-theme', 'light');
          that loop without putting an address in a query string, in history, or
          in a referrer. */
       try { window.sessionStorage.setItem('onblue:email', email.value.trim()); } catch (e) {}
-      leave('campaign.html');
+      toAgency();
+    }
+
+    /* PRESSING A DOOR IS THE SIGN-IN, AND THE AGENCY IS THE NEXT QUESTION. Both
+       doors end here so the two cannot drift: one marks the session, one waits,
+       one screen follows.
+       THE WAIT IS THE POINT, not a delay dressed up as one. What this stands in
+       for is a provider's page and a return trip, and a prototype that answered
+       instantly would be teaching a flow that does not exist. 1150ms is long
+       enough to read as a load and short enough not to be one.
+       LOCKED WHILE IT RUNS. The backdrop and Escape both reach close(), and a
+       sign-in that can be dismissed halfway would leave the session marked and
+       the agency never asked. */
+    function toAgency() {
+      markSignedIn();
+      loading = true;
+      if (loadEl) { loadEl.hidden = false; }
+      window.setTimeout(function () {
+        loading = false;
+        pane('register');
+        if (loadEl) { loadEl.hidden = true; }
+      }, 1150);
     }
 
     /* ---- registering an agency -------------------------------------------
@@ -3454,15 +3650,12 @@ document.documentElement.setAttribute('data-theme', 'light');
         window.sessionStorage.setItem('onblue:email', mail.value.trim());
         if (site.value.trim()) { window.sessionStorage.setItem('onblue:site', site.value.trim()); }
       } catch (e2) {}
-      /* THE LAST STEP OF REGISTERING IS PICKING A DOOR, so Continue crosses to
-         them rather than leaving: an account has to be something you can get
-         back into, and until one of these is pressed there is no way in. It
-         crosses under the band for the reason every other change on this field
-         does, which is the whole argument for having a band. */
-      /* THE PANES, NOT THE FORMS. pane() hides and shows the two panes, so those
-         are what the band has to be crossing; sweeping the form and the doors
-         left their headings unmasked, which was the whole bug. */
-      sweep(regPane, optsPane, function () { pane('choose'); });
+      /* AND THIS IS THE LAST STEP NOW. Continue used to cross to the doors,
+         because registering came first and an account you cannot get back into
+         is not one; the doors come first now, so by the time this form is
+         submitted the way back in has already been chosen and the only thing
+         left is the dashboard. */
+      leave('campaign.html');
     });
 
     gate.addEventListener('click', function (e) {
@@ -3474,18 +3667,15 @@ document.documentElement.setAttribute('data-theme', 'light');
       var what = act.getAttribute('data-gate');
       if (what === 'close') { close(); }
       else if (what === 'signin') { open(true); }
-      else if (what === 'reg-pane') { pane('register'); }
       else if (what === 'email') { openMail(); }
       else if (what === 'continue') { proceed(); }
       else if (what === 'google') {
         /* THE STUB HAS NO ADDRESS TO OFFER, so it clears whatever was typed
-           rather than carrying a wrong one forward. Unless the agency has just
-           registered, in which case its work email is known, was not guessed,
-           and is the address the approval is going to. */
-        if (mode !== 'choose') {
-          try { window.sessionStorage.removeItem('onblue:email'); } catch (e2) {}
-        }
-        leave('campaign.html');
+           rather than carrying a wrong one forward. It kept one when the agency
+           had already registered; registering comes after this now, so there is
+           never an address here that was not guessed. */
+        try { window.sessionStorage.removeItem('onblue:email'); } catch (e2) {}
+        toAgency();
       }
     });
 
