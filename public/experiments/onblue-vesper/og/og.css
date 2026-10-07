@@ -1,20 +1,22 @@
 /* ============================================================================
-   THE SHARE CARDS (2026-10-07)
+   THE SHARE CARDS (2026-10-07, third version)
    1200 x 630, one per site, rendered to PNG by og/render.js. These pages are
    the source of og-creators.png and og-business.png; edit a word here and run
    the script again rather than touching the images.
 
-   ONE FRAME, TWO HEROES. Both cards share the ground, the glyph field, the
-   wordmark, the audience tag and the headline's type, so the two read as one
-   product side by side in a feed. What differs is the thing each site leads
-   with: the creators card puts the agent beside the copy, as that hero does,
-   and the business card stacks the copy over the film ring, as that hero does.
+   ONE STATEMENT AND ONE PICTURE, BECAUSE MOST SHARES ARE READ ON A PHONE.
+   The second version was a three-step strip with a label and a panel per
+   step. It explained the product, but on a phone a card is shown about 350px
+   wide, under a third of its size, and at that scale 26px labels become 7px and
+   a panel's insides become texture. What survives is what is large: two lines
+   of promise, and one image that shows the product's object.
+   THE BUDGET: anything a reader must read is set so it is still about 12px at
+   350px wide, which on this card means 40px and up. Nothing smaller is there to
+   be read.
 
    SIZES ARE SET HERE, NOT BORROWED. onblue.css moves --h1 and --logo at five
    breakpoints and 1200 is one of them; a card that inherited those would change
-   whenever the site's type ladder did. The values are the site's own, written
-   once at the scale a feed preview needs: a card is shown about 500px wide, so
-   the headline is sized to survive being shrunk to forty per cent.
+   whenever the site's type ladder did.
    ============================================================================ */
 
 html, body {
@@ -24,6 +26,15 @@ html, body {
   overflow: hidden;
   background: var(--bg);
 }
+
+/* NO SCROLLBAR GUTTER ON A CARD. onblue.css gives html scrollbar-gutter: stable
+   so the site does not shift sideways when a scrollbar comes and goes, and
+   reserves the space even with overflow hidden. Inherited here it left a 10px
+   strip of page white down the right edge of every card, invisible on the light
+   set against near-white and plain on the blue one. A card has nothing to
+   scroll. render.js now fails if the page is not the full 1200px wide. */
+html { scrollbar-gutter: auto; scrollbar-width: none; }
+html::-webkit-scrollbar { width: 0; height: 0; }
 
 .og {
   position: relative;
@@ -39,41 +50,47 @@ html, body {
 .og .hero-media { z-index: 0; }
 .og > .ascii-bg { z-index: 1; }
 
-/* ---- the frame both cards share ------------------------------------------- */
+/* ---- the wordmark ------------------------------------------------------------
+   THE ONLY THING ABOVE THE PROMISE. The audience tag that sat opposite it went
+   in this version: at phone size it was 4px of grey, and the promise already
+   says who the card is for. */
 .og-top {
   position: absolute;
-  top: 54px;
+  top: 50px;
   left: 64px;
-  right: 64px;
   z-index: 3;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
 }
 .og .logo {
-  gap: 7px;
-  font-size: 30px;
-  --logo-mark: 42px;
-}
-.og .eyebrow {
-  font-size: 14px;
-  color: var(--muted);
+  gap: 8px;
+  font-size: 36px;
+  --logo-mark: 50px;
 }
 
-/* THE SITE'S HEADLINE, AT THE CARD'S SIZE. Weight, tracking, the serif italic
-   and its blue are copied from .hero h1 and its em; only the size is the
-   card's. */
-.og-title {
+/* ---- the statement, left ---------------------------------------------------- */
+.og-copy {
+  position: absolute;
+  z-index: 2;
+  top: 110px;
+  bottom: 40px;
+  left: 64px;
+  width: 700px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+/* TWO LINES, BROKEN BY HAND, NEVER WRAPPED. nowrap so a line that grows past
+   its column is a failure render.js catches, not a third line nobody chose. */
+.og-promise {
   margin: 0;
   font-family: var(--ui-font);
   font-weight: 500;
-  font-size: 58px;
+  font-size: 66px;
   letter-spacing: -0.045em;
-  line-height: 1.1;
+  line-height: 1.06;
   color: var(--ink);
-  text-wrap: balance;
+  white-space: nowrap;
 }
-.og-title em {
+.og-promise em {
   font-family: var(--serif-font);
   font-style: italic;
   font-weight: 400;
@@ -82,89 +99,167 @@ html, body {
   color: var(--blue-ink);
   text-shadow: var(--em-shadow);
 }
-
-/* ---- creators: copy left, the agent right ---------------------------------- */
-.og--creators .og-copy {
-  position: absolute;
-  z-index: 2;
-  left: 64px;
-  top: 0;
-  bottom: 0;
-  width: 660px;
+/* the one fact a promise cannot carry on its own: how the money works */
+.og-sub {
   display: flex;
   align-items: center;
+  gap: 14px;
+  margin: 26px 0 0;
+  color: var(--muted);
+  font-size: 40px;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  white-space: nowrap;
 }
+.og-sub svg { flex: none; width: 40px; height: 40px; color: var(--green-ink); }
+
+/* ---- the picture, right ------------------------------------------------------
+   AS LARGE AS THE COPY LETS IT BE. The column starts about 60px clear of where
+   each card's longest line actually ends (measured: x 556 on the business card,
+   601 on the creators card) and runs the card's full height inside the crop
+   margin, so the picture is the second thing a phone reader sees, not a
+   thumbnail beside the first. */
+.og-art {
+  position: absolute;
+  z-index: 2;
+  top: 56px;
+  bottom: 40px;
+  right: 64px;
+}
+.og--business .og-art { left: 620px; }
+.og--creators .og-art { left: 650px; }
+
+/* three of the films the site's ring plays, fanned */
+.og-fan img {
+  position: absolute;
+  top: 100px;
+  left: 164px;
+  width: 188px;
+  height: 334px;
+  border-radius: 14px;
+  object-fit: cover;
+  box-shadow: 0 22px 44px -22px rgba(18, 32, 64, 0.55);
+}
+.og-fan img:nth-child(1) { left: 34px; top: 118px; transform: rotate(-10deg); }
+.og-fan img:nth-child(3) { left: 294px; top: 118px; transform: rotate(10deg); }
+.og-fan img:nth-child(2) { z-index: 1; }
+
+/* the agent alone: the creators hero's own figure, turned slightly toward
+   the copy so it looks into the card, centred in its column */
 .og-agent {
   position: absolute;
-  z-index: 2;
-  /* centred on its own column, which starts where the copy's ends, and set a
-     little below the card's middle so the head clears the audience tag that
-     sits over this column's top */
-  right: 124px;
-  top: calc(50% + 22px);
-  height: 484px;
-  transform: translateY(-50%);
-}
-
-/* ---- business: copy over the ring ------------------------------------------ */
-.og--business .og-copy {
-  position: absolute;
-  z-index: 3;
-  left: 0;
-  right: 0;
-  top: 118px;
-  text-align: center;
-}
-
-/* THE RING, SEEN FROM INSIDE, which is how the hero shows it: the frame in the
-   middle is the farthest away and the ones at the ends come round towards the
-   reader, larger and turned inward. Seven frames, 18 degrees apart, the outer
-   two leaving the card at its edges, where the mask dissolves them as the
-   page's own mask does. */
-.og-ring {
-  position: absolute;
-  z-index: 2;
-  left: 0;
-  right: 0;
-  top: 300px;
-  height: 300px;
-  perspective: 1100px;
-  perspective-origin: 50% 50%;
-  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 12%, #000 88%, transparent 100%);
-  mask-image: linear-gradient(90deg, transparent 0%, #000 12%, #000 88%, transparent 100%);
-}
-.og-stage {
-  position: absolute;
+  top: 7px;
   left: 50%;
-  top: 50%;
-  width: 0;
-  height: 0;
-  transform-style: preserve-3d;
-  transform: translateZ(550px);
+  height: 520px;
+  transform: translateX(-50%);
 }
-.og-tile {
+
+/* WHAT IT EARNS, UNDER THE PROMISE. It sat over the agent's feet; under the
+   sentence that says "get paid" it reads as that sentence's evidence, and the
+   picture is left to be one thing. flex-start, because the copy column is a
+   flex column and would otherwise stretch it to 700px. */
+.og-earn {
+  align-self: flex-start;
+  margin-top: 30px;
+  display: grid;
+  gap: 2px;
+  padding: 18px 28px 20px;
+  border: 1px solid var(--border-soft);
+  border-radius: 16px;
+  background: var(--card-bg);
+  box-shadow: var(--card-shadow);
+}
+.og .og-earn .earn-label { font-size: 24px; }
+.og .og-earn .earn-figure { margin: 0; font-size: 56px; line-height: 1.05; }
+
+/* ============================================================================
+   THE BLUE SET (variation B, 2026-10-07)
+   SAME RULE, DIFFERENT GROUND. One statement and one picture, nothing to read
+   under 40px, exactly as above; what changes is the surface and the
+   arrangement. The ground is the portal's confirmation band: its blue
+   gradient and its perspective grid (grid.svg, lifted from campaign.html), so
+   the variation is still a surface the product already has.
+   WHITE ON BLUE, SO EVERYTHING THAT WAS BLUE MOVES. The spark, the "on" or "AI"
+   in the wordmark and the serif accent are all brand blue on the light set,
+   and on this ground they would vanish; they go white or a pale tint of it.
+   ============================================================================ */
+.og--b {
+  background: linear-gradient(120deg, #0d52d6 0%, var(--blue) 50%, #4589ff 100%);
+  color: #fff;
+}
+.og-grid {
   position: absolute;
-  left: -84px;
-  top: -150px;
-  width: 168px;
-  height: 299px;
-  border-radius: 12px;
-  overflow: hidden;
-  background: var(--panel-bg);
-  box-shadow: 0 20px 40px -24px rgba(18, 32, 64, 0.45);
-  transform: rotateY(var(--a)) translateZ(-700px);
-  backface-visibility: hidden;
-}
-.og-tile img {
-  display: block;
+  inset: 0;
+  z-index: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
 }
-/* the split edge the ring's frames wear as they near the edge of the view */
-.og-tile.is-edge {
-  box-shadow:
-    -2px 0 0 rgba(255, 70, 90, 0.55),
-    2px 0 0 rgba(0, 200, 255, 0.55),
-    0 20px 40px -24px rgba(18, 32, 64, 0.45);
+.og--b .logo { color: #fff; }
+.og--b .logo-mark { color: #fff; filter: none; }
+.og--b .logo-on { color: #bcd5ff; }
+.og--b .og-promise { color: #fff; }
+.og--b .og-promise em { color: #cfe0ff; text-shadow: none; }
+.og--b .og-sub { color: rgba(255, 255, 255, 0.9); }
+.og--b .og-sub svg { color: #fff; }
+
+/* ---- business B: the line across the top, the films along the bottom -------
+   ONE LINE, CENTRED. At 66px "Creator marketing, done for you." fits the card's
+   width in one pass, and a single line over a row reads before two lines
+   beside a picture do. The films become a row of five in a shallow arc, the
+   centre one highest: a feed of the videos rather than a stack of three. */
+.og--b.og--business .og-copy {
+  top: 100px;
+  bottom: auto;
+  left: 64px;
+  right: 64px;
+  width: auto;
+  align-items: center;
+  text-align: center;
+}
+.og--b.og--business .og-sub { justify-content: center; margin-top: 16px; }
+.og--b.og--business .og-art {
+  top: 290px;
+  bottom: 40px;
+  left: 64px;
+  right: 64px;
+}
+.og-row { display: flex; justify-content: center; align-items: flex-start; gap: 22px; }
+.og-row img {
+  width: 150px;
+  height: 266px;
+  border-radius: 14px;
+  object-fit: cover;
+  box-shadow: 0 22px 40px -18px rgba(6, 26, 90, 0.6);
+}
+.og-row img:nth-child(1), .og-row img:nth-child(5) { margin-top: 24px; }
+.og-row img:nth-child(2), .og-row img:nth-child(4) { margin-top: 8px; }
+
+/* ---- creators B: the agent large on the left, the words on the right --------
+   MIRRORED, AND THE AGENT IS ALLOWED OFF THE CARD. The figure is mostly a head,
+   so at 640px it reads as a face and its lower edge can run off the bottom the
+   way a portrait crop does; render.js exempts it from the margin check by its
+   data-bleed attribute.
+   ITS OWN CUTOUT, agent-white.png, NOT A FILTER ON THE GREY ONE. The light
+   cutout's glyphs are thin and mostly half transparent (median alpha 121 of
+   255), which reads as grey ink on white and as a faint haze when tinted white
+   on blue. agent-white.py rebuilds it white with the alpha lifted, so the same
+   glyphs read at full strength on this ground. */
+.og--b.og--creators .og-copy { left: 560px; width: 576px; }
+.og--b.og--creators .og-art {
+  top: 0;
+  bottom: 0;
+  left: 64px;
+  right: auto;
+  width: 460px;
+}
+.og-agent-b {
+  position: absolute;
+  top: 130px;
+  left: 30px;
+  height: 640px;
+}
+.og--b .og-earn {
+  border-color: transparent;
+  background: #fff;
+  box-shadow: 0 18px 40px -20px rgba(6, 26, 90, 0.55);
 }

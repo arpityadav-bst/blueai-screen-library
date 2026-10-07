@@ -5,7 +5,7 @@
 <!-- the source of a share image, served only because the image beside it is;
      not a page anybody should land on from a search -->
 <meta name="robots" content="noindex">
-<title>BlueAI share card, creators</title>
+<title>BlueAI share card, creators, variation B</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900&family=Instrument+Serif:ital@1&display=swap">
@@ -13,15 +13,11 @@
 <link rel="stylesheet" href="og.css">
 </head>
 <body>
-<!-- THE CREATORS CARD. Source for og-creators.png; render with og/render.js.
-     THE PROMISE IS THE SITE'S OWN SENTENCE, SHORTENED. How it works says
-     "Choose an agent, make it yours, and get paid every time it completes a
-     job"; the card keeps the two halves a stranger needs. Under it, the
-     site's own earnings readout with the site's sample figure, so the money
-     sits with the sentence that promises it; the picture is the agent alone.
-     THE WORDMARK IS BlueAI, built the way the site builds it. -->
-<main class="og og--creators" id="og">
-  <div class="hero-media" aria-hidden="true"></div>
+<!-- THE CREATORS CARD, VARIATION B. Source for og-creators-b.png. The same
+     promise and earnings as og-creators.html, on the portal's blue band, with
+     the agent large on the left in white and cropped by the bottom edge. -->
+<main class="og og--b og--creators" id="og">
+  <img class="og-grid" src="grid.svg" alt="">
 
   <header class="og-top">
     <span class="logo">
@@ -30,6 +26,10 @@
     </span>
   </header>
 
+  <div class="og-art" aria-hidden="true">
+    <img class="og-agent-b" src="agent-white.png" alt="" data-bleed>
+  </div>
+
   <div class="og-copy">
     <h1 class="og-promise">Own an <em>AI agent.</em><br>Get paid for its work.</h1>
     <div class="og-earn">
@@ -37,17 +37,6 @@
       <span class="earn-figure">$1,248</span>
     </div>
   </div>
-
-  <div class="og-art" aria-hidden="true">
-    <img class="og-agent" src="agent.png" alt="">
-  </div>
 </main>
-
-<script src="../ascii-field.js"></script>
-<script>
-  if (window.onblueField) {
-    window.onblueField({ host: document.getElementById('og'), pointer: false });
-  }
-</script>
 </body>
 </html>

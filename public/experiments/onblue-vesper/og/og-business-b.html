@@ -5,7 +5,7 @@
 <!-- the source of a share image, served only because the image beside it is;
      not a page anybody should land on from a search -->
 <meta name="robots" content="noindex">
-<title>onBlue share card, business</title>
+<title>onBlue share card, business, variation B</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900&family=Instrument+Serif:ital@1&display=swap">
@@ -13,12 +13,11 @@
 <link rel="stylesheet" href="og.css">
 </head>
 <body>
-<!-- THE BUSINESS CARD. Source for og-business.png; render with og/render.js.
-     THREE THINGS, EACH CARRYING ONE PART OF THE PRODUCT. The promise says what
-     is bought; the films say what it looks like; the line under the promise
-     says how it is paid for, in the hero's own words. -->
-<main class="og og--business" id="og">
-  <div class="hero-media" aria-hidden="true"></div>
+<!-- THE BUSINESS CARD, VARIATION B. Source for og-business-b.png. The same
+     promise, the same pay line and the same films as og-business.html, on the
+     portal's blue band, arranged as one line over a row. -->
+<main class="og og--b og--business" id="og">
+  <img class="og-grid" src="grid.svg" alt="">
 
   <header class="og-top">
     <span class="logo">
@@ -28,26 +27,21 @@
   </header>
 
   <div class="og-copy">
-    <h1 class="og-promise">Creator marketing,<br><em>done for you.</em></h1>
+    <h1 class="og-promise">Creator marketing, <em>done for you.</em></h1>
     <p class="og-sub">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8.2 12.2 11 15l5-5.6"/></svg>
       You pay per verified view.
     </p>
   </div>
 
-  <!-- three of the films the site's ring plays, one from each advertiser -->
-  <div class="og-art og-fan" aria-hidden="true">
-    <img src="../samples/airtap-pasta.jpg" alt="">
+  <!-- five of the films the site's ring plays, across all three advertisers -->
+  <div class="og-art og-row" aria-hidden="true">
+    <img src="../samples/airtap-red-eye.jpg" alt="">
+    <img src="../samples/hunter-raid-first-hour.jpg" alt="">
     <img src="../samples/sandbar-think-out-loud.jpg" alt="">
-    <img src="../samples/hunter-raid-awaken.jpg" alt="">
+    <img src="../samples/airtap-pasta.jpg" alt="">
+    <img src="../samples/sandbar-the-menu.jpg" alt="">
   </div>
 </main>
-
-<script src="../ascii-field.js"></script>
-<script>
-  if (window.onblueField) {
-    window.onblueField({ host: document.getElementById('og'), pointer: false });
-  }
-</script>
 </body>
 </html>
