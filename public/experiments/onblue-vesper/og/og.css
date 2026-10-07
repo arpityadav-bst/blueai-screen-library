@@ -1,0 +1,170 @@
+/* ============================================================================
+   THE SHARE CARDS (2026-10-07)
+   1200 x 630, one per site, rendered to PNG by og/render.js. These pages are
+   the source of og-creators.png and og-business.png; edit a word here and run
+   the script again rather than touching the images.
+
+   ONE FRAME, TWO HEROES. Both cards share the ground, the glyph field, the
+   wordmark, the audience tag and the headline's type, so the two read as one
+   product side by side in a feed. What differs is the thing each site leads
+   with: the creators card puts the agent beside the copy, as that hero does,
+   and the business card stacks the copy over the film ring, as that hero does.
+
+   SIZES ARE SET HERE, NOT BORROWED. onblue.css moves --h1 and --logo at five
+   breakpoints and 1200 is one of them; a card that inherited those would change
+   whenever the site's type ladder did. The values are the site's own, written
+   once at the scale a feed preview needs: a card is shown about 500px wide, so
+   the headline is sized to survive being shrunk to forty per cent.
+   ============================================================================ */
+
+html, body {
+  margin: 0;
+  width: 1200px;
+  height: 630px;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+.og {
+  position: relative;
+  width: 1200px;
+  height: 630px;
+  overflow: hidden;
+  background: var(--bg);
+  --ascii: 0.5;
+}
+
+/* the hero's own ground, the element itself rather than a copy of its
+   gradient, so the card cannot drift from the page it advertises */
+.og .hero-media { z-index: 0; }
+.og > .ascii-bg { z-index: 1; }
+
+/* ---- the frame both cards share ------------------------------------------- */
+.og-top {
+  position: absolute;
+  top: 54px;
+  left: 64px;
+  right: 64px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.og .logo {
+  gap: 7px;
+  font-size: 30px;
+  --logo-mark: 42px;
+}
+.og .eyebrow {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* THE SITE'S HEADLINE, AT THE CARD'S SIZE. Weight, tracking, the serif italic
+   and its blue are copied from .hero h1 and its em; only the size is the
+   card's. */
+.og-title {
+  margin: 0;
+  font-family: var(--ui-font);
+  font-weight: 500;
+  font-size: 58px;
+  letter-spacing: -0.045em;
+  line-height: 1.1;
+  color: var(--ink);
+  text-wrap: balance;
+}
+.og-title em {
+  font-family: var(--serif-font);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.08em;
+  letter-spacing: -0.03em;
+  color: var(--blue-ink);
+  text-shadow: var(--em-shadow);
+}
+
+/* ---- creators: copy left, the agent right ---------------------------------- */
+.og--creators .og-copy {
+  position: absolute;
+  z-index: 2;
+  left: 64px;
+  top: 0;
+  bottom: 0;
+  width: 660px;
+  display: flex;
+  align-items: center;
+}
+.og-agent {
+  position: absolute;
+  z-index: 2;
+  /* centred on its own column, which starts where the copy's ends, and set a
+     little below the card's middle so the head clears the audience tag that
+     sits over this column's top */
+  right: 124px;
+  top: calc(50% + 22px);
+  height: 484px;
+  transform: translateY(-50%);
+}
+
+/* ---- business: copy over the ring ------------------------------------------ */
+.og--business .og-copy {
+  position: absolute;
+  z-index: 3;
+  left: 0;
+  right: 0;
+  top: 118px;
+  text-align: center;
+}
+
+/* THE RING, SEEN FROM INSIDE, which is how the hero shows it: the frame in the
+   middle is the farthest away and the ones at the ends come round towards the
+   reader, larger and turned inward. Seven frames, 18 degrees apart, the outer
+   two leaving the card at its edges, where the mask dissolves them as the
+   page's own mask does. */
+.og-ring {
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  right: 0;
+  top: 300px;
+  height: 300px;
+  perspective: 1100px;
+  perspective-origin: 50% 50%;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 12%, #000 88%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0%, #000 12%, #000 88%, transparent 100%);
+}
+.og-stage {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0;
+  height: 0;
+  transform-style: preserve-3d;
+  transform: translateZ(550px);
+}
+.og-tile {
+  position: absolute;
+  left: -84px;
+  top: -150px;
+  width: 168px;
+  height: 299px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--panel-bg);
+  box-shadow: 0 20px 40px -24px rgba(18, 32, 64, 0.45);
+  transform: rotateY(var(--a)) translateZ(-700px);
+  backface-visibility: hidden;
+}
+.og-tile img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* the split edge the ring's frames wear as they near the edge of the view */
+.og-tile.is-edge {
+  box-shadow:
+    -2px 0 0 rgba(255, 70, 90, 0.55),
+    2px 0 0 rgba(0, 200, 255, 0.55),
+    0 20px 40px -24px rgba(18, 32, 64, 0.45);
+}
