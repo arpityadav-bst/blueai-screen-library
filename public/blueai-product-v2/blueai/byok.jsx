@@ -38,6 +38,12 @@
      "Got it" has to genuinely dismiss, so this takes onDismiss. Buttons elsewhere in this
      prototype are decorative; this one is the primary way out, there being no other action. */
   function OutOfCreditsCard({ onDismiss }) {
+    // 2026-10-06 review (ROB-21389): say WHEN credits return, and let the (i) explain what they
+    // are. The countdown, the (i) and its tooltip come from credits_popup_parts.jsx, shared with
+    // the comparison page (credits-popup-options.html). The refill lands at 00:00 UTC.
+    const P = window.CreditsPopupParts;
+    const now = P.useNow();
+    const left = P.formatLeft(P.nextUtcMidnight(now) - now);
     return (
       <div>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '10px 4px 16px' }}>
@@ -46,13 +52,18 @@
         </div>
         <Divider />
         <div style={{ textAlign: 'center', padding: '16px 4px 4px' }}>
-          <p style={{ fontSize: 18, fontWeight: 800, color: '#080a1f' }}>Out of credits</p>
+          {/* The (i) sits to the right of the title. Its tooltip opens upward, over the 0, so it
+             never covers the two lines below or the button. */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+            <p style={{ fontSize: 18, fontWeight: 800, color: '#080a1f' }}>Out of credits</p>
+            <P.InfoTip dir="up" />
+          </div>
           {/* Two sentences, two lines, as drawn. Separate blocks rather than one wrapping
              paragraph, so the break always lands after "credits." instead of wherever the
              available width happens to put it. */}
           <p style={{ fontSize: 13, color: '#565977', lineHeight: 1.55, marginTop: 7 }}>
             <span style={{ display: 'block' }}>You&rsquo;ve used all of today&rsquo;s AI credits.</span>
-            <span style={{ display: 'block' }}>Credits will be refreshed tomorrow.</span>
+            <span style={{ display: 'block' }}>Credits will be refreshed in <strong style={{ color: '#080a1f', fontWeight: 700, whiteSpace: 'nowrap' }}>{left}</strong>.</span>
           </p>
           <button onClick={onDismiss} {...hov} style={{ ...pillBtn, marginTop: 18 }}>Got it</button>
         </div>

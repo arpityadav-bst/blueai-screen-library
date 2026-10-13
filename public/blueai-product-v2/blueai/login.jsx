@@ -1,9 +1,10 @@
-// BlueAI — Login Modal
-// 4 states: default → browser → signing → success
+// BlueAI — Login Modal. States: default → browser → signing → success | gate | confirm (ROB-21388,
+// cards in account_gate.jsx). onOpenBrowser hands 'browser' to the desktop's browser window;
+// browserResult finishes it. 'gate' / 'confirm' start from App Player's account (gateAccount).
 
 const { useState, useEffect } = React;
 
-function LoginModal({ isOpen, onClose, onSuccess, variant, initialStep }) {
+function LoginModal({ isOpen, onClose, onSuccess, variant, initialStep, onOpenBrowser, browserResult, onSwitchAccount, gateAccount, playerSwitch }) {
   const [step, setStep] = useState(initialStep || 'default');
   const v = variant || (typeof window !== 'undefined' && window.__loginVariant) || 'default';
 
@@ -11,14 +12,24 @@ function LoginModal({ isOpen, onClose, onSuccess, variant, initialStep }) {
   // step (MoneyMaker's welcome page already IS that screen, full-page — see moneymaker.jsx).
   useEffect(() => {if (isOpen) setStep(initialStep || 'default');}, [isOpen, initialStep]);
 
-  // Opening directly at 'browser' skips the click that normally starts handleSignIn's own
-  // auto-advance timers, so replay that same chain here instead.
+  // Opening directly at 'browser' skips the click that normally starts handleSignIn, so start
+  // the browser step here instead: open the desktop's browser window when the parent drives one,
+  // else replay the old auto-advance timers.
   useEffect(() => {
     if (!isOpen || initialStep !== 'browser') return;
+    if (onOpenBrowser) { onOpenBrowser(); return; }
     const t1 = setTimeout(() => setStep('signing'), 2200);
     const t2 = setTimeout(() => setStep('success'), 4000);
     return () => { clearTimeout(t1); clearTimeout(t2); };
   }, [isOpen, initialStep]);
+
+  // The browser page handed back an account: finish the sign-in with that account's status.
+  useEffect(() => {
+    if (!isOpen || !browserResult) return;
+    setStep('signing');
+    const t = setTimeout(() => setStep(browserResult.enrolled ? 'success' : 'gate'), 1500);
+    return () => clearTimeout(t);
+  }, [browserResult]);
 
   useEffect(() => {
     const h = (e) => {if (e.key === 'Escape' && step === 'default') onClose?.();};
@@ -30,6 +41,7 @@ function LoginModal({ isOpen, onClose, onSuccess, variant, initialStep }) {
 
   const handleSignIn = () => {
     setStep('browser');
+    if (onOpenBrowser) { onOpenBrowser(); return; }
     setTimeout(() => setStep('signing'), 2200);
     setTimeout(() => setStep('success'), 4000);
   };
@@ -62,8 +74,9 @@ function LoginModal({ isOpen, onClose, onSuccess, variant, initialStep }) {
     <div style={{ position: 'absolute', inset: 0, zIndex: 100, display: 'flex', flexDirection: 'column', background: 'rgba(255,255,255,0.55)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)' }}>
       <style>{`@keyframes loginSpin{to{transform:rotate(360deg)}} @keyframes cfGlow{0%,100%{opacity:.55}50%{opacity:.85}}`}</style>
 
-      {/* Close — only in default state */}
-      {step === 'default' &&
+      {/* Close — on every step, as in the live app (ai-worker LoginModal.tsx renders it always),
+         except the account check (ROB-21388), which blocks the home screen. */}
+      {step !== 'gate' && step !== 'confirm' &&
       <button onClick={onClose}
       style={{ position: 'absolute', top: 14, right: 14, width: 34, height: 34, borderRadius: '50%', background: 'none', border: 'none', cursor: 'pointer', color: '#9ca3af', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <IcoXClose size={18} />
@@ -262,6 +275,18 @@ function LoginModal({ isOpen, onClose, onSuccess, variant, initialStep }) {
               Continue
             </button>
           </>
+        )}
+
+        {/* ── GATE (ROB-21388): signed in, but not with the accepted account. From App Player's
+             session at launch (gateAccount), or from a browser sign-in that picked the wrong one. ── */}
+        {step === 'gate' && card(
+          <window.AccountGate.GateCard account={browserResult || gateAccount} fromPlayer={!browserResult}
+            onSwitch={() => { setStep('browser'); if (onSwitchAccount) onSwitchAccount(); }} />
+        )}
+        {/* ── CONFIRM (option B): App Player's account, confirmed before BlueAI uses it ── */}
+        {step === 'confirm' && card(
+          <window.AccountGate.ConfirmCard account={gateAccount} onContinue={() => (gateAccount.enrolled ? onSuccess?.() : setStep('gate'))}
+            onSwitch={() => { setStep('browser'); if (playerSwitch) playerSwitch(); }} />
         )}
 
       </div>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Same base as index.html, so asset and script paths resolve from this folder. -->
+  <base href="/blueai-product-v2/" />
+  <title>Credits Popup Options</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', 'Helvetica Neue', sans-serif; background: #e2e8f0; color: #0f172a; }
+    button { font-family: inherit; }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" src="blueai/credits_popup_parts.jsx"></script>
+<script type="text/babel" src="blueai/credits_popup_frame.jsx"></script>
+<script type="text/babel" src="blueai/credits_popup_options.jsx"></script>
+<script type="text/babel" src="blueai/credits_page_options.jsx"></script>
+<script type="text/babel">
+  const { useState } = React;
+  const P = window.CreditsPopupParts;
+  const { Frame } = window.CreditsPopupFrame;
+
+  // Time presets. "Real time" counts to the actual next 00:00 UTC; the rest are for watching
+  // the end of the countdown without waiting.
+  const PRESETS = [
+    { id: 'live', label: 'Real time', ms: null },
+    { id: '6h', label: '6h 42m', ms: (6 * 60 + 42) * 60e3 },
+    { id: '45m', label: '45m', ms: 45 * 60e3 },
+    { id: '10s', label: '10s', ms: 10e3 },
+  ];
+  const targetFor = (p) => (p.ms == null ? P.nextUtcMidnight(new Date()) : new Date(Date.now() + p.ms));
+
+  // The picked designs (2026-10-06 review): popup B, out-of-credits page option 1, healthy page
+  // option 3. The page shows only those unless opened with ?all=1, which brings back every option.
+  const PICKED = { now: true, b: true, pnow: true, p1: true, hnow: true, h3: true };
+  const SHOW_ALL = new URLSearchParams(location.search).get('all') === '1';
+  const visible = (list) => (SHOW_ALL ? list : list.filter((o) => PICKED[o.id]));
+  const Picked = ({ id }) => (PICKED[id] && id !== 'now' && id !== 'pnow' && id !== 'hnow'
+    ? <span style={{ marginLeft: 8, fontSize: 11, fontWeight: 700, color: '#15803d', background: '#dcfce7', borderRadius: 999, padding: '2px 8px', verticalAlign: 'middle' }}>Picked</span>
+    : null);
+
+  function App() {
+    const now = P.useNow();
+    const [preset, setPreset] = useState('live');
+    const [target, setTarget] = useState(() => targetFor(PRESETS[0]));
+    // Bumping `run` remounts every frame, so each popup reopens with its (i) closed.
+    const [run, setRun] = useState(0);
+    const pick = (p) => { setPreset(p.id); setTarget(targetFor(p)); setRun(run + 1); };
+
+    const left = target - now;
+    const t = { left, leftText: P.formatLeft(left), clock: P.formatClock(target, now), refreshed: left <= 0 };
+
+    return (
+      <div style={{ padding: '28px 24px 48px', display: 'flex', flexDirection: 'column', gap: 24, alignItems: 'center' }}>
+        <div style={{ maxWidth: 1100, width: '100%', display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <h1 style={{ fontSize: 22, fontWeight: 800 }}>{SHOW_ALL ? 'Out-of-credits: every option' : 'Out-of-credits: picked designs'}</h1>
+          <p style={{ fontSize: 13.5, color: '#475569', lineHeight: 1.6 }}>
+            Each row shows today's screen next to the proposed one. The countdown runs to 00:00 UTC (5:30 AM IST), when the daily refill is due;
+            when it ends, the proposed screens switch to the refilled state (this assumes the app asks for the refill when the timer ends, which it does not yet).
+            Hover the (i) to see the credits explanation. Close the popup to see the window behind it.
+            {' '}{SHOW_ALL
+              ? <a href="credits-popup-options.html" style={{ color: '#1990FF', fontWeight: 600 }}>Show only the picked designs</a>
+              : <a href="credits-popup-options.html?all=1" style={{ color: '#1990FF', fontWeight: 600 }}>Show every option considered</a>}
+          </p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+            <span style={{ fontSize: 13, fontWeight: 600, color: '#334155' }}>Refill in:</span>
+            {PRESETS.map((p) => (
+              <button key={p.id} onClick={() => pick(p)}
+                style={{ border: '1px solid ' + (preset === p.id ? '#1990FF' : '#cbd5e1'), background: preset === p.id ? '#1990FF' : 'white', color: preset === p.id ? 'white' : '#334155', borderRadius: 999, padding: '6px 14px', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
+                {p.label}
+              </button>
+            ))}
+            <span style={{ fontSize: 13, color: '#64748b', marginLeft: 6 }}>{t.refreshed ? 'Refilled' : t.leftText + ' left'}</span>
+          </div>
+        </div>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 28, justifyContent: 'center' }}>
+          {visible(window.CreditsPopupOptions).map((o) => (
+            <div key={o.id + run} style={{ display: 'flex', flexDirection: 'column', gap: 10, width: 421 }}>
+              <div>
+                <p style={{ fontSize: 15, fontWeight: 800 }}>{o.label}<Picked id={o.id} /></p>
+                <p style={{ fontSize: 12.5, color: '#475569', marginTop: 2, minHeight: 36 }}>{o.note}</p>
+              </div>
+              <Frame balance={t.refreshed && o.id !== 'now' ? P.DAILY : 0} render={(close) => o.render(close, t)} />
+            </div>
+          ))}
+        </div>
+
+        <div style={{ maxWidth: 1100, width: '100%', display: 'flex', flexDirection: 'column', gap: 6, marginTop: 24 }}>
+          <h2 style={{ fontSize: 19, fontWeight: 800 }}>AI Credits page</h2>
+          <p style={{ fontSize: 13.5, color: '#475569', lineHeight: 1.6 }}>
+            The page the header pill opens. Same timer and explanation, applied to its red banner. When the timer ends, the banner goes and the healthy page returns.
+          </p>
+        </div>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 28, justifyContent: 'center' }}>
+          {visible(window.CreditsPageOptions).map((o) => (
+            <div key={o.id + run} style={{ display: 'flex', flexDirection: 'column', gap: 10, width: 421 }}>
+              <div>
+                <p style={{ fontSize: 15, fontWeight: 800 }}>{o.label}<Picked id={o.id} /></p>
+                <p style={{ fontSize: 12.5, color: '#475569', marginTop: 2, minHeight: 36 }}>{o.note}</p>
+              </div>
+              {o.render(t)}
+            </div>
+          ))}
+        </div>
+
+        <div style={{ maxWidth: 1100, width: '100%', display: 'flex', flexDirection: 'column', gap: 6, marginTop: 24 }}>
+          <h2 style={{ fontSize: 19, fontWeight: 800 }}>AI Credits page, with credits</h2>
+          <p style={{ fontSize: 13.5, color: '#475569', lineHeight: 1.6 }}>
+            The user still has credits (1,250 here) and opens the page from the header pill. The chance to explain the rule before they run out.
+          </p>
+        </div>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 28, justifyContent: 'center' }}>
+          {visible(window.CreditsHealthyOptions).map((o) => (
+            <div key={o.id + run} style={{ display: 'flex', flexDirection: 'column', gap: 10, width: 421 }}>
+              <div>
+                <p style={{ fontSize: 15, fontWeight: 800 }}>{o.label}<Picked id={o.id} /></p>
+                <p style={{ fontSize: 12.5, color: '#475569', marginTop: 2, minHeight: 36 }}>{o.note}</p>
+              </div>
+              {o.render(t)}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

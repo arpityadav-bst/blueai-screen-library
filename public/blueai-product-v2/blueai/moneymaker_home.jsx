@@ -93,10 +93,16 @@
 
      zIndex 40 covers the TopNavbar (20), the composer (positioned, auto) and the bottom nav
      (static), and stays under the in-app modals (shared.jsx's 60); the card+tooltip column lifts to
-     41. Dismiss = Okay, clicking the scrim, or just running the skill — the conversation replaces
-     this component entirely. */
+     41 ONLY WHILE COACHING. It used to stay at 41 for good, which left the card out-ranking the
+     header after the scrim was gone, so the header's kebab dropdown (60, but inside the header's
+     own z-20 layer) rendered underneath the card (Abhisht, 2026-09-30). With no scrim there is
+     nothing to sit above, so the column drops back to auto. Dismiss = Okay, clicking the scrim, or
+     just running the skill — the conversation replaces this component entirely. */
   function MoneyMakerHome({ onRun }) {
-    const [coaching, setCoaching] = useState(true);
+    // A returning person (the worker already set up): no coach spotlight, and the earnings strip
+    // above the card says where they are this month (sheet row 2, 2026-10-12).
+    const back = window.WorkerFlow.isOnboarded();
+    const [coaching, setCoaching] = useState(!back);
     const run = () => onRun(PROMPT, 'MoneyMaker');
 
     return (
@@ -110,7 +116,8 @@
           <div onClick={() => setCoaching(false)} aria-hidden="true"
             style={{ position: 'absolute', inset: 0, zIndex: 40, background: 'rgba(11,18,32,0.52)', animation: 'mmScrimIn 0.35s ease both', cursor: 'pointer' }} />}
 
-        <div style={{ position: 'relative', zIndex: 41 }}>
+        <div style={{ position: 'relative', zIndex: coaching ? 41 : 'auto' }}>
+          {back && <window.WorkerDayDone.EarningsStrip />}
           <div style={{ position: 'relative', borderRadius: 16, animation: 'mmCardIn 0.4s cubic-bezier(0.22,1,0.36,1) both' }}>
             <div style={{ position: 'absolute', inset: 0, borderRadius: 16, pointerEvents: 'none', background: 'linear-gradient(white,white) padding-box, linear-gradient(135deg,#0EA4C5,#7B4CFF,#0EA4C5) border-box', border: '1.5px solid transparent', animation: 'ba-border-spin 3s linear infinite' }} />
             <div role="button" tabIndex={0} onClick={run}

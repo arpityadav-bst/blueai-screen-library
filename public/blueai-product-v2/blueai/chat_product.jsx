@@ -21,15 +21,22 @@
   const makeTaskSteps = (t) => B().makeTaskSteps(t);
   const makeResumeSteps = (t, app) => B().makeResumeSteps(t, app);
   const makeScheduledOocSteps = () => B().makeScheduledOocSteps();
+  const WF = () => window.WorkerFlow;   // the BlueAI worker's onboarding + daily run (worker_flow.jsx, ROB-21350)
+  const PlanCard = (p) => React.createElement(window.WorkerCards.PlanCard, p);
+  const AskBubble = (p) => React.createElement(window.WorkerCards.AskBubble, p);
+  const DayDoneCard = (p) => React.createElement(window.WorkerDayDone.DayDoneCard, p);   // the card that closes a daily run (sheet row 2)
+  const DayDoneOverlay = (p) => React.createElement(window.WorkerDayDone.DayDoneOverlay, p);   // the centre "run complete" moment over the whole window
 
   /* ───────── Merged chat screen: ProductHome (empty) → task-progress + feedback (active) ───────── */
-  function ChatScreen({ sessionKey, seed, loading, zeroCredits, onNoCredits, isOnboarding, sessionMode = 'default', onNeedLogin, showStates, bsInstalled = true, onBsInstalled, scheduledOoc = false }) {
+  function ChatScreen({ sessionKey, seed, loading, zeroCredits, onNoCredits, isOnboarding, sessionMode = 'default', onNeedLogin, showStates, bsInstalled = true, onBsInstalled, scheduledOoc = false, dailyRunKey = 0, onJobWaiting, permUi = 'ribbon', onDayDone }) {
     const C = window.ChatCompare;
     const [convo, setConvo] = useState([]);
     const [visible, setVisible] = useState(0);
     const [draft, setDraft] = useState('');
     const [votes, setVotes] = useState({});
     const [reasons, setReasons] = useState({});
+    const [answers, setAnswers] = useState({});   // worker question / job card answers, keyed like votes: 'k' + step index
+    const [seenDone, setSeenDone] = useState(-1);  // index of the day-done step whose centre overlay was dismissed
     const [composerFocused, setComposerFocused] = useState(false);
     const scrollRef = useRef(null);
     const taRef = useRef(null);
@@ -38,7 +45,7 @@
     // Reset on New chat (and on a login-state flip, which also bumps sessionKey)
     useEffect(() => {
       timers.current.forEach(clearTimeout); timers.current = [];
-      setConvo([]); setVisible(0); setDraft(''); setVotes({}); setReasons({});
+      setConvo([]); setVisible(0); setDraft(''); setVotes({}); setReasons({}); setAnswers({}); setSeenDone(-1);
     }, [sessionKey]);
 
     // Onboarding chat lands here from the picker → focus the composer (prefilled or empty).
@@ -52,6 +59,11 @@
     useEffect(() => {
       if (scheduledOoc && !isOnboarding) push(makeScheduledOocSteps());
     }, [scheduledOoc, sessionKey, isOnboarding]);
+
+    // "Next day" preview: the worker's daily scheduled run plays itself in its own chat, once per click.
+    useEffect(() => {
+      if (!isOnboarding && WF().claimDailyRun(dailyRunKey)) push(WF().makeDailyRun({ scheduled: true }));
+    }, [dailyRunKey, isOnboarding]);
 
     // Seed → either prefill the composer ("Try this skill") or auto-run it. Auto-run is the
     // onboarding → sign-in handoff: the message that opened the login gate gets SENT once the
@@ -67,7 +79,30 @@
     useEffect(() => () => { timers.current.forEach(clearTimeout); }, []);
 
     const started = convo.length > 0;
-    const running = visible < convo.length;
+    /* A worker question waiting on its answer is still a run in progress: the composer stays locked
+       (live placeholder below) and the Stop button stays up, so the run can be ended from the
+       question OR the composer. */
+    const awaitingIdx = convo.slice(0, visible).findIndex((s, i) => s.role === 'ask' && !answers['k' + i]);
+    const awaiting = awaitingIdx !== -1;
+    const running = visible < convo.length || awaiting;
+
+    /* An unanswered job ask lights up BlueAI's taskbar button, the way Windows flags an app that
+       needs you (Abhisht, 2026-10-05). 4s is the prototype's stand-in for "nobody answered". */
+    const jobWaiting = awaiting && (convo[awaitingIdx].id === 'job' || convo[awaitingIdx].id === 'retry');
+    const workerStarted = convo.slice(0, visible).some((s) => s.worker);
+    const doneIdx = convo.slice(0, visible).findIndex((s) => s.role === 'daydone');   // today's run has closed: the centre moment shows until dismissed
+    useEffect(() => {
+      if (!onJobWaiting) return;
+      if (!jobWaiting) { onJobWaiting(false); return; }
+      const t = setTimeout(() => onJobWaiting(true), 4000);
+      return () => clearTimeout(t);
+    }, [jobWaiting]);
+    useEffect(() => () => { if (onJobWaiting) onJobWaiting(false); }, []);
+    // A scheduled run's day-done card tells the desktop, which raises the Windows notification.
+    useEffect(() => {
+      const s = convo[visible - 1];
+      if (s && s.scheduled && (s.role === 'daydone' || s.card === 'daydone') && onDayDone) onDayDone(s.end);
+    }, [visible]);
 
     // Append steps and schedule their reveal. Shared by run() and the post-install resume.
     const push = (steps) => {
@@ -96,12 +131,15 @@
         push([{ role: 'user', content: t, d: 250 }, { role: 'needsbs', app, text: t, d: 700 }]);
         return;
       }
+      // The BlueAI worker card: onboarding the first time, a daily run after that (ROB-21350).
+      if (category === 'MoneyMaker') { push(WF().makeWorkerRun(t)); return; }
       push(makeTaskSteps(t));
     };
 
     // Stop a running task at any time: cancel pending steps, drop a trailing "working"
     // indicator, keep the partial output, and re-enable the composer to recalibrate.
     const stop = () => {
+      if (awaiting) setAnswers((p) => ({ ...p, ['k' + awaitingIdx]: 'stopped' }));
       timers.current.forEach(clearTimeout); timers.current = [];
       let end = visible;
       while (end > 0 && convo[end - 1] && convo[end - 1].role === 'thinking') end--;
@@ -132,9 +170,28 @@
         onGet={() => push([{ role: 'installing-bs', app: step.app, text: step.text, d: 200 }])} />;
       if (step.role === 'installing-bs') return <window.NeedsBluestacks.ProgressBubble key={i} app={step.app}
         onDone={() => { onBsInstalled && onBsInstalled(step.app, step.text); push(makeResumeSteps(step.text, step.app)); }} />;
+      if (step.role === 'plan') return <PlanCard key={i} />;
+      if (step.role === 'daydone' || step.card === 'daydone') return <DayDoneCard key={i} step={step} answer={answers['k' + i]}
+        onAnswer={(a) => { setAnswers((p) => ({ ...p, ['k' + i]: a })); push(WF().next(step, a)); }} />;
+      if (step.role === 'ask') return <AskBubble key={i} step={step} answer={answers['k' + i]}
+        onAnswer={(a) => { setAnswers((p) => ({ ...p, ['k' + i]: a })); push(WF().next(step, a)); }} />;
       if (step.role === 'thinking') return i === visible - 1 ? <ThinkingBubble key={i} /> : null;
       return <FinalBubble key={i} msg={step} feedback={feedbackFor(i, step)} />;
     };
+
+    /* ROB-21350 Version 1: the Mode chip sits in the composer's bottom bar in every signed-in chat
+       (product level), with Send moving down beside it. Version 2 keeps the one-row composer. */
+    const modeChip = permUi === 'chatbox' && !isOnboarding;
+    const sendBtn = (
+      <button onClick={() => (running ? stop() : run())} disabled={!running && !draft.trim()}
+        aria-label={running ? 'Stop task' : 'Send message'} title={running ? 'Stop' : 'Send'}
+        style={{ width: modeChip ? 32 : 34, height: modeChip ? 32 : 34, borderRadius: '50%', background: running ? '#eef1f6' : (draft.trim() ? '#1990FF' : '#9ec9f5'), border: running ? '1px solid #d6dce5' : 'none', cursor: (running || draft.trim()) ? 'pointer' : 'default', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'background 0.15s ease' }}
+        onMouseEnter={(e) => { if (running || draft.trim()) e.currentTarget.style.opacity = '0.85'; }}
+        onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; }}>
+        {running
+          ? <svg width="13" height="13" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="3" fill="#64748b" /></svg>
+          : <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z" /></svg>}
+      </button>);
 
     return (
       <>
@@ -153,7 +210,7 @@
                        "skill" -> "worker" 2026-09-09: the Skills tab is hidden now and this is the
                        one worker in the product, so "skill" framing no longer matches anything
                        else the product says. */
-                    ? "You're all set. The BlueAI worker is all it takes to start earning."
+                    ? (WF().isOnboarded() ? 'Welcome back. Your next run is at 11 am.' : "You're all set. The BlueAI worker is all it takes to start earning.")   // returning person: the time onboarding set (draft copy, sheet row 24)
                     : isOnboarding
                     ? 'Just send your message whenever you are ready and see me do your work for you!'
                     : 'Your AI worker for BlueStacks — pick a task below or just type what you need.'} />}
@@ -198,13 +255,15 @@
               <span style={{ width: 7, height: 7, borderRadius: '50%', background: 'white', animation: 'ba-pulse 1.3s infinite' }} />
               Send a message to watch BlueAI work
             </div>}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, border: '1.5px solid ' + (isOnboarding ? '#60a5fa' : (composerFocused ? '#1990FF' : '#c7dcf5')), borderRadius: isOnboarding ? 18 : 14, background: 'white', padding: '8px 10px', boxShadow: composerFocused ? '0 0 0 3px rgba(25,144,255,0.12)' : (isOnboarding && !started ? '0 0 0 4px rgba(25,144,255,0.12)' : '0 1px 4px rgba(0,0,0,0.04)'), transition: 'border-color 0.15s ease, box-shadow 0.15s ease' }}>
+          {/* ROB-21350 Version 2: the Automatic ribbon, only once the worker has started in this chat. */}
+          {permUi === 'ribbon' && workerStarted && <window.AgentPermissions.AutoRibbon />}
+          <div style={{ display: 'flex', flexDirection: modeChip ? 'column' : 'row', alignItems: modeChip ? 'stretch' : 'center', gap: modeChip ? 2 : 8, border: '1.5px solid ' + (isOnboarding ? '#60a5fa' : (composerFocused ? '#1990FF' : '#c7dcf5')), borderRadius: isOnboarding ? 18 : 14, background: 'white', padding: modeChip ? '8px 8px 6px 10px' : '8px 10px', boxShadow: composerFocused ? '0 0 0 3px rgba(25,144,255,0.12)' : (isOnboarding && !started ? '0 0 0 4px rgba(25,144,255,0.12)' : '0 1px 4px rgba(0,0,0,0.04)'), transition: 'border-color 0.15s ease, box-shadow 0.15s ease' }}>
             <textarea ref={taRef} value={draft} disabled={running || scheduledOoc} rows={1}
               onChange={(e) => setDraft(e.target.value)}
               onFocus={() => setComposerFocused(true)}
               onBlur={() => setComposerFocused(false)}
               onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); run(); } }}
-              placeholder={running ? 'BlueAI is working…'
+              placeholder={running ? (awaiting ? 'Please respond using the buttons above...' : 'BlueAI is working…')
                 /* Ordered AFTER the running check on purpose: while the scheduled run is still
                    playing, "BlueAI is working…" is the honest label, and it only flips to the
                    credits line at the moment the run actually dies.
@@ -222,18 +281,13 @@
                    Copy renamed 2026-09-09 (MoneyMaker -> "BlueAI worker"); sessionMode value
                    stays 'moneymaker' internally, this is a display-string-only change. */
                 : (sessionMode === 'moneymaker' && !started ? 'Ask anything, or run the BlueAI worker above' : 'Type your message...')}
-              style={{ flex: 1, resize: 'none', background: 'transparent', border: 'none', outline: 'none', fontSize: 13.5, color: '#1f2937', padding: '4px 6px', lineHeight: 1.5, fontFamily: 'inherit', maxHeight: 120, overflowY: 'hidden' }} />
-            <button onClick={() => (running ? stop() : run())} disabled={!running && !draft.trim()}
-              aria-label={running ? 'Stop task' : 'Send message'} title={running ? 'Stop' : 'Send'}
-              style={{ width: 34, height: 34, borderRadius: '50%', background: running ? '#eef1f6' : (draft.trim() ? '#1990FF' : '#9ec9f5'), border: running ? '1px solid #d6dce5' : 'none', cursor: (running || draft.trim()) ? 'pointer' : 'default', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'background 0.15s ease' }}
-              onMouseEnter={(e) => { if (running || draft.trim()) e.currentTarget.style.opacity = '0.85'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; }}>
-              {running
-                ? <svg width="13" height="13" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="3" fill="#64748b" /></svg>
-                : <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z" /></svg>}
-            </button>
+              style={{ flex: modeChip ? 'none' : 1, resize: 'none', background: 'transparent', border: 'none', outline: 'none', fontSize: 13.5, color: '#1f2937', padding: '4px 6px', lineHeight: 1.5, fontFamily: 'inherit', maxHeight: 120, overflowY: 'hidden' }} />
+            {modeChip
+              ? <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}><window.AgentPermissions.ModeChip />{sendBtn}</div>
+              : sendBtn}
           </div>
         </div>}
+        {doneIdx > seenDone && <DayDoneOverlay step={convo[doneIdx]} onClose={() => setSeenDone(doneIdx)} />}
       </>);
   }
 
