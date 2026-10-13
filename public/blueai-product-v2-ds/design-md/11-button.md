@@ -2,7 +2,7 @@
 
 **Status:** Button, Primary in V2 today, IconButton, Link: all Changed from V2.
 
-**Why:** The worker acts on the partner's own accounts, so every action needs a rank: the one that commits (I agree, turn on; Got it), the frequent second one (Cancel), the third (Not now), the one that destroys (Remove). V2 gives most of them the same blue fill in six radii with three hover models and blue glows, and white on its #1990FF is 3.24:1 (index.html:342, byok.jsx:22). The system takes the site's ladder and shape (radius 6, 13/500, a real press, disabled with a reason; onblue/onblue.css:959-999, onblue/apply.html:411) and an AA action blue (P2, P5, P6, P7).
+**Why:** The worker acts on the partner's own accounts, so every action needs a rank: the one that commits (I agree, turn on; Got it), the frequent second one (Cancel), the third (Not now), the one that destroys (Remove). V2 gives most of them the same blue fill in six radii with three hover models and blue glows, and white on its #1990FF is 3.24:1 (index.html:351, byok.jsx:22). The system takes the site's ladder and shape (radius 6, 13/500, a real press, disabled with a reason; onblue/onblue.css:959-999, onblue/apply.html:411) and an AA action blue (P2, P5, P6, P7).
 
 ### Button (Changed from V2)
 
@@ -14,7 +14,7 @@
 
 **Sizes.** sm 28 (`--v2-control-sm`) for dense rows; md 36 (`--v2-control-md`) default; lg 44 (`--v2-control-lg`) for full-width sheet and dialog actions (`full`). sm grows an invisible ::after to the 32px hit floor.
 
-**States.** Rest; hover; focus-visible (2px `--v2-blue` outline, offset 2); active (translateY 1px, plus `--v2-wash-press` on secondary and quiet); disabled (0.45, `aria-disabled`, still focusable, reason printed); loading (`aria-busy`, spinner, clicks ignored, cursor progress). In V2 today: New Chat at `?start=worker` (index.html:342); Save settings on the Settings tab (settings.jsx:123); Cancel and I agree, turn on in the Automatic consent (agent_permissions.jsx:164-165, open the Mode chip at `?start=worker&v=1` and pick Automatic); Got it on the day-done card (worker_day_done.jsx:148, `?end=job`) and the out-of-credits card (byok.jsx:26, `?credits=0` then send); Apply disabled at 0.45 with no reason (ai_mode.jsx:190, Settings, AI Mode, Hybrid, Custom).
+**States.** Rest; hover; focus-visible (2px `--v2-blue` outline, offset 2); active (translateY 1px, plus `--v2-wash-press` on secondary and quiet); disabled (0.45, `aria-disabled`, still focusable, reason printed); loading (`aria-busy`, spinner, clicks ignored, cursor progress). In V2 today: New Chat at `?start=worker` (index.html:351); Save settings on the Settings tab (settings.jsx:138); Cancel and I agree, turn on in the Automatic consent (agent_permissions.jsx:190-191, open the mode sheet at `?start=worker&v=1` and switch YouTube on); Got it on the day-done card (worker_day_done.jsx:148, `?end=job`) and the out-of-credits card (byok.jsx:26, `?credits=0` then send); Apply disabled at 0.45 with no reason (ai_mode.jsx:190, Settings, AI Mode, Hybrid, Custom).
 
 **Props.** `variant` ('primary' | 'secondary' | 'quiet' | 'danger', default 'secondary'), `size` ('sm' | 'md' | 'lg'), `icon`, `iconRight` (icon names, section 08), `loading`, `disabled`, `disabledReason` (string printed under it), `full`, `type` ('button'), `onClick`, `href` (renders an a), `external` (new tab, external glyph, "opens in a new tab" for screen readers), `className`, `children`.
 
@@ -58,7 +58,7 @@
 
 **Sizes.** 36 default, 32 for dense rows, 28 inside fields (the reveal button); 28 grows an invisible 32 target.
 
-**States.** Rest; hover (`--v2-wash-hover`, ink glyph); focus-visible; active, menu open or pressed (`--v2-wash-press`, ink glyph, from `active`, `aria-expanded` or `aria-pressed`); disabled (0.45, `aria-disabled`). In V2 today: the help and more icons on the top bar at `?start=worker` (index.html:292, #64748b, #1990FF when open, no hover, no focus); the out-of-credits close at #94a3b8 (2.56:1, byok.jsx:81).
+**States.** Rest; hover (`--v2-wash-hover`, ink glyph); focus-visible; active, menu open or pressed (`--v2-wash-press`, ink glyph, from `active`, `aria-expanded` or `aria-pressed`); disabled (0.45, `aria-disabled`). In V2 today: the help and more icons on the top bar at `?start=worker` (index.html:301, #64748b, #1990FF when open, no hover, no focus); the out-of-credits close at #94a3b8 (2.56:1, byok.jsx:81).
 
 **Props.** `icon`, `label` (required), `size` (28 | 32 | 36), `variant`, `active`, `tone` ('default' | 'danger'), `disabled`, `tip` (default on: a label Tooltip showing the label, section 23; false opts out), `onClick`; `aria-expanded`, `aria-haspopup`, `aria-pressed` pass through.
 

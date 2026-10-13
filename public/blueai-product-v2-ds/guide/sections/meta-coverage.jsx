@@ -21,7 +21,7 @@
   const NOT_LOADED = [
     ['DesktopScene, DesktopToast, BrowserWindow, InstallDialog', 'Scene, not product: shown as V2 URL states (FrameState) because product-scene.css is not loaded here (section 71).'],
     ['SiteSignIn', 'The site’s sign-in page, drawn only inside SignInPage’s browser; shown through V2 URL states (section 56).'],
-    ['ProductChat', 'V2’s chat screen (blueai/chat_product.jsx:294, loaded by V2’s index.html:159). It needs the whole app, so it is shown only as V2 URL states (FrameState), as in section 57 (section 76).'],
+    ['ProductChat', 'V2’s chat screen (blueai/chat_product.jsx:294, loaded by V2’s index.html:167). It needs the whole app, so it is shown only as V2 URL states (FrameState), as in section 57 (section 76).'],
   ];
   const names = function (rows) { return rows.reduce(function (n, r) { return n + r[0].split(', ').length; }, 0); };
 

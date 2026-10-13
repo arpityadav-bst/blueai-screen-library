@@ -21,9 +21,9 @@
 - Selected: blue bar + ink; no fill, no weight change, so labels never shift.
 - Focus-visible: 2px blue outline, inset 2.
 - Badge: something in Activity needs the partner (a waiting job, a rejected day); hidden at 0, "9+" above 9.
-- Pushed screen open: the parent tab stays lit (V2 lights none, index.html:982).
+- Pushed screen open: the parent tab stays lit (V2 lights none, index.html:992).
 - Signed out: no nav (AppFrame chrome-free).
-V2: `?start=worker` shows the nav with Chat active (the default, index.html:604).
+V2: `?start=worker` shows the nav with Chat active (the default, index.html:613).
 
 **Props.** `BottomNav { items = NAV_ITEMS ([{ id, label, icon, badge }]), value, onChange(id), ariaLabel = 'Main', forceState, className }`. `value` is the parent tab while a pushed screen is open. `forceState` is for guide specimens only.
 

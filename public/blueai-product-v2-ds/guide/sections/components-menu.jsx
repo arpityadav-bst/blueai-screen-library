@@ -4,10 +4,10 @@
   const { useState } = React;
   const noop = function () {};
   const FAQ_URL = 'https://bluestacks.ai/getting-started#ai-credits';
-  // V2 copy, quoted: FAQ, Earnings (index.html:355, 368); the footnote (agent_permissions.jsx:144).
+  // V2 copy, quoted: FAQ, Earnings (index.html:364, 377); the footnote (V2's mode menu until 2026-10-14).
   // Proposed copy (glossary): Report a problem (V2: Report Issue), Account (V2: Profile), Sign out (V2: Logout).
   const FOOTNOTE = 'Automatic starts and finishes that app’s jobs without asking. Each app has its own setting, and a new app starts on Always ask.';
-  const HEADER = 'Paid jobs, per app'; // proposed: V2's "Mode, per app" uses Mode as a label, which the glossary retires
+  const HEADER = 'Paid jobs, per app'; // proposed: V2's former "Mode, per app" used Mode as a label, which the glossary retires
   const APPS = [
     { id: 'youtube', name: 'YouTube', icon: 'youtube' },
     { id: 'instagram', name: 'Instagram', icon: 'instagram', status: 'coming-soon' },
@@ -81,7 +81,6 @@
   }
 
   function MenuSection() {
-    const AP = window.AgentPermissions;
     const open = function (items, label, icon) { return <Win h={230}><Bar icon={icon || 'more'} label={label || 'More'} items={items} open /></Win>; };
     return (
       <G.Section id="menu">
@@ -103,7 +102,7 @@
           <G.CompareRow
             v2={<G.FrameState url="index.html?start=worker" label="V2 signed in: open the ? or the three dots" height={760} />}
             system={<Win h={260}><Bar icon="more" label="More" items={moreItems()} open /></Win>}
-            changed="V2's two header menus close only on an outside mousedown: no role, no Esc, no arrow keys, hover painted by onMouseEnter. Rows are 14px #1f2937 with 18px #64748b icons, a red Report Issue glyph and a 14px #94a3b8 external arrow; the panel is min 190, radius 10, its own shadow, z 60. The system menu is the keyboard menu ModeChip already half-implements: role menu, aria-haspopup and aria-expanded on the button, arrows, Home, End, Esc returning focus, Tab closing. Rows are 36px, radius 6, 13/500 ink-2 with 16px ink-3 icons, one hover wash and a visible focus ring; danger only for a row that destroys; external rows carry the icon. Words follow the glossary: Sign out, Account, Report a problem." />
+            changed="V2's two header menus close only on an outside mousedown: no role, no Esc, no arrow keys, hover painted by onMouseEnter. Rows are 14px #1f2937 with 18px #64748b icons, a red Report Issue glyph and a 14px #94a3b8 external arrow; the panel is min 190, radius 10, its own shadow, z 60. The system menu is a keyboard menu: role menu, aria-haspopup and aria-expanded on the button, arrows, Home, End, Esc returning focus, Tab closing. Rows are 36px, radius 6, 13/500 ink-2 with 16px ink-3 icons, one hover wash and a visible focus ring; danger only for a row that destroys; external rows carry the icon. Words follow the glossary: Sign out, Account, Report a problem." />
           <G.SpecDrawer rows={[
             { part: 'Panel', token: '--v2-surface, --v2-line, --v2-radius-md, --v2-shadow-1', value: 'white, 1px 10% line, 10px, the float cast', ref: 'overlays.menu.panel' },
             { part: 'Width', token: null, value: 'min 200px, max 280px', ref: 'overlays.menu.panel' },
@@ -140,17 +139,17 @@
             { label: 'Open up', node: <Win h={300} align="flex-end" justify="flex-start"><ModePopover open placement="up" /></Win>, note: 'From the ribbon above the composer.' },
           ]} />
           <G.CompareRow
-            v2={<Win h={300} justify="flex-start"><G.Live label="AgentPermissions.ModeChip" get={function () { return AP && AP.ModeChip; }} props={{ placement: 'down' }} /></Win>}
+            v2={<Win h={300} justify="flex-start"><span className="g-muted">V2 has no popover since 2026-10-14: the composer chip and the ribbon’s Change open a bottom sheet (section 26).</span></Win>}
             system={<Win h={300} justify="flex-start"><ModePopover open placement="down" /></Win>}
-            changed={'Click the chip on the left. V2 calls this a menu (role menu around two radio groups) at a fixed width of 364 with left -4; Esc and an outside click close it but focus is not given back. Its header and footnote are #9ca3af (2.54:1). The system makes it what it is: a non-modal dialog that takes focus on open, gives it back on Esc, and closes on an outside click or when focus leaves. It fits the window (width up to 364, flips and swaps), the footnote rises to ink-3 (6.0:1), the header to the eyebrow style, and the header loses the word Mode, which the glossary retires as a label: "' + HEADER + '" is proposed copy. The footnote is V2\'s, word for word.'} />
+            changed={'Until 2026-10-14 V2 drew this as a menu (role menu around two radio groups, a fixed 364 wide, a #9ca3af header and footnote at 2.54:1, focus not given back on Esc); it is now a bottom sheet with one switch per app (section 26). The system keeps the popover for a few controls anchored to a button: a non-modal dialog that takes focus on open, gives it back on Esc, and closes on an outside click or when focus leaves. It fits the window (width up to 364, flips and swaps), with an eyebrow header and an ink-3 footnote (6.0:1). "' + HEADER + '" is proposed copy; the footnote keeps the words of V2\'s former menu.'} />
           <G.SpecDrawer rows={[
-            { part: 'Panel', token: '--v2-surface, --v2-line, --v2-radius-md, --v2-shadow-1', value: 'the Menu panel', ref: 'overlays.popover.panel' },
-            { part: 'Width', token: '--v2-shell-w, --v2-gutter', value: 'min(364px, window less two gutters)', ref: 'overlays.popover.panel' },
-            { part: 'Placement', token: null, value: 'down or up, start or end; fits the window', ref: 'overlays.popover.placement' },
-            { part: 'Header', token: '.v2-text-eyebrow (--v2-text-11, --v2-ink-3)', value: 'eyebrow 11/500 uppercase, the one eyebrow recipe', ref: 'overlays.popover.header' },
-            { part: 'Footnote', token: '--v2-text-12, --v2-ink-3', value: '12px, #5f636b (6.0:1)', ref: ['overlays.popover.footnote', 'overlays.popover.faint'] },
-            { part: 'Role', token: null, value: 'dialog (non-modal), named by its header; button aria-haspopup dialog', ref: ['overlays.popover.role', 'overlays.popover.trigger'] },
-            { part: 'Closes', token: null, value: 'Esc (focus back to the button), outside click, focus leaving', ref: ['overlays.popover.esc', 'overlays.popover.outside'] },
+            { part: 'Panel', token: '--v2-surface, --v2-line, --v2-radius-md, --v2-shadow-1', value: 'the Menu panel' },
+            { part: 'Width', token: '--v2-shell-w, --v2-gutter', value: 'min(364px, window less two gutters)' },
+            { part: 'Placement', token: null, value: 'down or up, start or end; fits the window' },
+            { part: 'Header', token: '.v2-text-eyebrow (--v2-text-11, --v2-ink-3)', value: 'eyebrow 11/500 uppercase, the one eyebrow recipe' },
+            { part: 'Footnote', token: '--v2-text-12, --v2-ink-3', value: '12px, #5f636b (6.0:1)' },
+            { part: 'Role', token: null, value: 'dialog (non-modal), named by its header; button aria-haspopup dialog (V2’s mode chip says dialog too, for its sheet)', ref: 'overlays.sheet.mode-chip' },
+            { part: 'Closes', token: null, value: 'Esc (focus back to the button), outside click, focus leaving' },
             { part: 'Modes', token: null, value: 'Always ask / Automatic, per app', ref: ['overlays.popover.mode-always', 'overlays.popover.mode-auto'] },
           ]} />
         </G.Part>

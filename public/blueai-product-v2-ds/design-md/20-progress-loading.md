@@ -72,7 +72,7 @@
 **Sizes.** Free: `width` and `height` props (numbers are px).
 
 **States.**
-- Shimmering. V2: every cold start shows HomeSkeleton for 850ms (index.html:735).
+- Shimmering. V2: every cold start shows HomeSkeleton for 850ms (index.html:745).
 - Still under reduced motion (V2 has no rule, boot_splash.jsx:14).
 - Replaced by content: the screen swaps the composite for the real thing in the same place.
 

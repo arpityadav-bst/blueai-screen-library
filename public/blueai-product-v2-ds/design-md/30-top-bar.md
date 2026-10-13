@@ -2,7 +2,7 @@
 
 **Status:** TopBar: Changed from V2. WorkerStatusChip: New. BrandMark: Changed from V2. Help and more menus: Changed from V2.
 
-**Why:** The partner opens BlueAI to check one thing: did today's run happen, and does the day count. V2's header gives its loudest slot, the only filled control in the chrome, to a "New Chat" pill (index.html:342) and shows the run nowhere; it runs the brand gradient three times in 419px (index.html:326, 333, 337); and two of its six menu rows do nothing (index.html:355-356).
+**Why:** The partner opens BlueAI to check one thing: did today's run happen, and does the day count. V2's header gives its loudest slot, the only filled control in the chrome, to a "New Chat" pill (index.html:351) and shows the run nowhere; it runs the brand gradient three times in 419px (index.html:335, 342, 346); and two of its six menu rows do nothing (index.html:364-365).
 
 ### TopBar (Changed from V2)
 
@@ -78,7 +78,7 @@ One rule for the ended chip: once the period has ended, every signed-in screen s
 
 **Variants.** Mark + wordmark; mark only (alt "BlueAI"); stacked (splash).
 
-**Sizes.** 24 logo + 16/600 wordmark, gap 6 (top bar). 48 logo + 24/600 wordmark, gap 12, stacked (splash). V2: logo 32 + 22/700 (index.html:325-326).
+**Sizes.** 24 logo + 16/600 wordmark, gap 6 (top bar). 48 logo + 24/600 wordmark, gap 12, stacked (splash). V2: logo 32 + 22/700 (index.html:334-335).
 
 **States.** None.
 
@@ -102,19 +102,19 @@ One rule for the ended chip: once the period has ended, every signed-in screen s
 
 | Menu | Item | Icon | Does | V2 today |
 |---|---|---|---|---|
-| Help | FAQ | help | Opens the onBlue site's FAQ (index.html#faqs) in the browser | only closes the menu (index.html:355) |
-| Help | Report a problem | alert, ink | Opens the Report a problem sheet, filled in from the last run (section 65) | "Report Issue" only closes the menu; red glyph (index.html:356) |
-| More | Notifications | bell | Pushes Notifications (section 60) | not in V2; "Chat History" sat here (index.html:366) |
-| More | Account | user | Pushes Account (section 64) | "Profile" (index.html:367) |
-| More | Earnings | earnings + external | Opens the Earnings dashboard: the one `EARNINGS_URL` (kit/worker-data.jsx) | same label, one of two URLs (index.html:320) |
+| Help | FAQ | help | Opens the onBlue site's FAQ (index.html#faqs) in the browser | only closes the menu (index.html:364) |
+| Help | Report a problem | alert, ink | Opens the Report a problem sheet, filled in from the last run (section 65) | "Report Issue" only closes the menu; red glyph (index.html:365) |
+| More | Notifications | bell | Pushes Notifications (section 60) | not in V2; "Chat History" sat here (index.html:375) |
+| More | Account | user | Pushes Account (section 64) | "Profile" (index.html:376) |
+| More | Earnings | earnings + external | Opens the Earnings dashboard: the one `EARNINGS_URL` (kit/worker-data.jsx) | same label, one of two URLs (index.html:329) |
 | (separator) | | | | |
-| More | Sign out | sign-out | Asks, then signs out and pauses the worker | "Logout"; confirm does nothing (index.html:369, 1000) |
+| More | Sign out | sign-out | Asks, then signs out and pauses the worker | "Logout"; confirm does nothing (index.html:378, 1010) |
 
 Activity is a tab, so the menu does not repeat it; Notifications has no other door.
 
 **Sizes.** Menu spec, section 27.
 
-**States.** Closed, open, item hover, item focus-visible. V2: open only by mouse; close on an outside mousedown (index.html:285).
+**States.** Closed, open, item hover, item focus-visible. V2: open only by mouse; close on an outside mousedown (index.html:294).
 
 **Props.** `helpItems`, `moreItems` on TopBar (Menu items: `{ icon, label, onSelect, href, external }` or `{ separator }`).
 

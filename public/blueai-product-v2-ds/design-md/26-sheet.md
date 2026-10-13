@@ -14,7 +14,7 @@
 
 **Sizes.** One: the window's width; height to content.
 
-**States.** Blocking; dismissible; entering; leaving; busy (the primary loads while the agreement is recorded); reduced motion (arrives and leaves at once). In V2 today: a bare `index.html` opens on the first-run Terms sheet; the Preview panel row Terms switches First run, Terms update, Off (index.html:1151); `?start=worker` hides it (index.html:660).
+**States.** Blocking; dismissible; entering; leaving; busy (the primary loads while the agreement is recorded); reduced motion (arrives and leaves at once). In V2 today: a bare `index.html` opens on the first-run Terms sheet; the Preview panel row Terms switches First run, Terms update, Off (index.html:1163); `?start=worker` hides it (index.html:670). Since 2026-10-14 V2 has a second, dismissible sheet: the mode sheet ('Apps BlueAI can run on its own', agent_permissions.jsx:124-157), opened by the composer chip (`?start=worker&v=1`) or the ribbon's Change; the scrim, Esc and a close button close it, focus moves to the close button and back, radius 20, a lighter scrim (rgba(15,23,42,0.24)), it slides up 0.36s with no exit, and the app list scrolls inside.
 
 **Props.** `open`, `onClose`, `title`, `description`, `blocking`, `busy`, `actions` (as Dialog), `footer`, `initialFocus`, `className`, `children`; `preview` for guide specimens.
 

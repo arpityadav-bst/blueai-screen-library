@@ -2,7 +2,7 @@
 
 **Status:** Select: Changed from V2.
 
-**Why:** The partner picks from a short plain list in two places (which provider, which model) and both live under Settings, Advanced (R31). The native select gives keyboard, screen readers and a list that fits a 419px window for free; it only needs to wear the field box. V2 shows three looks on one screen (radius 10 with a custom chevron, radius 8 with the OS arrow) and its provider select removes the focus outline with nothing in its place (byok_settings.jsx:31; settings.jsx:107; P2, P7).
+**Why:** The partner picks from a short plain list in two places (which provider, which model) and both live under Settings, Advanced (R31). The native select gives keyboard, screen readers and a list that fits a 419px window for free; it only needs to wear the field box. V2 shows three looks on one screen (radius 10 with a custom chevron, radius 8 with the OS arrow) and its provider select removes the focus outline with nothing in its place (byok_settings.jsx:31; settings.jsx:122; P2, P7).
 
 ### Select (Changed from V2)
 
@@ -14,7 +14,7 @@
 
 **Sizes.** md 40, sm 32.
 
-**States.** Placeholder (ink-3, "Add a provider"); rest; hover (edge 20%); focus (blue edge + 3px ring); filled; open (the operating system draws the list; options always ink); disabled (sunken, 0.45, helper says why); invalid (edge `--v2-danger-edge`, message, as TextField). In V2 today: Settings, Bring Your Own Key switched on: "Add a provider" at #9ca3af (2.54:1), radius 10, custom chevron, no focus style (byok_settings.jsx:31-32, 113-114); two cards below, AI Model with the OS arrow, radius 8, width 200 (settings.jsx:107).
+**States.** Placeholder (ink-3, "Add a provider"); rest; hover (edge 20%); focus (blue edge + 3px ring); filled; open (the operating system draws the list; options always ink); disabled (sunken, 0.45, helper says why); invalid (edge `--v2-danger-edge`, message, as TextField). In V2 today: Settings, Bring Your Own Key switched on: "Add a provider" at #9ca3af (2.54:1), radius 10, custom chevron, no focus style (byok_settings.jsx:31-32, 113-114); two cards below, AI Model with the OS arrow, radius 8, width 200 (settings.jsx:122).
 
 **Props.** `label`, `hideLabel`, `value` / `defaultValue`, `options` ([{value, label, disabled}]), `placeholder`, `onChange(value, event)`, `helper`, `error`, `required`, `optional`, `disabled`, `size`, `width`, `id`, `className`.
 

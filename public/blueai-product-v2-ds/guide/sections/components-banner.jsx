@@ -95,7 +95,7 @@
             { part: 'Copy', token: null, value: 'Out of credits', ref: 'display-feedback.banner.ooc-title' },
             { part: 'Copy', token: null, value: 'You’ve used all of today’s AI credits. Credits will be refreshed in 6h 42m.', ref: ['display-feedback.banner.ooc-copy', 'display-feedback.banner.ooc-refill'] },
             { part: 'Copy', token: null, value: "This PC doesn't meet the requirements for Hybrid. Cloud mode will be used.", ref: 'display-feedback.banner.hw-copy' },
-            { part: 'Copy', token: null, value: 'Automatic is on for YouTube. BlueAI takes paid YouTube jobs without asking.', ref: 'display-feedback.banner.ribbon-copy' },
+            { part: 'Copy', token: null, value: 'Automatic on YouTube (a count once several apps are on)', ref: 'display-feedback.banner.ribbon-copy' },
             { part: 'Copy', token: null, value: 'Yesterday’s run verified.', ref: 'display-feedback.stat.verified-line' },
             { part: 'Copy (proposed)', token: null, value: 'Add a key, You’re offline, Today’s run starts when BlueAI is back online., Try again, Didn’t finish, Today doesn’t count yet. Try again before 9 pm.' },
           ]} />

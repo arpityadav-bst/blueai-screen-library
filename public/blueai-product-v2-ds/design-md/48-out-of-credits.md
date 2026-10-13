@@ -6,7 +6,7 @@
 ### Out-of-credits popup (retired) (Changed from V2)
 - **Purpose:** none left. V2 lets the partner type at zero, then stops the send with a popup. The system locks the composer at zero and says so before anyone types (section 38), so the moment the popup answered never happens and there is no dialog to dismiss or buy from.
 - **V2 today:** `index.html?start=worker&credits=0`, type in the composer, press Send. Width 300, radius 12, its own scrim rgba(15,23,42,0.5) at z 130, backdrop click only, no role, focus never moves in (byok.jsx:78-80); a gradient 38/800 zero (byok.jsx:51); an unlabelled 22px (i) "What are credits?" (credits_popup_parts.jsx:94); "You’ve used all of today’s AI credits." / "Credits will be refreshed in **6h 42m**." (byok.jsx:65-66).
-- **Where its parts went:** the time and the day line to the composer notice (below); the explainer stays V2's, on the AI credits screen (section 66, `index.html:525-537`); the refreshed moment to the AI credits screen's success banner.
+- **Where its parts went:** the time and the day line to the composer notice (below); the explainer stays V2's, on the AI credits screen (section 66, `index.html:534-546`); the refreshed moment to the AI credits screen's success banner.
 - **Do / Don't:** Do lock the field before anyone types. Don't reveal zero only after Send. Don't add a top-up or "earn credits" action.
 
 **Proposed copy (day line, pending D6):** covered "Today’s run isn’t affected." / waiting "Today’s run starts once they’re back, so today can still count." / stopped "Today won’t count toward your 20 days." The PM confirms whether a run stopped for credits loses the day.

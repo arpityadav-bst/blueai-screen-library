@@ -4,6 +4,9 @@
   const G = window.V2Guide;
 
   const ENTRIES = [
+    ['2026-10-14', 'Mode sheet, one-line ribbon and Settings > Worker in V2', [
+      'V2’s per-app mode is now one switch per app (on = Automatic; on asks for consent, off applies at once) in a bottom sheet opened by the composer chip or the ribbon’s Change; the ribbon is one line (Automatic on YouTube, or a count); Settings has a Worker card with the same apps list; the Preview panel’s Version row is Change mode from, plus a Mode row. Refs and sections 14, 21, 26, 27, 38, 42, 46, 53, 57, 61, 62 and 72 updated.',
+    ]],
     ['2026-10-14', 'Minimal consent in V2', [
       'V2’s consent dialog is now minimal (title, one paragraph, Cancel / I agree, turn on); refs and sections updated.',
     ]],

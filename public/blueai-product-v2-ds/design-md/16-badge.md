@@ -2,7 +2,7 @@
 
 **Status:** Changed from V2.
 
-**Why:** The money depends on a day's state (pending verification, verified, not counted), so that state needs one unmistakable label on every row and card. V2 has five pill systems for it: the AI Mode status chip (12/600, ai_mode.jsx:38), the Jobs badge (radius 4 with a line, jobs.jsx:31), "Active" (10/700 uppercase, index.html:474), "Verified" (11.5/700, profile.jsx:50) and "Not enrolled" (11/600 uppercase at 0.12em, account_gate.jsx:26). One Badge replaces all five.
+**Why:** The money depends on a day's state (pending verification, verified, not counted), so that state needs one unmistakable label on every row and card. V2 has five pill systems for it: the AI Mode status chip (12/600, ai_mode.jsx:38), the Jobs badge (radius 4 with a line, jobs.jsx:31), "Active" (10/700 uppercase, index.html:483), "Verified" (11.5/700, profile.jsx:50) and "Not enrolled" (11/600 uppercase at 0.12em, account_gate.jsx:26). One Badge replaces all five.
 
 ### Badge (Changed from V2)
 

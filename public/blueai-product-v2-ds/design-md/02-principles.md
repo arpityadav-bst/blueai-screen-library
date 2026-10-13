@@ -7,7 +7,7 @@
 ### P1 The worker is the product; chat is a window onto it
 
 - **Rule:** Home shows the worker and today's run first. A run, its waiting question and its result live in one Worker record above any screen; no navigation can erase them.
-- **Why:** V2 unmounts the chat (and the run) when the partner opens Credits, History, Profile or another tab (index.html:955-971, chat_product.jsx:33, 79); the failed-day toast then opens a screen with no Retry (worker_day_done.jsx:203, index.html:1053). A worker that runs unattended needs a state that outlives its views.
+- **Why:** V2 unmounts the chat (and the run) when the partner opens Credits, History, Profile or another tab (index.html:965-981, chat_product.jsx:33, 79); the failed-day toast then opens a screen with no Retry (worker_day_done.jsx:203, index.html:1065). A worker that runs unattended needs a state that outlives its views.
 - **Prevents:** Lost runs, lost Retry, a day count that goes backwards overnight (worker_day_done.jsx:39 vs :173).
 
 ### P2 Money and days are said once, the same way everywhere
@@ -25,7 +25,7 @@
 ### P4 Every promise has a control
 
 - **Rule:** 'Pause, stop, or disconnect anytime' and 'turn it off anytime' each map to a findable control in Settings > Worker and Connected apps, reachable from the home in two taps.
-- **Why:** The promises exist in live copy (worker_flow.jsx:67, agent_permissions.jsx:162) but no screen delivers them (settings.jsx:129-143).
+- **Why:** The promises exist in live copy (worker_flow.jsx:67, agent_permissions.jsx:188) but only one has a screen: since 2026-10-14 Settings has a Worker card that turns Automatic off (settings.jsx:11-20); pause, stop and disconnect have none (settings.jsx:144-159).
 - **Prevents:** Consent that cannot be withdrawn.
 
 ### P5 Quiet by default

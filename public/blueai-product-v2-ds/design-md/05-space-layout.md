@@ -2,7 +2,7 @@
 
 **Status:** Space scale, Window budget: both Changed from V2.
 
-**Why:** A small window that the partner opens every day has no room for near-misses. 59% of V2's 927 spacing values sit off a 4px grid, card padding alone has eight recipes, the chat column is 420px inside a 419px box (index.html:966), modals size in vh against the browser instead of the window (shared.jsx:73), and the 866px window does not fit a 1366 x 768 laptop. One scale, one gutter and a compact rule keep every screen aligned and on screen.
+**Why:** A small window that the partner opens every day has no room for near-misses. 59% of V2's 927 spacing values sit off a 4px grid, card padding alone has eight recipes, the chat column is 420px inside a 419px box (index.html:976), modals size in vh against the browser instead of the window (shared.jsx:73), and the 866px window does not fit a 1366 x 768 laptop. One scale, one gutter and a compact rule keep every screen aligned and on screen.
 
 ### Space scale (Changed from V2)
 
@@ -14,7 +14,7 @@
 
 **Sizes.** As above.
 
-**States.** Not applicable. V2 today: the user bubble pads '11px 14px 8px' (chat_bubbles.jsx:30), the progress strip '12px 15px 11px' (worker_day_done.jsx:176), two settings cards 16 and 18 (settings.jsx:10, 97); reach with `?day=returning`.
+**States.** Not applicable. V2 today: the user bubble pads '11px 14px 8px' (chat_bubbles.jsx:30), the progress strip '12px 15px 11px' (worker_day_done.jsx:176), two settings cards 16 and 18 (settings.jsx:25, 112); reach with `?day=returning`.
 
 **Props.** Tokens and utilities only.
 

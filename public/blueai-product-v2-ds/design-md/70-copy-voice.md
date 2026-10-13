@@ -2,7 +2,7 @@
 
 **Status:** New (glossary); In V2 (PM copy register).
 
-**Why:** A partner moves between the onBlue site and the app every day. V2 names one thing several ways: "BlueAI Worker v57 skill" (`worker_flow.jsx:63`), "Loading your skills…" (`boot_splash.jsx:25`), "tasks" and "earn rewards" for paid jobs (`worker_flow.jsx:45-46`), "Logout" beside "Sign out" (`index.html:369`, `profile.jsx:62`), "tokens" for AI credits (`ai_mode.jsx:109`). The same thing named five ways reads as five things, and the money words drift most.
+**Why:** A partner moves between the onBlue site and the app every day. V2 names one thing several ways: "BlueAI Worker v57 skill" (`worker_flow.jsx:63`), "Loading your skills…" (`boot_splash.jsx:25`), "tasks" and "earn rewards" for paid jobs (`worker_flow.jsx:45-46`), "Logout" beside "Sign out" (`index.html:378`, `profile.jsx:62`), "tokens" for AI credits (`ai_mode.jsx:109`). The same thing named five ways reads as five things, and the money words drift most.
 
 ### Glossary (New)
 
@@ -42,8 +42,8 @@
   - "Use the account you applied with"; PM; `login.jsx:239`; live.
   - "By continuing, you agree to the Program Terms and acknowledge the Privacy Policy and Cookie Policy."; legal; `terms_sheet.jsx:67-69` (wording rule `:49-53`); legal.
   - "Agree and continue"; PM; `terms_sheet.jsx:71` (`:60`); live.
-  - "Run YouTube jobs automatically?" / "I agree, turn on"; PM; `agent_permissions.jsx:160, 165`; live.
-  - "BlueAI will take YouTube jobs and finish them on your account without asking first, including posting videos. You can turn this off anytime."; PM and legal; `agent_permissions.jsx:162`; live (V2 adopted the minimal consent dialog on 2026-10-14 (title, one paragraph, Cancel / I agree, turn on); its agreement paragraph is gone). Proposed change, sent to the owners (R51): "BlueAI will take YouTube jobs and do them on your account without asking first: watching, liking and posting comments in your name." (the ConsentDialog body, section 46): the worker never posts videos, and the comment it does post is not named.
+  - "Run YouTube jobs automatically?" / "I agree, turn on"; PM; `agent_permissions.jsx:186, 191`; live.
+  - "BlueAI will take YouTube jobs and finish them on your account without asking first, including posting videos. You can turn this off anytime."; PM and legal; `agent_permissions.jsx:188`; live (V2 adopted the minimal consent dialog on 2026-10-14 (title, one paragraph, Cancel / I agree, turn on); its agreement paragraph is gone). Proposed change, sent to the owners (R51): "BlueAI will take YouTube jobs and do them on your account without asking first: watching, liking and posting comments in your name." (the ConsentDialog body, section 46): the worker never posts videos, and the comment it does post is not named.
   - "Always ask" / "Automatic"; PM; `worker_flow.jsx:78`; live.
 - **States:** live, DRAFT, legal.
 - **Do / Don't:** Do quote these exactly in every part marked In V2; send a proposed change to the owner with the reason. Don't fix a typo or a tone in them silently; don't move legal wording between contexts without legal.

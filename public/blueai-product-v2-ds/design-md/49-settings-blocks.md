@@ -1,14 +1,14 @@
 ## 49 Settings blocks
 
 **Status:** Changed from V2 (SettingsSection, AdvancedDisclosure, ByokPanel, AiModePanel).
-**Why:** Settings is where a partner looks for the controls the worker's promises point to (P4). V2 copies one card shell five times with two paddings and two title weights (settings.jsx:10, 97; byok_settings.jsx:61), and leads with developer knobs (Max Output Tokens, Max Steps, Timeout, two AI Model pickers: settings.jsx:105-119, byok_settings.jsx:78). Its own-key switch deletes the key (byok_settings.jsx:64) and AI mode's failure states are unreachable. The system has one section block, one Advanced disclosure, and panels whose every state exists.
+**Why:** Settings is where a partner looks for the controls the worker's promises point to (P4). V2 copies one card shell five times with two paddings and two title weights (settings.jsx:25, 112; byok_settings.jsx:61), and leads with developer knobs (Max Output Tokens, Max Steps, Timeout, two AI Model pickers: settings.jsx:120-134, byok_settings.jsx:78). Its own-key switch deletes the key (byok_settings.jsx:64) and AI mode's failure states are unreachable. The system has one section block, one Advanced disclosure, and panels whose every state exists.
 
 ### SettingsSection (Changed from V2)
 - **Purpose:** One card per topic the partner thinks about (Worker, Connected apps, Notifications, BlueStacks, Account and privacy, Help, then Advanced: section 55).
 - **Anatomy:** Card: `--v2-surface`, 1px `--v2-line`, no shadow, radius 16, padding 16, gap 12. Header: title 16/600 ink (h2), optional description 13 ink-3, optional control at the right. Body: ListRows run full-bleed (their 16px padding aligns with the title) with their own inset hairlines; any other block gets one `--v2-line-hair` above it with 12 on each side.
 - **Variants:** Plain; with description; with a header control.
 - **Sizes:** Full width of the settings column (387 in the window).
-- **States:** Rest; highlighted (routed here: `--v2-blue` edge + `--v2-focus-ring` for 1900ms, then fades over 240ms). V2: Settings tab at `index.html?start=worker`; the own-key route from AI credits highlights and also turns the key on (index.html:730).
+- **States:** Rest; highlighted (routed here: `--v2-blue` edge + `--v2-focus-ring` for 1900ms, then fades over 240ms). V2: Settings tab at `index.html?start=worker`; the own-key route from AI credits highlights and also turns the key on (index.html:740).
 - **Props:** `id`, `title`, `description`, `action`, `highlight` (truthy change = scroll into view + highlight), `className` (`is-highlighted` forces the look), `children`.
 - **Motion:** Scroll smooth, instant under reduced motion; edge and ring 240ms.
 - **Accessibility:** `<section aria-labelledby>` on its h2, so each block is a landmark-like group; highlight is visual only and never moves focus or changes a value.
@@ -39,7 +39,7 @@
 - **Responsive:** Actions wrap right-aligned.
 - **Do / Don't:** Do let the switch only enable. Do confirm Remove and offer Undo. Don't show the key in clear text. Don't report success without a check.
 
-**Proposed copy:** "Use my own key", "Turning this off keeps your saved key.", "Check and save", "Checking your key with {provider}…", "That key didn’t work. Check it and paste it again.", "Couldn’t reach {provider}", "Your key wasn’t saved.", "Paste your key first", "Remove your {provider} key? BlueAI goes back to using your AI credits.", "Keep key", "Remove key", "{provider} key removed", "No AI credits are used while this is on." (adapted from index.html:476), "Your key is saved but not in use, so AI credits are used.". Kept from V2: the description (with "no AI credits used" for "no BlueAI credits consumed"), "No API key configured. Add one to get started.", "Add a provider", the five providers and hints, "Your key is stored encrypted on this device only.".
+**Proposed copy:** "Use my own key", "Turning this off keeps your saved key.", "Check and save", "Checking your key with {provider}…", "That key didn’t work. Check it and paste it again.", "Couldn’t reach {provider}", "Your key wasn’t saved.", "Paste your key first", "Remove your {provider} key? BlueAI goes back to using your AI credits.", "Keep key", "Remove key", "{provider} key removed", "No AI credits are used while this is on." (adapted from index.html:485), "Your key is saved but not in use, so AI credits are used.". Kept from V2: the description (with "no AI credits used" for "no BlueAI credits consumed"), "No API key configured. Add one to get started.", "Add a provider", the five providers and hints, "Your key is stored encrypted on this device only.".
 
 ### AiModePanel (Changed from V2)
 - **Purpose:** Choose where AI runs: Cloud (default) or Hybrid on the partner's PC, so tasks use fewer AI credits.

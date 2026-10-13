@@ -1,7 +1,7 @@
 ## 47 Credits balance and allowance
 
 **Status:** Changed from V2 (CreditsChip); New (CreditsMeter, useCountdown).
-**Why:** AI credits are the worker's fuel, not money (concept). A partner has one question about them: will today's run happen. V2 shows a bare number that is only ever 2,000 or 0 (index.html:721), paints it and its ring in the brand gradient (index.html:333, 337), fires a "low" dot under 1,000 that can therefore only mean empty (index.html:723), and keeps a second grant of 2,500 in the shared popup parts (credits_popup_parts.jsx:14). The system says the allowance in one place, in ink, against one grant read from the Worker record (section 41).
+**Why:** AI credits are the worker's fuel, not money (concept). A partner has one question about them: will today's run happen. V2 shows a bare number that is only ever 2,000 or 0 (index.html:731), paints it and its ring in the brand gradient (index.html:342, 346), fires a "low" dot under 1,000 that can therefore only mean empty (index.html:733), and keeps a second grant of 2,500 in the shared popup parts (credits_popup_parts.jsx:14). The system says the allowance in one place, in ink, against one grant read from the Worker record (section 41).
 
 ### CreditsChip (Changed from V2)
 - **Purpose:** The top bar's quiet status of today's allowance, and the way into AI credits (section 66).

@@ -32,7 +32,7 @@
 
 **Anatomy.** Taskbar button: BlueAI logo with an indicator under it. Toast: Windows 11 notification (logo, "BlueAI", "now", dismiss), a bold title and a body.
 
-**Variants.** Taskbar: running (short grey dash), open (longer pill), attention (7 amber flashes, then held; product-scene.css:141) while a job ask waits (index.html:1042). Toast copy, PM-owned and quoted exactly (worker_day_done.jsx:196-203):
+**Variants.** Taskbar: running (short grey dash), open (longer pill), attention (7 amber flashes, then held; product-scene.css:141) while a job ask waits (index.html:1054). Toast copy, PM-owned and quoted exactly (worker_day_done.jsx:196-203):
 - Run done: "Today’s run is done." / "Day {n} of {target}. Pending verification."
 - Day 20: "All 20 days done, pending verification."
 - Didn't finish: "Today’s job didn’t finish." / "Open BlueAI to retry and count the day."
@@ -49,7 +49,7 @@
 
 **Responsive.** Not applicable.
 
-**Do / Don't.** Do open the persistent Today record from the toast, where Try again and its deadline live (R15); V2 opens a cold start with no Retry (index.html:1053). Do raise a notification with the deadline when a job waits on Always ask (R08, section 54); V2 has only the taskbar flash. Don't rely on either channel while the window is gone: the tray keeps the app alive (section 29).
+**Do / Don't.** Do open the persistent Today record from the toast, where Try again and its deadline live (R15); V2 opens a cold start with no Retry (index.html:1065). Do raise a notification with the deadline when a job waits on Always ask (R08, section 54); V2 has only the taskbar flash. Don't rely on either channel while the window is gone: the tray keeps the app alive (section 29).
 
 ### BlueStacks install dialog (In V2)
 
@@ -59,7 +59,7 @@
 
 **Variants.** One skin.
 
-**Sizes.** Card 420 wide, square corners, dark BlueStacks surface, Poppins (install_dialog.jsx:46, 168). Downloading 2.8 s, done 0.9 s (index.html:594-595).
+**Sizes.** Card 420 wide, square corners, dark BlueStacks surface, Poppins (install_dialog.jsx:46, 168). Downloading 2.8 s, done 0.9 s (index.html:603-604).
 
 **States.** Idle, downloading, done. V2: `?bs=1&bai=0&dlg=blueai`.
 
@@ -71,4 +71,4 @@
 
 **Responsive.** Not applicable.
 
-**Do / Don't.** Do keep the skin. Don't keep the pitch: "finds deals, claims rewards, creates content, and more." (index.html:589) sells a general assistant, not the paid worker the partner was accepted for (R43; or drop Flow A, decision D9).
+**Do / Don't.** Do keep the skin. Don't keep the pitch: "finds deals, claims rewards, creates content, and more." (index.html:598) sells a general assistant, not the paid worker the partner was accepted for (R43; or drop Flow A, decision D9).

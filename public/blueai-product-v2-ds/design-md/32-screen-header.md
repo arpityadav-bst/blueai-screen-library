@@ -2,7 +2,7 @@
 
 **Status:** ScreenHeader: Changed from V2. Navigation model: Changed from V2.
 
-**Why:** A partner who opens Credits or Account must always know where they are and how to get back, and must never lose today's run by looking elsewhere. V2 has five title treatments (19/800 index.html:439, 22/800 history.jsx:91, 20/700 schedule.jsx:118, 22/800 in #1e293b jobs.jsx:140, none on Profile) and no Back anywhere; it picks the screen from a chain of booleans (index.html:955) and mounts the chat, with the run inside it, only on the chat tab (index.html:965).
+**Why:** A partner who opens Credits or Account must always know where they are and how to get back, and must never lose today's run by looking elsewhere. V2 has five title treatments (19/800 index.html:448, 22/800 history.jsx:91, 20/700 schedule.jsx:118, 22/800 in #1e293b jobs.jsx:140, none on Profile) and no Back anywhere; it picks the screen from a chain of booleans (index.html:965) and mounts the chat, with the run inside it, only on the chat tab (index.html:975).
 
 ### ScreenHeader (Changed from V2)
 
@@ -44,7 +44,7 @@
 
 **Sizes.** Not applicable.
 
-**States.** Tab; pushed (one or more screens on a tab's stack); overlay open. Rules: each tab keeps its own stack; tapping another tab switches and keeps the stack; tapping the lit tab returns to its root; a notification or the tray opens the screen it names, pushed over its parent tab. V2: none of these exist; a kebab screen is left only by tapping a tab (index.html:857).
+**States.** Tab; pushed (one or more screens on a tab's stack); overlay open. Rules: each tab keeps its own stack; tapping another tab switches and keeps the stack; tapping the lit tab returns to its root; a notification or the tray opens the screen it names, pushed over its parent tab. V2: none of these exist; a kebab screen is left only by tapping a tab (index.html:867).
 
 **Props.** Navigation state is `{ tab, stacks: { home: [], activity: [], settings: [] } }`, held by the host router: the code that mounts the screens (V2's app root when it adopts the kit; the guide's demo is `guide/sections/screens-home.jsx`, `Flow`), never inside a screen and never in the kit. A stack entry is `{ id, run, row }`. BottomNav's `value` is `tab`. Every screen emits `onNavigate(id, opts)`; the router resolves each id by this table.
 

@@ -2,7 +2,7 @@
 
 **Status:** Token table: New.
 
-**Why:** V2 has five runtime CSS variables and none of them are design tokens; its values are typed inline, and local constants (ACCENT, INK, MUTED, FAINT, repeated across five files such as ai_mode.jsx:10-13 and agent_permissions.jsx:33) were the system trying to exist. A single token file the PM can read, with what each token replaces, is what lets the next iteration change a colour once (P8).
+**Why:** V2 has five runtime CSS variables and none of them are design tokens; its values are typed inline, and local constants (ACCENT, INK, MUTED, FAINT, repeated across five files such as ai_mode.jsx:10-13 and agent_permissions.jsx:37) were the system trying to exist. A single token file the PM can read, with what each token replaces, is what lets the next iteration change a colour once (P8).
 
 ### Token table (New)
 

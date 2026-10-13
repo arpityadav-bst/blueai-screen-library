@@ -1,7 +1,7 @@
 ## 38 Composer
 
 **Status:** Changed from V2 (Composer, ComposerNotice, Stop).
-**Why:** V2 clips text past 120px (chat_product.jsx:78, 284), rests on a blue-tinted 1.5px border at 1.40:1 that reads as focus (chat_product.jsx:260), mixes "..." and "…" in placeholders (266, 278, 283), reveals zero credits only after Send (124), and stops a paid job on one click with no trace (141). The Automatic ribbon (agent_permissions.jsx:195) is the right pattern and is generalised.
+**Why:** V2 clips text past 120px (chat_product.jsx:78, 284), rests on a blue-tinted 1.5px border at 1.40:1 that reads as focus (chat_product.jsx:260), mixes "..." and "…" in placeholders (266, 278, 283), reveals zero credits only after Send (124), and stops a paid job on one click with no trace (141). The Automatic ribbon (agent_permissions.jsx:203-216) is the right pattern and is generalised.
 
 ### Composer (Changed from V2)
 - **Purpose:** One field to talk to the worker, with Send that becomes Stop.
@@ -24,7 +24,7 @@
 - **Props:** `ComposerNotice {tone, icon, text, children, action: {label, onClick}, id, className}`.
 - **Motion:** None of its own.
 - **Accessibility:** Text 13 ink-2 on every tone's fill (above 9:1); the action is the shared Link (a real button); links are never warm-coloured (ink in every tone).
-- **Copy:** "Automatic is on for YouTube. BlueAI takes paid YouTube jobs without asking." and "Change" are V2's (agent_permissions.jsx:197-198). The out-of-credits line is owned by section 48 ("Out of AI credits until **5:30 am tomorrow**.", `V2Kit.OOC_COPY.until`); the locked field's placeholder is neutral ("You can’t send messages right now"), so the time is said once, in the notice. Proposed: "Today’s run needs BlueStacks App Player." / "Get BlueStacks", "The BlueAI worker is paused until tomorrow." / "Resume".
+- **Copy:** "Automatic is on for YouTube. BlueAI takes paid YouTube jobs without asking." and "Change" are V2's former words; since 2026-10-14 V2 says "Automatic on YouTube" (a count once several apps are on) and Change opens its mode sheet (agent_permissions.jsx:62, 210-214). The out-of-credits line is owned by section 48 ("Out of AI credits until **5:30 am tomorrow**.", `V2Kit.OOC_COPY.until`); the locked field's placeholder is neutral ("You can’t send messages right now"), so the time is said once, in the notice. Proposed: "Today’s run needs BlueStacks App Player." / "Get BlueStacks", "The BlueAI worker is paused until tomorrow." / "Resume".
 - **Do / Don't:** Do keep one notice at a time, the most urgent. Don't announce zero credits only after Send.
 
 ### Stop (SendStop) (Changed from V2)

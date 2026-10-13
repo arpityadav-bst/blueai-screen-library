@@ -81,17 +81,18 @@
           <p><strong>Try it.</strong> Switch YouTube to Automatic: the consent opens; Cancel keeps Always ask.</p>
           <ModeDemo />
           <G.CompareRow
-            v2={<div style={{ minHeight: 280 }}><G.Live get={function () { return AP() && AP().ModeChip; }} props={{ placement: 'down' }} label="AgentPermissions.ModeChip" /></div>}
+            v2={<div style={{ minHeight: 160 }}><G.Live get={function () { return AP() && AP().AppSwitchList; }} label="AgentPermissions.AppSwitchList" /></div>}
             system={<K.ModeRows worker={F.verified} onChange={noop} float />}
-            changed="Same model, same words and the same per-app rows. The rows move into the kit Segmented (arrow keys, a gate for consent, 32px segments) and get a permanent home in Settings > Worker, so the mode can be changed outside an open chat (R05, D4). Instagram cannot be consented to before its jobs exist (R40). 'Mode, per app' is not carried: Mode is not a partner word." />
+            changed="Same model, same words, one row per app. Since 2026-10-14 V2 draws each row as one switch (on = Automatic; turning it on asks for consent, off applies at once) in a bottom sheet titled 'Apps BlueAI can run on its own', opened from the composer chip or the ribbon's Change, and lists the same rows in Settings > Worker > Apps, so the mode already has a home outside an open chat (R05, D4). The system names both options with the kit Segmented (arrow keys, a gate for consent, 32px segments), so a row says which mode is on without decoding a switch, and puts the rows in Settings > Worker's Paid jobs. Instagram cannot be consented to before its jobs exist (R40)." />
           <G.SpecDrawer rows={[
             { part: 'Always ask', token: 'Segmented option', value: 'Always ask (default for every app)', ref: ['worker.permissions.always', 'worker.permissions.store'] },
             { part: 'Automatic', token: 'Segmented option + beforeChange', value: 'Automatic, only through the consent', ref: 'worker.permissions.auto' },
-            { part: 'Track', token: '--v2-surface-sunken, --v2-radius-md', value: 'Segmented md, 32 (section 14)', ref: 'worker.permissions.track' },
-            { part: 'Segment', token: '--v2-radius-sm, --v2-text-13 500', value: 'shield-check / zap icon 16 + label; selected: the select fill, a blue edge, ink', ref: 'worker.permissions.segment' },
+            { part: 'Track', token: '--v2-surface-sunken, --v2-radius-md', value: 'Segmented md, 32 (section 14); V2: a 40x24 switch, on #1990FF, off #cbd5e1', ref: 'worker.permissions.switch-size' },
+            { part: 'Segment', token: '--v2-radius-sm, --v2-text-13 500', value: 'shield-check / zap icon 16 + label; selected: the select fill, a blue edge, ink. V2: one role=switch per app, named Run YouTube jobs without asking; on asks for consent, off applies at once', ref: ['worker.permissions.switch', 'worker.permissions.switch-request'] },
             { part: 'Apps', token: 'WORKER_APPS + record status', value: 'YouTube live, Instagram coming soon', ref: ['worker.permissions.apps', 'worker.permissions.instagram'] },
-            { part: 'Note', token: '--v2-text-12, --v2-ink-3', value: 'Automatic starts and finishes that app’s jobs without asking. …', ref: 'worker.permissions.menu-note' },
-            { part: 'Summary (card, chip)', token: 'modeSummary()', value: "'Always ask' or 'Automatic · YouTube'", ref: 'worker.permissions.summary' },
+            { part: 'Note', token: '--v2-text-12, --v2-ink-3', value: "System: 'Automatic starts and finishes that app’s jobs without asking. …' (the words of V2’s former menu). V2 today, under the sheet’s title: 'New apps always start on Always ask.'", ref: 'worker.permissions.sheet-note' },
+            { part: 'Summary (card, chip)', token: 'modeSummary()', value: "'Always ask' or 'Automatic · YouTube'; V2's chip and ribbon since 2026-10-14: 'Always ask', 'Automatic on YouTube' or 'Automatic on 2 apps'", ref: 'worker.permissions.summary' },
+            { part: 'Where (V2)', token: null, value: "a bottom sheet, 'Apps BlueAI can run on its own' (section 26), from the composer chip or the ribbon's Change; the same list in Settings > Worker > Apps", ref: ['worker.permissions.sheet', 'worker.permissions.sheet-title', 'worker.permissions.chip', 'worker.permissions.list', 'worker.permissions.settings'] },
           ]} />
         </G.Part>
 
@@ -116,7 +117,7 @@
             { part: 'Title', token: '--v2-text-20, --v2-weight-semibold', value: 'Run YouTube jobs automatically?', ref: 'worker.permissions.consent-title' },
             { part: 'Body', token: '--v2-text-14, --v2-ink-2', value: 'Proposed, PM and legal (R51): BlueAI will take YouTube jobs and do them on your account without asking first: watching, liking and posting comments in your name.', ref: 'worker.permissions.consent-body' },
             { part: 'Target row', token: '--v2-blue-tint', value: 'the app being changed (system only; V2 dropped its list on 2026-10-14)' },
-            { part: 'Note', token: '--v2-text-12, --v2-ink-3', value: 'Each app has its own setting. The others stay on Always ask until you switch them. (System only; V2 dropped it on 2026-10-14, its Mode menu says it.)' },
+            { part: 'Note', token: '--v2-text-12, --v2-ink-3', value: 'Each app has its own setting. The others stay on Always ask until you switch them. (System only; V2 dropped it on 2026-10-14; its mode sheet says New apps always start on Always ask.)' },
             { part: 'Agreement', token: '--v2-text-14, --v2-ink-2', value: 'By turning this on, you agree to let BlueAI do this for you on YouTube. You can turn it off anytime. (V2’s words until 2026-10-14; the system keeps them.)' },
             { part: 'Where to turn it off', token: '--v2-text-12, --v2-ink-3', value: 'Proposed: Turn it off in Settings > Worker, or with Change above the chat.' },
             { part: 'Cancel', token: 'Button secondary lg', value: 'Cancel', ref: 'worker.permissions.cancel' },
@@ -136,12 +137,12 @@
           <G.CompareRow
             v2={<V2Ribbon />}
             system={notice}
-            changed="Kept as the in-chat shortcut, now drawn by the shared ComposerNotice so standing conditions (Automatic, out of credits, BlueStacks needed, paused) share one shape. Text moves from #1763c6 on #eaf3ff to ink-2 on the info tint, with only the icon in blue ink; Change grows to a 32px target. Its permanent home is Settings > Worker (decision D4)." />
+            changed="V2's ribbon is one line since 2026-10-14: 'Automatic on YouTube' (a count once several apps are on) and Change, which opens the mode sheet. Kept as the in-chat shortcut, now drawn by the shared ComposerNotice so standing conditions (Automatic, out of credits, BlueStacks needed, paused) share one shape. Text moves from 12/600 #1763c6 on #eaf3ff to ink-2 on the info tint, with only the icon in blue ink; Change grows to a 32px target. Its permanent home is Settings > Worker (decision D4), where V2 also lists the apps now." />
           <G.SpecDrawer rows={[
             { part: 'Gate', token: 'autoNotice() returns null', value: 'only while some app is Automatic', ref: 'worker.permissions.ribbon-gate' },
             { part: 'Fill', token: '--v2-blue-tint, --v2-blue-tint-line', value: 'info tone', ref: 'worker.permissions.ribbon-fill' },
-            { part: 'Copy', token: 'text --v2-text-13, --v2-ink-2; icon --v2-blue-ink', value: 'Automatic is on for YouTube. BlueAI takes paid YouTube jobs without asking.', ref: 'worker.permissions.ribbon-copy' },
-            { part: 'Change', token: 'ComposerNotice action, --v2-hit-min', value: 'Change (opens ModeRows)', ref: 'worker.permissions.ribbon-change' },
+            { part: 'Copy', token: 'text --v2-text-13, --v2-ink-2; icon --v2-blue-ink', value: "System: 'Automatic is on for YouTube. BlueAI takes paid YouTube jobs without asking.' V2 since 2026-10-14: 'Automatic on YouTube'", ref: 'worker.permissions.ribbon-copy' },
+            { part: 'Change', token: 'ComposerNotice action, --v2-hit-min', value: 'Change (opens ModeRows; in V2, the mode sheet)', ref: 'worker.permissions.ribbon-change' },
           ]} />
         </G.Part>
 

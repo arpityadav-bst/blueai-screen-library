@@ -16,16 +16,16 @@ window.V2Refs = (window.V2Refs || []).concat([
   { id: 'screens-core.home.strip-earnings', file: 'worker_day_done.jsx', line: 169, needle: 'href="https://bluestacks.ai/dashboard"', value: 'Earnings link to bluestacks.ai/dashboard (the second Earnings URL)' },
 
   /* 57 Chat (reached from Home). */
-  { id: 'screens-core.chat.new-chat', file: 'index.html', line: 341, needle: '<button onClick={onNewChat}', value: 'New Chat: the filled pill in the top bar' },
-  { id: 'screens-core.chat.new-chat-label', file: 'index.html', line: 346, needle: 'New Chat', value: 'New Chat' },
-  { id: 'screens-core.chat.mounted-as-tab', file: 'index.html', line: 965, needle: ') : isChat ? (', value: 'the chat (and the run in it) exists only while its tab is open' },
+  { id: 'screens-core.chat.new-chat', file: 'index.html', line: 350, needle: '<button onClick={onNewChat}', value: 'New Chat: the filled pill in the top bar' },
+  { id: 'screens-core.chat.new-chat-label', file: 'index.html', line: 355, needle: 'New Chat', value: 'New Chat' },
+  { id: 'screens-core.chat.mounted-as-tab', file: 'index.html', line: 975, needle: ') : isChat ? (', value: 'the chat (and the run in it) exists only while its tab is open' },
   { id: 'screens-core.chat.scheduled-start', file: 'worker_flow.jsx', line: 102, needle: "say('Scheduled run started.', 600)", value: 'Scheduled run started.' },
   { id: 'screens-core.chat.job-label', file: 'worker_flow.jsx', line: 50, needle: "label: 'Paid job available'", value: 'Paid job available' },
   { id: 'screens-core.chat.job-title', file: 'worker_flow.jsx', line: 51, needle: "title: 'Watch the video and provide feedback'", value: 'Watch the video and provide feedback' },
   { id: 'screens-core.chat.job-question', file: 'worker_flow.jsx', line: 120, needle: "question: 'Want me to take this one?'", value: 'Want me to take this one?' },
   { id: 'screens-core.chat.job-options', file: 'worker_flow.jsx', line: 121, needle: "label: 'Yes, switch to Automatic', consent: true }, { id: 'once', label: 'Just this job' }, { id: 'deny', label: 'Not now' }", value: 'Yes, switch to Automatic / Just this job / Not now' },
-  { id: 'screens-core.chat.auto-ribbon', file: 'agent_permissions.jsx', line: 183, needle: 'Automatic is on for {listNames(auto)}. BlueAI takes paid', value: 'Automatic is on for YouTube. BlueAI takes paid YouTube jobs without asking.' },
-  { id: 'screens-core.chat.auto-change', file: 'agent_permissions.jsx', line: 184, needle: 'label="Change"', value: 'Change' },
+  { id: 'screens-core.chat.auto-ribbon', file: 'agent_permissions.jsx', line: 62, needle: "'Automatic on ' + (auto.length === 1 ? auto[0].name : auto.length + ' apps')", value: 'Automatic on YouTube' },
+  { id: 'screens-core.chat.auto-change', file: 'agent_permissions.jsx', line: 214, needle: '>Change</button>', value: 'Change, which opens the mode sheet' },
 
   /* 58 Activity: what V2 has instead. */
   { id: 'screens-core.jobs.nav-jobs', file: 'shared.jsx', line: 222, needle: "{ id: 'jobs', label: 'Jobs', Icon: IcoBriefcase }", value: 'Jobs, the first tab' },

@@ -101,6 +101,14 @@
     .ba-chip:active { transform: scale(0.96); }
     .ba-chip--below:hover:not(.ba-chip--sel) { background: #f1f5f9 !important; border-color: #cbd5e1 !important; }
     .ba-chip--inside:hover:not(.ba-chip--sel) { background: rgba(255,255,255,0.9) !important; }
+    /* Mode sheet + app switches (agent_permissions.jsx): the slide-up over a light scrim, and the
+       switch's keyboard focus ring (Settings' Worker > Apps uses the same switches). */
+    @keyframes baSheetUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    @keyframes baScrimIn { from { opacity: 0; } to { opacity: 1; } }
+    .ba-sheet-scrim { animation: baScrimIn 0.24s ease both; }
+    .ba-sheet { animation: baSheetUp 0.36s cubic-bezier(0.22,1,0.36,1) both; }
+    .ba-switch:focus-visible { outline: 2px solid #1990FF; outline-offset: 2px; }
+    @media (prefers-reduced-motion: reduce) { .ba-sheet-scrim, .ba-sheet { animation: none; } }
   </style>
 </head>
 <body>
@@ -145,8 +153,8 @@
      siblings at render time, so this order is for readability, not correctness. -->
 <script type="text/babel" src="blueai/chat_feedback.jsx"></script>
 <script type="text/babel" src="blueai/chat_bubbles.jsx"></script>
-<!-- BlueAI worker, end to end (ROB-21350): the Always ask / Automatic setting and its consent
-     dialog (exposes window.AgentPermissions); the onboarding + daily-run scripts
+<!-- BlueAI worker, end to end (ROB-21350): the Always ask / Automatic setting, its mode sheet and
+     consent dialog (exposes window.AgentPermissions); the onboarding + daily-run scripts
      (exposes window.WorkerFlow); and their chat cards (exposes window.WorkerCards). All three
      resolve each other at render time. -->
 <script type="text/babel" src="blueai/agent_permissions.jsx"></script>
@@ -217,7 +225,7 @@ const SIGNIN_OPTS = [{ id: 'a', label: 'A: Check account' }, { id: 'b', label: '
 // ROB-21350 shareable BlueAI-worker setups, so a link opens straight on the case being discussed.
 // The Preview panel's "Copy link" builds one from whatever is on screen:
 //   ?start=worker   land signed in on the BlueAI worker home (no terms sheet, no sign-in)
-//   ?v=1 | ?v=2     Version 1 (Mode chip in the composer) | Version 2 (ribbon above it)
+//   ?v=1 | ?v=2     change mode from the composer chip | the ribbon above the composer
 //   ?setup=off      onboarding without the "take it on my own?" setup question (default: on)
 //   ?day=next       play the next day's scheduled worker run as soon as the app opens (implies start=worker)
 //   ?day=returning  a returning person on the worker home, before today's run (implies start=worker)
@@ -226,7 +234,8 @@ const SIGNIN_OPTS = [{ id: 'a', label: 'A: Check account' }, { id: 'b', label: '
 //   ?card=days | money | plain   which day-done option draws it: the days-led message (ships), the
 //                   money-led one, or no message and a longer closing line. Default: days
 //   ?mode=auto      start with Automatic on for YouTube (default: Always ask on every app). Skips
-//                   the consent dialog: the link stands in for a person who already agreed.
+//                   the consent dialog: the link stands in for a person who already agreed. The
+//                   Preview panel's Mode row sets the same thing.
 // ROB-21388 sign-in handoff (the browser window beside the app):
 //   ?signin=browser open straight on the sign-in handoff, no terms sheet
 //   ?player=out | accepted | other   App Player on this PC: signed out (the app opens the
@@ -248,7 +257,7 @@ const LINK = {
 };
 // Local-testing rows remembered in THIS browser only; a link's own settings win over them.
 //   bai_proto_start    'signin' (the real cold start) | 'worker' (land signed in on the worker home)
-//   bai_proto_version  'chatbox' (Version 1) | 'ribbon' (Version 2)
+//   bai_proto_version  'chatbox' (Composer chip) | 'ribbon' (Ribbon)
 const PROTO = (() => {
   let saved = {};
   try { saved = { start: localStorage.getItem('bai_proto_start'), version: localStorage.getItem('bai_proto_version') }; } catch (e) { /* private window */ }
@@ -627,11 +636,12 @@ function App() {
   const [previewOpen, setPreviewOpen] = useState(true);    // dev preview panel collapse
   // BlueAI worker end to end (ROB-21350). workerDay: 'day1' = a new user (Run plays onboarding),
   // 'next' = the following day's scheduled run, replayed per click via dailyRunKey. jobChoice:
-  // whether onboarding asks the setup question. permUi: which version of the "change it later"
-  // control. protoStart: skip sign-in on load. jobWaiting: an unanswered job ask, which lights
-  // BlueAI's taskbar button.
+  // whether onboarding asks the setup question. permUi: which control opens the mode sheet later
+  // (composer chip or ribbon). protoStart: skip sign-in on load. jobWaiting: an unanswered job
+  // ask, which lights BlueAI's taskbar button. permModes: the per-app modes, for the Mode row.
   const [protoStart, setProtoStart] = useState(PROTO.start);
   const [permUi, setPermUi] = useState(PROTO.version);
+  const { modes: permModes } = window.AgentPermissions.usePermissionMode();
   const [workerDay, setWorkerDay] = useState(LINK.day);
   const [dailyRunKey, setDailyRunKey] = useState(0);
   const [jobChoice, setJobChoice] = useState(LINK.setup);
@@ -999,8 +1009,10 @@ function App() {
         onCancel={() => setLogoutOpen(false)}
         onConfirm={() => { setLogoutOpen(false); setProfileOpen(false); setActiveTab('chat'); }} />
 
-      {/* "Run jobs automatically?" confirm. One instance here, inside .ba-app, so it is scoped to
-         the product window whether the composer chip or the Settings card asked for it. */}
+      {/* The mode sheet, and the "Run jobs automatically?" confirm that opens over it. One
+         instance of each here, inside .ba-app, so both are scoped to the product window whichever
+         control opened them (the composer chip, the ribbon's Change, Settings, the job ask). */}
+      <window.AgentPermissions.ModeSheet />
       <window.AgentPermissions.AutoConfirm />
 
       {/* Out-of-credits popup on message-send: prime geo → Prime upsell (image 1); non-prime geo → BYOK (image 2). */}
@@ -1174,15 +1186,18 @@ function App() {
                replays the script from the top. */
             if (isChat) rows.push(<PreviewRow key="schedooc" label="Scheduled job" opts={[['Off', false], ['Out of credits', true]]} val={scheduledOoc}
               set={(v) => { setScheduledOoc(v); if (v) setZeroCredits(true); setSessionKey((k) => k + 1); }} />);
-            /* BlueAI worker end to end (ROB-21350). Version: where the person changes the mode
-               later, the two shapes going to the seniors (1 = Mode chip in the composer, 2 = a
-               ribbon above it once the worker runs on Automatic). Worker: Day 1 resets to a
+            /* BlueAI worker end to end (ROB-21350). Change mode from: the control that opens the
+               mode sheet, the two shapes going to the seniors (the composer chip, or a ribbon
+               above the composer once the worker runs on Automatic). Mode: YouTube's mode, set
+               directly with no consent dialog, exactly like ?mode=auto. Worker: Day 1 resets to a
                brand-new user (Run plays onboarding, mode back to Always ask); Next day plays the
                following day's scheduled run in its own chat, again on every click. Setup question:
                whether onboarding asks "take paid jobs on my own, or check with me first?". */
             if (isChat && sessionMode === 'moneymaker' && isLoggedIn) {
-              rows.push(<PreviewRow key="permui" label="Version" opts={[['1 Chat box', 'chatbox'], ['2 Ribbon', 'ribbon']]} val={permUi}
+              rows.push(<PreviewRow key="permui" label="Change mode from" opts={[['Composer chip', 'chatbox'], ['Ribbon', 'ribbon']]} val={permUi}
                 set={(v) => { setPermUi(v); remember('bai_proto_version', v); }} />);
+              rows.push(<PreviewRow key="permmode" label="Mode" opts={[['Always ask', 'always'], ['Automatic', 'auto']]} val={permModes.youtube}
+                set={(v) => window.AgentPermissions.setMode('youtube', v)} />);
               rows.push(<PreviewRow key="workerday" label="Worker" opts={[['Day 1', 'day1'], ['Returning', 'returning'], ['Next day', 'next']]} val={workerDay}
                 set={(v) => {
                   setWorkerDay(v); setSeed(null); setToast(null);

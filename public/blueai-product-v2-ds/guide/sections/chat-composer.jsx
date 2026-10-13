@@ -95,7 +95,7 @@
           <G.CompareRow
             v2={<V2Ribbon />}
             system={shell(<K.ComposerNotice tone="info" icon="zap" text={AUTO_TEXT} action={{ label: 'Change', onClick: noop }} />)}
-            changed="The Automatic ribbon pattern, generalised so zero credits, a missing BlueStacks and a pause show before the partner types, not after Send. Text goes from 12px #1763c6 to 13px ink-2 with the zap in blue ink, the 21px 'Change' becomes a 32px underlined ink link, and the zap from 13 to 16." />
+            changed="The Automatic ribbon pattern, generalised so zero credits, a missing BlueStacks and a pause show before the partner types, not after Send. V2's ribbon is one line since 2026-10-14 ('Automatic on YouTube', a count once several apps are on); its text goes from 12/600 #1763c6 to 13px ink-2 with the zap in blue ink, the 21px 'Change' (which opens V2's mode sheet) becomes a 32px underlined ink link, and the zap from 13 to 16." />
           <G.SpecDrawer rows={[
             { part: 'Shape', token: '--v2-radius-md', value: 'radius 10, 1px line in tone', ref: 'chat.composer.ribbon-fill' },
             { part: 'Info', token: '--v2-blue-tint, --v2-blue-tint-line, --v2-blue-ink, --v2-ink-2', value: 'tint, tint line, icon #0d5ad6, words ink-2' },

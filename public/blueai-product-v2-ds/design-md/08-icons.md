@@ -2,7 +2,7 @@
 
 **Status:** Icon set: Changed from V2.
 
-**Why:** Icons label the controls the partner uses to keep the worker in check (Always ask, Automatic, pause, disconnect), so each meaning needs one glyph everywhere. V2 redraws its clock, chat, help and sign-out glyphs two or three times per file at 14 to 22px, with 16 different stroke widths and hard-coded hexes such as #64748b (index.html:294-319, shared.jsx:7-40). One registry ends that and matches the site's stroke style (onblue/index.html:307-330).
+**Why:** Icons label the controls the partner uses to keep the worker in check (Always ask, Automatic, pause, disconnect), so each meaning needs one glyph everywhere. V2 redraws its clock, chat, help and sign-out glyphs two or three times per file at 14 to 22px, with 16 different stroke widths and hard-coded hexes such as #64748b (index.html:303-328, shared.jsx:7-40). One registry ends that and matches the site's stroke style (onblue/index.html:307-330).
 
 ### Icon set (Changed from V2)
 
@@ -14,7 +14,7 @@
 
 **Sizes.** 16 `--v2-icon-sm` (inline, chips, menu rows), 20 `--v2-icon-md` (top bar, nav, list rows), 24 `--v2-icon-lg` (empty states, dialog marks). The stroke renders 1.75px at every size (`--v2-icon-stroke`, compensated per size in kit/base.css).
 
-**States.** No states of its own: it takes the colour of its parent. Idle `--v2-ink-3`, active `--v2-ink` (or `--v2-blue` for the lit nav item), on a tint the tone ink, on a fill `--v2-on-color`. V2 today: nav glyphs 22px stroke 1.9 (shared.jsx:7-8), menu glyphs 18px stroke 2 in #64748b (index.html:294), close 2.5 (shared.jsx:28), mode glyphs stroke 2 (agent_permissions.jsx:38-41); reach with `?start=worker`.
+**States.** No states of its own: it takes the colour of its parent. Idle `--v2-ink-3`, active `--v2-ink` (or `--v2-blue` for the lit nav item), on a tint the tone ink, on a fill `--v2-on-color`. V2 today: nav glyphs 22px stroke 1.9 (shared.jsx:7-8), menu glyphs 18px stroke 2 in #64748b (index.html:303), close 2.5 (shared.jsx:28), mode glyphs stroke 2 (agent_permissions.jsx:42-45); reach with `?start=worker`.
 
 **Props.** `Icon { name, size = 16 | 20 | 24, label, inline, className }`. Without `label` it is decorative (`aria-hidden`); with `label` it is `role="img"` named by it. `inline` aligns it to the text baseline. `V2Kit.ICON_NAMES` lists every name. An unknown name renders an empty box of the right size and warns once in the console.
 

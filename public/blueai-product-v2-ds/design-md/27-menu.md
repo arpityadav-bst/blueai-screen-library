@@ -2,7 +2,7 @@
 
 **Status:** Menu, Popover: both Changed from V2.
 
-**Why:** Earnings and Sign out live in a header menu, so the only route to the partner's money and account must work from the keyboard. V2's help and more menus close only on an outside mousedown, with no role, no Esc and no arrow keys, and paint hover with onMouseEnter (index.html:280-292). The per-app mode menu (ModeChip) already handles Esc and outside clicks (agent_permissions.jsx:121-128) but calls a panel of radio groups a menu and returns no focus. The system splits the two jobs: Menu for actions, Popover for a small panel with its own controls (P4, P7, R25).
+**Why:** Earnings and Sign out live in a header menu, so the only route to the partner's money and account must work from the keyboard. V2's help and more menus close only on an outside mousedown, with no role, no Esc and no arrow keys, and paint hover with onMouseEnter (index.html:289-301). Until 2026-10-14 the per-app mode menu (ModeChip) handled Esc and outside clicks but called a panel of radio groups a menu and returned no focus; V2 now opens a bottom sheet for it instead (section 26). The system splits the two jobs: Menu for actions, Popover for a small panel with its own controls (P4, P7, R25).
 
 ### Menu (Changed from V2)
 
@@ -14,7 +14,7 @@
 
 **Sizes.** One.
 
-**States.** Closed; open; row hover (`--v2-wash-hover`, label to ink); row focus-visible (2px blue ring inside the row plus the wash); row active (`--v2-wash-press`); row disabled; danger row; external row. Placement down or up, aligned to the button's end or start; it flips and swaps to stay in the window. In V2 today: `?start=worker`, then the ? (FAQ, Report Issue) or the three dots (Chat History, Profile, Earnings, Logout) (index.html:355-369).
+**States.** Closed; open; row hover (`--v2-wash-hover`, label to ink); row focus-visible (2px blue ring inside the row plus the wash); row active (`--v2-wash-press`); row disabled; danger row; external row. Placement down or up, aligned to the button's end or start; it flips and swaps to stay in the window. In V2 today: `?start=worker`, then the ? (FAQ, Report Issue) or the three dots (Chat History, Profile, Earnings, Logout) (index.html:364-378).
 
 **Props.** `trigger` (render prop receiving `aria-haspopup`, `aria-expanded`, `aria-controls`, `onClick`, or an element to clone them onto), `items` ([{icon, label, onSelect, href, external, danger, disabled, hint} | {separator: true}]), `placement` ('down' | 'up'), `align` ('end' | 'start'), `header`, `footer`, `label`, `open` / `defaultOpen` / `onOpenChange`, `className`.
 
@@ -36,7 +36,7 @@
 
 **Sizes.** One.
 
-**States.** Open down; open up; Esc (closes, focus back to the button); outside click (closes); focus leaving (closes). In V2 today: `?start=worker&v=1`, the mode chip in the composer; `&v=2` with Automatic on, the ribbon's Change (agent_permissions.jsx:113-146).
+**States.** Open down; open up; Esc (closes, focus back to the button); outside click (closes); focus leaving (closes). In V2 today: `?start=worker&v=1`, the mode chip in the composer; `&v=2` with Automatic on, the ribbon's Change (agent_permissions.jsx:113-156).
 
 **Props.** `trigger`, `placement`, `align`, `header`, `footnote`, `label`, `open` / `defaultOpen` / `onOpenChange`, `className`, `children`.
 

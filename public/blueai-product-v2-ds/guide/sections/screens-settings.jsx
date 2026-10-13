@@ -3,7 +3,7 @@
 (function () {
   const G = window.V2Guide;
   const noop = function () {};
-  // V2 always hands SettingsScreen a byok object (index.html:977), so its own-key card draws; this one is V2's signed-in default.
+  // V2 always hands SettingsScreen a byok object (index.html:987), so its own-key card draws; this one is V2's signed-in default.
   const V2_BYOK = { on: false, setOn: noop, keyAdded: false, keyInfo: null, onSave: noop, onRemove: noop, highlight: false };
   const v2Box = { width: 'var(--v2-shell-w)', maxWidth: '100%', maxHeight: 640, overflow: 'auto', padding: '0 var(--v2-space-4)', background: 'var(--v2-canvas)' };
 
@@ -65,9 +65,10 @@
             )}
             system={scr()}
             changed={'V2 has no page title and opens on "BlueStacks Instance", which says "Connected to BlueStacks App Player" '
-              + 'whether or not BlueStacks is installed; then Telegram, AI mode, own key, and a Chat AI Settings card of Max '
-              + 'Output Tokens, Max Steps and Timeout with its own Save button and a second AI Model picker. Nothing about the '
-              + 'worker, its accounts or the partner is here. The system leads with the worker (when it runs, how it takes paid '
+              + 'whether or not BlueStacks is installed; then, since 2026-10-14, a Worker card whose Apps group is the mode '
+              + 'sheet\'s switch list; then Telegram, AI mode, own key, and a Chat AI Settings card of Max Output Tokens, Max '
+              + 'Steps and Timeout with its own Save button and a second AI Model picker. Beyond that switch list nothing about '
+              + 'the worker, its accounts or the partner is here. The system leads with the worker (when it runs, how it takes paid '
               + 'jobs), then the accounts it acts on, notifications, a BlueStacks row that tells the truth with the one action '
               + 'that fixes it, the account, and help; AI mode, own key and one chat model wait closed under Advanced, and the '
               + 'token, step and timeout knobs leave the partner UI. One card shape, one 20/600 title, changes apply on change.'} />
@@ -84,7 +85,7 @@
             { part: 'Section card', token: 'SettingsSection: --v2-surface, --v2-line, --v2-radius-lg, --v2-space-4', value: '1px line, radius 16, padding 16, no shadow', ref: 'screens-account.settings.card' },
             { part: 'Section title', token: '--v2-text-16, --v2-weight-semibold', value: '16/600 ink, no icon', ref: 'screens-account.settings.card-title' },
             { part: 'Gap and gutter', token: '--v2-space-3, --v2-gutter', value: '12 between sections, 16 to the window edge' },
-            { part: 'Worker row', token: 'ListRow nav, Badge neutral when paused', value: 'run time + mode from the Worker record', ref: 'screens-account.worker.no-settings-card' },
+            { part: 'Worker row', token: 'ListRow nav, Badge neutral when paused', value: 'run time + mode from the Worker record (V2: a Worker card with the apps list)', ref: 'screens-account.worker.settings-card' },
             { part: 'Connected apps', token: 'V2Screens.ConnectedAppRows', value: 'YouTube, Telegram, Instagram (Coming soon, static)', ref: ['screens-account.settings.telegram-title', 'screens-account.apps.instagram'] },
             { part: 'Notifications', token: 'ListRow + Switch', value: 'a paid job needs you; today’s run ends (Proposed copy); each covers the events section 54 maps to it' },
             { part: 'BlueStacks', token: 'ListRow, Badge success or Button sm', value: 'three true states; V2’s switch hint kept', ref: ['screens-account.settings.bluestacks-claim', 'screens-account.settings.bluestacks-switch'] },

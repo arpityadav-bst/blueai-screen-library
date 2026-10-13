@@ -2,7 +2,7 @@
 
 **Status:** Card: Changed from V2. StatCard: Changed from V2.
 
-**Why:** BlueAI is a quiet control room: the surfaces should separate content and get out of the way, the way the onBlue site's 1px lines do; the site also adds a faint resting cast, which the product drops (section 02, P6). V2's in-flow cards carry seven shadow strengths over a different line on each (settings.jsx:10, profile.jsx:30, index.html:432, worker_day_done.jsx:176), and its one important figure, the credits balance, is 54/800 brand gradient (index.html:518). The partner returns to the site to cash out; the same figure should look the same in both places.
+**Why:** BlueAI is a quiet control room: the surfaces should separate content and get out of the way, the way the onBlue site's 1px lines do; the site also adds a faint resting cast, which the product drops (section 02, P6). V2's in-flow cards carry seven shadow strengths over a different line on each (settings.jsx:25, profile.jsx:30, index.html:441, worker_day_done.jsx:176), and its one important figure, the credits balance, is 54/800 brand gradient (index.html:527). The partner returns to the site to cash out; the same figure should look the same in both places.
 
 ### Card (Changed from V2)
 
@@ -46,7 +46,7 @@
 - Value: V2 opens the AI Credits screen from the credits pill (`?start=worker`).
 - Zero: same size as any value; the Banner above says why. V2 shrinks the figure to 38 (`?start=worker&credits=0`, then the pill).
 - Loading: label stays, figure and context become skeletons, `aria-busy`. New.
-- Replaced (own key): the figure becomes "Running on your own key" with V2's line "No BlueAI credits are consumed while this is on." (index.html:473-476; Preview "Own key: On").
+- Replaced (own key): the figure becomes "Running on your own key" with V2's line "No BlueAI credits are consumed while this is on." (index.html:482-485; Preview "Own key: On").
 - Compact: V2's EarningsStrip (`?day=returning`).
 
 **Props.** `StatCard { label, value (number formats as 2,000), unit, context, action, icon, loading, size = 'display' | 'compact', className }`, plus any Card prop.

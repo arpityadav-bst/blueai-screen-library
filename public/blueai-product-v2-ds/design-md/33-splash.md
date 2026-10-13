@@ -2,7 +2,7 @@
 
 **Status:** Splash: Changed from V2.
 
-**Why:** A partner opens BlueAI most days to check one run. V2's splash says "Loading your skills…" (boot_splash.jsx:25), naming a feature the partner never sees, puts its status in #94a3b8 at 2.56:1 (boot_splash.jsx:73), bounces its dots with no reduced-motion rule (boot_splash.jsx:66), and replays for about 3.5 s every time the window opens (2650 ms, boot_splash.jsx:33, plus an 850 ms skeleton, index.html:735).
+**Why:** A partner opens BlueAI most days to check one run. V2's splash says "Loading your skills…" (boot_splash.jsx:25), naming a feature the partner never sees, puts its status in #94a3b8 at 2.56:1 (boot_splash.jsx:73), bounces its dots with no reduced-motion rule (boot_splash.jsx:66), and replays for about 3.5 s every time the window opens (2650 ms, boot_splash.jsx:33, plus an 850 ms skeleton, index.html:745).
 
 ### Splash (Changed from V2)
 

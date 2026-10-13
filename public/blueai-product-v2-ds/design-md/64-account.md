@@ -1,7 +1,7 @@
 ## 64 Account and privacy
 
 **Status:** Changed from V2.
-**Why:** The gate's whole point is "use the account you applied with" (R39), and signing out has to sign out (R03). V2's Profile opens on a 96px gradient banner and a 92px emoji avatar (profile.jsx:31-34), shows a real staff member's identity in a prototype (profile.jsx:7, described, not quoted), lists Handle, Country and Mobile the product never uses, and its "Logout" confirm only closes the dialog and returns to chat (index.html:1000). What BlueAI keeps about the partner (the interest profile, watch-history access, consent records) is shown nowhere.
+**Why:** The gate's whole point is "use the account you applied with" (R39), and signing out has to sign out (R03). V2's Profile opens on a 96px gradient banner and a 92px emoji avatar (profile.jsx:31-34), shows a real staff member's identity in a prototype (profile.jsx:7, described, not quoted), lists Handle, Country and Mobile the product never uses, and its "Logout" confirm only closes the dialog and returns to chat (index.html:1010). What BlueAI keeps about the partner (the interest profile, watch-history access, consent records) is shown nowhere.
 
 ### Account (Changed from V2)
 - **Purpose:** Who is signed in, the program they are in, the account BlueAI acts on, what BlueAI keeps and what was agreed, the legal documents, and a Sign out that signs out.
@@ -21,4 +21,4 @@
 - **Responsive:** One column; the email wraps anywhere; legal links wrap to two lines if needed.
 - **Do / Don't:** Do show the account the partner applied with, as the site does. Do list what BlueAI keeps, each with the way to change it. Do say in the confirm that the worker pauses and days stop counting. Do say "Sign out" everywhere. Don't put real people's details in a prototype. Don't decorate identity. Don't build a confirm that does nothing. Don't show fields the product never uses.
 
-**Proposed copy:** the section titles and descriptions, the record lines and the sign-out dialog. Kept: "Sign out" (profile.jsx:62), "Program Terms", "Privacy Policy". "Logout" (profile.jsx:75, 79; index.html:369) becomes "Sign out" (glossary). **Decision D3:** the program row shows days, never dollars, until the money model is chosen. The agreed dates are fixture values; the real record is the acceptance log legal asked for (terms_sheet.jsx:23).
+**Proposed copy:** the section titles and descriptions, the record lines and the sign-out dialog. Kept: "Sign out" (profile.jsx:62), "Program Terms", "Privacy Policy". "Logout" (profile.jsx:75, 79; index.html:378) becomes "Sign out" (glossary). **Decision D3:** the program row shows days, never dollars, until the money model is chosen. The agreed dates are fixture values; the real record is the acceptance log legal asked for (terms_sheet.jsx:23).

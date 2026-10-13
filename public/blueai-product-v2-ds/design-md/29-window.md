@@ -2,7 +2,7 @@
 
 **Status:** AppFrame: Changed from V2. Window semantics and tray: New.
 
-**Why:** BlueAI is a worker that runs once a day on its own. Its window has to fit the partner's laptop, and the worker has to outlive the window. V2's window is a fixed 866px tall (product-scene.css:76), which does not fit a 1366 x 768 laptop or a 1080p screen at 125%; its close button unmounts the whole app (index.html:933) and Minimize does nothing (index.html:553), so nothing can run or notify while it is closed.
+**Why:** BlueAI is a worker that runs once a day on its own. Its window has to fit the partner's laptop, and the worker has to outlive the window. V2's window is a fixed 866px tall (product-scene.css:76), which does not fit a 1366 x 768 laptop or a 1080p screen at 125%; its close button unmounts the whole app (index.html:943) and Minimize does nothing (index.html:562), so nothing can run or notify while it is closed.
 
 ### AppFrame (Changed from V2)
 
@@ -18,7 +18,7 @@
 
 **Sizes.** Content box 419 x 830 (`--v2-shell-w`, `--v2-shell-h`); compact 419 x 640 (`--v2-shell-min-h`). Content band 722 full, 532 compact. The Windows caption adds 34 (`--v2-titlebar-h`). The window opens at the content box plus caption, capped to the screen's work area, resizes in height only, never below 640. Ground `--v2-canvas`. One gutter, 16 (`--v2-gutter`).
 
-**States.** Full: V2 `?start=worker`. Compact: new, no V2 equivalent (resize the window). Signed out: V2 bare URL (the welcome renders chrome-free, index.html:935).
+**States.** Full: V2 `?start=worker`. Compact: new, no V2 equivalent (resize the window). Signed out: V2 bare URL (the welcome renders chrome-free, index.html:945).
 
 **Props.** `AppFrame { compact, topBar, nav, children, overlays, landmark = true, className }`. Leaving out both `topBar` and `nav` gives the chrome-free frame. `landmark={false}` only for guide specimens (the content band is the page's `<main>`).
 
@@ -28,7 +28,7 @@
 
 **Responsive.** Two heights only, 830 and 640; the width never changes. At 640 the content band scrolls and the bars stay. Never use `vh` inside the window: it measures the browser, not the frame.
 
-**Do / Don't.** Do mount every overlay in `overlays`. Do design every screen for 640 too. Don't scroll the bars away. Don't give a band its own width (V2's chat column was 420 inside a 419 box, index.html:966).
+**Do / Don't.** Do mount every overlay in `overlays`. Do design every screen for 640 too. Don't scroll the bars away. Don't give a band its own width (V2's chat column was 420 inside a 419 box, index.html:976).
 
 ### Window semantics and tray (New)
 
@@ -49,7 +49,7 @@
 - Resume runs (offered only while paused): resumes at once, no question.
 - Quit BlueAI: confirm "Quit BlueAI?" / "Today’s run won’t happen while BlueAI is closed, so today won’t count." [Keep running] [Quit] (danger). Once today is settled (pending, done, not counted, verified, period ended): "Today is done. Your next run won’t happen while BlueAI is closed." No question while runs are paused: the host passes no confirm.
 - PC restarts: BlueAI starts with Windows into the tray, window closed (proposed; a switch in Settings > Worker).
-- Sign out: signs out and pauses the worker, and the confirm says so (section 64; V2's Logout confirm does not sign out, index.html:1000).
+- Sign out: signs out and pauses the worker, and the confirm says so (section 64; V2's Logout confirm does not sign out, index.html:1010).
 
 **Props.** `TrayMenu { runStatus (a RUN_STATUS key, section 30; 'done' reads as 'pending'), statusLabel (the real time or count; default the tray words), onOpen, onSkip, onResume, onQuit, confirm: null | 'skip' | 'quit', onConfirm, onCancel }`.
 

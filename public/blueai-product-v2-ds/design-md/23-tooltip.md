@@ -14,7 +14,7 @@
 
 **Sizes.** One. Info max 260px wide; label hugs its word.
 
-**States.** Hidden; hover; keyboard focus; pinned by click (the mark turns `--v2-blue-ink` on `--v2-select`, an outside click unpins); Esc (shut until the pointer leaves or focus moves); flipped (no room on the asked side: it opens on the other and slides to stay 8px inside the window). In V2 today: `?credits=0`, open the credits pill: the red (i) in the AI Credits banner (index.html:504); or `?credits=0` and send a message: the (i) on the out-of-credits card (byok.jsx:59).
+**States.** Hidden; hover; keyboard focus; pinned by click (the mark turns `--v2-blue-ink` on `--v2-select`, an outside click unpins); Esc (shut until the pointer leaves or focus moves); flipped (no room on the asked side: it opens on the other and slides to stay 8px inside the window). In V2 today: `?credits=0`, open the credits pill: the red (i) in the AI Credits banner (index.html:513); or `?credits=0` and send a message: the (i) on the out-of-credits card (byok.jsx:59).
 
 **Props.** `kind` ('label' | 'info'), `content` (node), `placement` ('up' | 'down', default up), `label` (names the default info mark; proposed "What are AI credits?"), `open` (force open), `className`, `children` (the trigger; info adds `aria-expanded`, `aria-describedby` and click-to-pin to it).
 

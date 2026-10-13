@@ -98,13 +98,13 @@
           <G.CompareRow
             v2={<G.Live get={function () { return (window.Toggle || window.Byok) && V2Toggles; }} label="Toggle and Byok.ByokSettings" />}
             system={<SwitchRow />}
-            changed="Two switches (32x18 with a spring, 46x26 as a pressed button) become one role=switch. Off gets an edge that can be seen (V2's grey tracks are 1.48:1). And a switch never deletes: in V2, switching Bring Your Own Key off removes the saved key. Try it on the left." />
+            changed="Three switches (32x18 with a spring, 46x26 as a pressed button, and since 2026-10-14 the 40x24 per-app mode switch, the one real role=switch) become one role=switch. Off gets an edge that can be seen (V2's grey tracks are 1.48:1). And a switch never deletes: in V2, switching Bring Your Own Key off removes the saved key. Try it on the left." />
           <G.SpecDrawer rows={[
-            { part: 'Track', token: '--v2-radius-pill', value: '36x20 (V2: 32x18 and 46x26)', ref: ['actions-inputs.switch.shared', 'actions-inputs.switch.byok'] },
-            { part: 'Off', token: '--v2-ink-4, --v2-surface', value: '1px #6e737c edge, white, thumb 12 ink-4 (V2: fill #d1d5db / #cbd5e1)', ref: ['actions-inputs.switch.shared-colours', 'actions-inputs.switch.byok-colours'] },
+            { part: 'Track', token: '--v2-radius-pill', value: '36x20 (V2: 32x18, 46x26 and 40x24)', ref: ['actions-inputs.switch.shared', 'actions-inputs.switch.byok', 'actions-inputs.switch.mode'] },
+            { part: 'Off', token: '--v2-ink-4, --v2-surface', value: '1px #6e737c edge, white, thumb 12 ink-4 (V2: fill #d1d5db / #cbd5e1)', ref: ['actions-inputs.switch.shared-colours', 'actions-inputs.switch.byok-colours', 'actions-inputs.switch.mode-colours'] },
             { part: 'On', token: '--v2-action, --v2-surface', value: '#1268f0 fill, thumb 16 white (V2 #1990FF)' },
             { part: 'Motion', token: '--v2-dur-2, --v2-ease-out', value: 'thumb slides 180ms, no overshoot (V2: a spring)', ref: 'actions-inputs.switch.shared-spring' },
-            { part: 'Role', token: null, value: 'role=switch, aria-checked (V2 BYOK: aria-pressed button)', ref: ['actions-inputs.switch.shared-role', 'actions-inputs.switch.byok-pressed'] },
+            { part: 'Role', token: null, value: 'role=switch, aria-checked (V2 BYOK: aria-pressed button; V2 mode: already role=switch, named per app)', ref: ['actions-inputs.switch.shared-role', 'actions-inputs.switch.byok-pressed', 'actions-inputs.switch.mode-role'] },
             { part: 'Busy', token: null, value: 'aria-busy, the thumb becomes a 12 spinner, clicks ignored' },
             { part: 'Never destroys', token: null, value: 'off disables only (V2 BYOK off deletes the key, R30)', ref: 'actions-inputs.switch.byok-delete' },
           ]} />
@@ -186,15 +186,15 @@
           <G.Stage ground="surface"><GatedMode /></G.Stage>
           <G.Note>Try it: pick Automatic. The consent opens and the selection waits; Cancel leaves Always ask. With a gate, arrow keys only move focus and Space asks, so no dialog opens from a stray key.</G.Note>
           <G.CompareRow
-            v2={<G.FrameState url="index.html?start=worker&v=1" label="V2: the Mode chip in the composer (open it)" height={830} />}
+            v2={<G.FrameState url="index.html?start=worker&v=1" label="V2: the composer chip opens the mode sheet, one switch per app" height={830} />}
             system={<div className="v2-hstack v2-hstack--between" style={{ maxWidth: 'var(--v2-shell-w)' }}><span className="v2-text-label">YouTube</span>{seg()}</div>}
-            changed="It declared a radiogroup but answered clicks only; now arrows, Home and End move between options with one tab stop. The selected segment is the select fill with a blue edge, not a white chip with a shadow; labels go from 11.5/700 to 13/500. beforeChange keeps the Automatic consent gate." />
+            changed="V2 has no segmented control since 2026-10-14: each app became one switch (on = Automatic) in the mode sheet and in Settings > Worker, and the switch keeps the gate (on asks for consent, off applies at once). The system keeps the two named options, so a row says which mode is on without decoding a switch: one tab stop, arrows, Home and End; the selected segment is the select fill with a blue edge; beforeChange keeps the Automatic consent gate." />
           <G.SpecDrawer rows={[
-            { part: 'Track', token: '--v2-surface-sunken, --v2-line, --v2-radius-md', value: 'sunken, 1px 10% edge, radius 10, padding 2 (V2 #f1f5f9, radius 8, width 172)', ref: ['actions-inputs.segmented.track', 'actions-inputs.onblue.tabs-track'] },
-            { part: 'Segment', token: '--v2-hit-min, --v2-radius-sm, --v2-text-13', value: '32 (sm 28), radius 6, 13/500 ink-3, icon 16 (V2: 11.5/700)', ref: 'actions-inputs.segmented.segment' },
-            { part: 'Selected', token: '--v2-select, --v2-blue, --v2-stroke-selected', value: 'select fill, 1.5px blue edge (4.15:1 on the track), ink', ref: ['actions-inputs.segmented.selected', 'actions-inputs.onblue.tab-on'] },
+            { part: 'Track', token: '--v2-surface-sunken, --v2-line, --v2-radius-md', value: 'sunken, 1px 10% edge, radius 10, padding 2', ref: 'actions-inputs.onblue.tabs-track' },
+            { part: 'Segment', token: '--v2-hit-min, --v2-radius-sm, --v2-text-13', value: '32 (sm 28), radius 6, 13/500 ink-3, icon 16' },
+            { part: 'Selected', token: '--v2-select, --v2-blue, --v2-stroke-selected', value: 'select fill, 1.5px blue edge (4.15:1 on the track), ink', ref: 'actions-inputs.onblue.tab-on' },
             { part: 'Hover', token: '--v2-wash-hover, --v2-ink', value: 'wash + ink' },
-            { part: 'Keys', token: null, value: 'radiogroup, roving tabindex, arrows, Home, End (V2: clicks only)', ref: ['actions-inputs.segmented.role', 'actions-inputs.segmented.radio'] },
+            { part: 'Keys', token: null, value: 'radiogroup, roving tabindex, arrows, Home, End' },
             { part: 'Gate', token: '--v2-select-line', value: 'beforeChange(value) resolves true to apply; dashed edge while waiting' },
             { part: 'Disabled', token: '--v2-opacity-disabled', value: 'aria-disabled, stays focusable; disabledReason printed once under the control (caption) and tied with aria-describedby' },
             { part: 'Copy', token: null, value: 'V2 copy', ref: ['actions-inputs.segmented.always', 'actions-inputs.segmented.auto', 'actions-inputs.segmented.youtube', 'actions-inputs.segmented.consent-title', 'actions-inputs.segmented.consent-copy', 'actions-inputs.button.consent', 'actions-inputs.button.cancel'] },

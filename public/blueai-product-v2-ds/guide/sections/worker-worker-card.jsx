@@ -85,7 +85,7 @@
             { part: 'Set up line', token: '--v2-text-13, --v2-ink-3', value: 'Finds jobs that fit you and runs them on your account.', ref: 'worker.card.desc' },
             { part: 'Action', token: '--v2-action (primary) or secondary / quiet', value: 'Button md 36; one per card; busy loads it in place (Run now starting, Try again reconnecting)', ref: ['worker.card.run', 'worker.card.run-label'] },
             { part: 'Run message', token: 'none', value: 'Run starts setup or today’s run, never "first paid job" twice', ref: 'worker.card.prompt' },
-            { part: 'Mode line', token: '--v2-text-12, --v2-ink-3 / --v2-blue-ink', value: "'Always ask' or 'Automatic · YouTube'", ref: 'worker.permissions.summary' },
+            { part: 'Mode line', token: '--v2-text-12, --v2-ink-3 / --v2-blue-ink', value: "'Always ask' or 'Automatic · YouTube' (V2's chip says 'Automatic on YouTube' since 2026-10-14)", ref: 'worker.permissions.summary' },
             { part: 'Next run', token: 'nextRunText(record)', value: 'Next run today at 11 am. (from the saved window)', ref: 'worker.flow.next-run' },
             { part: 'Running step', token: 'today.step', value: 'Watching a tech Short…', ref: 'worker.flow.running-step' },
             { part: 'Done', token: 'today.end', value: 'Today’s run is done. / Pending verification', ref: ['worker.copy.job', 'worker.copy.pending'] },

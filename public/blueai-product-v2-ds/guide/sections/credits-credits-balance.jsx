@@ -92,7 +92,7 @@
             viewer. Pass a Date or ms; a display string such as '5:30 am' is ignored and the next 00:00 UTC is used.
           </G.Note>
           <G.Warn>
-            One grant. V2 states {fmt(2000)} in the app (index.html:720) and {fmt(2500)} in the shared popup parts
+            One grant. V2 states {fmt(2000)} in the app (index.html:730) and {fmt(2500)} in the shared popup parts
             (credits_popup_parts.jsx:14). The system reads credits.grant and credits.runCost from the Worker record and never
             holds its own constant.
           </G.Warn>

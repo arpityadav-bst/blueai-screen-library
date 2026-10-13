@@ -28,7 +28,7 @@
 
 **Sizes.** 11, 12, 13, 14, 16, 20, 24, 40 (`--v2-text-*`). Nothing in between.
 
-**States.** One per style. Sample copy in the guide is quoted from V2 (for example `'Every task and job BlueAI does uses credits.'`, index.html:527).
+**States.** One per style. Sample copy in the guide is quoted from V2 (for example `'Every task and job BlueAI does uses credits.'`, index.html:536).
 
 **Props.** Classes only. Inline font sizes are not allowed in kit or screens.
 
@@ -50,7 +50,7 @@
 
 **Sizes.** 20.
 
-**States.** V2 today has seven: AI Credits 19/800 (index.html:439), Chat History 22/800 (history.jsx:91), Scheduled tasks 20/700 (schedule.jsx:118), Coming Soon 22/800 in #1e293b (jobs.jsx:140), Before you start 20/800 (terms_sheet.jsx:114), Logout 19/800 (profile.jsx:75), modal 18/600 (shared.jsx:75). Reach them from `?start=worker` through the header menus and tabs.
+**States.** V2 today has seven: AI Credits 19/800 (index.html:448), Chat History 22/800 (history.jsx:91), Scheduled tasks 20/700 (schedule.jsx:118), Coming Soon 22/800 in #1e293b (jobs.jsx:140), Before you start 20/800 (terms_sheet.jsx:114), Logout 19/800 (profile.jsx:75), modal 18/600 (shared.jsx:75). Reach them from `?start=worker` through the header menus and tabs.
 
 **Props.** The ScreenHeader and Dialog own the title; screens pass a string.
 
@@ -72,7 +72,7 @@
 
 **Sizes.** 40, 20, and body size inside notes.
 
-**States.** Credits balance (V2: 54/800 gradient, 38/800 at zero, index.html:518, byok.jsx:51; reach with `?credits=0`). "7 of 20 days" (V2: the home strip's "Day 6 of 20" 13.5/800 ink, worker_day_done.jsx:163, reach with `?day=returning`; the popup's 22/800 green count went with its minimal popup, 2026-10-14). "$6 earned" (V2: 13.5/800 green, worker_day_done.jsx:164; reach with `?day=returning&card=money`).
+**States.** Credits balance (V2: 54/800 gradient, 38/800 at zero, index.html:527, byok.jsx:51; reach with `?credits=0`). "7 of 20 days" (V2: the home strip's "Day 6 of 20" 13.5/800 ink, worker_day_done.jsx:163, reach with `?day=returning`; the popup's 22/800 green count went with its minimal popup, 2026-10-14). "$6 earned" (V2: 13.5/800 green, worker_day_done.jsx:164; reach with `?day=returning&card=money`).
 
 **Props.** Classes only; format with `toLocaleString('en-US')`.
 

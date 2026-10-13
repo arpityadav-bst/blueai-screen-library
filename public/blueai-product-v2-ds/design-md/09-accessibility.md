@@ -2,7 +2,7 @@
 
 **Status:** Focus ring: Changed from V2. Contrast table: Changed from V2. Targets and keyboard: New.
 
-**Why:** The partner agrees, through this app, to an agent acting on their own accounts and earning on their behalf, so every consent, money and control surface has to be readable and operable by everyone. V2 ships one focus rule (index.html:57) and removes the BYOK select's outline with nothing in its place (byok_settings.jsx:31); its primary labels are 3.24:1; its faintest text carries its caveats at 2.5:1; no overlay moves focus; the header menus work by mouse only (index.html:285); consent controls are 21 to 22px tall (P7).
+**Why:** The partner agrees, through this app, to an agent acting on their own accounts and earning on their behalf, so every consent, money and control surface has to be readable and operable by everyone. V2 ships one focus rule (index.html:57) and removes the BYOK select's outline with nothing in its place (byok_settings.jsx:31); its primary labels are 3.24:1; its faintest text carries its caveats at 2.5:1; no overlay moves focus; the header menus work by mouse only (index.html:294); consent controls are 21 to 22px tall (P7).
 
 ### Focus ring (Changed from V2)
 
@@ -65,7 +65,7 @@
 
 **Sizes.** 24, 32, 36, 44.
 
-**States.** V2 today: the coach 'Okay' about 21px (moneymaker_home.jsx:57, `?start=worker` first run), the mode 'Change' about 21px (agent_permissions.jsx:133), the info button 22px (credits_popup_parts.jsx:95, `?credits=0`).
+**States.** V2 today: the coach 'Okay' about 21px (moneymaker_home.jsx:57, `?start=worker` first run), the ribbon's 'Change' about 21px (agent_permissions.jsx:212), the info button 22px (credits_popup_parts.jsx:95, `?credits=0`).
 
 **Props.** Overlay parts own their focus management (sections 25 to 27); the kit's IconButton requires `label`.
 

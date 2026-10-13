@@ -9,7 +9,7 @@
     ['V2 without Tailwind', 'V2 loads the Tailwind CDN; this page does not (R26). Live V2 parts sit in a v2-preflight wrapper whose scoped reset mirrors Tailwind’s preflight, but V2’s few Tailwind utility classes (worker_cards.jsx) do nothing here.'],
     ['V2’s own style block', 'V2 index.html’s keyframes and ba-* classes are copied into guide/v2-live.css so live parts animate. If V2 changes that block, re-copy it; no check compares them.'],
     ['Scene styles', 'product-scene.css is not loaded, so the desktop, the Windows toast and the install dialog are shown as V2 URL states in a frame, not live.'],
-    ['URL states and localStorage', 'V2 reads two Preview panel rows from localStorage (index.html:252-256): bai_proto_start (land signed in on the worker, or the real sign-in cold start) and bai_proto_version (Version 1 chat chip or Version 2 ribbon). A link that sets its own start (start, day, end or signin) or version (v) wins (index.html:237-245); a framed state without them opens on what an earlier visit stored. Open it in a private window to be sure. The consent record is only written (agent_permissions.jsx:76) and the mode per app lives in memory, so neither carries over.'],
+    ['URL states and localStorage', 'V2 reads two Preview panel rows from localStorage (index.html:261-265): bai_proto_start (land signed in on the worker, or the real sign-in cold start) and bai_proto_version (which control opens the mode sheet: the composer chip or the ribbon). A link that sets its own start (start, day, end or signin) or version (v) wins (index.html:246-254); a framed state without them opens on what an earlier visit stored. Open it in a private window to be sure. The consent record is only written (agent_permissions.jsx:85) and the mode per app lives in memory, so neither carries over.'],
     ['Shared V2 stores on this page', 'Live parts share V2’s in-page stores: section 46’s specimens set the AgentPermissions mode, which chat’s AutoRibbon (section 38) then shows as Automatic. Use section 46’s Reset.'],
     ['V2 modal markup', 'The live V2 TermsSheet (section 26) renders V2’s own role=dialog aria-modal markup, so a screen reader may treat the rest of the guide as inert while it is mounted.'],
     ['What a ref proves', 'A ref proves a piece of text is still on its V2 line. It does not prove V2 renders it, or renders it the way the guide describes.'],
@@ -53,7 +53,7 @@
     ['product-scene.css, desktop_scene.jsx, desktop_toast.jsx chrome, browser_window.jsx', 'The fake Windows desktop: scene, fenced out of product tokens (section 71).'],
     ['install_dialog.jsx skin', 'BlueStacks’ installer look, not BlueAI’s.'],
     ['site_kit.jsx, site_signin.jsx, signin_page.jsx', 'The site and Google pages inside V2: the site’s language, used as the family reference.'],
-    ['index.html:867-1237', 'The dark Preview panel: review tooling (section 72).'],
+    ['index.html:877-1252', 'The dark Preview panel: review tooling (section 72).'],
   ];
 
   function KnownGapsSection() {

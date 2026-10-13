@@ -2,7 +2,7 @@
 
 **Status:** Ink ramp, Surfaces and lines, Action blue, Status tones, Brand gradient: all Changed from V2.
 
-**Why:** BlueAI is a quiet control room for an agent working on the partner's own accounts, and the partner moves between it and the onBlue site every day. V2 paints with two Tailwind grey ramps split 178/178, seven blue fills, an indigo nav, four parallel status maps and the brand gradient in three places on one top bar; its primary blue fails contrast with its own white labels (3.24:1, index.html:342) and its faintest text carries its most important caveats (2.5:1, chat_bubbles.jsx:124, account_gate.jsx:31). The system keeps one hue per job and shares the site's neutrals, lines, blue, greens and reds, so the app and the site read as one family (P5, P6, P7).
+**Why:** BlueAI is a quiet control room for an agent working on the partner's own accounts, and the partner moves between it and the onBlue site every day. V2 paints with two Tailwind grey ramps split 178/178, seven blue fills, an indigo nav, four parallel status maps and the brand gradient in three places on one top bar; its primary blue fails contrast with its own white labels (3.24:1, index.html:351) and its faintest text carries its most important caveats (2.5:1, chat_bubbles.jsx:124, account_gate.jsx:31). The system keeps one hue per job and shares the site's neutrals, lines, blue, greens and reds, so the app and the site read as one family (P5, P6, P7).
 
 ### Ink ramp (Changed from V2)
 
@@ -42,7 +42,7 @@
 
 **Motion.** Background and border colour over `--v2-dur-1`.
 
-**Accessibility.** Hover never lowers opacity (V2 does, index.html:343), so contrast holds while hovering.
+**Accessibility.** Hover never lowers opacity (V2 does, index.html:352), so contrast holds while hovering.
 
 **Responsive.** Not applicable.
 
@@ -110,7 +110,7 @@
 
 **Sizes.** Mark per section 30; glyph 16, 20, 24.
 
-**States.** Mark, credits glyph. V2 today: the top bar at `?start=worker` shows it three times (wordmark, pill ring, pill number, index.html:326-337), and the user bubble uses a cousin gradient with an indigo glow (chat_bubbles.jsx:30).
+**States.** Mark, credits glyph. V2 today: the top bar at `?start=worker` shows it three times (wordmark, pill ring, pill number, index.html:335-346), and the user bubble uses a cousin gradient with an indigo glow (chat_bubbles.jsx:30).
 
 **Props.** None: use BrandMark or the credits Icon.
 

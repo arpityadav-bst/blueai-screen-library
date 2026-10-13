@@ -2,7 +2,7 @@
 
 **Status:** Switch, RadioCard, Segmented: Changed from V2. Checkbox: New.
 
-**Why:** "Keep the partner in control" is one of the product's three jobs, and its controls are choices: Always ask or Automatic per app, own key on or off, when to run, which notifications. V2 has two switches (one of which deletes the saved key when turned off), an option card built from plain buttons, and a segmented control that declares a radiogroup without the keys it promises (shared.jsx:49; byok_settings.jsx:26, 64; ai_mode.jsx:47; agent_permissions.jsx:97-100). The system gives each a real role and keyboard, the site's one chosen look (blue 12% fill, blue 50% edge, ink; onblue/apply.html:930), and edges that clear 3:1 (P4, P6, P7).
+**Why:** "Keep the partner in control" is one of the product's three jobs, and its controls are choices: Always ask or Automatic per app, own key on or off, when to run, which notifications. V2 has three switches (one of which deletes the saved key when turned off; the per-app mode switch, since 2026-10-14, is the one real role=switch) and an option card built from plain buttons (shared.jsx:49; byok_settings.jsx:26, 64; agent_permissions.jsx:108; ai_mode.jsx:47). Its segmented control, which declared a radiogroup without the keys it promised, became that mode switch on 2026-10-14. The system gives each a real role and keyboard, the site's one chosen look (blue 12% fill, blue 50% edge, ink; onblue/apply.html:930), and edges that clear 3:1 (P4, P6, P7).
 
 ### Switch (Changed from V2)
 
@@ -36,7 +36,7 @@
 
 **Sizes.** One.
 
-**States.** Unchecked; hover (edge ink-3 + wash); focus-visible (outline on the box); checked (`--v2-action` fill, white tick); indeterminate (action fill, white bar); disabled and disabled checked (row at 0.45); invalid (edge `--v2-danger-edge` #d0454a, message in danger ink under the label). In V2 today: none in the product; the only checkbox is the review panel's install chip (index.html:913-916).
+**States.** Unchecked; hover (edge ink-3 + wash); focus-visible (outline on the box); checked (`--v2-action` fill, white tick); indeterminate (action fill, white bar); disabled and disabled checked (row at 0.45); invalid (edge `--v2-danger-edge` #d0454a, message in danger ink under the label). In V2 today: none in the product; the only checkbox is the review panel's install chip (index.html:923-926).
 
 **Props.** `checked` / `defaultChecked`, `onChange(next, event)`, `label`, `description`, `disabled`, `indeterminate`, `required`, `error`, `name`, `value`, `id`, `className`.
 
@@ -80,7 +80,7 @@
 
 **Sizes.** md 32, sm 28 (with an invisible 32 target).
 
-**States.** Rest; hover (wash + ink); selected; focus-visible; disabled (0.45; say why beside it); gated (`beforeChange` is waiting: the target segment shows a dashed select-line edge, the group is `aria-busy`, the selection does not move until the answer). In V2 today: open the Mode chip at `?start=worker&v=1` (agent_permissions.jsx:88-104): track #f1f5f9 radius 8 width 172, 11.5/700 labels, a white selected chip with a shadow, click only.
+**States.** Rest; hover (wash + ink); selected; focus-visible; disabled (0.45; say why beside it); gated (`beforeChange` is waiting: the target segment shows a dashed select-line edge, the group is `aria-busy`, the selection does not move until the answer). In V2 today: none since 2026-10-14; the composer chip at `?start=worker&v=1` opens a sheet with one switch per app (agent_permissions.jsx:98-116).
 
 **Props.** `options` ([{value, label, icon, disabled}]), `value`, `onChange(value)`, `ariaLabel`, `beforeChange(value)` (return true, or a promise of true, to let the change through), `size`, `disabled`, `className`.
 

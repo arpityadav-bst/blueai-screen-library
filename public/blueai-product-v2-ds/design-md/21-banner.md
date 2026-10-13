@@ -2,7 +2,7 @@
 
 **Status:** Changed from V2.
 
-**Why:** Some conditions decide whether today counts: out of AI credits, offline, App Player signed out, Automatic on. The partner has to see them above what they affect, said the same way every time. V2 has five banners in two blues, two ambers and two reds: an edgeless InfoBanner (ai_mode.jsx:71-78), a centred out-of-credits block at radius 14 (index.html:499-510), a second amber for BYOK (byok_settings.jsx:109), a sign-in notice at radius 12 (login.jsx:235), and the Automatic ribbon (agent_permissions.jsx:195). None can be dismissed, none has an offline tone.
+**Why:** Some conditions decide whether today counts: out of AI credits, offline, App Player signed out, Automatic on. The partner has to see them above what they affect, said the same way every time. V2 has five banners in two blues, two ambers and two reds: an edgeless InfoBanner (ai_mode.jsx:71-78), a centred out-of-credits block at radius 14 (index.html:508-519), a second amber for BYOK (byok_settings.jsx:109), a sign-in notice at radius 12 (login.jsx:235), and the one-line Automatic ribbon (agent_permissions.jsx:203-216). None can be dismissed, none has an offline tone.
 
 ### Banner (Changed from V2)
 

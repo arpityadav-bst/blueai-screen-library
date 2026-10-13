@@ -2,7 +2,7 @@
 
 **Status:** Changed from V2.
 
-**Why:** V2 stages its cold start (splash until 2650 ms, then an 850 ms skeleton, `boot_splash.jsx:31-33`, `index.html:735`), but the skeleton is the retired category list, the splash replays on every window open, and no button has a loading state, so Agree and continue, I agree, turn on, Validate & Save and Save settings can each be pressed twice while their work is in flight. A partner waiting on a consent or a save must see that it is happening, and fast work must never flash.
+**Why:** V2 stages its cold start (splash until 2650 ms, then an 850 ms skeleton, `boot_splash.jsx:31-33`, `index.html:745`), but the skeleton is the retired category list, the splash replays on every window open, and no button has a loading state, so Agree and continue, I agree, turn on, Validate & Save and Save settings can each be pressed twice while their work is in flight. A partner waiting on a consent or a save must see that it is happening, and fast work must never flash.
 
 ### Loading by duration (Changed from V2)
 

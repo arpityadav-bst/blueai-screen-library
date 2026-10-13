@@ -2,7 +2,7 @@
 
 **Status:** Changed from V2.
 
-**Why:** The handoff logic is the PM's (ROB-21388, `signin_page.jsx:5-17`, `index.html:203-216`) and it is sound: the download link only reaches accepted partners, so the only failure is the app running on another account. Two stops cost a click and say nothing new: the success step asks for Continue and greets a first sign-in with "Welcome back!" (`login.jsx:270-275`), and the browser step offers two controls with one job (`login.jsx:242-247`). Two site lines need the PM and legal (below).
+**Why:** The handoff logic is the PM's (ROB-21388, `signin_page.jsx:5-17`, `index.html:211-224`) and it is sound: the download link only reaches accepted partners, so the only failure is the app running on another account. Two stops cost a click and say nothing new: the success step asks for Continue and greets a first sign-in with "Welcome back!" (`login.jsx:270-275`), and the browser step offers two controls with one job (`login.jsx:242-247`). Two site lines need the PM and legal (below).
 
 ### Sign-in cases (Changed from V2)
 

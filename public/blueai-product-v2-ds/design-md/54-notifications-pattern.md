@@ -2,7 +2,7 @@
 
 **Status:** Changed from V2.
 
-**Why:** V2 has good pointers with nothing to point at. The Windows notification leaves after 8 s and is the only record (`desktop_toast.jsx:12`); a click opens a cold-started home with no Retry (`index.html:1053`); and the most urgent moment, a paid job waiting for an Always ask partner, raises only an amber taskbar flash after 4 s (`chat_product.jsx:97`, `product-scene.css:141-142`), with no notification and no deadline, so the job waits forever and the day is lost unseen.
+**Why:** V2 has good pointers with nothing to point at. The Windows notification leaves after 8 s and is the only record (`desktop_toast.jsx:12`); a click opens a cold-started home with no Retry (`index.html:1065`); and the most urgent moment, a paid job waiting for an Always ask partner, raises only an amber taskbar flash after 4 s (`chat_product.jsx:97`, `product-scene.css:141-142`), with no notification and no deadline, so the job waits forever and the day is lost unseen.
 
 ### Channel map (Changed from V2)
 

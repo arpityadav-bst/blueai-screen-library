@@ -14,7 +14,7 @@
 
 **Sizes.** 4, 6, 10, 16, 999, 50%.
 
-**States.** Selected uses 1.5px `--v2-select-line` on `--v2-select`. V2 today: Settings (`?start=worker`, then Settings) shows Connect Telegram at radius 20 (settings.jsx:44) and Save settings at 8 (settings.jsx:123) on one screen.
+**States.** Selected uses 1.5px `--v2-select-line` on `--v2-select`. V2 today: Settings (`?start=worker`, then Settings) shows Connect Telegram at radius 20 (settings.jsx:59) and Save settings at 8 (settings.jsx:138) on one screen.
 
 **Props.** Tokens only.
 

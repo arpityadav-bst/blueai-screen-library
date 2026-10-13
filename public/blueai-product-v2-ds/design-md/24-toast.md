@@ -2,7 +2,7 @@
 
 **Status:** Toast: New.
 
-**Why:** Confirm, destroy, undo (section 52) says a cheap mistake gets Undo, not a confirm. Undo needs a home, and V2 has none: its only in-app confirmation is an inline "Settings saved successfully." that vanishes after 2.5 s (settings.jsx:78, 121), while removing your own key and unlinking an app act at once with no confirm and no undo (byok_settings.jsx:75, settings.jsx:44). The toast is that home. It is not the Windows notification (desktop_toast.jsx:12), which reaches a partner who is not looking at BlueAI; a toast only confirms something the partner did in this window a second ago.
+**Why:** Confirm, destroy, undo (section 52) says a cheap mistake gets Undo, not a confirm. Undo needs a home, and V2 has none: its only in-app confirmation is an inline "Settings saved successfully." that vanishes after 2.5 s (settings.jsx:93, 136), while removing your own key and unlinking an app act at once with no confirm and no undo (byok_settings.jsx:75, settings.jsx:59). The toast is that home. It is not the Windows notification (desktop_toast.jsx:12), which reaches a partner who is not looking at BlueAI; a toast only confirms something the partner did in this window a second ago.
 
 ### Toast (New)
 

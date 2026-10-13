@@ -2,7 +2,7 @@
 
 **Status:** Changed from V2.
 
-**Why:** V2's Settings is one stack of five cards with no groups (`settings.jsx:129-139`): BlueStacks first, claiming "Connected" even when it is not installed (`settings.jsx:16`), then Telegram, AI mode, your own key, and Chat AI Settings with Max Output Tokens, Max Steps and a timeout (`settings.jsx:117-119`). A Save button with a 2.5 s success line (`settings.jsx:78, 121`) sits next to switches that apply at once. A partner looking for the worker's controls ("pause, stop, or disconnect anytime") finds none.
+**Why:** V2's Settings is one stack of five cards with no groups (`settings.jsx:144-155`): BlueStacks first, claiming "Connected" even when it is not installed (`settings.jsx:31`), then Telegram, AI mode, your own key, and Chat AI Settings with Max Output Tokens, Max Steps and a timeout (`settings.jsx:132-134`). A Save button with a 2.5 s success line (`settings.jsx:93, 136`) sits next to switches that apply at once. A partner looking for the worker's controls ("pause, stop, or disconnect anytime") finds none.
 
 ### Grouping and save model (Changed from V2)
 

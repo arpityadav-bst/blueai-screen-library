@@ -2,7 +2,7 @@
 
 **Status:** New.
 
-**Why:** BlueAI is a worker that runs once a day on the partner's own accounts, so its state has to outlive every screen. V2 keeps it in a component's local state, module globals and constants: the day count is a constant (`worker_day_done.jsx:39`), so tonight's popup says Day 7 of 20 and tomorrow's strip says Day 6 of 20 (`:163`); the next run is hard-coded to 11 am (`chat_product.jsx:213`); the mode per app resets on reload (`agent_permissions.jsx:60`); opening another tab unmounts the run (R01, R02).
+**Why:** BlueAI is a worker that runs once a day on the partner's own accounts, so its state has to outlive every screen. V2 keeps it in a component's local state, module globals and constants: the day count is a constant (`worker_day_done.jsx:39`), so tonight's popup says Day 7 of 20 and tomorrow's strip says Day 6 of 20 (`:163`); the next run is hard-coded to 11 am (`chat_product.jsx:213`); the mode per app resets on reload (`agent_permissions.jsx:66`); opening another tab unmounts the run (R01, R02).
 
 ### Worker record and fixtures
 

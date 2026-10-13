@@ -37,7 +37,7 @@
             first. The system locks the composer at zero, says why and until when in its notice slot before anyone types
             (section 38), and says once, at the end of a run that stopped, what zero means for today. With nothing left to
             stop, the popup has no moment. Its explainer, “What are AI credits?”, moves to the AI credits screen
-            (<a className="g-link" href={G.hashHref('credits-screen')}>section 66</a>), V2’s explainer, kept word for word (index.html:525-537).
+            (<a className="g-link" href={G.hashHref('credits-screen')}>section 66</a>), V2’s explainer, kept word for word (index.html:534-546).
           </G.Note>
           <G.CompareRow
             v2={<div style={card}><G.Live get={function () { return window.Byok && window.Byok.OutOfCreditsCard; }} props={{ onDismiss: noop }} label="window.Byok.OutOfCreditsCard" /></div>}

@@ -58,7 +58,7 @@
 
 **Sizes.** Not applicable.
 
-**States.** V2 today: splash messages at 1050ms, fade at 2150ms, done at 2650ms (boot_splash.jsx:31-33) then an 850ms skeleton (index.html:735) on every window open (bare URL); welcome CTA at 1.65s and terms finishing at 5.9s (moneymaker.jsx:107-110); day done `?end=job`.
+**States.** V2 today: splash messages at 1050ms, fade at 2150ms, done at 2650ms (boot_splash.jsx:31-33) then an 850ms skeleton (index.html:745) on every window open (bare URL); welcome CTA at 1.65s and terms finishing at 5.9s (moneymaker.jsx:107-110); day done `?end=job`.
 
 **Props.** Splash `coldStart` (section 33).
 

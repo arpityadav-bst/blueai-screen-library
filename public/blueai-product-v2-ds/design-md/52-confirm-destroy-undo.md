@@ -2,7 +2,7 @@
 
 **Status:** Changed from V2.
 
-**Why:** V2's one sign-out confirm says "Logout" over a body that says sign out, paints a non-destructive action red (`profile.jsx:75-79`), and its confirm does not sign out (`index.html:1000`). The actions that do lose something never ask: switching your own key off deletes the key (`byok_settings.jsx:64`), Remove and Unlink act at once (`byok_settings.jsx:74`, `settings.jsx:44`), and "Not now" on a paid job ends the day as not counted in one tap, the cost told only afterwards (`worker_flow.jsx:121, 149`, `worker_day_done.jsx:95`).
+**Why:** V2's one sign-out confirm says "Logout" over a body that says sign out, paints a non-destructive action red (`profile.jsx:75-79`), and its confirm does not sign out (`index.html:1010`). The actions that do lose something never ask: switching your own key off deletes the key (`byok_settings.jsx:64`), Remove and Unlink act at once (`byok_settings.jsx:74`, `settings.jsx:59`), and "Not now" on a paid job ends the day as not counted in one tap, the cost told only afterwards (`worker_flow.jsx:121, 149`, `worker_day_done.jsx:95`).
 
 ### Rules (Changed from V2)
 

@@ -14,7 +14,7 @@
 
 **Sizes.** sm 320 (`--v2-dialog-sm`): alert, celebration, out of credits. md 382 (`--v2-dialog-md`): task, consent. Height up to the window less 16px each side.
 
-**States.** Closed (nothing mounted); opening; open; busy (the primary loads; Esc, the scrim and Close wait); closing; over a menu (the menu closes first, focus comes back to the menu button). In V2 today: ModalOverlay as Confirm delete on the Schedule tab (schedule.jsx:144); the Automatic consent at `?start=worker&v=1`, open the mode chip, pick Automatic (agent_permissions.jsx:160); out of credits at `?credits=0` then send a message (byok.jsx:76).
+**States.** Closed (nothing mounted); opening; open; busy (the primary loads; Esc, the scrim and Close wait); closing; over a menu (the menu closes first, focus comes back to the menu button). In V2 today: ModalOverlay as Confirm delete on the Schedule tab (schedule.jsx:144); the Automatic consent at `?start=worker&v=1`, open the mode chip, pick Automatic (agent_permissions.jsx:186); out of credits at `?credits=0` then send a message (byok.jsx:76).
 
 **Props.** `open`, `onClose`, `title`, `description`, `variant`, `size` ('sm' | 'md'), `role` (override), `dismissible` (false blocks: no Close, no Esc, no scrim), `busy`, `actions` ([{label, onClick, variant 'secondary' | 'primary' | 'danger' | 'quiet', disabled}]), `footer`, `initialFocus` (ref or selector), `labelledBy` (when the title lives in the body), `scrim`, `className`, `children`. `preview` renders it open in place without focus (guide specimens only).
 
@@ -46,4 +46,4 @@
 
 **Responsive.** As Dialog.
 
-**Do / Don't.** Do name the primary for the action (Sign out, Disconnect, Delete), never OK or Yes. Do say the consequence; the sign-out confirm's strings are owned by section 64, the disconnect confirm's by section 63. Don't paint Sign out as destructive: V2's "Logout" on #ef4444 (3.76:1, profile.jsx:79) suggests loss, and confirming it does not even sign out (index.html:1000, R03).
+**Do / Don't.** Do name the primary for the action (Sign out, Disconnect, Delete), never OK or Yes. Do say the consequence; the sign-out confirm's strings are owned by section 64, the disconnect confirm's by section 63. Don't paint Sign out as destructive: V2's "Logout" on #ef4444 (3.76:1, profile.jsx:79) suggests loss, and confirming it does not even sign out (index.html:1010, R03).

@@ -1,7 +1,7 @@
 ## 65 Help and Report a problem
 
 **Status:** New.
-**Why:** Help is the escape hatch when a day or a payout looks wrong, the moment money is at stake (R34). V2 draws a Help menu with "FAQ" and "Report Issue" whose rows only close the menu (index.html:355-356), with a red warning glyph on a help entry (index.html:306). There is nothing behind them.
+**Why:** Help is the escape hatch when a day or a payout looks wrong, the moment money is at stake (R34). V2 draws a Help menu with "FAQ" and "Report Issue" whose rows only close the menu (index.html:364-365), with a red warning glyph on a help entry (index.html:315). There is nothing behind them.
 
 ### Help (New)
 - **Purpose:** Two entries reachable from every screen: FAQ opens the site article in the browser; Report a problem opens one sheet, already attached to the run it started from when it started from one.

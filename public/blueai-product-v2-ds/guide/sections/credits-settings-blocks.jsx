@@ -7,7 +7,7 @@
   const KEY = { provider: 'Anthropic', model: 'claude-haiku-4-5', last4: 'qAAA' };
   const DRAFT = { provider: 'Anthropic', key: 'sk-ant-api03-7Hq2xQ' };
   const W = function (node) { return <div style={fill}>{node}</div>; };
-  // V2 always hands SettingsScreen a byok object (index.html:977), so its own-key card draws; V2's signed-in default.
+  // V2 always hands SettingsScreen a byok object (index.html:987), so its own-key card draws; V2's signed-in default.
   const V2_BYOK = { on: false, setOn: noop, keyAdded: false, keyInfo: null, onSave: noop, onRemove: noop, highlight: false };
 
   function SettingsBlocksSection() {
@@ -41,7 +41,7 @@
               + 'Max Steps and Timeout before anything about the worker. The system is one SettingsSection (1px line, no shadow, '
               + 'padding 16, title 16/600), rows hair-divided, partner topics first and the developer controls behind one '
               + 'Advanced disclosure. Routing to a section highlights it and never changes it (V2 also switched own key on).'} />
-          <G.Warn>V2 says "Connected to BlueStacks App Player" whether or not it is installed (settings.jsx:16). The truthful card is part of Settings (section 61).</G.Warn>
+          <G.Warn>V2 says "Connected to BlueStacks App Player" whether or not it is installed (settings.jsx:31). The truthful card is part of Settings (section 61).</G.Warn>
           <G.DoDont
             do={['Group by what the partner thinks about: Worker, Connected apps, Notifications, BlueStacks, Account and privacy, Help, then Advanced.', 'Apply on change with a quiet toast; a Save button only for a multi-field form (section 55).', 'Pass ListRows without their own divider; the section draws the hairlines.']}
             dont={['Put tokens, steps or timeouts in front of the partner.', 'Change a setting by routing to it.', 'Add a shadow or a second padding.']} />

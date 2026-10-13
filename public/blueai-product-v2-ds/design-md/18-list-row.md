@@ -2,7 +2,7 @@
 
 **Status:** Changed from V2.
 
-**Why:** Every screen the concept adds (Activity, Notifications, Worker settings, Connected apps, Account) is a list. V2 has four row shapes for one idea, with two label treatments: Profile rows (grey 14.5 label, 14.5/600 value, profile.jsx:17-24), Settings field rows (15/700 label over a 12px hint at 2.54:1, settings.jsx:82-87), the Sign out card (a whole card, hover from a mouse handler, profile.jsx:57-59) and History rows (a card each, a turning chevron, no aria-expanded, history.jsx:96-104). One row with variants replaces them.
+**Why:** Every screen the concept adds (Activity, Notifications, Worker settings, Connected apps, Account) is a list. V2 has four row shapes for one idea, with two label treatments: Profile rows (grey 14.5 label, 14.5/600 value, profile.jsx:17-24), Settings field rows (15/700 label over a 12px hint at 2.54:1, settings.jsx:97-102), the Sign out card (a whole card, hover from a mouse handler, profile.jsx:57-59) and History rows (a card each, a turning chevron, no aria-expanded, history.jsx:96-104). One row with variants replaces them.
 
 ### ListRow (Changed from V2)
 
