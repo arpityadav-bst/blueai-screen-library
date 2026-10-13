@@ -2,8 +2,8 @@
    kit/choice.jsx). Tokens only. Every state is written twice: the real pseudo-class and the class
    the guide uses to force it (.is-hover, .is-focus, .is-active). Hover never changes opacity (it
    would lower contrast that has to hold); disabled is the only opacity, always with a reason.
-   Small controls (button sm, chip, icon button 28) draw at 28 and reach the 32px hit floor with an
-   invisible ::after. */
+   Small controls (button sm, chip, the field's icon button 28) draw at 28 and reach the 32px hit
+   floor with an invisible ::after. */
 
 /* Button ------------------------------------------------------------------------------------ */
 .v2-button {
@@ -66,16 +66,16 @@
   border: 2px solid currentColor; border-right-color: transparent; border-radius: var(--v2-radius-round);
 }
 
-/* IconButton --------------------------------------------------------------------------------- */
+/* IconButton: 32 square (the hit floor); 28 only inside a field ------------------------------- */
 .v2-icon-button {
   position: relative; flex: none;
   display: inline-flex; align-items: center; justify-content: center;
-  width: var(--v2-control-md); height: var(--v2-control-md); padding: 0;
+  width: var(--v2-hit-min); height: var(--v2-hit-min); padding: 0;
   border: var(--v2-stroke) solid transparent; border-radius: var(--v2-radius-sm);
   background-color: transparent; color: var(--v2-ink-3); cursor: pointer;
-  transition: background-color var(--v2-dur-1) var(--v2-ease-standard), color var(--v2-dur-1) var(--v2-ease-standard);
+  transition: background-color var(--v2-dur-1) var(--v2-ease-standard), color var(--v2-dur-1) var(--v2-ease-standard),
+    border-color var(--v2-dur-1) var(--v2-ease-standard);
 }
-.v2-icon-button--32 { width: var(--v2-hit-min); height: var(--v2-hit-min); }
 .v2-icon-button--28 { width: var(--v2-control-sm); height: var(--v2-control-sm); }
 .v2-icon-button--outlined { background-color: var(--v2-surface); border-color: var(--v2-line-strong); }
 .v2-icon-button:hover:not([aria-disabled="true"]), .v2-icon-button.is-hover { background-color: var(--v2-wash-hover); color: var(--v2-ink); }
@@ -83,12 +83,22 @@
   background-color: var(--v2-surface); background-image: linear-gradient(var(--v2-wash-hover), var(--v2-wash-hover));
   border-color: var(--v2-line-hover);
 }
-/* on: its menu is open or it is pressed. Ink, not blue: blue is for selection. */
-.v2-icon-button.is-on, .v2-icon-button[aria-expanded="true"], .v2-icon-button[aria-pressed="true"],
+/* on: its menu is open, or it is being pressed. Ink, not blue: blue is for selection. */
+.v2-icon-button.is-on, .v2-icon-button[aria-expanded="true"],
 .v2-icon-button:active:not([aria-disabled="true"]), .v2-icon-button.is-active {
   background-color: var(--v2-wash-press); color: var(--v2-ink);
 }
-.v2-icon-button--danger:hover:not([aria-disabled="true"]), .v2-icon-button--danger.is-hover { color: var(--v2-danger-ink); }
+/* pressed (aria-pressed, a toggle such as the recorded feedback vote): a selection, so the family's
+   chosen look, as Chip and RadioCard draw it: blue 12% fill, blue 50% edge, blue-ink glyph. The
+   edge and fill change the shape of the box, so the vote never rests on a darker glyph alone. */
+.v2-icon-button[aria-pressed="true"] {
+  background-color: var(--v2-surface); background-image: linear-gradient(var(--v2-select), var(--v2-select));
+  border-color: var(--v2-select-line); color: var(--v2-blue-ink);
+}
+.v2-icon-button[aria-pressed="true"]:hover:not([aria-disabled="true"]), .v2-icon-button[aria-pressed="true"].is-hover {
+  background-image: linear-gradient(var(--v2-wash-hover), var(--v2-wash-hover)), linear-gradient(var(--v2-select), var(--v2-select));
+  border-color: var(--v2-select-line); color: var(--v2-blue-ink);
+}
 .v2-icon-button:focus-visible, .v2-icon-button.is-focus { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); }
 .v2-icon-button[aria-disabled="true"] { opacity: var(--v2-opacity-disabled); cursor: not-allowed; }
 
@@ -158,7 +168,4 @@
 }
 .v2-icon-button--28::after { left: calc((100% - var(--v2-hit-min)) / 2); right: calc((100% - var(--v2-hit-min)) / 2); }
 
-@media (prefers-reduced-motion: reduce) {
-  .v2-button, .v2-icon-button, .v2-link, .v2-link-text, .v2-chip { transition: none; }
-  .v2-button:active:not([aria-disabled="true"]), .v2-button.is-active { transform: none; }
-}
+@media (prefers-reduced-motion: reduce) { .v2-button:active:not([aria-disabled="true"]), .v2-button.is-active { transform: none; } }

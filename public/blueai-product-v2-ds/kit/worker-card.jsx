@@ -4,10 +4,12 @@
      The home's one card. state defaults to workerState(worker); pass it to force one for review.
      busy: the card's action is working (Try again reconnecting, Run now starting): its Button
      loads in place and ignores a second click.
-     Fourteen states: setup, scheduled, running, waiting, done, stopped, failed, missed, blocked,
-     paused, noCredits, offline, complete, ended. Never a second Run once today's run has happened
-     (V2's Run 'completes' the day again). The card is not one big button (V2's role=button wraps a
-     second button); only the action acts. Every state that costs today says so, with the time.
+     Fifteen states: setup, scheduled, running, waiting, done, stopped, failed, missed, blocked,
+     paused, noCredits, offline, checking, complete, ended. Never a second Run once today's run has
+     happened (V2's Run 'completes' the day again). The card is not one big button (V2's role=button
+     wraps a second button); only the action acts. Every state that costs today says so, with the
+     time, in DAY_COPY's words (kit/job.jsx). running says to leave App Player open (RUN_COPY).
+     checking (all 20 done, one still being checked) and complete say the worker stops taking jobs.
      onFix(reason) is the blocked state's one fixing action ('no-app' Connect YouTube, 'signed-out'
      Open App Player, 'no-bluestacks' Get BlueStacks). ended uses endedCopy, the words section 69's
      period-ended state shows; Home itself shows that state, not this card, once the period is over,
@@ -16,7 +18,8 @@
      The first-run pointer under the card, a non-blocking note: nothing is dimmed or locked, so
      nothing has to be made inert. PM copy 'Run this to begin' / 'Okay' kept. Dismissal is
      remembered on the Worker record (coachSeen), so it never comes back on a remount (V2:
-     moneymaker_home.jsx:105). */
+     moneymaker_home.jsx:105). Okay unmounts, so focus moves to the card's action (Run) rather
+     than dropping to the page (useSwapFocus keyed on coaching). */
 (function () {
   const K = () => window.V2Kit;
   const cx = function () { return Array.prototype.filter.call(arguments, Boolean).join(' '); };
@@ -25,17 +28,18 @@
     setup: ['spark', null], scheduled: ['clock', null], running: ['play', 'info'], waiting: ['bell', 'attention'],
     done: ['check', null], stopped: ['stop', null], failed: ['alert', 'danger'], missed: ['clock', 'attention'],
     blocked: ['alert', 'danger'], paused: ['pause', null], noCredits: ['credits', null], offline: ['wifi-off', null],
-    complete: ['check-double', 'success'], ended: ['calendar', null],
+    checking: ['check', null], complete: ['check-double', 'success'], ended: ['calendar', null],
   };
 
-  // V2 copy where V2 has it (quoted exactly), proposed copy elsewhere. Keyed by today's outcome.
-  const NOT_COUNTED = 'Today doesn’t count toward your 20 days.';
-  const DONE_LINE = {
-    job: ['Today’s run is done.'],
-    nojob: ['No paid job today, but your run counts.'],
-    skipped: ['Run finished without a job.', NOT_COUNTED],
-    expired: ['No answer by 9 pm, so I skipped the job.', NOT_COUNTED],
-  };
+  // V2 copy where V2 has it (quoted exactly), proposed copy elsewhere. Keyed by today's outcome;
+  // the skipped line is RunCard's, the not-counted lines DAY_COPY's.
+  function doneLine(outcome, by) {
+    const D = K().DAY_COPY;
+    if (outcome === 'nojob') return ['No paid job today, but your run counts.'];
+    if (outcome === 'skipped') return ['You skipped today’s paid job.', D.notCounted];
+    if (outcome === 'expired') return [D.expired(by), D.notCounted];
+    return ['Today’s run is done.'];
+  }
   // What blocks today's run, and the one action that fixes it. Proposed copy, in Settings' words.
   const BLOCKED = {
     'no-app': ['YouTube isn’t connected.', 'Connect it by 9 pm to count today.', 'Connect YouTube'],
@@ -47,6 +51,7 @@
     const P = K();
     const t = w.today || {};
     const n = P.numbers(w);
+    const D = P.DAY_COPY;
     const btn = (variant, label, onClick, extra) => <P.Button variant={variant} size="md" loading={!!h.busy} onClick={onClick} {...(extra || {})}>{label}</P.Button>;
     const earnings = btn('secondary', 'Earnings', null, { href: P.EARNINGS_URL, external: true });
     switch (state) {
@@ -55,7 +60,7 @@
       case 'scheduled':
         return { lines: [{ text: P.nextRunText(w) }], action: btn('secondary', 'Run now', h.onRun) };
       case 'running':
-        return { lines: [{ text: t.step || 'Working…', lead: <P.Spinner size={16} label="Running" /> }], action: btn('quiet', 'Details', h.onOpenToday) };
+        return { lines: [{ text: t.step || 'Working…', lead: <P.Spinner size={16} label="Running" /> }, { text: P.RUN_COPY.keepOpen, meta: true }], action: btn('quiet', 'Details', h.onOpenToday) };
       case 'waiting': {
         const a = t.ask || {};
         const app = P.WORKER_APPS.find((x) => x.id === (a.job && a.job.app)) || P.WORKER_APPS[0];
@@ -65,16 +70,16 @@
         };
       }
       case 'done': {
-        const out = DONE_LINE[t.outcome] || DONE_LINE.job;
+        const out = doneLine(t.outcome, (t.ask && t.ask.expires) || t.retryBy);
         const first = t.outcome === 'job' && n.done >= n.target ? 'Day ' + n.target + ' done.' : out[0];
         const second = out[1] ? { text: out[1], meta: true } : { text: 'Pending verification', tick: 'pending', meta: true };
         return { lines: [{ text: first }, second], action: btn('quiet', 'Details', h.onOpenToday) };
       }
       case 'stopped':
-        return { lines: [{ text: 'You stopped today’s run.' }, { text: 'Today doesn’t count yet. Run again by ' + (t.retryBy || '9 pm') + '.', meta: true }], action: btn('secondary', 'Run again', h.onRetry || h.onRun) };
+        return { lines: [{ text: 'You stopped today’s run.' }, { text: D.stopped(t.retryBy), meta: true }], action: btn('secondary', 'Run again', h.onRetry || h.onRun) };
       case 'failed':
         return {
-          lines: [{ text: 'Today’s job didn’t finish.', tone: 'danger' }, { text: (t.error ? t.error + ' ' : '') + 'Try again by ' + (t.retryBy || '9 pm') + ' to count the day.', meta: true }],
+          lines: [{ text: 'Today’s job didn’t finish.', tone: 'danger' }, { text: (t.error ? t.error + ' ' : '') + D.failed(t.retryBy), meta: true }],
           action: btn('primary', 'Try again', h.onRetry || h.onRun),
         };
       // A late start never begins on its own: the partner may be using the PC when it wakes (P3).
@@ -96,12 +101,16 @@
       case 'noCredits': {
         const c = w.credits || {};
         const at = P.creditsTime.formatClock(c.refillAt != null ? c.refillAt : P.creditsTime.nextRefill());
-        return { lines: [{ text: 'Not enough AI credits for today’s run.' }, { text: 'Credits refresh at ' + at + '. ' + P.OOC_COPY.day[P.creditsDay(w)], meta: true }], action: btn('secondary', 'AI credits', h.onOpenCredits) };
+        return { lines: [{ text: 'Not enough AI credits for today’s run.' }, { text: P.OOC_COPY.refreshAt + ' ' + at + '. ' + P.OOC_COPY.day[P.creditsDay(w)], meta: true }], action: btn('secondary', 'AI credits', h.onOpenCredits) };
       }
       case 'offline':
         return { lines: [{ text: 'You’re offline.' }, { text: 'Today’s run starts when you’re back online.', meta: true }], action: btn('secondary', 'Try again', h.onRetry) };
+      // All 20 done: the worker stops taking jobs, and runs again only if a day still being checked
+      // is not counted (proposed, PM to confirm). Once all are verified it is off until the next program.
+      case 'checking':
+        return { lines: [{ text: 'All ' + n.target + ' days done.' }, { text: P.RUN_COPY.checking(n.pending), tick: 'pending', meta: true }], action: earnings, noMode: true };
       case 'complete':
-        return { lines: [{ text: 'All ' + n.target + ' days done.' }, { text: 'Cash out on Earnings after ' + n.endsOn + '.', meta: true }], action: earnings, noMode: true };
+        return { lines: [{ text: 'All ' + n.target + ' days verified.' }, { text: P.RUN_COPY.over + ' Cash out on Earnings after ' + n.endsOn + '.', meta: true }], action: earnings, noMode: true };
       case 'ended': {
         const e = P.endedCopy(n);
         return { lines: [{ text: e.title + '.' }, { text: e.body, meta: true }], action: earnings, noMode: true };
@@ -118,6 +127,8 @@
     const c = content(state, w, props);
     const tile = TILE[state] || TILE.scheduled;
     const mode = P.modeSummary(w);
+    const act = React.useRef(null);
+    if (P.useSwapFocus) P.useSwapFocus(function () { return act.current && act.current.querySelector('button, a'); }, !!props.coaching);
     return (
       <div>
         <article className={cx('v2-wcard', 'v2-wcard--' + state)} aria-label="BlueAI worker">
@@ -139,7 +150,7 @@
               </span>
             )}
           </div>
-          {c.action ? <div className="v2-wcard-action">{c.action}</div> : null}
+          {c.action ? <div className="v2-wcard-action" ref={act}>{c.action}</div> : null}
         </article>
         {props.coaching ? <CoachMark onOkay={props.onDismissCoach} /> : null}
       </div>

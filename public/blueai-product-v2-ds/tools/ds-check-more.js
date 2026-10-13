@@ -15,9 +15,10 @@
    8. sizes  the size lists the JSX copies (Icon and Avatar SIZES) equal their tokens' px values;
              each size's class rule sets width and height to its token (the default size in the
              base rule); no <Icon> or <Avatar> gets a literal size outside the list (it would fall
-             back to the default); and no kit/ or screens/ rule types a Size token's value raw: a
-             square of a mark size, a badge height, a rail height (a square dot is not a rail),
-             the row minimum, the popover width, a measure.
+             back to the default); and no kit/ or screens/ rule types a Size token's value raw, or
+             borrows a Space token for it: a square of a mark size, a badge height, a rail height
+             (a square dot is not a rail), the row minimum, the popover width, a measure. Each
+             part-local property tokens.css's header cites as the pattern is defined where cited.
    9. rest   no object rest destructuring ({ a, ...rest }) in any .jsx in kit/, screens/ or guide/:
              Babel hoists the key list of each one to a program-level _excluded, so the next file
              that compiles one overwrites it and every earlier part forwards the wrong props.
@@ -167,11 +168,15 @@ module.exports = function more({ files, read, has, err, asts }) {
     [['--v2-popover-w'], ['width', 'max-width']],
     [['--v2-measure', '--v2-measure-tip'], ['max-width']],
   ];
+  // A Space token is a gap, not a size: a whole value of var(--v2-space-N) counts as its px here, so
+  // a rail drawn at var(--v2-space-15) or a disc at var(--v2-space-8) fails like a typed 6px or 32px.
+  const SPACE = /^var\((--v2-space-[\w-]+)\)$/;
+  const val = (d) => { const s = d.value.match(SPACE); return s ? [px(s[1])] : rawPx(d.value); };
   for (const f of files.filter((x) => /^(kit|screens)\/.+\.css$/.test(x))) {
     for (const r of rules(read(f))) {
       const last = {};
       r.decls.forEach((d) => { last[d.prop] = d; });
-      const has2 = (p, v) => !!last[p] && rawPx(last[p].value).includes(v);
+      const has2 = (p, v) => !!last[p] && val(last[p]).includes(v);
       const said = new Set();
       for (const [names, props, shape] of SIZE_USE) for (const n of names) {
         const v = px(n);
@@ -179,9 +184,19 @@ module.exports = function more({ files, read, has, err, asts }) {
         if (shape === 'line' && has2('width', v)) continue;
         for (const p of props.filter((x) => has2(x, v) && !said.has(x))) {
           said.add(p);
-          err(f, 'line ' + last[p].line + ': ' + p + ' ' + v + 'px is ' + n + ' (Size, tokens.css): use var(' + n + ')');
+          const sp = last[p].value.match(SPACE);
+          err(f, 'line ' + last[p].line + ': ' + p + ' ' + (sp ? last[p].value + ' (a Space token, for gaps) reads ' : '')
+            + v + 'px, which is ' + n + ' (Size, tokens.css): use var(' + n + ')');
         }
       }
+    }
+  }
+
+  // ...and every part-local property tokens.css's header cites as the pattern is defined where it says
+  const tokHead = (read('tokens.css').match(/^\/\*[\s\S]*?\*\//) || [''])[0];
+  for (const m of tokHead.matchAll(/(--(?!v2-)[a-z][\w-]*), ((?:kit|screens)\/[\w-]+\.css)/g)) {
+    if (!has(m[2]) || !new RegExp('(?:^|[;{\\s])' + m[1] + '\\s*:').test(read(m[2]))) {
+      err(m[2], 'tokens.css cites ' + m[1] + ' here as its part-local property, but this file does not define it');
     }
   }
 

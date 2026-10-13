@@ -29,12 +29,12 @@
   max-width: var(--v2-dialog-sm); margin: 0; color: var(--v2-ink-2);
   font-size: var(--v2-text-14); line-height: var(--v2-leading-body); text-wrap: pretty;
 }
-/* The site's one serif word (title-lg em): Instrument Serif italic in blue ink. Brand voice, not a
+/* The site's one serif word (title-lg em): Instrument Serif italic in the site's blue. Brand voice, not a
    highlight: one per title at most, never on a button or a number. */
 .v2-serif-em {
   font-family: var(--v2-font-serif); font-style: italic; font-weight: var(--v2-weight-regular);
-  font-size: 1.06em; letter-spacing: var(--v2-tracking-label); color: var(--v2-blue-ink);
-}
+  font-size: 1.06em; letter-spacing: var(--v2-tracking-display); color: var(--v2-blue);
+} /* the site's .title-lg em (onblue.css:1446-1453): -0.03em, and its light --blue-ink is --blue (:443) */
 .v2-welcome-foot {
   display: flex; justify-content: center; padding-top: var(--v2-space-4);
 }
@@ -58,7 +58,9 @@
 
 /* ---- Program Terms sheet body (Welcome, Account) -------------------------------------------- */
 .v2-terms-text { margin: 0; color: var(--v2-ink-2); font-size: var(--v2-text-14); line-height: var(--v2-leading-body); }
-.v2-terms-text + .v2-banner { margin-top: var(--v2-space-3); }
+.v2-terms-text + .v2-banner, .v2-terms-note + .v2-banner { margin-top: var(--v2-space-3); }
+/* Update mode only: what Not now costs, read before the buttons (section 53). */
+.v2-terms-note { margin: var(--v2-space-3) 0 0; color: var(--v2-ink-3); font-size: var(--v2-text-13); line-height: var(--v2-leading-body); }
 
 /* ---- Sign-in gate (section 68): content of the kit Dialog on the frost scrim ----------------- */
 .v2-gate {

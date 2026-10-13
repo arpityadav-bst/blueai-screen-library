@@ -2,13 +2,13 @@
 
 **Status:** Type ladder, Page titles, Numerals: all Changed from V2.
 
-**Why:** The partner reads this app every day in a 419px window, often at small sizes on Windows. V2 uses 30 font sizes, seven page-title recipes, weight 800 71 times (650, 750 and 900 are requested but never loaded), and four typefaces in a new partner's first minute. Its stack puts SF before Plus Jakarta Sans, so Macs and Windows show different products (index.html:34). The site is Inter end to end; one face, twelve styles and three weights make the app read as the site's working screen (P6).
+**Why:** The partner reads this app every day in a 419px window, often at small sizes on Windows. V2 uses 30 font sizes, seven page-title recipes, weight 800 71 times (650, 750 and 900 are requested but never loaded), and four typefaces in a new partner's first minute. Its stack puts SF before Plus Jakarta Sans, so Macs and Windows show different products (index.html:34). The site is Inter end to end; one face, thirteen styles and three weights make the app read as the site's working screen (P6).
 
 ### Type ladder (Changed from V2)
 
 **Purpose.** One recipe per text role, so size, weight, leading, tracking and ink travel together and no screen re-decides how loud a line is.
 
-**Anatomy.** Classes in kit/base.css (size / weight / leading / tracking, ink):
+**Anatomy.** Thirteen classes in kit/base.css (size / weight / leading / tracking, ink), plus the row label the list-row parts set themselves:
 - `.v2-text-display` 40 / 600 / 1 / -0.03em, ink, tabular: credits balance.
 - `.v2-text-greeting` 24 / 600 / 1.2 / -0.02em, ink: home greeting, welcome title.
 - `.v2-text-title-lg` 20 / 600 / 1.2 / -0.02em, ink: every screen and dialog title.
@@ -19,7 +19,8 @@
 - `.v2-text-body-sm` 13 / 400 / 1.5, ink-3: descriptions, notes, consequences. A `<strong>` inside turns ink 600 (fact muted, figure ink).
 - `.v2-text-label` 13 / 500 / 1.35 / -0.01em, ink-2: buttons, chips, nav, menu rows.
 - Row label (no class): 14 / 500 / 1.35, ink. The list-row parts set it in their own CSS (ListRow, section 18), so a screen never sets it by hand.
-- `.v2-text-meta` 12 / 400 / 1.35, ink-4: timestamps, counts, hints.
+- `.v2-text-meta` 12 / 400 / 1.35, ink-4 (4.77:1): timestamps, counts, hints, and only on surface, panel or canvas at rest. Never the only carrier of a consequence.
+- `.v2-text-caption` 12 / 400 / 1.35, ink-3 (6.0:1): a small line that says something: disabled reasons, field helpers and messages, dialog footnotes, notes under a block (`kit/base.css:145-151`; Button, Checkbox, TextField, Dialog, Feedback, BYOK). It is also the small line on a tint, wash or sunken surface, where meta's ink-4 drops under 4.5:1 (4.42:1 on sunken).
 - `.v2-text-eyebrow` 11 / 500 / 1 / 0.08em, uppercase, ink-3: section labels only. The 0.08em is adapted from the site's 0.14em.
 - `.v2-text-mono` 13 / 400 / 1.35, mono, ink-2: keys, endpoints, model ids.
 
@@ -33,7 +34,7 @@
 
 **Motion.** None.
 
-**Accessibility.** Smallest running text 12 (meta); 11 only for uppercase eyebrows. Body ink-2 or darker. Sentence case everywhere except the eyebrow, which is uppercase by CSS, not in the source string.
+**Accessibility.** Smallest running text 12 (meta and caption); 11 only for uppercase eyebrows. Body ink-2 or darker. Sentence case everywhere except the eyebrow, which is uppercase by CSS, not in the source string.
 
 **Responsive.** Sizes do not change with the window height.
 

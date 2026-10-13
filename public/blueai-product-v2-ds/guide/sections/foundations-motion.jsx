@@ -108,7 +108,7 @@
           <G.SpecDrawer rows={[
             { part: 'Global rule', token: '@media (prefers-reduced-motion: reduce)', value: 'animation and transition 0.01ms, one iteration, no delay', ref: 'foundations.motion.onblue-reduced' },
             { part: 'Spinner exception', token: '--v2-dur-spin', value: 'keeps turning at 1600ms' },
-            { part: 'Indeterminate exception', token: '--v2-opacity-disabled', value: 'full-width track at 0.45' },
+            { part: 'Indeterminate exception', token: '--v2-blue-tint-line', value: 'a still, full-width rail in the blue tint edge, undimmed: not the disabled look (opacity means disabled only)' },
             { part: 'V2 honours it in 4 places', token: null, value: 'terms sheet, welcome, welcome logo, onboarding picker', ref: ['foundations.motion.rm-terms', 'foundations.motion.rm-welcome', 'foundations.motion.rm-logo', 'foundations.motion.rm-onboarding'] },
             { part: 'V2 loops that ignore it', token: null, value: 'thinking dots, day-done ring', ref: ['foundations.motion.thinking-loop', 'foundations.motion.ring-loop'] },
           ]} />

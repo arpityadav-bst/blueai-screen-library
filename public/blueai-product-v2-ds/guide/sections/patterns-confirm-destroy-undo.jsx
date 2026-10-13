@@ -5,10 +5,10 @@
 
   // cost, the rule, examples. Copy in the examples is proposed.
   const RULES = [
-    ['Costs today’s day', 'Say the cost on the control, before the choice; confirm if it cannot be taken back today.', 'Skip today’s job (“Skip: today won’t count”), Skip today’s run (tray), Quit BlueAI, Stop a paid run'],
-    ['Costs account control or money', 'Confirm in an alert dialog. The title asks the question with the object; the body says what changes and how to undo it; the primary names the action.', 'Sign out and Disconnect YouTube: alert dialog; turn on Automatic: ConsentDialog (section 46)'],
+    ['Costs today’s day or future days', 'Say the cost before the choice and ask once: either the control carries the cost and one tap acts, or it opens one confirm that names it. Never a second question, never the cost told afterwards. No Undo: a day cannot be given back by a toast.', 'Skip today’s job (“Skip: today won’t count”), Skip today’s run (tray), Stop a run, Quit BlueAI, Pause daily runs, Disconnect YouTube'],
+    ['Costs account control, AI credits or money', 'Confirm in an alert dialog: the title asks the question with the object, the body says what changes and how to undo it, the primary names the action. Turning on Automatic uses the ConsentDialog.', 'Sign out, Disconnect YouTube, Remove my own key (then Undo in the toast); turn on Automatic: ConsentDialog (section 46)'],
     ['Cannot be undone', 'Confirm; the primary is danger and named for the action.', 'Delete my data, Leave the program'],
-    ['Cheap and reversible', 'Do it at once, then a toast with Undo for 6 s. Commit only when the toast leaves.', 'Remove my own key, Disconnect Telegram, Dismiss a notification'],
+    ['Costs nothing', 'Do it at once, no question, then a toast with Undo; the toast has no timer and the change commits when it leaves.', 'Disconnect Telegram, Dismiss a notification'],
     ['A switch', 'A switch only turns something on or off. It never deletes, signs out or costs a day as a side effect.', 'Use my own key (off keeps the key)'],
   ];
 
@@ -59,7 +59,7 @@
               </Win>
             ) },
             { label: 'Busy', note: 'Esc, scrim and Cancel held while it works', node: signOut(true) },
-            { label: 'Act, then Undo', note: '6 s; the key is removed when the toast leaves', node: <K.Toast tone="success" title="Key removed." action={{ label: 'Undo', onClick: noop }} duration={0} onClose={noop} /> },
+            { label: 'Act, then Undo', note: 'no timer: the key is removed for good when the toast leaves', node: <K.Toast tone="success" title="Key removed." action={{ label: 'Undo', onClick: noop }} duration={0} onClose={noop} /> },
             { label: 'Undone', node: <K.Toast tone="info" title="Key restored." duration={0} onClose={noop} /> },
             { label: 'Cost on the control', note: 'consequence before the choice', node: (
               <div className="v2-hstack v2-wrap v2-gap-2" style={{ maxWidth: 320 }}>
@@ -80,11 +80,11 @@
             { part: 'The one V2 delete confirm', token: null, value: 'Confirm delete / This action cannot be undone.', ref: ['entry-patterns.destroy.schedule-title', 'entry-patterns.destroy.schedule-body'] },
             { part: 'No confirm, no undo, V2', token: null, value: 'switch off deletes the key; Remove; Unlink', ref: ['entry-patterns.destroy.toggle-delete', 'entry-patterns.destroy.remove', 'entry-patterns.destroy.unlink'] },
             { part: 'Cost told afterwards, V2', token: null, value: 'Not now, then: Today doesn’t count toward your 20 days.', ref: ['entry-patterns.destroy.not-now-option', 'entry-patterns.destroy.not-now', 'entry-patterns.destroy.declined-sub'] },
-            { part: 'Undo toast', token: 'Toast with action', value: '6 s, pauses on hover and focus; commit on leave' },
+            { part: 'Undo toast', token: 'Toast with action', value: 'no timer while it carries Undo: stays until Dismiss, Undo, the next toast or dismiss() on leaving; commit then' },
           ]} />
           <G.DoDont
             do={['Name the primary for what it does: Sign out, Disconnect, Delete.', 'Say what is kept as well as what is lost.', 'Prefer Undo to a question when the action is cheap.']}
-            dont={['Use “Are you sure?” as the whole message.', 'Paint a reversible action red.', 'Let a switch delete data.']} />
+            dont={['Use “Are you sure?” as the whole message.', 'Paint an action that costs nothing red.', 'Let a switch delete data.']} />
         </G.Part>
       </G.Section>
     );

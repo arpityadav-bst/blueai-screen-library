@@ -24,7 +24,7 @@
 
   const TOPICS = [
     { value: 'run', label: 'A run' },
-    { value: 'verification', label: 'A day that wasn’t verified' },
+    { value: 'verification', label: 'A day that wasn’t counted' },
     { value: 'payout', label: 'Earnings or cash out' },
     { value: 'account', label: 'My account or sign-in' },
     { value: 'app', label: 'Something else in the app' },

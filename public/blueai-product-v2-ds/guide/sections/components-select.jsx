@@ -53,7 +53,7 @@
             { part: 'Focus', token: '--v2-blue, --v2-focus-ring', value: 'blue edge + 3px 16% ring (V2 BYOK: outline none, nothing in its place)', ref: ['actions-inputs.select.byok-outline', 'actions-inputs.field.focus'] },
             { part: 'Placeholder', token: '--v2-ink-3', value: 'disabled first option, #5f636b 6.0:1 (V2 #9ca3af, 2.54:1)', ref: ['actions-inputs.select.placeholder', 'actions-inputs.select.placeholder-colour'] },
             { part: 'Value and options', token: '--v2-text-14, --v2-ink', value: '14 ink; options always ink' },
-            { part: 'Invalid, disabled', token: '--v2-danger-line, --v2-opacity-disabled', value: 'as TextField' },
+            { part: 'Invalid, disabled', token: '--v2-danger-edge, --v2-opacity-disabled', value: 'as TextField: #d0454a edge; disabled 0.45' },
             { part: 'Copy', token: null, value: 'provider and model names are V2 data', ref: ['actions-inputs.select.provider-anthropic', 'actions-inputs.select.provider-azure', 'actions-inputs.select.provider-gemini', 'actions-inputs.select.provider-vertex', 'actions-inputs.select.provider-openai', 'actions-inputs.select.models'] },
           ]} />
           <G.DoDont

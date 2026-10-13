@@ -1,28 +1,25 @@
 /* BlueAI Product V2 Design System: motion (loads after kit/base.css, before every other kit sheet).
-   The only keyframes the product keeps, each with a utility class that pairs it with its token
-   duration and curve, plus the one global reduced-motion rule. A part puts the class on its
-   element; a part whose keyframe changes with its state (.is-closing, .is-leaving) writes the
-   same recipe in its own rule instead, named under Run by. The guide plays every class (section 07).
+   The only keyframes the product keeps, the classes parts put on their elements, and the one global
+   reduced-motion rule. A keyframe gets a class only where a part uses one; the overlays, whose
+   keyframe changes with their state (.is-closing, .is-leaving), name it in their own rule instead.
+   This table is every place each keyframe runs; the guide plays each recipe (section 07).
 
-   Keyframe      Class                Duration / curve                 Run by
-   v2-fade-up    .v2-anim-fade-up     --v2-dur-2 / --v2-ease-out       the class (Notice, welcome); .v2-toast
-   v2-fade-up    .v2-anim-pop-in      --v2-dur-3 / --v2-ease-out       the class (coach mark); .v2-float-panel
-                                                                       (menus, popovers)
-   v2-scale-in   .v2-anim-scale-in    --v2-dur-4 / --v2-ease-out       .v2-dialog; .v2-daydone-badge at
-                                                                       --v2-dur-celebrate
-   v2-sheet-up   .v2-anim-sheet-up    --v2-dur-4 / --v2-ease-out       .v2-sheet
-   v2-sheet-down .v2-anim-sheet-down  --v2-dur-3 / --v2-ease-in        .v2-overlay.is-closing > .v2-sheet
-   v2-fade       .v2-anim-fade        --v2-dur-3 / --v2-ease-standard  .v2-scrim; .v2-toast-timer (linear, over
-                                                                       the toast's lifetime)
-   v2-fade       .v2-anim-fade-out    --v2-dur-3 / --v2-ease-in        .v2-overlay.is-closing > .v2-scrim and
-                                                                       > .v2-dialog; .v2-toast.is-leaving at
-                                                                       --v2-dur-1 (it arrives at -2)
-   v2-pulse      .v2-anim-pulse       --v2-dur-pulse / standard, loops the class (Badge busy dot, thinking
-                                                                       dots); .v2-splash-dot
-   v2-spin       .v2-anim-spin        --v2-dur-spin linear, loops      the class (Spinner)
-   v2-shimmer    .v2-anim-shimmer     --v2-dur-shimmer linear, loops   the class (Skeleton)
-   v2-indet      .v2-anim-indet       --v2-dur-shimmer, loops          the class (ProgressBar)
-   Every rule named here lives in kit/overlays.css, kit/worker.css or kit/shell.css.
+   Keyframe      Duration / curve                 Run by
+   v2-fade-up    --v2-dur-2 / --v2-ease-out       .v2-anim-fade-up (EmptyState, welcome); .v2-toast
+                 --v2-dur-3 / --v2-ease-out       .v2-anim-pop-in (coach mark); .v2-float-panel
+                                                  (menus, popovers)
+   v2-scale-in   --v2-dur-4 / --v2-ease-out       .v2-dialog; .v2-daydone-badge at --v2-dur-celebrate
+   v2-sheet-up   --v2-dur-4 / --v2-ease-out       .v2-sheet
+   v2-sheet-down --v2-dur-3 / --v2-ease-in        .v2-overlay.is-closing > .v2-sheet
+   v2-fade       --v2-dur-3 / --v2-ease-standard  .v2-scrim
+                 --v2-dur-3 / --v2-ease-in, back  .v2-overlay.is-closing > .v2-scrim and > .v2-dialog
+                 --v2-dur-1 / --v2-ease-in, back  .v2-toast.is-leaving (it arrives at -2)
+                 the toast's lifetime, linear     .v2-toast-timer (a clock, not motion)
+   v2-pulse      --v2-dur-pulse / standard, loops .v2-anim-pulse (Badge busy dot); .v2-splash-dot
+   v2-spin       --v2-dur-spin linear, loops      .v2-anim-spin (Spinner, so the thinking bubble)
+   v2-shimmer    --v2-dur-shimmer linear, loops   .v2-anim-shimmer (Skeleton)
+   v2-indet      --v2-dur-shimmer, loops          .v2-anim-indet (ProgressBar)
+   The rules named here live in kit/overlays.css, kit/worker.css and kit/shell.css.
 
    Rules: arrivals ease out, departures ease in and run one step shorter; nothing loops unless the
    partner is waiting on it (busy, thinking, loading); celebration effects (confetti, tick ring)
@@ -67,11 +64,6 @@
 
 .v2-anim-fade-up { animation: v2-fade-up var(--v2-dur-2) var(--v2-ease-out) both; }
 .v2-anim-pop-in { animation: v2-fade-up var(--v2-dur-3) var(--v2-ease-out) both; }
-.v2-anim-scale-in { animation: v2-scale-in var(--v2-dur-4) var(--v2-ease-out) both; }
-.v2-anim-sheet-up { animation: v2-sheet-up var(--v2-dur-4) var(--v2-ease-out) both; }
-.v2-anim-sheet-down { animation: v2-sheet-down var(--v2-dur-3) var(--v2-ease-in) both; }
-.v2-anim-fade { animation: v2-fade var(--v2-dur-3) var(--v2-ease-standard) both; }
-.v2-anim-fade-out { animation: v2-fade var(--v2-dur-3) var(--v2-ease-in) reverse both; }
 .v2-anim-pulse { animation: v2-pulse var(--v2-dur-pulse) var(--v2-ease-standard) infinite; }
 .v2-anim-spin { animation: v2-spin var(--v2-dur-spin) linear infinite; }
 .v2-anim-shimmer {

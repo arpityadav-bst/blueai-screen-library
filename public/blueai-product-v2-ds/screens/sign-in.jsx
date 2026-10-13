@@ -11,7 +11,9 @@
      signing  the account is being checked (V2: 1500 ms). Close cancels.
      error    the check failed or timed out: Try again (the check) or Open the browser again.
      success  says so and moves on by itself after doneAfter ms (900): no extra click.
-     gate     signed in with an account that is not in the program. Blocking, one way out.
+     gate     signed in with an account that is not in the program. Blocking: Switch account,
+              and a quiet Get help (the site's FAQ) under it for a partner sure this is the
+              account they applied with, or who has lost access to it.
      confirm  option B (decision D5): App Player is signed in, so ask before using that account.
      from     where the gate's account came from: 'player' adds "from App Player on this PC".
      under    what the frost covers (default: the Welcome content, not interactive). */
@@ -85,6 +87,7 @@
         return {
           closable: false,
           actions: [{ label: 'Switch account', variant: 'primary', onClick: p.onSwitch }],
+          footer: k.Link ? <k.Link href={k.SITE_FAQ_URL} external tone="muted">Get help</k.Link> : null,
           body: (
             <div className="v2-gate v2-gate--top">
               {k.Avatar ? <k.Avatar name={a.name} id={a.email} size={56} decorative /> : null}
@@ -154,7 +157,7 @@
     const D = k.Dialog;
     const gate = D ? (
       <D open preview={p.preview} variant="task" size="md" scrim="frost" labelledBy={ids.title}
-        dismissible={c.closable} onClose={p.onCancel} actions={c.actions}
+        dismissible={c.closable} onClose={p.onCancel} actions={c.actions} footer={c.footer}
         className={cx('v2-signin', 'v2-signin--' + p.step)}>
         <div aria-live="polite">{c.body}</div>
       </D>

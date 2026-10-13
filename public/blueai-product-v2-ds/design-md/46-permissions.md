@@ -6,12 +6,12 @@
 
 ### ModeRows
 
-- **Purpose:** the per-app mode, with a permanent home in Settings > Worker and a popover from the ribbon's Change.
+- **Purpose:** the per-app mode, with one home in Settings > Worker (section 62). The ribbon's Change opens that screen (Chat's `onChangeMode`), so the consent dialog never stacks over a float.
 - **Anatomy:** one kit ListRow per app: mark 20 ink-3, name 14/500, account as the description, kit Segmented md (32) 'Always ask' (shield-check) / 'Automatic' (zap), the icons the consent table and the worker card use (`kit/permissions.jsx` OPTIONS). Note under the rows 12 ink-3: 'Automatic starts and finishes that app’s jobs without asking. Each app has its own setting, and a new app starts on Always ask.' (V2). 'Mode, per app' is not carried (Mode is not a partner word).
-- **Variants:** connected (switch); coming soon ('Instagram jobs aren’t available yet.' + Badge 'Coming soon', no switch); not connected ('Not connected' + Connect); float (surface, line, radius 10, shadow-1, width 364: the popover).
-- **Sizes:** full width; float 364.
+- **Variants:** connected (switch); coming soon ('Instagram jobs aren’t available yet.' + Badge 'Coming soon', no switch); not connected ('Not connected' + Connect).
+- **Sizes:** full width.
 - **States:** Always ask (default); Automatic (only after the consent: `beforeChange` opens it and commits on agree); coming soon; not connected. In V2: `?v=2&mode=auto` (ribbon, Change), `?v=1` (chip).
-- **Props:** `worker` or `apps` + `modes`, `onChange(appId, mode)`, `beforeChange(appId, mode)` (return a promise of true to commit), `onConnect(appId)`, `float`, `note` (false hides).
+- **Props:** `worker` or `apps` + `modes`, `onChange(appId, mode)`, `beforeChange(appId, mode)` (return a promise of true to commit), `onConnect(appId)`, `note` (false hides).
 - **Motion:** the Segmented's own (180ms).
 - **Accessibility:** each Segmented is a radiogroup named 'YouTube paid jobs' with arrow keys; segments 32 tall; aria-busy while the consent is open.
 - **Responsive:** the description truncates before the switch shrinks.
@@ -20,20 +20,20 @@
 ### ConsentDialog
 
 - **Purpose:** the consent for Automatic, per app, every time.
-- **Anatomy:** kit Dialog, consent variant, md (382): title 20/600 'Run YouTube jobs automatically?', close 32, no scrim dismiss. Body 14 ink-2, proposed, PM and legal (R51): 'BlueAI will take YouTube jobs and do them on your account without asking first: watching, liking and posting comments in your name.' The words come from what a job does (`WORKER_JOB.actions`, section 41; `kit/permissions.jsx:69-79`). V2's line, 'BlueAI will accept YouTube jobs and finish them on your YouTube account without asking you first, including posting videos and other content.' (`agent_permissions.jsx:161`), names posting videos, which the worker never does, and leaves out the comment it does post; on Automatic the job preview never appears, so this line is the partner's only notice of that comment. Per-app table radius 10: the app being changed tinted blue, Automatic in blue ink with zap, Always ask with shield-check, coming soon in words. Note 12 ink-3: 'Each app has its own setting. The others stay on Always ask until you switch them.' Agreement 14: 'By turning this on, you agree to let BlueAI do this for you on YouTube. You can turn it off anytime.' Added, proposed, 12 ink-3: 'Turn it off in Settings > Worker, or with Change above the chat.' Footer 44: 'Cancel' (secondary) then 'I agree, turn on' (primary). The title, table, note, agreement and buttons are V2 verbatim (`agent_permissions.jsx:159-179`); the body and the turn-off line are not.
+- **Anatomy:** kit Dialog, consent variant, md (382): title 20/600 'Run YouTube jobs automatically?', close 32, no scrim dismiss. Body 14 ink-2, the Dialog's description (aria-describedby, so it is read with the dialog), proposed, PM and legal (R51): 'BlueAI will take YouTube jobs and do them on your account without asking first: watching, liking, posting comments and subscribing to channels in your name.' The line is built from every action a job on that app can include (`WORKER_APPS[].actions`, section 41; `kit/permissions.jsx:75-79`), never a fixed list. V2's line, 'BlueAI will accept YouTube jobs and finish them on your YouTube account without asking you first, including posting videos and other content.' (`agent_permissions.jsx:161`), names posting videos, which the worker never does, and leaves out the actions it does take; on Automatic the job preview never appears, so this line is the partner's only notice of what will be done in their name. Per-app table radius 10: the app being changed tinted blue, Automatic in blue ink with zap, Always ask with shield-check, coming soon in words. Note 12 ink-3: 'Each app has its own setting. The others stay on Always ask until you switch them.' Agreement 14: 'By turning this on, you agree to let BlueAI do this for you on YouTube. You can turn it off anytime.' Added, proposed, 12 ink-3: 'Turn it off in Settings > Worker, or with Change above the chat.' Footer 44: 'Cancel' (secondary) then 'I agree, turn on' (primary). The title, table, note, agreement and buttons are V2 verbatim (`agent_permissions.jsx:159-179`); the body and the turn-off line are not.
 - **Variants:** one per app.
 - **Sizes:** Dialog md.
 - **States:** open; agree busy (primary loading, Esc, scrim and close held), then done (closes, the ribbon appears, the agreement time is recorded per account on the server); cancel (nothing changes, the job question keeps waiting); not saved (`error`: Banner danger 'Not saved, nothing changed. Try again.' in the body, and 'I agree, turn on' is the retry; proposed copy). V2: the Automatic chip on the daily job ask, or the onboarding choice (`?setup` default).
 - **Props:** `app`, `open`, `busy`, `error`, `onAgree`, `onCancel`, `worker`, `preview` (guide only).
 - **Motion:** the Dialog's (320ms in, 240ms out, none under reduced motion).
-- **Accessibility:** aria-modal, labelled by the title, focus in, trapped, returned; the agreement is the button (no checkbox), 44 tall at 4.92:1.
+- **Accessibility:** aria-modal, labelled by the title and described by the consent line, focus in, trapped, returned; the agreement is the button (no checkbox), 44 tall at 4.92:1.
 - **Responsive:** scrolls inside the window at compact height.
 - **Do / Don't:** Do keep the V2 copy verbatim, send the proposed body to the PM and legal (section 70's register) and record the version shown; say where to turn it off. Don't remember consent forever; don't let a busy agree fire twice.
 
 ### AutoRibbon
 
 - **Purpose:** while any app is Automatic, say so above the composer, with a way to change it.
-- **Anatomy:** the chat kit's ComposerNotice, info tone: zap 16, 13 blue ink 'Automatic is on for YouTube. BlueAI takes paid YouTube jobs without asking.' (V2), trailing 'Change' (32) opening ModeRows float.
+- **Anatomy:** the chat kit's ComposerNotice, info tone: zap 16, 13 blue ink 'Automatic is on for YouTube. BlueAI takes paid YouTube jobs without asking.' (V2), trailing 'Change' (32) opening Settings > Worker, the mode's one home (Chat's `onChangeMode`).
 - **Variants:** one.
 - **Sizes:** composer width.
 - **States:** visible while some app is Automatic; hidden otherwise (`autoNotice()` returns null). V2: `?v=2&mode=auto`.
@@ -46,10 +46,10 @@
 ### PermissionRequest
 
 - **Purpose:** ask before the worker reads viewing data, say what Not now costs, and say where to take it back.
-- **Anatomy:** card radius 16, max 300, padding 16. Head 14/600: app mark on a 32 disc + 'BlueAI wants to'. Three lines 13 ink-2 with 16 icons: 'See your watch history', 'See your subscriptions', 'See your channel’s joined date and stats'. Why and cost 13 ink-3: 'So I watch what you’re actually into and pick jobs that fit. If you choose Not now, I’ll still run, with general videos.' 'Not now' (secondary) then 'Allow' (primary), 36. Revoke note 12 ink-3: 'You can turn this off anytime in Connected apps.' All proposed copy (PM decision).
-- **Variants:** full (asked); compact one-line result.
+- **Anatomy:** card radius 16, max 300, padding 16. The worker speaks as 'I' throughout, as in the thread. Head 14/600: app mark on a 32 disc + 'I’d like to see'. Three lines 13 ink-2 with 16 icons: 'Your watch history', 'Your subscriptions', 'Your channel’s joined date and stats'. Why and cost 13 ink-3: 'So I can watch what you’re into and pick jobs that fit. If you choose Not now, I’ll still run, with general videos.' 'Not now' (secondary) then 'Allow' (primary), 36. Revoke note 12 ink-3: 'You can turn this off anytime in Connected apps.' All proposed copy (PM decision).
+- **Variants:** full (asked); compact one-line result: allowed 'I can see your YouTube watch history. Turn it off anytime in Connected apps.'; not now 'Not allowed. I’ll watch general videos instead of what you’re into.' + Allow; revoked 'You turned off watch history on Oct 14. I’ll watch general videos until you allow it again.' + Allow.
 - **Sizes:** max 300.
-- **States:** asked; allowing (Allow busy); allowed; not now (with Allow); revoked in Connected apps ('You turned off watch history on Oct 14. …' with Allow). V2 has none: it reads history during setup (`worker_flow.jsx:80, 161`).
+- **States:** asked; allowing (Allow busy); allowed; not now (with Allow); revoked in Connected apps (with Allow, which opens the full request in place, section 63). V2 has none: it reads history during setup (`worker_flow.jsx:80, 161`).
 - **Props:** `app`, `state` (asked | allowed | notnow | revoked), `lines`, `busy`, `onAllow`, `onNotNow`, `decidedOn`.
 - **Motion:** none.
 - **Accessibility:** a named section; results are role=status; buttons 36.

@@ -36,11 +36,11 @@
 
   /* Avatar: the signed-in account, or which app a row is about. Initials sit on one of two hues
      picked from the id (action blue or ink, the two V2's sign-in accounts already use); an image
-     covers them and falls back to them if it fails. App marks are a glyph on a sunken disc. */
+     covers them and falls back to them if it fails. App marks are a glyph on a sunken disc. It
+     carries no status: a row says its status in words, with a Badge (Connected apps). */
   const SIZES = [24, 32, 40, 56];
   const APP_ICON = { youtube: 'youtube', instagram: 'instagram', telegram: 'telegram' };
   const APP_NAME = { youtube: 'YouTube', instagram: 'Instagram', telegram: 'Telegram' };
-  const STATUS_TEXT = { success: 'Connected', attention: 'Needs you', danger: 'Signed out', neutral: 'Paused' };
   function hueOf(key) {
     let h = 0;
     const s = String(key || '');
@@ -54,13 +54,12 @@
     const last = words.length > 1 ? words[words.length - 1][0] : '';
     return (size >= 40 && last ? first + last : first).toUpperCase();
   }
-  function Avatar({ name, id, src, size, app, status, statusLabel, loading, decorative, className }) {
+  function Avatar({ name, id, src, size, app, loading, decorative, className }) {
     const [failed, setFailed] = useState(false);
     const s = SIZES.indexOf(size) >= 0 ? size : 32;
     if (loading) return <span className={cx('v2-skel', 'v2-skel--circle', 'v2-anim-shimmer', className)} style={{ width: s, height: s }} aria-hidden="true" />;
-    const said = status ? (statusLabel || STATUS_TEXT[status] || status) : null;
     const who = app ? (APP_NAME[app] || app) : name;
-    const a11y = decorative ? { 'aria-hidden': true } : { role: 'img', 'aria-label': [who, said].filter(Boolean).join(', ') };
+    const a11y = decorative ? { 'aria-hidden': true } : { role: 'img', 'aria-label': who };
     const glyph = s >= 56 ? 24 : (s >= 40 ? 20 : 16);
     return (
       <span className={cx('v2-avatar', 'v2-avatar--' + s, app ? 'v2-avatar--app' : 'v2-avatar--hue-' + hueOf(id || name), className)} {...a11y}>
@@ -68,7 +67,6 @@
           ? <Ico name={APP_ICON[app] || 'link'} size={glyph} />
           : <span className="v2-avatar-initials" aria-hidden="true">{initialsOf(name, s)}</span>}
         {src && !app && !failed ? <img className="v2-avatar-img" src={src} alt="" onError={function () { setFailed(true); }} /> : null}
-        {status ? <span className={cx('v2-avatar-status', 'v2-avatar-status--' + status)} aria-hidden="true" /> : null}
       </span>
     );
   }
@@ -77,9 +75,11 @@
      only kind that answers hover), expandable (aria-expanded) and destructive. A control row is a
      div: never put a control inside a nav row. Disabled rows keep their reason legible and stay
      focusable: a disabled link drops its href (so it goes nowhere) but keeps role=link and a tab
-     stop, so the reason inside it is still reached (section 18). */
+     stop, so the reason inside it is still reached (section 18). Leading is an icon or Avatar, or
+     mark {icon, tone 'neutral' | 'attention' | 'success' | 'danger', dot}: a 32 sunken disc with
+     a 16 glyph in its tone and an optional unread dot, for a row about a thing or an event. */
   function ListRow(props) {
-    const { leading, label, description, value, trailing, badge, onClick, href, external, danger,
+    const { leading, mark, label, description, value, trailing, badge, onClick, href, external, danger,
       expandable, expanded, onToggle, divider, disabled, disabledReason, children, className } = props;
     const [openSelf, setOpenSelf] = useState(false);
     const panelId = useId();
@@ -88,9 +88,10 @@
     const desc = disabled && disabledReason ? disabledReason : description;
     const lines = divider !== false;
     const chevron = expandable ? 'chevron-down' : (external ? 'external' : 'chevron-right');
+    const lead = mark ? (<span className={cx('v2-row-mark', mark.tone && mark.tone !== 'neutral' && 'v2-row-mark--' + mark.tone)}><Ico name={mark.icon} size={16} />{mark.dot ? <span className="v2-row-mark-dot" /> : null}</span>) : leading;
     const inner = (
       <>
-        {leading ? <span className="v2-row-lead" aria-hidden="true">{leading}</span> : null}
+        {lead ? <span className="v2-row-lead" aria-hidden="true">{lead}</span> : null}
         <span className="v2-row-text">
           <span className="v2-row-label">{label}</span>
           {desc ? <span className="v2-row-desc v2-text-body-sm">{desc}</span> : null}
@@ -135,21 +136,23 @@
   }
 
   /* Card: the one surface. Static cards never answer hover; a pressable card is a real button or
-     link whose line firms up on hover. Inset is the panel step inside a card. */
+     link whose line firms up on hover. Only href, onClick or pressable make it pressable: `as`
+     sets the semantic tag alone (a static section stays static). Inset is the panel step inside a
+     card. The ref reaches the element (a swap-focus anchor, such as the BYOK Remove confirm). */
   const CARD_OWN = ['as', 'pressable', 'inset', 'padding', 'href', 'external', 'onClick', 'className', 'children'];
-  function Card(props) {
+  const Card = React.forwardRef(function Card(props, ref) {
     const { as, pressable, inset, padding, href, external, onClick, className, children } = props;
     const rest = omit(props, CARD_OWN);
-    const Tag = as || (href ? 'a' : (onClick || pressable ? 'button' : 'div'));
-    const press = Tag !== 'div';
+    const press = !!(href || onClick || pressable);
+    const Tag = as || (href ? 'a' : (press ? 'button' : 'div'));
     const extra = Tag === 'button' ? { type: 'button' }
       : (Tag === 'a' ? { href: href, target: external ? '_blank' : undefined, rel: external ? 'noopener' : undefined } : {});
     const pad = padding && padding !== 'md' ? 'v2-card--pad-' + padding : null;
     return (
-      <Tag className={cx('v2-card', inset && 'v2-card--inset', press && 'v2-card--pressable', pad, className)}
+      <Tag ref={ref} className={cx('v2-card', inset && 'v2-card--inset', press && 'v2-card--pressable', pad, className)}
         onClick={onClick} {...extra} {...rest}>{children}</Tag>
     );
-  }
+  });
 
   /* StatCard: one figure that matters. A mini-title label (the site's .mini-title, sentence case),
      the figure in ink (money and credits are figures, not states), one context line, one optional

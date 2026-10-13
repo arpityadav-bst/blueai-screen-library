@@ -20,6 +20,7 @@
     ['.v2-grow', 'takes the remaining width, can shrink (min-width 0)'],
     ['.v2-screen', 'fills the content band, canvas ground'],
     ['.v2-screen-body', 'the only scroller: gutter 16, top 16, bottom 24, gap 12'],
+    ['.v2-acct-body', 'the settings group (Settings, Worker settings, Connected apps, Account, AI credits): no scroller of its own, so the content band scrolls for ScreenFrame scrollTo; same 16 16 24 and gap 12'],
     ['.v2-divider', '1px hair line between blocks in a card'],
     ['.v2-sr-only', 'text for screen readers only'],
     ['.v2-tabular / .v2-truncate', 'tabular figures / one line with an ellipsis'],

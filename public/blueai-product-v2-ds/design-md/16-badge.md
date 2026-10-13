@@ -20,7 +20,7 @@ Tone lives in the fill and the mark; the words stay in ink-2. This is a style ch
 - info: `--v2-blue-tint`, mark `--v2-blue` (running, checking).
 - success: `--v2-success-tint`, mark `--v2-success` (verified, connected, on).
 - attention: `--v2-attention-tint`, mark `--v2-attention-ink` (the worker needs the partner; signed out; out of credits on a run).
-- danger: `--v2-danger-tint`, mark `--v2-danger-ink` (not counted, failed: a day already lost). Signed out is attention: the partner can still fix it (section 03's rule).
+- danger: `--v2-danger-tint`, mark `--v2-danger-ink` (not counted, failed: something went wrong or a day is lost). Signed out is attention: nothing failed and the partner can fix it (section 03's rule).
 Plus: no mark, dot, icon, busy dot.
 
 **Sizes.** One: 22 tall. Width hugs the label.

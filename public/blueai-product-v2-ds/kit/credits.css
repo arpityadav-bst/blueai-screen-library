@@ -16,7 +16,7 @@
   height: var(--v2-control-sm); padding: 0 var(--v2-space-3) 0 var(--v2-space-2); box-sizing: border-box;
   border: var(--v2-stroke) solid var(--v2-line); border-radius: var(--v2-radius-pill);
   background-color: var(--v2-surface); font-family: var(--v2-font-ui); font-size: var(--v2-text-13);
-  font-weight: var(--v2-weight-medium); line-height: 1; font-variant-numeric: tabular-nums;
+  font-weight: var(--v2-weight-medium); line-height: var(--v2-leading-display); font-variant-numeric: tabular-nums;
   transition: border-color var(--v2-dur-1) var(--v2-ease-standard), background-image var(--v2-dur-1) var(--v2-ease-standard); }
 .v2-credits-chip:hover .v2-credits-chip-pill,
 .v2-credits-chip.is-hover .v2-credits-chip-pill { border-color: var(--v2-line-hover);
@@ -97,7 +97,7 @@
 .v2-advanced-toggle:focus-visible, .v2-advanced-toggle.is-focus { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); }
 .v2-advanced-text { display: flex; flex-direction: column; gap: var(--v2-space-05); min-width: 0; }
 .v2-advanced-label { font-size: var(--v2-text-14); font-weight: var(--v2-weight-medium); line-height: var(--v2-leading-snug); color: var(--v2-ink); }
-.v2-advanced-desc { font-size: var(--v2-text-12); line-height: var(--v2-leading-snug); color: var(--v2-ink-3); }
+/* .v2-advanced-desc is set in .v2-text-caption (kit/settings.jsx): nothing restated here. */
 .v2-advanced-chev { display: inline-flex; flex: none; color: var(--v2-ink-3); transition: transform var(--v2-dur-2) var(--v2-ease-out); }
 .v2-advanced.is-open .v2-advanced-chev { transform: rotate(180deg); }
 .v2-advanced-body { display: flex; flex-direction: column; gap: var(--v2-space-3); }
@@ -108,10 +108,10 @@
 .v2-byok-key { display: flex; align-items: center; justify-content: space-between; gap: var(--v2-space-3); }
 .v2-byok-key-text { min-width: 0; }
 .v2-byok-provider { margin: 0; font-size: var(--v2-text-14); font-weight: var(--v2-weight-medium); line-height: var(--v2-leading-snug); color: var(--v2-ink); }
-.v2-byok-masked { margin: var(--v2-space-05) 0 0; font-family: var(--v2-font-mono); font-size: var(--v2-text-13); color: var(--v2-ink-3); }
-.v2-byok-confirm { display: flex; flex-direction: column; gap: var(--v2-space-3); padding: var(--v2-space-3);
-  border: var(--v2-stroke) solid var(--v2-line); border-radius: var(--v2-radius-md);
-  background: var(--v2-surface-panel); }
+.v2-byok-masked { margin: var(--v2-space-05) 0 0; } /* type: .v2-text-mono (kit/advanced.jsx) */
+/* The Remove confirm is the kit's Card inset (kit/display.css), the one panel inside a card; this
+   only stacks its sentence over its actions. */
+.v2-byok-confirm { display: flex; flex-direction: column; gap: var(--v2-space-3); }
 .v2-byok-confirm-text { margin: 0; font-size: var(--v2-text-13); line-height: var(--v2-leading-body); color: var(--v2-ink-2); }
 .v2-byok-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--v2-space-2); }
 .v2-byok-note { margin: 0; } /* type: .v2-text-caption (kit/advanced.jsx) */
@@ -127,7 +127,10 @@
 /* The method switch is V2Kit.Link standalone (kit/actions.css); this only places it. */
 .v2-aimode-switch { align-self: flex-start; }
 
+/* Forced colours drop fills: the meter keeps its fill in the forced ink, and the low / empty dot on
+   the chip stays a solid dot, so neither state rests on a background the theme removes. */
 @media (forced-colors: active) {
+  .v2-credits-chip-dot { forced-color-adjust: none; background: currentColor; box-shadow: none; }
   .v2-credits-meter-rail { border: var(--v2-stroke) solid; }
   .v2-credits-meter-fill { forced-color-adjust: none; background: currentColor; }
 }

@@ -12,16 +12,11 @@
    dayStatus           'covered' | 'waiting' | 'stopped': what short credits mean for today's day,
        from the Worker record (V2Kit.creditsDay, section 41). Every zero moment states it.
    OOC_COPY            the strings, so screens, WorkerCard and RunCard say exactly the same thing.
-       explain + learnMore + faqUrl is the one 'What are AI credits?' explainer (the AI credits
-       screen shows it). Proposed copy, built around the daily run, not a count of jobs. */
+       Proposed copy, built around the daily run, not a count of jobs. */
 (function () {
   const cx = function () { return Array.prototype.filter.call(arguments, Boolean).join(' '); };
 
   const COPY = {
-    why: 'What are AI credits?',
-    explain: 'Your daily run and your chats use AI credits. You get a fresh set every day, enough for today’s run with room to chat.',
-    learnMore: 'Learn more',
-    faqUrl: 'https://bluestacks.ai/getting-started#ai-credits',
     // Proposed copy: what short credits mean for today's day (R14, decision D6). 'waiting' follows
     // the refill time; 'stopped' holds whether or not the run had started.
     day: {

@@ -9,7 +9,7 @@
      A row's words come from its outcome and its tick from its status (V2Kit.dayWords), so a
      no-job day says so, never 'Paid job done'. A rejected day carries its reason and a Report a
      problem action under the row (a control is never nested in a nav row); the report opens with
-     that run attached and 'A day that wasn't verified' picked. Rows open where the day can be acted
+     that run attached and 'A day that wasn't counted' picked. Rows open where the day can be acted
      on (rowTarget): a running or waiting run opens Chat at its card, every other run opens Run
      detail in its state (by outcome, then status); a day with no run is static. Today's live row
      is keyed on workerState, like Home's card and the Activity badge, so every state the badge
@@ -199,7 +199,7 @@
     if (loading) {
       body = (
         <React.Fragment>
-          {P.Skeleton ? <div className="v2-home-skel-card"><P.Skeleton shape="line" width="45%" /><P.Skeleton shape="rect" height={8} /></div> : null}
+          {P.Skeleton ? <div className="v2-home-skel-card"><P.Skeleton shape="line" width="45%" /><P.Skeleton shape="rect" height="var(--v2-rail)" /></div> : null}
           {S.ListSkeleton ? <S.ListSkeleton rows={5} label="Loading your days" /> : null}
         </React.Fragment>
       );

@@ -36,13 +36,13 @@ All under `public/blueai-product-v2-ds/`. V2 itself is `public/blueai-product-v2
 | Path | What it holds |
 |---|---|
 | `index.html` | The live guide. Every section, live parts, V2 today next to the system. |
-| `DESIGN.md` | This file: the same content as Markdown, generated from `design-md/`. |
+| `DESIGN.md` | This file: the written spec, built only from the `design-md/` partials by `tools/build-design-md.js`. It is not generated from the guide: each guide section writes its own notes and spec rows, so the two are kept in step by hand. When you change a part, change its partial and its guide section together (section 74, step 7), and where they disagree, the kit's code is the truth. |
 | `tokens.css` | Every colour, size, radius, shadow, layer and timing as a `--v2-*` custom property. The only place raw values live. |
 | `kit/` | The parts, on `window.V2Kit` (`button.jsx`, `run-card.jsx`, ...), and their `v2-*` styles (`actions.css`, `chat.css`, ...). |
 | `screens/` | Whole screens composed from the kit, on `window.V2Screens`. |
 | `guide/` | The guide's own chrome: `catalog.jsx` (the section list), `sections/`, `refs/` (the V2 sources), `app.jsx`. |
 | `design-md/` | One partial per section; edit these, then rebuild DESIGN.md. |
-| `tools/` | `ds-check.js` (the gate, with checks 8 and 9 in `ds-check-more.js`) and `build-design-md.js`. |
+| `tools/` | `ds-check.js` (the gate; check 6's named colours and checks 8, 9 and 10 run in `ds-check-more.js`) and `build-design-md.js`. |
 
 ### How to run the checks
 

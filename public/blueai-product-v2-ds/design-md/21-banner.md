@@ -20,7 +20,7 @@ The words stay in ink so every tone passes 4.5:1; the tone lives in the tint, th
 - info: `--v2-blue-tint`, `--v2-blue-tint-line`, icon `--v2-blue-ink` (`info`). A fact, nothing to do.
 - success: `--v2-success-tint`, `--v2-success-line`, icon `--v2-success-ink` (`check`). News.
 - attention: `--v2-attention-tint`, `--v2-attention-line`, icon `--v2-attention-ink` (`alert`). The partner has to do something.
-- danger: `--v2-danger-tint`, `--v2-danger-line`, icon `--v2-danger-ink` (`x-circle`). Today is blocked.
+- danger: `--v2-danger-tint` #fdecec, `--v2-danger-line` rgba(208,69,74,0.32) (the pale edge; the solid `--v2-danger-edge` is for invalid fields only), icon `--v2-danger-ink` (`x-circle`). Today is blocked.
 - offline: `--v2-surface-sunken`, `--v2-line`, icon `--v2-ink-3` (`wifi-off`). New. This is the Banner's neutral tone (section 03): a neutral condition that is not about the connection uses it with its own icon (the AI-mode conflict: `tone="offline" icon="alert"`, section 49). There is no `neutral` value; an unknown tone renders as info.
 Any icon can replace the default (Automatic uses `zap`).
 
@@ -41,4 +41,4 @@ Any icon can replace the default (Automatic uses `zap`).
 
 **Responsive.** Text wraps; the action stays at the trailing edge, top-aligned with the first line through its negative margin.
 
-**Do / Don't.** Do place it above what it is about and remove it when the condition ends. Do say what it means for today and the one next step ("Today's run starts when BlueAI is back online."). Don't dismiss a condition: it would hide something still true. Don't centre the text or invent a sixth tone. Don't stack two: show the one that blocks today.
+**Do / Don't.** Do place it above what it is about and remove it when the condition ends. Do say what it means for today and the one next step ("Today’s run starts when BlueAI is back online."). Don't dismiss a condition: it would hide something still true. Don't centre the text or invent a sixth tone. Don't stack two: show the one that blocks today.

@@ -32,7 +32,7 @@
           <G.StateGrid states={[
             { label: 'Full', node: chip() },
             { label: 'Low', note: 'less than one run (' + c.runCost + ')', node: chip({ balance: 120 }) },
-            { label: 'Empty', note: '0 plus a neutral dot (out of AI credits is neutral, section 03)', node: chip({ balance: 0 }) },
+            { label: 'Empty', note: '0 plus a neutral dot (out of AI credits says until when: neutral, section 03)', node: chip({ balance: 0 }) },
             { label: 'Paused', note: 'running on your own key', node: chip({ state: 'paused' }) },
             { label: 'Hover', node: chip({ className: 'is-hover' }) },
             { label: 'Focus-visible', node: chip({ className: 'is-focus' }) },
@@ -80,7 +80,9 @@
             { label: 'Full', node: meter() },
             { label: 'Partial', node: meter({ balance: 1250 }) },
             { label: 'Low', note: 'less than one run', node: meter({ balance: 120 }) },
-            { label: 'Empty', node: meter({ balance: 0 }) },
+            { label: 'Empty', note: 'until credits refresh: neutral, clock', node: meter({ balance: 0 }) },
+            { label: 'Empty, refill before 9 pm', note: 'today can still count: neutral, clock', node: meter({ balance: 0, dayStatus: 'waiting' }) },
+            { label: 'Empty, today lost', note: 'today won’t count: danger, x-circle', node: meter({ balance: 0, dayStatus: 'stopped' }) },
             { label: 'Empty, run already done', node: meter({ balance: 0, runDone: true }) },
             { label: 'Refreshed', note: 'after 00:00 UTC', node: meter({ balance: 0, refreshed: true }) },
           ]} />
@@ -100,7 +102,7 @@
             { part: 'Left today', token: '--v2-text-12, --v2-ink-4', value: fmt(1250) + ' of ' + fmt(c.grant) + ' left today', ref: 'credits-settings.meter.idea-left' },
             { part: 'Refresh', token: '--v2-text-12, --v2-ink-4', value: "'Refreshes in 6h 42m' / 'Refreshed'", ref: ['credits-settings.meter.idea-refresh', 'credits-settings.countdown.format'] },
             { part: 'Covered line', token: '--v2-text-13, --v2-weight-medium, --v2-ink-2', value: "'Enough for today’s run' and three siblings" },
-            { part: 'Covered icon', token: '--v2-success / --v2-attention-ink / --v2-ink-3', value: 'check (enough) / alert (low) / clock (empty, until credits refresh) / check in ink-3 (run done), 16px' },
+            { part: 'Covered icon', token: '--v2-success / --v2-attention-ink / --v2-ink-3 / --v2-danger-ink', value: 'check (enough) / alert (low) / clock in ink-3 (empty, today can still count) / x-circle in danger (empty, today won’t count: dayStatus stopped) / check in ink-3 (run done), 16px; section 03’s out-of-credits rule' },
             { part: 'Grant', token: null, value: fmt(c.grant) + ' (Worker record credits.grant)', ref: ['credits-settings.grant.daily', 'credits-settings.grant.popup-daily'] },
             { part: 'Balance in V2', token: null, value: '0 or 2,000 only', ref: 'credits-settings.grant.zero-or-full' },
             { part: 'Refill', token: null, value: '00:00 UTC, shown in local time', ref: ['credits-settings.countdown.utc', 'credits-settings.countdown.next'] },

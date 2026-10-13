@@ -117,8 +117,8 @@
             { label: 'Focus-visible', node: <K.Checkbox label="Include diagnostic info" className="is-focus" /> },
             { label: 'Checked', node: <K.Checkbox label="Include diagnostic info" defaultChecked /> },
             { label: 'Indeterminate', note: 'some of a group', node: <K.Checkbox label="All notifications" indeterminate /> },
-            { label: 'Disabled', node: <K.Checkbox label="Include diagnostic info" disabled /> },
-            { label: 'Disabled, checked', node: <K.Checkbox label="Include diagnostic info" disabled defaultChecked /> },
+            { label: 'Disabled with reason', note: 'aria-disabled, focusable; Proposed copy', node: <K.Checkbox label="Include diagnostic info" disabled disabledReason="There’s no run to attach yet." /> },
+            { label: 'Disabled with reason, checked', node: <K.Checkbox label="A job is waiting for you" disabled disabledReason="BlueAI always tells you when a job waits for your OK." defaultChecked /> },
             { label: 'Invalid', note: 'Proposed copy', node: <K.Checkbox label="Include diagnostic info" error="Needed to look into a failed run." /> },
           ]} />
           <G.Stage ground="surface" width="shell">
@@ -137,7 +137,8 @@
             { part: 'Indeterminate', token: '--v2-action', value: 'action fill, white 10x2 bar' },
             { part: 'Hover', token: '--v2-ink-3, --v2-wash-hover, --v2-action-hover', value: 'edge to ink-3 + wash; checked deepens' },
             { part: 'Row', token: '--v2-hit-min, --v2-text-14, --v2-text-13', value: 'min 32, gap 12, label 14 ink, description 13 ink-3; whole row toggles' },
-            { part: 'Invalid', token: '--v2-danger-line, --v2-danger-ink', value: 'red edge + message under the label' },
+            { part: 'Invalid', token: '--v2-danger-edge, --v2-danger-ink', value: '#d0454a box edge + message under the label' },
+            { part: 'Disabled', token: '--v2-opacity-disabled, --v2-ink-2', value: 'aria-disabled, stays focusable, row at 0.45; disabledReason under it (lock 16, caption in ink-2), tied with aria-describedby' },
             { part: 'Semantics', token: null, value: 'native input type=checkbox (V2 has only a dev-panel button role=checkbox)', ref: 'actions-inputs.checkbox.dev-role' },
           ]} />
         </G.Part>
@@ -178,7 +179,7 @@
             { label: 'Hover (Automatic)', node: seg({ options: mark('auto', 'is-hover') }) },
             { label: 'Selected (Automatic)', node: seg({ value: 'auto' }) },
             { label: 'Focus-visible', node: seg({ options: mark('always', 'is-focus') }) },
-            { label: 'Disabled', note: 'the reason sits beside it', node: <div className="v2-stack v2-gap-1">{seg({ disabled: true })}<span className="v2-text-meta">Connect YouTube to choose a mode.</span></div> },
+            { label: 'Disabled with reason', note: 'disabledReason, tied with aria-describedby', node: seg({ disabled: true, disabledReason: 'Connect YouTube to choose a mode.' }) },
             { label: 'Gated (consent open)', note: 'selection waits', node: seg({ options: mark('auto', 'is-pending') }) },
             { label: 'Small, text only', node: seg({ size: 'sm' }, MODES.map(function (m) { return { value: m.value, label: m.label }; })) },
           ]} />
@@ -195,6 +196,7 @@
             { part: 'Hover', token: '--v2-wash-hover, --v2-ink', value: 'wash + ink' },
             { part: 'Keys', token: null, value: 'radiogroup, roving tabindex, arrows, Home, End (V2: clicks only)', ref: ['actions-inputs.segmented.role', 'actions-inputs.segmented.radio'] },
             { part: 'Gate', token: '--v2-select-line', value: 'beforeChange(value) resolves true to apply; dashed edge while waiting' },
+            { part: 'Disabled', token: '--v2-opacity-disabled', value: 'aria-disabled, stays focusable; disabledReason printed once under the control (caption) and tied with aria-describedby' },
             { part: 'Copy', token: null, value: 'V2 copy', ref: ['actions-inputs.segmented.always', 'actions-inputs.segmented.auto', 'actions-inputs.segmented.youtube', 'actions-inputs.segmented.consent-title', 'actions-inputs.segmented.consent-copy', 'actions-inputs.button.consent', 'actions-inputs.button.cancel'] },
           ]} />
           <G.DoDont

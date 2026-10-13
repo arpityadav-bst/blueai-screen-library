@@ -4,6 +4,25 @@
   const G = window.V2Guide;
   const { useState } = React;
 
+  // Section 32's route table, verbatim (design-md/32-screen-header.md): every id a screen emits.
+  const ROUTES = [
+    ["`home`, `activity`, `settings`", "none", "Home, Activity, Settings", "tab", "itself", "none; tapping the lit tab returns it to its root"],
+    ["`settings`", "`{highlight}`: a section id ('worker', 'apps', 'notifications', 'bluestacks', 'account', 'help', 'advanced')", "Settings, scrolled to that section and holding the highlight", "tab", "Settings", "none"],
+    ["`chat`", "`{state}`: setup, running, waiting, retrying", "Chat", "pushed on Home's stack, from any door", "Home", "the screen under it on Home's stack"],
+    ["`run`", "`{state, row, tab}`: a Run detail state, its ledger row (`rowTarget`, section 58) and the tab it was opened from", "Run detail (`tab`)", "pushed on the stack of the tab it was opened from (`opts.tab`; Activity by default)", "that tab", "the screen under it on that tab's stack"],
+    ["`notifications`", "none", "Notifications (`parentTab`)", "pushed over the tab you are on", "that tab", "that tab"],
+    ["`credits`", "none", "AI credits (`tab`)", "pushed over the tab you are on", "that tab", "that tab"],
+    ["`account`", "none", "Account", "pushed on Settings' stack", "Settings", "Settings"],
+    ["`worker-settings`", "none", "Worker settings", "pushed on Settings' stack", "Settings", "the screen under it"],
+    ["`connected-apps`", "`{app}`: 'youtube' or 'telegram'; none for the list", "Connected apps", "pushed on Settings' stack", "Settings", "the screen under it"],
+    ["`report`", "none", "the Report a problem sheet (`V2Screens.ReportProblemSheet`)", "overlay", "unchanged", "its own close"],
+    ["`sign-out`", "none", "the sign-out confirm (`CONFIRM_COPY.signOut`, section 64)", "overlay", "unchanged", "Cancel"],
+    ["`terms`", "`{docs}`: the changed documents' names", "the Program Terms sheet, `update` mode (`V2Screens.TermsSheet`, section 53), from a Terms updated notification", "overlay", "unchanged", "none: it asks for the agreement"],
+  ];
+  const ROUTES_NOTE = "The run chip, the WorkerCard's Details and the RunCard's details emit no id of their own: they open `V2Screens.chipTarget(worker)` (`screens/home.jsx`), which is today's row as Activity opens it (`chat` {state} while the run is live, `run` {state, row} once it has an outcome), `worker-settings` while paused, and `home` otherwise. Earnings is not a route: it opens `EARNINGS_URL` on the site in the browser. A pushed screen whose id is already on top is replaced, so it shows the new state. A new screen gets a row here before it ships (section 74, step 3).";
+  // `code` spans in the table's words become code.
+  function ticks(s) { return s.split('`').map(function (t, i) { return i % 2 ? <code key={i} className="g-code">{t}</code> : t; }); }
+
   function Band(props) {
     const K = window.V2Kit;
     return <div style={{ width: 'var(--v2-shell-w)', maxWidth: '100%', background: 'var(--v2-canvas)' }}><K.ScreenHeader {...props} /></div>;
@@ -119,10 +138,13 @@
                 <li>Each tab keeps its own stack. Tapping another tab switches and keeps the stack; tapping the lit tab returns to its root.</li>
                 <li>Navigation state is separate from the Worker record (section 41): opening Credits or Account never unmounts today's run.</li>
                 <li>A notification or the tray opens the screen it names, pushed over its parent tab.</li>
-                <li>Which tab is lit for a pushed screen, one rule: a screen with a home in Settings (Worker settings, Connected apps, Account) lights Settings from any door, the top bar’s More menu included. A screen only the top bar opens (AI credits from the credits chip, Notifications from More) is pushed over the tab you were on, and that tab stays lit; Back returns to it. Chat belongs to Home and Run detail to Activity, so each lights its own. The top-bar screens take the tab as a prop: tab (AI credits) or parentTab (Notifications).</li>
+                <li>Which tab is lit for a pushed screen, one rule: a screen with a home in Settings (Worker settings, Connected apps, Account) lights Settings from any door, the top bar’s More menu included. A pushed screen with no home in Settings goes on the stack of the tab it was opened from and keeps it lit; Back returns there (Run detail, AI credits, Notifications); Chat belongs to Home. The props are tab (Run detail, AI credits) or parentTab (Notifications).</li>
               </ul>
             </div>
           </div>
+          <G.Table head={['id', 'opts', 'Screen', 'Level', 'Tab lit', 'Back']}
+            rows={ROUTES.map(function (r) { return r.map(ticks); })} caption="The route table: every id a screen emits, resolved by the host router" />
+          <G.Note>{ticks(ROUTES_NOTE)}</G.Note>
           <G.CompareRow
             v2={<G.FrameState url="index.html?start=worker" label="V2: open the kebab's Chat History, then look for a way back" height={900} />}
             system={<span className="g-muted">The working model above: push a screen, switch tabs, come back.</span>}

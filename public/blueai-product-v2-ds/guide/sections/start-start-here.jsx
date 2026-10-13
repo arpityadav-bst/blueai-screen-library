@@ -18,7 +18,7 @@
     ['screens/', 'Whole screens composed from the kit, on window.V2Screens (Home, Activity, Settings, ...).'],
     ['guide/', 'This guide’s own chrome: catalog.jsx (the section list), sections/, refs/ (the V2 sources), app.jsx.'],
     ['design-md/', 'One Markdown partial per section; edit these, then rebuild DESIGN.md.'],
-    ['tools/', 'ds-check.js (the gate, with checks 8 and 9 in ds-check-more.js) and build-design-md.js.'],
+    ['tools/', 'ds-check.js (the gate; the named-colour half of check 6 and checks 8 to 10 live in ds-check-more.js) and build-design-md.js.'],
   ];
   const CHECKS = [
     'Every V2 value or string the guide quotes still sits on its V2 line (guide/refs/*.js).',
@@ -29,11 +29,12 @@
     'The catalog, the section files, the design-md partials and index.html agree.',
     'No raw colour in kit/ or screens/: tokens only. No stylesheet but tokens.css defines a --v2- property.',
     'Every kit part and screen the catalog names is on window.V2Kit or window.V2Screens.',
-    'The size lists the JSX copies (Icon and Avatar sizes) equal their tokens.',
+    'The size lists the JSX copies (Icon and Avatar sizes) equal their tokens, and no kit or screens rule types a Size token’s value raw or borrows a Space token in its place.',
     'No .jsx in kit/, screens/ or guide/ uses object rest destructuring: Babel hoists its key list to one program-level _excluded that the next file overwrites, so use a local omit(props, KEYS).',
+    'Files in kit/, screens/ and guide/ hold only IIFEs at top level (a refs file may also assign window.V2Refs), so nothing they declare lands on window and overwrites a V2 global the live parts read.',
   ];
   const RULES = [
-    'Tokens only: a colour or size in kit/ or screens/ is a --v2-* token, never a raw value.',
+    'Tokens only: every colour in kit/ or screens/ is a --v2-* token, and so is every size two parts share (the Size family); geometry one part owns stays px in its rule.',
     'Kit classes start v2-, guide classes g-. Hover, focus-visible, active, disabled, loading and error live in CSS, not in mouse handlers.',
     'Files are IIFEs for the browser’s Babel: no import or export. Kit parts go on window.V2Kit, screens on window.V2Screens.',
     'At most 300 lines per .jsx, .js or .css file. Split before you pass it.',

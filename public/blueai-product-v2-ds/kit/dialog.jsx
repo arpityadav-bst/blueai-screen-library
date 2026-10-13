@@ -12,9 +12,10 @@
            size 'sm' (320) | 'md' (382), role, dismissible, busy, actions, footer, initialFocus,
            labelledBy, scrim, preview, className, children}
            variant sets the defaults below (role, size, close button, scrim click). actions is
-           [{label, onClick, variant 'secondary' | 'primary' | 'danger' | 'quiet', disabled}], written
-           secondary first and primary last. busy puts the primary in loading and holds Esc, the
-           scrim and the close button, so a slow consent or delete cannot fire twice.
+           [{label, onClick, variant 'secondary' | 'primary' | 'danger' | 'quiet', disabled,
+           disabledReason}], written secondary first and primary last; a disabled action prints its
+           reason under it, as every Button does (P3). busy puts the primary in loading and holds
+           Esc, the scrim and the close button, so a slow consent or delete cannot fire twice.
            dismissible={false} blocks: no close button, no Esc, no scrim.
            preview renders it open in place without taking focus (guide specimens only).
    Sheet   {open, onClose, title, description, blocking, busy, actions, footer, initialFocus,
@@ -47,7 +48,6 @@
     } catch (e) { /* no stylesheet yet */ }
     return 240;
   }
-  const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
   const VARIANTS = {
     task: { role: 'dialog', size: 'md', close: true, scrimCloses: true },
     alert: { role: 'alertdialog', size: 'sm', close: false, scrimCloses: false, focusAction: true },
@@ -56,15 +56,11 @@
   };
 
   function cx() { return Array.prototype.filter.call(arguments, Boolean).join(' '); }
-  function reducedMotion() {
-    return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-  }
-  function focusEl(el) {
-    if (!el || !el.focus) return;
-    try { el.focus({ preventScroll: true }); } catch (e) { el.focus(); }
-  }
+  // The kit's one focus and motion toolkit (FOCUSABLE, focusEl, reducedMotion) lives in kit/menu.jsx,
+  // which loads after this file: read it at call time, never at load.
+  const KT = function () { return window.V2Kit || {}; };
   function focusables(root) {
-    return Array.prototype.filter.call(root.querySelectorAll(FOCUSABLE), function (el) {
+    return Array.prototype.filter.call(root.querySelectorAll(KT().FOCUSABLE), function (el) {
       return el.getClientRects().length > 0;
     });
   }
@@ -98,7 +94,7 @@
       if (open) { setMounted(true); setClosing(false); return undefined; }
       if (!mounted) return undefined;
       setClosing(true);
-      const t = setTimeout(function () { setMounted(false); setClosing(false); }, reducedMotion() ? 0 : (ms || exitMs()));
+      const t = setTimeout(function () { setMounted(false); setClosing(false); }, KT().reducedMotion() ? 0 : (ms || exitMs()));
       return function () { clearTimeout(t); };
     }, [open]);
     return { mounted: mounted || !!open, closing: closing && !open };
@@ -125,7 +121,7 @@
       prev.current = key;
       if (onPage(document.activeElement)) return;
       const el = typeof target === 'function' ? target() : (target && (target.current || (target.nodeType ? target : null)));
-      if (el) focusEl(el);
+      if (el) KT().focusEl(el);
     }, [key]);
   }
 
@@ -142,20 +138,20 @@
       const top = function () { return traps[traps.length - 1] === token; };
       traps.push(token);
       const release = inertAround(root.closest('.v2-overlay') || root);
-      focusEl(resolve(latest.current.initialFocus, root) || root);
+      KT().focusEl(resolve(latest.current.initialFocus, root) || root);
       function onKey(e) {
         if (!top()) return;
         // Esc inside the panel is the panel's own handler; this catches focus that left it.
         if (e.key === 'Escape') { if (!root.contains(e.target) && latest.current.onEscape) latest.current.onEscape(); return; }
         if (e.key !== 'Tab') return;
         const list = focusables(root);
-        if (!list.length) { e.preventDefault(); focusEl(root); return; }
+        if (!list.length) { e.preventDefault(); KT().focusEl(root); return; }
         const i = list.indexOf(document.activeElement);
-        if (i < 0) { e.preventDefault(); focusEl(e.shiftKey ? list[list.length - 1] : list[0]); }
-        else if (e.shiftKey && i === 0) { e.preventDefault(); focusEl(list[list.length - 1]); }
-        else if (!e.shiftKey && i === list.length - 1) { e.preventDefault(); focusEl(list[0]); }
+        if (i < 0) { e.preventDefault(); KT().focusEl(e.shiftKey ? list[list.length - 1] : list[0]); }
+        else if (e.shiftKey && i === 0) { e.preventDefault(); KT().focusEl(list[list.length - 1]); }
+        else if (!e.shiftKey && i === list.length - 1) { e.preventDefault(); KT().focusEl(list[0]); }
       }
-      function onFocusIn(e) { if (top() && !root.contains(e.target)) focusEl(root); }
+      function onFocusIn(e) { if (top() && !root.contains(e.target)) KT().focusEl(root); }
       document.addEventListener('keydown', onKey);
       document.addEventListener('focusin', onFocusIn);
       return function () {
@@ -164,7 +160,7 @@
         traps.splice(traps.indexOf(token), 1);
         release();
         if (latest.current.returnFocus === false) return;
-        focusEl(returnTarget(opener, trail, latest.current.returnFocus));
+        KT().focusEl(returnTarget(opener, trail, latest.current.returnFocus));
       };
     }, [active]);
   }
@@ -196,7 +192,8 @@
           const main = a.variant === 'primary' || a.variant === 'danger';
           return (
             <Btn key={a.label + i} variant={a.variant || 'secondary'} size="lg" full loading={!!(busy && main)}
-              disabled={a.disabled || (busy && !main)} onClick={a.onClick} className={a.className}>{a.label}</Btn>
+              disabled={a.disabled || (busy && !main)} disabledReason={a.disabled ? a.disabledReason : undefined}
+              onClick={a.onClick} className={a.className}>{a.label}</Btn>
           );
         })}
       </div>
@@ -226,7 +223,7 @@
     useFocusTrap(panel, live, { initialFocus: p.initialFocus || (v.focusAction ? '.v2-ov-actions button' : null), onEscape: close });
     useEffect(function () {
       const el = panel.current;
-      if (p.busy && live && el && !el.contains(document.activeElement)) focusEl(el);
+      if (p.busy && live && el && !el.contains(document.activeElement)) KT().focusEl(el);
     }, [p.busy]);
     if (!pres.mounted) return null;
 

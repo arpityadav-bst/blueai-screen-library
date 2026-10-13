@@ -42,12 +42,14 @@
           </G.Note>
           <p><strong>Anatomy.</strong> ScreenHeader 'Connected apps' with Back. The list is one SettingsSection of
             ConnectedAppRows: app mark, name, the account or why there is none, one Badge. An app's detail: its Account row,
-            What BlueAI does here (Paid jobs, Watch history), then the consequence in words over one Disconnect button: danger for
+            What BlueAI does here (Daily warm-up, Paid jobs), then Watch history as a permission (section 46), then the consequence in words over one Disconnect button: danger for
             YouTube, which costs days; secondary for Telegram, which costs nothing and offers Undo.</p>
           <Screens states={[
             { label: 'List', note: 'YouTube connected, Telegram not connected, Instagram Coming soon', node: scr() },
             { label: 'YouTube connected', note: 'pushed from the list or from Settings', node: scr({ app: 'youtube' }) },
             { label: 'YouTube signed out in App Player', note: 'the one action that fixes it', node: scr({ app: 'youtube', state: 'signed-out' }) },
+            { label: 'Watch history turned off', note: 'Allow opens the full request', node: scr({ app: 'youtube', worker: K.workerFixtures && K.workerFixtures.revoked }) },
+            { label: 'From a blocked run', note: 'the record says signed out', node: scr({ app: 'youtube', worker: K.workerFixtures && K.workerFixtures.blocked }) },
             { label: 'Disconnect confirm', note: 'the cost before the choice', node: scr({ app: 'youtube', state: 'disconnect' }) },
             { label: 'Disconnecting', note: 'the confirm’s primary works in place', node: scr({ app: 'youtube', state: 'disconnect-busy' }) },
             { label: 'Couldn’t disconnect', note: 'said in the dialog, Try again', node: scr({ app: 'youtube', state: 'disconnect-failed' }) },
@@ -83,7 +85,7 @@
               'Confirm a disconnect that costs days; offer Undo for one that costs nothing (Telegram).',
               'Show an app that is not live as Coming soon, with no switch and no chevron.']}
             dont={['Say "Unlink".', 'Let a partner consent to automation on an app with no jobs.',
-              'Read watch history without a visible switch to stop it.', 'Hide the account after setup.']} />
+              'Read watch history without a way to turn it off.', 'Hide the account after setup.']} />
           <G.SpecDrawer rows={[
             { part: 'Title', token: 'ScreenHeader with Back', value: '"Connected apps"; an app’s detail is titled with its name', ref: 'screens-account.apps.handle' },
             { part: 'Row', token: 'ListRow nav + Avatar app 32 + Badge', value: 'name 14/500, account 13 ink-3, one Badge', ref: ['screens-account.apps.youtube', 'screens-account.settings.telegram-title'] },
@@ -93,7 +95,8 @@
             { part: 'Pairing', token: 'Dialog task + Spinner 16', value: 'the code 4829 (24/600 tabular, sunken, dashed line), "Waiting for Telegram. The code works for 10 minutes."; expired and failed say "Nothing was linked."; no QR placeholder, no "I’ve paired"', ref: ['screens-account.settings.telegram-modal', 'screens-account.settings.telegram-qr', 'screens-account.settings.telegram-code', 'screens-account.settings.telegram-paired'] },
             { part: 'Disconnect', token: 'Button danger md (YouTube), secondary md (Telegram)', value: 'replaces "Unlink"; consequence 13 ink-3 above it', ref: 'screens-account.settings.telegram-unlink' },
             { part: 'Confirm', token: 'Dialog alert sm', value: '"Disconnect YouTube?" Cancel / Disconnect (danger); focus starts on Cancel' },
-            { part: 'Watch history', token: 'ListRow + Switch', value: 'on: used to pick jobs; off: general videos', ref: 'screens-account.worker.history-read' },
+            { part: 'Daily warm-up', token: 'ListRow', value: 'Watches and likes videos that fit you, every run, in both modes. (general videos when history is off)' },
+            { part: 'Watch history', token: 'ListRow + Button secondary sm; PermissionRequest compact and full (section 46)', value: 'allowed: Allowed on Oct 6 / BlueAI sees your watch history, subscriptions and channel stats to pick jobs that fit you. + Turn off (one tap); not now or turned off: the compact result with Allow, which opens the full request', ref: 'screens-account.worker.history-read' },
             { part: 'Passwords', token: 'SettingsSection description', value: 'adapted from the pitch: "It never sees or types your passwords."', ref: 'screens-account.worker.password' },
           ]} />
         </G.Part>

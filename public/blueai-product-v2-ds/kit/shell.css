@@ -46,11 +46,10 @@
 }
 .v2-topbar--signed-out { padding-right: var(--v2-gutter); }
 .v2-topbar-actions { display: flex; align-items: center; gap: var(--v2-space-2); min-width: 0; }
-.v2-topbar-menus { display: flex; align-items: center; gap: var(--v2-space-05); }
 
-/* WorkerStatusChip: 28 tall, pill, hairline, a dot in the status tone and a 13/500 label. Only the
-   states where the partner must act for today to count take a tint (needs you; didn't finish and
-   can't run). The ::after pads the hit area to 32 without growing the chip. */
+/* WorkerStatusChip: 28 tall, pill, hairline, a dot in the status tone and a 13/500 label. Only a
+   waiting job and a run that broke take a tint (needs you; didn't finish and can't run); a missed
+   start says it with its attention dot. The ::after pads the hit area to 32 without growing the chip. */
 .v2-status {
   position: relative; display: inline-flex; align-items: center; gap: var(--v2-space-15); flex: none;
   height: var(--v2-control-sm); padding: 0 var(--v2-space-3) 0 var(--v2-space-2);
@@ -67,13 +66,17 @@
 .v2-status--needs-you { background-color: var(--v2-attention-tint); border-color: var(--v2-attention-line); color: var(--v2-attention-ink); }
 .v2-status--failed, .v2-status--blocked { background-color: var(--v2-danger-tint); color: var(--v2-danger-ink); }
 
-/* The dot: neutral (ink-4) for a plain fact, a ring for 'not running', blue while it runs, a blue
-   ring while a done day waits for its check (the DayBar's pending look), attention when it needs
-   the partner, danger when today can still be saved, and green only once a day is verified (P2). */
+/* The dot: neutral (ink-4) for a plain fact, a ring for 'not running' (paused, offline, waiting for
+   credits, ended, and stopped: the partner stopped it themselves, so it is their choice, not a
+   call to act), blue while it runs, a blue ring while a done day waits for its check (pending, and
+   checking: all 20 done, the last still being checked; the DayBar's pending look, one of the blue
+   exceptions to the neutral pending tone, section 03), attention when today needs the partner to
+   count (a job waiting, a missed start), danger when today's run broke and can still be saved
+   (didn't finish, can't run), and green only once a day is verified (P2). */
 .v2-status-dot { flex: none; width: var(--v2-space-2); height: var(--v2-space-2); border-radius: var(--v2-radius-round); background: var(--v2-ink-4); }
 .v2-status-dot--running { background: var(--v2-blue); }
-.v2-status-dot--pending { background: none; box-shadow: inset 0 0 0 var(--v2-stroke-selected) var(--v2-blue); }
-.v2-status-dot--needs-you { background: var(--v2-attention-ink); }
+.v2-status-dot--pending, .v2-status-dot--checking { background: none; box-shadow: inset 0 0 0 var(--v2-stroke-selected) var(--v2-blue); }
+.v2-status-dot--needs-you, .v2-status-dot--missed { background: var(--v2-attention-ink); }
 .v2-status-dot--verified { background: var(--v2-success); }
 .v2-status-dot--failed, .v2-status-dot--blocked { background: var(--v2-danger-ink); }
 .v2-status-dot--paused, .v2-status-dot--offline, .v2-status-dot--stopped, .v2-status-dot--no-credits, .v2-status-dot--ended {
@@ -101,6 +104,12 @@
   content: ''; position: absolute; top: calc(-1 * (var(--v2-space-1) + var(--v2-stroke))); left: 50%;
   width: var(--v2-icon-lg); height: var(--v2-space-05); margin-left: calc(var(--v2-icon-lg) / -2);
   border-radius: 0 0 var(--v2-radius-xs) var(--v2-radius-xs); background: var(--v2-blue);
+}
+/* Forced colours drop the bar's fill: keep it in Highlight and underline the label, so the current
+   item never rests on a colour the theme has replaced. */
+@media (forced-colors: active) {
+  .v2-nav-item.is-selected::before { forced-color-adjust: none; background: Highlight; }
+  .v2-nav-item.is-selected .v2-nav-label { text-decoration: underline; text-decoration-thickness: calc(var(--v2-stroke) * 2); text-underline-offset: 3px; }
 }
 .v2-nav-icon { position: relative; display: inline-flex; align-items: center; justify-content: center; width: var(--v2-icon-md); height: var(--v2-icon-md); }
 .v2-nav-label { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

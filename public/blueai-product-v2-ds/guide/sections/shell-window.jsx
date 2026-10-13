@@ -132,6 +132,8 @@
           <G.StateGrid wide states={[
             { label: 'Tray menu: scheduled', node: <Tray runStatus="scheduled" /> },
             { label: 'Tray menu: running', node: <Tray runStatus="running" /> },
+            { label: 'Tray menu: needs you', note: 'a paid job waits for the OK; Open BlueAI reaches it', node: <Tray runStatus="needs-you" /> },
+            { label: 'Tray menu: didn’t start', note: 'today is still to come, so Skip is offered', node: <Tray runStatus="missed" /> },
             { label: 'Tray menu: done today', node: <Tray runStatus="done" statusLabel="Day 7 of 20, pending verification" /> },
             { label: 'Tray menu: paused', node: <Tray runStatus="paused" /> },
             { label: 'Skip asks first (today not run yet)', node: <Tray runStatus="scheduled" confirm="skip" /> },

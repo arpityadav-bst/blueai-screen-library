@@ -10,12 +10,14 @@
               className, children}
               Disabled stays focusable (aria-disabled) so the reason printed beside it can be
               reached; loading keeps the label, swaps the icon for a spinner and ignores clicks.
-   IconButton {icon, label (required: the only name a screen reader hears), size 28|32|36 (36),
-              variant 'bare'|'outlined', active (its menu is open), tone 'default'|'danger',
-              disabled, disabledReason, onClick; aria-expanded / aria-haspopup / aria-pressed
-              pass through}  Disabled stays focusable too. A glyph has no room for a printed
-              line, so its reason is the label tooltip (V2Kit.Tooltip, on hover and focus) and
-              the description a screen reader hears.
+   IconButton {icon, label (required: the only name a screen reader hears), size 32|28 (32: the
+              hit floor; 28 only inside a field, growing an invisible 32 target), variant
+              'bare'|'outlined', active (its menu is open), disabled, disabledReason, tip, onClick;
+              aria-expanded / aria-haspopup pass through; aria-pressed makes it a toggle drawn in
+              the selected look (a recorded vote)}  tip (default on): a label Tooltip showing the
+              label on hover and focus (section 23); tip={false} opts out. Disabled stays focusable
+              too. A glyph has no room for a printed line, so its reason is that tooltip
+              (V2Kit.Tooltip) and the description a screen reader hears.
    Link       {href, external, tone 'ink'|'muted', standalone, onClick, children}
               Without href it renders a button drawn as a link (an inline action). */
 (function () {
@@ -27,7 +29,7 @@
   function omit(o, keys) { const r = {}; for (const k in o) if (keys.indexOf(k) < 0) r[k] = o[k]; return r; }
   const BUTTON_OWN = ['variant', 'size', 'icon', 'iconRight', 'loading', 'disabled', 'disabledReason', 'full',
     'type', 'onClick', 'href', 'external', 'className', 'children'];
-  const ICON_BUTTON_OWN = ['icon', 'label', 'size', 'variant', 'active', 'tone', 'disabled', 'disabledReason', 'onClick', 'className'];
+  const ICON_BUTTON_OWN = ['icon', 'label', 'size', 'variant', 'active', 'disabled', 'disabledReason', 'tip', 'onClick', 'className'];
   const LINK_OWN = ['href', 'external', 'tone', 'standalone', 'onClick', 'className', 'children'];
   function Ico({ name, size, inline }) {
     const Icon = window.V2Kit && window.V2Kit.Icon;
@@ -82,7 +84,7 @@
 
   let warned = false;
   function IconButton(props) {
-    const { icon, label, size = 36, variant = 'bare', active, tone = 'default', disabled, disabledReason, onClick, className } = props;
+    const { icon, label, size = 32, variant = 'bare', active, disabled, disabledReason, onClick, className } = props;
     const rest = omit(props, ICON_BUTTON_OWN);
     const reasonId = useId();
     const why = !!(disabled && disabledReason);
@@ -90,9 +92,9 @@
       warned = true;
       console.warn('[V2Kit.IconButton] label is required: it is the only name a screen reader hears.');
     }
-    const s = size === 28 || size === 32 ? size : 36;
-    const cls = cx('v2-icon-button', 'v2-icon-button--' + s, variant === 'outlined' && 'v2-icon-button--outlined',
-      tone === 'danger' && 'v2-icon-button--danger', active && 'is-on', className);
+    const s = size === 28 ? 28 : 32;
+    const cls = cx('v2-icon-button', s === 28 && 'v2-icon-button--28', variant === 'outlined' && 'v2-icon-button--outlined',
+      active && 'is-on', className);
     const el = (
       <button {...rest} type="button" className={cls} aria-label={label}
         aria-disabled={disabled ? 'true' : undefined} aria-describedby={why ? reasonId : rest['aria-describedby']}
@@ -100,14 +102,11 @@
         <Ico name={icon} size={s === 28 ? 16 : 20} />
       </button>
     );
-    if (!why) return el;
     const Tip = window.V2Kit && window.V2Kit.Tooltip;
-    return (
-      <>
-        {Tip ? <Tip content={disabledReason}>{el}</Tip> : el}
-        <span id={reasonId} className="v2-sr-only">{disabledReason}</span>
-      </>
-    );
+    const tipText = why ? disabledReason : label;
+    const tipped = Tip && props.tip !== false && tipText ? <Tip kind="label" content={tipText}>{el}</Tip> : el;
+    if (!why) return tipped;
+    return (<>{tipped}<span id={reasonId} className="v2-sr-only">{disabledReason}</span></>);
   }
 
   function Link(props) {

@@ -30,27 +30,27 @@
 
 **Purpose.** Today's run in one glance, on every screen; clicking it opens where the partner can act.
 
-**Anatomy.** Pill button: an 8px dot in the status tone, a 13/500 label, and visually hidden "Today's run: " before the label.
+**Anatomy.** Pill button: an 8px dot in the status tone, a 13/500 label, and visually hidden "Today’s run: " before the label.
 
-**Variants.** (Labels are proposed copy except "Didn't finish", which echoes the PM's toast, worker_day_done.jsx:203.)
+**Variants.** (Labels are proposed copy except "Didn’t finish", which echoes the PM's toast, worker_day_done.jsx:203.)
 
 Every `RUN_STATUS` key (`kit/topbar.jsx:35-50`), its chip label, its tray line (section 29) and the record condition `topBarProps(record)` maps to it (`screens/home.jsx`, `chip`). The chip's label is the RUN_STATUS label unless the record gives a time or a count. Opens is `chipTarget(record)` (`screens/home.jsx`, section 32): running, waiting, failed and done open today's run as its Activity row does; stopped, missed, blocked, no-credits, offline and ended open Home; paused opens Settings > Worker. "Waiting for credits" shows only when `creditsDay` is 'waiting'; when it is 'stopped' the chip is not-counted, "Not counted today". The credits chip's dot shows only until today's run is done.
 
 | Status | Chip label | Tray line | Worker record (`workerState`) | Opens |
 |---|---|---|---|---|
 | scheduled | Next run 11 am; Next run 9 am to 8 pm; Runs later today (from `runWindow`: a time, a window, any time) | Next run 11 am | scheduled | Home, Today |
-| running | Running | Running today's run | running | the run in the chat |
+| running | Running | Running today’s run | running | the run in the chat |
 | needs-you | Needs you (yellow tint) | A paid job needs your OK by 9 pm | waiting | the job preview |
 | pending | Day 7 of 20 (blue ring: in, not yet checked) | Done today, pending verification | done, and today's ledger row is not verified yet (`done` is read as `pending`) | the run in Activity |
-| not-counted | Not counted today (neutral dot) | Today doesn't count toward your 20 days | done, with `today.outcome` skipped or expired; noCredits with `creditsDay` 'stopped' | the run in Activity; out of credits: Home, Today |
+| not-counted | Not counted today (neutral dot) | Today doesn’t count toward your 20 days | done, with `today.outcome` skipped or expired; noCredits with `creditsDay` 'stopped' | the run in Activity; out of credits: Home, Today |
 | verified | Day 7 of 20 once today is verified; All 20 days done (`numbers().complete`) | All 20 days verified | done and verified; complete | the run in Activity; complete: Home, Today (the card's Earnings) |
-| failed | Didn't finish (red tint) | Today's job didn't finish. Try again by 9 pm | failed | the run, with Try again and its deadline |
-| stopped | Stopped (ring dot) | You stopped today's run. Run again by 9 pm | stopped | Home, Today: Run again and its deadline |
-| missed | Didn't start (neutral dot) | Today's run didn't start. Run it by 9 pm | missed: the PC was off or asleep at run time | Home, Today: Run now and its deadline |
-| blocked | Can't run (red tint) | Today's run can't start. Open BlueAI to fix it | blocked: `blockedBy(record)`, no app, signed out or no BlueStacks | Home, Today: the card's one fix |
-| no-credits | Waiting for credits (ring dot) | Out of AI credits for today's run | noCredits: `credits.left` below `runCost` before today's run and the refill lands before 9 pm (`creditsDay` 'waiting'); when it lands after 9 pm ('stopped') the chip says Not counted today | Home, Today: the card says when credits refresh |
+| failed | Didn’t finish (red tint) | Today’s job didn’t finish. Try again by 9 pm | failed | the run, with Try again and its deadline |
+| stopped | Stopped (ring dot) | You stopped today’s run. Run again by 9 pm | stopped | Home, Today: Run again and its deadline |
+| missed | Didn’t start (neutral dot) | Today’s run didn’t start. Run it by 9 pm | missed: the PC was off or asleep at run time | Home, Today: Run now and its deadline |
+| blocked | Can’t run (red tint) | Today’s run can’t start. Open BlueAI to fix it | blocked: `blockedBy(record)`, no app, signed out or no BlueStacks | Home, Today: the card's one fix |
+| no-credits | Waiting for credits (ring dot) | Out of AI credits for today’s run | noCredits: `credits.left` below `runCost` before today's run and the refill lands before 9 pm (`creditsDay` 'waiting'); when it lands after 9 pm ('stopped') the chip says Not counted today | Home, Today: the card says when credits refresh |
 | paused | Paused (ring dot); Update needed (section 69, the label passed) | Runs paused | paused; an update is required | Settings > Worker; the update screen |
-| offline | Offline (ring dot) | Offline. Today's run waits for a connection | offline | Home, Today: the card says what happens to today |
+| offline | Offline (ring dot) | Offline. Today’s run waits for a connection | offline | Home, Today: the card says what happens to today |
 | ended | Period ended (ring dot) | Your 20 days have ended | ended: the 20 days ran out before all were verified (`daysLeft` 0) | Home: the period-ended state with Earnings (section 69) |
 | (none) | not rendered | | setup (not set up yet), signed out, not in the program, between programs | |
 
@@ -64,7 +64,7 @@ One rule for the ended chip: once the period has ended, every signed-in screen s
 
 **Motion.** Colour over `--v2-dur-1`. The running dot does not pulse: nothing loops unattended.
 
-**Accessibility.** A real `<button>`; accessible name "Today's run: Needs you". Colour is never the only carrier: every status has words. Tinted labels: attention ink on tint and danger ink on tint, both above 4.5:1.
+**Accessibility.** A real `<button>`; accessible name "Today’s run: Needs you". Colour is never the only carrier: every status has words. Tinted labels: attention ink on tint and danger ink on tint, both above 4.5:1.
 
 **Responsive.** One line, no wrap.
 

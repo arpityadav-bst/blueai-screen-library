@@ -40,9 +40,9 @@
         <G.Part name="DayDone" status="changed" role="The end-of-run moment: today's run is in, here is where the 20 days stand, and it is pending until checked.">
           <p><strong>Anatomy.</strong> The kit Dialog, celebration variant, size sm (320), dim scrim, no close button. A 56
             badge in blue tint with one tick in --v2-blue-ink, inherited from the badge (pending, never green): one of the
-            two blue exceptions to the neutral pending tone (section 03). Title 20/600, the PM's DRAFT string. One sub line
-            only on Day 20. DayBar with one count line: '7 of 20 days' and one tick 'Pending verification'. The
-            verification note 13 ink-3. One full-width primary 'Got it' (44). Confetti on Day 20 only, once.</p>
+            two blue exceptions to the neutral pending tone (section 03). Title 20/600, the PM's DRAFT string. Two sub
+            lines 13 ink-3, only on Day 20: the PM's, then the proposed cash-out step. DayBar with one count line:
+            '7 of 20 days' and one tick 'Pending verification'. The verification note 13 ink-3. One full-width primary 'Got it' (44). Confetti on Day 20 only, once.</p>
           <G.StateGrid wide states={[
             { label: 'Job', note: '?day=next&end=job', node: spec('job') },
             { label: 'No job (the run counts)', note: '?day=next&end=nojob', node: spec('nojob') },
@@ -62,7 +62,7 @@
             { part: 'Badge', token: '--v2-blue-tint, --v2-blue-ink', value: '56 round, one tick 28 in --v2-blue-ink inherited from the badge (a blue exception to the neutral pending tone), no ring', ref: 'worker.daydone.ring' },
             { part: 'Title', token: '--v2-text-20, --v2-weight-semibold', value: 'Today’s run is done.', ref: 'worker.copy.job' },
             { part: 'Title, no job', token: 'same', value: 'No paid job today, but your run counts.', ref: 'worker.copy.nojob' },
-            { part: 'Title, Day 20', token: 'same + sub 13 ink-3', value: 'Day 20 done. / That’s every day for this month.', ref: ['worker.copy.day20', 'worker.copy.day20-sub'] },
+            { part: 'Title, Day 20', token: 'same + two subs 13 ink-3', value: 'Day 20 done. / That’s every day for this month. / Cash out on Earnings after Nov 1, once your days are verified ($10 minimum). (the last line proposed)', ref: ['worker.copy.day20', 'worker.copy.day20-sub'] },
             { part: 'Count', token: '--v2-text-13, figure --v2-ink 600', value: "'7 of 20 days' replaces the eyebrow and the green hero", ref: ['worker.daydone.eyebrow', 'worker.daydone.hero'] },
             { part: 'Status', token: 'StatusTick pending', value: 'Pending verification', ref: ['worker.daydone.pending-line', 'worker.copy.pending'] },
             { part: 'Note', token: '--v2-text-13, --v2-ink-3', value: 'We check every run within a day. The tick doubles once it’s verified.', ref: ['worker.copy.verify-note', 'worker.daydone.note-colour'] },

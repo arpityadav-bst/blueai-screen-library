@@ -9,15 +9,20 @@
     return <div style={{ position: 'relative', overflow: 'hidden', minHeight: height || 260, padding: 'var(--v2-space-3)' }}>{children}</div>;
   }
 
-  // All fourteen states, each from its kit fixture. 'blocked:<reason>' sets one reason on the blocked
-  // fixture, so each fixing action has its own cell.
+  // All fifteen states, each from its kit fixture. 'blocked:<reason>' sets one reason on the blocked
+  // fixture, so each fixing action has its own cell; a function builds a fixture from another. A
+  // fifth item true passes busy: the action loads in place and ignores a second click.
+  const EXPIRED = function (F) { return Object.assign({}, F.declined, { today: Object.assign({}, F.declined.today, { outcome: 'expired' }) }); };
   const STATES = [
     ['setup', 'new', 'Set up', 'Not set up yet: V2 description and Run (?start=worker)'],
     ['scheduled', 'setUp', 'Next run', 'Run now is secondary: nothing is waiting'],
+    ['scheduled', 'setUp', 'Run now, starting', 'busy: Run now loads in place until the run starts', true],
     ['running', 'running', 'Running', 'live step, Details opens today'],
     ['waiting', 'waiting', 'Waiting for you', 'the deadline and its cost before the tap'],
     ['done', 'donePending', 'Done today', 'no second Run; pending until verified'],
     ['done', 'declined', 'Done, skipped', 'says the day does not count'],
+    ['done', EXPIRED, 'Done, no answer', 'the job expired at 9 pm: the day does not count'],
+    ['done', 'nojob', 'Done, no job', 'no job on the board: the run still counts'],
     ['stopped', 'stopped', 'Stopped', 'the partner stopped it: Run again, by 9 pm'],
     ['failed', 'failed', 'Failed', 'Try again, with the deadline'],
     ['missed', 'missed', 'Didn’t start', 'PC off or asleep at run time; never starts late on its own'],
@@ -27,12 +32,15 @@
     ['paused', 'paused', 'Paused', 'days do not count while paused'],
     ['noCredits', 'noCredits', 'Out of credits', 'when the allowance comes back'],
     ['offline', 'offline', 'Offline', 'what happens to today'],
+    ['offline', 'offline', 'Offline, reconnecting', 'busy: Try again loads in place while it reconnects (section 51)', true],
     ['complete', 'complete', 'Program complete', 'Earnings opens the site'],
     ['ended', 'ended', 'Period ended', 'the 20 days ran out first; cash out is open'],
+    ['checking', 'checking', 'All 20 done, one checking', 'the worker stops taking jobs; runs again only if a day is not counted'],
     ['ended', 'endedBelow', 'Period ended, under $10', 'the minimum and the carry-over'],
     ['done', 'automatic', 'Automatic', 'the mode line names the app'],
   ];
   function fixture(F, key) {
+    if (typeof key === 'function') return key(F);
     const r = key.split(':');
     return r[1] ? Object.assign({}, F[r[0]], { blocked: { reason: r[1], app: 'youtube' } }) : F[key];
   }
@@ -52,7 +60,7 @@
   function WorkerCardSection() {
     const K = window.V2Kit || {};
     const ready = !!(K.WorkerCard && K.workerFixtures);
-    const card = (state, fx) => (ready ? <div style={{ width: '100%' }}><K.WorkerCard worker={fixture(K.workerFixtures, fx)} state={state} onRun={noop} onOpenToday={noop} onReview={noop} onRetry={noop} onResume={noop} onOpenCredits={noop} onFix={noop} /></div> : null);
+    const card = (state, fx, busy) => (ready ? <div style={{ width: '100%' }}><K.WorkerCard worker={fixture(K.workerFixtures, fx)} state={state} busy={!!busy} onRun={noop} onOpenToday={noop} onReview={noop} onRetry={noop} onResume={noop} onOpenCredits={noop} onFix={noop} /></div> : null);
     return (
       <G.Section id="worker-card">
         <G.Part name="WorkerCard" status="changed" role="The home's one card: what the worker is doing today and the one action that matters now. Never a second Run.">
@@ -60,10 +68,10 @@
             state's icon (tone only for running, waiting, missed, failed, blocked and complete). Title 16/600 'BlueAI worker'. Status
             line 13 ink-3, an optional 12 line for the deadline or consequence. Mode line 12/500: shield-check
             'Always ask' or zap 'Automatic · YouTube'. One Button on the right.</p>
-          <p><strong>States.</strong> Fourteen, read from the record by <code className="g-code">workerState()</code> in
-            section 41's priority order: setup, complete, ended, running, waiting, done, offline, paused, blocked,
+          <p><strong>States.</strong> Fifteen, read from the record by <code className="g-code">workerState()</code> in
+            section 41's priority order: setup, complete, ended, checking, running, waiting, done, offline, paused, blocked,
             noCredits, stopped, failed, missed, scheduled. A blocked run's one action calls <code className="g-code">onFix(reason)</code>.</p>
-          <G.StateGrid wide states={STATES.map(function (s) { return { label: s[2], note: s[3], node: card(s[0], s[1]) }; })} />
+          <G.StateGrid wide states={STATES.map(function (s) { return { label: s[2], note: s[3], node: card(s[0], s[1], s[4]) }; })} />
           <G.CompareRow
             v2={<Contained height={300}><G.Live get={function () { return window.MoneyMaker && window.MoneyMaker.MoneyMakerHome; }} props={{ onRun: noop }} label="MoneyMakerHome" /></Contained>}
             system={<CoachDemo />}
@@ -75,7 +83,7 @@
             { part: 'Tile', token: '--v2-surface-sunken, --v2-radius-md', value: '40 x 40, radius 10, state icon 20', ref: 'worker.card.tile' },
             { part: 'Title', token: '--v2-text-16, --v2-weight-semibold, --v2-ink', value: "'BlueAI worker' 16/600", ref: 'worker.card.title' },
             { part: 'Set up line', token: '--v2-text-13, --v2-ink-3', value: 'Finds jobs that fit you and runs them on your account.', ref: 'worker.card.desc' },
-            { part: 'Action', token: '--v2-action (primary) or secondary / quiet', value: 'Button md 36; one per card', ref: ['worker.card.run', 'worker.card.run-label'] },
+            { part: 'Action', token: '--v2-action (primary) or secondary / quiet', value: 'Button md 36; one per card; busy loads it in place (Run now starting, Try again reconnecting)', ref: ['worker.card.run', 'worker.card.run-label'] },
             { part: 'Run message', token: 'none', value: 'Run starts setup or today’s run, never "first paid job" twice', ref: 'worker.card.prompt' },
             { part: 'Mode line', token: '--v2-text-12, --v2-ink-3 / --v2-blue-ink', value: "'Always ask' or 'Automatic · YouTube'", ref: 'worker.permissions.summary' },
             { part: 'Next run', token: 'nextRunText(record)', value: 'Next run today at 11 am. (from the saved window)', ref: 'worker.flow.next-run' },
@@ -86,7 +94,7 @@
             { part: 'Stopped', token: 'today.status stopped', value: 'You stopped today’s run. / Today doesn’t count yet. Run again by 9 pm.' },
             { part: 'Didn’t start', token: 'today.status missed, --v2-attention-ink', value: 'Your PC was off or asleep at 11 am, so today’s run didn’t start. / Run now by 9 pm to count today.' },
             { part: 'Can’t run', token: 'blockedBy(record), --v2-danger-ink', value: 'Today’s run can’t start: + reason + its fix by 9 pm; action onFix(reason): Connect YouTube, Open App Player, Get BlueStacks' },
-            { part: 'Period ended', token: 'endedCopy(n), numbers().reachedMinimum', value: 'This program ended on Nov 1. + verified days + cash out open, or the $10 minimum and the carry-over; Earnings. Home shows section 69’s state instead' },
+            { part: 'Period ended', token: 'endedCopy(n), numbers().cashOutOpen', value: 'This program ended on Nov 1. + verified days + cash out open, the $10 minimum and the carry-over, or where to look (null); Earnings. Home shows section 69’s state instead' },
             { part: 'Waiting, paused, credits, offline, complete', token: 'status family', value: 'Proposed copy, each with its consequence for today' },
           ]} />
           <G.DoDont

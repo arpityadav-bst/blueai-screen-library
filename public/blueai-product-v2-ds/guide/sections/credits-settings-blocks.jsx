@@ -32,10 +32,6 @@
             { label: 'Rest', node: sec() },
             { label: 'With description', node: sec({ description: 'When it runs and what it asks you first.' }) },
             { label: 'Highlighted', note: 'routed here, 1900ms', node: sec({ className: 'is-highlighted' }) },
-            { label: 'Advanced, closed', node: W(<A />) },
-            { label: 'Advanced, hover', node: W(<A className="is-hover" />) },
-            { label: 'Advanced, focus-visible', node: W(<A className="is-focus" />) },
-            { label: 'Advanced, open', node: W(<A defaultOpen>{chatModel}</A>) },
           ]} />
           <G.CompareRow
             v2={<G.Live get={function () { return window.SettingsScreen; }} props={{ byok: V2_BYOK, aiModeConditions: { hwSupported: true, conflict: false } }} label="window.SettingsScreen" />}
@@ -58,10 +54,32 @@
             { part: 'Row divider', token: '--v2-line-hair', value: '1px rgba(0,0,0,0.08), between rows only', ref: 'credits-settings.settings.row' },
             { part: 'Highlight', token: '--v2-blue, --v2-focus-ring', value: 'blue edge + 3px 16% ring for 1900ms', ref: ['credits-settings.byok.glow', 'credits-settings.byok.glow-time'] },
             { part: 'Routing', token: null, value: 'scrolls (instantly under reduced motion), never sets a value', ref: 'credits-settings.settings.route' },
-            { part: 'Advanced row', token: '--v2-control-lg, --v2-text-14, --v2-ink-3', value: 'min 44, label 14/500, note 12', ref: ['credits-settings.settings.order', 'credits-settings.settings.max-tokens'] },
-            { part: 'Chat model', token: null, value: 'one model picker, under Advanced', ref: ['credits-settings.settings.ai-model', 'credits-settings.byok.model'] },
             { part: 'Save model', token: null, value: 'apply on change + toast', ref: ['credits-settings.settings.save', 'credits-settings.settings.saved'] },
           ]} />
+        </G.Part>
+
+        <G.Part name="AdvancedDisclosure" status="changed"
+          role="The one place developer controls live: AI mode, your own key and the chat model, closed by default so partner topics come first.">
+          <G.StateGrid wide states={[
+            { label: 'Closed', node: W(<A />) },
+            { label: 'Hover', note: 'toggleClassName', node: W(<A toggleClassName="is-hover" />) },
+            { label: 'Focus-visible', node: W(<A toggleClassName="is-focus" />) },
+            { label: 'Pressed', node: W(<A toggleClassName="is-active" />) },
+            { label: 'Open', note: 'chevron turned, panels 12 apart', node: W(<A defaultOpen>{chatModel}</A>) },
+          ]} />
+          <G.Note>Changed from V2, which has no grouping: Max Output Tokens, Max Steps, Timeout and two AI model pickers sit in front of the partner. Forced states go on the button with toggleClassName; className stays on the wrapper.</G.Note>
+          <G.SpecDrawer rows={[
+            { part: 'Row', token: '--v2-control-lg, --v2-surface, --v2-line, --v2-radius-lg', value: 'min 44, padding 12 16, 1px line, radius 16; a real button with aria-expanded and aria-controls', ref: 'credits-settings.settings.order' },
+            { part: 'Label', token: '--v2-text-14, --v2-weight-medium, --v2-ink', value: "'Advanced' 14/500 ink" },
+            { part: 'Note', token: '--v2-text-12, --v2-ink-3', value: "12 ink-3: 'AI mode, your own key and the chat model. Most partners never need these.'" },
+            { part: 'Chevron', token: '--v2-icon-sm, --v2-ink-3, --v2-dur-2', value: 'chevron-down 16 ink-3, turns 180° open in 180ms; the body appears without animation' },
+            { part: 'Hover, press', token: '--v2-line-hover, --v2-wash-hover, --v2-wash-press', value: 'edge firms + wash; deeper wash while held' },
+            { part: 'Body', token: '--v2-space-3', value: 'stays in the DOM with hidden, so aria-controls always resolves' },
+            { part: 'Chat model', token: null, value: 'one model picker, under Advanced', ref: ['credits-settings.settings.ai-model', 'credits-settings.byok.model', 'credits-settings.settings.max-tokens'] },
+          ]} />
+          <G.DoDont
+            do={['Keep it closed by default.', 'Put AI mode, your own key and the chat model inside it.']}
+            dont={['Put anything a partner needs for the worker inside it.', 'Force a state with className: it lands on the wrapper, not the button.']} />
         </G.Part>
 
         <G.Part name="ByokPanel" status="changed"

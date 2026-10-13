@@ -5,7 +5,6 @@
     /* Button */
     r('button.new-chat', 'index.html', 342, "background: '#1990FF', border: 'none', borderRadius: 999, padding: '6px 13px 6px 9px', fontSize: 13, fontWeight: 600, color: 'white'", 'New Chat: #1990FF pill, radius 999, 13/600, white label at 3.24:1'),
     r('button.new-chat-hover', 'index.html', 343, "e.currentTarget.style.opacity = '0.88'", 'hover lowers opacity to 0.88'),
-    r('button.new-chat-copy', 'index.html', 346, 'New Chat', "'New Chat'"),
     r('button.settings-save', 'settings.jsx', 123, "background: '#1990FF', border: 'none', borderRadius: 8, padding: '9px 20px', fontSize: 14, fontWeight: 600", 'Save settings: radius 8, 14/600, no hover, no focus style'),
     r('button.consent-recipe', 'agent_permissions.jsx', 157, "const btn = { flex: 1, borderRadius: 10, padding: '10px 12px', fontSize: 13.5, fontWeight: 700", 'consent buttons: radius 10, 13.5/700'),
     r('button.cancel', 'agent_permissions.jsx', 178, "background: 'white', border: '1px solid #e2e8f0', color: '#374151' }}>Cancel</button>", 'Cancel: white, 1px #e2e8f0, label #374151'),

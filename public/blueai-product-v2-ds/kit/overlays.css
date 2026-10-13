@@ -96,10 +96,7 @@
 .v2-menu { min-width: 200px; max-width: var(--v2-measure); }
 .v2-popover { width: min(var(--v2-popover-w), calc(var(--v2-shell-w) - 2 * var(--v2-gutter))); }
 .v2-float-header { padding: var(--v2-space-2) var(--v2-space-3) var(--v2-space-1); } /* type: .v2-text-eyebrow (kit/menu.jsx) */
-.v2-float-foot {
-  margin: 0; padding: var(--v2-space-15) var(--v2-space-3) var(--v2-space-2);
-  color: var(--v2-ink-3); font-size: var(--v2-text-12); line-height: var(--v2-leading-snug);
-}
+.v2-float-foot { margin: 0; padding: var(--v2-space-15) var(--v2-space-3) var(--v2-space-2); } /* type: .v2-text-caption (kit/menu.jsx) */
 .v2-popover-body { padding: var(--v2-space-1) var(--v2-space-3); }
 
 .v2-menu-item {
@@ -193,8 +190,9 @@
 .v2-tip-trigger > * { position: relative; }
 .v2-tip-trigger:hover, .v2-tip.is-hover .v2-tip-trigger { color: var(--v2-ink); }
 .v2-tip-trigger:hover::before, .v2-tip.is-hover .v2-tip-trigger::before { background: var(--v2-wash-hover); }
-.v2-tip.is-open .v2-tip-trigger { color: var(--v2-blue-ink); }
-.v2-tip.is-open .v2-tip-trigger::before { background: var(--v2-select); }
+/* Pinned open: the IconButton's 'on' look, ink on the press wash. Open is not a selection, so not blue. */
+.v2-tip.is-open .v2-tip-trigger { color: var(--v2-ink); }
+.v2-tip.is-open .v2-tip-trigger::before { background: var(--v2-wash-press); }
 .v2-tip.is-focus .v2-tip-trigger { outline: var(--v2-focus-outline); outline-offset: calc(-1 * var(--v2-space-05)); }
 .v2-tip-trigger:focus-visible { outline-offset: calc(-1 * var(--v2-space-05)); }
 
@@ -225,14 +223,8 @@
   flex: 1 1 auto; min-width: 0; padding: var(--v2-space-15) 0;
   color: var(--v2-ink); font-size: var(--v2-text-13); font-weight: var(--v2-weight-medium); line-height: var(--v2-leading-snug);
 }
-.v2-toast-action {
-  flex: none; min-height: var(--v2-hit-min); padding: 0 var(--v2-space-2); border-radius: var(--v2-radius-sm);
-  color: var(--v2-blue-ink); font-size: var(--v2-text-13); font-weight: var(--v2-weight-medium); white-space: nowrap;
-  transition: background-color var(--v2-dur-1) var(--v2-ease-standard);
-}
-.v2-toast-action:hover, .v2-toast-action.is-hover { background: var(--v2-select); }
-.v2-toast-action:active, .v2-toast-action.is-active { background: var(--v2-wash-press); }
-.v2-toast-close { flex: none; }
+/* The action is the kit Button, quiet sm (28 tall, 32 hit floor): on the ladder, never resting blue. */
+.v2-toast-action, .v2-toast-close { flex: none; }
 /* The timer exists only on a timed toast, which always sets --toast-ms (kit/toast.jsx LIFETIME). */
 .v2-toast-timer {
   position: absolute; left: 0; bottom: 0; width: 0; height: 0; overflow: hidden;
@@ -246,10 +238,11 @@
 .v2-reduced-motion .v2-toast .v2-toast-timer { animation-duration: var(--toast-ms) !important; }
 
 /* ---- Segmented (14) and Tabs (28): one recessed track, one item, one selected look --------------
-   The family's chosen look (select fill, ink) with a 1.5px blue edge, 4.15:1 on the track, so which
-   one is on never rests on text darkness. One weight in every state, so nothing reflows. Only the
-   role's own bits live apart: the Segmented's equal widths, small size and pending (kit/inputs.css),
-   the Tabs' full track and counts (below). */
+   The selected item takes the select fill and ink with a solid 1.5px blue edge, 4.15:1 on the
+   track, so which one is on never rests on text darkness. Adapted (section 02, P6): the Radio card
+   and Chip keep the site's 50% edge (--v2-select-line). One weight in every state, so nothing
+   reflows, and one duration (--v2-dur-2). Only the role's own bits live apart: the Segmented's
+   equal widths, small size and pending (kit/inputs.css), the Tabs' full track and counts (below). */
 .v2-segmented, .v2-tabs {
   display: inline-flex; gap: var(--v2-space-05); max-width: 100%; padding: var(--v2-space-05);
   background-color: var(--v2-surface-sunken); border: var(--v2-stroke) solid var(--v2-line); border-radius: var(--v2-radius-md);
@@ -263,17 +256,25 @@
   transition: background-color var(--v2-dur-2) var(--v2-ease-standard), color var(--v2-dur-2) var(--v2-ease-standard),
     border-color var(--v2-dur-2) var(--v2-ease-standard);
 }
-.v2-segment:hover:not(:disabled):not(.is-selected), .v2-segment.is-hover,
-.v2-tab:hover:not(:disabled):not(.is-selected), .v2-tab.is-hover { background-color: var(--v2-wash-hover); color: var(--v2-ink); }
-.v2-segment:active:not(:disabled):not(.is-selected), .v2-segment.is-active,
-.v2-tab:active:not(:disabled):not(.is-selected), .v2-tab.is-active { background-color: var(--v2-wash-press); }
+.v2-segment:hover:not(:disabled):not([aria-disabled="true"]):not(.is-selected), .v2-segment.is-hover,
+.v2-tab:hover:not(:disabled):not([aria-disabled="true"]):not(.is-selected), .v2-tab.is-hover { background-color: var(--v2-wash-hover); color: var(--v2-ink); }
+.v2-segment:active:not(:disabled):not([aria-disabled="true"]):not(.is-selected), .v2-segment.is-active,
+.v2-tab:active:not(:disabled):not([aria-disabled="true"]):not(.is-selected), .v2-tab.is-active { background-color: var(--v2-wash-press); }
 .v2-segment.is-selected, .v2-tab.is-selected {
   background-color: var(--v2-surface); background-image: linear-gradient(var(--v2-select), var(--v2-select));
   border-color: var(--v2-blue); box-shadow: inset 0 0 0 calc(var(--v2-stroke-selected) - var(--v2-stroke)) var(--v2-blue);
   color: var(--v2-ink);
 }
 .v2-segment:focus-visible, .v2-segment.is-focus, .v2-tab:focus-visible, .v2-tab.is-focus { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); }
-.v2-segment:disabled, .v2-tab:disabled { opacity: var(--v2-opacity-disabled); cursor: not-allowed; }
+.v2-segment:disabled, .v2-segment[aria-disabled="true"], .v2-tab:disabled { opacity: var(--v2-opacity-disabled); cursor: not-allowed; }
+/* Forced colours replace the fill and the inset edge, so the one selected look becomes a thick
+   edge and an underlined label, for both roles. */
+@media (forced-colors: active) {
+  .v2-segment.is-selected, .v2-tab.is-selected { border-width: calc(var(--v2-stroke) * 2); }
+  .v2-segment.is-selected > span, .v2-tab.is-selected > .v2-tab-label {
+    text-decoration: underline; text-decoration-thickness: calc(var(--v2-stroke) * 2); text-underline-offset: 3px;
+  }
+}
 
 /* Tabs only: onBlue's Active / Past switch (onblue/apply.html:443-475) */
 .v2-tabs--full { display: flex; }

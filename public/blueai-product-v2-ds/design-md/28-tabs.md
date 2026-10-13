@@ -8,7 +8,7 @@
 
 **Purpose.** Switch between sibling views of one screen. Never navigation between screens (that is the bottom nav, section 31).
 
-**Anatomy.** Track: `--v2-surface-sunken`, 1px `--v2-line`, radius 10, padding and gap 2. Tab: 32 tall (`--v2-hit-min`), radius 6, 12px sides, label 13/400 `--v2-ink-3`, optional count 12/400 tabular `--v2-ink-3`. Selected: the Segmented's selected look (section 14, `kit/overlays.css` .v2-tab.is-selected): `--v2-select` over `--v2-surface`, a 1.5px `--v2-blue` edge (`--v2-stroke-selected`), label 13/500 `--v2-ink`; no shadow. Adapted from the site: label 12.5 to 13, selected 550 to 500, radius 9 to 10, padding 3 to 2, the selected chip takes the product's one selected look (select fill, blue edge) instead of the site's raised white chip and drops its shadow, and the count one ink darker (the site's dimmest ink on the recessed track is 4.42:1, under AA for 12px).
+**Anatomy.** Track: `--v2-surface-sunken`, 1px `--v2-line`, radius 10, padding and gap 2. Tab: 32 tall (`--v2-hit-min`), radius 6, 12px sides, label 13/500 (`--v2-weight-medium` in every state, so nothing reflows) `--v2-ink-3`, optional count 12/400 tabular `--v2-ink-3`. Selected: the Segmented's selected look (section 14, `kit/overlays.css:271-275`): `--v2-select` over `--v2-surface`, a 1.5px `--v2-blue` edge (`--v2-stroke-selected`), label 13/500 `--v2-ink`; no shadow. Adapted from the site: label 12.5 to 13, every state 500 where the site steps the selected tab to 550, radius 9 to 10, padding 3 to 2, the selected chip takes the product's one selected look (select fill, blue edge) instead of the site's raised white chip and drops its shadow, and the track is `--v2-surface-sunken` #f6f6f8, which is the site's `--bar-bg`; the site's tab track is its `--panel-bg` #fdfdfd (`onblue/apply.html:449`, `onblue/onblue.css:400, 404`). The count goes one ink darker: the site's `--dim-ink` #767b85 on its #fdfdfd track is 4.18:1, and the system's ink-4 on the sunken track would be 4.42:1, both under AA for 12px; ink-3 is 5.59:1 there.
 
 **Variants.** With counts (count 0 still shows, so a tab never changes width); `full` stretches the track and splits it evenly.
 
@@ -18,9 +18,9 @@
 
 **Props.** `Tabs {tabs: [{id, label, count, disabled}], value, onChange(id), ariaLabel, idBase, full, className}`. `TabPanel {idBase, id, hidden, children}`: pass the same `idBase` so the tab and its panel point at each other.
 
-**Motion.** Colour, fill and edge over `--v2-dur-1` on `--v2-ease-standard`. The panel swap is instant.
+**Motion.** Colour, fill and edge over `--v2-dur-2` (180ms, one duration shared with the Segmented, `kit/overlays.css:264-265`) on `--v2-ease-standard`. The panel swap is instant.
 
-**Accessibility.** tablist (named by `ariaLabel`), tabs with `aria-selected` and `aria-controls`, tabpanels labelled by their tab. One tab stop (the selected tab); Left and Right move and select, wrapping; Home and End jump. Label 6.0:1 at rest.
+**Accessibility.** tablist (named by `ariaLabel`), tabs with `aria-selected` and `aria-controls`, tabpanels labelled by their tab. One tab stop (the selected tab); Left and Right move and select, wrapping; Home and End jump. Label ink-3 on the sunken track 5.59:1 at rest.
 
 **Responsive.** Hugs its labels; `full` in a 419 window for two-tab screens like Activity. Labels stay one or two words so nothing wraps.
 

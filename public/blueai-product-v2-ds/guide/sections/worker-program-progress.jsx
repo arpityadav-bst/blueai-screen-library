@@ -58,8 +58,8 @@
             system={shell(<K.DayBar days={bar(6, 1, 0, 0)} />)}
             changed="Green #1BA07A becomes the site's green, and pending is no longer a green outline: green now means reached on both sides (P2). The amber day-20 segment becomes a label, since amber is not in the family and the bonus itself waits on D3. The bar gains rejected and out-of-reach states, a role and a spoken value; the same component should draw the site's tile." />
           <G.SpecDrawer rows={[
-            { part: 'Segment', token: '--v2-space-15, --v2-radius-xs, --v2-space-05', value: 'height 6, radius 4 (V2 2), gap 2', ref: 'worker.bar.segment' },
-            { part: 'Verified', token: '--v2-success', value: 'solid', ref: 'worker.rule.green' },
+            { part: 'Segment', token: '--v2-rail, --v2-radius-xs, --v2-space-05', value: 'height 6, radius 4 (V2 2), gap 2', ref: 'worker.bar.segment' },
+            { part: 'Verified', token: '--v2-success-ink', value: 'solid (the site goal-bar green; the tick keeps --v2-success)', ref: 'worker.rule.green' },
             { part: 'Pending', token: '--v2-blue, --v2-stroke-selected', value: '1.5 inset outline on surface' },
             { part: 'Rejected', token: '--v2-danger-tint, --v2-danger-line', value: 'tint + 1px line' },
             { part: 'Out of reach', token: '--v2-line-strong', value: 'hatched' },

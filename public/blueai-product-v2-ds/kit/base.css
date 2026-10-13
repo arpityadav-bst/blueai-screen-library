@@ -2,11 +2,12 @@
    1. Reset, scoped to kit trees: any element whose class contains "v2-" and everything inside it.
       Written with :where() so it has zero specificity and every kit class beats it.
    2. The kit root (.v2-root): face, size, leading and ink every screen starts from.
-   3. The thirteen text styles (.v2-text-*), one per role in the type ladder (section 04). Kit parts
-      compose their text from these classes rather than restating size, weight, leading and ink.
-   4. Layout utilities: v2-stack, v2-hstack, v2-gap-*, v2-grow, v2-screen, v2-screen-body, v2-divider,
-      v2-sr-only, v2-tabular, v2-truncate, v2-prose. (The horizontal stack is v2-hstack, not v2-row:
-      v2-row is ListRow's root class in kit/display.css.)
+   3. The fourteen text styles (.v2-text-*), one per role in the type ladder (section 04). Kit parts
+      and screens compose their text from these classes rather than restating size, weight, leading
+      and ink; a leaf rule keeps only layout (margin, flex) and, at most, a tone's ink.
+   4. Layout utilities: v2-stack, v2-hstack (--baseline, --between, --end), v2-wrap, v2-gap-1 to -6,
+      v2-grow, v2-screen, v2-screen-body, v2-divider, v2-sr-only, v2-tabular, v2-truncate, v2-prose.
+      (The horizontal stack is v2-hstack, not v2-row: v2-row is ListRow's root class, display.css.)
    5. Focus: one global :focus-visible rule (section 09) plus the .is-focus forcing class.
    6. Scrollbar: .v2-scroll (and .v2-screen-body), one definition for both engines, no grey rail.
    7. Icon box (.v2-icon), the CSS half of kit/icons.jsx.
@@ -116,6 +117,12 @@
   font-size: var(--v2-text-16); font-weight: var(--v2-weight-semibold); line-height: var(--v2-leading-tight);
   letter-spacing: var(--v2-tracking-label); color: var(--v2-ink);
 }
+/* The head of a card or a block inside one (RunCard, RadioCard, JobPreviewCard, PermissionRequest,
+   Run detail's Verification): body size, one step bolder, in ink. */
+.v2-text-title-sm {
+  font-size: var(--v2-text-14); font-weight: var(--v2-weight-semibold); line-height: var(--v2-leading-snug);
+  letter-spacing: 0; color: var(--v2-ink);
+}
 /* The label over a figure inside a card (StatCard): the site's .mini-title (onblue/onblue.css:1935-1942),
    sentence case. The uppercase eyebrow stays for section labels only. */
 .v2-text-mini-title {
@@ -167,13 +174,11 @@
 /* 4. Layout utilities ----------------------------------------------------------------------- */
 .v2-stack { display: flex; flex-direction: column; gap: var(--v2-space-3); min-width: 0; }
 .v2-hstack { display: flex; flex-direction: row; align-items: center; gap: var(--v2-space-2); min-width: 0; }
-.v2-hstack--top { align-items: flex-start; }
 .v2-hstack--baseline { align-items: baseline; }
 .v2-hstack--between { justify-content: space-between; }
 .v2-hstack--end { justify-content: flex-end; }
 .v2-wrap { flex-wrap: wrap; }
 .v2-grow { flex: 1 1 auto; min-width: 0; }
-.v2-gap-0 { gap: var(--v2-space-0); }
 .v2-gap-1 { gap: var(--v2-space-1); }
 .v2-gap-2 { gap: var(--v2-space-2); }
 .v2-gap-3 { gap: var(--v2-space-3); }

@@ -8,7 +8,7 @@
 
 **Purpose.** Five durations, three curves and nine keyframes that every part draws from.
 
-**Anatomy.** Durations: `--v2-dur-1` 120ms (hover colour, press), `-2` 180ms (tab change, chips, toggles, message in), `-3` 240ms (popover, scrim, disclosure, departures), `-4` 320ms (dialog, sheet, window), `--v2-dur-celebrate` 450ms (day-done pop only). Loops: `--v2-dur-spin` 800ms, `--v2-dur-pulse` 1200ms, `--v2-dur-shimmer` 1400ms. Curves: `--v2-ease-out` cubic-bezier(0.16,1,0.3,1) (every arrival, the site's ease), `--v2-ease-in` cubic-bezier(0.5,0,0.75,0.4) (departures), `--v2-ease-standard` ease (colour, opacity). Keyframes and classes in kit/motion.css: `.v2-anim-fade-up` (6px, dur-2), `.v2-anim-pop-in` (6px, dur-3), `.v2-anim-scale-in` (0.98, dur-4), `.v2-anim-sheet-up` (dur-4), `.v2-anim-sheet-down` (dur-3, ease-in), `.v2-anim-fade`, `.v2-anim-fade-out`, `.v2-anim-pulse`, `.v2-anim-spin`, `.v2-anim-shimmer`, `.v2-anim-indet`; staggers `.v2-delay-1` to `-3` (120ms steps).
+**Anatomy.** Durations: `--v2-dur-1` 120ms (hover colour, press), `-2` 180ms (tab change, chips, toggles, message in), `-3` 240ms (popover, scrim, disclosure, departures), `-4` 320ms (dialog, sheet, window), `--v2-dur-celebrate` 450ms (day-done pop only). Loops: `--v2-dur-spin` 800ms, `--v2-dur-pulse` 1200ms, `--v2-dur-shimmer` 1400ms. Curves: `--v2-ease-out` cubic-bezier(0.16,1,0.3,1) (every arrival, the site's ease), `--v2-ease-in` cubic-bezier(0.5,0,0.75,0.4) (departures), `--v2-ease-standard` ease (colour, opacity). Keyframes in kit/motion.css: `v2-fade-up` (6px rise), `v2-scale-in` (from 0.98), `v2-sheet-up`, `v2-sheet-down`, `v2-fade`, `v2-pulse`, `v2-spin`, `v2-shimmer`, `v2-indet`. Six classes put one on an element (`kit/motion.css:65-77`): `.v2-anim-fade-up` (v2-fade-up at dur-2: EmptyState and Welcome), `.v2-anim-pop-in` (v2-fade-up at dur-3: the coach mark only), `.v2-anim-pulse` (Badge busy dot), `.v2-anim-spin` (Spinner, so the thinking bubble), `.v2-anim-shimmer` (Skeleton), `.v2-anim-indet` (ProgressBar); staggers `.v2-delay-1` and `.v2-delay-2` (120ms steps). There is no class for the overlays: their keyframe changes with their state (`.is-closing`, `.is-leaving`), so each names it in its own rule (`kit/overlays.css`): dialog v2-scale-in at dur-4, sheet v2-sheet-up at dur-4 and v2-sheet-down at dur-3 ease-in, scrim v2-fade at dur-3 (out: reversed, ease-in), toast v2-fade-up at dur-2 (out: v2-fade reversed at dur-1), menus and popovers v2-fade-up at dur-3, and the day-done badge v2-scale-in at `--v2-dur-celebrate` (`kit/worker.css:113`). The "Run by" table at the top of kit/motion.css (lines 7-21) lists every place each keyframe runs; read it before adding motion.
 
 **Variants.** Arrival (ease-out), departure (ease-in, one step shorter), loop (only while the partner waits).
 
@@ -16,7 +16,7 @@
 
 **States.** Fast, base, moderate, slow, celebrate. V2 today: tabFadeUp 0.18s (index.html:74), baMsgIn 0.22s (index.html:89), terms sheet up 0.45s and down 0.32s (terms_sheet.jsx:104, 106, bare URL), ddPop 0.45s (worker_day_done.jsx:147, `?end=job`).
 
-**Props.** Classes only; a part may set `animation-delay` from the stagger classes.
+**Props.** The six classes and the two stagger classes; an overlay names its keyframe in its own rule instead.
 
 **Motion.** As above.
 
@@ -24,7 +24,7 @@
 
 **Responsive.** Not applicable.
 
-**Do / Don't.** Do ease arrivals out and departures in. Do animate opacity and transform only. Don't loop anything the partner is not waiting on. Don't add a keyframe for one part: celebration effects (confetti, tick ring) live in the day-done part and play once.
+**Do / Don't.** Do ease arrivals out and departures in. Do animate opacity and transform only. Don't loop anything the partner is not waiting on. Don't add a keyframe for one part: the one celebration effect, Day 20's confetti (`v2-w-confetti`, the only local keyframe, `kit/worker.css:190`), lives in the day-done part and plays once.
 
 ### Reduced motion (New)
 
@@ -42,7 +42,7 @@
 
 **Motion.** Not applicable.
 
-**Accessibility.** Busy states always carry words ("Saving…", "Running today's run"), so nothing depends on movement.
+**Accessibility.** Busy states always carry words ("Saving…", "Running today’s run"), so nothing depends on movement.
 
 **Responsive.** Not applicable.
 
@@ -52,7 +52,7 @@
 
 **Purpose.** A time budget for every timed sequence, measured against a daily user.
 
-**Anatomy.** Cold start: splash up to 1.2s, only when the app process starts; reopening the window restores the last screen at once, no splash, no skeleton. Welcome (signed out): title, card, action at `--v2-dur-4` with 120ms staggers, about 0.56s, cap 1.2s, no logo drift. Day done: one pop at `--v2-dur-celebrate`, the ring plays once. Sheet: up 320ms ease-out, down 240ms ease-in.
+**Anatomy.** Cold start: splash up to 1.2s, only when the app process starts; reopening the window restores the last screen at once, no splash, no skeleton. Welcome (signed out): title, steps and action fade up at `--v2-dur-2` (`.v2-anim-fade-up`, `.v2-delay-1`, `.v2-delay-2`), 120ms apart, about 0.42s, cap 1.2s, no logo drift (`screens/welcome.jsx:93, 136`). Day done: one pop at `--v2-dur-celebrate` (v2-scale-in), no ring; Day 20 adds its confetti once, none under reduced motion. Sheet: up 320ms ease-out, down 240ms ease-in.
 
 **Variants.** Cold start, welcome, day done, sheet.
 

@@ -19,13 +19,15 @@
                   element, is wrapped in the field's description, so the field reads it.
                   Force focus for specimens with className 'is-focus'.
    ComposerNotice {tone: the Banner's tones, 'info'|'success'|'attention'|'danger'|'offline'
-                  ('neutral' is read as 'offline'), icon, text, children, action: {label, onClick}}
+                  ('neutral' is read as 'offline'), icon, text, children, action: {label, onClick},
+                  actionClassName (forces the action's state in the guide)}
                   the slot above the field for a condition that holds before you type: Automatic
                   on, out of credits, BlueStacks needed, paused. V2's AutoRibbon, generalised: it
                   is V2Kit.Banner in its compact size (kit/feedback.css), so tones, icon and action
                   are the Banner's.
-   SendStop       {mode: 'send'|'stop', disabled, onClick, className}  36px round. Disabled is
-                  aria-disabled (focusable, ignores the press). */
+   SendStop       {mode: 'send'|'stop', disabled, onClick, describedBy, className}  36px round.
+                  Disabled is aria-disabled (focusable, ignores the press); describedBy is the id of
+                  what says why (the composer passes its notice while locked). */
 (function () {
   const { useState, useRef, useLayoutEffect, useEffect, useId } = React;
   const K = () => window.V2Kit || {};
@@ -33,14 +35,14 @@
 
   function Icon(props) { const I = K().Icon; return I ? <I {...props} /> : null; }
 
-  function ComposerNotice({ tone, icon, text, children, action, className }) {
+  function ComposerNotice({ tone, icon, text, children, action, actionClassName, className }) {
     const B = K().Banner;
     if (!B) return null;
     // 'neutral' was this slot's own name for the Banner's neutral tone; it keeps its pause glyph.
     const t = tone === 'neutral' ? 'offline' : tone;
     const ic = icon || (tone === 'neutral' ? 'pause' : undefined);
     const act = action ? { label: action.label, onClick: action.onClick } : null;
-    return <B tone={t} icon={ic} action={act} className={cx('v2-banner--compact', className)}>{text || children}</B>;
+    return <B tone={t} icon={ic} action={act} actionClassName={actionClassName} className={cx('v2-banner--compact', className)}>{text || children}</B>;
   }
 
   function SendStop({ mode, disabled, onClick, className, describedBy }) {
@@ -132,7 +134,7 @@
           </div>
         ) : null}
         <div ref={box} className={cx('v2-composer-box', (busy || locked) && 'is-readonly')}>
-          <textarea ref={ta} className="v2-composer-input" rows={1} value={text} placeholder={ph}
+          <textarea ref={ta} className="v2-composer-input v2-scroll" rows={1} value={text} placeholder={ph}
             readOnly={busy || locked} aria-disabled={locked ? 'true' : undefined} aria-label="Message BlueAI"
             aria-describedby={notice ? noticeId : undefined}
             onChange={function (e) { set(e.target.value); }}

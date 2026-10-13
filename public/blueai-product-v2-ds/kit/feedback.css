@@ -39,27 +39,30 @@
   background: var(--v2-blue);
   transition: width var(--v2-dur-3) var(--v2-ease-out), background-color var(--v2-dur-2) var(--v2-ease-standard);
 }
-.v2-progress--success .v2-progress-fill { background: var(--v2-success); }
+/* Reached (a goal met or a download done): the site's program-bar green, as the DayBar draws it. */
+.v2-progress--success .v2-progress-fill { background: var(--v2-success-ink); }
 .v2-progress--error .v2-progress-fill { background: var(--v2-danger-ink); }
 .v2-progress--error .v2-progress-value { color: var(--v2-danger-ink); }
 .v2-progress--paused .v2-progress-fill { background: var(--v2-ink-4); }
 .v2-progress--indet .v2-progress-fill { width: 40%; transition: none; }
 
-/* ---- Spinner: a ring in currentColor ---- */
+/* ---- Spinner: an arc in currentColor on a line-token track ---- */
 .v2-spinner {
   display: inline-flex;
   flex: none;
   align-items: center;
   justify-content: center;
-  width: 16px;
-  height: 16px;
+  width: var(--v2-icon-sm);
+  height: var(--v2-icon-sm);
   color: inherit;
   vertical-align: middle;
 }
+/* 12 is the Switch's busy thumb's own geometry (a 16 thumb with its edge), so it stays literal. */
 .v2-spinner--12 { width: 12px; height: 12px; }
 .v2-spinner--32 { width: var(--v2-mark-md); height: var(--v2-mark-md); }
 .v2-spinner svg { display: block; width: 100%; height: 100%; }
-.v2-spinner-track { opacity: 0.2; }
+/* The track is a line, not a faded arc: opacity is for disabled only (tokens.css). */
+.v2-spinner-track { stroke: var(--v2-line-strong); }
 .v2-spinner--on-color { color: var(--v2-on-color); }
 .v2-spinner--done { color: var(--v2-success); }
 .v2-spinner.is-waiting { visibility: hidden; }
@@ -144,4 +147,5 @@
 @media (forced-colors: active) {
   .v2-progress-rail { border: var(--v2-stroke) solid; }
   .v2-progress-rail > .v2-progress-fill { forced-color-adjust: none; background: currentColor; }
+  .v2-spinner-track { forced-color-adjust: none; stroke: GrayText; }
 }

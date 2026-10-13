@@ -77,14 +77,14 @@
             { part: 'Growth', token: null, value: '1 to 6 lines, then overflow-y auto', ref: ['chat.composer.autosize', 'chat.composer.clip'] },
             { part: 'Keys', token: null, value: 'Enter sends, Shift+Enter new line', ref: 'chat.composer.enter' },
             { part: 'Placeholders', token: null, value: '"Type your message" / "BlueAI is working…" / "Answer with the buttons above" / the disabled reason, neutral ("You can’t send messages right now")', ref: ['chat.composer.placeholder-idle', 'chat.composer.placeholder-busy', 'chat.composer.placeholder-ooc'] },
-            { part: 'Read-only', token: '--v2-surface-panel', value: 'running or awaiting: read-only (still focusable), Stop shown' },
+            { part: 'Read-only', token: '--v2-surface-sunken, --v2-line', value: 'sunken fill, 10% edge (TextField read-only); running or awaiting: read-only (still focusable), Stop shown' },
           ]} />
         </G.Part>
 
         <G.Part name="ComposerNotice" status="changed" role="A condition that holds before you type, said above the field with its one action.">
           <G.StateGrid wide states={[
             { label: 'Automatic is on (info)', note: 'V2 copy.', node: shell(<K.ComposerNotice tone="info" icon="zap" text={AUTO_TEXT} action={{ label: 'Change', onClick: noop }} />) },
-            { label: 'Out of AI credits (neutral)', note: 'V2Kit.OutOfCreditsNotice, section 48: neutral with a clock, as out of AI credits shows everywhere (section 03). Nothing is asked of the partner; the words say until when.', node: shell(<OocNotice />) },
+            { label: 'Out of AI credits (neutral)', note: 'V2Kit.OutOfCreditsNotice, section 48: neutral with a clock, as out of AI credits shows while today can still count (section 03). Nothing is asked of the partner; the words say until when.', node: shell(<OocNotice />) },
             { label: 'BlueStacks needed (info)', node: shell(<K.ComposerNotice tone="info" icon="monitor" text="Today’s run needs BlueStacks App Player." action={{ label: 'Get BlueStacks', onClick: noop }} />) },
             { label: 'Paused (neutral)', node: shell(<K.ComposerNotice tone="neutral" text="The BlueAI worker is paused until tomorrow." action={{ label: 'Resume', onClick: noop }} />) },
           ]} />
@@ -95,10 +95,10 @@
           <G.CompareRow
             v2={<V2Ribbon />}
             system={shell(<K.ComposerNotice tone="info" icon="zap" text={AUTO_TEXT} action={{ label: 'Change', onClick: noop }} />)}
-            changed="The Automatic ribbon pattern, generalised so zero credits, a missing BlueStacks and a pause show before the partner types, not after Send. Text goes from 12px #1763c6 to 13px blue-ink, the 21px 'Change' becomes a 32px underlined ink link, and the zap from 13 to 16." />
+            changed="The Automatic ribbon pattern, generalised so zero credits, a missing BlueStacks and a pause show before the partner types, not after Send. Text goes from 12px #1763c6 to 13px ink-2 with the zap in blue ink, the 21px 'Change' becomes a 32px underlined ink link, and the zap from 13 to 16." />
           <G.SpecDrawer rows={[
             { part: 'Shape', token: '--v2-radius-md', value: 'radius 10, 1px line in tone', ref: 'chat.composer.ribbon-fill' },
-            { part: 'Info', token: '--v2-blue-tint, --v2-blue-tint-line, --v2-blue-ink', value: 'tint, tint line, #0d5ad6 text and icon' },
+            { part: 'Info', token: '--v2-blue-tint, --v2-blue-tint-line, --v2-blue-ink, --v2-ink-2', value: 'tint, tint line, icon #0d5ad6, words ink-2' },
             { part: 'Attention', token: '--v2-attention-tint, --v2-attention-line, --v2-attention-ink', value: '#fdf6cf, #f3e8a8, #8a6116: an answer the run waits on' },
             { part: 'Neutral', token: '--v2-surface-sunken, --v2-line, --v2-ink-2', value: 'sunken, line, ink-2; icon ink-3: paused, and out of AI credits until a time (clock)' },
             { part: 'Icon', token: '--v2-icon-sm', value: '16 (was 13)', ref: 'chat.composer.ribbon-icon' },

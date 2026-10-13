@@ -81,7 +81,7 @@
             { label: 'Selected', note: 'aria-pressed', node: <K.Chip selected onClick={noop}>{REASONS[1]}</K.Chip> },
             { label: 'Selected, hover', node: <K.Chip selected onClick={noop} className="is-hover">{REASONS[1]}</K.Chip> },
             { label: 'Unselected toggle', note: 'aria-pressed false', node: <K.Chip selected={false} onClick={noop}>{REASONS[2]}</K.Chip> },
-            { label: 'Disabled', node: <K.Chip disabled onClick={noop}>{REPLIES[2]}</K.Chip> },
+            { label: 'Disabled with reason', note: 'a filter with nothing to show; Proposed copy', node: <K.Chip selected={false} disabled disabledReason="No missed days yet." onClick={noop}>{FILTERS[2]}</K.Chip> },
             { label: 'With icon', node: <K.Chip icon="zap" onClick={noop}>{REPLIES[0]}</K.Chip> },
           ]} />
           <G.Stage ground="canvas" width="shell">
@@ -103,7 +103,7 @@
             { part: 'Press', token: '--v2-wash-press', value: 'deeper wash (V2: scale 0.96)', ref: 'actions-inputs.chip.reply-press' },
             { part: 'Selected', token: '--v2-select, --v2-select-line, --v2-ink', value: 'blue 12% fill, 50% edge, ink label plus a check (V2: #334155 fill, white)', ref: ['actions-inputs.chip.reason-selected', 'actions-inputs.onblue.choice-on'] },
             { part: 'Focus', token: '--v2-focus-outline', value: '2px #156efe, offset 2 (V2: none)' },
-            { part: 'Disabled', token: '--v2-opacity-disabled', value: 'native disabled, 0.45' },
+            { part: 'Disabled', token: '--v2-opacity-disabled', value: 'aria-disabled, stays focusable, 0.45; the reason is printed under it (caption) and tied with aria-describedby' },
             { part: 'Row gap', token: '--v2-space-2', value: '8 (V2: 7 and 6)' },
             { part: 'Shape choice', token: null, value: 'pill kept: in the thread it reads as "tap to answer"; the site\'s radius-9 chip is a fact, not a control', ref: 'actions-inputs.onblue.chip' },
             { part: 'Copy', token: null, value: 'V2 copy', ref: ['actions-inputs.chip.job-title', 'actions-inputs.chip.job-lead', 'actions-inputs.chip.job-question', 'actions-inputs.chip.job-options', 'actions-inputs.chip.reason-prompt', 'actions-inputs.chip.reasons'] },

@@ -15,7 +15,7 @@
                the current toast in the one its tone needs (an error goes to the assertive one).
                AppFrame renders it; screens never do.
    useToast()  {show(opts) -> id, update(id, opts), dismiss(id?)}
-               opts: {tone 'success' | 'info' | 'error' | 'loading', title, action {label, onClick},
+               opts: {tone 'success' | 'info' | 'error' | 'loading' ('danger' is read as 'error'), title, action {label, onClick},
                duration ms}. A toast with an action never times out: it stays until Dismiss, its
                action, the next toast, or the screen that showed it calls dismiss() on leaving, so
                Undo and Try again can be reached by keyboard and screen reader at any pace (WCAG
@@ -28,7 +28,9 @@
    is a CSS state (.v2-toast:hover, :focus-within, .is-paused), like every other state in the kit. */
 (function () {
   const { useState, useEffect, useMemo, useContext, createContext } = React;
-  const LEAVE_MS = 120; // --v2-dur-1: departures run one step shorter than the --v2-dur-2 arrival
+  // Departures run --v2-dur-1, one step shorter than the --v2-dur-2 arrival: read from the token
+  // when the toast leaves (V2Kit.tokenMs, kit/menu.jsx), so the unmount timer follows tokens.css.
+  const leaveMs = () => window.V2Kit.tokenMs('--v2-dur-1', 120);
   // Fixed internals (section 24): how long a toast without an action stays.
   const LIFETIME = { plain: 4000, error: 8000 };
   const ICON = { success: 'check-circle', info: 'info', error: 'alert' };
@@ -46,7 +48,7 @@
 
   function Toast(p) {
     const K = window.V2Kit;
-    const tone = (ICON[p.tone] || p.tone === 'loading') ? p.tone : 'success';
+    const tone = p.tone === 'danger' ? 'error' : ((ICON[p.tone] || p.tone === 'loading') ? p.tone : 'success');
     const ms = msFor(Object.assign({}, p, { tone: tone }));
     const timed = ms > 0 && isFinite(ms) && !p.leaving;
     function close(why) { if (p.onClose) p.onClose(why); }
@@ -57,8 +59,8 @@
         <span className="v2-toast-icon">{icon}</span>
         <span className="v2-toast-title">{p.title}</span>
         {p.action ? (
-          <button type="button" className="v2-toast-action"
-            onClick={function (e) { if (p.action.onClick) p.action.onClick(e); close('action'); }}>{p.action.label}</button>
+          <K.Button variant="quiet" size="sm" className="v2-toast-action"
+            onClick={function (e) { if (p.action.onClick) p.action.onClick(e); close('action'); }}>{p.action.label}</K.Button>
         ) : null}
         {p.onClose ? <K.IconButton icon="close" label="Dismiss" size={32} onClick={function () { close('close'); }} className="v2-toast-close" /> : null}
         {timed ? (
@@ -88,7 +90,7 @@
       <Toast key={t.id} tone={t.tone} title={t.title} action={t.action} duration={t.duration}
         leaving={t.leaving} timerKey={t.rev} onClose={function () { api.dismiss(t.id); }} />
     ) : null;
-    const urgent = !!(t && t.tone === 'error');
+    const urgent = !!(t && (t.tone === 'error' || t.tone === 'danger'));
     return (
       <div className={cx('v2-toast-host', offset === 'none' && 'v2-toast-host--flush', className)}>
         <div className="v2-toast-live" aria-live="polite" aria-atomic="true">{urgent ? null : node}</div>
@@ -120,7 +122,7 @@
       if (leavingId == null) return undefined;
       const timer = setTimeout(function () {
         setT(function (c) { return c && c.id === leavingId && c.leaving ? null : c; });
-      }, window.V2Kit.reducedMotion() ? 0 : LEAVE_MS);
+      }, window.V2Kit.reducedMotion() ? 0 : leaveMs());
       return function () { clearTimeout(timer); };
     }, [leavingId]);
     return (

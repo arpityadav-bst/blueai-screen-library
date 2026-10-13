@@ -22,7 +22,8 @@
                in tools/ds-check-more.js. No stylesheet but tokens.css defines a --v2- property.
    7. kit      every kit component and screen the catalog names is put on window.V2Kit / V2Screens.
    8. sizes    Icon and Avatar SIZES equal their tokens, each size class reads its token, no caller
-               passes a size off the list, and no kit/ or screens/ rule types a Size token raw.
+               passes a size off the list, and no kit/ or screens/ rule types a Size token raw
+               or borrows a Space token (var(--v2-space-N)) in its place.
    9. rest     no object rest destructuring in kit/, screens/ or guide/ .jsx (Babel's hoisted
                _excluded is shared across files).
    10. iife    kit/, screens/ and guide/ files hold only IIFEs at top level (refs may assign

@@ -16,11 +16,11 @@
 5. Actions (optional): one medium primary Button (36), and a quiet one beside it only if needed.
 
 **Variants.** Five, which change the words and the default icon, never the colours:
-- first use (`activity`): "No runs yet" / "Your first run starts today at 11 am. Each run shows up here, with what it did and whether the day counts."
-- no results (`info`): "No unread notifications" / "You're up to date. Earlier ones are under All." + Show all.
-- error (`alert`): "Couldn’t load your days" / "Nothing is lost: your runs and days are not affected. Try again in a moment." + Try again (`V2Screens.LoadError`'s words).
-- offline (`wifi-off`): "You're offline" / "Activity updates when BlueAI is back online. Today's run starts then too."
-- locked (`lock`): "Activity starts after setup" / "Set up your worker once in a short chat. Every run then shows up here." + Set up the worker.
+- first use (`first`, icon `activity`): "No days yet" / "Each run shows here with its verification: one tick while pending, two once verified." plus the next run time ("Next run today at 11 am."); before setup, + Set up your worker (`screens/activity.jsx:138-140`).
+- no results (`noresults`, icon `info`; Notifications passes `check`): "Nothing unread" / "You’ve seen everything your worker sent.", no action (`screens/notifications.jsx:123`).
+- error (`error`, icon `alert`): "Couldn’t load your days" / "Nothing is lost: your runs and days are not affected. Try again in a moment." + Try again (`V2Screens.LoadError`'s words, `screens/home.jsx:216-217`).
+- offline (`offline`, icon `wifi-off`): "You’re offline" / "BlueAI can’t reach the internet, so there’s nothing to show yet. Today’s run starts when you’re back online." + Try again (section 69, `screens/system-states.jsx:87-89`).
+- locked (`locked`, icon `lock`; the update state passes `download`): "Update BlueAI to keep running" / "This version can’t run jobs anymore, so runs are paused. Update now and today can still count. It takes about a minute." + Update now (section 69, `screens/system-states.jsx:121-123`).
 (All proposed copy.)
 
 **Sizes.** One; adapts to the width of its container.

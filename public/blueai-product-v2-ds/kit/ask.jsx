@@ -46,8 +46,8 @@
     if (P.useSwapFocus) P.useSwapFocus(card, st);
     return (
       <div className={cx('v2-msg', 'v2-msg--worker', 'v2-ask', 'is-' + st, quiet && 'v2-ask--neutral', className)}>
-        <div ref={card} className="v2-ask-card" tabIndex={pending ? undefined : -1} data-v2-anchor={pending ? undefined : ''}>
-          {pending ? <span className="v2-chat-sr">BlueAI needs your answer. </span> : null}
+        <div ref={card} className="v2-ask-card v2-text-body" tabIndex={pending ? undefined : -1} data-v2-anchor={pending ? undefined : ''}>
+          {pending ? <span className="v2-sr-only">BlueAI needs your answer. </span> : null}
           {s.title ? <p className="v2-ask-title">{s.title}</p> : null}
           {s.lead ? <p className="v2-ask-text">{s.lead}</p> : null}
           {s.bullets ? <ul className="v2-ask-bullets">{s.bullets.map(function (b) { return <li key={b}>{b}</li>; })}</ul> : null}
@@ -120,13 +120,13 @@
     return (
       <div className={cx('v2-fb', className)}>
         <div className="v2-fb-row" ref={row}>
-          {IB ? <IB icon="thumb-up" label="Good result" size={32} variant="outlined" active={vote === 'up'} aria-pressed={vote === 'up'} onClick={function () { cast('up'); }} /> : null}
-          {IB ? <IB icon="thumb-down" label="Bad result" size={32} variant="outlined" active={vote === 'down'} aria-pressed={vote === 'down'} onClick={function () { cast('down'); }} /> : null}
-          <span className="v2-fb-thanks" role="status">{showThanks ? 'Thanks for the feedback' : ''}</span>
+          {IB ? <IB icon="thumb-up" label="Good result" variant="outlined" aria-pressed={vote === 'up'} onClick={function () { cast('up'); }} /> : null}
+          {IB ? <IB icon="thumb-down" label="Bad result" variant="outlined" aria-pressed={vote === 'down'} onClick={function () { cast('down'); }} /> : null}
+          <span className="v2-fb-thanks v2-text-caption" role="status">{showThanks ? 'Thanks for the feedback' : ''}</span>
         </div>
         {showReasons ? (
           <div className="v2-fb-reasons">
-            <p className="v2-fb-prompt" id={pid}>What went wrong?</p>
+            <p className="v2-fb-prompt v2-text-caption" id={pid}>What went wrong?</p>
             <div className="v2-fb-chips" role="group" aria-labelledby={pid}>
               {REASONS.map(function (r) {
                 return P.Chip ? <P.Chip key={r} selected={reason === r} onClick={function () { pick(r); }}>{r}</P.Chip> : null;

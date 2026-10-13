@@ -106,14 +106,14 @@
   }
 
   /* The covered line: one sentence that answers "will today's run fit". runDone wins, because a
-     finished run is not affected by what is left. At zero, with the day's status, it says whether
+     finished run is not affected by what is left. Short or at zero, with the day's status, it says whether
      today still counts (OOC_COPY.day), so a refill after the 9 pm deadline never reads as if
      today's run will still happen. */
   const DAY_TONE = { covered: ['ok', 'check'], waiting: ['attention', 'clock'], stopped: ['danger', 'x-circle'] };
   function coverLine(state, runDone, dayStatus) {
     if (runDone) return { tone: 'done', icon: 'check', text: 'Today’s run is done' };
     const day = (window.V2Kit && window.V2Kit.OOC_COPY || {}).day || {};
-    if (state === 'empty' && DAY_TONE[dayStatus] && day[dayStatus]) {
+    if ((state === 'empty' || state === 'low') && DAY_TONE[dayStatus] && day[dayStatus]) {
       return { tone: DAY_TONE[dayStatus][0], icon: DAY_TONE[dayStatus][1], text: day[dayStatus] };
     }
     if (state === 'empty') return { tone: 'danger', icon: 'x-circle', text: 'Today’s run can’t start until credits refresh' };

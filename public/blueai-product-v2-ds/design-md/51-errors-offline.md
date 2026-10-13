@@ -19,18 +19,18 @@
 - **States:** shown, retrying (the button loads), recovered (the message goes; a toast only if the partner acted).
 - **Props:** none of its own; see TextField, Toast, Banner, RunCard, EmptyState.
 - **Motion:** inherits each part (toast rise 180 ms; banner and card appear in place).
-- **Accessibility:** field messages and danger banners are `role=alert`; toasts announce through the ToastHost live region; error text is danger ink 5.36:1 or ink on a tint.
+- **Accessibility:** field messages and danger banners are `role=alert`; toasts announce through AppFrame's one ToastRegion (an error in its assertive region, section 24); error text is danger ink 5.36:1 or ink on a tint.
 - **Responsive:** fits the column at any width.
 - **Do / Don't:** Do say what it means for today's run or the 20 days; name the next step for what it does (Try again, Switch account); keep the partner's input. Don't show codes; don't use a toast for a field or a full screen for a section; don't stop at "Something went wrong". Use Try again everywhere (V2 also says Retry, `worker_flow.jsx:127`, PM copy, flagged).
 
 ### Offline (New)
 
 - **Purpose:** losing the connection shows at once, says what will not happen today, and recovers by itself.
-- **Anatomy:** Banner tone `offline` (neutral fill, wifi-off icon, ink words) sticky under the top bar (`--v2-z-sticky`). `V2Screens.ScreenFrame` draws it whenever the record says `online: false`, on every signed-in screen but Home, so no screen builds its own; the top bar's WorkerStatusChip says `offline`. In Chat the Composer locks with the neutral placeholder every locked composer uses, `disabledReason` "You can’t send messages right now" (section 38), and the offline ComposerNotice above it says why and until when. On Home the WorkerCard `offline` says it instead, and its Try again reconnects in place (Home `onReconnect`, `screens/home.jsx:251-256`).
-- **Variants (proposed copy):** offline: "You’re offline" / "Today’s run starts when you’re back online." + Try again. Reconnecting: "Reconnecting…". Back online: Toast success "You’re back online." Service down: "BlueAI can’t reach its service" / "This is on our side, not your PC. Today’s run starts as soon as it’s back."
+- **Anatomy:** Banner tone `offline` (neutral fill, wifi-off icon, ink words) pinned under the top bar, on the gutter, outside the content band, so it never scrolls and needs no layer. `V2Screens.ScreenFrame` draws it, in the top bar slot it hands AppFrame, whenever the record says `online: false`, on every signed-in screen but Home, which passes `offlineBanner={false}` because its WorkerCard says it, so no screen builds its own; the top bar's WorkerStatusChip says `offline`. In Chat the Composer locks with the neutral placeholder every locked composer uses, `disabledReason` "You can’t send messages right now" (section 38), and the offline ComposerNotice above it says why and until when (tone `neutral`, icon wifi-off, "You’re offline. You can send messages once you’re back online."). On Home the WorkerCard `offline` says it instead, and its Try again reconnects in place (Home `onReconnect`, `screens/home.jsx`).
+- **Variants (proposed copy):** offline: "You’re offline" / "Today’s run starts when you’re back online." + Try again; in Chat, the composer notice above. Reconnecting: "Reconnecting…". Back online: Toast success "You’re back online." Service down: "BlueAI can’t reach its service" / "This is on our side, not your PC. Today’s run starts as soon as it’s back."
 - **Sizes:** full column width.
 - **States:** offline, reconnecting (checks every 30 s and at once on Try again), back online, service down.
-- **Props:** none on a screen: ScreenFrame reads `worker.online`. The Banner it draws is `{tone: 'offline', title, action}`; Chat passes the Composer `disabledReason` and the notice.
+- **Props:** none on a screen: ScreenFrame reads `worker.online`, takes `onReconnect` for the banner's Try again (without it the banner has no action and the 30 s check still runs) and `offlineBanner` (default true; Home passes false). The Banner it draws is `{tone: 'offline', title, action}`; Chat passes the Composer `disabledReason` and the notice.
 - **Motion:** the banner appears in place; the recovery toast rises 180 ms.
 - **Accessibility:** banner `role=status`; the composer's placeholder is the neutral reason and the notice says the cause, so the field is disabled, not hidden, and described by the notice.
 - **Responsive:** the banner stays pinned while the content band scrolls (compact 640 too).

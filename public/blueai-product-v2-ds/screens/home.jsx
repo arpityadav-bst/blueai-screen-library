@@ -2,34 +2,30 @@
    signed-in screen sits in. Composed only from window.V2Kit, read at render.
 
    ScreenFrame {worker, tab, loading, compact, landmark, overlays, onNavigate, frame, openMenu,
-                scrollTo, status, statusLabel, credits, nav, className, children}
-     AppFrame + TopBar + BottomNav for every signed-in screen (core, account and system states).
-     The run chip and credits come from the Worker record (topBarProps), so every screen says
-     today's run the same way; status, statusLabel and credits override it (system states; null
-     hides). tab is the lit nav item and stays the parent tab while a screen is pushed. nav false
-     drops the bottom nav. Activity carries the section 54 badge: what needs the partner.
-     Every chrome event goes to onNavigate(id, opts): nav ids (home, activity, settings), menu ids
-     (notifications, account, report, sign-out), credits, and the run chip's chipTarget.
-     scrollTo moves the content band to a [data-section]; openMenu forces a top-bar menu open
-     (guide). frame false returns the children and overlays alone.
+                scrollTo, status, statusLabel, credits, nav, offlineBanner, onReconnect, className, children}
+     AppFrame + TopBar + BottomNav for every signed-in screen. The run chip and credits come from
+     the Worker record (topBarProps), so every screen says today's run the same way; status,
+     statusLabel and credits override it (null hides). tab is the lit nav item and stays the parent
+     tab while a screen is pushed; nav false drops the bottom nav; Activity carries the section 54
+     badge. While worker.online is false the offline Banner sits pinned under the top bar (section
+     51; Try again calls onReconnect); offlineBanner false drops it (Home: the card says it). Every
+     chrome event goes to onNavigate(id, opts): nav ids, menu ids (notifications, account, report,
+     sign-out), credits and chipTarget. scrollTo moves the content band to a [data-section];
+     openMenu forces a top-bar menu open (guide); frame false returns children and overlays alone.
    ToastScope {children}, useScreenToast()  a screen that confirms its changes wraps itself in
-     ToastScope (V2Kit.ToastHost region={false}) and calls useScreenToast().show({title, tone,
-     action}); the window's one live region is AppFrame's ToastRegion, so every toast is announced.
-   topBarProps(worker)  {status, statusLabel, credits} for TopBar.
-   chipTarget(worker)  [id, opts]: where the run chip and the card's Details open (section 30):
-     today's run as its Activity row opens it (Chat while live, Run detail once it has an outcome),
-     Settings > Worker while paused, Home's card for every other status.
-   HomeSkeleton, ListSkeleton {rows, label}, LoadError {what, onRetry, busy}  the loading and
-     load-failed blocks every screen that reads server data uses (section 50).
+     ToastScope and calls useScreenToast().show({title, tone, action}); AppFrame's ToastRegion is
+     the window's one live region, so every toast is announced.
+   topBarProps(worker)  {status, statusLabel, credits}. chipTarget(worker)  [id, opts], section 30:
+     today's run as its Activity row opens it, Settings > Worker while paused, else Home's card.
+     The chip and Home's Details pass {tab}: Run detail goes on the stack of the tab it came from.
+   HomeSkeleton, ListSkeleton {rows, label}, LoadError {what, onRetry, busy}  section 50's blocks.
    Home {worker, state, loading, coaching, compact, landmark, frame, onNavigate, onRun, onRetry,
-         onReconnect, onResume, onFix, onDismissCoach}
-     Greeting (ScreenHeader, name, no emoji), WorkerCard first (P1), ProgramStrip, a Banner only
-     when the program needs a word the card cannot say, then 'Chat with BlueAI'. The coach mark is
-     a note under the card: nothing is dimmed or locked. Run opens setup in Chat for a new partner
-     and starts today's run otherwise (Run now, Run again); Review job opens the waiting ask; a
-     failed day's Try again retries in Chat; offline Try again reconnects in place (onReconnect); a
-     blocked run's fix does what its button says (onFix). A period that has ended is section 69's
-     full-window state, not a card.
+         onReconnect, onResume, onFix, onDismissCoach}  without onResume, Resume confirms with a toast.
+     Greeting, WorkerCard first (P1), ProgramStrip, a Banner only when the program needs a word the
+     card cannot say, then 'Chat with BlueAI'. The coach mark is a note under the card. Run opens
+     setup in Chat for a new partner, else starts today's run; Review job opens the waiting ask;
+     failed Try again retries in Chat; offline Try again reconnects (onReconnect); a blocked run's
+     fix does what its button says (onFix). An ended period is section 69's full-window state.
    HOME_STATES  [[key, fixture, label, note]] in the guide's order. */
 (function () {
   const { useState, useEffect, useRef } = React;
@@ -41,11 +37,18 @@
     ['running', 'running', 'Running', 'the live step'],
     ['waiting', 'waiting', 'Waiting for you', 'deadline and cost first'],
     ['done', 'donePending', 'Done today, pending', 'no second Run'],
+    ['nojob', 'nojob', 'Done, no job (counts)', 'the day still counts'],
+    ['skipped', 'declined', 'Skipped (Not now)', 'today doesn’t count'],
+    ['day20', 'day20', 'Day 20 done', 'the last day, pending'],
     ['failed', 'failed', 'Failed today', 'Try again, by 9 pm'],
+    ['stopped', 'stopped', 'Stopped', 'Run again, by 9 pm'],
+    ['missed', 'missed', 'Didn’t start', 'PC off or asleep at 11 am; Run now by 9 pm, never late on its own'],
+    ['blocked', 'blocked', 'Can’t run', 'the card’s one fix (onFix), by 9 pm'],
     ['paused', 'paused', 'Paused', 'days do not count'],
     ['noCredits', 'noCredits', 'Out of credits', 'when they refresh'],
     ['offline', 'offline', 'Offline', 'Try again reconnects in place'],
     ['complete', 'complete', 'Program complete', 'Earnings on the site'],
+    ['ended', 'ended', 'Period ended', 'section 69’s full-window state, not a card'],
     ['behind', 'behind', 'Out of reach (banner)', 'the one program banner'],
     ['loading', 'verified', 'Loading', 'worker-home skeleton'],
   ];
@@ -75,7 +78,7 @@
     // Out of credits waits for the refill only when it lands before 9 pm; after it, today is lost.
     if (st === 'noCredits' && P.creditsDay && P.creditsDay(w) === 'stopped') return ['not-counted', null];
     if (st === 'done') {
-      if (t.outcome === 'skipped' || t.outcome === 'expired' || t.end === 'declined') return ['not-counted', null];
+      if (t.outcome === 'skipped' || t.outcome === 'expired') return ['not-counted', null];
       return [n.last && n.last.status === 'verified' ? 'verified' : 'pending', 'Day ' + n.done + ' of ' + n.target];
     }
     if (st === 'complete') return ['verified', 'All ' + n.target + ' days done'];
@@ -140,14 +143,15 @@
     const pick = function (key) { return p[key] !== undefined ? p[key] : tb[key]; };
     const top = P.TopBar ? (
       <P.TopBar signedIn status={pick('status')} statusLabel={pick('statusLabel')} credits={pick('credits')} openMenu={p.openMenu}
-        onOpenStatus={function () { const to = chipTarget(p.worker); nav(to[0], to[1]); }}
+        onOpenStatus={function () { const to = chipTarget(p.worker); nav(to[0], Object.assign({ tab: p.tab || 'home' }, to[1])); }}
         onOpenCredits={function () { nav('credits'); }} onAction={nav} />
     ) : null;
     const count = p.loading ? 0 : needsYou(p.worker);
     const items = P.NAV_ITEMS ? P.NAV_ITEMS.map(function (it) { return it.id === 'activity' ? Object.assign({}, it, { badge: count }) : it; }) : undefined;
+    const offline = p.offlineBanner !== false && !p.loading && p.worker && p.worker.online === false && P.Banner ? <div className="v2-frame-condition"><P.Banner tone="offline" title="You’re offline" action={p.onReconnect ? { label: 'Try again', onClick: p.onReconnect } : undefined}>Today’s run starts when you’re back online.</P.Banner></div> : null;
     const bottom = p.nav !== false && P.BottomNav ? <P.BottomNav items={items} value={p.tab || 'home'} onChange={nav} /> : null;
     return (
-      <P.AppFrame compact={p.compact} landmark={p.landmark} overlays={p.overlays} topBar={top} nav={bottom} className={p.className}>
+      <P.AppFrame compact={p.compact} landmark={p.landmark} overlays={p.overlays} topBar={offline ? <React.Fragment>{top}{offline}</React.Fragment> : top} nav={bottom} className={p.className}>
         {p.scrollTo ? <span ref={anchor} hidden /> : null}
         {p.children}
       </P.AppFrame>
@@ -172,13 +176,13 @@
           <span className="v2-sr-only" role="status">Loading your worker</span>
           <div className="v2-home-skel-title"><S shape="title" width="40%" /></div>
           <div className="v2-home-skel-card v2-home-skel-row">
-            <S shape="rect" width={40} height={40} />
+            <S shape="rect" width="var(--v2-mark-lg)" height="var(--v2-mark-lg)" />
             <span className="v2-home-skel-lines"><S shape="line" width="50%" /><S shape="line" width="85%" /></span>
-            <S shape="rect" width={72} height={36} />
+            <S shape="rect" width="calc(var(--v2-control-md) * 2)" height="var(--v2-control-md)" />
           </div>
           <div className="v2-home-skel-card">
             <S shape="line" width="45%" />
-            <S shape="rect" height={8} />
+            <S shape="rect" height="var(--v2-rail)" />
             <S shape="line" width="70%" />
           </div>
         </div>
@@ -239,6 +243,7 @@
     const P = K();
     const [seen, setSeen] = useState(false);
     const toast = useScreenToast();
+    const S = window.V2Screens || {};
     const w = p.worker || fixtureFor(p.state);
     const loading = !!(p.loading || p.state === 'loading');
     if (!w || !P.WorkerCard || !P.numbers || !P.workerState) return null;
@@ -254,16 +259,9 @@
       if (p.onReconnect) p.onReconnect();
       else toast.show({ tone: 'info', title: 'Still offline. BlueAI keeps trying on its own.' });
     }
-    // The fix does what its button says. Open App Player and Get BlueStacks act in place (the
-    // host's onFix; here a toast stands in for the launch and the download); Connect YouTube opens
-    // Connected apps, where the account is connected.
-    function fix(reason) {
-      if (p.onFix) p.onFix(reason);
-      else if (reason === 'signed-out') toast.show({ tone: 'info', title: 'Opening App Player. Sign in to YouTube there.' });
-      else if (reason === 'no-bluestacks') toast.show({ tone: 'info', title: 'BlueStacks is downloading. Open the installer when it’s done.' });
-      else go('connected-apps', { app: 'youtube' })();
-    }
-    const S = window.V2Screens || {};
+    // The fix does what its button says, the same way everywhere (fixBlocked, connected-apps.jsx).
+    function fix(reason) { if (S.fixBlocked) S.fixBlocked(reason, p.onFix, toast, function (id, o) { go(id, o)(); }); }
+    function resume() { if (p.onResume) p.onResume(); else toast.show({ title: 'Daily runs are back on.' }); }
     if (!loading && st === 'ended' && S.SystemStates) {
       return <S.SystemStates state="period-ended" worker={w} compact={p.compact} landmark={p.landmark} onNavigate={p.onNavigate} />;
     }
@@ -275,8 +273,8 @@
         {P.ScreenHeader ? <P.ScreenHeader title={name ? 'Hi, ' + name : 'Today'} /> : null}
         <div className="v2-screen-body v2-home">
           <P.WorkerCard worker={w} coaching={coaching} onDismissCoach={dismiss} onRun={run}
-            onOpenToday={go(today[0], today[1])} onReview={go('chat', { state: 'waiting' })} onRetry={retry}
-            onResume={p.onResume} onFix={fix} onOpenCredits={go('credits')} />
+            onOpenToday={go(today[0], Object.assign({ tab: 'home' }, today[1]))} onReview={go('chat', { state: 'waiting' })} onRetry={retry}
+            onResume={resume} onFix={fix} onOpenCredits={go('credits')} />
           {P.ProgramStrip ? <P.ProgramStrip worker={w} receipt={st !== 'done'} onOpenActivity={go('activity')} /> : null}
           {programBanner(n)}
           {P.Link ? <P.Link standalone className="v2-home-chat" onClick={go('chat')}>Chat with BlueAI</P.Link> : null}
@@ -285,7 +283,7 @@
     );
     return (
       <ScreenFrame worker={w} tab="home" loading={loading} compact={p.compact} landmark={p.landmark}
-        frame={p.frame} onNavigate={p.onNavigate}>
+        frame={p.frame} onNavigate={p.onNavigate} offlineBanner={false}>
         {body}
       </ScreenFrame>
     );

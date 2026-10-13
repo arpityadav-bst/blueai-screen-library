@@ -7,18 +7,11 @@
 .v2-acct { display: flex; flex-direction: column; min-height: 100%; }
 .v2-acct-body {
   display: flex; flex-direction: column; gap: var(--v2-space-3);
-  padding: var(--v2-space-1) var(--v2-gutter) var(--v2-space-6);
+  padding: var(--v2-space-4) var(--v2-gutter) var(--v2-space-6);
 }
 .v2-acct-note {
   margin: 0; padding: 0 var(--v2-space-1);
   font-size: var(--v2-text-12); line-height: var(--v2-leading-body); color: var(--v2-ink-3);
-}
-
-/* A mark for a row that is about a thing, not a person (BlueStacks): the Avatar app disc's shape. */
-.v2-acct-mark {
-  display: inline-flex; flex: none; align-items: center; justify-content: center;
-  width: var(--v2-space-8); height: var(--v2-space-8); border-radius: var(--v2-radius-round);
-  background: var(--v2-surface-sunken); color: var(--v2-ink-2);
 }
 
 /* Account: who is signed in. Avatar 56, name 16/600 ink, email 13 ink-3. No banner, no emoji. */
@@ -75,6 +68,7 @@
 .v2-acct-explain { display: flex; flex-direction: column; align-items: flex-start; gap: var(--v2-space-1); padding: var(--v2-space-1) var(--v2-space-1) 0; }
 .v2-acct-explain h2 { margin: 0; font-size: var(--v2-text-14); font-weight: var(--v2-weight-semibold); line-height: var(--v2-leading-snug); color: var(--v2-ink); }
 .v2-acct-explain p { margin: 0; font-size: var(--v2-text-13); line-height: var(--v2-leading-body); color: var(--v2-ink-3); }
+.v2-acct-explain-line { display: block; } /* V2's two explainer lines, one paragraph (index.html:526-537) */
 .v2-acct-explain .v2-link { margin-top: var(--v2-space-1); }
 
 /* Signed out with no Welcome screen loaded: the fallback lands centred in the window. */

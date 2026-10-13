@@ -117,9 +117,11 @@ Shared helpers on window.V2Screens that are not screens:
 | ScreenFrame / topBarProps | `screens/home.jsx` | The one frame for every signed-in screen (core, account, system states): topBarProps chip, scrollTo, openMenu, status/credits/nav overrides; every chrome event goes to onNavigate(id, opts). |
 | ToastScope / useScreenToast | `screens/home.jsx` | Wrap a screen in ToastScope and call useScreenToast().show(); AppFrame draws the one live region. |
 | ListSkeleton / LoadError / HomeSkeleton | `screens/home.jsx` | Loading and load-failed blocks for screens that read server data. |
-| CONFIRM_COPY | `screens/settings.jsx` | One title, body and primary per destructive confirm (sign out, disconnect, leave, delete data). |
+| CONFIRM_COPY | `screens/settings.jsx` | One title, body, primary and failure title per destructive confirm (sign out, disconnect, leave, delete data). |
+| useConfirmStep / ConfirmDialog / pendingBody | `screens/settings.jsx` | `useConfirmStep(forced) -> {busy, failed, run(done), reset()}`; `ConfirmDialog {copy, tone, step, preview, onCancel, onConfirm}`, the AlertDialog for one CONFIRM_COPY entry; `pendingBody(state, what, onRetry)`, the loading and error bodies (section 52). |
 | rowTarget / reportAbout | `screens/activity.jsx, screens/help.jsx` | Where a ledger row opens; the about/topic a report opens with. |
 | ConnectedAppRows | `screens/connected-apps.jsx` | The connected-account rows, reused by Settings. |
+| accountStates / fixBlocked | `screens/connected-apps.jsx` | the record's YouTube and BlueStacks state, and a blocked run's one fix behaviour |
 | ReportProblemSheet | `screens/help.jsx` | Report a problem; open it with about: {label, detail} to attach a run. |
 | TermsSheet / TERMS_URL | `screens/welcome.jsx` | The Program Terms sheet (first run and update); reuse it, never a second sheet. |
 

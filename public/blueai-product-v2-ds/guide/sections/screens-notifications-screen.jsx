@@ -38,6 +38,31 @@
     );
   }
 
+  // Section 60's Kinds, verbatim (design-md/60-notifications-screen.md): kind, glyph and tone, words, where it opens.
+  const KINDS = [
+    ["`ask`", "bell, attention", "'Paid YouTube job waiting for your OK' / 'Answer by 9 pm or today won’t count.'", "`chat` (the waiting ask), only while the record has a job waiting (otherwise its run, or Activity). Once answered it turns into 'You took the paid job' / 'Day 7 of 20, pending verification.' (`done`) or the `skipped` row."],
+    ["`expired`", "clock, neutral", "'Paid job expired' / 'No answer by 9 pm, so today didn’t count.'", "`run`."],
+    ["`done`", "check, neutral", "'Run done' / 'Day 6 of 20, pending verification.'", "`run`."],
+    ["`skipped`", "info, neutral", "'You skipped the paid job' / 'Today didn’t count toward your 20 days.'", "`run`."],
+    ["`nojob`", "info, neutral", "'No job today' / 'Your run counts. Day 6 of 20, pending verification.'", "`run`."],
+    ["`failed`", "x-circle, danger", "'Job didn’t finish' / the V2 reason ('App Player closed during the job.')", "`run`."],
+    ["`verified`", "check-double, success", "'Oct 11 run verified' / 'Day 6 of 20.'", "`run`."],
+    ["`rejected`", "x-circle, danger", "'Oct 12 wasn’t counted' / the reason", "`run`."],
+    ["`missed`", "clock, attention", "'Today’s run didn’t start' / 'Run it by 9 pm to count today.'", "`home` (the WorkerCard's Run now). At 9 pm it turns into 'Today’s run didn’t happen' / 'Today didn’t count.', neutral, `run`."],
+    ["`blocked`", "alert, danger", "'Today’s run can’t start' / the reason and 'Fix it by 9 pm.'", "`home` (the card's one fix). At 9 pm it turns into its result, as missed does."],
+    ["`nocredits`", "credits, attention", "'Out of AI credits for today’s run' / 'They refresh at 5:30 am, so today won’t count.'", "`credits`."],
+    ["`ending`", "calendar, neutral", "'3 days left in this program' / '17 of 20 days done. It ends Nov 1.'", "`activity`."],
+    ["`cashout`", "earnings, success", "'Cash out is open' / 'Your 20 days ended on Nov 1. Cash out on Earnings.'", "`earnings` (external: `EARNINGS_URL`, opens the site in the browser, the row carries the external glyph)."],
+    ["`ended`", "calendar, neutral", "'This program has ended' / 'You need $10 to cash out. Your balance carries over to the next period.' (the site's words, `onblue/apply.html:2292-2293`)", "`earnings` (external)."],
+    ["`terms`", "info, neutral", "'Terms of Use and Privacy Policy updated' / 'Review them and accept the updated terms to keep your worker running.' (names from the row's docs, the same data the TermsSheet shows)", "`terms` (the TermsSheet, `update` mode, section 53)."],
+  ];
+  function ticks(s) { return s.split('`').map(function (t, i) { return i % 2 ? <code key={i} className="g-code">{t}</code> : t; }); }
+  function KindRow({ item }) {
+    const K = window.V2Kit || {};
+    const S = window.V2Screens || {};
+    return K.Card && S.NotificationRow ? <div style={{ width: W, maxWidth: '100%' }}><K.Card padding="none"><S.NotificationRow item={item} /></K.Card></div> : null;
+  }
+
   function NotificationsSection() {
     const S = window.V2Screens || {};
     if (!S.Notifications) return <G.Section id="notifications-screen"><div className="g-missing">V2Screens.Notifications is not loaded.</div></G.Section>;
@@ -60,6 +85,12 @@
             the body, one short sentence that wraps; the time on the right ('11:04 am' today, 'Oct 11' before). A row opens where to act: the chat for a
             waiting job, Run detail for everything else. Opening a row marks it read.</p>
           <G.StateGrid wide states={states} />
+          <p><strong>Kinds.</strong> One per section 54 event. A kind not in this list draws the neutral info glyph, never a check.
+            An answered ask turns into what was chosen (the 'actioned' state in NOTIFICATION_STATES), as an unanswered one turns into its result at 9 pm.</p>
+          <G.Table head={['Kind', 'Glyph, tone', 'Title / body', 'Opens']} rows={KINDS.map(function (r) { return r.map(ticks); })} />
+          {S.NOTIFICATION_SAMPLES ? <G.StateGrid wide states={S.NOTIFICATION_SAMPLES.map(function (n) {
+            return { label: n.kind, note: 'opens ' + n.target, node: <KindRow item={n} /> };
+          })} /> : null}
           <G.CompareRow v2Label="V2 today (the words, live from V2)" v2={<V2Toasts />}
             system={<div style={{ width: W, maxWidth: '100%', overflow: 'auto' }}><S.Notifications state="unread" landmark={false} /></div>}
             changed="The words existed; the place did not. Rows are written to last: 'Today’s run is done.' is right for 8 seconds on the desktop and wrong in a list tomorrow, so a row keeps the event and the day count ('Run done' / 'Day 6 of 20, pending verification.'). A waiting job gets a row with its deadline, and the row turns into its result when the deadline passes." />
@@ -70,7 +101,7 @@
             { part: 'Skipped day', token: 'none', value: 'never notifies (the partner was there to say Not now); Activity records it', ref: 'screens-core.notif.declined-silent' },
             { part: 'Job waiting', token: 'none', value: 'V2: taskbar flash after 4 s, no expiry; here a row with the deadline', ref: ['screens-core.notif.taskbar', 'screens-core.notif.taskbar-delay'] },
             { part: 'Row', token: 'ListRow nav, Card padding none', value: 'min 48, padding 12 16, hairline between rows' },
-            { part: 'Disc', token: '--v2-hit-min, --v2-surface-sunken, --v2-radius-round', value: '32 round, glyph 16 in --v2-attention-ink / --v2-success-ink / --v2-danger-ink / --v2-ink-3' },
+            { part: 'Disc', token: 'ListRow mark (section 18): --v2-mark-md, --v2-surface-sunken, --v2-radius-round', value: '32 round, glyph 16 in --v2-attention-ink / --v2-success-ink / --v2-danger-ink / --v2-ink-3' },
             { part: 'Unread dot', token: '--v2-blue, --v2-surface ring', value: '8 round at the disc’s top right; CanvasText in forced colours' },
             { part: 'Title', token: '--v2-text-14, --v2-weight-semibold / medium', value: '600 unread, 500 read, ink' },
             { part: 'Body', token: '--v2-text-13, --v2-ink-3', value: 'one short sentence; wraps, never truncated' },

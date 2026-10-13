@@ -82,7 +82,7 @@
             { part: 'Value', token: '--v2-text-14, --v2-ink', value: '14/1.35 (V2: 13 to 14)' },
             { part: 'Placeholder', token: '--v2-ink-placeholder, --v2-ink-4', value: '#9ca2ad under a label, #6e737c when it is the only name', ref: ['actions-inputs.onblue.placeholder', 'actions-inputs.onblue.ph-ink', 'actions-inputs.field.vlm-placeholder'] },
             { part: 'Required', token: '--v2-ink-4', value: '"Required" flag + native required (V2: red asterisk #ef4444, 3.76:1)', ref: 'actions-inputs.field.required' },
-            { part: 'Invalid', token: '--v2-danger-line, --v2-danger-ring, --v2-danger-ink', value: '#d0454a edge, 16% red ring on focus, message with alert icon (V2: none)', ref: ['actions-inputs.onblue.field-err', 'actions-inputs.onblue.err-line', 'actions-inputs.onblue.err-ring'] },
+            { part: 'Invalid', token: '--v2-danger-edge, --v2-danger-ring, --v2-danger-ink', value: '#d0454a edge (4.53:1), 16% red ring on focus, message with alert icon (V2: none)', ref: ['actions-inputs.onblue.field-err', 'actions-inputs.onblue.err-line', 'actions-inputs.onblue.err-ring'] },
             { part: 'Validating / validated', token: '--v2-success', value: 'spinner 16, then check 16, in the trailing slot; message says it (V2: never validates)', ref: 'actions-inputs.field.fake-key' },
             { part: 'Read-only / disabled', token: '--v2-surface-sunken, --v2-line', value: 'sunken fill, 10% edge; disabled also 0.45' },
             { part: 'Message line', token: '--v2-text-12, --v2-ink-3', value: '12/1.35, 6 below, aria-describedby, polite live region' },

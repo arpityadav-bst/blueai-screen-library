@@ -34,6 +34,8 @@
     ['Product', 'How support replies to Report a problem and how soon; the sheet promises email only (section 65).', 'support'],
     ['Copy', 'Every string marked Proposed in DESIGN.md waits for the PM; decisions D1 to D19 wait for the PM and legal (section 73).', 'PM'],
     ['Site', 'The site\'s Cash out and program sheets set backdrop-filter: var(--gate-blur), a bare length (14px), which is invalid, so they draw no blur (onblue-vesper/onblue.css:1365, onblue-vesper/apply.html:634). Wrap it in blur(). The app is not affected: its sign-in gate uses --v2-scrim-blur inside blur().', 'onBlue owner'],
+    ['Site', 'The site sets small text in its dim ink #767b85, about 4.2:1 on white (section 02): .progtab-n 12px (onblue-vesper/apply.html:474), .progtile-ends 12.5px (:566), .txn-date in 13.5px rows (:603, 610) and the field helper .msg 12.5px (onblue-vesper/onblue.css:1331). Move that text to a 4.5:1 ink, the system\'s #6e737c (--v2-ink-4).', 'onBlue owner'],
+    ['Site', 'Dates differ: the site writes \'Ends Nov 1, 2026\' (onblue-vesper/apply.html:1404); the app writes \'Ends Nov 1\', a year only when it is not this one (section 70). Agree one date rule for the family.', 'onBlue owner'],
   ];
 
   const DEAD = [

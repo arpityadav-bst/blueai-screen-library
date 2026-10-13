@@ -36,7 +36,7 @@
 
 **Anatomy.** Window behaviours plus a tray menu (Windows draws it; the kit's `TrayMenu` fixes its items, order and words): a head (mark, "BlueAI", a status line with a dot), a separator, Open BlueAI, then Skip today's run (only while today's run is still to come: scheduled, or it didn't start) or Resume runs (while paused), a separator, Quit BlueAI. Skip and Quit lead to a confirm step that states the cost (`kit/shell.jsx:39-63, 96-100`). Pausing runs for days is not a tray item: it lives in Settings > Worker, always with an end date (section 62).
 
-**Variants.** Tray status: any RUN_STATUS key (section 30), in its tray words: scheduled ("Next run 11 am"), running ("Running today's run"), pending ("Done today, pending verification"), missed ("Today's run didn't start. Run it by 9 pm"), paused ("Runs paused"), and the rest of section 30's table. Confirm: skip, quit.
+**Variants.** Tray status: any RUN_STATUS key (section 30), in its tray words: scheduled ("Next run 11 am"), running ("Running today’s run"), pending ("Done today, pending verification"), missed ("Today’s run didn’t start. Run it by 9 pm"), paused ("Runs paused"), and the rest of section 30's table. Confirm: skip, quit.
 
 **Sizes.** Specimen width `--v2-dialog-sm` (320); items 32 tall (`--v2-hit-min`), radius 6; surface, hairline, `--v2-shadow-1`, radius 10.
 
@@ -45,7 +45,7 @@
 - Minimize: to the taskbar; the running dash stays.
 - Reopen (taskbar, tray, notification): restores the last screen at once, no splash.
 - Tray click: opens BlueAI. Right-click: the tray menu.
-- Skip today's run (offered only while today's run is still to come): confirm "Skip today’s run?" / "Today won’t count toward your 20 days. Runs start again tomorrow." [Keep today’s run] [Skip today] (primary). It skips one day; it never pauses runs.
+- Skip today's run (offered only while today's run is still to come): confirm "Skip today’s run?" / "Today won’t count toward your 20 days. Runs start again tomorrow." [Keep today’s run] [Skip today] (danger). It skips one day; it never pauses runs.
 - Resume runs (offered only while paused): resumes at once, no question.
 - Quit BlueAI: confirm "Quit BlueAI?" / "Today’s run won’t happen while BlueAI is closed, so today won’t count." [Keep running] [Quit] (danger). Once today is settled (pending, done, not counted, verified, period ended): "Today is done. Your next run won’t happen while BlueAI is closed." No question while runs are paused: the host passes no confirm.
 - PC restarts: BlueAI starts with Windows into the tray, window closed (proposed; a switch in Settings > Worker).

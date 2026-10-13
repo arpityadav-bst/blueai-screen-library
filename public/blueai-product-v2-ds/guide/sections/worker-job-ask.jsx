@@ -36,6 +36,20 @@
     return <K.JobPreviewCard taking={taking} onTake={function () { setTaking(true); setTimeout(function () { setTaking(false); }, 1600); }} onSkip={noop} onStopAsking={noop} />;
   }
 
+  // Text the system does not control, at its longest: YouTube caps a title at 100 characters, and a
+  // channel name and the job's comment come from outside too. Nothing on this card is clamped: the
+  // partner agrees to exactly what it says.
+  function longJob(K) {
+    const j = K.WORKER_JOB || {};
+    return Object.assign({}, j, {
+      video: Object.assign({}, j.video, {
+        title: 'Galaxy S26 Ultra vs iPhone 17 Pro Max: the full night camera test, 40 shots in five cities, ranked',
+        channel: 'TechLine Reviews, Comparisons and Long-Term Tests',
+      }),
+      comment: 'The low-light shots at 4:10 surprised me. Did not expect the S26 to hold up that well against the iPhone, especially in the street scene at 6:45 where the neon signs usually blow out. Would love a zoom test next.',
+    });
+  }
+
   function JobAskSection() {
     const K = window.V2Kit || {};
     if (!K.JobPreviewCard) return <G.Section id="job-ask"><div className="g-missing">kit/job.jsx is not loaded.</div></G.Section>;
@@ -61,6 +75,7 @@
             { label: 'Waiting since 11:04 am, expires 9 pm', note: 'the partner was away; the Windows notification brings them here', node: <K.JobPreviewCard waitingSince="11:04 am" expiresAt="9 pm" onTake={noop} onSkip={noop} onStopAsking={noop} /> },
             { label: 'Taking', note: 'Take this job is busy; the other two wait', node: <TakeDemo /> },
             { label: 'Expired', note: 'no answer by 9 pm: the day did not count', node: <K.JobPreviewCard expired expiresAt="9 pm" /> },
+            { label: 'Long content', note: 'a 100-character title, a long channel and comment: everything wraps, nothing is clamped', node: <K.JobPreviewCard job={longJob(K)} onTake={noop} onSkip={noop} onStopAsking={noop} /> },
             { label: 'Receipt (Automatic, after the fact)', note: 'the same facts, past tense, with the way back', node: <K.JobPreviewCard mode="receipt" doneAt="11:12 am" onChangeMode={noop} /> },
             { label: 'Receipt, verified (Always ask)', note: 'two ticks; no way back to offer, the partner approved it', node: <K.JobPreviewCard mode="receipt" verify="verified" ranOn="ask" doneAt="11:12 am" /> },
             { label: 'Receipt, not counted', note: 'rejected: the cross, no way back on Always ask', node: <K.JobPreviewCard mode="receipt" verify="rejected" ranOn="ask" doneAt="11:12 am" /> },
@@ -77,8 +92,8 @@
             { part: 'Head', token: '--v2-attention-tint, --v2-attention-ink', value: 'Paid job available', ref: 'worker.flow.job-label' },
             { part: 'What V2 shows today', token: 'none', value: 'Watch the video and provide feedback.', ref: ['worker.flow.job-title', 'worker.flow.ask-lead'] },
             { part: 'Thumbnail', token: '--v2-surface-sunken, --v2-radius-md', value: '16:9, duration 11/500 on ink' },
-            { part: 'Title / channel', token: '--v2-text-14 600 ink / --v2-text-13 ink-3', value: 'from the job record' },
-            { part: 'Comment', token: '--v2-surface-sunken, 2px --v2-line-strong edge', value: 'exact text, 13/1.5 ink', ref: 'worker.flow.comment' },
+            { part: 'Title / channel', token: '--v2-text-14 600 ink / --v2-text-13 ink-3', value: 'from the job record; wraps, never clamped (YouTube caps a title at 100 characters)' },
+            { part: 'Comment', token: '--v2-surface-sunken, 2px --v2-line-strong edge', value: 'exact text, 13/1.5 ink, never clamped', ref: 'worker.flow.comment' },
             { part: 'Deadline', token: '--v2-text-13, clock --v2-attention-ink', value: 'Answer by 9 pm or today won’t count.' },
             { part: 'Take', token: 'Button primary md, full', value: 'Take this job', ref: 'worker.flow.ask-question' },
             { part: 'Skip', token: 'Button secondary md, full', value: 'Skip: today won’t count', ref: 'worker.flow.skip-after' },

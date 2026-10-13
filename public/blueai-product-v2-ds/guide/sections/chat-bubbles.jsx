@@ -25,8 +25,17 @@
     headsup: ['This job may use more AI credits than usual, since it repeats a few actions.'],
   };
 
+  /* The plan step V2 shows after the first Run (worker_flow.jsx:62), read from V2's own PLAN so its
+     copy exists once. Without V2 loaded, the specimen says so. */
+  function planStep() {
+    const P = (window.WorkerFlow || {}).PLAN;
+    return P ? { role: 'plan', summary: P.summary, items: P.steps } : null;
+  }
+
   function BubblesSection() {
     const K = window.V2Kit;
+    const plan = planStep();
+    const planNode = plan ? K.renderMessage(plan, 0, [plan]) : <div className="g-missing">WorkerFlow.PLAN (V2 worker_flow.jsx) is not loaded, so the plan is not drawn.</div>;
     return (
       <G.Section id="bubbles">
         <G.Part name="MessageBubble (user)" status="changed" role="What the partner said, or the answer they tapped. The quietest thing on screen, because the partner already knows what they said.">
@@ -54,16 +63,22 @@
             { label: 'Rest', node: <K.MessageBubble from="worker">Verifying the result…</K.MessageBubble> },
             { label: 'With time', node: <K.MessageBubble from="worker" time="11:06 am">Verifying the result…</K.MessageBubble> },
             { label: 'Thinking (last step only)', node: K.renderMessage({ role: 'thinking' }, 0, [{ role: 'thinking' }]) },
+            { label: 'Plan', note: 'role plan: title, summary, numbered steps. V2 copy.', node: planNode },
           ]} />
           <G.CompareRow
             v2={<G.Live get={function () { return CB().StatusBubble; }} props={{ content: 'Verifying the result…' }} label="ChatBubbles.StatusBubble" />}
             system={<K.MessageBubble from="worker">Verifying the result…</K.MessageBubble>}
             changed="Grey fill plus shadow becomes white plus a 1px line, the site's surface rule. Thinking drops the indigo dots and the 2.56:1 caption for the shared Spinner and ink-3 text." />
+          <G.CompareRow
+            v2={<G.Live get={function () { return window.WorkerCards && window.WorkerCards.PlanCard; }} label="WorkerCards.PlanCard" />}
+            system={planNode}
+            changed="V2's PLAN card is a light-blue gradient with a shadow, a 10/700 pale-blue eyebrow, the summary and steps in two more blues (its step numbers hidden by the Tailwind preflight) and a 'Suggested skill: blueai-worker' chip. It becomes a worker bubble: white, 1px line, 'Plan' as a 14/600 ink title, the summary and the numbered steps in ink-2. The skill chip goes: a skill id means nothing to the partner." />
           <G.SpecDrawer rows={[
             { part: 'Fill and line', token: '--v2-surface, --v2-line', value: 'white, 1px rgba(0,0,0,0.10)', ref: 'chat.status.fill' },
             { part: 'Shadow', token: '--v2-shadow-0', value: 'none', ref: 'chat.status.shadow' },
             { part: 'Text', token: '--v2-text-14, --v2-ink-2', value: '14/1.5 #3c4049', ref: 'chat.status.text' },
             { part: 'Thinking', token: '--v2-ink-3', value: 'Spinner 16 + "Working on it…" 14 #5f636b (6.0:1)', ref: ['chat.status.thinking-dots', 'chat.status.thinking-copy'] },
+            { part: 'Plan', token: '--v2-weight-semibold, --v2-ink, --v2-ink-2', value: "'Plan' 14/600 ink, then the summary and a numbered list in ink-2 with its numbers shown (V2's are hidden)", ref: 'chat.ask.plan-list' },
           ]} />
         </G.Part>
 

@@ -1,6 +1,6 @@
 /* BlueAI Product V2 Design System: the Advanced panels (section 49). Both live inside
    AdvancedDisclosure on Settings and are built from the kit (SettingsSection, Switch, Select,
-   TextField, Button, Banner, Badge, RadioCard, ProgressBar), read lazily at render.
+   TextField, Button, Banner, Badge, Card inset, RadioCard, ProgressBar), read lazily at render.
 
    ByokPanel    {on, keyInfo?, providers?, status?, draft?, highlight?, onToggle, onSave, onCancel,
                  onRemove, onModel, className}
@@ -9,7 +9,7 @@
        key, model}) runs. The switch only turns the key on or off; it never deletes it. Remove asks
        first, says what changes, then calls onRemove(keyInfo); the screen shows the Undo toast.
        Each swap moves focus on (section 09): Remove to the confirm, Keep key back to Remove, a
-       removed key to the panel's first control.
+       removed key to the block's first control, or the switch when the panel is off.
        draft {provider, key} pre-fills the entry form (specimens, routed entry).
    AiModePanel  {mode, method?, status, hwSupported, conflict, pct, endpoint?, model?, onPick,
                  onMethod, onDownload, onCancel, onRetry, onEndpoint, onModel, onApply, className}
@@ -17,7 +17,7 @@
        partner's local model endpoint). status follows V2's lifecycle (ai_mode.jsx:16-25): idle,
        checking, downloading, installing, running, install_failed, startup_failed, blocked. */
 (function () {
-  const { useState, useRef } = React;
+  const { useState, useRef, useId } = React;
   const cx = function () { return Array.prototype.filter.call(arguments, Boolean).join(' '); };
 
   // V2's providers, models and hints, as shipped (byok_settings.jsx:14-20).
@@ -95,10 +95,11 @@
     const [confirming, setConfirming] = useState(status === 'confirm-remove');
     const block = useRef(null);
     const ask = useRef(null);
+    const swId = 'v2byok' + useId().replace(/[^a-zA-Z0-9]/g, '');
     const swap = (window.V2Kit || {}).useSwapFocus;
-    if (swap) swap(function () { return ask.current || (block.current && block.current.querySelector('button, select, input')); }, String(confirming) + !!keyInfo);
+    if (swap) swap(function () { return ask.current || (block.current && block.current.querySelector('button, select, input')) || document.getElementById(swId); }, String(confirming) + !!keyInfo);
     const Section = part('SettingsSection'), Switch = part('Switch'), Select = part('Select');
-    const TextField = part('TextField'), Button = part('Button'), Banner = part('Banner');
+    const TextField = part('TextField'), Button = part('Button'), Banner = part('Banner'), Card = part('Card');
     const busy = status === 'validating';
 
     let body = null;
@@ -110,18 +111,18 @@
           <div className="v2-byok-key">
             <div className="v2-byok-key-text">
               <p className="v2-byok-provider">{keyInfo.provider}</p>
-              <p className="v2-byok-masked"><span aria-hidden="true">{'•••• '}</span><span className="v2-sr-only">Key ending </span>{last4}</p>
+              <p className="v2-byok-masked v2-text-mono"><span aria-hidden="true">{'•••• '}</span><span className="v2-sr-only">Key ending </span>{last4}</p>
             </div>
             {!confirming ? <Button variant="secondary" size="sm" onClick={function () { setConfirming(true); }}>Remove</Button> : null}
           </div>
           {confirming ? (
-            <div className="v2-byok-confirm" role="group" aria-label="Remove key" ref={ask} tabIndex={-1} data-v2-anchor="">
+            <Card inset className="v2-byok-confirm" role="group" aria-label="Remove key" ref={ask} tabIndex={-1} data-v2-anchor="">
               <p className="v2-byok-confirm-text">{BYOK.confirm(keyInfo.provider)}</p>
               <div className="v2-byok-actions">
                 <Button variant="secondary" size="sm" onClick={function () { setConfirming(false); }}>Keep key</Button>
                 <Button variant="danger" size="sm" onClick={function () { setConfirming(false); call(props.onRemove, keyInfo); }}>Remove key</Button>
               </div>
-            </div>
+            </Card>
           ) : null}
           <Select label="Model" value={keyInfo.model} options={opts(models)} disabled={!on}
             onChange={function (x) { call(props.onModel, val(x)); }} />
@@ -159,7 +160,7 @@
     }
     return (
       <Section id="byok" title={BYOK.title} description={BYOK.desc} highlight={highlight} className={cx('v2-byok', className)}>
-        <Switch checked={!!on} label={BYOK.switchLabel} description={BYOK.switchDesc}
+        <Switch id={swId} checked={!!on} label={BYOK.switchLabel} description={BYOK.switchDesc}
           onChange={function (x) { call(props.onToggle, !!val(x)); }} />
         {body}
       </Section>

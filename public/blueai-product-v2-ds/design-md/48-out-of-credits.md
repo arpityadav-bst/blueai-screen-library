@@ -6,12 +6,12 @@
 ### Out-of-credits popup (retired) (Changed from V2)
 - **Purpose:** none left. V2 lets the partner type at zero, then stops the send with a popup. The system locks the composer at zero and says so before anyone types (section 38), so the moment the popup answered never happens and there is no dialog to dismiss or buy from.
 - **V2 today:** `index.html?start=worker&credits=0`, type in the composer, press Send. Width 300, radius 12, its own scrim rgba(15,23,42,0.5) at z 130, backdrop click only, no role, focus never moves in (byok.jsx:78-80); a gradient 38/800 zero (byok.jsx:51); an unlabelled 22px (i) "What are credits?" (credits_popup_parts.jsx:94); "You’ve used all of today’s AI credits." / "Credits will be refreshed in **6h 42m**." (byok.jsx:65-66).
-- **Where its parts went:** the time and the day line to the composer notice (below); the explainer to the AI credits screen (section 66), which reads `V2Kit.OOC_COPY.explain`; the refreshed moment to the AI credits screen's success banner.
+- **Where its parts went:** the time and the day line to the composer notice (below); the explainer stays V2's, on the AI credits screen (section 66, `index.html:525-537`); the refreshed moment to the AI credits screen's success banner.
 - **Do / Don't:** Do lock the field before anyone types. Don't reveal zero only after Send. Don't add a top-up or "earn credits" action.
 
 **Proposed copy (day line, pending D6):** covered "Today’s run isn’t affected." / waiting "Today’s run starts once they’re back, so today can still count." / stopped "Today won’t count toward your 20 days." The PM confirms whether a run stopped for credits loses the day.
 
-**Explainer (proposed):** "Your daily run and your chats use AI credits. You get a fresh set every day, and chats use the same set, so leave enough for today’s run." (`OOC_COPY.explain`), built around the daily run rather than a count of jobs, and true until decision D6 holds credits back for the run (section 76); it never promises room to chat: V2's approved line, "enough for 4 to 5 jobs" (credits_popup_parts.jsx:105), was written beside a 2,500 grant and holds at 2,000 only while a job costs 400 or less.
+**Explainer (a proposal listed in section 73, not shown anywhere):** "Your daily run and your chats use AI credits. You get a fresh set every day, and chats use the same set, so leave enough for today’s run.", built around the daily run rather than a count of jobs, and true until decision D6 holds credits back for the run (section 76); it never promises room to chat: V2's approved line, "enough for 4 to 5 jobs" (credits_popup_parts.jsx:105), was written beside a 2,500 grant and holds at 2,000 only while a job costs 400 or less.
 
 ### Zero-credits notice and run end (New)
 - **Purpose:** Say zero before anyone types, and close a run that stopped for credits, with the same time and the day status.

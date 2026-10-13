@@ -24,4 +24,4 @@
 
 **Responsive.** Fits the window it is in: the nearest `[data-v2-bounds]` or AppFrame. Works the same on the compact 640px window.
 
-**Do / Don't.** Do give every icon-only button a label tip. Do put an info tip right after the term it explains. Do keep V2's approved explainer copy word for word. Don't put the only statement of a consequence in a tip; say it on the control. Don't put a second control in a tip; that is a Popover. Don't hard-code an offset.
+**Do / Don't.** Do give every icon-only button a label tip (IconButton does this by default, kit/button.jsx). Do put an info tip right after the term it explains. Do keep V2's approved explainer copy word for word. Don't put the only statement of a consequence in a tip; say it on the control. Don't put a second control in a tip; that is a Popover. Don't hard-code an offset.

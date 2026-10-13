@@ -26,7 +26,7 @@
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--v2-space-3)', padding: 'var(--v2-space-4) var(--v2-gutter)' }}>
           {banner}
           {card === false ? null : <K.WorkerCard worker={fx.offline} state="offline" />}
-          {composer ? <K.Composer disabledReason="You’re offline" /> : null}
+          {composer ? <K.Composer disabledReason="You can’t send messages right now" notice={{ tone: 'neutral', icon: 'wifi-off', text: 'You’re offline. You can send messages once you’re back online.' }} /> : null}
         </div>
       </div>
     );
@@ -75,7 +75,7 @@
             changed="V2 designed only its scripted failures: a run that fails (a red bubble, then Retry and Not now) and three AI-mode banners. A failed save, a field that rejects input, a screen that cannot load, a lost connection, a service outage: none has a place or words. The system gives each scope one home and one sentence shape, and keeps V2's good banners as the section scope." />
           <G.SpecDrawer rows={[
             { part: 'Field', token: '--v2-danger-line, --v2-danger-ring, --v2-danger-ink', value: 'red border + 3px ring; message 12 in danger ink, role alert' },
-            { part: 'Action', token: 'Toast error', value: '8 s, assertive, Try again' },
+            { part: 'Action', token: 'Toast error', value: 'assertive, Try again; no timer while it carries Try again (section 24)' },
             { part: 'Section', token: 'Banner danger', value: 'danger tint, ink words, role alert', ref: ['entry-patterns.errors.hybrid', 'entry-patterns.errors.endpoint'] },
             { part: 'Run', token: 'RunCard failed', value: 'deadline + Try again; V2 bubble #fdecec, #991b1b', ref: ['entry-patterns.errors.fail-bubble', 'entry-patterns.errors.run-fail'] },
             { part: 'Retry label', token: null, value: 'Try again everywhere (V2 also says Retry)', ref: ['entry-patterns.copy.retry', 'entry-patterns.copy.try-again'] },
@@ -96,9 +96,9 @@
             { label: 'Service down', note: 'our side, not the partner’s PC', node: <Mini card={false} banner={<K.Banner tone="offline" icon="alert" title="BlueAI can’t reach its service">This is on our side, not your PC. Today’s run starts as soon as it’s back.</K.Banner>} /> },
           ]} />
           <G.SpecDrawer rows={[
-            { part: 'Banner', token: 'Banner tone offline', value: 'neutral sunken fill, wifi-off icon, ink words; sticky under the top bar, role status' },
+            { part: 'Banner', token: 'Banner tone offline', value: 'neutral sunken fill, wifi-off icon, ink words; pinned under the top bar by ScreenFrame, outside the content band; role status; Home passes offlineBanner={false}' },
             { part: 'Top bar', token: 'WorkerStatusChip offline', value: 'hollow dot, Offline' },
-            { part: 'Composer', token: 'Composer disabledReason', value: 'locked, the reason as placeholder' },
+            { part: 'Composer', token: 'Composer disabledReason', value: 'locked with the neutral placeholder “You can’t send messages right now”; the offline ComposerNotice says why' },
             { part: 'Recovery', token: 'Toast success', value: '4 s, polite: You’re back online.' },
             { part: 'Retry cadence', token: null, value: 'every 30 s, and at once on Try again' },
           ]} />

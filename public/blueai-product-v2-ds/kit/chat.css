@@ -4,8 +4,8 @@
    colour rides on icons, and the one attention fill marks what is waiting for the partner.
    Each interactive state is written for the real pseudo-class and its forced .is-* twin. */
 
-/* Shared helpers */
-.v2-chat-sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+/* Shared helpers. Screen-reader-only text is .v2-sr-only and the scrollers take .v2-scroll, both
+   from kit/base.css, so the thread hides and scrolls like every other part. */
 .v2-chat-tone--success { color: var(--v2-success-ink); }
 .v2-chat-tone--danger { color: var(--v2-danger-ink); }
 .v2-chat-tone--attention { color: var(--v2-attention-ink); }
@@ -14,10 +14,7 @@
 
 /* Thread (34) */
 .v2-thread { position: relative; display: flex; flex-direction: column; width: 100%; height: 100%; min-height: 0; }
-.v2-thread-scroll {
-  flex: 1; min-height: 0; overflow-y: auto; padding: var(--v2-gutter);
-  scrollbar-width: thin; scrollbar-color: var(--v2-scroll-thumb) transparent;
-}
+.v2-thread-scroll { flex: 1; min-height: 0; overflow-y: auto; padding: var(--v2-gutter); }
 .v2-thread-scroll:focus-visible, .v2-thread.is-focus > .v2-thread-scroll { outline: var(--v2-focus-outline); outline-offset: calc(var(--v2-focus-offset) * -1); }
 .v2-thread-list { min-height: 100%; display: flex; flex-direction: column; justify-content: flex-end; gap: var(--v2-space-2); }
 .v2-thread-list.is-empty { justify-content: flex-start; }
@@ -43,12 +40,12 @@
 .v2-msg--user { align-items: flex-end; }
 .v2-msg.is-group-start { margin-top: var(--v2-space-2); }
 .v2-msg.is-full { width: 100%; }
+/* Text: .v2-text-body on the element (kit/thread.jsx, kit/ask.jsx); this draws the surface only. */
 .v2-bubble, .v2-notice, .v2-ask-card {
   max-width: var(--v2-bubble-max);
   padding: var(--v2-space-3) var(--v2-space-4);
   border: var(--v2-stroke) solid var(--v2-line); border-radius: var(--v2-radius-lg);
-  background: var(--v2-surface); color: var(--v2-ink-2);
-  font-size: var(--v2-text-14); font-weight: var(--v2-weight-regular); line-height: var(--v2-leading-body);
+  background: var(--v2-surface);
   overflow-wrap: anywhere;
 }
 .v2-bubble { white-space: pre-wrap; }
@@ -71,16 +68,16 @@
 .v2-dep > .v2-notice { width: var(--v2-bubble-max); max-width: 100%; }
 .v2-dep .v2-notice-action > .v2-button--quiet { align-self: flex-start; }
 
-/* Run card (36). Its surface (line, radius 16, white) is the Card's, kit/display.css. */
+/* Run card (36). Its surface (line, radius 16, white) is the Card's, kit/display.css; its text is
+   .v2-text-body and its title .v2-text-title-sm, set on the elements (kit/run-card.jsx). */
 .v2-run {
   display: flex; flex-direction: column; gap: var(--v2-space-3);
   width: var(--v2-bubble-max); max-width: 100%; padding: var(--v2-space-4);
-  color: var(--v2-ink-2); font-size: var(--v2-text-14); line-height: var(--v2-leading-body);
 }
 .v2-run.is-full { width: 100%; }
 .v2-run--waiting { border-color: var(--v2-attention-line); }
 .v2-run-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--v2-space-2); }
-.v2-run-title { margin: 0; color: var(--v2-ink); font-size: var(--v2-text-14); font-weight: var(--v2-weight-semibold); line-height: var(--v2-leading-snug); }
+.v2-run-title { margin: 0; }
 .v2-run-time { margin-left: var(--v2-space-2); font-variant-numeric: tabular-nums; } /* type: .v2-text-meta */
 .v2-run-live { display: flex; align-items: center; gap: var(--v2-space-2); color: var(--v2-ink-2); }
 .v2-run-steps-wrap { display: flex; flex-direction: column; gap: var(--v2-space-2); }
@@ -134,9 +131,10 @@
 /* Feedback (39) */
 .v2-fb { display: flex; flex-direction: column; gap: var(--v2-space-2); }
 .v2-fb-row { display: flex; align-items: center; gap: var(--v2-space-2); }
-.v2-fb-thanks { color: var(--v2-ink-3); font-size: var(--v2-text-12); font-weight: var(--v2-weight-medium); }
+/* thanks and prompt: .v2-text-caption (kit/ask.jsx) at medium weight */
+.v2-fb-thanks { font-weight: var(--v2-weight-medium); }
 .v2-fb-reasons { display: flex; flex-direction: column; gap: var(--v2-space-2); max-width: var(--v2-bubble-max); }
-.v2-fb-prompt { margin: 0; color: var(--v2-ink-3); font-size: var(--v2-text-12); font-weight: var(--v2-weight-medium); }
+.v2-fb-prompt { margin: 0; font-weight: var(--v2-weight-medium); }
 .v2-fb-chips { display: flex; flex-wrap: wrap; gap: var(--v2-space-15); }
 .v2-fb-other { display: flex; align-items: flex-end; gap: var(--v2-space-2); }
 .v2-fb-other > :first-child { flex: 1; min-width: 0; }
@@ -159,9 +157,11 @@
   flex: 1; min-width: 0; align-self: center; margin: 0; padding: var(--v2-space-15) 0;
   border: 0; outline: 0; resize: none; background: transparent; overflow-y: hidden;
   color: var(--v2-ink); font: inherit; font-size: var(--v2-text-14); line-height: var(--v2-leading-body);
-  scrollbar-width: thin; scrollbar-color: var(--v2-scroll-thumb) transparent;
 }
 .v2-composer-input::placeholder { color: var(--v2-ink-4); opacity: 1; }
+/* Read-only (running, waiting, locked), the placeholder is the instruction ('Answer with the buttons
+   above', the lock reason) on the sunken fill, where ink-4 is 4.42:1: it takes ink-3 (5.59:1). */
+.v2-composer-box.is-readonly .v2-composer-input::placeholder { color: var(--v2-ink-3); }
 .v2-composer-input[aria-disabled="true"] { cursor: not-allowed; }
 .v2-sendstop {
   flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center;

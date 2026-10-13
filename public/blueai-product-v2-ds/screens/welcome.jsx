@@ -3,8 +3,9 @@
    Built only from kit parts: AppFrame (chrome-free), BrandMark, Card, Button, Link, Sheet, Banner.
    Layout lives in screens/entry.css. Spec: design-md/67-welcome.md, 53-consent.md.
 
-   Welcome      {terms: null | 'firstrun' | 'update', termsBusy, termsError, headline 'pm' | 'proposed',
-                signedOut, onSignIn, onAgree, compact, reduced, preview, landmark, animate}
+   Welcome      {terms: null | 'firstrun' | 'update', termsDocs, termsBusy, termsError, headline 'pm' |
+                'proposed', signedOut, onSignIn, onAgree, onDecline, compact, reduced, preview,
+                landmark, animate}
                 terms opens the blocking Program Terms sheet over the screen (first cold start, or a
                 terms change). headline 'pm' is V2's line verbatim (decision D3 pending); 'proposed'
                 is the system's line that promises no income. reduced forces the reduced-motion look
@@ -14,10 +15,14 @@
                 signing out means (the worker is paused, days don't count) and one way back, 'Sign in
                 as <email>'. Proposed copy.
    Welcome.Body {headline, onSignIn, animate}  the content alone, for screens drawn over it (SignIn).
-   TermsSheet   {mode 'firstrun' | 'update', open, busy, error, onAgree, preview}  the kit Sheet,
-                blocking: no close, no Esc, no scrim; the button is the agreement. busy while the
-                agreement record is written server-side; error says it was not saved, and the same
-                button tries again. Copy is V2's and legal's, quoted exactly (terms_sheet.jsx:61-84). */
+   TermsSheet   {mode 'firstrun' | 'update', docs, open, busy, error, onAgree, onDecline, preview}
+                the kit Sheet, blocking: no close, no Esc, no scrim; the button is the agreement.
+                busy while the agreement record is written server-side; error says it was not
+                saved, and the same button tries again. Copy is V2's and legal's, quoted exactly
+                (terms_sheet.jsx:61-84). update names the changed documents from docs (data,
+                section 53; V2's pair by default, the names the inbox row carries) and adds a quiet
+                Not now with its cost said first (proposed): the worker pauses and days don't count
+                until the partner accepts; Earnings and Leave the program stay reachable. */
 (function () {
   const K = () => window.V2Kit || {};
   const cx = function () { return Array.prototype.filter.call(arguments, Boolean).join(' '); };
@@ -44,11 +49,16 @@
     return <L href={TERMS_URL + '#' + anchor} target="_blank" rel="noopener">{children}{sr}</L>;
   }
 
+  // The documents a terms change can name, and V2's update pair (terms_sheet.jsx:61-66).
+  const ANCHOR = { 'Program Terms': 'program', 'Terms of Use': 'terms', 'Privacy Policy': 'privacy', 'Cookie Policy': 'cookies' };
+  const UPDATED_DOCS = ['Terms of Use', 'Privacy Policy'];
+  const DECLINE = 'Not now pauses your worker until you accept, and paused days don’t count. You can still see Earnings or leave the program.';
+
   // Body copy per mode, verbatim from terms_sheet.jsx:61-84 (agree to the contract, acknowledge
   // the notices: legal's wording split, terms_sheet.jsx:49-53).
   const MODES = {
     firstrun: {
-      title: 'Before you start',
+      title: function () { return 'Before you start'; },
       body: function () {
         return (
           <>By continuing, you agree to the <LegalLink anchor="program">Program Terms</LegalLink> and
@@ -58,26 +68,30 @@
       },
     },
     update: {
-      title: 'Updates to our Terms of Use',
-      body: function () {
+      title: function (d) { return 'Updates to our ' + d[0]; },
+      body: function (d) {
         return (
-          <>We've updated our <LegalLink anchor="terms">Terms of Use</LegalLink> and{' '}
-            <LegalLink anchor="privacy">Privacy Policy</LegalLink>. Please review them and accept
-            the updated terms to keep using BlueAI.</>
+          <>We've updated our {d.map(function (n, i) {
+            return <React.Fragment key={n}>{i ? (i === d.length - 1 ? ' and ' : ', ') : null}<LegalLink anchor={ANCHOR[n] || 'terms'}>{n}</LegalLink></React.Fragment>;
+          })}. Please review {d.length > 1 ? 'them' : 'it'} and accept the updated terms to keep using BlueAI.</>
         );
       },
     },
   };
 
-  function TermsSheet({ mode, open, busy, error, onAgree, preview }) {
+  function TermsSheet({ mode, docs, open, busy, error, onAgree, onDecline, preview }) {
     const S = K().Sheet;
     const B = K().Banner;
     const cfg = MODES[mode] || MODES.firstrun;
+    const d = docs && docs.length ? docs : UPDATED_DOCS;
+    const update = mode === 'update';
     if (!S) return null;
+    const agree = { label: 'Agree and continue', variant: 'primary', onClick: onAgree };
     return (
-      <S open={open !== false} blocking busy={busy} preview={preview} title={cfg.title}
-        actions={[{ label: 'Agree and continue', variant: 'primary', onClick: onAgree }]}>
-        <p className="v2-terms-text">{cfg.body()}</p>
+      <S open={open !== false} blocking busy={busy} preview={preview} title={cfg.title(d)}
+        actions={update ? [{ label: 'Not now', variant: 'quiet', onClick: onDecline }, agree] : [agree]}>
+        <p className="v2-terms-text">{cfg.body(d)}</p>
+        {update ? <p className="v2-terms-note">{DECLINE}</p> : null}
         {error && B ? (
           <B tone="danger" title="Your agreement wasn’t saved.">
             Check your connection, then press Agree and continue again.
@@ -153,12 +167,15 @@
 
   function Welcome(props) {
     const p = props || {};
+    const [declined, setDeclined] = React.useState(false);
+    React.useEffect(function () { setDeclined(false); }, [p.terms]);
     const Frame = K().AppFrame;
     const body = p.signedOut
       ? <SignedOutBody email={p.signedOut} onSignIn={p.onSignIn} animate={p.animate} />
       : <WelcomeBody headline={p.headline} onSignIn={p.onSignIn} animate={p.animate} />;
-    const sheet = p.terms ? (
-      <TermsSheet mode={p.terms} busy={p.termsBusy} error={p.termsError} onAgree={p.onAgree} preview={p.preview} />
+    const sheet = p.terms && !declined ? (
+      <TermsSheet mode={p.terms} docs={p.termsDocs} busy={p.termsBusy} error={p.termsError} onAgree={p.onAgree} preview={p.preview}
+        onDecline={function () { setDeclined(true); if (p.onDecline) p.onDecline(); }} />
     ) : null;
     if (!Frame) return body;
     return (

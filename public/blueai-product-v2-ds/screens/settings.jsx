@@ -5,13 +5,15 @@
    Every account screen (61 to 66) sits in V2Screens.ScreenFrame (home.jsx) inside one
    .v2-acct column, so the top bar, the menus and the nav behave the same on every screen.
 
-   Settings {worker, state, bluestacks, telegram, highlight, onNavigate, onReport, onRetry, frame, compact, landmark, preview}
+   Settings {worker, state, bluestacks, telegram, highlight, onNavigate, onReport, onRetry, onFix, frame, compact, landmark, preview}
      worker      the Worker record (section 41); default V2Kit.workerFixtures.verified.
      state       'default' | 'advanced' (Advanced open) | 'no-bluestacks' (and scrolled to it) |
                  'report' (Help > Report a problem open: the sheet from help.jsx) | 'loading' |
                  'error' (pendingBody: the rows' shape, or LoadError with Try again).
      bluestacks  'connected' | 'not-installed' | 'signed-out': the worker's preflight (R13, R16),
-                 never a fixed claim. telegram 'linked' | 'not-linked'.
+                 never a fixed claim: without the prop, the record's blocked reason decides
+                 (V2Screens.accountStates). telegram 'linked' | 'not-linked'.
+     onFix(reason)  Open App Player and Get BlueStacks do what Home's fix does (fixBlocked).
      highlight   a section id ('worker', 'apps', 'notifications', 'bluestacks', 'account', 'help',
                  'advanced'): routed here. Scrolls it into view and holds the highlight; never
                  changes a value. With preview the look is forced and only the window scrolls.
@@ -21,7 +23,7 @@
    CONFIRM_COPY  {signOut(email), disconnect(handle), leave(handle, endsOn, n), deleteData(n)} the
      one title, body, primary label and failure line per destructive confirm (section 52), read by
      Account, Connected apps and the guide, so a confirm is written once. n is numbers(record):
-     leaving and deleting say cash out with its $10 minimum, and what a balance under it means.
+     leaving and deleting always state the $10 minimum; under it, what that means once you leave.
    useConfirmStep(forced)  {busy, failed, run(done), reset()}: a confirm's primary that does work,
      busy while it runs, then done or failed. forced 'busy' | 'failed' draws that cell (guide).
    ConfirmDialog {copy, tone, step, preview, onCancel, onConfirm}  the AlertDialog for one
@@ -44,14 +46,14 @@
   // Proposed copy, one owner per confirm (section 52). Each body says what changes, what is kept
   // and, where there is one, the way back. A disconnect is the partner's choice, so it is not
   // called a pause: the runs simply cannot start without the account (section 63).
-  // Cash out after leaving: open after the period only at the $10 minimum; under it, the balance
-  // cannot be cashed out once the partner leaves (PM and legal to confirm, D3 in section 73).
+  // Cash out after leaving follows the site's cashOutOpen (section 41): open; under the $10 minimum it
+  // cannot be cashed out once the partner leaves (PM and legal to confirm, D3); null (every fixture
+  // today): the fixed rule, the minimum and when cash out opens, never a claim about the balance.
   function cashLine(endsOn, n) {
     const min = '$' + ((n && n.cashOutMin) || 10);
-    const after = ' after ' + (endsOn || 'the program ends');
-    if (n && n.reachedMinimum === false) return 'Your verified days stay on Earnings, but a balance under ' + min + ' can’t be cashed out once you leave.';
-    if (n && n.reachedMinimum) return 'Verified days stay on Earnings, and cash out opens there' + after + '.';
-    return 'Verified days stay on Earnings, and cash out opens there' + after + ' once your balance reaches ' + min + '.';
+    if (n && n.cashOutOpen === false) return 'Your verified days stay on Earnings, but a balance under ' + min + ' can’t be cashed out once you leave.';
+    if (n && n.cashOutOpen === true) return 'Verified days stay on Earnings, and cash out is open there.';
+    return 'You need ' + min + ' to cash out once the program ends on ' + (endsOn || 'its last day') + '. Check your balance on Earnings before you leave.';
   }
   const CONFIRM_COPY = {
     signOut: function (email) {
@@ -165,13 +167,19 @@
   }
 
   function Settings(props) {
+    const Scope = scr().ToastScope;
+    return Scope ? <Scope><SettingsScreen {...props} /></Scope> : <SettingsScreen {...props} />;
+  }
+
+  function SettingsScreen(props) {
     const K = kit();
     const p = props;
     const w = p.worker || fixture('verified');
     const [adv, setAdv] = useState(p.state === 'advanced' || p.highlight === 'advanced');
     const [report, setReport] = useState(p.state === 'report');
     const [notify, setNotify] = useState({ ask: true, end: true });
-    const bs = p.bluestacks || (p.state === 'no-bluestacks' ? 'not-installed' : 'connected');
+    const toast = (scr().useScreenToast || function () { return { show: noop }; })();
+    const bs = p.bluestacks || (p.state === 'no-bluestacks' ? 'not-installed' : (scr().accountStates ? scr().accountStates(w).bluestacks : 'connected'));
     const hl = p.highlight || null;
     const go = p.onNavigate || noop;
     const Sec = K.SettingsSection;
@@ -190,6 +198,7 @@
       );
     }
     const b = BLUESTACKS[bs] || BLUESTACKS.connected;
+    const fix = function () { if (scr().fixBlocked) scr().fixBlocked(bs === 'not-installed' ? 'no-bluestacks' : 'signed-out', p.onFix, toast); };
     const Apps = scr().ConnectedAppRows;
     const Report = scr().ReportProblemSheet;
     const ic = function (name) { return K.Icon ? <K.Icon name={name} size={16} /> : null; };
@@ -221,9 +230,9 @@
               <Row key="end" label="Today’s run ends" description="Done, or stopped with a way to try again." trailing={sw('end', 'Today’s run ends')} />,
             ])}
             {section('bluestacks', 'BlueStacks', (
-              <Row label="BlueStacks App Player" description={b.desc} leading={<span className="v2-acct-mark">{ic('monitor')}</span>}
+              <Row label="BlueStacks App Player" description={b.desc} mark={{ icon: 'monitor' }}
                 badge={b.badge && K.Badge ? <K.Badge tone="success">{b.badge}</K.Badge> : null}
-                trailing={b.act && K.Button ? <K.Button size="sm" variant={b.primary ? 'primary' : 'secondary'} onClick={noop}>{b.act}</K.Button> : null} />
+                trailing={b.act && K.Button ? <K.Button size="sm" variant={b.primary ? 'primary' : 'secondary'} onClick={fix}>{b.act}</K.Button> : null} />
             ))}
             {section('account', 'Account and privacy', (
               <Row label={(w.account && w.account.name) || 'Account'} description={w.account && w.account.email}

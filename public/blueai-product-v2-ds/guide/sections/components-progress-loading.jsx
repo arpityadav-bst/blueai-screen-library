@@ -26,16 +26,15 @@
     }
     return (
       <G.Section id="progress-loading">
-        <G.Part name="ProgressBar" status="changed" role="An amount done: a download, a setup, a goal. Label and value on top, a sunken rail, one fill.">
+        <G.Part name="ProgressBar" status="changed" role="An amount done: a download, a setup. Label and value on top, a sunken rail, one fill. Program progress is never a ProgressBar: it is the DayBar (section 43).">
           <G.StateGrid wide states={[
             { label: '0%', node: <div style={full}><Bar label="Getting ready" value={0} /></div> },
             { label: '45%', node: <div style={full}><Bar label="Getting ready" value={45} /></div> },
             { label: 'Complete', note: 'turns green: reached', node: <div style={full}><Bar label="Getting ready" value={100} valueText="Done" /></div> },
             { label: 'Indeterminate', note: 'a sliding segment', node: <div style={full}><Bar label="Checking…" indeterminate /></div> },
-            { label: 'Indeterminate, reduced motion', note: 'a full, quiet track', node: <div style={full} className="v2-reduced-motion"><Bar label="Checking…" indeterminate /></div> },
+            { label: 'Indeterminate, reduced motion', note: 'a still, full rail in the blue tint edge, not dimmed', node: <div style={full} className="v2-reduced-motion"><Bar label="Checking…" indeterminate /></div> },
             { label: 'Error', note: 'frozen where it stopped', node: <div style={full}><Bar label="Getting ready" value={62} error valueText="Download failed" /></div> },
             { label: 'Paused', node: <div style={full}><Bar label="Getting ready" value={30} paused valueText="Paused" /></div> },
-            { label: 'Goal (success tone), 4px', note: "the site's program bar", node: <div style={full}><Bar label="Run BlueAI this month" value={12} max={20} tone="success" size={4} valueText="12 of 20 days" /></div> },
           ]} />
 
           <G.CompareRow
@@ -50,8 +49,8 @@
             { part: 'Rail', token: '--v2-surface-sunken / --v2-radius-pill', value: '6px (4 inline), pill', ref: ['display-feedback.progress.ai-rail', 'display-feedback.progress.bs-rail', 'display-feedback.progress.site-bar'] },
             { part: 'Fill', token: '--v2-blue', value: '#156efe', ref: 'display-feedback.progress.bs-fill' },
             { part: 'Fill motion', token: '--v2-dur-3 / --v2-ease-out', value: 'width 240ms', ref: 'display-feedback.progress.ai-pulse' },
-            { part: 'Indeterminate', token: '--v2-dur-shimmer', value: '.v2-anim-indet: 40% segment (V2 38%), 1400ms; reduced motion: full track at 0.45', ref: ['display-feedback.progress.indet-width', 'display-feedback.progress.indet-anim', 'display-feedback.progress.indet-keys'] },
-            { part: 'Complete / goal', token: '--v2-success', value: '#16a34a' },
+            { part: 'Indeterminate', token: '--v2-dur-shimmer', value: '.v2-anim-indet: 40% segment (V2 38%), 1400ms; reduced motion: a still, full rail in --v2-blue-tint-line, undimmed (not the disabled look)', ref: ['display-feedback.progress.indet-width', 'display-feedback.progress.indet-anim', 'display-feedback.progress.indet-keys'] },
+            { part: 'Complete', token: '--v2-success', value: '#16a34a' },
             { part: 'Error', token: '--v2-danger-ink', value: 'fill and value text' },
             { part: 'Paused', token: '--v2-ink-4', value: 'grey fill' },
             { part: 'Label row', token: '--v2-text-13', value: 'label 500 ink, value ink-3 tabular' },
@@ -60,7 +59,7 @@
             { part: 'Copy', token: null, value: 'Checking…', ref: 'display-feedback.progress.ai-copy' },
             { part: 'Copy', token: null, value: 'Download failed', ref: 'display-feedback.progress.failed-copy' },
             { part: 'Copy', token: null, value: 'Paused', ref: 'display-feedback.progress.paused-copy' },
-            { part: 'Copy', token: null, value: 'Run BlueAI this month, 12 of 20 days (the site)', ref: ['display-feedback.progress.site-label', 'display-feedback.progress.site-count'] },
+            { part: 'Program progress', token: null, value: 'not a ProgressBar: the site’s "Run BlueAI this month, 12 of 20 days" bar is the DayBar (section 43), which keeps a pending day out of green until it is verified', ref: ['display-feedback.progress.site-label', 'display-feedback.progress.site-count'] },
           ]} />
         </G.Part>
 

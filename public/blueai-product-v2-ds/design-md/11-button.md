@@ -60,7 +60,7 @@
 
 **States.** Rest; hover (`--v2-wash-hover`, ink glyph); focus-visible; active, menu open or pressed (`--v2-wash-press`, ink glyph, from `active`, `aria-expanded` or `aria-pressed`); disabled (0.45, `aria-disabled`). In V2 today: the help and more icons on the top bar at `?start=worker` (index.html:292, #64748b, #1990FF when open, no hover, no focus); the out-of-credits close at #94a3b8 (2.56:1, byok.jsx:81).
 
-**Props.** `icon`, `label` (required), `size` (28 | 32 | 36), `variant`, `active`, `tone` ('default' | 'danger'), `disabled`, `onClick`; `aria-expanded`, `aria-haspopup`, `aria-pressed` pass through.
+**Props.** `icon`, `label` (required), `size` (28 | 32 | 36), `variant`, `active`, `tone` ('default' | 'danger'), `disabled`, `tip` (default on: a label Tooltip showing the label, section 23; false opts out), `onClick`; `aria-expanded`, `aria-haspopup`, `aria-pressed` pass through.
 
 **Motion.** Background and colour over `--v2-dur-1`.
 

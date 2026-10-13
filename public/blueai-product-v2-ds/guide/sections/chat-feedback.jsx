@@ -28,7 +28,7 @@
             { label: 'Idle', node: fb({ vote: null }) },
             { label: 'Up (Thanks for 2200ms)', node: fb({ vote: 'up', thanks: true }) },
             { label: 'Down (reasons)', node: fb({ vote: 'down', reason: null }) },
-            { label: 'Reason picked', note: 'Picking a reason other than Other closes the chips and says thanks.', node: fb({ vote: 'down', reason: 'Wrong result' }) },
+            { label: 'Reason picked', note: 'Picking a reason other than Other closes the chips and says thanks: the pressed thumb and the thanks line.', node: fb({ vote: 'down', reason: 'Wrong result', thanks: true }) },
             { label: 'Other: text and submit', node: fb({ vote: 'down', reason: 'Other' }) },
             { label: 'Under a run card', node: <K.RunCard state="done-pending" feedback={<K.FeedbackThumbs vote={null} onVote={noop} />} /> },
           ]} />

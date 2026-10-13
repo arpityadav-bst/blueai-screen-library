@@ -53,7 +53,7 @@
           <G.StateGrid wide states={[
             { label: 'Success', node: <T tone="success" title="Settings saved" /> },
             { label: 'Info', node: <T tone="info" title="Automatic is off for YouTube" /> },
-            { label: 'Error with Try again', node: <T tone="error" title="Couldn’t save your change" action={{ label: 'Try again' }} />, note: 'Stays 8s. An error that holds belongs in a banner.' },
+            { label: 'Error with Try again', node: <T tone="error" title="Couldn’t save your change" action={{ label: 'Try again' }} />, note: 'With Try again it has no timer: it stays until Dismiss, Try again, the next toast or dismiss() on leaving. An error that holds belongs in a banner.' },
             { label: 'With Undo', node: <T tone="success" title="Key removed" action={{ label: 'Undo' }} />, note: 'The change applies now; Undo reverses it.' },
             { label: 'Loading', node: <T tone="loading" title="Sending your report…" />, note: 'No timer until it has a result.' },
             { label: 'Loading, then its result', node: <T tone="success" title="Report sent" />, note: 'The same toast, updated in place.' },
@@ -74,7 +74,7 @@
             { part: 'Title', token: '--v2-text-13, --v2-weight-medium, --v2-ink', value: '13/500, one line where it can' },
             { part: 'Action', token: '--v2-blue-ink, --v2-hit-min', value: 'a text button in a 32px target: Undo or Try again' },
             { part: 'Close', token: '--v2-hit-min', value: '32px icon button named Dismiss' },
-            { part: 'Timing', token: null, value: '4s; 6s with an action; 8s for an error; loading waits for update()', ref: ['overlays.toast.saved-time', 'overlays.toast.os'] },
+            { part: 'Timing', token: null, value: '4s; 8s for an error; no timer with an action (Undo, Try again): it stays until Dismiss, its action, the next toast or dismiss() on leaving; loading waits for update()', ref: ['overlays.toast.saved-time', 'overlays.toast.os'] },
             { part: 'Pause', token: null, value: 'while hovered or holding keyboard focus (a CSS state)' },
             { part: 'Layer', token: '--v2-z-toast', value: '120, above dialogs' },
             { part: 'Motion', token: '--v2-dur-2, --v2-dur-1', value: 'fade-up 180ms in, fade 120ms out' },

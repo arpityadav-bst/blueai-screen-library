@@ -8,14 +8,18 @@
     '  account:   { name, first, email }            one neutral identity everywhere',
     '  setUp:     true | false                       onboarding finished',
     '  coachSeen: true | false                       the first-run coach mark was dismissed',
-    "  apps:      { youtube: { status, handle, mode, history }, instagram: { status: 'coming-soon' } }",
+    "  apps:      { youtube: { status, handle, mode, history, historyOn }, instagram: { status: 'coming-soon' } }",
     "  runWindow: { kind: 'time' | 'window' | 'any', label: '11 am' }",
     "  paused:    null | { until: 'Oct 16' }",
+    "  blocked:   null | { reason: 'no-app' | 'signed-out' | 'no-bluestacks', app }",
     '  online:    true | false',
     "  credits:   { left, grant: 2000, refillAt: '5:30 am', runCost }",
-    "  today:     { status: scheduled | running | waiting | done | failed | none,",
-    "               nextRunAt, startedAt, step, stepsDone, ask: { job, since, expires }, end, error }",
-    "  ledger:    [ { date: 'Oct 7', status: verified | pending | late | rejected | skipped | missed, reason } ]",
+    "  cashOutOpen: true | false | null            the site’s answer; null until it sends one",
+    "  today:     { date, status: scheduled | running | waiting | done | stopped | failed | missed | none,",
+    "               nextRunAt, startedAt, step, stepsDone, ask: { job, since, expires },",
+    "               outcome, error, retryBy, missedAt, checkedAt, ranOn }",
+    "  ledger:    [ { date, outcome: job | nojob | skipped | expired | stopped | failed | nocredits | norun,",
+    "                 status: verified | pending | late | rejected | notcounted, reason, checkedAt, ranOn } ]",
     "  program:   { target: 20, endsOn: 'Nov 1', daysLeft }",
     '}',
   ].join('\n');
@@ -93,11 +97,15 @@
             reload ({G.refText('worker.permissions.store')}); and opening another tab unmounts the run (R01).
           </G.Warn>
           <p><strong>Anatomy.</strong> Plain data, no methods. Helpers on <code className="g-code">window.V2Kit</code>:
-            {' '}<code className="g-code">numbers(record)</code> (count, verified, pending, not counted, out of reach, the 20 segments, cashOutMin, reachedMinimum),
+            {' '}<code className="g-code">numbers(record)</code> (count, verified, pending, not counted, out of reach, the 20 segments, cashOutMin, cashOutOpen),
             {' '}<code className="g-code">workerState(record)</code> (the card state),
-            {' '}<code className="g-code">modeSummary(record)</code> and <code className="g-code">nextRunText(record)</code>.
+            {' '}<code className="g-code">blockedBy(record)</code> (null or {'{reason, app}'}),
+            {' '}<code className="g-code">creditsDay(record, now)</code> ('covered' | 'waiting' | 'stopped'),
+            {' '}<code className="g-code">modeSummary(record)</code>, <code className="g-code">nextRunText(record)</code>,
+            {' '}<code className="g-code">endedCopy(n)</code>, <code className="g-code">dayWords(row)</code> and <code className="g-code">dayGap(from, to)</code>.
             Constants: <code className="g-code">WORKER_RULE</code>, <code className="g-code">WORKER_APPS</code>,
-            {' '}<code className="g-code">WORKER_JOB</code>, <code className="g-code">EARNINGS_URL</code>.</p>
+            {' '}<code className="g-code">WORKER_JOB</code>, <code className="g-code">WORKER_OTHER_ACCOUNT</code>, <code className="g-code">EARNINGS_URL</code>,
+            {' '}<code className="g-code">SITE_FAQ_URL</code> and <code className="g-code">DAY_DEADLINE_HOUR</code> 21 (the day’s 9 pm deadline).</p>
           <G.Stage ground="surface"><pre className="g-code" style={{ display: 'block', margin: 0, whiteSpace: 'pre', overflowX: 'auto' }}>{SHAPE}</pre></G.Stage>
           <p><strong>Every state, derived.</strong> One row per fixture; the numbers are computed live by <code className="g-code">numbers()</code>.</p>
           <FixtureTable />

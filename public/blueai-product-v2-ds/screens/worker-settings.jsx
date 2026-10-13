@@ -4,7 +4,8 @@
    disconnect anytime." (worker_flow.jsx:67) and asks for the run time once in chat; none of it has
    a control afterwards (R05). Pushed over Settings with Back. Each change applies at once and says
    so in one toast once it settles; pausing says what it costs, for the date picked, before it
-   happens (P3); Automatic asks for consent every time (section 46).
+   happens (P3): the date first, then its cost as a polite status, and Pause is danger because it
+   loses days (section 52, the Red rule); Automatic asks for consent every time (section 46).
 
    WorkerSettings {worker, state, onBack, onNavigate, onRetry, frame, compact, landmark, preview}
      state  'ask' (Always ask everywhere, default) | 'auto' (Automatic on YouTube) | 'paused' (until
@@ -163,10 +164,10 @@
 
     const pauseDialog = pausing && K.Dialog ? (
       <K.Dialog open preview={p.preview} variant="task" title="Pause daily runs?" busy={!!pauseStep.busy} onClose={function () { setPausing(false); }}
-        actions={[{ label: 'Keep running', onClick: function () { setPausing(false); } }, { label: 'Pause', variant: 'primary', onClick: confirmPause }]}>
+        actions={[{ label: 'Keep running', onClick: function () { setPausing(false); } }, { label: 'Pause', variant: 'danger', onClick: confirmPause }]}>
         <div className="v2-acct-stack">
-          <p>{pauseCost(until, w, n)}</p>
           {K.Select ? <K.Select label="Pause until" options={UNTIL} value={until} onChange={setUntil} /> : null}
+          <p role="status">{pauseCost(until, w, n)}</p>
         </div>
       </K.Dialog>
     ) : null;

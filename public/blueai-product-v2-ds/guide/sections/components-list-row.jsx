@@ -22,7 +22,7 @@
           </G.Stage>
           <ul className="g-list">
             <li>Min height 48, padding 12 16, gap 12; content centred on the row.</li>
-            <li>Leading (optional): a 20px icon in ink-3, or an Avatar 32/40.</li>
+            <li>Leading (optional): a 20px icon in ink-3, an Avatar 32/40, or a mark (the mark prop: icon, tone and dot): a 32 sunken disc with a 16 glyph in its tone and an optional unread dot, for a row about a thing or an event (Notifications, BlueStacks in Settings).</li>
             <li>Label 14/500 ink; description 13 ink-3 under it (also where a disabled row says why).</li>
             <li>Trailing, one of: a value (14 ink-2, tabular), a control, a Badge, a chevron (nav), an external mark.</li>
             <li>Divider: a 1px hairline between rows, inset 16, none after the last.</li>
@@ -40,6 +40,7 @@
             { label: 'Nav: external', note: 'opens the site', node: inCard(<Row leading={<Icon name="link" size={20} />} label="Earnings" href="https://bluestacks.ai/dashboard" external divider={false} />) },
             { label: 'Expandable: closed', node: inCard(<Row label="Oct 11" description="1 job, 2 actions" expandable expanded={false} divider={false}>Watched the video, then liked it.</Row>) },
             { label: 'Expandable: open', note: 'aria-expanded', node: inCard(<Row label="Oct 11" description="1 job, 2 actions" expandable expanded divider={false}>Watched the video, then liked it.</Row>) },
+            { label: 'Mark', note: 'an event row (Notifications)', node: inCard(<K.ListRow mark={{ icon: 'bell', tone: 'attention', dot: true }} label="Paid YouTube job waiting for your OK" description="Answer by 9 pm or today won’t count." value="11:04 am" divider={false} />) },
             { label: 'Destructive', node: inCard(<Row leading={<Icon name="sign-out" size={20} />} label="Disconnect YouTube" danger onClick={noop} divider={false} />) },
             { label: 'Disabled, with the reason', node: inCard(<Row leading={<Icon name="pause" size={20} />} label="Pause the worker" disabled disabledReason="Available after setup." onClick={noop} divider={false} />) },
             { label: 'A list', note: 'hairlines between rows only', node: inCard(<>
@@ -73,6 +74,7 @@
             { part: 'Focus', token: '--v2-focus-outline', value: '2px blue, inset 2px (rows sit in clipped cards)' },
             { part: 'Chevron', token: '--v2-ink-4', value: '16px; turns 180 over --v2-dur-2 when expanded', ref: 'display-feedback.row.history-chevron' },
             { part: 'Expandable', token: null, value: 'button with aria-expanded + aria-controls', ref: ['display-feedback.row.history', 'display-feedback.row.history-toggle'] },
+            { part: 'Mark', token: '--v2-mark-md, --v2-surface-sunken', value: '32 disc, 16 glyph in its tone, 8 blue dot with a 2px surface halo' },
             { part: 'Danger', token: '--v2-danger-ink', value: 'label and leading icon' },
             { part: 'Disabled', token: '--v2-opacity-disabled', value: '0.45 on label and marks; the reason stays ink-3' },
             { part: 'Copy', token: null, value: 'AI model, Auto (sentence case)', ref: ['display-feedback.row.copy-model', 'display-feedback.row.copy-auto'] },

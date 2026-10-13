@@ -79,7 +79,7 @@
             { part: 'Glow', token: '--v2-shadow-0', value: 'none (V2: blue glows)', ref: ['actions-inputs.button.day-done-glow', 'actions-inputs.button.terms-glow'] },
             { part: 'Secondary', token: '--v2-surface, --v2-line-strong, --v2-ink', value: 'white, 1px 15% black, ink; hover wash + 20% edge', ref: ['actions-inputs.button.cancel', 'actions-inputs.onblue.ghost-hover'] },
             { part: 'Quiet', token: '--v2-ink-2, --v2-wash-hover', value: 'no box at rest, ink-2; hover wash + ink' },
-            { part: 'Danger', token: '--v2-danger-ink', value: '#c03a40 fill, white 5.36:1 (V2 Remove: #dc2626 outline, no confirm)', ref: 'actions-inputs.button.remove' },
+            { part: 'Danger', token: '--v2-danger-ink', value: '#c03a40 fill, white 5.36:1; only for the confirm’s primary when something is lost and the trigger that opens that confirm (Disconnect YouTube), section 52 (V2 Remove: #dc2626 outline, no confirm)', ref: 'actions-inputs.button.remove' },
             { part: 'Press', token: '--v2-dur-1', value: 'translateY(1px), 120ms' },
             { part: 'Focus', token: '--v2-focus-outline, --v2-focus-offset', value: '2px #156efe, offset 2 (V2: none)' },
             { part: 'Disabled', token: '--v2-opacity-disabled', value: '0.45, aria-disabled, reason 12/ink-3 below', ref: ['actions-inputs.button.apply-disabled', 'actions-inputs.onblue.disabled', 'actions-inputs.onblue.disabled-why'] },
@@ -125,7 +125,7 @@
             system={<div className="v2-hstack v2-gap-1"><K.IconButton icon="help" label="Help" /><K.IconButton icon="more" label="More" active aria-haspopup="menu" aria-expanded={true} /></div>}
             changed="Same idea as V2's iconBtn (padding 6, radius 8, #64748b) with the site's wash hover and a focus ring. Open is ink on a wash, not #1990FF: blue now means selection. The out-of-credits close at #94a3b8 (2.56:1) moves to ink-3." />
           <G.SpecDrawer rows={[
-            { part: 'Box', token: '--v2-control-md, --v2-radius-sm', value: '36 square, radius 6 (V2: padding 6 around 18, radius 8)', ref: 'actions-inputs.icon-button.v2' },
+            { part: 'Box', token: '--v2-control-md, --v2-radius-sm', value: '36 square, radius 6 (V2: padding 6 around a 22 glyph, 34 square, radius 8)', ref: 'actions-inputs.icon-button.v2' },
             { part: 'Glyph', token: '--v2-icon-md, --v2-ink-3', value: '20, #5f636b 6.0:1 (V2 #64748b; close #94a3b8 2.56:1)', ref: ['actions-inputs.icon-button.v2', 'actions-inputs.icon-button.close'] },
             { part: 'Hover', token: '--v2-wash-hover, --v2-ink', value: 'wash + ink (V2: none, or a JS colour swap)', ref: 'actions-inputs.icon-button.close-hover' },
             { part: 'Open / pressed', token: '--v2-wash-press, --v2-ink', value: 'deeper wash + ink (V2 #1990FF)', ref: 'actions-inputs.icon-button.v2' },

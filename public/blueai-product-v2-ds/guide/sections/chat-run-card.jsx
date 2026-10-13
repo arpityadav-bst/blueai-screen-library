@@ -11,7 +11,7 @@
     ['failed', 'Failed (Try again)', 'Says that today does not count yet.'],
     ['stopped', 'Stopped', 'Stop leaves a trace and the day status.'],
     ['nojob', 'No job (day counts)', 'Pending tick: the run still counts.'],
-    ['nocredits', 'Out of credits', 'Neutral with a clock (section 03); day status and refresh time, decision D6.'],
+    ['nocredits', 'Out of credits, today lost', 'Danger: the day line says today won’t count (OOC_COPY.day.stopped, decision D6). See AI credits.'],
     ['skipped', 'Skipped (Not now)', 'The partner said Not now. Run detail and Activity.'],
     ['expired', 'No answer (expired)', 'No answer by 9 pm, told apart from Not now. Run detail and Activity.'],
     ['rejected', 'Rejected after checking', 'Run detail and Activity, R19.'],
@@ -28,6 +28,7 @@
           <G.StateGrid wide states={STATES.map(function (s) {
             return { label: s[1], note: s[2], node: <K.RunCard state={s[0]} onAction={noop} onOpenDetail={noop} /> };
           }).concat([
+            { label: 'Out of credits, refill before 9 pm', note: 'Neutral with a clock: today can still count (OOC_COPY.day.waiting).', node: <K.RunCard state="nocredits" run={{ dayStatus: 'waiting' }} onAction={noop} onOpenDetail={noop} /> },
             { label: 'Steps expanded', note: 'The disclosure is a real button with aria-expanded.', node: <K.RunCard state="done-pending" defaultExpanded onOpenDetail={noop} /> },
             { label: 'Full width (Run detail)', note: 'full fills the screen column.', node: <div style={{ width: '100%' }}><K.RunCard state="verified" full defaultExpanded /></div> },
           ])} />
@@ -46,7 +47,7 @@
             { part: 'Card', token: '--v2-surface, --v2-line, --v2-radius-lg, --v2-space-4', value: 'white, 1px line, radius 16, padding 16, gap 12, no shadow' },
             { part: 'Width', token: '--v2-bubble-max', value: '300 in the thread; 100% with full' },
             { part: 'Header', token: '--v2-text-14, --v2-weight-semibold, --v2-ink', value: '"Today’s run" 14/600 + start time 12 ink-4 + Badge' },
-            { part: 'Badge', token: 'status family', value: 'Running info (busy dot), Waiting for you attention, Done neutral (pending verification, section 03), Verified success, Didn’t finish danger, Stopped, Skipped, No answer and Out of credits neutral (out of credits with a clock, section 03)' },
+            { part: 'Badge', token: 'status family', value: 'Running info (busy dot), Waiting for you attention, Done neutral (pending verification, section 03), Verified success, Didn’t finish danger, Stopped, Skipped and No answer neutral; Out of credits by its day (section 03’s rule): neutral with a clock while today can still count, danger with x-circle once it won’t' },
             { part: 'Live row', token: '--v2-ink-2', value: 'Spinner 16 + current step 14', ref: ['chat.run.jobs-board', 'chat.run.status-render'] },
             { part: 'Disclosure', token: '--v2-text-13, --v2-ink-3, --v2-hit-min', value: '"7 steps done", 13/500, 32px tall, chevron turns', ref: 'chat.run.routine' },
             { part: 'Steps', token: '--v2-text-13, --v2-text-12, --v2-ink-4', value: 'check 16 ink-3, past-tense label 13, time 12 tabular', ref: 'chat.run.daily-head' },

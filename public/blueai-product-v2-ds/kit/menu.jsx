@@ -28,9 +28,10 @@
 (function () {
   const { useState, useEffect, useLayoutEffect, useRef, useId } = React;
   const EDGE = 8; // px a float keeps from the window edge
-  const GAP = 6; // px between a trigger and its menu (--v2-space-15)
-  // The kit's one focus and motion toolkit, on V2Kit for every part (Dialog, Menu, Popover, Thread,
-  // Toast, Settings, Splash) to read at call time, so load order is free.
+  // The kit's one focus, motion and token toolkit, on V2Kit for every part (Dialog, Menu, Popover,
+  // Thread, Toast, Settings, Splash) to read at call time, so load order is free. tokenMs and
+  // tokenPx read a tokens.css value when it is needed, so a timer or an offset in JS never copies a
+  // token and cannot drift from it (the fallback is used only before the stylesheet loads).
   const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
   function focusEl(el) {
     if (!el || !el.focus) return;
@@ -38,6 +39,19 @@
   }
   function reducedMotion() {
     try { return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { return false; }
+  }
+  function tokenRaw(name) {
+    try { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); } catch (e) { return ''; }
+  }
+  function tokenMs(name, fallback) {
+    const v = tokenRaw(name);
+    const n = parseFloat(v);
+    if (!isFinite(n)) return fallback;
+    return /ms$/.test(v) ? n : (/s$/.test(v) ? n * 1000 : n);
+  }
+  function tokenPx(name, fallback) {
+    const n = parseFloat(tokenRaw(name));
+    return isFinite(n) ? n : fallback;
   }
 
   function cx() { return Array.prototype.filter.call(arguments, Boolean).join(' '); }
@@ -60,7 +74,7 @@
     const a = anchor.getBoundingClientRect();
     const p = panel.getBoundingClientRect();
     const b = boundsOf(anchor);
-    const h = p.height + GAP;
+    const h = p.height + tokenPx('--v2-space-15', 6); // the gap .v2-float-panel keeps (kit/overlays.css)
     let s = side, al = align;
     if (s === 'down' && a.bottom + h > b.bottom - EDGE && a.top - h >= b.top + EDGE) s = 'up';
     else if (s === 'up' && a.top - h < b.top + EDGE && a.bottom + h <= b.bottom - EDGE) s = 'down';
@@ -166,7 +180,7 @@
             className={cx('v2-menu', 'v2-float-panel', 'is-' + f.pos.side, 'is-' + f.pos.align)}>
             {props.header ? <div className="v2-float-header v2-text-eyebrow" role="presentation">{props.header}</div> : null}
             {items.map(item)}
-            {props.footer ? <div className="v2-float-foot" role="presentation">{props.footer}</div> : null}
+            {props.footer ? <div className="v2-float-foot v2-text-caption" role="presentation">{props.footer}</div> : null}
           </div>
         ) : null}
       </span>
@@ -200,7 +214,7 @@
             className={cx('v2-popover', 'v2-float-panel', 'is-' + f.pos.side, 'is-' + f.pos.align)}>
             {props.header ? <div className="v2-float-header v2-text-eyebrow">{props.header}</div> : null}
             <div className="v2-popover-body">{props.children}</div>
-            {props.footnote ? <p className="v2-float-foot">{props.footnote}</p> : null}
+            {props.footnote ? <p className="v2-float-foot v2-text-caption">{props.footnote}</p> : null}
           </div>
         ) : null}
       </span>
@@ -281,5 +295,5 @@
     );
   }
 
-  Object.assign(window.V2Kit = window.V2Kit || {}, { Menu, Popover, Tooltip, FOCUSABLE, focusEl, reducedMotion });
+  Object.assign(window.V2Kit = window.V2Kit || {}, { Menu, Popover, Tooltip, FOCUSABLE, focusEl, reducedMotion, tokenMs, tokenPx });
 })();

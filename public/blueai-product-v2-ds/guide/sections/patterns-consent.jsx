@@ -63,7 +63,7 @@
             { label: 'Not asked yet', note: 'first run: the Program Terms sheet', node: <Terms mode="firstrun" /> },
             { label: 'Agreeing', note: 'the record is being written', node: <Terms mode="firstrun" busy /> },
             { label: 'Not saved', note: 'nothing agreed; the same button tries again', node: <Terms mode="firstrun" error /> },
-            { label: 'Re-asked after a terms change', node: <Terms mode="update" /> },
+            { label: 'Re-asked after a terms change', note: 'Not now beside Agree and continue, its cost said first', node: <Terms mode="update" /> },
             { label: 'Automatic: asked', note: 'the kit ConsentDialog (section 46)', node: <Win h={460}><K.ConsentDialog app="youtube" preview onAgree={noop} onCancel={noop} /></Win> },
             { label: 'Agreed: where it is seen', note: 'Account and privacy > Agreements', node: <Record /> },
             { label: 'Declined', node: <div style={{ width: 340 }}><K.PermissionRequest app="youtube" state="notnow" onAllow={noop} /></div> },
@@ -81,7 +81,7 @@
             { part: 'Links', token: 'Link (ink)', value: 'underlined ink, blue on hover, new tab, said to screen readers', ref: ['entry-patterns.terms.link', 'entry-patterns.terms.url'] },
             { part: 'Button', token: 'Button primary lg full', value: 'Agree and continue; 44, --v2-action; loading while it records', ref: ['entry-patterns.terms.button', 'entry-patterns.terms.cta', 'entry-patterns.terms.cta-owner'] },
             { part: 'Not saved', token: 'Banner danger', value: 'Your agreement wasn’t saved. Check your connection, then press Agree and continue again.' },
-            { part: 'Update mode', token: null, value: 'same sheet, update wording (names the changed documents)', ref: ['entry-patterns.terms.update-title', 'entry-patterns.terms.update-body', 'entry-patterns.terms.update-body-2', 'entry-patterns.terms.update-body-3'] },
+            { part: 'Update mode', token: null, value: 'same sheet, update wording, the changed documents named from docs; a quiet Not now beside Agree and continue, its cost said first: “Not now pauses your worker until you accept, and paused days don’t count. You can still see Earnings or leave the program.” Declining pauses the worker; the terms are asked again on the next open and from the inbox row.', ref: ['entry-patterns.terms.update-title', 'entry-patterns.terms.update-body', 'entry-patterns.terms.update-body-2', 'entry-patterns.terms.update-body-3'] },
             { part: 'Motion', token: '--v2-dur-4, --v2-ease-out', value: 'rises 320 ms; leaves 240 ms ease-in', ref: 'entry-patterns.terms.motion' },
             { part: 'Automatic consent', token: 'ConsentDialog', value: 'Run YouTube jobs automatically? / I agree, turn on', ref: ['entry-patterns.consent.title', 'entry-patterns.consent.line', 'entry-patterns.consent.agree'] },
           ]} />

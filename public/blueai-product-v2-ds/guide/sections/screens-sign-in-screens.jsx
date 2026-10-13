@@ -63,7 +63,7 @@
       '"You’re signed in" and the email, then Home after 900 ms by itself (the browser already said so). No button.'],
     ['Gate', ['entry-patterns.signin.signed-in-as', 'entry-patterns.signin.from-player', 'entry-patterns.signin.not-enrolled', 'entry-patterns.signin.switch', 'entry-patterns.signin.player-too', 'entry-patterns.signin.player-too-ink'],
       '"Signed in as", the email, "from App Player on this PC", the pill "Not enrolled", "Switch account", then "App Player will be signed out too." at 2.54:1.',
-      'Same words and order; Badge "Not in the program" (glossary); one line on why; the consequence at 6.0:1, right above the button. Blocking, no close.'],
+      'Same words and order; Badge "Not in the program" (glossary); one line on why; the consequence at 6.0:1, right above the button; a quiet "Get help" (SITE_FAQ_URL) under Switch account. Blocking, no close.'],
     ['Confirm (option B)', ['entry-patterns.signin.confirm-title', 'entry-patterns.signin.confirm-sub', 'entry-patterns.signin.continue-as', 'entry-patterns.signin.not-you'],
       '"Continue to BlueAI", "Signed in on App Player on this PC", "Continue as Alex", "Not you? Switch account" in #1990FF.',
       'Same words; the account is one pressable Card with hover and focus; Switch account is an underlined ink link.'],

@@ -7,8 +7,9 @@
    label above names the field, so the edge is not the only cue to it (section 09 records the
    exception); focus turns the edge blue (4.47:1) and adds the ring. An errored field or checkbox
    takes --v2-danger-edge, the one solid red stroke (4.53:1); --v2-danger-line is the banner's pale
-   edge and never marks an error on its own. Disabled is aria-disabled, so a disabled control stays
-   focusable and its reason can be reached (P3). */
+   edge and never marks an error on its own. Disabled is aria-disabled on every control here, the
+   fields too (TextField and TextArea also go read-only, Select ignores a change), so a disabled
+   control stays focusable and its reason, the helper, can be reached (P3). */
 
 /* Field: label, box, message line ----------------------------------------------------------- */
 .v2-field { display: flex; flex-direction: column; gap: var(--v2-space-15); min-width: 0; }
@@ -30,7 +31,7 @@
 .v2-field-box:focus-within, .v2-field.is-focus .v2-field-box { border-color: var(--v2-blue); box-shadow: var(--v2-focus-ring); }
 .v2-field.is-invalid .v2-field-box { border-color: var(--v2-danger-edge); }
 .v2-field.is-invalid .v2-field-box:focus-within, .v2-field.is-invalid.is-focus .v2-field-box {
-  box-shadow: 0 0 0 3px var(--v2-danger-ring);
+  box-shadow: 0 0 0 var(--v2-focus-ring-width) var(--v2-danger-ring);
 }
 .v2-field.is-readonly .v2-field-box { background-color: var(--v2-surface-sunken); border-color: var(--v2-line); }
 .v2-field.is-disabled .v2-field-box {
@@ -44,7 +45,7 @@
   font-family: var(--v2-font-ui); font-size: var(--v2-text-14); line-height: var(--v2-leading-snug);
 }
 .v2-field-input:focus, .v2-field-input:focus-visible { outline: none; }
-.v2-field-input:disabled { cursor: not-allowed; }
+.v2-field.is-disabled .v2-field-input { cursor: not-allowed; }
 .v2-field-input::placeholder { color: var(--v2-ink-placeholder); opacity: 1; }
 /* With no visible label the placeholder is the only name in the box, so it reads at ink-4 (the site's rule). */
 .v2-field--bare .v2-field-input::placeholder { color: var(--v2-ink-4); }
@@ -79,10 +80,8 @@
 .v2-field-msg { display: flex; align-items: flex-start; gap: var(--v2-space-1); min-width: 0; }
 .v2-field-msg--error { color: var(--v2-danger-ink); }
 .v2-field-msg--success { color: var(--v2-success-ink); }
-.v2-field-count {
-  flex: none; margin-left: auto; color: var(--v2-ink-4);
-  font-size: var(--v2-text-12); line-height: var(--v2-leading-snug); font-variant-numeric: tabular-nums;
-}
+/* type: .v2-text-meta (kit/fields.jsx); near and over only change the ink */
+.v2-field-count { flex: none; margin-left: auto; font-variant-numeric: tabular-nums; }
 .v2-field-count.is-near { color: var(--v2-attention-ink); }
 .v2-field-count.is-over { color: var(--v2-danger-ink); }
 
@@ -119,16 +118,17 @@
 .v2-switch-label { color: var(--v2-ink); font-size: var(--v2-text-14); font-weight: var(--v2-weight-medium); line-height: var(--v2-leading-snug); cursor: pointer; }
 .v2-switch-row.is-disabled .v2-switch-label { cursor: not-allowed; }
 
-/* Checkbox: 18 box, radius 4, whole row is the target -------------------------------------- */
-.v2-check { display: flex; flex-direction: column; gap: var(--v2-space-05); }
+/* Checkbox: 18 box, radius 6 (the family's control radius, the site's box), whole row is the target */
+/* --check-box: the box's one size, repeated by the hidden input and the message indent (part-local, tokens.css header) */
+.v2-check { --check-box: 18px; display: flex; flex-direction: column; gap: var(--v2-space-05); }
 .v2-check-row {
   position: relative; display: flex; align-items: flex-start; gap: var(--v2-space-3);
   min-height: var(--v2-hit-min); padding: var(--v2-space-15) 0; cursor: pointer;
 }
-.v2-check-input { position: absolute; left: 0; top: var(--v2-space-15); width: 18px; height: 18px; margin: 0; opacity: 0; pointer-events: none; }
+.v2-check-input { position: absolute; left: 0; top: var(--v2-space-15); width: var(--check-box); height: var(--check-box); margin: 0; opacity: 0; pointer-events: none; }
 .v2-check-box {
-  position: relative; flex: none; width: 18px; height: 18px; margin-top: 1px;
-  border: var(--v2-stroke) solid var(--v2-ink-4); border-radius: var(--v2-radius-xs); background-color: var(--v2-surface);
+  position: relative; flex: none; width: var(--check-box); height: var(--check-box); margin-top: 1px;
+  border: var(--v2-stroke) solid var(--v2-ink-4); border-radius: var(--v2-radius-sm); background-color: var(--v2-surface);
   transition: background-color var(--v2-dur-1) var(--v2-ease-standard), border-color var(--v2-dur-1) var(--v2-ease-standard);
 }
 .v2-check:not(.is-disabled) .v2-check-row:hover .v2-check-input:not(:checked):not(:indeterminate) + .v2-check-box, .v2-check.is-hover .v2-check-box {
@@ -150,7 +150,7 @@
 .v2-check-text { display: flex; flex-direction: column; gap: var(--v2-space-05); min-width: 0; }
 .v2-check-label { color: var(--v2-ink); font-size: var(--v2-text-14); line-height: var(--v2-leading-snug); }
 /* type: .v2-text-caption (kit/choice.jsx): the error in danger ink, a disabled reason in ink-2 */
-.v2-check-msg { display: flex; align-items: flex-start; gap: var(--v2-space-1); padding-left: calc(18px + var(--v2-space-3)); color: var(--v2-danger-ink); }
+.v2-check-msg { display: flex; align-items: flex-start; gap: var(--v2-space-1); padding-left: calc(var(--check-box) + var(--v2-space-3)); color: var(--v2-danger-ink); }
 .v2-check-msg--why { color: var(--v2-ink-2); }
 .v2-fieldset { display: flex; flex-direction: column; min-width: 0; margin: 0; padding: 0; border: 0; }
 .v2-legend { padding: 0; margin-bottom: var(--v2-space-1); color: var(--v2-ink); font-size: var(--v2-text-13); font-weight: var(--v2-weight-medium); line-height: var(--v2-leading-snug); }
@@ -180,52 +180,27 @@
 .v2-radio-card.is-disabled .v2-radio-card-body { border-color: var(--v2-line); background-color: var(--v2-surface-sunken); background-image: none; }
 .v2-radio-card.is-disabled .v2-radio-card-head, .v2-radio-card.is-disabled .v2-radio-card-sub { opacity: var(--v2-opacity-disabled); }
 .v2-radio-card-head { display: flex; align-items: center; flex-wrap: wrap; gap: var(--v2-space-15); min-height: 20px; }
-.v2-radio-card-title { color: var(--v2-ink); font-size: var(--v2-text-14); font-weight: var(--v2-weight-semibold); line-height: var(--v2-leading-snug); }
+/* .v2-radio-card-title is set in .v2-text-title-sm (kit/choice.jsx). */
 .v2-radio-card-check { margin-left: auto; display: flex; color: var(--v2-blue-ink); opacity: 0; }
 .v2-radio-card.is-selected .v2-radio-card-check { opacity: 1; }
 .v2-radio-card-sub { color: var(--v2-ink-3); font-size: var(--v2-text-13); line-height: var(--v2-leading-snug); }
-.v2-radio-card-why {
-  display: flex; align-items: flex-start; gap: var(--v2-space-1); margin-top: var(--v2-space-1);
-  color: var(--v2-ink-2); font-size: var(--v2-text-12); line-height: var(--v2-leading-snug);
-}
-.v2-radio-card-tag { color: var(--v2-ink-3); font-size: var(--v2-text-12); }
+/* type: .v2-text-caption (kit/choice.jsx); a reason reads in ink-2, like the Checkbox's */
+.v2-radio-card-why { display: flex; align-items: flex-start; gap: var(--v2-space-1); margin-top: var(--v2-space-1); color: var(--v2-ink-2); }
 
-/* Segmented: recessed track; the selected segment takes the family's chosen look (select fill, ink)
-   with a 1.5px blue edge, 4.15:1 on the track, so which mode is on never rests on text darkness ---- */
-.v2-segmented {
-  display: inline-flex; gap: var(--v2-space-05); padding: var(--v2-space-05);
-  border: var(--v2-stroke) solid var(--v2-line); border-radius: var(--v2-radius-md); background-color: var(--v2-surface-sunken);
-}
-.v2-segment {
-  position: relative; flex: 1 1 0; display: inline-flex; align-items: center; justify-content: center; gap: var(--v2-space-15);
-  height: var(--v2-hit-min); padding: 0 var(--v2-space-3);
-  border: var(--v2-stroke) solid transparent; border-radius: var(--v2-radius-sm); background-color: transparent;
-  color: var(--v2-ink-3); font-family: var(--v2-font-ui); font-size: var(--v2-text-13); font-weight: var(--v2-weight-medium);
-  letter-spacing: var(--v2-tracking-label); line-height: var(--v2-leading-display); white-space: nowrap; cursor: pointer;
-  transition: background-color var(--v2-dur-2) var(--v2-ease-standard), color var(--v2-dur-2) var(--v2-ease-standard),
-    border-color var(--v2-dur-2) var(--v2-ease-standard);
-}
+/* Segmented: the role's own bits (equal widths, the small size, pending). The track, the item and
+   every state (hover, active, selected, focus, disabled) are one rule with Tabs in kit/overlays.css,
+   which loads after this sheet. */
+.v2-segment { position: relative; flex: 1 1 0; justify-content: center; font-family: var(--v2-font-ui); cursor: pointer; }
 .v2-segmented--sm .v2-segment { height: var(--v2-control-sm); padding: 0 var(--v2-space-2); }
-.v2-segment:hover:not([aria-disabled="true"]):not(.is-selected), .v2-segment.is-hover { background-color: var(--v2-wash-hover); color: var(--v2-ink); }
-.v2-segment.is-selected {
-  background-color: var(--v2-surface); background-image: linear-gradient(var(--v2-select), var(--v2-select));
-  border-color: var(--v2-blue); box-shadow: inset 0 0 0 calc(var(--v2-stroke-selected) - var(--v2-stroke)) var(--v2-blue);
-  color: var(--v2-ink);
-}
 .v2-segment.is-pending { border-style: dashed; border-color: var(--v2-select-line); color: var(--v2-ink); cursor: progress; }
-.v2-segment:focus-visible, .v2-segment.is-focus { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); }
-.v2-segment[aria-disabled="true"] { opacity: var(--v2-opacity-disabled); cursor: not-allowed; }
 .v2-segmented-group { display: inline-flex; flex-direction: column; align-items: flex-start; gap: var(--v2-space-15); }
 .v2-segmented--sm .v2-segment::after { content: ''; position: absolute; left: 0; right: 0; top: calc((100% - var(--v2-hit-min)) / 2); bottom: calc((100% - var(--v2-hit-min)) / 2); }
 
-@media (prefers-reduced-motion: reduce) {
-  .v2-field-box, .v2-switch, .v2-switch-thumb, .v2-check-box, .v2-radio-card-body, .v2-segment { transition: none; }
-}
-
 /* Forced colours (Windows contrast themes) drop fills and inset shadows and paint every edge, so
    state drawn by a fill alone would vanish. Each state here keeps a shape in the forced ink
-   (currentColor), never a hue: the Switch thumb is a hollow ring off and a solid dot on, and the
-   selected segment wears a thick edge plus an underline under its label. */
+   (currentColor), never a hue: the Switch thumb is a hollow ring off and a solid dot on, the
+   indeterminate bar keeps its ink, and the selected segment wears a thick edge plus an underline
+   under its label. */
 @media (forced-colors: active) {
   .v2-switch-thumb, .v2-switch:hover:not([aria-disabled="true"]) .v2-switch-thumb, .v2-switch.is-hover .v2-switch-thumb {
     forced-color-adjust: none; background-color: transparent;
@@ -234,6 +209,7 @@
   .v2-switch.is-on .v2-switch-thumb, .v2-switch.is-on:hover:not([aria-disabled="true"]) .v2-switch-thumb,
   .v2-switch.is-on.is-hover .v2-switch-thumb { background-color: currentColor; }
   .v2-switch.is-busy .v2-switch-thumb, .v2-switch.is-busy.is-on .v2-switch-thumb { background-color: transparent; }
+  .v2-check-input:indeterminate + .v2-check-box::after { forced-color-adjust: none; background-color: currentColor; }
   .v2-segment.is-selected { border-width: calc(var(--v2-stroke) * 2); }
   .v2-segment.is-selected > span { text-decoration: underline; text-decoration-thickness: calc(var(--v2-stroke) * 2); text-underline-offset: 3px; }
 }

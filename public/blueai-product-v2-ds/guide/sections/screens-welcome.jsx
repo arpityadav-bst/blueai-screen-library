@@ -38,6 +38,7 @@
     ['Action', 'one primary Button, lg 44, full width: Sign in to get started'],
     ['Terms', 'a muted standalone Link at the foot, Program Terms, opens the legal page in a new tab'],
     ['Over it', 'the Program Terms sheet on first run (blocking; section 53)'],
+    ['Update mode', 'after a terms change the same sheet names the changed documents (from termsDocs) and adds a quiet Not now beside Agree and continue, its cost said first: “Not now pauses your worker until you accept, and paused days don’t count. You can still see Earnings or leave the program.” onDecline closes it and pauses the worker.'],
   ];
 
   function WelcomeSection() {
@@ -55,13 +56,14 @@
             { label: 'After terms', note: 'title, steps, action rise once, 120 ms apart', node: <Shot><Screen /></Shot> },
             { label: 'Agreeing', note: 'the agreement record is being written', node: <Shot><Screen terms="firstrun" termsBusy /></Shot> },
             { label: 'Not saved', note: 'the same button tries again', node: <Shot><Screen terms="firstrun" termsError /></Shot> },
+            { label: 'Terms updated', note: 'the changed documents by name; a quiet Not now with its cost', node: <Shot><Screen terms="update" /></Shot> },
             { label: 'Signed out', note: 'after Sign out (section 64): paused, one way back', node: <Shot><Screen signedOut="alex@example.com" /></Shot> },
             { label: 'Reduced motion', note: 'everything is simply there', node: <Shot><Screen reduced /></Shot> },
             { label: 'Compact 640', note: 'the column centres in less height', node: <Shot h={640}><Screen compact /></Shot> },
             { label: 'Proposed headline', note: 'if D3 drops the income promise', node: <Shot><Screen headline="proposed" /></Shot> },
           ]} />
           <G.Warn>
-            Decision D3. The headline is the PM’s and is kept word for word: “An AI that turns your social accounts into income.” The site pays $30 for 20 verified days, and the glossary bans “income”. If D3 settles on the site’s model, use the proposed line (“Put your BlueAI worker to work.”), shown above.
+            Decision D3. The headline is the PM’s and is kept word for word: “An AI that turns your social accounts into income.” The site says “Run BlueAI on at least 20 days each month to earn $30” (apply.html:1285), and the glossary bans “income”. If D3 settles on the site’s model, use the proposed line (“Put your BlueAI worker to work.”), shown above.
           </G.Warn>
           <G.CompareRow
             v2={(

@@ -2,11 +2,11 @@
    The one source of every colour, type, space, radius, stroke, shadow, scrim, layer, motion, focus,
    icon and shared size the kit, screens and guide use. tools/ds-check.js enforces colour (no raw
    colour in kit/ or screens/) and sizes: the lists the JSX copies (Icon and Avatar SIZES), and no
-   kit or screens rule typing a Size token's value raw. Geometry that belongs to one part only (a
-   switch track and thumb, a checkbox box and tick, a badge dot, a menu's minimum width) stays px in
-   that part's rule; a size one part repeats is a local custom property without the --v2- prefix
-   (--ledger-date-w, screens/core.css), the way the colour marks are (--badge-mark,
-   kit/display.css); a size two parts share is a token here first.
+   kit or screens rule typing a Size token's value raw or borrowing a Space token for it. Geometry
+   that belongs to one part only (a switch track and thumb, a badge dot, a menu's minimum width)
+   stays px in that part's rule; a size one part repeats is a local custom property without the
+   --v2- prefix (--ledger-date-w, screens/core.css; --check-box, kit/inputs.css), the way the
+   colour marks are (--badge-mark, kit/display.css); a size two parts share is a token here first.
    Every token is a CSS custom property on :root with the prefix --v2-, and nothing else uses that
    prefix. Light theme only: V2 is white end to end and the
    onBlue site never ships its dark theme (onblue/apply.html:36 forces light), so a dark set
@@ -49,14 +49,14 @@
   --v2-line-hover: rgba(0,0,0,0.20); /* hover firm-up on pressable cards and rows. Absorbs #c7d2e1 (product_home.jsx:98), #c3cad6 (ai_mode.jsx:55), #c7d2fe (jobs.jsx:79) */
   --v2-link-underline: rgba(0,0,0,0.32); /* resting underline under an ink link (turns blue on hover). onBlue: shared verbatim, --link-underline 32% (onblue/onblue.css:326). Absorbs none (V2 links are blue text, no underline) */
 
-  /* Blue. Role: One action and selection hue. Brand blue for marks, focus, selection and progress; a one-step-deeper action blue for filled buttons; a deeper ink for blue text on tints.
+  /* Blue. Role: One action and selection hue. Brand blue for marks, focus, selection and progress; a one-step-deeper action blue for filled buttons; a deeper ink for blue text on tints, which is also the filled button's hover (one colour, two role names).
      onBlue: adapted: --v2-blue is the site's --blue #156efe (onblue/onblue.css:46). The site's own design.md claims 4.5:1 on white but it computes 4.47:1, so the product adds --v2-action #1268f0 (4.92:1 with white) for every white label and --v2-blue-ink #0d5ad6 (the site's --notice-ink, 6.09:1, onblue/onblue.css:444) for blue text on tints.
      Why: White on #1990FF is 3.24:1 on every primary button and link (inv-foundations finding 1). Indigo #4f46e5 as nav active is a second accent (shared.jsx:305). Seven blue fills, six blue lines and seven blue inks become eight named roles.
      Absorbs: the V2 values listed on each token below. */
   --v2-blue: #156efe; /* focus outline, selected border, progress fill, current-step disc, active nav indicator. Absorbs #1990FF as focus/selected/progress (index.html:57, needs_bluestacks.jsx:139, ai_mode.jsx:52) */
   --v2-action: #1268f0; /* primary button fill, send button. Absorbs #1990FF fills (index.html:342, settings.jsx:123, agent_permissions.jsx:179, byok.jsx:26, moneymaker_home.jsx:141, worker_day_done.jsx:163, terms_sheet.jsx:121), #1a90ff, #1275D8, indigo #4f46e5 buttons (jobs.jsx:60) */
-  --v2-action-hover: #0f5ad4; /* primary hover (6.12:1). Absorbs brightness(1.06) and lift hovers (login.jsx:56, terms_sheet.jsx:122) */
-  --v2-blue-ink: #0d5ad6; /* blue text: on-tint labels, info notice text, hovered link. Absorbs #1e40af, #1d4ed8, #1763c6, #2563eb, #1e3a8a, #1990FF link text (credits_popup_parts.jsx:110, worker_day_done.jsx:184) */
+  --v2-action-hover: var(--v2-blue-ink); /* primary hover: the blue ink, #0d5ad6 (white 6.09:1), named for its role the way --v2-gutter names --v2-space-4. Absorbs brightness(1.06) and lift hovers (login.jsx:56, terms_sheet.jsx:122) */
+  --v2-blue-ink: #0d5ad6; /* blue text: on-tint labels, info notice text, hovered link. Absorbs #1e40af, #1d4ed8, #1763c6, #2563eb, #1e3a8a, #1990FF link text (credits_popup_parts.jsx:110, worker_day_done.jsx:184). The site's light --blue-ink equals --blue #156efe (onblue.css:443), i.e. --v2-blue, not this token */
   --v2-blue-tint: rgba(21,110,254,0.08); /* info notice fill, user bubble fill. Absorbs #eff6ff, #eaf3ff, #eef6ff, #e8f3ff, #f5f9ff, #f0f7ff, gradient #eef5ff to #e2edff (worker_cards.jsx:25) */
   --v2-blue-tint-line: rgba(21,110,254,0.24); /* edge of an info tint. Absorbs #bfdbfe, #d6e6fb, #c7dcf5, #bcd6f5, #9ec9f5, #93c5fd */
   --v2-select: rgba(21,110,254,0.12); /* selected fill (choice card, chip, segmented on). Absorbs #eef6ff selected (ai_mode.jsx:51), #eef2ff nav active (shared.jsx:305) */
@@ -107,7 +107,7 @@
   --v2-leading-tight: 1.2; /* titles. Absorbs 1.18, 1.2, 1.25 */
   --v2-leading-snug: 1.35; /* single-line UI, labels, meta. Absorbs 1.3, 1.35, 1.4, normal */
   --v2-leading-body: 1.5; /* paragraphs and bubbles. Absorbs 1.45, 1.5, 1.55, 1.6, 1.65, '17px', '20px' */
-  --v2-tracking-display: -0.03em; /* 40px numeral. Absorbs -1px, -2px, -4px, -0.7px */
+  --v2-tracking-display: -0.03em; /* 40px numeral. Absorbs -1px, -2px, -4px, -0.7px, and the site's serif em (onblue.css:1451; screens/entry.css .v2-serif-em) */
   --v2-tracking-title: -0.02em; /* 20 and 24px titles. Absorbs -0.4px, -0.3px, -0.5px, -0.02em */
   --v2-tracking-label: -0.01em; /* 16px titles, buttons. Absorbs -0.01em, -0.015em, -0.2px */
   --v2-tracking-eyebrow: 0.08em; /* uppercase eyebrow only. Absorbs 0.04 to 0.14em (index.html:474, worker_day_done.jsx:153, account_gate.jsx:26) */
@@ -239,10 +239,10 @@
 
   /* Size. Role: Part sizes that more than one part shares or that step as one set: marks (avatars, tiles, discs), rails, floating widths, text measures.
      onBlue: not shared (the site sizes page-scale parts; these are the 419px window's).
-     Why: The same raw sizes were typed into several kit files (364 twice, the 260 and 280 measures, 32, 40 and 56 discs and tiles), so one change could not reach them all. Check 8 (tools/ds-check-more.js) holds the family: Avatar SIZES equal the marks and each .v2-avatar size rule reads its mark, no caller passes a size off that list, and no kit or screens rule types one of these values raw where the token belongs (a square of a mark size, a badge or rail height, the row minimum, the popover width, a measure).
+     Why: The same raw sizes were typed into several kit files (364 twice, the 260 and 280 measures, 32, 40 and 56 discs and tiles), so one change could not reach them all. Check 8 (tools/ds-check-more.js) holds the family: Avatar SIZES equal the marks and each .v2-avatar size rule reads its mark, no caller passes a size off that list, and no kit or screens rule types one of these values raw, or reads a Space token for it, where the token belongs (a square of a mark size, a badge or rail height, the row minimum, the popover width, a measure).
      Absorbs: the V2 values listed on each token below. */
   --v2-mark-sm: 24px; /* small avatar (app rows). Absorbs none (new) */
-  --v2-mark-md: 32px; /* avatar, notification disc, permission mark, skeleton circle, page spinner. Absorbs 34px account disc (account_gate.jsx:51) */
+  --v2-mark-md: 32px; /* avatar, notification disc, permission mark, account row mark, skeleton circle, page spinner. Absorbs 34px account disc (account_gate.jsx:51) */
   --v2-mark-lg: 40px; /* large avatar, worker card tile. Absorbs 46px worker tile (moneymaker_home.jsx:132) */
   --v2-mark-xl: 56px; /* account avatar, day-done badge. Absorbs 56px account disc (account_gate.jsx:20), 92px profile emoji disc (profile.jsx:33) */
   --v2-badge-h: 22px; /* Badge and the guide's status and priority tags. Absorbs pills 18 to 24 tall (ai_mode.jsx:38, jobs.jsx:31, index.html:474) */

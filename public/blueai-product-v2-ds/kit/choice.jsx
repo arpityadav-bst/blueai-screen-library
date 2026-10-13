@@ -14,7 +14,8 @@
               group are always unique per instance), options [{value, title, sub, disabled,
               disabledReason, pending, badge}], value | defaultValue, onChange(value),
               variant 'card'|'list'}  native radios, so arrow keys and focus come free. pending is
-              true or a short tag ('Setup needed'): picked, not active yet.
+              true or a short tag ('Setup needed'): picked, not active yet. A disabled card stays
+              reachable (arrows land on it and read its reason) but never takes the selection.
    Segmented  {options [{value, label, icon, disabled, disabledReason}], value, onChange(value),
               ariaLabel, beforeChange(value) returning true or a promise of true (a gate such as
               the Automatic consent), size 'sm'|'md', disabled, disabledReason}  role=radiogroup
@@ -24,7 +25,8 @@
               Selected draws a check in place of the icon, so selection is never shown by hue alone.
    Disabled is one model across the kit (Button, IconButton, ListRow, Switch and these): the control
    carries aria-disabled, stays in the tab order and ignores the press, and disabledReason is
-   printed under it and tied to it with aria-describedby (P3, section 09). */
+   printed under it and tied to it with aria-describedby (P3, section 09). Switch has no separate
+   reason: its description says why, and it is already tied to the switch. */
 (function () {
   const { useId, useRef, useState, useEffect } = React;
 
@@ -112,10 +114,12 @@
     const [own, setOwn] = useState(defaultValue);
     const current = value !== undefined ? value : own;
     const Badge = kit().Badge;
-    function tag(text, tone) {
+    // The pending tag and the badge are words on the card, so the radio is described by them.
+    function tag(text, tone, id) {
       if (!text || text === true) return null;
-      return Badge ? <Badge tone={tone}>{text}</Badge> : <span className="v2-radio-card-tag">{text}</span>;
+      return Badge ? <Badge tone={tone} id={id}>{text}</Badge> : <span id={id} className="v2-text-caption">{text}</span>;
     }
+    function said(o) { return typeof o.pending === 'string' ? o.pending : (!o.pending && o.badge && o.badge !== true ? o.badge : null); }
     return (
       <div role="radiogroup" aria-label={label} className={cx('v2-radio-cards', 'v2-radio-cards--' + variant, className)}>
         {(options || []).map(function (o) {
@@ -125,19 +129,19 @@
             <label key={o.value} className={cx('v2-radio-card', on && 'is-selected', o.pending && 'is-pending',
               o.disabled && 'is-disabled', o.className)}>
               <input type="radio" className="v2-radio-input" name={group} value={o.value} checked={on}
-                disabled={o.disabled} aria-labelledby={key + '-t'}
-                aria-describedby={[o.sub ? key + '-s' : null, o.disabled && o.disabledReason ? key + '-w' : null].filter(Boolean).join(' ') || undefined}
-                onChange={function () { if (value === undefined) setOwn(o.value); if (onChange) onChange(o.value); }} />
+                aria-disabled={o.disabled ? 'true' : undefined} aria-labelledby={key + '-t'}
+                aria-describedby={[said(o) ? key + '-p' : null, o.sub ? key + '-s' : null, o.disabled && o.disabledReason ? key + '-w' : null].filter(Boolean).join(' ') || undefined}
+                onChange={function () { if (o.disabled) return; if (value === undefined) setOwn(o.value); if (onChange) onChange(o.value); }} />
               <span className="v2-radio-card-body">
                 <span className="v2-radio-card-head">
-                  <span id={key + '-t'} className="v2-radio-card-title">{o.title}</span>
-                  {tag(o.pending, 'attention')}
-                  {o.pending ? null : tag(o.badge, 'neutral')}
+                  <span id={key + '-t'} className="v2-radio-card-title v2-text-title-sm">{o.title}</span>
+                  {tag(o.pending, 'attention', key + '-p')}
+                  {o.pending ? null : tag(o.badge, 'neutral', key + '-p')}
                   <span className="v2-radio-card-check" aria-hidden="true"><Ico name="check" /></span>
                 </span>
                 {o.sub ? <span id={key + '-s'} className="v2-radio-card-sub">{o.sub}</span> : null}
                 {o.disabled && o.disabledReason ? (
-                  <span id={key + '-w'} className="v2-radio-card-why"><Ico name="lock" /><span>{o.disabledReason}</span></span>
+                  <span id={key + '-w'} className="v2-radio-card-why v2-text-caption"><Ico name="lock" /><span>{o.disabledReason}</span></span>
                 ) : null}
               </span>
             </label>

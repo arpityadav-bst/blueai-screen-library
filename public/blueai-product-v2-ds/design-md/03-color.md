@@ -14,13 +14,13 @@
 
 **Sizes.** Not applicable.
 
-**States.** On surface: ink 19.67, ink-2 10.39, ink-3 6.03, ink-4 4.77 (:1). ink-4 on canvas 4.60, on panel 4.69. Everywhere else ink-4 drops under 4.5:1: sunken 4.42, blue tint 4.29, selected 4.06, success tint 4.36, attention tint 4.37, danger tint 4.17, hover wash 4.32, press wash 4.08. So ink-4 sits only on surface, panel or canvas at rest; meta on anything tinted, sunken, selected, hovered or pressed is ink-3 (the menu's hint already does this, kit/overlays.css:131). V2 today: `'Working on it…'` in #94a3b8 (ChatBubbles.ThinkingBubble, any chat run), `'App Player will be signed out too.'` in #9ca3af (the sign-in gate, `?signin=browser&player=other`).
+**States.** On surface: ink 19.67, ink-2 10.39, ink-3 6.03, ink-4 4.77 (:1). ink-4 on canvas 4.60, on panel 4.69. Everywhere else ink-4 drops under 4.5:1: sunken 4.42, blue tint 4.29, selected 4.06, success tint 4.36, attention tint 4.37, danger tint 4.17, hover wash 4.32, press wash 4.08. So ink-4 sits only on surface, panel or canvas at rest; meta on anything tinted, sunken, selected, hovered or pressed is ink-3 (the menu's hint already does this, kit/overlays.css:114; the type style for it is `.v2-text-caption`, section 04). V2 today: `'Working on it…'` in #94a3b8 (ChatBubbles.ThinkingBubble, any chat run), `'App Player will be signed out too.'` in #9ca3af (the sign-in gate, `?signin=browser&player=other`).
 
 **Props.** Tokens only. Text styles carry their ink (section 04); override with a token, never a hex.
 
 **Motion.** Colour changes use `--v2-dur-1` and `--v2-ease-standard`.
 
-**Accessibility.** Body text 4.5:1 at least on its ground (section 09 computes every pair). ink-4 is never the only carrier of a consequence: a line that says what happens next ("signed out too", "won't count") is ink-3 or stronger. Placeholder is never text that must be read.
+**Accessibility.** Body text 4.5:1 at least on its ground (section 09 computes every pair). ink-4 is never the only carrier of a consequence: a line that says what happens next ("signed out too", "won’t count") is ink-3 or stronger. Placeholder is never text that must be read.
 
 **Responsive.** Not applicable.
 
@@ -74,21 +74,21 @@
 
 **Purpose.** Five tones every badge, banner, notice, tick, day bar and run card read from one table.
 
-**Anatomy.** Each tone is tint, line, ink (and icon where it differs). Neutral: `--v2-surface-sunken`, `--v2-line`, `--v2-ink-2`. Info: `--v2-blue-tint`, `--v2-blue-tint-line`, `--v2-blue-ink`. Success: `--v2-success-tint`, `--v2-success-line`, `--v2-success-ink` #15803d (icon `--v2-success` #16a34a). Attention (the worker needs your answer, the PM's yellow): `--v2-attention-tint` #fdf6cf, `--v2-attention-line` #f3e8a8, `--v2-attention-ink` #8a6116. Danger: `--v2-danger-tint` #fdecec, `--v2-danger-line` #d0454a, `--v2-danger-ink` #c03a40 (also the destructive fill).
+**Anatomy.** Each tone is tint, line, ink (and icon where it differs). Neutral: `--v2-surface-sunken`, `--v2-line`, `--v2-ink-2`. Info: `--v2-blue-tint`, `--v2-blue-tint-line`, `--v2-blue-ink`. Success: `--v2-success-tint`, `--v2-success-line`, `--v2-success-ink` #15803d (icon `--v2-success` #16a34a). Attention (the worker needs your answer, the PM's yellow): `--v2-attention-tint` #fdf6cf, `--v2-attention-line` #f3e8a8, `--v2-attention-ink` #8a6116. Danger: `--v2-danger-tint` #fdecec, `--v2-danger-line` rgba(208,69,74,0.32) (the pale banner and P1 tag edge, like the other tones' lines), `--v2-danger-ink` #c03a40 (also the destructive fill), plus one strong stroke, `--v2-danger-edge` #d0454a (4.53:1 on white, so it reads at 1px): the edge of an invalid TextField, Select or Checkbox (`kit/inputs.css:31, 149`).
 
 **Variants.** Five tones. Orange heads-up is not a tone: it is a neutral notice whose icon is attention-coloured.
 
 **Sizes.** Not applicable.
 
-**States.** Neutral (paused, skipped, pending verification, out of credits in the composer), info (running, checking, a fact with nothing to do), success (verified, done, connected), attention (needs you, and anything the partner can still fix today: a waiting job, a run that didn't start, out of credits on the RunCard, signed out), danger (a day already lost or a failure: failed, not counted, can't run). One rule picks between the last two: danger is for a day already lost or a failure, attention for something the partner can still fix.
+**States.** Neutral (paused, skipped, pending verification, out of credits in the composer), info (running, checking, a fact with nothing to do), success (verified, done, connected), attention (needs you, and nothing has gone wrong: a waiting job, a run that didn't start because the PC was off, out of credits on the RunCard, an account signed out), danger (something went wrong or a day is lost: failed, can't run, not counted). One rule picks between the last two: danger when the run failed, cannot start or the day is lost, even while Try again or a fix can still save today; attention when nothing failed and the partner's answer or action is what is needed. Out of credits in the composer is neutral: it explains a locked field, it does not ask.
 
-**Pending verification, one rule.** A pending day is neutral wherever it is a status: one tick in `--v2-ink-4` (StatusTick, section 43), a neutral Badge with the `check` mark (section 16), the RunCard's Done badge (section 36). Blue touches it in exactly three places, all meaning "in, not yet checked" rather than a status: the DayBar's pending segment (1.5 `--v2-blue` inset outline, section 43), the run chip's pending dot (the same 1.5 blue ring, `kit/shell.css:75`, section 30) and the DayDone badge (`--v2-blue-tint` with its tick in `--v2-blue-ink`, section 44). Never green until verified. V2 today: the dev Preview's Chat states row (ChatBubbles.ChatStatesPreview); the AI Credits banner at `?credits=0`.
+**Pending verification, one rule.** A pending day is neutral wherever it is a status: one tick in `--v2-ink-4` (StatusTick, section 43), a neutral Badge with the `check` mark (section 16), the RunCard's Done badge (section 36). Blue touches it in exactly three places, all meaning "in, not yet checked" rather than a status: the DayBar's pending segment (1.5 `--v2-blue` inset outline, section 43), the run chip's pending dot (the same 1.5 blue ring, `kit/shell.css:76`, section 30) and the DayDone badge (`--v2-blue-tint` with its tick in `--v2-blue-ink`, section 44). Never green until verified. V2 today: the dev Preview's Chat states row (ChatBubbles.ChatStatesPreview); the AI Credits banner at `?credits=0`.
 
 **Props.** The five tones are the table every part reads, but each part names its own prop (check this list before passing one):
 - Badge `tone`: the five; anything else is neutral (`kit/display.jsx:21-26`).
 - Banner `tone`: info, success, attention, danger, and `offline` for its neutral (sunken, line, ink-3 icon; section 21); anything else is info, so a neutral banner is `tone="offline"` with its own icon (the AI-mode conflict uses `alert`, section 49) (`kit/notice.jsx:16-18`).
 - NoticeBubble `kind`: the five, plus the aliases headsup (attention), fail (danger) and needsInput (attention with the help glyph) for older callers; anything else is attention (`kit/thread.jsx:72-86`).
-- ComposerNotice `tone`: drawn by the Banner, so the Banner's tones, plus `neutral`, its own name for the Banner's offline look with a pause glyph (`kit/composer.jsx:36-41`).
+- ComposerNotice `tone`: drawn by the Banner, so the Banner's tones, plus `neutral`, its own name for the Banner's offline look with a pause glyph (`kit/composer.jsx:38-46`).
 - Toast `tone`: success, info, error, loading; danger is read as error, so it is announced assertively (section 24, `kit/toast.jsx`).
 - ProgressBar: no tone prop for status; `error` and `paused` booleans freeze it red or grey, and it turns success at max (`kit/progress.jsx:20-26`).
 

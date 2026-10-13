@@ -21,21 +21,21 @@
   // The status a chip shows, from the Worker record (section 41). Labels are proposed copy except
   // 'Didn’t finish', which echoes the PM's toast.
   const CHIP_STATES = [
-    ['scheduled', 'Next run 11 am; Next run 9 am to 9 pm; Runs later today', 'today.status scheduled, worded from runWindow (a time, a window, any time)', 'Home, Today'],
+    ['scheduled', 'Next run 11 am; Next run 9 am to 8 pm; Runs later today', 'today.status scheduled, worded from runWindow (a time, a window, any time)', 'Home, Today'],
     ['running', 'Running', 'today.status running', 'the run in the chat'],
     ['needs-you', 'Needs you (yellow tint)', 'today.status waiting', 'the job preview'],
-    ['done', 'Day 7 of 20 (blue ring while pending, green once verified)', 'today.status done', 'the run in Activity'],
-    ['not-counted', 'Not counted today (neutral dot)', 'today.status done, end declined (skipped)', 'the run in Activity'],
-    ['verified', 'All 20 days done', 'all 20 days verified (numbers().complete)', 'Home, Today: the card’s Earnings'],
+    ['pending', 'Day 7 of 20 (blue ring: in, not yet checked)', 'today.status done, today’s ledger row not verified yet', 'the run in Activity'],
+    ['not-counted', 'Not counted today (neutral dot)', 'done with today.outcome skipped or expired; noCredits with creditsDay stopped', 'the run in Activity; out of credits: Home, Today'],
+    ['verified', 'All 20 days done; Day 7 of 20 once today is verified', 'done and verified; numbers().complete', 'the run in Activity; complete: Home, Today (the card’s Earnings)'],
     ['stopped', 'Stopped (ring dot)', 'today.status stopped', 'Home, Today: Run again and its deadline'],
     ['failed', 'Didn’t finish (red tint)', 'today.status failed', 'the run, with Try again and its deadline'],
     ['missed', 'Didn’t start (neutral dot)', 'today.status missed: the PC was off or asleep at run time', 'Home, Today: Run now and its deadline'],
     ['blocked', 'Can’t run (red tint)', 'blockedBy(record): no app, signed out or no BlueStacks', 'Home, Today: the card’s one fix'],
     ['paused', 'Paused (ring dot)', 'paused', 'Settings > Worker'],
-    ['no-credits', 'Waiting for credits (ring dot)', 'credits.left below runCost before today’s run', 'Home, Today: the card says when credits refresh'],
+    ['no-credits', 'Waiting for credits (ring dot)', 'credits.left below runCost before today’s run, refill before 9 pm (creditsDay waiting)', 'Home, Today: the card says when credits refresh'],
     ['paused', 'Update needed (ring dot)', 'an update is required (section 69)', 'the update screen (section 69)'],
-    ['offline', 'Offline (ring dot)', 'offline', 'Home, with the offline banner'],
-    ['ended', 'Period ended (ring dot)', 'the 20 days ran out before all were verified (daysLeft 0)', 'Home, Today: the card’s Earnings'],
+    ['offline', 'Offline (ring dot)', 'offline', 'Home, Today: the card says what happens to today'],
+    ['ended', 'Period ended (ring dot)', 'the 20 days ran out before all were verified (daysLeft 0)', 'Home: the period-ended state with Earnings (section 69)'],
   ];
   // The label a specimen draws: the first wording, without the note in brackets.
   function chipLabel(s) { return s[1].split(';')[0].replace(/ \(.*\)$/, ''); }

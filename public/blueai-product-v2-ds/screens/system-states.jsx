@@ -15,12 +15,15 @@
      screen the screen that failed to load, for error ('Home' by default).
      Cash out follows the site's one rule (onblue/apply.html:2277-2296): it opens only when the
      period has ended AND the balance is at least $10; under it, the balance carries over, in the
-     site's words. With a worker, period-ended picks the variant from numbers().reachedMinimum.
-     The period-ended words are one set (endedCopy, or V2Kit.endedCopy when the kit has it): the
-     verified count, since cash out depends on it, and a last day still being checked said so.
+     site's words. With a worker, period-ended follows the site's numbers().cashOutOpen (null: where to look).
+     The period-ended words are one set, V2Kit.endedCopy (section 41): the verified count, since
+     cash out depends on it, and a last day still being checked said so.
      Home shows this state, not a card, once the period is over.
+     not-in-program  Switch account, and a quiet Get help (the site's FAQ) for a partner who
+            believes this is the account they applied with, or has lost access to it.
      left-program  after Leave the program or Delete my data (Account, section 64): the worker
-            has stopped, what happens to the balance, Earnings, and Apply again on the site.
+            has stopped, what happens to the balance (the $10 minimum always stated), Earnings,
+            and Apply again on the site.
             deleting adds that the data is being deleted.
      busy   the primary action is working (Try again, Update now, Switch account)
    SYSTEM_STATES [[key, label]] in the order the guide shows them. */
@@ -44,14 +47,6 @@
   function fixture(key) {
     const fx = K().workerFixtures || {};
     return fx[key] || fx.verified || null;
-  }
-
-  // 'This program ended on Nov 1': the program ends on a date; 'your 20 days' is the count.
-  function endedCopy(n) {
-    const checking = !n.pending ? '' : n.pending === 1 ? ' One more day is still being checked and counts once it’s verified.'
-      : ' ' + n.pending + ' more days are still being checked and count once they’re verified.';
-    const cash = n.reachedMinimum ? 'Cash out is open on Earnings.' : 'You need $' + n.cashOutMin + ' to cash out. Your balance carries over to the next period.';
-    return { title: 'This program ended on ' + n.endsOn, body: 'You finished ' + n.verified + ' of ' + n.target + ' days.' + checking + ' ' + cash };
   }
 
   // Chrome per state: which status the top bar says, whether credits and the nav make sense.
@@ -132,6 +127,7 @@
                 variant: 'locked', icon: 'user', title: 'This account isn’t in the program',
                 body: 'You’re signed in as alex@morganmedia.example. BlueAI runs on the account you applied with.',
                 primaryAction: action('Switch account', p.onSwitch, p.busy),
+                secondaryAction: { label: 'Get help', href: k.SITE_FAQ_URL, external: true },
               })}
               <p className="v2-sys-note">App Player will be signed out too.</p>
             </>
@@ -150,25 +146,27 @@
       case 'period-under': { // under the minimum: the site's words, apply.html:2292-2293
         const open = state === 'period-ended';
         const base = k.numbers ? k.numbers(w || fixture(open ? 'ended' : 'endedBelow')) : { verified: open ? 18 : 6, pending: 0, target: 20, endsOn: 'Nov 1', cashOutMin: 10 };
-        const c = (k.endedCopy || endedCopy)(Object.assign({}, base, { reachedMinimum: open }));
+        const cash = w ? base.cashOutOpen : open; // a worker: the site's answer; a specimen: its variant
+        const c = k.endedCopy ? k.endedCopy(Object.assign({}, base, { cashOutOpen: cash })) : {};
         return {
           center: true,
           node: empty({
             variant: 'first', icon: 'calendar', title: c.title, body: c.body,
-            primaryAction: open ? earnings : null, secondaryAction: open ? null : earnings,
+            primaryAction: cash === false ? null : earnings, secondaryAction: cash === false ? earnings : null,
           }),
         };
       }
       case 'left-program': { // proposed copy; the cash-out line is CONFIRM_COPY's (settings.jsx)
-        const n = k.numbers ? k.numbers(w || fixture('verified')) : { reachedMinimum: true, endsOn: 'Nov 1', cashOutMin: 10 };
-        const cash = n.reachedMinimum ? 'Your verified days stay on Earnings, and cash out opens there after ' + n.endsOn + '.'
-          : 'Your balance is under $' + n.cashOutMin + ', so it can’t be cashed out.';
+        const n = k.numbers ? k.numbers(w || fixture('verified')) : { cashOutOpen: null, endsOn: 'Nov 1', cashOutMin: 10 };
+        const cash = n.cashOutOpen === true ? 'Your verified days stay on Earnings, and cash out is open there.'
+          : n.cashOutOpen === false ? 'Your balance is under $' + n.cashOutMin + ', so it can’t be cashed out.'
+            : 'You need $' + n.cashOutMin + ' to cash out once the program ends on ' + n.endsOn + '. See your balance on Earnings.';
         return {
           center: true,
           node: empty({
             variant: 'first', icon: 'sign-out', title: 'You’ve left the program',
             body: 'Your worker has stopped and BlueAI no longer uses your accounts. ' + cash + (p.deleting ? ' Your data is being deleted. We’ll email you when it’s done.' : ''),
-            primaryAction: n.reachedMinimum ? earnings : null,
+            primaryAction: n.cashOutOpen === false ? null : earnings,
             secondaryAction: { label: 'Apply again', href: String(k.SITE_FAQ_URL || '').split('#')[0], external: true },
           }),
         };
@@ -185,11 +183,11 @@
     }
   }
 
-  // Cash out is open only when the period has ended and the balance reached the minimum.
+  // Cash out is open only when the site says so (cashOutOpen); false is its under-the-minimum answer.
   function resolve(state, w) {
     const k = K();
     if (state !== 'period-ended' || !w || !k.numbers) return state;
-    return k.numbers(w).reachedMinimum === false ? 'period-under' : state;
+    return k.numbers(w).cashOutOpen === false ? 'period-under' : state;
   }
 
   function SystemStates(props) {
@@ -210,5 +208,5 @@
   }
 
   window.V2Screens = window.V2Screens || {};
-  Object.assign(window.V2Screens, { SystemStates, SYSTEM_STATES, endedCopy });
+  Object.assign(window.V2Screens, { SystemStates, SYSTEM_STATES });
 })();

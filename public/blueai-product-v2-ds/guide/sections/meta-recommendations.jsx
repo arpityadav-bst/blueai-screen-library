@@ -1,7 +1,8 @@
 /* Section 73: Recommendations for V2 (compose slice). Every V2 difference as a prioritised fix for
    the PM (P1 to P3) with V2 file:line, today, recommended, why and effort; then Decisions pending
    (D1 to D19) and the V2 strings changed as proposals. Data from the architect plan. Each recommendation's V2 location (and any V2 string its
-   "today" quotes exactly) is proved by guide/refs/compose.js (ids compose.rNN.*). */
+   "today" quotes exactly) is proved by guide/refs/compose.js (ids compose.rNN.*). The lists are
+   also put on G.recommendations ({recs, decisions}) so section 75 tallies them instead of typing a count. */
 (function () {
   const G = window.V2Guide;
 
@@ -63,7 +64,7 @@
   const DECISIONS = [
     ["D1","Primary fill","Blue action #1268f0 (kit default)","Ink #0b0b0d like the site's commit button","A: blue already means the worker's actions in V2; links become underlined ink and selection a 12% tint, so blue no longer collides."],
     ["D2","The noun: worker or agent","worker (V2)","agent (site, apply.html:1269-1274)","One noun across site and app, one capitalisation ('BlueAI worker'); PM call."],
-    ["D3","The money model","$1 per verified day + $10 day-20 bonus (worker_day_done.jsx:5-6)","$30 when the 20-day goal is met (apply.html:1285, 1471)","Pick one sentence and say it everywhere; if B, the app shows days, never partial dollars ('days' style is already the default). Rename the bonus 'day-20 bonus' if it stays. The $10 cash-out minimum is not part of the choice: it is V2's rule (worker_day_done.jsx:6) and the site's (apply.html:1360, 2292), so the app states it now (sections 01, 41, 43). Proposed strings that wait on this choice (PM and legal): the leave and delete line for a balance under the minimum ('a balance under $10 can’t be cashed out once you leave', screens/settings.jsx cashLine), and Home's dropped banner sentence 'Every day you run still counts.' (false under B)."],
+    ["D3","The money model","$1 per verified day + $10 day-20 bonus, over one 20-day period that ends Nov 1 (worker_day_done.jsx:5-6, 38)","At least 20 days each month, $30 each month the goal is met (apply.html:1285, 1471)","Pick one sentence and say it everywhere. The choice is also the cadence (one period ending Nov 1, or every month) and the unit (verified days, or days run: apply.html never says verified). If B, the app shows days, never partial dollars ('days' style is already the default). Rename the bonus 'day-20 bonus' if it stays. The $10 cash-out minimum is not part of the choice: it is V2's rule (worker_day_done.jsx:6) and the site's (apply.html:1360, 2292), so the app states it now (sections 01, 41, 43). Proposed strings that wait on this choice (PM and legal): the leave and delete line for a balance under the minimum ('a balance under $10 can’t be cashed out once you leave', screens/settings.jsx cashLine), and Home's dropped banner sentence 'Every day you run still counts.' (false under B)."],
     ["D4","Where the mode changes later","Version 1 chip in the composer","Version 2 ribbon (default)","B as the in-chat shortcut plus Settings > Worker as the permanent home either way."],
     ["D5","Sign-in option","Check account (interrupt only on the wrong account)","Continue as (always confirm)","A for fewer stops; drop the losing code path."],
     ["D6","Credits and the paid run","Reserve the worker's run cost from the daily grant","Warn before a chat would dip into it","A: a partner should never lose a paid day to an invisible meter. Not built yet: the composer locks only at zero (section 38) and the credits chip turns low once fewer than the run's cost are left (section 47), so a chat can still spend today's run (section 76)."],
@@ -77,10 +78,12 @@
     ["D14","Skipping a waiting job (R06)","The cost on the option, one tap: 'Skip: today won’t count'","Keep the job open until 9 pm with Undo","A, built in the JobPreviewCard (section 45): the cost is read before the tap, and nothing waits on a toast."],
     ["D15","The setup promise (R11)","One bullet that holds in both modes ('You choose: I can ask before each paid job, or take them on my own.')","Keep 'I only run a paid job after you say yes to that specific job.' and drop Automatic from setup","A: Automatic stays a choice, and the first promise stays true. PM copy."],
     ["D16","Reading watch history (R18)","Ask first: PermissionRequest in setup, Allow or Not now, revoked in Connected apps","Read it at setup as V2 does, listed under Account with a switch to stop it","A, built (section 46): reading viewing data is its own permission. PM copy."],
-    ["D17","The paid job ask (R07)","JobPreviewCard replaces V2's AskCard for paid jobs","Keep the AskCard and add the video, channel and exact comment to it","A, built (section 45); the AskCard stays for every other question (section 37)."],
+    ["D17","The paid job ask (R07)","JobPreviewCard replaces V2's AskCard for paid jobs","Keep the AskCard and add the video, channel and exact comment to it","A, built: Chat's waiting state asks in the JobPreviewCard (section 45, screens/chat.jsx jobCard); B is one constant away (D17 = 'B'); the AskCard stays for every other question (section 37)."],
     ["D18","Feedback on a failed job (section 39)","Offer thumbs on failed jobs too","Successes only, as V2 (chat_product.jsx:150)","A: a failed job is where a partner most wants to say something; Report a problem stays the route for a dispute."],
     ["D19","Turning an interest topic off (section 62)","A topic can be turned off, and BlueAI stops picking jobs about it","Topics are read only, from watch history","A, as Worker settings draws it; the PM confirms what it does to the jobs offered."],
   ];
+
+  G.recommendations = { recs: RECS, decisions: DECISIONS };
 
   // [V2 today (file:line), proposed, why]: section 73's "V2 strings changed as proposals".
   const PROPOSALS = [
@@ -155,7 +158,7 @@
         </div>
         {shown.map(function (r) { return <Rec key={r[0]} r={r} />; })}
 
-        <G.Part name="Decisions pending (D1 to D19)">
+        <G.Part name={'Decisions pending (D1 to D' + DECISIONS.length + ')'}>
           <p className="g-role">Choices only the PM (and legal, where named) can make. The system builds the recommended option and keeps the other easy to switch to, with one exception: no part builds either option of D6 yet (section 76). A recommendation that waits on a choice names its decision (R06 D14, R07 D17, R11 D15, R14 D6, R18 D16).</p>
           <G.Table head={['Decision', 'Option A', 'Option B', 'Recommended']} rows={DECISIONS.map(function (d) {
             return [<span><strong>{d[0]}</strong> {d[1]}</span>, d[2], d[3], d[4]];

@@ -37,7 +37,7 @@
             first. The system locks the composer at zero, says why and until when in its notice slot before anyone types
             (section 38), and says once, at the end of a run that stopped, what zero means for today. With nothing left to
             stop, the popup has no moment. Its explainer, “What are AI credits?”, moves to the AI credits screen
-            (<a className="g-link" href={G.hashHref('credits-screen')}>section 66</a>), read from OOC_COPY.explain.
+            (<a className="g-link" href={G.hashHref('credits-screen')}>section 66</a>), V2’s explainer, kept word for word (index.html:525-537).
           </G.Note>
           <G.CompareRow
             v2={<div style={card}><G.Live get={function () { return window.Byok && window.Byok.OutOfCreditsCard; }} props={{ onDismiss: noop }} label="window.Byok.OutOfCreditsCard" /></div>}
@@ -71,7 +71,8 @@
           <G.StateGrid wide states={[
             { label: 'Composer notice, run covered', note: 'before typing', node: note({ dayStatus: 'covered' }) },
             { label: 'Composer notice, run still to come', node: note({ dayStatus: 'waiting' }) },
-            { label: 'Run ended: no credits', note: 'day status stated', node: note({ variant: 'run', dayStatus: 'stopped' }) },
+            { label: 'Run ended: no credits', note: 'today won’t count: danger', node: note({ variant: 'run', dayStatus: 'stopped' }) },
+            { label: 'Run ended: refill before 9 pm', note: 'today can still count: neutral, clock', node: note({ variant: 'run', dayStatus: 'waiting' }) },
           ]} />
           <G.Warn>
             Proposed copy, pending decision D6 (reserve the run's credits or warn before chat dips into them):
@@ -84,8 +85,8 @@
             { part: 'V2 composer', token: null, value: "placeholder 'BlueAI is out of credits until tomorrow...', field disabled", ref: ['credits-settings.ooc.placeholder', 'credits-settings.ooc.composer-disabled'] },
             { part: 'V2 main chat', token: null, value: 'zero shown only after Send', ref: 'credits-settings.ooc.trigger' },
             { part: 'Notice', token: 'ComposerNotice tone neutral (--v2-surface-sunken, --v2-line, clock in --v2-ink-3)', value: "'Out of AI credits until 5:30 am tomorrow.' + day line; the one wording section 38 and the chat screen use" },
-            { part: 'Run line', token: '--v2-ink-3 (clock icon, as RunCard nocredits), --v2-ink, --v2-ink-4', value: 'day line 13/500, refresh 12 meta; RunCard nocredits' },
-            { part: 'Tone', token: null, value: 'neutral everywhere out of AI credits shows (section 03): nothing failed and nothing is asked of the partner; the words say until when and what it means for today' },
+            { part: 'Run line', token: '--v2-danger-ink (x-circle) when today won’t count, --v2-ink-3 (clock) while it still can; --v2-ink, --v2-ink-4', value: 'day line 13/500, refresh 12 meta; the same tone as the RunCard’s nocredits end' },
+            { part: 'Tone', token: null, value: 'section 03’s one rule: neutral with a clock wherever it says until when (nothing failed, nothing is asked); danger with x-circle only on the line that says today won’t count; never attention' },
             { part: 'Time', token: null, value: 'local clock from creditsTime.formatClock; a fixed time, never a ticking countdown', ref: 'credits-settings.countdown.utc' },
           ]} />
         </G.Part>

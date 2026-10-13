@@ -63,7 +63,7 @@
             { part: 'FAQ', token: 'V2Kit.SITE_FAQ_URL', value: 'the site’s FAQ; the credits screen links its AI credits article', ref: 'screens-account.help.article' },
             { part: 'Sheet', token: 'Sheet, full window width', value: '"Report a problem", reply-to line 13 ink-3' },
             { part: 'From a run', token: '--v2-surface-sunken, --v2-radius-md, --v2-text-13', value: 'activity 16 + run label 600 + what happened' },
-            { part: 'Topic', token: 'Select', value: 'A run / A day that wasn’t verified / Earnings or cash out / My account or sign-in / Something else' },
+            { part: 'Topic', token: 'Select', value: 'A run / A day that wasn’t counted / Earnings or cash out / My account or sign-in / Something else' },
             { part: 'Details', token: 'TextArea, required, 4 rows', value: 'placeholder is an example, never the label' },
             { part: 'Diagnostics', token: 'Checkbox, on', value: '"Today’s run log and the app version. Never your passwords or messages."' },
             { part: 'Actions', token: 'Button secondary + primary lg, busy', value: 'Cancel / Send; Try again after a failure' },

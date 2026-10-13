@@ -1,6 +1,6 @@
-/* Section 04 Type (foundations slice). One face, twelve text styles (kit/base.css .v2-text-*),
+/* Section 04 Type (foundations slice). One face, thirteen text styles (kit/base.css .v2-text-*),
    three weights, numerals. Sample copy is quoted from V2 (refs in guide/refs/foundations.js) except
-   the display figure and the greeting, which are labelled proposed. */
+   the display figure, the greeting, the timestamp and the caption, which are labelled proposed. */
 (function () {
   const G = window.V2Guide;
 
@@ -15,7 +15,8 @@
     ['v2-text-body', 'You can pause, stop, or disconnect anytime.', '14 / 400 / 1.5 / 0', '--v2-ink-2', 'Bubbles, composer, paragraphs, fields', 'foundations.type.body-copy'],
     ['v2-text-body-sm', 'Every task and job BlueAI does uses credits.', '13 / 400 / 1.5 / 0', '--v2-ink-3', 'Descriptions, notes, consequences', 'foundations.type.body-sm-copy'],
     ['v2-text-label', 'Switch account', '13 / 500 / 1.35 / -0.01em', '--v2-ink-2', 'Buttons, chips, nav, menu rows', 'foundations.blue.gate-label'],
-    ['v2-text-meta', 'Working on it…', '12 / 400 / 1.35 / 0', '--v2-ink-4', 'Timestamps, counts, hints', 'foundations.ink.thinking-copy'],
+    ['v2-text-meta', '11:04 am', '12 / 400 / 1.35 / 0', '--v2-ink-4', 'Timestamps and counts only, never a line that carries a consequence (proposed sample)', null],
+    ['v2-text-caption', 'Turning this off keeps your saved key.', '12 / 400 / 1.35 / 0', '--v2-ink-3', 'Helpers, disabled reasons, footnotes: any line that carries a consequence (6.0:1; proposed sample)', null],
     ['v2-text-eyebrow', 'Plan', '11 / 500 / 1 / 0.08em, uppercase', '--v2-ink-3', 'Section labels only; status words are Badges', 'foundations.type.eyebrow'],
     ['v2-text-mono', 'claude-haiku-4-5', '13 / 400 / 1.35 / 0, mono', '--v2-ink-2', 'Keys, endpoints, model ids', 'foundations.type.mono-hint'],
   ];
@@ -39,7 +40,7 @@
     const K = window.V2Kit || {};
     return (
       <G.Section id="type">
-        <G.Part name="Type ladder" status="changed" role="Twelve text styles, one recipe per role: size, weight, leading, tracking and ink travel together, so a screen never re-decides how loud a line is.">
+        <G.Part name="Type ladder" status="changed" role="Thirteen text styles, one recipe per role: size, weight, leading, tracking and ink travel together, so a screen never re-decides how loud a line is.">
           <G.StateGrid wide states={LADDER.map(function (row) {
             return { label: '.' + row[0] + '  ' + row[2], note: row[4], node: <div style={{ width: '100%' }}>{sample(row)}</div> };
           })} />
@@ -52,6 +53,7 @@
             system={<div className="v2-stack v2-gap-4"><span className="v2-text-greeting">Hi, Alex</span><div className="v2-stack v2-gap-2"><span className="v2-text-eyebrow">Plan</span><span className="v2-text-body">You can pause, stop, or disconnect anytime.</span><span className="v2-text-meta">Working on it…</span></div></div>}
             changed="V2 sets this in -apple-system first, so Macs show SF and Windows shows Plus Jakarta Sans, at 30 sizes with weight 800 for emphasis and a 10/700 pale-blue eyebrow. The system is Inter on both, eight sizes, three weights (400, 500, 600), and one recipe per role." />
           <G.Note>Row labels are 14/500 ink, set by ListRow (section 18), with no class of their own.</G.Note>
+          <G.Note>Meta or caption, both 12: a line that says what happens or why (a field's helper, a disabled reason, a dialog's footnote) is .v2-text-caption in ink-3; meta's ink-4 is for a time or a count only.</G.Note>
           <G.Note>Inter is the one UI face: the partner applies on, and comes back to, the onBlue site, which is Inter end to end, and putting it first in the stack ends the split where Macs render SF and Windows renders Plus Jakarta Sans. Instrument Serif italic appears only on the site-language sign-in pages. Decision D11 lets the PM keep Plus Jakarta Sans; the scale and weights hold either way.</G.Note>
           <G.SpecDrawer rows={[
             { part: 'UI face', token: '--v2-font-ui', value: "'Inter', system-ui, 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif", ref: 'foundation.font-stack' },

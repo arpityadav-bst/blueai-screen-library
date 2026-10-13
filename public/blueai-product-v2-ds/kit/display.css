@@ -3,7 +3,7 @@
    written twice: the real pseudo-class and the guide's forcing class (.is-hover, .is-focus,
    .is-active). Loops come from kit/motion.css (.v2-anim-pulse on the busy dot), so its one
    reduced-motion rule covers them. Shared sizes are Size tokens (badge, marks, row minimum); the
-   literal px left here are one part's own geometry (the 6 dot, the 8 status floor). */
+   literal px left here are one part's own geometry (the 6 dot). */
 
 /* ---- Badge: tone in the fill and the dot, words in ink-2 ---- */
 .v2-badge {
@@ -20,7 +20,7 @@
   font-family: var(--v2-font-ui);
   font-size: var(--v2-text-12);
   font-weight: var(--v2-weight-medium);
-  line-height: 1;
+  line-height: var(--v2-leading-display);
   white-space: nowrap;
   vertical-align: middle;
   --badge-mark: var(--v2-ink-4);
@@ -54,7 +54,7 @@
   font-family: var(--v2-font-ui);
   font-size: var(--v2-text-13);
   font-weight: var(--v2-weight-semibold);
-  line-height: 1;
+  line-height: var(--v2-leading-display);
   letter-spacing: 0;
   user-select: none;
 }
@@ -77,21 +77,6 @@
   object-fit: cover;
   background: var(--v2-surface-sunken);
 }
-.v2-avatar-status {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  width: 28%;
-  height: 28%;
-  min-width: 8px;
-  min-height: 8px;
-  border-radius: var(--v2-radius-round);
-  box-shadow: 0 0 0 2px var(--v2-surface);
-  background: var(--v2-ink-4);
-}
-.v2-avatar-status--success { background: var(--v2-success); }
-.v2-avatar-status--attention { background: var(--v2-attention-ink); }
-.v2-avatar-status--danger { background: var(--v2-danger-ink); }
 
 /* ---- ListRow ---- */
 .v2-row {
@@ -126,6 +111,12 @@
 }
 .v2-row--divider:last-child::after { display: none; }
 .v2-row-lead { display: inline-flex; flex: none; align-items: center; color: var(--v2-ink-3); }
+.v2-row-mark { position: relative; display: inline-flex; flex: none; align-items: center; justify-content: center; width: var(--v2-mark-md); height: var(--v2-mark-md); border-radius: var(--v2-radius-round); background: var(--v2-surface-sunken); color: var(--v2-ink-3); }
+.v2-row-mark--attention { color: var(--v2-attention-ink); }
+.v2-row-mark--success { color: var(--v2-success-ink); }
+.v2-row-mark--danger { color: var(--v2-danger-ink); }
+.v2-row-mark-dot { position: absolute; top: 0; right: 0; width: var(--v2-space-2); height: var(--v2-space-2); border-radius: var(--v2-radius-round); background: var(--v2-blue); box-shadow: 0 0 0 var(--v2-space-05) var(--v2-surface); }
+@media (forced-colors: active) { .v2-row-mark-dot { background: CanvasText; box-shadow: none; } }
 .v2-row-text { display: flex; flex: 1; flex-direction: column; gap: var(--v2-space-05); min-width: 0; }
 .v2-row-label { color: var(--v2-ink); font-weight: var(--v2-weight-medium); overflow-wrap: anywhere; }
 /* .v2-row-desc is set in .v2-text-body-sm (kit/base.css). */

@@ -17,7 +17,10 @@
    TextArea      + autoGrow (true), maxRows (6: grows to it, then scrolls), rows (3), maxLength,
                  showCount.
    Select        + options [{value, label, disabled}], placeholder (an instruction, shown as a
-                 disabled first option). Native select: the operating system draws the open list. */
+                 disabled first option). Native select: the operating system draws the open list.
+   disabled is aria-disabled, never the native attribute, so the field keeps its tab stop and the
+   helper that says why is read with it (P3, section 12): TextField and TextArea also go read-only,
+   and Select ignores every way of changing it (press, keys, a change that gets through). */
 (function () {
   const { useId, useRef, useState, useLayoutEffect } = React;
 
@@ -80,7 +83,7 @@
               {f.text ? <span>{f.text}</span> : null}
             </p>
             {f.counting ? (
-              <span id={f.id + '-count'} className={cx('v2-field-count', f.near && 'is-near', f.over && 'is-over')}>
+              <span id={f.id + '-count'} className={cx('v2-field-count', 'v2-text-meta', f.near && 'is-near', f.over && 'is-over')}>
                 {f.len} / {f.max}
               </span>
             ) : null}
@@ -101,7 +104,7 @@
 
   function control(p, f) {
     return {
-      id: f.id, required: p.required, disabled: p.disabled,
+      id: f.id, required: p.required, 'aria-disabled': p.disabled ? 'true' : undefined,
       'aria-invalid': f.invalid || undefined, 'aria-describedby': f.describedBy,
     };
   }
@@ -110,7 +113,7 @@
      reach the input and cut pasted text instead of turning the field invalid). */
   const FRAME_OWN = ['label', 'hideLabel', 'helper', 'error', 'optional', 'leading', 'trailing', 'mono', 'secret',
     'size', 'status', 'width', 'className', 'showCount', 'autoGrow', 'maxRows', 'options', 'onChange', 'maxLength',
-    'defaultRevealed'];
+    'defaultRevealed', 'disabled'];
   function strip(p) {
     const rest = {};
     for (const k in p) if (FRAME_OWN.indexOf(k) < 0) rest[k] = p[k];
@@ -134,7 +137,7 @@
         <div className="v2-field-box">
           <Slot>{p.leading}</Slot>
           <input {...strip(p)} {...control(p, f)} type={type} className="v2-field-input"
-            readOnly={p.readOnly} aria-busy={p.status === 'validating' || undefined}
+            readOnly={p.readOnly || p.disabled} aria-busy={p.status === 'validating' || undefined}
             spellCheck={p.secret || p.mono ? false : p.spellCheck}
             autoComplete={p.secret ? 'off' : p.autoComplete}
             onChange={function (e) { f.track(e.target.value); if (p.onChange) p.onChange(e.target.value, e); }} />
@@ -168,7 +171,7 @@
       <Frame f={f} p={p} kind="area">
         <div className="v2-field-box">
           <textarea {...strip(p)} {...control(p, f)} ref={ref} rows={p.rows || 3}
-            className="v2-field-input v2-field-input--area" readOnly={p.readOnly}
+            className="v2-field-input v2-field-input--area" readOnly={p.readOnly || p.disabled}
             onChange={function (e) { f.track(e.target.value); fit(); if (p.onChange) p.onChange(e.target.value, e); }} />
         </div>
       </Frame>
@@ -186,12 +189,24 @@
     delete rest.value;
     delete rest.defaultValue;
     const valueProps = controlled ? { value: current } : { defaultValue: p.placeholder && p.defaultValue == null ? '' : p.defaultValue };
+    // Disabled keeps focus, so it blocks the list opening, the keys that change a closed select
+    // (Tab still moves on) and, last, any change that gets through (a touch picker), putting back
+    // the value it had when it took focus.
+    const held = useRef(null);
+    const hold = p.disabled ? {
+      onMouseDown: function (e) { e.preventDefault(); },
+      onKeyDown: function (e) { if (e.key !== 'Tab') e.preventDefault(); },
+      onFocus: function (e) { held.current = e.target.value; },
+    } : null;
     return (
       <Frame f={f} p={p} kind="select">
         <div className="v2-field-box">
-          <select {...rest} {...control(p, f)} {...valueProps}
+          <select {...rest} {...control(p, f)} {...valueProps} {...hold}
             className={cx('v2-field-input', 'v2-field-select', current === '' && p.placeholder && 'is-placeholder')}
-            onChange={function (e) { if (!controlled) setOwn(e.target.value); if (p.onChange) p.onChange(e.target.value, e); }}>
+            onChange={function (e) {
+              if (p.disabled) { if (held.current != null) e.target.value = held.current; return; }
+              if (!controlled) setOwn(e.target.value); if (p.onChange) p.onChange(e.target.value, e);
+            }}>
             {p.placeholder ? <option value="" disabled>{p.placeholder}</option> : null}
             {(p.options || []).map(function (o) {
               return <option key={o.value} value={o.value} disabled={o.disabled}>{o.label}</option>;

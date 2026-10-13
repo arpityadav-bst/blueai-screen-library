@@ -23,14 +23,44 @@
     return <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--v2-space-3)' }}>{children}</div>;
   }
 
+  // The Home states section 57 lists that HOME_STATES does not carry, each from its kit fixture
+  // (kit/worker-data.jsx), placed after the row they follow. 'blocked:<reason>' sets one reason on
+  // the blocked fixture, so each fix has its own cell. A key HOME_STATES already has is not added.
+  const MORE_STATES = {
+    failed: [
+      ['stopped', 'stopped', 'Stopped today', 'Run again, by 9 pm'],
+      ['missed', 'missed', 'Didn’t start', 'PC off or asleep at 11 am; Run now, by 9 pm; never starts late on its own'],
+      ['blocked-no-app', 'blocked:no-app', 'Can’t run: no app', 'Connect YouTube opens Connected apps'],
+      ['blocked-signed-out', 'blocked:signed-out', 'Can’t run: signed out', 'Open App Player acts in place'],
+      ['blocked-no-bluestacks', 'blocked:no-bluestacks', 'Can’t run: no BlueStacks', 'Get BlueStacks acts in place'],
+    ],
+    complete: [
+      ['ended', 'ended', 'Period ended', 'section 69’s state, not a card; cash out open'],
+      ['endedBelow', 'endedBelow', 'Period ended, under $10', 'section 69’s state: the minimum and the carry-over'],
+    ],
+  };
+  function homeStates(S) {
+    const base = S.HOME_STATES || [];
+    const has = function (k) { return base.some(function (s) { return s[0] === k; }); };
+    return base.reduce(function (out, s) {
+      return out.concat([s], (MORE_STATES[s[0]] || []).filter(function (m) { return !has(m[0]); }));
+    }, []);
+  }
+  function fixtureOf(F, key) {
+    const r = String(key || '').split(':');
+    return r[1] ? Object.assign({}, F[r[0]], { blocked: { reason: r[1], app: 'youtube' } }) : F[key];
+  }
+
   // The core screens wired together: three tabs, pushed screens, Back. Settings is section 61.
   // Section 32's model: each tab keeps its own stack; another tab switches and keeps it; tapping the
   // lit tab again returns that tab to its root. A stack entry is { id, run, row }: run is the pushed
   // screen's state (Chat's or RunDetail's), row the ledger row a Run detail is about.
-  // A pushed screen goes on its parent tab's stack and that tab lights, from any door: Chat belongs to
-  // Home, Run detail to Activity. Notifications has no parent tab, so it goes over the tab you are on.
+  // Chat belongs to Home: it goes on Home's stack and Home lights, from any door. Run detail goes on
+  // the stack of the tab it was opened from (opts.tab: Home's Details, the run chip and Chat's See run
+  // details pass it; Activity rows pass none, so the current tab), and that tab stays lit. AI credits
+  // and Notifications have no home in Settings either, so they go over the tab you are on.
   const NO_STACKS = { home: [], activity: [], settings: [] };
-  const PARENT = { chat: 'home', run: 'activity' };
+  const PARENT = { chat: 'home' };
   function Flow() {
     const S = window.V2Screens || {};
     const K = window.V2Kit || {};
@@ -38,16 +68,17 @@
     const [tab, setTab] = useState('home');
     const [stacks, setStacks] = useState(NO_STACKS);
     const [coached, setCoached] = useState(false);
-    const row = (S.HOME_STATES || []).find(function (s) { return s[0] === fx; }) || [];
-    const w = (K.workerFixtures || {})[row[1]];
+    const states = homeStates(S);
+    const row = states.find(function (s) { return s[0] === fx; }) || [];
+    const w = fixtureOf(K.workerFixtures || {}, row[1]);
     if (!S.Home || !w) return <div className="g-missing">The core screens are not loaded.</div>;
     const st = K.workerState(w);
     const stack = stacks[tab];
     const top = stack[stack.length - 1] || {};
     function setStack(next) { setStacks(Object.assign({}, stacks, { [tab]: next })); }
     // Switch to the parent tab, then push; the same screen on top is replaced, so it shows this run.
-    function push(id, run, r) {
-      const t = PARENT[id] || tab;
+    function push(id, run, r, from) {
+      const t = from || PARENT[id] || tab;
       const s = stacks[t];
       const keep = (s[s.length - 1] || {}).id === id ? s.slice(0, -1) : s;
       setStacks(Object.assign({}, stacks, { [t]: keep.concat([{ id: id, run: run, row: r }]) }));
@@ -58,16 +89,18 @@
       if (id === 'today') { const t = S.chipTarget(w); nav(t[0], t[1]); return; }
       // Settings > Worker, Connected apps and Settings with {highlight} all live under the settings tab.
       if (id === 'worker-settings' || id === 'connected-apps') { if (tab === 'settings') setStack([]); else setTab('settings'); return; }
-      if (id === 'chat' || id === 'run') { push(id, opts && opts.state, opts && opts.row); return; }
+      if (id === 'chat' || id === 'run') { push(id, opts && opts.state, opts && opts.row, opts && opts.tab); return; }
+      if (id === 'credits') { push('credits'); return; }
       if (id === 'notifications') push(id);
     }
     function back() { setStack(stack.slice(0, -1)); }
     function pick(key) { setFx(key); setTab('home'); setStacks(NO_STACKS); }
     const common = { worker: w, landmark: false, onNavigate: nav, onBack: back };
-    const chatState = { setup: 'setup', running: 'running', waiting: 'waiting', done: 'done', failed: 'failed', stopped: 'running', noCredits: 'noCredits' }[st] || 'empty';
+    const chatState = { setup: 'setup', running: 'running', waiting: 'waiting', done: 'done', failed: 'failed', stopped: 'stopped', noCredits: 'noCredits' }[st] || 'empty';
     let screen;
     if (top.id === 'chat') screen = <S.Chat {...common} state={top.run || chatState} />;
-    else if (top.id === 'run') screen = <S.RunDetail {...common} state={top.run} row={top.row} />;
+    else if (top.id === 'run') screen = <S.RunDetail {...common} tab={tab} state={top.run} row={top.row} />;
+    else if (top.id === 'credits') screen = <S.Credits {...common} tab={tab} />;
     else if (top.id === 'notifications') screen = <S.Notifications worker={w} landmark={false} onNavigate={nav} onBack={back} state="unread" parentTab={tab} />;
     else if (tab === 'activity') {
       screen = <S.Activity {...common} />;
@@ -79,12 +112,12 @@
     return (
       <Stack>
         <div role="group" aria-label="Worker state" style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--v2-space-1)' }}>
-          {(S.HOME_STATES || []).map(function (s) {
+          {states.map(function (s) {
             return <button key={s[0]} type="button" className="g-btn" aria-pressed={fx === s[0]} onClick={function () { pick(s[0]); }}>{s[2]}</button>;
           })}
         </div>
         <div style={{ width: W, maxWidth: '100%', overflow: 'auto' }}>{screen}</div>
-        <p className="g-muted">Live: Chat with BlueAI, Details, See why, the run chip, More &gt; Notifications, the nav and Back all work. Each tab keeps its own stack; tapping the lit tab returns it to its root. Chat always opens on Home's stack and Run detail on Activity's, so the lit tab is the one whose stack holds the screen. Dismissing the coach is remembered, as the record's coachSeen would be.</p>
+        <p className="g-muted">Live: Chat with BlueAI, Details, See why, the run chip, More &gt; Notifications, the nav and Back all work. Each tab keeps its own stack; tapping the lit tab returns it to its root. Chat always opens on Home's stack; Run detail, AI credits and Notifications open on the stack of the tab they were opened from, so the lit tab is the one whose stack holds the screen. Dismissing the coach is remembered, as the record's coachSeen would be.</p>
       </Stack>
     );
   }
@@ -103,8 +136,9 @@
   function HomeSection() {
     const S = window.V2Screens || {};
     if (!S.Home || !S.Chat) return <G.Section id="home"><div className="g-missing">V2Screens.Home and V2Screens.Chat are not loaded.</div></G.Section>;
-    const homeStates = S.HOME_STATES.map(function (s) {
-      return { label: s[2], note: s[3], node: <Shot><S.Home state={s[0]} landmark={false} /></Shot> };
+    const F = (window.V2Kit || {}).workerFixtures || {};
+    const homeGrid = homeStates(S).map(function (s) {
+      return { label: s[2], note: s[3], node: <Shot><S.Home state={s[0]} worker={fixtureOf(F, s[1])} landmark={false} /></Shot> };
     }).concat([{ label: 'Compact window (640)', note: 'bars pinned, body scrolls', node: <Shot h={640}><S.Home state="returning" compact landmark={false} /></Shot> }]);
     const chatStates = S.CHAT_STATES.map(function (s) {
       return { label: s[2], note: s[3], node: <Shot><S.Chat state={s[0]} landmark={false} /></Shot> };
@@ -116,7 +150,7 @@
             the greeting as the screen title ('Hi, Alex', no emoji, no second line), then a 12px column: WorkerCard
             (section 42), ProgramStrip (section 43), a Banner only for a program fact the card cannot say, and one
             standalone link 'Chat with BlueAI'. Nothing else: no feature list, no second Run.</p>
-          <G.StateGrid wide states={homeStates} />
+          <G.StateGrid wide states={homeGrid} />
           <G.CompareRow v2={<V2Home />} system={<Flow />}
             changed="V2's home answered 'what can I do' but not 'what is my worker doing'. 'Hi, Alex' with an emoji and 'You're all set. The BlueAI worker is all it takes to start earning.' sat above the coach's 'Run this to begin'; the progress strip appeared only for a returning partner and counted from a constant; the next run time was typed into the copy. Here the greeting is only a title, the strip is always there and reads the ledger, the card says today's state with one action, and Chat is one link away instead of being the home itself. Loading draws the worker home, not V2's five-card skill list." />
           <G.SpecDrawer rows={[
@@ -141,28 +175,29 @@
 
         <G.Part name="Chat (from Home)" status="changed" role="The thread as a window onto the Worker record, pushed from Home; leaving it loses nothing.">
           <p><strong>Anatomy.</strong> ScreenHeader 'Chat' with Back (to Home) and a New chat IconButton; the Thread
-            (section 34) with today's run as one RunCard (section 36) and any question as an AskCard (section 37); the
+            (section 34) with today's run as one RunCard (section 36), a paid job as the JobPreviewCard (section 45) and any other question as an AskCard (section 37); the
             Composer (section 38) with its notice slot. Home stays lit in the nav while Chat is open. States
-            (CHAT_STATES): empty, setup, setupDone, running, waiting, done, failed, retrying, noCredits, automatic.</p>
+            (CHAT_STATES): {S.CHAT_STATES.map(function (c) { return c[0]; }).join(', ')}.</p>
           <G.StateGrid wide states={chatStates} />
           <G.CompareRow
             v2={<G.FrameState url="index.html?day=next" label="V2: the next day's scheduled run, as chat bubbles" height={830} />}
             system={<div style={{ width: W, maxWidth: '100%', overflow: 'auto' }}><S.Chat state="waiting" landmark={false} /></div>}
-            changed="V2's chat is the home, the run and the record at once, and it unmounts when another tab opens, so a waiting job or a failed day's Retry is gone. New Chat was the loudest control in the top bar. Here Chat is pushed from Home over the same record, the run is one card instead of a dozen status bubbles, the job ask says what Not now costs before the tap, New chat is an icon in the chat's own header, and a condition that holds before typing (Automatic on, no credits) sits above the field." />
+            changed="V2's chat is the home, the run and the record at once, and it unmounts when another tab opens, so a waiting job or a failed day's Retry is gone. New Chat was the loudest control in the top bar. Here Chat is pushed from Home over the same record, the run is one card instead of a dozen status bubbles, the job preview shows the video, channel and exact comment and puts the cost of skipping on its button, New chat is an icon in the chat's own header, and a condition that holds before typing (Automatic on, no credits) sits above the field." />
           <G.SpecDrawer rows={[
             { part: 'Lifetime', token: 'Worker record', value: 'the thread reads the record; opening Credits or Activity loses nothing', ref: 'screens-core.chat.mounted-as-tab' },
             { part: 'New chat', token: 'IconButton 32, plus', value: "label 'New chat', in the chat header (not a filled pill in the top bar)", ref: ['screens-core.chat.new-chat', 'screens-core.chat.new-chat-label'] },
             { part: 'Today’s run', token: 'RunCard (section 36)', value: 'one card per run, steps folded', ref: 'screens-core.chat.scheduled-start' },
-            { part: 'Job ask', token: 'AskCard (section 37)', value: 'Paid job available / Watch the video and provide feedback. / Want me to take this one?', ref: ['screens-core.chat.job-label', 'screens-core.chat.job-title', 'screens-core.chat.job-question'] },
-            { part: 'Answers', token: 'Chip', value: 'Yes, switch to Automatic / Just this job / Not now', ref: 'screens-core.chat.job-options' },
-            { part: 'Not now costs', token: '--v2-text-12', value: 'Today won’t count toward your 20 days. (said before the tap, proposed)' },
+            { part: 'Job ask', token: 'JobPreviewCard (section 45)', value: 'Take this job / Skip: today won’t count / Switch YouTube to Automatic (through ConsentDialog); decision D17 option A, built; option B (V2’s AskCard words) is D17 = B in screens/chat.jsx' },
+            { part: 'Option B (V2’s ask)', token: 'AskCard + Chip (section 37)', value: 'Paid job available / Watch the video and provide feedback. / Want me to take this one? + Yes, switch to Automatic / Just this job / Not now', ref: ['screens-core.chat.job-label', 'screens-core.chat.job-title', 'screens-core.chat.job-question', 'screens-core.chat.job-options'] },
+            { part: 'Skip costs', token: 'Button secondary (section 11)', value: 'on the button: Skip: today won’t count' },
             { part: 'Automatic on', token: 'ComposerNotice info, zap', value: 'Automatic is on for YouTube. BlueAI takes paid YouTube jobs without asking. + Change', ref: ['screens-core.chat.auto-ribbon', 'screens-core.chat.auto-change'] },
             { part: 'Setup', token: 'AskCard, PermissionRequest, ConsentDialog, ProgramSummary', value: "V2's order: the pitch, confirm @alexwatches, watch history, the run time, paid jobs per app (Always ask first; Automatic only through ConsentDialog); closes with ProgramSummary and the D7 line (A: 'Your first run starts now, and today counts as day 1 once it’s verified.'; B: 'Your first counted day is tomorrow, at your run time.')", ref: 'screens-core.chat.job-options' },
             { part: 'Job ask bullets', token: 'AskCard bullets', value: 'proposed (R07): the video, channel and length; what will be done, with the exact comment' },
             { part: 'Consent', token: 'ConsentDialog (section 46)', value: 'any answer that turns Automatic on opens it first; Cancel leaves the question waiting' },
             { part: 'Stop', token: 'Composer costsDay / paidJob (section 38)', value: 'asks first while running, retrying or waiting' },
-            { part: 'Out of credits', token: 'RunCard nocredits, OutOfCreditsNotice composer', value: "each fact once: the card 'Not enough credits for this job.' + OOC_COPY.day; the notice says until when; the locked field's placeholder is neutral, 'You can’t send messages right now'" },
-            { part: 'Empty', token: 'EmptyState', value: "'Chat with BlueAI' / 'Ask about today’s run, or tell your worker what to change.'" },
+            { part: 'Out of credits', token: 'RunCard nocredits, OutOfCreditsNotice composer', value: "the field locks only at zero (until when); short of today's run (noCredits, 120 of 360) it stays open with ComposerNotice Not enough AI credits for today’s run. They refresh at 5:30 am." },
+            { part: 'Empty', token: 'EmptyState', value: "'Chat with BlueAI' / 'Ask about today’s run, your days, or where to change a setting.'" },
+            { part: 'Typed messages', token: 'MessageBubble + Link (proposed copy)', value: 'status questions answered from the record; an action gets a Link to its control (Open Worker settings), never a silent change; out of scope says what the worker can do' },
           ]} />
           <G.DoDont
             do={['Show a run as one RunCard that updates in place.', 'Say what an answer costs on the card, before the tap.', 'Put a condition that holds before typing in the notice slot.']}

@@ -1,23 +1,24 @@
 /* BlueAI Product V2 Design System: the day-done moment (section 44).
-   DayDone {end, worker, open, onClose, preview}
-     end      job | nojob | day20 (failed and declined have no moment: the run card says those).
-     worker   the Worker record; numbers() gives the one count, so tonight's '7 of 20 days' is
-              tomorrow's '7 of 20 days' with two ticks (V2: 'DAY 7 OF 20' then 'Day 6 of 20', R02).
+   DayDone {worker, open, onClose, preview}
+     The one milestone of the program: Day 20, the last day, which also carries the next step (cash
+     out). An ordinary day has no moment: the RunCard's day line ('Day 7 of 20, pending
+     verification', section 36), the WorkerCard's done line and the run chip close it, so a
+     blocking dialog after every run would only repeat them (the PM's job and nojob titles are
+     dropped as a proposal, section 73; V2 opens it after every run).
+     worker   the Worker record; numbers() gives the one count (V2: 'DAY 7 OF 20' then 'Day 6 of
+              20', R02).
      open     shows the kit Dialog (celebration variant, size sm). preview draws it open in place
               without taking focus (guide specimens; give it a positioned parent).
    One count, one status line. Pending stays blue with one tick until verified (P2: green means
-   reached), and so does Day 20's confetti: blue and neutral only, once, never under reduced
-   motion. Titles are the PM's DRAFT strings, quoted (worker_day_done.jsx:91-93); Day 20 adds one
-   proposed next-step line: cash out after the period, with the $10 minimum, the one amount that
-   holds under both options of decision D3 (section 01). */
+   reached), and so does the confetti: blue and neutral only, once, never under reduced motion.
+   The title and sub are the PM's DRAFT strings, quoted (worker_day_done.jsx:93); the sub's
+   'every day for this month' goes to the PM as a proposal ('That's all 20 days.', section 73).
+   One proposed next-step line: cash out after the period, with the $10 minimum, the one amount
+   that holds under both options of decision D3 (section 01). */
 (function () {
   const K = () => window.V2Kit || {};
 
-  const COPY = {
-    job: { title: 'Today’s run is done.' },
-    nojob: { title: 'No paid job today, but your run counts.' },
-    day20: { title: 'Day 20 done.', sub: 'That’s every day for this month.' },
-  };
+  const COPY = { title: 'Day 20 done.', sub: 'That’s every day for this month.' };
   // Proposed: what comes after the last day, so the moment does not end on 'every day'.
   const NEXT = function (endsOn) { return 'Cash out on Earnings after ' + endsOn + ', once your days are verified ($10 minimum).'; };
   const PENDING = 'Pending verification';
@@ -41,20 +42,18 @@
     );
   }
 
-  function DayDoneBody({ end, worker, titleId }) {
-    const e = COPY[end] ? end : 'job';
-    const c = COPY[e];
-    const w = worker || (K().workerFixtures || {})[e === 'day20' ? 'day20' : (e === 'nojob' ? 'nojob' : 'donePending')];
+  function DayDoneBody({ worker, titleId }) {
+    const w = worker || (K().workerFixtures || {}).day20;
     const n = K().numbers(w);
     const T = K().StatusTick;
     const Bar = K().DayBar;
     return (
       <div className="v2-daydone">
-        {e === 'day20' ? <Confetti /> : null}
+        <Confetti />
         <span className="v2-daydone-badge" aria-hidden="true">{T ? <T status="pending" size={28} /> : null}</span>
-        <h2 className="v2-daydone-title v2-text-title-lg" id={titleId}>{c.title}</h2>
-        {c.sub ? <p className="v2-daydone-sub v2-text-body-sm">{c.sub}</p> : null}
-        {e === 'day20' ? <p className="v2-daydone-sub v2-text-body-sm">{NEXT(n.endsOn)}</p> : null}
+        <h2 className="v2-daydone-title v2-text-title-lg" id={titleId}>{COPY.title}</h2>
+        <p className="v2-daydone-sub v2-text-body-sm">{COPY.sub}</p>
+        <p className="v2-daydone-sub v2-text-body-sm">{NEXT(n.endsOn)}</p>
         <div className="v2-daydone-progress">
           {Bar ? <Bar days={n.segments} target={n.target} legend={false} /> : null}
           <div className="v2-daydone-count">
@@ -70,14 +69,14 @@
   let seq = 0;
   // The kit Dialog's celebration variant: centred, no close button, scrim and Esc dismiss, one
   // full-width Got it. The title sits under the badge, so the dialog is labelled by it.
-  function DayDone({ end, worker, open, onClose, preview }) {
+  function DayDone({ worker, open, onClose, preview }) {
     const [titleId] = React.useState(function () { seq += 1; return 'v2-daydone-title-' + seq; });
     const D = K().Dialog;
     if (!D || !(open || preview)) return null;
     return (
       <D open variant="celebration" size="sm" preview={preview} onClose={onClose} labelledBy={titleId}
         actions={[{ label: 'Got it', variant: 'primary', onClick: onClose }]}>
-        <DayDoneBody end={end} worker={worker} titleId={titleId} />
+        <DayDoneBody worker={worker} titleId={titleId} />
       </D>
     );
   }

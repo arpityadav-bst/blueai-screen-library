@@ -59,7 +59,7 @@
             { label: 'Rest', node: <T />, note: 'Past is at rest: ink-3 on the track.' },
             { label: 'Hover', node: <T tabs={mark(ACTIVITY, 'past', 'is-hover')} /> },
             { label: 'Pressed', node: <T tabs={mark(ACTIVITY, 'past', 'is-active')} />, note: 'A deeper wash while held.' },
-            { label: 'Selected', node: <T />, note: 'This program: the select fill with a blue edge, ink, 500 (Segmented’s selected look).' },
+            { label: 'Selected', node: <T />, note: 'This program: the select fill with a blue edge, label to ink at the same 500 (Segmented’s selected look).' },
             { label: 'Focus-visible', node: <T tabs={mark(ACTIVITY, 'program', 'is-focus')} />, note: 'One tab stop; Left and Right move and select.' },
             { label: 'Disabled', node: <T tabs={mark(ACTIVITY, 'past', null, { disabled: true })} />, note: 'Rare: prefer an enabled tab with 0.' },
             { label: 'Count 0 still shown', node: <T value="past" />, note: 'The tab keeps its width when it empties.' },
@@ -70,17 +70,17 @@
             { part: 'Track', token: '--v2-surface-sunken, --v2-line, --v2-radius-md', value: 'recessed, 1px 10% line, 10px', ref: ['overlays.tabs.track-fill', 'overlays.tabs.track-line', 'overlays.tabs.track-radius'] },
             { part: 'Track padding, gap', token: '--v2-space-05', value: '2px', ref: 'overlays.tabs.track-padding' },
             { part: 'Tab', token: '--v2-hit-min, --v2-radius-sm, --v2-space-3', value: '32px tall, radius 6, 12px sides' },
-            { part: 'Label', token: '--v2-text-13, --v2-ink-3, --v2-weight-regular', value: '13/400, #5f636b', ref: 'overlays.tabs.tab-size' },
+            { part: 'Label', token: '--v2-text-13, --v2-weight-medium, --v2-ink-3', value: '13/500, #5f636b; one weight in every state, so nothing reflows', ref: 'overlays.tabs.tab-size' },
             { part: 'Hover', token: '--v2-wash-hover, --v2-ink', value: 'wash, label to ink', ref: 'overlays.tabs.hover' },
-            { part: 'Selected', token: '--v2-select, --v2-blue, --v2-stroke-selected, --v2-weight-medium', value: 'select fill over white, 1.5px blue edge, 13/500 ink, no shadow: the Segmented’s selected look (section 14); the site raises a white chip', ref: ['overlays.tabs.selected-fill', 'overlays.tabs.selected-line', 'overlays.tabs.selected-weight'] },
+            { part: 'Selected', token: '--v2-select, --v2-blue, --v2-stroke-selected', value: 'select fill over white, 1.5px blue edge, label to ink, no shadow: the Segmented’s selected look (section 14); the site raises a white chip', ref: ['overlays.tabs.selected-fill', 'overlays.tabs.selected-line', 'overlays.tabs.selected-weight'] },
             { part: 'Count', token: '--v2-text-12, --v2-ink-3', value: '12/400 tabular, #5f636b (the site’s dimmest ink is 4.42:1 on the track)', ref: 'overlays.tabs.count' },
             { part: 'Focus', token: '--v2-focus-outline', value: '2px blue ring, offset 2' },
             { part: 'Disabled', token: '--v2-opacity-disabled', value: '0.45, skipped by the arrows' },
             { part: 'Roles', token: null, value: 'tablist (named), tab (aria-selected, aria-controls), tabpanel', ref: 'overlays.tabs.markup' },
-            { part: 'Motion', token: '--v2-dur-1', value: 'colour and fill 120ms' },
+            { part: 'Motion', token: '--v2-dur-2, --v2-ease-standard', value: 'colour, fill and edge 180ms (one duration, shared with Segmented)' },
             { part: 'V2 today', token: null, value: 'indigo #4f46e5 underline tabs, hidden Skills screen only', ref: 'overlays.tabs.v2-skills' },
           ]} />
-          <G.Note>Adapted from the site: the label goes from 12.5 to 13 and the selected weight from 550 to 500 (the
+          <G.Note>Adapted from the site: the label goes from 12.5 to 13 and every state is 500, where the site steps the selected tab to 550 (the
             product's type ladder), the track radius from 9 to 10 and its padding from 3 to 2 (the product's scales),
             the selected chip takes the product's one selected look (select fill, blue edge) and drops its shadow, the count is one ink darker so it passes AA on the track, and the tab is 32px tall, the product's smallest target.</G.Note>
           <G.DoDont

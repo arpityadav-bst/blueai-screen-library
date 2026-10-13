@@ -4,7 +4,8 @@
                  role=log, aria-live=polite, bottom-anchored. Sticks to the bottom only while the
                  reader is there; otherwise counts what arrived and shows JumpToLatest.
    DaySeparator  {label}                  'Today', 'Yesterday', 'Oct 12' (chatTime.day builds it).
-   JumpToLatest  {count, onClick}         renders nothing at 0.
+   JumpToLatest  {count, onClick}         renders nothing at 0. Jump unmounts it, so focus moves to
+                 the thread's scroll area (useSwapFocus), never to the page.
    MessageBubble {from: 'user'|'worker', time, groupStart, children}
    NoticeBubble  {kind: 'info'|'success'|'attention'|'danger'|'neutral', title, lines, children,
                  action, feedback, time}  kind is one of the five token tones; neutral surface, the
@@ -12,7 +13,8 @@
                  'needsInput' is attention with the PM's yellow as the one attention fill.
    renderMessage(step, i, steps)          the canonical message kinds (V2's role map plus run and
                  notice): separator, user, status, thinking, plan, warning, final, notice, ask,
-                 needsbs, installing-bs, run, daydone. Shows one time per message group.
+                 needsbs, installing-bs, run, daydone. Shows one time per message group. A run
+                 step {run, state, worker, onAction, onOpenDetail} is a RunCard reading the record.
    chatTime      {day(date, now), time(date)}  real times: '11:03 am', 'Today', 'Oct 12'. */
 (function () {
   const { useState, useRef, useLayoutEffect, useEffect } = React;
@@ -59,7 +61,7 @@
     const user = from === 'user';
     return (
       <div className={cx('v2-msg', user ? 'v2-msg--user' : 'v2-msg--worker', groupStart && 'is-group-start', className)}>
-        <div className={cx('v2-bubble', user ? 'v2-bubble--user' : 'v2-bubble--worker')}>
+        <div className={cx('v2-bubble', 'v2-text-body', user ? 'v2-bubble--user' : 'v2-bubble--worker')}>
           <span className="v2-chat-sr">{user ? 'You: ' : 'BlueAI: '}</span>
           {children}
         </div>
@@ -87,7 +89,7 @@
     const body = lines ? lines : (children != null ? [children] : []);
     return (
       <div className={cx('v2-msg', 'v2-msg--worker', groupStart && 'is-group-start', className)}>
-        <div className={cx('v2-notice', 'v2-notice--' + k.tone, k.fill && 'v2-notice--fill')}>
+        <div className={cx('v2-notice', 'v2-text-body', 'v2-notice--' + k.tone, k.fill && 'v2-notice--fill')}>
           <div className="v2-notice-row">
             <span className={'v2-notice-icon v2-chat-tone--' + k.tone}><Icon name={k.icon} size={16} /></span>
             <div className="v2-notice-body">
@@ -107,7 +109,7 @@
     const S = K().Spinner;
     return (
       <div className="v2-msg v2-msg--worker">
-        <div className="v2-bubble v2-bubble--worker v2-thinking">
+        <div className="v2-bubble v2-text-body v2-bubble--worker v2-thinking">
           {S ? <S size={16} delay={0} /> : null}
           <span>Working on it…</span>
         </div>
@@ -145,7 +147,7 @@
       case 'ask': return P.AskCard ? <P.AskCard key={key} step={step} answer={step.answer} onAnswer={step.onAnswer} tone={step.tone} /> : null;
       case 'needsbs': return P.DependencyCard ? <P.DependencyCard key={key} app={step.app} phase="needs" onGet={step.onGet} /> : null;
       case 'installing-bs': return P.DependencyCard ? <P.DependencyCard key={key} app={step.app} phase={step.phase || 'installing'} progress={step.progress} /> : null;
-      case 'run': return P.RunCard ? <P.RunCard key={key} run={step.run} state={step.state} feedback={fb} onAction={step.onAction} onOpenDetail={step.onOpenDetail} /> : null;
+      case 'run': return P.RunCard ? <P.RunCard key={key} run={step.run} worker={step.worker} state={step.state} feedback={fb} onAction={step.onAction} onOpenDetail={step.onOpenDetail} /> : null;
       case 'daydone': return null; /* said by RunCard's day line and the DayDone moment (section 44) */
       default: return null;
     }
@@ -158,7 +160,9 @@
     const atBottom = useRef(stick);
     const prevLen = useRef(list.length);
     const [fresh, setFresh] = useState(0);
+    const [jumps, setJumps] = useState(0);
     const render = renderStep || renderMessage;
+    if (K().useSwapFocus) K().useSwapFocus(ref, jumps);
 
     useLayoutEffect(function () {
       const el = ref.current;
@@ -180,6 +184,7 @@
       if (el) el.scrollTo({ top: el.scrollHeight, behavior: window.V2Kit.reducedMotion() ? 'auto' : 'smooth' });
       atBottom.current = true;
       setFresh(0);
+      setJumps(function (n) { return n + 1; });
       if (onJump) onJump();
     }
     useEffect(function () { if (!stick) atBottom.current = false; }, [stick]);

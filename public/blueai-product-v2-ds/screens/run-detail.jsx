@@ -3,8 +3,10 @@
    counted, and the credits it used. V2's only record of a run is the chat thread, which unmounts
    on navigation (chat_product.jsx:159, index.html:965). Composed only from window.V2Kit.
 
-   RunDetail {worker, state, run, row, onBack, onRetry, onRunAgain, onReport, onChangeMode,
+   RunDetail {worker, state, run, row, tab, onBack, onRetry, onRunAgain, onReport, onChangeMode,
               onOpenCredits, onNavigate, compact, landmark, frame}
+     tab    the tab it was opened from ('activity' by default; Home's Details and the run chip
+            pass theirs): it stays lit and Back returns there, as AI credits and Notifications do.
      ScreenHeader 'Run details' with Back, RunCard (full, steps open, no day line: the
      Verification card owns it), the JobPreviewCard receipt when a job ran (no tick of its own:
      the day is said once, in Verification; 'Switch back to Always ask' only when the job ran on
@@ -176,10 +178,10 @@
     }
 
     return (
-      <Frame worker={w} tab="activity" loading={loading} compact={p.compact} landmark={p.landmark} frame={p.frame}
+      <Frame worker={w} tab={p.tab || 'activity'} loading={loading} compact={p.compact} landmark={p.landmark} frame={p.frame}
         overlays={sheet} onNavigate={p.onNavigate}>
         <div className="v2-screen">
-          {P.ScreenHeader ? <P.ScreenHeader title="Run details" onBack={p.onBack || go('activity')} /> : null}
+          {P.ScreenHeader ? <P.ScreenHeader title="Run details" onBack={p.onBack || go(p.tab || 'activity')} /> : null}
           <div className="v2-screen-body v2-rundetail">{body}</div>
         </div>
       </Frame>

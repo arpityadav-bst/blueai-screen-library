@@ -1,6 +1,6 @@
 /* BlueAI Product V2 Design System: the job preview (section 45, New, proposal R07).
    JobPreviewCard {job, mode, waitingSince, expiresAt, expired, doneAt, taking, verify, ranOn,
-                   onTake, onSkip, onStopAsking, onChangeMode}
+                   answer, onTake, onSkip, onStopAsking, onChangeMode}
      job    { app, label, video: {title, channel, duration, thumb}, actions: [watch|like|comment|
             subscribe], comment }  (V2Kit.WORKER_JOB is the fixture). A flat {title, channel,
             thumb, duration} also works.
@@ -10,14 +10,18 @@
             for none (Run detail passes null: its Verification card says the day, once).
      ranOn  the mode this job ran under, from the run record: 'auto' (default) offers 'Switch
             back to Always ask'; 'ask' offers nothing (the partner already approved this one).
-     States: ask (just found), waiting (waitingSince set: the partner was away), expired (the
-            window closed, today did not count), receipt.
+     answer 'once' | 'deny' | 'always': the partner's answer. The card settles: no deadline line,
+            no actions, no attention tint, one line in their place ('You took this job.'), and
+            focus moves to the card (tabIndex -1, data-v2-anchor), as the AskCard does.
+     States: ask (just found), waiting (waitingSince set: the partner was away), answered (answer
+            set), expired (the window closed, today did not count), receipt.
    Before a paid job runs under the partner's name it says which video, which channel, what will
    be done (including the exact comment) and what skipping costs, on the buttons themselves. The
    mode controls name the mode they switch to: 'Switch YouTube to Automatic' (zap, opens the
    consent) and 'Switch back to Always ask'.
    V2 shows only 'Watch the video and provide feedback.' and tells the cost of 'Not now' afterwards
-   (worker_flow.jsx:119-121, 149). The PM's own job ask stays in the AskCard (section 37).
+   (worker_flow.jsx:119-121, 149). Chat asks paid jobs here (decision D17, option A, built); V2's
+   AskCard ask is option B (screens/chat.jsx D17).
 
    DAY_COPY  the day's deadline lines, one string per state, so AskCard, RunCard, WorkerCard, this
              card, Activity, the inbox and the Stop confirm say the same words (proposed copy):
@@ -52,8 +56,12 @@
     const job = props.job || K().WORKER_JOB || {};
     const v = job.video || { title: job.title, channel: job.channel, duration: job.duration, thumb: job.thumb };
     const app = (K().WORKER_APPS || []).find(function (a) { return a.id === (job.app || 'youtube'); }) || { name: 'YouTube', icon: 'youtube' };
-    const state = props.mode === 'receipt' ? 'receipt' : (props.expired ? 'expired' : (props.waitingSince ? 'waiting' : 'ask'));
+    const base = props.mode === 'receipt' ? 'receipt' : (props.expired ? 'expired' : (props.waitingSince ? 'waiting' : 'ask'));
+    const answered = !!props.answer && (base === 'ask' || base === 'waiting');
+    const state = answered ? 'answered' : base;
     const past = state === 'receipt';
+    const card = React.useRef(null);
+    if (K().useSwapFocus) K().useSwapFocus(card, props.answer);
     const by = props.expiresAt || '9 pm';
     const I = K().Icon;
     const B = K().Button;
@@ -65,15 +73,22 @@
     const back = past && props.ranOn !== 'ask' && B
       ? <B variant="quiet" size="md" icon="shield-check" onClick={props.onChangeMode}>Switch back to Always ask</B> : null;
 
+    const said = {
+      once: 'You took this job.',
+      deny: 'You skipped this job. Today won’t count toward your 20 days.',
+      always: 'Automatic is on for ' + app.name + ', so I took this job.',
+    }[props.answer];
     const head = {
       ask: [job.label || 'Paid job available', 'Just now'],
       waiting: [job.label || 'Paid job available', 'Since ' + props.waitingSince],
+      answered: [job.label || 'Paid job available', props.waitingSince ? 'Since ' + props.waitingSince : 'Just now'],
       expired: [DAY_COPY.expiredTitle, 'At ' + by],
       receipt: ['Paid job done', props.doneAt ? 'At ' + props.doneAt : null],
     }[state];
 
     return (
-      <article className={cx('v2-job', 'v2-job--' + state)} aria-labelledby={id}>
+      <article ref={card} className={cx('v2-job', 'v2-job--' + state)} aria-labelledby={id}
+        tabIndex={answered ? -1 : undefined} data-v2-anchor={answered ? '' : undefined}>
         <header className="v2-job-head">
           {ic(app.icon)}
           <span className="v2-job-head-text" id={id}>{head[0]}</span>
@@ -85,7 +100,7 @@
             {v.duration ? <span className="v2-job-dur">{v.duration}</span> : null}
           </div>
           <div className="v2-job-video">
-            <p className="v2-job-title">{v.title}</p>
+            <p className="v2-job-title v2-text-title-sm">{v.title}</p>
             <p className="v2-job-channel">{v.channel} on {app.name}</p>
           </div>
           <ul className="v2-job-do" aria-label={past ? 'What I did' : 'What I’ll do'}>
@@ -105,6 +120,10 @@
                 {B ? <B variant="quiet" size="md" full icon="zap" disabled={props.taking} onClick={props.onStopAsking}>Switch {app.name} to Automatic</B> : null}
               </div>
             </React.Fragment>
+          ) : null}
+
+          {answered ? (
+            <p className="v2-job-consequence">{props.answer === 'deny' && T ? <T status="notcounted" size={14} /> : ic(props.answer === 'always' ? 'zap' : 'check')}<span>{said}</span></p>
           ) : null}
 
           {state === 'expired' ? (

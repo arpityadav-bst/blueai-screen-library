@@ -19,7 +19,7 @@
 | Moment | V2 today | System |
 |---|---|---|
 | Message 1 | 0 ms "Starting BlueAI…" (boot_splash.jsx:24) | 0 ms "Starting BlueAI…" (kept) |
-| Message 2 | 1050 ms "Loading your skills…" | 600 ms "Checking today's run…" (proposed copy), signed in only |
+| Message 2 | 1050 ms "Loading your skills…" | 600 ms "Checking today’s run…" (proposed copy), signed in only |
 | Fading | from 2150 ms, 500 ms ease | from 900 ms, 320 ms `--v2-ease-in` |
 | Content | about 3.5 s | about 1.2 s; then the worker-home skeleton only while the record loads |
 | Reduced motion | dots bounce forever | static dots, no fade, done at 900 ms |

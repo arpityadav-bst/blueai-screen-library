@@ -25,23 +25,18 @@
     ['Day verified', 'Yesterday’s run is verified.', 'never', 'no (inbox only)', 'no', 'inbox only', null],
     ['Day not counted', 'Oct 12 wasn’t counted. See why.', 'never', 'yes', 'no', 'always on', null],
     ['Program ending', '3 days left in this program.', 'the program’s end', 'yes', 'no', 'always on', null],
-    ['Cash out open (only when numbers().reachedMinimum, after the period)', 'Cash out is open on Earnings.', 'never', 'yes', 'no', 'always on', null],
+    ['Cash out open (only when numbers().cashOutOpen is true, after the period)', 'Cash out is open on Earnings.', 'never', 'yes', 'no', 'always on', null],
     ['Cash out, under $10', 'This program has ended. You need $10 to cash out. Your balance carries over to the next period.', 'never', 'no (inbox only)', 'no', 'inbox only', null],
     ['Terms updated', 'We’ve updated the Program Terms.', 'never (the sheet asks on next open)', 'no', 'no', 'inbox only', null],
   ];
 
-  // One inbox row in section 60's anatomy, from the same screens/core.css classes as the screen: a 32
+  // One inbox row in section 60's anatomy, the same ListRow mark as the screen (section 18): a 32
   // sunken disc with the glyph 16 in its tone, an 8px blue dot and a 600 title while unread, the body
   // 13 ink-3 (it wraps), the time 12 ink-3. Every row opens its place, an expired ask included.
   function Row({ icon, tone, title, body, time, unread }) {
     const K = window.V2Kit;
-    const lead = (
-      <span className={'v2-notif-icon' + (tone ? ' v2-notif-icon--' + tone : '')}>
-        <K.Icon name={icon} size={16} />{unread ? <span className="v2-notif-dot" /> : null}
-      </span>
-    );
     return (
-      <K.ListRow className={'v2-notif' + (unread ? ' v2-notif--unread' : '')} leading={lead}
+      <K.ListRow className={'v2-notif' + (unread ? ' v2-notif--unread' : '')} mark={{ icon: icon, tone: tone, dot: unread }}
         label={<span>{unread ? <span className="v2-sr-only">Unread: </span> : null}{title}</span>}
         description={body} value={time} onClick={function () {}} />
     );

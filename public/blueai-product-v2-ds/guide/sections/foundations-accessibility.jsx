@@ -25,7 +25,7 @@
     ['Sheets', 'Same as dialogs. The blocking terms sheet has no close and no Esc: its one way out is the agreement button.'],
     ['Tabs', 'One tab stop; Left and Right move and select; the panel follows.'],
     ['Thread', "role='log' with aria-live='polite': new worker messages are read once, never the whole history."],
-    ['Toast', "role='status', polite; an action in a toast is also reachable elsewhere, because a toast leaves."],
+    ['Toast', "The toast host keeps two aria-live regions: polite for most toasts, assertive for errors (danger reads as error). A toast with an action (Undo) has no timer: it stays until it is used or dismissed, so the action never leaves on its own."],
     ['Errors', "Field errors sit under the field with aria-describedby; a run or screen error uses role='alert' once."],
   ];
   const TARGETS = [

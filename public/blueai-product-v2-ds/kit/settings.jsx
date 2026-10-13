@@ -67,7 +67,7 @@
         <button type="button" className={cx('v2-advanced-toggle', toggleClassName)} aria-expanded={isOpen} aria-controls={bodyId} onClick={toggle}>
           <span className="v2-advanced-text">
             <span className="v2-advanced-label">{label || 'Advanced'}</span>
-            <span className="v2-advanced-desc">{description || 'AI mode, your own key and the chat model. Most partners never need these.'}</span>
+            <span className="v2-advanced-desc v2-text-caption">{description || 'AI mode, your own key and the chat model. Most partners never need these.'}</span>
           </span>
           <span className="v2-advanced-chev" aria-hidden="true"><Ic name="chevron-down" size={16} /></span>
         </button>

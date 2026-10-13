@@ -4,6 +4,10 @@
    Shared frame: .v2-screen (a column the height of the content band) with a ScreenHeader and a
    .v2-screen-body that scrolls, both from kit/base.css. Nothing here animates. */
 
+/* A condition the whole window is in (offline, section 51): ScreenFrame pins it under the top bar,
+   outside the content band, so it stays while the content scrolls. */
+.v2-frame-condition { flex: none; padding: var(--v2-space-2) var(--v2-gutter) 0; background: var(--v2-canvas); }
+
 /* Home ------------------------------------------------------------------------------------------ */
 /* Standalone links on their own line keep their 32px target without stretching across the column. */
 .v2-home-chat, .v2-rundetail-report { align-self: flex-start; }
@@ -40,20 +44,22 @@
 
 /* Activity: the ledger ----------------------------------------------------------------------------- */
 /* One row per day: a 96px date column, the result, the tick. Dividers sit between items, so a
-   rejected day's Report a problem line stays with its row. */
+   rejected day's Report a problem line stays with its row. --ledger-date-w: the date column's one
+   size, repeated by the column, the reason indent and the action indent (part-local, tokens.css header). */
+.v2-ledger { --ledger-date-w: 96px; }
 .v2-ledger-item + .v2-ledger-item { border-top: var(--v2-stroke) solid var(--v2-line-hair); }
 .v2-ledger-line {
-  display: grid; grid-template-columns: 96px minmax(0, 1fr); column-gap: var(--v2-space-2);
+  display: grid; grid-template-columns: var(--ledger-date-w) minmax(0, 1fr); column-gap: var(--v2-space-2);
   align-items: baseline;
 }
 .v2-ledger-date {
   color: var(--v2-ink-3); font-weight: var(--v2-weight-regular); font-variant-numeric: tabular-nums;
 }
 .v2-ledger-result { min-width: 0; color: var(--v2-ink); }
-.v2-ledger-row .v2-row-desc { padding-left: calc(96px + var(--v2-space-2)); }
+.v2-ledger-row .v2-row-desc { padding-left: calc(var(--ledger-date-w) + var(--v2-space-2)); }
 .v2-ledger-act {
   display: flex; align-items: center;
-  padding: 0 var(--v2-space-4) var(--v2-space-2) calc(var(--v2-space-4) + 96px + var(--v2-space-2));
+  padding: 0 var(--v2-space-4) var(--v2-space-2) calc(var(--v2-space-4) + var(--ledger-date-w) + var(--v2-space-2));
 }
 
 /* Run detail ------------------------------------------------------------------------------------ */
@@ -68,25 +74,9 @@
 .v2-verify-actions { margin-top: var(--v2-space-1); }
 
 /* Notifications --------------------------------------------------------------------------------- */
-/* A 32px disc with the event's glyph; the tone is in the glyph only (the words stay ink). Unread
-   adds a blue dot on the disc and a heavier title; screen readers hear 'Unread:' first. */
-.v2-notif-icon {
-  position: relative; display: inline-flex; flex: none; align-items: center; justify-content: center;
-  width: var(--v2-hit-min); height: var(--v2-hit-min); border-radius: var(--v2-radius-round);
-  background: var(--v2-surface-sunken); color: var(--v2-ink-3);
-}
-.v2-notif-icon--attention { color: var(--v2-attention-ink); }
-.v2-notif-icon--success { color: var(--v2-success-ink); }
-.v2-notif-icon--danger { color: var(--v2-danger-ink); }
-.v2-notif-dot {
-  position: absolute; top: 0; right: 0; width: var(--v2-space-2); height: var(--v2-space-2);
-  border-radius: var(--v2-radius-round); background: var(--v2-blue);
-  box-shadow: 0 0 0 var(--v2-space-05) var(--v2-surface);
-}
+/* The disc and its unread dot are the ListRow mark (kit/display.css); the tone is in the glyph only
+   (the words stay ink). Unread adds a heavier title; screen readers hear 'Unread:' first. */
 .v2-notif .v2-row-label { font-weight: var(--v2-weight-medium); }
 .v2-notif--unread .v2-row-label { font-weight: var(--v2-weight-semibold); }
 .v2-notif .v2-row-value { align-self: flex-start; color: var(--v2-ink-3); font-size: var(--v2-text-12); }
 
-@media (forced-colors: active) {
-  .v2-notif-dot { background: CanvasText; box-shadow: none; }
-}

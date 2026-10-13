@@ -4,8 +4,10 @@
    stays lit. V2's screen has no way back (index.html:982), a Refresh button that does nothing
    (index.html:440), a 54/800 gradient numeral (index.html:518) and never states the grant or the
    reset until the balance is zero. Each fact is said once: the figure says the balance, the meter
-   says the refresh and what it means for today, and the explainer is the one V2 line every credits
-   surface uses (OOC_COPY.explain, V2's later line, credits_popup_parts.jsx:102-105).
+   says the refresh and what it means for today (dayStatus from V2Kit.creditsDay, the words every
+   short-credit surface uses), and the explainer is V2's, kept word for word (index.html:525-537).
+   At zero the banner's tone follows today: danger when today won't count, attention while the
+   refill still comes before 9 pm, neutral once the run is covered or done (section 03).
 
    Credits {worker, state, refillAt, now, keyInfo, tab, onBack, onRetry, onManageKey, onNavigate,
             frame, compact, landmark, preview}
@@ -19,6 +21,9 @@
   const noop = function () {};
   // The article V2's Learn more opens (credits_popup_parts.jsx:13).
   const ARTICLE = 'https://bluestacks.ai/getting-started#ai-credits';
+  // V2's explainer, the PM's lines (index.html:525, 527, 537). 'task' is flagged, not changed (section 66).
+  const EXPLAIN = { title: 'BlueAI runs on credits', lines: ['Every task and job BlueAI does uses credits.', 'You get limited credits for your daily tasks.'] };
+  const BANNER_TONE = { stopped: ['danger'], waiting: ['attention'], covered: ['offline', 'clock'] };
 
   function fixture(state) {
     const f = kit().workerFixtures || {};
@@ -52,17 +57,19 @@
     const S = window.V2Screens || {};
     const Frame = S.ScreenFrame;
     if (!Frame || !K.StatCard || !K.CreditsMeter || !K.SettingsSection) return <div className="v2-acct-note">The kit or screens/home.jsx is not loaded.</div>;
-    const OOC = K.OOC_COPY || {};
 
     const own = state === 'own-key';
     const balance = balanceFor(state, c);
     const runDone = !!(w.today && w.today.status === 'done');
+    // What the balance shown means for today, from the record at that balance (section 41).
+    const day = K.creditsDay ? K.creditsDay(Object.assign({}, w, { credits: Object.assign({}, c, { left: balance }, p.refillAt != null ? { refillAt: p.refillAt } : null) }), p.now) : 'stopped';
+    const tone = BANNER_TONE[day] || BANNER_TONE.stopped;
     const glyph = K.Icon ? <K.Icon name="credits" size={24} /> : null;
     const fmt = function (n) { return Number(n || 0).toLocaleString('en-US'); };
 
     // V2's banner line. When credits refresh, and what zero means for today, is the meter's to say.
     const banner = state === 'empty' && K.Banner ? (
-      <K.Banner tone="danger" title={OOC.title || 'Out of credits'}>{OOC.used || 'You’ve used all of today’s AI credits.'}</K.Banner>
+      <K.Banner tone={tone[0]} icon={tone[1]} title="Out of credits">You’ve used all of today’s AI credits.</K.Banner>
     ) : state === 'refreshed' && K.Banner ? (
       <K.Banner tone="success" title="New credits are here" onDismiss={noop}>
         {'You have ' + fmt(c.grant) + ' AI credits for today.'}
@@ -71,7 +78,7 @@
 
     const meter = (
       <K.CreditsMeter balance={balance} grant={c.grant} runCost={c.runCost} refillAt={p.refillAt} now={p.now}
-        runDone={runDone} refreshed={state === 'refreshed'} figure={false} />
+        runDone={runDone} refreshed={state === 'refreshed'} dayStatus={day} figure={false} />
     );
 
     const loading = state === 'loading';
@@ -89,9 +96,9 @@
             {banner}
             {main}
             <div className="v2-acct-explain">
-              <h2>{OOC.why || 'What are AI credits?'}</h2>
-              <p>{OOC.explain}</p>
-              {K.Link ? <K.Link href={ARTICLE} external>{OOC.learnMore || 'Learn more'}</K.Link> : null}
+              <h2>{EXPLAIN.title}</h2>
+              <p>{EXPLAIN.lines.map(function (l) { return <span key={l} className="v2-acct-explain-line">{l}</span>; })}</p>
+              {K.Link ? <K.Link href={ARTICLE} external>Learn more</K.Link> : null}
             </div>
           </div>
         </div>

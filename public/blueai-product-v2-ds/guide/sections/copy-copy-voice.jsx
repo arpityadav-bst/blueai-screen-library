@@ -4,7 +4,13 @@
 (function () {
   const G = window.V2Guide;
   const P = 'entry-patterns.';
-  function refs(list) { return list ? list.map(function (x) { return P + x; }) : null; }
+  // Short ids are this slice's ('copy.v57' is entry-patterns.copy.v57); an id that already names a slice
+  // (worker.permissions.consent-body) is used as written.
+  function refs(list) {
+    if (!list) return null;
+    const ns = new Set((window.V2Refs || []).map(function (r) { return String(r.id).split('.')[0]; }));
+    return list.map(function (x) { return ns.has(x.split('.')[0]) ? x : P + x; });
+  }
 
   // term, use, banned synonyms, where V2 drifts
   const GLOSSARY = [
