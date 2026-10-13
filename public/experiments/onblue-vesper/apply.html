@@ -405,6 +405,15 @@ body { min-height: 100vh; }
 /* the balance is the one figure on this screen answering "what can I take out
    now", so it keeps the money scale the programme card gives its reward */
 .bal-top .earn-figure { font-size: clamp(26px, 2.4vw, 32px); }
+/* THE CASH-OUT MINIMUM (PM spec, 2026-10-12). The minimum sits under the
+   balance it qualifies, in Earned till date's own muted note style. Cash out can
+   now be closed, so the button and the reason it is closed stack on the right:
+   a disabled control that does not say why is a refusal with no explanation. */
+.bal-min { margin-top: 8px; }
+.bal-act { display: grid; justify-items: end; gap: 8px; text-align: right; }
+.bal-act .btn:disabled { opacity: 0.45; cursor: not-allowed; box-shadow: none; }
+.bal-act .btn:disabled:hover { background: var(--charcoal-2); border-color: var(--border); }
+.bal-why { max-width: 230px; }
 .bal-ledger { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--border-soft); }
 .dash-quiet { color: var(--muted); font-size: 13.5px; letter-spacing: -0.01em; }
 
@@ -1296,10 +1305,12 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
      because they are one place: the same ground, the same header, the same
      footer, and a reader who gets approved does not change address.
      THE CONTENT IS THE PARTNER DASHBOARD'S, QUOTED. Headings, labels, the three
-     steps and the four payout rules are read off Dashboard.tsx, EarningsPanel,
+     steps and the first four payout rules are read off Dashboard.tsx, EarningsPanel,
      Transactions, EnrolledPrograms and HowEarningWorks rather than off a
      screenshot, which is how "your onBlue account" survived (the picture still
      says BlueAI; the source does not). Nothing about how it looks came with it.
+     The fifth rule, the payment minimum and the closed Cash out states are the
+     PM's cash-out spec (Abhisht, 2026-10-12), quoted word for word.
      ============================================================================ -->
 <section class="dash" id="dash" data-dock="creator" data-one="One program" hidden>
 
@@ -1340,11 +1351,15 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
                card read as two different kinds of thing. -->
           <span class="mini-title">Balance</span>
           <span class="earn-figure" data-fig="balance">$0</span>
+          <span class="dash-note bal-min">Payment minimum: <b>$10</b></span>
         </div>
         <!-- quiet, not the page's solid CTA: cashing out is a frequent,
              low-drama action, and the black button on this page belongs to the
              one thing that commits you to something -->
-        <button class="btn btn-ghost" type="button" data-sheet="cash-out">Cash out</button>
+        <div class="bal-act">
+          <button class="btn btn-ghost" type="button" data-sheet="cash-out">Cash out</button>
+          <span class="dash-note bal-why" data-cash-why hidden></span>
+        </div>
       </div>
       <div class="bal-ledger">
         <span class="mini-title">Transactions</span>
@@ -1422,6 +1437,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
           <li>PayPal only</li>
           <li>Transfers take 7-10 business days</li>
           <li>Withdrawals are final</li>
+          <li>Minimum $10 per cash-out</li>
         </ul>
       </div>
     </div>
@@ -2252,7 +2268,26 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
   };
   var acct = 'empty';
 
+  /* THE CASH-OUT RULE (PM spec, 2026-10-12): Cash out opens only when the
+     balance is at least the minimum AND the program period has ended. It does
+     not open early when the balance crosses $10, and a balance under it carries
+     over rather than lapsing. Whether the period has ended is a review switch,
+     because the four cases in the spec are two axes and only one of them is the
+     account. The end date is the one the programme tile already states; the
+     spec's "Nov 1" was its example, and this screen names its own period. */
+  var CASH_MIN = 10;
+  var PERIOD_ENDS = 'Aug 31';
+  var periodOver = false;
+
   function money(n) { return '$' + n; }
+
+  function cashWhy(a) {
+    if (a.balance < CASH_MIN) {
+      return 'You need ' + money(CASH_MIN) + ' to cash out.'
+        + (periodOver ? ' Your balance carries over to the next period.' : '');
+    }
+    return periodOver ? '' : 'Cash out opens when your program period ends on ' + PERIOD_ENDS + '.';
+  }
 
   function renderDash() {
     var dash = document.getElementById('dash');
@@ -2271,6 +2306,12 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     });
     dash.querySelector('[data-count="active"]').textContent = a.active;
     dash.querySelector('[data-count="past"]').textContent = a.past;
+
+    var why = cashWhy(a);
+    var whyEl = dash.querySelector('[data-cash-why]');
+    dash.querySelector('[data-sheet="cash-out"]').disabled = !!why;
+    whyEl.textContent = why;
+    whyEl.hidden = !why;
 
     var ledger = dash.querySelector('[data-ledger]');
     var none = dash.querySelector('[data-ledger-empty]');
@@ -2296,6 +2337,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     renderDash();
   }
   window.onblueAccount = setAccount;
+  window.onbluePeriod = function (over) { periodOver = !!over; renderDash(); };
 
   (function dashboard() {
     var dash = document.getElementById('dash');

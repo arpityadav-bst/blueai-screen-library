@@ -153,12 +153,20 @@
                { id: 'one', name: dash.getAttribute('data-one') || 'One program' }],
       apply: function (on) { if (window.onblueAccount) { window.onblueAccount(on); } }
     });
-    document.body.appendChild(dock([account, build({
+    /* the cash-out minimum's second axis: Cash out opens only once the program
+       period has ended, so the closed and open states need both answers */
+    var period = build({
+      label: 'Period', store: 'onblue:dev-cr-period',
+      states: [{ id: 'running', name: 'Running' }, { id: 'ended', name: 'Ended' }],
+      apply: function (on) { if (window.onbluePeriod) { window.onbluePeriod(on === 'ended'); } }
+    });
+    document.body.appendChild(dock([period, account, build({
       label: 'Creator', store: 'onblue:dev-creator', initial: 'apply',
       states: [{ id: 'apply', name: 'Application' },
                { id: 'in', name: 'Approved' }],
       apply: function (on) {
         account.hidden = on !== 'in';
+        period.hidden = on !== 'in';
         if (window.onblueApproved) { window.onblueApproved(on === 'in'); }
       }
     })]));
