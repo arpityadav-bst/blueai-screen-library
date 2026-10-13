@@ -1,4 +1,4 @@
-// BlueAI — Free Credits widget
+// BlueAI: Free Credits widget
 // 4 trigger styles: pill | fab | card | banner
 // Panel: bottom sheet slides up from above the bottom nav
 // Prerequisite: shared.jsx loaded first
@@ -490,7 +490,7 @@
 
 
   /* ══════════════════════════════════════════════════════════════
-     STYLES 25–44 — PM-designed trigger spectrum
+     STYLES 25–44: PM-designed trigger spectrum
   ══════════════════════════════════════════════════════════════ */
 
   /* 25 ── SPEED DIAL (FAB fans into 5 platform icons) ─────────── */
@@ -542,7 +542,7 @@
           <div style={{ height: '100%', width: `${pct * 100}%`, background: 'linear-gradient(90deg,#0EA4C5,#7B4CFF)', borderRadius: 999, transition: 'width 0.5s ease' }} />
           <div style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: `${(1-pct)*100}%`, background: 'repeating-linear-gradient(90deg,transparent,transparent 4px,rgba(255,255,255,0.5) 4px,rgba(255,255,255,0.5) 8px)' }} />
         </div>
-        <p style={{ fontSize: 10, color: '#9ca3af', margin: '5px 0 0', fontWeight: 600 }}>{done.length} of 5 tasks done — complete more to refill free</p>
+        <p style={{ fontSize: 10, color: '#9ca3af', margin: '5px 0 0', fontWeight: 600 }}>{done.length} of 5 tasks done. Complete more to refill free</p>
       </button>
     );
   }
@@ -612,7 +612,7 @@
         </div>
         <div style={{ flex: 1 }}>
           <p style={{ fontSize: 12.5, fontWeight: 800, color: '#92400e', margin: 0, lineHeight: 1.2 }}>Running low on credits?</p>
-          <p style={{ fontSize: 10.5, color: '#b45309', margin: '2px 0 0' }}>Earn {totalLeft} more for free — no payment needed</p>
+          <p style={{ fontSize: 10.5, color: '#b45309', margin: '2px 0 0' }}>Earn {totalLeft} more for free, no payment needed</p>
         </div>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d97706" strokeWidth="2.5" strokeLinecap="round"><polyline points="9 18 15 12 9 6"/></svg>
       </button>
@@ -730,7 +730,7 @@
           <span style={{ fontSize: 18 }}>💰</span>
           <p style={{ fontSize: 13, fontWeight: 900, color: '#15803d', margin: 0, lineHeight: 1.2 }}>Save real money</p>
         </div>
-        <p style={{ fontSize: 11, color: '#166534', margin: '0 0 6px', lineHeight: 1.4 }}>You could earn {totalLeft} AI credits — completely free. No credit card.</p>
+        <p style={{ fontSize: 11, color: '#166534', margin: '0 0 6px', lineHeight: 1.4 }}>You could earn {totalLeft} AI credits, completely free. No credit card.</p>
         <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
           <CreditsIcon size={12} id="sv" />
           <span style={{ fontSize: 10.5, fontWeight: 700, color: '#059669' }}>Earn free now →</span>
@@ -909,7 +909,7 @@
                 <div>
                   <p style={{ color: 'white', fontWeight: 800, fontSize: 14.5, lineHeight: 1.2, margin: 0 }}>Earn free AI credits</p>
                   <p style={{ color: 'rgba(255,255,255,0.78)', fontSize: 11.5, margin: '2px 0 0' }}>
-                    {allDone ? "All tasks complete — credits on their way!" : `Complete tasks below to earn free credits`}
+                    {allDone ? "All tasks complete. Credits on their way!" : `Complete tasks below to earn free credits`}
                   </p>
                 </div>
               </div>
@@ -964,7 +964,7 @@
   }
 
   /* ══════════════════════════════════════════════════════════════
-     MAIN WIDGET — accepts triggerStyle prop
+     MAIN WIDGET: accepts triggerStyle prop
   ══════════════════════════════════════════════════════════════ */
   function FreeCreditsWidget({ triggerStyle = 'pill' }) {
     const [open, setOpen] = useState(false);

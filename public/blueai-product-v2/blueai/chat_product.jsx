@@ -1,4 +1,4 @@
-/* BlueAI — Product chat screen: the conversation, the composer, and the send rules.
+/* BlueAI: Product chat screen: the conversation, the composer, and the send rules.
    Home = the canonical NEW variant (window.ChatCompare.NewHome + IntroCard). Conversation =
    the task-progress + feedback engine ported from "ChatView Feedback.html".
 
@@ -52,7 +52,7 @@
     useEffect(() => { if (isOnboarding) taRef.current && taRef.current.focus(); }, [isOnboarding, sessionKey]);
 
     /* Scheduled-run-out-of-credits scenario: plays ITSELF on mount, with no user message and no
-       send, because that's the whole point of the state — a scheduled BlueAI worker run happens in
+       send, because that's the whole point of the state, a scheduled BlueAI worker run happens in
        its own chat while nobody is typing. Keyed on sessionKey as well as the flag so flipping the
        preview toggle (which bumps sessionKey) replays it from the top instead of appending a
        second copy onto the first. */
@@ -164,7 +164,7 @@
          2026-08-10). Clicking pushes the NEXT step into this same conversation rather than
          opening anything outside it; when that step's own timer finishes, it tells the parent to
          run the scene-level effects (mount the BlueStacks window, cycle its frames) and picks the
-         original task back up right here, in the same convo — no round-trip through parent state
+         original task back up right here, in the same convo, no round-trip through parent state
          needed now that nothing ever leaves the chat. */
       if (step.role === 'needsbs') return <window.NeedsBluestacks.Bubble key={i} app={step.app}
         onGet={() => push([{ role: 'installing-bs', app: step.app, text: step.text, d: 200 }])} />;
@@ -198,14 +198,14 @@
         <div style={{ flex: 1, overflow: 'hidden' }}>
           <div ref={scrollRef} style={{ height: '100%', overflowY: 'auto', scrollbarWidth: 'thin', padding: '16px' }}>
             {showStates ? <ChatStatesPreview /> : <>
-              {/* Greeting shows on the pre-conversation view — it clears once a task is sent (both
+              {/* Greeting shows on the pre-conversation view, it clears once a task is sent (both
                  onboarding + default). Onboarding chat pads the greeting down to match the design;
                  the picker welcome lives one level up (App), so no welcome renders here. */}
               {!started &&
                 <C.IntroCard onboarding={isOnboarding}
                   title={sessionMode === 'moneymaker' && !isOnboarding ? 'Hi, Alex 👋' : undefined}
                   sub={sessionMode === 'moneymaker' && !isOnboarding
-                    /* Value statement, not instruction — the coach tooltip under the card already
+                    /* Value statement, not instruction, the coach tooltip under the card already
                        says "Run this to begin"; this line instructing as well read as a stutter.
                        "skill" -> "worker" 2026-09-09: the Skills tab is hidden now and this is the
                        one worker in the product, so "skill" framing no longer matches anything
@@ -213,7 +213,7 @@
                     ? (WF().isOnboarded() ? 'Welcome back. Your next run is at 11 am.' : "You're all set. The BlueAI worker is all it takes to start earning.")   // returning person: the time onboarding set (draft copy, sheet row 24)
                     : isOnboarding
                     ? 'Just send your message whenever you are ready and see me do your work for you!'
-                    : 'Your AI worker for BlueStacks — pick a task below or just type what you need.'} />}
+                    : 'Your AI worker for BlueStacks. Pick a task below or just type what you need.'} />}
               {!started
                 ? <div style={{ marginTop: 4 }}>
                     {isOnboarding
@@ -226,17 +226,17 @@
                   </div>
                 /* Conversation is BOTTOM-anchored, like every real messaging app: a short thread
                    rests on the composer and grows upward, rather than hanging from the top of an
-                   empty panel (designer, 2026-09-09 — this was wrong in every chat mode, not just
+                   empty panel (designer, 2026-09-09, this was wrong in every chat mode, not just
                    the scheduled run, since they all render through here).
 
                    minHeight:100% + marginTop:auto, NOT justifyContent:'flex-end' on the scroll
                    container. Two reasons. (1) flex-end on a scrolling container is the classic
-                   trap — once the content is taller than the box, the overflowing top gets
+                   trap: once the content is taller than the box, the overflowing top gets
                    clipped and can't be scrolled back to in Chrome and Firefox. Here the wrapper
                    simply grows past 100%, marginTop:auto collapses to 0, and it scrolls normally.
                    (2) It leaves the scroll container a plain block, so the pre-conversation home
                    (greeting + cards) and the ChatStatesPreview keep their existing top-aligned
-                   layout untouched — making the container itself flex would have changed all
+                   layout untouched: making the container itself flex would have changed all
                    three at once. The old marginTop:4 is dropped: it spaced the thread off the
                    greeting, which isn't rendered once a conversation exists. */
                 : <div style={{ minHeight: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -246,9 +246,9 @@
           </div>
         </div>
 
-        {/* Composer — hidden while the "Chat states" dev preview is on (nothing to type/send) */}
+        {/* Composer: hidden while the "Chat states" dev preview is on (nothing to type/send) */}
         {!showStates && <div style={{ flexShrink: 0, position: 'relative', padding: '4px 16px 10px' }}>
-          {/* Onboarding nudge — a pulsing "Send a message to watch BlueAI work" pill sits just
+          {/* Onboarding nudge: a pulsing "Send a message to watch BlueAI work" pill sits just
              above the composer until a message is attempted (matches the design's OnboardingChat). */}
           {isOnboarding && !started &&
             <div style={{ position: 'absolute', bottom: 'calc(100% + 2px)', left: 16, display: 'inline-flex', alignItems: 'center', gap: 7, background: '#1990FF', color: 'white', borderRadius: 10, padding: '7px 12px', fontSize: 12, fontWeight: 600, boxShadow: '0 4px 14px rgba(25,144,255,0.3)', whiteSpace: 'nowrap' }}>
@@ -276,7 +276,7 @@
                    still routes to the out-of-credits popup through run()'s zeroCredits guard,
                    which is where that dismiss-only card belongs. */
                 : scheduledOoc ? 'BlueAI is out of credits until tomorrow...'
-                /* MoneyMaker home is one card + a lot of air — the placeholder points back up at
+                /* MoneyMaker home is one card + a lot of air, the placeholder points back up at
                    it so the composer reads as connected to the screen, not an orphan input.
                    Copy renamed 2026-09-09 (MoneyMaker -> "BlueAI worker"); sessionMode value
                    stays 'moneymaker' internally, this is a display-string-only change. */

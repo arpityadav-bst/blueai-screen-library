@@ -1,4 +1,4 @@
-// BlueAI — Onboarding welcome (logged-out cold start), matched 1:1 to the cloud design
+// BlueAI: Onboarding welcome (logged-out cold start), matched 1:1 to the cloud design
 // (BlueAI Onboarding project → blueai/relax_flow.jsx "TaskPicker"). A chrome-free, vertically
 // centered picker: gradient sparkle logo + greeting + 3 starter tasks + "Just type it".
 // Picking a task hands its prompt up to prefill the onboarding chat composer; Send there

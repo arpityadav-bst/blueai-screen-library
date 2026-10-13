@@ -1,10 +1,10 @@
-/* BlueAI — the chat's pre-conversation home: four task categories and their prompt lists.
+/* BlueAI: the chat's pre-conversation home: four task categories and their prompt lists.
    Split out of chat_product.jsx (2026-08-10) for the 300-line rule.
    Exposes window.ProductHomeScreen. */
 (function () {
   const { useState, useRef, useEffect } = React;
 
-  /* ───────── Live home categories (matched to the live app — newer than the export).
+  /* ───────── Live home categories (matched to the live app, newer than the export).
      Counts (7/4/4/3) come from the prompt lists; drill-down prompts are best-effort
      assembled from the export's real category prompts (not 1:1 sourced). ───────── */
   const CATS_LIVE = {
@@ -37,7 +37,7 @@
         'Suggest an outfit for me today'] },
     'Productivity': {
       icon: 'productivity', color: '#1BA07A', bg: '#DDF4EE', border: '#A8E4D4',
-      desc: 'Chores, reminders, summaries — done before your coffee.',
+      desc: 'Chores, reminders, summaries, done before your coffee.',
       prompts: [
         'Every morning, brief me on the latest news and my schedule for the day',
         'Wind down my phone for the night and prep tomorrow',

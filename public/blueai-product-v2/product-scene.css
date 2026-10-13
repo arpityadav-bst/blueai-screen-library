@@ -7,18 +7,18 @@
    keeps its scene in a marked-off section: none of these values are product
    design tokens and none of them should be reused by product UI.
 
-   Architecture — matched to /blueai-desktop's .stage / .scaler / .composition exactly:
+   Architecture: matched to /blueai-desktop's .stage / .scaler / .composition exactly:
      .pscene            fixed, wallpaper as a viewport-level `cover`, centres everything
        .pscene-scaler   ONE scale() applied ONLY to the windows, not the wallpaper
          .pscene-comp   flex row: [BlueStacks window] gap [BlueAI window]
 
    HISTORY (designer, 2026-08-10): this briefly went through a "fixed 1920x1080 screen" version
    where the wallpaper scaled WITH the windows, to stop the wallpaper cropping at odd aspect
-   ratios. That traded one problem for a worse one — a visible letterboxed border around the
+   ratios. That traded one problem for a worse one, a visible letterboxed border around the
    whole scene at any size other than exactly 1920x1080. Reverted to /blueai-desktop's own
    technique instead: the wallpaper is a `cover` background on the UNSCALED, always-viewport-filling
    .pscene, so it always fills edge to edge with no border, at the cost of cropping its edges on
-   an unusual aspect ratio — which is what /blueai-desktop itself does and has always looked fine
+   an unusual aspect ratio, which is what /blueai-desktop itself does and has always looked fine
    on, because desktop-bg.png is a wide scenic image with nothing pinned to its exact edges. Only
    the WINDOWS scale, via .pscene-scaler, same as /blueai-desktop's .scaler scales only .composition.
    ============================================================================ */
@@ -43,7 +43,7 @@ html, body { height: 100%; overflow: hidden; }
 .pscene-comp.pscene-comp--noanim { transition: none; }   /* the FLIP's first frame */
 
 /* ---- BlueStacks App Player window --------------------------------------------------
-   Screenshot frames are CSS backgrounds, not <img> — same reason /blueai-desktop gives:
+   Screenshot frames are CSS backgrounds, not <img>, same reason /blueai-desktop gives:
    an <img> attracts Chrome's image-hover (Visual Search / Lens) button, which lands right
    on top of the scene and ruins every screenshot. All three frames are exactly 1394x799
    so `100% 100%` never stretches and swapping frames causes no geometric shift. */
@@ -68,7 +68,7 @@ html, body { height: 100%; overflow: hidden; }
 @keyframes pscene-win-in { from { opacity: 0; transform: scale(0.985); } to { opacity: 1; transform: none; } }
 
 /* ---- The BlueAI Windows app's own window frame -------------------------------------
-   866 = 830px content box (untouched — every screen inside was designed against it)
+   866 = 830px content box (untouched, every screen inside was designed against it)
        + 34px titlebar + 2px of hairline border (box-sizing is border-box globally).
    Radius 10, not the product's 16: this is an OS window, and Windows 11 corners are
    tighter than a web card's. */

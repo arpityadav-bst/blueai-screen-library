@@ -1,8 +1,8 @@
-// BlueAI — Chat home: Current vs New variant (for side-by-side comparison)
+// BlueAI: Chat home: Current vs New variant (for side-by-side comparison)
 const { useState, useRef, useEffect } = React;
 
 /* ───────── Category data ───────── */
-// CURRENT — faithful to the live ChatView (task counts, old subtexts, build-a-skill card, recent activity)
+// CURRENT: faithful to the live ChatView (task counts, old subtexts, build-a-skill card, recent activity)
 const CATS_CURRENT = {
   'Game Helpers': {
     icon: 'game', color: '#5B6CF6', bg: '#EEF0FE', border: '#D4D9FB',
@@ -26,7 +26,7 @@ const CATS_CURRENT = {
     prompts: ['Search the web for active redeem codes for my games'] }
 };
 
-// NEW VARIANT — action-led subtexts, no task counts, concrete example prompts, "See all in Skills" link
+// NEW VARIANT: action-led subtexts, no task counts, concrete example prompts, "See all in Skills" link
 const CATS_NEW = {
   'Game Helpers': {
     icon: 'game', color: '#5B6CF6', bg: '#EEF0FE', border: '#D4D9FB',
@@ -93,7 +93,7 @@ function aiReply(prompt) {
 function IntroCard({ sub, onboarding, title }) {
   // Onboarding chat empty-state greeting is pushed down + uses a 16px sub to match the design
   // (relax_flow OnboardingChat). Default home keeps the tighter top padding + 15px sub.
-  // title is optional — every existing caller gets the same hardcoded greeting as before;
+  // title is optional: every existing caller gets the same hardcoded greeting as before;
   // MoneyMaker's post-login home is the one caller that overrides it ("Hi, Alex 👋").
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', textAlign: 'left', width: '100%', gap: onboarding ? 6 : 6, padding: onboarding ? '30px 0 8px' : '20px 0px 16px' }}>
@@ -184,7 +184,7 @@ function BuildSkillCard({ onClick }) {
     </div>);
 }
 
-/* ═════════ CURRENT layout — drill-down, task counts, build-skill, recent activity ═════════ */
+/* ═════════ CURRENT layout: drill-down, task counts, build-skill, recent activity ═════════ */
 function CurrentHome({ onFill, onRunHistory }) {
   const [selectedCat, setSelectedCat] = useState(null);
   const cats = CATS_CURRENT;
@@ -240,12 +240,12 @@ function CurrentHome({ onFill, onRunHistory }) {
     </div>);
 }
 
-/* ═════════ NEW variant — inline accordion, no counts, run-on-tap, "See all in Skills" ═════════ */
+/* ═════════ NEW variant: inline accordion, no counts, run-on-tap, "See all in Skills" ═════════ */
 function NewHome({ onRun, onFill, onSeeAllInSkills, onOpenHistory }) {
   const [selectedCat, setSelectedCat] = useState(null);
   const cats = CATS_NEW;
 
-  // Drill-down view — same flow as today: tap a category, see its prompts with a back button
+  // Drill-down view: same flow as today: tap a category, see its prompts with a back button
   if (selectedCat) {
     const meta = cats[selectedCat];
     return (
@@ -270,7 +270,7 @@ function NewHome({ onRun, onFill, onSeeAllInSkills, onOpenHistory }) {
       </div>);
   }
 
-  // Category list — name + subtext + chevron only (no task counts)
+  // Category list: name + subtext + chevron only (no task counts)
   return (
     <div>
       <p style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: '0.08em', color: '#94a3b8', marginBottom: 8, textAlign: 'left' }}>WHAT WOULD YOU LIKE TO DO?</p>
@@ -290,7 +290,7 @@ function NewHome({ onRun, onFill, onSeeAllInSkills, onOpenHistory }) {
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2.5" strokeLinecap="round" style={{ flexShrink: 0 }}><polyline points="9 18 15 12 9 6" /></svg>
           </div>)}
       </div>
-      {/* Chat history — subtle centered text link, keeps focus on the categories */}
+      {/* Chat history: subtle centered text link, keeps focus on the categories */}
       <button onClick={onOpenHistory}
         style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, margin: '16px auto 4px', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 6px', fontFamily: 'inherit', fontSize: 12, fontWeight: 500, color: '#94a3b8', whiteSpace: 'nowrap', transition: 'color 0.12s' }}
         onMouseEnter={(e) => { e.currentTarget.style.color = '#1990FF'; e.currentTarget.querySelector('span').style.textDecoration = 'underline'; }}

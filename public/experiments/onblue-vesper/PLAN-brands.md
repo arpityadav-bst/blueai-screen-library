@@ -44,24 +44,24 @@ Read off `/creator-brand/brands`, `create-campaign`, `campaign-report.html` and
 
 ### 1.1 Marketing page, eight sections
 
-1. **Hero** — two CTAs: `Create a campaign` (solid) and `See how pricing works`
+1. **Hero**: two CTAs: `Create a campaign` (solid) and `See how pricing works`
    (opens a dialog)
-2. **Video examples** — the 9:16 strip
-3. **How it works** — **four** steps: create the campaign / BlueAI matches
+2. **Video examples**: the 9:16 strip
+3. **How it works**, **four** steps: create the campaign / BlueAI matches
    creators / real engagement, verified / you watch it run, live
-4. **Platforms** — YouTube live, four more coming
+4. **Platforms**: YouTube live, four more coming
 5. **Outcome pricing**
-6. **Trust** — checked not assumed, a real pool, live status
-7. **FAQ** — five questions
+6. **Trust**: checked not assumed, a real pool, live status
+7. **FAQ**: five questions
 8. **Closing CTA**
 
 ### 1.2 Three dialogs, hosted centrally
 
-- **`pricing`** — "How pricing works". A six-row comparison, **The old way** vs
+- **`pricing`**: "How pricing works". A six-row comparison, **The old way** vs
   **With BlueAI**: what you pay for, who you reach, how it feels to viewers,
   negotiating rates, checking the work happened, paying out.
-- **`signin`** — brand sign in.
-- **`campaign`** — branches on session state, which is the important part:
+- **`signin`**: brand sign in.
+- **`campaign`**: branches on session state, which is the important part:
   - signed out → sign in
   - signed in, no agency → **Register your agency** (name, work email, website),
     then the in-review screen
@@ -77,9 +77,9 @@ a monthly retainer).
 
 ### 1.4 The campaign report
 
-- **In review** — "Your application is in review."
-- **Campaigns** — the list, plus its empty state
-- **Campaign detail** — Progress (a chart), Accounting, Verification, Videos,
+- **In review**: "Your application is in review."
+- **Campaigns**: the list, plus its empty state
+- **Campaign detail**: Progress (a chart), Accounting, Verification, Videos,
   **Proof of work**
 
 ### 1.5 States

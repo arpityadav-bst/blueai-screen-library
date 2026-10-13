@@ -1,8 +1,8 @@
-/* BlueAI — AI Mode settings (Cloud vs Hybrid).
-   Ported from the PM's latest Claude Design source ("BlueAI AI Mode Settings v2.html" —
+/* BlueAI: AI Mode settings (Cloud vs Hybrid).
+   Ported from the PM's latest Claude Design source ("BlueAI AI Mode Settings v2.html",
    confirmed newer than the base file: adds the Auto/Custom method split, conflict
    detection, and the custom-VLM endpoint form). Cloud = today's default. Hybrid runs a
-   local model on the user's own PC to cut token usage — either BlueAI's bundled model
+   local model on the user's own PC to cut token usage, either BlueAI's bundled model
    ("Auto", recommended) or the user's own local VLM endpoint ("Custom"). */
 (function () {
   const { useState, useRef, useEffect } = React;
@@ -212,13 +212,13 @@
       </div>);
   }
 
-  /* ── HYBRID (AUTO) SETUP MODAL — reuses the shared ModalOverlay chrome ── */
+  /* ── HYBRID (AUTO) SETUP MODAL, reuses the shared ModalOverlay chrome ── */
   function HybridModal(props) {
     const { status, pct, hwSupported, onCancelModal, onConfirmModal, onDoneModal, onHideModal } = props;
     const inProgress = status === 'downloading' || status === 'installing' || status === 'checking';
     const failed = status === 'install_failed' || status === 'startup_failed';
     const running = status === 'running';
-    const title = running ? 'Hybrid AI is ready' : inProgress ? 'Setting up Hybrid AI' : 'Set up Hybrid — Auto';
+    const title = running ? 'Hybrid AI is ready' : inProgress ? 'Setting up Hybrid AI' : 'Set up Hybrid: Auto';
     const headerClose = inProgress ? onHideModal : running ? onDoneModal : onCancelModal;
 
     const btn = (label, onClick, primary, disabled) => (
@@ -277,7 +277,7 @@
       </window.ModalOverlay>);
   }
 
-  /* ── STATE HOOK — Cloud/Auto/Custom lifecycle. `hwSupported`/`conflict` are lifted to
+  /* ── STATE HOOK: Cloud/Auto/Custom lifecycle. `hwSupported`/`conflict` are lifted to
      the dev Preview panel (like the rest of the app's non-organic states); everything
      else is reachable by clicking through the real flow. ── */
   function useAiMode({ hwSupported = true, conflict = false } = {}) {

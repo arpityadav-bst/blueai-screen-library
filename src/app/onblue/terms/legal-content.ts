@@ -7,6 +7,12 @@
 // exclusion for auto-generated files (package-lock.json) is the one that applies. Splitting it by
 // document would also be undone by the next regeneration, and a hand-split of a generated file is a
 // split that silently disappears. Do not "fix" the length; regenerate instead.
+//
+// ONE ADDITION THAT IS NOT LEGAL'S (2026-10-13, Appy): the "Cash-outs" heading and paragraph under
+// the Partner Program section. It is the PM's product rule (Abhisht's cash-out spec, 2026-10-12),
+// which says the $10 minimum must appear in the Program Terms, and it was added ahead of legal's
+// own wording. When legal next revises and this file is regenerated, check their version carries
+// the rule, or it silently disappears with the regeneration.
 
 export type LegalBlock = { t: 'h' | 'p' | 'li'; x: string } | { t: 'chart' }
 export type LegalDoc = { id: string; tab: string; title: string; effective: string; blocks: LegalBlock[] }
@@ -109,6 +115,14 @@ export const LEGAL_DOCS: LegalDoc[] = [
       {
         "t": "p",
         "x": "The Program is open to users by invitation.  Upon receiving a onBlue Partner Program invitation, you may apply for a spot in the Program and will be placed on the waitlist.  Submission of the application and/or placement on the waitlist does not guarantee your acceptance into the Program.  We reserve the right to accept or reject users at our sole discretion.  The terms of the Program and application process may be changed at anytime by us."
+      },
+      {
+        "t": "h",
+        "x": "Cash-outs"
+      },
+      {
+        "t": "p",
+        "x": "Your balance can be cashed out once the current program period has ended, with a minimum of $10 per cash-out. The minimum applies to every cash-out, not only the first. A balance under $10 stays in your account and counts toward the next period's cash-out; it does not lapse."
       },
       {
         "t": "h",

@@ -1,4 +1,4 @@
-// BlueAI — Settings Screen
+// BlueAI: Settings Screen
 // Matches the live product: NO page title, NO account card (Profile / Chat History /
 // Report Issue / Log Out live in the header ? and kebab menus). Cards, in order:
 // BlueStacks Instance · Telegram · Chat AI Settings.
@@ -60,7 +60,7 @@ function TelegramCard() {
           </div>
           <button onClick={() => { setConnected(true); setShowModal(false); }}
             style={{ padding: '11px', borderRadius: 8, background: '#1990FF', border: 'none', fontSize: 14, fontWeight: 600, color: 'white', cursor: 'pointer', fontFamily: 'inherit' }}>
-            I've paired — continue
+            I've paired, continue
           </button>
         </div>
       </ModalOverlay>
@@ -134,7 +134,7 @@ function SettingsScreen({ byok, aiModeConditions }) {
       <BluestacksCard />
       <TelegramCard />
       <window.AiMode.AIModeCard {...aiMode} />
-      {/* Bring Your Own Key — available in every geo; the canonical place to add/manage a key. */}
+      {/* Bring Your Own Key, available in every geo; the canonical place to add/manage a key. */}
       {ByokSettings && byok && <ByokSettings {...byok} />}
       <AISettingsCard />
       {aiMode.modalOpen && <window.AiMode.HybridModal {...aiMode} />}

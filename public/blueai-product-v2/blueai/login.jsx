@@ -9,7 +9,7 @@ function LoginModal({ isOpen, onClose, onSuccess, variant, initialStep, onOpenBr
   const v = variant || (typeof window !== 'undefined' && window.__loginVariant) || 'default';
 
   // Reset state when modal reopens. initialStep lets a caller skip straight past the 'default'
-  // step (MoneyMaker's welcome page already IS that screen, full-page — see moneymaker.jsx).
+  // step (MoneyMaker's welcome page already IS that screen, full-page, see moneymaker.jsx).
   useEffect(() => {if (isOpen) setStep(initialStep || 'default');}, [isOpen, initialStep]);
 
   // Opening directly at 'browser' skips the click that normally starts handleSignIn, so start
@@ -63,7 +63,7 @@ function LoginModal({ isOpen, onClose, onSuccess, variant, initialStep, onOpenBr
 
   // maxWidth widened 288→360 so the browser step's "Use the account you applied with" line fits
   // on one row instead of wrapping (shared by all three of this step's screens: browser/signing/
-  // success — harmless there, just more breathing room around already-centered content).
+  // success: harmless there, just more breathing room around already-centered content).
   const card = (children) =>
   <div style={{ width: '100%', maxWidth: 360, background: 'white', borderRadius: 20, border: '1px solid #e5e7eb', padding: '40px 32px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, boxShadow: '0 8px 32px rgba(0,0,0,0.14)' }}>
       {children}
@@ -99,7 +99,7 @@ function LoginModal({ isOpen, onClose, onSuccess, variant, initialStep, onOpenBr
 
             <div style={{ textAlign: 'center' }}>
               <h1 style={{ fontSize: 21, fontWeight: 800, color: '#111827', letterSpacing: '-0.4px', lineHeight: 1.25 }}>Sign in to claim your credits</h1>
-              <p style={{ marginTop: 7, fontSize: 13, color: '#6b7280', lineHeight: 1.5 }}>BlueAI runs on credits. Get <strong style={{ color: '#374151' }}>upto 300 free AI Credits</strong> on your first login — enough to put your AI worker to work right away.</p>
+              <p style={{ marginTop: 7, fontSize: 13, color: '#6b7280', lineHeight: 1.5 }}>BlueAI runs on credits. Get <strong style={{ color: '#374151' }}>upto 300 free AI Credits</strong> on your first login, enough to put your AI worker to work right away.</p>
             </div>
 
             {/* What credits unlock */}
@@ -230,7 +230,7 @@ function LoginModal({ isOpen, onClose, onSuccess, variant, initialStep, onOpenBr
               <p style={{ fontSize: 17, fontWeight: 700, color: '#111827' }}>Check your browser</p>
               <p style={{ marginTop: 5, fontSize: 13, color: '#6b7280', lineHeight: 1.5 }}>Finish logging in from your web browser</p>
             </div>
-            {/* Same info-blue palette as needs_bluestacks.jsx's Bubble (bg/border/ink/icon) —
+            {/* Same info-blue palette as needs_bluestacks.jsx's Bubble (bg/border/ink/icon),
                the product's one established "blue notice" treatment, reused rather than a new tone. */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, width: '100%', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: 12, padding: '10px 14px', boxSizing: 'border-box' }}>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>

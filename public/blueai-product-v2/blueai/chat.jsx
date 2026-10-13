@@ -1,4 +1,4 @@
-// BlueAI — Chat Screen
+// BlueAI: Chat Screen
 
 const { useState, useRef, useEffect } = React;
 
@@ -119,12 +119,12 @@ const BUCKET_SETS = { current: CHAT_CATS, personas: PERSONA_CATS, benefits: BENE
 
 // ── Option D: 3 ready-to-use actions + "view all" ───────────────
 const QUICK_ACTIONS = [
-{ text: 'Collect my daily rewards across all my games every morning', sub: 'Spins, coins & bonuses — auto-collected', icon: 'gift', color: '#B45309', bg: '#FEF3C7', border: '#FDE68A' },
+{ text: 'Collect my daily rewards across all my games every morning', sub: 'Spins, coins & bonuses, auto-collected', icon: 'gift', color: '#B45309', bg: '#FEF3C7', border: '#FDE68A' },
 { text: 'Schedule a week of Instagram posts with captions & hashtags', sub: 'Drafts, captions & best times to post', icon: 'calendar', color: '#E05C8A', bg: '#FCE9F1', border: '#F5C0D5' },
 { text: 'Every morning, brief me on the news and my schedule', sub: 'Your daily standup, fully automated', icon: 'news', color: '#1BA07A', bg: '#DDF4EE', border: '#A8E4D4' }];
 
 
-// ── Option B: value-first — hero tasks visible immediately, persona filter ──
+// ── Option B: value-first, hero tasks visible immediately, persona filter ──
 const VF_PERSONAS = [
 { key: 'all', label: 'For you', icon: null },
 { key: 'gaming', label: 'Gaming', icon: 'game' },
@@ -134,7 +134,7 @@ const VF_PERSONAS = [
 { key: 'explore', label: 'Explore', icon: 'explore' }];
 
 const VF_TASKS = [
-{ text: 'Collect my daily rewards across all my games every morning', sub: 'Spins, coins & bonuses — auto-collected', icon: 'gift', tags: ['gaming'], hero: true, credits: 15 },
+{ text: 'Collect my daily rewards across all my games every morning', sub: 'Spins, coins & bonuses, auto-collected', icon: 'gift', tags: ['gaming'], hero: true, credits: 15 },
 { text: 'Schedule a week of Instagram posts with captions & hashtags', sub: 'Drafts, captions & best times to post', icon: 'calendar', tags: ['social'], hero: true, credits: 40 },
 { text: 'Every morning, brief me on the news and my schedule', sub: 'Your daily standup, fully automated', icon: 'news', tags: ['work'], hero: true, credits: 10 },
 { text: 'Find and redeem active gift codes for my games', icon: 'ticket', tags: ['gaming'], credits: 8 },
@@ -187,7 +187,7 @@ function IntroCard() {
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', textAlign: 'left', width: '100%', gap: 6, padding: "20px 0px 16px" }}>
       <h2 style={{ fontWeight: 800, color: '#111827', letterSpacing: '-0.4px', lineHeight: 1.2, fontSize: "24px" }}>{window.__introHeadline || "👋🏻 I work so you don't have to."}</h2>
       <p style={{ color: '#6b7280', lineHeight: 1.5, fontSize: "18px" }}>
-        {window.__introSub || "Click a task or just describe it — I'll figure it out."}
+        {window.__introSub || "Click a task or just describe it. I'll figure it out."}
       </p>
     </div>);
 
@@ -456,7 +456,7 @@ function ValueFirstTasks({ vfPersona, setVfPersona, onPick }) {
 
       })()}
       <p style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: '0.08em', color: '#94a3b8', marginBottom: 8, textAlign: 'left' }}>{heading.toUpperCase()}</p>
-      {/* Hero task cards — value visible immediately, no drill-down */}
+      {/* Hero task cards: value visible immediately, no drill-down */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
         {list.map((t, i) => {
           const c = tone(t);

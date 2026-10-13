@@ -1,12 +1,12 @@
-// BlueAI — MoneyMaker welcome screen's designer-supplied full-color step icons (used in place of
+// BlueAI: MoneyMaker welcome screen's designer-supplied full-color step icons (used in place of
 // the plain numeral for each step, see moneymaker.jsx's StepRow). Split out of moneymaker.jsx
-// (2026-08-14) when that file crossed the workspace's 300-line rule — these are two large,
+// (2026-08-14) when that file crossed the workspace's 300-line rule, these are two large,
 // self-contained SVG assets with nothing else in common with the rest of the welcome screen, so
 // they split cleanly. Exposes window.MoneyMakerIcons = { IcoProfile, IcoCodeFolder }.
 (function () {
   /* Designer-supplied full-color icon for step 1's numeral slot. Kept as its own embedded
      defs/gradients rather than trying to recolor it via a `color` prop like the flat icons
-     elsewhere in this product — it's a self-contained multi-tone asset, not a tintable glyph.
+     elsewhere in this product, it's a self-contained multi-tone asset, not a tintable glyph.
      Gradient ids renamed from the source's bare a/b/c to mmProf-prefixed ones, since the welcome
      screen already embeds several other inline <svg> elements and short generic ids are exactly
      what collides across them. */
@@ -32,7 +32,7 @@
       </svg>);
   }
 
-  /* Same deal as IcoProfile above — designer-supplied full-color icon for step 2's numeral slot,
+  /* Same deal as IcoProfile above, designer-supplied full-color icon for step 2's numeral slot,
      kept as its own embedded defs rather than tinted, gradient ids renamed from the source's bare
      a/b/c/d to mmCode-prefixed ones for the same collision reason. */
   function IcoCodeFolder({ size = 34 }) {

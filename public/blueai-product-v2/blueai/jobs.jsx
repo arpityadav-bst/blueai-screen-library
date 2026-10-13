@@ -1,4 +1,4 @@
-// BlueAI — Jobs Screen
+// BlueAI: Jobs Screen
 
 const { useState } = React;
 

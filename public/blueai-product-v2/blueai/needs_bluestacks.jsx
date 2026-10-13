@@ -1,4 +1,4 @@
-// BlueAI — "this task needs BlueStacks" chat state + the rule that decides when it fires.
+// BlueAI: "this task needs BlueStacks" chat state + the rule that decides when it fires.
 // Exports: window.NeedsBluestacks = { Bubble, ProgressBubble, needsApp, BS_BOOT, PLAY_FRAME }
 //
 // Lives in its own file rather than in chat_product.jsx, which is already 600 lines.
@@ -14,12 +14,12 @@
           name for the copy ("Opening YouTube…" beats "Opening the app…").
 
        2. Game Helpers is gated by CATEGORY, because a game always runs in BlueStacks and the
-          category's own prompts don't always say so — "Find a guide for the level I'm stuck on"
+          category's own prompts don't always say so, "Find a guide for the level I'm stuck on"
           names no app at all.
 
      Social Media is deliberately NOT category-gated, which is a change from the first draft of
      the plan (it said category-gate Social Media, and then listed two Social Media prompts as
-     ungated — the two statements contradicted each other, so one had to go). Token-matching it
+     ungated: the two statements contradicted each other, so one had to go). Token-matching it
      leaves two of its seven prompts ungated: "Draft sponsorship pitches to 5 brands" and "Show
      me what the people I follow posted this week". That is the better trade. Over-gating is the
      more visible error: blocking a pure drafting task on an Android emulator looks broken, while
@@ -34,7 +34,7 @@
     ['disney solitaire', 'Disney Solitaire'], ['royal match', 'Royal Match'],
     ['subway surf', 'Subway Surfers'], ['free fire', 'Free Fire MAX'], ['clash', 'Clash of Critters'],
     ['epic seven', 'Epic Seven'], ['maplestory', 'MapleStory'], ['dragon raja', 'Dragon Raja'],
-    // Generic fallbacks — last on purpose.
+    // Generic fallbacks: last on purpose.
     ['apps', 'the app'], ['app', 'the app'], ['games', 'the game'], ['game', 'the game']
   ];
   const CATEGORY_ALWAYS = { 'Game Helpers': 'the game' };
@@ -54,22 +54,22 @@
      apart. Change them here and both move together. */
   const BS_BOOT = { loading: 2400, home: 1400 };
 
-  /* Which apps we actually hold a Play-Store screenshot for. Only YouTube, today — so only a
+  /* Which apps we actually hold a Play-Store screenshot for. Only YouTube, today, so only a
      YouTube task may end on the third frame. Ask for TikTok and the sequence stops on the
      BlueStacks home screen instead, because showing a YouTube listing while the chat says
      "Found TikTok" is a straightforward lie about what the product did. Drop another listing
      into assets/bluestacks/ and add it here. */
   const PLAY_FRAME = { YouTube: 'play-youtube' };
 
-  /* The chat bubble. Info-blue — a sibling of WarningBubble, not a copy of it: nothing has gone
+  /* The chat bubble. Info-blue, a sibling of WarningBubble, not a copy of it: nothing has gone
      wrong and nothing failed, the task simply can't start until a dependency exists. Orange would
      read as a problem with the request.
 
      The button hides itself after one click (local `clicked` state) rather than disabling in
-     place — once clicked, a ProgressBubble appears right below carrying the same information
+     place: once clicked, a ProgressBubble appears right below carrying the same information
      (what's installing), so a lingering disabled "Get BlueStacks" button would just be a second,
      redundant thing saying the same thing. This also blocks a second click from queuing a
-     duplicate install — there's no debounce anywhere upstream of this component. */
+     duplicate install: there's no debounce anywhere upstream of this component. */
   function Bubble({ app, onGet }) {
     const [clicked, setClicked] = useState(false);
     return (
@@ -96,12 +96,12 @@
   }
 
   /* The install-in-progress card. Replaces what used to be a separate modal (InstallDialog,
-     "bluestacks" config) entirely — designer's call (2026-08-10), matched to a live-production
+     "bluestacks" config) entirely: designer's call (2026-08-10), matched to a live-production
      screenshot of an in-chat skill-progress card (PLAN → a progress card with a live percentage
      → a bar filling). No modal, no scrim, nothing blocking: the rest of the app stays fully
      usable while this ticks up, which is the actual point of putting it in the conversation
      instead of a popup. Kept in the app's own blue (matching the Bubble above it), not the
-     screenshot's purple — that purple is the live app's AUTO-GAMEPLAY skill's own branding, a
+     screenshot's purple: that purple is the live app's AUTO-GAMEPLAY skill's own branding, a
      different feature; reusing it here would borrow a color identity that means something else. */
   function ProgressBubble({ app, onDone }) {
     const [pct, setPct] = useState(0);
@@ -120,7 +120,7 @@
       return () => cancelAnimationFrame(raf);
     }, []);
 
-    // This card is never removed once pushed — push() only appends, so it stays in the
+    // This card is never removed once pushed, push() only appends, so it stays in the
     // conversation permanently as a record of what happened, frozen at whatever it last
     // rendered. A spinning ring frozen next to "100%" reads as stuck/broken, not finished, so
     // the done state swaps to a static checkmark rather than just leaving the spin running.

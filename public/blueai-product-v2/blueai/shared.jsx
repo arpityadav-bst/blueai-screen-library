@@ -1,4 +1,4 @@
-// BlueAI — Shared components: NavBars, Modal, Toggle, Icons
+// BlueAI: Shared components: NavBars, Modal, Toggle, Icons
 // Loaded first; all function declarations become globally accessible.
 
 const { useState, useRef, useEffect } = React;
@@ -111,7 +111,7 @@ function TopNavbar({ onNewChat, isLoggedIn, creditsNudge = null, onEarnCredits, 
       </div>
       {/* Actions */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-        {/* Credits pill — only when logged in */}
+        {/* Credits pill: only when logged in */}
         {isLoggedIn &&
         <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             {/* navglow: pulsing ring behind the pill */}
@@ -174,7 +174,7 @@ function TopNavbar({ onNewChat, isLoggedIn, creditsNudge = null, onEarnCredits, 
           </button>
         }
         {/* New chat pill */}
-        {/* New chat pill — or Help icon when __navHelp is set */}
+        {/* New chat pill: or Help icon when __navHelp is set */}
         {typeof window !== 'undefined' && window.__navHelp ?
         <button onClick={() => window.__onNavHelp?.()} aria-label="Help"
         style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 34, height: 34, background: 'none', border: 'none', cursor: 'pointer', flexShrink: 0, color: '#7A8499', padding: 0 }}
@@ -217,7 +217,7 @@ function TopNavbar({ onNewChat, isLoggedIn, creditsNudge = null, onEarnCredits, 
 
 /* ─── BOTTOM NAVBAR ──────────────────────────────────────────── */
 function BottomNavbar({ activeTab, onTabChange, compact }) {
-  // 'skills' dropped 2026-09-09 (designer directive) — hide, not delete; see index.html's activeTab==='skills' note for what stayed. NAV_TOP below still lists it, but that branch is dead: nothing here ever passes `compact`.
+  // 'skills' dropped 2026-09-09 (designer directive), hide, not delete; see index.html's activeTab==='skills' note for what stayed. NAV_TOP below still lists it, but that branch is dead: nothing here ever passes `compact`.
   const NAV = [
   { id: 'jobs', label: 'Jobs', Icon: IcoBriefcase },
   { id: 'chat', label: 'Chat', Icon: IcoChatBubble },

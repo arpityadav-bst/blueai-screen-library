@@ -1,4 +1,4 @@
-/* BlueAI — the thumbs-up/down feedback control for a completed task.
+/* BlueAI: the thumbs-up/down feedback control for a completed task.
    Split out of chat_product.jsx (2026-08-10), which was 648 lines against the workspace's
    300-line rule. Ported verbatim from "ChatView Feedback.html"; PM's config (placement
    "below", icons only, success only) is chosen by the CALLER, not here.

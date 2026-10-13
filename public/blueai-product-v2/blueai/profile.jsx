@@ -1,4 +1,4 @@
-// BlueAI — Profile (in-app screen) + Logout confirm modal.
+// BlueAI: Profile (in-app screen) + Logout confirm modal.
 // Opened from the kebab → Profile. Matches the live product: gradient banner + avatar,
 // name/email, an Account Information card, and a Sign out card that confirms via a modal.
 // Exposes window.Profile = { ProfileScreen, LogoutModal }. (Account values match live;

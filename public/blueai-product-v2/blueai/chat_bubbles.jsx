@@ -1,4 +1,4 @@
-/* BlueAI — chat message bubbles + the scripted task timelines.
+/* BlueAI: chat message bubbles + the scripted task timelines.
    Split out of chat_product.jsx (2026-08-10) for the 300-line rule. One bubble per message
    state (user · status · warning · needs-BlueStacks lives in needs_bluestacks.jsx · final
    success/fail/needs-input · thinking), plus the two step scripts ChatScreen plays.
@@ -7,7 +7,7 @@
   const { useState, useRef, useEffect } = React;
 
   /* FinalBubble renders the feedback control, which now lives in chat_feedback.jsx. Forwarded
-     lazily so the JSX below is untouched and the reference resolves at RENDER time — this file
+     lazily so the JSX below is untouched and the reference resolves at RENDER time, this file
      does not care whether it or chat_feedback.jsx was parsed first. */
   const FeedbackThumbs = (props) => React.createElement(window.ChatFeedback.FeedbackThumbs, props);
 
@@ -81,7 +81,7 @@
       </div>);
   }
 
-  /* NOTE: this is the LIVE product's "human input required" state (PM-confirmed name/colour —
+  /* NOTE: this is the LIVE product's "human input required" state (PM-confirmed name/colour,
      do not change), not a generic warning. See WarningBubble below for the actual Warning tone. */
   const FINAL_STYLES = {
     success:    { bg: '#d9fbe4', border: '#d9fbe4', text: '#1f2937', stamp: '#4ade80', link: '#1f2937' },
@@ -126,7 +126,7 @@
       </div>);
   }
 
-  /* Generic task script played for any prompt the user picks or types — always ends in success.
+  /* Generic task script played for any prompt the user picks or types, always ends in success.
      Warning/error bubbles are shown via the "Chat states" dev-preview toggle (ChatStatesPreview
      below), not by scripting a real task to fail. */
   const successContent = (text) =>
@@ -143,7 +143,7 @@
       { role: 'final', tone: 'success', content: successContent(text), d: 900 }];
   }
 
-  /* Picked up where the task left off, once BlueStacks has just been installed. No user bubble —
+  /* Picked up where the task left off, once BlueStacks has just been installed. No user bubble,
      the request is already in the conversation, above the "needs BlueStacks" bubble.
 
      The first three delays are DERIVED from NeedsBluestacks.BS_BOOT, which is the same constant
@@ -165,12 +165,12 @@
   }
 
   /* Scheduled BlueAI-worker run that dies mid-job because credits ran out (designer, 2026-09-09).
-     A scheduled run happens in its OWN chat with no user message — that's why this script opens on
+     A scheduled run happens in its OWN chat with no user message, that's why this script opens on
      a status line instead of a 'user' bubble, unlike makeTaskSteps/makeResumeSteps.
 
      Reuses the EXISTING bubble roles: 'warning' -> the amber WarningBubble, 'final'+tone:'fail' ->
      the red FinalBubble. The PM's mock showed these two states plus a placeholder change; it was a
-     COPY spec, not new UI, so nothing new is drawn here — only the strings are new.
+     COPY spec, not new UI, so nothing new is drawn here, only the strings are new.
 
      The warning lands BEFORE the failure on purpose: the run is what noticed the balance hit zero,
      so it announces the condition first and only then reports the job it couldn't finish. Flipped,
@@ -197,9 +197,9 @@
     const [reasons, setReasons] = useState({});
     const examples = [
       { key: 'success', user: 'Play Whiteout Survival for 10 min', kind: 'final', tone: 'success', content: 'Done. I completed your task: “Play Whiteout Survival for 10 min”. Let me know if you’d like me to do anything else.', hasFeedback: true },
-      { key: 'warning', user: 'Farm resources on the world map', kind: 'warning', content: 'Heads up — this may use more AI credits than usual since it involves repeated actions.' },
+      { key: 'warning', user: 'Farm resources on the world map', kind: 'warning', content: 'Heads up: this may use more AI credits than usual since it involves repeated actions.' },
       { key: 'needsInput', user: 'Set up a task that runs automatically every day at 6 AM', kind: 'final', tone: 'needsInput', content: 'I need a bit more information to continue with “Set up a task that runs automatically every day at 6 AM”. Could you tell me which app or game instance to use?' },
-      { key: 'fail', user: 'Collect bonus coins in Disney Solitaire game', kind: 'final', tone: 'fail', content: 'I wasn’t able to complete “Collect bonus coins in Disney Solitaire game” — the app closed unexpectedly partway through. You can try again or rephrase the request.' }
+      { key: 'fail', user: 'Collect bonus coins in Disney Solitaire game', kind: 'final', tone: 'fail', content: 'I wasn’t able to complete “Collect bonus coins in Disney Solitaire game”. The app closed unexpectedly partway through. You can try again or rephrase the request.' }
     ];
     return (
       <div style={{ marginTop: 4 }}>

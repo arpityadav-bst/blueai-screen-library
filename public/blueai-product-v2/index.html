@@ -8,11 +8,11 @@
   <title>BlueAI</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <!-- Space Grotesk — creator-brand's own heading face (globals.css --font-head), loaded for the
+  <!-- Space Grotesk: creator-brand's own heading face (globals.css --font-head), loaded for the
        MoneyMaker welcome screen only (moneymaker.jsx), which borrows that page's design theme. -->
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
   <!-- Best-guess match for BlueStacks App Player's own UI font, used ONLY by the dark
-       ("bluestacks" skin) install dialog — see BS_FONT in install_dialog.jsx. Not a
+       ("bluestacks" skin) install dialog, see BS_FONT in install_dialog.jsx. Not a
        confirmed match; falls back to Segoe UI if wrong or slow to load. -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&display=swap" rel="stylesheet" />
   <!-- bluestacks.ai's own faces (Inter + Instrument Serif italic), for the pages the app's Sign in
@@ -34,9 +34,9 @@
       font-family: -apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', 'Helvetica Neue', sans-serif;
       background: #e2e8f0;
     }
-    /* The product window's CONTENT box — still exactly 830px tall (421 x 830, every screen
-       inside was designed against it). Its FRAME — border, radius, shadow, and the Windows
-       titlebar above it — now lives on .ba-win in product-scene.css, because the window sits
+    /* The product window's CONTENT box, still exactly 830px tall (421 x 830, every screen
+       inside was designed against it). Its FRAME, border, radius, shadow, and the Windows
+       titlebar above it: now lives on .ba-win in product-scene.css, because the window sits
        on a fake Windows desktop instead of a flat page. .ba-win is 866 = 830 + 34 titlebar +
        2 hairline, so this box keeps its full height. `position: relative` is load-bearing:
        every in-app overlay (boot splash, login gate, logout + out-of-credits modals) is
@@ -73,10 +73,10 @@
     @keyframes tabFadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
     .tab-anim { animation: tabFadeUp 0.18s ease; }
     @keyframes ba-shimmer { 0% { background-position: -600px 0; } 100% { background-position: 600px 0; } }
-    /* Small spinning ring — the in-chat BlueStacks install progress card (needs_bluestacks.jsx). */
+    /* Small spinning ring: the in-chat BlueStacks install progress card (needs_bluestacks.jsx). */
     @keyframes ba-spin { to { transform: rotate(360deg); } }
     .ba-ring-spin { display: inline-block; width: 13px; height: 13px; flex-shrink: 0; border-radius: 50%; border: 2px solid #bfdbfe; border-top-color: #1990FF; animation: ba-spin 0.8s linear infinite; }
-    /* Install dialog's background wave (install_dialog.jsx's PixelWave) — two tile-widths drawn
+    /* Install dialog's background wave (install_dialog.jsx's PixelWave), two tile-widths drawn
        side by side, scrolled by exactly one tile so the loop is seamless. -400px→0 (not the
        app's existing ba-marquee direction, which goes the other way) so it reads as moving right. */
     @keyframes ba-wave-scroll { from { transform: translateX(-400px); } to { transform: translateX(0); } }
@@ -112,7 +112,7 @@
 <script type="text/babel" src="blueai/desktop_scene.jsx"></script>
 <!-- A Windows notification on that desktop (exposes window.DesktopToast) -->
 <script type="text/babel" src="blueai/desktop_toast.jsx"></script>
-<!-- "Additional files required" installer dialog — Flow A only now (exposes window.InstallDialog) -->
+<!-- "Additional files required" installer dialog, Flow A only now (exposes window.InstallDialog) -->
 <script type="text/babel" src="blueai/install_dialog.jsx"></script>
 <!-- Boot splash + Shimmer -->
 <script type="text/babel" src="blueai/boot_splash.jsx"></script>
@@ -124,16 +124,16 @@
 <script type="text/babel" src="blueai/onboarding.jsx"></script>
 <!-- MoneyMaker welcome screen's background decoration (exposes window.MoneyMakerBackdrop) -->
 <script type="text/babel" src="blueai/moneymaker_backdrop.jsx"></script>
-<!-- MoneyMaker welcome screen's full-color step icons (exposes window.MoneyMakerIcons) — must
+<!-- MoneyMaker welcome screen's full-color step icons (exposes window.MoneyMakerIcons), must
      load before moneymaker.jsx, which reads window.MoneyMakerIcons at its own top level. -->
 <script type="text/babel" src="blueai/moneymaker_icons.jsx"></script>
-<!-- MoneyMaker welcome screen's hero logo — glow, ring, mark, grain (exposes window.MoneyMakerLogo)
-     — must load before moneymaker.jsx, which reads window.MoneyMakerLogo at its own top level. -->
+<!-- MoneyMaker welcome screen's hero logo, glow, ring, mark, grain (exposes window.MoneyMakerLogo)
+     must load before moneymaker.jsx, which reads window.MoneyMakerLogo at its own top level. -->
 <script type="text/babel" src="blueai/moneymaker_logo.jsx"></script>
-<!-- MoneyMaker welcome screen's steps card (exposes window.MoneyMakerSteps) — must load before
+<!-- MoneyMaker welcome screen's steps card (exposes window.MoneyMakerSteps), must load before
      moneymaker.jsx, which reads window.MoneyMakerSteps at its own top level. -->
 <script type="text/babel" src="blueai/moneymaker_steps.jsx"></script>
-<!-- MoneyMaker's post-login in-chat card (exposes window.MoneyMakerHomeCard) — must load before
+<!-- MoneyMaker's post-login in-chat card (exposes window.MoneyMakerHomeCard), must load before
      moneymaker.jsx, which reads window.MoneyMakerHomeCard at its own top level to re-export it. -->
 <script type="text/babel" src="blueai/moneymaker_home.jsx"></script>
 <!-- MoneyMaker session variant: the welcome screen, plus the re-export that keeps the post-login
@@ -165,7 +165,7 @@
 <script type="text/babel" src="blueai/jobs.jsx"></script>
 <script type="text/babel" src="blueai/skills.jsx"></script>
 <script type="text/babel" src="blueai/schedule.jsx"></script>
-<!-- AI Mode (Cloud vs Hybrid) — used inside settings.jsx (exposes window.AiMode) -->
+<!-- AI Mode (Cloud vs Hybrid), used inside settings.jsx (exposes window.AiMode) -->
 <script type="text/babel" src="blueai/ai_mode.jsx"></script>
 <script type="text/babel" src="blueai/settings.jsx"></script>
 <script type="text/babel" src="blueai/login.jsx"></script>
@@ -186,7 +186,7 @@
      credits-popup-options.html. Loaded before byok.jsx, which reads it at render time. -->
 <script type="text/babel" src="blueai/credits_popup_parts.jsx"></script>
 <script type="text/babel" src="blueai/byok.jsx"></script>
-<!-- BYOK Settings section — the canonical add/manage-key surface (extends window.Byok) -->
+<!-- BYOK Settings section: the canonical add/manage-key surface (extends window.Byok) -->
 <script type="text/babel" src="blueai/byok_settings.jsx"></script>
 
 <script type="text/babel">
@@ -263,15 +263,15 @@ const START = (() => {
   return { bs, bai };
 })();
 
-// Live product configuration (frozen — the Tweaks playground is removed).
+// Live product configuration (frozen, the Tweaks playground is removed).
 const CONFIG = {
   credits: 45812,        // matches the live Windows app
   skillsLayout: 'grid',
 };
 
-// Live header (newer than the export — matched to the live app screenshots):
+// Live header (newer than the export, matched to the live app screenshots):
 // logo · credits pill · New Chat · "?" help menu (FAQ / Report Issue) · kebab (Chat History / Profile / Earnings ↗ / Logout).
-// Logged-out (onboarding): strips to just the brand lockup — no credits/New Chat/help/kebab, matching the cold start.
+// Logged-out (onboarding): strips to just the brand lockup, no credits/New Chat/help/kebab, matching the cold start.
 function ProductTopBar({ credits, lowDot, isLoggedIn, onNewChat, onOpenHistory, onOpenCredits, onOpenProfile, onLogout }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
@@ -327,7 +327,7 @@ function ProductTopBar({ credits, lowDot, isLoggedIn, onNewChat, onOpenHistory, 
       </div>
       {isLoggedIn &&
       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-        {/* Credits pill — opens the AI Credits balance screen */}
+        {/* Credits pill: opens the AI Credits balance screen */}
         <div onClick={onOpenCredits} role="button" tabIndex={0} aria-label="AI credits"
           onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onOpenCredits(); } }}
           style={{ position: 'relative', background: 'linear-gradient(90deg,#0EA4C5,#7B4CFF)', borderRadius: 24, padding: 1.5, cursor: 'pointer' }}>
@@ -374,7 +374,7 @@ function ProductTopBar({ credits, lowDot, isLoggedIn, onNewChat, onOpenHistory, 
 }
 
 // AI Credits screen. BYOK is universal (prime + non-prime) and the BYOK toggle is the master
-// switch — "whatever they've switched on will work" (PM). So when a key is added AND BYOK is on,
+// switch: "whatever they've switched on will work" (PM). So when a key is added AND BYOK is on,
 // this screen shows the "running on your own key" state in ANY geo, with the credit balance
 // preserved/paused underneath; otherwise it shows the geo-specific credit view.
 /* V2's AI Credits screen. V2's credit model is deliberately small: no membership tiers, no geo
@@ -549,10 +549,10 @@ function AICreditsScreen({ credits, keyAdded, byokOn, keyInfo, onManageByok }) {
 }
 
 /* Windows titlebar for the BlueAI app window. The product is installed Windows software, so on
-   a desktop it needs OS chrome — without it the window reads as a mockup pasted onto a wallpaper.
+   a desktop it needs OS chrome, without it the window reads as a mockup pasted onto a wallpaper.
    Mirrors /blueai-desktop's .bai-titlebar in light theme. Minimise/maximise are decorative
    (tabIndex -1, no handler), same convention as there; ✕ genuinely closes the window, and BlueAI
-   stays INSTALLED — clicking the BlueStacks window reopens it without re-running the installer. */
+   stays INSTALLED: clicking the BlueStacks window reopens it without re-running the installer. */
 function ProductTitlebar({ onClose }) {
   const btn = { strokeLinecap: 'round' };
   return (
@@ -574,11 +574,11 @@ function ProductTitlebar({ onClose }) {
 }
 
 /* Installer copy for Flow A only (BlueStacks talking, installing BlueAI). Flow B (installing
-   BlueStacks) no longer uses this modal at all — designer's call (2026-08-10): it's now an
+   BlueStacks) no longer uses this modal at all, designer's call (2026-08-10): it's now an
    inline progress card in the chat instead (see needs_bluestacks.jsx's ProgressBubble). The
    'bluestacks' config that used to live here was removed with it, not left as dead data. */
 const INSTALLERS = {
-  // Copy from the designer's "Full State 1" table (2026-08-11) — onboarding-style rewrite,
+  // Copy from the designer's "Full State 1" table (2026-08-11), onboarding-style rewrite,
   // replacing the old single-title/single-body confirm copy. No `skin`/`cancelLabel` anymore:
   // InstallDialog is one skin now (see its file header), and this reference has no secondary
   // button, dismissing via ✕ only.
@@ -708,8 +708,8 @@ function App() {
   const [winOpen, setWinOpen] = useState(true);             // its window is open (✕ closes it; still installed)
   const [bsScreen, setBsScreen] = useState('home');         // which BlueStacks frame: home | loading | play-youtube
   // ?dlg=blueai opens that installer straight away. Only honoured when BlueAI is genuinely
-  // missing — otherwise it would show an install prompt for software that is already installed.
-  // (Flow B/BlueStacks has no modal to deep-link into anymore — see INSTALLERS above.)
+  // missing: otherwise it would show an install prompt for software that is already installed.
+  // (Flow B/BlueStacks has no modal to deep-link into anymore, see INSTALLERS above.)
   const [installing, setInstalling] = useState(() => (QS.get('dlg') === 'blueai' && !START.bai) ? 'blueai' : null);
   const [winJustIn, setWinJustIn] = useState(false);        // play the window's open animation once
   const [onbPhase, setOnbPhase] = useState('welcome');      // onboarding sub-flow: 'welcome' (chrome-free picker) → 'chat'
@@ -720,7 +720,7 @@ function App() {
   const DAILY_GRANT = 2000;
   const credits = zeroCredits ? 0 : DAILY_GRANT;
   const byokActive = keyAdded && byokOn;                   // running on the user's own key (any geo)
-  const lowDot = credits < 1000 && !byokActive;            // low/empty warning — suppressed while on own key (credits paused)
+  const lowDot = credits < 1000 && !byokActive;            // low/empty warning, suppressed while on own key (credits paused)
   const addKey = (info) => { setKeyInfo(info || DEFAULT_KEY); setKeyAdded(true); setByokOn(true); setOocOpen(false); };
   const removeKey = () => { setKeyInfo(null); setKeyAdded(false); };
   // Route into Settings › BYOK (from the out-of-credits popup or the credits-screen row): open
@@ -765,7 +765,7 @@ function App() {
   };
 
   /* ── Desktop: opening / closing / installing the BlueAI window ───────────────────────────
-     Opening the window is always a COLD START — the boot splash replays and the chat resets,
+     Opening the window is always a COLD START, the boot splash replays and the chat resets,
      because that is what launching a Windows app does. */
   const openWindow = () => {
     setWinOpen(true);
@@ -789,9 +789,9 @@ function App() {
     if (installing === 'blueai') { setBaiInstalled(true); setInstalling(null); openWindow(); }
   };
 
-  /* Flow B's scene-level payoff — mount the BlueStacks window and cycle it through its cold-start
+  /* Flow B's scene-level payoff, mount the BlueStacks window and cycle it through its cold-start
      frames. Called by ChatScreen's inline progress card (needs_bluestacks.jsx's ProgressBubble)
-     once IT finishes, not by a modal's onComplete — Flow B has no modal anymore. The chat side
+     once IT finishes, not by a modal's onComplete, Flow B has no modal anymore. The chat side
      (resuming the original task) is handled entirely inside ChatScreen itself now; this function
      only owns what the DESKTOP SCENE needs to do, which is genuinely parent-owned state. */
   const completeBluestacksInstall = (app) => {
@@ -804,7 +804,7 @@ function App() {
     const listing = window.NeedsBluestacks.PLAY_FRAME[app];
     if (listing) setTimeout(() => setBsScreen(listing), B.loading + B.home);
   };
-  /* Preview panel: flip either install flag. GUARD — turning the last one off would leave a bare
+  /* Preview panel: flip either install flag. GUARD, turning the last one off would leave a bare
      desktop with nothing on it and no way back, which is not a designed state, so the other one
      turns on instead of allowing it. */
   const toggleInstalled = (which, val) => {
@@ -827,14 +827,14 @@ function App() {
 
   const handleNewChat = () => { setSeed(null); setSessionKey((k) => k + 1); setActiveTab('chat'); setCreditsOpen(false); setHistoryOpen(false); setProfileOpen(false); setLogoutOpen(false); };
   // Onboarding sign-in completes → the message that opened the gate auto-sends in the now
-  // logged-in DEFAULT flow (so the conversation starts and the category home is skipped —
+  // logged-in DEFAULT flow (so the conversation starts and the category home is skipped,
   // designer's correction). A fresh sign-in with no queued message just lands on the home.
   // sessionKey bump resets ChatScreen; the autorun seed then fires the queued message.
   const handleLoginSuccess = () => {
     setShowLoginModal(false);
     setBrowserOpen(false);
     setIsLoggedIn(true);
-    // MoneyMaker: nothing was typed/queued — the CTA on the welcome page opened this directly —
+    // MoneyMaker: nothing was typed/queued, the CTA on the welcome page opened this directly,
     // so just reveal the chat home as-is, no seed/sessionKey churn.
     if (loginFlow !== 'onboarding') return;   // moneymaker / gate / confirm: nothing was queued
     setSessionKey((k) => k + 1);
@@ -860,11 +860,11 @@ function App() {
   const handleMoneyMakerSignIn = () => { setLoginFlow('moneymaker'); setShowLoginModal(true); };
 
   const isChat = activeTab === 'chat';
-  // Logged-out cold start sits on the chrome-free welcome picker (no top bar, no bottom nav) —
+  // Logged-out cold start sits on the chrome-free welcome picker (no top bar, no bottom nav),
   // matches the design's picker phase. Once a task is picked / "just type it", we enter the chat.
   const onboardingWelcome = !isLoggedIn && onbPhase === 'welcome';
 
-  /* Dev-only preview control — DARK (designer, 2026-08-10: the white card was pulling attention
+  /* Dev-only preview control: DARK (designer, 2026-08-10: the white card was pulling attention
      off the work). It is a tool sitting on a desktop, not product UI, so it deliberately shares
      nothing with the product's light system: near-black surface, muted ink, and it rests at 88%
      opacity, coming fully forward only on hover. */
@@ -878,7 +878,7 @@ function App() {
 
   // Compact segmented control sharing one inner track (no per-pill shadow). 3+ options (e.g.
   // Session's Onboarding/Default/MoneyMaker) get the label on its own line above a full-width
-  // track instead of squeezing both onto one row — that's what was pushing MoneyMaker past the
+  // track instead of squeezing both onto one row, that's what was pushing MoneyMaker past the
   // card's edge. flexWrap is a safety net, not the fix: a still-too-narrow track wraps instead of
   // spilling outside the rounded card.
   const PreviewRow = ({ label, opts, val, set }) => {
@@ -907,7 +907,7 @@ function App() {
   };
 
   /* Two INDEPENDENT booleans, so they get checkbox chips rather than PreviewRow's either/or
-     segments — a segmented pair would imply picking one excludes the other, which is the
+     segments: a segmented pair would imply picking one excludes the other, which is the
      opposite of the model. */
   const InstallChip = ({ label, on, onToggle }) => (
     <button role="checkbox" aria-checked={on} onClick={() => onToggle(!on)}
@@ -919,7 +919,7 @@ function App() {
     </button>
   );
 
-  /* The installer belongs to the app that raises it, so it renders INSIDE that app's window —
+  /* The installer belongs to the app that raises it, so it renders INSIDE that app's window,
      centred on it, dimming it and nothing else. Only Flow A uses this now (BlueStacks raising
      the prompt to install BlueAI); Flow B's install lives entirely inside the chat instead. */
   const installerCfg = INSTALLERS[installing];
@@ -958,7 +958,7 @@ function App() {
         <HistoryScreen />
       ) : creditsOpen ? (
         <AICreditsScreen credits={credits} keyAdded={keyAdded} byokOn={byokOn} keyInfo={keyInfo} onManageByok={goToByokSettings} />
-      /* activeTab === 'skills' branch removed 2026-09-09 (designer directive, hide not delete) —
+      /* activeTab === 'skills' branch removed 2026-09-09 (designer directive, hide not delete),
          SkillsScreen, handleTrySkill and CONFIG.skillsLayout below are all left defined; nothing
          reaches 'skills' as an activeTab any more now that BottomNavbar's NAV dropped it in
          shared.jsx, so this is dead-but-intact, not broken. */
@@ -1020,7 +1020,7 @@ function App() {
 
   /* The scene wraps the window; the installer dialog and the dev Preview card sit OUTSIDE it.
      That placement is load-bearing, not tidiness: .pscene-scaler carries a transform, which makes
-     it the containing block for any position:fixed descendant — anything fixed rendered inside it
+     it the containing block for any position:fixed descendant, anything fixed rendered inside it
      would be positioned against the scene AND scaled with it. */
   return (
     <>
@@ -1083,7 +1083,7 @@ function App() {
         </button>
       )}
 
-      {/* Preview-state dev control — ONE compact card (geo → member/key + credits), collapses to a gear. */}
+      {/* Preview-state dev control: ONE compact card (geo → member/key + credits), collapses to a gear. */}
       {!CASES_MODE && (previewOpen ? (
         /* Bottom-LEFT, not bottom-right: the product window always sits on the right of the
            scene (or centred alone), so a right-docked panel covered its bottom nav. The far
@@ -1107,17 +1107,17 @@ function App() {
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
             </button>
           </div>
-          {/* Progressive disclosure — mirror the product's real dependency chain so only the
+          {/* Progressive disclosure: mirror the product's real dependency chain so only the
              controls that affect the CURRENT screen show. BYOK is universal (prime + non-prime)
-             and its toggle is the master switch — "whatever they've switched on will work":
+             and its toggle is the master switch, "whatever they've switched on will work":
                Session ─ Onboarding (logged out) → nothing else applies
                        └ Default (logged in) → Geo
                             ├ Prime geo → Membership + Own key + Credits*
                             └ Non-prime geo → Own key + Credits*
-               (*Credits hidden while running on the user's own key — credits are paused, not consumed.)
+               (*Credits hidden while running on the user's own key, credits are paused, not consumed.)
              The Own-key toggle mirrors Settings: "Added" flips both keyAdded + byokOn on, so the
              preview state stays in sync with what Settings shows and vice-versa. */}
-          {/* What's installed on this PC. Sits at the TOP because it gates everything below it —
+          {/* What's installed on this PC. Sits at the TOP because it gates everything below it,
              with BlueAI not installed there is no app to configure, so the rest is hidden. */}
           <div style={{ padding: '7px 0 8px' }}>
             <span style={{ display: 'block', fontSize: 9.5, fontWeight: 800, letterSpacing: '0.09em', color: DEV.label, textTransform: 'uppercase', marginBottom: 6 }}>Installed</span>
@@ -1128,7 +1128,7 @@ function App() {
           </div>
           {baiInstalled && <div style={{ height: 1, background: DEV.divider }} />}
           {baiInstalled && (() => {
-            // Session row's display label only, renamed 2026-09-09 — the 'moneymaker' VALUE stays
+            // Session row's display label only, renamed 2026-09-09, the 'moneymaker' VALUE stays
             // as the internal session-mode identifier on purpose (code/filenames weren't part of
             // this rename), so switchSession/sessionMode wiring is untouched.
             /* Start at (ROB-21350, local testing): Worker home lands signed in on the BlueAI worker
@@ -1166,7 +1166,7 @@ function App() {
             if (isChat) rows.push(<PreviewRow key="states" label="Chat states" opts={[['Off', false], ['On', true]]} val={showChatStates} set={setShowChatStates} />);
             /* The scheduled-run-out-of-credits scenario. Its own row rather than a 4th Session
                option on purpose: sessionMode picks which WELCOME + LOGIN + home screen renders,
-               and this is none of those — it's a chat that plays itself. Folding it into
+               and this is none of those, it's a chat that plays itself. Folding it into
                sessionMode would have made it mutually exclusive with the BlueAI-worker session and
                dragged the login wiring along for a state that never signs anyone in.
                Selecting it also flips zeroCredits, because a run dying for lack of credits while

@@ -1369,7 +1369,7 @@ export function createAsciiObject(elements, options = {}) {
   let lastTime = 0;
   let elapsed = Math.random() * 100;
 
-  // REACTIONS (added for the application page's companion — see apply.html).
+  // REACTIONS (added for the application page's companion, see apply.html).
   // Additive on top of the ambient float and ZERO when idle, so a page that
   // never calls them renders exactly as before. nod() kicks a damped pitch
   // spring; turn() runs one eased full turn on the fit group (which nothing
@@ -1408,8 +1408,8 @@ export function createAsciiObject(elements, options = {}) {
       floatGroup.rotation.z = (Math.sin(elapsed / 4) / 20) * config.rotationIntensity;
 
       // REACTIONS (added): integrated in real time so they read the same at
-      // any frame rate. The nod is an underdamped spring — one dip, a small
-      // overshoot, still — added to the float's own pitch rather than
+      // any frame rate. The nod is an underdamped spring, one dip, a small
+      // overshoot, still: added to the float's own pitch rather than
       // replacing it, the same composition rule the entrance uses below.
       if (react.pitch || react.pitchVel) {
         react.pitchVel += (-90 * react.pitch - 13 * react.pitchVel) * delta;
@@ -1420,7 +1420,7 @@ export function createAsciiObject(elements, options = {}) {
         }
         floatGroup.rotation.x += react.pitch;
       }
-      // the turn borrows fitGroup.rotation.y, which only load() writes — it
+      // the turn borrows fitGroup.rotation.y, which only load() writes, it
       // eases through one full revolution and lands back on the model's own
       // yaw exactly, so there is nothing to undo afterwards
       if (react.spinT >= 0) {
@@ -1564,7 +1564,7 @@ export function createAsciiObject(elements, options = {}) {
       postMaterial.uniforms.uSweep.value = 0;
       startLoop();
     },
-    // REACTIONS (added) — the companion verbs; see the react state above.
+    // REACTIONS (added): the companion verbs; see the react state above.
     // Safe on any model, and inert under reduced motion because the whole
     // ambient block is.
     nod(strength = 1) {

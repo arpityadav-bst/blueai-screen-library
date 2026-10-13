@@ -1,9 +1,9 @@
-# blueAI — Claude Code project instructions
+# blueAI: Claude Code project instructions
 
 This file auto-loads when Claude Code's working directory is `blueai/`. The canonical
 bootstrap rule lives in the parent `N:\Antigravity Main\CLAUDE.md`. This is the in-repo
 mirror. **blueAI is a design-only handoff replica** of the BlueAI marketing/product site
-(BlueAI = BlueStacks' in-app AI assistant; "BlueAI by now.gg") — same philosophy as
+(BlueAI = BlueStacks' in-app AI assistant; "BlueAI by now.gg"), same philosophy as
 WSUP/now.gg: visual fidelity + handoff clarity, no real backend.
 
 ---
@@ -15,7 +15,9 @@ WSUP/now.gg: visual fidelity + handoff clarity, no real backend.
   (`public/blueai-product-v2/`, React 18 + Babel-standalone, no build). Edited in the
   `blueai-worktrees/blueai-product` worktree. Its worker flow is the PM's (Abhisht), ported
   byte-for-byte from his repo `abhisht-bst/blueai-creator-brand` so every later port diffs cleanly:
-  a bug in his code goes back to him rather than being fixed here. V1 (`/blueai-product`) was
+  a bug in his code goes back to him rather than being fixed here. The one local change: every
+  em dash is removed after each port, in comments and on-screen copy alike, so a diff against his
+  tree shows those lines and nothing else. V1 (`/blueai-product`) was
   deleted 2026-10-13 and is recoverable from git history (last present at 34027ca).
 - **onBlue Agentic** (`public/experiments/onblue-vesper/index.html` + `apply.html`): the partner
   (creator) website. Partners apply, run the jobs with their agent, and cash out from its dashboard.
@@ -39,16 +41,16 @@ says otherwise; V2 and the onBlue Agentic sites are out of VDA scope unless VDA 
 this note enumerated the dormant set and went stale the first time a surface was added, then again
 when two were deleted. If you add a surface, it is an extra by default and this note needs no edit.
 
-**DELETED 2026-08-06 (designer directive — do not resurrect):** `/blueai-creators` (all three
+**DELETED 2026-08-06 (designer directive, do not resurrect):** `/blueai-creators` (all three
 entries: the site, the onboarding prototype, the flows/diagrams) and `/moneymaker` (all three
 variants). Removed from `public/`, `src/app/`, `src/components/`, `src/lib/`, `src/styles/`, the
 rewrites in `next.config.js`, and the Screen Library index. Recoverable from git history if ever
 needed; nothing in the live tree references them.
 
 **Practical effect for VDA:** Gate 8 (taste.md) reviews new work against blueai-desktop's OWN
-design system — **`public/blueai-desktop/style-guide.html`** (live specimens, built from the
+design system: **`public/blueai-desktop/style-guide.html`** (live specimens, built from the
 product's own stylesheet + icon set) + taste **rules from 38 onward** (the cross-surface craft
-rules) — not the marketing site's rules 1–37 (preserved on record, not currently load-bearing).
+rules): not the marketing site's rules 1–37 (preserved on record, not currently load-bearing).
 
 ---
 
@@ -57,9 +59,9 @@ rules) — not the marketing site's rules 1–37 (preserved on record, not curre
 VDA is one junior designer across products. Its CRAFT (gates, forcing functions) lives in
 the shared `../agents/vda-core/`; blueAI's TASTE/decisions live here in `visual-designer/`.
 **None of the gates fire if the files aren't read at session start.** Non-negotiable. **Do
-NOT load WSUP's or now.gg's notebook for blueAI work — that's cross-contamination.**
+NOT load WSUP's or now.gg's notebook for blueAI work, that's cross-contamination.**
 
-**Trigger — the trigger is `blueai-desktop`, NOT the word "blueai"** (narrowed 2026-08-03, designer
+**Trigger: the trigger is `blueai-desktop`, NOT the word "blueai"** (narrowed 2026-08-03, designer
 directive). The bootstrap is expensive and it exists to protect ONE surface; firing it on the bare
 project name made every unrelated errand in this repo pay for it. Fire the FIRST time any of these
 are true in a session:
@@ -86,54 +88,54 @@ surface must never be edited in a way that touches `public/blueai-desktop/**` or
 Those two trees are the active surface, bootstrap or no bootstrap.
 
 **Mandatory reads on first blueAI touch, in this order** (craft = shared `../agents/vda-core/`; notebook = blueAI's `visual-designer/`):
-1. `../agents/vda-core/agent.md` — re-anchor identity (think like a UX designer)
-2. `../agents/vda-core/QUALITY-GATES.md` — 8 gates + dual-cadence + Gate 6.5 + routing table
-3. `visual-designer/taste.md` — read the SCOPE PIVOT note at the top first, then **every rule from 38
-   onward** — deliberately NOT enumerated. This line said "rule 38" while 39–41 were live, then
+1. `../agents/vda-core/agent.md`: re-anchor identity (think like a UX designer)
+2. `../agents/vda-core/QUALITY-GATES.md`: 8 gates + dual-cadence + Gate 6.5 + routing table
+3. `visual-designer/taste.md`: read the SCOPE PIVOT note at the top first, then **every rule from 38
+   onward**: deliberately NOT enumerated. This line said "rule 38" while 39–41 were live, then
    "rules 38-45" while 46 was live; an enumeration of a growing list is wrong the moment the list
    grows, and it was wrong twice here. The file is the list. Rules 1–37 are dormant-surface reference.
-3b. `public/blueai-desktop/style-guide.html` — blueai-desktop's own DS reference (tokens,
+3b. `public/blueai-desktop/style-guide.html`: blueai-desktop's own DS reference (tokens,
    scales, icon set, component families). THIS is what Gate 8 reviews blueai-desktop work
    against. Skim its section list + "Known gaps"; open it in the browser when designing.
-4. `visual-designer/decisions.md` — recent decisions so new work doesn't contradict them
-5. `visual-designer/reasonings.md` — the principles behind the rules; this is what makes a NEW
+4. `visual-designer/decisions.md`: recent decisions so new work doesn't contradict them
+5. `visual-designer/reasonings.md`: the principles behind the rules; this is what makes a NEW
    situation decidable rather than only a repeat one
-6. `visual-designer/project-insights.md` — the FACTS file. For blueai-desktop, read the **layout
+6. `visual-designer/project-insights.md`: the FACTS file. For blueai-desktop, read the **layout
    system** section: the 290px floor, the unified 15px gutter, the 260px form content width, and the
-   node-relocation rule. **Do not carry numbers out of this line — read the file.** This line said
+   node-relocation rule. **Do not carry numbers out of this line, read the file.** This line said
    "the deliberate 14px/12px list-vs-subpane gutter split, the 264px form content width" until
    2026-08-11, when the designer unified the gutter and that narrowed the form to 260px; both figures
    were then wrong in the very instruction telling a session to go learn them. The form width has now
    been revised four times. A 2026-08-03 defect (a wrapper
    double-paying a gutter) existed partly because these numbers were written nowhere a session reads.
-7. `visual-designer/knowledge-base.md` — accumulated traps. Read the **blueai-desktop traps**
+7. `visual-designer/knowledge-base.md`: accumulated traps. Read the **blueai-desktop traps**
    section at the bottom; everything above it is the dormant marketing site.
-8. `visual-designer/session-logs.md` — most recent entry only (top), including its `Freshness check:`
+8. `visual-designer/session-logs.md`: most recent entry only (top), including its `Freshness check:`
    line and `designer_caught_count`
-9. `visual-designer/scratchpad.md` — pending entries (flag if non-empty past the header)
-10. `visual-designer/evolution.md` — current phase + the CURRENT top recurring category, which is
+9. `visual-designer/scratchpad.md`: pending entries (flag if non-empty past the header)
+10. `visual-designer/evolution.md`: current phase + the CURRENT top recurring category, which is
    what you are watching for this session. Read the newest era section, not the whole file.
-11. **Run `node public/blueai-desktop/ds-drift-check.js`** — 20 seconds, and it tells you the current
+11. **Run `node public/blueai-desktop/ds-drift-check.js`**, 20 seconds, and it tells you the current
    truth about the design system (coverage, any invented copy, any raw sizes, dead CSS) instead of
    making you infer it. Do this at session start AND before declaring any change done.
 
 **Why items 5, 6, 7 and 10 were ADDED (2026-08-03).** This list held six notebook files while
-`../agents/vda-core/agent.md` says *"NOTEBOOK files — read ALL — these ARE you for THIS project"* and
+`../agents/vda-core/agent.md` says *"NOTEBOOK files, read ALL, these ARE you for THIS project"* and
 names seven. An independent audit found the four omitted files were **exactly the four that had gone
 stale**, which is not a coincidence: a file nothing reads is a file nothing corrects. Two further
 consequences of the omission: Gate 6.5's rule-conflict cross-check is *specified* to check new rules
 against `knowledge-base.md`, so it was structurally unable to run; and `evolution.md` carried the wrong
-"watch this" category for two sessions with nobody reading it. The cost of the extra reads is real —
+"watch this" category for two sessions with nobody reading it. The cost of the extra reads is real,
 mitigated by pointing each one at the section that matters rather than the whole file.
 
-**After reading, announce:** *"VDA bootstrap loaded — blueAI, Phase X, last session
+**After reading, announce:** *"VDA bootstrap loaded, blueAI, Phase X, last session
 caught_count: N, watching for [recurring category]. Scratchpad: [empty | N pending]."*
 
-**Why:** skipping these is itself a Gate 6 fail — every blueAI edit made without them
+**Why:** skipping these is itself a Gate 6 fail, every blueAI edit made without them
 operates on stale memory of blueAI's design system. The reading IS the reset.
 
 **Session end / "is everything good?":** the full health-check procedure is codified as the
-**`/blueai-health`** command (workspace `.claude/commands/blueai-health.md`) — mechanical gates,
+**`/blueai-health`** command (workspace `.claude/commands/blueai-health.md`), mechanical gates,
 independent reaudit, VDA-learning check, full-tokenisation check, fix-everything-found. Run it when
 wrapping a blueAI work session or whenever the designer asks whether things are in sync. It exists
 because the same health-check prompt was being hand-pasted; a hand-pasted procedure is a procedure
@@ -141,7 +143,7 @@ that gets skipped.
 
 ---
 
-## ⚡ VDA OPERATING CONTRACT for blueai-desktop (2026-08-01) — differs from WSUP on purpose
+## ⚡ VDA OPERATING CONTRACT for blueai-desktop (2026-08-01), differs from WSUP on purpose
 
 blueai-desktop has **no separate design-system implementation.** The DS *is* `blueai-desktop.css` +
 `blueai-icons.js`; `style-guide.html` is a *view* onto them, not a second copy. That single fact
@@ -152,15 +154,15 @@ decides everything below, and it is why the inherited WSUP cadence is wrong here
 **DS → product: unsynchronizable, by identity.** Change a token or a rule and the product has it on
 reload, because it links the same file. Nothing to propagate, nothing to remember. The cost is the
 mirror image: no staging layer, so **blast radius** replaces drift as the risk. Before touching a
-shared rule, grep its consumers — a "let me soften `--bai-faint`" edit lands on 40 surfaces at once.
+shared rule, grep its consumers, a "let me soften `--bai-faint`" edit lands on 40 surfaces at once.
 
 **Product → guide: automatic for APPEARANCE, manual for MEANING.** Automatic with zero memory
 involved: token values (read via `getComputedStyle`), the type/radius tables (tallied from the live
 sheet), the icon inventory, the coverage number, and any *restyle* of an already-specimen'd component.
-**Not automatic:** a component's markup, its copy, and its set of states — because the guide
+**Not automatic:** a component's markup, its copy, and its set of states, because the guide
 hand-writes specimens while the product builds most of its DOM in JS template strings.
 
-**The worst-repeating defect comes out of that one gap** — invented glyphs, then invented copy, then a
+**The worst-repeating defect comes out of that one gap**, invented glyphs, then invented copy, then a
 four-state login flow documented as one invented state, then (2026-08-01) a specimen paragraph left
 behind after its product copy was deleted. *Failing to delete* is the same defect as inventing.
 
@@ -174,13 +176,13 @@ the *other* failure modes stay unwatched.
 
 `vda-core/workflow.md` defers style-guide sync to the audit pass. That is right for WSUP, where the
 guide is a separate React route and syncing is expensive. **It is wrong here.** When specimens are
-hand-written, deferring the sync does not produce staleness — it produces **fabrication**, because the
+hand-written, deferring the sync does not produce staleness, it produces **fabrication**, because the
 later pass writes what it remembers instead of what it reads. That is the exact mechanism behind every
 invented-copy incident. Here the sync costs one edit in one file.
 
 > **For blueai-desktop: specimen + prose sync is INLINE, same edit. Decisions promotion stays deferred.**
 
-### The rule that makes fabrication rare (not impossible — see the table)
+### The rule that makes fabrication rare (not impossible, see the table)
 
 > **Specimen copy is never authored. It is quoted.** Every user-facing string in a specimen must exist
 > verbatim in `index.html`. If you cannot find it there, you are inventing it.
@@ -196,21 +198,21 @@ six; the check now prints its own scope footer, which is authoritative over anyt
 
 | If the edit touches… | Same-edit obligation | Partly caught by | The gap you still own |
 |---|---|---|---|
-| a new CSS class | a specimen renders it | §2 coverage **floor** | a floor, not a check — several classes can ship uncovered before it trips |
-| a new `--bai-*` token | a row in the guide's `GROUPS` | the guide self-reports omissions | none known — this one genuinely works |
+| a new CSS class | a specimen renders it | §2 coverage **floor** | a floor, not a check, several classes can ship uncovered before it trips |
+| a new `--bai-*` token | a row in the guide's `GROUPS` | the guide self-reports omissions | none known, this one genuinely works |
 | a size / radius / spacing / weight / line-height / letter-spacing / z-layer / motion value | the matching `--bai-*` token | §8 (sizes+radii incl. longhands, zero exemptions) | spacing/weight/etc. have tokens but no gate yet; widths and rem are invisible; the *right* token is never checked |
-| an icon | named in `blueai-icons.js`, consumed by name | §4 (literals), §6 (duplication+unnamed), §9 (right glyph, via label/aria/class anchors), §10 (hydration position), §11 (no hand-drawn guide glyphs) | specimens with NO anchor of any kind are still unverified — §9 prints how many |
-| a component's **markup / copy / states** | specimen re-derived from `index.html` | §1, for `<button>` text + placeholders | **markup and states are not checked at all** — which is exactly where the four-state login flow defect lived |
+| an icon | named in `blueai-icons.js`, consumed by name | §4 (literals), §6 (duplication+unnamed), §9 (right glyph, via label/aria/class anchors), §10 (hydration position), §11 (no hand-drawn guide glyphs) | specimens with NO anchor of any kind are still unverified, §9 prints how many |
+| a component's **markup / copy / states** | specimen re-derived from `index.html` | §1, for `<button>` text + placeholders | **markup and states are not checked at all**, which is exactly where the four-state login flow defect lived |
 | a class removed from the product | its CSS rule removed too | §7 **reports**, never fails | nothing stops a dead rule landing |
-| a component adopting another's treatment | join the combined base rule + declare the family in §12 | §12 (fails if a member overrides a family property, or the base rule disappears) | families must be DECLARED — two rules that merely look similar are invisible until someone declares them |
+| a component adopting another's treatment | join the combined base rule + declare the family in §12 | §12 (fails if a member overrides a family property, or the base rule disappears) | families must be DECLARED, two rules that merely look similar are invisible until someone declares them |
 
-**Run `node ds-drift-check.js` before saying done** — then read its scope footer, not just PASS. It
+**Run `node ds-drift-check.js` before saying done**, then read its scope footer, not just PASS. It
 narrows the gap that has bitten four times; it does not close it, and it has itself printed a false OK
 before now. Where the table says you own the gap, you own it.
 
 ### Notebook
 
-Keep using `blueai/visual-designer/` — it is already blueAI-scoped and the SCOPE PIVOT note re-pointed
+Keep using `blueai/visual-designer/`: it is already blueAI-scoped and the SCOPE PIVOT note re-pointed
 it at blueai-desktop. Do **not** create a second notebook; per-product separation exists to stop
 WSUP/now.gg cross-contamination, and blueai-desktop is not a different product from blueAI.
 
@@ -219,8 +221,8 @@ WSUP/now.gg cross-contamination, and blueai-desktop is not a different product f
 **Gate 6.5 (Generalization Probe) runs on every rule PROMOTED, not only on new work.** This is a
 blueAI-scoped addition to the shared cadence; `agents/vda-core/` is protected and unchanged.
 
-It exists because of a measured failure. Taste rule 41 — *hierarchy carried by colour does not also
-need to be carried by size* — already covered the skill-switcher reflow bug. It never fired, because it
+It exists because of a measured failure. Taste rule 41, *hierarchy carried by colour does not also
+need to be carried by size*, already covered the skill-switcher reflow bug. It never fired, because it
 had been written as "two text roles a half-step apart": the width of the single example that taught it.
 A component **state** never matched that description, so a live bug sat in the product while the rule
 governing it sat in the notebook. Widening it was a one-line edit that should have happened at
@@ -231,7 +233,7 @@ promotion time, months earlier, for free.
 1. **What is the mechanism, stripped of this instance?** Rule 41's mechanism is *colour vs type
    metrics*. Its instance was *captions vs body-small*. Write the first; cite the second as an example.
 2. **Where else does this mechanism apply?** Name at least one surface the originating instance did not
-   touch. If none can be named, the rule may genuinely be a one-off — say so explicitly, so the next
+   touch. If none can be named, the rule may genuinely be a one-off, say so explicitly, so the next
    reader doesn't have to re-derive whether it generalizes.
 3. **What would make this rule fail to fire?** Usually a noun that is too specific ("text roles",
    "dividers", "modals"). Replace it or the rule catches exactly one bug: the one that already happened.
@@ -246,49 +248,49 @@ down. The failure mode is rules phrased so narrowly they only match their own or
 - The "modern terminal" prototype replicating BlueAI (BlueStacks' in-app AI assistant). Plain
   HTML/CSS/vanilla-JS, no build step, no JS dependencies (one webfont `<link>` aside). Files in
   `public/blueai-desktop/`:
-  - `index.html` — markup + the app's inline `<script>` (file-size-rule EXEMPT by established
+  - `index.html`: markup + the app's inline `<script>` (file-size-rule EXEMPT by established
     convention; a deliberate fast-iteration prototype, not a Next/React app)
-  - `blueai-desktop.css` — **the design system**: every `--bai-*` token (defined on `.drawer`
+  - `blueai-desktop.css`: **the design system**: every `--bai-*` token (defined on `.drawer`
     dark / `.drawer.light`, plus a `.bai-scope` tokens-only alias for the style guide) + every
     component family. Extracted from index.html 2026-08-01 so the style guide can LINK it and
     render the real components instead of re-implementing them.
-    **Counts are deliberately not written down here** — the style guide tallies them live, and a
+    **Counts are deliberately not written down here**, the style guide tallies them live, and a
     number in this file went stale the same day it was written (it said 46; adding the type and
     radius scales made it 64). Open the guide, or run `ds-drift-check.js`, for the current figure.
-  - `blueai-icons.js` — **the icon set.** SSOT for the style guide (which renders every specimen
+  - `blueai-icons.js`: **the icon set.** SSOT for the style guide (which renders every specimen
     from it and *throws* on an unknown name). For the product: every path **that is in the module**
     is now reached by name, via three call shapes documented in its header. Since batch 3
-    (2026-08-01), §6 counts ZERO unnamed inline glyphs — every icon the product draws is named;
+    (2026-08-01), §6 counts ZERO unnamed inline glyphs, every icon the product draws is named;
     the only svg outside the module is the credits ring gauge, a runtime data-viz component.
-    **No counts here on purpose** — `ds-drift-check.js` §6 prints them (module size, duplication,
+    **No counts here on purpose**, `ds-drift-check.js` §6 prints them (module size, duplication,
     and unnamed-glyph count) every run. Four numbers written in this bullet were wrong at once
     before they were deleted; the header of that file records three separate versions of the same
     mistake. Read §6.
-  - `ds-drift-check.js` — **run this after any component change:** `node ds-drift-check.js`.
+  - `ds-drift-check.js`: **run this after any component change:** `node ds-drift-check.js`.
     Fails on invented specimen copy (every button label/placeholder must exist verbatim in
     index.html), coverage regression below a floor, unknown icon names, re-declared icon literals,
     and the guide restyling `.bai-*` itself. Also *reports* icon duplication and dead CSS. It exists
     because invented copy shipped twice and only a human comparing screenshots caught it.
-  - `style-guide.html` — **the DS reference.** Open at
+  - `style-guide.html`: **the DS reference.** Open at
     `http://localhost:8410/blueai-desktop/style-guide.html`. Links the product stylesheet + icon
     set and renders real components inside `.bai-scope`, so their **styling** cannot drift (markup and
-    copy still can, and have — the guide's own page says "that's a real drift vector"). Everything numeric is
-    computed at load — token values via `getComputedStyle`, type/radius scales tallied from the
+    copy still can, and have, the guide's own page says "that's a real drift vector"). Everything numeric is
+    computed at load: token values via `getComputedStyle`, type/radius scales tallied from the
     live stylesheet, and its own class coverage measured by diffing rendered classes against the
     stylesheet. Independent dark/light toggles for specimens and page.
     **When you add or change a component, add/update its specimen in the same edit.** Markup is
     the one thing still hand-written here (the product builds most of it in JS), so grep how
-    `index.html` renders a component before writing its specimen — four were subtly wrong on day
+    `index.html` renders a component before writing its specimen, four were subtly wrong on day
     one from working off recall.
-  - `boot.js` · `flows.js` — pre-existing extracted scripts
-- **Tokens are `.drawer`-scoped on purpose** — the dormant marketing site in this same repo uses
+  - `boot.js` · `flows.js`: pre-existing extracted scripts
+- **Tokens are `.drawer`-scoped on purpose**, the dormant marketing site in this same repo uses
   the same `--bai-*` namespace with completely different values. The scoping is what stops them
   colliding. Do not hoist them to `:root`, and do not assume a `--bai-*` name means the same
   thing in both products.
-- **Local preview + WHERE THIS SURFACE IS EDITED (changed 2026-08-11 — read this before opening a file).**
+- **Local preview + WHERE THIS SURFACE IS EDITED (changed 2026-08-11, read this before opening a file).**
   blueai-desktop now lives in its own git worktree: **`N:\Antigravity Main\blueai-worktrees\blueai-desktop\`**
   on branch `blueai-desktop/work`. The shared `blueai\` checkout stays on `main` and is used by OTHER
-  concurrent sessions (`/creator-brand`, `/blueai-product`, each in its own worktree too) — **do not edit
+  concurrent sessions (`/creator-brand`, `/blueai-product`, each in its own worktree too), **do not edit
   `blueai\public\blueai-desktop\**` or `blueai\visual-designer\**` by hand**; that copy is frozen at whatever
   was last pushed and will silently drift.
   The preview config is still the workspace-root `../.claude/launch.json`'s `blueai-desktop` entry (NOT
@@ -296,30 +298,30 @@ down. The failure mode is rules phrased so narrowly they only match their own or
   --directory blueai-worktrees/blueai-desktop/public` → `http://localhost:8410/blueai-desktop/index.html`.
   Two things that have each cost real time: the server drops between sessions fairly often (check it before
   concluding something's broken), and **`python -m http.server` sends no cache headers**, which is why the
-  custom no-cache server exists — the plain one served a frozen CSS snapshot through full restarts.
-  **Verify the server serves the tree you are editing, don't assume** — byte-compare a served file against
+  custom no-cache server exists, the plain one served a frozen CSS snapshot through full restarts.
+  **Verify the server serves the tree you are editing, don't assume**, byte-compare a served file against
   the worktree copy. Editing one directory while serving another has produced clean-looking lies twice.
   Ship with `git push origin blueai-desktop/work:main` (a fast-forward straight from the branch); never
-  `git checkout main` locally, which is what disturbs the other sessions. Fetch first — the shared
+  `git checkout main` locally, which is what disturbs the other sessions. Fetch first, the shared
   checkout's local `main` runs behind `origin/main` by design under this pattern.
-- Design-system docs: `style-guide.html` (built 2026-08-01) — foundations (tokens, live-tallied
+- Design-system docs: `style-guide.html` (built 2026-08-01), foundations (tokens, live-tallied
   type/radius scales, the icon set) + sections across shell, components and full-screen
   states, house conventions, and a **self-measured** coverage figure computed at load rather than
   asserted. Every component family has a section. **The page lists every uncovered class by name and
-  prints the coverage percentage — trust the page, never a summary here.**
+  prints the coverage percentage, trust the page, never a summary here.**
   This bullet used to characterise the uncovered set as "the demo scene, mid-gesture modifiers, and
   one-off descendants." An audit found that list wrong: it also contains component ROOTS
   (`.bai-logingate`, `.bai-tgmodal`, `.bai-onb`, `.bai-tour`, the `tgm-*` pairing family) and the
-  handful §7 reports as dead CSS — a category the sentence didn't mention at all. The guide's own
+  handful §7 reports as dead CSS, a category the sentence didn't mention at all. The guide's own
   version of this paragraph ends "Trust the list above over this paragraph"; whoever copied it here
   dropped that hedge, which is the whole reason the copy went wrong.
-- **Specimen fidelity checking:** `ds-drift-check.js` is the live tool — run it. (A one-off
+- **Specimen fidelity checking:** `ds-drift-check.js` is the live tool, run it. (A one-off
   computed-style comparison harness was used during the 2026-08-01 build and caught 4 real bugs,
   including this page's own body ink leaking into specimens and masking components with no `color`
   of their own. It was never committed, so "re-run it" is not actionable; rebuild it if you need
   that class of check again.) Design reasoning lives in `visual-designer/` (taste.md, reasonings.md,
   decisions.md).
-- Designer reviews live in-browser during iteration — skip Playwright screenshots for small/
+- Designer reviews live in-browser during iteration, skip Playwright screenshots for small/
   mechanical changes (see `feedback_skip_screenshots_when_watching` memory); verify with
   Playwright only for first-time-wiring new interactions or genuine logic/data-model changes.
 
@@ -327,7 +329,7 @@ down. The failure mode is rules phrased so narrowly they only match their own or
 - **Design-only:** no real backend; the agent demos are scripted/animated, not live.
 - **Source:** a Claude-design HTML/CSS export in `design-source/homepage-rework/` (ported
   to Next + Tailwind). Full DS extras in "BlueAI Modern.zip" (Downloads) if extending.
-- **Routes:** `/` (Screen Library index — links to every page) · `/seo` (SEO homepage) ·
+- **Routes:** `/` (Screen Library index, links to every page) · `/seo` (SEO homepage) ·
   `/hero/stage` (★ Stage, Recommended) · `/hero/stage-original` · `/hero/3-cards` ·
   `/hero-options` (chooser) · `/style-guide`.
 - **Two animation paths:** Stage = RICH multi-scene; Stage Original + 3 Cards = LEGACY
@@ -345,12 +347,12 @@ down. The failure mode is rules phrased so narrowly they only match their own or
 - **Two routes, one shell:** `/creator-brand/creators` (default) and `/creator-brand/brands`,
   sharing `components/creator-brand/Header.tsx` + `Footer.tsx`. The header's nav carries a
   cross-link ("For Brands" / "For Creators") rather than a toggle control.
-- **On the marketing design system** (`globals.css` `--bai-*` + `tailwind.config.ts`) — NOT a
+- **On the marketing design system** (`globals.css` `--bai-*` + `tailwind.config.ts`), NOT a
   private token set. `creator-brand.css` holds only what the DS lacks: the paper-grain texture and
   the handle-lookup scan keyframe. If you need a value, reach for a token first.
-- **Scope is deliberately narrow — YouTube only.** Instagram/TikTok/X/Reddit are shown as "soon".
+- **Scope is deliberately narrow, YouTube only.** Instagram/TikTok/X/Reddit are shown as "soon".
   Jobs are a flat rate per verified watch+like+comment; there is no per-outcome bidding, no
-  negotiation, and no creator-authored brief. Copy that implies otherwise is wrong — see the real
+  negotiation, and no creator-authored brief. Copy that implies otherwise is wrong, see the real
   job schema (title, description, jobPrompt[], verifyPrompt[], preRequisites[], totalBudget,
   jobTargetCount, startAt, endAt, visibility), of which the brand form deliberately exposes only
   brand name, goal, video URL, budget, and campaign window. The rest is BlueAI's own template.
@@ -364,7 +366,7 @@ down. The failure mode is rules phrased so narrowly they only match their own or
   elsewhere on the page).
 - **Hero artwork:** `public/creator-brand/*.png`. The page background (`layout.tsx`, `#F9F9FA`) is
   sampled to match the artwork's own background so the radial-masked edges dissolve with no visible
-  seam. **Before adding a blend mode to "fix" a seam, measure the asset** — a `mix-blend-multiply`
+  seam. **Before adding a blend mode to "fix" a seam, measure the asset**, a `mix-blend-multiply`
   added for one asset darkened its replacement ~6 units *below* the page and created the very seam
   it was meant to remove.
 

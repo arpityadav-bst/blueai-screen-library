@@ -1,20 +1,20 @@
-// BlueAI — "additional files required" installer dialog.
+// BlueAI: "additional files required" installer dialog.
 // Exports: window.InstallDialog
 //
 // ONE state machine (idle → downloading → done → onComplete). ONE skin now, dark/BlueStacks
-// (Flow A: BlueStacks is installed, BlueAI is not) — the light/"blueai" skin this file used to
+// (Flow A: BlueStacks is installed, BlueAI is not), the light/"blueai" skin this file used to
 // also render was Flow B's, and Flow B stopped using any modal (2026-08-10, see
-// needs_bluestacks.jsx's ProgressBubble — installing BlueStacks is an inline chat card now, not
+// needs_bluestacks.jsx's ProgressBubble: installing BlueStacks is an inline chat card now, not
 // a popup). Removed that branch outright rather than leave it unreachable.
 //
 // Rebuilt again (2026-08-11) into a centered "onboarding" layout (badge → title → subtitle →
 // divider → body copy → CTA → wave), modeled on a real BlueStacks login-dialog reference. First
-// pass also copied that reference's rounded corners onto the card and button — overriding the
+// pass also copied that reference's rounded corners onto the card and button, overriding the
 // designer's own explicit, direct rule from earlier this session ("no round radius in any
 // container or CTA in the BlueStacks App Player UI") based on a personal read of ONE image,
 // without checking back first. Corrected same day: card and button are sharp again, radius 0,
 // matching that rule and the other four confirm/utility dialogs. The ONE rounding exception that
-// survives is the circular badge/checkmark — an identity/completion mark, not chrome, same
+// survives is the circular badge/checkmark, an identity/completion mark, not chrome, same
 // precedent as the done-screen's own checkmark badge already established.
 //
 // Progress is INDETERMINATE by design. A percentage would claim we know how far along a
@@ -34,27 +34,27 @@
     </svg>);
 
   // Same glyph the product window's own titlebar minimize button already uses (index.html's
-  // ProductTitlebar) — reused here rather than invented, so the two minimize affordances in the
+  // ProductTitlebar): reused here rather than invented, so the two minimize affordances in the
   // same app read as one convention.
   const IcoMinimize = ({ size = 16 }) => (
     <svg width={size} height={size} viewBox="0 0 10 10"><rect x="1" y="4.6" width="8" height="1" fill="currentColor" /></svg>);
 
   // Best-guess match to the real BlueStacks App Player's UI font from the reference
-  // screenshots (Poppins) — falls back to the Segoe stack if it fails to load or the guess
+  // screenshots (Poppins): falls back to the Segoe stack if it fails to load or the guess
   // is wrong. Title weight is also dropped from 700→600 regardless (designer's explicit
   // fallback instruction), so the dialog reads lighter even if the font guess doesn't land.
   const BS_FONT = '"Poppins", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, sans-serif';
 
 
-  /* The wave behind the CTA — the same idea as boot.js's pixel logo/rain in blueai-desktop
+  /* The wave behind the CTA, the same idea as boot.js's pixel logo/rain in blueai-desktop
      (small squares, brand gradient, always moving), rebuilt fresh for this no-canvas prototype
      rather than ported: that engine is a full grid-assembly particle system with no single
      "wave" output to lift, and blueai-product doesn't share code with blueai-desktop at all
      (separate design systems by project convention). This is TWO overlapping SVG layers of the
-     exact same wavy path — one filled with the brand's own cyan→purple gradient (the "color
+     exact same wavy path, one filled with the brand's own cyan→purple gradient (the "color
      tone" asked for), one filled with a small-square pattern at low opacity (the "pixel" texture)
-     — drawn twice side by side and scrolled by exactly one tile-width so the loop is seamless.
-     translateX animates -400px → 0, i.e. content moves toward larger X — rightward on screen,
+     drawn twice side by side and scrolled by exactly one tile-width so the loop is seamless.
+     translateX animates -400px → 0, i.e. content moves toward larger X, rightward on screen,
      not the app's existing `ba-marquee` direction (which moves left). */
   function PixelWave({ height = 108 }) {
     const TILE_W = 400, HUMPS = 4, H = height, HW = TILE_W / HUMPS;
@@ -87,7 +87,7 @@
       </div>);
   }
 
-  /* The progress shell that REPLACES the buttons once the install starts — bar + label, no
+  /* The progress shell that REPLACES the buttons once the install starts, bar + label, no
      percentage. Shared by both skins; only its palette differs. */
   function ProgressShell({ phase, label, dark }) {
     const done = phase === 'done';
@@ -120,7 +120,7 @@
     // Re-arm every time the dialog opens, so a cancelled-then-reopened install starts at idle.
     useEffect(() => { if (open) { clear(); setPhase('idle'); setMinimized(false); } return clear; }, [open]);
 
-    // Esc cancels, but only before the install starts — there is no cancelling a running install.
+    // Esc cancels, but only before the install starts, there is no cancelling a running install.
     useEffect(() => {
       if (!open) return;
       const h = (e) => { if (e.key === 'Escape' && phase === 'idle' && onCancel) onCancel(); };
@@ -133,7 +133,7 @@
     const label = phase === 'done' ? doneLabel : downloadingLabel;
     const done = phase === 'done';
 
-    // Minimized = render nothing. No chip, no indicator — the window underneath just becomes
+    // Minimized = render nothing. No chip, no indicator, the window underneath just becomes
     // fully usable again. The download's timers (below, in start()) keep running regardless of
     // what's rendered, so it completes and triggers onComplete on schedule either way; there's
     // nothing to "restore," since minimize only shows up during 'downloading' (see the button
@@ -146,7 +146,7 @@
       timers.current.push(setTimeout(() => { onComplete && onComplete(); }, downloadMs + doneMs));
     };
 
-    /* `contained` scopes the dialog to the window that raised it — absolute inside that window's
+    /* `contained` scopes the dialog to the window that raised it, absolute inside that window's
        box rather than fixed over the whole viewport. A real app's modal dims its OWN window, not
        your entire Windows desktop, and the designer's BlueStacks references show exactly that:
        the player content behind the dialog is dimmed, everything outside it is not. */
@@ -168,7 +168,7 @@
           style={{ position: 'relative', width: 420, background: '#1E2440', borderRadius: 0, boxShadow: '0 24px 70px rgba(0,0,0,0.55)', fontFamily: BS_FONT, padding: '24px 24px 22px' }}>
 
           {done ? (
-            /* Success screen — unchanged throughout every rebuild this component has had. */
+            /* Success screen: unchanged throughout every rebuild this component has had. */
             <div style={{ textAlign: 'center', padding: '10px 4px 6px' }}>
               <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'rgba(74,222,128,0.14)', color: '#4ade80', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 18px' }}>
                 <IcoCheck size={28} strokeWidth={2.4} />
@@ -180,12 +180,12 @@
               {/* Left-aligned structure (2026-08-11, designer: "how it was earlier, only before
                  we made it centre aligned, but with this new data"). Icon moved back beside
                  title+subtitle (designer's next correction, same session) rather than beside the
-                 body copy — so body/body2/meta now run full-width, nothing left to indent past
+                 body copy: so body/body2/meta now run full-width, nothing left to indent past
                  an icon that isn't in that row anymore. Centering, the circular gradient badge,
                  and the wave-behind-the-footer are all gone with the layout revert; the wave
                  specifically doesn't carry over cleanly onto a small flex-end button row (it was
                  built to sit behind a full-width button with clear space below), so it's dropped
-                 here rather than force-fit. Sharp corners / no-glow stay — that correction fixed a
+                 here rather than force-fit. Sharp corners / no-glow stay, that correction fixed a
                  real contradiction with the designer's own rule, unrelated to the layout question. */}
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: ICON_GAP }}>
                 {icon &&

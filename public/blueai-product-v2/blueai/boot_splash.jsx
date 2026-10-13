@@ -1,4 +1,4 @@
-// BlueAI — Boot Splash + Shimmer utility
+// BlueAI: Boot Splash + Shimmer utility
 // Exports: BootSplash, Shimmer
 
 (function () {

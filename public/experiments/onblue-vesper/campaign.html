@@ -4605,7 +4605,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
         + '<td><span class="run-acts">' + r.acts.map(function (a) {
             return '<span class="run-act">' + a + '</span>';
           }).join('') + '</span></td>'
-        + '<td class="is-quote">' + (r.q ? (growth ? esc(r.q) : '\u201c' + esc(r.q) + '\u201d') : '\u2014') + '</td>'
+        + '<td class="is-quote">' + (r.q ? (growth ? esc(r.q) : '\u201c' + esc(r.q) + '\u201d') : 'None') + '</td>'
         + '<td><span class="run-evd">' + ev.slice(0, r.ev).map(function (e) {
             return '<a data-stub>' + e + '</a>';
           }).join('') + '</span></td>'

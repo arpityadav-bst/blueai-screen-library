@@ -1,14 +1,14 @@
-// BlueAI — MoneyMaker's POST-LOGIN in-chat card (MoneyMakerHome) + its first-run coach spotlight
+// BlueAI: MoneyMaker's POST-LOGIN in-chat card (MoneyMakerHome) + its first-run coach spotlight
 // and the dollar glyph the card's tile uses. Split out of moneymaker.jsx (2026-08-18) when that file
 // crossed the workspace's 300-line rule.
 //
 // Clean seam: this is the only part of the feature that renders INSIDE the chat (in ChatScreen's
 // !started home slot, on blueai-product's own light design system), whereas the welcome screen in
-// moneymaker.jsx runs on creator-brand's theme — two surfaces that share no style and no state.
+// moneymaker.jsx runs on creator-brand's theme, two surfaces that share no style and no state.
 //
 // PROVENANCE: the card + spotlight in this file come from the PM's `moneymaker-first-run-polish`
 // branch (commit 6fc57e7, Abhisht Shukla, 2026-08-18), ported across our own 300-line splits. Only
-// the CHAT-HOME half of that commit was taken — its welcome-screen changes were deliberately NOT
+// the CHAT-HOME half of that commit was taken, its welcome-screen changes were deliberately NOT
 // applied, since the welcome screen has since been reworked much further here.
 //
 // Exposes window.MoneyMakerHomeCard = { MoneyMakerHome, PROMPT }. PROMPT lives here because the
@@ -17,11 +17,11 @@
 (function () {
   const { useState } = React;
 
-  /* Dollar glyph — designer-supplied SVG asset (filled, not stroke), swapped in for the earlier
+  /* Dollar glyph: designer-supplied SVG asset (filled, not stroke), swapped in for the earlier
      custom-drawn version. Down to ONE use now, the card's tile. Two former uses are gone: an
      oversized card watermark, cut because it sat behind the description text and read as a smudge
      (and two dollar signs on one small card was one too many); and the welcome screen's step-2 tile,
-     which in this tree uses the designer-supplied IcoCodeFolder instead — see moneymaker_icons.jsx.
+     which in this tree uses the designer-supplied IcoCodeFolder instead, see moneymaker_icons.jsx.
      Kept parameterised anyway; it costs nothing and the card renders it at a non-default size. */
   function IcoDollar({ size = 22, color = '#1BA07A' }) {
     return (
@@ -31,8 +31,8 @@
   }
 
   /* Google-Material-style onboarding tooltip: solid product blue, one bold line, an explicit "Okay"
-     dismiss. Copy went through three rounds — "…get your first job" (promised scarce supply),
-     "Start here." (too stubby next to the button), headline + explainer body (too much) — and landed
+     dismiss. Copy went through three rounds, "…get your first job" (promised scarce supply),
+     "Start here." (too stubby next to the button), headline + explainer body (too much), and landed
      on the single instruction "Run this to begin"; don't re-add a body line or promissory copy.
 
      This REPLACES the earlier dark self-animating pill (its mmJump tick and mmShine sweep are gone
@@ -40,7 +40,7 @@
      attention work now, so the tooltip can sit still and offer a way out instead of nagging on a
      timer. Right-aligned with a right-offset caret so it aims at the compact Run pill on the card's
      right edge, rather than centring under a card whose action is no longer centred. */
-  /* Scaled down across the board, not just in padding — a tooltip shrunk only by its box keeps type
+  /* Scaled down across the board, not just in padding, a tooltip shrunk only by its box keeps type
      sized for the old box and reads as cramped rather than smaller. Every dimension came down
      together: padding 13/16/11 → 10/13/9, title 14 → 12.5, the Okay pill 12/5×16 → 11/4×13, its gap
      10 → 8, the caret 7 → 6, the radius 12 → 10, and the outer gap 12 → 10. The shadow tightened too
@@ -64,30 +64,30 @@
       </div>);
   }
 
-  // Renamed 2026-09-09 (designer directive: MoneyMaker -> "BlueAI worker") — copy only, this
+  // Renamed 2026-09-09 (designer directive: MoneyMaker -> "BlueAI worker"), copy only, this
   // string still gets pushed into the conversation as the simulated user message, so it had to
   // read naturally, not just find/replace the name in place.
   const PROMPT = 'Run the BlueAI worker to find and complete my first paid job.';
 
   /* Renders in ChatScreen's !started home slot in place of ProductHome, when sessionMode is
      'moneymaker'. The greeting above it is IntroCard (chat_compare.jsx) with its title/sub
-     overridden by the caller — this component is the card plus a one-time coach spotlight.
+     overridden by the caller, this component is the card plus a one-time coach spotlight.
 
      Card anatomy is skills.jsx's row (tile · name+description · compact action pill), because the
      button only needs the verb: the tile and the title already say MoneyMaker. The whole card is
-     clickable — the pill is a small target, and on a spotlighted first run clicking the lit thing
+     clickable: the pill is a small target, and on a spotlighted first run clicking the lit thing
      should just work; the pill stopPropagations so it doesn't double-fire. The animated gradient
      border + entrance reuse credits_widget.jsx's "special moment" signature (TriggerBorderPulse's
-     ba-border-spin) — MoneyMaker's first-paid-job card is the same kind of moment, and against the
+     ba-border-spin): MoneyMaker's first-paid-job card is the same kind of moment, and against the
      scrim the glowing frame finally reads as a frame.
 
-     THE SCRIM — absolute inset-0, which resolves against .ba-app. That's verified, not assumed: the
+     THE SCRIM: absolute inset-0, which resolves against .ba-app. That's verified, not assumed: the
      five wrappers between this component and .ba-app (the marginTop:4 div, the chat scroller, its
      overflow:hidden parent, the 420px chat column, and ChatScreen's own fragment) are all
      position:static with no transform, and .ba-app is position:relative. Two consequences worth
      knowing before anyone refactors that chain: overflow alone doesn't clip an absolute box whose
      containing block is an ancestor of the clipper, which is why the scrim escapes the chat
-     scroll-area — but a transform ANYWHERE in that chain would capture it and it would clip. The
+     scroll-area: but a transform ANYWHERE in that chain would capture it and it would clip. The
      jobs/schedule/settings tabs wrap their content in .tab-anim, whose tabFadeUp animates transform;
      the chat branch does not, and that is load-bearing.
 
@@ -127,7 +127,7 @@
               style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: 13, background: 'white', borderRadius: 16, padding: '15px 15px', cursor: 'pointer', boxShadow: coaching ? '0 0 44px rgba(25,144,255,0.28), 0 18px 50px rgba(0,0,0,0.4)' : '0 6px 24px rgba(15,23,42,0.08)', transition: 'box-shadow 0.35s ease, transform 0.15s ease' }}
               onMouseEnter={(e) => { if (!coaching) e.currentTarget.style.transform = 'translateY(-1px)'; }}
               onMouseLeave={(e) => { e.currentTarget.style.transform = ''; }}>
-              {/* Soft diagonal green gradient, not the flat fill — the tile is the card's face and
+              {/* Soft diagonal green gradient, not the flat fill, the tile is the card's face and
                  the flat swatch went muddy next to the animated gradient border. */}
               <div style={{ flexShrink: 0, width: 46, height: 46, borderRadius: 12, background: 'linear-gradient(135deg, #E5F8F0, #CFF0E1)', border: '1px solid #A8E4D4', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <IcoDollar size={26} color="#1BA07A" />
@@ -149,7 +149,7 @@
 
           {coaching &&
             <div style={{ animation: 'mmCardIn 0.4s cubic-bezier(0.22,1,0.36,1) both 0.15s' }}>
-              {/* Deliberately promise-free copy: no "job" anywhere in this nudge — supply may be
+              {/* Deliberately promise-free copy: no "job" anywhere in this nudge, supply may be
                  scarce at launch, and "your first paid job starts here" read as a guarantee. */}
               <CoachTooltip title="Run this to begin" onOkay={() => setCoaching(false)} />
             </div>}

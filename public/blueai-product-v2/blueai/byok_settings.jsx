@@ -1,4 +1,4 @@
-// BlueAI — Settings › Bring Your Own Key (staged flow, matched to the cloud design screens).
+// BlueAI: Settings › Bring Your Own Key (staged flow, matched to the cloud design screens).
 // Lives in Settings for BOTH geos (prime + non-prime). Stages:
 //   toggle off → header + description only
 //   on, no key → "No API key configured" notice + "Add a provider" dropdown

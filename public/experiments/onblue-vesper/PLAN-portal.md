@@ -26,19 +26,19 @@ listed it beside In review and Campaigns as though it were a place you could be.
 
 ## The five screens
 
-1. **Application in review** — three-step rail (Register / We review / Start campaigns),
+1. **Application in review**, three-step rail (Register / We review / Start campaigns),
    confirmation card, Refresh status, and a receipt line that appears only after the
    first press. Shown INSTEAD of the app, not as a fourth view.
-2. **Campaigns list** — three tiles (In review, Verified completions all time, Spend this
+2. **Campaigns list**: three tiles (In review, Verified completions all time, Spend this
    month); "Your campaigns" with its empty row; "Sample reports" with six rows. The two
    video-growth sample rows exist only in v2.
-3. **Campaign report** — sample banner, five tiles, progress chart, board state,
+3. **Campaign report**: sample banner, five tiles, progress chart, board state,
    accounting, verification, proof-of-work table with filters, privacy note.
    **Videos card: video growth only.**
-4. **Your campaign, in review** — IN REVIEW chip, kind, dates or country, created-at,
+4. **Your campaign, in review**, IN REVIEW chip, kind, dates or country, created-at,
    short id; empty card with two CTAs; a setup table whose rows are rebuilt from the
    campaign's own type. **Videos card in its empty state: video growth only.**
-5. **Create dialog** — chooser (v2 only), engagement three-step form, video-growth
+5. **Create dialog**: chooser (v2 only), engagement three-step form, video-growth
    three-step form, submitted panel with the campaign id.
 
 ## Passes

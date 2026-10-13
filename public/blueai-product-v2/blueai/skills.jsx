@@ -1,4 +1,4 @@
-// BlueAI — Skills Screen (adapted from Try3/Skills Tab.html)
+// BlueAI: Skills Screen (adapted from Try3/Skills Tab.html)
 
 const { useState, useRef, useEffect, useCallback } = React;
 
@@ -8,7 +8,7 @@ const SKILLS_INITIAL = {
   'Game Helpers': [
     { id: 'gh1', name: 'quest-guide',             desc: 'Helps the user find the best guides and strategies for any game challenge. Opens Chrome to search for a web guide.' },
     { id: 'gh2', name: 'daily-rewards-collector', desc: 'Automatically opens specified games one by one in BlueStacks and collects daily login rewards, bonus chests, free items, and more.' },
-    { id: 'gh3', name: 'auto-gameplay',           desc: 'Autonomously plays specific mobile games via the ILAgent engine — farming, grinding, dailies, completing levels, and more.' },
+    { id: 'gh3', name: 'auto-gameplay',           desc: 'Autonomously plays specific mobile games via the ILAgent engine: farming, grinding, dailies, completing levels, and more.' },
   ],
   'Social Media': [
     { id: 'sm1', name: 'Social Media Marketing Helper', desc: 'Creates and schedules posts, captions, and campaigns across platforms.' },
@@ -21,7 +21,7 @@ const SKILLS_INITIAL = {
   ],
   'Explore': [],
   'Other': [
-    { id: 'ot1', name: 'Foobar', desc: 'A placeholder skill that does not fit any of the standard categories \u2014 used to demonstrate the Other bucket.' },
+    { id: 'ot1', name: 'Foobar', desc: 'A placeholder skill that does not fit any of the standard categories, used to demonstrate the Other bucket.' },
   ],
 };
 const SKILLS_ENABLED = { gh1:true, gh2:true, gh3:true, sm1:true, sm2:false, pr1:true, pr2:true, pr3:true };
@@ -81,7 +81,7 @@ function SkillCard({ skill, category, enabled, onToggle, onTry, onView, isUserOw
       {/* Description */}
       <p style={{ fontSize: 13.5, color: '#6b7280', marginTop: 5, lineHeight: 1.5, paddingRight: 4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{skill.desc}</p>
 
-      {/* Actions row — Try left, Edit + Delete right (user-owned) or Details right (official) */}
+      {/* Actions row: Try left, Edit + Delete right (user-owned) or Details right (official) */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 13 }}>
         <button onClick={e => { e.stopPropagation(); onTry(skill, category); }}
           style={{ display: 'inline-flex', alignItems: 'center', gap: 4, height: 28, padding: '0 13px 0 10px', border: 'none', borderRadius: 20, background: '#1990FF', color: 'white', fontSize: 12, fontWeight: 600, cursor: 'pointer', flexShrink: 0, fontFamily: 'inherit', transition: 'opacity 0.13s' }}
@@ -227,7 +227,7 @@ function CreateSkillModal({ isOpen, onClose, onCreateSkill, onCreateWithAI, init
     <ModalOverlay isOpen={isOpen} onClose={handleClose} title="Create Skill">
       <div style={{ minHeight: 480 }}>
         <form style={{ display: 'flex', flexDirection: 'column', gap: 14 }} onSubmit={e => { e.preventDefault(); if (!canCreate) return; onCreateSkill({ name, desc }); handleClose(); }}>
-          {/* Mode tabs — three underline tabs */}
+          {/* Mode tabs: three underline tabs */}
           <div style={{ display: 'flex', borderBottom: '1.5px solid #e2e8f0', marginBottom: 2 }}>
             {[
               { id: 'instruction', label: 'Write instructions' },
@@ -292,7 +292,7 @@ function CreateSkillModal({ isOpen, onClose, onCreateSkill, onCreateWithAI, init
               <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'linear-gradient(135deg,rgba(14,164,197,0.12),rgba(123,76,255,0.12))', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7B4CFF" strokeWidth="2" strokeLinecap="round"><path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6L5.6 18.4"/></svg>
               </div>
-              <p style={{ fontSize: 13.5, color: '#6b7280', lineHeight: 1.6, maxWidth: 260, margin: '0 auto' }}>Describe what you want to do in plain language — BlueAI will build the skill for you in chat.</p>
+              <p style={{ fontSize: 13.5, color: '#6b7280', lineHeight: 1.6, maxWidth: 260, margin: '0 auto' }}>Describe what you want to do in plain language. BlueAI will build the skill for you in chat.</p>
               <button type="button" onClick={() => { handleClose(); onCreateWithAI?.(); }}
                 style={{ marginTop: 4, display: 'flex', alignItems: 'center', gap: 8, background: 'linear-gradient(135deg,#0EA4C5,#7B4CFF)', color: 'white', border: 'none', borderRadius: 12, padding: '12px 28px', fontSize: 14, fontWeight: 600, cursor: 'pointer', boxShadow: '0 4px 16px rgba(123,76,255,0.3)', fontFamily: 'inherit' }}>
                 Start in Chat
@@ -406,7 +406,7 @@ function MySkillsDetailView({ userSkills, enabledMap, onToggle, onTry, onView, o
 }
 
 /* ── EXPANDED ALL-CATEGORIES VIEW ──────────────────────────────── */
-/* Every category shown as a section header with its skills listed inline —
+/* Every category shown as a section header with its skills listed inline,
    no drill-down required. Category1 → task1, task2, then Category2 → … */
 function ExpandedSkillsView({ skills, enabledMap, onToggle, onTry, onView, userSkills, onDeleteUserSkill, onNew }) {
   // Build ordered list of sections: My Skills (if any), then categories with ≥1 skill
@@ -485,7 +485,7 @@ function SkillsView({ skills, enabledMap, onToggle, onTry, onView, onNew, userSk
 
   return (
     <div style={{ animation: 'skFadeUp 0.18s ease' }} ref={scrollRef}>
-      {/* Sticky header — hidden inside category drill-down */}
+      {/* Sticky header: hidden inside category drill-down */}
       <div style={{ position: 'sticky', top: 0, zIndex: 10, background: '#f8fafc', paddingTop: 14, paddingBottom: 12, marginLeft: -16, marginRight: -16, paddingLeft: 16, paddingRight: 16, transition: 'box-shadow 0.2s', boxShadow: scrolled ? '0 4px 16px rgba(0,0,0,0.10)' : 'none' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 12 }}>
           <h1 style={{ fontSize: 22, fontWeight: 800, color: '#111827', letterSpacing: '-0.4px' }}>Skills</h1>

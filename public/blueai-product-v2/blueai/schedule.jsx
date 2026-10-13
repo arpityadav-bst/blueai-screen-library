@@ -1,4 +1,4 @@
-// BlueAI — Schedule Screen
+// BlueAI: Schedule Screen
 
 const { useState } = React;
 

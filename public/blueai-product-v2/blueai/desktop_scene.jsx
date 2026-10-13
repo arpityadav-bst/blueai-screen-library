@@ -1,4 +1,4 @@
-// BlueAI — the Windows desktop scene the product window sits on.
+// BlueAI: the Windows desktop scene the product window sits on.
 // Exports: window.DesktopScene
 //
 // Mirrors /blueai-desktop's .stage / .scaler / .composition architecture: one wallpaper,
@@ -6,7 +6,7 @@
 // BlueStacks App Player window and the BlueAI app window.
 //
 // The one non-obvious part is the FLIP shift. Scene geometry is derived entirely from two
-// booleans, so when a window mounts the row's width changes and the row re-centres — which
+// booleans, so when a window mounts the row's width changes and the row re-centres, which
 // would teleport the window that was already on screen. So before the browser paints the new
 // layout we translate the row by exactly the distance the surviving window moved, then release
 // it with a transition: the old window appears to stay put while the new one slides in beside it.
@@ -70,10 +70,10 @@
     // Preload every BlueStacks frame once, so a mid-flow frame swap never flashes empty.
     useEffect(() => { FRAMES.forEach((src) => { const i = new Image(); i.src = src; }); }, []);
 
-    // Fit the WINDOWS to the viewport — same job /blueai-desktop's fit() does for .composition.
+    // Fit the WINDOWS to the viewport, same job /blueai-desktop's fit() does for .composition.
     // The wallpaper isn't part of this: it's a `cover` background on the unscaled .pscene, so it
     // always fills edge to edge regardless of viewport shape. Measured against the currently
-    // VISIBLE windows, not a fixed maximum — a lone 421px window isn't shrunk to make room for a
+    // VISIBLE windows, not a fixed maximum, a lone 421px window isn't shrunk to make room for a
     // BlueStacks window that isn't installed.
     useEffect(() => {
       const fit = () => {
@@ -114,10 +114,10 @@
       el.style.transform = '';
     }, [sidePresent, bsInstalled, winPresent]);
 
-    /* Clicking the bare wallpaper does nothing while a window is up — this is a desktop, not a
+    /* Clicking the bare wallpaper does nothing while a window is up, this is a desktop, not a
        dismissible drawer. The ONE exception is an empty desktop: BlueAI's ✕ can leave nothing on
-       screen when BlueStacks isn't installed, and that would be a dead end. This is a stopgap —
-       an undiscoverable one — and the real fix is a BlueAI desktop shortcut icon. */
+       screen when BlueStacks isn't installed, and that would be a dead end. This is a stopgap,
+       an undiscoverable one: and the real fix is a BlueAI desktop shortcut icon. */
     const empty = !bsInstalled && !winPresent;
 
     return (

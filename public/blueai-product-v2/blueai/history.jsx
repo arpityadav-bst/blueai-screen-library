@@ -1,6 +1,6 @@
-// BlueAI — Chat History (in-app screen; accordion of past sessions).
+// BlueAI: Chat History (in-app screen; accordion of past sessions).
 // Matches the live product: the app header + bottom nav stay, there is NO overlay,
-// NO close "X", and NO composer — the screen replaces the whole chat area.
+// NO close "X", and NO composer, the screen replaces the whole chat area.
 // Each row is an accordion: tap to expand the FULL past conversation inline. The
 // expanded transcript matches the row's message count and scrolls (subtle scrollbar)
 // when long. (Data is best-effort, matched to the live screenshots.)
@@ -25,17 +25,17 @@
     { id: 'ig', title: "Scan my girlfriend's Instagram profile and suggest what I can gift her",
       n: 1, when: 'Jun 13, 05:24 PM', base: { date: 'Jun 13', h: 5, m: 24, ap: 'PM' }, steps: [] },
     { id: 'hi1', title: 'hi', n: 3, when: 'Jun 13, 02:47 PM', base: { date: 'Jun 13', h: 2, m: 47, ap: 'PM' },
-      steps: ["Hey! I'm BlueAI — your AI worker for BlueStacks."], result: "Tell me a task and I'll handle it for you." },
+      steps: ["Hey! I'm BlueAI, your AI worker for BlueStacks."], result: "Tell me a task and I'll handle it for you." },
     { id: 'hi2', title: 'hi', n: 3, when: 'Jun 11, 11:02 AM', base: { date: 'Jun 11', h: 11, m: 2, ap: 'AM' },
       steps: ['Hi there! What can I help you automate today?'], result: "Just type a task and I'll take it from here." },
     { id: 'gen', title: 'find all active redeem codes for genshin impact', n: 17, when: 'May 27, 02:16 AM',
       base: { date: 'May 27', h: 2, m: 13, ap: 'AM' }, pool: GENSHIN_POOL,
       steps: ['Agent started…', 'Opening Chrome to search for codes…', 'Scrolling to find active codes…'],
-      result: 'Done — I found 3 active codes and listed them for you. Want me to redeem them?' },
+      result: 'Done. I found 3 active codes and listed them for you. Want me to redeem them?' },
     { id: 'fake', title: 'redeem this code: FAKE123NOTAREAL', n: 62, when: 'May 27, 02:12 AM',
       base: { date: 'May 27', h: 2, m: 12, ap: 'AM' },
       steps: ['Agent started…', 'Opening the redemption page to enter the code…'],
-      result: "That code wasn't valid — it looks like a placeholder. Double-check the source and I'll try again." },
+      result: "That code wasn't valid. It looks like a placeholder. Double-check the source and I'll try again." },
     { id: 'build', title: 'show me the recommended build for Anemo characters', n: 28, when: 'May 26, 11:55 PM',
       base: { date: 'May 26', h: 11, m: 55, ap: 'PM' },
       steps: ['Agent started…', 'Searching for the recommended Anemo build…'],
@@ -65,7 +65,7 @@
     const seq = [...(it.steps || [])];
     let pi = 0;
     while (seq.length < agentCount - 1) seq.push(pool[pi++ % pool.length]);
-    if (agentCount >= 1) seq.push(it.result || 'Done — task completed.');
+    if (agentCount >= 1) seq.push(it.result || 'Done. Task completed.');
     const lines = seq.slice(0, agentCount);
     const msgs = [{ r: 'user', c: it.title, t: stepTime(it.base, 0) }];
     lines.forEach((c, i) => msgs.push({ r: 'agent', c, t: stepTime(it.base, Math.floor((i + 1) / 3)) }));
