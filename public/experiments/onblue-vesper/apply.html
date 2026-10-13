@@ -414,6 +414,12 @@ body { min-height: 100vh; }
 .bal-act .btn:disabled { opacity: 0.45; cursor: not-allowed; box-shadow: none; }
 .bal-act .btn:disabled:hover { background: var(--charcoal-2); border-color: var(--border); }
 .bal-why { max-width: 230px; }
+/* on a phone the reason would be squeezed into a narrow column beside the
+   balance, so the row stacks and everything reads from one left edge */
+@media (max-width: 560px) {
+  .bal-top { flex-direction: column; gap: 14px; }
+  .bal-act { justify-items: start; text-align: left; }
+}
 .bal-ledger { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--border-soft); }
 .dash-quiet { color: var(--muted); font-size: 13.5px; letter-spacing: -0.01em; }
 

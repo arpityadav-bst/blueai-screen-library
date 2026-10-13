@@ -63,7 +63,7 @@ const MAIN = [
     // the thing it describes. The row style is what says which of the two kinds it is.
     href: '/experiments/onblue-vesper/style-guide.html',
     name: 'onBlue Agentic Design System',
-    desc: 'The design reference for the onBlue Agentic homepage, built the way Terminal Modern’s is: a view onto the page’s own CSS rather than a second copy of it. The guide fetches index.html at load, lifts its inline stylesheet and its shared icon sprite into itself, then renders real components with real class names, so a restyle lands here on reload with nothing to propagate. Every number is measured, not transcribed: token values via getComputedStyle, the radius scale tallied off the live sheet, the type specimens reporting their own rendered metrics, and a self-measured class coverage that lists by name every class the sheet styles and the guide does not. Sections for tokens, type and the responsive ladder, scales, motion, icons, the four background effect systems, fourteen component families, and a known-gaps note saying what this kind of guide structurally cannot catch.',
+    desc: 'The design reference for both onBlue Agentic sites, built the way Terminal Modern’s is: a view onto the real CSS rather than a second copy of it. It links onblue.css, the one stylesheet the homepage, the application and the business site share, fetches index.html only for its icon sprite, then renders real components with real class names, so a restyle lands here on reload with nothing to propagate. Every number is measured, not transcribed: token values via getComputedStyle, the radius scale tallied off the live sheet, the type specimens reporting their own rendered metrics, and a self-measured class coverage that lists by name every class the sheet styles and the guide does not. Sections for tokens, type and the responsive ladder, scales, motion, icons, the four background effect systems, fourteen component families, and a known-gaps note saying what this kind of guide structurally cannot catch.',
     ds: true,
   },
   {
@@ -153,7 +153,7 @@ const BRAND_EXPERIMENTS = [
     // Moved here from the old MAINTAINED group 2026-10-13, which V2's promotion emptied of surfaces.
     href: '/style-guide',
     name: 'Marketing Design System',
-    desc: 'Tokens, type and components for the dormant marketing site and the creator-brand shell (the Brand website and the frozen creator page). It governs those and nothing else: the main product, onBlue Agentic and Terminal Modern each have their own.',
+    desc: 'Tokens, type and components for the dormant marketing site and the creator-brand shell (the Brand website and the frozen creator page). It governs those and nothing else: onBlue Agentic and Terminal Modern each have their own, and the main product is a standalone replica on its own styles.',
     ds: true,
   },
 ]
