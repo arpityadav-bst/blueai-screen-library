@@ -17,7 +17,10 @@ WSUP/now.gg: visual fidelity + handoff clarity, no real backend.
   byte-for-byte from his repo `abhisht-bst/blueai-creator-brand` so every later port diffs cleanly:
   a bug in his code goes back to him rather than being fixed here. The one local change: every
   em dash is removed after each port, in comments and on-screen copy alike, so a diff against his
-  tree shows those lines and nothing else. V1 (`/blueai-product`) was
+  tree shows those lines and nothing else. Its design system (built 2026-10-13/14) lives beside it
+  in `public/blueai-product-v2-ds/` (guide, DESIGN.md, HANDOVER.md for the PM, two looks: V2 today
+  and Target). After every port run `node tools/ds-check.js` there: it holds references to V2's
+  lines and goes red where the PM changed something the system documents. V1 (`/blueai-product`) was
   deleted 2026-10-13 and is recoverable from git history (last present at 34027ca).
 - **onBlue Agentic** (`public/experiments/onblue-vesper/index.html` + `apply.html`): the partner
   (creator) website. Partners apply, run the jobs with their agent, and cash out from its dashboard.

@@ -25,7 +25,9 @@
    10. iife  every kit/, screens/ and guide/ .jsx program is IIFE expression statements only, and
              every guide/refs/*.js an IIFE or a window.V2Refs assignment: each file runs as a
              classic script, so a top-level declaration lands on window and can overwrite a V2
-             global the live specimens read (Toggle, ModalOverlay, SettingsScreen). */
+             global the live specimens read (Toggle, ModalOverlay, SettingsScreen).
+   11. looks tokens.css (Target) and tokens-v2-today.css (V2 today) define the same --v2- names, comments
+             skipped, so a token added to one look and not the other fails. */
 'use strict';
 const NAMED = ('aliceblue antiquewhite aqua aquamarine azure beige bisque black blanchedalmond blue blueviolet brown '
   + 'burlywood cadetblue chartreuse chocolate coral cornflowerblue cornsilk crimson cyan darkblue darkcyan '
@@ -226,5 +228,16 @@ module.exports = function more({ files, read, has, err, asts }) {
       err(f, 'line ' + s.loc.start.line + ': top-level ' + s.type + ': wrap the file in (function () { ... })()'
         + (ref ? ' or assign window.V2Refs' : '') + ', or it lands on window and can overwrite a V2 global');
     }
+  }
+
+  // 11. looks: the V2 today file re-values every token tokens.css defines, and defines no other
+  const TODAY = 'tokens-v2-today.css';
+  const names = (f) => new Set([...read(f).replace(/\/\*[\s\S]*?\*\//g, '').matchAll(/(--v2-[\w-]+)\s*:/g)].map((m) => m[1]));
+  if (!has(TODAY)) err(TODAY, 'missing: the V2 today look must define every token tokens.css defines');
+  else {
+    const base = names('tokens.css');
+    const today = names(TODAY);
+    base.forEach((n) => { if (!today.has(n)) err(TODAY, 'does not define ' + n + ', which tokens.css does: both looks define the same tokens'); });
+    today.forEach((n) => { if (!base.has(n)) err(TODAY, 'defines ' + n + ', which tokens.css does not: both looks define the same tokens'); });
   }
 };

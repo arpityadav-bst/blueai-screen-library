@@ -10,6 +10,10 @@ The target design system for BlueAI Product V2: the parts, colours, words and sc
 
 It is built for the PM building V2 next, and for anyone who picks up a V2 screen after him. V2's own files were not changed: the system sits next to V2 (`public/blueai-product-v2-ds/`) and shows V2 live where it can.
 
+### Two looks
+
+The system has two looks over the same tokens and kit. **V2 today** (`tokens-v2-today.css`) sets every token to what V2 ships now: Plus Jakarta Sans, #1990FF, Tailwind gray and slate, soft shadows, the indigo gradient on the user's chat bubble. **Target** (`tokens.css`) is where the system is going: Inter, a darker action blue, 1px lines instead of shadows, one accent. Build in V2 today, so anything new matches the V2 around it, until V2's old screens are moved onto the kit; then switch once. In V2's `index.html`, link `tokens.css` and then `tokens-v2-today.css`, and set `data-v2-look="today"` on the `html` element. To switch to Target, remove that attribute. The guide header has the same switch (Look: V2 today / Target); it changes the specimens and screens, not the guide around them.
+
 ### How to read a part
 
 Every part carries one status; section headers count them.
@@ -37,18 +41,19 @@ All under `public/blueai-product-v2-ds/`. V2 itself is `public/blueai-product-v2
 |---|---|
 | `index.html` | The live guide. Every section, live parts, V2 today next to the system. |
 | `DESIGN.md` | This file: the written spec, built only from the `design-md/` partials by `tools/build-design-md.js`. It is not generated from the guide: each guide section writes its own notes and spec rows, so the two are kept in step by hand. When you change a part, change its partial and its guide section together (section 74, step 7), and where they disagree, the kit's code is the truth. |
-| `tokens.css` | Every colour, size, radius, shadow, layer and timing as a `--v2-*` custom property. The only place raw values live. |
+| `tokens.css` | Every colour, size, radius, shadow, layer and timing as a `--v2-*` custom property: the Target look. With `tokens-v2-today.css`, the only place raw values live. |
+| `tokens-v2-today.css` | The same tokens re-valued to V2 today, under `[data-v2-look="today"]` (Two looks, above). |
 | `kit/` | The parts, on `window.V2Kit` (`button.jsx`, `run-card.jsx`, ...), and their `v2-*` styles (`actions.css`, `chat.css`, ...). |
 | `screens/` | Whole screens composed from the kit, on `window.V2Screens`. |
 | `guide/` | The guide's own chrome: `catalog.jsx` (the section list), `sections/`, `refs/` (the V2 sources), `app.jsx`. |
 | `design-md/` | One partial per section; edit these, then rebuild DESIGN.md. |
-| `tools/` | `ds-check.js` (the gate; check 6's named colours and checks 8, 9 and 10 run in `ds-check-more.js`) and `build-design-md.js`. |
+| `tools/` | `ds-check.js` (the gate; check 6's named colours and checks 8 to 11 run in `ds-check-more.js`) and `build-design-md.js`. |
 
 ### How to run the checks
 
 From `public/blueai-product-v2-ds/`, with Node and one dependency, Babel's parser. ds-check looks for it in this repo's `node_modules` (run `npm install` at the repo root), then in the main `N:/Antigravity Main/blueai` checkout's, or takes a `@babel/parser` build named in the `DS_BABEL_PARSER` environment variable. With none of these the run fails with an error instead of skipping the parse step. The parser parses; it does not compile, so a transform error that only Babel standalone raises in the browser can still pass.
 
-- `node tools/ds-check.js` before every hand-off; it must end with 0 errors (add `--missing-ok` only while files are still being written). It proves: every V2 value or string the guide quotes still sits on its V2 line; no em dash in any form; every ref id a guide section names exists; every .jsx and .js parses; every .jsx, .js and .css is 300 lines or fewer; the catalog, section files, partials and index.html agree; no raw colour in `kit/` or `screens/`, and no stylesheet but `tokens.css` defines a `--v2-` property; every kit part and screen the catalog names is on its global; the size lists the JSX copies (Icon and Avatar sizes) equal their tokens; no .jsx in `kit/`, `screens/` or `guide/` uses object rest destructuring (Babel hoists its key list to one program-level `_excluded` that the next file overwrites, so use a local `omit(props, KEYS)`).
+- `node tools/ds-check.js` before every hand-off; it must end with 0 errors (add `--missing-ok` only while files are still being written). It proves: every V2 value or string the guide quotes still sits on its V2 line; no em dash in any form; every ref id a guide section names exists; every .jsx and .js parses; every .jsx, .js and .css is 300 lines or fewer; the catalog, section files, partials and index.html agree; no raw colour outside `tokens.css` and `tokens-v2-today.css`, no other stylesheet defines a `--v2-` property, and the two define the same tokens; every kit part and screen the catalog names is on its global; the size lists the JSX copies (Icon and Avatar sizes) equal their tokens; no .jsx in `kit/`, `screens/` or `guide/` uses object rest destructuring (Babel hoists its key list to one program-level `_excluded` that the next file overwrites, so use a local `omit(props, KEYS)`).
 - `node tools/build-design-md.js` after editing anything in `design-md/`. Never edit DESIGN.md by hand.
 
 The checks read files, not pixels. How a part looks is checked by eye in the guide.

@@ -7,8 +7,9 @@
    stays px in that part's rule; a size one part repeats is a local custom property without the
    --v2- prefix (--ledger-date-w, screens/core.css; --check-box, kit/inputs.css), the way the
    colour marks are (--badge-mark, kit/display.css); a size two parts share is a token here first.
-   Every token is a CSS custom property on :root with the prefix --v2-, and nothing else uses that
-   prefix. Light theme only: V2 is white end to end and the
+   Every token is a CSS custom property on :root with the prefix --v2-; only tokens-v2-today.css (the
+   "V2 today" look, the same names re-valued) also defines it. This file is the Target look.
+   Light theme only: V2 is white end to end and the
    onBlue site never ships its dark theme (onblue/apply.html:36 forces light), so a dark set
    would be speculative; the names leave room for one later.
    Each family comment says its role, its onBlue family link, and what V2 values it absorbs.
@@ -84,6 +85,19 @@
      Why: The gradient appears three times in one 419px top bar today (wordmark, pill ring, pill number, index.html:326-337). As identity it stays; as a UI fill, ring, bubble or border it goes.
      Absorbs: the V2 values listed on each token below. */
   --v2-gradient-brand: linear-gradient(90deg, #0EA4C5, #7B4CFF); /* BlueAI wordmark, credits star glyph (mask), boot splash wordmark. Absorbs 135deg / 270deg / to-bottom-right variants (index.html:430, credits_popup_parts.jsx:15, moneymaker.jsx:154), cousins #22ACE0 (login.jsx:174), #A855F7 (login.jsx:160), #1A90FF/#6b53ff (moneymaker.jsx:184), #2f6fed (profile.jsx:31), user bubble #5158ee to #7b4cff (chat_bubbles.jsx:30) */
+
+  /* Look hooks. Role: Parts the two looks draw differently, so tokens-v2-today.css can restore V2 where
+     a Target value would otherwise sit in a kit rule. Target values equal the rule's own recipe.
+     Why: the "V2 today" look (tokens-v2-today.css) re-values every token; these are the places where a
+     re-value alone could not bring V2 back (a gradient bubble, an indigo nav pill, a lifted nav). */
+  --v2-bubble-user-fill: var(--v2-blue-tint); /* user bubble fill: a tint (V2 today: the indigo gradient) */
+  --v2-bubble-user-line: var(--v2-blue-tint-line); /* user bubble edge */
+  --v2-bubble-user-ink: var(--v2-ink); /* user bubble text: ink on the tint */
+  --v2-bubble-user-shadow: var(--v2-shadow-0); /* user bubble lift: none, in flow */
+  --v2-nav-selected-fill: transparent; /* selected bottom-nav item fill: none, the bar marks it */
+  --v2-nav-selected-ink: var(--v2-ink); /* selected bottom-nav label and icon */
+  --v2-nav-indicator: var(--v2-blue); /* the 2px bar over the selected item */
+  --v2-nav-shadow: none; /* bottom nav lift: none, its top line separates it */
 
   /* Type. Role: One UI face, eight sizes, three weights, four leadings, em-based tracking.
      onBlue: shared: Inter as the only UI face, weights capped at 600, negative tracking that scales with size, uppercase only for the eyebrow (onblue/onblue.css:250, design.md:100-102). Adapted: the product uses the site's working-screen (dashboard) tier, not its marketing ladder.

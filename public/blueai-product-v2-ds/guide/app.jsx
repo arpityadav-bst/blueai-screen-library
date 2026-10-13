@@ -1,7 +1,9 @@
 /* BlueAI Product V2 Design System: the guide shell (loads last).
    Left navigation by catalog group, a header with the system name, the status legend and links,
    one section at a time chosen by the URL hash (#<section id>), previous / next at the foot.
-   A section nobody has registered yet renders a quiet placeholder built from the catalog. */
+   A section nobody has registered yet renders a quiet placeholder built from the catalog.
+   The header's Look switch (V2 today / Target) sets data-v2-look on the wrapper around the section,
+   so specimens and screens take tokens-v2-today.css while the guide chrome stays on tokens.css. */
 (function () {
   const { useState, useEffect, useRef } = React;
   const G = window.V2Guide;
@@ -9,6 +11,15 @@
   const NAME = (C && C.name) || 'BlueAI Product V2 Design System';
 
   const toHash = G.hashHref;
+  const LOOK_KEY = 'v2ds-look';
+  const LOOKS = [{ id: 'today', label: 'V2 today' }, { id: 'target', label: 'Target' }];
+
+  function readLook() {
+    try { return localStorage.getItem(LOOK_KEY) === 'target' ? 'target' : 'today'; } catch (e) { return 'today'; }
+  }
+  function saveLook(v) {
+    try { localStorage.setItem(LOOK_KEY, v); } catch (e) { /* storage blocked: the switch still works for this visit */ }
+  }
 
   function currentId() {
     const h = decodeURIComponent((location.hash || '').replace(/^#\/?/, ''));
@@ -53,7 +64,7 @@
     );
   }
 
-  function Header() {
+  function Header({ look, onLook }) {
     return (
       <header className="g-header">
         <div className="g-header-row">
@@ -62,6 +73,12 @@
             <div className="g-title">{NAME}</div>
           </div>
           <div className="g-header-links">
+            <div className="g-filter g-look-switch" role="group" aria-label="Look">
+              <span className="g-muted">Look:</span>
+              {LOOKS.map(function (l) {
+                return <button type="button" key={l.id} className="g-btn" aria-pressed={look === l.id} onClick={function () { onLook(l.id); }}>{l.label}</button>;
+              })}
+            </div>
             <a className="g-link" href="index.html" target="_blank" rel="noopener">Open V2</a>
             <a className="g-link" href="../blueai-product-v2-ds/DESIGN.md" target="_blank" rel="noopener">DESIGN.md</a>
           </div>
@@ -112,6 +129,8 @@
 
   function App() {
     const [id, setId] = useState(currentId);
+    const [look, setLook] = useState(readLook);
+    function pickLook(v) { setLook(v); saveLook(v); }
     const mainRef = useRef(null);
     const first = useRef(true);
     useRegistryTick();
@@ -135,8 +154,10 @@
         <a className="g-skip" href="#g-main" onClick={function (e) { e.preventDefault(); if (mainRef.current) mainRef.current.focus(); }}>Skip to content</a>
         <Nav current={id} />
         <main className="g-main" id="g-main" ref={mainRef} tabIndex={-1}>
-          <Header />
-          <G.Boundary key={id}>{Comp ? <Comp /> : <Placeholder section={section} />}</G.Boundary>
+          <Header look={look} onLook={pickLook} />
+          <div className="g-look" data-v2-look={look === 'today' ? 'today' : undefined}>
+            <G.Boundary key={id}>{Comp ? <Comp /> : <Placeholder section={section} />}</G.Boundary>
+          </div>
           <Pager id={id} />
         </main>
       </div>

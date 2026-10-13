@@ -31,7 +31,7 @@
 .v2-field-box:focus-within, .v2-field.is-focus .v2-field-box { border-color: var(--v2-blue); box-shadow: var(--v2-focus-ring); }
 .v2-field.is-invalid .v2-field-box { border-color: var(--v2-danger-edge); }
 .v2-field.is-invalid .v2-field-box:focus-within, .v2-field.is-invalid.is-focus .v2-field-box {
-  box-shadow: 0 0 0 var(--v2-focus-ring-width) var(--v2-danger-ring);
+  box-shadow: 0 0 0 3px var(--v2-danger-ring);
 }
 .v2-field.is-readonly .v2-field-box { background-color: var(--v2-surface-sunken); border-color: var(--v2-line); }
 .v2-field.is-disabled .v2-field-box {

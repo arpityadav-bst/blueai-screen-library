@@ -87,7 +87,7 @@
    plus ink label and icon; weight never changes, so labels never reflow. */
 .v2-nav {
   display: flex; align-items: stretch; flex: none; height: var(--v2-nav-h); padding: 0 var(--v2-space-2);
-  background: var(--v2-surface); border-top: var(--v2-stroke) solid var(--v2-line);
+  background: var(--v2-surface); border-top: var(--v2-stroke) solid var(--v2-line); box-shadow: var(--v2-nav-shadow);
 }
 .v2-nav-item {
   position: relative; flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -99,11 +99,11 @@
 .v2-nav-item:hover, .v2-nav-item.is-hover { background: var(--v2-wash-hover); color: var(--v2-ink-2); }
 .v2-nav-item:active, .v2-nav-item.is-active { background: var(--v2-wash-press); }
 .v2-nav-item:focus-visible, .v2-nav-item.is-focus { outline: var(--v2-focus-outline); outline-offset: calc(-1 * var(--v2-focus-offset)); }
-.v2-nav-item.is-selected { color: var(--v2-ink); }
+.v2-nav-item.is-selected { color: var(--v2-nav-selected-ink); background-image: linear-gradient(var(--v2-nav-selected-fill), var(--v2-nav-selected-fill)); }
 .v2-nav-item.is-selected::before {
   content: ''; position: absolute; top: calc(-1 * (var(--v2-space-1) + var(--v2-stroke))); left: 50%;
   width: var(--v2-icon-lg); height: var(--v2-space-05); margin-left: calc(var(--v2-icon-lg) / -2);
-  border-radius: 0 0 var(--v2-radius-xs) var(--v2-radius-xs); background: var(--v2-blue);
+  border-radius: 0 0 var(--v2-radius-xs) var(--v2-radius-xs); background: var(--v2-nav-indicator);
 }
 /* Forced colours drop the bar's fill: keep it in Highlight and underline the label, so the current
    item never rests on a colour the theme has replaced. */

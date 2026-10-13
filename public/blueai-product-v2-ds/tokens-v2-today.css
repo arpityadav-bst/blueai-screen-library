@@ -1,0 +1,205 @@
+/* BlueAI Product V2 Design System: the "V2 today" look.
+   Every token tokens.css defines, re-valued to what BlueAI Product V2 ships today, scoped under
+   [data-v2-look="today"]. tokens.css stays the Target look. The kit and screens read only tokens,
+   so the same parts render either look; the attribute picks one.
+   Use: load this right after tokens.css and set data-v2-look="today" on the html element (V2) or on
+   the element that wraps the specimens (the guide's Look switch). Remove the attribute to switch to
+   Target. tools/ds-check.js fails if the two files stop defining the same token names.
+   Values come from the foundations inventory (inv-foundations.json); refs are relative to
+   public/blueai-product-v2/ (bare jsx names live in blueai/). Where V2 is inconsistent the value is
+   the one V2 uses most for that role. "kept" means V2 has nothing to copy (or its value would drop
+   focus or break a list the JSX copies), so the Target value stands. Font: Plus Jakarta Sans. */
+
+[data-v2-look="today"] {
+  /* Ink: Tailwind gray titles and body, gray-500 muted, slate-400 meta. */
+  --v2-ink: #111827; /* gray-900, 67 uses: titles (index.html:439, settings.jsx:13) */
+  --v2-ink-2: #374151; /* gray-700, 42 uses: secondary labels, prompt rows (schedule.jsx:39, product_home.jsx:80) */
+  --v2-ink-3: #6b7280; /* gray-500, 59 uses: muted body (index.html:526, settings.jsx:15) */
+  --v2-ink-4: #94a3b8; /* slate-400, 41 uses: faint meta (chat_bubbles.jsx:124, product_home.jsx:92) */
+  --v2-ink-placeholder: #9ca3af; /* placeholder (byok_settings.jsx:113-114) */
+  --v2-on-color: #ffffff; /* 'white' x230 (chat_bubbles.jsx:31) */
+
+  /* Surface: slate canvas, white cards, slate-100 wells. */
+  --v2-canvas: #f8fafc; /* .ba-app ground (index.html:51), 20 uses */
+  --v2-surface: #ffffff; /* white cards (index.html:432, settings.jsx:10) */
+  --v2-surface-panel: #f8fafc; /* inset panels (byok_settings.jsx:99, settings.jsx:56) */
+  --v2-surface-sunken: #f1f5f9; /* status bubble, chips, pills, 18 uses (chat_bubbles.jsx:40, index.html:480) */
+  --v2-wash-hover: rgba(115,155,195,0.10); /* equals #f1f5f9 over white, V2's hover fill (index.html:291), as a wash so it still layers over fills */
+  --v2-wash-press: rgba(0,0,0,0.07); /* kept: V2 presses by scale, no fill (index.html:94, 101) */
+
+  /* Line: Tailwind hex lines. */
+  --v2-line: #e2e8f0; /* 89 uses, the de-facto line (index.html:323, shared.jsx:300) */
+  --v2-line-strong: #d1d5db; /* field borders (schedule.jsx:60, settings.jsx:93, byok_settings.jsx:94) */
+  --v2-line-hair: #eef2f6; /* dividers inside cards (settings.jsx:82, profile.jsx:17, ai_mode.jsx:118) */
+  --v2-line-hover: #c7d2e1; /* card and row hover edge (product_home.jsx:98, :81) */
+  --v2-link-underline: rgba(0,0,0,0.32); /* kept: V2 has no ink link (its links are blue text, credits_popup_parts.jsx:110) */
+
+  /* Blue: one #1990FF for marks, focus, selection and fills. */
+  --v2-blue: #1990FF; /* focus, selected, progress (index.html:57, ai_mode.jsx:52, needs_bluestacks.jsx:139) */
+  --v2-action: #1990FF; /* every primary fill, 74 uses (index.html:342, settings.jsx:123, byok.jsx:26) */
+  --v2-action-hover: #359dff; /* V2 hovers by opacity 0.88 (index.html:343): #1990FF at 0.88 over white */
+  --v2-blue-ink: #1e40af; /* blue notice text, 'the one established blue notice' (needs_bluestacks.jsx:77-82, login.jsx:236) */
+  --v2-blue-tint: #eff6ff; /* info notice fill (needs_bluestacks.jsx:77, login.jsx:236, jobs.jsx:6) */
+  --v2-blue-tint-line: #bfdbfe; /* info notice edge (needs_bluestacks.jsx:77-82, jobs.jsx:6) */
+  --v2-select: #eef6ff; /* selected option fill (ai_mode.jsx:51) */
+  --v2-select-line: #1990FF; /* selected option border, 1.5px solid ACCENT (ai_mode.jsx:52) */
+
+  /* Status. */
+  --v2-success: #16a34a; /* 10 uses: key icon, 'Active', dots (index.html:469, 481) */
+  --v2-success-ink: #15803d; /* 8 uses: Accepted, Completed (jobs.jsx:7, 9; settings.jsx:121) */
+  --v2-success-tint: #dcfce7; /* 'Active' pill fill (index.html:468) */
+  --v2-success-line: #bbf7d0; /* success edge (color.success lines) */
+  --v2-danger-ink: #ef4444; /* destructive fills Delete and Logout, low dot, warn glyph (schedule.jsx:149, profile.jsx:79, index.html:306, 334) */
+  --v2-danger-line: #f8d7d7; /* out-of-credits banner edge (index.html:499) */
+  --v2-danger-edge: #d0454a; /* kept: V2 fields have no error state (ai_mode.jsx:179-186) */
+  --v2-danger-ring: rgba(208,69,74,0.16); /* kept: no error focus in V2 */
+  --v2-danger-tint: #fdecec; /* out-of-credits banner fill (index.html:499) */
+  --v2-attention-tint: #fdf6cf; /* needs-input fill (worker_cards.jsx:19, chat_bubbles.jsx:89) */
+  --v2-attention-line: #f3e8a8; /* needs-input edge (chat_bubbles.jsx:89) */
+  --v2-attention-ink: #8a6116; /* needs-input text (chat_bubbles.jsx:89, worker_cards.jsx:45) */
+
+  /* Brand. */
+  --v2-gradient-brand: linear-gradient(90deg, #0EA4C5, #7B4CFF); /* wordmark, pill ring, balance (index.html:326, 333, 431) */
+
+  /* Look hooks: parts V2 draws differently from Target (defined in tokens.css too). */
+  --v2-bubble-user-fill: linear-gradient(135deg, #5158ee, #7b4cff); /* user bubble (chat_bubbles.jsx:30) */
+  --v2-bubble-user-line: transparent; /* user bubble has no border (chat_bubbles.jsx:30) */
+  --v2-bubble-user-ink: var(--v2-on-color); /* white text on the gradient (chat_bubbles.jsx:31) */
+  --v2-bubble-user-shadow: 0 4px 14px rgba(99,102,241,0.30); /* indigo glow (chat_bubbles.jsx:30) */
+  --v2-nav-selected-fill: #eef2ff; /* active tab pill (shared.jsx:305) */
+  --v2-nav-selected-ink: #4f46e5; /* active tab label and icon (shared.jsx:305) */
+  --v2-nav-indicator: transparent; /* V2 marks the tab with the pill only, no bar (shared.jsx:305) */
+  --v2-nav-shadow: 0 -2px 8px rgba(0,0,0,0.06); /* bottom nav lift (shared.jsx:300) */
+
+  /* Type: Plus Jakarta Sans, half-pixel sizes, heavier weights. */
+  --v2-font-ui: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif; /* V2's face; V2's stack (index.html:34) lists -apple-system first, so a Mac shows SF: here the face leads */
+  --v2-font-mono: ui-monospace, Menlo, monospace; /* model name, key field (byok_settings.jsx:72, 94) */
+  --v2-font-serif: 'Instrument Serif', 'Times New Roman', serif; /* bluestacks.ai pages (site_kit.jsx:14) */
+  --v2-text-11: 10.5px; /* eyebrow, nav label, timestamp (product_home.jsx:92, shared.jsx:305, chat_bubbles.jsx:32) */
+  --v2-text-12: 12px; /* meta (chat_bubbles.jsx:124), 52 uses */
+  --v2-text-13: 13px; /* the commonest size, 81 uses: button, body-sm (index.html:342, 526) */
+  --v2-text-14: 13.5px; /* body: bubbles and composer (chat_bubbles.jsx:31, chat_product.jsx:284) */
+  --v2-text-16: 17px; /* card title 17/700 (settings.jsx:13, login.jsx:229, account_gate.jsx:46) */
+  --v2-text-20: 20px; /* page title; V2 spreads 18 to 22, 20 is its middle (schedule.jsx:118, terms_sheet.jsx:114) */
+  --v2-text-24: 24px; /* greeting (chat_compare.jsx:100) */
+  --v2-text-40: 54px; /* credits balance (index.html:518) */
+  --v2-weight-regular: 400; /* body */
+  --v2-weight-medium: 600; /* labels and buttons, 600 x74 (index.html:342, settings.jsx:123) */
+  --v2-weight-semibold: 700; /* titles and emphasis, 700 x96, the most (settings.jsx:13, schedule.jsx:118) */
+  --v2-leading-display: 1; /* numerals, 17 uses (index.html:518) */
+  --v2-leading-tight: 1.2; /* titles (chat_compare.jsx:100) */
+  --v2-leading-snug: 1.4; /* single-line UI, 10 uses, the most of 1.3 to 1.4 */
+  --v2-leading-body: 1.5; /* paragraphs, 31 uses */
+  --v2-tracking-display: -1px; /* balance 54/800/-1px (index.html:518, byok.jsx:51) */
+  --v2-tracking-title: -0.4px; /* page titles (history.jsx:91, terms_sheet.jsx:114) */
+  --v2-tracking-label: 0; /* V2 card titles and buttons set no tracking (settings.jsx:13, index.html:342) */
+  --v2-tracking-eyebrow: 0.08em; /* eyebrow, 7 uses (product_home.jsx:92) */
+  --v2-tracking-mini: 0.02em; /* 4 uses (type.letter-spacing) */
+
+  /* Space: each step takes the value V2 uses most in its range (space.scale counts). */
+  --v2-space-0: 0; /* reset */
+  --v2-space-05: 2px; /* 2 x31 of 1 to 3 */
+  --v2-space-1: 5px; /* 5 x46 over 4 x36 */
+  --v2-space-15: 6px; /* 6 x66 over 7 x39 */
+  --v2-space-2: 8px; /* 8 x77 over 9 x40 */
+  --v2-space-3: 10px; /* 10 x109 over 12 x82 (padding '10px 12px') */
+  --v2-space-4: 16px; /* card padding and gutter (settings.jsx:10, chat and tab screens) */
+  --v2-space-5: 20px; /* 20 x23 over 22 x16 */
+  --v2-space-6: 24px; /* 24 x14 over 26 x3 */
+  --v2-space-8: 28px; /* 28 x11 over 32 x9 (login.jsx:86) */
+  --v2-space-10: 40px; /* 40 x3 over 36 and 48 */
+  --v2-gutter: var(--v2-space-4); /* 16, chat, tabs and history (shell.layout-constants) */
+
+  /* Radius. */
+  --v2-radius-xs: 4px; /* job badge (jobs.jsx:31) */
+  --v2-radius-sm: 8px; /* buttons and fields, 38 uses (settings.jsx:123, schedule.jsx:60) */
+  --v2-radius-md: 10px; /* 10 x29, the most of 10 to 14 (byok_settings.jsx:31, profile.jsx:78) */
+  --v2-radius-lg: 16px; /* cards, 25 uses (index.html:432, settings.jsx:10) */
+  --v2-radius-pill: 999px; /* pills (index.html:342) */
+  --v2-radius-round: 50%; /* discs, 40 uses */
+
+  /* Stroke. */
+  --v2-stroke: 1px; /* ~230 uses */
+  --v2-stroke-selected: 1.5px; /* selected option, composer (ai_mode.jsx:52, chat_product.jsx:260) */
+
+  /* Elevation: V2 lifts in-flow cards and bubbles with a soft shadow. */
+  --v2-shadow-0: 0 1px 3px rgba(0,0,0,0.04); /* in-flow cards and bubbles, x9 (index.html:432, chat_bubbles.jsx:40) */
+  --v2-shadow-1: 0 10px 28px rgba(0,0,0,0.14); /* top-bar dropdown (index.html:289); each floating recipe is used once */
+  --v2-shadow-2: 0 20px 60px rgba(0,0,0,0.3); /* ModalOverlay and Logout (shared.jsx:73, profile.jsx:74) */
+
+  /* Overlay. */
+  --v2-scrim: rgba(0,0,0,0.5); /* ModalOverlay, four dialogs (shared.jsx:72) */
+  --v2-scrim-frost: rgba(255,255,255,0.55); /* sign-in veil (login.jsx:74) */
+  --v2-scrim-blur: 10px; /* sign-in blur (login.jsx:74) */
+
+  /* Z. */
+  --v2-z-raised: 1; /* local lift */
+  --v2-z-sticky: 10; /* modal sticky header (shared.jsx:74) */
+  --v2-z-header: 20; /* top bar (index.html:323) */
+  --v2-z-popover: 30; /* mode popover (agent_permissions.jsx:141); V2 also uses 20 and 60 once each */
+  --v2-z-dialog: 60; /* ModalOverlay (shared.jsx:72) */
+  --v2-z-gate: 100; /* LoginModal (login.jsx:74) */
+  --v2-z-toast: 120; /* kept: V2 has no in-app toast */
+  --v2-z-splash: 200; /* boot splash (boot_splash.jsx:39) */
+
+  /* Motion: the value V2 uses most in each step (motion.durations counts). */
+  --v2-dur-1: 150ms; /* 150 x40 over 120 x32 */
+  --v2-dur-2: 200ms; /* 200 x9 over 180 x6 */
+  --v2-dur-3: 250ms; /* 250 x7 over 300 x6 */
+  --v2-dur-4: 350ms; /* 350 x6 over 320 x5 */
+  --v2-dur-celebrate: 450ms; /* ddPop 0.45s (worker_day_done.jsx:147) */
+  --v2-ease-out: cubic-bezier(0.22, 1, 0.36, 1); /* 'this product's house curve' x9 (moneymaker.jsx:107-109) */
+  --v2-ease-in: cubic-bezier(0.5, 0, 0.75, 0.4); /* sheet out (terms_sheet.jsx:106) */
+  --v2-ease-standard: ease; /* x81 */
+  --v2-dur-spin: 800ms; /* ba-spin 0.8s */
+  --v2-dur-pulse: 1100ms; /* 1.1s x3, the most of the pulses */
+  --v2-dur-shimmer: 1400ms; /* ba-shimmer 1.4s */
+
+  /* Focus: V2 ships one field ring and no :focus-visible rule, so the outline is kept in V2's blue. */
+  --v2-focus-outline: 2px solid var(--v2-blue); /* kept: V2 relies on the browser default (focus.ring) */
+  --v2-focus-offset: 2px; /* kept */
+  --v2-focus-ring: 0 0 0 3px rgba(25,144,255,0.12); /* .ba-field:focus (index.html:57) */
+
+  /* Opacity. */
+  --v2-opacity-disabled: 0.45; /* ai_mode.jsx:190, 226 */
+
+  /* Icon: sizes kept, the Icon SIZES list in the JSX copies them (ds-check 8). */
+  --v2-icon-sm: 16px; /* kept */
+  --v2-icon-md: 20px; /* kept (V2 nav glyphs are 22, shared.jsx:7-24) */
+  --v2-icon-lg: 24px; /* kept */
+  --v2-icon-stroke: 1.67; /* strokeWidth 2 x42 on a 24 viewBox, as drawn at 20px */
+
+  /* Shell. */
+  --v2-shell-w: 419px; /* product-scene.css:76 */
+  --v2-shell-h: 830px; /* product-scene.css:71-76 */
+  --v2-shell-min-h: 640px; /* kept: V2 has no compact rule */
+  --v2-titlebar-h: 34px; /* product-scene.css:85-87 */
+  --v2-topbar-h: 52px; /* kept: V2's bar is content-sized, about 53 to 55 (index.html:323) */
+  --v2-nav-h: 64px; /* bottom nav (shared.jsx:300) */
+  --v2-bubble-max: 290px; /* user bubble maxWidth (chat_bubbles.jsx:30) */
+  --v2-dialog-sm: 320px; /* kept: V2 uses 300 and 340 (byok.jsx:80, profile.jsx:74), no majority */
+  --v2-dialog-md: 382px; /* ModalOverlay width, one of V2's two (shared.jsx:73) */
+  --v2-control-sm: 28px; /* kept: V2 spreads 21 to 30 */
+  --v2-control-md: 34px; /* icon buttons and send (index.html:292, chat_product.jsx:188) */
+  --v2-control-lg: 44px; /* kept: V2 CTAs are padding-sized (terms_sheet.jsx:121, login.jsx:174) */
+  --v2-field-h: 40px; /* kept: V2 fields are padding-sized, 36 to 42 */
+  --v2-hit-min: 32px; /* kept: V2 has no minimum (21px Okay, moneymaker_home.jsx:57) */
+
+  /* Size: marks kept, the Avatar SIZES list in the JSX copies them (ds-check 8). */
+  --v2-mark-sm: 24px; /* kept */
+  --v2-mark-md: 32px; /* kept */
+  --v2-mark-lg: 40px; /* kept */
+  --v2-mark-xl: 56px; /* account disc (account_gate.jsx:20) */
+  --v2-badge-h: 22px; /* kept: V2 pills spread 18 to 24 */
+  --v2-row-min-h: 48px; /* kept: V2 rows are padding-sized */
+  --v2-rail: 6px; /* bars (ai_mode.jsx:140, needs_bluestacks.jsx:138) */
+  --v2-rail-thin: 4px; /* kept: none in V2 */
+  --v2-popover-w: 364px; /* mode menu (agent_permissions.jsx:141) */
+  --v2-measure: 280px; /* kept: none in V2 */
+  --v2-measure-tip: 260px; /* InfoTip (credits_popup_parts.jsx:148) */
+
+  /* Scrollbar. */
+  --v2-scroll-w: 5px; /* index.html:58 */
+  --v2-scroll-thumb: rgba(0,0,0,0.18); /* index.html:60 */
+  --v2-scroll-thumb-hover: rgba(0,0,0,0.32); /* index.html:61 */
+}

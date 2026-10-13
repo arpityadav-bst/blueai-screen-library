@@ -4,6 +4,10 @@
 
 **Why:** Dated, newest first, so anyone building from the system can see what changed since they last looked. Add an entry for every change to tokens, a kit part’s API or a screen, here and in guide/sections/meta-changelog.jsx.
 
+### 2026-10-14: Two looks
+
+- tokens-v2-today.css adds the "V2 today" look (every token re-valued to what V2 ships now, under [data-v2-look="today"]; tokens.css stays Target), eight look-hook tokens let the kit restore V2's gradient user bubble, indigo nav pill and soft in-flow shadows, the guide header switches the look, and ds-check fails if the two files define different token names.
+
 ### 2026-10-13: First version
 
 - The system and its live guide, built next to V2 without changing V2: 78 sections (start, foundations, components, shell, chat, worker, credits and settings, patterns, screens, copy and voice, scene and review, meta).

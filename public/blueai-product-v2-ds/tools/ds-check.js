@@ -16,10 +16,10 @@
    4. lines    every .jsx/.js/.css is at most 300 lines (index.html and .md exempt).
    5. sync     catalog sections, guide/sections files (and their register id), design-md partials
                and index.html's script/stylesheet list agree, in a safe load order.
-   6. colour   no raw colour in kit/ or screens/: #hex and rgb(a), hsl(a), hwb, lab, lch, oklab,
-               oklch and color() on any line here; CSS named and system colours read from values,
-               under any CSS property, JSX colour key, style= key or fill=/stroke=/color= attribute,
-               in tools/ds-check-more.js. No stylesheet but tokens.css defines a --v2- property.
+   6. colour   raw colour only in tokens.css and tokens-v2-today.css: #hex, rgb(a), hsl(a), hwb, lab,
+               lch, oklab, oklch and color() fail on any line of kit/, screens/ or another root .css;
+               named and system colours, read from values, in tools/ds-check-more.js. No stylesheet
+               but those two defines a --v2- property; 11 (more.js) holds them to the same names.
    7. kit      every kit component and screen the catalog names is put on window.V2Kit / V2Screens.
    8. sizes    Icon and Avatar SIZES equal their tokens, each size class reads its token, no caller
                passes a size off the list, and no kit/ or screens/ rule types a Size token raw
@@ -27,7 +27,7 @@
    9. rest     no object rest destructuring in kit/, screens/ or guide/ .jsx (Babel's hoisted
                _excluded is shared across files).
    10. iife    kit/, screens/ and guide/ files hold only IIFEs at top level (refs may assign
-               window.V2Refs), so nothing lands on window. 8 to 10 live in tools/ds-check-more.js.
+               window.V2Refs), so nothing lands on window. 8 to 11 live in tools/ds-check-more.js.
    --missing-ok turns "planned file does not exist yet" (and "file not loaded by index.html") into
    warnings, so slice builders can run it before every file exists; planned-but-absent files are
    then counted in one line (add --verbose to list them). Exit 1 on any error. */
@@ -114,20 +114,20 @@ for (const f of FILES) {
   }
 }
 
-// 6. raw colour in kit/ and screens/ (named colours: tools/ds-check-more.js, which reads values)
+// 6. raw colour outside the two token files: kit/, screens/, root .css (named: tools/ds-check-more.js)
 const HEX = /(^|[^\w&#/-])#(?:[0-9a-f]{8}|[0-9a-f]{6}|[0-9a-f]{3,4})(?![\w-])/i;
 const FN = /\b(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch|color)\s*\(/i;
-for (const f of FILES.filter((x) => /^(kit|screens)\//.test(x) && ['.js', '.jsx', '.css'].includes(ext(x)))) {
+for (const f of FILES.filter((x) => (/^(kit|screens)\//.test(x) || /^[^/]+\.css$/.test(x)) && !/^tokens(-v2-today)?\.css$/.test(x) && ['.js', '.jsx', '.css'].includes(ext(x)))) {
   read(f).split('\n').forEach((l, i) => {
     const m = l.match(HEX) || l.match(FN);
     if (m) err(f, 'line ' + (i + 1) + ': raw colour "' + m[0].trim() + '": use a --v2-* token');
   });
 }
-// ...and the --v2- prefix means tokens.css: no other stylesheet defines one
-for (const f of FILES.filter((x) => ext(x) === '.css' && x !== 'tokens.css')) {
+// ...and the --v2- prefix means the two token files: no other stylesheet defines one
+for (const f of FILES.filter((x) => ext(x) === '.css' && !/^tokens(-v2-today)?\.css$/.test(x))) {
   read(f).split('\n').forEach((l, i) => {
     const m = l.match(/(?:^|[;{\s])(--v2-[\w-]+)\s*:/);
-    if (m) err(f, 'line ' + (i + 1) + ': defines ' + m[1] + ', but only tokens.css defines --v2- properties: name a part-local one without the prefix (' + m[1].replace('--v2-', '--') + ')');
+    if (m) err(f, 'line ' + (i + 1) + ': defines ' + m[1] + ', but only tokens.css and tokens-v2-today.css define --v2- properties: name a part-local one without the prefix (' + m[1].replace('--v2-', '--') + ')');
   });
 }
 
@@ -248,14 +248,14 @@ if (C) {
   }
   if (order.length && order[order.length - 1] !== 'guide/app.jsx') err('index.html', 'guide/app.jsx must be the last script');
   const cssOrder = links.filter((l) => l.startsWith(PREFIX)).map((l) => l.slice(PREFIX.length));
-  if (cssOrder[0] !== 'tokens.css') err('index.html', 'tokens.css must be the first system stylesheet');
+  if (cssOrder[0] !== 'tokens.css' || cssOrder[1] !== 'tokens-v2-today.css') err('index.html', 'tokens.css then tokens-v2-today.css must be the first two system stylesheets');
   if (cssOrder[cssOrder.length - 1] !== 'guide/guide.css') err('index.html', 'guide/guide.css must be the last stylesheet');
   ['kit/base.css', 'kit/motion.css'].forEach((b) => {
     const i = cssOrder.indexOf(b);
     if (i < 0) err('index.html', 'does not load ' + b);
     else if (cssOrder.slice(0, i).some((x) => x.startsWith('kit/') && x !== 'kit/base.css')) err('index.html', b + ' must load before the other kit stylesheets');
   });
-  const expected = [...secFiles, ...C.kit.map((k) => k.file), ...C.screens.map((k) => k.file), 'guide/catalog.jsx', 'guide/app.jsx', 'guide/kit-guide.jsx', 'guide/spec.jsx', 'tokens.css', 'guide/guide.css'];
+  const expected = [...secFiles, ...C.kit.map((k) => k.file), ...C.screens.map((k) => k.file), 'guide/catalog.jsx', 'guide/app.jsx', 'guide/kit-guide.jsx', 'guide/spec.jsx', 'tokens.css', 'tokens-v2-today.css', 'guide/guide.css'];
   expected.forEach((x) => { if (!loaded.has(x)) err('index.html', 'does not load ' + x); });
   FILES.filter((x) => /^(kit|screens|guide)\//.test(x) && ['.js', '.jsx', '.css'].includes(ext(x)) && !loaded.has(x))
     .forEach((x) => (MISSING_OK ? warn : err)(x, 'exists but index.html does not load it'));

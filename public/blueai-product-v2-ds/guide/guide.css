@@ -66,7 +66,11 @@ button, input, textarea, select { font-family: inherit; }
 .g-header { padding-bottom: var(--v2-space-5); margin-bottom: var(--v2-space-6); border-bottom: var(--v2-stroke) solid var(--v2-line); }
 .g-header-row { display: flex; justify-content: space-between; align-items: flex-end; gap: var(--v2-space-4); flex-wrap: wrap; }
 .g-title { margin-top: var(--v2-space-2); color: var(--v2-ink); font-size: var(--v2-text-20); font-weight: var(--v2-weight-semibold); letter-spacing: var(--v2-tracking-title); line-height: var(--v2-leading-tight); }
-.g-header-links { display: flex; gap: var(--v2-space-4); }
+.g-header-links { display: flex; flex-wrap: wrap; align-items: center; gap: var(--v2-space-4); }
+.g-look-switch { align-items: center; }
+/* The Look wrapper re-reads the body's type and ink here, so specimens that inherit them take the
+   chosen look (data-v2-look, tokens-v2-today.css) and not the guide's own. */
+.g-look { color: var(--v2-ink-2); font-family: var(--v2-font-ui); font-size: var(--v2-text-14); line-height: var(--v2-leading-body); }
 .g-legend { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--v2-space-3); margin: var(--v2-space-4) 0 0; }
 .g-legend-item { display: flex; flex-direction: column; gap: var(--v2-space-1); }
 .g-legend dt, .g-legend dd { margin: 0; }
