@@ -407,18 +407,26 @@ body { min-height: 100vh; }
 .bal-top .earn-figure { font-size: clamp(26px, 2.4vw, 32px); }
 /* THE CASH-OUT MINIMUM (PM spec, 2026-10-12). The minimum sits under the
    balance it qualifies, in Earned till date's own muted note style. Cash out can
-   now be closed, so the button and the reason it is closed stack on the right:
-   a disabled control that does not say why is a refusal with no explanation. */
+   now be closed. WHILE CLOSED, A STATUS TAKES THE BUTTON'S PLACE (Arpit,
+   2026-10-14): a greyed button with a paragraph under it read as broken, so the
+   spot shows a quiet pill instead, "Opens Nov 1", or "$7 of $10" with a thin bar
+   while the balance is short. The PM's full sentence is its hover title and its
+   accessible name. When cash out opens, the pill becomes the button. */
 .bal-min { margin-top: 8px; }
-.bal-act { display: grid; justify-items: end; gap: 8px; text-align: right; }
-.bal-act .btn:disabled { opacity: 0.45; cursor: not-allowed; box-shadow: none; }
-.bal-act .btn:disabled:hover { background: var(--charcoal-2); border-color: var(--border); }
-.bal-why { max-width: 230px; }
+.bal-act { display: flex; justify-content: flex-end; } .bal-act [hidden] { display: none; }
+.cash-pill {
+  display: inline-flex; align-items: center; gap: 8px; height: var(--btn-h);
+  padding: 0 12px; border: 1px solid var(--border-soft); border-radius: 6px;
+  color: var(--muted); font-size: 13px; letter-spacing: -0.01em; white-space: nowrap; cursor: default;
+}
+.cash-pill svg { flex-shrink: 0; }
+.cash-pill-bar { width: 48px; height: 4px; border-radius: 2px; background: var(--border-soft); overflow: hidden; }
+.cash-pill-bar > span { display: block; height: 100%; border-radius: 2px; background: var(--green); }
 /* on a phone the reason would be squeezed into a narrow column beside the
    balance, so the row stacks and everything reads from one left edge */
 @media (max-width: 560px) {
   .bal-top { flex-direction: column; gap: 14px; }
-  .bal-act { justify-items: start; text-align: left; }
+  .bal-act { justify-content: flex-start; }
 }
 .bal-ledger { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--border-soft); }
 .dash-quiet { color: var(--muted); font-size: 13.5px; letter-spacing: -0.01em; }
@@ -1364,7 +1372,11 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
              one thing that commits you to something -->
         <div class="bal-act">
           <button class="btn btn-ghost" type="button" data-sheet="cash-out">Cash out</button>
-          <span class="dash-note bal-why" data-cash-why hidden></span>
+          <span class="cash-pill" role="status" data-cash-pill hidden>
+            <svg data-pill-icon viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+            <span data-pill-text></span>
+            <span class="cash-pill-bar" data-pill-bar hidden><span data-pill-fill></span></span>
+          </span>
         </div>
       </div>
       <div class="bal-ledger">
@@ -2313,11 +2325,19 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     dash.querySelector('[data-count="active"]').textContent = a.active;
     dash.querySelector('[data-count="past"]').textContent = a.past;
 
+    /* closed: the pill stands where the button was; short on money it shows how
+       close, otherwise when it opens. The full reason is its title and label. */
     var why = cashWhy(a);
-    var whyEl = dash.querySelector('[data-cash-why]');
-    dash.querySelector('[data-sheet="cash-out"]').disabled = !!why;
-    whyEl.textContent = why;
-    whyEl.hidden = !why;
+    var pill = dash.querySelector('[data-cash-pill]');
+    var short = a.balance < CASH_MIN;
+    dash.querySelector('[data-sheet="cash-out"]').hidden = !!why;
+    pill.hidden = !why;
+    pill.title = why;
+    pill.setAttribute('aria-label', why);
+    pill.querySelector('[data-pill-icon]').style.display = short ? 'none' : '';
+    pill.querySelector('[data-pill-text]').textContent = short ? money(a.balance) + ' of ' + money(CASH_MIN) : 'Opens ' + PERIOD_ENDS;
+    pill.querySelector('[data-pill-bar]').hidden = !short;
+    pill.querySelector('[data-pill-fill]').style.width = Math.min(100, Math.round(a.balance / CASH_MIN * 100)) + '%';
 
     var ledger = dash.querySelector('[data-ledger]');
     var none = dash.querySelector('[data-ledger-empty]');
