@@ -8,24 +8,36 @@ WSUP/now.gg: visual fidelity + handoff clarity, no real backend.
 
 ---
 
-## ⚡ SCOPE (2026-08-06, designer directive) — READ THIS FIRST
+## ⚡ SCOPE (2026-10-13, designer directive): READ THIS FIRST
 
-**Two surfaces are ACTIVE — work happens on these:**
-- **`/blueai-desktop`** (the "modern terminal" prototype) — the product prototype.
-- **`/creator-brand`** — the creators + brands pre-launch acquisition pages.
+**MAIN: the BlueAI product and its two sites. Work happens on these:**
+- **`/blueai-product-v2`**: the main running BlueAI product, the desktop app replica
+  (`public/blueai-product-v2/`, React 18 + Babel-standalone, no build). Edited in the
+  `blueai-worktrees/blueai-product` worktree. Its worker flow is the PM's (Abhisht), ported
+  byte-for-byte from his repo `abhisht-bst/blueai-creator-brand` so every later port diffs cleanly:
+  a bug in his code goes back to him rather than being fixed here. V1 (`/blueai-product`) was
+  deleted 2026-10-13 and is recoverable from git history (last present at 34027ca).
+- **onBlue Agentic** (`public/experiments/onblue-vesper/index.html` + `apply.html`): the partner
+  (creator) website. Partners apply, run the jobs with their agent, and cash out from its dashboard.
+- **onBlue Agentic for business** (`public/experiments/onblue-vesper/brands.html` +
+  `campaign.html`): the business website. Businesses start the campaigns and set the budgets the
+  partners' jobs are paid from. Same stylesheet (`onblue.css`) as the partner site.
 
-**Two are MAINTAINED** — not where new work happens, but genuinely updated from time to time as
-the product and the marketing system move: **`/style-guide`** (marketing design system) and
-**`/blueai-product`**. Treat a change here as normal work, not an exhumation.
+**EXTRAS: everything else**, kept on record and still compared against, not where new work
+happens. That includes `/blueai-desktop` (Terminal Modern, the product prototype until this
+directive), `/creator-brand`, `/style-guide`, the other creator page experiments and the dormant
+marketing site. A change to an extra is normal work when asked for, not an exhumation.
 
-**Everything else is DORMANT** — kept on record, not in progress: `/seo`, `/hero-options`,
-`/live-demo-v2`, `/ai-video-creator-v2`, plus the unindexed routes (`/hero/*`, `/apply-to-jobs`,
-`/ai-trading-agent`, `/prediction-market-agent`, `/social-rewards`, `/developer`, `/product`) and
-the untracked `/clay` experiment.
+**This replaces the 2026-08-06 directive**, which named `/blueai-desktop` and `/creator-brand`
+ACTIVE and `/style-guide` + `/blueai-product` MAINTAINED. The Screen Library index
+(`src/app/page.tsx`) mirrors it: a Main group, then the extras.
 
-**State the dormant set as "everything not named above", not as an enumeration.** A previous
-version of this note enumerated it and went stale the first time a surface was added — then again
-when two were deleted. If you add a surface, it is dormant by default and this note needs no edit.
+**VDA was NOT re-scoped with it.** VDA stays aligned to blueai-desktop (below) until the designer
+says otherwise; V2 and the onBlue Agentic sites are out of VDA scope unless VDA review is asked for.
+
+**State the extras as "everything not named above", not as an enumeration.** A previous version of
+this note enumerated the dormant set and went stale the first time a surface was added, then again
+when two were deleted. If you add a surface, it is an extra by default and this note needs no edit.
 
 **DELETED 2026-08-06 (designer directive — do not resurrect):** `/blueai-creators` (all three
 entries: the site, the onboarding prototype, the flows/diagrams) and `/moneymaker` (all three
@@ -51,8 +63,8 @@ NOT load WSUP's or now.gg's notebook for blueAI work — that's cross-contaminat
 directive). The bootstrap is expensive and it exists to protect ONE surface; firing it on the bare
 project name made every unrelated errand in this repo pay for it. Fire the FIRST time any of these
 are true in a session:
-- Human message references the **blueai-desktop / "modern terminal" prototype** — the one active
-  surface — or its design system, by name or by component: credits screen, OOC modal, Settings
+- Human message references the **blueai-desktop / "modern terminal" prototype** (VDA's surface;
+  an extra since 2026-10-13) or its design system, by name or by component: credits screen, OOC modal, Settings
   cards, Telegram / AI-Mode / BYOK, Preview panel, Skills / Jobs / Scheduled, the login gate,
   onboarding, the titlebar, the drawer.
 - Human drags/pastes, or you are about to read/write, a file under `public/blueai-desktop/`
@@ -60,10 +72,10 @@ are true in a session:
   `boot.js`, `flows.js`) or under `visual-designer/`.
 - Human says "build", "design", "fix the layout", "update VDA" **about blueai-desktop**.
 
-**It does NOT fire for anything else in this repo — including `/creator-brand`.** VDA is aligned
-to blueai-desktop and nothing else. Every other surface is out of VDA scope — work on it freely,
-no bootstrap, no Gate 8 against blueai-desktop's DS: `/creator-brand` (ACTIVE, but independently
-designed on the marketing DS), `/style-guide`, `/blueai-product`, the marketing site (`/seo`, the
+**It does NOT fire for anything else in this repo, including the MAIN surfaces.** VDA is aligned
+to blueai-desktop and nothing else. Every other surface is out of VDA scope, so work on it freely,
+no bootstrap, no Gate 8 against blueai-desktop's DS: `/blueai-product-v2` and both onBlue Agentic
+sites (MAIN, each on its own styles), `/creator-brand`, `/style-guide`, the marketing site (`/seo`, the
 three heroes, `HeroStage` / `HeroCards` / `HeroStageOriginal` / `HeroNav` / `BaiHome` /
 `FeatureRows` / `AllSkills`, the agent scenes), `/live-demo-v2`, `/ai-video-creator-v2`, `/clay`,
 and the root Screen Library index. A non-blueai-desktop surface fires the bootstrap ONLY if the
@@ -230,7 +242,7 @@ down. The failure mode is rules phrased so narrowly they only match their own or
 
 ---
 
-## blueai-desktop — ACTIVE
+## blueai-desktop: EXTRA since 2026-10-13 (was ACTIVE)
 - The "modern terminal" prototype replicating BlueAI (BlueStacks' in-app AI assistant). Plain
   HTML/CSS/vanilla-JS, no build step, no JS dependencies (one webfont `<link>` aside). Files in
   `public/blueai-desktop/`:
@@ -311,7 +323,7 @@ down. The failure mode is rules phrased so narrowly they only match their own or
   mechanical changes (see `feedback_skip_screenshots_when_watching` memory); verify with
   Playwright only for first-time-wiring new interactions or genuine logic/data-model changes.
 
-## Marketing site + /blueai-product — DORMANT (see SCOPE PIVOT above)
+## Marketing site: EXTRA (see SCOPE above)
 - **Design-only:** no real backend; the agent demos are scripted/animated, not live.
 - **Source:** a Claude-design HTML/CSS export in `design-source/homepage-rework/` (ported
   to Next + Tailwind). Full DS extras in "BlueAI Modern.zip" (Downloads) if extending.
@@ -325,7 +337,7 @@ down. The failure mode is rules phrased so narrowly they only match their own or
   full-page `<a>`. DS tokens in `globals.css` (`--bai-*`) + `tailwind.config.ts`.
 - **Parked fixes:** `design-source/FIX-LATER.md` (designer's Recommended-hero polish items).
 
-## /creator-brand — pre-launch acquisition site — ACTIVE
+## /creator-brand: pre-launch acquisition site, EXTRA since 2026-10-13 (was ACTIVE)
 - **What it sells:** BlueAI as the layer between creators and brands. A brand posts a YouTube
   video + a budget; BlueAI matches it to creators whose interests fit, runs the watch/like/comment
   on their account, verifies each engagement, and pays out. Both journeys end at a **waitlist**,
