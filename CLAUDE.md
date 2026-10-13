@@ -32,7 +32,9 @@ marketing site. A change to an extra is normal work when asked for, not an exhum
 
 **This replaces the 2026-08-06 directive**, which named `/blueai-desktop` and `/creator-brand`
 ACTIVE and `/style-guide` + `/blueai-product` MAINTAINED. The Screen Library index
-(`src/app/page.tsx`) mirrors it: a Main group, then the extras.
+(`src/app/page.tsx`) mirrors it: a Main group, then the only extras still listed, the onBlue
+Cinematic Hero and Terminal Modern. The other extras came off the index on 2026-10-13 and are
+still in the repo and still served, just not listed.
 
 **VDA was NOT re-scoped with it.** VDA stays aligned to blueai-desktop (below) until the designer
 says otherwise; V2 and the onBlue Agentic sites are out of VDA scope unless VDA review is asked for.
