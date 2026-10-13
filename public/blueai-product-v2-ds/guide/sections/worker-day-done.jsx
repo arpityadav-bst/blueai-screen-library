@@ -52,23 +52,23 @@
           <G.CompareRow
             v2={<Win height={560}><G.Live get={function () { return window.WorkerDayDone && window.WorkerDayDone.DayDoneOverlay; }} props={{ step: { end: 'job' }, onClose: noop }} label="WorkerDayDone.DayDoneOverlay" /></Win>}
             system={spec('job')}
-            changed="V2 says the same fact five times (DAY 7 OF 20, the title, 7 of 20 days, Pending verification, the legend) and celebrates a pending day in verified green with confetti and a ring that pulses forever. Now: one count and one status line, pending in blue with one tick until verified, confetti only on Day 20, money nowhere (the days style ships). The panel is the one Dialog, so it gains aria-modal, focus in and out, and Esc. The PM's titles are quoted, not rewritten." />
+            changed="V2 adopted the minimal popup on 2026-10-14, as this section recommended: a 44 tick badge, the title, one status line ('Day 7 of 20 · Pending verification'; the money option leads with '+$1 · '; Day 20 drops the day part), the note only the first time it shows in a session, and Got it, on a 280 panel. The eyebrow, the big green count, the bar and legend, the confetti and the pulsing ring are gone. Still different: V2's badge is verified green while the day is pending; here it is blue with one tick until verified. The system keeps the DayBar above its one count line, confetti once on Day 20 only, and the note on every showing. The panel is the one Dialog, so it gains aria-modal, focus in and out, and Esc. The PM's titles are quoted, not rewritten." />
           <G.FrameState url="index.html?day=next&end=job" label="V2: the next day's run, ending on a job" height={830} />
           <p><strong>Try it.</strong> The real dialog in a product-sized window:</p>
           <LiveDemo />
           <G.SpecDrawer rows={[
             { part: 'Dialog', token: '--v2-dialog-sm, --v2-radius-lg, --v2-shadow-2', value: '320, radius 16, celebration variant', ref: ['worker.daydone.panel', 'worker.daydone.role'] },
             { part: 'Scrim', token: '--v2-scrim', value: 'rgba(11,18,32,0.48), dialog layer', ref: 'worker.daydone.scrim' },
-            { part: 'Badge', token: '--v2-blue-tint, --v2-blue-ink', value: '56 round, one tick 28 in --v2-blue-ink inherited from the badge (a blue exception to the neutral pending tone), no ring', ref: 'worker.daydone.ring' },
+            { part: 'Badge', token: '--v2-blue-tint, --v2-blue-ink', value: '56 round, one tick 28 in --v2-blue-ink inherited from the badge (a blue exception to the neutral pending tone), no ring', ref: 'worker.daydone.badge' },
             { part: 'Title', token: '--v2-text-20, --v2-weight-semibold', value: 'Today’s run is done.', ref: 'worker.copy.job' },
             { part: 'Title, no job', token: 'same', value: 'No paid job today, but your run counts.', ref: 'worker.copy.nojob' },
             { part: 'Title, Day 20', token: 'same + two subs 13 ink-3', value: 'Day 20 done. / That’s every day for this month. / Cash out on Earnings after Nov 1, once your days are verified ($10 minimum). (the last line proposed)', ref: ['worker.copy.day20', 'worker.copy.day20-sub'] },
-            { part: 'Count', token: '--v2-text-13, figure --v2-ink 600', value: "'7 of 20 days' replaces the eyebrow and the green hero", ref: ['worker.daydone.eyebrow', 'worker.daydone.hero'] },
-            { part: 'Status', token: 'StatusTick pending', value: 'Pending verification', ref: ['worker.daydone.pending-line', 'worker.copy.pending'] },
-            { part: 'Note', token: '--v2-text-13, --v2-ink-3', value: 'We check every run within a day. The tick doubles once it’s verified.', ref: ['worker.copy.verify-note', 'worker.daydone.note-colour'] },
+            { part: 'Count', token: '--v2-text-13, figure --v2-ink 600', value: "'7 of 20 days', said once, under the DayBar", ref: 'worker.daydone.pending-line' },
+            { part: 'Status', token: 'StatusTick pending', value: 'one tick, Pending verification', ref: 'worker.copy.pending' },
+            { part: 'Note', token: '--v2-text-13, --v2-ink-3', value: 'We check every run within a day. The tick doubles once it’s verified.', ref: ['worker.copy.verify-note', 'worker.daydone.note-colour', 'worker.daydone.note-once'] },
             { part: 'Got it', token: '--v2-action, --v2-control-lg', value: 'primary, full width, 44', ref: ['worker.daydone.got-it', 'worker.daydone.got-it-label'] },
             { part: 'Arrival', token: '--v2-dur-celebrate, --v2-ease-out', value: 'badge pops 450ms once', ref: 'worker.daydone.pop' },
-            { part: 'Confetti', token: '--v2-blue, --v2-action, --v2-ink-4', value: '12 fixed bits, Day 20 only, hidden under reduced motion; never green or yellow while the day is pending', ref: 'worker.daydone.confetti' },
+            { part: 'Confetti', token: '--v2-blue, --v2-action, --v2-ink-4', value: '12 fixed bits, Day 20 only, hidden under reduced motion; never green or yellow while the day is pending (V2 has none since 2026-10-14)' },
           ]} />
           <G.DoDont
             do={['Show pending as pending: blue, one tick, the word.', 'Say the count once, from numbers(), so tomorrow matches tonight.', 'Keep failed and skipped out of the moment: the run card says those with their action.']}

@@ -10,13 +10,14 @@
    TICKS (Abhisht's feedback, 2026-10-12): a run is verified within a day, so it cannot be
    "complete" the moment it ends. Like a messaging app: ONE tick = the run is done and submitted,
    pending verification; TWO ticks = verified, the day counts and the money is in. Today's day
-   shows one tick; the next morning it shows two. The 20-day bar draws verified days solid and the
-   pending one outlined, with a legend, so the person can always see where each day stands.
+   shows one tick; the next morning it shows two. The 20-day bar lives on the worker home
+   (EarningsStrip): verified days solid, the pending one outlined.
 
    THE MOMENT itself appears in the CENTRE of the window, like a game's "quest complete" screen
-   (DayDoneOverlay), and that is the whole message. Three options, the Preview panel's "Card" row:
-     money   leads with the dollar: "+$1", day count, balance and bonus underneath.
-     days    the same with no money on it: the day count is the hero, "13 days to go".
+   (DayDoneOverlay), and that is the whole message. MINIMAL since 2026-10-14 (Arpit): one small
+   tick, the title, one status line, Got it. Three options, the Preview panel's "Card" row:
+     money   the status line leads with the dollar: "+$1 · Day 7 of 20 · Pending verification".
+     days    the same with no money on it: "Day 7 of 20 · Pending verification".
      plain   no overlay and no card. The closing line gets one more sentence, so it ships as a
              copy change in the skill.
 
@@ -80,11 +81,6 @@
         })}
       </div>);
   }
-  const Legend = ({ n, color = FAINT }) => (
-    <p style={{ fontSize: 11.5, color, lineHeight: 1.45, marginTop: 6, display: 'flex', alignItems: 'center', gap: 5, flexWrap: 'wrap' }}>
-      <Tick double color={GREEN} size={12} /> {n.verified} verified
-      {n.pending > 0 && <><span>·</span><Tick color={FAINT} size={12} /> {n.pending} pending</>}
-    </p>);
 
   // Titles. A sub given per style differs between the money and days options.
   const COPY = {
@@ -127,40 +123,29 @@
     return null;
   }
 
-  const heroOf = (e, n, soft) => style === 'days'
-    ? <span style={{ fontSize: 22, fontWeight: 800, color: n.counted ? GREEN : INK, letterSpacing: '-0.01em', lineHeight: 1 }}>{n.day}<span style={{ fontSize: 12.5, fontWeight: 700, color: soft, marginLeft: 5 }}>of {n.target} days</span></span>
-    : <span style={{ fontSize: 22, fontWeight: 800, color: GREEN, letterSpacing: '-0.01em', lineHeight: 1 }}>+{money(n.gained)}{e === 'day20' && <span style={{ fontSize: 11.5, fontWeight: 700, marginLeft: 6, color: MUTED }}>{money(n.rate)} + {money(n.bonus)} bonus</span>}</span>;
-  /* The centre moment. Over the whole window, like a game's "quest complete": a badge with one
-     tick, the day, the hero number, what pending means, the bar, Got it. */
-  function Confetti() {
-    const [bits] = useState(() => Array.from({ length: 16 }, (_, i) => ({ i, c: ['#1BA07A', '#1990FF', '#f59e0b', '#7B4CFF'][i % 4], tx: Math.round((Math.random() - 0.5) * 220) + 'px', ty: Math.round(-40 - Math.random() * 120) + 'px', d: Math.round(Math.random() * 180) + 'ms' })));
-    return <>{bits.map((b) => <span key={b.i} style={{ position: 'absolute', left: '50%', top: 58, width: 7, height: 7, borderRadius: 2, background: b.c, '--tx': b.tx, '--ty': b.ty, animation: 'ba-cfetti 1s ease-out ' + b.d + ' both', pointerEvents: 'none' }} />)}</>;
-  }
+  /* The centre moment, MINIMAL (Arpit, 2026-10-14). It used to say the day three times (an
+     eyebrow, a big "7 of 20 days", the 20-day bar) and draw the tick four times (badge, pending
+     line, both legend entries). Now: one small tick, the title, one status line, Got it. The bar
+     lives on the worker home. What "pending" means is explained only the first time the moment
+     shows in a session, while the ticks are new; after that the status line is enough. */
+  let explained = false;
   function DayDoneOverlay({ step, onClose }) {
+    const [explain] = useState(() => { const first = !explained; explained = true; return first; });
     if (style === 'plain' || !step || step.end === 'failed' || step.end === 'declined') return null;
     const e = step.end, n = numbers(e), c = COPY[e];
     const sub = c.sub && typeof c.sub === 'object' ? c.sub[style] : c.sub;
+    const status = (style === 'money' ? '+' + money(n.gained) + ' · ' : '') + (e === 'day20' ? '' : 'Day ' + n.day + ' of ' + n.target + ' · ') + PENDING;
     return (
       <div style={{ position: 'absolute', inset: 0, zIndex: 50, background: 'rgba(11,18,32,0.55)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24, animation: 'baMsgIn 0.25s ease both' }} onClick={onClose}>
         <style>{'@keyframes ddPop { from { opacity: 0; transform: translateY(14px) scale(0.94); } to { opacity: 1; transform: none; } }'}</style>
         <div role="dialog" aria-label={c.title} onClick={(ev) => ev.stopPropagation()}
-          style={{ position: 'relative', width: 300, background: 'white', borderRadius: 20, padding: '26px 22px 18px', textAlign: 'center', boxShadow: '0 30px 80px rgba(0,0,0,0.45)', animation: 'ddPop 0.45s cubic-bezier(0.22,1,0.36,1) both', overflow: 'hidden' }}>
-          <Confetti />
-          <div style={{ position: 'relative', width: 64, height: 64, margin: '0 auto' }}>
-            <span style={{ position: 'absolute', inset: -6, borderRadius: '50%', border: '2px solid rgba(27,160,122,0.45)', animation: 'ba-ring 1.6s ease-out infinite' }} />
-            <span style={{ width: 64, height: 64, borderRadius: '50%', background: GREEN, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 10px 24px rgba(27,160,122,0.35)' }}><Tick color="white" size={32} /></span>
-          </div>
-          <p style={{ fontSize: 10.5, fontWeight: 800, letterSpacing: '0.12em', color: FAINT, marginTop: 14 }}>DAY {n.day} OF {n.target}</p>
-          <p style={{ fontSize: 17, fontWeight: 800, color: INK, lineHeight: 1.3, marginTop: 4 }}>{c.title}</p>
+          style={{ width: 280, background: 'white', borderRadius: 20, padding: '24px 22px 18px', textAlign: 'center', boxShadow: '0 30px 80px rgba(0,0,0,0.45)', animation: 'ddPop 0.45s cubic-bezier(0.22,1,0.36,1) both' }}>
+          <span style={{ width: 44, height: 44, margin: '0 auto', borderRadius: '50%', background: GREEN, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Tick color="white" size={22} /></span>
+          <p style={{ fontSize: 17, fontWeight: 800, color: INK, lineHeight: 1.3, marginTop: 14 }}>{c.title}</p>
           {sub && <p style={{ fontSize: 13, color: MUTED, lineHeight: 1.5, marginTop: 3 }}>{sub}</p>}
-          <div style={{ marginTop: 12 }}>{heroOf(e, n, MUTED)}</div>
-          <p style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 12.5, fontWeight: 700, color: MUTED, marginTop: 8 }}><Tick color={FAINT} size={14} /> {PENDING}</p>
-          <p style={{ fontSize: 11.5, color: FAINT, lineHeight: 1.45, marginTop: 4 }}>{VERIFY_NOTE}</p>
-          <div style={{ textAlign: 'left', marginTop: 10 }}>
-            <DayBar n={n} />
-            <Legend n={n} />
-          </div>
-          <button onClick={onClose} style={{ width: '100%', marginTop: 14, background: '#1990FF', border: 'none', borderRadius: 10, padding: '10px 12px', fontSize: 13.5, fontWeight: 750, color: 'white', cursor: 'pointer', fontFamily: 'inherit', boxShadow: '0 3px 10px rgba(25,144,255,0.3)' }}>Got it</button>
+          <p style={{ fontSize: 13, color: MUTED, lineHeight: 1.5, marginTop: 6 }}>{status}</p>
+          {explain && <p style={{ fontSize: 11.5, color: FAINT, lineHeight: 1.45, marginTop: 6 }}>{VERIFY_NOTE}</p>}
+          <button onClick={onClose} style={{ width: '100%', marginTop: 18, background: '#1990FF', border: 'none', borderRadius: 10, padding: '10px 12px', fontSize: 13.5, fontWeight: 750, color: 'white', cursor: 'pointer', fontFamily: 'inherit', boxShadow: '0 3px 10px rgba(25,144,255,0.3)' }}>Got it</button>
         </div>
       </div>);
   }

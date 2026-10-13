@@ -2,7 +2,7 @@
 
 **Status:** Changed from V2 (StatusTick, DayBar, ProgramStrip); New (ProgramSummary).
 
-**Why:** the 20 days are the partner's pay. V2's strip says 'Day 6 of 20' the morning after the overlay said DAY 7 (R02), '14 to go' in green has no unit, a rejected day has no way to show (R19), the rules are never stated before the first day ends (R12), and its Earnings link goes somewhere other than the menu's (R29). The site's dashboard says '12 of 20 days' and 'Ends Nov 1, 2026' (`onblue/apply.html:1404, 1409`); the app uses the same words and drops the year while it is the current one ('Ends Nov 1', section 70's date rule).
+**Why:** the 20 days are the partner's pay. V2's strip says 'Day 6 of 20' the morning after the popup said Day 7 (R02), '14 to go' in green has no unit, a rejected day has no way to show (R19), the rules are never stated before the first day ends (R12), and its Earnings link goes somewhere other than the menu's (R29). The site's dashboard says '12 of 20 days' and 'Ends Nov 1, 2026' (`onblue/apply.html:1404, 1409`); the app uses the same words and drops the year while it is the current one ('Ends Nov 1', section 70's date rule).
 
 ### StatusTick
 

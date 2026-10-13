@@ -36,7 +36,7 @@
 
 **Sizes.** Not applicable.
 
-**States.** Level 0, 1, 2. V2 today: the user bubble's indigo glow (chat_bubbles.jsx:30, any chat), the bottom nav casting upward (shared.jsx:300), day done at 0.45 black (worker_day_done.jsx:147, `?end=job`).
+**States.** Level 0, 1, 2. V2 today: the user bubble's indigo glow (chat_bubbles.jsx:30, any chat), the bottom nav casting upward (shared.jsx:300), day done at 0.45 black (worker_day_done.jsx:142, `?end=job`).
 
 **Props.** Tokens only.
 

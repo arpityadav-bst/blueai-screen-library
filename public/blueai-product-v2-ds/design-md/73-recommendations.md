@@ -22,8 +22,8 @@
 
 #### R02 worker (effort M)
 
-- **V2:** `blueai/worker_day_done.jsx:39, 173; blueai/worker_flow.jsx:42, 168`
-- **Today:** DONE_BEFORE=6 makes tonight 'DAY 7 OF 20' and tomorrow's strip 'Day 6 of 20'; the strip appears right after Day 1 claiming 'Yesterday’s run verified.'
+- **V2:** `blueai/worker_day_done.jsx:40, 163; blueai/worker_flow.jsx:42, 168`
+- **Today:** DONE_BEFORE=6 makes tonight's popup 'Day 7 of 20' and tomorrow's strip 'Day 6 of 20'; the strip appears right after Day 1 claiming 'Yesterday’s run verified.'
 - **Recommended:** One ledger (verified, pending, missed, rejected days; target; ends Nov 1) feeding overlay, strip, toast, Activity and the site tile.
 - **Why:** The day count is the partner's pay.
 
@@ -78,7 +78,7 @@
 
 #### R10 foundations (effort S)
 
-- **V2:** `blueai/chat_bubbles.jsx:124; blueai/account_gate.jsx:31; blueai/login.jsx:242; blueai/worker_day_done.jsx:158`
+- **V2:** `blueai/chat_bubbles.jsx:124; blueai/account_gate.jsx:31; blueai/login.jsx:242; blueai/worker_day_done.jsx:147`
 - **Today:** Caveats ('App Player will be signed out too.', 'We check every run within a day…', 'Working on it…') at 2.15 to 2.56:1.
 - **Recommended:** ink-3 for anything the partner must read, ink-4 #6e737c (4.77:1) for pure meta; no warm link colour.
 - **Why:** Unreadable caveats are not disclosure.
@@ -113,7 +113,7 @@
 
 #### R15 notifications (effort M)
 
-- **V2:** `blueai/worker_day_done.jsx:203; index.html:1053, 770-777`
+- **V2:** `blueai/worker_day_done.jsx:188; index.html:1053, 770-777`
 - **Today:** 'Open BlueAI to retry and count the day.' opens a cold-started home with no Retry.
 - **Recommended:** Toast opens the persistent Today record; Retry lives on the WorkerCard and in Activity until 9 pm, the day's deadline (section 41), stated with it.
 - **Why:** This is the exact moment money is at stake.
@@ -141,7 +141,7 @@
 
 #### R19 worker (effort M)
 
-- **V2:** `blueai/worker_day_done.jsx:53, 62-68, 83-87`
+- **V2:** `blueai/worker_day_done.jsx:54, 63-69, 73-83`
 - **Today:** Verification has only pending and verified; a rejected day looks pending forever.
 - **Recommended:** StatusTick and DayBar gain rejected (with reason), not counted and late; Activity row offers Report a problem.
 - **Why:** The two-tick model implies a day can fail; the partner needs to know and dispute.
@@ -185,7 +185,7 @@
 
 #### R24 components (effort M)
 
-- **V2:** `blueai/shared.jsx:57-82; blueai/profile.jsx:69-84; blueai/byok.jsx:76-89; blueai/worker_day_done.jsx:144`
+- **V2:** `blueai/shared.jsx:57-82; blueai/profile.jsx:69-84; blueai/byok.jsx:76-89; blueai/worker_day_done.jsx:142`
 - **Today:** Seven overlay builds, seven scrims, five widths, z tie at 120, no focus management.
 - **Recommended:** One Dialog and one Sheet on one scrim and the named z-scale, with role, focus in, trap, return and a busy state.
 - **Why:** Keyboard users act on content under the scrim; each dialog looks like another product.
@@ -206,21 +206,21 @@
 
 #### R27 motion (effort S)
 
-- **V2:** `index.html:63-104; blueai/worker_day_done.jsx:150; blueai/moneymaker_home.jsx:122`
-- **Today:** Reduced motion honoured in 4 components; infinite ring, border spin (which cannot animate), shimmer, bounce run for everyone.
-- **Recommended:** One global reduced-motion rule; remove the border spin; ring pulses once.
+- **V2:** `index.html:63-104; blueai/moneymaker_home.jsx:122`
+- **Today:** Reduced motion honoured in 4 components; border spin (which cannot animate), shimmer, bounce run for everyone (the day-done ring went with the minimal popup, 2026-10-14).
+- **Recommended:** One global reduced-motion rule; remove the border spin.
 - **Why:** Perpetual motion on the screens partners sit on.
 
 #### R28 worker (effort S)
 
-- **V2:** `blueai/worker_day_done.jsx:131-163`
-- **Today:** Overlay says the count five times, celebrates a pending day in verified green with confetti, money in green.
-- **Recommended:** One count, one status line, pending treatment (blue, one tick) until verified, confetti on Day 20 only, money in ink.
+- **V2:** `blueai/worker_day_done.jsx:132-151`
+- **Today:** V2 adopted the minimal popup on 2026-10-14 (one tick, title, one status line, Got it): the count is said once, no confetti, no ring, money in grey. Still open: the 44 badge is verified green while the day is pending.
+- **Recommended:** Keep it minimal; badge in pending treatment (blue tint, one tick) until verified.
 - **Why:** Colour says paid while words say not yet.
 
 #### R29 copy (effort S)
 
-- **V2:** `index.html:320; blueai/worker_day_done.jsx:184`
+- **V2:** `index.html:320; blueai/worker_day_done.jsx:169`
 - **Today:** Kebab Earnings and strip 'Earnings ↗' go to two different URLs.
 - **Recommended:** One EARNINGS_URL constant; one external glyph.
 - **Why:** The partner's money lives behind this link.

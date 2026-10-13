@@ -65,7 +65,7 @@
             { part: 'Out of reach', token: '--v2-line-strong', value: 'hatched' },
             { part: 'Future', token: '--v2-line', value: 'alpha-black 10%' },
             { part: 'Day 20', token: 'bonusLabel', value: 'a label, not a colour', ref: 'worker.bar.amber' },
-            { part: 'Legend', token: '--v2-text-12, --v2-ink-3', value: '6 verified, 1 pending', ref: ['worker.bar.legend-verified', 'worker.bar.legend-pending'] },
+            { part: 'Legend', token: '--v2-text-12, --v2-ink-3', value: '6 verified, 1 pending (V2 has no legend since 2026-10-14)' },
           ]} />
         </G.Part>
 
@@ -85,7 +85,7 @@
           <G.CompareRow
             v2={<G.Live get={strip} label="WorkerDayDone.EarningsStrip" />}
             system={shell(<K.ProgramStrip worker={F.verified} />)}
-            changed="'Day 6 of 20' read as 'today is day 6' and went backwards after tonight's DAY 7 (R02); now one count from the ledger, worded like the site ('12 of 20 days'). '14 to go' had no unit and was green; the green is gone and the end date is shown. The strip appeared only to returning partners; it now shows from day 0. 'Earnings ↗' pointed somewhere other than the menu's Earnings; one URL, one external icon." />
+            changed="'Day 6 of 20' read as 'today is day 6' and went backwards after tonight's Day 7 (R02); now one count from the ledger, worded like the site ('12 of 20 days'). '14 to go' had no unit and was green; the green is gone and the end date is shown. The strip appeared only to returning partners; it now shows from day 0. 'Earnings ↗' pointed somewhere other than the menu's Earnings; one URL, one external icon." />
           <G.FrameState url="index.html?day=returning" label="V2: the strip above the worker card" height={830} />
           <G.SpecDrawer rows={[
             { part: 'Card', token: '--v2-radius-lg, --v2-line, --v2-space-4', value: '16, 1px line, padding 16, no shadow', ref: ['worker.strip.card', 'worker.strip.shadow'] },

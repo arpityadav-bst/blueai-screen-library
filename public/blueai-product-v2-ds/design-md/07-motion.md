@@ -2,7 +2,7 @@
 
 **Status:** Durations and curves: Changed from V2. Reduced motion: New. Choreography budgets: Changed from V2.
 
-**Why:** The partner opens this app every day, so motion has to be quick, quiet and identical everywhere. V2 has 38 durations and 12 curves, honours reduced motion in four components only, loops the thinking dots and the day-done ring for everyone, and spends 3.5s of splash and skeleton on every window open and 5.9s of welcome intro behind the terms sheet. The site's ease is a near twin of V2's house curve, so the family match is free (P5, P6, P7).
+**Why:** The partner opens this app every day, so motion has to be quick, quiet and identical everywhere. V2 has 38 durations and 12 curves, honours reduced motion in four components only, loops the thinking dots for everyone (its day-done ring went with the minimal popup, 2026-10-14), and spends 3.5s of splash and skeleton on every window open and 5.9s of welcome intro behind the terms sheet. The site's ease is a near twin of V2's house curve, so the family match is free (P5, P6, P7).
 
 ### Durations and curves (Changed from V2)
 
@@ -14,7 +14,7 @@
 
 **Sizes.** Not applicable.
 
-**States.** Fast, base, moderate, slow, celebrate. V2 today: tabFadeUp 0.18s (index.html:74), baMsgIn 0.22s (index.html:89), terms sheet up 0.45s and down 0.32s (terms_sheet.jsx:104, 106, bare URL), ddPop 0.45s (worker_day_done.jsx:147, `?end=job`).
+**States.** Fast, base, moderate, slow, celebrate. V2 today: tabFadeUp 0.18s (index.html:74), baMsgIn 0.22s (index.html:89), terms sheet up 0.45s and down 0.32s (terms_sheet.jsx:104, 106, bare URL), ddPop 0.45s (worker_day_done.jsx:142, `?end=job`).
 
 **Props.** The six classes and the two stagger classes; an overlay names its keyframe in its own rule instead.
 

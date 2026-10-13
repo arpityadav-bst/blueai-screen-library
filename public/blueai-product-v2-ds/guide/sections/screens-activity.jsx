@@ -69,7 +69,7 @@
             { part: 'Replaces', token: 'none', value: 'Coming Soon / We are working on this section to bring you new opportunities. Check back soon for updates!', ref: ['screens-core.jobs.title', 'screens-core.jobs.body'] },
             { part: 'Not a chat history', token: 'none', value: "past chats ('find all active redeem codes for genshin impact') are not runs", ref: ['screens-core.history.title', 'screens-core.history.list', 'screens-core.history.sample'] },
             { part: 'Ledger', token: 'worker.ledger, numbers()', value: 'one row per day, derived; never a stored count', ref: 'screens-core.ledger.done-before' },
-            { part: 'Ticks', token: 'StatusTick (section 43)', value: 'one tick pending, two verified, plus late, rejected, not counted', ref: ['screens-core.ledger.ticks', 'screens-core.ledger.legend'] },
+            { part: 'Ticks', token: 'StatusTick (section 43)', value: 'one tick pending, two verified, plus late, rejected, not counted', ref: 'screens-core.ledger.ticks' },
             { part: 'Row', token: 'ListRow nav, --v2-text-14', value: 'min 48 tall, padding 12 16, divider --v2-line-hair between days' },
             { part: 'Date column', token: '--v2-ink-3, tabular figures', value: '96 wide, 14/400' },
             { part: 'Result', token: '--v2-ink, --v2-weight-medium', value: 'Paid job done / Job skipped / No run / Run in progress / Paid job waiting / Job didn’t finish' },

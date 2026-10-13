@@ -516,7 +516,7 @@ Shared means the same value as the site; adapted means the same idea tuned for a
 
 **Sizes.** 40, 20, and body size inside notes.
 
-**States.** Credits balance (V2: 54/800 gradient, 38/800 at zero, index.html:518, byok.jsx:51; reach with `?credits=0`). "7 of 20 days" (V2: 22/800, green when counted, worker_day_done.jsx:131; reach with `?end=job`). "$6 earned" (V2: 13.5/800 green, worker_day_done.jsx:179; reach with `?day=returning&card=money`).
+**States.** Credits balance (V2: 54/800 gradient, 38/800 at zero, index.html:518, byok.jsx:51; reach with `?credits=0`). "7 of 20 days" (V2: the home strip's "Day 6 of 20" 13.5/800 ink, worker_day_done.jsx:163, reach with `?day=returning`; the popup's 22/800 green count went with its minimal popup, 2026-10-14). "$6 earned" (V2: 13.5/800 green, worker_day_done.jsx:164; reach with `?day=returning&card=money`).
 
 **Props.** Classes only; format with `toLocaleString('en-US')`.
 
@@ -619,7 +619,7 @@ A new screen picks the first unless it is a settings-style list of sections that
 
 **Sizes.** Not applicable.
 
-**States.** Level 0, 1, 2. V2 today: the user bubble's indigo glow (chat_bubbles.jsx:30, any chat), the bottom nav casting upward (shared.jsx:300), day done at 0.45 black (worker_day_done.jsx:147, `?end=job`).
+**States.** Level 0, 1, 2. V2 today: the user bubble's indigo glow (chat_bubbles.jsx:30, any chat), the bottom nav casting upward (shared.jsx:300), day done at 0.45 black (worker_day_done.jsx:142, `?end=job`).
 
 **Props.** Tokens only.
 
@@ -657,7 +657,7 @@ A new screen picks the first unless it is a settings-style list of sections that
 
 **Status:** Durations and curves: Changed from V2. Reduced motion: New. Choreography budgets: Changed from V2.
 
-**Why:** The partner opens this app every day, so motion has to be quick, quiet and identical everywhere. V2 has 38 durations and 12 curves, honours reduced motion in four components only, loops the thinking dots and the day-done ring for everyone, and spends 3.5s of splash and skeleton on every window open and 5.9s of welcome intro behind the terms sheet. The site's ease is a near twin of V2's house curve, so the family match is free (P5, P6, P7).
+**Why:** The partner opens this app every day, so motion has to be quick, quiet and identical everywhere. V2 has 38 durations and 12 curves, honours reduced motion in four components only, loops the thinking dots for everyone (its day-done ring went with the minimal popup, 2026-10-14), and spends 3.5s of splash and skeleton on every window open and 5.9s of welcome intro behind the terms sheet. The site's ease is a near twin of V2's house curve, so the family match is free (P5, P6, P7).
 
 ### Durations and curves (Changed from V2)
 
@@ -669,7 +669,7 @@ A new screen picks the first unless it is a settings-style list of sections that
 
 **Sizes.** Not applicable.
 
-**States.** Fast, base, moderate, slow, celebrate. V2 today: tabFadeUp 0.18s (index.html:74), baMsgIn 0.22s (index.html:89), terms sheet up 0.45s and down 0.32s (terms_sheet.jsx:104, 106, bare URL), ddPop 0.45s (worker_day_done.jsx:147, `?end=job`).
+**States.** Fast, base, moderate, slow, celebrate. V2 today: tabFadeUp 0.18s (index.html:74), baMsgIn 0.22s (index.html:89), terms sheet up 0.45s and down 0.32s (terms_sheet.jsx:104, 106, bare URL), ddPop 0.45s (worker_day_done.jsx:142, `?end=job`).
 
 **Props.** The six classes and the two stagger classes; an overlay names its keyframe in its own rule instead.
 
@@ -878,7 +878,7 @@ A new screen picks the first unless it is a settings-style list of sections that
 
 **Sizes.** sm 28 (`--v2-control-sm`) for dense rows; md 36 (`--v2-control-md`) default; lg 44 (`--v2-control-lg`) for full-width sheet and dialog actions (`full`). sm grows an invisible ::after to the 32px hit floor.
 
-**States.** Rest; hover; focus-visible (2px `--v2-blue` outline, offset 2); active (translateY 1px, plus `--v2-wash-press` on secondary and quiet); disabled (0.45, `aria-disabled`, still focusable, reason printed); loading (`aria-busy`, spinner, clicks ignored, cursor progress). In V2 today: New Chat at `?start=worker` (index.html:342); Save settings on the Settings tab (settings.jsx:123); Cancel and I agree, turn on in the Automatic consent (agent_permissions.jsx:178-179, open the Mode chip at `?start=worker&v=1` and pick Automatic); Got it on the day-done card (worker_day_done.jsx:163, `?end=job`) and the out-of-credits card (byok.jsx:26, `?credits=0` then send); Apply disabled at 0.45 with no reason (ai_mode.jsx:190, Settings, AI Mode, Hybrid, Custom).
+**States.** Rest; hover; focus-visible (2px `--v2-blue` outline, offset 2); active (translateY 1px, plus `--v2-wash-press` on secondary and quiet); disabled (0.45, `aria-disabled`, still focusable, reason printed); loading (`aria-busy`, spinner, clicks ignored, cursor progress). In V2 today: New Chat at `?start=worker` (index.html:342); Save settings on the Settings tab (settings.jsx:123); Cancel and I agree, turn on in the Automatic consent (agent_permissions.jsx:178-179, open the Mode chip at `?start=worker&v=1` and pick Automatic); Got it on the day-done card (worker_day_done.jsx:148, `?end=job`) and the out-of-credits card (byok.jsx:26, `?credits=0` then send); Apply disabled at 0.45 with no reason (ai_mode.jsx:190, Settings, AI Mode, Hybrid, Custom).
 
 **Props.** `variant` ('primary' | 'secondary' | 'quiet' | 'danger', default 'secondary'), `size` ('sm' | 'md' | 'lg'), `icon`, `iconRight` (icon names, section 08), `loading`, `disabled`, `disabledReason` (string printed under it), `full`, `type` ('button'), `onClick`, `href` (renders an a), `external` (new tab, external glyph, "opens in a new tab" for screen readers), `className`, `children`.
 
@@ -1593,7 +1593,7 @@ Any icon can replace the default (Automatic uses `zap`).
 
 **Status:** Dialog, AlertDialog (confirm, destructive): both Changed from V2.
 
-**Why:** The partner's consent, sign-out and disconnect decisions happen in dialogs, and V2 builds each one separately: four widths (300, 340, 360, 382), radii 12, 16 and 20, five different scrims, z-indexes from 50 to 130 with a tie at 120 (shared.jsx:72-73, profile.jsx:73-74, byok.jsx:79-80, worker_day_done.jsx:144-147, terms_sheet.jsx:97). None moves focus in or gives it back, the close button has no name (shared.jsx:76) and none has a busy state, so a slow consent can be clicked twice. One Dialog on one scrim and one layer fixes all of it (P5, P7, R24), with the onBlue sheet's quiet manners: the panel takes focus, not its close button (onblue/onblue.css:942), and the title takes the row (onblue.css:1384).
+**Why:** The partner's consent, sign-out and disconnect decisions happen in dialogs, and V2 builds each one separately: five widths (280, 300, 340, 360, 382), radii 12, 16 and 20, five different scrims, z-indexes from 50 to 130 with a tie at 120 (shared.jsx:72-73, profile.jsx:73-74, byok.jsx:79-80, worker_day_done.jsx:139-142, terms_sheet.jsx:97). None moves focus in or gives it back, the close button has no name (shared.jsx:76) and none has a busy state, so a slow consent can be clicked twice. One Dialog on one scrim and one layer fixes all of it (P5, P7, R24), with the onBlue sheet's quiet manners: the panel takes focus, not its close button (onblue/onblue.css:942), and the title takes the row (onblue.css:1384).
 
 ### Dialog (Changed from V2)
 
@@ -2294,7 +2294,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 
 **Status:** New.
 
-**Why:** BlueAI is a worker that runs once a day on the partner's own accounts, so its state has to outlive every screen. V2 keeps it in a component's local state, module globals and constants: the day count is a constant (`worker_day_done.jsx:39`), so tonight's overlay says DAY 7 OF 20 and tomorrow's strip says Day 6 of 20 (`:173`); the next run is hard-coded to 11 am (`chat_product.jsx:213`); the mode per app resets on reload (`agent_permissions.jsx:60`); opening another tab unmounts the run (R01, R02).
+**Why:** BlueAI is a worker that runs once a day on the partner's own accounts, so its state has to outlive every screen. V2 keeps it in a component's local state, module globals and constants: the day count is a constant (`worker_day_done.jsx:39`), so tonight's popup says Day 7 of 20 and tomorrow's strip says Day 6 of 20 (`:163`); the next run is hard-coded to 11 am (`chat_product.jsx:213`); the mode per app resets on reload (`agent_permissions.jsx:60`); opening another tab unmounts the run (R01, R02).
 
 ### Worker record and fixtures
 
@@ -2373,7 +2373,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 
 **Status:** Changed from V2 (StatusTick, DayBar, ProgramStrip); New (ProgramSummary).
 
-**Why:** the 20 days are the partner's pay. V2's strip says 'Day 6 of 20' the morning after the overlay said DAY 7 (R02), '14 to go' in green has no unit, a rejected day has no way to show (R19), the rules are never stated before the first day ends (R12), and its Earnings link goes somewhere other than the menu's (R29). The site's dashboard says '12 of 20 days' and 'Ends Nov 1, 2026' (`onblue/apply.html:1404, 1409`); the app uses the same words and drops the year while it is the current one ('Ends Nov 1', section 70's date rule).
+**Why:** the 20 days are the partner's pay. V2's strip says 'Day 6 of 20' the morning after the popup said Day 7 (R02), '14 to go' in green has no unit, a rejected day has no way to show (R19), the rules are never stated before the first day ends (R12), and its Earnings link goes somewhere other than the menu's (R29). The site's dashboard says '12 of 20 days' and 'Ends Nov 1, 2026' (`onblue/apply.html:1404, 1409`); the app uses the same words and drops the year while it is the current one ('Ends Nov 1', section 70's date rule).
 
 ### StatusTick
 
@@ -2431,13 +2431,13 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 
 **Status:** Changed from V2.
 
-**Why:** V2's overlay says the same fact five times (eyebrow, title, hero count, pending line, legend), celebrates a pending day in verified green with confetti and a ring that pulses forever, and is a div with role=dialog that never takes focus (`worker_day_done.jsx:131-163`). Colour says paid while the words say not yet (R28). The PM's titles are DRAFT strings and are quoted, not rewritten.
+**Why:** V2 adopted the minimal popup on 2026-10-14, as this system recommended (R28): a 44 green tick badge, the title, one status line ('Day 7 of 20 · Pending verification'; the money option leads with '+$1 · '; Day 20 drops the day part), the verification note only the first time it shows in a session, and Got it, on a 280 panel, radius 20 (`worker_day_done.jsx:132-151`). The eyebrow, the big green count, the 20-day bar and legend, the confetti and the pulsing ring are gone; the bar lives on the home strip. Still different: V2's badge is verified green while the day is pending, so colour says paid while the words say not yet, and the panel is a div with role=dialog that never takes focus. The system keeps the DayBar above its one count line, confetti once on Day 20 only, and the note on every showing. The PM's titles are DRAFT strings and are quoted, not rewritten.
 
 ### DayDone
 
 - **Purpose:** the end-of-run moment: today's run is in, here is where the 20 days stand, and it is pending until checked.
 - **Anatomy:** the kit Dialog, celebration variant, size sm (320), dim scrim, no close button. Badge 56 round, `--v2-blue-tint` with one tick 28 in `--v2-blue-ink` (the badge's colour; the tick inherits it instead of StatusTick's pending ink-4). One of the three blue exceptions to the neutral pending tone, with the DayBar's pending segment and the run chip's pending dot (section 03). Title 20/600 ink. Sub 13 ink-3 (Day 20 only). DayBar without legend, then one count line 13: '7 of 20 days' (figure 600 ink) and one tick 'Pending verification'. Note 13 ink-3 'We check every run within a day. The tick doubles once it’s verified.' One primary 'Got it', full width, 44.
-- **Variants (copy is the PM's, `worker_day_done.jsx:91-93`):** job 'Today’s run is done.'; nojob 'No paid job today, but your run counts.'; day20 'Day 20 done.' + 'That’s every day for this month.' + the proposed line 'Cash out on Earnings after {endsOn}, once your days are verified ($10 minimum).' (`kit/day-done.jsx:22, 57`). Failed and skipped have no moment: the run card and the worker card say those, with their action.
+- **Variants (copy is the PM's, `worker_day_done.jsx:87-89`):** job 'Today’s run is done.'; nojob 'No paid job today, but your run counts.'; day20 'Day 20 done.' + 'That’s every day for this month.' + the proposed line 'Cash out on Earnings after {endsOn}, once your days are verified ($10 minimum).' (`kit/day-done.jsx:22, 57`). Failed and skipped have no moment: the run card and the worker card say those, with their action.
 - **Sizes:** Dialog sm, 320.
 - **States:** open (job, nojob, day20); dismissed by Got it, Esc or the scrim. In V2: `?day=next&end=job`, `?day=next&end=nojob`, `?day=next&end=day20`; the Preview panel's Day end row.
 - **Props:** `end` (job | nojob | day20), `worker` (count from `numbers()`), `open`, `onClose`, `preview` (guide only: drawn open in place, no focus).
@@ -3462,8 +3462,8 @@ Worker params ride on Copy link only from the signed-in worker home (index.html:
 
 #### R02 worker (effort M)
 
-- **V2:** `blueai/worker_day_done.jsx:39, 173; blueai/worker_flow.jsx:42, 168`
-- **Today:** DONE_BEFORE=6 makes tonight 'DAY 7 OF 20' and tomorrow's strip 'Day 6 of 20'; the strip appears right after Day 1 claiming 'Yesterday’s run verified.'
+- **V2:** `blueai/worker_day_done.jsx:40, 163; blueai/worker_flow.jsx:42, 168`
+- **Today:** DONE_BEFORE=6 makes tonight's popup 'Day 7 of 20' and tomorrow's strip 'Day 6 of 20'; the strip appears right after Day 1 claiming 'Yesterday’s run verified.'
 - **Recommended:** One ledger (verified, pending, missed, rejected days; target; ends Nov 1) feeding overlay, strip, toast, Activity and the site tile.
 - **Why:** The day count is the partner's pay.
 
@@ -3518,7 +3518,7 @@ Worker params ride on Copy link only from the signed-in worker home (index.html:
 
 #### R10 foundations (effort S)
 
-- **V2:** `blueai/chat_bubbles.jsx:124; blueai/account_gate.jsx:31; blueai/login.jsx:242; blueai/worker_day_done.jsx:158`
+- **V2:** `blueai/chat_bubbles.jsx:124; blueai/account_gate.jsx:31; blueai/login.jsx:242; blueai/worker_day_done.jsx:147`
 - **Today:** Caveats ('App Player will be signed out too.', 'We check every run within a day…', 'Working on it…') at 2.15 to 2.56:1.
 - **Recommended:** ink-3 for anything the partner must read, ink-4 #6e737c (4.77:1) for pure meta; no warm link colour.
 - **Why:** Unreadable caveats are not disclosure.
@@ -3553,7 +3553,7 @@ Worker params ride on Copy link only from the signed-in worker home (index.html:
 
 #### R15 notifications (effort M)
 
-- **V2:** `blueai/worker_day_done.jsx:203; index.html:1053, 770-777`
+- **V2:** `blueai/worker_day_done.jsx:188; index.html:1053, 770-777`
 - **Today:** 'Open BlueAI to retry and count the day.' opens a cold-started home with no Retry.
 - **Recommended:** Toast opens the persistent Today record; Retry lives on the WorkerCard and in Activity until 9 pm, the day's deadline (section 41), stated with it.
 - **Why:** This is the exact moment money is at stake.
@@ -3581,7 +3581,7 @@ Worker params ride on Copy link only from the signed-in worker home (index.html:
 
 #### R19 worker (effort M)
 
-- **V2:** `blueai/worker_day_done.jsx:53, 62-68, 83-87`
+- **V2:** `blueai/worker_day_done.jsx:54, 63-69, 73-83`
 - **Today:** Verification has only pending and verified; a rejected day looks pending forever.
 - **Recommended:** StatusTick and DayBar gain rejected (with reason), not counted and late; Activity row offers Report a problem.
 - **Why:** The two-tick model implies a day can fail; the partner needs to know and dispute.
@@ -3625,7 +3625,7 @@ Worker params ride on Copy link only from the signed-in worker home (index.html:
 
 #### R24 components (effort M)
 
-- **V2:** `blueai/shared.jsx:57-82; blueai/profile.jsx:69-84; blueai/byok.jsx:76-89; blueai/worker_day_done.jsx:144`
+- **V2:** `blueai/shared.jsx:57-82; blueai/profile.jsx:69-84; blueai/byok.jsx:76-89; blueai/worker_day_done.jsx:142`
 - **Today:** Seven overlay builds, seven scrims, five widths, z tie at 120, no focus management.
 - **Recommended:** One Dialog and one Sheet on one scrim and the named z-scale, with role, focus in, trap, return and a busy state.
 - **Why:** Keyboard users act on content under the scrim; each dialog looks like another product.
@@ -3646,21 +3646,21 @@ Worker params ride on Copy link only from the signed-in worker home (index.html:
 
 #### R27 motion (effort S)
 
-- **V2:** `index.html:63-104; blueai/worker_day_done.jsx:150; blueai/moneymaker_home.jsx:122`
-- **Today:** Reduced motion honoured in 4 components; infinite ring, border spin (which cannot animate), shimmer, bounce run for everyone.
-- **Recommended:** One global reduced-motion rule; remove the border spin; ring pulses once.
+- **V2:** `index.html:63-104; blueai/moneymaker_home.jsx:122`
+- **Today:** Reduced motion honoured in 4 components; border spin (which cannot animate), shimmer, bounce run for everyone (the day-done ring went with the minimal popup, 2026-10-14).
+- **Recommended:** One global reduced-motion rule; remove the border spin.
 - **Why:** Perpetual motion on the screens partners sit on.
 
 #### R28 worker (effort S)
 
-- **V2:** `blueai/worker_day_done.jsx:131-163`
-- **Today:** Overlay says the count five times, celebrates a pending day in verified green with confetti, money in green.
-- **Recommended:** One count, one status line, pending treatment (blue, one tick) until verified, confetti on Day 20 only, money in ink.
+- **V2:** `blueai/worker_day_done.jsx:132-151`
+- **Today:** V2 adopted the minimal popup on 2026-10-14 (one tick, title, one status line, Got it): the count is said once, no confetti, no ring, money in grey. Still open: the 44 badge is verified green while the day is pending.
+- **Recommended:** Keep it minimal; badge in pending treatment (blue tint, one tick) until verified.
 - **Why:** Colour says paid while words say not yet.
 
 #### R29 copy (effort S)
 
-- **V2:** `index.html:320; blueai/worker_day_done.jsx:184`
+- **V2:** `index.html:320; blueai/worker_day_done.jsx:169`
 - **Today:** Kebab Earnings and strip 'Earnings ↗' go to two different URLs.
 - **Recommended:** One EARNINGS_URL constant; one external glyph.
 - **Why:** The partner's money lives behind this link.
@@ -4109,6 +4109,10 @@ About 3,000 of V2’s lines never render. They are listed here and never specime
 **Status:** Meta (no parts).
 
 **Why:** Dated, newest first, so anyone building from the system can see what changed since they last looked. Add an entry for every change to tokens, a kit part’s API or a screen, here and in guide/sections/meta-changelog.jsx.
+
+### 2026-10-14: Minimal day-done in V2
+
+- V2's run-complete popup is now minimal (one tick, title, one status line, Got it); refs and section 44 updated.
 
 ### 2026-10-14: Two looks
 

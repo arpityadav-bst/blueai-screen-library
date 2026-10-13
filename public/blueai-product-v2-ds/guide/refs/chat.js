@@ -43,10 +43,10 @@ window.V2Refs = (window.V2Refs || []).concat([
   { id: 'chat.run.nojob', file: 'blueai/worker_flow.jsx', line: 111, needle: "say('No paid job on the board today.')", value: 'No paid job on the board today.' },
   { id: 'chat.run.job-title', file: 'blueai/worker_flow.jsx', line: 51, needle: "title: 'Watch the video and provide feedback'", value: 'Watch the video and provide feedback' },
   { id: 'chat.run.fail-copy', file: 'blueai/worker_flow.jsx', line: 132, needle: "'I couldn’t finish “' + JOB.title + '”. App Player closed during the job.'", value: 'I couldn’t finish “…”. App Player closed during the job.' },
-  { id: 'chat.run.done-line', file: 'blueai/worker_day_done.jsx', line: 103, needle: "const live = 'Done. I finished “' + jobTitle + '” and submitted the job.';", value: 'Done. I finished “…” and submitted the job.' },
-  { id: 'chat.run.pending', file: 'blueai/worker_day_done.jsx', line: 97, needle: "const PENDING = 'Pending verification';", value: 'Pending verification' },
-  { id: 'chat.run.verify-note', file: 'blueai/worker_day_done.jsx', line: 98, needle: 'We check every run within a day. The tick doubles once it’s verified.', value: 'one tick pending, two ticks verified' },
-  { id: 'chat.run.declined', file: 'blueai/worker_day_done.jsx', line: 95, needle: "sub: 'Today doesn’t count toward your 20 days.'", value: 'Today doesn’t count toward your 20 days.' },
+  { id: 'chat.run.done-line', file: 'blueai/worker_day_done.jsx', line: 99, needle: "const live = 'Done. I finished “' + jobTitle + '” and submitted the job.';", value: 'Done. I finished “…” and submitted the job.' },
+  { id: 'chat.run.pending', file: 'blueai/worker_day_done.jsx', line: 93, needle: "const PENDING = 'Pending verification';", value: 'Pending verification' },
+  { id: 'chat.run.verify-note', file: 'blueai/worker_day_done.jsx', line: 94, needle: 'We check every run within a day. The tick doubles once it’s verified.', value: 'one tick pending, two ticks verified' },
+  { id: 'chat.run.declined', file: 'blueai/worker_day_done.jsx', line: 91, needle: "sub: 'Today doesn’t count toward your 20 days.'", value: 'Today doesn’t count toward your 20 days.' },
   { id: 'chat.run.stop-trace', file: 'blueai/chat_product.jsx', line: 146, needle: 'setConvo(convo.slice(0, end));', value: 'Stop keeps the partial thread and adds nothing: no trace, no day status' },
   { id: 'chat.run.agent-progress', file: 'blueai/chat.jsx', line: 250, needle: 'AgentProgress', value: 'the unloaded AgentProgress idea the run card salvages' },
 
@@ -71,7 +71,7 @@ window.V2Refs = (window.V2Refs || []).concat([
   { id: 'chat.ask.job-question', file: 'blueai/worker_flow.jsx', line: 120, needle: "question: 'Want me to take this one?'", value: 'Want me to take this one?' },
   { id: 'chat.ask.job-options', file: 'blueai/worker_flow.jsx', line: 121, needle: "options: [{ id: 'always', label: 'Yes, switch to Automatic', consent: true }, { id: 'once', label: 'Just this job' }, { id: 'deny', label: 'Not now' }]", value: 'Yes, switch to Automatic / Just this job / Not now' },
   { id: 'chat.ask.job-deny', file: 'blueai/worker_flow.jsx', line: 149, needle: "if (a === 'deny') return [reply, say('Okay, I’ll skip this one. I’ll check with you when the next paid job comes up.', 600), dayDone('declined')];", value: 'Not now forfeits the day; the cost is told afterwards' },
-  { id: 'chat.ask.failed-title', file: 'blueai/worker_day_done.jsx', line: 94, needle: "title: 'Today’s job didn’t finish.', sub: 'Retry to count the day.'", value: 'Today’s job didn’t finish. / Retry to count the day.' },
+  { id: 'chat.ask.failed-title', file: 'blueai/worker_day_done.jsx', line: 90, needle: "title: 'Today’s job didn’t finish.', sub: 'Retry to count the day.'", value: 'Today’s job didn’t finish. / Retry to count the day.' },
   { id: 'chat.ask.retry-options', file: 'blueai/worker_flow.jsx', line: 127, needle: "options: [{ id: 'retry', label: 'Retry' }, { id: 'later', label: 'Not now' }]", value: 'Retry / Not now' },
 
   /* Composer (38) */

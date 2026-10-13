@@ -2,7 +2,7 @@
 
 **Status:** Dialog, AlertDialog (confirm, destructive): both Changed from V2.
 
-**Why:** The partner's consent, sign-out and disconnect decisions happen in dialogs, and V2 builds each one separately: four widths (300, 340, 360, 382), radii 12, 16 and 20, five different scrims, z-indexes from 50 to 130 with a tie at 120 (shared.jsx:72-73, profile.jsx:73-74, byok.jsx:79-80, worker_day_done.jsx:144-147, terms_sheet.jsx:97). None moves focus in or gives it back, the close button has no name (shared.jsx:76) and none has a busy state, so a slow consent can be clicked twice. One Dialog on one scrim and one layer fixes all of it (P5, P7, R24), with the onBlue sheet's quiet manners: the panel takes focus, not its close button (onblue/onblue.css:942), and the title takes the row (onblue.css:1384).
+**Why:** The partner's consent, sign-out and disconnect decisions happen in dialogs, and V2 builds each one separately: five widths (280, 300, 340, 360, 382), radii 12, 16 and 20, five different scrims, z-indexes from 50 to 130 with a tie at 120 (shared.jsx:72-73, profile.jsx:73-74, byok.jsx:79-80, worker_day_done.jsx:139-142, terms_sheet.jsx:97). None moves focus in or gives it back, the close button has no name (shared.jsx:76) and none has a busy state, so a slow consent can be clicked twice. One Dialog on one scrim and one layer fixes all of it (P5, P7, R24), with the onBlue sheet's quiet manners: the panel takes focus, not its close button (onblue/onblue.css:942), and the title takes the row (onblue.css:1384).
 
 ### Dialog (Changed from V2)
 

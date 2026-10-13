@@ -4,6 +4,9 @@
   const G = window.V2Guide;
 
   const ENTRIES = [
+    ['2026-10-14', 'Minimal day-done in V2', [
+      'V2’s run-complete popup is now minimal (one tick, title, one status line, Got it); refs and section 44 updated.',
+    ]],
     ['2026-10-14', 'Two looks', [
       'tokens-v2-today.css adds the "V2 today" look: every token re-valued to what V2 ships now, under [data-v2-look="today"], while tokens.css stays Target. Eight look-hook tokens let the kit restore V2’s gradient user bubble, indigo nav pill and soft in-flow shadows; the guide header switches the look; ds-check fails if the two files define different token names.',
     ]],

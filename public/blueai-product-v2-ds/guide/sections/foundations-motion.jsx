@@ -110,7 +110,7 @@
             { part: 'Spinner exception', token: '--v2-dur-spin', value: 'keeps turning at 1600ms' },
             { part: 'Indeterminate exception', token: '--v2-blue-tint-line', value: 'a still, full-width rail in the blue tint edge, undimmed: not the disabled look (opacity means disabled only)' },
             { part: 'V2 honours it in 4 places', token: null, value: 'terms sheet, welcome, welcome logo, onboarding picker', ref: ['foundations.motion.rm-terms', 'foundations.motion.rm-welcome', 'foundations.motion.rm-logo', 'foundations.motion.rm-onboarding'] },
-            { part: 'V2 loops that ignore it', token: null, value: 'thinking dots, day-done ring', ref: ['foundations.motion.thinking-loop', 'foundations.motion.ring-loop'] },
+            { part: 'V2 loops that ignore it', token: null, value: 'thinking dots (the day-done ring went with the minimal popup, 2026-10-14)', ref: 'foundations.motion.thinking-loop' },
           ]} />
         </G.Part>
 
@@ -137,7 +137,7 @@
             { part: 'Splash', token: '--v2-dur-4', value: 'V2 1050 / 2150 / 2650ms; system up to 1200ms, cold start only', ref: ['foundations.motion.splash-msg', 'foundations.motion.splash-fade', 'foundations.motion.splash-done'] },
             { part: 'Skeleton after splash', token: null, value: 'V2 850ms; system none on reopen', ref: 'foundations.motion.skeleton' },
             { part: 'Welcome intro', token: '--v2-dur-2 + 120ms staggers', value: 'V2 5.9s; system about 0.42s (.v2-anim-fade-up, .v2-delay-1, .v2-delay-2), cap 1.2s', ref: ['foundations.motion.welcome-cta', 'foundations.motion.welcome-terms'] },
-            { part: 'Day done', token: '--v2-dur-celebrate', value: '450ms pop (v2-scale-in), no ring (V2 loops one forever)', ref: ['foundations.motion.dd-pop', 'foundations.motion.ring-loop'] },
+            { part: 'Day done', token: '--v2-dur-celebrate', value: '450ms pop (v2-scale-in), no ring (V2 dropped its looping ring 2026-10-14)', ref: 'foundations.motion.dd-pop' },
           ]} />
         </G.Part>
       </G.Section>

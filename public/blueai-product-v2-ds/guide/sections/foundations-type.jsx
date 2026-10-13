@@ -90,7 +90,7 @@
           <G.CompareRow
             v2={<div className="v2-stack"><G.Live get={function () { return window.Byok && window.Byok.OutOfCreditsCard; }} props={{ onDismiss: function () {} }} label="Byok.OutOfCreditsCard" /><G.Live get={function () { return window.WorkerDayDone && window.WorkerDayDone.EarningsStrip; }} label="WorkerDayDone.EarningsStrip" /></div>}
             system={<div className="v2-stack v2-gap-4"><span className="v2-hstack v2-gap-2">{K.Icon ? <K.Icon name="credits" size={24} /> : null}<span className="v2-text-display">0</span></span><span className="v2-hstack v2-hstack--between"><span className="v2-text-label" style={{ color: 'var(--v2-ink)' }}>Day 7 of 20</span><span className="v2-text-label v2-tabular" style={{ color: 'var(--v2-ink)' }}>$6 earned</span></span></div>}
-            changed="Credits numbers drop the gradient (54/800 and 38/800 in V2) and become 40/600 ink. Dollars drop green: on the site, money is a figure, not a state, so green stays for verified days. Day counts drop the green-when-counted switch: the tick says counted." />
+            changed="Credits numbers drop the gradient (54/800 and 38/800 in V2) and become 40/600 ink. Dollars drop green: on the site, money is a figure, not a state, so green stays for verified days. Day counts stay ink: the tick says counted (V2's green-when-counted popup count went with its minimal popup, 2026-10-14)." />
           <G.SpecDrawer rows={[
             { part: 'Credits balance', token: '--v2-text-40 / --v2-ink', value: '40 / 600, tabular', ref: ['foundations.type.balance', 'foundations.type.ooc-numeral'] },
             { part: 'Day count', token: '--v2-text-20 / --v2-ink', value: '20 / 600, tabular', ref: ['foundations.type.day-count', 'foundations.type.day-count-copy'] },

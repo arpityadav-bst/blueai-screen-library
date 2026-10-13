@@ -92,7 +92,7 @@
           <G.Warn>
             Why the product needs it: V2 keeps the worker in a component's local state, module globals and
             constants. The day count is a constant ({G.refText('worker.rule.done-before')}), so tonight's
-            overlay says DAY 7 OF 20 and tomorrow's strip says Day 6 of 20 ({G.refText('worker.strip.before-run')});
+            popup says Day 7 of 20 and tomorrow's strip says Day 6 of 20 ({G.refText('worker.strip.before-run')});
             the next run time is hard-coded ({G.refText('worker.flow.next-run')}); the mode per app resets on
             reload ({G.refText('worker.permissions.store')}); and opening another tab unmounts the run (R01).
           </G.Warn>
