@@ -21,7 +21,7 @@ const nextConfig = {
     : {
         // Serve the static prototypes (public/**/index.html) at clean URLs.
         // Each of these two is only safe because its index.html declares a
-        // <base href="/blueai-desktop/"> (resp. /blueai-product/). Without that, at
+        // <base href="/blueai-desktop/"> (resp. /blueai-product-v2/). Without that, at
         // /foo the browser resolves relative URLs against / — `styles.css` becomes
         // /styles.css, 404s, and the page renders completely unstyled.
         // A page added here needs a <base> tag or absolute asset paths. Note also
@@ -30,7 +30,6 @@ const nextConfig = {
         // /experiments/... is linked directly at its index.html from the index page.
         async rewrites() {
           return [
-            { source: '/blueai-product', destination: '/blueai-product/index.html' },
             { source: '/blueai-product-v2', destination: '/blueai-product-v2/index.html' },
             { source: '/blueai-desktop', destination: '/blueai-desktop/index.html' },
             // Option 1 mock (chat terminal flow) is standalone: fonts from CDN, image inlined,

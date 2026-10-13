@@ -43,7 +43,7 @@ export function AICredits({ credits = 45812, onRefresh }: AICreditsProps) {
       {/* Balance */}
       <div className="flex items-center justify-center gap-3 pb-[34px] pt-10">
         <img
-          src="/blueai-product/assets/Logo.png"
+          src="/blueai-product-v2/assets/Logo.png"
           alt=""
           className="h-11 w-11 shrink-0"
           onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}

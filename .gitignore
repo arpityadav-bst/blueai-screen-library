@@ -46,7 +46,7 @@ __preview/
 public/screencapture-*.png
 
 # BlueAI Product clone — PM design export (kept local; 4.8MB of screenshots/uploads,
-# reference only. The clone in public/blueai-product/ is self-contained.)
+# reference only. The clone in public/blueai-product-v2/ is self-contained.)
 design-source/blueai-uiux/
 
 # Parity-audit evidence — ~15MB, 208 screenshots + their capture/validate tooling. Kept LOCAL:

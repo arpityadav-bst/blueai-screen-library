@@ -127,19 +127,13 @@ const CREATOR_EXPERIMENTS = [
 // and the marketing system move. Distinct from DORMANT: these are expected to change again.
 const MAINTAINED = [
   {
-    // THE V2 FORK (Appy, 2026-09-09). Its own card, not a line on V1's, for the same reason the
-    // onBlue fork above has one: there are genuinely two surfaces now, so two entries is the
-    // honest shape. V1 stays listed because it is the rollback point, not because it is current.
+    // V1 DELETED 2026-10-13 (Appy). It had been frozen since V2 forked off it on 2026-09-09, with
+    // zero commits after the fork, so V2 is now the only product clone. V1 is recoverable from git
+    // history (last present at 34027ca). The URL deliberately stays /blueai-product-v2 rather than
+    // moving back to /blueai-product: the PM's prototype links and review URLs already use it.
     href: '/blueai-product-v2',
     name: 'BlueAI Product V2',
-    desc: 'Where product-clone work happens now. Forked as a byte-identical duplicate of V1 below (only the base href differs, so each serves correctly at its own clean URL) and diverges from here: the new-variant chat, task-progress + feedback, all five tabs. Standalone replica, not on the marketing design system.',
-  },
-  {
-    // FROZEN 2026-09-09 when V2 forked off it. Deliberately not deleted and deliberately not
-    // updated: it is the comparison point and the way back. Changes belong in V2 above.
-    href: '/blueai-product',
-    name: 'BlueAI Product (V1, frozen)',
-    desc: 'V1 as it stood when V2 forked off it, kept as the backup: the new-variant chat, task-progress + feedback, all five tabs, Skills hidden and the BlueAI worker session. Nothing here changes again. Standalone replica, not on the marketing design system.',
+    desc: 'The BlueAI desktop app replica, and the only product clone: the BlueAI worker session, the new-variant chat, task-progress and feedback, and all five tabs. Standalone replica, not on the marketing design system.',
   },
   {
     // MOVED TO THE FOOT OF THIS GROUP 2026-09-15 (Appy), and given the design-system row. Its

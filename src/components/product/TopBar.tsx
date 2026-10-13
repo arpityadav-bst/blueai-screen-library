@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState, ReactNode } from 'react'
 import { Button, IconButton } from './ui'
 
-const LOGO = '/blueai-product/assets/Logo.png'
+const LOGO = '/blueai-product-v2/assets/Logo.png'
 
 function Menu({ open, items }: { open: boolean; items: { icon: ReactNode; label: string; onClick: () => void; danger?: boolean }[] }) {
   if (!open) return null

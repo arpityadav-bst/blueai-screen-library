@@ -66,7 +66,7 @@ export function BootSplash({ onDone }: { onDone?: () => void }) {
       {/* Logo (brand asset — kept as-is) */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src="/blueai-product/assets/Logo.png"
+        src="/blueai-product-v2/assets/Logo.png"
         alt=""
         className="mb-4"
         style={{ width: 64, height: 64 }}
