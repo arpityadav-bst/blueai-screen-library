@@ -36,7 +36,7 @@
           <G.Note>
             <strong>Why the product needs it. </strong>BlueAI acts on the partner's own YouTube account every day, so every promise
             made in setup needs a control the partner can find later (P4). V2's pitch says "You can pause, stop, or disconnect
-            anytime." and its consent says "You can turn it off anytime", yet the mode changes only inside an open chat (a
+            anytime." and its consent says "You can turn this off anytime", yet the mode changes only inside an open chat (a
             Settings card was dropped), modes are not kept across a reload, and the run time is asked once in chat and never
             shown again. Consent that cannot be found to revoke is weak consent (R05).
           </G.Note>

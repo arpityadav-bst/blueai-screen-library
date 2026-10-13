@@ -4,6 +4,9 @@
   const G = window.V2Guide;
 
   const ENTRIES = [
+    ['2026-10-14', 'Minimal consent in V2', [
+      'V2’s consent dialog is now minimal (title, one paragraph, Cancel / I agree, turn on); refs and sections updated.',
+    ]],
     ['2026-10-14', 'Minimal day-done in V2', [
       'V2’s run-complete popup is now minimal (one tick, title, one status line, Got it); refs and section 44 updated.',
     ]],

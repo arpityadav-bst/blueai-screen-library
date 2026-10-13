@@ -24,8 +24,8 @@ window.V2Refs = (window.V2Refs || []).concat([
   { id: 'screens-core.chat.job-title', file: 'worker_flow.jsx', line: 51, needle: "title: 'Watch the video and provide feedback'", value: 'Watch the video and provide feedback' },
   { id: 'screens-core.chat.job-question', file: 'worker_flow.jsx', line: 120, needle: "question: 'Want me to take this one?'", value: 'Want me to take this one?' },
   { id: 'screens-core.chat.job-options', file: 'worker_flow.jsx', line: 121, needle: "label: 'Yes, switch to Automatic', consent: true }, { id: 'once', label: 'Just this job' }, { id: 'deny', label: 'Not now' }", value: 'Yes, switch to Automatic / Just this job / Not now' },
-  { id: 'screens-core.chat.auto-ribbon', file: 'agent_permissions.jsx', line: 197, needle: 'Automatic is on for {listNames(auto)}. BlueAI takes paid', value: 'Automatic is on for YouTube. BlueAI takes paid YouTube jobs without asking.' },
-  { id: 'screens-core.chat.auto-change', file: 'agent_permissions.jsx', line: 198, needle: 'label="Change"', value: 'Change' },
+  { id: 'screens-core.chat.auto-ribbon', file: 'agent_permissions.jsx', line: 183, needle: 'Automatic is on for {listNames(auto)}. BlueAI takes paid', value: 'Automatic is on for YouTube. BlueAI takes paid YouTube jobs without asking.' },
+  { id: 'screens-core.chat.auto-change', file: 'agent_permissions.jsx', line: 184, needle: 'label="Change"', value: 'Change' },
 
   /* 58 Activity: what V2 has instead. */
   { id: 'screens-core.jobs.nav-jobs', file: 'shared.jsx', line: 222, needle: "{ id: 'jobs', label: 'Jobs', Icon: IcoBriefcase }", value: 'Jobs, the first tab' },

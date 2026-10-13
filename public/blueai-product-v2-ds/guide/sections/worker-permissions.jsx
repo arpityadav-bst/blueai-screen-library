@@ -110,14 +110,14 @@
           <G.CompareRow
             v2={<V2Consent />}
             system={consent(false)}
-            changed="The strongest trust moment in V2, so its copy is kept word for word except the body, which names what a job does instead of posting videos (proposed, PM and legal, R51). The chrome moves to the one Dialog: focus moves in and returns, Tab stays inside, busy prevents a double agree. The note rises from #9ca3af (2.54:1) to ink-3, the agree button from #1990FF (3.24:1) to action blue, and one line says where to turn it off (P4)." />
+            changed="The strongest trust moment in V2. V2 adopted the minimal consent dialog on 2026-10-14 (title, one paragraph, Cancel / I agree, turn on). The system keeps its title and button word for word; its body names what a job does instead of posting videos (proposed, PM and legal, R51), and it keeps the per-app table, the note and the agreement line V2 dropped, plus one line that says where to turn it off (P4). The chrome moves to the one Dialog: focus moves in and returns, Tab stays inside, busy prevents a double agree, and the agree button goes from #1990FF (3.24:1) to action blue." />
           <G.SpecDrawer rows={[
             { part: 'Dialog', token: '--v2-dialog-md, consent variant', value: '382, close button, no scrim dismiss', ref: 'worker.permissions.modal' },
             { part: 'Title', token: '--v2-text-20, --v2-weight-semibold', value: 'Run YouTube jobs automatically?', ref: 'worker.permissions.consent-title' },
             { part: 'Body', token: '--v2-text-14, --v2-ink-2', value: 'Proposed, PM and legal (R51): BlueAI will take YouTube jobs and do them on your account without asking first: watching, liking and posting comments in your name.', ref: 'worker.permissions.consent-body' },
-            { part: 'Target row', token: '--v2-blue-tint', value: 'the app being changed', ref: 'worker.permissions.consent-row' },
-            { part: 'Note', token: '--v2-text-12, --v2-ink-3', value: 'Each app has its own setting. The others stay on Always ask until you switch them.', ref: ['worker.permissions.consent-note', 'worker.permissions.consent-note-colour'] },
-            { part: 'Agreement', token: '--v2-text-14, --v2-ink-2', value: 'By turning this on, you agree to let BlueAI do this for you on YouTube. You can turn it off anytime.', ref: 'worker.permissions.consent-agree' },
+            { part: 'Target row', token: '--v2-blue-tint', value: 'the app being changed (system only; V2 dropped its list on 2026-10-14)' },
+            { part: 'Note', token: '--v2-text-12, --v2-ink-3', value: 'Each app has its own setting. The others stay on Always ask until you switch them. (System only; V2 dropped it on 2026-10-14, its Mode menu says it.)' },
+            { part: 'Agreement', token: '--v2-text-14, --v2-ink-2', value: 'By turning this on, you agree to let BlueAI do this for you on YouTube. You can turn it off anytime. (V2’s words until 2026-10-14; the system keeps them.)' },
             { part: 'Where to turn it off', token: '--v2-text-12, --v2-ink-3', value: 'Proposed: Turn it off in Settings > Worker, or with Change above the chat.' },
             { part: 'Cancel', token: 'Button secondary lg', value: 'Cancel', ref: 'worker.permissions.cancel' },
             { part: 'Agree', token: 'Button primary lg, --v2-action', value: 'I agree, turn on', ref: ['worker.permissions.agree', 'worker.permissions.agree-fill', 'worker.permissions.accent'] },

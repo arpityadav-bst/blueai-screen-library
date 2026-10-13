@@ -9,14 +9,14 @@
      It lives in Settings > Worker (section 62). The ribbon's Change opens that screen (Chat's
      onChangeMode), so the mode has one home and the consent dialog never stacks over a float.
    ConsentDialog {app, open, busy, error, onAgree, onCancel, worker, preview}
-     V2's consent structure (agent_permissions.jsx:159-179), on the one Dialog with focus
+     V2's consent title and button (agent_permissions.jsx:160-165), on the one Dialog with focus
      management, plus where to turn it off. Cancel leaves the question waiting. error (the
      agreement was not saved) shows a danger Banner in the body; 'I agree, turn on' is the retry.
      Its first line is the Dialog's description (aria-describedby), so what the partner agrees to
      is read with the dialog. It names every action a job on that app can include
      (WORKER_APPS[].actions: watch, like, comment, subscribe), never a fixed list, and is proposed
-     copy for the PM and legal to confirm (R51, section 73): V2's 'including posting videos and
-     other content' names an action the worker never takes and leaves out the ones it does. On
+     copy for the PM and legal to confirm (R51, section 73): V2's 'including posting videos'
+     names an action the worker never takes and leaves out the ones it does. On
      Automatic the job preview never appears, so this line is the partner's only notice of what
      will be done in their name.
    PermissionRequest {app, state, lines, busy, onAllow, onNotNow, decidedOn}

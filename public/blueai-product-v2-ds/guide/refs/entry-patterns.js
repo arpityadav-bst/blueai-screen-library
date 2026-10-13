@@ -103,10 +103,10 @@
     r('consent.dropped', 'blueai/agent_permissions.jsx', 16, 'A Settings card and a worker-card row were dropped.', 'no place to change the mode later'),
     r('consent.every-time', 'blueai/agent_permissions.jsx', 25, 'every time it is turned on, not once per lifetime.', 'asked every time'),
     r('consent.local', 'blueai/agent_permissions.jsx', 76, "localStorage.setItem('blueai_auto_consent_' + app, new Date().toISOString())", 'consent time in localStorage (stand-in)'),
-    r('consent.button', 'blueai/agent_permissions.jsx', 152, 'agreement IS the button ("I agree, turn on"), so there is no checkbox to tick first.', 'the agreement is the button'),
-    r('consent.title', 'blueai/agent_permissions.jsx', 159, "'Run ' + a.name + ' jobs automatically?'", 'consent title'),
-    r('consent.line', 'blueai/agent_permissions.jsx', 176, 'By turning this on, you agree to let BlueAI do this for you on {a.name}. You can turn it off anytime.', 'consent line'),
-    r('consent.agree', 'blueai/agent_permissions.jsx', 179, '>I agree, turn on<', 'consent button, no loading state'),
+    r('consent.button', 'blueai/agent_permissions.jsx', 152, 'agreement IS the button ("I agree, turn on", per the PM\'s spec), so there is no', 'the agreement is the button'),
+    r('consent.title', 'blueai/agent_permissions.jsx', 160, "'Run ' + a.name + ' jobs automatically?'", 'consent title'),
+    r('consent.line', 'blueai/agent_permissions.jsx', 162, 'BlueAI will take {a.name} jobs and finish them on your account without asking first, including posting videos. You can turn this off anytime.', 'consent line'),
+    r('consent.agree', 'blueai/agent_permissions.jsx', 165, '>I agree, turn on<', 'consent button, no loading state'),
     r('consent.history', 'blueai/worker_flow.jsx', 80, "say('Accessing your watch history…')", 'watch history read without asking'),
 
     // Loading (boot_splash.jsx, index.html, buttons with no loading state)

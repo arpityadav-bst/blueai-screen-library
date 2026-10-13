@@ -68,9 +68,9 @@
     ['Use the account you applied with', 'PM', ['signin.notice'], 'Live'],
     ['By continuing, you agree to the Program Terms and acknowledge the Privacy Policy and Cookie Policy.', 'Legal (Ashish)', ['terms.body', 'terms.body-2', 'terms.body-3', 'terms.split'], 'Legal'],
     ['Agree and continue', 'PM', ['terms.cta', 'terms.cta-owner'], 'Live'],
-    ['Run YouTube jobs automatically? / By turning this on, you agree to let BlueAI do this for you on YouTube. You can turn it off anytime. / I agree, turn on', 'PM', ['consent.title', 'consent.line', 'consent.agree'], 'Live'],
+    ['Run YouTube jobs automatically? / I agree, turn on', 'PM', ['consent.title', 'consent.agree'], 'Live'],
     ['Always ask / Automatic', 'PM', ['copy.modes'], 'Live'],
-    ['BlueAI will accept YouTube jobs and finish them on your YouTube account without asking you first, including posting videos and other content. Proposed change (R51): BlueAI will take YouTube jobs and do them on your account without asking first: watching, liking and posting comments in your name.', 'PM and legal', ['worker.permissions.consent-body'], 'Live, change proposed'],
+    ['BlueAI will take YouTube jobs and finish them on your account without asking first, including posting videos. You can turn this off anytime. (V2 adopted the minimal consent dialog on 2026-10-14 (title, one paragraph, Cancel / I agree, turn on); its agreement paragraph is gone.) Proposed change (R51): BlueAI will take YouTube jobs and do them on your account without asking first: watching, liking and posting comments in your name.', 'PM and legal', ['worker.permissions.consent-body', 'consent.line'], 'Live, change proposed'],
   ];
 
   function Table({ head, rows, render }) {

@@ -4,6 +4,10 @@
 
 **Why:** Dated, newest first, so anyone building from the system can see what changed since they last looked. Add an entry for every change to tokens, a kit part’s API or a screen, here and in guide/sections/meta-changelog.jsx.
 
+### 2026-10-14: Minimal consent in V2
+
+- V2's consent dialog is now minimal (title, one paragraph, Cancel / I agree, turn on); refs and sections updated.
+
 ### 2026-10-14: Minimal day-done in V2
 
 - V2's run-complete popup is now minimal (one tick, title, one status line, Got it); refs and section 44 updated.

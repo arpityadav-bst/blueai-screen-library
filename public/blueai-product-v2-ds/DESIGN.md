@@ -246,7 +246,7 @@ The money model is decision D3: the app's $1 a day plus a $10 bonus, or the site
 ### P4 Every promise has a control
 
 - **Rule:** 'Pause, stop, or disconnect anytime' and 'turn it off anytime' each map to a findable control in Settings > Worker and Connected apps, reachable from the home in two taps.
-- **Why:** The promises exist in live copy (worker_flow.jsx:67, agent_permissions.jsx:176) but no screen delivers them (settings.jsx:129-143).
+- **Why:** The promises exist in live copy (worker_flow.jsx:67, agent_permissions.jsx:162) but no screen delivers them (settings.jsx:129-143).
 - **Prevents:** Consent that cannot be withdrawn.
 
 ### P5 Quiet by default
@@ -878,7 +878,7 @@ A new screen picks the first unless it is a settings-style list of sections that
 
 **Sizes.** sm 28 (`--v2-control-sm`) for dense rows; md 36 (`--v2-control-md`) default; lg 44 (`--v2-control-lg`) for full-width sheet and dialog actions (`full`). sm grows an invisible ::after to the 32px hit floor.
 
-**States.** Rest; hover; focus-visible (2px `--v2-blue` outline, offset 2); active (translateY 1px, plus `--v2-wash-press` on secondary and quiet); disabled (0.45, `aria-disabled`, still focusable, reason printed); loading (`aria-busy`, spinner, clicks ignored, cursor progress). In V2 today: New Chat at `?start=worker` (index.html:342); Save settings on the Settings tab (settings.jsx:123); Cancel and I agree, turn on in the Automatic consent (agent_permissions.jsx:178-179, open the Mode chip at `?start=worker&v=1` and pick Automatic); Got it on the day-done card (worker_day_done.jsx:148, `?end=job`) and the out-of-credits card (byok.jsx:26, `?credits=0` then send); Apply disabled at 0.45 with no reason (ai_mode.jsx:190, Settings, AI Mode, Hybrid, Custom).
+**States.** Rest; hover; focus-visible (2px `--v2-blue` outline, offset 2); active (translateY 1px, plus `--v2-wash-press` on secondary and quiet); disabled (0.45, `aria-disabled`, still focusable, reason printed); loading (`aria-busy`, spinner, clicks ignored, cursor progress). In V2 today: New Chat at `?start=worker` (index.html:342); Save settings on the Settings tab (settings.jsx:123); Cancel and I agree, turn on in the Automatic consent (agent_permissions.jsx:164-165, open the Mode chip at `?start=worker&v=1` and pick Automatic); Got it on the day-done card (worker_day_done.jsx:148, `?end=job`) and the out-of-credits card (byok.jsx:26, `?credits=0` then send); Apply disabled at 0.45 with no reason (ai_mode.jsx:190, Settings, AI Mode, Hybrid, Custom).
 
 **Props.** `variant` ('primary' | 'secondary' | 'quiet' | 'danger', default 'secondary'), `size` ('sm' | 'md' | 'lg'), `icon`, `iconRight` (icon names, section 08), `loading`, `disabled`, `disabledReason` (string printed under it), `full`, `type` ('button'), `onClick`, `href` (renders an a), `external` (new tab, external glyph, "opens in a new tab" for screen readers), `className`, `children`.
 
@@ -1605,7 +1605,7 @@ Any icon can replace the default (Automatic uses `zap`).
 
 **Sizes.** sm 320 (`--v2-dialog-sm`): alert, celebration, out of credits. md 382 (`--v2-dialog-md`): task, consent. Height up to the window less 16px each side.
 
-**States.** Closed (nothing mounted); opening; open; busy (the primary loads; Esc, the scrim and Close wait); closing; over a menu (the menu closes first, focus comes back to the menu button). In V2 today: ModalOverlay as Confirm delete on the Schedule tab (schedule.jsx:144); the Automatic consent at `?start=worker&v=1`, open the mode chip, pick Automatic (agent_permissions.jsx:159); out of credits at `?credits=0` then send a message (byok.jsx:76).
+**States.** Closed (nothing mounted); opening; open; busy (the primary loads; Esc, the scrim and Close wait); closing; over a menu (the menu closes first, focus comes back to the menu button). In V2 today: ModalOverlay as Confirm delete on the Schedule tab (schedule.jsx:144); the Automatic consent at `?start=worker&v=1`, open the mode chip, pick Automatic (agent_permissions.jsx:160); out of credits at `?credits=0` then send a message (byok.jsx:76).
 
 **Props.** `open`, `onClose`, `title`, `description`, `variant`, `size` ('sm' | 'md'), `role` (override), `dismissible` (false blocks: no Close, no Esc, no scrim), `busy`, `actions` ([{label, onClick, variant 'secondary' | 'primary' | 'danger' | 'quiet', disabled}]), `footer`, `initialFocus` (ref or selector), `labelledBy` (when the title lives in the body), `scrim`, `className`, `children`. `preview` renders it open in place without focus (guide specimens only).
 
@@ -2487,7 +2487,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 ### ConsentDialog
 
 - **Purpose:** the consent for Automatic, per app, every time.
-- **Anatomy:** kit Dialog, consent variant, md (382): title 20/600 'Run YouTube jobs automatically?', close 32, no scrim dismiss. Body 14 ink-2, the Dialog's description (aria-describedby, so it is read with the dialog), proposed, PM and legal (R51): 'BlueAI will take YouTube jobs and do them on your account without asking first: watching, liking, posting comments and subscribing to channels in your name.' The line is built from every action a job on that app can include (`WORKER_APPS[].actions`, section 41; `kit/permissions.jsx:75-79`), never a fixed list. V2's line, 'BlueAI will accept YouTube jobs and finish them on your YouTube account without asking you first, including posting videos and other content.' (`agent_permissions.jsx:161`), names posting videos, which the worker never does, and leaves out the actions it does take; on Automatic the job preview never appears, so this line is the partner's only notice of what will be done in their name. Per-app table radius 10: the app being changed tinted blue, Automatic in blue ink with zap, Always ask with shield-check, coming soon in words. Note 12 ink-3: 'Each app has its own setting. The others stay on Always ask until you switch them.' Agreement 14: 'By turning this on, you agree to let BlueAI do this for you on YouTube. You can turn it off anytime.' Added, proposed, 12 ink-3: 'Turn it off in Settings > Worker, or with Change above the chat.' Footer 44: 'Cancel' (secondary) then 'I agree, turn on' (primary). The title, table, note, agreement and buttons are V2 verbatim (`agent_permissions.jsx:159-179`); the body and the turn-off line are not.
+- **Anatomy:** kit Dialog, consent variant, md (382): title 20/600 'Run YouTube jobs automatically?', close 32, no scrim dismiss. Body 14 ink-2, the Dialog's description (aria-describedby, so it is read with the dialog), proposed, PM and legal (R51): 'BlueAI will take YouTube jobs and do them on your account without asking first: watching, liking, posting comments and subscribing to channels in your name.' The line is built from every action a job on that app can include (`WORKER_APPS[].actions`, section 41; `kit/permissions.jsx:75-79`), never a fixed list. V2 adopted the minimal consent dialog on 2026-10-14 (title, one paragraph, Cancel / I agree, turn on): its one paragraph, 'BlueAI will take YouTube jobs and finish them on your account without asking first, including posting videos. You can turn this off anytime.' (`agent_permissions.jsx:162`), names posting videos, which the worker never does, and leaves out the actions it does take; on Automatic the job preview never appears, so this line is the partner's only notice of what will be done in their name. The system keeps what V2 dropped: a per-app table radius 10 (the app being changed tinted blue, Automatic in blue ink with zap, Always ask with shield-check, coming soon in words), a note 12 ink-3 'Each app has its own setting. The others stay on Always ask until you switch them.' and the agreement line 14 'By turning this on, you agree to let BlueAI do this for you on YouTube. You can turn it off anytime.' (V2's words until 2026-10-14). Added, proposed, 12 ink-3: 'Turn it off in Settings > Worker, or with Change above the chat.' Footer 44: 'Cancel' (secondary) then 'I agree, turn on' (primary). The title and buttons are V2 verbatim (`agent_permissions.jsx:160-165`); the body, table, note, agreement line and turn-off line are not.
 - **Variants:** one per app.
 - **Sizes:** Dialog md.
 - **States:** open; agree busy (primary loading, Esc, scrim and close held), then done (closes, the ribbon appears, the agreement time is recorded per account on the server); cancel (nothing changes, the job question keeps waiting); not saved (`error`: Banner danger 'Not saved, nothing changed. Try again.' in the body, and 'I agree, turn on' is the retry; proposed copy). V2: the Automatic chip on the daily job ask, or the onboarding choice (`?setup` default).
@@ -2495,7 +2495,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 - **Motion:** the Dialog's (320ms in, 240ms out, none under reduced motion).
 - **Accessibility:** aria-modal, labelled by the title and described by the consent line, focus in, trapped, returned; the agreement is the button (no checkbox), 44 tall at 4.92:1.
 - **Responsive:** scrolls inside the window at compact height.
-- **Do / Don't:** Do keep the V2 copy verbatim, send the proposed body to the PM and legal (section 70's register) and record the version shown; say where to turn it off. Don't remember consent forever; don't let a busy agree fire twice.
+- **Do / Don't:** Do keep V2's title and button verbatim, send the proposed body to the PM and legal (section 70's register) and record the version shown; say where to turn it off. Don't remember consent forever; don't let a busy agree fire twice.
 
 ### AutoRibbon
 
@@ -2750,7 +2750,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 
 **Status:** Changed from V2.
 
-**Why:** V2's consent moments are right: the agreement is the button (`agent_permissions.jsx:152`), Automatic is asked every time it is turned on (`agent_permissions.jsx:25`), contracts are agreed and notices acknowledged (`terms_sheet.jsx:49-53`), and every agreement is meant to be recorded server-side with the exact copy shown (`terms_sheet.jsx:23-27`). What V2 lacks is a place to see and withdraw them: the Settings card for the mode was dropped (`agent_permissions.jsx:16`), watch history is read without asking (`worker_flow.jsx:80`), and the consent buttons have no loading state although each one is a server write.
+**Why:** V2's consent moments are right: the agreement is the button (`agent_permissions.jsx:152`; V2 adopted the minimal consent dialog on 2026-10-14 (title, one paragraph, Cancel / I agree, turn on)), Automatic is asked every time it is turned on (`agent_permissions.jsx:25`), contracts are agreed and notices acknowledged (`terms_sheet.jsx:49-53`), and every agreement is meant to be recorded server-side with the exact copy shown (`terms_sheet.jsx:23-27`). What V2 lacks is a place to see and withdraw them: the Settings card for the mode was dropped (`agent_permissions.jsx:16`), watch history is read without asking (`worker_flow.jsx:80`), and the consent buttons have no loading state although each one is a server write.
 
 ### Consent rules (Changed from V2)
 
@@ -3012,7 +3012,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 ## 62 Worker settings
 
 **Status:** New.
-**Why:** BlueAI acts on the partner's account every day, so every promise made in setup needs a control the partner can find later (P4, R05). V2's pitch says "You can pause, stop, or disconnect anytime." (worker_flow.jsx:67) and its consent says "You can turn it off anytime." (agent_permissions.jsx:176), yet the mode changes only inside an open chat (a Settings card was dropped, agent_permissions.jsx:16), modes reset on reload (:18), and the run time is asked once in chat (worker_flow.jsx:73-74) and never shown again.
+**Why:** BlueAI acts on the partner's account every day, so every promise made in setup needs a control the partner can find later (P4, R05). V2's pitch says "You can pause, stop, or disconnect anytime." (worker_flow.jsx:67) and its consent says "You can turn this off anytime." (agent_permissions.jsx:162), yet the mode changes only inside an open chat (a Settings card was dropped, agent_permissions.jsx:16), modes reset on reload (:18), and the run time is asked once in chat (worker_flow.jsx:73-74) and never shown again.
 
 ### WorkerSettings (New)
 - **Purpose:** Settings > Worker. Turn daily runs off for a while (and know what it costs), choose Always ask or Automatic per app, set when the run happens, and see the interest profile jobs are picked from.
@@ -3259,8 +3259,8 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
   - "Use the account you applied with"; PM; `login.jsx:239`; live.
   - "By continuing, you agree to the Program Terms and acknowledge the Privacy Policy and Cookie Policy."; legal; `terms_sheet.jsx:67-69` (wording rule `:49-53`); legal.
   - "Agree and continue"; PM; `terms_sheet.jsx:71` (`:60`); live.
-  - "Run YouTube jobs automatically?" / "By turning this on, you agree to let BlueAI do this for you on YouTube. You can turn it off anytime." / "I agree, turn on"; PM; `agent_permissions.jsx:159, 176, 179`; live.
-  - "BlueAI will accept YouTube jobs and finish them on your YouTube account without asking you first, including posting videos and other content."; PM and legal; `agent_permissions.jsx:161`; live. Proposed change, sent to the owners (R51): "BlueAI will take YouTube jobs and do them on your account without asking first: watching, liking and posting comments in your name." (the ConsentDialog body, section 46): the worker never posts videos, and the comment it does post is not named.
+  - "Run YouTube jobs automatically?" / "I agree, turn on"; PM; `agent_permissions.jsx:160, 165`; live.
+  - "BlueAI will take YouTube jobs and finish them on your account without asking first, including posting videos. You can turn this off anytime."; PM and legal; `agent_permissions.jsx:162`; live (V2 adopted the minimal consent dialog on 2026-10-14 (title, one paragraph, Cancel / I agree, turn on); its agreement paragraph is gone). Proposed change, sent to the owners (R51): "BlueAI will take YouTube jobs and do them on your account without asking first: watching, liking and posting comments in your name." (the ConsentDialog body, section 46): the worker never posts videos, and the comment it does post is not named.
   - "Always ask" / "Automatic"; PM; `worker_flow.jsx:78`; live.
 - **States:** live, DRAFT, legal.
 - **Do / Don't:** Do quote these exactly in every part marked In V2; send a proposed change to the owner with the reason. Don't fix a typo or a tone in them silently; don't move legal wording between contexts without legal.
@@ -3483,8 +3483,8 @@ Worker params ride on Copy link only from the signed-in worker home (index.html:
 
 #### R05 worker (effort M)
 
-- **V2:** `blueai/settings.jsx:129-143; blueai/worker_flow.jsx:67; blueai/agent_permissions.jsx:16, 176`
-- **Today:** 'Pause, stop, or disconnect anytime' and 'turn it off anytime' have no control; mode changes only inside an open chat.
+- **V2:** `blueai/settings.jsx:129-143; blueai/worker_flow.jsx:67; blueai/agent_permissions.jsx:16, 162`
+- **Today:** 'Pause, stop, or disconnect anytime' and 'turn this off anytime' have no control; mode changes only inside an open chat. V2 adopted the minimal consent dialog on 2026-10-14 (title, one paragraph, Cancel / I agree, turn on), and it still makes the promise.
 - **Recommended:** Settings > Worker (pause until, run window, mode per app, interest profile) and Connected apps (Disconnect).
 - **Why:** Consent that cannot be found to revoke is weak consent (P4).
 
@@ -3588,8 +3588,8 @@ Worker params ride on Copy link only from the signed-in worker home (index.html:
 
 #### R51 consent (effort S)
 
-- **V2:** `blueai/agent_permissions.jsx:161`
-- **Today:** The Automatic consent says the worker will finish jobs 'including posting videos and other content'; the worker never posts videos, and the comment it does post in the partner's name is not named.
+- **V2:** `blueai/agent_permissions.jsx:162`
+- **Today:** The Automatic consent says the worker will finish jobs 'including posting videos'; the worker never posts videos, and the comment it does post in the partner's name is not named. V2 adopted the minimal consent dialog on 2026-10-14 (title, one paragraph, Cancel / I agree, turn on), which dropped 'and other content' but kept 'posting videos'.
 - **Recommended:** Name what a job does, from `WORKER_JOB.actions`: 'BlueAI will take YouTube jobs and do them on your account without asking first: watching, liking and posting comments in your name.' (section 46). Consent copy, so the PM and legal decide it; the record keeps the version shown (section 53).
 - **Why:** On Automatic the job preview never appears, so this line is the partner's only notice that comments go out under their name.
 
@@ -4109,6 +4109,10 @@ About 3,000 of V2’s lines never render. They are listed here and never specime
 **Status:** Meta (no parts).
 
 **Why:** Dated, newest first, so anyone building from the system can see what changed since they last looked. Add an entry for every change to tokens, a kit part’s API or a screen, here and in guide/sections/meta-changelog.jsx.
+
+### 2026-10-14: Minimal consent in V2
+
+- V2's consent dialog is now minimal (title, one paragraph, Cancel / I agree, turn on); refs and sections updated.
 
 ### 2026-10-14: Minimal day-done in V2
 

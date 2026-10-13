@@ -102,8 +102,8 @@ window.V2Refs = (window.V2Refs || []).concat([
   { id: 'display-feedback.banner.byok-copy', file: 'byok_settings.jsx', line: 110, needle: 'No API key configured. Add one to get started.', value: 'No API key configured. Add one to get started.' },
   { id: 'display-feedback.banner.login', file: 'login.jsx', line: 235, needle: "background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: 12, padding: '10px 14px'", value: 'sign-in notice: #eff6ff / #bfdbfe, radius 12' },
   { id: 'display-feedback.banner.login-copy', file: 'login.jsx', line: 239, needle: 'Use the account you applied with', value: 'Use the account you applied with' },
-  { id: 'display-feedback.banner.ribbon', file: 'agent_permissions.jsx', line: 195, needle: "borderRadius: 10, background: '#eaf3ff', border: '1px solid #d6e6fb'", value: 'Automatic ribbon: #eaf3ff / #d6e6fb, a second blue' },
-  { id: 'display-feedback.banner.ribbon-copy', file: 'agent_permissions.jsx', line: 197, needle: 'Automatic is on for {listNames(auto)}. BlueAI takes paid', value: 'Automatic is on for YouTube. BlueAI takes paid YouTube jobs without asking.' },
+  { id: 'display-feedback.banner.ribbon', file: 'agent_permissions.jsx', line: 181, needle: "borderRadius: 10, background: '#eaf3ff', border: '1px solid #d6e6fb'", value: 'Automatic ribbon: #eaf3ff / #d6e6fb, a second blue' },
+  { id: 'display-feedback.banner.ribbon-copy', file: 'agent_permissions.jsx', line: 183, needle: 'Automatic is on for {listNames(auto)}. BlueAI takes paid', value: 'Automatic is on for YouTube. BlueAI takes paid YouTube jobs without asking.' },
   { id: 'display-feedback.banner.site-payout', file: 'onblue/onblue.css', line: 2108, needle: 'border: 1px solid var(--green-line);', value: 'site payout pill: 1px green line on the green fill, radius 10' },
 
   /* Empty state */

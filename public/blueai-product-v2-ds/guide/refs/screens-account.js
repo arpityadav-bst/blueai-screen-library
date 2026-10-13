@@ -46,7 +46,7 @@ window.V2Refs = (window.V2Refs || []).concat([
   { id: 'screens-account.worker.topic-fun', file: 'blueai/worker_flow.jsx', line: 85, needle: "'Entertainment (", value: "'Entertainment'" },
   { id: 'screens-account.worker.no-settings-card', file: 'blueai/agent_permissions.jsx', line: 16, needle: 'A Settings card and a worker-card row were dropped.', value: 'mode changes only inside an open chat' },
   { id: 'screens-account.worker.not-persisted', file: 'blueai/agent_permissions.jsx', line: 18, needle: 'Not persisted: every reload of this prototype starts a brand-new user on Always ask everywhere.', value: 'modes are not kept' },
-  { id: 'screens-account.worker.turn-off', file: 'blueai/agent_permissions.jsx', line: 176, needle: 'You can turn it off anytime.</p>', value: "'You can turn it off anytime.' with no place to do it" },
+  { id: 'screens-account.worker.turn-off', file: 'blueai/agent_permissions.jsx', line: 162, needle: 'You can turn this off anytime.</p>', value: "'You can turn this off anytime.' with no place to do it" },
   { id: 'screens-account.worker.mode-always', file: 'blueai/agent_permissions.jsx', line: 49, needle: "title: 'Always ask', sub: 'Asks before each job starts, then runs it to the end'", value: "'Always ask'" },
   { id: 'screens-account.worker.mode-auto', file: 'blueai/agent_permissions.jsx', line: 50, needle: "title: 'Automatic', sub: 'Starts and finishes jobs without asking'", value: "'Automatic'" },
 

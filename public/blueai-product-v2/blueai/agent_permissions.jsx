@@ -147,33 +147,19 @@
   }
 
   /* ── Consent to Automatic ── Rendered ONCE, at App level inside .ba-app, so the absolute
-     ModalOverlay is scoped to the product window whichever surface asked for it. Shaped like
-     Claude Code's bypass-permissions warning: what changes, then what you are agreeing to, and the
-     agreement IS the button ("I agree, turn on"), so there is no checkbox to tick first. It names
-     the app, and lists every app with the setting it will have, so "per app" is seen, not read. */
+     ModalOverlay is scoped to the product window whichever surface asked for it. MINIMAL since
+     2026-10-14 (Arpit): what BlueAI will do, that it posts under your name, that it can be undone,
+     and the agreement IS the button ("I agree, turn on", per the PM's spec), so there is no
+     checkbox and no separate agreement paragraph. The per-app list and "each app has its own
+     setting" live in the Mode menu, where the setting is changed. */
   function AutoConfirm() {
-    const { confirming: app, modes: cur } = usePermissionMode();
+    const { confirming: app } = usePermissionMode();
     const a = app ? appById(app) : null;
     const btn = { flex: 1, borderRadius: 10, padding: '10px 12px', fontSize: 13.5, fontWeight: 700, fontFamily: 'inherit', cursor: 'pointer', whiteSpace: 'nowrap' };
     return (
       <ModalOverlay isOpen={!!app} onClose={cancelConfirm} title={a ? 'Run ' + a.name + ' jobs automatically?' : ''}>
         {a && <>
-          <p style={{ fontSize: 13.5, color: '#4b5563', lineHeight: 1.6 }}>BlueAI will accept {a.name} jobs and finish them on your {a.name} account without asking you first, including posting videos and other content.</p>
-          <div style={{ marginTop: 12, border: '1px solid #e5e7eb', borderRadius: 10, overflow: 'hidden' }}>
-            {APPS.map((x, i) => {
-              const willBeAuto = x.id === a.id || cur[x.id] === 'auto';
-              return (
-                <div key={x.id} style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '8px 11px', borderTop: i ? '1px solid #eef2f6' : 'none', background: x.id === a.id ? '#f5f9ff' : 'white' }}>
-                  <span style={{ display: 'flex', color: '#64748b' }}><x.Icon size={15} /></span>
-                  <span style={{ flex: 1, fontSize: 13, fontWeight: 700, color: INK }}>{x.name}</span>
-                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 12, fontWeight: 700, color: willBeAuto ? '#1763c6' : MUTED }}>
-                    {willBeAuto ? <IcoZap size={12} /> : <IcoShieldCheck size={12} />}{willBeAuto ? 'Automatic' : 'Always ask'}
-                  </span>
-                </div>);
-            })}
-          </div>
-          <p style={{ fontSize: 12, color: FAINT, lineHeight: 1.5, marginTop: 7 }}>Each app has its own setting. The others stay on Always ask until you switch them.</p>
-          <p style={{ fontSize: 13.5, color: '#4b5563', lineHeight: 1.6, marginTop: 10 }}>By turning this on, you agree to let BlueAI do this for you on {a.name}. You can turn it off anytime.</p>
+          <p style={{ fontSize: 13.5, color: '#4b5563', lineHeight: 1.6 }}>BlueAI will take {a.name} jobs and finish them on your account without asking first, including posting videos. You can turn this off anytime.</p>
           <div style={{ display: 'flex', gap: 8, marginTop: 18 }}>
             <button onClick={cancelConfirm} style={{ ...btn, background: 'white', border: '1px solid #e2e8f0', color: '#374151' }}>Cancel</button>
             <button onClick={agreeAuto} style={{ ...btn, background: ACCENT, border: 'none', color: 'white' }}>I agree, turn on</button>

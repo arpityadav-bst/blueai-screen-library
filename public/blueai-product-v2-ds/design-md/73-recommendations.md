@@ -43,8 +43,8 @@
 
 #### R05 worker (effort M)
 
-- **V2:** `blueai/settings.jsx:129-143; blueai/worker_flow.jsx:67; blueai/agent_permissions.jsx:16, 176`
-- **Today:** 'Pause, stop, or disconnect anytime' and 'turn it off anytime' have no control; mode changes only inside an open chat.
+- **V2:** `blueai/settings.jsx:129-143; blueai/worker_flow.jsx:67; blueai/agent_permissions.jsx:16, 162`
+- **Today:** 'Pause, stop, or disconnect anytime' and 'turn this off anytime' have no control; mode changes only inside an open chat. V2 adopted the minimal consent dialog on 2026-10-14 (title, one paragraph, Cancel / I agree, turn on), and it still makes the promise.
 - **Recommended:** Settings > Worker (pause until, run window, mode per app, interest profile) and Connected apps (Disconnect).
 - **Why:** Consent that cannot be found to revoke is weak consent (P4).
 
@@ -148,8 +148,8 @@
 
 #### R51 consent (effort S)
 
-- **V2:** `blueai/agent_permissions.jsx:161`
-- **Today:** The Automatic consent says the worker will finish jobs 'including posting videos and other content'; the worker never posts videos, and the comment it does post in the partner's name is not named.
+- **V2:** `blueai/agent_permissions.jsx:162`
+- **Today:** The Automatic consent says the worker will finish jobs 'including posting videos'; the worker never posts videos, and the comment it does post in the partner's name is not named. V2 adopted the minimal consent dialog on 2026-10-14 (title, one paragraph, Cancel / I agree, turn on), which dropped 'and other content' but kept 'posting videos'.
 - **Recommended:** Name what a job does, from `WORKER_JOB.actions`: 'BlueAI will take YouTube jobs and do them on your account without asking first: watching, liking and posting comments in your name.' (section 46). Consent copy, so the PM and legal decide it; the record keeps the version shown (section 53).
 - **Why:** On Automatic the job preview never appears, so this line is the partner's only notice that comments go out under their name.
 

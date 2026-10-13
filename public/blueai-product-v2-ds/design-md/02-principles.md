@@ -25,7 +25,7 @@
 ### P4 Every promise has a control
 
 - **Rule:** 'Pause, stop, or disconnect anytime' and 'turn it off anytime' each map to a findable control in Settings > Worker and Connected apps, reachable from the home in two taps.
-- **Why:** The promises exist in live copy (worker_flow.jsx:67, agent_permissions.jsx:176) but no screen delivers them (settings.jsx:129-143).
+- **Why:** The promises exist in live copy (worker_flow.jsx:67, agent_permissions.jsx:162) but no screen delivers them (settings.jsx:129-143).
 - **Prevents:** Consent that cannot be withdrawn.
 
 ### P5 Quiet by default
