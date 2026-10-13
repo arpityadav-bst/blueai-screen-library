@@ -58,10 +58,8 @@
 .v2-button.is-loading { cursor: progress; }
 .v2-button-group { display: inline-flex; flex-direction: column; align-items: flex-start; gap: var(--v2-space-15); }
 .v2-button-group--full { display: flex; align-items: stretch; }
-.v2-button-reason {
-  max-width: 34ch; color: var(--v2-ink-3);
-  font-size: var(--v2-text-12); line-height: var(--v2-leading-snug);
-}
+/* The reason line under any disabled control (Button, Chip, Segmented); type: .v2-text-caption */
+.v2-button-reason, .v2-reason { max-width: 34ch; }
 /* Fallback mark only for a page that has not loaded kit/progress.jsx. */
 .v2-button-spin {
   width: var(--v2-icon-sm); height: var(--v2-icon-sm); flex: none;
@@ -132,24 +130,26 @@
     border-color var(--v2-dur-2) var(--v2-ease-standard), color var(--v2-dur-2) var(--v2-ease-standard);
 }
 .v2-chip .v2-icon { flex: none; }
-.v2-chip:hover:not(:disabled), .v2-chip.is-hover {
+.v2-chip:hover:not([aria-disabled="true"]), .v2-chip.is-hover {
   background-image: linear-gradient(var(--v2-wash-hover), var(--v2-wash-hover)); border-color: var(--v2-line-hover);
 }
-.v2-chip:not([aria-pressed="true"]):active:not(:disabled), .v2-chip.is-active {
+.v2-chip:not([aria-pressed="true"]):active:not([aria-disabled="true"]), .v2-chip.is-active {
   background-image: linear-gradient(var(--v2-wash-press), var(--v2-wash-press));
 }
 /* selected: the family's chosen look (P6, onblue/apply.html:949): blue 12% fill, blue 50% edge,
-   ink label (16.75:1 on the fill). The edge is 2.05:1, so Chip also draws a check: never hue alone. */
+   ink label (16.75:1 on the fill). The edge is 2.05:1, so Chip also draws a check: never hue alone.
+   One rule, two grounds: on white (Chip, RadioCard) the edge is --v2-select-line; on the sunken
+   track (Segmented, Tabs) it is full --v2-blue at 1.5px (4.15:1), because those carry no check. */
 .v2-chip[aria-pressed="true"], .v2-chip.is-selected {
   background-image: linear-gradient(var(--v2-select), var(--v2-select));
   border-color: var(--v2-select-line); color: var(--v2-ink);
 }
-.v2-chip[aria-pressed="true"]:hover:not(:disabled), .v2-chip.is-selected.is-hover {
+.v2-chip[aria-pressed="true"]:hover:not([aria-disabled="true"]), .v2-chip.is-selected.is-hover {
   background-image: linear-gradient(var(--v2-wash-hover), var(--v2-wash-hover)), linear-gradient(var(--v2-select), var(--v2-select));
   border-color: var(--v2-select-line);
 }
 .v2-chip:focus-visible, .v2-chip.is-focus { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); }
-.v2-chip:disabled { opacity: var(--v2-opacity-disabled); cursor: not-allowed; }
+.v2-chip[aria-disabled="true"] { opacity: var(--v2-opacity-disabled); cursor: not-allowed; }
 
 /* Hit floor: 28 tall controls grow an invisible 32px target ----------------------------------- */
 .v2-button--sm::after, .v2-chip::after, .v2-icon-button--28::after {

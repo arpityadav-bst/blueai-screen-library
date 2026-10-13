@@ -83,8 +83,9 @@
             { part: 'V2 run end', token: null, value: "'Not enough credits for this job. Credits will be refreshed tomorrow.'", ref: 'credits-settings.ooc.fail' },
             { part: 'V2 composer', token: null, value: "placeholder 'BlueAI is out of credits until tomorrow...', field disabled", ref: ['credits-settings.ooc.placeholder', 'credits-settings.ooc.composer-disabled'] },
             { part: 'V2 main chat', token: null, value: 'zero shown only after Send', ref: 'credits-settings.ooc.trigger' },
-            { part: 'Notice', token: 'ComposerNotice tone neutral, clock icon', value: "'Out of AI credits until 5:30 am tomorrow.' + day line; the one wording section 38 and the chat screen use" },
-            { part: 'Run line', token: '--v2-danger-ink (x-circle icon), --v2-ink, --v2-ink-4', value: 'day line 13/500, refresh 12 meta; RunCard nocredits' },
+            { part: 'Notice', token: 'ComposerNotice tone neutral (--v2-surface-sunken, --v2-line, clock in --v2-ink-3)', value: "'Out of AI credits until 5:30 am tomorrow.' + day line; the one wording section 38 and the chat screen use" },
+            { part: 'Run line', token: '--v2-ink-3 (clock icon, as RunCard nocredits), --v2-ink, --v2-ink-4', value: 'day line 13/500, refresh 12 meta; RunCard nocredits' },
+            { part: 'Tone', token: null, value: 'neutral everywhere out of AI credits shows (section 03): nothing failed and nothing is asked of the partner; the words say until when and what it means for today' },
             { part: 'Time', token: null, value: 'local clock from creditsTime.formatClock; a fixed time, never a ticking countdown', ref: 'credits-settings.countdown.utc' },
           ]} />
         </G.Part>

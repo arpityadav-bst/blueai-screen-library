@@ -7,20 +7,24 @@
               hideLabel, description, disabled, busy}  role=switch. Applies at once and never
               destroys anything; busy holds it while a consent or check is pending.
    Checkbox   {checked | defaultChecked, onChange(next, event), label, description, disabled,
-              indeterminate, required, error, name, value}  a native checkbox under a drawn box.
+              disabledReason, indeterminate, required, error, name, value}  a native checkbox
+              under a drawn box.
               Group several in <fieldset className="v2-fieldset"> with <legend className="v2-legend">.
    RadioCard  {label (the group's accessible name), name (a prefix for the radios' name; ids and the
               group are always unique per instance), options [{value, title, sub, disabled,
               disabledReason, pending, badge}], value | defaultValue, onChange(value),
               variant 'card'|'list'}  native radios, so arrow keys and focus come free. pending is
               true or a short tag ('Setup needed'): picked, not active yet.
-   Segmented  {options [{value, label, icon, disabled}], value, onChange(value), ariaLabel,
-              beforeChange(value) returning true or a promise of true (a gate such as the
-              Automatic consent), size 'sm'|'md', disabled}  role=radiogroup with arrow keys,
-              Home, End; with a gate, arrows only move focus and Space or Enter asks.
-   Chip       {selected, onClick, icon, disabled, children}  selected undefined: a one-shot reply;
-              true or false: a toggle (reason, filter) carrying aria-pressed. Selected draws a
-              check in place of the icon, so selection is never shown by hue alone. */
+   Segmented  {options [{value, label, icon, disabled, disabledReason}], value, onChange(value),
+              ariaLabel, beforeChange(value) returning true or a promise of true (a gate such as
+              the Automatic consent), size 'sm'|'md', disabled, disabledReason}  role=radiogroup
+              with arrow keys, Home, End; with a gate, arrows only move focus and Space or Enter asks.
+   Chip       {selected, onClick, icon, disabled, disabledReason, children}  selected undefined: a
+              one-shot reply; true or false: a toggle (reason, filter) carrying aria-pressed.
+              Selected draws a check in place of the icon, so selection is never shown by hue alone.
+   Disabled is one model across the kit (Button, IconButton, ListRow, Switch and these): the control
+   carries aria-disabled, stays in the tab order and ignores the press, and disabledReason is
+   printed under it and tied to it with aria-describedby (P3, section 09). */
 (function () {
   const { useId, useRef, useState, useEffect } = React;
 
@@ -35,9 +39,11 @@
      _excluded that the next kit file overwrites, so the wrong props reach the DOM. */
   function omit(o, keys) { const r = {}; for (const k in o) if (keys.indexOf(k) < 0) r[k] = o[k]; return r; }
   const SWITCH_OWN = ['checked', 'onChange', 'label', 'hideLabel', 'description', 'disabled', 'busy', 'id', 'className'];
-  const CHECK_OWN = ['checked', 'defaultChecked', 'onChange', 'label', 'description', 'disabled', 'indeterminate',
-    'required', 'error', 'id', 'className'];
-  const CHIP_OWN = ['selected', 'onClick', 'icon', 'disabled', 'className', 'children'];
+  const CHECK_OWN = ['checked', 'defaultChecked', 'onChange', 'label', 'description', 'disabled', 'disabledReason',
+    'indeterminate', 'required', 'error', 'id', 'className'];
+  const CHIP_OWN = ['selected', 'onClick', 'icon', 'disabled', 'disabledReason', 'className', 'children'];
+  // The reason line under a disabled control (the Button's, kit/actions.css).
+  function Reason({ id, children }) { return <span id={id} className="v2-reason v2-text-caption">{children}</span>; }
 
   function Switch(props) {
     const { checked, onChange, label, hideLabel, description, disabled, busy, id, className } = props;
@@ -69,28 +75,31 @@
   }
 
   function Checkbox(props) {
-    const { checked, defaultChecked, onChange, label, description, disabled, indeterminate, required, error,
-      id, className } = props;
+    const { checked, defaultChecked, onChange, label, description, disabled, disabledReason, indeterminate, required,
+      error, id, className } = props;
     const rest = omit(props, CHECK_OWN);
     const auto = useId();
     const cid = id || uid(auto, 'v2c');
     const ref = useRef(null);
     useEffect(function () { if (ref.current) ref.current.indeterminate = !!indeterminate; }, [indeterminate]);
-    const describedBy = [description ? cid + '-d' : null, error ? cid + '-e' : null].filter(Boolean).join(' ') || undefined;
+    const why = disabled && disabledReason;
+    const describedBy = [description ? cid + '-d' : null, why ? cid + '-w' : null, error ? cid + '-e' : null].filter(Boolean).join(' ') || undefined;
     return (
       <div className={cx('v2-check', error && 'is-invalid', disabled && 'is-disabled', className)}>
         <label className="v2-check-row" htmlFor={cid}>
           <input {...rest} ref={ref} id={cid} type="checkbox" className="v2-check-input"
-            checked={checked} defaultChecked={defaultChecked} disabled={disabled} required={required}
-            aria-invalid={error ? true : undefined} aria-describedby={describedBy}
-            onChange={function (e) { if (onChange) onChange(e.target.checked, e); }} />
+            checked={checked} defaultChecked={defaultChecked} required={required}
+            aria-disabled={disabled ? 'true' : undefined} aria-invalid={error ? true : undefined} aria-describedby={describedBy}
+            onClick={function (e) { if (disabled) e.preventDefault(); }}
+            onChange={function (e) { if (!disabled && onChange) onChange(e.target.checked, e); }} />
           <span className="v2-check-box" aria-hidden="true" />
           <span className="v2-check-text">
             <span className="v2-check-label">{label}</span>
             {description ? <span id={cid + '-d'} className="v2-check-desc v2-text-body-sm">{description}</span> : null}
           </span>
         </label>
-        {error ? <p id={cid + '-e'} className="v2-check-msg"><Ico name="alert" /><span>{error}</span></p> : null}
+        {why ? <p id={cid + '-w'} className="v2-check-msg v2-check-msg--why v2-text-caption"><Ico name="lock" /><span>{disabledReason}</span></p> : null}
+        {error ? <p id={cid + '-e'} className="v2-check-msg v2-text-caption"><Ico name="alert" /><span>{error}</span></p> : null}
       </div>
     );
   }
@@ -140,14 +149,20 @@
 
   const STEP = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1, Home: 1, End: -1 };
   function Segmented(props) {
-    const { options, value, onChange, ariaLabel, beforeChange, size = 'md', disabled, className } = props;
+    const { options, value, onChange, ariaLabel, beforeChange, size = 'md', disabled, disabledReason, className } = props;
     const list = options || [];
     const refs = useRef([]);
+    const gid = uid(useId(), 'v2g');
     const [pending, setPending] = useState(null);
     const sel = list.findIndex(function (o) { return o.value === value; });
     const tabStop = sel >= 0 ? sel : 0;
+    function off(o) { return !!(disabled || (o && o.disabled)); }
+    // Each disabled option's reason (the group's when the whole control is off), said once below it.
+    function whyOf(o, i) { return disabled ? (disabledReason ? gid : null) : (o.disabled && o.disabledReason ? gid + '-' + i : null); }
+    const reasons = disabled ? (disabledReason ? [[gid, disabledReason]] : [])
+      : list.map(function (o, i) { return o.disabled && o.disabledReason ? [gid + '-' + i, o.disabledReason] : null; }).filter(Boolean);
     function commit(v) {
-      if (v === value || disabled || pending !== null) return;
+      if (v === value || off(list.find(function (o) { return o.value === v; })) || pending !== null) return;
       if (!beforeChange) { if (onChange) onChange(v); return; }
       setPending(v);
       Promise.resolve(beforeChange(v)).then(function (ok) {
@@ -165,14 +180,16 @@
       if (refs.current[j]) refs.current[j].focus();
       if (!beforeChange) commit(list[j].value);
     }
-    return (
+    const group = (
       <div role="radiogroup" aria-label={ariaLabel} aria-busy={pending !== null ? 'true' : undefined}
+        aria-disabled={disabled ? 'true' : undefined}
         className={cx('v2-segmented', 'v2-segmented--' + (size === 'sm' ? 'sm' : 'md'), disabled && 'is-disabled', className)}>
         {list.map(function (o, i) {
           const on = o.value === value;
           return (
             <button key={o.value} ref={function (el) { refs.current[i] = el; }} type="button" role="radio"
-              aria-checked={on} tabIndex={i === tabStop ? 0 : -1} disabled={disabled || o.disabled}
+              aria-checked={on} tabIndex={i === tabStop ? 0 : -1} aria-disabled={off(o) ? 'true' : undefined}
+              aria-describedby={whyOf(o, i) || undefined}
               className={cx('v2-segment', on && 'is-selected', pending === o.value && 'is-pending', o.className)}
               onClick={function () { commit(o.value); }} onKeyDown={function (e) { onKey(e, i); }}>
               <Ico name={o.icon} />
@@ -182,20 +199,33 @@
         })}
       </div>
     );
+    if (!reasons.length) return group;
+    return (
+      <div className="v2-segmented-group">
+        {group}
+        {reasons.map(function (r) { return <Reason key={r[0]} id={r[0]}>{r[1]}</Reason>; })}
+      </div>
+    );
   }
 
   function Chip(props) {
-    const { selected, onClick, icon, disabled, className, children } = props;
+    const { selected, onClick, icon, disabled, disabledReason, className, children } = props;
     const rest = omit(props, CHIP_OWN);
+    const rid = uid(useId(), 'v2w');
     const toggle = selected !== undefined && selected !== null;
     const on = toggle && !!selected;
-    return (
-      <button {...rest} type="button" disabled={disabled} aria-pressed={toggle ? on : undefined}
-        className={cx('v2-chip', on && 'is-selected', className)} onClick={onClick}>
+    const why = !!(disabled && disabledReason);
+    const chip = (
+      <button {...rest} type="button" aria-disabled={disabled ? 'true' : undefined} aria-pressed={toggle ? on : undefined}
+        aria-describedby={why ? rid : rest['aria-describedby']}
+        className={cx('v2-chip', on && 'is-selected', className)}
+        onClick={function (e) { if (disabled) { e.preventDefault(); return; } if (onClick) onClick(e); }}>
         <Ico name={on ? 'check' : icon} />
         <span>{children}</span>
       </button>
     );
+    if (!why) return chip;
+    return <span className="v2-button-group">{chip}<Reason id={rid}>{disabledReason}</Reason></span>;
   }
 
   Object.assign(window.V2Kit = window.V2Kit || {}, { Switch, Checkbox, RadioCard, Segmented, Chip });

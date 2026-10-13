@@ -7,6 +7,8 @@
   const KEY = { provider: 'Anthropic', model: 'claude-haiku-4-5', last4: 'qAAA' };
   const DRAFT = { provider: 'Anthropic', key: 'sk-ant-api03-7Hq2xQ' };
   const W = function (node) { return <div style={fill}>{node}</div>; };
+  // V2 always hands SettingsScreen a byok object (index.html:977), so its own-key card draws; V2's signed-in default.
+  const V2_BYOK = { on: false, setOn: noop, keyAdded: false, keyInfo: null, onSave: noop, onRemove: noop, highlight: false };
 
   function SettingsBlocksSection() {
     const K = window.V2Kit || {};
@@ -36,7 +38,7 @@
             { label: 'Advanced, open', node: W(<A defaultOpen>{chatModel}</A>) },
           ]} />
           <G.CompareRow
-            v2={<G.Live get={function () { return window.SettingsScreen; }} props={{ byok: null, aiModeConditions: { hwSupported: true, conflict: false } }} label="window.SettingsScreen" />}
+            v2={<G.Live get={function () { return window.SettingsScreen; }} props={{ byok: V2_BYOK, aiModeConditions: { hwSupported: true, conflict: false } }} label="window.SettingsScreen" />}
             system={<div style={stack}>{sec({ description: 'When it runs and what it asks you first.' })}<A /></div>}
             changed={'V2 copies one card shell five times inline with two paddings (16 and 18), two title weights (17/700 and '
               + '17/800) and a shadow on every card, then leads with BlueStacks, Telegram, AI Mode, own key and Max Output Tokens, '
@@ -91,7 +93,7 @@
             { part: 'No key', token: '--v2-text-12, --v2-ink-3', value: 'neutral note, not the yellow notice', ref: ['credits-settings.byok.none', 'credits-settings.byok.notice-amber'] },
             { part: 'Provider', token: 'V2Kit.Select', value: "placeholder 'Add a provider', five providers", ref: ['credits-settings.byok.add', 'credits-settings.byok.providers', 'credits-settings.byok.select-outline'] },
             { part: 'API key', token: 'V2Kit.TextField secret mono', value: 'password type + reveal; hint as helper', ref: ['credits-settings.byok.clear-text', 'credits-settings.byok.stored'] },
-            { part: 'Check and save', token: 'Button primary', value: "disabled until a key, 'Checking key…' while validating", ref: ['credits-settings.byok.validate', 'credits-settings.byok.fake-key'] },
+            { part: 'Check and save', token: 'Button primary', value: "disabled until a key; keeps 'Check and save' with a spinner while validating (the helper says 'Checking your key with {provider}…')", ref: ['credits-settings.byok.validate', 'credits-settings.byok.fake-key'] },
             { part: 'Saved key', token: '--v2-font-mono, --v2-ink-3', value: 'provider 14/500, four dots + last 4', ref: 'credits-settings.byok.masked' },
             { part: 'Remove', token: 'Button secondary, then danger', value: 'inline confirm, then Undo toast', ref: ['credits-settings.byok.remove', 'credits-settings.byok.remove-style'] },
             { part: 'On note', token: '--v2-text-12, --v2-ink-3', value: "'No AI credits are used while this is on.'", ref: 'credits-settings.byok.own-key-note' },

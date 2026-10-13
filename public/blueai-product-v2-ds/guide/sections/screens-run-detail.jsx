@@ -22,6 +22,7 @@
       return { label: s[1], note: s[2], node: <Shot><S.RunDetail state={s[0]} landmark={false} /></Shot> };
     }).concat([
       { label: 'Job done on Automatic', note: 'the receipt offers the way back to Always ask', node: <Shot><S.RunDetail state="done" worker={F.automatic} landmark={false} /></Shot> },
+      { label: 'A past day: dated words, no Try again', node: <Shot><S.RunDetail state="failed" row={{ date: 'Oct 10', outcome: 'failed', status: 'notcounted' }} landmark={false} /></Shot> },
       { label: 'Compact window (640)', note: 'header pinned, the run scrolls', node: <Shot h={640}><S.RunDetail state="verified" compact landmark={false} /></Shot> },
     ]);
     return (

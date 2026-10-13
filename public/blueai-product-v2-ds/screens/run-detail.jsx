@@ -9,13 +9,17 @@
      Verification card owns it), the JobPreviewCard receipt when a job ran (no tick of its own:
      the day is said once, in Verification; 'Switch back to Always ask' only when the job ran on
      Automatic: ranOn), Verification (tick, one sentence, and for a rejected day Report a problem), a
-     Details card (how paid jobs were taken, and the AI credits a paid job used), then a Report a
-     problem link for every other run. Report a problem opens the sheet with this run attached.
+     Details card (how this job was taken, and the AI credits it used), then a Report a problem
+     link for every other run. Report a problem opens the sheet with this run attached.
      state  done | nojob | skipped | failed | stopped | nocredits | pending | verified | rejected |
             loading | error (RUN_STATES).
-     run    overrides: {card, title, job, taken 'ask' | 'auto', verify, text, checkedAt, reason}.
-     row    the Activity ledger row it was opened from: its date names the run and its status
-            decides Verification. */
+     run    overrides: {card, title, job, taken 'ask' | 'auto', verify, text, checkedAt, reason, day}.
+     row    the Activity ledger row it was opened from (section 41): its date names the run, its
+            status decides Verification, its place in the ledger gives the day number, and its
+            checkedAt and ranOn say when it was checked and how the job was taken. A settled row
+            (not today's live run) offers no Try again or Run again, and a past day's words are
+            dated. How a job was taken is the record's, never today's setting: with no ranOn, the
+            row is left out. */
 (function () {
   const { useState } = React;
   const K = () => window.V2Kit || {};
@@ -25,7 +29,7 @@
     ['nojob', 'No job', 'the run still counts'],
     ['skipped', 'Skipped', 'the partner said Not now'],
     ['failed', 'Failed', 'Try again, by 9 pm'],
-    ['stopped', 'Stopped', 'stopped from the composer'],
+    ['stopped', 'Stopped', 'Not counted yet: Run again by 9 pm'],
     ['nocredits', 'Out of credits', 'stopped when credits ran out'],
     ['pending', 'Pending, past a day', 'still checking'],
     ['verified', 'Verified', 'two ticks'],
@@ -42,37 +46,56 @@
     rejected: ['rejected', 'Not counted', null],
     notcounted: ['notcounted', 'Not counted', 'Today doesn’t count toward your 20 days.'], // V2, worker_day_done.jsx:95
     open: ['notcounted', 'Not counted yet', 'Try again by 9 pm to count the day.'],
+    reopen: ['notcounted', 'Not counted yet', 'Run again by 9 pm to count the day.'],
     // Decision D6 (credits and the paid run) may let this day count; until then it does not.
     nocredits: ['notcounted', 'Not counted', 'The run stopped when AI credits ran out, so today doesn’t count.'],
   };
   // A ledger row's status -> its Verification key (a day lost to credits says why).
   const ROW_VERIFY = { verified: 'verified', pending: 'pending', late: 'late', rejected: 'rejected', notcounted: 'notcounted', skipped: 'notcounted' };
+  const COUNTS = { verified: 1, pending: 1, late: 1 };
 
+  // Specimens. Today's runs read how the job was taken from the record (today.ranOn); the dated
+  // ones carry it, as their ledger rows would.
   const RUNS = {
     done: { card: 'done-pending', title: 'Today’s run', job: true, verify: 'pending' },
     nojob: { card: 'nojob', title: 'Today’s run', verify: 'pending' },
     skipped: { card: 'skipped', title: 'Today’s run', verify: 'notcounted' },
     failed: { card: 'failed', title: 'Today’s run', verify: 'open' },
-    stopped: { card: 'stopped', title: 'Today’s run', verify: 'notcounted' },
+    stopped: { card: 'stopped', title: 'Today’s run', verify: 'reopen' },
     nocredits: { card: 'nocredits', title: 'Today’s run', verify: 'nocredits' },
-    pending: { card: 'done-pending', title: 'Oct 10 run', job: true, verify: 'late' },
-    verified: { card: 'verified', title: 'Oct 11 run', job: true, verify: 'verified', checkedAt: 'Oct 12, 7:02 am', day: 6 },
-    rejected: { card: 'rejected', title: 'Oct 11 run', job: true, verify: 'rejected', reason: 'The comment was removed before we checked it.' },
+    pending: { card: 'done-pending', title: 'Oct 10 run', job: true, verify: 'late', taken: 'ask' },
+    verified: { card: 'verified', title: 'Oct 11 run', job: true, verify: 'verified', checkedAt: 'Oct 12, 7:02 am', day: 6, taken: 'ask' },
+    rejected: { card: 'rejected', title: 'Oct 11 run', job: true, verify: 'rejected', reason: 'The comment was removed before we checked it.', taken: 'ask' },
   };
 
-  function fromRow(row) {
+  // A counted day's number: the counted days in the ledger up to and including its row.
+  function dayOf(w, row, today) {
+    const L = (w && w.ledger) || [];
+    const i = today ? L.length - 1 : L.map(function (x) { return x.date; }).lastIndexOf(row.date);
+    return i < 0 ? null : L.slice(0, i + 1).filter(function (x) { return COUNTS[x.status]; }).length;
+  }
+
+  function fromRow(row, w) {
     if (!row) return {};
-    const o = { title: row.today || !row.date || row.date === 'Today' ? 'Today’s run' : row.date + ' run' };
+    const today = !!row.today || !row.date || row.date === 'Today';
+    const o = { title: today ? 'Today’s run' : row.date + ' run', taken: row.ranOn || (today && w && w.today && w.today.ranOn) || null };
+    if (!row.live) o.action = null; // a settled day: nothing to try again or run again
+    if (!today) o.past = row.date;
     if (row.outcome === 'nocredits') o.verify = 'nocredits';
     else if (ROW_VERIFY[row.status]) o.verify = ROW_VERIFY[row.status];
     if (row.reason) o.reason = row.reason;
+    if (o.verify === 'verified') { o.day = dayOf(w, row, today); o.checkedAt = row.checkedAt || null; }
     return o;
   }
 
-  function verifyText(r) {
+  function verifyText(r, target) {
     if (r.text) return r.text;
-    if (r.verify === 'verified') return 'Checked ' + (r.checkedAt || 'within a day') + '. Day ' + (r.day || 7) + ' of 20 counts.';
+    if (r.verify === 'verified') {
+      return (r.checkedAt ? 'Checked ' + r.checkedAt + '. ' : '') + (r.day ? 'Day ' + r.day + ' of ' + target + ' counts.' : 'This day counts toward your ' + target + ' days.');
+    }
     if (r.verify === 'rejected') return r.reason || 'This run didn’t pass the check.';
+    if (r.past && r.verify === 'notcounted') return r.past + ' didn’t count toward your ' + target + ' days.';
+    if (r.past && r.verify === 'nocredits') return 'The run stopped when AI credits ran out, so ' + r.past + ' didn’t count.';
     return (VERIFY[r.verify] || VERIFY.pending)[2];
   }
 
@@ -95,14 +118,15 @@
     const S = window.V2Screens || {};
     const [report, setReport] = useState(null);
     const key = RUNS[p.state] ? p.state : 'done';
-    const r = Object.assign({}, RUNS[key], fromRow(p.row), p.run || {});
-    const w = p.worker || (P.workerFixtures || {})[r.verify === 'open' ? 'failed' : 'verified'];
+    const w = p.worker || (P.workerFixtures || {})[(!p.row && { failed: 'failed', stopped: 'stopped' }[key]) || 'verified'];
+    const r = Object.assign({}, RUNS[key], fromRow(p.row, w), p.run || {});
     const Frame = S.ScreenFrame;
     if (!w || !Frame || !P.RunCard || !P.Card) return null;
     const go = function (id, opts) { return function () { if (p.onNavigate) p.onNavigate(id, opts); }; };
     const v = VERIFY[r.verify] || VERIFY.pending;
     const rejected = r.verify === 'rejected';
-    const taken = r.taken || (P.modeSummary ? P.modeSummary(w).mode : 'always');
+    const taken = r.taken !== undefined ? r.taken : ((w.today && w.today.ranOn) || null);
+    const target = P.numbers ? P.numbers(w).target : 20;
     const credits = w.credits || {};
     const loading = p.state === 'loading';
     function openReport() {
@@ -126,7 +150,8 @@
     else {
       body = (
         <React.Fragment>
-          <P.RunCard state={r.card} run={{ title: r.title, dayText: '' }} full defaultExpanded onAction={onAction} />
+          <P.RunCard state={r.card} run={Object.assign({ title: r.title, dayText: '' }, r.action === null ? { action: null } : {})}
+            full defaultExpanded onAction={onAction} />
           {r.job && P.JobPreviewCard ? (
             <P.JobPreviewCard mode="receipt" doneAt="11:06 am" verify={null} ranOn={taken === 'auto' ? 'auto' : 'ask'}
               onChangeMode={p.onChangeMode || go('worker-settings')} />
@@ -134,15 +159,15 @@
           <P.Card as="section" className="v2-verify" aria-label="Verification">
             <h2 className="v2-verify-title">Verification</h2>
             {P.StatusTick ? <P.StatusTick status={v[0]} size={16} label={v[1]} /> : null}
-            <p className={'v2-verify-text' + (rejected ? ' v2-verify-text--danger' : '')}>{verifyText(r)}</p>
+            <p className={'v2-verify-text' + (rejected ? ' v2-verify-text--danger' : '')}>{verifyText(r, target)}</p>
             {rejected && P.Button ? (
               <div className="v2-verify-actions"><P.Button variant="secondary" size="md" onClick={openReport}>Report a problem</P.Button></div>
             ) : null}
           </P.Card>
-          {P.ListRow ? (
+          {r.job && P.ListRow ? (
             <P.Card padding="none" as="section" aria-label="Details">
-              <P.ListRow label="Paid jobs" value={taken === 'auto' ? 'Automatic' : 'Always ask'} />
-              {r.job ? <P.ListRow label="AI credits used" value={String(credits.runCost || 360)} /> : null}
+              {taken ? <P.ListRow label="Paid jobs" value={taken === 'auto' ? 'Automatic' : 'Always ask'} /> : null}
+              <P.ListRow label="AI credits used" value={String(credits.runCost || 360)} />
             </P.Card>
           ) : null}
           {!rejected && P.Link ? <P.Link standalone className="v2-rundetail-report" onClick={openReport}>Report a problem</P.Link> : null}

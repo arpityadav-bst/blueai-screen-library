@@ -16,7 +16,7 @@
   - a run (minutes): never block. The RunCard, the WorkerCard and the top bar's WorkerStatusChip carry it; the partner can leave.
 - **Sizes:** Spinner 16 in buttons and inline, 32 alone (sign-in). Skeletons take the size of the content they stand for.
 - **States:** cold start (Splash, section 33, true cold start only), screen (skeleton), action (button loading), background run.
-- **Props:** none of its own. Use `Button loading`, `Spinner {size, delay, label}`, `Skeleton {shape, width, height, lines}`.
+- **Props:** none of its own. Use `Button loading`, `Spinner {size, delay, label}`, `Skeleton {shape, width, height, lines}`. A list screen's default loading block is `V2Screens.ListSkeleton {rows, label}` (Activity, Run detail, Notifications, AI credits), and Home's is `V2Screens.HomeSkeleton`, both in `screens/home.jsx` with their styles in `screens/core.css`. When the data does not arrive, the same screens show `V2Screens.LoadError` ("Couldn’t load <what>" / "Nothing is lost: your runs and days are not affected. Try again in a moment." + Try again, section 51).
 - **Motion:** spinner `--v2-dur-spin` 800 ms linear; skeleton shimmer `--v2-dur-shimmer` 1400 ms. Under reduced motion the shimmer stops and the spinner turns at half speed.
 - **Accessibility:** a loading button keeps its name and sets `aria-busy`; a standalone spinner with a label is `role=status`; skeletons are `aria-hidden`; a waiting caveat is ink-3 (6.0:1), not V2's `#94a3b8` (2.56:1, `chat_bubbles.jsx:124`).
 - **Responsive:** skeletons follow the column width; nothing is fixed to 419.

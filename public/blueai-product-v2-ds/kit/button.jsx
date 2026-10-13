@@ -12,7 +12,10 @@
               reached; loading keeps the label, swaps the icon for a spinner and ignores clicks.
    IconButton {icon, label (required: the only name a screen reader hears), size 28|32|36 (36),
               variant 'bare'|'outlined', active (its menu is open), tone 'default'|'danger',
-              disabled, onClick; aria-expanded / aria-haspopup / aria-pressed pass through}
+              disabled, disabledReason, onClick; aria-expanded / aria-haspopup / aria-pressed
+              pass through}  Disabled stays focusable too. A glyph has no room for a printed
+              line, so its reason is the label tooltip (V2Kit.Tooltip, on hover and focus) and
+              the description a screen reader hears.
    Link       {href, external, tone 'ink'|'muted', standalone, onClick, children}
               Without href it renders a button drawn as a link (an inline action). */
 (function () {
@@ -24,7 +27,7 @@
   function omit(o, keys) { const r = {}; for (const k in o) if (keys.indexOf(k) < 0) r[k] = o[k]; return r; }
   const BUTTON_OWN = ['variant', 'size', 'icon', 'iconRight', 'loading', 'disabled', 'disabledReason', 'full',
     'type', 'onClick', 'href', 'external', 'className', 'children'];
-  const ICON_BUTTON_OWN = ['icon', 'label', 'size', 'variant', 'active', 'tone', 'disabled', 'onClick', 'className'];
+  const ICON_BUTTON_OWN = ['icon', 'label', 'size', 'variant', 'active', 'tone', 'disabled', 'disabledReason', 'onClick', 'className'];
   const LINK_OWN = ['href', 'external', 'tone', 'standalone', 'onClick', 'className', 'children'];
   function Ico({ name, size, inline }) {
     const Icon = window.V2Kit && window.V2Kit.Icon;
@@ -72,15 +75,17 @@
     return (
       <span className={cx('v2-button-group', full && 'v2-button-group--full')}>
         {el}
-        <span id={reasonId} className="v2-button-reason">{disabledReason}</span>
+        <span id={reasonId} className="v2-button-reason v2-text-caption">{disabledReason}</span>
       </span>
     );
   }
 
   let warned = false;
   function IconButton(props) {
-    const { icon, label, size = 36, variant = 'bare', active, tone = 'default', disabled, onClick, className } = props;
+    const { icon, label, size = 36, variant = 'bare', active, tone = 'default', disabled, disabledReason, onClick, className } = props;
     const rest = omit(props, ICON_BUTTON_OWN);
+    const reasonId = useId();
+    const why = !!(disabled && disabledReason);
     if (!label && !warned && window.console) {
       warned = true;
       console.warn('[V2Kit.IconButton] label is required: it is the only name a screen reader hears.');
@@ -88,12 +93,20 @@
     const s = size === 28 || size === 32 ? size : 36;
     const cls = cx('v2-icon-button', 'v2-icon-button--' + s, variant === 'outlined' && 'v2-icon-button--outlined',
       tone === 'danger' && 'v2-icon-button--danger', active && 'is-on', className);
-    return (
+    const el = (
       <button {...rest} type="button" className={cls} aria-label={label}
-        aria-disabled={disabled ? 'true' : undefined}
+        aria-disabled={disabled ? 'true' : undefined} aria-describedby={why ? reasonId : rest['aria-describedby']}
         onClick={function (e) { if (disabled) { e.preventDefault(); return; } if (onClick) onClick(e); }}>
         <Ico name={icon} size={s === 28 ? 16 : 20} />
       </button>
+    );
+    if (!why) return el;
+    const Tip = window.V2Kit && window.V2Kit.Tooltip;
+    return (
+      <>
+        {Tip ? <Tip content={disabledReason}>{el}</Tip> : el}
+        <span id={reasonId} className="v2-sr-only">{disabledReason}</span>
+      </>
     );
   }
 

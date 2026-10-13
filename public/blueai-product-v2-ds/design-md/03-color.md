@@ -80,11 +80,17 @@
 
 **Sizes.** Not applicable.
 
-**States.** Neutral (paused, skipped, pending verification), info (running, checking, a fact with nothing to do), success (verified, done, connected), attention (needs you), danger (failed, out of credits).
+**States.** Neutral (paused, skipped, pending verification, out of credits in the composer), info (running, checking, a fact with nothing to do), success (verified, done, connected), attention (needs you, and anything the partner can still fix today: a waiting job, a run that didn't start, out of credits on the RunCard, signed out), danger (a day already lost or a failure: failed, not counted, can't run). One rule picks between the last two: danger is for a day already lost or a failure, attention for something the partner can still fix.
 
-**Pending verification, one rule.** A pending day is neutral wherever it is a status: one tick in `--v2-ink-4` (StatusTick, section 43), a neutral Badge with the `check` mark (section 16), the RunCard's Done badge (section 36). Blue touches it in exactly two places, both meaning "in, not yet checked" rather than a status: the DayBar's pending segment (1.5 `--v2-blue` inset outline, section 43) and the DayDone badge (`--v2-blue-tint` with its tick in `--v2-blue-ink`, section 44). Never green until verified. V2 today: the dev Preview's Chat states row (ChatBubbles.ChatStatesPreview); the AI Credits banner at `?credits=0`.
+**Pending verification, one rule.** A pending day is neutral wherever it is a status: one tick in `--v2-ink-4` (StatusTick, section 43), a neutral Badge with the `check` mark (section 16), the RunCard's Done badge (section 36). Blue touches it in exactly three places, all meaning "in, not yet checked" rather than a status: the DayBar's pending segment (1.5 `--v2-blue` inset outline, section 43), the run chip's pending dot (the same 1.5 blue ring, `kit/shell.css:75`, section 30) and the DayDone badge (`--v2-blue-tint` with its tick in `--v2-blue-ink`, section 44). Never green until verified. V2 today: the dev Preview's Chat states row (ChatBubbles.ChatStatesPreview); the AI Credits banner at `?credits=0`.
 
-**Props.** `tone: 'neutral' | 'info' | 'success' | 'attention' | 'danger'` on every status part, with one exception: Banner names its neutral tone `offline` (sunken, line, ink-3 icon; section 21) and turns any tone it does not know into info, so a neutral banner is `tone="offline"` with its own icon (the AI-mode conflict uses `alert`, section 49).
+**Props.** The five tones are the table every part reads, but each part names its own prop (check this list before passing one):
+- Badge `tone`: the five; anything else is neutral (`kit/display.jsx:21-26`).
+- Banner `tone`: info, success, attention, danger, and `offline` for its neutral (sunken, line, ink-3 icon; section 21); anything else is info, so a neutral banner is `tone="offline"` with its own icon (the AI-mode conflict uses `alert`, section 49) (`kit/notice.jsx:16-18`).
+- NoticeBubble `kind`: the five, plus the aliases headsup (attention), fail (danger) and needsInput (attention with the help glyph) for older callers; anything else is attention (`kit/thread.jsx:72-86`).
+- ComposerNotice `tone`: drawn by the Banner, so the Banner's tones, plus `neutral`, its own name for the Banner's offline look with a pause glyph (`kit/composer.jsx:36-41`).
+- Toast `tone`: success, info, error, loading; danger is read as error, so it is announced assertively (section 24, `kit/toast.jsx`).
+- ProgressBar: no tone prop for status; `error` and `paused` booleans freeze it red or grey, and it turns success at max (`kit/progress.jsx:20-26`).
 
 **Motion.** None of its own.
 

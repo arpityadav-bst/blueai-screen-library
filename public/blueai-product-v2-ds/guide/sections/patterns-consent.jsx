@@ -7,7 +7,7 @@
   // moment, how it is agreed, what is recorded, where it is seen and withdrawn later
   const MOMENTS = [
     ['Program Terms', 'Blocking sheet on first run; the button is the agreement (Agree and continue). Re-asked in full on every terms change.', 'Account ID, time, terms version, IP address, the exact copy shown; server-side.', 'Account and privacy > Agreements: each version and when it was agreed. Withdrawing means leaving the program, from the same place.', ['entry-patterns.terms.blocking', 'entry-patterns.terms.record', 'entry-patterns.terms.record-fields']],
-    ['Automatic, per app', 'Consent dialog; the button is the agreement (I agree, turn on). Asked every time it is turned on, per app.', 'App, time, the copy version; server-side (V2 keeps the time in localStorage).', 'Settings > Worker and Connected apps: back to Always ask at once, no question.', ['entry-patterns.consent.button', 'entry-patterns.consent.every-time', 'entry-patterns.consent.local', 'entry-patterns.consent.dropped']],
+    ['Automatic, per app', 'Consent dialog; the button is the agreement (I agree, turn on). Asked every time it is turned on, per app. Body proposed, PM and legal (R51); the record keeps the version shown.', 'App, time, the copy version; server-side (V2 keeps the time in localStorage).', 'Settings > Worker and Connected apps: back to Always ask at once, no question.', ['entry-patterns.consent.button', 'entry-patterns.consent.every-time', 'entry-patterns.consent.local', 'entry-patterns.consent.dropped']],
     ['Access to watch history', 'A permission request in setup: Allow or Not now. Not now still lets the worker run.', 'App, scope, time.', 'Connected apps > YouTube > Watch history: Turn off. The interest profile is listed under Account and privacy.', ['entry-patterns.consent.history']],
     ['Windows notifications', 'Windows asks, the first time BlueAI sends one.', 'Kept by Windows.', 'Settings > Notifications: two switches (section 61); section 54 maps the events to them.', null],
   ];
@@ -58,6 +58,7 @@
             </table>
           </div>
           <ul className="g-list">{WORDING.map(function (t) { return <li key={t}>{t}</li>; })}</ul>
+          <G.Note>A Telegram command never gives or takes back consent: turning on Automatic, disconnecting an account and leaving the program happen only in the app, where the exact copy is shown and recorded.</G.Note>
           <G.StateGrid wide states={[
             { label: 'Not asked yet', note: 'first run: the Program Terms sheet', node: <Terms mode="firstrun" /> },
             { label: 'Agreeing', note: 'the record is being written', node: <Terms mode="firstrun" busy /> },
@@ -85,7 +86,7 @@
             { part: 'Automatic consent', token: 'ConsentDialog', value: 'Run YouTube jobs automatically? / I agree, turn on', ref: ['entry-patterns.consent.title', 'entry-patterns.consent.line', 'entry-patterns.consent.agree'] },
           ]} />
           <G.DoDont
-            do={['Keep legal’s and the PM’s consent copy word for word.', 'Record what was shown, server-side, at the click.', 'Give every agreement a place to be seen and turned off.']}
+            do={['Keep legal’s and the PM’s consent copy word for word once they approve it; send a proposed change to them first.', 'Record what was shown, server-side, at the click.', 'Give every agreement a place to be seen and turned off.']}
             dont={['Add a checkbox before the button.', 'Ask once per lifetime for Automatic.', 'Bundle cookie consent into the terms.']} />
         </G.Part>
       </G.Section>

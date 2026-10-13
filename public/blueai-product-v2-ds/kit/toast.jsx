@@ -11,8 +11,9 @@
                AppFrame inside it draws the region in the window (kit/shell.jsx). AppFrame mounts
                its own host when there is none above it. One toast at a time: a new one replaces
                the current one (a 419px window cannot stack).
-   ToastRegion {offset, className}  the polite live region (assertive for an error) with the
-               current toast in it. AppFrame renders it; screens never do.
+   ToastRegion {offset, className}  two always-mounted live regions, polite and assertive, with
+               the current toast in the one its tone needs (an error goes to the assertive one).
+               AppFrame renders it; screens never do.
    useToast()  {show(opts) -> id, update(id, opts), dismiss(id?)}
                opts: {tone 'success' | 'info' | 'error' | 'loading', title, action {label, onClick},
                duration ms}. A toast with an action never times out: it stays until Dismiss, its
@@ -37,9 +38,6 @@
   let warned = false;
 
   function cx() { return Array.prototype.filter.call(arguments, Boolean).join(' '); }
-  function reducedMotion() {
-    return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-  }
   function msFor(p) {
     if (p.duration != null) return p.duration;
     if (p.tone === 'loading' || p.action) return 0;
@@ -80,16 +78,21 @@
     dismiss: function () {},
   };
 
+  /* Two live regions, both always mounted: a region added together with its content is not
+     announced, and switching aria-live on a node that already holds the toast is not reliable.
+     The current toast goes into the one that matches its tone (an error into the assertive one). */
   function ToastRegion({ offset, className }) {
     const api = useContext(ApiCtx);
     const t = useContext(ToastCtx);
+    const node = t && api ? (
+      <Toast key={t.id} tone={t.tone} title={t.title} action={t.action} duration={t.duration}
+        leaving={t.leaving} timerKey={t.rev} onClose={function () { api.dismiss(t.id); }} />
+    ) : null;
+    const urgent = !!(t && t.tone === 'error');
     return (
-      <div className={cx('v2-toast-host', offset === 'none' && 'v2-toast-host--flush', className)}
-        aria-live={t && t.tone === 'error' ? 'assertive' : 'polite'} aria-atomic="true">
-        {t && api ? (
-          <Toast key={t.id} tone={t.tone} title={t.title} action={t.action} duration={t.duration}
-            leaving={t.leaving} timerKey={t.rev} onClose={function () { api.dismiss(t.id); }} />
-        ) : null}
+      <div className={cx('v2-toast-host', offset === 'none' && 'v2-toast-host--flush', className)}>
+        <div className="v2-toast-live" aria-live="polite" aria-atomic="true">{urgent ? null : node}</div>
+        <div className="v2-toast-live" aria-live="assertive" aria-atomic="true">{urgent ? node : null}</div>
       </div>
     );
   }
@@ -117,7 +120,7 @@
       if (leavingId == null) return undefined;
       const timer = setTimeout(function () {
         setT(function (c) { return c && c.id === leavingId && c.leaving ? null : c; });
-      }, reducedMotion() ? 0 : LEAVE_MS);
+      }, window.V2Kit.reducedMotion() ? 0 : LEAVE_MS);
       return function () { clearTimeout(timer); };
     }, [leavingId]);
     return (

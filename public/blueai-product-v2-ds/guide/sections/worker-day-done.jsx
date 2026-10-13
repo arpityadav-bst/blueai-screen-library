@@ -68,7 +68,7 @@
             { part: 'Note', token: '--v2-text-13, --v2-ink-3', value: 'We check every run within a day. The tick doubles once it’s verified.', ref: ['worker.copy.verify-note', 'worker.daydone.note-colour'] },
             { part: 'Got it', token: '--v2-action, --v2-control-lg', value: 'primary, full width, 44', ref: ['worker.daydone.got-it', 'worker.daydone.got-it-label'] },
             { part: 'Arrival', token: '--v2-dur-celebrate, --v2-ease-out', value: 'badge pops 450ms once', ref: 'worker.daydone.pop' },
-            { part: 'Confetti', token: '--v2-blue, --v2-success, --v2-action, --v2-attention-line', value: '12 fixed bits, Day 20 only, hidden under reduced motion', ref: 'worker.daydone.confetti' },
+            { part: 'Confetti', token: '--v2-blue, --v2-action, --v2-ink-4', value: '12 fixed bits, Day 20 only, hidden under reduced motion; never green or yellow while the day is pending', ref: 'worker.daydone.confetti' },
           ]} />
           <G.DoDont
             do={['Show pending as pending: blue, one tick, the word.', 'Say the count once, from numbers(), so tomorrow matches tonight.', 'Keep failed and skipped out of the moment: the run card says those with their action.']}

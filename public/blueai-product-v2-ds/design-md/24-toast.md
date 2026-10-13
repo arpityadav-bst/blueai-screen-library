@@ -10,17 +10,17 @@
 
 **Anatomy.** Bottom centre of the window, 12px above the bottom nav. A row that hugs its words, max 388, at least 44 tall: `--v2-surface`, 1px `--v2-line`, radius 10, `--v2-shadow-1`. Icon 16 (check-circle `--v2-success`, info `--v2-blue`, alert `--v2-danger-ink`, a Spinner while loading), title 13/500 `--v2-ink`, an optional text action (13/500 `--v2-blue-ink`, 32px target), a 32px Dismiss button. Layer `--v2-z-toast` (120, above dialogs).
 
-**Variants.** `success`, `info`, `error` (with Try again), `loading` (turns into its result in place). Any of them may carry an `action`; with Undo the change applies now and Undo reverses it.
+**Variants.** `success`, `info`, `error` (with Try again), `loading` (turns into its result in place). Any of them may carry an `action`; with Undo the change applies now, Undo reverses it, and it commits when the toast goes.
 
 **Sizes.** One.
 
-**States.** Entering; visible; paused (hover or keyboard focus holds the timer); leaving; replaced (a new toast replaces the current one: a 419px window cannot stack). Timing: 4s, 6s with an action, 8s for an error, loading waits for `update()`. Not in V2 (New): the guide shows every state forced, and its Try it window fires each one.
+**States.** Entering; visible; paused (hover or keyboard focus holds the timer); leaving; replaced (a new toast replaces the current one: a 419px window cannot stack). Timing: 4s, 8s for an error, loading waits for `update()`. A toast with Undo or Try again has no timer: it stays until Dismiss, its action, the next toast, or the screen calls `dismiss()` on leaving, so the action can be reached by keyboard and screen reader at any pace (WCAG 2.2.1, `kit/toast.jsx:17-23, 41-45`); a change it can undo commits then. Not in V2 (New): the guide shows every state forced, and its Try it window fires each one.
 
-**Props.** `ToastHost {offset 'nav' | 'none', children}` wraps the app (or sits in AppFrame's overlays). `useToast()` returns `show({tone, title, action: {label, onClick}, duration}) -> id`, `update(id, opts)`, `dismiss(id)`. `Toast {tone, title, action, duration, leaving, onClose}` is the drawn part; `duration={0}` shows it without a timer.
+**Props.** `ToastHost {offset 'nav' | 'none', children}` wraps the app (or sits in AppFrame's overlays). `useToast()` returns `show({tone: 'success' | 'info' | 'error' | 'loading', title, action: {label, onClick}, duration}) -> id`, `update(id, opts)`, `dismiss(id)`; tone 'danger' is read as 'error' (section 03). `Toast {tone, title, action, duration, leaving, onClose}` is the drawn part; `duration={0}` shows it without a timer.
 
 **Motion.** Fade-up `--v2-dur-2` (180ms) on `--v2-ease-out`; fade out `--v2-dur-1` (120ms) on `--v2-ease-in`. The timer is a CSS animation, so pausing is a CSS state; under reduced motion everything else is instant but the timer keeps its length.
 
-**Accessibility.** One live region: polite, assertive for an error. Toasts never take focus; the action and Dismiss are reachable by Tab, and focus pauses the timer. Never the only route to a fix: a condition that holds is a Banner (section 21).
+**Accessibility.** Two live regions, polite and assertive, both always mounted; the toast goes into the one its tone needs (an error into the assertive one). Toasts never take focus; the action and Dismiss are reachable by Tab, and focus pauses the timer. Never the only route to a fix: a condition that holds is a Banner (section 21).
 
 **Responsive.** Max 388 inside the 419 window with 16px gutters; on a screen without the bottom nav use `offset="none"` (16px from the bottom).
 

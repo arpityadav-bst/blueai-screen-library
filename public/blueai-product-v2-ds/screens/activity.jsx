@@ -11,7 +11,10 @@
      problem action under the row (a control is never nested in a nav row); the report opens with
      that run attached and 'A day that wasn't verified' picked. Rows open where the day can be acted
      on (rowTarget): a running or waiting run opens Chat at its card, every other run opens Run
-     detail in its state (by outcome, then status); a day with no run is static. state picks the
+     detail in its state (by outcome, then status); a day with no run is static. Today's live row
+     is keyed on workerState, like Home's card and the Activity badge, so every state the badge
+     counts has a row: a run that didn't start opens Home (Run now), one that can't start opens
+     the place that fixes it. state picks the
      fixture and tab (ACTIVITY_STATES) when worker / tab are not passed; loading draws the ledger's
      shape, error says so in place with Try again.
      past [{id, title, range, done, target}] earlier programs (PAST_PROGRAMS is the specimen).
@@ -58,6 +61,14 @@
     waiting: ['Paid job waiting', 'Answer by 9 pm or today won’t count.', 'attention', 'Needs you'],
     failed: ['Job didn’t finish', 'Try again by 9 pm to count the day.', 'danger', 'Not counted yet'],
     stopped: ['Run stopped', 'Run again by 9 pm to count the day.', 'neutral', 'Not counted yet'],
+    missed: ['Run didn’t start', 'Run it by 9 pm to count the day.', 'attention', 'Not counted yet'],
+    blocked: ['Run can’t start', null, 'danger', 'Can’t run'],
+  };
+  // What blocks today's run (V2Kit.blockedBy), said as the fix, in the WorkerCard's words.
+  const BLOCKED_FIX = {
+    'no-app': 'YouTube isn’t connected. Connect it by 9 pm to count the day.',
+    'signed-out': 'App Player isn’t signed in to YouTube. Sign in there by 9 pm to count the day.',
+    'no-bluestacks': 'BlueStacks isn’t installed. Install it by 9 pm to count the day.',
   };
 
   function nextDate(d) {
@@ -66,17 +77,24 @@
   }
 
   function ledgerRows(w) {
+    const P = K();
     const list = (w && w.ledger) || [];
     const t = (w && w.today) || {};
+    const st = w && P.workerState ? P.workerState(w) : t.status;
     const rows = list.map(function (r, i) { return Object.assign({ key: r.date + i }, norm(r)); });
     const last = rows[rows.length - 1];
     if (t.status === 'done' && last) Object.assign(last, { date: 'Today', today: true });
-    else if (LIVE[t.status]) rows.push({ key: 'today', date: 'Today', today: true, live: t.status, from: last ? nextDate(last.date) : null });
+    else if (LIVE[st]) {
+      const why = st === 'blocked' && P.blockedBy ? (P.blockedBy(w) || {}).reason : null;
+      rows.push({ key: 'today', date: 'Today', today: true, live: st, reason: why || null, from: last ? nextDate(last.date) : null });
+    }
     return rows.reverse();
   }
 
   function rowTarget(row) {
     if (row.live === 'running' || row.live === 'waiting') return ['chat', { state: row.live }];
+    if (row.live === 'missed') return ['home'];
+    if (row.live === 'blocked') return row.reason === 'no-bluestacks' ? ['settings', { highlight: 'bluestacks' }] : ['connected-apps', { app: 'youtube' }];
     if (row.live) return ['run', { state: row.live, row: row }];
     const r = norm(row);
     if (!words(r).hasRun) return null;
@@ -94,7 +112,8 @@
         <span className="v2-ledger-result">{live ? live[0] : (row.result || wd.result)}</span>
       </span>
     );
-    const desc = live ? live[1] : (row.status === 'rejected' ? row.reason : null);
+    const desc = live ? (row.live === 'blocked' ? BLOCKED_FIX[row.reason] || BLOCKED_FIX['no-app'] : live[1])
+      : (row.status === 'rejected' ? row.reason : null);
     const trailing = live
       ? (P.Badge ? <P.Badge tone={live[2]} busy={row.live === 'running'}>{live[3]}</P.Badge> : null)
       : (P.StatusTick ? <P.StatusTick status={wd.tick} size={14} label={wd.tickWord} /> : null);

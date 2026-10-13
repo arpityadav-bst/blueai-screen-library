@@ -16,7 +16,8 @@
   }
 
   /* Badge: one short state on a row or card. Tone lives in the fill and the dot; the label stays
-     in ink-2 so every tone clears 4.5:1 (the success ink on its own tint computes 4.49:1). */
+     in ink-2, a style choice: one ink keeps a row of badges calm and the mark carries the tone
+     (every status ink passes on its own tint; success ink on the 8% tint is 4.59:1, section 16). */
   const TONES = ['neutral', 'info', 'success', 'attention', 'danger'];
   const BADGE_OWN = ['tone', 'dot', 'busy', 'icon', 'className', 'children'];
   function Badge(props) {
@@ -74,7 +75,9 @@
 
   /* ListRow: the line every list is made of. Static (value or control), nav (button or link, the
      only kind that answers hover), expandable (aria-expanded) and destructive. A control row is a
-     div: never put a control inside a nav row. Disabled rows keep their reason legible. */
+     div: never put a control inside a nav row. Disabled rows keep their reason legible and stay
+     focusable: a disabled link drops its href (so it goes nowhere) but keeps role=link and a tab
+     stop, so the reason inside it is still reached (section 18). */
   function ListRow(props) {
     const { leading, label, description, value, trailing, badge, onClick, href, external, danger,
       expandable, expanded, onToggle, divider, disabled, disabledReason, children, className } = props;
@@ -118,6 +121,7 @@
     if (href) {
       return (
         <a className={cls} href={disabled ? undefined : href} aria-disabled={disabled ? 'true' : undefined}
+          role={disabled ? 'link' : undefined} tabIndex={disabled ? 0 : undefined}
           target={external ? '_blank' : undefined} rel={external ? 'noopener' : undefined}>{inner}</a>
       );
     }

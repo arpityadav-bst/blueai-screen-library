@@ -83,7 +83,7 @@ button, input, textarea, select { font-family: inherit; }
 
 /* Status tag */
 .g-tag {
-  display: inline-flex; align-items: center; height: 22px; padding: 0 var(--v2-space-2);
+  display: inline-flex; align-items: center; height: var(--v2-badge-h); padding: 0 var(--v2-space-2);
   border-radius: var(--v2-radius-pill); border: var(--v2-stroke) solid; white-space: nowrap;
   font-size: var(--v2-text-12); font-weight: var(--v2-weight-medium); line-height: 1;
 }

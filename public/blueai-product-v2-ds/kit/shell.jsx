@@ -40,9 +40,10 @@
   // Today is settled (counted, pending or not): quitting costs only the next run.
   const SETTLED = { pending: 1, done: 1, 'not-counted': 1, verified: 1, ended: 1 };
 
-  // The consequence step. Said before the choice (P3): what it costs today. Proposed copy.
+  // The consequence step. Said before the choice (P3): what it costs today. Proposed copy. Only
+  // 'skip' and 'quit' have one; any other confirm value shows the menu, never a guessed step.
   function trayConfirmCopy(kind, runStatus) {
-    if (kind !== 'quit') {
+    if (kind === 'skip') {
       return {
         title: 'Skip today’s run?',
         body: 'Today won’t count toward your 20 days. Runs start again tomorrow.',
@@ -50,6 +51,7 @@
         cancel: 'Keep today’s run',
       };
     }
+    if (kind !== 'quit') return null;
     return {
       title: 'Quit BlueAI?',
       body: SETTLED[runStatus]
@@ -65,8 +67,8 @@
     const id = useId();
     const words = K.RUN_STATUS;
     const status = words[runStatus] ? runStatus : (runStatus === 'done' ? 'pending' : 'scheduled');
-    if (confirm) {
-      const c = trayConfirmCopy(confirm, status);
+    const c = confirm ? trayConfirmCopy(confirm, status) : null;
+    if (c) {
       return (
         <div className="v2-tray v2-tray--confirm" role="alertdialog" aria-labelledby={id + 't'} aria-describedby={id + 'b'}>
           <p className="v2-tray-confirm-title" id={id + 't'}>{c.title}</p>

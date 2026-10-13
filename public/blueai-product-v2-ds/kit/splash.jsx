@@ -18,10 +18,6 @@
   const SPLASH_MESSAGES = ['Starting BlueAI…', 'Checking today’s run…'];
   const T_SECOND = 600, T_FADE = 900, T_DONE = 1220;
 
-  function prefersReduced() {
-    try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; }
-  }
-
   function Splash({ messages, onDone, coldStart, state, reduced }) {
     const msgs = messages && messages.length ? messages : SPLASH_MESSAGES;
     const frozen = !!state;
@@ -34,7 +30,7 @@
     useEffect(function () {
       if (frozen) return undefined;
       if (skip) { if (done.current) done.current(); return undefined; }
-      const still = reduced || prefersReduced();
+      const still = reduced || window.V2Kit.reducedMotion();
       const timers = [];
       if (msgs.length > 1) timers.push(setTimeout(function () { setIdx(1); }, T_SECOND));
       if (!still) timers.push(setTimeout(function () { setFading(true); }, T_FADE));
@@ -45,7 +41,7 @@
     if (skip) return null;
     const Brand = window.V2Kit && window.V2Kit.BrandMark;
     return (
-      <div className={cx('v2-splash', fading && 'is-fading', reduced && 'is-reduced')} aria-busy={fading ? undefined : 'true'}>
+      <div className={cx('v2-splash', fading && 'is-fading', reduced && 'v2-reduced-motion')} aria-busy={fading ? undefined : 'true'}>
         {Brand ? <Brand size={48} /> : null}
         <div className="v2-splash-dots" aria-hidden="true">
           <span className="v2-splash-dot" /><span className="v2-splash-dot" /><span className="v2-splash-dot" />

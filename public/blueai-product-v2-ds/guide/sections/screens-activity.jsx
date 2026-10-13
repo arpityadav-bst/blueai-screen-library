@@ -41,6 +41,8 @@
       return { label: s[3], note: s[4], node: <Shot><S.Activity state={s[0]} landmark={false} /></Shot> };
     }).concat([
       { label: 'Failed today', note: 'Not counted yet, with the deadline', node: <Shot><S.Activity worker={F.failed} landmark={false} /></Shot> },
+      { label: 'Didn’t start today', note: 'Run it by 9 pm, opens Home', node: <Shot><S.Activity worker={F.missed} landmark={false} /></Shot> },
+      { label: 'Can’t run today', note: 'the fix, opens Connected apps', node: <Shot><S.Activity worker={F.blocked} landmark={false} /></Shot> },
       { label: 'Not set up', note: 'one way forward', node: <Shot><S.Activity worker={F.new} landmark={false} /></Shot> },
       { label: 'Compact window (640)', note: 'strip and tabs scroll with the rows', node: <Shot h={640}><S.Activity state="complete" compact landmark={false} /></Shot> },
     ]);

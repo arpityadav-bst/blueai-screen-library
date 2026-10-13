@@ -5,10 +5,11 @@
    Every account screen (61 to 66) sits in V2Screens.ScreenFrame (home.jsx) inside one
    .v2-acct column, so the top bar, the menus and the nav behave the same on every screen.
 
-   Settings {worker, state, bluestacks, telegram, highlight, onNavigate, onReport, frame, compact, landmark, preview}
+   Settings {worker, state, bluestacks, telegram, highlight, onNavigate, onReport, onRetry, frame, compact, landmark, preview}
      worker      the Worker record (section 41); default V2Kit.workerFixtures.verified.
      state       'default' | 'advanced' (Advanced open) | 'no-bluestacks' (and scrolled to it) |
-                 'report' (Help > Report a problem open: the sheet from help.jsx).
+                 'report' (Help > Report a problem open: the sheet from help.jsx) | 'loading' |
+                 'error' (pendingBody: the rows' shape, or LoadError with Try again).
      bluestacks  'connected' | 'not-installed' | 'signed-out': the worker's preflight (R13, R16),
                  never a fixed claim. telegram 'linked' | 'not-linked'.
      highlight   a section id ('worker', 'apps', 'notifications', 'bluestacks', 'account', 'help',
@@ -17,12 +18,20 @@
      onNavigate(id, opts)  'worker-settings' | 'connected-apps' {app} | 'account', plus every chrome
                  event (ScreenFrame). The top bar's Report a problem opens the sheet here.
      preview     guide specimens: overlays draw in place without taking focus.
-   CONFIRM_COPY  {signOut(email), disconnect(handle), leave(handle, endsOn), deleteData()} the one
-     title, body and primary label per destructive confirm (section 52), read by Account, Connected
-     apps and the guide, so a confirm is written once.
+   CONFIRM_COPY  {signOut(email), disconnect(handle), leave(handle, endsOn, n), deleteData(n)} the
+     one title, body, primary label and failure line per destructive confirm (section 52), read by
+     Account, Connected apps and the guide, so a confirm is written once. n is numbers(record):
+     leaving and deleting say cash out with its $10 minimum, and what a balance under it means.
+   useConfirmStep(forced)  {busy, failed, run(done), reset()}: a confirm's primary that does work,
+     busy while it runs, then done or failed. forced 'busy' | 'failed' draws that cell (guide).
+   ConfirmDialog {copy, tone, step, preview, onCancel, onConfirm}  the AlertDialog for one
+     CONFIRM_COPY entry: busy holds Esc, the scrim and Cancel; a failure keeps the dialog, says so
+     in a danger Banner and turns the primary into Try again.
+   pendingBody(state, what, onRetry)  the account screens' 'loading' and 'error' bodies (section
+     50), or null when the screen has its data.
    ConnectedAppRows (connected-apps.jsx) and ReportProblemSheet (help.jsx) are read at render. */
 (function () {
-  const { useState } = React;
+  const { useState, useRef, useEffect } = React;
   const kit = function () { return window.V2Kit || {}; };
   const scr = function () { return window.V2Screens || {}; };
   const noop = function () {};
@@ -33,25 +42,66 @@
   }
 
   // Proposed copy, one owner per confirm (section 52). Each body says what changes, what is kept
-  // and, where there is one, the way back.
+  // and, where there is one, the way back. A disconnect is the partner's choice, so it is not
+  // called a pause: the runs simply cannot start without the account (section 63).
+  // Cash out after leaving: open after the period only at the $10 minimum; under it, the balance
+  // cannot be cashed out once the partner leaves (PM and legal to confirm, D3 in section 73).
+  function cashLine(endsOn, n) {
+    const min = '$' + ((n && n.cashOutMin) || 10);
+    const after = ' after ' + (endsOn || 'the program ends');
+    if (n && n.reachedMinimum === false) return 'Your verified days stay on Earnings, but a balance under ' + min + ' can’t be cashed out once you leave.';
+    if (n && n.reachedMinimum) return 'Verified days stay on Earnings, and cash out opens there' + after + '.';
+    return 'Verified days stay on Earnings, and cash out opens there' + after + ' once your balance reaches ' + min + '.';
+  }
   const CONFIRM_COPY = {
     signOut: function (email) {
-      return { title: 'Sign out?', confirm: 'Sign out',
+      return { title: 'Sign out of BlueAI?', confirm: 'Sign out', failed: 'Couldn’t sign out',
         body: 'Your worker pauses while you’re signed out, and days without a run don’t count toward your 20 days. Sign in again with ' + email + ' to pick up where you left off.' };
     },
     disconnect: function (handle) {
-      return { title: 'Disconnect YouTube?', confirm: 'Disconnect',
-        body: 'BlueAI stops using ' + handle + ' and pauses your daily runs. Days without a run don’t count toward your 20 days.' };
+      return { title: 'Disconnect YouTube?', confirm: 'Disconnect', failed: 'Couldn’t disconnect YouTube',
+        body: 'BlueAI stops using ' + handle + ', and daily runs can’t start until you connect YouTube again. Days without a run don’t count toward your 20 days.' };
     },
-    leave: function (handle, endsOn) {
-      return { title: 'Leave the program?', confirm: 'Leave the program',
-        body: 'Your worker stops for good and BlueAI disconnects ' + handle + '. Days already verified stay on Earnings, and cash out opens there after ' + endsOn + '. To come back, apply again on the site.' };
+    leave: function (handle, endsOn, n) {
+      return { title: 'Leave the program?', confirm: 'Leave the program', failed: 'Couldn’t leave the program',
+        body: 'Your worker stops for good and BlueAI disconnects ' + handle + '. ' + cashLine(endsOn, n) + ' To come back, apply again on the site.' };
     },
-    deleteData: function () {
-      return { title: 'Delete your data?', confirm: 'Delete my data',
-        body: 'BlueAI deletes your run history, interest profile and agreement records, disconnects your accounts and takes you out of the program. Verified days stay on Earnings until you cash out. This can’t be undone.' };
+    deleteData: function (n) {
+      return { title: 'Delete your data?', confirm: 'Delete my data', failed: 'Couldn’t delete your data',
+        body: 'BlueAI deletes your run history, interest profile and agreement records, disconnects your accounts and takes you out of the program. ' + cashLine(n && n.endsOn, n) + ' This can’t be undone.' };
     },
   };
+
+  const WORK_MS = 900; // the prototype's stand-in for the server's answer
+  function useConfirmStep(forced) {
+    const [st, setSt] = useState(forced || null);
+    const t = useRef(null);
+    useEffect(function () { return function () { clearTimeout(t.current); }; }, []);
+    return {
+      busy: st === 'busy', failed: st === 'failed',
+      run: function (done) { setSt('busy'); clearTimeout(t.current); t.current = setTimeout(function () { setSt(null); done(); }, WORK_MS); },
+      reset: function () { clearTimeout(t.current); setSt(null); },
+    };
+  }
+
+  function ConfirmDialog({ copy, tone, step, preview, onCancel, onConfirm }) {
+    const K = kit();
+    if (!copy || !K.Dialog) return null;
+    const s = step || {};
+    return (
+      <K.Dialog open preview={preview} variant="alert" title={copy.title} description={copy.body} busy={s.busy} onClose={onCancel}
+        actions={[{ label: 'Cancel', onClick: onCancel }, { label: s.failed ? 'Try again' : copy.confirm, variant: tone || 'primary', onClick: onConfirm }]}>
+        {s.failed && K.Banner ? <K.Banner tone="danger" title={copy.failed}>Nothing changed. Try again in a moment.</K.Banner> : null}
+      </K.Dialog>
+    );
+  }
+
+  function pendingBody(state, what, onRetry) {
+    const S = scr();
+    if (state === 'loading') return S.ListSkeleton ? <S.ListSkeleton rows={4} label={'Loading ' + what} /> : null;
+    if (state === 'error') return S.LoadError ? <S.LoadError what={what} onRetry={onRetry} /> : null;
+    return null;
+  }
 
   // One sentence for the worker row: when it runs and how it takes paid jobs, or that it is paused.
   function workerLine(w) {
@@ -150,13 +200,14 @@
     const overlays = report && Report
       ? <Report open preview={p.preview} onClose={function () { setReport(false); }} onSent={function () { setReport(false); }} />
       : null;
+    const pending = pendingBody(p.state, 'your settings', p.onRetry);
 
     return (
       <Frame worker={w} tab="settings" frame={p.frame} compact={p.compact} landmark={p.landmark} onNavigate={nav}
-        scrollTo={p.preview ? (hl || SCROLL[p.state] || null) : null} overlays={overlays}>
+        loading={p.state === 'loading'} scrollTo={p.preview ? (hl || SCROLL[p.state] || null) : null} overlays={overlays}>
         <div className="v2-acct">
           {K.ScreenHeader ? <K.ScreenHeader title="Settings" /> : null}
-          <div className="v2-acct-body">
+          {pending ? <div className="v2-acct-body">{pending}</div> : <div className="v2-acct-body">
             {section('worker', 'Worker', (
               <Row label="BlueAI worker" description={workerLine(w)} leading={ic(w.paused ? 'pause' : 'calendar')}
                 badge={w.paused && K.Badge ? <K.Badge tone="neutral">Paused</K.Badge> : null}
@@ -184,12 +235,12 @@
               <Row key="report" label="Report a problem" leading={ic('alert')} onClick={openReport} />,
             ])}
             <Advanced open={adv} onToggle={setAdv} />
-          </div>
+          </div>}
         </div>
       </Frame>
     );
   }
 
   window.V2Screens = window.V2Screens || {};
-  Object.assign(window.V2Screens, { Settings, CONFIRM_COPY });
+  Object.assign(window.V2Screens, { Settings, CONFIRM_COPY, useConfirmStep, ConfirmDialog, pendingBody });
 })();

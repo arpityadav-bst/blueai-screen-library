@@ -84,10 +84,10 @@
               <Stat label="Your 20 days" size="compact" value="Day 7" unit="of 20" context={ctx} action={earnings} />
               <Stat label="AI credits left today" value={2000} context="Refills to 2,000 every day." />
             </div>}
-            changed="The credits figure is 54/800 in the brand gradient (38 when zero) inside 28px padding, and the strip says '13 to go' in green. The system figure is ink, 40/600 tabular (20 compact), the same size at zero, one eyebrow label per card (the site's mini-title rule), and money and counts stay in ink: green means reached, a figure is not a state." />
+            changed="The credits figure is 54/800 in the brand gradient (38 when zero) inside 28px padding, and the strip says '13 to go' in green. The system figure is ink, 40/600 tabular (20 compact), the same size at zero, one mini-title label per card (the site's .mini-title), and money and counts stay in ink: green means reached, a figure is not a state." />
 
           <G.SpecDrawer rows={[
-            { part: 'Label', token: '--v2-text-11 / --v2-tracking-eyebrow / --v2-ink-3', value: '11px / 500, uppercase eyebrow', ref: 'display-feedback.stat.site-label' },
+            { part: 'Label', token: '.v2-text-mini-title (--v2-text-13, --v2-weight-semibold, --v2-ink)', value: '13 / 600, sentence case, 0.02em (the site’s .mini-title, onblue.css:1935-1942)', ref: 'display-feedback.stat.site-label' },
             { part: 'Figure', token: '--v2-text-40 / --v2-weight-semibold / --v2-ink', value: '40px / 600, -0.03em, tabular', ref: ['display-feedback.stat.figure', 'display-feedback.stat.gradient'] },
             { part: 'Figure (compact)', token: '--v2-text-20', value: '20px / 600, -0.02em', ref: 'display-feedback.stat.day-of' },
             { part: 'Unit', token: '--v2-text-14 / --v2-ink-3', value: '14px / 500' },

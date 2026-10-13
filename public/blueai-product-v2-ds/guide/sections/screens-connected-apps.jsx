@@ -42,16 +42,34 @@
           </G.Note>
           <p><strong>Anatomy.</strong> ScreenHeader 'Connected apps' with Back. The list is one SettingsSection of
             ConnectedAppRows: app mark, name, the account or why there is none, one Badge. An app's detail: its Account row,
-            What BlueAI does here (Paid jobs, Watch history), then the consequence in words over one danger Disconnect button.</p>
+            What BlueAI does here (Paid jobs, Watch history), then the consequence in words over one Disconnect button: danger for
+            YouTube, which costs days; secondary for Telegram, which costs nothing and offers Undo.</p>
           <Screens states={[
             { label: 'List', note: 'YouTube connected, Telegram not connected, Instagram Coming soon', node: scr() },
             { label: 'YouTube connected', note: 'pushed from the list or from Settings', node: scr({ app: 'youtube' }) },
             { label: 'YouTube signed out in App Player', note: 'the one action that fixes it', node: scr({ app: 'youtube', state: 'signed-out' }) },
             { label: 'Disconnect confirm', note: 'the cost before the choice', node: scr({ app: 'youtube', state: 'disconnect' }) },
-            { label: 'Disconnected', note: 'runs paused; Connect brings it back', node: scr({ app: 'youtube', state: 'disconnected' }) },
+            { label: 'Disconnecting', note: 'the confirm’s primary works in place', node: scr({ app: 'youtube', state: 'disconnect-busy' }) },
+            { label: 'Couldn’t disconnect', note: 'said in the dialog, Try again', node: scr({ app: 'youtube', state: 'disconnect-failed' }) },
+            { label: 'Disconnected', note: 'runs can’t start; Connect brings it back', node: scr({ app: 'youtube', state: 'disconnected' }) },
             { label: 'Telegram linked', note: 'Disconnect, then Undo in the toast', node: scr({ app: 'telegram', telegram: 'linked' }) },
             { label: 'Telegram not linked', node: scr({ app: 'telegram', telegram: 'not-linked' }) },
+            { label: 'Telegram pairing', note: 'the code and a waiting line', node: scr({ app: 'telegram', state: 'tg-pairing' }) },
+            { label: 'Pairing expired', node: scr({ app: 'telegram', state: 'tg-expired' }) },
+            { label: 'Pairing failed', node: scr({ app: 'telegram', state: 'tg-failed' }) },
+            { label: 'Loading', node: scr({ state: 'loading' }) },
+            { label: 'Couldn’t load', node: scr({ state: 'error' }) },
           ]} />
+          <G.CompareRow
+            v2={<div style={{ position: 'relative', width: '100%', minHeight: 440 }}>
+              <G.Live get={function () { return window.TelegramCard; }} label="TelegramCard (settings.jsx)" />
+            </div>}
+            system={scr({ app: 'telegram', state: 'tg-pairing' })}
+            changed={'V2’s Connect Telegram opens a modal (press it on the left) with a grey QR placeholder, "Or use pairing code:", '
+              + '4829 in indigo, and "I’ve paired, continue": the partner reports a pairing the app never checked. The system keeps the '
+              + 'code, says where to send it, and waits for Telegram itself with a live line ("The code works for 10 minutes."); an '
+              + 'expired or failed pairing says so, says nothing was linked, and offers a new code or Try again. The QR placeholder '
+              + 'is left out until there is a real code to scan.'} />
           <G.StateGrid wide states={[
             { label: 'Rows: all connected', node: rows({ telegram: 'linked' }) },
             { label: 'Rows: YouTube signed out', node: rows({ youtube: 'signed-out' }) },
@@ -61,7 +79,7 @@
           ]} />
           <G.DoDont
             do={['Show the account handle BlueAI uses, with one status Badge.',
-              'Write what disconnecting costs above the button and again in the confirm: runs pause, days without a run don’t count.',
+              'Write what disconnecting costs above the button and again in the confirm: runs can’t start, days without a run don’t count.',
               'Confirm a disconnect that costs days; offer Undo for one that costs nothing (Telegram).',
               'Show an app that is not live as Coming soon, with no switch and no chevron.']}
             dont={['Say "Unlink".', 'Let a partner consent to automation on an app with no jobs.',
@@ -72,7 +90,8 @@
             { part: 'Status words', token: 'Badge success / attention / neutral', value: 'Connected, Signed out, Not connected, Coming soon' },
             { part: 'Instagram', token: 'ListRow static + Badge neutral', value: '"Instagram jobs aren’t available yet." No chevron', ref: 'screens-account.apps.instagram' },
             { part: 'Telegram', token: 'ListRow', value: 'V2’s copy: "Connected to @BlueAIBot" / "Connect your Telegram account…"; Connect Telegram', ref: ['screens-account.settings.telegram-linked', 'screens-account.settings.telegram-desc', 'screens-account.settings.telegram-connect'] },
-            { part: 'Disconnect', token: 'Button danger md', value: 'replaces "Unlink"; consequence 13 ink-3 above it', ref: 'screens-account.settings.telegram-unlink' },
+            { part: 'Pairing', token: 'Dialog task + Spinner 16', value: 'the code 4829 (24/600 tabular, sunken, dashed line), "Waiting for Telegram. The code works for 10 minutes."; expired and failed say "Nothing was linked."; no QR placeholder, no "I’ve paired"', ref: ['screens-account.settings.telegram-modal', 'screens-account.settings.telegram-qr', 'screens-account.settings.telegram-code', 'screens-account.settings.telegram-paired'] },
+            { part: 'Disconnect', token: 'Button danger md (YouTube), secondary md (Telegram)', value: 'replaces "Unlink"; consequence 13 ink-3 above it', ref: 'screens-account.settings.telegram-unlink' },
             { part: 'Confirm', token: 'Dialog alert sm', value: '"Disconnect YouTube?" Cancel / Disconnect (danger); focus starts on Cancel' },
             { part: 'Watch history', token: 'ListRow + Switch', value: 'on: used to pick jobs; off: general videos', ref: 'screens-account.worker.history-read' },
             { part: 'Passwords', token: 'SettingsSection description', value: 'adapted from the pitch: "It never sees or types your passwords."', ref: 'screens-account.worker.password' },

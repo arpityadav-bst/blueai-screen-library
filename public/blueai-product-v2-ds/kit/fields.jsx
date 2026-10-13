@@ -68,14 +68,14 @@
         {p.label ? (
           <label className={p.hideLabel ? 'v2-sr-only' : 'v2-field-label'} htmlFor={f.id}>
             {p.label}
-            {p.required && !p.hideLabel ? <span className="v2-field-flag" aria-hidden="true">Required</span> : null}
-            {p.optional && !p.hideLabel ? <span className="v2-field-flag">Optional</span> : null}
+            {p.required && !p.hideLabel ? <span className="v2-field-flag v2-text-meta" aria-hidden="true">Required</span> : null}
+            {p.optional && !p.hideLabel ? <span className="v2-field-flag v2-text-meta">Optional</span> : null}
           </label>
         ) : null}
         {children}
         {f.mayHold ? (
           <div className="v2-field-foot">
-            <p id={f.id + '-msg'} className={cx('v2-field-msg', f.tone && 'v2-field-msg--' + f.tone)} aria-live="polite">
+            <p id={f.id + '-msg'} className={cx('v2-field-msg', 'v2-text-caption', f.tone && 'v2-field-msg--' + f.tone)} aria-live="polite">
               {f.text && f.tone === 'error' ? <Ico name="alert" /> : null}
               {f.text ? <span>{f.text}</span> : null}
             </p>

@@ -73,4 +73,6 @@ window.V2Refs = (window.V2Refs || []).concat([
   {"id":"compose.r49.q2","file":"blueai/login.jsx","line":247,"needle":"Try again","value":"R49 today: Try again"},
   {"id":"compose.r49.at","file":"blueai/login.jsx","line":242,"needle":"<button onClick={handleSignIn} {...linkHover('#f59e0b', '#d97706')} st","value":"R49 cited at blueai/login.jsx:242"},
   {"id":"compose.r50.at","file":"blueai/schedule.jsx","line":10,"needle":"function repeatLabel(sch) {","value":"R50 cited at blueai/schedule.jsx:10"},
+  {"id":"compose.r51.q1","file":"blueai/agent_permissions.jsx","line":161,"needle":"including posting videos and other content","value":"R51 today: including posting videos and other content"},
+  {"id":"compose.r51.at","file":"blueai/agent_permissions.jsx","line":161,"needle":"BlueAI will accept {a.name} jobs and finish them on your {a.name} account without asking you first","value":"R51 cited at blueai/agent_permissions.jsx:161"},
 ]);

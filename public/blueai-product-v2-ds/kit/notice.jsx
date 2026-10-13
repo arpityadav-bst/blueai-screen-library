@@ -10,19 +10,20 @@
   }
 
   /* Banner: tone in the fill, the edge and the icon; the words stay in ink, so every tone clears
-     4.5:1. One action at most, written as an underlined link. Only one-time news (a verified day)
+     4.5:1. One action at most: V2Kit.Link standalone (the family link). Only one-time news (a verified day)
      is dismissible; a condition ends when the condition ends. Danger is role=alert, the rest
      role=status. A ticking value inside goes in <strong aria-live="off"> so it is read once. */
   const BANNER_ICON = { info: 'info', success: 'check', attention: 'alert', danger: 'x-circle', offline: 'wifi-off' };
   function Banner({ tone, icon, title, children, action, onDismiss, dismissLabel, className }) {
     const t = BANNER_ICON[tone] ? tone : 'info';
     const ic = icon === null ? null : (icon || BANNER_ICON[t]);
+    const L = window.V2Kit && window.V2Kit.Link;
     let act = action || null;
     if (action && action.label) {
-      act = action.href
-        ? <a className="v2-banner-action" href={action.href} target={action.external ? '_blank' : undefined}
-            rel={action.external ? 'noopener' : undefined}>{action.label}</a>
-        : <button type="button" className="v2-banner-action" onClick={action.onClick}>{action.label}</button>;
+      act = L ? (
+        <L standalone href={action.href} external={action.external} onClick={action.onClick}
+          className="v2-banner-action">{action.label}</L>
+      ) : null;
     }
     return (
       <div className={cx('v2-banner', 'v2-banner--' + t, className)} role={t === 'danger' ? 'alert' : 'status'}>
@@ -59,8 +60,8 @@
     return (
       <div className={cx('v2-empty', 'v2-empty--' + v, 'v2-anim-fade-up', className)} role={v === 'error' ? 'alert' : undefined}>
         {ic ? <span className="v2-empty-icon" aria-hidden="true"><Ico name={ic} size={24} /></span> : null}
-        {title ? <H className="v2-empty-title">{title}</H> : null}
-        {body ? <p className="v2-empty-body">{body}</p> : null}
+        {title ? <H className="v2-empty-title v2-text-title">{title}</H> : null}
+        {body ? <p className="v2-empty-body v2-text-body-sm">{body}</p> : null}
         {primaryAction || secondaryAction ? (
           <div className="v2-empty-actions">
             {button(primaryAction, 'primary')}

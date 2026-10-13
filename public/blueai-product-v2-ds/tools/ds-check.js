@@ -8,16 +8,25 @@
                guide section names exists: ref: and refs= values, ref() and refText() calls, and any
                ref-shaped string (a refs namespace plus two or more dots) in its data arrays.
    2. em dash  no U+2014 character, its HTML entities or its JS escapes in any system file.
-   3. parse    every .jsx/.js parses (babel parser, plugin jsx, as a script). It parses; it does not
-               compile, so a transform error only Babel standalone raises in the browser can pass.
-               No parser found is an error, never a silent skip.
+   3. parse    every .jsx/.js parses (babel parser, plugin jsx, as a strict script: Babel standalone
+               compiles text/babel as a module, which is strict, so with, legacy octals, duplicate
+               parameters and reserved words such as package fail here, not in the browser; import
+               and export stay errors). It parses; it does not compile, so a transform error only
+               Babel standalone raises can pass. No parser found is an error, never a silent skip.
    4. lines    every .jsx/.js/.css is at most 300 lines (index.html and .md exempt).
    5. sync     catalog sections, guide/sections files (and their register id), design-md partials
                and index.html's script/stylesheet list agree, in a safe load order.
-   6. colour   no raw colour (#hex, rgb(a), hsl(a), named colours) in kit/ or screens/, and no
-               stylesheet but tokens.css defines a --v2- property.
+   6. colour   no raw colour in kit/ or screens/: #hex and rgb(a), hsl(a), hwb, lab, lch, oklab,
+               oklch and color() on any line here; CSS named and system colours read from values,
+               under any CSS property, JSX colour key, style= key or fill=/stroke=/color= attribute,
+               in tools/ds-check-more.js. No stylesheet but tokens.css defines a --v2- property.
    7. kit      every kit component and screen the catalog names is put on window.V2Kit / V2Screens.
-   8. sizes    the size lists the JSX copies (Icon and Avatar SIZES) equal their tokens' px values.
+   8. sizes    Icon and Avatar SIZES equal their tokens, each size class reads its token, no caller
+               passes a size off the list, and no kit/ or screens/ rule types a Size token raw.
+   9. rest     no object rest destructuring in kit/, screens/ or guide/ .jsx (Babel's hoisted
+               _excluded is shared across files).
+   10. iife    kit/, screens/ and guide/ files hold only IIFEs at top level (refs may assign
+               window.V2Refs), so nothing lands on window. 8 to 10 live in tools/ds-check-more.js.
    --missing-ok turns "planned file does not exist yet" (and "file not loaded by index.html") into
    warnings, so slice builders can run it before every file exists; planned-but-absent files are
    then counted in one line (add --verbose to list them). Exit 1 on any error. */
@@ -92,6 +101,7 @@ const parserPath = PARSERS.find((p) => fs.existsSync(p));
 const parser = parserPath ? require(parserPath) : null;
 if (parser) notes.push('parser: ' + parserPath + ' (parses only, does not compile)');
 else err('tools/ds-check.js', 'parse check cannot run: no Babel parser found. Run npm install in the repo, or set DS_BABEL_PARSER to a @babel/parser build');
+const ASTS = {};
 for (const f of FILES) {
   const e = ext(f);
   if (!['.js', '.jsx', '.css'].includes(e)) continue;
@@ -99,17 +109,16 @@ for (const f of FILES) {
   const n = src.replace(/\r?\n$/, '').split(/\r?\n/).length;
   if (n > MAX_LINES) err(f, n + ' lines, over the ' + MAX_LINES + '-line rule: split it');
   if (parser && e !== '.css') {
-    try { parser.parse(src, { sourceType: 'script', plugins: ['jsx'] }); } catch (x) { err(f, 'does not parse: ' + x.message); }
+    try { ASTS[f] = parser.parse(src, { sourceType: 'script', strictMode: true, plugins: ['jsx'] }); } catch (x) { err(f, 'does not parse: ' + x.message); }
   }
 }
 
-// 6. raw colour in kit/ and screens/
+// 6. raw colour in kit/ and screens/ (named colours: tools/ds-check-more.js, which reads values)
 const HEX = /(^|[^\w&#/-])#(?:[0-9a-f]{8}|[0-9a-f]{6}|[0-9a-f]{3,4})(?![\w-])/i;
-const FN = /\b(?:rgba?|hsla?)\s*\(/i;
-const NAMED = /\b(?:color|background(?:-color)?|border(?:-[a-z]+)*-color|border(?:-[a-z]+)?|fill|stroke|outline(?:-color)?)\s*:\s*['"]?[^;'"]*(?<![\w-])(white|black|red|blue|green|gr[ae]y|yellow|orange|purple|pink|navy|silver)(?![\w-])/i;
+const FN = /\b(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch|color)\s*\(/i;
 for (const f of FILES.filter((x) => /^(kit|screens)\//.test(x) && ['.js', '.jsx', '.css'].includes(ext(x)))) {
   read(f).split('\n').forEach((l, i) => {
-    const m = l.match(HEX) || l.match(FN) || l.match(NAMED);
+    const m = l.match(HEX) || l.match(FN);
     if (m) err(f, 'line ' + (i + 1) + ': raw colour "' + m[0].trim() + '": use a --v2-* token');
   });
 }
@@ -270,17 +279,8 @@ if (C) {
   check(C.screens, 'V2Screens');
 }
 
-// 8. sizes the JSX copies: each SIZES list must equal its tokens' px values
-const TOKENS = {};
-for (const m of read('tokens.css').matchAll(/(--v2-[\w-]+)\s*:\s*([^;]+);/g)) TOKENS[m[1]] = m[2].trim();
-[['kit/icons.jsx', ['--v2-icon-sm', '--v2-icon-md', '--v2-icon-lg']],
-  ['kit/display.jsx', ['--v2-mark-sm', '--v2-mark-md', '--v2-mark-lg', '--v2-mark-xl']]].forEach(([f, names]) => {
-  if (!has(f)) return;
-  const want = names.map((n) => parseFloat(TOKENS[n])).join(', ');
-  const m = read(f).match(/\bconst SIZES = \[([^\]]*)\]/);
-  const got = m ? m[1].split(',').map((x) => parseFloat(x)).join(', ') : 'none';
-  if (got !== want) err(f, 'SIZES is [' + got + '] but ' + names.join(', ') + ' in tokens.css are [' + want + ']: keep them equal');
-});
+// 6 (named colours), 8. sizes, 9. rest and 10. iife (tools/ds-check-more.js)
+require('./ds-check-more.js')({ files: FILES, read, has, err, asts: ASTS });
 
 // Report
 let errors = 0;

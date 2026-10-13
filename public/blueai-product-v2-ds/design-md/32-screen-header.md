@@ -46,7 +46,24 @@
 
 **States.** Tab; pushed (one or more screens on a tab's stack); overlay open. Rules: each tab keeps its own stack; tapping another tab switches and keeps the stack; tapping the lit tab returns to its root; a notification or the tray opens the screen it names, pushed over its parent tab. V2: none of these exist; a kebab screen is left only by tapping a tab (index.html:857).
 
-**Props.** Navigation state is `{ tab, stacks: { home: [], activity: [], settings: [] } }`, held by the app shell, never inside a screen. BottomNav's `value` is `tab`.
+**Props.** Navigation state is `{ tab, stacks: { home: [], activity: [], settings: [] } }`, held by the host router: the code that mounts the screens (V2's app root when it adopts the kit; the guide's demo is `guide/sections/screens-home.jsx`, `Flow`), never inside a screen and never in the kit. A stack entry is `{ id, run, row }`. BottomNav's `value` is `tab`. Every screen emits `onNavigate(id, opts)`; the router resolves each id by this table.
+
+| id | opts | Screen | Level | Tab lit | Back |
+|---|---|---|---|---|---|
+| `home`, `activity`, `settings` | none | Home, Activity, Settings | tab | itself | none; tapping the lit tab returns it to its root |
+| `settings` | `{highlight}`: a section id ('worker', 'apps', 'notifications', 'bluestacks', 'account', 'help', 'advanced') | Settings, scrolled to that section and holding the highlight | tab | Settings | none |
+| `chat` | `{state}`: setup, running, waiting, retrying | Chat | pushed on Home's stack, from any door | Home | the screen under it on Home's stack |
+| `run` | `{state, row}`: a Run detail state and its ledger row (`rowTarget`, section 58) | Run detail | pushed on Activity's stack, from any door | Activity | the screen under it on Activity's stack |
+| `notifications` | none | Notifications (`parentTab`) | pushed over the tab you are on | that tab | that tab |
+| `credits` | none | AI credits (`tab`) | pushed over the tab you are on | that tab | that tab |
+| `account` | none | Account | pushed on Settings' stack | Settings | Settings |
+| `worker-settings` | none | Worker settings | pushed on Settings' stack | Settings | the screen under it |
+| `connected-apps` | `{app}`: 'youtube' or 'telegram'; none for the list | Connected apps | pushed on Settings' stack | Settings | the screen under it |
+| `report` | none | the Report a problem sheet (`V2Screens.ReportProblemSheet`) | overlay | unchanged | its own close |
+| `sign-out` | none | the sign-out confirm (`CONFIRM_COPY.signOut`, section 64) | overlay | unchanged | Cancel |
+| `terms` | none | the Program Terms sheet, `update` mode (`V2Screens.TermsSheet`, section 53), from a Terms updated notification | overlay | unchanged | none: it asks for the agreement |
+
+The run chip, the WorkerCard's Details and the RunCard's details emit no id of their own: they open `V2Screens.chipTarget(worker)` (`screens/home.jsx`), which is today's row as Activity opens it (`chat` {state} while the run is live, `run` {state, row} once it has an outcome), `worker-settings` while paused, and `home` otherwise. Earnings is not a route: it opens `EARNINGS_URL` on the site in the browser. A pushed screen whose id is already on top is replaced, so it shows the new state. A new screen gets a row here before it ships (section 74, step 3).
 
 **Motion.** A pushed screen enters with `v2-anim-fade-up` (section 07); Back reverses it. Reduced motion: instant.
 

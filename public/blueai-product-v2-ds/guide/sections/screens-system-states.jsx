@@ -47,6 +47,7 @@
             { label: 'Offline, trying again', note: 'the button holds while it checks', node: <Shot><Screen state="offline" busy /></Shot> },
             { label: 'Updating', note: 'Update now in progress', node: <Shot><Screen state="update-required" busy /></Shot> },
             { label: 'Offline, compact 640', note: 'bars pinned, content centred', node: <Shot h={640}><Screen state="offline" compact /></Shot> },
+            { label: 'Left the program, data deleted', node: <Shot><Screen state="left-program" deleting /></Shot> },
           ])} />
           <div className="g-table-wrap">
             <table className="g-table">

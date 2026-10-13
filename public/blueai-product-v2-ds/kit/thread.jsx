@@ -6,9 +6,10 @@
    DaySeparator  {label}                  'Today', 'Yesterday', 'Oct 12' (chatTime.day builds it).
    JumpToLatest  {count, onClick}         renders nothing at 0.
    MessageBubble {from: 'user'|'worker', time, groupStart, children}
-   NoticeBubble  {kind: 'headsup'|'success'|'fail'|'needsInput'|'info', title, lines, children,
-                 action, feedback, time}  neutral surface, the icon carries the tone; needsInput
-                 keeps the PM's yellow as the one attention fill.
+   NoticeBubble  {kind: 'info'|'success'|'attention'|'danger'|'neutral', title, lines, children,
+                 action, feedback, time}  kind is one of the five token tones; neutral surface, the
+                 icon carries the tone. Aliases: 'headsup' is attention, 'fail' is danger, and
+                 'needsInput' is attention with the PM's yellow as the one attention fill.
    renderMessage(step, i, steps)          the canonical message kinds (V2's role map plus run and
                  notice): separator, user, status, thinking, plan, warning, final, notice, ask,
                  needsbs, installing-bs, run, daydone. Shows one time per message group.
@@ -34,9 +35,6 @@
     },
   };
 
-  function reducedMotion() {
-    return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-  }
 
   function Icon(props) {
     const I = K().Icon;
@@ -65,25 +63,31 @@
           <span className="v2-chat-sr">{user ? 'You: ' : 'BlueAI: '}</span>
           {children}
         </div>
-        {time ? <span className="v2-msg-time">{time}</span> : null}
+        {time ? <span className="v2-msg-time v2-text-meta">{time}</span> : null}
       </div>
     );
   }
 
+  // Keyed by the five token tones. DependencyCard (kit/ask.jsx) and older callers pass the aliases.
   const NOTICE = {
-    headsup: { icon: 'alert', tone: 'attention', sr: 'Heads up' },
-    success: { icon: 'check', tone: 'success', sr: 'Done' },
-    fail: { icon: 'x-circle', tone: 'danger', sr: 'Did not finish' },
-    needsInput: { icon: 'help', tone: 'attention', sr: 'Needs your input' },
     info: { icon: 'info', tone: 'info', sr: 'Info' },
+    success: { icon: 'check', tone: 'success', sr: 'Done' },
+    attention: { icon: 'alert', tone: 'attention', sr: 'Heads up' },
+    danger: { icon: 'x-circle', tone: 'danger', sr: 'Did not finish' },
+    neutral: { icon: 'info', tone: 'neutral', sr: 'Note' },
+  };
+  const ALIAS = {
+    headsup: NOTICE.attention,
+    fail: NOTICE.danger,
+    needsInput: { icon: 'help', tone: 'attention', sr: 'Needs your input', fill: true },
   };
 
   function NoticeBubble({ kind, title, lines, children, action, feedback, time, groupStart, className }) {
-    const k = NOTICE[kind] || NOTICE.headsup;
+    const k = NOTICE[kind] || ALIAS[kind] || NOTICE.attention;
     const body = lines ? lines : (children != null ? [children] : []);
     return (
       <div className={cx('v2-msg', 'v2-msg--worker', groupStart && 'is-group-start', className)}>
-        <div className={cx('v2-notice', 'v2-notice--' + (NOTICE[kind] ? kind : 'headsup'))}>
+        <div className={cx('v2-notice', 'v2-notice--' + k.tone, k.fill && 'v2-notice--fill')}>
           <div className="v2-notice-row">
             <span className={'v2-notice-icon v2-chat-tone--' + k.tone}><Icon name={k.icon} size={16} /></span>
             <div className="v2-notice-body">
@@ -94,7 +98,7 @@
           {action ? <div className="v2-notice-action">{action}</div> : null}
         </div>
         {feedback || null}
-        {time ? <span className="v2-msg-time">{time}</span> : null}
+        {time ? <span className="v2-msg-time v2-text-meta">{time}</span> : null}
       </div>
     );
   }
@@ -173,7 +177,7 @@
     }
     function jump() {
       const el = ref.current;
-      if (el) el.scrollTo({ top: el.scrollHeight, behavior: reducedMotion() ? 'auto' : 'smooth' });
+      if (el) el.scrollTo({ top: el.scrollHeight, behavior: window.V2Kit.reducedMotion() ? 'auto' : 'smooth' });
       atBottom.current = true;
       setFresh(0);
       if (onJump) onJump();

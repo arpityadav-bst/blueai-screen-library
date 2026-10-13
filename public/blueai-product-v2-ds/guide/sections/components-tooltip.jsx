@@ -42,8 +42,8 @@
         <G.Part name="Tooltip" status="changed"
           role="A label tip names an icon-only control; an info tip explains a concept beside its name, with at most one link.">
           <p>Two kinds on one float. <strong>Info</strong> keeps everything V2's credits (i) already does well:
-            it opens on hover, on keyboard focus and on click (click pins it for touchscreens), waits 200ms before
-            closing so the pointer can reach the link, and Esc closes it. <strong>Label</strong> is new: every
+            it opens on hover, on keyboard focus and on click (click pins it for touchscreens), waits 180ms (--v2-dur-2; V2 waits 200ms)
+            before closing so the pointer can reach the link, and Esc closes it. <strong>Label</strong> is new: every
             icon-only button gets its name shown on hover or keyboard focus, after a short wait so a pointer
             crossing the top bar stays quiet.</p>
           <G.StateGrid wide states={[
@@ -56,7 +56,7 @@
           ]} />
           <G.StateGrid states={[
             { label: 'Label tip, rest', node: <Win h={96} align="flex-start"><HelpTip /></Win> },
-            { label: 'Label tip, hover', node: <Win h={96} align="flex-start"><HelpTip tipClass="is-hover" btnClass="is-hover" /></Win>, note: 'After a 400ms wait.' },
+            { label: 'Label tip, hover', node: <Win h={96} align="flex-start"><HelpTip tipClass="is-hover" btnClass="is-hover" /></Win>, note: 'After a 360ms wait (2 x --v2-dur-2).' },
             { label: 'Label tip, focus', node: <Win h={96} align="flex-start"><HelpTip tipClass="is-focus" btnClass="is-focus" /></Win>, note: 'At once, keyboard only.' },
           ]} />
           <G.Note>Try it: hover, Tab to and click the controls in this window. The two top icons sit on the edge and
@@ -91,10 +91,10 @@
             { part: 'Arrow (info only)', token: '--v2-surface, --v2-line', value: '8px square turned 45deg', ref: 'overlays.tooltip.arrow' },
             { part: 'Placement', token: null, value: 'up or down; flips when the side has no room, slides to stay 8px inside the window', ref: 'overlays.tooltip.position' },
             { part: 'Opens on', token: null, value: 'hover, keyboard focus, click (pins)', ref: ['overlays.tooltip.focus-open', 'overlays.tooltip.pin'] },
-            { part: 'Closes', token: null, value: '200ms after the pointer leaves; Esc; an outside click when pinned', ref: ['overlays.tooltip.close-delay', 'overlays.tooltip.esc'] },
+            { part: 'Closes', token: '--v2-dur-2, --v2-dur-1', value: 'info: fades out after a 180ms grace once the pointer leaves (V2: 200ms), hidden by 300ms; Esc; an outside click when pinned', ref: ['overlays.tooltip.close-delay', 'overlays.tooltip.esc'] },
             { part: 'Layer', token: '--v2-z-popover', value: '30', ref: 'overlays.tooltip.position' },
             { part: 'Motion', token: '--v2-dur-3, --v2-ease-out', value: 'fade-up 240ms in, 120ms out' },
-            { part: 'Label kind', token: '--v2-text-12, --v2-weight-medium, --v2-radius-sm', value: '12/500, padding 4 8, no arrow, 400ms hover wait, at once on keyboard focus' },
+            { part: 'Label kind', token: '--v2-text-12, --v2-weight-medium, --v2-radius-sm', value: '12/500, padding 4 8, no arrow, 360ms hover wait (2 x --v2-dur-2), at once on keyboard focus, gone 120ms after the pointer leaves' },
             { part: 'Copy', token: null, value: EXPLAIN + ' Learn more', ref: ['overlays.tooltip.copy', 'overlays.tooltip.learn-more', 'overlays.tooltip.faq-url'] },
           ]} />
           <G.DoDont

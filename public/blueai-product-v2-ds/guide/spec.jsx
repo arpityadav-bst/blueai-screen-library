@@ -17,7 +17,7 @@
   const FAMILIES = {
     ink: ['--v2-ink', '--v2-on-color'],
     surface: ['--v2-canvas', '--v2-surface', '--v2-wash'],
-    line: ['--v2-line'],
+    line: ['--v2-line', '--v2-link'],
     blue: ['--v2-blue', '--v2-action', '--v2-select'],
     status: ['--v2-success', '--v2-danger', '--v2-attention'],
     brand: ['--v2-gradient'],
@@ -33,6 +33,7 @@
     opacity: ['--v2-opacity'],
     icon: ['--v2-icon'],
     shell: ['--v2-shell', '--v2-titlebar', '--v2-topbar', '--v2-nav-h', '--v2-bubble', '--v2-dialog', '--v2-control', '--v2-field', '--v2-hit'],
+    size: ['--v2-mark', '--v2-badge-h', '--v2-row-min-h', '--v2-rail', '--v2-popover-w', '--v2-measure'],
     scrollbar: ['--v2-scroll'],
   };
 

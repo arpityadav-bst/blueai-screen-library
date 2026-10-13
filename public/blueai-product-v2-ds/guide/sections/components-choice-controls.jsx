@@ -6,29 +6,25 @@
   const noop = function () {};
   /* V2 copy, quoted (refs below). Proposed copy is not written here: it is read from where the product
      says it, so it exists once. AI mode and own-key strings: kit/advanced.jsx (V2Kit.AI_COPY,
-     V2Kit.BYOK_COPY); run-window options: the Worker settings screen (V2Kit.RUN_WINDOW_OPTIONS,
-     section 62). The fallbacks are those strings verbatim, for a page where the export is missing. */
+     V2Kit.BYOK_COPY); run-window options: kit/worker-data.jsx (V2Kit.RUN_WINDOW_OPTIONS, which the
+     Worker settings screen reads, section 62). With an export missing, its specimens say so. */
   const NO_HW = "This PC doesn't meet the requirements for Hybrid.";
   const MODES = [{ value: 'always', label: 'Always ask', icon: 'shield-check' }, { value: 'auto', label: 'Automatic', icon: 'zap' }];
-  const FALLBACK = {
-    ai: { cloudSub: 'Default. Uses cloud AI.', hybridSub: 'Runs on your PC and uses fewer AI credits.' },
-    byok: { switchLabel: 'Use my own key', switchDesc: 'Turning this off keeps your saved key.' },
-    run: [
-      { value: 'time', title: 'A set time', sub: 'BlueAI starts within that hour.' },
-      { value: 'window', title: 'A window', sub: 'BlueAI picks a different moment in it each day.' },
-      { value: 'any', title: 'Any time', sub: 'BlueAI picks the moment each day.' },
-    ],
-  };
   function copy() {
     const K = window.V2Kit || {};
-    const ai = K.AI_COPY || FALLBACK.ai, byok = K.BYOK_COPY || FALLBACK.byok;
+    const ai = K.AI_COPY || {}, byok = K.BYOK_COPY || {};
     return {
       CLOUD: { value: 'cloud', title: 'Cloud', sub: ai.cloudSub },
       HYBRID: { value: 'hybrid', title: 'Hybrid', sub: ai.hybridSub },
       AUTO: { value: 'auto', title: 'Auto', sub: 'BlueAI runs a local model for you.', badge: 'Recommended' },
-      RUN_WINDOW: K.RUN_WINDOW_OPTIONS || FALLBACK.run,
+      RUN_WINDOW: K.RUN_WINDOW_OPTIONS || [],
       KEY_ROW: { label: byok.switchLabel, description: byok.switchDesc },
     };
+  }
+  // A specimen whose copy the kit does not export is not drawn from a second copy: it says what is missing.
+  function missing(name, file) {
+    return (window.V2Kit || {})[name] ? null
+      : <div className="g-missing">{'V2Kit.' + name + ' is not exported (' + file + '), so this specimen is not drawn.'}</div>;
   }
 
   function V2Toggles() {
@@ -49,7 +45,7 @@
   function SwitchRow() {
     const K = window.V2Kit;
     const [on, setOn] = useState(false);
-    return <K.Switch {...copy().KEY_ROW} checked={on} onChange={setOn} />;
+    return missing('BYOK_COPY', 'kit/advanced.jsx') || <K.Switch {...copy().KEY_ROW} checked={on} onChange={setOn} />;
   }
   function GatedMode() {
     const K = window.V2Kit;
@@ -84,7 +80,7 @@
     return (
       <G.Section id="choice-controls">
         <G.Part name="Switch" status="changed" role="On or off, applied at once. A switch only enables or disables; it never deletes anything.">
-          <G.StateGrid states={[
+          {missing('BYOK_COPY', 'kit/advanced.jsx') || <G.StateGrid states={[
             { label: 'Off', node: <K.Switch {...sw()} /> },
             { label: 'On', node: <K.Switch {...sw({ checked: true })} /> },
             { label: 'Hover, off', node: <K.Switch {...sw({ className: 'is-hover' })} /> },
@@ -93,7 +89,7 @@
             { label: 'Disabled, off', note: 'the description says why', node: <K.Switch {...off} /> },
             { label: 'Disabled, on', note: 'the description says why', node: <K.Switch {...off} checked description="YouTube is signed out. Sign in to YouTube again to change this." /> },
             { label: 'Busy', note: 'waiting on consent or a check', node: <K.Switch {...sw({ busy: true })} /> },
-          ]} />
+          ]} />}
           <G.Stage ground="surface" width="shell"><SwitchRow /></G.Stage>
           <ul className="g-list">
             <li>Track 36 by 20, pill. Off: 1px ink-4 edge, white, a 12px ink-4 thumb. On: action fill, a 16px white thumb. Both clear 3:1 on white.</li>
@@ -147,7 +143,7 @@
         </G.Part>
 
         <G.Part name="RadioCard" status="changed" role="One of a few options the partner compares, each with a line of why. The base of AI mode and of the run-window setting.">
-          <G.StateGrid wide states={[
+          {missing('AI_COPY', 'kit/advanced.jsx') || <G.StateGrid wide states={[
             { label: 'Rest', node: rc(CLOUD, null) },
             { label: 'Hover', node: rc(Object.assign({ className: 'is-hover' }, CLOUD), null) },
             { label: 'Selected', node: rc(CLOUD, 'cloud') },
@@ -155,14 +151,14 @@
             { label: 'Pending', note: 'picked, setup still to finish', node: rc(Object.assign({ pending: 'Setup needed' }, HYBRID), null) },
             { label: 'Disabled with reason', node: rc(Object.assign({ disabled: true, disabledReason: NO_HW }, HYBRID), null) },
             { label: 'With a badge', node: rc(AUTO, null) },
-          ]} />
+          ]} />}
           <G.Stage ground="surface" width="shell">
-            <K.RadioCard label="When BlueAI runs" variant="list" options={RUN_WINDOW} defaultValue="window" />
+            {missing('RUN_WINDOW_OPTIONS', 'kit/worker-data.jsx') || <K.RadioCard label="When BlueAI runs" variant="list" options={RUN_WINDOW} defaultValue="window" />}
           </G.Stage>
           <G.Note>Hybrid's line says "AI credits" where V2 says "tokens" (a banned word), read from the AI mode panel (section 49); the run-window options are the Worker settings screen's (section 62), proposed copy built on V2's schedule question; the rest is V2 copy.</G.Note>
           <G.CompareRow
             v2={<G.Live get={function () { return window.AiMode && window.AiMode.useAiMode && V2AiMode; }} label="AiMode.AIModeCard" />}
-            system={<K.RadioCard label="AI mode" options={[CLOUD, HYBRID]} defaultValue="cloud" />}
+            system={missing('AI_COPY', 'kit/advanced.jsx') || <K.RadioCard label="AI mode" options={[CLOUD, HYBRID]} defaultValue="cloud" />}
             changed="OptionCard was a row of plain buttons: no radio role, no arrow keys, no focus, and the reason Hybrid is unavailable lived only in a hover title. It becomes a real radio group with the family's chosen look and the reason printed on the card." />
           <G.SpecDrawer rows={[
             { part: 'Card', token: '--v2-radius-md, --v2-line', value: 'radius 10, padding 12, 1px 10% black (V2: radius 12, 1.5px #e3e7ee)', ref: ['actions-inputs.radio-card.shape', 'actions-inputs.radio-card.border'] },
@@ -191,11 +187,11 @@
           <G.CompareRow
             v2={<G.FrameState url="index.html?start=worker&v=1" label="V2: the Mode chip in the composer (open it)" height={830} />}
             system={<div className="v2-hstack v2-hstack--between" style={{ maxWidth: 'var(--v2-shell-w)' }}><span className="v2-text-label">YouTube</span>{seg()}</div>}
-            changed="It declared a radiogroup but answered clicks only; now arrows, Home and End move between options with one tab stop. The selected segment is an edge and ink, not a white chip with a shadow; labels go from 11.5/700 to 13/500. beforeChange keeps the Automatic consent gate." />
+            changed="It declared a radiogroup but answered clicks only; now arrows, Home and End move between options with one tab stop. The selected segment is the select fill with a blue edge, not a white chip with a shadow; labels go from 11.5/700 to 13/500. beforeChange keeps the Automatic consent gate." />
           <G.SpecDrawer rows={[
             { part: 'Track', token: '--v2-surface-sunken, --v2-line, --v2-radius-md', value: 'sunken, 1px 10% edge, radius 10, padding 2 (V2 #f1f5f9, radius 8, width 172)', ref: ['actions-inputs.segmented.track', 'actions-inputs.onblue.tabs-track'] },
             { part: 'Segment', token: '--v2-hit-min, --v2-radius-sm, --v2-text-13', value: '32 (sm 28), radius 6, 13/500 ink-3, icon 16 (V2: 11.5/700)', ref: 'actions-inputs.segmented.segment' },
-            { part: 'Selected', token: '--v2-surface, --v2-line, --v2-ink', value: 'white, 1px edge, ink, no shadow (V2: a shadow)', ref: ['actions-inputs.segmented.selected', 'actions-inputs.onblue.tab-on'] },
+            { part: 'Selected', token: '--v2-select, --v2-blue, --v2-stroke-selected', value: 'select fill, 1.5px blue edge (4.15:1 on the track), ink', ref: ['actions-inputs.segmented.selected', 'actions-inputs.onblue.tab-on'] },
             { part: 'Hover', token: '--v2-wash-hover, --v2-ink', value: 'wash + ink' },
             { part: 'Keys', token: null, value: 'radiogroup, roving tabindex, arrows, Home, End (V2: clicks only)', ref: ['actions-inputs.segmented.role', 'actions-inputs.segmented.radio'] },
             { part: 'Gate', token: '--v2-select-line', value: 'beforeChange(value) resolves true to apply; dashed edge while waiting' },

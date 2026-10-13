@@ -51,8 +51,8 @@
     ['Close (the window ✕)', 'The whole app unmounts: nothing runs and nothing can notify.', ['shell.frame.close'], 'Hides to the tray; the worker keeps its schedule. The first time only, a Windows notification says so (proposed copy): "BlueAI is still running. Your next run is at 11 am."'],
     ['Minimize', 'Decorative: no handler.', ['shell.frame.decorative'], 'Minimizes to the taskbar; the running dash stays under the icon.'],
     ['Reopen (taskbar, tray, notification)', 'A cold start every time: the splash replays and the chat resets.', ['shell.frame.cold-start', 'shell.splash.every-open'], 'Restores the last screen at once, no splash. The Worker record and navigation outlive the window (P1).'],
-    ['Tray icon', 'None.', null, 'Click opens BlueAI. Right-click opens the tray menu: status line, Open BlueAI, Pause today’s run, Quit BlueAI.'],
-    ['Pause today’s run', 'None, though setup promises it.', ['shell.frame.promise'], 'Asks first and says the cost when today has not run yet: "Today won’t count toward your 20 days." Resume runs from the same menu or Settings > Worker.'],
+    ['Tray icon', 'None.', null, 'Click opens BlueAI. Right-click opens the tray menu: status line, Open BlueAI, Skip today’s run (only while today’s run is still to come) or Resume runs (while paused), Quit BlueAI.'],
+    ['Skip today’s run', 'None, though setup promises it.', ['shell.frame.promise'], 'Offered only while today’s run is still to come (scheduled, or it didn’t start). Asks first and says the cost: "Today won’t count toward your 20 days. Runs start again tomorrow." Pausing runs for days lives in Settings > Worker, with an end date; while paused the tray offers Resume runs.'],
     ['Quit BlueAI', 'None.', null, 'The only action that stops runs. Asks first and says what it costs today; no question when runs are paused.'],
     ['PC restarts', 'Not modelled.', null, 'BlueAI starts with Windows into the tray, without opening the window, so tomorrow’s run still happens (proposed; a switch in Settings > Worker).'],
     ['Sign out', 'Logout confirm returns to chat; the partner stays signed in.', ['shell.topbar.logout-noop'], 'Signs out and pauses the worker, and says so in the confirm (Account, section 64).'],
@@ -128,13 +128,13 @@
         </G.Part>
 
         <G.Part name="Window semantics and tray" status="new" role="What the window does when it is closed, minimized or quit, so a worker that runs unattended keeps running and can still reach the partner.">
-          <G.Note><strong>Why the product needs it.</strong> BlueAI earns the partner a day by running on its own once a day. In V2 the window's ✕ unmounts the whole app, so nothing can run or raise a notification while it is closed, and Minimize does nothing. A daily worker has to outlive its window, and the partner needs one obvious place to see it, pause it or quit it.</G.Note>
+          <G.Note><strong>Why the product needs it.</strong> BlueAI earns the partner a day by running on its own once a day. In V2 the window's ✕ unmounts the whole app, so nothing can run or raise a notification while it is closed, and Minimize does nothing. A daily worker has to outlive its window, and the partner needs one obvious place to see it, skip a day or quit it.</G.Note>
           <G.StateGrid wide states={[
             { label: 'Tray menu: scheduled', node: <Tray runStatus="scheduled" /> },
             { label: 'Tray menu: running', node: <Tray runStatus="running" /> },
             { label: 'Tray menu: done today', node: <Tray runStatus="done" statusLabel="Day 7 of 20, pending verification" /> },
             { label: 'Tray menu: paused', node: <Tray runStatus="paused" /> },
-            { label: 'Pause asks first (today not run yet)', node: <Tray runStatus="scheduled" confirm="pause" /> },
+            { label: 'Skip asks first (today not run yet)', node: <Tray runStatus="scheduled" confirm="skip" /> },
             { label: 'Quit warns: today’s run will not happen', node: <Tray runStatus="running" confirm="quit" /> },
             { label: 'Quit after today is done', node: <Tray runStatus="done" confirm="quit" /> },
           ]} />
@@ -145,10 +145,11 @@
             { part: 'Corner', token: '--v2-radius-md', value: '10px' },
             { part: 'Item', token: '--v2-hit-min, --v2-radius-sm', value: '32 tall, 6 radius, 13/400 ink-2' },
             { part: 'Status line', token: '--v2-text-12, --v2-ink-3', value: 'dot in the status tone + words' },
-            { part: 'Confirm', token: 'Button sm secondary + primary (Pause) / danger (Quit)', value: 'title 14/600, body 13 ink-3' },
+            { part: 'Confirm', token: 'Button sm secondary + primary (Skip) / danger (Quit)', value: 'title 14/600, body 13 ink-3; confirm null | skip | quit' },
+            { part: 'runStatus', token: 'RUN_STATUS (section 30)', value: 'any chip status; done reads as pending. The line uses the tray words unless statusLabel is passed' },
           ]} />
           <G.DoDont
-            do={['Say the cost of Pause and Quit before the click, in the confirm.', 'Keep the status line in the tray the same words as the top bar chip.', 'Restore the last screen when the window comes back.']}
+            do={['Say the cost of Skip and Quit before the click, in the confirm.', 'Keep the status line in the tray the same words as the top bar chip.', 'Restore the last screen when the window comes back.']}
             dont={['Stop runs when the window closes.', 'Replay the splash on every reopen.', 'Hide Quit; it is the honest way to stop everything.']} />
         </G.Part>
       </G.Section>

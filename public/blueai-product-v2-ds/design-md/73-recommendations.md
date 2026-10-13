@@ -11,7 +11,7 @@
 
 **Do these first:** R01 (one Worker record, so nothing a partner opens can lose today’s run), R02 (one ledger for the day count), R07 (show the job, channel and exact comment before the partner agrees), R08 (a waiting job tells the partner, with a deadline), R03 (Sign out signs out).
 
-### P1 (19)
+### P1 (20)
 
 #### R01 worker (effort L)
 
@@ -36,10 +36,10 @@
 
 #### R04 navigation (effort M)
 
-- **V2:** `blueai/shared.jsx:222; blueai/jobs.jsx:140-142`
-- **Today:** The first tab, Jobs, is 'Coming Soon'; Schedule shows Coin Master samples (schedule.jsx:5-8).
-- **Recommended:** Nav = Home, Activity (run and verification log), Settings; Jobs and Schedule retire (the run window moves to Worker settings).
-- **Why:** Two of four tabs say nothing about the only thing a partner is here for.
+- **V2:** `blueai/shared.jsx:222; blueai/jobs.jsx:140-142; index.html:366`
+- **Today:** The first tab, Jobs, is 'Coming Soon'; Schedule shows Coin Master samples (schedule.jsx:5-8); the kebab's Chat History lists past chat sessions.
+- **Recommended:** Nav = Home, Activity (run and verification log), Settings; Jobs and Schedule retire (the run window moves to Worker settings), and so does Chat History: runs live in Activity and the chat is one thread opened from Home.
+- **Why:** Two of four tabs say nothing about the only thing a partner is here for, and a list of past chats is a second, weaker record of the runs Activity keeps.
 
 #### R05 worker (effort M)
 
@@ -52,14 +52,14 @@
 
 - **V2:** `blueai/worker_flow.jsx:121, 149; blueai/worker_day_done.jsx:118`
 - **Today:** 'Not now' on the job ask forfeits the day; the cost is told afterwards.
-- **Recommended:** State the cost on the option ('Skip today: today won't count') or keep the job open until the run window ends with Undo. PM copy: decision.
+- **Recommended:** State the cost on the option ('Skip: today won’t count') or keep the job open until 9 pm, the day's deadline (section 41), with Undo. Decision D14.
 - **Why:** Learning the cost after the click feels like a trap (P3).
 
 #### R07 worker (effort M)
 
 - **V2:** `blueai/worker_flow.jsx:49-52, 117-121, 136`
 - **Today:** The ask shows only 'Watch the video and provide feedback.'; the comment posted under the partner's name is never shown; first chip bundles 'Yes' with switching to Automatic.
-- **Recommended:** JobPreviewCard: video, channel, actions, exact comment text, consequence; primary 'Take this job', Automatic as a quiet link.
+- **Recommended:** JobPreviewCard: video, channel, actions, exact comment text, consequence; primary 'Take this job', Automatic as a quiet link. Whether it replaces V2's AskCard for paid jobs is decision D17.
 - **Why:** The riskiest moment in the product is agreeing blind to a public comment.
 
 #### R08 notifications (effort M)
@@ -87,7 +87,7 @@
 
 - **V2:** `blueai/worker_flow.jsx:67 vs 76-78; blueai/worker_flow.jsx:46`
 - **Today:** 'I only run a paid job after you say yes to that specific job.' then the same onboarding offers Automatic; PLAN step 2 promises 'a quick approval'.
-- **Recommended:** Decision for the PM (kept live by his call, worker_flow.jsx:18): a bullet that holds in both modes, for example 'You choose: I can ask before each paid job, or take them on my own. You can change this anytime in Settings.'
+- **Recommended:** Decision D15 for the PM (kept live by his call, worker_flow.jsx:18): a bullet that holds in both modes, for example 'You choose: I can ask before each paid job, or take them on my own. You can change this anytime in Settings.'
 - **Why:** The first promise about the partner's account is broken minutes later.
 
 #### R12 worker (effort S)
@@ -115,7 +115,7 @@
 
 - **V2:** `blueai/worker_day_done.jsx:203; index.html:1053, 770-777`
 - **Today:** 'Open BlueAI to retry and count the day.' opens a cold-started home with no Retry.
-- **Recommended:** Toast opens the persistent Today record; Retry lives on the WorkerCard and in Activity until the window closes, with the deadline stated.
+- **Recommended:** Toast opens the persistent Today record; Retry lives on the WorkerCard and in Activity until 9 pm, the day's deadline (section 41), stated with it.
 - **Why:** This is the exact moment money is at stake.
 
 #### R16 settings (effort S)
@@ -136,7 +136,7 @@
 
 - **V2:** `blueai/worker_flow.jsx:80-82, 161`
 - **Today:** Watch history, subscriptions and channel stats are read without being asked.
-- **Recommended:** PermissionRequest card in onboarding (PM copy decision) and a Revoke row in Connected apps; list the interest profile under Account and privacy.
+- **Recommended:** PermissionRequest card in onboarding (decision D16) and a Revoke row in Connected apps; list the interest profile under Account and privacy.
 - **Why:** Reading viewing data is a separate permission from 'use your account like a fan'.
 
 #### R19 worker (effort M)
@@ -145,6 +145,13 @@
 - **Today:** Verification has only pending and verified; a rejected day looks pending forever.
 - **Recommended:** StatusTick and DayBar gain rejected (with reason), not counted and late; Activity row offers Report a problem.
 - **Why:** The two-tick model implies a day can fail; the partner needs to know and dispute.
+
+#### R51 consent (effort S)
+
+- **V2:** `blueai/agent_permissions.jsx:161`
+- **Today:** The Automatic consent says the worker will finish jobs 'including posting videos and other content'; the worker never posts videos, and the comment it does post in the partner's name is not named.
+- **Recommended:** Name what a job does, from `WORKER_JOB.actions`: 'BlueAI will take YouTube jobs and do them on your account without asking first: watching, liking and posting comments in your name.' (section 46). Consent copy, so the PM and legal decide it; the record keeps the version shown (section 53).
+- **Why:** On Automatic the job preview never appears, so this line is the partner's only notice that comments go out under their name.
 
 ### P2 (21)
 
@@ -276,8 +283,8 @@
 
 #### R38 navigation (effort S)
 
-- **V2:** `index.html:982; blueai/history.jsx:2-3`
-- **Today:** Kebab screens have no Back and light no tab.
+- **V2:** `index.html:956, 960, 982`
+- **Today:** Kebab screens (Profile, AI Credits) have no Back and light no tab.
 - **Recommended:** ScreenHeader with Back; pushed screens keep the parent tab lit.
 - **Why:** The partner loses their place.
 
@@ -320,9 +327,9 @@
 
 #### R44 copy (effort S)
 
-- **V2:** `index.html:369; blueai/profile.jsx:62, 75-79; blueai/chat_product.jsx:266, 278; blueai/worker_flow.jsx:63; blueai/worker_cards.jsx:31`
-- **Today:** Logout / Sign out / logging in; '...' vs '…'; 'Loading BlueAI Worker v57 skill…', 'Suggested skill: blueai-worker'; emoji in headings.
-- **Recommended:** Glossary (Sign in, Sign out); the … character; no version or slug strings in partner copy (PM copy, flagged); no emoji in headings.
+- **V2:** `index.html:369; blueai/profile.jsx:62, 75-79; blueai/chat_product.jsx:266, 278; blueai/worker_flow.jsx:63-64; blueai/worker_cards.jsx:31`
+- **Today:** Logout / Sign out / logging in; '...' vs '…'; 'Loading BlueAI Worker v57 skill…', 'Suggested skill: blueai-worker'; 'Let’s set up your BlueAI Worker.'; emoji in headings.
+- **Recommended:** Glossary (Sign in, Sign out); the … character; no version or slug strings in partner copy (PM copy, flagged); 'BlueAI Worker' becomes 'BlueAI worker' (`worker_flow.jsx:64`); no emoji in headings.
 - **Why:** Small drift makes the product read unfinished.
 
 #### R45 shell (effort M)
@@ -367,18 +374,18 @@
 - **Recommended:** Remove with the Jobs and Schedule tabs (R04).
 - **Why:** Inert controls teach that the app is unreliable; BCX contradicts dollar payouts.
 
-### Decisions pending (D1 to D13)
+### Decisions pending (D1 to D19)
 
-Choices only the PM (and legal, where named) can make. The system builds the recommended option and keeps the other easy to switch to.
+Choices only the PM (and legal, where named) can make. The system builds the recommended option and keeps the other easy to switch to, with one exception: no part builds either option of D6 yet (section 76). A recommendation that waits on a choice names its decision (R06 D14, R07 D17, R11 D15, R14 D6, R18 D16).
 
 | Decision | Option A | Option B | Recommended |
 |---|---|---|---|
 | **D1** Primary fill | Blue action #1268f0 (kit default) | Ink #0b0b0d like the site's commit button | A: blue already means the worker's actions in V2; links become underlined ink and selection a 12% tint, so blue no longer collides. |
 | **D2** The noun: worker or agent | worker (V2) | agent (site, apply.html:1269-1274) | One noun across site and app, one capitalisation ('BlueAI worker'); PM call. |
-| **D3** The money model | $1 per verified day + $10 day-20 bonus (worker_day_done.jsx:5-6) | $30 when the 20-day goal is met (apply.html:1285, 1471) | Pick one sentence and say it everywhere; if B, the app shows days, never partial dollars ('days' style is already the default). Rename the bonus 'day-20 bonus' if it stays. The $10 cash-out minimum is not part of the choice: it is V2's rule (worker_day_done.jsx:6) and the site's (apply.html:1360, 2292), so the app states it now (sections 01, 41, 43). |
+| **D3** The money model | $1 per verified day + $10 day-20 bonus (worker_day_done.jsx:5-6) | $30 when the 20-day goal is met (apply.html:1285, 1471) | Pick one sentence and say it everywhere; if B, the app shows days, never partial dollars ('days' style is already the default). Rename the bonus 'day-20 bonus' if it stays. The $10 cash-out minimum is not part of the choice: it is V2's rule (worker_day_done.jsx:6) and the site's (apply.html:1360, 2292), so the app states it now (sections 01, 41, 43). Proposed strings that wait on this choice (PM and legal): the leave and delete line for a balance under the minimum ('a balance under $10 can’t be cashed out once you leave', `screens/settings.jsx` cashLine), and Home's dropped banner sentence 'Every day you run still counts.' (false under B). |
 | **D4** Where the mode changes later | Version 1 chip in the composer | Version 2 ribbon (default) | B as the in-chat shortcut plus Settings > Worker as the permanent home either way. |
 | **D5** Sign-in option | Check account (interrupt only on the wrong account) | Continue as (always confirm) | A for fewer stops; drop the losing code path. |
-| **D6** Credits and the paid run | Reserve the worker's run cost from the daily grant | Warn before a chat would dip into it | A: a partner should never lose a paid day to an invisible meter. |
+| **D6** Credits and the paid run | Reserve the worker's run cost from the daily grant | Warn before a chat would dip into it | A: a partner should never lose a paid day to an invisible meter. Not built yet: the composer locks only at zero (section 38) and the credits chip turns low once fewer than the run's cost are left (section 47), so a chat can still spend today's run (section 76). |
 | **D7** Does Day 1 count | Setup continues into the first daily run and counts | Setup only; first counted day is tomorrow | Either, said in the onboarding close. |
 | **D8** The family mark | BlueAI gradient wordmark | Site spark + two-tone 'BlueAI' | B in the long run (already in V2's sign-in pages); A until the PM decides. |
 | **D9** Install from BlueStacks (Flow A) | Keep with worker copy and an 'Apply on onBlue' path for non-applicants | Drop from the partner target | B: partners install from the dashboard link after acceptance. |
@@ -386,3 +393,16 @@ Choices only the PM (and legal, where named) can make. The system builds the rec
 | **D11** Product face | Inter (site) | Plus Jakarta Sans (V2) | A; the scale and weights hold either way. |
 | **D12** Chat as a tab | Three tabs, chat from Home | Four tabs with Chat | A: chat serves the worker. |
 | **D13** Yellow for every worker question | Keep the live yellow on every ask (PM-confirmed) | Neutral asks in onboarding, yellow only for unattended job and retry asks | B so yellow keeps meaning 'needs you'. |
+| **D14** Skipping a waiting job (R06) | The cost on the option, one tap: 'Skip: today won’t count' | Keep the job open until 9 pm with Undo | A, built in the JobPreviewCard (section 45): the cost is read before the tap, and nothing waits on a toast. |
+| **D15** The setup promise (R11) | One bullet that holds in both modes ('You choose: I can ask before each paid job, or take them on my own.') | Keep 'I only run a paid job after you say yes to that specific job.' and drop Automatic from setup | A: Automatic stays a choice, and the first promise stays true. PM copy. |
+| **D16** Reading watch history (R18) | Ask first: PermissionRequest in setup, Allow or Not now, revoked in Connected apps | Read it at setup as V2 does, listed under Account with a switch to stop it | A, built (section 46): reading viewing data is its own permission. PM copy. |
+| **D17** The paid job ask (R07) | JobPreviewCard replaces V2's AskCard for paid jobs | Keep the AskCard and add the video, channel and exact comment to it | A, built (section 45); the AskCard stays for every other question (section 37). |
+| **D18** Feedback on a failed job (section 39) | Offer thumbs on failed jobs too | Successes only, as V2 (`chat_product.jsx:150`) | A: a failed job is where a partner most wants to say something; Report a problem stays the route for a dispute. |
+| **D19** Turning an interest topic off (section 62) | A topic can be turned off, and BlueAI stops picking jobs about it | Topics are read only, from watch history | A, as Worker settings draws it; the PM confirms what it does to the jobs offered. |
+
+### V2 strings changed as proposals
+
+The PM's words are kept unless a change goes to the PM as a proposal (section 70's register). These are proposed in the system:
+
+- The setup run window '9am–9pm' (`blueai/worker_flow.jsx:73-74`) becomes '9 am to 8 pm': runs start by 8 pm, so there is time to answer a job or try again before 9 pm (section 62), and times are written with spaces (section 70).
+- The handle No line 'Okay. Sign in to the YouTube account you want me to use in App Player, then run the BlueAI worker again.' (`blueai/worker_flow.jsx:162`) invites another account, which section 56 and R39 rule out. Proposed: 'Okay. I can only use the YouTube account you applied with, or a channel under it. If you meant a different channel, report a problem and we’ll help.' with a Report a problem link (section 57).

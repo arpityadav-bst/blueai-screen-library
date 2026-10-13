@@ -30,7 +30,7 @@
 
 **Purpose.** A small panel anchored to a button with its own controls: the per-app Always ask / Automatic choice opened from the ribbon's Change or the composer chip.
 
-**Anatomy.** The Menu's panel at min(364, window less two gutters) wide; eyebrow header 11/500 uppercase `--v2-ink-4`; a content slot (ModeRows, section 46); footnote 12/1.35 `--v2-ink-3`.
+**Anatomy.** The Menu's panel at min(364, window less two gutters) wide; eyebrow header `.v2-text-eyebrow` (11/500 uppercase `--v2-ink-3`, the one eyebrow recipe); a content slot (ModeRows, section 46); footnote 12/1.35 `--v2-ink-3`.
 
 **Variants.** Anchored down or up, start or end.
 

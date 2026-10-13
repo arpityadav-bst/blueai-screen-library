@@ -7,10 +7,7 @@
 /* Home ------------------------------------------------------------------------------------------ */
 /* Standalone links on their own line keep their 32px target without stretching across the column. */
 .v2-home-chat, .v2-rundetail-report { align-self: flex-start; }
-
-/* The coach scrim covers the whole window (top bar and nav included) at the coach layer; the
-   WorkerCard and its CoachMark lift themselves one step above it (kit/worker.css). */
-.v2-home-coach-layer { position: absolute; inset: 0; z-index: var(--v2-z-coach); }
+/* The coach mark is a note under the WorkerCard: no scrim, nothing dimmed or locked (section 42). */
 
 /* The worker-home skeleton: the same blocks the screen will show, on the same card surface. */
 .v2-home-skel-title { display: flex; align-items: center; min-height: var(--v2-topbar-h); }

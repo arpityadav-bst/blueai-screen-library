@@ -9,22 +9,27 @@
      hides). tab is the lit nav item and stays the parent tab while a screen is pushed. nav false
      drops the bottom nav. Activity carries the section 54 badge: what needs the partner.
      Every chrome event goes to onNavigate(id, opts): nav ids (home, activity, settings), menu ids
-     (notifications, account, report, sign-out), today (the run chip) and credits.
+     (notifications, account, report, sign-out), credits, and the run chip's chipTarget.
      scrollTo moves the content band to a [data-section]; openMenu forces a top-bar menu open
      (guide). frame false returns the children and overlays alone.
    ToastScope {children}, useScreenToast()  a screen that confirms its changes wraps itself in
      ToastScope (V2Kit.ToastHost region={false}) and calls useScreenToast().show({title, tone,
      action}); the window's one live region is AppFrame's ToastRegion, so every toast is announced.
    topBarProps(worker)  {status, statusLabel, credits} for TopBar.
+   chipTarget(worker)  [id, opts]: where the run chip and the card's Details open (section 30):
+     today's run as its Activity row opens it (Chat while live, Run detail once it has an outcome),
+     Settings > Worker while paused, Home's card for every other status.
    HomeSkeleton, ListSkeleton {rows, label}, LoadError {what, onRetry, busy}  the loading and
      load-failed blocks every screen that reads server data uses (section 50).
    Home {worker, state, loading, coaching, compact, landmark, frame, onNavigate, onRun, onRetry,
          onReconnect, onResume, onFix, onDismissCoach}
-     Greeting (ScreenHeader, name, no emoji), ProgramStrip, a Banner only when the program needs a
-     word the card cannot say, WorkerCard, then 'Chat with BlueAI'. Run opens setup in Chat for a
-     new partner and starts today's run otherwise (Run now, Run again); Review job opens the waiting
-     ask; a failed day's Try again retries in Chat; offline Try again reconnects in place
-     (onReconnect); a blocked run's fix opens the place that fixes it (onFix).
+     Greeting (ScreenHeader, name, no emoji), WorkerCard first (P1), ProgramStrip, a Banner only
+     when the program needs a word the card cannot say, then 'Chat with BlueAI'. The coach mark is
+     a note under the card: nothing is dimmed or locked. Run opens setup in Chat for a new partner
+     and starts today's run otherwise (Run now, Run again); Review job opens the waiting ask; a
+     failed day's Try again retries in Chat; offline Try again reconnects in place (onReconnect); a
+     blocked run's fix does what its button says (onFix). A period that has ended is section 69's
+     full-window state, not a card.
    HOME_STATES  [[key, fixture, label, note]] in the guide's order. */
 (function () {
   const { useState, useEffect, useRef } = React;
@@ -58,14 +63,17 @@
   // The chip's run time, from the saved run window (the same kinds as nextRunText).
   function runLabel(w) {
     const r = w.runWindow || {};
-    if (r.kind === 'window') return 'Next run ' + String(r.label || '9 am and 9 pm').replace(' and ', ' to ');
+    if (r.kind === 'window') return 'Next run ' + String(r.label || '9 am and 8 pm').replace(' and ', ' to ');
     if (r.kind === 'any') return 'Runs later today';
     return 'Next run ' + (r.label || (w.today && w.today.nextRunAt) || '11 am');
   }
 
   function chip(w, st, n) {
     const t = w.today || {};
+    const P = K();
     if (st === 'scheduled') return ['scheduled', runLabel(w)];
+    // Out of credits waits for the refill only when it lands before 9 pm; after it, today is lost.
+    if (st === 'noCredits' && P.creditsDay && P.creditsDay(w) === 'stopped') return ['not-counted', null];
     if (st === 'done') {
       if (t.outcome === 'skipped' || t.outcome === 'expired' || t.end === 'declined') return ['not-counted', null];
       return [n.last && n.last.status === 'verified' ? 'verified' : 'pending', 'Day ' + n.done + ' of ' + n.target];
@@ -74,8 +82,10 @@
     return [CHIP[st] || null, null];
   }
 
-  function creditsState(c) {
-    if (!c) return undefined;
+  // The credits chip warns only while today's run still needs credits (CreditsMeter's runDone rule).
+  function creditsState(w) {
+    const c = w.credits;
+    if ((w.today || {}).status === 'done') return 'full';
     if (c.left <= 0) return 'empty';
     return c.left < c.runCost ? 'low' : 'full';
   }
@@ -87,8 +97,25 @@
     return {
       status: c[0],
       statusLabel: c[1],
-      credits: w.credits ? { balance: w.credits.left, state: creditsState(w.credits) } : null,
+      credits: w.credits ? { balance: w.credits.left, state: creditsState(w) } : null,
     };
+  }
+
+  // Section 30's 'Opens' column. Running, waiting, failed and done open today's run as its Activity
+  // row does (rowTarget, screens/activity.jsx); paused opens Settings > Worker; every other status
+  // opens Home, where the card says what to do and holds the action (Run again, Run now, the fix).
+  const AS_ROW = { running: 1, waiting: 1, failed: 1, done: 1 };
+  function chipTarget(w) {
+    const P = K();
+    const S = window.V2Screens || {};
+    const st = w && P.workerState ? P.workerState(w) : null;
+    if (st === 'paused') return ['worker-settings'];
+    if (AS_ROW[st] && S.ledgerRows && S.rowTarget) {
+      const today = S.ledgerRows(w).find(function (r) { return r.today; });
+      const to = today && S.rowTarget(today);
+      if (to) return to;
+    }
+    return ['home'];
   }
 
   // Section 54's count on Activity: a waiting job, a failed run, a day not counted. Never on Home.
@@ -113,7 +140,8 @@
     const pick = function (key) { return p[key] !== undefined ? p[key] : tb[key]; };
     const top = P.TopBar ? (
       <P.TopBar signedIn status={pick('status')} statusLabel={pick('statusLabel')} credits={pick('credits')} openMenu={p.openMenu}
-        onOpenStatus={function () { nav('today'); }} onOpenCredits={function () { nav('credits'); }} onAction={nav} />
+        onOpenStatus={function () { const to = chipTarget(p.worker); nav(to[0], to[1]); }}
+        onOpenCredits={function () { nav('credits'); }} onAction={nav} />
     ) : null;
     const count = p.loading ? 0 : needsYou(p.worker);
     const items = P.NAV_ITEMS ? P.NAV_ITEMS.map(function (it) { return it.id === 'activity' ? Object.assign({}, it, { badge: count }) : it; }) : undefined;
@@ -134,7 +162,7 @@
   }
   function useScreenToast() { return (K().useToast || function () { return NO_TOAST; })(); }
 
-  // The worker home's own skeleton (R36): the same three blocks that will arrive, nothing else.
+  // The worker home's own skeleton (R36): the same three blocks that will arrive, in their order.
   function HomeSkeleton() {
     const S = K().Skeleton;
     if (!S) return null;
@@ -143,15 +171,15 @@
         <div className="v2-screen-body">
           <span className="v2-sr-only" role="status">Loading your worker</span>
           <div className="v2-home-skel-title"><S shape="title" width="40%" /></div>
-          <div className="v2-home-skel-card">
-            <S shape="line" width="45%" />
-            <S shape="rect" height={8} />
-            <S shape="line" width="70%" />
-          </div>
           <div className="v2-home-skel-card v2-home-skel-row">
             <S shape="rect" width={40} height={40} />
             <span className="v2-home-skel-lines"><S shape="line" width="50%" /><S shape="line" width="85%" /></span>
             <S shape="rect" width={72} height={36} />
+          </div>
+          <div className="v2-home-skel-card">
+            <S shape="line" width="45%" />
+            <S shape="rect" height={8} />
+            <S shape="line" width="70%" />
           </div>
         </div>
       </div>
@@ -180,26 +208,24 @@
     );
   }
 
-  // A section that failed to load says so in its own place; the chrome and the rest stay.
+  // A section that failed to load says so in its own place; the chrome and the rest stay. The
+  // words never blame the partner's connection: the cause may be the service (section 51).
   function LoadError({ what, onRetry, busy }) {
     const E = K().EmptyState;
     return E ? (
       <E variant="error" title={'Couldn’t load ' + (what || 'this')}
-        body="Nothing is lost: your runs and days are not affected. Check your connection and try again."
+        body="Nothing is lost: your runs and days are not affected. Try again in a moment."
         primaryAction={{ label: 'Try again', onClick: onRetry, loading: !!busy }} />
     ) : null;
   }
 
-  // The one Home banner: a program fact the worker card cannot say. Proposed copy; the loss is
-  // said once, by the DayBar legend, and no money, since what a day is worth waits on D3.
+  // The one Home banner: how many days can still be reached, which the card cannot say. Title
+  // only, proposed copy: the done count and the end date are on the ProgramStrip, and what a
+  // remaining day earns waits on D3, so nothing here depends on the money model.
   function programBanner(n) {
     const B = K().Banner;
     if (!B || n.complete || n.outOfReach <= 0) return null;
-    return (
-      <B tone="info" title={'You can still reach ' + (n.target - n.outOfReach) + ' of ' + n.target + ' days'}>
-        {n.done + ' done, ' + n.daysLeft + ' left before ' + n.endsOn + '. Every day you run still counts.'}
-      </B>
-    );
+    return <B tone="info" title={'You can still reach ' + (n.target - n.outOfReach) + ' of ' + n.target + ' days'} />;
   }
 
   function fixtureFor(state) {
@@ -228,36 +254,44 @@
       if (p.onReconnect) p.onReconnect();
       else toast.show({ tone: 'info', title: 'Still offline. BlueAI keeps trying on its own.' });
     }
+    // The fix does what its button says. Open App Player and Get BlueStacks act in place (the
+    // host's onFix; here a toast stands in for the launch and the download); Connect YouTube opens
+    // Connected apps, where the account is connected.
     function fix(reason) {
       if (p.onFix) p.onFix(reason);
-      else if (reason === 'no-bluestacks') go('settings', { highlight: 'bluestacks' })();
+      else if (reason === 'signed-out') toast.show({ tone: 'info', title: 'Opening App Player. Sign in to YouTube there.' });
+      else if (reason === 'no-bluestacks') toast.show({ tone: 'info', title: 'BlueStacks is downloading. Open the installer when it’s done.' });
       else go('connected-apps', { app: 'youtube' })();
     }
+    const S = window.V2Screens || {};
+    if (!loading && st === 'ended' && S.SystemStates) {
+      return <S.SystemStates state="period-ended" worker={w} compact={p.compact} landmark={p.landmark} onNavigate={p.onNavigate} />;
+    }
     const name = w.account && w.account.first;
+    const today = chipTarget(w);
 
     const body = loading ? <HomeSkeleton /> : (
       <div className="v2-screen">
         {P.ScreenHeader ? <P.ScreenHeader title={name ? 'Hi, ' + name : 'Today'} /> : null}
         <div className="v2-screen-body v2-home">
+          <P.WorkerCard worker={w} coaching={coaching} onDismissCoach={dismiss} onRun={run}
+            onOpenToday={go(today[0], today[1])} onReview={go('chat', { state: 'waiting' })} onRetry={retry}
+            onResume={p.onResume} onFix={fix} onOpenCredits={go('credits')} />
           {P.ProgramStrip ? <P.ProgramStrip worker={w} receipt={st !== 'done'} onOpenActivity={go('activity')} /> : null}
           {programBanner(n)}
-          <P.WorkerCard worker={w} coaching={coaching} onDismissCoach={dismiss} onRun={run}
-            onOpenToday={go('today')} onReview={go('chat', { state: 'waiting' })} onRetry={retry}
-            onResume={p.onResume} onFix={fix} onOpenCredits={go('credits')} />
           {P.Link ? <P.Link standalone className="v2-home-chat" onClick={go('chat')}>Chat with BlueAI</P.Link> : null}
         </div>
       </div>
     );
-    const scrim = coaching && P.Scrim ? <div className="v2-home-coach-layer"><P.Scrim onClick={dismiss} /></div> : null;
     return (
       <ScreenFrame worker={w} tab="home" loading={loading} compact={p.compact} landmark={p.landmark}
-        frame={p.frame} overlays={scrim} onNavigate={p.onNavigate}>
+        frame={p.frame} onNavigate={p.onNavigate}>
         {body}
       </ScreenFrame>
     );
   }
 
   Object.assign(window.V2Screens = window.V2Screens || {}, {
-    Home, ScreenFrame, topBarProps, HOME_STATES, HomeSkeleton, ListSkeleton, LoadError, ToastScope, useScreenToast,
+    Home, ScreenFrame, topBarProps, chipTarget, HOME_STATES, HomeSkeleton, ListSkeleton, LoadError, ToastScope, useScreenToast,
   });
 })();

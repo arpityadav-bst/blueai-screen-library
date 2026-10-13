@@ -7,8 +7,8 @@
     ['--v2-space-1', 'icon to text in ticks and small links'],
     ['--v2-space-15', 'tight stacks, icon to text in chips'],
     ['--v2-space-2', 'row gaps, button icon gap'],
-    ['--v2-space-3', 'card stack gap, chip row gap'],
-    ['--v2-space-4', 'card padding and the screen gutter'],
+    ['--v2-space-3', 'card stack gap, bubble vertical padding'],
+    ['--v2-space-4', 'card padding, bubble horizontal padding, the screen gutter'],
     ['--v2-space-5', 'dialog padding'],
     ['--v2-space-6', 'section gap, sheet padding'],
     ['--v2-space-8', 'empty-state padding'],
@@ -86,12 +86,12 @@
           <G.CompareRow
             v2={<div className="v2-stack"><G.Live get={function () { return window.ChatBubbles && window.ChatBubbles.UserBubble; }} props={{ content: (window.MoneyMaker && window.MoneyMaker.PROMPT) || 'Run this to begin' }} label="ChatBubbles.UserBubble" /><G.Live get={function () { return window.WorkerDayDone && window.WorkerDayDone.EarningsStrip; }} label="WorkerDayDone.EarningsStrip" /></div>}
             system={<div className="v2-stack">
-              <div style={{ alignSelf: 'flex-end', maxWidth: 'var(--v2-bubble-max)', background: 'var(--v2-blue-tint)', borderRadius: 'var(--v2-radius-lg)', padding: 'calc(var(--v2-space-2) + var(--v2-space-05)) calc(var(--v2-space-3) + var(--v2-space-05))' }} className="v2-text-body">{(window.MoneyMaker && window.MoneyMaker.PROMPT) || 'Run this to begin'}</div>
+              <div style={{ alignSelf: 'flex-end', maxWidth: 'var(--v2-bubble-max)', background: 'var(--v2-blue-tint)', borderRadius: 'var(--v2-radius-lg)', padding: 'var(--v2-space-3) var(--v2-space-4)' }} className="v2-text-body">{(window.MoneyMaker && window.MoneyMaker.PROMPT) || 'Run this to begin'}</div>
               <div style={Object.assign({}, tile, { padding: 'var(--v2-space-4)', borderRadius: 'var(--v2-radius-lg)' })} className="v2-hstack v2-hstack--between"><span className="v2-text-label" style={{ color: 'var(--v2-ink)' }}>Day 7 of 20</span><span className="v2-text-label" style={{ color: 'var(--v2-ink)' }}>13 to go</span></div>
             </div>}
-            changed="59% of V2's 927 spacing values sit off the 4px grid and card padding alone has eight recipes ('11px 14px 8px', '12px 15px 11px', 16, 18 on the same settings screen). Every bubble pads 10 by 14, built from scale tokens (8 + 2, 12 + 2; the bubble spec, section 35), every card 16, every screen gutter 16." />
+            changed="59% of V2's 927 spacing values sit off the 4px grid and card padding alone has eight recipes ('11px 14px 8px', '12px 15px 11px', 16, 18 on the same settings screen). Every bubble pads 12 by 16 on two scale steps (the bubble spec, section 35), every card 16, every screen gutter 16." />
           <G.SpecDrawer rows={[
-            { part: 'Bubble padding', token: '--v2-space-2 + --v2-space-05 / --v2-space-3 + --v2-space-05', value: '10 14 (kit/chat.css, section 35)', ref: 'foundations.space.bubble-padding' },
+            { part: 'Bubble padding', token: '--v2-space-3 / --v2-space-4', value: '12 16 (kit/chat.css, section 35)', ref: 'foundations.space.bubble-padding' },
             { part: 'Card padding', token: '--v2-space-4', value: '16', ref: ['foundations.space.strip-padding', 'foundations.space.card-18', 'foundations.space.card-16'] },
             { part: 'Screen gutter', token: '--v2-gutter', value: '16', ref: 'foundations.space.chat-gutter' },
             { part: 'Layout utilities', token: null, value: '.v2-stack, .v2-hstack, .v2-gap-*, .v2-screen, .v2-screen-body' },

@@ -2,7 +2,7 @@
 
 **Status:** Type ladder, Page titles, Numerals: all Changed from V2.
 
-**Why:** The partner reads this app every day in a 419px window, often at small sizes on Windows. V2 uses 30 font sizes, seven page-title recipes, weight 800 71 times (650, 750 and 900 are requested but never loaded), and four typefaces in a new partner's first minute. Its stack puts SF before Plus Jakarta Sans, so Macs and Windows show different products (index.html:34). The site is Inter end to end; one face, eleven styles and three weights make the app read as the site's working screen (P6).
+**Why:** The partner reads this app every day in a 419px window, often at small sizes on Windows. V2 uses 30 font sizes, seven page-title recipes, weight 800 71 times (650, 750 and 900 are requested but never loaded), and four typefaces in a new partner's first minute. Its stack puts SF before Plus Jakarta Sans, so Macs and Windows show different products (index.html:34). The site is Inter end to end; one face, twelve styles and three weights make the app read as the site's working screen (P6).
 
 ### Type ladder (Changed from V2)
 
@@ -13,13 +13,14 @@
 - `.v2-text-greeting` 24 / 600 / 1.2 / -0.02em, ink: home greeting, welcome title.
 - `.v2-text-title-lg` 20 / 600 / 1.2 / -0.02em, ink: every screen and dialog title.
 - `.v2-text-numeral-sm` 20 / 600 / 1 / -0.02em, ink, tabular: "7" in "7 of 20 days".
-- `.v2-text-title` 16 / 600 / 1.35 / -0.01em, ink: card titles, section heads.
+- `.v2-text-title` 16 / 600 / 1.2 / -0.01em, ink: card titles, section heads.
+- `.v2-text-mini-title` 13 / 600 / 1.35 / 0.02em, ink: the label over a figure in a card (StatCard), sentence case; the site's `.mini-title` (`onblue/onblue.css:1935-1942`).
 - `.v2-text-body` 14 / 400 / 1.5, ink-2: bubbles, composer, paragraphs, fields.
 - `.v2-text-body-sm` 13 / 400 / 1.5, ink-3: descriptions, notes, consequences. A `<strong>` inside turns ink 600 (fact muted, figure ink).
 - `.v2-text-label` 13 / 500 / 1.35 / -0.01em, ink-2: buttons, chips, nav, menu rows.
 - Row label (no class): 14 / 500 / 1.35, ink. The list-row parts set it in their own CSS (ListRow, section 18), so a screen never sets it by hand.
 - `.v2-text-meta` 12 / 400 / 1.35, ink-4: timestamps, counts, hints.
-- `.v2-text-eyebrow` 11 / 500 / 1 / 0.08em, uppercase, ink-3: section labels only.
+- `.v2-text-eyebrow` 11 / 500 / 1 / 0.08em, uppercase, ink-3: section labels only. The 0.08em is adapted from the site's 0.14em.
 - `.v2-text-mono` 13 / 400 / 1.35, mono, ink-2: keys, endpoints, model ids.
 
 **Variants.** Faces: `--v2-font-ui` (Inter, then system-ui and Segoe UI), `--v2-font-mono`, `--v2-font-serif` (Instrument Serif italic, site-language sign-in pages only). Weights: 400 body, 500 labels, 600 titles and figures. Helpers: `.v2-tabular`, `.v2-truncate`, `.v2-prose`.

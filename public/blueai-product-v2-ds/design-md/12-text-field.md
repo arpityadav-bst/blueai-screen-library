@@ -36,7 +36,7 @@
 
 **Sizes.** md.
 
-**States.** Hidden; revealed (eye pressed); validating ("Checking your key…", proposed copy); invalid key ("This key didn't work. Check it and try again.", proposed copy); validated ("Key works.", proposed copy). In V2 today: Settings, Bring Your Own Key on, Add a provider, pick one: the key is typed in clear text (byok_settings.jsx:93), the hint "Find at https://console.anthropic.com/settings" is the placeholder and vanishes as you type (byok_settings.jsx:15), and the note "Your key is stored encrypted on this device only." is #9ca3af at 2.54:1 (byok_settings.jsx:96, 12).
+**States.** Hidden; revealed (eye pressed); validating ("Checking your key with Anthropic…"); invalid key ("That key didn’t work. Check it and paste it again."); validated ("Key works."); all proposed copy, owned by section 49 (`kit/advanced.jsx:37-42`), so this field never words them differently. In V2 today: Settings, Bring Your Own Key on, Add a provider, pick one: the key is typed in clear text (byok_settings.jsx:93), the hint "Find at https://console.anthropic.com/settings" is the placeholder and vanishes as you type (byok_settings.jsx:15), and the note "Your key is stored encrypted on this device only." is #9ca3af at 2.54:1 (byok_settings.jsx:96, 12).
 
 **Props.** As TextField; `secret`, `defaultRevealed`, `status`, `error`.
 

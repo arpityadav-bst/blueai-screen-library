@@ -18,7 +18,7 @@
     ['screens/', 'Whole screens composed from the kit, on window.V2Screens (Home, Activity, Settings, ...).'],
     ['guide/', 'This guide’s own chrome: catalog.jsx (the section list), sections/, refs/ (the V2 sources), app.jsx.'],
     ['design-md/', 'One Markdown partial per section; edit these, then rebuild DESIGN.md.'],
-    ['tools/', 'ds-check.js (the gate) and build-design-md.js.'],
+    ['tools/', 'ds-check.js (the gate, with checks 8 and 9 in ds-check-more.js) and build-design-md.js.'],
   ];
   const CHECKS = [
     'Every V2 value or string the guide quotes still sits on its V2 line (guide/refs/*.js).',
@@ -30,6 +30,7 @@
     'No raw colour in kit/ or screens/: tokens only. No stylesheet but tokens.css defines a --v2- property.',
     'Every kit part and screen the catalog names is on window.V2Kit or window.V2Screens.',
     'The size lists the JSX copies (Icon and Avatar sizes) equal their tokens.',
+    'No .jsx in kit/, screens/ or guide/ uses object rest destructuring: Babel hoists its key list to one program-level _excluded that the next file overwrites, so use a local omit(props, KEYS).',
   ];
   const RULES = [
     'Tokens only: a colour or size in kit/ or screens/ is a --v2-* token, never a raw value.',

@@ -38,7 +38,10 @@
 
 **States.** Full: V2 `?start=worker` (421 x 866 window, product-scene.css:76). Compact: new (resize the window to 640).
 
-**Props.** AppFrame `compact` (section 29); screens use `.v2-screen` + `.v2-screen-body`.
+**Props.** AppFrame `compact` (section 29). Two screen recipes, one spacing: the first block always sits 16 under the ScreenHeader, the column keeps the 16 gutter, blocks sit 12 apart and the bottom pad is 24.
+- `.v2-screen` + `.v2-screen-body` (`kit/base.css:185-193`): the header stays pinned and the body is the only scroller. For screens the partner reads in place: Home, Activity, Run detail, Notifications, Chat.
+- `.v2-acct` + `.v2-acct-body` (`screens/account.css:7-11`): no scroller of its own, so the whole content band scrolls, header included. For the settings group, whose columns are long lists of sections: Settings, Worker settings, Connected apps, Account, AI credits. The header gives its room back on the 640 window, and ScreenFrame's `scrollTo` can move the band to a section (Settings' `highlight`).
+A new screen picks the first unless it is a settings-style list of sections.
 
 **Motion.** None.
 

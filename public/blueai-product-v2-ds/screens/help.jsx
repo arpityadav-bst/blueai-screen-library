@@ -13,7 +13,8 @@
      topic preselects the subject ('verification' for a day that was not counted). Send stays
      disabled until something is written; sending holds the sheet; a failure keeps the text and
      offers Try again. The draft lives outside the sheet, per run, so a stray scrim click or Esc
-     keeps it for the next open; Cancel and Send clear it.
+     keeps it for the next open; Cancel and Send clear it. A form, so focus starts in its first
+     field to fill: the topic, or 'What happened?' once the topic is set (sections 09, 25).
    reportAbout(row)  {about, topic} for a ledger row or a run: '<date> run' plus its reason. */
 (function () {
   const { useState, useEffect } = React;
@@ -63,6 +64,7 @@
     function cancel() { delete DRAFTS[key]; (p.onClose || noop)(); }
     return (
       <K.Sheet open preview={p.preview} title="Report a problem" busy={status === 'sending'} onClose={p.onClose || noop}
+        initialFocus={about || p.topic ? '.v2-acct-report textarea' : '.v2-acct-report select'}
         description={'We reply by email to ' + (p.email || 'alex@example.com') + '.'}
         actions={[
           { label: 'Cancel', onClick: cancel },
@@ -79,7 +81,7 @@
             </p>
           ) : null}
           {K.Select ? <K.Select label="What is it about?" placeholder="Choose one" options={TOPICS} value={topic} onChange={setTopic} /> : null}
-          {K.TextArea ? <K.TextArea label="What happened?" placeholder={'Example: ' + EXAMPLE} rows={4} maxLength={1000}
+          {K.TextArea ? <K.TextArea label="What happened?" helper={'Example: ' + EXAMPLE} rows={4} maxLength={1000}
             value={text} onChange={write} required /> : null}
           {K.Checkbox ? <K.Checkbox label="Include diagnostic info" checked={diag} onChange={setDiag}
             description="Today’s run log and the app version. Never your passwords or messages." /> : null}

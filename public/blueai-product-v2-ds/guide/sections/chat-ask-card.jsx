@@ -54,7 +54,7 @@
           <G.SpecDrawer rows={[
             { part: 'Fill and line (pending)', token: '--v2-attention-tint, --v2-attention-line', value: '#fdf6cf, 1px #f3e8a8', ref: 'chat.ask.input-colours' },
             { part: 'Fill and line (settled)', token: '--v2-surface, --v2-line', value: 'white, 1px line' },
-            { part: 'Shape', token: '--v2-radius-lg, --v2-bubble-max', value: 'radius 16, max 300, padding 10 14, no shadow', ref: ['chat.ask.bubble', 'chat.ask.shadow'] },
+            { part: 'Shape', token: '--v2-radius-lg, --v2-bubble-max', value: 'radius 16, max 300, padding 12 16, no shadow', ref: ['chat.ask.bubble', 'chat.ask.shadow'] },
             { part: 'Title', token: '--v2-text-14, --v2-weight-semibold, --v2-ink', value: '14/600 ink (was 13.5/800 #8a6116)', ref: 'chat.ask.title' },
             { part: 'Lead, question', token: '--v2-text-14, --v2-ink-2', value: '14/1.5' },
             { part: 'Bullets', token: '--v2-space-5, --v2-ink-3', value: 'disc markers on, indent 20, marker ink-3', ref: ['chat.ask.bullets', 'chat.ask.plan-list'] },

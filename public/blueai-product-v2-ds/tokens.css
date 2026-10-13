@@ -1,10 +1,12 @@
 /* BlueAI Product V2 Design System: tokens.
    The one source of every colour, type, space, radius, stroke, shadow, scrim, layer, motion, focus,
    icon and shared size the kit, screens and guide use. tools/ds-check.js enforces colour (no raw
-   colour in kit/ or screens/) and the size lists the JSX copies (Icon and Avatar SIZES). Geometry
-   that belongs to one part only (a switch track and thumb, a checkbox box and tick, a badge dot, a
-   menu's minimum width) stays px in that part's rule; a size one part repeats is a local custom
-   property without the --v2- prefix (--ledger-date-w); a size two parts share is a token here first.
+   colour in kit/ or screens/) and sizes: the lists the JSX copies (Icon and Avatar SIZES), and no
+   kit or screens rule typing a Size token's value raw. Geometry that belongs to one part only (a
+   switch track and thumb, a checkbox box and tick, a badge dot, a menu's minimum width) stays px in
+   that part's rule; a size one part repeats is a local custom property without the --v2- prefix
+   (--ledger-date-w, screens/core.css), the way the colour marks are (--badge-mark,
+   kit/display.css); a size two parts share is a token here first.
    Every token is a CSS custom property on :root with the prefix --v2-, and nothing else uses that
    prefix. Light theme only: V2 is white end to end and the
    onBlue site never ships its dark theme (onblue/apply.html:36 forces light), so a dark set
@@ -20,9 +22,9 @@
      Why: V2 splits gray 178 / slate 178 uses across 18 files, plus a navy set and a private ai_mode set (inv-foundations color.ink). One hue in four steps reads as one product and matches the site the partner returns to.
      Absorbs: the V2 values listed on each token below. */
   --v2-ink: #0b0b0d; /* titles, figures (money in ink), strong text. Absorbs #111827 (index.html:439), #080a1f (index.html:473, byok.jsx:58), #0f172a (onboarding.jsx:45), #1e293b (history.jsx:100), #1f2937 (chat_product.jsx:284), #333333 */
-  --v2-ink-2: #3c4049; /* body copy, button and row labels. Absorbs #374151 (schedule.jsx:39), #334155 (index.html:480), #475569 (chat_bubbles.jsx:41), #4b5563 (agent_permissions.jsx:161), #565977 (index.html:476), #4a4f63 / #3a4256 / #454a5e (ai_mode.jsx:119, 146, 239) */
+  --v2-ink-2: #3c4049; /* body copy, button and chip labels (row labels are ink, 14/500, section 04). Absorbs #374151 (schedule.jsx:39), #334155 (index.html:480), #475569 (chat_bubbles.jsx:41), #4b5563 (agent_permissions.jsx:161), #565977 (index.html:476), #4a4f63 / #3a4256 / #454a5e (ai_mode.jsx:119, 146, 239) */
   --v2-ink-3: #5f636b; /* muted body, descriptions, idle icons (6.0:1). Absorbs #6b7280 (index.html:526), #64748b (index.html:292, shared.jsx:305), #5b6172 (ai_mode.jsx:27), #5e628a (moneymaker_steps.jsx:80), #7a8499 (product_home.jsx:58), #7c8a9c / rgb(98,115,139) (login.jsx:158, 167) */
-  --v2-ink-4: #6e737c; /* meta only: timestamps, counts, eyebrows (4.77:1). Never the only carrier of a consequence.. Absorbs #94a3b8 (chat_bubbles.jsx:124, 2.56:1), #9ca3af (account_gate.jsx:31, worker_day_done.jsx:41, 2.54:1), #9aa0b4 (ai_mode.jsx:13), #b0b8c8 */
+  --v2-ink-4: #6e737c; /* meta only: timestamps, counts (4.77:1). Never the only carrier of a consequence. Absorbs #94a3b8 (chat_bubbles.jsx:124, 2.56:1), #9ca3af (account_gate.jsx:31, worker_day_done.jsx:41, 2.54:1), #9aa0b4 (ai_mode.jsx:13), #b0b8c8 */
   --v2-ink-placeholder: #9ca2ad; /* placeholder text only, and only under a visible label (site rule onblue/onblue.css:117-119). Absorbs placeholder colour #9ca3af (byok_settings.jsx:113-114) */
   --v2-on-color: #ffffff; /* label on action, danger and ink fills. Absorbs 'white' x230, '#fff' x43. V2's faded whites rgba(255,255,255,0.45 to 0.85) (chat_bubbles.jsx:31-32, chat_feedback.jsx:79) go with the gradient bubble: the user bubble is a tint with ink text, and the coach mark carries one line in full white */
 
@@ -54,7 +56,7 @@
   --v2-blue: #156efe; /* focus outline, selected border, progress fill, current-step disc, active nav indicator. Absorbs #1990FF as focus/selected/progress (index.html:57, needs_bluestacks.jsx:139, ai_mode.jsx:52) */
   --v2-action: #1268f0; /* primary button fill, send button. Absorbs #1990FF fills (index.html:342, settings.jsx:123, agent_permissions.jsx:179, byok.jsx:26, moneymaker_home.jsx:141, worker_day_done.jsx:163, terms_sheet.jsx:121), #1a90ff, #1275D8, indigo #4f46e5 buttons (jobs.jsx:60) */
   --v2-action-hover: #0f5ad4; /* primary hover (6.12:1). Absorbs brightness(1.06) and lift hovers (login.jsx:56, terms_sheet.jsx:122) */
-  --v2-blue-ink: #0d5ad6; /* blue text: on-tint labels, selected chip label, info notice text, hovered link. Absorbs #1e40af, #1d4ed8, #1763c6, #2563eb, #1e3a8a, #1990FF link text (credits_popup_parts.jsx:110, worker_day_done.jsx:184) */
+  --v2-blue-ink: #0d5ad6; /* blue text: on-tint labels, info notice text, hovered link. Absorbs #1e40af, #1d4ed8, #1763c6, #2563eb, #1e3a8a, #1990FF link text (credits_popup_parts.jsx:110, worker_day_done.jsx:184) */
   --v2-blue-tint: rgba(21,110,254,0.08); /* info notice fill, user bubble fill. Absorbs #eff6ff, #eaf3ff, #eef6ff, #e8f3ff, #f5f9ff, #f0f7ff, gradient #eef5ff to #e2edff (worker_cards.jsx:25) */
   --v2-blue-tint-line: rgba(21,110,254,0.24); /* edge of an info tint. Absorbs #bfdbfe, #d6e6fb, #c7dcf5, #bcd6f5, #9ec9f5, #93c5fd */
   --v2-select: rgba(21,110,254,0.12); /* selected fill (choice card, chip, segmented on). Absorbs #eef6ff selected (ai_mode.jsx:51), #eef2ff nav active (shared.jsx:305) */
@@ -109,6 +111,7 @@
   --v2-tracking-title: -0.02em; /* 20 and 24px titles. Absorbs -0.4px, -0.3px, -0.5px, -0.02em */
   --v2-tracking-label: -0.01em; /* 16px titles, buttons. Absorbs -0.01em, -0.015em, -0.2px */
   --v2-tracking-eyebrow: 0.08em; /* uppercase eyebrow only. Absorbs 0.04 to 0.14em (index.html:474, worker_day_done.jsx:153, account_gate.jsx:26) */
+  --v2-tracking-mini: 0.02em; /* mini-title over a figure (StatCard), the site's .mini-title (onblue/onblue.css:1935-1942) */
 
   /* Space. Role: 4px scale with a 2px fine step; one gutter.
      onBlue: adapted: the site's semantic-distance principle and 'same token on both sides of an action' carry over; its 23 observed values do not.
@@ -171,7 +174,6 @@
   --v2-z-sticky: 10; /* sticky dialog header, sticky list header. Absorbs 10 (shared.jsx:74) */
   --v2-z-header: 20; /* top bar. Absorbs 20 (index.html:323) */
   --v2-z-popover: 30; /* menus, popovers, tooltips. Absorbs 20 InfoTip (credits_popup_parts.jsx:148), 30 mode menu (agent_permissions.jsx:141), 60 dropdown (index.html:289) */
-  --v2-z-coach: 40; /* coach scrim and spotlight. Absorbs 40 / 41 (moneymaker_home.jsx:117, 119) */
   --v2-z-dialog: 100; /* every dialog and sheet, day done included (it opens as a Dialog). Absorbs 50 (worker_day_done.jsx:144), 60 (shared.jsx:72), 120 (profile.jsx:73, terms_sheet.jsx:97, tie), 130 (byok.jsx:79) */
   --v2-z-gate: 110; /* sign-in gate. Absorbs 100 (login.jsx:74) */
   --v2-z-toast: 120; /* in-app toast. Absorbs none (new) */
@@ -237,13 +239,13 @@
 
   /* Size. Role: Part sizes that more than one part shares or that step as one set: marks (avatars, tiles, discs), rails, floating widths, text measures.
      onBlue: not shared (the site sizes page-scale parts; these are the 419px window's).
-     Why: The same raw sizes were typed into several kit files (364 twice, the 260 and 280 measures, 32, 40 and 56 discs and tiles), so one change could not reach them all. The Icon and Avatar size props name these values (ds-check keeps the two equal).
+     Why: The same raw sizes were typed into several kit files (364 twice, the 260 and 280 measures, 32, 40 and 56 discs and tiles), so one change could not reach them all. Check 8 (tools/ds-check-more.js) holds the family: Avatar SIZES equal the marks and each .v2-avatar size rule reads its mark, no caller passes a size off that list, and no kit or screens rule types one of these values raw where the token belongs (a square of a mark size, a badge or rail height, the row minimum, the popover width, a measure).
      Absorbs: the V2 values listed on each token below. */
   --v2-mark-sm: 24px; /* small avatar (app rows). Absorbs none (new) */
-  --v2-mark-md: 32px; /* avatar, notification disc, skeleton circle, page spinner. Absorbs 34px account disc (account_gate.jsx:51) */
+  --v2-mark-md: 32px; /* avatar, notification disc, permission mark, skeleton circle, page spinner. Absorbs 34px account disc (account_gate.jsx:51) */
   --v2-mark-lg: 40px; /* large avatar, worker card tile. Absorbs 46px worker tile (moneymaker_home.jsx:132) */
   --v2-mark-xl: 56px; /* account avatar, day-done badge. Absorbs 56px account disc (account_gate.jsx:20), 92px profile emoji disc (profile.jsx:33) */
-  --v2-badge-h: 22px; /* Badge and the guide's priority tag. Absorbs pills 18 to 24 tall (ai_mode.jsx:38, jobs.jsx:31, index.html:474) */
+  --v2-badge-h: 22px; /* Badge and the guide's status and priority tags. Absorbs pills 18 to 24 tall (ai_mode.jsx:38, jobs.jsx:31, index.html:474) */
   --v2-row-min-h: 48px; /* ListRow minimum height. Absorbs rows padded 14 and 16 (profile.jsx:17, settings.jsx:82) */
   --v2-rail: 6px; /* progress rail, credits meter, DayBar segment. Absorbs 6px bars (ai_mode.jsx:140, needs_bluestacks.jsx:138) */
   --v2-rail-thin: 4px; /* thin progress rail inside a row or card. Absorbs none (new) */

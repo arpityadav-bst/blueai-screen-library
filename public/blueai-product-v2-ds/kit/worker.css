@@ -3,10 +3,7 @@
    ModeRows, ConsentDialog, PermissionRequest. Tokens only. Every interactive state is written twice:
    the real pseudo-class and the .is-hover / .is-focus / .is-active class the guide forces. */
 
-/* Shared: small text roles used across the worker parts */
-.v2-w-meta { font-size: var(--v2-text-12); line-height: var(--v2-leading-snug); color: var(--v2-ink-4); }
-.v2-w-note { margin: 0; font-size: var(--v2-text-13); line-height: var(--v2-leading-snug); color: var(--v2-ink-3); }
-.v2-w-figure { color: var(--v2-ink); font-weight: var(--v2-weight-semibold); font-variant-numeric: tabular-nums; }
+/* Small text uses the type ladder (kit/base.css): .v2-text-meta, .v2-text-body-sm, <strong> inside it. */
 
 /* CoachMark Okay: the one inverse control (a light button on the ink coach), 32px target. Every
    other worker action is a kit Button or the Tooltip's own (i) trigger. */
@@ -22,13 +19,9 @@
 .v2-coach-okay:focus-visible, .v2-coach-okay.is-focus { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); }
 
 /* WorkerCard */
-.v2-wcard {
-  position: relative; display: flex; align-items: center; gap: var(--v2-space-3);
-  padding: var(--v2-space-4); background: var(--v2-surface);
-  border: var(--v2-stroke) solid var(--v2-line); border-radius: var(--v2-radius-lg);
-}
+.v2-wcard { position: relative; display: flex; align-items: center; gap: var(--v2-space-3); padding: var(--v2-space-4); } /* surface: kit/display.css Card */
 .v2-wcard-tile {
-  flex: none; align-self: flex-start; display: grid; place-items: center; width: 40px; height: 40px;
+  flex: none; align-self: flex-start; display: grid; place-items: center; width: var(--v2-mark-lg); height: var(--v2-mark-lg);
   border-radius: var(--v2-radius-md); background: var(--v2-surface-sunken); color: var(--v2-ink-3);
 }
 .v2-wcard-tile--info { background: var(--v2-blue-tint); color: var(--v2-blue-ink); }
@@ -36,10 +29,6 @@
 .v2-wcard-tile--danger { background: var(--v2-danger-tint); color: var(--v2-danger-ink); }
 .v2-wcard-tile--success { background: var(--v2-success-tint); color: var(--v2-success-ink); }
 .v2-wcard-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: var(--v2-space-1); }
-.v2-wcard-title {
-  margin: 0; color: var(--v2-ink); font-size: var(--v2-text-16); font-weight: var(--v2-weight-semibold);
-  letter-spacing: var(--v2-tracking-label); line-height: var(--v2-leading-tight);
-}
 .v2-wcard-status { display: flex; align-items: flex-start; gap: var(--v2-space-15); margin: 0; color: var(--v2-ink-3); font-size: var(--v2-text-13); line-height: var(--v2-leading-snug); }
 .v2-wcard-status > svg, .v2-wcard-status > .v2-tick { margin-top: 1px; }
 .v2-wcard-status--meta { font-size: var(--v2-text-12); }
@@ -53,7 +42,7 @@
    .v2-anim-pop-in, kit/motion.css) */
 .v2-coach-wrap { display: flex; justify-content: flex-end; margin-top: var(--v2-space-3); }
 .v2-coach {
-  position: relative; display: flex; flex-direction: column; gap: var(--v2-space-2); max-width: 260px;
+  position: relative; display: flex; flex-direction: column; gap: var(--v2-space-2); max-width: var(--v2-measure-tip);
   padding: var(--v2-space-3) var(--v2-space-3) var(--v2-space-2) var(--v2-space-4);
   background: var(--v2-ink); color: var(--v2-on-color); border-radius: var(--v2-radius-md); box-shadow: var(--v2-shadow-1);
 }
@@ -76,11 +65,13 @@
 .v2-tick-label { color: var(--v2-ink-3); font-size: var(--v2-text-12); }
 .v2-tick-reason { display: block; color: var(--v2-danger-ink); font-size: var(--v2-text-12); line-height: var(--v2-leading-snug); }
 
-/* DayBar: 20 segments, verified solid, pending outlined in blue (in progress, not reached) */
+/* DayBar: 20 segments, verified solid, pending outlined in blue (in progress, not reached). A reached
+   fill is the site's goal-bar green, --green-ink (onblue/apply.html:576), so it is --v2-success-ink;
+   the bright --v2-success stays on the tick, as on the site. */
 .v2-daybar { display: flex; flex-direction: column; gap: var(--v2-space-2); min-width: 0; }
 .v2-daybar-track { display: flex; gap: var(--v2-space-05); }
 .v2-daybar-seg { flex: 1; min-width: 0; height: var(--v2-space-15); border-radius: var(--v2-radius-xs); background: var(--v2-line); }
-.v2-daybar-seg--verified { background: var(--v2-success); }
+.v2-daybar-seg--verified { background: var(--v2-success-ink); }
 .v2-daybar-seg--pending { background: var(--v2-surface); box-shadow: inset 0 0 0 var(--v2-stroke-selected) var(--v2-blue); }
 .v2-daybar-seg--rejected { background: var(--v2-danger-tint); box-shadow: inset 0 0 0 var(--v2-stroke) var(--v2-danger-line); }
 .v2-daybar-seg--missed { background: repeating-linear-gradient(135deg, var(--v2-line-strong) 0 2px, transparent 2px 4px); }
@@ -102,14 +93,6 @@
 }
 .v2-pstrip-receipt { display: inline-flex; align-items: center; gap: var(--v2-space-15); min-width: 0; }
 .v2-pstrip-receipt--danger { color: var(--v2-danger-ink); }
-.v2-w-earnings {
-  display: inline-flex; align-items: center; gap: var(--v2-space-1); flex: none; min-height: var(--v2-hit-min);
-  color: var(--v2-ink); font-size: var(--v2-text-12); font-weight: var(--v2-weight-medium);
-  text-decoration: underline; text-decoration-thickness: var(--v2-stroke); text-underline-offset: 3px;
-  text-decoration-color: var(--v2-link-underline); border-radius: var(--v2-radius-xs);
-}
-.v2-w-earnings:hover, .v2-w-earnings.is-hover { color: var(--v2-blue-ink); text-decoration-color: currentColor; }
-.v2-w-earnings:focus-visible, .v2-w-earnings.is-focus { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); }
 
 /* ProgramSummary */
 .v2-psummary { display: flex; flex-direction: column; gap: var(--v2-space-2); }
@@ -122,13 +105,13 @@
 /* DayDone: one count, one status line, pending until verified */
 .v2-daydone { position: relative; display: flex; flex-direction: column; align-items: center; gap: var(--v2-space-3); text-align: center; }
 .v2-daydone-badge {
-  display: grid; place-items: center; width: 56px; height: 56px; border-radius: var(--v2-radius-round);
+  display: grid; place-items: center; width: var(--v2-mark-xl); height: var(--v2-mark-xl); border-radius: var(--v2-radius-round);
   background: var(--v2-blue-tint); color: var(--v2-blue-ink);
   animation: v2-scale-in var(--v2-dur-celebrate) var(--v2-ease-out) both;
 }
 .v2-daydone-badge .v2-tick { color: inherit; }
-.v2-daydone-title { margin: 0; color: var(--v2-ink); font-size: var(--v2-text-20); font-weight: var(--v2-weight-semibold); letter-spacing: var(--v2-tracking-title); line-height: var(--v2-leading-tight); }
-.v2-daydone-sub { margin: calc(var(--v2-space-2) * -1) 0 0; color: var(--v2-ink-3); font-size: var(--v2-text-13); line-height: var(--v2-leading-body); }
+.v2-daydone-title { margin: 0; } /* type: .v2-text-title-lg */
+.v2-daydone-sub { margin: calc(var(--v2-space-2) * -1) 0 0; } /* type: .v2-text-body-sm */
 .v2-daydone-progress { align-self: stretch; display: flex; flex-direction: column; gap: var(--v2-space-2); text-align: left; }
 .v2-daydone-count { display: flex; align-items: center; justify-content: space-between; gap: var(--v2-space-2); color: var(--v2-ink-3); font-size: var(--v2-text-13); line-height: var(--v2-leading-snug); }
 .v2-confetti { position: absolute; inset: 0; pointer-events: none; }
@@ -149,7 +132,7 @@
 .v2-job--ask .v2-job-head, .v2-job--waiting .v2-job-head { background: var(--v2-attention-tint); border-bottom-color: var(--v2-attention-line); color: var(--v2-attention-ink); }
 .v2-job--expired .v2-job-head { background: var(--v2-surface-sunken); color: var(--v2-ink-3); }
 .v2-job-head-text { flex: 1; min-width: 0; }
-.v2-job-head .v2-w-meta { color: inherit; font-weight: var(--v2-weight-regular); }
+.v2-job-head .v2-w-meta, .v2-job-head .v2-text-meta { color: inherit; font-weight: var(--v2-weight-regular); }
 .v2-job-body { display: flex; flex-direction: column; gap: var(--v2-space-3); padding: var(--v2-space-4); }
 .v2-job-thumb { position: relative; display: grid; place-items: center; aspect-ratio: 16 / 9; overflow: hidden; border-radius: var(--v2-radius-md); background: var(--v2-surface-sunken); color: var(--v2-ink-3); }
 .v2-job-thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
@@ -198,7 +181,7 @@
 .v2-permreq-actions > * { flex: 1; }
 .v2-permreq .v2-permreq-revoke { margin: 0; color: var(--v2-ink-3); }
 .v2-permreq--compact { flex-direction: row; align-items: center; gap: var(--v2-space-3); padding: var(--v2-space-3) var(--v2-space-4); }
-.v2-permreq--compact .v2-w-note { flex: 1; min-width: 0; }
+.v2-permreq--compact .v2-permreq-note { flex: 1; min-width: 0; }
 
 /* Motion: arrivals use motion.css (the coach .v2-anim-pop-in, the day-done badge v2-scale-in at
    --v2-dur-celebrate); only the confetti is local. Confetti is hidden outright under reduced motion. */

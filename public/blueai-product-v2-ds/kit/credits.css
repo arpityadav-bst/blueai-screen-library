@@ -1,24 +1,12 @@
 /* BlueAI Product V2 Design System: credits and settings blocks (sections 47 to 49).
    Tokens only. Every interactive state is written twice, the real pseudo-class and the class the
    guide uses to force it (.is-hover, .is-focus, .is-active). Reduced motion is the global rule in
-   kit/motion.css; nothing here loops. */
+   kit/motion.css; nothing here loops. The credits glyph is V2Kit.Icon 'credits' (kit/base.css). */
 
 /* ---- shared ------------------------------------------------------------------------------ */
 .v2-kit-missing { display: inline-block; padding: var(--v2-space-1) var(--v2-space-2);
   border: var(--v2-stroke) dashed var(--v2-line-strong); border-radius: var(--v2-radius-sm);
   font-size: var(--v2-text-12); color: var(--v2-ink-4); }
-/* Fallback credits glyph, used only when V2Kit.Icon is not loaded. The mask has no colour of its
-   own; the brand gradient shows through it (the gradient's one sanctioned use besides the mark). */
-.v2-credits-glyph {
-  display: inline-block;
-  flex: none;
-  width: var(--v2-icon-sm);
-  height: var(--v2-icon-sm);
-  background: var(--v2-gradient-brand);
-  -webkit-mask: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path d='M8 1C8.4 4.6 11.4 7.6 15 8C11.4 8.4 8.4 11.4 8 15C7.6 11.4 4.6 8.4 1 8C4.6 7.6 7.6 4.6 8 1Z'/></svg>") center / contain no-repeat;
-  mask: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path d='M8 1C8.4 4.6 11.4 7.6 15 8C11.4 8.4 8.4 11.4 8 15C7.6 11.4 4.6 8.4 1 8C4.6 7.6 7.6 4.6 8 1Z'/></svg>") center / contain no-repeat;
-}
-.v2-credits-glyph--lg { width: var(--v2-icon-lg); height: var(--v2-icon-lg); }
 
 /* ---- CreditsChip: 28px pill in a 32px hit area -------------------------------------------- */
 .v2-credits-chip { display: inline-flex; align-items: center; height: var(--v2-hit-min); margin: 0; padding: 0;
@@ -49,12 +37,12 @@
 /* ---- CreditsMeter -------------------------------------------------------------------------- */
 .v2-credits-meter { display: flex; flex-direction: column; gap: var(--v2-space-2); width: 100%;
   font-family: var(--v2-font-ui); font-variant-numeric: tabular-nums; }
-.v2-credits-meter-rail { height: var(--v2-space-15); overflow: hidden; border-radius: var(--v2-radius-pill);
+.v2-credits-meter-rail { height: var(--v2-rail); overflow: hidden; border-radius: var(--v2-radius-pill);
   background: var(--v2-surface-sunken); }
 .v2-credits-meter-fill { display: block; height: 100%; border-radius: inherit; background: var(--v2-blue);
   transition: width var(--v2-dur-3) var(--v2-ease-out); }
-.v2-credits-meter-caption { display: flex; justify-content: space-between; gap: var(--v2-space-3);
-  font-size: var(--v2-text-12); line-height: var(--v2-leading-snug); color: var(--v2-ink-4); }
+/* Caption text is .v2-text-meta (kit/base.css), set on the element; this only lays it out. */
+.v2-credits-meter-caption { display: flex; justify-content: space-between; gap: var(--v2-space-3); }
 .v2-credits-meter-cover { display: flex; align-items: center; gap: var(--v2-space-15); margin: 0;
   font-size: var(--v2-text-13); font-weight: var(--v2-weight-medium); line-height: var(--v2-leading-snug);
   color: var(--v2-ink-2); }
@@ -64,18 +52,14 @@
 .v2-credits-meter-cover--attention > :first-child { color: var(--v2-attention-ink); }
 .v2-credits-meter-cover--danger > :first-child { color: var(--v2-danger-ink); }
 
-/* ---- OutOfCreditsNotice: composer line and run end ----------------------------------------- */
+/* ---- OutOfCreditsNotice, run end (the composer line is the compact Banner, kit/feedback.css) ---- */
 .v2-ooc-note { display: flex; align-items: flex-start; gap: var(--v2-space-2);
-  padding: var(--v2-space-2) var(--v2-space-3); border-radius: var(--v2-radius-md);
-  background: var(--v2-surface-sunken); font-family: var(--v2-font-ui); font-size: var(--v2-text-13);
-  line-height: var(--v2-leading-snug); color: var(--v2-ink-2); }
+  font-family: var(--v2-font-ui); font-size: var(--v2-text-13); line-height: var(--v2-leading-snug); color: var(--v2-ink-2); }
 .v2-ooc-note p { margin: 0; }
-.v2-ooc-note strong { color: var(--v2-ink); font-weight: var(--v2-weight-semibold); }
 .v2-ooc-note-icon { display: inline-flex; flex: none; color: var(--v2-ink-3); }
 .v2-ooc-note-icon--danger { color: var(--v2-danger-ink); }
-.v2-ooc-note--run { padding: 0; background: transparent; }
 .v2-ooc-note-title { font-weight: var(--v2-weight-medium); color: var(--v2-ink); }
-.v2-ooc-note .v2-ooc-note-meta { margin-top: var(--v2-space-05); font-size: var(--v2-text-12); color: var(--v2-ink-4); font-variant-numeric: tabular-nums; }
+.v2-ooc-note .v2-ooc-note-meta { margin-top: var(--v2-space-05); font-variant-numeric: tabular-nums; } /* type: .v2-text-meta */
 
 /* ---- SettingsSection (its surface is the Card's, kit/display.css) ------------------------- */
 .v2-settings-section { display: flex; flex-direction: column; gap: var(--v2-space-3); padding: var(--v2-space-4);
@@ -84,9 +68,9 @@
 .v2-settings-section.is-highlighted { border-color: var(--v2-blue); box-shadow: var(--v2-focus-ring); }
 .v2-settings-section-head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--v2-space-3); }
 .v2-settings-section-text { min-width: 0; }
-.v2-settings-section-title { margin: 0; font-size: var(--v2-text-16); font-weight: var(--v2-weight-semibold);
-  line-height: var(--v2-leading-tight); letter-spacing: var(--v2-tracking-label); color: var(--v2-ink); }
-.v2-settings-section-desc { margin: var(--v2-space-1) 0 0; font-size: var(--v2-text-13); line-height: var(--v2-leading-body); color: var(--v2-ink-3); }
+/* Type: .v2-text-title and .v2-text-body-sm (kit/settings.jsx). */
+.v2-settings-section-title { margin: 0; }
+.v2-settings-section-desc { margin: var(--v2-space-1) 0 0; }
 .v2-settings-section-action { flex: none; }
 .v2-settings-section-body { display: flex; flex-direction: column; }
 /* ListRows and ModeRows run full-bleed so their own 16px padding lines up with the title; they draw
@@ -105,8 +89,7 @@
 .v2-advanced { display: flex; flex-direction: column; gap: var(--v2-space-3); font-family: var(--v2-font-ui); }
 .v2-advanced-toggle { display: flex; align-items: center; justify-content: space-between; gap: var(--v2-space-3);
   width: 100%; min-height: var(--v2-control-lg); padding: var(--v2-space-3) var(--v2-space-4);
-  border: var(--v2-stroke) solid var(--v2-line); border-radius: var(--v2-radius-lg);
-  background-color: var(--v2-surface); color: var(--v2-ink); font: inherit; text-align: left; cursor: pointer;
+  color: var(--v2-ink); font: inherit; text-align: left; cursor: pointer; /* surface: the Card rule, kit/display.css */
   transition: border-color var(--v2-dur-1) var(--v2-ease-standard), background-image var(--v2-dur-1) var(--v2-ease-standard); }
 .v2-advanced-toggle:hover, .v2-advanced-toggle.is-hover { border-color: var(--v2-line-hover);
   background-image: linear-gradient(var(--v2-wash-hover), var(--v2-wash-hover)); }
@@ -131,7 +114,7 @@
   background: var(--v2-surface-panel); }
 .v2-byok-confirm-text { margin: 0; font-size: var(--v2-text-13); line-height: var(--v2-leading-body); color: var(--v2-ink-2); }
 .v2-byok-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--v2-space-2); }
-.v2-byok-note { margin: 0; font-size: var(--v2-text-12); line-height: var(--v2-leading-snug); color: var(--v2-ink-3); }
+.v2-byok-note { margin: 0; } /* type: .v2-text-caption (kit/advanced.jsx) */
 .v2-byok-note--icon { display: flex; align-items: center; gap: var(--v2-space-15); }
 
 /* ---- AiModePanel --------------------------------------------------------------------------- */
@@ -143,3 +126,8 @@
 .v2-aimode-status { display: flex; align-items: center; justify-content: space-between; gap: var(--v2-space-3); font-size: var(--v2-text-13); font-weight: var(--v2-weight-medium); color: var(--v2-ink-2); }
 /* The method switch is V2Kit.Link standalone (kit/actions.css); this only places it. */
 .v2-aimode-switch { align-self: flex-start; }
+
+@media (forced-colors: active) {
+  .v2-credits-meter-rail { border: var(--v2-stroke) solid; }
+  .v2-credits-meter-fill { forced-color-adjust: none; background: currentColor; }
+}

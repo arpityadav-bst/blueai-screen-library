@@ -4,11 +4,13 @@
 
    RunCard {run, state, onAction, onOpenDetail, feedback, full, defaultExpanded, className}
      run    {status, title, startedAt, current, since, steps: [{label, time, status}], outcome,
-             dayText, dayStatus, action}   every field optional; a missing field falls back to the
+             dayText, note, dayStatus, action}   every field optional; a missing field falls back to the
              fixture for that status, so <RunCard state="failed" /> renders a whole card. The
              'nocredits' day line is OOC_COPY.day[dayStatus] (V2Kit.creditsDay(worker), default
              'stopped'), the words the composer notice and WorkerCard use.
              A stopped run, like a failed one, still counts if it runs again before 9 pm.
+             note: one line under the day line. A done job's pending day says, before it can cost
+             the day, that a removed comment fails verification (proposed copy, section 36).
      state  shorthand for run.status: running | waiting | done-pending | verified | failed |
             stopped | nojob | nocredits, plus skipped, expired and rejected for Run detail. A
             ledger row's outcome (section 41) picks it: skipped (Not now) and expired (no answer
@@ -54,7 +56,7 @@
   const RUN_FIXTURES = {
     running: { steps: DONE_STEPS.slice(0, 3), current: 'Checking the jobs board…' },
     waiting: { steps: DONE_STEPS.slice(0, 4), since: '11:04 am', dayText: 'Answer by 9 pm or today won’t count.' },
-    'done-pending': { steps: DONE_STEPS, outcome: 'Done. I finished “' + JOB + '” and submitted the job.', dayText: 'Day 7 of 20, pending verification' },
+    'done-pending': { steps: DONE_STEPS, outcome: 'Done. I finished “' + JOB + '” and submitted the job.', dayText: 'Day 7 of 20, pending verification', note: 'Keep the comment up until it’s verified, or the day won’t count.' },
     verified: { steps: DONE_STEPS, outcome: 'Done. I finished “' + JOB + '” and submitted the job.', dayText: 'Day 7 of 20, verified' },
     failed: { steps: DONE_STEPS.slice(0, 5), outcome: 'I couldn’t finish “' + JOB + '”. App Player closed during the job.', dayText: 'Today doesn’t count yet. Try again before 9 pm.' },
     stopped: { steps: DONE_STEPS.slice(0, 3), outcome: 'You stopped the run at 11:04 am.', dayText: 'Today doesn’t count yet. Run again before 9 pm.' },
@@ -68,13 +70,13 @@
   const ALIAS = { done: 'done-pending', pending: 'done-pending', 'no-job': 'nojob', 'no-credits': 'nocredits' };
   const FINISHED = { 'done-pending': 1, verified: 1, nojob: 1, rejected: 1, skipped: 1, expired: 1 };
 
-  function Icon(props) { const I = K().Icon; return I ? <I {...props} /> : null; }
+  function Icon(props) { const I = K().Icon; return <I {...props} />; }
 
   /* StatusTick (section 43) draws the tick in its own colour; the day line's words say it, so the
      glyph is hidden from assistive tech here. */
   function Tick({ status }) {
     const T = K().StatusTick;
-    return T ? <T status={status} size={14} /> : null;
+    return <T status={status} size={14} />;
   }
 
   function RunCard({ run, state, onAction, onOpenDetail, feedback, full, defaultExpanded, className }) {
@@ -84,11 +86,15 @@
     const S = STATUS[status];
     const F = RUN_FIXTURES[status];
     const steps = r.steps || F.steps || [];
-    const outcome = r.outcome != null ? r.outcome : F.outcome;
+    // V2's 'Credits will be refreshed tomorrow.' is wrong when the refill lands before 9 pm today
+    // (dayStatus 'waiting'): the day line then says what happens, so the outcome stops at the fact.
+    const outcome = r.outcome != null ? r.outcome
+      : status === 'nocredits' && r.dayStatus === 'waiting' ? 'Not enough credits for this job.' : F.outcome;
     const dayText = r.dayText != null ? r.dayText
       : status === 'nocredits' ? K().OOC_COPY.day[r.dayStatus || 'stopped'] : F.dayText;
     // On Run detail the Verification card says verified or not counted; the badge says the run.
     const badge = full && (status === 'verified' || status === 'rejected') ? ['neutral', 'Done'] : S.badge;
+    const note = r.note !== undefined ? r.note : F.note;
     const action = r.action !== undefined ? r.action : S.action;
     const [open, setOpen] = useState(!!defaultExpanded);
     const listId = useId();
@@ -98,7 +104,7 @@
     if (status === 'running') {
       live = (
         <div className="v2-run-live">
-          {P.Spinner ? <P.Spinner size={16} delay={0} /> : null}
+          <P.Spinner size={16} delay={0} />
           <span>{r.current || F.current}</span>
         </div>
       );
@@ -117,7 +123,7 @@
           <header className="v2-run-head">
             <p className="v2-run-title">
               {r.title || 'Today’s run'}
-              <span className="v2-run-time">{r.startedAt || '11:02 am'}</span>
+              <span className="v2-run-time v2-text-meta">{r.startedAt || '11:02 am'}</span>
             </p>
             <P.Badge tone={badge[0]} busy={!!S.busy}>{badge[1]}</P.Badge>
           </header>
@@ -138,7 +144,7 @@
                     <li className="v2-run-step" key={i}>
                       <span className={failed ? 'v2-chat-tone--danger' : 'v2-chat-tone--neutral'}><Icon name={failed ? 'x-circle' : 'check'} size={16} /></span>
                       <span>{s.label}</span>
-                      <span className="v2-run-step-time">{s.time}</span>
+                      <span className="v2-run-step-time v2-text-meta">{s.time}</span>
                     </li>
                   );
                 })}
@@ -159,14 +165,15 @@
               <span>{dayText}</span>
             </div>
           ) : null}
+          {dayText && note ? <p className="v2-text-body-sm">{note}</p> : null}
 
           {action || (onOpenDetail && FINISHED[status]) ? (
             <div className="v2-run-actions">
-              {action && P.Button ? (
+              {action ? (
                 <P.Button variant={action[2]} size="md" onClick={function () { if (onAction) onAction(action[0]); }}>{action[1]}</P.Button>
               ) : null}
               {onOpenDetail && FINISHED[status] ? (
-                <button type="button" className="v2-run-link" onClick={onOpenDetail}>See run details</button>
+                <P.Link standalone onClick={onOpenDetail}>See run details</P.Link>
               ) : null}
             </div>
           ) : null}

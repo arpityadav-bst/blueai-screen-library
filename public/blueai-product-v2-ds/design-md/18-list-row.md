@@ -10,7 +10,7 @@
 
 **Anatomy.**
 1. Row: min 48 tall, padding 12 16 (`--v2-space-3` `--v2-space-4`), gap 12, items centred.
-2. Leading (optional): a 20px icon in `--v2-ink-3`, or an Avatar 32 / 40.
+2. Leading (optional), one of: a 20px icon in `--v2-ink-3`; an Avatar 32 / 40; or a mark (`mark` prop): a `--v2-mark-md` (32) round `--v2-surface-sunken` disc with a 16 glyph in its tone (ink-3, or attention, success or danger ink) and, when `dot`, an 8 `--v2-blue` dot at its top right with a 2px surface halo. The mark is for a row about a thing or an event, not a person: a notification (section 60), BlueStacks in Settings (section 61).
 3. Text: label 14/500 `--v2-ink`; description 13 `--v2-ink-3` under it (also where a disabled row says why).
 4. Trailing, one of: value (14/400 `--v2-ink-2`, tabular, right-aligned), a control (Switch, Select), a Badge, a chevron (16, `--v2-ink-4`), or the external mark.
 5. Divider: 1px `--v2-line-hair`, inset 16 on both sides, between rows only (none after the last).
@@ -27,7 +27,7 @@
 - Disabled: label, icon, value and chevron at `--v2-opacity-disabled`; the reason, as the description, stays readable. `aria-disabled`, still focusable. New.
 - Expanded: `aria-expanded="true"`, chevron turned, panel shown. In V2: History (without the attribute).
 
-**Props.** `ListRow { leading, label, description, value, trailing, badge, onClick, href, external, danger, expandable, expanded, onToggle, divider = true, disabled, disabledReason, children (the expandable panel), className }`. `onClick` makes a button, `href` a link, `expandable` a button with a panel; none makes a div. `expanded` controls it, or it keeps its own state.
+**Props.** `ListRow { leading, mark: {icon, tone: 'neutral' | 'attention' | 'success' | 'danger', dot}, label, description, value, trailing, badge, onClick, href, external, danger, expandable, expanded, onToggle, divider = true, disabled, disabledReason, children (the expandable panel), className }`. `onClick` makes a button, `href` a link, `expandable` a button with a panel; none makes a div. `expanded` controls it, or it keeps its own state. `mark` draws the mark leading and wins over `leading`; it is decorative (the label and description say the event, and an unread dot is said in words by the row).
 
 **Motion.** Hover wash `--v2-dur-1`; chevron turn `--v2-dur-2` `--v2-ease-out`. Nothing under reduced motion.
 

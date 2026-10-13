@@ -49,7 +49,7 @@
           <span className="v2-ooc-note-icon v2-ooc-note-icon--danger"><K.Icon name="x-circle" size={16} /></span>
           <div className="v2-ooc-note-text">
             <p className="v2-ooc-note-title">{COPY.day[dayStatus || 'stopped']}</p>
-            <p className="v2-ooc-note-meta">{COPY.refreshAt} {at}.</p>
+            <p className="v2-ooc-note-meta v2-text-meta">{COPY.refreshAt} {at}.</p>
           </div>
         </div>
       );

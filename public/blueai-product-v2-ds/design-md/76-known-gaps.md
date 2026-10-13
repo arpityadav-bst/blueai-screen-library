@@ -11,7 +11,7 @@
 - **V2 without Tailwind:** V2 loads the Tailwind CDN; this page does not (R26). Live V2 parts sit in a v2-preflight wrapper whose scoped reset mirrors Tailwind’s preflight, but V2’s few Tailwind utility classes (worker_cards.jsx) do nothing here.
 - **V2’s own style block:** V2 index.html’s keyframes and ba-* classes are copied into guide/v2-live.css so live parts animate. If V2 changes that block, re-copy it; no check compares them.
 - **Scene styles:** product-scene.css is not loaded, so the desktop, the Windows toast and the install dialog are shown as V2 URL states in a frame, not live.
-- **URL states and localStorage:** Some V2 states read localStorage (the consent record, the mode per app, sign-in). A framed state can open on what an earlier visit stored rather than what its URL says. Open it in a private window to be sure.
+- **URL states and localStorage:** V2 reads two Preview panel rows from localStorage (`index.html:252-256`): `bai_proto_start` (land signed in on the worker, or the real sign-in cold start) and `bai_proto_version` (Version 1 chat chip or Version 2 ribbon). A link that sets its own start (`start`, `day`, `end` or `signin`) or version (`v`) wins (`index.html:237-245`); a framed state without them opens on what an earlier visit stored. Open it in a private window to be sure. The consent record is only written (`agent_permissions.jsx:76`) and the mode per app lives in memory, so neither carries over.
 - **Shared V2 stores on this page:** Live parts share V2’s in-page stores: section 46’s specimens set the AgentPermissions mode, which chat’s AutoRibbon (section 38) then shows as Automatic. Use section 46’s Reset.
 - **V2 modal markup:** The live V2 TermsSheet (section 26) renders V2’s own role=dialog aria-modal markup, so a screen reader may treat the rest of the guide as inert while it is mounted.
 - **What a ref proves:** A ref proves a piece of text is still on its V2 line. It does not prove V2 renders it, or renders it the way the guide describes.
@@ -24,20 +24,21 @@ Each is a small change in one place; none blocks reading or using the system.
 | Area | Item | Closes it |
 |---|---|---|
 | Kit | TopBar passes balance and state to CreditsChip but not runCost, so “low” shows only when state is passed. | shell kit |
+| Kit | Decision D6 is not built: no part holds back the credits today's run needs. The composer locks only at zero (section 38) and the credits chip turns low once fewer than the run's cost are left, so a chat can spend today's paid run. To build option A: CreditsMeter shows a held segment ("360 held for today’s run") and the composer gets a notice and locks at what is left minus the run's cost until today's run is done. | credits kit |
 | Kit | The icon set has eye but no eye-off; the secret field shows its state with aria-pressed and a wash. | foundations |
 | Kit | Numbered step discs and the one-serif-word title live in screens/entry.css; promote them if Help or ProgramSummary needs them. | display kit |
 | Screens | The Notifications unread count has no place in the chrome (More carries no badge); what needs the partner is counted on Activity. | section 54 |
 | Screens | The Notifications items are fixtures in screens/notifications.jsx, outside the Worker record. Give the record an inbox list when V2 adopts the kit. | section 41 |
-| Screens | The app router must map “report” to ReportProblemSheet; Activity’s rejected day and a failed RunCard should open it with the run attached. | screens |
+| Screens | A failed RunCard has no Report a problem entry yet; Activity and Run detail open the sheet with the run attached (V2Screens.reportAbout). | screens |
 | Screens | Search and load more are deferred. Chat History, V2’s one long list, retires (R04); Activity’s This program tab is at most 20 days and Past adds one row per program. Notifications grows with every event: before a partner’s second program, give it a “Show earlier” row or keep only the current program. | screens |
-| Data | The Worker record has no run date, BlueStacks or App Player preflight result, or Telegram link state; screens take them as props. | worker kit |
-| Data | Only one account fixture: the account gate hard-codes a second address in two screens. Add an other-account fixture. | worker kit |
+| Data | The Worker record has no Telegram link state; Settings and Connected apps take it as a prop (`telegram`). | worker kit |
+| Screens | The sign-in mismatch screens type the second address instead of reading `V2Kit.WORKER_OTHER_ACCOUNT` (`screens/sign-in.jsx:27`, `screens/system-states.jsx:133`). | screens |
 | Data | One real dashboard URL for Earnings (R29); the FAQ link is a stand-in next to it. | product team |
-| Product | Welcome has no “signed out after a session” variant that says the worker is paused. | entry patterns |
-| Product | Whether feedback (thumbs) is offered on a failed job, where a partner most wants to report a problem; V2 offers it on successes only (section 39). | PM |
-| Product | Whether a partner can turn an interest topic off, and what that does to the jobs offered (section 62). | PM |
+| Product | Whether feedback (thumbs) is offered on a failed job (decision D18) and whether a partner can turn an interest topic off (decision D19), section 73. | PM |
+| Product | Whether Telegram carries the day-losing events (a job waiting, a run that didn’t start or can’t start) to a partner away from the PC; today it carries only the partner's commands (section 54). | PM |
 | Product | How support replies to Report a problem and how soon; the sheet promises email only (section 65). | support |
-| Copy | Every string marked Proposed in DESIGN.md waits for the PM; decisions D1 to D13 wait for the PM and legal (section 73). | PM |
+| Copy | Every string marked Proposed in DESIGN.md waits for the PM; decisions D1 to D19 wait for the PM and legal (section 73). | PM |
+| Site | The site's Cash out and program sheets set `backdrop-filter: var(--gate-blur)`, a bare length (14px), which is invalid, so they draw no blur (`onblue-vesper/onblue.css:1365`, `onblue-vesper/apply.html:634`). Wrap it in `blur()`. The app is not affected: its sign-in gate uses `--v2-scrim-blur` inside `blur()`. | onBlue owner |
 
 ### Dead code in V2 (not a source)
 

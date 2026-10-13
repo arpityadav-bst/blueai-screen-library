@@ -19,20 +19,21 @@
   // [area, item, who closes it]
   const OPEN = [
     ['Kit', 'TopBar passes balance and state to CreditsChip but not runCost, so “low” shows only when state is passed.', 'shell kit'],
+    ['Kit', 'Decision D6 is not built: no part holds back the credits today\'s run needs. The composer locks only at zero (section 38) and the credits chip turns low once fewer than the run\'s cost are left, so a chat can spend today\'s paid run. To build option A: CreditsMeter shows a held segment ("360 held for today’s run") and the composer gets a notice and locks at what is left minus the run\'s cost until today\'s run is done.', 'credits kit'],
     ['Kit', 'The icon set has eye but no eye-off; the secret field shows its state with aria-pressed and a wash.', 'foundations'],
     ['Kit', 'Numbered step discs and the one-serif-word title live in screens/entry.css; promote them if Help or ProgramSummary needs them.', 'display kit'],
     ['Screens', 'The Notifications unread count has no place in the chrome (More carries no badge); what needs the partner is counted on Activity.', 'section 54'],
     ['Screens', 'The Notifications items are fixtures in screens/notifications.jsx, outside the Worker record. Give the record an inbox list when V2 adopts the kit.', 'section 41'],
-    ['Screens', 'The app router must map “report” to ReportProblemSheet; Activity’s rejected day and a failed RunCard should open it with the run attached.', 'screens'],
+    ['Screens', 'A failed RunCard has no Report a problem entry yet; Activity and Run detail open the sheet with the run attached (V2Screens.reportAbout).', 'screens'],
     ['Screens', 'Search and load more are deferred. Chat History, V2’s one long list, retires (R04); Activity’s This program tab is at most 20 days and Past adds one row per program. Notifications grows with every event: before a partner’s second program, give it a “Show earlier” row or keep only the current program.', 'screens'],
-    ['Data', 'The Worker record has no run date, BlueStacks or App Player preflight result, or Telegram link state; screens take them as props.', 'worker kit'],
-    ['Data', 'Only one account fixture: the account gate hard-codes a second address in two screens. Add an other-account fixture.', 'worker kit'],
+    ['Data', 'The Worker record has no Telegram link state; Settings and Connected apps take it as a prop (telegram).', 'worker kit'],
+    ['Screens', 'The sign-in mismatch screens type the second address instead of reading V2Kit.WORKER_OTHER_ACCOUNT (screens/sign-in.jsx:27, screens/system-states.jsx:133).', 'screens'],
     ['Data', 'One real dashboard URL for Earnings (R29); the FAQ link is a stand-in next to it.', 'product team'],
-    ['Product', 'Welcome has no “signed out after a session” variant that says the worker is paused.', 'entry patterns'],
-    ['Product', 'Whether feedback (thumbs) is offered on a failed job, where a partner most wants to report a problem; V2 offers it on successes only (section 39).', 'PM'],
-    ['Product', 'Whether a partner can turn an interest topic off, and what that does to the jobs offered (section 62).', 'PM'],
+    ['Product', 'Whether feedback (thumbs) is offered on a failed job (decision D18) and whether a partner can turn an interest topic off (decision D19), section 73.', 'PM'],
+    ['Product', 'Whether Telegram carries the day-losing events (a job waiting, a run that didn’t start or can’t start) to a partner away from the PC; today it carries only the partner\'s commands (section 54).', 'PM'],
     ['Product', 'How support replies to Report a problem and how soon; the sheet promises email only (section 65).', 'support'],
-    ['Copy', 'Every string marked Proposed in DESIGN.md waits for the PM; decisions D1 to D13 wait for the PM and legal (section 73).', 'PM'],
+    ['Copy', 'Every string marked Proposed in DESIGN.md waits for the PM; decisions D1 to D19 wait for the PM and legal (section 73).', 'PM'],
+    ['Site', 'The site\'s Cash out and program sheets set backdrop-filter: var(--gate-blur), a bare length (14px), which is invalid, so they draw no blur (onblue-vesper/onblue.css:1365, onblue-vesper/apply.html:634). Wrap it in blur(). The app is not affected: its sign-in gate uses --v2-scrim-blur inside blur().', 'onBlue owner'],
   ];
 
   const DEAD = [

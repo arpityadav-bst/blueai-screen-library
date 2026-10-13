@@ -32,11 +32,11 @@
 
 ### Window semantics and tray (New)
 
-**Purpose.** What the window does when it is closed, minimized or quit, so the worker keeps its schedule and the partner always has one place to see, pause or stop it. It keeps the setup promise "You can pause, stop, or disconnect anytime." (worker_flow.jsx:67).
+**Purpose.** What the window does when it is closed, minimized or quit, so the worker keeps its schedule and the partner always has one place to see it, skip a day or stop it. It keeps the setup promise "You can pause, stop, or disconnect anytime." (worker_flow.jsx:67).
 
-**Anatomy.** Window behaviours plus a tray menu (Windows draws it; the kit's `TrayMenu` fixes its items, order and words): a head (mark, "BlueAI", a status line with a dot), a separator, Open BlueAI, Pause today's run (Resume runs while paused), a separator, Quit BlueAI. Pause and Quit lead to a confirm step that states the cost.
+**Anatomy.** Window behaviours plus a tray menu (Windows draws it; the kit's `TrayMenu` fixes its items, order and words): a head (mark, "BlueAI", a status line with a dot), a separator, Open BlueAI, then Skip today's run (only while today's run is still to come: scheduled, or it didn't start) or Resume runs (while paused), a separator, Quit BlueAI. Skip and Quit lead to a confirm step that states the cost (`kit/shell.jsx:39-63, 96-100`). Pausing runs for days is not a tray item: it lives in Settings > Worker, always with an end date (section 62).
 
-**Variants.** Tray status: scheduled ("Next run 11 am"), running ("Running today's run"), done ("Done today, pending verification", or "Day 7 of 20, pending verification"), paused ("Runs paused"). Confirm: pause, quit.
+**Variants.** Tray status: any RUN_STATUS key (section 30), in its tray words: scheduled ("Next run 11 am"), running ("Running today's run"), pending ("Done today, pending verification"), missed ("Today's run didn't start. Run it by 9 pm"), paused ("Runs paused"), and the rest of section 30's table. Confirm: skip, quit.
 
 **Sizes.** Specimen width `--v2-dialog-sm` (320); items 32 tall (`--v2-hit-min`), radius 6; surface, hairline, `--v2-shadow-1`, radius 10.
 
@@ -45,12 +45,13 @@
 - Minimize: to the taskbar; the running dash stays.
 - Reopen (taskbar, tray, notification): restores the last screen at once, no splash.
 - Tray click: opens BlueAI. Right-click: the tray menu.
-- Pause today's run: confirm "Pause today's run?" / "Today won't count toward your 20 days. Runs stay paused until you resume them." [Keep running] [Pause]. When today is already done: "Today is already done. Runs stay paused until you resume them."
-- Quit BlueAI: confirm "Quit BlueAI?" / "Today's run won't happen while BlueAI is closed, so today won't count." [Keep running] [Quit] (danger). After today's run: "Today is done. Your next run won't happen while BlueAI is closed." No question while runs are paused.
+- Skip today's run (offered only while today's run is still to come): confirm "Skip today’s run?" / "Today won’t count toward your 20 days. Runs start again tomorrow." [Keep today’s run] [Skip today] (primary). It skips one day; it never pauses runs.
+- Resume runs (offered only while paused): resumes at once, no question.
+- Quit BlueAI: confirm "Quit BlueAI?" / "Today’s run won’t happen while BlueAI is closed, so today won’t count." [Keep running] [Quit] (danger). Once today is settled (pending, done, not counted, verified, period ended): "Today is done. Your next run won’t happen while BlueAI is closed." No question while runs are paused: the host passes no confirm.
 - PC restarts: BlueAI starts with Windows into the tray, window closed (proposed; a switch in Settings > Worker).
 - Sign out: signs out and pauses the worker, and the confirm says so (section 64; V2's Logout confirm does not sign out, index.html:1000).
 
-**Props.** `TrayMenu { runStatus: 'scheduled' | 'running' | 'done' | 'paused', statusLabel, onOpen, onPause, onResume, onQuit, confirm: null | 'pause' | 'quit', onConfirm, onCancel }`.
+**Props.** `TrayMenu { runStatus (a RUN_STATUS key, section 30; 'done' reads as 'pending'), statusLabel (the real time or count; default the tray words), onOpen, onSkip, onResume, onQuit, confirm: null | 'skip' | 'quit', onConfirm, onCancel }`.
 
 **Motion.** None in the product (Windows animates its own menu).
 
@@ -58,4 +59,4 @@
 
 **Responsive.** Not applicable (OS surface).
 
-**Do / Don't.** Do say the cost of Pause and Quit before the click. Do use the same status words as the top bar chip. Don't stop runs when the window closes. Don't replay the splash on reopen. Don't hide Quit.
+**Do / Don't.** Do say the cost of Skip and Quit before the click. Do use the same status words as the top bar chip. Don't stop runs when the window closes. Don't replay the splash on reopen. Don't hide Quit.

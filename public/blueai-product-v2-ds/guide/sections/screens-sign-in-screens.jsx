@@ -55,6 +55,9 @@
     ['Signing', ['entry-patterns.signin.spinner', 'entry-patterns.signin.signing-title', 'entry-patterns.signin.signing-body', 'entry-patterns.signin.result', 'entry-patterns.signin.timer-signing', 'entry-patterns.signin.timer-success'],
       'Indigo #4f46e5 ring (a second accent), "Signing in…", "Please wait while we complete your sign-in", 1500 ms.',
       'Blue Spinner 32, "Signing in…", and what is happening: "Checking that this account is in the program." (proposed).'],
+    ['Couldn’t finish', ['entry-patterns.signin.result'],
+      'None: after 1500 ms signing always moves to success or the gate, so a timeout or a dropped connection has nowhere to go.',
+      '"Couldn’t finish signing in" / "Check your connection and try again." with a danger mark; Try again (primary) and Open the browser again. Close cancels.'],
     ['Success', ['entry-patterns.signin.success-title', 'entry-patterns.signin.welcome-back', 'entry-patterns.signin.continue'],
       '"Logged in", "Welcome back!" to a first-time partner, and a Continue click.',
       '"You’re signed in" and the email, then Home after 900 ms by itself (the browser already said so). No button.'],
@@ -76,6 +79,7 @@
           <G.StateGrid wide states={[
             { label: 'Browser', note: 'the browser is open', node: <Shot><Screen step="browser" /></Shot> },
             { label: 'Signing', note: 'about 1.5 s', node: <Shot><Screen step="signing" /></Shot> },
+            { label: 'Couldn’t finish', note: 'timeout or dropped connection: Try again or the browser', node: <Shot><Screen step="error" /></Shot> },
             { label: 'Success', note: 'moves on after 900 ms', node: <Shot><Screen step="success" /></Shot> },
             { label: 'Gate, from App Player', note: 'case 2 (option A)', node: <Shot><Screen step="gate" from="player" /></Shot> },
             { label: 'Gate, from the browser', note: 'case 3b, a wrong pick', node: <Shot><Screen step="gate" /></Shot> },

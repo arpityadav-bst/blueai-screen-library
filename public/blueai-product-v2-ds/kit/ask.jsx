@@ -9,8 +9,12 @@
                   heard before the tap, not after. tone
                   'neutral' is decision D13's option B (onboarding asks while the partner watches).
                   An option with consent: true turns Automatic on: the caller opens ConsentDialog
-                  (section 46) first and answers only after "I agree, turn on".
+                  (section 46) first and answers only after "I agree, turn on". Answering removes
+                  the chips, so focus moves to the settled card (an in-place swap, section 09); a
+                  dialog opened from a chip returns there too.
    FeedbackThumbs {vote, onVote, reason, onReason, onSubmitOther, thanks}  below placement only.
+                  Picking a reason or sending Other hides the reasons; focus goes back to the
+                  pressed thumb.
    DependencyCard {app, phase: 'needs'|'installing'|'failed'|'done'|'signedOut', progress, onGet,
                   onCancel, onRetry, onOpen}  the reply in the thread when a run needs BlueStacks
                   or App Player; also the worker's preflight (R13). Installing is the over-10s wait
@@ -23,8 +27,9 @@
 
   /* ---------- AskCard ---------- */
   function settledLine(state, step) {
+    const D = K().DAY_COPY;
     if (state === 'stopped') return 'The run stopped before you answered.';
-    if (state === 'expired') return 'No answer by ' + (step.expiresAt || '9 pm') + ', so I skipped this job. Today doesn’t count.';
+    if (state === 'expired' && D) return D.expired(step.expiresAt) + ' ' + D.notCounted;
     return null;
   }
 
@@ -35,11 +40,13 @@
     const pending = st === 'pending';
     const quiet = tone === 'neutral';
     const qid = useId();
+    const card = useRef(null);
     const P = K();
     const line = settledLine(st, s);
+    if (P.useSwapFocus) P.useSwapFocus(card, st);
     return (
       <div className={cx('v2-msg', 'v2-msg--worker', 'v2-ask', 'is-' + st, quiet && 'v2-ask--neutral', className)}>
-        <div className="v2-ask-card">
+        <div ref={card} className="v2-ask-card" tabIndex={pending ? undefined : -1} data-v2-anchor={pending ? undefined : ''}>
           {pending ? <span className="v2-chat-sr">BlueAI needs your answer. </span> : null}
           {s.title ? <p className="v2-ask-title">{s.title}</p> : null}
           {s.lead ? <p className="v2-ask-text">{s.lead}</p> : null}
@@ -66,7 +73,9 @@
   }
 
   /* ---------- FeedbackThumbs ---------- */
-  const REASONS = ["Didn't complete the task", 'Wrong result', 'Took too long', "Didn't understand me", 'Other'];
+  // V2's reasons (chat_feedback.jsx), curly apostrophes. 'task' is V2's word; the glossary keeps it
+  // for paid work, so section 39 flags it for the PM (proposed: 'Didn’t finish the job').
+  const REASONS = ['Didn’t complete the task', 'Wrong result', 'Took too long', 'Didn’t understand me', 'Other'];
 
   function FeedbackThumbs({ vote, onVote, reason, onReason, onSubmitOther, thanks, className }) {
     const [flash, setFlash] = useState(false);
@@ -74,6 +83,7 @@
     const [text, setText] = useState('');
     const [sent, setSent] = useState(false);
     const timer = useRef(null);
+    const row = useRef(null);
     const pid = useId();
     const P = K();
     useEffect(function () { return function () { clearTimeout(timer.current); }; }, []);
@@ -104,10 +114,12 @@
     const showThanks = thanks != null ? thanks : flash;
     const showReasons = vote === 'down' && !hidden;
     const IB = P.IconButton;
+    // The reasons left with the chip just pressed: back to the pressed thumb.
+    if (P.useSwapFocus) P.useSwapFocus(function () { return row.current && row.current.querySelector('[aria-pressed="true"]'); }, showReasons);
 
     return (
       <div className={cx('v2-fb', className)}>
-        <div className="v2-fb-row">
+        <div className="v2-fb-row" ref={row}>
           {IB ? <IB icon="thumb-up" label="Good result" size={32} variant="outlined" active={vote === 'up'} aria-pressed={vote === 'up'} onClick={function () { cast('up'); }} /> : null}
           {IB ? <IB icon="thumb-down" label="Bad result" size={32} variant="outlined" active={vote === 'down'} aria-pressed={vote === 'down'} onClick={function () { cast('down'); }} /> : null}
           <span className="v2-fb-thanks" role="status">{showThanks ? 'Thanks for the feedback' : ''}</span>

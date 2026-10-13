@@ -5,7 +5,7 @@
 
 ### MessageBubble, user (Changed from V2)
 - **Purpose:** What the partner said, or the answer chip they tapped (echoed).
-- **Anatomy:** Right-aligned; blue tint fill (`--v2-blue-tint`), 1px `--v2-blue-tint-line`, radius 16, padding 10 14, max 300, text 14/1.5 ink, no shadow; optional time under it.
+- **Anatomy:** Right-aligned; blue tint fill (`--v2-blue-tint`), 1px `--v2-blue-tint-line`, radius 16, padding 12 16, max 300, text 14/1.5 ink, no shadow; optional time under it.
 - **Variants:** One.
 - **Sizes:** Max 300, hugs short text.
 - **States:** Rest; with time (last of a group). V2: `?start=worker&ask=<text>`, or the Preview panel's Chat states row.
@@ -17,7 +17,7 @@
 
 ### MessageBubble, worker (Changed from V2)
 - **Purpose:** A plain sentence from the worker. Run progress is not here; it is in the RunCard.
-- **Anatomy:** Left-aligned; white, 1px `--v2-line`, radius 16, padding 10 14, max 300, text 14/1.5 ink-2. Thinking: Spinner 16 + "Working on it…" ink-3.
+- **Anatomy:** Left-aligned; white, 1px `--v2-line`, radius 16, padding 12 16, max 300, text 14/1.5 ink-2. Thinking: Spinner 16 + "Working on it…" ink-3.
 - **Variants:** Plain; thinking (last step only); plan (title + numbered list).
 - **Sizes:** Max 300.
 - **States:** Rest; with time; thinking. V2: any running script (`?day=next`).
@@ -29,8 +29,8 @@
 
 ### NoticeBubble (Changed from V2)
 - **Purpose:** An outcome or a heads-up the partner should read.
-- **Anatomy:** White, 1px line, radius 16, padding 10 14, max 300; icon 16 in tone, optional title 14/600 ink, body 14 ink-2 (one line per item when given `lines`); optional action row under it and feedback below the bubble.
-- **Variants:** `headsup` (alert, attention-ink), `success` (check, success-ink), `fail` (x-circle, danger-ink), `needsInput` (help, attention-ink, on the PM's yellow `#fdf6cf` / `#f3e8a8`), `info` (info, blue-ink; DependencyCard).
+- **Anatomy:** White, 1px line, radius 16, padding 12 16, max 300; icon 16 in tone, optional title 14/600 ink, body 14 ink-2 (one line per item when given `lines`); optional action row under it and feedback below the bubble.
+- **Variants:** `kind` is one of the five token tones (`kit/thread.jsx` NOTICE): `info` (info, blue-ink; DependencyCard), `success` (check, success-ink), `attention` (alert, attention-ink), `danger` (x-circle, danger-ink), `neutral` (info, ink-3). Aliases kept for older callers: `headsup` is attention, `fail` is danger, and `needsInput` is attention (help icon) on the PM's yellow (`--v2-attention-tint` / `--v2-attention-line`), the one attention fill.
 - **Sizes:** Max 300.
 - **States:** Static. V2: Preview panel, Chat states On shows success, heads-up, needs input and fail; Scheduled job Out of credits shows the titled heads-up.
 - **Props:** `NoticeBubble {kind, title, lines, children, action, feedback, time, groupStart, className}`.

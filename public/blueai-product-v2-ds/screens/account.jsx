@@ -5,20 +5,27 @@
    (profile.jsx:7-34), and its Logout confirm only closes the dialog (index.html:1000). Pushed over
    Settings with Back; also opened from the top bar's More menu (Account).
 
-   Account {worker, state, onBack, onNavigate, onSignOut, onLeave, onDeleteData, frame, compact,
-            landmark, preview}
-     state  'view' (default) | 'signout' | 'leave' | 'delete' (that confirm open) |
+   Account {worker, state, onBack, onNavigate, onSignOut, onLeave, onDeleteData, onRetry, frame,
+            compact, landmark, preview}
+     state  'view' (default) | 'signout' | 'leave' | 'delete' (that confirm open), each also as
+            '-busy' (the primary working) and '-failed' (it failed: said in the dialog, Try again) |
             'history-revoked' (watch history turned off in Connected apps) | 'signed-out' (signed
-            out: the worker is paused and the window lands on Welcome's signed-out variant, 67).
+            out: the worker is paused and the window lands on Welcome's signed-out variant, 67) |
+            'left' | 'deleted' (after Leave the program or Delete my data: section 69's
+            left-program state) | 'loading' | 'error'.
      Watch history reads the record exactly: allowed is Allowed; notnow, revoked and not asked yet
-     (a new partner) are Not allowed. The agreement record lists it with the day it was decided.
+     (a new partner) are Not allowed, and the interest profile then says it is general topics.
+     The agreement record lists it with the day it was decided.
      Leaving the program and deleting data are the withdrawal the consent rules put here
-     (section 53): danger AlertDialogs with CONFIRM_COPY (settings.jsx).
+     (section 53): danger AlertDialogs with CONFIRM_COPY and ConfirmDialog (settings.jsx), whose
+     cash-out line reads numbers(record).
      onNavigate('connected-apps', {app}) | ('worker-settings'), plus every chrome event. */
 (function () {
   const { useState } = React;
   const kit = function () { return window.V2Kit || {}; };
   const noop = function () {};
+  const CONFIRM_STATE = /^(signout|leave|delete)(?:-(busy|failed))?$/;
+  const NO_STEP = function () { return { busy: false, failed: false, run: function (done) { done(); }, reset: noop }; };
   // V2's legal page (terms_sheet.jsx:32) and its two anchors (terms_sheet.jsx:67-68).
   const TERMS_URL = '/onblue/terms';
   // The history line per record value: [Privacy row value, record line].
@@ -62,23 +69,23 @@
   }
 
   function Account(props) {
-    const Scope = (window.V2Screens || {}).ToastScope;
-    return Scope ? <Scope><AccountScreen {...props} /></Scope> : <AccountScreen {...props} />;
-  }
-
-  function AccountScreen(props) {
     const K = kit();
     const p = props;
     const w = p.worker || fixture(p.state);
-    const [confirm, setConfirm] = useState({ signout: 'signout', leave: 'leave', delete: 'delete' }[p.state] || null);
-    const [out, setOut] = useState(p.state === 'signed-out');
+    const forced = CONFIRM_STATE.exec(p.state || '');
     const S = window.V2Screens || {};
-    const toast = (S.useScreenToast || function () { return { show: noop }; })();
+    const [confirm, setConfirm] = useState(forced ? forced[1] : null);
+    const step = (S.useConfirmStep || NO_STEP)(forced ? forced[2] : null);
+    const [out, setOut] = useState(p.state === 'signed-out');
+    const [left, setLeft] = useState(p.state === 'left' || p.state === 'deleted' ? p.state : null);
     const Frame = S.ScreenFrame;
     const Sec = K.SettingsSection;
     const Row = K.ListRow;
     if (!Sec || !Row || !Frame || !K.AppFrame) return <div className="v2-acct-note">The kit or screens/home.jsx is not loaded.</div>;
     if (out) return <SignedOut worker={w} compact={p.compact} landmark={p.landmark} />;
+    if (left && S.SystemStates) {
+      return <S.SystemStates state="left-program" deleting={left === 'deleted'} worker={w} compact={p.compact} landmark={p.landmark} onNavigate={p.onNavigate} />;
+    }
 
     const go = p.onNavigate || noop;
     const a = w.account || {};
@@ -91,29 +98,26 @@
     const copy = S.CONFIRM_COPY || {};
     function nav(id, opts) { if (id === 'sign-out') setConfirm('signout'); else go(id, opts); }
 
-    // The confirm that is open: its copy, its primary's tone, and what confirming does.
+    // The confirm that is open: its copy, its primary's tone, and where confirming lands.
     const confirms = {
-      signout: [copy.signOut && copy.signOut(a.email), 'primary', function () { setConfirm(null); setOut(true); (p.onSignOut || noop)(); }],
-      leave: [copy.leave && copy.leave(yt.handle || 'your YouTube account', n.endsOn), 'danger', function () {
-        setConfirm(null); if (p.onLeave) p.onLeave(); else toast.show({ title: 'You’ve left the program.', tone: 'info' });
-      }],
-      delete: [copy.deleteData && copy.deleteData(), 'danger', function () {
-        setConfirm(null); if (p.onDeleteData) p.onDeleteData(); else toast.show({ title: 'Your data is being deleted. We’ll email you when it’s done.', tone: 'info' });
-      }],
+      signout: [copy.signOut && copy.signOut(a.email), 'primary', function () { setOut(true); (p.onSignOut || noop)(); }],
+      leave: [copy.leave && copy.leave(yt.handle || 'your YouTube account', n.endsOn, n), 'danger', function () { setLeft('left'); (p.onLeave || noop)(); }],
+      delete: [copy.deleteData && copy.deleteData(n), 'danger', function () { setLeft('deleted'); (p.onDeleteData || noop)(); }],
     };
     const c = confirm && confirms[confirm];
-    const dialog = c && c[0] && K.Dialog ? (
-      <K.Dialog open preview={p.preview} variant="alert" title={c[0].title} description={c[0].body}
-        onClose={function () { setConfirm(null); }}
-        actions={[{ label: 'Cancel', onClick: function () { setConfirm(null); } }, { label: c[0].confirm, variant: c[1], onClick: c[2] }]} />
+    function cancel() { step.reset(); setConfirm(null); }
+    const dialog = c && S.ConfirmDialog ? (
+      <S.ConfirmDialog copy={c[0]} tone={c[1]} step={step} preview={p.preview} onCancel={cancel}
+        onConfirm={function () { step.run(function () { setConfirm(null); c[2](); }); }} />
     ) : null;
+    const pending = S.pendingBody ? S.pendingBody(p.state, 'your account', p.onRetry) : null;
 
     return (
       <Frame worker={w} tab="settings" frame={p.frame} compact={p.compact} landmark={p.landmark} overlays={dialog}
-        onNavigate={nav}>
+        loading={p.state === 'loading'} onNavigate={nav}>
         <div className="v2-acct">
           {K.ScreenHeader ? <K.ScreenHeader title="Account" onBack={p.onBack || noop} /> : null}
-          <div className="v2-acct-body">
+          {pending ? <div className="v2-acct-body">{pending}</div> : <div className="v2-acct-body">
             <div className="v2-acct-id">
               {K.Avatar ? <K.Avatar name={a.name} size={56} decorative /> : null}
               <div className="v2-acct-id-text">
@@ -130,7 +134,8 @@
                 description={yt.handle || 'Not connected'} onClick={function () { go('connected-apps', { app: 'youtube' }); }} />
             </Sec>
             <Sec id="privacy" title="Privacy" description="What BlueAI keeps about you, what you agreed to, and how to leave.">
-              <Row label="Interest profile" description="4 topics from your watch history" onClick={function () { go('worker-settings'); }} />
+              <Row label="Interest profile" description={yt.history === 'allowed' ? '4 topics from your watch history' : 'General topics. Allow watch history to tailor jobs.'}
+                onClick={function () { go('worker-settings'); }} />
               <Row label="Watch history" value={hist[0]} onClick={function () { go('connected-apps', { app: 'youtube' }); }} />
               <Row label="What you agreed to" expandable>
                 <ul className="v2-acct-record">
@@ -152,7 +157,7 @@
                 <Row label="Sign out" leading={ic('sign-out')} onClick={function () { setConfirm('signout'); }} />
               </K.Card>
             ) : null}
-          </div>
+          </div>}
         </div>
       </Frame>
     );

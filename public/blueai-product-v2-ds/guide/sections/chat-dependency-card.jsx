@@ -4,7 +4,7 @@
   const { useState, useEffect, useRef } = React;
   const noop = function () {};
 
-  /* needs -> installing (3000ms, V2's duration) -> done, then Reset. */
+  /* needs -> installing (3000ms, V2's duration, with Cancel install) -> done, then Reset. */
   function Playable() {
     const K = window.V2Kit;
     const [phase, setPhase] = useState('needs');
@@ -24,7 +24,8 @@
     }, [phase]);
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'flex-start' }}>
-        <K.DependencyCard app="YouTube" phase={phase} progress={pct} onGet={function () { setPct(0); setPhase('installing'); }} />
+        <K.DependencyCard app="YouTube" phase={phase} progress={pct} onGet={function () { setPct(0); setPhase('installing'); }}
+          onCancel={function () { setPhase('needs'); }} onRetry={function () { setPct(0); setPhase('installing'); }} />
         {phase === 'done' ? <button type="button" className="g-btn" onClick={function () { setPhase('needs'); }}>Reset</button> : null}
       </div>
     );
@@ -38,11 +39,12 @@
         <G.Part name="DependencyCard" status="changed" role="The reply where the question was when a run needs BlueStacks or App Player: what is missing, the fix as one button, install progress inline.">
           <G.StateGrid wide states={[
             { label: 'Needs install', note: 'V2 copy.', node: <K.DependencyCard app="YouTube" phase="needs" onGet={noop} /> },
-            { label: 'Installing (ProgressBar)', node: <K.DependencyCard app="YouTube" phase="installing" progress={42} /> },
+            { label: 'Installing (ProgressBar)', note: 'over 10 s: keep using BlueAI, or Cancel install (section 50)', node: <K.DependencyCard app="YouTube" phase="installing" progress={42} onCancel={noop} /> },
+            { label: 'Install failed', note: 'says so; Try again', node: <K.DependencyCard app="YouTube" phase="failed" onRetry={noop} /> },
             { label: 'Done (check)', node: <K.DependencyCard app="YouTube" phase="done" /> },
             { label: 'App Player signed out', note: 'Proposed copy (R13, R16).', node: <K.DependencyCard app="YouTube" phase="signedOut" onOpen={noop} /> },
           ]} />
-          <G.Note>Try it: Get BlueStacks runs the 3-second install inline, with nothing blocking the window.</G.Note>
+          <G.Note>Try it: Get BlueStacks runs the 3-second install inline, with nothing blocking the window; Cancel install goes back.</G.Note>
           <Playable />
           <G.CompareRow
             v2={<G.Live get={function () { return NB().Bubble; }} props={{ app: 'YouTube', onGet: noop }} label="NeedsBluestacks.Bubble" />}
@@ -61,6 +63,8 @@
             { part: 'Installing title', token: '--v2-weight-semibold, --v2-ink', value: '"Installing BlueStacks" 14/600 (was a 10px uppercase eyebrow)', ref: 'chat.dependency.eyebrow' },
             { part: 'Progress', token: 'ProgressBar 6 (section 20)', value: 'label "Getting ready", value "42%", fill --v2-blue', ref: ['chat.dependency.progress-label', 'chat.dependency.bar', 'chat.dependency.bar-fill'] },
             { part: 'Duration', token: null, value: '3000ms in the prototype', ref: 'chat.dependency.duration' },
+            { part: 'Cancel install', token: 'Button quiet sm', value: '"Cancel install" under the bar (onCancel); "You can keep using BlueAI while it installs."' },
+            { part: 'Failed', token: 'NoticeBubble danger + Button primary md, full', value: '"BlueStacks didn’t finish installing, so today’s run is waiting. Check your connection, then try again." + Try again (onRetry)' },
             { part: 'Done', token: '--v2-success-ink', value: 'success notice "BlueStacks is ready."', ref: ['chat.dependency.done-check', 'chat.dependency.ready'] },
             { part: 'Signed out', token: 'Button secondary md, full', value: '"Open App Player"', ref: 'chat.dependency.signed-out' },
             { part: 'Preflight', token: null, value: 'checked before every worker run (R13)', ref: 'chat.dependency.ungated' },

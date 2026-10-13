@@ -12,7 +12,7 @@
 
 **Variants.** Three items: Home (`home`), Activity (`activity`), Settings (`settings`). Four items only if decision D12 keeps chat as a tab: Home, Chat, Activity, Settings (`NAV_ITEMS_WITH_CHAT`). The recommendation is three.
 
-**Sizes.** 56 tall (`--v2-nav-h`; V2 64). Padding 0 8; items 48 tall inside the bar (4 margin top and bottom), radius 6. Icon 20, stroke 1.75 (V2 22, stroke 1.9). Label 12/500 in every state (V2 10.5px, 700 active / 600 rest). Selected bar 24 x 2, `--v2-blue`. Badge 16 tall pill, `--v2-action` fill, white 11/600 (4.92:1), a 2px surface ring.
+**Sizes.** 56 tall (`--v2-nav-h`; V2 64). Padding 0 8; items 47 tall inside the bar (56 less the 1px top line and a 4 margin above and below), radius 6. Icon 20, stroke 1.75 (V2 22, stroke 1.9). Label 12/500 in every state (V2 10.5px, 700 active / 600 rest). Selected bar 24 x 2, `--v2-blue`. Badge 16 tall pill, `--v2-action` fill, white 11/600 (4.92:1), a 2px surface ring.
 
 **States.**
 - Rest: ink-3 icon and label (6.0:1).
@@ -29,7 +29,7 @@ V2: `?start=worker` shows the nav with Chat active (the default, index.html:604)
 
 **Motion.** Colour and wash over `--v2-dur-1` (120ms). No indicator slide.
 
-**Accessibility.** `<nav aria-label="Main">`; the selected item has `aria-current="page"`. The badge number is hidden from screen readers and said as ", 2 new" after the label. Every item is a 48 tall target.
+**Accessibility.** `<nav aria-label="Main">`; the selected item has `aria-current="page"`. The badge number is hidden from screen readers and said as ", 2 new" after the label. Every item is a 47 tall target.
 
 **Responsive.** One width; labels truncate rather than wrap (none do at three or four items).
 

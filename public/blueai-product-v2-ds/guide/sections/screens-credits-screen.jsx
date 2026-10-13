@@ -41,6 +41,8 @@
             { label: 'Empty, run already done', note: 'the day is not affected', node: scr({ state: 'empty', worker: f.donePending }) },
             { label: 'Refreshed', note: 'the countdown reached zero', node: scr({ state: 'refreshed' }) },
             { label: 'Own key active', note: 'credits paused; manage in Settings', node: scr({ state: 'own-key' }) },
+            { label: 'Loading', note: 'the figure’s skeleton', node: scr({ state: 'loading' }) },
+            { label: 'Couldn’t load', note: 'said in place, with Try again', node: scr({ state: 'error' }) },
           ]} />
           <G.CompareRow
             v2={<G.FrameState url="index.html?start=worker&credits=0" height={760} label="V2 at 0 credits: open the credits pill (?start=worker alone shows 2,000)" />}

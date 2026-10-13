@@ -8,10 +8,11 @@
      that is not live yet shows 'Coming soon' with no switch (R40); one not connected offers Connect.
      The ribbon's Change opens it inside the kit Popover (<Popover><ModeRows /></Popover>), which
      owns Esc, outside click and focus; ModeRows draws no float surface of its own.
-   ConsentDialog {app, open, busy, onAgree, onCancel, worker, preview}
+   ConsentDialog {app, open, busy, error, onAgree, onCancel, worker, preview}
      V2's consent structure (agent_permissions.jsx:159-179), on the one Dialog with focus
-     management, plus where to turn it off. Cancel leaves the question waiting. Its first line is
-     proposed copy for the PM and legal to confirm (section 73): V2's 'including posting videos and other
+     management, plus where to turn it off. Cancel leaves the question waiting. error (the
+     agreement was not saved) shows a danger Banner in the body; 'I agree, turn on' is the retry. Its first line is
+     proposed copy for the PM and legal to confirm (R51, section 73): V2's 'including posting videos and other
      content' names an action the worker never takes and leaves out the one it does. On Automatic
      the job preview never appears, so this line is the partner's only notice that comments will
      be posted in their name.
@@ -23,12 +24,12 @@
   const K = () => window.V2Kit || {};
   const cx = function () { return Array.prototype.filter.call(arguments, Boolean).join(' '); };
   const NOTE = 'Automatic starts and finishes that app’s jobs without asking. Each app has its own setting, and a new app starts on Always ask.';
-  const OPTIONS = [{ value: 'always', label: 'Always ask' }, { value: 'auto', label: 'Automatic' }];
+  const OPTIONS = [{ value: 'always', label: 'Always ask', icon: 'shield-check' }, { value: 'auto', label: 'Automatic', icon: 'zap' }];
 
   // Apps with their live status and mode, from a Worker record or from explicit props.
   function appList(worker, apps, modes) {
-    const base = K().WORKER_APPS || [];
-    if (!worker && !apps) worker = (K().workerFixtures || {}).verified;
+    const base = K().WORKER_APPS;
+    if (!worker && !apps) worker = K().workerFixtures.verified;
     return (apps || base).map(function (a) {
       const rec = worker && worker.apps ? (worker.apps[a.id] || {}) : {};
       return Object.assign({}, a, rec, a.status ? { status: a.status } : {}, modes && modes[a.id] ? { mode: modes[a.id] } : {});
@@ -38,33 +39,27 @@
 
   function ModeRows({ worker, apps, modes, onChange, beforeChange, onConnect, note }) {
     const list = appList(worker, apps, modes);
-    const I = K().Icon;
-    const Row = K().ListRow;
-    const Seg = K().Segmented;
-    const Badge = K().Badge;
-    const B = K().Button;
+    const P = K();
     return (
       <div className="v2-moderows">
         {list.map(function (a, i) {
-          const leading = <span className="v2-moderows-app">{I ? <I name={a.icon} size={20} /> : null}</span>;
+          const leading = <span className="v2-moderows-app"><P.Icon name={a.icon} size={20} /></span>;
           let description = a.handle || null;
-          let trailing = null;
+          let trailing;
           if (a.status === 'coming-soon') {
             description = a.name + ' jobs aren’t available yet.';
-            trailing = Badge ? <Badge tone="neutral">Coming soon</Badge> : 'Coming soon';
+            trailing = <P.Badge tone="neutral">Coming soon</P.Badge>;
           } else if (a.status === 'not-connected') {
             description = 'Not connected';
-            trailing = B ? <B variant="secondary" size="sm" onClick={function () { if (onConnect) onConnect(a.id); }}>Connect</B> : null;
-          } else if (Seg) {
+            trailing = <P.Button variant="secondary" size="sm" onClick={function () { if (onConnect) onConnect(a.id); }}>Connect</P.Button>;
+          } else {
             trailing = (
-              <Seg size="md" options={OPTIONS} value={a.mode || 'always'} ariaLabel={a.name + ' paid jobs'}
+              <P.Segmented size="md" options={OPTIONS} value={a.mode || 'always'} ariaLabel={a.name + ' paid jobs'}
                 onChange={function (m) { if (onChange) onChange(a.id, m); }}
                 beforeChange={beforeChange ? function (m) { return beforeChange(a.id, m); } : undefined} />
             );
           }
-          return Row
-            ? <Row key={a.id} leading={leading} label={a.name} description={description} trailing={trailing} divider={i > 0} />
-            : <div key={a.id}>{a.name} {trailing}</div>;
+          return <P.ListRow key={a.id} leading={leading} label={a.name} description={description} trailing={trailing} divider={i > 0} />;
         })}
         {note === false ? null : <p className="v2-moderows-note">{note || NOTE}</p>}
       </div>
@@ -89,10 +84,10 @@
               const auto = !soon && (x.id === a.id || x.mode === 'auto');
               return (
                 <div key={x.id} className={cx('v2-consent-row', x.id === a.id && 'is-target')}>
-                  {I ? <I name={x.icon} size={16} /> : null}
+                  <I name={x.icon} size={16} />
                   <span className="v2-consent-app">{x.name}</span>
                   <span className={cx('v2-consent-mode', auto && 'v2-consent-mode--auto')}>
-                    {soon ? 'Coming soon' : <React.Fragment>{I ? <I name={auto ? 'zap' : 'shield-check'} size={16} /> : null}{auto ? 'Automatic' : 'Always ask'}</React.Fragment>}
+                    {soon ? 'Coming soon' : <React.Fragment><I name={auto ? 'zap' : 'shield-check'} size={16} />{auto ? 'Automatic' : 'Always ask'}</React.Fragment>}
                   </span>
                 </div>
               );
@@ -112,11 +107,13 @@
     const app = props.app || 'youtube';
     const a = appList(props.worker).find(function (x) { return x.id === app; }) || { name: 'YouTube' };
     const D = K().Dialog;
-    if (!D || !(props.open || props.preview)) return null;
+    const Ban = K().Banner;
+    if (!(props.open || props.preview)) return null;
     return (
       <D open variant="consent" size="md" preview={props.preview} title={'Run ' + a.name + ' jobs automatically?'}
         busy={props.busy} onClose={props.onCancel}
         actions={[{ label: 'Cancel', variant: 'secondary', onClick: props.onCancel }, { label: 'I agree, turn on', variant: 'primary', onClick: props.onAgree }]}>
+        {props.error && Ban ? <Ban tone="danger">Not saved, nothing changed. Try again.</Ban> : null}
         <ConsentBody app={app} worker={props.worker} />
       </D>
     );
@@ -128,10 +125,10 @@
     { icon: 'activity', text: 'See your channel’s joined date and stats' },
   ];
   function PermissionRequest({ app, state, lines, busy, onAllow, onNotNow, decidedOn }) {
-    const a = (K().WORKER_APPS || []).find(function (x) { return x.id === (app || 'youtube'); }) || { name: 'YouTube', icon: 'youtube' };
+    const a = K().WORKER_APPS.find(function (x) { return x.id === (app || 'youtube'); }) || K().WORKER_APPS[0];
     const I = K().Icon;
     const B = K().Button;
-    const mark = <span className="v2-permreq-mark" aria-hidden="true">{I ? <I name={a.icon} size={16} /> : null}</span>;
+    const mark = <span className="v2-permreq-mark" aria-hidden="true"><I name={a.icon} size={16} /></span>;
     const s = state || 'asked';
     if (s !== 'asked') {
       const text = {
@@ -142,8 +139,8 @@
       return (
         <div className="v2-permreq v2-permreq--compact" role="status">
           {mark}
-          <p className="v2-w-note">{text}</p>
-          {s !== 'allowed' && B ? <B variant="secondary" size="sm" onClick={onAllow}>Allow</B> : null}
+          <p className="v2-permreq-note v2-text-body-sm">{text}</p>
+          {s !== 'allowed' ? <B variant="secondary" size="sm" onClick={onAllow}>Allow</B> : null}
         </div>
       );
     }
@@ -151,14 +148,14 @@
       <section className="v2-permreq" aria-label={'BlueAI wants to see your ' + a.name + ' activity'}>
         <p className="v2-permreq-head">{mark}BlueAI wants to</p>
         <ul className="v2-permreq-list">
-          {(lines || ACCESS).map(function (l) { return <li key={l.text}>{I ? <I name={l.icon} size={16} /> : null}<span>{l.text}</span></li>; })}
+          {(lines || ACCESS).map(function (l) { return <li key={l.text}><I name={l.icon} size={16} /><span>{l.text}</span></li>; })}
         </ul>
-        <p className="v2-w-note">So I watch what you’re actually into and pick jobs that fit. If you choose Not now, I’ll still run, with general videos.</p>
+        <p className="v2-text-body-sm">So I watch what you’re actually into and pick jobs that fit. If you choose Not now, I’ll still run, with general videos.</p>
         <div className="v2-permreq-actions">
-          {B ? <B variant="secondary" size="md" disabled={busy} onClick={onNotNow}>Not now</B> : null}
-          {B ? <B variant="primary" size="md" loading={busy} onClick={onAllow}>Allow</B> : null}
+          <B variant="secondary" size="md" disabled={busy} onClick={onNotNow}>Not now</B>
+          <B variant="primary" size="md" loading={busy} onClick={onAllow}>Allow</B>
         </div>
-        <p className="v2-w-meta v2-permreq-revoke">You can turn this off anytime in Connected apps.</p>
+        <p className="v2-text-meta v2-permreq-revoke">You can turn this off anytime in Connected apps.</p>
       </section>
     );
   }

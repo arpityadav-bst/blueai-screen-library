@@ -15,7 +15,8 @@
   /* ProgressBar: label row (name left, value right in tabular figures), a sunken rail, a fill.
      Determinate fills blue and turns green at max (reached); error freezes red; paused freezes
      grey; indeterminate slides a 40% segment (V2's 38% idea on the shared v2-indet loop).
-     role=progressbar carries the value text. */
+     role=progressbar carries the value text. Error and paused say so in the value itself ('62%,
+     failed', 'Paused'), seen and spoken the same, so the state never rests on the fill colour. */
   function ProgressBar(props) {
     const { value, max, indeterminate, tone, size, label, valueText, paused, error, className } = props;
     const labelId = useId();
@@ -24,9 +25,10 @@
     const pct = (v / m) * 100;
     const state = error ? 'error' : (paused ? 'paused' : (indeterminate ? 'indet'
       : (v >= m || tone === 'success' ? 'success' : 'blue')));
-    const shown = valueText != null ? valueText : (indeterminate ? null : Math.round(pct) + '%');
+    const base = valueText != null ? valueText : (indeterminate ? null : Math.round(pct) + '%');
     const extra = error ? 'failed' : (paused ? 'paused' : null);
-    const spoken = [shown, extra && String(shown || '').toLowerCase().indexOf(extra) < 0 ? extra : null].filter(Boolean).join(', ');
+    const says = !extra || String(base || '').toLowerCase().indexOf(extra) >= 0;
+    const shown = says ? base : (base ? base + ', ' + extra : extra.charAt(0).toUpperCase() + extra.slice(1));
     return (
       <div className={cx('v2-progress', 'v2-progress--' + (size === 4 ? 4 : 6), 'v2-progress--' + state, className)}>
         {label || shown ? (
@@ -38,7 +40,7 @@
         <div className="v2-progress-rail" role="progressbar"
           aria-labelledby={label ? labelId : undefined} aria-label={label ? undefined : props['aria-label']}
           aria-valuemin={0} aria-valuemax={m} aria-valuenow={indeterminate ? undefined : v}
-          aria-valuetext={spoken || undefined}>
+          aria-valuetext={shown || undefined}>
           <span className={cx('v2-progress-fill', indeterminate && 'v2-anim-indet')} style={indeterminate ? undefined : { width: pct + '%' }} />
         </div>
       </div>

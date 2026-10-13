@@ -68,7 +68,7 @@ Shared means the same value as the site; adapted means the same idea tuned for a
 | Selection = 12% blue fill + 50% blue border + ink label | shared | One 'chosen' look on site and app. |
 | Green means reached; money stays in ink | shared | Verified days look the same on the dashboard; pending money is not painted as paid. |
 | Error red #c03a40 / #d0454a / ring 16% | shared | One danger set; also the destructive fill (5.36:1). |
-| Card radius 16, controls 6, pills 999 | shared | Strongest single 'same family' cue is the button shape. |
+| Card radius 16, controls 6, pills 999 | shared (pills on chips: adapted) | Strongest single 'same family' cue is the button shape. The site's application chips are radius-9 toggles; the product keeps the pill on chips (section 15). |
 | Site near-step radii 7/9/11/12/14 | not shared | Too many near steps for a 419px tool. |
 | Inter only; weights to 600; negative tracking scales with size; uppercase only for eyebrows | shared | Calm hierarchy from size and ink, not weight. |
 | Dashboard working-screen type tier | adapted | The app is a working screen like the dashboard; scaled for a 419px window. |
@@ -77,11 +77,11 @@ Shared means the same value as the site; adapted means the same idea tuned for a
 | 0.35s marketing transition standard | adapted | App state changes run at 120 to 240ms. |
 | Focus: 2px blue outline offset 2; fields border + 3px 16% ring | shared | Keyboard users meet one system across site and app. |
 | Sign-in gate scrim rgba(248,249,251,0.88) + 14px blur | shared | 'Sign in' looks the same on the site and in the app. |
-| Frosted veil for every dialog | not shared | Blur costs on partner PCs; a solid dim veil elsewhere. |
+| Frosted veil for every dialog | not shared | A white dialog on the site's pale veil separates only by its shadow (its 10% line 1.19:1 against the veil); the dim veil puts its edge at 3.3:1 (WCAG 1.4.11), so a decision reads as blocking at a glance (the Overlay family, `tokens.css:161-162`). The frost stays for sign-in. |
 | Navy-tinted casts at low alpha, no glows | adapted | Three levels only (none, popover, dialog). |
 | Button ladder: one primary per view, secondary, quiet, link; disabled with a reason | shared | Ranks Run, Got it, Try again, Allow, Not now. |
 | Underlined ink links that turn blue on hover | shared | Frees blue for selection. |
-| Recessed tabs with one raised chip and counts | adapted (shadow dropped) | Activity and Notifications need tabs; take the family's shape without the lit tab's card shadow (apply.html:467-473; section 28). |
+| Recessed tabs with one raised chip and counts | adapted (shadow dropped, one selected look) | Activity and Notifications need tabs; take the family's shape without the lit tab's card shadow, and the lit tab wears the product's one selected look, the Segmented's select fill and blue edge (apply.html:467-473; section 28). |
 | Ledger rows with a fixed date column; empty copy names what will appear | shared | The run log and the site's transactions read as one record. |
 | Muted note with one bold ink figure | shared | Pending verification lines, credit notes. |
 | Payout pill (green receipt) | adapted (plain line) | 'Yesterday's run verified.' is its job, drawn as a plain 12 ink-3 line with its tick (section 43): the site's pill (green line, 10% green fill, onblue.css:2102-2115) would put a second green box on a small strip whose bar is already green. |
@@ -91,5 +91,6 @@ Shared means the same value as the site; adapted means the same idea tuned for a
 | Copy voice and vocabulary | shared | Same words on both sides; conflicts go to the PM as decisions. |
 | 'Log out' on the site | adapted | Product uses 'Sign out' to pair with 'Sign in'; recommend the site align. |
 | 'Reward' and 'campaigns and tasks' on the site | adapted | The program card and its sheet say 'Reward' (apply.html:1280, 1470), How it works says 'its own reward' and 'its reward is added to your earnings' (:1434, 1436), the agent intro says 'completes campaigns and tasks' (:1849). The product says Earnings for money and job for paid work (section 70); recommend the site align, or the PM accepts the site's word for both. |
+| 'Withdraw' on the site | adapted | The site's cash-out sheet says 'Withdraw' and 'withdrawal' (apply.html:1445, 1532, 1541); the product says cash out (section 70), the word the program rule uses; recommend the site align. |
 | Review dock convention (onblue-dev.js) | shared | Review controls live outside the product and add no tokens; V2's Preview panel follows it. |
 | window.SiteKit inside V2 | adapted | Seed for one family token object; it has drifted (48 vs 44 height, 0.12s vs 0.18s press, 32 vs 38 mark). |

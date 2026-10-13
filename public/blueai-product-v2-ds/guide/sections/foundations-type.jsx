@@ -1,4 +1,4 @@
-/* Section 04 Type (foundations slice). One face, eleven text styles (kit/base.css .v2-text-*),
+/* Section 04 Type (foundations slice). One face, twelve text styles (kit/base.css .v2-text-*),
    three weights, numerals. Sample copy is quoted from V2 (refs in guide/refs/foundations.js) except
    the display figure and the greeting, which are labelled proposed. */
 (function () {
@@ -10,7 +10,8 @@
     ['v2-text-greeting', 'Hi, Alex', '24 / 600 / 1.2 / -0.02em', '--v2-ink', "Home greeting, welcome title (proposed: V2's 'Hi, Alex' carries an emoji)", 'foundations.type.greeting'],
     ['v2-text-title-lg', 'AI Credits', '20 / 600 / 1.2 / -0.02em', '--v2-ink', 'Every screen title and dialog title', 'foundations.type.title-ai-credits'],
     ['v2-text-numeral-sm', '7', '20 / 600 / 1 / -0.02em, tabular', '--v2-ink', "Counts beside a label: '7 of 20 days'", 'foundations.type.day-count-copy'],
-    ['v2-text-title', 'BlueStacks Instance', '16 / 600 / 1.35 / -0.01em', '--v2-ink', 'Card titles, section heads', 'foundations.type.card-title'],
+    ['v2-text-title', 'BlueStacks Instance', '16 / 600 / 1.2 / -0.01em', '--v2-ink', 'Card titles, section heads', 'foundations.type.card-title'],
+    ['v2-text-mini-title', 'Balance', '13 / 600 / 1.35 / 0.02em', '--v2-ink', 'Label over a figure in a card (StatCard)', null],
     ['v2-text-body', 'You can pause, stop, or disconnect anytime.', '14 / 400 / 1.5 / 0', '--v2-ink-2', 'Bubbles, composer, paragraphs, fields', 'foundations.type.body-copy'],
     ['v2-text-body-sm', 'Every task and job BlueAI does uses credits.', '13 / 400 / 1.5 / 0', '--v2-ink-3', 'Descriptions, notes, consequences', 'foundations.type.body-sm-copy'],
     ['v2-text-label', 'Switch account', '13 / 500 / 1.35 / -0.01em', '--v2-ink-2', 'Buttons, chips, nav, menu rows', 'foundations.blue.gate-label'],
@@ -38,7 +39,7 @@
     const K = window.V2Kit || {};
     return (
       <G.Section id="type">
-        <G.Part name="Type ladder" status="changed" role="Eleven text styles, one recipe per role: size, weight, leading, tracking and ink travel together, so a screen never re-decides how loud a line is.">
+        <G.Part name="Type ladder" status="changed" role="Twelve text styles, one recipe per role: size, weight, leading, tracking and ink travel together, so a screen never re-decides how loud a line is.">
           <G.StateGrid wide states={LADDER.map(function (row) {
             return { label: '.' + row[0] + '  ' + row[2], note: row[4], node: <div style={{ width: '100%' }}>{sample(row)}</div> };
           })} />

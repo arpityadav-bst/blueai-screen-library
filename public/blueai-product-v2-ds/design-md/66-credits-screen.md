@@ -6,17 +6,17 @@
 ### Credits (Changed from V2)
 - **Purpose:** The allowance screen: what is left today, whether today's run is covered, when credits refresh, and that credits are paused while the partner's own key runs.
 - **Anatomy:** `ScreenHeader` "AI credits" (sentence case) with Back, pushed from the top bar's `CreditsChip` over the tab you came from (that tab stays lit). Then:
-  - **Empty only:** `Banner` danger "Out of credits", V2's lines word for word: "You’ve used all of today’s AI credits." "Credits will be refreshed in **6h 42m**." (index.html:503-508; the countdown in `<strong aria-live="off">`).
+  - **Empty only:** `Banner` danger "Out of credits" with V2's banner line only: "You’ve used all of today’s AI credits." (index.html:503-508). No countdown in the banner: the meter says when credits refresh and what zero means for today (`screens/credits.jsx:63-65`).
   - **Refreshed only:** `Banner` success, dismissible, "New credits are here" / "You have 2,000 AI credits for today."
   - `StatCard` "Left today": credits glyph 24 (the one gradient, section 08) + the figure 40/600 in ink; its action slot holds `CreditsMeter` (section 47) stretched to the card: the rail, "of 2,000 today" (`figure={false}`: the stat above already says 1,640) and "Refreshes in 6h 42m", and the covered line ("Enough for today’s run" / "Not enough for today’s run" / "Today’s run can’t start until credits refresh" / "Today’s run is done").
   - **Own key instead of the figure:** `SettingsSection` "Running on your own key" / "No AI credits are used while this is on." with `Badge` success "On"; rows Provider, Model; nav row "Manage in Settings" (Settings, Advanced open, own key highlighted).
   - Explainer (no card, V2 copy kept): "BlueAI runs on credits" 14/600; "Every task and job BlueAI does uses credits." "You get limited credits for your daily tasks." 13 ink-3; `Link` external "Learn more" to the site's AI credits article (credits_popup_parts.jsx:13).
 - **Variants:** Allowance; own key.
 - **Sizes:** The 419 window; figure 40; meter rail 6.
-- **States:** Healthy (1,640, covered); low (120, less than one run of 360); empty (banner + countdown; covered line says whether today's run can start or is already done); refreshed; own key active. V2: `index.html?start=worker&credits=0`, then the credits pill.
-- **Props:** `worker` (credits {left, grant, runCost}, today), `state` ('healthy' | 'low' | 'empty' | 'refreshed' | 'own-key'), `refillAt` (default next 00:00 UTC), `now` (freezes the clock), `keyInfo`, `tab`, `onBack`, `onManageKey`, `frame`, `compact`, `landmark`, `preview`.
-- **Motion:** The meter fill is static; the countdown ticks once a second as text; nothing animates.
-- **Accessibility:** The meter is role=meter with "1,640 of 2,000 left today" as its value text; the danger banner is role=alert and the ticking value inside it is read once; the figure is ink (19.7:1 on white), never gradient text. No dead control.
+- **States:** Healthy (1,640, covered); low (120, less than one run of 360); empty (the banner line; the meter says when credits refresh and whether today's run can start or is already done); refreshed; own key active; loading (the `StatCard` loading skeleton, the top bar's credits chip hidden); error (`V2Screens.LoadError` 'Couldn’t load your AI credits' with Try again, `screens/credits.jsx:77-85`). V2: `index.html?start=worker&credits=0`, then the credits pill.
+- **Props:** `worker` (credits {left, grant, runCost}, today), `state` ('healthy' | 'low' | 'empty' | 'refreshed' | 'own-key' | 'loading' | 'error'), `refillAt` (default next 00:00 UTC), `now` (freezes the clock), `keyInfo`, `tab`, `onBack`, `onRetry`, `onManageKey`, `frame`, `compact`, `landmark`, `preview`.
+- **Motion:** The meter fill is static; the meter's "Refreshes in" time ticks once a second as text; nothing animates.
+- **Accessibility:** The meter is role=meter with "1,640 of 2,000 left today" as its value text; the danger banner is role=alert and holds no ticking value; the figure is ink (19.7:1 on white), never gradient text. No dead control.
 - **Responsive:** One column; meter caption wraps under itself at narrow widths.
 - **Do / Don't:** Do state the grant and the refresh time before zero. Do say what zero means for today's run once, on the covered line. Do keep V2's banner and explainer copy. Do offer Back. Don't draw a Refresh that does nothing. Don't paint the figure. Don't offer to buy or earn credits. Don't show a balance while the own key is in use.
 

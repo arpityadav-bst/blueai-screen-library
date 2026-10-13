@@ -24,14 +24,18 @@
     ['scheduled', 'Next run 11 am; Next run 9 am to 9 pm; Runs later today', 'today.status scheduled, worded from runWindow (a time, a window, any time)', 'Home, Today'],
     ['running', 'Running', 'today.status running', 'the run in the chat'],
     ['needs-you', 'Needs you (yellow tint)', 'today.status waiting', 'the job preview'],
-    ['done', 'Day 7 of 20 (neutral dot while pending, green once verified)', 'today.status done', 'the run in Activity'],
+    ['done', 'Day 7 of 20 (blue ring while pending, green once verified)', 'today.status done', 'the run in Activity'],
     ['not-counted', 'Not counted today (neutral dot)', 'today.status done, end declined (skipped)', 'the run in Activity'],
     ['verified', 'All 20 days done', 'all 20 days verified (numbers().complete)', 'Home, Today: the card’s Earnings'],
+    ['stopped', 'Stopped (ring dot)', 'today.status stopped', 'Home, Today: Run again and its deadline'],
     ['failed', 'Didn’t finish (red tint)', 'today.status failed', 'the run, with Try again and its deadline'],
+    ['missed', 'Didn’t start (neutral dot)', 'today.status missed: the PC was off or asleep at run time', 'Home, Today: Run now and its deadline'],
+    ['blocked', 'Can’t run (red tint)', 'blockedBy(record): no app, signed out or no BlueStacks', 'Home, Today: the card’s one fix'],
     ['paused', 'Paused (ring dot)', 'paused', 'Settings > Worker'],
     ['no-credits', 'Waiting for credits (ring dot)', 'credits.left below runCost before today’s run', 'Home, Today: the card says when credits refresh'],
     ['paused', 'Update needed (ring dot)', 'an update is required (section 69)', 'the update screen (section 69)'],
     ['offline', 'Offline (ring dot)', 'offline', 'Home, with the offline banner'],
+    ['ended', 'Period ended (ring dot)', 'the 20 days ran out before all were verified (daysLeft 0)', 'Home, Today: the card’s Earnings'],
   ];
   // The label a specimen draws: the first wording, without the note in brackets.
   function chipLabel(s) { return s[1].split(';')[0].replace(/ \(.*\)$/, ''); }
@@ -122,9 +126,9 @@
             { part: 'Height and target', token: '--v2-control-sm, --v2-hit-min', value: '28 visible, 32 target' },
             { part: 'Shape', token: '--v2-radius-pill, --v2-line', value: 'pill, 1px hairline, surface' },
             { part: 'Label', token: '--v2-text-13, --v2-weight-medium', value: '13/500 ink-2, one line' },
-            { part: 'Dot', token: '--v2-space-2', value: '8: ink-4 scheduled, blue running, attention needs you, success done, danger failed, ring paused / offline' },
+            { part: 'Dot', token: '--v2-space-2', value: '8: ink-4 scheduled / not counted / didn’t start; blue running; pending (done, not yet verified): blue ring, the DayBar’s pending look; verified: success; attention needs you; danger failed / can’t run; ink-4 ring paused / offline / stopped / waiting for credits / period ended' },
             { part: 'Needs you', token: '--v2-attention-tint, -line, -ink', value: 'yellow tint: the one state that asks for the partner' },
-            { part: 'Didn’t finish', token: '--v2-danger-tint, --v2-danger-ink', value: 'red tint: the day can still count' },
+            { part: 'Didn’t finish, Can’t run', token: '--v2-danger-tint, --v2-danger-ink', value: 'red tint: the day can still count once it is fixed' },
             { part: 'Hover / press', token: '--v2-line-hover, --v2-wash-hover, --v2-wash-press', value: 'line firms, wash layers on the fill' },
             { part: 'Screen readers', token: 'v2-sr-only', value: '"Today’s run: Needs you"' },
           ]} />

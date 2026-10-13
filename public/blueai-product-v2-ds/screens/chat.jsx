@@ -11,10 +11,14 @@
      setup  a new partner's Run lands here, in V2's order (worker_flow.jsx:65-171): the pitch,
             confirm the YouTube account, watch history (PermissionRequest, section 46), the run
             time, then paid jobs per app (Always ask first; Automatic only through ConsentDialog),
-            closing with ProgramSummary and when day 1 counts (decision D7).
+            closing with ProgramSummary and when day 1 counts (decision D7). Under option A the
+            first run starts there: today's RunCard follows, live, and the record says running.
+            No on the handle says the worker uses only the account applied with (section 56)
+            and offers Report a problem.
      steps  thread steps in V2Kit.renderMessage's shape, plus {role: 'node', node} for a kit part.
    Every answer that turns Automatic on (an option with consent: true) opens ConsentDialog first
-   and answers only on "I agree, turn on"; Cancel leaves the question waiting. Stop asks first
+   and answers only on "I agree, turn on"; Cancel leaves the question waiting. Not now carries its
+   cost under the chips and acts in one tap (section 52 rule 1, decision D14). Stop asks first
    while today is not counted yet (running, waiting, retrying).
    Header: ScreenHeader 'Chat' with Back (to Home) and a New chat IconButton (moved out of V2's
    top bar). Bottom: Composer, with ComposerNotice for a condition that holds before typing:
@@ -72,10 +76,13 @@
 
   // The setup conversation so far, from the answers given. Copy is V2's (worker_flow.jsx) unless
   // noted; the handle is the record's, never a second identity (R39).
-  function setupSteps(a, ask, w) {
+  function setupSteps(h, w, run) {
     const P = K();
+    const a = h.setup;
+    const ask = h.ask;
     const yt = (w.apps && w.apps.youtube) || {};
-    const out = [{ role: 'separator', key: 'sep', label: 'Today' }, say('hi', 'Welcome! Let’s set up your BlueAI Worker.')];
+    // V2 capitalises 'BlueAI Worker' (worker_flow.jsx:64); the glossary's name is 'BlueAI worker'.
+    const out = [{ role: 'separator', key: 'sep', label: 'Today' }, say('hi', 'Welcome! Let’s set up your BlueAI worker.')];
     const pitch = ask('pitch', {
       lead: 'Here’s the idea: I’ll use your YouTube account like a genuine fan, watching things you’re actually into and keeping it active on its own, and you earn when I finish a paid job.',
       bullets: ['I only run a paid job after you say yes to that specific job.', 'You can pause, stop, or disconnect anytime.', 'I never see or type your password.'],
@@ -89,13 +96,19 @@
     out.push(say('check', 'Checking your YouTube account…'), acct);
     if (!a.handle) return out;
     out.push(reply(acct, a.handle));
-    if (a.handle === 'no') return out.concat([say('handle-no', 'Okay. Sign in to the YouTube account you want me to use in App Player, then run the BlueAI worker again.')]);
+    // Proposed copy. V2 asks for another account (worker_flow.jsx:162), which section 56 refuses.
+    if (a.handle === 'no') {
+      return out.concat([say('handle-no', 'Okay. I can only use the YouTube account you applied with, or a channel under it. If you meant a different channel, report a problem and we’ll help.'),
+        { role: 'node', key: 'handle-report', node: P.Link ? <P.Link standalone onClick={h.onReport}>Report a problem</P.Link> : null }]);
+    }
     out.push({ role: 'node', key: 'history', node: P.PermissionRequest ? <P.PermissionRequest app="youtube" state={a.history || 'asked'}
       onAllow={function () { ask.set('history', 'allowed'); }} onNotNow={function () { ask.set('history', 'notnow'); }} /> : null });
     if (!a.history) return out;
+    // V2's window example ends at 9 pm (worker_flow.jsx:73-74); runs start by 8 pm (section 62), so
+    // the example ends there (proposed, section 73).
     const sched = ask('schedule', {
-      lead: 'When would you like me to run each day? Give me a time, like 11 am, and I’ll start within that hour. Or give me a window, like 9am–9pm, and I’ll pick a different moment in it each day. Or leave it to me.',
-      options: [{ id: 'time', label: '11 am' }, { id: 'window', label: '9am–9pm' }, { id: 'any', label: 'Leave it to me' }],
+      lead: 'When would you like me to run each day? Give me a time, like 11 am, and I’ll start within that hour. Or give me a window, like 9 am to 8 pm, and I’ll pick a different moment in it each day. Or leave it to me.',
+      options: [{ id: 'time', label: '11 am' }, { id: 'window', label: '9 am to 8 pm' }, { id: 'any', label: 'Leave it to me' }],
     });
     out.push(sched);
     if (!a.schedule) return out;
@@ -111,6 +124,7 @@
     out.push(reply(mode, a.mode), say('mode-ok', auto ? 'Got it. Automatic is on for YouTube. I’ll take paid jobs on my own.' : 'Got it. Always ask is on for YouTube. I’ll check with you before each paid job.'));
     out.push({ role: 'final', key: 'set', tone: 'success', content: 'You’re all set. I’ll run every day in your window and keep your account active. ' + (auto ? 'When a paid job comes up, I’ll take it on my own.' : 'When a paid job comes up, I’ll check with you first.') });
     out.push({ role: 'node', key: 'rules', node: P.Card && P.ProgramSummary ? <P.Card><div className="v2-chat-close"><P.ProgramSummary /><p className="v2-chat-dayone">{DAY_ONE[D7]}</p></div></P.Card> : null });
+    if (D7 === 'A') out.push(run('running', { steps: [], current: 'Opening YouTube in App Player…' }));
     return out;
   }
 
@@ -120,7 +134,7 @@
     const run = function (s, extra, key) { return { role: 'run', key: key || 'run', state: s, run: extra, onOpenDetail: h.onOpenRun, onAction: h.onRunAction }; };
     const ooc = P.OOC_COPY || {};
     switch (state) {
-      case 'setup': case 'setupDone': return setupSteps(h.setup, h.ask, w);
+      case 'setup': case 'setupDone': return setupSteps(h, w, run);
       case 'running': return [sep, run('running')];
       case 'waiting': {
         const ask = Object.assign(jobAsk(P.WORKER_JOB), { answer: h.job, onAnswer: h.answerJob });
@@ -156,26 +170,36 @@
 
   function Chat(p) {
     const P = K();
+    const S = window.V2Screens || {};
     const row = CHAT_STATES.find(function (s) { return s[0] === p.state; }) || CHAT_STATES[0];
     const [local, setLocal] = useState(null);
     const [job, setJob] = useState(null);
     const [setup, setSetup] = useState(row[0] === 'setupDone' ? DONE_SETUP : {});
     const [consent, setConsent] = useState(null);
+    const [report, setReport] = useState(false);
     useEffect(function () { setLocal(null); setJob(null); setSetup(row[0] === 'setupDone' ? DONE_SETUP : {}); }, [p.state]);
     const state = local || row[0];
     const w = p.worker || (P.workerFixtures || {})[row[1]];
     const go = function (id, opts) { return function () { if (p.onNavigate) p.onNavigate(id, opts); }; };
-    const Frame = (window.V2Screens || {}).ScreenFrame;
+    const Frame = S.ScreenFrame;
     if (!w || !P.Thread || !P.Composer || !Frame) return null;
+
+    // The chrome reads the record, so a move made here (a retry, a stop, an answer, the first run
+    // that setup starts under D7 option A) shows there too.
+    const started = (state === 'setup' || state === 'setupDone') && !!setup.mode && D7 === 'A';
+    const moved = started ? { status: 'running', startedAt: '11:02 am' }
+      : state === 'waiting' && job ? (job === 'deny' ? { status: 'done', outcome: 'skipped' } : { status: 'running' })
+        : ({ retrying: { status: 'running' }, running: { status: 'running' }, stopped: { status: 'stopped' } })[state] || null;
+    const rec = moved ? Object.assign({}, w, started ? { setUp: true } : {}, { today: Object.assign({}, w.today, moved) }) : w;
 
     // An answer that turns Automatic on waits for the ConsentDialog.
     function guarded(apply) { return function (id, o) { if (o && o.consent) setConsent({ apply: function () { apply(id, o); } }); else apply(id, o); }; }
     const ask = function (key, o) { return Object.assign({ role: 'ask', key: key, answer: setup[key], onAnswer: guarded(function (id) { ask.set(key, id); }) }, o); };
     ask.set = function (key, id) { setSetup(function (s) { return Object.assign({}, s, { [key]: id }); }); };
     const h = {
-      setup: setup, ask: ask, job: job,
+      setup: setup, ask: ask, job: job, onReport: function () { setReport(true); },
       answerJob: guarded(function (id, o) { setJob(id); if (p.onAnswer) p.onAnswer(id, o); }),
-      onOpenRun: p.onOpenRun || go('today'),
+      onOpenRun: p.onOpenRun || function () { const to = S.chipTarget ? S.chipTarget(rec) : ['activity']; go(to[0], to[1])(); },
       onRunAction: function (kind) {
         if (kind === 'credits') (p.onOpenCredits || go('credits'))();
         else if (kind === 'retry') { if (p.onRetry) p.onRetry(); else setLocal('retrying'); }
@@ -183,15 +207,12 @@
       },
     };
     const steps = p.steps || threadFor(state, h, w);
-    // The chrome reads the record, so a move made here (a retry, a stop, an answer) shows there too.
-    const moved = state === 'waiting' && job ? (job === 'deny' ? { status: 'done', outcome: 'skipped' } : { status: 'running' })
-      : ({ retrying: { status: 'running' }, running: { status: 'running' }, stopped: { status: 'stopped' } })[state] || null;
-    const rec = moved ? Object.assign({}, w, { today: Object.assign({}, w.today, moved) }) : w;
-    const live = state === 'running' || state === 'retrying' || (state === 'waiting' && job !== 'deny');
+    const live = started || state === 'running' || state === 'retrying' || (state === 'waiting' && job !== 'deny');
     const awaiting = state === 'waiting' && !job;
     const jobOn = state === 'retrying' || (state === 'waiting' && !!job && job !== 'deny'); // a paid job is under way
 
-    const auto = state === 'automatic' && P.autoNotice ? P.autoNotice(w, p.onChangeMode || go('worker-settings')) : null;
+    // The Automatic ribbon whenever some app is on Automatic (running, waiting or done), naming the app.
+    const auto = P.autoNotice ? P.autoNotice(w, p.onChangeMode || go('worker-settings')) : null;
     const empty = P.EmptyState ? (
       <P.EmptyState icon="chat" title="Chat with BlueAI" body="Ask about today’s run, or tell your worker what to change." />
     ) : null;
@@ -199,9 +220,14 @@
       <P.ConsentDialog app="youtube" open worker={w}
         onAgree={function () { const c = consent; setConsent(null); c.apply(); }} onCancel={function () { setConsent(null); }} />
     ) : null;
+    const sheet = report && S.ReportProblemSheet ? (
+      <S.ReportProblemSheet open topic="account" email={w.account && w.account.email}
+        onClose={function () { setReport(false); }} onSent={function () { setReport(false); }} />
+    ) : null;
 
     return (
-      <Frame worker={rec} tab="home" compact={p.compact} landmark={p.landmark} frame={p.frame} onNavigate={p.onNavigate} overlays={dialog}>
+      <Frame worker={rec} tab="home" compact={p.compact} landmark={p.landmark} frame={p.frame} onNavigate={p.onNavigate}
+        overlays={<React.Fragment>{dialog}{sheet}</React.Fragment>}>
         <div className="v2-screen v2-chat-screen">
           {P.ScreenHeader ? (
             <P.ScreenHeader title="Chat" onBack={p.onBack || go('home')}

@@ -4,11 +4,15 @@
    switched to Automatic before Instagram jobs exist (R40) and unlinks Telegram at once.
    Pushed over Settings with Back; Settings lists the same rows (ConnectedAppRows).
 
-   ConnectedApps {worker, app, state, telegram, onBack, onNavigate, frame, compact, landmark, preview}
+   ConnectedApps {worker, app, state, telegram, onBack, onNavigate, onRetry, frame, compact, landmark, preview}
      app       null: the list; 'youtube' | 'telegram': that account's detail.
      state     'connected' | 'signed-out' (YouTube signed out in App Player) | 'disconnect' (the
-               confirm open) | 'disconnected' | 'tg-pairing' | 'tg-expired' | 'tg-failed' (the
-               Telegram pairing dialog).  telegram 'linked' | 'not-linked'.
+               confirm open; 'disconnect-busy' working, 'disconnect-failed' said in the dialog
+               with Try again) | 'disconnected' | 'tg-pairing' | 'tg-expired' | 'tg-failed' (the
+               Telegram pairing dialog) | 'loading' | 'error'.  telegram 'linked' | 'not-linked'.
+     Each Disconnect sits under its consequence. YouTube's costs days, so it is danger and opens
+     the confirm (section 11); Telegram's costs nothing, so it is secondary and acts at once with
+     Undo (section 52, rule 4).
      Watch history is on only when the record says allowed (notnow, revoked and not asked are off).
      Connect Telegram pairs first, as V2 does (settings.jsx:49-66): the code to send to the bot and
      a waiting line, with an expired and a failed variant. V2's QR placeholder is left out until
@@ -88,7 +92,7 @@
       : ys === 'signed-out'
         ? <K.ListRow leading={ic} label={yt.handle} description="App Player isn’t signed in to YouTube. Sign in there so today’s run can start."
             trailing={<K.Button size="sm" variant="secondary" onClick={noop}>Open App Player</K.Button>} />
-        : <K.ListRow leading={ic} label="Not connected" description="Daily runs are paused until BlueAI has a YouTube account to use."
+        : <K.ListRow leading={ic} label="Not connected" description="Daily runs can’t start until BlueAI has a YouTube account to use."
             trailing={<K.Button size="sm" variant="primary" onClick={onConnect}>Connect</K.Button>} />;
     return (
       <React.Fragment>
@@ -102,7 +106,7 @@
         ) : null}
         {on ? (
           <div className="v2-acct-zone">
-            <p>BlueAI stops using {yt.handle} and pauses your daily runs until you connect YouTube again.</p>
+            <p>BlueAI stops using {yt.handle}, and daily runs can’t start until you connect YouTube again.</p>
             <K.Button variant="danger" onClick={onDisconnect}>Disconnect YouTube</K.Button>
           </div>
         ) : null}
@@ -123,7 +127,7 @@
         {tg === 'linked' ? (
           <div className="v2-acct-zone">
             <p>You won’t be able to send commands to BlueAI from Telegram. Your worker keeps running.</p>
-            <K.Button variant="danger" onClick={onDisconnect}>Disconnect Telegram</K.Button>
+            <K.Button variant="secondary" onClick={onDisconnect}>Disconnect Telegram</K.Button>
           </div>
         ) : (
           <div className="v2-acct-zone"><K.Button variant="primary" onClick={onConnect}>Connect Telegram</K.Button></div>
@@ -149,7 +153,8 @@
     const [ys, setYs] = useState(p.state === 'signed-out' || p.state === 'disconnected' ? p.state : 'connected');
     const [tg, setTg] = useState(p.telegram || 'not-linked');
     const [pair, setPair] = useState(pairState);
-    const [confirm, setConfirm] = useState(p.state === 'disconnect');
+    const [confirm, setConfirm] = useState(/^disconnect(-busy|-failed)?$/.test(p.state || ''));
+    const step = (S.useConfirmStep || function () { return { run: function (f) { f(); }, reset: noop }; })({ 'disconnect-busy': 'busy', 'disconnect-failed': 'failed' }[p.state] || null);
     const [history, setHistory] = useState(yt.history === 'allowed');
     const toast = (S.useScreenToast || function () { return { show: noop }; })();
     useEffect(function () { if (p.state === 'disconnected') say('YouTube disconnected'); }, []);
@@ -165,17 +170,20 @@
 
     function say(title, o) { toast.show(Object.assign({ title: title, duration: p.preview ? 0 : undefined }, o || {})); }
     function back() { if (pushed) { setApp(null); setPushed(false); } else (p.onBack || noop)(); }
-    function disconnect() { setConfirm(false); setYs('disconnected'); say('YouTube disconnected'); }
+    function disconnect() { step.run(function () { setConfirm(false); setYs('disconnected'); say('YouTube disconnected'); }); }
     const title = app === 'youtube' ? 'YouTube' : app === 'telegram' ? 'Telegram' : 'Connected apps';
-    const c = S.CONFIRM_COPY ? S.CONFIRM_COPY.disconnect(yt.handle) : { title: 'Disconnect YouTube?', body: '', confirm: 'Disconnect' };
-    const dialog = confirm && K.Dialog ? (
-      <K.Dialog open preview={p.preview} variant="alert" title={c.title} onClose={function () { setConfirm(false); }} description={c.body}
-        actions={[{ label: 'Cancel', onClick: function () { setConfirm(false); } }, { label: c.confirm, variant: 'danger', onClick: disconnect }]} />
+    const c = S.CONFIRM_COPY ? S.CONFIRM_COPY.disconnect(yt.handle) : null;
+    const dialog = confirm && S.ConfirmDialog ? (
+      <S.ConfirmDialog copy={c} tone="danger" step={step} preview={p.preview} onConfirm={disconnect}
+        onCancel={function () { step.reset(); setConfirm(false); }} />
     ) : null;
+    const pending = S.pendingBody ? S.pendingBody(p.state, 'your connected apps', p.onRetry) : null;
     const pairing = pair ? <PairDialog phase={pair} preview={p.preview} onRetry={function () { setPair('waiting'); }} onCancel={function () { setPair(null); }} /> : null;
 
     let body;
-    if (app === 'youtube') {
+    if (pending) {
+      body = pending;
+    } else if (app === 'youtube') {
       body = <YouTube w={w} ys={ys} history={history} go={go} onDisconnect={function () { setConfirm(true); }}
         onConnect={function () { setYs('connected'); say('YouTube connected'); }}
         setHistory={function (v) { setHistory(v); say(v ? 'Watch history on' : 'Watch history off', { tone: 'info' }); }} />;
@@ -197,7 +205,7 @@
     }
     return (
       <Frame worker={w} tab="settings" frame={p.frame} compact={p.compact} landmark={p.landmark} onNavigate={p.onNavigate}
-        overlays={<React.Fragment>{dialog}{pairing}</React.Fragment>}>
+        loading={p.state === 'loading'} overlays={<React.Fragment>{dialog}{pairing}</React.Fragment>}>
         <div className="v2-acct">
           {K.ScreenHeader ? <K.ScreenHeader title={title} onBack={back} /> : null}
           <div className="v2-acct-body">{body}</div>

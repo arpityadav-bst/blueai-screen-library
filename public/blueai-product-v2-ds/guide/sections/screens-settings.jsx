@@ -45,6 +45,8 @@
             { label: 'Highlighted section', note: 'routed to Connected apps: look held 1900ms, no value changed', node: scr({ highlight: 'apps', telegram: 'linked' }) },
             { label: 'Worker paused', note: 'the summary row says until when and what it costs', node: scr({ worker: f.paused }) },
             { label: 'Report a problem', note: 'Help > Report a problem opens the sheet (section 65)', node: scr({ state: 'report' }) },
+            { label: 'Loading', node: scr({ state: 'loading' }) },
+            { label: 'Couldn’t load', node: scr({ state: 'error' }) },
           ]} />
           <G.Note>Each summary row pushes its screen with Back and keeps Settings lit in the nav: BlueAI worker to Worker settings
             (section 62), an app to Connected apps (63), the account row to Account and privacy (64). AI credits (66) is not

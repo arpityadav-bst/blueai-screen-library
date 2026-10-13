@@ -14,5 +14,5 @@
 - **Accessibility:** Buttons expose aria-pressed; thanks is a role=status line; reasons are a group labelled by the prompt; nothing fades below 4.5:1.
 - **Responsive:** Chips wrap.
 - **Copy:** Quoted exactly from chat_feedback.jsx: "Good result", "Bad result", "Thanks for the feedback", "What went wrong?", "Didn't complete the task", "Wrong result", "Took too long", "Didn't understand me", "Other", "Provide additional feedback", "Submit feedback".
-- **Decision:** V2 offers it on successful outcomes only (PM config, chat_product.jsx:150). Offering it on failed jobs, where a partner most wants to report a problem, is a PM call.
+- **Decision:** V2 offers it on successful outcomes only (PM config, chat_product.jsx:150). Offering it on failed jobs, where a partner most wants to report a problem, is a PM call (decision D18, section 73).
 - **Do / Don't:** Do keep both thumbs readable after a vote. Don't invent a new chip look for reasons.

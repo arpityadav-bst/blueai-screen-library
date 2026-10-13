@@ -11,7 +11,7 @@
 
 **Proposed copy (day line, pending D6):** covered "Today’s run isn’t affected." / waiting "Today’s run starts once they’re back, so today can still count." / stopped "Today won’t count toward your 20 days." The PM confirms whether a run stopped for credits loses the day.
 
-**Explainer (proposed):** "Your daily run and your chats use AI credits. You get a fresh set every day, enough for today’s run with room to chat." (`OOC_COPY.explain`), built around the daily run rather than a count of jobs: V2's approved line, "enough for 4 to 5 jobs" (credits_popup_parts.jsx:105), was written beside a 2,500 grant and holds at 2,000 only while a job costs 400 or less.
+**Explainer (proposed):** "Your daily run and your chats use AI credits. You get a fresh set every day, and chats use the same set, so leave enough for today’s run." (`OOC_COPY.explain`), built around the daily run rather than a count of jobs, and true until decision D6 holds credits back for the run (section 76); it never promises room to chat: V2's approved line, "enough for 4 to 5 jobs" (credits_popup_parts.jsx:105), was written beside a 2,500 grant and holds at 2,000 only while a job costs 400 or less.
 
 ### Zero-credits notice and run end (New)
 - **Purpose:** Say zero before anyone types, and close a run that stopped for credits, with the same time and the day status.

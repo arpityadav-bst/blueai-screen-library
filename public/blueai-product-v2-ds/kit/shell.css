@@ -119,13 +119,8 @@
   min-height: var(--v2-topbar-h); padding: var(--v2-space-2) var(--v2-gutter); background: var(--v2-canvas);
 }
 .v2-screen-header--back { padding-left: calc(var(--v2-gutter) - var(--v2-space-15)); }
-.v2-screen-title {
-  flex: 1 1 auto; min-width: 0; margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-  color: var(--v2-ink); font-size: var(--v2-text-20); font-weight: var(--v2-weight-semibold);
-  letter-spacing: var(--v2-tracking-title); line-height: var(--v2-leading-tight);
-}
-.v2-screen-title:focus { outline: none; }
-.v2-screen-title:focus-visible { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); border-radius: var(--v2-radius-xs); }
+/* Type: .v2-text-title-lg (kit/nav.jsx). Focused by script, so no ring (kit/base.css, section 09). */
+.v2-screen-title { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .v2-screen-header-trailing { display: flex; align-items: center; gap: var(--v2-space-1); flex: none; }
 
 /* TrayMenu: a specimen of the Windows tray menu (Windows draws the real one). Product tokens so the
@@ -171,10 +166,4 @@
 .v2-splash-dot:nth-child(3) { animation-delay: calc(var(--v2-dur-pulse) / 3); }
 .v2-splash-status { margin: var(--v2-space-3) 0 0; color: var(--v2-ink-3); font-size: var(--v2-text-13); line-height: var(--v2-leading-snug); }
 
-/* Reduced motion: no loops, no fades, no colour transitions. .is-reduced forces it for specimens. */
-.v2-splash.is-reduced { transition: none; }
-.v2-splash.is-reduced .v2-splash-dot { animation: none; }
-@media (prefers-reduced-motion: reduce) {
-  .v2-splash, .v2-status, .v2-nav-item, .v2-tray-item { transition: none; }
-  .v2-splash-dot { animation: none; }
-}
+/* Reduced motion: kit/motion.css's one rule (or .v2-reduced-motion on the splash) stops the dots and the fade. */

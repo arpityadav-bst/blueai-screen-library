@@ -84,13 +84,13 @@
         <G.Part name="ComposerNotice" status="changed" role="A condition that holds before you type, said above the field with its one action.">
           <G.StateGrid wide states={[
             { label: 'Automatic is on (info)', note: 'V2 copy.', node: shell(<K.ComposerNotice tone="info" icon="zap" text={AUTO_TEXT} action={{ label: 'Change', onClick: noop }} />) },
-            { label: 'Out of AI credits (neutral)', note: 'V2Kit.OutOfCreditsNotice, section 48.', node: shell(<OocNotice />) },
+            { label: 'Out of AI credits (neutral)', note: 'V2Kit.OutOfCreditsNotice, section 48: neutral with a clock, as out of AI credits shows everywhere (section 03). Nothing is asked of the partner; the words say until when.', node: shell(<OocNotice />) },
             { label: 'BlueStacks needed (info)', node: shell(<K.ComposerNotice tone="info" icon="monitor" text="Today’s run needs BlueStacks App Player." action={{ label: 'Get BlueStacks', onClick: noop }} />) },
             { label: 'Paused (neutral)', node: shell(<K.ComposerNotice tone="neutral" text="The BlueAI worker is paused until tomorrow." action={{ label: 'Resume', onClick: noop }} />) },
           ]} />
-          <G.StateGrid states={[
-            { label: 'Action hover', node: <button type="button" className="v2-cnotice-action is-hover">Change</button> },
-            { label: 'Action focus', node: <button type="button" className="v2-cnotice-action is-focus">Change</button> },
+          <G.StateGrid wide states={[
+            { label: 'Action hover', note: 'the notice’s own V2Kit.Link, forced with actionClassName', node: shell(<K.ComposerNotice tone="info" icon="zap" text={AUTO_TEXT} action={{ label: 'Change', onClick: noop }} actionClassName="is-hover" />) },
+            { label: 'Action focus', node: shell(<K.ComposerNotice tone="info" icon="zap" text={AUTO_TEXT} action={{ label: 'Change', onClick: noop }} actionClassName="is-focus" />) },
           ]} />
           <G.CompareRow
             v2={<V2Ribbon />}
@@ -99,8 +99,8 @@
           <G.SpecDrawer rows={[
             { part: 'Shape', token: '--v2-radius-md', value: 'radius 10, 1px line in tone', ref: 'chat.composer.ribbon-fill' },
             { part: 'Info', token: '--v2-blue-tint, --v2-blue-tint-line, --v2-blue-ink', value: 'tint, tint line, #0d5ad6 text and icon' },
-            { part: 'Attention', token: '--v2-attention-tint, --v2-attention-line, --v2-attention-ink', value: '#fdf6cf, #f3e8a8, #8a6116' },
-            { part: 'Neutral', token: '--v2-surface-sunken, --v2-line, --v2-ink-2', value: 'sunken, line, ink-2; icon ink-3' },
+            { part: 'Attention', token: '--v2-attention-tint, --v2-attention-line, --v2-attention-ink', value: '#fdf6cf, #f3e8a8, #8a6116: an answer the run waits on' },
+            { part: 'Neutral', token: '--v2-surface-sunken, --v2-line, --v2-ink-2', value: 'sunken, line, ink-2; icon ink-3: paused, and out of AI credits until a time (clock)' },
             { part: 'Icon', token: '--v2-icon-sm', value: '16 (was 13)', ref: 'chat.composer.ribbon-icon' },
             { part: 'Text', token: '--v2-text-13, --v2-leading-snug', value: '13/1.35 (was 12)', ref: 'chat.composer.ribbon-text' },
             { part: 'Action', token: '--v2-hit-min, --v2-ink', value: 'underlined ink link, 32px tall, blue-ink on hover', ref: 'chat.composer.ribbon-change' },
@@ -134,7 +134,7 @@
             { part: 'Hover', token: '--v2-wash-hover', value: 'colour and wash in CSS, never opacity', ref: 'chat.composer.hover' },
             { part: 'Press', token: null, value: 'translateY 1px' },
             { part: 'Labels', token: null, value: '"Send message" / "Stop the run" ("task" is banned for paid work)', ref: 'chat.composer.aria' },
-            { part: 'Confirm', token: '--v2-attention-tint', value: 'costsDay: "Stop now? Today won’t count toward your 20 days."; paidJob (a job under way): "Stop now? The paid job won’t finish and today won’t count." Keep running / Stop run (36px)', ref: ['chat.composer.stop', 'chat.run.stop-trace'] },
+            { part: 'Confirm', token: '--v2-attention-tint', value: 'costsDay: "Stop now? Today counts only if you run again by 9 pm."; paidJob (a job under way): "Stop now? The paid job won’t finish. Today counts only if you run again by 9 pm." Keep running / Stop run (36px). role=alertdialog labelled by the question; focus moves to Keep running; while it is open, Stop only returns focus to it, so only Stop run stops', ref: ['chat.composer.stop', 'chat.run.stop-trace'] },
           ]} />
           <G.DoDont
             do={['Ask before stopping a paid job, and say what it costs.', 'Leave a stopped run card with its day status.']}

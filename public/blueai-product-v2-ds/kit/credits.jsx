@@ -5,11 +5,15 @@
                   'paused' (running on the partner's own key); when absent it is derived from
                   balance and runCost (low = less than one run needs). Number in ink, a dot only when
                   today's run is short. Visible pill 28px inside a 32px hit area.
-   CreditsMeter   {balance, grant, runCost, refillAt?, now?, runDone?, refreshed?, figure?, className}
+   CreditsMeter   {balance, grant, runCost, refillAt?, now?, runDone?, refreshed?, dayStatus?, figure?,
+                  className}
                   role=meter rail, '1,250 of 2,000 left today', 'Refreshes in 6h 42m', and one line
-                  that answers "is today's run covered". figure false (under a StatCard that already
-                  shows the balance) drops the balance from the caption: 'of 2,000 today'; the
-                  meter's aria-valuetext keeps the full words.
+                  that answers "is today's run covered". At zero that line says what zero means for
+                  today, in the words every zero surface uses: dayStatus is V2Kit.creditsDay(worker)
+                  ('covered' | 'waiting' | 'stopped', section 41) and the line is
+                  V2Kit.OOC_COPY.day[dayStatus] (section 48). figure false (under a StatCard that
+                  already shows the balance) drops the balance from the caption: 'of 2,000 today';
+                  the meter's aria-valuetext keeps the full words.
    useCountdown(target?, opts?)  -> {ms, at, left, clock, done, underMinute}
                   Time to the next refill. target (a Date or ms) defaults to the next 00:00 UTC
                   (V2's refill, credits_popup_parts.jsx:22-25); a string is ignored, the clock
@@ -27,7 +31,6 @@
 
   function Ic({ name, size }) {
     const K = window.V2Kit || {};
-    if (name === 'credits' && !K.Icon) return <span className="v2-credits-glyph" aria-hidden="true" />;
     return K.Icon ? <K.Icon name={name} size={size || 16} /> : null;
   }
 
@@ -103,30 +106,37 @@
   }
 
   /* The covered line: one sentence that answers "will today's run fit". runDone wins, because a
-     finished run is not affected by what is left. */
-  function coverLine(state, runDone) {
+     finished run is not affected by what is left. At zero, with the day's status, it says whether
+     today still counts (OOC_COPY.day), so a refill after the 9 pm deadline never reads as if
+     today's run will still happen. */
+  const DAY_TONE = { covered: ['ok', 'check'], waiting: ['attention', 'clock'], stopped: ['danger', 'x-circle'] };
+  function coverLine(state, runDone, dayStatus) {
     if (runDone) return { tone: 'done', icon: 'check', text: 'Today’s run is done' };
+    const day = (window.V2Kit && window.V2Kit.OOC_COPY || {}).day || {};
+    if (state === 'empty' && DAY_TONE[dayStatus] && day[dayStatus]) {
+      return { tone: DAY_TONE[dayStatus][0], icon: DAY_TONE[dayStatus][1], text: day[dayStatus] };
+    }
     if (state === 'empty') return { tone: 'danger', icon: 'x-circle', text: 'Today’s run can’t start until credits refresh' };
     if (state === 'low') return { tone: 'attention', icon: 'alert', text: 'Not enough for today’s run' };
     return { tone: 'ok', icon: 'check', text: 'Enough for today’s run' };
   }
 
-  function CreditsMeter({ balance, grant, runCost, refillAt, now, runDone, refreshed, figure, className }) {
+  function CreditsMeter({ balance, grant, runCost, refillAt, now, runDone, refreshed, dayStatus, figure, className }) {
     const g = grant > 0 ? grant : 1;
     const b = refreshed ? g : Math.max(0, Math.min(balance || 0, g));
     const t = useCountdown(refillAt, { now: now });
     const state = refreshed ? 'refreshed' : b <= 0 ? 'empty' : (runCost && b < runCost) ? 'low' : b >= g ? 'full' : 'partial';
     const left = fmt(b) + ' of ' + fmt(g) + ' left today';
-    const cover = coverLine(state, runDone);
+    const cover = coverLine(state, runDone, dayStatus);
     return (
       <div className={cx('v2-credits-meter', 'v2-credits-meter--' + state, className)}>
         <div className="v2-credits-meter-rail" role="meter" aria-label="AI credits left today"
           aria-valuemin={0} aria-valuemax={g} aria-valuenow={b} aria-valuetext={left}>
           <span className="v2-credits-meter-fill" style={{ width: Math.round((b / g) * 100) + '%' }} />
         </div>
-        <div className="v2-credits-meter-caption">
-          <span className="v2-num">{figure === false ? 'of ' + fmt(g) + ' today' : left}</span>
-          <span className="v2-num">{refreshed ? 'Refreshed' : 'Refreshes in ' + t.left}</span>
+        <div className="v2-credits-meter-caption v2-text-meta">
+          <span className="v2-tabular">{figure === false ? 'of ' + fmt(g) + ' today' : left}</span>
+          <span className="v2-tabular">{refreshed ? 'Refreshed' : 'Refreshes in ' + t.left}</span>
         </div>
         <p className={'v2-credits-meter-cover v2-credits-meter-cover--' + cover.tone}>
           <Ic name={cover.icon} size={16} />

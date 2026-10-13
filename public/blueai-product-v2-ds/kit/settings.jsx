@@ -26,9 +26,6 @@
     return <I name={name} size={size || 16} />;
   }
 
-  function reducedMotion() {
-    try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; }
-  }
 
   function SettingsSection({ id, title, description, action, highlight, className, children }) {
     const ref = useRef(null);
@@ -37,7 +34,7 @@
     useEffect(function () {
       if (!highlight) return undefined;
       const el = ref.current;
-      if (el && el.scrollIntoView) el.scrollIntoView({ behavior: reducedMotion() ? 'auto' : 'smooth', block: 'center' });
+      if (el && el.scrollIntoView) el.scrollIntoView({ behavior: window.V2Kit.reducedMotion() ? 'auto' : 'smooth', block: 'center' });
       setLit(true);
       const t = setTimeout(function () { setLit(false); }, HIGHLIGHT_MS);
       return function () { clearTimeout(t); };
@@ -47,8 +44,8 @@
         className={cx('v2-settings-section', lit && 'is-highlighted', className)}>
         <header className="v2-settings-section-head">
           <div className="v2-settings-section-text">
-            <h2 id={hid} className="v2-settings-section-title">{title}</h2>
-            {description ? <p className="v2-settings-section-desc">{description}</p> : null}
+            <h2 id={hid} className="v2-settings-section-title v2-text-title">{title}</h2>
+            {description ? <p className="v2-settings-section-desc v2-text-body-sm">{description}</p> : null}
           </div>
           {action ? <div className="v2-settings-section-action">{action}</div> : null}
         </header>

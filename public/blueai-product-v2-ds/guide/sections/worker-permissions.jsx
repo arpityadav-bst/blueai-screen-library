@@ -63,7 +63,7 @@
     const K = window.V2Kit || {};
     if (!K.ModeRows || !K.workerFixtures) return <G.Section id="permissions"><div className="g-missing">kit/permissions.jsx is not loaded.</div></G.Section>;
     const F = K.workerFixtures;
-    const consent = function (busy) { return K.Dialog ? <Win height={600}><K.ConsentDialog app="youtube" preview busy={busy} onAgree={noop} onCancel={noop} worker={F.verified} /></Win> : null; };
+    const consent = function (busy, error) { return K.Dialog ? <Win height={600}><K.ConsentDialog app="youtube" preview busy={busy} error={error} onAgree={noop} onCancel={noop} worker={F.verified} /></Win> : null; };
     const notice = K.ComposerNotice ? <K.ComposerNotice {...K.autoNotice(F.automatic, noop)} /> : null;
     return (
       <G.Section id="permissions">
@@ -88,7 +88,7 @@
             { part: 'Always ask', token: 'Segmented option', value: 'Always ask (default for every app)', ref: ['worker.permissions.always', 'worker.permissions.store'] },
             { part: 'Automatic', token: 'Segmented option + beforeChange', value: 'Automatic, only through the consent', ref: 'worker.permissions.auto' },
             { part: 'Track', token: '--v2-surface-sunken, --v2-radius-md', value: 'Segmented md, 32 (section 14)', ref: 'worker.permissions.track' },
-            { part: 'Segment', token: '--v2-radius-sm, --v2-text-13 500', value: 'selected surface + line', ref: 'worker.permissions.segment' },
+            { part: 'Segment', token: '--v2-radius-sm, --v2-text-13 500', value: 'shield-check / zap icon 16 + label; selected: the select fill, a blue edge, ink', ref: 'worker.permissions.segment' },
             { part: 'Apps', token: 'WORKER_APPS + record status', value: 'YouTube live, Instagram coming soon', ref: ['worker.permissions.apps', 'worker.permissions.instagram'] },
             { part: 'Note', token: '--v2-text-12, --v2-ink-3', value: 'Automatic starts and finishes that app’s jobs without asking. …', ref: 'worker.permissions.menu-note' },
             { part: 'Summary (card, chip)', token: 'modeSummary()', value: "'Always ask' or 'Automatic · YouTube'", ref: 'worker.permissions.summary' },
@@ -103,17 +103,18 @@
           <G.StateGrid wide states={[
             { label: 'Open', node: consent(false) },
             { label: 'Agree: busy', note: 'primary loading; Esc, scrim and close held', node: consent(true) },
+            { label: 'Agree: not saved', note: 'danger banner; nothing changed; I agree, turn on tries again', node: consent(false, true) },
             { label: 'Agree: done', note: 'the dialog closes and the ribbon appears', node: notice },
             { label: 'Cancel', note: 'nothing changes; the job question keeps waiting', node: <span className="g-muted">Dialog closed, mode unchanged.</span> },
           ]} />
           <G.CompareRow
             v2={<V2Consent />}
             system={consent(false)}
-            changed="The strongest trust moment in V2, so the copy is kept word for word. The chrome moves to the one Dialog: focus moves in and returns, Tab stays inside, busy prevents a double agree. The note rises from #9ca3af (2.54:1) to ink-3, the agree button from #1990FF (3.24:1) to action blue, and one line says where to turn it off (P4)." />
+            changed="The strongest trust moment in V2, so its copy is kept word for word except the body, which names what a job does instead of posting videos (proposed, PM and legal, R51). The chrome moves to the one Dialog: focus moves in and returns, Tab stays inside, busy prevents a double agree. The note rises from #9ca3af (2.54:1) to ink-3, the agree button from #1990FF (3.24:1) to action blue, and one line says where to turn it off (P4)." />
           <G.SpecDrawer rows={[
             { part: 'Dialog', token: '--v2-dialog-md, consent variant', value: '382, close button, no scrim dismiss', ref: 'worker.permissions.modal' },
             { part: 'Title', token: '--v2-text-20, --v2-weight-semibold', value: 'Run YouTube jobs automatically?', ref: 'worker.permissions.consent-title' },
-            { part: 'Body', token: '--v2-text-14, --v2-ink-2', value: 'BlueAI will accept YouTube jobs and finish them on your YouTube account without asking you first, …', ref: 'worker.permissions.consent-body' },
+            { part: 'Body', token: '--v2-text-14, --v2-ink-2', value: 'Proposed, PM and legal (R51): BlueAI will take YouTube jobs and do them on your account without asking first: watching, liking and posting comments in your name.', ref: 'worker.permissions.consent-body' },
             { part: 'Target row', token: '--v2-blue-tint', value: 'the app being changed', ref: 'worker.permissions.consent-row' },
             { part: 'Note', token: '--v2-text-12, --v2-ink-3', value: 'Each app has its own setting. The others stay on Always ask until you switch them.', ref: ['worker.permissions.consent-note', 'worker.permissions.consent-note-colour'] },
             { part: 'Agreement', token: '--v2-text-14, --v2-ink-2', value: 'By turning this on, you agree to let BlueAI do this for you on YouTube. You can turn it off anytime.', ref: 'worker.permissions.consent-agree' },
@@ -135,11 +136,11 @@
           <G.CompareRow
             v2={<V2Ribbon />}
             system={notice}
-            changed="Kept as the in-chat shortcut, now drawn by the shared ComposerNotice so standing conditions (Automatic, out of credits, BlueStacks needed, paused) share one shape. Text moves from #1763c6 on #eaf3ff to blue ink on the info tint; Change grows to a 32px target. Its permanent home is Settings > Worker (decision D4)." />
+            changed="Kept as the in-chat shortcut, now drawn by the shared ComposerNotice so standing conditions (Automatic, out of credits, BlueStacks needed, paused) share one shape. Text moves from #1763c6 on #eaf3ff to ink-2 on the info tint, with only the icon in blue ink; Change grows to a 32px target. Its permanent home is Settings > Worker (decision D4)." />
           <G.SpecDrawer rows={[
             { part: 'Gate', token: 'autoNotice() returns null', value: 'only while some app is Automatic', ref: 'worker.permissions.ribbon-gate' },
             { part: 'Fill', token: '--v2-blue-tint, --v2-blue-tint-line', value: 'info tone', ref: 'worker.permissions.ribbon-fill' },
-            { part: 'Copy', token: '--v2-text-13, --v2-blue-ink', value: 'Automatic is on for YouTube. BlueAI takes paid YouTube jobs without asking.', ref: 'worker.permissions.ribbon-copy' },
+            { part: 'Copy', token: 'text --v2-text-13, --v2-ink-2; icon --v2-blue-ink', value: 'Automatic is on for YouTube. BlueAI takes paid YouTube jobs without asking.', ref: 'worker.permissions.ribbon-copy' },
             { part: 'Change', token: 'ComposerNotice action, --v2-hit-min', value: 'Change (opens ModeRows)', ref: 'worker.permissions.ribbon-change' },
           ]} />
         </G.Part>

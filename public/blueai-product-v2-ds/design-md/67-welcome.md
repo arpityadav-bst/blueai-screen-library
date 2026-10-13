@@ -15,10 +15,10 @@
   5. One Button, primary lg (44) full width: "Sign in to get started".
   6. Foot: a muted standalone Link "Program Terms" (13/500 ink-3, 32 target) that opens the legal page in a new tab.
 - **Copy:** PM copy, verbatim. Title "An AI that turns your social accounts *into income.*" (`moneymaker.jsx:154`; decision D3: the site pays $30 for 20 days and the glossary bans "income"; if D3 follows the site, use the proposed "Put your BlueAI worker *to work.*"). Steps "Sign in with the same account you applied with." and "Run the BlueAI worker: it finds jobs and runs them for you." (`:51, 55`). Action "Sign in to get started" (`:187`). The link says Program Terms (glossary), not "Terms & Conditions".
-- **Variants:** `headline` pm (default) or proposed.
+- **Variants:** `headline` pm (default) or proposed. `signedOut` (the account's email), the variant after Sign out (section 64): BrandMark 48, title "You’re signed out", line "Your worker is paused, and days without a run don’t count toward your 20 days.", and one Button primary lg full "Sign in as alex@example.com" (`screens/welcome.jsx:134-152`). Proposed copy.
 - **Sizes:** the 419 window; compact 640 centres the same column in less height.
-- **States:** first run (the Program Terms sheet over it, section 53); agreeing (sheet button loading); not saved (sheet error banner); after terms; reduced motion. In V2: the bare URL `index.html` (terms sheet), then Agree and continue.
-- **Props:** `Welcome {terms: null | 'firstrun' | 'update', termsBusy, termsError, headline, onSignIn, onAgree, compact, reduced, preview, landmark}`; `Welcome.Body {headline, onSignIn, animate}` for screens drawn over it (sign-in).
+- **States:** first run (the Program Terms sheet over it, section 53); agreeing (sheet button loading); not saved (sheet error banner); after terms; signed out (after Sign out, section 64); reduced motion. In V2: the bare URL `index.html` (terms sheet), then Agree and continue.
+- **Props:** `Welcome {terms: null | 'firstrun' | 'update', termsBusy, termsError, headline, signedOut (email), onSignIn, onAgree, compact, reduced, preview, landmark, animate}`; `Welcome.Body {headline, onSignIn, animate}` for screens drawn over it (sign-in).
 - **Motion:** title, steps and action rise once with `.v2-anim-fade-up` (180 ms, `--v2-ease-out`), 120 ms apart (`.v2-delay-1`, `.v2-delay-2`); everything is in place by about 420 ms. Under reduced motion it is simply there.
 - **Accessibility:** the title is the page h1; the list says "Step 1:" and "Step 2:" to screen readers (the discs are decorative); the action label is 4.92:1; the terms link is 6.0:1 (V2 2.41:1) with a 32 target and "(opens in a new tab)".
 - **Responsive:** one centred column; the title balances its lines at any width.

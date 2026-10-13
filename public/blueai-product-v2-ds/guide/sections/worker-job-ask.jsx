@@ -54,8 +54,8 @@
             available' and when: attention tint while it waits for the partner, panel grey after. Thumbnail 16:9 radius 10
             with the duration. Video title 14/600, channel 13 ink-3. What I'll do: a plain list with 16 icons (not chips:
             these are facts, not buttons). The exact comment in a quote block 13 ink. The deadline and its cost. Then
-            'Take this job' (primary), 'Skip today (today won’t count)' (secondary) and 'Stop asking for YouTube jobs'
-            (quiet, opens the consent for Automatic). All three are 36 tall and full width.</p>
+            'Take this job' (primary), 'Skip: today won’t count' (secondary) and 'Switch YouTube to Automatic'
+            (quiet, zap, opens the consent for Automatic). All three are 36 tall and full width.</p>
           <G.StateGrid wide states={[
             { label: 'Ask (Always ask, partner here)', node: <K.JobPreviewCard onTake={noop} onSkip={noop} onStopAsking={noop} /> },
             { label: 'Waiting since 11:04 am, expires 9 pm', note: 'the partner was away; the Windows notification brings them here', node: <K.JobPreviewCard waitingSince="11:04 am" expiresAt="9 pm" onTake={noop} onSkip={noop} onStopAsking={noop} /> },
@@ -70,7 +70,7 @@
             v2Label="V2 today: the ask it would replace"
             v2={<V2Ask />}
             system={<K.JobPreviewCard onTake={noop} onSkip={noop} onStopAsking={noop} />}
-            changed="Not a restyle: a proposal. The partner sees the job before agreeing to it, the cost of skipping sits on the skip button, and saying yes once no longer switches on Automatic: 'Stop asking' is its own quiet action and goes through the consent." />
+            changed="Not a restyle: a proposal. The partner sees the job before agreeing to it, the cost of skipping sits on the skip button, and saying yes once no longer switches on Automatic: 'Switch YouTube to Automatic' is its own quiet action and goes through the consent." />
           <G.FrameState url="index.html?day=next&end=job" label="V2: the next day's run asks about the job (Always ask)" height={830} />
           <G.SpecDrawer rows={[
             { part: 'Card', token: '--v2-bubble-max, --v2-radius-lg, --v2-line', value: 'max 300, 16, 1px line (attention line while waiting)' },
@@ -81,9 +81,9 @@
             { part: 'Comment', token: '--v2-surface-sunken, 2px --v2-line-strong edge', value: 'exact text, 13/1.5 ink', ref: 'worker.flow.comment' },
             { part: 'Deadline', token: '--v2-text-13, clock --v2-attention-ink', value: 'Answer by 9 pm or today won’t count.' },
             { part: 'Take', token: 'Button primary md, full', value: 'Take this job', ref: 'worker.flow.ask-question' },
-            { part: 'Skip', token: 'Button secondary md, full', value: 'Skip today (today won’t count)', ref: 'worker.flow.skip-after' },
-            { part: 'Automatic', token: 'Button quiet md, full', value: 'Stop asking for YouTube jobs (opens consent)', ref: 'worker.flow.ask-options' },
-            { part: 'Receipt', token: 'StatusTick pending + quiet Button', value: 'Pending verification / Ask me first next time' },
+            { part: 'Skip', token: 'Button secondary md, full', value: 'Skip: today won’t count', ref: 'worker.flow.skip-after' },
+            { part: 'Automatic', token: 'Button quiet md, full, zap', value: 'Switch YouTube to Automatic (opens the consent)', ref: 'worker.flow.ask-options' },
+            { part: 'Receipt', token: 'StatusTick + quiet Button (shield-check)', value: 'StatusTick from verify (pending by default, null in Run detail) + quiet "Switch back to Always ask", only when ranOn is auto' },
           ]} />
           <G.DoDont
             do={['Show the exact comment before the partner agrees.', 'Put the cost on the skip button itself.', 'Keep the standing consent (Automatic) a separate, quieter action.']}

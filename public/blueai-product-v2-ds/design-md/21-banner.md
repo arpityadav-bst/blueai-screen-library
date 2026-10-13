@@ -12,7 +12,7 @@
 1. Box: radius 10 (`--v2-radius-md`), 1px tone line, tone tint, padding 12, gap 8, left-aligned.
 2. Icon: 16, in the tone ink.
 3. Text: title 13/600 `--v2-ink` (optional), body 13 `--v2-ink-2`, `--v2-leading-body`. Figures in the body are bold ink, tabular.
-4. Actions (trailing, optional): one action as an underlined 13/500 ink link with a 32px target, and/or a 32px dismiss (`close`, labelled "Dismiss").
+4. Actions (trailing, optional): one action as `V2Kit.Link` standalone (an underlined 13/500 ink link with a 32px target, `kit/notice.jsx`), and/or a 32px dismiss (`close`, labelled "Dismiss").
 
 The words stay in ink so every tone passes 4.5:1; the tone lives in the tint, the line and the icon.
 
@@ -31,7 +31,7 @@ Any icon can replace the default (Automatic uses `zap`).
 - With action. V2: `?start=worker&mode=auto`, then Run (the ribbon's "Change").
 - Dismissible: news only. New.
 - Live value: the out-of-credits countdown (`?start=worker&credits=0`, then the credits pill). The ticking value sits in `<strong aria-live="off">` so it is read once.
-- Action hover (wash, underline firms), focus-visible (2px blue outline), pressed (press wash). New.
+- Action hover (blue ink, underline firms), focus-visible (2px blue outline): the Link's own states. New.
 
 **Props.** `Banner { tone = 'info' | 'success' | 'attention' | 'danger' | 'offline', icon (name, or null for none), title, children, action ({ label, onClick } or { label, href, external } or a node), onDismiss, dismissLabel = 'Dismiss', className }`.
 

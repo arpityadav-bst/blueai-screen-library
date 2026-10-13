@@ -7,7 +7,7 @@
 ### ModeRows
 
 - **Purpose:** the per-app mode, with a permanent home in Settings > Worker and a popover from the ribbon's Change.
-- **Anatomy:** one kit ListRow per app: mark 20 ink-3, name 14/500, account as the description, kit Segmented md (32) 'Always ask' / 'Automatic'. Note under the rows 12 ink-3: 'Automatic starts and finishes that app’s jobs without asking. Each app has its own setting, and a new app starts on Always ask.' (V2). 'Mode, per app' is not carried (Mode is not a partner word).
+- **Anatomy:** one kit ListRow per app: mark 20 ink-3, name 14/500, account as the description, kit Segmented md (32) 'Always ask' (shield-check) / 'Automatic' (zap), the icons the consent table and the worker card use (`kit/permissions.jsx` OPTIONS). Note under the rows 12 ink-3: 'Automatic starts and finishes that app’s jobs without asking. Each app has its own setting, and a new app starts on Always ask.' (V2). 'Mode, per app' is not carried (Mode is not a partner word).
 - **Variants:** connected (switch); coming soon ('Instagram jobs aren’t available yet.' + Badge 'Coming soon', no switch); not connected ('Not connected' + Connect); float (surface, line, radius 10, shadow-1, width 364: the popover).
 - **Sizes:** full width; float 364.
 - **States:** Always ask (default); Automatic (only after the consent: `beforeChange` opens it and commits on agree); coming soon; not connected. In V2: `?v=2&mode=auto` (ribbon, Change), `?v=1` (chip).
@@ -20,15 +20,15 @@
 ### ConsentDialog
 
 - **Purpose:** the consent for Automatic, per app, every time.
-- **Anatomy:** kit Dialog, consent variant, md (382): title 20/600 'Run YouTube jobs automatically?', close 32, no scrim dismiss. Body 14 ink-2: 'BlueAI will accept YouTube jobs and finish them on your YouTube account without asking you first, including posting videos and other content.' Per-app table radius 10: the app being changed tinted blue, Automatic in blue ink with zap, Always ask with shield-check, coming soon in words. Note 12 ink-3: 'Each app has its own setting. The others stay on Always ask until you switch them.' Agreement 14: 'By turning this on, you agree to let BlueAI do this for you on YouTube. You can turn it off anytime.' Added, proposed, 12 ink-3: 'Turn it off in Settings > Worker, or with Change above the chat.' Footer 44: 'Cancel' (secondary) then 'I agree, turn on' (primary). All other copy V2 verbatim (`agent_permissions.jsx:159-179`).
+- **Anatomy:** kit Dialog, consent variant, md (382): title 20/600 'Run YouTube jobs automatically?', close 32, no scrim dismiss. Body 14 ink-2, proposed, PM and legal (R51): 'BlueAI will take YouTube jobs and do them on your account without asking first: watching, liking and posting comments in your name.' The words come from what a job does (`WORKER_JOB.actions`, section 41; `kit/permissions.jsx:69-79`). V2's line, 'BlueAI will accept YouTube jobs and finish them on your YouTube account without asking you first, including posting videos and other content.' (`agent_permissions.jsx:161`), names posting videos, which the worker never does, and leaves out the comment it does post; on Automatic the job preview never appears, so this line is the partner's only notice of that comment. Per-app table radius 10: the app being changed tinted blue, Automatic in blue ink with zap, Always ask with shield-check, coming soon in words. Note 12 ink-3: 'Each app has its own setting. The others stay on Always ask until you switch them.' Agreement 14: 'By turning this on, you agree to let BlueAI do this for you on YouTube. You can turn it off anytime.' Added, proposed, 12 ink-3: 'Turn it off in Settings > Worker, or with Change above the chat.' Footer 44: 'Cancel' (secondary) then 'I agree, turn on' (primary). The title, table, note, agreement and buttons are V2 verbatim (`agent_permissions.jsx:159-179`); the body and the turn-off line are not.
 - **Variants:** one per app.
 - **Sizes:** Dialog md.
-- **States:** open; agree busy (primary loading, Esc, scrim and close held), then done (closes, the ribbon appears, the agreement time is recorded per account on the server); cancel (nothing changes, the job question keeps waiting). V2: the Automatic chip on the daily job ask, or the onboarding choice (`?setup` default).
-- **Props:** `app`, `open`, `busy`, `onAgree`, `onCancel`, `worker`, `preview` (guide only).
+- **States:** open; agree busy (primary loading, Esc, scrim and close held), then done (closes, the ribbon appears, the agreement time is recorded per account on the server); cancel (nothing changes, the job question keeps waiting); not saved (`error`: Banner danger 'Not saved, nothing changed. Try again.' in the body, and 'I agree, turn on' is the retry; proposed copy). V2: the Automatic chip on the daily job ask, or the onboarding choice (`?setup` default).
+- **Props:** `app`, `open`, `busy`, `error`, `onAgree`, `onCancel`, `worker`, `preview` (guide only).
 - **Motion:** the Dialog's (320ms in, 240ms out, none under reduced motion).
 - **Accessibility:** aria-modal, labelled by the title, focus in, trapped, returned; the agreement is the button (no checkbox), 44 tall at 4.92:1.
 - **Responsive:** scrolls inside the window at compact height.
-- **Do / Don't:** Do keep the copy verbatim and say where to turn it off. Don't remember consent forever; don't let a busy agree fire twice.
+- **Do / Don't:** Do keep the V2 copy verbatim, send the proposed body to the PM and legal (section 70's register) and record the version shown; say where to turn it off. Don't remember consent forever; don't let a busy agree fire twice.
 
 ### AutoRibbon
 

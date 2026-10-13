@@ -19,8 +19,9 @@
    Tooltip  {kind 'label' | 'info', content, placement 'up' | 'down', label, open, className,
             children}  label: names an icon-only control on hover or keyboard focus (the control
             keeps its own aria-label; the tooltip is the visible copy of it). info: explains a
-            concept and may hold a link; opens on hover, focus or click (click pins it), closes 200ms
-            after the pointer leaves so the pointer can reach the link, Esc closes. children is the
+            concept and may hold a link; opens on hover, focus or click (click pins it), closes
+            --v2-dur-2 after the pointer leaves (V2's 200ms) so the pointer can reach the link, Esc
+            closes (a label tip waits twice that on hover). children is the
             trigger; an info tip without children draws the standard 24px (i) with a 32px target,
             named by label. Open / close is CSS (:hover, :focus-within, .is-open); JS only pins,
             dismisses and measures. */
@@ -28,13 +29,18 @@
   const { useState, useEffect, useLayoutEffect, useRef, useId } = React;
   const EDGE = 8; // px a float keeps from the window edge
   const GAP = 6; // px between a trigger and its menu (--v2-space-15)
-  const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
-
-  function cx() { return Array.prototype.filter.call(arguments, Boolean).join(' '); }
+  // The kit's one focus and motion toolkit, on V2Kit for every part (Dialog, Menu, Popover, Thread,
+  // Toast, Settings, Splash) to read at call time, so load order is free.
+  const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
   function focusEl(el) {
     if (!el || !el.focus) return;
     try { el.focus({ preventScroll: true }); } catch (e) { el.focus(); }
   }
+  function reducedMotion() {
+    try { return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { return false; }
+  }
+
+  function cx() { return Array.prototype.filter.call(arguments, Boolean).join(' '); }
   function boundsOf(el) {
     const b = el && el.closest ? el.closest('[data-v2-bounds], .v2-frame') : null;
     if (b) return b.getBoundingClientRect();
@@ -158,7 +164,7 @@
         {f.open ? (
           <div ref={f.panel} id={uid} role="menu" aria-label={props.label} onKeyDown={onMenuKey}
             className={cx('v2-menu', 'v2-float-panel', 'is-' + f.pos.side, 'is-' + f.pos.align)}>
-            {props.header ? <div className="v2-float-header" role="presentation">{props.header}</div> : null}
+            {props.header ? <div className="v2-float-header v2-text-eyebrow" role="presentation">{props.header}</div> : null}
             {items.map(item)}
             {props.footer ? <div className="v2-float-foot" role="presentation">{props.footer}</div> : null}
           </div>
@@ -192,7 +198,7 @@
         {f.open ? (
           <div ref={f.panel} id={uid} role="dialog" aria-label={name} tabIndex={-1}
             className={cx('v2-popover', 'v2-float-panel', 'is-' + f.pos.side, 'is-' + f.pos.align)}>
-            {props.header ? <div className="v2-float-header">{props.header}</div> : null}
+            {props.header ? <div className="v2-float-header v2-text-eyebrow">{props.header}</div> : null}
             <div className="v2-popover-body">{props.children}</div>
             {props.footnote ? <p className="v2-float-foot">{props.footnote}</p> : null}
           </div>
@@ -275,5 +281,5 @@
     );
   }
 
-  Object.assign(window.V2Kit = window.V2Kit || {}, { Menu, Popover, Tooltip });
+  Object.assign(window.V2Kit = window.V2Kit || {}, { Menu, Popover, Tooltip, FOCUSABLE, focusEl, reducedMotion });
 })();

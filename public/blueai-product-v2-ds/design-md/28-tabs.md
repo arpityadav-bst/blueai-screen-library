@@ -8,7 +8,7 @@
 
 **Purpose.** Switch between sibling views of one screen. Never navigation between screens (that is the bottom nav, section 31).
 
-**Anatomy.** Track: `--v2-surface-sunken`, 1px `--v2-line`, radius 10, padding and gap 2. Tab: 32 tall (`--v2-hit-min`), radius 6, 12px sides, label 13/400 `--v2-ink-3`, optional count 12/400 tabular `--v2-ink-3`. Selected: a raised chip, `--v2-surface` with 1px `--v2-line`, label 13/500 `--v2-ink`; no shadow. Adapted from the site: label 12.5 to 13, selected 550 to 500, radius 9 to 10, padding 3 to 2, the chip's shadow dropped, and the count one ink darker (the site's dimmest ink on the recessed track is 4.42:1, under AA for 12px).
+**Anatomy.** Track: `--v2-surface-sunken`, 1px `--v2-line`, radius 10, padding and gap 2. Tab: 32 tall (`--v2-hit-min`), radius 6, 12px sides, label 13/400 `--v2-ink-3`, optional count 12/400 tabular `--v2-ink-3`. Selected: the Segmented's selected look (section 14, `kit/overlays.css` .v2-tab.is-selected): `--v2-select` over `--v2-surface`, a 1.5px `--v2-blue` edge (`--v2-stroke-selected`), label 13/500 `--v2-ink`; no shadow. Adapted from the site: label 12.5 to 13, selected 550 to 500, radius 9 to 10, padding 3 to 2, the selected chip takes the product's one selected look (select fill, blue edge) instead of the site's raised white chip and drops its shadow, and the count one ink darker (the site's dimmest ink on the recessed track is 4.42:1, under AA for 12px).
 
 **Variants.** With counts (count 0 still shows, so a tab never changes width); `full` stretches the track and splits it evenly.
 

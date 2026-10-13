@@ -80,7 +80,7 @@
             { label: 'Yesterday rejected', note: 'See why opens Activity', node: shell(<K.ProgramStrip worker={F.rejected} onOpenActivity={function () {}} />) },
             { label: 'Program complete', node: shell(<K.ProgramStrip worker={F.complete} />) },
             { label: 'Receipt off', note: 'receipt={false}: Home, where the WorkerCard says today’s status', node: shell(<K.ProgramStrip worker={F.verified} receipt={false} />) },
-            { label: 'Earnings link: hover / focus-visible', node: <span style={{ display: 'inline-flex', gap: 'var(--v2-space-4)' }}><K.EarningsLink className="is-hover" /><K.EarningsLink className="is-focus" /></span> },
+            { label: 'Earnings link: hover / focus-visible', node: <span style={{ display: 'inline-flex', gap: 'var(--v2-space-4)' }}>{K.Link ? <K.Link href={K.EARNINGS_URL} external standalone className="is-hover">Earnings</K.Link> : null}{K.Link ? <K.Link href={K.EARNINGS_URL} external standalone className="is-focus">Earnings</K.Link> : null}</span> },
           ]} />
           <G.CompareRow
             v2={<G.Live get={strip} label="WorkerDayDone.EarningsStrip" />}
@@ -93,7 +93,7 @@
             { part: 'Remaining', token: 'none', value: "dropped: the bar shows it ('14 to go' was green)", ref: 'worker.strip.to-go' },
             { part: 'Ends', token: '--v2-text-12, --v2-ink-4', value: 'Ends Nov 1', ref: ['worker.rule.const', 'worker.site.ends'] },
             { part: 'Receipt', token: '--v2-text-12, --v2-ink-3', value: 'Yesterday’s run verified.', ref: 'worker.strip.verified' },
-            { part: 'Earnings', token: '--v2-ink, underline --v2-link-underline, hover --v2-blue-ink', value: 'one EARNINGS_URL + external icon', ref: ['worker.strip.earnings', 'worker.strip.earnings-label', 'worker.earnings.menu-url'] },
+            { part: 'Earnings', token: 'V2Kit.Link standalone (--v2-ink, underline --v2-link-underline, hover --v2-blue-ink)', value: 'one EARNINGS_URL + external icon', ref: ['worker.strip.earnings', 'worker.strip.earnings-label', 'worker.earnings.menu-url'] },
           ]} />
         </G.Part>
 

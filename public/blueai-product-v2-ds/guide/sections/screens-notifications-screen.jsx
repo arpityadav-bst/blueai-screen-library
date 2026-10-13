@@ -57,7 +57,7 @@
             ScreenHeader 'Notifications' with Back and, only while something is unread, a quiet 'Mark all read'. Tabs All /
             Unread with counts (a tab never changes width). A card of rows: a 32px disc with the event's glyph in its tone
             and a blue dot when unread; the title (600 when unread, 500 when read; screen readers hear 'Unread:' first);
-            one line; the time on the right ('11:04 am' today, 'Oct 11' before). A row opens where to act: the chat for a
+            the body, one short sentence that wraps; the time on the right ('11:04 am' today, 'Oct 11' before). A row opens where to act: the chat for a
             waiting job, Run detail for everything else. Opening a row marks it read.</p>
           <G.StateGrid wide states={states} />
           <G.CompareRow v2Label="V2 today (the words, live from V2)" v2={<V2Toasts />}
@@ -73,6 +73,7 @@
             { part: 'Disc', token: '--v2-hit-min, --v2-surface-sunken, --v2-radius-round', value: '32 round, glyph 16 in --v2-attention-ink / --v2-success-ink / --v2-danger-ink / --v2-ink-3' },
             { part: 'Unread dot', token: '--v2-blue, --v2-surface ring', value: '8 round at the disc’s top right; CanvasText in forced colours' },
             { part: 'Title', token: '--v2-text-14, --v2-weight-semibold / medium', value: '600 unread, 500 read, ink' },
+            { part: 'Body', token: '--v2-text-13, --v2-ink-3', value: 'one short sentence; wraps, never truncated' },
             { part: 'Time', token: '--v2-text-12, --v2-ink-3', value: 'top-aligned, tabular' },
             { part: 'Mark all read', token: 'Button quiet md', value: '36 tall in the header; absent when nothing is unread' },
             { part: 'Tabs', token: 'Tabs full (section 28)', value: 'All n / Unread n' },

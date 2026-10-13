@@ -17,7 +17,12 @@
    mode controls name the mode they switch to: 'Switch YouTube to Automatic' (zap, opens the
    consent) and 'Switch back to Always ask'.
    V2 shows only 'Watch the video and provide feedback.' and tells the cost of 'Not now' afterwards
-   (worker_flow.jsx:119-121, 149). The PM's own job ask stays in the AskCard (section 37). */
+   (worker_flow.jsx:119-121, 149). The PM's own job ask stays in the AskCard (section 37).
+
+   DAY_COPY  the day's deadline lines, one string per state, so AskCard, RunCard, WorkerCard, this
+             card, Activity, the inbox and the Stop confirm say the same words (proposed copy):
+             notCounted, stopped(by), failed(by), expiredTitle, expired(by), stopAsk(paidJob, by).
+             by is the record's deadline ('9 pm' when absent), always written 'by 9 pm'. */
 (function () {
   const K = () => window.V2Kit || {};
   const cx = function () { return Array.prototype.filter.call(arguments, Boolean).join(' '); };
@@ -31,6 +36,17 @@
   let seq = 0;
   // One skip label everywhere (this card, section 52, R06): the action, then what it costs.
   const SKIP = 'Skip: today won’t count';
+  const BY = function (by) { return by || '9 pm'; };
+  const DAY_COPY = {
+    notCounted: 'Today doesn’t count toward your 20 days.',
+    stopped: function (by) { return 'Today doesn’t count yet. Run again by ' + BY(by) + '.'; },
+    failed: function (by) { return 'Today doesn’t count yet. Try again by ' + BY(by) + '.'; },
+    expiredTitle: 'No answer, job skipped',
+    expired: function (by) { return 'No answer by ' + BY(by) + ', so I skipped the job.'; },
+    stopAsk: function (paidJob, by) {
+      return 'Stop now? ' + (paidJob ? 'The paid job won’t finish. ' : '') + 'Today counts only if you run again by ' + BY(by) + '.';
+    },
+  };
 
   function JobPreviewCard(props) {
     const job = props.job || K().WORKER_JOB || {};
@@ -52,7 +68,7 @@
     const head = {
       ask: [job.label || 'Paid job available', 'Just now'],
       waiting: [job.label || 'Paid job available', 'Since ' + props.waitingSince],
-      expired: ['Job expired', 'At ' + by],
+      expired: [DAY_COPY.expiredTitle, 'At ' + by],
       receipt: ['Paid job done', props.doneAt ? 'At ' + props.doneAt : null],
     }[state];
 
@@ -61,7 +77,7 @@
         <header className="v2-job-head">
           {ic(app.icon)}
           <span className="v2-job-head-text" id={id}>{head[0]}</span>
-          {head[1] ? <span className="v2-w-meta">{head[1]}</span> : null}
+          {head[1] ? <span className="v2-text-meta">{head[1]}</span> : null}
         </header>
         <div className="v2-job-body">
           <div className="v2-job-thumb">
@@ -92,7 +108,7 @@
           ) : null}
 
           {state === 'expired' ? (
-            <p className="v2-job-consequence">{T ? <T status="notcounted" size={14} /> : null}<span>No answer by {by}, so today didn’t count. I’ll ask again on the next job.</span></p>
+            <p className="v2-job-consequence">{T ? <T status="notcounted" size={14} /> : null}<span>{DAY_COPY.expired(by) + ' ' + DAY_COPY.notCounted}</span></p>
           ) : null}
 
           {state === 'receipt' && (tick || back) ? <div className="v2-job-foot">{tick}{back}</div> : null}
@@ -101,5 +117,5 @@
     );
   }
 
-  Object.assign(window.V2Kit = window.V2Kit || {}, { JobPreviewCard });
+  Object.assign(window.V2Kit = window.V2Kit || {}, { JobPreviewCard, DAY_COPY });
 })();

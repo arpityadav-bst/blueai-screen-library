@@ -27,11 +27,26 @@
            that does not close cannot strand focus on the page; with two overlays only the top
            one acts. initialFocus is a ref or a selector; without one the panel itself takes
            focus, so nothing draws a ring until the partner presses Tab (the onBlue rule,
-           onblue.css:929-942).
-   usePresence(open, ms)  {mounted, closing}: keeps a part mounted while its exit plays. */
+           onblue.css:929-942). returnFocus false skips the return; a ref, element or selector
+           is where focus goes if the opener is gone, else the opener's nearest surviving
+           ancestor's [data-v2-anchor] or first control (an AskCard chip is gone once answered).
+   useSwapFocus(target, key)  the in-place swap rule (section 09): when key changes and focus
+           was left on the page body, it moves to target (a ref, element or function): the new
+           state's anchor (tabIndex -1, data-v2-anchor) or the next control. Real focus stays.
+   usePresence(open, ms)  {mounted, closing}: keeps a part mounted while its exit plays. ms
+           defaults to --v2-dur-3, read from tokens.css when the exit starts. */
 (function () {
-  const { useState, useEffect, useRef, useId } = React;
-  const EXIT_MS = 240; // --v2-dur-3: scrims, dialogs and sheets leave one step faster than they arrive
+  const { useState, useEffect, useLayoutEffect, useRef, useId } = React;
+  // Scrims, dialogs and sheets leave in --v2-dur-3, one step faster than they arrive. Read from the
+  // token at run time, so a change in tokens.css reaches the unmount timer too (240 if unreadable).
+  function exitMs() {
+    try {
+      const v = getComputedStyle(document.documentElement).getPropertyValue('--v2-dur-3').trim();
+      const n = parseFloat(v);
+      if (isFinite(n)) return /ms$/.test(v) ? n : (/s$/.test(v) ? n * 1000 : n);
+    } catch (e) { /* no stylesheet yet */ }
+    return 240;
+  }
   const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
   const VARIANTS = {
     task: { role: 'dialog', size: 'md', close: true, scrimCloses: true },
@@ -83,10 +98,35 @@
       if (open) { setMounted(true); setClosing(false); return undefined; }
       if (!mounted) return undefined;
       setClosing(true);
-      const t = setTimeout(function () { setMounted(false); setClosing(false); }, reducedMotion() ? 0 : (ms || EXIT_MS));
+      const t = setTimeout(function () { setMounted(false); setClosing(false); }, reducedMotion() ? 0 : (ms || exitMs()));
       return function () { clearTimeout(t); };
     }, [open]);
     return { mounted: mounted || !!open, closing: closing && !open };
+  }
+
+  function onPage(el) { return !!(el && el !== document.body && document.contains(el)); }
+  // Where focus goes back to: the opener; else the caller's target; else the nearest ancestor of
+  // the opener that is still on the page, at its anchor or its first control.
+  function returnTarget(opener, trail, target) {
+    if (onPage(opener)) return opener;
+    const given = typeof target === 'string' ? document.querySelector(target) : (target && (target.current || (target.nodeType ? target : null)));
+    if (onPage(given)) return given;
+    for (let i = 0; i < trail.length; i++) {
+      if (!document.contains(trail[i])) continue;
+      return trail[i].querySelector('[data-v2-anchor]') || focusables(trail[i])[0] || null;
+    }
+    return null;
+  }
+
+  function useSwapFocus(target, key) {
+    const prev = useRef(key);
+    useLayoutEffect(function () {
+      if (prev.current === key) return;
+      prev.current = key;
+      if (onPage(document.activeElement)) return;
+      const el = typeof target === 'function' ? target() : (target && (target.current || (target.nodeType ? target : null)));
+      if (el) focusEl(el);
+    }, [key]);
   }
 
   function useFocusTrap(ref, active, opts) {
@@ -96,6 +136,8 @@
       const root = ref.current;
       if (!active || !root) return undefined;
       const opener = document.activeElement;
+      const trail = []; // the opener's ancestors, nearest first, for when the opener itself is gone
+      for (let el = opener && opener.parentElement; el && el !== document.body; el = el.parentElement) trail.push(el);
       const token = {};
       const top = function () { return traps[traps.length - 1] === token; };
       traps.push(token);
@@ -122,7 +164,7 @@
         traps.splice(traps.indexOf(token), 1);
         release();
         if (latest.current.returnFocus === false) return;
-        if (opener && opener !== document.body && document.contains(opener)) focusEl(opener);
+        focusEl(returnTarget(opener, trail, latest.current.returnFocus));
       };
     }, [active]);
   }
@@ -165,7 +207,7 @@
     if (!title && !showClose) return null;
     return (
       <div className={cx('v2-dialog-head', !title && 'v2-dialog-head--bare')}>
-        {title ? <h2 className="v2-dialog-title" id={id}>{title}</h2> : null}
+        {title ? <h2 className="v2-dialog-title v2-text-title-lg" id={id}>{title}</h2> : null}
         {showClose ? <CloseButton onClick={onClose} disabled={busy} /> : null}
       </div>
     );
@@ -174,7 +216,7 @@
   function Dialog(props) {
     const p = props;
     const v = VARIANTS[p.variant] || VARIANTS.task;
-    const pres = usePresence(!!p.open, EXIT_MS);
+    const pres = usePresence(!!p.open);
     const panel = useRef(null);
     const uid = useId();
     const live = !!p.open && !p.preview;
@@ -205,7 +247,7 @@
             {p.children}
           </div>
           <Actions actions={p.actions} busy={p.busy} />
-          {p.footer ? <div className="v2-dialog-foot">{p.footer}</div> : null}
+          {p.footer ? <div className="v2-dialog-foot v2-text-caption">{p.footer}</div> : null}
         </div>
       </div>
     );
@@ -213,7 +255,7 @@
 
   function Sheet(props) {
     const p = props;
-    const pres = usePresence(!!p.open, EXIT_MS);
+    const pres = usePresence(!!p.open);
     const panel = useRef(null);
     const uid = useId();
     const live = !!p.open && !p.preview;
@@ -237,11 +279,11 @@
             {p.children}
           </div>
           <Actions actions={p.actions} busy={p.busy} />
-          {p.footer ? <div className="v2-dialog-foot">{p.footer}</div> : null}
+          {p.footer ? <div className="v2-dialog-foot v2-text-caption">{p.footer}</div> : null}
         </div>
       </div>
     );
   }
 
-  Object.assign(window.V2Kit = window.V2Kit || {}, { Scrim, Dialog, Sheet, useFocusTrap, usePresence });
+  Object.assign(window.V2Kit = window.V2Kit || {}, { Scrim, Dialog, Sheet, useFocusTrap, useSwapFocus, usePresence });
 })();

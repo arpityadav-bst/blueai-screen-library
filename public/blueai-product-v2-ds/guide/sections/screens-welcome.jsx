@@ -55,6 +55,7 @@
             { label: 'After terms', note: 'title, steps, action rise once, 120 ms apart', node: <Shot><Screen /></Shot> },
             { label: 'Agreeing', note: 'the agreement record is being written', node: <Shot><Screen terms="firstrun" termsBusy /></Shot> },
             { label: 'Not saved', note: 'the same button tries again', node: <Shot><Screen terms="firstrun" termsError /></Shot> },
+            { label: 'Signed out', note: 'after Sign out (section 64): paused, one way back', node: <Shot><Screen signedOut="alex@example.com" /></Shot> },
             { label: 'Reduced motion', note: 'everything is simply there', node: <Shot><Screen reduced /></Shot> },
             { label: 'Compact 640', note: 'the column centres in less height', node: <Shot h={640}><Screen compact /></Shot> },
             { label: 'Proposed headline', note: 'if D3 drops the income promise', node: <Shot><Screen headline="proposed" /></Shot> },

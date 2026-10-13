@@ -6,14 +6,19 @@
    so in one toast once it settles; pausing says what it costs, for the date picked, before it
    happens (P3); Automatic asks for consent every time (section 46).
 
-   WorkerSettings {worker, state, onBack, onNavigate, frame, compact, landmark, preview}
+   WorkerSettings {worker, state, onBack, onNavigate, onRetry, frame, compact, landmark, preview}
      state  'ask' (Always ask everywhere, default) | 'auto' (Automatic on YouTube) | 'paused' (until
             a date) | 'window' (editing the run window) | 'consent' (the consent dialog open) |
-            'pause' (the pause dialog open) | 'window-invalid' (To before From).
+            'pause' (the pause dialog open) | 'pause-busy' (pausing) | 'window-invalid' (To
+            before From) | 'saving' (a switch's change in flight) | 'not-saved' (it failed: the
+            switch goes back, an error toast offers Try again; section 55) | 'history-off' (watch
+            history not allowed: the profile is general topics) | 'one-topic' (the last topic on
+            cannot be turned off, and says why) | 'loading' | 'error'.
    Runs start by 8 pm: the ask and retry deadline is a fixed 9 pm (worker-data ASK, retryBy), so a
-   later start could never be answered or retried in time. */
+   later start could never be answered or retried in time. The interest profile keeps one topic
+   on (the last one says why), and each topic change confirms in a toast. */
 (function () {
-  const { useState, useRef, useEffect } = React;
+  const { useState, useRef, useEffect, useId } = React;
   const kit = function () { return window.V2Kit || {}; };
   const noop = function () {};
 
@@ -32,7 +37,7 @@
 
   function fixture(state) {
     const f = kit().workerFixtures || {};
-    const key = state === 'auto' ? 'automatic' : state === 'paused' ? 'paused' : 'verified';
+    const key = { auto: 'automatic', paused: 'paused', 'history-off': 'revoked' }[state] || 'verified';
     return f[key] || f.verified || {};
   }
   function runFrom(w, state) {
@@ -72,16 +77,24 @@
     const yt = (w0.apps && w0.apps.youtube) || {};
     const [modes, setModes] = useState({ youtube: yt.mode || 'always', instagram: 'always' });
     const [paused, setPaused] = useState(w0.paused ? w0.paused.until : null);
-    const [pausing, setPausing] = useState(p.state === 'pause');
+    const [pausing, setPausing] = useState(p.state === 'pause' || p.state === 'pause-busy');
+    const pauseStep = (S.useConfirmStep || function () { return { run: function (f) { f(); } }; })(p.state === 'pause-busy' ? 'busy' : null);
     const [until, setUntil] = useState(UNTIL[0].value);
     const [consent, setConsent] = useState(p.state === 'consent' ? 'youtube' : null);
     const [run, setRun] = useState(runFrom(w0, p.state));
     const [boot, setBoot] = useState(true);
-    const [topics, setTopics] = useState(TOPICS.reduce(function (o, t) { o[t] = true; return o; }, {}));
+    const [topics, setTopics] = useState(TOPICS.reduce(function (o, t) { o[t] = p.state !== 'one-topic' || t === TOPICS[0]; return o; }, {}));
+    const noteId = useId();
     const toast = (S.useScreenToast || function () { return { show: noop }; })();
     const pend = useRef(null);
     const timer = useRef(null);
     useEffect(function () { return function () { clearTimeout(timer.current); }; }, []);
+    // Not saved (section 55): the switch shows its old value and an error toast offers Try again.
+    useEffect(function () {
+      if (p.state !== 'not-saved') return;
+      toast.show({ tone: 'error', title: 'Couldn’t turn off Start with Windows. Nothing changed.', duration: p.preview ? 0 : undefined,
+        action: { label: 'Try again', onClick: function () { setBoot(false); say('BlueAI won’t start with Windows.', 'info'); } } });
+    }, []);
     const Frame = S.ScreenFrame;
     const Sec = K.SettingsSection;
     if (!Sec || !K.ListRow || !Frame) return <div className="v2-acct-note">The kit or screens/home.jsx is not loaded.</div>;
@@ -91,7 +104,14 @@
     const apps = Object.assign({}, w0.apps, { youtube: Object.assign({}, yt, { mode: modes.youtube }) });
     const w = Object.assign({}, w0, { apps: apps, paused: paused ? { until: paused } : null });
     const n = K.numbers ? K.numbers(w) : { toGo: 13, daysLeft: 18, target: 20 };
-    const say = function (title, tone) { toast.show({ title: title, tone: tone, duration: p.preview ? 0 : undefined }); };
+    const go = p.onNavigate || noop;
+    function say(title, tone) { toast.show({ title: title, tone: tone, duration: p.preview ? 0 : undefined }); }
+    const on = TOPICS.filter(function (t) { return topics[t]; });
+    function toggleTopic(t) {
+      const next = !topics[t];
+      setTopics(Object.assign({}, topics, { [t]: next }));
+      say(next ? 'BlueAI can pick ' + t + ' jobs again.' : 'BlueAI won’t pick ' + t + ' jobs.', next ? undefined : 'info');
+    }
 
     // One toast once the run settles: a burst of picks (kind, then a time) says it once, and an
     // invalid window says nothing until it is fixed.
@@ -113,9 +133,11 @@
       if (ok) say('Automatic is on for YouTube.');
     }
     function confirmPause() {
-      setPausing(false);
-      setPaused(until === 'later' ? 'you turn them back on' : until);
-      say('Daily runs paused.', 'info');
+      pauseStep.run(function () {
+        setPausing(false);
+        setPaused(until === 'later' ? 'you turn them back on' : until);
+        say('Daily runs paused.', 'info');
+      });
     }
 
     const runRow = (
@@ -126,8 +148,8 @@
     );
     const bootRow = (
       <K.ListRow label="Start BlueAI with Windows" description="If it’s off, runs skip after a restart until you open BlueAI."
-        trailing={K.Switch ? <K.Switch hideLabel label="Start BlueAI with Windows" checked={boot}
-          onChange={function (on) { setBoot(on); say(on ? 'BlueAI starts with Windows.' : 'BlueAI won’t start with Windows.', on ? undefined : 'info'); }} /> : null} />
+        trailing={K.Switch ? <K.Switch hideLabel label="Start BlueAI with Windows" checked={boot} busy={p.state === 'saving'}
+          onChange={function (v) { setBoot(v); say(v ? 'BlueAI starts with Windows.' : 'BlueAI won’t start with Windows.', v ? undefined : 'info'); }} /> : null} />
     );
     const timeFields = run.kind === 'window' ? (
       <div className="v2-acct-pair">
@@ -140,7 +162,7 @@
       : null;
 
     const pauseDialog = pausing && K.Dialog ? (
-      <K.Dialog open preview={p.preview} variant="task" title="Pause daily runs?" onClose={function () { setPausing(false); }}
+      <K.Dialog open preview={p.preview} variant="task" title="Pause daily runs?" busy={!!pauseStep.busy} onClose={function () { setPausing(false); }}
         actions={[{ label: 'Keep running', onClick: function () { setPausing(false); } }, { label: 'Pause', variant: 'primary', onClick: confirmPause }]}>
         <div className="v2-acct-stack">
           <p>{pauseCost(until, w, n)}</p>
@@ -152,19 +174,21 @@
       ? <K.ConsentDialog app={consent} open preview={p.preview} worker={w} onAgree={function () { settle(true); }} onCancel={function () { settle(false); }} />
       : null;
 
+    const hist = yt.history === 'allowed';
+    const pending = S.pendingBody ? S.pendingBody(p.state, 'your worker settings', p.onRetry) : null;
     return (
       <Frame worker={w} tab="settings" frame={p.frame} compact={p.compact} landmark={p.landmark} onNavigate={p.onNavigate}
-        scrollTo={p.preview && /^window/.test(p.state || '') ? 'run' : null}
+        loading={p.state === 'loading'} scrollTo={p.preview && /^window/.test(p.state || '') ? 'run' : null}
         overlays={<React.Fragment>{pauseDialog}{consentDialog}</React.Fragment>}>
         <div className="v2-acct">
           {K.ScreenHeader ? <K.ScreenHeader title="Worker" onBack={p.onBack || noop} /> : null}
-          <div className="v2-acct-body">
-            <Sec id="status" title="Runs">{runRow}{bootRow}</Sec>
+          {pending ? <div className="v2-acct-body">{pending}</div> : <div className="v2-acct-body">
+            <Sec id="status" title="Pause and start-up">{runRow}{bootRow}</Sec>
             <Sec id="jobs" title="Paid jobs" description="Choose for each app whether BlueAI asks before every paid job.">
               {K.ModeRows ? <K.ModeRows worker={w} modes={modes} beforeChange={beforeChange}
                 onChange={function (app, m) { setModes(Object.assign({}, modes, { [app]: m })); if (m === 'always') say('YouTube is back on Always ask.'); }} /> : null}
             </Sec>
-            <Sec id="run" title="Daily run" description={'Runs start by ' + LAST_START + ', so there’s time to answer a job or try again before 9 pm. Changes start tomorrow if today’s run has already begun.'}>
+            <Sec id="run" title="Run time" description={'Runs start by ' + LAST_START + ', so there’s time to answer a job or try again before 9 pm. Changes start tomorrow if today’s run has already begun.'}>
               <div className="v2-acct-stack">
                 {K.RadioCard ? <K.RadioCard label="When BlueAI runs" variant="list" value={run.kind}
                   onChange={function (v) { setRunWith({ kind: v }); }}
@@ -176,18 +200,21 @@
                 {timeFields}
               </div>
             </Sec>
-            <Sec id="interests" title="Interest profile" description="Built from your watch history. BlueAI picks jobs that fit these topics.">
+            <Sec id="interests" title="Interest profile" description={hist ? 'Built from your watch history. BlueAI picks jobs that fit these topics.'
+              : 'General topics. BlueAI picks jobs that fit these topics.'}>
               <div className="v2-acct-stack">
                 <div className="v2-acct-chips">
                   {TOPICS.map(function (t) {
-                    return K.Chip ? <K.Chip key={t} selected={!!topics[t]} icon={topics[t] ? 'check' : undefined}
-                      onClick={function () { setTopics(Object.assign({}, topics, { [t]: !topics[t] })); }}>{t}</K.Chip> : null;
+                    const last = !!topics[t] && on.length === 1;
+                    return K.Chip ? <K.Chip key={t} selected={!!topics[t]} icon={topics[t] ? 'check' : undefined} disabled={last}
+                      aria-describedby={last ? noteId : undefined} onClick={function () { toggleTopic(t); }}>{t}</K.Chip> : null;
                   })}
                 </div>
-                <p className="v2-acct-note">Turn a topic off and BlueAI stops picking jobs about it.</p>
+                <p className="v2-acct-note" id={noteId}>{on.length === 1 ? 'Keep at least one topic on, so BlueAI has jobs to pick from.' : 'Turn a topic off and BlueAI stops picking jobs about it.'}</p>
+                {!hist && K.Link ? <K.Link standalone onClick={function () { go('connected-apps', { app: 'youtube' }); }}>Allow watch history to tailor jobs</K.Link> : null}
               </div>
             </Sec>
-          </div>
+          </div>}
         </div>
       </Frame>
     );

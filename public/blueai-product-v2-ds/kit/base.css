@@ -2,7 +2,7 @@
    1. Reset, scoped to kit trees: any element whose class contains "v2-" and everything inside it.
       Written with :where() so it has zero specificity and every kit class beats it.
    2. The kit root (.v2-root): face, size, leading and ink every screen starts from.
-   3. The twelve text styles (.v2-text-*), one per role in the type ladder (section 04). Kit parts
+   3. The thirteen text styles (.v2-text-*), one per role in the type ladder (section 04). Kit parts
       compose their text from these classes rather than restating size, weight, leading and ink.
    4. Layout utilities: v2-stack, v2-hstack, v2-gap-*, v2-grow, v2-screen, v2-screen-body, v2-divider,
       v2-sr-only, v2-tabular, v2-truncate, v2-prose. (The horizontal stack is v2-hstack, not v2-row:
@@ -120,7 +120,7 @@
    sentence case. The uppercase eyebrow stays for section labels only. */
 .v2-text-mini-title {
   font-size: var(--v2-text-13); font-weight: var(--v2-weight-semibold); line-height: var(--v2-leading-snug);
-  letter-spacing: var(--v2-tracking-mini, 0.02em); color: var(--v2-ink);
+  letter-spacing: var(--v2-tracking-mini); color: var(--v2-ink);
 }
 .v2-text-body {
   font-size: var(--v2-text-14); font-weight: var(--v2-weight-regular); line-height: var(--v2-leading-body);
@@ -131,7 +131,7 @@
   letter-spacing: 0; color: var(--v2-ink-3);
 }
 /* A figure inside a note: the fact stays muted, the number is ink (site .dash-note). */
-.v2-text-body-sm :is(strong, b), .v2-text-body :is(strong, b), .v2-text-meta :is(strong, b) {
+.v2-text-body-sm :is(strong, b), .v2-text-body :is(strong, b), .v2-text-meta :is(strong, b), .v2-text-caption :is(strong, b) {
   font-weight: var(--v2-weight-semibold); color: var(--v2-ink);
 }
 .v2-text-label {
@@ -141,6 +141,13 @@
 .v2-text-meta {
   font-size: var(--v2-text-12); font-weight: var(--v2-weight-regular); line-height: var(--v2-leading-snug);
   letter-spacing: 0; color: var(--v2-ink-4);
+}
+/* The working caption: a line that says something (a disabled reason, a field's helper, a dialog's
+   footnote, a note under a block). Meta's size in ink-3 (6.0:1), because it can carry a consequence
+   and meta's ink-4 never may. */
+.v2-text-caption {
+  font-size: var(--v2-text-12); font-weight: var(--v2-weight-regular); line-height: var(--v2-leading-snug);
+  letter-spacing: 0; color: var(--v2-ink-3);
 }
 /* Section labels only. 0.08em is adapted from the site's 0.14em marketing band heads
    (onblue/onblue.css:1287-1295): at 11px in a 419px window the wider tracking scatters the word. */

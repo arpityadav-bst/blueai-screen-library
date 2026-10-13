@@ -3,7 +3,6 @@
 (function () {
   const G = window.V2Guide;
   const { useState, useEffect } = React;
-  const noop = function () {};
   /* V2 copy, quoted (refs below). */
   const ENDPOINT = 'VLM endpoint';
   const ENDPOINT_EX = 'http://127.0.0.1:11434/api/chat';
@@ -11,16 +10,10 @@
   const KEY_NOTE = 'Your key is stored encrypted on this device only.';
   const KEY_HINT = 'Find at https://console.anthropic.com/settings';
   const FEEDBACK_PH = 'Provide additional feedback';
-  /* Proposed own-key copy is the panel's (kit/advanced.jsx, V2Kit.BYOK_COPY, section 49), so it exists once;
-     the fallbacks are those strings verbatim, for a page where the export is missing. */
-  function byok() {
-    const B = (window.V2Kit || {}).BYOK_COPY || {};
-    return {
-      checking: B.checking ? B.checking('Anthropic') : 'Checking your key with Anthropic…',
-      invalid: B.invalid || 'That key didn’t work. Check it and paste it again.',
-      save: B.save || 'Check and save',
-    };
-  }
+  /* Proposed own-key copy is the panel's (kit/advanced.jsx, V2Kit.BYOK_COPY, section 49), so it exists once.
+     With the export missing, the specimens that need it say so instead of drawing a second copy. */
+  function byok() { return (window.V2Kit || {}).BYOK_COPY || null; }
+  const LOST = <div className="g-missing">V2Kit.BYOK_COPY is not exported (kit/advanced.jsx), so this specimen is not drawn.</div>;
   /* A made-up key for specimens: not a real credential. */
   const FAKE_KEY = 'sk-ant-example-0000-0000';
   const LONG = 'The worker opened YouTube, then stopped on the sign-in page.\nIt said App Player was signed out.\nI signed in again.\nThe run did not restart.\nToday still shows one tick.\nI tried again at 9 pm.\nSame thing.\nNo error on screen.';
@@ -104,14 +97,14 @@
           <G.StateGrid wide states={[
             { label: 'Hidden', node: <K.TextField label="API key" width="100%" secret defaultValue={FAKE_KEY} helper={KEY_NOTE} /> },
             { label: 'Revealed', note: 'reveal pressed', node: <K.TextField label="API key" width="100%" secret defaultRevealed defaultValue={FAKE_KEY} helper={KEY_NOTE} /> },
-            { label: 'Validating', note: 'Proposed copy', node: <K.TextField label="API key" width="100%" secret defaultValue={FAKE_KEY} status="validating" helper={byok().checking} /> },
-            { label: 'Invalid key', note: 'Proposed copy', node: <K.TextField label="API key" width="100%" secret defaultValue={FAKE_KEY} error={byok().invalid} /> },
+            { label: 'Validating', note: 'Proposed copy', node: byok() ? <K.TextField label="API key" width="100%" secret defaultValue={FAKE_KEY} status="validating" helper={byok().checking('Anthropic')} /> : LOST },
+            { label: 'Invalid key', note: 'Proposed copy', node: byok() ? <K.TextField label="API key" width="100%" secret defaultValue={FAKE_KEY} error={byok().invalid} /> : LOST },
             { label: 'Validated', note: 'Proposed copy', node: <K.TextField label="API key" width="100%" secret defaultValue={FAKE_KEY} status="validated" helper="Key works." /> },
             { label: 'Empty, hint as helper', note: 'V2 copy, moved out of the placeholder', node: <K.TextField label="API key" width="100%" secret helper={KEY_HINT + '. ' + KEY_NOTE} /> },
           ]} />
           <G.CompareRow
             v2={<G.Live get={function () { return window.Byok && window.Byok.ByokSettings && V2Byok; }} label="Byok.ByokSettings" />}
-            system={<div className="v2-stack"><K.TextField label="API key" width="100%" secret helper={KEY_HINT + '. ' + KEY_NOTE} /><div className="v2-hstack v2-hstack--end v2-gap-2"><K.Button>Cancel</K.Button><K.Button variant="primary">{byok().save}</K.Button></div></div>}
+            system={byok() ? <div className="v2-stack"><K.TextField label="API key" width="100%" secret helper={KEY_HINT + '. ' + KEY_NOTE} /><div className="v2-hstack v2-hstack--end v2-gap-2"><K.Button>Cancel</K.Button><K.Button variant="primary">{byok().save}</K.Button></div></div> : LOST}
             changed="The key showed in clear text right under 'stored encrypted on this device only', and the where-to-find hint vanished as you typed because it was the placeholder. Now it is hidden with a reveal button, the hint is a helper that stays, and V2's Validate & Save (which makes up a key when the field is empty) becomes Check and save, which really checks the key. Try V2: pick a provider and type a key." />
           <G.SpecDrawer rows={[
             { part: 'Type', token: null, value: 'password, reveal button (eye, 28, aria-pressed, "Show API key") (V2: type text)', ref: 'actions-inputs.field.key-clear' },

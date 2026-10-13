@@ -17,8 +17,11 @@
   const EVENTS = [
     ['Day done', 'Today’s run is done.', 'never', 'yes', 'no', 'Today’s run ends', ['entry-patterns.notify.job-title', 'entry-patterns.notify.days-body']],
     ['No job today', 'Your run counts today.', 'never', 'yes', 'no', 'Today’s run ends', ['entry-patterns.notify.nojob-title']],
-    ['Job waiting (Always ask)', 'A paid YouTube job is waiting for your OK. Answer by 9 pm.', 'the run window’s end: the day closes as skipped', 'yes', 'yes', 'A paid job needs you', ['entry-patterns.notify.attention-delay']],
-    ['Run failed', 'Today’s job didn’t finish.', 'the run window’s end', 'yes', 'yes', 'Today’s run ends', ['entry-patterns.notify.failed-title', 'entry-patterns.notify.failed']],
+    ['Job waiting (Always ask)', 'A paid YouTube job is waiting for your OK. Answer by 9 pm.', 'at 9 pm (the day’s deadline, section 41): the day closes as skipped', 'yes', 'yes', 'A paid job needs you', ['entry-patterns.notify.attention-delay']],
+    ['Run failed', 'Today’s job didn’t finish.', 'at 9 pm', 'yes', 'yes', 'Today’s run ends', ['entry-patterns.notify.failed-title', 'entry-patterns.notify.failed']],
+    ['Run didn’t start (raised when the PC wakes)', 'Today’s run didn’t start. Run it by 9 pm to count today.', '9 pm', 'yes', 'no', 'always on', null],
+    ['Run can’t start (no YouTube, App Player signed out, no BlueStacks)', 'Today’s run can’t start: <reason>. Fix it by 9 pm.', '9 pm', 'yes', 'no', 'always on', null],
+    ['Out of credits for today’s run (refill after 9 pm)', 'Not enough AI credits for today’s run. They refresh at 5:30 am, so today won’t count.', '9 pm', 'yes', 'no', 'always on', null],
     ['Day verified', 'Yesterday’s run is verified.', 'never', 'no (inbox only)', 'no', 'inbox only', null],
     ['Day not counted', 'Oct 12 wasn’t counted. See why.', 'never', 'yes', 'no', 'always on', null],
     ['Program ending', '3 days left in this program.', 'the program’s end', 'yes', 'no', 'always on', null],
@@ -86,7 +89,8 @@
               <tbody>{EVENTS.map(function (r) { return <tr key={r[0]}><td>{r[0]}</td><td>{r[1]}</td><td>{r[2]}</td><td>{r[3]}</td><td>{r[4]}</td><td>{r[5]}</td><td><G.RefCell refs={r[6]} /></td></tr>; })}</tbody>
             </table>
           </div>
-          <G.Note>Every event also lands in Notifications. A Windows notification stays in the Windows action centre; BlueAI does not make it leave early. Clicking it opens the entry’s own place: the job ask in Chat (Chat waiting, the destination section 60 names), the run card with Try again, Activity, or Earnings. The two Settings switches only silence the Windows notification; every event still lands in the inbox, and events marked always on cost or pay the partner, so no switch hides them.</G.Note>
+          <G.Note>Every event also lands in Notifications. A Windows notification stays in the Windows action centre; BlueAI does not make it leave early. Clicking it opens the entry’s own place: the job ask in Chat (Chat waiting, the destination section 60 names), the run card with Try again, Activity, or Earnings. The two Settings switches only silence the Windows notification; every event still lands in the inbox, and events marked always on cost or pay the partner, so no switch hides them. When the credits refill lands before 9 pm there is no event: the run starts once they are back.</G.Note>
+          <G.Note>Telegram is not a notification channel. A linked Telegram (section 63) carries the partner’s commands to BlueAI, not these events, and nothing here waits on it. Whether it should carry the day-losing events (job waiting, run didn’t start, run can’t start) to a partner away from the PC is a product call (section 76).</G.Note>
           <G.StateGrid wide states={[
             { label: 'Unread, read, expired', note: 'section 60’s rows, newest first; opening one marks it read', node: <Inbox /> },
             { label: 'Badge', note: 'on Activity: a waiting job and a day not counted', node: <div style={{ width: 'var(--v2-shell-w)' }}><K.BottomNav items={items.map(function (it) { return it.id === 'activity' ? Object.assign({}, it, { badge: 2 }) : it; })} value="home" /></div> },

@@ -18,7 +18,7 @@
 **Variants.** Five, which change the words and the default icon, never the colours:
 - first use (`activity`): "No runs yet" / "Your first run starts today at 11 am. Each run shows up here, with what it did and whether the day counts."
 - no results (`info`): "No unread notifications" / "You're up to date. Earlier ones are under All." + Show all.
-- error (`alert`): "Couldn't load your runs" / "Nothing is lost: today's run and your days are not affected." + Try again.
+- error (`alert`): "Couldn’t load your days" / "Nothing is lost: your runs and days are not affected. Try again in a moment." + Try again (`V2Screens.LoadError`'s words).
 - offline (`wifi-off`): "You're offline" / "Activity updates when BlueAI is back online. Today's run starts then too."
 - locked (`lock`): "Activity starts after setup" / "Set up your worker once in a short chat. Every run then shows up here." + Set up the worker.
 (All proposed copy.)

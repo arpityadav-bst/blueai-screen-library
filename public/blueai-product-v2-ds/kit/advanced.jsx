@@ -8,6 +8,8 @@
        'invalid' | 'unreachable' | 'confirm-remove' is set by the caller while onSave({provider,
        key, model}) runs. The switch only turns the key on or off; it never deletes it. Remove asks
        first, says what changes, then calls onRemove(keyInfo); the screen shows the Undo toast.
+       Each swap moves focus on (section 09): Remove to the confirm, Keep key back to Remove, a
+       removed key to the panel's first control.
        draft {provider, key} pre-fills the entry form (specimens, routed entry).
    AiModePanel  {mode, method?, status, hwSupported, conflict, pct, endpoint?, model?, onPick,
                  onMethod, onDownload, onCancel, onRetry, onEndpoint, onModel, onApply, className}
@@ -15,7 +17,7 @@
        partner's local model endpoint). status follows V2's lifecycle (ai_mode.jsx:16-25): idle,
        checking, downloading, installing, running, install_failed, startup_failed, blocked. */
 (function () {
-  const { useState } = React;
+  const { useState, useRef } = React;
   const cx = function () { return Array.prototype.filter.call(arguments, Boolean).join(' '); };
 
   // V2's providers, models and hints, as shipped (byok_settings.jsx:14-20).
@@ -91,6 +93,10 @@
     const [picked, setPicked] = useState((draft && draft.provider) || null);
     const [keyVal, setKeyVal] = useState((draft && draft.key) || '');
     const [confirming, setConfirming] = useState(status === 'confirm-remove');
+    const block = useRef(null);
+    const ask = useRef(null);
+    const swap = (window.V2Kit || {}).useSwapFocus;
+    if (swap) swap(function () { return ask.current || (block.current && block.current.querySelector('button, select, input')); }, String(confirming) + !!keyInfo);
     const Section = part('SettingsSection'), Switch = part('Switch'), Select = part('Select');
     const TextField = part('TextField'), Button = part('Button'), Banner = part('Banner');
     const busy = status === 'validating';
@@ -100,7 +106,7 @@
       const last4 = String(keyInfo.last4 || keyInfo.key || '').slice(-4);
       const models = P[keyInfo.provider] ? P[keyInfo.provider].models : [keyInfo.model];
       body = (
-        <div className="v2-byok-block">
+        <div className="v2-byok-block" ref={block}>
           <div className="v2-byok-key">
             <div className="v2-byok-key-text">
               <p className="v2-byok-provider">{keyInfo.provider}</p>
@@ -109,7 +115,7 @@
             {!confirming ? <Button variant="secondary" size="sm" onClick={function () { setConfirming(true); }}>Remove</Button> : null}
           </div>
           {confirming ? (
-            <div className="v2-byok-confirm" role="group" aria-label="Remove key">
+            <div className="v2-byok-confirm" role="group" aria-label="Remove key" ref={ask} tabIndex={-1} data-v2-anchor="">
               <p className="v2-byok-confirm-text">{BYOK.confirm(keyInfo.provider)}</p>
               <div className="v2-byok-actions">
                 <Button variant="secondary" size="sm" onClick={function () { setConfirming(false); }}>Keep key</Button>
@@ -119,20 +125,20 @@
           ) : null}
           <Select label="Model" value={keyInfo.model} options={opts(models)} disabled={!on}
             onChange={function (x) { call(props.onModel, val(x)); }} />
-          <p className="v2-byok-note">{on ? BYOK.onNote : BYOK.offNote}</p>
+          <p className="v2-byok-note v2-text-caption">{on ? BYOK.onNote : BYOK.offNote}</p>
         </div>
       );
     } else if (on && picked) {
       const cancel = function () { setPicked(null); setKeyVal(''); call(props.onCancel); };
       const save = function () { if (keyVal.trim()) call(props.onSave, { provider: picked, key: keyVal.trim(), model: P[picked].models[0] }); };
       body = (
-        <div className="v2-byok-block">
+        <div className="v2-byok-block" ref={block}>
           <Select label="Provider" value={picked} options={opts(Object.keys(P))} disabled={busy}
             onChange={function (x) { setPicked(val(x) || null); }} />
           <TextField label="API key" value={keyVal} secret mono readOnly={busy} helper={busy ? BYOK.checking(picked) : P[picked].hint}
             status={busy ? 'validating' : undefined} error={status === 'invalid' ? BYOK.invalid : undefined}
             onChange={function (x) { setKeyVal(val(x) || ''); }} />
-          <p className="v2-byok-note v2-byok-note--icon"><Ic name="lock" size={16} />{BYOK.stored}</p>
+          <p className="v2-byok-note v2-byok-note--icon v2-text-caption"><Ic name="lock" size={16} />{BYOK.stored}</p>
           {status === 'unreachable' ? <Banner tone="danger" title={BYOK.unreachable(picked)} action={{ label: 'Try again', onClick: save }}>{BYOK.unreachableBody}</Banner> : null}
           <div className="v2-byok-actions">
             <Button variant="secondary" onClick={cancel} disabled={busy}>Cancel</Button>
@@ -144,8 +150,8 @@
       );
     } else if (on) {
       body = (
-        <div className="v2-byok-block">
-          <p className="v2-byok-note">{BYOK.none}</p>
+        <div className="v2-byok-block" ref={block}>
+          <p className="v2-byok-note v2-text-caption">{BYOK.none}</p>
           <Select label="Provider" value="" placeholder="Add a provider" options={opts(Object.keys(P))}
             onChange={function (x) { setPicked(val(x) || null); }} />
         </div>

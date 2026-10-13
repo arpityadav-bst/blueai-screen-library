@@ -20,7 +20,9 @@
     success: 'Done. I finished “' + JOB + '” and submitted the job.',
     fail: 'I couldn’t finish “' + JOB + '”. App Player closed during the job.',
     needsInput: ['Paid job available: “' + JOB + '”.', 'Answer by 9 pm or today won’t count.'],
-    ooc: ['You’ve used all of today’s AI credits.', 'AI credits refresh at 5:30 am.'],
+    // Proposed: a heads-up that needs nothing from the partner. Out of AI credits is not one: it is neutral and
+    // says until when (sections 03, 48), so it is not drawn as an attention bubble here.
+    headsup: ['This job may use more AI credits than usual, since it repeats a few actions.'],
   };
 
   function BubblesSection() {
@@ -41,7 +43,7 @@
             { part: 'Line', token: '--v2-blue-tint-line', value: '1px rgba(21,110,254,0.24)' },
             { part: 'Shadow', token: '--v2-shadow-0', value: 'none', ref: 'chat.user-bubble.glow' },
             { part: 'Shape', token: '--v2-radius-lg, --v2-bubble-max', value: 'radius 16, max 300', ref: ['chat.user-bubble.radius', 'chat.user-bubble.shape'] },
-            { part: 'Padding', token: '--v2-space-2 + --v2-space-05, --v2-space-3 + --v2-space-05', value: '10px 14px' },
+            { part: 'Padding', token: '--v2-space-3, --v2-space-4', value: '12px 16px' },
             { part: 'Text', token: '--v2-text-14, --v2-leading-body, --v2-ink', value: '14/1.5 ink #0b0b0d', ref: 'chat.user-bubble.text' },
             { part: 'Time', token: '--v2-text-12, --v2-ink-4', value: '12px #6e737c under the bubble', ref: 'chat.user-bubble.stamp-style' },
           ]} />
@@ -67,11 +69,11 @@
 
         <G.Part name="NoticeBubble" status="changed" role="An outcome or a heads-up from the worker. Neutral surface; the icon carries the tone. Only 'needs input' keeps a fill.">
           <G.StateGrid wide states={[
-            { label: 'Heads-up (attention icon on neutral)', node: <K.NoticeBubble kind="headsup" lines={WORK.ooc} /> },
-            { label: 'Heads-up with title', node: <K.NoticeBubble kind="headsup" title="Out of AI credits" lines={WORK.ooc} /> },
-            { label: 'Outcome success (check)', node: <K.NoticeBubble kind="success" lines={[WORK.success]} /> },
-            { label: 'Outcome fail (x-circle, danger)', node: <K.NoticeBubble kind="fail" lines={[WORK.fail]} /> },
-            { label: 'Needs input (attention fill)', node: <K.NoticeBubble kind="needsInput" lines={WORK.needsInput} /> },
+            { label: 'Attention (heads-up icon on neutral)', note: 'alias headsup. Proposed copy.', node: <K.NoticeBubble kind="attention" lines={WORK.headsup} /> },
+            { label: 'Attention with title', node: <K.NoticeBubble kind="attention" title="Uses more AI credits" lines={WORK.headsup} /> },
+            { label: 'Success (check)', node: <K.NoticeBubble kind="success" lines={[WORK.success]} /> },
+            { label: 'Danger (x-circle)', note: 'alias fail', node: <K.NoticeBubble kind="danger" lines={[WORK.fail]} /> },
+            { label: 'Needs input (attention fill)', note: 'alias needsInput', node: <K.NoticeBubble kind="needsInput" lines={WORK.needsInput} /> },
             { label: 'Info (used by DependencyCard)', node: <K.NoticeBubble kind="info" lines={['BlueStacks is ready.']} /> },
           ]} />
           <G.CompareRow

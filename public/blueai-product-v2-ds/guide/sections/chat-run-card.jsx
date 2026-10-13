@@ -11,8 +11,9 @@
     ['failed', 'Failed (Try again)', 'Says that today does not count yet.'],
     ['stopped', 'Stopped', 'Stop leaves a trace and the day status.'],
     ['nojob', 'No job (day counts)', 'Pending tick: the run still counts.'],
-    ['nocredits', 'Out of credits', 'Day status and refresh time, decision D6.'],
-    ['skipped', 'Skipped (Not now)', 'Run detail and Activity.'],
+    ['nocredits', 'Out of credits', 'Neutral with a clock (section 03); day status and refresh time, decision D6.'],
+    ['skipped', 'Skipped (Not now)', 'The partner said Not now. Run detail and Activity.'],
+    ['expired', 'No answer (expired)', 'No answer by 9 pm, told apart from Not now. Run detail and Activity.'],
     ['rejected', 'Rejected after checking', 'Run detail and Activity, R19.'],
   ];
 
@@ -33,8 +34,8 @@
           <G.StateGrid states={[
             { label: 'Disclosure hover', node: <button type="button" className="v2-run-toggle is-hover" aria-expanded="false">7 steps done</button> },
             { label: 'Disclosure focus', node: <button type="button" className="v2-run-toggle is-focus" aria-expanded="false">7 steps done</button> },
-            { label: 'Details link hover', node: <button type="button" className="v2-run-link is-hover">See run details</button> },
-            { label: 'Details link focus', node: <button type="button" className="v2-run-link is-focus">See run details</button> },
+            { label: 'Details link hover', node: <K.Link standalone className="is-hover">See run details</K.Link> },
+            { label: 'Details link focus', node: <K.Link standalone className="is-focus">See run details</K.Link> },
           ]} />
           <G.CompareRow
             v2Label="V2 today (no run card)"
@@ -45,7 +46,7 @@
             { part: 'Card', token: '--v2-surface, --v2-line, --v2-radius-lg, --v2-space-4', value: 'white, 1px line, radius 16, padding 16, gap 12, no shadow' },
             { part: 'Width', token: '--v2-bubble-max', value: '300 in the thread; 100% with full' },
             { part: 'Header', token: '--v2-text-14, --v2-weight-semibold, --v2-ink', value: '"Today’s run" 14/600 + start time 12 ink-4 + Badge' },
-            { part: 'Badge', token: 'status family', value: 'Running info (busy dot), Waiting for you attention, Done info (pending verification), Verified success, Didn’t finish danger, Out of credits attention' },
+            { part: 'Badge', token: 'status family', value: 'Running info (busy dot), Waiting for you attention, Done neutral (pending verification, section 03), Verified success, Didn’t finish danger, Stopped, Skipped, No answer and Out of credits neutral (out of credits with a clock, section 03)' },
             { part: 'Live row', token: '--v2-ink-2', value: 'Spinner 16 + current step 14', ref: ['chat.run.jobs-board', 'chat.run.status-render'] },
             { part: 'Disclosure', token: '--v2-text-13, --v2-ink-3, --v2-hit-min', value: '"7 steps done", 13/500, 32px tall, chevron turns', ref: 'chat.run.routine' },
             { part: 'Steps', token: '--v2-text-13, --v2-text-12, --v2-ink-4', value: 'check 16 ink-3, past-tense label 13, time 12 tabular', ref: 'chat.run.daily-head' },
@@ -54,11 +55,11 @@
             { part: 'Day line, not counted', token: '--v2-ink-3', value: '"Today doesn’t count toward your 20 days."', ref: 'chat.run.declined' },
             { part: 'Day line, verified / rejected / waiting', token: '--v2-success-ink, --v2-danger-ink, --v2-attention-ink', value: 'text in tone' },
             { part: 'Waiting edge', token: '--v2-attention-line', value: 'border only; the fill stays on the AskCard' },
-            { part: 'Action', token: 'Button md', value: 'Try again (primary), Run again or See AI credits (secondary), See run details (underlined ink link, 32px)' },
+            { part: 'Action', token: 'Button md', value: 'Try again (primary), Run again or See AI credits (secondary), See run details (V2Kit.Link standalone: underlined ink link, 32px)' },
             { part: 'Stopped', token: null, value: 'a stopped run keeps its card and states the day', ref: 'chat.run.stop-trace' },
             { part: 'Origin', token: null, value: 'AgentProgress, never loaded in V2', ref: 'chat.run.agent-progress' },
           ]} />
-          <G.Warn>Copy that V2 does not have is proposed and marked in DESIGN.md: the waiting deadline (R08), "Try again before 9 pm", the stopped and skipped lines, and whether an out-of-credits run costs the day (decision D6, R14).</G.Warn>
+          <G.Warn>Copy that V2 does not have is proposed and marked in DESIGN.md: the waiting deadline (R08), "Try again before 9 pm", the stopped, skipped and no-answer lines, and whether an out-of-credits run costs the day (decision D6, R14).</G.Warn>
           <G.DoDont
             do={['Keep one card per run and update it in place.', 'Say the day status in words next to the tick.', 'Offer one action, the one that changes today.']}
             dont={['Print a bubble per step.', 'Colour a pending day green.', 'Use "Retry" in new copy; the system word is "Try again".']} />

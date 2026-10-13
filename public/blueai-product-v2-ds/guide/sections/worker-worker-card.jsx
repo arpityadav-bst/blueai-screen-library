@@ -9,6 +9,8 @@
     return <div style={{ position: 'relative', overflow: 'hidden', minHeight: height || 260, padding: 'var(--v2-space-3)' }}>{children}</div>;
   }
 
+  // All fourteen states, each from its kit fixture. 'blocked:<reason>' sets one reason on the blocked
+  // fixture, so each fixing action has its own cell.
   const STATES = [
     ['setup', 'new', 'Set up', 'Not set up yet: V2 description and Run (?start=worker)'],
     ['scheduled', 'setUp', 'Next run', 'Run now is secondary: nothing is waiting'],
@@ -16,22 +18,31 @@
     ['waiting', 'waiting', 'Waiting for you', 'the deadline and its cost before the tap'],
     ['done', 'donePending', 'Done today', 'no second Run; pending until verified'],
     ['done', 'declined', 'Done, skipped', 'says the day does not count'],
+    ['stopped', 'stopped', 'Stopped', 'the partner stopped it: Run again, by 9 pm'],
     ['failed', 'failed', 'Failed', 'Try again, with the deadline'],
+    ['missed', 'missed', 'Didn’t start', 'PC off or asleep at run time; never starts late on its own'],
+    ['blocked', 'blocked:no-app', 'Can’t run: no app', "onFix('no-app'): Connect YouTube"],
+    ['blocked', 'blocked:signed-out', 'Can’t run: signed out', "onFix('signed-out'): Open App Player"],
+    ['blocked', 'blocked:no-bluestacks', 'Can’t run: no BlueStacks', "onFix('no-bluestacks'): Get BlueStacks"],
     ['paused', 'paused', 'Paused', 'days do not count while paused'],
     ['noCredits', 'noCredits', 'Out of credits', 'when the allowance comes back'],
     ['offline', 'offline', 'Offline', 'what happens to today'],
     ['complete', 'complete', 'Program complete', 'Earnings opens the site'],
+    ['ended', 'ended', 'Period ended', 'the 20 days ran out first; cash out is open'],
+    ['ended', 'endedBelow', 'Period ended, under $10', 'the minimum and the carry-over'],
     ['done', 'automatic', 'Automatic', 'the mode line names the app'],
   ];
+  function fixture(F, key) {
+    const r = key.split(':');
+    return r[1] ? Object.assign({}, F[r[0]], { blocked: { reason: r[1], app: 'youtube' } }) : F[key];
+  }
 
   function CoachDemo() {
     const K = window.V2Kit || {};
     const [seen, setSeen] = useState(false);
     if (!K.WorkerCard) return <div className="g-missing">The worker kit is not loaded.</div>;
-    const Scrim = K.Scrim;
     return (
       <Contained height={300}>
-        {!seen && Scrim ? <div style={{ position: 'absolute', inset: 0, zIndex: 'var(--v2-z-coach)' }}><Scrim variant="dim" onClick={function () { setSeen(true); }} /></div> : null}
         <K.WorkerCard worker={K.workerFixtures.new} coaching={!seen} onDismissCoach={function () { setSeen(true); }} onRun={function () { setSeen(true); }} />
         {seen ? <p className="g-muted" style={{ marginTop: 'var(--v2-space-3)' }}>Dismissed: the record keeps <code className="g-code">coachSeen: true</code>, so it never returns. <button type="button" className="g-btn" onClick={function () { setSeen(false); }}>Show again</button></p> : null}
       </Contained>
@@ -41,14 +52,17 @@
   function WorkerCardSection() {
     const K = window.V2Kit || {};
     const ready = !!(K.WorkerCard && K.workerFixtures);
-    const card = (state, fx) => (ready ? <div style={{ width: '100%' }}><K.WorkerCard worker={K.workerFixtures[fx]} state={state} onRun={noop} onOpenToday={noop} onRetry={noop} onResume={noop} onOpenCredits={noop} /></div> : null);
+    const card = (state, fx) => (ready ? <div style={{ width: '100%' }}><K.WorkerCard worker={fixture(K.workerFixtures, fx)} state={state} onRun={noop} onOpenToday={noop} onReview={noop} onRetry={noop} onResume={noop} onOpenCredits={noop} onFix={noop} /></div> : null);
     return (
       <G.Section id="worker-card">
         <G.Part name="WorkerCard" status="changed" role="The home's one card: what the worker is doing today and the one action that matters now. Never a second Run.">
           <p><strong>Anatomy.</strong> Card radius 16 with a 1px line, no shadow. Tile 40, radius 10, sunken, with the
-            state's icon (tone only for waiting, failed, running and complete). Title 16/600 'BlueAI worker'. Status
+            state's icon (tone only for running, waiting, missed, failed, blocked and complete). Title 16/600 'BlueAI worker'. Status
             line 13 ink-3, an optional 12 line for the deadline or consequence. Mode line 12/500: shield-check
             'Always ask' or zap 'Automatic · YouTube'. One Button on the right.</p>
+          <p><strong>States.</strong> Fourteen, read from the record by <code className="g-code">workerState()</code> in
+            section 41's priority order: setup, complete, ended, running, waiting, done, offline, paused, blocked,
+            noCredits, stopped, failed, missed, scheduled. A blocked run's one action calls <code className="g-code">onFix(reason)</code>.</p>
           <G.StateGrid wide states={STATES.map(function (s) { return { label: s[2], note: s[3], node: card(s[0], s[1]) }; })} />
           <G.CompareRow
             v2={<Contained height={300}><G.Live get={function () { return window.MoneyMaker && window.MoneyMaker.MoneyMakerHome; }} props={{ onRun: noop }} label="MoneyMakerHome" /></Contained>}
@@ -69,6 +83,10 @@
             { part: 'Done', token: 'today.end', value: 'Today’s run is done. / Pending verification', ref: ['worker.copy.job', 'worker.copy.pending'] },
             { part: 'Skipped', token: 'today.end', value: 'Run finished without a job. / Today doesn’t count toward your 20 days.', ref: 'worker.copy.declined' },
             { part: 'Failed', token: '--v2-danger-ink', value: 'Today’s job didn’t finish. + reason + Try again by 9 pm', ref: ['worker.copy.failed', 'worker.flow.failed-reason'] },
+            { part: 'Stopped', token: 'today.status stopped', value: 'You stopped today’s run. / Today doesn’t count yet. Run again by 9 pm.' },
+            { part: 'Didn’t start', token: 'today.status missed, --v2-attention-ink', value: 'Your PC was off or asleep at 11 am, so today’s run didn’t start. / Run now by 9 pm to count today.' },
+            { part: 'Can’t run', token: 'blockedBy(record), --v2-danger-ink', value: 'Today’s run can’t start: + reason + its fix by 9 pm; action onFix(reason): Connect YouTube, Open App Player, Get BlueStacks' },
+            { part: 'Period ended', token: 'endedCopy(n), numbers().reachedMinimum', value: 'This program ended on Nov 1. + verified days + cash out open, or the $10 minimum and the carry-over; Earnings. Home shows section 69’s state instead' },
             { part: 'Waiting, paused, credits, offline, complete', token: 'status family', value: 'Proposed copy, each with its consequence for today' },
           ]} />
           <G.DoDont
@@ -78,13 +96,13 @@
 
         <G.Part name="CoachMark" status="changed" role="Points a brand-new partner at the one thing to press, once. PM copy kept; it no longer returns on every remount.">
           <p><strong>Anatomy.</strong> Ink fill, radius 10, shadow-1, caret 6 aimed at the action. Title 13/500 on-colour
-            'Run this to begin'. Okay: a 32px inverse button. The screen draws the dim scrim at the coach layer (z 40) and lifts the card above it.</p>
+            'Run this to begin'. Okay: a 32px inverse button. A note under the card: nothing is dimmed or locked.</p>
           <G.StateGrid states={ready ? [
             { label: 'Visible', node: <K.CoachMark onOkay={noop} /> },
             { label: 'Okay hover', node: <K.CoachMark onOkay={noop} okayClassName="is-hover" /> },
             { label: 'Okay focus-visible', node: <K.CoachMark onOkay={noop} okayClassName="is-focus" /> },
             { label: 'Okay pressed', node: <K.CoachMark onOkay={noop} okayClassName="is-active" /> },
-            { label: 'Dismissed (remembered)', note: 'Okay, a scrim click or Run sets coachSeen', node: <span className="g-muted">Nothing renders.</span> },
+            { label: 'Dismissed (remembered)', note: 'Okay or Run sets coachSeen', node: <span className="g-muted">Nothing renders.</span> },
           ] : []} />
           <G.CompareRow
             v2={<G.FrameState url="index.html?start=worker" label="V2: coach under the card" height={830} />}
@@ -94,7 +112,6 @@
             { part: 'Fill', token: '--v2-ink', value: 'ink, radius 10, shadow-1', ref: 'worker.card.coach-fill' },
             { part: 'Copy', token: '--v2-text-13, --v2-on-color', value: 'Run this to begin', ref: 'worker.card.coach-copy' },
             { part: 'Okay', token: '--v2-hit-min, --v2-surface, --v2-ink', value: '32 tall, radius 6, 13/500', ref: ['worker.card.okay', 'worker.card.okay-label'] },
-            { part: 'Scrim', token: '--v2-scrim, --v2-z-coach', value: 'rgba(11,18,32,0.48), z 40', ref: 'worker.card.scrim' },
             { part: 'Memory', token: 'coachSeen', value: 'on the Worker record', ref: 'worker.card.coach-state' },
             { part: 'Motion', token: '--v2-dur-3, --v2-ease-out', value: 'rise 6px once, none under reduced motion' },
           ]} />

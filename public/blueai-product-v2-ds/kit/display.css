@@ -2,15 +2,16 @@
    Badge, Avatar, ListRow, Card, StatCard. Tokens only (tokens.css). Every interactive state is
    written twice: the real pseudo-class and the guide's forcing class (.is-hover, .is-focus,
    .is-active). Loops come from kit/motion.css (.v2-anim-pulse on the busy dot), so its one
-   reduced-motion rule covers them. Literal px here are component geometry with no token
-   (badge 22, dot 6, avatar 24/32/40/56, row 48). */
+   reduced-motion rule covers them. Shared sizes are Size tokens (badge, marks, row minimum); the
+   literal px left here are one part's own geometry (the 6 dot, the 8 status floor). */
 
 /* ---- Badge: tone in the fill and the dot, words in ink-2 ---- */
 .v2-badge {
   display: inline-flex;
   align-items: center;
   gap: var(--v2-space-15);
-  height: 22px;
+  height: var(--v2-badge-h);
+  min-width: 0;
   max-width: 100%;
   padding: 0 var(--v2-space-2);
   border-radius: var(--v2-radius-pill);
@@ -28,7 +29,7 @@
 .v2-badge--success { background: var(--v2-success-tint); --badge-mark: var(--v2-success); }
 .v2-badge--attention { background: var(--v2-attention-tint); --badge-mark: var(--v2-attention-ink); }
 .v2-badge--danger { background: var(--v2-danger-tint); --badge-mark: var(--v2-danger-ink); }
-.v2-badge-label { overflow: hidden; text-overflow: ellipsis; }
+.v2-badge-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 .v2-badge-dot {
   flex: none;
   width: 6px;
@@ -45,8 +46,8 @@
   flex: none;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: var(--v2-mark-md);
+  height: var(--v2-mark-md);
   border-radius: var(--v2-radius-round);
   background: var(--v2-ink);
   color: var(--v2-on-color);
@@ -57,9 +58,9 @@
   letter-spacing: 0;
   user-select: none;
 }
-.v2-avatar--24 { width: 24px; height: 24px; font-size: var(--v2-text-11); }
-.v2-avatar--40 { width: 40px; height: 40px; font-size: var(--v2-text-14); }
-.v2-avatar--56 { width: 56px; height: 56px; font-size: var(--v2-text-20); letter-spacing: var(--v2-tracking-label); }
+.v2-avatar--24 { width: var(--v2-mark-sm); height: var(--v2-mark-sm); font-size: var(--v2-text-11); }
+.v2-avatar--40 { width: var(--v2-mark-lg); height: var(--v2-mark-lg); font-size: var(--v2-text-14); }
+.v2-avatar--56 { width: var(--v2-mark-xl); height: var(--v2-mark-xl); font-size: var(--v2-text-20); letter-spacing: var(--v2-tracking-label); }
 .v2-avatar--hue-0 { background: var(--v2-action); }
 .v2-avatar--hue-1 { background: var(--v2-ink); }
 .v2-avatar--app {
@@ -99,7 +100,7 @@
   align-items: center;
   gap: var(--v2-space-3);
   width: 100%;
-  min-height: 48px;
+  min-height: var(--v2-row-min-h);
   margin: 0;
   padding: var(--v2-space-3) var(--v2-space-4);
   border: 0;
@@ -136,7 +137,10 @@
   font-variant-numeric: tabular-nums;
   overflow-wrap: anywhere;
 }
-.v2-row-badge, .v2-row-trail { display: inline-flex; flex: none; align-items: center; gap: var(--v2-space-2); }
+.v2-row-badge, .v2-row-trail { display: inline-flex; align-items: center; gap: var(--v2-space-2); }
+.v2-row-trail { flex: none; }
+/* A long badge gives way first: it shrinks to half the row and truncates, so the label keeps its room. */
+.v2-row-badge { flex: 0 1 auto; min-width: 0; max-width: 50%; }
 .v2-row-chevron { display: inline-flex; flex: none; color: var(--v2-ink-4); transition: transform var(--v2-dur-2) var(--v2-ease-out); }
 .v2-row[aria-expanded='true'] .v2-row-chevron { transform: rotate(180deg); }
 .v2-row--nav { cursor: pointer; transition: background-color var(--v2-dur-1) var(--v2-ease-standard); }
@@ -155,9 +159,12 @@
 .v2-row-panel[hidden] { display: none; }
 
 /* ---- Card: surface, 1px line, radius 16, no shadow ----
-   The one card surface. Parts that are cards by another name (RunCard, WorkerCard, SettingsSection)
-   take it from this rule instead of restating it; their own sheets add layout and state only. */
-.v2-card, .v2-run, .v2-wcard, .v2-settings-section {
+   The one card surface. Parts that are cards by another name (RunCard, WorkerCard, SettingsSection,
+   the Advanced toggle, ProgramStrip, JobPreviewCard, PermissionRequest, and the Home and list
+   skeletons) take it from this rule instead of restating it; their own sheets add layout and state
+   only (a tone edge, a hover). */
+.v2-card, .v2-run, .v2-wcard, .v2-settings-section, .v2-advanced-toggle, .v2-pstrip, .v2-job, .v2-permreq,
+.v2-home-skel-card, .v2-skel-list {
   border: var(--v2-stroke) solid var(--v2-line);
   border-radius: var(--v2-radius-lg);
   background: var(--v2-surface);

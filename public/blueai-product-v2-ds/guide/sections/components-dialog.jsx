@@ -3,10 +3,10 @@
   const G = window.V2Guide;
   const { useState } = React;
   const noop = function () {};
-  // V2's consent copy, quoted (agent_permissions.jsx:159, 161, 179). Its full body is ConsentDialog's (section 46).
+  // V2's consent title and button, quoted (agent_permissions.jsx:159, 179); the body is the kit's proposed one. Its full body is ConsentDialog's (section 46).
   const CONSENT = {
     title: 'Run YouTube jobs automatically?',
-    body: 'BlueAI will accept YouTube jobs and finish them on your YouTube account without asking you first, including posting videos and other content.',
+    body: 'BlueAI will take YouTube jobs and do them on your account without asking first: watching, liking and posting comments in your name.', // ConsentBody (kit/permissions.jsx:79); proposed, PM and legal, R51, design-md/46
     agree: 'I agree, turn on',
   };
   // V2's Confirm delete, quoted (schedule.jsx:144-149): the same words in both shells, so only the shell differs.

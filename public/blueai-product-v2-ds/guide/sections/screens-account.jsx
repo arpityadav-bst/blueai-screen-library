@@ -41,11 +41,20 @@
           role="Who is signed in, the program, the account BlueAI acts on, what it keeps and what was agreed, legal, and a Sign out that signs out.">
           <p><strong>Anatomy.</strong> ScreenHeader 'Account' with Back. Identity on the canvas (Avatar 56, name, email), then
             SettingsSection cards Program (external row to the site), Connected account (YouTube) and Privacy (Interest
-            profile, Watch history, What you agreed to), the two legal links, and Sign out as a one-row card.</p>
+            profile, Watch history, What you agreed to, then the danger rows Leave the program and Delete my data), the two legal links, and Sign out as a one-row card.</p>
           <Screens states={[
-            { label: 'View', note: 'pushed from Settings or More > Account', node: scr() },
+            { label: 'View', note: 'pushed from Settings or More > Account; with watch history off the interest profile reads ‘General topics. Allow watch history to tailor jobs.’', node: scr() },
+            { label: 'Watch history turned off', note: 'Not allowed; the record says turned off, Oct 11', node: scr({ state: 'history-revoked' }) },
             { label: 'Sign out confirm', note: 'what signing out costs, before the choice', node: scr({ state: 'signout' }) },
+            { label: 'Signing out', note: 'the primary works in place', node: scr({ state: 'signout-busy' }) },
+            { label: 'Leave the program', note: 'danger confirm: verified days, cash out with its $10 minimum, the account', node: scr({ state: 'leave' }) },
+            { label: 'Couldn’t leave the program', note: 'said in the dialog, Try again', node: scr({ state: 'leave-failed' }) },
+            { label: 'Delete my data', note: 'danger confirm, cannot be undone', node: scr({ state: 'delete' }) },
             { label: 'Signed out', note: 'the worker is paused; lands on Welcome (section 67)', node: scr({ state: 'signed-out' }) },
+            { label: 'Left the program (section 69)', node: scr({ state: 'left' }) },
+            { label: 'Data being deleted', note: 'section 69’s left-program state, deleting', node: scr({ state: 'deleted' }) },
+            { label: 'Loading', node: scr({ state: 'loading' }) },
+            { label: 'Couldn’t load', node: scr({ state: 'error' }) },
           ]} />
           <G.CompareRow v2={v2} system={scr()}
             changed={'V2\'s Profile opens on a 96px gradient banner and a 92px emoji avatar, then shows a real staff member\'s '

@@ -16,8 +16,9 @@
      behind the Tooltip's own (i) trigger (32px; triggerClassName forces its state and open forces
      the tip, for review).
    programRules(rule)  [{id days | counts | ticks | cashout | minimum, icon, text}]: the one place a
-     rule is written. Run detail, Activity and DayDone read the tick rule from it (id 'ticks').
-   EarningsLink {className}  the one Earnings link (EARNINGS_URL), used by the strip and the card. */
+     rule is written. DayDone and Run detail read the tick rule from it (id 'ticks'), the PM's
+     DRAFT line kept word for word (worker_day_done.jsx:98, section 70).
+   The strip's Earnings link is V2Kit.Link {href: EARNINGS_URL, external, standalone}. */
 (function () {
   const K = () => window.V2Kit || {};
   const cx = function () { return Array.prototype.filter.call(arguments, Boolean).join(' '); };
@@ -93,16 +94,6 @@
     return { status: 'verified', text: run + ' verified.' };
   }
 
-  // The one Earnings link: underlined ink, blue on hover (the family link), opens the site.
-  function EarningsLink({ className }) {
-    const I = K().Icon;
-    return (
-      <a className={cx('v2-w-earnings', className)} href={K().EARNINGS_URL} target="_blank" rel="noopener">
-        Earnings{I ? <I name="external" size={16} label="opens in a new tab" /> : null}
-      </a>
-    );
-  }
-
   function ProgramStrip({ worker, onOpenActivity, receipt: showReceipt }) {
     const P = K();
     const w = worker || P.workerFixtures.verified;
@@ -111,9 +102,9 @@
     return (
       <section className="v2-pstrip" aria-label="Your 20 days">
         <div className="v2-pstrip-head">
-          <p className="v2-pstrip-count"><span className="v2-w-figure">{n.done}</span> of {n.target} days</p>
+          <p className="v2-pstrip-count v2-text-body-sm"><strong className="v2-tabular">{n.done}</strong> of {n.target} days</p>
           <span className="v2-pstrip-side">
-            <span className="v2-w-meta">Ends {n.endsOn}</span>
+            <span className="v2-text-meta">Ends {n.endsOn}</span>
             <ProgramSummary compact />
           </span>
         </div>
@@ -126,20 +117,21 @@
               {r.danger && onOpenActivity ? <P.Button variant="quiet" size="sm" onClick={onOpenActivity}>See why</P.Button> : null}
             </span>
           ) : null}
-          <EarningsLink />
+          {P.Link ? <P.Link href={P.EARNINGS_URL} external standalone>Earnings</P.Link> : null}
         </div>
       </section>
     );
   }
 
-  // Proposed copy built from V2's rule note (worker_day_done.jsx:5-7).
-  // No rate or bonus until D3; the $10 cash-out minimum is in both options (section 43).
+  // Proposed copy built from V2's rule note (worker_day_done.jsx:5-7), except 'ticks' (the PM's).
+  // No rate or bonus until D3; the $10 cash-out minimum is in both options (section 43). The PC
+  // and the comment lines say before a day is lost what the missed card and a rejected day say after.
   function rules(rule) {
     const r = Object.assign({}, K().WORKER_RULE, rule || {});
     return [
-      { id: 'days', icon: 'calendar', text: 'Run on ' + r.target + ' days before ' + r.programEnd + '.' },
-      { id: 'counts', icon: 'check', text: 'A day counts when a job is verified, or when there was no job to take.' },
-      { id: 'ticks', icon: 'check-double', text: 'We check every run within a day. One tick while pending, two once verified.' },
+      { id: 'days', icon: 'calendar', text: 'Run on ' + r.target + ' days before ' + r.programEnd + '. Keep your PC on and awake at run time, and App Player open while a job runs.' },
+      { id: 'counts', icon: 'check', text: 'A day counts when a job is verified, or when there was no job to take. Keep the comment up until it’s verified.' },
+      { id: 'ticks', icon: 'check-double', text: 'We check every run within a day. The tick doubles once it’s verified.' },
       { id: 'cashout', icon: 'earnings', text: 'Cash out on Earnings after the period ends.' },
       { id: 'minimum', icon: 'lock', text: 'You need $' + r.cashOutMin + ' to cash out; a smaller balance carries over to the next period.' },
     ];
@@ -164,5 +156,5 @@
     );
   }
 
-  Object.assign(window.V2Kit = window.V2Kit || {}, { StatusTick, DayBar, ProgramStrip, ProgramSummary, EarningsLink, programRules: rules });
+  Object.assign(window.V2Kit = window.V2Kit || {}, { StatusTick, DayBar, ProgramStrip, ProgramSummary, programRules: rules });
 })();

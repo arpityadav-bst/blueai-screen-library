@@ -83,6 +83,7 @@
           <G.StateGrid wide states={[
             { label: 'Blocking', node: <S {...terms()} />, note: 'The legal wording is V2\'s, word for word.' },
             { label: 'Dismissible', node: <S {...report()} />, note: 'Proposed copy.' },
+            { label: 'Busy', node: <S {...report({ busy: true })} />, note: 'The primary loads; Close, Esc, the scrim and Cancel wait.' },
             { label: 'Entering', node: <S {...terms({ className: 'is-snapshot' })} />, note: 'Slides up 320ms on the site ease.' },
             { label: 'Leaving', node: <S {...terms({ className: 'is-snapshot is-closing' })} />, note: 'Slides down 240ms, ease-in.' },
             { label: 'Reduced motion', node: <div className="v2-reduced-motion" style={{ width: '100%' }}><S {...terms()} /></div>, note: 'Arrives and leaves at once (motion.css, one rule).' },

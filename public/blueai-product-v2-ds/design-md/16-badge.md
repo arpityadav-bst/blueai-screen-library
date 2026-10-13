@@ -19,8 +19,8 @@ Tone lives in the fill and the mark; the words stay in ink-2. This is a style ch
 - neutral: `--v2-surface-sunken`, mark `--v2-ink-4` (pending verification, paused, soon). Pending is neutral by the one rule in section 03.
 - info: `--v2-blue-tint`, mark `--v2-blue` (running, checking).
 - success: `--v2-success-tint`, mark `--v2-success` (verified, connected, on).
-- attention: `--v2-attention-tint`, mark `--v2-attention-ink` (the worker needs the partner).
-- danger: `--v2-danger-tint`, mark `--v2-danger-ink` (not counted, failed, signed out).
+- attention: `--v2-attention-tint`, mark `--v2-attention-ink` (the worker needs the partner; signed out; out of credits on a run).
+- danger: `--v2-danger-tint`, mark `--v2-danger-ink` (not counted, failed: a day already lost). Signed out is attention: the partner can still fix it (section 03's rule).
 Plus: no mark, dot, icon, busy dot.
 
 **Sizes.** One: 22 tall. Width hugs the label.

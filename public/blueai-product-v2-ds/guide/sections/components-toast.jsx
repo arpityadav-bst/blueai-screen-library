@@ -78,7 +78,7 @@
             { part: 'Pause', token: null, value: 'while hovered or holding keyboard focus (a CSS state)' },
             { part: 'Layer', token: '--v2-z-toast', value: '120, above dialogs' },
             { part: 'Motion', token: '--v2-dur-2, --v2-dur-1', value: 'fade-up 180ms in, fade 120ms out' },
-            { part: 'Live region', token: null, value: 'polite; assertive for an error; one toast at a time' },
+            { part: 'Live region', token: null, value: 'two always-mounted regions, polite and assertive; an error goes to the assertive one; one toast at a time' },
             { part: 'V2 today', token: null, value: '"Settings saved successfully." in an inline box (#f0fdf4, #bbf7d0, radius 8), gone in 2.5 s', ref: ['overlays.toast.saved', 'overlays.toast.saved-style', 'overlays.toast.saved-time'] },
             { part: 'V2 actions with no undo', token: null, value: 'Remove (own key), Unlink (Telegram)', ref: ['overlays.toast.remove-key', 'overlays.toast.unlink'] },
           ]} />

@@ -8,14 +8,20 @@
    credits and the nav per state. Layout lives in screens/entry.css. Copy is proposed copy except
    where a comment names V2. Spec: design-md/69-system-states.md.
 
-   SystemStates {state, worker, screen, busy, compact, reduced, preview, landmark, onNavigate,
-                onRetry, onReport, onUpdate, onRestart, onSwitch}
+   SystemStates {state, worker, screen, busy, deleting, compact, reduced, preview, landmark,
+                onNavigate, onRetry, onReport, onUpdate, onRestart, onSwitch}
      state  offline | error | update-optional | update-required | not-in-program | complete |
-            period-ended | period-under | between-programs (SYSTEM_STATES lists them)
+            period-ended | period-under | between-programs | left-program (SYSTEM_STATES)
      screen the screen that failed to load, for error ('Home' by default).
      Cash out follows the site's one rule (onblue/apply.html:2277-2296): it opens only when the
      period has ended AND the balance is at least $10; under it, the balance carries over, in the
      site's words. With a worker, period-ended picks the variant from numbers().reachedMinimum.
+     The period-ended words are one set (endedCopy, or V2Kit.endedCopy when the kit has it): the
+     verified count, since cash out depends on it, and a last day still being checked said so.
+     Home shows this state, not a card, once the period is over.
+     left-program  after Leave the program or Delete my data (Account, section 64): the worker
+            has stopped, what happens to the balance, Earnings, and Apply again on the site.
+            deleting adds that the data is being deleted.
      busy   the primary action is working (Try again, Update now, Switch account)
    SYSTEM_STATES [[key, label]] in the order the guide shows them. */
 (function () {
@@ -32,11 +38,20 @@
     ['period-ended', 'Period ended, cash out open'],
     ['period-under', 'Period ended, under $10'],
     ['between-programs', 'Between programs'],
+    ['left-program', 'Left the program'],
   ];
 
   function fixture(key) {
     const fx = K().workerFixtures || {};
     return fx[key] || fx.verified || null;
+  }
+
+  // 'This program ended on Nov 1': the program ends on a date; 'your 20 days' is the count.
+  function endedCopy(n) {
+    const checking = !n.pending ? '' : n.pending === 1 ? ' One more day is still being checked and counts once it’s verified.'
+      : ' ' + n.pending + ' more days are still being checked and count once they’re verified.';
+    const cash = n.reachedMinimum ? 'Cash out is open on Earnings.' : 'You need $' + n.cashOutMin + ' to cash out. Your balance carries over to the next period.';
+    return { title: 'This program ended on ' + n.endsOn, body: 'You finished ' + n.verified + ' of ' + n.target + ' days.' + checking + ' ' + cash };
   }
 
   // Chrome per state: which status the top bar says, whether credits and the nav make sense.
@@ -47,9 +62,10 @@
     'update-required': { status: 'paused', label: 'Update needed', credits: true, nav: true },
     'not-in-program': { status: null, credits: false, nav: false },
     complete: { status: 'verified', label: 'All 20 days done', credits: true, nav: true },
-    'period-ended': { status: null, credits: false, nav: true },
-    'period-under': { status: null, credits: false, nav: true },
+    'period-ended': { status: 'ended', credits: false, nav: true }, // section 30's one rule: 'Period ended'
+    'period-under': { status: 'ended', credits: false, nav: true },
     'between-programs': { status: null, credits: false, nav: true },
+    'left-program': { status: null, credits: false, nav: false },
   };
 
   function action(label, onClick, busy, extra) {
@@ -133,13 +149,27 @@
       case 'period-ended':
       case 'period-under': { // under the minimum: the site's words, apply.html:2292-2293
         const open = state === 'period-ended';
-        const n = k.numbers ? k.numbers(w || fixture(open ? 'ended' : 'endedBelow')) : { verified: open ? 18 : 6, target: 20, endsOn: 'Nov 1' };
+        const base = k.numbers ? k.numbers(w || fixture(open ? 'ended' : 'endedBelow')) : { verified: open ? 18 : 6, pending: 0, target: 20, endsOn: 'Nov 1', cashOutMin: 10 };
+        const c = (k.endedCopy || endedCopy)(Object.assign({}, base, { reachedMinimum: open }));
         return {
           center: true,
           node: empty({
-            variant: 'first', icon: 'calendar', title: 'This program ended on ' + n.endsOn,
-            body: 'You finished ' + n.verified + ' of ' + n.target + ' days. ' + (open ? 'Cash out is open on the Earnings page.' : 'You need $10 to cash out. Your balance carries over to the next period.'),
+            variant: 'first', icon: 'calendar', title: c.title, body: c.body,
             primaryAction: open ? earnings : null, secondaryAction: open ? null : earnings,
+          }),
+        };
+      }
+      case 'left-program': { // proposed copy; the cash-out line is CONFIRM_COPY's (settings.jsx)
+        const n = k.numbers ? k.numbers(w || fixture('verified')) : { reachedMinimum: true, endsOn: 'Nov 1', cashOutMin: 10 };
+        const cash = n.reachedMinimum ? 'Your verified days stay on Earnings, and cash out opens there after ' + n.endsOn + '.'
+          : 'Your balance is under $' + n.cashOutMin + ', so it can’t be cashed out.';
+        return {
+          center: true,
+          node: empty({
+            variant: 'first', icon: 'sign-out', title: 'You’ve left the program',
+            body: 'Your worker has stopped and BlueAI no longer uses your accounts. ' + cash + (p.deleting ? ' Your data is being deleted. We’ll email you when it’s done.' : ''),
+            primaryAction: n.reachedMinimum ? earnings : null,
+            secondaryAction: { label: 'Apply again', href: String(k.SITE_FAQ_URL || '').split('#')[0], external: true },
           }),
         };
       }
@@ -148,7 +178,7 @@
           center: true,
           node: empty({
             variant: 'first', icon: 'clock', title: 'No program running right now',
-            body: 'The next one starts Dec 1. Your BlueAI worker starts it once you agree to its Program Terms.',
+            body: 'The next one starts Dec 1. We’ll ask you to agree to its Program Terms then, and your worker starts once you do.',
             secondaryAction: earnings,
           }),
         };
@@ -180,5 +210,5 @@
   }
 
   window.V2Screens = window.V2Screens || {};
-  Object.assign(window.V2Screens, { SystemStates, SYSTEM_STATES });
+  Object.assign(window.V2Screens, { SystemStates, SYSTEM_STATES, endedCopy });
 })();

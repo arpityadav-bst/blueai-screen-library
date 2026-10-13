@@ -42,20 +42,20 @@ All under `public/blueai-product-v2-ds/`. V2 itself is `public/blueai-product-v2
 | `screens/` | Whole screens composed from the kit, on `window.V2Screens`. |
 | `guide/` | The guide's own chrome: `catalog.jsx` (the section list), `sections/`, `refs/` (the V2 sources), `app.jsx`. |
 | `design-md/` | One partial per section; edit these, then rebuild DESIGN.md. |
-| `tools/` | `ds-check.js` (the gate) and `build-design-md.js`. |
+| `tools/` | `ds-check.js` (the gate, with checks 8 and 9 in `ds-check-more.js`) and `build-design-md.js`. |
 
 ### How to run the checks
 
 From `public/blueai-product-v2-ds/`, with Node and one dependency, Babel's parser. ds-check looks for it in this repo's `node_modules` (run `npm install` at the repo root), then in the main `N:/Antigravity Main/blueai` checkout's, or takes a `@babel/parser` build named in the `DS_BABEL_PARSER` environment variable. With none of these the run fails with an error instead of skipping the parse step. The parser parses; it does not compile, so a transform error that only Babel standalone raises in the browser can still pass.
 
-- `node tools/ds-check.js` before every hand-off; it must end with 0 errors (add `--missing-ok` only while files are still being written). It proves: every V2 value or string the guide quotes still sits on its V2 line; no em dash in any form; every ref id a guide section names exists; every .jsx and .js parses; every .jsx, .js and .css is 300 lines or fewer; the catalog, section files, partials and index.html agree; no raw colour in `kit/` or `screens/`, and no stylesheet but `tokens.css` defines a `--v2-` property; every kit part and screen the catalog names is on its global; the size lists the JSX copies (Icon and Avatar sizes) equal their tokens.
+- `node tools/ds-check.js` before every hand-off; it must end with 0 errors (add `--missing-ok` only while files are still being written). It proves: every V2 value or string the guide quotes still sits on its V2 line; no em dash in any form; every ref id a guide section names exists; every .jsx and .js parses; every .jsx, .js and .css is 300 lines or fewer; the catalog, section files, partials and index.html agree; no raw colour in `kit/` or `screens/`, and no stylesheet but `tokens.css` defines a `--v2-` property; every kit part and screen the catalog names is on its global; the size lists the JSX copies (Icon and Avatar sizes) equal their tokens; no .jsx in `kit/`, `screens/` or `guide/` uses object rest destructuring (Babel hoists its key list to one program-level `_excluded` that the next file overwrites, so use a local `omit(props, KEYS)`).
 - `node tools/build-design-md.js` after editing anything in `design-md/`. Never edit DESIGN.md by hand.
 
 The checks read files, not pixels. How a part looks is checked by eye in the guide.
 
 ### House rules
 
-- Tokens only: a colour or size in `kit/` or `screens/` is a `--v2-*` token, never a raw value.
+- Tokens, by the rule in `tokens.css:1-9`: every colour in `kit/` or `screens/` is a `--v2-*` token, and so is every size two parts share (the Size family, section 10); ds-check fails a raw colour and a rule that types a Size token's value raw. Geometry that belongs to one part only (a switch track, a checkbox tick, a badge dot) stays px in that part's rule, and a size one part repeats is a local custom property without the `--v2-` prefix (`--ledger-date-w`).
 - Kit classes start `v2-`, guide classes `g-`. Hover, focus-visible, active, disabled, loading and error live in CSS, not in mouse handlers.
 - Files are IIFEs for the browser's Babel: no import or export. Kit parts go on `window.V2Kit`, screens on `window.V2Screens`.
 - At most 300 lines per .jsx, .js or .css file. Split before you pass it.

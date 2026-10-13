@@ -89,7 +89,8 @@
         <G.Part name="Offline" status="new" role="Losing the connection is shown at once, says what will not happen today, and recovers by itself.">
           <G.Note>Why the product needs it. Nothing in V2 checks or shows connectivity, and a scheduled run that silently fails to start costs a counted day.</G.Note>
           <G.StateGrid wide states={[
-            { label: 'Offline', note: 'banner under the top bar, worker card, composer locked', node: <Mini composer banner={<K.Banner tone="offline" title="You’re offline" action={{ label: 'Try again', onClick: noop }}>Today’s run starts when you’re back online.</K.Banner>} /> },
+            { label: 'Offline', note: 'banner on a screen without the worker card (Chat); on Home the card says it, and Try again reconnects in place', node: <Mini composer card={false} banner={<K.Banner tone="offline" title="You’re offline" action={{ label: 'Try again', onClick: noop }}>Today’s run starts when you’re back online.</K.Banner>} /> },
+            { label: 'Offline on Home', note: 'no banner: the worker card says it, and its Try again reconnects in place', node: <Mini /> },
             { label: 'Reconnecting', note: 'checks again by itself every 30 s', node: <Mini card={false} banner={<K.Banner tone="offline" icon="refresh" title="Reconnecting…">Today’s run starts when you’re back online.</K.Banner>} /> },
             { label: 'Back online', note: 'the banner goes; one quiet toast', node: <K.Toast tone="success" title="You’re back online." duration={0} /> },
             { label: 'Service down', note: 'our side, not the partner’s PC', node: <Mini card={false} banner={<K.Banner tone="offline" icon="alert" title="BlueAI can’t reach its service">This is on our side, not your PC. Today’s run starts as soon as it’s back.</K.Banner>} /> },

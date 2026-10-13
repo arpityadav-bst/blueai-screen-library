@@ -5,7 +5,10 @@
    the wrapper. Off-state edges on the small binary controls use ink-4 so they clear 3:1 on white.
    Field and composer edges stay --v2-line-strong (1.41:1, the site's 15% field edge): the visible
    label above names the field, so the edge is not the only cue to it (section 09 records the
-   exception); focus turns the edge blue (4.47:1) and adds the ring. */
+   exception); focus turns the edge blue (4.47:1) and adds the ring. An errored field or checkbox
+   takes --v2-danger-edge, the one solid red stroke (4.53:1); --v2-danger-line is the banner's pale
+   edge and never marks an error on its own. Disabled is aria-disabled, so a disabled control stays
+   focusable and its reason can be reached (P3). */
 
 /* Field: label, box, message line ----------------------------------------------------------- */
 .v2-field { display: flex; flex-direction: column; gap: var(--v2-space-15); min-width: 0; }
@@ -13,7 +16,7 @@
   display: flex; align-items: baseline; gap: var(--v2-space-2);
   color: var(--v2-ink); font-size: var(--v2-text-13); font-weight: var(--v2-weight-medium); line-height: var(--v2-leading-snug);
 }
-.v2-field-flag { color: var(--v2-ink-4); font-size: var(--v2-text-12); font-weight: var(--v2-weight-regular); }
+/* Required / Optional: .v2-text-meta (kit/base.css) on the span; nothing restated here. */
 .v2-field-box {
   position: relative; display: flex; align-items: center; gap: var(--v2-space-2);
   min-height: var(--v2-field-h); padding: 0 var(--v2-space-3);
@@ -25,7 +28,7 @@
 .v2-field--area .v2-field-box, .v2-field--select .v2-field-box { padding: 0; }
 .v2-field-box:hover, .v2-field.is-hover .v2-field-box { border-color: var(--v2-line-hover); }
 .v2-field-box:focus-within, .v2-field.is-focus .v2-field-box { border-color: var(--v2-blue); box-shadow: var(--v2-focus-ring); }
-.v2-field.is-invalid .v2-field-box { border-color: var(--v2-danger-line); }
+.v2-field.is-invalid .v2-field-box { border-color: var(--v2-danger-edge); }
 .v2-field.is-invalid .v2-field-box:focus-within, .v2-field.is-invalid.is-focus .v2-field-box {
   box-shadow: 0 0 0 3px var(--v2-danger-ring);
 }
@@ -72,10 +75,8 @@
   display: flex; align-items: flex-start; justify-content: space-between; gap: var(--v2-space-3);
   min-height: calc(var(--v2-text-12) * var(--v2-leading-snug));
 }
-.v2-field-msg {
-  display: flex; align-items: flex-start; gap: var(--v2-space-1); min-width: 0;
-  color: var(--v2-ink-3); font-size: var(--v2-text-12); line-height: var(--v2-leading-snug);
-}
+/* type: .v2-text-caption (kit/fields.jsx); the tones only change the ink */
+.v2-field-msg { display: flex; align-items: flex-start; gap: var(--v2-space-1); min-width: 0; }
 .v2-field-msg--error { color: var(--v2-danger-ink); }
 .v2-field-msg--success { color: var(--v2-success-ink); }
 .v2-field-count {
@@ -130,12 +131,12 @@
   border: var(--v2-stroke) solid var(--v2-ink-4); border-radius: var(--v2-radius-xs); background-color: var(--v2-surface);
   transition: background-color var(--v2-dur-1) var(--v2-ease-standard), border-color var(--v2-dur-1) var(--v2-ease-standard);
 }
-.v2-check-row:hover .v2-check-input:not(:checked):not(:indeterminate):not(:disabled) + .v2-check-box, .v2-check.is-hover .v2-check-box {
+.v2-check:not(.is-disabled) .v2-check-row:hover .v2-check-input:not(:checked):not(:indeterminate) + .v2-check-box, .v2-check.is-hover .v2-check-box {
   border-color: var(--v2-ink-3); background-image: linear-gradient(var(--v2-wash-hover), var(--v2-wash-hover));
 }
 .v2-check-input:focus-visible + .v2-check-box, .v2-check.is-focus .v2-check-box { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); }
 .v2-check-input:checked + .v2-check-box, .v2-check-input:indeterminate + .v2-check-box { background-color: var(--v2-action); border-color: var(--v2-action); }
-.v2-check-row:hover .v2-check-input:checked:not(:disabled) + .v2-check-box { background-color: var(--v2-action-hover); border-color: var(--v2-action-hover); }
+.v2-check:not(.is-disabled) .v2-check-row:hover .v2-check-input:checked + .v2-check-box { background-color: var(--v2-action-hover); border-color: var(--v2-action-hover); }
 .v2-check-input:checked + .v2-check-box::after {
   content: ''; position: absolute; left: 5px; top: 1px; width: 5px; height: 10px;
   border: solid var(--v2-on-color); border-width: 0 2px 2px 0; transform: rotate(45deg);
@@ -144,14 +145,13 @@
   content: ''; position: absolute; left: 3px; top: 7px; width: 10px; height: 2px;
   border-radius: var(--v2-radius-xs); background-color: var(--v2-on-color);
 }
-.v2-check.is-invalid .v2-check-box { border-color: var(--v2-danger-line); }
+.v2-check.is-invalid .v2-check-box { border-color: var(--v2-danger-edge); }
 .v2-check.is-disabled .v2-check-row { opacity: var(--v2-opacity-disabled); cursor: not-allowed; }
 .v2-check-text { display: flex; flex-direction: column; gap: var(--v2-space-05); min-width: 0; }
 .v2-check-label { color: var(--v2-ink); font-size: var(--v2-text-14); line-height: var(--v2-leading-snug); }
-.v2-check-msg {
-  display: flex; align-items: flex-start; gap: var(--v2-space-1); padding-left: calc(18px + var(--v2-space-3));
-  color: var(--v2-danger-ink); font-size: var(--v2-text-12); line-height: var(--v2-leading-snug);
-}
+/* type: .v2-text-caption (kit/choice.jsx): the error in danger ink, a disabled reason in ink-2 */
+.v2-check-msg { display: flex; align-items: flex-start; gap: var(--v2-space-1); padding-left: calc(18px + var(--v2-space-3)); color: var(--v2-danger-ink); }
+.v2-check-msg--why { color: var(--v2-ink-2); }
 .v2-fieldset { display: flex; flex-direction: column; min-width: 0; margin: 0; padding: 0; border: 0; }
 .v2-legend { padding: 0; margin-bottom: var(--v2-space-1); color: var(--v2-ink); font-size: var(--v2-text-13); font-weight: var(--v2-weight-medium); line-height: var(--v2-leading-snug); }
 
@@ -206,7 +206,7 @@
     border-color var(--v2-dur-2) var(--v2-ease-standard);
 }
 .v2-segmented--sm .v2-segment { height: var(--v2-control-sm); padding: 0 var(--v2-space-2); }
-.v2-segment:hover:not(:disabled):not(.is-selected), .v2-segment.is-hover { background-color: var(--v2-wash-hover); color: var(--v2-ink); }
+.v2-segment:hover:not([aria-disabled="true"]):not(.is-selected), .v2-segment.is-hover { background-color: var(--v2-wash-hover); color: var(--v2-ink); }
 .v2-segment.is-selected {
   background-color: var(--v2-surface); background-image: linear-gradient(var(--v2-select), var(--v2-select));
   border-color: var(--v2-blue); box-shadow: inset 0 0 0 calc(var(--v2-stroke-selected) - var(--v2-stroke)) var(--v2-blue);
@@ -214,9 +214,26 @@
 }
 .v2-segment.is-pending { border-style: dashed; border-color: var(--v2-select-line); color: var(--v2-ink); cursor: progress; }
 .v2-segment:focus-visible, .v2-segment.is-focus { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); }
-.v2-segment:disabled { opacity: var(--v2-opacity-disabled); cursor: not-allowed; }
+.v2-segment[aria-disabled="true"] { opacity: var(--v2-opacity-disabled); cursor: not-allowed; }
+.v2-segmented-group { display: inline-flex; flex-direction: column; align-items: flex-start; gap: var(--v2-space-15); }
 .v2-segmented--sm .v2-segment::after { content: ''; position: absolute; left: 0; right: 0; top: calc((100% - var(--v2-hit-min)) / 2); bottom: calc((100% - var(--v2-hit-min)) / 2); }
 
 @media (prefers-reduced-motion: reduce) {
   .v2-field-box, .v2-switch, .v2-switch-thumb, .v2-check-box, .v2-radio-card-body, .v2-segment { transition: none; }
+}
+
+/* Forced colours (Windows contrast themes) drop fills and inset shadows and paint every edge, so
+   state drawn by a fill alone would vanish. Each state here keeps a shape in the forced ink
+   (currentColor), never a hue: the Switch thumb is a hollow ring off and a solid dot on, and the
+   selected segment wears a thick edge plus an underline under its label. */
+@media (forced-colors: active) {
+  .v2-switch-thumb, .v2-switch:hover:not([aria-disabled="true"]) .v2-switch-thumb, .v2-switch.is-hover .v2-switch-thumb {
+    forced-color-adjust: none; background-color: transparent;
+    border: calc(var(--v2-stroke) * 2) solid currentColor;
+  }
+  .v2-switch.is-on .v2-switch-thumb, .v2-switch.is-on:hover:not([aria-disabled="true"]) .v2-switch-thumb,
+  .v2-switch.is-on.is-hover .v2-switch-thumb { background-color: currentColor; }
+  .v2-switch.is-busy .v2-switch-thumb, .v2-switch.is-busy.is-on .v2-switch-thumb { background-color: transparent; }
+  .v2-segment.is-selected { border-width: calc(var(--v2-stroke) * 2); }
+  .v2-segment.is-selected > span { text-decoration: underline; text-decoration-thickness: calc(var(--v2-stroke) * 2); text-underline-offset: 3px; }
 }

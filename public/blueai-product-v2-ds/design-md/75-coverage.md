@@ -2,36 +2,19 @@
 
 **Status:** Meta (no parts).
 
-**Why:** What exists, counted. The guide’s section 75 reads these live from the catalog; the figures below are as of 2026-10-13.
+**Why:** What exists, and where each count comes from. The guide's section 75 counts everything live from the catalog (`guide/catalog.jsx`) and the refs, so its numbers never go stale; this partial does not copy them, because a typed count is wrong after the next change. It lists what is counted, in the same unit the live section uses, and every kit part and screen with its status.
 
-| What | Count |
+| What | Counted from |
 |---|---|
-| Sections in the catalog | 78 |
-| Parts (in sections) | 123 (In V2 6, Changed 91, New 26) |
-| Kit components (window.V2Kit) | 56 (In V2 0, Changed 48, New 8) |
-| Screens (window.V2Screens) | 14 (In V2 0, Changed 7, New 7) |
-| Shared screen helpers | 5 |
-| V2 references the checks prove | 1406 |
-| Recommendations for V2 | 50 (19 P1, 21 P2, 10 P3) and 13 decisions |
+| Sections | the catalog's sections, one per partial in `design-md/` |
+| Parts, by status (In V2, Changed from V2, New) | the parts each catalog section names |
+| Kit components on window.V2Kit, by status | the catalog's `kit` rows: one row per component, never a bundle of names under one status, the same rows as the table below |
+| Screens on window.V2Screens, by status | the catalog's `screens` rows |
+| Shared screen helpers | the catalog's `helpers` rows |
+| V2 references the checks prove | `node tools/ds-check.js` prints the number it checked ("refs: N checked") |
+| Recommendations and decisions | section 73 (P1, P2 and P3 counts, and Decisions pending) |
 
-Most parts are Changed on purpose: the system keeps what V2 does and changes how it looks, reads and behaves. The six In V2 parts are the PM’s copy register and the scene and review tools, which are not product.
-
-### Parts by group
-
-| Group | Sections | Parts | Status |
-|---|---|---|---|
-| Start | 00-02 | 0 | Meta, no parts |
-| Foundations | 03-10 | 21 | In V2 0, Changed 18, New 3 |
-| Components | 11-28 | 31 | In V2 0, Changed 28, New 3 |
-| Shell | 29-33 | 10 | In V2 0, Changed 8, New 2 |
-| Chat | 34-40 | 13 | In V2 0, Changed 10, New 3 |
-| Worker | 41-46 | 13 | In V2 0, Changed 9, New 4 |
-| Credits and settings | 47-49 | 7 | In V2 0, Changed 5, New 2 |
-| Patterns | 50-56 | 8 | In V2 0, Changed 7, New 1 |
-| Screens | 57-69 | 13 | In V2 0, Changed 6, New 7 |
-| Copy and voice | 70 | 2 | In V2 1, Changed 0, New 1 |
-| Scene and review | 71-72 | 5 | In V2 5, Changed 0, New 0 |
-| Meta | 73-77 | 0 | Meta, no parts |
+Most parts are Changed on purpose: the system keeps what V2 does and changes how it looks, reads and behaves. The parts marked In V2 are the PM's copy register and the scene and review tools, which are not product.
 
 ### Kit and screens
 
@@ -65,8 +48,11 @@ Most parts are Changed on purpose: the system keeps what V2 does and changes how
 | Menu | `kit/menu.jsx` | Changed from V2 |
 | Popover | `kit/menu.jsx` | Changed from V2 |
 | Tooltip | `kit/menu.jsx` | Changed from V2 |
-| Toast / ToastHost / useToast | `kit/toast.jsx` | New |
+| Toast | `kit/toast.jsx` | New |
+| ToastHost | `kit/toast.jsx` | New |
+| useToast | `kit/toast.jsx` | New |
 | Tabs | `kit/tabs.jsx` | New |
+| TabPanel | `kit/tabs.jsx` | New |
 | AppFrame | `kit/shell.jsx` | Changed from V2 |
 | TrayMenu | `kit/shell.jsx` | New |
 | TopBar | `kit/topbar.jsx` | Changed from V2 |
@@ -75,24 +61,40 @@ Most parts are Changed on purpose: the system keeps what V2 does and changes how
 | BottomNav | `kit/nav.jsx` | Changed from V2 |
 | ScreenHeader | `kit/nav.jsx` | Changed from V2 |
 | Splash | `kit/splash.jsx` | Changed from V2 |
-| Thread / DaySeparator / JumpToLatest | `kit/thread.jsx` | Changed from V2 |
+| Thread | `kit/thread.jsx` | Changed from V2 |
+| DaySeparator | `kit/thread.jsx` | New |
+| JumpToLatest | `kit/thread.jsx` | New |
 | MessageBubble | `kit/thread.jsx` | Changed from V2 |
 | NoticeBubble | `kit/thread.jsx` | Changed from V2 |
 | RunCard | `kit/run-card.jsx` | New |
 | AskCard | `kit/ask.jsx` | Changed from V2 |
 | FeedbackThumbs | `kit/ask.jsx` | Changed from V2 |
 | DependencyCard | `kit/ask.jsx` | Changed from V2 |
-| Composer / ComposerNotice / SendStop | `kit/composer.jsx` | Changed from V2 |
-| workerFixtures / numbers | `kit/worker-data.jsx` | New |
-| WorkerCard / CoachMark | `kit/worker-card.jsx` | Changed from V2 |
-| StatusTick / DayBar / ProgramStrip / ProgramSummary | `kit/program.jsx` | Changed from V2 |
+| Composer | `kit/composer.jsx` | Changed from V2 |
+| ComposerNotice | `kit/composer.jsx` | Changed from V2 |
+| SendStop | `kit/composer.jsx` | Changed from V2 |
+| workerFixtures | `kit/worker-data.jsx` | New |
+| numbers | `kit/worker-data.jsx` | New |
+| WorkerCard | `kit/worker-card.jsx` | Changed from V2 |
+| CoachMark | `kit/worker-card.jsx` | Changed from V2 |
+| StatusTick | `kit/program.jsx` | Changed from V2 |
+| DayBar | `kit/program.jsx` | Changed from V2 |
+| ProgramStrip | `kit/program.jsx` | Changed from V2 |
+| ProgramSummary | `kit/program.jsx` | New |
 | DayDone | `kit/day-done.jsx` | Changed from V2 |
 | JobPreviewCard | `kit/job.jsx` | New |
-| ModeRows / ConsentDialog / PermissionRequest | `kit/permissions.jsx` | Changed from V2 |
-| CreditsChip / CreditsMeter / useCountdown | `kit/credits.jsx` | Changed from V2 |
-| OutOfCreditsNotice / OOC_COPY | `kit/out-of-credits.jsx` | Changed from V2 |
-| SettingsSection / AdvancedDisclosure | `kit/settings.jsx` | Changed from V2 |
-| ByokPanel / AiModePanel | `kit/advanced.jsx` | Changed from V2 |
+| ModeRows | `kit/permissions.jsx` | Changed from V2 |
+| ConsentDialog | `kit/permissions.jsx` | Changed from V2 |
+| PermissionRequest | `kit/permissions.jsx` | New |
+| CreditsChip | `kit/credits.jsx` | Changed from V2 |
+| CreditsMeter | `kit/credits.jsx` | New |
+| useCountdown | `kit/credits.jsx` | New |
+| OutOfCreditsNotice | `kit/out-of-credits.jsx` | New |
+| OOC_COPY | `kit/out-of-credits.jsx` | Changed from V2 |
+| SettingsSection | `kit/settings.jsx` | Changed from V2 |
+| AdvancedDisclosure | `kit/settings.jsx` | Changed from V2 |
+| ByokPanel | `kit/advanced.jsx` | Changed from V2 |
+| AiModePanel | `kit/advanced.jsx` | Changed from V2 |
 | Home | `screens/home.jsx` | Changed from V2 |
 | Activity | `screens/activity.jsx` | New |
 | RunDetail | `screens/run-detail.jsx` | New |

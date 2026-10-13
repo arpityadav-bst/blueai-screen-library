@@ -5,7 +5,7 @@
 
   // cost, the rule, examples. Copy in the examples is proposed.
   const RULES = [
-    ['Costs today’s day', 'Say the cost on the control, before the choice; confirm if it cannot be taken back today.', 'Skip today’s job (“Skip: today won’t count”), Pause today’s run, Quit BlueAI, Stop a paid run'],
+    ['Costs today’s day', 'Say the cost on the control, before the choice; confirm if it cannot be taken back today.', 'Skip today’s job (“Skip: today won’t count”), Skip today’s run (tray), Quit BlueAI, Stop a paid run'],
     ['Costs account control or money', 'Confirm in an alert dialog. The title asks the question with the object; the body says what changes and how to undo it; the primary names the action.', 'Sign out and Disconnect YouTube: alert dialog; turn on Automatic: ConsentDialog (section 46)'],
     ['Cannot be undone', 'Confirm; the primary is danger and named for the action.', 'Delete my data, Leave the program'],
     ['Cheap and reversible', 'Do it at once, then a toast with Undo for 6 s. Commit only when the toast leaves.', 'Remove my own key, Disconnect Telegram, Dismiss a notification'],
@@ -73,7 +73,7 @@
             changed="V2’s one sign-out confirm says Logout over a body that says sign out, paints a non-destructive action red, and its confirm does not sign out: it closes and returns to chat. Meanwhile the actions that do lose something never ask: switching your own key off deletes the key, Remove and Unlink act at once with no undo, and Not now on a paid job ends the day as not counted in one tap, with the cost told only afterwards. The system confirms by cost, says the cost before the choice, and makes cheap actions undoable." />
           <G.SpecDrawer rows={[
             { part: 'Dialog', token: 'Dialog alert, --v2-dialog-sm', value: '320, role alertdialog, focus on the first action, no scrim dismiss' },
-            { part: 'Title', token: '--v2-text-20', value: 'the question: Sign out?', ref: 'entry-patterns.destroy.logout-title' },
+            { part: 'Title', token: '--v2-text-20', value: 'the question, with the object: Sign out of BlueAI? (V2: Logout)', ref: 'entry-patterns.destroy.logout-title' },
             { part: 'Body', token: '--v2-text-14, --v2-ink-2', value: 'what changes and how to undo it', ref: 'entry-patterns.destroy.logout-body' },
             { part: 'Primary', token: '--v2-action or --v2-danger-ink', value: 'danger only when something is lost (V2 paints sign out #ef4444)', ref: ['entry-patterns.destroy.logout-red', 'entry-patterns.destroy.schedule-red'] },
             { part: 'Confirm that does nothing, V2', token: null, value: 'closes and stays signed in', ref: 'entry-patterns.destroy.logout-noop' },

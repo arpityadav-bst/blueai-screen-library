@@ -2,7 +2,7 @@
 
 **Status:** Changed from V2 (StatusTick, DayBar, ProgramStrip); New (ProgramSummary).
 
-**Why:** the 20 days are the partner's pay. V2's strip says 'Day 6 of 20' the morning after the overlay said DAY 7 (R02), '14 to go' in green has no unit, a rejected day has no way to show (R19), the rules are never stated before the first day ends (R12), and its Earnings link goes somewhere other than the menu's (R29). The site's dashboard says '12 of 20 days' and 'Ends Nov 1, 2026' (`onblue/apply.html:1404, 1409`); the app now says it the same way.
+**Why:** the 20 days are the partner's pay. V2's strip says 'Day 6 of 20' the morning after the overlay said DAY 7 (R02), '14 to go' in green has no unit, a rejected day has no way to show (R19), the rules are never stated before the first day ends (R12), and its Earnings link goes somewhere other than the menu's (R29). The site's dashboard says '12 of 20 days' and 'Ends Nov 1, 2026' (`onblue/apply.html:1404, 1409`); the app uses the same words and drops the year while it is the current one ('Ends Nov 1', section 70's date rule).
 
 ### StatusTick
 
@@ -33,7 +33,7 @@
 ### ProgramStrip
 
 - **Purpose:** the home's 'how many of my 20 days count', shown from day 0.
-- **Anatomy:** card radius 16, 1px line, padding 16. Head: '6 of 20 days' 14 ink-3 with the figure 600 ink (the site's muted note with one bold figure), 'Ends Nov 1' 12 ink-4, and the ProgramSummary info tip (32). DayBar. Foot over a hairline: one receipt line 12 ink-3 with its tick, and 'Earnings' (underlined ink, blue on hover, external icon, `EARNINGS_URL`).
+- **Anatomy:** card radius 16, 1px line, padding 16. Head: '6 of 20 days' 14 ink-3 with the figure 600 ink (the site's muted note with one bold figure), 'Ends Nov 1' 12 ink-4, and the ProgramSummary info tip (32). DayBar. Foot over a hairline: one receipt line 12 ink-3 with its tick, and 'Earnings' (`V2Kit.Link` standalone with `href: EARNINGS_URL`, external: underlined ink, blue on hover, external icon).
 - **Variants (receipt line):** day 0 'No days counted yet.'; today pending 'Today’s run is pending verification.'; yesterday verified 'Yesterday’s run verified.' (V2); yesterday rejected 'Yesterday’s run wasn’t counted.' in danger ink + 'See why' (opens Activity); skipped 'Today doesn’t count toward your 20 days.' (V2); complete 'All 20 days verified. Cash out on Earnings after Nov 1.'
 - **Sizes:** full width.
 - **States:** the variants, from the record. V2: `?day=returning` only (returning partners).

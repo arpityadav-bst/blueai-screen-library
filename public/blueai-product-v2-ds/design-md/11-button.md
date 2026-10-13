@@ -10,7 +10,7 @@
 
 **Anatomy.** Box: height 28 / 36 / 44, radius 6 (`--v2-radius-sm`), 1px edge, padding 0 12 / 16 / 20. Label: 13/500 (`--v2-text-13`, `--v2-weight-medium`), tracking -0.01em, one line, ellipsis if it must. Optional 16px icon before (`icon`) or after (`iconRight`), gap 8 (6 at sm). Loading: a 16px Spinner takes the leading icon's place; the label stays. Disabled reason: 12/1.35 ink-3 under the button, 6 below.
 
-**Variants.** `primary`: `--v2-action` #1268f0 fill and edge, white label (4.92:1); hover `--v2-action-hover`. `secondary` (default): white, 1px `--v2-line-strong`, ink label; hover adds `--v2-wash-hover` and `--v2-line-hover`. `quiet`: no box, ink-2 label; hover wash + ink. `danger`: `--v2-danger-ink` #c03a40 fill, white label (5.36:1); hover adds `--v2-wash-press`. Use danger only inside the confirm that names what is destroyed.
+**Variants.** `primary`: `--v2-action` #1268f0 fill and edge, white label (4.92:1); hover `--v2-action-hover`. `secondary` (default): white, 1px `--v2-line-strong`, ink label; hover adds `--v2-wash-hover` and `--v2-line-hover`. `quiet`: no box, ink-2 label; hover wash + ink. `danger`: `--v2-danger-ink` #c03a40 fill, white label (5.36:1); hover adds `--v2-wash-press`. Use danger for the primary of the confirm that names what is lost, and for the trigger that opens that confirm (Disconnect YouTube); never for an action that costs nothing (section 52 is the rule).
 
 **Sizes.** sm 28 (`--v2-control-sm`) for dense rows; md 36 (`--v2-control-md`) default; lg 44 (`--v2-control-lg`) for full-width sheet and dialog actions (`full`). sm grows an invisible ::after to the 32px hit floor.
 

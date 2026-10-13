@@ -58,7 +58,8 @@
           <G.StateGrid wide states={[
             { label: 'Rest', node: <T />, note: 'Past is at rest: ink-3 on the track.' },
             { label: 'Hover', node: <T tabs={mark(ACTIVITY, 'past', 'is-hover')} /> },
-            { label: 'Selected', node: <T />, note: 'This program: the raised chip, ink, 500.' },
+            { label: 'Pressed', node: <T tabs={mark(ACTIVITY, 'past', 'is-active')} />, note: 'A deeper wash while held.' },
+            { label: 'Selected', node: <T />, note: 'This program: the select fill with a blue edge, ink, 500 (Segmented’s selected look).' },
             { label: 'Focus-visible', node: <T tabs={mark(ACTIVITY, 'program', 'is-focus')} />, note: 'One tab stop; Left and Right move and select.' },
             { label: 'Disabled', node: <T tabs={mark(ACTIVITY, 'past', null, { disabled: true })} />, note: 'Rare: prefer an enabled tab with 0.' },
             { label: 'Count 0 still shown', node: <T value="past" />, note: 'The tab keeps its width when it empties.' },
@@ -71,7 +72,7 @@
             { part: 'Tab', token: '--v2-hit-min, --v2-radius-sm, --v2-space-3', value: '32px tall, radius 6, 12px sides' },
             { part: 'Label', token: '--v2-text-13, --v2-ink-3, --v2-weight-regular', value: '13/400, #5f636b', ref: 'overlays.tabs.tab-size' },
             { part: 'Hover', token: '--v2-wash-hover, --v2-ink', value: 'wash, label to ink', ref: 'overlays.tabs.hover' },
-            { part: 'Selected', token: '--v2-surface, --v2-line, --v2-weight-medium', value: 'white chip, 1px line, 13/500 ink, no shadow', ref: ['overlays.tabs.selected-fill', 'overlays.tabs.selected-line', 'overlays.tabs.selected-weight'] },
+            { part: 'Selected', token: '--v2-select, --v2-blue, --v2-stroke-selected, --v2-weight-medium', value: 'select fill over white, 1.5px blue edge, 13/500 ink, no shadow: the Segmented’s selected look (section 14); the site raises a white chip', ref: ['overlays.tabs.selected-fill', 'overlays.tabs.selected-line', 'overlays.tabs.selected-weight'] },
             { part: 'Count', token: '--v2-text-12, --v2-ink-3', value: '12/400 tabular, #5f636b (the site’s dimmest ink is 4.42:1 on the track)', ref: 'overlays.tabs.count' },
             { part: 'Focus', token: '--v2-focus-outline', value: '2px blue ring, offset 2' },
             { part: 'Disabled', token: '--v2-opacity-disabled', value: '0.45, skipped by the arrows' },
@@ -81,7 +82,7 @@
           ]} />
           <G.Note>Adapted from the site: the label goes from 12.5 to 13 and the selected weight from 550 to 500 (the
             product's type ladder), the track radius from 9 to 10 and its padding from 3 to 2 (the product's scales),
-            the chip's shadow goes (lines, not shadows), the count is one ink darker so it passes AA on the track, and the tab is 32px tall, the product's smallest target.</G.Note>
+            the selected chip takes the product's one selected look (select fill, blue edge) and drops its shadow, the count is one ink darker so it passes AA on the track, and the tab is 32px tall, the product's smallest target.</G.Note>
           <G.DoDont
             do={['Use tabs for two or three views of the same list or screen.',
               'Show the count on every tab, 0 included.',

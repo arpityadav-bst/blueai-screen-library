@@ -12,7 +12,7 @@
 
 **Variants.** Signed out (brand only). Signed in.
 
-**Sizes.** 52 tall (`--v2-topbar-h`). Padding 0 12 0 16: the brand sits on the 16 gutter; the right edge is 12 because the icon buttons carry a 6px inset. Gap 8 between chips, 2 between the two icon buttons. Surface, 1px `--v2-line` bottom, no shadow. Layer `--v2-z-header` (20). The longest status labels are "Next run 9 am to 9 pm" (a run window) and "Waiting for credits"; the bar must fit 419 with them (Responsive says what gives if it does not).
+**Sizes.** 52 tall (`--v2-topbar-h`). Padding 0 12 0 16: the brand sits on the 16 gutter; the right edge is 12 because the icon buttons carry a 6px inset. Gap 8 between chips, 2 between the two icon buttons. Surface, 1px `--v2-line` bottom, no shadow. Layer `--v2-z-header` (20). The longest status labels are "Next run 9 am to 8 pm" (a run window) and "Waiting for credits"; the bar must fit 419 with them (Responsive says what gives if it does not).
 
 **States.** Signed out: V2 bare URL then Sign in. Signed in: V2 `?start=worker`. Menu open: click Help or More (V2 has no keyboard path).
 
@@ -22,7 +22,7 @@
 
 **Accessibility.** The bar is a `<header>`. Each icon button has a label ("Help", "More"); its button stays lit while its menu is open (`aria-expanded`). Tab order follows reading order.
 
-**Responsive.** One width. If a status label ever overflows, shorten the label, never the bar's parts.
+**Responsive.** One width. The WorkerStatusChip label is the one part that gives: it shrinks and ends in an ellipsis, and its full words stay in the accessible name. Brand, credits, Help and More never shrink or move out, so More (the way to Account and Sign out) is always reachable.
 
 **Do / Don't.** Do keep one status chip and one credits chip. Don't add a filled button to the bar. Don't add a second gradient. Don't show the right cluster when signed out.
 
@@ -34,20 +34,27 @@
 
 **Variants.** (Labels are proposed copy except "Didn't finish", which echoes the PM's toast, worker_day_done.jsx:203.)
 
-| Status | Label | Worker record | Opens |
-|---|---|---|---|
-| scheduled | Next run 11 am; Next run 9 am to 9 pm; Runs later today | today.status scheduled, worded from `runWindow` (a time, a window, any time) | Home, Today |
-| running | Running | today.status running | the run in the chat |
-| needs-you | Needs you (yellow tint) | today.status waiting | the job preview |
-| done | Day 7 of 20 (neutral dot while pending, green once verified) | today.status done | the run in Activity |
-| done (skipped) | Not counted today (neutral dot) | today.status done, end declined | the run in Activity |
-| done (complete) | All 20 days done | all 20 days verified (`numbers().complete`) | Home, Today: the card's Earnings |
-| failed | Didn't finish (red tint) | today.status failed | the run, with Try again and its deadline |
-| paused | Paused (ring dot) | paused | Settings > Worker |
-| paused (no credits) | Waiting for credits (ring dot) | credits.left below runCost before today's run | Home, Today: the card says when credits refresh |
-| paused (update) | Update needed (ring dot) | an update is required (section 69) | the update screen (section 69) |
-| offline | Offline (ring dot) | offline | Home, with the offline banner |
-| signed out | not rendered | | |
+Every `RUN_STATUS` key (`kit/topbar.jsx:35-50`), its chip label, its tray line (section 29) and the record condition `topBarProps(record)` maps to it (`screens/home.jsx`, `chip`). The chip's label is the RUN_STATUS label unless the record gives a time or a count. Opens is `chipTarget(record)` (`screens/home.jsx`, section 32): running, waiting, failed and done open today's run as its Activity row does; stopped, missed, blocked, no-credits, offline and ended open Home; paused opens Settings > Worker. "Waiting for credits" shows only when `creditsDay` is 'waiting'; when it is 'stopped' the chip is not-counted, "Not counted today". The credits chip's dot shows only until today's run is done.
+
+| Status | Chip label | Tray line | Worker record (`workerState`) | Opens |
+|---|---|---|---|---|
+| scheduled | Next run 11 am; Next run 9 am to 8 pm; Runs later today (from `runWindow`: a time, a window, any time) | Next run 11 am | scheduled | Home, Today |
+| running | Running | Running today's run | running | the run in the chat |
+| needs-you | Needs you (yellow tint) | A paid job needs your OK by 9 pm | waiting | the job preview |
+| pending | Day 7 of 20 (blue ring: in, not yet checked) | Done today, pending verification | done, and today's ledger row is not verified yet (`done` is read as `pending`) | the run in Activity |
+| not-counted | Not counted today (neutral dot) | Today doesn't count toward your 20 days | done, with `today.outcome` skipped or expired; noCredits with `creditsDay` 'stopped' | the run in Activity; out of credits: Home, Today |
+| verified | Day 7 of 20 once today is verified; All 20 days done (`numbers().complete`) | All 20 days verified | done and verified; complete | the run in Activity; complete: Home, Today (the card's Earnings) |
+| failed | Didn't finish (red tint) | Today's job didn't finish. Try again by 9 pm | failed | the run, with Try again and its deadline |
+| stopped | Stopped (ring dot) | You stopped today's run. Run again by 9 pm | stopped | Home, Today: Run again and its deadline |
+| missed | Didn't start (neutral dot) | Today's run didn't start. Run it by 9 pm | missed: the PC was off or asleep at run time | Home, Today: Run now and its deadline |
+| blocked | Can't run (red tint) | Today's run can't start. Open BlueAI to fix it | blocked: `blockedBy(record)`, no app, signed out or no BlueStacks | Home, Today: the card's one fix |
+| no-credits | Waiting for credits (ring dot) | Out of AI credits for today's run | noCredits: `credits.left` below `runCost` before today's run and the refill lands before 9 pm (`creditsDay` 'waiting'); when it lands after 9 pm ('stopped') the chip says Not counted today | Home, Today: the card says when credits refresh |
+| paused | Paused (ring dot); Update needed (section 69, the label passed) | Runs paused | paused; an update is required | Settings > Worker; the update screen |
+| offline | Offline (ring dot) | Offline. Today's run waits for a connection | offline | Home, Today: the card says what happens to today |
+| ended | Period ended (ring dot) | Your 20 days have ended | ended: the 20 days ran out before all were verified (`daysLeft` 0) | Home: the period-ended state with Earnings (section 69) |
+| (none) | not rendered | | setup (not set up yet), signed out, not in the program, between programs | |
+
+One rule for the ended chip: once the period has ended, every signed-in screen says "Period ended", the period-ended system states included (section 69); a partner who verified all 20 days keeps "All 20 days done" instead.
 
 **Sizes.** 28 visible (`--v2-control-sm`), 32 hit area (`--v2-hit-min`, via `::after`). Padding 0 12 0 8. Pill, 1px `--v2-line`, surface.
 

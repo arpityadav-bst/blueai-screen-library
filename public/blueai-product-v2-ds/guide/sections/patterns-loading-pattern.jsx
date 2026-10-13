@@ -8,27 +8,23 @@
     ['Under 300 ms', 'Nothing. The Spinner waits 300 ms before it appears, so fast work never flashes.', 'A switch, a tab, a menu'],
     ['300 ms to 2 s', 'A spinner inside the control that started it (label kept, clicks ignored), or a Skeleton in the shape of what arrives.', 'Agree and continue; I agree, turn on; the Home card on reopen'],
     ['Over 2 s', 'Say what is happening, in words, next to the spinner.', '"Signing in…" with "Checking that this account is in the program."'],
-    ['Over 10 s', 'Say it is still going and offer the way out: keep going in the background, or Cancel.', 'Installing BlueStacks; checking an API key'],
+    ['Over 10 s', 'Say it is still going and offer the way out: keep going in the background, or Cancel.', 'Installing BlueStacks (DependencyCard installing: "You can keep using BlueAI while it installs." and Cancel install, section 40); checking an API key'],
     ['A run (minutes)', 'Never block. The run card and the top bar status carry it; the partner can leave and come back.', 'Today’s run'],
   ];
 
   function Box({ children, w }) {
     return <div style={{ width: w || 300, display: 'flex', flexDirection: 'column', gap: 'var(--v2-space-3)' }}>{children}</div>;
   }
-  // The worker home's first card while the Worker record loads: tile, two lines, an action.
+  // Home's own skeleton (screens/home.jsx), so the pattern shows the one the screen draws.
   function HomeSkeleton() {
-    const K = window.V2Kit;
-    return (
-      <Box>
-        <K.Card>
-          <div className="v2-hstack v2-gap-3">
-            <K.Skeleton shape="circle" width={40} />
-            <div className="v2-stack v2-gap-2 v2-grow"><K.Skeleton shape="title" width="50%" /><K.Skeleton shape="line" width="80%" /></div>
-          </div>
-        </K.Card>
-        <K.Card><K.Skeleton lines={3} /></K.Card>
-      </Box>
-    );
+    const C = (window.V2Screens || {}).HomeSkeleton;
+    if (!C) return <div className="g-missing">V2Screens.HomeSkeleton is not loaded.</div>;
+    return <Box w={340}><C /></Box>;
+  }
+  function ListSkeleton() {
+    const C = (window.V2Screens || {}).ListSkeleton;
+    if (!C) return <div className="g-missing">V2Screens.ListSkeleton is not loaded.</div>;
+    return <Box w={340}><C rows={5} label="Loading your days" /></Box>;
   }
   function V2Skeleton() {
     const C = window.HomeSkeleton;
@@ -51,6 +47,7 @@
           <G.StateGrid wide states={[
             { label: 'Cold start', note: 'splash on a true cold start only (section 33)', node: <div style={{ position: 'relative', width: 240, height: 260, overflow: 'hidden', border: 'var(--v2-stroke) solid var(--v2-line)', borderRadius: 'var(--v2-radius-sm)' }}><K.Splash state="message-1" /></div> },
             { label: 'Screen', note: 'skeleton in the shape of the worker home', node: <HomeSkeleton /> },
+            { label: 'List', note: 'the ledger’s rows (Activity, Notifications)', node: <ListSkeleton /> },
             { label: 'Action', note: 'spinner in the button, label kept', node: <K.Button variant="primary" size="lg" loading>Agree and continue</K.Button> },
             { label: 'Over 2 s', note: 'say what is happening', node: <Box w={260}><div className="v2-hstack v2-gap-2"><K.Spinner size={16} delay={0} /><span className="v2-text-body-sm">Checking that this account is in the program.</span></div></Box> },
             { label: 'Over 10 s', note: 'still going, with a way out', node: <Box><K.Banner tone="info" icon="clock" title="Still checking your key" action={{ label: 'Cancel', onClick: function () {} }}>This is taking longer than usual.</K.Banner></Box> },

@@ -21,7 +21,8 @@
      WORKER_OTHER_ACCOUNT  the second identity sign-in mismatch screens use
      EARNINGS_URL, SITE_FAQ_URL  the one Earnings destination (V2 has two: index.html:320,
                         worker_day_done.jsx:184) and the site's FAQ, on the same stand-in host
-     modeSummary(record) 'Always ask' or 'Automatic · YouTube' (V2 wording, agent_permissions.jsx:119) */
+     modeSummary(record) 'Always ask' or 'Automatic · YouTube' (V2 wording, agent_permissions.jsx:119)
+     endedCopy(n)       {title, body}: the period-ended words (section 69), from numbers() + reachedMinimum */
 (function () {
   // V2 RULE verbatim (worker_day_done.jsx:38) plus the $10 cash-out minimum (its rule note, :6, and
   // the site's dashboard, onblue/apply.html:2292). Money terms wait on decision D3; the UI shows days.
@@ -71,18 +72,23 @@
       instagram: Object.assign({ status: 'coming-soon', mode: 'always' }, instagram),
     };
   }
-  /* Ledger rows, oldest first, one per program day: {date, outcome, status, reason}.
+  /* Ledger rows, oldest first, one per program day: {date, outcome, status, reason, checkedAt, ranOn}.
        outcome  what the run did: job | nojob | skipped | expired | stopped | failed | nocredits | norun
-       status   whether the day counts: verified | pending | late | rejected | notcounted */
+       status   whether the day counts: verified | pending | late | rejected | notcounted
+       checkedAt when the day was checked ('Oct 12, 7:02 am'), on a verified row
+       ranOn    how the job was taken: 'ask' | 'auto', on a row where a job ran */
   const row = (date, outcome, status, extra) => Object.assign({ date: date, outcome: outcome, status: status }, extra);
   function days(n, status, from) {
     const out = [];
-    for (let i = 0; i < n; i++) out.push(row('Oct ' + ((from || 6) + i), 'job', status));
+    for (let i = 0; i < n; i++) {
+      const d = (from || 6) + i;
+      out.push(row('Oct ' + d, 'job', status, Object.assign({ ranOn: 'ask' }, status === 'verified' ? { checkedAt: 'Oct ' + (d + 1) + ', 7:02 am' } : null)));
+    }
     return out;
   }
   /* today {date, status scheduled | running | waiting | done | stopped | failed | missed | none,
      outcome (as a ledger row's, once the run ends), nextRunAt, startedAt, step, stepsDone, ask,
-     error, retryBy, missedAt}. */
+     error, retryBy, missedAt, checkedAt ('Oct 12, 7:02 am'), ranOn ('ask' | 'auto', once a job ran)}. */
   const IDLE = { date: 'Oct 12', status: 'scheduled', nextRunAt: '11 am', startedAt: null, step: null, stepsDone: 0, ask: null, outcome: null, error: null };
   const today = (o) => Object.assign({}, IDLE, o);
 
@@ -97,6 +103,10 @@
       blocked: null,
       online: true,
       credits: { left: 1640, grant: 2000, refillAt: REFILL_AT, runCost: 360 },
+      // The site's answer to "can this partner cash out": its balance (which carries over between
+      // periods) is at least $10 and the period has ended. null until the site sends it, so no
+      // fixture sets it; until then numbers().reachedMinimum stands in from this period's days (D3).
+      cashOutOpen: null,
       today: today(),
       ledger: days(6, 'verified'),
       program: { target: WORKER_RULE.target, endsOn: WORKER_RULE.programEnd, daysLeft: 19 },
@@ -104,7 +114,7 @@
   }
 
   const ASK = { job: WORKER_JOB, since: '11:04 am', expires: '9 pm' };
-  const PENDING_TODAY = (outcome) => days(6, 'verified').concat([row('Oct 12', outcome || 'job', 'pending')]);
+  const PENDING_TODAY = (outcome) => days(6, 'verified').concat([row('Oct 12', outcome || 'job', 'pending', outcome && outcome !== 'job' ? null : { ranOn: 'ask' })]);
   const ENDED = { target: 20, endsOn: 'Nov 1', daysLeft: 0 };
   const workerFixtures = {
     new: base({ setUp: false, coachSeen: false, apps: apps({ status: 'not-connected', handle: null, history: null }), today: today({ status: 'none', nextRunAt: null }), ledger: [], program: { target: 20, endsOn: 'Nov 1', daysLeft: 20 } }),
@@ -125,7 +135,7 @@
     // Extra states the cards and strips need.
     noCredits: base({ credits: { left: 120, grant: 2000, refillAt: REFILL_AT, runCost: 360 } }),
     rejected: base({ today: today({ date: 'Oct 13' }), ledger: days(6, 'verified').concat([row('Oct 12', 'job', 'rejected', { reason: 'The comment was removed before we checked it.' })]) }),
-    automatic: base({ apps: apps({ mode: 'auto' }), today: today({ status: 'done', outcome: 'job', startedAt: '11:02 am', doneAt: '11:12 am' }), ledger: PENDING_TODAY() }),
+    automatic: base({ apps: apps({ mode: 'auto' }), today: today({ status: 'done', outcome: 'job', startedAt: '11:02 am', doneAt: '11:12 am', ranOn: 'auto' }), ledger: days(6, 'verified').concat([row('Oct 12', 'job', 'pending', { ranOn: 'auto' })]) }),
     day20: base({ today: today({ date: 'Oct 20', status: 'done', outcome: 'job', startedAt: '11:02 am' }), ledger: days(19, 'verified', 1).concat([row('Oct 20', 'job', 'pending')]), program: ENDED }),
     nojob: base({ today: today({ status: 'done', outcome: 'nojob', startedAt: '11:02 am' }), ledger: PENDING_TODAY('nojob') }),
     declined: base({ today: today({ status: 'done', outcome: 'skipped', startedAt: '11:02 am' }), ledger: days(6, 'verified').concat([row('Oct 12', 'skipped', 'notcounted')]) }),
@@ -148,8 +158,8 @@
          is later rejected leaves it, and the receipt line says why (section 41's counting rule).
        toGo, daysLeft, reachable (done + daysLeft >= target), outOfReach (slots no longer reachable)
        latestRejected: the most recent row is rejected (its slot shows red until the next run fills it)
-       cashOutMin, reachedMinimum: verified x rate, plus the bonus once complete, is at least the minimum
-       segments: target entries, verified | pending | rejected | missed | future */
+       segments: target entries, verified | pending | rejected | missed | future
+       cashOutMin, reachedMinimum: verified x rate, plus the bonus once complete, is at least the minimum */
   function numbers(w) {
     const rec = w || workerFixtures.verified;
     const target = (rec.program && rec.program.target) || WORKER_RULE.target;
@@ -188,11 +198,12 @@
     return w.setUp && !live ? { reason: 'no-app', app: 'youtube' } : null;
   }
 
-  /* The WorkerCard state for a record. Order matters: today's own outcome outranks what could block
-     the next run, and what blocks a run (no app, no credits) outranks a way to start one, so the
-     card never offers Try again, Run again or Run now when the run cannot start.
-       setup, complete, ended (the period is over, not complete), offline, paused, running, waiting,
-       done, blocked, noCredits, stopped, failed, missed, scheduled */
+  /* The WorkerCard state for a record. Order matters: a run that is going, waiting or done today
+     outranks offline and paused, which only stop the next run; what blocks a run (no app, no
+     credits) outranks a way to start one, so the card never offers Try again, Run again or Run now
+     when the run cannot start.
+       setup, complete, ended (the period is over, not complete), running, waiting, done, offline,
+       paused, blocked, noCredits, stopped, failed, missed, scheduled */
   function workerState(w) {
     const n = numbers(w);
     const t = w.today || {};
@@ -200,11 +211,11 @@
     if (!w.setUp) return 'setup';
     if (n.complete) return 'complete';
     if (n.daysLeft <= 0 && idle) return 'ended';
-    if (!w.online) return 'offline';
-    if (w.paused) return 'paused';
     if (t.status === 'running') return 'running';
     if (t.status === 'waiting') return 'waiting';
     if (t.status === 'done') return 'done';
+    if (!w.online) return 'offline';
+    if (w.paused) return 'paused';
     if (blockedBy(w)) return 'blocked';
     if (w.credits && w.credits.left < w.credits.runCost) return 'noCredits';
     if (t.status === 'stopped') return 'stopped';
@@ -246,6 +257,16 @@
     return isFinite(gap) ? gap : null;
   }
 
+  /* The period-ended words, one set (section 69; Home shows them once the period is over).
+     n: numbers(record) plus reachedMinimum. The verified count, since cash out depends on it. */
+  function endedCopy(n) {
+    const checking = !n.pending ? '' : n.pending === 1 ? ' One more day is still being checked and counts once it’s verified.'
+      : ' ' + n.pending + ' more days are still being checked and count once they’re verified.';
+    const cash = n.reachedMinimum ? 'Cash out is open on Earnings.'
+      : 'You need $' + (n.cashOutMin || WORKER_RULE.cashOutMin) + ' to cash out. Your balance carries over to the next period.';
+    return { title: 'This program ended on ' + n.endsOn, body: 'You finished ' + n.verified + ' of ' + n.target + ' days.' + checking + ' ' + cash };
+  }
+
   // V2's summary wording (agent_permissions.jsx:119): 'Always ask' until some app is Automatic.
   function modeSummary(w) {
     const auto = WORKER_APPS.filter((a) => w && w.apps && w.apps[a.id] && w.apps[a.id].mode === 'auto' && w.apps[a.id].status === 'connected');
@@ -262,7 +283,7 @@
   }
 
   Object.assign(window.V2Kit = window.V2Kit || {}, {
-    workerFixtures, FIXTURE_ORDER, numbers, workerState, blockedBy, creditsDay, dayWords, dayGap, modeSummary, nextRunText,
+    workerFixtures, FIXTURE_ORDER, numbers, workerState, blockedBy, creditsDay, dayWords, dayGap, modeSummary, nextRunText, endedCopy,
     WORKER_RULE, WORKER_APPS, WORKER_JOB, WORKER_OTHER_ACCOUNT, EARNINGS_URL, SITE_FAQ_URL,
   });
 })();

@@ -3,7 +3,8 @@
    forced in the guide with .is-hover / .is-focus / .is-active. Every loop and arrival is a
    kit/motion.css class (.v2-anim-indet, -spin, -shimmer, -fade-up), so its one reduced-motion
    rule covers them: the bar becomes a full quiet track, the spinner turns at half speed, the
-   skeleton and the empty state hold still. */
+   skeleton and the empty state hold still. In forced colours the rails draw an edge and the fill
+   keeps its own ink, so progress never rests on a background that the theme removes. */
 
 /* ---- ProgressBar ---- */
 .v2-progress { display: flex; flex-direction: column; gap: var(--v2-space-2); width: 100%; font-family: var(--v2-font-ui); }
@@ -15,16 +16,19 @@
   font-size: var(--v2-text-13);
   line-height: var(--v2-leading-snug);
 }
-.v2-progress-label { min-width: 0; color: var(--v2-ink); font-weight: var(--v2-weight-medium); }
+.v2-progress-label {
+  min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  color: var(--v2-ink); font-weight: var(--v2-weight-medium);
+}
 .v2-progress-value { flex: none; color: var(--v2-ink-3); font-variant-numeric: tabular-nums; }
 .v2-progress-rail {
   position: relative;
-  height: 6px;
+  height: var(--v2-rail);
   overflow: hidden;
   border-radius: var(--v2-radius-pill);
   background: var(--v2-surface-sunken);
 }
-.v2-progress--4 .v2-progress-rail { height: 4px; }
+.v2-progress--4 .v2-progress-rail { height: var(--v2-rail-thin); }
 .v2-progress-fill {
   position: absolute;
   top: 0;
@@ -53,7 +57,7 @@
   vertical-align: middle;
 }
 .v2-spinner--12 { width: 12px; height: 12px; }
-.v2-spinner--32 { width: 32px; height: 32px; }
+.v2-spinner--32 { width: var(--v2-mark-md); height: var(--v2-mark-md); }
 .v2-spinner svg { display: block; width: 100%; height: 100%; }
 .v2-spinner-track { opacity: 0.2; }
 .v2-spinner--on-color { color: var(--v2-on-color); }
@@ -69,7 +73,7 @@
   background-color: var(--v2-surface-sunken);
 }
 .v2-skel--title { width: 60%; height: 16px; }
-.v2-skel--circle { width: 32px; height: 32px; border-radius: var(--v2-radius-round); }
+.v2-skel--circle { width: var(--v2-mark-md); height: var(--v2-mark-md); border-radius: var(--v2-radius-round); }
 .v2-skel--rect { height: 64px; border-radius: var(--v2-radius-md); }
 .v2-skel-lines { display: flex; flex-direction: column; gap: var(--v2-space-2); width: 100%; }
 
@@ -103,39 +107,20 @@
   gap: var(--v2-space-05);
   margin: calc(var(--v2-space-15) * -1) calc(var(--v2-space-15) * -1) calc(var(--v2-space-15) * -1) 0;
 }
-.v2-banner-action, .v2-banner-dismiss {
-  display: inline-flex;
+/* The action is V2Kit.Link standalone (kit/actions.css draws it); here only its placement. The
+   dismiss is V2Kit.IconButton 32 (kit/notice.jsx), drawn and stated by kit/actions.css. */
+.v2-banner-action { padding: 0 var(--v2-space-2); white-space: nowrap; }
+
+/* Compact: one line above a field (the composer's notice slot, section 38). Same tones, icon and
+   action; tighter box, snug leading, the action's 32px target inside the box. */
+.v2-banner--compact {
   align-items: center;
-  justify-content: center;
-  min-height: var(--v2-hit-min);
-  margin: 0;
-  border: 0;
-  border-radius: var(--v2-radius-sm);
-  background: transparent;
-  font-family: inherit;
-  cursor: pointer;
-  transition: background-color var(--v2-dur-1) var(--v2-ease-standard), text-decoration-color var(--v2-dur-1) var(--v2-ease-standard);
+  padding: var(--v2-space-05) var(--v2-space-1) var(--v2-space-05) var(--v2-space-3);
+  line-height: var(--v2-leading-snug);
 }
-/* The family link's underline (--v2-link-underline 32%, offset 3, as V2Kit.Link in kit/actions.css). */
-.v2-banner-action {
-  padding: 0 var(--v2-space-2);
-  color: var(--v2-ink);
-  font-size: var(--v2-text-13);
-  font-weight: var(--v2-weight-medium);
-  text-decoration: underline;
-  text-decoration-thickness: var(--v2-stroke);
-  text-decoration-color: var(--v2-link-underline);
-  text-underline-offset: 3px;
-  white-space: nowrap;
-}
-.v2-banner-dismiss { width: var(--v2-hit-min); padding: 0; color: var(--v2-ink-3); }
-.v2-banner-action:hover, .v2-banner-action.is-hover { background: var(--v2-wash-hover); color: var(--v2-blue-ink); text-decoration-color: currentColor; }
-.v2-banner-dismiss:hover, .v2-banner-dismiss.is-hover { background: var(--v2-wash-hover); color: var(--v2-ink); }
-.v2-banner-action:active, .v2-banner-action.is-active, .v2-banner-dismiss:active, .v2-banner-dismiss.is-active { background: var(--v2-wash-press); }
-.v2-banner-action:focus-visible, .v2-banner-action.is-focus, .v2-banner-dismiss:focus-visible, .v2-banner-dismiss.is-focus {
-  outline: var(--v2-focus-outline);
-  outline-offset: 0;
-}
+.v2-banner--compact .v2-banner-icon { margin-top: 0; }
+.v2-banner--compact .v2-banner-text { padding: var(--v2-space-15) 0; }
+.v2-banner--compact .v2-banner-actions { margin: 0; }
 
 /* ---- EmptyState: the dashed ghost ---- */
 .v2-empty {
@@ -151,13 +136,12 @@
   text-align: center;
 }
 .v2-empty-icon { display: inline-flex; margin-bottom: var(--v2-space-1); color: var(--v2-ink-3); }
-.v2-empty-title {
-  margin: 0;
-  color: var(--v2-ink);
-  font-size: var(--v2-text-16);
-  font-weight: var(--v2-weight-semibold);
-  line-height: var(--v2-leading-tight);
-  letter-spacing: var(--v2-tracking-label);
-}
-.v2-empty-body { max-width: 280px; margin: 0; color: var(--v2-ink-3); font-size: var(--v2-text-13); line-height: var(--v2-leading-body); }
+/* Type from .v2-text-title and .v2-text-body-sm (kit/base.css), set in kit/notice.jsx. */
+.v2-empty-title { margin: 0; }
+.v2-empty-body { max-width: var(--v2-measure); margin: 0; }
 .v2-empty-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--v2-space-2); margin-top: var(--v2-space-2); }
+
+@media (forced-colors: active) {
+  .v2-progress-rail { border: var(--v2-stroke) solid; }
+  .v2-progress-rail > .v2-progress-fill { forced-color-adjust: none; background: currentColor; }
+}

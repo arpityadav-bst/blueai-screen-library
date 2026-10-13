@@ -1,13 +1,17 @@
 /* BlueAI Product V2 Design System: the worker card and its coach mark (section 42).
-   WorkerCard {worker, state, onRun, onOpenToday, onRetry, onResume, onOpenCredits, onReview, onFix,
-               coaching, onDismissCoach}
+   WorkerCard {worker, state, busy, onRun, onOpenToday, onRetry, onResume, onOpenCredits, onReview,
+               onFix, coaching, onDismissCoach}
      The home's one card. state defaults to workerState(worker); pass it to force one for review.
+     busy: the card's action is working (Try again reconnecting, Run now starting): its Button
+     loads in place and ignores a second click.
      Fourteen states: setup, scheduled, running, waiting, done, stopped, failed, missed, blocked,
      paused, noCredits, offline, complete, ended. Never a second Run once today's run has happened
      (V2's Run 'completes' the day again). The card is not one big button (V2's role=button wraps a
      second button); only the action acts. Every state that costs today says so, with the time.
      onFix(reason) is the blocked state's one fixing action ('no-app' Connect YouTube, 'signed-out'
-     Open App Player, 'no-bluestacks' Get BlueStacks).
+     Open App Player, 'no-bluestacks' Get BlueStacks). ended uses endedCopy, the words section 69's
+     period-ended state shows; Home itself shows that state, not this card, once the period is over,
+     so ended is for review and for surfaces other than Home.
    CoachMark {title, onOkay, okayClassName}
      The first-run pointer under the card, a non-blocking note: nothing is dimmed or locked, so
      nothing has to be made inert. PM copy 'Run this to begin' / 'Okay' kept. Dismissal is
@@ -43,7 +47,7 @@
     const P = K();
     const t = w.today || {};
     const n = P.numbers(w);
-    const btn = (variant, label, onClick, extra) => <P.Button variant={variant} size="md" onClick={onClick} {...(extra || {})}>{label}</P.Button>;
+    const btn = (variant, label, onClick, extra) => <P.Button variant={variant} size="md" loading={!!h.busy} onClick={onClick} {...(extra || {})}>{label}</P.Button>;
     const earnings = btn('secondary', 'Earnings', null, { href: P.EARNINGS_URL, external: true });
     switch (state) {
       case 'setup':
@@ -99,9 +103,8 @@
       case 'complete':
         return { lines: [{ text: 'All ' + n.target + ' days done.' }, { text: 'Cash out on Earnings after ' + n.endsOn + '.', meta: true }], action: earnings, noMode: true };
       case 'ended': {
-        const did = 'You finished ' + n.done + ' of ' + n.target + ' days. ';
-        const cash = n.reachedMinimum ? 'Cash out is open on Earnings.' : 'You need $' + n.cashOutMin + ' to cash out; your balance carries over to the next period.';
-        return { lines: [{ text: 'Your ' + n.target + ' days ended on ' + n.endsOn + '.' }, { text: did + cash, meta: true }], action: earnings, noMode: true };
+        const e = P.endedCopy(n);
+        return { lines: [{ text: e.title + '.' }, { text: e.body, meta: true }], action: earnings, noMode: true };
       }
       default:
         return { lines: [], action: null };
@@ -120,7 +123,7 @@
         <article className={cx('v2-wcard', 'v2-wcard--' + state)} aria-label="BlueAI worker">
           <span className={cx('v2-wcard-tile', tile[1] && 'v2-wcard-tile--' + tile[1])} aria-hidden="true"><P.Icon name={tile[0]} size={20} /></span>
           <div className="v2-wcard-body">
-            <h2 className="v2-wcard-title">BlueAI worker</h2>
+            <h2 className="v2-text-title">BlueAI worker</h2>
             {c.lines.map(function (l, i) {
               return (
                 <p key={i} className={cx('v2-wcard-status', l.tone && 'v2-wcard-status--' + l.tone, l.meta && 'v2-wcard-status--meta')} role={i === 0 && (state === 'running' || state === 'waiting') ? 'status' : undefined}>

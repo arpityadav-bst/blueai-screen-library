@@ -64,7 +64,7 @@
 
 **Motion.** Fill and edge over `--v2-dur-1`.
 
-**Accessibility.** Native radios: one tab stop, arrow keys move and select, title is the name and sub plus reason the description.
+**Accessibility.** Native radios: one tab stop, arrow keys move and select, title is the name and sub plus reason the description. Element ids come from `useId`, never from `name`, and the radio `name` is made unique per instance (name + id), so two panels never share one radio group (`kit/choice.jsx:100-102`).
 
 **Responsive.** `card` holds two options in the 419px window; three or more use `list`.
 
@@ -74,7 +74,7 @@
 
 **Purpose.** Two or three short, equal options in one line: the per-app Always ask / Automatic.
 
-**Anatomy.** Track: `--v2-surface-sunken`, 1px `--v2-line`, radius 10, padding 2, gap 2. Segment: 32 tall, radius 6, padding 0 12, 13/500 ink-3, optional 16px icon (shield-check for Always ask, zap for Automatic). Selected: white, 1px `--v2-line`, ink; no shadow.
+**Anatomy.** Track: `--v2-surface-sunken`, 1px `--v2-line`, radius 10, padding 2, gap 2. Segment: 32 tall, radius 6, padding 0 12, 13/500 ink-3, optional 16px icon (ModeRows passes shield-check for Always ask and zap for Automatic). Selected: the select fill (`--v2-select` over `--v2-surface`) with a 1.5px `--v2-blue` edge (`--v2-stroke-selected`; 4.15:1 on the track) and ink; no shadow (`kit/inputs.css:210-214`).
 
 **Variants.** Text; icon and text.
 

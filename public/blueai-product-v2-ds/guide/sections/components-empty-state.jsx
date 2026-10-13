@@ -7,7 +7,11 @@
   function EmptySection() {
     const K = window.V2Kit || {};
     const E = K.EmptyState;
-    const first = <E variant="first" title="No runs yet" body="Your first run starts today at 11 am. Each run shows up here, with what it did and whether the day counts." />;
+    // Each specimen quotes the screen that draws the state (Activity, Notifications, system states, section 69), so a
+    // state has one proposed wording. Activity's body ends with V2Kit.nextRunText once the worker is set up.
+    const LOAD_BODY = 'Nothing is lost: your runs and days are not affected. Try again in a moment.'; // V2Screens.LoadError
+    const DAYS = 'Each run shows here with its verification: one tick while pending, two once verified.';
+    const first = <E variant="first" title="No days yet" body={DAYS + ' Next run today at 11 am.'} />;
     return (
       <G.Section id="empty-state">
         <G.Part name="EmptyState" status="changed" role="What a view shows with nothing in it: names what will appear, says why, and offers the one way forward.">
@@ -22,11 +26,12 @@
 
           <G.StateGrid wide states={[
             { label: 'First use', note: 'names what will appear', node: <div style={full}>{first}</div> },
-            { label: 'No results', node: <div style={full}><E variant="noresults" title="No unread notifications" body="You're up to date. Earlier ones are under All." secondaryAction={{ label: 'Show all', onClick: noop }} /></div> },
-            { label: 'Error', note: 'what failed, what it means, one step', node: <div style={full}><E variant="error" title="Couldn't load your runs" body="Nothing is lost: today's run and your days are not affected." primaryAction={{ label: 'Try again', onClick: noop }} /></div> },
-            { label: 'Error, action loading', node: <div style={full}><E variant="error" title="Couldn't load your runs" body="Nothing is lost: today's run and your days are not affected." primaryAction={{ label: 'Try again', onClick: noop, loading: true }} /></div> },
-            { label: 'Offline', node: <div style={full}><E variant="offline" title="You're offline" body="Activity updates when BlueAI is back online. Today's run starts then too." /></div> },
-            { label: 'Locked', note: 'says what unlocks it', node: <div style={full}><E variant="locked" title="Activity starts after setup" body="Set up your worker once in a short chat. Every run then shows up here." primaryAction={{ label: 'Set up the worker', onClick: noop }} /></div> },
+            { label: 'First use, not set up', note: 'the one way forward', node: <div style={full}><E variant="first" title="No days yet" body={DAYS} primaryAction={{ label: 'Set up your worker', onClick: noop }} /></div> },
+            { label: 'No results', note: 'Notifications, Unread', node: <div style={full}><E variant="noresults" icon="check" title="Nothing unread" body="You’ve seen everything your worker sent." /></div> },
+            { label: 'Error', note: 'what failed, what it means, one step', node: <div style={full}><E variant="error" title="Couldn’t load your days" body={LOAD_BODY} primaryAction={{ label: 'Try again', onClick: noop }} /></div> },
+            { label: 'Error, action loading', node: <div style={full}><E variant="error" title="Couldn’t load your days" body={LOAD_BODY} primaryAction={{ label: 'Try again', onClick: noop, loading: true }} /></div> },
+            { label: 'Offline', note: 'system states, nothing cached', node: <div style={full}><E variant="offline" title="You’re offline" body="BlueAI can’t reach the internet, so there’s nothing to show yet. Today’s run starts when you’re back online." primaryAction={{ label: 'Try again', onClick: noop }} /></div> },
+            { label: 'Locked', note: 'says what unlocks it; system states, update required', node: <div style={full}><E variant="locked" icon="download" title="Update BlueAI to keep running" body="This version can’t run jobs anymore, so runs are paused. Update now and today can still count. It takes about a minute." primaryAction={{ label: 'Update now', onClick: noop }} /></div> },
             { label: 'Copy only', note: "the site's Past tab", node: <div style={full}><E variant="first" icon={null} body="Nothing here yet. Programs you finish will show up here, with what each one earned." /></div> },
           ]} />
 
@@ -48,7 +53,7 @@
             { part: 'Copy (V2, replaced)', token: null, value: 'No scheduled tasks', ref: 'display-feedback.empty.schedule-title' },
             { part: 'Copy (V2, replaced)', token: null, value: 'Coming Soon. We are working on this section to bring you new opportunities. Check back soon for updates!', ref: ['display-feedback.empty.jobs-title', 'display-feedback.empty.jobs-body'] },
             { part: 'Copy (the site)', token: null, value: 'Nothing here yet. Programs you finish will show up here, with what each one earned.', ref: 'display-feedback.empty.site-copy' },
-            { part: 'Copy (proposed)', token: null, value: "No runs yet, Couldn't load your runs, You're offline, Activity starts after setup" },
+            { part: 'Copy (proposed)', token: null, value: "No days yet, Set up your worker, Nothing unread, Couldn’t load your days, You’re offline, Update BlueAI to keep running: the screens' own strings (sections 58, 60, 69)" },
           ]} />
 
           <G.DoDont

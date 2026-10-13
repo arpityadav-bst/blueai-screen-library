@@ -8,7 +8,7 @@
 
 **Purpose.** Six radii, each with a job.
 
-**Anatomy.** `--v2-radius-xs` 4 (checkbox box, day-bar segment, tooltip arrow), `-sm` 6 (buttons, fields, segmented items, menu rows, icon buttons: the site's button radius), `-md` 10 (rows, banners, composer, menus, tooltips, segmented track), `-lg` 16 (cards, bubbles, dialogs, sheet top corners: the site's card radius), `-pill` (badges, quick-reply chips, credits chip, progress rail), `-round` (avatars, discs, send). Strokes: `--v2-stroke` 1px for every edge; `--v2-stroke-selected` 1.5px for a selected choice, the focused composer, and the two outlined marks that must still read at 6 to 8px: the ring status dot (paused, offline: `kit/shell.css:81`) and the pending DayBar segment (`kit/worker.css:87`). A 2px step is not a stroke token; it appears only as mark geometry, sized with its mark: the spinner ring and the checkbox tick (glyph lines), the 2px surface halo that cuts a count dot out of what it sits on (`kit/credits.css:45`, `kit/display.css:88`), and the 2px left rule of the job preview's quoted comment (`kit/worker.css:166`). Icon glyphs draw at their own weight (StatusTick 2.5, `kit/program.jsx:21`).
+**Anatomy.** `--v2-radius-xs` 4 (checkbox box, day-bar segment, tooltip arrow), `-sm` 6 (buttons, fields, segmented items, menu rows, icon buttons: the site's button radius), `-md` 10 (rows, banners, composer, menus, tooltips, segmented track), `-lg` 16 (cards, bubbles, dialogs, sheet top corners: the site's card radius), `-pill` (badges, quick-reply chips, credits chip, progress rail), `-round` (avatars, discs, send). Strokes: `--v2-stroke` 1px for every edge; `--v2-stroke-selected` 1.5px for a selected choice, the focused composer, and the two outlined marks that must still read at 6 to 8px: the ring status dot (paused, offline: `kit/shell.css:80`) and the pending DayBar segment (`kit/worker.css:75`). A 2px step is not a stroke token; it appears only as mark geometry, sized with its mark: the spinner ring and the checkbox tick (glyph lines), the 2px surface halo that cuts a count dot out of what it sits on (`kit/credits.css:33`, `kit/display.css:89`), and the 2px left rule of the job preview's quoted comment (`kit/worker.css:148`). Icon glyphs draw at their own weight (StatusTick 2.5, `kit/program.jsx:29`).
 
 **Variants.** As listed.
 
@@ -52,7 +52,7 @@
 
 **Purpose.** One veil for every decision, the site's frosted gate for sign-in, and a named order of layers inside the window.
 
-**Anatomy.** `--v2-scrim` rgba(11,18,32,0.48) under every dialog, sheet and day done. `--v2-scrim-frost` rgba(248,249,251,0.88) with `--v2-scrim-blur` 14px, the site's gate, for sign-in only. Z-scale: `--v2-z-raised` 1, `-sticky` 10, `-header` 20, `-popover` 30, `-coach` 40, `-overlay` 50, `-dialog` 100, `-gate` 110, `-toast` 120, `-splash` 200.
+**Anatomy.** `--v2-scrim` rgba(11,18,32,0.48) under every dialog, sheet and day done. `--v2-scrim-frost` rgba(248,249,251,0.88) with `--v2-scrim-blur` 14px, the site's gate, for sign-in only. Z-scale: `--v2-z-raised` 1, `-sticky` 10, `-header` 20, `-popover` 30, `-dialog` 100, `-gate` 110, `-toast` 120, `-splash` 200.
 
 **Variants.** Dim, frost.
 
@@ -68,4 +68,4 @@
 
 **Responsive.** Not applicable.
 
-**Do / Don't.** Don't stack a dialog on a dialog (section 25); mount order on `--v2-z-dialog` only settles an overlap that cannot be avoided (one dialog still fading out while the next one opens), and the later one sits on top. Don't blur outside sign-in (it costs on partner PCs). Don't invent a z-index: pick a layer.
+**Do / Don't.** Don't stack a dialog on a dialog (section 25); mount order on `--v2-z-dialog` only settles an overlap that cannot be avoided (one dialog still fading out while the next one opens), and the later one sits on top. Don't blur outside sign-in: a white dialog on a pale frosted veil separates only by its shadow, while the dim veil puts its edge at 3.3:1 (WCAG 1.4.11, the Overlay family in `tokens.css:161-162`). Don't invent a z-index: pick a layer.

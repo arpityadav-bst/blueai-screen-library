@@ -16,7 +16,6 @@
       </div>
     );
   }
-  // V2's home paints its coach scrim against the nearest positioned box; this keeps it in here.
   function Contained({ height, children }) {
     return <div style={{ position: 'relative', overflow: 'hidden', height: height, padding: 'var(--v2-space-3)', background: 'var(--v2-canvas)' }}>{children}</div>;
   }
@@ -28,7 +27,10 @@
   // Section 32's model: each tab keeps its own stack; another tab switches and keeps it; tapping the
   // lit tab again returns that tab to its root. A stack entry is { id, run, row }: run is the pushed
   // screen's state (Chat's or RunDetail's), row the ledger row a Run detail is about.
+  // A pushed screen goes on its parent tab's stack and that tab lights, from any door: Chat belongs to
+  // Home, Run detail to Activity. Notifications has no parent tab, so it goes over the tab you are on.
   const NO_STACKS = { home: [], activity: [], settings: [] };
+  const PARENT = { chat: 'home', run: 'activity' };
   function Flow() {
     const S = window.V2Screens || {};
     const K = window.V2Kit || {};
@@ -43,13 +45,19 @@
     const stack = stacks[tab];
     const top = stack[stack.length - 1] || {};
     function setStack(next) { setStacks(Object.assign({}, stacks, { [tab]: next })); }
-    function push(id, run, r) { if (id !== top.id) setStack(stack.concat([{ id: id, run: run, row: r }])); }
+    // Switch to the parent tab, then push; the same screen on top is replaced, so it shows this run.
+    function push(id, run, r) {
+      const t = PARENT[id] || tab;
+      const s = stacks[t];
+      const keep = (s[s.length - 1] || {}).id === id ? s.slice(0, -1) : s;
+      setStacks(Object.assign({}, stacks, { [t]: keep.concat([{ id: id, run: run, row: r }]) }));
+      if (t !== tab) setTab(t);
+    }
     function nav(id, opts) {
       if (id === 'home' || id === 'activity' || id === 'settings') { if (id === tab) setStack([]); else setTab(id); return; }
-      if (id === 'today') {
-        if (st === 'running' || st === 'waiting') { push('chat'); return; }
-        push('run', st === 'failed' ? 'failed' : (st === 'done' ? 'done' : 'verified')); return;
-      }
+      if (id === 'today') { const t = S.chipTarget(w); nav(t[0], t[1]); return; }
+      // Settings > Worker, Connected apps and Settings with {highlight} all live under the settings tab.
+      if (id === 'worker-settings' || id === 'connected-apps') { if (tab === 'settings') setStack([]); else setTab('settings'); return; }
       if (id === 'chat' || id === 'run') { push(id, opts && opts.state, opts && opts.row); return; }
       if (id === 'notifications') push(id);
     }
@@ -76,7 +84,7 @@
           })}
         </div>
         <div style={{ width: W, maxWidth: '100%', overflow: 'auto' }}>{screen}</div>
-        <p className="g-muted">Live: Chat with BlueAI, Details, See why, the run chip, More &gt; Notifications, the nav and Back all work. Each tab keeps its own stack; tapping the lit tab returns it to its root. Dismissing the coach is remembered, as the record's coachSeen would be.</p>
+        <p className="g-muted">Live: Chat with BlueAI, Details, See why, the run chip, More &gt; Notifications, the nav and Back all work. Each tab keeps its own stack; tapping the lit tab returns it to its root. Chat always opens on Home's stack and Run detail on Activity's, so the lit tab is the one whose stack holds the screen. Dismissing the coach is remembered, as the record's coachSeen would be.</p>
       </Stack>
     );
   }
@@ -105,8 +113,8 @@
       <G.Section id="home">
         <G.Part name="Home" status="changed" role="Today at a glance: is my worker on, when is the next run, did the days count, is anything waiting for me.">
           <p><strong>Anatomy.</strong> Inside the window (top bar with today's run chip and credits, nav with Home lit):
-            the greeting as the screen title ('Hi, Alex', no emoji, no second line), then a 12px column: ProgramStrip
-            (section 43), a Banner only for a program fact the card cannot say, WorkerCard (section 42), and one
+            the greeting as the screen title ('Hi, Alex', no emoji, no second line), then a 12px column: WorkerCard
+            (section 42), ProgramStrip (section 43), a Banner only for a program fact the card cannot say, and one
             standalone link 'Chat with BlueAI'. Nothing else: no feature list, no second Run.</p>
           <G.StateGrid wide states={homeStates} />
           <G.CompareRow v2={<V2Home />} system={<Flow />}
@@ -119,12 +127,12 @@
             { part: 'Receipt line', token: '--v2-text-12, --v2-ink-3', value: 'Yesterday’s run verified.', ref: 'screens-core.home.strip-verified' },
             { part: 'Earnings', token: 'EARNINGS_URL', value: 'one URL for the whole product', ref: 'screens-core.home.strip-earnings' },
             { part: 'WorkerCard', token: 'section 42', value: "'BlueAI worker', one action", ref: ['screens-core.home.component', 'screens-core.home.card-title'] },
-            { part: 'Coach scrim', token: '--v2-scrim, --v2-z-coach', value: 'rgba(11,18,32,0.48) over the whole window, z 40', ref: 'screens-core.home.scrim' },
+            { part: 'Coach mark', token: 'CoachMark (section 42)', value: 'a note under the WorkerCard: no scrim, nothing dimmed or locked' },
             { part: 'Coach memory', token: 'coachSeen', value: 'on the Worker record, never shown twice', ref: 'screens-core.home.coach-local' },
-            { part: 'Banner', token: 'Banner info (section 21)', value: "'You can still reach 17 of 20 days' / '8 done, 9 left before Nov 1. Every day you run still counts.'; only when outOfReach > 0" },
+            { part: 'Banner', token: 'Banner info (section 21)', value: "'You can still reach 17 of 20 days', a title only; only when outOfReach > 0" },
             { part: 'Chat link', token: 'Link standalone', value: "'Chat with BlueAI', 13/500, 32 target" },
-            { part: 'Run chip', token: 'topBarProps(record)', value: "'Next run 11 am', 'Next run 9 am to 9 pm', 'Runs later today', 'Needs you', 'Day 7 of 20' (pending ring), 'Waiting for credits'" },
-            { part: 'Loading', token: 'Skeleton, --v2-dur-shimmer', value: 'title, strip, card: the worker home, held still under reduced motion', ref: 'screens-core.home.skeleton' },
+            { part: 'Run chip', token: 'topBarProps(record)', value: "'Next run 11 am', 'Next run 9 am to 8 pm', 'Runs later today', 'Needs you', 'Day 7 of 20' (pending ring), 'Waiting for credits' (refill before 9 pm) or 'Not counted today' (after); opens chipTarget(record)" },
+            { part: 'Loading', token: 'Skeleton, --v2-dur-shimmer', value: 'a title, the worker card, the strip card: the worker home, held still under reduced motion', ref: 'screens-core.home.skeleton' },
           ]} />
           <G.DoDont
             do={['Read every number and time on Home from the Worker record.', 'Keep one card and one primary action; make the action primary only when the partner is needed.', 'Use the banner for a fact about the program, and only while it holds.']}

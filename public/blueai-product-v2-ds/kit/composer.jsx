@@ -6,21 +6,26 @@
                   One field. Grows from 1 to maxRows (6) lines, then scrolls (V2 clipped at 120px).
                   Enter sends, Shift+Enter is a new line. While a run plays or waits on an answer
                   the field is read-only and Send becomes Stop; with costsDay (today is not counted
-                  yet), Stop asks first and says what stopping costs: 'Today won't count toward
-                  your 20 days.' paidJob also asks first, for a paid job already under way, and
-                  adds that the job won't finish. The confirm is an alertdialog that takes focus
-                  (Keep running), so it is heard; while it is open Stop only moves focus back to it,
-                  so a double press never stops a paid run. disabledReason locks the field and
-                  becomes its placeholder, neutral ('You can't send messages right now'); the
-                  notice says why and until when (Out of AI credits until 5:30 am,
-                  V2Kit.OOC_COPY.until, section 48).
+                  yet), Stop asks first and says what stopping costs (V2Kit.DAY_COPY.stopAsk, the
+                  deadline the stopped RunCard and WorkerCard then state with DAY_COPY.stopped).
+                  paidJob also asks first, for a paid job already under way, and adds that the job
+                  won't finish. The confirm is an alertdialog that takes focus (Keep running), so it
+                  is heard; Esc answers Keep running, the safe answer. While it is open Stop only
+                  moves focus back to it, so a double press never stops a paid run. disabledReason
+                  locks the field: read-only and aria-disabled, so it stays focusable and is
+                  described by the notice; the reason becomes its placeholder, neutral ('You can't
+                  send messages right now'); the notice says why and until when (Out of AI credits
+                  until 5:30 am, V2Kit.OOC_COPY.until, section 48). Any notice, an object or an
+                  element, is wrapped in the field's description, so the field reads it.
                   Force focus for specimens with className 'is-focus'.
-   ComposerNotice {tone: 'info'|'attention'|'neutral', icon, text, children, action: {label,
-                  onClick}}  the slot above the field for a condition that holds before you type:
-                  Automatic on, out of credits, BlueStacks needed, paused. V2's AutoRibbon,
-                  generalised as the compact Banner: tone in the fill, edge and icon, words in ink,
-                  the action is the shared Link.
-   SendStop       {mode: 'send'|'stop', disabled, onClick, className}  36px round. */
+   ComposerNotice {tone: the Banner's tones, 'info'|'success'|'attention'|'danger'|'offline'
+                  ('neutral' is read as 'offline'), icon, text, children, action: {label, onClick}}
+                  the slot above the field for a condition that holds before you type: Automatic
+                  on, out of credits, BlueStacks needed, paused. V2's AutoRibbon, generalised: it
+                  is V2Kit.Banner in its compact size (kit/feedback.css), so tones, icon and action
+                  are the Banner's.
+   SendStop       {mode: 'send'|'stop', disabled, onClick, className}  36px round. Disabled is
+                  aria-disabled (focusable, ignores the press). */
 (function () {
   const { useState, useRef, useLayoutEffect, useEffect, useId } = React;
   const K = () => window.V2Kit || {};
@@ -28,25 +33,22 @@
 
   function Icon(props) { const I = K().Icon; return I ? <I {...props} /> : null; }
 
-  const NOTICE_ICON = { info: 'info', attention: 'alert', neutral: 'pause' };
-
-  function ComposerNotice({ tone, icon, text, children, action, id, className }) {
-    const t = NOTICE_ICON[tone] ? tone : 'info';
-    const L = K().Link;
-    return (
-      <div className={cx('v2-cnotice', 'v2-cnotice--' + t, className)} id={id}>
-        <span className="v2-cnotice-icon" aria-hidden="true"><Icon name={icon || NOTICE_ICON[t]} size={16} /></span>
-        <span className="v2-cnotice-text">{text || children}</span>
-        {action && L ? <L standalone className="v2-cnotice-action" onClick={action.onClick}>{action.label}</L> : null}
-      </div>
-    );
+  function ComposerNotice({ tone, icon, text, children, action, className }) {
+    const B = K().Banner;
+    if (!B) return null;
+    // 'neutral' was this slot's own name for the Banner's neutral tone; it keeps its pause glyph.
+    const t = tone === 'neutral' ? 'offline' : tone;
+    const ic = icon || (tone === 'neutral' ? 'pause' : undefined);
+    const act = action ? { label: action.label, onClick: action.onClick } : null;
+    return <B tone={t} icon={ic} action={act} className={cx('v2-banner--compact', className)}>{text || children}</B>;
   }
 
-  function SendStop({ mode, disabled, onClick, className }) {
+  function SendStop({ mode, disabled, onClick, className, describedBy }) {
     const stop = mode === 'stop';
     return (
       <button type="button" className={cx('v2-sendstop', stop ? 'v2-sendstop--stop' : 'v2-sendstop--send', className)}
-        onClick={onClick} disabled={disabled} aria-label={stop ? 'Stop the run' : 'Send message'}>
+        onClick={function (e) { if (disabled) { e.preventDefault(); return; } if (onClick) onClick(e); }}
+        aria-disabled={disabled ? 'true' : undefined} aria-describedby={describedBy} aria-label={stop ? 'Stop the run' : 'Send message'}>
         <Icon name={stop ? 'stop' : 'send'} size={16} />
       </button>
     );
@@ -111,15 +113,18 @@
 
     const ph = placeholder || (awaiting ? 'Answer with the buttons above'
       : (running ? 'BlueAI is working…' : (disabledReason || 'Type your message')));
+    const D = P.DAY_COPY;
     let noticeNode = null;
-    if (notice) noticeNode = React.isValidElement(notice) ? notice : <ComposerNotice {...notice} id={noticeId} />;
+    // Wrapped, so the field's aria-describedby reaches any notice: an object or an element.
+    if (notice) noticeNode = <div id={noticeId}>{React.isValidElement(notice) ? notice : <ComposerNotice {...notice} />}</div>;
 
     return (
       <div className={cx('v2-composer', className)}>
         {noticeNode}
         {asking ? (
-          <div ref={ask} className="v2-stopconfirm" role="alertdialog" aria-labelledby={askId}>
-            <p className="v2-stopconfirm-text" id={askId}>{paidJob ? 'Stop now? The paid job won’t finish and today won’t count.' : 'Stop now? Today won’t count toward your 20 days.'}</p>
+          <div ref={ask} className="v2-stopconfirm" role="alertdialog" aria-labelledby={askId}
+            onKeyDown={function (e) { if (e.key === 'Escape') { e.stopPropagation(); keepRunning(); } }}>
+            <p className="v2-stopconfirm-text" id={askId}>{D ? D.stopAsk(!!paidJob) : 'Stop now?'}</p>
             <div className="v2-stopconfirm-actions">
               {P.Button ? <P.Button variant="secondary" size="md" onClick={keepRunning}>Keep running</P.Button> : null}
               {P.Button ? <P.Button variant="danger" size="md" onClick={stopRun}>Stop run</P.Button> : null}
@@ -128,12 +133,12 @@
         ) : null}
         <div ref={box} className={cx('v2-composer-box', (busy || locked) && 'is-readonly')}>
           <textarea ref={ta} className="v2-composer-input" rows={1} value={text} placeholder={ph}
-            readOnly={busy} disabled={locked} aria-label="Message BlueAI"
-            aria-describedby={notice && !React.isValidElement(notice) ? noticeId : undefined}
+            readOnly={busy || locked} aria-disabled={locked ? 'true' : undefined} aria-label="Message BlueAI"
+            aria-describedby={notice ? noticeId : undefined}
             onChange={function (e) { set(e.target.value); }}
             onKeyDown={function (e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } }} />
           <SendStop mode={busy ? 'stop' : 'send'} disabled={busy ? false : (locked || !text.trim())}
-            onClick={busy ? requestStop : send} />
+            describedBy={locked && notice ? noticeId : undefined} onClick={busy ? requestStop : send} />
         </div>
       </div>
     );

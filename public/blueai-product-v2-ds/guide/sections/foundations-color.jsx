@@ -54,7 +54,7 @@
   const acct = function () { const A = window.SignInPage && window.SignInPage.ACCOUNTS; return (A && A.other) || { name: 'Alex Rivera', email: 'alex@riveramedia.co', hue: 'var(--v2-ink)' }; };
   const INKS = [
     ['--v2-ink', 'Titles, figures, money (money is ink, never green)'],
-    ['--v2-ink-2', 'Body copy, button and row labels'],
+    ['--v2-ink-2', 'Body copy, button and chip labels'],
     ['--v2-ink-3', 'Descriptions, notes, idle icons, every consequence line'],
     ['--v2-ink-4', 'Meta only, on surface, panel or canvas at rest; never on sunken, a tint, selected or a hover or press wash. Never a consequence'],
     ['--v2-ink-placeholder', 'Placeholder, only under a visible label (not text that must be read)'],
@@ -89,6 +89,8 @@
 
   function ColorSection() {
     const K = window.V2Kit || {};
+    // Out of AI credits says section 48's one wording (OOC_COPY), never a line of its own.
+    const ooc = K.OOC_COPY || { until: 'Out of AI credits until', day: { waiting: '' } };
     const btn = function (cls, extra) { return K.Button ? <K.Button variant="primary" className={cls} {...(extra || {})}>Switch account</K.Button> : <span className="g-missing">Button is not loaded</span>; };
     return (
       <G.Section id="color">
@@ -206,17 +208,17 @@
 
         <G.Part name="Status tones" status="changed" role="Five tones (neutral, info, success, attention, danger), each a tint, a line and an ink, read by every badge, banner, notice, tick and run card.">
           <G.StateGrid states={[
-            { label: 'Neutral', note: 'paused, skipped, pending verification (one ink-4 tick)', node: <Tone t="neutral" label="Paused" /> },
+            { label: 'Neutral', note: 'paused, skipped, pending verification (one ink-4 tick), out of AI credits until a time', node: <Tone t="neutral" label="Paused" /> },
             { label: 'Info', note: 'running, checking', node: <Tone t="info" label="Running" /> },
             { label: 'Success', note: 'reached, verified', node: <Tone t="success" label="Verified" /> },
-            { label: 'Attention', note: 'the worker needs you, out of AI credits', node: <Tone t="attention" label="Needs you" /> },
+            { label: 'Attention', note: 'the worker needs your answer', node: <Tone t="attention" label="Needs you" /> },
             { label: 'Danger', note: 'failed, not verified', node: <Tone t="danger" label="Didn’t finish" /> },
           ]} />
           <G.Note>Pending verification, one rule: a pending day is neutral wherever it is a status (one tick in --v2-ink-4, a neutral Badge with the check mark, the RunCard's Done badge). Blue touches it in exactly two places, both meaning “in, not yet checked” rather than a status: the DayBar's pending segment (1.5 --v2-blue inset outline, section 43) and the DayDone badge (--v2-blue-tint with its tick in --v2-blue-ink, section 44). Never green until verified. Banner names its neutral tone offline (sunken, line, ink-3 icon; section 21), so a neutral banner is tone="offline" with its own icon.</G.Note>
           <G.CompareRow
             v2={<G.Live get={function () { return window.ChatBubbles && window.ChatBubbles.ChatStatesPreview; }} label="ChatBubbles.ChatStatesPreview" />}
-            system={K.Banner ? <div className="v2-stack"><K.Banner tone="attention" title="Needs you">Answer in the chat to start today’s job.</K.Banner><K.Banner tone="attention">Out of AI credits until <strong>5:30 am</strong>. Today’s run can’t start until then.</K.Banner></div> : <span className="g-missing">Banner is not loaded</span>}
-            changed="Four parallel status maps (FINAL_STYLES, TONES, JOB_STATUS, FB_TONES) with 13 greens and 14 reds become one table. Success and danger are copied from the site so a verified day looks the same on the dashboard. The PM's needs-input yellow is kept as attention. Orange heads-up folds into a neutral notice whose icon carries the colour. Green means reached, never money: money is ink. Pending is neutral wherever it is a status, so a day waiting on its check never looks reached. Out of AI credits is attention, not danger: the partner can act and the day may still count." />
+            system={K.Banner ? <div className="v2-stack"><K.Banner tone="attention" title="Needs you">Answer in the chat to start today’s job.</K.Banner><K.Banner tone="offline" icon="clock">{ooc.until} <strong>5:30 am</strong>. {ooc.day.waiting}</K.Banner></div> : <span className="g-missing">Banner is not loaded</span>}
+            changed="Four parallel status maps (FINAL_STYLES, TONES, JOB_STATUS, FB_TONES) with 13 greens and 14 reds become one table. Success and danger are copied from the site so a verified day looks the same on the dashboard. The PM's needs-input yellow is kept as attention. Orange heads-up folds into a neutral notice whose icon carries the colour. Green means reached, never money: money is ink. Pending is neutral wherever it is a status, so a day waiting on its check never looks reached. Out of AI credits is neutral, with a clock: nothing failed and nothing is asked of the partner, and the words say until when and what it means for today." />
           <G.DoDont do={['Use success for a reached state: verified, done, connected.', 'Put money in ink: $6, 2,000 credits.', 'Let the icon carry tone on a neutral notice.']} dont={['Paint dollars green.', 'Use a warm colour for link text (#f59e0b is 2.15:1).', 'Invent a sixth tone for one screen.']} />
           <G.SpecDrawer rows={[
             { part: 'Success', token: '--v2-success / -ink / -tint / -line', value: '#16a34a / #15803d / 8% / 32%; not the site’s 10%: green text on it must pass 4.5:1', ref: ['foundations.status.success-icon', 'foundations.status.active-badge', 'foundations.status.tones-green', 'foundations.status.fb-success', 'foundations.status.onblue-green', 'foundations.status.onblue-green-ink'] },
@@ -235,7 +237,7 @@
           ]} />
           <G.CompareRow
             v2={<div className="v2-stack"><G.FrameState url="index.html?start=worker" label="V2 top bar: gradient wordmark, gradient ring, gradient number" height={520} /><G.Live get={function () { return window.ChatBubbles && window.ChatBubbles.UserBubble; }} props={{ content: (window.MoneyMaker && window.MoneyMaker.PROMPT) || 'Run this to begin' }} label="ChatBubbles.UserBubble" /></div>}
-            system={<div className="v2-stack"><div className="v2-hstack v2-hstack--between" style={plate}>{K.BrandMark ? <K.BrandMark /> : null}<span className="v2-hstack v2-gap-1">{K.Icon ? <K.Icon name="credits" /> : null}<span className="v2-text-label v2-tabular" style={{ color: 'var(--v2-ink)' }}>2,000</span></span></div><div style={{ alignSelf: 'flex-end', maxWidth: 'var(--v2-bubble-max)', background: 'var(--v2-blue-tint)', border: 'var(--v2-stroke) solid var(--v2-blue-tint-line)', borderRadius: 'var(--v2-radius-lg)', padding: 'calc(var(--v2-space-2) + var(--v2-space-05)) calc(var(--v2-space-3) + var(--v2-space-05))' }} className="v2-text-body">{(window.MoneyMaker && window.MoneyMaker.PROMPT) || 'Run this to begin'}</div></div>}
+            system={<div className="v2-stack"><div className="v2-hstack v2-hstack--between" style={plate}>{K.BrandMark ? <K.BrandMark /> : null}<span className="v2-hstack v2-gap-1">{K.Icon ? <K.Icon name="credits" /> : null}<span className="v2-text-label v2-tabular" style={{ color: 'var(--v2-ink)' }}>2,000</span></span></div><div style={{ alignSelf: 'flex-end', maxWidth: 'var(--v2-bubble-max)', background: 'var(--v2-blue-tint)', border: 'var(--v2-stroke) solid var(--v2-blue-tint-line)', borderRadius: 'var(--v2-radius-lg)', padding: 'var(--v2-space-3) var(--v2-space-4)' }} className="v2-text-body">{(window.MoneyMaker && window.MoneyMaker.PROMPT) || 'Run this to begin'}</div></div>}
             changed="The gradient appears three times in one 419px top bar (wordmark, pill ring, pill number) and fills the user bubble with a cousin gradient and an indigo glow. Fenced to identity: the wordmark and the credits glyph keep it; rings, numbers, bubbles, buttons and borders lose it. The credits number turns ink." />
           <G.SpecDrawer rows={[
             { part: 'Wordmark, credits glyph', token: '--v2-gradient-brand', value: 'linear-gradient(90deg, #0EA4C5, #7B4CFF)', ref: ['foundations.brand.wordmark', 'foundations.brand.star-mask', 'foundations.icon.credits-asset'] },

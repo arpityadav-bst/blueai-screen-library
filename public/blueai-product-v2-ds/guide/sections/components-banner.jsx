@@ -34,17 +34,17 @@
   function BannerSection() {
     const K = window.V2Kit || {};
     const Ban = K.Banner;
-    const Icon = K.Icon || function () { return null; };
-    /* The kit's own dismiss markup, with a forcing class (Banner renders this when onDismiss is set). */
+    /* The dismiss Banner renders for onDismiss (V2Kit.IconButton close, 32), passed as the action node so a
+       state can be forced on the real part. */
     function dismiss(force) {
-      return <button type="button" className={'v2-banner-dismiss ' + force} aria-label="Dismiss"><Icon name="close" size={16} /></button>;
+      return K.IconButton ? <K.IconButton icon="close" label="Dismiss" size={32} onClick={noop} className={force} /> : null;
     }
     const ooc = <>You’ve used all of today’s AI credits. Credits will be refreshed in <Countdown />.</>;
     return (
       <G.Section id="banner">
         <G.Part name="Banner" status="changed" role="A condition that holds until it ends, placed above what it is about. Five tones; the words stay in ink.">
           <G.Stage ground="surface" width="shell">
-            <Ban tone="attention" title="Out of credits">{ooc}</Ban>
+            <Ban tone="offline" icon="clock" title="Out of credits">{ooc}</Ban>
           </G.Stage>
           <ul className="g-list">
             <li>Radius 10, 1px tone line, tone tint, padding 12, gap 8.</li>
@@ -58,12 +58,12 @@
             { label: 'Info', node: <div style={full}><Ban tone="info">Use the account you applied with</Ban></div> },
             { label: 'Success', note: 'news, dismissible', node: <div style={full}><Ban tone="success" onDismiss={noop}>Yesterday’s run verified.</Ban></div> },
             { label: 'Attention, with action', node: <div style={full}><Ban tone="attention" action={{ label: 'Add a key', onClick: noop }}>No API key configured. Add one to get started.</Ban></div> },
-            { label: 'Attention, live value', note: 'out of AI credits; countdown read once', node: <div style={full}><Ban tone="attention" title="Out of credits">{ooc}</Ban></div> },
+            { label: 'Neutral, live value', note: 'out of AI credits: tone offline with a clock; countdown read once', node: <div style={full}><Ban tone="offline" icon="clock" title="Out of credits">{ooc}</Ban></div> },
             { label: 'Danger, with action', note: 'today is blocked', node: <div style={full}><Ban tone="danger" title="Didn’t finish" action={{ label: 'Try again', onClick: noop }}>Today doesn’t count yet. Try again before 9 pm.</Ban></div> },
             { label: 'Offline (neutral)', node: <div style={full}><Ban tone="offline" title="You’re offline" action={{ label: 'Try again', onClick: noop }}>Today’s run starts when BlueAI is back online.</Ban></div> },
             { label: 'Info, condition with action', note: 'not dismissible', node: <div style={full}><Ban tone="info" icon="zap" action={{ label: 'Change', onClick: noop }}>Automatic is on for YouTube. BlueAI takes paid YouTube jobs without asking.</Ban></div> },
-            { label: 'Action: hover', node: <div style={full}><Ban tone="attention" action={<button type="button" className="v2-banner-action is-hover">Add a key</button>}>No API key configured. Add one to get started.</Ban></div> },
-            { label: 'Action: focus-visible', node: <div style={full}><Ban tone="attention" action={<button type="button" className="v2-banner-action is-focus">Add a key</button>}>No API key configured. Add one to get started.</Ban></div> },
+            { label: 'Action: hover', node: <div style={full}><Ban tone="attention" action={K.Link ? <K.Link standalone className="v2-banner-action is-hover">Add a key</K.Link> : null}>No API key configured. Add one to get started.</Ban></div> },
+            { label: 'Action: focus-visible', node: <div style={full}><Ban tone="attention" action={K.Link ? <K.Link standalone className="v2-banner-action is-focus">Add a key</K.Link> : null}>No API key configured. Add one to get started.</Ban></div> },
             { label: 'Dismiss: hover', node: <div style={full}><Ban tone="success" action={dismiss('is-hover')}>Yesterday’s run verified.</Ban></div> },
             { label: 'Dismiss: focus-visible', node: <div style={full}><Ban tone="success" action={dismiss('is-focus')}>Yesterday’s run verified.</Ban></div> },
           ]} />
@@ -77,9 +77,9 @@
             system={<div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--v2-space-3)', width: '100%' }}>
               <Ban tone="info">This PC doesn't meet the requirements for Hybrid. Cloud mode will be used.</Ban>
               <Ban tone="attention" action={{ label: 'Add a key', onClick: noop }}>No API key configured. Add one to get started.</Ban>
-              <Ban tone="attention" title="Out of credits">{ooc}</Ban>
+              <Ban tone="offline" icon="clock" title="Out of credits">{ooc}</Ban>
             </div>}
-            changed="Five banners in two blues, two ambers and two reds (edgeless at radius 10, centred at radius 14, a ribbon at radius 10, a sign-in notice at radius 12) become one Banner in five tones, left-aligned, radius 10, with a tone line. The words move to ink so every tone passes 4.5:1. An offline tone is added, and a heads-up that needs nothing from the partner (Hybrid unsupported) is info, not amber. The red out-of-credits banner becomes attention: the partner can act, and today's day may still count; danger is kept for a day that is blocked (a run that didn't finish)." />
+            changed="Five banners in two blues, two ambers and two reds (edgeless at radius 10, centred at radius 14, a ribbon at radius 10, a sign-in notice at radius 12) become one Banner in five tones, left-aligned, radius 10, with a tone line. The words move to ink so every tone passes 4.5:1. An offline tone is added, and a heads-up that needs nothing from the partner (Hybrid unsupported) is info, not amber. The red out-of-credits banner becomes neutral (the offline tone with a clock): nothing failed and nothing is asked of the partner, and it ends at a known time; attention is kept for an answer the worker needs, danger for a day that is blocked (a run that didn't finish)." />
 
           <G.SpecDrawer rows={[
             { part: 'Shape', token: '--v2-radius-md', value: '10px, 1px line', ref: ['display-feedback.banner.info-banner', 'display-feedback.banner.ooc', 'display-feedback.banner.login'] },
@@ -88,10 +88,10 @@
             { part: 'Info', token: '--v2-blue-tint / --v2-blue-tint-line / --v2-blue-ink', value: 'blue 8%, blue 24% line, icon #0d5ad6', ref: ['display-feedback.banner.login', 'display-feedback.banner.ribbon'] },
             { part: 'Success', token: '--v2-success-tint / --v2-success-line / --v2-success-ink', value: 'green 8%, green 32% line', ref: 'display-feedback.banner.site-payout' },
             { part: 'Attention', token: '--v2-attention-tint / --v2-attention-line / --v2-attention-ink', value: '#fdf6cf, #f3e8a8, icon #8a6116', ref: ['display-feedback.banner.byok', 'display-feedback.badge.tone-amber'] },
-            { part: 'Danger', token: '--v2-danger-tint / --v2-danger-line / --v2-danger-ink', value: '#fdecec, #d0454a, icon #c03a40 (V2 drew out of credits in it; that is attention now)', ref: 'display-feedback.banner.ooc' },
-            { part: 'Offline', token: '--v2-surface-sunken / --v2-line / --v2-ink-3', value: 'neutral, wifi-off icon' },
-            { part: 'Action', token: '--v2-ink / --v2-link-underline', value: '13/500 underlined link (32% underline, the Link part), 32px target' },
-            { part: 'Dismiss', token: '--v2-hit-min', value: '32px, aria-label Dismiss' },
+            { part: 'Danger', token: '--v2-danger-tint / --v2-danger-line / --v2-danger-ink', value: '#fdecec, #d0454a, icon #c03a40 (V2 drew out of credits in it; that is neutral now)', ref: 'display-feedback.banner.ooc' },
+            { part: 'Offline', token: '--v2-surface-sunken / --v2-line / --v2-ink-3', value: 'neutral, wifi-off icon; out of AI credits uses it with a clock' },
+            { part: 'Action', token: '--v2-ink / --v2-link-underline', value: 'V2Kit.Link standalone: 13/500 underlined ink link (32% underline), 32px target' },
+            { part: 'Dismiss', token: '--v2-hit-min', value: 'V2Kit.IconButton close, 32px, aria-label Dismiss' },
             { part: 'Copy', token: null, value: 'Use the account you applied with', ref: 'display-feedback.banner.login-copy' },
             { part: 'Copy', token: null, value: 'No API key configured. Add one to get started.', ref: 'display-feedback.banner.byok-copy' },
             { part: 'Copy', token: null, value: 'Out of credits', ref: 'display-feedback.banner.ooc-title' },

@@ -11,7 +11,7 @@
     ['Celebrate', '--v2-dur-celebrate', 'day-done pop only'],
   ];
   const KEYS = [
-    ['v2-anim-fade-up', 'message, tab, toast'], ['v2-anim-pop-in', 'menu, popover, tooltip'], ['v2-anim-scale-in', 'dialog'],
+    ['v2-anim-fade-up', 'message, tab, toast'], ['v2-anim-pop-in', 'menu, popover, tooltip, coach mark'], ['v2-anim-scale-in', 'dialog, day-done badge'],
     ['v2-anim-sheet-up', 'sheet arrives'], ['v2-anim-sheet-down', 'sheet leaves'], ['v2-anim-fade', 'scrim arrives'],
     ['v2-anim-fade-out', 'scrim leaves'], ['v2-anim-pulse', 'busy dot, thinking'], ['v2-anim-spin', 'spinner'],
     ['v2-anim-shimmer', 'skeleton'], ['v2-anim-indet', 'indeterminate bar'],
@@ -59,13 +59,13 @@
     const BUDGET = [
       ['Cold start', 3500, 1200, 'Splash 2.65s then an 850ms skeleton on every window open', 'Splash up to 1.2s on a true cold start only; reopening restores at once'],
       ['Welcome (signed out)', 5900, 420, 'Five beats with a slow logo drift; terms finish fading at 5.9s', 'Title, steps, action fade up at --v2-dur-2 with 120ms staggers, about 0.42s; cap 1.2s; no logo drift'],
-      ['Day done', 450, 450, 'Pop 0.45s, then the tick ring loops forever', 'One pop (v2-w-pop) at --v2-dur-celebrate; no ring'],
+      ['Day done', 450, 450, 'Pop 0.45s, then the tick ring loops forever', 'One pop (v2-scale-in) at --v2-dur-celebrate; no ring'],
       ['Sheet', 450, 320, 'Up 0.45s, down 0.32s', 'Up --v2-dur-4 ease-out, down --v2-dur-3 ease-in'],
     ];
     const bar = function (ms, tone) { return <span style={{ display: 'block', height: 8, width: Math.max(2, ms / 6000 * 100) + '%', background: tone, borderRadius: 'var(--v2-radius-pill)' }} />; };
     return (
       <G.Section id="motion">
-        <G.Part name="Durations and curves" status="changed" role="Five durations, three curves, nine shared keyframes (kit/motion.css) and the worker's three (kit/worker.css): arrivals ease out, departures ease in one step shorter, nothing loops unless the partner is waiting on it.">
+        <G.Part name="Durations and curves" status="changed" role="Five durations, three curves, nine shared keyframes (kit/motion.css) and one local, the Day 20 confetti (kit/worker.css): arrivals ease out, departures ease in one step shorter, nothing loops unless the partner is waiting on it.">
           <div><button type="button" className="g-btn" onClick={replay}>Play every tile</button></div>
           <G.StateGrid states={DURS.map(function (d) {
             return { label: d[0] + ' ' + G.tokenValue(d[1]), note: d[2], node: <span key={run} style={Object.assign({}, plate, { animation: 'v2-fade-up var(' + d[1] + ') var(--v2-ease-out) both' })} /> };
@@ -82,8 +82,8 @@
             { part: 'Message in, tab change', token: '--v2-dur-2 / --v2-ease-out', value: '180ms, v2-fade-up 6px', ref: ['foundations.motion.tab-fade', 'foundations.motion.tab-anim', 'foundations.motion.msg-in', 'foundations.motion.msg-in-class'] },
             { part: 'Arrival curve', token: '--v2-ease-out', value: 'cubic-bezier(0.16, 1, 0.3, 1)', ref: ['foundations.motion.house-curve', 'foundations.motion.onblue-ease'] },
             { part: 'Sheet', token: '--v2-dur-4 / --v2-dur-3', value: 'up 320ms ease-out, down 240ms ease-in', ref: ['foundations.motion.terms-up', 'foundations.motion.terms-down'] },
-            { part: 'Day-done pop', token: '--v2-dur-celebrate', value: '450ms, v2-w-pop on the badge, once', ref: 'foundations.motion.dd-pop' },
-            { part: 'Worker keyframes', token: '--v2-dur-3, --v2-dur-celebrate', value: 'kit/worker.css: v2-w-rise (coach mark), v2-w-pop (day-done badge), v2-w-confetti (Day 20 only); each plays once' },
+            { part: 'Day-done pop', token: '--v2-dur-celebrate', value: '450ms, v2-scale-in on the badge, once', ref: 'foundations.motion.dd-pop' },
+            { part: 'Local keyframe', token: '--v2-dur-celebrate', value: 'kit/worker.css: v2-w-confetti (Day 20 only), once; the badge pops with the shared v2-scale-in, the coach mark rises with .v2-anim-pop-in' },
           ]} />
         </G.Part>
 
@@ -137,7 +137,7 @@
             { part: 'Splash', token: '--v2-dur-4', value: 'V2 1050 / 2150 / 2650ms; system up to 1200ms, cold start only', ref: ['foundations.motion.splash-msg', 'foundations.motion.splash-fade', 'foundations.motion.splash-done'] },
             { part: 'Skeleton after splash', token: null, value: 'V2 850ms; system none on reopen', ref: 'foundations.motion.skeleton' },
             { part: 'Welcome intro', token: '--v2-dur-2 + 120ms staggers', value: 'V2 5.9s; system about 0.42s (.v2-anim-fade-up, .v2-delay-1, .v2-delay-2), cap 1.2s', ref: ['foundations.motion.welcome-cta', 'foundations.motion.welcome-terms'] },
-            { part: 'Day done', token: '--v2-dur-celebrate', value: '450ms pop (v2-w-pop), no ring (V2 loops one forever)', ref: ['foundations.motion.dd-pop', 'foundations.motion.ring-loop'] },
+            { part: 'Day done', token: '--v2-dur-celebrate', value: '450ms pop (v2-scale-in), no ring (V2 loops one forever)', ref: ['foundations.motion.dd-pop', 'foundations.motion.ring-loop'] },
           ]} />
         </G.Part>
       </G.Section>

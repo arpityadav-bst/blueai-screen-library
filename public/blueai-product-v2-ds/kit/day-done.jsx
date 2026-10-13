@@ -52,13 +52,13 @@
       <div className="v2-daydone">
         {e === 'day20' ? <Confetti /> : null}
         <span className="v2-daydone-badge" aria-hidden="true">{T ? <T status="pending" size={28} /> : null}</span>
-        <h2 className="v2-daydone-title" id={titleId}>{c.title}</h2>
-        {c.sub ? <p className="v2-daydone-sub">{c.sub}</p> : null}
-        {e === 'day20' ? <p className="v2-daydone-sub">{NEXT(n.endsOn)}</p> : null}
+        <h2 className="v2-daydone-title v2-text-title-lg" id={titleId}>{c.title}</h2>
+        {c.sub ? <p className="v2-daydone-sub v2-text-body-sm">{c.sub}</p> : null}
+        {e === 'day20' ? <p className="v2-daydone-sub v2-text-body-sm">{NEXT(n.endsOn)}</p> : null}
         <div className="v2-daydone-progress">
           {Bar ? <Bar days={n.segments} target={n.target} legend={false} /> : null}
           <div className="v2-daydone-count">
-            <span><span className="v2-w-figure">{n.done}</span> of {n.target} days</span>
+            <span className="v2-text-body-sm"><strong className="v2-tabular">{n.done}</strong> of {n.target} days</span>
             {T ? <T status="pending" size={14} label={PENDING} /> : <span>{PENDING}</span>}
           </div>
         </div>
