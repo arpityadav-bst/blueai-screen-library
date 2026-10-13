@@ -19,16 +19,17 @@
     ['guide/', 'This guide’s own chrome: catalog.jsx (the section list), sections/, refs/ (the V2 sources), app.jsx.'],
     ['design-md/', 'One Markdown partial per section; edit these, then rebuild DESIGN.md.'],
     ['tools/', 'ds-check.js (the gate) and build-design-md.js.'],
-    ['HANDOVER.md', 'The one-page handover in plain words.'],
   ];
   const CHECKS = [
     'Every V2 value or string the guide quotes still sits on its V2 line (guide/refs/*.js).',
+    'Every ref id a guide section names exists.',
     'No em dash anywhere, in any form.',
     'Every .jsx and .js file parses.',
     'Every .jsx, .js and .css file is 300 lines or fewer.',
     'The catalog, the section files, the design-md partials and index.html agree.',
-    'No raw colour in kit/ or screens/: tokens only.',
+    'No raw colour in kit/ or screens/: tokens only. No stylesheet but tokens.css defines a --v2- property.',
     'Every kit part and screen the catalog names is on window.V2Kit or window.V2Screens.',
+    'The size lists the JSX copies (Icon and Avatar sizes) equal their tokens.',
   ];
   const RULES = [
     'Tokens only: a colour or size in kit/ or screens/ is a --v2-* token, never a raw value.',
@@ -78,7 +79,7 @@
         </G.Part>
 
         <G.Part name="How to run the checks">
-          <p className="g-role">From <Code>public/blueai-product-v2-ds/</Code>, with Node and nothing to install:</p>
+          <p className="g-role">From <Code>public/blueai-product-v2-ds/</Code>, with Node and one dependency, Babel’s parser. ds-check looks for it in this repo’s <Code>node_modules</Code> (run <Code>npm install</Code> at the repo root), then in the main <Code>N:/Antigravity Main/blueai</Code> checkout’s, or takes a <Code>@babel/parser</Code> build named in the <Code>DS_BABEL_PARSER</Code> environment variable. With none of these the run fails with an error instead of skipping the parse step. The parser parses; it does not compile, so a transform error that only Babel standalone raises in the browser can still pass.</p>
           <G.Table head={['Command', 'When']} rows={[
             [<Code>node tools/ds-check.js</Code>, 'Before every hand-off. It must end with 0 errors. Add --missing-ok only while files are still being written.'],
             [<Code>node tools/build-design-md.js</Code>, 'After editing anything in design-md/. It rewrites DESIGN.md; never edit DESIGN.md by hand.'],

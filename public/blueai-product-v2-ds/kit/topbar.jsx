@@ -4,22 +4,19 @@
                      credits (number, or { balance, state } for V2Kit.CreditsChip), onOpenStatus,
                      onOpenCredits, helpItems, moreItems (Menu items; default: topBarMenus(onAction)),
                      onAction(id) for the default items, openMenu ('help' | 'more': guide specimens).
-   WorkerStatusChip  today's run, said once in the chrome. Props: status (scheduled | running |
-                     needs-you | done | failed | paused | offline), label, onClick, className.
-                     Opens today's run. Renders nothing for any other status (signed out).
+   WorkerStatusChip  today's run, said once in the chrome. Props: status (a RUN_STATUS key), label,
+                     onClick, className. Opens today's run. Renders nothing for any other status
+                     (signed out). 'done' is read as 'pending': a finished day is pending until
+                     verified, so only 'verified' is ever green.
+   RUN_STATUS        { status: [chip label, tray line] }: the one set of words the chip and the
+                     tray menu (section 29) share. Callers pass the real time or count as the label.
    BrandMark         the BlueAI mark, with or without the wordmark. Props: size (24 | 48), wordmark.
-   topBarMenus(onAction)  the default Help and More items (Earnings reads V2Kit.EARNINGS_URL).
+   topBarMenus(onAction)  the default Help and More items (SITE_FAQ_URL, EARNINGS_URL from the
+                     Worker record, kit/worker-data.jsx).
    New chat is not here: it lives in the chat screen's own header (section 32). */
 (function () {
   function cx() { return Array.prototype.filter.call(arguments, Boolean).join(' '); }
-  function icon(name, size) {
-    const I = window.V2Kit && window.V2Kit.Icon;
-    return I ? <I name={name} size={size || 20} /> : null;
-  }
-
-  // The site's FAQ (onblue/apply.html:1576 links index.html#faqs), on the same stand-in host as the
-  // one Earnings URL, which kit/worker-data.jsx owns (P2: one Earnings URL for the whole product).
-  const SITE_FAQ_URL = 'https://blueai-screen-library.vercel.app/experiments/onblue-vesper/index.html#faqs';
+  const K = function () { return window.V2Kit; };
 
   function BrandMark({ size, wordmark, className }) {
     const lg = size === 48;
@@ -33,25 +30,35 @@
     );
   }
 
-  // Status words are proposed copy except 'Didn’t finish', which echoes the PM's toast
-  // ('Today’s job didn’t finish.'). Callers pass the real label: 'Next run 11 am', 'Day 7 of 20'.
-  const STATUS = {
-    scheduled: 'Scheduled',
-    running: 'Running',
-    'needs-you': 'Needs you',
-    done: 'Done today',
-    failed: 'Didn’t finish',
-    paused: 'Paused',
-    offline: 'Offline',
+  /* Proposed copy except 'Didn’t finish', which echoes the PM's toast ('Today’s job didn’t
+     finish.'). The dot says the tone (shell.css); the words always say the state. */
+  const RUN_STATUS = {
+    scheduled: ['Scheduled', 'Next run 11 am'],
+    running: ['Running', 'Running today’s run'],
+    'needs-you': ['Needs you', 'A paid job needs your OK by 9 pm'],
+    pending: ['Done, pending', 'Done today, pending verification'],
+    'not-counted': ['Not counted today', 'Today doesn’t count toward your 20 days'],
+    verified: ['Verified', 'All 20 days verified'],
+    failed: ['Didn’t finish', 'Today’s job didn’t finish. Try again by 9 pm'],
+    stopped: ['Stopped', 'You stopped today’s run. Run again by 9 pm'],
+    missed: ['Didn’t start', 'Today’s run didn’t start. Run it by 9 pm'],
+    blocked: ['Can’t run', 'Today’s run can’t start. Open BlueAI to fix it'],
+    'no-credits': ['Waiting for credits', 'Out of AI credits for today’s run'],
+    paused: ['Paused', 'Runs paused'],
+    offline: ['Offline', 'Offline. Today’s run waits for a connection'],
+    ended: ['Period ended', 'Your 20 days have ended'],
   };
+  const ALIAS = { done: 'pending' };
+  function runStatus(s) { return RUN_STATUS[s] ? s : (ALIAS[s] || null); }
 
   function WorkerStatusChip({ status, label, onClick, className }) {
-    if (!STATUS[status]) return null;
+    const s = runStatus(status);
+    if (!s) return null;
     return (
-      <button type="button" className={cx('v2-status', 'v2-status--' + status, className)} onClick={onClick}>
+      <button type="button" className={cx('v2-status', 'v2-status--' + s, className)} onClick={onClick}>
         <span className="v2-sr-only">Today’s run: </span>
-        <span className={cx('v2-status-dot', 'v2-status-dot--' + status)} aria-hidden="true" />
-        <span className="v2-status-label">{label || STATUS[status]}</span>
+        <span className={cx('v2-status-dot', 'v2-status-dot--' + s)} aria-hidden="true" />
+        <span className="v2-status-label">{label || RUN_STATUS[s][0]}</span>
       </button>
     );
   }
@@ -60,61 +67,42 @@
     const act = function (id) { return function () { if (onAction) onAction(id); }; };
     return {
       help: [
-        { icon: 'help', label: 'FAQ', href: SITE_FAQ_URL, external: true },
+        { icon: 'help', label: 'FAQ', href: K().SITE_FAQ_URL, external: true },
         { icon: 'alert', label: 'Report a problem', onSelect: act('report') },
       ],
       more: [
         { icon: 'bell', label: 'Notifications', onSelect: act('notifications') },
         { icon: 'user', label: 'Account', onSelect: act('account') },
-        { icon: 'earnings', label: 'Earnings', href: (window.V2Kit || {}).EARNINGS_URL, external: true },
+        { icon: 'earnings', label: 'Earnings', href: K().EARNINGS_URL, external: true },
         { separator: true },
         { icon: 'sign-out', label: 'Sign out', onSelect: act('sign-out') },
       ],
     };
   }
 
-  // Icon button for the bar: the kit's IconButton when loaded, a plain labelled button otherwise.
-  // Spreads the trigger props V2Kit.Menu hands its render prop (aria-haspopup, aria-expanded,
-  // aria-controls, onClick); active mirrors aria-expanded so the open menu's button stays lit.
-  function BarButton(props) {
-    const IB = window.V2Kit && window.V2Kit.IconButton;
-    const rest = Object.assign({}, props);
-    delete rest.icon; delete rest.label; delete rest.active;
-    if (IB) return <IB icon={props.icon} label={props.label} size={32} active={props.active} {...rest} />;
-    return <button type="button" className="v2-topbar-btn" aria-label={props.label} {...rest}>{icon(props.icon, 20)}</button>;
-  }
-
-  function BarMenu({ icon: name, label, items, open }) {
-    const M = window.V2Kit && window.V2Kit.Menu;
+  // The bar's menus: V2Kit.Menu with the kit IconButton as its trigger. The trigger props the Menu
+  // hands its render prop (aria-haspopup, aria-expanded, aria-controls, onClick) are spread on;
+  // active mirrors aria-expanded so the open menu's button stays lit.
+  function BarMenu({ icon, label, items, open }) {
+    const P = K();
     const trigger = function (t) {
       const p = t && typeof t === 'object' ? t : {};
-      return <BarButton icon={name} label={label} active={!!p['aria-expanded']} {...p} />;
+      return <P.IconButton icon={icon} label={label} size={32} {...p} active={!!p['aria-expanded']} />;
     };
-    if (!M) return trigger(null);
-    return <M items={items} align="end" placement="down" label={label} trigger={trigger} defaultOpen={!!open} />;
-  }
-
-  function Credits({ credits, onOpenCredits }) {
-    const c = credits && typeof credits === 'object' ? credits : { balance: credits };
-    const Chip = window.V2Kit && window.V2Kit.CreditsChip;
-    if (Chip) return <Chip balance={c.balance} state={c.state} onClick={onOpenCredits} />;
-    return (
-      <button type="button" className="v2-status" onClick={onOpenCredits}>
-        <span className="v2-status-label">{Number(c.balance || 0).toLocaleString('en-US')}</span>
-        <span className="v2-sr-only"> AI credits left today</span>
-      </button>
-    );
+    return <P.Menu items={items} align="end" placement="down" label={label} trigger={trigger} defaultOpen={!!open} />;
   }
 
   function TopBar({ signedIn, status, statusLabel, credits, onOpenStatus, onOpenCredits, helpItems, moreItems, onAction, openMenu }) {
+    const P = K();
     const menus = topBarMenus(onAction);
+    const c = credits && typeof credits === 'object' ? credits : { balance: credits };
     return (
       <header className={cx('v2-topbar', !signedIn && 'v2-topbar--signed-out')}>
         <BrandMark size={24} />
         {signedIn ? (
           <div className="v2-topbar-actions">
             {status ? <WorkerStatusChip status={status} label={statusLabel} onClick={onOpenStatus} /> : null}
-            {credits != null ? <Credits credits={credits} onOpenCredits={onOpenCredits} /> : null}
+            {credits != null ? <P.CreditsChip balance={c.balance} state={c.state} onClick={onOpenCredits} /> : null}
             <div className="v2-topbar-menus">
               <BarMenu icon="help" label="Help" items={helpItems || menus.help} open={openMenu === 'help'} />
               <BarMenu icon="more" label="More" items={moreItems || menus.more} open={openMenu === 'more'} />
@@ -125,5 +113,5 @@
     );
   }
 
-  Object.assign(window.V2Kit = window.V2Kit || {}, { TopBar, WorkerStatusChip, BrandMark, topBarMenus, SITE_FAQ_URL });
+  Object.assign(window.V2Kit = window.V2Kit || {}, { TopBar, WorkerStatusChip, BrandMark, topBarMenus, RUN_STATUS });
 })();

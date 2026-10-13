@@ -5,7 +5,21 @@
   const noop = function () {};
   const LONG = 'Please skip any job that asks me to comment on a video about politics.\nAlso keep my runs before noon.\nAnd if a job needs Instagram, ask me first.\nOne more line.\nAnd another.\nSeventh line now scrolls inside the field.\nEighth line.';
   const AUTO_TEXT = 'Automatic is on for YouTube. BlueAI takes paid YouTube jobs without asking.';
-  const OOC = { tone: 'attention', text: 'You’re out of AI credits until 5:30 am.', action: { label: 'See AI credits', onClick: noop } };
+  // Zero credits uses section 48's notice, which says until when (OOC_COPY.until), with section 48's
+  // frozen clock: refill at 00:00 UTC, 6h 42m away. The locked field's placeholder is neutral, so the
+  // time is said once, in the notice (as on the chat screen).
+  const REFILL = Date.UTC(2026, 9, 14);
+  const NOW = REFILL - (6 * 60 + 42) * 60000;
+
+  function OocNotice() {
+    const K = window.V2Kit || {};
+    if (!K.OutOfCreditsNotice) return <G.Warn>kit/out-of-credits.jsx is not loaded.</G.Warn>;
+    return <K.OutOfCreditsNotice variant="composer" refillAt={REFILL} now={NOW} />;
+  }
+  function OocComposer() {
+    const K = window.V2Kit || {};
+    return <K.Composer disabledReason="You can’t send messages right now" notice={<OocNotice />} />;
+  }
 
   /* V2's AutoRibbon renders only while some app is on Automatic. This wrapper turns Automatic on
      for YouTube while it is on screen and puts the previous mode back when it leaves. */
@@ -45,7 +59,7 @@
             { label: 'Typing', node: shell(<K.Composer onSend={noop} defaultValue="Skip jobs about politics" />) },
             { label: 'Running (Stop)', node: shell(<K.Composer running onStop={noop} />) },
             { label: 'Awaiting a choice', node: shell(<K.Composer awaiting onStop={noop} />) },
-            { label: 'Disabled: out of credits until a time', node: shell(<K.Composer disabledReason="Out of credits until 5:30 am" notice={OOC} />) },
+            { label: 'Disabled: out of AI credits until a time', note: 'The notice says until when; the locked field stays neutral.', node: shell(<OocComposer />) },
             { label: 'Max height, then scroll', note: 'Six lines, then the field scrolls.', node: shell(<K.Composer onSend={noop} defaultValue={LONG} />) },
           ]} />
           <G.Note>Try it: send a message to start a pretend paid job, then press Stop.</G.Note>
@@ -62,7 +76,7 @@
             { part: 'Field', token: '--v2-text-14, --v2-leading-body, --v2-ink', value: '14/1.5 ink, placeholder ink-4 (4.77:1)', ref: 'chat.composer.textarea' },
             { part: 'Growth', token: null, value: '1 to 6 lines, then overflow-y auto', ref: ['chat.composer.autosize', 'chat.composer.clip'] },
             { part: 'Keys', token: null, value: 'Enter sends, Shift+Enter new line', ref: 'chat.composer.enter' },
-            { part: 'Placeholders', token: null, value: '"Type your message" / "BlueAI is working…" / "Answer with the buttons above" / the disabled reason', ref: ['chat.composer.placeholder-idle', 'chat.composer.placeholder-busy', 'chat.composer.placeholder-ooc'] },
+            { part: 'Placeholders', token: null, value: '"Type your message" / "BlueAI is working…" / "Answer with the buttons above" / the disabled reason, neutral ("You can’t send messages right now")', ref: ['chat.composer.placeholder-idle', 'chat.composer.placeholder-busy', 'chat.composer.placeholder-ooc'] },
             { part: 'Read-only', token: '--v2-surface-panel', value: 'running or awaiting: read-only (still focusable), Stop shown' },
           ]} />
         </G.Part>
@@ -70,7 +84,7 @@
         <G.Part name="ComposerNotice" status="changed" role="A condition that holds before you type, said above the field with its one action.">
           <G.StateGrid wide states={[
             { label: 'Automatic is on (info)', note: 'V2 copy.', node: shell(<K.ComposerNotice tone="info" icon="zap" text={AUTO_TEXT} action={{ label: 'Change', onClick: noop }} />) },
-            { label: 'Out of credits until 5:30 am (attention)', node: shell(<K.ComposerNotice {...OOC} />) },
+            { label: 'Out of AI credits (neutral)', note: 'V2Kit.OutOfCreditsNotice, section 48.', node: shell(<OocNotice />) },
             { label: 'BlueStacks needed (info)', node: shell(<K.ComposerNotice tone="info" icon="monitor" text="Today’s run needs BlueStacks App Player." action={{ label: 'Get BlueStacks', onClick: noop }} />) },
             { label: 'Paused (neutral)', node: shell(<K.ComposerNotice tone="neutral" text="The BlueAI worker is paused until tomorrow." action={{ label: 'Resume', onClick: noop }} />) },
           ]} />
@@ -90,7 +104,7 @@
             { part: 'Icon', token: '--v2-icon-sm', value: '16 (was 13)', ref: 'chat.composer.ribbon-icon' },
             { part: 'Text', token: '--v2-text-13, --v2-leading-snug', value: '13/1.35 (was 12)', ref: 'chat.composer.ribbon-text' },
             { part: 'Action', token: '--v2-hit-min, --v2-ink', value: 'underlined ink link, 32px tall, blue-ink on hover', ref: 'chat.composer.ribbon-change' },
-            { part: 'Out of credits', token: null, value: 'shown before typing, not after Send', ref: 'chat.composer.ooc-guard' },
+            { part: 'Out of AI credits', token: null, value: 'shown before typing, not after Send; V2Kit.OutOfCreditsNotice (section 48), never a second wording', ref: 'chat.composer.ooc-guard' },
           ]} />
         </G.Part>
 
@@ -105,8 +119,13 @@
             { label: 'Stop pressed', node: <K.SendStop mode="stop" onClick={noop} className="is-active" /> },
           ]} />
           <G.StateGrid wide states={[
-            { label: 'Stop confirm while a paid job runs', note: 'Proposed copy.', node: shell(<K.Composer running paidJob confirming onStop={noop} />) },
+            { label: 'Stop confirm while a paid job runs', note: 'paidJob. Proposed copy.', node: shell(<K.Composer running paidJob confirming onStop={noop} />) },
+            { label: 'Stop confirm before a job is taken', note: 'costsDay: running or waiting, no job yet. Proposed copy.', node: shell(<K.Composer running costsDay confirming onStop={noop} />) },
           ]} />
+          <G.CompareRow
+            v2={<G.FrameState url="index.html?day=next&end=job" label="V2 daily run: Send turns to Stop while the run plays" height={830} />}
+            system={<div className="v2-hstack v2-gap-3"><K.SendStop mode="send" onClick={noop} /><K.SendStop mode="stop" onClick={noop} /></div>}
+            changed="V2's one button is 34 round, fills #1990FF for Send (white on it is 3.24:1), shows hover by fading, and stops a paid job on one click with no trace ('Stop task'). The system keeps one button that swaps Send for Stop, at 36 round: Send on action blue (4.92:1), Stop white with a 1px line and a 16 stop glyph, hover as colour and wash, and stopping a paid job asks first and leaves a stopped run card." />
           <G.SpecDrawer rows={[
             { part: 'Size', token: '--v2-control-md, --v2-radius-round', value: '36 round (was 34)', ref: 'chat.composer.send-size' },
             { part: 'Send', token: '--v2-action, --v2-action-hover, --v2-on-color', value: '#1268f0, hover #0f5ad4, white glyph (was #1990FF, 3.24:1)', ref: 'chat.composer.send' },
@@ -115,7 +134,7 @@
             { part: 'Hover', token: '--v2-wash-hover', value: 'colour and wash in CSS, never opacity', ref: 'chat.composer.hover' },
             { part: 'Press', token: null, value: 'translateY 1px' },
             { part: 'Labels', token: null, value: '"Send message" / "Stop the run" ("task" is banned for paid work)', ref: 'chat.composer.aria' },
-            { part: 'Confirm', token: '--v2-attention-tint', value: '"Stop now? The paid job won’t finish and today won’t count." Keep running / Stop run (36px)', ref: ['chat.composer.stop', 'chat.run.stop-trace'] },
+            { part: 'Confirm', token: '--v2-attention-tint', value: 'costsDay: "Stop now? Today won’t count toward your 20 days."; paidJob (a job under way): "Stop now? The paid job won’t finish and today won’t count." Keep running / Stop run (36px)', ref: ['chat.composer.stop', 'chat.run.stop-trace'] },
           ]} />
           <G.DoDont
             do={['Ask before stopping a paid job, and say what it costs.', 'Leave a stopped run card with its day status.']}

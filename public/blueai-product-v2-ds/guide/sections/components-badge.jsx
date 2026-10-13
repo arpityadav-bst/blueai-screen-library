@@ -31,20 +31,20 @@
           </ul>
 
           <G.StateGrid states={[
-            { label: 'Neutral', note: 'one tick: pending', node: <B tone="neutral" icon="check">Pending verification</B> },
+            { label: 'Neutral', note: 'one ink-4 tick: pending', node: <B tone="neutral" icon="check">Pending verification</B> },
             { label: 'Success', note: 'two ticks: verified', node: <B tone="success" icon="check-double">Verified</B> },
             { label: 'Info, busy', note: 'dot pulses', node: <B tone="info" busy>Running</B> },
             { label: 'Attention', note: 'the worker needs you', node: <B tone="attention" dot>Waiting for you</B> },
             { label: 'Danger', note: 'the day did not count', node: <B tone="danger" dot>Not counted</B> },
-            { label: 'No mark', note: 'fill alone', node: <B tone="neutral">Paused</B> },
+            { label: 'Neutral, no mark', note: 'fill alone', node: <B tone="neutral">Paused</B> },
             { label: 'With dot', node: <B tone="neutral" dot>Paused</B> },
             { label: 'Busy, reduced motion', note: 'dot holds still', node: <B tone="info" busy className="v2-reduced-motion">Running</B> },
           ]} />
 
           <G.Note>
-            Why the label is ink, not the tone colour: the success ink on its own tint computes 4.49:1, under the 4.5:1
-            floor for 12px text, and the site's green state chip has the same pair. With the tone in the fill and the
-            mark, every tone reads at 9:1 or better and the row stays quiet.
+            Why the label is ink, not the tone colour: a style choice. Every status ink passes on its own tint (success ink
+            on the 8% tint is 4.59:1), and one ink keeps a row of badges calm: the tone is in the fill and the mark, the
+            words read at 9:1 or better. Pending verification is neutral (section 03).
           </G.Note>
 
           <G.CompareRow
@@ -65,8 +65,8 @@
             { part: 'Padding', token: '--v2-space-2', value: '0 8px', ref: 'display-feedback.badge.statuschip' },
             { part: 'Label size', token: '--v2-text-12 / --v2-weight-medium', value: '12px / 500, sentence case', ref: ['display-feedback.badge.active', 'display-feedback.badge.verified', 'display-feedback.badge.not-enrolled'] },
             { part: 'Label colour', token: '--v2-ink-2', value: '#3c4049 on every tone', ref: ['display-feedback.badge.tone-green', 'display-feedback.badge.site-chip'] },
-            { part: 'Neutral fill', token: '--v2-surface-sunken', value: '#f6f6f8, mark ink-4', ref: 'display-feedback.badge.not-enrolled' },
-            { part: 'Info fill', token: '--v2-blue-tint', value: 'blue 8%, mark --v2-blue' },
+            { part: 'Neutral fill', token: '--v2-surface-sunken', value: '#f6f6f8, mark ink-4 (paused, skipped, soon)', ref: 'display-feedback.badge.not-enrolled' },
+            { part: 'Info fill', token: '--v2-blue-tint', value: 'blue 8%, mark --v2-blue (pending verification, running, checking)' },
             { part: 'Success fill', token: '--v2-success-tint', value: 'green 8%, mark --v2-success', ref: ['display-feedback.badge.verified', 'display-feedback.badge.active'] },
             { part: 'Attention fill', token: '--v2-attention-tint', value: '#fdf6cf, mark --v2-attention-ink', ref: 'display-feedback.badge.tone-amber' },
             { part: 'Danger fill', token: '--v2-danger-tint', value: '#fdecec, mark --v2-danger-ink' },

@@ -44,21 +44,23 @@
       <G.Section id="banner">
         <G.Part name="Banner" status="changed" role="A condition that holds until it ends, placed above what it is about. Five tones; the words stay in ink.">
           <G.Stage ground="surface" width="shell">
-            <Ban tone="danger" title="Out of credits">{ooc}</Ban>
+            <Ban tone="attention" title="Out of credits">{ooc}</Ban>
           </G.Stage>
           <ul className="g-list">
             <li>Radius 10, 1px tone line, tone tint, padding 12, gap 8.</li>
             <li>Icon 16 in the tone ink: info, check, alert, x-circle, wifi-off by default.</li>
             <li>Title 13/600 ink (optional), body 13 ink-2; figures in the body are bold, tabular ink.</li>
             <li>One action at most, an underlined link at the trailing edge, 32px target. A dismiss (32px, labelled) only for one-time news.</li>
+            <li>Tones: info, success, attention, danger and offline. Offline is Banner’s neutral tone (sunken, line, ink-3 icon): a neutral condition uses tone="offline" with its own icon (the AI mode conflict uses alert, section 49). An unknown tone renders as info.</li>
           </ul>
 
           <G.StateGrid wide states={[
             { label: 'Info', node: <div style={full}><Ban tone="info">Use the account you applied with</Ban></div> },
             { label: 'Success', note: 'news, dismissible', node: <div style={full}><Ban tone="success" onDismiss={noop}>Yesterday’s run verified.</Ban></div> },
             { label: 'Attention, with action', node: <div style={full}><Ban tone="attention" action={{ label: 'Add a key', onClick: noop }}>No API key configured. Add one to get started.</Ban></div> },
-            { label: 'Danger, live value', note: 'countdown read once', node: <div style={full}><Ban tone="danger" title="Out of credits">{ooc}</Ban></div> },
-            { label: 'Offline (neutral)', node: <div style={full}><Ban tone="offline" title="You're offline" action={{ label: 'Try again', onClick: noop }}>Today's run starts when BlueAI is back online.</Ban></div> },
+            { label: 'Attention, live value', note: 'out of AI credits; countdown read once', node: <div style={full}><Ban tone="attention" title="Out of credits">{ooc}</Ban></div> },
+            { label: 'Danger, with action', note: 'today is blocked', node: <div style={full}><Ban tone="danger" title="Didn’t finish" action={{ label: 'Try again', onClick: noop }}>Today doesn’t count yet. Try again before 9 pm.</Ban></div> },
+            { label: 'Offline (neutral)', node: <div style={full}><Ban tone="offline" title="You’re offline" action={{ label: 'Try again', onClick: noop }}>Today’s run starts when BlueAI is back online.</Ban></div> },
             { label: 'Info, condition with action', note: 'not dismissible', node: <div style={full}><Ban tone="info" icon="zap" action={{ label: 'Change', onClick: noop }}>Automatic is on for YouTube. BlueAI takes paid YouTube jobs without asking.</Ban></div> },
             { label: 'Action: hover', node: <div style={full}><Ban tone="attention" action={<button type="button" className="v2-banner-action is-hover">Add a key</button>}>No API key configured. Add one to get started.</Ban></div> },
             { label: 'Action: focus-visible', node: <div style={full}><Ban tone="attention" action={<button type="button" className="v2-banner-action is-focus">Add a key</button>}>No API key configured. Add one to get started.</Ban></div> },
@@ -75,9 +77,9 @@
             system={<div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--v2-space-3)', width: '100%' }}>
               <Ban tone="info">This PC doesn't meet the requirements for Hybrid. Cloud mode will be used.</Ban>
               <Ban tone="attention" action={{ label: 'Add a key', onClick: noop }}>No API key configured. Add one to get started.</Ban>
-              <Ban tone="danger" title="Out of credits">{ooc}</Ban>
+              <Ban tone="attention" title="Out of credits">{ooc}</Ban>
             </div>}
-            changed="Five banners in two blues, two ambers and two reds (edgeless at radius 10, centred at radius 14, a ribbon at radius 10, a sign-in notice at radius 12) become one Banner in five tones, left-aligned, radius 10, with a tone line. The words move to ink so every tone passes 4.5:1. An offline tone is added, and a heads-up that needs nothing from the partner (Hybrid unsupported) is info, not amber." />
+            changed="Five banners in two blues, two ambers and two reds (edgeless at radius 10, centred at radius 14, a ribbon at radius 10, a sign-in notice at radius 12) become one Banner in five tones, left-aligned, radius 10, with a tone line. The words move to ink so every tone passes 4.5:1. An offline tone is added, and a heads-up that needs nothing from the partner (Hybrid unsupported) is info, not amber. The red out-of-credits banner becomes attention: the partner can act, and today's day may still count; danger is kept for a day that is blocked (a run that didn't finish)." />
 
           <G.SpecDrawer rows={[
             { part: 'Shape', token: '--v2-radius-md', value: '10px, 1px line', ref: ['display-feedback.banner.info-banner', 'display-feedback.banner.ooc', 'display-feedback.banner.login'] },
@@ -86,9 +88,9 @@
             { part: 'Info', token: '--v2-blue-tint / --v2-blue-tint-line / --v2-blue-ink', value: 'blue 8%, blue 24% line, icon #0d5ad6', ref: ['display-feedback.banner.login', 'display-feedback.banner.ribbon'] },
             { part: 'Success', token: '--v2-success-tint / --v2-success-line / --v2-success-ink', value: 'green 8%, green 32% line', ref: 'display-feedback.banner.site-payout' },
             { part: 'Attention', token: '--v2-attention-tint / --v2-attention-line / --v2-attention-ink', value: '#fdf6cf, #f3e8a8, icon #8a6116', ref: ['display-feedback.banner.byok', 'display-feedback.badge.tone-amber'] },
-            { part: 'Danger', token: '--v2-danger-tint / --v2-danger-line / --v2-danger-ink', value: '#fdecec, #d0454a, icon #c03a40', ref: 'display-feedback.banner.ooc' },
+            { part: 'Danger', token: '--v2-danger-tint / --v2-danger-line / --v2-danger-ink', value: '#fdecec, #d0454a, icon #c03a40 (V2 drew out of credits in it; that is attention now)', ref: 'display-feedback.banner.ooc' },
             { part: 'Offline', token: '--v2-surface-sunken / --v2-line / --v2-ink-3', value: 'neutral, wifi-off icon' },
-            { part: 'Action', token: '--v2-ink / --v2-line-hover', value: '13/500 underlined link, 32px target' },
+            { part: 'Action', token: '--v2-ink / --v2-link-underline', value: '13/500 underlined link (32% underline, the Link part), 32px target' },
             { part: 'Dismiss', token: '--v2-hit-min', value: '32px, aria-label Dismiss' },
             { part: 'Copy', token: null, value: 'Use the account you applied with', ref: 'display-feedback.banner.login-copy' },
             { part: 'Copy', token: null, value: 'No API key configured. Add one to get started.', ref: 'display-feedback.banner.byok-copy' },
@@ -97,7 +99,7 @@
             { part: 'Copy', token: null, value: "This PC doesn't meet the requirements for Hybrid. Cloud mode will be used.", ref: 'display-feedback.banner.hw-copy' },
             { part: 'Copy', token: null, value: 'Automatic is on for YouTube. BlueAI takes paid YouTube jobs without asking.', ref: 'display-feedback.banner.ribbon-copy' },
             { part: 'Copy', token: null, value: 'Yesterday’s run verified.', ref: 'display-feedback.stat.verified-line' },
-            { part: 'Copy (proposed)', token: null, value: "Add a key, You're offline, Today's run starts when BlueAI is back online., Try again" },
+            { part: 'Copy (proposed)', token: null, value: 'Add a key, You’re offline, Today’s run starts when BlueAI is back online., Try again, Didn’t finish, Today doesn’t count yet. Try again before 9 pm.' },
           ]} />
 
           <G.DoDont

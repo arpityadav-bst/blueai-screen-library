@@ -66,6 +66,9 @@
     toCustom: 'Use my own local model instead',
     toAuto: 'Use BlueAI’s model instead',
     fields: 'Enter the endpoint and model name first',
+    // The format lives in helper text (ink-3), never only in a 2.57:1 placeholder (section 09).
+    endpointHint: 'For example, http://127.0.0.1:11434/api/chat',
+    modelHint: 'For example, qwen3-vl:4b-instruct',
   };
   const BADGES = { running: ['success', 'On'], install_failed: ['danger', 'Download failed'], startup_failed: ['danger', 'Couldn’t start'], blocked: ['neutral', 'Paused'] };
 
@@ -101,7 +104,7 @@
           <div className="v2-byok-key">
             <div className="v2-byok-key-text">
               <p className="v2-byok-provider">{keyInfo.provider}</p>
-              <p className="v2-byok-masked" aria-label={'Key ending ' + last4}>{'•••• ' + last4}</p>
+              <p className="v2-byok-masked"><span aria-hidden="true">{'•••• '}</span><span className="v2-sr-only">Key ending </span>{last4}</p>
             </div>
             {!confirming ? <Button variant="secondary" size="sm" onClick={function () { setConfirming(true); }}>Remove</Button> : null}
           </div>
@@ -134,7 +137,7 @@
           <div className="v2-byok-actions">
             <Button variant="secondary" onClick={cancel} disabled={busy}>Cancel</Button>
             <Button variant="primary" onClick={save} loading={busy} disabled={!keyVal.trim()} disabledReason="Paste your key first">
-              {busy ? 'Checking key…' : 'Check and save'}
+              Check and save
             </Button>
           </div>
         </div>
@@ -159,7 +162,7 @@
 
   function AiModePanel(props) {
     const { mode, method, hwSupported, conflict, pct, endpoint, model, className } = props;
-    const RadioCard = part('RadioCard'), Section = part('SettingsSection'), Button = part('Button');
+    const RadioCard = part('RadioCard'), Section = part('SettingsSection'), Button = part('Button'), Link = part('Link');
     const Badge = part('Badge'), Banner = part('Banner'), ProgressBar = part('ProgressBar'), TextField = part('TextField');
     const hw = hwSupported !== false;
     const hybrid = mode === 'hybrid' && hw;
@@ -178,15 +181,15 @@
         <div className="v2-aimode-block">
           <ProgressBar value={st === 'downloading' ? n : undefined} max={100} indeterminate={st !== 'downloading'}
             size={6} label={busy} valueText={st === 'downloading' ? n + '%' : undefined} />
-          <p className="v2-aimode-meta">{AI.still}</p>
+          <p className="v2-text-meta">{AI.still}</p>
           {st === 'downloading' ? <div className="v2-aimode-row"><Button variant="quiet" size="sm" onClick={props.onCancel}>{AI.cancel}</Button></div> : null}
         </div>
       );
     } else if (hybrid && st === 'idle' && custom) {
       body = (
         <div className="v2-aimode-block">
-          <TextField label="Model endpoint" mono value={endpoint || ''} placeholder="http://127.0.0.1:11434/api/chat" onChange={function (x) { call(props.onEndpoint, val(x)); }} />
-          <TextField label="Model name" mono value={model || ''} placeholder="qwen3-vl:4b-instruct" onChange={function (x) { call(props.onModel, val(x)); }} />
+          <TextField label="Model endpoint" mono value={endpoint || ''} helper={AI.endpointHint} onChange={function (x) { call(props.onEndpoint, val(x)); }} />
+          <TextField label="Model name" mono value={model || ''} helper={AI.modelHint} onChange={function (x) { call(props.onModel, val(x)); }} />
           <div className="v2-aimode-row"><Button variant="primary" size="sm" onClick={props.onApply} disabled={!ready} disabledReason={AI.fields}>Apply</Button></div>
         </div>
       );
@@ -214,7 +217,7 @@
     const canSwitch = hybrid && !running && !busy;
     return (
       <Section id="ai-mode" title={AI.title} description={AI.desc} className={cx('v2-aimode', className)}>
-        <RadioCard label={AI.title} name="ai-mode" value={running ? 'hybrid' : 'cloud'} onChange={function (x) { call(props.onPick, val(x)); }}
+        <RadioCard label={AI.title} value={running ? 'hybrid' : 'cloud'} onChange={function (x) { call(props.onPick, val(x)); }}
           options={[
             { value: 'cloud', title: 'Cloud', sub: AI.cloudSub },
             { value: 'hybrid', title: 'Hybrid', sub: AI.hybridSub, disabled: !hw, disabledReason: AI.noHw, pending: hybrid && !running ? (st === 'idle' ? AI.setupTag : true) : false },
@@ -223,9 +226,9 @@
           <div className="v2-aimode-body">
             {body}
             {canSwitch ? (
-              <button type="button" className="v2-aimode-switch" onClick={function () { call(props.onMethod, custom ? 'auto' : 'custom'); }}>
+              <Link standalone className="v2-aimode-switch" onClick={function () { call(props.onMethod, custom ? 'auto' : 'custom'); }}>
                 {custom ? AI.toAuto : AI.toCustom}
-              </button>
+              </Link>
             ) : null}
           </div>
         ) : null}

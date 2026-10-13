@@ -1,10 +1,11 @@
 /* BlueAI Product V2 Design System: inputs. TextField, TextArea, Select (kit/fields.jsx); Switch,
    Checkbox, RadioCard, Segmented (kit/choice.jsx). Tokens only. Each state is written next to the
    class the guide forces it with (.is-hover, .is-focus, .is-active). Forced focus on a field, a
-   checkbox or a radio card draws on its box, so the global .is-focus outline is cleared on the
-   wrapper. Off-state edges on the small binary controls use ink-4 so they clear 3:1 on white. */
-
-.v2-field.is-focus, .v2-check.is-focus, .v2-radio-card.is-focus { outline: none; }
+   checkbox or a radio card draws on its box; kit/base.css clears the global .is-focus outline on
+   the wrapper. Off-state edges on the small binary controls use ink-4 so they clear 3:1 on white.
+   Field and composer edges stay --v2-line-strong (1.41:1, the site's 15% field edge): the visible
+   label above names the field, so the edge is not the only cue to it (section 09 records the
+   exception); focus turns the edge blue (4.47:1) and adds the ring. */
 
 /* Field: label, box, message line ----------------------------------------------------------- */
 .v2-field { display: flex; flex-direction: column; gap: var(--v2-space-15); min-width: 0; }
@@ -115,7 +116,6 @@
 .v2-switch-row .v2-switch { margin-top: var(--v2-space-05); }
 .v2-switch-text { display: flex; flex-direction: column; gap: var(--v2-space-05); min-width: 0; }
 .v2-switch-label { color: var(--v2-ink); font-size: var(--v2-text-14); font-weight: var(--v2-weight-medium); line-height: var(--v2-leading-snug); cursor: pointer; }
-.v2-switch-desc { color: var(--v2-ink-3); font-size: var(--v2-text-13); line-height: var(--v2-leading-body); }
 .v2-switch-row.is-disabled .v2-switch-label { cursor: not-allowed; }
 
 /* Checkbox: 18 box, radius 4, whole row is the target -------------------------------------- */
@@ -148,7 +148,6 @@
 .v2-check.is-disabled .v2-check-row { opacity: var(--v2-opacity-disabled); cursor: not-allowed; }
 .v2-check-text { display: flex; flex-direction: column; gap: var(--v2-space-05); min-width: 0; }
 .v2-check-label { color: var(--v2-ink); font-size: var(--v2-text-14); line-height: var(--v2-leading-snug); }
-.v2-check-desc { color: var(--v2-ink-3); font-size: var(--v2-text-13); line-height: var(--v2-leading-body); }
 .v2-check-msg {
   display: flex; align-items: flex-start; gap: var(--v2-space-1); padding-left: calc(18px + var(--v2-space-3));
   color: var(--v2-danger-ink); font-size: var(--v2-text-12); line-height: var(--v2-leading-snug);
@@ -191,7 +190,8 @@
 }
 .v2-radio-card-tag { color: var(--v2-ink-3); font-size: var(--v2-text-12); }
 
-/* Segmented: recessed track, one raised segment (an edge, not a shadow) ---------------------- */
+/* Segmented: recessed track; the selected segment takes the family's chosen look (select fill, ink)
+   with a 1.5px blue edge, 4.15:1 on the track, so which mode is on never rests on text darkness ---- */
 .v2-segmented {
   display: inline-flex; gap: var(--v2-space-05); padding: var(--v2-space-05);
   border: var(--v2-stroke) solid var(--v2-line); border-radius: var(--v2-radius-md); background-color: var(--v2-surface-sunken);
@@ -207,7 +207,11 @@
 }
 .v2-segmented--sm .v2-segment { height: var(--v2-control-sm); padding: 0 var(--v2-space-2); }
 .v2-segment:hover:not(:disabled):not(.is-selected), .v2-segment.is-hover { background-color: var(--v2-wash-hover); color: var(--v2-ink); }
-.v2-segment.is-selected { background-color: var(--v2-surface); border-color: var(--v2-line); color: var(--v2-ink); }
+.v2-segment.is-selected {
+  background-color: var(--v2-surface); background-image: linear-gradient(var(--v2-select), var(--v2-select));
+  border-color: var(--v2-blue); box-shadow: inset 0 0 0 calc(var(--v2-stroke-selected) - var(--v2-stroke)) var(--v2-blue);
+  color: var(--v2-ink);
+}
 .v2-segment.is-pending { border-style: dashed; border-color: var(--v2-select-line); color: var(--v2-ink); cursor: progress; }
 .v2-segment:focus-visible, .v2-segment.is-focus { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); }
 .v2-segment:disabled { opacity: var(--v2-opacity-disabled); cursor: not-allowed; }

@@ -17,7 +17,7 @@
     ['--v2-z-popover', 'menus, popovers, tooltips'],
     ['--v2-z-coach', 'coach mark scrim and spotlight'],
     ['--v2-z-overlay', 'in-window celebration (day done)'],
-    ['--v2-z-dialog', 'every dialog and sheet; ties resolve by mount order'],
+    ['--v2-z-dialog', 'every dialog and sheet; one dialog at a time; mount order only settles an unavoidable overlap'],
     ['--v2-z-gate', 'sign-in gate'],
     ['--v2-z-toast', 'in-app toast'],
     ['--v2-z-splash', 'boot splash'],
@@ -64,8 +64,9 @@
           </div>
           <G.StateGrid states={[
             { label: 'Stroke 1px', note: '--v2-stroke: every edge', node: <div style={Object.assign({}, surf, { width: '100%' })} className="v2-text-label">Card</div> },
-            { label: 'Stroke 1.5px', note: '--v2-stroke-selected: selected, focused composer', node: <div style={Object.assign({}, surf, { width: '100%', border: 'var(--v2-stroke-selected) solid var(--v2-select-line)', background: 'var(--v2-select)' })} className="v2-text-label">Selected</div> },
+            { label: 'Stroke 1.5px', note: '--v2-stroke-selected: selected, focused composer, ring status dot, pending DayBar segment', node: <div style={Object.assign({}, surf, { width: '100%', border: 'var(--v2-stroke-selected) solid var(--v2-select-line)', background: 'var(--v2-select)' })} className="v2-text-label">Selected</div> },
           ]} />
+          <G.Note>2px is mark geometry (tick and glyph strokes) and has no stroke token.</G.Note>
           <G.CompareRow
             v2={<div className="v2-stack"><G.Live get={function () { return window.TelegramCard; }} label="TelegramCard (settings.jsx)" /><G.Live get={function () { return window.AISettingsCard; }} label="AISettingsCard (settings.jsx)" /></div>}
             system={K.Button ? <div className="v2-stack" style={{ alignItems: 'flex-start' }}><K.Button variant="secondary">Connect Telegram</K.Button><K.Button variant="primary">Save settings</K.Button></div> : <span className="g-missing">Button is not loaded</span>}

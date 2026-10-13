@@ -1,7 +1,7 @@
 /* Section 45: the job preview (New, proposal R07). Owner: worker slice. */
 (function () {
   const G = window.V2Guide;
-  const { useState } = React;
+  const { useState, useEffect } = React;
   const noop = function () {};
 
   // V2's daily job ask as the live AskBubble draws it, built from V2's own step (worker_flow.jsx:117-121).
@@ -9,6 +9,26 @@
     id: 'job', title: 'Paid job available', lead: 'Watch the video and provide feedback.', question: 'Want me to take this one?',
     options: [{ id: 'always', label: 'Yes, switch to Automatic', consent: true }, { id: 'once', label: 'Just this job' }, { id: 'deny', label: 'Not now' }],
   };
+
+  /* V2's first chip asks for Automatic through V2's own consent (AgentPermissions.AutoConfirm), which
+     only section 46 mounts, so it is mounted here beside the bubble and the tap does what it does in V2.
+     Leaving the section puts YouTube's mode back, which also drops a consent left open. */
+  function V2Ask() {
+    const AP = window.AgentPermissions;
+    const [answer, setAnswer] = useState(null);
+    useEffect(function () {
+      if (!AP) return undefined;
+      const before = AP.getMode('youtube');
+      return function () { AP.setMode('youtube', before); };
+    }, []);
+    return (
+      <div style={{ position: 'relative', overflow: 'hidden', width: '100%', maxWidth: 'var(--v2-shell-w)', minHeight: 560, padding: 'var(--v2-space-3)', background: 'var(--v2-canvas)' }}>
+        <G.Live get={function () { return window.WorkerCards && window.WorkerCards.AskBubble; }} props={{ step: V2_STEP, answer: answer, onAnswer: setAnswer }} label="WorkerCards.AskBubble" />
+        {answer ? <button type="button" className="g-btn" onClick={function () { setAnswer(null); }}>Ask again</button> : null}
+        <G.Live get={function () { return AP && AP.AutoConfirm; }} label="AgentPermissions.AutoConfirm" />
+      </div>
+    );
+  }
 
   function TakeDemo() {
     const K = window.V2Kit || {};
@@ -42,10 +62,13 @@
             { label: 'Taking', note: 'Take this job is busy; the other two wait', node: <TakeDemo /> },
             { label: 'Expired', note: 'no answer by 9 pm: the day did not count', node: <K.JobPreviewCard expired expiresAt="9 pm" /> },
             { label: 'Receipt (Automatic, after the fact)', note: 'the same facts, past tense, with the way back', node: <K.JobPreviewCard mode="receipt" doneAt="11:12 am" onChangeMode={noop} /> },
+            { label: 'Receipt, verified (Always ask)', note: 'two ticks; no way back to offer, the partner approved it', node: <K.JobPreviewCard mode="receipt" verify="verified" ranOn="ask" doneAt="11:12 am" /> },
+            { label: 'Receipt, not counted', note: 'rejected: the cross, no way back on Always ask', node: <K.JobPreviewCard mode="receipt" verify="rejected" ranOn="ask" doneAt="11:12 am" /> },
+            { label: 'Receipt in Run detail', note: 'verify null: the Verification card says the day once; Automatic offers the way back', node: <K.JobPreviewCard mode="receipt" verify={null} ranOn="auto" doneAt="11:12 am" onChangeMode={noop} /> },
           ]} />
           <G.CompareRow
             v2Label="V2 today: the ask it would replace"
-            v2={<G.Live get={function () { return window.WorkerCards && window.WorkerCards.AskBubble; }} props={{ step: V2_STEP, answer: null, onAnswer: noop }} label="WorkerCards.AskBubble" />}
+            v2={<V2Ask />}
             system={<K.JobPreviewCard onTake={noop} onSkip={noop} onStopAsking={noop} />}
             changed="Not a restyle: a proposal. The partner sees the job before agreeing to it, the cost of skipping sits on the skip button, and saying yes once no longer switches on Automatic: 'Stop asking' is its own quiet action and goes through the consent." />
           <G.FrameState url="index.html?day=next&end=job" label="V2: the next day's run asks about the job (Always ask)" height={830} />

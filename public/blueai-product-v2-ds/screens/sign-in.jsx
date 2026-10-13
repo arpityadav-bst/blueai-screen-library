@@ -4,11 +4,12 @@
    Built only from kit parts: AppFrame, Dialog (scrim frost), Banner, Spinner, Icon, Avatar, Badge,
    Card, Link. Layout lives in screens/entry.css. Spec: design-md/68-sign-in-screens.md.
 
-   SignIn {step 'browser' | 'signing' | 'success' | 'gate' | 'confirm', from 'browser' | 'player',
-          account, otherAccount, onOpenBrowser, onCancel, onSwitch, onContinue, onDone, doneAfter,
-          compact, reduced, preview, landmark, under}
+   SignIn {step 'browser' | 'signing' | 'error' | 'success' | 'gate' | 'confirm', from 'browser' |
+          'player', account, otherAccount, onOpenBrowser, onRetry, onCancel, onSwitch, onContinue,
+          onDone, doneAfter, compact, reduced, preview, landmark, under}
      browser  the browser is open; one action, Open the browser again. Close cancels.
      signing  the account is being checked (V2: 1500 ms). Close cancels.
+     error    the check failed or timed out: Try again (the check) or Open the browser again.
      success  says so and moves on by itself after doneAfter ms (900): no extra click.
      gate     signed in with an account that is not in the program. Blocking, one way out.
      confirm  option B (decision D5): App Player is signed in, so ask before using that account.
@@ -52,6 +53,20 @@
             <div className="v2-gate">
               <span className="v2-gate-mark v2-gate-mark--plain" aria-hidden="true">{k.Spinner ? <k.Spinner size={32} delay={0} /> : null}</span>
               <Text titleId={ids.title} title="Signing in…" body="Checking that this account is in the program." />
+            </div>
+          ),
+        };
+      case 'error':
+        return {
+          closable: true,
+          actions: [
+            { label: 'Open the browser again', variant: 'secondary', onClick: p.onOpenBrowser },
+            { label: 'Try again', variant: 'primary', onClick: p.onRetry },
+          ],
+          body: (
+            <div className="v2-gate">
+              <Mark icon="alert" tone="danger" />
+              <Text titleId={ids.title} title="Couldn’t finish signing in" body="Check your connection and try again." />
             </div>
           ),
         };
@@ -157,5 +172,5 @@
   }
 
   window.V2Screens = window.V2Screens || {};
-  Object.assign(window.V2Screens, { SignIn, SIGN_IN_STEPS: ['browser', 'signing', 'success', 'gate', 'confirm'] });
+  Object.assign(window.V2Screens, { SignIn, SIGN_IN_STEPS: ['browser', 'signing', 'error', 'success', 'gate', 'confirm'] });
 })();

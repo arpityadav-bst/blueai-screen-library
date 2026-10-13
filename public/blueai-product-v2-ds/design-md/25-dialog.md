@@ -8,7 +8,7 @@
 
 **Purpose.** A decision or a short task the partner must finish or decline before going on: consent to Automatic, sign out, disconnect, out of credits, the day-done moment.
 
-**Anatomy.** Scrim `--v2-scrim` over the window. Panel centred with a 16px inset: `--v2-surface`, 1px `--v2-line`, radius 16 (`--v2-radius-lg`), `--v2-shadow-2`. Header: title 20/600 `--v2-ink` (tracking -0.02em) taking the row, a 32px IconButton named Close beside it. Body: 14/1.5 `--v2-ink-2`, padding 20, scrolls when tall. Actions: 44px Buttons of equal width, 8px apart, secondary first, primary last. Optional footer note 12 `--v2-ink-3`. Layer `--v2-z-dialog` (100); two dialogs stack by mount order.
+**Anatomy.** Scrim `--v2-scrim` over the window. Panel centred with a 16px inset: `--v2-surface`, 1px `--v2-line`, radius 16 (`--v2-radius-lg`), `--v2-shadow-2`. Header: title 20/600 `--v2-ink` (tracking -0.02em) taking the row, a 32px IconButton named Close beside it. Body: 14/1.5 `--v2-ink-2`, padding 20, scrolls when tall. Actions: 44px Buttons of equal width, 8px apart, secondary first, primary last. Optional footer note 12 `--v2-ink-3`. Layer `--v2-z-dialog` (100). One dialog at a time; if two ever overlap, mount order decides which is on top (section 06), which only settles the overlap, it does not make stacking a pattern.
 
 **Variants.** `task` (md, Close, scrim click cancels). `consent` (md, Close, scrim click does nothing, the primary's label is the agreement: "I agree, turn on"). `alert` (see AlertDialog). `celebration` (sm, centred, no Close, scrim click closes: DayDone). `scrim="frost"` puts it on the sign-in gate veil and layer (`--v2-z-gate`), sign-in only.
 
@@ -20,7 +20,7 @@
 
 **Motion.** Scale-in `--v2-dur-4` (320ms) on `--v2-ease-out`; scrim fades `--v2-dur-3`; exit fades `--v2-dur-3` on `--v2-ease-in`. Reduced motion: instant (motion.css).
 
-**Accessibility.** role dialog, `aria-modal`, named by its title, described by `description`. On open the panel takes focus (no ring until Tab); Tab cycles inside; Esc, Close and Cancel return focus to the opener. `aria-busy` while busy. Close is named. Every label at least 4.5:1.
+**Accessibility.** role dialog, `aria-modal`, named by its title, described by `description`. Where focus lands on open, one rule (section 09): the panel itself for dialogs read before acting (task, consent, celebration), with no ring until Tab; the first field, through `initialFocus`, for a dialog that is a form; Cancel, the first action, for an AlertDialog. Tab cycles inside; Esc, Close and Cancel return focus to the opener. `aria-busy` while busy. Close is named. Every label at least 4.5:1.
 
 **Responsive.** Scoped to the window (absolute inside AppFrame's overlay plane), never the page. On the compact window the body scrolls; header and actions stay.
 
@@ -46,4 +46,4 @@
 
 **Responsive.** As Dialog.
 
-**Do / Don't.** Do name the primary for the action (Sign out, Disconnect, Delete), never OK or Yes. Do say the consequence (proposed: "Your BlueAI worker stops running until you sign in again."). Don't paint Sign out as destructive: V2's "Logout" on #ef4444 (3.76:1, profile.jsx:79) suggests loss, and confirming it does not even sign out (index.html:1000, R03).
+**Do / Don't.** Do name the primary for the action (Sign out, Disconnect, Delete), never OK or Yes. Do say the consequence; the sign-out confirm's strings are owned by section 64, the disconnect confirm's by section 63. Don't paint Sign out as destructive: V2's "Logout" on #ef4444 (3.76:1, profile.jsx:79) suggests loss, and confirming it does not even sign out (index.html:1000, R03).

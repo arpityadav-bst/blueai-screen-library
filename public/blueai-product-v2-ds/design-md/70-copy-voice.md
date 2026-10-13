@@ -10,14 +10,15 @@
 - **Anatomy (term: use; never):**
   - BlueAI: the product and brand on screen; never onBlue (internal), "BlueAI Worker v57".
   - BlueAI worker (lowercase worker): the thing that runs, pending D2 (worker or agent); never BlueAI Worker, AI worker, MoneyMaker, skill, blueai-worker, agent (until D2).
-  - job, paid job: one paid unit of work; never task (for paid work), campaign, gig, opportunity.
+  - job, paid job: one paid unit of work; never task (for paid work), campaign (the site should align: "completes campaigns and tasks", `onblue/apply.html:1849`), gig, opportunity.
   - run, today's run: the daily session; never routine, session, scheduled task.
   - day, your 20 days: the program unit; never program days, qualifying day.
   - pending verification, verified: one tick, two ticks; never confirmed, approved, validated.
   - Always ask, Automatic: the mode per app (the PM's names); never Mode (as a label), auto mode, autopilot, Just this job (as a mode).
   - Sign in, Sign out: account entry and exit; never Log in, Login, Logout, Log out (the site should align), logging in.
   - AI credits: the daily allowance, sentence case; never tokens, coins, free credits, claim, earn (for credits), balance (say "left today").
-  - Earnings: money, opened on the site's dashboard; never income, rewards, wallet, BCX, a ↗ character (use the external icon).
+  - Earnings: money, opened on the site's dashboard; never income, rewards (the site should align: "Reward" on the program card and its sheet, "its own reward", "its reward is added to your earnings", `onblue/apply.html:1280, 1470, 1434, 1436`), wallet, BCX, a ↗ character (use the external icon).
+  - cash out, Cash out: taking earnings out, which happens on the site's dashboard, from $10 after the period ends (section 01); the app only points there and says the minimum with it. Never withdraw (the site's own sheet step, `onblue/apply.html:1532`), claim, redeem.
   - Program Terms: the agreement; never Terms of Use (unless that document changed), Terms & Conditions.
   - connected account, Disconnect: the accounts BlueAI uses; never Unlink, ID, enrolled or Not enrolled (say "in the program").
   - Try again: the system retry; never Retry (the PM's failed-day ask is flagged, not changed).
@@ -26,7 +27,7 @@
 - **Formats:** dates "Nov 1", "Oct 12" (a year only when it is not this one); times "11 am", "9 pm", "9 am to 9 pm" in the partner's local time; days "7 of 20 days", "Day 7 of 20"; money "$1", "$30" in ink, never green while pending; credits "1,640 AI credits left today"; the … character only for work in progress ("Signing in…"), never three dots (`chat_product.jsx:266`) and never on a button; curly quotes and apostrophes.
 - **Variants, Sizes, States, Props, Motion, Responsive:** n/a (a reference, not a part).
 - **Accessibility:** plain words are the accessible version; a label is the same word everywhere, so screen-reader users meet one name per thing.
-- **Do / Don't:** Do look a word up here before writing it; use the site's word when the site has one; mark new copy "Proposed copy" until the PM approves it. Don't invent synonyms for variety; don't put versions or slugs on screen; don't use money words for AI credits.
+- **Do / Don't:** Do look a word up here before writing it; use the site's word when the site has one, unless it is marked "the site should align" (each is a recommendation to the site's owner in section 02, P6, and the PM's call if the site keeps it); mark new copy "Proposed copy" until the PM approves it. Don't invent synonyms for variety; don't put versions or slugs on screen; don't use money words for AI credits.
 
 ### PM copy register (In V2)
 

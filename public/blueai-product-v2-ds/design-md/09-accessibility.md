@@ -36,7 +36,7 @@
 
 **Sizes.** Not applicable.
 
-**States.** Pass (AA), large only, fails. Rules it enforces: ink-4 is meta only and never on sunken (4.42:1 there); placeholder is never text that must be read (2.57:1); status inks go on their own tint or white; white labels go on action (4.92:1), never on brand blue (4.47:1). V2 pairs that fail: #94a3b8 'Working on it…' 2.56:1, #9ca3af 'App Player will be signed out too.' 2.54:1, #60a5fa 'PLAN' eyebrow, #f59e0b link 2.15:1, white on #1990FF 3.24:1, white on #ef4444 3.76:1.
+**States.** Pass (AA), large only, fails. Rules it enforces: ink-4 is meta only, and only on surface, panel or canvas at rest (it drops under 4.5:1 on sunken 4.42, every tint 4.17 to 4.37, selected 4.06, and the hover and press washes 4.32 and 4.08; section 03); placeholder is never text that must be read (2.57:1); status inks go on their own tint or white; white labels go on action (4.92:1), never on brand blue (4.47:1). V2 pairs that fail: #94a3b8 'Working on it…' 2.56:1, #9ca3af 'App Player will be signed out too.' 2.54:1, #60a5fa 'PLAN' eyebrow, #f59e0b link 2.15:1, white on #1990FF 3.24:1, white on #ef4444 3.76:1.
 
 **Props.** Not applicable.
 
@@ -54,7 +54,7 @@
 
 **Anatomy.** Targets: 24px absolute floor; `--v2-hit-min` 32px for consent, money and controls in a row; `--v2-control-md` 36px default; `--v2-control-lg` 44px for full-width dialog and sheet actions and the sign-in doors. Keyboard model:
 - Menus: trigger has `aria-haspopup` and `aria-expanded`; Enter, Space or Down opens on the first item; Up, Down, Home, End move; Enter picks; Esc or Tab closes and focus returns to the trigger.
-- Dialogs: focus moves in (first field, else the safest button); Tab stays inside; Esc closes unless the dialog blocks; focus returns to the opener; the title labels the dialog.
+- Dialogs: focus moves in to one place by kind: the panel for a dialog read before acting (task, consent, day done), the first field (`initialFocus`) for a form dialog, Cancel (the first action, the safe answer) for an alert; Tab stays inside; Esc closes unless the dialog blocks; focus returns to the opener; the title labels the dialog.
 - Sheets: as dialogs; the blocking terms sheet has no close and no Esc, its one way out is the agreement button.
 - Tabs: one tab stop, Left and Right move and select.
 - Thread: `role="log"`, `aria-live="polite"`.

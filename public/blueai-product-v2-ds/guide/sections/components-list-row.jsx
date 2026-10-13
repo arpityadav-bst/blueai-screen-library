@@ -43,7 +43,7 @@
             { label: 'Destructive', node: inCard(<Row leading={<Icon name="sign-out" size={20} />} label="Disconnect YouTube" danger onClick={noop} divider={false} />) },
             { label: 'Disabled, with the reason', node: inCard(<Row leading={<Icon name="pause" size={20} />} label="Pause the worker" disabled disabledReason="Available after setup." onClick={noop} divider={false} />) },
             { label: 'A list', note: 'hairlines between rows only', node: inCard(<>
-              <Row label="Mode" value="Always ask" />
+              <Row label="Paid jobs" value="Always ask" />
               <Row label="Run window" value="9 am to 9 pm" />
               <Row label="Next run" value="Today, 11 am" />
             </>) },
@@ -80,7 +80,7 @@
             { part: 'Copy', token: null, value: 'Timeout, 20 min (V2 says 1200 in seconds)', ref: ['display-feedback.row.copy-timeout', 'display-feedback.row.copy-timeout-value'] },
             { part: 'Copy', token: null, value: 'Sign out', ref: 'display-feedback.row.copy-sign-out' },
             { part: 'Link', token: null, value: 'Earnings: https://bluestacks.ai/dashboard', ref: 'display-feedback.stat.earnings' },
-            { part: 'Copy (proposed)', token: null, value: 'Next run, Run window, Mode, Disconnect YouTube, Pause the worker' },
+            { part: 'Copy (proposed)', token: null, value: 'Next run, Run window, Paid jobs, Disconnect YouTube, Pause the worker' },
           ]} />
 
           <G.DoDont

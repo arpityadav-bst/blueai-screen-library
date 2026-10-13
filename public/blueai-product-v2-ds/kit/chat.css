@@ -45,7 +45,7 @@
 .v2-msg.is-full { width: 100%; }
 .v2-bubble, .v2-notice, .v2-ask-card {
   max-width: var(--v2-bubble-max);
-  padding: calc(var(--v2-space-2) + var(--v2-space-05)) calc(var(--v2-space-3) + var(--v2-space-05));
+  padding: var(--v2-space-3) var(--v2-space-4);
   border: var(--v2-stroke) solid var(--v2-line); border-radius: var(--v2-radius-lg);
   background: var(--v2-surface); color: var(--v2-ink-2);
   font-size: var(--v2-text-14); font-weight: var(--v2-weight-regular); line-height: var(--v2-leading-body);
@@ -69,14 +69,13 @@
 .v2-notice--needsInput { background: var(--v2-attention-tint); border-color: var(--v2-attention-line); }
 .v2-notice-action { display: flex; flex-direction: column; gap: var(--v2-space-2); }
 .v2-dep > .v2-notice { width: var(--v2-bubble-max); max-width: 100%; }
+.v2-dep .v2-notice-action > .v2-button--quiet { align-self: flex-start; }
 
-/* Run card (36) */
+/* Run card (36). Its surface (line, radius 16, white) is the Card's, kit/display.css. */
 .v2-run {
   display: flex; flex-direction: column; gap: var(--v2-space-3);
   width: var(--v2-bubble-max); max-width: 100%; padding: var(--v2-space-4);
-  border: var(--v2-stroke) solid var(--v2-line); border-radius: var(--v2-radius-lg);
-  background: var(--v2-surface); color: var(--v2-ink-2);
-  font-size: var(--v2-text-14); line-height: var(--v2-leading-body);
+  color: var(--v2-ink-2); font-size: var(--v2-text-14); line-height: var(--v2-leading-body);
 }
 .v2-run.is-full { width: 100%; }
 .v2-run--waiting { border-color: var(--v2-attention-line); }
@@ -118,16 +117,15 @@
 .v2-run-day--attention { color: var(--v2-attention-ink); }
 .v2-run-tick { display: inline-flex; flex-shrink: 0; }
 .v2-run-actions { display: flex; align-items: center; flex-wrap: wrap; gap: var(--v2-space-3); }
-.v2-run-link, .v2-cnotice-action {
-  display: inline-flex; align-items: center; min-height: var(--v2-hit-min); padding: 0 var(--v2-space-2);
+.v2-run-link {
+  display: inline-flex; align-items: center; min-height: var(--v2-hit-min); margin-left: calc(var(--v2-space-2) * -1); padding: 0 var(--v2-space-2);
   border: 0; border-radius: var(--v2-radius-sm); background: transparent; color: var(--v2-ink);
   font: inherit; font-size: var(--v2-text-13); font-weight: var(--v2-weight-medium);
-  text-decoration: underline; text-decoration-color: var(--v2-line-hover); text-underline-offset: var(--v2-space-05); cursor: pointer;
-  transition: color var(--v2-dur-1) var(--v2-ease-standard), background-color var(--v2-dur-1) var(--v2-ease-standard);
+  text-decoration: underline; text-decoration-thickness: var(--v2-stroke); text-decoration-color: var(--v2-link-underline);
+  text-underline-offset: 3px; cursor: pointer; transition: color var(--v2-dur-1) var(--v2-ease-standard);
 }
-.v2-run-link { margin-left: calc(var(--v2-space-2) * -1); }
-.v2-run-link:hover, .v2-run-link.is-hover, .v2-cnotice-action:hover, .v2-cnotice-action.is-hover { color: var(--v2-blue-ink); text-decoration-color: currentColor; }
-.v2-run-link:focus-visible, .v2-run-link.is-focus, .v2-cnotice-action:focus-visible, .v2-cnotice-action.is-focus { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); }
+.v2-run-link:hover, .v2-run-link.is-hover { color: var(--v2-blue-ink); text-decoration-color: currentColor; }
+.v2-run-link:focus-visible, .v2-run-link.is-focus { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); }
 
 /* Ask card (37): yellow only while it waits for you */
 .v2-ask-card { display: flex; flex-direction: column; gap: var(--v2-space-15); background: var(--v2-attention-tint); border-color: var(--v2-attention-line); }
@@ -188,20 +186,21 @@
 .v2-sendstop:active:not(:disabled), .v2-sendstop.is-active { transform: translateY(1px); }
 .v2-sendstop:focus-visible, .v2-sendstop.is-focus { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); }
 
-/* Composer notice and stop confirm */
+/* Composer notice: the compact Banner (kit/feedback.css): tone in the fill, the edge and the icon,
+   words in ink-2 in every tone; the action is the shared Link (kit/actions.css). */
 .v2-cnotice {
   display: flex; align-items: center; gap: var(--v2-space-2);
   padding: var(--v2-space-05) var(--v2-space-1) var(--v2-space-05) var(--v2-space-3);
   border: var(--v2-stroke) solid var(--v2-blue-tint-line); border-radius: var(--v2-radius-md);
-  background: var(--v2-blue-tint); color: var(--v2-blue-ink);
+  background: var(--v2-blue-tint); color: var(--v2-ink-2);
   font-size: var(--v2-text-13); line-height: var(--v2-leading-snug);
+  --cnotice-mark: var(--v2-blue-ink);
 }
-.v2-cnotice--attention { border-color: var(--v2-attention-line); background: var(--v2-attention-tint); color: var(--v2-attention-ink); }
-.v2-cnotice--neutral { border-color: var(--v2-line); background: var(--v2-surface-sunken); color: var(--v2-ink-2); }
-.v2-cnotice--neutral .v2-cnotice-icon { color: var(--v2-ink-3); }
-.v2-cnotice-icon { display: inline-flex; flex-shrink: 0; }
+.v2-cnotice--attention { border-color: var(--v2-attention-line); background: var(--v2-attention-tint); --cnotice-mark: var(--v2-attention-ink); }
+.v2-cnotice--neutral { border-color: var(--v2-line); background: var(--v2-surface-sunken); --cnotice-mark: var(--v2-ink-3); }
+.v2-cnotice-icon { display: inline-flex; flex-shrink: 0; color: var(--cnotice-mark); }
 .v2-cnotice-text { flex: 1; min-width: 0; padding: var(--v2-space-15) 0; }
-.v2-cnotice-action { flex-shrink: 0; }
+.v2-cnotice-action { flex-shrink: 0; margin-right: var(--v2-space-2); }
 .v2-stopconfirm {
   display: flex; flex-direction: column; gap: var(--v2-space-2); padding: var(--v2-space-3);
   border: var(--v2-stroke) solid var(--v2-attention-line); border-radius: var(--v2-radius-md); background: var(--v2-attention-tint);

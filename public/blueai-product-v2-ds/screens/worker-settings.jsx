@@ -3,20 +3,24 @@
    per app, when the run happens, and the interest profile. V2 promises "You can pause, stop, or
    disconnect anytime." (worker_flow.jsx:67) and asks for the run time once in chat; none of it has
    a control afterwards (R05). Pushed over Settings with Back. Each change applies at once and says
-   so in a toast; pausing says what it costs before it happens (P3); Automatic asks for consent
-   every time (section 46).
+   so in one toast once it settles; pausing says what it costs, for the date picked, before it
+   happens (P3); Automatic asks for consent every time (section 46).
 
-   WorkerSettings {worker, state, onBack, frame, compact, landmark, preview}
+   WorkerSettings {worker, state, onBack, onNavigate, frame, compact, landmark, preview}
      state  'ask' (Always ask everywhere, default) | 'auto' (Automatic on YouTube) | 'paused' (until
             a date) | 'window' (editing the run window) | 'consent' (the consent dialog open) |
-            'pause' (the pause dialog open). */
+            'pause' (the pause dialog open) | 'window-invalid' (To before From).
+   Runs start by 8 pm: the ask and retry deadline is a fixed 9 pm (worker-data ASK, retryBy), so a
+   later start could never be answered or retried in time. */
 (function () {
-  const { useState, useRef } = React;
+  const { useState, useRef, useEffect } = React;
   const kit = function () { return window.V2Kit || {}; };
   const noop = function () {};
 
-  const HOURS = ['6 am', '7 am', '8 am', '9 am', '10 am', '11 am', '12 pm', '1 pm', '2 pm', '3 pm', '4 pm', '5 pm', '6 pm', '7 pm', '8 pm', '9 pm', '10 pm']
+  const LAST_START = '8 pm';
+  const HOURS = ['6 am', '7 am', '8 am', '9 am', '10 am', '11 am', '12 pm', '1 pm', '2 pm', '3 pm', '4 pm', '5 pm', '6 pm', '7 pm', LAST_START]
     .map(function (h) { return { value: h, label: h }; });
+  const hourIndex = function (h) { return HOURS.findIndex(function (x) { return x.value === h; }); };
   // V2's interest profile (worker_flow.jsx:85), topic names only.
   const TOPICS = ['Tech & Smartphones', 'Automotive', 'Motivation & Finance', 'Entertainment'];
   const UNTIL = [
@@ -32,45 +36,70 @@
     return f[key] || f.verified || {};
   }
   function runFrom(w, state) {
-    if (state === 'window') return { kind: 'window', time: '11 am', from: '9 am', to: '9 pm' };
+    if (state === 'window') return { kind: 'window', time: '11 am', from: '9 am', to: '8 pm' };
+    if (state === 'window-invalid') return { kind: 'window', time: '11 am', from: '7 pm', to: '9 am' };
     const r = w.runWindow || {};
-    return { kind: r.kind || 'time', time: r.kind === 'time' && r.label ? r.label : '11 am', from: '9 am', to: '9 pm' };
+    return { kind: r.kind || 'time', time: r.kind === 'time' && r.label ? r.label : '11 am', from: '9 am', to: '8 pm' };
   }
+  function windowOk(r) { return r.kind !== 'window' || hourIndex(r.from) < hourIndex(r.to); }
   function runSummary(r) {
     if (r.kind === 'window') return 'between ' + r.from + ' and ' + r.to;
     if (r.kind === 'any') return 'at a time BlueAI picks';
     return 'at ' + r.time;
   }
 
+  // What a pause costs, for the date picked: days skipped (today.date to the end date, dayGap)
+  // against the days still needed.
+  function pauseCost(until, w, n) {
+    if (until === 'later') return 'Days you pause don’t count toward your 20 days. You need ' + n.toGo + ' more, and ' + n.daysLeft + ' days are left.';
+    const gap = kit().dayGap ? kit().dayGap((w.today && w.today.date) || 'Oct 13', until) : null;
+    const skip = Math.max(1, gap || 1);
+    const left = Math.max(0, n.daysLeft - skip);
+    const line = 'Pausing until ' + until + ' skips ' + skip + (skip === 1 ? ' day' : ' days') + '. You’d have ' + left + ' left for the ' + n.toGo + ' you need';
+    return line + (left < n.toGo ? ', so ' + n.target + ' days would be out of reach.' : '.');
+  }
+
   function WorkerSettings(props) {
+    const Scope = (window.V2Screens || {}).ToastScope;
+    return Scope ? <Scope><WorkerSettingsScreen {...props} /></Scope> : <WorkerSettingsScreen {...props} />;
+  }
+
+  function WorkerSettingsScreen(props) {
     const K = kit();
+    const S = window.V2Screens || {};
     const p = props;
     const w0 = p.worker || fixture(p.state);
     const yt = (w0.apps && w0.apps.youtube) || {};
     const [modes, setModes] = useState({ youtube: yt.mode || 'always', instagram: 'always' });
     const [paused, setPaused] = useState(w0.paused ? w0.paused.until : null);
     const [pausing, setPausing] = useState(p.state === 'pause');
-    const [until, setUntil] = useState('Oct 16');
+    const [until, setUntil] = useState(UNTIL[0].value);
     const [consent, setConsent] = useState(p.state === 'consent' ? 'youtube' : null);
     const [run, setRun] = useState(runFrom(w0, p.state));
+    const [boot, setBoot] = useState(true);
     const [topics, setTopics] = useState(TOPICS.reduce(function (o, t) { o[t] = true; return o; }, {}));
-    const [toast, setToast] = useState(null);
+    const toast = (S.useScreenToast || function () { return { show: noop }; })();
     const pend = useRef(null);
-    const Frame = (window.V2Screens || {}).AccountFrame;
+    const timer = useRef(null);
+    useEffect(function () { return function () { clearTimeout(timer.current); }; }, []);
+    const Frame = S.ScreenFrame;
     const Sec = K.SettingsSection;
-    if (!Sec || !K.ListRow || !Frame) return <div className="v2-acct-note">The kit is not loaded.</div>;
+    if (!Sec || !K.ListRow || !Frame) return <div className="v2-acct-note">The kit or screens/home.jsx is not loaded.</div>;
 
     // The record as it stands after this screen's edits, so the top bar, ModeRows and the consent
     // dialog all read one truth.
     const apps = Object.assign({}, w0.apps, { youtube: Object.assign({}, yt, { mode: modes.youtube }) });
     const w = Object.assign({}, w0, { apps: apps, paused: paused ? { until: paused } : null });
     const n = K.numbers ? K.numbers(w) : { toGo: 13, daysLeft: 18, target: 20 };
-    const say = function (title, tone) { setToast({ title: title, tone: tone }); };
+    const say = function (title, tone) { toast.show({ title: title, tone: tone, duration: p.preview ? 0 : undefined }); };
 
+    // One toast once the run settles: a burst of picks (kind, then a time) says it once, and an
+    // invalid window says nothing until it is fixed.
     function setRunWith(patch) {
       const next = Object.assign({}, run, patch);
       setRun(next);
-      say('Daily run set ' + runSummary(next) + '.');
+      clearTimeout(timer.current);
+      if (windowOk(next)) timer.current = setTimeout(function () { say('Daily run set ' + runSummary(next) + '.'); }, 700);
     }
     function beforeChange(app, mode) {
       if (mode !== 'auto') return true;
@@ -95,10 +124,16 @@
         trailing={K.Switch ? <K.Switch hideLabel label="Daily runs" checked={!paused} busy={pausing}
           onChange={function (on) { if (on) { setPaused(null); say('Daily runs are back on.'); } else setPausing(true); }} /> : null} />
     );
+    const bootRow = (
+      <K.ListRow label="Start BlueAI with Windows" description="If it’s off, runs skip after a restart until you open BlueAI."
+        trailing={K.Switch ? <K.Switch hideLabel label="Start BlueAI with Windows" checked={boot}
+          onChange={function (on) { setBoot(on); say(on ? 'BlueAI starts with Windows.' : 'BlueAI won’t start with Windows.', on ? undefined : 'info'); }} /> : null} />
+    );
     const timeFields = run.kind === 'window' ? (
       <div className="v2-acct-pair">
         <K.Select label="From" options={HOURS} value={run.from} onChange={function (v) { setRunWith({ from: v }); }} />
-        <K.Select label="To" options={HOURS} value={run.to} onChange={function (v) { setRunWith({ to: v }); }} />
+        <K.Select label="To" options={HOURS} value={run.to} onChange={function (v) { setRunWith({ to: v }); }}
+          error={windowOk(run) ? null : 'Pick a time after ' + run.from + '.'} />
       </div>
     ) : run.kind === 'time'
       ? <K.Select label="Start at" options={HOURS} value={run.time} onChange={function (v) { setRunWith({ time: v }); }} />
@@ -108,7 +143,7 @@
       <K.Dialog open preview={p.preview} variant="task" title="Pause daily runs?" onClose={function () { setPausing(false); }}
         actions={[{ label: 'Keep running', onClick: function () { setPausing(false); } }, { label: 'Pause', variant: 'primary', onClick: confirmPause }]}>
         <div className="v2-acct-stack">
-          <p>{'Days you pause don’t count toward your 20 days. You need ' + n.toGo + ' more, and ' + n.daysLeft + ' days are left.'}</p>
+          <p>{pauseCost(until, w, n)}</p>
           {K.Select ? <K.Select label="Pause until" options={UNTIL} value={until} onChange={setUntil} /> : null}
         </div>
       </K.Dialog>
@@ -116,46 +151,43 @@
     const consentDialog = consent && K.ConsentDialog
       ? <K.ConsentDialog app={consent} open preview={p.preview} worker={w} onAgree={function () { settle(true); }} onCancel={function () { settle(false); }} />
       : null;
-    const toastNode = toast && K.Toast ? (
-      <div className="v2-toast-host">
-        <K.Toast tone={toast.tone || 'success'} title={toast.title} duration={p.preview ? 0 : undefined} onClose={function () { setToast(null); }} />
-      </div>
-    ) : null;
 
     return (
-      <Frame worker={w} tab="settings" frame={p.frame} compact={p.compact} landmark={p.landmark}
-        scrollTo={p.preview && p.state === 'window' ? 'run' : null}
-        overlays={<React.Fragment>{pauseDialog}{consentDialog}{toastNode}</React.Fragment>}>
-        {K.ScreenHeader ? <K.ScreenHeader title="Worker" onBack={p.onBack || noop} /> : null}
-        <div className="v2-acct-body">
-          <Sec id="status" title="Runs">{runRow}</Sec>
-          <Sec id="jobs" title="Paid jobs" description="Choose for each app whether BlueAI asks before every paid job.">
-            {K.ModeRows ? <K.ModeRows worker={w} modes={modes} beforeChange={beforeChange}
-              onChange={function (app, m) { setModes(Object.assign({}, modes, { [app]: m })); if (m === 'always') say('YouTube is back on Always ask.'); }} /> : null}
-          </Sec>
-          <Sec id="run" title="Daily run" description="Changes start tomorrow if today’s run has already begun.">
-            <div className="v2-acct-stack">
-              {K.RadioCard ? <K.RadioCard label="When BlueAI runs" variant="list" value={run.kind}
-                onChange={function (v) { setRunWith({ kind: v }); }}
-                options={[
-                  { value: 'time', title: 'A set time', sub: 'BlueAI starts within that hour.' },
-                  { value: 'window', title: 'A window', sub: 'BlueAI picks a different moment in it each day.' },
-                  { value: 'any', title: 'Any time', sub: 'BlueAI picks the moment each day.' },
-                ]} /> : null}
-              {timeFields}
-            </div>
-          </Sec>
-          <Sec id="interests" title="Interest profile" description="Built from your watch history. BlueAI picks jobs that fit these topics.">
-            <div className="v2-acct-stack">
-              <div className="v2-acct-chips">
-                {TOPICS.map(function (t) {
-                  return K.Chip ? <K.Chip key={t} selected={!!topics[t]} icon={topics[t] ? 'check' : undefined}
-                    onClick={function () { setTopics(Object.assign({}, topics, { [t]: !topics[t] })); }}>{t}</K.Chip> : null;
-                })}
+      <Frame worker={w} tab="settings" frame={p.frame} compact={p.compact} landmark={p.landmark} onNavigate={p.onNavigate}
+        scrollTo={p.preview && /^window/.test(p.state || '') ? 'run' : null}
+        overlays={<React.Fragment>{pauseDialog}{consentDialog}</React.Fragment>}>
+        <div className="v2-acct">
+          {K.ScreenHeader ? <K.ScreenHeader title="Worker" onBack={p.onBack || noop} /> : null}
+          <div className="v2-acct-body">
+            <Sec id="status" title="Runs">{runRow}{bootRow}</Sec>
+            <Sec id="jobs" title="Paid jobs" description="Choose for each app whether BlueAI asks before every paid job.">
+              {K.ModeRows ? <K.ModeRows worker={w} modes={modes} beforeChange={beforeChange}
+                onChange={function (app, m) { setModes(Object.assign({}, modes, { [app]: m })); if (m === 'always') say('YouTube is back on Always ask.'); }} /> : null}
+            </Sec>
+            <Sec id="run" title="Daily run" description={'Runs start by ' + LAST_START + ', so there’s time to answer a job or try again before 9 pm. Changes start tomorrow if today’s run has already begun.'}>
+              <div className="v2-acct-stack">
+                {K.RadioCard ? <K.RadioCard label="When BlueAI runs" variant="list" value={run.kind}
+                  onChange={function (v) { setRunWith({ kind: v }); }}
+                  options={[
+                    { value: 'time', title: 'A set time', sub: 'BlueAI starts within that hour.' },
+                    { value: 'window', title: 'A window', sub: 'BlueAI picks a different moment in it each day.' },
+                    { value: 'any', title: 'Any time', sub: 'BlueAI picks the moment each day.' },
+                  ]} /> : null}
+                {timeFields}
               </div>
-              <p className="v2-acct-note">Turn a topic off and BlueAI stops picking jobs about it.</p>
-            </div>
-          </Sec>
+            </Sec>
+            <Sec id="interests" title="Interest profile" description="Built from your watch history. BlueAI picks jobs that fit these topics.">
+              <div className="v2-acct-stack">
+                <div className="v2-acct-chips">
+                  {TOPICS.map(function (t) {
+                    return K.Chip ? <K.Chip key={t} selected={!!topics[t]} icon={topics[t] ? 'check' : undefined}
+                      onClick={function () { setTopics(Object.assign({}, topics, { [t]: !topics[t] })); }}>{t}</K.Chip> : null;
+                  })}
+                </div>
+                <p className="v2-acct-note">Turn a topic off and BlueAI stops picking jobs about it.</p>
+              </div>
+            </Sec>
+          </div>
         </div>
       </Frame>
     );

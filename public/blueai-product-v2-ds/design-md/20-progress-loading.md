@@ -43,7 +43,7 @@
 
 **Variants.** Inherit (takes the text colour). On colour (`--v2-on-color`, inside a filled button). Done (a `check` in `--v2-success`).
 
-**Sizes.** 12 (inside buttons), 16 (rows, steps, beside text), 32 (standalone). Stroke 1.5 / 2 / 4.
+**Sizes.** 12 (the Switch's busy thumb), 16 (buttons, rows, steps, beside text), 32 (standalone). Stroke 1.5 / 2 / 4.
 
 **States.**
 - Delayed: hidden for the first 300ms, space held, so fast work never flashes. New.

@@ -145,7 +145,7 @@
             { part: 'Corner', token: '--v2-radius-md', value: '10px' },
             { part: 'Item', token: '--v2-hit-min, --v2-radius-sm', value: '32 tall, 6 radius, 13/400 ink-2' },
             { part: 'Status line', token: '--v2-text-12, --v2-ink-3', value: 'dot in the status tone + words' },
-            { part: 'Confirm', token: 'Button sm secondary + danger', value: 'title 14/600, body 13 ink-3' },
+            { part: 'Confirm', token: 'Button sm secondary + primary (Pause) / danger (Quit)', value: 'title 14/600, body 13 ink-3' },
           ]} />
           <G.DoDont
             do={['Say the cost of Pause and Quit before the click, in the confirm.', 'Keep the status line in the tray the same words as the top bar chip.', 'Restore the last screen when the window comes back.']}

@@ -18,7 +18,7 @@
   - paused: 'Paused until Oct 16.' + 'Days don’t count while the worker is paused.' / secondary 'Resume'.
   - noCredits: 'Not enough AI credits for today’s run.' + 'Credits refresh at 5:30 am.' / secondary 'AI credits'.
   - offline: 'You’re offline.' + 'Today’s run starts when you’re back online.' / secondary 'Try again'.
-  - complete: 'All 20 days done.' + 'Cash out on Earnings after Nov 1.' / secondary 'Earnings' (external).
+  - complete: 'All 20 days done.' + 'Cash out on Earnings after Nov 1.' / secondary 'Earnings' (external). Twenty verified days always clear the $10 cash-out minimum (section 41, `reachedMinimum`), so this line needs no below-the-minimum variant; it still waits for the period to end.
   - Everything not marked V2 is proposed copy.
 - **Sizes:** full width of the content column (387 in the 419 window).
 - **States:** the ten above, from `workerState(worker)` or forced with `state`. In V2: `?start=worker` (setup, coach on), `?day=returning` (scheduled). The other states do not exist in V2.

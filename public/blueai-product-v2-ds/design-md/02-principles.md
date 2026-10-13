@@ -60,7 +60,8 @@ Shared means the same value as the site; adapted means the same idea tuned for a
 |---|---|---|
 | Neutral ink ramp #0b0b0d / #3c4049 / #5f636b | shared | Same text colours on the site and in the app (onblue.css:300-309). |
 | Meta ink #6e737c (site dim #767b85) | adapted | One step darker so 12px captions clear 4.5:1; the site's dim measures about 4.2:1. |
-| Alpha-black 1px lines 10/15/8/20% | shared | The site's clearest DNA; strokes, not shadows, separate in-flow surfaces. |
+| Alpha-black 1px lines 10/15/8/20% | shared | The site's clearest DNA, same values (onblue.css:274-275, 319, 376). |
+| Lines alone separate in-flow surfaces | adapted (shadow dropped) | The site's light theme also casts a faint resting shadow on cards, panels and ghost buttons (onblue.css:388, 993, 1486; apply.html:85-90); the product drops it, so a shadow only ever means 'this floats'. |
 | Surfaces a fraction apart, alternating card / panel / row | shared | Depth reads as structure, not murk. |
 | Brand blue #156efe for focus, selection and progress | shared | One blue across the journey. |
 | Action blue #1268f0 and blue ink #0d5ad6 | adapted | #156efe is 4.47:1 with white; the product needs 4.5:1 on every primary label. |
@@ -80,14 +81,15 @@ Shared means the same value as the site; adapted means the same idea tuned for a
 | Navy-tinted casts at low alpha, no glows | adapted | Three levels only (none, popover, dialog). |
 | Button ladder: one primary per view, secondary, quiet, link; disabled with a reason | shared | Ranks Run, Got it, Try again, Allow, Not now. |
 | Underlined ink links that turn blue on hover | shared | Frees blue for selection. |
-| Recessed tabs with one raised chip and counts | shared | Activity and Notifications need tabs; take the family's. |
+| Recessed tabs with one raised chip and counts | adapted (shadow dropped) | Activity and Notifications need tabs; take the family's shape without the lit tab's card shadow (apply.html:467-473; section 28). |
 | Ledger rows with a fixed date column; empty copy names what will appear | shared | The run log and the site's transactions read as one record. |
 | Muted note with one bold ink figure | shared | Pending verification lines, credit notes. |
-| Payout pill (green receipt) | shared | 'Yesterday's run verified.' is exactly its job. |
+| Payout pill (green receipt) | adapted (plain line) | 'Yesterday's run verified.' is its job, drawn as a plain 12 ink-3 line with its tick (section 43): the site's pill (green line, 10% green fill, onblue.css:2102-2115) would put a second green box on a small strip whose bar is already green. |
 | Progress bar toward a goal | adapted | Merged with the product's segmented DayBar, which adds the pending state the site lacks. |
 | Sheet anatomy and motion | adapted | Solid dim veil instead of frost outside sign-in. |
 | Grain, glyph field, aberration, WebGL model, card sheen, terminal, badge, band note, header, footer | not shared | Marketing ambience competes with a daily tool and costs GPU. |
 | Copy voice and vocabulary | shared | Same words on both sides; conflicts go to the PM as decisions. |
 | 'Log out' on the site | adapted | Product uses 'Sign out' to pair with 'Sign in'; recommend the site align. |
+| 'Reward' and 'campaigns and tasks' on the site | adapted | The program card and its sheet say 'Reward' (apply.html:1280, 1470), How it works says 'its own reward' and 'its reward is added to your earnings' (:1434, 1436), the agent intro says 'completes campaigns and tasks' (:1849). The product says Earnings for money and job for paid work (section 70); recommend the site align, or the PM accepts the site's word for both. |
 | Review dock convention (onblue-dev.js) | shared | Review controls live outside the product and add no tokens; V2's Preview panel follows it. |
 | window.SiteKit inside V2 | adapted | Seed for one family token object; it has drifted (48 vs 44 height, 0.12s vs 0.18s press, 32 vs 38 mark). |

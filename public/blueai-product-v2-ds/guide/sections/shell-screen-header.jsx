@@ -65,7 +65,7 @@
 
   const LEVELS = [
     ['Tab', 'Home, Activity, Settings', 'none: the nav is the way out', 'itself'],
-    ['Pushed screen', 'Chat, Run detail, Notifications, Account, Worker settings, Connected apps, AI credits', 'Back in the ScreenHeader', 'its parent tab'],
+    ['Pushed screen', 'Chat, Run detail, Notifications, Account, Worker settings, Connected apps, AI credits', 'Back in the ScreenHeader', 'its parent tab (rule below)'],
     ['Overlay', 'Dialog, Sheet, day done, splash, toast', 'its own close or answer; never Back', 'unchanged'],
   ];
 
@@ -119,6 +119,7 @@
                 <li>Each tab keeps its own stack. Tapping another tab switches and keeps the stack; tapping the lit tab returns to its root.</li>
                 <li>Navigation state is separate from the Worker record (section 41): opening Credits or Account never unmounts today's run.</li>
                 <li>A notification or the tray opens the screen it names, pushed over its parent tab.</li>
+                <li>Which tab is lit for a pushed screen, one rule: a screen with a home in Settings (Worker settings, Connected apps, Account) lights Settings from any door, the top bar’s More menu included. A screen only the top bar opens (AI credits from the credits chip, Notifications from More) is pushed over the tab you were on, and that tab stays lit; Back returns to it. Chat belongs to Home and Run detail to Activity, so each lights its own. The top-bar screens take the tab as a prop: tab (AI credits) or parentTab (Notifications).</li>
               </ul>
             </div>
           </div>

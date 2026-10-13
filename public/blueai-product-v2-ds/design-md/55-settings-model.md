@@ -10,7 +10,7 @@
 - **Anatomy (groups, in this order):**
   1. Worker: Always ask or Automatic per app, run window, pause until, start with Windows, interest profile.
   2. Connected apps: YouTube (account, watch history, Disconnect), Instagram (coming soon, no switch), Telegram.
-  3. Notifications: Windows notifications per event.
+  3. Notifications: two switches for Windows notifications, "A paid job needs you" and "Today’s run ends" (section 61); section 54 maps each event to its switch or to always on.
   4. BlueStacks: App Player status from the real check (not installed, signed out, connected as).
   5. Account and privacy: the signed-in account, the program, agreements, what BlueAI keeps, Sign out.
   6. Help: FAQ (opens the site), Report a problem.

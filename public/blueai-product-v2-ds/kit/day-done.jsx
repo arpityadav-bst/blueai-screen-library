@@ -6,8 +6,10 @@
      open     shows the kit Dialog (celebration variant, size sm). preview draws it open in place
               without taking focus (guide specimens; give it a positioned parent).
    One count, one status line. Pending stays blue with one tick until verified (P2: green means
-   reached). Confetti only on Day 20, once, and never under reduced motion. Titles are the PM's
-   DRAFT strings, quoted (worker_day_done.jsx:91-93). */
+   reached), and so does Day 20's confetti: blue and neutral only, once, never under reduced
+   motion. Titles are the PM's DRAFT strings, quoted (worker_day_done.jsx:91-93); Day 20 adds one
+   proposed next-step line: cash out after the period, with the $10 minimum, the one amount that
+   holds under both options of decision D3 (section 01). */
 (function () {
   const K = () => window.V2Kit || {};
 
@@ -16,15 +18,18 @@
     nojob: { title: 'No paid job today, but your run counts.' },
     day20: { title: 'Day 20 done.', sub: 'That’s every day for this month.' },
   };
+  // Proposed: what comes after the last day, so the moment does not end on 'every day'.
+  const NEXT = function (endsOn) { return 'Cash out on Earnings after ' + endsOn + ', once your days are verified ($10 minimum).'; };
   const PENDING = 'Pending verification';
   const VERIFY_NOTE = 'We check every run within a day. The tick doubles once it’s verified.';
 
-  // A fixed burst, so every render is the same (V2 rolls Math.random per mount). Colours are tokens.
+  // A fixed burst, so every render is the same (V2 rolls Math.random per mount). The day is still
+  // pending, so the bits are the pending blues and a neutral mark: no green, no yellow (P2).
   const BITS = [
-    [-96, -36, '--v2-blue', 0, 140], [-64, -64, '--v2-success', 40, -90], [-30, -52, '--v2-attention-line', 80, 200],
-    [8, -70, '--v2-action', 20, -160], [40, -58, '--v2-success', 60, 120], [76, -62, '--v2-blue', 100, -60],
-    [104, -28, '--v2-attention-line', 30, 180], [-112, 12, '--v2-success', 120, -140], [118, 16, '--v2-blue', 90, 90],
-    [-56, 44, '--v2-action', 150, 60], [60, 40, '--v2-attention-line', 170, -120], [-10, 64, '--v2-success', 110, 150],
+    [-96, -36, '--v2-blue', 0, 140], [-64, -64, '--v2-ink-4', 40, -90], [-30, -52, '--v2-action', 80, 200],
+    [8, -70, '--v2-action', 20, -160], [40, -58, '--v2-ink-4', 60, 120], [76, -62, '--v2-blue', 100, -60],
+    [104, -28, '--v2-action', 30, 180], [-112, 12, '--v2-ink-4', 120, -140], [118, 16, '--v2-blue', 90, 90],
+    [-56, 44, '--v2-action', 150, 60], [60, 40, '--v2-blue', 170, -120], [-10, 64, '--v2-ink-4', 110, 150],
   ];
   function Confetti() {
     return (
@@ -49,6 +54,7 @@
         <span className="v2-daydone-badge" aria-hidden="true">{T ? <T status="pending" size={28} /> : null}</span>
         <h2 className="v2-daydone-title" id={titleId}>{c.title}</h2>
         {c.sub ? <p className="v2-daydone-sub">{c.sub}</p> : null}
+        {e === 'day20' ? <p className="v2-daydone-sub">{NEXT(n.endsOn)}</p> : null}
         <div className="v2-daydone-progress">
           {Bar ? <Bar days={n.segments} target={n.target} legend={false} /> : null}
           <div className="v2-daydone-count">
@@ -56,7 +62,7 @@
             {T ? <T status="pending" size={14} label={PENDING} /> : <span>{PENDING}</span>}
           </div>
         </div>
-        <p className="v2-w-note">{VERIFY_NOTE}</p>
+        <p className="v2-text-body-sm">{VERIFY_NOTE}</p>
       </div>
     );
   }

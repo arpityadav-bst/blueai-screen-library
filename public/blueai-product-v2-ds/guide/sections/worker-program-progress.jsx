@@ -20,7 +20,7 @@
             Colour sits on the glyph only; the optional label is 12 ink-3. Rejected adds its reason in danger ink.
             The glyph alone is announced (role img); with a label, the label is.</p>
           <G.StateGrid states={[
-            { label: 'Pending', note: 'one tick, ink-4', node: <K.StatusTick status="pending" label /> },
+            { label: 'Pending', note: 'one tick, ink-4 (the neutral pending tone)', node: <K.StatusTick status="pending" label /> },
             { label: 'Verified', note: 'two ticks, success', node: <K.StatusTick status="verified" label /> },
             { label: 'Not counted', note: 'dash: skipped or no run', node: <K.StatusTick status="notcounted" label /> },
             { label: 'Rejected', note: 'cross, with the reason', node: <K.StatusTick status="rejected" label reason="The comment was removed before we checked it." /> },
@@ -79,6 +79,7 @@
             { label: 'Yesterday verified', node: shell(<K.ProgramStrip worker={F.verified} />) },
             { label: 'Yesterday rejected', note: 'See why opens Activity', node: shell(<K.ProgramStrip worker={F.rejected} onOpenActivity={function () {}} />) },
             { label: 'Program complete', node: shell(<K.ProgramStrip worker={F.complete} />) },
+            { label: 'Receipt off', note: 'receipt={false}: Home, where the WorkerCard says today’s status', node: shell(<K.ProgramStrip worker={F.verified} receipt={false} />) },
             { label: 'Earnings link: hover / focus-visible', node: <span style={{ display: 'inline-flex', gap: 'var(--v2-space-4)' }}><K.EarningsLink className="is-hover" /><K.EarningsLink className="is-focus" /></span> },
           ]} />
           <G.CompareRow
@@ -92,19 +93,20 @@
             { part: 'Remaining', token: 'none', value: "dropped: the bar shows it ('14 to go' was green)", ref: 'worker.strip.to-go' },
             { part: 'Ends', token: '--v2-text-12, --v2-ink-4', value: 'Ends Nov 1', ref: ['worker.rule.const', 'worker.site.ends'] },
             { part: 'Receipt', token: '--v2-text-12, --v2-ink-3', value: 'Yesterday’s run verified.', ref: 'worker.strip.verified' },
-            { part: 'Earnings', token: '--v2-ink, underline --v2-line-hover, hover --v2-blue-ink', value: 'one EARNINGS_URL + external icon', ref: ['worker.strip.earnings', 'worker.strip.earnings-label', 'worker.earnings.menu-url'] },
+            { part: 'Earnings', token: '--v2-ink, underline --v2-link-underline, hover --v2-blue-ink', value: 'one EARNINGS_URL + external icon', ref: ['worker.strip.earnings', 'worker.strip.earnings-label', 'worker.earnings.menu-url'] },
           ]} />
         </G.Part>
 
-        <G.Part name="ProgramSummary" status="new" role="The program's rules in four lines, said before the first day ends and one tap away afterwards.">
+        <G.Part name="ProgramSummary" status="new" role="The program's rules in five lines, said before the first day ends and one tap away afterwards.">
           <G.Note>
             Why the product needs it: the rules live in a code comment ({G.refText('worker.rule.successful-day')}) and in a
             constant nobody shows ({G.refText('worker.rule.const')}); the onboarding close says nothing about them
             ({G.refText('worker.flow.close')}), so partners meet the rules first inside a celebration (R12). Wording waits
             on decision D3: no amount appears until the money model is chosen.
           </G.Note>
-          <p><strong>Anatomy.</strong> Title 13/600 ink, then four lines 13 ink-2 each with a 16 icon: run on 20 days before
-            Nov 1; what makes a day count; checked within a day, one tick then two; cash out on Earnings after the end.
+          <p><strong>Anatomy.</strong> Title 13/600 ink, then five lines 13 ink-2 each with a 16 icon: run on 20 days before
+            Nov 1; what makes a day count; checked within a day, one tick then two; cash out on Earnings after the end;
+            You need $10 to cash out; a smaller balance carries over to the next period.
             Full in the onboarding close and Help; compact as the strip's info tip (32px trigger).</p>
           <G.StateGrid wide states={[
             { label: 'Full', node: shell(<K.ProgramSummary />) },
@@ -116,10 +118,11 @@
             { part: 'What counts', token: 'none', value: 'A day counts when a job is verified, or when there was no job to take.', ref: 'worker.rule.successful-day' },
             { part: 'Verification', token: 'none', value: 'We check every run within a day. One tick while pending, two once verified.', ref: 'worker.copy.verify-note' },
             { part: 'Cash out', token: 'none', value: 'Cash out on Earnings after the period ends.', ref: 'worker.rule.cash-out' },
+            { part: 'Minimum', token: 'WORKER_RULE.cashOutMin', value: 'You need $10 to cash out; a smaller balance carries over to the next period.', ref: ['worker.rule.cash-out', 'display-feedback.stat.site-note'] },
           ]} />
           <G.DoDont
-            do={['Show the rules in the onboarding close, before the first day ends.', 'Put Ends Nov 1 wherever the bar appears.']}
-            dont={['Promise an amount before D3 is decided.', 'Paint pending days or dollar figures green.']} />
+            do={['Show the rules in the onboarding close, before the first day ends.', 'Put Ends Nov 1 beside the count on the ProgramStrip; the day-done moment shows the count only.']}
+            dont={['Promise a rate or a bonus before D3 is decided.', 'Paint pending days or dollar figures green.']} />
         </G.Part>
       </G.Section>
     );

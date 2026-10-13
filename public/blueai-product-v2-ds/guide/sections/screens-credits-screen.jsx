@@ -65,7 +65,7 @@
             { part: 'Title', token: 'ScreenHeader with Back', value: '"AI credits" 20/600, sentence case', ref: ['screens-account.credits.title', 'screens-account.credits.nav-off'] },
             { part: 'Refresh', token: null, value: 'removed: the meter counts down', ref: 'screens-account.credits.refresh' },
             { part: 'Figure', token: 'StatCard: --v2-text-40, --v2-weight-semibold, --v2-ink', value: 'credits glyph 24 + "1,640" in ink', ref: 'screens-account.credits.numeral' },
-            { part: 'Meter', token: 'CreditsMeter (section 47)', value: '"1,640 of 2,000 left today", "Refreshes in 6h 42m", covered line', ref: ['screens-account.credits.grant', 'screens-account.credits.refill'] },
+            { part: 'Meter', token: 'CreditsMeter (section 47)', value: '"of 2,000 today" (figure={false}: the stat says 1,640), "Refreshes in 6h 42m", covered line', ref: ['screens-account.credits.grant', 'screens-account.credits.refill'] },
             { part: 'Empty', token: 'Banner danger', value: 'V2’s title and two lines, kept; the day is the meter’s covered line', ref: ['screens-account.credits.banner', 'screens-account.credits.banner-title', 'screens-account.credits.used', 'screens-account.credits.refresh-in'] },
             { part: 'Refreshed', token: 'Banner success, dismissible', value: '"New credits are here" / "You have 2,000 AI credits for today."' },
             { part: 'Own key', token: 'SettingsSection + Badge success + ListRows', value: '"Running on your own key", "No AI credits are used while this is on.", Manage in Settings', ref: ['screens-account.credits.own-key', 'screens-account.credits.active', 'screens-account.credits.own-key-note', 'screens-account.credits.manage'] },

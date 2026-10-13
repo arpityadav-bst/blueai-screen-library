@@ -1,5 +1,5 @@
 /* Section 54: Notifications (entry-patterns slice). Part: Channel map (Changed).
-   Composed from kit parts (ListRow, Card, Badge, Icon, BottomNav, Toast). The Windows notification
+   Composed from kit parts (ListRow, Card, Icon, BottomNav, Toast); inbox rows reuse section 60’s row classes. The Windows notification
    and the taskbar are OS chrome (section 71): this section fixes when they fire and what they say.
    Refs: guide/refs/entry-patterns.js. */
 (function () {
@@ -12,26 +12,35 @@
     ['Badge', 'The count of what needs the partner, on Activity (section 31). Never on Home.', 'A waiting job, a day not counted'],
     ['In-app toast', 'Confirms what the partner just did in this window. Never an event.', 'Saved, Key removed, Back online'],
   ];
-  // event, Windows title (V2 where V2 has it), when it expires, Windows, taskbar, refs
+  // event, Windows title (V2 where V2 has it), when it expires, Windows, taskbar, the Settings switch that
+  // silences its Windows notification (section 61), refs
   const EVENTS = [
-    ['Day done', 'Today’s run is done.', 'never', 'yes', 'no', ['entry-patterns.notify.job-title', 'entry-patterns.notify.days-body']],
-    ['No job today', 'Your run counts today.', 'never', 'yes', 'no', ['entry-patterns.notify.nojob-title']],
-    ['Job waiting (Always ask)', 'A paid YouTube job is waiting for your OK. Answer by 9 pm.', 'the run window’s end: the day closes as skipped', 'yes', 'yes', ['entry-patterns.notify.attention-delay']],
-    ['Run failed', 'Today’s job didn’t finish.', 'the run window’s end', 'yes', 'yes', ['entry-patterns.notify.failed-title', 'entry-patterns.notify.failed']],
-    ['Day verified', 'Yesterday’s run is verified.', 'never', 'no (inbox only)', 'no', null],
-    ['Day not counted', 'Oct 12 wasn’t counted. See why.', 'never', 'yes', 'no', null],
-    ['Program ending', '3 days left in this program.', 'the program’s end', 'yes', 'no', null],
-    ['Cash out open', 'Cash out is open on Earnings.', 'never', 'yes', 'no', null],
-    ['Terms updated', 'We’ve updated the Program Terms.', 'never (the sheet asks on next open)', 'no', 'no', null],
+    ['Day done', 'Today’s run is done.', 'never', 'yes', 'no', 'Today’s run ends', ['entry-patterns.notify.job-title', 'entry-patterns.notify.days-body']],
+    ['No job today', 'Your run counts today.', 'never', 'yes', 'no', 'Today’s run ends', ['entry-patterns.notify.nojob-title']],
+    ['Job waiting (Always ask)', 'A paid YouTube job is waiting for your OK. Answer by 9 pm.', 'the run window’s end: the day closes as skipped', 'yes', 'yes', 'A paid job needs you', ['entry-patterns.notify.attention-delay']],
+    ['Run failed', 'Today’s job didn’t finish.', 'the run window’s end', 'yes', 'yes', 'Today’s run ends', ['entry-patterns.notify.failed-title', 'entry-patterns.notify.failed']],
+    ['Day verified', 'Yesterday’s run is verified.', 'never', 'no (inbox only)', 'no', 'inbox only', null],
+    ['Day not counted', 'Oct 12 wasn’t counted. See why.', 'never', 'yes', 'no', 'always on', null],
+    ['Program ending', '3 days left in this program.', 'the program’s end', 'yes', 'no', 'always on', null],
+    ['Cash out open (only when numbers().reachedMinimum, after the period)', 'Cash out is open on Earnings.', 'never', 'yes', 'no', 'always on', null],
+    ['Cash out, under $10', 'This program has ended. You need $10 to cash out. Your balance carries over to the next period.', 'never', 'no (inbox only)', 'no', 'inbox only', null],
+    ['Terms updated', 'We’ve updated the Program Terms.', 'never (the sheet asks on next open)', 'no', 'no', 'inbox only', null],
   ];
 
-  function Row({ icon, title, body, time, state }) {
+  // One inbox row in section 60's anatomy, from the same screens/core.css classes as the screen: a 32
+  // sunken disc with the glyph 16 in its tone, an 8px blue dot and a 600 title while unread, the body
+  // 13 ink-3 (it wraps), the time 12 ink-3. Every row opens its place, an expired ask included.
+  function Row({ icon, tone, title, body, time, unread }) {
     const K = window.V2Kit;
-    const badge = state === 'new' ? <K.Badge tone="info" dot>New</K.Badge>
-      : (state === 'expired' ? <K.Badge tone="neutral">Expired</K.Badge> : null);
+    const lead = (
+      <span className={'v2-notif-icon' + (tone ? ' v2-notif-icon--' + tone : '')}>
+        <K.Icon name={icon} size={16} />{unread ? <span className="v2-notif-dot" /> : null}
+      </span>
+    );
     return (
-      <K.ListRow leading={<K.Icon name={icon} size={20} />} label={title} description={body + ' · ' + time}
-        badge={badge} onClick={state === 'expired' ? undefined : function () {}} />
+      <K.ListRow className={'v2-notif' + (unread ? ' v2-notif--unread' : '')} leading={lead}
+        label={<span>{unread ? <span className="v2-sr-only">Unread: </span> : null}{title}</span>}
+        description={body} value={time} onClick={function () {}} />
     );
   }
   function Inbox() {
@@ -39,10 +48,10 @@
     return (
       <div style={{ width: 'var(--v2-shell-w)' }}>
         <K.Card padding="none">
-          <Row state="new" icon="bell" title="Paid YouTube job waiting for your OK" body="Answer by 9 pm or today won’t count." time="11:04 am" />
-          <Row state="seen" icon="check" title="Oct 12 run done" body="Day 7 of 20. Pending verification." time="Yesterday" />
-          <Row state="actioned" icon="check-double" title="Oct 11 run verified" body="Day 6 of 20." time="Oct 12" />
-          <Row state="expired" icon="clock" title="Paid job expired" body="No answer by 9 pm, so today didn’t count." time="Oct 9" />
+          <Row unread icon="bell" tone="attention" title="Paid YouTube job waiting for your OK" body="Answer by 9 pm or today won’t count." time="11:04 am" />
+          <Row icon="check" title="Run done" body="Day 7 of 20, pending verification." time="Oct 12" />
+          <Row icon="check-double" tone="success" title="Oct 11 run verified" body="Day 6 of 20." time="Oct 12" />
+          <Row icon="clock" title="Paid job expired" body="No answer by 9 pm, so today didn’t count." time="Oct 9" />
         </K.Card>
       </div>
     );
@@ -73,13 +82,13 @@
           </div>
           <div className="g-table-wrap">
             <table className="g-table">
-              <thead><tr><th scope="col">Event</th><th scope="col">Windows title (proposed unless sourced)</th><th scope="col">Expires</th><th scope="col">Windows</th><th scope="col">Taskbar</th><th scope="col">V2 source</th></tr></thead>
-              <tbody>{EVENTS.map(function (r) { return <tr key={r[0]}><td>{r[0]}</td><td>{r[1]}</td><td>{r[2]}</td><td>{r[3]}</td><td>{r[4]}</td><td><G.RefCell refs={r[5]} /></td></tr>; })}</tbody>
+              <thead><tr><th scope="col">Event</th><th scope="col">Windows title (proposed unless sourced)</th><th scope="col">Expires</th><th scope="col">Windows</th><th scope="col">Taskbar</th><th scope="col">Switch</th><th scope="col">V2 source</th></tr></thead>
+              <tbody>{EVENTS.map(function (r) { return <tr key={r[0]}><td>{r[0]}</td><td>{r[1]}</td><td>{r[2]}</td><td>{r[3]}</td><td>{r[4]}</td><td>{r[5]}</td><td><G.RefCell refs={r[6]} /></td></tr>; })}</tbody>
             </table>
           </div>
-          <G.Note>Every event also lands in Notifications. A Windows notification stays in the Windows action centre; BlueAI does not make it leave early. Clicking it opens the entry’s own place: the job preview, the run card with Try again, Activity, or Earnings.</G.Note>
+          <G.Note>Every event also lands in Notifications. A Windows notification stays in the Windows action centre; BlueAI does not make it leave early. Clicking it opens the entry’s own place: the job ask in Chat (Chat waiting, the destination section 60 names), the run card with Try again, Activity, or Earnings. The two Settings switches only silence the Windows notification; every event still lands in the inbox, and events marked always on cost or pay the partner, so no switch hides them.</G.Note>
           <G.StateGrid wide states={[
-            { label: 'New, seen, actioned, expired', note: 'one row each, newest first', node: <Inbox /> },
+            { label: 'Unread, read, expired', note: 'section 60’s rows, newest first; opening one marks it read', node: <Inbox /> },
             { label: 'Badge', note: 'on Activity: a waiting job and a day not counted', node: <div style={{ width: 'var(--v2-shell-w)' }}><K.BottomNav items={items.map(function (it) { return it.id === 'activity' ? Object.assign({}, it, { badge: 2 }) : it; })} value="home" /></div> },
             { label: 'In-app toast', note: 'confirms an action, never an event', node: <K.Toast tone="success" title="Notification settings saved." duration={0} /> },
           ]} />
@@ -93,9 +102,9 @@
             { part: 'Taskbar, V2', token: null, value: 'after 4000 ms; 7 flashes of 0.55 s, then holds amber', ref: ['entry-patterns.notify.attention-delay', 'entry-patterns.notify.flash', 'entry-patterns.notify.flash-colour'] },
             { part: 'Low-credit dot, V2', token: null, value: 'red dot on the credits pill (moves to the credits chip, section 47)', ref: 'entry-patterns.notify.low-dot' },
             { part: 'Telegram, V2', token: null, value: 'a card with no notification role (a channel later, if the PM wants one)', ref: 'entry-patterns.notify.telegram' },
-            { part: 'Inbox row', token: 'ListRow, --v2-icon-md', value: 'icon 20, title 14/500, body + time 12 ink-3, chevron' },
-            { part: 'New', token: 'Badge info dot', value: 'New until opened; the screen itself is section 60' },
-            { part: 'Expired', token: 'Badge neutral', value: 'Expired; not pressable; says what it cost' },
+            { part: 'Inbox row', token: 'ListRow + v2-notif (section 60)', value: '32 sunken disc, glyph 16 in its tone; title 14, 600 unread / 500 read; body 13 ink-3, wraps; time 12 ink-3; chevron' },
+            { part: 'Unread', token: '--v2-blue, --v2-space-2', value: '8px dot on the disc and a 600 title; said “Unread:” first; opening the row marks it read' },
+            { part: 'Expired', token: 'kind expired (clock, ink-3)', value: 'the waiting ask turns into its result and what it cost; still opens the run' },
             { part: 'Badge', token: 'BottomNav badge', value: 'on Activity; count, 9+ above nine, read as “, 2 new”' },
           ]} />
           <G.DoDont

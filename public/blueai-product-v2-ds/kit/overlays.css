@@ -83,15 +83,6 @@
 .v2-sheet .v2-ov-actions { padding: var(--v2-space-5) var(--v2-space-6) var(--v2-space-6); }
 .v2-sheet .v2-dialog-foot { padding: 0 var(--v2-space-6) var(--v2-space-6); }
 
-/* The close control when the kit's IconButton is not loaded. */
-.v2-ov-close--plain {
-  display: inline-grid; place-items: center; flex: none; width: var(--v2-hit-min); height: var(--v2-hit-min);
-  border-radius: var(--v2-radius-sm); color: var(--v2-ink-3);
-  transition: background-color var(--v2-dur-1) var(--v2-ease-standard), color var(--v2-dur-1) var(--v2-ease-standard);
-}
-.v2-ov-close--plain:hover, .v2-ov-close--plain.is-hover { background: var(--v2-wash-hover); color: var(--v2-ink); }
-.v2-ov-close--plain:disabled { opacity: var(--v2-opacity-disabled); }
-
 /* ---- Menu and popover: one float shape ------------------------------------------------------ */
 .v2-float { position: relative; display: inline-flex; vertical-align: middle; }
 .v2-float-panel {
@@ -149,7 +140,7 @@
 .v2-tip-panel {
   position: absolute; left: 50%; z-index: var(--v2-z-popover); width: max-content; max-width: 260px;
   transform: translateX(calc(-50% + var(--tip-shift, 0px)));
-  visibility: hidden; transition: visibility 0s linear calc(200ms + var(--v2-dur-1));
+  visibility: hidden; transition: visibility 0s linear calc(var(--v2-dur-2) + var(--v2-dur-1));
 }
 .v2-tip.is-up > .v2-tip-panel { bottom: calc(100% + var(--v2-space-2)); }
 .v2-tip.is-down > .v2-tip-panel { top: calc(100% + var(--v2-space-2)); }
@@ -165,7 +156,7 @@
   font-weight: var(--v2-weight-regular); line-height: var(--v2-leading-body); text-align: left;
   white-space: normal; letter-spacing: normal;
   opacity: 0; transform: translateY(4px);
-  transition: opacity var(--v2-dur-1) var(--v2-ease-in) 200ms, transform var(--v2-dur-1) var(--v2-ease-in) 200ms;
+  transition: opacity var(--v2-dur-1) var(--v2-ease-in) var(--v2-dur-2), transform var(--v2-dur-1) var(--v2-ease-in) var(--v2-dur-2);
 }
 .v2-tip.is-down .v2-tip-box { transform: translateY(-4px); }
 .v2-tip--label .v2-tip-box {
@@ -183,8 +174,9 @@
   opacity: 1; transform: none;
   transition: opacity var(--v2-dur-3) var(--v2-ease-out), transform var(--v2-dur-3) var(--v2-ease-out);
 }
-/* A label tip waits a beat on hover, so passing the pointer across the top bar stays quiet. */
-.v2-tip--label:hover > .v2-tip-panel, .v2-tip--label:hover > .v2-tip-panel > .v2-tip-box { transition-delay: 400ms; }
+/* A label tip waits a beat on hover, so passing the pointer across the top bar stays quiet. The
+   close delay is --v2-dur-2 (V2's 200ms, credits_popup_parts.jsx:135-146) and the hover wait is twice it. */
+.v2-tip--label:hover > .v2-tip-panel, .v2-tip--label:hover > .v2-tip-panel > .v2-tip-box { transition-delay: calc(var(--v2-dur-2) * 2); }
 .v2-tip.is-dismissed > .v2-tip-panel { visibility: hidden; transition: none; }
 .v2-tip.is-dismissed > .v2-tip-panel > .v2-tip-box { opacity: 0; transition: none; }
 .v2-tip-box .v2-link { font-size: inherit; }
@@ -246,16 +238,17 @@
 .v2-toast-action:hover, .v2-toast-action.is-hover { background: var(--v2-select); }
 .v2-toast-action:active, .v2-toast-action.is-active { background: var(--v2-wash-press); }
 .v2-toast-close { flex: none; }
+/* The timer exists only on a timed toast, which always sets --toast-ms (kit/toast.jsx LIFETIME). */
 .v2-toast-timer {
   position: absolute; left: 0; bottom: 0; width: 0; height: 0; overflow: hidden;
-  animation: v2-fade var(--toast-ms, 4000ms) linear forwards;
+  animation: v2-fade var(--toast-ms) linear forwards;
 }
 .v2-toast:hover .v2-toast-timer, .v2-toast:focus-within .v2-toast-timer,
 .v2-toast.is-hover .v2-toast-timer, .v2-toast.is-paused .v2-toast-timer { animation-play-state: paused; }
 @media (prefers-reduced-motion: reduce) {
-  .v2-toast .v2-toast-timer { animation-duration: var(--toast-ms, 4000ms) !important; }
+  .v2-toast .v2-toast-timer { animation-duration: var(--toast-ms) !important; }
 }
-.v2-reduced-motion .v2-toast .v2-toast-timer { animation-duration: var(--toast-ms, 4000ms) !important; }
+.v2-reduced-motion .v2-toast .v2-toast-timer { animation-duration: var(--toast-ms) !important; }
 
 /* ---- Tabs (onBlue's recessed track with one raised chip) ------------------------------------- */
 .v2-tabs {

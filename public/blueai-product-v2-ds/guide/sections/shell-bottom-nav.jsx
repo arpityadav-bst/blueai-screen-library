@@ -57,7 +57,7 @@
             { part: 'Rest label and icon', token: '--v2-ink-3', value: '#5f636b (6.0:1)', ref: 'shell.nav.active-ink' },
             { part: 'Label', token: '--v2-text-12, --v2-weight-medium', value: '12/500 in every state', ref: 'shell.nav.label' },
             { part: 'Icon', token: '--v2-icon-md, --v2-icon-stroke', value: '20, stroke 1.75', ref: ['shell.nav.icon', 'shell.nav.stroke'] },
-            { part: 'Item shape', token: '--v2-radius-sm', value: '48 tall inside the bar, radius 6, wash on hover', ref: 'shell.nav.item-shape' },
+            { part: 'Item shape', token: '--v2-radius-sm', value: '47 tall inside the bar (56 less the 1px top line and 4 above and below), radius 6, wash on hover', ref: 'shell.nav.item-shape' },
             { part: 'Motion', token: '--v2-dur-1, --v2-ease-standard', value: '120ms colour', ref: 'shell.nav.motion' },
             { part: 'Badge', token: '--v2-action, --v2-on-color, --v2-text-11', value: '16 tall pill, 4.92:1' },
             { part: 'Pushed screen', token: 'value = parent tab', value: 'parent stays lit', ref: 'shell.nav.no-tab-lit' },

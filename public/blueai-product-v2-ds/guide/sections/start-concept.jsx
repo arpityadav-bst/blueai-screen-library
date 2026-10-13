@@ -72,12 +72,13 @@
           <G.Table head={['What', 'V2 today', 'Source']} rows={[
             ['Program', '20 days, ends Nov 1, $1 per verified day, $10 day-20 bonus', <Src at={G.refText('worker.rule.const')} />],
             ['Money rule note', '$1 credited at the end of each successful day (under review)', <Src at={G.refText('worker.rule.money-draft')} />],
+            ['Cash out', 'From $10, after the period ends; under $10 the balance carries over', <Src at={G.refText('worker.rule.cash-out')} />],
             ['The site’s program', 'At least 20 days each month to earn $30', <Src at={G.refText('entry-patterns.family.pay')} />],
             ['AI credits', '2,000 granted every day', <Src at={G.refText('credits-settings.grant.daily')} />],
             ['Modes', 'Always ask and Automatic, per app', <Src at={G.refText('entry-patterns.copy.modes')} />],
             ['Ticks', 'Pending verification, then verified', <Src at={G.refText('entry-patterns.copy.pending')} />],
           ]} />
-          <G.Warn>The money model is decision D3: the app’s $1 a day plus a $10 bonus, or the site’s $30 for 20 days. Until the PM picks one, the system shows days, not dollars (section 73).</G.Warn>
+          <G.Warn>The money model is decision D3: the app’s $1 a day plus a $10 bonus, or the site’s $30 for 20 days. Until the PM picks one, the system shows days, not dollars (section 73). The $10 cash-out minimum holds under both, so it is stated wherever cash out is.</G.Warn>
         </G.Part>
       </G.Section>
     );

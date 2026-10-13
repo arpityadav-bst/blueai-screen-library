@@ -27,7 +27,8 @@
     ['Update required', 'This version can no longer run jobs.', 'Paused chip "Update needed"', 'Update now', null],
     ['Not in the program', 'Signed in, but this account is not an accepted one (the gate, after the fact).', 'No status, no credits, no nav', 'Switch account (App Player signs out too)', ['entry-patterns.signin.gate-card', 'entry-patterns.signin.player-too']],
     ['Program complete', 'Day 20 is verified; the period has not ended.', '"All 20 days done"', 'Earnings, after the period ends', ['entry-patterns.copy.day20', 'entry-patterns.copy.day20-sub']],
-    ['Period ended', 'The program’s period is over (Nov 1); cash out is open.', 'No status, no credits', 'Earnings', ['entry-patterns.copy.rule', 'entry-patterns.copy.cashout']],
+    ['Period ended', 'The program’s period is over (Nov 1); cash out is open only when numbers().reachedMinimum.', 'No status, no credits', 'Earnings', ['entry-patterns.copy.rule', 'entry-patterns.copy.cashout']],
+    ['Period ended, under $10', 'The period is over and earnings are under the $10 minimum.', 'No status, no credits', 'Earnings as the quiet one', ['entry-patterns.copy.cashout']],
     ['Between programs', 'No program is running; the next one has a date.', 'No status, no credits', 'None needed; Earnings as the quiet one', null],
   ];
 

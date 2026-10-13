@@ -94,7 +94,7 @@
 
 - **V2:** `blueai/worker_flow.jsx:171; blueai/worker_day_done.jsx:38`
 - **Today:** The money rule (20 days, verification, end Nov 1, cash out) is never stated before the first day-done overlay; RULE.programEnd is never shown.
-- **Recommended:** ProgramSummary in the onboarding close and behind an info tip on the strip; show 'Ends Nov 1' wherever the bar appears.
+- **Recommended:** ProgramSummary in the onboarding close and behind an info tip on the strip; show 'Ends Nov 1' beside the count on the ProgramStrip (Home, Activity). The day-done moment keeps its bar without the date: it says the count once and nothing else (section 44).
 - **Why:** Partners cannot plan around rules they have not been told.
 
 #### R13 worker (effort M)
@@ -375,7 +375,7 @@ Choices only the PM (and legal, where named) can make. The system builds the rec
 |---|---|---|---|
 | **D1** Primary fill | Blue action #1268f0 (kit default) | Ink #0b0b0d like the site's commit button | A: blue already means the worker's actions in V2; links become underlined ink and selection a 12% tint, so blue no longer collides. |
 | **D2** The noun: worker or agent | worker (V2) | agent (site, apply.html:1269-1274) | One noun across site and app, one capitalisation ('BlueAI worker'); PM call. |
-| **D3** The money model | $1 per verified day + $10 day-20 bonus (worker_day_done.jsx:5-6) | $30 when the 20-day goal is met (apply.html:1285, 1471) | Pick one sentence and say it everywhere; if B, the app shows days, never partial dollars ('days' style is already the default). Rename the bonus 'day-20 bonus' if it stays; $10 is also the site's cash-out minimum. |
+| **D3** The money model | $1 per verified day + $10 day-20 bonus (worker_day_done.jsx:5-6) | $30 when the 20-day goal is met (apply.html:1285, 1471) | Pick one sentence and say it everywhere; if B, the app shows days, never partial dollars ('days' style is already the default). Rename the bonus 'day-20 bonus' if it stays. The $10 cash-out minimum is not part of the choice: it is V2's rule (worker_day_done.jsx:6) and the site's (apply.html:1360, 2292), so the app states it now (sections 01, 41, 43). |
 | **D4** Where the mode changes later | Version 1 chip in the composer | Version 2 ribbon (default) | B as the in-chat shortcut plus Settings > Worker as the permanent home either way. |
 | **D5** Sign-in option | Check account (interrupt only on the wrong account) | Continue as (always confirm) | A for fewer stops; drop the losing code path. |
 | **D6** Credits and the paid run | Reserve the worker's run cost from the daily grant | Warn before a chat would dip into it | A: a partner should never lose a paid day to an invisible meter. |

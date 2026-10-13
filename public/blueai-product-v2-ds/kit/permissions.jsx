@@ -2,14 +2,19 @@
    The PM's per-app model (agent_permissions.jsx:1-26): each app is Always ask or Automatic, a new
    app starts on Always ask, and turning Automatic on is consent, asked every time.
 
-   ModeRows {worker | apps, modes, onChange(appId, mode), beforeChange(appId, mode), onConnect, float, note}
+   ModeRows {worker | apps, modes, onChange(appId, mode), beforeChange(appId, mode), onConnect, note}
      One ListRow per app: mark, name, account, and a Segmented 'Always ask' / 'Automatic'. Picking
      Automatic goes through beforeChange (open the ConsentDialog, resolve true on agree). An app
      that is not live yet shows 'Coming soon' with no switch (R40); one not connected offers Connect.
-     float wraps the rows as the popover that the ribbon's Change opens.
+     The ribbon's Change opens it inside the kit Popover (<Popover><ModeRows /></Popover>), which
+     owns Esc, outside click and focus; ModeRows draws no float surface of its own.
    ConsentDialog {app, open, busy, onAgree, onCancel, worker, preview}
-     V2's consent copy verbatim (agent_permissions.jsx:159-179), on the one Dialog with focus
-     management, plus where to turn it off. Cancel leaves the question waiting.
+     V2's consent structure (agent_permissions.jsx:159-179), on the one Dialog with focus
+     management, plus where to turn it off. Cancel leaves the question waiting. Its first line is
+     proposed copy for the PM and legal to confirm (section 73): V2's 'including posting videos and other
+     content' names an action the worker never takes and leaves out the one it does. On Automatic
+     the job preview never appears, so this line is the partner's only notice that comments will
+     be posted in their name.
    PermissionRequest {app, state, lines, busy, onAllow, onNotNow, decidedOn}
      state asked | allowed | notnow | revoked. Asks before reading watch history and subscriptions
      (V2 reads them unasked: worker_flow.jsx:80, 161). Proposed copy, a PM decision (R18).
@@ -31,7 +36,7 @@
   }
   const listNames = (apps) => apps.map(function (a) { return a.name; }).join(apps.length === 2 ? ' and ' : ', ');
 
-  function ModeRows({ worker, apps, modes, onChange, beforeChange, onConnect, float, note }) {
+  function ModeRows({ worker, apps, modes, onChange, beforeChange, onConnect, note }) {
     const list = appList(worker, apps, modes);
     const I = K().Icon;
     const Row = K().ListRow;
@@ -39,7 +44,7 @@
     const Badge = K().Badge;
     const B = K().Button;
     return (
-      <div className={cx('v2-moderows', float && 'v2-moderows--float')}>
+      <div className="v2-moderows">
         {list.map(function (a, i) {
           const leading = <span className="v2-moderows-app">{I ? <I name={a.icon} size={20} /> : null}</span>;
           let description = a.handle || null;
@@ -66,13 +71,17 @@
     );
   }
 
+  // What a paid job does on each app, in the partner's terms (WORKER_JOB.actions: watch, like,
+  // comment). Proposed copy; Instagram's waits for its job type.
+  const ACTS = { youtube: 'watching, liking and posting comments in your name' };
+
   function ConsentBody({ app, worker }) {
     const list = appList(worker);
     const a = list.find(function (x) { return x.id === app; }) || list[0];
     const I = K().Icon;
     return (
       <div className="v2-consent">
-        <p>BlueAI will accept {a.name} jobs and finish them on your {a.name} account without asking you first, including posting videos and other content.</p>
+        <p>BlueAI will take {a.name} jobs and do them on your account without asking first: {ACTS[a.id] || ACTS.youtube}.</p>
         <div>
           <div className="v2-consent-table">
             {list.map(function (x) {

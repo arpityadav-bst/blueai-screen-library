@@ -21,14 +21,20 @@
   // The status a chip shows, from the Worker record (section 41). Labels are proposed copy except
   // 'Didn’t finish', which echoes the PM's toast.
   const CHIP_STATES = [
-    ['scheduled', 'Next run 11 am', 'today.status scheduled', 'Home, Today'],
+    ['scheduled', 'Next run 11 am; Next run 9 am to 9 pm; Runs later today', 'today.status scheduled, worded from runWindow (a time, a window, any time)', 'Home, Today'],
     ['running', 'Running', 'today.status running', 'the run in the chat'],
-    ['needs-you', 'Needs you', 'today.status waiting (a job ask)', 'the job preview'],
-    ['done', 'Day 7 of 20', 'today.status done (pending verification)', 'the run in Activity'],
-    ['failed', 'Didn’t finish', 'today.status failed', 'the run, with Try again and its deadline'],
-    ['paused', 'Paused', 'paused', 'Settings > Worker'],
-    ['offline', 'Offline', 'offline', 'Home, with the offline banner'],
+    ['needs-you', 'Needs you (yellow tint)', 'today.status waiting', 'the job preview'],
+    ['done', 'Day 7 of 20 (neutral dot while pending, green once verified)', 'today.status done', 'the run in Activity'],
+    ['not-counted', 'Not counted today (neutral dot)', 'today.status done, end declined (skipped)', 'the run in Activity'],
+    ['verified', 'All 20 days done', 'all 20 days verified (numbers().complete)', 'Home, Today: the card’s Earnings'],
+    ['failed', 'Didn’t finish (red tint)', 'today.status failed', 'the run, with Try again and its deadline'],
+    ['paused', 'Paused (ring dot)', 'paused', 'Settings > Worker'],
+    ['no-credits', 'Waiting for credits (ring dot)', 'credits.left below runCost before today’s run', 'Home, Today: the card says when credits refresh'],
+    ['paused', 'Update needed (ring dot)', 'an update is required (section 69)', 'the update screen (section 69)'],
+    ['offline', 'Offline (ring dot)', 'offline', 'Home, with the offline banner'],
   ];
+  // The label a specimen draws: the first wording, without the note in brackets.
+  function chipLabel(s) { return s[1].split(';')[0].replace(/ \(.*\)$/, ''); }
 
   const MENU_ROWS = [
     ['Help', 'FAQ', 'help', 'Opens the FAQ on the onBlue site in the browser.', 'Only closes the menu.', ['shell.topbar.faq']],
@@ -73,6 +79,8 @@
             { label: 'Signed in, next run scheduled', node: <Bar status="scheduled" statusLabel="Next run 11 am" /> },
             { label: 'Signed in, the worker needs you', node: <Bar status="needs-you" /> },
             { label: 'Menu open (More)', note: 'keyboard: Down opens, arrows move, Esc returns focus to the button', node: <Bar status="done" statusLabel="Day 7 of 20" openMenu="more" room /> },
+            { label: 'Longest label', note: 'Next run 9 am to 9 pm, 4-digit credits, Help, More at 419: only the chip label may shorten', node: <Bar status="scheduled" statusLabel="Next run 9 am to 9 pm" credits={2000} /> },
+            { label: 'Waiting for credits', note: 'the other long label, with credits at none', node: <Bar status="no-credits" statusLabel="Waiting for credits" credits={0} /> },
           ]} />
           <G.CompareRow
             v2={<G.FrameState url="index.html?start=worker" label="V2 header, signed in" height={900} />}
@@ -87,16 +95,17 @@
             { part: 'Icon buttons', token: 'IconButton 32 (section 11)', value: '32 target, 20 glyph, ink-3', ref: 'shell.topbar.icon-btn' },
             { part: 'New chat', token: 'moved to the chat ScreenHeader', value: 'IconButton, not a filled pill', ref: ['shell.topbar.new-chat', 'shell.topbar.new-chat-label', 'shell.topbar.new-chat-hover'] },
             { part: 'Signed out', token: 'signedIn false', value: 'brand only', ref: 'shell.topbar.signed-out' },
+            { part: 'Long status label', token: 'WorkerStatusChip label', value: 'the one part that shrinks: it ends in an ellipsis and keeps the full words in its accessible name; brand, credits, Help and More never move out' },
           ]} />
           <G.DoDont
-            do={['Keep one status chip and one credits chip; let the menus hold the rest.', 'Check the bar at 419 wide with the longest status label.']}
+            do={['Keep one status chip and one credits chip; let the menus hold the rest.', 'Check the bar at 419 wide with the longest status labels: “Next run 9 am to 9 pm” and “Waiting for credits”.']}
             dont={['Add a filled button to the top bar.', 'Put a second gradient in the bar.', 'Show the cluster when signed out.']} />
         </G.Part>
 
         <G.Part name="WorkerStatusChip" status="new" role="Today's run in one glance, in the chrome on every screen; opens today's run.">
           <G.Note><strong>Why the product needs it.</strong> The partner opens BlueAI to check one thing: did today's run happen, and does the day count. In V2 that state lives only inside the chat thread, a taskbar flash and an 8 second Windows toast. One chip in the top bar answers it on every screen and leads to the place to act.</G.Note>
           <G.StateGrid states={CHIP_STATES.map(function (s) {
-            return { label: s[0] === 'needs-you' ? 'needs you' : s[0], note: 'opens ' + s[3], node: <Chip status={s[0]} label={s[1]} /> };
+            return { label: (s[0] === 'needs-you' ? 'needs you' : s[0]) + (s[0] === 'paused' && chipLabel(s) !== 'Paused' ? ' (update)' : ''), note: 'opens ' + s[3], node: <Chip status={s[0]} label={chipLabel(s)} /> };
           }).concat([
             { label: 'signed out', note: 'not rendered', node: <span className="g-muted">(nothing)</span> },
             { label: 'hover', node: <Chip status="scheduled" label="Next run 11 am" className="is-hover" /> },
@@ -106,7 +115,7 @@
           <div className="g-table-wrap">
             <table className="g-table">
               <thead><tr><th scope="col">Status</th><th scope="col">Label</th><th scope="col">From the Worker record</th><th scope="col">Opens</th></tr></thead>
-              <tbody>{CHIP_STATES.map(function (s) { return <tr key={s[0]}><td><code className="g-code">{s[0]}</code></td><td>{s[1]}</td><td>{s[2]}</td><td>{s[3]}</td></tr>; })}</tbody>
+              <tbody>{CHIP_STATES.map(function (s) { return <tr key={s[1]}><td><code className="g-code">{s[0]}</code></td><td>{s[1]}</td><td>{s[2]}</td><td>{s[3]}</td></tr>; })}</tbody>
             </table>
           </div>
           <G.SpecDrawer rows={[

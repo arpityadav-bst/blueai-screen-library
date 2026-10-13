@@ -73,7 +73,7 @@
             { part: 'Privacy', token: 'ListRow nav + expandable', value: 'Interest profile, Watch history, What you agreed to' },
             { part: 'Legal', token: 'Link external', value: '"Program Terms", "Privacy Policy" on /onblue/terms', ref: ['screens-account.legal.url', 'screens-account.legal.program', 'screens-account.legal.privacy'] },
             { part: 'Sign out row', token: 'Card padding none + ListRow', value: 'sign-out 16, "Sign out" 14/500; CSS hover and focus', ref: ['screens-account.profile.signout-row', 'screens-account.profile.hover-js'] },
-            { part: 'Confirm', token: 'Dialog alert sm', value: '"Sign out?" + the cost; Cancel / Sign out (primary)', ref: ['screens-account.profile.logout-title', 'screens-account.profile.logout-body', 'screens-account.profile.logout-button', 'screens-account.profile.menu-logout'] },
+            { part: 'Confirm', token: 'Dialog alert sm', value: '"Sign out of BlueAI?" + the cost; Cancel / Sign out (primary)', ref: ['screens-account.profile.logout-title', 'screens-account.profile.logout-body', 'screens-account.profile.logout-button', 'screens-account.profile.menu-logout'] },
             { part: 'After', token: 'Welcome (section 67)', value: 'signed out, worker paused', ref: 'screens-account.profile.logout-noop' },
           ]} />
         </G.Part>

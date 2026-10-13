@@ -3,14 +3,19 @@
    update is ready or required, when the account is not in the program, and around the program's
    end. Every state keeps the top bar (and the nav when there is somewhere to go), so the partner is
    never stranded, and says what it means for today and the one next step.
-   Built only from kit parts: AppFrame, TopBar, BottomNav, EmptyState, Banner, WorkerCard,
-   ProgramStrip, Button. Layout lives in screens/entry.css. Copy is proposed copy except where a
-   comment names V2. Spec: design-md/69-system-states.md.
+   Built from kit parts (EmptyState, Banner, WorkerCard, ProgramStrip, Button) inside
+   V2Screens.ScreenFrame, the one window every signed-in screen uses; CHROME sets the chip, the
+   credits and the nav per state. Layout lives in screens/entry.css. Copy is proposed copy except
+   where a comment names V2. Spec: design-md/69-system-states.md.
 
-   SystemStates {state, worker, busy, compact, reduced, preview, landmark, onRetry, onReport,
-                onUpdate, onRestart, onSwitch}
+   SystemStates {state, worker, screen, busy, compact, reduced, preview, landmark, onNavigate,
+                onRetry, onReport, onUpdate, onRestart, onSwitch}
      state  offline | error | update-optional | update-required | not-in-program | complete |
-            period-ended | between-programs (SYSTEM_STATES lists them with labels)
+            period-ended | period-under | between-programs (SYSTEM_STATES lists them)
+     screen the screen that failed to load, for error ('Home' by default).
+     Cash out follows the site's one rule (onblue/apply.html:2277-2296): it opens only when the
+     period has ended AND the balance is at least $10; under it, the balance carries over, in the
+     site's words. With a worker, period-ended picks the variant from numbers().reachedMinimum.
      busy   the primary action is working (Try again, Update now, Switch account)
    SYSTEM_STATES [[key, label]] in the order the guide shows them. */
 (function () {
@@ -25,6 +30,7 @@
     ['not-in-program', 'Not in the program'],
     ['complete', 'Program complete'],
     ['period-ended', 'Period ended, cash out open'],
+    ['period-under', 'Period ended, under $10'],
     ['between-programs', 'Between programs'],
   ];
 
@@ -40,8 +46,9 @@
     'update-optional': { status: 'scheduled', label: 'Next run 11 am', credits: true, nav: true },
     'update-required': { status: 'paused', label: 'Update needed', credits: true, nav: true },
     'not-in-program': { status: null, credits: false, nav: false },
-    complete: { status: 'done', label: 'All 20 days done', credits: true, nav: true },
+    complete: { status: 'verified', label: 'All 20 days done', credits: true, nav: true },
     'period-ended': { status: null, credits: false, nav: true },
+    'period-under': { status: null, credits: false, nav: true },
     'between-programs': { status: null, credits: false, nav: true },
   };
 
@@ -70,7 +77,7 @@
         return {
           center: true,
           node: empty({
-            variant: 'error', title: 'Couldn’t load Home',
+            variant: 'error', title: 'Couldn’t load ' + (p.screen || 'Home'),
             body: 'Nothing is lost: today’s run and your days are not affected.',
             primaryAction: action('Try again', p.onRetry, p.busy),
             secondaryAction: action('Report a problem', p.onReport),
@@ -124,43 +131,49 @@
           ),
         };
       case 'period-ended':
+      case 'period-under': { // under the minimum: the site's words, apply.html:2292-2293
+        const open = state === 'period-ended';
+        const n = k.numbers ? k.numbers(w || fixture(open ? 'ended' : 'endedBelow')) : { verified: open ? 18 : 6, target: 20, endsOn: 'Nov 1' };
         return {
           center: true,
           node: empty({
-            variant: 'first', icon: 'calendar', title: 'This program ended on Nov 1',
-            body: 'You finished 18 of 20 days. Cash out is open on the Earnings page.',
-            primaryAction: earnings,
+            variant: 'first', icon: 'calendar', title: 'This program ended on ' + n.endsOn,
+            body: 'You finished ' + n.verified + ' of ' + n.target + ' days. ' + (open ? 'Cash out is open on the Earnings page.' : 'You need $10 to cash out. Your balance carries over to the next period.'),
+            primaryAction: open ? earnings : null, secondaryAction: open ? null : earnings,
           }),
         };
-      default: // between-programs
+      }
+      default: // between-programs. Dec 1 is a PM-supplied value.
         return {
           center: true,
           node: empty({
             variant: 'first', icon: 'clock', title: 'No program running right now',
-            body: 'The next one starts Dec 1. Your BlueAI worker starts again then, with nothing to set up.',
+            body: 'The next one starts Dec 1. Your BlueAI worker starts it once you agree to its Program Terms.',
             secondaryAction: earnings,
           }),
         };
     }
   }
 
+  // Cash out is open only when the period has ended and the balance reached the minimum.
+  function resolve(state, w) {
+    const k = K();
+    if (state !== 'period-ended' || !w || !k.numbers) return state;
+    return k.numbers(w).reachedMinimum === false ? 'period-under' : state;
+  }
+
   function SystemStates(props) {
     const p = props || {};
-    const k = K();
-    const state = CHROME[p.state] ? p.state : 'offline';
+    const Frame = (window.V2Screens || {}).ScreenFrame;
+    const state = resolve(CHROME[p.state] ? p.state : 'offline', p.worker);
     const chrome = CHROME[state];
     const b = body(state, p);
-    const credits = chrome.credits ? { balance: 1640 } : null;
-    const top = k.TopBar ? (
-      <k.TopBar signedIn status={chrome.status} statusLabel={chrome.label} credits={credits} />
-    ) : null;
-    const nav = chrome.nav && k.BottomNav ? <k.BottomNav value="home" /> : null;
     const content = <div className={cx('v2-sys', b.center && 'v2-sys--center')}>{b.node}</div>;
-    const Frame = k.AppFrame;
     if (!Frame) return content;
     return (
-      <Frame compact={p.compact} landmark={p.landmark} topBar={top} nav={nav}
-        className={cx('v2-root', p.reduced && 'v2-reduced-motion')}>
+      <Frame worker={p.worker || fixture('verified')} tab="home" compact={p.compact} landmark={p.landmark}
+        onNavigate={p.onNavigate} nav={chrome.nav} status={chrome.status} statusLabel={chrome.label || null}
+        credits={chrome.credits ? undefined : null} className={cx('v2-root', p.reduced && 'v2-reduced-motion')}>
         {content}
       </Frame>
     );

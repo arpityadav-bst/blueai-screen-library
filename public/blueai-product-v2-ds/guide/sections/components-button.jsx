@@ -143,7 +143,7 @@
             { label: 'Muted tone', node: <K.Link href={DASH} external standalone tone="muted">{COPY.earnings}</K.Link> },
           ]} />
           <ul className="g-list">
-            <li>Inline: inherits the sentence's size; ink text, 1px underline at offset 3 in a 20% line, blue-ink on hover.</li>
+            <li>Inline: inherits the sentence's size; ink text, 1px underline at offset 3 in --v2-link-underline (32% black, the site's link underline), blue-ink on hover.</li>
             <li>Standalone: 13/500 on its own line with a 32px target. External adds the external glyph 16 and says "opens in a new tab" to screen readers.</li>
             <li>No href renders a button drawn as a link (Switch account), so it is still a real control.</li>
           </ul>
@@ -153,7 +153,7 @@
             changed="Bold blue links at 3.24:1 with no underline become underlined ink (the site's rule), which frees blue for selection. One external glyph replaces a typed arrow character and a second hand-drawn SVG." />
           <G.SpecDrawer rows={[
             { part: 'Colour', token: '--v2-ink', value: 'ink (V2 #1990FF 3.24:1, 600 to 700)', ref: ['actions-inputs.link.learn-more', 'actions-inputs.link.earnings', 'actions-inputs.link.switch-account'] },
-            { part: 'Underline', token: '--v2-stroke, --v2-line-hover', value: '1px, offset 3, 20% black', ref: 'actions-inputs.onblue.link' },
+            { part: 'Underline', token: '--v2-stroke, --v2-link-underline', value: '1px, offset 3, 32% black, the site’s --link-underline; every ink link uses it, kit links and hand-rolled ones alike', ref: 'actions-inputs.onblue.link' },
             { part: 'Hover', token: '--v2-blue-ink', value: '#0d5ad6, underline in the same colour', ref: 'actions-inputs.onblue.link-hover' },
             { part: 'External', token: '--v2-icon-sm', value: 'external glyph 16 (V2: a typed arrow, and an SVG)', ref: ['actions-inputs.link.learn-more-copy', 'actions-inputs.link.earnings-copy', 'actions-inputs.link.external-glyph'] },
             { part: 'Standalone', token: '--v2-text-13, --v2-hit-min', value: '13/500, min height 32' },

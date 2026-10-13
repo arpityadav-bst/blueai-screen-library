@@ -16,7 +16,8 @@
 - `.v2-text-title` 16 / 600 / 1.35 / -0.01em, ink: card titles, section heads.
 - `.v2-text-body` 14 / 400 / 1.5, ink-2: bubbles, composer, paragraphs, fields.
 - `.v2-text-body-sm` 13 / 400 / 1.5, ink-3: descriptions, notes, consequences. A `<strong>` inside turns ink 600 (fact muted, figure ink).
-- `.v2-text-label` 13 / 500 / 1.35 / -0.01em, ink-2: buttons, chips, nav, menu rows, row labels.
+- `.v2-text-label` 13 / 500 / 1.35 / -0.01em, ink-2: buttons, chips, nav, menu rows.
+- Row label (no class): 14 / 500 / 1.35, ink. The list-row parts set it in their own CSS (ListRow, section 18), so a screen never sets it by hand.
 - `.v2-text-meta` 12 / 400 / 1.35, ink-4: timestamps, counts, hints.
 - `.v2-text-eyebrow` 11 / 500 / 1 / 0.08em, uppercase, ink-3: section labels only.
 - `.v2-text-mono` 13 / 400 / 1.35, mono, ink-2: keys, endpoints, model ids.

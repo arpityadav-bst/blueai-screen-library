@@ -23,24 +23,20 @@ Each is a small change in one place; none blocks reading or using the system.
 
 | Area | Item | Closes it |
 |---|---|---|
-| Kit | JobPreviewCard receipt always shows “Ask me first next time”; it should only show when the job ran on Automatic (section 59 flags it). | worker kit |
-| Kit | WorkerStatusChip has no out-of-credits status; ScreenFrame maps it to paused with “Waiting for credits” (proposed). | shell kit |
-| Kit | RunCard’s out-of-credits line and the composer’s disabled reason should read from OutOfCreditsNotice (OOC_COPY and creditsTime.formatClock) so every zero moment says the same time. | chat kit |
-| Kit | credits.refillAt in the Worker fixtures is a display string, so the countdown falls back to the next 00:00 UTC. Store a time. | worker kit |
 | Kit | TopBar passes balance and state to CreditsChip but not runCost, so “low” shows only when state is passed. | shell kit |
-| Kit | Banner has no neutral tone (the AI mode heads-up uses offline) and the offline tone has no rule of its own. | display kit |
-| Kit | SettingsSection runs ListRows to the card edge but not ModeRows; screens/account.css works around it. | credits kit |
 | Kit | The icon set has eye but no eye-off; the secret field shows its state with aria-pressed and a wash. | foundations |
 | Kit | Numbered step discs and the one-serif-word title live in screens/entry.css; promote them if Help or ProgramSummary needs them. | display kit |
-| Kit | AppFrame does not mount ToastHost; screens that toast draw their own host. Mount one ToastHost per window when V2 adopts the kit. | shell kit |
-| Screens | Two frame helpers, ScreenFrame and AccountFrame (both read topBarProps). Merge them. | screens |
-| Screens | The Notifications unread count has no place in the chrome (More carries no badge). | section 54 |
+| Screens | The Notifications unread count has no place in the chrome (More carries no badge); what needs the partner is counted on Activity. | section 54 |
+| Screens | The Notifications items are fixtures in screens/notifications.jsx, outside the Worker record. Give the record an inbox list when V2 adopts the kit. | section 41 |
 | Screens | The app router must map “report” to ReportProblemSheet; Activity’s rejected day and a failed RunCard should open it with the run attached. | screens |
+| Screens | Search and load more are deferred. Chat History, V2’s one long list, retires (R04); Activity’s This program tab is at most 20 days and Past adds one row per program. Notifications grows with every event: before a partner’s second program, give it a “Show earlier” row or keep only the current program. | screens |
 | Data | The Worker record has no run date, BlueStacks or App Player preflight result, or Telegram link state; screens take them as props. | worker kit |
 | Data | Only one account fixture: the account gate hard-codes a second address in two screens. Add an other-account fixture. | worker kit |
 | Data | One real dashboard URL for Earnings (R29); the FAQ link is a stand-in next to it. | product team |
 | Product | Welcome has no “signed out after a session” variant that says the worker is paused. | entry patterns |
-| Product | “BlueAI starts with Windows into the tray” (section 29) needs a switch in Settings, Worker. | PM |
+| Product | Whether feedback (thumbs) is offered on a failed job, where a partner most wants to report a problem; V2 offers it on successes only (section 39). | PM |
+| Product | Whether a partner can turn an interest topic off, and what that does to the jobs offered (section 62). | PM |
+| Product | How support replies to Report a problem and how soon; the sheet promises email only (section 65). | support |
 | Copy | Every string marked Proposed in DESIGN.md waits for the PM; decisions D1 to D13 wait for the PM and legal (section 73). | PM |
 
 ### Dead code in V2 (not a source)

@@ -20,9 +20,13 @@
    Sheet   {open, onClose, title, description, blocking, busy, actions, footer, initialFocus,
            preview, className, children}  bottom sheet, full window width. blocking: no close,
            no Esc, no scrim dismiss (the Program Terms).
-   useFocusTrap(ref, active, {initialFocus, returnFocus})  moves focus in, keeps Tab inside, returns
-           focus to the opener. initialFocus is a ref or a selector; without one the panel itself
-           takes focus, so nothing draws a ring until the partner presses Tab (the onBlue rule,
+   useFocusTrap(ref, active, {initialFocus, returnFocus, onEscape})  makes the window under the
+           overlay inert (every sibling of the overlay and of its ancestors up to the AppFrame:
+           top bar, content, nav), moves focus in, keeps Tab inside, and returns focus to the
+           opener. Tab, Esc and stray focus are handled at the document, so a click on a scrim
+           that does not close cannot strand focus on the page; with two overlays only the top
+           one acts. initialFocus is a ref or a selector; without one the panel itself takes
+           focus, so nothing draws a ring until the partner presses Tab (the onBlue rule,
            onblue.css:929-942).
    usePresence(open, ms)  {mounted, closing}: keeps a part mounted while its exit plays. */
 (function () {
@@ -54,6 +58,23 @@
     if (typeof target === 'string') return root.querySelector(target);
     return target.current || null;
   }
+  // Inert everything beside the overlay, level by level up to the AppFrame (or only the overlay's
+  // own siblings outside a frame). Returns the undo; nodes already inert are left as they were.
+  function inertAround(node) {
+    const frame = node.closest('.v2-frame');
+    const set = [];
+    let el = node;
+    while (el && el.parentElement && el !== frame && el !== document.body) {
+      Array.prototype.forEach.call(el.parentElement.children, function (sib) {
+        if (sib === el || sib.hasAttribute('inert') || sib.tagName === 'SCRIPT' || sib.tagName === 'STYLE') return;
+        sib.setAttribute('inert', ''); set.push(sib);
+      });
+      if (!frame) break;
+      el = el.parentElement;
+    }
+    return function () { set.forEach(function (sib) { sib.removeAttribute('inert'); }); };
+  }
+  const traps = []; // live traps, newest last: only the top one handles keys and focus
 
   function usePresence(open, ms) {
     const [mounted, setMounted] = useState(!!open);
@@ -75,26 +96,41 @@
       const root = ref.current;
       if (!active || !root) return undefined;
       const opener = document.activeElement;
+      const token = {};
+      const top = function () { return traps[traps.length - 1] === token; };
+      traps.push(token);
+      const release = inertAround(root.closest('.v2-overlay') || root);
       focusEl(resolve(latest.current.initialFocus, root) || root);
       function onKey(e) {
+        if (!top()) return;
+        // Esc inside the panel is the panel's own handler; this catches focus that left it.
+        if (e.key === 'Escape') { if (!root.contains(e.target) && latest.current.onEscape) latest.current.onEscape(); return; }
         if (e.key !== 'Tab') return;
         const list = focusables(root);
         if (!list.length) { e.preventDefault(); focusEl(root); return; }
         const i = list.indexOf(document.activeElement);
-        if (e.shiftKey && i <= 0) { e.preventDefault(); focusEl(list[list.length - 1]); }
+        if (i < 0) { e.preventDefault(); focusEl(e.shiftKey ? list[list.length - 1] : list[0]); }
+        else if (e.shiftKey && i === 0) { e.preventDefault(); focusEl(list[list.length - 1]); }
         else if (!e.shiftKey && i === list.length - 1) { e.preventDefault(); focusEl(list[0]); }
       }
-      root.addEventListener('keydown', onKey);
+      function onFocusIn(e) { if (top() && !root.contains(e.target)) focusEl(root); }
+      document.addEventListener('keydown', onKey);
+      document.addEventListener('focusin', onFocusIn);
       return function () {
-        root.removeEventListener('keydown', onKey);
+        document.removeEventListener('keydown', onKey);
+        document.removeEventListener('focusin', onFocusIn);
+        traps.splice(traps.indexOf(token), 1);
+        release();
         if (latest.current.returnFocus === false) return;
         if (opener && opener !== document.body && document.contains(opener)) focusEl(opener);
       };
     }, [active]);
   }
 
+  // The scrim is not focusable: pressing it must not move focus out of the panel to the page.
   function Scrim({ variant, onClick, className, style }) {
-    return <div className={cx('v2-scrim', variant === 'frost' && 'v2-scrim--frost', className)} style={style} aria-hidden="true" onClick={onClick} />;
+    return <div className={cx('v2-scrim', variant === 'frost' && 'v2-scrim--frost', className)} style={style} aria-hidden="true"
+      onMouseDown={function (e) { e.preventDefault(); }} onClick={onClick} />;
   }
 
   // The close control: the kit's IconButton at the 32px target, a plain labelled button without it.
@@ -144,14 +180,14 @@
     const live = !!p.open && !p.preview;
     const dismissible = p.dismissible !== false;
     const canClose = dismissible && !p.busy;
-    useFocusTrap(panel, live, { initialFocus: p.initialFocus || (v.focusAction ? '.v2-ov-actions button' : null) });
+    function close() { if (canClose && p.onClose) p.onClose(); }
+    useFocusTrap(panel, live, { initialFocus: p.initialFocus || (v.focusAction ? '.v2-ov-actions button' : null), onEscape: close });
     useEffect(function () {
       const el = panel.current;
       if (p.busy && live && el && !el.contains(document.activeElement)) focusEl(el);
     }, [p.busy]);
     if (!pres.mounted) return null;
 
-    function close() { if (canClose && p.onClose) p.onClose(); }
     const tid = uid + '-title';
     const did = uid + '-desc';
     return (
@@ -182,10 +218,10 @@
     const uid = useId();
     const live = !!p.open && !p.preview;
     const canClose = !p.blocking && !p.busy;
-    useFocusTrap(panel, live, { initialFocus: p.initialFocus });
+    function close() { if (canClose && p.onClose) p.onClose(); }
+    useFocusTrap(panel, live, { initialFocus: p.initialFocus, onEscape: close });
     if (!pres.mounted) return null;
 
-    function close() { if (canClose && p.onClose) p.onClose(); }
     const tid = uid + '-title';
     const did = uid + '-desc';
     return (

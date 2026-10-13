@@ -8,7 +8,7 @@
   const GROUPS = [
     ['Worker', 'Always ask or Automatic per app, run window, pause until, start with Windows, interest profile', 'The promise “pause, stop, or disconnect anytime” needs its controls first (P4).'],
     ['Connected apps', 'YouTube (account, watch history, Disconnect), Instagram (coming soon), Telegram', 'Which accounts BlueAI acts on, and how to take them back.'],
-    ['Notifications', 'Windows notifications per event', 'What the worker may interrupt for.'],
+    ['Notifications', 'Two Windows notification switches: A paid job needs you, Today’s run ends', 'What the worker may interrupt for.'],
     ['BlueStacks', 'App Player status from the real check: not installed, signed out, connected as', 'Where a partner debugs a failed day.'],
     ['Account and privacy', 'Signed-in account, the program, agreements, what BlueAI keeps, Sign out', 'Who you are and what you agreed to.'],
     ['Help', 'FAQ (opens the site), Report a problem', 'Last of the partner topics.'],

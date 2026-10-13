@@ -1,6 +1,12 @@
 /* BlueAI Product V2 Design System: tokens.
-   The one source of every value the kit, screens and guide use. Every token is a CSS custom
-   property on :root with the prefix --v2-. Light theme only: V2 is white end to end and the
+   The one source of every colour, type, space, radius, stroke, shadow, scrim, layer, motion, focus,
+   icon and shared size the kit, screens and guide use. tools/ds-check.js enforces colour (no raw
+   colour in kit/ or screens/) and the size lists the JSX copies (Icon and Avatar SIZES). Geometry
+   that belongs to one part only (a switch track and thumb, a checkbox box and tick, a badge dot, a
+   menu's minimum width) stays px in that part's rule; a size one part repeats is a local custom
+   property without the --v2- prefix (--ledger-date-w); a size two parts share is a token here first.
+   Every token is a CSS custom property on :root with the prefix --v2-, and nothing else uses that
+   prefix. Light theme only: V2 is white end to end and the
    onBlue site never ships its dark theme (onblue/apply.html:36 forces light), so a dark set
    would be speculative; the names leave room for one later.
    Each family comment says its role, its onBlue family link, and what V2 values it absorbs.
@@ -18,8 +24,7 @@
   --v2-ink-3: #5f636b; /* muted body, descriptions, idle icons (6.0:1). Absorbs #6b7280 (index.html:526), #64748b (index.html:292, shared.jsx:305), #5b6172 (ai_mode.jsx:27), #5e628a (moneymaker_steps.jsx:80), #7a8499 (product_home.jsx:58), #7c8a9c / rgb(98,115,139) (login.jsx:158, 167) */
   --v2-ink-4: #6e737c; /* meta only: timestamps, counts, eyebrows (4.77:1). Never the only carrier of a consequence.. Absorbs #94a3b8 (chat_bubbles.jsx:124, 2.56:1), #9ca3af (account_gate.jsx:31, worker_day_done.jsx:41, 2.54:1), #9aa0b4 (ai_mode.jsx:13), #b0b8c8 */
   --v2-ink-placeholder: #9ca2ad; /* placeholder text only, and only under a visible label (site rule onblue/onblue.css:117-119). Absorbs placeholder colour #9ca3af (byok_settings.jsx:113-114) */
-  --v2-on-color: #ffffff; /* label on action, danger and ink fills. Absorbs 'white' x230, '#fff' x43 */
-  --v2-on-color-muted: rgba(255,255,255,0.78); /* secondary text on a filled surface (coach mark). Absorbs rgba(255,255,255,0.75 / 0.85 / 0.6 / 0.55 / 0.45) (chat_bubbles.jsx:31-32, chat_feedback.jsx:79) */
+  --v2-on-color: #ffffff; /* label on action, danger and ink fills. Absorbs 'white' x230, '#fff' x43. V2's faded whites rgba(255,255,255,0.45 to 0.85) (chat_bubbles.jsx:31-32, chat_feedback.jsx:79) go with the gradient bubble: the user bubble is a tint with ink text, and the coach mark carries one line in full white */
 
   /* Surface. Role: Grounds a fraction of a percent apart; the line does the separating.
      onBlue: shared: --band-lift, --charcoal, --panel-bg, --bar-bg, --wash-hover (onblue/onblue.css:282-297, 336, 396-404); alternation rule (card white, panel 1% down, rows back to white).
@@ -34,7 +39,7 @@
 
   /* Line. Role: 1px alpha-black strokes that sit right on any near-white ground.
      onBlue: shared verbatim: --border-soft 10%, --border 15%, --hair 8%, --card-line-hover 20% (onblue/onblue.css:274-275, 319, 376).
-     Why: This is the token that lets the product drop most of its shadows, the site's main move.
+     Why: Lines alone separate in-flow surfaces; the site also casts a faint resting card shadow, which the product drops (P6, adapted).
      Absorbs: the V2 values listed on each token below. */
   --v2-line: rgba(0,0,0,0.10); /* every card, bubble, banner, nav and top bar edge. Absorbs #e2e8f0 (89 uses, index.html:323, shared.jsx:300), #e5e7eb (index.html:289), #e8edf3 (index.html:432), rgba(0,0,0,0.06) (settings.jsx:10), rgba(0,0,0,0.05) (profile.jsx:30), rgba(182,184,204,0.8) (byok.jsx:23) */
   --v2-line-strong: rgba(0,0,0,0.15); /* fields, secondary buttons, composer at rest. Absorbs #d1d5db (schedule.jsx:60, byok_settings.jsx:94), #e3e7ee (ai_mode.jsx:181), #d8dde7, #cbd5e1, composer #c7dcf5 (chat_product.jsx:260) */
@@ -55,16 +60,17 @@
   --v2-select: rgba(21,110,254,0.12); /* selected fill (choice card, chip, segmented on). Absorbs #eef6ff selected (ai_mode.jsx:51), #eef2ff nav active (shared.jsx:305) */
   --v2-select-line: rgba(21,110,254,0.50); /* selected border. Absorbs 1.5px #1990FF selected (ai_mode.jsx:52) */
 
-  /* Status. Role: Five tones used by Badge, Banner, NoticeBubble, StatusTick, DayBar and RunCard: neutral, info, success, attention, danger. Each has tint, line, ink (and icon where it differs).
+  /* Status. Role: Five tones used by Badge, Banner, NoticeBubble, StatusTick, DayBar and RunCard: neutral, info, success, attention, danger. Each has tint, line (a pale edge for its tint), ink (and icon where it differs); danger adds one strong edge for errored fields and the rejected day.
      onBlue: success and danger shared verbatim with the site (onblue/onblue.css:314-317, 413-415) so verified days look the same on the dashboard; attention is product-only (PM-pinned 'human input required' yellow); info reuses blue tints; neutral reuses surface-sunken + line + ink-2.
      Why: Four parallel status maps (FINAL_STYLES chat_bubbles.jsx:86-90, TONES ai_mode.jsx:26-32, JOB_STATUS jobs.jsx:5-13, FB_TONES chat_feedback.jsx:21-24) with 13 greens and 14 reds become one table. Orange 'heads-up' folds into a neutral notice with an attention icon: colour carried by the icon (P5). No warm colour is ever link text.
      Absorbs: the V2 values listed on each token below. */
   --v2-success: #16a34a; /* verified tick, reached fill, done dot (icon use). Absorbs #16a34a (index.html:469), #1BA07A (worker_day_done.jsx:40), #059669, #4ade80 */
   --v2-success-ink: #15803d; /* any green text (5.02:1). Absorbs #15803d (settings.jsx:121, jobs.jsx:7), #157a44 (ai_mode.jsx:29), #1f7a36, #3f9b63, #166534, #047857 */
-  --v2-success-tint: rgba(22,163,74,0.08); /* receipt pill fill. 8%, not the site's 10% (--green-fill, onblue/onblue.css:317): success-ink on 10% computes 4.49:1, on 8% 4.59:1, so green text on it passes AA. Absorbs #dcfce7 (index.html:468), #f0fdf4, #d9fbe4 (chat_bubbles.jsx:87), #eafaf0, #d1fae5, gradient #E5F8F0 to #CFF0E1 (moneymaker_home.jsx:132) */
+  --v2-success-tint: rgba(22,163,74,0.08); /* success badge and banner fill. 8%, not the site's 10% (--green-fill, onblue/onblue.css:317): success-ink on 10% computes 4.49:1, on 8% 4.59:1, so green text on it passes AA. Absorbs #dcfce7 (index.html:468), #f0fdf4, #d9fbe4 (chat_bubbles.jsx:87), #eafaf0, #d1fae5, gradient #E5F8F0 to #CFF0E1 (moneymaker_home.jsx:132) */
   --v2-success-line: rgba(22,163,74,0.32); /* receipt edge, success banner edge. Not the pending DayBar segment: pending is blue (in progress), so green only means reached (P2). Absorbs #bbf7d0, #86efac, #A8E4D4, rgba(27,160,122,0.45) */
   --v2-danger-ink: #c03a40; /* error text and destructive button fill (white 5.36:1). Absorbs #991b1b (index.html:503), #b04a4a (index.html:506), #dc2626 (jobs.jsx:10), #c0392b (ai_mode.jsx:30), #ef4444 (profile.jsx:79, 3.76:1 fails), #b35560 */
-  --v2-danger-line: #d0454a; /* errored field border, danger banner edge. Absorbs #f8d7d7 (index.html:499), #fecaca (byok_settings.jsx:74) */
+  --v2-danger-line: rgba(208,69,74,0.32); /* danger banner edge, P1 tag edge: a pale edge for the danger tint, like the other tones' lines. Absorbs #f8d7d7 (index.html:499), #fecaca (byok_settings.jsx:74) */
+  --v2-danger-edge: #d0454a; /* errored field and checkbox border, rejected DayBar segment: the one strong red stroke (4.53:1 on white, so it reads at 1px). onBlue: shared, the site's error border. Absorbs none (V2 fields have no error state, ai_mode.jsx:179-186) */
   --v2-danger-ring: rgba(208,69,74,0.16); /* focus ring on an errored field. Absorbs none (new) */
   --v2-danger-tint: #fdecec; /* danger banner fill, low-balance dot halo. Absorbs #fdecec (index.html:499), #fef2f2 */
   --v2-attention-tint: #fdf6cf; /* the worker needs your answer (AskCard, waiting RunCard). Absorbs #fdf6cf (worker_cards.jsx:19, chat_bubbles.jsx:89), #fff7ed orange warning (chat_bubbles.jsx:72), #fef6e7, #fffbeb (byok_settings.jsx:109) */
@@ -77,7 +83,7 @@
      Absorbs: the V2 values listed on each token below. */
   --v2-gradient-brand: linear-gradient(90deg, #0EA4C5, #7B4CFF); /* BlueAI wordmark, credits star glyph (mask), boot splash wordmark. Absorbs 135deg / 270deg / to-bottom-right variants (index.html:430, credits_popup_parts.jsx:15, moneymaker.jsx:154), cousins #22ACE0 (login.jsx:174), #A855F7 (login.jsx:160), #1A90FF/#6b53ff (moneymaker.jsx:184), #2f6fed (profile.jsx:31), user bubble #5158ee to #7b4cff (chat_bubbles.jsx:30) */
 
-  /* Type. Role: One UI face, eight sizes, three weights, three leadings, em-based tracking.
+  /* Type. Role: One UI face, eight sizes, three weights, four leadings, em-based tracking.
      onBlue: shared: Inter as the only UI face, weights capped at 600, negative tracking that scales with size, uppercase only for the eyebrow (onblue/onblue.css:250, design.md:100-102). Adapted: the product uses the site's working-screen (dashboard) tier, not its marketing ladder.
      Why: 30 font sizes, 7 page-title recipes, weights 650/750/900 that are never loaded (render as 700/800), 800 used 71 times, and four typefaces in a new partner's first minute (inv-foundations type.*).
      Absorbs: the V2 values listed on each token below. */
@@ -132,12 +138,14 @@
   --v2-radius-pill: 999px; /* badges, quick-reply chips, credits chip, progress rail. Absorbs 999, 40, 24, 20 on pill buttons (index.html:342, credits_popup_parts.jsx:84, settings.jsx:44) */
   --v2-radius-round: 50%; /* avatars, discs, send button. Absorbs '50%' x40 */
 
-  /* Stroke. Role: 1px everywhere; 1.5px only for 'selected' and the focused composer.
+  /* Stroke. Role: 1px everywhere; 1.5px only for a selected choice, the focused composer, a ring
+     status dot (paused, offline) and a pending DayBar segment. 2px is mark geometry (ticks, glyph
+     strokes) and has no token (section 06).
      onBlue: shared: the site is 1px throughout (onblue/onblue.css:274-327).
      Why: 1.5px borders on chips and the composer at rest read heavier than the site's hairlines.
      Absorbs: the V2 values listed on each token below. */
   --v2-stroke: 1px; /* default. Absorbs 1px (~230 uses) */
-  --v2-stroke-selected: 1.5px; /* selected choice card, focused composer. Absorbs 1.5px on composer, chips, onboarding cards, option cards (chat_product.jsx:260, worker_cards.jsx:58, ai_mode.jsx:52) */
+  --v2-stroke-selected: 1.5px; /* selected choice, focused composer, ring status dot (paused, offline), pending DayBar segment. Absorbs 1.5px on composer, chips, onboarding cards, option cards (chat_product.jsx:260, worker_cards.jsx:58, ai_mode.jsx:52) */
 
   /* Elevation. Role: Three levels, navy-tinted casts, no coloured glows.
      onBlue: adapted: the site uses faint navy casts at 2.5 to 16% alpha (onblue/onblue.css:388, 425-436; apply.html:86-87) and no glows on controls.
@@ -148,7 +156,7 @@
   --v2-shadow-2: 0 2px 6px rgba(18,32,64,0.06), 0 28px 64px -24px rgba(18,32,64,0.32); /* blocks the window: dialogs, sheets, day-done. Absorbs shared.jsx:73, profile.jsx:74, byok.jsx:24, login.jsx:68, worker_day_done.jsx:147, terms_sheet.jsx:113 */
 
   /* Overlay. Role: Two scrims: one dim veil for every decision, one frosted gate for sign-in (family match).
-     onBlue: shared: --gate-scrim rgba(248,249,251,0.88) + 14px blur (onblue/onblue.css:403-404) for sign-in only. Adapted: solid dim veil elsewhere (6labs performance rule, and blur costs on partner PCs).
+     onBlue: shared: --gate-scrim rgba(248,249,251,0.88) + 14px blur (onblue/onblue.css:411-412, 3346-3349) for sign-in only. Adapted: a dim veil for dialogs and sheets. Reason, not blur cost: the app's screens are white, and a white dialog on the site's pale veil separates only by its shadow (card 1.05:1, its 10% line 1.19:1 against the veil), while the dim veil puts the card's edge at 3.3:1 (WCAG 1.4.11), so a consent, sign-out or out-of-credits decision reads as blocking at a glance in a 419px window. The site's Cash out and program sheets use the gate veil too, but draw it without blur (onblue/onblue.css:1365, onblue/apply.html:634 set backdrop-filter to a bare length, which is invalid; the site owner should wrap it in blur()).
      Why: Seven veils for one idea (inv-foundations color.overlay).
      Absorbs: the V2 values listed on each token below. */
   --v2-scrim: rgba(11,18,32,0.48); /* every dialog, sheet and day-done veil. Absorbs rgba(0,0,0,0.5) (shared.jsx:72), rgba(15,23,42,0.45) (profile.jsx:73), rgba(15,23,42,0.5) (byok.jsx:79), rgba(8,10,31,0.44) (terms_sheet.jsx:97), rgba(11,18,32,0.55) (worker_day_done.jsx:144), rgba(11,18,32,0.52) (moneymaker_home.jsx:117) */
@@ -164,8 +172,7 @@
   --v2-z-header: 20; /* top bar. Absorbs 20 (index.html:323) */
   --v2-z-popover: 30; /* menus, popovers, tooltips. Absorbs 20 InfoTip (credits_popup_parts.jsx:148), 30 mode menu (agent_permissions.jsx:141), 60 dropdown (index.html:289) */
   --v2-z-coach: 40; /* coach scrim and spotlight. Absorbs 40 / 41 (moneymaker_home.jsx:117, 119) */
-  --v2-z-overlay: 50; /* in-window celebration. Absorbs 50 (worker_day_done.jsx:144) */
-  --v2-z-dialog: 100; /* every dialog and sheet. Absorbs 60 (shared.jsx:72), 120 (profile.jsx:73, terms_sheet.jsx:97, tie), 130 (byok.jsx:79) */
+  --v2-z-dialog: 100; /* every dialog and sheet, day done included (it opens as a Dialog). Absorbs 50 (worker_day_done.jsx:144), 60 (shared.jsx:72), 120 (profile.jsx:73, terms_sheet.jsx:97, tie), 130 (byok.jsx:79) */
   --v2-z-gate: 110; /* sign-in gate. Absorbs 100 (login.jsx:74) */
   --v2-z-toast: 120; /* in-app toast. Absorbs none (new) */
   --v2-z-splash: 200; /* boot splash. Absorbs 200 (boot_splash.jsx:39) */
@@ -227,6 +234,22 @@
   --v2-control-lg: 44px; /* full-width sheet and dialog actions, sign-in doors. Absorbs terms CTA, login CTA (terms_sheet.jsx:121, login.jsx:174), SiteKit 48 (site_kit.jsx:46) */
   --v2-field-h: 40px; /* text field and select. Absorbs 36 to 42px fields */
   --v2-hit-min: 32px; /* minimum target for consent and money controls (24px absolute floor). Absorbs 21px Okay (moneymaker_home.jsx:57), 21px Change (agent_permissions.jsx:133), 22px InfoButton (credits_popup_parts.jsx:95) */
+
+  /* Size. Role: Part sizes that more than one part shares or that step as one set: marks (avatars, tiles, discs), rails, floating widths, text measures.
+     onBlue: not shared (the site sizes page-scale parts; these are the 419px window's).
+     Why: The same raw sizes were typed into several kit files (364 twice, the 260 and 280 measures, 32, 40 and 56 discs and tiles), so one change could not reach them all. The Icon and Avatar size props name these values (ds-check keeps the two equal).
+     Absorbs: the V2 values listed on each token below. */
+  --v2-mark-sm: 24px; /* small avatar (app rows). Absorbs none (new) */
+  --v2-mark-md: 32px; /* avatar, notification disc, skeleton circle, page spinner. Absorbs 34px account disc (account_gate.jsx:51) */
+  --v2-mark-lg: 40px; /* large avatar, worker card tile. Absorbs 46px worker tile (moneymaker_home.jsx:132) */
+  --v2-mark-xl: 56px; /* account avatar, day-done badge. Absorbs 56px account disc (account_gate.jsx:20), 92px profile emoji disc (profile.jsx:33) */
+  --v2-badge-h: 22px; /* Badge and the guide's priority tag. Absorbs pills 18 to 24 tall (ai_mode.jsx:38, jobs.jsx:31, index.html:474) */
+  --v2-row-min-h: 48px; /* ListRow minimum height. Absorbs rows padded 14 and 16 (profile.jsx:17, settings.jsx:82) */
+  --v2-rail: 6px; /* progress rail, credits meter, DayBar segment. Absorbs 6px bars (ai_mode.jsx:140, needs_bluestacks.jsx:138) */
+  --v2-rail-thin: 4px; /* thin progress rail inside a row or card. Absorbs none (new) */
+  --v2-popover-w: 364px; /* Popover and the floating mode menu (capped by the window). Absorbs width 364 (agent_permissions.jsx:141) */
+  --v2-measure: 280px; /* line length of short centred copy (empty-state body) and a menu's maximum width. Absorbs none (new) */
+  --v2-measure-tip: 260px; /* tooltip and coach mark maximum width. Absorbs width 260 (credits_popup_parts.jsx:148) */
 
   /* Scrollbar. Role: One definition for both engines, no grey rail.
      onBlue: shared idea: the site styles its scrollbar with tokens (onblue/onblue.css:585-595).

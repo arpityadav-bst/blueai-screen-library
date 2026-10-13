@@ -9,7 +9,8 @@
    Checkbox   {checked | defaultChecked, onChange(next, event), label, description, disabled,
               indeterminate, required, error, name, value}  a native checkbox under a drawn box.
               Group several in <fieldset className="v2-fieldset"> with <legend className="v2-legend">.
-   RadioCard  {label (the group's accessible name), name, options [{value, title, sub, disabled,
+   RadioCard  {label (the group's accessible name), name (a prefix for the radios' name; ids and the
+              group are always unique per instance), options [{value, title, sub, disabled,
               disabledReason, pending, badge}], value | defaultValue, onChange(value),
               variant 'card'|'list'}  native radios, so arrow keys and focus come free. pending is
               true or a short tag ('Setup needed'): picked, not active yet.
@@ -18,7 +19,8 @@
               Automatic consent), size 'sm'|'md', disabled}  role=radiogroup with arrow keys,
               Home, End; with a gate, arrows only move focus and Space or Enter asks.
    Chip       {selected, onClick, icon, disabled, children}  selected undefined: a one-shot reply;
-              true or false: a toggle (reason, filter) carrying aria-pressed. */
+              true or false: a toggle (reason, filter) carrying aria-pressed. Selected draws a
+              check in place of the icon, so selection is never shown by hue alone. */
 (function () {
   const { useId, useRef, useState, useEffect } = React;
 
@@ -29,9 +31,17 @@
     return Icon && name ? <Icon name={name} size={size || 16} /> : null;
   }
   function uid(auto, pre) { return pre + auto.replace(/[^a-zA-Z0-9]/g, ''); }
+  /* Rest props without object-rest syntax: Babel hoists a rest's key list to one program-level
+     _excluded that the next kit file overwrites, so the wrong props reach the DOM. */
+  function omit(o, keys) { const r = {}; for (const k in o) if (keys.indexOf(k) < 0) r[k] = o[k]; return r; }
+  const SWITCH_OWN = ['checked', 'onChange', 'label', 'hideLabel', 'description', 'disabled', 'busy', 'id', 'className'];
+  const CHECK_OWN = ['checked', 'defaultChecked', 'onChange', 'label', 'description', 'disabled', 'indeterminate',
+    'required', 'error', 'id', 'className'];
+  const CHIP_OWN = ['selected', 'onClick', 'icon', 'disabled', 'className', 'children'];
 
   function Switch(props) {
-    const { checked, onChange, label, hideLabel, description, disabled, busy, id, className, ...rest } = props;
+    const { checked, onChange, label, hideLabel, description, disabled, busy, id, className } = props;
+    const rest = omit(props, SWITCH_OWN);
     const auto = useId();
     const sid = id || uid(auto, 'v2s');
     const blocked = !!(disabled || busy);
@@ -51,7 +61,7 @@
       <div className={cx('v2-switch-row', blocked && 'is-disabled', className)}>
         <div className="v2-switch-text">
           <label className="v2-switch-label" htmlFor={sid}>{label}</label>
-          {description ? <p id={sid + '-d'} className="v2-switch-desc">{description}</p> : null}
+          {description ? <p id={sid + '-d'} className="v2-switch-desc v2-text-body-sm">{description}</p> : null}
         </div>
         {control}
       </div>
@@ -60,7 +70,8 @@
 
   function Checkbox(props) {
     const { checked, defaultChecked, onChange, label, description, disabled, indeterminate, required, error,
-      id, className, ...rest } = props;
+      id, className } = props;
+    const rest = omit(props, CHECK_OWN);
     const auto = useId();
     const cid = id || uid(auto, 'v2c');
     const ref = useRef(null);
@@ -76,7 +87,7 @@
           <span className="v2-check-box" aria-hidden="true" />
           <span className="v2-check-text">
             <span className="v2-check-label">{label}</span>
-            {description ? <span id={cid + '-d'} className="v2-check-desc">{description}</span> : null}
+            {description ? <span id={cid + '-d'} className="v2-check-desc v2-text-body-sm">{description}</span> : null}
           </span>
         </label>
         {error ? <p id={cid + '-e'} className="v2-check-msg"><Ico name="alert" /><span>{error}</span></p> : null}
@@ -87,7 +98,8 @@
   function RadioCard(props) {
     const { label, name, options, value, defaultValue, onChange, variant = 'card', className } = props;
     const auto = useId();
-    const group = name || uid(auto, 'v2r');
+    const rid = uid(auto, 'v2r'); // element ids come from useId, never from name
+    const group = name ? name + '-' + rid : rid; // so two panels never share one radio group
     const [own, setOwn] = useState(defaultValue);
     const current = value !== undefined ? value : own;
     const Badge = kit().Badge;
@@ -99,7 +111,7 @@
       <div role="radiogroup" aria-label={label} className={cx('v2-radio-cards', 'v2-radio-cards--' + variant, className)}>
         {(options || []).map(function (o) {
           const on = o.value === current;
-          const key = group + '-' + String(o.value).replace(/[^a-zA-Z0-9]/g, '');
+          const key = rid + '-' + String(o.value).replace(/[^a-zA-Z0-9]/g, '');
           return (
             <label key={o.value} className={cx('v2-radio-card', on && 'is-selected', o.pending && 'is-pending',
               o.disabled && 'is-disabled', o.className)}>
@@ -173,12 +185,14 @@
   }
 
   function Chip(props) {
-    const { selected, onClick, icon, disabled, className, children, ...rest } = props;
+    const { selected, onClick, icon, disabled, className, children } = props;
+    const rest = omit(props, CHIP_OWN);
     const toggle = selected !== undefined && selected !== null;
+    const on = toggle && !!selected;
     return (
-      <button {...rest} type="button" disabled={disabled} aria-pressed={toggle ? !!selected : undefined}
-        className={cx('v2-chip', toggle && selected && 'is-selected', className)} onClick={onClick}>
-        <Ico name={icon} />
+      <button {...rest} type="button" disabled={disabled} aria-pressed={toggle ? on : undefined}
+        className={cx('v2-chip', on && 'is-selected', className)} onClick={onClick}>
+        <Ico name={on ? 'check' : icon} />
         <span>{children}</span>
       </button>
     );

@@ -7,14 +7,17 @@
                  ariaLabel, className. Item ids accept .is-hover / .is-focus forcing via
                  forceState { [id]: 'hover' | 'focus' } for guide specimens.
    ScreenHeader  one title band for every screen. Props: title, onBack (shows Back), trailing (an
-                 IconButton or a small Button), titleId, className. The title is the focus target
-                 when a screen is pushed (tabIndex -1).
+                 IconButton or a small Button), titleId, focusOnMount, className. The title is the
+                 focus target (tabIndex -1): every pushed view passes focusOnMount, so focus lands
+                 on its h1 when it opens instead of falling to the page (an in-place swap that
+                 removes the focused control focuses the new view's title the same way).
    NAV_ITEMS, NAV_ITEMS_WITH_CHAT  the default item lists. */
 (function () {
+  const { useRef, useEffect } = React;
   function cx() { return Array.prototype.filter.call(arguments, Boolean).join(' '); }
   function icon(name, size) {
-    const I = window.V2Kit && window.V2Kit.Icon;
-    return I ? <I name={name} size={size || 20} /> : null;
+    const I = window.V2Kit.Icon;
+    return <I name={name} size={size || 20} />;
   }
 
   const NAV_ITEMS = [
@@ -51,17 +54,16 @@
     );
   }
 
-  function BackButton({ onBack }) {
-    const IB = window.V2Kit && window.V2Kit.IconButton;
-    if (IB) return <IB icon="back" label="Back" size={32} onClick={onBack} />;
-    return <button type="button" className="v2-topbar-btn" aria-label="Back" onClick={onBack}>{icon('back', 20)}</button>;
-  }
-
-  function ScreenHeader({ title, onBack, trailing, titleId, className }) {
+  function ScreenHeader({ title, onBack, trailing, titleId, focusOnMount, className }) {
+    const K = window.V2Kit;
+    const h1 = useRef(null);
+    useEffect(function () {
+      if (focusOnMount && h1.current) h1.current.focus({ preventScroll: true });
+    }, [focusOnMount]);
     return (
       <div className={cx('v2-screen-header', onBack && 'v2-screen-header--back', className)}>
-        {onBack ? <BackButton onBack={onBack} /> : null}
-        <h1 className="v2-screen-title" id={titleId} tabIndex={-1}>{title}</h1>
+        {onBack ? <K.IconButton icon="back" label="Back" size={32} onClick={onBack} /> : null}
+        <h1 className="v2-screen-title" id={titleId} tabIndex={-1} ref={h1}>{title}</h1>
         {trailing ? <div className="v2-screen-header-trailing">{trailing}</div> : null}
       </div>
     );

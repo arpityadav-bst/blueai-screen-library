@@ -13,10 +13,10 @@
 2. Mark (optional): a 6px round dot in the tone colour, or one 16px icon in its place, never both. Days use the program's ticks: `check` for pending, `check-double` for verified.
 3. Label: 12/500 (`--v2-text-12`, `--v2-weight-medium`) in `--v2-ink-2`, sentence case, three words at most, ellipsis if it must cut.
 
-Tone lives in the fill and the mark; the words stay in ink-2. Reason: the success ink on its own tint computes 4.49:1 (the site's green state chip, onblue/apply.html:315, has the same pair), under the 4.5:1 floor for 12px text. Ink-2 on every tint reads at 9:1 or better.
+Tone lives in the fill and the mark; the words stay in ink-2. This is a style choice, not a contrast fix: every status ink passes 4.5:1 on its own tint (section 03; success ink on the 8% success tint is 4.59:1). One ink for every label keeps a row of badges calm and lets the mark carry the tone; ink-2 on every tint reads at 9:1 or better.
 
 **Variants.** Five tones, each a fill plus a mark colour:
-- neutral: `--v2-surface-sunken`, mark `--v2-ink-4` (pending, paused, soon).
+- neutral: `--v2-surface-sunken`, mark `--v2-ink-4` (pending verification, paused, soon). Pending is neutral by the one rule in section 03.
 - info: `--v2-blue-tint`, mark `--v2-blue` (running, checking).
 - success: `--v2-success-tint`, mark `--v2-success` (verified, connected, on).
 - attention: `--v2-attention-tint`, mark `--v2-attention-ink` (the worker needs the partner).

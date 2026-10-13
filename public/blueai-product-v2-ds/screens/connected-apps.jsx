@@ -7,15 +7,21 @@
    ConnectedApps {worker, app, state, telegram, onBack, onNavigate, frame, compact, landmark, preview}
      app       null: the list; 'youtube' | 'telegram': that account's detail.
      state     'connected' | 'signed-out' (YouTube signed out in App Player) | 'disconnect' (the
-               confirm open) | 'disconnected'.  telegram 'linked' | 'not-linked'.
-     onNavigate('worker-settings') for the Paid jobs row.
+               confirm open) | 'disconnected' | 'tg-pairing' | 'tg-expired' | 'tg-failed' (the
+               Telegram pairing dialog).  telegram 'linked' | 'not-linked'.
+     Watch history is on only when the record says allowed (notnow, revoked and not asked are off).
+     Connect Telegram pairs first, as V2 does (settings.jsx:49-66): the code to send to the bot and
+     a waiting line, with an expired and a failed variant. V2's QR placeholder is left out until
+     there is a real code to scan.
+     onNavigate('worker-settings') for the Paid jobs row, plus every chrome event.
    ConnectedAppRows {worker, youtube, telegram, onOpen(app)}  one ListRow per app: mark, name, the
      account or why there is none, one Badge. Instagram is a static Coming soon row, no chevron. */
 (function () {
-  const { useState } = React;
+  const { useState, useEffect } = React;
   const kit = function () { return window.V2Kit || {}; };
   const noop = function () {};
   const BOT = '@BlueAIBot';
+  const CODE = '4829'; // V2's pairing code (settings.jsx:61)
 
   function fixture() { const f = kit().workerFixtures || {}; return f.verified || {}; }
   function ytOf(w) { return (w.apps && w.apps.youtube) || {}; }
@@ -47,13 +53,28 @@
     ];
   }
 
-  function Toast({ t, onClose, preview }) {
+  // Pairing: waiting (the code and a live waiting line), expired, failed. Proposed copy.
+  const PAIR = {
+    waiting: { text: 'In Telegram, open ' + BOT + ' and send this code.', act: null },
+    expired: { text: 'This code expired before Telegram got it.', act: 'Get a new code' },
+    failed: { text: 'Couldn’t connect Telegram. Check your connection and try again.', act: 'Try again' },
+  };
+  function PairDialog({ phase, preview, onRetry, onCancel }) {
     const K = kit();
-    if (!t || !K.Toast) return null;
+    const c = PAIR[phase] || PAIR.waiting;
+    if (!K.Dialog) return null;
+    const actions = [{ label: 'Cancel', onClick: onCancel }].concat(c.act ? [{ label: c.act, variant: 'primary', onClick: onRetry }] : []);
     return (
-      <div className="v2-toast-host">
-        <K.Toast tone={t.tone || 'success'} title={t.title} action={t.action} duration={preview ? 0 : undefined} onClose={onClose} />
-      </div>
+      <K.Dialog open preview={preview} variant="task" title="Connect Telegram" onClose={onCancel} actions={actions}>
+        <div className="v2-acct-stack">
+          <p>{c.text}</p>
+          {phase === 'waiting' ? <p className="v2-acct-code" aria-label={'Pairing code ' + CODE.split('').join(' ')}>{CODE}</p> : null}
+          <p className="v2-acct-wait" role="status">
+            {phase === 'waiting' && K.Spinner ? <K.Spinner size={16} delay={0} /> : null}
+            <span>{phase === 'waiting' ? 'Waiting for Telegram. The code works for 10 minutes.' : 'Nothing was linked.'}</span>
+          </p>
+        </div>
+      </K.Dialog>
     );
   }
 
@@ -112,41 +133,57 @@
   }
 
   function ConnectedApps(props) {
+    const Scope = (window.V2Screens || {}).ToastScope;
+    return Scope ? <Scope><ConnectedAppsScreen {...props} /></Scope> : <ConnectedAppsScreen {...props} />;
+  }
+
+  function ConnectedAppsScreen(props) {
     const K = kit();
+    const S = window.V2Screens || {};
     const p = props;
     const w = p.worker || fixture();
     const yt = ytOf(w);
-    const [app, setApp] = useState(p.app || null);
+    const pairState = { 'tg-pairing': 'waiting', 'tg-expired': 'expired', 'tg-failed': 'failed' }[p.state] || null;
+    const [app, setApp] = useState(p.app || (pairState ? 'telegram' : null));
     const [pushed, setPushed] = useState(false);
     const [ys, setYs] = useState(p.state === 'signed-out' || p.state === 'disconnected' ? p.state : 'connected');
     const [tg, setTg] = useState(p.telegram || 'not-linked');
+    const [pair, setPair] = useState(pairState);
     const [confirm, setConfirm] = useState(p.state === 'disconnect');
-    const [history, setHistory] = useState(yt.history !== 'notnow');
-    const [toast, setToast] = useState(p.state === 'disconnected' ? { title: 'YouTube disconnected' } : null);
+    const [history, setHistory] = useState(yt.history === 'allowed');
+    const toast = (S.useScreenToast || function () { return { show: noop }; })();
+    useEffect(function () { if (p.state === 'disconnected') say('YouTube disconnected'); }, []);
+    // The prototype's stand-in for the bot reporting the code back: the waiting line resolves.
+    useEffect(function () {
+      if (pair !== 'waiting' || p.preview) return undefined;
+      const t = setTimeout(function () { setPair(null); setTg('linked'); say('Telegram connected'); }, 3000);
+      return function () { clearTimeout(t); };
+    }, [pair]);
     const go = p.onNavigate || noop;
-    const Frame = (window.V2Screens || {}).AccountFrame;
-    if (!K.SettingsSection || !K.ListRow || !K.Button || !K.Badge || !Frame) return <div className="v2-acct-note">The kit is not loaded.</div>;
+    const Frame = S.ScreenFrame;
+    if (!K.SettingsSection || !K.ListRow || !K.Button || !K.Badge || !Frame) return <div className="v2-acct-note">The kit or screens/home.jsx is not loaded.</div>;
 
+    function say(title, o) { toast.show(Object.assign({ title: title, duration: p.preview ? 0 : undefined }, o || {})); }
     function back() { if (pushed) { setApp(null); setPushed(false); } else (p.onBack || noop)(); }
-    function disconnect() { setConfirm(false); setYs('disconnected'); setToast({ title: 'YouTube disconnected' }); }
+    function disconnect() { setConfirm(false); setYs('disconnected'); say('YouTube disconnected'); }
     const title = app === 'youtube' ? 'YouTube' : app === 'telegram' ? 'Telegram' : 'Connected apps';
+    const c = S.CONFIRM_COPY ? S.CONFIRM_COPY.disconnect(yt.handle) : { title: 'Disconnect YouTube?', body: '', confirm: 'Disconnect' };
     const dialog = confirm && K.Dialog ? (
-      <K.Dialog open preview={p.preview} variant="alert" title="Disconnect YouTube?" onClose={function () { setConfirm(false); }}
-        description={'BlueAI stops using ' + yt.handle + ' and pauses your daily runs. Days without a run don’t count toward your 20 days.'}
-        actions={[{ label: 'Cancel', onClick: function () { setConfirm(false); } }, { label: 'Disconnect', variant: 'danger', onClick: disconnect }]} />
+      <K.Dialog open preview={p.preview} variant="alert" title={c.title} onClose={function () { setConfirm(false); }} description={c.body}
+        actions={[{ label: 'Cancel', onClick: function () { setConfirm(false); } }, { label: c.confirm, variant: 'danger', onClick: disconnect }]} />
     ) : null;
-    const overlays = <React.Fragment>{dialog}<Toast t={toast} preview={p.preview} onClose={function () { setToast(null); }} /></React.Fragment>;
+    const pairing = pair ? <PairDialog phase={pair} preview={p.preview} onRetry={function () { setPair('waiting'); }} onCancel={function () { setPair(null); }} /> : null;
 
     let body;
     if (app === 'youtube') {
       body = <YouTube w={w} ys={ys} history={history} go={go} onDisconnect={function () { setConfirm(true); }}
-        onConnect={function () { setYs('connected'); setToast({ title: 'YouTube connected' }); }}
-        setHistory={function (v) { setHistory(v); setToast({ title: v ? 'Watch history on' : 'Watch history off', tone: 'info' }); }} />;
+        onConnect={function () { setYs('connected'); say('YouTube connected'); }}
+        setHistory={function (v) { setHistory(v); say(v ? 'Watch history on' : 'Watch history off', { tone: 'info' }); }} />;
     } else if (app === 'telegram') {
-      body = <Telegram tg={tg} onConnect={function () { setTg('linked'); setToast({ title: 'Telegram connected' }); }}
+      body = <Telegram tg={tg} onConnect={function () { setPair('waiting'); }}
         onDisconnect={function () {
           setTg('not-linked');
-          setToast({ title: 'Telegram disconnected', action: { label: 'Undo', onClick: function () { setTg('linked'); } } });
+          say('Telegram disconnected', { action: { label: 'Undo', onClick: function () { setTg('linked'); } } });
         }} />;
     } else {
       body = (
@@ -159,9 +196,12 @@
       );
     }
     return (
-      <Frame worker={w} tab="settings" frame={p.frame} compact={p.compact} landmark={p.landmark} overlays={overlays}>
-        {K.ScreenHeader ? <K.ScreenHeader title={title} onBack={back} /> : null}
-        <div className="v2-acct-body">{body}</div>
+      <Frame worker={w} tab="settings" frame={p.frame} compact={p.compact} landmark={p.landmark} onNavigate={p.onNavigate}
+        overlays={<React.Fragment>{dialog}{pairing}</React.Fragment>}>
+        <div className="v2-acct">
+          {K.ScreenHeader ? <K.ScreenHeader title={title} onBack={back} /> : null}
+          <div className="v2-acct-body">{body}</div>
+        </div>
       </Frame>
     );
   }

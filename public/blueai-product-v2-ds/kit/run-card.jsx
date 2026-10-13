@@ -4,13 +4,19 @@
 
    RunCard {run, state, onAction, onOpenDetail, feedback, full, defaultExpanded, className}
      run    {status, title, startedAt, current, since, steps: [{label, time, status}], outcome,
-             dayText, day: {n, target}, action}   every field optional; a missing field falls back
-             to the fixture for that status, so <RunCard state="failed" /> renders a whole card.
+             dayText, dayStatus, action}   every field optional; a missing field falls back to the
+             fixture for that status, so <RunCard state="failed" /> renders a whole card. The
+             'nocredits' day line is OOC_COPY.day[dayStatus] (V2Kit.creditsDay(worker), default
+             'stopped'), the words the composer notice and WorkerCard use.
+             A stopped run, like a failed one, still counts if it runs again before 9 pm.
      state  shorthand for run.status: running | waiting | done-pending | verified | failed |
-            stopped | nojob | nocredits, plus skipped and rejected for Run detail.
+            stopped | nojob | nocredits, plus skipped, expired and rejected for Run detail. A
+            ledger row's outcome (section 41) picks it: skipped (Not now) and expired (no answer
+            by 9 pm) are told apart, as the AskCard told them apart.
      onAction(kind)   'retry' (failed), 'credits' (nocredits), 'restart' (stopped).
      onOpenDetail()   shows 'See run details' on finished runs when given.
-     full   fills its container (Run detail) instead of the 300px thread width.
+     full   fills its container (Run detail) instead of the 300px thread width. The badge then
+            says the run, not the verification: the Verification card owns the day's result.
    Copy in RUN_FIXTURES quotes V2 where V2 has the line (refs in guide/refs/chat.js); the rest is
    proposed copy, marked in design-md/36-run-card.md. */
 (function () {
@@ -39,9 +45,10 @@
     failed: { badge: ['danger', 'Didn’t finish'], outcome: ['x-circle', 'danger'], tick: 'notcounted', action: ['retry', 'Try again', 'primary'] },
     stopped: { badge: ['neutral', 'Stopped'], outcome: ['stop', 'neutral'], tick: 'notcounted', action: ['restart', 'Run again', 'secondary'] },
     skipped: { badge: ['neutral', 'Skipped'], outcome: ['info', 'neutral'], tick: 'notcounted' },
+    expired: { badge: ['neutral', 'No answer'], outcome: ['clock', 'neutral'], tick: 'notcounted' },
     nojob: { badge: ['neutral', 'No job today'], outcome: ['info', 'neutral'], tick: 'pending' },
     nocredits: { badge: ['attention', 'Out of credits'], outcome: ['alert', 'attention'], tick: 'notcounted', action: ['credits', 'See AI credits', 'secondary'] },
-    rejected: { badge: ['danger', 'Not verified'], outcome: ['x-circle', 'danger'], tick: 'rejected', dayTone: 'danger' },
+    rejected: { badge: ['danger', 'Not counted'], outcome: ['x-circle', 'danger'], tick: 'rejected', dayTone: 'danger' },
   };
 
   const RUN_FIXTURES = {
@@ -50,15 +57,16 @@
     'done-pending': { steps: DONE_STEPS, outcome: 'Done. I finished “' + JOB + '” and submitted the job.', dayText: 'Day 7 of 20, pending verification' },
     verified: { steps: DONE_STEPS, outcome: 'Done. I finished “' + JOB + '” and submitted the job.', dayText: 'Day 7 of 20, verified' },
     failed: { steps: DONE_STEPS.slice(0, 5), outcome: 'I couldn’t finish “' + JOB + '”. App Player closed during the job.', dayText: 'Today doesn’t count yet. Try again before 9 pm.' },
-    stopped: { steps: DONE_STEPS.slice(0, 3), outcome: 'You stopped the run at 11:04 am.', dayText: 'Today doesn’t count toward your 20 days.' },
+    stopped: { steps: DONE_STEPS.slice(0, 3), outcome: 'You stopped the run at 11:04 am.', dayText: 'Today doesn’t count yet. Run again before 9 pm.' },
     skipped: { steps: DONE_STEPS.slice(0, 4), outcome: 'You skipped today’s paid job.', dayText: 'Today doesn’t count toward your 20 days.' },
+    expired: { steps: DONE_STEPS.slice(0, 4), outcome: 'No answer by 9 pm, so I skipped this job.', dayText: 'Today doesn’t count toward your 20 days.' },
     nojob: { steps: DONE_STEPS.slice(0, 4), outcome: 'No paid job on the board today.', dayText: 'Day 7 of 20, pending verification' },
-    nocredits: { steps: DONE_STEPS.slice(0, 5), outcome: 'Not enough credits for this job. Credits will be refreshed tomorrow.', dayText: 'Today doesn’t count yet. Credits refresh at 5:30 am.' },
+    nocredits: { steps: DONE_STEPS.slice(0, 5), outcome: 'Not enough credits for this job. Credits will be refreshed tomorrow.' },
     rejected: { steps: DONE_STEPS, outcome: 'Done. I finished “' + JOB + '” and submitted the job.', dayText: 'Day 7 not counted: the comment was removed before it was checked.' },
   };
 
   const ALIAS = { done: 'done-pending', pending: 'done-pending', 'no-job': 'nojob', 'no-credits': 'nocredits' };
-  const FINISHED = { 'done-pending': 1, verified: 1, nojob: 1, rejected: 1, skipped: 1 };
+  const FINISHED = { 'done-pending': 1, verified: 1, nojob: 1, rejected: 1, skipped: 1, expired: 1 };
 
   function Icon(props) { const I = K().Icon; return I ? <I {...props} /> : null; }
 
@@ -77,7 +85,10 @@
     const F = RUN_FIXTURES[status];
     const steps = r.steps || F.steps || [];
     const outcome = r.outcome != null ? r.outcome : F.outcome;
-    const dayText = r.dayText != null ? r.dayText : F.dayText;
+    const dayText = r.dayText != null ? r.dayText
+      : status === 'nocredits' ? K().OOC_COPY.day[r.dayStatus || 'stopped'] : F.dayText;
+    // On Run detail the Verification card says verified or not counted; the badge says the run.
+    const badge = full && (status === 'verified' || status === 'rejected') ? ['neutral', 'Done'] : S.badge;
     const action = r.action !== undefined ? r.action : S.action;
     const [open, setOpen] = useState(!!defaultExpanded);
     const listId = useId();
@@ -102,13 +113,13 @@
 
     return (
       <div className={cx('v2-msg', 'v2-msg--worker', full && 'is-full')}>
-        <article className={cx('v2-run', 'v2-run--' + status, full && 'is-full', className)} aria-label={(r.title || 'Today’s run') + ', ' + S.badge[1]}>
+        <article className={cx('v2-run', 'v2-run--' + status, full && 'is-full', className)} aria-label={(r.title || 'Today’s run') + ', ' + badge[1]}>
           <header className="v2-run-head">
             <p className="v2-run-title">
               {r.title || 'Today’s run'}
               <span className="v2-run-time">{r.startedAt || '11:02 am'}</span>
             </p>
-            {P.Badge ? <P.Badge tone={S.badge[0]} busy={!!S.busy}>{S.badge[1]}</P.Badge> : <span>{S.badge[1]}</span>}
+            <P.Badge tone={badge[0]} busy={!!S.busy}>{badge[1]}</P.Badge>
           </header>
 
           {live}

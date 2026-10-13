@@ -6,6 +6,10 @@
   const { useState, useId } = React;
 
   function cx() { return Array.prototype.filter.call(arguments, Boolean).join(' '); }
+  /* Rest props without object-rest syntax: Babel hoists a rest's key list to one program-level
+     _excluded, and this file loads last of the kit files that use one, so its lists would decide
+     which props every Button, field and Chip forwards to the DOM. */
+  function omit(o, keys) { const r = {}; for (const k in o) if (keys.indexOf(k) < 0) r[k] = o[k]; return r; }
   function Ico({ name, size }) {
     const Icon = window.V2Kit && window.V2Kit.Icon;
     return Icon ? <Icon name={name} size={size || 16} /> : null;
@@ -14,7 +18,10 @@
   /* Badge: one short state on a row or card. Tone lives in the fill and the dot; the label stays
      in ink-2 so every tone clears 4.5:1 (the success ink on its own tint computes 4.49:1). */
   const TONES = ['neutral', 'info', 'success', 'attention', 'danger'];
-  function Badge({ tone, dot, busy, icon, className, children, ...rest }) {
+  const BADGE_OWN = ['tone', 'dot', 'busy', 'icon', 'className', 'children'];
+  function Badge(props) {
+    const { tone, dot, busy, icon, className, children } = props;
+    const rest = omit(props, BADGE_OWN);
     const t = TONES.indexOf(tone) >= 0 ? tone : 'neutral';
     const showDot = !icon && (dot || busy);
     return (
@@ -83,7 +90,7 @@
         {leading ? <span className="v2-row-lead" aria-hidden="true">{leading}</span> : null}
         <span className="v2-row-text">
           <span className="v2-row-label">{label}</span>
-          {desc ? <span className="v2-row-desc">{desc}</span> : null}
+          {desc ? <span className="v2-row-desc v2-text-body-sm">{desc}</span> : null}
         </span>
         {value != null ? <span className="v2-row-value">{value}</span> : null}
         {badge ? <span className="v2-row-badge">{badge}</span> : null}
@@ -125,7 +132,10 @@
 
   /* Card: the one surface. Static cards never answer hover; a pressable card is a real button or
      link whose line firms up on hover. Inset is the panel step inside a card. */
-  function Card({ as, pressable, inset, padding, href, external, onClick, className, children, ...rest }) {
+  const CARD_OWN = ['as', 'pressable', 'inset', 'padding', 'href', 'external', 'onClick', 'className', 'children'];
+  function Card(props) {
+    const { as, pressable, inset, padding, href, external, onClick, className, children } = props;
+    const rest = omit(props, CARD_OWN);
     const Tag = as || (href ? 'a' : (onClick || pressable ? 'button' : 'div'));
     const press = Tag !== 'div';
     const extra = Tag === 'button' ? { type: 'button' }
@@ -137,15 +147,19 @@
     );
   }
 
-  /* StatCard: one figure that matters. Eyebrow label, the figure in ink (money and credits are
-     figures, not states), one context line, one optional action. Display (40) or compact (20). */
+  /* StatCard: one figure that matters. A mini-title label (the site's .mini-title, sentence case),
+     the figure in ink (money and credits are figures, not states), one context line, one optional
+     action. Display (40) or compact (20). Text comes from the type ladder (kit/base.css). */
   function fmt(v) { return typeof v === 'number' ? v.toLocaleString('en-US') : v; }
-  function StatCard({ label, value, unit, context, action, icon, loading, size, className, ...rest }) {
+  const STAT_OWN = ['label', 'value', 'unit', 'context', 'action', 'icon', 'loading', 'size', 'className'];
+  function StatCard(props) {
+    const { label, value, unit, context, action, icon, loading, size, className } = props;
+    const rest = omit(props, STAT_OWN);
     const compact = size === 'compact';
     const Sk = window.V2Kit && window.V2Kit.Skeleton;
     return (
       <Card className={cx('v2-stat', compact && 'v2-stat--compact', className)} aria-busy={loading ? 'true' : undefined} {...rest}>
-        {label ? <span className="v2-stat-label">{label}</span> : null}
+        {label ? <span className="v2-stat-label v2-text-mini-title">{label}</span> : null}
         {loading ? (
           <span className="v2-stat-loading">
             {Sk ? <Sk shape="rect" width={compact ? 96 : 148} height={compact ? 20 : 40} /> : null}
@@ -155,10 +169,10 @@
           <>
             <span className="v2-stat-figure">
               {icon ? <span className="v2-stat-icon" aria-hidden="true">{icon}</span> : null}
-              <span className="v2-stat-value">{fmt(value)}</span>
+              <span className={cx('v2-stat-value', compact ? 'v2-text-numeral-sm' : 'v2-text-display')}>{fmt(value)}</span>
               {unit ? <span className="v2-stat-unit">{unit}</span> : null}
             </span>
-            {context ? <span className="v2-stat-context">{context}</span> : null}
+            {context ? <span className="v2-stat-context v2-text-body-sm">{context}</span> : null}
           </>
         )}
         {action && !loading ? <span className="v2-stat-action">{action}</span> : null}

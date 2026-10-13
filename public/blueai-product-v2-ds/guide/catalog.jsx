@@ -80,7 +80,7 @@
     s("45", "job-ask", "worker", "worker", "Job preview", "Before a paid job runs on the partner's account: which video, which channel, what the worker will do (including the exact comment text), and what skipping costs.", [["JobPreviewCard", N]]),
     s("46", "permissions", "worker", "worker", "Always ask and Automatic", "The per-app mode (PM model): rows, the ribbon shortcut, the consent dialog, and a permission request for watch-history access.", [["ModeRows", C], ["ConsentDialog", C], ["AutoRibbon", C], ["PermissionRequest", N]]),
     s("47", "credits-balance", "credits", "credits-settings", "Credits balance and allowance", "Credits as the worker's daily allowance: a quiet chip, a meter that says whether today's run is covered, low, empty and refreshed states, one grant constant.", [["CreditsChip", C], ["CreditsMeter", N]]),
-    s("48", "out-of-credits", "credits", "credits-settings", "Out of credits", "Every zero-balance moment says the same time and what it means for today's day.", [["OutOfCreditsDialog", C], ["Zero-credits notice and run end", N]]),
+    s("48", "out-of-credits", "credits", "credits-settings", "Out of credits", "Every zero-balance moment says the same time and what it means for today's day.", [["Out-of-credits popup (retired)", C], ["Zero-credits notice and run end", N]]),
     s("49", "settings-blocks", "credits", "credits-settings", "Settings blocks", "SettingsSection, setting rows, the Advanced disclosure, and the advanced panels (own key, AI mode) with their missing states.", [["SettingsSection", C], ["ByokPanel", C], ["AiModePanel", C]]),
     s("50", "loading-pattern", "patterns", "entry-patterns", "Loading", "What the partner sees while waiting, by duration (under 300ms nothing; to 2s spinner in the control or a skeleton in the shape of content; over 2s say what is happening; over 10s offer background or cancel).", [["Loading by duration", C]]),
     s("51", "errors-offline", "patterns", "entry-patterns", "Errors and offline", "Where an error goes by scope (field, action, section, run, screen, app) and the copy rule: what happened, what it means for today, the one next step.", [["Error scopes", C], ["Offline", N]]),
@@ -108,7 +108,7 @@
     s("73", "recommendations", "meta", "compose", "Recommendations for V2", "Every V2 difference as a prioritised recommendation to the PM (P1 to P3) with file:line, today, recommended, why, effort; then Decisions pending (D1 to D13).", []),
     s("74", "how-to-add", "meta", "compose", "How to add a feature", "From a new task to a screen merged into V2 using the kit, tokens and DESIGN.md, step by step.", []),
     s("75", "coverage", "meta", "compose", "Coverage", "Counts of In V2 / Changed / New parts; V2 window exports specimened vs not; owed states per kit control.", []),
-    s("76", "known-gaps", "meta", "compose", "Known gaps", "What the guide cannot catch (visual checks by eye, V2 rendered without Tailwind preflight in the guide, iframe states that depend on localStorage), plus the dead-code list.", []),
+    s("76", "known-gaps", "meta", "compose", "Known gaps", "What the guide cannot catch (visual checks by eye, V2 rendered without Tailwind preflight in the guide, iframe states that depend on localStorage), the open items, what is deferred with its owner (the Day 1 setup chat and its onboarding close), plus the dead-code list.", []),
     s("77", "changelog", "meta", "compose", "Changelog", "Dated, newest first; 2026-10-13 first version.", [])
   ];
   // Kit components the plan names (window.V2Kit) and the screens (window.V2Screens), with their files.
@@ -166,7 +166,7 @@
     ["JobPreviewCard", "kit/job.jsx", "kit/worker.css", "new"],
     ["ModeRows / ConsentDialog / PermissionRequest", "kit/permissions.jsx", "kit/worker.css", "changed"],
     ["CreditsChip / CreditsMeter / useCountdown", "kit/credits.jsx", "kit/credits.css", "changed"],
-    ["OutOfCreditsDialog / OutOfCreditsNotice", "kit/out-of-credits.jsx", "kit/credits.css", "changed"],
+    ["OutOfCreditsNotice / OOC_COPY", "kit/out-of-credits.jsx", "kit/credits.css", "changed"],
     ["SettingsSection / AdvancedDisclosure", "kit/settings.jsx", "kit/credits.css", "changed"],
     ["ByokPanel / AiModePanel", "kit/advanced.jsx", "kit/credits.css", "changed"]
   ];
@@ -188,8 +188,11 @@
   ];
   // Shared screen helpers on window.V2Screens that are not screens of their own: [name, file, use].
   var helpers = [
-    ["ScreenFrame / topBarProps", "screens/home.jsx", "The product frame for a screen; topBarProps(worker) gives every screen the same top bar and status chip."],
-    ["AccountFrame", "screens/settings.jsx", "ScreenFrame plus scrollTo, openMenu and onAction for the Settings family; reads topBarProps."],
+    ["ScreenFrame / topBarProps", "screens/home.jsx", "The one frame for every signed-in screen (core, account, system states): topBarProps chip, scrollTo, openMenu, status/credits/nav overrides; every chrome event goes to onNavigate(id, opts)."],
+    ["ToastScope / useScreenToast", "screens/home.jsx", "Wrap a screen in ToastScope and call useScreenToast().show(); AppFrame draws the one live region."],
+    ["ListSkeleton / LoadError / HomeSkeleton", "screens/home.jsx", "Loading and load-failed blocks for screens that read server data."],
+    ["CONFIRM_COPY", "screens/settings.jsx", "One title, body and primary per destructive confirm (sign out, disconnect, leave, delete data)."],
+    ["rowTarget / reportAbout", "screens/activity.jsx, screens/help.jsx", "Where a ledger row opens; the about/topic a report opens with."],
     ["ConnectedAppRows", "screens/connected-apps.jsx", "The connected-account rows, reused by Settings."],
     ["ReportProblemSheet", "screens/help.jsx", "Report a problem; open it with about: {label, detail} to attach a run."],
     ["TermsSheet / TERMS_URL", "screens/welcome.jsx", "The Program Terms sheet (first run and update); reuse it, never a second sheet."]

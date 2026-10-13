@@ -14,7 +14,7 @@
 
 **Sizes.** Not applicable.
 
-**States.** On surface: ink 19.67, ink-2 10.39, ink-3 6.03, ink-4 4.77 (:1). On canvas: ink-4 4.60. On sunken: ink-4 4.42, so ink-4 never sits on `--v2-surface-sunken`. V2 today: `'Working on it…'` in #94a3b8 (ChatBubbles.ThinkingBubble, any chat run), `'App Player will be signed out too.'` in #9ca3af (the sign-in gate, `?signin=browser&player=other`).
+**States.** On surface: ink 19.67, ink-2 10.39, ink-3 6.03, ink-4 4.77 (:1). ink-4 on canvas 4.60, on panel 4.69. Everywhere else ink-4 drops under 4.5:1: sunken 4.42, blue tint 4.29, selected 4.06, success tint 4.36, attention tint 4.37, danger tint 4.17, hover wash 4.32, press wash 4.08. So ink-4 sits only on surface, panel or canvas at rest; meta on anything tinted, sunken, selected, hovered or pressed is ink-3 (the menu's hint already does this, kit/overlays.css:131). V2 today: `'Working on it…'` in #94a3b8 (ChatBubbles.ThinkingBubble, any chat run), `'App Player will be signed out too.'` in #9ca3af (the sign-in gate, `?signin=browser&player=other`).
 
 **Props.** Tokens only. Text styles carry their ink (section 04); override with a token, never a hex.
 
@@ -24,13 +24,13 @@
 
 **Responsive.** Not applicable.
 
-**Do / Don't.** Do pick the step by role. Do put money and credits figures in ink. Don't use ink-4 for a caveat or on sunken. Don't add a grey for one screen.
+**Do / Don't.** Do pick the step by role. Do put money and credits figures in ink. Don't use ink-4 for a caveat, or on anything but surface, panel or canvas at rest. Don't add a grey for one screen.
 
 ### Surfaces and lines (Changed from V2)
 
-**Purpose.** Grounds a fraction of a percent apart, separated by 1px alpha-black lines, the site's main move (it lets the product drop its shadows).
+**Purpose.** Grounds a fraction of a percent apart, separated by 1px alpha-black lines (the site's line values, shared). The site pairs those lines with faint resting card shadows; the product drops the shadows and lets the lines alone separate in-flow surfaces (section 02, P6: adapted).
 
-**Anatomy.** Grounds: `--v2-canvas` #fafbfb (window), `--v2-surface` #fff (cards, bubbles, bars, dialogs), `--v2-surface-panel` #fdfdfd (inset panel inside a card), `--v2-surface-sunken` #f6f6f8 (wells, tracks, neutral chips). Lines: `--v2-line` 10% (every edge), `--v2-line-strong` 15% (fields, secondary buttons), `--v2-line-hair` 8% (dividers inside a card), `--v2-line-hover` 20% (hover firm-up). Washes: `--v2-wash-hover` 4.5%, `--v2-wash-press` 7%, layered over the fill.
+**Anatomy.** Grounds: `--v2-canvas` #fafbfb (window), `--v2-surface` #fff (cards, bubbles, bars, dialogs), `--v2-surface-panel` #fdfdfd (inset panel inside a card), `--v2-surface-sunken` #f6f6f8 (wells, tracks, neutral chips). Lines: `--v2-line` 10% (every edge), `--v2-line-strong` 15% (fields, secondary buttons), `--v2-line-hair` 8% (dividers inside a card), `--v2-line-hover` 20% (hover firm-up), `--v2-link-underline` 32% (the resting underline under an ink link, the site's own value). Washes: `--v2-wash-hover` 4.5%, `--v2-wash-press` 7%, layered over the fill.
 
 **Variants.** Alternation: canvas, then a white card, then a panel one step down, then rows back to white.
 
@@ -80,9 +80,11 @@
 
 **Sizes.** Not applicable.
 
-**States.** Neutral (paused, skipped), info (pending verification), success (verified, done, connected), attention (needs you), danger (failed, out of credits). V2 today: the dev Preview's Chat states row (ChatBubbles.ChatStatesPreview); the AI Credits banner at `?credits=0`.
+**States.** Neutral (paused, skipped, pending verification), info (running, checking, a fact with nothing to do), success (verified, done, connected), attention (needs you), danger (failed, out of credits).
 
-**Props.** `tone: 'neutral' | 'info' | 'success' | 'attention' | 'danger'` on every status part.
+**Pending verification, one rule.** A pending day is neutral wherever it is a status: one tick in `--v2-ink-4` (StatusTick, section 43), a neutral Badge with the `check` mark (section 16), the RunCard's Done badge (section 36). Blue touches it in exactly two places, both meaning "in, not yet checked" rather than a status: the DayBar's pending segment (1.5 `--v2-blue` inset outline, section 43) and the DayDone badge (`--v2-blue-tint` with its tick in `--v2-blue-ink`, section 44). Never green until verified. V2 today: the dev Preview's Chat states row (ChatBubbles.ChatStatesPreview); the AI Credits banner at `?credits=0`.
+
+**Props.** `tone: 'neutral' | 'info' | 'success' | 'attention' | 'danger'` on every status part, with one exception: Banner names its neutral tone `offline` (sunken, line, ink-3 icon; section 21) and turns any tone it does not know into info, so a neutral banner is `tone="offline"` with its own icon (the AI-mode conflict uses `alert`, section 49).
 
 **Motion.** None of its own.
 

@@ -39,7 +39,8 @@
       <G.Section id="day-done">
         <G.Part name="DayDone" status="changed" role="The end-of-run moment: today's run is in, here is where the 20 days stand, and it is pending until checked.">
           <p><strong>Anatomy.</strong> The kit Dialog, celebration variant, size sm (320), dim scrim, no close button. A 56
-            badge in blue tint with one tick (pending, never green). Title 20/600, the PM's DRAFT string. One sub line
+            badge in blue tint with one tick in --v2-blue-ink, inherited from the badge (pending, never green): one of the
+            two blue exceptions to the neutral pending tone (section 03). Title 20/600, the PM's DRAFT string. One sub line
             only on Day 20. DayBar with one count line: '7 of 20 days' and one tick 'Pending verification'. The
             verification note 13 ink-3. One full-width primary 'Got it' (44). Confetti on Day 20 only, once.</p>
           <G.StateGrid wide states={[
@@ -58,7 +59,7 @@
           <G.SpecDrawer rows={[
             { part: 'Dialog', token: '--v2-dialog-sm, --v2-radius-lg, --v2-shadow-2', value: '320, radius 16, celebration variant', ref: ['worker.daydone.panel', 'worker.daydone.role'] },
             { part: 'Scrim', token: '--v2-scrim', value: 'rgba(11,18,32,0.48), dialog layer', ref: 'worker.daydone.scrim' },
-            { part: 'Badge', token: '--v2-blue-tint, --v2-blue-ink', value: '56 round, one tick 28, no ring', ref: 'worker.daydone.ring' },
+            { part: 'Badge', token: '--v2-blue-tint, --v2-blue-ink', value: '56 round, one tick 28 in --v2-blue-ink inherited from the badge (a blue exception to the neutral pending tone), no ring', ref: 'worker.daydone.ring' },
             { part: 'Title', token: '--v2-text-20, --v2-weight-semibold', value: 'Today’s run is done.', ref: 'worker.copy.job' },
             { part: 'Title, no job', token: 'same', value: 'No paid job today, but your run counts.', ref: 'worker.copy.nojob' },
             { part: 'Title, Day 20', token: 'same + sub 13 ink-3', value: 'Day 20 done. / That’s every day for this month.', ref: ['worker.copy.day20', 'worker.copy.day20-sub'] },

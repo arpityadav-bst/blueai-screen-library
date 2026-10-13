@@ -37,7 +37,7 @@
             system={<SystemThumbs />}
             changed="The unused inside and stamp placements are dropped. The buttons become the shared IconButton (no shadow, no fade on the unvoted thumb, selection shown as pressed with aria-pressed). Reasons use the shared Chip instead of a third chip look (#334155 selected). The 2.56:1 grey label becomes ink-3. Copy is V2's, quoted exactly." />
           <G.SpecDrawer rows={[
-            { part: 'Buttons', token: 'IconButton 32 (section 11)', value: '32px, thumb-up / thumb-down 16, ink-3; selected = active', ref: ['chat.feedback.button', 'chat.feedback.button-shadow', 'chat.feedback.icon'] },
+            { part: 'Buttons', token: 'IconButton 32 outlined (section 11), --v2-surface, --v2-line-strong', value: '32px, glyph 20 ink-3 (thumb-up / thumb-down), 1px line-strong edge on white; selected = pressed wash, ink', ref: ['chat.feedback.button', 'chat.feedback.button-shadow', 'chat.feedback.icon'] },
             { part: 'Unvoted thumb', token: null, value: 'stays at full contrast (V2 fades it to 0.55)', ref: 'chat.feedback.fade' },
             { part: 'Labels', token: null, value: '"Good result" / "Bad result"', ref: 'chat.feedback.aria' },
             { part: 'Thanks', token: '--v2-text-12, --v2-weight-medium, --v2-ink-3', value: '"Thanks for the feedback" for 2200ms, role=status', ref: ['chat.feedback.thanks', 'chat.feedback.thanks-ms', 'chat.feedback.label-colour'] },

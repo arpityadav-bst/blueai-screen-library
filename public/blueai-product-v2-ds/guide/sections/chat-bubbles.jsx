@@ -11,6 +11,17 @@
     needsInput: 'I need a bit more information to continue with “Set up a task that runs automatically every day at 6 AM”. Could you tell me which app or game instance to use?',
     fail: 'I wasn’t able to complete “Collect bonus coins in Disney Solitaire game”. The app closed unexpectedly partway through. You can try again or rephrase the request.',
   };
+  /* V2's preview copy is a general assistant's, so it stays in the CompareRows (the same words on both
+     sides). The state grids speak as the worker, in the strings the RunCard, AskCard and out-of-credits
+     parts already use (sections 36, 37, 48). */
+  const JOB = 'Watch the video and provide feedback';
+  const WORK = {
+    answer: 'Just this job',
+    success: 'Done. I finished “' + JOB + '” and submitted the job.',
+    fail: 'I couldn’t finish “' + JOB + '”. App Player closed during the job.',
+    needsInput: ['Paid job available: “' + JOB + '”.', 'Answer by 9 pm or today won’t count.'],
+    ooc: ['You’ve used all of today’s AI credits.', 'AI credits refresh at 5:30 am.'],
+  };
 
   function BubblesSection() {
     const K = window.V2Kit;
@@ -18,8 +29,8 @@
       <G.Section id="bubbles">
         <G.Part name="MessageBubble (user)" status="changed" role="What the partner said, or the answer they tapped. The quietest thing on screen, because the partner already knows what they said.">
           <G.StateGrid states={[
-            { label: 'Rest', node: <K.MessageBubble from="user">{COPY.user}</K.MessageBubble> },
-            { label: 'With time (last of a group)', node: <K.MessageBubble from="user" time="11:03 am">{COPY.user}</K.MessageBubble> },
+            { label: 'Rest', note: 'an answer the partner tapped', node: <K.MessageBubble from="user">{WORK.answer}</K.MessageBubble> },
+            { label: 'With time (last of a group)', node: <K.MessageBubble from="user" time="11:05 am">{WORK.answer}</K.MessageBubble> },
           ]} />
           <G.CompareRow
             v2={<G.Live get={function () { return CB().UserBubble; }} props={{ content: COPY.user }} label="ChatBubbles.UserBubble" />}
@@ -56,11 +67,11 @@
 
         <G.Part name="NoticeBubble" status="changed" role="An outcome or a heads-up from the worker. Neutral surface; the icon carries the tone. Only 'needs input' keeps a fill.">
           <G.StateGrid wide states={[
-            { label: 'Heads-up (attention icon on neutral)', node: <K.NoticeBubble kind="headsup" lines={[COPY.headsup]} /> },
-            { label: 'Heads-up with title', node: <K.NoticeBubble kind="headsup" title="Out of credits" lines={['You’ve used all of today’s AI credits.', 'Credits will be refreshed tomorrow.']} /> },
-            { label: 'Outcome success (check)', node: <K.NoticeBubble kind="success" lines={[COPY.success]} /> },
-            { label: 'Outcome fail (x-circle, danger)', node: <K.NoticeBubble kind="fail" lines={[COPY.fail]} /> },
-            { label: 'Needs input (attention fill)', node: <K.NoticeBubble kind="needsInput" lines={[COPY.needsInput]} /> },
+            { label: 'Heads-up (attention icon on neutral)', node: <K.NoticeBubble kind="headsup" lines={WORK.ooc} /> },
+            { label: 'Heads-up with title', node: <K.NoticeBubble kind="headsup" title="Out of AI credits" lines={WORK.ooc} /> },
+            { label: 'Outcome success (check)', node: <K.NoticeBubble kind="success" lines={[WORK.success]} /> },
+            { label: 'Outcome fail (x-circle, danger)', node: <K.NoticeBubble kind="fail" lines={[WORK.fail]} /> },
+            { label: 'Needs input (attention fill)', node: <K.NoticeBubble kind="needsInput" lines={WORK.needsInput} /> },
             { label: 'Info (used by DependencyCard)', node: <K.NoticeBubble kind="info" lines={['BlueStacks is ready.']} /> },
           ]} />
           <G.CompareRow

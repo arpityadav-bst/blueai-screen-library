@@ -58,7 +58,8 @@
           <G.SpecDrawer rows={[
             { part: 'Title', token: 'ScreenHeader with Back', value: '"Worker", pushed over Settings (Settings stays lit)', ref: 'screens-account.worker.promise' },
             { part: 'Runs', token: 'ListRow + Switch', value: 'on: "Next run today at 11 am."; off: "Paused until Oct 16. Paused days don’t count toward your 20 days."', ref: 'screens-account.worker.promise' },
-            { part: 'Pause dialog', token: 'Dialog task md + Select', value: 'cost from numbers(): "You need 13 more, and 18 days are left."; Keep running / Pause' },
+            { part: 'Pause dialog', token: 'Dialog task md + Select', value: 'cost from numbers(), for the date picked: "Pausing until Oct 20 skips 7 days. You’d have 11 left for the 13 you need, so 20 days would be out of reach."; Keep running / Pause' },
+            { part: 'Start with Windows', token: 'ListRow + Switch', value: 'on; "If it’s off, runs skip after a restart until you open BlueAI."' },
             { part: 'Paid jobs', token: 'ModeRows (section 46), full-bleed', value: 'Always ask / Automatic per app; Instagram Coming soon', ref: ['screens-account.worker.mode-always', 'screens-account.worker.mode-auto', 'screens-account.worker.not-persisted'] },
             { part: 'Consent', token: 'ConsentDialog', value: 'V2’s consent copy; "I agree, turn on"', ref: ['screens-account.worker.no-settings-card', 'screens-account.worker.turn-off'] },
             { part: 'Daily run', token: 'RadioCard list', value: 'A set time / A window / Any time', ref: ['screens-account.worker.option-time', 'screens-account.worker.option-window', 'screens-account.worker.option-any'] },

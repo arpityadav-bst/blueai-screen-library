@@ -45,7 +45,7 @@
             { part: 'Card', token: '--v2-surface, --v2-line, --v2-radius-lg, --v2-space-4', value: 'white, 1px line, radius 16, padding 16, gap 12, no shadow' },
             { part: 'Width', token: '--v2-bubble-max', value: '300 in the thread; 100% with full' },
             { part: 'Header', token: '--v2-text-14, --v2-weight-semibold, --v2-ink', value: '"Today’s run" 14/600 + start time 12 ink-4 + Badge' },
-            { part: 'Badge', token: 'status family', value: 'Running info (busy dot), Waiting for you attention, Done neutral, Verified success, Didn’t finish danger, Out of credits attention' },
+            { part: 'Badge', token: 'status family', value: 'Running info (busy dot), Waiting for you attention, Done info (pending verification), Verified success, Didn’t finish danger, Out of credits attention' },
             { part: 'Live row', token: '--v2-ink-2', value: 'Spinner 16 + current step 14', ref: ['chat.run.jobs-board', 'chat.run.status-render'] },
             { part: 'Disclosure', token: '--v2-text-13, --v2-ink-3, --v2-hit-min', value: '"7 steps done", 13/500, 32px tall, chevron turns', ref: 'chat.run.routine' },
             { part: 'Steps', token: '--v2-text-13, --v2-text-12, --v2-ink-4', value: 'check 16 ink-3, past-tense label 13, time 12 tabular', ref: 'chat.run.daily-head' },

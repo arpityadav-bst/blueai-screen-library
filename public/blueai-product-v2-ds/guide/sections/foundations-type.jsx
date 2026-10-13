@@ -13,7 +13,7 @@
     ['v2-text-title', 'BlueStacks Instance', '16 / 600 / 1.35 / -0.01em', '--v2-ink', 'Card titles, section heads', 'foundations.type.card-title'],
     ['v2-text-body', 'You can pause, stop, or disconnect anytime.', '14 / 400 / 1.5 / 0', '--v2-ink-2', 'Bubbles, composer, paragraphs, fields', 'foundations.type.body-copy'],
     ['v2-text-body-sm', 'Every task and job BlueAI does uses credits.', '13 / 400 / 1.5 / 0', '--v2-ink-3', 'Descriptions, notes, consequences', 'foundations.type.body-sm-copy'],
-    ['v2-text-label', 'Switch account', '13 / 500 / 1.35 / -0.01em', '--v2-ink-2', 'Buttons, chips, nav, menu rows, row labels', 'foundations.blue.gate-label'],
+    ['v2-text-label', 'Switch account', '13 / 500 / 1.35 / -0.01em', '--v2-ink-2', 'Buttons, chips, nav, menu rows', 'foundations.blue.gate-label'],
     ['v2-text-meta', 'Working on it…', '12 / 400 / 1.35 / 0', '--v2-ink-4', 'Timestamps, counts, hints', 'foundations.ink.thinking-copy'],
     ['v2-text-eyebrow', 'Plan', '11 / 500 / 1 / 0.08em, uppercase', '--v2-ink-3', 'Section labels only; status words are Badges', 'foundations.type.eyebrow'],
     ['v2-text-mono', 'claude-haiku-4-5', '13 / 400 / 1.35 / 0, mono', '--v2-ink-2', 'Keys, endpoints, model ids', 'foundations.type.mono-hint'],
@@ -50,6 +50,7 @@
             v2={<div className="v2-stack"><G.Live get={function () { return window.ChatCompare && window.ChatCompare.IntroCard; }} label="ChatCompare.IntroCard" /><G.Live get={function () { return window.WorkerCards && window.WorkerCards.PlanCard; }} label="WorkerCards.PlanCard" /></div>}
             system={<div className="v2-stack v2-gap-4"><span className="v2-text-greeting">Hi, Alex</span><div className="v2-stack v2-gap-2"><span className="v2-text-eyebrow">Plan</span><span className="v2-text-body">You can pause, stop, or disconnect anytime.</span><span className="v2-text-meta">Working on it…</span></div></div>}
             changed="V2 sets this in -apple-system first, so Macs show SF and Windows shows Plus Jakarta Sans, at 30 sizes with weight 800 for emphasis and a 10/700 pale-blue eyebrow. The system is Inter on both, eight sizes, three weights (400, 500, 600), and one recipe per role." />
+          <G.Note>Row labels are 14/500 ink, set by ListRow (section 18), with no class of their own.</G.Note>
           <G.Note>Inter is the one UI face: the partner applies on, and comes back to, the onBlue site, which is Inter end to end, and putting it first in the stack ends the split where Macs render SF and Windows renders Plus Jakarta Sans. Instrument Serif italic appears only on the site-language sign-in pages. Decision D11 lets the PM keep Plus Jakarta Sans; the scale and weights hold either way.</G.Note>
           <G.SpecDrawer rows={[
             { part: 'UI face', token: '--v2-font-ui', value: "'Inter', system-ui, 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif", ref: 'foundation.font-stack' },

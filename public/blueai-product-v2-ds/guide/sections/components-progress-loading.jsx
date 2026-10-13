@@ -66,8 +66,8 @@
 
         <G.Part name="Spinner" status="changed" role="Working, where the result has no shape yet: a button that sent something, a step in progress. One ring, currentColor.">
           <G.StateGrid states={[
-            { label: '12', note: 'inside buttons', node: <Spin size={12} delay={0} /> },
-            { label: '16', note: 'rows, steps', node: <Spin size={16} delay={0} /> },
+            { label: '12', note: 'switch thumb, busy', node: <Spin size={12} delay={0} /> },
+            { label: '16', note: 'buttons, rows, steps', node: <Spin size={16} delay={0} /> },
             { label: '32', note: 'standalone', node: <Spin size={32} delay={0} /> },
             { label: 'On colour', node: <span style={filled}><Spin size={16} delay={0} variant="on-color" /></span> },
             { label: 'Delayed', note: 'first 300ms: nothing, space held', node: <span style={line}><Spin size={16} delay={600000} />Sending</span> },
@@ -80,8 +80,6 @@
             v2={<G.Live label="ChatBubbles.ThinkingBubble" get={function () { return window.ChatBubbles && window.ChatBubbles.ThinkingBubble; }} />}
             system={<span style={line}><Spin size={16} delay={0} label="Working" />Working on it…</span>}
             changed="V2 has five busy marks in three colours: a 13px blue ring, a 36px indigo ring, three indigo dots, the boot bounce dots and a pulsing status dot. The system has one ring in currentColor at 12, 16 and 32, which waits 300ms so fast work never flashes and swaps to a check when done. The bounce dots stay on the splash only." />
-
-          <G.Note>V2's busy keyframes and its ring class live in V2's own index.html style block, which this page does not load, so the live V2 marks here (dots, ring, shimmer) hold still. Open a V2 URL state to see them move.</G.Note>
 
           <G.SpecDrawer rows={[
             { part: 'Ring', token: null, value: 'currentColor, track at 20%, arc a quarter turn', ref: ['display-feedback.spinner.ring', 'display-feedback.spinner.login'] },

@@ -35,8 +35,10 @@
 | Level | Screens | Way back | Tab lit |
 |---|---|---|---|
 | Tab | Home, Activity, Settings | the nav | itself |
-| Pushed screen | Chat, Run detail, Notifications, Account, Worker settings, Connected apps, AI credits (Help is the top bar menu plus the Report a problem sheet, not a screen) | Back in the ScreenHeader | its parent tab |
+| Pushed screen | Chat, Run detail, Notifications, Account, Worker settings, Connected apps, AI credits (Help is the top bar menu plus the Report a problem sheet, not a screen) | Back in the ScreenHeader | its parent tab (rule below) |
 | Overlay | Dialog, Sheet, day done, splash, toast | its own close or answer | unchanged |
+
+**Which tab is lit for a pushed screen, one rule.** A screen with a home in Settings (Worker settings, Connected apps, Account) lights Settings from any door, the top bar's More menu included. A screen only the top bar opens (AI credits from the credits chip, Notifications from More) is pushed over the tab you were on, and that tab stays lit; Back returns to it. Chat belongs to Home and Run detail to Activity, so each lights its own. The top-bar screens take the tab as a prop: `tab` (AI credits) or `parentTab` (Notifications).
 
 **Variants.** None.
 

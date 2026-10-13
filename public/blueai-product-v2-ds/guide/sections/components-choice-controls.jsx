@@ -4,18 +4,32 @@
   const G = window.V2Guide;
   const { useState } = React;
   const noop = function () {};
-  /* V2 copy, quoted (refs below). Proposed copy is marked where it is used. */
+  /* V2 copy, quoted (refs below). Proposed copy is not written here: it is read from where the product
+     says it, so it exists once. AI mode and own-key strings: kit/advanced.jsx (V2Kit.AI_COPY,
+     V2Kit.BYOK_COPY); run-window options: the Worker settings screen (V2Kit.RUN_WINDOW_OPTIONS,
+     section 62). The fallbacks are those strings verbatim, for a page where the export is missing. */
   const NO_HW = "This PC doesn't meet the requirements for Hybrid.";
-  const CLOUD = { value: 'cloud', title: 'Cloud', sub: 'Default. Uses cloud AI.' };
-  const HYBRID = { value: 'hybrid', title: 'Hybrid', sub: 'Uses your PC and saves AI credits.' };
-  const AUTO = { value: 'auto', title: 'Auto', sub: 'BlueAI runs a local model for you.', badge: 'Recommended' };
   const MODES = [{ value: 'always', label: 'Always ask', icon: 'shield-check' }, { value: 'auto', label: 'Automatic', icon: 'zap' }];
-  const RUN_WINDOW = [
-    { value: 'time', title: 'At a set time', sub: 'Starts within the hour you pick, like 11 am.' },
-    { value: 'window', title: 'In a window', sub: 'A different moment each day, like 9 am to 9 pm.' },
-    { value: 'any', title: 'Leave it to me', sub: 'BlueAI picks a time each day.' },
-  ];
-  const KEY_ROW = { label: 'Use my own key', description: 'Your key stays saved when this is off.' };
+  const FALLBACK = {
+    ai: { cloudSub: 'Default. Uses cloud AI.', hybridSub: 'Runs on your PC and uses fewer AI credits.' },
+    byok: { switchLabel: 'Use my own key', switchDesc: 'Turning this off keeps your saved key.' },
+    run: [
+      { value: 'time', title: 'A set time', sub: 'BlueAI starts within that hour.' },
+      { value: 'window', title: 'A window', sub: 'BlueAI picks a different moment in it each day.' },
+      { value: 'any', title: 'Any time', sub: 'BlueAI picks the moment each day.' },
+    ],
+  };
+  function copy() {
+    const K = window.V2Kit || {};
+    const ai = K.AI_COPY || FALLBACK.ai, byok = K.BYOK_COPY || FALLBACK.byok;
+    return {
+      CLOUD: { value: 'cloud', title: 'Cloud', sub: ai.cloudSub },
+      HYBRID: { value: 'hybrid', title: 'Hybrid', sub: ai.hybridSub },
+      AUTO: { value: 'auto', title: 'Auto', sub: 'BlueAI runs a local model for you.', badge: 'Recommended' },
+      RUN_WINDOW: K.RUN_WINDOW_OPTIONS || FALLBACK.run,
+      KEY_ROW: { label: byok.switchLabel, description: byok.switchDesc },
+    };
+  }
 
   function V2Toggles() {
     const [on, setOn] = useState(true);
@@ -35,7 +49,7 @@
   function SwitchRow() {
     const K = window.V2Kit;
     const [on, setOn] = useState(false);
-    return <K.Switch {...KEY_ROW} checked={on} onChange={setOn} />;
+    return <K.Switch {...copy().KEY_ROW} checked={on} onChange={setOn} />;
   }
   function GatedMode() {
     const K = window.V2Kit;
@@ -60,7 +74,10 @@
 
   function ChoiceSection() {
     const K = window.V2Kit;
+    const { CLOUD, HYBRID, AUTO, RUN_WINDOW, KEY_ROW } = copy();
     const sw = function (extra) { return Object.assign({ label: KEY_ROW.label, hideLabel: true, onChange: noop }, extra); };
+    // A disabled switch always says why, in its description (proposed copy).
+    const off = { label: 'Use my watch history', description: 'Connect YouTube to turn this on.', disabled: true, onChange: noop };
     const rc = function (o, value) { return <div style={{ width: '100%' }}><K.RadioCard label="AI mode" options={[o]} value={value} onChange={noop} /></div>; };
     const seg = function (extra, opts) { return <K.Segmented ariaLabel="YouTube mode" options={opts || MODES} value="always" onChange={noop} {...extra} />; };
     const mark = function (o, cls) { return MODES.map(function (m) { return m.value === o ? Object.assign({}, m, { className: cls }) : m; }); };
@@ -73,13 +90,14 @@
             { label: 'Hover, off', node: <K.Switch {...sw({ className: 'is-hover' })} /> },
             { label: 'Hover, on', node: <K.Switch {...sw({ checked: true, className: 'is-hover' })} /> },
             { label: 'Focus-visible', node: <K.Switch {...sw({ checked: true, className: 'is-focus' })} /> },
-            { label: 'Disabled', node: <div className="v2-hstack v2-gap-3"><K.Switch {...sw({ disabled: true })} /><K.Switch {...sw({ disabled: true, checked: true })} /></div> },
+            { label: 'Disabled, off', note: 'the description says why', node: <K.Switch {...off} /> },
+            { label: 'Disabled, on', note: 'the description says why', node: <K.Switch {...off} checked description="YouTube is signed out. Sign in to YouTube again to change this." /> },
             { label: 'Busy', note: 'waiting on consent or a check', node: <K.Switch {...sw({ busy: true })} /> },
           ]} />
           <G.Stage ground="surface" width="shell"><SwitchRow /></G.Stage>
           <ul className="g-list">
             <li>Track 36 by 20, pill. Off: 1px ink-4 edge, white, a 12px ink-4 thumb. On: action fill, a 16px white thumb. Both clear 3:1 on white.</li>
-            <li>Row: label 14/500 ink and description 13 ink-3 on the left, the switch on the right; the label is clickable. role=switch, a 32px target. The row's copy is proposed.</li>
+            <li>Row: label 14/500 ink and description 13 ink-3 on the left, the switch on the right; the label is clickable. role=switch, a 32px target. The row's copy is the own-key panel's (section 49); the disabled rows' reasons are proposed.</li>
           </ul>
           <G.CompareRow
             v2={<G.Live get={function () { return (window.Toggle || window.Byok) && V2Toggles; }} label="Toggle and Byok.ByokSettings" />}
@@ -111,9 +129,9 @@
             <fieldset className="v2-fieldset">
               <legend className="v2-legend">Tell me when</legend>
               <K.Checkbox label="A job is waiting for you" defaultChecked />
-              <K.Checkbox label="Today's run is done" defaultChecked />
+              <K.Checkbox label="Today’s run is done" defaultChecked />
               <K.Checkbox label="A day is verified" />
-              <K.Checkbox label="Include diagnostic info" description="Adds this run's log to your report." />
+              <K.Checkbox label="Include diagnostic info" description="Adds this run’s log to your report." />
             </fieldset>
           </G.Stage>
           <G.Note>New, and why: notification preferences (section 60) and Report a problem (section 65) are lists of independent choices saved together. All copy in this part is proposed.</G.Note>
@@ -139,9 +157,9 @@
             { label: 'With a badge', node: rc(AUTO, null) },
           ]} />
           <G.Stage ground="surface" width="shell">
-            <K.RadioCard label="When to run" variant="list" options={RUN_WINDOW} defaultValue="window" />
+            <K.RadioCard label="When BlueAI runs" variant="list" options={RUN_WINDOW} defaultValue="window" />
           </G.Stage>
-          <G.Note>Hybrid's line says "AI credits" where V2 says "tokens" (a banned word), and the run-window options are proposed copy built on V2's schedule question; the rest is V2 copy.</G.Note>
+          <G.Note>Hybrid's line says "AI credits" where V2 says "tokens" (a banned word), read from the AI mode panel (section 49); the run-window options are the Worker settings screen's (section 62), proposed copy built on V2's schedule question; the rest is V2 copy.</G.Note>
           <G.CompareRow
             v2={<G.Live get={function () { return window.AiMode && window.AiMode.useAiMode && V2AiMode; }} label="AiMode.AIModeCard" />}
             system={<K.RadioCard label="AI mode" options={[CLOUD, HYBRID]} defaultValue="cloud" />}
@@ -164,7 +182,7 @@
             { label: 'Hover (Automatic)', node: seg({ options: mark('auto', 'is-hover') }) },
             { label: 'Selected (Automatic)', node: seg({ value: 'auto' }) },
             { label: 'Focus-visible', node: seg({ options: mark('always', 'is-focus') }) },
-            { label: 'Disabled', note: 'say why beside it', node: seg({ disabled: true }) },
+            { label: 'Disabled', note: 'the reason sits beside it', node: <div className="v2-stack v2-gap-1">{seg({ disabled: true })}<span className="v2-text-meta">Connect YouTube to choose a mode.</span></div> },
             { label: 'Gated (consent open)', note: 'selection waits', node: seg({ options: mark('auto', 'is-pending') }) },
             { label: 'Small, text only', node: seg({ size: 'sm' }, MODES.map(function (m) { return { value: m.value, label: m.label }; })) },
           ]} />

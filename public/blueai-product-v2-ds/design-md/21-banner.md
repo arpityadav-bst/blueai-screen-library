@@ -21,7 +21,7 @@ The words stay in ink so every tone passes 4.5:1; the tone lives in the tint, th
 - success: `--v2-success-tint`, `--v2-success-line`, icon `--v2-success-ink` (`check`). News.
 - attention: `--v2-attention-tint`, `--v2-attention-line`, icon `--v2-attention-ink` (`alert`). The partner has to do something.
 - danger: `--v2-danger-tint`, `--v2-danger-line`, icon `--v2-danger-ink` (`x-circle`). Today is blocked.
-- offline: `--v2-surface-sunken`, `--v2-line`, icon `--v2-ink-3` (`wifi-off`). New.
+- offline: `--v2-surface-sunken`, `--v2-line`, icon `--v2-ink-3` (`wifi-off`). New. This is the Banner's neutral tone (section 03): a neutral condition that is not about the connection uses it with its own icon (the AI-mode conflict: `tone="offline" icon="alert"`, section 49). There is no `neutral` value; an unknown tone renders as info.
 Any icon can replace the default (Automatic uses `zap`).
 
 **Sizes.** One. Full width of its container.

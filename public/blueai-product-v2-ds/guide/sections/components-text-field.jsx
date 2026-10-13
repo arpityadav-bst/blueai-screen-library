@@ -11,6 +11,16 @@
   const KEY_NOTE = 'Your key is stored encrypted on this device only.';
   const KEY_HINT = 'Find at https://console.anthropic.com/settings';
   const FEEDBACK_PH = 'Provide additional feedback';
+  /* Proposed own-key copy is the panel's (kit/advanced.jsx, V2Kit.BYOK_COPY, section 49), so it exists once;
+     the fallbacks are those strings verbatim, for a page where the export is missing. */
+  function byok() {
+    const B = (window.V2Kit || {}).BYOK_COPY || {};
+    return {
+      checking: B.checking ? B.checking('Anthropic') : 'Checking your key with Anthropic…',
+      invalid: B.invalid || 'That key didn’t work. Check it and paste it again.',
+      save: B.save || 'Check and save',
+    };
+  }
   /* A made-up key for specimens: not a real credential. */
   const FAKE_KEY = 'sk-ant-example-0000-0000';
   const LONG = 'The worker opened YouTube, then stopped on the sign-in page.\nIt said App Player was signed out.\nI signed in again.\nThe run did not restart.\nToday still shows one tick.\nI tried again at 9 pm.\nSame thing.\nNo error on screen.';
@@ -69,7 +79,7 @@
           <G.CompareRow
             v2={<G.Live get={function () { return window.AiMode && window.AiMode.useAiMode && V2Vlm; }} label="AiMode.AIModeCard (Hybrid, Custom)" />}
             system={<div className="v2-stack"><K.TextField {...ep()} /><K.TextField label={MODEL} placeholder="qwen3-vl:4b-instruct" /><K.Button variant="primary" disabled disabledReason="Add the endpoint and the model first.">Apply</K.Button></div>}
-            changed="Five hand-rolled fields with three focus treatments (a shared ring on .ba-field, a JS border swap, nothing) and zero error states become one field. The site's error line and ring give the invalid state V2 never had; validating and validated give Validate & Save something true to show." />
+            changed="Five hand-rolled fields with three focus treatments (a shared ring on .ba-field, a JS border swap, nothing) and zero error states become one field. The site's error line and ring give the invalid state V2 never had; validating and validated give Check and save (V2: Validate & Save) something true to show." />
           <G.SpecDrawer rows={[
             { part: 'Box', token: '--v2-field-h, --v2-radius-sm', value: '40 (sm 32), radius 6, padding 0 12 (V2: radius 8 and 10, 9 to 11 padding)', ref: ['actions-inputs.field.schedule', 'actions-inputs.field.vlm', 'actions-inputs.field.key'] },
             { part: 'Edge', token: '--v2-line-strong', value: '1px 15% black (V2 #d1d5db, #e3e7ee)', ref: ['actions-inputs.field.schedule', 'actions-inputs.field.vlm'] },
@@ -87,22 +97,22 @@
           ]} />
           <G.DoDont
             do={['Keep a visible label on every field.', 'Say what is wrong and how to fix it, under the box.', 'Validate before saying saved.']}
-            dont={['Use the placeholder as the label or the hint.', 'Remove the focus outline without the ring.', 'Pretend to validate (Validate & Save makes up a key today).']} />
+            dont={['Use the placeholder as the label or the hint.', 'Remove the focus outline without the ring.', 'Pretend to validate (V2’s Validate & Save makes up a key today).']} />
         </G.Part>
 
         <G.Part name="Secret field" status="changed" role="An API key: hidden by default, mono, with a reveal button, checked before it is saved.">
           <G.StateGrid wide states={[
             { label: 'Hidden', node: <K.TextField label="API key" width="100%" secret defaultValue={FAKE_KEY} helper={KEY_NOTE} /> },
             { label: 'Revealed', note: 'reveal pressed', node: <K.TextField label="API key" width="100%" secret defaultRevealed defaultValue={FAKE_KEY} helper={KEY_NOTE} /> },
-            { label: 'Validating', note: 'Proposed copy', node: <K.TextField label="API key" width="100%" secret defaultValue={FAKE_KEY} status="validating" helper="Checking your key…" /> },
-            { label: 'Invalid key', note: 'Proposed copy', node: <K.TextField label="API key" width="100%" secret defaultValue={FAKE_KEY} error="This key didn't work. Check it and try again." /> },
+            { label: 'Validating', note: 'Proposed copy', node: <K.TextField label="API key" width="100%" secret defaultValue={FAKE_KEY} status="validating" helper={byok().checking} /> },
+            { label: 'Invalid key', note: 'Proposed copy', node: <K.TextField label="API key" width="100%" secret defaultValue={FAKE_KEY} error={byok().invalid} /> },
             { label: 'Validated', note: 'Proposed copy', node: <K.TextField label="API key" width="100%" secret defaultValue={FAKE_KEY} status="validated" helper="Key works." /> },
             { label: 'Empty, hint as helper', note: 'V2 copy, moved out of the placeholder', node: <K.TextField label="API key" width="100%" secret helper={KEY_HINT + '. ' + KEY_NOTE} /> },
           ]} />
           <G.CompareRow
             v2={<G.Live get={function () { return window.Byok && window.Byok.ByokSettings && V2Byok; }} label="Byok.ByokSettings" />}
-            system={<div className="v2-stack"><K.TextField label="API key" width="100%" secret helper={KEY_HINT + '. ' + KEY_NOTE} /><div className="v2-hstack v2-hstack--end v2-gap-2"><K.Button>Cancel</K.Button><K.Button variant="primary">Validate &amp; Save</K.Button></div></div>}
-            changed="The key showed in clear text right under 'stored encrypted on this device only', and the where-to-find hint vanished as you typed because it was the placeholder. Now it is hidden with a reveal button, the hint is a helper that stays, and Validate & Save really validates. Try V2: pick a provider and type a key." />
+            system={<div className="v2-stack"><K.TextField label="API key" width="100%" secret helper={KEY_HINT + '. ' + KEY_NOTE} /><div className="v2-hstack v2-hstack--end v2-gap-2"><K.Button>Cancel</K.Button><K.Button variant="primary">{byok().save}</K.Button></div></div>}
+            changed="The key showed in clear text right under 'stored encrypted on this device only', and the where-to-find hint vanished as you typed because it was the placeholder. Now it is hidden with a reveal button, the hint is a helper that stays, and V2's Validate & Save (which makes up a key when the field is empty) becomes Check and save, which really checks the key. Try V2: pick a provider and type a key." />
           <G.SpecDrawer rows={[
             { part: 'Type', token: null, value: 'password, reveal button (eye, 28, aria-pressed, "Show API key") (V2: type text)', ref: 'actions-inputs.field.key-clear' },
             { part: 'Face', token: '--v2-font-mono, --v2-text-13', value: 'mono 13, spellcheck and autocomplete off', ref: 'actions-inputs.field.key-mono' },

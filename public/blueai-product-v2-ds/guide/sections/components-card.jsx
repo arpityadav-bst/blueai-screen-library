@@ -33,13 +33,13 @@
           </ul>
 
           <G.StateGrid wide states={[
-            { label: 'Static', note: 'no hover', node: <div style={full}><Card><Content t="Today's run" b="Starts at 11 am." /></Card></div> },
-            { label: 'Pressable: rest', node: <div style={full}><Card onClick={noop}><Content t="Today's run" b="Starts at 11 am." /></Card></div> },
-            { label: 'Pressable: hover', note: 'line firms up', node: <div style={full}><Card onClick={noop} className="is-hover"><Content t="Today's run" b="Starts at 11 am." /></Card></div> },
-            { label: 'Pressable: focus-visible', node: <div style={full}><Card onClick={noop} className="is-focus"><Content t="Today's run" b="Starts at 11 am." /></Card></div> },
-            { label: 'Pressable: pressed', node: <div style={full}><Card onClick={noop} className="is-active"><Content t="Today's run" b="Starts at 11 am." /></Card></div> },
-            { label: 'Inset panel', note: 'inside a card', node: <div style={full}><Card><Content t="Today's run" b="Starts at 11 am." /><div style={{ marginTop: 'var(--v2-space-3)' }}><Card inset><span style={body}>BlueAI asks before it takes a paid job.</span></Card></div></Card></div> },
-            { label: 'Padding none, with rows', node: <div style={full}><Card padding="none"><Row label="Mode" value="Always ask" /><Row leading={<Icon name="user" size={20} />} label="Account" onClick={noop} /></Card></div> },
+            { label: 'Static', note: 'no hover', node: <div style={full}><Card><Content t="Today’s run" b="Starts at 11 am." /></Card></div> },
+            { label: 'Pressable: rest', node: <div style={full}><Card onClick={noop}><Content t="Today’s run" b="Starts at 11 am." /></Card></div> },
+            { label: 'Pressable: hover', note: 'line firms up', node: <div style={full}><Card onClick={noop} className="is-hover"><Content t="Today’s run" b="Starts at 11 am." /></Card></div> },
+            { label: 'Pressable: focus-visible', node: <div style={full}><Card onClick={noop} className="is-focus"><Content t="Today’s run" b="Starts at 11 am." /></Card></div> },
+            { label: 'Pressable: pressed', node: <div style={full}><Card onClick={noop} className="is-active"><Content t="Today’s run" b="Starts at 11 am." /></Card></div> },
+            { label: 'Inset panel', note: 'inside a card', node: <div style={full}><Card><Content t="Today’s run" b="Starts at 11 am." /><div style={{ marginTop: 'var(--v2-space-3)' }}><Card inset><span style={body}>BlueAI asks before it takes a paid job.</span></Card></div></Card></div> },
+            { label: 'Padding none, with rows', node: <div style={full}><Card padding="none"><Row label="Paid jobs" value="Always ask" /><Row leading={<Icon name="user" size={20} />} label="Account" onClick={noop} /></Card></div> },
           ]} />
 
           <G.CompareRow

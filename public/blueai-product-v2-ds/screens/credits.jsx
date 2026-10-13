@@ -3,10 +3,14 @@
    and the own-key state. Pushed from the top bar's credits chip with Back; the tab you came from
    stays lit. V2's screen has no way back (index.html:982), a Refresh button that does nothing
    (index.html:440), a 54/800 gradient numeral (index.html:518) and never states the grant or the
-   reset until the balance is zero. The explainer copy is V2's, kept word for word.
+   reset until the balance is zero. Each fact is said once: the figure says the balance, the meter
+   says the refresh and what it means for today, and the explainer is the one V2 line every credits
+   surface uses (OOC_COPY.explain, V2's later line, credits_popup_parts.jsx:102-105).
 
-   Credits {worker, state, refillAt, now, keyInfo, tab, onBack, onManageKey, frame, compact, landmark, preview}
-     state     'healthy' (default) | 'low' (less than one run) | 'empty' | 'refreshed' | 'own-key'.
+   Credits {worker, state, refillAt, now, keyInfo, tab, onBack, onRetry, onManageKey, onNavigate,
+            frame, compact, landmark, preview}
+     state     'healthy' (default) | 'low' (less than one run) | 'empty' | 'refreshed' | 'own-key' |
+               'loading' (the figure's skeleton) | 'error' (couldn't load, Try again).
      refillAt  the next refill (a Date or ms); default the next 00:00 UTC, V2's day key.
      now       freezes the countdown (guide specimens).  keyInfo {provider, model} for own-key.
      onManageKey()  Settings with Advanced open and own key highlighted (section 61). */
@@ -45,9 +49,10 @@
     const state = p.state || 'healthy';
     const w = p.worker || fixture(state);
     const c = Object.assign({ left: 1640, grant: 2000, runCost: 360 }, w.credits);
-    const t = K.useCountdown ? K.useCountdown(p.refillAt, { now: p.now }) : { left: '', clock: '' };
-    const Frame = (window.V2Screens || {}).AccountFrame;
-    if (!Frame || !K.StatCard || !K.CreditsMeter || !K.SettingsSection) return <div className="v2-acct-note">The kit is not loaded.</div>;
+    const S = window.V2Screens || {};
+    const Frame = S.ScreenFrame;
+    if (!Frame || !K.StatCard || !K.CreditsMeter || !K.SettingsSection) return <div className="v2-acct-note">The kit or screens/home.jsx is not loaded.</div>;
+    const OOC = K.OOC_COPY || {};
 
     const own = state === 'own-key';
     const balance = balanceFor(state, c);
@@ -55,12 +60,9 @@
     const glyph = K.Icon ? <K.Icon name="credits" size={24} /> : null;
     const fmt = function (n) { return Number(n || 0).toLocaleString('en-US'); };
 
-    // V2's banner lines, kept word for word. What zero means for today is the meter's covered line,
-    // so it is said once.
+    // V2's banner line. When credits refresh, and what zero means for today, is the meter's to say.
     const banner = state === 'empty' && K.Banner ? (
-      <K.Banner tone="danger" title="Out of credits">
-        You’ve used all of today’s AI credits. Credits will be refreshed in <strong aria-live="off">{t.left}</strong>.
-      </K.Banner>
+      <K.Banner tone="danger" title={OOC.title || 'Out of credits'}>{OOC.used || 'You’ve used all of today’s AI credits.'}</K.Banner>
     ) : state === 'refreshed' && K.Banner ? (
       <K.Banner tone="success" title="New credits are here" onDismiss={noop}>
         {'You have ' + fmt(c.grant) + ' AI credits for today.'}
@@ -69,23 +71,28 @@
 
     const meter = (
       <K.CreditsMeter balance={balance} grant={c.grant} runCost={c.runCost} refillAt={p.refillAt} now={p.now}
-        runDone={runDone} refreshed={state === 'refreshed'} />
+        runDone={runDone} refreshed={state === 'refreshed'} figure={false} />
     );
 
+    const loading = state === 'loading';
+    let main;
+    if (state === 'error') main = S.LoadError ? <S.LoadError what="your AI credits" onRetry={p.onRetry || noop} /> : null;
+    else if (own) main = <OwnKey keyInfo={p.keyInfo} onManage={p.onManageKey || noop} />;
+    else main = <K.StatCard className="v2-acct-credits" label="Left today" icon={glyph} value={balance} loading={loading} action={loading ? null : meter} />;
+
     return (
-      <Frame worker={w} tab={p.tab || 'home'} frame={p.frame} compact={p.compact} landmark={p.landmark}
-        credits={own ? { balance: c.left, state: 'paused' } : { balance: balance }}>
-        {K.ScreenHeader ? <K.ScreenHeader title="AI credits" onBack={p.onBack || noop} /> : null}
-        <div className="v2-acct-body">
-          {banner}
-          {own
-            ? <OwnKey keyInfo={p.keyInfo} onManage={p.onManageKey || noop} />
-            : <K.StatCard className="v2-acct-credits" label="Left today" icon={glyph} value={balance} action={meter} />}
-          <div className="v2-acct-explain">
-            <h2>BlueAI runs on credits</h2>
-            <p>Every task and job BlueAI does uses credits.</p>
-            <p>You get limited credits for your daily tasks.</p>
-            {K.Link ? <K.Link href={ARTICLE} external>Learn more</K.Link> : null}
+      <Frame worker={w} tab={p.tab || 'home'} frame={p.frame} compact={p.compact} landmark={p.landmark} onNavigate={p.onNavigate}
+        loading={loading} credits={loading || state === 'error' ? undefined : (own ? { balance: c.left, state: 'paused' } : { balance: balance })}>
+        <div className="v2-acct">
+          {K.ScreenHeader ? <K.ScreenHeader title="AI credits" onBack={p.onBack || noop} /> : null}
+          <div className="v2-acct-body">
+            {banner}
+            {main}
+            <div className="v2-acct-explain">
+              <h2>{OOC.why || 'What are AI credits?'}</h2>
+              <p>{OOC.explain}</p>
+              {K.Link ? <K.Link href={ARTICLE} external>{OOC.learnMore || 'Learn more'}</K.Link> : null}
+            </div>
           </div>
         </div>
       </Frame>

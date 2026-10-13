@@ -93,7 +93,7 @@
             reload ({G.refText('worker.permissions.store')}); and opening another tab unmounts the run (R01).
           </G.Warn>
           <p><strong>Anatomy.</strong> Plain data, no methods. Helpers on <code className="g-code">window.V2Kit</code>:
-            {' '}<code className="g-code">numbers(record)</code> (count, verified, pending, not counted, out of reach, the 20 segments),
+            {' '}<code className="g-code">numbers(record)</code> (count, verified, pending, not counted, out of reach, the 20 segments, cashOutMin, reachedMinimum),
             {' '}<code className="g-code">workerState(record)</code> (the card state),
             {' '}<code className="g-code">modeSummary(record)</code> and <code className="g-code">nextRunText(record)</code>.
             Constants: <code className="g-code">WORKER_RULE</code>, <code className="g-code">WORKER_APPS</code>,
@@ -109,7 +109,7 @@
             pending forever (R19). Slots that can no longer be reached before the program ends show as out of reach.
           </G.Note>
           <G.SpecDrawer rows={[
-            { part: 'Program rule', token: 'WORKER_RULE', value: "rate 1, target 20, bonus 10, ends 'Nov 1' (copied, money waits on D3)", ref: ['worker.rule.const', 'worker.rule.money-draft'] },
+            { part: 'Program rule', token: 'WORKER_RULE', value: "rate 1, target 20, bonus 10, ends 'Nov 1', cashOutMin 10 (copied, money waits on D3; the $10 cash-out minimum holds under both options)", ref: ['worker.rule.const', 'worker.rule.money-draft', 'worker.rule.cash-out'] },
             { part: 'What counts', token: 'numbers()', value: 'verified job, or a completed run with no job', ref: 'worker.rule.successful-day' },
             { part: 'Days before today', token: 'ledger', value: 'derived from rows, not a constant', ref: 'worker.rule.done-before' },
             { part: 'Strip count', token: 'numbers().done', value: 'same figure tonight and tomorrow', ref: 'worker.strip.before-run' },

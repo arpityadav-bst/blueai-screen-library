@@ -17,6 +17,8 @@
     const rows = [<Row key="w" label="Run window" value="11 am" />, <Row key="m" label="YouTube" value="Always ask" />];
     const sec = function (p) { return W(<S title="Worker" {...p}>{rows}</S>); };
     const byok = function (p) { return W(<B on onToggle={noop} onSave={noop} onRemove={noop} onModel={noop} {...p} />); };
+    // The kit's own placeholders (kit/advanced.jsx), as a filled-in local model.
+    const LOCAL = { endpoint: 'http://127.0.0.1:11434/api/chat', model: 'qwen3-vl:4b-instruct' };
     const ai = function (p) { return W(<M mode="hybrid" hwSupported conflict={false} pct={0} onPick={noop} onMethod={noop} onDownload={noop} onCancel={noop} onRetry={noop} {...p} />); };
     const toast = K.Toast ? <K.Toast tone="success" title="Anthropic key removed" action={{ label: 'Undo', onClick: noop }} duration={0} /> : null;
     const chatModel = <S title="Chat model"><Select label="Model" value="auto" options={[{ value: 'auto', label: 'Auto' }]} onChange={noop} /></S>;
@@ -110,6 +112,9 @@
             { label: 'Paused', node: ai({ status: 'blocked' }) },
             { label: 'Hardware not supported', node: ai({ mode: 'cloud', hwSupported: false }) },
             { label: 'Own local model', note: 'method custom', node: ai({ status: 'idle', method: 'custom', endpoint: '', model: '' }) },
+            { label: 'Own local model, checking', note: 'after Apply', node: ai({ status: 'checking', method: 'custom', endpoint: LOCAL.endpoint, model: LOCAL.model }) },
+            { label: 'Own local model, on', node: ai({ status: 'running', method: 'custom', endpoint: LOCAL.endpoint, model: LOCAL.model }) },
+            { label: 'Own local model, unreachable', note: 'endpoint failed', node: ai({ status: 'startup_failed', method: 'custom', endpoint: LOCAL.endpoint, model: LOCAL.model }) },
           ]} />
           <G.CompareRow
             v2={<G.Live get={function () { return window.AiMode && window.AiMode.AIModeCard; }} label="window.AiMode.AIModeCard"

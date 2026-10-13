@@ -74,7 +74,7 @@
 
 **Purpose.** An action inside a sentence (Not you? Switch account), or a quiet way out on its own line (Learn more, Earnings).
 
-**Anatomy.** Ink text with a 1px underline at offset 3 in `--v2-line-hover`; hover turns text and underline `--v2-blue-ink` (the site's link, onblue/onblue.css:1224-1232). External adds the external glyph 16 after the text.
+**Anatomy.** Ink text with a 1px underline at offset 3 in `--v2-link-underline` (32%, the site's `--link-underline`, onblue/onblue.css:326); hover turns text and underline `--v2-blue-ink` (the site's link, onblue/onblue.css:1224-1232). External adds the external glyph 16 after the text.
 
 **Variants.** Inline (inherits the sentence's size and weight); `standalone` (13/500, inline-flex, min height 32); `external`; `tone="muted"` (ink-3). Without `href` it renders a button drawn as a link.
 

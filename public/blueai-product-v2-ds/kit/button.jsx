@@ -19,6 +19,13 @@
   const { useId } = React;
 
   function cx() { return Array.prototype.filter.call(arguments, Boolean).join(' '); }
+  /* Rest props without object-rest syntax: Babel hoists a rest's key list to one program-level
+     _excluded that the next kit file overwrites, so the wrong props reach the DOM. */
+  function omit(o, keys) { const r = {}; for (const k in o) if (keys.indexOf(k) < 0) r[k] = o[k]; return r; }
+  const BUTTON_OWN = ['variant', 'size', 'icon', 'iconRight', 'loading', 'disabled', 'disabledReason', 'full',
+    'type', 'onClick', 'href', 'external', 'className', 'children'];
+  const ICON_BUTTON_OWN = ['icon', 'label', 'size', 'variant', 'active', 'tone', 'disabled', 'onClick', 'className'];
+  const LINK_OWN = ['href', 'external', 'tone', 'standalone', 'onClick', 'className', 'children'];
   function Ico({ name, size, inline }) {
     const Icon = window.V2Kit && window.V2Kit.Icon;
     return Icon && name ? <Icon name={name} size={size || 16} inline={inline} /> : null;
@@ -32,7 +39,8 @@
 
   function Button(props) {
     const { variant = 'secondary', size = 'md', icon, iconRight, loading, disabled, disabledReason, full,
-      type = 'button', onClick, href, external, className, children, ...rest } = props;
+      type = 'button', onClick, href, external, className, children } = props;
+    const rest = omit(props, BUTTON_OWN);
     const reasonId = useId();
     const blocked = !!(disabled || loading);
     const showReason = !!(disabled && disabledReason);
@@ -71,8 +79,8 @@
 
   let warned = false;
   function IconButton(props) {
-    const { icon, label, size = 36, variant = 'bare', active, tone = 'default', disabled, onClick,
-      className, ...rest } = props;
+    const { icon, label, size = 36, variant = 'bare', active, tone = 'default', disabled, onClick, className } = props;
+    const rest = omit(props, ICON_BUTTON_OWN);
     if (!label && !warned && window.console) {
       warned = true;
       console.warn('[V2Kit.IconButton] label is required: it is the only name a screen reader hears.');
@@ -90,7 +98,8 @@
   }
 
   function Link(props) {
-    const { href, external, tone = 'ink', standalone, onClick, className, children, ...rest } = props;
+    const { href, external, tone = 'ink', standalone, onClick, className, children } = props;
+    const rest = omit(props, LINK_OWN);
     const cls = cx('v2-link', tone === 'muted' && 'v2-link--muted', standalone && 'v2-link--standalone', className);
     const body = (
       <>

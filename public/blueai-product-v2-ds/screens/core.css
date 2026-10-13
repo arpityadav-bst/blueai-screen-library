@@ -21,10 +21,25 @@
 .v2-home-skel-row { flex-direction: row; align-items: center; }
 .v2-home-skel-lines { display: flex; flex: 1 1 auto; flex-direction: column; gap: var(--v2-space-2); min-width: 0; }
 
+/* A list that has not arrived (Activity, Notifications): rows in the ledger's card. */
+.v2-skel-list {
+  display: flex; flex-direction: column;
+  background: var(--v2-surface); border: var(--v2-stroke) solid var(--v2-line); border-radius: var(--v2-radius-lg);
+}
+.v2-skel-list-row { display: flex; align-items: center; gap: var(--v2-space-3); padding: var(--v2-space-3) var(--v2-space-4); }
+.v2-skel-list-row + .v2-skel-list-row { border-top: var(--v2-stroke) solid var(--v2-line-hair); }
+
 /* Chat ------------------------------------------------------------------------------------------ */
 /* Header on top, the thread takes the rest, the composer sits on the bottom edge. */
 .v2-chat-screen > .v2-thread { flex: 1 1 auto; height: auto; min-height: 0; }
 .v2-chat-screen > .v2-composer { flex: none; }
+/* A kit part as a worker message (setup's watch-history ask, the closing rules): bubble width. */
+.v2-chat-node { width: var(--v2-bubble-max); max-width: 100%; }
+.v2-chat-close { display: flex; flex-direction: column; gap: var(--v2-space-3); }
+.v2-chat-dayone {
+  margin: 0; padding-top: var(--v2-space-3); border-top: var(--v2-stroke) solid var(--v2-line-hair);
+  color: var(--v2-ink); font-size: var(--v2-text-13); font-weight: var(--v2-weight-medium); line-height: var(--v2-leading-snug);
+}
 
 /* Activity: the ledger ----------------------------------------------------------------------------- */
 /* One row per day: a 96px date column, the result, the tick. Dividers sit between items, so a

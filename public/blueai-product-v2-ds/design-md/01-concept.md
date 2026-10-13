@@ -38,9 +38,10 @@ The system reads these from one Worker record (section 41), never from a second 
 |---|---|---|
 | Program | 20 days, ends Nov 1, $1 per verified day, $10 day-20 bonus | `worker_day_done.jsx:38` |
 | Money rule note | $1 credited at the end of each successful day (under review) | `worker_day_done.jsx:5` |
+| Cash out | From $10, after the period ends; under $10 the balance carries over (the site's dashboard says the same: "Payment minimum: $10") | `worker_day_done.jsx:6`; `onblue/apply.html:1360, 2292-2293` |
 | The site's program | At least 20 days each month to earn $30 | `onblue/apply.html:1285` |
 | AI credits | 2,000 granted every day | `index.html:720` |
 | Modes | Always ask and Automatic, per app | `blueai/worker_flow.jsx:78` |
 | Ticks | Pending verification, then verified | `blueai/worker_day_done.jsx:97` |
 
-The money model is decision D3: the app's $1 a day plus a $10 bonus, or the site's $30 for 20 days. Until the PM picks one, the system shows days, not dollars (section 73).
+The money model is decision D3: the app's $1 a day plus a $10 bonus, or the site's $30 for 20 days. Until the PM picks one, the system shows days, not dollars (section 73). The $10 cash-out minimum holds under both, so it is stated wherever cash out is: a line that says cash out is open is shown only to a partner whose earnings reached it (`numbers().reachedMinimum`, section 41).

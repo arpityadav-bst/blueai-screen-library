@@ -86,13 +86,13 @@
   font-family: var(--v2-font-ui);
   font-size: var(--v2-text-13);
   line-height: var(--v2-leading-body);
-  --v2-banner-mark: var(--v2-ink-3);
+  --banner-mark: var(--v2-ink-3);
 }
-.v2-banner--info { background: var(--v2-blue-tint); border-color: var(--v2-blue-tint-line); --v2-banner-mark: var(--v2-blue-ink); }
-.v2-banner--success { background: var(--v2-success-tint); border-color: var(--v2-success-line); --v2-banner-mark: var(--v2-success-ink); }
-.v2-banner--attention { background: var(--v2-attention-tint); border-color: var(--v2-attention-line); --v2-banner-mark: var(--v2-attention-ink); }
-.v2-banner--danger { background: var(--v2-danger-tint); border-color: var(--v2-danger-line); --v2-banner-mark: var(--v2-danger-ink); }
-.v2-banner-icon { display: inline-flex; flex: none; margin-top: var(--v2-space-05); color: var(--v2-banner-mark); }
+.v2-banner--info { background: var(--v2-blue-tint); border-color: var(--v2-blue-tint-line); --banner-mark: var(--v2-blue-ink); }
+.v2-banner--success { background: var(--v2-success-tint); border-color: var(--v2-success-line); --banner-mark: var(--v2-success-ink); }
+.v2-banner--attention { background: var(--v2-attention-tint); border-color: var(--v2-attention-line); --banner-mark: var(--v2-attention-ink); }
+.v2-banner--danger { background: var(--v2-danger-tint); border-color: var(--v2-danger-line); --banner-mark: var(--v2-danger-ink); }
+.v2-banner-icon { display: inline-flex; flex: none; margin-top: var(--v2-space-05); color: var(--banner-mark); }
 .v2-banner-text { flex: 1; min-width: 0; }
 .v2-banner-title { display: block; color: var(--v2-ink); font-weight: var(--v2-weight-semibold); }
 .v2-banner-body strong { color: var(--v2-ink); font-weight: var(--v2-weight-semibold); font-variant-numeric: tabular-nums; white-space: nowrap; }
@@ -116,18 +116,20 @@
   cursor: pointer;
   transition: background-color var(--v2-dur-1) var(--v2-ease-standard), text-decoration-color var(--v2-dur-1) var(--v2-ease-standard);
 }
+/* The family link's underline (--v2-link-underline 32%, offset 3, as V2Kit.Link in kit/actions.css). */
 .v2-banner-action {
   padding: 0 var(--v2-space-2);
   color: var(--v2-ink);
   font-size: var(--v2-text-13);
   font-weight: var(--v2-weight-medium);
   text-decoration: underline;
-  text-decoration-color: var(--v2-line-hover);
+  text-decoration-thickness: var(--v2-stroke);
+  text-decoration-color: var(--v2-link-underline);
   text-underline-offset: 3px;
   white-space: nowrap;
 }
 .v2-banner-dismiss { width: var(--v2-hit-min); padding: 0; color: var(--v2-ink-3); }
-.v2-banner-action:hover, .v2-banner-action.is-hover { background: var(--v2-wash-hover); text-decoration-color: currentColor; }
+.v2-banner-action:hover, .v2-banner-action.is-hover { background: var(--v2-wash-hover); color: var(--v2-blue-ink); text-decoration-color: currentColor; }
 .v2-banner-dismiss:hover, .v2-banner-dismiss.is-hover { background: var(--v2-wash-hover); color: var(--v2-ink); }
 .v2-banner-action:active, .v2-banner-action.is-active, .v2-banner-dismiss:active, .v2-banner-dismiss.is-active { background: var(--v2-wash-press); }
 .v2-banner-action:focus-visible, .v2-banner-action.is-focus, .v2-banner-dismiss:focus-visible, .v2-banner-dismiss.is-focus {

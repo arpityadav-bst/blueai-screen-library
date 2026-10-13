@@ -2,7 +2,8 @@
    kit/choice.jsx). Tokens only. Every state is written twice: the real pseudo-class and the class
    the guide uses to force it (.is-hover, .is-focus, .is-active). Hover never changes opacity (it
    would lower contrast that has to hold); disabled is the only opacity, always with a reason.
-   Small controls draw at 28 or 30 and reach the 32px hit floor with an invisible ::after. */
+   Small controls (button sm, chip, icon button 28) draw at 28 and reach the 32px hit floor with an
+   invisible ::after. */
 
 /* Button ------------------------------------------------------------------------------------ */
 .v2-button {
@@ -120,7 +121,7 @@
 .v2-chip {
   position: relative;
   display: inline-flex; align-items: center; gap: var(--v2-space-15);
-  height: calc(var(--v2-control-sm) + var(--v2-space-05)); /* 30 */
+  height: var(--v2-control-sm);
   padding: 0 var(--v2-space-3);
   border: var(--v2-stroke) solid var(--v2-line-strong); border-radius: var(--v2-radius-pill);
   background-color: var(--v2-surface); color: var(--v2-ink);
@@ -137,10 +138,11 @@
 .v2-chip:not([aria-pressed="true"]):active:not(:disabled), .v2-chip.is-active {
   background-image: linear-gradient(var(--v2-wash-press), var(--v2-wash-press));
 }
-/* selected: the family's chosen look, blue 12% fill, blue 50% edge, blue-ink label (6.1:1) */
+/* selected: the family's chosen look (P6, onblue/apply.html:949): blue 12% fill, blue 50% edge,
+   ink label (16.75:1 on the fill). The edge is 2.05:1, so Chip also draws a check: never hue alone. */
 .v2-chip[aria-pressed="true"], .v2-chip.is-selected {
   background-image: linear-gradient(var(--v2-select), var(--v2-select));
-  border-color: var(--v2-select-line); color: var(--v2-blue-ink);
+  border-color: var(--v2-select-line); color: var(--v2-ink);
 }
 .v2-chip[aria-pressed="true"]:hover:not(:disabled), .v2-chip.is-selected.is-hover {
   background-image: linear-gradient(var(--v2-wash-hover), var(--v2-wash-hover)), linear-gradient(var(--v2-select), var(--v2-select));
@@ -149,7 +151,7 @@
 .v2-chip:focus-visible, .v2-chip.is-focus { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); }
 .v2-chip:disabled { opacity: var(--v2-opacity-disabled); cursor: not-allowed; }
 
-/* Hit floor: 28 and 30 tall controls grow an invisible 32px target --------------------------- */
+/* Hit floor: 28 tall controls grow an invisible 32px target ----------------------------------- */
 .v2-button--sm::after, .v2-chip::after, .v2-icon-button--28::after {
   content: ''; position: absolute; left: 0; right: 0;
   top: calc((100% - var(--v2-hit-min)) / 2); bottom: calc((100% - var(--v2-hit-min)) / 2);

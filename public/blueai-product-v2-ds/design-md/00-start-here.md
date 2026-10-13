@@ -43,13 +43,12 @@ All under `public/blueai-product-v2-ds/`. V2 itself is `public/blueai-product-v2
 | `guide/` | The guide's own chrome: `catalog.jsx` (the section list), `sections/`, `refs/` (the V2 sources), `app.jsx`. |
 | `design-md/` | One partial per section; edit these, then rebuild DESIGN.md. |
 | `tools/` | `ds-check.js` (the gate) and `build-design-md.js`. |
-| `HANDOVER.md` | The one-page handover in plain words. |
 
 ### How to run the checks
 
-From `public/blueai-product-v2-ds/`, with Node and nothing to install:
+From `public/blueai-product-v2-ds/`, with Node and one dependency, Babel's parser. ds-check looks for it in this repo's `node_modules` (run `npm install` at the repo root), then in the main `N:/Antigravity Main/blueai` checkout's, or takes a `@babel/parser` build named in the `DS_BABEL_PARSER` environment variable. With none of these the run fails with an error instead of skipping the parse step. The parser parses; it does not compile, so a transform error that only Babel standalone raises in the browser can still pass.
 
-- `node tools/ds-check.js` before every hand-off; it must end with 0 errors (add `--missing-ok` only while files are still being written). It proves: every V2 value or string the guide quotes still sits on its V2 line; no em dash in any form; every .jsx and .js parses; every .jsx, .js and .css is 300 lines or fewer; the catalog, section files, partials and index.html agree; no raw colour in `kit/` or `screens/`; every kit part and screen the catalog names is on its global.
+- `node tools/ds-check.js` before every hand-off; it must end with 0 errors (add `--missing-ok` only while files are still being written). It proves: every V2 value or string the guide quotes still sits on its V2 line; no em dash in any form; every ref id a guide section names exists; every .jsx and .js parses; every .jsx, .js and .css is 300 lines or fewer; the catalog, section files, partials and index.html agree; no raw colour in `kit/` or `screens/`, and no stylesheet but `tokens.css` defines a `--v2-` property; every kit part and screen the catalog names is on its global; the size lists the JSX copies (Icon and Avatar sizes) equal their tokens.
 - `node tools/build-design-md.js` after editing anything in `design-md/`. Never edit DESIGN.md by hand.
 
 The checks read files, not pixels. How a part looks is checked by eye in the guide.

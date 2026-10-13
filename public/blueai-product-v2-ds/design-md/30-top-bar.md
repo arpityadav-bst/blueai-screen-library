@@ -12,7 +12,7 @@
 
 **Variants.** Signed out (brand only). Signed in.
 
-**Sizes.** 52 tall (`--v2-topbar-h`). Padding 0 12 0 16: the brand sits on the 16 gutter; the right edge is 12 because the icon buttons carry a 6px inset. Gap 8 between chips, 2 between the two icon buttons. Surface, 1px `--v2-line` bottom, no shadow. Layer `--v2-z-header` (20). Fits 419 with the longest status label ("Next run 11 am").
+**Sizes.** 52 tall (`--v2-topbar-h`). Padding 0 12 0 16: the brand sits on the 16 gutter; the right edge is 12 because the icon buttons carry a 6px inset. Gap 8 between chips, 2 between the two icon buttons. Surface, 1px `--v2-line` bottom, no shadow. Layer `--v2-z-header` (20). The longest status labels are "Next run 9 am to 9 pm" (a run window) and "Waiting for credits"; the bar must fit 419 with them (Responsive says what gives if it does not).
 
 **States.** Signed out: V2 bare URL then Sign in. Signed in: V2 `?start=worker`. Menu open: click Help or More (V2 has no keyboard path).
 
@@ -36,12 +36,16 @@
 
 | Status | Label | Worker record | Opens |
 |---|---|---|---|
-| scheduled | Next run 11 am | today.status scheduled | Home, Today |
+| scheduled | Next run 11 am; Next run 9 am to 9 pm; Runs later today | today.status scheduled, worded from `runWindow` (a time, a window, any time) | Home, Today |
 | running | Running | today.status running | the run in the chat |
 | needs-you | Needs you (yellow tint) | today.status waiting | the job preview |
-| done | Day 7 of 20 | today.status done | the run in Activity |
+| done | Day 7 of 20 (neutral dot while pending, green once verified) | today.status done | the run in Activity |
+| done (skipped) | Not counted today (neutral dot) | today.status done, end declined | the run in Activity |
+| done (complete) | All 20 days done | all 20 days verified (`numbers().complete`) | Home, Today: the card's Earnings |
 | failed | Didn't finish (red tint) | today.status failed | the run, with Try again and its deadline |
 | paused | Paused (ring dot) | paused | Settings > Worker |
+| paused (no credits) | Waiting for credits (ring dot) | credits.left below runCost before today's run | Home, Today: the card says when credits refresh |
+| paused (update) | Update needed (ring dot) | an update is required (section 69) | the update screen (section 69) |
 | offline | Offline (ring dot) | offline | Home, with the offline banner |
 | signed out | not rendered | | |
 

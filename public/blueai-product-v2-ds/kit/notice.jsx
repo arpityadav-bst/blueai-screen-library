@@ -34,11 +34,7 @@
         {act || onDismiss ? (
           <div className="v2-banner-actions">
             {act}
-            {onDismiss ? (
-              <button type="button" className="v2-banner-dismiss" aria-label={dismissLabel || 'Dismiss'} onClick={onDismiss}>
-                <Ico name="close" size={16} />
-              </button>
-            ) : null}
+            {onDismiss ? <window.V2Kit.IconButton icon="close" label={dismissLabel || 'Dismiss'} size={32} onClick={onDismiss} /> : null}
           </div>
         ) : null}
       </div>
@@ -57,8 +53,7 @@
     function button(a, kind) {
       if (!a) return null;
       if (React.isValidElement(a)) return a;
-      const B = window.V2Kit && window.V2Kit.Button;
-      if (!B) return <button type="button" onClick={a.onClick} disabled={!!a.loading}>{a.label}</button>;
+      const B = window.V2Kit.Button;
       return <B variant={kind} size="md" onClick={a.onClick} href={a.href} external={a.external} loading={a.loading} icon={a.icon}>{a.label}</B>;
     }
     return (

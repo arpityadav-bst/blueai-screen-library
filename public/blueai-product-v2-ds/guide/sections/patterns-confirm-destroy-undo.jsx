@@ -6,7 +6,7 @@
   // cost, the rule, examples. Copy in the examples is proposed.
   const RULES = [
     ['Costs today’s day', 'Say the cost on the control, before the choice; confirm if it cannot be taken back today.', 'Skip today’s job (“Skip: today won’t count”), Pause today’s run, Quit BlueAI, Stop a paid run'],
-    ['Costs account control or money', 'Confirm in an alert dialog. The title asks the question with the object; the body says what changes and how to undo it; the primary names the action.', 'Sign out, Disconnect YouTube, turn on Automatic (the consent dialog, section 53)'],
+    ['Costs account control or money', 'Confirm in an alert dialog. The title asks the question with the object; the body says what changes and how to undo it; the primary names the action.', 'Sign out and Disconnect YouTube: alert dialog; turn on Automatic: ConsentDialog (section 46)'],
     ['Cannot be undone', 'Confirm; the primary is danger and named for the action.', 'Delete my data, Leave the program'],
     ['Cheap and reversible', 'Do it at once, then a toast with Undo for 6 s. Commit only when the toast leaves.', 'Remove my own key, Disconnect Telegram, Dismiss a notification'],
     ['A switch', 'A switch only turns something on or off. It never deletes, signs out or costs a day as a side effect.', 'Use my own key (off keeps the key)'],
@@ -22,19 +22,22 @@
     return <Win><div className="g-live" style={{ position: 'absolute', inset: 0 }}><G.Boundary><C isOpen onCancel={function () {}} onConfirm={function () {}} /></G.Boundary></div></Win>;
   }
 
-  const SIGN_OUT = {
-    title: 'Sign out of BlueAI?',
-    description: 'Your worker pauses until you sign in again, and days don’t count while it’s paused.',
-  };
+  // Each confirm's strings have one owner, V2Screens.CONFIRM_COPY (screens/settings.jsx); read at render.
+  function confirmCopy(kind) {
+    const C = (window.V2Screens || {}).CONFIRM_COPY;
+    if (!C) return { title: 'V2Screens.CONFIRM_COPY is not loaded', body: '' };
+    return kind === 'signOut' ? C.signOut('alex@example.com') : C.disconnect('@alexwatches');
+  }
 
   function ConfirmSection() {
     const K = window.V2Kit;
     const noop = function () {};
+    const SIGN_OUT = confirmCopy('signOut'), DISCONNECT = confirmCopy('disconnect');
     const signOut = function (busy) {
       return (
-        <Win h={280}>
-          <K.Dialog open preview variant="alert" title={SIGN_OUT.title} description={SIGN_OUT.description} busy={busy}
-            actions={[{ label: 'Cancel', variant: 'secondary', onClick: noop }, { label: 'Sign out', variant: 'primary', onClick: noop }]} />
+        <Win h={320}>
+          <K.Dialog open preview variant="alert" title={SIGN_OUT.title} description={SIGN_OUT.body} busy={busy}
+            actions={[{ label: 'Cancel', variant: 'secondary', onClick: noop }, { label: SIGN_OUT.confirm || 'Sign out', variant: 'primary', onClick: noop }]} />
         </Win>
       );
     };
@@ -51,9 +54,8 @@
             { label: 'Confirm first: sign out', note: 'primary, not danger: nothing is deleted', node: signOut(false) },
             { label: 'Confirm first: disconnect', note: 'danger: the worker cannot run', node: (
               <Win h={300}>
-                <K.Dialog open preview variant="alert" title="Disconnect YouTube?"
-                  description="Your worker can’t run YouTube jobs until you connect it again, so today won’t count. Your days so far are kept."
-                  actions={[{ label: 'Cancel', variant: 'secondary', onClick: noop }, { label: 'Disconnect', variant: 'danger', onClick: noop }]} />
+                <K.Dialog open preview variant="alert" title={DISCONNECT.title} description={DISCONNECT.body}
+                  actions={[{ label: 'Cancel', variant: 'secondary', onClick: noop }, { label: DISCONNECT.confirm || 'Disconnect', variant: 'danger', onClick: noop }]} />
               </Win>
             ) },
             { label: 'Busy', note: 'Esc, scrim and Cancel held while it works', node: signOut(true) },
@@ -71,7 +73,7 @@
             changed="V2’s one sign-out confirm says Logout over a body that says sign out, paints a non-destructive action red, and its confirm does not sign out: it closes and returns to chat. Meanwhile the actions that do lose something never ask: switching your own key off deletes the key, Remove and Unlink act at once with no undo, and Not now on a paid job ends the day as not counted in one tap, with the cost told only afterwards. The system confirms by cost, says the cost before the choice, and makes cheap actions undoable." />
           <G.SpecDrawer rows={[
             { part: 'Dialog', token: 'Dialog alert, --v2-dialog-sm', value: '320, role alertdialog, focus on the first action, no scrim dismiss' },
-            { part: 'Title', token: '--v2-text-20', value: 'the question, with the object: Sign out of BlueAI?', ref: 'entry-patterns.destroy.logout-title' },
+            { part: 'Title', token: '--v2-text-20', value: 'the question: Sign out?', ref: 'entry-patterns.destroy.logout-title' },
             { part: 'Body', token: '--v2-text-14, --v2-ink-2', value: 'what changes and how to undo it', ref: 'entry-patterns.destroy.logout-body' },
             { part: 'Primary', token: '--v2-action or --v2-danger-ink', value: 'danger only when something is lost (V2 paints sign out #ef4444)', ref: ['entry-patterns.destroy.logout-red', 'entry-patterns.destroy.schedule-red'] },
             { part: 'Confirm that does nothing, V2', token: null, value: 'closes and stays signed in', ref: 'entry-patterns.destroy.logout-noop' },

@@ -147,13 +147,12 @@ All under `public/blueai-product-v2-ds/`. V2 itself is `public/blueai-product-v2
 | `guide/` | The guide's own chrome: `catalog.jsx` (the section list), `sections/`, `refs/` (the V2 sources), `app.jsx`. |
 | `design-md/` | One partial per section; edit these, then rebuild DESIGN.md. |
 | `tools/` | `ds-check.js` (the gate) and `build-design-md.js`. |
-| `HANDOVER.md` | The one-page handover in plain words. |
 
 ### How to run the checks
 
-From `public/blueai-product-v2-ds/`, with Node and nothing to install:
+From `public/blueai-product-v2-ds/`, with Node and one dependency, Babel's parser. ds-check looks for it in this repo's `node_modules` (run `npm install` at the repo root), then in the main `N:/Antigravity Main/blueai` checkout's, or takes a `@babel/parser` build named in the `DS_BABEL_PARSER` environment variable. With none of these the run fails with an error instead of skipping the parse step. The parser parses; it does not compile, so a transform error that only Babel standalone raises in the browser can still pass.
 
-- `node tools/ds-check.js` before every hand-off; it must end with 0 errors (add `--missing-ok` only while files are still being written). It proves: every V2 value or string the guide quotes still sits on its V2 line; no em dash in any form; every .jsx and .js parses; every .jsx, .js and .css is 300 lines or fewer; the catalog, section files, partials and index.html agree; no raw colour in `kit/` or `screens/`; every kit part and screen the catalog names is on its global.
+- `node tools/ds-check.js` before every hand-off; it must end with 0 errors (add `--missing-ok` only while files are still being written). It proves: every V2 value or string the guide quotes still sits on its V2 line; no em dash in any form; every ref id a guide section names exists; every .jsx and .js parses; every .jsx, .js and .css is 300 lines or fewer; the catalog, section files, partials and index.html agree; no raw colour in `kit/` or `screens/`, and no stylesheet but `tokens.css` defines a `--v2-` property; every kit part and screen the catalog names is on its global; the size lists the JSX copies (Icon and Avatar sizes) equal their tokens.
 - `node tools/build-design-md.js` after editing anything in `design-md/`. Never edit DESIGN.md by hand.
 
 The checks read files, not pixels. How a part looks is checked by eye in the guide.
@@ -207,12 +206,13 @@ The system reads these from one Worker record (section 41), never from a second 
 |---|---|---|
 | Program | 20 days, ends Nov 1, $1 per verified day, $10 day-20 bonus | `worker_day_done.jsx:38` |
 | Money rule note | $1 credited at the end of each successful day (under review) | `worker_day_done.jsx:5` |
+| Cash out | From $10, after the period ends; under $10 the balance carries over (the site's dashboard says the same: "Payment minimum: $10") | `worker_day_done.jsx:6`; `onblue/apply.html:1360, 2292-2293` |
 | The site's program | At least 20 days each month to earn $30 | `onblue/apply.html:1285` |
 | AI credits | 2,000 granted every day | `index.html:720` |
 | Modes | Always ask and Automatic, per app | `blueai/worker_flow.jsx:78` |
 | Ticks | Pending verification, then verified | `blueai/worker_day_done.jsx:97` |
 
-The money model is decision D3: the app's $1 a day plus a $10 bonus, or the site's $30 for 20 days. Until the PM picks one, the system shows days, not dollars (section 73).
+The money model is decision D3: the app's $1 a day plus a $10 bonus, or the site's $30 for 20 days. Until the PM picks one, the system shows days, not dollars (section 73). The $10 cash-out minimum holds under both, so it is stated wherever cash out is: a line that says cash out is open is shown only to a partner whose earnings reached it (`numbers().reachedMinimum`, section 41).
 
 ## 02 Principles
 
@@ -276,7 +276,8 @@ Shared means the same value as the site; adapted means the same idea tuned for a
 |---|---|---|
 | Neutral ink ramp #0b0b0d / #3c4049 / #5f636b | shared | Same text colours on the site and in the app (onblue.css:300-309). |
 | Meta ink #6e737c (site dim #767b85) | adapted | One step darker so 12px captions clear 4.5:1; the site's dim measures about 4.2:1. |
-| Alpha-black 1px lines 10/15/8/20% | shared | The site's clearest DNA; strokes, not shadows, separate in-flow surfaces. |
+| Alpha-black 1px lines 10/15/8/20% | shared | The site's clearest DNA, same values (onblue.css:274-275, 319, 376). |
+| Lines alone separate in-flow surfaces | adapted (shadow dropped) | The site's light theme also casts a faint resting shadow on cards, panels and ghost buttons (onblue.css:388, 993, 1486; apply.html:85-90); the product drops it, so a shadow only ever means 'this floats'. |
 | Surfaces a fraction apart, alternating card / panel / row | shared | Depth reads as structure, not murk. |
 | Brand blue #156efe for focus, selection and progress | shared | One blue across the journey. |
 | Action blue #1268f0 and blue ink #0d5ad6 | adapted | #156efe is 4.47:1 with white; the product needs 4.5:1 on every primary label. |
@@ -296,15 +297,16 @@ Shared means the same value as the site; adapted means the same idea tuned for a
 | Navy-tinted casts at low alpha, no glows | adapted | Three levels only (none, popover, dialog). |
 | Button ladder: one primary per view, secondary, quiet, link; disabled with a reason | shared | Ranks Run, Got it, Try again, Allow, Not now. |
 | Underlined ink links that turn blue on hover | shared | Frees blue for selection. |
-| Recessed tabs with one raised chip and counts | shared | Activity and Notifications need tabs; take the family's. |
+| Recessed tabs with one raised chip and counts | adapted (shadow dropped) | Activity and Notifications need tabs; take the family's shape without the lit tab's card shadow (apply.html:467-473; section 28). |
 | Ledger rows with a fixed date column; empty copy names what will appear | shared | The run log and the site's transactions read as one record. |
 | Muted note with one bold ink figure | shared | Pending verification lines, credit notes. |
-| Payout pill (green receipt) | shared | 'Yesterday's run verified.' is exactly its job. |
+| Payout pill (green receipt) | adapted (plain line) | 'Yesterday's run verified.' is its job, drawn as a plain 12 ink-3 line with its tick (section 43): the site's pill (green line, 10% green fill, onblue.css:2102-2115) would put a second green box on a small strip whose bar is already green. |
 | Progress bar toward a goal | adapted | Merged with the product's segmented DayBar, which adds the pending state the site lacks. |
 | Sheet anatomy and motion | adapted | Solid dim veil instead of frost outside sign-in. |
 | Grain, glyph field, aberration, WebGL model, card sheen, terminal, badge, band note, header, footer | not shared | Marketing ambience competes with a daily tool and costs GPU. |
 | Copy voice and vocabulary | shared | Same words on both sides; conflicts go to the PM as decisions. |
 | 'Log out' on the site | adapted | Product uses 'Sign out' to pair with 'Sign in'; recommend the site align. |
+| 'Reward' and 'campaigns and tasks' on the site | adapted | The program card and its sheet say 'Reward' (apply.html:1280, 1470), How it works says 'its own reward' and 'its reward is added to your earnings' (:1434, 1436), the agent intro says 'completes campaigns and tasks' (:1849). The product says Earnings for money and job for paid work (section 70); recommend the site align, or the PM accepts the site's word for both. |
 | Review dock convention (onblue-dev.js) | shared | Review controls live outside the product and add no tokens; V2's Preview panel follows it. |
 | window.SiteKit inside V2 | adapted | Seed for one family token object; it has drifted (48 vs 44 height, 0.12s vs 0.18s press, 32 vs 38 mark). |
 
@@ -326,7 +328,7 @@ Shared means the same value as the site; adapted means the same idea tuned for a
 
 **Sizes.** Not applicable.
 
-**States.** On surface: ink 19.67, ink-2 10.39, ink-3 6.03, ink-4 4.77 (:1). On canvas: ink-4 4.60. On sunken: ink-4 4.42, so ink-4 never sits on `--v2-surface-sunken`. V2 today: `'Working on it…'` in #94a3b8 (ChatBubbles.ThinkingBubble, any chat run), `'App Player will be signed out too.'` in #9ca3af (the sign-in gate, `?signin=browser&player=other`).
+**States.** On surface: ink 19.67, ink-2 10.39, ink-3 6.03, ink-4 4.77 (:1). ink-4 on canvas 4.60, on panel 4.69. Everywhere else ink-4 drops under 4.5:1: sunken 4.42, blue tint 4.29, selected 4.06, success tint 4.36, attention tint 4.37, danger tint 4.17, hover wash 4.32, press wash 4.08. So ink-4 sits only on surface, panel or canvas at rest; meta on anything tinted, sunken, selected, hovered or pressed is ink-3 (the menu's hint already does this, kit/overlays.css:131). V2 today: `'Working on it…'` in #94a3b8 (ChatBubbles.ThinkingBubble, any chat run), `'App Player will be signed out too.'` in #9ca3af (the sign-in gate, `?signin=browser&player=other`).
 
 **Props.** Tokens only. Text styles carry their ink (section 04); override with a token, never a hex.
 
@@ -336,13 +338,13 @@ Shared means the same value as the site; adapted means the same idea tuned for a
 
 **Responsive.** Not applicable.
 
-**Do / Don't.** Do pick the step by role. Do put money and credits figures in ink. Don't use ink-4 for a caveat or on sunken. Don't add a grey for one screen.
+**Do / Don't.** Do pick the step by role. Do put money and credits figures in ink. Don't use ink-4 for a caveat, or on anything but surface, panel or canvas at rest. Don't add a grey for one screen.
 
 ### Surfaces and lines (Changed from V2)
 
-**Purpose.** Grounds a fraction of a percent apart, separated by 1px alpha-black lines, the site's main move (it lets the product drop its shadows).
+**Purpose.** Grounds a fraction of a percent apart, separated by 1px alpha-black lines (the site's line values, shared). The site pairs those lines with faint resting card shadows; the product drops the shadows and lets the lines alone separate in-flow surfaces (section 02, P6: adapted).
 
-**Anatomy.** Grounds: `--v2-canvas` #fafbfb (window), `--v2-surface` #fff (cards, bubbles, bars, dialogs), `--v2-surface-panel` #fdfdfd (inset panel inside a card), `--v2-surface-sunken` #f6f6f8 (wells, tracks, neutral chips). Lines: `--v2-line` 10% (every edge), `--v2-line-strong` 15% (fields, secondary buttons), `--v2-line-hair` 8% (dividers inside a card), `--v2-line-hover` 20% (hover firm-up). Washes: `--v2-wash-hover` 4.5%, `--v2-wash-press` 7%, layered over the fill.
+**Anatomy.** Grounds: `--v2-canvas` #fafbfb (window), `--v2-surface` #fff (cards, bubbles, bars, dialogs), `--v2-surface-panel` #fdfdfd (inset panel inside a card), `--v2-surface-sunken` #f6f6f8 (wells, tracks, neutral chips). Lines: `--v2-line` 10% (every edge), `--v2-line-strong` 15% (fields, secondary buttons), `--v2-line-hair` 8% (dividers inside a card), `--v2-line-hover` 20% (hover firm-up), `--v2-link-underline` 32% (the resting underline under an ink link, the site's own value). Washes: `--v2-wash-hover` 4.5%, `--v2-wash-press` 7%, layered over the fill.
 
 **Variants.** Alternation: canvas, then a white card, then a panel one step down, then rows back to white.
 
@@ -392,9 +394,11 @@ Shared means the same value as the site; adapted means the same idea tuned for a
 
 **Sizes.** Not applicable.
 
-**States.** Neutral (paused, skipped), info (pending verification), success (verified, done, connected), attention (needs you), danger (failed, out of credits). V2 today: the dev Preview's Chat states row (ChatBubbles.ChatStatesPreview); the AI Credits banner at `?credits=0`.
+**States.** Neutral (paused, skipped, pending verification), info (running, checking, a fact with nothing to do), success (verified, done, connected), attention (needs you), danger (failed, out of credits).
 
-**Props.** `tone: 'neutral' | 'info' | 'success' | 'attention' | 'danger'` on every status part.
+**Pending verification, one rule.** A pending day is neutral wherever it is a status: one tick in `--v2-ink-4` (StatusTick, section 43), a neutral Badge with the `check` mark (section 16), the RunCard's Done badge (section 36). Blue touches it in exactly two places, both meaning "in, not yet checked" rather than a status: the DayBar's pending segment (1.5 `--v2-blue` inset outline, section 43) and the DayDone badge (`--v2-blue-tint` with its tick in `--v2-blue-ink`, section 44). Never green until verified. V2 today: the dev Preview's Chat states row (ChatBubbles.ChatStatesPreview); the AI Credits banner at `?credits=0`.
+
+**Props.** `tone: 'neutral' | 'info' | 'success' | 'attention' | 'danger'` on every status part, with one exception: Banner names its neutral tone `offline` (sunken, line, ink-3 icon; section 21) and turns any tone it does not know into info, so a neutral banner is `tone="offline"` with its own icon (the AI-mode conflict uses `alert`, section 49).
 
 **Motion.** None of its own.
 
@@ -444,7 +448,8 @@ Shared means the same value as the site; adapted means the same idea tuned for a
 - `.v2-text-title` 16 / 600 / 1.35 / -0.01em, ink: card titles, section heads.
 - `.v2-text-body` 14 / 400 / 1.5, ink-2: bubbles, composer, paragraphs, fields.
 - `.v2-text-body-sm` 13 / 400 / 1.5, ink-3: descriptions, notes, consequences. A `<strong>` inside turns ink 600 (fact muted, figure ink).
-- `.v2-text-label` 13 / 500 / 1.35 / -0.01em, ink-2: buttons, chips, nav, menu rows, row labels.
+- `.v2-text-label` 13 / 500 / 1.35 / -0.01em, ink-2: buttons, chips, nav, menu rows.
+- Row label (no class): 14 / 500 / 1.35, ink. The list-row parts set it in their own CSS (ListRow, section 18), so a screen never sets it by hand.
 - `.v2-text-meta` 12 / 400 / 1.35, ink-4: timestamps, counts, hints.
 - `.v2-text-eyebrow` 11 / 500 / 1 / 0.08em, uppercase, ink-3: section labels only.
 - `.v2-text-mono` 13 / 400 / 1.35, mono, ink-2: keys, endpoints, model ids.
@@ -569,7 +574,7 @@ Shared means the same value as the site; adapted means the same idea tuned for a
 
 **Purpose.** Six radii, each with a job.
 
-**Anatomy.** `--v2-radius-xs` 4 (checkbox box, day-bar segment, tooltip arrow), `-sm` 6 (buttons, fields, segmented items, menu rows, icon buttons: the site's button radius), `-md` 10 (rows, banners, composer, menus, tooltips, segmented track), `-lg` 16 (cards, bubbles, dialogs, sheet top corners: the site's card radius), `-pill` (badges, quick-reply chips, credits chip, progress rail), `-round` (avatars, discs, send). Strokes: `--v2-stroke` 1px everywhere; `--v2-stroke-selected` 1.5px only for a selected choice and the focused composer.
+**Anatomy.** `--v2-radius-xs` 4 (checkbox box, day-bar segment, tooltip arrow), `-sm` 6 (buttons, fields, segmented items, menu rows, icon buttons: the site's button radius), `-md` 10 (rows, banners, composer, menus, tooltips, segmented track), `-lg` 16 (cards, bubbles, dialogs, sheet top corners: the site's card radius), `-pill` (badges, quick-reply chips, credits chip, progress rail), `-round` (avatars, discs, send). Strokes: `--v2-stroke` 1px for every edge; `--v2-stroke-selected` 1.5px for a selected choice, the focused composer, and the two outlined marks that must still read at 6 to 8px: the ring status dot (paused, offline: `kit/shell.css:81`) and the pending DayBar segment (`kit/worker.css:87`). A 2px step is not a stroke token; it appears only as mark geometry, sized with its mark: the spinner ring and the checkbox tick (glyph lines), the 2px surface halo that cuts a count dot out of what it sits on (`kit/credits.css:45`, `kit/display.css:88`), and the 2px left rule of the job preview's quoted comment (`kit/worker.css:166`). Icon glyphs draw at their own weight (StatusTick 2.5, `kit/program.jsx:21`).
 
 **Variants.** As listed.
 
@@ -629,7 +634,7 @@ Shared means the same value as the site; adapted means the same idea tuned for a
 
 **Responsive.** Not applicable.
 
-**Do / Don't.** Do stack dialogs that share `--v2-z-dialog` by mount order. Don't blur outside sign-in (it costs on partner PCs). Don't invent a z-index: pick a layer.
+**Do / Don't.** Don't stack a dialog on a dialog (section 25); mount order on `--v2-z-dialog` only settles an overlap that cannot be avoided (one dialog still fading out while the next one opens), and the later one sits on top. Don't blur outside sign-in (it costs on partner PCs). Don't invent a z-index: pick a layer.
 
 ## 07 Motion
 
@@ -769,7 +774,7 @@ Shared means the same value as the site; adapted means the same idea tuned for a
 
 **Sizes.** Not applicable.
 
-**States.** Pass (AA), large only, fails. Rules it enforces: ink-4 is meta only and never on sunken (4.42:1 there); placeholder is never text that must be read (2.57:1); status inks go on their own tint or white; white labels go on action (4.92:1), never on brand blue (4.47:1). V2 pairs that fail: #94a3b8 'Working on it…' 2.56:1, #9ca3af 'App Player will be signed out too.' 2.54:1, #60a5fa 'PLAN' eyebrow, #f59e0b link 2.15:1, white on #1990FF 3.24:1, white on #ef4444 3.76:1.
+**States.** Pass (AA), large only, fails. Rules it enforces: ink-4 is meta only, and only on surface, panel or canvas at rest (it drops under 4.5:1 on sunken 4.42, every tint 4.17 to 4.37, selected 4.06, and the hover and press washes 4.32 and 4.08; section 03); placeholder is never text that must be read (2.57:1); status inks go on their own tint or white; white labels go on action (4.92:1), never on brand blue (4.47:1). V2 pairs that fail: #94a3b8 'Working on it…' 2.56:1, #9ca3af 'App Player will be signed out too.' 2.54:1, #60a5fa 'PLAN' eyebrow, #f59e0b link 2.15:1, white on #1990FF 3.24:1, white on #ef4444 3.76:1.
 
 **Props.** Not applicable.
 
@@ -787,7 +792,7 @@ Shared means the same value as the site; adapted means the same idea tuned for a
 
 **Anatomy.** Targets: 24px absolute floor; `--v2-hit-min` 32px for consent, money and controls in a row; `--v2-control-md` 36px default; `--v2-control-lg` 44px for full-width dialog and sheet actions and the sign-in doors. Keyboard model:
 - Menus: trigger has `aria-haspopup` and `aria-expanded`; Enter, Space or Down opens on the first item; Up, Down, Home, End move; Enter picks; Esc or Tab closes and focus returns to the trigger.
-- Dialogs: focus moves in (first field, else the safest button); Tab stays inside; Esc closes unless the dialog blocks; focus returns to the opener; the title labels the dialog.
+- Dialogs: focus moves in to one place by kind: the panel for a dialog read before acting (task, consent, day done), the first field (`initialFocus`) for a form dialog, Cancel (the first action, the safe answer) for an alert; Tab stays inside; Esc closes unless the dialog blocks; focus returns to the opener; the title labels the dialog.
 - Sheets: as dialogs; the blocking terms sheet has no close and no Esc, its one way out is the agreement button.
 - Tabs: one tab stop, Left and Right move and select.
 - Thread: `role="log"`, `aria-live="polite"`.
@@ -916,7 +921,7 @@ Shared means the same value as the site; adapted means the same idea tuned for a
 
 **Purpose.** An action inside a sentence (Not you? Switch account), or a quiet way out on its own line (Learn more, Earnings).
 
-**Anatomy.** Ink text with a 1px underline at offset 3 in `--v2-line-hover`; hover turns text and underline `--v2-blue-ink` (the site's link, onblue/onblue.css:1224-1232). External adds the external glyph 16 after the text.
+**Anatomy.** Ink text with a 1px underline at offset 3 in `--v2-link-underline` (32%, the site's `--link-underline`, onblue/onblue.css:326); hover turns text and underline `--v2-blue-ink` (the site's link, onblue/onblue.css:1224-1232). External adds the external glyph 16 after the text.
 
 **Variants.** Inline (inherits the sentence's size and weight); `standalone` (13/500, inline-flex, min height 32); `external`; `tone="muted"` (ink-3). Without `href` it renders a button drawn as a link.
 
@@ -1171,10 +1176,10 @@ Shared means the same value as the site; adapted means the same idea tuned for a
 2. Mark (optional): a 6px round dot in the tone colour, or one 16px icon in its place, never both. Days use the program's ticks: `check` for pending, `check-double` for verified.
 3. Label: 12/500 (`--v2-text-12`, `--v2-weight-medium`) in `--v2-ink-2`, sentence case, three words at most, ellipsis if it must cut.
 
-Tone lives in the fill and the mark; the words stay in ink-2. Reason: the success ink on its own tint computes 4.49:1 (the site's green state chip, onblue/apply.html:315, has the same pair), under the 4.5:1 floor for 12px text. Ink-2 on every tint reads at 9:1 or better.
+Tone lives in the fill and the mark; the words stay in ink-2. This is a style choice, not a contrast fix: every status ink passes 4.5:1 on its own tint (section 03; success ink on the 8% success tint is 4.59:1). One ink for every label keeps a row of badges calm and lets the mark carry the tone; ink-2 on every tint reads at 9:1 or better.
 
 **Variants.** Five tones, each a fill plus a mark colour:
-- neutral: `--v2-surface-sunken`, mark `--v2-ink-4` (pending, paused, soon).
+- neutral: `--v2-surface-sunken`, mark `--v2-ink-4` (pending verification, paused, soon). Pending is neutral by the one rule in section 03.
 - info: `--v2-blue-tint`, mark `--v2-blue` (running, checking).
 - success: `--v2-success-tint`, mark `--v2-success` (verified, connected, on).
 - attention: `--v2-attention-tint`, mark `--v2-attention-ink` (the worker needs the partner).
@@ -1280,7 +1285,7 @@ Plus: no mark, dot, icon, busy dot.
 
 **Status:** Card: Changed from V2. StatCard: Changed from V2.
 
-**Why:** BlueAI is a quiet control room: the surfaces should separate content and get out of the way, the way the onBlue site does with lines instead of casts. V2's in-flow cards carry seven shadow strengths over a different line on each (settings.jsx:10, profile.jsx:30, index.html:432, worker_day_done.jsx:176), and its one important figure, the credits balance, is 54/800 brand gradient (index.html:518). The partner returns to the site to cash out; the same figure should look the same in both places.
+**Why:** BlueAI is a quiet control room: the surfaces should separate content and get out of the way, the way the onBlue site's 1px lines do; the site also adds a faint resting cast, which the product drops (section 02, P6). V2's in-flow cards carry seven shadow strengths over a different line on each (settings.jsx:10, profile.jsx:30, index.html:432, worker_day_done.jsx:176), and its one important figure, the credits balance, is 54/800 brand gradient (index.html:518). The partner returns to the site to cash out; the same figure should look the same in both places.
 
 ### Card (Changed from V2)
 
@@ -1382,7 +1387,7 @@ Plus: no mark, dot, icon, busy dot.
 
 **Variants.** Inherit (takes the text colour). On colour (`--v2-on-color`, inside a filled button). Done (a `check` in `--v2-success`).
 
-**Sizes.** 12 (inside buttons), 16 (rows, steps, beside text), 32 (standalone). Stroke 1.5 / 2 / 4.
+**Sizes.** 12 (the Switch's busy thumb), 16 (buttons, rows, steps, beside text), 32 (standalone). Stroke 1.5 / 2 / 4.
 
 **States.**
 - Delayed: hidden for the first 300ms, space held, so fast work never flashes. New.
@@ -1448,7 +1453,7 @@ The words stay in ink so every tone passes 4.5:1; the tone lives in the tint, th
 - success: `--v2-success-tint`, `--v2-success-line`, icon `--v2-success-ink` (`check`). News.
 - attention: `--v2-attention-tint`, `--v2-attention-line`, icon `--v2-attention-ink` (`alert`). The partner has to do something.
 - danger: `--v2-danger-tint`, `--v2-danger-line`, icon `--v2-danger-ink` (`x-circle`). Today is blocked.
-- offline: `--v2-surface-sunken`, `--v2-line`, icon `--v2-ink-3` (`wifi-off`). New.
+- offline: `--v2-surface-sunken`, `--v2-line`, icon `--v2-ink-3` (`wifi-off`). New. This is the Banner's neutral tone (section 03): a neutral condition that is not about the connection uses it with its own icon (the AI-mode conflict: `tone="offline" icon="alert"`, section 49). There is no `neutral` value; an unknown tone renders as info.
 Any icon can replace the default (Automatic uses `zap`).
 
 **Sizes.** One. Full width of its container.
@@ -1577,7 +1582,7 @@ Any icon can replace the default (Automatic uses `zap`).
 
 **Purpose.** A decision or a short task the partner must finish or decline before going on: consent to Automatic, sign out, disconnect, out of credits, the day-done moment.
 
-**Anatomy.** Scrim `--v2-scrim` over the window. Panel centred with a 16px inset: `--v2-surface`, 1px `--v2-line`, radius 16 (`--v2-radius-lg`), `--v2-shadow-2`. Header: title 20/600 `--v2-ink` (tracking -0.02em) taking the row, a 32px IconButton named Close beside it. Body: 14/1.5 `--v2-ink-2`, padding 20, scrolls when tall. Actions: 44px Buttons of equal width, 8px apart, secondary first, primary last. Optional footer note 12 `--v2-ink-3`. Layer `--v2-z-dialog` (100); two dialogs stack by mount order.
+**Anatomy.** Scrim `--v2-scrim` over the window. Panel centred with a 16px inset: `--v2-surface`, 1px `--v2-line`, radius 16 (`--v2-radius-lg`), `--v2-shadow-2`. Header: title 20/600 `--v2-ink` (tracking -0.02em) taking the row, a 32px IconButton named Close beside it. Body: 14/1.5 `--v2-ink-2`, padding 20, scrolls when tall. Actions: 44px Buttons of equal width, 8px apart, secondary first, primary last. Optional footer note 12 `--v2-ink-3`. Layer `--v2-z-dialog` (100). One dialog at a time; if two ever overlap, mount order decides which is on top (section 06), which only settles the overlap, it does not make stacking a pattern.
 
 **Variants.** `task` (md, Close, scrim click cancels). `consent` (md, Close, scrim click does nothing, the primary's label is the agreement: "I agree, turn on"). `alert` (see AlertDialog). `celebration` (sm, centred, no Close, scrim click closes: DayDone). `scrim="frost"` puts it on the sign-in gate veil and layer (`--v2-z-gate`), sign-in only.
 
@@ -1589,7 +1594,7 @@ Any icon can replace the default (Automatic uses `zap`).
 
 **Motion.** Scale-in `--v2-dur-4` (320ms) on `--v2-ease-out`; scrim fades `--v2-dur-3`; exit fades `--v2-dur-3` on `--v2-ease-in`. Reduced motion: instant (motion.css).
 
-**Accessibility.** role dialog, `aria-modal`, named by its title, described by `description`. On open the panel takes focus (no ring until Tab); Tab cycles inside; Esc, Close and Cancel return focus to the opener. `aria-busy` while busy. Close is named. Every label at least 4.5:1.
+**Accessibility.** role dialog, `aria-modal`, named by its title, described by `description`. Where focus lands on open, one rule (section 09): the panel itself for dialogs read before acting (task, consent, celebration), with no ring until Tab; the first field, through `initialFocus`, for a dialog that is a form; Cancel, the first action, for an AlertDialog. Tab cycles inside; Esc, Close and Cancel return focus to the opener. `aria-busy` while busy. Close is named. Every label at least 4.5:1.
 
 **Responsive.** Scoped to the window (absolute inside AppFrame's overlay plane), never the page. On the compact window the body scrolls; header and actions stay.
 
@@ -1615,7 +1620,7 @@ Any icon can replace the default (Automatic uses `zap`).
 
 **Responsive.** As Dialog.
 
-**Do / Don't.** Do name the primary for the action (Sign out, Disconnect, Delete), never OK or Yes. Do say the consequence (proposed: "Your BlueAI worker stops running until you sign in again."). Don't paint Sign out as destructive: V2's "Logout" on #ef4444 (3.76:1, profile.jsx:79) suggests loss, and confirming it does not even sign out (index.html:1000, R03).
+**Do / Don't.** Do name the primary for the action (Sign out, Disconnect, Delete), never OK or Yes. Do say the consequence; the sign-out confirm's strings are owned by section 64, the disconnect confirm's by section 63. Don't paint Sign out as destructive: V2's "Logout" on #ef4444 (3.76:1, profile.jsx:79) suggests loss, and confirming it does not even sign out (index.html:1000, R03).
 
 ## 26 Sheet
 
@@ -1801,7 +1806,7 @@ Any icon can replace the default (Automatic uses `zap`).
 
 **Variants.** Signed out (brand only). Signed in.
 
-**Sizes.** 52 tall (`--v2-topbar-h`). Padding 0 12 0 16: the brand sits on the 16 gutter; the right edge is 12 because the icon buttons carry a 6px inset. Gap 8 between chips, 2 between the two icon buttons. Surface, 1px `--v2-line` bottom, no shadow. Layer `--v2-z-header` (20). Fits 419 with the longest status label ("Next run 11 am").
+**Sizes.** 52 tall (`--v2-topbar-h`). Padding 0 12 0 16: the brand sits on the 16 gutter; the right edge is 12 because the icon buttons carry a 6px inset. Gap 8 between chips, 2 between the two icon buttons. Surface, 1px `--v2-line` bottom, no shadow. Layer `--v2-z-header` (20). The longest status labels are "Next run 9 am to 9 pm" (a run window) and "Waiting for credits"; the bar must fit 419 with them (Responsive says what gives if it does not).
 
 **States.** Signed out: V2 bare URL then Sign in. Signed in: V2 `?start=worker`. Menu open: click Help or More (V2 has no keyboard path).
 
@@ -1825,12 +1830,16 @@ Any icon can replace the default (Automatic uses `zap`).
 
 | Status | Label | Worker record | Opens |
 |---|---|---|---|
-| scheduled | Next run 11 am | today.status scheduled | Home, Today |
+| scheduled | Next run 11 am; Next run 9 am to 9 pm; Runs later today | today.status scheduled, worded from `runWindow` (a time, a window, any time) | Home, Today |
 | running | Running | today.status running | the run in the chat |
 | needs-you | Needs you (yellow tint) | today.status waiting | the job preview |
-| done | Day 7 of 20 | today.status done | the run in Activity |
+| done | Day 7 of 20 (neutral dot while pending, green once verified) | today.status done | the run in Activity |
+| done (skipped) | Not counted today (neutral dot) | today.status done, end declined | the run in Activity |
+| done (complete) | All 20 days done | all 20 days verified (`numbers().complete`) | Home, Today: the card's Earnings |
 | failed | Didn't finish (red tint) | today.status failed | the run, with Try again and its deadline |
 | paused | Paused (ring dot) | paused | Settings > Worker |
+| paused (no credits) | Waiting for credits (ring dot) | credits.left below runCost before today's run | Home, Today: the card says when credits refresh |
+| paused (update) | Update needed (ring dot) | an update is required (section 69) | the update screen (section 69) |
 | offline | Offline (ring dot) | offline | Home, with the offline banner |
 | signed out | not rendered | | |
 
@@ -1978,8 +1987,10 @@ V2: `?start=worker` shows the nav with Chat active (the default, index.html:604)
 | Level | Screens | Way back | Tab lit |
 |---|---|---|---|
 | Tab | Home, Activity, Settings | the nav | itself |
-| Pushed screen | Chat, Run detail, Notifications, Account, Worker settings, Connected apps, AI credits (Help is the top bar menu plus the Report a problem sheet, not a screen) | Back in the ScreenHeader | its parent tab |
+| Pushed screen | Chat, Run detail, Notifications, Account, Worker settings, Connected apps, AI credits (Help is the top bar menu plus the Report a problem sheet, not a screen) | Back in the ScreenHeader | its parent tab (rule below) |
 | Overlay | Dialog, Sheet, day done, splash, toast | its own close or answer | unchanged |
+
+**Which tab is lit for a pushed screen, one rule.** A screen with a home in Settings (Worker settings, Connected apps, Account) lights Settings from any door, the top bar's More menu included. A screen only the top bar opens (AI credits from the credits chip, Notifications from More) is pushed over the tab you were on, and that tab stays lit; Back returns to it. Chat belongs to Home and Run detail to Activity, so each lights its own. The top-bar screens take the tab as a prop: `tab` (AI credits) or `parentTab` (Notifications).
 
 **Variants.** None.
 
@@ -2127,7 +2138,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 ### RunCard (New)
 - **Purpose:** One card per run: the live step, finished steps folded, the outcome, whether today counts, and the one action that changes today.
 - **Anatomy:** Card (white, 1px line, radius 16, padding 16, gap 12, no shadow). Header: "Today’s run" 14/600 ink + start time 12 ink-4, Badge on the right. Live row (running, waiting): Spinner 16 or help icon + one line 14. Disclosure: "7 steps done" 13/500 ink-3, 32px tall, chevron; list of past-tense steps (check 16 ink-3, label 13, time 12 tabular). Outcome: icon 16 in tone + one line 14 ink. Day line: hairline above, StatusTick + 13 text. Actions: one Button md and/or "See run details" (underlined ink link, 32px).
-- **Variants (status):** `running` (Badge Running, info, busy dot), `waiting` (Waiting for you, attention; attention border; deadline line), `done-pending` (Done; one tick; "Day 7 of 20, pending verification"), `verified` (Verified, success; two ticks), `failed` (Didn’t finish, danger; "Try again" primary), `stopped` (Stopped; "Run again" secondary), `nojob` (No job today; pending tick, the day counts), `nocredits` (Out of credits, attention; "See AI credits"), `skipped` and `rejected` (Run detail, Activity).
+- **Variants (status):** `running` (Badge Running, info, busy dot), `waiting` (Waiting for you, attention; attention border; deadline line), `done-pending` (Done, neutral; one tick; "Day 7 of 20, pending verification"; pending is neutral by the rule in section 03), `verified` (Verified, success; two ticks), `failed` (Didn’t finish, danger; "Try again" primary), `stopped` (Stopped; "Run again" secondary), `nojob` (No job today; pending tick, the day counts), `nocredits` (Out of credits, attention; "See AI credits"), `skipped` and `rejected` (Run detail, Activity).
 - **Sizes:** 300 in the thread; `full` fills the column (Run detail).
 - **States:** Each status above; steps collapsed (default) or expanded. V2 has no equivalent; the nearest V2 states are `?day=next&end=job|nojob|failed` and the Preview panel's Scheduled job Out of credits.
 - **Props:** `RunCard {run, state, onAction(kind), onOpenDetail, feedback, full, defaultExpanded, className}`; `run {status, title, startedAt, current, since, steps[{label, time, status}], outcome, dayText, action}`. Missing fields fall back to `V2Kit.RUN_FIXTURES[status]`. `onAction` receives `retry`, `restart` or `credits`.
@@ -2166,8 +2177,8 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 - **Anatomy:** Block padding 4 16 12; optional notice and stop-confirm above; box radius 10, 1px `--v2-line-strong`, white, padding 4 4 4 12; textarea 14/1.5 ink, placeholder ink-4; SendStop 36 round on the right, bottom-aligned.
 - **Variants:** Default; with a notice.
 - **Sizes:** Field grows from 1 to 6 lines (`maxRows`), then scrolls.
-- **States:** Rest; hover (line 20%); focus (1.5px blue + 3px 16% ring); typing; running (read-only, "BlueAI is working…", Stop); awaiting a choice (read-only, "Answer with the buttons above", Stop); disabled with a reason ("Out of credits until 5:30 am", paired with a notice); max height then scroll. Forced with `.is-hover`, `.is-focus`. V2: `?start=worker` (rest, typing), Run (running, awaiting), Preview Scheduled job Out of credits (disabled).
-- **Props:** `Composer {value, defaultValue, onChange(text), onSend(text), onStop, running, awaiting, paidJob, confirming, disabledReason, placeholder, notice, maxRows, className}`; `notice` is a ComposerNotice props object or an element.
+- **States:** Rest; hover (line 20%); focus (1.5px blue + 3px 16% ring); typing; running (read-only, "BlueAI is working…", Stop); awaiting a choice (read-only, "Answer with the buttons above", Stop); disabled with a reason (a neutral placeholder, "You can’t send messages right now", paired with the notice that says why and until when); max height then scroll. Forced with `.is-hover`, `.is-focus`. V2: `?start=worker` (rest, typing), Run (running, awaiting), Preview Scheduled job Out of credits (disabled).
+- **Props:** `Composer {value, defaultValue, onChange(text), onSend(text), onStop, running, awaiting, costsDay, paidJob, confirming, disabledReason, placeholder, notice, maxRows, className}`; `notice` is a ComposerNotice props object or an element.
 - **Motion:** Border and ring 120ms.
 - **Accessibility:** Labelled "Message BlueAI"; described by the notice; read-only (not disabled) while busy, so it stays reachable; Enter sends, Shift+Enter is a new line; placeholder 4.77:1 because it carries state.
 - **Responsive:** Full width of the window; pinned above the nav at the compact height.
@@ -2176,22 +2187,22 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 ### ComposerNotice (Changed from V2)
 - **Purpose:** A condition that holds before the partner types, with its one action.
 - **Anatomy:** Radius 10, 1px line in tone, padding 2 4 2 12; icon 16; text 13/1.35; trailing action as an underlined ink link, 32px tall, blue-ink on hover.
-- **Variants:** `info` (blue tint, blue-ink: Automatic on, BlueStacks needed), `attention` (yellow, attention-ink: out of credits until a time), `neutral` (sunken, ink-2: paused).
+- **Variants:** `info` (blue tint, blue-ink: Automatic on, BlueStacks needed), `attention` (yellow, attention-ink: the partner must answer before the run can go on), `neutral` (sunken, ink-2: paused; out of AI credits until a time, section 48).
 - **Sizes:** Composer width.
 - **States:** Shown while the condition holds; action hover, focus. V2: `?start=worker&v=2&mode=auto` then Run shows the Automatic ribbon.
 - **Props:** `ComposerNotice {tone, icon, text, children, action: {label, onClick}, id, className}`.
 - **Motion:** None of its own.
 - **Accessibility:** Text 13 in tone at least 5:1; action is a real button; links are never warm-coloured (ink in every tone).
-- **Copy:** "Automatic is on for YouTube. BlueAI takes paid YouTube jobs without asking." and "Change" are V2's (agent_permissions.jsx:197-198). Proposed: "You’re out of AI credits until 5:30 am." / "See AI credits", "Today’s run needs BlueStacks App Player." / "Get BlueStacks", "The BlueAI worker is paused until tomorrow." / "Resume".
+- **Copy:** "Automatic is on for YouTube. BlueAI takes paid YouTube jobs without asking." and "Change" are V2's (agent_permissions.jsx:197-198). The out-of-credits line is owned by section 48 ("Out of AI credits until **5:30 am tomorrow**.", `V2Kit.OOC_COPY.until`); the locked field's placeholder is neutral ("You can’t send messages right now"), so the time is said once, in the notice. Proposed: "Today’s run needs BlueStacks App Player." / "Get BlueStacks", "The BlueAI worker is paused until tomorrow." / "Resume".
 - **Do / Don't:** Do keep one notice at a time, the most urgent. Don't announce zero credits only after Send.
 
 ### Stop (SendStop) (Changed from V2)
 - **Purpose:** Send the message, or stop the run.
-- **Anatomy:** 36 round. Send: `--v2-action` fill, white send glyph 16. Stop: white, 1px line-strong, ink-2 stop glyph 16. Stop confirm (paid job running): attention panel above the field, "Stop now? The paid job won’t finish and today won’t count.", Keep running (secondary md) / Stop run (danger md).
+- **Anatomy:** 36 round. Send: `--v2-action` fill, white send glyph 16. Stop: white, 1px line-strong, ink-2 stop glyph 16. Stop confirm (today not counted yet, `costsDay`): attention panel above the field, "Stop now? Today won’t count toward your 20 days."; with a paid job under way (`paidJob`) it says "Stop now? The paid job won’t finish and today won’t count."; Keep running (secondary md) / Stop run (danger md).
 - **Variants:** send, stop.
 - **Sizes:** 36 (control-md).
 - **States:** Send ready, hover (`--v2-action-hover`), focus, pressed (1px down), disabled (sunken + ink-4, not pale blue); Stop, hover (wash + line), pressed; stop confirm.
-- **Props:** `SendStop {mode, disabled, onClick, className}`; Composer `paidJob` turns the confirm on, `confirming` forces it.
+- **Props:** `SendStop {mode, disabled, onClick, className}`; Composer `costsDay` (running, retrying or waiting, before the day counts) turns the confirm on, `paidJob` does too and names the job, `confirming` forces it.
 - **Motion:** Colour 120ms, press 120ms.
 - **Accessibility:** Labels "Send message" / "Stop the run" (V2 said "Stop task"; "task" is banned for paid work); visible focus ring; 36px target.
 - **Responsive:** Fixed size.
@@ -2248,21 +2259,21 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 - **Anatomy:** plain data, `kit/worker-data.jsx`:
   - `account` {name, first, email}: one neutral identity (Alex Morgan, @alexwatches), never staff data (R39).
   - `setUp`, `coachSeen`, `online`, `paused` (null or {until}).
-  - `apps.youtube` / `apps.instagram`: {status connected | not-connected | coming-soon, handle, mode always | auto, history allowed | notnow | revoked}.
+  - `apps.youtube` / `apps.instagram`: {status connected | not-connected | coming-soon, handle, mode always | auto, history allowed | notnow | revoked, historyOn}. `historyOn` is the day watch history was answered ('Oct 6' by default when `history` is set, null when it was never asked; the revoked fixture says 'Oct 11'); Account's What you agreed to reads it.
   - `runWindow` {kind time | window | any, label}.
   - `credits` {left, grant 2000, refillAt, runCost}.
   - `today` {status scheduled | running | waiting | done | failed | none, nextRunAt, startedAt, step, stepsDone, ask {job, since, expires}, end job | nojob | day20 | failed | declined, error}.
   - `ledger`: one row per day {date, status verified | pending | late | rejected | skipped | missed, reason}.
   - `program` {target 20, endsOn 'Nov 1', daysLeft}.
-  - Helpers on `window.V2Kit`: `numbers(record)`, `workerState(record)`, `modeSummary(record)`, `nextRunText(record)`; constants `WORKER_RULE` (V2's RULE, `worker_day_done.jsx:38`), `WORKER_APPS`, `WORKER_JOB`, `EARNINGS_URL` (one URL; V2 has two).
-- **Variants:** 17 fixtures in `FIXTURE_ORDER`: new, setUp, running, waiting, donePending, verified, failed, paused, offline, complete, noCredits, rejected, automatic, nojob, declined, day20, behind.
+  - Helpers on `window.V2Kit`: `numbers(record)`, `workerState(record)`, `modeSummary(record)`, `nextRunText(record)`; constants `WORKER_RULE` {rate 1, target 20, bonus 10, programEnd 'Nov 1', cashOutMin 10} (V2's RULE, `worker_day_done.jsx:38`, plus the cash-out minimum from its rule note, `:6`), `WORKER_APPS`, `WORKER_JOB`, `EARNINGS_URL` (one URL; V2 has two).
+- **Variants:** 23 fixtures in `FIXTURE_ORDER`: new, setUp, running, waiting, donePending, verified, failed, stopped, missed, blocked, paused, offline, complete, ended, endedBelow, noCredits, rejected, automatic, nojob, declined, day20, behind, revoked (verified, with `apps.youtube.history` 'revoked' and `historyOn` 'Oct 11'; Account's 'history-revoked' state reads it).
 - **Sizes:** n/a (data).
-- **States:** `numbers()` returns done (verified + pending: the count every surface prints), verified, pending, rejected, notCounted, toGo, daysLeft, reachable, outOfReach, complete, latestRejected, last and the 20 `segments` (verified | pending | rejected | missed | future). `workerState()` returns the card state in priority order: setup, complete, offline, paused, running, waiting, failed, done, noCredits, scheduled. In V2 these come from `?start=worker`, `?day=returning`, `?day=next&end=job|nojob|day20|failed`, `?mode=auto`.
+- **States:** `numbers()` returns done (verified + pending: the count every surface prints), verified, pending, rejected, notCounted, toGo, daysLeft, reachable, outOfReach, complete, latestRejected, last, the 20 `segments` (verified | pending | rejected | missed | future), and `cashOutMin` with `reachedMinimum` (verified × rate, plus the bonus once complete, is at least `cashOutMin`). `reachedMinimum` is the one switch for every cash-out line: 'Cash out is open' only when it is true, the below-the-minimum line (sections 43, 54, 69) when it is false. It follows WORKER_RULE, so it follows D3. `workerState()` returns the card state in priority order: setup, complete, offline, paused, running, waiting, failed, done, noCredits, scheduled. In V2 these come from `?start=worker`, `?day=returning`, `?day=next&end=job|nojob|day20|failed`, `?mode=auto`.
 - **Props:** n/a. Surfaces take `worker` (the record) and read through the helpers.
 - **Motion:** none.
 - **Accessibility:** the record feeds the spoken values (DayBar's aria-valuetext, StatusTick names), so they always match the visible count.
 - **Responsive:** n/a.
-- **Do / Don't:** Do change a count by adding a ledger row; read times from `runWindow`; keep the record above every screen. Don't store a count, a time or a mode in a component; don't hard-code Day 6 or 11 am; don't invent a second identity.
+- **Do / Don't:** Do change a count by adding a ledger row; read times from `runWindow`; keep the record above every screen. Don't store a count, a time, a mode or whether cash out is open in a component; don't hard-code Day 6 or 11 am; don't invent a second identity.
 
 ## 42 Worker card and coach mark
 
@@ -2284,7 +2295,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
   - paused: 'Paused until Oct 16.' + 'Days don’t count while the worker is paused.' / secondary 'Resume'.
   - noCredits: 'Not enough AI credits for today’s run.' + 'Credits refresh at 5:30 am.' / secondary 'AI credits'.
   - offline: 'You’re offline.' + 'Today’s run starts when you’re back online.' / secondary 'Try again'.
-  - complete: 'All 20 days done.' + 'Cash out on Earnings after Nov 1.' / secondary 'Earnings' (external).
+  - complete: 'All 20 days done.' + 'Cash out on Earnings after Nov 1.' / secondary 'Earnings' (external). Twenty verified days always clear the $10 cash-out minimum (section 41, `reachedMinimum`), so this line needs no below-the-minimum variant; it still waits for the period to end.
   - Everything not marked V2 is proposed copy.
 - **Sizes:** full width of the content column (387 in the 419 window).
 - **States:** the ten above, from `workerState(worker)` or forced with `state`. In V2: `?start=worker` (setup, coach on), `?day=returning` (scheduled). The other states do not exist in V2.
@@ -2317,7 +2328,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 
 - **Purpose:** where one day stands, in V2's messaging-app model: one tick pending, two verified.
 - **Anatomy:** polyline glyph, stroke 2.5, round caps; the double tick is 1.4 times as wide. Colour on the glyph only; optional label 12 ink-3; rejected adds its reason 12 in danger ink.
-- **Variants:** pending (one tick, `--v2-ink-4`), verified (two ticks, `--v2-success`), notcounted (dash, ink-4: skipped or no run), rejected (cross, `--v2-danger-ink`, with reason), late (clock, ink-3: past the one-day promise).
+- **Variants:** pending (one tick, `--v2-ink-4`: the neutral pending tone, section 03), verified (two ticks, `--v2-success`), notcounted (dash, ink-4: skipped or no run), rejected (cross, `--v2-danger-ink`, with reason), late (clock, ink-3: past the one-day promise).
 - **Sizes:** 12, 14, 16 (28 inside the day-done badge).
 - **States:** the five variants. V2 has pending and verified only (`worker_day_done.jsx:62-68`).
 - **Props:** `status`, `size`, `label` (true prints the word, a string replaces it), `reason`.
@@ -2329,7 +2340,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 ### DayBar
 
 - **Purpose:** the 20 days at a glance; the site's progress bar plus the pending state it lacks.
-- **Anatomy:** 20 segments, height 6, radius 4, gap 2. Verified solid `--v2-success`; pending surface with a 1.5 inset `--v2-blue` outline (in progress, not reached); rejected `--v2-danger-tint` + 1px `--v2-danger-line`, in the slot it would have filled until the next run takes it; out of reach hatched `--v2-line-strong` (slots that can no longer be reached before the end); future `--v2-line`. Legend 12 ink-3 with ticks: '6 verified', '1 pending', '1 not counted', 'n days out of reach'.
+- **Anatomy:** 20 segments, height 6, radius 4, gap 2. Verified solid `--v2-success`; pending surface with a 1.5 inset `--v2-blue` outline (in progress, not reached: one of the two blue exceptions to the neutral pending tone, section 03); rejected `--v2-danger-tint` + 1px `--v2-danger-line`, in the slot it would have filled until the next run takes it; out of reach hatched `--v2-line-strong` (slots that can no longer be reached before the end); future `--v2-line`. Legend 12 ink-3 with ticks: '6 verified', '1 pending', '1 not counted', 'n days out of reach'.
 - **Variants:** with or without legend; optional `bonusLabel` at the right end only if decision D3 keeps a day-20 bonus (V2's amber segment becomes a label).
 - **Sizes:** fills its container.
 - **States:** verified, pending, rejected, out of reach, future. V2: `?day=returning` (strip), `?day=next&end=job` (overlay).
@@ -2346,7 +2357,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 - **Variants (receipt line):** day 0 'No days counted yet.'; today pending 'Today’s run is pending verification.'; yesterday verified 'Yesterday’s run verified.' (V2); yesterday rejected 'Yesterday’s run wasn’t counted.' in danger ink + 'See why' (opens Activity); skipped 'Today doesn’t count toward your 20 days.' (V2); complete 'All 20 days verified. Cash out on Earnings after Nov 1.'
 - **Sizes:** full width.
 - **States:** the variants, from the record. V2: `?day=returning` only (returning partners).
-- **Props:** `worker`, `onOpenActivity`.
+- **Props:** `worker`, `onOpenActivity`, `receipt` (default true; false drops the receipt line and leaves Earnings alone in the foot, for Home while the WorkerCard says today's status, section 57).
 - **Motion:** none.
 - **Accessibility:** a section named 'Your 20 days'; Earnings and the info trigger are 32 tall and announce 'opens in a new tab' / 'How your 20 days work'.
 - **Responsive:** foot wraps under 320.
@@ -2354,8 +2365,8 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 
 ### ProgramSummary
 
-- **Purpose:** the rules in four lines, before the first day ends (onboarding close, Help) and one tap away afterwards (strip info tip).
-- **Anatomy:** title 13/600 'How your 20 days work'; four lines 13 ink-2, each with a 16 icon: 'Run on 20 days before Nov 1.' / 'A day counts when a job is verified, or when there was no job to take.' / 'We check every run within a day. One tick while pending, two once verified.' / 'Cash out on Earnings after the period ends.' Proposed copy built from V2's rule comment (`worker_day_done.jsx:5-7`); no amount until D3.
+- **Purpose:** the rules in five lines, before the first day ends (onboarding close, Help) and one tap away afterwards (strip info tip).
+- **Anatomy:** title 13/600 'How your 20 days work'; five lines 13 ink-2, each with its own 16 icon: calendar 'Run on 20 days before Nov 1.' / check 'A day counts when a job is verified, or when there was no job to take.' / check-double 'We check every run within a day. One tick while pending, two once verified.' / earnings 'Cash out on Earnings after the period ends.' / lock 'You need $10 to cash out; a smaller balance carries over to the next period.' Proposed copy built from V2's rule comment (`worker_day_done.jsx:5-7`); the last line takes the site's own words (`onblue/apply.html:1360, 2292-2293`). The $10 minimum is in both D3 options, so it is the one amount shown before D3; no rate or bonus until then.
 - **Variants:** full; compact (the kit Tooltip, info kind, behind a 32px info button).
 - **Sizes:** full width; tip max 260.
 - **States:** full; compact closed, hover, focus, pinned open, Esc closes.
@@ -2363,7 +2374,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 - **Motion:** the tip's own (section 23).
 - **Accessibility:** the trigger is named; the tip is aria-describedby.
 - **Responsive:** the tip flips at the window edge.
-- **Do / Don't:** Do show it in the onboarding close. Don't promise an amount before D3.
+- **Do / Don't:** Do show it in the onboarding close; do state the $10 minimum with cash out. Don't promise a rate or a bonus before D3.
 
 ## 44 Day done
 
@@ -2374,7 +2385,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 ### DayDone
 
 - **Purpose:** the end-of-run moment: today's run is in, here is where the 20 days stand, and it is pending until checked.
-- **Anatomy:** the kit Dialog, celebration variant, size sm (320), dim scrim, no close button. Badge 56 round, `--v2-blue-tint` with one tick 28 in blue ink. Title 20/600 ink. Sub 13 ink-3 (Day 20 only). DayBar without legend, then one count line 13: '7 of 20 days' (figure 600 ink) and one tick 'Pending verification'. Note 13 ink-3 'We check every run within a day. The tick doubles once it’s verified.' One primary 'Got it', full width, 44.
+- **Anatomy:** the kit Dialog, celebration variant, size sm (320), dim scrim, no close button. Badge 56 round, `--v2-blue-tint` with one tick 28 in `--v2-blue-ink` (the badge's colour; the tick inherits it instead of StatusTick's pending ink-4). One of the two blue exceptions to the neutral pending tone (section 03). Title 20/600 ink. Sub 13 ink-3 (Day 20 only). DayBar without legend, then one count line 13: '7 of 20 days' (figure 600 ink) and one tick 'Pending verification'. Note 13 ink-3 'We check every run within a day. The tick doubles once it’s verified.' One primary 'Got it', full width, 44.
 - **Variants (copy is the PM's, `worker_day_done.jsx:91-93`):** job 'Today’s run is done.'; nojob 'No paid job today, but your run counts.'; day20 'Day 20 done.' + 'That’s every day for this month.' Failed and skipped have no moment: the run card and the worker card say those, with their action.
 - **Sizes:** Dialog sm, 320.
 - **States:** open (job, nojob, day20); dismissed by Got it, Esc or the scrim. In V2: `?day=next&end=job`, `?day=next&end=nojob`, `?day=next&end=day20`; the Preview panel's Day end row.
@@ -2382,7 +2393,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 - **Motion:** the badge pops once over 450ms (`--v2-dur-celebrate`, site ease). Confetti only on Day 20: 12 fixed bits in blue, green and pale yellow, once, about 900ms; hidden entirely under reduced motion. No ring, no loop.
 - **Accessibility:** aria-modal, labelled by the title (it sits under the badge, so `labelledBy`); focus moves in, Tab stays inside, focus returns to where it was; the note is ink-3 (V2's was 2.54:1).
 - **Responsive:** centred in the window; fits the 640 compact height.
-- **Do / Don't:** Do keep pending blue with one tick until verified; say the count once; keep money off it (the days style ships). Don't paint a pending day green; don't celebrate every day; don't loop animation.
+- **Do / Don't:** Do keep the badge blue with one tick and the count line's tick neutral until verified (section 03); say the count once; keep money off it (the days style ships). Don't paint a pending day green; don't celebrate every day; don't loop animation.
 
 ## 45 Job preview
 
@@ -2486,7 +2497,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 - **Variants:** Covered line: "Enough for today's run", "Not enough for today's run", "Today's run can't start until credits refresh", "Today's run is done" (when runDone).
 - **Sizes:** Full width of its container.
 - **States:** Full; partial; low (less than one run); empty; empty with today's run already done; refreshed (rail full, caption "Refreshed"). Not in V2: it is the unshipped comparison idea (credits_page_options.jsx:147-170, `credits-popup-options.html`).
-- **Props:** `balance`, `grant`, `runCost`, `refillAt` (Date or ms; default the next 00:00 UTC), `now` (freezes the clock), `runDone`, `refreshed`, `className`.
+- **Props:** `balance`, `grant`, `runCost`, `refillAt` (Date or ms; default the next 00:00 UTC), `now` (freezes the clock), `runDone`, `refreshed`, `figure` (default true; false, under a StatCard that already shows the balance, makes the caption "of 2,000 today" and keeps aria-valuetext whole), `className`.
 - **Motion:** Fill width 240ms `--v2-ease-out`; the countdown text ticks once a second and stops at zero. Reduced motion: the global rule removes the width transition.
 - **Accessibility:** role=meter with aria-valuemin 0, aria-valuemax grant, aria-valuenow balance and aria-valuetext "1,250 of 2,000 left today". The covered line is text, not colour. Caption ink-4 is 4.77:1 (meta only); the consequence sits in the ink-2 line.
 - **Responsive:** Caption halves wrap to two lines below about 260px.
@@ -2508,28 +2519,22 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 
 ## 48 Out of credits
 
-**Status:** Changed from V2 (OutOfCreditsDialog); New (zero-credits notice and run end).
-**Why:** Every zero-balance moment must say the same time and what zero means for today's day (R14). In V2 the popup counts down (byok.jsx:66) while the chat says "refreshed tomorrow" twice (chat_bubbles.jsx:188, 189), the main chat reveals zero only after Send (chat_product.jsx:124), and nothing says whether the day still counts. The popup's copy is right and stays; its chrome joins the one Dialog.
+**Status:** Changed from V2 (out-of-credits popup, retired); New (zero-credits notice and run end).
+**Why:** Every zero-balance moment must say the same time and what zero means for today's day (R14). In V2 the popup counts down (byok.jsx:66) while the chat says "refreshed tomorrow" twice (chat_bubbles.jsx:188, 189), the main chat reveals zero only after Send (chat_product.jsx:124), and nothing says whether the day still counts.
 
-### OutOfCreditsDialog (Changed from V2)
-- **Purpose:** Stop a send at zero, say when credits return, what today means, and what credits are. Dismiss only: there is nothing to buy.
-- **Anatomy:** `V2Kit.Dialog` variant task, size sm (320): header title "Out of credits" 20/600 with the close button; body left-aligned: credits glyph 24 + "0" 40/600 ink (tracking -0.03em); V2's two lines 13 ink-2, kept word for word: "You’ve used all of today’s AI credits." / "Credits will be refreshed in **6h 42m**." (countdown 600 ink, nowrap); the day line 13/500 ink (Proposed copy); "What are AI credits?" trigger (info 16 + 13/500 ink-3, 32px target) opening `V2Kit.Tooltip` kind info with V2's explainer and Learn more; actions: Got it, primary, full width, 44.
-- **Variants:** Out of credits; refreshed: title "New credits are here", "2,000", "You have 2,000 AI credits for today." (copy from the unshipped comparison page, credits_popup_options.jsx:29-30).
-- **Sizes:** Dialog sm only.
-- **States:** Open (6h 42m); countdown under a minute ("42s"); refreshed (the countdown reached zero while open). V2: `index.html?start=worker&credits=0`, type in the composer, press Send. V2 has no refreshed state and no keyboard handling.
-- **Props:** `open`, `onClose`, `refillAt` (default next 00:00 UTC), `now`, `dayStatus` ('covered' | 'waiting' | 'stopped', from the Worker record), `grant`, `preview` (guide only), `className`.
-- **Motion:** The Dialog's own: scale-in 320ms, exit 240ms, none under reduced motion.
-- **Accessibility:** role=dialog, aria-modal, focus moves to Got it and returns to the opener; Esc, the close button and the scrim close it. The (i) has a visible name instead of a 22px bare icon. 13px ink-2 body 10.6:1.
-- **Responsive:** 320 wide inside the 419 window; the overlay is absolute against AppFrame, never the page.
-- **Do / Don't:** Do keep V2's two lines exactly. Do state the day line from the Worker record. Don't add a top-up or "earn credits" action. Don't paint the 0 in the gradient.
+### Out-of-credits popup (retired) (Changed from V2)
+- **Purpose:** none left. V2 lets the partner type at zero, then stops the send with a popup. The system locks the composer at zero and says so before anyone types (section 38), so the moment the popup answered never happens and there is no dialog to dismiss or buy from.
+- **V2 today:** `index.html?start=worker&credits=0`, type in the composer, press Send. Width 300, radius 12, its own scrim rgba(15,23,42,0.5) at z 130, backdrop click only, no role, focus never moves in (byok.jsx:78-80); a gradient 38/800 zero (byok.jsx:51); an unlabelled 22px (i) "What are credits?" (credits_popup_parts.jsx:94); "You’ve used all of today’s AI credits." / "Credits will be refreshed in **6h 42m**." (byok.jsx:65-66).
+- **Where its parts went:** the time and the day line to the composer notice (below); the explainer to the AI credits screen (section 66), which reads `V2Kit.OOC_COPY.explain`; the refreshed moment to the AI credits screen's success banner.
+- **Do / Don't:** Do lock the field before anyone types. Don't reveal zero only after Send. Don't add a top-up or "earn credits" action.
 
-**Proposed copy (day line, pending D6):** covered "Today’s run isn’t affected." / waiting "Today’s run can’t start until then." / stopped "Today’s run stopped, so today won’t count." The PM confirms whether a run stopped for credits loses the day.
+**Proposed copy (day line, pending D6):** covered "Today’s run isn’t affected." / waiting "Today’s run starts once they’re back, so today can still count." / stopped "Today won’t count toward your 20 days." The PM confirms whether a run stopped for credits loses the day.
 
-**Explainer:** "BlueAI runs on credits. Every job and chat uses some. You get limited credits each day, enough for 4 to 5 jobs." (credits_popup_parts.jsx:105, PM approved). It was written beside a 2,500 grant; at 2,000 it holds while a job costs 400 or less (fixture 360). PM to confirm.
+**Explainer (proposed):** "Your daily run and your chats use AI credits. You get a fresh set every day, enough for today’s run with room to chat." (`OOC_COPY.explain`), built around the daily run rather than a count of jobs: V2's approved line, "enough for 4 to 5 jobs" (credits_popup_parts.jsx:105), was written beside a 2,500 grant and holds at 2,000 only while a job costs 400 or less.
 
 ### Zero-credits notice and run end (New)
 - **Purpose:** Say zero before anyone types, and close a run that stopped for credits, with the same time and the day status.
-- **Anatomy:** Composer variant: `V2Kit.ComposerNotice` tone neutral, clock 16, "Out of AI credits until **5:30 am tomorrow**." + day line. Run variant: x-circle 16 in `--v2-danger-ink`, day line 13/500 ink, then "AI credits refresh at 5:30 am tomorrow, in 6h 42m." 12 ink-4.
+- **Anatomy:** Composer variant: `V2Kit.ComposerNotice` tone neutral, clock 16, "Out of AI credits until **5:30 am tomorrow**." + day line. This section owns the zero-credits wording (`V2Kit.OOC_COPY`); the composer (38), RunCard (36) and the guide read it. Run variant: x-circle 16 in `--v2-danger-ink`, day line 13/500 ink, then "AI credits refresh at 5:30 am tomorrow." 12 ink-4, a fixed local time, never a ticking countdown. In Chat each fact is said once: the run's end carries the day line only (`OOC_COPY.day`), the notice says until when, and the locked field's placeholder is neutral ("You can’t send messages right now").
 - **Variants:** `composer`, `run` (RunCard's out-of-credits end, section 36).
 - **Sizes:** Full width of the composer or the card.
 - **States:** Composer, run covered; composer, run still to come; run ended for credits. V2: Preview row "Scheduled job: Out of credits" (chat tab, signed in) plays the run that dies; its placeholder says "BlueAI is out of credits until tomorrow..." (chat_product.jsx:278).
@@ -2584,7 +2589,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 
 ### AiModePanel (Changed from V2)
 - **Purpose:** Choose where AI runs: Cloud (default) or Hybrid on the partner's PC, so tasks use fewer AI credits.
-- **Anatomy:** SettingsSection "AI mode" / "Choose where AI processing happens."; `V2Kit.RadioCard` Cloud ("Default. Uses cloud AI.") and Hybrid ("Runs on your PC and uses fewer AI credits."), Hybrid pending while picked but not active; body by status: pending text + "Additional files of 3 to 4 GB are required to enable Hybrid mode." 13/500 ink + Download and turn on (primary sm, download icon); ProgressBar size 6 ("Downloading Hybrid AI…" 42%, "Installing Hybrid AI…" sliding) + "Cloud mode is still available." + Cancel download (quiet); "Hybrid status" row + Badge; Banner for conflict (neutral, alert icon) or failure (danger) with Try again as its action; a link "Use my own local model instead" (endpoint + model name TextFields, Apply).
+- **Anatomy:** SettingsSection "AI mode" / "Choose where AI processing happens."; `V2Kit.RadioCard` Cloud ("Default. Uses cloud AI.") and Hybrid ("Runs on your PC and uses fewer AI credits."), Hybrid pending while picked but not active; body by status: pending text + "Additional files of 3 to 4 GB are required to enable Hybrid mode." 13/500 ink + Download and turn on (primary sm, download icon); ProgressBar size 6 ("Downloading Hybrid AI…" 42%, "Installing Hybrid AI…" sliding) + "Cloud mode is still available." + Cancel download (quiet); "Hybrid status" row + Badge; Banner for conflict (`offline` tone, the Banner's neutral one, with the `alert` icon) or failure (danger) with Try again as its action; a link "Use my own local model instead" (endpoint + model name TextFields, Apply).
 - **Variants:** method auto (BlueAI's own model, default) or custom (your local model endpoint).
 - **Sizes:** Full width.
 - **States:** Cloud; Hybrid pending; downloading; installing; on; on with another local model running; download failed; couldn't start; paused; hardware not supported (Hybrid disabled with its reason "This PC doesn’t meet the requirements for Hybrid. Cloud mode will be used."); own local model. V2: Settings tab, Hybrid then Auto (modal) for the happy path; Preview rows "Hardware: No" and "AI conflict: Detected"; nothing in V2 sets download failed, couldn't start or paused (ai_mode.jsx:300).
@@ -2671,7 +2676,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 - **Purpose:** decide, by what an action costs, whether to confirm, say the cost on the control, or act and offer Undo.
 - **Anatomy (the decision table):**
   1. Costs today's day (skip today's job, pause today's run, quit, stop a paid run): say the cost on the control before the choice ("Skip: today won’t count", proposed copy); confirm if it cannot be taken back today.
-  2. Costs account control or money (sign out, disconnect YouTube, turn on Automatic): AlertDialog. The title is the question with the object; the body says what changes and how to undo it; the primary names the action.
+  2. Costs account control or money: sign out and disconnect YouTube use an AlertDialog; turning on Automatic uses the ConsentDialog (section 46: Dialog `consent` variant, md, with Close, a scrim click does nothing, the primary is the agreement "I agree, turn on"). Either way the title is the question with the object, the body says what changes and how to undo it, and the primary names the action.
   3. Cannot be undone (delete my data, leave the program): AlertDialog with a danger primary named for the action.
   4. Cheap and reversible (remove my own key, disconnect Telegram, dismiss a notification): do it at once, then a Toast with Undo for 6 s; commit when the toast leaves.
   5. A switch only turns something on or off; it never deletes, signs out or costs a day as a side effect.
@@ -2680,9 +2685,9 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 - **States:** confirm, busy (primary loading; Esc, scrim and Cancel held), done (toast), undone (toast "Key restored.").
 - **Props:** `Dialog {variant: 'alert', title, description, actions, busy}`; `Toast {tone, title, action: {label: 'Undo', onClick}}`.
 - **Motion:** dialog scale-in 320 ms, leaves 240 ms ease-in; toast rises 180 ms.
-- **Accessibility:** `role=alertdialog`, focus on the first action, focus back to the opener on close; Undo is a real button and the toast timer pauses on hover and keyboard focus.
+- **Accessibility:** `role=alertdialog`, focus on Cancel (the first action, the safe answer; section 09), focus back to the opener on close; Undo is a real button and the toast timer pauses on hover and keyboard focus.
 - **Responsive:** dialogs centre in the window, compact 640 included.
-- **Copy (proposed):** "Sign out of BlueAI?" / "Your worker pauses until you sign in again, and days don’t count while it’s paused." / Cancel, Sign out (primary, not danger). "Disconnect YouTube?" / "Your worker can’t run YouTube jobs until you connect it again, so today won’t count. Your days so far are kept." / Cancel, Disconnect (danger). "Key removed." + Undo.
+- **Copy:** each destructive confirm's strings have one owner, `V2Screens.CONFIRM_COPY` in `screens/settings.jsx` (`signOut(email)`, `disconnect(handle)`, `leave(handle, endsOn)`, `deleteData()`), and this section and the screens read them from it: sign out, section 64 ("Sign out?", Cancel / Sign out, primary not danger); disconnect YouTube, section 63 ("Disconnect YouTube?", Cancel / Disconnect, danger); delete my data and leave the program, on Account (section 64) as danger AlertDialogs. Removing your own key: section 49 ("{provider} key removed" + Undo). Proposed copy, the PM to approve.
 - **Do / Don't:** Do name the primary for what it does; say what is kept as well as what is lost; prefer Undo to a question when the action is cheap. Don't use "Are you sure?" as the whole message; don't paint a reversible action red; don't let a switch delete data.
 
 ## 53 Consent
@@ -2698,7 +2703,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
   1. Program Terms: blocking Sheet on first run (`V2Screens.TermsSheet`); the button is the agreement ("Agree and continue"); re-asked in full on every terms change. Records account ID, time, terms version, IP and the exact copy, server-side. Seen under Account and privacy > Agreements; withdrawing means leaving the program, from the same place.
   2. Automatic, per app: the kit ConsentDialog ("Run YouTube jobs automatically?" / "I agree, turn on"), asked every time it is turned on. Records app, time and copy version, server-side (V2 keeps only a time in localStorage, `agent_permissions.jsx:76`). Changed back in Settings > Worker or Connected apps, at once and without a question.
   3. Access to watch history: the kit PermissionRequest in setup, Allow or Not now (the worker still runs on Not now). Turned off in Connected apps > YouTube > Watch history.
-  4. Windows notifications: Windows asks the first time; per event in Settings > Notifications.
+  4. Windows notifications: Windows asks the first time; two switches in Settings > Notifications (section 61) turn off the job-waiting and run-ends notifications; section 54 lists which events each covers and which always notify.
 - **Wording rules:** agree to contracts, acknowledge notices (the Privacy Policy and Cookie Policy are never agreed to); no checkbox before the button; say what changes before the button and where to turn it off; cookie consent is the site banner's job, never part of the terms.
 - **The terms sheet:** kit Sheet `blocking`, the dim veil `--v2-scrim`, radius 16 top, title 20/600 ink, the consent line 14 ink-2 with underlined ink links (new tab, announced), one primary lg full button "Agree and continue". Copy is legal's and the PM's, verbatim (`terms_sheet.jsx:61-84`).
 - **Variants:** firstrun ("Before you start"); update ("Updates to our Terms of Use"; the document names are data, not fixed copy).
@@ -2720,25 +2725,26 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 
 - **Purpose:** reach a partner who is not watching, by urgency, with one record for everything.
 - **Anatomy (channels):**
-  1. Windows notification: a pointer for a partner not looking at BlueAI. A click opens the entry's own place (the job preview, the run card with Try again, Activity, Earnings), never a cold home. It stays in the Windows action centre.
+  1. Windows notification: a pointer for a partner not looking at BlueAI. A click opens the entry's own place (for a waiting job, the job ask in Chat, Chat waiting, the same destination section 60 names; the run card with Try again; Activity; Earnings), never a cold home. It stays in the Windows action centre.
   2. Taskbar attention: a finite flash while something waits for an answer (job waiting, run failed).
   3. Notifications, the inbox (section 60): the record. Every event lands here, read or not. Pushed from the top bar's More menu.
   4. Badge: on Activity, the count of what needs the partner (a waiting job, a day not counted). Never on Home.
   5. In-app toast: confirms what the partner just did in this window. Never an event.
-- **Events (Windows title; when it expires):**
-  - Day done: "Today’s run is done." (V2, DRAFT); never.
-  - No job today: "Your run counts today." (V2); never.
-  - Job waiting (Always ask): "A paid YouTube job is waiting for your OK. Answer by 9 pm."; at the end of the run window, which closes the day as skipped. Also flashes the taskbar.
-  - Run failed: "Today’s job didn’t finish." (V2); at the end of the run window. Also flashes the taskbar.
-  - Day verified: inbox only.
-  - Day not counted: "Oct 12 wasn’t counted. See why."
-  - Program ending: "3 days left in this program."
-  - Cash out open: "Cash out is open on Earnings."
+- **Events (Windows title; when it expires; the Settings switch that turns its Windows notification off, section 61):**
+  - Day done: "Today’s run is done." (V2, DRAFT); never; "Today’s run ends".
+  - No job today: "Your run counts today." (V2); never; "Today’s run ends".
+  - Job waiting (Always ask): "A paid YouTube job is waiting for your OK. Answer by 9 pm."; at the end of the run window, which closes the day as skipped; "A paid job needs you". Also flashes the taskbar.
+  - Run failed: "Today’s job didn’t finish." (V2); at the end of the run window; "Today’s run ends". Also flashes the taskbar.
+  - Day verified: inbox only, so no switch.
+  - Day not counted: "Oct 12 wasn’t counted. See why."; always on (a lost day).
+  - Program ending: "3 days left in this program."; always on.
+  - Cash out open, only when the period has ended and `numbers().reachedMinimum` (section 41): "Cash out is open on Earnings."; always on.
+  - Cash out, under $10 (the period has ended, the minimum not reached): the inbox row says "This program has ended. You need $10 to cash out. Your balance carries over to the next period." (the last two sentences are the site's, `onblue/apply.html:2292-2293`); inbox only, no Windows notification. Never tell a partner under the minimum that cash out is open.
   - Terms updated: inbox only; the terms sheet asks on the next open.
-  Titles not marked V2 are proposed copy.
+  Titles not marked V2 are proposed copy. The two switches only silence the Windows notification; every event still lands in the inbox. Events marked always on cost or pay the partner, so no switch hides them.
 - **Variants:** pointer (Windows, taskbar), record (inbox row), count (badge), confirmation (toast).
-- **Sizes:** inbox rows are ListRows with a 20 icon; the badge is the BottomNav badge.
-- **States:** new (Badge info "New", counted), seen, actioned, expired (Badge neutral "Expired", not pressable, says what it cost: "No answer by 9 pm, so today didn’t count.").
+- **Sizes:** inbox rows are section 60's rows (it owns their anatomy); the badge is the BottomNav badge.
+- **States:** as section 60 draws them: unread (blue dot, 600 title, counted), read, actioned, expired (the waiting row turns into its result, 'Paid job expired' / 'No answer by 9 pm, so today didn’t count.', and still opens the run).
 - **Props:** none of its own. The inbox is `V2Screens.Notifications {items, state}`; the count is `BottomNav items[].badge`.
 - **Motion:** Windows draws its own notification; the taskbar flash is finite (seven times, then it holds); nothing in the app loops.
 - **Accessibility:** unread rows are announced as unread first; the badge is read as ", 2 new"; a Windows notification makes sense without opening the app.
@@ -2757,7 +2763,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 - **Anatomy (groups, in this order):**
   1. Worker: Always ask or Automatic per app, run window, pause until, start with Windows, interest profile.
   2. Connected apps: YouTube (account, watch history, Disconnect), Instagram (coming soon, no switch), Telegram.
-  3. Notifications: Windows notifications per event.
+  3. Notifications: two switches for Windows notifications, "A paid job needs you" and "Today’s run ends" (section 61); section 54 maps each event to its switch or to always on.
   4. BlueStacks: App Player status from the real check (not installed, signed out, connected as).
   5. Account and privacy: the signed-in account, the program, agreements, what BlueAI keeps, Sign out.
   6. Help: FAQ (opens the site), Report a problem.
@@ -2812,11 +2818,12 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 ### Home
 
 - **Purpose:** today at a glance, answered from the Worker record (section 41), with the one action that matters now.
-- **Anatomy:** inside `ScreenFrame` (AppFrame + TopBar + BottomNav, Home lit). ScreenHeader as the greeting: 'Hi, Alex' (the account's first name; 'Today' when there is none; no emoji, no second line). Then `.v2-screen-body` (padding 16 16 24, blocks 12 apart, the only part that scrolls): ProgramStrip (section 43), a Banner only for a program fact the card cannot say, WorkerCard (section 42), and one standalone Link 'Chat with BlueAI' (13/500, 32 target, left aligned). The top bar's run chip and credits come from `topBarProps(record)`: 'Next run 11 am', 'Running', 'Needs you', 'Day 7 of 20', 'Didn’t finish', 'Paused', 'Offline', 'Waiting for credits', 'All 20 days'.
-- **Variants:** one screen; the content changes with the record. The only Banner: info, '20 days are out of reach' + '8 days done and 9 days left before Nov 1.' (proposed; no money until decision D3).
+- **Anatomy:** inside `ScreenFrame` (AppFrame + TopBar + BottomNav, Home lit). ScreenHeader as the greeting: 'Hi, Alex' (the account's first name; 'Today' when there is none; no emoji, no second line). Then `.v2-screen-body` (padding 16 16 24, blocks 12 apart, the only part that scrolls): ProgramStrip (section 43), a Banner only for a program fact the card cannot say, WorkerCard (section 42), and one standalone Link 'Chat with BlueAI' (13/500, 32 target, left aligned). The top bar's run chip and credits come from `topBarProps(record)`, which maps the record to section 30's RUN_STATUS: 'Next run 11 am', 'Next run 9 am to 9 pm' (a run window), 'Runs later today' (Any time), 'Running', 'Needs you', 'Day 7 of 20' (the neutral pending dot until verified; green only for verified and complete), 'Not counted today', 'Didn’t finish', 'Paused', 'Offline', 'Waiting for credits', 'All 20 days done'. Activity carries the section 54 badge: a waiting job, a failed, stopped, missed or blocked run, and the latest day not counted (rejected); never Home.
+- **Variants:** one screen; the content changes with the record. The only Banner: info 'You can still reach 17 of 20 days' / '8 done, 9 left before Nov 1. Every day you run still counts.', only when `numbers().outOfReach` > 0 (proposed; the loss is said once, by the DayBar legend; no money until decision D3).
+- **Actions:** Run opens setup in Chat for a new partner (Chat 'setup') and starts today's run otherwise (Chat 'running'); Review job opens the waiting ask (Chat 'waiting'); a failed day's Try again opens Chat 'retrying'; offline Try again reconnects in place (`onReconnect`; without one, a toast 'Still offline. BlueAI keeps trying on its own.'); a blocked run's fix opens the place that fixes it (`onFix`).
 - **Sizes:** window 419 x 830, compact 640 (bars pinned, body scrolls). Content column 387.
 - **States (`state` prop, or derived from `worker`):** new (day 0: Set up card, coach mark under a dim scrim over the whole window), returning before today's run ('Next run today at 11 am.', Run now secondary), running (live step), waiting for you (deadline and cost, Review job primary), done today pending (one tick, no second Run), failed today (reason, Try again by 9 pm), paused, out of credits (refresh time), offline (what happens to today), program complete (Earnings), out of reach (the banner), loading (the worker-home skeleton: a title, the strip card, the worker card; never V2's five-card skill list, `chat_product.jsx:222`).
-- **Props:** `worker`, `state`, `loading`, `coaching` (force the coach on or off), `onNavigate(id)` (ids: `activity` from See why, `today` from Details and the run chip, `chat` from Review job, Try again and the link, `credits`, `notifications`, `account`, `report`, `sign-out`), `onRun`, `onRetry`, `onResume`, `onDismissCoach`, `compact`, `landmark` (false in specimens), `frame` (false: content only).
+- **Props:** `worker`, `state`, `loading`, `coaching` (force the coach on or off), `onNavigate(id, opts)` (ids: `activity` from See why, `today` from Details and the run chip, `chat` with `opts.state` from Run, Review job, Try again and the link, `credits`, `notifications`, `account`, `report`, `sign-out`), `onRun`, `onRetry`, `onReconnect`, `onResume`, `onFix`, `onDismissCoach`, `compact`, `landmark` (false in specimens), `frame` (false: content only).
 - **Motion:** none of its own. The coach mark rises once (section 42); skeleton shimmer stops under reduced motion.
 - **Accessibility:** the greeting is the screen's h1 and the focus target when the app returns to Home; the coach scrim is decorative (aria-hidden) and Okay, a scrim click or Run dismisses it; dismissal is stored on the record (`coachSeen`), never local state (`moneymaker_home.jsx:105`). Loading is `aria-busy` with a 'Loading your worker' status.
 - **Responsive:** at 640 the header and bars stay put and the column scrolls; nothing reflows sideways.
@@ -2826,9 +2833,12 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 
 - **Purpose:** the thread as a window onto the same Worker record; leaving it loses nothing.
 - **Anatomy:** ScreenHeader 'Chat' with Back (to Home) and a 32px IconButton 'New chat' (plus), moved out of V2's top bar (`index.html:341-346`). Thread (section 34) filling the height; today's run as one RunCard (section 36); a question as an AskCard (section 37); Composer (section 38) on the bottom edge with its notice slot. Home stays lit in the nav.
-- **Variants:** the job ask keeps the PM's words exactly: 'Paid job available', 'Watch the video and provide feedback.', 'Want me to take this one?', answers 'Yes, switch to Automatic' / 'Just this job' / 'Not now' (`worker_flow.jsx:50-51, 120-121`), plus the cost under the chips before the tap: 'Not now: Today won’t count toward your 20 days.' (proposed, R06).
+- **Variants:** `CHAT_STATES`: empty, setup, setupDone, running, waiting, done, failed, retrying, noCredits, automatic.
+  - Setup follows V2's order (`worker_flow.jsx:65-171`): the pitch, confirm @alexwatches, watch history (PermissionRequest, section 46), the run time, then paid jobs per app, Always ask first and Automatic only through ConsentDialog. It closes with ProgramSummary plus the D7 line: option A 'Your first run starts now, and today counts as day 1 once it’s verified.' (shown until the PM picks) or B 'Your first counted day is tomorrow, at your run time.'
+  - The job ask keeps the PM's words exactly: 'Paid job available', 'Watch the video and provide feedback.', 'Want me to take this one?', answers 'Yes, switch to Automatic' / 'Just this job' / 'Not now' (`worker_flow.jsx:50-51, 120-121`), and adds two proposed bullets (R07): the video, channel and length; what will be done, with the exact comment. The cost sits under the chips before the tap: 'Not now: Today won’t count toward your 20 days.' (proposed, R06).
+  - Any answer that turns Automatic on opens ConsentDialog first and answers only on 'I agree, turn on'; Cancel leaves the question waiting.
 - **Sizes:** as Home. Bubbles max 300 (section 35).
-- **States:** empty (EmptyState 'Chat with BlueAI' / 'Ask about today’s run, or tell your worker what to change.'), running (field read-only, Send becomes Stop), waiting (the ask, Stop asks first), done (run card + See run details), out of credits (OutOfCreditsNotice above a locked field 'Out of AI credits until 5:30 am'), Automatic on (ComposerNotice info: 'Automatic is on for YouTube. BlueAI takes paid YouTube jobs without asking.' + 'Change', V2's ribbon words, `agent_permissions.jsx:197-198`).
+- **States:** empty (EmptyState 'Chat with BlueAI' / 'Ask about today’s run, or tell your worker what to change.'), running (field read-only, Send becomes Stop), waiting (the ask), retrying (the second try, live), failed (Try again by 9 pm), done (run card + See run details). Stop asks first while running, retrying or waiting (Composer `costsDay`, section 38). Out of credits says each fact once: the RunCard 'Not enough credits for this job.' + `OOC_COPY.day`, the OutOfCreditsNotice above the field says until when, and the locked field's placeholder is neutral, 'You can’t send messages right now' (section 48). Automatic on (ComposerNotice info: 'Automatic is on for YouTube. BlueAI takes paid YouTube jobs without asking.' + 'Change', V2's ribbon words, `agent_permissions.jsx:197-198`).
 - **Props:** `worker`, `state`, `steps` (renderMessage shape), `onBack`, `onNewChat`, `onSend`, `onStop`, `onAnswer`, `onChangeMode`, `onOpenRun`, `onOpenCredits`, `onNavigate`, `compact`, `landmark`, `frame`.
 - **Motion:** the thread's own (smooth jump to latest, none under reduced motion).
 - **Accessibility:** the thread is a polite log; New chat and Back are labelled icon buttons at 32; the notice is tied to the field with aria-describedby.
@@ -2844,11 +2854,12 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 ### Activity
 
 - **Purpose:** one row per program day: date, result, whether it counted; the place to open a run and to dispute a day.
-- **Anatomy:** inside `ScreenFrame` with Activity lit. ScreenHeader 'Activity'. Body (padding 16 16 24, 12 apart): ProgramStrip (section 43, no See why here), Tabs 'This program' / 'Past' (full width, section 28), then a Card (padding none) of ledger rows, newest first. A row is a ListRow: a 96px date column ('Today', 'Oct 11'; 14/400 ink-3, tabular), the result (14/500 ink: 'Paid job done', 'Job skipped', 'No run'), and on the right the StatusTick with its word ('Verified' two ticks, 'Pending' one tick, 'Still checking', 'Not counted'). Rows are separated by a hairline. A rejected row puts its reason under the result and a standalone Link 'Report a problem' on its own line under the row (32 target; never inside the row).
+- **Anatomy:** inside `ScreenFrame` with Activity lit. ScreenHeader 'Activity'. Body (padding 16 16 24, 12 apart): ProgramStrip (section 43, no See why here), Tabs 'This program' / 'Past' (full width, section 28), then a Card (padding none) of ledger rows, newest first. A row is a ListRow read from the ledger row {date, outcome, status} through `V2Kit.dayWords`: words from its outcome, the tick from its status, so a no-job day says so, never 'Paid job done'. A 96px date column ('Today', 'Oct 11'; 14/400 ink-3, tabular), the result (14/500 ink: 'Paid job done', 'Job skipped', 'No run'), and on the right the StatusTick with its word ('Verified' two ticks, 'Pending' one tick, 'Still checking', 'Not counted'). Rows are separated by a hairline. A rejected row puts its reason under the result and a standalone Link 'Report a problem' on its own line under the row (32 target; never inside the row).
 - **Variants:** today's live row while the run is live: 'Run in progress' + Badge info busy 'Running'; 'Paid job waiting' + 'Answer by 9 pm or today won’t count.' + Badge attention 'Needs you'; 'Job didn’t finish' + 'Try again by 9 pm to count the day.' + Badge danger 'Not counted yet'. Past tab rows: program name, its dates, and 'n of 20 days' with a tick.
 - **Sizes:** row min 48, padding 12 16; date column 96; the window 419 x 830 or 640.
-- **States:** empty before day 1 (EmptyState 'No days yet' + 'Each run shows here with its verification: one tick while pending, two once verified.' + the next run time; before setup the one action 'Set up your worker'), mid-program (today pending, the rest verified), today in progress, rejected day, failed today, program complete (20 rows verified), Past tab with a past program, Past tab in the first program (EmptyState 'No past programs' / 'When this program ends, its days move here. Cash out happens on Earnings.'). All copy here is proposed except 'Today doesn’t count toward your 20 days.' (`worker_day_done.jsx:95`).
-- **Props:** `worker` (the record; rows come from `ledgerRows(worker)`), `state` (ACTIVITY_STATES), `tab` + `onTab`, `past` [{id, title, range, done, target}], `onOpenRun(row)` (rows with a run; default `onNavigate('run')`), `onReport(row)` (default `onNavigate('report')`), `onNavigate`, `compact`, `landmark`, `frame`.
+- **Opens (rowTarget):** a running or waiting run opens Chat at its card; a failed or stopped run opens Run detail in that state; any other row opens Run detail by its outcome, then its status; a day with no run (norun) is static. Report a problem opens `ReportProblemSheet` with about '<date> run' plus the reason, and the topic 'verification' (a day that wasn't verified). 'Set up your worker' opens Chat 'setup'.
+- **States:** empty before day 1 (EmptyState 'No days yet' + 'Each run shows here with its verification: one tick while pending, two once verified.' + the next run time; before setup the one action 'Set up your worker'), no job today (the day still counts), loading (`V2Screens.ListSkeleton`, the ledger's shape), error (`V2Screens.LoadError` 'Couldn’t load your days', with Try again), mid-program (today pending, the rest verified), today in progress, rejected day, failed today, program complete (20 rows verified), Past tab with a past program, Past tab in the first program (EmptyState 'No past programs' / 'When this program ends, its days move here. Cash out happens on Earnings.'). All copy here is proposed except 'Today doesn’t count toward your 20 days.' (`worker_day_done.jsx:95`).
+- **Props:** `worker` (the record; rows come from `ledgerRows(worker)`), `state` (ACTIVITY_STATES), `tab` + `onTab`, `past` [{id, title, range, done, target}], `onOpenRun(row)` (rows with a run; default `onNavigate(...V2Screens.rowTarget(row))`), `onReport(row)` (default: the sheet in place, from `V2Screens.reportAbout(row)`), `onRetry`, `onNavigate`, `compact`, `landmark`, `frame`.
 - **Motion:** none; the Running badge pulses under the global reduced-motion rule.
 - **Accessibility:** each row reads in order: date, result, tick word ('Oct 12 Paid job done, The comment was removed before we checked it., Not counted'); ticks never rely on colour; tabs are a real tablist (arrows, Home, End) with both panels in the DOM; Report a problem is a separate button.
 - **Responsive:** at 640 the strip and tabs scroll with the rows; long results wrap inside their column, the date column stays 96.
@@ -2863,16 +2874,15 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 ### RunDetail
 
 - **Purpose:** what the worker did in one run, the job and its exact comment, whether the day counted, and the credits it used.
-- **Anatomy:** pushed over Activity (also opened from Home's Details and the run chip); Activity stays lit. ScreenHeader 'Run details' with Back. Body (padding 16 16 24, 12 apart): RunCard (section 36) full width, steps open, no day line; JobPreviewCard receipt (section 45) when a paid job ran: video, channel, what was done, the exact comment; Verification card (radius 16, 1px line, padding 16): title 'Verification' 14/600, StatusTick 16 with its word, one sentence 13 ink-2, and on a rejected day 'Report a problem' (secondary md); Details card (padding none): 'Job mode' ('Always ask' / 'Automatic · YouTube') and, for a paid job, 'AI credits used' (360); a standalone Link 'Report a problem' under every run that was not rejected.
+- **Anatomy:** pushed over Activity (also opened from Home's Details and the run chip); Activity stays lit. ScreenHeader 'Run details' with Back. Body (padding 16 16 24, 12 apart): RunCard (section 36) full width, steps open, no day line; JobPreviewCard receipt (section 45) when a paid job ran: video, channel, what was done, the exact comment; it draws no tick (`verify={null}`: Verification says the day once) and offers 'Switch back to Always ask' only when the job ran on Automatic (`ranOn`); Verification card (radius 16, 1px line, padding 16): title 'Verification' 14/600, StatusTick 16 with its word, one sentence 13 ink-2, and on a rejected day 'Report a problem' (secondary md); Details card (padding none): 'Paid jobs', how this job ran ('Always ask' / 'Automatic'), and, for a paid job, 'AI credits used' (360); a standalone Link 'Report a problem' under every run that was not rejected.
 - **Variants:** the RunCard title says which run: 'Today’s run', 'Oct 11 run'. The day is said once, in Verification.
 - **Sizes:** window 419 x 830 or 640; cards full column width (387).
-- **States:** job done ('Pending verification' / 'We check every run within a day. One tick while pending, two once verified.'), no job (RunCard 'No paid job on the board today.', pending), skipped ('Not counted' / 'Today doesn’t count toward your 20 days.'), failed (RunCard reason 'App Player closed during the job.' + Try again; 'Not counted yet' / 'Try again by 9 pm to count the day.'), stopped (Run again; not counted), pending past a day ('Still checking' / 'This one is taking longer than a day. There is nothing to do; the day counts once it’s verified.'), verified ('Checked Oct 12, 7:02 am. Day 6 of 20 counts.'), rejected (reason in danger ink + Report a problem). Copy is proposed except the V2 lines cited.
-- **Props:** `worker`, `state` (RUN_STATES), `run` overrides {card, title, job, verify, text, checkedAt, reason, day}, `onBack`, `onRetry`, `onRunAgain`, `onReport`, `onChangeMode`, `onOpenCredits`, `onNavigate`, `compact`, `landmark`, `frame`.
+- **States:** job done ('Pending verification' / 'We check every run within a day. One tick while pending, two once verified.'), no job (RunCard 'No paid job on the board today.', pending), skipped ('Not counted' / 'Today doesn’t count toward your 20 days.'), failed (RunCard reason 'App Player closed during the job.' + Try again; 'Not counted yet' / 'Try again by 9 pm to count the day.'), stopped (Run again; not counted), pending past a day ('Still checking' / 'This one is taking longer than a day. There is nothing to do; the day counts once it’s verified.'), verified ('Checked Oct 12, 7:02 am. Day 6 of 20 counts.'), rejected (reason in danger ink + Report a problem), out of credits ('Not counted' / 'The run stopped when AI credits ran out, so today doesn’t count.'; decision D6 may change it), loading (the run card's shape), error (`V2Screens.LoadError` 'Couldn’t load this run', with Try again). Report a problem opens the sheet with this run attached (`V2Screens.reportAbout`). Copy is proposed except the V2 lines cited.
+- **Props:** `worker`, `state` (RUN_STATES: done, nojob, skipped, failed, stopped, nocredits, pending, verified, rejected, loading, error), `run` overrides {card, title, job, taken 'ask' | 'auto', verify, text, checkedAt, reason}, `row` (the ledger row it was opened from: its date names the run and its status decides Verification), `onBack`, `onRetry`, `onRunAgain`, `onReport`, `onChangeMode`, `onOpenCredits`, `onNavigate`, `compact`, `landmark`, `frame`.
 - **Motion:** none of its own; the RunCard's disclosure follows the global reduced-motion rule.
 - **Accessibility:** Verification and Details are labelled sections; the tick is always paired with its word; the rejected reason uses danger ink at 5.4:1 on white; every action is 32 or taller.
 - **Responsive:** at 640 the header stays and the cards scroll.
 - **Do / Don't:** Do say the day once, with the reason when it did not count; show the exact comment that went out; keep the run after the chat moves on. Don't repeat the day line in the RunCard; don't drop Report a problem from runs that counted; don't show money before decision D3.
-- **Known gap:** JobPreviewCard's receipt always offers 'Ask me first next time'; on an Always ask run it should not render (kit, section 45).
 
 ## 60 Notifications
 
@@ -2884,10 +2894,11 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 
 - **Purpose:** the record of everything the worker told the partner, with what is still unread, each row opening the place to act.
 - **Anatomy:** pushed from the top bar's More menu; the tab the partner came from stays lit. ScreenHeader 'Notifications' with Back and, only while something is unread, a quiet md Button 'Mark all read'. Tabs 'All' / 'Unread' with counts (full width). A Card (padding none) of ListRows: a 32px round sunken disc with the event's glyph 16 in its tone (attention, success, danger, ink-3) and an 8px blue dot at its top right when unread; the title (14, 600 unread, 500 read, ink); one line (13 ink-3); the time on the right (12 ink-3: '11:04 am' today, 'Oct 11' before).
-- **Variants (rows, proposed copy):** job waiting: 'Paid YouTube job waiting for your OK' / 'Answer by 9 pm or today won’t count.' (opens the chat); expired: 'Paid job expired' / 'No answer by 9 pm, so today didn’t count.'; verified: 'Oct 11 run verified' / 'Day 6 of 20.'; done: 'Run done' / 'Day 6 of 20, pending verification.'; failed: 'Job didn’t finish' / 'App Player closed during the job.' (V2 reason). Rows are written to last: the toast's 'Today’s run is done.' is right for 8 seconds and wrong in a list tomorrow, so a row keeps the event and the day count, and the date goes on the right.
+- **Variants (rows, proposed copy):** job waiting: 'Paid YouTube job waiting for your OK' / 'Answer by 9 pm or today won’t count.' (opens the job ask in Chat, Chat waiting, the destination section 54 names); expired: 'Paid job expired' / 'No answer by 9 pm, so today didn’t count.'; verified: 'Oct 11 run verified' / 'Day 6 of 20.'; done: 'Run done' / 'Day 6 of 20, pending verification.'; failed: 'Job didn’t finish' / 'App Player closed during the job.' (V2 reason). Rows are written to last: the toast's 'Today’s run is done.' is right for 8 seconds and wrong in a list tomorrow, so a row keeps the event and the day count, and the date goes on the right.
 - **Sizes:** row min 48, padding 12 16; window 419 x 830 or 640.
-- **States:** empty (EmptyState 'No notifications yet' / 'Your worker tells you here when a run is done, a job needs your OK, or a day is verified.'), with unread, all read (Mark all read gone), expired job ask (the waiting row turns into its result), Unread tab with nothing unread (EmptyState 'Nothing unread' / 'You’ve seen everything your worker sent.'). Opening a row marks it read.
-- **Props:** `items` [{id, kind: ask | expired | done | verified | failed | nojob | rejected, title, body, time, unread, target}], `state` (NOTIFICATION_STATES), `tab`, `onOpen(item)` (default `onNavigate(item.target)`: `chat` or `run`), `onMarkAllRead`, `onBack`, `parentTab`, `worker` (for the top bar), `onNavigate`, `compact`, `landmark`, `frame`.
+- **States:** empty (EmptyState 'No notifications yet' / 'Your worker tells you here when a run is done, a job needs your OK, or a day is verified.'), with unread, all read (Mark all read gone), expired job ask (the waiting row turns into its result), Unread tab with nothing unread (EmptyState 'Nothing unread' / 'You’ve seen everything your worker sent.'), loading (`V2Screens.ListSkeleton`, 'Loading notifications'), error (`V2Screens.LoadError`, 'Couldn’t load your notifications' with Try again). Opening a row marks it read.
+- **Props:** `items` [{id, kind: ask | expired | done | verified | failed | nojob | rejected, title, body, time, unread, target, run}], `state` (NOTIFICATION_STATES: empty, unread, read, expired, unreadTab, loading, error), `tab`, `onOpen(item)` (default: a `chat` row opens the waiting ask in Chat; a `run` row carries `run` {date, outcome, status}, its ledger row, and opens `V2Screens.rowTarget(run)`, the day as it stands now, section 58), `onMarkAllRead`, `onBack`, `onRetry`, `parentTab`, `worker` (for the top bar), `onNavigate`, `compact`, `landmark`, `frame`.
+- **Count in the chrome:** what needs the partner reaches the chrome as the Activity badge (ScreenFrame, section 54); the More menu carries no badge, and the unread count itself is this screen's Unread tab.
 - **Motion:** none.
 - **Accessibility:** unread is said first ('Unread: Paid YouTube job waiting for your OK'), never by the dot or weight alone; the disc is decorative; tabs are a real tablist with counts that never change their width; in forced colours the dot draws in CanvasText.
 - **Responsive:** at 640 header and tabs stay with the bars; rows scroll.
@@ -2903,7 +2914,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 - **Anatomy:** `ScreenHeader` "Settings" (20/600, no Back: a tab root). Then `SettingsSection` cards, 12 apart on the 16 gutter, in this order:
   1. **Worker**: one nav `ListRow` "BlueAI worker", leading calendar 16 (pause 16 when paused), description from the Worker record ("Runs daily at 11 am. Paid jobs: Always ask." or "Paused until Oct 16. Paused days don’t count."), `Badge` neutral "Paused" only when paused. Pushes Worker settings (62).
   2. **Connected apps**, description "The accounts BlueAI uses for you.": `V2Screens.ConnectedAppRows` (63): YouTube (handle · mode, Badge Connected / Signed out / Not connected), Telegram, Instagram (static, Badge "Coming soon"). Each live row pushes that app's detail.
-  3. **Notifications**: two control rows, `ListRow` + `Switch`: "A paid job needs you" / "A job you don’t answer by 9 pm doesn’t count for today."; "Today’s run ends" / "Done, or stopped with a way to try again." (Proposed copy).
+  3. **Notifications**: two control rows, `ListRow` + `Switch`: "A paid job needs you" / "A job you don’t answer by 9 pm doesn’t count for today."; "Today’s run ends" / "Done, or stopped with a way to try again." (Proposed copy). They turn off the Windows notification for exactly the events section 54 maps to them (job waiting; day done, no job today, run failed). A day not counted, the program ending and cash out always notify, and every event still lands in the inbox, so there is no third switch.
   4. **BlueStacks**: one row "BlueStacks App Player", mark = monitor 16 on a 32 sunken disc. Connected: V2's "To switch, open BlueAI from another instance." + `Badge` success "Connected". Signed out: "App Player isn’t signed in to YouTube. Sign in there so today’s run can start." + `Button` secondary sm "Open App Player". Not installed: "Not installed. BlueAI runs your jobs inside App Player, so today’s run can’t start without it." + `Button` primary sm "Get BlueStacks".
   5. **Account and privacy**: one nav row, `Avatar` 32 + name + email. Pushes Account (64).
   6. **Help**: "FAQ" (external row, opens the site in the browser) and "Report a problem" (opens the sheet, 65).
@@ -2911,7 +2922,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 - **Variants:** One screen. The BlueStacks row has three variants (connected, signed out, not installed) bound to the worker's preflight (R13), never a fixed claim.
 - **Sizes:** The 419 window, content 387 wide; full 830 or compact 640 (the content band scrolls, bars stay pinned).
 - **States:** Default; Advanced open; BlueStacks not installed; BlueStacks signed out; a section highlighted after routing (blue edge + ring for 1900ms, value unchanged); worker paused; Report a problem sheet open. V2: `index.html?start=worker`, then Settings in the nav.
-- **Props:** `worker`, `state` ('default' | 'advanced' | 'no-bluestacks' | 'report'), `bluestacks` ('connected' | 'not-installed' | 'signed-out'), `telegram` ('linked' | 'not-linked'), `highlight` (section id), `onNavigate(id, opts)`, `frame`, `compact`, `landmark`, `preview` (guide). Shares `V2Screens.AccountFrame` (AppFrame + TopBar + BottomNav, Settings lit) with sections 62 to 66.
+- **Props:** `worker`, `state` ('default' | 'advanced' | 'no-bluestacks' | 'report'), `bluestacks` ('connected' | 'not-installed' | 'signed-out'), `telegram` ('linked' | 'not-linked'), `highlight` (section id), `onNavigate(id, opts)`, `onReport` (the host's Report a problem; without it Settings opens its own sheet), `frame`, `compact`, `landmark`, `preview` (guide). Settings, Worker, Connected apps, Account, Help and AI credits sit in `V2Screens.ScreenFrame`, the one frame for every signed-in screen, inside one `.v2-acct` column, and every chrome event reaches `onNavigate(id, opts)`; the lit tab follows section 32's rule: Settings for this screen and the screens it pushes (62 to 65), the tab you came from for AI credits (66), which only the top bar opens.
 - **Motion:** None of its own. Routing scrolls the section into view (instantly under reduced motion); the kit's row and disclosure transitions only.
 - **Accessibility:** One h1, one h2 per section. Nav rows are buttons or links with a visible focus ring; the FAQ row says "(opens in your browser)". Switches carry their row's label as their name. Every control is at least 32px tall. Body 14 ink, descriptions 13 ink-3 (6.0:1 on white).
 - **Responsive:** One column; long descriptions wrap; badges and buttons never shrink.
@@ -2927,11 +2938,11 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 ### WorkerSettings (New)
 - **Purpose:** Settings > Worker. Turn daily runs off for a while (and know what it costs), choose Always ask or Automatic per app, set when the run happens, and see the interest profile jobs are picked from.
 - **Anatomy:** `ScreenHeader` "Worker" with Back (Settings stays lit; the consent dialog's own note says "Settings > Worker"). Four `SettingsSection` cards:
-  1. **Runs**: `ListRow` "Daily runs" + `Switch`. On: `nextRunText` ("Next run today at 11 am."). Off: "Paused until Oct 16. Paused days don’t count toward your 20 days." Turning it off opens the pause `Dialog` (task, md) "Pause daily runs?": the cost from `numbers()` ("Days you pause don’t count toward your 20 days. You need 13 more, and 18 days are left."), then `Select` "Pause until" (Tomorrow, Oct 14 / Oct 16 / Oct 20 / Until I turn them back on); actions Keep running / Pause (primary). Turning it on resumes at once.
+  1. **Runs**: `ListRow` "Daily runs" + `Switch`. On: `nextRunText` ("Next run today at 11 am."). Off: "Paused until Oct 16. Paused days don’t count toward your 20 days." Turning it off opens the pause `Dialog` (task, md) "Pause daily runs?": the cost from `numbers()`, computed for the date picked ("Pausing until Oct 20 skips 7 days. You’d have 11 left for the 13 you need, so 20 days would be out of reach."; for "Until I turn them back on": "Days you pause don’t count toward your 20 days. You need 13 more, and 18 days are left."), then `Select` "Pause until" (Tomorrow, Oct 14 / Oct 16 / Oct 20 / Until I turn them back on); actions Keep running / Pause (primary). Turning it on resumes at once. Then `ListRow` "Start BlueAI with Windows" + `Switch` (on): "If it’s off, runs skip after a restart until you open BlueAI." (so tomorrow's run survives a PC restart, section 29).
   2. **Paid jobs**, description "Choose for each app whether BlueAI asks before every paid job.": `ModeRows` (section 46), full-bleed. Picking Automatic opens `ConsentDialog` first and applies only on "I agree, turn on"; Always ask applies at once. Instagram: "Coming soon", no control.
   3. **Daily run**, description "Changes start tomorrow if today’s run has already begun.": `RadioCard` list "A set time" ("BlueAI starts within that hour.") / "A window" ("BlueAI picks a different moment in it each day.") / "Any time" ("BlueAI picks the moment each day."); then one `Select` "Start at" (6 am to 10 pm, hourly) or two side by side, "From" and "To" (gap 8).
   4. **Interest profile**, description "Built from your watch history. BlueAI picks jobs that fit these topics.": `Chip` toggles with V2's four topics (worker_flow.jsx:85, names only): Tech & Smartphones, Automotive, Motivation & Finance, Entertainment; note 12 ink-3 "Turn a topic off and BlueAI stops picking jobs about it."
-  Every change confirms in a `Toast` ("Daily run set at 11 am.", "Automatic is on for YouTube.", "Daily runs paused.", "Daily runs are back on.").
+  Every change confirms in a `Toast` ("Daily run set at 11 am.", "Automatic is on for YouTube.", "Daily runs paused.", "Daily runs are back on.", "BlueAI starts with Windows.", "BlueAI won’t start with Windows.").
 - **Variants:** One screen.
 - **Sizes:** The 419 window; content 387; selects full width or two equal columns.
 - **States:** Always ask everywhere (default); Automatic on YouTube; consent open; pause dialog open; paused until a date; editing the run window (A window, From 9 am, To 9 pm).
@@ -3028,7 +3039,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 - **Anatomy:** `ScreenHeader` "AI credits" (sentence case) with Back, pushed from the top bar's `CreditsChip` over the tab you came from (that tab stays lit). Then:
   - **Empty only:** `Banner` danger "Out of credits", V2's lines word for word: "You’ve used all of today’s AI credits." "Credits will be refreshed in **6h 42m**." (index.html:503-508; the countdown in `<strong aria-live="off">`).
   - **Refreshed only:** `Banner` success, dismissible, "New credits are here" / "You have 2,000 AI credits for today."
-  - `StatCard` "Left today": credits glyph 24 (the one gradient, section 08) + the figure 40/600 in ink; its action slot holds `CreditsMeter` (section 47) stretched to the card: the rail, "1,640 of 2,000 left today" and "Refreshes in 6h 42m", and the covered line ("Enough for today’s run" / "Not enough for today’s run" / "Today’s run can’t start until credits refresh" / "Today’s run is done").
+  - `StatCard` "Left today": credits glyph 24 (the one gradient, section 08) + the figure 40/600 in ink; its action slot holds `CreditsMeter` (section 47) stretched to the card: the rail, "of 2,000 today" (`figure={false}`: the stat above already says 1,640) and "Refreshes in 6h 42m", and the covered line ("Enough for today’s run" / "Not enough for today’s run" / "Today’s run can’t start until credits refresh" / "Today’s run is done").
   - **Own key instead of the figure:** `SettingsSection` "Running on your own key" / "No AI credits are used while this is on." with `Badge` success "On"; rows Provider, Model; nav row "Manage in Settings" (Settings, Advanced open, own key highlighted).
   - Explainer (no card, V2 copy kept): "BlueAI runs on credits" 14/600; "Every task and job BlueAI does uses credits." "You get limited credits for your daily tasks." 13 ink-3; `Link` external "Learn more" to the site's AI credits article (credits_popup_parts.jsx:13).
 - **Variants:** Allowance; own key.
@@ -3109,15 +3120,16 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
   4. update required: chip Paused "Update needed". EmptyState locked, icon download, "Update BlueAI to keep running" / "This version can’t run jobs anymore, so runs are paused. Update now and today can still count. It takes about a minute." + Update now.
   5. not in the program: no chip, no credits, no nav. EmptyState locked, icon user, "This account isn’t in the program" / "You’re signed in as {email}. BlueAI runs on the account you applied with." + Switch account, then "App Player will be signed out too." (V2's consequence line).
   6. program complete (Day 20 verified, period not over): chip "All 20 days done"; WorkerCard complete and ProgramStrip.
-  7. period ended, cash out open: no chip, no credits. EmptyState "This program ended on Nov 1" / "You finished 18 of 20 days. Cash out is open on the Earnings page." + Earnings (the one Earnings URL, opens the site).
-  8. between programs: no chip, no credits. EmptyState "No program running right now" / "The next one starts Dec 1. Your BlueAI worker starts again then, with nothing to set up." + Earnings as the quiet action.
+  7. period ended, cash out open (`numbers().reachedMinimum`, section 41): no chip, no credits. EmptyState "This program ended on Nov 1" / "You finished 18 of 20 days. Cash out is open on the Earnings page." + Earnings (the one Earnings URL, opens the site).
+  8. period ended, under the minimum (`reachedMinimum` false): no chip, no credits. EmptyState "This program ended on Nov 1" / "You finished 6 of 20 days. You need $10 to cash out. Your balance carries over to the next period." (the last two sentences are the site's, `onblue/apply.html:2292-2293`) + Earnings as the quiet action. Never "Cash out is open" to a partner who cannot.
+  9. between programs: no chip, no credits. EmptyState "No program running right now" / "The next one starts Dec 1. Your BlueAI worker starts again then, with nothing to set up." + Earnings as the quiet action.
 - **Sizes:** the 419 window; compact 640 keeps the bars pinned and centres the content.
 - **States:** each variant; busy on its primary (Try again, Update now, Switch account: spinner in the button, label kept, `aria-busy`).
-- **Props:** `SystemStates {state, worker, busy, compact, reduced, preview, landmark, onRetry, onReport, onUpdate, onRestart, onSwitch}`; `SYSTEM_STATES` lists the keys and labels in order.
+- **Props:** `SystemStates {state, worker, busy, compact, reduced, preview, landmark, onRetry, onReport, onUpdate, onRestart, onSwitch}`; `SYSTEM_STATES` lists the keys and labels in order (`period-ended` and `period-under` are the two period-ended variants). The top bar labels here are section 30's chip labels.
 - **Motion:** the EmptyState rises once (180 ms); nothing loops.
 - **Accessibility:** the EmptyState title is the h1; error is `role=alert`, the update banner `role=status`; every primary has a 36 target and a verb label.
 - **Responsive:** one column at any height.
-- **Do / Don't:** Do keep the top bar; say what the state means for today's run or the 20 days; offer exactly one next step. Don't show a blank window or a wordless spinner; don't blame the partner's connection for a service problem; don't show money the program has not decided (D3).
+- **Do / Don't:** Do keep the top bar; say what the state means for today's run or the 20 days; offer exactly one next step. Don't show a blank window or a wordless spinner; don't blame the partner's connection for a service problem; don't show money the program has not decided (D3; the $10 cash-out minimum is decided, both D3 options carry it); don't tell a partner under the minimum that cash out is open.
 
 # Copy and voice
 
@@ -3133,14 +3145,15 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 - **Anatomy (term: use; never):**
   - BlueAI: the product and brand on screen; never onBlue (internal), "BlueAI Worker v57".
   - BlueAI worker (lowercase worker): the thing that runs, pending D2 (worker or agent); never BlueAI Worker, AI worker, MoneyMaker, skill, blueai-worker, agent (until D2).
-  - job, paid job: one paid unit of work; never task (for paid work), campaign, gig, opportunity.
+  - job, paid job: one paid unit of work; never task (for paid work), campaign (the site should align: "completes campaigns and tasks", `onblue/apply.html:1849`), gig, opportunity.
   - run, today's run: the daily session; never routine, session, scheduled task.
   - day, your 20 days: the program unit; never program days, qualifying day.
   - pending verification, verified: one tick, two ticks; never confirmed, approved, validated.
   - Always ask, Automatic: the mode per app (the PM's names); never Mode (as a label), auto mode, autopilot, Just this job (as a mode).
   - Sign in, Sign out: account entry and exit; never Log in, Login, Logout, Log out (the site should align), logging in.
   - AI credits: the daily allowance, sentence case; never tokens, coins, free credits, claim, earn (for credits), balance (say "left today").
-  - Earnings: money, opened on the site's dashboard; never income, rewards, wallet, BCX, a ↗ character (use the external icon).
+  - Earnings: money, opened on the site's dashboard; never income, rewards (the site should align: "Reward" on the program card and its sheet, "its own reward", "its reward is added to your earnings", `onblue/apply.html:1280, 1470, 1434, 1436`), wallet, BCX, a ↗ character (use the external icon).
+  - cash out, Cash out: taking earnings out, which happens on the site's dashboard, from $10 after the period ends (section 01); the app only points there and says the minimum with it. Never withdraw (the site's own sheet step, `onblue/apply.html:1532`), claim, redeem.
   - Program Terms: the agreement; never Terms of Use (unless that document changed), Terms & Conditions.
   - connected account, Disconnect: the accounts BlueAI uses; never Unlink, ID, enrolled or Not enrolled (say "in the program").
   - Try again: the system retry; never Retry (the PM's failed-day ask is flagged, not changed).
@@ -3149,7 +3162,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 - **Formats:** dates "Nov 1", "Oct 12" (a year only when it is not this one); times "11 am", "9 pm", "9 am to 9 pm" in the partner's local time; days "7 of 20 days", "Day 7 of 20"; money "$1", "$30" in ink, never green while pending; credits "1,640 AI credits left today"; the … character only for work in progress ("Signing in…"), never three dots (`chat_product.jsx:266`) and never on a button; curly quotes and apostrophes.
 - **Variants, Sizes, States, Props, Motion, Responsive:** n/a (a reference, not a part).
 - **Accessibility:** plain words are the accessible version; a label is the same word everywhere, so screen-reader users meet one name per thing.
-- **Do / Don't:** Do look a word up here before writing it; use the site's word when the site has one; mark new copy "Proposed copy" until the PM approves it. Don't invent synonyms for variety; don't put versions or slugs on screen; don't use money words for AI credits.
+- **Do / Don't:** Do look a word up here before writing it; use the site's word when the site has one, unless it is marked "the site should align" (each is a recommendation to the site's owner in section 02, P6, and the PM's call if the site keeps it); mark new copy "Proposed copy" until the PM approves it. Don't invent synonyms for variety; don't put versions or slugs on screen; don't use money words for AI credits.
 
 ### PM copy register (In V2)
 
@@ -3437,7 +3450,7 @@ Worker params ride on Copy link only from the signed-in worker home (index.html:
 
 - **V2:** `blueai/worker_flow.jsx:171; blueai/worker_day_done.jsx:38`
 - **Today:** The money rule (20 days, verification, end Nov 1, cash out) is never stated before the first day-done overlay; RULE.programEnd is never shown.
-- **Recommended:** ProgramSummary in the onboarding close and behind an info tip on the strip; show 'Ends Nov 1' wherever the bar appears.
+- **Recommended:** ProgramSummary in the onboarding close and behind an info tip on the strip; show 'Ends Nov 1' beside the count on the ProgramStrip (Home, Activity). The day-done moment keeps its bar without the date: it says the count once and nothing else (section 44).
 - **Why:** Partners cannot plan around rules they have not been told.
 
 #### R13 worker (effort M)
@@ -3718,7 +3731,7 @@ Choices only the PM (and legal, where named) can make. The system builds the rec
 |---|---|---|---|
 | **D1** Primary fill | Blue action #1268f0 (kit default) | Ink #0b0b0d like the site's commit button | A: blue already means the worker's actions in V2; links become underlined ink and selection a 12% tint, so blue no longer collides. |
 | **D2** The noun: worker or agent | worker (V2) | agent (site, apply.html:1269-1274) | One noun across site and app, one capitalisation ('BlueAI worker'); PM call. |
-| **D3** The money model | $1 per verified day + $10 day-20 bonus (worker_day_done.jsx:5-6) | $30 when the 20-day goal is met (apply.html:1285, 1471) | Pick one sentence and say it everywhere; if B, the app shows days, never partial dollars ('days' style is already the default). Rename the bonus 'day-20 bonus' if it stays; $10 is also the site's cash-out minimum. |
+| **D3** The money model | $1 per verified day + $10 day-20 bonus (worker_day_done.jsx:5-6) | $30 when the 20-day goal is met (apply.html:1285, 1471) | Pick one sentence and say it everywhere; if B, the app shows days, never partial dollars ('days' style is already the default). Rename the bonus 'day-20 bonus' if it stays. The $10 cash-out minimum is not part of the choice: it is V2's rule (worker_day_done.jsx:6) and the site's (apply.html:1360, 2292), so the app states it now (sections 01, 41, 43). |
 | **D4** Where the mode changes later | Version 1 chip in the composer | Version 2 ribbon (default) | B as the in-chat shortcut plus Settings > Worker as the permanent home either way. |
 | **D5** Sign-in option | Check account (interrupt only on the wrong account) | Continue as (always confirm) | A for fewer stops; drop the losing code path. |
 | **D6** Credits and the paid run | Reserve the worker's run cost from the daily grant | Warn before a chat would dip into it | A: a partner should never lose a paid day to an invisible meter. |
@@ -3739,28 +3752,32 @@ Choices only the PM (and legal, where named) can make. The system builds the rec
 ### From a new task to a screen in V2
 
 1. **Name the job it serves.** One line: which of the three jobs in section 01 it serves, and which principle in section 02 it leans on. If it serves none, question the feature before designing it.
-2. **Find its state in the Worker record.** Everything about the worker's day lives in one record (section 41). Name the fields the feature reads or writes and add them to the fixtures in `kit/worker-data.jsx`, never to a screen's local state, so no navigation can lose them (P1).
+2. **Find its state in the Worker record.** Everything about the worker's day lives in one record (section 41). Name the fields the feature reads or writes and add them to the fixtures in `kit/worker-data.jsx`, never to a screen's local state, so no navigation can lose them (P1). One thing sits outside the record today: the Notifications inbox keeps its items as fixtures in `screens/notifications.jsx` (section 76 lists the gap). A feature that raises a new event adds its row there and its line to section 54.
 3. **Place it.** Pick the level from the navigation model in section 32: a tab, a pushed screen with Back, a sheet or a dialog. Check section 55 if it is a setting and section 54 if it has to reach a partner who is away.
 4. **Compose it from the kit.** Use parts from Components, Shell, Chat, Worker and Credits. Each part's section lists its props, variants and states. Reach for a token, never a raw value. Add a kit part only when nothing fits (step 8).
+   - Wrap a whole screen in `V2Screens.ScreenFrame`, the one frame for every signed-in screen (core, account and system states). Pass `tab` for the lit tab by the rule in section 32 (a top-bar door keeps the tab you came from), `worker` for the top bar, `onNavigate(id, opts)` for every chrome event, and `frame={false}` to drop the chrome inside a guide specimen.
+   - If the screen confirms its changes with a toast, wrap it in `V2Screens.ToastScope` and call `useScreenToast().show()`; AppFrame draws the window's one live region, so every toast is announced.
 5. **Write the copy.** Use the glossary in section 70: Always ask and Automatic, AI credits, Sign in and Sign out, job and run. Say the consequence before the choice (P3). Mark every new string Proposed until the PM approves it. No em dash.
 6. **Cover every state.** Loading (50), empty, error and offline (51), confirm or undo (52), consent (53). Then the floor: visible focus, labels on icon buttons, 4.5:1 text, 32px targets, reduced motion.
 7. **Add it to the guide.** A section file in `guide/sections/`, its entry in `guide/catalog.jsx`, a partial in `design-md/`, a script line in `index.html`, and a ref in `guide/refs/` for every V2 value or string it quotes.
+   - Names follow the catalog's contract (`guide/catalog.jsx:3-6`): the section file is `guide/sections/<group>-<id>.jsx` and calls `V2Guide.register('<id>', Component)`; the partial is `design-md/<number>-<id>.md` and starts with `## <number> <title>`.
+   - A new kit part or screen also gets a row in the catalog's `kit` or `screens` array (name, file, stylesheet, status), which ds-check reads to prove it is on `window.V2Kit` or `window.V2Screens`.
 8. **If it needs a new kit part.** One IIFE file `kit/<name>.jsx` that does `Object.assign(window.V2Kit, { Part })`, reads other parts lazily at render, `v2-` classes in a kit stylesheet, hover, focus, active, disabled, loading and error in CSS, tokens only, 300 lines at most.
 9. **Run the checks.** `node tools/ds-check.js` to 0 errors and `node tools/build-design-md.js`. Then look at it in the guide by eye: the checks read files, not pixels.
-10. **Merge into V2.** V2 here is a port of the PM's own source, so merge there. Load `tokens.css`, `kit/base.css`, `kit/motion.css` and the kit stylesheets you use, then the kit scripts after React and Babel and before the screens that use them. Build the screen with `window.V2Kit` parts, delete the V2 code the matching recommendation in section 73 names, and keep V2's URL states working (section 72) so review links still open the right state.
+10. **Merge into V2.** V2 here is a port of the PM's own source, so merge there. Load `tokens.css`, `kit/base.css`, `kit/motion.css` and the kit stylesheets you use, then the kit scripts after React and Babel and before the screens that use them. AppFrame holds the window's one toast region, so screens need no host of their own beyond ToastScope. Build the screen with `window.V2Kit` parts, delete the V2 code the matching recommendation in section 73 names, and keep V2's URL states working (section 72) so review links still open the right state.
 11. **Close the loop.** Once it ships in V2, change the part's status to In V2, move its row out of Recommendations, and add a line to the changelog (section 77).
 
-### Worked example: Pause until tomorrow
+### Worked example: Pause daily runs
 
-Proposed copy throughout; it is here to show the steps, not to decide the feature.
+How section 62's pause row was built, step by step, so each step can be checked against a part that exists. Proposed copy throughout, as in section 62.
 
 - **Job:** keep the partner in control (P4: every promise has a control). V2 promises "You can pause, stop, or disconnect anytime." (`blueai/worker_flow.jsx:67`) and has no control for it (R05).
-- **State:** the record's pause field: paused until a time, or not. The home WorkerCard, the top bar status chip and the tray all read it.
-- **Place:** a row in Settings, Worker (section 62): a pushed screen, apply on change.
-- **Parts:** ListRow with a Switch; a Dialog in its alert variant when pausing costs today's day; a Toast with Undo.
-- **Copy:** confirm title "Pause today's run?", body "Today won't count toward your 20 days.", buttons Cancel and Pause.
-- **States:** running (pause stops the run, so confirm), done today (no cost, no confirm), paused (Resume), offline (the change waits and says so).
-- **Checks:** focus returns to the switch after the dialog; the switch has a visible label; ds-check to 0.
+- **State:** the record's `paused` field (null, or {until}), section 41. The WorkerCard, the top bar status chip and Settings all read it; `numbers()` gives the cost (`toGo`, `daysLeft`).
+- **Place:** a row in Settings > Worker (section 62), a pushed screen; the change applies at once (section 55).
+- **Parts:** `ListRow` "Daily runs" with a `Switch`. Turning it off opens a `Dialog` (task variant, md) with a `Select` "Pause until"; turning it on resumes at once. A `Toast` confirms each change, with no Undo: the dialog already asked, and turning the switch back on is the way back (section 52, rule 1: a choice that costs days is said and confirmed first; Undo is only for cheap actions that skip the question, rule 4).
+- **Copy:** section 62 owns every string; the example only shows where each sits. The dialog title is the question ("Pause daily runs?"); the body says the cost in days from `numbers()` before the buttons; the Select says until when; the actions are Keep running and Pause (primary); a toast says what changed ("Daily runs paused.", "Daily runs are back on."); the row says until when and what it costs while paused.
+- **States:** running daily (the switch on, the next run time); pause dialog open (the switch busy while it decides); paused until a date (the row says until when and what it costs); resumed.
+- **Checks:** the switch is role=switch named "Daily runs"; dialog focus moves in and returns to the switch; the cost is in the dialog body, read before the buttons; ds-check to 0.
 
 ### Do / Don't
 
@@ -3859,7 +3876,7 @@ Most parts are Changed on purpose: the system keeps what V2 does and changes how
 | JobPreviewCard | `kit/job.jsx` | New |
 | ModeRows / ConsentDialog / PermissionRequest | `kit/permissions.jsx` | Changed from V2 |
 | CreditsChip / CreditsMeter / useCountdown | `kit/credits.jsx` | Changed from V2 |
-| OutOfCreditsDialog / OutOfCreditsNotice | `kit/out-of-credits.jsx` | Changed from V2 |
+| OutOfCreditsNotice / OOC_COPY | `kit/out-of-credits.jsx` | Changed from V2 |
 | SettingsSection / AdvancedDisclosure | `kit/settings.jsx` | Changed from V2 |
 | ByokPanel / AiModePanel | `kit/advanced.jsx` | Changed from V2 |
 | Home | `screens/home.jsx` | Changed from V2 |
@@ -3881,8 +3898,11 @@ Shared helpers on window.V2Screens that are not screens:
 
 | Helper | File | Use |
 |---|---|---|
-| ScreenFrame / topBarProps | `screens/home.jsx` | The product frame for a screen; topBarProps(worker) gives every screen the same top bar and status chip. |
-| AccountFrame | `screens/settings.jsx` | ScreenFrame plus scrollTo, openMenu and onAction for the Settings family; reads topBarProps. |
+| ScreenFrame / topBarProps | `screens/home.jsx` | The one frame for every signed-in screen (core, account, system states): topBarProps chip, scrollTo, openMenu, status/credits/nav overrides; every chrome event goes to onNavigate(id, opts). |
+| ToastScope / useScreenToast | `screens/home.jsx` | Wrap a screen in ToastScope and call useScreenToast().show(); AppFrame draws the one live region. |
+| ListSkeleton / LoadError / HomeSkeleton | `screens/home.jsx` | Loading and load-failed blocks for screens that read server data. |
+| CONFIRM_COPY | `screens/settings.jsx` | One title, body and primary per destructive confirm (sign out, disconnect, leave, delete data). |
+| rowTarget / reportAbout | `screens/activity.jsx, screens/help.jsx` | Where a ledger row opens; the about/topic a report opens with. |
 | ConnectedAppRows | `screens/connected-apps.jsx` | The connected-account rows, reused by Settings. |
 | ReportProblemSheet | `screens/help.jsx` | Report a problem; open it with about: {label, detail} to attach a run. |
 | TermsSheet / TERMS_URL | `screens/welcome.jsx` | The Program Terms sheet (first run and update); reuse it, never a second sheet. |
@@ -3925,24 +3945,20 @@ Each is a small change in one place; none blocks reading or using the system.
 
 | Area | Item | Closes it |
 |---|---|---|
-| Kit | JobPreviewCard receipt always shows “Ask me first next time”; it should only show when the job ran on Automatic (section 59 flags it). | worker kit |
-| Kit | WorkerStatusChip has no out-of-credits status; ScreenFrame maps it to paused with “Waiting for credits” (proposed). | shell kit |
-| Kit | RunCard’s out-of-credits line and the composer’s disabled reason should read from OutOfCreditsNotice (OOC_COPY and creditsTime.formatClock) so every zero moment says the same time. | chat kit |
-| Kit | credits.refillAt in the Worker fixtures is a display string, so the countdown falls back to the next 00:00 UTC. Store a time. | worker kit |
 | Kit | TopBar passes balance and state to CreditsChip but not runCost, so “low” shows only when state is passed. | shell kit |
-| Kit | Banner has no neutral tone (the AI mode heads-up uses offline) and the offline tone has no rule of its own. | display kit |
-| Kit | SettingsSection runs ListRows to the card edge but not ModeRows; screens/account.css works around it. | credits kit |
 | Kit | The icon set has eye but no eye-off; the secret field shows its state with aria-pressed and a wash. | foundations |
 | Kit | Numbered step discs and the one-serif-word title live in screens/entry.css; promote them if Help or ProgramSummary needs them. | display kit |
-| Kit | AppFrame does not mount ToastHost; screens that toast draw their own host. Mount one ToastHost per window when V2 adopts the kit. | shell kit |
-| Screens | Two frame helpers, ScreenFrame and AccountFrame (both read topBarProps). Merge them. | screens |
-| Screens | The Notifications unread count has no place in the chrome (More carries no badge). | section 54 |
+| Screens | The Notifications unread count has no place in the chrome (More carries no badge); what needs the partner is counted on Activity. | section 54 |
+| Screens | The Notifications items are fixtures in screens/notifications.jsx, outside the Worker record. Give the record an inbox list when V2 adopts the kit. | section 41 |
 | Screens | The app router must map “report” to ReportProblemSheet; Activity’s rejected day and a failed RunCard should open it with the run attached. | screens |
+| Screens | Search and load more are deferred. Chat History, V2’s one long list, retires (R04); Activity’s This program tab is at most 20 days and Past adds one row per program. Notifications grows with every event: before a partner’s second program, give it a “Show earlier” row or keep only the current program. | screens |
 | Data | The Worker record has no run date, BlueStacks or App Player preflight result, or Telegram link state; screens take them as props. | worker kit |
 | Data | Only one account fixture: the account gate hard-codes a second address in two screens. Add an other-account fixture. | worker kit |
 | Data | One real dashboard URL for Earnings (R29); the FAQ link is a stand-in next to it. | product team |
 | Product | Welcome has no “signed out after a session” variant that says the worker is paused. | entry patterns |
-| Product | “BlueAI starts with Windows into the tray” (section 29) needs a switch in Settings, Worker. | PM |
+| Product | Whether feedback (thumbs) is offered on a failed job, where a partner most wants to report a problem; V2 offers it on successes only (section 39). | PM |
+| Product | Whether a partner can turn an interest topic off, and what that does to the jobs offered (section 62). | PM |
+| Product | How support replies to Report a problem and how soon; the sheet promises email only (section 65). | support |
 | Copy | Every string marked Proposed in DESIGN.md waits for the PM; decisions D1 to D13 wait for the PM and legal (section 73). | PM |
 
 ### Dead code in V2 (not a source)

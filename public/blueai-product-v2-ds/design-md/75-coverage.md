@@ -90,7 +90,7 @@ Most parts are Changed on purpose: the system keeps what V2 does and changes how
 | JobPreviewCard | `kit/job.jsx` | New |
 | ModeRows / ConsentDialog / PermissionRequest | `kit/permissions.jsx` | Changed from V2 |
 | CreditsChip / CreditsMeter / useCountdown | `kit/credits.jsx` | Changed from V2 |
-| OutOfCreditsDialog / OutOfCreditsNotice | `kit/out-of-credits.jsx` | Changed from V2 |
+| OutOfCreditsNotice / OOC_COPY | `kit/out-of-credits.jsx` | Changed from V2 |
 | SettingsSection / AdvancedDisclosure | `kit/settings.jsx` | Changed from V2 |
 | ByokPanel / AiModePanel | `kit/advanced.jsx` | Changed from V2 |
 | Home | `screens/home.jsx` | Changed from V2 |
@@ -112,8 +112,11 @@ Shared helpers on window.V2Screens that are not screens:
 
 | Helper | File | Use |
 |---|---|---|
-| ScreenFrame / topBarProps | `screens/home.jsx` | The product frame for a screen; topBarProps(worker) gives every screen the same top bar and status chip. |
-| AccountFrame | `screens/settings.jsx` | ScreenFrame plus scrollTo, openMenu and onAction for the Settings family; reads topBarProps. |
+| ScreenFrame / topBarProps | `screens/home.jsx` | The one frame for every signed-in screen (core, account, system states): topBarProps chip, scrollTo, openMenu, status/credits/nav overrides; every chrome event goes to onNavigate(id, opts). |
+| ToastScope / useScreenToast | `screens/home.jsx` | Wrap a screen in ToastScope and call useScreenToast().show(); AppFrame draws the one live region. |
+| ListSkeleton / LoadError / HomeSkeleton | `screens/home.jsx` | Loading and load-failed blocks for screens that read server data. |
+| CONFIRM_COPY | `screens/settings.jsx` | One title, body and primary per destructive confirm (sign out, disconnect, leave, delete data). |
+| rowTarget / reportAbout | `screens/activity.jsx, screens/help.jsx` | Where a ledger row opens; the about/topic a report opens with. |
 | ConnectedAppRows | `screens/connected-apps.jsx` | The connected-account rows, reused by Settings. |
 | ReportProblemSheet | `screens/help.jsx` | Report a problem; open it with about: {label, detail} to attach a run. |
 | TermsSheet / TERMS_URL | `screens/welcome.jsx` | The Program Terms sheet (first run and update); reuse it, never a second sheet. |

@@ -3,6 +3,8 @@
 (function () {
   const G = window.V2Guide;
   const noop = function () {};
+  // V2 always hands SettingsScreen a byok object (index.html:977), so its own-key card draws; this one is V2's signed-in default.
+  const V2_BYOK = { on: false, setOn: noop, keyAdded: false, keyInfo: null, onSave: noop, onRemove: noop, highlight: false };
   const v2Box = { width: 'var(--v2-shell-w)', maxWidth: '100%', maxHeight: 640, overflow: 'auto', padding: '0 var(--v2-space-4)', background: 'var(--v2-canvas)' };
 
   // StateGrid's cells are 168 or 320 wide; a whole window needs 419 plus the stage padding.
@@ -32,7 +34,7 @@
         <G.Part name="Settings" status="changed"
           role="The Settings tab. Partner topics first, in the order a partner looks for them; developer controls closed behind Advanced.">
           <p><strong>Anatomy.</strong> Inside the window (Settings lit in the nav): ScreenHeader 'Settings', then one 12px column of
-            SettingsSection cards: Worker (one summary row), Connected apps (one row per app), Notifications (two switch rows),
+            SettingsSection cards: Worker (one summary row), Connected apps (one row per app), Notifications (two switch rows, covering the events section 54 maps to them),
             BlueStacks (one row that tells the truth, with the action that fixes it), Account and privacy (one row), Help (FAQ,
             Report a problem), and the Advanced disclosure, closed, holding AI mode, own key and one chat model.</p>
           <Screens states={[
@@ -45,15 +47,16 @@
             { label: 'Report a problem', note: 'Help > Report a problem opens the sheet (section 65)', node: scr({ state: 'report' }) },
           ]} />
           <G.Note>Each summary row pushes its screen with Back and keeps Settings lit in the nav: BlueAI worker to Worker settings
-            (section 62), an app to Connected apps (63), the account row to Account and privacy (64). FAQ opens the site
-            article in the browser; Report a problem opens one sheet (65). Changes apply at once with a toast; nothing on this
-            screen has a Save button.</G.Note>
+            (section 62), an app to Connected apps (63), the account row to Account and privacy (64). AI credits (66) is not
+            under Settings: only the top bar's credits chip opens it, and it keeps the tab it was opened over lit (section 32).
+            FAQ opens the site article in the browser; Report a problem opens one sheet (65). Changes apply at once with a
+            toast; nothing on this screen has a Save button.</G.Note>
           <G.CompareRow
             v2={(
               <div>
                 <div style={v2Box}>
                   <G.Live get={function () { return window.SettingsScreen; }} label="window.SettingsScreen"
-                    props={{ byok: null, aiModeConditions: { hwSupported: true, conflict: false } }} />
+                    props={{ byok: V2_BYOK, aiModeConditions: { hwSupported: true, conflict: false } }} />
                 </div>
                 <G.FrameState url="index.html?start=worker" label="V2 signed in: open Settings in the bottom nav" height={760} />
               </div>
@@ -81,7 +84,7 @@
             { part: 'Gap and gutter', token: '--v2-space-3, --v2-gutter', value: '12 between sections, 16 to the window edge' },
             { part: 'Worker row', token: 'ListRow nav, Badge neutral when paused', value: 'run time + mode from the Worker record', ref: 'screens-account.worker.no-settings-card' },
             { part: 'Connected apps', token: 'V2Screens.ConnectedAppRows', value: 'YouTube, Telegram, Instagram (Coming soon, static)', ref: ['screens-account.settings.telegram-title', 'screens-account.apps.instagram'] },
-            { part: 'Notifications', token: 'ListRow + Switch', value: 'a paid job needs you; today’s run ends (Proposed copy)' },
+            { part: 'Notifications', token: 'ListRow + Switch', value: 'a paid job needs you; today’s run ends (Proposed copy); each covers the events section 54 maps to it' },
             { part: 'BlueStacks', token: 'ListRow, Badge success or Button sm', value: 'three true states; V2’s switch hint kept', ref: ['screens-account.settings.bluestacks-claim', 'screens-account.settings.bluestacks-switch'] },
             { part: 'Help', token: 'ListRow external + ListRow', value: 'FAQ (site), Report a problem (sheet)', ref: ['screens-account.help.faq', 'screens-account.help.report'] },
             { part: 'Advanced', token: 'AdvancedDisclosure, closed', value: 'AI mode, own key, chat model; no tokens, steps or timeout', ref: ['screens-account.settings.max-tokens', 'screens-account.settings.max-steps', 'screens-account.settings.timeout'] },

@@ -2,7 +2,8 @@
    1. Reset, scoped to kit trees: any element whose class contains "v2-" and everything inside it.
       Written with :where() so it has zero specificity and every kit class beats it.
    2. The kit root (.v2-root): face, size, leading and ink every screen starts from.
-   3. The eleven text styles (.v2-text-*), one per role in the type ladder (section 04).
+   3. The twelve text styles (.v2-text-*), one per role in the type ladder (section 04). Kit parts
+      compose their text from these classes rather than restating size, weight, leading and ink.
    4. Layout utilities: v2-stack, v2-hstack, v2-gap-*, v2-grow, v2-screen, v2-screen-body, v2-divider,
       v2-sr-only, v2-tabular, v2-truncate, v2-prose. (The horizontal stack is v2-hstack, not v2-row:
       v2-row is ListRow's root class in kit/display.css.)
@@ -112,8 +113,14 @@
   letter-spacing: var(--v2-tracking-title); color: var(--v2-ink); font-variant-numeric: tabular-nums;
 }
 .v2-text-title {
-  font-size: var(--v2-text-16); font-weight: var(--v2-weight-semibold); line-height: var(--v2-leading-snug);
+  font-size: var(--v2-text-16); font-weight: var(--v2-weight-semibold); line-height: var(--v2-leading-tight);
   letter-spacing: var(--v2-tracking-label); color: var(--v2-ink);
+}
+/* The label over a figure inside a card (StatCard): the site's .mini-title (onblue/onblue.css:1935-1942),
+   sentence case. The uppercase eyebrow stays for section labels only. */
+.v2-text-mini-title {
+  font-size: var(--v2-text-13); font-weight: var(--v2-weight-semibold); line-height: var(--v2-leading-snug);
+  letter-spacing: var(--v2-tracking-mini, 0.02em); color: var(--v2-ink);
 }
 .v2-text-body {
   font-size: var(--v2-text-14); font-weight: var(--v2-weight-regular); line-height: var(--v2-leading-body);
@@ -124,7 +131,7 @@
   letter-spacing: 0; color: var(--v2-ink-3);
 }
 /* A figure inside a note: the fact stays muted, the number is ink (site .dash-note). */
-.v2-text-body-sm strong, .v2-text-body strong, .v2-text-meta strong {
+.v2-text-body-sm :is(strong, b), .v2-text-body :is(strong, b), .v2-text-meta :is(strong, b) {
   font-weight: var(--v2-weight-semibold); color: var(--v2-ink);
 }
 .v2-text-label {
@@ -135,6 +142,8 @@
   font-size: var(--v2-text-12); font-weight: var(--v2-weight-regular); line-height: var(--v2-leading-snug);
   letter-spacing: 0; color: var(--v2-ink-4);
 }
+/* Section labels only. 0.08em is adapted from the site's 0.14em marketing band heads
+   (onblue/onblue.css:1287-1295): at 11px in a 419px window the wider tracking scatters the word. */
 .v2-text-eyebrow {
   font-size: var(--v2-text-11); font-weight: var(--v2-weight-medium); line-height: var(--v2-leading-display);
   letter-spacing: var(--v2-tracking-eyebrow); text-transform: uppercase; color: var(--v2-ink-3);
@@ -192,11 +201,16 @@
 }
 /* Containers and headings that receive focus from script (dialogs, screen titles) stay quiet. */
 :where([tabindex="-1"]):focus { outline: none; }
-/* Forced focus for StateGrid specimens. Fields override it with their border plus ring. */
+/* Forced focus for StateGrid specimens. */
 .is-focus {
   outline: var(--v2-focus-outline);
   outline-offset: var(--v2-focus-offset);
 }
+/* Wrappers whose forced focus is drawn by their own sheet on an inner part (the field box, the
+   check box, the card body, the composer box, the thread's scroll area, the credits pill): the
+   wrapper itself shows no second ring, exactly as the real :focus-visible state looks. */
+.v2-field.is-focus, .v2-check.is-focus, .v2-radio-card.is-focus,
+.v2-composer.is-focus, .v2-thread.is-focus, .v2-credits-chip.is-focus { outline: none; }
 /* A forced state shows at once, without its transition. */
 [class*="v2-"]:is(.is-hover, .is-focus, .is-active) { transition: none; }
 

@@ -4,14 +4,18 @@
    AskCard        {step: {title, lead, bullets, question, options: [{id, label, consent,
                   consequence}], hint, expiresAt}, answer, onAnswer(id, option), state, tone}
                   One shape for every question (V2's idea, V2's copy). Yellow only while it waits
-                  for you; answered, stopped and expired settle to the neutral surface. tone
+                  for you; answered, stopped and expired settle to the neutral surface. What an
+                  answer costs sits above the chips and is that chip's description, so it is
+                  heard before the tap, not after. tone
                   'neutral' is decision D13's option B (onboarding asks while the partner watches).
                   An option with consent: true turns Automatic on: the caller opens ConsentDialog
                   (section 46) first and answers only after "I agree, turn on".
    FeedbackThumbs {vote, onVote, reason, onReason, onSubmitOther, thanks}  below placement only.
-   DependencyCard {app, phase: 'needs'|'installing'|'done'|'signedOut', progress, onGet, onOpen}
-                  the reply in the thread when a run needs BlueStacks or App Player; also the
-                  worker's preflight (R13). */
+   DependencyCard {app, phase: 'needs'|'installing'|'failed'|'done'|'signedOut', progress, onGet,
+                  onCancel, onRetry, onOpen}  the reply in the thread when a run needs BlueStacks
+                  or App Player; also the worker's preflight (R13). Installing is the over-10s wait
+                  (section 50): it never blocks the window and offers Cancel; failed says so and
+                  offers Try again. */
 (function () {
   const { useState, useRef, useEffect, useId } = React;
   const K = () => window.V2Kit || {};
@@ -42,18 +46,19 @@
           {s.bullets ? <ul className="v2-ask-bullets">{s.bullets.map(function (b) { return <li key={b}>{b}</li>; })}</ul> : null}
           {s.question ? <p className="v2-ask-text" id={qid}>{s.question}</p> : null}
         </div>
+        {pending ? opts.map(function (o, i) {
+          return o.consequence ? <p key={o.id} id={qid + '-c' + i} className="v2-ask-consequence"><strong>{o.label}:</strong> {o.consequence}</p> : null;
+        }) : null}
         {pending && opts.length ? (
           <div className="v2-ask-chips" role="group" aria-labelledby={s.question ? qid : undefined} aria-label={s.question ? undefined : (s.title || 'Answers')}>
-            {opts.map(function (o) {
+            {opts.map(function (o, i) {
               return P.Chip
-                ? <P.Chip key={o.id} icon={o.consent ? 'zap' : undefined} onClick={function () { if (onAnswer) onAnswer(o.id, o); }}>{o.label}</P.Chip>
+                ? <P.Chip key={o.id} icon={o.consent ? 'zap' : undefined} aria-describedby={o.consequence ? qid + '-c' + i : undefined}
+                    onClick={function () { if (onAnswer) onAnswer(o.id, o); }}>{o.label}</P.Chip>
                 : null;
             })}
           </div>
         ) : null}
-        {pending ? opts.filter(function (o) { return o.consequence; }).map(function (o) {
-          return <p key={o.id} className="v2-ask-consequence"><strong>{o.label}:</strong> {o.consequence}</p>;
-        }) : null}
         {pending && s.hint ? <p className="v2-ask-hint">{s.hint}</p> : null}
         {line ? <p className="v2-ask-hint">{line}</p> : null}
       </div>
@@ -132,7 +137,7 @@
   }
 
   /* ---------- DependencyCard ---------- */
-  function DependencyCard({ app, phase, progress, onGet, onOpen, className }) {
+  function DependencyCard({ app, phase, progress, onGet, onCancel, onRetry, onOpen, className }) {
     const P = K();
     const name = app || 'YouTube';
     const NB = P.NoticeBubble;
@@ -142,7 +147,20 @@
       const pct = Math.max(0, Math.min(100, Math.round(progress || 0)));
       return (
         <NB kind="info" title="Installing BlueStacks" className={cls}
-          action={P.ProgressBar ? <P.ProgressBar value={pct} max={100} size={6} label="Getting ready" valueText={pct + '%'} /> : null} />
+          lines={['You can keep using BlueAI while it installs.']}
+          action={(
+            <React.Fragment>
+              {P.ProgressBar ? <P.ProgressBar value={pct} max={100} size={6} label="Getting ready" valueText={pct + '%'} /> : null}
+              {onCancel && P.Button ? <P.Button variant="quiet" size="sm" onClick={onCancel}>Cancel install</P.Button> : null}
+            </React.Fragment>
+          )} />
+      );
+    }
+    if (phase === 'failed') {
+      return (
+        <NB kind="fail" className={cls}
+          lines={['BlueStacks didn’t finish installing, so today’s run is waiting. Check your connection, then try again.']}
+          action={P.Button ? <P.Button variant="primary" size="md" full onClick={onRetry || onGet}>Try again</P.Button> : null} />
       );
     }
     if (phase === 'done') return <NB kind="success" className={cls} lines={['BlueStacks is ready.']} />;

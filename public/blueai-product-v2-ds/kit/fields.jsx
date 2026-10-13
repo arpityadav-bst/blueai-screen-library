@@ -10,8 +10,9 @@
                  required, optional, disabled, readOnly, size 'sm'|'md' (32/40), width, id,
                  className. Other props reach the native control.
    TextField     + leading / trailing (an icon name or a node), mono, secret (password type with a
-                 reveal button; implies mono; defaultRevealed starts it shown), maxLength + showCount
-                 (a soft limit: the counter warns near it and the field turns invalid past it),
+                 reveal button; implies mono; defaultRevealed starts it shown), maxLength (a soft
+                 limit: never cuts text; the counter appears within 10% of it and the field turns
+                 invalid past it) + showCount (show the counter from the first character),
                  status 'validating'|'validated' (say what is happening in helper).
    TextArea      + autoGrow (true), maxRows (6: grows to it, then scrolls), rows (3), maxLength,
                  showCount.
@@ -41,9 +42,11 @@
     const [ownLen, setOwnLen] = useState(str(p.defaultValue).length);
     const len = controlled ? str(p.value).length : ownLen;
     const max = p.maxLength;
-    const counting = !!(p.showCount && max);
     const over = !!(max && len > max);
     const near = !!(max && !over && len >= Math.ceil(max * 0.9));
+    // Shown when asked, and on any limited field once it nears or passes the limit, so an
+    // over-limit field always says why it is invalid.
+    const counting = !!(max && (p.showCount || near || over));
     const invalid = !!p.error || over;
     const tone = p.error ? 'error' : (p.status === 'validated' ? 'success' : null);
     const text = p.error || p.helper || null;
@@ -102,10 +105,15 @@
       'aria-invalid': f.invalid || undefined, 'aria-describedby': f.describedBy,
     };
   }
-  /* Frame-only props never reach the native control. */
+  /* Frame-only props never reach the native control. No object-rest syntax: Babel hoists a rest's
+     key list to one program-level _excluded that the next kit file overwrites (maxLength would then
+     reach the input and cut pasted text instead of turning the field invalid). */
+  const FRAME_OWN = ['label', 'hideLabel', 'helper', 'error', 'optional', 'leading', 'trailing', 'mono', 'secret',
+    'size', 'status', 'width', 'className', 'showCount', 'autoGrow', 'maxRows', 'options', 'onChange', 'maxLength',
+    'defaultRevealed'];
   function strip(p) {
-    const { label, hideLabel, helper, error, optional, leading, trailing, mono, secret, size, status, width,
-      className, showCount, autoGrow, maxRows, options, onChange, maxLength, defaultRevealed, ...rest } = p;
+    const rest = {};
+    for (const k in p) if (FRAME_OWN.indexOf(k) < 0) rest[k] = p[k];
     return rest;
   }
 

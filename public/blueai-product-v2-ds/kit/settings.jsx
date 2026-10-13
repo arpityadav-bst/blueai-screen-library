@@ -9,18 +9,21 @@
        reduced motion) and holds the highlighted look for 1900ms, V2's timing
        (byok_settings.jsx:47). It never changes a value. Force the look with the class
        is-highlighted for specimens.
-   AdvancedDisclosure  {open?, onToggle?, defaultOpen?, label?, description?, className, children}
+   AdvancedDisclosure  {open?, onToggle?, defaultOpen?, label?, description?, className,
+                       toggleClassName, children}
        The one place developer controls live (AI mode, own key, chat model). Controlled when open
        is passed, otherwise it keeps its own state. A real button with aria-expanded and
-       aria-controls; the body stays in the DOM with hidden so the reference always resolves. */
+       aria-controls; the body stays in the DOM with hidden so the reference always resolves.
+       toggleClassName lands on that button (.is-hover / .is-focus / .is-active for specimens);
+       className stays on the wrapper. */
 (function () {
   const { useState, useEffect, useRef, useId } = React;
   const cx = function () { return Array.prototype.filter.call(arguments, Boolean).join(' '); };
   const HIGHLIGHT_MS = 1900;
 
   function Ic({ name, size }) {
-    const K = window.V2Kit || {};
-    return K.Icon ? <K.Icon name={name} size={size || 16} /> : null;
+    const I = window.V2Kit.Icon;
+    return <I name={name} size={size || 16} />;
   }
 
   function reducedMotion() {
@@ -54,7 +57,7 @@
     );
   }
 
-  function AdvancedDisclosure({ open, onToggle, defaultOpen, label, description, className, children }) {
+  function AdvancedDisclosure({ open, onToggle, defaultOpen, label, description, className, toggleClassName, children }) {
     const [own, setOwn] = useState(!!defaultOpen);
     const bodyId = useId();
     const isOpen = open != null ? !!open : own;
@@ -64,7 +67,7 @@
     }
     return (
       <div className={cx('v2-advanced', isOpen && 'is-open', className)}>
-        <button type="button" className="v2-advanced-toggle" aria-expanded={isOpen} aria-controls={bodyId} onClick={toggle}>
+        <button type="button" className={cx('v2-advanced-toggle', toggleClassName)} aria-expanded={isOpen} aria-controls={bodyId} onClick={toggle}>
           <span className="v2-advanced-text">
             <span className="v2-advanced-label">{label || 'Advanced'}</span>
             <span className="v2-advanced-desc">{description || 'AI mode, your own key and the chat model. Most partners never need these.'}</span>

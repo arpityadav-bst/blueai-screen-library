@@ -253,7 +253,15 @@
       <span ref={wrap} style={{ '--tip-shift': pos.shift + 'px' }}
         className={cx('v2-tip', 'v2-tip--' + kind, 'is-' + pos.side, (pinned || forced) && 'is-open', dismissed && 'is-dismissed', props.className)}
         onPointerEnter={place} onFocus={place} onPointerLeave={function () { setDismissed(false); }}
-        onKeyDown={function (e) { if (e.key === 'Escape') { setPinned(false); setDismissed(true); } }}
+        onKeyDown={function (e) {
+          // Esc closes a showing tip and stops there, so a Dialog around it stays open; a second
+          // Esc (the tip already gone) reaches the Dialog. Menu and Popover do the same.
+          if (e.key !== 'Escape' || dismissed) return;
+          const w = wrap.current;
+          const shown = pinned || forced || w.matches(':hover') || (kind === 'info' ? w.matches(':focus-within') : !!w.querySelector(':focus-visible'));
+          if (shown) e.stopPropagation();
+          setPinned(false); setDismissed(true);
+        }}
         onBlur={function (e) { if (!wrap.current.contains(e.relatedTarget)) { setPinned(false); setDismissed(false); } }}>
         {trigger}
         <span ref={panel} className="v2-tip-panel" id={tid} role={kind === 'label' ? 'tooltip' : undefined}

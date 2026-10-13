@@ -12,7 +12,12 @@
   font-family: var(--v2-font-ui); font-size: var(--v2-text-14); line-height: var(--v2-leading-body);
 }
 .v2-frame--compact { height: var(--v2-shell-min-h); }
-.v2-frame-content { position: relative; flex: 1 1 auto; min-height: 0; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; }
+/* scroll-padding keeps a focused row clear of the sticky ScreenHeader (52) when Tab scrolls it in
+   (WCAG 2.4.11): the header sits inside this band on the account screens. */
+.v2-frame-content {
+  position: relative; flex: 1 1 auto; min-height: 0; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain;
+  scroll-padding-top: calc(var(--v2-topbar-h) + var(--v2-space-2));
+}
 .v2-frame-overlays { position: absolute; inset: 0; pointer-events: none; }
 .v2-frame-overlays > * { pointer-events: auto; }
 
@@ -43,20 +48,9 @@
 .v2-topbar-actions { display: flex; align-items: center; gap: var(--v2-space-2); min-width: 0; }
 .v2-topbar-menus { display: flex; align-items: center; gap: var(--v2-space-05); }
 
-/* Bar icon button: used only when V2Kit.IconButton is not loaded; the same recipe as section 11. */
-.v2-topbar-btn {
-  display: inline-flex; align-items: center; justify-content: center; flex: none;
-  width: var(--v2-hit-min); height: var(--v2-hit-min); padding: 0; border: 0; border-radius: var(--v2-radius-sm);
-  background: none; color: var(--v2-ink-3); cursor: pointer;
-  transition: background-color var(--v2-dur-1) var(--v2-ease-standard), color var(--v2-dur-1) var(--v2-ease-standard);
-}
-.v2-topbar-btn:hover, .v2-topbar-btn.is-hover { background: var(--v2-wash-hover); color: var(--v2-ink); }
-.v2-topbar-btn:active, .v2-topbar-btn.is-active, .v2-topbar-btn[aria-expanded="true"] { background: var(--v2-wash-press); color: var(--v2-ink); }
-.v2-topbar-btn:focus-visible, .v2-topbar-btn.is-focus { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); }
-
 /* WorkerStatusChip: 28 tall, pill, hairline, a dot in the status tone and a 13/500 label. Only the
-   two states that need the partner (needs you, didn't finish) take a tint. The ::after pads the
-   hit area to 32 without growing the chip. */
+   states where the partner must act for today to count take a tint (needs you; didn't finish and
+   can't run). The ::after pads the hit area to 32 without growing the chip. */
 .v2-status {
   position: relative; display: inline-flex; align-items: center; gap: var(--v2-space-15); flex: none;
   height: var(--v2-control-sm); padding: 0 var(--v2-space-3) 0 var(--v2-space-2);
@@ -71,14 +65,20 @@
 .v2-status:active, .v2-status.is-active { background-image: linear-gradient(var(--v2-wash-press), var(--v2-wash-press)); }
 .v2-status:focus-visible, .v2-status.is-focus { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); }
 .v2-status--needs-you { background-color: var(--v2-attention-tint); border-color: var(--v2-attention-line); color: var(--v2-attention-ink); }
-.v2-status--failed { background-color: var(--v2-danger-tint); color: var(--v2-danger-ink); }
+.v2-status--failed, .v2-status--blocked { background-color: var(--v2-danger-tint); color: var(--v2-danger-ink); }
 
+/* The dot: neutral (ink-4) for a plain fact, a ring for 'not running', blue while it runs, a blue
+   ring while a done day waits for its check (the DayBar's pending look), attention when it needs
+   the partner, danger when today can still be saved, and green only once a day is verified (P2). */
 .v2-status-dot { flex: none; width: var(--v2-space-2); height: var(--v2-space-2); border-radius: var(--v2-radius-round); background: var(--v2-ink-4); }
 .v2-status-dot--running { background: var(--v2-blue); }
+.v2-status-dot--pending { background: none; box-shadow: inset 0 0 0 var(--v2-stroke-selected) var(--v2-blue); }
 .v2-status-dot--needs-you { background: var(--v2-attention-ink); }
-.v2-status-dot--done { background: var(--v2-success); }
-.v2-status-dot--failed { background: var(--v2-danger-ink); }
-.v2-status-dot--paused, .v2-status-dot--offline { background: none; box-shadow: inset 0 0 0 var(--v2-stroke-selected) var(--v2-ink-4); }
+.v2-status-dot--verified { background: var(--v2-success); }
+.v2-status-dot--failed, .v2-status-dot--blocked { background: var(--v2-danger-ink); }
+.v2-status-dot--paused, .v2-status-dot--offline, .v2-status-dot--stopped, .v2-status-dot--no-credits, .v2-status-dot--ended {
+  background: none; box-shadow: inset 0 0 0 var(--v2-stroke-selected) var(--v2-ink-4);
+}
 
 /* BottomNav: 56 tall, surface, one top hairline, no shadow. Selected = a 2px blue bar on the line
    plus ink label and icon; weight never changes, so labels never reflow. */
@@ -153,15 +153,6 @@
 .v2-tray-confirm-title { margin: 0; color: var(--v2-ink); font-size: var(--v2-text-14); font-weight: var(--v2-weight-semibold); }
 .v2-tray-confirm-body { margin: var(--v2-space-1) 0 0; color: var(--v2-ink-3); }
 .v2-tray-actions { display: flex; justify-content: flex-end; gap: var(--v2-space-2); margin-top: var(--v2-space-4); }
-/* Fallback action buttons, only when V2Kit.Button is not loaded. */
-.v2-tray-btn {
-  height: var(--v2-hit-min); padding: 0 var(--v2-space-3); border: var(--v2-stroke) solid var(--v2-line-strong);
-  border-radius: var(--v2-radius-sm); background: var(--v2-surface); color: var(--v2-ink); cursor: pointer;
-  font: inherit; font-weight: var(--v2-weight-medium);
-}
-.v2-tray-btn:hover, .v2-tray-btn.is-hover { border-color: var(--v2-line-hover); background-image: linear-gradient(var(--v2-wash-hover), var(--v2-wash-hover)); }
-.v2-tray-btn:focus-visible, .v2-tray-btn.is-focus { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); }
-.v2-tray-btn--danger { background-color: var(--v2-danger-ink); border-color: var(--v2-danger-ink); color: var(--v2-on-color); }
 
 /* Splash: brand, three blue dots (progress, not brand), one status line in ink-3 (6.0:1). Fills the
    frame above everything; fades out over --v2-dur-4 on the site's departure curve. */
@@ -184,6 +175,6 @@
 .v2-splash.is-reduced { transition: none; }
 .v2-splash.is-reduced .v2-splash-dot { animation: none; }
 @media (prefers-reduced-motion: reduce) {
-  .v2-splash, .v2-status, .v2-nav-item, .v2-tray-item, .v2-topbar-btn { transition: none; }
+  .v2-splash, .v2-status, .v2-nav-item, .v2-tray-item { transition: none; }
   .v2-splash-dot { animation: none; }
 }

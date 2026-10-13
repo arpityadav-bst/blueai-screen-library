@@ -5,9 +5,11 @@
                   'paused' (running on the partner's own key); when absent it is derived from
                   balance and runCost (low = less than one run needs). Number in ink, a dot only when
                   today's run is short. Visible pill 28px inside a 32px hit area.
-   CreditsMeter   {balance, grant, runCost, refillAt?, now?, runDone?, refreshed?, className}
+   CreditsMeter   {balance, grant, runCost, refillAt?, now?, runDone?, refreshed?, figure?, className}
                   role=meter rail, '1,250 of 2,000 left today', 'Refreshes in 6h 42m', and one line
-                  that answers "is today's run covered".
+                  that answers "is today's run covered". figure false (under a StatCard that already
+                  shows the balance) drops the balance from the caption: 'of 2,000 today'; the
+                  meter's aria-valuetext keeps the full words.
    useCountdown(target?, opts?)  -> {ms, at, left, clock, done, underMinute}
                   Time to the next refill. target (a Date or ms) defaults to the next 00:00 UTC
                   (V2's refill, credits_popup_parts.jsx:22-25); a string is ignored, the clock
@@ -109,7 +111,7 @@
     return { tone: 'ok', icon: 'check', text: 'Enough for today’s run' };
   }
 
-  function CreditsMeter({ balance, grant, runCost, refillAt, now, runDone, refreshed, className }) {
+  function CreditsMeter({ balance, grant, runCost, refillAt, now, runDone, refreshed, figure, className }) {
     const g = grant > 0 ? grant : 1;
     const b = refreshed ? g : Math.max(0, Math.min(balance || 0, g));
     const t = useCountdown(refillAt, { now: now });
@@ -123,7 +125,7 @@
           <span className="v2-credits-meter-fill" style={{ width: Math.round((b / g) * 100) + '%' }} />
         </div>
         <div className="v2-credits-meter-caption">
-          <span className="v2-num">{left}</span>
+          <span className="v2-num">{figure === false ? 'of ' + fmt(g) + ' today' : left}</span>
           <span className="v2-num">{refreshed ? 'Refreshed' : 'Refreshes in ' + t.left}</span>
         </div>
         <p className={'v2-credits-meter-cover v2-credits-meter-cover--' + cover.tone}>

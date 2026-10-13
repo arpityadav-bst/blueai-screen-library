@@ -56,10 +56,10 @@
             { part: 'Verified', token: 'StatusTick verified', value: 'Checked Oct 12, 7:02 am. Day 6 of 20 counts.' },
             { part: 'Rejected', token: 'StatusTick rejected, --v2-danger-ink', value: 'the reason, then Report a problem (secondary, 36)' },
             { part: 'Not counted', token: 'StatusTick notcounted', value: 'Today doesn’t count toward your 20 days.', ref: 'screens-core.ledger.declined' },
-            { part: 'Details', token: 'Card padding none, ListRow static', value: "Job mode 'Always ask' / 'Automatic · YouTube'; AI credits used 360" },
+            { part: 'Details', token: 'Card padding none, ListRow static', value: "Paid jobs: how this job ran, 'Always ask' / 'Automatic'; AI credits used 360" },
+            { part: 'Receipt', token: 'JobPreviewCard receipt, verify null, ranOn', value: "no tick of its own (Verification says the day once); 'Switch back to Always ask' only when the job ran on Automatic" },
+            { part: 'Out of credits', token: 'StatusTick notcounted', value: 'The run stopped when AI credits ran out, so today doesn’t count. (decision D6 may change it)' },
           ]} />
-          <G.Warn>Kit gap: JobPreviewCard's receipt always offers 'Ask me first next time', which only makes sense for a job taken on
-            Automatic. On an Always ask run it should not render (reported to the worker slice).</G.Warn>
           <G.DoDont
             do={['Say the day once, in Verification, with the reason when it did not count.', 'Show the exact comment that went out under the partner’s name.', 'Keep the run after the chat moves on.']}
             dont={['Repeat the day line in the RunCard and in Verification.', 'Drop Report a problem from runs that counted: any run can be questioned.', 'Show money here before decision D3.']} />

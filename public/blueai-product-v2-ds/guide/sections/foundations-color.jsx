@@ -56,7 +56,7 @@
     ['--v2-ink', 'Titles, figures, money (money is ink, never green)'],
     ['--v2-ink-2', 'Body copy, button and row labels'],
     ['--v2-ink-3', 'Descriptions, notes, idle icons, every consequence line'],
-    ['--v2-ink-4', 'Meta only: timestamps, counts. Never on sunken, never a consequence'],
+    ['--v2-ink-4', 'Meta only, on surface, panel or canvas at rest; never on sunken, a tint, selected or a hover or press wash. Never a consequence'],
     ['--v2-ink-placeholder', 'Placeholder, only under a visible label (not text that must be read)'],
   ];
 
@@ -78,7 +78,7 @@
     return (
       <div className="v2-stack v2-gap-2" style={{ width: '100%' }}>
         <div className="v2-hstack" style={{ background: 'var(' + tint + ')', border: 'var(--v2-stroke) solid var(' + line + ')', borderRadius: 'var(--v2-radius-md)', padding: 'var(--v2-space-2) var(--v2-space-3)', color: 'var(' + ink + ')' }}>
-          {K.Icon ? <K.Icon name={{ neutral: 'info', info: 'info', success: 'check-double', attention: 'alert', danger: 'x-circle' }[t]} /> : null}
+          {K.Icon ? <K.Icon name={{ neutral: 'info', info: 'check', success: 'check-double', attention: 'alert', danger: 'x-circle' }[t]} /> : null}
           <span style={{ fontSize: 'var(--v2-text-13)', fontWeight: 500 }}>{label}</span>
         </div>
         {K.Badge ? <K.Badge tone={t} dot>{label}</K.Badge> : null}
@@ -158,14 +158,14 @@
             { label: 'Pressable card hover', note: 'line firms up to --v2-line-hover', node: <div style={Object.assign({}, plate, { padding: 'var(--v2-space-3)', borderColor: 'var(--v2-line-hover)' })} className="v2-text-label">Card</div> },
           ]} />
           <div className="v2-hstack v2-wrap v2-gap-3">
-            {[['--v2-line', 'every card, bubble, bar edge'], ['--v2-line-strong', 'fields, secondary buttons'], ['--v2-line-hair', 'dividers inside a card'], ['--v2-line-hover', 'hover firm-up']].map(function (l) {
+            {[['--v2-line', 'every card, bubble, bar edge'], ['--v2-line-strong', 'fields, secondary buttons'], ['--v2-line-hair', 'dividers inside a card'], ['--v2-line-hover', 'hover firm-up'], ['--v2-link-underline', 'resting underline under an ink link']].map(function (l) {
               return <div key={l[0]} style={{ flex: '1 1 160px', border: 'var(--v2-stroke) solid var(' + l[0] + ')', borderRadius: 'var(--v2-radius-md)', padding: 'var(--v2-space-3)', background: 'var(--v2-surface)' }}><code className="g-code">{l[0]}</code><div className="v2-text-meta">{tok(l[0])}: {l[1]}</div></div>;
             })}
           </div>
           <G.CompareRow
             v2={<G.Live get={function () { return window.BluestacksCard; }} label="BluestacksCard (settings.jsx)" />}
             system={<div style={plate}><div className="v2-text-title">BlueStacks Instance</div><p className="v2-text-body-sm" style={{ marginTop: 'var(--v2-space-1)' }}>Same card: white, 1px line, radius 16, no shadow.</p></div>}
-            changed="Four hex greys for one job (#e2e8f0, #e5e7eb, #e8edf3, rgba(0,0,0,0.06)) and a shadow on every card become alpha-black lines that sit on any near-white ground, the site's main move. Five sunken greys become one; hover becomes a wash instead of an opacity drop that lowers contrast." />
+            changed="Four hex greys for one job (#e2e8f0, #e5e7eb, #e8edf3, rgba(0,0,0,0.06)) and a shadow on every card become alpha-black lines that sit on any near-white ground, the site's own values. The site also keeps a faint resting cast on its cards; the product drops it, so lines alone separate in-flow surfaces. Five sunken greys become one; hover becomes a wash instead of an opacity drop that lowers contrast." />
           <G.SpecDrawer rows={[
             { part: 'Window ground', token: '--v2-canvas', value: '#fafbfb', ref: 'foundations.surface.canvas' },
             { part: 'Card edge', token: '--v2-line', value: 'rgba(0,0,0,0.10)', ref: ['foundations.line.topbar', 'foundations.shadow.card', 'foundations.line.onblue-soft'] },
@@ -206,19 +206,20 @@
 
         <G.Part name="Status tones" status="changed" role="Five tones (neutral, info, success, attention, danger), each a tint, a line and an ink, read by every badge, banner, notice, tick and run card.">
           <G.StateGrid states={[
-            { label: 'Neutral', note: 'paused, skipped', node: <Tone t="neutral" label="Paused" /> },
-            { label: 'Info', note: 'pending verification', node: <Tone t="info" label="Pending" /> },
+            { label: 'Neutral', note: 'paused, skipped, pending verification (one ink-4 tick)', node: <Tone t="neutral" label="Paused" /> },
+            { label: 'Info', note: 'running, checking', node: <Tone t="info" label="Running" /> },
             { label: 'Success', note: 'reached, verified', node: <Tone t="success" label="Verified" /> },
-            { label: 'Attention', note: 'the worker needs you', node: <Tone t="attention" label="Needs you" /> },
-            { label: 'Danger', note: 'failed, out of credits', node: <Tone t="danger" label="Didn’t finish" /> },
+            { label: 'Attention', note: 'the worker needs you, out of AI credits', node: <Tone t="attention" label="Needs you" /> },
+            { label: 'Danger', note: 'failed, not verified', node: <Tone t="danger" label="Didn’t finish" /> },
           ]} />
+          <G.Note>Pending verification, one rule: a pending day is neutral wherever it is a status (one tick in --v2-ink-4, a neutral Badge with the check mark, the RunCard's Done badge). Blue touches it in exactly two places, both meaning “in, not yet checked” rather than a status: the DayBar's pending segment (1.5 --v2-blue inset outline, section 43) and the DayDone badge (--v2-blue-tint with its tick in --v2-blue-ink, section 44). Never green until verified. Banner names its neutral tone offline (sunken, line, ink-3 icon; section 21), so a neutral banner is tone="offline" with its own icon.</G.Note>
           <G.CompareRow
             v2={<G.Live get={function () { return window.ChatBubbles && window.ChatBubbles.ChatStatesPreview; }} label="ChatBubbles.ChatStatesPreview" />}
-            system={K.Banner ? <div className="v2-stack"><K.Banner tone="attention" title="Needs you">Answer in the chat to start today’s job.</K.Banner><K.Banner tone="danger" title="Out of credits">Today’s run can’t start.</K.Banner></div> : <span className="g-missing">Banner is not loaded</span>}
-            changed="Four parallel status maps (FINAL_STYLES, TONES, JOB_STATUS, FB_TONES) with 13 greens and 14 reds become one table. Success and danger are copied from the site so a verified day looks the same on the dashboard. The PM's needs-input yellow is kept as attention. Orange heads-up folds into a neutral notice whose icon carries the colour. Green means reached, never money: money is ink." />
+            system={K.Banner ? <div className="v2-stack"><K.Banner tone="attention" title="Needs you">Answer in the chat to start today’s job.</K.Banner><K.Banner tone="attention">Out of AI credits until <strong>5:30 am</strong>. Today’s run can’t start until then.</K.Banner></div> : <span className="g-missing">Banner is not loaded</span>}
+            changed="Four parallel status maps (FINAL_STYLES, TONES, JOB_STATUS, FB_TONES) with 13 greens and 14 reds become one table. Success and danger are copied from the site so a verified day looks the same on the dashboard. The PM's needs-input yellow is kept as attention. Orange heads-up folds into a neutral notice whose icon carries the colour. Green means reached, never money: money is ink. Pending is neutral wherever it is a status, so a day waiting on its check never looks reached. Out of AI credits is attention, not danger: the partner can act and the day may still count." />
           <G.DoDont do={['Use success for a reached state: verified, done, connected.', 'Put money in ink: $6, 2,000 credits.', 'Let the icon carry tone on a neutral notice.']} dont={['Paint dollars green.', 'Use a warm colour for link text (#f59e0b is 2.15:1).', 'Invent a sixth tone for one screen.']} />
           <G.SpecDrawer rows={[
-            { part: 'Success', token: '--v2-success / -ink / -tint / -line', value: '#16a34a / #15803d / 10% / 32%', ref: ['foundations.status.success-icon', 'foundations.status.active-badge', 'foundations.status.tones-green', 'foundations.status.fb-success', 'foundations.status.onblue-green', 'foundations.status.onblue-green-ink'] },
+            { part: 'Success', token: '--v2-success / -ink / -tint / -line', value: '#16a34a / #15803d / 8% / 32%; not the site’s 10%: green text on it must pass 4.5:1', ref: ['foundations.status.success-icon', 'foundations.status.active-badge', 'foundations.status.tones-green', 'foundations.status.fb-success', 'foundations.status.onblue-green', 'foundations.status.onblue-green-ink'] },
             { part: 'Danger', token: '--v2-danger-ink / -line / -tint', value: '#c03a40 / #d0454a / #fdecec', ref: ['foundations.status.final-fail', 'foundations.status.danger-banner', 'foundations.status.tones-red', 'foundations.status.job-failed', 'foundations.status.logout-red'] },
             { part: 'Attention', token: '--v2-attention-ink / -tint / -line', value: '#8a6116 / #fdf6cf / #f3e8a8', ref: ['foundations.status.final-needs', 'foundations.status.tones-amber'] },
             { part: 'Money in green, retired', token: '--v2-ink', value: '#0b0b0d', ref: ['foundations.status.green-const', 'foundations.status.money-green'] },
@@ -234,7 +235,7 @@
           ]} />
           <G.CompareRow
             v2={<div className="v2-stack"><G.FrameState url="index.html?start=worker" label="V2 top bar: gradient wordmark, gradient ring, gradient number" height={520} /><G.Live get={function () { return window.ChatBubbles && window.ChatBubbles.UserBubble; }} props={{ content: (window.MoneyMaker && window.MoneyMaker.PROMPT) || 'Run this to begin' }} label="ChatBubbles.UserBubble" /></div>}
-            system={<div className="v2-stack"><div className="v2-hstack v2-hstack--between" style={plate}>{K.BrandMark ? <K.BrandMark /> : null}<span className="v2-hstack v2-gap-1">{K.Icon ? <K.Icon name="credits" /> : null}<span className="v2-text-label v2-tabular" style={{ color: 'var(--v2-ink)' }}>2,000</span></span></div><div style={{ alignSelf: 'flex-end', maxWidth: 'var(--v2-bubble-max)', background: 'var(--v2-blue-tint)', border: 'var(--v2-stroke) solid var(--v2-blue-tint-line)', borderRadius: 'var(--v2-radius-lg)', padding: 'var(--v2-space-3) var(--v2-space-4)' }} className="v2-text-body">{(window.MoneyMaker && window.MoneyMaker.PROMPT) || 'Run this to begin'}</div></div>}
+            system={<div className="v2-stack"><div className="v2-hstack v2-hstack--between" style={plate}>{K.BrandMark ? <K.BrandMark /> : null}<span className="v2-hstack v2-gap-1">{K.Icon ? <K.Icon name="credits" /> : null}<span className="v2-text-label v2-tabular" style={{ color: 'var(--v2-ink)' }}>2,000</span></span></div><div style={{ alignSelf: 'flex-end', maxWidth: 'var(--v2-bubble-max)', background: 'var(--v2-blue-tint)', border: 'var(--v2-stroke) solid var(--v2-blue-tint-line)', borderRadius: 'var(--v2-radius-lg)', padding: 'calc(var(--v2-space-2) + var(--v2-space-05)) calc(var(--v2-space-3) + var(--v2-space-05))' }} className="v2-text-body">{(window.MoneyMaker && window.MoneyMaker.PROMPT) || 'Run this to begin'}</div></div>}
             changed="The gradient appears three times in one 419px top bar (wordmark, pill ring, pill number) and fills the user bubble with a cousin gradient and an indigo glow. Fenced to identity: the wordmark and the credits glyph keep it; rings, numbers, bubbles, buttons and borders lose it. The credits number turns ink." />
           <G.SpecDrawer rows={[
             { part: 'Wordmark, credits glyph', token: '--v2-gradient-brand', value: 'linear-gradient(90deg, #0EA4C5, #7B4CFF)', ref: ['foundations.brand.wordmark', 'foundations.brand.star-mask', 'foundations.icon.credits-asset'] },

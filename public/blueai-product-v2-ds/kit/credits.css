@@ -64,38 +64,6 @@
 .v2-credits-meter-cover--attention > :first-child { color: var(--v2-attention-ink); }
 .v2-credits-meter-cover--danger > :first-child { color: var(--v2-danger-ink); }
 
-/* ---- OutOfCreditsDialog body (inside V2Kit.Dialog sm, left-aligned like every dialog) ----- */
-.v2-ooc { display: flex; flex-direction: column; align-items: flex-start; gap: var(--v2-space-3); text-align: left;
-  font-family: var(--v2-font-ui); }
-.v2-ooc-hero { display: flex; align-items: center; gap: var(--v2-space-2); }
-.v2-ooc-num { font-size: var(--v2-text-40); font-weight: var(--v2-weight-semibold);
-  line-height: var(--v2-leading-display); letter-spacing: var(--v2-tracking-display); color: var(--v2-ink);
-  font-variant-numeric: tabular-nums; }
-.v2-ooc-lines { margin: 0; font-size: var(--v2-text-13); line-height: var(--v2-leading-body); color: var(--v2-ink-2); }
-.v2-ooc-lines > span { display: block; }
-.v2-ooc-lines strong { color: var(--v2-ink); font-weight: var(--v2-weight-semibold); white-space: nowrap; font-variant-numeric: tabular-nums; }
-.v2-ooc-day { margin: 0; font-size: var(--v2-text-13); font-weight: var(--v2-weight-medium); line-height: var(--v2-leading-snug); color: var(--v2-ink); }
-.v2-ooc-why { display: inline-flex; align-items: center; gap: var(--v2-space-1); min-height: var(--v2-hit-min);
-  margin-left: calc(var(--v2-space-2) * -1); padding: 0 var(--v2-space-2); border: 0;
-  border-radius: var(--v2-radius-sm); background: transparent; color: var(--v2-ink-3); font: inherit;
-  font-size: var(--v2-text-13); font-weight: var(--v2-weight-medium); cursor: pointer;
-  transition: color var(--v2-dur-1) var(--v2-ease-standard), background-color var(--v2-dur-1) var(--v2-ease-standard); }
-.v2-ooc-why:hover, .v2-ooc-why.is-hover { color: var(--v2-ink); background-color: var(--v2-wash-hover); }
-.v2-ooc-why:focus-visible, .v2-ooc-why.is-focus { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); }
-.v2-ooc-actions { align-self: stretch; margin-top: var(--v2-space-1); }
-.v2-ooc-fallback-btn { width: 100%; height: var(--v2-control-lg); border: 0; border-radius: var(--v2-radius-sm);
-  background: var(--v2-action); color: var(--v2-on-color); font: inherit; font-size: var(--v2-text-13);
-  font-weight: var(--v2-weight-medium); cursor: pointer; }
-.v2-ooc-fallback-btn:hover, .v2-ooc-fallback-btn.is-hover { background: var(--v2-action-hover); }
-.v2-ooc-fallback-btn:focus-visible, .v2-ooc-fallback-btn.is-focus { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); }
-/* The same surface as Dialog sm, in place and without the scrim (specimens, docs). */
-.v2-ooc-static { display: flex; flex-direction: column; gap: var(--v2-space-4); width: var(--v2-dialog-sm);
-  max-width: 100%; box-sizing: border-box; padding: var(--v2-space-5); border: var(--v2-stroke) solid var(--v2-line);
-  border-radius: var(--v2-radius-lg); background: var(--v2-surface); box-shadow: var(--v2-shadow-2); }
-.v2-ooc-static-title { margin: 0; font-family: var(--v2-font-ui); font-size: var(--v2-text-20);
-  font-weight: var(--v2-weight-semibold); line-height: var(--v2-leading-tight);
-  letter-spacing: var(--v2-tracking-title); color: var(--v2-ink); }
-
 /* ---- OutOfCreditsNotice: composer line and run end ----------------------------------------- */
 .v2-ooc-note { display: flex; align-items: flex-start; gap: var(--v2-space-2);
   padding: var(--v2-space-2) var(--v2-space-3); border-radius: var(--v2-radius-md);
@@ -109,10 +77,9 @@
 .v2-ooc-note-title { font-weight: var(--v2-weight-medium); color: var(--v2-ink); }
 .v2-ooc-note .v2-ooc-note-meta { margin-top: var(--v2-space-05); font-size: var(--v2-text-12); color: var(--v2-ink-4); font-variant-numeric: tabular-nums; }
 
-/* ---- SettingsSection ----------------------------------------------------------------------- */
+/* ---- SettingsSection (its surface is the Card's, kit/display.css) ------------------------- */
 .v2-settings-section { display: flex; flex-direction: column; gap: var(--v2-space-3); padding: var(--v2-space-4);
-  border: var(--v2-stroke) solid var(--v2-line); border-radius: var(--v2-radius-lg); background: var(--v2-surface);
-  box-shadow: var(--v2-shadow-0); font-family: var(--v2-font-ui); scroll-margin: var(--v2-space-4);
+  font-family: var(--v2-font-ui); scroll-margin: var(--v2-space-4);
   transition: border-color var(--v2-dur-3) var(--v2-ease-out), box-shadow var(--v2-dur-3) var(--v2-ease-out); }
 .v2-settings-section.is-highlighted { border-color: var(--v2-blue); box-shadow: var(--v2-focus-ring); }
 .v2-settings-section-head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--v2-space-3); }
@@ -122,13 +89,16 @@
 .v2-settings-section-desc { margin: var(--v2-space-1) 0 0; font-size: var(--v2-text-13); line-height: var(--v2-leading-body); color: var(--v2-ink-3); }
 .v2-settings-section-action { flex: none; }
 .v2-settings-section-body { display: flex; flex-direction: column; }
-/* ListRows run full-bleed so their own 16px padding lines up with the title; they draw their own
-   inset hairlines. Any other block (a switch row, a panel) is separated by one hairline. */
+/* ListRows and ModeRows run full-bleed so their own 16px padding lines up with the title; they draw
+   their own inset hairlines (the ModeRows note gets the 16 back). Any other block (a switch row, a
+   panel) is separated by one hairline. */
 .v2-settings-section-body > .v2-row,
 .v2-settings-section-body > .v2-row-group { width: auto; margin: 0 calc(var(--v2-space-4) * -1); }
 .v2-settings-section-body > .v2-row:last-child,
 .v2-settings-section-body > .v2-row-group:last-child { margin-bottom: calc(var(--v2-space-3) * -1); }
-.v2-settings-section-body > :not(.v2-row):not(.v2-row-group) + :not(.v2-row):not(.v2-row-group) {
+.v2-settings-section-body > .v2-moderows { width: auto; margin: 0 calc(var(--v2-space-4) * -1) calc(var(--v2-space-1) * -1); }
+.v2-settings-section-body > .v2-moderows .v2-moderows-note { padding: 0 var(--v2-space-4); }
+.v2-settings-section-body > :not(.v2-row):not(.v2-row-group):not(.v2-moderows) + :not(.v2-row):not(.v2-row-group):not(.v2-moderows) {
   margin-top: var(--v2-space-3); border-top: var(--v2-stroke) solid var(--v2-line-hair); }
 
 /* ---- AdvancedDisclosure -------------------------------------------------------------------- */
@@ -169,13 +139,7 @@
 .v2-aimode-block { display: flex; flex-direction: column; gap: var(--v2-space-3); }
 .v2-aimode-text { margin: 0; font-size: var(--v2-text-13); line-height: var(--v2-leading-body); color: var(--v2-ink-2); }
 .v2-aimode-text--strong { font-weight: var(--v2-weight-medium); color: var(--v2-ink); }
-.v2-aimode-meta { margin: 0; font-size: var(--v2-text-12); line-height: var(--v2-leading-snug); color: var(--v2-ink-4); }
 .v2-aimode-row { display: flex; flex-wrap: wrap; gap: var(--v2-space-2); }
 .v2-aimode-status { display: flex; align-items: center; justify-content: space-between; gap: var(--v2-space-3); font-size: var(--v2-text-13); font-weight: var(--v2-weight-medium); color: var(--v2-ink-2); }
-/* Underlined ink link that turns blue on hover: the family's link (onBlue). */
-.v2-aimode-switch { align-self: flex-start; min-height: var(--v2-hit-min); padding: 0; border: 0;
-  background: transparent; color: var(--v2-ink); font: inherit; font-size: var(--v2-text-13);
-  font-weight: var(--v2-weight-medium); text-decoration: underline; text-decoration-color: var(--v2-line-hover);
-  text-underline-offset: 3px; cursor: pointer; transition: color var(--v2-dur-1) var(--v2-ease-standard); }
-.v2-aimode-switch:hover, .v2-aimode-switch.is-hover { color: var(--v2-blue-ink); text-decoration-color: currentColor; }
-.v2-aimode-switch:focus-visible, .v2-aimode-switch.is-focus { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); border-radius: var(--v2-radius-xs); }
+/* The method switch is V2Kit.Link standalone (kit/actions.css); this only places it. */
+.v2-aimode-switch { align-self: flex-start; }

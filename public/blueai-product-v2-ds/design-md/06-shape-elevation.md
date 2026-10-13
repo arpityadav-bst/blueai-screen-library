@@ -8,7 +8,7 @@
 
 **Purpose.** Six radii, each with a job.
 
-**Anatomy.** `--v2-radius-xs` 4 (checkbox box, day-bar segment, tooltip arrow), `-sm` 6 (buttons, fields, segmented items, menu rows, icon buttons: the site's button radius), `-md` 10 (rows, banners, composer, menus, tooltips, segmented track), `-lg` 16 (cards, bubbles, dialogs, sheet top corners: the site's card radius), `-pill` (badges, quick-reply chips, credits chip, progress rail), `-round` (avatars, discs, send). Strokes: `--v2-stroke` 1px everywhere; `--v2-stroke-selected` 1.5px only for a selected choice and the focused composer.
+**Anatomy.** `--v2-radius-xs` 4 (checkbox box, day-bar segment, tooltip arrow), `-sm` 6 (buttons, fields, segmented items, menu rows, icon buttons: the site's button radius), `-md` 10 (rows, banners, composer, menus, tooltips, segmented track), `-lg` 16 (cards, bubbles, dialogs, sheet top corners: the site's card radius), `-pill` (badges, quick-reply chips, credits chip, progress rail), `-round` (avatars, discs, send). Strokes: `--v2-stroke` 1px for every edge; `--v2-stroke-selected` 1.5px for a selected choice, the focused composer, and the two outlined marks that must still read at 6 to 8px: the ring status dot (paused, offline: `kit/shell.css:81`) and the pending DayBar segment (`kit/worker.css:87`). A 2px step is not a stroke token; it appears only as mark geometry, sized with its mark: the spinner ring and the checkbox tick (glyph lines), the 2px surface halo that cuts a count dot out of what it sits on (`kit/credits.css:45`, `kit/display.css:88`), and the 2px left rule of the job preview's quoted comment (`kit/worker.css:166`). Icon glyphs draw at their own weight (StatusTick 2.5, `kit/program.jsx:21`).
 
 **Variants.** As listed.
 
@@ -68,4 +68,4 @@
 
 **Responsive.** Not applicable.
 
-**Do / Don't.** Do stack dialogs that share `--v2-z-dialog` by mount order. Don't blur outside sign-in (it costs on partner PCs). Don't invent a z-index: pick a layer.
+**Do / Don't.** Don't stack a dialog on a dialog (section 25); mount order on `--v2-z-dialog` only settles an overlap that cannot be avoided (one dialog still fading out while the next one opens), and the later one sits on top. Don't blur outside sign-in (it costs on partner PCs). Don't invent a z-index: pick a layer.

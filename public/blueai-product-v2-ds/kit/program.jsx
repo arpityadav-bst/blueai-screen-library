@@ -6,10 +6,17 @@
    DayBar {days, worker, target, legend, bonusLabel, label}
      days: segment states (verified | pending | rejected | missed | future), or pass worker and
      numbers() derives them. role=progressbar with a spoken summary; the legend says it in words.
-   ProgramStrip {worker, onOpenActivity}  the home's progress card: count, Ends Nov 1, DayBar, one
-     receipt line, Earnings (one URL). The site's progress tile with the pending state it lacks.
-   ProgramSummary {rule, compact, title, triggerClassName, open}  the four program rules, in full or
-     behind an info tip (32px trigger; open forces the tip, for review).
+   ProgramStrip {worker, onOpenActivity, receipt}  the home's progress card: count, Ends Nov 1, DayBar,
+     one receipt line, Earnings (one URL). The site's progress tile with the pending state it lacks.
+     receipt false (default true) drops the receipt line and keeps Earnings alone in the foot, for a
+     screen where the WorkerCard already says today's status (Home).
+     The receipt names the real day of the last ledger row against today.date ('Yesterday’s run
+     verified.', 'The Oct 10 run is still being checked.'), never a day picked from its status.
+   ProgramSummary {rule, compact, title, triggerClassName, open}  the five program rules, in full or
+     behind the Tooltip's own (i) trigger (32px; triggerClassName forces its state and open forces
+     the tip, for review).
+   programRules(rule)  [{id days | counts | ticks | cashout | minimum, icon, text}]: the one place a
+     rule is written. Run detail, Activity and DayDone read the tick rule from it (id 'ticks').
    EarningsLink {className}  the one Earnings link (EARNINGS_URL), used by the strip and the card. */
 (function () {
   const K = () => window.V2Kit || {};
@@ -67,15 +74,23 @@
   }
 
   // The receipt line under the bar: the one fact that changed since the partner last looked.
+  // Proposed copy except 'Yesterday’s run verified.' and the skipped line (V2).
   function receipt(w, n) {
     const last = n.last;
-    if (n.complete) return { status: 'verified', text: 'All 20 days verified. Cash out on Earnings after ' + n.endsOn + '.' };
+    if (n.complete) return { status: 'verified', text: 'All ' + n.target + ' days verified. Cash out on Earnings after ' + n.endsOn + '.' };
     if (!last) return { status: 'notcounted', text: 'No days counted yet.' };
-    if (last.status === 'rejected') return { status: 'rejected', text: 'Yesterday’s run wasn’t counted.', danger: true };
-    if (last.status === 'pending' || last.status === 'late') return { status: last.status, text: 'Today’s run is pending verification.' };
-    if (last.status === 'skipped') return { status: 'notcounted', text: 'Today doesn’t count toward your 20 days.' };
-    if (last.status === 'missed') return { status: 'notcounted', text: 'Yesterday had no run.' };
-    return { status: 'verified', text: 'Yesterday’s run verified.' };
+    if (K().workerState(w) === 'ended') return { status: 'notcounted', text: 'Your ' + n.target + ' days ended on ' + n.endsOn + '.' };
+    const gap = K().dayGap(last.date, (w.today || {}).date);
+    const run = gap === 0 ? 'Today’s run' : gap === 1 ? 'Yesterday’s run' : 'The ' + last.date + ' run';
+    if (last.status === 'rejected') return { status: 'rejected', text: run + ' wasn’t counted.', danger: true };
+    if (last.status === 'late') return { status: 'late', text: run + ' is still being checked.' };
+    if (last.status === 'pending') return { status: 'pending', text: run + ' is pending verification.' };
+    if (last.status === 'notcounted') {
+      if (last.outcome === 'norun') return { status: 'notcounted', text: (gap === 1 ? 'Yesterday' : gap === 0 ? 'Today' : last.date) + ' had no run.' };
+      if (gap === 0) return { status: 'notcounted', text: 'Today doesn’t count toward your 20 days.' };
+      return { status: 'notcounted', text: run + ' didn’t count.' };
+    }
+    return { status: 'verified', text: run + ' verified.' };
   }
 
   // The one Earnings link: underlined ink, blue on hover (the family link), opens the site.
@@ -88,61 +103,62 @@
     );
   }
 
-  function ProgramStrip({ worker, onOpenActivity }) {
-    const w = worker || (K().workerFixtures || {}).verified;
-    const n = K().numbers(w);
-    const r = receipt(w, n);
-    const Tip = K().Tooltip;
+  function ProgramStrip({ worker, onOpenActivity, receipt: showReceipt }) {
+    const P = K();
+    const w = worker || P.workerFixtures.verified;
+    const n = P.numbers(w);
+    const r = showReceipt === false ? null : receipt(w, n);
     return (
       <section className="v2-pstrip" aria-label="Your 20 days">
         <div className="v2-pstrip-head">
           <p className="v2-pstrip-count"><span className="v2-w-figure">{n.done}</span> of {n.target} days</p>
           <span className="v2-pstrip-side">
             <span className="v2-w-meta">Ends {n.endsOn}</span>
-            {Tip ? <ProgramSummary compact /> : null}
+            <ProgramSummary compact />
           </span>
         </div>
         <DayBar days={n.segments} target={n.target} />
         <div className="v2-pstrip-foot">
-          <span className={cx('v2-pstrip-receipt', r.danger && 'v2-pstrip-receipt--danger')}>
-            <StatusTick status={r.status} size={12} />
-            <span>{r.text}</span>
-            {r.danger && onOpenActivity ? <button type="button" className="v2-w-btn" onClick={onOpenActivity}>See why</button> : null}
-          </span>
+          {r ? (
+            <span className={cx('v2-pstrip-receipt', r.danger && 'v2-pstrip-receipt--danger')}>
+              <StatusTick status={r.status} size={12} />
+              <span>{r.text}</span>
+              {r.danger && onOpenActivity ? <P.Button variant="quiet" size="sm" onClick={onOpenActivity}>See why</P.Button> : null}
+            </span>
+          ) : null}
           <EarningsLink />
         </div>
       </section>
     );
   }
 
-  // Wording waits on decision D3 (the money model), so no amount appears here.
+  // Proposed copy built from V2's rule note (worker_day_done.jsx:5-7).
+  // No rate or bonus until D3; the $10 cash-out minimum is in both options (section 43).
   function rules(rule) {
     const r = Object.assign({}, K().WORKER_RULE, rule || {});
     return [
-      { icon: 'calendar', text: 'Run on ' + r.target + ' days before ' + r.programEnd + '.' },
-      { icon: 'check', text: 'A day counts when a job is verified, or when there was no job to take.' },
-      { icon: 'check-double', text: 'We check every run within a day. One tick while pending, two once verified.' },
-      { icon: 'earnings', text: 'Cash out on Earnings after the period ends.' },
+      { id: 'days', icon: 'calendar', text: 'Run on ' + r.target + ' days before ' + r.programEnd + '.' },
+      { id: 'counts', icon: 'check', text: 'A day counts when a job is verified, or when there was no job to take.' },
+      { id: 'ticks', icon: 'check-double', text: 'We check every run within a day. One tick while pending, two once verified.' },
+      { id: 'cashout', icon: 'earnings', text: 'Cash out on Earnings after the period ends.' },
+      { id: 'minimum', icon: 'lock', text: 'You need $' + r.cashOutMin + ' to cash out; a smaller balance carries over to the next period.' },
     ];
   }
   function ProgramSummary({ rule, compact, title, triggerClassName, open }) {
-    const I = K().Icon;
+    const P = K();
+    const name = title || 'How your 20 days work';
     const list = (
       <ul className="v2-psummary-list">
-        {rules(rule).map(function (x) {
-          return <li key={x.icon}>{I ? <I name={x.icon} size={16} /> : null}<span>{x.text}</span></li>;
-        })}
+        {rules(rule).map(function (x) { return <li key={x.id}><P.Icon name={x.icon} size={16} /><span>{x.text}</span></li>; })}
       </ul>
     );
     if (compact) {
-      const Tip = K().Tooltip;
-      const content = <div className="v2-psummary v2-psummary--tip"><p className="v2-psummary-title">{title || 'How your 20 days work'}</p>{list}</div>;
-      const trigger = <button type="button" className={cx('v2-w-btn v2-w-btn--icon', triggerClassName)} aria-label={title || 'How your 20 days work'}>{I ? <I name="info" size={16} /> : 'i'}</button>;
-      return Tip ? <Tip kind="info" placement="down" open={open} content={content}>{trigger}</Tip> : trigger;
+      const content = <div className="v2-psummary v2-psummary--tip"><p className="v2-psummary-title">{name}</p>{list}</div>;
+      return <P.Tooltip kind="info" placement="down" open={open} label={name} className={triggerClassName} content={content} />;
     }
     return (
       <div className="v2-psummary">
-        <p className="v2-psummary-title">{title || 'How your 20 days work'}</p>
+        <p className="v2-psummary-title">{name}</p>
         {list}
       </div>
     );

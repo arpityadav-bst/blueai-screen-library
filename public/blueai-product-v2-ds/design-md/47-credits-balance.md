@@ -21,7 +21,7 @@
 - **Variants:** Covered line: "Enough for today's run", "Not enough for today's run", "Today's run can't start until credits refresh", "Today's run is done" (when runDone).
 - **Sizes:** Full width of its container.
 - **States:** Full; partial; low (less than one run); empty; empty with today's run already done; refreshed (rail full, caption "Refreshed"). Not in V2: it is the unshipped comparison idea (credits_page_options.jsx:147-170, `credits-popup-options.html`).
-- **Props:** `balance`, `grant`, `runCost`, `refillAt` (Date or ms; default the next 00:00 UTC), `now` (freezes the clock), `runDone`, `refreshed`, `className`.
+- **Props:** `balance`, `grant`, `runCost`, `refillAt` (Date or ms; default the next 00:00 UTC), `now` (freezes the clock), `runDone`, `refreshed`, `figure` (default true; false, under a StatCard that already shows the balance, makes the caption "of 2,000 today" and keeps aria-valuetext whole), `className`.
 - **Motion:** Fill width 240ms `--v2-ease-out`; the countdown text ticks once a second and stops at zero. Reduced motion: the global rule removes the width transition.
 - **Accessibility:** role=meter with aria-valuemin 0, aria-valuemax grant, aria-valuenow balance and aria-valuetext "1,250 of 2,000 left today". The covered line is text, not colour. Caption ink-4 is 4.77:1 (meta only); the consequence sits in the ink-2 line.
 - **Responsive:** Caption halves wrap to two lines below about 260px.

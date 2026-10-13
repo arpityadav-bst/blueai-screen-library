@@ -8,20 +8,18 @@
 .v2-w-note { margin: 0; font-size: var(--v2-text-13); line-height: var(--v2-leading-snug); color: var(--v2-ink-3); }
 .v2-w-figure { color: var(--v2-ink); font-weight: var(--v2-weight-semibold); font-variant-numeric: tabular-nums; }
 
-/* The one inverse control (CoachMark Okay) and the info trigger: 32px targets */
-.v2-w-btn {
-  display: inline-flex; align-items: center; justify-content: center; gap: var(--v2-space-1);
+/* CoachMark Okay: the one inverse control (a light button on the ink coach), 32px target. Every
+   other worker action is a kit Button or the Tooltip's own (i) trigger. */
+.v2-coach-okay {
+  display: inline-flex; align-items: center; justify-content: center;
   min-width: var(--v2-hit-min); min-height: var(--v2-hit-min); padding: 0 var(--v2-space-3);
-  border: 0; border-radius: var(--v2-radius-sm); background: transparent; color: var(--v2-ink-3);
+  border: 0; border-radius: var(--v2-radius-sm); background: var(--v2-surface); color: var(--v2-ink);
   font: inherit; font-size: var(--v2-text-13); font-weight: var(--v2-weight-medium); cursor: pointer;
-  transition: background-color var(--v2-dur-1) var(--v2-ease-standard), color var(--v2-dur-1) var(--v2-ease-standard);
+  transition: background-color var(--v2-dur-1) var(--v2-ease-standard);
 }
-.v2-w-btn--icon { padding: 0; }
-.v2-w-btn:hover, .v2-w-btn.is-hover { background: var(--v2-wash-hover); color: var(--v2-ink); }
-.v2-w-btn:active, .v2-w-btn.is-active { background: var(--v2-wash-press); transform: translateY(1px); }
-.v2-w-btn:focus-visible, .v2-w-btn.is-focus { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); }
-.v2-w-btn--inverse { background: var(--v2-surface); color: var(--v2-ink); }
-.v2-w-btn--inverse:hover, .v2-w-btn--inverse.is-hover { background: var(--v2-surface-sunken); color: var(--v2-ink); }
+.v2-coach-okay:hover, .v2-coach-okay.is-hover { background: var(--v2-surface-sunken); }
+.v2-coach-okay:active, .v2-coach-okay.is-active { background: var(--v2-surface-sunken); transform: translateY(1px); }
+.v2-coach-okay:focus-visible, .v2-coach-okay.is-focus { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); }
 
 /* WorkerCard */
 .v2-wcard {
@@ -29,7 +27,6 @@
   padding: var(--v2-space-4); background: var(--v2-surface);
   border: var(--v2-stroke) solid var(--v2-line); border-radius: var(--v2-radius-lg);
 }
-.v2-wcard.is-coaching { z-index: calc(var(--v2-z-coach) + 1); }
 .v2-wcard-tile {
   flex: none; align-self: flex-start; display: grid; place-items: center; width: 40px; height: 40px;
   border-radius: var(--v2-radius-md); background: var(--v2-surface-sunken); color: var(--v2-ink-3);
@@ -52,13 +49,13 @@
 .v2-wcard-mode--auto { color: var(--v2-blue-ink); }
 .v2-wcard-action { flex: none; }
 
-/* CoachMark: the one inverse surface */
-.v2-coach-wrap { display: flex; justify-content: flex-end; margin-top: var(--v2-space-3); position: relative; z-index: calc(var(--v2-z-coach) + 1); }
+/* CoachMark: the one inverse surface, a non-blocking note under the card (arrives with
+   .v2-anim-pop-in, kit/motion.css) */
+.v2-coach-wrap { display: flex; justify-content: flex-end; margin-top: var(--v2-space-3); }
 .v2-coach {
   position: relative; display: flex; flex-direction: column; gap: var(--v2-space-2); max-width: 260px;
   padding: var(--v2-space-3) var(--v2-space-3) var(--v2-space-2) var(--v2-space-4);
   background: var(--v2-ink); color: var(--v2-on-color); border-radius: var(--v2-radius-md); box-shadow: var(--v2-shadow-1);
-  animation: v2-w-rise var(--v2-dur-3) var(--v2-ease-out) both;
 }
 .v2-coach::before {
   content: ''; position: absolute; top: calc(var(--v2-space-15) * -1); right: var(--v2-space-6);
@@ -108,7 +105,8 @@
 .v2-w-earnings {
   display: inline-flex; align-items: center; gap: var(--v2-space-1); flex: none; min-height: var(--v2-hit-min);
   color: var(--v2-ink); font-size: var(--v2-text-12); font-weight: var(--v2-weight-medium);
-  text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--v2-line-hover); border-radius: var(--v2-radius-xs);
+  text-decoration: underline; text-decoration-thickness: var(--v2-stroke); text-underline-offset: 3px;
+  text-decoration-color: var(--v2-link-underline); border-radius: var(--v2-radius-xs);
 }
 .v2-w-earnings:hover, .v2-w-earnings.is-hover { color: var(--v2-blue-ink); text-decoration-color: currentColor; }
 .v2-w-earnings:focus-visible, .v2-w-earnings.is-focus { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); }
@@ -126,8 +124,9 @@
 .v2-daydone-badge {
   display: grid; place-items: center; width: 56px; height: 56px; border-radius: var(--v2-radius-round);
   background: var(--v2-blue-tint); color: var(--v2-blue-ink);
-  animation: v2-w-pop var(--v2-dur-celebrate) var(--v2-ease-out) both;
+  animation: v2-scale-in var(--v2-dur-celebrate) var(--v2-ease-out) both;
 }
+.v2-daydone-badge .v2-tick { color: inherit; }
 .v2-daydone-title { margin: 0; color: var(--v2-ink); font-size: var(--v2-text-20); font-weight: var(--v2-weight-semibold); letter-spacing: var(--v2-tracking-title); line-height: var(--v2-leading-tight); }
 .v2-daydone-sub { margin: calc(var(--v2-space-2) * -1) 0 0; color: var(--v2-ink-3); font-size: var(--v2-text-13); line-height: var(--v2-leading-body); }
 .v2-daydone-progress { align-self: stretch; display: flex; flex-direction: column; gap: var(--v2-space-2); text-align: left; }
@@ -175,7 +174,6 @@
 
 /* ModeRows, ConsentDialog, PermissionRequest */
 .v2-moderows { display: flex; flex-direction: column; min-width: 0; }
-.v2-moderows--float { width: 364px; max-width: 100%; padding: var(--v2-space-1) var(--v2-space-3) var(--v2-space-3); background: var(--v2-surface); border: var(--v2-stroke) solid var(--v2-line); border-radius: var(--v2-radius-md); box-shadow: var(--v2-shadow-1); }
 .v2-moderows-note { margin: var(--v2-space-2) 0 0; color: var(--v2-ink-3); font-size: var(--v2-text-12); line-height: var(--v2-leading-snug); }
 .v2-moderows-app { display: grid; place-items: center; width: var(--v2-icon-md); color: var(--v2-ink-3); }
 .v2-consent { display: flex; flex-direction: column; gap: var(--v2-space-3); color: var(--v2-ink-2); font-size: var(--v2-text-14); line-height: var(--v2-leading-body); }
@@ -202,15 +200,12 @@
 .v2-permreq--compact { flex-direction: row; align-items: center; gap: var(--v2-space-3); padding: var(--v2-space-3) var(--v2-space-4); }
 .v2-permreq--compact .v2-w-note { flex: 1; min-width: 0; }
 
-/* Motion: arrivals only, once. Confetti is hidden outright under reduced motion. */
-@keyframes v2-w-rise { from { opacity: 0; transform: translateY(var(--v2-space-15)); } to { opacity: 1; transform: none; } }
-@keyframes v2-w-pop { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: none; } }
+/* Motion: arrivals use motion.css (the coach .v2-anim-pop-in, the day-done badge v2-scale-in at
+   --v2-dur-celebrate); only the confetti is local. Confetti is hidden outright under reduced motion. */
 @keyframes v2-w-confetti {
   0% { opacity: 1; transform: translate(-50%, 0) rotate(0deg); }
   100% { opacity: 0; transform: translate(calc(-50% + var(--tx)), var(--ty)) rotate(var(--r)); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .v2-coach, .v2-daydone-badge { animation: none; }
   .v2-confetti { display: none; }
-  .v2-w-btn { transition: none; }
 }

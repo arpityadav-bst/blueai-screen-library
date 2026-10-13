@@ -4,12 +4,15 @@
    Layout lives in screens/entry.css. Spec: design-md/67-welcome.md, 53-consent.md.
 
    Welcome      {terms: null | 'firstrun' | 'update', termsBusy, termsError, headline 'pm' | 'proposed',
-                onSignIn, onAgree, compact, reduced, preview, landmark, animate}
+                signedOut, onSignIn, onAgree, compact, reduced, preview, landmark, animate}
                 terms opens the blocking Program Terms sheet over the screen (first cold start, or a
                 terms change). headline 'pm' is V2's line verbatim (decision D3 pending); 'proposed'
                 is the system's line that promises no income. reduced forces the reduced-motion look
                 (guide). preview draws overlays open without taking focus (guide). landmark false
-                renders the content as a div, not <main> (guide specimens).
+                renders the content as a div, not <main> (guide specimens). signedOut (the account's
+                email) is the variant after Sign out (section 64): not the cold-start pitch but what
+                signing out means (the worker is paused, days don't count) and one way back, 'Sign in
+                as <email>'. Proposed copy.
    Welcome.Body {headline, onSignIn, animate}  the content alone, for screens drawn over it (SignIn).
    TermsSheet   {mode 'firstrun' | 'update', open, busy, error, onAgree, preview}  the kit Sheet,
                 blocking: no close, no Esc, no scrim; the button is the agreement. busy while the
@@ -127,10 +130,33 @@
     );
   }
 
+  // After Sign out: the same window, the account to come back with, and what the pause costs.
+  function SignedOutBody({ email, onSignIn, animate }) {
+    const k = K();
+    const anim = animate === false ? null : 'v2-anim-fade-up';
+    const Btn = k.Button;
+    return (
+      <div className="v2-welcome">
+        <div className="v2-welcome-main">
+          <div className={cx('v2-welcome-head', anim)}>
+            {k.BrandMark ? <k.BrandMark size={48} wordmark={false} /> : null}
+            <h1 className="v2-welcome-title">You’re signed out</h1>
+            <p className="v2-welcome-line">Your worker is paused, and days without a run don’t count toward your 20 days.</p>
+          </div>
+          <div className={cx(anim, anim && 'v2-delay-1')}>
+            {Btn ? <Btn variant="primary" size="lg" full onClick={onSignIn}>{'Sign in as ' + email}</Btn> : null}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   function Welcome(props) {
     const p = props || {};
     const Frame = K().AppFrame;
-    const body = <WelcomeBody headline={p.headline} onSignIn={p.onSignIn} animate={p.animate} />;
+    const body = p.signedOut
+      ? <SignedOutBody email={p.signedOut} onSignIn={p.onSignIn} animate={p.animate} />
+      : <WelcomeBody headline={p.headline} onSignIn={p.onSignIn} animate={p.animate} />;
     const sheet = p.terms ? (
       <TermsSheet mode={p.terms} busy={p.termsBusy} error={p.termsError} onAgree={p.onAgree} preview={p.preview} />
     ) : null;

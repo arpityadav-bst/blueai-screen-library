@@ -24,6 +24,11 @@
   font-size: var(--v2-text-24); font-weight: var(--v2-weight-semibold); line-height: var(--v2-leading-tight);
   letter-spacing: var(--v2-tracking-title); color: var(--v2-ink); text-wrap: balance;
 }
+/* The signed-out variant's one line under the title: what signing out means for the 20 days. */
+.v2-welcome-line {
+  max-width: var(--v2-dialog-sm); margin: 0; color: var(--v2-ink-2);
+  font-size: var(--v2-text-14); line-height: var(--v2-leading-body); text-wrap: pretty;
+}
 /* The site's one serif word (title-lg em): Instrument Serif italic in blue ink. Brand voice, not a
    highlight: one per title at most, never on a button or a number. */
 .v2-serif-em {
@@ -68,6 +73,7 @@
   background: var(--v2-blue-tint); color: var(--v2-blue-ink);
 }
 .v2-gate-mark--success { background: var(--v2-success-tint); color: var(--v2-success-ink); }
+.v2-gate-mark--danger { background: var(--v2-danger-tint); color: var(--v2-danger-ink); }
 .v2-gate-mark--plain { background: none; color: var(--v2-blue); }
 .v2-gate-text { display: flex; flex-direction: column; align-items: center; gap: var(--v2-space-1); }
 .v2-gate-title {

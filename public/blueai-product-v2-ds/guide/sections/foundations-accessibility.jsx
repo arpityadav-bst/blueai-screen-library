@@ -21,7 +21,7 @@
   ];
   const KEYS = [
     ['Menus', 'Trigger has aria-haspopup and aria-expanded. Enter, Space or Down opens and focuses the first item; Up and Down move, Home and End jump; Enter picks; Esc or Tab closes and focus returns to the trigger.'],
-    ['Dialogs', 'Focus moves in on open (the first field, else the safest button); Tab stays inside; Esc closes unless the dialog blocks (terms); focus returns to what opened it. The title labels the dialog.'],
+    ['Dialogs', 'Focus moves in on open, by kind: the panel takes it for a dialog read before acting (task, consent, day done), the first field takes it through initialFocus for a form dialog, Cancel takes it for an alert. Tab stays inside; Esc closes unless the dialog blocks (terms); focus returns to what opened it. The title labels the dialog.'],
     ['Sheets', 'Same as dialogs. The blocking terms sheet has no close and no Esc: its one way out is the agreement button.'],
     ['Tabs', 'One tab stop; Left and Right move and select; the panel follows.'],
     ['Thread', "role='log' with aria-live='polite': new worker messages are read once, never the whole history."],
@@ -75,7 +75,7 @@
           <div className="v2-hstack v2-wrap v2-gap-4">{FILLS.map(function (f) {
             return <span key={f[0]} className="v2-hstack v2-gap-2"><span style={{ background: 'var(' + f[0] + ')', color: 'var(--v2-on-color)', padding: '2px var(--v2-space-2)', borderRadius: 'var(--v2-radius-xs)', fontSize: 'var(--v2-text-13)' }}>on-color on {f[1]}</span><R fg="--v2-on-color" bg={f[0]} /></span>;
           })}</div>
-          <G.Warn>Rules the table enforces: ink-4 is meta only and never on sunken (it drops under 4.5:1 there), placeholder is never text that must be read, status inks go on their own tint or on white, and white labels go on action, never on brand blue.</G.Warn>
+          <G.Warn>Rules the table enforces: ink-4 is meta only and only on surface, panel or canvas at rest (it is under 4.5:1 on sunken, every tint, selected, and the hover and press washes), placeholder is never text that must be read, status inks go on their own tint or on white, and white labels go on action, never on brand blue.</G.Warn>
           <G.CompareRow
             v2={<div className="g-table-wrap"><table className="g-table"><tbody>{V2_PAIRS.map(function (p) {
               return <tr key={p[2]}><td><span style={{ color: p[0], background: p[1], padding: '2px 6px', borderRadius: 4, border: '1px solid rgba(0,0,0,0.08)' }}>Aa</span></td><td className="v2-text-meta">{p[2]}</td><td><R fg={p[0]} bg={p[1]} /></td></tr>;

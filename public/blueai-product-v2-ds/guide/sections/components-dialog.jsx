@@ -11,9 +11,13 @@
   };
   // V2's Confirm delete, quoted (schedule.jsx:144-149): the same words in both shells, so only the shell differs.
   const DELETE = { title: 'Confirm delete', body: 'Are you sure you want to delete this scheduled task? This action cannot be undone.' };
-  // Proposed copy.
-  const SIGN_OUT = { title: 'Sign out of BlueAI?', body: 'Your BlueAI worker stops running until you sign in again.' };
-  const DISCONNECT = { title: 'Disconnect YouTube?', body: 'BlueAI stops using your YouTube account. Runs need it, so your days won’t count until you connect it again.' };
+  // Proposed copy, read from its one owner, V2Screens.CONFIRM_COPY (screens/settings.jsx, section 52), so each
+  // confirm has one wording. Read at render, so the screens script has loaded.
+  function confirmCopy(kind) {
+    const C = (window.V2Screens || {}).CONFIRM_COPY;
+    if (!C) return { title: 'V2Screens.CONFIRM_COPY is not loaded', body: '' };
+    return kind === 'signOut' ? C.signOut('alex@example.com') : C.disconnect('@alexwatches');
+  }
 
   // A stand-in for the product window: dialogs are scoped to it, as they are to AppFrame.
   function Win({ h, children }) {
@@ -49,6 +53,7 @@
 
   function TryIt() {
     const K = window.V2Kit;
+    const SIGN_OUT = confirmCopy('signOut'), DISCONNECT = confirmCopy('disconnect');
     const [open, setOpen] = useState(null);
     const [busy, setBusy] = useState(false);
     function close() { setOpen(null); setBusy(false); }
@@ -75,6 +80,7 @@
 
   function DialogSection() {
     const K = window.V2Kit;
+    const SIGN_OUT = confirmCopy('signOut'), DISCONNECT = confirmCopy('disconnect');
     const D = function (props) { return <Win h={330}><K.Dialog preview open {...props} /></Win>; };
     return (
       <G.Section id="dialog">
@@ -84,8 +90,8 @@
             <strong> consent</strong> (md, close button, the agreement is the primary's label, scrim click does nothing so
             consent is never given or refused by accident), <strong>alert</strong> (sm, role alertdialog, no close
             button, focus starts on Cancel), <strong>celebration</strong> (sm, centred, the day-done moment). On open the
-            panel itself takes focus, so no ring appears until Tab (the onBlue rule); Tab cycles inside; Esc, Close or
-            Cancel returns focus to whatever opened it.</p>
+            panel itself takes focus, so no ring appears until Tab (the onBlue rule); a form dialog passes initialFocus to
+            its first field instead. Tab cycles inside; Esc, Close or Cancel returns focus to whatever opened it.</p>
           <G.StateGrid wide states={[
             { label: 'Closed', node: <Win h={330}><K.Button>Turn on Automatic</K.Button></Win>, note: 'Nothing mounted; the opener keeps focus.' },
             { label: 'Opening', node: <D {...consent({ className: 'is-snapshot' })} />, note: 'Scale-in 320ms on the site ease; the scrim fades 240ms.' },
@@ -106,8 +112,8 @@
             changed="Same words on both sides, so only the shell differs (V2's buttons come from each caller). V2 builds its overlays one by one: four widths (300, 340, 360, 382), radii 12, 16 and 20, five different scrims, z-indexes from 50 to 130 with a tie at 120. None moves focus in or gives it back, the close button has no name, and nothing has a busy state, so a slow consent can be clicked twice. The system has one Dialog on one scrim: sm 320 or md 382, radius 16, shadow-2, a 20/600 title that takes the row with a named 32px Close beside it, body 14 in ink-2, actions secondary then primary at 44px." />
           <G.SpecDrawer rows={[
             { part: 'Scrim', token: '--v2-scrim', value: 'rgba(11,18,32,0.48), fades 240ms', ref: ['overlays.dialog.scrim', 'overlays.dialog.logout-scrim', 'overlays.dialog.ooc-scrim', 'overlays.dialog.daydone-scrim'] },
-            { part: 'Layer', token: '--v2-z-dialog', value: '100; two dialogs stack by mount order', ref: ['overlays.dialog.scrim', 'overlays.dialog.logout-scrim', 'overlays.dialog.ooc-scrim'] },
-            { part: 'Width sm', token: '--v2-dialog-sm', value: '320px (alert, celebration, out of credits)', ref: ['overlays.dialog.ooc-panel', 'overlays.dialog.daydone', 'overlays.dialog.logout-panel'] },
+            { part: 'Layer', token: '--v2-z-dialog', value: '100; one at a time; mount order only settles an unavoidable overlap', ref: ['overlays.dialog.scrim', 'overlays.dialog.logout-scrim', 'overlays.dialog.ooc-scrim'] },
+            { part: 'Width sm', token: '--v2-dialog-sm', value: '320px (alert, celebration)', ref: ['overlays.dialog.ooc-panel', 'overlays.dialog.daydone', 'overlays.dialog.logout-panel'] },
             { part: 'Width md', token: '--v2-dialog-md', value: '382px (task, consent)', ref: ['overlays.dialog.panel', 'overlays.dialog.login-card'] },
             { part: 'Height', token: null, value: 'up to the window less 16px each side; the body scrolls, title and actions stay', ref: 'overlays.dialog.panel' },
             { part: 'Window inset', token: '--v2-space-4', value: '16px', ref: 'overlays.dialog.padding' },
@@ -136,7 +142,7 @@
         <G.Part name="AlertDialog (confirm, destructive)" status="changed"
           role="The confirm: the title is the question, the body says what changes, the primary is named for the action.">
           <G.StateGrid wide states={[
-            { label: 'Confirm', node: <D {...alertOf(SIGN_OUT, 'Sign out', 'primary')} />, note: 'Signing out destroys nothing: a neutral primary.' },
+            { label: 'Confirm', node: <D {...alertOf(SIGN_OUT, 'Sign out', 'primary')} />, note: 'Signing in again undoes it and nothing is deleted, so the primary is neutral; the body still says days don’t count meanwhile.' },
             { label: 'Destructive', node: <D {...alertOf(DISCONNECT, 'Disconnect', 'danger')} />, note: 'Danger only when it destroys or costs a day.' },
             { label: 'Busy', node: <D {...alertOf(DISCONNECT, 'Disconnect', 'danger', { busy: true })} /> },
           ]} />
