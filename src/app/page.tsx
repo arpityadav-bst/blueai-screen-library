@@ -56,6 +56,13 @@ const MAIN = [
     desc: 'The main BlueAI product, the desktop app replica. The BlueAI worker session end to end: sign in, terms and per-app permissions, Automatic or ask-first mode per app, the run, its verification and the day-done states, plus the chat, task progress and feedback, credits with the out-of-credits popup, and Settings. Standalone replica, not on the marketing design system.',
   },
   {
+    // ADDED 2026-10-13: V2's design system, directly under V2 because it describes it.
+    href: '/blueai-product-v2-ds/index.html',
+    name: 'BlueAI Product V2 Design System',
+    desc: 'The target design system for BlueAI Product V2, the one the PM builds V2’s next iterations from: tokens, a kit of parts, whole screens and the patterns between them, one family with the onBlue Agentic site. A live guide shows every part with its status, In V2, Changed from V2 (V2 today beside the system version, with what changed and why) or New, each V2 value tied to its V2 line and proved by a checker, plus prioritised recommendations for V2 and the PM’s pending decisions. DESIGN.md carries the same content as one Markdown file. V2 itself is unchanged.',
+    ds: true,
+  },
+  {
     // RENAMED 2026-10-13 (Appy): was "onBlue Agentic Hero", from when this page was one hero
     // experiment (2026-09-11, rebased onto the Cinematic light theme 2026-09-15). It is now the
     // whole partner site: the homepage, the apply flow and the partner dashboard behind it.

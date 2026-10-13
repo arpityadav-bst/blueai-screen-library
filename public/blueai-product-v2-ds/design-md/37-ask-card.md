@@ -1,0 +1,18 @@
+## 37 Ask card
+
+**Status:** Changed from V2.
+**Why:** V2's one-shape-for-every-question idea is right and stays, with its copy. What changes: the chips are a fifth look at 3.24:1 (worker_cards.jsx:58), bullet markers are hidden by the Tailwind preflight (worker_cards.jsx:49), the hint is 2.54:1, yellow stays on after the answer, and "Not now" forfeits the day with the cost told only afterwards (worker_flow.jsx:149, P3).
+
+### AskCard (Changed from V2)
+- **Purpose:** The worker's question, answered with chips, with what each answer costs visible before tapping.
+- **Anatomy:** Card: attention fill `#fdf6cf`, 1px `#f3e8a8`, radius 16, padding 10 14, max 300, no shadow. Inside: optional title 14/600 ink, lead 14 ink-2, bullets (disc markers on, indent 20), question 14. Under the card: Chip row (shared Chip, gap 8; a consent option carries the zap icon), consequence lines 13 attention-ink ("Not now: today won’t count toward your 20 days."), optional hint 13 ink-3.
+- **Variants:** Plain (lead + chips), titled (job ask, failed day), with bullets (onboarding pitch). Tone `attention` (default) or `neutral` (decision D13 option B: onboarding asks while the partner watches).
+- **Sizes:** Card max 300; chip row wraps at 300.
+- **States:** Pending (chips shown, composer read-only with "Answer with the buttons above"); answered (chips go, card settles to white, the label echoes as a user bubble); stopped (Stop pressed while waiting: "The run stopped before you answered."); expired (proposed: "No answer by 9 pm, so I skipped this job. Today doesn’t count."). V2: `?start=worker` then Run for onboarding asks; `?day=next` for the job ask; `?day=next&end=failed` for the failed-day ask.
+- **Props:** `AskCard {step: {title, lead, bullets, question, options[{id, label, consent, consequence}], hint, expiresAt}, answer, onAnswer(id, option), state, tone, className}`.
+- **Motion:** Chips leave without animation; the card's fill change is instant.
+- **Accessibility:** A hidden "BlueAI needs your answer." leads the pending card; chips are a group labelled by the question; text on yellow is ink / ink-2 (above 9:1); consequence 13 attention-ink (5.07:1).
+- **Responsive:** Chips wrap to new lines inside 300.
+- **Consent:** An option with `consent: true` turns on Automatic for that app. The caller opens ConsentDialog (section 46) and calls back only after "I agree, turn on"; Cancel leaves the question waiting (as V2, worker_cards.jsx:39).
+- **Copy:** In V2 strings quoted exactly: the pitch (worker_flow.jsx:66-69), "Paid job available", "Watch the video and provide feedback.", "Want me to take this one?", "Yes, switch to Automatic" / "Just this job" / "Not now" (worker_flow.jsx:50, 120-121), "Today’s job didn’t finish." / "Retry to count the day." / "Retry" (worker_day_done.jsx:94, worker_flow.jsx:127; "Retry" flagged against the glossary, not changed). Proposed: the consequence line (R06), the stopped and expired lines (R08).
+- **Do / Don't:** Do say the consequence before the choice and settle the card once answered. Don't bundle a mode switch into "Yes" silently (R07, R11). Don't leave yellow on an answered question.

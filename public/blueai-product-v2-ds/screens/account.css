@@ -1,0 +1,76 @@
+/* BlueAI Product V2 Design System: screens-account layout (sections 61 to 66).
+   Settings, Worker settings, Connected apps, Account, Help (Report a problem) and AI credits.
+   Only the arrangement of kit parts lives here; every control, row, card, badge and state is the
+   kit's own, with its own hover, focus-visible, active and disabled rules. Tokens only. */
+
+/* The screen: the header band, then one column of sections on the 16px gutter. */
+.v2-acct { display: flex; flex-direction: column; min-height: 100%; }
+.v2-acct-body {
+  display: flex; flex-direction: column; gap: var(--v2-space-3);
+  padding: var(--v2-space-1) var(--v2-gutter) var(--v2-space-6);
+}
+.v2-acct-note {
+  margin: 0; padding: 0 var(--v2-space-1);
+  font-size: var(--v2-text-12); line-height: var(--v2-leading-body); color: var(--v2-ink-3);
+}
+
+/* A mark for a row that is about a thing, not a person (BlueStacks): the Avatar app disc's shape. */
+.v2-acct-mark {
+  display: inline-flex; flex: none; align-items: center; justify-content: center;
+  width: var(--v2-space-8); height: var(--v2-space-8); border-radius: var(--v2-radius-round);
+  background: var(--v2-surface-sunken); color: var(--v2-ink-2);
+}
+
+/* Account: who is signed in. Avatar 56, name 16/600 ink, email 13 ink-3. No banner, no emoji. */
+.v2-acct-id { display: flex; align-items: center; gap: var(--v2-space-3); }
+.v2-acct-id-text { display: flex; flex-direction: column; gap: var(--v2-space-05); min-width: 0; }
+.v2-acct-id-name {
+  margin: 0; font-size: var(--v2-text-16); font-weight: var(--v2-weight-semibold);
+  line-height: var(--v2-leading-tight); letter-spacing: var(--v2-tracking-label); color: var(--v2-ink);
+}
+.v2-acct-id-email { margin: 0; font-size: var(--v2-text-13); line-height: var(--v2-leading-snug); color: var(--v2-ink-3); overflow-wrap: anywhere; }
+
+/* Legal links under the last section: underlined ink links (kit Link), wrapping in one line. */
+.v2-acct-links {
+  display: flex; flex-wrap: wrap; gap: var(--v2-space-2) var(--v2-space-4);
+  padding: 0 var(--v2-space-1); font-size: var(--v2-text-13);
+}
+
+/* What you agreed to: the expandable row's record list. */
+.v2-acct-record { display: flex; flex-direction: column; gap: var(--v2-space-15); margin: 0; padding: 0; list-style: none; }
+.v2-acct-record li { display: flex; justify-content: space-between; gap: var(--v2-space-3); }
+.v2-acct-record span:last-child { flex: none; color: var(--v2-ink-3); font-variant-numeric: tabular-nums; }
+
+/* Worker settings: the run window's two times side by side, the interest chips, the pause body. */
+.v2-acct-pair { display: grid; grid-template-columns: 1fr 1fr; gap: var(--v2-space-2); }
+.v2-acct-chips { display: flex; flex-wrap: wrap; gap: var(--v2-space-2); }
+.v2-acct-stack { display: flex; flex-direction: column; gap: var(--v2-space-3); }
+.v2-acct-stack > p:not(.v2-acct-note) { margin: 0; font-size: var(--v2-text-13); line-height: var(--v2-leading-body); color: var(--v2-ink-2); }
+
+/* ModeRows inside a section run full-bleed like ListRows, so their rows line up with the title. */
+.v2-acct .v2-settings-section-body > .v2-moderows { margin: 0 calc(var(--v2-space-4) * -1) calc(var(--v2-space-1) * -1); }
+.v2-acct .v2-settings-section-body > .v2-moderows .v2-moderows-note { padding: 0 var(--v2-space-4); }
+
+/* The one destructive action on a detail screen, with its consequence written above the button. */
+.v2-acct-zone { display: flex; flex-direction: column; align-items: flex-start; gap: var(--v2-space-2); padding: var(--v2-space-1) var(--v2-space-1) 0; }
+.v2-acct-zone > p { margin: 0; font-size: var(--v2-text-13); line-height: var(--v2-leading-body); color: var(--v2-ink-3); }
+
+/* Report a problem: the sheet's form, and the run it is about when it was opened from one. */
+.v2-acct-report { display: flex; flex-direction: column; gap: var(--v2-space-4); }
+.v2-acct-about {
+  display: flex; align-items: flex-start; gap: var(--v2-space-2);
+  padding: var(--v2-space-2) var(--v2-space-3); border-radius: var(--v2-radius-md);
+  background: var(--v2-surface-sunken); color: var(--v2-ink-2);
+  font-size: var(--v2-text-13); line-height: var(--v2-leading-body);
+}
+.v2-acct-about > :first-child { display: inline-flex; flex: none; margin-top: var(--v2-space-05); color: var(--v2-ink-3); }
+
+/* AI credits: the meter spans the figure's card; the explainer sits under it, quiet. */
+.v2-acct-credits .v2-stat-action { align-self: stretch; margin-top: var(--v2-space-2); }
+.v2-acct-explain { display: flex; flex-direction: column; align-items: flex-start; gap: var(--v2-space-1); padding: var(--v2-space-1) var(--v2-space-1) 0; }
+.v2-acct-explain h2 { margin: 0; font-size: var(--v2-text-14); font-weight: var(--v2-weight-semibold); line-height: var(--v2-leading-snug); color: var(--v2-ink); }
+.v2-acct-explain p { margin: 0; font-size: var(--v2-text-13); line-height: var(--v2-leading-body); color: var(--v2-ink-3); }
+.v2-acct-explain .v2-link { margin-top: var(--v2-space-1); }
+
+/* Signed out with no Welcome screen loaded: the fallback lands centred in the window. */
+.v2-acct-out { display: flex; flex: 1; align-items: center; justify-content: center; min-height: 100%; padding: var(--v2-space-6) var(--v2-gutter); }

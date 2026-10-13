@@ -1,0 +1,80 @@
+/* BlueAI Product V2 Design System: placement for the core screens (Home, Activity, Run detail,
+   Notifications, Chat; sections 57 to 60). Tokens only. The screens are composed from kit parts,
+   so this sheet only places them: the kit owns every part's look and every interactive state.
+   Shared frame: .v2-screen (a column the height of the content band) with a ScreenHeader and a
+   .v2-screen-body that scrolls, both from kit/base.css. Nothing here animates. */
+
+/* Home ------------------------------------------------------------------------------------------ */
+/* Standalone links on their own line keep their 32px target without stretching across the column. */
+.v2-home-chat, .v2-rundetail-report { align-self: flex-start; }
+
+/* The coach scrim covers the whole window (top bar and nav included) at the coach layer; the
+   WorkerCard and its CoachMark lift themselves one step above it (kit/worker.css). */
+.v2-home-coach-layer { position: absolute; inset: 0; z-index: var(--v2-z-coach); }
+
+/* The worker-home skeleton: the same blocks the screen will show, on the same card surface. */
+.v2-home-skel-title { display: flex; align-items: center; min-height: var(--v2-topbar-h); }
+.v2-home-skel-card {
+  display: flex; flex-direction: column; gap: var(--v2-space-3); padding: var(--v2-space-4);
+  background: var(--v2-surface); border: var(--v2-stroke) solid var(--v2-line); border-radius: var(--v2-radius-lg);
+}
+.v2-home-skel-row { flex-direction: row; align-items: center; }
+.v2-home-skel-lines { display: flex; flex: 1 1 auto; flex-direction: column; gap: var(--v2-space-2); min-width: 0; }
+
+/* Chat ------------------------------------------------------------------------------------------ */
+/* Header on top, the thread takes the rest, the composer sits on the bottom edge. */
+.v2-chat-screen > .v2-thread { flex: 1 1 auto; height: auto; min-height: 0; }
+.v2-chat-screen > .v2-composer { flex: none; }
+
+/* Activity: the ledger ----------------------------------------------------------------------------- */
+/* One row per day: a 96px date column, the result, the tick. Dividers sit between items, so a
+   rejected day's Report a problem line stays with its row. */
+.v2-ledger-item + .v2-ledger-item { border-top: var(--v2-stroke) solid var(--v2-line-hair); }
+.v2-ledger-line {
+  display: grid; grid-template-columns: 96px minmax(0, 1fr); column-gap: var(--v2-space-2);
+  align-items: baseline;
+}
+.v2-ledger-date {
+  color: var(--v2-ink-3); font-weight: var(--v2-weight-regular); font-variant-numeric: tabular-nums;
+}
+.v2-ledger-result { min-width: 0; color: var(--v2-ink); }
+.v2-ledger-row .v2-row-desc { padding-left: calc(96px + var(--v2-space-2)); }
+.v2-ledger-act {
+  display: flex; align-items: center;
+  padding: 0 var(--v2-space-4) var(--v2-space-2) calc(var(--v2-space-4) + 96px + var(--v2-space-2));
+}
+
+/* Run detail ------------------------------------------------------------------------------------ */
+/* Verification: the one place the day's status is said on this screen. */
+.v2-verify { display: flex; flex-direction: column; align-items: flex-start; gap: var(--v2-space-2); }
+.v2-verify-title {
+  margin: 0; color: var(--v2-ink); font-size: var(--v2-text-14); font-weight: var(--v2-weight-semibold);
+  line-height: var(--v2-leading-snug);
+}
+.v2-verify-text { margin: 0; color: var(--v2-ink-2); font-size: var(--v2-text-13); line-height: var(--v2-leading-body); }
+.v2-verify-text--danger { color: var(--v2-danger-ink); }
+.v2-verify-actions { margin-top: var(--v2-space-1); }
+
+/* Notifications --------------------------------------------------------------------------------- */
+/* A 32px disc with the event's glyph; the tone is in the glyph only (the words stay ink). Unread
+   adds a blue dot on the disc and a heavier title; screen readers hear 'Unread:' first. */
+.v2-notif-icon {
+  position: relative; display: inline-flex; flex: none; align-items: center; justify-content: center;
+  width: var(--v2-hit-min); height: var(--v2-hit-min); border-radius: var(--v2-radius-round);
+  background: var(--v2-surface-sunken); color: var(--v2-ink-3);
+}
+.v2-notif-icon--attention { color: var(--v2-attention-ink); }
+.v2-notif-icon--success { color: var(--v2-success-ink); }
+.v2-notif-icon--danger { color: var(--v2-danger-ink); }
+.v2-notif-dot {
+  position: absolute; top: 0; right: 0; width: var(--v2-space-2); height: var(--v2-space-2);
+  border-radius: var(--v2-radius-round); background: var(--v2-blue);
+  box-shadow: 0 0 0 var(--v2-space-05) var(--v2-surface);
+}
+.v2-notif .v2-row-label { font-weight: var(--v2-weight-medium); }
+.v2-notif--unread .v2-row-label { font-weight: var(--v2-weight-semibold); }
+.v2-notif .v2-row-value { align-self: flex-start; color: var(--v2-ink-3); font-size: var(--v2-text-12); }
+
+@media (forced-colors: active) {
+  .v2-notif-dot { background: CanvasText; box-shadow: none; }
+}

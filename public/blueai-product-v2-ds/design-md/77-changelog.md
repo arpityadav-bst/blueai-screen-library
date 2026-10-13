@@ -1,0 +1,15 @@
+## 77 Changelog
+
+**Status:** Meta (no parts).
+
+**Why:** Dated, newest first, so anyone building from the system can see what changed since they last looked. Add an entry for every change to tokens, a kit part’s API or a screen, here and in guide/sections/meta-changelog.jsx.
+
+### 2026-10-13: First version
+
+- The system and its live guide, built next to V2 without changing V2: 78 sections (start, foundations, components, shell, chat, worker, credits and settings, patterns, screens, copy and voice, scene and review, meta).
+- tokens.css: every --v2-* token, each with its role, its onBlue Agentic family link and the V2 values it absorbs.
+- The kit (56 entries on window.V2Kit, some bundling a few related parts) and 14 screens on window.V2Screens, every part marked In V2, Changed from V2 or New.
+- Every V2 value and string the guide prints carries a ref to its V2 line; tools/ds-check.js proves them and enforces tokens only, no em dash, 300 lines a file and a catalog in sync.
+- DESIGN.md generated from one partial per section (tools/build-design-md.js).
+- 50 recommendations for V2 (19 P1, 21 P2, 10 P3) and 13 decisions pending for the PM.
+- Compose fixes: --v2-success-tint is 8% (not the site’s 10%) so green text on it passes 4.5:1; new --v2-link-underline (the site’s 32%) under ink links; live V2 parts render inside a v2-preflight wrapper and with V2’s own keyframes (guide/v2-live.css); the catalog lists the shared screen helpers; Help is a menu and a sheet, not a pushed screen.

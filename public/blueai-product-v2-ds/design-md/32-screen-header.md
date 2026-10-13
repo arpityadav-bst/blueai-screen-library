@@ -1,0 +1,55 @@
+## 32 Screen header and navigation model
+
+**Status:** ScreenHeader: Changed from V2. Navigation model: Changed from V2.
+
+**Why:** A partner who opens Credits or Account must always know where they are and how to get back, and must never lose today's run by looking elsewhere. V2 has five title treatments (19/800 index.html:439, 22/800 history.jsx:91, 20/700 schedule.jsx:118, 22/800 in #1e293b jobs.jsx:140, none on Profile) and no Back anywhere; it picks the screen from a chain of booleans (index.html:955) and mounts the chat, with the run inside it, only on the chat tab (index.html:965).
+
+### ScreenHeader (Changed from V2)
+
+**Purpose.** One title band for every screen.
+
+**Anatomy.** Optional Back (IconButton 32, `back`, label "Back"), the title (`<h1>`), an optional trailing slot for one action.
+
+**Variants.** Title only (a tab root: Activity, Settings). With Back (a pushed screen: Worker settings, Account). With a trailing action: an IconButton (Chat's "New chat", `plus`) or a quiet small Button (Notifications' "Mark all read").
+
+**Sizes.** Min 52 tall (`--v2-topbar-h`), padding 8 16 (`--v2-space-2`, `--v2-gutter`); with Back the left padding is 10, so the chevron lands on the 16 gutter. Title 20/600, -0.02em, ink, one line (`--v2-text-20`, `--v2-weight-semibold`, `--v2-tracking-title`). Ground `--v2-canvas`.
+
+**States.** None of its own (Back follows IconButton states, section 11). A long title truncates with an ellipsis. V2: open AI Credits, Chat History or Schedule from `?start=worker` to see the five treatments.
+
+**Props.** `ScreenHeader { title, onBack, trailing, titleId, className }`.
+
+**Motion.** None. It is sticky to the top of the content band (`--v2-z-sticky`), so Back stays reachable on the 640 window.
+
+**Accessibility.** The title is the screen's `<h1>` with `tabIndex -1`: when a screen is pushed, focus moves to it, so a screen reader announces where the partner landed. Back has a label. One trailing action only.
+
+**Responsive.** One line at 419; truncate, never wrap.
+
+**Do / Don't.** Do give every pushed screen a Back. Don't use a second title style. Don't put Back on a tab root or on an overlay.
+
+### Navigation model (Changed from V2)
+
+**Purpose.** Where every screen sits, how the partner gets back, and which tab is lit, kept apart from the Worker record.
+
+**Anatomy.** Three levels.
+
+| Level | Screens | Way back | Tab lit |
+|---|---|---|---|
+| Tab | Home, Activity, Settings | the nav | itself |
+| Pushed screen | Chat, Run detail, Notifications, Account, Worker settings, Connected apps, AI credits (Help is the top bar menu plus the Report a problem sheet, not a screen) | Back in the ScreenHeader | its parent tab |
+| Overlay | Dialog, Sheet, day done, splash, toast | its own close or answer | unchanged |
+
+**Variants.** None.
+
+**Sizes.** Not applicable.
+
+**States.** Tab; pushed (one or more screens on a tab's stack); overlay open. Rules: each tab keeps its own stack; tapping another tab switches and keeps the stack; tapping the lit tab returns to its root; a notification or the tray opens the screen it names, pushed over its parent tab. V2: none of these exist; a kebab screen is left only by tapping a tab (index.html:857).
+
+**Props.** Navigation state is `{ tab, stacks: { home: [], activity: [], settings: [] } }`, held by the app shell, never inside a screen. BottomNav's `value` is `tab`.
+
+**Motion.** A pushed screen enters with `v2-anim-fade-up` (section 07); Back reverses it. Reduced motion: instant.
+
+**Accessibility.** Focus moves to the pushed screen's title; on Back it returns to the control that pushed it.
+
+**Responsive.** The same on both window heights.
+
+**Do / Don't.** Do keep the worker's run in the Worker record (section 41) so no navigation can unmount it. Don't model screens as a chain of booleans. Don't open a pushed screen from a menu without lighting its parent tab.

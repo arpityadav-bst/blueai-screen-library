@@ -1,0 +1,189 @@
+/* BlueAI Product V2 Design System: shell (AppFrame, TrayMenu, TopBar, WorkerStatusChip, BrandMark,
+   BottomNav, ScreenHeader, Splash). Tokens only. Every interactive state is written twice, the
+   real pseudo-class and the .is-hover / .is-focus / .is-active class the guide uses to force it. */
+
+/* AppFrame: the 419 x 830 content box. Three bands; the content band is the only one that scrolls,
+   so the compact frame (640) keeps the top bar and the nav pinned. isolation scopes every overlay's
+   z-index to the window, the job V2's position: relative on .ba-app did (index.html:41-43). */
+.v2-frame {
+  position: relative; isolation: isolate; display: flex; flex-direction: column; flex: none;
+  width: var(--v2-shell-w); height: var(--v2-shell-h); overflow: hidden;
+  background: var(--v2-canvas); color: var(--v2-ink-2); text-align: left;
+  font-family: var(--v2-font-ui); font-size: var(--v2-text-14); line-height: var(--v2-leading-body);
+}
+.v2-frame--compact { height: var(--v2-shell-min-h); }
+.v2-frame-content { position: relative; flex: 1 1 auto; min-height: 0; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; }
+.v2-frame-overlays { position: absolute; inset: 0; pointer-events: none; }
+.v2-frame-overlays > * { pointer-events: auto; }
+
+/* BrandMark: the one place the brand gradient is a fill (P5). Logos are exempt from text contrast;
+   forced-colours mode falls back to system text so the name never disappears. */
+.v2-brand { display: inline-flex; align-items: center; gap: var(--v2-space-15); flex: none; min-width: 0; }
+.v2-brand-logo { display: block; flex: none; width: var(--v2-icon-lg); height: var(--v2-icon-lg); }
+.v2-brand-word {
+  font-size: var(--v2-text-16); font-weight: var(--v2-weight-semibold); letter-spacing: var(--v2-tracking-label);
+  line-height: var(--v2-leading-tight); background: var(--v2-gradient-brand);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;
+}
+.v2-brand--lg { flex-direction: column; gap: var(--v2-space-3); }
+.v2-brand--lg .v2-brand-logo { width: calc(var(--v2-icon-lg) * 2); height: calc(var(--v2-icon-lg) * 2); }
+.v2-brand--lg .v2-brand-word { font-size: var(--v2-text-24); letter-spacing: var(--v2-tracking-title); }
+@media (forced-colors: active) {
+  .v2-brand-word { background: none; -webkit-text-fill-color: currentColor; color: CanvasText; }
+}
+
+/* TopBar: 52 tall, surface, one hairline, no shadow. The brand sits on the content gutter; the
+   right edge is 12 because the 32 icon buttons carry their own 6px inset. */
+.v2-topbar {
+  position: relative; z-index: var(--v2-z-header); display: flex; align-items: center; justify-content: space-between;
+  gap: var(--v2-space-2); flex: none; height: var(--v2-topbar-h); padding: 0 var(--v2-space-3) 0 var(--v2-gutter);
+  background: var(--v2-surface); border-bottom: var(--v2-stroke) solid var(--v2-line);
+}
+.v2-topbar--signed-out { padding-right: var(--v2-gutter); }
+.v2-topbar-actions { display: flex; align-items: center; gap: var(--v2-space-2); min-width: 0; }
+.v2-topbar-menus { display: flex; align-items: center; gap: var(--v2-space-05); }
+
+/* Bar icon button: used only when V2Kit.IconButton is not loaded; the same recipe as section 11. */
+.v2-topbar-btn {
+  display: inline-flex; align-items: center; justify-content: center; flex: none;
+  width: var(--v2-hit-min); height: var(--v2-hit-min); padding: 0; border: 0; border-radius: var(--v2-radius-sm);
+  background: none; color: var(--v2-ink-3); cursor: pointer;
+  transition: background-color var(--v2-dur-1) var(--v2-ease-standard), color var(--v2-dur-1) var(--v2-ease-standard);
+}
+.v2-topbar-btn:hover, .v2-topbar-btn.is-hover { background: var(--v2-wash-hover); color: var(--v2-ink); }
+.v2-topbar-btn:active, .v2-topbar-btn.is-active, .v2-topbar-btn[aria-expanded="true"] { background: var(--v2-wash-press); color: var(--v2-ink); }
+.v2-topbar-btn:focus-visible, .v2-topbar-btn.is-focus { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); }
+
+/* WorkerStatusChip: 28 tall, pill, hairline, a dot in the status tone and a 13/500 label. Only the
+   two states that need the partner (needs you, didn't finish) take a tint. The ::after pads the
+   hit area to 32 without growing the chip. */
+.v2-status {
+  position: relative; display: inline-flex; align-items: center; gap: var(--v2-space-15); flex: none;
+  height: var(--v2-control-sm); padding: 0 var(--v2-space-3) 0 var(--v2-space-2);
+  border: var(--v2-stroke) solid var(--v2-line); border-radius: var(--v2-radius-pill);
+  background-color: var(--v2-surface); color: var(--v2-ink-2); cursor: pointer;
+  font: inherit; font-size: var(--v2-text-13); font-weight: var(--v2-weight-medium); letter-spacing: var(--v2-tracking-label);
+  line-height: 1; white-space: nowrap;
+  transition: border-color var(--v2-dur-1) var(--v2-ease-standard), background-color var(--v2-dur-1) var(--v2-ease-standard);
+}
+.v2-status::after { content: ''; position: absolute; inset: calc((var(--v2-control-sm) - var(--v2-hit-min)) / 2) 0; }
+.v2-status:hover, .v2-status.is-hover { border-color: var(--v2-line-hover); background-image: linear-gradient(var(--v2-wash-hover), var(--v2-wash-hover)); }
+.v2-status:active, .v2-status.is-active { background-image: linear-gradient(var(--v2-wash-press), var(--v2-wash-press)); }
+.v2-status:focus-visible, .v2-status.is-focus { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); }
+.v2-status--needs-you { background-color: var(--v2-attention-tint); border-color: var(--v2-attention-line); color: var(--v2-attention-ink); }
+.v2-status--failed { background-color: var(--v2-danger-tint); color: var(--v2-danger-ink); }
+
+.v2-status-dot { flex: none; width: var(--v2-space-2); height: var(--v2-space-2); border-radius: var(--v2-radius-round); background: var(--v2-ink-4); }
+.v2-status-dot--running { background: var(--v2-blue); }
+.v2-status-dot--needs-you { background: var(--v2-attention-ink); }
+.v2-status-dot--done { background: var(--v2-success); }
+.v2-status-dot--failed { background: var(--v2-danger-ink); }
+.v2-status-dot--paused, .v2-status-dot--offline { background: none; box-shadow: inset 0 0 0 var(--v2-stroke-selected) var(--v2-ink-4); }
+
+/* BottomNav: 56 tall, surface, one top hairline, no shadow. Selected = a 2px blue bar on the line
+   plus ink label and icon; weight never changes, so labels never reflow. */
+.v2-nav {
+  display: flex; align-items: stretch; flex: none; height: var(--v2-nav-h); padding: 0 var(--v2-space-2);
+  background: var(--v2-surface); border-top: var(--v2-stroke) solid var(--v2-line);
+}
+.v2-nav-item {
+  position: relative; flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: var(--v2-space-05); margin: var(--v2-space-1) var(--v2-space-05); padding: 0; border: 0; border-radius: var(--v2-radius-sm);
+  background: none; color: var(--v2-ink-3); cursor: pointer;
+  font: inherit; font-size: var(--v2-text-12); font-weight: var(--v2-weight-medium); line-height: var(--v2-leading-snug);
+  transition: color var(--v2-dur-1) var(--v2-ease-standard), background-color var(--v2-dur-1) var(--v2-ease-standard);
+}
+.v2-nav-item:hover, .v2-nav-item.is-hover { background: var(--v2-wash-hover); color: var(--v2-ink-2); }
+.v2-nav-item:active, .v2-nav-item.is-active { background: var(--v2-wash-press); }
+.v2-nav-item:focus-visible, .v2-nav-item.is-focus { outline: var(--v2-focus-outline); outline-offset: calc(-1 * var(--v2-focus-offset)); }
+.v2-nav-item.is-selected { color: var(--v2-ink); }
+.v2-nav-item.is-selected::before {
+  content: ''; position: absolute; top: calc(-1 * (var(--v2-space-1) + var(--v2-stroke))); left: 50%;
+  width: var(--v2-icon-lg); height: var(--v2-space-05); margin-left: calc(var(--v2-icon-lg) / -2);
+  border-radius: 0 0 var(--v2-radius-xs) var(--v2-radius-xs); background: var(--v2-blue);
+}
+.v2-nav-icon { position: relative; display: inline-flex; align-items: center; justify-content: center; width: var(--v2-icon-md); height: var(--v2-icon-md); }
+.v2-nav-label { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.v2-nav-badge {
+  position: absolute; top: calc(-1 * var(--v2-space-1)); left: calc(100% - var(--v2-space-15));
+  min-width: var(--v2-icon-sm); height: var(--v2-icon-sm); padding: 0 var(--v2-space-1); border-radius: var(--v2-radius-pill);
+  background: var(--v2-action); color: var(--v2-on-color); box-shadow: 0 0 0 var(--v2-space-05) var(--v2-surface);
+  font-size: var(--v2-text-11); font-weight: var(--v2-weight-semibold); line-height: var(--v2-icon-sm);
+  text-align: center; font-variant-numeric: tabular-nums;
+}
+
+/* ScreenHeader: one band for every screen. Sticky inside the content band, so Back and the title
+   stay reachable on a compact window. With Back, the chevron's glyph lands on the gutter. */
+.v2-screen-header {
+  position: sticky; top: 0; z-index: var(--v2-z-sticky); display: flex; align-items: center; gap: var(--v2-space-1);
+  min-height: var(--v2-topbar-h); padding: var(--v2-space-2) var(--v2-gutter); background: var(--v2-canvas);
+}
+.v2-screen-header--back { padding-left: calc(var(--v2-gutter) - var(--v2-space-15)); }
+.v2-screen-title {
+  flex: 1 1 auto; min-width: 0; margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  color: var(--v2-ink); font-size: var(--v2-text-20); font-weight: var(--v2-weight-semibold);
+  letter-spacing: var(--v2-tracking-title); line-height: var(--v2-leading-tight);
+}
+.v2-screen-title:focus { outline: none; }
+.v2-screen-title:focus-visible { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); border-radius: var(--v2-radius-xs); }
+.v2-screen-header-trailing { display: flex; align-items: center; gap: var(--v2-space-1); flex: none; }
+
+/* TrayMenu: a specimen of the Windows tray menu (Windows draws the real one). Product tokens so the
+   words and order can be reviewed beside the app; the confirm step states the cost before Quit. */
+.v2-tray {
+  width: var(--v2-dialog-sm); padding: var(--v2-space-1); text-align: left;
+  background: var(--v2-surface); border: var(--v2-stroke) solid var(--v2-line); border-radius: var(--v2-radius-md);
+  box-shadow: var(--v2-shadow-1); color: var(--v2-ink-2);
+  font-family: var(--v2-font-ui); font-size: var(--v2-text-13); line-height: var(--v2-leading-snug);
+}
+.v2-tray-head { display: flex; align-items: center; gap: var(--v2-space-3); padding: var(--v2-space-2) var(--v2-space-3); }
+.v2-tray-head-text { display: flex; flex-direction: column; gap: var(--v2-space-05); min-width: 0; }
+.v2-tray-name { color: var(--v2-ink); font-weight: var(--v2-weight-semibold); }
+.v2-tray-status { display: inline-flex; align-items: center; gap: var(--v2-space-15); color: var(--v2-ink-3); font-size: var(--v2-text-12); }
+.v2-tray-sep { height: var(--v2-stroke); margin: var(--v2-space-1) 0; background: var(--v2-line-hair); }
+.v2-tray-item {
+  display: flex; align-items: center; width: 100%; min-height: var(--v2-hit-min); padding: 0 var(--v2-space-3);
+  border: 0; border-radius: var(--v2-radius-sm); background: none; color: var(--v2-ink-2); cursor: pointer;
+  font: inherit; text-align: left; transition: background-color var(--v2-dur-1) var(--v2-ease-standard);
+}
+.v2-tray-item:hover, .v2-tray-item.is-hover { background: var(--v2-wash-hover); color: var(--v2-ink); }
+.v2-tray-item:active, .v2-tray-item.is-active { background: var(--v2-wash-press); }
+.v2-tray-item:focus-visible, .v2-tray-item.is-focus { outline: var(--v2-focus-outline); outline-offset: calc(-1 * var(--v2-focus-offset)); }
+.v2-tray--confirm { padding: var(--v2-space-4); }
+.v2-tray-confirm-title { margin: 0; color: var(--v2-ink); font-size: var(--v2-text-14); font-weight: var(--v2-weight-semibold); }
+.v2-tray-confirm-body { margin: var(--v2-space-1) 0 0; color: var(--v2-ink-3); }
+.v2-tray-actions { display: flex; justify-content: flex-end; gap: var(--v2-space-2); margin-top: var(--v2-space-4); }
+/* Fallback action buttons, only when V2Kit.Button is not loaded. */
+.v2-tray-btn {
+  height: var(--v2-hit-min); padding: 0 var(--v2-space-3); border: var(--v2-stroke) solid var(--v2-line-strong);
+  border-radius: var(--v2-radius-sm); background: var(--v2-surface); color: var(--v2-ink); cursor: pointer;
+  font: inherit; font-weight: var(--v2-weight-medium);
+}
+.v2-tray-btn:hover, .v2-tray-btn.is-hover { border-color: var(--v2-line-hover); background-image: linear-gradient(var(--v2-wash-hover), var(--v2-wash-hover)); }
+.v2-tray-btn:focus-visible, .v2-tray-btn.is-focus { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); }
+.v2-tray-btn--danger { background-color: var(--v2-danger-ink); border-color: var(--v2-danger-ink); color: var(--v2-on-color); }
+
+/* Splash: brand, three blue dots (progress, not brand), one status line in ink-3 (6.0:1). Fills the
+   frame above everything; fades out over --v2-dur-4 on the site's departure curve. */
+.v2-splash {
+  position: absolute; inset: 0; z-index: var(--v2-z-splash); display: flex; flex-direction: column;
+  align-items: center; justify-content: center; background: var(--v2-surface); user-select: none;
+  font-family: var(--v2-font-ui); transition: opacity var(--v2-dur-4) var(--v2-ease-in);
+}
+.v2-splash.is-fading { opacity: 0; pointer-events: none; }
+.v2-splash-dots { display: flex; gap: var(--v2-space-15); margin-top: var(--v2-space-10); }
+.v2-splash-dot {
+  width: var(--v2-space-15); height: var(--v2-space-15); border-radius: var(--v2-radius-round); background: var(--v2-blue);
+  animation: v2-pulse var(--v2-dur-pulse) var(--v2-ease-standard) infinite;
+}
+.v2-splash-dot:nth-child(2) { animation-delay: calc(var(--v2-dur-pulse) / 6); }
+.v2-splash-dot:nth-child(3) { animation-delay: calc(var(--v2-dur-pulse) / 3); }
+.v2-splash-status { margin: var(--v2-space-3) 0 0; color: var(--v2-ink-3); font-size: var(--v2-text-13); line-height: var(--v2-leading-snug); }
+
+/* Reduced motion: no loops, no fades, no colour transitions. .is-reduced forces it for specimens. */
+.v2-splash.is-reduced { transition: none; }
+.v2-splash.is-reduced .v2-splash-dot { animation: none; }
+@media (prefers-reduced-motion: reduce) {
+  .v2-splash, .v2-status, .v2-nav-item, .v2-tray-item, .v2-topbar-btn { transition: none; }
+  .v2-splash-dot { animation: none; }
+}

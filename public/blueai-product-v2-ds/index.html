@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Same base as V2, so V2's own blueai/*.jsx files and V2 URL states (index.html?end=job) resolve
+       exactly as they do in V2. Every system file is therefore referenced as ../blueai-product-v2-ds/<path>. -->
+  <base href="/blueai-product-v2/" />
+  <title>BlueAI Product V2 Design System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <!-- The system's faces (type decision): Inter 400/500/600 with optical sizing for all UI, Instrument
+       Serif italic for the site-language sign-in pages only. -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..600&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet" />
+  <!-- V2's own faces, loaded only so "V2 today" specimens render as V2 does (same links as V2 lines 10 and 13). -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
+  <!-- React, ReactDOM and Babel: copied verbatim from V2 index.html lines 21-23. No Tailwind (V2 line 24 is not carried). -->
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <!-- Tokens first, then the kit (base and motion before the rest), then screens, then the guide chrome. -->
+  <link rel="stylesheet" href="../blueai-product-v2-ds/tokens.css" />
+  <link rel="stylesheet" href="../blueai-product-v2-ds/kit/base.css" />
+  <link rel="stylesheet" href="../blueai-product-v2-ds/kit/motion.css" />
+  <link rel="stylesheet" href="../blueai-product-v2-ds/kit/actions.css" />
+  <link rel="stylesheet" href="../blueai-product-v2-ds/kit/inputs.css" />
+  <link rel="stylesheet" href="../blueai-product-v2-ds/kit/display.css" />
+  <link rel="stylesheet" href="../blueai-product-v2-ds/kit/feedback.css" />
+  <link rel="stylesheet" href="../blueai-product-v2-ds/kit/overlays.css" />
+  <link rel="stylesheet" href="../blueai-product-v2-ds/kit/shell.css" />
+  <link rel="stylesheet" href="../blueai-product-v2-ds/kit/chat.css" />
+  <link rel="stylesheet" href="../blueai-product-v2-ds/kit/worker.css" />
+  <link rel="stylesheet" href="../blueai-product-v2-ds/kit/credits.css" />
+  <link rel="stylesheet" href="../blueai-product-v2-ds/screens/core.css" />
+  <link rel="stylesheet" href="../blueai-product-v2-ds/screens/account.css" />
+  <link rel="stylesheet" href="../blueai-product-v2-ds/screens/entry.css" />
+  <!-- V2's own keyframes and ba-* classes (from V2 index.html's style block), so live V2 specimens animate. Not the system. -->
+  <link rel="stylesheet" href="../blueai-product-v2-ds/guide/v2-live.css" />
+  <link rel="stylesheet" href="../blueai-product-v2-ds/guide/guide.css" />
+</head>
+<body>
+<div id="g-root"></div>
+
+<!-- 1. V2's own files, for live "V2 today" specimens, in V2's own order. Not loaded: credits_widget,
+     skills, onboarding, product_home, chat_product, jobs, schedule (not sources; see Known gaps). -->
+<script type="text/babel" src="blueai/shared.jsx"></script>
+<script type="text/babel" src="blueai/desktop_scene.jsx"></script>
+<script type="text/babel" src="blueai/desktop_toast.jsx"></script>
+<script type="text/babel" src="blueai/install_dialog.jsx"></script>
+<script type="text/babel" src="blueai/boot_splash.jsx"></script>
+<script type="text/babel" src="blueai/chat_compare.jsx"></script>
+<script type="text/babel" src="blueai/moneymaker_backdrop.jsx"></script>
+<script type="text/babel" src="blueai/moneymaker_icons.jsx"></script>
+<script type="text/babel" src="blueai/moneymaker_logo.jsx"></script>
+<script type="text/babel" src="blueai/moneymaker_steps.jsx"></script>
+<script type="text/babel" src="blueai/moneymaker_home.jsx"></script>
+<script type="text/babel" src="blueai/moneymaker.jsx"></script>
+<script type="text/babel" src="blueai/needs_bluestacks.jsx"></script>
+<script type="text/babel" src="blueai/chat_feedback.jsx"></script>
+<script type="text/babel" src="blueai/chat_bubbles.jsx"></script>
+<script type="text/babel" src="blueai/agent_permissions.jsx"></script>
+<script type="text/babel" src="blueai/worker_flow.jsx"></script>
+<script type="text/babel" src="blueai/worker_cards.jsx"></script>
+<script type="text/babel" src="blueai/worker_day_done.jsx"></script>
+<script type="text/babel" src="blueai/history.jsx"></script>
+<script type="text/babel" src="blueai/profile.jsx"></script>
+<script type="text/babel" src="blueai/ai_mode.jsx"></script>
+<script type="text/babel" src="blueai/settings.jsx"></script>
+<script type="text/babel" src="blueai/login.jsx"></script>
+<script type="text/babel" src="blueai/browser_window.jsx"></script>
+<script type="text/babel" src="blueai/site_kit.jsx"></script>
+<script type="text/babel" src="blueai/site_signin.jsx"></script>
+<script type="text/babel" src="blueai/signin_page.jsx"></script>
+<script type="text/babel" src="blueai/account_gate.jsx"></script>
+<script type="text/babel" src="blueai/terms_sheet.jsx"></script>
+<script type="text/babel" src="blueai/credits_popup_parts.jsx"></script>
+<script type="text/babel" src="blueai/byok.jsx"></script>
+<script type="text/babel" src="blueai/byok_settings.jsx"></script>
+
+<!-- 2. The kit (window.V2Kit). Parts read each other lazily at render, so order inside is free. -->
+<script type="text/babel" src="../blueai-product-v2-ds/kit/icons.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/kit/worker-data.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/kit/button.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/kit/fields.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/kit/choice.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/kit/display.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/kit/progress.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/kit/notice.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/kit/dialog.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/kit/menu.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/kit/toast.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/kit/tabs.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/kit/shell.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/kit/topbar.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/kit/nav.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/kit/splash.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/kit/thread.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/kit/run-card.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/kit/ask.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/kit/composer.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/kit/worker-card.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/kit/program.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/kit/day-done.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/kit/job.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/kit/permissions.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/kit/credits.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/kit/out-of-credits.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/kit/settings.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/kit/advanced.jsx"></script>
+
+<!-- 3. Screens (window.V2Screens), composed from the kit. -->
+<script type="text/babel" src="../blueai-product-v2-ds/screens/home.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/screens/activity.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/screens/run-detail.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/screens/notifications.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/screens/chat.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/screens/settings.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/screens/worker-settings.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/screens/connected-apps.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/screens/account.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/screens/help.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/screens/credits.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/screens/welcome.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/screens/sign-in.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/screens/system-states.jsx"></script>
+
+<!-- 4. V2 refs, one file per slice (guide/refs/README.md). -->
+<script type="text/babel" src="../blueai-product-v2-ds/guide/refs/foundation.js"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/refs/foundations.js"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/refs/actions-inputs.js"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/refs/display-feedback.js"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/refs/overlays.js"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/refs/shell.js"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/refs/chat.js"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/refs/worker.js"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/refs/credits-settings.js"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/refs/screens-core.js"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/refs/screens-account.js"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/refs/entry-patterns.js"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/refs/compose.js"></script>
+
+<!-- 5. Guide blocks and registry, then the sections in catalog order. -->
+<script type="text/babel" src="../blueai-product-v2-ds/guide/kit-guide.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/spec.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/start-start-here.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/start-concept.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/start-principles.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/foundations-color.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/foundations-type.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/foundations-space-layout.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/foundations-shape-elevation.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/foundations-motion.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/foundations-icons.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/foundations-accessibility.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/foundations-tokens-reference.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/components-button.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/components-text-field.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/components-select.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/components-choice-controls.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/components-chip.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/components-badge.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/components-avatar.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/components-list-row.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/components-card.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/components-progress-loading.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/components-banner.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/components-empty-state.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/components-tooltip.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/components-toast.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/components-dialog.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/components-sheet.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/components-menu.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/components-tabs.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/shell-window.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/shell-top-bar.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/shell-bottom-nav.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/shell-screen-header.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/shell-splash.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/chat-chat-thread.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/chat-bubbles.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/chat-run-card.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/chat-ask-card.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/chat-composer.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/chat-feedback.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/chat-dependency-card.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/worker-worker-model.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/worker-worker-card.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/worker-program-progress.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/worker-day-done.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/worker-job-ask.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/worker-permissions.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/credits-credits-balance.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/credits-out-of-credits.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/credits-settings-blocks.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/patterns-loading-pattern.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/patterns-errors-offline.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/patterns-confirm-destroy-undo.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/patterns-consent.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/patterns-notifications-pattern.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/patterns-settings-model.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/patterns-sign-in-flow.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/screens-home.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/screens-activity.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/screens-run-detail.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/screens-notifications-screen.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/screens-settings.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/screens-worker-settings.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/screens-connected-apps.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/screens-account.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/screens-help.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/screens-credits-screen.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/screens-welcome.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/screens-sign-in-screens.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/screens-system-states.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/copy-copy-voice.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/scene-scene.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/scene-review-states.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/meta-recommendations.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/meta-how-to-add.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/meta-coverage.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/meta-known-gaps.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/sections/meta-changelog.jsx"></script>
+
+<!-- 6. The catalog, then the shell, which renders. -->
+<script type="text/babel" src="../blueai-product-v2-ds/guide/catalog.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/guide/app.jsx"></script>
+</body>
+</html>

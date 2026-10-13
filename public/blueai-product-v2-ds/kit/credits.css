@@ -1,0 +1,181 @@
+/* BlueAI Product V2 Design System: credits and settings blocks (sections 47 to 49).
+   Tokens only. Every interactive state is written twice, the real pseudo-class and the class the
+   guide uses to force it (.is-hover, .is-focus, .is-active). Reduced motion is the global rule in
+   kit/motion.css; nothing here loops. */
+
+/* ---- shared ------------------------------------------------------------------------------ */
+.v2-kit-missing { display: inline-block; padding: var(--v2-space-1) var(--v2-space-2);
+  border: var(--v2-stroke) dashed var(--v2-line-strong); border-radius: var(--v2-radius-sm);
+  font-size: var(--v2-text-12); color: var(--v2-ink-4); }
+/* Fallback credits glyph, used only when V2Kit.Icon is not loaded. The mask has no colour of its
+   own; the brand gradient shows through it (the gradient's one sanctioned use besides the mark). */
+.v2-credits-glyph {
+  display: inline-block;
+  flex: none;
+  width: var(--v2-icon-sm);
+  height: var(--v2-icon-sm);
+  background: var(--v2-gradient-brand);
+  -webkit-mask: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path d='M8 1C8.4 4.6 11.4 7.6 15 8C11.4 8.4 8.4 11.4 8 15C7.6 11.4 4.6 8.4 1 8C4.6 7.6 7.6 4.6 8 1Z'/></svg>") center / contain no-repeat;
+  mask: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path d='M8 1C8.4 4.6 11.4 7.6 15 8C11.4 8.4 8.4 11.4 8 15C7.6 11.4 4.6 8.4 1 8C4.6 7.6 7.6 4.6 8 1Z'/></svg>") center / contain no-repeat;
+}
+.v2-credits-glyph--lg { width: var(--v2-icon-lg); height: var(--v2-icon-lg); }
+
+/* ---- CreditsChip: 28px pill in a 32px hit area -------------------------------------------- */
+.v2-credits-chip { display: inline-flex; align-items: center; height: var(--v2-hit-min); margin: 0; padding: 0;
+  border: 0; border-radius: var(--v2-radius-pill); background: transparent; color: var(--v2-ink); font: inherit;
+  cursor: pointer; }
+.v2-credits-chip-pill { position: relative; display: inline-flex; align-items: center; gap: var(--v2-space-15);
+  height: var(--v2-control-sm); padding: 0 var(--v2-space-3) 0 var(--v2-space-2); box-sizing: border-box;
+  border: var(--v2-stroke) solid var(--v2-line); border-radius: var(--v2-radius-pill);
+  background-color: var(--v2-surface); font-family: var(--v2-font-ui); font-size: var(--v2-text-13);
+  font-weight: var(--v2-weight-medium); line-height: 1; font-variant-numeric: tabular-nums;
+  transition: border-color var(--v2-dur-1) var(--v2-ease-standard), background-image var(--v2-dur-1) var(--v2-ease-standard); }
+.v2-credits-chip:hover .v2-credits-chip-pill,
+.v2-credits-chip.is-hover .v2-credits-chip-pill { border-color: var(--v2-line-hover);
+  background-image: linear-gradient(var(--v2-wash-hover), var(--v2-wash-hover)); }
+.v2-credits-chip:active .v2-credits-chip-pill,
+.v2-credits-chip.is-active .v2-credits-chip-pill { background-image: linear-gradient(var(--v2-wash-press), var(--v2-wash-press)); }
+.v2-credits-chip:focus-visible { outline: none; }
+.v2-credits-chip:focus-visible .v2-credits-chip-pill,
+.v2-credits-chip.is-focus .v2-credits-chip-pill { outline: var(--v2-focus-outline);
+  outline-offset: var(--v2-focus-offset); }
+.v2-credits-chip-value { color: var(--v2-ink); }
+.v2-credits-chip--paused .v2-credits-chip-value { color: var(--v2-ink-3); }
+.v2-credits-chip-dot { position: absolute; top: 0; right: 0; width: var(--v2-space-2); height: var(--v2-space-2);
+  border-radius: var(--v2-radius-round); box-shadow: 0 0 0 2px var(--v2-surface); transform: translate(25%, -25%); }
+.v2-credits-chip--low .v2-credits-chip-dot { background: var(--v2-attention-ink); }
+.v2-credits-chip--empty .v2-credits-chip-dot { background: var(--v2-danger-ink); }
+
+/* ---- CreditsMeter -------------------------------------------------------------------------- */
+.v2-credits-meter { display: flex; flex-direction: column; gap: var(--v2-space-2); width: 100%;
+  font-family: var(--v2-font-ui); font-variant-numeric: tabular-nums; }
+.v2-credits-meter-rail { height: var(--v2-space-15); overflow: hidden; border-radius: var(--v2-radius-pill);
+  background: var(--v2-surface-sunken); }
+.v2-credits-meter-fill { display: block; height: 100%; border-radius: inherit; background: var(--v2-blue);
+  transition: width var(--v2-dur-3) var(--v2-ease-out); }
+.v2-credits-meter-caption { display: flex; justify-content: space-between; gap: var(--v2-space-3);
+  font-size: var(--v2-text-12); line-height: var(--v2-leading-snug); color: var(--v2-ink-4); }
+.v2-credits-meter-cover { display: flex; align-items: center; gap: var(--v2-space-15); margin: 0;
+  font-size: var(--v2-text-13); font-weight: var(--v2-weight-medium); line-height: var(--v2-leading-snug);
+  color: var(--v2-ink-2); }
+.v2-credits-meter-cover > :first-child { flex: none; display: inline-flex; }
+.v2-credits-meter-cover--ok > :first-child { color: var(--v2-success); }
+.v2-credits-meter-cover--done > :first-child { color: var(--v2-ink-3); }
+.v2-credits-meter-cover--attention > :first-child { color: var(--v2-attention-ink); }
+.v2-credits-meter-cover--danger > :first-child { color: var(--v2-danger-ink); }
+
+/* ---- OutOfCreditsDialog body (inside V2Kit.Dialog sm, left-aligned like every dialog) ----- */
+.v2-ooc { display: flex; flex-direction: column; align-items: flex-start; gap: var(--v2-space-3); text-align: left;
+  font-family: var(--v2-font-ui); }
+.v2-ooc-hero { display: flex; align-items: center; gap: var(--v2-space-2); }
+.v2-ooc-num { font-size: var(--v2-text-40); font-weight: var(--v2-weight-semibold);
+  line-height: var(--v2-leading-display); letter-spacing: var(--v2-tracking-display); color: var(--v2-ink);
+  font-variant-numeric: tabular-nums; }
+.v2-ooc-lines { margin: 0; font-size: var(--v2-text-13); line-height: var(--v2-leading-body); color: var(--v2-ink-2); }
+.v2-ooc-lines > span { display: block; }
+.v2-ooc-lines strong { color: var(--v2-ink); font-weight: var(--v2-weight-semibold); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.v2-ooc-day { margin: 0; font-size: var(--v2-text-13); font-weight: var(--v2-weight-medium); line-height: var(--v2-leading-snug); color: var(--v2-ink); }
+.v2-ooc-why { display: inline-flex; align-items: center; gap: var(--v2-space-1); min-height: var(--v2-hit-min);
+  margin-left: calc(var(--v2-space-2) * -1); padding: 0 var(--v2-space-2); border: 0;
+  border-radius: var(--v2-radius-sm); background: transparent; color: var(--v2-ink-3); font: inherit;
+  font-size: var(--v2-text-13); font-weight: var(--v2-weight-medium); cursor: pointer;
+  transition: color var(--v2-dur-1) var(--v2-ease-standard), background-color var(--v2-dur-1) var(--v2-ease-standard); }
+.v2-ooc-why:hover, .v2-ooc-why.is-hover { color: var(--v2-ink); background-color: var(--v2-wash-hover); }
+.v2-ooc-why:focus-visible, .v2-ooc-why.is-focus { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); }
+.v2-ooc-actions { align-self: stretch; margin-top: var(--v2-space-1); }
+.v2-ooc-fallback-btn { width: 100%; height: var(--v2-control-lg); border: 0; border-radius: var(--v2-radius-sm);
+  background: var(--v2-action); color: var(--v2-on-color); font: inherit; font-size: var(--v2-text-13);
+  font-weight: var(--v2-weight-medium); cursor: pointer; }
+.v2-ooc-fallback-btn:hover, .v2-ooc-fallback-btn.is-hover { background: var(--v2-action-hover); }
+.v2-ooc-fallback-btn:focus-visible, .v2-ooc-fallback-btn.is-focus { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); }
+/* The same surface as Dialog sm, in place and without the scrim (specimens, docs). */
+.v2-ooc-static { display: flex; flex-direction: column; gap: var(--v2-space-4); width: var(--v2-dialog-sm);
+  max-width: 100%; box-sizing: border-box; padding: var(--v2-space-5); border: var(--v2-stroke) solid var(--v2-line);
+  border-radius: var(--v2-radius-lg); background: var(--v2-surface); box-shadow: var(--v2-shadow-2); }
+.v2-ooc-static-title { margin: 0; font-family: var(--v2-font-ui); font-size: var(--v2-text-20);
+  font-weight: var(--v2-weight-semibold); line-height: var(--v2-leading-tight);
+  letter-spacing: var(--v2-tracking-title); color: var(--v2-ink); }
+
+/* ---- OutOfCreditsNotice: composer line and run end ----------------------------------------- */
+.v2-ooc-note { display: flex; align-items: flex-start; gap: var(--v2-space-2);
+  padding: var(--v2-space-2) var(--v2-space-3); border-radius: var(--v2-radius-md);
+  background: var(--v2-surface-sunken); font-family: var(--v2-font-ui); font-size: var(--v2-text-13);
+  line-height: var(--v2-leading-snug); color: var(--v2-ink-2); }
+.v2-ooc-note p { margin: 0; }
+.v2-ooc-note strong { color: var(--v2-ink); font-weight: var(--v2-weight-semibold); }
+.v2-ooc-note-icon { display: inline-flex; flex: none; color: var(--v2-ink-3); }
+.v2-ooc-note-icon--danger { color: var(--v2-danger-ink); }
+.v2-ooc-note--run { padding: 0; background: transparent; }
+.v2-ooc-note-title { font-weight: var(--v2-weight-medium); color: var(--v2-ink); }
+.v2-ooc-note .v2-ooc-note-meta { margin-top: var(--v2-space-05); font-size: var(--v2-text-12); color: var(--v2-ink-4); font-variant-numeric: tabular-nums; }
+
+/* ---- SettingsSection ----------------------------------------------------------------------- */
+.v2-settings-section { display: flex; flex-direction: column; gap: var(--v2-space-3); padding: var(--v2-space-4);
+  border: var(--v2-stroke) solid var(--v2-line); border-radius: var(--v2-radius-lg); background: var(--v2-surface);
+  box-shadow: var(--v2-shadow-0); font-family: var(--v2-font-ui); scroll-margin: var(--v2-space-4);
+  transition: border-color var(--v2-dur-3) var(--v2-ease-out), box-shadow var(--v2-dur-3) var(--v2-ease-out); }
+.v2-settings-section.is-highlighted { border-color: var(--v2-blue); box-shadow: var(--v2-focus-ring); }
+.v2-settings-section-head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--v2-space-3); }
+.v2-settings-section-text { min-width: 0; }
+.v2-settings-section-title { margin: 0; font-size: var(--v2-text-16); font-weight: var(--v2-weight-semibold);
+  line-height: var(--v2-leading-tight); letter-spacing: var(--v2-tracking-label); color: var(--v2-ink); }
+.v2-settings-section-desc { margin: var(--v2-space-1) 0 0; font-size: var(--v2-text-13); line-height: var(--v2-leading-body); color: var(--v2-ink-3); }
+.v2-settings-section-action { flex: none; }
+.v2-settings-section-body { display: flex; flex-direction: column; }
+/* ListRows run full-bleed so their own 16px padding lines up with the title; they draw their own
+   inset hairlines. Any other block (a switch row, a panel) is separated by one hairline. */
+.v2-settings-section-body > .v2-row,
+.v2-settings-section-body > .v2-row-group { width: auto; margin: 0 calc(var(--v2-space-4) * -1); }
+.v2-settings-section-body > .v2-row:last-child,
+.v2-settings-section-body > .v2-row-group:last-child { margin-bottom: calc(var(--v2-space-3) * -1); }
+.v2-settings-section-body > :not(.v2-row):not(.v2-row-group) + :not(.v2-row):not(.v2-row-group) {
+  margin-top: var(--v2-space-3); border-top: var(--v2-stroke) solid var(--v2-line-hair); }
+
+/* ---- AdvancedDisclosure -------------------------------------------------------------------- */
+.v2-advanced { display: flex; flex-direction: column; gap: var(--v2-space-3); font-family: var(--v2-font-ui); }
+.v2-advanced-toggle { display: flex; align-items: center; justify-content: space-between; gap: var(--v2-space-3);
+  width: 100%; min-height: var(--v2-control-lg); padding: var(--v2-space-3) var(--v2-space-4);
+  border: var(--v2-stroke) solid var(--v2-line); border-radius: var(--v2-radius-lg);
+  background-color: var(--v2-surface); color: var(--v2-ink); font: inherit; text-align: left; cursor: pointer;
+  transition: border-color var(--v2-dur-1) var(--v2-ease-standard), background-image var(--v2-dur-1) var(--v2-ease-standard); }
+.v2-advanced-toggle:hover, .v2-advanced-toggle.is-hover { border-color: var(--v2-line-hover);
+  background-image: linear-gradient(var(--v2-wash-hover), var(--v2-wash-hover)); }
+.v2-advanced-toggle:active, .v2-advanced-toggle.is-active { background-image: linear-gradient(var(--v2-wash-press), var(--v2-wash-press)); }
+.v2-advanced-toggle:focus-visible, .v2-advanced-toggle.is-focus { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); }
+.v2-advanced-text { display: flex; flex-direction: column; gap: var(--v2-space-05); min-width: 0; }
+.v2-advanced-label { font-size: var(--v2-text-14); font-weight: var(--v2-weight-medium); line-height: var(--v2-leading-snug); color: var(--v2-ink); }
+.v2-advanced-desc { font-size: var(--v2-text-12); line-height: var(--v2-leading-snug); color: var(--v2-ink-3); }
+.v2-advanced-chev { display: inline-flex; flex: none; color: var(--v2-ink-3); transition: transform var(--v2-dur-2) var(--v2-ease-out); }
+.v2-advanced.is-open .v2-advanced-chev { transform: rotate(180deg); }
+.v2-advanced-body { display: flex; flex-direction: column; gap: var(--v2-space-3); }
+.v2-advanced-body[hidden] { display: none; }
+
+/* ---- ByokPanel ----------------------------------------------------------------------------- */
+.v2-byok-block { display: flex; flex-direction: column; gap: var(--v2-space-3); padding-top: var(--v2-space-3); }
+.v2-byok-key { display: flex; align-items: center; justify-content: space-between; gap: var(--v2-space-3); }
+.v2-byok-key-text { min-width: 0; }
+.v2-byok-provider { margin: 0; font-size: var(--v2-text-14); font-weight: var(--v2-weight-medium); line-height: var(--v2-leading-snug); color: var(--v2-ink); }
+.v2-byok-masked { margin: var(--v2-space-05) 0 0; font-family: var(--v2-font-mono); font-size: var(--v2-text-13); color: var(--v2-ink-3); }
+.v2-byok-confirm { display: flex; flex-direction: column; gap: var(--v2-space-3); padding: var(--v2-space-3);
+  border: var(--v2-stroke) solid var(--v2-line); border-radius: var(--v2-radius-md);
+  background: var(--v2-surface-panel); }
+.v2-byok-confirm-text { margin: 0; font-size: var(--v2-text-13); line-height: var(--v2-leading-body); color: var(--v2-ink-2); }
+.v2-byok-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--v2-space-2); }
+.v2-byok-note { margin: 0; font-size: var(--v2-text-12); line-height: var(--v2-leading-snug); color: var(--v2-ink-3); }
+.v2-byok-note--icon { display: flex; align-items: center; gap: var(--v2-space-15); }
+
+/* ---- AiModePanel --------------------------------------------------------------------------- */
+.v2-aimode-body { display: flex; flex-direction: column; gap: var(--v2-space-3); padding-top: var(--v2-space-3); }
+.v2-aimode-block { display: flex; flex-direction: column; gap: var(--v2-space-3); }
+.v2-aimode-text { margin: 0; font-size: var(--v2-text-13); line-height: var(--v2-leading-body); color: var(--v2-ink-2); }
+.v2-aimode-text--strong { font-weight: var(--v2-weight-medium); color: var(--v2-ink); }
+.v2-aimode-meta { margin: 0; font-size: var(--v2-text-12); line-height: var(--v2-leading-snug); color: var(--v2-ink-4); }
+.v2-aimode-row { display: flex; flex-wrap: wrap; gap: var(--v2-space-2); }
+.v2-aimode-status { display: flex; align-items: center; justify-content: space-between; gap: var(--v2-space-3); font-size: var(--v2-text-13); font-weight: var(--v2-weight-medium); color: var(--v2-ink-2); }
+/* Underlined ink link that turns blue on hover: the family's link (onBlue). */
+.v2-aimode-switch { align-self: flex-start; min-height: var(--v2-hit-min); padding: 0; border: 0;
+  background: transparent; color: var(--v2-ink); font: inherit; font-size: var(--v2-text-13);
+  font-weight: var(--v2-weight-medium); text-decoration: underline; text-decoration-color: var(--v2-line-hover);
+  text-underline-offset: 3px; cursor: pointer; transition: color var(--v2-dur-1) var(--v2-ease-standard); }
+.v2-aimode-switch:hover, .v2-aimode-switch.is-hover { color: var(--v2-blue-ink); text-decoration-color: currentColor; }
+.v2-aimode-switch:focus-visible, .v2-aimode-switch.is-focus { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); border-radius: var(--v2-radius-xs); }

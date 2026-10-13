@@ -1,0 +1,117 @@
+/* BlueAI Product V2 Design System: entry screens (Welcome, SignIn, SystemStates) and the Program
+   Terms sheet body. Tokens only. These screens are compositions of kit parts; this sheet only lays
+   them out and adds the two family details the kit has no part for: the site's numbered step disc
+   (onblue/onblue.css:1887-1899) and the one serif word a site title may carry (onblue.css:1446-1453).
+   Motion uses kit/motion.css classes (.v2-anim-fade-up, .v2-delay-*), so the one global
+   reduced-motion rule covers every entrance here. */
+
+/* ---- Welcome (section 67) --------------------------------------------------------------------- */
+.v2-welcome {
+  display: flex; flex-direction: column; min-height: 100%;
+  padding: var(--v2-space-10) var(--v2-space-6) var(--v2-space-4);
+  background: var(--v2-canvas);
+}
+.v2-welcome-main {
+  flex: 1 1 auto; display: flex; flex-direction: column; justify-content: center;
+  gap: var(--v2-space-6); min-height: 0;
+}
+.v2-welcome-head {
+  display: flex; flex-direction: column; align-items: center; gap: var(--v2-space-4);
+  text-align: center;
+}
+.v2-welcome-title {
+  max-width: var(--v2-dialog-sm); margin: 0;
+  font-size: var(--v2-text-24); font-weight: var(--v2-weight-semibold); line-height: var(--v2-leading-tight);
+  letter-spacing: var(--v2-tracking-title); color: var(--v2-ink); text-wrap: balance;
+}
+/* The site's one serif word (title-lg em): Instrument Serif italic in blue ink. Brand voice, not a
+   highlight: one per title at most, never on a button or a number. */
+.v2-serif-em {
+  font-family: var(--v2-font-serif); font-style: italic; font-weight: var(--v2-weight-regular);
+  font-size: 1.06em; letter-spacing: var(--v2-tracking-label); color: var(--v2-blue-ink);
+}
+.v2-welcome-foot {
+  display: flex; justify-content: center; padding-top: var(--v2-space-4);
+}
+
+/* Numbered steps: the site's step disc (blue tint, blue edge, ink figure), scaled to the window. */
+.v2-steps { display: flex; flex-direction: column; gap: var(--v2-space-4); margin: 0; padding: 0; list-style: none; }
+.v2-step { display: flex; align-items: flex-start; gap: var(--v2-space-3); }
+.v2-step-num {
+  flex: none; display: grid; place-items: center;
+  width: var(--v2-control-sm); height: var(--v2-control-sm); border-radius: var(--v2-radius-round);
+  background: var(--v2-select); border: var(--v2-stroke) solid var(--v2-select-line);
+  color: var(--v2-ink); font-size: var(--v2-text-13); font-weight: var(--v2-weight-semibold);
+  line-height: 1; font-variant-numeric: tabular-nums;
+}
+/* Centre the first line of text on the 28px disc: (28 - 14 x 1.5) / 2. */
+.v2-step-text {
+  margin: 0; min-width: 0;
+  padding-top: calc((var(--v2-control-sm) - var(--v2-text-14) * var(--v2-leading-body)) / 2);
+  font-size: var(--v2-text-14); line-height: var(--v2-leading-body); color: var(--v2-ink-2);
+}
+
+/* ---- Program Terms sheet body (Welcome, Account) -------------------------------------------- */
+.v2-terms-text { margin: 0; color: var(--v2-ink-2); font-size: var(--v2-text-14); line-height: var(--v2-leading-body); }
+.v2-terms-text + .v2-banner { margin-top: var(--v2-space-3); }
+
+/* ---- Sign-in gate (section 68): content of the kit Dialog on the frost scrim ----------------- */
+.v2-gate {
+  display: flex; flex-direction: column; align-items: center; gap: var(--v2-space-3);
+  text-align: center;
+}
+.v2-gate--top { padding-top: var(--v2-space-3); }
+.v2-gate-mark {
+  display: grid; place-items: center; flex: none;
+  width: calc(var(--v2-icon-lg) * 2); height: calc(var(--v2-icon-lg) * 2);
+  border-radius: var(--v2-radius-round);
+  background: var(--v2-blue-tint); color: var(--v2-blue-ink);
+}
+.v2-gate-mark--success { background: var(--v2-success-tint); color: var(--v2-success-ink); }
+.v2-gate-mark--plain { background: none; color: var(--v2-blue); }
+.v2-gate-text { display: flex; flex-direction: column; align-items: center; gap: var(--v2-space-1); }
+.v2-gate-title {
+  margin: 0; color: var(--v2-ink);
+  font-size: var(--v2-text-20); font-weight: var(--v2-weight-semibold);
+  line-height: var(--v2-leading-tight); letter-spacing: var(--v2-tracking-title);
+}
+.v2-gate-body {
+  margin: 0; color: var(--v2-ink-3);
+  font-size: var(--v2-text-13); line-height: var(--v2-leading-body);
+}
+.v2-gate-email {
+  margin: 0; color: var(--v2-ink); font-size: var(--v2-text-16); font-weight: var(--v2-weight-semibold);
+  line-height: var(--v2-leading-snug); letter-spacing: var(--v2-tracking-label); overflow-wrap: anywhere;
+}
+.v2-gate .v2-banner { align-self: stretch; text-align: left; }
+/* The consequence line sits right above the action it describes (P3), at body contrast. */
+.v2-gate-note { margin: 0; color: var(--v2-ink-3); font-size: var(--v2-text-13); line-height: var(--v2-leading-body); }
+
+/* Option B: the account to continue as, one pressable card (kit Card supplies every state). */
+.v2-gate-account {
+  display: flex; align-items: center; gap: var(--v2-space-3); align-self: stretch;
+  width: 100%; text-align: left;
+}
+.v2-gate-account-text { display: flex; flex-direction: column; min-width: 0; }
+.v2-gate-account-name {
+  color: var(--v2-ink); font-size: var(--v2-text-14); font-weight: var(--v2-weight-semibold);
+  line-height: var(--v2-leading-snug);
+}
+.v2-gate-account-email {
+  color: var(--v2-ink-3); font-size: var(--v2-text-13); line-height: var(--v2-leading-snug);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.v2-gate-account .v2-row-chevron, .v2-gate-account-chev { margin-left: auto; flex: none; color: var(--v2-ink-3); }
+
+/* ---- System and program states (section 69) --------------------------------------------------- */
+.v2-sys {
+  display: flex; flex-direction: column; gap: var(--v2-space-3); min-height: 100%;
+  padding: var(--v2-space-4) var(--v2-gutter) var(--v2-space-6);
+}
+.v2-sys--center { justify-content: center; }
+/* A condition banner holds under the top bar while the content band scrolls beneath it. */
+.v2-sys-banner { position: sticky; top: 0; z-index: var(--v2-z-sticky); }
+.v2-sys-note {
+  margin: 0; text-align: center; color: var(--v2-ink-3);
+  font-size: var(--v2-text-13); line-height: var(--v2-leading-body);
+}

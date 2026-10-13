@@ -1,0 +1,121 @@
+/* BlueAI Product V2 Design System: motion (loads after kit/base.css, before every other kit sheet).
+   The only keyframes the product keeps, each with a utility class that pairs it with its token
+   duration and curve, plus the one global reduced-motion rule.
+
+   Keyframe        Class                 Duration / curve                  Used by
+   v2-fade-up      .v2-anim-fade-up      --v2-dur-2 / --v2-ease-out        messages, tab change, toast
+   v2-fade-up      .v2-anim-pop-in       --v2-dur-3 / --v2-ease-out        menus, popovers, tooltips
+   v2-scale-in     .v2-anim-scale-in     --v2-dur-4 / --v2-ease-out        dialogs (day done uses --v2-dur-celebrate)
+   v2-sheet-up     .v2-anim-sheet-up     --v2-dur-4 / --v2-ease-out        sheet arrives
+   v2-sheet-down   .v2-anim-sheet-down   --v2-dur-3 / --v2-ease-in         sheet leaves
+   v2-fade         .v2-anim-fade         --v2-dur-3 / --v2-ease-standard   scrims arrive
+   v2-fade         .v2-anim-fade-out     --v2-dur-3 / --v2-ease-in         scrims and dialogs leave
+   v2-pulse        .v2-anim-pulse        --v2-dur-pulse, loops             busy dot, thinking dots
+   v2-spin         .v2-anim-spin         --v2-dur-spin linear, loops       spinner
+   v2-shimmer      .v2-anim-shimmer      --v2-dur-shimmer linear, loops    skeleton
+   v2-indet        .v2-anim-indet        --v2-dur-shimmer, loops           indeterminate progress bar
+
+   Rules: arrivals ease out, departures ease in and run one step shorter; nothing loops unless the
+   partner is waiting on it (busy, thinking, loading); celebration effects (confetti, tick ring)
+   belong to the day-done component and play once. Stagger with .v2-delay-1..3 (120ms steps). */
+
+@keyframes v2-fade-up {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes v2-scale-in {
+  from { opacity: 0; transform: scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes v2-sheet-up {
+  from { transform: translateY(100%); }
+  to { transform: none; }
+}
+@keyframes v2-sheet-down {
+  from { transform: none; }
+  to { transform: translateY(100%); }
+}
+@keyframes v2-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes v2-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.8); }
+}
+@keyframes v2-spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes v2-shimmer {
+  from { background-position: 100% 0; }
+  to { background-position: -100% 0; }
+}
+@keyframes v2-indet {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(250%); }
+}
+
+.v2-anim-fade-up { animation: v2-fade-up var(--v2-dur-2) var(--v2-ease-out) both; }
+.v2-anim-pop-in { animation: v2-fade-up var(--v2-dur-3) var(--v2-ease-out) both; }
+.v2-anim-scale-in { animation: v2-scale-in var(--v2-dur-4) var(--v2-ease-out) both; }
+.v2-anim-sheet-up { animation: v2-sheet-up var(--v2-dur-4) var(--v2-ease-out) both; }
+.v2-anim-sheet-down { animation: v2-sheet-down var(--v2-dur-3) var(--v2-ease-in) both; }
+.v2-anim-fade { animation: v2-fade var(--v2-dur-3) var(--v2-ease-standard) both; }
+.v2-anim-fade-out { animation: v2-fade var(--v2-dur-3) var(--v2-ease-in) reverse both; }
+.v2-anim-pulse { animation: v2-pulse var(--v2-dur-pulse) ease-in-out infinite; }
+.v2-anim-spin { animation: v2-spin var(--v2-dur-spin) linear infinite; }
+.v2-anim-shimmer {
+  background-image: linear-gradient(90deg, var(--v2-surface-sunken) 0%, var(--v2-surface) 50%, var(--v2-surface-sunken) 100%);
+  background-size: 200% 100%;
+  animation: v2-shimmer var(--v2-dur-shimmer) linear infinite;
+}
+.v2-anim-indet { animation: v2-indet var(--v2-dur-shimmer) var(--v2-ease-standard) infinite; }
+
+.v2-delay-1 { animation-delay: var(--v2-dur-1); }
+.v2-delay-2 { animation-delay: calc(var(--v2-dur-1) * 2); }
+.v2-delay-3 { animation-delay: calc(var(--v2-dur-1) * 3); }
+
+/* Reduced motion: one rule for the whole product (the site's model, onblue.css 3014-3029).
+   Every animation and transition finishes at once on its resting frame, so arrivals are simply
+   there and loops stop. Two loops keep their meaning instead of freezing mid-gesture:
+   the spinner turns at half speed (it only exists while the partner waits on a control), and an
+   indeterminate bar becomes a full, quiet track. .v2-reduced-motion applies the same rule to one
+   subtree, so the guide can show it without changing the operating system setting. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+  .v2-anim-spin {
+    animation-duration: calc(var(--v2-dur-spin) * 2) !important;
+    animation-iteration-count: infinite !important;
+  }
+  .v2-anim-indet {
+    animation: none !important;
+    transform: none !important;
+    width: 100% !important;
+    opacity: var(--v2-opacity-disabled);
+  }
+}
+.v2-reduced-motion, .v2-reduced-motion *, .v2-reduced-motion *::before, .v2-reduced-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-delay: 0ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  transition-delay: 0ms !important;
+  scroll-behavior: auto !important;
+}
+.v2-reduced-motion .v2-anim-spin, .v2-reduced-motion.v2-anim-spin {
+  animation-duration: calc(var(--v2-dur-spin) * 2) !important;
+  animation-iteration-count: infinite !important;
+}
+.v2-reduced-motion .v2-anim-indet, .v2-reduced-motion.v2-anim-indet {
+  animation: none !important;
+  transform: none !important;
+  width: 100% !important;
+  opacity: var(--v2-opacity-disabled);
+}

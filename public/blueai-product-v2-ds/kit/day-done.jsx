@@ -1,0 +1,80 @@
+/* BlueAI Product V2 Design System: the day-done moment (section 44).
+   DayDone {end, worker, open, onClose, preview}
+     end      job | nojob | day20 (failed and declined have no moment: the run card says those).
+     worker   the Worker record; numbers() gives the one count, so tonight's '7 of 20 days' is
+              tomorrow's '7 of 20 days' with two ticks (V2: 'DAY 7 OF 20' then 'Day 6 of 20', R02).
+     open     shows the kit Dialog (celebration variant, size sm). preview draws it open in place
+              without taking focus (guide specimens; give it a positioned parent).
+   One count, one status line. Pending stays blue with one tick until verified (P2: green means
+   reached). Confetti only on Day 20, once, and never under reduced motion. Titles are the PM's
+   DRAFT strings, quoted (worker_day_done.jsx:91-93). */
+(function () {
+  const K = () => window.V2Kit || {};
+
+  const COPY = {
+    job: { title: 'Today’s run is done.' },
+    nojob: { title: 'No paid job today, but your run counts.' },
+    day20: { title: 'Day 20 done.', sub: 'That’s every day for this month.' },
+  };
+  const PENDING = 'Pending verification';
+  const VERIFY_NOTE = 'We check every run within a day. The tick doubles once it’s verified.';
+
+  // A fixed burst, so every render is the same (V2 rolls Math.random per mount). Colours are tokens.
+  const BITS = [
+    [-96, -36, '--v2-blue', 0, 140], [-64, -64, '--v2-success', 40, -90], [-30, -52, '--v2-attention-line', 80, 200],
+    [8, -70, '--v2-action', 20, -160], [40, -58, '--v2-success', 60, 120], [76, -62, '--v2-blue', 100, -60],
+    [104, -28, '--v2-attention-line', 30, 180], [-112, 12, '--v2-success', 120, -140], [118, 16, '--v2-blue', 90, 90],
+    [-56, 44, '--v2-action', 150, 60], [60, 40, '--v2-attention-line', 170, -120], [-10, 64, '--v2-success', 110, 150],
+  ];
+  function Confetti() {
+    return (
+      <span className="v2-confetti" aria-hidden="true">
+        {BITS.map(function (b, i) {
+          return <i key={i} style={{ '--tx': b[0] + 'px', '--ty': b[1] + 'px', '--c': 'var(' + b[2] + ')', '--d': b[3] + 'ms', '--r': b[4] + 'deg' }} />;
+        })}
+      </span>
+    );
+  }
+
+  function DayDoneBody({ end, worker, titleId }) {
+    const e = COPY[end] ? end : 'job';
+    const c = COPY[e];
+    const w = worker || (K().workerFixtures || {})[e === 'day20' ? 'day20' : (e === 'nojob' ? 'nojob' : 'donePending')];
+    const n = K().numbers(w);
+    const T = K().StatusTick;
+    const Bar = K().DayBar;
+    return (
+      <div className="v2-daydone">
+        {e === 'day20' ? <Confetti /> : null}
+        <span className="v2-daydone-badge" aria-hidden="true">{T ? <T status="pending" size={28} /> : null}</span>
+        <h2 className="v2-daydone-title" id={titleId}>{c.title}</h2>
+        {c.sub ? <p className="v2-daydone-sub">{c.sub}</p> : null}
+        <div className="v2-daydone-progress">
+          {Bar ? <Bar days={n.segments} target={n.target} legend={false} /> : null}
+          <div className="v2-daydone-count">
+            <span><span className="v2-w-figure">{n.done}</span> of {n.target} days</span>
+            {T ? <T status="pending" size={14} label={PENDING} /> : <span>{PENDING}</span>}
+          </div>
+        </div>
+        <p className="v2-w-note">{VERIFY_NOTE}</p>
+      </div>
+    );
+  }
+
+  let seq = 0;
+  // The kit Dialog's celebration variant: centred, no close button, scrim and Esc dismiss, one
+  // full-width Got it. The title sits under the badge, so the dialog is labelled by it.
+  function DayDone({ end, worker, open, onClose, preview }) {
+    const [titleId] = React.useState(function () { seq += 1; return 'v2-daydone-title-' + seq; });
+    const D = K().Dialog;
+    if (!D || !(open || preview)) return null;
+    return (
+      <D open variant="celebration" size="sm" preview={preview} onClose={onClose} labelledBy={titleId}
+        actions={[{ label: 'Got it', variant: 'primary', onClick: onClose }]}>
+        <DayDoneBody end={end} worker={worker} titleId={titleId} />
+      </D>
+    );
+  }
+
+  Object.assign(window.V2Kit = window.V2Kit || {}, { DayDone });
+})();

@@ -1,0 +1,211 @@
+/* BlueAI Product V2 Design System: Scrim, Dialog, Sheet on window.V2Kit, plus the two hooks every
+   blocking overlay shares. Styles: kit/overlays.css. Spec: design-md/25-dialog.md, 26-sheet.md.
+
+   Overlays live inside the product window, never on the page: each is position: absolute against
+   the nearest positioned ancestor, which in the product is AppFrame (its overlay plane), the rule
+   V2 already states at blueai/shared.jsx:66-71. Two open dialogs stack by mount order on one
+   layer (--v2-z-dialog); the frost gate sits one step up (--v2-z-gate).
+
+   Scrim   {variant 'dim' | 'frost', onClick, className, style}  dim is every dialog and sheet;
+           frost is the sign-in gate only (the onBlue gate veil).
+   Dialog  {open, onClose, title, description, variant 'task' | 'alert' | 'consent' | 'celebration',
+           size 'sm' (320) | 'md' (382), role, dismissible, busy, actions, footer, initialFocus,
+           labelledBy, scrim, preview, className, children}
+           variant sets the defaults below (role, size, close button, scrim click). actions is
+           [{label, onClick, variant 'secondary' | 'primary' | 'danger' | 'quiet', disabled}], written
+           secondary first and primary last. busy puts the primary in loading and holds Esc, the
+           scrim and the close button, so a slow consent or delete cannot fire twice.
+           dismissible={false} blocks: no close button, no Esc, no scrim.
+           preview renders it open in place without taking focus (guide specimens only).
+   Sheet   {open, onClose, title, description, blocking, busy, actions, footer, initialFocus,
+           preview, className, children}  bottom sheet, full window width. blocking: no close,
+           no Esc, no scrim dismiss (the Program Terms).
+   useFocusTrap(ref, active, {initialFocus, returnFocus})  moves focus in, keeps Tab inside, returns
+           focus to the opener. initialFocus is a ref or a selector; without one the panel itself
+           takes focus, so nothing draws a ring until the partner presses Tab (the onBlue rule,
+           onblue.css:929-942).
+   usePresence(open, ms)  {mounted, closing}: keeps a part mounted while its exit plays. */
+(function () {
+  const { useState, useEffect, useRef, useId } = React;
+  const EXIT_MS = 240; // --v2-dur-3: scrims, dialogs and sheets leave one step faster than they arrive
+  const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+  const VARIANTS = {
+    task: { role: 'dialog', size: 'md', close: true, scrimCloses: true },
+    alert: { role: 'alertdialog', size: 'sm', close: false, scrimCloses: false, focusAction: true },
+    consent: { role: 'dialog', size: 'md', close: true, scrimCloses: false },
+    celebration: { role: 'dialog', size: 'sm', close: false, scrimCloses: true, center: true },
+  };
+
+  function cx() { return Array.prototype.filter.call(arguments, Boolean).join(' '); }
+  function reducedMotion() {
+    return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  }
+  function focusEl(el) {
+    if (!el || !el.focus) return;
+    try { el.focus({ preventScroll: true }); } catch (e) { el.focus(); }
+  }
+  function focusables(root) {
+    return Array.prototype.filter.call(root.querySelectorAll(FOCUSABLE), function (el) {
+      return el.getClientRects().length > 0;
+    });
+  }
+  function resolve(target, root) {
+    if (!target) return null;
+    if (typeof target === 'string') return root.querySelector(target);
+    return target.current || null;
+  }
+
+  function usePresence(open, ms) {
+    const [mounted, setMounted] = useState(!!open);
+    const [closing, setClosing] = useState(false);
+    useEffect(function () {
+      if (open) { setMounted(true); setClosing(false); return undefined; }
+      if (!mounted) return undefined;
+      setClosing(true);
+      const t = setTimeout(function () { setMounted(false); setClosing(false); }, reducedMotion() ? 0 : (ms || EXIT_MS));
+      return function () { clearTimeout(t); };
+    }, [open]);
+    return { mounted: mounted || !!open, closing: closing && !open };
+  }
+
+  function useFocusTrap(ref, active, opts) {
+    const latest = useRef(opts || {});
+    latest.current = opts || {};
+    useEffect(function () {
+      const root = ref.current;
+      if (!active || !root) return undefined;
+      const opener = document.activeElement;
+      focusEl(resolve(latest.current.initialFocus, root) || root);
+      function onKey(e) {
+        if (e.key !== 'Tab') return;
+        const list = focusables(root);
+        if (!list.length) { e.preventDefault(); focusEl(root); return; }
+        const i = list.indexOf(document.activeElement);
+        if (e.shiftKey && i <= 0) { e.preventDefault(); focusEl(list[list.length - 1]); }
+        else if (!e.shiftKey && i === list.length - 1) { e.preventDefault(); focusEl(list[0]); }
+      }
+      root.addEventListener('keydown', onKey);
+      return function () {
+        root.removeEventListener('keydown', onKey);
+        if (latest.current.returnFocus === false) return;
+        if (opener && opener !== document.body && document.contains(opener)) focusEl(opener);
+      };
+    }, [active]);
+  }
+
+  function Scrim({ variant, onClick, className, style }) {
+    return <div className={cx('v2-scrim', variant === 'frost' && 'v2-scrim--frost', className)} style={style} aria-hidden="true" onClick={onClick} />;
+  }
+
+  // The close control: the kit's IconButton at the 32px target, a plain labelled button without it.
+  function CloseButton({ onClick, disabled }) {
+    const K = window.V2Kit || {};
+    if (K.IconButton) return <K.IconButton icon="close" label="Close" size={32} onClick={onClick} disabled={disabled} className="v2-ov-close" />;
+    return (
+      <button type="button" className="v2-ov-close v2-ov-close--plain" aria-label="Close" onClick={onClick} disabled={disabled}>
+        {K.Icon ? <K.Icon name="close" size={20} /> : null}
+      </button>
+    );
+  }
+
+  function Actions({ actions, busy }) {
+    if (!actions || !actions.length) return null;
+    const K = window.V2Kit || {};
+    const Btn = K.Button || 'button';
+    return (
+      <div className={cx('v2-ov-actions', actions.length === 1 && 'v2-ov-actions--one')}>
+        {actions.map(function (a, i) {
+          const main = a.variant === 'primary' || a.variant === 'danger';
+          return (
+            <Btn key={a.label + i} variant={a.variant || 'secondary'} size="lg" full loading={!!(busy && main)}
+              disabled={a.disabled || (busy && !main)} onClick={a.onClick} className={a.className}>{a.label}</Btn>
+          );
+        })}
+      </div>
+    );
+  }
+
+  function Head({ id, title, showClose, onClose, busy }) {
+    if (!title && !showClose) return null;
+    return (
+      <div className={cx('v2-dialog-head', !title && 'v2-dialog-head--bare')}>
+        {title ? <h2 className="v2-dialog-title" id={id}>{title}</h2> : null}
+        {showClose ? <CloseButton onClick={onClose} disabled={busy} /> : null}
+      </div>
+    );
+  }
+
+  function Dialog(props) {
+    const p = props;
+    const v = VARIANTS[p.variant] || VARIANTS.task;
+    const pres = usePresence(!!p.open, EXIT_MS);
+    const panel = useRef(null);
+    const uid = useId();
+    const live = !!p.open && !p.preview;
+    const dismissible = p.dismissible !== false;
+    const canClose = dismissible && !p.busy;
+    useFocusTrap(panel, live, { initialFocus: p.initialFocus || (v.focusAction ? '.v2-ov-actions button' : null) });
+    useEffect(function () {
+      const el = panel.current;
+      if (p.busy && live && el && !el.contains(document.activeElement)) focusEl(el);
+    }, [p.busy]);
+    if (!pres.mounted) return null;
+
+    function close() { if (canClose && p.onClose) p.onClose(); }
+    const tid = uid + '-title';
+    const did = uid + '-desc';
+    return (
+      <div className={cx('v2-overlay', 'v2-overlay--center', p.scrim === 'frost' && 'v2-overlay--gate', pres.closing && 'is-closing', p.className)}>
+        <Scrim variant={p.scrim} onClick={v.scrimCloses ? close : undefined} />
+        <div ref={panel} tabIndex={-1}
+          className={cx('v2-dialog', 'v2-dialog--' + (p.size === 'sm' || p.size === 'md' ? p.size : v.size), v.center && 'v2-dialog--center')}
+          role={p.role || v.role} aria-modal={live ? 'true' : undefined}
+          aria-labelledby={p.title ? tid : (p.labelledBy || p['aria-labelledby'])}
+          aria-describedby={p.description ? did : undefined} aria-busy={p.busy ? 'true' : undefined}
+          onKeyDown={function (e) { if (e.key === 'Escape') { e.stopPropagation(); close(); } }}>
+          <Head id={tid} title={p.title} showClose={v.close && dismissible} onClose={close} busy={p.busy} />
+          <div className="v2-dialog-body">
+            {p.description ? <p className="v2-dialog-desc" id={did}>{p.description}</p> : null}
+            {p.children}
+          </div>
+          <Actions actions={p.actions} busy={p.busy} />
+          {p.footer ? <div className="v2-dialog-foot">{p.footer}</div> : null}
+        </div>
+      </div>
+    );
+  }
+
+  function Sheet(props) {
+    const p = props;
+    const pres = usePresence(!!p.open, EXIT_MS);
+    const panel = useRef(null);
+    const uid = useId();
+    const live = !!p.open && !p.preview;
+    const canClose = !p.blocking && !p.busy;
+    useFocusTrap(panel, live, { initialFocus: p.initialFocus });
+    if (!pres.mounted) return null;
+
+    function close() { if (canClose && p.onClose) p.onClose(); }
+    const tid = uid + '-title';
+    const did = uid + '-desc';
+    return (
+      <div className={cx('v2-overlay', 'v2-overlay--bottom', pres.closing && 'is-closing', p.className)}>
+        <Scrim onClick={p.blocking ? undefined : close} />
+        <div ref={panel} tabIndex={-1} className="v2-sheet" role="dialog" aria-modal={live ? 'true' : undefined}
+          aria-labelledby={p.title ? tid : p.labelledBy} aria-describedby={p.description ? did : undefined}
+          aria-busy={p.busy ? 'true' : undefined}
+          onKeyDown={function (e) { if (e.key === 'Escape') { e.stopPropagation(); close(); } }}>
+          <Head id={tid} title={p.title} showClose={!p.blocking} onClose={close} busy={p.busy} />
+          <div className="v2-sheet-body">
+            {p.description ? <p className="v2-dialog-desc" id={did}>{p.description}</p> : null}
+            {p.children}
+          </div>
+          <Actions actions={p.actions} busy={p.busy} />
+          {p.footer ? <div className="v2-dialog-foot">{p.footer}</div> : null}
+        </div>
+      </div>
+    );
+  }
+
+  Object.assign(window.V2Kit = window.V2Kit || {}, { Scrim, Dialog, Sheet, useFocusTrap, usePresence });
+})();

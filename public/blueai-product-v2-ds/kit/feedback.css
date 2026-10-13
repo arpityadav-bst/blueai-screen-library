@@ -1,0 +1,161 @@
+/* BlueAI Product V2 Design System: feedback parts (kit/progress.jsx, kit/notice.jsx).
+   ProgressBar, Spinner, Skeleton, Banner, EmptyState. Tokens only (tokens.css). States are CSS,
+   forced in the guide with .is-hover / .is-focus / .is-active. Every loop and arrival is a
+   kit/motion.css class (.v2-anim-indet, -spin, -shimmer, -fade-up), so its one reduced-motion
+   rule covers them: the bar becomes a full quiet track, the spinner turns at half speed, the
+   skeleton and the empty state hold still. */
+
+/* ---- ProgressBar ---- */
+.v2-progress { display: flex; flex-direction: column; gap: var(--v2-space-2); width: 100%; font-family: var(--v2-font-ui); }
+.v2-progress-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--v2-space-3);
+  font-size: var(--v2-text-13);
+  line-height: var(--v2-leading-snug);
+}
+.v2-progress-label { min-width: 0; color: var(--v2-ink); font-weight: var(--v2-weight-medium); }
+.v2-progress-value { flex: none; color: var(--v2-ink-3); font-variant-numeric: tabular-nums; }
+.v2-progress-rail {
+  position: relative;
+  height: 6px;
+  overflow: hidden;
+  border-radius: var(--v2-radius-pill);
+  background: var(--v2-surface-sunken);
+}
+.v2-progress--4 .v2-progress-rail { height: 4px; }
+.v2-progress-fill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  border-radius: inherit;
+  background: var(--v2-blue);
+  transition: width var(--v2-dur-3) var(--v2-ease-out), background-color var(--v2-dur-2) var(--v2-ease-standard);
+}
+.v2-progress--success .v2-progress-fill { background: var(--v2-success); }
+.v2-progress--error .v2-progress-fill { background: var(--v2-danger-ink); }
+.v2-progress--error .v2-progress-value { color: var(--v2-danger-ink); }
+.v2-progress--paused .v2-progress-fill { background: var(--v2-ink-4); }
+.v2-progress--indet .v2-progress-fill { width: 40%; transition: none; }
+
+/* ---- Spinner: a ring in currentColor ---- */
+.v2-spinner {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  color: inherit;
+  vertical-align: middle;
+}
+.v2-spinner--12 { width: 12px; height: 12px; }
+.v2-spinner--32 { width: 32px; height: 32px; }
+.v2-spinner svg { display: block; width: 100%; height: 100%; }
+.v2-spinner-track { opacity: 0.2; }
+.v2-spinner--on-color { color: var(--v2-on-color); }
+.v2-spinner--done { color: var(--v2-success); }
+.v2-spinner.is-waiting { visibility: hidden; }
+
+/* ---- Skeleton ---- */
+.v2-skel {
+  display: block;
+  width: 100%;
+  height: 12px;
+  border-radius: var(--v2-radius-xs);
+  background-color: var(--v2-surface-sunken);
+}
+.v2-skel--title { width: 60%; height: 16px; }
+.v2-skel--circle { width: 32px; height: 32px; border-radius: var(--v2-radius-round); }
+.v2-skel--rect { height: 64px; border-radius: var(--v2-radius-md); }
+.v2-skel-lines { display: flex; flex-direction: column; gap: var(--v2-space-2); width: 100%; }
+
+/* ---- Banner: tone in the fill, edge and icon; words in ink ---- */
+.v2-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--v2-space-2);
+  padding: var(--v2-space-3);
+  border: var(--v2-stroke) solid var(--v2-line);
+  border-radius: var(--v2-radius-md);
+  background: var(--v2-surface-sunken);
+  color: var(--v2-ink-2);
+  font-family: var(--v2-font-ui);
+  font-size: var(--v2-text-13);
+  line-height: var(--v2-leading-body);
+  --v2-banner-mark: var(--v2-ink-3);
+}
+.v2-banner--info { background: var(--v2-blue-tint); border-color: var(--v2-blue-tint-line); --v2-banner-mark: var(--v2-blue-ink); }
+.v2-banner--success { background: var(--v2-success-tint); border-color: var(--v2-success-line); --v2-banner-mark: var(--v2-success-ink); }
+.v2-banner--attention { background: var(--v2-attention-tint); border-color: var(--v2-attention-line); --v2-banner-mark: var(--v2-attention-ink); }
+.v2-banner--danger { background: var(--v2-danger-tint); border-color: var(--v2-danger-line); --v2-banner-mark: var(--v2-danger-ink); }
+.v2-banner-icon { display: inline-flex; flex: none; margin-top: var(--v2-space-05); color: var(--v2-banner-mark); }
+.v2-banner-text { flex: 1; min-width: 0; }
+.v2-banner-title { display: block; color: var(--v2-ink); font-weight: var(--v2-weight-semibold); }
+.v2-banner-body strong { color: var(--v2-ink); font-weight: var(--v2-weight-semibold); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.v2-banner-actions {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--v2-space-05);
+  margin: calc(var(--v2-space-15) * -1) calc(var(--v2-space-15) * -1) calc(var(--v2-space-15) * -1) 0;
+}
+.v2-banner-action, .v2-banner-dismiss {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--v2-hit-min);
+  margin: 0;
+  border: 0;
+  border-radius: var(--v2-radius-sm);
+  background: transparent;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background-color var(--v2-dur-1) var(--v2-ease-standard), text-decoration-color var(--v2-dur-1) var(--v2-ease-standard);
+}
+.v2-banner-action {
+  padding: 0 var(--v2-space-2);
+  color: var(--v2-ink);
+  font-size: var(--v2-text-13);
+  font-weight: var(--v2-weight-medium);
+  text-decoration: underline;
+  text-decoration-color: var(--v2-line-hover);
+  text-underline-offset: 3px;
+  white-space: nowrap;
+}
+.v2-banner-dismiss { width: var(--v2-hit-min); padding: 0; color: var(--v2-ink-3); }
+.v2-banner-action:hover, .v2-banner-action.is-hover { background: var(--v2-wash-hover); text-decoration-color: currentColor; }
+.v2-banner-dismiss:hover, .v2-banner-dismiss.is-hover { background: var(--v2-wash-hover); color: var(--v2-ink); }
+.v2-banner-action:active, .v2-banner-action.is-active, .v2-banner-dismiss:active, .v2-banner-dismiss.is-active { background: var(--v2-wash-press); }
+.v2-banner-action:focus-visible, .v2-banner-action.is-focus, .v2-banner-dismiss:focus-visible, .v2-banner-dismiss.is-focus {
+  outline: var(--v2-focus-outline);
+  outline-offset: 0;
+}
+
+/* ---- EmptyState: the dashed ghost ---- */
+.v2-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--v2-space-2);
+  padding: var(--v2-space-8) var(--v2-space-6);
+  border: var(--v2-stroke) dashed var(--v2-line-strong);
+  border-radius: var(--v2-radius-lg);
+  background: var(--v2-surface-panel);
+  font-family: var(--v2-font-ui);
+  text-align: center;
+}
+.v2-empty-icon { display: inline-flex; margin-bottom: var(--v2-space-1); color: var(--v2-ink-3); }
+.v2-empty-title {
+  margin: 0;
+  color: var(--v2-ink);
+  font-size: var(--v2-text-16);
+  font-weight: var(--v2-weight-semibold);
+  line-height: var(--v2-leading-tight);
+  letter-spacing: var(--v2-tracking-label);
+}
+.v2-empty-body { max-width: 280px; margin: 0; color: var(--v2-ink-3); font-size: var(--v2-text-13); line-height: var(--v2-leading-body); }
+.v2-empty-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--v2-space-2); margin-top: var(--v2-space-2); }

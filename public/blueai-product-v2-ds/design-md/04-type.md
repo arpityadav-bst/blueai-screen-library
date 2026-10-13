@@ -1,0 +1,82 @@
+## 04 Type
+
+**Status:** Type ladder, Page titles, Numerals: all Changed from V2.
+
+**Why:** The partner reads this app every day in a 419px window, often at small sizes on Windows. V2 uses 30 font sizes, seven page-title recipes, weight 800 71 times (650, 750 and 900 are requested but never loaded), and four typefaces in a new partner's first minute. Its stack puts SF before Plus Jakarta Sans, so Macs and Windows show different products (index.html:34). The site is Inter end to end; one face, eleven styles and three weights make the app read as the site's working screen (P6).
+
+### Type ladder (Changed from V2)
+
+**Purpose.** One recipe per text role, so size, weight, leading, tracking and ink travel together and no screen re-decides how loud a line is.
+
+**Anatomy.** Classes in kit/base.css (size / weight / leading / tracking, ink):
+- `.v2-text-display` 40 / 600 / 1 / -0.03em, ink, tabular: credits balance.
+- `.v2-text-greeting` 24 / 600 / 1.2 / -0.02em, ink: home greeting, welcome title.
+- `.v2-text-title-lg` 20 / 600 / 1.2 / -0.02em, ink: every screen and dialog title.
+- `.v2-text-numeral-sm` 20 / 600 / 1 / -0.02em, ink, tabular: "7" in "7 of 20 days".
+- `.v2-text-title` 16 / 600 / 1.35 / -0.01em, ink: card titles, section heads.
+- `.v2-text-body` 14 / 400 / 1.5, ink-2: bubbles, composer, paragraphs, fields.
+- `.v2-text-body-sm` 13 / 400 / 1.5, ink-3: descriptions, notes, consequences. A `<strong>` inside turns ink 600 (fact muted, figure ink).
+- `.v2-text-label` 13 / 500 / 1.35 / -0.01em, ink-2: buttons, chips, nav, menu rows, row labels.
+- `.v2-text-meta` 12 / 400 / 1.35, ink-4: timestamps, counts, hints.
+- `.v2-text-eyebrow` 11 / 500 / 1 / 0.08em, uppercase, ink-3: section labels only.
+- `.v2-text-mono` 13 / 400 / 1.35, mono, ink-2: keys, endpoints, model ids.
+
+**Variants.** Faces: `--v2-font-ui` (Inter, then system-ui and Segoe UI), `--v2-font-mono`, `--v2-font-serif` (Instrument Serif italic, site-language sign-in pages only). Weights: 400 body, 500 labels, 600 titles and figures. Helpers: `.v2-tabular`, `.v2-truncate`, `.v2-prose`.
+
+**Sizes.** 11, 12, 13, 14, 16, 20, 24, 40 (`--v2-text-*`). Nothing in between.
+
+**States.** One per style. Sample copy in the guide is quoted from V2 (for example `'Every task and job BlueAI does uses credits.'`, index.html:527).
+
+**Props.** Classes only. Inline font sizes are not allowed in kit or screens.
+
+**Motion.** None.
+
+**Accessibility.** Smallest running text 12 (meta); 11 only for uppercase eyebrows. Body ink-2 or darker. Sentence case everywhere except the eyebrow, which is uppercase by CSS, not in the source string.
+
+**Responsive.** Sizes do not change with the window height.
+
+**Do / Don't.** Do pick a style by role. Do load Inter 400/500/600 only. Don't use 700 or 800. Don't set status words as uppercase eyebrows: they are Badges in sentence case. Decision D11 lets the PM keep Plus Jakarta Sans; the scale and weights hold either way.
+
+### Page titles, V2 today (Changed from V2)
+
+**Purpose.** One title recipe for every screen and dialog.
+
+**Anatomy.** `.v2-text-title-lg`: 20 / 600 / 1.2 / -0.02em, ink. In a ScreenHeader (section 32) or a dialog head (section 25).
+
+**Variants.** None.
+
+**Sizes.** 20.
+
+**States.** V2 today has seven: AI Credits 19/800 (index.html:439), Chat History 22/800 (history.jsx:91), Scheduled tasks 20/700 (schedule.jsx:118), Coming Soon 22/800 in #1e293b (jobs.jsx:140), Before you start 20/800 (terms_sheet.jsx:114), Logout 19/800 (profile.jsx:75), modal 18/600 (shared.jsx:75). Reach them from `?start=worker` through the header menus and tabs.
+
+**Props.** The ScreenHeader and Dialog own the title; screens pass a string.
+
+**Motion.** None.
+
+**Accessibility.** The screen title is the screen's `h1` and takes focus on navigation (`tabIndex=-1`, no visible ring).
+
+**Responsive.** One line; long titles truncate with an ellipsis rather than wrap.
+
+**Do / Don't.** Do use the same title on every screen. Don't style a title inline. Copy changes (Logout becomes Sign out) live in section 70.
+
+### Numerals (Changed from V2)
+
+**Purpose.** Figures that matter (credits, days, money) read as facts: ink, tabular, never a gradient or a status colour.
+
+**Anatomy.** `.v2-text-display` for the credits balance; `.v2-text-numeral-sm` beside a label for counts; inside notes, `<strong>` turns a figure ink 600.
+
+**Variants.** Balance, count, money in a sentence.
+
+**Sizes.** 40, 20, and body size inside notes.
+
+**States.** Credits balance (V2: 54/800 gradient, 38/800 at zero, index.html:518, byok.jsx:51; reach with `?credits=0`). "7 of 20 days" (V2: 22/800, green when counted, worker_day_done.jsx:131; reach with `?end=job`). "$6 earned" (V2: 13.5/800 green, worker_day_done.jsx:179; reach with `?day=returning&card=money`).
+
+**Props.** Classes only; format with `toLocaleString('en-US')`.
+
+**Motion.** Numbers change in place without counting animations.
+
+**Accessibility.** Tabular figures stop numbers jumping as they change. A figure is never the only thing that says whether a day counted: the tick and its words do.
+
+**Responsive.** Not applicable.
+
+**Do / Don't.** Do put money in ink (the site's rule: money is a figure, not a state). Don't colour a count green to mean counted. Don't gradient a number.

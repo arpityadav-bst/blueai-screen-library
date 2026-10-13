@@ -1,0 +1,288 @@
+/* BlueAI Product V2 Design System: overlays (Scrim, Dialog, Sheet, Menu, Popover, Tooltip, Toast,
+   Tabs). Tokens only. Every interactive state is written twice: the real pseudo-class and the
+   .is-hover / .is-focus / .is-active class the guide uses to force it.
+   Overlays sit inside the product window (position: absolute), never fixed to the page.
+   Motion reuses kit/motion.css keyframes: v2-fade (scrims, toast timer), v2-scale-in (dialogs),
+   v2-sheet-up / v2-sheet-down (sheets), v2-fade-up (menus, popovers, tips, toasts). Arrivals ease
+   out, departures ease in one step shorter. Reduced motion is motion.css's one global rule; the
+   only exception here is the toast timer, which is a clock, not motion.
+   .is-snapshot freezes a part part-way through its arrival (with .is-closing: its exit) so the guide
+   can show the moving states side by side. */
+
+/* ---- Overlay root and scrim -------------------------------------------------------------- */
+.v2-overlay {
+  position: absolute; inset: 0; z-index: var(--v2-z-dialog); display: flex;
+  font-family: var(--v2-font-ui); color: var(--v2-ink-2); text-align: left;
+}
+.v2-overlay--center { align-items: center; justify-content: center; padding: var(--v2-space-4); }
+.v2-overlay--bottom { flex-direction: column; justify-content: flex-end; }
+.v2-overlay--gate { z-index: var(--v2-z-gate); }
+.v2-scrim {
+  position: absolute; inset: 0; background: var(--v2-scrim);
+  animation: v2-fade var(--v2-dur-3) var(--v2-ease-standard) both;
+}
+.v2-scrim--frost {
+  background: var(--v2-scrim-frost);
+  -webkit-backdrop-filter: blur(var(--v2-scrim-blur)); backdrop-filter: blur(var(--v2-scrim-blur));
+}
+.v2-overlay.is-closing > .v2-scrim { animation: v2-fade var(--v2-dur-3) var(--v2-ease-in) reverse both; }
+
+/* ---- Dialog -------------------------------------------------------------------------------- */
+.v2-dialog {
+  position: relative; display: flex; flex-direction: column; width: 100%; max-height: 100%;
+  background: var(--v2-surface); border: var(--v2-stroke) solid var(--v2-line);
+  border-radius: var(--v2-radius-lg); box-shadow: var(--v2-shadow-2);
+  animation: v2-scale-in var(--v2-dur-4) var(--v2-ease-out) both;
+}
+.v2-dialog--sm { max-width: var(--v2-dialog-sm); }
+.v2-dialog--md { max-width: var(--v2-dialog-md); }
+.v2-dialog--center { text-align: center; }
+.v2-overlay.is-closing > .v2-dialog { animation: v2-fade var(--v2-dur-3) var(--v2-ease-in) reverse both; }
+.v2-dialog:focus, .v2-sheet:focus { outline: none; }
+.v2-dialog-head {
+  display: flex; align-items: flex-start; gap: var(--v2-space-3);
+  padding: var(--v2-space-5) var(--v2-space-4) 0 var(--v2-space-5);
+}
+.v2-dialog-head--bare { justify-content: flex-end; padding-bottom: 0; }
+.v2-dialog-head--bare + .v2-dialog-body { padding-top: 0; }
+.v2-dialog-title {
+  flex: 1 1 auto; min-width: 0; margin: 0; padding-top: var(--v2-space-1);
+  color: var(--v2-ink); font-size: var(--v2-text-20); font-weight: var(--v2-weight-semibold);
+  letter-spacing: var(--v2-tracking-title); line-height: var(--v2-leading-tight);
+}
+.v2-dialog-head .v2-ov-close { flex: none; margin-top: calc(-1 * var(--v2-space-05)); }
+.v2-dialog-body {
+  flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: var(--v2-space-2) var(--v2-space-5) 0;
+  color: var(--v2-ink-2); font-size: var(--v2-text-14); line-height: var(--v2-leading-body);
+}
+.v2-dialog-body:last-child { padding-bottom: var(--v2-space-5); }
+.v2-dialog-body > p + p, .v2-sheet-body > p + p { margin-top: var(--v2-space-2); }
+.v2-dialog-desc + * { margin-top: var(--v2-space-3); }
+.v2-dialog-desc { margin: 0; }
+.v2-ov-actions { display: flex; gap: var(--v2-space-2); padding: var(--v2-space-5); }
+.v2-ov-actions > * { flex: 1 1 0; min-width: 0; }
+.v2-dialog-foot {
+  padding: 0 var(--v2-space-5) var(--v2-space-5); margin-top: calc(-1 * var(--v2-space-2));
+  color: var(--v2-ink-3); font-size: var(--v2-text-12); line-height: var(--v2-leading-snug);
+}
+
+/* ---- Sheet --------------------------------------------------------------------------------- */
+.v2-sheet {
+  position: relative; display: flex; flex-direction: column; max-height: calc(100% - var(--v2-space-10));
+  background: var(--v2-surface); border-top: var(--v2-stroke) solid var(--v2-line);
+  border-radius: var(--v2-radius-lg) var(--v2-radius-lg) 0 0; box-shadow: var(--v2-shadow-2);
+  animation: v2-sheet-up var(--v2-dur-4) var(--v2-ease-out) both;
+}
+.v2-overlay.is-closing > .v2-sheet { animation: v2-sheet-down var(--v2-dur-3) var(--v2-ease-in) both; }
+.v2-sheet .v2-dialog-head { padding: var(--v2-space-6) var(--v2-space-5) 0 var(--v2-space-6); }
+.v2-sheet-body {
+  flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: var(--v2-space-2) var(--v2-space-6) 0;
+  color: var(--v2-ink-2); font-size: var(--v2-text-14); line-height: var(--v2-leading-body);
+}
+.v2-sheet-body:last-child { padding-bottom: var(--v2-space-6); }
+.v2-sheet .v2-ov-actions { padding: var(--v2-space-5) var(--v2-space-6) var(--v2-space-6); }
+.v2-sheet .v2-dialog-foot { padding: 0 var(--v2-space-6) var(--v2-space-6); }
+
+/* The close control when the kit's IconButton is not loaded. */
+.v2-ov-close--plain {
+  display: inline-grid; place-items: center; flex: none; width: var(--v2-hit-min); height: var(--v2-hit-min);
+  border-radius: var(--v2-radius-sm); color: var(--v2-ink-3);
+  transition: background-color var(--v2-dur-1) var(--v2-ease-standard), color var(--v2-dur-1) var(--v2-ease-standard);
+}
+.v2-ov-close--plain:hover, .v2-ov-close--plain.is-hover { background: var(--v2-wash-hover); color: var(--v2-ink); }
+.v2-ov-close--plain:disabled { opacity: var(--v2-opacity-disabled); }
+
+/* ---- Menu and popover: one float shape ------------------------------------------------------ */
+.v2-float { position: relative; display: inline-flex; vertical-align: middle; }
+.v2-float-panel {
+  position: absolute; z-index: var(--v2-z-popover);
+  background: var(--v2-surface); border: var(--v2-stroke) solid var(--v2-line);
+  border-radius: var(--v2-radius-md); box-shadow: var(--v2-shadow-1); padding: var(--v2-space-1);
+  font-family: var(--v2-font-ui); text-align: left;
+  animation: v2-fade-up var(--v2-dur-3) var(--v2-ease-out) both;
+}
+.v2-float-panel.is-down { top: calc(100% + var(--v2-space-15)); }
+.v2-float-panel.is-up { bottom: calc(100% + var(--v2-space-15)); }
+.v2-float-panel.is-start { left: 0; }
+.v2-float-panel.is-end { right: 0; }
+.v2-float-panel:focus { outline: none; }
+.v2-menu { min-width: 200px; max-width: 280px; }
+.v2-popover { width: min(364px, calc(var(--v2-shell-w) - 2 * var(--v2-gutter))); }
+.v2-float-header {
+  padding: var(--v2-space-2) var(--v2-space-3) var(--v2-space-1);
+  color: var(--v2-ink-4); font-size: var(--v2-text-11); font-weight: var(--v2-weight-medium);
+  letter-spacing: var(--v2-tracking-eyebrow); text-transform: uppercase; line-height: var(--v2-leading-snug);
+}
+.v2-float-foot {
+  margin: 0; padding: var(--v2-space-15) var(--v2-space-3) var(--v2-space-2);
+  color: var(--v2-ink-3); font-size: var(--v2-text-12); line-height: var(--v2-leading-snug);
+}
+.v2-popover-body { padding: var(--v2-space-1) var(--v2-space-3); }
+
+.v2-menu-item {
+  display: flex; align-items: center; gap: var(--v2-space-3); width: 100%; min-height: var(--v2-control-md);
+  padding: 0 var(--v2-space-3) 0 var(--v2-space-2); border-radius: var(--v2-radius-sm);
+  color: var(--v2-ink-2); font-size: var(--v2-text-13); font-weight: var(--v2-weight-medium);
+  line-height: var(--v2-leading-snug); text-align: left; text-decoration: none; cursor: pointer;
+  transition: background-color var(--v2-dur-1) var(--v2-ease-standard), color var(--v2-dur-1) var(--v2-ease-standard);
+}
+.v2-menu-icon { display: inline-flex; flex: none; color: var(--v2-ink-3); }
+.v2-menu-label { flex: 1 1 auto; min-width: 0; }
+.v2-menu-hint { flex: none; color: var(--v2-ink-3); font-size: var(--v2-text-12); font-weight: var(--v2-weight-regular); } /* ink-4 drops under 4.5:1 on the hover wash */
+.v2-menu-ext { display: inline-flex; flex: none; color: var(--v2-ink-4); }
+.v2-menu-item:hover, .v2-menu-item.is-hover { background: var(--v2-wash-hover); color: var(--v2-ink); }
+.v2-menu-item:hover .v2-menu-icon, .v2-menu-item.is-hover .v2-menu-icon { color: var(--v2-ink-2); }
+.v2-menu-item:focus-visible, .v2-menu-item.is-focus {
+  background: var(--v2-wash-hover); color: var(--v2-ink);
+  outline: var(--v2-focus-outline); outline-offset: calc(-1 * var(--v2-focus-offset));
+}
+.v2-menu-item:active, .v2-menu-item.is-active { background: var(--v2-wash-press); }
+.v2-menu-item--danger, .v2-menu-item--danger .v2-menu-icon,
+.v2-menu-item--danger:hover, .v2-menu-item--danger.is-hover { color: var(--v2-danger-ink); }
+.v2-menu-item[aria-disabled="true"] { opacity: var(--v2-opacity-disabled); cursor: not-allowed; }
+.v2-menu-item[aria-disabled="true"]:hover, .v2-menu-item[aria-disabled="true"].is-hover { background: none; color: var(--v2-ink-2); }
+.v2-menu-sep { height: 0; margin: var(--v2-space-1) calc(-1 * var(--v2-space-1)); border-top: var(--v2-stroke) solid var(--v2-line-hair); }
+
+/* ---- Tooltip: label and info ---------------------------------------------------------------- */
+.v2-tip { position: relative; display: inline-flex; vertical-align: middle; }
+.v2-tip.is-focus { outline: none; } /* the forced ring belongs on the trigger, not the wrapper */
+.v2-tip-panel {
+  position: absolute; left: 50%; z-index: var(--v2-z-popover); width: max-content; max-width: 260px;
+  transform: translateX(calc(-50% + var(--tip-shift, 0px)));
+  visibility: hidden; transition: visibility 0s linear calc(200ms + var(--v2-dur-1));
+}
+.v2-tip.is-up > .v2-tip-panel { bottom: calc(100% + var(--v2-space-2)); }
+.v2-tip.is-down > .v2-tip-panel { top: calc(100% + var(--v2-space-2)); }
+/* A bridge over the gap, so the pointer keeps the tip open on its way to the link inside. */
+.v2-tip-panel::before { content: ''; position: absolute; left: 0; right: 0; height: var(--v2-space-2); }
+.v2-tip.is-up > .v2-tip-panel::before { top: 100%; }
+.v2-tip.is-down > .v2-tip-panel::before { bottom: 100%; }
+.v2-tip-box {
+  position: relative; display: block; padding: var(--v2-space-3);
+  background: var(--v2-surface); border: var(--v2-stroke) solid var(--v2-line);
+  border-radius: var(--v2-radius-md); box-shadow: var(--v2-shadow-1);
+  color: var(--v2-ink-2); font-family: var(--v2-font-ui); font-size: var(--v2-text-13);
+  font-weight: var(--v2-weight-regular); line-height: var(--v2-leading-body); text-align: left;
+  white-space: normal; letter-spacing: normal;
+  opacity: 0; transform: translateY(4px);
+  transition: opacity var(--v2-dur-1) var(--v2-ease-in) 200ms, transform var(--v2-dur-1) var(--v2-ease-in) 200ms;
+}
+.v2-tip.is-down .v2-tip-box { transform: translateY(-4px); }
+.v2-tip--label .v2-tip-box {
+  padding: var(--v2-space-1) var(--v2-space-2); border-radius: var(--v2-radius-sm);
+  font-size: var(--v2-text-12); font-weight: var(--v2-weight-medium); line-height: var(--v2-leading-snug); white-space: nowrap;
+  transition-delay: 0s;
+}
+.v2-tip--label > .v2-tip-panel { transition-delay: var(--v2-dur-1); }
+.v2-tip:hover > .v2-tip-panel, .v2-tip.is-hover > .v2-tip-panel,
+.v2-tip--info:focus-within > .v2-tip-panel, .v2-tip--label:has(:focus-visible) > .v2-tip-panel,
+.v2-tip.is-focus > .v2-tip-panel, .v2-tip.is-open > .v2-tip-panel { visibility: visible; transition-delay: 0s; }
+.v2-tip:hover > .v2-tip-panel > .v2-tip-box, .v2-tip.is-hover > .v2-tip-panel > .v2-tip-box,
+.v2-tip--info:focus-within > .v2-tip-panel > .v2-tip-box, .v2-tip--label:has(:focus-visible) > .v2-tip-panel > .v2-tip-box,
+.v2-tip.is-focus > .v2-tip-panel > .v2-tip-box, .v2-tip.is-open > .v2-tip-panel > .v2-tip-box {
+  opacity: 1; transform: none;
+  transition: opacity var(--v2-dur-3) var(--v2-ease-out), transform var(--v2-dur-3) var(--v2-ease-out);
+}
+/* A label tip waits a beat on hover, so passing the pointer across the top bar stays quiet. */
+.v2-tip--label:hover > .v2-tip-panel, .v2-tip--label:hover > .v2-tip-panel > .v2-tip-box { transition-delay: 400ms; }
+.v2-tip.is-dismissed > .v2-tip-panel { visibility: hidden; transition: none; }
+.v2-tip.is-dismissed > .v2-tip-panel > .v2-tip-box { opacity: 0; transition: none; }
+.v2-tip-box .v2-link { font-size: inherit; }
+.v2-tip-arrow {
+  position: absolute; left: calc(50% - var(--tip-shift, 0px)); width: 8px; height: 8px; margin-left: -4px;
+  background: var(--v2-surface); border: var(--v2-stroke) solid var(--v2-line); transform: rotate(45deg);
+}
+.v2-tip.is-up .v2-tip-arrow { bottom: -5px; border-top-color: transparent; border-left-color: transparent; }
+.v2-tip.is-down .v2-tip-arrow { top: -5px; border-bottom-color: transparent; border-right-color: transparent; }
+/* The standard info trigger: a 24px mark inside a 32px target (the negative margin keeps 24 in layout). */
+.v2-tip-trigger {
+  position: relative; display: inline-grid; place-items: center; flex: none;
+  width: var(--v2-hit-min); height: var(--v2-hit-min); margin: calc(-1 * var(--v2-space-1));
+  border-radius: var(--v2-radius-round); color: var(--v2-ink-3);
+  transition: color var(--v2-dur-1) var(--v2-ease-standard);
+}
+.v2-tip-trigger::before {
+  content: ''; position: absolute; inset: var(--v2-space-1); border-radius: var(--v2-radius-round);
+  transition: background-color var(--v2-dur-1) var(--v2-ease-standard);
+}
+.v2-tip-trigger > * { position: relative; }
+.v2-tip-trigger:hover, .v2-tip.is-hover .v2-tip-trigger { color: var(--v2-ink); }
+.v2-tip-trigger:hover::before, .v2-tip.is-hover .v2-tip-trigger::before { background: var(--v2-wash-hover); }
+.v2-tip.is-open .v2-tip-trigger { color: var(--v2-blue-ink); }
+.v2-tip.is-open .v2-tip-trigger::before { background: var(--v2-select); }
+.v2-tip.is-focus .v2-tip-trigger { outline: var(--v2-focus-outline); outline-offset: calc(-1 * var(--v2-space-05)); }
+.v2-tip-trigger:focus-visible { outline-offset: calc(-1 * var(--v2-space-05)); }
+
+/* ---- Toast ---------------------------------------------------------------------------------- */
+.v2-toast-host, .v2-frame-overlays > .v2-toast-host {
+  position: absolute; left: 0; right: 0; bottom: calc(var(--v2-nav-h) + var(--v2-space-3));
+  z-index: var(--v2-z-toast); display: flex; justify-content: center;
+  padding: 0 var(--v2-gutter); pointer-events: none;
+}
+.v2-toast-host--flush, .v2-frame-overlays > .v2-toast-host--flush { bottom: var(--v2-space-4); }
+.v2-toast {
+  position: relative; display: inline-flex; align-items: center; gap: var(--v2-space-2);
+  max-width: min(388px, 100%); min-height: var(--v2-control-lg); padding: var(--v2-space-1) var(--v2-space-1) var(--v2-space-1) var(--v2-space-3);
+  background: var(--v2-surface); border: var(--v2-stroke) solid var(--v2-line);
+  border-radius: var(--v2-radius-md); box-shadow: var(--v2-shadow-1); pointer-events: auto;
+  font-family: var(--v2-font-ui); text-align: left;
+  animation: v2-fade-up var(--v2-dur-2) var(--v2-ease-out) both;
+}
+.v2-toast.is-leaving { animation: v2-fade var(--v2-dur-1) var(--v2-ease-in) reverse both; }
+.v2-toast-icon { display: inline-flex; flex: none; }
+.v2-toast--success .v2-toast-icon { color: var(--v2-success); }
+.v2-toast--info .v2-toast-icon { color: var(--v2-blue); }
+.v2-toast--error .v2-toast-icon { color: var(--v2-danger-ink); }
+.v2-toast--loading .v2-toast-icon { color: var(--v2-ink-3); }
+.v2-toast-title {
+  flex: 1 1 auto; min-width: 0; padding: var(--v2-space-15) 0;
+  color: var(--v2-ink); font-size: var(--v2-text-13); font-weight: var(--v2-weight-medium); line-height: var(--v2-leading-snug);
+}
+.v2-toast-action {
+  flex: none; min-height: var(--v2-hit-min); padding: 0 var(--v2-space-2); border-radius: var(--v2-radius-sm);
+  color: var(--v2-blue-ink); font-size: var(--v2-text-13); font-weight: var(--v2-weight-medium); white-space: nowrap;
+  transition: background-color var(--v2-dur-1) var(--v2-ease-standard);
+}
+.v2-toast-action:hover, .v2-toast-action.is-hover { background: var(--v2-select); }
+.v2-toast-action:active, .v2-toast-action.is-active { background: var(--v2-wash-press); }
+.v2-toast-close { flex: none; }
+.v2-toast-timer {
+  position: absolute; left: 0; bottom: 0; width: 0; height: 0; overflow: hidden;
+  animation: v2-fade var(--toast-ms, 4000ms) linear forwards;
+}
+.v2-toast:hover .v2-toast-timer, .v2-toast:focus-within .v2-toast-timer,
+.v2-toast.is-hover .v2-toast-timer, .v2-toast.is-paused .v2-toast-timer { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) {
+  .v2-toast .v2-toast-timer { animation-duration: var(--toast-ms, 4000ms) !important; }
+}
+.v2-reduced-motion .v2-toast .v2-toast-timer { animation-duration: var(--toast-ms, 4000ms) !important; }
+
+/* ---- Tabs (onBlue's recessed track with one raised chip) ------------------------------------- */
+.v2-tabs {
+  display: inline-flex; gap: var(--v2-space-05); max-width: 100%; padding: var(--v2-space-05);
+  background: var(--v2-surface-sunken); border: var(--v2-stroke) solid var(--v2-line); border-radius: var(--v2-radius-md);
+}
+.v2-tabs--full { display: flex; }
+.v2-tabs--full .v2-tab { flex: 1 1 0; justify-content: center; }
+.v2-tab {
+  display: inline-flex; align-items: center; gap: var(--v2-space-15); min-width: 0; min-height: var(--v2-hit-min);
+  padding: 0 var(--v2-space-3); border: var(--v2-stroke) solid transparent; border-radius: var(--v2-radius-sm);
+  color: var(--v2-ink-3); font-size: var(--v2-text-13); font-weight: var(--v2-weight-regular);
+  letter-spacing: var(--v2-tracking-label); line-height: var(--v2-leading-snug); white-space: nowrap;
+  transition: background-color var(--v2-dur-1) var(--v2-ease-standard), color var(--v2-dur-1) var(--v2-ease-standard), border-color var(--v2-dur-1) var(--v2-ease-standard);
+}
+.v2-tab:hover, .v2-tab.is-hover { color: var(--v2-ink); background: var(--v2-wash-hover); }
+.v2-tab.is-selected, .v2-tab.is-selected:hover {
+  color: var(--v2-ink); background: var(--v2-surface); border-color: var(--v2-line); font-weight: var(--v2-weight-medium);
+}
+.v2-tab:active:not(:disabled), .v2-tab.is-active { background: var(--v2-wash-press); }
+.v2-tab:disabled { opacity: var(--v2-opacity-disabled); }
+.v2-tab:disabled:hover { color: var(--v2-ink-3); background: none; }
+/* Count in ink-3, not the site's dimmest ink: ink-4 on the recessed track is 4.42:1, under AA for 12px. */
+.v2-tab-count { color: var(--v2-ink-3); font-size: var(--v2-text-12); font-weight: var(--v2-weight-regular); font-variant-numeric: tabular-nums; }
+.v2-tabpanel:focus { outline: none; }
+.v2-tabpanel:focus-visible { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); border-radius: var(--v2-radius-sm); }
+
+/* ---- Guide snapshots: a moving state held still --------------------------------------------- */
+.is-snapshot, .is-snapshot * { animation-play-state: paused !important; animation-delay: -70ms !important; }
+.is-snapshot.is-closing, .is-snapshot.is-closing *, .is-snapshot .is-leaving { animation-delay: -150ms !important; }

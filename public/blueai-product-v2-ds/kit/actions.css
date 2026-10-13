@@ -1,0 +1,162 @@
+/* BlueAI Product V2 Design System: actions. Button, IconButton, Link, Chip (kit/button.jsx,
+   kit/choice.jsx). Tokens only. Every state is written twice: the real pseudo-class and the class
+   the guide uses to force it (.is-hover, .is-focus, .is-active). Hover never changes opacity (it
+   would lower contrast that has to hold); disabled is the only opacity, always with a reason.
+   Small controls draw at 28 or 30 and reach the 32px hit floor with an invisible ::after. */
+
+/* Button ------------------------------------------------------------------------------------ */
+.v2-button {
+  position: relative;
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--v2-space-2);
+  height: var(--v2-control-md); padding: 0 var(--v2-space-4);
+  border: var(--v2-stroke) solid transparent; border-radius: var(--v2-radius-sm);
+  background-color: var(--v2-surface); color: var(--v2-ink);
+  font-family: var(--v2-font-ui); font-size: var(--v2-text-13); font-weight: var(--v2-weight-medium);
+  letter-spacing: var(--v2-tracking-label); line-height: var(--v2-leading-display);
+  white-space: nowrap; text-decoration: none; cursor: pointer; user-select: none;
+  transition: background-color var(--v2-dur-1) var(--v2-ease-standard),
+    border-color var(--v2-dur-1) var(--v2-ease-standard), transform var(--v2-dur-1) var(--v2-ease-out);
+}
+.v2-button--sm { height: var(--v2-control-sm); padding: 0 var(--v2-space-3); gap: var(--v2-space-15); }
+.v2-button--lg { height: var(--v2-control-lg); padding: 0 var(--v2-space-5); }
+.v2-button--full { display: flex; width: 100%; }
+.v2-button .v2-icon { flex: none; }
+.v2-button-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+
+/* primary: the one commit on a view */
+.v2-button--primary { background-color: var(--v2-action); border-color: var(--v2-action); color: var(--v2-on-color); }
+.v2-button--primary:hover:not([aria-disabled="true"]), .v2-button--primary.is-hover {
+  background-color: var(--v2-action-hover); border-color: var(--v2-action-hover);
+}
+/* secondary: the frequent second action (the site's ghost) */
+.v2-button--secondary { background-color: var(--v2-surface); border-color: var(--v2-line-strong); color: var(--v2-ink); }
+.v2-button--secondary:hover:not([aria-disabled="true"]), .v2-button--secondary.is-hover {
+  background-image: linear-gradient(var(--v2-wash-hover), var(--v2-wash-hover)); border-color: var(--v2-line-hover);
+}
+/* quiet: the third action, no box until hovered */
+.v2-button--quiet { background-color: transparent; color: var(--v2-ink-2); }
+.v2-button--quiet:hover:not([aria-disabled="true"]), .v2-button--quiet.is-hover {
+  background-color: var(--v2-wash-hover); color: var(--v2-ink);
+}
+/* danger: the one action that destroys, inside its confirm */
+.v2-button--danger { background-color: var(--v2-danger-ink); border-color: var(--v2-danger-ink); color: var(--v2-on-color); }
+.v2-button--danger:hover:not([aria-disabled="true"]), .v2-button--danger.is-hover {
+  background-image: linear-gradient(var(--v2-wash-press), var(--v2-wash-press));
+}
+
+/* press: a real 1px drop (the site's press), plus a deeper wash on the unfilled two */
+.v2-button:active:not([aria-disabled="true"]), .v2-button.is-active { transform: translateY(1px); }
+.v2-button--secondary:active:not([aria-disabled="true"]), .v2-button--secondary.is-active {
+  background-image: linear-gradient(var(--v2-wash-press), var(--v2-wash-press));
+}
+.v2-button--quiet:active:not([aria-disabled="true"]), .v2-button--quiet.is-active { background-color: var(--v2-wash-press); }
+.v2-button:focus-visible, .v2-button.is-focus { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); }
+
+/* disabled: dimmed, still focusable, its reason printed beside it */
+.v2-button[aria-disabled="true"]:not(.is-loading) { opacity: var(--v2-opacity-disabled); cursor: not-allowed; }
+.v2-button.is-loading { cursor: progress; }
+.v2-button-group { display: inline-flex; flex-direction: column; align-items: flex-start; gap: var(--v2-space-15); }
+.v2-button-group--full { display: flex; align-items: stretch; }
+.v2-button-reason {
+  max-width: 34ch; color: var(--v2-ink-3);
+  font-size: var(--v2-text-12); line-height: var(--v2-leading-snug);
+}
+/* Fallback mark only for a page that has not loaded kit/progress.jsx. */
+.v2-button-spin {
+  width: var(--v2-icon-sm); height: var(--v2-icon-sm); flex: none;
+  border: 2px solid currentColor; border-right-color: transparent; border-radius: var(--v2-radius-round);
+}
+
+/* IconButton --------------------------------------------------------------------------------- */
+.v2-icon-button {
+  position: relative; flex: none;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: var(--v2-control-md); height: var(--v2-control-md); padding: 0;
+  border: var(--v2-stroke) solid transparent; border-radius: var(--v2-radius-sm);
+  background-color: transparent; color: var(--v2-ink-3); cursor: pointer;
+  transition: background-color var(--v2-dur-1) var(--v2-ease-standard), color var(--v2-dur-1) var(--v2-ease-standard);
+}
+.v2-icon-button--32 { width: var(--v2-hit-min); height: var(--v2-hit-min); }
+.v2-icon-button--28 { width: var(--v2-control-sm); height: var(--v2-control-sm); }
+.v2-icon-button--outlined { background-color: var(--v2-surface); border-color: var(--v2-line-strong); }
+.v2-icon-button:hover:not([aria-disabled="true"]), .v2-icon-button.is-hover { background-color: var(--v2-wash-hover); color: var(--v2-ink); }
+.v2-icon-button--outlined:hover:not([aria-disabled="true"]), .v2-icon-button--outlined.is-hover {
+  background-color: var(--v2-surface); background-image: linear-gradient(var(--v2-wash-hover), var(--v2-wash-hover));
+  border-color: var(--v2-line-hover);
+}
+/* on: its menu is open or it is pressed. Ink, not blue: blue is for selection. */
+.v2-icon-button.is-on, .v2-icon-button[aria-expanded="true"], .v2-icon-button[aria-pressed="true"],
+.v2-icon-button:active:not([aria-disabled="true"]), .v2-icon-button.is-active {
+  background-color: var(--v2-wash-press); color: var(--v2-ink);
+}
+.v2-icon-button--danger:hover:not([aria-disabled="true"]), .v2-icon-button--danger.is-hover { color: var(--v2-danger-ink); }
+.v2-icon-button:focus-visible, .v2-icon-button.is-focus { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); }
+.v2-icon-button[aria-disabled="true"] { opacity: var(--v2-opacity-disabled); cursor: not-allowed; }
+
+/* Link ---------------------------------------------------------------------------------------- */
+.v2-link {
+  display: inline; padding: 0; margin: 0; border: 0; background: none;
+  font: inherit; letter-spacing: inherit; text-align: inherit; text-decoration: none;
+  color: var(--v2-ink); cursor: pointer; border-radius: var(--v2-radius-xs);
+  transition: color var(--v2-dur-1) var(--v2-ease-standard);
+}
+.v2-link-text {
+  text-decoration: underline; text-decoration-thickness: var(--v2-stroke);
+  text-underline-offset: 3px; text-decoration-color: var(--v2-link-underline);
+  transition: text-decoration-color var(--v2-dur-1) var(--v2-ease-standard);
+}
+.v2-link--muted { color: var(--v2-ink-3); }
+.v2-link:hover, .v2-link.is-hover { color: var(--v2-blue-ink); }
+.v2-link:hover .v2-link-text, .v2-link.is-hover .v2-link-text { text-decoration-color: currentColor; }
+.v2-link:focus-visible, .v2-link.is-focus { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); }
+.v2-link .v2-icon--inline { margin-left: var(--v2-space-05); }
+/* standalone: a link on its own line (Earnings, Learn more) gets a full 32px target */
+.v2-link--standalone {
+  display: inline-flex; align-items: center; gap: var(--v2-space-1); min-height: var(--v2-hit-min);
+  font-size: var(--v2-text-13); font-weight: var(--v2-weight-medium); line-height: var(--v2-leading-snug);
+}
+
+/* Chip ----------------------------------------------------------------------------------------- */
+.v2-chip {
+  position: relative;
+  display: inline-flex; align-items: center; gap: var(--v2-space-15);
+  height: calc(var(--v2-control-sm) + var(--v2-space-05)); /* 30 */
+  padding: 0 var(--v2-space-3);
+  border: var(--v2-stroke) solid var(--v2-line-strong); border-radius: var(--v2-radius-pill);
+  background-color: var(--v2-surface); color: var(--v2-ink);
+  font-family: var(--v2-font-ui); font-size: var(--v2-text-13); font-weight: var(--v2-weight-medium);
+  letter-spacing: var(--v2-tracking-label); line-height: var(--v2-leading-display);
+  white-space: nowrap; cursor: pointer; user-select: none;
+  transition: background-color var(--v2-dur-2) var(--v2-ease-standard),
+    border-color var(--v2-dur-2) var(--v2-ease-standard), color var(--v2-dur-2) var(--v2-ease-standard);
+}
+.v2-chip .v2-icon { flex: none; }
+.v2-chip:hover:not(:disabled), .v2-chip.is-hover {
+  background-image: linear-gradient(var(--v2-wash-hover), var(--v2-wash-hover)); border-color: var(--v2-line-hover);
+}
+.v2-chip:not([aria-pressed="true"]):active:not(:disabled), .v2-chip.is-active {
+  background-image: linear-gradient(var(--v2-wash-press), var(--v2-wash-press));
+}
+/* selected: the family's chosen look, blue 12% fill, blue 50% edge, blue-ink label (6.1:1) */
+.v2-chip[aria-pressed="true"], .v2-chip.is-selected {
+  background-image: linear-gradient(var(--v2-select), var(--v2-select));
+  border-color: var(--v2-select-line); color: var(--v2-blue-ink);
+}
+.v2-chip[aria-pressed="true"]:hover:not(:disabled), .v2-chip.is-selected.is-hover {
+  background-image: linear-gradient(var(--v2-wash-hover), var(--v2-wash-hover)), linear-gradient(var(--v2-select), var(--v2-select));
+  border-color: var(--v2-select-line);
+}
+.v2-chip:focus-visible, .v2-chip.is-focus { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); }
+.v2-chip:disabled { opacity: var(--v2-opacity-disabled); cursor: not-allowed; }
+
+/* Hit floor: 28 and 30 tall controls grow an invisible 32px target --------------------------- */
+.v2-button--sm::after, .v2-chip::after, .v2-icon-button--28::after {
+  content: ''; position: absolute; left: 0; right: 0;
+  top: calc((100% - var(--v2-hit-min)) / 2); bottom: calc((100% - var(--v2-hit-min)) / 2);
+}
+.v2-icon-button--28::after { left: calc((100% - var(--v2-hit-min)) / 2); right: calc((100% - var(--v2-hit-min)) / 2); }
+
+@media (prefers-reduced-motion: reduce) {
+  .v2-button, .v2-icon-button, .v2-link, .v2-link-text, .v2-chip { transition: none; }
+  .v2-button:active:not([aria-disabled="true"]), .v2-button.is-active { transform: none; }
+}

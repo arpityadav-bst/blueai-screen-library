@@ -1,0 +1,18 @@
+## 60 Notifications
+
+**Status:** New.
+
+**Why:** the worker runs while nobody watches, so what it says has to reach the partner later. In V2 a finished run raises an 8 second Windows toast and nothing else (`desktop_toast.jsx:12`, words from `worker_day_done.jsx:191-204`); a waiting job only flashes the taskbar button after 4 seconds, with no deadline (`chat_product.jsx:89-97`); a skipped day never notifies. The words existed; the place did not. Channels (toast, taskbar, nav badge) are section 54.
+
+### Notifications
+
+- **Purpose:** the record of everything the worker told the partner, with what is still unread, each row opening the place to act.
+- **Anatomy:** pushed from the top bar's More menu; the tab the partner came from stays lit. ScreenHeader 'Notifications' with Back and, only while something is unread, a quiet md Button 'Mark all read'. Tabs 'All' / 'Unread' with counts (full width). A Card (padding none) of ListRows: a 32px round sunken disc with the event's glyph 16 in its tone (attention, success, danger, ink-3) and an 8px blue dot at its top right when unread; the title (14, 600 unread, 500 read, ink); one line (13 ink-3); the time on the right (12 ink-3: '11:04 am' today, 'Oct 11' before).
+- **Variants (rows, proposed copy):** job waiting: 'Paid YouTube job waiting for your OK' / 'Answer by 9 pm or today won’t count.' (opens the chat); expired: 'Paid job expired' / 'No answer by 9 pm, so today didn’t count.'; verified: 'Oct 11 run verified' / 'Day 6 of 20.'; done: 'Run done' / 'Day 6 of 20, pending verification.'; failed: 'Job didn’t finish' / 'App Player closed during the job.' (V2 reason). Rows are written to last: the toast's 'Today’s run is done.' is right for 8 seconds and wrong in a list tomorrow, so a row keeps the event and the day count, and the date goes on the right.
+- **Sizes:** row min 48, padding 12 16; window 419 x 830 or 640.
+- **States:** empty (EmptyState 'No notifications yet' / 'Your worker tells you here when a run is done, a job needs your OK, or a day is verified.'), with unread, all read (Mark all read gone), expired job ask (the waiting row turns into its result), Unread tab with nothing unread (EmptyState 'Nothing unread' / 'You’ve seen everything your worker sent.'). Opening a row marks it read.
+- **Props:** `items` [{id, kind: ask | expired | done | verified | failed | nojob | rejected, title, body, time, unread, target}], `state` (NOTIFICATION_STATES), `tab`, `onOpen(item)` (default `onNavigate(item.target)`: `chat` or `run`), `onMarkAllRead`, `onBack`, `parentTab`, `worker` (for the top bar), `onNavigate`, `compact`, `landmark`, `frame`.
+- **Motion:** none.
+- **Accessibility:** unread is said first ('Unread: Paid YouTube job waiting for your OK'), never by the dot or weight alone; the disc is decorative; tabs are a real tablist with counts that never change their width; in forced colours the dot draws in CanvasText.
+- **Responsive:** at 640 header and tabs stay with the bars; rows scroll.
+- **Do / Don't:** Do write a row so it is still true tomorrow; open the place to act from every row; turn a waiting job into its result when its deadline passes. Don't copy the toast's "Today’s …" into the list; don't show Mark all read with nothing unread; don't rely on the toast or the taskbar flash as the only record.
