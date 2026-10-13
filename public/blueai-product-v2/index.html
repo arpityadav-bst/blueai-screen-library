@@ -177,7 +177,7 @@
 <script type="text/babel" src="blueai/site_signin.jsx"></script>
 <script type="text/babel" src="blueai/signin_page.jsx"></script>
 <script type="text/babel" src="blueai/account_gate.jsx"></script>
-<!-- Terms bottom sheet (first-run acceptance + terms-update notice/re-accept) — an in-app
+<!-- Terms bottom sheet (first-run acceptance + terms-update notice/re-accept), an in-app
      overlay like the login gate; previewed via the dev panel's Terms row. -->
 <script type="text/babel" src="blueai/terms_sheet.jsx"></script>
 <!-- Bring-your-own-key: out-of-credits popups + credits-screen routes (exposes window.Byok) -->
@@ -197,7 +197,7 @@ const { useState, useRef, useEffect } = React;
 //   ?dlg=blueai           open Flow A's installer          ?ask=…   auto-send that message
 //   ?credits=0            start with zero credits (the out-of-credits popup and AI Credits banner, ROB-21389)
 // A bare URL is the canonical starting experience (Abhisht, 2026-09-24): BlueAI installed and
-// alone on the desktop, no BlueStacks — so BlueStacks is now opt-IN via ?bs=1, inverted from
+// alone on the desktop, no BlueStacks, so BlueStacks is now opt-IN via ?bs=1, inverted from
 // the old "both installed" default.
 const QS = new URLSearchParams(location.search);
 // ?cases=signin (ROB-21388): the five sign-in cases as a bar across the top and NOTHING else to
@@ -650,10 +650,10 @@ function App() {
   }, []);
   const [jobWaiting, setJobWaiting] = useState(false);
   // The BlueAI-worker welcome IS the starting experience (Abhisht, 2026-09-24): logged out, on
-  // the worker session, with the first-run terms sheet up. These three defaults move together —
+  // the worker session, with the first-run terms sheet up. These three defaults move together,
   // 'moneymaker' must start logged OUT (switchSession derives isLoggedIn the same way).
   const [isLoggedIn, setIsLoggedIn] = useState(PROTO.start === 'worker' || LINK.player === 'accepted');  // within the current session: has sign-in completed (Start at: Worker home skips it; App Player's accepted account signs in silently, ROB-21388)
-  const [sessionMode, setSessionMode] = useState('moneymaker'); // preview toggle: which session — Onboarding | Default | MoneyMaker
+  const [sessionMode, setSessionMode] = useState('moneymaker'); // preview toggle: which session, Onboarding | Default | MoneyMaker
   // Terms sheet preview: 'firstrun' (blocking first-start acceptance, the default) | 'update'
   // (blocking re-acceptance after a terms change) | 'off'. Its own row rather than a Session
   // option because it overlays ANY session.
@@ -1008,7 +1008,7 @@ function App() {
          geo without a grant, so the mode that pitched BYOK is unreachable too. */}
       {oocOpen && <window.Byok.OutOfCreditsModal onClose={() => setOocOpen(false)} />}
 
-      {/* Terms sheet — z120: above the login gate (acceptance precedes sign-in), below the boot
+      {/* Terms sheet: z120: above the login gate (acceptance precedes sign-in), below the boot
          splash. !booting delays the MOUNT until the splash is done, so the slide-up entrance
          plays where the user can see it instead of finishing behind the splash. Accepting plays
          the exit and then flips the preview row to Off. */}

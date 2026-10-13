@@ -1,4 +1,4 @@
-/* BlueAI — agent permissions (ROB-21350, "Agent should ask for permission once").
+/* BlueAI: agent permissions (ROB-21350, "Agent should ask for permission once").
 
    One setting PER APP (Abhisht, 2026-10-12), deciding whether the BlueAI worker asks before it
    takes a paid job on that app during its daily run:

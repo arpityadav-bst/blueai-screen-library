@@ -1,10 +1,10 @@
-// BlueAI — Terms bottom sheet. One component, two modes, all mounted inside .ba-app like
-// every other in-app overlay (login gate z100, boot splash z200 — this sits between at z120,
+// BlueAI: Terms bottom sheet. One component, two modes, all mounted inside .ba-app like
+// every other in-app overlay (login gate z100, boot splash z200, this sits between at z120,
 // above the gate because acceptance conceptually precedes sign-in, below the splash so a cold
 // start still boots on top of it):
-//   'firstrun'  — first cold start: "Before you start" + "Agree and continue".
-//   'update'    — the terms changed: same sheet, update wording.
-// BOTH modes are blocking — no close, no scrim dismiss, no Esc; the only way forward is the CTA.
+//   'firstrun' : first cold start: "Before you start" + "Agree and continue".
+//   'update'   : the terms changed: same sheet, update wording.
+// BOTH modes are blocking, no close, no scrim dismiss, no Esc; the only way forward is the CTA.
 // A dismissible notice-only variant (the X.com "Got it" pattern) existed and was REMOVED
 // (Abhisht, 2026-09-24): every update re-collects acceptance, which is one click either way for
 // the user, deletes the per-release "is this change material?" judgment call, and produces a
@@ -16,14 +16,14 @@
 //   - motion: the house curve cubic-bezier(0.22,1,0.36,1) used across this product's intros
 //   - consent line: the website SignInDialog's approved sentence shape, re-pointed at the
 //     BlueAI Partner Program Terms (see the note on MODES for why that document, not the TOU)
-//   - links: the real legal page (same tabs/anchors the website links), new tab on purpose —
+//   - links: the real legal page (same tabs/anchors the website links), new tab on purpose,
 //     never cost the user their place in the app. Relative URL: resolves on the deployment
 //     (blueai-screen-library.vercel.app/onblue/terms); 404s on a bare static file server, which
-//     is fine — the prototype's job is the sheet, not the destination.
-// HANDOFF — acceptance records (legal review, Ashish 2026-09-24, matching the Privacy Policy's
+//     is fine: the prototype's job is the sheet, not the destination.
+// HANDOFF: acceptance records (legal review, Ashish 2026-09-24, matching the Privacy Policy's
 // own "consent records" section): every "Agree and continue" click must be recorded server-side
 // with the user ID, a timestamp, the terms version accepted, the IP address, and the exact
-// screen/copy the user saw. A material terms change re-collects acceptance — that is this
+// screen/copy the user saw. A material terms change re-collects acceptance, that is this
 // sheet's 'update' mode. This prototype has no backend, so nothing here records anything.
 // Exposes window.TermsSheet = { TermsSheet }.
 (function () {
@@ -44,10 +44,10 @@
     // per its "order of documents" section it governs over the site TOU for anything
     // Program-related), so first-run acceptance names IT, not the site Terms of Use.
     // #program and #arbitration are the legal page's PLANNED anchors (Program Terms tab, its
-    // Choice of Law; Arbitration section) — the page rework is a separate task; until it lands
+    // Choice of Law; Arbitration section), the page rework is a separate task; until it lands
     // the links resolve to the page top, which is still the right page.
     // Wording split, per legal review (Ashish, 2026-09-24): the user AGREES to the contract
-    // (Program Terms) and ACKNOWLEDGES the notices (Privacy + Cookie Policy) — a privacy policy
+    // (Program Terms) and ACKNOWLEDGES the notices (Privacy + Cookie Policy), a privacy policy
     // is a notice, not a contract, and under GDPR conditioning product use on "agreeing" to it
     // is not valid consent. Cookie consent for non-essential cookies is likewise NOT collected
     // here (invalid inside a terms acceptance in the EU/UK); that is the site banner's job.
@@ -61,7 +61,7 @@
     firstrun: {
       title: 'Before you start',
       body: () => (
-        // "Program Terms", not the full program name — the program's name can change, the
+        // "Program Terms", not the full program name, the program's name can change, the
         // generic label can't go stale (Abhisht, 2026-09-24). The link still carries the reader
         // to the specific document.
         <>By continuing, you agree to the <LegalLink anchor="program">Program Terms</LegalLink> and
@@ -71,7 +71,7 @@
       cta: 'Agree and continue'
     },
     // The document names here are placeholders for whichever documents actually changed in that
-    // update — in the real build they are data, not fixed copy. "Accept the updated terms", not
+    // update: in the real build they are data, not fixed copy. "Accept the updated terms", not
     // "accept them": the Privacy Policy in the sentence is acknowledged, never accepted.
     update: {
       title: 'Updates to our Terms of Use',
@@ -86,7 +86,7 @@
 
   function TermsSheet({ mode, onDone }) {
     const cfg = MODES[mode] || MODES.firstrun;
-    // Accepting plays the exit (sheet slides back down, scrim fades) BEFORE unmounting —
+    // Accepting plays the exit (sheet slides back down, scrim fades) BEFORE unmounting,
     // 'leaving' drives the exit classes, the timeout matches their 0.32s duration.
     const [leaving, setLeaving] = useState(false);
     const close = () => { if (leaving) return; setLeaving(true); setTimeout(() => onDone?.(), 340); };

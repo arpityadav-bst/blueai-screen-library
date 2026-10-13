@@ -1,4 +1,4 @@
-// BlueAI — Login Modal. States: default → browser → signing → success | gate | confirm (ROB-21388,
+// BlueAI: Login Modal. States: default → browser → signing → success | gate | confirm (ROB-21388,
 // cards in account_gate.jsx). onOpenBrowser hands 'browser' to the desktop's browser window;
 // browserResult finishes it. 'gate' / 'confirm' start from App Player's account (gateAccount).
 
@@ -74,7 +74,7 @@ function LoginModal({ isOpen, onClose, onSuccess, variant, initialStep, onOpenBr
     <div style={{ position: 'absolute', inset: 0, zIndex: 100, display: 'flex', flexDirection: 'column', background: 'rgba(255,255,255,0.55)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)' }}>
       <style>{`@keyframes loginSpin{to{transform:rotate(360deg)}} @keyframes cfGlow{0%,100%{opacity:.55}50%{opacity:.85}}`}</style>
 
-      {/* Close — on every step, as in the live app (ai-worker LoginModal.tsx renders it always),
+      {/* Close: on every step, as in the live app (ai-worker LoginModal.tsx renders it always),
          except the account check (ROB-21388), which blocks the home screen. */}
       {step !== 'gate' && step !== 'confirm' &&
       <button onClick={onClose}

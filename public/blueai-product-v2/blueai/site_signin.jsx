@@ -1,4 +1,4 @@
-// BlueAI — the bluestacks.ai sign-in screen (what the app's redirect lands on when the browser
+// BlueAI: the bluestacks.ai sign-in screen (what the app's redirect lands on when the browser
 // holds no session) and Google's account chooser behind its Google button (ROB-21388).
 // Exports: window.SiteSignIn = { Gate, GoogleChooser }
 //

@@ -1,4 +1,4 @@
-// BlueAI — the bluestacks.ai pages the app's Sign in opens in the browser (ROB-21388), and the
+// BlueAI: the bluestacks.ai pages the app's Sign in opens in the browser (ROB-21388), and the
 // state machine that walks the browser window through them.
 // Exports: window.SignInPage = { SignInBrowser, ACCOUNTS }
 //

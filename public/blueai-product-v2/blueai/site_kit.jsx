@@ -1,4 +1,4 @@
-// BlueAI — bluestacks.ai's own page language, as primitives for the pages the app's Sign in opens
+// BlueAI: bluestacks.ai's own page language, as primitives for the pages the app's Sign in opens
 // in the browser (ROB-21388). Exports: window.SiteKit
 //
 // Transcribed from the live site's source (the vesper experiment's gate, light theme), not

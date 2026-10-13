@@ -1,4 +1,4 @@
-/* BlueAI — the BlueAI worker's chat cards (ROB-21350). Data and scripts live in worker_flow.jsx.
+/* BlueAI: the BlueAI worker's chat cards (ROB-21350). Data and scripts live in worker_flow.jsx.
 
    PlanCard   the live PLAN card: light-blue, label, summary, numbered plan, suggested-skill chip.
    AskBubble  a worker question: the live app's yellow "needs your input" bubble (optional bold

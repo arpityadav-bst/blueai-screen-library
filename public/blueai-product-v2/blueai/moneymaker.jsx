@@ -46,7 +46,7 @@
   // that restriction only applies to the tag position itself, not to how a variable holding a
   // component got its value. Requires moneymaker_icons.jsx's <script> to run before this one.
   const STEPS = [
-    // "now.gg" dropped from the copy (Abhisht, 2026-09-24) — the account is just "the account
+    // "now.gg" dropped from the copy (Abhisht, 2026-09-24), the account is just "the account
     // you applied with", no platform branding on the welcome step.
     { n: 1, NumeralIcon: window.MoneyMakerIcons.IcoProfile, node: 'Sign in with the same account you applied with.' },
     // Copy renamed 2026-09-09 (designer directive: MoneyMaker -> "BlueAI worker") — dropped

@@ -1,4 +1,4 @@
-/* BlueAI — the "day done" moment (Oct 2026 worker sheet, row 2 Phase 1: "show something to the
+/* BlueAI: the "day done" moment (Oct 2026 worker sheet, row 2 Phase 1: "show something to the
    user so that user can see that today's work is done"; row 24's stage messages ride on the same
    card). Built 2026-10-12.
 

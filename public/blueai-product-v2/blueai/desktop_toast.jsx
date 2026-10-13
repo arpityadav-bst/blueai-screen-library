@@ -1,4 +1,4 @@
-/* BlueAI — a Windows 11 notification (toast) at the bottom right of the desktop (Oct 2026 worker
+/* BlueAI: a Windows 11 notification (toast) at the bottom right of the desktop (Oct 2026 worker
    sheet, row 2, built 2026-10-12). A scheduled worker run ends with nobody watching, so the chat's
    day-done card alone would be missed; this is the surface that reaches the person.
 

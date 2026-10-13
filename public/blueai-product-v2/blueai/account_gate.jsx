@@ -1,4 +1,4 @@
-// BlueAI — the in-app gate (ROB-21388): the app signed in, silently or through the browser, with
+// BlueAI: the in-app gate (ROB-21388): the app signed in, silently or through the browser, with
 // an account that isn't the accepted one. Exports: window.AccountGate = { GateCard }
 //
 // Rendered by login.jsx as a step of the sign-in modal, inside its card. Minimal on purpose

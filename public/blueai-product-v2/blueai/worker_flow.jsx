@@ -1,4 +1,4 @@
-/* BlueAI — the BlueAI worker, end to end (ROB-21350, "Agent should ask for permission once").
+/* BlueAI: the BlueAI worker, end to end (ROB-21350, "Agent should ask for permission once").
 
    Mirrors the live worker skill's chat (blueai-worker v57, Abhisht's Oct 2026 sessions):
      Day 1, ONCE      plan card, setup pitch, confirm the YouTube handle, daily run time, interest

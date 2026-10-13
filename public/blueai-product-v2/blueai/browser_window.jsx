@@ -1,4 +1,4 @@
-// BlueAI — a web browser window on the desktop (ROB-21388).
+// BlueAI: a web browser window on the desktop (ROB-21388).
 // Exports: window.BrowserWindow
 //
 // The app signs people in by opening the system browser, so a review of the sign-in flow has to

@@ -97,7 +97,7 @@
      header after the scrim was gone, so the header's kebab dropdown (60, but inside the header's
      own z-20 layer) rendered underneath the card (Abhisht, 2026-09-30). With no scrim there is
      nothing to sit above, so the column drops back to auto. Dismiss = Okay, clicking the scrim, or
-     just running the skill — the conversation replaces this component entirely. */
+     just running the skill, the conversation replaces this component entirely. */
   function MoneyMakerHome({ onRun }) {
     // A returning person (the worker already set up): no coach spotlight, and the earnings strip
     // above the card says where they are this month (sheet row 2, 2026-10-12).
