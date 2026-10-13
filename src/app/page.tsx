@@ -1,16 +1,16 @@
 import type { Metadata } from 'next'
 import { Wordmark } from '@/components/Wordmark'
 
-// Root Screen Library — the handoff index (like WSUP's). Links to every blueAI page via
+// Root Screen Library: the handoff index (like WSUP's). Links to every blueAI page via
 // full-page <a> (each route loads its own scoped CSS, so this avoids cross-route accumulation).
 //
 // REORGANISED 2026-08-01 around the scope pivot: this page used to list nine cards flat, with the
 // ACTIVE surface (blueai-desktop) buried sixth and described as a "JS experiment", and the pinned
 // design-system card pointing at the DORMANT marketing style guide. An index that misstates which
-// work is current misleads every reviewer who lands here — grouping by status IS the information.
+// work is current misleads every reviewer who lands here, so grouping by status IS the information.
 //
-// REORGANISED AGAIN 2026-09-14 (Abhisht): the acquisition surfaces now group by AUDIENCE — creator
-// page experiments and brand page experiments — because that is how they are reviewed. Nothing is
+// REORGANISED AGAIN 2026-09-14 (Abhisht): the acquisition surfaces now group by AUDIENCE (creator
+// page experiments and brand page experiments) because that is how they are reviewed. Nothing is
 // deleted while its deployed page is still used for comparison: earlier creator/partner pages stay
 // listed, including the frozen creator side of the creator-brand shell, which returns to the index
 // after being dropped from it on 2026-08-19.
@@ -22,56 +22,40 @@ import { Wordmark } from '@/components/Wordmark'
 // and every design system takes the tinted row with the grid mark while every surface takes the
 // plain bordered one. That treatment existed already but only one of the three design systems
 // wore it, which made it read as a highlight on the active prototype rather than as a type.
+//
+// REORGANISED 2026-10-13 (Appy): one MAIN group now, and everything else is an extra. BlueAI
+// Product V2 is the main running product, no longer a maintained replica, and the two onBlue
+// Agentic sites are its fronts: onBlue Agentic is the partner (creator) website, where people
+// run the jobs and cash out, and onBlue Agentic for business is where businesses start the
+// campaigns and set the budgets those jobs are paid from. Terminal Modern, which led this page
+// as ACTIVE since 2026-08-06, moves down to the extras with the remaining experiments. Nothing
+// was deleted: every page that was listed is still listed.
 export const metadata: Metadata = {
-  title: 'BlueAI — Screen Library',
+  title: 'BlueAI | Screen Library',
   description:
-    'Design-only handoff. The active BlueAI Terminal Modern prototype and its design system, the creator and brand page experiments (newest first, each design system listed with the surface it documents), and the maintained product replicas.',
+    'Design-only handoff. The main BlueAI product and its two onBlue Agentic sites (partner and business), then the extras: the earlier Terminal Modern prototype and the creator and brand page experiments, newest first, each design system listed with the surface it documents.',
 }
 
-const ACTIVE = [
+const MAIN = [
   {
-    href: '/blueai-desktop',
-    name: 'BlueAI Terminal Modern',
-    desc: 'The product prototype — a BlueStacks window on the desktop; click it to slide out the terminal drawer. Login gate, chat, skills, scheduled tasks, credits, Telegram pairing, all states reachable via the dev preview panel.',
+    // V1 DELETED 2026-10-13 (Appy). It had been frozen since V2 forked off it on 2026-09-09, with
+    // zero commits after the fork, so V2 is now the only product clone. V1 is recoverable from git
+    // history (last present at 34027ca). The URL deliberately stays /blueai-product-v2 rather than
+    // moving back to /blueai-product: the PM's prototype links and review URLs already use it.
+    // PROMOTED TO MAIN the same day. Its worker flow is the PM's (Abhisht), ported byte-for-byte
+    // from his branch worker-day-done-and-modes @ a1108a8 so the next port diffs cleanly: a bug in
+    // that code goes back to him rather than being fixed here.
+    href: '/blueai-product-v2',
+    name: 'BlueAI Product V2',
+    desc: 'The main BlueAI product, the desktop app replica. The BlueAI worker session end to end: sign in, terms and per-app permissions, Automatic or ask-first mode per app, the run, its verification and the day-done states, plus the chat, task progress and feedback, credits with the out-of-credits popup, and Settings. Standalone replica, not on the marketing design system.',
   },
   {
-    href: '/blueai-desktop/style-guide.html',
-    name: 'Terminal Modern Design System',
-    desc: 'Live style guide onto the product’s own stylesheet and icon set — tokens, scales and specimens are computed from the real files at load, and ds-drift-check.js gates every change.',
-    ds: true,
-  },
-]
-
-// BRAND PAGE EXPERIMENTS — the brand/agency-facing acquisition pages.
-const BRAND_EXPERIMENTS = [
-  {
-    href: '/experiments/onblue-vesper/brands.html',
-    name: 'onBlue Agentic for business',
-    desc:
-      'The brand side of the onBlue Agentic site, built 2026-09-17 as a third page JOINING onblue.css rather than a second implementation of it, so every token, the grain, the card sheen, the button ladder and both themes arrive already correct and cannot drift. It is the destination the homepage’s own “For businesses” link now points at, and it opens on that section’s own words: “Bring work to onBlue. Agents take it from there.” Six bands where the Next version had eight: the platforms grid became a band note, the trust section was what two other sections already demonstrated, and the homepage’s dispatch diagram gave its band to three real 9:16 samples, since the mechanism was already told twice by then. Every device is the homepage’s read from the buyer’s end — the rail runs brief to charged, the three agent terminals show work being bought rather than earned from, the step demos re-aim to brief, match and pay, and the spark lens follows its filter onto the closing mark. The access gate and its ascii sweep carry over, and behind it campaign.html is the logged-in half: a catalogue of campaign kinds, a four-step brief, and a dashboard that mirrors the creator one section for section because a brand and an agent owner are reading two ends of the same ledger — spend where that has earnings, budget remaining where that has balance, Add budget where that has Cash out, and a progress bar that fills toward budget spent rather than toward a goal.',
-  },
-  {
-    // RENAMED + RE-POINTED 2026-08-19 (Appy): was "Creator ↔ Brand" -> /creator-brand/creators,
-    // describing both audiences under one shell. The creator side of that shell moved to its own
-    // group below; this card narrows to the brand side and points straight at its own route.
-    href: '/creator-brand/brands',
-    name: 'Brand website',
-    desc: 'The brand-side acquisition flow: post a job, outcome-based pricing, a live job-post form. On the blueai-modern marketing design system. Now carries the agent-made 9:16 sample-video strip under review: three placements (after the hero, after How it works, in the hero) switchable from the gear at bottom left.',
-  },
-]
-
-// CREATOR PAGE EXPERIMENTS — every creator/partner/worker-facing page, the current sites first,
-// then the standalone hero experiments (each owns its own stylesheet and README; the .html hrefs
-// are deliberate — those pages use relative asset paths, and an extensionless rewrite would
-// resolve them against /experiments/ and serve the page unstyled), then the frozen page kept for
-// comparison.
-const CREATOR_EXPERIMENTS = [
-  {
-    // THE onBlue HERO EXPERIMENT (Appy, 2026-09-11; rewritten 2026-09-15 after the terminal and
-    // the agent carousel were removed and the page was rebased onto the Cinematic light theme).
+    // RENAMED 2026-10-13 (Appy): was "onBlue Agentic Hero", from when this page was one hero
+    // experiment (2026-09-11, rebased onto the Cinematic light theme 2026-09-15). It is now the
+    // whole partner site: the homepage, the apply flow and the partner dashboard behind it.
     href: '/experiments/onblue-vesper/index.html',
-    name: 'onBlue Agentic Hero',
-    desc: 'One agentic hero on the Cinematic light theme. The hero is a sampled-clay gradient field, an ambient ascii glyph field that brightens and churns in a pool around the cursor, and six ascii-rendered 3D models that exchange under a travelling ascii sweep band, the swap point solved from the shader’s own equation against each model’s projected x so it happens while the band covers it; one of the six is a rigged arm that hangs from the top of frame and reaches for the cursor on a hinge-constrained IK chain measured out of its own animation clip. Everything below is the Cinematic system verbatim: the economy panels with per-agent illustration swapping, partnered agents with looping terminals, three self-demonstrating how-it-works steps, a wired dispatch diagram whose spark splits its channels along the cursor-to-mark line, FAQs, a typed closing line and a cropped oversized footer wordmark. Standalone HTML plus one ES module, three.js pinned via importmap. Its design system is the row below.',
+    name: 'onBlue Agentic',
+    desc: 'The partner (creator) website: people apply to run jobs with their agent, then earn from the campaigns businesses fund on onBlue Agentic for business, tracked and cashed out from the partner dashboard. The homepage is an agentic hero on the Cinematic light theme (a sampled-clay gradient field, an ascii glyph field that churns around the cursor, and six ascii-rendered 3D models exchanging under a travelling sweep band, one a rigged arm that reaches for the cursor), then the economy panels, partnered agents with looping terminals, three self-demonstrating how-it-works steps, the wired dispatch diagram, FAQs and a cropped oversized footer wordmark. apply.html behind it holds the application and the dashboard. Standalone HTML plus one ES module, three.js pinned via importmap. Its design system is the row below.',
   },
   {
     // ITS DESIGN SYSTEM (Appy, 2026-09-15). Directly under the surface it documents, rather than
@@ -83,6 +67,34 @@ const CREATOR_EXPERIMENTS = [
     ds: true,
   },
   {
+    href: '/experiments/onblue-vesper/brands.html',
+    name: 'onBlue Agentic for business',
+    desc: 'The business website: businesses start a campaign and set its budget, and the partners on onBlue Agentic run the jobs it pays for. Built 2026-09-17 as a third page JOINING onblue.css rather than a second implementation of it, so every token, the grain, the card sheen, the button ladder and both themes arrive already correct and cannot drift. It is the destination the homepage’s own “For businesses” link points at, and it opens on that section’s own words: “Bring work to onBlue. Agents take it from there.” Every device is the homepage’s read from the buyer’s end: the rail runs brief to charged, the three agent terminals show work being bought rather than earned from, the step demos re-aim to brief, match and pay, and the spark lens follows its filter onto the closing mark. Behind the access gate, campaign.html is the logged-in half: a catalogue of campaign kinds, a four-step brief, and a dashboard that mirrors the partner one section for section, because a business and a partner are reading two ends of the same ledger: spend where that has earnings, budget remaining where that has balance, Add budget where that has Cash out.',
+  },
+]
+
+// EXTRAS: THE EARLIER PRODUCT PROTOTYPE. Moved out of ACTIVE 2026-10-13 (Appy) when V2 became the
+// main product. Its design system stays directly under it.
+const PROTOTYPE = [
+  {
+    href: '/blueai-desktop',
+    name: 'BlueAI Terminal Modern',
+    desc: 'The earlier product prototype: a BlueStacks window on the desktop; click it to slide out the terminal drawer. Login gate, chat, skills, scheduled tasks, credits, Telegram pairing, all states reachable via the dev preview panel.',
+  },
+  {
+    href: '/blueai-desktop/style-guide.html',
+    name: 'Terminal Modern Design System',
+    desc: 'Live style guide onto the product’s own stylesheet and icon set: tokens, scales and specimens are computed from the real files at load, and ds-drift-check.js gates every change.',
+    ds: true,
+  },
+]
+
+// EXTRAS: CREATOR PAGE EXPERIMENTS. Every earlier creator/partner/worker-facing page, newest first,
+// then the frozen page kept for comparison. The .html hrefs are deliberate: those pages use
+// relative asset paths, and an extensionless rewrite would resolve them against /experiments/ and
+// serve the page unstyled.
+const CREATOR_EXPERIMENTS = [
+  {
     // THE onBlue LANDING (Appy, 2026-09-11). Built outside this repo, at the onblue-landing
     // folder in the workspace root, and copied in: the source of truth is there, not here.
     href: '/experiments/onblue-dark-v1/index.html',
@@ -93,8 +105,8 @@ const CREATOR_EXPERIMENTS = [
     // THE onBlue FORK (Appy, 2026-09-08). Its own card because it is a second route and a second
     // brand: two entries is the honest shape when there are genuinely two sites.
     href: '/onblue',
-    name: 'Partner website — onBlue',
-    desc: 'The Partner website under the new onBlue brand: the wordmark replaces the BlueAI lockup (no symbol) and every mention of the product reads onBlue. A complete duplicate otherwise — same hero, application, dashboard, legal page, dialogs and A/B/C versions, and the same ?theme= switch — so the two can be compared screen for screen.',
+    name: 'Partner website: onBlue',
+    desc: 'The Partner website under the new onBlue brand: the wordmark replaces the BlueAI lockup (no symbol) and every mention of the product reads onBlue. A complete duplicate otherwise (same hero, application, dashboard, legal page, dialogs and A/B/C versions, and the same ?theme= switch) so the two can be compared screen for screen.',
   },
   {
     // "Partner", not "Creator" (Appy, 2026-08-25), following the audience rename on the route
@@ -105,7 +117,7 @@ const CREATOR_EXPERIMENTS = [
     // second card implied a second site. The switch lives in the page's own toggler.
     href: '/creators',
     name: 'Partner website',
-    desc: 'The full partner side: an AI-worker homepage ("The AI You Own"), sign in, a 5-step application, a returning-partner dashboard with cash-out, and logout — all in its own dark, futuristic design language. Two versions under review: this is A, and ?v=b opens Version B, the same site with the word "program" gone (the month is the unit) — flip either way from the gear, bottom-left. Design-only, same convention as every other page here.',
+    desc: 'The full partner side: an AI-worker homepage ("The AI You Own"), sign in, a 5-step application, a returning-partner dashboard with cash-out, and logout, all in its own dark, futuristic design language. Two versions under review: this is A, and ?v=b opens Version B, the same site with the word "program" gone (the month is the unit). Flip either way from the gear, bottom-left. Design-only, same convention as every other page here.',
   },
   {
     href: '/experiments/intelligence-hero/index.html',
@@ -118,36 +130,33 @@ const CREATOR_EXPERIMENTS = [
     // nothing already live disappears from the index yet. Frozen: changes belong to the sites
     // above, which is also why it sits last rather than in date order with them.
     href: '/creator-brand/creators',
-    name: 'Creator website — creator-brand shell (frozen)',
+    name: 'Creator website, creator-brand shell (frozen)',
     desc: 'The original creator side of the two-audience creator-brand shell: apply flow, dashboard, cash-out, on the blueai-modern marketing design system. Superseded by the Partner website above; kept listed while the deployed page is still compared against.',
   },
 ]
 
-// MAINTAINED — not where new work happens, but updated from time to time as the real product
-// and the marketing system move. Distinct from DORMANT: these are expected to change again.
-const MAINTAINED = [
+// EXTRAS: BRAND PAGE EXPERIMENTS, with the marketing design system at the foot, since the Brand
+// website is the surface it documents (with the frozen creator page above).
+const BRAND_EXPERIMENTS = [
   {
-    // V1 DELETED 2026-10-13 (Appy). It had been frozen since V2 forked off it on 2026-09-09, with
-    // zero commits after the fork, so V2 is now the only product clone. V1 is recoverable from git
-    // history (last present at 34027ca). The URL deliberately stays /blueai-product-v2 rather than
-    // moving back to /blueai-product: the PM's prototype links and review URLs already use it.
-    href: '/blueai-product-v2',
-    name: 'BlueAI Product V2',
-    desc: 'The BlueAI desktop app replica, and the only product clone: the BlueAI worker session, the new-variant chat, task-progress and feedback, and all five tabs. Standalone replica, not on the marketing design system.',
+    // RENAMED + RE-POINTED 2026-08-19 (Appy): was "Creator ↔ Brand" -> /creator-brand/creators,
+    // describing both audiences under one shell. The creator side of that shell moved to its own
+    // group; this card narrows to the brand side and points straight at its own route.
+    href: '/creator-brand/brands',
+    name: 'Brand website',
+    desc: 'The brand-side acquisition flow: post a job, outcome-based pricing, a live job-post form. On the blueai-modern marketing design system. Now carries the agent-made 9:16 sample-video strip under review: three placements (after the hero, after How it works, in the hero) switchable from the gear at bottom left.',
   },
   {
-    // MOVED TO THE FOOT OF THIS GROUP 2026-09-15 (Appy), and given the design-system row. Its
-    // description used to say it governs "the marketing pages below", which was wrong twice over:
-    // it sat at the top of the group, and the two pages under it are standalone replicas that say
-    // in their own descriptions that they are NOT on this system. What it actually governs is the
-    // dormant marketing site and the creator-brand shell, so it now says that.
+    // At the foot of a group since 2026-09-15 (Appy), with the design-system row. Its description
+    // used to say it governs "the marketing pages below", which was wrong twice over. What it
+    // actually governs is the dormant marketing site and the creator-brand shell, so it says that.
+    // Moved here from the old MAINTAINED group 2026-10-13, which V2's promotion emptied of surfaces.
     href: '/style-guide',
     name: 'Marketing Design System',
-    desc: 'Tokens, type and components for the dormant marketing site and the creator-brand shell (the Brand website and the frozen creator page). It governs those and nothing else: the active prototype and the onBlue Agentic hero each have their own design system, listed with the surface it belongs to.',
+    desc: 'Tokens, type and components for the dormant marketing site and the creator-brand shell (the Brand website and the frozen creator page). It governs those and nothing else: the main product, onBlue Agentic and Terminal Modern each have their own.',
     ds: true,
   },
 ]
-
 
 /* COMPACT ROWS (Appy, 2026-09-09). Titles only. With descriptions each row ran about 90px, so
    roughly six fitted in a viewport and every group below Active needed scrolling to find. A row
@@ -207,31 +216,32 @@ export default function Home() {
           <Wordmark size={26} />
           <h1 className="mt-3 font-head text-4xl font-semibold tracking-tight-3 text-ink-display">Screen Library</h1>
           <p className="mt-2 max-w-xl text-[15px] leading-relaxed text-ink-muted">
-            Design-only handoff. Product work lives in the Terminal Modern prototype. The
-            acquisition pages are grouped by audience below, creator first, newest at the top of
-            each group, and earlier pages stay listed while they are still compared against. A
-            tinted row with a grid mark is a design system; a plain row is a surface.
+            Design-only handoff. Main is the BlueAI product and its two onBlue Agentic sites: the
+            partner website, where people run the jobs and cash out, and the business website,
+            where campaigns and budgets start. Everything below it is an extra, newest first in
+            each group, kept listed while it is still compared against. A tinted row with a grid
+            mark is a design system; a plain row is a surface.
           </p>
         </header>
 
-        <p className="bai-section-label mb-2 text-iris">Active — the product prototype</p>
+        <p className="bai-section-label mb-2 text-iris">Main: the BlueAI product and its two sites</p>
         <div className="space-y-1.5">
-          {ACTIVE.map((p) => <Card key={p.href} p={p} />)}
+          {MAIN.map((p) => <Card key={p.href} p={p} />)}
         </div>
 
-        <p className="bai-section-label mb-2 mt-8 text-ink-muted">Creator page experiments</p>
+        <p className="bai-section-label mb-2 mt-8 text-ink-muted">Extras: earlier product prototype</p>
+        <div className="space-y-1.5">
+          {PROTOTYPE.map((p) => <Card key={p.href} p={p} />)}
+        </div>
+
+        <p className="bai-section-label mb-2 mt-8 text-ink-muted">Extras: creator page experiments</p>
         <div className="space-y-1.5">
           {CREATOR_EXPERIMENTS.map((p) => <Card key={p.href} p={p} />)}
         </div>
 
-        <p className="bai-section-label mb-2 mt-8 text-ink-muted">Brand page experiments</p>
+        <p className="bai-section-label mb-2 mt-8 text-ink-muted">Extras: brand page experiments</p>
         <div className="space-y-1.5">
           {BRAND_EXPERIMENTS.map((p) => <Card key={p.href} p={p} />)}
-        </div>
-
-        <p className="bai-section-label mb-2 mt-8 text-ink-muted">Maintained — updated from time to time</p>
-        <div className="space-y-1.5">
-          {MAINTAINED.map((p) => <Card key={p.href} p={p} />)}
         </div>
 
         <footer className="mt-10 text-2xs text-ink-muted">An AI worker by now.gg, Inc. · design-only handoff replica</footer>
