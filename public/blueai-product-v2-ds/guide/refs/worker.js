@@ -12,12 +12,12 @@ window.V2Refs = (window.V2Refs || []).concat([
   { id: 'worker.flow.onboarded', file: 'worker_flow.jsx', line: 36, needle: 'let onboarded = false;', value: 'module global: set up or not' },
   { id: 'worker.permissions.store', file: 'agent_permissions.jsx', line: 66, needle: 'let modes = fresh();', value: 'module global: mode per app, reset on reload' },
   { id: 'worker.flow.next-run', file: 'chat_product.jsx', line: 213, needle: 'Welcome back. Your next run is at 11 am.', value: "'Your next run is at 11 am.' whatever window was chosen" },
-  { id: 'worker.strip.before-run', file: 'worker_day_done.jsx', line: 148, needle: "const n = numbers('failed');", value: "the strip counts as if today failed: 'Day 6 of 20' after tonight's 'DAY 7 OF 20'" },
+  { id: 'worker.strip.before-run', file: 'worker_day_done.jsx', line: 149, needle: "const n = numbers('failed');", value: "the strip counts as if today failed: 'Day 6 of 20' after tonight's 'DAY 7 OF 20'" },
 
   // Ticks and the progress bar
   { id: 'worker.tick.stroke', file: 'worker_day_done.jsx', line: 66, needle: 'strokeWidth="2.8"', value: 'tick stroke 2.8' },
   { id: 'worker.tick.single', file: 'worker_day_done.jsx', line: 67, needle: '<polyline points="20 6 9 17 4 12" />', value: 'one tick polyline' },
-  { id: 'worker.bar.track', file: 'worker_day_done.jsx', line: 155, needle: 'height: 4, borderRadius: 2, background: TRACK', value: 'one continuous bar, height 4, radius 2, green fill for the verified share (since 2026-10-14)' },
+  { id: 'worker.bar.track', file: 'worker_day_done.jsx', line: 156, needle: "height: 4, borderRadius: 2, boxSizing: 'border-box'", value: '20 thin segments, height 4, radius 2, gap 2; verified green, pending outlined (since 2026-10-14)' },
 
   // Day-done copy (PM DRAFT strings) and the overlay
   { id: 'worker.copy.job', file: 'worker_day_done.jsx', line: 74, needle: "title: 'Today’s run is done.'", value: 'Today’s run is done.' },
@@ -40,12 +40,12 @@ window.V2Refs = (window.V2Refs || []).concat([
   { id: 'worker.daydone.got-it-label', file: 'worker_day_done.jsx', line: 135, needle: '>Got it</button>', value: 'Got it' },
 
   // The home strip
-  { id: 'worker.strip.card', file: 'worker_day_done.jsx', line: 150, needle: "borderRadius: 16, padding: '12px 15px 11px'", value: 'card radius 16, padding 12 15 11' },
-  { id: 'worker.strip.shadow', file: 'worker_day_done.jsx', line: 150, needle: "boxShadow: '0 6px 24px rgba(15,23,42,0.06)'", value: 'in-flow shadow' },
-  { id: 'worker.strip.count', file: 'worker_day_done.jsx', line: 152, needle: 'Day {n.day} of {n.target}', value: "'Day 6 of 20'" },
-  { id: 'worker.strip.verified', file: 'worker_day_done.jsx', line: 156, needle: 'Yesterday’s run verified.', value: 'Yesterday’s run verified.' },
-  { id: 'worker.strip.earnings', file: 'worker_day_done.jsx', line: 153, needle: 'href="https://bluestacks.ai/dashboard"', value: 'Earnings to bluestacks.ai/dashboard' },
-  { id: 'worker.strip.earnings-label', file: 'worker_day_done.jsx', line: 153, needle: 'Earnings ↗</a>', value: "'Earnings ↗' in #1990FF" },
+  { id: 'worker.strip.card', file: 'worker_day_done.jsx', line: 151, needle: "borderRadius: 16, padding: '12px 15px 11px'", value: 'card radius 16, padding 12 15 11' },
+  { id: 'worker.strip.shadow', file: 'worker_day_done.jsx', line: 151, needle: "boxShadow: '0 6px 24px rgba(15,23,42,0.06)'", value: 'in-flow shadow' },
+  { id: 'worker.strip.count', file: 'worker_day_done.jsx', line: 153, needle: 'Day {n.day} of {n.target}', value: "'Day 6 of 20'" },
+  { id: 'worker.strip.verified', file: 'worker_day_done.jsx', line: 157, needle: 'Yesterday’s run verified.', value: 'Yesterday’s run verified.' },
+  { id: 'worker.strip.earnings', file: 'worker_day_done.jsx', line: 154, needle: 'href="https://bluestacks.ai/dashboard"', value: 'Earnings to bluestacks.ai/dashboard' },
+  { id: 'worker.strip.earnings-label', file: 'worker_day_done.jsx', line: 154, needle: 'Earnings ↗</a>', value: "'Earnings ↗' in #1990FF" },
   { id: 'worker.earnings.menu-url', file: 'index.html', line: 329, needle: "const DASHBOARD_URL = 'https://blueai-screen-library.vercel.app/experiments/onblue-vesper/apply.html';", value: 'the menu’s Earnings URL, a different destination' },
 
   // The home card and coach mark

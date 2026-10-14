@@ -141,8 +141,9 @@
      shows two ticks. Above the worker card, same card language (skills.jsx's row). The plain
      option has no numbers anywhere, so it has no strip. */
   /* MINIMAL since 2026-10-14 (Arpit): the day was said three times ("Day 6 of 20", "14 to go",
-     20 segments). Now the day and Earnings on one row, one thin bar, one quiet verified line. The
-     amber bonus segment went with the segments: nothing on this card talks about money. */
+     and the bar). Now the day and Earnings on one row, 20 thin segments (one per program day, the
+     partner's own unit; a pending day is outlined), one quiet verified line. No amber bonus
+     segment: nothing on this card talks about money. */
   function EarningsStrip() {
     if (style === 'plain') return null;
     const n = numbers('failed');   // before today's run: everything so far is verified, nothing pending
@@ -152,7 +153,7 @@
           <span style={{ fontSize: 13.5, fontWeight: 800, color: INK }}>Day {n.day} of {n.target}{style === 'money' && <span style={{ fontWeight: 600, color: MUTED }}> · {money(n.balance)} earned</span>}</span>
           <a href="https://bluestacks.ai/dashboard" target="_blank" rel="noopener" style={{ fontSize: 11.5, fontWeight: 700, color: '#1990FF', textDecoration: 'none', whiteSpace: 'nowrap' }}>Earnings ↗</a>
         </div>
-        <div style={{ height: 4, borderRadius: 2, background: TRACK, marginTop: 9, overflow: 'hidden' }}><span style={{ display: 'block', width: Math.round(n.verified / n.target * 100) + '%', height: '100%', borderRadius: 2, background: GREEN }} /></div>
+        <div style={{ display: 'flex', gap: 2, marginTop: 9 }}>{Array.from({ length: n.target }, (_, i) => <span key={i} style={{ flex: 1, height: 4, borderRadius: 2, boxSizing: 'border-box', background: i < n.verified ? GREEN : (i < n.day ? 'white' : TRACK), border: i >= n.verified && i < n.day ? '1px solid ' + GREEN : 'none' }} />)}</div>
         <p style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11.5, color: MUTED, marginTop: 8 }}><Tick double color={GREEN} size={12} /> Yesterday’s run verified.</p>
       </div>);
   }

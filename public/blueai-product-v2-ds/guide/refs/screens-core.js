@@ -11,9 +11,9 @@ window.V2Refs = (window.V2Refs || []).concat([
   { id: 'screens-core.home.scrim', file: 'moneymaker_home.jsx', line: 117, needle: "background: 'rgba(11,18,32,0.52)'", value: 'coach scrim rgba(11,18,32,0.52)' },
   { id: 'screens-core.home.strip-returning', file: 'moneymaker_home.jsx', line: 120, needle: '{back && <window.WorkerDayDone.EarningsStrip />}', value: 'the progress strip shows only for a returning partner' },
   { id: 'screens-core.home.card-title', file: 'moneymaker_home.jsx', line: 137, needle: '>BlueAI worker</p>', value: 'BlueAI worker' },
-  { id: 'screens-core.home.strip-day', file: 'worker_day_done.jsx', line: 152, needle: 'Day {n.day} of {n.target}', value: 'Day 7 of 20 (from DONE_BEFORE, not a ledger)' },
-  { id: 'screens-core.home.strip-verified', file: 'worker_day_done.jsx', line: 156, needle: 'Yesterday’s run verified.', value: 'Yesterday’s run verified.' },
-  { id: 'screens-core.home.strip-earnings', file: 'worker_day_done.jsx', line: 153, needle: 'href="https://bluestacks.ai/dashboard"', value: 'Earnings link to bluestacks.ai/dashboard (the second Earnings URL)' },
+  { id: 'screens-core.home.strip-day', file: 'worker_day_done.jsx', line: 153, needle: 'Day {n.day} of {n.target}', value: 'Day 7 of 20 (from DONE_BEFORE, not a ledger)' },
+  { id: 'screens-core.home.strip-verified', file: 'worker_day_done.jsx', line: 157, needle: 'Yesterday’s run verified.', value: 'Yesterday’s run verified.' },
+  { id: 'screens-core.home.strip-earnings', file: 'worker_day_done.jsx', line: 154, needle: 'href="https://bluestacks.ai/dashboard"', value: 'Earnings link to bluestacks.ai/dashboard (the second Earnings URL)' },
 
   /* 57 Chat (reached from Home). */
   { id: 'screens-core.chat.new-chat', file: 'index.html', line: 350, needle: '<button onClick={onNewChat}', value: 'New Chat: the filled pill in the top bar' },
@@ -52,13 +52,13 @@ window.V2Refs = (window.V2Refs || []).concat([
 
   /* 60 Notifications: the words exist as an 8 second Windows toast. */
   { id: 'screens-core.notif.toast', file: 'desktop_toast.jsx', line: 12, needle: 'function DesktopToast({ title, body, onOpen, onClose, ms = 8000 })', value: 'Windows toast, gone after 8 s' },
-  { id: 'screens-core.notif.declined-silent', file: 'worker_day_done.jsx', line: 160, needle: '`declined` never toasts', value: 'a skipped day never notifies' },
-  { id: 'screens-core.notif.toast-fn', file: 'worker_day_done.jsx', line: 162, needle: 'function toastFor(e) {', value: 'the toast words per run end' },
-  { id: 'screens-core.notif.day-line', file: 'worker_day_done.jsx', line: 164, needle: "const dayLine = 'Day ' + n.day + ' of ' + n.target + '.';", value: 'Day 7 of 20.' },
-  { id: 'screens-core.notif.days-body', file: 'worker_day_done.jsx', line: 167, needle: "job: dayLine + ' Pending verification.'", value: 'Day 7 of 20. Pending verification.' },
-  { id: 'screens-core.notif.job-title', file: 'worker_day_done.jsx', line: 171, needle: "job:    { title: 'Today’s run is done.', body: body.job }", value: 'Today’s run is done.' },
-  { id: 'screens-core.notif.nojob-title', file: 'worker_day_done.jsx', line: 172, needle: "title: 'Your run counts today.'", value: 'Your run counts today.' },
-  { id: 'screens-core.notif.failed', file: 'worker_day_done.jsx', line: 174, needle: "failed: { title: 'Today’s job didn’t finish.', body: 'Open BlueAI to retry and count the day.' }", value: 'Today’s job didn’t finish. / Open BlueAI to retry and count the day.' },
+  { id: 'screens-core.notif.declined-silent', file: 'worker_day_done.jsx', line: 161, needle: '`declined` never toasts', value: 'a skipped day never notifies' },
+  { id: 'screens-core.notif.toast-fn', file: 'worker_day_done.jsx', line: 163, needle: 'function toastFor(e) {', value: 'the toast words per run end' },
+  { id: 'screens-core.notif.day-line', file: 'worker_day_done.jsx', line: 165, needle: "const dayLine = 'Day ' + n.day + ' of ' + n.target + '.';", value: 'Day 7 of 20.' },
+  { id: 'screens-core.notif.days-body', file: 'worker_day_done.jsx', line: 168, needle: "job: dayLine + ' Pending verification.'", value: 'Day 7 of 20. Pending verification.' },
+  { id: 'screens-core.notif.job-title', file: 'worker_day_done.jsx', line: 172, needle: "job:    { title: 'Today’s run is done.', body: body.job }", value: 'Today’s run is done.' },
+  { id: 'screens-core.notif.nojob-title', file: 'worker_day_done.jsx', line: 173, needle: "title: 'Your run counts today.'", value: 'Your run counts today.' },
+  { id: 'screens-core.notif.failed', file: 'worker_day_done.jsx', line: 175, needle: "failed: { title: 'Today’s job didn’t finish.', body: 'Open BlueAI to retry and count the day.' }", value: 'Today’s job didn’t finish. / Open BlueAI to retry and count the day.' },
   { id: 'screens-core.notif.taskbar', file: 'chat_product.jsx', line: 89, needle: "An unanswered job ask lights up BlueAI's taskbar button", value: 'a waiting job only flashes the taskbar button' },
   { id: 'screens-core.notif.taskbar-delay', file: 'chat_product.jsx', line: 97, needle: 'setTimeout(() => onJobWaiting(true), 4000)', value: 'after 4 s, with no expiry' },
 ]);

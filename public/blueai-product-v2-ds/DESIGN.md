@@ -4113,7 +4113,7 @@ About 3,000 of V2’s lines never render. They are listed here and never specime
 
 ### 2026-10-14: Minimal progress card and plain consent frame in V2
 
-- V2's home progress card is minimal (day + Earnings, one thin bar, one verified line) and the consent dialog uses a plain frame (no header, divider or X); refs and sections updated.
+- V2's home progress card is minimal (day + Earnings, 20 thin day segments, one verified line) and the consent dialog uses a plain frame (no header, divider or X); refs and sections updated.
 
 ### 2026-10-14: Mode sheet, one-line ribbon and Settings > Worker in V2
 

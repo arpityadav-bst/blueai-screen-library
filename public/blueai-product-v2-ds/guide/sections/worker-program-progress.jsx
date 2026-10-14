@@ -56,9 +56,9 @@
           <G.CompareRow
             v2={<G.Live get={strip} label="WorkerDayDone.EarningsStrip" />}
             system={shell(<K.DayBar days={bar(6, 1, 0, 0)} />)}
-            changed="Since 2026-10-14 V2 draws one thin continuous bar (height 4, green fill for the verified share): its 20 segments and amber day-20 segment are gone, so a pending, rejected or missed day cannot show. The system keeps one segment per day. Green #1BA07A becomes the site's green, and pending is a blue outline, not a green one: green means reached on both sides (P2). A day-20 bonus, if D3 keeps one, is a label, not a colour. The bar gains rejected and out-of-reach states, a role and a spoken value; the same component should draw the site's tile." />
+            changed="Since 2026-10-14 V2 draws 20 thin segments (height 4, gap 2): verified green, a pending day outlined, no amber day-20 segment. A rejected or missed day still cannot show. The system keeps one segment per day too. Green #1BA07A becomes the site's green, and pending is a blue outline, not a green one: green means reached on both sides (P2). A day-20 bonus, if D3 keeps one, is a label, not a colour. The bar gains rejected and out-of-reach states, a role and a spoken value; the same component should draw the site's tile." />
           <G.SpecDrawer rows={[
-            { part: 'Segment', token: '--v2-rail, --v2-radius-xs, --v2-space-05', value: 'height 6, radius 4, gap 2 (V2: one continuous bar, height 4, radius 2, since 2026-10-14)', ref: 'worker.bar.track' },
+            { part: 'Segment', token: '--v2-rail, --v2-radius-xs, --v2-space-05', value: 'height 6, radius 4, gap 2 (V2: 20 thin segments, height 4, radius 2, gap 2, since 2026-10-14)', ref: 'worker.bar.track' },
             { part: 'Verified', token: '--v2-success-ink', value: 'solid (the site goal-bar green; the tick keeps --v2-success)', ref: 'worker.rule.green' },
             { part: 'Pending', token: '--v2-blue, --v2-stroke-selected', value: '1.5 inset outline on surface' },
             { part: 'Rejected', token: '--v2-danger-tint, --v2-danger-line', value: 'tint + 1px line' },
