@@ -34,7 +34,7 @@ window.V2Refs = (window.V2Refs || []).concat([
   { id: 'worker.daydone.got-it-label', file: 'worker_day_done.jsx', line: 132, needle: '>Got it</button>', value: 'Got it' },
 
   // The home strip
-  { id: 'worker.earnings.menu-url', file: 'index.html', line: 323, needle: 'const DASHBOARD_URL = \'../experiments/onblue-vesper/apply.html?creator=in&account=one\';', value: 'the menu’s Earnings URL: the partner dashboard' },
+  { id: 'worker.earnings.menu-url', file: 'index.html', line: 324, needle: 'const DASHBOARD_URL = \'../experiments/onblue-vesper/apply.html?creator=in&account=one\';', value: 'the menu’s Earnings URL: the partner dashboard' },
 
   // The home card and coach mark
   { id: 'worker.card.coach-fill', file: 'moneymaker_home.jsx', line: 52, needle: "background: '#1990FF', borderRadius: 10, padding: '10px 13px 9px'", value: 'coach bubble #1990FF, radius 10' },

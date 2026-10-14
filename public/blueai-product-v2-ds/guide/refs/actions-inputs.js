@@ -3,8 +3,8 @@
   function r(id, file, line, needle, value) { return { id: 'actions-inputs.' + id, file: file, line: line, needle: needle, value: value }; }
   window.V2Refs = (window.V2Refs || []).concat([
     /* Button */
-    r('button.new-chat', 'index.html', 345, "background: '#1990FF', border: 'none', borderRadius: 999, padding: '6px 13px 6px 9px', fontSize: 13, fontWeight: 600, color: 'white'", 'New Chat: #1990FF pill, radius 999, 13/600, white label at 3.24:1'),
-    r('button.new-chat-hover', 'index.html', 346, "e.currentTarget.style.opacity = '0.88'", 'hover lowers opacity to 0.88'),
+    r('button.new-chat', 'index.html', 346, "background: '#1990FF', border: 'none', borderRadius: 999, padding: '6px 13px 6px 9px', fontSize: 13, fontWeight: 600, color: 'white'", 'New Chat: #1990FF pill, radius 999, 13/600, white label at 3.24:1'),
+    r('button.new-chat-hover', 'index.html', 347, "e.currentTarget.style.opacity = '0.88'", 'hover lowers opacity to 0.88'),
     r('button.settings-save', 'settings.jsx', 126, "background: '#1990FF', border: 'none', borderRadius: 8, padding: '9px 20px', fontSize: 14, fontWeight: 600", 'Save settings: radius 8, 14/600, no hover, no focus style'),
     r('button.consent-recipe', 'agent_permissions.jsx', 199, 'height: t.controlLg, borderRadius: t.radiusSm, padding: \'0 16px\', fontSize: t.text13, fontWeight: t.wMedium', 'consent buttons: 44 tall, radius 8, 13/600'),
     r('button.cancel', 'agent_permissions.jsx', 205, 'background: t.surface, border: t.stroke + \'px solid \' + t.lineStrong, color: t.ink', 'Cancel: white, 1px #d1d5db, ink label'),
@@ -22,17 +22,17 @@
     r('button.apply', 'ai_mode.jsx', 193, 'Apply', "'Apply'"),
     r('button.validate-save', 'byok_settings.jsx', 101, 'Validate &amp; Save</button>', "'Validate & Save'"),
     /* IconButton */
-    r('icon-button.v2', 'index.html', 292, "padding: 6, borderRadius: 8, color: active ? '#1990FF' : '#64748b'", 'iconBtn: padding 6, radius 8, #64748b idle, #1990FF when its menu is open, no hover, no focus'),
+    r('icon-button.v2', 'index.html', 293, "padding: 6, borderRadius: 8, color: active ? '#1990FF' : '#64748b'", 'iconBtn: padding 6, radius 8, #64748b idle, #1990FF when its menu is open, no hover, no focus'),
     r('icon-button.close', 'byok.jsx', 81, "color: '#94a3b8', padding: 4", 'out-of-credits close: #94a3b8 (2.56:1), padding 4'),
     r('icon-button.close-hover', 'byok.jsx', 82, "e.currentTarget.style.color = '#475569'", 'hover darkens the glyph in JS'),
     /* Link */
     r('link.learn-more', 'credits_popup_parts.jsx', 110, "fontSize: 12.5, fontWeight: 600, color: BLUE, textDecoration: 'none'", 'Learn more: 12.5/600 #1990FF, no underline (3.24:1)'),
     r('link.learn-more-copy', 'credits_popup_parts.jsx', 110, '>Learn more &#8599;</a>', "'Learn more' plus a typed arrow character"),
     r('link.faq-url', 'credits_popup_parts.jsx', 13, "const FAQ_URL = 'https://bluestacks.ai/getting-started#ai-credits';", 'https://bluestacks.ai/getting-started#ai-credits'),
-    r('link.earnings-url', 'index.html', 323, 'const DASHBOARD_URL = \'../experiments/onblue-vesper/apply.html?creator=in&account=one\';', 'Earnings opens the partner dashboard'),
+    r('link.earnings-url', 'index.html', 324, 'const DASHBOARD_URL = \'../experiments/onblue-vesper/apply.html?creator=in&account=one\';', 'Earnings opens the partner dashboard'),
     r('link.not-you', 'account_gate.jsx', 75, "Not you?{' '}", "'Not you?'"),
     r('link.switch-account', 'account_gate.jsx', 76, "fontWeight: 600, color: '#1990FF', cursor: 'pointer' }}>Switch account</button>", "'Switch account': a button drawn as a 600 blue link"),
-    r('link.external-glyph', 'index.html', 322, 'const ExternalIcon = <svg width="14" height="14"', 'kebab Earnings row: a second external glyph, drawn as an SVG'),
+    r('link.external-glyph', 'index.html', 323, 'const ExternalIcon = <svg width="14" height="14"', 'kebab Earnings row: a second external glyph, drawn as an SVG'),
     /* Text field */
     r('field.schedule', 'schedule.jsx', 60, "border: '1px solid #d1d5db', borderRadius: 8, padding: '9px 12px', fontSize: 14", 'schedule fields: 1px #d1d5db, radius 8, 14px'),
     r('field.label', 'schedule.jsx', 65, "fontSize: 13, fontWeight: 500, color: '#374151', marginBottom: 6", 'label 13/500 #374151, 6 above the box'),
@@ -57,7 +57,7 @@
     r('textarea.cap', 'chat_feedback.jsx', 96, 'const maxH = 48;', 'grows to 48px, then scrolls'),
     r('textarea.feedback', 'chat_feedback.jsx', 102, "borderRadius: 10, padding: '7px 10px', outline: 'none'", 'feedback box: 12px, radius 10, 31 tall, outline removed'),
     r('textarea.schedule', 'schedule.jsx', 70, "rows={3} style={{ ...fieldStyle, resize: 'vertical' }}", 'schedule prompt: 3 rows, drag to resize'),
-    r('textarea.composer', 'chat_product.jsx', 280, "maxHeight: 120, overflowY: 'hidden'", 'composer grows to 120px, then clips what is past it'),
+    r('textarea.composer', 'chat_product.jsx', 285, "maxHeight: 120, overflowY: 'hidden'", 'composer grows to 120px, then clips what is past it'),
     /* Select */
     r('select.byok', 'byok_settings.jsx', 31, "borderRadius: 10, padding: '11px 13px', fontSize: 14, fontWeight: 500", 'BYOK select: radius 10, 14/500'),
     r('select.byok-outline', 'byok_settings.jsx', 31, "outline: 'none', appearance: 'none', WebkitAppearance: 'none'", 'focus outline removed, nothing in its place'),
@@ -82,9 +82,9 @@
     r('switch.byok-colours', 'byok_settings.jsx', 26, "background: on ? ACCENT : '#cbd5e1'", 'on #1990FF, off #cbd5e1'),
     r('switch.byok-delete', 'byok_settings.jsx', 64, 'if (on) { setOn(false); onRemove();', 'switching it off deletes the saved key'),
     /* Checkbox */
-    r('checkbox.dev-role', 'index.html', 903, '<button role="checkbox" aria-checked={on}', 'the only checkbox: the review panel InstallChip'),
-    r('checkbox.dev-box', 'index.html', 905, 'width: 13, height: 13, flexShrink: 0, borderRadius: 4', 'box 13x13, radius 4'),
-    r('checkbox.dev-on', 'index.html', 905, "background: on ? '#1990FF' : 'transparent'", 'checked #1990FF'),
+    r('checkbox.dev-role', 'index.html', 904, '<button role="checkbox" aria-checked={on}', 'the only checkbox: the review panel InstallChip'),
+    r('checkbox.dev-box', 'index.html', 906, 'width: 13, height: 13, flexShrink: 0, borderRadius: 4', 'box 13x13, radius 4'),
+    r('checkbox.dev-on', 'index.html', 906, "background: on ? '#1990FF' : 'transparent'", 'checked #1990FF'),
     /* RadioCard */
     r('radio-card.signature', 'ai_mode.jsx', 45, 'function OptionCard({ title, sub, selected, pending, pendingLabel, onClick, disabled, badge })', 'OptionCard props'),
     r('radio-card.button', 'ai_mode.jsx', 47, '<button onClick={disabled ? undefined : onClick} disabled={disabled}', 'a plain button: no radio role, no arrow keys'),

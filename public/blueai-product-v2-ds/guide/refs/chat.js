@@ -1,11 +1,11 @@
 /* Refs owned by the chat slice (sections 34 to 40). Format: guide/refs/README.md. */
 window.V2Refs = (window.V2Refs || []).concat([
   /* Thread (34) */
-  { id: 'chat.thread.force-scroll', file: 'blueai/chat_product.jsx', line: 77, needle: 'if (el) el.scrollTop = el.scrollHeight; }, [visible, convo]);', value: 'scrollTop forced to the bottom on every step, even while the reader is scrolled up' },
-  { id: 'chat.thread.render-step', file: 'blueai/chat_product.jsx', line: 166, needle: 'const renderStep = (step, i) => {', value: 'the role map: user, status, warning, needsbs, installing-bs, plan, daydone, ask, thinking, final' },
-  { id: 'chat.thread.padding', file: 'blueai/chat_product.jsx', line: 207, needle: "overflowY: 'auto', scrollbarWidth: 'thin', padding: '16px'", value: 'thread padding 16px' },
-  { id: 'chat.thread.anchor', file: 'blueai/chat_product.jsx', line: 251, needle: "<div style={{ marginTop: 'auto' }}>{convo.slice(0, visible).map(renderStep)}</div>", value: 'bottom-anchored thread (minHeight 100% + marginTop auto)' },
-  { id: 'chat.thread.thinking-last', file: 'blueai/chat_product.jsx', line: 185, needle: "if (step.role === 'thinking') return i === visible - 1", value: 'thinking shows only as the last step' },
+  { id: 'chat.thread.force-scroll', file: 'blueai/chat_product.jsx', line: 79, needle: 'if (el) el.scrollTop = el.scrollHeight; }, [visible, convo]);', value: 'scrollTop forced to the bottom on every step, even while the reader is scrolled up' },
+  { id: 'chat.thread.render-step', file: 'blueai/chat_product.jsx', line: 170, needle: 'const renderStep = (step, i) => {', value: 'the role map: user, status, warning, needsbs, installing-bs, plan, daydone, ask, thinking, final' },
+  { id: 'chat.thread.padding', file: 'blueai/chat_product.jsx', line: 211, needle: "overflowY: 'auto', scrollbarWidth: 'thin', padding: '16px'", value: 'thread padding 16px' },
+  { id: 'chat.thread.anchor', file: 'blueai/chat_product.jsx', line: 255, needle: "<div style={{ marginTop: 'auto' }}>{convo.slice(0, visible).map(renderStep)}</div>", value: 'bottom-anchored thread (minHeight 100% + marginTop auto)' },
+  { id: 'chat.thread.thinking-last', file: 'blueai/chat_product.jsx', line: 189, needle: "if (step.role === 'thinking') return i === visible - 1", value: 'thinking shows only as the last step' },
   { id: 'chat.thread.stamp', file: 'blueai/chat_bubbles.jsx', line: 15, needle: "function fmtStamp() { return 'Jun 12, 2026, 11:03 AM'; }", value: "every user bubble stamped 'Jun 12, 2026, 11:03 AM'" },
 
   /* Bubbles (35) */
@@ -36,7 +36,7 @@ window.V2Refs = (window.V2Refs || []).concat([
   { id: 'chat.status.example-fail', file: 'blueai/chat_bubbles.jsx', line: 202, needle: "content: 'I wasn’t able to complete “Collect bonus coins in Disney Solitaire game”. The app closed unexpectedly partway through. You can try again or rephrase the request.'", value: 'fail example' },
 
   /* Run card (36) */
-  { id: 'chat.run.status-render', file: 'blueai/chat_product.jsx', line: 168, needle: "if (step.role === 'status') return <StatusBubble key={i} content={step.content} />;", value: 'every run step prints its own status bubble' },
+  { id: 'chat.run.status-render', file: 'blueai/chat_product.jsx', line: 172, needle: "if (step.role === 'status') return <StatusBubble key={i} content={step.content} />;", value: 'every run step prints its own status bubble' },
   { id: 'chat.run.routine', file: 'blueai/worker_flow.jsx', line: 86, needle: 'const routineSteps = () => [', value: 'warm-up routine, six status lines' },
   { id: 'chat.run.daily-head', file: 'blueai/worker_flow.jsx', line: 100, needle: "? [{ ...say('Scheduled run started.', 600), worker: true }, say('Starting your daily routine…')]", value: 'Scheduled run started. / Starting your daily routine…' },
   { id: 'chat.run.jobs-board', file: 'blueai/worker_flow.jsx', line: 106, needle: "say('Checking the jobs board…', 1000)", value: 'Checking the jobs board…' },
@@ -46,7 +46,7 @@ window.V2Refs = (window.V2Refs || []).concat([
   { id: 'chat.run.done-line', file: 'blueai/worker_day_done.jsx', line: 74, needle: '\'Done. I finished “\' + jobTitle + \'” and submitted the job.\'', value: 'Done. I finished “…” and submitted the job.' },
   { id: 'chat.run.pending', file: 'blueai/worker_day_done.jsx', line: 100, needle: '\'Day \' + n.day + \' of \' + n.target + \'. Pending verification\'', value: 'Pending verification' },
   { id: 'chat.run.declined', file: 'blueai/worker_day_done.jsx', line: 70, needle: "sub: 'Today doesn’t count toward your 20 days.'", value: 'Today doesn’t count toward your 20 days.' },
-  { id: 'chat.run.stop-trace', file: 'blueai/chat_product.jsx', line: 153, needle: 'setConvo(convo.slice(0, end));', value: 'Stop keeps the partial thread and adds nothing: no trace, no day status' },
+  { id: 'chat.run.stop-trace', file: 'blueai/chat_product.jsx', line: 157, needle: 'setConvo(convo.slice(0, end));', value: 'Stop keeps the partial thread and adds nothing: no trace, no day status' },
   { id: 'chat.run.agent-progress', file: 'blueai/chat.jsx', line: 250, needle: 'AgentProgress', value: 'the unloaded AgentProgress idea the run card salvages' },
 
   /* Ask card (37) */
@@ -59,7 +59,7 @@ window.V2Refs = (window.V2Refs || []).concat([
   { id: 'chat.ask.chip', file: 'blueai/worker_cards.jsx', line: 53, needle: 'border: t.stroke + \'px solid \' + t.lineStrong, background: t.surface, color: t.ink', value: 'chip 1px #d1d5db, ink label' },
   { id: 'chat.ask.chip-size', file: 'blueai/worker_cards.jsx', line: 53, needle: 'height: t.controlSm, padding: \'0 12px\'', value: 'chip 28 tall, padding 0 12, 13/600' },
   { id: 'chat.ask.hint', file: 'blueai/worker_cards.jsx', line: 79, needle: 'fontSize: t.text12, color: t.ink3', value: 'hint 12px #6b7280' },
-  { id: 'chat.ask.stopped', file: 'blueai/chat_product.jsx', line: 149, needle: "if (awaiting) setAnswers((p) => ({ ...p, ['k' + awaitingIdx]: 'stopped' }));", value: 'Stop while waiting marks the question stopped' },
+  { id: 'chat.ask.stopped', file: 'blueai/chat_product.jsx', line: 153, needle: "if (awaiting) setAnswers((p) => ({ ...p, ['k' + awaitingIdx]: 'stopped' }));", value: 'Stop while waiting marks the question stopped' },
   { id: 'chat.ask.echo', file: 'blueai/worker_flow.jsx', line: 165, needle: 'const reply = { role: \'user\', content: typed || (opt ? opt.label : a), d: 250 };', value: 'every answer echoes as the partner’s own bubble: the typed words or the option\'s label' },
   { id: 'chat.ask.pitch-lead', file: 'blueai/worker_flow.jsx', line: 68, needle: "lead: 'Here’s the idea: I’ll use your YouTube account like a genuine fan, watching things you’re actually into and keeping it active on its own, and you earn when I finish a paid job.'", value: 'onboarding pitch lead' },
   { id: 'chat.ask.pitch-bullets', file: 'blueai/worker_flow.jsx', line: 69, needle: "bullets: ['I only run a paid job after you say yes to that specific job.', 'You can pause, stop, or disconnect anytime.', 'I never see or type your password.']", value: 'onboarding pitch bullets' },
@@ -73,25 +73,25 @@ window.V2Refs = (window.V2Refs || []).concat([
   { id: 'chat.ask.retry-options', file: 'blueai/worker_flow.jsx', line: 125, needle: "options: [{ id: 'retry', label: 'Retry' }, { id: 'later', label: 'Not now' }]", value: 'Retry / Not now' },
 
   /* Composer (38) */
-  { id: 'chat.composer.padding', file: 'blueai/chat_product.jsx', line: 258, needle: "padding: '4px 16px 10px'", value: "composer block padding '4px 16px 10px'" },
-  { id: 'chat.composer.border', file: 'blueai/chat_product.jsx', line: 268, needle: "border: '1.5px solid ' + (isOnboarding ? '#60a5fa' : (composerFocused ? '#1990FF' : '#c7dcf5'))", value: 'border 1.5px #c7dcf5 at rest (1.40:1), #1990FF focused' },
-  { id: 'chat.composer.radius', file: 'blueai/chat_product.jsx', line: 268, needle: 'borderRadius: isOnboarding ? 18 : 14', value: 'radius 14 (18 signed out)' },
-  { id: 'chat.composer.ring', file: 'blueai/chat_product.jsx', line: 268, needle: "boxShadow: composerFocused ? '0 0 0 3px rgba(25,144,255,0.12)'", value: 'focus ring 0 0 0 3px rgba(25,144,255,0.12)' },
-  { id: 'chat.composer.autosize', file: 'blueai/chat_product.jsx', line: 78, needle: 'Math.min(ta.scrollHeight, 120)', value: 'auto-grow capped at 120px' },
-  { id: 'chat.composer.textarea', file: 'blueai/chat_product.jsx', line: 280, needle: "fontSize: 13.5, color: '#1f2937', padding: '4px 6px', lineHeight: 1.5", value: '13.5px / 1.5 #1f2937' },
-  { id: 'chat.composer.clip', file: 'blueai/chat_product.jsx', line: 280, needle: "maxHeight: 120, overflowY: 'hidden'", value: 'text past 120px is clipped, not scrolled' },
-  { id: 'chat.composer.enter', file: 'blueai/chat_product.jsx', line: 273, needle: 'if (e.key === \'Enter\' && !e.shiftKey) { e.preventDefault();', value: 'Enter sends, Shift+Enter is a new line' },
-  { id: 'chat.composer.placeholder-busy', file: 'blueai/chat_product.jsx', line: 274, needle: 'placeholder={running ? (awaiting ? \'Or type your answer…\' : \'BlueAI is working…\')', value: '\'Or type your answer…\' / \'BlueAI is working…\'' },
-  { id: 'chat.composer.placeholder-ooc', file: 'blueai/chat_product.jsx', line: 277, needle: "scheduledOoc ? 'BlueAI is out of credits until tomorrow...'", value: 'BlueAI is out of credits until tomorrow...' },
-  { id: 'chat.composer.placeholder-idle', file: 'blueai/chat_product.jsx', line: 279, needle: "'Ask anything, or run the BlueAI worker above' : 'Type your message...'", value: "'Ask anything, or run the BlueAI worker above' / 'Type your message...'" },
-  { id: 'chat.composer.ooc-guard', file: 'blueai/chat_product.jsx', line: 131, needle: 'if (zeroCredits) { if (onNoCredits) onNoCredits(); return; }', value: 'zero credits is revealed only after Send' },
-  { id: 'chat.composer.send', file: 'blueai/chat_product.jsx', line: 196, needle: 'background: busy ? \'#eef1f6\' : (draft.trim() ? \'#1990FF\' : \'#9ec9f5\')', value: 'Send #1990FF, disabled #9ec9f5, Stop #eef1f6' },
-  { id: 'chat.composer.send-size', file: 'blueai/chat_product.jsx', line: 196, needle: 'width: modeChip ? 32 : 34, height: modeChip ? 32 : 34', value: '34px round (32 with the Mode chip)' },
-  { id: 'chat.composer.stop-border', file: 'blueai/chat_product.jsx', line: 196, needle: 'border: busy ? \'1px solid #d6dce5\' : \'none\'', value: 'Stop border 1px #d6dce5' },
-  { id: 'chat.composer.hover', file: 'blueai/chat_product.jsx', line: 197, needle: "e.currentTarget.style.opacity = '0.85'", value: 'hover by opacity in onMouseEnter' },
-  { id: 'chat.composer.aria', file: 'blueai/chat_product.jsx', line: 195, needle: 'aria-label={busy ? \'Stop task\' : (typeOk ? \'Send answer\' : \'Send message\')}', value: '\'Stop task\' / \'Send answer\' / \'Send message\'' },
-  { id: 'chat.composer.stop-glyph', file: 'blueai/chat_product.jsx', line: 200, needle: 'rx="3" fill="#64748b"', value: 'stop square 13px #64748b' },
-  { id: 'chat.composer.stop', file: 'blueai/chat_product.jsx', line: 148, needle: 'const stop = () => {', value: 'Stop cancels pending steps at once, with no confirm' },
+  { id: 'chat.composer.padding', file: 'blueai/chat_product.jsx', line: 262, needle: "padding: '4px 16px 10px'", value: "composer block padding '4px 16px 10px'" },
+  { id: 'chat.composer.border', file: 'blueai/chat_product.jsx', line: 273, needle: "border: '1.5px solid ' + (isOnboarding ? '#60a5fa' : (composerFocused ? '#1990FF' : '#c7dcf5'))", value: 'border 1.5px #c7dcf5 at rest (1.40:1), #1990FF focused' },
+  { id: 'chat.composer.radius', file: 'blueai/chat_product.jsx', line: 273, needle: 'borderRadius: isOnboarding ? 18 : 14', value: 'radius 14 (18 signed out)' },
+  { id: 'chat.composer.ring', file: 'blueai/chat_product.jsx', line: 273, needle: "boxShadow: composerFocused ? '0 0 0 3px rgba(25,144,255,0.12)'", value: 'focus ring 0 0 0 3px rgba(25,144,255,0.12)' },
+  { id: 'chat.composer.autosize', file: 'blueai/chat_product.jsx', line: 82, needle: 'Math.min(ta.scrollHeight, 120)', value: 'auto-grow capped at 120px' },
+  { id: 'chat.composer.textarea', file: 'blueai/chat_product.jsx', line: 285, needle: "fontSize: 13.5, color: '#1f2937', padding: '4px 6px', lineHeight: 1.5", value: '13.5px / 1.5 #1f2937' },
+  { id: 'chat.composer.clip', file: 'blueai/chat_product.jsx', line: 285, needle: "maxHeight: 120, overflowY: 'hidden'", value: 'text past 120px is clipped, not scrolled' },
+  { id: 'chat.composer.enter', file: 'blueai/chat_product.jsx', line: 278, needle: 'if (e.key === \'Enter\' && !e.shiftKey) { e.preventDefault();', value: 'Enter sends, Shift+Enter is a new line' },
+  { id: 'chat.composer.placeholder-busy', file: 'blueai/chat_product.jsx', line: 279, needle: 'placeholder={running ? (awaiting ? \'Or type your answer…\' : \'BlueAI is working…\')', value: '\'Or type your answer…\' / \'BlueAI is working…\'' },
+  { id: 'chat.composer.placeholder-ooc', file: 'blueai/chat_product.jsx', line: 282, needle: "scheduledOoc ? 'BlueAI is out of credits until tomorrow...'", value: 'BlueAI is out of credits until tomorrow...' },
+  { id: 'chat.composer.placeholder-idle', file: 'blueai/chat_product.jsx', line: 284, needle: "'Ask anything, or run the BlueAI worker above' : 'Type your message...'", value: "'Ask anything, or run the BlueAI worker above' / 'Type your message...'" },
+  { id: 'chat.composer.ooc-guard', file: 'blueai/chat_product.jsx', line: 135, needle: 'if (zeroCredits) { if (onNoCredits) onNoCredits(); return; }', value: 'zero credits is revealed only after Send' },
+  { id: 'chat.composer.send', file: 'blueai/chat_product.jsx', line: 200, needle: 'background: busy ? \'#eef1f6\' : (draft.trim() ? \'#1990FF\' : \'#9ec9f5\')', value: 'Send #1990FF, disabled #9ec9f5, Stop #eef1f6' },
+  { id: 'chat.composer.send-size', file: 'blueai/chat_product.jsx', line: 200, needle: 'width: modeChip ? 32 : 34, height: modeChip ? 32 : 34', value: '34px round (32 with the Mode chip)' },
+  { id: 'chat.composer.stop-border', file: 'blueai/chat_product.jsx', line: 200, needle: 'border: busy ? \'1px solid #d6dce5\' : \'none\'', value: 'Stop border 1px #d6dce5' },
+  { id: 'chat.composer.hover', file: 'blueai/chat_product.jsx', line: 201, needle: "e.currentTarget.style.opacity = '0.85'", value: 'hover by opacity in onMouseEnter' },
+  { id: 'chat.composer.aria', file: 'blueai/chat_product.jsx', line: 199, needle: 'aria-label={busy ? \'Stop task\' : (typeOk ? \'Send answer\' : \'Send message\')}', value: '\'Stop task\' / \'Send answer\' / \'Send message\'' },
+  { id: 'chat.composer.stop-glyph', file: 'blueai/chat_product.jsx', line: 204, needle: 'rx="3" fill="#64748b"', value: 'stop square 13px #64748b' },
+  { id: 'chat.composer.stop', file: 'blueai/chat_product.jsx', line: 152, needle: 'const stop = () => {', value: 'Stop cancels pending steps at once, with no confirm' },
 
   /* Feedback (39) */
   { id: 'chat.feedback.button', file: 'blueai/chat_feedback.jsx', line: 171, needle: "width: 32, height: 32, borderRadius: '50%', border: '1px solid ' + (selected ? '#94a3b8' : '#e2e8f0')", value: '32px round, 1px #e2e8f0, selected #94a3b8' },
@@ -108,8 +108,8 @@ window.V2Refs = (window.V2Refs || []).concat([
   { id: 'chat.feedback.other-placeholder', file: 'blueai/chat_feedback.jsx', line: 92, needle: 'placeholder="Provide additional feedback"', value: 'Provide additional feedback' },
   { id: 'chat.feedback.submit', file: 'blueai/chat_feedback.jsx', line: 103, needle: 'aria-label="Submit feedback"', value: 'Submit feedback' },
   { id: 'chat.feedback.placements', file: 'blueai/chat_feedback.jsx', line: 145, needle: "if (placement === 'stamp') {", value: 'stamp and inside placements, unreachable in V2' },
-  { id: 'chat.feedback.success-only', file: 'blueai/chat_product.jsx', line: 157, needle: "if (step.tone !== 'success') return null; // PM config: success only (onFailed = false)", value: 'PM config: success outcomes only' },
-  { id: 'chat.feedback.placement', file: 'blueai/chat_product.jsx', line: 160, needle: "placement: 'below', withLabel: false", value: 'PM config: below the bubble, icons only' },
+  { id: 'chat.feedback.success-only', file: 'blueai/chat_product.jsx', line: 161, needle: "if (step.tone !== 'success') return null; // PM config: success only (onFailed = false)", value: 'PM config: success outcomes only' },
+  { id: 'chat.feedback.placement', file: 'blueai/chat_product.jsx', line: 164, needle: "placement: 'below', withLabel: false", value: 'PM config: below the bubble, icons only' },
 
   /* Dependency card (40) */
   { id: 'chat.dependency.ungated', file: 'blueai/needs_bluestacks.jsx', line: 40, needle: "const CATEGORY_ALWAYS = { 'Game Helpers': 'the game' };", value: 'only app-named tasks and Game Helpers are gated; the worker never is' },

@@ -1,19 +1,19 @@
 /* Refs owned by the screens-core slice (sections 57 to 60). Format: guide/refs/README.md. */
 window.V2Refs = (window.V2Refs || []).concat([
   /* 57 Home: V2's home is the chat's pre-conversation view (greeting + worker card). */
-  { id: 'screens-core.home.greeting-gate', file: 'chat_product.jsx', line: 212, needle: '{!started &&', value: 'the greeting shows only before a conversation starts' },
-  { id: 'screens-core.home.greeting-title', file: 'chat_product.jsx', line: 214, needle: "title={sessionMode === 'moneymaker' && !isOnboarding ? 'Hi, Alex ", value: "greeting 'Hi, Alex' with a waving-hand emoji" },
-  { id: 'screens-core.home.first-line', file: 'chat_product.jsx', line: 221, needle: "You're all set. The BlueAI worker is all it takes to start earning.", value: "You're all set. The BlueAI worker is all it takes to start earning." },
-  { id: 'screens-core.home.skeleton', file: 'chat_product.jsx', line: 230, needle: 'loading ? <window.HomeSkeleton />', value: 'cold-start skeleton: the old five-card ProductHome list' },
+  { id: 'screens-core.home.greeting-gate', file: 'chat_product.jsx', line: 216, needle: '{!started &&', value: 'the greeting shows only before a conversation starts' },
+  { id: 'screens-core.home.greeting-title', file: 'chat_product.jsx', line: 218, needle: "title={sessionMode === 'moneymaker' && !isOnboarding ? 'Hi, Alex ", value: "greeting 'Hi, Alex' with a waving-hand emoji" },
+  { id: 'screens-core.home.first-line', file: 'chat_product.jsx', line: 225, needle: "You're all set. The BlueAI worker is all it takes to start earning.", value: "You're all set. The BlueAI worker is all it takes to start earning." },
+  { id: 'screens-core.home.skeleton', file: 'chat_product.jsx', line: 234, needle: 'loading ? <window.HomeSkeleton />', value: 'cold-start skeleton: the old five-card ProductHome list' },
   { id: 'screens-core.home.component', file: 'moneymaker_home.jsx', line: 101, needle: 'function MoneyMakerHome({ onRun })', value: 'the worker home: one card, one Run' },
   { id: 'screens-core.home.coach-local', file: 'moneymaker_home.jsx', line: 106, needle: 'const [coaching, setCoaching] = useState(!back);', value: 'coach dismissal kept in local state' },
   { id: 'screens-core.home.scrim', file: 'moneymaker_home.jsx', line: 118, needle: "background: 'rgba(11,18,32,0.52)'", value: 'coach scrim rgba(11,18,32,0.52)' },
   { id: 'screens-core.home.card-title', file: 'moneymaker_home.jsx', line: 137, needle: '>BlueAI worker</p>', value: 'BlueAI worker' },
 
   /* 57 Chat (reached from Home). */
-  { id: 'screens-core.chat.new-chat', file: 'index.html', line: 344, needle: '<button onClick={onNewChat}', value: 'New Chat: the filled pill in the top bar' },
-  { id: 'screens-core.chat.new-chat-label', file: 'index.html', line: 349, needle: 'New Chat', value: 'New Chat' },
-  { id: 'screens-core.chat.mounted-as-tab', file: 'index.html', line: 955, needle: ') : isChat ? (', value: 'the chat (and the run in it) exists only while its tab is open' },
+  { id: 'screens-core.chat.new-chat', file: 'index.html', line: 345, needle: '<button onClick={onNewChat}', value: 'New Chat: the filled pill in the top bar' },
+  { id: 'screens-core.chat.new-chat-label', file: 'index.html', line: 350, needle: 'New Chat', value: 'New Chat' },
+  { id: 'screens-core.chat.mounted-as-tab', file: 'index.html', line: 956, needle: ') : isChat ? (', value: 'the chat (and the run in it) exists only while its tab is open' },
   { id: 'screens-core.chat.scheduled-start', file: 'worker_flow.jsx', line: 100, needle: "say('Scheduled run started.', 600)", value: 'Scheduled run started.' },
   { id: 'screens-core.chat.job-label', file: 'worker_flow.jsx', line: 52, needle: "label: 'Paid job available'", value: 'Paid job available' },
   { id: 'screens-core.chat.job-title', file: 'worker_flow.jsx', line: 53, needle: "title: 'Watch the video and provide feedback'", value: 'Watch the video and provide feedback' },
@@ -34,7 +34,7 @@ window.V2Refs = (window.V2Refs || []).concat([
   { id: 'screens-core.ledger.declined', file: 'worker_day_done.jsx', line: 70, needle: "sub: 'Today doesn’t count toward your 20 days.'", value: 'Today doesn’t count toward your 20 days.' },
 
   /* 59 Run detail: the run exists only as chat steps. */
-  { id: 'screens-core.run.render-step', file: 'chat_product.jsx', line: 166, needle: 'const renderStep = (step, i) => {', value: 'each run step is a chat bubble' },
+  { id: 'screens-core.run.render-step', file: 'chat_product.jsx', line: 170, needle: 'const renderStep = (step, i) => {', value: 'each run step is a chat bubble' },
   { id: 'screens-core.run.open-steps', file: 'worker_flow.jsx', line: 128, needle: "say('Opening the job’s video on YouTube…', 1000)", value: 'Opening the job’s video on YouTube…' },
   { id: 'screens-core.run.like-step', file: 'worker_flow.jsx', line: 133, needle: "say('Liking the video…')", value: 'Liking the video…' },
   { id: 'screens-core.run.comment-step', file: 'worker_flow.jsx', line: 134, needle: "say('Leaving a comment…', 1000)", value: 'Leaving a comment… (the comment itself is never shown)' },
@@ -52,6 +52,6 @@ window.V2Refs = (window.V2Refs || []).concat([
   { id: 'screens-core.notif.job-title', file: 'worker_day_done.jsx', line: 143, needle: 'job:    { title: \'Today’s run is done.\'', value: 'Today’s run is done.' },
   { id: 'screens-core.notif.nojob-title', file: 'worker_day_done.jsx', line: 144, needle: "title: 'Your run counts today.'", value: 'Your run counts today.' },
   { id: 'screens-core.notif.failed', file: 'worker_day_done.jsx', line: 146, needle: "failed: { title: 'Today’s job didn’t finish.', body: 'Open BlueAI to retry and count the day.' }", value: 'Today’s job didn’t finish. / Open BlueAI to retry and count the day.' },
-  { id: 'screens-core.notif.taskbar', file: 'chat_product.jsx', line: 96, needle: "An unanswered job ask lights up BlueAI's taskbar button", value: 'a waiting job only flashes the taskbar button' },
-  { id: 'screens-core.notif.taskbar-delay', file: 'chat_product.jsx', line: 104, needle: 'setTimeout(() => onJobWaiting(true), 4000)', value: 'after 4 s, with no expiry' },
+  { id: 'screens-core.notif.taskbar', file: 'chat_product.jsx', line: 100, needle: "An unanswered job ask lights up BlueAI's taskbar button", value: 'a waiting job only flashes the taskbar button' },
+  { id: 'screens-core.notif.taskbar-delay', file: 'chat_product.jsx', line: 108, needle: 'setTimeout(() => onJobWaiting(true), 4000)', value: 'after 4 s, with no expiry' },
 ]);
