@@ -27,9 +27,9 @@
     const fmt = function (n) { return n.toLocaleString('en-US'); };
     return (
       <G.Section id="credits-balance">
-        <G.Note>V3 restyle (2026-10-14): the credits glyph is V2's own drawing shown as an image beside the ink figure; big figures take --v2-tracking-figure (-0.045em).</G.Note>
+        <G.Note>V3 restyle (2026-10-14): the credits glyph is the neutral spark (the logo's path) in ink-3 beside the ink figure; the V2 today look keeps V2's gradient star through two look hooks. The chip is plain text, no outline. Big figures take --v2-tracking-figure (-0.045em).</G.Note>
         <G.Part name="CreditsChip" status="changed"
-          role="The top bar's quiet allowance status. Number in ink; a dot only when today's run is short. Opens AI credits.">
+          role="The top bar's first item on the left: plain text, the neutral spark and the number in ink; a dot only when today's run is short. Opens AI credits.">
           <G.StateGrid states={[
             { label: 'Full', node: chip() },
             { label: 'Low', note: 'less than one run (' + c.runCost + ')', node: chip({ balance: 120 }) },
@@ -46,24 +46,24 @@
             changed={'V2 wraps a white capsule in a 1.5px brand-gradient ring and paints the 13/700 number in the same gradient, '
               + 'three gradients in one 419px bar. It is a div acting as a button with no hover or focus. Its red dot fires under '
               + '1,000 against a balance that is only ever 0 or 2,000, so it can only mean empty, and on your own key it still '
-              + 'shows 2,000 with nothing saying credits are paused. The system keeps the gradient on the glyph only, sets the '
-              + 'number in ink 13/500 tabular on a 1px line, makes low mean "less than one run", says "Own key" when paused, '
+              + 'shows 2,000 with nothing saying credits are paused. The system drops the gradient and the outline (the neutral spark, '
+              + 'the number in ink 13/500 tabular, plain text), makes low mean "less than one run", says "Own key" when paused, '
               + 'and is a real button with a 32px hit area and the focus ring.'} />
           <G.DoDont
             do={['Show the number in ink and let the dot carry low and empty.', 'Derive low from the Worker record: less than one run (credits.runCost).', 'Open AI credits (section 66) on click, Enter or Space.']}
-            dont={['Paint the number, ring or fill with the brand gradient.', 'Use a raw threshold such as 1,000.', 'Keep showing a balance while your own key is in use.']} />
+            dont={['Outline the chip, or paint the number or glyph with the brand gradient.', 'Use a raw threshold such as 1,000.', 'Keep showing a balance while your own key is in use.']} />
           <G.SpecDrawer rows={[
-            { part: 'Pill height', token: '--v2-control-sm', value: '28px', ref: 'credits-settings.pill.inner' },
+            { part: 'Wash pill', token: '--v2-control-sm', value: '28px, drawn only on hover and press', ref: 'credits-settings.pill.inner' },
             { part: 'Hit area', token: '--v2-hit-min', value: '32px, a real <button>', ref: 'credits-settings.pill.label' },
-            { part: 'Edge', token: '--v2-line', value: '1px rgba(0,0,0,0.10)', ref: 'credits-settings.pill.ring' },
-            { part: 'Fill', token: '--v2-surface', value: '#ffffff', ref: 'credits-settings.pill.inner' },
+            { part: 'Edge', token: null, value: 'none: plain text (2026-10-14)', ref: 'credits-settings.pill.ring' },
+            { part: 'Fill', token: null, value: 'none: the bar shows through', ref: 'credits-settings.pill.inner' },
             { part: 'Radius', token: '--v2-radius-pill', value: '999px', ref: 'credits-settings.pill.ring' },
-            { part: 'Glyph', token: '--v2-gradient-brand', value: 'credits icon 16px, assets/Credits.svg as an image', ref: 'credits-settings.pill.glyph' },
+            { part: 'Glyph', token: '--v2-ink-3, --v2-credits-spark-display', value: 'credits icon 16px: the neutral spark (V2 today: its gradient star, assets/Credits.svg)', ref: 'credits-settings.pill.glyph' },
             { part: 'Number', token: '--v2-text-13, --v2-weight-medium, --v2-ink', value: '13/500 #0b0b0d, tabular', ref: 'credits-settings.pill.number' },
             { part: 'Low rule', token: null, value: 'balance < runCost (' + c.runCost + ', Worker record)', ref: 'credits-settings.grant.low-dot' },
             { part: 'Low dot', token: '--v2-attention-ink', value: '8px #8a6116, 2px surface ring' },
             { part: 'Empty dot', token: '--v2-ink-3', value: '8px #5f636b, 2px surface ring (V2: red)', ref: 'credits-settings.pill.dot' },
-            { part: 'Hover', token: '--v2-line-hover, --v2-wash-hover', value: 'edge 20%, wash 4.5%' },
+            { part: 'Hover', token: '--v2-wash-hover', value: 'wash 4.5% on the 28px pill' },
             { part: 'Focus', token: '--v2-focus-outline', value: '2px #156efe, offset 2' },
             { part: 'V2 states', token: null, value: '?start=worker (2,000), ?start=worker&credits=0 (0 + dot)', ref: ['credits-settings.url.start-worker', 'credits-settings.url.credits-zero'] },
           ]} />

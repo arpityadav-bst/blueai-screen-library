@@ -1,10 +1,11 @@
 /* BlueAI Product V2 Design System: AI credits as the worker's daily allowance (section 47).
 
    CreditsChip    {balance, state?, runCost?, onClick, className}
-                  The quiet top-bar chip that opens AI credits. state is 'full' | 'low' | 'empty' |
-                  'paused' (running on the partner's own key); when absent it is derived from
-                  balance and runCost (low = less than one run needs). Number in ink, a dot only when
-                  today's run is short. Visible pill 28px inside a 32px hit area.
+                  The top bar's credits, first on the left, opening AI credits. state is 'full' |
+                  'low' | 'empty' | 'paused' (running on the partner's own key); when absent it is
+                  derived from balance and runCost (low = less than one run needs). Plain text
+                  (2026-10-14): the neutral spark, the number in ink 500, a dot only when today's run
+                  is short; no outline, a 28px wash on hover inside a 32px hit area.
    CreditsMeter   {balance, grant, runCost, refillAt?, now?, runDone?, refreshed?, dayStatus?, figure?,
                   className}
                   role=meter rail, '1,250 of 2,000 left today', 'Refreshes in 6h 42m', and one line

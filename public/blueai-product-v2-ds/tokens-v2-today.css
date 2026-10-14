@@ -79,6 +79,8 @@
   --v2-waiting-fill: var(--v2-attention-tint); /* needs-input yellow fill (chat_bubbles.jsx:89, worker_cards.jsx:19) */
   --v2-waiting-line: var(--v2-attention-line); /* needs-input pale yellow edge (chat_bubbles.jsx:89) */
   --v2-brand-word-fill: var(--v2-gradient-brand); /* gradient wordmark (index.html:326) */
+  --v2-credits-spark-display: none; /* V2 has no spark: its credits glyph is the star */
+  --v2-credits-star-display: block; /* V2's gradient credits star (index.html:345, assets/Credits.svg) */
   --v2-nav-selected-fill: #eef2ff; /* active tab pill (shared.jsx:305) */
   --v2-nav-selected-ink: #4f46e5; /* active tab label and icon (shared.jsx:305) */
   --v2-nav-indicator: transparent; /* V2 marks the tab with the pill only, no bar (shared.jsx:305) */

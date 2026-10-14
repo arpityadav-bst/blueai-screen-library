@@ -54,7 +54,7 @@
 
   // ---- card pieces (live CreditsOverlay values)
   const gradText = { background: GRAD, WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent' };
-  const CreditsIcon = ({ size = 44 }) => <img src="assets/Credits.svg" alt="" style={{ width: size, height: size, flexShrink: 0 }} />;
+  const CreditsIcon = ({ size = 44 }) => <span className="v3-cr-ink" aria-hidden="true"><window.V2Kit.Icon name="credits" size={size} /></span>;
   const ClockIcon = ({ size = 40 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       <defs><linearGradient id="cpo-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#0EA4C5" /><stop offset="1" stopColor="#7B4CFF" /></linearGradient></defs>

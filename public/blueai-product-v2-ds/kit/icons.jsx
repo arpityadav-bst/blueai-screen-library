@@ -10,8 +10,9 @@
    the icon sits next to text that already says it), inline (sits on the text baseline),
    className. Colour is always currentColor: set `color` on the parent, never on the icon.
    Geometry: 24-unit grid, round caps and joins, stroke renders 1.75px at every size (kit/base.css
-   .v2-icon). spark is the one filled glyph (onBlue's mark, onblue/index.html:327-329); credits is
-   the one painted glyph: V2's own star (assets/Credits.svg) as an image, its gradient inside the file.
+   .v2-icon). spark is the one filled glyph (onBlue's mark, onblue/index.html:327-329, the same path
+   as V3's BlueAILogo). credits is that spark in ink-3 in Target (2026-10-14); the V2 today look
+   keeps V2's own star (assets/Credits.svg, its gradient inside the file) through two look hooks.
    youtube and instagram keep V2's own stroke drawings (agent_permissions.jsx:41-42), and
    shield-check / zap keep V2's mode glyphs (agent_permissions.jsx:39-40) so Always ask and
    Automatic look the same as in V2. An unknown name renders an empty box and warns once. */
@@ -90,8 +91,8 @@
     bluestacks: 'monitor', 'app-player': 'monitor', offline: 'wifi-off',
   };
 
-  // V2's credits star, V2's own drawing (assets/Credits.svg, its gradient inside the file), shown as
-  // an image beside an ink figure.
+  // The credits glyph holds both drawings; the look hooks (--v2-credits-spark-display,
+  // --v2-credits-star-display) show one: the neutral spark in Target, V2's star in the V2 today look.
   const CREDITS_SRC = 'assets/Credits.svg';
 
   const SIZES = [16, 20, 24];
@@ -104,7 +105,12 @@
     const a11y = label ? { role: 'img', 'aria-label': label } : { 'aria-hidden': true };
     const cls = cx('v2-icon', s !== 16 && 'v2-icon--' + s, inline && 'v2-icon--inline', className);
     if (key === 'credits') {
-      return <img className={cx(cls, 'v2-icon--credits')} src={CREDITS_SRC} alt={label || ''} aria-hidden={label ? undefined : true} draggable="false" />;
+      return (
+        <span className={cx(cls, 'v2-icon--credits')} {...a11y}>
+          <svg className="v2-icon-credits-spark" viewBox="0 0 24 24" focusable="false" fill="currentColor" stroke="none">{GLYPHS.spark}</svg>
+          <img className="v2-icon-credits-star" src={CREDITS_SRC} alt="" draggable="false" />
+        </span>
+      );
     }
     const glyph = GLYPHS[key];
     if (!glyph) {

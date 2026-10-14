@@ -1,22 +1,26 @@
 /* BlueAI Product V2 Design System: the top bar (section 30).
-   TopBar            52 tall: BrandMark left; WorkerStatusChip, credits and one More menu right.
-                     Props: signedIn, status (a WorkerStatusChip status) or null, statusLabel,
-                     credits (number, or { balance, state } for V2Kit.CreditsChip), onOpenStatus,
-                     onOpenCredits, moreItems (Menu items; default: topBarMenus(onAction).more),
-                     onAction(id) for the default items, openMenu ('more'; 'help' opens it too:
-                     guide specimens). FAQ and Report a problem sit in More, above the separator
-                     (they are Settings > Help's too), so the bar keeps one 32px icon button and the
-                     run chip's label gets the width a second menu took.
+   TopBar            52 tall, not worker-centric (2026-10-14: people also use BlueAI for plain chat).
+                     Signed in: left, the credits (V2Kit.CreditsChip, plain text) and, only while the
+                     worker is live or needs attention (HEADER_STATUS: running, needs-you, failed), a
+                     WorkerStatusChip right after them; right, New chat (IconButton 32, 'edit') and one
+                     More menu. Quiet states (scheduled, pending, verified, not set up) stay on Home.
+                     Signed out: BrandMark only. The brand is the window's title bar's when there is one.
+                     Props: signedIn, status (a RUN_STATUS key; shown only if in HEADER_STATUS),
+                     statusLabel, credits (number, or { balance, state } for V2Kit.CreditsChip),
+                     onOpenStatus, onOpenCredits, onNewChat, moreItems (Menu items; default:
+                     topBarMenus(onAction).more), onAction(id) for the default items and New chat
+                     ('new-chat') when onNewChat is absent, openMenu ('more'; 'help' opens it too:
+                     guide specimens). FAQ and Report a problem sit in More, above the separator.
    WorkerStatusChip  today's run, said once in the chrome. Props: status (a RUN_STATUS key), label,
-                     onClick, className. Opens today's run. Renders nothing for any other status
-                     (signed out). 'done' is read as 'pending': a finished day is pending until
-                     verified, so only 'verified' is ever green.
+                     onClick, className. Renders nothing for any other status (signed out). 'done'
+                     is read as 'pending': a finished day is pending until verified, so only
+                     'verified' is ever green.
    RUN_STATUS        { status: [chip label, tray line] }: the one set of words the chip and the
                      tray menu (section 29) share. Callers pass the real time or count as the label.
+   HEADER_STATUS     the statuses the top bar shows: live (running) or needing attention.
    BrandMark         the BlueAI mark, with or without the wordmark. Props: size (24 | 48), wordmark.
    topBarMenus(onAction)  { more }: the default More items (SITE_FAQ_URL, EARNINGS_URL from the
-                     Worker record, kit/worker-data.jsx).
-   New chat is not here: it lives in the chat screen's own header (section 32). */
+                     Worker record, kit/worker-data.jsx). */
 (function () {
   function cx() { return Array.prototype.filter.call(arguments, Boolean).join(' '); }
   const K = function () { return window.V2Kit; };
@@ -37,7 +41,7 @@
      finish.'). The dot says the tone (shell.css); the words always say the state. */
   const RUN_STATUS = {
     scheduled: ['Scheduled', 'Next run 11 am'],
-    running: ['Running', 'Running. Leave App Player open until it’s done'],
+    running: ['Running…', 'Running. Leave App Player open until it’s done'],
     'needs-you': ['Needs you', 'A paid job needs your OK by 9 pm'],
     pending: ['Done, pending', 'Done today, pending verification'],
     'not-counted': ['Not counted today', 'Today doesn’t count toward your 20 days'],
@@ -94,17 +98,24 @@
     return <P.Menu items={items} align="end" placement="down" label={label} trigger={trigger} defaultOpen={!!open} />;
   }
 
-  function TopBar({ signedIn, status, statusLabel, credits, onOpenStatus, onOpenCredits, moreItems, onAction, openMenu }) {
+  const HEADER_STATUS = ['running', 'needs-you', 'failed'];
+
+  function TopBar({ signedIn, status, statusLabel, credits, onOpenStatus, onOpenCredits, onNewChat, moreItems, onAction, openMenu }) {
     const P = K();
     const menus = topBarMenus(onAction);
     const c = credits && typeof credits === 'object' ? credits : { balance: credits };
+    const newChat = onNewChat || function () { if (onAction) onAction('new-chat'); };
     return (
       <header className={cx('v2-topbar', !signedIn && 'v2-topbar--signed-out')}>
-        <BrandMark size={24} />
+        {signedIn ? (
+          <div className="v2-topbar-lead">
+            {credits != null ? <P.CreditsChip balance={c.balance} state={c.state} onClick={onOpenCredits} /> : null}
+            {HEADER_STATUS.indexOf(runStatus(status)) >= 0 ? <WorkerStatusChip status={status} label={statusLabel} onClick={onOpenStatus} /> : null}
+          </div>
+        ) : <BrandMark size={24} />}
         {signedIn ? (
           <div className="v2-topbar-actions">
-            {status ? <WorkerStatusChip status={status} label={statusLabel} onClick={onOpenStatus} /> : null}
-            {credits != null ? <P.CreditsChip balance={c.balance} state={c.state} onClick={onOpenCredits} /> : null}
+            <P.IconButton icon="edit" label="New chat" size={32} onClick={newChat} />
             <BarMenu icon="more" label="More" items={moreItems || menus.more} open={openMenu === 'more' || openMenu === 'help'} />
           </div>
         ) : null}
@@ -112,5 +123,5 @@
     );
   }
 
-  Object.assign(window.V2Kit = window.V2Kit || {}, { TopBar, WorkerStatusChip, BrandMark, topBarMenus, RUN_STATUS });
+  Object.assign(window.V2Kit = window.V2Kit || {}, { TopBar, WorkerStatusChip, BrandMark, topBarMenus, RUN_STATUS, HEADER_STATUS });
 })();

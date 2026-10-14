@@ -78,17 +78,15 @@
   --v2-attention-line: rgba(138,97,22,0.32); /* edge of attention surfaces and of a run waiting on you: the attention ink at 32%, like the success and danger lines (the V3 restyle, 2026-10-14; was #f3e8a8). Absorbs #f3e8a8, #fed7aa, #fde68a */
   --v2-attention-ink: #8a6116; /* text and icon on attention (5.07:1). Absorbs #8a6116, #9a3412, #7c2d12, #c2410c, #946612, #92722a, link #f59e0b (login.jsx:242, 2.15:1) */
 
-  /* Brand. Role: Identity, not action. Fenced to the credits glyph's own drawing (the V3 restyle, 2026-10-14).
+  /* Brand. Role: Identity, not action. Target paints nothing with it since 2026-10-14 (the credits glyph is the neutral spark); the V2 today look keeps it in V2's star and wordmark.
      onBlue: not shared: the site's mark is the spark in #156efe; which mark the family uses is decision D8.
      Why: The gradient appears three times in one 419px top bar today (wordmark, pill ring, pill number, index.html:326-337). As identity it stays; as a UI fill, ring, bubble or border it goes. */
-  --v2-gradient-brand: linear-gradient(90deg, #0EA4C5, #7B4CFF); /* the credits glyph's stops only: the glyph is V2's own drawing (assets/Credits.svg) shown as an image beside an ink figure, never text, a mask fill, a ring or a wordmark (Target paints nothing with it; the V2 today wordmark reads it through --v2-brand-word-fill). Absorbs 135deg / 270deg / to-bottom-right variants (index.html:430, credits_popup_parts.jsx:15, moneymaker.jsx:154), cousins #22ACE0 (login.jsx:174), #A855F7 (login.jsx:160), #1A90FF/#6b53ff (moneymaker.jsx:184), #2f6fed (profile.jsx:31), user bubble #5158ee to #7b4cff (chat_bubbles.jsx:30) */
+  --v2-gradient-brand: linear-gradient(90deg, #0EA4C5, #7B4CFF); /* V2's own stops: in the V2 today look they live in V2's credits star (assets/Credits.svg, an image, through --v2-credits-star-display) and its wordmark (--v2-brand-word-fill); Target paints nothing with them (2026-10-14: the credits glyph is the neutral spark in ink-3), never text, a mask fill or a ring. Absorbs 135deg / 270deg / to-bottom-right variants (index.html:430, credits_popup_parts.jsx:15, moneymaker.jsx:154), cousins #22ACE0 (login.jsx:174), #A855F7 (login.jsx:160), #1A90FF/#6b53ff (moneymaker.jsx:184), #2f6fed (profile.jsx:31), user bubble #5158ee to #7b4cff (chat_bubbles.jsx:30) */
   --v2-em-glow: 0 0 26px rgba(90,195,255,0.18); /* the serif em's soft glow (text-shadow), the logo spark's glow at title size (review round 1, 2026-10-14). Absorbs the site's title em glow */
   --v2-mark-glow: rgba(90,195,255,0.18); /* the spark mark's drop-shadow colour (the logo); its radius scales with the mark (review round 2, 2026-10-14). Absorbs the site's --mark-shadow (onblue/onblue.css .logo-mark) */
 
-  /* Look hooks. Role: Parts the two looks draw differently, so tokens-v2-today.css can restore V2 where
-     a Target value would otherwise sit in a kit rule. Target values equal the rule's own recipe. Why: a
-     re-value alone could not bring V2 back (a gradient bubble, an indigo nav pill, a lifted nav, the white
-     secondary and danger buttons, the red confirm, the grey switch, the boxed purple empty state, the slate chips). */
+  /* Look hooks. Role: Parts the two looks draw differently, so tokens-v2-today.css can restore V2 where a Target value would otherwise sit in a kit rule. Target values equal the rule's own recipe.
+     Why: a re-value alone could not bring V2 back (a gradient bubble, an indigo nav pill, a lifted nav, the white secondary and danger buttons, the red confirm, the grey switch, the boxed purple empty state, the slate chips, the gradient credits star). */
   --v2-bubble-user-fill: var(--v2-surface-sunken); /* user bubble fill: the grey surface, not a blue tint (the V3 restyle, 2026-10-14; V2 today: the indigo gradient) */
   --v2-bubble-user-line: var(--v2-line-hair); /* user bubble edge: the hairline */
   --v2-bubble-user-ink: var(--v2-ink); /* user bubble text: ink on the tint */
@@ -100,6 +98,8 @@
   --v2-waiting-fill: var(--v2-attention-tint); /* a message waiting on you (needs-input notice, a pending AskCard): the attention tint, so a question that holds the run reads before its words (V3 review round 1, 2026-10-14: the surface alone did not); it settles to the surface once answered */
   --v2-waiting-line: var(--v2-attention-ink); /* the edge of a message waiting on you: the attention ink itself (the 32% line was too faint on the tint). Added in V3 review round 1, 2026-10-14; V2 today: its pale yellow edge */
   --v2-brand-word-fill: var(--v2-ink); /* the BrandMark word: ink (the V3 restyle, 2026-10-14; V2 today: the brand gradient through the text) */
+  --v2-credits-spark-display: block; /* the credits glyph's spark (Icon 'credits'): shown in Target, in ink-3 (2026-10-14; V2 today: hidden) */
+  --v2-credits-star-display: none; /* V2's gradient star (assets/Credits.svg) in the credits glyph: hidden in Target (V2 today: shown) */
   --v2-button-secondary-fill: var(--v2-surface-panel); /* secondary (ghost) button fill (V2 today: white) */
   --v2-button-secondary-line: var(--v2-line-strong); /* secondary button edge */
   --v2-button-secondary-ink: var(--v2-ink); /* secondary button label */

@@ -1847,33 +1847,35 @@ Any icon can replace the default (Automatic uses `zap`).
 
 **Why:** The partner opens BlueAI to check one thing: did today's run happen, and does the day count. V2's header gives its loudest slot, the only filled control in the chrome, to a "New Chat" pill (index.html:351) and shows the run nowhere; it runs the brand gradient three times in 419px (index.html:335, 342, 346); and two of its six menu rows do nothing (index.html:364-365).
 
-**V3 restyle (2026-10-14).** The BrandMark word is ink in Target (`--v2-brand-word-fill`): the brand gradient is fenced to the credits glyph. The V2 today look keeps its gradient word.
+**V3 restyle (2026-10-14).** The BrandMark word is ink in Target (`--v2-brand-word-fill`). The V2 today look keeps its gradient word.
+
+**Not worker-centric (2026-10-14, Appy).** People also use BlueAI for plain chat with no worker, so the bar leads with what every user has: the credits, plain text, on the left. The worker shows only when it is live or needs attention, as one WorkerStatusChip right after the credits: Running… (blue dot), Needs you (attention), Didn’t finish (danger). Quiet states (the next run, a day that is in or verified, set up the worker) stay on Home. With nothing happening the left shows only the credits. New chat is back in the bar as an icon button, right, before Help and More.
 
 ### TopBar (Changed from V2)
 
-**Purpose.** Brand, today's run, credits, help and the account doors, on every signed-in screen.
+**Purpose.** Credits, a new chat, help and the account doors on every signed-in screen, and the worker only when it is live or needs the partner.
 
-**Anatomy.** Left: BrandMark (logo 24 + wordmark). Right, in reading order: WorkerStatusChip, credits chip (section 47), Help (IconButton 32, `help`), More (IconButton 32, `more`). New chat is not here: it is a trailing IconButton in the chat screen's header (section 32).
+**Anatomy.** Left: the credits (CreditsChip, section 47: the neutral spark, the number in ink, no outline), then a WorkerStatusChip only for `HEADER_STATUS` (running, needs-you, failed). Right, in reading order: New chat (IconButton 32, `edit`, tooltip "New chat"), Help (IconButton 32, `help`), More (IconButton 32, `more`). No brand: the window's title bar carries it (section 29). The kit's TopBar folds Help into More; V3 keeps both.
 
-**Variants.** Signed out (brand only). Signed in.
+**Variants.** Signed out (BrandMark only in the kit; empty in V3). Signed in, nothing happening (credits only on the left). Signed in, worker live or needing attention (credits + chip).
 
-**Sizes.** 52 tall (`--v2-topbar-h`). Padding 0 12 0 16: the brand sits on the 16 gutter; the right edge is 12 because the icon buttons carry a 6px inset. Gap 8 between chips, 2 between the two icon buttons. Surface, 1px `--v2-line` bottom, no shadow. Layer `--v2-z-header` (20). The longest status labels are "Next run 9 am to 8 pm" (a run window) and "Waiting for credits"; the bar must fit 419 with them (Responsive says what gives if it does not).
+**Sizes.** 52 tall (`--v2-topbar-h`). Padding 0 12 0 16; the lead pulls left 8 (the credits' wash padding) so the spark sits on the 16 gutter; the right edge is 12 because the icon buttons carry a 6px inset. Gap 4 between the credits and the chip, 2 between the icon buttons. Surface, 1px `--v2-line` bottom, no shadow. Layer `--v2-z-header` (20). The longest header label is "Didn’t finish" beside 4-digit credits; the bar must fit 419 with it (Responsive says what gives if it does not).
 
-**States.** Signed out: V2 bare URL then Sign in. Signed in: V2 `?start=worker`. Menu open: click Help or More (V2 has no keyboard path).
+**States.** Signed out: V2 bare URL then Sign in. Signed in: V2 `?start=worker`. Menu open: click Help or More (V2 has no keyboard path). V3: credits only at rest (`?start=worker`); Running… while a worker run plays (`?day=next`); Needs you while the job or retry question waits (same link, at the job ask); Didn’t finish once today's run failed (`?end=failed`): it opens that run's chat, or Retry when the chat no longer holds it; out of credits shows as the credits' danger dot (`?credits=0`), not a chip.
 
-**Props.** `TopBar { signedIn, status, statusLabel, credits (number or { balance, state }), onOpenStatus, onOpenCredits, helpItems, moreItems, onAction(id), openMenu }`. Default items come from `topBarMenus(onAction)`; `openMenu` ('help' | 'more') is for guide specimens.
+**Props.** `TopBar { signedIn, status, statusLabel, credits (number or { balance, state }), onOpenStatus, onOpenCredits, onNewChat, moreItems, onAction(id), openMenu }`. A status outside `HEADER_STATUS` is not drawn. Default items come from `topBarMenus(onAction)`; New chat calls `onAction('new-chat')` when `onNewChat` is absent; `openMenu` ('help' | 'more') is for guide specimens.
 
 **Motion.** None on the bar; chips and buttons change colour over `--v2-dur-1`.
 
-**Accessibility.** The bar is a `<header>`. Each icon button has a label ("Help", "More"); its button stays lit while its menu is open (`aria-expanded`). Tab order follows reading order.
+**Accessibility.** The bar is a `<header>`. Each icon button has a label ("New chat", "Help", "More"), and New chat shows it as a tooltip; its button stays lit while its menu is open (`aria-expanded`). Tab order follows reading order.
 
-**Responsive.** One width. The WorkerStatusChip label is the one part that gives: it shrinks and ends in an ellipsis, and its full words stay in the accessible name. Brand, credits, Help and More never shrink or move out, so More (the way to Account and Sign out) is always reachable.
+**Responsive.** One width. The WorkerStatusChip label is the one part that gives: it shrinks and ends in an ellipsis, and its full words stay in the accessible name. Credits, New chat, Help and More never shrink or move out, so More (the way to Account and Sign out) is always reachable.
 
-**Do / Don't.** Do keep one status chip and one credits chip. Don't add a filled button to the bar. Don't add a second gradient. Don't show the right cluster when signed out.
+**Do / Don't.** Do lead with the credits; show the worker only while it is live or needs the partner. Don't put a quiet state (next run, day in, verified, set up) in the bar: Home says those. Don't outline the credits or add a filled button. Don't paint anything in the bar with the gradient. Don't show the clusters when signed out.
 
 ### WorkerStatusChip (New)
 
-**Purpose.** Today's run in one glance, on every screen; clicking it opens where the partner can act.
+**Purpose.** Today's run in one glance, on every screen; clicking it opens where the partner can act. In the top bar only `HEADER_STATUS` shows (running, needs-you, failed); the full set below is for the tray (section 29), Home and specimens.
 
 **Anatomy.** Pill button: an 8px dot in the status tone, a 13/500 label, and visually hidden "Today’s run: " before the label.
 
@@ -1884,7 +1886,7 @@ Every `RUN_STATUS` key (`kit/topbar.jsx:35-50`), its chip label, its tray line (
 | Status | Chip label | Tray line | Worker record (`workerState`) | Opens |
 |---|---|---|---|---|
 | scheduled | Next run 11 am; Next run 9 am to 8 pm; Runs later today (from `runWindow`: a time, a window, any time) | Next run 11 am | scheduled | Home, Today |
-| running | Running | Running today’s run | running | the run in the chat |
+| running | Running… | Running today’s run | running | the run in the chat |
 | needs-you | Needs you (yellow tint) | A paid job needs your OK by 9 pm | waiting | the job preview |
 | pending | Day 7 of 20 (blue ring: in, not yet checked) | Done today, pending verification | done, and today's ledger row is not verified yet (`done` is read as `pending`) | the run in Activity |
 | not-counted | Not counted today (neutral dot) | Today doesn’t count toward your 20 days | done, with `today.outcome` skipped or expired; noCredits with `creditsDay` 'stopped' | the run in Activity; out of credits: Home, Today |
@@ -1935,7 +1937,7 @@ One rule for the ended chip: once the period has ended, every signed-in screen s
 
 **Responsive.** Not applicable.
 
-**Do / Don't.** Do keep the word in ink (V3 restyle). Don't use the gradient as a ring, border, wordmark or text fill: it lives only in the credits glyph's drawing. Decision D8 may switch the product to the onBlue site's blue spark; only BrandMark changes.
+**Do / Don't.** Do keep the word in ink (V3 restyle). Don't use the gradient as a ring, border, wordmark or text fill in Target: it lives only in the V2 today look's star and wordmark. Decision D8 may switch the product to the onBlue site's blue spark; only BrandMark changes.
 
 ### Help and more menus (Changed from V2)
 
@@ -2571,19 +2573,19 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 **Status:** Changed from V2 (CreditsChip); New (CreditsMeter, useCountdown).
 **Why:** AI credits are the worker's fuel, not money (concept). A partner has one question about them: will today's run happen. V2 shows a bare number that is only ever 2,000 or 0 (index.html:731), paints it and its ring in the brand gradient (index.html:342, 346), fires a "low" dot under 1,000 that can therefore only mean empty (index.html:733), and keeps a second grant of 2,500 in the shared popup parts (credits_popup_parts.jsx:14). The system says the allowance in one place, in ink, against one grant read from the Worker record (section 41).
 
-**V3 restyle (2026-10-14).** The credits glyph is V2's own drawing (assets/Credits.svg) shown as an image beside the ink figure, never a mask fill or text. The big figure takes `--v2-tracking-figure` (-0.045em), tabular.
+**V3 restyle (2026-10-14).** The credits glyph is the neutral spark: the exact path of the BlueAI logo's spark (Icon `spark`), in ink-3, beside the ink figure. The V2 today look keeps V2's gradient star (assets/Credits.svg, an image) through two look hooks, `--v2-credits-spark-display` and `--v2-credits-star-display`. The top-bar chip is plain text, no outline. The big figure takes `--v2-tracking-figure` (-0.045em), tabular.
 
 ### CreditsChip (Changed from V2)
-- **Purpose:** The top bar's quiet status of today's allowance, and the way into AI credits (section 66).
-- **Anatomy:** A real `<button>` with a 32px hit area holding a 28px pill: 1px `--v2-line` on `--v2-surface`, radius pill, padding 0 12 0 8; credits glyph 16 (V2's own drawing as an image, the gradient's one use); number 13/500 ink, tabular; an 8px dot at the top right with a 2px surface ring when low or empty.
+- **Purpose:** The top bar's first item on the left (section 30): today's allowance, and the way into AI credits (section 66).
+- **Anatomy:** A real `<button>` with a 32px hit area, plain text (2026-10-14: no outlined pill): credits glyph 16 (the neutral spark in ink-3), gap 6, number 13/500 ink, tabular; an 8px dot at the top right with a 2px surface ring when low or empty. A 28px pill (radius pill, padding 0 8) exists only as the hover and press wash.
 - **Variants:** full (number), low (number + attention dot), empty (0 + danger dot), paused (glyph + "Own key" in ink-3).
 - **Sizes:** One: pill 28, target 32.
-- **States:** Full; low (less than one run's cost); empty; paused (running on your own key); hover (edge to `--v2-line-hover` + 4.5% wash); focus-visible (2px blue outline on the pill); active (7% wash). Forced with `.is-hover`, `.is-focus`, `.is-active`. V2: `index.html?start=worker` (2,000), `?start=worker&credits=0` (0 + red dot), Preview row "Own key: On" (still shows 2,000, dot hidden).
+- **States:** Full; low (less than one run's cost); empty; paused (running on your own key); hover (4.5% wash on the pill); focus-visible (2px blue outline on the pill); active (7% wash). Forced with `.is-hover`, `.is-focus`, `.is-active`. V2: `index.html?start=worker` (2,000), `?start=worker&credits=0` (0 + red dot), Preview row "Own key: On" (still shows 2,000, dot hidden).
 - **Props:** `balance`, `state` ('full' | 'low' | 'empty' | 'paused', derived from balance and runCost when absent), `runCost`, `onClick`, `className`. TopBar passes `{balance, state}`.
-- **Motion:** Edge and wash 120ms (`--v2-dur-1`). Nothing else moves.
+- **Motion:** Wash 120ms (`--v2-dur-1`). Nothing else moves.
 - **Accessibility:** Accessible name says the state in words ("AI credits: 120 left today, not enough for today’s run"), so the dot is never the only carrier. Number contrast 19:1; focus ring on the visible pill.
 - **Responsive:** Fixed size in the 52px top bar; the number never wraps.
-- **Do / Don't:** Do derive low from the Worker record (`credits.left < credits.runCost`). Do say "Own key" instead of a balance that is not being spent. Don't paint the number, ring or fill with the gradient. Don't use a raw threshold like 1,000.
+- **Do / Don't:** Do derive low from the Worker record (`credits.left < credits.runCost`). Do say "Own key" instead of a balance that is not being spent. Don't outline the chip or paint the number or glyph with the gradient in Target. Don't use a raw threshold like 1,000.
 
 ### CreditsMeter (New)
 - **Purpose:** Answer "will today's run fit": how much of today's grant is left, when it refreshes, and whether today's run is covered. Lives on AI credits (section 66) under the stat.
@@ -4163,6 +4165,11 @@ About 3,000 of V2’s lines never render. They are listed here and never specime
 **Status:** Meta (no parts).
 
 **Why:** Dated, newest first, so anyone building from the system can see what changed since they last looked. Add an entry for every change to tokens, a kit part’s API or a screen, here and in guide/sections/meta-changelog.jsx.
+
+### 2026-10-14: Top bar not worker-centric, neutral credits glyph
+
+- Top bar (section 30, Appy): left, the credits as plain text, then a WorkerStatusChip only while the worker is live or needs attention (`HEADER_STATUS`: Running…, Needs you, Didn’t finish); right, New chat (IconButton, `edit`, tooltip), Help, More. Quiet states stay on Home; no brand in the signed-in bar (the title bar carries it).
+- Credits glyph (sections 08, 47): the neutral spark (the logo's path) in ink-3 in Target; the V2 today look keeps V2's gradient star through two new look hooks, `--v2-credits-spark-display` and `--v2-credits-star-display`. CreditsChip loses its outline; hover is the wash only.
 
 ### 2026-10-14: Review round 2 of V3, pass B: the strip offers Retry on a failed day
 

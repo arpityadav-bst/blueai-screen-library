@@ -38,15 +38,20 @@
   .v2-brand-word { background: none; -webkit-text-fill-color: currentColor; color: CanvasText; }
 }
 
-/* TopBar: 52 tall, surface, one hairline, no shadow. The brand sits on the content gutter; the
-   right edge is 12 because the 32 icon buttons carry their own 6px inset. */
+/* TopBar: 52 tall, surface, one hairline, no shadow. Signed in, the lead (credits, then a status chip
+   only while the worker is live or needs you) pulls left by the credits' 8px wash padding so the
+   spark sits on the content gutter; the right edge is 12 because the 32 icon buttons carry their own
+   6px inset. The status chip is the one part that shrinks: its label ends in an ellipsis. */
 .v2-topbar {
   position: relative; z-index: var(--v2-z-header); display: flex; align-items: center; justify-content: space-between;
   gap: var(--v2-space-2); flex: none; height: var(--v2-topbar-h); padding: 0 var(--v2-space-3) 0 var(--v2-gutter);
   background: var(--v2-surface); border-bottom: var(--v2-stroke) solid var(--v2-line);
 }
 .v2-topbar--signed-out { padding-right: var(--v2-gutter); }
-.v2-topbar-actions { display: flex; align-items: center; gap: var(--v2-space-2); min-width: 0; }
+.v2-topbar-lead { display: flex; align-items: center; gap: var(--v2-space-1); min-width: 0; margin-left: calc(var(--v2-space-2) * -1); }
+.v2-topbar-lead .v2-status { flex: 0 1 auto; min-width: 0; }
+.v2-topbar-lead .v2-status-label { overflow: hidden; text-overflow: ellipsis; }
+.v2-topbar-actions { display: flex; align-items: center; gap: var(--v2-space-05); flex: none; }
 
 /* WorkerStatusChip: 28 tall, pill, hairline, a dot in the status tone and a 13/500 label. Only a
    waiting job and a run that broke take a tint (needs you; didn't finish and can't run); a missed

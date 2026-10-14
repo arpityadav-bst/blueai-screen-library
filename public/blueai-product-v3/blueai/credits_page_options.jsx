@@ -41,7 +41,7 @@
       <div style={{ flex: 1, minHeight: 200, display: 'flex', flexDirection: 'column', borderRadius: 16, border: '1px solid #e8edf3', background: 'white', padding: 22, boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: zero ? 9 : 12 }}>
-            <img src="assets/Credits.svg" alt="" style={{ width: zero ? 30 : 44, height: zero ? 30 : 44 }} />
+            <span className="v3-cr-ink" aria-hidden="true"><window.V2Kit.Icon name="credits" size={zero ? 30 : 44} /></span>
             <span style={{ ...P.gradText, fontSize: zero ? 38 : 54, fontWeight: 700, lineHeight: 1, letterSpacing: zero ? '-0.7px' : '-1px' }}>{balance.toLocaleString()}</span>
           </div>
           {children}

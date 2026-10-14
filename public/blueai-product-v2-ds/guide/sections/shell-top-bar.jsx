@@ -72,39 +72,40 @@
     const K = window.V2Kit;
     return (
       <G.Section id="top-bar">
-        <G.Note>V3 restyle (2026-10-14): the BrandMark word is ink in Target (--v2-brand-word-fill); the gradient is fenced to the credits glyph. The V2 today look keeps its gradient word.</G.Note>
-        <G.Part name="TopBar" status="changed" role="Brand, today's run, credits, help and more: what the partner checks every time the window opens.">
+        <G.Note>Not worker-centric (2026-10-14, Appy): people also use BlueAI for plain chat, so the bar leads with the credits and shows the worker only while it is live or needs attention (Running…, Needs you, Didn’t finish). Quiet states stay on Home. The BrandMark word is ink in Target; the V2 today look keeps its gradient word.</G.Note>
+        <G.Part name="TopBar" status="changed" role="Credits, New chat, help and more on every signed-in screen; the worker only when it is live or needs the partner.">
           <ul className="g-list">
-            <li>52 tall, surface, one bottom hairline, no shadow. Left padding on the 16 gutter; right 12, because the 32 icon buttons carry their own inset.</li>
-            <li>Left: BrandMark (logo 24 + wordmark). Right, in reading order: WorkerStatusChip, credits chip (section 47), Help, More.</li>
-            <li>Signed out it shows the brand only. New chat is not here: it moves into the chat screen's header (section 32).</li>
+            <li>52 tall, surface, one bottom hairline, no shadow. The credits' spark sits on the 16 gutter; right 12, because the 32 icon buttons carry their own inset.</li>
+            <li>Left: the credits (section 47, plain text), then a WorkerStatusChip only for running, needs-you and failed (HEADER_STATUS). Right, in reading order: New chat (edit, tooltip), More (V3 keeps Help beside it).</li>
+            <li>Signed out it shows the brand only. Signed in there is no brand: the window's title bar carries it.</li>
           </ul>
           <G.StateGrid wide states={[
             { label: 'Signed out (brand only)', node: <Bar signedIn={false} /> },
-            { label: 'Signed in, next run scheduled', node: <Bar status="scheduled" statusLabel="Next run 11 am" /> },
-            { label: 'Signed in, the worker needs you', node: <Bar status="needs-you" /> },
-            { label: 'Menu open (More)', note: 'keyboard: Down opens, arrows move, Esc returns focus to the button', node: <Bar status="done" statusLabel="Day 7 of 20" openMenu="more" room /> },
-            { label: 'Longest label', note: 'Next run 9 am to 9 pm, 4-digit credits, Help, More at 419: only the chip label may shorten', node: <Bar status="scheduled" statusLabel="Next run 9 am to 9 pm" credits={2000} /> },
-            { label: 'Waiting for credits', note: 'the other long label, with credits at none', node: <Bar status="no-credits" statusLabel="Waiting for credits" credits={0} /> },
+            { label: 'Signed in, nothing happening', note: 'a quiet status (here scheduled) is not drawn: Home says it', node: <Bar status="scheduled" statusLabel="Next run 11 am" /> },
+            { label: 'Worker running', node: <Bar status="running" /> },
+            { label: 'The worker needs you', node: <Bar status="needs-you" /> },
+            { label: 'Today didn’t finish', note: 'opens that run, or Retry', node: <Bar status="failed" /> },
+            { label: 'Out of credits', note: 'the credits’ dot says it; no chip', node: <Bar credits={0} /> },
+            { label: 'Menu open (More)', note: 'keyboard: Down opens, arrows move, Esc returns focus to the button', node: <Bar openMenu="more" room /> },
           ]} />
           <G.CompareRow
             v2={<G.FrameState url="index.html?start=worker" label="V2 header, signed in" height={900} />}
-            system={<Bar status="scheduled" statusLabel="Next run 11 am" />}
-            changed="V2 gave its loudest slot, the only filled control in the chrome, to a 'New Chat' pill, while the worker's run appeared nowhere in the header. The system puts today's run in the chrome (WorkerStatusChip), moves New chat into the chat screen, keeps the hairline and drops two of the three gradients." />
+            system={<Bar status="running" />}
+            changed="V2 gave its loudest slot, the only filled control in the chrome, to a 'New Chat' pill, while the worker's run appeared nowhere in the header. The system leads with the credits as plain text, shows the worker only while it is live or needs the partner (WorkerStatusChip), makes New chat a quiet icon button, keeps the hairline and drops all three gradients." />
           <G.SpecDrawer rows={[
             { part: 'Height', token: '--v2-topbar-h', value: '52px', ref: 'shell.topbar.bar' },
             { part: 'Surface and edge', token: '--v2-surface, --v2-line', value: '#ffffff, 1px rgba(0,0,0,0.10) bottom', ref: 'shell.topbar.bar' },
             { part: 'Padding', token: '--v2-gutter, --v2-space-3', value: '0 12 0 16', ref: 'shell.topbar.bar' },
             { part: 'Layer', token: '--v2-z-header', value: '20', ref: 'shell.topbar.z' },
-            { part: 'Cluster gap', token: '--v2-space-2', value: '8px between chips, 2px between icon buttons' },
+            { part: 'Cluster gap', token: '--v2-space-1, --v2-space-05', value: '4px between credits and chip, 2px between icon buttons' },
             { part: 'Icon buttons', token: 'IconButton 32 (section 11)', value: '32 target, 20 glyph, ink-3', ref: 'shell.topbar.icon-btn' },
-            { part: 'New chat', token: 'moved to the chat ScreenHeader', value: 'IconButton, not a filled pill', ref: ['shell.topbar.new-chat', 'shell.topbar.new-chat-label', 'shell.topbar.new-chat-hover'] },
+            { part: 'New chat', token: 'IconButton 32, edit', value: 'icon button with a "New chat" tooltip, not a filled pill', ref: ['shell.topbar.new-chat', 'shell.topbar.new-chat-label', 'shell.topbar.new-chat-hover'] },
             { part: 'Signed out', token: 'signedIn false', value: 'brand only', ref: 'shell.topbar.signed-out' },
-            { part: 'Long status label', token: 'WorkerStatusChip label', value: 'the one part that shrinks: it ends in an ellipsis and keeps the full words in its accessible name; brand, credits, Help and More never move out' },
+            { part: 'Long status label', token: 'WorkerStatusChip label', value: 'the one part that shrinks: it ends in an ellipsis and keeps the full words in its accessible name; credits, New chat, Help and More never move out' },
           ]} />
           <G.DoDont
-            do={['Keep one status chip and one credits chip; let the menus hold the rest.', 'Check the bar at 419 wide with the longest status labels: “Next run 9 am to 9 pm” and “Waiting for credits”.']}
-            dont={['Add a filled button to the top bar.', 'Put a second gradient in the bar.', 'Show the cluster when signed out.']} />
+            do={['Lead with the credits; show the worker only while it is live or needs the partner.', 'Check the bar at 419 wide with “Didn’t finish” and 4-digit credits.']}
+            dont={['Put a quiet state (next run, day in, verified, set up) in the bar.', 'Outline the credits or add a filled button.', 'Show the clusters when signed out.']} />
         </G.Part>
 
         <G.Part name="WorkerStatusChip" status="new" role="Today's run in one glance, in the chrome on every screen; opens today's run.">

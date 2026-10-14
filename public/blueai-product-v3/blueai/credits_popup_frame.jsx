@@ -24,7 +24,7 @@
     return (
       <span style={{ position: 'relative', padding: 1.5, borderRadius: 999, background: 'linear-gradient(90deg,#0EA4C5,#7B4CFF)' }}>
         <span style={{ display: 'flex', alignItems: 'center', gap: 4, background: 'white', borderRadius: 999, padding: '4px 10px', fontSize: 13, fontWeight: 600, color: '#334155' }}>
-          <img src="assets/Credits.svg" alt="" style={{ width: 14, height: 14 }} />{balance.toLocaleString()}
+          <span className="v3-cr-ink" aria-hidden="true"><window.V2Kit.Icon name="credits" size={14} /></span>{balance.toLocaleString()}
         </span>
         {balance < 1000 && <span style={{ position: 'absolute', top: 2, right: 2, width: 8, height: 8, borderRadius: 999, background: '#ef4444', boxShadow: '0 0 0 1px white' }} />}
       </span>

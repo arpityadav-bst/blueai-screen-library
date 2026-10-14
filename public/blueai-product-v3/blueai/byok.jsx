@@ -44,7 +44,7 @@
     return (
       <div className="v3-dlg-center">
         <div className="v3-cr-figure">
-          <img src="assets/Credits.svg" alt="" className="v3-cr-glyph" />
+          <span className="v3-cr-glyph" aria-hidden="true"><window.V2Kit.Icon name="credits" size={28} /></span>
           <span className="v2-text-display">0</span>
         </div>
         <hr className="v2-divider v3-dlg-rule" />

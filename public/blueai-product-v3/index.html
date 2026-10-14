@@ -98,12 +98,7 @@
     .ba-thanks-in { animation: baThanksIn var(--v2-dur-2) var(--v2-ease-out); }
 
     /* ---- V3 Phase 1: the shell. The top bar, its menus, the bottom nav and the splash are the kit's
-       (kit/shell.css, kit/overlays.css, kit/credits.css); only V3's own differences live here: the
-       bar has no brand (the title bar carries it), so its actions sit at the end. New chat is the
-       kit's chip pill (kit/actions.css, its 32px hit floor; design-md 30: no filled button in the
-       bar), review round 2. */
-    .ba-topbar-actions { margin-left: auto; }
-    .ba-topbar-icons { display: flex; align-items: center; gap: var(--v2-space-05); }
+       (kit/shell.css, kit/overlays.css, kit/credits.css); the bar has no brand (the title bar carries it). */
   </style>
 </head>
 <body>
@@ -117,6 +112,9 @@
 <script type="text/babel" src="../blueai-product-v2-ds/kit/menu.jsx"></script>
 <!-- Review round 2: the kit's ProgressBar and Skeleton (the install bar, the Hybrid setup, the home skeletons). -->
 <script type="text/babel" src="../blueai-product-v2-ds/kit/progress.jsx"></script>
+<!-- 2026-10-14: the top bar's credits (CreditsChip, plain text) and its run chip (WorkerStatusChip). -->
+<script type="text/babel" src="../blueai-product-v2-ds/kit/credits.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/kit/topbar.jsx"></script>
 <!-- Shared components (must load first) -->
 <script type="text/babel" src="blueai/logo.jsx"></script>
 <script type="text/babel" src="blueai/shared.jsx"></script>
@@ -272,12 +270,22 @@ const CONFIG = {
   credits: 45812,        // matches the live Windows app
 };
 
-// Live header (newer than the export, matched to the live app screenshots):
-// credits pill · New chat · "?" help menu (FAQ / Report issue) · kebab (Chat history / Profile / Earnings ↗ / Sign out).
-// Logged-out (onboarding): strips to just the brand lockup, no credits/New Chat/help/kebab, matching the cold start.
-function ProductTopBar({ credits, lowDot, isLoggedIn, onNewChat, onOpenHistory, onOpenCredits, onOpenProfile, onSignOut, onReportIssue }) {
-  const Menu = window.V2Kit.Menu;
-  const Icon = window.V2Kit.Icon;
+// The worker's state the top bar says, or null (2026-10-14, Appy): only while a worker run is live
+// or needs attention. 'needs-you' while the job (or retry) question waits; 'running' while a worker
+// run plays; 'failed' once today's job didn't finish. Quiet states (next run, today's run is in,
+// set up the worker) stay on Home: people also use BlueAI for plain chat, so the bar is not
+// worker-centric.
+function headerRunStatus(st) {
+  const d = window.ChatStore.derive(st);
+  if (d.jobWaiting) return 'needs-you';
+  if (d.dailyLive || (d.running && d.workerStarted)) return 'running';
+  return window.WorkerDayDone.getToday() === 'failed' ? 'failed' : null;
+}
+
+// Logged-out (onboarding): the bar is empty, matching the cold start.
+function ProductTopBar({ credits, lowDot, isLoggedIn, onNewChat, onOpenRun, onOpenHistory, onOpenCredits, onOpenProfile, onSignOut, onReportIssue }) {
+  const { Menu, Icon, Tooltip, CreditsChip, WorkerStatusChip } = window.V2Kit;
+  const run = window.ChatStore.useChatWhere(headerRunStatus);
   /* Every row's glyph is the kit's Icon by name (review round 2); the kit menu takes the name and
      wraps it in .v2-menu-icon, so all rows share the ink-3 outline family.
      FAQ replaces the Discord entry (PM, 2026-09-10). It carries the SAME question-mark glyph as the
@@ -295,11 +303,11 @@ function ProductTopBar({ credits, lowDot, isLoggedIn, onNewChat, onOpenHistory, 
      BlueAILinks, review round 1), the deployed Vesper page as a stand-in for the real dashboard
      URL, which the product team owns. */
 
-  /* V3 Phase 1, the Target top bar (design-md 30), on the kit since review round 1: 52 tall, surface,
-     one hairline, no shadow (.v2-topbar); no logo (the title bar already carries it, Appy
-     2026-10-14), so the actions sit at the end; the kit's credits chip (the low dot in the danger
-     ink); New chat as the kit's chip pill (review round 2); Help and More as the kit's 32px
-     icon buttons, ink on the press wash while their menu is open. Both menus are the kit's Menu
+  /* The Target top bar (design-md 30, Appy 2026-10-14): 52 tall, surface, one hairline, no shadow
+     (.v2-topbar); no logo (the title bar carries it). Left: the credits as plain text (the kit's
+     CreditsChip: the neutral spark, the number in ink, the low dot), then the kit's WorkerStatusChip
+     only while the worker is live or needs you. Right: New chat, Help and More as the kit's 32px
+     icon buttons (New chat's name is its tooltip), ink on the press wash while their menu is open. Both menus are the kit's Menu
      (kit/menu.jsx, review round 1, U17): the first item takes focus on open, arrows, Home and End
      move, Esc and Tab close and focus returns to the button. No dead rows (U16): FAQ opens the
      site's FAQ, Report issue opens its dialog, Sign out its confirm. */
@@ -314,31 +322,25 @@ function ProductTopBar({ credits, lowDot, isLoggedIn, onNewChat, onOpenHistory, 
   return (
     <header className={'v2-topbar' + (isLoggedIn ? '' : ' v2-topbar--signed-out')}>
       {isLoggedIn &&
-      <div className="v2-topbar-actions ba-topbar-actions">
-        {/* Credits chip: opens the AI Credits balance screen */}
-        <button type="button" className={'v2-credits-chip' + (lowDot ? (credits === 0 ? ' v2-credits-chip--empty' : ' v2-credits-chip--low') : '')} onClick={onOpenCredits}
-          aria-label={'AI credits: ' + credits.toLocaleString('en-US') + (lowDot ? ', running low' : '')}>
-          <span className="v2-credits-chip-pill">
-            <img src="assets/Credits.svg" alt="" className="v2-icon v2-icon--credits" onError={(e) => { e.target.style.display = 'none'; }} />
-            <span className="v2-credits-chip-value">{credits.toLocaleString('en-US')}</span>
-            {lowDot && <span className="v2-credits-chip-dot" aria-hidden="true" />}
-          </span>
-        </button>
-        {/* New chat */}
-        <button type="button" className="v2-chip" onClick={onNewChat}>
-          <Icon name="chat" />
-          New chat
-        </button>
-        <div className="ba-topbar-icons">
-          <Menu label="Help" items={helpItems} trigger={(t) =>
-            <button type="button" className="v2-icon-button" aria-label="Help" {...t}>
-              <Icon name="help" size={20} />
-            </button>} />
-          <Menu label="More options" items={moreItems} trigger={(t) =>
-            <button type="button" className="v2-icon-button" aria-label="More options" {...t}>
-              <Icon name="more" size={20} />
-            </button>} />
-        </div>
+      <div className="v2-topbar-lead">
+        <CreditsChip balance={credits} state={lowDot ? (credits === 0 ? 'empty' : 'low') : 'full'} onClick={onOpenCredits} />
+        {run && <WorkerStatusChip status={run} onClick={() => onOpenRun(run)} />}
+      </div>}
+      {isLoggedIn &&
+      <div className="v2-topbar-actions">
+        <Tooltip kind="label" content="New chat" placement="down">
+          <button type="button" className="v2-icon-button" aria-label="New chat" onClick={onNewChat}>
+            <Icon name="edit" size={20} />
+          </button>
+        </Tooltip>
+        <Menu label="Help" items={helpItems} trigger={(t) =>
+          <button type="button" className="v2-icon-button" aria-label="Help" {...t}>
+            <Icon name="help" size={20} />
+          </button>} />
+        <Menu label="More options" items={moreItems} trigger={(t) =>
+          <button type="button" className="v2-icon-button" aria-label="More options" {...t}>
+            <Icon name="more" size={20} />
+          </button>} />
       </div>}
     </header>);
 }
@@ -453,7 +455,7 @@ function AICreditsScreen({ credits, keyAdded, byokOn, keyInfo, onManageByok }) {
 
           <div className="v2-card v3-cr-card">
             <div className="v3-cr-figure">
-              <img src="assets/Credits.svg" alt="" className="v3-cr-glyph" />
+              <span className="v3-cr-glyph" aria-hidden="true"><window.V2Kit.Icon name="credits" size={28} /></span>
               <span className="v2-text-display">{credits.toLocaleString('en-US')}</span>
             </div>
             {/* The explainer is the healthy state's only copy. When the balance is zero the note
@@ -914,6 +916,7 @@ function App() {
         lowDot={lowDot}
         isLoggedIn={isLoggedIn}
         onNewChat={handleNewChat}
+        onOpenRun={(st) => { if (st === 'failed' && !window.ChatStore.get().convo.some((x) => x.daily)) retryToday(); else handleTabChange('chat'); }}
         onOpenCredits={() => { setHistoryOpen(false); setProfileOpen(false); setCreditsOpen(true); }}
         onOpenHistory={openHistory}
         onOpenProfile={openProfile}

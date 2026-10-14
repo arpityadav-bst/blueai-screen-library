@@ -4,6 +4,11 @@
 
 **Why:** Dated, newest first, so anyone building from the system can see what changed since they last looked. Add an entry for every change to tokens, a kit part’s API or a screen, here and in guide/sections/meta-changelog.jsx.
 
+### 2026-10-14: Top bar not worker-centric, neutral credits glyph
+
+- Top bar (section 30, Appy): left, the credits as plain text, then a WorkerStatusChip only while the worker is live or needs attention (`HEADER_STATUS`: Running…, Needs you, Didn’t finish); right, New chat (IconButton, `edit`, tooltip), Help, More. Quiet states stay on Home; no brand in the signed-in bar (the title bar carries it).
+- Credits glyph (sections 08, 47): the neutral spark (the logo's path) in ink-3 in Target; the V2 today look keeps V2's gradient star through two new look hooks, `--v2-credits-spark-display` and `--v2-credits-star-display`. CreditsChip loses its outline; hover is the wash only.
+
 ### 2026-10-14: Review round 2 of V3, pass B: the strip offers Retry on a failed day
 
 - Kit: ProgramStrip gains onRetry. Given it, a failed today (workerState failed) is the receipt in the danger ink, ‘Today’s job didn’t finish.’, with a quiet Retry, for a screen with no WorkerCard to say it (V3’s Jobs tab and home); without it the strip is unchanged and the WorkerCard’s Try again stays the home’s action.

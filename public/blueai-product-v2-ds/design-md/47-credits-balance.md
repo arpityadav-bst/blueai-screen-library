@@ -3,19 +3,19 @@
 **Status:** Changed from V2 (CreditsChip); New (CreditsMeter, useCountdown).
 **Why:** AI credits are the worker's fuel, not money (concept). A partner has one question about them: will today's run happen. V2 shows a bare number that is only ever 2,000 or 0 (index.html:731), paints it and its ring in the brand gradient (index.html:342, 346), fires a "low" dot under 1,000 that can therefore only mean empty (index.html:733), and keeps a second grant of 2,500 in the shared popup parts (credits_popup_parts.jsx:14). The system says the allowance in one place, in ink, against one grant read from the Worker record (section 41).
 
-**V3 restyle (2026-10-14).** The credits glyph is V2's own drawing (assets/Credits.svg) shown as an image beside the ink figure, never a mask fill or text. The big figure takes `--v2-tracking-figure` (-0.045em), tabular.
+**V3 restyle (2026-10-14).** The credits glyph is the neutral spark: the exact path of the BlueAI logo's spark (Icon `spark`), in ink-3, beside the ink figure. The V2 today look keeps V2's gradient star (assets/Credits.svg, an image) through two look hooks, `--v2-credits-spark-display` and `--v2-credits-star-display`. The top-bar chip is plain text, no outline. The big figure takes `--v2-tracking-figure` (-0.045em), tabular.
 
 ### CreditsChip (Changed from V2)
-- **Purpose:** The top bar's quiet status of today's allowance, and the way into AI credits (section 66).
-- **Anatomy:** A real `<button>` with a 32px hit area holding a 28px pill: 1px `--v2-line` on `--v2-surface`, radius pill, padding 0 12 0 8; credits glyph 16 (V2's own drawing as an image, the gradient's one use); number 13/500 ink, tabular; an 8px dot at the top right with a 2px surface ring when low or empty.
+- **Purpose:** The top bar's first item on the left (section 30): today's allowance, and the way into AI credits (section 66).
+- **Anatomy:** A real `<button>` with a 32px hit area, plain text (2026-10-14: no outlined pill): credits glyph 16 (the neutral spark in ink-3), gap 6, number 13/500 ink, tabular; an 8px dot at the top right with a 2px surface ring when low or empty. A 28px pill (radius pill, padding 0 8) exists only as the hover and press wash.
 - **Variants:** full (number), low (number + attention dot), empty (0 + danger dot), paused (glyph + "Own key" in ink-3).
 - **Sizes:** One: pill 28, target 32.
-- **States:** Full; low (less than one run's cost); empty; paused (running on your own key); hover (edge to `--v2-line-hover` + 4.5% wash); focus-visible (2px blue outline on the pill); active (7% wash). Forced with `.is-hover`, `.is-focus`, `.is-active`. V2: `index.html?start=worker` (2,000), `?start=worker&credits=0` (0 + red dot), Preview row "Own key: On" (still shows 2,000, dot hidden).
+- **States:** Full; low (less than one run's cost); empty; paused (running on your own key); hover (4.5% wash on the pill); focus-visible (2px blue outline on the pill); active (7% wash). Forced with `.is-hover`, `.is-focus`, `.is-active`. V2: `index.html?start=worker` (2,000), `?start=worker&credits=0` (0 + red dot), Preview row "Own key: On" (still shows 2,000, dot hidden).
 - **Props:** `balance`, `state` ('full' | 'low' | 'empty' | 'paused', derived from balance and runCost when absent), `runCost`, `onClick`, `className`. TopBar passes `{balance, state}`.
-- **Motion:** Edge and wash 120ms (`--v2-dur-1`). Nothing else moves.
+- **Motion:** Wash 120ms (`--v2-dur-1`). Nothing else moves.
 - **Accessibility:** Accessible name says the state in words ("AI credits: 120 left today, not enough for today’s run"), so the dot is never the only carrier. Number contrast 19:1; focus ring on the visible pill.
 - **Responsive:** Fixed size in the 52px top bar; the number never wraps.
-- **Do / Don't:** Do derive low from the Worker record (`credits.left < credits.runCost`). Do say "Own key" instead of a balance that is not being spent. Don't paint the number, ring or fill with the gradient. Don't use a raw threshold like 1,000.
+- **Do / Don't:** Do derive low from the Worker record (`credits.left < credits.runCost`). Do say "Own key" instead of a balance that is not being spent. Don't outline the chip or paint the number or glyph with the gradient in Target. Don't use a raw threshold like 1,000.
 
 ### CreditsMeter (New)
 - **Purpose:** Answer "will today's run fit": how much of today's grant is left, when it refreshes, and whether today's run is covered. Lives on AI credits (section 66) under the stat.

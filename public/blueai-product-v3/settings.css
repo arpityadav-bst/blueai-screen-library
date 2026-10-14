@@ -21,7 +21,7 @@
 /* ---- Credits: one figure, one note, the ledger's line between them ---------------------------- */
 .v3-cr-card { flex: 1; min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: var(--v2-space-8) var(--v2-space-5); text-align: center; }
 .v3-cr-figure { display: flex; align-items: center; justify-content: center; gap: var(--v2-space-2); }
-.v3-cr-glyph { flex: none; width: calc(var(--v2-icon-lg) + var(--v2-space-1)); height: calc(var(--v2-icon-lg) + var(--v2-space-1)); }
+.v3-cr-glyph, .v3-cr-ink { display: inline-flex; flex: none; color: var(--v2-ink-3); }
 .v3-cr-explain { width: 100%; margin-top: var(--v2-space-6); padding-top: var(--v2-space-5); border-top: var(--v2-stroke) solid var(--v2-line-hair); }
 /* Type: .v2-text-body-sm; each sentence on its own line, the countdown unbroken. */
 .v3-cr-text { margin: var(--v2-space-1) 0 0; }

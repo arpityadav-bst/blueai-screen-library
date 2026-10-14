@@ -4,33 +4,35 @@
 
 **Why:** The partner opens BlueAI to check one thing: did today's run happen, and does the day count. V2's header gives its loudest slot, the only filled control in the chrome, to a "New Chat" pill (index.html:351) and shows the run nowhere; it runs the brand gradient three times in 419px (index.html:335, 342, 346); and two of its six menu rows do nothing (index.html:364-365).
 
-**V3 restyle (2026-10-14).** The BrandMark word is ink in Target (`--v2-brand-word-fill`): the brand gradient is fenced to the credits glyph. The V2 today look keeps its gradient word.
+**V3 restyle (2026-10-14).** The BrandMark word is ink in Target (`--v2-brand-word-fill`). The V2 today look keeps its gradient word.
+
+**Not worker-centric (2026-10-14, Appy).** People also use BlueAI for plain chat with no worker, so the bar leads with what every user has: the credits, plain text, on the left. The worker shows only when it is live or needs attention, as one WorkerStatusChip right after the credits: Running… (blue dot), Needs you (attention), Didn’t finish (danger). Quiet states (the next run, a day that is in or verified, set up the worker) stay on Home. With nothing happening the left shows only the credits. New chat is back in the bar as an icon button, right, before Help and More.
 
 ### TopBar (Changed from V2)
 
-**Purpose.** Brand, today's run, credits, help and the account doors, on every signed-in screen.
+**Purpose.** Credits, a new chat, help and the account doors on every signed-in screen, and the worker only when it is live or needs the partner.
 
-**Anatomy.** Left: BrandMark (logo 24 + wordmark). Right, in reading order: WorkerStatusChip, credits chip (section 47), Help (IconButton 32, `help`), More (IconButton 32, `more`). New chat is not here: it is a trailing IconButton in the chat screen's header (section 32).
+**Anatomy.** Left: the credits (CreditsChip, section 47: the neutral spark, the number in ink, no outline), then a WorkerStatusChip only for `HEADER_STATUS` (running, needs-you, failed). Right, in reading order: New chat (IconButton 32, `edit`, tooltip "New chat"), Help (IconButton 32, `help`), More (IconButton 32, `more`). No brand: the window's title bar carries it (section 29). The kit's TopBar folds Help into More; V3 keeps both.
 
-**Variants.** Signed out (brand only). Signed in.
+**Variants.** Signed out (BrandMark only in the kit; empty in V3). Signed in, nothing happening (credits only on the left). Signed in, worker live or needing attention (credits + chip).
 
-**Sizes.** 52 tall (`--v2-topbar-h`). Padding 0 12 0 16: the brand sits on the 16 gutter; the right edge is 12 because the icon buttons carry a 6px inset. Gap 8 between chips, 2 between the two icon buttons. Surface, 1px `--v2-line` bottom, no shadow. Layer `--v2-z-header` (20). The longest status labels are "Next run 9 am to 8 pm" (a run window) and "Waiting for credits"; the bar must fit 419 with them (Responsive says what gives if it does not).
+**Sizes.** 52 tall (`--v2-topbar-h`). Padding 0 12 0 16; the lead pulls left 8 (the credits' wash padding) so the spark sits on the 16 gutter; the right edge is 12 because the icon buttons carry a 6px inset. Gap 4 between the credits and the chip, 2 between the icon buttons. Surface, 1px `--v2-line` bottom, no shadow. Layer `--v2-z-header` (20). The longest header label is "Didn’t finish" beside 4-digit credits; the bar must fit 419 with it (Responsive says what gives if it does not).
 
-**States.** Signed out: V2 bare URL then Sign in. Signed in: V2 `?start=worker`. Menu open: click Help or More (V2 has no keyboard path).
+**States.** Signed out: V2 bare URL then Sign in. Signed in: V2 `?start=worker`. Menu open: click Help or More (V2 has no keyboard path). V3: credits only at rest (`?start=worker`); Running… while a worker run plays (`?day=next`); Needs you while the job or retry question waits (same link, at the job ask); Didn’t finish once today's run failed (`?end=failed`): it opens that run's chat, or Retry when the chat no longer holds it; out of credits shows as the credits' danger dot (`?credits=0`), not a chip.
 
-**Props.** `TopBar { signedIn, status, statusLabel, credits (number or { balance, state }), onOpenStatus, onOpenCredits, helpItems, moreItems, onAction(id), openMenu }`. Default items come from `topBarMenus(onAction)`; `openMenu` ('help' | 'more') is for guide specimens.
+**Props.** `TopBar { signedIn, status, statusLabel, credits (number or { balance, state }), onOpenStatus, onOpenCredits, onNewChat, moreItems, onAction(id), openMenu }`. A status outside `HEADER_STATUS` is not drawn. Default items come from `topBarMenus(onAction)`; New chat calls `onAction('new-chat')` when `onNewChat` is absent; `openMenu` ('help' | 'more') is for guide specimens.
 
 **Motion.** None on the bar; chips and buttons change colour over `--v2-dur-1`.
 
-**Accessibility.** The bar is a `<header>`. Each icon button has a label ("Help", "More"); its button stays lit while its menu is open (`aria-expanded`). Tab order follows reading order.
+**Accessibility.** The bar is a `<header>`. Each icon button has a label ("New chat", "Help", "More"), and New chat shows it as a tooltip; its button stays lit while its menu is open (`aria-expanded`). Tab order follows reading order.
 
-**Responsive.** One width. The WorkerStatusChip label is the one part that gives: it shrinks and ends in an ellipsis, and its full words stay in the accessible name. Brand, credits, Help and More never shrink or move out, so More (the way to Account and Sign out) is always reachable.
+**Responsive.** One width. The WorkerStatusChip label is the one part that gives: it shrinks and ends in an ellipsis, and its full words stay in the accessible name. Credits, New chat, Help and More never shrink or move out, so More (the way to Account and Sign out) is always reachable.
 
-**Do / Don't.** Do keep one status chip and one credits chip. Don't add a filled button to the bar. Don't add a second gradient. Don't show the right cluster when signed out.
+**Do / Don't.** Do lead with the credits; show the worker only while it is live or needs the partner. Don't put a quiet state (next run, day in, verified, set up) in the bar: Home says those. Don't outline the credits or add a filled button. Don't paint anything in the bar with the gradient. Don't show the clusters when signed out.
 
 ### WorkerStatusChip (New)
 
-**Purpose.** Today's run in one glance, on every screen; clicking it opens where the partner can act.
+**Purpose.** Today's run in one glance, on every screen; clicking it opens where the partner can act. In the top bar only `HEADER_STATUS` shows (running, needs-you, failed); the full set below is for the tray (section 29), Home and specimens.
 
 **Anatomy.** Pill button: an 8px dot in the status tone, a 13/500 label, and visually hidden "Today’s run: " before the label.
 
@@ -41,7 +43,7 @@ Every `RUN_STATUS` key (`kit/topbar.jsx:35-50`), its chip label, its tray line (
 | Status | Chip label | Tray line | Worker record (`workerState`) | Opens |
 |---|---|---|---|---|
 | scheduled | Next run 11 am; Next run 9 am to 8 pm; Runs later today (from `runWindow`: a time, a window, any time) | Next run 11 am | scheduled | Home, Today |
-| running | Running | Running today’s run | running | the run in the chat |
+| running | Running… | Running today’s run | running | the run in the chat |
 | needs-you | Needs you (yellow tint) | A paid job needs your OK by 9 pm | waiting | the job preview |
 | pending | Day 7 of 20 (blue ring: in, not yet checked) | Done today, pending verification | done, and today's ledger row is not verified yet (`done` is read as `pending`) | the run in Activity |
 | not-counted | Not counted today (neutral dot) | Today doesn’t count toward your 20 days | done, with `today.outcome` skipped or expired; noCredits with `creditsDay` 'stopped' | the run in Activity; out of credits: Home, Today |
@@ -92,7 +94,7 @@ One rule for the ended chip: once the period has ended, every signed-in screen s
 
 **Responsive.** Not applicable.
 
-**Do / Don't.** Do keep the word in ink (V3 restyle). Don't use the gradient as a ring, border, wordmark or text fill: it lives only in the credits glyph's drawing. Decision D8 may switch the product to the onBlue site's blue spark; only BrandMark changes.
+**Do / Don't.** Do keep the word in ink (V3 restyle). Don't use the gradient as a ring, border, wordmark or text fill in Target: it lives only in the V2 today look's star and wordmark. Decision D8 may switch the product to the onBlue site's blue spark; only BrandMark changes.
 
 ### Help and more menus (Changed from V2)
 

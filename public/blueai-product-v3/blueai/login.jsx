@@ -102,7 +102,7 @@ function LoginModal({ isOpen, onClose, onSuccess, initialStep, onOpenBrowser, br
             <p className="v2-text-body-sm">You need AI credits to use BlueAI</p>
             <div>
               <div className="v3-cr-figure">
-                <img src="assets/Credits.svg" alt="" className="v3-cr-glyph" />
+                <span className="v3-cr-glyph" aria-hidden="true"><window.V2Kit.Icon name="credits" size={28} /></span>
                 <span className="v2-text-display">2,000</span>
               </div>
               <p className="v2-text-title-lg" style={{ marginTop: 'var(--v2-space-2)' }}>AI credits every day</p>

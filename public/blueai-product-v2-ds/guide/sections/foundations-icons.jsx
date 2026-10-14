@@ -60,7 +60,7 @@
             { part: 'Always ask / Automatic', token: null, value: "shield-check / zap, V2's drawings", ref: ['foundations.icon.shield', 'foundations.icon.zap'] },
             { part: 'App marks', token: null, value: "youtube / instagram, V2's stroke drawings", ref: 'foundations.icon.youtube' },
             { part: 'Spark (filled)', token: null, value: "the site's spark", ref: 'foundations.icon.onblue-spark' },
-            { part: 'Credits (painted)', token: '--v2-gradient-brand', value: "V2's star, assets/Credits.svg, as an image (V3 restyle; was a mask)", ref: ['foundations.icon.credits-asset', 'foundations.brand.star-mask'] },
+            { part: 'Credits', token: '--v2-ink-3, --v2-credits-spark-display, --v2-credits-star-display', value: "the neutral spark in ink-3 (2026-10-14); V2 today: its gradient star, assets/Credits.svg, as an image", ref: ['foundations.icon.credits-asset', 'foundations.brand.star-mask'] },
             { part: 'Helpers retired', token: null, value: 'ChatCatIcon, the per-file stroke() helper', ref: 'foundations.icon.chat-cat' },
           ]} />
         </G.Part>

@@ -8,19 +8,18 @@
   border: var(--v2-stroke) dashed var(--v2-line-strong); border-radius: var(--v2-radius-sm);
   font-size: var(--v2-text-12); color: var(--v2-ink-4); }
 
-/* ---- CreditsChip: 28px pill in a 32px hit area -------------------------------------------- */
+/* ---- CreditsChip: plain text in a 32px hit area (2026-10-14: no outline). The 28px pill is only the
+   hover and press wash; the glyph is the neutral spark (kit/base.css), the number ink 500 tabular. */
 .v2-credits-chip { display: inline-flex; align-items: center; height: var(--v2-hit-min); margin: 0; padding: 0;
   border: 0; border-radius: var(--v2-radius-pill); background: transparent; color: var(--v2-ink); font: inherit;
   cursor: pointer; }
 .v2-credits-chip-pill { position: relative; display: inline-flex; align-items: center; gap: var(--v2-space-15);
-  height: var(--v2-control-sm); padding: 0 var(--v2-space-3) 0 var(--v2-space-2); box-sizing: border-box;
-  border: var(--v2-stroke) solid var(--v2-line); border-radius: var(--v2-radius-pill);
-  background-color: var(--v2-surface); font-family: var(--v2-font-ui); font-size: var(--v2-text-13);
+  height: var(--v2-control-sm); padding: 0 var(--v2-space-2); box-sizing: border-box; border-radius: var(--v2-radius-pill);
+  font-family: var(--v2-font-ui); font-size: var(--v2-text-13);
   font-weight: var(--v2-weight-medium); line-height: var(--v2-leading-display); font-variant-numeric: tabular-nums;
-  transition: border-color var(--v2-dur-1) var(--v2-ease-standard), background-image var(--v2-dur-1) var(--v2-ease-standard); }
+  transition: background-image var(--v2-dur-1) var(--v2-ease-standard); }
 .v2-credits-chip:hover .v2-credits-chip-pill,
-.v2-credits-chip.is-hover .v2-credits-chip-pill { border-color: var(--v2-line-hover);
-  background-image: linear-gradient(var(--v2-wash-hover), var(--v2-wash-hover)); }
+.v2-credits-chip.is-hover .v2-credits-chip-pill { background-image: linear-gradient(var(--v2-wash-hover), var(--v2-wash-hover)); }
 .v2-credits-chip:active .v2-credits-chip-pill,
 .v2-credits-chip.is-active .v2-credits-chip-pill { background-image: linear-gradient(var(--v2-wash-press), var(--v2-wash-press)); }
 .v2-credits-chip:focus-visible { outline: none; }
