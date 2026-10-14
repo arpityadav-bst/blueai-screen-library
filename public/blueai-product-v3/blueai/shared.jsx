@@ -1,4 +1,4 @@
-// BlueAI: Shared components: NavBars, Modal, Toggle, Icons
+// BlueAI: Shared components: NavBars, Modal, Toggle (the switch), SelectField, Icons
 // Loaded first; all function declarations become globally accessible.
 
 const { useState, useRef, useEffect } = React;
@@ -40,17 +40,24 @@ function IcoArrowLeft({ size = 15 }) {
   return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></svg>;
 }
 
-/* ─── TOGGLE ─────────────────────────────────────────────────── */
-function Toggle({ enabled, onToggle }) {
+/* ─── SWITCH ─────────────────────────────────────────────────── */
+/* V3, Phase 5: the product's ONE switch is worker.css's .v3-switch (off: a sunken track with a 15%
+   line; on: the selection blue). Toggle keeps its V2 name and props, so a caller reads the same. */
+function Toggle({ enabled, onToggle, label }) {
   return (
-    <button
-      onClick={(e) => {e.stopPropagation();onToggle();}}
-      role="switch" aria-checked={enabled}
-      style={{ width: 32, height: 18, borderRadius: 999, position: 'relative', cursor: 'pointer', background: enabled ? '#1990FF' : '#d1d5db', transition: 'background 0.2s', flexShrink: 0, border: 'none', padding: 0 }}>
-      
-      <span style={{ position: 'absolute', top: 2, left: enabled ? 16 : 2, width: 14, height: 14, borderRadius: '50%', background: 'white', transition: 'left 0.2s cubic-bezier(.34,1.4,.64,1)', boxShadow: '0 1px 3px rgba(0,0,0,0.22)', display: 'block' }} />
-    </button>);
+    <button type="button" role="switch" aria-checked={enabled} aria-label={label} className="v3-switch"
+      onClick={(e) => {e.stopPropagation();onToggle();}} />);
+}
 
+/* ─── SELECT ─────────────────────────────────────────────────── */
+/* One select for Settings: the .v3-field look, the native arrow swapped for a quiet chevron.
+   `empty` greys the value while it is still the placeholder option. */
+function SelectField({ value, onChange, empty, className, children, ...rest }) {
+  return (
+    <div className="v3-select">
+      <select value={value} onChange={onChange} className={'v3-field' + (className ? ' ' + className : '') + (empty ? ' is-empty' : '')} {...rest}>{children}</select>
+      <svg className="v3-select-chev v3-ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9" /></svg>
+    </div>);
 }
 
 /* ─── MODAL OVERLAY ──────────────────────────────────────────── */
@@ -186,7 +193,7 @@ function BottomNavbar({ activeTab, onTabChange, compact }) {
 
 // Export everything so other Babel script files can use them
 Object.assign(window, {
-  Toggle, ModalOverlay,
+  Toggle, SelectField, ModalOverlay,
   BottomNavbar,
   IcoBriefcase, IcoLightbulb, IcoChatBubble, IcoCalendar, IcoGear, IcoHistory,
   IcoXClose, IcoTrashBin, IcoPencilEdit, IcoPlusSmall, IcoArrowLeft

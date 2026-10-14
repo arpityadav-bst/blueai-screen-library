@@ -88,7 +88,7 @@
   }
 
   const ICON = {
-    blueai: <img src="assets/Logo.png" alt="" />,
+    blueai: <img src="assets/spark.svg" alt="" />,
     google: <svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="7" fill="none" stroke="#4285f4" strokeWidth="2" /><text x="8" y="11.5" textAnchor="middle" fontSize="9" fontWeight="700" fill="#4285f4" fontFamily="Arial">G</text></svg>
   };
   // What the tab and omnibox show per page. The Google address spells out prompt=select_account

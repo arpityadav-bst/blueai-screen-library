@@ -6,10 +6,13 @@
 //   on, key saved → provider + masked key + Remove + AI Model dropdown
 // Saved key state lives in App (shared with the credits screen + out-of-credits popup);
 // the in-progress provider/key entry is local. Exposes window.Byok.ByokSettings.
+//
+// V3, Phase 5: the Settings card and row language (settings.css), the product's one switch
+// (shared.jsx Toggle, worker.css .v3-switch), the shared select and field, a neutral notice for the
+// empty state, a ghost Remove that turns red only on hover, and the solid ink Validate & Save. Routed
+// here from the credits screen, the card takes a passing selection ring instead of a blue glow.
 (function () {
   const { useState, useRef, useEffect } = React;
-  const ACCENT = '#1990FF';
-  const INK = '#111827', MUTED = '#6b7280', FAINT = '#9ca3af';
 
   const PROVIDERS = {
     'Anthropic':        { models: ['claude-haiku-4-5', 'claude-sonnet-5', 'claude-opus-4-8'], hint: 'Find at https://console.anthropic.com/settings' },
@@ -19,17 +22,6 @@
     'OpenAI':           { models: ['gpt-5.4', 'gpt-5', 'o4'],                                    hint: 'Find at https://platform.openai.com/api-keys' }
   };
   const PROVIDER_NAMES = Object.keys(PROVIDERS);
-
-  function Toggle({ on, onClick }) {
-    return (
-      <button onClick={onClick} aria-pressed={on} aria-label="Toggle Bring Your Own Key"
-        style={{ width: 46, height: 26, borderRadius: 999, border: 'none', padding: 3, cursor: 'pointer', flexShrink: 0, background: on ? ACCENT : '#cbd5e1', transition: 'background 0.18s ease' }}>
-        <span style={{ display: 'block', width: 20, height: 20, borderRadius: '50%', background: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.25)', transform: on ? 'translateX(20px)' : 'translateX(0)', transition: 'transform 0.18s ease' }} />
-      </button>);
-  }
-
-  const selectStyle = { width: '100%', border: '1px solid #d1d5db', borderRadius: 10, padding: '11px 13px', fontSize: 14, fontWeight: 500, color: INK, background: 'white', cursor: 'pointer', fontFamily: 'inherit', outline: 'none', appearance: 'none', WebkitAppearance: 'none' };
-  const Chevron = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}><polyline points="6 9 12 15 18 9" /></svg>;
 
   function ByokSettings({ on, setOn, keyAdded, keyInfo, onSave, onRemove, highlight }) {
     const [picked, setPicked] = useState(null);      // provider mid-entry (before save)
@@ -55,69 +47,66 @@
     const cancel = () => { setPicked(null); setKeyVal(''); };
 
     return (
-      <div ref={rootRef} data-section="byok" style={{ background: 'white', borderRadius: 16, padding: 18, marginBottom: 14, border: '1px solid ' + (glow ? 'rgba(25,144,255,0.9)' : 'rgba(0,0,0,0.06)'), boxShadow: glow ? '0 0 0 4px rgba(25,144,255,0.22), 0 6px 20px rgba(25,144,255,0.18)' : '0 1px 3px rgba(0,0,0,0.08)', transition: 'box-shadow 0.3s ease, border-color 0.3s ease' }}>
-        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <h2 style={{ fontSize: 17, fontWeight: 800, color: INK, marginBottom: 8 }}>Bring Your Own Key</h2>
-            <p style={{ fontSize: 14, color: MUTED, lineHeight: 1.55 }}>Use your own API key from OpenAI, Anthropic, or another provider. Usage is billed directly to your provider account, with no BlueAI credits consumed.</p>
+      <section ref={rootRef} data-section="byok" className={'v3-card v3-set-card' + (glow ? ' is-highlight' : '')}>
+        <div className="v3-set-head">
+          <div className="v3-set-head-main">
+            <h2 className="v3-set-title">Bring Your Own Key</h2>
+            <p className="v3-set-desc">Use your own API key from OpenAI, Anthropic, or another provider. Usage is billed directly to your provider account, with no BlueAI credits consumed.</p>
           </div>
-          <Toggle on={on} onClick={() => { if (on) { setOn(false); onRemove(); setPicked(null); setKeyVal(''); } else { setOn(true); } }} />
+          <Toggle enabled={on} label="Toggle Bring Your Own Key" onToggle={() => { if (on) { setOn(false); onRemove(); setPicked(null); setKeyVal(''); } else { setOn(true); } }} />
         </div>
 
         {on && keyAdded && (
-          <div style={{ marginTop: 16 }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-              <div>
-                <p style={{ fontSize: 14, fontWeight: 700, color: INK }}>{provider}</p>
-                <p style={{ fontSize: 13, color: FAINT, fontFamily: 'ui-monospace, Menlo, monospace', marginTop: 3 }}>{masked}</p>
+          <div className="v3-set-rows">
+            <div className="v3-set-row">
+              <div className="v3-set-line">
+                <div style={{ minWidth: 0 }}>
+                  <p className="v3-set-label">{provider}</p>
+                  <p className="v3-set-hint v3-mono">{masked}</p>
+                </div>
+                <button type="button" onClick={onRemove} className="v3-btn-ghost v3-btn-ghost--danger v3-btn-sm">Remove</button>
               </div>
-              <button onClick={onRemove} style={{ borderRadius: 10, border: '1px solid #fecaca', background: 'white', padding: '9px 18px', fontSize: 13.5, fontWeight: 700, color: '#dc2626', cursor: 'pointer', fontFamily: 'inherit', transition: 'background 0.13s' }}
-                onMouseEnter={(e) => e.currentTarget.style.background = '#fef2f2'} onMouseLeave={(e) => e.currentTarget.style.background = 'white'}>Remove</button>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginTop: 16, paddingTop: 16, borderTop: '1px solid #eef2f6' }}>
-              <p style={{ fontSize: 15, fontWeight: 700, color: INK }}>AI Model</p>
-              <div style={{ position: 'relative', width: 200 }}>
-                <select value={savedModel} onChange={(e) => setSavedModel(e.target.value)} style={{ ...selectStyle, paddingRight: 32 }}>
+            <div className="v3-set-row">
+              <div className="v3-set-line">
+                <p className="v3-set-label">AI Model</p>
+                <SelectField aria-label="AI Model" className="v3-field--md" value={savedModel} onChange={(e) => setSavedModel(e.target.value)}>
                   {(PROVIDERS[provider] ? PROVIDERS[provider].models : [savedModel]).map((m) => <option key={m} value={m}>{m}</option>)}
-                </select><Chevron />
+                </SelectField>
               </div>
             </div>
           </div>
         )}
 
         {on && !keyAdded && picked && (
-          <div style={{ marginTop: 16 }}>
-            <p style={{ fontSize: 14, fontWeight: 700, color: INK, marginBottom: 10 }}>{picked}</p>
-            <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 12, padding: 14 }}>
-              <label style={{ fontSize: 12.5, fontWeight: 700, color: '#475569', display: 'block', marginBottom: 7 }}>API Key</label>
-              <input value={keyVal} onChange={(e) => setKeyVal(e.target.value)} type="text" spellCheck={false} autoComplete="off" placeholder={PROVIDERS[picked].hint}
-                style={{ width: '100%', border: '1px solid #d1d5db', borderRadius: 10, padding: '10px 12px', fontSize: 13.5, color: INK, fontFamily: 'ui-monospace, Menlo, monospace', outline: 'none', boxSizing: 'border-box' }}
-                onFocus={(e) => e.currentTarget.style.borderColor = ACCENT} onBlur={(e) => e.currentTarget.style.borderColor = '#d1d5db'} />
-              <p style={{ fontSize: 12, color: FAINT, marginTop: 8 }}>Your key is stored encrypted on this device only.</p>
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 14 }}>
-                <button onClick={cancel} style={{ borderRadius: 10, border: '1px solid #d8dde7', background: 'white', padding: '9px 18px', fontSize: 13.5, fontWeight: 600, color: '#374151', cursor: 'pointer', fontFamily: 'inherit' }}
-                  onMouseEnter={(e) => e.currentTarget.style.background = '#f5f7fb'} onMouseLeave={(e) => e.currentTarget.style.background = 'white'}>Cancel</button>
-                <button onClick={save} style={{ borderRadius: 10, border: 'none', background: ACCENT, padding: '9px 18px', fontSize: 13.5, fontWeight: 700, color: 'white', cursor: 'pointer', fontFamily: 'inherit', transition: 'opacity 0.13s' }}
-                  onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'} onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}>Validate &amp; Save</button>
+          <div style={{ marginTop: 'var(--v2-space-4)' }}>
+            <p className="v3-set-label" style={{ marginBottom: 'var(--v2-space-2)' }}>{picked}</p>
+            <div className="v3-panel">
+              <label htmlFor="byok-key" className="v3-label">API Key</label>
+              <input id="byok-key" value={keyVal} onChange={(e) => setKeyVal(e.target.value)} type="text" spellCheck={false} autoComplete="off" placeholder={PROVIDERS[picked].hint}
+                className="v3-field v3-mono" />
+              <p className="v3-set-hint">Your key is stored encrypted on this device only.</p>
+              <div className="v3-set-actions">
+                <button type="button" onClick={cancel} className="v3-btn-ghost v3-btn-sm">Cancel</button>
+                <button type="button" onClick={save} className="v3-btn-solid v3-btn-sm">Validate &amp; Save</button>
               </div>
             </div>
           </div>
         )}
 
         {on && !keyAdded && !picked && (
-          <div style={{ marginTop: 16 }}>
-            <div style={{ background: '#fffbeb', border: '1px solid #fde68a', borderRadius: 10, padding: '11px 13px', marginBottom: 12 }}>
-              <p style={{ fontSize: 13, color: '#92722a', lineHeight: 1.5 }}>No API key configured. Add one to get started.</p>
+          <div style={{ marginTop: 'var(--v2-space-4)' }}>
+            <div className="v3-set-notice">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" className="v3-ico" aria-hidden="true"><circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8" /></svg>
+              <span>No API key configured. Add one to get started.</span>
             </div>
-            <div style={{ position: 'relative' }}>
-              <select value="" onChange={(e) => { if (e.target.value) setPicked(e.target.value); }} style={{ ...selectStyle, paddingRight: 32, color: FAINT }}>
-                <option value="" disabled>Add a provider</option>
-                {PROVIDER_NAMES.map((p) => <option key={p} value={p} style={{ color: INK }}>{p}</option>)}
-              </select><Chevron />
-            </div>
+            <SelectField aria-label="Add a provider" value="" empty onChange={(e) => { if (e.target.value) setPicked(e.target.value); }}>
+              <option value="" disabled>Add a provider</option>
+              {PROVIDER_NAMES.map((p) => <option key={p} value={p}>{p}</option>)}
+            </SelectField>
           </div>
         )}
-      </div>);
+      </section>);
   }
 
   window.Byok = Object.assign(window.Byok || {}, { ByokSettings, BYOK_PROVIDERS: PROVIDERS });

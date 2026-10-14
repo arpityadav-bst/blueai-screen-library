@@ -5,6 +5,13 @@
 // CreditsOverlay.tsx (ai-worker frontend), not from byok.jsx, so "Now" matches what users see
 // today: frosted full-window backdrop, X in the window corner, 300px card.
 //
+// V3, Phase 5: the pieces the product itself shows (the (i), its tooltip, the explainer and the
+// Learn more link) take settings.css classes: an ink-4 (i) that turns to the selection blue while
+// open, a white floating tooltip with the Target float shadow, the explainer as a lined panel, and
+// the site's underlined ink link. The countdown helpers are unchanged. The card pieces below them
+// (Hero, Title, Body, GotIt, Card...) are the comparison page's copy of the live app and keep V2's
+// values on purpose, so "Now" still matches what users see today.
+//
 // Exposes window.CreditsPopupParts.
 (function () {
   const { useState, useEffect } = React;
@@ -13,10 +20,6 @@
   const FAQ_URL = 'https://bluestacks.ai/getting-started#ai-credits';
   const DAILY = 2500;
   const GRAD = 'linear-gradient(270deg,#7B4CFF 0%,#0EA4C5 99.48%)';
-  // The hover tooltip's tint. Plain white vanished against the white card; this is the (i)
-  // icon's own highlight blue, so the tooltip reads as belonging to the icon.
-  const TIP_BG = '#EEF6FF';
-  const TIP_BORDER = '#BFDBFE';
 
   // ---- time
   // The daily refill is due at 00:00 UTC (token/handlers.py uses the UTC date as the day key).
@@ -83,17 +86,12 @@
   const GotIt = ({ onClick }) => (
     <button onClick={onClick} style={{ minHeight: 32, minWidth: 106, padding: '7px 16px', borderRadius: 40, background: BLUE, border: 'none', color: '#F7FAFF', fontSize: 15, fontWeight: 500, cursor: 'pointer' }}>Got it</button>
   );
-  // `palette` 'red' is for the (i) inside the red out-of-credits banner and next to a red
-  // title, where the blue highlight looked out of place. Idle is a muted red, open a deeper red
-  // on a pale red circle, both from the banner's own palette.
-  const PALETTES = {
-    blue: { idle: '#94a3b8', open: BLUE, ring: '#e8f3ff' },
-    red: { idle: '#b04a4a', open: '#991b1b', ring: '#f8d7d7' },
-  };
+  // `palette` 'red' is for the (i) beside a red title (the comparison page's red banner). The
+  // product's out-of-credits note is neutral, so it uses the default.
   const InfoButton = ({ open, onClick, palette = 'blue' }) => (
-    <button aria-label="What are credits?" aria-expanded={open} onClick={onClick}
-      style={{ width: 22, height: 22, borderRadius: 999, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', border: 'none', cursor: 'pointer', background: open ? PALETTES[palette].ring : 'transparent', color: open ? PALETTES[palette].open : PALETTES[palette].idle }}>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="9.5" /><path d="M12 11v6" /><path d="M12 7.5h.01" /></svg>
+    <button type="button" aria-label="What are credits?" aria-expanded={open} onClick={onClick}
+      className={'v3-info-btn' + (palette === 'red' ? ' v3-info-btn--danger' : '')}>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" className="v3-ico" aria-hidden="true"><circle cx="12" cy="12" r="9.5" /><path d="M12 11v6" /><path d="M12 7.5h.01" /></svg>
     </button>
   );
   const TextLink = ({ children, onClick, open }) => (
@@ -105,18 +103,18 @@
   const EXPLAIN_CREDITS = 'BlueAI runs on credits. Every job and chat uses some. You get limited credits each day, enough for 4 to 5 jobs.';
   const EXPLAIN_LIMIT = 'BlueAI has a daily limit. Every job and chat uses some of it. It’s enough for 4 to 5 jobs.';
 
-  // The "Learn more" text link. Opens the website FAQ.
+  // The "Learn more" text link. Opens the website FAQ. The site's link: ink, underlined at 32%.
   const LearnLink = ({ style }) => (
-    <a href={FAQ_URL} target="_blank" rel="noreferrer" style={{ display: 'inline-block', fontSize: 12.5, fontWeight: 600, color: BLUE, textDecoration: 'none', ...style }}>Learn more &#8599;</a>
+    <a href={FAQ_URL} target="_blank" rel="noreferrer" className="v3-link v3-link--ink v3-learn" style={style}>Learn more &#8599;</a>
   );
 
   // The explanation. `words` picks the vocabulary: 'credits' (A to C) or 'limit' (D).
   // `tone` 'panel' is the inline grey panel (C, D); 'tooltip' is the floating card (B).
   function Explainer({ words = 'credits', tone = 'panel' }) {
-    const tip = tone === 'tooltip';
+    // The inline panel is in flow (a line, no cast); the tooltip floats, so it alone casts.
     return (
-      <div style={{ width: '100%', textAlign: 'left', background: tip ? TIP_BG : '#f5f7fb', border: '1px solid ' + (tip ? TIP_BORDER : '#e3e8f0'), borderRadius: 10, padding: '12px 14px', display: 'flex', flexDirection: 'column', gap: 10, boxShadow: tip ? '0 8px 24px rgba(15,23,42,0.16)' : 'none' }}>
-        <p style={{ fontSize: 12.5, lineHeight: 1.5, color: '#334155' }}>{words === 'credits' ? EXPLAIN_CREDITS : EXPLAIN_LIMIT}</p>
+      <div className={'v3-explain' + (tone === 'tooltip' ? ' v3-explain--tip' : '')}>
+        <p>{words === 'credits' ? EXPLAIN_CREDITS : EXPLAIN_LIMIT}</p>
         <LearnLink />
       </div>
     );
@@ -130,8 +128,8 @@
      nothing the reader needs while the tooltip is up; downward it covered the body copy and the
      button, the two things the person hovering is about to read. On the AI Credits page the
      banner sits near the top, so it opens DOWN, over the card that only holds the 0.
-     Positioned for a centred title row: the icon sits about 220px across, so the 260px tooltip
-     starts 189px left of the icon's centre and stays in the window. */
+     Positioned for a centred title row: the 260px tooltip starts 189px left of the icon and its
+     arrow sits over the icon's centre (settings.css .v3-tip), so it stays in the window. */
   function InfoTip({ dir = 'up', palette = 'blue' }) {
     const [hover, setHover] = useState(false);
     const [pinned, setPinned] = useState(false);
@@ -140,15 +138,15 @@
     const leave = () => { timer.current = setTimeout(() => setHover(false), 200); };
     const open = hover || pinned;
     return (
-      <span style={{ position: 'relative', display: 'inline-flex' }} onMouseEnter={enter} onMouseLeave={leave}
+      <span className="v3-info" onMouseEnter={enter} onMouseLeave={leave}
         onFocus={enter} onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) { setHover(false); setPinned(false); } }}
         onKeyDown={(e) => { if (e.key === 'Escape') { setHover(false); setPinned(false); } }}>
         <InfoButton open={open} onClick={() => setPinned(!pinned)} palette={palette} />
         {open && (
-          <span role="tooltip" style={{ position: 'absolute', [dir === 'up' ? 'bottom' : 'top']: 'calc(100% + 10px)', left: -189, width: 260, zIndex: 20 }}>
+          <span role="tooltip" className={'v3-tip v3-tip--' + (dir === 'up' ? 'up' : 'down')}>
             {/* The arrow is a bordered square behind the card, so only its outer two edges show. */}
-            <span style={{ position: 'absolute', [dir === 'up' ? 'bottom' : 'top']: -6, left: 194, width: 12, height: 12, background: TIP_BG, border: '1px solid ' + TIP_BORDER, transform: 'rotate(45deg)', borderRadius: 2 }} />
-            <span style={{ position: 'relative', display: 'block' }}><Explainer tone="tooltip" /></span>
+            <span className="v3-tip-arrow" />
+            <span className="v3-tip-body"><Explainer tone="tooltip" /></span>
           </span>
         )}
       </span>

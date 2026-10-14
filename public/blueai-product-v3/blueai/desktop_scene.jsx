@@ -150,7 +150,7 @@
           <button ref={tbRef} type="button" aria-label="BlueAI" title="BlueAI"
             className={'pscene-tb-ai' + (aiOpen ? ' pscene-tb-ai--open' : '') + (aiAttention ? ' pscene-tb-ai--attn' : '')}
             onClick={(e) => { e.stopPropagation(); if (onAiClick) onAiClick(); }}>
-            <img src="assets/Logo.png" alt="" draggable="false" />
+            <img src="assets/spark.svg" alt="" draggable="false" />
           </button>}
       </div>);
   }

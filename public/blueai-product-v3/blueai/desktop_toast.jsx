@@ -24,7 +24,7 @@
     return (
       <div className={'pscene-toast' + (leaving ? ' pscene-toast--out' : '')} role="status" onClick={onOpen}>
         <div className="pscene-toast-head">
-          <img src="assets/Logo.png" alt="" draggable="false" />
+          <img src="assets/spark.svg" alt="" draggable="false" />
           <span>BlueAI</span>
           <i>now</i>
           <button type="button" aria-label="Dismiss" onClick={(e) => { e.stopPropagation(); setLeaving(true); }}>
