@@ -50,15 +50,8 @@
 }
 
 /* ---- Welcome (section 67) --------------------------------------------------------------------- */
-/* The site's quiet texture: a faint grey dot grid on the canvas, strongest behind the content and
-   dissolving toward the window edges, the way the site's glyph field fades out (onblue.css:3198). */
-.v3-dotgrid {
-  position: absolute; inset: 0; pointer-events: none;
-  background-image: radial-gradient(circle, var(--v2-line-strong) 1px, transparent 1.5px);
-  background-size: 18px 18px; background-position: center;
-  -webkit-mask-image: radial-gradient(75% 65% at 50% 46%, #000 0%, rgba(0, 0, 0, 0.5) 55%, transparent 100%);
-  mask-image: radial-gradient(75% 65% at 50% 46%, #000 0%, rgba(0, 0, 0, 0.5) 55%, transparent 100%);
-}
+/* The welcome's dot field is drawn by blueai/lens_dots.jsx (crisp middle, soft red/cyan fringe at
+   the edges, the site's aberration), on a canvas so it needs no CSS mask or blur. */
 .v3-welcome-title {
   margin: 0; color: var(--v2-ink); text-align: center; text-wrap: balance;
   font-family: var(--v2-font-ui); font-size: var(--v2-text-24); font-weight: var(--v2-weight-semibold);

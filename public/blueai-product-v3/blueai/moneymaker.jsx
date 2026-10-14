@@ -61,7 +61,7 @@
           }
         `}</style>
 
-        <div className="v3-dotgrid" aria-hidden="true" />
+        <window.LensDots />
 
         <div style={{ position: 'relative', zIndex: 'var(--v2-z-raised)', display: 'flex', flexDirection: 'column', '--mm-shift': `${shift}px` }}>
           <div className="mm-title" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--v2-space-4)' }}>
