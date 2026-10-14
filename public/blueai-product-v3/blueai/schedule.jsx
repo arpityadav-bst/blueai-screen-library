@@ -4,8 +4,10 @@
    danger trigger (red on hover only), its confirm the destructive commit; the one committing action
    per view is the primary (Create, and Create schedule on the empty state), so the header's New is
    secondary. Kit fields: label above, 1px line, blue edge and soft ring on focus. The title sits in
-   the one screen header, 24px. Review round 1 (U16): Edit opens the same form filled in with the
-   task, saved in place; the form's first field takes focus. */
+   the one screen header, 24px (the kit's ScreenHeader since review round 2). Review round 1 (U16):
+   Edit opens the same form filled in with the task, saved in place; the form's first field takes
+   focus. Every glyph is the kit's Icon; the empty state sits on the ground (no card), and both
+   dialogs end on the dialogs' one button row (review round 2). */
 
 const { useState, useEffect } = React;
 
@@ -33,7 +35,7 @@ function ScheduleCard({ task, onEdit, onDelete }) {
           <span><strong>Schedule:</strong> {repeatLabel(task.schedule)}</span>
         </div>
         <div className="v3-sched-line">
-          <svg className="v2-icon" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg>
+          <window.V2Kit.Icon name="clock" />
           <span>
             <strong>Next run:</strong>{' '}
             <span className="v3-figure">
@@ -74,10 +76,10 @@ function ScheduleTaskModal({ isOpen, task, onClose, onSave }) {
   return (
     <ModalOverlay isOpen={isOpen} onClose={onClose} title={task ? 'Edit task' : 'Schedule task'} initialFocus="#sched-name">
       <form onSubmit={submit} className="v3-form">
-        <Field id="sched-name" label="Task name" required>
+        <Field id="sched-name" label="Task name">
           <input id="sched-name" className="v2-field-input" value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Daily rewards collection" />
         </Field>
-        <Field id="sched-prompt" label="Task prompt" required className="v2-field--area">
+        <Field id="sched-prompt" label="Task prompt" className="v2-field--area">
           <textarea id="sched-prompt" className="v2-field-input v2-field-input--area" value={prompt} onChange={e => setPrompt(e.target.value)} placeholder="Describe what BlueAI should do…" rows={3} />
         </Field>
         <SelectField id="sched-repeat" label="Repeat" value={repeat} onChange={e => setRepeat(e.target.value)}>
@@ -86,7 +88,7 @@ function ScheduleTaskModal({ isOpen, task, onClose, onSave }) {
           <option value="weekly">Weekly</option>
           <option value="monthly">Monthly</option>
         </SelectField>
-        <div className="v3-btn-row">
+        <div className="v3-btn-row v3-dlg-actions">
           <button type="button" onClick={onClose} className="v2-button v2-button--secondary v2-button--lg">Cancel</button>
           <button type="submit" disabled={!canSave} aria-disabled={!canSave} className="v2-button v2-button--primary v2-button--lg">{task ? 'Save' : 'Create'}</button>
         </div>
@@ -104,11 +106,11 @@ function ScheduleScreen({ isLoading }) {
 
   if (isLoading) return (
     <div>
-      <div className="v3-screen-head">
-        <Shimmer h={24} w={150} r={6} />
+      <div className="v2-screen-header">
+        <Shimmer h={24} w={150} r={6} extra={{ marginRight: 'auto' }} />
         <Shimmer h={36} w={72} r={6} />
       </div>
-      <div className="v3-list">
+      <div className="v3-screen-body v3-list">
         {[1, 2].map(i => (
           <div key={i} className="v2-card">
             <Shimmer h={17} w="65%" r={6} extra={{ marginBottom: 14 }} />
@@ -125,15 +127,16 @@ function ScheduleScreen({ isLoading }) {
   );
 
   return (
-    <div>
+    <div className="v3-tabpage">
       <ScreenHead title="Scheduled tasks">
         <button type="button" onClick={() => openForm()} className="v2-button v2-button--secondary">
           <IcoPlusSmall /> New
         </button>
       </ScreenHead>
 
+      <div className="v3-screen-body">
       {tasks.length === 0 ? (
-        <div className="v2-card v2-empty">
+        <div className="v2-empty v3-fill">
           <div className="v2-empty-icon"><IcoCalendar size={24} /></div>
           <p className="v2-text-title-lg v2-empty-title">No scheduled tasks</p>
           <p className="v2-text-body v2-empty-body">Schedule jobs to run automatically at specific times.</p>
@@ -146,6 +149,7 @@ function ScheduleScreen({ isLoading }) {
           ))}
         </ul>
       )}
+      </div>
 
       <ScheduleTaskModal isOpen={showCreate} task={editing} onClose={() => setShowCreate(false)}
         onSave={t => setTasks(prev => (prev.some(p => p.id === t.id) ? prev.map(p => (p.id === t.id ? t : p)) : [...prev, t]))} />
@@ -153,7 +157,7 @@ function ScheduleScreen({ isLoading }) {
       <ModalOverlay isOpen={!!confirmId} onClose={() => setConfirmId(null)} title="Confirm delete">
         <div className="v3-form">
           <p className="v2-text-body">Are you sure you want to delete this scheduled task? This action cannot be undone.</p>
-          <div className="v3-btn-row">
+          <div className="v3-btn-row v3-dlg-actions">
             <button type="button" onClick={() => setConfirmId(null)} className="v2-button v2-button--secondary v2-button--lg">Cancel</button>
             <button type="button" onClick={() => { setTasks(p => p.filter(t => t.id !== confirmId)); setConfirmId(null); }} className="v2-button v2-button--destructive v2-button--lg">Delete</button>
           </div>

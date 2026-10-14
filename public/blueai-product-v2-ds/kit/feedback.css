@@ -128,8 +128,8 @@
 .v2-banner--compact .v2-banner-actions { margin: 0; }
 
 /* ---- EmptyState: a 56 sunken mark, a 20/600 title, one muted line (V3 restyle, 2026-10-14). No box of its
-   own in Target: on a page it sits on the ground, in a card it takes the card's padding. The box, the
-   mark and the title read look hooks, so V2 today gets its white box and purple mark back. ---- */
+   own in Target: on a page it sits on the ground, in a card it takes the card's padding. The box, its
+   lift, the mark and the title read look hooks, so V2 today gets its white box and purple mark back. ---- */
 .v2-empty {
   display: flex;
   flex-direction: column;
@@ -139,6 +139,7 @@
   background: var(--v2-empty-fill);
   border: var(--v2-stroke) solid var(--v2-empty-line);
   border-radius: var(--v2-empty-radius);
+  box-shadow: var(--v2-shadow-0);
   font-family: var(--v2-font-ui);
   text-align: center;
 }
@@ -146,9 +147,9 @@
   display: grid; place-items: center; width: var(--v2-mark-xl); height: var(--v2-mark-xl); margin-bottom: var(--v2-space-2);
   border-radius: var(--v2-radius-round); background: var(--v2-empty-mark-fill); color: var(--v2-empty-mark-ink);
 }
-/* Type from .v2-text-title-lg and .v2-text-body (kit/base.css), set in kit/notice.jsx; size and inks from the hooks. */
-.v2-empty-title { margin: 0; font-size: var(--v2-empty-title-size); color: var(--v2-empty-title-ink); }
-.v2-empty-body { max-width: var(--v2-measure-tip); margin: 0; color: var(--v2-empty-body-ink); text-wrap: pretty; }
+/* Type from .v2-text-title-lg and .v2-text-body (kit/base.css), set in kit/notice.jsx; size, weight and inks from the hooks. */
+.v2-empty-title { margin: 0; font-size: var(--v2-empty-title-size); font-weight: var(--v2-empty-title-weight); color: var(--v2-empty-title-ink); }
+.v2-empty-body { max-width: var(--v2-measure); margin: 0; color: var(--v2-empty-body-ink); text-wrap: pretty; }
 .v2-empty-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--v2-space-2); margin-top: var(--v2-space-2); }
 
 @media (forced-colors: active) {

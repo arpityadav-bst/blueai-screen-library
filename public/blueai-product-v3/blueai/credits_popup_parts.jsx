@@ -6,9 +6,11 @@
 // today: frosted full-window backdrop, X in the window corner, 300px card.
 //
 // V3, Phase 5: the pieces the product itself shows (the (i), its tooltip, the explainer and the
-// Learn more link) take settings.css classes: an ink-4 (i) that turns ink on the press wash while
-// open (review round 1: open is not a selection), a white floating tooltip with the Target float
-// shadow, the explainer as a lined panel, and the kit's underlined ink link. The countdown helpers are unchanged. The card pieces below them
+// Learn more link). Since review round 2 the (i) and its tooltip are the kit's info Tooltip
+// (V2Kit.Tooltip, kit/menu.jsx and kit/overlays.css: the 24px (i) in a 32px target, ink on the press
+// wash while pinned open, the white floating box with its arrow, placed and kept inside the window
+// by the kit, no hard-coded offsets); the explainer is a lined panel (settings.css) and the link the
+// kit's underlined ink link. The countdown helpers are unchanged. The card pieces below them
 // (Hero, Title, Body, GotIt, Card...) are the comparison page's copy of the live app and keep V2's
 // values on purpose, so "Now" still matches what users see today.
 //
@@ -86,14 +88,6 @@
   const GotIt = ({ onClick }) => (
     <button onClick={onClick} style={{ minHeight: 32, minWidth: 106, padding: '7px 16px', borderRadius: 40, background: BLUE, border: 'none', color: '#F7FAFF', fontSize: 15, fontWeight: 500, cursor: 'pointer' }}>Got it</button>
   );
-  // `palette` 'red' is for the (i) beside a red title (the comparison page's red banner). The
-  // product's out-of-credits note is neutral, so it uses the default.
-  const InfoButton = ({ open, onClick, palette = 'blue' }) => (
-    <button type="button" aria-label="What are credits?" aria-expanded={open} onClick={onClick}
-      className={'v3-info-btn' + (palette === 'red' ? ' v3-info-btn--danger' : '')}>
-      <svg className="v2-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5" /><path d="M12 11v6" /><path d="M12 7.5h.01" /></svg>
-    </button>
-  );
   const TextLink = ({ children, onClick, open }) => (
     <button onClick={onClick} aria-expanded={open} style={{ background: 'none', border: 'none', cursor: 'pointer', color: BLUE, fontSize: 12.5, fontWeight: 600, padding: 2 }}>{children}</button>
   );
@@ -108,48 +102,33 @@
     <a href={FAQ_URL} target="_blank" rel="noreferrer" className="v2-link v3-learn" style={style}><span className="v2-link-text">Learn more &#8599;</span></a>
   );
 
-  // The explanation. `words` picks the vocabulary: 'credits' (A to C) or 'limit' (D).
-  // `tone` 'panel' is the inline grey panel (C, D); 'tooltip' is the floating card (B).
-  function Explainer({ words = 'credits', tone = 'panel' }) {
-    // The inline panel is in flow (a line, no cast); the tooltip floats, so it alone casts.
+  // The explanation as the inline grey panel (C, D). `words` picks the vocabulary: 'credits' (A to
+  // C) or 'limit' (D). The panel is in flow (a line, no cast).
+  function Explainer({ words = 'credits' }) {
     return (
-      <div className={'v3-explain' + (tone === 'tooltip' ? ' v3-explain--tip' : '')}>
+      <div className="v3-explain">
         <p>{words === 'credits' ? EXPLAIN_CREDITS : EXPLAIN_LIMIT}</p>
         <LearnLink />
       </div>
     );
   }
 
-  /* The (i) with its hover tooltip. Opens on hover, keyboard focus or click (click pins it, for
-     touchscreens). Closing waits 200ms, so the pointer can travel from the icon onto the tooltip
-     and reach the FAQ link without it vanishing. Esc closes.
+  /* The (i) with its tooltip: the kit's info Tooltip (V2Kit.Tooltip kind 'info'). It opens on hover,
+     keyboard focus or click (click pins it, for touchscreens); closing waits --v2-dur-2 (V2's 200ms)
+     so the pointer can travel onto the tooltip and reach the FAQ link; Esc closes. The kit places it
+     and slides it back inside the window, so nothing here hard-codes an offset.
 
-     `dir` says which way it opens. In the popup it opens UP, over the hero number, which carries
-     nothing the reader needs while the tooltip is up; downward it covered the body copy and the
-     button, the two things the person hovering is about to read. On the AI Credits page the
-     banner sits near the top, so it opens DOWN, over the card that only holds the 0.
-     Positioned for a centred title row: the 260px tooltip starts 189px left of the icon and its
-     arrow sits over the icon's centre (settings.css .v3-tip), so it stays in the window. */
+     `dir` says which way it prefers to open. In the popup it opens UP, over the hero number, which
+     carries nothing the reader needs while the tooltip is up; downward it covered the body copy and
+     the button. On the AI Credits page the note sits near the top, so it opens DOWN, over the card
+     that only holds the 0. `palette` 'red' is for the (i) beside a red title (the comparison page's
+     red banner, settings.css .v3-tip--danger); the product's out-of-credits note is neutral. */
   function InfoTip({ dir = 'up', palette = 'blue' }) {
-    const [hover, setHover] = useState(false);
-    const [pinned, setPinned] = useState(false);
-    const timer = React.useRef(null);
-    const enter = () => { clearTimeout(timer.current); setHover(true); };
-    const leave = () => { timer.current = setTimeout(() => setHover(false), 200); };
-    const open = hover || pinned;
+    const Tooltip = window.V2Kit.Tooltip;
     return (
-      <span className="v3-info" onMouseEnter={enter} onMouseLeave={leave}
-        onFocus={enter} onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) { setHover(false); setPinned(false); } }}
-        onKeyDown={(e) => { if (e.key === 'Escape') { setHover(false); setPinned(false); } }}>
-        <InfoButton open={open} onClick={() => setPinned(!pinned)} palette={palette} />
-        {open && (
-          <span role="tooltip" className={'v3-tip v3-tip--' + (dir === 'up' ? 'up' : 'down')}>
-            {/* The arrow is a bordered square behind the card, so only its outer two edges show. */}
-            <span className="v3-tip-arrow" />
-            <span className="v3-tip-body"><Explainer tone="tooltip" /></span>
-          </span>
-        )}
-      </span>
+      <Tooltip kind="info" placement={dir === 'down' ? 'down' : 'up'} label="What are credits?"
+        className={palette === 'red' ? 'v3-tip--danger' : undefined}
+        content={<span className="v2-stack v2-gap-2"><span>{EXPLAIN_CREDITS}</span><LearnLink /></span>} />
     );
   }
   // The card shell, live CreditsOverlay sizes: max-w 300, pt-10 px-5 pb-12, gap 5.
@@ -159,7 +138,7 @@
 
   window.CreditsPopupParts = {
     BLUE, DAILY, nextUtcMidnight, formatLeft, formatClock, useNow,
-    CreditsIcon, ClockIcon, Hero, Rule, Title, Body, Strong, GotIt, InfoButton, InfoTip, TextLink, Explainer, LearnLink, Card, gradText,
+    CreditsIcon, ClockIcon, Hero, Rule, Title, Body, Strong, GotIt, InfoTip, TextLink, Explainer, LearnLink, Card, gradText,
     EXPLAIN_CREDITS,
   };
 })();

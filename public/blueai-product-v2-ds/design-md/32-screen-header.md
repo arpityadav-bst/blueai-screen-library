@@ -12,7 +12,7 @@
 
 **Variants.** Title only (a tab root: Activity, Settings). With Back (a pushed screen: Worker settings, Account). With a trailing action: an IconButton (Chat's "New chat", `plus`) or a quiet md Button (Notifications' "Mark all read", `screens/notifications.jsx:157`).
 
-**Sizes.** Min 52 tall (`--v2-topbar-h`), padding 8 16 (`--v2-space-2`, `--v2-gutter`); with Back the left padding is 10, so the chevron lands on the 16 gutter. Title 20/600, -0.02em, ink, one line (`--v2-text-20`, `--v2-weight-semibold`, `--v2-tracking-title`). Ground `--v2-canvas`.
+**Sizes.** A 36 line (`--v2-control-md`, its min height in content-box, so a trailing 36px button never grows the band) with 16 above and below and 16 at the sides (`--v2-space-4`, `--v2-gutter`): 68 tall. With Back the left padding is 10, so the chevron lands on the 16 gutter. Title 24/500, -0.04em, ink, one line (`.v2-text-greeting`: `--v2-text-24`, `--v2-greeting-weight`, `--v2-tracking-hero`), the home greeting's style (review round 2, 2026-10-14). Ground `--v2-canvas`.
 
 **States.** None of its own (Back follows IconButton states, section 11). A long title truncates with an ellipsis. V2: open AI Credits, Chat History or Schedule from `?start=worker` to see the five treatments.
 

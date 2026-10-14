@@ -107,9 +107,9 @@
   letter-spacing: var(--v2-tracking-display); color: var(--v2-ink); text-wrap: balance;
 }
 .v2-text-greeting {
-  font-size: var(--v2-text-24); font-weight: var(--v2-weight-medium); line-height: var(--v2-leading-tight);
+  font-size: var(--v2-text-24); font-weight: var(--v2-greeting-weight); line-height: var(--v2-leading-tight);
   letter-spacing: var(--v2-tracking-hero); color: var(--v2-ink); text-wrap: balance;
-} /* titles 24 and up follow the site: 500, -0.04em (review round 1, 2026-10-14) */
+} /* titles 24 and up follow the site: 500, -0.04em (review round 1); the weight is a look hook (round 2) */
 .v2-text-title-lg {
   font-size: var(--v2-text-20); font-weight: var(--v2-weight-semibold); line-height: var(--v2-leading-tight);
   letter-spacing: var(--v2-tracking-title); color: var(--v2-ink);
@@ -134,13 +134,14 @@
   font-size: var(--v2-text-13); font-weight: var(--v2-weight-semibold); line-height: var(--v2-leading-snug);
   letter-spacing: var(--v2-tracking-mini); color: var(--v2-ink);
 }
+/* Body text takes the site's -0.01em (review round 2, 2026-10-14). */
 .v2-text-body {
   font-size: var(--v2-text-14); font-weight: var(--v2-weight-regular); line-height: var(--v2-leading-body);
-  letter-spacing: 0; color: var(--v2-ink-2);
+  letter-spacing: var(--v2-tracking-label); color: var(--v2-ink-2);
 }
 .v2-text-body-sm {
   font-size: var(--v2-text-13); font-weight: var(--v2-weight-regular); line-height: var(--v2-leading-body);
-  letter-spacing: 0; color: var(--v2-ink-3);
+  letter-spacing: var(--v2-tracking-label); color: var(--v2-ink-3);
 }
 /* A figure inside a note: the fact stays muted, the number is ink (site .dash-note). */
 .v2-text-body-sm :is(strong, b), .v2-text-body :is(strong, b), .v2-text-meta :is(strong, b), .v2-text-caption :is(strong, b) {
@@ -162,10 +163,10 @@
   letter-spacing: 0; color: var(--v2-ink-3);
 }
 /* Section labels only, at the site's band-head tracking, 0.14em (onblue/onblue.css:1287-1295; review
-   round 1, 2026-10-14, was 0.08em). */
+   round 1, 2026-10-14, was 0.08em), in the site's --dim-ink step, ink-4 (review round 2). */
 .v2-text-eyebrow {
   font-size: var(--v2-text-11); font-weight: var(--v2-weight-medium); line-height: var(--v2-leading-display);
-  letter-spacing: var(--v2-tracking-eyebrow); text-transform: uppercase; color: var(--v2-ink-3);
+  letter-spacing: var(--v2-tracking-eyebrow); text-transform: uppercase; color: var(--v2-ink-4);
 }
 .v2-text-mono {
   font-family: var(--v2-font-mono); font-size: var(--v2-text-13); font-weight: var(--v2-weight-regular);

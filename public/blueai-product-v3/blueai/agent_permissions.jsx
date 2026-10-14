@@ -29,30 +29,23 @@
    real product records it server-side, per app.
 
    Exposes window.AgentPermissions = { MODES, APPS, getMode, setMode, reset, autoApps, requestMode,
-   usePermissionMode, summary, openSheet, ModeChip, AutoRibbon, ModeSheet, AppSwitchList, AutoConfirm,
-   IcoShieldCheck, IcoZap }. */
+   usePermissionMode, summary, openSheet, ModeChip, AutoRibbon, ModeSheet, AppSwitchList, AutoConfirm }. */
 (function () {
   const { useState, useEffect, useRef, useId } = React;
 
-  /* V3 (phase 4; kit parts since review round 1): a quiet kit button for the chip, a panel-band
-     ribbon (worker.css), the kit's sheet with one kit switch per app, and the consent on the
-     button ladder (Cancel secondary, "I agree, turn on" primary). Icons are the kit's icon box. */
-  const stroke = (size, paths) =>
-    <svg className={window.icoCls(size)} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{paths}</svg>;
-  const IcoShieldCheck = ({ size = 16 }) => stroke(size, <><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" /><path d="m9 12 2 2 4-4" /></>);
-  const IcoZap = ({ size = 16 }) => stroke(size, <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z" />);
-  // App marks, in the product's own stroke style rather than brand logos.
-  const IcoYouTube = ({ size = 16 }) => stroke(size, <><rect x="2.5" y="5" width="19" height="14" rx="4" /><path d="m10 9 5 3-5 3z" fill="currentColor" stroke="none" /></>);
-  const IcoInstagram = ({ size = 16 }) => stroke(size, <><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="3.8" /><circle cx="17.3" cy="6.7" r="0.9" fill="currentColor" stroke="none" /></>);
-  const IcoChevron = () =>
-    <svg className="v2-icon v3-mode-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="6 15 12 9 18 15" /></svg>;
+  /* V3 (phase 4; kit parts since review rounds 1 and 2): a quiet kit button for the chip, the kit's
+     compact neutral banner for the ribbon (the composer notice, design-md 38), the kit's sheet with
+     one kit switch per app, and the consent on the button ladder (Cancel secondary, "I agree, turn
+     on" primary). Every glyph is the kit's Icon by name: shield-check (Always ask) and zap
+     (Automatic), the app marks youtube and instagram in the product's stroke style. */
+  const Icon = (p) => React.createElement(window.V2Kit.Icon, p);
 
   const MODES = [
-    { id: 'always', title: 'Always ask', sub: 'Asks before each job starts, then runs it to the end', Icon: IcoShieldCheck },
-    { id: 'auto', title: 'Automatic', sub: 'Starts and finishes jobs without asking', Icon: IcoZap }];
+    { id: 'always', title: 'Always ask', sub: 'Asks before each job starts, then runs it to the end', icon: 'shield-check' },
+    { id: 'auto', title: 'Automatic', sub: 'Starts and finishes jobs without asking', icon: 'zap' }];
   const APPS = [
-    { id: 'youtube', name: 'YouTube', Icon: IcoYouTube },
-    { id: 'instagram', name: 'Instagram', Icon: IcoInstagram }];
+    { id: 'youtube', name: 'YouTube', icon: 'youtube' },
+    { id: 'instagram', name: 'Instagram', icon: 'instagram' }];
   const byId = (id) => MODES.find((m) => m.id === id) || MODES[0];
   const appById = (id) => APPS.find((a) => a.id === id) || APPS[0];
   // The chip's and the ribbon's words: one app is named, several are counted, so the line stays
@@ -105,7 +98,7 @@
           const sid = uid + '-' + a.id;
           return (
             <li key={a.id} className="v3-app">
-              <span className="v3-row-tile"><a.Icon size={20} /></span>
+              <span className="v2-row-mark" aria-hidden="true"><Icon name={a.icon} /></span>
               <span className="v3-app-text">
                 <span className="v3-app-name">{a.name}</span>
                 <span id={sid} className="v3-app-state">{on ? 'Automatic' : 'Always ask'}</span>
@@ -154,7 +147,7 @@
     const m = byId(auto.length ? 'auto' : 'always');
     return (
       <button type="button" onClick={openSheet} aria-haspopup="dialog" aria-expanded={open} title="Mode" className="v2-button v2-button--quiet v2-button--sm">
-        <m.Icon size={16} />{summary(auto)}<IcoChevron />
+        <Icon name={m.icon} />{summary(auto)}<Icon name="chevron-up" className="v3-mode-chev" />
       </button>);
   }
 
@@ -186,18 +179,21 @@
      setting belongs to the worker skill, not to the product, so it shows up where the worker is
      working and nowhere else. One line (Arpit, 2026-10-14): "Automatic on YouTube", or a count
      once several apps are on, then "Change", which opens the mode sheet. Renders nothing while
-     every app is on Always ask. */
+     every app is on Always ask. It is the kit's composer notice, a compact neutral Banner (review
+     round 2). */
   function AutoRibbon() {
     const { autoApps: on } = usePermissionMode();
     const auto = on();
     if (!auto.length) return null;
     return (
-      <div className="v2-anim-pop-in v3-ribbon">
-        <span className="v3-ribbon-icon"><IcoZap size={16} /></span>
-        <span className="v3-ribbon-text">{summary(auto)}</span>
-        <button type="button" onClick={openSheet} aria-haspopup="dialog" className="v2-button v2-button--quiet v2-button--sm">Change</button>
+      <div className="v2-anim-pop-in v2-banner v2-banner--compact">
+        <span className="v2-banner-icon"><Icon name="zap" /></span>
+        <span className="v2-banner-text">{summary(auto)}</span>
+        <span className="v2-banner-actions">
+          <button type="button" onClick={openSheet} aria-haspopup="dialog" className="v2-button v2-button--quiet v2-button--sm">Change</button>
+        </span>
       </div>);
   }
 
-  window.AgentPermissions = { MODES, APPS, getMode, setMode, reset, autoApps, requestMode, usePermissionMode, summary, openSheet, ModeChip, AutoRibbon, ModeSheet, AppSwitchList, AutoConfirm, IcoShieldCheck, IcoZap };
+  window.AgentPermissions = { MODES, APPS, getMode, setMode, reset, autoApps, requestMode, usePermissionMode, summary, openSheet, ModeChip, AutoRibbon, ModeSheet, AppSwitchList, AutoConfirm };
 })();

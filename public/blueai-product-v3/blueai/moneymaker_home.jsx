@@ -1,6 +1,5 @@
-// BlueAI: MoneyMaker's POST-LOGIN in-chat card (MoneyMakerHome) + its first-run coach spotlight
-// and the dollar glyph the card's tile uses. Split out of moneymaker.jsx (2026-08-18) when that file
-// crossed the workspace's 300-line rule.
+// BlueAI: MoneyMaker's POST-LOGIN in-chat card (MoneyMakerHome) + its first-run coach spotlight.
+// Split out of moneymaker.jsx (2026-08-18) when that file crossed the workspace's 300-line rule.
 //
 // Clean seam: this is the only part of the feature that renders INSIDE the chat (in ChatScreen's
 // !started home slot, on blueai-product's own light design system), whereas the welcome screen in
@@ -16,21 +15,6 @@
 // existing call site in chat_product.jsx is untouched by the split.
 (function () {
   const { useState } = React;
-
-  /* Dollar glyph: designer-supplied SVG asset (filled, not stroke), swapped in for the earlier
-     custom-drawn version. Down to ONE use now, the card's tile. Two former uses are gone: an
-     oversized card watermark, cut because it sat behind the description text and read as a smudge
-     (and two dollar signs on one small card was one too many); and the welcome screen's step-2 tile
-     (the welcome now uses numbered step discs, V3 Phase 2).
-     Kept parameterised anyway; it costs nothing.
-     V3 (phase 4): it takes the tile's ink (money is ink, never green). Review round 1: redrawn as an
-     outline in the product's stroke set (Lucide dollar-sign), so it is no longer the one filled glyph. */
-  function IcoDollar({ size = 24 }) {
-    return (
-      <svg className={window.icoCls(size)} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <line x1="12" y1="2" x2="12" y2="22" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-      </svg>);
-  }
 
   /* Onboarding tooltip: one bold line, an explicit "Okay" dismiss. Copy went through three rounds,
      "…get your first job" (promised scarce supply),
@@ -70,10 +54,12 @@
      one control (review round 1: the card itself is no longer a button). Under the description,
      the mode line says how paid jobs run ("Always ask", or "Automatic on YouTube") with a quiet
      Change that opens the mode sheet (the kit's WorkerCard mode line, design-md 42).
-     V3 (phase 4): the chat home's row language (chat.css .v3-row) at card size, a 1px line and no
-     cast, the dollar on a sunken tile in ink, and Run as the solid ink button. The spinning gradient
-     border and the blue halo are gone (no gradients, no glows); while the coach lights it, the card
-     sits above the veil, so for that moment it floats with the dialog cast.
+     V3: the kit's card (review round 2: .v2-card, not a row, so no pointer and no hover: Run is its
+     one target), a 1px line and no cast, the kit's earnings glyph (the one dollar mark, as the top
+     bar's Earnings row) on the kit WorkerCard's sunken tile in ink, and Run as the solid ink button
+     with the kit's outline play. The spinning gradient border and the blue halo are gone (no
+     gradients, no glows); while the coach lights it, the card sits above the veil, so for that
+     moment it floats with the dialog cast.
 
      THE SCRIM: absolute inset-0, which resolves against .ba-app. That's verified, not assumed: the
      five wrappers between this component and .ba-app (the marginTop:4 div, the chat scroller, its
@@ -101,7 +87,7 @@
     const AP = window.AgentPermissions;
     const { autoApps } = AP.usePermissionMode();
     const auto = autoApps();
-    const ModeIcon = auto.length ? AP.IcoZap : AP.IcoShieldCheck;
+    const Icon = window.V2Kit.Icon;
 
     return (
       <div>
@@ -109,19 +95,19 @@
 
         <div className={'v3-wk-stack' + (coaching ? ' is-coaching' : '')}>
           {back && <window.WorkerDayDone.EarningsStrip />}
-          <div className={'v3-row v3-wk-home' + (coaching ? ' is-lit' : '')}>
-            <span className="v3-row-tile v3-row-tile--lg"><IcoDollar size={24} /></span>
-            <div className="v3-row-main">
+          <div className={'v2-card v3-wk-home' + (coaching ? ' is-lit' : '')}>
+            <span className="v2-wcard-tile"><Icon name="earnings" size={24} /></span>
+            <div className="v2-grow">
               {/* Renamed 2026-09-09 (designer directive: MoneyMaker -> "BlueAI worker"). */}
-              <p className="v3-row-title">BlueAI worker</p>
-              <p className="v3-row-desc">Finds jobs that fit you and runs them on your account.</p>
+              <p className="v2-text-title-sm">BlueAI worker</p>
+              <p className="v2-text-caption v3-wk-desc">Finds jobs that fit you and runs them on your account.</p>
               <p className="v3-wk-mode">
-                <ModeIcon size={16} /><span className="v3-wk-mode-text">{AP.summary(auto)}</span>
+                <Icon name={auto.length ? 'zap' : 'shield-check'} /><span className="v3-wk-mode-text">{AP.summary(auto)}</span>
                 <button type="button" onClick={AP.openSheet} aria-haspopup="dialog" className="v2-button v2-button--quiet v2-button--sm v3-wk-mode-change">Change</button>
               </p>
             </div>
             <button type="button" onClick={run} className="v2-button v2-button--primary">
-              <svg className="v2-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
+              <Icon name="play" />
               Run
             </button>
           </div>

@@ -26,9 +26,7 @@
       <button type="button" onClick={() => (running ? onStop() : onSend())} disabled={!running && !draft.trim()} aria-disabled={!running && !draft.trim()}
         aria-label={running ? 'Stop task' : 'Send message'} title={running ? 'Stop' : 'Send'}
         className={'v2-sendstop ' + (running ? 'v2-sendstop--stop' : 'v2-sendstop--send')}>
-        {running
-          ? <svg className="v2-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2" fill="currentColor" /></svg>
-          : <svg className="v2-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><line x1="12" y1="19" x2="12" y2="5" /><polyline points="5 12 12 5 19 12" /></svg>}
+        <window.V2Kit.Icon name={running ? 'stop' : 'arrow-up'} />
       </button>);
 
     return (

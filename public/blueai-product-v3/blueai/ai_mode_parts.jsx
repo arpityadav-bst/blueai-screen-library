@@ -1,16 +1,20 @@
 /* BlueAI: AI Mode's pieces (V3, Phase 5), split out of ai_mode.jsx for the 300-line rule: the
    status pill, the choice card, the tone notices, the inline link and retry button, and the Hybrid
-   (Auto) setup dialog. Styles in settings.css; the status pill and tags are the kit's Badge, the
-   notices its Banner, the link and buttons its own (review round 1). Must load before ai_mode.jsx.
+   (Auto) setup dialog. The status pill and tags are the kit's Badge, the notices its Banner, the
+   link and buttons its own (review round 1); since review round 2 the choice card is the kit's
+   RadioCard (its outline check), the progress the kit's ProgressBar and every glyph the kit's
+   Icon. Must load before ai_mode.jsx.
    Exposes window.AiModeParts. */
 (function () {
+  const Icon = (p) => React.createElement(window.V2Kit.Icon, p);
+
   /* ── status pill (mirrors the real local-model lifecycle) ── */
   const STATUS = {
     idle:           { label: 'Off',             tone: 'neutral' },
     checking:       { label: 'Checking…',       tone: 'info', busy: true },
     downloading:    { label: 'Downloading…',    tone: 'info', busy: true },
     installing:     { label: 'Installing…',     tone: 'info', busy: true },
-    running:        { label: 'On',              tone: 'success' },
+    running:        { label: 'On',              tone: 'neutral' },   // green is only reached or verified (review round 2)
     install_failed: { label: 'Download failed', tone: 'danger' },
     startup_failed: { label: "Couldn't start",  tone: 'danger' },
     blocked:        { label: 'Paused',          tone: 'attention' },
@@ -25,21 +29,23 @@
       </span>);
   }
 
-  /* ── shared choice card (Cloud/Hybrid, then Auto/Custom) ── */
+  /* ── shared choice card (Cloud/Hybrid, then Auto/Custom): the kit's RadioCard (kit/inputs.css),
+     a button so a click on the chosen card still answers (Auto reopens its setup) ── */
   function OptionCard({ title, sub, selected, pending, pendingLabel, onClick, disabled, badge, describedBy }) {
     return (
       <button type="button" onClick={disabled ? undefined : onClick} disabled={disabled} aria-pressed={selected}
         aria-describedby={disabled ? describedBy : undefined}
         title={disabled ? "This PC doesn't meet the requirements for Hybrid." : undefined}
-        className={'v3-choice' + (selected ? ' is-selected' : pending ? ' is-pending' : '')}>
-        <div className="v3-choice-head">
-          <span className="v3-choice-title">{title}</span>
-          {selected &&
-            <svg className="v2-icon v3-choice-check" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-1.1 14.2-3.6-3.6 1.4-1.4 2.2 2.2 4.9-4.9 1.4 1.4-6.3 6.3z" /></svg>}
-          {pending && pendingLabel && <span className="v2-badge v2-badge--attention"><span className="v2-badge-label">{pendingLabel}</span></span>}
-          {badge && !selected && !pending && <span className="v2-badge"><span className="v2-badge-label">{badge}</span></span>}
-        </div>
-        <p className="v2-text-caption v3-choice-sub">{sub}</p>
+        className={'v2-radio-card' + (selected ? ' is-selected' : pending ? ' is-pending' : '') + (disabled ? ' is-disabled' : '')}>
+        <span className="v2-radio-card-body">
+          <span className="v2-radio-card-head">
+            <span className="v2-radio-card-title v2-text-title-sm">{title}</span>
+            {pending && pendingLabel && <span className="v2-badge v2-badge--attention"><span className="v2-badge-label">{pendingLabel}</span></span>}
+            {badge && !selected && !pending && <span className="v2-badge"><span className="v2-badge-label">{badge}</span></span>}
+            <span className="v2-radio-card-check" aria-hidden="true"><Icon name="check" /></span>
+          </span>
+          <span className="v2-radio-card-sub">{sub}</span>
+        </span>
       </button>);
   }
 
@@ -51,8 +57,8 @@
         <span className="v2-banner-text">{children}</span>
       </div>);
   }
-  const WarnIcon = () => <svg className="v2-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>;
-  const ErrIcon = () => <svg className="v2-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>;
+  const WarnIcon = () => <Icon name="alert" />;
+  const ErrIcon = () => <Icon name="x-circle" />;
   const CONFLICT = 'Another local model (e.g. LM Studio) is running. Running multiple local models may reduce performance.';
   const LinkBtn = ({ onClick, children }) => <button type="button" onClick={onClick} className="v2-link v3-inline-link"><span className="v2-link-text">{children}</span></button>;
 
@@ -61,7 +67,8 @@
     return <button type="button" onClick={onClick} className="v2-button v2-button--secondary" style={{ alignSelf: 'flex-start' }}>Try again</button>;
   }
 
-  /* ── HYBRID (AUTO) SETUP MODAL, reuses the shared ModalOverlay chrome ── */
+  /* ── HYBRID (AUTO) SETUP MODAL, reuses the shared ModalOverlay chrome. Its actions stack full width,
+     the commit first (review round 2). ── */
   function HybridModal(props) {
     const { status, pct, hwSupported, onCancelModal, onConfirmModal, onDoneModal, onHideModal } = props;
     const inProgress = status === 'downloading' || status === 'installing' || status === 'checking';
@@ -95,13 +102,8 @@
 
             {inProgress ? (
               <div style={{ marginTop: 'var(--v2-space-4)' }}>
-                <div className="v3-prog-head">
-                  <span className="v3-prog-label">{status === 'downloading' ? 'Downloading…' : status === 'installing' ? 'Installing…' : 'Checking…'}</span>
-                  {status === 'downloading' && <span className="v3-prog-pct">{Math.round(pct)}%</span>}
-                </div>
-                <div className="v3-prog-track">
-                  <div className={'v3-prog-fill' + (status === 'downloading' ? '' : ' is-indet')} style={{ width: status === 'downloading' ? pct + '%' : '100%' }} />
-                </div>
+                <window.V2Kit.ProgressBar label={status === 'downloading' ? 'Downloading…' : status === 'installing' ? 'Installing…' : 'Checking…'}
+                  value={pct} indeterminate={status !== 'downloading'} />
               </div>
             ) : failed ? (
               <div style={{ marginTop: 'var(--v2-space-4)' }}>
@@ -111,14 +113,14 @@
           </>
         )}
 
-        <div className="v3-btn-row v3-dlg-actions">
+        <div className="v3-btn-row v3-btn-row--stack v3-dlg-actions">
           {running
             ? btn('Done', onDoneModal, true)
             : inProgress
-              ? [btn(status === 'downloading' ? 'Cancel download' : 'Cancel', onCancelModal, false), btn('Continue in background', onHideModal, true)]
+              ? [btn('Continue in background', onHideModal, true), btn(status === 'downloading' ? 'Cancel download' : 'Cancel', onCancelModal, false)]
               : failed
-                ? [btn('Cancel', onCancelModal, false), btn('Try again', onConfirmModal, true)]
-                : [btn('Cancel', onCancelModal, false), btn('Download & enable', onConfirmModal, true, !hwSupported)]}
+                ? [btn('Try again', onConfirmModal, true), btn('Cancel', onCancelModal, false)]
+                : [btn('Download & enable', onConfirmModal, true, !hwSupported), btn('Cancel', onCancelModal, false)]}
         </div>
       </window.ModalOverlay>);
   }

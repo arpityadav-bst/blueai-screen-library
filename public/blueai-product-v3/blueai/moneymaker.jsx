@@ -88,7 +88,7 @@
 
             <button type="button" onClick={onSignIn} className="mm-cta v2-button v2-button--primary v2-button--lg v2-button--full" style={{ marginTop: 'var(--v2-space-8)' }}>
               Sign in to get started
-              <svg className="v2-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg>
+              <window.V2Kit.Icon name="chevron-right" />
             </button>
           </div>
         </div>

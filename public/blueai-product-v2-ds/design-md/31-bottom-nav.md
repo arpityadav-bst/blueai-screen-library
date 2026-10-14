@@ -12,7 +12,7 @@
 
 **Variants.** Three items: Home (`home`), Activity (`activity`), Settings (`settings`). Four items only if decision D12 keeps chat as a tab: Home, Chat, Activity, Settings (`NAV_ITEMS_WITH_CHAT`). The recommendation is three.
 
-**Sizes.** 56 tall (`--v2-nav-h`; V2 64). Padding 0 8; items 47 tall inside the bar (56 less the 1px top line and a 4 margin above and below), radius 6. Icon 20, stroke 1.75 (V2 22, stroke 1.9). Label 12/500 in every state (V2 10.5px, 700 active / 600 rest). Selected bar 24 x 2, `--v2-blue`. Badge 16 tall pill, `--v2-action` fill, white 11/600 (4.92:1), a 2px surface ring.
+**Sizes.** 56 tall (`--v2-nav-h`; V2 64). Padding 0 8; items 47 tall inside the bar (56 less the 1px top line and a 4 margin above and below), radius 6. Icon 20, stroke 1.75 (V2 22, stroke 1.9). Label 12/500 in every state (V2 10.5px, 700 active / 600 rest). Selected bar 24 x 2, `--v2-blue`. Badge 16 tall pill, `--v2-solid` fill (the ink, not blue: a count is not a selection, review round 2), `--v2-on-color` 11/600 (19.6:1), a 2px surface ring.
 
 **States.**
 - Rest: ink-3 icon and label (6.0:1).

@@ -65,7 +65,7 @@
           <span className="v2-chat-sr">{user ? 'You: ' : 'BlueAI: '}</span>
           {children}
         </div>
-        {time ? <span className="v2-msg-time v2-text-meta">{time}</span> : null}
+        {time ? <span className="v2-msg-time v2-text-caption">{time}</span> : null}
       </div>
     );
   }
@@ -100,7 +100,7 @@
           {action ? <div className="v2-notice-action">{action}</div> : null}
         </div>
         {feedback || null}
-        {time ? <span className="v2-msg-time v2-text-meta">{time}</span> : null}
+        {time ? <span className="v2-msg-time v2-text-caption">{time}</span> : null}
       </div>
     );
   }

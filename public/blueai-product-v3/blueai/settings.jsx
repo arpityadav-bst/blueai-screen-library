@@ -2,14 +2,14 @@
 // NO account card (Profile / Chat history / Report issue / Log Out live in the header ? and
 // kebab menus). Since review round 1 the tab carries the one screen header ("Settings"), as every
 // pushed screen and tab does. Cards, in order:
-// BlueStacks Instance · Worker · Telegram · AI Mode · Bring Your Own Key · Chat AI Settings.
+// BlueStacks instance · Worker · Telegram · AI mode · Bring your own key · Chat AI settings.
 //
-// V3, Phase 5 (settings.css .v3-set-*, kit cards, fields, switch and buttons since review round 1):
-// every section is an in-flow card (1px line, no shadow) with
-// the same head (title, one muted line) and the same row: label left in ink, control right, one
-// muted hint under, rows split by the hairline. An outside service (BlueStacks, Telegram) keeps its
-// mark in a sunken tile; BlueAI's own sections carry no icon. One solid action per open form (review
-// round 1): an always-shown card's save and routine actions (connect, unlink) are secondary.
+// V3, Phase 5, on kit parts since review rounds 1 and 2: every section is the kit's SettingsSection
+// (.v2-settings-section: an in-flow card, the head, the body whose rows run full bleed) and every
+// row the kit's ListRow (.v2-row: the label and its description on the left, the control on the
+// right, the hairline between rows). An outside service (BlueStacks, Telegram) keeps its mark in a
+// sunken tile (settings.css .v3-set-head); BlueAI's own sections carry none. One solid action per
+// open form (review round 1): an always-shown card's save and routine actions are secondary.
 
 const { useState } = React;
 
@@ -25,19 +25,21 @@ function WorkerCard() {
   const [runTime, setRunTime] = useState(WF.getRunTime().id);
   const pick = (e) => { setRunTime(e.target.value); WF.setRunTime(e.target.value); };
   return (
-    <section data-section="worker-settings" className="v2-card v3-set-card">
-      <h2 className="v2-text-title v3-set-title">Worker</h2>
-      <div className="v3-set-rows">
-        <div className="v3-set-row">
-          <div className="v3-set-line">
-            <label htmlFor="worker-run" className="v3-set-label">Daily run</label>
+    <section data-section="worker-settings" className="v2-settings-section">
+      <h2 className="v2-settings-section-title v2-text-title">Worker</h2>
+      <div className="v2-settings-section-body">
+        <div className="v2-row v2-row--divider">
+          <span className="v2-row-text">
+            <label htmlFor="worker-run" className="v2-row-label">Daily run</label>
+            <span id="worker-run-hint" className="v2-row-desc v2-text-body-sm">When BlueAI runs each day. A change starts with the next run.</span>
+          </span>
+          <span className="v2-row-trail">
             <SelectField id="worker-run" className="v3-field--md" value={runTime} onChange={pick} aria-describedby="worker-run-hint">
               {WF.RUN_TIMES.map((t) => <option key={t.id} value={t.id}>{t.label}</option>)}
             </SelectField>
-          </div>
-          <p id="worker-run-hint" className="v2-text-meta v3-set-hint">When BlueAI runs each day. A change starts with the next run.</p>
+          </span>
         </div>
-        <div className="v3-set-row">
+        <div className="v3-set-block">
           <h3 className="v3-set-label">Apps</h3>
           <p className="v2-text-body-sm v3-set-desc">Apps BlueAI can run on its own. New apps always start on Always ask.</p>
           <AppSwitchList />
@@ -49,11 +51,11 @@ function WorkerCard() {
 
 function BluestacksCard() {
   return (
-    <section className="v2-card v3-set-card">
+    <section className="v2-settings-section">
       <div className="v3-set-head">
         <span className="v3-set-brand"><img src="assets/BlueStacks.png" alt="BlueStacks" onError={e => { e.target.style.display = 'none'; }} /></span>
         <div className="v3-set-head-main">
-          <h2 className="v2-text-title v3-set-title">BlueStacks Instance</h2>
+          <h2 className="v2-text-title v3-set-title">BlueStacks instance</h2>
           <p className="v2-text-body-sm v3-set-desc">Connected to <strong>BlueStacks App Player</strong></p>
           <p className="v2-text-meta v3-set-note">To switch, open BlueAI from another instance.</p>
         </div>
@@ -62,21 +64,15 @@ function BluestacksCard() {
   );
 }
 
-const TelegramMark = () => (
-  <svg className="v2-icon v2-icon--20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.479.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
-  </svg>
-);
-
 function TelegramCard() {
   const [connected, setConnected] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
   return (
     <>
-      <section className="v2-card v3-set-card">
+      <section className="v2-settings-section">
         <div className="v3-set-head">
-          <span className="v3-set-brand"><TelegramMark /></span>
+          <span className="v3-set-brand"><window.V2Kit.Icon name="telegram" size={20} /></span>
           <div className="v3-set-head-main">
             <h2 className="v2-text-title v3-set-title">Telegram</h2>
             {connected
@@ -120,14 +116,14 @@ function AISettingsCard() {
 
   const save = () => { setSaved(true); setTimeout(() => setSaved(false), 2500); };
 
-  // The one settings row: label + control on a line, a muted hint below, hairline between rows.
+  // The one settings row, the kit's ListRow: the label and its description left, the control right.
   const fieldRow = (label, sublabel, el) => (
-    <div key={label} className="v3-set-row">
-      <div className="v3-set-line">
-        <p className="v3-set-label">{label}</p>
-        {el}
-      </div>
-      {sublabel && <p className="v2-text-meta v3-set-hint">{sublabel}</p>}
+    <div key={label} className="v2-row v2-row--divider">
+      <span className="v2-row-text">
+        <span className="v2-row-label">{label}</span>
+        {sublabel && <span className="v2-row-desc v2-text-body-sm">{sublabel}</span>}
+      </span>
+      <span className="v2-row-trail">{el}</span>
     </div>
   );
 
@@ -136,11 +132,11 @@ function AISettingsCard() {
   );
 
   return (
-    <section data-section="ai-chat-settings" className="v2-card v3-set-card">
-      <h2 className="v2-text-title v3-set-title">Chat AI Settings</h2>
-      <div className="v3-set-rows">
-        {fieldRow('AI Model', null,
-          <SelectField aria-label="AI Model" className="v3-field--md" value={model} onChange={e => setModel(e.target.value)}>
+    <section data-section="ai-chat-settings" className="v2-settings-section">
+      <h2 className="v2-settings-section-title v2-text-title">Chat AI settings</h2>
+      <div className="v2-settings-section-body">
+        {fieldRow('AI model', null,
+          <SelectField aria-label="AI model" className="v3-field--md" value={model} onChange={e => setModel(e.target.value)}>
             <option value="auto">Auto</option>
             <option value="gemini-3.1-pro-preview">Gemini 3.1 Pro Preview</option>
             <option value="gpt-5.4-mini">GPT-5.4 Mini</option>
@@ -150,19 +146,19 @@ function AISettingsCard() {
             <option value="gpt-5.4">GPT-5.4</option>
           </SelectField>
         )}
-        {fieldRow('Max Output Tokens', 'Maximum number of tokens to generate (5,000-100,000)', numInput('Max Output Tokens', maxTokens, setMaxTokens, 5000, 100000, 1000))}
-        {fieldRow('Max Steps', 'Maximum number of reasoning steps (10-500)', numInput('Max Steps', maxSteps, setMaxSteps, 10, 500))}
-        {fieldRow('Timeout (in Secs)', null, numInput('Timeout (in Secs)', timeout, setTimeoutVal, 60, 7200, 60))}
-      </div>
-      {/* The confirmation sits in the action row, beside the button that caused it, so nothing
-         above it moves when it appears. Saved is a reached state, so it is the one green here. */}
-      <div className="v3-set-actions">
-        {saved &&
-          <span className="v3-set-saved" role="status">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12" /></svg>
-            Settings saved successfully.
-          </span>}
-        <button type="button" onClick={save} className="v2-button v2-button--secondary">Save settings</button>
+        {fieldRow('Max output tokens', 'Maximum number of tokens to generate (5,000-100,000)', numInput('Max output tokens', maxTokens, setMaxTokens, 5000, 100000, 1000))}
+        {fieldRow('Max steps', 'Maximum number of reasoning steps (10-500)', numInput('Max steps', maxSteps, setMaxSteps, 10, 500))}
+        {fieldRow('Timeout (seconds)', null, numInput('Timeout (seconds)', timeout, setTimeoutVal, 60, 7200, 60))}
+        {/* The confirmation sits in the action row, beside the button that caused it, so nothing
+           above it moves when it appears. Saved is a reached state, so it is the one green here. */}
+        <div className="v3-set-actions">
+          {saved &&
+            <span className="v3-set-saved" role="status">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12" /></svg>
+              Settings saved successfully.
+            </span>}
+          <button type="button" onClick={save} className="v2-button v2-button--secondary">Save settings</button>
+        </div>
       </div>
     </section>
   );
@@ -172,9 +168,9 @@ function SettingsScreen({ byok, aiModeConditions }) {
   const ByokSettings = window.Byok && window.Byok.ByokSettings;
   const aiMode = window.AiMode.useAiMode(aiModeConditions);
   return (
-    <div>
+    <div className="v3-set">
       <ScreenHead title="Settings" />
-      <div className="v3-set">
+      <div className="v3-screen-body">
       <BluestacksCard />
       <WorkerCard />
       <TelegramCard />

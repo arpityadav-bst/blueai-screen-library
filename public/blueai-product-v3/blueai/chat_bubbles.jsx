@@ -3,10 +3,12 @@
    state (user · status · warning · needs-BlueStacks lives in needs_bluestacks.jsx · final
    success/fail/needs-input · thinking), plus the two step scripts ChatScreen plays.
 
-   V3 (phase 3): one bubble language, styled in chat.css (the icon box and links are the kit's). Every message sits on the surface with a
-   1px line; the user's own is the quiet sunken surface. Tone rides on one icon in the tone's ink,
-   and the edge turns only when the run stopped (failed, or waiting on you). Status and thinking
-   are progress notes, not bubbles.
+   V3: one bubble language. Since review round 2 (2026-10-14) every message is the kit's
+   (kit/chat.css, the markup of kit/thread.jsx): MessageBubble (.v2-msg, .v2-bubble, the user's on
+   the grey surface, its time a caption under it) and NoticeBubble (.v2-notice: one 16px icon in the
+   tone's ink, the edge turning only when the run stopped: failed takes the strong danger edge,
+   waiting on you the attention fill and edge). Status and thinking are progress notes, not bubbles
+   (chat.css).
    Exposes window.ChatBubbles. */
 (function () {
   const { useState } = React;
@@ -22,36 +24,34 @@
   function richText(text) {
     const urlRe = /(https?:\/\/[^\s]+)/g;
     return text.split('\n').map((line, li) =>
-      <p key={li}>
+      <p key={li} className="v2-notice-text">
         {line.split(urlRe).map((part, pi) => urlRe.test(part)
           ? <a key={pi} href="#" onClick={(e) => e.preventDefault()} className="v2-link" style={{ wordBreak: 'break-all' }}><span className="v2-link-text">{part}</span></a>
           : <span key={pi}>{part}</span>)}
       </p>);
   }
 
-  /* One 16px tone mark per toned bubble: done (green tick), heads-up and waiting-on-you (the
-     attention ink), failed (the danger ink). 24 viewBox, currentColor, round caps. */
-  const TONE_PATHS = {
-    success: <><circle cx="12" cy="12" r="9" /><polyline points="8 12.5 11 15.5 16 9.5" /></>,
-    warning: <><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></>,
-    input: <><circle cx="12" cy="12" r="9" /><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5v.4" /><line x1="12" y1="17" x2="12.01" y2="17" /></>,
-    fail: <><circle cx="12" cy="12" r="9" /><line x1="12" y1="8" x2="12" y2="12.5" /><line x1="12" y1="16" x2="12.01" y2="16" /></>
+  /* One 16px tone mark per notice, the kit's NoticeBubble map (kit/thread.jsx NOTICE), drawn by
+     name from the kit's icon set: done (check), heads-up (alert), waiting on you (help), failed
+     (x-circle), a plain note (info, ink-3). */
+  const TONE = {
+    success: { icon: 'check', tone: 'success' },
+    warning: { icon: 'alert', tone: 'attention' },
+    input: { icon: 'help', tone: 'attention' },
+    fail: { icon: 'x-circle', tone: 'danger' },
+    quiet: { icon: 'info', tone: 'neutral' }
   };
-  const TONE_INK = { success: 'v3-tone-success', warning: 'v3-tone-attention', input: 'v3-tone-attention', fail: 'v3-tone-danger' };
   function ToneIcon({ tone }) {
-    return (
-      <svg className={'v2-icon v3-toned-icon ' + TONE_INK[tone]} viewBox="0 0 24 24" fill="none" stroke="currentColor"
-        strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{TONE_PATHS[tone]}</svg>);
+    const t = TONE[tone];
+    return <span className={'v2-notice-icon v2-chat-tone--' + t.tone}><window.V2Kit.Icon name={t.icon} /></span>;
   }
 
   /* ───────── Bubbles ───────── */
   function UserBubble({ content }) {
     return (
-      <div className="v2-anim-pop-in v3-msg v3-msg--user">
-        <div className="v3-bubble v3-bubble--user">
-          <p>{content}</p>
-          <p className="v3-bubble-stamp">{fmtStamp()}</p>
-        </div>
+      <div className="v2-anim-pop-in v2-msg v2-msg--user">
+        <div className="v2-bubble v2-text-body v2-bubble--user">{content}</div>
+        <span className="v2-msg-time v2-text-caption">{fmtStamp()}</span>
       </div>);
   }
 
@@ -83,24 +83,27 @@
   function WarningBubble({ title, content, refill }) {
     const body = Array.isArray(content) ? content : [content];
     return (
-      <div className="v2-anim-pop-in v3-msg">
-        <div className="v3-bubble v3-toned">
-          <ToneIcon tone="warning" />
-          <div className="v3-toned-body">
-            {title && <p className="v3-bubble-title">{title}</p>}
-            <p className="v3-bubble-lines">{body.map((line, k) => <span key={k}>{line}</span>)}{refill && <RefillLine />}</p>
+      <div className="v2-anim-pop-in v2-msg v2-msg--worker">
+        <div className="v2-notice v2-text-body">
+          <div className="v2-notice-row">
+            <ToneIcon tone="warning" />
+            <div className="v2-notice-body">
+              {title && <p className="v2-notice-title">{title}</p>}
+              {body.map((line, k) => <p key={k} className="v2-notice-text">{line}</p>)}
+              {refill && <p className="v2-notice-text"><RefillLine /></p>}
+            </div>
           </div>
         </div>
       </div>);
   }
 
   /* The final message of a run. needsInput is the LIVE product's "human input required" state
-     (PM-confirmed name); V3 draws it with the Target attention tokens on the one bubble language
-     rather than the live yellow fill. */
+     (PM-confirmed name), the kit's waiting notice (the attention fill and edge); failed takes the
+     kit's strong danger edge. */
   const FINAL = {
     success:    { icon: 'success', edge: '' },
-    fail:       { icon: 'fail', edge: ' v3-bubble--fail' },
-    needsInput: { icon: 'input', edge: ' v3-bubble--input' }
+    fail:       { icon: 'fail', edge: ' v2-notice--danger' },
+    needsInput: { icon: 'input', edge: ' v2-notice--fill' }
   };
 
   function FinalBubble({ msg, feedback }) {
@@ -111,11 +114,11 @@
         withLabel={feedback.withLabel} vote={feedback.vote} onVote={feedback.onVote}
         reason={feedback.reason} onReason={feedback.onReason} />;
     return (
-      <div className="v2-anim-pop-in v3-msg">
-        <div className={'v3-bubble' + S.edge}>
-          <div className="v3-toned">
+      <div className="v2-anim-pop-in v2-msg v2-msg--worker">
+        <div className={'v2-notice v2-text-body' + S.edge}>
+          <div className="v2-notice-row">
             <ToneIcon tone={S.icon} />
-            <div className="v3-toned-body v3-rich">{richText(msg.content)}</div>
+            <div className="v2-notice-body">{richText(msg.content)}</div>
           </div>
           {fbPlacement === 'stamp' && fb('stamp')}
           {fbPlacement === 'inside' && fb('inside')}
@@ -124,12 +127,13 @@
       </div>);
   }
 
-  // Working: three progress dots (the blue is progress) and a muted note.
+  // Working: three progress dots (the blue is progress), no words on screen (review round 2): the
+  // composer's status line already says "BlueAI is working…"; the dots' words are for screen readers.
   function ThinkingBubble() {
     return (
       <div className="v2-anim-pop-in v3-working" role="status">
         <span className="v3-working-dots" aria-hidden="true"><span /><span /><span /></span>
-        <span className="v2-text-meta">Working on it…</span>
+        <span className="v2-sr-only">Working on it…</span>
       </div>);
   }
 
@@ -212,7 +216,7 @@
       <div style={{ marginTop: 'var(--v2-space-1)' }}>
         <p className="v2-text-eyebrow" style={{ marginBottom: 'var(--v2-space-3)' }}>Chat states preview</p>
         {examples.map((ex) => (
-          <div key={ex.key} style={{ marginBottom: 'var(--v2-space-4)' }}>
+          <div key={ex.key} className="v2-stack v2-gap-2" style={{ marginBottom: 'var(--v2-space-4)' }}>
             <UserBubble content={ex.user} />
             {ex.kind === 'warning'
               ? <WarningBubble content={ex.content} />

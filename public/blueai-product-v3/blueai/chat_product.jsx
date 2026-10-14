@@ -218,7 +218,7 @@
                     {isOnboarding
                       ? null // pre-login chat (onboarding or moneymaker) = greeting + composer only
                       : sessionMode === 'moneymaker'
-                      ? (loading ? <window.HomeSkeleton /> : <window.MoneyMaker.MoneyMakerHome onRun={(p, cat) => run(p, cat)} />)
+                      ? (loading ? <window.WorkerHomeSkeleton /> : <window.MoneyMaker.MoneyMakerHome onRun={(p, cat) => run(p, cat)} />)
                       : (loading
                           ? <window.HomeSkeleton />
                           : <ProductHome onRun={(p, cat) => run(p, cat)} onOpenHistory={() => window.__openChatHistory && window.__openChatHistory()} />)}
@@ -228,19 +228,13 @@
                    empty panel (designer, 2026-09-09, this was wrong in every chat mode, not just
                    the scheduled run, since they all render through here).
 
-                   minHeight:100% + marginTop:auto, NOT justifyContent:'flex-end' on the scroll
-                   container. Two reasons. (1) flex-end on a scrolling container is the classic
-                   trap: once the content is taller than the box, the overflowing top gets
-                   clipped and can't be scrolled back to in Chrome and Firefox. Here the wrapper
-                   simply grows past 100%, marginTop:auto collapses to 0, and it scrolls normally.
-                   (2) It leaves the scroll container a plain block, so the pre-conversation home
-                   (greeting + cards) and the ChatStatesPreview keep their existing top-aligned
-                   layout untouched: making the container itself flex would have changed all
-                   three at once. The old marginTop:4 is dropped: it spaced the thread off the
-                   greeting, which isn't rendered once a conversation exists. */
-                : <div style={{ minHeight: '100%', display: 'flex', flexDirection: 'column' }}>
-                    <div style={{ marginTop: 'auto' }}>{convo.slice(0, visible).map(renderStep)}</div>
-                  </div>}
+                   The kit's thread list (kit/chat.css .v2-thread-list, review round 2): min-height
+                   100% with flex-end on the LIST, never on the scroll container (flex-end on a
+                   scrolling box clips the overflowing top in Chrome and Firefox); the list simply
+                   grows past 100% and the container scrolls normally. Its 8px gap spaces the
+                   messages. The scroll container stays a plain block, so the pre-conversation home
+                   and the ChatStatesPreview keep their top-aligned layout. */
+                : <div className="v2-thread-list">{convo.slice(0, visible).map(renderStep)}</div>}
             </>}
           </div>
         </div>

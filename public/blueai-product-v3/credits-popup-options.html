@@ -12,11 +12,14 @@
   <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
   <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
   <!-- V3, Phase 5: the shared (i), tooltip and Learn more link take V3's settings.css classes and,
-       since review round 1, the kit's icon box and link, so this page loads the tokens, the two kit
-       sheets they need and settings.css, as index.html does. -->
+       since review round 1, the kit's icon box and link; since review round 2 the (i) and its
+       tooltip are the kit's info Tooltip. So this page loads the tokens, the kit sheets they need
+       (overlays.css draws the tooltip), the kit's icon set and Tooltip, and settings.css, as
+       index.html does. -->
   <link rel="stylesheet" href="../blueai-product-v2-ds/tokens.css" />
   <link rel="stylesheet" href="../blueai-product-v2-ds/kit/base.css" />
   <link rel="stylesheet" href="../blueai-product-v2-ds/kit/actions.css" />
+  <link rel="stylesheet" href="../blueai-product-v2-ds/kit/overlays.css" />
   <link rel="stylesheet" href="settings.css" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -26,6 +29,8 @@
 </head>
 <body>
 <div id="root"></div>
+<script type="text/babel" src="../blueai-product-v2-ds/kit/icons.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/kit/menu.jsx"></script>
 <script type="text/babel" src="blueai/credits_popup_parts.jsx"></script>
 <script type="text/babel" src="blueai/credits_popup_frame.jsx"></script>
 <script type="text/babel" src="blueai/credits_popup_options.jsx"></script>

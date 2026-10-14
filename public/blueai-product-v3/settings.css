@@ -1,25 +1,20 @@
 /* BlueAI Product V3: the pushed screens and tabs' one header, credits, settings, profile, the
    remaining dialog contents and the onboarding entry, drawn in the onBlue Agentic site's language
    on the Target tokens (--v2-*). Phase 5.
-   Kit parts (review round 1, 2026-10-14): cards (.v2-card, --inset), badges, banners, fields and
-   selects, switches, buttons, links, avatars and dividers; text from the kit's type ladder.
-   One settings row language: label left in ink, control right, one muted hint under, rows split
-   by the hairline (the site's ledger). Money and balances are ink 600; green is only verified or
-   reached; blue is selection, progress, focus. */
+   Kit parts (review rounds 1 and 2, 2026-10-14): cards (.v2-card, --inset), the ScreenHeader, the
+   SettingsSection (.v2-settings-section: head, body, highlight), ListRow (.v2-row: settings rows,
+   ledger rows, the Sign out row), RadioCard, ProgressBar, the info Tooltip, badges, banners,
+   fields and selects, switches, buttons, links, avatars and dividers; text from the kit's type
+   ladder. Money and balances are ink 600; green is only verified or reached; blue is selection,
+   progress, focus. */
 
-@keyframes v3-breathe { 0%, 100% { opacity: 0.6; } 50% { opacity: 0.3; } }
-
-/* ---- Screens and tabs: one header (24px title, 16 above and below), a scrolling canvas -------- */
-.v3-screen-head {
-  display: flex; align-items: center; justify-content: space-between; gap: var(--v2-space-3);
-  min-height: var(--v2-hit-min); box-sizing: content-box; padding: var(--v2-space-4) 0;
-}
-.v3-screen-title { margin: 0; min-width: 0; } /* type: .v2-text-greeting */
+/* ---- Screens and tabs: the kit's ScreenHeader (full bleed, its own gutter), a scrolling canvas */
 .v3-screen {
   flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column;
-  padding: 0 var(--v2-gutter) var(--v2-space-5); background: var(--v2-canvas);
+  padding: 0 0 var(--v2-space-5); background: var(--v2-canvas);
 }
-.v3-screen-body { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: var(--v2-space-3); }
+/* The body under the header holds the gutter (the header draws its own). */
+.v3-screen-body { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: var(--v2-space-3); padding: 0 var(--v2-gutter); }
 .v3-screen-body--fit { flex: none; }
 .v3-mono { font-family: var(--v2-font-mono); }
 
@@ -41,7 +36,7 @@
   position: relative; display: flex; align-items: center; justify-content: center; gap: var(--v2-space-15);
   width: fit-content; margin: 0 auto;
 }
-.v3-titled > .v3-info { position: absolute; left: calc(100% + var(--v2-space-1)); top: 50%; transform: translateY(-50%); }
+.v3-titled > .v2-tip { position: absolute; left: calc(100% + var(--v2-space-1)); top: 50%; transform: translateY(-50%); }
 .v3-cr-out-title { color: var(--v2-ink); font-size: var(--v2-text-14); font-weight: var(--v2-weight-semibold); letter-spacing: var(--v2-tracking-label); }
 /* Own key: the state, the two facts it runs on, one routine way to Settings. */
 .v3-cr-key { display: flex; align-items: center; gap: var(--v2-space-3); }
@@ -49,33 +44,13 @@
 .v3-cr-key-title { display: flex; align-items: center; gap: var(--v2-space-2); margin: 0; }
 .v3-cr-facts { display: flex; flex-wrap: wrap; gap: var(--v2-space-2); margin: var(--v2-space-4) 0; }
 
-/* ---- The (i) and its tooltip (credits_popup_parts.jsx) ---------------------------------------- */
-.v3-info { position: relative; display: inline-flex; }
-.v3-info-btn {
-  display: grid; place-items: center; width: var(--v2-mark-sm); height: var(--v2-mark-sm); padding: 0;
-  border: 0; border-radius: var(--v2-radius-round); background: none; color: var(--v2-ink-4); cursor: pointer;
-  transition: background var(--v2-dur-1) var(--v2-ease-standard), color var(--v2-dur-1) var(--v2-ease-standard);
-}
-.v3-info-btn:hover { background: var(--v2-wash-hover); color: var(--v2-ink); }
-/* Open is not a selection: ink on the press wash, the kit IconButton's open look (review round 1). */
-.v3-info-btn[aria-expanded="true"] { background: var(--v2-wash-press); color: var(--v2-ink); }
-.v3-info-btn--danger, .v3-info-btn--danger[aria-expanded="true"] { color: var(--v2-danger-ink); }
-/* 260 wide, starting 189px left of a 24px icon, so a centred title row keeps it in the window. */
-.v3-tip { position: absolute; left: -189px; z-index: var(--v2-z-popover); width: var(--v2-measure-tip); text-align: left; }
-.v3-tip--up { bottom: calc(100% + var(--v2-space-2)); }
-.v3-tip--down { top: calc(100% + var(--v2-space-2)); }
-.v3-tip-arrow {
-  position: absolute; left: 195px; width: var(--v2-space-3); height: var(--v2-space-3); background: var(--v2-surface);
-  border: var(--v2-stroke) solid var(--v2-line-strong); border-radius: var(--v2-radius-xs); transform: rotate(45deg);
-}
-.v3-tip--up .v3-tip-arrow { bottom: calc(-1 * var(--v2-space-15)); }
-.v3-tip--down .v3-tip-arrow { top: calc(-1 * var(--v2-space-15)); }
-.v3-tip-body { position: relative; display: block; }
+/* ---- The credits explainer (credits_popup_parts.jsx; the (i) is the kit's info Tooltip) ------ */
+/* The comparison page's red banner puts the (i) in the danger ink. */
+.v3-tip--danger .v2-tip-trigger, .v3-tip--danger .v2-tip-trigger:hover { color: var(--v2-danger-ink); }
 .v3-explain {
   display: flex; flex-direction: column; align-items: flex-start; gap: var(--v2-space-2); width: 100%; text-align: left;
   padding: var(--v2-space-3); background: var(--v2-surface-panel); border: var(--v2-stroke) solid var(--v2-line); border-radius: var(--v2-radius-md);
 }
-.v3-explain--tip { background: var(--v2-surface); border-color: var(--v2-line-strong); box-shadow: var(--v2-shadow-1); }
 .v3-explain p { margin: 0; color: var(--v2-ink-2); font-size: var(--v2-text-13); line-height: var(--v2-leading-body); }
 .v3-learn { display: inline-block; font-size: var(--v2-text-13); }
 
@@ -88,93 +63,68 @@
 .v3-dlg-done { display: flex; align-items: flex-start; gap: var(--v2-space-3); }
 .v3-mark-md { width: var(--v2-mark-md); height: var(--v2-mark-md); }
 
-/* ---- Settings: section cards and the one row language ----------------------------------------- */
-.v3-set { display: flex; flex-direction: column; gap: var(--v2-space-3); }
-.v3-set-card { transition: border-color var(--v2-dur-3) var(--v2-ease-standard), box-shadow var(--v2-dur-3) var(--v2-ease-standard); }
-/* Routed here from the credits screen: a passing selection ring, not a glow. */
-.v3-set-card.is-highlight { border-color: var(--v2-select-line); box-shadow: var(--v2-ring-select); }
+/* ---- Settings: the kit's SettingsSection (kit/credits.css) and ListRow (kit/display.css) ----- */
+/* The settings fields' two widths, named once (review round 2: no raw size in a rule). */
+.v3-set { --field-sm: 150px; --field-md: 200px; }
+.v3-field--sm { width: var(--field-sm); }
+.v3-field--md { width: var(--field-md); }
+/* A head with an outside service's mark (BlueStacks, Telegram); BlueAI's own sections take the
+   kit's head. The mark sits in a sunken tile. */
 .v3-set-head { display: flex; align-items: flex-start; gap: var(--v2-space-3); }
 .v3-set-head-main { flex: 1; min-width: 0; }
 .v3-set-title { margin: 0; } /* type: .v2-text-title */
-/* Type: .v2-text-body-sm (desc), .v2-text-meta (note, hint); these only space them. */
+/* Type: .v2-text-body-sm (desc), .v2-text-meta (note); these only space them. */
 .v3-set-desc { margin: var(--v2-space-1) 0 0; text-wrap: pretty; }
-.v3-set-note, .v3-set-hint { margin: var(--v2-space-1) 0 0; }
-/* An outside service's mark (BlueStacks, Telegram) identifies it; BlueAI's own sections carry none. */
+.v3-set-note { margin: var(--v2-space-1) 0 0; }
 .v3-set-brand { flex: none; display: grid; place-items: center; width: var(--v2-control-md); height: var(--v2-control-md); border-radius: var(--v2-radius-sm); background: var(--v2-surface-sunken); color: var(--v2-ink-2); }
 .v3-set-brand img { width: var(--v2-icon-md); height: var(--v2-icon-md); object-fit: contain; border-radius: var(--v2-radius-xs); }
-.v3-set-rows { margin-top: var(--v2-space-2); }
-.v3-set-row { padding: var(--v2-space-3) 0; }
-.v3-set-row + .v3-set-row { border-top: var(--v2-stroke) solid var(--v2-line-hair); }
-.v3-set-row:last-child { padding-bottom: 0; }
-.v3-set-line { display: flex; align-items: center; justify-content: space-between; gap: var(--v2-space-3); min-height: var(--v2-control-md); }
+/* A block in a section body that is not a row (Worker's Apps): a row's 12 above it. */
+.v3-set-block { padding-top: var(--v2-space-3); }
 .v3-set-label { margin: 0; color: var(--v2-ink); font-size: var(--v2-text-14); font-weight: var(--v2-weight-medium); letter-spacing: var(--v2-tracking-label); }
-.v3-set-actions { display: flex; align-items: center; justify-content: flex-end; gap: var(--v2-space-2); margin-top: var(--v2-space-4); }
+.v3-set-line { display: flex; align-items: center; justify-content: space-between; gap: var(--v2-space-3); min-height: var(--v2-control-md); }
+/* An action row: 4 over the gap or the row padding above it, so 16 in all. */
+.v3-set-actions { display: flex; align-items: center; justify-content: flex-end; gap: var(--v2-space-2); margin-top: var(--v2-space-1); }
 .v3-set-actions--start { justify-content: flex-start; }
-/* Remove's inline confirm (byok_settings.jsx): an inset card under the key, its actions 12 below. */
-.v3-set-confirm { margin-top: var(--v2-space-3); }
+/* Remove's inline confirm (byok_settings.jsx): an inset card under the key row, its actions 12 below. */
+.v3-set-confirm:not(:last-child) { margin-bottom: var(--v2-space-3); }
 .v3-set-confirm .v3-set-actions { margin-top: var(--v2-space-3); }
 .v3-set-saved { display: inline-flex; align-items: center; gap: var(--v2-space-15); margin-right: auto; color: var(--v2-success-ink); font-size: var(--v2-text-13); }
 .v3-set-saved svg { color: var(--v2-success); }
 .v3-set-notice { margin-bottom: var(--v2-space-3); }
-.v3-field--sm { width: 150px; }
-.v3-field--md { width: 200px; }
 
-/* Telegram pairing */
+/* Telegram pairing: the QR stand-in's one size and the code's wide tracking, named once. */
 .v3-tg { display: flex; flex-direction: column; gap: var(--v2-space-4); }
 .v3-tg-panel { display: flex; flex-direction: column; align-items: center; gap: var(--v2-space-3); padding: var(--v2-space-6); }
-.v3-tg-qr { display: grid; place-items: center; width: 120px; height: 120px; border-radius: var(--v2-radius-sm); background: var(--v2-surface-sunken); color: var(--v2-ink-4); }
+.v3-tg-qr { --tg-qr: 120px; display: grid; place-items: center; width: var(--tg-qr); height: var(--tg-qr); border-radius: var(--v2-radius-sm); background: var(--v2-surface-sunken); color: var(--v2-ink-4); }
 .v3-tg-code {
+  --tg-code-tracking: 0.3em;
   padding: var(--v2-space-2) var(--v2-space-5); background: var(--v2-surface); border: var(--v2-stroke) dashed var(--v2-line-strong); border-radius: var(--v2-radius-sm);
-  color: var(--v2-ink); font-family: var(--v2-font-mono); font-size: var(--v2-text-20); font-weight: var(--v2-weight-semibold); letter-spacing: 0.3em; font-variant-numeric: tabular-nums;
+  color: var(--v2-ink); font-family: var(--v2-font-mono); font-size: var(--v2-text-20); font-weight: var(--v2-weight-semibold); letter-spacing: var(--tg-code-tracking); font-variant-numeric: tabular-nums;
 }
 
-/* ---- AI Mode: choice cards, notices, the setup progress -------------------------------------- */
-.v3-choices { display: flex; gap: var(--v2-space-2); margin-top: var(--v2-space-4); }
-.v3-choice {
-  flex: 1; min-width: 0; padding: var(--v2-space-3); text-align: left; cursor: pointer; font: inherit;
-  background: var(--v2-surface); border: var(--v2-stroke) solid var(--v2-line-strong); border-radius: var(--v2-radius-md);
-  transition: background var(--v2-dur-1) var(--v2-ease-standard), border-color var(--v2-dur-1) var(--v2-ease-standard);
-}
-.v3-choice:hover:not(:disabled) { background: var(--v2-surface-sunken); border-color: var(--v2-line-hover); }
-.v3-choice.is-selected, .v3-choice.is-selected:hover { background: var(--v2-select); border-color: var(--v2-select-line); }
-.v3-choice.is-pending, .v3-choice.is-pending:hover { border-style: dashed; border-color: var(--v2-select-line); }
-.v3-choice:disabled { opacity: var(--v2-opacity-disabled); cursor: not-allowed; }
-.v3-choice-head { display: flex; flex-wrap: wrap; align-items: center; gap: var(--v2-space-15); margin-bottom: var(--v2-space-05); }
-.v3-choice-title { color: var(--v2-ink); font-size: var(--v2-text-14); font-weight: var(--v2-weight-medium); letter-spacing: var(--v2-tracking-label); }
-.v3-choice-check { color: var(--v2-blue); }
-.v3-choice-sub { margin: 0; } /* type: .v2-text-caption */
+/* ---- AI mode: the kit's RadioCard and ProgressBar; the subgroup, the reasons ------------------ */
 .v3-subgroup { margin-top: var(--v2-space-4); padding-top: var(--v2-space-4); border-top: var(--v2-stroke) solid var(--v2-line-hair); }
 .v3-subgroup-label { margin: 0; color: var(--v2-ink-2); font-size: var(--v2-text-12); font-weight: var(--v2-weight-semibold); letter-spacing: var(--v2-tracking-label); }
 .v3-stack { display: flex; flex-direction: column; gap: var(--v2-space-3); margin-top: var(--v2-space-4); }
 /* Disabled with a reason: one muted line under the control says why. */
 .v3-reason { display: flex; align-items: flex-start; gap: var(--v2-space-15); margin: var(--v2-space-2) 0 0; color: var(--v2-ink-3); font-size: var(--v2-text-12); line-height: var(--v2-leading-body); }
 .v3-reason svg { margin-top: var(--v2-space-05); color: var(--v2-ink-3); }
-.v3-prog-head { display: flex; align-items: center; justify-content: space-between; gap: var(--v2-space-3); margin-bottom: var(--v2-space-2); }
-.v3-prog-label { color: var(--v2-ink); font-size: var(--v2-text-13); font-weight: var(--v2-weight-semibold); }
-.v3-prog-pct { color: var(--v2-ink); font-size: var(--v2-text-12); font-weight: var(--v2-weight-semibold); font-variant-numeric: tabular-nums; }
-.v3-prog-track { height: var(--v2-rail); border-radius: var(--v2-radius-pill); background: var(--v2-surface-sunken); overflow: hidden; }
-.v3-prog-fill { height: 100%; border-radius: var(--v2-radius-pill); background: var(--v2-blue); transition: width var(--v2-dur-2) linear; }
-.v3-prog-fill.is-indet { animation: v3-breathe var(--v2-dur-pulse) var(--v2-ease-standard) infinite; }
+/* The setup's View link, under its bar on the right. */
+.v3-view-link { display: flex; justify-content: flex-end; margin: var(--v2-space-2) 0 0; }
 .v3-inline-link { font-size: var(--v2-text-12); }
 .v3-row-gap { display: flex; align-items: center; gap: var(--v2-space-3); }
 
-/* ---- Profile: identity, the account ledger, sign out ------------------------------------------ */
+/* ---- Profile: identity, the account ledger (kit rows), sign out (a kit nav row) -------------- */
 .v3-prof-id { display: flex; align-items: center; gap: var(--v2-space-4); }
 .v3-prof-name { margin: 0; } /* type: .v2-text-title-lg */
-.v3-ledger { margin-top: var(--v2-space-2); }
-.v3-ledger-row { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--v2-space-3); padding: var(--v2-space-3) 0; }
-.v3-ledger-row + .v3-ledger-row { border-top: var(--v2-stroke) solid var(--v2-line-hair); }
-.v3-ledger-row:last-child { padding-bottom: 0; }
-.v3-ledger-label { flex: none; color: var(--v2-ink-3); font-size: var(--v2-text-14); }
-.v3-ledger-value { min-width: 0; margin: 0; text-align: right; color: var(--v2-ink); font-size: var(--v2-text-14); font-weight: var(--v2-weight-medium); overflow-wrap: anywhere; }
-.v3-ledger-value--empty { color: var(--v2-ink-4); font-weight: var(--v2-weight-regular); }
-.v3-ledger-value .v2-badge { margin-top: var(--v2-space-15); }
-.v3-row-icon { flex: none; color: var(--v2-ink-3); }
+/* The email and its Verified badge, stacked at the value's right edge. */
+.v3-value-stack { display: flex; flex-direction: column; align-items: flex-end; gap: var(--v2-space-15); }
+.v3-value-empty { color: var(--v2-ink-4); }
 
 /* ---- Entry leftovers: the onboarding welcome and the free-credits sign-in ------------------- */
 .v3-ob { flex: 1; min-height: 0; position: relative; display: flex; flex-direction: column; justify-content: center; padding: var(--v2-space-6) var(--v2-space-5); overflow-y: auto; overflow-x: hidden; background: var(--v2-canvas); font-family: var(--v2-font-ui); }
 .v3-ob-inner { position: relative; z-index: var(--v2-z-raised); display: flex; flex-direction: column; }
 .v3-ob-hi { margin: var(--v2-space-4) 0 var(--v2-space-1); color: var(--v2-ink-3); font-size: var(--v2-text-16); line-height: var(--v2-leading-body); text-align: center; }
-.v3-ob .v3-rows { margin-top: var(--v2-space-6); }
+.v3-ob-list { margin-top: var(--v2-space-6); }
 .v3-ob-more { max-width: var(--v2-measure); margin: var(--v2-space-5) auto 0; color: var(--v2-ink-3); font-size: var(--v2-text-13); line-height: var(--v2-leading-body); text-align: center; }
 .v3-signin-terms { font-size: var(--v2-text-12); }

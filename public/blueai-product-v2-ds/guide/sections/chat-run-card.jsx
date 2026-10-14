@@ -55,7 +55,7 @@
             { part: 'Day line', token: '--v2-line-hair, --v2-text-13, --v2-ink-3', value: 'hairline above; StatusTick + "Day 7 of 20, pending verification"', ref: ['chat.run.pending', 'chat.run.verify-note'] },
             { part: 'Day line, not counted', token: '--v2-ink-3', value: '"Today doesn’t count toward your 20 days."', ref: 'chat.run.declined' },
             { part: 'Day line, verified / rejected / waiting', token: '--v2-success-ink, --v2-danger-ink, --v2-attention-ink', value: 'text in tone' },
-            { part: 'Waiting edge', token: '--v2-attention-line', value: 'border only; the fill stays on the AskCard' },
+            { part: 'Waiting edge', token: '--v2-waiting-line', value: 'border only, the AskCard edge (review round 2); the fill stays on the AskCard' },
             { part: 'Action', token: 'Button md', value: 'Try again (primary), Run again or See AI credits (secondary), See run details (V2Kit.Link standalone: underlined ink link, 32px)' },
             { part: 'Stopped', token: null, value: 'a stopped run keeps its card and states the day', ref: 'chat.run.stop-trace' },
             { part: 'Origin', token: null, value: 'AgentProgress, never loaded in V2', ref: 'chat.run.agent-progress' },

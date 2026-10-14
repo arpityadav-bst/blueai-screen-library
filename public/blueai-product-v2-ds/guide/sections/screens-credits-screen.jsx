@@ -64,7 +64,7 @@
             dont={['Draw a Refresh control that does nothing.', 'Paint the figure in the gradient.',
               'Offer to buy or earn credits.', 'Show a balance while the own key is in use.']} />
           <G.SpecDrawer rows={[
-            { part: 'Title', token: 'ScreenHeader with Back', value: '"AI credits" 20/600, sentence case', ref: ['screens-account.credits.title', 'screens-account.credits.nav-off'] },
+            { part: 'Title', token: 'ScreenHeader with Back', value: '"AI credits" 24/500/-0.04em (.v2-text-greeting, review round 2), sentence case', ref: ['screens-account.credits.title', 'screens-account.credits.nav-off'] },
             { part: 'Refresh', token: null, value: 'removed: the meter counts down', ref: 'screens-account.credits.refresh' },
             { part: 'Figure', token: 'StatCard: --v2-text-40, --v2-weight-semibold, --v2-ink', value: 'credits glyph 24 + "1,640" in ink', ref: 'screens-account.credits.numeral' },
             { part: 'Meter', token: 'CreditsMeter (section 47)', value: '"of 2,000 today" (figure={false}: the stat says 1,640), "Refreshes in 6h 42m", covered line', ref: ['screens-account.credits.grant', 'screens-account.credits.refill'] },

@@ -33,8 +33,9 @@
   background-color: var(--v2-solid-hover); border-color: var(--v2-solid-hover); box-shadow: var(--v2-shadow-btn-hover); transform: translateY(1px);
 }
 .v2-button--primary[aria-disabled="true"], .v2-button--destructive[aria-disabled="true"] { box-shadow: none; }
-/* destructive: a destructive confirm's commit (Delete, Sign out's confirm). In Target it is the solid
-   primary; the V2 today look paints it red through its look hooks (review round 1, 2026-10-14). */
+/* destructive: the commit of a confirm that loses something (Delete, Remove key, Disconnect); Sign
+   out's confirm commits with the primary. In Target it is the solid primary; the V2 today look
+   paints it red through its look hooks (review rounds 1 and 2, 2026-10-14). */
 .v2-button--destructive {
   background-color: var(--v2-button-destructive-fill); border-color: var(--v2-button-destructive-fill); color: var(--v2-on-color); box-shadow: var(--v2-shadow-btn);
 }
@@ -42,10 +43,11 @@
   background-color: var(--v2-button-destructive-hover); border-color: var(--v2-button-destructive-hover); box-shadow: var(--v2-shadow-btn-hover); transform: translateY(1px);
 }
 /* secondary: the frequent second action, the site's ghost: panel fill, 15% line, no cast; hover to
-   the sunken surface, pressed to --v2-surface-press. Rest reads the look hooks (V2 today: white). */
+   the sunken surface, pressed to --v2-surface-press. Rest and hover read the look hooks (V2 today:
+   white, hover slate-50 with a slate-200 edge). */
 .v2-button--secondary { background-color: var(--v2-button-secondary-fill); border-color: var(--v2-button-secondary-line); color: var(--v2-button-secondary-ink); }
 .v2-button--secondary:hover:not([aria-disabled="true"]), .v2-button--secondary.is-hover {
-  background-color: var(--v2-surface-sunken); border-color: var(--v2-line-hover);
+  background-color: var(--v2-button-secondary-hover-fill); border-color: var(--v2-button-secondary-hover-line);
 }
 /* quiet: the third action, no box until hovered */
 .v2-button--quiet { background-color: transparent; color: var(--v2-ink-2); }
@@ -56,7 +58,7 @@
    hover only; the label already says what it does. The confirm's commit is the destructive variant above. */
 .v2-button--danger { background-color: var(--v2-button-danger-fill); border-color: var(--v2-button-danger-line); color: var(--v2-button-danger-ink); }
 .v2-button--danger:hover:not([aria-disabled="true"]), .v2-button--danger.is-hover {
-  background-color: var(--v2-button-danger-hover-fill); border-color: var(--v2-danger-edge); color: var(--v2-danger-ink);
+  background-color: var(--v2-button-danger-hover-fill); border-color: var(--v2-button-danger-hover-line); color: var(--v2-button-danger-hover-ink);
 }
 
 /* press: a real drop (the site's press, 2px on the solid), the ghost to its pressed fill */

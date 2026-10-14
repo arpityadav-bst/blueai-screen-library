@@ -1,18 +1,13 @@
-/* BlueAI Product V2 Design System: tokens.
-   The one source of every colour, type, space, radius, stroke, shadow, scrim, layer, motion, focus,
-   icon and shared size the kit, screens and guide use. tools/ds-check.js enforces colour (no raw
-   colour in kit/ or screens/) and sizes: the lists the JSX copies (Icon and Avatar SIZES), and no
-   kit or screens rule typing a Size token's value raw or borrowing a Space token for it. Geometry
-   that belongs to one part only (a switch track and thumb, a badge dot, a menu's minimum width)
-   stays px in that part's rule; a size one part repeats is a local custom property without the
-   --v2- prefix (--ledger-date-w, screens/core.css; --check-box, kit/inputs.css), the way the
-   colour marks are (--badge-mark, kit/display.css); a size two parts share is a token here first.
-   Every token is a CSS custom property on :root with the prefix --v2-; only tokens-v2-today.css (the
-   "V2 today" look, the same names re-valued) also defines it. This file is the Target look.
-   Light theme only: V2 is white end to end and the onBlue site never ships its dark theme
-   (onblue/apply.html:36 forces light). Each family comment says its role and onBlue link; each
-   token's own comment says which V2 values it absorbs.
-   V2 refs are relative to public/blueai-product-v2/ (bare jsx names live in blueai/). */
+/* BlueAI Product V2 Design System: tokens. The one source of every colour, type, space, radius, stroke, shadow, scrim, layer,
+   motion, focus, icon and shared size the kit, screens and guide use. tools/ds-check.js enforces colour (no raw colour in kit/ or
+   screens/) and sizes: the lists the JSX copies (Icon and Avatar SIZES), and no kit or screens rule typing a Size token's value raw
+   or borrowing a Space token for it. Geometry that belongs to one part only (a switch track and thumb, a badge dot, a menu's minimum
+   width) stays px in that part's rule; a size one part repeats is a local custom property without the --v2- prefix (--ledger-date-w,
+   screens/core.css; --check-box, kit/inputs.css), the way the colour marks are (--badge-mark, kit/display.css); a size two parts
+   share is a token here first. Every token is a CSS custom property on :root with the prefix --v2-; only tokens-v2-today.css (the
+   "V2 today" look, the same names re-valued) also defines it. This file is the Target look. Light theme only: V2 is white end to end
+   and the onBlue site never ships its dark theme (onblue/apply.html:36 forces light). Each family comment says its role and onBlue
+   link; each token's own comment says which V2 values it absorbs. V2 refs are relative to public/blueai-product-v2/ (bare jsx names live in blueai/). */
 
 :root {
   color-scheme: light;
@@ -52,7 +47,7 @@
      Why: White on #1990FF is 3.24:1 on every primary button and link (inv-foundations finding 1). Indigo #4f46e5 as nav active is a second accent (shared.jsx:305). Seven blue fills, six blue lines and seven blue inks become eight named roles. */
   --v2-blue: #156efe; /* focus outline, selected border, progress fill, current-step disc, active nav indicator. Absorbs #1990FF as focus/selected/progress (index.html:57, needs_bluestacks.jsx:139, ai_mode.jsx:52) */
   --v2-action: #1268f0; /* filled blue where a selection needs a white mark (checked checkbox, avatar hue). Not a button: since the V3 restyle, 2026-10-14, the committing button is --v2-solid. Absorbs #1990FF fills (index.html:342, settings.jsx:123, agent_permissions.jsx:179, byok.jsx:26, moneymaker_home.jsx:141, worker_day_done.jsx:163, terms_sheet.jsx:121), #1a90ff, #1275D8, indigo #4f46e5 buttons (jobs.jsx:60) */
-  --v2-action-hover: var(--v2-blue-ink); /* primary hover: the blue ink, #0d5ad6 (white 6.09:1), named for its role the way --v2-gutter names --v2-space-4. Absorbs brightness(1.06) and lift hovers (login.jsx:56, terms_sheet.jsx:122) */
+  --v2-action-hover: var(--v2-blue-ink); /* the checked checkbox's hover (the primary has been --v2-solid since the V3 restyle): the blue ink, #0d5ad6 (white 6.09:1), named for its role the way --v2-gutter names --v2-space-4. Absorbs brightness(1.06) and lift hovers (login.jsx:56, terms_sheet.jsx:122) */
   --v2-blue-ink: #0d5ad6; /* blue text: on-tint labels, info notice text, hovered link. Absorbs #1e40af, #1d4ed8, #1763c6, #2563eb, #1e3a8a, #1990FF link text (credits_popup_parts.jsx:110, worker_day_done.jsx:184). The site's light --blue-ink equals --blue #156efe (onblue.css:443), i.e. --v2-blue, not this token */
   --v2-blue-tint: rgba(21,110,254,0.08); /* info badge and banner fill (the user bubble left it in the V3 restyle, 2026-10-14). Absorbs #eff6ff, #eaf3ff, #eef6ff, #e8f3ff, #f5f9ff, #f0f7ff, gradient #eef5ff to #e2edff (worker_cards.jsx:25) */
   --v2-blue-tint-line: rgba(21,110,254,0.24); /* edge of an info tint. Absorbs #bfdbfe, #d6e6fb, #c7dcf5, #bcd6f5, #9ec9f5, #93c5fd */
@@ -88,6 +83,7 @@
      Why: The gradient appears three times in one 419px top bar today (wordmark, pill ring, pill number, index.html:326-337). As identity it stays; as a UI fill, ring, bubble or border it goes. */
   --v2-gradient-brand: linear-gradient(90deg, #0EA4C5, #7B4CFF); /* the credits glyph's stops only: the glyph is V2's own drawing (assets/Credits.svg) shown as an image beside an ink figure, never text, a mask fill, a ring or a wordmark (Target paints nothing with it; the V2 today wordmark reads it through --v2-brand-word-fill). Absorbs 135deg / 270deg / to-bottom-right variants (index.html:430, credits_popup_parts.jsx:15, moneymaker.jsx:154), cousins #22ACE0 (login.jsx:174), #A855F7 (login.jsx:160), #1A90FF/#6b53ff (moneymaker.jsx:184), #2f6fed (profile.jsx:31), user bubble #5158ee to #7b4cff (chat_bubbles.jsx:30) */
   --v2-em-glow: 0 0 26px rgba(90,195,255,0.18); /* the serif em's soft glow (text-shadow), the logo spark's glow at title size (review round 1, 2026-10-14). Absorbs the site's title em glow */
+  --v2-mark-glow: rgba(90,195,255,0.18); /* the spark mark's drop-shadow colour (the logo); its radius scales with the mark (review round 2, 2026-10-14). Absorbs the site's --mark-shadow (onblue/onblue.css .logo-mark) */
 
   /* Look hooks. Role: Parts the two looks draw differently, so tokens-v2-today.css can restore V2 where
      a Target value would otherwise sit in a kit rule. Target values equal the rule's own recipe. Why: a
@@ -107,10 +103,14 @@
   --v2-button-secondary-fill: var(--v2-surface-panel); /* secondary (ghost) button fill (V2 today: white) */
   --v2-button-secondary-line: var(--v2-line-strong); /* secondary button edge */
   --v2-button-secondary-ink: var(--v2-ink); /* secondary button label */
+  --v2-button-secondary-hover-fill: var(--v2-surface-sunken); /* secondary hover fill (review round 2, 2026-10-14; V2 today: slate-50) */
+  --v2-button-secondary-hover-line: var(--v2-line-hover); /* secondary hover edge (V2 today: its slate-200 edge) */
   --v2-button-danger-fill: var(--v2-surface-panel); /* danger trigger at rest: a ghost (V2 today: white with a red edge and label) */
   --v2-button-danger-line: var(--v2-line-strong); /* danger trigger edge at rest */
   --v2-button-danger-ink: var(--v2-ink); /* danger trigger label at rest: the red arrives on hover */
   --v2-button-danger-hover-fill: var(--v2-danger-tint); /* danger trigger hover fill */
+  --v2-button-danger-hover-line: var(--v2-danger-edge); /* danger trigger hover edge, the strong red (review round 2; V2 today: its red-200 edge) */
+  --v2-button-danger-hover-ink: var(--v2-danger-ink); /* danger trigger hover label (V2 today: its red-600 label) */
   --v2-button-destructive-fill: var(--v2-solid); /* a destructive confirm's commit: the solid primary (V2 today: a red fill) */
   --v2-button-destructive-hover: var(--v2-solid-hover); /* its hover fill */
   --v2-switch-off-fill: var(--v2-line-hover); /* switch track when off: a 20% fill the white knob reads on (review round 1, 2026-10-14) */
@@ -121,6 +121,8 @@
   --v2-empty-mark-fill: var(--v2-surface-sunken); /* EmptyState mark disc fill */
   --v2-empty-mark-ink: var(--v2-ink-3); /* EmptyState mark glyph */
   --v2-empty-title-size: var(--v2-text-20); /* EmptyState title size */
+  --v2-empty-title-weight: var(--v2-weight-semibold); /* EmptyState title weight (review round 2; V2 today: 600) */
+  --v2-greeting-weight: var(--v2-weight-medium); /* .v2-text-greeting weight: the site's 500 for titles 24 and up (review round 2; V2 today: its 800 greeting) */
   --v2-empty-title-ink: var(--v2-ink); /* EmptyState title ink */
   --v2-empty-body-ink: var(--v2-ink-3); /* EmptyState body ink */
   --v2-chip-ink: var(--v2-ink-2); /* chip label at rest */
@@ -186,9 +188,7 @@
   --v2-radius-pill: 999px; /* badges, quick-reply chips, credits chip, progress rail. Absorbs 999, 40, 24, 20 on pill buttons (index.html:342, credits_popup_parts.jsx:84, settings.jsx:44) */
   --v2-radius-round: 50%; /* avatars, discs, send button. Absorbs '50%' x40 */
 
-  /* Stroke. Role: 1px everywhere; 1.5px only for a selected choice, the focused composer, a ring
-     status dot (paused, offline) and a pending DayBar segment. 2px is mark geometry (ticks, glyph
-     strokes) and has no token (section 06).
+  /* Stroke. Role: 1px everywhere; 1.5px only for a selected choice, the focused composer, a ring status dot (paused, offline) and a pending DayBar segment. 2px is mark geometry (ticks, glyph strokes) and has no token (section 06).
      onBlue: shared: the site is 1px throughout (onblue/onblue.css:274-327).
      Why: 1.5px borders on chips and the composer at rest read heavier than the site's hairlines. */
   --v2-stroke: 1px; /* default. Absorbs 1px (~230 uses) */

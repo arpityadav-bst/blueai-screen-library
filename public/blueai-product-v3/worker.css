@@ -1,34 +1,30 @@
-/* BlueAI Product V3: the worker (mode chip, Automatic ribbon, the mode sheet's app rows, the
-   run-complete moment's contents, the home progress card, the BlueAI worker home card and its coach,
-   the BlueStacks bubbles, the Schedule tab), drawn in the onBlue Agentic site's language on the
-   Target tokens (--v2-*). Phase 4.
-   Kit parts (review round 1, 2026-10-14): every dialog and sheet is the kit overlay (.v2-overlay,
-   .v2-scrim, .v2-dialog, .v2-sheet: one radius, one edge, one entry), the switch, buttons, fields,
-   the empty state, the spinner and the skeleton card are kit classes. In-flow surfaces take a 1px
-   line and no shadow; blue is progress, selection and focus; green is a verified day; money is ink. */
+/* BlueAI Product V3: the worker (mode chip, the mode sheet's app rows, the run-complete moment's
+   contents, the home progress card, the BlueAI worker home card and its coach, the BlueStacks
+   bubbles, the Schedule tab), drawn in the onBlue Agentic site's language on the Target tokens
+   (--v2-*). Phase 4.
+   Kit parts (review rounds 1 and 2, 2026-10-14): every dialog and sheet is the kit overlay
+   (.v2-overlay, .v2-scrim, .v2-dialog, .v2-sheet: one radius, one edge, one entry), the switch,
+   buttons, fields, the empty state, the spinner and the skeleton card are kit classes; the
+   Automatic ribbon is the kit's compact Banner, the 20-day bar the kit's DayBar (kit/worker.css),
+   the install bar the kit's ProgressBar, the worker card the kit's card with its WorkerCard tile.
+   In-flow surfaces take a 1px line and no shadow; blue is progress, selection and focus; green is a
+   verified day; money is ink. */
 
 /* ---- Button row and dialog text spacing (inside a kit dialog body) ---------------------------- */
 .v3-btn-row { display: flex; gap: var(--v2-space-2); }
 .v3-btn-row > * { flex: 1; min-width: 0; }
 .v3-btn-row > .v2-button { padding: 0 var(--v2-space-3); }
-/* The consent's spacing: the note 12 under the text, the buttons 20 under that. */
+/* Stacked: the actions full width, one per line, the commit first (the Hybrid setup dialog). */
+.v3-btn-row--stack { flex-direction: column; }
+.v3-btn-row--stack > * { flex: none; }
+/* The dialogs' spacing: the note 12 under the text, the buttons 20 under that (16 of a form's gap
+   plus 4). */
 .v3-dlg-note { margin-top: var(--v2-space-3); }
 .v3-dlg-actions { margin-top: var(--v2-space-5); }
+.v3-form > .v3-dlg-actions { margin-top: var(--v2-space-1); }
 
-/* ---- Mode chip, Automatic ribbon --------------------------------------------------------------- */
+/* ---- Mode chip ---------------------------------------------------------------------------------- */
 .v3-mode-chev { color: var(--v2-ink-4); }
-/* One quiet in-flow line above the composer box (the composer's gap spaces it): a panel band with
-   a 1px line, no blue fill. */
-.v3-ribbon {
-  display: flex; align-items: center; gap: var(--v2-space-2);
-  padding: var(--v2-space-05) var(--v2-space-05) var(--v2-space-05) var(--v2-space-3);
-  background: var(--v2-surface-panel); border: var(--v2-stroke) solid var(--v2-line); border-radius: var(--v2-radius-md);
-}
-.v3-ribbon-icon { display: flex; color: var(--v2-ink-3); }
-.v3-ribbon-text {
-  flex: 1; min-width: 0; color: var(--v2-ink-2); font-size: var(--v2-text-12); font-weight: var(--v2-weight-medium);
-  line-height: var(--v2-leading-snug); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
 
 /* ---- App rows (the mode sheet's body and Settings > Worker > Apps) ----------------------------- */
 .v3-apps { margin: 0; padding: 0; list-style: none; }
@@ -55,7 +51,7 @@
 /* One bold ink figure in a muted line (brief section 9): money is ink 600, never green. */
 .v3-figure { color: var(--v2-ink); font-weight: var(--v2-weight-semibold); }
 
-/* ---- Home progress card: 20 thin day segments ------------------------------------------------ */
+/* ---- Home progress card: the kit's DayBar (its column spaces the head, the bar, the note) ----- */
 .v3-progress { margin-bottom: var(--v2-space-3); padding: var(--v2-space-3) var(--v2-space-4); }
 .v3-progress-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--v2-space-3); }
 .v3-progress-title {
@@ -64,12 +60,7 @@
 }
 .v3-progress-title > span { color: var(--v2-ink-3); font-weight: var(--v2-weight-regular); }
 .v3-progress-link { font-size: var(--v2-text-12); white-space: nowrap; }
-.v3-segs { display: flex; gap: var(--v2-space-05); margin-top: var(--v2-space-2); }
-.v3-seg { flex: 1; height: var(--v2-rail-thin); border-radius: var(--v2-radius-pill); background: var(--v2-surface-sunken); }
-.v3-seg--done { background: var(--v2-success); }
-/* Pending: a solid select fill (review round 1: a 1px ring on a 4px bar did not read). */
-.v3-seg--pending { background: var(--v2-select); }
-.v3-progress-note { display: flex; align-items: center; gap: var(--v2-space-15); margin: var(--v2-space-2) 0 0; }
+.v3-progress-note { display: flex; align-items: center; gap: var(--v2-space-15); margin: 0; }
 .v3-verified { display: flex; color: var(--v2-success); }
 
 /* ---- BlueAI worker home card + the first-run coach -------------------------------------------- */
@@ -80,10 +71,12 @@
 }
 .v3-wk-stack { position: relative; }
 .v3-wk-stack.is-coaching { z-index: calc(var(--v2-z-popover) + var(--v2-z-raised)); }
-.v3-wk-home { padding: var(--v2-space-4); border-radius: var(--v2-radius-lg); animation: v2-fade-up var(--v2-dur-4) var(--v2-ease-out) both; }
+/* The kit's card, laid out as the kit WorkerCard: tile, text, the Run button. Not pressable. */
+.v3-wk-home { display: flex; align-items: center; gap: var(--v2-space-3); animation: v2-fade-up var(--v2-dur-4) var(--v2-ease-out) both; }
 /* Lit by the coach, the card sits above the veil, so for that moment it floats. */
 .v3-wk-home.is-lit { border-color: var(--v2-line-strong); box-shadow: var(--v2-shadow-2); }
 .v3-wk-home > .v2-button { flex: none; }
+.v3-wk-desc { margin: var(--v2-space-05) 0 0; } /* type: .v2-text-caption */
 /* The mode line (the kit WorkerCard's, design-md 42): how paid jobs run, and a quiet Change. */
 .v3-wk-mode { display: flex; align-items: center; gap: var(--v2-space-15); margin: var(--v2-space-1) 0 0; color: var(--v2-ink-3); }
 .v3-wk-mode-text { color: var(--v2-ink-2); font-size: var(--v2-text-12); font-weight: var(--v2-weight-medium); }
@@ -106,15 +99,10 @@
 .v3-coach-title { margin: 0; padding-right: var(--v2-space-2); color: var(--v2-ink); font-size: var(--v2-text-13); font-weight: var(--v2-weight-semibold); letter-spacing: var(--v2-tracking-label); white-space: nowrap; }
 .v3-coach-actions { display: flex; justify-content: flex-end; margin-top: var(--v2-space-1); }
 
-/* ---- BlueStacks bubbles (needs_bluestacks.jsx) ------------------------------------------------- */
-.v3-bs-get { margin-top: var(--v2-space-3); }
+/* ---- BlueStacks bubbles (needs_bluestacks.jsx): the logo in Get BlueStacks, the install bubble at
+   the thread's full bubble width so its bar has room ------------------------------------------- */
 .v3-bs-logo { width: var(--v2-icon-md); height: var(--v2-icon-md); border-radius: var(--v2-radius-xs); }
-.v3-bs-progress { width: 100%; }
-.v3-bs-row { display: flex; align-items: center; gap: var(--v2-space-2); margin-top: var(--v2-space-2); }
-.v3-bs-pct { color: var(--v2-ink); font-size: var(--v2-text-13); font-weight: var(--v2-weight-semibold); font-variant-numeric: tabular-nums; }
-.v3-bs-track { height: var(--v2-rail); margin-top: var(--v2-space-2); border-radius: var(--v2-radius-pill); background: var(--v2-surface-sunken); overflow: hidden; }
-.v3-bs-fill { height: 100%; border-radius: var(--v2-radius-pill); background: var(--v2-blue); }
-.v3-bs-spin { color: var(--v2-blue); } /* the kit spinner in the progress blue */
+.v3-bs-progress { width: var(--v2-bubble-max); max-width: 100%; }
 
 /* ---- Jobs and Schedule tabs -------------------------------------------------------------------- */
 /* A tab page fills the band under its header, so an empty state centres in what is left. */
@@ -130,4 +118,3 @@
 .v3-sched-line .v3-figure { font-weight: var(--v2-weight-medium); font-variant-numeric: tabular-nums; }
 /* Forms: kit fields (label above, 1px line, blue edge and ring on focus) stacked 16 apart. */
 .v3-form { display: flex; flex-direction: column; gap: var(--v2-space-4); }
-.v3-req { color: var(--v2-danger-ink); }

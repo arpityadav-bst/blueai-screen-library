@@ -34,7 +34,7 @@
 - **Anatomy:** 36 round. Send: `--v2-solid` fill with `--v2-shadow-btn`, white send glyph 16. Stop: the ghost, `--v2-surface-panel`, 1px line-strong, ink stop glyph 16. Stop confirm (today not counted yet, `costsDay`): attention panel above the field, "Stop now? Today counts only if you run again by 9 pm." (the stopped RunCard and WorkerCard say the same); with a paid job under way (`paidJob`) it says "Stop now? The paid job won’t finish. Today counts only if you run again by 9 pm."; Keep running (secondary md) / Stop run (primary md). The confirm is role=alertdialog labelled by its question and takes focus on Keep running; while it is open, Stop moves focus back to it, so a double press never stops a paid run (`kit/composer.jsx:102-135`).
 - **Variants:** send, stop.
 - **Sizes:** 36 (control-md).
-- **States:** Send ready, hover (`--v2-action-hover`), focus, pressed (1px down), disabled (sunken + ink-4, not pale blue); Stop, hover (wash + line), pressed; stop confirm.
+- **States:** Send ready, hover (`--v2-solid-hover`, the cast pulled in), focus, pressed (1px down), disabled (sunken + ink-4, not pale blue); Stop, hover (wash + line), pressed; stop confirm.
 - **Props:** `SendStop {mode, disabled, onClick, className}`; Composer `costsDay` (running, retrying or waiting, before the day counts) turns the confirm on, `paidJob` does too and names the job, `confirming` forces it.
 - **Motion:** Colour 120ms, press 120ms.
 - **Accessibility:** Labels "Send message" / "Stop the run" (V2 said "Stop task"; "task" is banned for paid work); visible focus ring; 36px target.

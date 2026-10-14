@@ -1,13 +1,14 @@
-// BlueAI: Boot Splash + Shimmer utility
-// Exports: BootSplash, Shimmer
+// BlueAI: Boot Splash + Shimmer utility + the two home skeletons
+// Exports: BootSplash, Shimmer, HomeSkeleton, WorkerHomeSkeleton
 
 (function () {
   const { useState, useEffect } = React;
 
   /* ── Shimmer block ─────────────────────────────────────────── */
   /* The kit's skeleton block (kit/feedback.css .v2-skel) with its shimmer (kit/motion.css
-     .v2-anim-shimmer, on the token clock); only the block's size and radius are this call's. */
-  function Shimmer({ w = '100%', h, r = 8, extra = {} }) {
+     .v2-anim-shimmer, on the token clock); only the block's size and radius are this call's, the
+     radius the kit skeleton's own by default. */
+  function Shimmer({ w = '100%', h, r = 'var(--v2-radius-xs)', extra = {} }) {
     return <div className="v2-skel v2-anim-shimmer" style={{ width: w, height: h, borderRadius: r, flexShrink: 0, ...extra }} />;
   }
 
@@ -43,30 +44,22 @@
     );
   }
 
-  /* ── Home skeleton (chat cold-start; mirrors ProductHome's card list) ──
-     Review round 1: it matches the real rows (chat.css .v3-row: padding 12, gap 8, radius 10, a
-     36px tile at radius 6), and the blue "focused" last card is gone. */
+  /* ── Home skeletons (chat cold-start), in the shape of what arrives: the kit's skeleton shapes
+     (V2Kit.Skeleton, kit/progress.jsx) on the real parts, so every size is the parts' own. ── */
+  const Skel = (p) => React.createElement(window.V2Kit.Skeleton, p);
+
+  /* The category list (ProductHome): the eyebrow, then the kit's rows in one pad-none card (review
+     round 2: a 32 mark, the label and its description, the count, the chevron). */
   function HomeSkeleton() {
-    const row = {
-      display: 'flex', alignItems: 'center', gap: 'var(--v2-space-3)', padding: 'var(--v2-space-3)',
-      background: 'var(--v2-surface)', border: 'var(--v2-stroke) solid var(--v2-line)', borderRadius: 'var(--v2-radius-md)'
-    };
     return (
       <div>
-        {/* "What would you like to do?" eyebrow placeholder */}
-        <Shimmer w={150} h={9} r={4} extra={{ marginBottom: 'var(--v2-space-2)' }} />
-        <div className="v3-rows">
+        <Skel width="40%" height="var(--v2-text-11)" className="v3-home-eyebrow" />
+        <div className="v2-card v2-card--pad-none">
           {[0, 1, 2, 3].map(i => (
-            <div key={i} style={row}>
-              <Shimmer w="var(--v2-control-md)" h="var(--v2-control-md)" r="var(--v2-radius-sm)" />
-              <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 'var(--v2-space-15)' }}>
-                <Shimmer w="46%" h={10} r={5} />
-                <Shimmer w="82%" h={9} r={5} />
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--v2-space-1)', flexShrink: 0 }}>
-                <Shimmer w={34} h={9} r={5} />
-                <Shimmer w={16} h={16} r={4} />
-              </div>
+            <div key={i} className="v2-row v2-row--divider">
+              <Skel shape="circle" width="var(--v2-mark-md)" />
+              <span className="v2-row-text"><Skel width="46%" /><Skel width="82%" /></span>
+              <Skel width="var(--v2-icon-lg)" />
             </div>
           ))}
         </div>
@@ -74,5 +67,28 @@
     );
   }
 
-  Object.assign(window, { BootSplash, Shimmer, HomeSkeleton });
+  /* The BlueAI worker home (MoneyMakerHome, the default session; review round 2): the 20-day strip
+     for a returning person, then the worker card (its tile, three lines, the Run button). */
+  function WorkerHomeSkeleton() {
+    const back = window.WorkerFlow.isOnboarded() && window.WorkerDayDone.getStyle() !== 'plain';
+    return (
+      <div>
+        {back &&
+          <div className="v2-card v3-progress">
+            <div className="v2-daybar">
+              <Skel width="40%" />
+              <Skel shape="rect" height="var(--v2-rail)" />
+              <Skel width="60%" />
+            </div>
+          </div>}
+        <div className="v2-card v3-wk-home" aria-busy="true">
+          <Skel shape="rect" width="var(--v2-mark-lg)" height="var(--v2-mark-lg)" />
+          <span className="v2-skel-lines v2-grow"><Skel width="40%" /><Skel width="85%" /><Skel width="50%" /></span>
+          <Skel shape="rect" width="calc(var(--v2-control-md) * 2)" height="var(--v2-control-md)" />
+        </div>
+      </div>
+    );
+  }
+
+  Object.assign(window, { BootSplash, Shimmer, HomeSkeleton, WorkerHomeSkeleton });
 })();

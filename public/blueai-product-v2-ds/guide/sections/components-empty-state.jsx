@@ -14,11 +14,11 @@
     const first = <E variant="first" title="No days yet" body={DAYS + ' Next run today at 11 am.'} />;
     return (
       <G.Section id="empty-state">
-        <G.Note>V3 restyle (2026-10-14): a 56 sunken mark with the icon in muted ink, a 20/600 title, one 14 ink-3 line at --v2-measure-tip, at most one solid action; no box of its own. No serif em phrase in working tabs.</G.Note>
+        <G.Note>V3 restyle (2026-10-14): a 56 sunken mark with the icon in muted ink, a 20/600 title, one 14 ink-3 line at --v2-measure (280, review round 2), at most one solid action; no box of its own. No serif em phrase in working tabs.</G.Note>
         <G.Part name="EmptyState" status="changed" role="What a view shows with nothing in it: names what will appear, says why, and offers the one way forward.">
           <G.Stage ground="canvas" width="shell">{first}</G.Stage>
           <ul className="g-list">
-            <li>No box: a centred column, padding 40 20; the icon on a 56 sunken disc; title 20/600; body 14 ink-3 at 260 wide.</li>
+            <li>No box: a centred column, padding 40 20; the icon on a 56 sunken disc; title 20/600; body 14 ink-3 at 280 wide (--v2-measure).</li>
             <li>Icon 24 in ink-3, no disc, no colour.</li>
             <li>Title 16/600 ink (an h2 by default). Body 13 ink-3, at most 280 wide.</li>
             <li>At most one medium primary button, and only when there is a real next step; a secondary quiet one beside it if needed.</li>

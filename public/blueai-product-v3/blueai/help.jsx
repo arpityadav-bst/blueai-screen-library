@@ -18,7 +18,7 @@
           <Field id="report-text" label="What happened?" className="v2-field--area">
             <textarea id="report-text" className="v2-field-input v2-field-input--area" rows={4} value={text} onChange={(e) => setText(e.target.value)} />
           </Field>
-          <div className="v3-btn-row">
+          <div className="v3-btn-row v3-dlg-actions">
             <button type="button" onClick={close} className="v2-button v2-button--secondary v2-button--lg">Cancel</button>
             <button type="submit" disabled={empty} aria-disabled={empty} className="v2-button v2-button--primary v2-button--lg">Send</button>
           </div>

@@ -8,7 +8,7 @@
                  forceState { [id]: 'hover' | 'focus' } for guide specimens.
    ScreenHeader  one title band for every screen. Props: title, onBack (shows Back), trailing (an
                  IconButton or a small Button), titleId, focusOnMount, className. The title (the
-                 .v2-text-title-lg role, tabIndex -1) is the focus target. With onBack it takes
+                 .v2-text-greeting role, tabIndex -1) is the focus target. With onBack it takes
                  focus when it opens, so a screen reader says where the partner landed, but only
                  when the push came from inside this window (the pushing control holds focus, or
                  went away with the screen it sat on); a specimen mounting beside someone's focus
@@ -106,7 +106,7 @@
     return (
       <div className={cx('v2-screen-header', onBack && 'v2-screen-header--back', className)}>
         {onBack ? <K.IconButton icon="back" label="Back" size={32} onClick={back} /> : null}
-        <h1 className="v2-screen-title v2-text-title-lg" id={titleId} tabIndex={-1} ref={h1}>{title}</h1>
+        <h1 className="v2-screen-title v2-text-greeting" id={titleId} tabIndex={-1} ref={h1}>{title}</h1>
         {trailing ? <div className="v2-screen-header-trailing">{trailing}</div> : null}
       </div>
     );

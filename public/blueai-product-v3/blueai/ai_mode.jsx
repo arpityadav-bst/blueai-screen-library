@@ -5,9 +5,10 @@
    local model on the user's own PC to cut token usage, either BlueAI's bundled model
    ("Auto", recommended) or the user's own local VLM endpoint ("Custom").
 
-   V3, Phase 5 (settings.css; kit cards, badges, banners, fields and buttons since review round 1):
-   the Settings card and row language. The choices are the site's
-   selection (12% blue fill, 50% blue edge), pending is the same edge dashed. Status pills carry
+   V3, Phase 5 (settings.css; kit cards, badges, banners, fields and buttons since review round 1; the
+   kit's SettingsSection, RadioCard and ProgressBar since round 2): the Settings card and row
+   language. The choices are the site's selection (12% blue fill, 50% blue edge, the outline check),
+   pending is the same edge dashed. Status pills carry
    their tone (progress blue, verified green, failed red, paused amber) and nothing else does.
    Hybrid unavailable is disabled with a reason: the card keeps its label at 45% and one muted line
    under the choices says why. Retry and View are links; Download & enable opens the dialog, where
@@ -31,11 +32,16 @@
     const applyOff = !customConfigured || applying;
 
     return (
-      <section className="v2-card v3-set-card">
-        <h2 className="v2-text-title v3-set-title">AI Mode</h2>
-        <p className="v2-text-body-sm v3-set-desc">Choose where AI processing happens.</p>
+      <section className="v2-settings-section">
+        <header className="v2-settings-section-head">
+          <div className="v2-settings-section-text">
+            <h2 className="v2-settings-section-title v2-text-title">AI mode</h2>
+            <p className="v2-settings-section-desc v2-text-body-sm">Choose where AI processing happens.</p>
+          </div>
+        </header>
 
-        <div className="v3-choices">
+        <div>
+        <div className="v2-radio-cards">
           <OptionCard title="Cloud" sub="Default. Uses cloud AI." selected={!hybridActive} onClick={onPickCloud} />
           <OptionCard title="Hybrid" sub="Uses your PC and saves tokens." selected={hybridActive} pending={hybridPending} pendingLabel={hybridTag} onClick={onPickHybrid} disabled={!hwSupported} describedBy="ai-mode-hw" />
         </div>
@@ -46,7 +52,7 @@
         {outer === 'hybrid' && hwSupported &&
           <div className="v3-subgroup">
             <p className="v3-subgroup-label">{method === null ? 'Pick method' : 'Hybrid method'}</p>
-            <div className="v3-choices" style={{ marginTop: 'var(--v2-space-2)' }}>
+            <div className="v2-radio-cards" style={{ marginTop: 'var(--v2-space-2)' }}>
               <OptionCard title="Auto" sub="BlueAI runs a local model for you." selected={method === 'auto'} onClick={onPickAuto} badge="Recommended" />
               <OptionCard title="Custom" sub="Connect your own local VLM." selected={method === 'custom'} onClick={onPickCustom} />
             </div>
@@ -58,16 +64,9 @@
               <div className="v3-stack">
                 {autoInProgress ? (
                   <div className="v2-card v2-card--inset">
-                    <div className="v3-prog-head">
-                      <span className="v3-prog-label">{status === 'downloading' ? 'Downloading Hybrid AI…' : status === 'installing' ? 'Installing Hybrid AI…' : 'Checking…'}</span>
-                      <div className="v3-row-gap">
-                        {status === 'downloading' && <span className="v3-prog-pct">{Math.round(pct)}%</span>}
-                        <LinkBtn onClick={onOpenModal}>View</LinkBtn>
-                      </div>
-                    </div>
-                    <div className="v3-prog-track">
-                      <div className={'v3-prog-fill' + (status === 'downloading' ? '' : ' is-indet')} style={{ width: status === 'downloading' ? pct + '%' : '100%' }} />
-                    </div>
+                    <window.V2Kit.ProgressBar label={status === 'downloading' ? 'Downloading Hybrid AI…' : status === 'installing' ? 'Installing Hybrid AI…' : 'Checking…'}
+                      value={pct} indeterminate={status !== 'downloading'} />
+                    <p className="v3-view-link"><LinkBtn onClick={onOpenModal}>View</LinkBtn></p>
                   </div>
                 ) : status === 'idle' ? (
                   <>
@@ -125,6 +124,7 @@
                   <p id="vlm-why" className="v3-reason" style={{ margin: 0 }}>Enter your local VLM endpoint and model name, then Apply.</p>}
               </div>}
           </div>}
+        </div>
       </section>);
   }
 

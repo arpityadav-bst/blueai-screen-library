@@ -152,8 +152,9 @@
   }
 
   /* The 20-day strip (worker home for a returning person, and the Jobs tab), MINIMAL since
-     2026-10-14 (Arpit): the day and Earnings on one row, 20 thin segments (one per program day,
-     the partner's own unit), one quiet receipt line. Read from today's real state (review round
+     2026-10-14 (Arpit): the day and Earnings on one row, the kit's DayBar (kit/worker.css, review
+     round 2: 20 segments on the 6px rail, empty the line, verified the reached green, today pending
+     as a white segment inside a blue edge), one quiet receipt line. Read from today's real state (review round
      1, the kit's ProgramStrip receipts, design-md 43): verified days solid; once today's run has
      counted, today is the pending segment and the receipt says so with one tick; a skipped or
      failed day says what it means; before today's run, yesterday's two ticks. No amber bonus
@@ -172,16 +173,18 @@
     const state = counted ? 'pending' : (today === 'declined' || today === 'failed' ? today : 'verified');
     return (
       <div className="v2-card v3-progress">
-        <div className="v3-progress-head">
-          <span className="v3-progress-title">Day {day} of {RULE.target}{style === 'money' && <span> · <span className="v3-figure">{money(day * RULE.rate + (day >= RULE.target ? RULE.bonus : 0))}</span> earned</span>}</span>
-          <a href={window.BlueAILinks.dashboard} target="_blank" rel="noopener" className="v2-link v3-progress-link"><span className="v2-link-text">Earnings ↗</span></a>
+        <div className="v2-daybar">
+          <div className="v3-progress-head">
+            <span className="v3-progress-title">Day {day} of {RULE.target}{style === 'money' && <span> · <span className="v3-figure">{money(day * RULE.rate + (day >= RULE.target ? RULE.bonus : 0))}</span> earned</span>}</span>
+            <a href={window.BlueAILinks.dashboard} target="_blank" rel="noopener" className="v2-link v3-progress-link"><span className="v2-link-text">Earnings ↗</span></a>
+          </div>
+          <div className="v2-daybar-track" aria-hidden="true">{Array.from({ length: RULE.target }, (_, i) => <span key={i} className={'v2-daybar-seg' + (i < verified ? ' v2-daybar-seg--verified' : (i < day ? ' v2-daybar-seg--pending' : ''))} />)}</div>
+          <p className="v2-text-caption v3-progress-note">
+            {state === 'verified' && <span className="v3-verified"><Tick double /></span>}
+            {state === 'pending' && <Tick />}
+            {RECEIPT[state]}
+          </p>
         </div>
-        <div className="v3-segs" aria-hidden="true">{Array.from({ length: RULE.target }, (_, i) => <span key={i} className={'v3-seg' + (i < verified ? ' v3-seg--done' : (i < day ? ' v3-seg--pending' : ''))} />)}</div>
-        <p className="v2-text-caption v3-progress-note">
-          {state === 'verified' && <span className="v3-verified"><Tick double /></span>}
-          {state === 'pending' && <Tick />}
-          {RECEIPT[state]}
-        </p>
       </div>);
   }
 

@@ -5,8 +5,8 @@
 // the partner site read as one family (Appy, 2026-10-14): the four-point spark mark (the site's
 // "i-spark" symbol, experiments/onblue-vesper/index.html:444) followed by the wordmark "Blue" + "AI",
 // where "AI" takes the site's blue. Proportions are the site's .logo / .logo-mark (onblue.css:829-847,
-// light theme): 19.5px text at weight 600, tracking -0.03em, a 28px mark, a 5px gap, the mark in the
-// blue with a soft 12px glow. Every size here scales from those ratios, so a smaller or larger lockup
+// light theme): 19.5px text at weight 600, tracking -0.03em (--v2-tracking-display), a 28px mark, a
+// 5px gap, the mark in the blue with a soft 12px glow in --v2-mark-glow (review round 2). Every size here scales from those ratios, so a smaller or larger lockup
 // keeps the same shape. Blue is the Target --v2-blue (#156efe), the same value the site uses.
 //
 // Props: size (wordmark font size in px, default 19.5), mark (mark size in px, default from size),
@@ -23,9 +23,9 @@
     const named = !!label;
     return (
       <span className={className} role={named ? 'img' : undefined} aria-label={named ? label : undefined} aria-hidden={named ? undefined : 'true'}
-        style={{ display: 'inline-flex', alignItems: 'center', gap: Math.round(size * BASE_GAP / BASE_TEXT), flex: 'none', fontFamily: 'var(--v2-font-ui)', fontSize: size, fontWeight: 'var(--v2-weight-semibold)', letterSpacing: '-0.03em', lineHeight: 1, color: 'var(--v2-ink)', whiteSpace: 'nowrap', userSelect: 'none', ...style }}>
+        style={{ display: 'inline-flex', alignItems: 'center', gap: Math.round(size * BASE_GAP / BASE_TEXT), flex: 'none', fontFamily: 'var(--v2-font-ui)', fontSize: size, fontWeight: 'var(--v2-weight-semibold)', letterSpacing: 'var(--v2-tracking-display)', lineHeight: 1, color: 'var(--v2-ink)', whiteSpace: 'nowrap', userSelect: 'none', ...style }}>
         <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"
-          style={{ width: m, height: m, flex: 'none', display: 'block', color: 'var(--v2-blue)', filter: 'drop-shadow(0 0 ' + glow + 'px rgba(90, 195, 255, 0.18))' }}>
+          style={{ width: m, height: m, flex: 'none', display: 'block', color: 'var(--v2-blue)', filter: 'drop-shadow(0 0 ' + glow + 'px var(--v2-mark-glow))' }}>
           <path d={SPARK} />
         </svg>
         {wordmark && <span aria-hidden="true">Blue<span style={{ color: 'var(--v2-blue)' }}>AI</span></span>}

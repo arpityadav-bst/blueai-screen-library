@@ -46,7 +46,7 @@ function LoginModal({ isOpen, onClose, onSuccess, initialStep, onOpenBrowser, br
   // success: harmless there, just more breathing room around already-centered content).
   // V3, Phase 2: the card is the Target surface with a 1px line and no shadow (entry.css
   // .v3-gate-card), on the kit's frost scrim and gate layer (review round 1), in the site's language
-  // like the welcome behind it.
+  // like the welcome behind it. Every step's button runs the card's full width (review round 2).
   const card = (children) => <div className="v3-gate-card">{children}</div>;
   // The account check (ROB-21388) blocks the home screen: no close button and no Esc there.
   const closable = step !== 'gate' && step !== 'confirm';
@@ -81,7 +81,7 @@ function LoginModal({ isOpen, onClose, onSuccess, initialStep, onOpenBrowser, br
         {step === 'default' && card(
           <>
             <window.BlueAILogo wordmark={false} mark={38} label="" />
-            <p className="v2-text-body-sm">You need AI Credits to use BlueAI</p>
+            <p className="v2-text-body-sm">You need AI credits to use BlueAI</p>
             <div>
               <div className="v3-cr-figure">
                 <img src="assets/Credits.svg" alt="" className="v3-cr-glyph" />
@@ -92,7 +92,7 @@ function LoginModal({ isOpen, onClose, onSuccess, initialStep, onOpenBrowser, br
             <hr className="v2-divider" />
             <button type="button" onClick={handleSignIn} className="v2-button v2-button--primary v2-button--lg v2-button--full">
               Sign in to claim
-              <svg className="v2-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg>
+              <window.V2Kit.Icon name="chevron-right" />
             </button>
             {/* The legal page the terms sheet links (terms_sheet.jsx TERMS_URL), in a new tab. */}
             <a href="/onblue/terms" target="_blank" rel="noopener" className="v2-link v2-link--muted v3-signin-terms"><span className="v2-link-text">Terms &amp; Conditions</span></a>
@@ -113,15 +113,13 @@ function LoginModal({ isOpen, onClose, onSuccess, initialStep, onOpenBrowser, br
             </div>
             {/* A neutral notice (the kit Banner): blue is held to focus, selection and the logo here. */}
             <div className="v2-banner">
-              <span className="v2-banner-icon"><svg className="v2-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8" />
-              </svg></span>
+              <span className="v2-banner-icon"><window.V2Kit.Icon name="info" /></span>
               <span className="v2-banner-text">Use the account you applied with</span>
             </div>
             <hr className="v2-divider" />
             {/* One way back to the browser (review round 1, U20): the link and the button that did
                the same thing are one secondary button. */}
-            <button type="button" onClick={handleSignIn} className="v2-button v2-button--secondary v2-button--lg">
+            <button type="button" onClick={handleSignIn} className="v2-button v2-button--secondary v2-button--lg v2-button--full">
               Open the browser again
             </button>
           </>
@@ -145,10 +143,10 @@ function LoginModal({ isOpen, onClose, onSuccess, initialStep, onOpenBrowser, br
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
             </span>
             <div>
-              <p className="v2-text-title-lg">Logged in</p>
+              <p className="v2-text-title-lg">Signed in</p>
               <p className="v2-text-body-sm v3-gate-body">Welcome back!</p>
             </div>
-            <button type="button" onClick={() => onSuccess?.()} className="v2-button v2-button--primary v2-button--lg">
+            <button type="button" onClick={() => onSuccess?.()} className="v2-button v2-button--primary v2-button--lg v2-button--full">
               Continue
             </button>
           </>

@@ -76,7 +76,7 @@
           <G.SpecDrawer rows={[
             { part: 'Sheet', token: 'Sheet blocking, --v2-shadow-2', value: 'radius 16 top, no close, no Esc, no scrim dismiss', ref: ['entry-patterns.terms.sheet', 'entry-patterns.terms.blocking'] },
             { part: 'Veil', token: '--v2-scrim', value: 'rgba(11,18,32,0.48)', ref: 'entry-patterns.terms.scrim' },
-            { part: 'Title', token: '--v2-text-20, --v2-weight-semibold', value: '20/600 ink: Before you start', ref: ['entry-patterns.terms.title-type', 'entry-patterns.terms.title'] },
+            { part: 'Title', token: '.v2-text-title-dialog: --v2-text-18, --v2-weight-semibold, --v2-tracking-display', value: '18/600/-0.03em ink: Before you start', ref: ['entry-patterns.terms.title-type', 'entry-patterns.terms.title'] },
             { part: 'Consent line', token: '--v2-text-14, --v2-ink-2', value: 'legal copy, verbatim', ref: ['entry-patterns.terms.body', 'entry-patterns.terms.body-2', 'entry-patterns.terms.body-3', 'entry-patterns.terms.split', 'entry-patterns.terms.agree-ack'] },
             { part: 'Links', token: 'Link (ink)', value: 'underlined ink, blue on hover, new tab, said to screen readers', ref: ['entry-patterns.terms.link', 'entry-patterns.terms.url'] },
             { part: 'Button', token: 'Button primary lg full', value: 'Agree and continue; 44, --v2-action; loading while it records', ref: ['entry-patterns.terms.button', 'entry-patterns.terms.cta', 'entry-patterns.terms.cta-owner'] },

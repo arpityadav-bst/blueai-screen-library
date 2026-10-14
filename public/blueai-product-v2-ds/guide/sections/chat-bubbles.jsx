@@ -38,7 +38,7 @@
     const planNode = plan ? K.renderMessage(plan, 0, [plan]) : <div className="g-missing">WorkerFlow.PLAN (V2 worker_flow.jsx) is not loaded, so the plan is not drawn.</div>;
     return (
       <G.Section id="bubbles">
-        <G.Note>V3 restyle (2026-10-14): the user bubble is the grey surface with a hairline, not a blue tint. Tone rides on one 16px icon; the edge takes the tone only when the run stopped (waiting: the attention line at 32%; failed: the danger line), on the surface. The progress note (a 4px dot and a muted 13px line) is a pattern, not a bubble.</G.Note>
+        <G.Note>V3 restyle (2026-10-14): the user bubble is the grey surface with a hairline, not a blue tint. Tone rides on one 16px icon; the edge takes the tone only when the run stopped (waiting: the waiting edge, the attention ink; failed: the strong danger edge, review round 2), on the surface. A message's time is a 12 ink-3 caption. The progress note (a 4px dot and a muted 13px line) is a pattern, not a bubble.</G.Note>
         <G.Part name="MessageBubble (user)" status="changed" role="What the partner said, or the answer they tapped. The quietest thing on screen, because the partner already knows what they said.">
           <G.StateGrid states={[
             { label: 'Rest', note: 'an answer the partner tapped', node: <K.MessageBubble from="user">{WORK.answer}</K.MessageBubble> },

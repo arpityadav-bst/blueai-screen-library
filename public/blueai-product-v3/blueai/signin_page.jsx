@@ -21,10 +21,11 @@
   const { useState, useEffect } = React;
   const K = window.SiteKit;
 
-  // Two Google accounts in one browser: the accepted one, and a workspace account.
+  // Two Google accounts in one browser: the accepted one, and a workspace account. hue names the
+  // kit's avatar fill (.v2-avatar--hue-0 action blue, -1 ink), so no raw colour rides on the data.
   const ACCOUNTS = {
-    primary: { id: 'primary', name: 'Alex Rivera', first: 'Alex', email: 'alex.rivera@gmail.com', hue: '#156efe', enrolled: true },
-    other:   { id: 'other',   name: 'Alex Rivera', first: 'Alex', email: 'alex@riveramedia.co',   hue: '#0b0b0d', enrolled: false }
+    primary: { id: 'primary', name: 'Alex Rivera', first: 'Alex', email: 'alex.rivera@gmail.com', hue: 0, enrolled: true },
+    other:   { id: 'other',   name: 'Alex Rivera', first: 'Alex', email: 'alex@riveramedia.co',   hue: 1, enrolled: false }
   };
   /* The program pill, the kit's badge (review round 1, family words): "In the program" on the
      verified green with its dot, "Not in the program" neutral. Never blue: blue is focus,

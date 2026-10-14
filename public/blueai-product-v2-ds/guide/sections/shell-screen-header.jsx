@@ -91,7 +91,7 @@
   function ScreenHeaderSection() {
     return (
       <G.Section id="screen-header">
-        <G.Part name="ScreenHeader" status="changed" role="One title band for every screen: optional Back, one 20/600 title, optional trailing action.">
+        <G.Part name="ScreenHeader" status="changed" role="One title band for every screen: optional Back, one 24/500 title (the greeting's style), optional trailing action.">
           <G.StateGrid wide states={[
             { label: 'Title only (a tab)', node: <Band title="Activity" /> },
             { label: 'With Back (a pushed screen)', node: <Band title="Worker settings" onBack={function () {}} /> },
@@ -110,10 +110,10 @@
           <G.CompareRow
             v2={<div style={{ width: 'var(--v2-shell-w)', maxWidth: '100%', height: 220, overflow: 'hidden' }}><G.Live get={function () { return window.ChatHistory && window.ChatHistory.ChatHistoryScreen; }} label="V2 ChatHistoryScreen" /></div>}
             system={<div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--v2-space-3)' }}><Band title="Activity" /><Band title="Account" onBack={function () {}} /></div>}
-            changed="V2 has no shared header: five title treatments at 19 to 22px and weights 700 to 800, and no screen has a Back, so a screen opened from the kebab is left only by tapping a tab. The system has one band: 20/600 ink on the 16 gutter, Back on every pushed screen, and one slot for the screen's own action." />
+            changed="V2 has no shared header: five title treatments at 19 to 22px and weights 700 to 800, and no screen has a Back, so a screen opened from the kebab is left only by tapping a tab. The system has one band: 24/500/-0.04em ink (the greeting's style, review round 2) with 16 above, below and at the gutter, Back on every pushed screen, and one slot for the screen's own action." />
           <G.SpecDrawer rows={[
-            { part: 'Title', token: '--v2-text-20, --v2-weight-semibold, --v2-tracking-title', value: '20/600, -0.02em, ink', ref: ['shell.header.credits-title', 'shell.header.history-title', 'shell.header.schedule-title', 'shell.header.jobs-title'] },
-            { part: 'Band', token: '--v2-topbar-h, --v2-space-2, --v2-gutter', value: 'min 52 tall, 8 / 16 padding, canvas', ref: 'shell.header.credits-pad' },
+            { part: 'Title', token: '.v2-text-greeting: --v2-text-24, --v2-greeting-weight, --v2-tracking-hero', value: '24/500, -0.04em, ink (review round 2)', ref: ['shell.header.credits-title', 'shell.header.history-title', 'shell.header.schedule-title', 'shell.header.jobs-title'] },
+            { part: 'Band', token: '--v2-control-md, --v2-space-4, --v2-gutter', value: 'a 36 line (content-box min height) with 16 above, below and at the sides: 68 tall; canvas', ref: 'shell.header.credits-pad' },
             { part: 'Back', token: 'IconButton 32, back', value: 'label "Back"; the chevron lands on the gutter' },
             { part: 'Trailing', token: 'IconButton 32 or Button sm quiet', value: 'one action only' },
             { part: 'Position', token: '--v2-z-sticky', value: 'sticky to the top of the content band' },

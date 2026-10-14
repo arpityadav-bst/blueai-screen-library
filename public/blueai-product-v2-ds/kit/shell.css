@@ -12,11 +12,11 @@
   font-family: var(--v2-font-ui); font-size: var(--v2-text-14); line-height: var(--v2-leading-body);
 }
 .v2-frame--compact { height: var(--v2-shell-min-h); }
-/* scroll-padding keeps a focused row clear of the sticky ScreenHeader (52) when Tab scrolls it in
-   (WCAG 2.4.11): the header sits inside this band on the account screens. */
+/* scroll-padding keeps a focused row clear of the sticky ScreenHeader (68: 36 plus 16 above and
+   below) when Tab scrolls it in (WCAG 2.4.11): the header sits inside this band on the account screens. */
 .v2-frame-content {
   position: relative; flex: 1 1 auto; min-height: 0; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain;
-  scroll-padding-top: calc(var(--v2-topbar-h) + var(--v2-space-2));
+  scroll-padding-top: calc(var(--v2-control-md) + 2 * var(--v2-space-4) + var(--v2-space-2));
 }
 .v2-frame-overlays { position: absolute; inset: 0; pointer-events: none; }
 .v2-frame-overlays > * { pointer-events: auto; }
@@ -117,19 +117,20 @@
 .v2-nav-badge {
   position: absolute; top: calc(-1 * var(--v2-space-1)); left: calc(100% - var(--v2-space-15));
   min-width: var(--v2-icon-sm); height: var(--v2-icon-sm); padding: 0 var(--v2-space-1); border-radius: var(--v2-radius-pill);
-  background: var(--v2-action); color: var(--v2-on-color); box-shadow: 0 0 0 var(--v2-space-05) var(--v2-surface);
+  background: var(--v2-solid); color: var(--v2-on-color); box-shadow: 0 0 0 var(--v2-space-05) var(--v2-surface);
   font-size: var(--v2-text-11); font-weight: var(--v2-weight-semibold); line-height: var(--v2-icon-sm);
   text-align: center; font-variant-numeric: tabular-nums;
 }
 
 /* ScreenHeader: one band for every screen. Sticky inside the content band, so Back and the title
-   stay reachable on a compact window. With Back, the chevron's glyph lands on the gutter. */
+   stay reachable on a compact window. With Back, the chevron's glyph lands on the gutter. 16 above
+   and below a 36 line (content-box), so a trailing 36px button never grows it (review round 2). */
 .v2-screen-header {
   position: sticky; top: 0; z-index: var(--v2-z-sticky); display: flex; align-items: center; gap: var(--v2-space-1);
-  min-height: var(--v2-topbar-h); padding: var(--v2-space-2) var(--v2-gutter); background: var(--v2-canvas);
+  box-sizing: content-box; min-height: var(--v2-control-md); padding: var(--v2-space-4) var(--v2-gutter); background: var(--v2-canvas);
 }
 .v2-screen-header--back { padding-left: calc(var(--v2-gutter) - var(--v2-space-15)); }
-/* Type: .v2-text-title-lg (kit/nav.jsx). Focused by script, so no ring (kit/base.css, section 09). */
+/* Type: .v2-text-greeting, 24/500/-0.04em (kit/nav.jsx). Focused by script, so no ring (kit/base.css, section 09). */
 .v2-screen-title { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .v2-screen-header-trailing { display: flex; align-items: center; gap: var(--v2-space-1); flex: none; }
 

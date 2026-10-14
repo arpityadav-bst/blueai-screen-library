@@ -71,27 +71,28 @@
      redundant thing saying the same thing. This also blocks a second click from queuing a
      duplicate install: there's no debounce anywhere upstream of this component.
 
-     V3 (phase 4): the chat's one bubble language (chat.css). Info-blue becomes a plain bubble with
-     a quiet info mark in the muted ink (blue is not a surface, and nothing here needs a tone), and
-     Get BlueStacks is the view's one committing action, the solid ink button. */
+     V3: the kit's NoticeBubble (kit/chat.css, review round 2). Info-blue becomes the neutral notice
+     with a quiet info mark in the muted ink (blue is not a surface, and nothing here needs a tone),
+     and Get BlueStacks, in its action slot, is the view's one committing action, the solid ink button. */
   function Bubble({ app, onGet }) {
     const [clicked, setClicked] = useState(false);
+    const ToneIcon = window.ChatBubbles.ToneIcon;
     return (
-      <div className="v2-anim-pop-in v3-msg">
-        <div className="v3-bubble">
-          <div className="v3-toned">
-            <svg className="v2-icon v3-toned-icon v3-tone-quiet" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <circle cx="12" cy="12" r="9" /><line x1="12" y1="16" x2="12" y2="11.5" /><line x1="12" y1="8" x2="12.01" y2="8" />
-            </svg>
-            <p className="v3-toned-body">
-              This one runs inside BlueStacks App Player. I drive {app} there, and BlueStacks isn’t installed on this PC yet.
-            </p>
+      <div className="v2-anim-pop-in v2-msg v2-msg--worker">
+        <div className="v2-notice v2-text-body">
+          <div className="v2-notice-row">
+            <ToneIcon tone="quiet" />
+            <div className="v2-notice-body">
+              <p className="v2-notice-text">This one runs inside BlueStacks App Player. I drive {app} there, and BlueStacks isn’t installed on this PC yet.</p>
+            </div>
           </div>
           {!clicked &&
-            <button type="button" onClick={() => { setClicked(true); onGet(); }} className="v2-button v2-button--primary v2-button--full v3-bs-get">
-              <img src="assets/BlueStacks.png" alt="" className="v3-bs-logo" onError={(e) => { e.target.style.display = 'none'; }} />
-              Get BlueStacks
-            </button>}
+            <div className="v2-notice-action">
+              <button type="button" onClick={() => { setClicked(true); onGet(); }} className="v2-button v2-button--primary v2-button--full">
+                <img src="assets/BlueStacks.png" alt="" className="v3-bs-logo" onError={(e) => { e.target.style.display = 'none'; }} />
+                Get BlueStacks
+              </button>
+            </div>}
         </div>
       </div>);
   }
@@ -104,8 +105,8 @@
      instead of a popup. Kept in the app's own blue (matching the Bubble above it), not the
      screenshot's purple: that purple is the live app's AUTO-GAMEPLAY skill's own branding, a
      different feature; reusing it here would borrow a color identity that means something else.
-     V3 (phase 4): a plain bubble; the blue is held to what it means, progress (the kit spinner and
-     the bar), and the done state turns to the green tick because the install has been reached. */
+     V3: a worker bubble holding the kit's ProgressBar (kit/progress.jsx, review round 2): the blue
+     is held to what it means, progress, and the bar turns the reached green at 100%. */
   function ProgressBubble({ app, onDone }) {
     const [pct, setPct] = useState(0);
     const DURATION = 3000;   // matches the old InstallDialog's downloadMs for BlueStacks
@@ -125,22 +126,13 @@
 
     // This card is never removed once pushed, push() only appends, so it stays in the
     // conversation permanently as a record of what happened, frozen at whatever it last
-    // rendered. A spinning ring frozen next to "100%" reads as stuck/broken, not finished, so
-    // the done state swaps to a static checkmark rather than just leaving the spin running.
-    const done = pct >= 100;
+    // rendered: at 100% the kit's bar is the reached green, so it reads finished, not stuck.
+    const ProgressBar = window.V2Kit.ProgressBar;
     return (
-      <div className="v2-anim-pop-in v3-msg">
-        <div className="v3-bubble v3-bs-progress">
+      <div className="v2-anim-pop-in v2-msg v2-msg--worker">
+        <div className="v2-bubble v2-text-body v2-stack v2-gap-2 v3-bs-progress">
           <p className="v2-text-eyebrow">Installing</p>
-          <div className="v3-bs-row">
-            {done
-              ? <svg className="v3-tone-success" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12" /></svg>
-              : <Spinner className="v3-bs-spin" />}
-            <span className="v3-bs-pct">Getting ready {pct}%</span>
-          </div>
-          <div className="v3-bs-track">
-            <div className="v3-bs-fill" style={{ width: pct + '%' }} />
-          </div>
+          <ProgressBar value={pct} label="Getting ready" />
         </div>
       </div>);
   }

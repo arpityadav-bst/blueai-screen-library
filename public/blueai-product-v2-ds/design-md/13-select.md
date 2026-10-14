@@ -4,7 +4,7 @@
 
 **Why:** The partner picks from a short plain list in two places (which provider, which model) and both live under Settings, Advanced (R31). The native select gives keyboard, screen readers and a list that fits a 419px window for free; it only needs to wear the field box. V2 shows three looks on one screen (radius 10 with a custom chevron, radius 8 with the OS arrow) and its provider select removes the focus outline with nothing in its place (byok_settings.jsx:31; settings.jsx:122; P2, P7).
 
-**V3 restyle (2026-10-14).** The select is the field with the native arrow replaced by a 16px chevron in ink-3. Decision: its placeholder takes `--v2-ink-placeholder` like a field's (it always sits under a visible label), not ink-3.
+**V3 restyle (2026-10-14).** The select is the field with the native arrow replaced by a 16px chevron in ink-3. Decision: its placeholder takes `--v2-ink-placeholder` like a field's (it always sits under a visible label), not ink-3. With `hideLabel` (`v2-field--bare`) the placeholder is the only name in the box, so it reads at `--v2-ink-4`, as a bare field's does (review round 2, 2026-10-14).
 
 ### Select (Changed from V2)
 

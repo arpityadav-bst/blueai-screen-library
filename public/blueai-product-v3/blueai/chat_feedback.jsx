@@ -10,16 +10,9 @@
 (function () {
   const { useState, useRef, useEffect } = React;
 
-  /* ───────── Icons ───────── */
-  function ThumbIcon({ dir, filled = false }) {
-    const up = "M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3";
-    const down = "M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zM17 2h3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-3";
-    return (
-      <svg className="v2-icon" viewBox="0 0 24 24" fill={filled ? 'currentColor' : 'none'} stroke="currentColor"
-        strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <path d={dir === 'up' ? up : down} />
-      </svg>);
-  }
+  /* Glyphs are the kit's Icon by name (review round 2): thumb-up, thumb-down, arrow-up. A recorded
+     vote is the IconButton's pressed look (the select fill and edge), so the glyph stays an outline. */
+  const Icon = (p) => React.createElement(window.V2Kit.Icon, p);
 
   /* ───────── Feedback control ───────── */
   const FB_REASONS = ["Didn't complete the task", "Wrong result", "Took too long", "Didn't understand me", "Other"];
@@ -81,7 +74,7 @@
         </div>
         {isOther &&
           <div className="v2-anim-pop-in v2-fb-other" style={{ marginTop: 'var(--v2-space-2)' }}>
-            <div className={'v2-field' + (submitted ? ' is-disabled' : '')}><div className="v2-field-box">
+            <div className={'v2-field v2-field--bare' + (submitted ? ' is-disabled' : '')}><div className="v2-field-box">
             <textarea className="v2-field-input v3-fb-input" value={otherText} autoFocus rows={1}
               placeholder="Provide additional feedback"
               disabled={submitted}
@@ -99,7 +92,7 @@
             <button type="button" onClick={submit} disabled={submitted} aria-disabled={submitted} aria-label="Submit feedback" className="v2-icon-button">
               {submitted
                 ? <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12" /></svg>
-                : <svg className="v2-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><line x1="12" y1="19" x2="12" y2="5" /><polyline points="5 12 12 5 19 12" /></svg>}
+                : <Icon name="arrow-up" />}
             </button>
           </div>}
       </div>);
@@ -139,7 +132,7 @@
       return (
         <button key={dir} onClick={() => cast(dir)} aria-label={dir === 'up' ? 'Good result' : 'Bad result'} aria-pressed={selected}
           className={'v2-icon-button v2-icon-button--28' + (vote && !selected ? ' v3-fb-dim' : '')}>
-          <ThumbIcon dir={dir} filled={selected} />
+          <Icon name={dir === 'up' ? 'thumb-up' : 'thumb-down'} />
         </button>);
     };
     const labelText = thanks ? 'Thanks for the feedback' : (vote ? '' : (withLabel ? 'Did I get this right?' : ''));

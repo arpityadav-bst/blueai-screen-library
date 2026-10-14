@@ -11,33 +11,19 @@ function icoCls(size) {
   return 'v2-icon' + (size >= 24 ? ' v2-icon--24' : size >= 20 ? ' v2-icon--20' : '');
 }
 
-/* ─── NAV ICONS ─────────────────────────────────────────────── */
-function IcoBriefcase({ size = 20 }) {
-  return <svg className={icoCls(size)} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2" /><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" /></svg>;
-}
-function IcoChatBubble({ size = 20 }) {
-  return <svg className={icoCls(size)} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>;
-}
-function IcoCalendar({ size = 20 }) {
-  return <svg className={icoCls(size)} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>;
-}
-function IcoGear({ size = 20 }) {
-  return <svg className={icoCls(size)} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" /></svg>;
-}
-
-/* ─── UTIL ICONS ─────────────────────────────────────────────── */
-function IcoXClose({ size = 20 }) {
-  return <svg className={icoCls(size)} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>;
-}
-function IcoTrashBin({ size = 16 }) {
-  return <svg className={icoCls(size)} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6" /><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" /><path d="M10 11v6M14 11v6M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" /></svg>;
-}
-function IcoPencilEdit({ size = 16 }) {
-  return <svg className={icoCls(size)} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" /></svg>;
-}
-function IcoPlusSmall({ size = 16 }) {
-  return <svg className={icoCls(size)} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>;
-}
+/* ─── ICONS ──────────────────────────────────────────────────── */
+/* Every product glyph is the kit's icon set by name (kit/icons.jsx, review round 2); these keep
+   their V2 names and default sizes, so callers read the same. Inline SVG is left for marks only
+   (the spark, ticks, the spinner). */
+function kitIcon(name, size) { return React.createElement(window.V2Kit.Icon, { name, size }); }
+function IcoBriefcase({ size = 20 }) { return kitIcon('briefcase', size); }
+function IcoChatBubble({ size = 20 }) { return kitIcon('chat', size); }
+function IcoCalendar({ size = 20 }) { return kitIcon('calendar', size); }
+function IcoGear({ size = 20 }) { return kitIcon('settings', size); }
+function IcoXClose({ size = 20 }) { return kitIcon('close', size); }
+function IcoTrashBin({ size = 16 }) { return kitIcon('trash', size); }
+function IcoPencilEdit({ size = 16 }) { return kitIcon('edit', size); }
+function IcoPlusSmall({ size = 16 }) { return kitIcon('plus', size); }
 
 /* ─── SPINNER ────────────────────────────────────────────────── */
 /* The kit's one spinner (kit/feedback.css .v2-spinner, the markup of kit/progress.jsx): a ring in
@@ -65,12 +51,15 @@ function Toggle({ enabled, onToggle, label, describedBy }) {
 
 /* ─── FIELDS ─────────────────────────────────────────────────── */
 /* The kit's field (kit/inputs.css): the label above, the 40px box with its 1px line, the blue edge
-   and ring on focus. The control (input or textarea, class v2-field-input) is the child. */
-function Field({ id, label, required, className, children }) {
+   and ring on focus. The control (input or textarea, class v2-field-input) is the child. A required
+   field carries no mark (review round 2: no red asterisk; an optional one would say "Optional" in
+   ink-4, the kit's flag); `helper` is the kit's caption line under the box. */
+function Field({ id, label, helper, className, children }) {
   return (
     <div className={'v2-field' + (className ? ' ' + className : '')}>
-      {label && <label htmlFor={id} className="v2-field-label">{label}{required && <span className="v3-req">*</span>}</label>}
+      {label && <label htmlFor={id} className="v2-field-label">{label}</label>}
       <div className="v2-field-box">{children}</div>
+      {helper && <div className="v2-field-foot"><span className="v2-field-msg v2-text-caption">{helper}</span></div>}
     </div>);
 }
 /* One select: the kit's Select box, the native arrow swapped for its quiet chevron. `empty` greys
@@ -81,19 +70,20 @@ function SelectField({ value, onChange, empty, className, label, children, ...re
       {label && <label htmlFor={rest.id} className="v2-field-label">{label}</label>}
       <div className="v2-field-box">
         <select value={value} onChange={onChange} className={'v2-field-input v2-field-select' + (empty ? ' is-placeholder' : '')} {...rest}>{children}</select>
-        <span className="v2-field-chevron" aria-hidden="true"><svg className="v2-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9" /></svg></span>
+        <span className="v2-field-chevron" aria-hidden="true">{kitIcon('chevron-down', 16)}</span>
       </div>
     </div>);
 }
 
 /* ─── SCREEN HEADER ──────────────────────────────────────────── */
-/* One header for every pushed screen and tab (review round 1): the 24px title (.v2-text-greeting,
-   500, -0.04em), 16 above and below, an optional trailing control. Styles: settings.css. */
+/* One header for every pushed screen and tab: the kit's ScreenHeader (kit/shell.css, design-md 32,
+   review round 2): the 24px title (.v2-text-greeting, 500, -0.04em) on a 36 line, 16 above, below
+   and at the gutter, sticky to the top of its scroller, an optional trailing control. */
 function ScreenHead({ title, children }) {
   return (
-    <div className="v3-screen-head">
-      <h1 className="v2-text-greeting v3-screen-title">{title}</h1>
-      {children}
+    <div className="v2-screen-header">
+      <h1 className="v2-screen-title v2-text-greeting">{title}</h1>
+      {children && <div className="v2-screen-header-trailing">{children}</div>}
     </div>);
 }
 

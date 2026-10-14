@@ -8,16 +8,16 @@
   const LADDER = [
     ['v2-text-display', '2,000', '40 / 600 / 1 / -0.045em, tabular', '--v2-ink', 'Credits balance numeral (proposed figure: the daily grant)', null],
     ['v2-text-greeting', 'Hi, Alex', '24 / 500 / 1.2 / -0.04em', '--v2-ink', "Home greeting, welcome title, screen titles (proposed: V2's 'Hi, Alex' carries an emoji)", 'foundations.type.greeting'],
-    ['v2-text-title-lg', 'AI Credits', '20 / 600 / 1.2 / -0.02em', '--v2-ink', 'Every screen title and dialog title', 'foundations.type.title-ai-credits'],
+    ['v2-text-title-lg', 'AI Credits', '20 / 600 / 1.2 / -0.02em', '--v2-ink', 'Empty-state titles and big card heads (screen titles are the greeting, dialog titles 18/600)', 'foundations.type.title-ai-credits'],
     ['v2-text-numeral-sm', '7', '20 / 600 / 1 / -0.02em, tabular', '--v2-ink', "Counts beside a label: '7 of 20 days'", 'foundations.type.day-count-copy'],
     ['v2-text-title', 'BlueStacks Instance', '16 / 600 / 1.2 / -0.01em', '--v2-ink', 'Card titles, section heads', 'foundations.type.card-title'],
     ['v2-text-mini-title', 'Balance', '13 / 600 / 1.35 / 0.02em', '--v2-ink', 'Label over a figure in a card (StatCard)', null],
-    ['v2-text-body', 'You can pause, stop, or disconnect anytime.', '14 / 400 / 1.5 / 0', '--v2-ink-2', 'Bubbles, composer, paragraphs, fields', 'foundations.type.body-copy'],
-    ['v2-text-body-sm', 'Every task and job BlueAI does uses credits.', '13 / 400 / 1.5 / 0', '--v2-ink-3', 'Descriptions, notes, consequences', 'foundations.type.body-sm-copy'],
+    ['v2-text-body', 'You can pause, stop, or disconnect anytime.', '14 / 400 / 1.5 / -0.01em', '--v2-ink-2', 'Bubbles, composer, paragraphs, fields', 'foundations.type.body-copy'],
+    ['v2-text-body-sm', 'Every task and job BlueAI does uses credits.', '13 / 400 / 1.5 / -0.01em', '--v2-ink-3', 'Descriptions, notes, consequences', 'foundations.type.body-sm-copy'],
     ['v2-text-label', 'Switch account', '13 / 500 / 1.35 / -0.01em', '--v2-ink-2', 'Buttons, chips, nav, menu rows', 'foundations.blue.gate-label'],
     ['v2-text-meta', '11:04 am', '12 / 400 / 1.35 / 0', '--v2-ink-4', 'Timestamps and counts only, never a line that carries a consequence (proposed sample)', null],
     ['v2-text-caption', 'Turning this off keeps your saved key.', '12 / 400 / 1.35 / 0', '--v2-ink-3', 'Helpers, disabled reasons, footnotes: any line that carries a consequence (6.0:1; proposed sample)', null],
-    ['v2-text-eyebrow', 'Plan', '11 / 500 / 1 / 0.14em, uppercase', '--v2-ink-3', 'Section labels only; status words are Badges', 'foundations.type.eyebrow'],
+    ['v2-text-eyebrow', 'Plan', '11 / 500 / 1 / 0.14em, uppercase', '--v2-ink-4', 'Section labels only; status words are Badges', 'foundations.type.eyebrow'],
     ['v2-text-mono', 'claude-haiku-4-5', '13 / 400 / 1.35 / 0, mono', '--v2-ink-2', 'Keys, endpoints, model ids', 'foundations.type.mono-hint'],
   ];
   function sample(row) {
@@ -65,18 +65,18 @@
           }))} />
         </G.Part>
 
-        <G.Part name="Page titles, V2 today" status="changed" role="Seven title recipes in V2 become one: every screen and dialog title is .v2-text-title-lg, 20/600.">
+        <G.Part name="Page titles, V2 today" status="changed" role="Seven title recipes in V2 become two: every screen title is .v2-text-greeting, 24/500/-0.04em (the ScreenHeader, review round 2), every dialog and sheet title .v2-text-title-dialog, 18/600.">
           <G.CompareRow
             v2={<div className="g-live v2-stack v2-gap-2">{TITLES.map(function (t) {
               return <div key={t[0]} className="v2-hstack v2-hstack--between v2-hstack--baseline"><span style={t[1]}>{t[0]}</span><span className="v2-text-meta v2-tabular">{t[2]}</span></div>;
             })}</div>}
             system={<div className="v2-stack v2-gap-2">{TITLES.map(function (t) {
-              return <div key={t[0]} className="v2-hstack v2-hstack--between v2-hstack--baseline"><span className="v2-text-title-lg">{t[0]}</span><span className="v2-text-meta v2-tabular">20 / 600</span></div>;
+              return <div key={t[0]} className="v2-hstack v2-hstack--between v2-hstack--baseline"><span className="v2-text-greeting">{t[0]}</span><span className="v2-text-meta v2-tabular">24 / 500</span></div>;
             })}</div>}
-            changed="AI Credits 19/800, Chat History 22/800, Scheduled tasks 20/700, Coming Soon 22/800 in a different ink, the terms sheet 20/800, Logout 19/800 and the modal 18/600: moving between tabs re-decided how loud a title is. One recipe, 20/600 in ink, ends that. The words are V2's here; copy changes (Logout becomes Sign out) live in section 70." />
+            changed="AI Credits 19/800, Chat History 22/800, Scheduled tasks 20/700, Coming Soon 22/800 in a different ink, the terms sheet 20/800, Logout 19/800 and the modal 18/600: moving between tabs re-decided how loud a title is. One recipe, the greeting's 24/500/-0.04em in ink (review round 2), ends that. The words are V2's here; copy changes (Logout becomes Sign out) live in section 70." />
           <G.FrameState url="index.html?start=worker" label="V2 worker home: open AI Credits and Chat History from the header to see two of the recipes in place" height={520} />
           <G.SpecDrawer rows={TITLES.map(function (t) {
-            return { part: "'" + t[0] + "'", token: '--v2-text-20 / --v2-weight-semibold', value: 'V2 ' + t[2] + ', system 20 / 600', ref: t[3] };
+            return { part: "'" + t[0] + "'", token: '--v2-text-24 / --v2-greeting-weight', value: 'V2 ' + t[2] + ', system 24 / 500', ref: t[3] };
           }).concat([
             { part: 'Copy shown', token: null, value: "'Chat History', 'Coming Soon', 'Before you start', 'Job details'", ref: ['foundations.type.title-history-copy', 'foundations.type.title-jobs-copy', 'foundations.type.terms-copy', 'foundations.type.modal-copy'] },
           ])} />

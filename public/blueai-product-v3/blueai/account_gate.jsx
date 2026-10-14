@@ -10,20 +10,21 @@
 //
 // V3, Phase 2: Target tokens and the site's language (entry.css .v3-*; kit avatar, badge, button and
 // link since review round 1): Inter, a lined account row, the primary button for the one action, an
-// underlined ink link for the quiet one. The avatar fill is the account's own data (account.hue).
+// underlined ink link for the quiet one. The avatar fill is the kit's avatar hue the account names
+// (account.hue, .v2-avatar--hue-N: review round 2, no raw colour); the button runs full width.
 
 (function () {
   function GateCard({ account, fromPlayer, onSwitch }) {
     return (
       <>
-        <span className="v2-avatar v2-avatar--56" style={{ background: account.hue }}>{account.name[0]}</span>
+        <span className={'v2-avatar v2-avatar--56 v2-avatar--hue-' + account.hue}>{account.name[0]}</span>
         <div>
           <p className="v2-text-body-sm">Signed in as</p>
           <p className="v3-gate-email">{account.email}</p>
           {fromPlayer && <p className="v2-text-body-sm v3-gate-body" style={{ marginTop: 'var(--v2-space-1)' }}>from App Player on this PC</p>}
         </div>
         <span className="v2-badge"><span className="v2-badge-dot" aria-hidden="true" /><span className="v2-badge-label">Not in the program</span></span>
-        <button type="button" onClick={onSwitch} className="v2-button v2-button--primary v2-button--lg">Switch account</button>
+        <button type="button" onClick={onSwitch} className="v2-button v2-button--primary v2-button--lg v2-button--full">Switch account</button>
         <p className="v2-text-body-sm">App Player will be signed out too.</p>
       </>
     );
@@ -39,7 +40,7 @@
           <p className="v2-text-body-sm v3-gate-body">Signed in on App Player on this PC</p>
         </div>
         <button type="button" onClick={onContinue} className="v3-account">
-          <span className="v2-avatar" style={{ background: account.hue }}>{account.name[0]}</span>
+          <span className={'v2-avatar v2-avatar--hue-' + account.hue}>{account.name[0]}</span>
           <span style={{ minWidth: 0 }}>
             <span className="v3-account-name">Continue as {account.first}</span>
             <span className="v3-account-email">{account.email}</span>

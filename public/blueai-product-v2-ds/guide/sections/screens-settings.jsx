@@ -80,7 +80,7 @@
             dont={['Show tokens, steps or timeouts to a partner.', 'Claim a connection the app has not checked.',
               'Add a Save button to a list of toggles.', 'Open Advanced by default.']} />
           <G.SpecDrawer rows={[
-            { part: 'Title', token: 'ScreenHeader, --v2-text-20, --v2-weight-semibold', value: '"Settings" 20/600 ink', ref: 'screens-account.settings.no-title' },
+            { part: 'Title', token: 'ScreenHeader, .v2-text-greeting', value: '"Settings" 24/500/-0.04em ink (review round 2)', ref: 'screens-account.settings.no-title' },
             { part: 'Order', token: null, value: 'Worker, Connected apps, Notifications, BlueStacks, Account and privacy, Help, Advanced', ref: ['screens-account.settings.order-bluestacks', 'screens-account.settings.order-telegram', 'screens-account.settings.order-aimode', 'screens-account.settings.order-chat-ai'] },
             { part: 'Section card', token: 'SettingsSection: --v2-surface, --v2-line, --v2-radius-lg, --v2-space-4', value: '1px line, radius 16, padding 16, no shadow', ref: 'screens-account.settings.card' },
             { part: 'Section title', token: '--v2-text-16, --v2-weight-semibold', value: '16/600 ink, no icon', ref: 'screens-account.settings.card-title' },

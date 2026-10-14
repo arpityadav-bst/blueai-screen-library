@@ -1,70 +1,28 @@
 /* BlueAI Product V3: the chat screen (home, conversation, composer extras, history), drawn in the
    onBlue Agentic site's language on the Target tokens (--v2-*). Phase 3.
-   One bubble language: every message sits on the surface with a 1px line and no shadow; the user's
-   own message reads the kit's user-bubble look hooks. Tone (done, heads-up, waiting on you, failed)
-   is carried by one 16px icon in the tone's ink, and the edge turns only when the run has stopped
-   (failed, or waiting on an answer). Progress lines are notes, not bubbles. Only things that float
-   (the onboarding nudge) cast a shadow.
-   Kit parts used here (review round 1, 2026-10-14): the composer box, input and send/stop seat
-   (kit/chat.css), chips, quiet buttons, links and icon buttons (kit/actions.css), badges, the
-   eyebrow and the type ladder (kit/base.css, kit/display.css). */
+   Since review round 2 (2026-10-14) every message is the kit's (kit/chat.css): .v2-msg with a
+   .v2-bubble (the user's on the grey surface), a .v2-notice whose one 16px icon carries the tone
+   and whose edge turns only when the run stopped (failed: the strong danger edge; waiting on you:
+   the attention fill and edge), the AskCard (.v2-ask) and the caption time under a bubble. The
+   home's categories, prompts and history are the kit's list rows (.v2-row in one pad-none card).
+   Kit parts used here: the composer box, input and send/stop seat (kit/chat.css), chips, quiet
+   buttons, links and icon buttons (kit/actions.css), badges, avatars, rows and cards
+   (kit/display.css), the eyebrow and the type ladder (kit/base.css). This file keeps only V3's
+   own: the progress note, the working dots, the composer stack, the nudge and the home layout. */
 
-/* ---- Message rows ----------------------------------------------------------------------------- */
-.v3-msg { display: flex; flex-direction: column; align-items: flex-start; margin-bottom: var(--v2-space-3); }
-.v3-msg--user { align-items: flex-end; }
-.v3-bubble {
-  max-width: var(--v2-bubble-max); min-width: 0;
-  padding: var(--v2-space-3) var(--v2-space-4);
-  background: var(--v2-surface); border: var(--v2-stroke) solid var(--v2-line); border-radius: var(--v2-radius-lg);
-  color: var(--v2-ink); font-size: var(--v2-text-14); line-height: var(--v2-leading-body);
-  letter-spacing: var(--v2-tracking-label); overflow-wrap: break-word;
-}
-.v3-bubble p { margin: 0; white-space: pre-wrap; word-break: break-word; }
-.v3-rich p + p { margin-top: var(--v2-space-2); }
-.v3-bubble .v3-bubble-q { margin-top: var(--v2-space-15); }
-.v3-bubble--user {
-  background: var(--v2-bubble-user-fill); border-color: var(--v2-bubble-user-line);
-  color: var(--v2-bubble-user-ink); box-shadow: var(--v2-bubble-user-shadow);
-}
-/* The run stopped: it failed, or it is waiting on you. Only then does the edge take the tone, in
-   the strong edge (review round 1: the 32% tints were too faint). Waiting on you also takes the
-   attention fill (the kit's waiting tokens, as the AskCard); an answered question settles. */
-.v3-bubble--fail { border-color: var(--v2-danger-edge); }
-.v3-bubble--input { background: var(--v2-waiting-fill); border-color: var(--v2-waiting-line); }
-.v3-ask--answered .v3-toned-icon { color: var(--v2-ink-3); }
-.v3-bubble-stamp { margin-top: var(--v2-space-1); color: var(--v2-ink-3); font-size: var(--v2-text-11); letter-spacing: 0; }
-.v3-bubble .v3-bubble-title { margin: 0 0 var(--v2-space-05); color: var(--v2-ink); font-weight: var(--v2-weight-semibold); }
-.v3-bubble-list { margin: var(--v2-space-15) 0 0; padding-left: var(--v2-space-5); color: var(--v2-ink-2); font-size: var(--v2-text-13); }
-/* Tailwind's preflight strips list markers; the plan is a numbered list, the bullets a list. */
-ol.v3-bubble-list { list-style: decimal; }
-ul.v3-bubble-list { list-style: disc; }
-.v3-bubble-list li + li { margin-top: var(--v2-space-05); }
-.v3-bubble-lines span { display: block; }
-.v3-ask-hint { max-width: var(--v2-bubble-max); margin: var(--v2-space-15) 0 0; }
-/* The cost of an answer, above the chips (the kit's .v2-ask-consequence), and the chip row. */
-.v3-ask-cost { margin-top: var(--v2-space-15); }
-.v3-ask-chips { margin-top: var(--v2-space-2); }
-
-/* Toned bubble: icon, then the text column. The icon (.v2-icon, 16) centres on the first 21px line. */
-.v3-toned { display: flex; align-items: flex-start; gap: var(--v2-space-2); }
-.v3-toned-icon { margin-top: calc((var(--v2-text-14) * var(--v2-leading-body) - var(--v2-icon-sm)) / 2); }
-.v3-toned-body { min-width: 0; flex: 1; }
-.v3-tone-success { color: var(--v2-success); }
-.v3-tone-attention { color: var(--v2-attention-ink); }
-.v3-tone-danger { color: var(--v2-danger-ink); }
-.v3-tone-quiet { color: var(--v2-ink-3); }
-
-/* ---- Progress notes (status lines + the working indicator) ------------------------------------ */
+/* ---- The conversation: the kit's thread list spaces the messages (kit/chat.css .v2-thread-list) */
+/* Progress notes (status lines + the working indicator) are a pattern, not bubbles. */
 .v3-note-line {
   display: flex; align-items: flex-start; gap: var(--v2-space-2); max-width: var(--v2-bubble-max);
-  margin: 0 0 var(--v2-space-2); padding: 0 var(--v2-space-1);
+  margin: 0; padding: 0 var(--v2-space-1);
   color: var(--v2-ink-3); font-size: var(--v2-text-13); line-height: var(--v2-leading-body); letter-spacing: var(--v2-tracking-label);
 }
 .v3-note-line::before {
   content: ''; flex: none; width: var(--v2-space-1); height: var(--v2-space-1); border-radius: var(--v2-radius-round);
   margin-top: calc((var(--v2-text-13) * var(--v2-leading-body) - var(--v2-space-1)) / 2); background: var(--v2-ink-4);
 }
-.v3-working { display: flex; align-items: center; gap: var(--v2-space-2); margin: 0 0 var(--v2-space-2); padding: 0 var(--v2-space-1); }
+/* Working: three blue dots only; the words are for screen readers (the composer status says it). */
+.v3-working { display: flex; align-items: center; padding: var(--v2-space-15) var(--v2-space-1); }
 .v3-working-dots { display: inline-flex; gap: var(--v2-space-1); }
 /* The kit's pulse (kit/motion.css), staggered like the splash dots. */
 .v3-working-dots span, .v3-nudge-dot {
@@ -74,78 +32,46 @@ ul.v3-bubble-list { list-style: disc; }
 .v3-working-dots span:nth-child(2) { animation-delay: calc(var(--v2-dur-pulse) / 6); }
 .v3-working-dots span:nth-child(3) { animation-delay: calc(var(--v2-dur-pulse) / 3); }
 
-/* ---- Composer extras: the kit composer (kit/chat.css) plus the nudge and the mode-chip stack ---- */
-.v3-composer { position: relative; flex-shrink: 0; }
-.v3-composer-box--stack { flex-direction: column; align-items: stretch; gap: var(--v2-space-05); padding-bottom: var(--v2-space-15); }
-.v3-composer-box--stack .v2-composer-input { align-self: stretch; }
-.v3-composer-bar { display: flex; align-items: center; justify-content: space-between; gap: var(--v2-space-2); }
-/* The onboarding nudge floats above the composer, so it is the one thing here that casts. */
-.v3-nudge {
-  position: absolute; bottom: calc(100% + var(--v2-space-05)); left: var(--v2-gutter); z-index: var(--v2-z-raised);
-  display: inline-flex; align-items: center; gap: var(--v2-space-2); padding: var(--v2-space-15) var(--v2-space-3);
-  background: var(--v2-surface); border: var(--v2-stroke) solid var(--v2-line); border-radius: var(--v2-radius-pill);
-  box-shadow: var(--v2-shadow-1); white-space: nowrap;
-  color: var(--v2-ink-2); font-size: var(--v2-text-12); font-weight: var(--v2-weight-medium);
-}
-/* A vote not cast once the other is: the thumb at ink-4, full opacity (opacity means disabled). */
-.v3-fb-dim { color: var(--v2-ink-4); }
-/* "Other": a one-line textarea in the kit field box that grows to 64px (chat_feedback.jsx). */
-.v3-fb-input { padding: var(--v2-space-2) 0; line-height: var(--v2-leading-body); resize: none; overflow-y: hidden; }
-
+/* ---- Composer extras: the kit composer (kit/chat.css) plus the nudge and the mode-chip stack ---- */
+.v3-composer { position: relative; flex-shrink: 0; }
+.v3-composer-box--stack { flex-direction: column; align-items: stretch; gap: var(--v2-space-05); padding-bottom: var(--v2-space-15); }
+.v3-composer-box--stack .v2-composer-input { align-self: stretch; }
+.v3-composer-bar { display: flex; align-items: center; justify-content: space-between; gap: var(--v2-space-2); }
+/* The onboarding nudge floats above the composer, so it is the one thing here that casts. */
+.v3-nudge {
+  position: absolute; bottom: calc(100% + var(--v2-space-05)); left: var(--v2-gutter); z-index: var(--v2-z-raised);
+  display: inline-flex; align-items: center; gap: var(--v2-space-2); padding: var(--v2-space-15) var(--v2-space-3);
+  background: var(--v2-surface); border: var(--v2-stroke) solid var(--v2-line); border-radius: var(--v2-radius-pill);
+  box-shadow: var(--v2-shadow-1); white-space: nowrap;
+  color: var(--v2-ink-2); font-size: var(--v2-text-12); font-weight: var(--v2-weight-medium);
+}
+/* A vote not cast once the other is: the thumb at ink-4, full opacity (opacity means disabled). */
+.v3-fb-dim { color: var(--v2-ink-4); }
+/* "Other": a one-line textarea in the kit field box that grows to 64px (chat_feedback.jsx). */
+.v3-fb-input { padding: var(--v2-space-2) 0; line-height: var(--v2-leading-body); resize: none; overflow-y: hidden; }
+
 /* ---- Home: greeting, category rows, prompt rows ---------------------------------------------- */
 .v3-intro { display: flex; flex-direction: column; gap: var(--v2-space-15); padding: var(--v2-space-5) 0 var(--v2-space-4); }
 .v3-intro--onboarding { padding: var(--v2-space-8) 0 var(--v2-space-2); }
 .v3-intro-title { margin: 0; } /* type: .v2-text-greeting */
 .v3-intro-sub { margin: 0; color: var(--v2-ink-3); font-size: var(--v2-text-14); line-height: var(--v2-leading-body); text-wrap: pretty; }
 .v3-intro--onboarding .v3-intro-sub { font-size: var(--v2-text-16); }
-
-.v3-rows { display: flex; flex-direction: column; gap: var(--v2-space-2); }
-.v3-row {
-  display: flex; align-items: center; gap: var(--v2-space-3); width: 100%; padding: var(--v2-space-3);
-  background: var(--v2-surface); border: var(--v2-stroke) solid var(--v2-line); border-radius: var(--v2-radius-md);
-  color: var(--v2-ink); font: inherit; text-align: left; cursor: pointer;
-  transition: background var(--v2-dur-1) var(--v2-ease-standard), border-color var(--v2-dur-1) var(--v2-ease-standard);
-}
-/* Hover is a visible step (review round 1): the sunken surface and the firmer edge. */
-.v3-row:hover { background: var(--v2-surface-sunken); border-color: var(--v2-line-hover); }
-.v3-row--prompt { justify-content: space-between; padding: var(--v2-space-3) var(--v2-space-4); font-size: var(--v2-text-14); line-height: var(--v2-leading-snug); }
-.v3-row--prompt > span { text-wrap: pretty; }
-.v3-row-tile {
-  flex: none; display: grid; place-items: center; width: var(--v2-control-md); height: var(--v2-control-md);
-  border-radius: var(--v2-radius-sm); background: var(--v2-surface-sunken); color: var(--v2-ink-2);
-}
-.v3-row-tile--lg { width: var(--v2-mark-lg); height: var(--v2-mark-lg); }
-.v3-row-main { flex: 1; min-width: 0; }
-/* Row labels are 14/500 ink, the list-row recipe (section 04). */
-.v3-row-title { display: block; margin: 0; color: var(--v2-ink); font-size: var(--v2-text-14); font-weight: var(--v2-weight-medium); line-height: var(--v2-leading-tight); letter-spacing: var(--v2-tracking-label); }
-.v3-row-desc { display: block; margin: var(--v2-space-05) 0 0; color: var(--v2-ink-3); font-size: var(--v2-text-12); line-height: var(--v2-leading-snug); }
-.v3-row-end { display: flex; align-items: center; gap: var(--v2-space-1); flex: none; color: var(--v2-ink-4); font-size: var(--v2-text-12); }
+.v3-home-eyebrow { margin-bottom: var(--v2-space-2); }
+/* A prompt row is a label only; its words wrap evenly. */
+.v3-prompt { text-wrap: pretty; }
 .v3-cat-head { display: flex; align-items: center; gap: var(--v2-space-3); margin: var(--v2-space-3) 0 var(--v2-space-4); }
+.v3-cat-main { flex: 1; min-width: 0; }
+.v3-cat-line { display: flex; align-items: center; justify-content: space-between; gap: var(--v2-space-2); }
 .v3-cat-title { margin: 0; } /* type: .v2-text-title-lg */
+.v3-cat-desc { margin: var(--v2-space-05) 0 0; } /* type: .v2-text-body-sm */
 /* "All actions": the kit's quiet sm button, its glyph pulled onto the gutter. */
 .v3-back { margin-left: calc(-1 * var(--v2-space-3)); }
 /* "Chat history" under the rows: the kit's standalone link, centred. */
 .v3-home-link { display: flex; width: fit-content; margin: var(--v2-space-4) auto var(--v2-space-1); }
 
-/* ---- Chat history ------------------------------------------------------------------------------ */
-.v3-hist-list { display: flex; flex-direction: column; gap: var(--v2-space-2); }
-.v3-hist-item { background: var(--v2-surface); border: var(--v2-stroke) solid var(--v2-line); border-radius: var(--v2-radius-md); overflow: hidden; }
-.v3-hist-head {
-  display: flex; align-items: center; gap: var(--v2-space-3); width: 100%; padding: var(--v2-space-3) var(--v2-space-4);
-  background: none; border: 0; font: inherit; text-align: left; cursor: pointer;
-  transition: background var(--v2-dur-1) var(--v2-ease-standard);
-}
-.v3-hist-head:hover { background: var(--v2-surface-sunken); }
-.v3-hist-head:focus-visible { outline-offset: calc(-1 * var(--v2-focus-offset)); }
-.v3-hist-title {
-  display: block; margin: 0; color: var(--v2-ink); font-size: var(--v2-text-14); font-weight: var(--v2-weight-medium);
-  line-height: var(--v2-leading-snug); letter-spacing: var(--v2-tracking-label);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.v3-hist-meta { display: block; margin: var(--v2-space-05) 0 0; }
-.v3-hist-chev { flex: none; color: var(--v2-ink-4); transition: transform var(--v2-dur-2) var(--v2-ease-out); }
-.v3-hist-head[aria-expanded="true"] .v3-hist-chev { transform: rotate(180deg); }
-.v3-hist-body {
-  max-height: 360px; overflow-y: auto;
-  padding: var(--v2-space-4) var(--v2-space-4) var(--v2-space-2); border-top: var(--v2-stroke) solid var(--v2-line-hair);
+/* ---- Chat history: an expandable kit row whose panel holds the transcript -------------------- */
+.v3-hist-scroll {
+  --hist-max-h: 360px;
+  display: flex; flex-direction: column; gap: var(--v2-space-2); max-height: var(--hist-max-h); overflow-y: auto;
+  padding-top: var(--v2-space-3); border-top: var(--v2-stroke) solid var(--v2-line-hair);
 }

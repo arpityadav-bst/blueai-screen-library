@@ -1,5 +1,6 @@
-// BlueAI: Chat history (in-app screen; accordion of past sessions). V3 styles live in chat.css; the
-// header is the shared ScreenHead (settings.css), as on every pushed screen (review round 1).
+// BlueAI: Chat history (in-app screen; accordion of past sessions). Since review round 2 the rows are
+// the kit's expandable ListRow (.v2-row in one pad-none card) and the transcript the kit's bubbles;
+// chat.css keeps only the panel's scroll. The header is the kit's ScreenHeader (shared.jsx ScreenHead).
 // Matches the live product: the app header + bottom nav stay, there is NO overlay,
 // NO close "X", and NO composer, the screen replaces the whole chat area.
 // Each row is an accordion: tap to expand the FULL past conversation inline. The
@@ -73,16 +74,14 @@
     return msgs;
   }
 
-  // Same bubble language as the live chat (chat.css): the user's message on the sunken surface,
-  // the agent's on the white surface with a 1px line.
+  // The live chat's bubbles (the kit's MessageBubble): the user's on the grey surface, the agent's
+  // on the white surface with a 1px line, the time a caption under each.
   function HistMsg({ m }) {
     const isUser = m.r === 'user';
     return (
-      <div className={'v3-msg' + (isUser ? ' v3-msg--user' : '')}>
-        <div className={'v3-bubble' + (isUser ? ' v3-bubble--user' : '')}>
-          <p>{m.c}</p>
-          <p className="v3-bubble-stamp">{m.t}</p>
-        </div>
+      <div className={'v2-msg ' + (isUser ? 'v2-msg--user' : 'v2-msg--worker')}>
+        <div className={'v2-bubble v2-text-body' + (isUser ? ' v2-bubble--user' : '')}>{m.c}</div>
+        <span className="v2-msg-time v2-text-caption">{m.t}</span>
       </div>
     );
   }
@@ -92,27 +91,30 @@
     return (
       <div className="v2-anim-fade-up v3-screen">
         <ScreenHead title="Chat history" />
-        <div className="v3-hist-list">
-          {HISTORY_ITEMS.map((it) => {
-            const isOpen = openId === it.id;
-            return (
-              <div key={it.id} className="v3-hist-item">
-                <button className="v3-hist-head" aria-expanded={isOpen} onClick={() => setOpenId(isOpen ? null : it.id)}>
-                  <span style={{ flex: 1, minWidth: 0 }}>
-                    <span className="v3-hist-title">{it.title}</span>
-                    <span className="v2-text-meta v3-hist-meta">{it.n} messages · {it.when}</span>
-                  </span>
-                  <svg className="v2-icon v3-hist-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <polyline points="6 9 12 15 18 9" />
-                  </svg>
-                </button>
-                {isOpen &&
-                  <div className="v2-anim-pop-in v3-hist-body">
-                    {buildConvo(it).map((m, i) => <HistMsg key={i} m={m} />)}
-                  </div>}
-              </div>
-            );
-          })}
+        <div className="v3-screen-body v3-screen-body--fit">
+          <div className="v2-card v2-card--pad-none">
+            {HISTORY_ITEMS.map((it) => {
+              const isOpen = openId === it.id;
+              const panel = 'hist-' + it.id;
+              return (
+                <div key={it.id} className="v2-row-group v2-row--divider">
+                  <button type="button" className="v2-row v2-row--nav" aria-expanded={isOpen} aria-controls={isOpen ? panel : undefined} onClick={() => setOpenId(isOpen ? null : it.id)}>
+                    <span className="v2-row-text">
+                      <span className="v2-row-label">{it.title}</span>
+                      <span className="v2-row-desc v2-text-body-sm">{it.n} messages · {it.when}</span>
+                    </span>
+                    <span className="v2-row-chevron" aria-hidden="true"><window.V2Kit.Icon name="chevron-down" /></span>
+                  </button>
+                  {isOpen &&
+                    <div id={panel} className="v2-row-panel">
+                      <div className="v2-anim-pop-in v3-hist-scroll">
+                        {buildConvo(it).map((m, i) => <HistMsg key={i} m={m} />)}
+                      </div>
+                    </div>}
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     );

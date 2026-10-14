@@ -68,7 +68,7 @@
     </svg>
   );
   const Avatar = ({ account, size = 36 }) => (
-    <span style={{ width: size, height: size, borderRadius: '50%', flexShrink: 0, background: account.hue, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: Math.round(size * 0.42), fontWeight: 500, fontFamily: T.font }}>{account.name[0]}</span>
+    <span className={'v2-avatar--hue-' + account.hue} style={{ width: size, height: size, borderRadius: '50%', flexShrink: 0, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: Math.round(size * 0.42), fontWeight: 500, fontFamily: T.font }}>{account.name[0]}</span>
   );
 
   window.SiteKit = { T, Shell, Mark, Eyebrow, Title, Em, Lede, Opts, Opt, Link, Alt, Legal, U, Arrow, GoogleG, Avatar };

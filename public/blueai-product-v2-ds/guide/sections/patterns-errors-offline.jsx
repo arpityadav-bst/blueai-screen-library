@@ -74,7 +74,7 @@
             system={<K.RunCard state="failed" />}
             changed="V2 designed only its scripted failures: a run that fails (a red bubble, then Retry and Not now) and three AI-mode banners. A failed save, a field that rejects input, a screen that cannot load, a lost connection, a service outage: none has a place or words. The system gives each scope one home and one sentence shape, and keeps V2's good banners as the section scope." />
           <G.SpecDrawer rows={[
-            { part: 'Field', token: '--v2-danger-line, --v2-danger-ring, --v2-danger-ink', value: 'red border + 3px ring; message 12 in danger ink, role alert' },
+            { part: 'Field', token: '--v2-danger-edge, --v2-danger-ring, --v2-danger-ink', value: 'red border + 3px ring; message 12 in danger ink, role alert' },
             { part: 'Action', token: 'Toast error', value: 'assertive, Try again; no timer while it carries Try again (section 24)' },
             { part: 'Section', token: 'Banner danger', value: 'danger tint, ink words, role alert', ref: ['entry-patterns.errors.hybrid', 'entry-patterns.errors.endpoint'] },
             { part: 'Run', token: 'RunCard failed', value: 'deadline + Try again; V2 bubble #fdecec, #991b1b', ref: ['entry-patterns.errors.fail-bubble', 'entry-patterns.errors.run-fail'] },
