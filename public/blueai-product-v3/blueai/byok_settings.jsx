@@ -8,6 +8,8 @@
 // Review round 1 (U12, the kit's ByokPanel, design-md 49 and 52): the switch only pauses the key,
 // it never deletes it; Remove asks first, inline ("Remove your Anthropic key? ...", Keep key /
 // Remove key, the commit the kit's destructive button named for what is lost: review round 2).
+// Removing the key also switches Bring your own key off (App's removeKey) and focus lands on the
+// switch, the one control left in the section (review round 2, R12).
 // Saved key state lives in App (shared with the credits screen + out-of-credits popup);
 // the in-progress provider/key entry is local. Exposes window.Byok.ByokSettings.
 //
@@ -37,8 +39,9 @@
     const [glow, setGlow] = useState(false);
     const [confirmRemove, setConfirmRemove] = useState(false);
     // Remove and its confirm swap in place, so focus follows to the first button now showing (Keep
-    // key, or Remove again): the kit's in-place swap (V2Kit.useSwapFocus, design-md 09).
-    window.V2Kit.useSwapFocus(() => rootRef.current && rootRef.current.querySelector('[data-key-swap] button'), confirmRemove);
+    // key, or Remove again; the switch once the key is gone): the kit's in-place swap
+    // (V2Kit.useSwapFocus, design-md 09).
+    window.V2Kit.useSwapFocus(() => rootRef.current && rootRef.current.querySelector(keyAdded ? '[data-key-swap] button' : '[role="switch"]'), confirmRemove);
 
     // Routed here from the out-of-credits popup / credits screen → scroll into view + pulse.
     useEffect(() => {

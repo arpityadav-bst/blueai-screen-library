@@ -77,24 +77,37 @@
      good, which left the card out-ranking the header after the scrim was gone, so the header's
      kebab dropdown (inside the header's own layer) rendered underneath the card (Abhisht, 2026-09-30). With no scrim there is
      nothing to sit above, so the column drops back to auto. Dismiss = Okay, clicking the scrim, or
-     just running the skill, the conversation replaces this component entirely. */
-  function MoneyMakerHome({ onRun }) {
+     just running the skill, the conversation replaces this component entirely.
+
+     ONCE A DAY (review round 2, R3, R10): once today has counted, or today was the setup, Run stays
+     on the card with its label but is disabled (aria-disabled, so it keeps focus and its reason),
+     and a reason line under the mode line says why and when the next run is (WorkerFlow.runLock).
+     With no credits it is disabled too, the reason the live countdown to the refill. A skipped or
+     failed day offers Run again; the strip's Retry answers a failed day (R4). */
+  function MoneyMakerHome({ onRun, zeroCredits, onRetry }) {
     // A returning person (the worker already set up): no coach spotlight, and the earnings strip
     // above the card says where they are this month (sheet row 2, 2026-10-12).
     const back = window.WorkerFlow.isOnboarded();
     const [coaching, setCoaching] = useState(!back);
-    const run = () => onRun(PROMPT, 'MoneyMaker');
     const AP = window.AgentPermissions;
     const { autoApps } = AP.usePermissionMode();
     const auto = autoApps();
     const Icon = window.V2Kit.Icon;
+    const reasonId = React.useId();
+    const CP = window.CreditsPopupParts;
+    const now = CP.useNow();
+    const lock = window.WorkerFlow.runLock();
+    const reason = lock || (zeroCredits
+      ? <>Out of credits. Credits will be refreshed in <strong className="v3-figure">{CP.formatLeft(CP.nextUtcMidnight(now) - now)}</strong>.</>
+      : null);
+    const run = () => { if (!reason) onRun(PROMPT, 'MoneyMaker'); };
 
     return (
       <div>
         {coaching && <div className="v3-coach-scrim" onClick={() => setCoaching(false)} aria-hidden="true" />}
 
         <div className={'v3-wk-stack' + (coaching ? ' is-coaching' : '')}>
-          {back && <window.WorkerDayDone.EarningsStrip />}
+          {back && <window.WorkerDayDone.EarningsStrip onRetry={onRetry} />}
           <div className={'v2-card v3-wk-home' + (coaching ? ' is-lit' : '')}>
             <span className="v2-wcard-tile"><Icon name="earnings" size={24} /></span>
             <div className="v2-grow">
@@ -105,8 +118,9 @@
                 <Icon name={auto.length ? 'zap' : 'shield-check'} /><span className="v3-wk-mode-text">{AP.summary(auto)}</span>
                 <button type="button" onClick={AP.openSheet} aria-haspopup="dialog" className="v2-button v2-button--quiet v2-button--sm v3-wk-mode-change">Change</button>
               </p>
+              {reason && <p id={reasonId} className="v2-text-caption v3-wk-reason">{reason}</p>}
             </div>
-            <button type="button" onClick={run} className="v2-button v2-button--primary">
+            <button type="button" onClick={run} aria-disabled={reason ? 'true' : undefined} aria-describedby={reason ? reasonId : undefined} className="v2-button v2-button--primary">
               <Icon name="play" />
               Run
             </button>

@@ -94,11 +94,12 @@
         </div>
 
         {/* Pinned to the bottom of the screen, outside the centred column. Quiet and underlined,
-           as the site's links are. Still a no-op, as in V2. */}
+           as the site's links are. It opens the legal page the terms sheet and the sign-in card link
+           (/onblue/terms) in a new tab (review round 2, R17; it was a no-op, as in V2). */}
         <div className="mm-terms" style={{ position: 'absolute', left: 0, right: 0, bottom: 'var(--v2-space-6)', zIndex: 'var(--v2-z-raised)', display: 'flex', justifyContent: 'center', fontSize: 'var(--v2-text-12)' }}>
-          <button type="button" onClick={(e) => e.preventDefault()} className="v2-link v2-link--muted">
+          <a href="/onblue/terms" target="_blank" rel="noopener" className="v2-link v2-link--muted">
             <span className="v2-link-text">Terms &amp; Conditions</span>
-          </button>
+          </a>
         </div>
       </div>);
   }

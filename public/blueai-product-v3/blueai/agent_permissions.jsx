@@ -4,8 +4,10 @@
    takes a paid job on that app during its daily run:
      always  Always ask (the default): the job ask waits for an answer, then the job runs to the end.
      auto    Automatic: no ask; the worker takes the job and finishes it on its own.
-   YouTube is the app today; Instagram is next. A new app always starts on Always ask and has to
-   be switched to Automatic on its own, and each switch is its own consent. The wording is
+   YouTube is the app today; Instagram is next, so it is listed as Coming soon with no switch
+   (review round 2, R9: the kit ModeRows' coming-soon row), and nothing can say "Automatic on 2
+   apps" before a second app is live. A new app always starts on Always ask and has to be switched
+   to Automatic on its own, and each switch is its own consent. The wording is
    "Always ask" and "Automatic" everywhere, never "Always allow", "Auto" or "Supervised".
 
    Where the person first picks is worker_flow.jsx's business (an onboarding question, or "Yes,
@@ -45,7 +47,7 @@
     { id: 'auto', title: 'Automatic', sub: 'Starts and finishes jobs without asking', icon: 'zap' }];
   const APPS = [
     { id: 'youtube', name: 'YouTube', icon: 'youtube' },
-    { id: 'instagram', name: 'Instagram', icon: 'instagram' }];
+    { id: 'instagram', name: 'Instagram', icon: 'instagram', soon: true }];
   const byId = (id) => MODES.find((m) => m.id === id) || MODES[0];
   const appById = (id) => APPS.find((a) => a.id === id) || APPS[0];
   // The chip's and the ribbon's words: one app is named, several are counted, so the line stays
@@ -61,8 +63,8 @@
   const subs = new Set();
   const emit = () => subs.forEach((f) => f());
   const getMode = (app = 'youtube') => modes[app] || 'always';
-  const autoApps = () => APPS.filter((a) => modes[a.id] === 'auto');
-  function setMode(app, m) { modes = { ...modes, [appById(app).id]: byId(m).id }; confirming = null; emit(); }
+  const autoApps = () => APPS.filter((a) => !a.soon && modes[a.id] === 'auto');
+  function setMode(app, m) { const a = appById(app); if (a.soon) return; modes = { ...modes, [a.id]: byId(m).id }; confirming = null; emit(); }
   function reset() { modes = fresh(); confirming = null; afterConsent = null; sheetOpen = false; emit(); }
   const openSheet = () => { sheetOpen = true; emit(); };
   const closeSheet = () => { sheetOpen = false; emit(); };
@@ -101,9 +103,11 @@
               <span className="v2-row-mark" aria-hidden="true"><Icon name={a.icon} /></span>
               <span className="v3-app-text">
                 <span className="v3-app-name">{a.name}</span>
-                <span id={sid} className="v3-app-state">{on ? 'Automatic' : 'Always ask'}</span>
+                <span id={sid} className="v3-app-state">{a.soon ? a.name + ' jobs aren’t available yet.' : (on ? 'Automatic' : 'Always ask')}</span>
               </span>
-              <Toggle enabled={on} label={'Run ' + a.name + ' jobs without asking'} describedBy={sid} onToggle={() => requestMode(a.id, on ? 'always' : 'auto')} />
+              {a.soon
+                ? <span className="v2-badge"><span className="v2-badge-label">Coming soon</span></span>
+                : <Toggle enabled={on} label={'Run ' + a.name + ' jobs without asking'} describedBy={sid} onToggle={() => requestMode(a.id, on ? 'always' : 'auto')} />}
             </li>);
         })}
       </ul>);

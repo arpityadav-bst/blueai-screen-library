@@ -78,6 +78,7 @@
             { label: 'Returning, today pending', node: shell(<K.ProgramStrip worker={F.donePending} />) },
             { label: 'Yesterday verified', node: shell(<K.ProgramStrip worker={F.verified} />) },
             { label: 'Yesterday rejected', note: 'See why opens Activity', node: shell(<K.ProgramStrip worker={F.rejected} onOpenActivity={function () {}} />) },
+            { label: 'Today failed, with onRetry', note: 'a screen with no WorkerCard to say it (V3’s Jobs tab)', node: shell(<K.ProgramStrip worker={F.failed} onRetry={function () {}} />) },
             { label: 'Program complete', node: shell(<K.ProgramStrip worker={F.complete} />) },
             { label: 'Receipt off', note: 'receipt={false}: Home, where the WorkerCard says today’s status', node: shell(<K.ProgramStrip worker={F.verified} receipt={false} />) },
             { label: 'Earnings link: hover / focus-visible', node: <span style={{ display: 'inline-flex', gap: 'var(--v2-space-4)' }}>{K.Link ? <K.Link href={K.EARNINGS_URL} external standalone className="is-hover">Earnings</K.Link> : null}{K.Link ? <K.Link href={K.EARNINGS_URL} external standalone className="is-focus">Earnings</K.Link> : null}</span> },

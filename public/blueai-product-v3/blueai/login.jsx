@@ -22,6 +22,23 @@ function LoginModal({ isOpen, onClose, onSuccess, initialStep, onOpenBrowser, br
     return () => { clearTimeout(t1); clearTimeout(t2); };
   }, [isOpen, initialStep]);
 
+  /* Each step swaps the whole card, so focus would drop with it (review round 2, R15): on every step
+     change after the first, focus moves to the step's title (data-step-title, focusable from code
+     only) or, on a step with none, its main button. The step's line is also the modal's status, one
+     live region that stays mounted, so a screen reader hears "Signing in…" turn into "Signed in". */
+  const bodyRef = React.useRef(null);
+  const shownStep = React.useRef(null);
+  useEffect(() => {
+    if (!isOpen) { shownStep.current = null; return; }
+    const prev = shownStep.current;
+    shownStep.current = step;
+    if (prev === null || prev === step) return;   // on open, the dialog's own focus hook places focus
+    const root = bodyRef.current;
+    const el = root && (root.querySelector('[data-step-title]') || root.querySelector('button'));
+    if (el) el.focus({ preventScroll: true });
+  }, [step, isOpen]);
+  const LINES = { browser: 'Finish signing in from your web browser', signing: 'Please wait while we complete your sign-in', success: 'Welcome back!' };
+
   // The browser page handed back an account: finish the sign-in with that account's status.
   useEffect(() => {
     if (!isOpen || !browserResult) return;
@@ -67,7 +84,8 @@ function LoginModal({ isOpen, onClose, onSuccess, initialStep, onOpenBrowser, br
         </button>
       }
 
-      <div style={{ position: 'relative', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '0 28px' }}>
+      <p className="v2-sr-only" role="status">{LINES[step] || ''}</p>
+      <div ref={bodyRef} style={{ position: 'relative', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '0 28px' }}>
 
         {/* ── DEFAULT: the free-credits sign-in (logged out, opened from the onboarding chat's
              Send). V3, Phase 5: the same gate card as the steps after it, in the welcome's
@@ -108,8 +126,8 @@ function LoginModal({ isOpen, onClose, onSuccess, initialStep, onOpenBrowser, br
               </svg>
             </span>
             <div>
-              <p className="v2-text-title-lg">Check your browser</p>
-              <p className="v2-text-body-sm v3-gate-body">Finish logging in from your web browser</p>
+              <p className="v2-text-title-lg" data-step-title="" tabIndex={-1}>Check your browser</p>
+              <p className="v2-text-body-sm v3-gate-body">{LINES.browser}</p>
             </div>
             {/* A neutral notice (the kit Banner): blue is held to focus, selection and the logo here. */}
             <div className="v2-banner">
@@ -130,8 +148,8 @@ function LoginModal({ isOpen, onClose, onSuccess, initialStep, onOpenBrowser, br
           <>
             <span className="v3-gate-mark" aria-hidden="true"><Spinner size={24} /></span>
             <div>
-              <p className="v2-text-title-lg">Signing in…</p>
-              <p className="v2-text-body-sm v3-gate-body">Please wait while we complete your sign-in</p>
+              <p className="v2-text-title-lg" data-step-title="" tabIndex={-1}>Signing in…</p>
+              <p className="v2-text-body-sm v3-gate-body">{LINES.signing}</p>
             </div>
           </>
         )}
@@ -143,8 +161,8 @@ function LoginModal({ isOpen, onClose, onSuccess, initialStep, onOpenBrowser, br
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
             </span>
             <div>
-              <p className="v2-text-title-lg">Signed in</p>
-              <p className="v2-text-body-sm v3-gate-body">Welcome back!</p>
+              <p className="v2-text-title-lg" data-step-title="" tabIndex={-1}>Signed in</p>
+              <p className="v2-text-body-sm v3-gate-body">{LINES.success}</p>
             </div>
             <button type="button" onClick={() => onSuccess?.()} className="v2-button v2-button--primary v2-button--lg v2-button--full">
               Continue

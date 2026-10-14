@@ -48,6 +48,8 @@
 .v3-dd-status { margin: var(--v2-space-15) 0 0; font-variant-numeric: tabular-nums; } /* type: .v2-text-body-sm */
 .v3-dd-note { margin: var(--v2-space-2) 0 0; text-wrap: pretty; } /* type: .v2-text-meta */
 .v3-dd-cta { margin-top: var(--v2-space-5); }
+/* Day 20's Open Earnings, the secondary under Got it (review round 2, R13). */
+.v3-dd-cta2 { margin-top: var(--v2-space-2); }
 /* One bold ink figure in a muted line (brief section 9): money is ink 600, never green. */
 .v3-figure { color: var(--v2-ink); font-weight: var(--v2-weight-semibold); }
 
@@ -62,6 +64,8 @@
 .v3-progress-link { font-size: var(--v2-text-12); white-space: nowrap; }
 .v3-progress-note { display: flex; align-items: center; gap: var(--v2-space-15); margin: 0; }
 .v3-verified { display: flex; color: var(--v2-success); }
+/* A failed day (review round 2, R4): the receipt in the danger ink, Retry the quiet button after it. */
+.v3-progress-note--danger { color: var(--v2-danger-ink); }
 
 /* ---- BlueAI worker home card + the first-run coach -------------------------------------------- */
 /* The coach's veil covers the top bar (--v2-z-header) and stays under every dialog (--v2-z-dialog). */
@@ -81,6 +85,8 @@
 .v3-wk-mode { display: flex; align-items: center; gap: var(--v2-space-15); margin: var(--v2-space-1) 0 0; color: var(--v2-ink-3); }
 .v3-wk-mode-text { color: var(--v2-ink-2); font-size: var(--v2-text-12); font-weight: var(--v2-weight-medium); }
 .v3-wk-mode-change { margin-left: calc(-1 * var(--v2-space-1)); }
+/* Why Run waits (review round 2, R3, R10): a caption under the mode line, Run described by it. */
+.v3-wk-reason { margin: var(--v2-space-1) 0 0; } /* type: .v2-text-caption */
 .v3-coach {
   display: flex; justify-content: flex-end; padding-right: var(--v2-space-2); margin-top: var(--v2-space-3);
   animation: v2-fade-up var(--v2-dur-4) var(--v2-ease-out) var(--v2-dur-1) both;
@@ -110,6 +116,8 @@
 .v3-fill { flex: 1; justify-content: center; }
 .v3-list { display: flex; flex-direction: column; gap: var(--v2-space-3); margin: 0; padding: 0; list-style: none; }
 .v3-sched { display: flex; flex-direction: column; gap: var(--v2-space-3); }
+/* The worker's daily run, the fixed entry above the tasks (review round 2, R11). */
+.v3-sched-fixed { margin-bottom: var(--v2-space-3); }
 .v3-sched-title { margin: 0; } /* type: .v2-text-title */
 .v3-sched-meta { display: flex; flex-direction: column; gap: var(--v2-space-15); }
 .v3-sched-line { display: flex; align-items: center; gap: var(--v2-space-2); color: var(--v2-ink-3); font-size: var(--v2-text-13); }

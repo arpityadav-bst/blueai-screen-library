@@ -4,6 +4,10 @@
   const G = window.V2Guide;
 
   const ENTRIES = [
+    ['2026-10-14', 'Review round 2 of V3, pass B: the strip offers Retry on a failed day', [
+      'Kit: ProgramStrip gains onRetry. Given it, a failed today (workerState failed) is the receipt in the danger ink, ‘Today’s job didn’t finish.’, with a quiet Retry, for a screen with no WorkerCard to say it (V3’s Jobs tab and home); without it the strip is unchanged and the WorkerCard’s Try again stays the home’s action.',
+      'Why: review round 2 of BlueAI Product V3, pass B (UX and state), R4: a failed day shows Retry in the strip. Section 43 updated.',
+    ]],
     ['2026-10-14', 'Review round 2 of V3, pass A: screen header, hover hooks, edges, type, briefcase', [
       'New tokens: --v2-button-secondary-hover-fill and -hover-line, --v2-button-danger-hover-line and -hover-ink (the hover look hooks: Target the sunken surface, the 20% line, the strong danger edge and ink; V2 today keeps its slate-50 hover, slate-200 edge, red-200 edge and red-600 label), --v2-greeting-weight (Target 500, V2 today 800), --v2-empty-title-weight (600) and --v2-mark-glow (the spark’s glow colour). Re-valued in V2 today: --v2-tracking-eyebrow 0.08em (V2’s own; Target keeps the site’s 0.14em) and --v2-switch-knob-shadow 0 1px 3px rgba(0,0,0,0.25) (byok_settings.jsx:26-27).',
       'Kit: ScreenHeader takes the greeting’s 24/500/-0.04em title on a 36 line with 16 above, below and at the gutter (content-box, so a trailing 36px button never grows it); the failed notice takes --v2-danger-edge and a waiting RunCard --v2-waiting-line; a message’s time is a 12 ink-3 caption; body text tracks -0.01em; the eyebrow is ink-4; the nav badge is the solid ink; the EmptyState lifts by --v2-shadow-0, reads its title weight from a hook and its body measure is --v2-measure (280); a bare select’s placeholder is ink-4; destructive commits the confirms that lose something (Delete, Remove key, Disconnect), Sign out’s confirm commits with the primary; the icon set gains briefcase.',

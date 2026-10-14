@@ -11,18 +11,27 @@
 // sunken tile (settings.css .v3-set-head); BlueAI's own sections carry none. One solid action per
 // open form (review round 1): an always-shown card's save and routine actions are secondary.
 
-const { useState } = React;
+const { useState, useEffect } = React;
 
 /* Worker (Arpit, 2026-10-14): the permanent home of the per-app mode outside chat. Its Apps
    group is the mode sheet's own list (agent_permissions.jsx's AppSwitchList), so a switch
    flipped here and one flipped in chat are the same setting, and turning one on asks for consent.
    Review round 1 (U9): the daily run time onboarding asked for is shown and changed here too, the
    Daily run row (the kit's Run time block, design-md 62, at its smallest: one select of the
-   onboarding's three answers); the home greeting reads the same value (worker_flow.jsx). */
-function WorkerCard() {
+   onboarding's three answers); the home greeting reads the same value (worker_flow.jsx).
+   Review round 2 (R11): Schedule's daily-run entry edits here; arriving from it (focusKey) scrolls
+   the section in and focuses Daily run. */
+function WorkerCard({ focusKey }) {
   const AppSwitchList = window.AgentPermissions.AppSwitchList;
   const WF = window.WorkerFlow;
   const [runTime, setRunTime] = useState(WF.getRunTime().id);
+  useEffect(() => {
+    if (!focusKey) return;
+    const el = document.getElementById('worker-run');
+    if (!el) return;
+    el.focus({ preventScroll: true });
+    el.scrollIntoView({ behavior: window.V2Kit.reducedMotion() ? 'auto' : 'smooth', block: 'center' });
+  }, [focusKey]);
   const pick = (e) => { setRunTime(e.target.value); WF.setRunTime(e.target.value); };
   return (
     <section data-section="worker-settings" className="v2-settings-section">
@@ -164,7 +173,7 @@ function AISettingsCard() {
   );
 }
 
-function SettingsScreen({ byok, aiModeConditions }) {
+function SettingsScreen({ byok, aiModeConditions, focusWorker }) {
   const ByokSettings = window.Byok && window.Byok.ByokSettings;
   const aiMode = window.AiMode.useAiMode(aiModeConditions);
   return (
@@ -172,7 +181,7 @@ function SettingsScreen({ byok, aiModeConditions }) {
       <ScreenHead title="Settings" />
       <div className="v3-screen-body">
       <BluestacksCard />
-      <WorkerCard />
+      <WorkerCard focusKey={focusWorker} />
       <TelegramCard />
       <window.AiMode.AIModeCard {...aiMode} />
       {/* Bring Your Own Key, available in every geo; the canonical place to add/manage a key. */}

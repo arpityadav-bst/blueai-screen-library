@@ -9,7 +9,7 @@
    DayBar {days, worker, target, legend, bonusLabel, label}
      days: segment states (verified | pending | rejected | missed | future), or pass worker and
      numbers() derives them. role=progressbar with a spoken summary; the legend says it in words.
-   ProgramStrip {worker, onOpenActivity, receipt}  the home's progress card: count, Ends Nov 1, DayBar,
+   ProgramStrip {worker, onOpenActivity, onRetry, receipt}  the home's progress card: count, Ends Nov 1, DayBar,
      one receipt line, Earnings (one URL). The site's progress tile with the pending state it lacks.
      receipt false (default true) drops the receipt line and keeps Earnings alone in the foot, for a
      screen where the WorkerCard already says today's status (Home). A complete program has no
@@ -89,9 +89,12 @@
 
   // The receipt line under the bar: the one fact that changed since the partner last looked.
   // Proposed copy except 'Yesterday’s run verified.' and the skipped line (V2, DAY_COPY.notCounted).
-  function receipt(w, n) {
+  // retry (ProgramStrip's onRetry): a failed today, on a screen with no WorkerCard to say it (V3's
+  // Jobs tab and home), is the receipt in the danger ink with a quiet Retry (V3 review round 2, R4).
+  function receipt(w, n, retry) {
     const last = n.last;
     if (n.complete) return null;
+    if (retry && K().workerState(w) === 'failed') return { status: 'notcounted', text: 'Today’s job didn’t finish.', danger: true, retry: true };
     if (!last) return { status: 'notcounted', text: 'No days counted yet.' };
     if (K().workerState(w) === 'ended') return { status: 'notcounted', text: endedCopy(n).title + '.' + (n.cashOutOpen === false ? '' : ' Cash out on Earnings.') };
     const gap = K().dayGap(last.date, (w.today || {}).date);
@@ -107,11 +110,11 @@
     return { status: 'verified', text: run + ' verified.' };
   }
 
-  function ProgramStrip({ worker, onOpenActivity, receipt: showReceipt }) {
+  function ProgramStrip({ worker, onOpenActivity, onRetry, receipt: showReceipt }) {
     const P = K();
     const w = worker || P.workerFixtures.verified;
     const n = P.numbers(w);
-    const r = showReceipt === false ? null : receipt(w, n);
+    const r = showReceipt === false ? null : receipt(w, n, !!onRetry);
     return (
       <section className="v2-pstrip" aria-label="Your 20 days">
         <div className="v2-pstrip-head">
@@ -127,7 +130,8 @@
             <span className={cx('v2-pstrip-receipt', r.danger && 'v2-pstrip-receipt--danger')}>
               <StatusTick status={r.status} size={12} />
               <span>{r.text}</span>
-              {r.danger && onOpenActivity ? <P.Button variant="quiet" size="sm" onClick={onOpenActivity}>See why</P.Button> : null}
+              {r.retry ? <P.Button variant="quiet" size="sm" onClick={onRetry}>Retry</P.Button>
+                : r.danger && onOpenActivity ? <P.Button variant="quiet" size="sm" onClick={onOpenActivity}>See why</P.Button> : null}
             </span>
           ) : null}
           {P.Link ? <P.Link href={P.EARNINGS_URL} external standalone>Earnings</P.Link> : null}

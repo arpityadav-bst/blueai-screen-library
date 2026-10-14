@@ -185,10 +185,14 @@
 
      The warning lands BEFORE the failure on purpose: the run is what noticed the balance hit zero,
      so it announces the condition first and only then reports the job it couldn't finish. Flipped,
-     the error would read as the cause rather than the consequence. */
+     the error would read as the cause rather than the consequence.
+     Review round 2: the failure marks this chat read-only (`ooc`, R5: only the chat it played in;
+     New chat clears it), and the run closes on a day-done step (R7), so the 20-day strip and the
+     Windows notification say the day stopped on credits. `daily` makes it today's run, so Stop and
+     New chat cost the day like any other. */
   function makeScheduledOocSteps() {
     return [
-      { role: 'status', content: 'Scheduled run started: finding a job that fits you…', d: 900 },
+      { role: 'status', content: 'Scheduled run started: finding a job that fits you…', d: 900, daily: true },
       { role: 'thinking', d: 1200 },
       { role: 'status', content: 'Found one. Opening the app and getting started…', d: 1100 },
       { role: 'status', content: 'Running the job step by step…', d: 1100 },
@@ -197,7 +201,8 @@
          grew. Review round 1 (U6, proposed to the PM): the warning says when, as the live
          countdown (refill), and the failure says what the run cost: the day. */
       { role: 'warning', title: 'Out of credits', content: ['You’ve used all of today’s AI credits.'], refill: true, d: 1100 },
-      { role: 'final', tone: 'fail', content: 'Not enough credits to finish this job. Today won’t count toward your 20 days.', d: 900 }];
+      { role: 'final', tone: 'fail', ooc: true, content: 'Not enough credits to finish this job. Today won’t count toward your 20 days.', d: 900 },
+      { role: 'daydone', end: 'nocredits', notify: 'nocredits', d: 600 }];
   }
 
   /* Dev-preview only: one example bubble per chat message state, rendered instantly (no

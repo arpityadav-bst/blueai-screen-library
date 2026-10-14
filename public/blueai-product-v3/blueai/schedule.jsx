@@ -7,7 +7,10 @@
    the one screen header, 24px (the kit's ScreenHeader since review round 2). Review round 1 (U16):
    Edit opens the same form filled in with the task, saved in place; the form's first field takes
    focus. Every glyph is the kit's Icon; the empty state sits on the ground (no card), and both
-   dialogs end on the dialogs' one button row (review round 2). */
+   dialogs end on the dialogs' one button row (review round 2).
+   Review round 2, pass B (R11): once the worker is set up, its daily run is a fixed entry at the top,
+   "BlueAI worker, daily run", read from the Daily run time; it has no Delete, and its Edit goes to
+   Settings > Worker, where that time is set. */
 
 const { useState, useEffect } = React;
 
@@ -56,6 +59,30 @@ function ScheduleCard({ task, onEdit, onDelete }) {
   );
 }
 
+function WorkerRunCard({ onEdit }) {
+  const WF = window.WorkerFlow;
+  return (
+    <li className="v2-card v3-sched">
+      <h3 className="v2-text-title v3-sched-title">BlueAI worker, daily run</h3>
+      <div className="v3-sched-meta">
+        <div className="v3-sched-line">
+          <IcoCalendar size={16} />
+          <span><strong>Schedule:</strong> Daily</span>
+        </div>
+        <div className="v3-sched-line">
+          <window.V2Kit.Icon name="clock" />
+          <span><strong>Next run:</strong> <span className="v3-figure">{WF.nextRunShort()}</span></span>
+        </div>
+      </div>
+      <div className="v3-btn-row">
+        <button type="button" onClick={onEdit} className="v2-button v2-button--secondary">
+          <IcoPencilEdit /> Edit
+        </button>
+      </div>
+    </li>
+  );
+}
+
 /* One form for a new task and an edited one: `task` fills it in, and saving keeps its id, so the
    list replaces it in place. */
 function ScheduleTaskModal({ isOpen, task, onClose, onSave }) {
@@ -97,7 +124,7 @@ function ScheduleTaskModal({ isOpen, task, onClose, onSave }) {
   );
 }
 
-function ScheduleScreen({ isLoading }) {
+function ScheduleScreen({ isLoading, onEditWorker }) {
   const [tasks, setTasks] = useState(SCHED_TASKS_INIT);
   const [showCreate, setShowCreate] = useState(false);
   const [editing, setEditing] = useState(null);   // the task the form is editing, null for a new one
@@ -135,6 +162,7 @@ function ScheduleScreen({ isLoading }) {
       </ScreenHead>
 
       <div className="v3-screen-body">
+      {window.WorkerFlow.isOnboarded() && <ul className="v3-list v3-sched-fixed"><WorkerRunCard onEdit={onEditWorker} /></ul>}
       {tasks.length === 0 ? (
         <div className="v2-empty v3-fill">
           <div className="v2-empty-icon"><IcoCalendar size={24} /></div>

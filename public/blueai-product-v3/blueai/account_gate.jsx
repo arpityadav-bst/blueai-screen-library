@@ -36,7 +36,7 @@
     return (
       <>
         <div>
-          <p className="v2-text-title-lg">Continue to BlueAI</p>
+          <p className="v2-text-title-lg" data-step-title="" tabIndex={-1}>Continue to BlueAI</p>
           <p className="v2-text-body-sm v3-gate-body">Signed in on App Player on this PC</p>
         </div>
         <button type="button" onClick={onContinue} className="v3-account">
