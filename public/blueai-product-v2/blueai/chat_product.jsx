@@ -26,6 +26,7 @@
   const AskBubble = (p) => React.createElement(window.WorkerCards.AskBubble, p);
   const DayDoneCard = (p) => React.createElement(window.WorkerDayDone.DayDoneCard, p);   // the card that closes a daily run (sheet row 2)
   const DayDoneOverlay = (p) => React.createElement(window.WorkerDayDone.DayDoneOverlay, p);   // the centre "run complete" moment over the whole window
+  const DayProgressBar = (p) => React.createElement(window.WorkerDayProgress.DayProgressBar, p);   // the 20-day bar on the chat box, after Got it
 
   /* ───────── Merged chat screen: ProductHome (empty) → task-progress + feedback (active) ───────── */
   function ChatScreen({ sessionKey, seed, loading, zeroCredits, onNoCredits, isOnboarding, sessionMode = 'default', onNeedLogin, showStates, bsInstalled = true, onBsInstalled, scheduledOoc = false, dailyRunKey = 0, onJobWaiting, permUi = 'chatbox', onDayDone }) {
@@ -37,6 +38,7 @@
     const [reasons, setReasons] = useState({});
     const [answers, setAnswers] = useState({});   // worker question / job card answers, keyed like votes: 'k' + step index
     const [seenDone, setSeenDone] = useState(-1);  // index of the day-done step whose centre overlay was dismissed
+    const [barShut, setBarShut] = useState(-1);    // index of the day-done step whose progress bar was closed
     const [composerFocused, setComposerFocused] = useState(false);
     const scrollRef = useRef(null);
     const taRef = useRef(null);
@@ -45,7 +47,7 @@
     // Reset on New chat (and on a login-state flip, which also bumps sessionKey)
     useEffect(() => {
       timers.current.forEach(clearTimeout); timers.current = [];
-      setConvo([]); setVisible(0); setDraft(''); setVotes({}); setReasons({}); setAnswers({}); setSeenDone(-1);
+      setConvo([]); setVisible(0); setDraft(''); setVotes({}); setReasons({}); setAnswers({}); setSeenDone(-1); setBarShut(-1);
     }, [sessionKey]);
 
     // Onboarding chat lands here from the picker → focus the composer (prefilled or empty).
@@ -75,6 +77,8 @@
     }, [seed]);
 
     useEffect(() => { const el = scrollRef.current; if (el) el.scrollTop = el.scrollHeight; }, [visible, convo]);
+    // The 20-day bar takes room above the composer after Got it: keep the thread's end in view.
+    useEffect(() => { const el = scrollRef.current; if (el && seenDone >= 0) el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' }); }, [seenDone]);
     useEffect(() => { const ta = taRef.current; if (!ta) return; ta.style.height = 'auto'; ta.style.height = Math.min(ta.scrollHeight, 120) + 'px'; }, [draft]);
     useEffect(() => () => { timers.current.forEach(clearTimeout); }, []);
 
@@ -265,6 +269,7 @@
             </div>}
           {/* (The Automatic ribbon, ROB-21350 Version 2, is archived 2026-10-14: AgentPermissions.AutoRibbon,
              rendered here when permUi === 'ribbon' && workerStarted, if it ever comes back.) */}
+          {doneIdx >= 0 && seenDone >= doneIdx && barShut !== doneIdx && <DayProgressBar step={convo[doneIdx]} onClose={() => setBarShut(doneIdx)} />}
           <div style={{ position: 'relative', display: 'flex', flexDirection: modeChip ? 'column' : 'row', alignItems: modeChip ? 'stretch' : 'center', gap: modeChip ? 2 : 8, border: '1.5px solid ' + (isOnboarding ? '#60a5fa' : (composerFocused ? '#1990FF' : '#c7dcf5')), borderRadius: isOnboarding ? 18 : 14, background: 'white', padding: modeChip ? '8px 8px 6px 10px' : '8px 10px', boxShadow: composerFocused ? '0 0 0 3px rgba(25,144,255,0.12)' : (isOnboarding && !started ? '0 0 0 4px rgba(25,144,255,0.12)' : '0 1px 4px rgba(0,0,0,0.04)'), transition: 'border-color 0.15s ease, box-shadow 0.15s ease' }}>
             <textarea ref={taRef} value={draft} disabled={(running && !typeOk) || scheduledOoc} rows={1}
               onChange={(e) => setDraft(e.target.value)}
