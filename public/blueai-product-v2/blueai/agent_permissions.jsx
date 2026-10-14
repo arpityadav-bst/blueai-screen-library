@@ -128,8 +128,11 @@
     useEffect(() => {
       if (!open) return;
       opener.current = document.activeElement;
-      if (closeRef.current) closeRef.current.focus();
-      return () => { if (opener.current && opener.current.isConnected) opener.current.focus(); };
+      // preventScroll: the sheet is still below the window when this runs (its slide-up has just
+      // started), so a plain focus() scrolled .ba-app down to reach the button, which lifted the
+      // sheet into the middle and pulled the hidden free-credits panel into view.
+      if (closeRef.current) closeRef.current.focus({ preventScroll: true });
+      return () => { if (opener.current && opener.current.isConnected) opener.current.focus({ preventScroll: true }); };
     }, [open]);
     useEffect(() => {
       if (!open || asking) return;

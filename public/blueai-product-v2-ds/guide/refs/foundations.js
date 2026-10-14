@@ -162,7 +162,7 @@
     // Accessibility
     r('a11y.select-outline', 'blueai/byok_settings.jsx', 31, "outline: 'none', appearance: 'none'", 'BYOK select removes its outline, nothing replaces it'),
     r('a11y.okay-21', 'blueai/moneymaker_home.jsx', 57, "borderRadius: 999, padding: '4px 13px', fontSize: 11, fontWeight: 700", "coach 'Okay' button, about 21px tall"),
-    r('a11y.change-21', 'blueai/agent_permissions.jsx', 212, "padding: '3px 7px', fontSize: 12, fontWeight: 700, color: ACCENT", "ribbon 'Change', about 21px tall"),
+    r('a11y.change-21', 'blueai/agent_permissions.jsx', 215, "padding: '3px 7px', fontSize: 12, fontWeight: 700, color: ACCENT", "ribbon 'Change', about 21px tall"),
     r('a11y.info-22', 'blueai/credits_popup_parts.jsx', 95, 'width: 22, height: 22, borderRadius: 999', 'info button 22px'),
     r('a11y.menu-mousedown', 'index.html', 294, "document.addEventListener('mousedown', h)", 'header menus close on mousedown only: no Esc, no arrows'),
     r('a11y.amber-link', 'blueai/login.jsx', 242, "color: '#f59e0b', fontWeight: 500", 'amber link #f59e0b (2.15:1)'),

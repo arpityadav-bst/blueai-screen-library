@@ -102,7 +102,7 @@ window.V2Refs = (window.V2Refs || []).concat([
   { id: 'display-feedback.banner.byok-copy', file: 'byok_settings.jsx', line: 110, needle: 'No API key configured. Add one to get started.', value: 'No API key configured. Add one to get started.' },
   { id: 'display-feedback.banner.login', file: 'login.jsx', line: 235, needle: "background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: 12, padding: '10px 14px'", value: 'sign-in notice: #eff6ff / #bfdbfe, radius 12' },
   { id: 'display-feedback.banner.login-copy', file: 'login.jsx', line: 239, needle: 'Use the account you applied with', value: 'Use the account you applied with' },
-  { id: 'display-feedback.banner.ribbon', file: 'agent_permissions.jsx', line: 208, needle: "borderRadius: 10, background: '#eaf3ff', border: '1px solid #d6e6fb'", value: 'Automatic ribbon: #eaf3ff / #d6e6fb, a second blue' },
+  { id: 'display-feedback.banner.ribbon', file: 'agent_permissions.jsx', line: 211, needle: "borderRadius: 10, background: '#eaf3ff', border: '1px solid #d6e6fb'", value: 'Automatic ribbon: #eaf3ff / #d6e6fb, a second blue' },
   { id: 'display-feedback.banner.ribbon-copy', file: 'agent_permissions.jsx', line: 62, needle: "'Automatic on ' + (auto.length === 1 ? auto[0].name : auto.length + ' apps')", value: 'Automatic on YouTube (one app) or Automatic on 2 apps' },
   { id: 'display-feedback.banner.site-payout', file: 'onblue/onblue.css', line: 2108, needle: 'border: 1px solid var(--green-line);', value: 'site payout pill: 1px green line on the green fill, radius 10' },
 

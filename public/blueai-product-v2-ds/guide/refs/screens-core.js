@@ -25,7 +25,7 @@ window.V2Refs = (window.V2Refs || []).concat([
   { id: 'screens-core.chat.job-question', file: 'worker_flow.jsx', line: 120, needle: "question: 'Want me to take this one?'", value: 'Want me to take this one?' },
   { id: 'screens-core.chat.job-options', file: 'worker_flow.jsx', line: 121, needle: "label: 'Yes, switch to Automatic', consent: true }, { id: 'once', label: 'Just this job' }, { id: 'deny', label: 'Not now' }", value: 'Yes, switch to Automatic / Just this job / Not now' },
   { id: 'screens-core.chat.auto-ribbon', file: 'agent_permissions.jsx', line: 62, needle: "'Automatic on ' + (auto.length === 1 ? auto[0].name : auto.length + ' apps')", value: 'Automatic on YouTube' },
-  { id: 'screens-core.chat.auto-change', file: 'agent_permissions.jsx', line: 214, needle: '>Change</button>', value: 'Change, which opens the mode sheet' },
+  { id: 'screens-core.chat.auto-change', file: 'agent_permissions.jsx', line: 217, needle: '>Change</button>', value: 'Change, which opens the mode sheet' },
 
   /* 58 Activity: what V2 has instead. */
   { id: 'screens-core.jobs.nav-jobs', file: 'shared.jsx', line: 222, needle: "{ id: 'jobs', label: 'Jobs', Icon: IcoBriefcase }", value: 'Jobs, the first tab' },
