@@ -149,7 +149,7 @@
 #### R51 consent (effort S)
 
 - **V2:** `blueai/agent_permissions.jsx:191`
-- **Today:** The Automatic consent says the worker will finish jobs 'including posting videos'; the worker never posts videos, and the comment it does post in the partner's name is not named. V2 adopted the minimal consent dialog on 2026-10-14 (a plain frame with no header, divider or X: title, one sentence, a lighter second line, Cancel / I agree, turn on), which dropped 'and other content' but kept 'posting videos'.
+- **Today:** The Automatic consent says the worker will finish jobs 'including posting videos'; the worker never posts videos, and the comment it does post in the partner's name is not named. V2 adopted the minimal consent dialog on 2026-10-14 (a plain frame with no header, divider or X: title, one sentence, a lighter second line, Cancel / I agree, turn on), and on 2026-10-14 its body became 'BlueAI will take paid YouTube jobs on its own and like, comment, follow and post from your account.' with 'Switch back anytime in Settings.' underneath: the comment in the partner's name is now named, as recommended, and posting stays because the PM's spec lists it for Automatic jobs.
 - **Recommended:** Name what a job does, from `WORKER_JOB.actions`: 'BlueAI will take YouTube jobs and do them on your account without asking first: watching, liking and posting comments in your name.' (section 46). Consent copy, so the PM and legal decide it; the record keeps the version shown (section 53).
 - **Why:** On Automatic the job preview never appears, so this line is the partner's only notice that comments go out under their name.
 

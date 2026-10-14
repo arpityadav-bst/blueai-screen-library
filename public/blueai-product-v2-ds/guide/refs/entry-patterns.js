@@ -105,7 +105,7 @@
     r('consent.local', 'blueai/agent_permissions.jsx', 85, "localStorage.setItem('blueai_auto_consent_' + app, new Date().toISOString())", 'consent time in localStorage (stand-in)'),
     r('consent.button', 'blueai/agent_permissions.jsx', 181, 'agreement IS the button ("I agree, turn on", per the PM\'s spec), so there is no', 'the agreement is the button'),
     r('consent.title', 'blueai/agent_permissions.jsx', 189, "'Run ' + a.name + ' jobs automatically?'", 'consent title'),
-    r('consent.line', 'blueai/agent_permissions.jsx', 191, 'BlueAI will finish {a.name} jobs on your account without asking, including posting videos.', 'consent line'),
+    r('consent.line', 'blueai/agent_permissions.jsx', 191, 'BlueAI will take paid {a.name} jobs on its own and like, comment, follow and post from your account.', 'consent line'),
     r('consent.agree', 'blueai/agent_permissions.jsx', 195, '>I agree, turn on<', 'consent button, no loading state'),
     r('consent.history', 'blueai/worker_flow.jsx', 80, "say('Accessing your watch history…')", 'watch history read without asking'),
 

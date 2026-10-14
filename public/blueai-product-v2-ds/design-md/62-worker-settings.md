@@ -1,7 +1,7 @@
 ## 62 Worker settings
 
 **Status:** New.
-**Why:** BlueAI acts on the partner's account every day, so every promise made in setup needs a control the partner can find later (P4, R05). V2's pitch says "You can pause, stop, or disconnect anytime." (worker_flow.jsx:67) and its consent says "You can turn this off anytime." (agent_permissions.jsx:188), and since 2026-10-14 the mode can be turned off outside an open chat (Settings' Worker card, settings.jsx:11-20), but nothing can be paused, modes reset on reload (agent_permissions.jsx:21), and the run time is asked once in chat (worker_flow.jsx:73-74) and never shown again.
+**Why:** BlueAI acts on the partner's account every day, so every promise made in setup needs a control the partner can find later (P4, R05). V2's pitch says "You can pause, stop, or disconnect anytime." (worker_flow.jsx:67) and its consent says "Switch back anytime in Settings." (agent_permissions.jsx:188), and since 2026-10-14 the mode can be turned off outside an open chat (Settings' Worker card, settings.jsx:11-20), but nothing can be paused, modes reset on reload (agent_permissions.jsx:21), and the run time is asked once in chat (worker_flow.jsx:73-74) and never shown again.
 
 ### WorkerSettings (New)
 - **Purpose:** Settings > Worker. Turn daily runs off for a while (and know what it costs), choose Always ask or Automatic per app, set when the run happens, and see the interest profile jobs are picked from.

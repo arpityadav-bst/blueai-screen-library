@@ -70,7 +70,7 @@
     ['Agree and continue', 'PM', ['terms.cta', 'terms.cta-owner'], 'Live'],
     ['Run YouTube jobs automatically? / I agree, turn on', 'PM', ['consent.title', 'consent.agree'], 'Live'],
     ['Always ask / Automatic', 'PM', ['copy.modes'], 'Live'],
-    ['BlueAI will finish YouTube jobs on your account without asking, including posting videos. You can turn this off anytime. (V2 adopted the minimal consent dialog on 2026-10-14 (a plain frame with no header, divider or X: title, one sentence, a lighter second line, Cancel / I agree, turn on); its agreement paragraph is gone.) Proposed change (R51): BlueAI will take YouTube jobs and do them on your account without asking first: watching, liking and posting comments in your name.', 'PM and legal', ['worker.permissions.consent-body', 'consent.line'], 'Live, change proposed'],
+    ['BlueAI will take paid YouTube jobs on its own and like, comment, follow and post from your account. Switch back anytime in Settings. (V2 adopted the minimal consent dialog on 2026-10-14 (a plain frame with no header, divider or X: title, one sentence, a lighter second line, Cancel / I agree, turn on); its agreement paragraph is gone.) Proposed change (R51): BlueAI will take YouTube jobs and do them on your account without asking first: watching, liking and posting comments in your name.', 'PM and legal', ['worker.permissions.consent-body', 'consent.line'], 'Live, change proposed'],
   ];
 
   function Table({ head, rows, render }) {

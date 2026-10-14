@@ -113,7 +113,7 @@
     r('segmented.auto', 'agent_permissions.jsx', 54, "{ id: 'auto', title: 'Automatic', sub: 'Starts and finishes jobs without asking'", "'Automatic', 'Starts and finishes jobs without asking'"),
     r('segmented.youtube', 'agent_permissions.jsx', 56, "{ id: 'youtube', name: 'YouTube', Icon: IcoYouTube }", "'YouTube'"),
     r('segmented.consent-title', 'agent_permissions.jsx', 189, "'Run ' + a.name + ' jobs automatically?'", "'Run YouTube jobs automatically?'"),
-    r('segmented.consent-copy', 'agent_permissions.jsx', 191, 'BlueAI will finish {a.name} jobs on your account without asking, including posting videos.', 'the consent sentence'),
+    r('segmented.consent-copy', 'agent_permissions.jsx', 191, 'BlueAI will take paid {a.name} jobs on its own and like, comment, follow and post from your account.', 'the consent sentence'),
     /* Chip */
     r('chip.reply', 'worker_cards.jsx', 58, "border: '1.5px solid #c7dcf5', background: 'white', color: '#1990FF', borderRadius: 999, padding: '6px 13px', fontSize: 12.5, fontWeight: 700", 'reply chip: 1.5px #c7dcf5, #1990FF label (3.24:1), 12.5/700'),
     r('chip.reply-hover', 'index.html', 100, '.ba-chip:hover { transform: translateY(-1px); }', 'hover lifts 1px, no colour change'),

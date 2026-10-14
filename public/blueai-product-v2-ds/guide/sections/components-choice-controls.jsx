@@ -60,8 +60,8 @@
         {ask ? (
           <div className="g-callout v2-stack">
             <strong>Run YouTube jobs automatically?</strong>
-            <span>BlueAI will finish YouTube jobs on your account without asking, including posting videos.</span>
-            <span className="g-muted">You can turn this off anytime.</span>
+            <span>BlueAI will take paid YouTube jobs on its own and like, comment, follow and post from your account.</span>
+            <span className="g-muted">Switch back anytime in Settings.</span>
             <div className="v2-hstack v2-gap-2"><K.Button onClick={function () { answer(false); }}>Cancel</K.Button><K.Button variant="primary" onClick={function () { answer(true); }}>I agree, turn on</K.Button></div>
           </div>
         ) : null}

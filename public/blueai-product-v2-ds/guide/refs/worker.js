@@ -107,7 +107,7 @@ window.V2Refs = (window.V2Refs || []).concat([
   { id: 'worker.permissions.settings', file: 'blueai/settings.jsx', line: 18, needle: '<AppSwitchList />', value: 'Settings > Worker > Apps renders the same list' },
   { id: 'worker.permissions.consent-title', file: 'agent_permissions.jsx', line: 189, needle: "'Run ' + a.name + ' jobs automatically?'", value: 'Run YouTube jobs automatically?' },
   { id: 'worker.permissions.modal', file: 'agent_permissions.jsx', line: 189, needle: '<ModalOverlay plain isOpen={!!app} onClose={cancelConfirm}', value: 'shared ModalOverlay, plain frame (no header, divider or X): no focus moved' },
-  { id: 'worker.permissions.consent-body', file: 'agent_permissions.jsx', line: 191, needle: 'BlueAI will finish {a.name} jobs on your account without asking, including posting videos.', value: 'what changes' },
+  { id: 'worker.permissions.consent-body', file: 'agent_permissions.jsx', line: 191, needle: 'BlueAI will take paid {a.name} jobs on its own and like, comment, follow and post from your account.', value: 'what changes' },
   { id: 'worker.permissions.cancel', file: 'agent_permissions.jsx', line: 194, needle: '>Cancel</button>', value: 'Cancel' },
   { id: 'worker.permissions.agree', file: 'agent_permissions.jsx', line: 195, needle: '>I agree, turn on</button>', value: 'I agree, turn on' },
   { id: 'worker.permissions.agree-fill', file: 'agent_permissions.jsx', line: 195, needle: "background: ACCENT, border: 'none', color: 'white'", value: 'agree on #1990FF (3.24:1)' },

@@ -7,7 +7,7 @@ window.V2Refs = (window.V2Refs || []).concat([
   {"id":"compose.r03.at","file":"index.html","line":1010,"needle":"onConfirm={() => { setLogoutOpen(false); setProfileOpen(false); setAct","value":"R03 cited at index.html:1000"},
   {"id":"compose.r04.q1","file":"blueai/jobs.jsx","line":140,"needle":"Coming Soon","value":"R04 today: Coming Soon"},
   {"id":"compose.r04.at","file":"blueai/shared.jsx","line":222,"needle":"{ id: 'jobs', label: 'Jobs', Icon: IcoBriefcase },","value":"R04 cited at blueai/shared.jsx:222"},
-  {"id":"compose.r05.q1","file":"blueai/agent_permissions.jsx","line":192,"needle":"turn this off anytime","value":"R05 today: turn this off anytime"},
+  {"id":"compose.r05.q1","file":"blueai/agent_permissions.jsx","line":192,"needle":"Switch back anytime in Settings","value":"R05 today: turn this off anytime"},
   {"id":"compose.r05.at","file":"blueai/settings.jsx","line":144,"needle":"function SettingsScreen({ byok, aiModeConditions }) {","value":"R05 cited at blueai/settings.jsx:129"},
   {"id":"compose.r06.q1","file":"blueai/worker_flow.jsx","line":121,"needle":"Not now","value":"R06 today: Not now"},
   {"id":"compose.r06.at","file":"blueai/worker_flow.jsx","line":121,"needle":"options: [{ id: 'always', label: 'Yes, switch to Automatic', consent:","value":"R06 cited at blueai/worker_flow.jsx:121"},
@@ -73,6 +73,6 @@ window.V2Refs = (window.V2Refs || []).concat([
   {"id":"compose.r49.q2","file":"blueai/login.jsx","line":247,"needle":"Try again","value":"R49 today: Try again"},
   {"id":"compose.r49.at","file":"blueai/login.jsx","line":242,"needle":"<button onClick={handleSignIn} {...linkHover('#f59e0b', '#d97706')} st","value":"R49 cited at blueai/login.jsx:242"},
   {"id":"compose.r50.at","file":"blueai/schedule.jsx","line":10,"needle":"function repeatLabel(sch) {","value":"R50 cited at blueai/schedule.jsx:10"},
-  {"id":"compose.r51.q1","file":"blueai/agent_permissions.jsx","line":191,"needle":"including posting videos.","value":"R51 today: including posting videos"},
-  {"id":"compose.r51.at","file":"blueai/agent_permissions.jsx","line":191,"needle":"BlueAI will finish {a.name} jobs on your account without asking","value":"R51 cited at blueai/agent_permissions.jsx:191"},
+  {"id":"compose.r51.q1","file":"blueai/agent_permissions.jsx","line":191,"needle":"like, comment, follow and post from your account.","value":"R51 today: including posting videos"},
+  {"id":"compose.r51.at","file":"blueai/agent_permissions.jsx","line":191,"needle":"BlueAI will take paid {a.name} jobs on its own","value":"R51 cited at blueai/agent_permissions.jsx:191"},
 ]);

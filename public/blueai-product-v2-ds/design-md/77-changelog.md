@@ -6,6 +6,7 @@
 
 ### 2026-10-14: Minimal progress card and plain consent frame in V2
 
+- Consent dialog, wording and spacing: body 'BlueAI will take paid {app} jobs on its own and like, comment, follow and post from your account.', note 'Switch back anytime in Settings.' set 12px apart, title 10px above the body, buttons 20px below, and the plain frame's corners 20 to match the run-complete popup and the mode sheet.
 - V2's home progress card is minimal (day + Earnings, 20 thin day segments, one verified line) and the consent dialog uses a plain frame (no header, divider or X); refs and sections updated.
 
 ### 2026-10-14: Mode sheet, one-line ribbon and Settings > Worker in V2
