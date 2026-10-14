@@ -1,0 +1,1359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Resolve all relative script/asset paths against this folder, so the page works at the clean /blueai-product-v3 URL too. -->
+  <base href="/blueai-product-v3/" />
+  <title>BlueAI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <!-- Space Grotesk: creator-brand's own heading face (globals.css --font-head), loaded for the
+       MoneyMaker welcome screen only (moneymaker.jsx), which borrows that page's design theme. -->
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
+  <!-- Best-guess match for BlueStacks App Player's own UI font, used ONLY by the dark
+       ("bluestacks" skin) install dialog, see BS_FONT in install_dialog.jsx. Not a
+       confirmed match; falls back to Segoe UI if wrong or slow to load. -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&display=swap" rel="stylesheet" />
+  <!-- bluestacks.ai's own faces (Inter + Instrument Serif italic), for the pages the app's Sign in
+       opens in the browser (site_kit.jsx, ROB-21388). The same link the live site loads. Since V3
+       Phase 1 this Inter is also the BlueAI window's base face (--v2-font-ui on .ba-win, at 400, 500
+       and 600 only); the link's variable weight range already covers those three. -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { theme: { extend: { colors: { accent: '#1990FF' } } } };</script>
+  <!-- The fake Windows desktop the product window sits on (wallpaper, BlueStacks window,
+       OS window frame + titlebar). Deliberately a separate file: none of it is product DS. -->
+  <link rel="stylesheet" href="product-scene.css" />
+  <!-- V3: the design system's Target tokens (--v2-*). Base is /blueai-product-v3/, so this resolves to
+       /blueai-product-v2-ds/tokens.css. Read-only here: never edit the DS folder from V3. -->
+  <link rel="stylesheet" href="../blueai-product-v2-ds/tokens.css" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', 'Helvetica Neue', sans-serif;
+      background: #e2e8f0;
+    }
+    /* The product window's CONTENT box, still exactly 830px tall (421 x 830, every screen
+       inside was designed against it). Its FRAME, border, radius, shadow, and the Windows
+       titlebar above it: now lives on .ba-win in product-scene.css, because the window sits
+       on a fake Windows desktop instead of a flat page. .ba-win is 866 = 830 + 34 titlebar +
+       2 hairline, so this box keeps its full height. `position: relative` is load-bearing:
+       every in-app overlay (boot splash, login gate, logout + out-of-credits modals) is
+       absolutely positioned against it, which is what scopes them to the window. */
+    .ba-app {
+      width: 100%;
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: var(--v2-canvas);
+      position: relative;
+    }
+    button, input, textarea, select { font-family: inherit; }
+    /* Shared form-field focus treatment (blue border + soft ring), consistent across Settings + modals. */
+    .ba-field { transition: border-color 0.15s ease, box-shadow 0.15s ease; }
+    .ba-field:focus { border-color: #1990FF !important; box-shadow: 0 0 0 3px rgba(25,144,255,0.12); }
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: #e2e8f0; }
+    ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.18); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.32); }
+
+    @keyframes ba-wiggle { 0%,100% { transform: rotate(0deg); } 20% { transform: rotate(-12deg); } 40% { transform: rotate(10deg); } 60% { transform: rotate(-8deg); } 80% { transform: rotate(6deg); } }
+    @keyframes ba-ring { 0% { transform: scale(1); opacity: 0.7; } 100% { transform: scale(1.55); opacity: 0; } }
+    @keyframes ba-pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.5); opacity: 0.5; } }
+    @keyframes ba-breathe { 0%, 100% { transform: scale(1); opacity: 0.6; } 50% { transform: scale(1.4); opacity: 1; } }
+    @keyframes ba-bounce { 0%, 100% { transform: translateY(0); } 40% { transform: translateY(-7px); } 60% { transform: translateY(-4px); } }
+    @keyframes ba-orbit { from { transform: rotate(0deg) translateX(28px) rotate(0deg); } to { transform: rotate(360deg) translateX(28px) rotate(-360deg); } }
+    @keyframes ba-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    @keyframes ba-slide-up { from { opacity: 0; transform: translateX(-50%) translateY(10px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+    @keyframes ba-cfetti { 0% { transform: translate(0,0) scale(1); opacity: 1; } 100% { transform: translate(var(--tx,0),var(--ty,-20px)) scale(0); opacity: 0; } }
+    @keyframes ba-border-spin { from { background: linear-gradient(white,white) padding-box, linear-gradient(0deg,#0EA4C5,#7B4CFF,#0EA4C5) border-box; } to { background: linear-gradient(white,white) padding-box, linear-gradient(360deg,#0EA4C5,#7B4CFF,#0EA4C5) border-box; } }
+    @keyframes tabFadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    .tab-anim { animation: tabFadeUp 0.18s ease; }
+    @keyframes ba-shimmer { 0% { background-position: -600px 0; } 100% { background-position: 600px 0; } }
+    /* Small spinning ring: the in-chat BlueStacks install progress card (needs_bluestacks.jsx). */
+    @keyframes ba-spin { to { transform: rotate(360deg); } }
+    .ba-ring-spin { display: inline-block; width: 13px; height: 13px; flex-shrink: 0; border-radius: 50%; border: 2px solid #bfdbfe; border-top-color: #1990FF; animation: ba-spin 0.8s linear infinite; }
+    /* Install dialog's background wave (install_dialog.jsx's PixelWave), two tile-widths drawn
+       side by side, scrolled by exactly one tile so the loop is seamless. -400px→0 (not the
+       app's existing ba-marquee direction, which goes the other way) so it reads as moving right. */
+    @keyframes ba-wave-scroll { from { transform: translateX(-400px); } to { transform: translateX(0); } }
+    .ba-wave-scroll { animation: ba-wave-scroll 7s linear infinite; }
+
+    /* ── Chat conversation + feedback (from ChatView Feedback) ── */
+    @keyframes baMsgIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes baThanksIn { from { opacity: 0; transform: translateX(-3px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes baExpand { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+    .ba-msg-in { animation: baMsgIn 0.22s ease; }
+    .ba-chips-in { animation: baMsgIn 0.22s ease; }
+    .ba-thanks-in { animation: baThanksIn 0.2s ease; }
+    .ba-fb-btn { transition: background 0.15s ease, border-color 0.15s ease, transform 0.12s ease, opacity 0.2s ease; }
+    .ba-fb-btn:hover { transform: translateY(-1px); }
+    .ba-fb-btn:active { transform: scale(0.92); }
+    .ba-fb-btn--below:hover { background: #f1f5f9 !important; border-color: #cbd5e1 !important; }
+    .ba-fb-btn--below.ba-fb-btn--sel:hover { background: #cbd5e1 !important; }
+    .ba-fb-btn--inside:hover { background: rgba(255,255,255,0.9) !important; }
+    .ba-fb-btn--inside.ba-fb-btn--sel:hover { background: rgba(255,255,255,1) !important; }
+    .ba-chip { transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.12s ease; }
+    .ba-chip:hover { transform: translateY(-1px); }
+    .ba-chip:active { transform: scale(0.96); }
+    .ba-chip--below:hover:not(.ba-chip--sel) { background: #f1f5f9 !important; border-color: #cbd5e1 !important; }
+    .ba-chip--inside:hover:not(.ba-chip--sel) { background: rgba(255,255,255,0.9) !important; }
+    /* Mode sheet + app switches (agent_permissions.jsx): the slide-up over a light scrim, and the
+       switch's keyboard focus ring (Settings' Worker > Apps uses the same switches). */
+    @keyframes baSheetUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    @keyframes baScrimIn { from { opacity: 0; } to { opacity: 1; } }
+    .ba-sheet-scrim { animation: baScrimIn 0.24s ease both; }
+    .ba-sheet { animation: baSheetUp 0.36s cubic-bezier(0.22,1,0.36,1) both; }
+    .ba-switch:focus-visible { outline: 2px solid #1990FF; outline-offset: 2px; }
+    @media (prefers-reduced-motion: reduce) { .ba-sheet-scrim, .ba-sheet { animation: none; } }
+
+    /* ---- V3 Phase 1: the shell in the Target look (tokens only). Top bar (design-md 30), its menus,
+       bottom nav (31) and splash dots (33). Lines, not shadows, on everything in flow; one blue for
+       selected and open states; Inter 400/500/600; a 2px blue focus ring on every control. ---- */
+    .ba-topbar {
+      position: relative; z-index: var(--v2-z-header); display: flex; align-items: center; justify-content: space-between;
+      gap: var(--v2-space-2); flex: none; height: var(--v2-topbar-h); padding: 0 var(--v2-space-3) 0 var(--v2-gutter);
+      background: var(--v2-surface); border-bottom: var(--v2-stroke) solid var(--v2-line);
+    }
+    .ba-topbar--out { padding-right: var(--v2-gutter); }
+    .ba-topbar-actions { display: flex; align-items: center; gap: var(--v2-space-2); min-width: 0; }
+    .ba-topbar-icons { display: flex; align-items: center; gap: var(--v2-space-05); }
+    .ba-iconbtn {
+      display: inline-flex; align-items: center; justify-content: center; flex: none;
+      width: var(--v2-hit-min); height: var(--v2-hit-min); padding: 0; border: 0; border-radius: var(--v2-radius-sm);
+      background: none; color: var(--v2-ink-3); cursor: pointer;
+      transition: background-color var(--v2-dur-1) var(--v2-ease-standard), color var(--v2-dur-1) var(--v2-ease-standard);
+    }
+    .ba-iconbtn:hover { background: var(--v2-wash-hover); color: var(--v2-ink-2); }
+    .ba-iconbtn:active { background: var(--v2-wash-press); }
+    .ba-iconbtn[aria-expanded="true"] { color: var(--v2-blue); background: var(--v2-select); }
+    .ba-credits-chip {
+      position: relative; display: inline-flex; align-items: center; gap: var(--v2-space-15); flex: none;
+      height: var(--v2-control-sm); padding: 0 var(--v2-space-3) 0 var(--v2-space-2); margin: 0;
+      border: var(--v2-stroke) solid var(--v2-line); border-radius: var(--v2-radius-pill);
+      background-color: var(--v2-surface); color: var(--v2-ink); cursor: pointer;
+      font: inherit; font-size: var(--v2-text-13); font-weight: var(--v2-weight-medium); line-height: var(--v2-leading-display);
+      font-variant-numeric: tabular-nums;
+      transition: border-color var(--v2-dur-1) var(--v2-ease-standard), background-color var(--v2-dur-1) var(--v2-ease-standard);
+    }
+    .ba-credits-chip:hover { border-color: var(--v2-line-hover); background-image: linear-gradient(var(--v2-wash-hover), var(--v2-wash-hover)); }
+    .ba-credits-chip:active { background-image: linear-gradient(var(--v2-wash-press), var(--v2-wash-press)); }
+    .ba-credits-dot {
+      position: absolute; top: 0; right: 0; width: var(--v2-space-2); height: var(--v2-space-2); border-radius: var(--v2-radius-round);
+      background: var(--v2-danger-ink); box-shadow: 0 0 0 2px var(--v2-surface); transform: translate(25%, -25%);
+    }
+    /* New Chat stays in the bar (behaviour kept), but as the quiet secondary button rather than a blue
+       fill: the Target bar carries no filled button (design-md 30, Do / Don't). */
+    .ba-newchat {
+      display: inline-flex; align-items: center; gap: var(--v2-space-15); flex: none;
+      height: var(--v2-control-sm); padding: 0 var(--v2-space-3) 0 var(--v2-space-2);
+      border: var(--v2-stroke) solid var(--v2-line-strong); border-radius: var(--v2-radius-pill);
+      background-color: var(--v2-surface); color: var(--v2-ink-2); cursor: pointer; white-space: nowrap;
+      font: inherit; font-size: var(--v2-text-13); font-weight: var(--v2-weight-medium); letter-spacing: var(--v2-tracking-label);
+      transition: border-color var(--v2-dur-1) var(--v2-ease-standard), background-color var(--v2-dur-1) var(--v2-ease-standard), color var(--v2-dur-1) var(--v2-ease-standard);
+    }
+    .ba-newchat:hover { border-color: var(--v2-line-hover); background-image: linear-gradient(var(--v2-wash-hover), var(--v2-wash-hover)); color: var(--v2-ink); }
+    .ba-newchat:active { background-image: linear-gradient(var(--v2-wash-press), var(--v2-wash-press)); }
+    .ba-menu {
+      position: absolute; right: 0; top: calc(100% + var(--v2-space-15)); z-index: var(--v2-z-popover);
+      min-width: 190px; max-width: var(--v2-measure); padding: var(--v2-space-1); overflow: hidden;
+      background: var(--v2-surface); border: var(--v2-stroke) solid var(--v2-line); border-radius: var(--v2-radius-md);
+      box-shadow: var(--v2-shadow-1);
+    }
+    .ba-menu-item {
+      display: flex; align-items: center; gap: var(--v2-space-3); width: 100%; min-height: var(--v2-hit-min);
+      padding: var(--v2-space-15) var(--v2-space-3); border: 0; border-radius: var(--v2-radius-sm);
+      background: none; color: var(--v2-ink-2); cursor: pointer; text-align: left; text-decoration: none;
+      font: inherit; font-size: var(--v2-text-14); font-weight: var(--v2-weight-regular); line-height: var(--v2-leading-snug);
+      transition: background-color var(--v2-dur-1) var(--v2-ease-standard), color var(--v2-dur-1) var(--v2-ease-standard);
+    }
+    .ba-menu-item:hover { background: var(--v2-wash-hover); color: var(--v2-ink); }
+    .ba-menu-item:active { background: var(--v2-wash-press); }
+    .ba-menu-icon { flex: none; color: var(--v2-ink-3); }
+    .ba-menu-icon--danger { color: var(--v2-danger-ink); }
+    .ba-menu-ext { flex: none; margin-left: auto; color: var(--v2-ink-4); }
+    .ba-nav {
+      display: flex; align-items: stretch; flex: none; height: var(--v2-nav-h); padding: 0 var(--v2-space-2);
+      background: var(--v2-surface); border-top: var(--v2-stroke) solid var(--v2-line); box-shadow: var(--v2-nav-shadow);
+    }
+    .ba-nav-item {
+      position: relative; flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: var(--v2-space-05); margin: var(--v2-space-1) var(--v2-space-05); padding: 0; border: 0; border-radius: var(--v2-radius-sm);
+      background: none; color: var(--v2-ink-3); cursor: pointer;
+      font: inherit; font-size: var(--v2-text-12); font-weight: var(--v2-weight-medium); line-height: var(--v2-leading-snug);
+      transition: color var(--v2-dur-1) var(--v2-ease-standard), background-color var(--v2-dur-1) var(--v2-ease-standard);
+    }
+    .ba-nav-item:hover { background: var(--v2-wash-hover); color: var(--v2-ink-2); }
+    .ba-nav-item:active { background: var(--v2-wash-press); }
+    .ba-nav-item.is-selected { color: var(--v2-nav-selected-ink); }
+    .ba-nav-item.is-selected::before {
+      content: ''; position: absolute; top: calc(-1 * (var(--v2-space-1) + var(--v2-stroke))); left: 50%;
+      width: var(--v2-icon-lg); height: var(--v2-space-05); margin-left: calc(var(--v2-icon-lg) / -2);
+      border-radius: 0 0 var(--v2-radius-xs) var(--v2-radius-xs); background: var(--v2-nav-indicator);
+    }
+    .ba-nav-label { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    @media (forced-colors: active) {
+      .ba-nav-item.is-selected::before { forced-color-adjust: none; background: Highlight; }
+      .ba-nav-item.is-selected .ba-nav-label { text-decoration: underline; text-underline-offset: 3px; }
+    }
+    .ba-iconbtn:focus-visible, .ba-newchat:focus-visible, .ba-credits-chip:focus-visible,
+    .ba-tb-btn:focus-visible { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); }
+    .ba-menu-item:focus-visible, .ba-nav-item:focus-visible { outline: var(--v2-focus-outline); outline-offset: calc(-1 * var(--v2-focus-offset)); }
+    @keyframes ba-v3-pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.35; transform: scale(0.8); } }
+    .ba-splash-dot {
+      display: block; width: var(--v2-space-15); height: var(--v2-space-15); border-radius: var(--v2-radius-round);
+      background: var(--v2-blue); animation: ba-v3-pulse var(--v2-dur-pulse) var(--v2-ease-standard) infinite;
+    }
+    @media (prefers-reduced-motion: reduce) { .ba-splash-dot { animation: none; } }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+
+<!-- Shared components (must load first) -->
+<script type="text/babel" src="blueai/logo.jsx"></script>
+<script type="text/babel" src="blueai/shared.jsx"></script>
+<script type="text/babel" src="blueai/top_navbar.jsx"></script>
+<!-- The Windows desktop scene: wallpaper + BlueStacks App Player window (exposes window.DesktopScene) -->
+<script type="text/babel" src="blueai/desktop_scene.jsx"></script>
+<!-- A Windows notification on that desktop (exposes window.DesktopToast) -->
+<script type="text/babel" src="blueai/desktop_toast.jsx"></script>
+<!-- "Additional files required" installer dialog, Flow A only now (exposes window.InstallDialog) -->
+<script type="text/babel" src="blueai/install_dialog.jsx"></script>
+<!-- Boot splash + Shimmer -->
+<script type="text/babel" src="blueai/boot_splash.jsx"></script>
+<!-- Credits widget -->
+<script type="text/babel" src="blueai/credits_widget.jsx"></script>
+<!-- Canonical NEW chat home (exposes window.ChatCompare) -->
+<script type="text/babel" src="blueai/chat_compare.jsx"></script>
+<!-- Onboarding welcome for the logged-out cold start (exposes window.Onboarding) -->
+<script type="text/babel" src="blueai/onboarding.jsx"></script>
+<!-- MoneyMaker welcome screen's background decoration (exposes window.MoneyMakerBackdrop) -->
+<script type="text/babel" src="blueai/moneymaker_backdrop.jsx"></script>
+<!-- MoneyMaker welcome screen's full-color step icons (exposes window.MoneyMakerIcons), must
+     load before moneymaker.jsx, which reads window.MoneyMakerIcons at its own top level. -->
+<script type="text/babel" src="blueai/moneymaker_icons.jsx"></script>
+<!-- MoneyMaker welcome screen's hero logo, glow, ring, mark, grain (exposes window.MoneyMakerLogo)
+     must load before moneymaker.jsx, which reads window.MoneyMakerLogo at its own top level. -->
+<script type="text/babel" src="blueai/moneymaker_logo.jsx"></script>
+<!-- MoneyMaker welcome screen's steps card (exposes window.MoneyMakerSteps), must load before
+     moneymaker.jsx, which reads window.MoneyMakerSteps at its own top level. -->
+<script type="text/babel" src="blueai/moneymaker_steps.jsx"></script>
+<!-- MoneyMaker's post-login in-chat card (exposes window.MoneyMakerHomeCard), must load before
+     moneymaker.jsx, which reads window.MoneyMakerHomeCard at its own top level to re-export it. -->
+<script type="text/babel" src="blueai/moneymaker_home.jsx"></script>
+<!-- MoneyMaker session variant: the welcome screen, plus the re-export that keeps the post-login
+     card reachable at window.MoneyMaker.MoneyMakerHome (exposes window.MoneyMaker) -->
+<script type="text/babel" src="blueai/moneymaker.jsx"></script>
+<!-- "Needs BlueStacks" chat state + the rule that decides when it fires (exposes window.NeedsBluestacks) -->
+<script type="text/babel" src="blueai/needs_bluestacks.jsx"></script>
+<!-- Chat internals, split out of chat_product.jsx for the 300-line rule. Each resolves its
+     siblings at render time, so this order is for readability, not correctness. -->
+<script type="text/babel" src="blueai/chat_feedback.jsx"></script>
+<script type="text/babel" src="blueai/chat_bubbles.jsx"></script>
+<!-- BlueAI worker, end to end (ROB-21350): the Always ask / Automatic setting, its mode sheet and
+     consent dialog (exposes window.AgentPermissions); the onboarding + daily-run scripts
+     (exposes window.WorkerFlow); and their chat cards (exposes window.WorkerCards). All three
+     resolve each other at render time. -->
+<script type="text/babel" src="blueai/agent_permissions.jsx"></script>
+<script type="text/babel" src="blueai/worker_flow.jsx"></script>
+<script type="text/babel" src="blueai/worker_cards.jsx"></script>
+<!-- The day-done card, the worker home's earnings strip and the notification words (exposes window.WorkerDayDone) -->
+<script type="text/babel" src="blueai/worker_day_done.jsx"></script>
+<script type="text/babel" src="blueai/product_home.jsx"></script>
+<!-- Assembled product chat: the conversation, composer + send rules (exposes window.ProductChat) -->
+<script type="text/babel" src="blueai/chat_product.jsx"></script>
+<!-- Chat History in-app screen (exposes window.ChatHistory) -->
+<script type="text/babel" src="blueai/history.jsx"></script>
+<!-- Profile in-app screen + Logout modal (exposes window.Profile) -->
+<script type="text/babel" src="blueai/profile.jsx"></script>
+<!-- Screen components -->
+<script type="text/babel" src="blueai/jobs.jsx"></script>
+<script type="text/babel" src="blueai/skills.jsx"></script>
+<script type="text/babel" src="blueai/schedule.jsx"></script>
+<!-- AI Mode (Cloud vs Hybrid), used inside settings.jsx (exposes window.AiMode) -->
+<script type="text/babel" src="blueai/ai_mode.jsx"></script>
+<script type="text/babel" src="blueai/settings.jsx"></script>
+<script type="text/babel" src="blueai/login.jsx"></script>
+<!-- ROB-21388: the browser window the app's Sign in opens, the pages inside it (bluestacks.ai's
+     sign-in and continue pages in the site's own language, Google's account chooser), and the
+     app's own "under review" card. -->
+<script type="text/babel" src="blueai/browser_window.jsx"></script>
+<script type="text/babel" src="blueai/site_kit.jsx"></script>
+<script type="text/babel" src="blueai/site_signin.jsx"></script>
+<script type="text/babel" src="blueai/signin_page.jsx"></script>
+<script type="text/babel" src="blueai/account_gate.jsx"></script>
+<!-- Terms bottom sheet (first-run acceptance + terms-update notice/re-accept), an in-app
+     overlay like the login gate; previewed via the dev panel's Terms row. -->
+<script type="text/babel" src="blueai/terms_sheet.jsx"></script>
+<!-- Bring-your-own-key: out-of-credits popups + credits-screen routes (exposes window.Byok) -->
+<!-- Credits countdown, the (i) tooltip and the Learn more link (window.CreditsPopupParts), used
+     by byok.jsx's popup and AICreditsScreen below, and by the standalone comparison page
+     credits-popup-options.html. Loaded before byok.jsx, which reads it at render time. -->
+<script type="text/babel" src="blueai/credits_popup_parts.jsx"></script>
+<script type="text/babel" src="blueai/byok.jsx"></script>
+<!-- BYOK Settings section: the canonical add/manage-key surface (extends window.Byok) -->
+<script type="text/babel" src="blueai/byok_settings.jsx"></script>
+
+<script type="text/babel">
+const { useState, useRef, useEffect } = React;
+
+// Deep-linkable starting state, so a review link can point at the exact screen being discussed:
+//   ?bs=1                 BlueStacks installed too        ?bai=0   BlueAI not installed
+//   ?dlg=blueai           open Flow A's installer          ?ask=…   auto-send that message
+//   ?credits=0            start with zero credits (the out-of-credits popup and AI Credits banner, ROB-21389)
+// A bare URL is the canonical starting experience (Abhisht, 2026-09-24): BlueAI installed and
+// alone on the desktop, no BlueStacks, so BlueStacks is now opt-IN via ?bs=1, inverted from
+// the old "both installed" default.
+const QS = new URLSearchParams(location.search);
+// ?cases=signin (ROB-21388): the five sign-in cases as a bar across the top and NOTHING else to
+// set. No Preview panel. Each case resets the desktop to its starting point; the flow is then
+// clicked through. ?case=1|2|3a|3b|3c picks the one to open on.
+const CASES_MODE = QS.get('cases') === 'signin';
+const SIGNIN_CASES = [
+  { id: '1',  label: '1 App Player: accepted', note: 'App Player is signed in with the accepted account.' },
+  { id: '2',  label: '2 App Player: other',    note: 'App Player is signed in with a different account.' },
+  { id: '3a', label: '3a Browser: accepted',   note: 'App Player is signed out. The browser is signed in with the accepted account.' },
+  { id: '3b', label: '3b Browser: other',      note: 'App Player is signed out. The browser is signed in with a different account.' },
+  { id: '3c', label: '3c Browser: signed out', note: 'App Player is signed out. So is the browser.' }
+];
+// Two options (Abhisht, 2026-10-07). A: interrupt only when the account is the wrong one.
+// B: whenever an account is already signed in (App Player, or the website), ask "Continue as".
+const SIGNIN_OPTS = [{ id: 'a', label: 'A: Check account' }, { id: 'b', label: 'B: Continue as' }];
+// ROB-21350 shareable BlueAI-worker setups, so a link opens straight on the case being discussed.
+// The Preview panel's "Copy link" builds one from whatever is on screen:
+//   ?start=worker   land signed in on the BlueAI worker home (no terms sheet, no sign-in)
+//   ?v=1 | ?v=2     change mode from the composer chip | the ribbon above the composer
+//   ?setup=off      onboarding without the "take it on my own?" setup question (default: on)
+//   ?day=next       play the next day's scheduled worker run as soon as the app opens (implies start=worker)
+//   ?day=returning  a returning person on the worker home, before today's run (implies start=worker)
+//   ?end=job | nojob | day20 | failed   how today's run ends: the day-done card and the notification
+//                   (worker sheet row 2). Implies day=next. Default: job
+//   ?card=days | money | plain   which day-done option draws it: the days-led message (ships), the
+//                   money-led one, or no message and a longer closing line. Default: days
+//   ?mode=auto      start with Automatic on for YouTube (default: Always ask on every app). Skips
+//                   the consent dialog: the link stands in for a person who already agreed. The
+//                   Preview panel's Mode row sets the same thing.
+// ROB-21388 sign-in handoff (the browser window beside the app):
+//   ?signin=browser open straight on the sign-in handoff, no terms sheet
+//   ?player=out | accepted | other   App Player on this PC: signed out (the app opens the
+//                   browser), signed in with the accepted account (silent sign-in, home), or with
+//                   another account (silent sign-in, then the in-app gate). Default: out
+//   ?browser=accepted | other | out   what bluestacks.ai holds when the browser opens: a session
+//                   as the accepted account, as another account, or none. Default: accepted
+const LINK = {
+  start: ['next', 'returning'].includes(QS.get('day')) || QS.has('end') || QS.get('start') === 'worker' ? 'worker' : (QS.get('start') === 'signin' ? 'signin' : null),
+  version: QS.get('v') === '1' ? 'chatbox' : (QS.get('v') === '2' ? 'ribbon' : null),
+  setup: QS.get('setup') === 'off' ? 'jobcard' : 'onboarding',
+  day: QS.get('day') === 'returning' ? 'returning' : (QS.get('day') === 'next' || QS.has('end') ? 'next' : 'day1'),
+  end: ['job', 'nojob', 'day20', 'failed'].includes(QS.get('end')) ? QS.get('end') : 'job',
+  card: ['money', 'plain'].includes(QS.get('card')) ? QS.get('card') : 'days',
+  mode: QS.get('mode') === 'auto' ? 'auto' : 'always',
+  signin: QS.get('signin') === 'browser' || CASES_MODE ? 'browser' : null,
+  browser: ['other', 'out'].includes(QS.get('browser')) ? QS.get('browser') : 'accepted',
+  player: ['accepted', 'other'].includes(QS.get('player')) ? QS.get('player') : 'out'
+};
+// Local-testing rows remembered in THIS browser only; a link's own settings win over them.
+//   bai_proto_start    'signin' (the real cold start) | 'worker' (land signed in on the worker home)
+//   bai_proto_version  'chatbox' (Composer chip) | 'ribbon' (Ribbon)
+const PROTO = (() => {
+  let saved = {};
+  try { saved = { start: localStorage.getItem('bai_proto_start'), version: localStorage.getItem('bai_proto_version') }; } catch (e) { /* private window */ }
+  return { start: LINK.start || (LINK.signin ? 'signin' : saved.start) || 'signin', version: LINK.version || saved.version || 'ribbon' };
+})();
+const remember = (k, v) => { try { localStorage.setItem(k, v); } catch (e) { /* private window: this session only */ } };
+
+const START = (() => {
+  const bs = QS.get('bs') === '1';
+  let bai = QS.get('bai') !== '0';
+  if (!bs && !bai) bai = true;   // same guard the Preview chips enforce: never both off
+  return { bs, bai };
+})();
+
+// Live product configuration (frozen, the Tweaks playground is removed).
+const CONFIG = {
+  credits: 45812,        // matches the live Windows app
+  skillsLayout: 'grid',
+};
+
+// Live header (newer than the export, matched to the live app screenshots):
+// logo · credits pill · New Chat · "?" help menu (FAQ / Report Issue) · kebab (Chat History / Profile / Earnings ↗ / Logout).
+// Logged-out (onboarding): strips to just the brand lockup, no credits/New Chat/help/kebab, matching the cold start.
+function ProductTopBar({ credits, lowDot, isLoggedIn, onNewChat, onOpenHistory, onOpenCredits, onOpenProfile, onLogout }) {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [helpOpen, setHelpOpen] = useState(false);
+  const menuRef = useRef(null);
+  const helpRef = useRef(null);
+  useEffect(() => {
+    const h = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) setMenuOpen(false);
+      if (helpRef.current && !helpRef.current.contains(e.target)) setHelpOpen(false);
+    };
+    if (menuOpen || helpOpen) document.addEventListener('mousedown', h);
+    return () => document.removeEventListener('mousedown', h);
+  }, [menuOpen, helpOpen]);
+
+  const ClockIcon = <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="ba-menu-icon"><circle cx="12" cy="12" r="9" /><polyline points="12 7 12 12 15 14" /></svg>;
+  const PersonIcon = <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="ba-menu-icon"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>;
+  const LogoutIcon = <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="ba-menu-icon"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>;
+  /* FAQ replaces the Discord entry (PM, 2026-09-10). It carries the SAME question-mark glyph as the
+     help trigger that opens this menu (Appy, 2026-09-10). I had drawn a book instead, reasoning that
+     repeating the trigger's own icon inside the menu would just echo the control you pressed; the
+     designer's call is that the echo is the point, since it ties the entry to the help affordance.
+     Paths are identical to the trigger's, drawn at the menu's 16px with the row's ink-3 (V3: every
+     menu glyph takes its colour from .ba-menu-icon), so it sits in the same outline family as
+     ClockIcon, PersonIcon and LogoutIcon. The trigger tints blue while its menu is open; a menu row
+     has no such state. The Discord logo this replaces was the only filled, brand-coloured glyph here. */
+  const FaqIcon = <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="ba-menu-icon"><circle cx="12" cy="12" r="10" /><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>;
+  const WarnIcon = <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="ba-menu-icon ba-menu-icon--danger"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>;
+  /* Earnings row (Abhisht + Ashish, 2026-09-30): the way from the app to the partner dashboard on
+     the onBlue site (earnings + cash out, program progress, payout rules). Labelled "Earnings"
+     rather than "Dashboard": the page carries more than money, but money is what users open it
+     for, and the label names the motive. It is the one EXTERNAL entry in this menu, so it is an <a>
+     that opens a new tab and carries a trailing arrow-out glyph the in-app rows don't have. The
+     leading icon is a dollar sign in a circle (it was a layout-dashboard grid while the row was
+     called Dashboard; the glyph follows the label), drawn in the same outline family
+     as ClockIcon / PersonIcon / LogoutIcon, and echoing the "$" tile on the BlueAI worker card.
+     Not a wallet: "Wallet" is the crypto concept the product is dropping. Sits after Profile
+     (account things together), before Logout (which stays last). Destination is the deployed
+     Vesper page as a stand-in for the real dashboard URL, which the product team owns. */
+  const EarningsIcon = <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="ba-menu-icon"><circle cx="12" cy="12" r="10" /><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" /><line x1="12" y1="18" x2="12" y2="6" /></svg>;
+  const ExternalIcon = <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="ba-menu-ext"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><polyline points="15 3 21 3 21 9" /><line x1="10" y1="14" x2="21" y2="3" /></svg>;
+  const DASHBOARD_URL = 'https://blueai-screen-library.vercel.app/experiments/onblue-vesper/apply.html';
+
+  /* V3 Phase 1, the Target top bar (design-md 30): 52 tall, surface, one hairline, no shadow; the
+     onBlue BlueAI logo on the gutter; a hairline credits chip (the low dot in the danger ink); New
+     Chat as a quiet secondary pill; Help and More as 32px icon buttons that stay blue while their
+     menu is open. Every handler, menu row and the Earnings link are unchanged. Styles: .ba-topbar
+     and friends in this file's <style>. */
+  const closeHelp = () => setHelpOpen(false);
+  return (
+    <header className={'ba-topbar' + (isLoggedIn ? '' : ' ba-topbar--out')}>
+      <window.BlueAILogo size={18} />
+      {isLoggedIn &&
+      <div className="ba-topbar-actions">
+        {/* Credits chip: opens the AI Credits balance screen */}
+        <button type="button" className="ba-credits-chip" onClick={onOpenCredits}
+          aria-label={'AI credits: ' + credits.toLocaleString('en-US') + (lowDot ? ', running low' : '')}>
+          <img src="assets/Credits.svg" alt="" style={{ width: 16, height: 16 }} onError={(e) => { e.target.style.display = 'none'; }} />
+          <span>{credits.toLocaleString('en-US')}</span>
+          {lowDot && <span className="ba-credits-dot" aria-hidden="true" />}
+        </button>
+        {/* New Chat */}
+        <button type="button" className="ba-newchat" onClick={onNewChat}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
+          New Chat
+        </button>
+        <div className="ba-topbar-icons">
+          {/* Help (?) menu */}
+          <div ref={helpRef} style={{ position: 'relative' }}>
+            <button type="button" className="ba-iconbtn" aria-label="Help" aria-haspopup="menu" aria-expanded={helpOpen} onClick={() => { setHelpOpen((v) => !v); setMenuOpen(false); }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>
+            </button>
+            {helpOpen &&
+              <div className="ba-menu" role="menu">
+                <button type="button" role="menuitem" className="ba-menu-item" onClick={closeHelp}>{FaqIcon}FAQ</button>
+                <button type="button" role="menuitem" className="ba-menu-item" onClick={closeHelp}>{WarnIcon}Report Issue</button>
+              </div>}
+          </div>
+          {/* Kebab menu */}
+          <div ref={menuRef} style={{ position: 'relative' }}>
+            <button type="button" className="ba-iconbtn" aria-label="More options" aria-haspopup="menu" aria-expanded={menuOpen} onClick={() => { setMenuOpen((v) => !v); setHelpOpen(false); }}>
+              <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.5" /><circle cx="12" cy="12" r="1.5" /><circle cx="12" cy="19" r="1.5" /></svg>
+            </button>
+            {menuOpen &&
+              <div className="ba-menu" role="menu">
+                <button type="button" role="menuitem" className="ba-menu-item" onClick={() => { setMenuOpen(false); onOpenHistory && onOpenHistory(); }}>{ClockIcon}Chat History</button>
+                <button type="button" role="menuitem" className="ba-menu-item" onClick={() => { setMenuOpen(false); onOpenProfile && onOpenProfile(); }}>{PersonIcon}Profile</button>
+                <a role="menuitem" className="ba-menu-item" href={DASHBOARD_URL} target="_blank" rel="noopener" onClick={() => setMenuOpen(false)}>{EarningsIcon}Earnings{ExternalIcon}</a>
+                <button type="button" role="menuitem" className="ba-menu-item" onClick={() => { setMenuOpen(false); onLogout && onLogout(); }}>{LogoutIcon}Logout</button>
+              </div>}
+          </div>
+        </div>
+      </div>}
+    </header>);
+}
+
+// AI Credits screen. BYOK is universal (prime + non-prime) and the BYOK toggle is the master
+// switch: "whatever they've switched on will work" (PM). So when a key is added AND BYOK is on,
+// this screen shows the "running on your own key" state in ANY geo, with the credit balance
+// preserved/paused underneath; otherwise it shows the geo-specific credit view.
+/* V2's AI Credits screen. V2's credit model is deliberately small: no membership tiers, no geo
+   split, no top-up. Every member is granted 2000 credits a day automatically, so the screen has
+   only two things to say, and which one shows depends purely on whether that grant is spent.
+
+   Everything sold or offered is GONE, per the designer's list: the Prime upsell (5000 a month,
+   view all benefits, try for $3.99), the "Or add your own key" link, the "MORE WAYS TO GET AI
+   CREDITS" stack (earn 1,000 / claim 25,000), every Top Up button, and the Credit Breakdown
+   section. In V2 none of those describe anything real, and a screen offering purchases that do
+   not exist is worse than a screen with less on it.
+
+   LAYOUT (2026-09-09, option A of three put to the designer). Removing the upsell stack left the
+   content floating on the bare canvas with roughly 55% of the panel empty below it, which read as
+   a page that had stopped early rather than a page that was finished. The fix is not spacing, it
+   is EDGES: the balance lives in ONE card that fills the panel, rather than floating bare. Two
+   reasons, both still true after the meter was removed:
+
+     1. Cards are this product's own idiom (chat cards, settings cards, and this screen's own BYOK
+        branch below). Bare content on canvas was the outlier here, not the norm.
+     2. A card that FILLS the height turns the empty region into card interior, with the balance
+        optically centered in it, so the space is composition rather than absence. minHeight keeps
+        it honest in a short window, where the container scrolls instead of crushing the card.
+
+   A third reason is deliberately struck out rather than kept: the original argument for one card
+   and not two was that the balance and the daily meter were the same subject, so splitting them
+   would divide one fact in two. With the meter gone there is only one thing in the card, so that
+   reason no longer carries any weight and leaving it would misrepresent why this is one card.
+
+   DAILY SPEND LIMIT REMOVED (2026-09-10, Appy). It was the last thing in the card besides the
+   balance, and it went with its divider: a rule whose only job was separating the meter from the
+   balance divides nothing once the meter is gone. V2 grants a flat 2000 a day with no way to
+   change it, so a user-set spend cap described a control that does not exist here. The card's
+   padding is symmetric now that nothing anchors its foot. It was the only such reference in V2;
+   "anywhere else" turned out to be nowhere else.
+
+   BYOK survives as a STATUS, not an invite. Adding a key lives in Settings now, but a key being
+   on changes what the balance MEANS (credits stop being consumed), so the screen still reports it.
+   That is the one branch here that is not about the balance.
+
+   Copy is the designer's, verbatim. The chrome is this product's own: card border, radius and
+   shadow match the BYOK card below, and the out-of-credits red is the chat's fail-bubble palette
+   rather than the spec mock's pink. */
+function AICreditsScreen({ credits, keyAdded, byokOn, keyInfo, onManageByok }) {
+  const byokActive = keyAdded && byokOn;
+  const out = credits === 0;
+  // 2026-10-06 review (ROB-21389): the zero banner says WHEN credits return and carries an (i)
+  // that explains them; the healthy state gets a Learn more link. Shared pieces in
+  // credits_popup_parts.jsx. The refill lands at 00:00 UTC.
+  const CP = window.CreditsPopupParts;
+  const nowTs = CP.useNow();
+  const refillIn = CP.formatLeft(CP.nextUtcMidnight(nowTs) - nowTs);
+  const star = { background: 'linear-gradient(135deg,#0EA4C5,#7B4CFF)', WebkitMaskImage: 'url(assets/Credits.svg)', WebkitMaskSize: 'contain', WebkitMaskRepeat: 'no-repeat', WebkitMaskPosition: 'center', maskImage: 'url(assets/Credits.svg)', maskSize: 'contain', maskRepeat: 'no-repeat', maskPosition: 'center' };
+  const gradText = { background: 'linear-gradient(90deg,#0EA4C5,#7B4CFF)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' };
+  const CARD = { background: 'white', border: '1px solid #e8edf3', borderRadius: 16, boxShadow: '0 1px 3px rgba(0,0,0,0.04)' };
+  const PAD = 22; // card's horizontal padding
+
+  return (
+    <div className="tab-anim" style={{ flex: 1, overflowY: 'auto', background: '#f8fafc', display: 'flex', flexDirection: 'column' }}>
+      {/* Header */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 18px 4px', flexShrink: 0 }}>
+        <h1 style={{ fontSize: 19, fontWeight: 800, color: '#111827', letterSpacing: '-0.3px' }}>AI Credits</h1>
+        <button aria-label="Refresh" style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8', padding: 4, display: 'flex' }}
+          onMouseEnter={(e) => e.currentTarget.style.color = '#1990FF'} onMouseLeave={(e) => e.currentTarget.style.color = '#94a3b8'}>
+          {/* Refresh. Replaced 2026-09-09 because the previous glyph was two mismatched pieces:
+             an arc M21 12 a9 9 0 1 1 -2.64 -6.36 terminating at (18.36, 5.64), and a separate
+             L-bracket whose vertex sat at (21,9), 4.27 units away from that terminus. So the
+             arrowhead capped nothing, and its vertex landed 3 units above the arc's own start at
+             (21,12). At strokeWidth 2 with round caps, each end extends 1 unit, leaving a 1-unit
+             gap, about 0.8px at this size. That is why it read as almost touching its own tail.
+
+             This is Lucide rotate-cw, where the geometry closes properly: the arc runs 270deg
+             from (21,12) to (12,3), curves out to (18.74, 5.74), then draws a LINE to (21,8),
+             and the arrowhead M21 3 v5 h-5 has its vertex at exactly (21,8). Head and stroke meet
+             at one point instead of floating apart, and the remaining gap to the arc start at
+             (21,12) is 4 units rather than 3, which after caps reads as a deliberate 2-unit
+             opening instead of a near miss. */}
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" />
+            <path d="M21 3v5h-5" />
+          </svg>
+        </button>
+      </div>
+
+      {byokActive ? (
+        /* Running on the user's own key. Reports the state and routes to Settings, which is where
+           keys are managed now. It does not invite anyone to add one. */
+        <div style={{ padding: '18px 18px 22px', flexShrink: 0 }}>
+          <div style={{ ...CARD, padding: 20 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 15 }}>
+              <span style={{ width: 44, height: 44, borderRadius: '50%', background: '#dcfce7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><circle cx="7.5" cy="15.5" r="5.5" /><path d="m21 2-9.6 9.6" /><path d="m15.5 7.5 3 3L22 7l-3-3" /></svg>
+              </span>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <p style={{ fontSize: 16, fontWeight: 800, color: '#080a1f' }}>Running on your own key</p>
+                  <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.04em', textTransform: 'uppercase', color: '#16a34a', background: '#dcfce7', borderRadius: 999, padding: '2px 8px' }}>Active</span>
+                </div>
+                <p style={{ fontSize: 12.5, color: '#565977', marginTop: 3 }}>No BlueAI credits are consumed while this is on.</p>
+              </div>
+            </div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12.5, fontWeight: 600, color: '#334155', background: '#f1f5f9', borderRadius: 999, padding: '6px 12px' }}>
+                <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#16a34a' }} />{(keyInfo && keyInfo.provider) || 'Your provider'}
+              </span>
+              <span style={{ fontSize: 12.5, fontWeight: 600, color: '#334155', background: '#f1f5f9', borderRadius: 999, padding: '6px 12px', fontFamily: 'ui-monospace, Menlo, monospace' }}>{(keyInfo && keyInfo.model) || 'default model'}</span>
+            </div>
+            <button onClick={onManageByok} style={{ width: '100%', borderRadius: 10, border: '1px solid #e2e8f0', background: 'white', padding: '11px', fontSize: 13.5, fontWeight: 700, color: '#1990FF', cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, transition: 'background 0.13s' }}
+              onMouseEnter={(e) => e.currentTarget.style.background = '#f8fafc'} onMouseLeave={(e) => e.currentTarget.style.background = 'white'}>
+              Manage in Settings
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6" /></svg>
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', gap: 12, padding: '18px 18px 22px' }}>
+          {/* Out of credits sits ABOVE the card, not inside it: it is a page-level status about why
+             the number below is zero, and nesting an alert inside the card it explains would bury
+             it. Informational only, with no action, because there is no action to offer. The grant
+             returns tomorrow on its own. Red is the chat fail-bubble palette, this product's own. */}
+          {out &&
+            <div style={{ background: '#fdecec', border: '1px solid #f8d7d7', borderRadius: 14, padding: '14px 16px', textAlign: 'center', flexShrink: 0 }}>
+              {/* The (i) uses the banner's own reds, not blue, and its tooltip opens downward over
+                 the card below, which holds only the 0. */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+                <p style={{ fontSize: 14.5, fontWeight: 800, color: '#991b1b' }}>Out of credits</p>
+                <CP.InfoTip dir="down" palette="red" />
+              </div>
+              <p style={{ fontSize: 12.5, color: '#b04a4a', lineHeight: 1.55, marginTop: 3 }}>
+                <span style={{ display: 'block' }}>You&rsquo;ve used all of today&rsquo;s AI credits.</span>
+                <span style={{ display: 'block' }}>Credits will be refreshed in <strong style={{ color: '#991b1b', fontWeight: 700, whiteSpace: 'nowrap' }}>{refillIn}</strong>.</span>
+              </p>
+            </div>}
+
+          <div style={{ ...CARD, flex: 1, minHeight: 200, display: 'flex', flexDirection: 'column', padding: '28px ' + PAD + 'px' }}>
+            {/* Balance + explainer, optically centered in the card. This region is the whole card
+               body now and is what absorbs the panel's spare space. */}
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: out ? 9 : 12 }}>
+                <div style={{ ...star, width: out ? 30 : 44, height: out ? 30 : 44, flexShrink: 0 }} />
+                <span style={{ ...gradText, fontSize: out ? 38 : 54, fontWeight: 800, letterSpacing: out ? '-0.7px' : '-1px', lineHeight: 1 }}>{credits.toLocaleString('en-US')}</span>
+              </div>
+              {/* The explainer is the healthy state's only copy. When the balance is zero the banner
+                 above is already saying what spends credits and when they return, so repeating it
+                 here would be the same sentence twice on one screen. */}
+              {!out &&
+                <div style={{ marginTop: 20 }}>
+                  <p style={{ fontSize: 16, fontWeight: 800, color: '#111827' }}>BlueAI runs on credits</p>
+                  <p style={{ fontSize: 13, color: '#6b7280', lineHeight: 1.6, marginTop: 6 }}>
+                    <span style={{ display: 'block' }}>Every task and job BlueAI does uses credits.</span>
+                    {/* PM's line (2026-09-10). The daily-refresh line that sat below it was removed
+                       with it on Appy's call, so this screen is two lines: what credits are for, then
+                       the constraint. That leaves no promise HERE that credits come back, which is
+                       deliberate rather than an omission. The reassurance survives in all four places
+                       it is actually needed, and every one is a zero-balance moment: the
+                       out-of-credits banner above, the on-send popup (byok.jsx), and the scheduled
+                       run's warning and job error (chat_bubbles.jsx). Being told credits return
+                       matters when you have run out, not while you still hold 2000. A terminal full
+                       stop was added so this matches its sibling; the PM's text had none. */}
+                    <span style={{ display: 'block' }}>You get limited credits for your daily tasks.</span>
+                  </p>
+                  {/* Opens the website article at its AI credits section. */}
+                  <CP.LearnLink style={{ marginTop: 10, fontSize: 13 }} />
+                </div>}
+            </div>
+
+
+          </div>
+        </div>
+      )}
+    </div>);
+}
+
+/* Windows titlebar for the BlueAI app window. The product is installed Windows software, so on
+   a desktop it needs OS chrome, without it the window reads as a mockup pasted onto a wallpaper.
+   Mirrors /blueai-desktop's .bai-titlebar in light theme. Minimise/maximise are decorative
+   (tabIndex -1, no handler), same convention as there; ✕ genuinely closes the window, and BlueAI
+   stays INSTALLED: clicking the BlueStacks window reopens it without re-running the installer. */
+function ProductTitlebar({ onClose }) {
+  const btn = { strokeLinecap: 'round' };
+  return (
+    <div className="ba-titlebar">
+      {/* V3: the onBlue BlueAI lockup is the window's icon and title in one (it reads "BlueAI"). */}
+      <span className="ba-tb-title"><window.BlueAILogo size={12.5} mark={16} /></span>
+      <div className="ba-tb-btns">
+        <button className="ba-tb-btn" type="button" aria-label="Minimize" tabIndex={-1}>
+          <svg width="10" height="10" viewBox="0 0 10 10"><rect x="1" y="4.6" width="8" height="1" fill="currentColor" /></svg>
+        </button>
+        <button className="ba-tb-btn" type="button" aria-label="Maximize" tabIndex={-1}>
+          <svg width="10" height="10" viewBox="0 0 10 10"><rect x="1.4" y="1.4" width="7.2" height="7.2" fill="none" stroke="currentColor" strokeWidth="1" /></svg>
+        </button>
+        <button className="ba-tb-btn ba-tb-close" type="button" aria-label="Close" onClick={onClose}>
+          <svg width="10" height="10" viewBox="0 0 10 10"><path d="M1.5 1.5l7 7M8.5 1.5l-7 7" stroke="currentColor" strokeWidth="1.2" {...btn} /></svg>
+        </button>
+      </div>
+    </div>);
+}
+
+/* Installer copy for Flow A only (BlueStacks talking, installing BlueAI). Flow B (installing
+   BlueStacks) no longer uses this modal at all, designer's call (2026-08-10): it's now an
+   inline progress card in the chat instead (see needs_bluestacks.jsx's ProgressBubble). The
+   'bluestacks' config that used to live here was removed with it, not left as dead data. */
+const INSTALLERS = {
+  // Copy from the designer's "Full State 1" table (2026-08-11), onboarding-style rewrite,
+  // replacing the old single-title/single-body confirm copy. No `skin`/`cancelLabel` anymore:
+  // InstallDialog is one skin now (see its file header), and this reference has no secondary
+  // button, dismissing via ✕ only.
+  blueai: {
+    icon: 'assets/Logo.png',
+    title: 'Meet BlueAI',
+    subtitle: 'Your AI worker that gets things done.',
+    body: 'Tell BlueAI what you need, in plain words. It handles multi-step tasks across your BlueStacks apps, finds deals, claims rewards, creates content, and more.',
+    meta: '182 MB · One-time setup',
+    primaryLabel: 'Download BlueAI',
+    downloadingLabel: 'Downloading BlueAI…',
+    doneLabel: 'BlueAI is installed. Launching it now…',
+    downloadMs: 2800,
+    doneMs: 900
+  }
+};
+
+function App() {
+  const ProductChatScreen = window.ProductChat.ChatScreen;
+  const HistoryScreen = window.ChatHistory.ChatHistoryScreen;
+  const ProfileScreen = window.Profile.ProfileScreen;
+  const LogoutModal = window.Profile.LogoutModal;
+  const [activeTab, setActiveTab] = useState('chat');
+  const [sessionKey, setSessionKey] = useState(0);   // bump to reset the chat (New chat)
+  // ?ask=… auto-sends that message on load, reusing the same autorun seed the post-login handoff
+  // uses. Lets a review link land on a chat state (e.g. the "needs BlueStacks" reply) directly.
+  const [seed, setSeed] = useState(QS.get('ask') ? { text: QS.get('ask'), autorun: true, n: 1 } : null);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [creditsOpen, setCreditsOpen] = useState(false); // AI Credits balance screen
+  const [historyOpen, setHistoryOpen] = useState(false); // Chat History in-app screen
+  const [profileOpen, setProfileOpen] = useState(false); // Profile in-app screen
+  const [logoutOpen, setLogoutOpen] = useState(false);   // Logout confirm modal
+  const [booting, setBooting] = useState(true);           // cold-start boot splash
+  const [homeReady, setHomeReady] = useState(false);      // skeleton → real content
+  const [keyAdded, setKeyAdded] = useState(false);         // has the user configured their own key (any geo)
+  const [keyInfo, setKeyInfo] = useState(null);            // { provider, model, key }
+  const [byokOn, setByokOn] = useState(false);             // BYOK toggle in Settings
+  const [highlightByok, setHighlightByok] = useState(false); // pulse the Settings BYOK card when routed there
+  const [zeroCredits, setZeroCredits] = useState(QS.get('credits') === '0');   // preview "out of credits" (drives the on-send popup); ?credits=0 starts there
+  const [scheduledOoc, setScheduledOoc] = useState(false); // preview: a SCHEDULED worker run that dies mid-job on zero credits (its own chat, no user message)
+  const [showChatStates, setShowChatStates] = useState(false); // preview: show one example bubble per chat message state (success/warning/error) instead of the live scripted task
+  const [aiHwSupported, setAiHwSupported] = useState(true);    // preview: does this PC meet Hybrid AI Mode's hardware requirements
+  const [aiConflict, setAiConflict] = useState(false);         // preview: another local model (e.g. LM Studio) already running
+  const [oocOpen, setOocOpen] = useState(false);           // out-of-credits popup
+  const [pendingMessage, setPendingMessage] = useState(null); // onboarding: message that opened the sign-in gate, auto-sent after login
+  const [previewOpen, setPreviewOpen] = useState(true);    // dev preview panel collapse
+  // BlueAI worker end to end (ROB-21350). workerDay: 'day1' = a new user (Run plays onboarding),
+  // 'next' = the following day's scheduled run, replayed per click via dailyRunKey. jobChoice:
+  // whether onboarding asks the setup question. permUi: which control opens the mode sheet later
+  // (composer chip or ribbon). protoStart: skip sign-in on load. jobWaiting: an unanswered job
+  // ask, which lights BlueAI's taskbar button. permModes: the per-app modes, for the Mode row.
+  const [protoStart, setProtoStart] = useState(PROTO.start);
+  const [permUi, setPermUi] = useState(PROTO.version);
+  const { modes: permModes } = window.AgentPermissions.usePermissionMode();
+  const [workerDay, setWorkerDay] = useState(LINK.day);
+  const [dailyRunKey, setDailyRunKey] = useState(0);
+  const [jobChoice, setJobChoice] = useState(LINK.setup);
+  const [dayEnd, setDayEnd] = useState(LINK.end);        // how today's run ends (worker_day_done.jsx)
+  const [cardStyle, setCardStyle] = useState(LINK.card); // which day-done option draws it: money | days | plain
+  const [toast, setToast] = useState(null);              // the Windows notification a scheduled run raises when its day is done
+  const [linkCopied, setLinkCopied] = useState(false);
+  const linkDayPlayed = useRef(false);   // ?day=next plays its run once, after the first boot
+  // A shared link's worker setup lives in module-level stores outside React; apply it once.
+  useEffect(() => {
+    window.WorkerFlow.setChoicePoint(LINK.setup);
+    window.WorkerDayDone.setEnd(LINK.end);
+    window.WorkerDayDone.setStyle(LINK.card);
+    if (LINK.day !== 'day1') window.WorkerFlow.setOnboarded(true);
+    if (LINK.mode === 'auto') window.AgentPermissions.setMode('youtube', 'auto');
+  }, []);
+  const [jobWaiting, setJobWaiting] = useState(false);
+  // The BlueAI-worker welcome IS the starting experience (Abhisht, 2026-09-24): logged out, on
+  // the worker session, with the first-run terms sheet up. These three defaults move together,
+  // 'moneymaker' must start logged OUT (switchSession derives isLoggedIn the same way).
+  const [isLoggedIn, setIsLoggedIn] = useState(PROTO.start === 'worker' || LINK.player === 'accepted');  // within the current session: has sign-in completed (Start at: Worker home skips it; App Player's accepted account signs in silently, ROB-21388)
+  const [sessionMode, setSessionMode] = useState('moneymaker'); // preview toggle: which session, Onboarding | Default | MoneyMaker
+  // Terms sheet preview: 'firstrun' (blocking first-start acceptance, the default) | 'update'
+  // (blocking re-acceptance after a terms change) | 'off'. Its own row rather than a Session
+  // option because it overlays ANY session.
+  const [termsMode, setTermsMode] = useState(PROTO.start === 'worker' || LINK.signin ? 'off' : 'firstrun');
+  const [loginFlow, setLoginFlow] = useState('onboarding');  // which flow opened LoginModal: 'onboarding' (composer-gated) or 'moneymaker' (welcome CTA, opens straight past the default step)
+  /* ROB-21388: the browser window the app's Sign in opens, and what it finds there. playerAcct
+     and browserSession are the Preview rows (App Player on this PC; what bluestacks.ai holds);
+     browserResult is the account the browser handed back. */
+  const [browserOpen, setBrowserOpen] = useState(false);
+  const [browserKey, setBrowserKey] = useState(0);
+  const [browserSession, setBrowserSession] = useState(LINK.browser);   // 'accepted' | 'other' | 'out'
+  const [playerAcct, setPlayerAcct] = useState(LINK.player);           // 'out' | 'accepted' | 'other'
+  const [browserResult, setBrowserResult] = useState(null);
+  const openBrowser = () => { setBrowserResult(null); setBrowserKey((k) => k + 1); setBrowserOpen(true); };
+  const [caseId, setCaseId] = useState(SIGNIN_CASES.some((c) => c.id === QS.get('case')) ? QS.get('case') : '1');
+  /* Every case is a cold start (Abhisht, 2026-10-07: "BlueAI should always start with the
+     launching/splash screen"). What happens after the splash depends only on the shared session:
+     App Player signed in = BlueAI signs in silently (home, or the check for another account);
+     signed out = BlueAI's sign-in page, and the person clicks Sign in. */
+  const playerRef = useRef(playerAcct); playerRef.current = playerAcct;
+  const loggedRef = useRef(false); loggedRef.current = isLoggedIn;
+  const [opt, setOpt] = useState(QS.get('opt') === 'b' ? 'b' : 'a');
+  const optRef = useRef(opt); optRef.current = opt;
+  const pickOpt = (v) => { setOpt(v); optRef.current = v; playCase(caseId); };
+  const playCase = (id) => {
+    setCaseId(id);
+    setBrowserOpen(false); setBrowserResult(null); setShowLoginModal(false); setTermsMode('off');
+    setCreditsOpen(false); setHistoryOpen(false); setProfileOpen(false); setLogoutOpen(false); setActiveTab('chat'); setSeed(null);
+    setSessionMode('moneymaker'); setOnbPhase('welcome'); setLoginFlow('moneymaker');
+    const player = id === '1' ? 'accepted' : (id === '2' ? 'other' : 'out');
+    setPlayerAcct(player); playerRef.current = player;
+    setBrowserSession(id === '3b' ? 'other' : (id === '3c' ? 'out' : 'accepted'));
+    setIsLoggedIn(id === '1' && optRef.current === 'a');   // option B confirms App Player's account first
+    setWinOpen(true); setBooting(true); setHomeReady(false); setSessionKey((k) => k + 1);
+  };
+  // After the splash: App Player on another account means a silent sign-in with it, then the check.
+  // Option B: any App Player account gets "Continue as" first.
+  const afterBoot = () => {
+    if (loggedRef.current || playerRef.current === 'out') return;
+    if (optRef.current === 'b') { setLoginFlow('confirm'); setShowLoginModal(true); return; }
+    if (playerRef.current === 'other') { setLoginFlow('gate'); setShowLoginModal(true); }
+  };
+  useEffect(() => { if (CASES_MODE) playCase(caseId); }, []);
+  // The browser's "You're signed in" page stays up just long enough to read, then the window goes.
+  const handleBrowserContinue = (acct) => { setBrowserResult(acct); setPlayerAcct(acct.id === 'primary' ? 'accepted' : 'other'); setTimeout(() => setBrowserOpen(false), 1400); };
+  // ── Desktop install model. Two independent booleans; at least one is always true (see
+  // toggleInstalled's guard), because "nothing installed" is not a designed screen.
+  // ?bs=0 / ?bai=0 deep-link a starting configuration, so a review link can point straight at
+  // the state being reviewed instead of "open it and untick BlueAI". Read once, at mount.
+  const [bsInstalled, setBsInstalled] = useState(START.bs);     // BlueStacks App Player present on this PC
+  const [baiInstalled, setBaiInstalled] = useState(START.bai);  // BlueAI Windows software present on this PC
+  const [winOpen, setWinOpen] = useState(true);             // its window is open (✕ closes it; still installed)
+  const [bsScreen, setBsScreen] = useState('home');         // which BlueStacks frame: home | loading | play-youtube
+  // ?dlg=blueai opens that installer straight away. Only honoured when BlueAI is genuinely
+  // missing: otherwise it would show an install prompt for software that is already installed.
+  // (Flow B/BlueStacks has no modal to deep-link into anymore, see INSTALLERS above.)
+  const [installing, setInstalling] = useState(() => (QS.get('dlg') === 'blueai' && !START.bai) ? 'blueai' : null);
+  const [winJustIn, setWinJustIn] = useState(false);        // play the window's open animation once
+  const [onbPhase, setOnbPhase] = useState('welcome');      // onboarding sub-flow: 'welcome' (chrome-free picker) → 'chat'
+  const isLoading = !homeReady;
+  const DEFAULT_KEY = { provider: 'Anthropic', model: 'claude-haiku-4-5', key: 'sk-ant-9Xsjhdw1qAAA' };
+  // V2 grants every member 2000 credits a day, automatically (Appy, 2026-09-09). No tiers and
+  // no geo split, so this is a flat constant rather than the old member/geo lookup.
+  const DAILY_GRANT = 2000;
+  const credits = zeroCredits ? 0 : DAILY_GRANT;
+  const byokActive = keyAdded && byokOn;                   // running on the user's own key (any geo)
+  const lowDot = credits < 1000 && !byokActive;            // low/empty warning, suppressed while on own key (credits paused)
+  const addKey = (info) => { setKeyInfo(info || DEFAULT_KEY); setKeyAdded(true); setByokOn(true); setOocOpen(false); };
+  const removeKey = () => { setKeyInfo(null); setKeyAdded(false); };
+  // Route into Settings › BYOK (from the out-of-credits popup or the credits-screen row): open
+  // Settings, turn BYOK on, and pulse-highlight the section so it's obvious where to add the key.
+  const goToByokSettings = () => {
+    setOocOpen(false); setCreditsOpen(false); setHistoryOpen(false); setProfileOpen(false);
+    setByokOn(true); setActiveTab('settings'); setHighlightByok(true);
+    setTimeout(() => setHighlightByok(false), 2000);
+  };
+  // After the splash fades, let the skeleton linger briefly, then settle the content in.
+  const handleBootDone = () => {
+    setBooting(false); setTimeout(() => setHomeReady(true), 850);
+    if (LINK.day === 'next' && !linkDayPlayed.current) { linkDayPlayed.current = true; setDailyRunKey((k) => k + 1); }
+    if (CASES_MODE) afterBoot();
+    else if (LINK.signin === 'browser' && !isLoggedIn) { setLoginFlow(LINK.player === 'other' ? 'gate' : 'moneymaker'); setShowLoginModal(true); }   // ROB-21388 link: the handoff, or the gate when App Player is on another account
+  };
+  /* Preview panel "Copy link" (ROB-21350): today's setup as a ?query link (see LINK above). It is
+     built on this page's own address, so it opens on localhost here and on the real host once the
+     prototype is deployed. Worker settings ride along only when the worker home is what's showing. */
+  const copyLink = () => {
+    const p = new URLSearchParams();
+    if (bsInstalled) p.set('bs', '1');
+    if (!baiInstalled) p.set('bai', '0');
+    if ((!isLoggedIn && showLoginModal) || playerAcct !== 'out') {   // ROB-21388: the sign-in handoff as it is set up now
+      p.set('signin', 'browser');
+      if (playerAcct !== 'out') p.set('player', playerAcct);
+      if (browserSession !== 'accepted') p.set('browser', browserSession);
+    }
+    if (isLoggedIn && sessionMode === 'moneymaker' && playerAcct === 'out') {
+      p.set('start', 'worker');
+      p.set('v', permUi === 'chatbox' ? '1' : '2');
+      if (jobChoice === 'jobcard') p.set('setup', 'off');
+      if (workerDay !== 'day1') p.set('day', workerDay);
+      if (workerDay === 'next' && dayEnd !== 'job') p.set('end', dayEnd);
+      if (cardStyle !== 'days') p.set('card', cardStyle);
+      if (window.AgentPermissions.getMode('youtube') === 'auto') p.set('mode', 'auto');
+    }
+    const url = location.origin + location.pathname + (p.toString() ? '?' + p.toString() : '');
+    const done = () => { setLinkCopied(true); setTimeout(() => setLinkCopied(false), 1600); };
+    if (navigator.clipboard) navigator.clipboard.writeText(url).then(done, () => window.prompt('Copy this link', url));
+    else window.prompt('Copy this link', url);
+  };
+
+  /* ── Desktop: opening / closing / installing the BlueAI window ───────────────────────────
+     Opening the window is always a COLD START, the boot splash replays and the chat resets,
+     because that is what launching a Windows app does. */
+  const openWindow = () => {
+    setWinOpen(true);
+    setWinJustIn(true); setTimeout(() => setWinJustIn(false), 380);
+    setBooting(true); setHomeReady(false);
+    setSessionKey((k) => k + 1);
+    setCreditsOpen(false); setHistoryOpen(false); setProfileOpen(false); setLogoutOpen(false);
+    setActiveTab('chat'); setSeed(null);
+  };
+  const winPresent = baiInstalled && winOpen;
+  // The BlueStacks window is only clickable when the click DOES something: install BlueAI, or
+  // reopen a BlueAI window that was closed with ✕. Otherwise it is scenery.
+  // …and never while its own dialog is up, so a click on the dimmed player can't re-fire it.
+  const bsLive = (!baiInstalled || !winOpen) && !installing;
+  const bsTitle = !baiInstalled ? 'Install BlueAI' : (!winOpen ? 'Open BlueAI' : null);
+  const handleBsClick = () => {
+    if (!baiInstalled) { setInstalling('blueai'); return; }   // Flow A: the install prompt
+    if (!winOpen) openWindow();                                // already installed → just relaunch
+  };
+  const finishInstall = () => {
+    if (installing === 'blueai') { setBaiInstalled(true); setInstalling(null); openWindow(); }
+  };
+
+  /* Flow B's scene-level payoff, mount the BlueStacks window and cycle it through its cold-start
+     frames. Called by ChatScreen's inline progress card (needs_bluestacks.jsx's ProgressBubble)
+     once IT finishes, not by a modal's onComplete, Flow B has no modal anymore. The chat side
+     (resuming the original task) is handled entirely inside ChatScreen itself now; this function
+     only owns what the DESKTOP SCENE needs to do, which is genuinely parent-owned state. */
+  const completeBluestacksInstall = (app) => {
+    const B = window.NeedsBluestacks.BS_BOOT;
+    setBsInstalled(true);
+    setBsScreen('loading');                                       // the player cold-starts…
+    setTimeout(() => setBsScreen('home'), B.loading);              // …lands on its home…
+    // …then the app's Play listing, but ONLY for an app we hold a listing screenshot of.
+    // Otherwise it rests on the home screen rather than showing the wrong app's page.
+    const listing = window.NeedsBluestacks.PLAY_FRAME[app];
+    if (listing) setTimeout(() => setBsScreen(listing), B.loading + B.home);
+  };
+  /* Preview panel: flip either install flag. GUARD, turning the last one off would leave a bare
+     desktop with nothing on it and no way back, which is not a designed state, so the other one
+     turns on instead of allowing it. */
+  const toggleInstalled = (which, val) => {
+    setInstalling(null);
+    if (which === 'bs') {
+      setBsInstalled(val);
+      if (val) setBsScreen('home');
+      if (!val && !baiInstalled) { setBaiInstalled(true); openWindow(); }
+    } else {
+      setBaiInstalled(val);
+      if (val) openWindow();
+      if (!val && !bsInstalled) { setBsInstalled(true); setBsScreen('home'); }
+    }
+  };
+
+  // Chat History / Profile open as full in-app screens (kebab menu routes here).
+  const openHistory = () => { setCreditsOpen(false); setProfileOpen(false); setHistoryOpen(true); };
+  const openProfile = () => { setCreditsOpen(false); setHistoryOpen(false); setProfileOpen(true); };
+  useEffect(() => { window.__openChatHistory = openHistory; return () => { delete window.__openChatHistory; }; }, []);
+
+  const handleNewChat = () => { setSeed(null); setSessionKey((k) => k + 1); setActiveTab('chat'); setCreditsOpen(false); setHistoryOpen(false); setProfileOpen(false); setLogoutOpen(false); };
+  // Onboarding sign-in completes → the message that opened the gate auto-sends in the now
+  // logged-in DEFAULT flow (so the conversation starts and the category home is skipped,
+  // designer's correction). A fresh sign-in with no queued message just lands on the home.
+  // sessionKey bump resets ChatScreen; the autorun seed then fires the queued message.
+  const handleLoginSuccess = () => {
+    setShowLoginModal(false);
+    setBrowserOpen(false);
+    setIsLoggedIn(true);
+    // MoneyMaker: nothing was typed/queued, the CTA on the welcome page opened this directly,
+    // so just reveal the chat home as-is, no seed/sessionKey churn.
+    if (loginFlow !== 'onboarding') return;   // moneymaker / gate / confirm: nothing was queued
+    setSessionKey((k) => k + 1);
+    setSeed(pendingMessage ? { text: pendingMessage, autorun: true, n: Date.now() } : null);
+    setPendingMessage(null);
+  };
+  // Preview-only: flip the Onboarding/Default/MoneyMaker session toggle. The two logged-out
+  // variants always re-arm at their start (the chrome-free welcome screen); Default lands on a
+  // clean chat tab, already signed in.
+  const switchSession = (mode) => { setSessionMode(mode); setIsLoggedIn(mode === 'default'); setOnbPhase('welcome'); setSeed(null); setPendingMessage(null); setSessionKey((k) => k + 1); setActiveTab('chat'); setCreditsOpen(false); setHistoryOpen(false); setProfileOpen(false); };
+  // Onboarding picker → chat: prefill the composer with the picked task (empty for "Just type it").
+  const startOnboardingChat = (prompt) => { setSeed(prompt ? { text: prompt, n: Date.now() } : null); setSessionKey((k) => k + 1); setActiveTab('chat'); setOnbPhase('chat'); };
+  const handleTrySkill = (skillObj) => {
+    const text = typeof skillObj === 'string'
+      ? skillObj
+      : (skillObj && (skillObj.prompt || skillObj.title || skillObj.name)) || '';
+    setSeed({ text, n: Date.now() });
+    setActiveTab('chat');
+  };
+  const handleTabChange = (tab) => { setActiveTab(tab); setCreditsOpen(false); setHistoryOpen(false); setProfileOpen(false); if (tab !== 'chat') setSeed(null); };
+  // MoneyMaker's welcome page IS the "please sign in" screen, so its CTA opens LoginModal
+  // straight past the 'default' step (see login.jsx's initialStep).
+  const handleMoneyMakerSignIn = () => { setLoginFlow('moneymaker'); setShowLoginModal(true); };
+
+  const isChat = activeTab === 'chat';
+  // Logged-out cold start sits on the chrome-free welcome picker (no top bar, no bottom nav),
+  // matches the design's picker phase. Once a task is picked / "just type it", we enter the chat.
+  const onboardingWelcome = !isLoggedIn && onbPhase === 'welcome';
+
+  /* Dev-only preview control: DARK (designer, 2026-08-10: the white card was pulling attention
+     off the work). It is a tool sitting on a desktop, not product UI, so it deliberately shares
+     nothing with the product's light system: near-black surface, muted ink, and it rests at 88%
+     opacity, coming fully forward only on hover. */
+  const DEV = {
+    surface: '#111524', line: '#242a40', divider: '#1e2335',
+    label: '#5f688a', ink: '#8790a8', inkHi: '#c3cade',
+    track: '#1b2033', on: '#1a6fc4', onInk: '#ffffff',
+    chipOn: 'rgba(25,144,255,0.13)', chipOnLine: '#2f5f96', chipOnInk: '#7db8f5',
+    chipOffLine: '#2a3048', chipOffInk: '#6b7390', box: '#3a4160'
+  };
+
+  // Compact segmented control sharing one inner track (no per-pill shadow). 3+ options (e.g.
+  // Session's Onboarding/Default/MoneyMaker) get the label on its own line above a full-width
+  // track instead of squeezing both onto one row, that's what was pushing MoneyMaker past the
+  // card's edge. flexWrap is a safety net, not the fix: a still-too-narrow track wraps instead of
+  // spilling outside the rounded card.
+  const PreviewRow = ({ label, opts, val, set }) => {
+    const stacked = opts.length > 2;
+    const track = (
+      <div style={{ display: 'flex', flexWrap: 'wrap', background: DEV.track, borderRadius: 8, padding: 2, width: stacked ? '100%' : undefined, boxSizing: 'border-box' }}>
+        {opts.map(([lbl, v]) => (
+          <button key={lbl} onClick={() => set(v)}
+            style={{ flex: stacked ? 1 : undefined, border: 'none', borderRadius: 6, padding: '4px 10px', fontSize: 11.5, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap', background: val === v ? DEV.on : 'transparent', color: val === v ? DEV.onInk : DEV.ink, transition: 'background 0.13s ease, color 0.13s ease' }}>
+            {lbl}
+          </button>
+        ))}
+      </div>
+    );
+    return stacked ? (
+      <div style={{ padding: '8px 0' }}>
+        <span style={{ display: 'block', fontSize: 10.5, fontWeight: 700, color: DEV.label, marginBottom: 6 }}>{label}</span>
+        {track}
+      </div>
+    ) : (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, padding: '8px 0' }}>
+        <span style={{ fontSize: 10.5, fontWeight: 700, color: DEV.label }}>{label}</span>
+        {track}
+      </div>
+    );
+  };
+
+  /* Two INDEPENDENT booleans, so they get checkbox chips rather than PreviewRow's either/or
+     segments: a segmented pair would imply picking one excludes the other, which is the
+     opposite of the model. */
+  const InstallChip = ({ label, on, onToggle }) => (
+    <button role="checkbox" aria-checked={on} onClick={() => onToggle(!on)}
+      style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 6, padding: '6px 8px', borderRadius: 8, cursor: 'pointer', fontFamily: 'inherit', fontSize: 11, fontWeight: 700, textAlign: 'left', transition: 'background 0.13s ease, border-color 0.13s ease, color 0.13s ease', background: on ? DEV.chipOn : 'transparent', border: '1px solid ' + (on ? DEV.chipOnLine : DEV.chipOffLine), color: on ? DEV.chipOnInk : DEV.chipOffInk }}>
+      <span style={{ width: 13, height: 13, flexShrink: 0, borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', background: on ? '#1990FF' : 'transparent', border: '1px solid ' + (on ? '#1990FF' : DEV.box) }}>
+        {on && <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3.6" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>}
+      </span>
+      {label}
+    </button>
+  );
+
+  /* The installer belongs to the app that raises it, so it renders INSIDE that app's window,
+     centred on it, dimming it and nothing else. Only Flow A uses this now (BlueStacks raising
+     the prompt to install BlueAI); Flow B's install lives entirely inside the chat instead. */
+  const installerCfg = INSTALLERS[installing];
+  const bsInstaller = installerCfg
+    ? <window.InstallDialog open contained {...installerCfg}
+        onCancel={() => setInstalling(null)} onComplete={finishInstall} />
+    : null;
+
+  const productWindow = (
+    <div className={'ba-win' + (winJustIn ? ' pscene-win-in' : '')}>
+      <ProductTitlebar onClose={() => setWinOpen(false)} />
+      <div className="ba-app">
+      {onboardingWelcome ? (
+        sessionMode === 'moneymaker' ? (
+          <window.MoneyMaker.MoneyMakerWelcome onSignIn={handleMoneyMakerSignIn} />
+        ) : (
+          <window.Onboarding.OnboardingWelcome
+            onPick={(item) => startOnboardingChat(item.prompt)}
+            onTypeIt={() => startOnboardingChat('')} />
+        )
+      ) : (
+      <>
+      <ProductTopBar
+        credits={credits}
+        lowDot={lowDot}
+        isLoggedIn={isLoggedIn}
+        onNewChat={handleNewChat}
+        onOpenCredits={() => { setHistoryOpen(false); setProfileOpen(false); setCreditsOpen(true); }}
+        onOpenHistory={openHistory}
+        onOpenProfile={openProfile}
+        onLogout={() => setLogoutOpen(true)} />
+
+      {profileOpen ? (
+        <ProfileScreen onSignOut={() => setLogoutOpen(true)} />
+      ) : historyOpen ? (
+        <HistoryScreen />
+      ) : creditsOpen ? (
+        <AICreditsScreen credits={credits} keyAdded={keyAdded} byokOn={byokOn} keyInfo={keyInfo} onManageByok={goToByokSettings} />
+      /* activeTab === 'skills' branch removed 2026-09-09 (designer directive, hide not delete),
+         SkillsScreen, handleTrySkill and CONFIG.skillsLayout below are all left defined; nothing
+         reaches 'skills' as an activeTab any more now that BottomNavbar's NAV dropped it in
+         shared.jsx, so this is dead-but-intact, not broken. */
+      ) : isChat ? (
+        <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column', width: '420px' }}>
+          <ProductChatScreen sessionKey={sessionKey} seed={seed} loading={!homeReady} zeroCredits={zeroCredits && !byokActive} onNoCredits={() => setOocOpen(true)} isOnboarding={!isLoggedIn} sessionMode={sessionMode} onNeedLogin={(text) => { setLoginFlow('onboarding'); setPendingMessage(text); setShowLoginModal(true); }} showStates={showChatStates}
+            scheduledOoc={scheduledOoc && !byokActive}
+            dailyRunKey={dailyRunKey} onJobWaiting={setJobWaiting} permUi={CASES_MODE ? 'none' : permUi} onDayDone={(end) => setToast({ end, key: Date.now() })}
+            bsInstalled={bsInstalled} onBsInstalled={completeBluestacksInstall} />
+        </div>
+      ) : (
+        <div key={activeTab} className="tab-anim"
+          style={{ flex: 1, overflowY: 'auto', scrollbarWidth: 'thin', scrollbarColor: 'rgba(0,0,0,0.15) #e2e8f0', padding: '0px 16px 20px' }}>
+          {activeTab === 'jobs' && <JobsScreen isLoading={isLoading} />}
+          {activeTab === 'schedule' && <ScheduleScreen isLoading={isLoading} />}
+          {activeTab === 'settings' && <SettingsScreen byok={{ on: byokOn, setOn: setByokOn, keyAdded, keyInfo, onSave: addKey, onRemove: removeKey, highlight: highlightByok }} aiModeConditions={{ hwSupported: aiHwSupported, conflict: aiConflict }} />}
+        </div>
+      )}
+
+      <FreeCreditsWidget triggerStyle="none" />
+      <BottomNavbar activeTab={creditsOpen || historyOpen || profileOpen ? null : activeTab} onTabChange={handleTabChange} />
+      </>
+      )}
+      <LoginModal
+        isOpen={showLoginModal}
+        variant="onboarding"
+        initialStep={loginFlow === 'gate' || loginFlow === 'confirm' ? loginFlow : (loginFlow === 'moneymaker' ? 'browser' : 'default')}
+        gateAccount={playerAcct === 'accepted' ? window.SignInPage.ACCOUNTS.primary : window.SignInPage.ACCOUNTS.other}
+        playerSwitch={() => { setPlayerAcct('out'); openBrowser(); }}
+        onClose={() => { setShowLoginModal(false); setPendingMessage(null); setBrowserOpen(false); }}
+        onSuccess={handleLoginSuccess}
+        onOpenBrowser={openBrowser}
+        browserResult={browserResult}
+        onSwitchAccount={() => { setPlayerAcct('out'); if (browserResult) setBrowserSession('out'); openBrowser(); }} />
+
+      <LogoutModal
+        isOpen={logoutOpen}
+        onCancel={() => setLogoutOpen(false)}
+        onConfirm={() => { setLogoutOpen(false); setProfileOpen(false); setActiveTab('chat'); }} />
+
+      {/* The mode sheet, and the "Run jobs automatically?" confirm that opens over it. One
+         instance of each here, inside .ba-app, so both are scoped to the product window whichever
+         control opened them (the composer chip, the ribbon's Change, Settings, the job ask). */}
+      <window.AgentPermissions.ModeSheet />
+      <window.AgentPermissions.AutoConfirm />
+
+      {/* Out-of-credits popup on message-send: prime geo → Prime upsell (image 1); non-prime geo → BYOK (image 2). */}
+      {/* One card for everyone. V2 has no tiers, so there is no non-member to upsell, and no
+         geo without a grant, so the mode that pitched BYOK is unreachable too. */}
+      {oocOpen && <window.Byok.OutOfCreditsModal onClose={() => setOocOpen(false)} />}
+
+      {/* Terms sheet: z120: above the login gate (acceptance precedes sign-in), below the boot
+         splash. !booting delays the MOUNT until the splash is done, so the slide-up entrance
+         plays where the user can see it instead of finishing behind the splash. Accepting plays
+         the exit and then flips the preview row to Off. */}
+      {!booting && termsMode !== 'off' && <window.TermsSheet.TermsSheet mode={termsMode} onDone={() => setTermsMode('off')} />}
+
+      {booting && <BootSplash key={sessionKey} onDone={handleBootDone} />}
+      </div>
+    </div>);
+
+  /* The scene wraps the window; the installer dialog and the dev Preview card sit OUTSIDE it.
+     That placement is load-bearing, not tidiness: .pscene-scaler carries a transform, which makes
+     it the containing block for any position:fixed descendant, anything fixed rendered inside it
+     would be positioned against the scene AND scaled with it. */
+  return (
+    <>
+      <window.DesktopScene
+        bsInstalled={bsInstalled}
+        winPresent={winPresent}
+        bsScreen={bsScreen}
+        bsLive={bsLive}
+        bsTitle={bsTitle}
+        onBsClick={handleBsClick}
+        onEmptyClick={openWindow}
+        bsOverlay={bsInstaller}
+        sideWindow={browserOpen && winPresent ? (
+          /* ROB-21388: the browser the app's Sign in opened. Keyed on its setup, so a Preview row
+             change restarts it on the matching first page. */
+          <window.SignInPage.SignInBrowser key={browserKey + '-' + browserSession + '-' + opt} start={browserSession} always={CASES_MODE && opt === 'b'}
+            onContinue={handleBrowserContinue} onClose={() => setBrowserOpen(false)} />
+        ) : null}
+        aiInstalled={baiInstalled} aiOpen={winPresent} aiAttention={jobWaiting}
+        onAiClick={() => { if (!winOpen) openWindow(); }}>
+        {winPresent && productWindow}
+      </window.DesktopScene>
+
+      {/* The Windows notification a scheduled run raises when its day is done (worker sheet row 2):
+         the run happens with nobody watching, so the chat card alone would be missed. A click
+         brings BlueAI up. Fixed to the viewport, so it sits OUTSIDE the scaled scene. */}
+      {toast && !CASES_MODE && (() => {
+        const t = window.WorkerDayDone.toastFor(toast.end);
+        return t && <window.DesktopToast key={toast.key} title={t.title} body={t.body}
+          onOpen={() => { if (!winOpen) openWindow(); setToast(null); }} onClose={() => setToast(null)} />;
+      })()}
+
+      {CASES_MODE && (
+        <>
+          <style>{'.pscene { top: 56px; }'}</style>
+          <div style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 300, height: 56, display: 'flex', alignItems: 'center', gap: 8, padding: '0 18px', background: 'rgba(17,21,36,0.94)', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}>
+            {SIGNIN_OPTS.map((o) => (
+              <button key={o.id} onClick={() => pickOpt(o.id)}
+                style={{ height: 32, padding: '0 14px', borderRadius: 8, border: '1px solid ' + (o.id === opt ? '#c3cade' : '#2a3048'), background: o.id === opt ? '#c3cade' : 'transparent', color: o.id === opt ? '#111524' : '#8790a8', fontSize: 12.5, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap' }}>{o.label}</button>
+            ))}
+            <span style={{ width: 1, height: 24, background: '#2a3048', margin: '0 6px' }} />
+            {SIGNIN_CASES.map((c) => (
+              <button key={c.id} onClick={() => playCase(c.id)}
+                style={{ height: 32, padding: '0 14px', borderRadius: 999, border: '1px solid ' + (c.id === caseId ? '#1a6fc4' : '#2a3048'), background: c.id === caseId ? '#1a6fc4' : 'transparent', color: c.id === caseId ? '#fff' : '#8790a8', fontSize: 12.5, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap' }}>{c.label}</button>
+            ))}
+            <button onClick={() => playCase(caseId)} title="Play this case from the start"
+              style={{ height: 32, padding: '0 14px', borderRadius: 999, border: '1px solid #2a3048', background: 'transparent', color: '#8790a8', fontSize: 12.5, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>Restart</button>
+            <span style={{ marginLeft: 'auto', fontSize: 12.5, lineHeight: 1.35, color: '#8790a8', textAlign: 'right', maxWidth: 560 }}>{SIGNIN_CASES.find((c) => c.id === caseId).note}</span>
+          </div>
+        </>
+      )}
+
+      {CASES_MODE && (
+        <button role="checkbox" aria-checked={bsInstalled} onClick={() => toggleInstalled('bs', !bsInstalled)}
+          style={{ position: 'fixed', left: 20, bottom: 20, zIndex: 300, display: 'flex', alignItems: 'center', gap: 8, height: 36, padding: '0 14px', borderRadius: 999, border: '1px solid #2a3048', background: 'rgba(17,21,36,0.94)', color: bsInstalled ? '#c3cade' : '#8790a8', fontSize: 12.5, fontWeight: 700, cursor: 'pointer', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}>
+          <span style={{ width: 14, height: 14, borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', background: bsInstalled ? '#1990FF' : 'transparent', border: '1px solid ' + (bsInstalled ? '#1990FF' : '#3a4160') }}>
+            {bsInstalled && <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3.6" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>}
+          </span>
+          Show BlueStacks
+        </button>
+      )}
+
+      {/* Preview-state dev control: ONE compact card (geo → member/key + credits), collapses to a gear. */}
+      {!CASES_MODE && (previewOpen ? (
+        /* Bottom-LEFT, not bottom-right: the product window always sits on the right of the
+           scene (or centred alone), so a right-docked panel covered its bottom nav. The far
+           side can only ever graze the BlueStacks screenshot, which is scenery. */
+        <div
+          onMouseEnter={(e) => e.currentTarget.style.opacity = '1'}
+          onMouseLeave={(e) => e.currentTarget.style.opacity = '0.88'}
+          style={{ position: 'fixed', left: 20, bottom: 20, zIndex: 300, width: 300, background: DEV.surface, border: '1px solid ' + DEV.line, borderRadius: 12, boxShadow: '0 12px 38px rgba(0,0,0,0.5)', padding: '9px 14px 11px', opacity: 0.88, transition: 'opacity 0.16s ease' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2 }}>
+            <span style={{ fontSize: 9.5, fontWeight: 800, letterSpacing: '0.09em', color: DEV.label, textTransform: 'uppercase' }}>Preview</span>
+            <span style={{ flex: 1 }} />
+            <button onClick={copyLink} title="Copy a link that opens this setup"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: 'none', border: '1px solid ' + DEV.chipOffLine, borderRadius: 6, cursor: 'pointer', color: linkCopied ? DEV.chipOnInk : DEV.ink, padding: '2px 8px', marginRight: 6, fontSize: 10.5, fontWeight: 700, fontFamily: 'inherit', transition: 'color 0.13s ease' }}
+              onMouseEnter={(e) => e.currentTarget.style.color = DEV.inkHi} onMouseLeave={(e) => e.currentTarget.style.color = linkCopied ? DEV.chipOnInk : DEV.ink}>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" /></svg>
+              {linkCopied ? 'Copied' : 'Copy link'}
+            </button>
+            <button aria-label="Collapse preview" onClick={() => setPreviewOpen(false)}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', color: DEV.chipOffInk, padding: 2, display: 'flex' }}
+              onMouseEnter={(e) => e.currentTarget.style.color = DEV.inkHi} onMouseLeave={(e) => e.currentTarget.style.color = DEV.chipOffInk}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
+            </button>
+          </div>
+          {/* Progressive disclosure: mirror the product's real dependency chain so only the
+             controls that affect the CURRENT screen show. BYOK is universal (prime + non-prime)
+             and its toggle is the master switch, "whatever they've switched on will work":
+               Session ─ Onboarding (logged out) → nothing else applies
+                       └ Default (logged in) → Geo
+                            ├ Prime geo → Membership + Own key + Credits*
+                            └ Non-prime geo → Own key + Credits*
+               (*Credits hidden while running on the user's own key, credits are paused, not consumed.)
+             The Own-key toggle mirrors Settings: "Added" flips both keyAdded + byokOn on, so the
+             preview state stays in sync with what Settings shows and vice-versa. */}
+          {/* What's installed on this PC. Sits at the TOP because it gates everything below it,
+             with BlueAI not installed there is no app to configure, so the rest is hidden. */}
+          <div style={{ padding: '7px 0 8px' }}>
+            <span style={{ display: 'block', fontSize: 9.5, fontWeight: 800, letterSpacing: '0.09em', color: DEV.label, textTransform: 'uppercase', marginBottom: 6 }}>Installed</span>
+            <div style={{ display: 'flex', gap: 6 }}>
+              <InstallChip label="BlueStacks" on={bsInstalled} onToggle={(v) => toggleInstalled('bs', v)} />
+              <InstallChip label="BlueAI" on={baiInstalled} onToggle={(v) => toggleInstalled('bai', v)} />
+            </div>
+          </div>
+          {baiInstalled && <div style={{ height: 1, background: DEV.divider }} />}
+          {baiInstalled && (() => {
+            // Session row's display label only, renamed 2026-09-09, the 'moneymaker' VALUE stays
+            // as the internal session-mode identifier on purpose (code/filenames weren't part of
+            // this rename), so switchSession/sessionMode wiring is untouched.
+            /* Start at (ROB-21350, local testing): Worker home lands signed in on the BlueAI worker
+               home as a brand-new user, now and on every reload, so the flow can be retried
+               without the terms sheet and sign-in each time. Sign in restores the real cold start. */
+            const startAt = (v) => {
+              setProtoStart(v); remember('bai_proto_start', v);
+              if (v !== 'worker') { switchSession('moneymaker'); setTermsMode('firstrun'); return; }
+              setSessionMode('moneymaker'); setIsLoggedIn(true); setTermsMode('off'); setShowLoginModal(false); setBrowserOpen(false); setOnbPhase('welcome');
+              setSeed(null); setActiveTab('chat'); setCreditsOpen(false); setHistoryOpen(false); setProfileOpen(false);
+              setWorkerDay('day1'); window.WorkerFlow.setOnboarded(false); window.AgentPermissions.reset();
+              setSessionKey((k) => k + 1);
+            };
+            const rows = [
+              <PreviewRow key="protostart" label="Start at" opts={[['Sign in', 'signin'], ['Worker home', 'worker']]} val={protoStart} set={startAt} />,
+              <PreviewRow key="session" label="Session" opts={[['Onboarding', 'onboarding'], ['Default', 'default'], ['BlueAI worker', 'moneymaker']]} val={sessionMode} set={switchSession} />,
+              // The terms sheet overlays any session, so the row is unconditional. First run
+              // leads because it is the default starting experience; the sheet's own CTA flips
+              // this to Off (its onDone above).
+              <PreviewRow key="terms" label="Terms" opts={[['First run', 'firstrun'], ['Terms update', 'update'], ['Off', 'off']]} val={termsMode} set={setTermsMode} />
+            ];
+            /* ROB-21388: the three cases. App Player signed out = the app opens the browser; with
+               the accepted account = silent sign-in, home; with another account = silent sign-in,
+               then the gate. Browser = what bluestacks.ai holds when the browser does open. */
+            if (!isLoggedIn || playerAcct !== 'out') {
+              const setPlayer = (v) => {
+                setPlayerAcct(v); setBrowserOpen(false); setShowLoginModal(false); setBrowserResult(null);
+                if (v === 'accepted') { setIsLoggedIn(true); setTermsMode('off'); return; }
+                setIsLoggedIn(false); setOnbPhase('welcome'); setSessionKey((k) => k + 1);
+                if (v === 'other') { setLoginFlow('gate'); setShowLoginModal(true); }
+              };
+              rows.push(<PreviewRow key="player" label="App Player" opts={[['Signed out', 'out'], ['Accepted account', 'accepted'], ['Other account', 'other']]} val={playerAcct} set={setPlayer} />);
+              rows.push(<PreviewRow key="bsession" label="Browser" opts={[['Accepted account', 'accepted'], ['Other account', 'other'], ['Signed out', 'out']]} val={browserSession} set={setBrowserSession} />);
+            }
+            if (isChat) rows.push(<PreviewRow key="states" label="Chat states" opts={[['Off', false], ['On', true]]} val={showChatStates} set={setShowChatStates} />);
+            /* The scheduled-run-out-of-credits scenario. Its own row rather than a 4th Session
+               option on purpose: sessionMode picks which WELCOME + LOGIN + home screen renders,
+               and this is none of those, it's a chat that plays itself. Folding it into
+               sessionMode would have made it mutually exclusive with the BlueAI-worker session and
+               dragged the login wiring along for a state that never signs anyone in.
+               Selecting it also flips zeroCredits, because a run dying for lack of credits while
+               the top bar still shows a balance is an incoherent screenshot; bumping sessionKey
+               replays the script from the top. */
+            if (isChat) rows.push(<PreviewRow key="schedooc" label="Scheduled job" opts={[['Off', false], ['Out of credits', true]]} val={scheduledOoc}
+              set={(v) => { setScheduledOoc(v); if (v) setZeroCredits(true); setSessionKey((k) => k + 1); }} />);
+            /* BlueAI worker end to end (ROB-21350). Change mode from: the control that opens the
+               mode sheet, the two shapes going to the seniors (the composer chip, or a ribbon
+               above the composer once the worker runs on Automatic). Mode: YouTube's mode, set
+               directly with no consent dialog, exactly like ?mode=auto. Worker: Day 1 resets to a
+               brand-new user (Run plays onboarding, mode back to Always ask); Next day plays the
+               following day's scheduled run in its own chat, again on every click. Setup question:
+               whether onboarding asks "take paid jobs on my own, or check with me first?". */
+            if (isChat && sessionMode === 'moneymaker' && isLoggedIn) {
+              rows.push(<PreviewRow key="permui" label="Change mode from" opts={[['Composer chip', 'chatbox'], ['Ribbon', 'ribbon']]} val={permUi}
+                set={(v) => { setPermUi(v); remember('bai_proto_version', v); }} />);
+              rows.push(<PreviewRow key="permmode" label="Mode" opts={[['Always ask', 'always'], ['Automatic', 'auto']]} val={permModes.youtube}
+                set={(v) => window.AgentPermissions.setMode('youtube', v)} />);
+              rows.push(<PreviewRow key="workerday" label="Worker" opts={[['Day 1', 'day1'], ['Returning', 'returning'], ['Next day', 'next']]} val={workerDay}
+                set={(v) => {
+                  setWorkerDay(v); setSeed(null); setToast(null);
+                  if (v === 'day1') { window.WorkerFlow.setOnboarded(false); window.AgentPermissions.reset(); }
+                  else { window.WorkerFlow.setOnboarded(true); if (v === 'next') setDailyRunKey((k) => k + 1); }
+                  setSessionKey((k) => k + 1);
+                }} />);
+              /* Day end (worker sheet row 2, 2026-10-12): how today's run closes, which is what the
+                 day-done card and the notification show. Picking one replays the next day's run. */
+              rows.push(<PreviewRow key="dayend" label="Day end" opts={window.WorkerDayDone.ENDS} val={dayEnd}
+                set={(v) => {
+                  setDayEnd(v); window.WorkerDayDone.setEnd(v); setToast(null); setSeed(null);
+                  setWorkerDay('next'); window.WorkerFlow.setOnboarded(true); setDailyRunKey((k) => k + 1); setSessionKey((k) => k + 1);
+                }} />);
+              /* Card (Abhisht, 2026-10-12): the three options for the moment. Money leads with the
+                 dollar; Days shows the count and no money; Plain is no card, only a longer closing
+                 line. Replays whatever is on screen so the change shows at once. */
+              rows.push(<PreviewRow key="cardstyle" label="Card" opts={window.WorkerDayDone.STYLES} val={cardStyle}
+                set={(v) => {
+                  setCardStyle(v); window.WorkerDayDone.setStyle(v); setToast(null); setSeed(null);
+                  if (workerDay === 'next') setDailyRunKey((k) => k + 1);
+                  setSessionKey((k) => k + 1);
+                }} />);
+              rows.push(<PreviewRow key="jobchoice" label="Setup question" opts={[['On', 'onboarding'], ['Off', 'jobcard']]} val={jobChoice}
+                set={(v) => { setJobChoice(v); window.WorkerFlow.setChoicePoint(v); }} />);
+            }
+            if (activeTab === 'settings') {
+              rows.push(<PreviewRow key="aihw" label="Hardware" opts={[['Yes', true], ['No', false]]} val={aiHwSupported} set={setAiHwSupported} />);
+              rows.push(<PreviewRow key="aiconflict" label="AI conflict" opts={[['None', false], ['Detected', true]]} val={aiConflict} set={setAiConflict} />);
+            }
+            if (isLoggedIn) {
+              // Geo and Membership rows removed 2026-09-09: with one member type and one geo they
+              // selected states the screens no longer distinguish. Own key stays, because BYOK still
+              // lives in Settings and still changes what the credits screen reports.
+              rows.push(<PreviewRow key="key" label="Own key" opts={[['Off', false], ['On', true]]} val={byokActive} set={(v) => { setKeyAdded(v); setByokOn(v); setKeyInfo(v ? DEFAULT_KEY : null); }} />);
+              if (!byokActive) rows.push(<PreviewRow key="credits" label="Credits" opts={[['Full', false], ['Empty', true]]} val={zeroCredits} set={setZeroCredits} />);
+            }
+            return rows.map((row, i) => (
+              <React.Fragment key={row.key}>
+                {i > 0 && <div style={{ height: 1, background: DEV.divider }} />}
+                {row}
+              </React.Fragment>
+            ));
+          })()}
+        </div>
+      ) : (
+        <button aria-label="Preview state" onClick={() => setPreviewOpen(true)}
+          style={{ position: 'fixed', left: 20, bottom: 20, zIndex: 300, width: 38, height: 38, borderRadius: '50%', background: DEV.surface, border: '1px solid ' + DEV.line, boxShadow: '0 10px 28px rgba(0,0,0,0.5)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: DEV.chipOffInk, opacity: 0.88, transition: 'opacity 0.16s ease' }}
+          onMouseEnter={(e) => { e.currentTarget.style.color = DEV.chipOnInk; e.currentTarget.style.opacity = '1'; }} onMouseLeave={(e) => { e.currentTarget.style.color = DEV.chipOffInk; e.currentTarget.style.opacity = '0.88'; }}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" /></svg>
+        </button>
+      ))}
+    </>);
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

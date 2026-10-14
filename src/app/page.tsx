@@ -63,6 +63,14 @@ const MAIN = [
     ds: true,
   },
   {
+    // ADDED 2026-10-14 (Appy): V2 rebuilt in the design system's Target look, one family with the
+    // onBlue Agentic site (its BlueAI spark logo, Inter, lines not shadows). A preview of where V2
+    // is heading, not a PM port target: the PM keeps working in V2, and V3 does not follow him.
+    href: '/blueai-product-v3',
+    name: 'BlueAI Product V3 (onBlue look)',
+    desc: 'A full copy of V2, every screen, flow and state, restyled in the design system’s Target look so the product reads as one family with the onBlue Agentic site: the site’s BlueAI spark logo, Inter, one blue, 1px lines instead of shadows, the same button ladder and words. A preview of where V2 is heading; V2 stays as the PM made it.',
+  },
+  {
     // RENAMED 2026-10-13 (Appy): was "onBlue Agentic Hero", from when this page was one hero
     // experiment (2026-09-11, rebased onto the Cinematic light theme 2026-09-15). It is now the
     // whole partner site: the homepage, the apply flow and the partner dashboard behind it.

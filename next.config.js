@@ -31,6 +31,7 @@ const nextConfig = {
         async rewrites() {
           return [
             { source: '/blueai-product-v2', destination: '/blueai-product-v2/index.html' },
+            { source: '/blueai-product-v3', destination: '/blueai-product-v3/index.html' },
             { source: '/blueai-desktop', destination: '/blueai-desktop/index.html' },
             // Option 1 mock (chat terminal flow) is standalone: fonts from CDN, image inlined,
             // so it needs no <base> tag.
