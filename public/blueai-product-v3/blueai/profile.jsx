@@ -1,9 +1,9 @@
-// BlueAI: Profile (in-app screen) + Logout confirm modal.
+// BlueAI: Profile (in-app screen) + the Sign out confirm modal.
 // Opened from the kebab → Profile. Matches the live product's content: avatar, name/email, an
 // Account Information card, and a Sign out row that confirms via a modal. V3, Phase 5: in-flow
 // cards with a 1px line, the account as the site's ledger, the green only on "Verified". Review
 // round 1: kit cards, badge, avatar and dialog; the screen header; a neutral avatar.
-// Exposes window.Profile = { ProfileScreen, LogoutModal }. (Account values match live;
+// Exposes window.Profile = { ProfileScreen, LogoutModal, ACCOUNT }. (Account values match live;
 // the avatar art isn't in the export, so the avatar is the neutral initial disc.)
 (function () {
   const ACCOUNT = {
@@ -65,25 +65,27 @@
   }
 
   // The kit's dialog (kit/overlays.css) at the confirm width: one solid ink commit, a secondary
-  // way back. Signing out is reversible, so it is not painted red (design-md 25).
+  // way back. Signing out is reversible, so it is not painted red (design-md 25). Review round 1
+  // (U11): "Sign out" everywhere, the kit's sign-out words (design-md 64: what signing out costs),
+  // the kit's focus hook (shared.jsx DialogPanel), and a confirm that signs out (index.html).
   function LogoutModal({ isOpen, onCancel, onConfirm }) {
     if (!isOpen) return null;
     return (
       <div className="v2-overlay v2-overlay--center">
         <div className="v2-scrim" onClick={onCancel} aria-hidden="true" />
-        <div role="dialog" aria-modal="true" aria-label="Logout" className="v2-dialog v2-dialog--sm">
-          <div className="v2-dialog-head"><h2 className="v2-dialog-title v2-text-title-dialog">Logout</h2></div>
+        <DialogPanel onEscape={onCancel} labelledBy="signout-title" describedBy="signout-body" className="v2-dialog v2-dialog--sm">
+          <div className="v2-dialog-head"><h2 id="signout-title" className="v2-dialog-title v2-text-title-dialog">Sign out of BlueAI?</h2></div>
           <div className="v2-dialog-body">
-            <p className="v2-text-body">Are you sure you want to sign out?</p>
+            <p id="signout-body" className="v2-text-body" style={{ overflowWrap: 'anywhere' }}>Your worker pauses while you’re signed out, and days without a run don’t count toward your 20 days. Sign in again with {ACCOUNT.email} to pick up where you left off.</p>
             <div className="v3-btn-row v3-dlg-actions">
               <button type="button" onClick={onCancel} className="v2-button v2-button--secondary v2-button--lg">Cancel</button>
-              <button type="button" onClick={onConfirm} className="v2-button v2-button--primary v2-button--lg">Logout</button>
+              <button type="button" onClick={onConfirm} className="v2-button v2-button--primary v2-button--lg">Sign out</button>
             </div>
           </div>
-        </div>
+        </DialogPanel>
       </div>
     );
   }
 
-  window.Profile = { ProfileScreen, LogoutModal };
+  window.Profile = { ProfileScreen, LogoutModal, ACCOUNT };
 })();

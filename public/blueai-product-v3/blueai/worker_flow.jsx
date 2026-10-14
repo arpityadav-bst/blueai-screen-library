@@ -11,11 +11,13 @@
    compared (Abhisht, 2026-10-05):
      'onboarding'  one extra setup question after the run time: Automatic, or Always ask. The daily
                    job ask still offers the switch to Automatic.
-     'jobcard'     onboarding exactly as live; the daily job ask offers Automatic / Just this job.
+     'jobcard'     onboarding exactly as live; the daily job ask offers this job / switch to Automatic.
    The mode is PER APP (Abhisht, 2026-10-12): this skill works YouTube, so every mode call here
    names 'youtube'. Wording everywhere is "Always ask" and "Automatic", nothing else.
    Where it is changed LATER is still open: the worker-card row was taken back out (2026-10-05).
-   The pitch's "I only run a paid job after you say yes" bullet stays as live, by Abhisht's call.
+   The pitch's first bullet no longer promises a yes before every job, which Automatic contradicts
+   (review round 1, U4; proposed to the PM): it says the person decides whether BlueAI checks first.
+   The daily run time is kept here (getRunTime) for the home greeting and Settings > Worker.
 
    Steps play through ChatScreen's own engine (d = ms after the previous step). 'ask' steps end a
    segment; the answer pushes the next one through next(). Live copy is verbatim
@@ -26,8 +28,8 @@
    day-done card from worker_day_done.jsx. Which end it is (job / no job / day 20 / failed) is the
    preview's "Day end" pick; a failed job asks to retry, and the retry always succeeds.
 
-   Exposes window.WorkerFlow = { PLAN, JOB, makeWorkerRun, makeDailyRun, next, setChoicePoint,
-   setOnboarded, isOnboarded, claimDailyRun }. */
+   Exposes window.WorkerFlow = { PLAN, JOB, RUN_TIMES, makeWorkerRun, makeDailyRun, next, setChoicePoint,
+   setOnboarded, isOnboarded, claimDailyRun, getRunTime, setRunTime }. */
 (function () {
   const AP = () => window.AgentPermissions;
   const DD = () => window.WorkerDayDone;
@@ -35,6 +37,15 @@
   let choicePoint = 'onboarding';
   let onboarded = false;
   let claimed = 0;
+  /* The daily run time, the schedule ask's answer (default: the live example, 11 am). The home
+     greeting and Settings > Worker's Daily run row read it, so nothing hard-codes a time. */
+  const RUN_TIMES = [
+    { id: '11am', label: '11 am', next: 'Your next run is at 11 am.' },
+    { id: 'window', label: '9am–9pm', next: 'Your next run is between 9 am and 9 pm.' },
+    { id: 'any', label: 'Leave it to me', next: 'I’ll pick the time of your next run.' }];
+  let runTime = '11am';
+  const getRunTime = () => RUN_TIMES.find((t) => t.id === runTime) || RUN_TIMES[0];
+  const setRunTime = (v) => { if (RUN_TIMES.some((t) => t.id === v)) runTime = v; };
   const setChoicePoint = (v) => { choicePoint = v; };
   const setOnboarded = (v) => { onboarded = v; };
   const isOnboarded = () => onboarded;
@@ -64,14 +75,14 @@
       say('Welcome! Let’s set up your BlueAI Worker.'),
       { role: 'ask', id: 'pitch', d: 1100,
         lead: 'Here’s the idea: I’ll use your YouTube account like a genuine fan, watching things you’re actually into and keeping it active on its own, and you earn when I finish a paid job.',
-        bullets: ['I only run a paid job after you say yes to that specific job.', 'You can pause, stop, or disconnect anytime.', 'I never see or type your password.'],
+        bullets: ['You decide whether I check with you before each paid job.','You can pause, stop, or disconnect anytime.', 'I never see or type your password.'],
         question: 'Want to set this up?',
         options: [{ id: 'yes', label: 'Yes' }, { id: 'no', label: 'Not now' }] }];
   }
   const handleAsk = () => ({ role: 'ask', id: 'handle', d: 1000, lead: 'Looks like you’re signed in as @bluestacksfan, is that right?', options: YES_NO });
   const scheduleAsk = () => ({ role: 'ask', id: 'schedule', d: 1000,
     lead: 'When would you like me to run each day? Give me a time, like 11 am, and I’ll start within that hour. Or give me a window, like 9am–9pm, and I’ll pick a different moment in it each day. Or leave it to me.',
-    options: [{ id: '11am', label: '11 am' }, { id: 'window', label: '9am–9pm' }, { id: 'any', label: 'Leave it to me' }] });
+    options: RUN_TIMES.map((t) => ({ id: t.id, label: t.label })) });
   // The 'onboarding' variant's one new question. Its Automatic answer goes through the consent dialog.
   const jobChoiceAsk = () => ({ role: 'ask', id: 'jobchoice', d: 1000,
     lead: 'One more thing. When I find a paid YouTube job on my daily run, should I take it on my own, or check with you first?',
@@ -98,6 +109,7 @@
   function makeDailyRun({ scheduled, text } = {}) {
     const auto = AP().getMode('youtube') === 'auto';
     lastRunScheduled = !!scheduled;
+    DD().setToday(null);   // today's run is under way: the 20-day strip waits for how it ends
     const head = scheduled
       ? [{ ...say('Scheduled run started.', 600), worker: true }, say('Starting your daily routine…')]
       : [{ role: 'user', content: text, d: 250, worker: true }, say('Starting your daily routine…')];
@@ -112,19 +124,21 @@
         : (auto ? [say(JOB.label + ': ' + JOB.title + '. Starting it now.'), ...jobSteps()] : [jobAsk()]))];
   }
   /* The daily job ask, as a plain worker question with quick replies like onboarding's (Abhisht,
-     2026-10-05: the earlier card said too much). "Yes, switch to Automatic" turns Automatic on for
-     YouTube, so it goes through the consent dialog before it answers. */
+     2026-10-05: the earlier card said too much). Review round 1 (U5, proposed to the PM): the plain
+     yes leads, the mode switch is a second yes (it goes through the consent dialog before it
+     answers), and what skipping costs is said before the tap, as the skip chip's description. */
+  const SKIP_COST = 'Skipping means today won’t count toward your 20 days.';
   const jobAsk = () => ({ role: 'ask', id: 'job', d: 900,
     title: JOB.label,
     lead: JOB.title + '.',
     question: 'Want me to take this one?',
-    options: [{ id: 'always', label: 'Yes, switch to Automatic', consent: true }, { id: 'once', label: 'Just this job' }, { id: 'deny', label: 'Not now' }] });
+    options: [{ id: 'once', label: 'Yes, take this job' }, { id: 'always', label: 'Yes, and switch to Automatic', consent: true }, { id: 'deny', label: 'Not now', consequence: SKIP_COST }] });
   /* The day-done card closes every run. `failed` is a worker question (Retry / Not now), so it is
      an 'ask' step drawn by the same card. `scheduled` rides along so the desktop knows whether to
      raise the Windows notification. */
   const dayDone = (end) => ({ role: 'daydone', end, scheduled: lastRunScheduled, d: 900 });
   const retryAsk = () => ({ role: 'ask', id: 'retry', card: 'daydone', end: 'failed', scheduled: lastRunScheduled, d: 900,
-    options: [{ id: 'retry', label: 'Retry' }, { id: 'later', label: 'Not now' }] });
+    options: [{ id: 'retry', label: 'Retry' }, { id: 'later', label: 'Not now', consequence: SKIP_COST }] });
   const jobSteps = (retrying) => {
     const end = retrying ? 'job' : DD().getEnd();
     const open = [say('Opening the job’s video on YouTube…', 1000), say('Watching the video…', 1100)];
@@ -140,39 +154,39 @@
 
   const makeWorkerRun = (text) => (onboarded ? makeDailyRun({ text }) : makeOnboarding(text));
 
-  // What an answer plays next. Every answer echoes as the person's own reply, the way a typed reply shows live.
+  /* What an answer plays next. The answer itself is echoed by the question, as its chosen chip left
+     as a selected pill (review round 1, the kit's AskCard), so no user bubble repeats it. */
   function next(step, a) {
-    const opt = (step.options || []).find((o) => o.id === a);
-    const reply = { role: 'user', content: opt ? opt.label : a, d: 250 };
     switch (step.id) {
       case 'job':
-        if (a === 'deny') return [reply, say('Okay, I’ll skip this one. I’ll check with you when the next paid job comes up.', 600), dayDone('declined')];
-        return [reply, ...(a === 'always' ? [say('Got it. Automatic is on for YouTube. I’ll take paid YouTube jobs on my own from now on.', 500)] : []), ...jobSteps()];
+        if (a === 'deny') return [say('Okay, I’ll skip this one. I’ll check with you when the next paid job comes up.', 600), dayDone('declined')];
+        return [...(a === 'always' ? [say('Got it. Automatic is on for YouTube. I’ll take paid YouTube jobs on my own from now on.', 500)] : []), ...jobSteps()];
       case 'retry':
         return a === 'retry'
-          ? [reply, say('Retrying the job…', 600), ...jobSteps(true)]
-          : [reply, say('Okay. I’ll try again on tomorrow’s run.', 600)];
+          ? [say('Retrying the job…', 600), ...jobSteps(true)]
+          : [say('Okay. Today won’t count. I’ll try again on tomorrow’s run.', 600)];
       case 'pitch':
         return a === 'yes'
-          ? [reply, say('Opening YouTube to find your handle…'), say('Checking your YouTube account…', 1000), say('Confirming your YouTube handle…'), handleAsk()]
-          : [reply, say('No problem. Run the BlueAI worker whenever you’re ready to set it up.', 700)];
+          ? [say('Opening YouTube to find your handle…'), say('Checking your YouTube account…', 1000), say('Confirming your YouTube handle…'), handleAsk()]
+          : [say('No problem. Run the BlueAI worker whenever you’re ready to set it up.', 700)];
       case 'handle':
         return a === 'yes'
-          ? [reply, say('Reading your channel’s joined date and stats…', 1000), say('Checking your subscriptions…'), say('Saving your account details…', 800), say('Setting your daily schedule…'), scheduleAsk()]
-          : [reply, say('Okay. Sign in to the YouTube account you want me to use in App Player, then run the BlueAI worker again.', 700)];
+          ? [say('Reading your channel’s joined date and stats…', 1000), say('Checking your subscriptions…'), say('Saving your account details…', 800), say('Setting your daily schedule…'), scheduleAsk()]
+          : [say('Okay. Sign in to the YouTube account you want me to use in App Player, then run the BlueAI worker again.', 700)];
       case 'schedule':
-        return [reply, say('Saving your preferred run window…'), say('Creating your daily schedule…'), ...(choicePoint === 'onboarding' ? [jobChoiceAsk()] : profileSteps())];
+        setRunTime(a);
+        return [say('Saving your preferred run window…'), say('Creating your daily schedule…'), ...(choicePoint === 'onboarding' ? [jobChoiceAsk()] : profileSteps())];
       case 'jobchoice':
-        return [reply, say(a === 'auto' ? 'Got it. Automatic is on for YouTube. I’ll take paid jobs on my own.' : 'Got it. Always ask is on for YouTube. I’ll check with you before each paid job.', 700), ...profileSteps()];
+        return [say(a === 'auto' ? 'Got it. Automatic is on for YouTube. I’ll take paid jobs on my own.' : 'Got it. Always ask is on for YouTube. I’ll check with you before each paid job.', 700), ...profileSteps()];
       case 'profile': {
         onboarded = true;
         const close = AP().getMode('youtube') === 'auto' ? 'When a paid job comes up, I’ll take it on my own.' : 'When a paid job comes up, I’ll check with you first.';
-        return [reply, ...(a === 'no' ? [say('Thanks. I’ll keep learning from what you watch.', 700)] : []), say('Saving your interest profile…'), ...routineSteps(),
+        return [...(a === 'no' ? [say('Thanks. I’ll keep learning from what you watch.', 700)] : []), say('Saving your interest profile…'), ...routineSteps(),
           { role: 'final', tone: 'success', content: 'You’re all set. I’ll run every day in your window and keep your account active. ' + close, d: 900 }];
       }
-      default: return [reply];
+      default: return [];
     }
   }
 
-  window.WorkerFlow = { PLAN, JOB, makeWorkerRun, makeDailyRun, next, setChoicePoint, setOnboarded, isOnboarded, claimDailyRun };
+  window.WorkerFlow = { PLAN, JOB, RUN_TIMES, makeWorkerRun, makeDailyRun, next, setChoicePoint, setOnboarded, isOnboarded, claimDailyRun, getRunTime, setRunTime };
 })();

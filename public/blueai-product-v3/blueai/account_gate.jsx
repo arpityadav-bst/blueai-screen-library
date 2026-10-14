@@ -3,8 +3,9 @@
 //
 // Rendered by login.jsx as a step of the sign-in modal, inside its card. Minimal on purpose
 // (Abhisht, 2026-10-07): the account, where it came from, the pill, the one way out. No Apply
-// button: the download link only goes to accepted people, so "not enrolled" always means "wrong
-// account". Switch account signs the shared session out, which signs App Player out too, and the
+// button: the download link only goes to accepted people, so "not in the program" always means
+// "wrong account". The pill says "Not in the program", the family's word (review round 1), on the
+// neutral badge. Switch account signs the shared session out, which signs App Player out too, and the
 // browser opens (signin_page.jsx).
 //
 // V3, Phase 2: Target tokens and the site's language (entry.css .v3-*; kit avatar, badge, button and
@@ -21,7 +22,7 @@
           <p className="v3-gate-email">{account.email}</p>
           {fromPlayer && <p className="v2-text-body-sm v3-gate-body" style={{ marginTop: 'var(--v2-space-1)' }}>from App Player on this PC</p>}
         </div>
-        <span className="v2-badge"><span className="v2-badge-dot" aria-hidden="true" /><span className="v2-badge-label">Not enrolled</span></span>
+        <span className="v2-badge"><span className="v2-badge-dot" aria-hidden="true" /><span className="v2-badge-label">Not in the program</span></span>
         <button type="button" onClick={onSwitch} className="v2-button v2-button--primary v2-button--lg">Switch account</button>
         <p className="v2-text-body-sm">App Player will be signed out too.</p>
       </>

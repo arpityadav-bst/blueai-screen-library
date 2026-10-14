@@ -16,7 +16,7 @@
 
 **States.** Closed; open; row hover (`--v2-wash-hover`, label to ink); row focus-visible (2px blue ring inside the row plus the wash); row active (`--v2-wash-press`); row disabled; danger row; external row. Placement down or up, aligned to the button's end or start; it flips and swaps to stay in the window. In V2 today: `?start=worker`, then the ? (FAQ, Report Issue) or the three dots (Chat History, Profile, Earnings, Logout) (index.html:364-378).
 
-**Props.** `trigger` (render prop receiving `aria-haspopup`, `aria-expanded`, `aria-controls`, `onClick`, or an element to clone them onto), `items` ([{icon, label, onSelect, href, external, danger, disabled, hint} | {separator: true}]), `placement` ('down' | 'up'), `align` ('end' | 'start'), `header`, `footer`, `label`, `open` / `defaultOpen` / `onOpenChange`, `className`.
+**Props.** `trigger` (render prop receiving `aria-haspopup`, `aria-expanded`, `aria-controls`, `onClick`, or an element to clone them onto), `items` ([{icon, label, onSelect, href, external, danger, disabled, hint} | {separator: true}]; `icon` is a kit icon name or an element, so a product with its own glyphs keeps them in the kit's menu, V3 review round 1), `placement` ('down' | 'up'), `align` ('end' | 'start'), `header`, `footer`, `label`, `open` / `defaultOpen` / `onOpenChange`, `className`.
 
 **Motion.** Fade-up `--v2-dur-3` on `--v2-ease-out`. Rows change colour over `--v2-dur-1`.
 

@@ -70,8 +70,17 @@
      `content` accepts an ARRAY as well as a string. This copy is written as short declaratives,
      and one per line reads as a list rather than a paragraph wrapping wherever the bubble cap
      falls. An array rather than splitting a string on full stops, so the break points are the
-     author's decision and stay visible in the source. String callers are unaffected. */
-  function WarningBubble({ title, content }) {
+     author's decision and stay visible in the source. String callers are unaffected.
+
+     `refill` adds the line that says WHEN credits come back, as the live countdown to the 00:00 UTC
+     refill (CreditsPopupParts), the way the credits screen and the popup say it, never "tomorrow"
+     (review round 1, U6). */
+  function RefillLine() {
+    const CP = window.CreditsPopupParts;
+    const now = CP.useNow();
+    return <span>Credits will be refreshed in <strong className="v3-figure">{CP.formatLeft(CP.nextUtcMidnight(now) - now)}</strong>.</span>;
+  }
+  function WarningBubble({ title, content, refill }) {
     const body = Array.isArray(content) ? content : [content];
     return (
       <div className="v2-anim-pop-in v3-msg">
@@ -79,7 +88,7 @@
           <ToneIcon tone="warning" />
           <div className="v3-toned-body">
             {title && <p className="v3-bubble-title">{title}</p>}
-            <p className="v3-bubble-lines">{body.map((line, k) => <span key={k}>{line}</span>)}</p>
+            <p className="v3-bubble-lines">{body.map((line, k) => <span key={k}>{line}</span>)}{refill && <RefillLine />}</p>
           </div>
         </div>
       </div>);
@@ -179,12 +188,12 @@
       { role: 'thinking', d: 1200 },
       { role: 'status', content: 'Found one. Opening the app and getting started…', d: 1100 },
       { role: 'status', content: 'Running the job step by step…', d: 1100 },
-      /* Designer's final copy (2026-09-09). Both messages now close the same way, and that
-         is the point: V2 has no top-up, so "refreshed tomorrow" is the only resolution the
-         product can honour. The previous wording offered "top up now", advice V2 cannot
-         deliver on. The warning takes the bold title slot WarningBubble just grew. */
-      { role: 'warning', title: 'Out of credits', content: ['You’ve used all of today’s AI credits.', 'Credits will be refreshed tomorrow.'], d: 1100 },
-      { role: 'final', tone: 'fail', content: 'Not enough credits for this job. Credits will be refreshed tomorrow.', d: 900 }];
+      /* Designer's copy (2026-09-09): V2 has no top-up, so the credits coming back is the only
+         resolution the product can honour. The warning takes the bold title slot WarningBubble
+         grew. Review round 1 (U6, proposed to the PM): the warning says when, as the live
+         countdown (refill), and the failure says what the run cost: the day. */
+      { role: 'warning', title: 'Out of credits', content: ['You’ve used all of today’s AI credits.'], refill: true, d: 1100 },
+      { role: 'final', tone: 'fail', content: 'Not enough credits to finish this job. Today won’t count toward your 20 days.', d: 900 }];
   }
 
   /* Dev-preview only: one example bubble per chat message state, rendered instantly (no

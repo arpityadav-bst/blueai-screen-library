@@ -66,9 +66,10 @@
      overridden by the caller, this component is the card plus a one-time coach spotlight.
 
      Card anatomy is the old Skills screen's row (skills.jsx, deleted 2026-10-14) (tile · name+description · compact action pill), because the
-     button only needs the verb: the tile and the title already say MoneyMaker. The whole card is
-     clickable: the pill is a small target, and on a spotlighted first run clicking the lit thing
-     should just work; the pill stopPropagations so it doesn't double-fire.
+     button only needs the verb: the tile and the title already say MoneyMaker. Run is the card's
+     one control (review round 1: the card itself is no longer a button). Under the description,
+     the mode line says how paid jobs run ("Always ask", or "Automatic on YouTube") with a quiet
+     Change that opens the mode sheet (the kit's WorkerCard mode line, design-md 42).
      V3 (phase 4): the chat home's row language (chat.css .v3-row) at card size, a 1px line and no
      cast, the dollar on a sunken tile in ink, and Run as the solid ink button. The spinning gradient
      border and the blue halo are gone (no gradients, no glows); while the coach lights it, the card
@@ -97,6 +98,10 @@
     const back = window.WorkerFlow.isOnboarded();
     const [coaching, setCoaching] = useState(!back);
     const run = () => onRun(PROMPT, 'MoneyMaker');
+    const AP = window.AgentPermissions;
+    const { autoApps } = AP.usePermissionMode();
+    const auto = autoApps();
+    const ModeIcon = auto.length ? AP.IcoZap : AP.IcoShieldCheck;
 
     return (
       <div>
@@ -104,15 +109,18 @@
 
         <div className={'v3-wk-stack' + (coaching ? ' is-coaching' : '')}>
           {back && <window.WorkerDayDone.EarningsStrip />}
-          <div role="button" tabIndex={0} onClick={run} className={'v3-row v3-wk-home' + (coaching ? ' is-lit' : '')}
-            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); run(); } }}>
+          <div className={'v3-row v3-wk-home' + (coaching ? ' is-lit' : '')}>
             <span className="v3-row-tile v3-row-tile--lg"><IcoDollar size={24} /></span>
             <div className="v3-row-main">
               {/* Renamed 2026-09-09 (designer directive: MoneyMaker -> "BlueAI worker"). */}
               <p className="v3-row-title">BlueAI worker</p>
               <p className="v3-row-desc">Finds jobs that fit you and runs them on your account.</p>
+              <p className="v3-wk-mode">
+                <ModeIcon size={16} /><span className="v3-wk-mode-text">{AP.summary(auto)}</span>
+                <button type="button" onClick={AP.openSheet} aria-haspopup="dialog" className="v2-button v2-button--quiet v2-button--sm v3-wk-mode-change">Change</button>
+              </p>
             </div>
-            <button type="button" onClick={(e) => { e.stopPropagation(); run(); }} className="v2-button v2-button--primary">
+            <button type="button" onClick={run} className="v2-button v2-button--primary">
               <svg className="v2-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
               Run
             </button>

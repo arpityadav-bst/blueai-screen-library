@@ -26,14 +26,17 @@
      DayDoneCard    what the thread keeps after the run closes: nothing for a counted day (job,
                     nojob, day20 are said by the overlay), a status line for declined, the yellow
                     Retry / Not now question for failed. The thread card was dropped 2026-10-12.
-     EarningsStrip  the worker home's progress line for a returning person, the next morning:
-                    yesterday's run now shows two ticks (hidden in the plain option).
+     EarningsStrip  the 20-day progress line, on the worker home for a returning person and on the
+                    Jobs tab, read from today's real state (review round 1): before today's run,
+                    yesterday's two ticks; once today's run has closed, today's day as the pending
+                    segment and its one-tick receipt, or what a skipped or failed day means
+                    (hidden in the plain option).
      doneLine       the run's closing line; the plain option's extra sentence lives here.
      toastFor(end)  the words the Windows notification carries when a SCHEDULED run ends with
                     nobody watching (desktop_toast.jsx draws it).
 
    Exposes window.WorkerDayDone = { DayDoneOverlay, DayDoneCard, EarningsStrip, ENDS, STYLES,
-   getEnd, setEnd, getStyle, setStyle, numbers, doneLine, toastFor }. */
+   getEnd, setEnd, getStyle, setStyle, setToday, numbers, doneLine, toastFor }. */
 (function () {
   const { useState } = React;
   const RULE = { rate: 1, target: 20, bonus: 10, programEnd: 'Nov 1' };
@@ -50,6 +53,11 @@
   const setEnd = (v) => { end = ENDS.some(([, id]) => id === v) ? v : 'job'; };
   const getStyle = () => style;
   const setStyle = (v) => { style = STYLES.some(([, id]) => id === v) ? v : 'days'; };
+  /* How today's run closed, once it has: the end its day-done step carried (job, nojob, day20,
+     declined, failed), null while it has not run or is still running (worker_flow.jsx resets it
+     when a run starts, chat_product.jsx sets it when the step shows). */
+  let today = null;
+  const setToday = (v) => { today = v || null; };
 
   function numbers(e = end) {
     const verified = e === 'day20' ? RULE.target - 1 : DONE_BEFORE;   // every earlier day is verified by now
@@ -118,6 +126,8 @@
      lives on the worker home. What "pending" means is explained only the first time the moment
      shows in a session, while the ticks are new; after that the status line is enough. */
   let explained = false;
+  /* The kit's focus hook (shared.jsx DialogPanel): focus moves in, Tab stays inside, Esc answers
+     Got it, focus returns (review round 1). */
   function DayDoneOverlay({ step, onClose }) {
     const [explain] = useState(() => { const first = !explained; explained = true; return first; });
     if (style === 'plain' || !step || step.end === 'failed' || step.end === 'declined') return null;
@@ -128,7 +138,7 @@
     return (
       <div className="v2-overlay v2-overlay--center v3-dd">
         <div className="v2-scrim" onClick={onClose} aria-hidden="true" />
-        <div role="dialog" aria-label={c.title} className="v2-dialog v2-dialog--sm v2-dialog--center">
+        <DialogPanel onEscape={onClose} label={c.title} className="v2-dialog v2-dialog--sm v2-dialog--center">
           <div className="v2-dialog-body">
             <span className="v3-dd-badge"><Tick size={20} /></span>
             <p className="v2-text-title-dialog v3-dd-title">{c.title}</p>
@@ -137,28 +147,41 @@
             {explain && <p className="v2-text-meta v3-dd-note">{VERIFY_NOTE}</p>}
             <button type="button" onClick={onClose} className="v2-button v2-button--primary v2-button--lg v2-button--full v3-dd-cta">Got it</button>
           </div>
-        </div>
+        </DialogPanel>
       </div>);
   }
 
-  /* The worker home, returning person, the next morning: yesterday's run is verified now, so it
-     shows two ticks. Above the worker card, same card language (skills.jsx's row). The plain
-     option has no numbers anywhere, so it has no strip. */
-  /* MINIMAL since 2026-10-14 (Arpit): the day was said three times ("Day 6 of 20", "14 to go",
-     and the bar). Now the day and Earnings on one row, 20 thin segments (one per program day, the
-     partner's own unit; a pending day is outlined), one quiet verified line. No amber bonus
+  /* The 20-day strip (worker home for a returning person, and the Jobs tab), MINIMAL since
+     2026-10-14 (Arpit): the day and Earnings on one row, 20 thin segments (one per program day,
+     the partner's own unit), one quiet receipt line. Read from today's real state (review round
+     1, the kit's ProgramStrip receipts, design-md 43): verified days solid; once today's run has
+     counted, today is the pending segment and the receipt says so with one tick; a skipped or
+     failed day says what it means; before today's run, yesterday's two ticks. No amber bonus
      segment: nothing on this card talks about money. */
+  const RECEIPT = {
+    pending: 'Today’s run is pending verification.',
+    declined: 'Today doesn’t count toward your 20 days.',
+    failed: 'Today’s job didn’t finish. Retry to count the day.',
+    verified: 'Yesterday’s run verified.'
+  };
   function EarningsStrip() {
     if (style === 'plain') return null;
-    const n = numbers('failed');   // before today's run: everything so far is verified, nothing pending
+    const counted = today === 'job' || today === 'nojob' || today === 'day20';
+    const verified = numbers(end).verified;
+    const day = verified + (counted ? 1 : 0);
+    const state = counted ? 'pending' : (today === 'declined' || today === 'failed' ? today : 'verified');
     return (
       <div className="v2-card v3-progress">
         <div className="v3-progress-head">
-          <span className="v3-progress-title">Day {n.day} of {n.target}{style === 'money' && <span> · <span className="v3-figure">{money(n.balance)}</span> earned</span>}</span>
-          <a href="https://bluestacks.ai/dashboard" target="_blank" rel="noopener" className="v2-link v3-progress-link"><span className="v2-link-text">Earnings ↗</span></a>
+          <span className="v3-progress-title">Day {day} of {RULE.target}{style === 'money' && <span> · <span className="v3-figure">{money(day * RULE.rate + (day >= RULE.target ? RULE.bonus : 0))}</span> earned</span>}</span>
+          <a href={window.BlueAILinks.dashboard} target="_blank" rel="noopener" className="v2-link v3-progress-link"><span className="v2-link-text">Earnings ↗</span></a>
         </div>
-        <div className="v3-segs" aria-hidden="true">{Array.from({ length: n.target }, (_, i) => <span key={i} className={'v3-seg' + (i < n.verified ? ' v3-seg--done' : (i < n.day ? ' v3-seg--pending' : ''))} />)}</div>
-        <p className="v2-text-caption v3-progress-note"><span className="v3-verified"><Tick double /></span> Yesterday’s run verified.</p>
+        <div className="v3-segs" aria-hidden="true">{Array.from({ length: RULE.target }, (_, i) => <span key={i} className={'v3-seg' + (i < verified ? ' v3-seg--done' : (i < day ? ' v3-seg--pending' : ''))} />)}</div>
+        <p className="v2-text-caption v3-progress-note">
+          {state === 'verified' && <span className="v3-verified"><Tick double /></span>}
+          {state === 'pending' && <Tick />}
+          {RECEIPT[state]}
+        </p>
       </div>);
   }
 
@@ -180,5 +203,5 @@
     }[e] || null;
   }
 
-  window.WorkerDayDone = { DayDoneOverlay, DayDoneCard, EarningsStrip, ENDS, STYLES, getEnd, setEnd, getStyle, setStyle, numbers, doneLine, toastFor };
+  window.WorkerDayDone = { DayDoneOverlay, DayDoneCard, EarningsStrip, ENDS, STYLES, getEnd, setEnd, getStyle, setStyle, setToday, numbers, doneLine, toastFor };
 })();

@@ -3,7 +3,7 @@
 **Status:** Changed from V2 (all three parts).
 **Why:** V2 has six bubble looks in five colours, each with a shadow, and the loudest is the partner's own message (an indigo gradient with a 30% glow, chat_bubbles.jsx:30). The system is quiet by default (P5): white with a 1px line, colour carried by an icon, one attention fill for "needs you".
 
-**V3 restyle (2026-10-14).** The user bubble is the grey surface (`--v2-surface-sunken`) with a hairline (`--v2-line-hair`), not a blue tint. Tone rides on one 16px icon; the edge takes the tone only when the run stopped (`needsInput` on `--v2-attention-line`, `danger` on `--v2-danger-line`), on the surface: V2's fill-based message colours are retired (`--v2-waiting-fill` keeps the yellow in the V2 today look only). The progress note is a pattern: a 4px ink-4 dot and a muted 13px line, no bubble.
+**V3 restyle (2026-10-14).** The user bubble is the grey surface (`--v2-surface-sunken`) with a hairline (`--v2-line-hair`), not a blue tint. Tone rides on one 16px icon; the edge takes the tone only when the run stopped (`needsInput` on `--v2-waiting-line`, `danger` on `--v2-danger-line`), on the surface: V2's fill-based message colours are retired except one, waiting on you (V3 review round 1, 2026-10-14: a needs-input notice and a pending AskCard take `--v2-waiting-fill`, the attention tint, with the attention ink as the edge, so a question that holds the run reads before its words). The progress note is a pattern: a 4px ink-4 dot and a muted 13px line, no bubble.
 
 ### MessageBubble, user (Changed from V2)
 - **Purpose:** What the partner said, or the answer chip they tapped (echoed).

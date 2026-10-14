@@ -3,8 +3,10 @@
 
    AskCard        {step: {title, lead, bullets, question, options: [{id, label, consent,
                   consequence}], hint, expiresAt}, answer, onAnswer(id, option), state, tone}
-                  One shape for every question (V2's idea, V2's copy). Yellow only while it waits
-                  for you; answered, stopped and expired settle to the neutral surface. What an
+                  One shape for every question (V2's idea, V2's copy). The attention fill and edge
+                  only while it waits for you; answered, stopped and expired settle to the neutral
+                  surface. Answered keeps the chosen chip as a selected pill under the card, the
+                  answer's echo (no user bubble repeats it; V3 review round 1). What an
                   answer costs sits above the chips and is that chip's description, so it is
                   heard before the tap, not after. tone
                   'neutral' is decision D13's option B (onboarding asks while the partner watches).
@@ -43,6 +45,7 @@
     const card = useRef(null);
     const P = K();
     const line = settledLine(st, s);
+    const chosen = st === 'answered' ? opts.find(function (o) { return o.id === answer; }) : null;
     if (P.useSwapFocus) P.useSwapFocus(card, st);
     return (
       <div className={cx('v2-msg', 'v2-msg--worker', 'v2-ask', 'is-' + st, quiet && 'v2-ask--neutral', className)}>
@@ -64,6 +67,11 @@
                     onClick={function () { if (onAnswer) onAnswer(o.id, o); }}>{o.label}</P.Chip>
                 : null;
             })}
+          </div>
+        ) : null}
+        {chosen ? (
+          <div className="v2-ask-chips">
+            <span className="v2-chip is-selected v2-ask-answer"><span className="v2-sr-only">You answered: </span>{P.Icon ? <P.Icon name="check" /> : null}<span>{chosen.label}</span></span>
           </div>
         ) : null}
         {pending && s.hint ? <p className="v2-ask-hint">{s.hint}</p> : null}

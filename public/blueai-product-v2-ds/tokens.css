@@ -16,7 +16,6 @@
 
 :root {
   color-scheme: light;
-
   /* Ink. Role: All text and idle icon colour, one hue in four steps plus placeholder and on-colour.
      onBlue: shared: values from the site's light theme (onblue/onblue.css:300-309, 273), except ink-4 which is one step darker than the site's --dim-ink so captions clear 4.5:1.
      Why: V2 splits gray 178 / slate 178 uses across 18 files, plus a navy set and a private ai_mode set (inv-foundations color.ink). One hue in four steps reads as one product and matches the site the partner returns to. */
@@ -102,7 +101,8 @@
   --v2-nav-selected-ink: var(--v2-ink); /* selected bottom-nav label and icon */
   --v2-nav-indicator: var(--v2-blue); /* the 2px bar over the selected item */
   --v2-nav-shadow: none; /* bottom nav lift: none, its top line separates it */
-  --v2-waiting-fill: var(--v2-surface); /* a message waiting on you (needs-input notice, AskCard): the surface, its edge says it (the V3 restyle, 2026-10-14; V2 today: the yellow fill) */
+  --v2-waiting-fill: var(--v2-attention-tint); /* a message waiting on you (needs-input notice, a pending AskCard): the attention tint, so a question that holds the run reads before its words (V3 review round 1, 2026-10-14: the surface alone did not); it settles to the surface once answered */
+  --v2-waiting-line: var(--v2-attention-ink); /* the edge of a message waiting on you: the attention ink itself (the 32% line was too faint on the tint). Added in V3 review round 1, 2026-10-14; V2 today: its pale yellow edge */
   --v2-brand-word-fill: var(--v2-ink); /* the BrandMark word: ink (the V3 restyle, 2026-10-14; V2 today: the brand gradient through the text) */
   --v2-button-secondary-fill: var(--v2-surface-panel); /* secondary (ghost) button fill (V2 today: white) */
   --v2-button-secondary-line: var(--v2-line-strong); /* secondary button edge */

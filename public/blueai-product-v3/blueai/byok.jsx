@@ -67,12 +67,13 @@
   }
 
   /* The on-send popup. No `mode` any more: there is one card, because there is one kind of member.
-     Closes on the X, on the backdrop, and on "Got it", which all route to the same onClose. */
+     Closes on the X, on the backdrop, on Esc and on "Got it", which all route to the same onClose;
+     the kit's focus hook (shared.jsx DialogPanel) moves focus in and back (review round 1). */
   function OutOfCreditsModal({ onClose }) {
     return (
       <div className="v2-overlay v2-overlay--center">
         <div className="v2-scrim" onClick={onClose} aria-hidden="true" />
-        <div role="dialog" aria-modal="true" aria-label="Out of credits" className="v2-dialog v2-dialog--sm">
+        <DialogPanel onEscape={onClose} label="Out of credits" className="v2-dialog v2-dialog--sm">
           <div className="v2-dialog-head v2-dialog-head--bare">
             <button type="button" aria-label="Close" onClick={onClose} className="v2-icon-button v2-ov-close"><IcoXClose /></button>
           </div>
@@ -80,7 +81,7 @@
           <div className="v2-dialog-body" style={{ overflow: 'visible' }}>
             <OutOfCreditsCard onDismiss={onClose} />
           </div>
-        </div>
+        </DialogPanel>
       </div>
     );
   }

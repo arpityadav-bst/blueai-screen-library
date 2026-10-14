@@ -2,8 +2,12 @@
    The PM's per-app model (agent_permissions.jsx:1-26): each app is Always ask or Automatic, a new
    app starts on Always ask, and turning Automatic on is consent, asked every time.
 
-   ModeRows {worker | apps, modes, onChange(appId, mode), beforeChange(appId, mode), onConnect, note}
-     One ListRow per app: mark, name, account, and a Segmented 'Always ask' / 'Automatic'. Picking
+   ModeRows {worker | apps, modes, onChange(appId, mode), beforeChange(appId, mode), onConnect, note,
+            control 'segmented' | 'switch'}
+     One ListRow per app: mark, name, account, and a Segmented 'Always ask' / 'Automatic'. control
+     'switch' is V2's shape (one switch per app, on = Automatic): a switch alone does not say which
+     mode off is, so the row's description becomes the mode in words ('Always ask' or 'Automatic',
+     then the account), a muted state line the switch is described by (V3 review round 1). Picking
      Automatic goes through beforeChange (open the ConsentDialog, resolve true on agree). An app
      that is not live yet shows 'Coming soon' with no switch (R40); one not connected offers Connect.
      It lives in Settings > Worker (section 62). The ribbon's Change opens that screen (Chat's
@@ -41,9 +45,16 @@
   }
   const listNames = (apps) => apps.map(function (a) { return a.name; }).join(apps.length === 2 ? ' and ' : ', ');
 
-  function ModeRows({ worker, apps, modes, onChange, beforeChange, onConnect, note }) {
+  function ModeRows({ worker, apps, modes, onChange, beforeChange, onConnect, note, control }) {
     const list = appList(worker, apps, modes);
     const P = K();
+    const uid = React.useId();
+    // The switch shape: Automatic goes through beforeChange (the consent) first; Always ask applies at once.
+    function flip(a, on) {
+      const m = on ? 'auto' : 'always';
+      if (on && beforeChange) { Promise.resolve(beforeChange(a.id, m)).then(function (ok) { if (ok && onChange) onChange(a.id, m); }); return; }
+      if (onChange) onChange(a.id, m);
+    }
     return (
       <div className="v2-moderows">
         {list.map(function (a, i) {
@@ -56,6 +67,12 @@
           } else if (a.status === 'not-connected') {
             description = 'Not connected';
             trailing = <P.Button variant="secondary" size="sm" onClick={function () { if (onConnect) onConnect(a.id); }}>Connect</P.Button>;
+          } else if (control === 'switch') {
+            const auto = a.mode === 'auto';
+            const sid = uid + '-' + a.id;
+            description = <span id={sid}>{(auto ? 'Automatic' : 'Always ask') + (a.handle ? ' · ' + a.handle : '')}</span>;
+            trailing = <P.Switch checked={auto} label={'Run ' + a.name + ' jobs without asking'} hideLabel aria-describedby={sid}
+              onChange={function (on) { flip(a, on); }} />;
           } else {
             trailing = (
               <P.Segmented size="md" options={OPTIONS} value={a.mode || 'always'} ariaLabel={a.name + ' paid jobs'}

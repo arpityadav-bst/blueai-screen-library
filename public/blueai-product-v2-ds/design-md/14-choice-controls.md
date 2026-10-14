@@ -18,7 +18,7 @@
 
 **States.** Off; on; hover (off: edge to `--v2-line-hover`; on: unchanged); focus-visible; disabled (0.45, `aria-disabled`, description says why); busy (`aria-busy`, held where it is, the knob holds a 12px spinner while a consent or a key check answers). In V2 today: the shared Toggle 32x18 with a spring (shared.jsx:49-51, only on the hidden Skills screen); Settings, Bring Your Own Key: 46x26, `aria-pressed`, and switching it off removes the saved key (byok_settings.jsx:25-26, 64).
 
-**Props.** `checked`, `onChange(next)`, `label`, `hideLabel`, `description`, `disabled`, `busy`, `id`, `className`.
+**Props.** `checked`, `onChange(next)`, `label`, `hideLabel`, `description`, `disabled`, `busy`, `id`, `className`. A bare switch keeps a caller's `aria-describedby`, so a list row's state line can describe it (ModeRows `control="switch"`, section 46; V3 review round 1, 2026-10-14).
 
 **Motion.** Thumb slides over `--v2-dur-2` (180ms) `--v2-ease-out`, no overshoot; colour over the same. Reduced motion: no transition.
 

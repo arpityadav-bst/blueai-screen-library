@@ -29,10 +29,10 @@
    real product records it server-side, per app.
 
    Exposes window.AgentPermissions = { MODES, APPS, getMode, setMode, reset, autoApps, requestMode,
-   usePermissionMode, ModeChip, AutoRibbon, ModeSheet, AppSwitchList, AutoConfirm, IcoShieldCheck,
-   IcoZap }. */
+   usePermissionMode, summary, openSheet, ModeChip, AutoRibbon, ModeSheet, AppSwitchList, AutoConfirm,
+   IcoShieldCheck, IcoZap }. */
 (function () {
-  const { useState, useEffect, useRef } = React;
+  const { useState, useEffect, useRef, useId } = React;
 
   /* V3 (phase 4; kit parts since review round 1): a quiet kit button for the chip, a panel-band
      ribbon (worker.css), the kit's sheet with one kit switch per app, and the consent on the
@@ -92,18 +92,25 @@
 
   /* ── The app list ── one row per app: its mark, its name and ONE switch, on = Automatic, off =
      Always ask. Switching on goes through the consent for that app; off applies at once. It is
-     the mode sheet's body and Settings' Worker > Apps group, so both read from APPS. */
+     the mode sheet's body and Settings' Worker > Apps group, so both read from APPS. A switch
+     alone does not say which mode off is, so the mode is a muted state line under the name and
+     the switch is described by it (review round 1; the kit's ModeRows control 'switch'). */
   function AppSwitchList() {
     const { modes: cur } = usePermissionMode();
+    const uid = useId();
     return (
       <ul className="v3-apps">
         {APPS.map((a) => {
           const on = cur[a.id] === 'auto';
+          const sid = uid + '-' + a.id;
           return (
             <li key={a.id} className="v3-app">
               <span className="v3-row-tile"><a.Icon size={20} /></span>
-              <span className="v3-app-name">{a.name}</span>
-              <Toggle enabled={on} label={'Run ' + a.name + ' jobs without asking'} onToggle={() => requestMode(a.id, on ? 'always' : 'auto')} />
+              <span className="v3-app-text">
+                <span className="v3-app-name">{a.name}</span>
+                <span id={sid} className="v3-app-state">{on ? 'Automatic' : 'Always ask'}</span>
+              </span>
+              <Toggle enabled={on} label={'Run ' + a.name + ' jobs without asking'} describedBy={sid} onToggle={() => requestMode(a.id, on ? 'always' : 'auto')} />
             </li>);
         })}
       </ul>);
@@ -112,34 +119,20 @@
   /* ── The mode sheet ── Rendered ONCE, at App level inside .ba-app like AutoConfirm, so it is
      scoped to the product window whichever control opened it. Slides up over a light scrim; the
      scrim, Esc and the close button shut it. Focus moves to the close button on open and back to
-     the opener on close. It is the kit's sheet (kit/overlays.css) on the dialog layer, mounted
+     the opener on close (the kit's focus hook, shared.jsx DialogPanel). It is the kit's sheet (kit/overlays.css) on the dialog layer, mounted
      before the consent dialog (AutoConfirm), so the consent opens on top of it when a switch is
      turned on; Esc then answers the dialog, not the sheet. The list scrolls inside the sheet once
      there are more apps than fit. */
   function ModeSheet() {
-    const { sheetOpen: open, confirming: asking } = usePermissionMode();
+    const { sheetOpen: open } = usePermissionMode();
     const closeRef = useRef(null);
-    const opener = useRef(null);
-    useEffect(() => {
-      if (!open) return;
-      opener.current = document.activeElement;
-      // preventScroll: the sheet is still below the window when this runs (its slide-up has just
-      // started), so a plain focus() scrolled .ba-app down to reach the button, which lifted the
-      // sheet into the middle and pulled the hidden free-credits panel into view.
-      if (closeRef.current) closeRef.current.focus({ preventScroll: true });
-      return () => { if (opener.current && opener.current.isConnected) opener.current.focus({ preventScroll: true }); };
-    }, [open]);
-    useEffect(() => {
-      if (!open || asking) return;
-      const key = (e) => { if (e.key === 'Escape') closeSheet(); };
-      document.addEventListener('keydown', key);
-      return () => document.removeEventListener('keydown', key);
-    }, [open, asking]);
     if (!open) return null;
+    // The kit hook focuses with preventScroll: the sheet is still below the window as its slide-up
+    // starts, and a plain focus() scrolled .ba-app down to reach the button.
     return (
       <div className="v2-overlay v2-overlay--bottom">
         <div className="v2-scrim" onClick={closeSheet} aria-hidden="true" />
-        <div role="dialog" aria-modal="true" aria-labelledby="ap-sheet-title" className="v2-sheet">
+        <DialogPanel onEscape={closeSheet} initialFocus={closeRef} labelledBy="ap-sheet-title" className="v2-sheet">
           <div className="v2-dialog-head">
             <div className="v2-grow">
               <h2 id="ap-sheet-title" className="v2-dialog-title v2-text-title-dialog">Apps BlueAI can run on its own</h2>
@@ -148,7 +141,7 @@
             <button ref={closeRef} type="button" onClick={closeSheet} aria-label="Close" className="v2-icon-button v2-ov-close"><IcoXClose /></button>
           </div>
           <div className="v2-sheet-body"><AppSwitchList /></div>
-        </div>
+        </DialogPanel>
       </div>);
   }
 
@@ -170,15 +163,16 @@
      2026-10-14 (Arpit): what BlueAI will do, that it posts under your name, that it can be undone,
      and the agreement IS the button ("I agree, turn on", per the PM's spec), so there is no
      checkbox and no separate agreement paragraph. The per-app list lives in the mode sheet and
-     in Settings, where the setting is changed. */
+     in Settings, where the setting is changed. The body describes the dialog (aria-describedby);
+     opened over the mode sheet, the way back names the sheet too (review round 1). */
   function AutoConfirm() {
-    const { confirming: app } = usePermissionMode();
+    const { confirming: app, sheetOpen: fromSheet } = usePermissionMode();
     const a = app ? appById(app) : null;
     return (
-      <ModalOverlay plain isOpen={!!app} onClose={cancelConfirm} title={a ? 'Run ' + a.name + ' jobs automatically?' : ''}>
+      <ModalOverlay plain isOpen={!!app} onClose={cancelConfirm} title={a ? 'Run ' + a.name + ' jobs automatically?' : ''} describedBy="ap-consent-body">
         {a && <>
-          <p className="v2-text-body">BlueAI will take paid {a.name} jobs on its own and like, comment, follow and post from your account.</p>
-          <p className="v2-text-body-sm v3-dlg-note">Switch back anytime in Settings.</p>
+          <p id="ap-consent-body" className="v2-text-body">BlueAI will take paid {a.name} jobs on its own and like, comment, follow and post from your account.</p>
+          <p className="v2-text-body-sm v3-dlg-note">{fromSheet ? 'Switch back anytime here or in Settings.' : 'Switch back anytime in Settings.'}</p>
           <div className="v3-btn-row v3-dlg-actions">
             <button type="button" onClick={cancelConfirm} className="v2-button v2-button--secondary v2-button--lg">Cancel</button>
             <button type="button" onClick={agreeAuto} className="v2-button v2-button--primary v2-button--lg">I agree, turn on</button>
@@ -205,5 +199,5 @@
       </div>);
   }
 
-  window.AgentPermissions = { MODES, APPS, getMode, setMode, reset, autoApps, requestMode, usePermissionMode, ModeChip, AutoRibbon, ModeSheet, AppSwitchList, AutoConfirm, IcoShieldCheck, IcoZap };
+  window.AgentPermissions = { MODES, APPS, getMode, setMode, reset, autoApps, requestMode, usePermissionMode, summary, openSheet, ModeChip, AutoRibbon, ModeSheet, AppSwitchList, AutoConfirm, IcoShieldCheck, IcoZap };
 })();

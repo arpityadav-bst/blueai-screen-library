@@ -8,10 +8,10 @@
 
 - **Purpose:** the per-app mode, with one home in Settings > Worker (section 62). The ribbon's Change opens that screen (Chat's `onChangeMode`), so the consent dialog never stacks over a float.
 - **Anatomy:** one kit ListRow per app: mark 20 ink-3, name 14/500, account as the description, kit Segmented md (32) 'Always ask' (shield-check) / 'Automatic' (zap), the icons the consent table and the worker card use (`kit/permissions.jsx` OPTIONS). Note under the rows 12 ink-3: 'Automatic starts and finishes that app’s jobs without asking. Each app has its own setting, and a new app starts on Always ask.' (V2's former menu footnote; V2's sheet now says 'New apps always start on Always ask.'). 'Mode, per app' is not carried (Mode is not a partner word).
-- **Variants:** connected (switch); coming soon ('Instagram jobs aren’t available yet.' + Badge 'Coming soon', no switch); not connected ('Not connected' + Connect).
+- **Variants:** connected (switch); coming soon ('Instagram jobs aren’t available yet.' + Badge 'Coming soon', no switch); not connected ('Not connected' + Connect). Control: `segmented` (default) or `switch`, V2's shape (one switch per app, on = Automatic). A switch alone does not say which mode off is, so in the switch shape the row's description is the mode in words, 'Always ask' or 'Automatic' (then the account), a muted state line the switch is described by (`aria-describedby`; V3 review round 1, 2026-10-14).
 - **Sizes:** full width.
 - **States:** Always ask (default); Automatic (only after the consent: `beforeChange` opens it and commits on agree); coming soon; not connected. In V2: `?v=2&mode=auto` (ribbon, Change) or `?v=1` (chip) open the mode sheet, one switch per app (agent_permissions.jsx:98-157); Settings > Worker > Apps lists the same switches.
-- **Props:** `worker` or `apps` + `modes`, `onChange(appId, mode)`, `beforeChange(appId, mode)` (return a promise of true to commit), `onConnect(appId)`, `note` (false hides).
+- **Props:** `worker` or `apps` + `modes`, `onChange(appId, mode)`, `beforeChange(appId, mode)` (return a promise of true to commit), `onConnect(appId)`, `note` (false hides), `control` ('segmented' | 'switch').
 - **Motion:** the Segmented's own (180ms).
 - **Accessibility:** each Segmented is a radiogroup named 'YouTube paid jobs' with arrow keys; segments 32 tall; aria-busy while the consent is open.
 - **Responsive:** the description truncates before the switch shrinks.

@@ -4,8 +4,8 @@
 // Transcribed from the live site's source (the vesper experiment's gate, light theme), not
 // eyeballed from a screenshot: Inter for everything, Instrument Serif italic for the one <em>
 // word in a title, an 11px letter-spaced eyebrow between two hairlines, the 38px spark mark,
-// outline "door" buttons at radius 6 with the solid black button reserved for the one action
-// that commits (the kit primary since review round 1), and underlined inline links. Sizes are the site's own at this window's width,
+// outline "door" buttons at radius 6 (the site's solid black commit button is the kit primary,
+// .v2-button--primary, where a page needs one), and underlined inline links. Sizes are the site's own at this window's width,
 // so the title is 40px here where the hero's is 64.
 
 (function () {
@@ -49,10 +49,6 @@
       {icon}{children}
     </button>
   );
-  // The solid button: the site's one shape for the action that commits, which is the kit's primary.
-  const Solid = ({ children, onClick }) => (
-    <button type="button" onClick={onClick} className="v2-button v2-button--primary v2-button--lg v2-button--full">{children}</button>
-  );
   // "First time here? See how it works": a muted sentence carrying one underlined action.
   const Link = ({ children, onClick }) => (
     <button type="button" onClick={onClick} {...hover({ color: T.blue, textDecorationColor: T.blue }, { color: T.ink, textDecorationColor: T.underline })}
@@ -75,5 +71,5 @@
     <span style={{ width: size, height: size, borderRadius: '50%', flexShrink: 0, background: account.hue, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: Math.round(size * 0.42), fontWeight: 500, fontFamily: T.font }}>{account.name[0]}</span>
   );
 
-  window.SiteKit = { T, Shell, Mark, Eyebrow, Title, Em, Lede, Opts, Opt, Solid, Link, Alt, Legal, U, Arrow, GoogleG, Avatar };
+  window.SiteKit = { T, Shell, Mark, Eyebrow, Title, Em, Lede, Opts, Opt, Link, Alt, Legal, U, Arrow, GoogleG, Avatar };
 })();

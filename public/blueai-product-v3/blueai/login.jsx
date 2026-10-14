@@ -30,12 +30,6 @@ function LoginModal({ isOpen, onClose, onSuccess, initialStep, onOpenBrowser, br
     return () => clearTimeout(t);
   }, [browserResult]);
 
-  useEffect(() => {
-    const h = (e) => {if (e.key === 'Escape' && step === 'default') onClose?.();};
-    document.addEventListener('keydown', h);
-    return () => document.removeEventListener('keydown', h);
-  }, [step, onClose]);
-
   if (!isOpen) return null;
 
   const handleSignIn = () => {
@@ -54,15 +48,19 @@ function LoginModal({ isOpen, onClose, onSuccess, initialStep, onOpenBrowser, br
   // .v3-gate-card), on the kit's frost scrim and gate layer (review round 1), in the site's language
   // like the welcome behind it.
   const card = (children) => <div className="v3-gate-card">{children}</div>;
-
+  // The account check (ROB-21388) blocks the home screen: no close button and no Esc there.
+  const closable = step !== 'gate' && step !== 'confirm';
 
   return (
     <div className="v2-overlay v2-overlay--gate" style={{ flexDirection: 'column' }}>
       <div className="v2-scrim v2-scrim--frost" aria-hidden="true" />
+      {/* The kit's focus hook (shared.jsx DialogPanel, review round 1): focus moves in, Tab stays
+         inside, Esc closes wherever the close button shows, focus returns on close. */}
+      <DialogPanel onEscape={closable ? () => onClose?.() : undefined} label="Sign in to BlueAI" className="v3-login-panel">
 
       {/* Close: on every step, as in the live app (ai-worker LoginModal.tsx renders it always),
          except the account check (ROB-21388), which blocks the home screen. */}
-      {step !== 'gate' && step !== 'confirm' &&
+      {closable &&
       <button type="button" onClick={onClose} aria-label="Close" className="v2-icon-button"
       style={{ position: 'absolute', top: 'var(--v2-space-3)', right: 'var(--v2-space-3)' }}>
           <IcoXClose />
@@ -74,8 +72,10 @@ function LoginModal({ isOpen, onClose, onSuccess, initialStep, onOpenBrowser, br
         {/* ── DEFAULT: the free-credits sign-in (logged out, opened from the onboarding chat's
              Send). V3, Phase 5: the same gate card as the steps after it, in the welcome's
              language: the spark, the grant as one ink figure beside the credits glyph (the only
-             place its cyan to violet art lives), a muted tick line, the hairline, the solid ink
-             claim button, and the underlined terms link. No glow orb, no gradient text. The
+             place its cyan to violet art lives), the hairline, the solid ink claim button, and the
+             underlined terms link. No glow orb, no gradient text. Review round 1 (U21, proposed
+             to the PM): the grant is V2's real one, 2,000 AI credits every day (index.html
+             DAILY_GRANT), not a one-time 500 "enough for ~10 tasks". The
              three older sign-in layouts (credits-first, minimal, classic) were unreachable and are
              deleted; this is the only default step. ── */}
         {step === 'default' && card(
@@ -85,21 +85,17 @@ function LoginModal({ isOpen, onClose, onSuccess, initialStep, onOpenBrowser, br
             <div>
               <div className="v3-cr-figure">
                 <img src="assets/Credits.svg" alt="" className="v3-cr-glyph" />
-                <span className="v2-text-display">500</span>
+                <span className="v2-text-display">2,000</span>
               </div>
-              <p className="v2-text-title-lg" style={{ marginTop: 'var(--v2-space-2)' }}>Free AI Credits</p>
-              <p className="v2-text-body-sm v3-gate-body">on your first login</p>
+              <p className="v2-text-title-lg" style={{ marginTop: 'var(--v2-space-2)' }}>AI credits every day</p>
             </div>
-            <p className="v3-signin-tick">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5" /></svg>
-              Enough for ~10 tasks
-            </p>
             <hr className="v2-divider" />
             <button type="button" onClick={handleSignIn} className="v2-button v2-button--primary v2-button--lg v2-button--full">
               Sign in to claim
               <svg className="v2-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg>
             </button>
-            <button type="button" className="v2-link v2-link--muted v3-signin-terms"><span className="v2-link-text">Terms &amp; Conditions</span></button>
+            {/* The legal page the terms sheet links (terms_sheet.jsx TERMS_URL), in a new tab. */}
+            <a href="/onblue/terms" target="_blank" rel="noopener" className="v2-link v2-link--muted v3-signin-terms"><span className="v2-link-text">Terms &amp; Conditions</span></a>
           </>
         )}
 
@@ -123,11 +119,10 @@ function LoginModal({ isOpen, onClose, onSuccess, initialStep, onOpenBrowser, br
               <span className="v2-banner-text">Use the account you applied with</span>
             </div>
             <hr className="v2-divider" />
-            <button type="button" onClick={handleSignIn} className="v2-link v2-link--muted" style={{ fontSize: 'var(--v2-text-13)' }}>
-              <span className="v2-link-text">Not seeing the browser tab?</span>
-            </button>
-            <button type="button" onClick={handleSignIn} className="v2-button v2-button--primary v2-button--lg">
-              Try again
+            {/* One way back to the browser (review round 1, U20): the link and the button that did
+               the same thing are one secondary button. */}
+            <button type="button" onClick={handleSignIn} className="v2-button v2-button--secondary v2-button--lg">
+              Open the browser again
             </button>
           </>
         )}
@@ -172,6 +167,7 @@ function LoginModal({ isOpen, onClose, onSuccess, initialStep, onOpenBrowser, br
         )}
 
       </div>
+      </DialogPanel>
     </div>);
 
 }

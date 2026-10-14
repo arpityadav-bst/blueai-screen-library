@@ -110,6 +110,9 @@
 .v3-set-label { margin: 0; color: var(--v2-ink); font-size: var(--v2-text-14); font-weight: var(--v2-weight-medium); letter-spacing: var(--v2-tracking-label); }
 .v3-set-actions { display: flex; align-items: center; justify-content: flex-end; gap: var(--v2-space-2); margin-top: var(--v2-space-4); }
 .v3-set-actions--start { justify-content: flex-start; }
+/* Remove's inline confirm (byok_settings.jsx): an inset card under the key, its actions 12 below. */
+.v3-set-confirm { margin-top: var(--v2-space-3); }
+.v3-set-confirm .v3-set-actions { margin-top: var(--v2-space-3); }
 .v3-set-saved { display: inline-flex; align-items: center; gap: var(--v2-space-15); margin-right: auto; color: var(--v2-success-ink); font-size: var(--v2-text-13); }
 .v3-set-saved svg { color: var(--v2-success); }
 .v3-set-notice { margin-bottom: var(--v2-space-3); }
@@ -174,6 +177,4 @@
 .v3-ob-hi { margin: var(--v2-space-4) 0 var(--v2-space-1); color: var(--v2-ink-3); font-size: var(--v2-text-16); line-height: var(--v2-leading-body); text-align: center; }
 .v3-ob .v3-rows { margin-top: var(--v2-space-6); }
 .v3-ob-more { max-width: var(--v2-measure); margin: var(--v2-space-5) auto 0; color: var(--v2-ink-3); font-size: var(--v2-text-13); line-height: var(--v2-leading-body); text-align: center; }
-.v3-signin-tick { display: inline-flex; align-items: center; gap: var(--v2-space-15); margin: 0; color: var(--v2-ink-3); font-size: var(--v2-text-13); }
-.v3-signin-tick svg { color: var(--v2-ink-4); }
 .v3-signin-terms { font-size: var(--v2-text-12); }

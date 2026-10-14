@@ -110,13 +110,20 @@
     }
     .ba-newchat:hover { border-color: var(--v2-line-hover); background-image: linear-gradient(var(--v2-wash-hover), var(--v2-wash-hover)); }
     .ba-newchat:active { background-image: linear-gradient(var(--v2-wash-press), var(--v2-wash-press)); }
-    /* Report issue keeps its warning glyph in the danger ink, also while its row is hovered. */
-    .v2-menu-icon.ba-menu-icon--danger, .v2-menu-item:hover .ba-menu-icon--danger { color: var(--v2-danger-ink); }
+    /* Report issue keeps its warning glyph in the danger ink, also while its row is hovered (the kit
+       menu colours the glyph's wrapper; this class sits on the glyph itself, so it wins). */
+    .ba-menu-icon--danger { color: var(--v2-danger-ink); }
   </style>
 </head>
 <body>
 <div id="root"></div>
 
+<!-- The design system's focus and menu toolkit (review round 1): the icon set (the menu's external
+     glyph), the dialog focus hook (V2Kit.useFocusTrap, useSwapFocus) and the Menu. They read React
+     only, and V3 reads them at render time. -->
+<script type="text/babel" src="../blueai-product-v2-ds/kit/icons.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/kit/dialog.jsx"></script>
+<script type="text/babel" src="../blueai-product-v2-ds/kit/menu.jsx"></script>
 <!-- Shared components (must load first) -->
 <script type="text/babel" src="blueai/logo.jsx"></script>
 <script type="text/babel" src="blueai/shared.jsx"></script>
@@ -143,6 +150,7 @@
      siblings at render time, so this order is for readability, not correctness. -->
 <script type="text/babel" src="blueai/chat_feedback.jsx"></script>
 <script type="text/babel" src="blueai/chat_bubbles.jsx"></script>
+<script type="text/babel" src="blueai/chat_composer.jsx"></script>
 <!-- BlueAI worker, end to end (ROB-21350): the Always ask / Automatic setting, its mode sheet and
      consent dialog (exposes window.AgentPermissions); the onboarding + daily-run scripts
      (exposes window.WorkerFlow); and their chat cards (exposes window.WorkerCards). All three
@@ -157,8 +165,10 @@
 <script type="text/babel" src="blueai/chat_product.jsx"></script>
 <!-- Chat History in-app screen (exposes window.ChatHistory) -->
 <script type="text/babel" src="blueai/history.jsx"></script>
-<!-- Profile in-app screen + Logout modal (exposes window.Profile) -->
+<!-- Profile in-app screen + the Sign out confirm (exposes window.Profile) -->
 <script type="text/babel" src="blueai/profile.jsx"></script>
+<!-- The Help menu's Report issue dialog (exposes window.Help) -->
+<script type="text/babel" src="blueai/help.jsx"></script>
 <!-- Screen components -->
 <script type="text/babel" src="blueai/jobs.jsx"></script>
 <script type="text/babel" src="blueai/schedule.jsx"></script>
@@ -268,58 +278,50 @@ const CONFIG = {
 };
 
 // Live header (newer than the export, matched to the live app screenshots):
-// credits pill · New chat · "?" help menu (FAQ / Report issue) · kebab (Chat history / Profile / Earnings ↗ / Logout).
+// credits pill · New chat · "?" help menu (FAQ / Report issue) · kebab (Chat history / Profile / Earnings ↗ / Sign out).
 // Logged-out (onboarding): strips to just the brand lockup, no credits/New Chat/help/kebab, matching the cold start.
-function ProductTopBar({ credits, lowDot, isLoggedIn, onNewChat, onOpenHistory, onOpenCredits, onOpenProfile, onLogout }) {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [helpOpen, setHelpOpen] = useState(false);
-  const menuRef = useRef(null);
-  const helpRef = useRef(null);
-  useEffect(() => {
-    const h = (e) => {
-      if (menuRef.current && !menuRef.current.contains(e.target)) setMenuOpen(false);
-      if (helpRef.current && !helpRef.current.contains(e.target)) setHelpOpen(false);
-    };
-    if (menuOpen || helpOpen) document.addEventListener('mousedown', h);
-    return () => document.removeEventListener('mousedown', h);
-  }, [menuOpen, helpOpen]);
-
-  const ClockIcon = <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="v2-icon v2-menu-icon"><circle cx="12" cy="12" r="9" /><polyline points="12 7 12 12 15 14" /></svg>;
-  const PersonIcon = <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="v2-icon v2-menu-icon"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>;
-  const LogoutIcon = <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="v2-icon v2-menu-icon"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>;
+function ProductTopBar({ credits, lowDot, isLoggedIn, onNewChat, onOpenHistory, onOpenCredits, onOpenProfile, onSignOut, onReportIssue }) {
+  const Menu = window.V2Kit.Menu;
+  const ClockIcon = <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="v2-icon"><circle cx="12" cy="12" r="9" /><polyline points="12 7 12 12 15 14" /></svg>;
+  const PersonIcon = <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="v2-icon"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>;
+  const SignOutIcon = <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="v2-icon"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>;
   /* FAQ replaces the Discord entry (PM, 2026-09-10). It carries the SAME question-mark glyph as the
      help trigger that opens this menu (Appy, 2026-09-10). I had drawn a book instead, reasoning that
      repeating the trigger's own icon inside the menu would just echo the control you pressed; the
      designer's call is that the echo is the point, since it ties the entry to the help affordance.
-     Paths are identical to the trigger's, drawn at the menu's 16px with the row's ink-3 (every
-     menu glyph takes its colour from the kit's .v2-menu-icon), so it sits in the same outline family
-     as ClockIcon, PersonIcon and LogoutIcon. The trigger turns ink on the press wash while its menu
-     is open; a menu row has no such state. The Discord logo this replaces was the only filled, brand-coloured glyph here. */
-  const FaqIcon = <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="v2-icon v2-menu-icon"><circle cx="12" cy="12" r="10" /><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>;
-  const WarnIcon = <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="v2-icon v2-menu-icon ba-menu-icon--danger"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>;
+     Paths are identical to the trigger's, drawn at the menu's 16px with the row's ink-3 (the kit's
+     menu wraps every glyph in .v2-menu-icon, which colours it), so it sits in the same outline family
+     as the other rows. The Discord logo this replaces was the only filled, brand-coloured glyph here. */
+  const FaqIcon = <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="v2-icon"><circle cx="12" cy="12" r="10" /><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>;
+  const WarnIcon = <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="v2-icon ba-menu-icon--danger"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>;
   /* Earnings row (Abhisht + Ashish, 2026-09-30): the way from the app to the partner dashboard on
      the onBlue site (earnings + cash out, program progress, payout rules). Labelled "Earnings"
      rather than "Dashboard": the page carries more than money, but money is what users open it
-     for, and the label names the motive. It is the one EXTERNAL entry in this menu, so it is an <a>
-     that opens a new tab and carries a trailing arrow-out glyph the in-app rows don't have. The
-     leading icon is a dollar sign in a circle (it was a layout-dashboard grid while the row was
-     called Dashboard; the glyph follows the label), drawn in the same outline family
-     as ClockIcon / PersonIcon / LogoutIcon, and echoing the "$" tile on the BlueAI worker card.
-     Not a wallet: "Wallet" is the crypto concept the product is dropping. Sits after Profile
-     (account things together), before Logout (which stays last). Destination is the deployed
-     Vesper page as a stand-in for the real dashboard URL, which the product team owns. */
-  const EarningsIcon = <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="v2-icon v2-menu-icon"><circle cx="12" cy="12" r="10" /><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" /><line x1="12" y1="18" x2="12" y2="6" /></svg>;
-  const ExternalIcon = <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="v2-icon v2-menu-ext"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><polyline points="15 3 21 3 21 9" /><line x1="10" y1="14" x2="21" y2="3" /></svg>;
-  const DASHBOARD_URL = 'https://blueai-screen-library.vercel.app/experiments/onblue-vesper/apply.html';
+     for, and the label names the motive. It is the one EXTERNAL entry in this menu, so it opens a
+     new tab and carries the kit menu's trailing arrow-out glyph. The leading icon is a dollar sign
+     in a circle, drawn in the same outline family as the other rows, and echoing the "$" tile on
+     the BlueAI worker card. Not a wallet: "Wallet" is the crypto concept the product is dropping.
+     Sits after Profile (account things together), before Sign out (which stays last). Destination:
+     the one dashboard link (shared.jsx BlueAILinks, review round 1), the deployed Vesper page as a
+     stand-in for the real dashboard URL, which the product team owns. */
+  const EarningsIcon = <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="v2-icon"><circle cx="12" cy="12" r="10" /><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" /><line x1="12" y1="18" x2="12" y2="6" /></svg>;
 
   /* V3 Phase 1, the Target top bar (design-md 30), on the kit since review round 1: 52 tall, surface,
      one hairline, no shadow (.v2-topbar); no logo (the title bar already carries it, Appy
      2026-10-14), so the actions sit at the end; the kit's credits chip (the low dot in the danger
      ink); New chat as a quiet pill sharing the chip's line and ink; Help and More as the kit's 32px
-     icon buttons, ink on the press wash while their menu is open, opening the kit's menu
-     (.v2-float-panel .v2-menu). Every handler, menu row and the Earnings link are unchanged. */
-  const closeHelp = () => setHelpOpen(false);
-  const menuCls = 'v2-float-panel v2-menu is-down is-end';
+     icon buttons, ink on the press wash while their menu is open. Both menus are the kit's Menu
+     (kit/menu.jsx, review round 1, U17): the first item takes focus on open, arrows, Home and End
+     move, Esc and Tab close and focus returns to the button. No dead rows (U16): FAQ opens the
+     site's FAQ, Report issue opens its dialog, Sign out its confirm. */
+  const helpItems = [
+    { icon: FaqIcon, label: 'FAQ', href: window.BlueAILinks.faq, external: true },
+    { icon: WarnIcon, label: 'Report issue', onSelect: onReportIssue }];
+  const moreItems = [
+    { icon: ClockIcon, label: 'Chat history', onSelect: onOpenHistory },
+    { icon: PersonIcon, label: 'Profile', onSelect: onOpenProfile },
+    { icon: EarningsIcon, label: 'Earnings', href: window.BlueAILinks.dashboard, external: true },
+    { icon: SignOutIcon, label: 'Sign out', onSelect: onSignOut }];
   return (
     <header className={'v2-topbar' + (isLoggedIn ? '' : ' v2-topbar--signed-out')}>
       {isLoggedIn &&
@@ -339,30 +341,14 @@ function ProductTopBar({ credits, lowDot, isLoggedIn, onNewChat, onOpenHistory, 
           New chat
         </button>
         <div className="ba-topbar-icons">
-          {/* Help (?) menu */}
-          <div ref={helpRef} className="v2-float">
-            <button type="button" className="v2-icon-button" aria-label="Help" aria-haspopup="menu" aria-expanded={helpOpen} onClick={() => { setHelpOpen((v) => !v); setMenuOpen(false); }}>
+          <Menu label="Help" items={helpItems} trigger={(t) =>
+            <button type="button" className="v2-icon-button" aria-label="Help" {...t}>
               <svg className="v2-icon v2-icon--20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" /><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>
-            </button>
-            {helpOpen &&
-              <div className={menuCls} role="menu">
-                <button type="button" role="menuitem" className="v2-menu-item" onClick={closeHelp}>{FaqIcon}<span className="v2-menu-label">FAQ</span></button>
-                <button type="button" role="menuitem" className="v2-menu-item" onClick={closeHelp}>{WarnIcon}<span className="v2-menu-label">Report issue</span></button>
-              </div>}
-          </div>
-          {/* Kebab menu */}
-          <div ref={menuRef} className="v2-float">
-            <button type="button" className="v2-icon-button" aria-label="More options" aria-haspopup="menu" aria-expanded={menuOpen} onClick={() => { setMenuOpen((v) => !v); setHelpOpen(false); }}>
+            </button>} />
+          <Menu label="More options" items={moreItems} trigger={(t) =>
+            <button type="button" className="v2-icon-button" aria-label="More options" {...t}>
               <svg className="v2-icon v2-icon--20" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="1.5" /><circle cx="12" cy="12" r="1.5" /><circle cx="12" cy="19" r="1.5" /></svg>
-            </button>
-            {menuOpen &&
-              <div className={menuCls} role="menu">
-                <button type="button" role="menuitem" className="v2-menu-item" onClick={() => { setMenuOpen(false); onOpenHistory && onOpenHistory(); }}>{ClockIcon}<span className="v2-menu-label">Chat history</span></button>
-                <button type="button" role="menuitem" className="v2-menu-item" onClick={() => { setMenuOpen(false); onOpenProfile && onOpenProfile(); }}>{PersonIcon}<span className="v2-menu-label">Profile</span></button>
-                <a role="menuitem" className="v2-menu-item" href={DASHBOARD_URL} target="_blank" rel="noopener" onClick={() => setMenuOpen(false)}>{EarningsIcon}<span className="v2-menu-label">Earnings</span>{ExternalIcon}</a>
-                <button type="button" role="menuitem" className="v2-menu-item" onClick={() => { setMenuOpen(false); onLogout && onLogout(); }}>{LogoutIcon}<span className="v2-menu-label">Logout</span></button>
-              </div>}
-          </div>
+            </button>} />
         </div>
       </div>}
     </header>);
@@ -432,15 +418,8 @@ function AICreditsScreen({ credits, keyAdded, byokOn, keyInfo, onManageByok }) {
 
   return (
     <div className="v2-anim-fade-up v3-screen">
-      <ScreenHead title="AI Credits">
-        {/* Refresh: Lucide rotate-cw, whose arrowhead meets its stroke at one point (2026-09-09). */}
-        <button type="button" aria-label="Refresh" className="v2-icon-button">
-          <svg className="v2-icon v2-icon--20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" />
-            <path d="M21 3v5h-5" />
-          </svg>
-        </button>
-      </ScreenHead>
+      {/* No Refresh button (review round 1, U16): it did nothing, and the balance is live. */}
+      <ScreenHead title="AI Credits" />
 
       {byokActive ? (
         /* Running on the user's own key. Reports the state and routes to Settings, which is where
@@ -570,7 +549,8 @@ function App() {
   const [creditsOpen, setCreditsOpen] = useState(false); // AI Credits balance screen
   const [historyOpen, setHistoryOpen] = useState(false); // Chat History in-app screen
   const [profileOpen, setProfileOpen] = useState(false); // Profile in-app screen
-  const [logoutOpen, setLogoutOpen] = useState(false);   // Logout confirm modal
+  const [logoutOpen, setLogoutOpen] = useState(false);   // Sign out confirm modal
+  const [reportOpen, setReportOpen] = useState(false);   // Help > Report issue dialog
   const [booting, setBooting] = useState(true);           // cold-start boot splash
   const [homeReady, setHomeReady] = useState(false);      // skeleton → real content
   const [keyAdded, setKeyAdded] = useState(false);         // has the user configured their own key (any geo)
@@ -786,6 +766,14 @@ function App() {
   const openProfile = () => { setCreditsOpen(false); setHistoryOpen(false); setProfileOpen(true); };
   useEffect(() => { window.__openChatHistory = openHistory; return () => { delete window.__openChatHistory; }; }, []);
 
+  /* Sign out signs out (review round 1, U11): back to the logged-out welcome, every pushed screen
+     closed. The shared session goes with it, so App Player's account is signed out too (the same
+     rule as Switch account, account_gate.jsx) and the next launch shows the sign-in page. */
+  const signOut = () => {
+    setLogoutOpen(false); setProfileOpen(false); setHistoryOpen(false); setCreditsOpen(false); setActiveTab('chat');
+    setIsLoggedIn(false); setOnbPhase('welcome'); setSeed(null); setPendingMessage(null);
+    setPlayerAcct('out'); setBrowserResult(null); setSessionKey((k) => k + 1);
+  };
   const handleNewChat = () => { setSeed(null); setSessionKey((k) => k + 1); setActiveTab('chat'); setCreditsOpen(false); setHistoryOpen(false); setProfileOpen(false); setLogoutOpen(false); };
   // Onboarding sign-in completes → the message that opened the gate auto-sends in the now
   // logged-in DEFAULT flow (so the conversation starts and the category home is skipped,
@@ -885,7 +873,9 @@ function App() {
   const productWindow = (
     <div className={'ba-win' + (winJustIn ? ' pscene-win-in' : '')}>
       <ProductTitlebar onClose={() => setWinOpen(false)} />
-      <div className="ba-app">
+      {/* data-v2-bounds: this is the product window, so the kit's dialog focus hook makes everything
+         in it inert under an open overlay, and the kit's menus fit inside it (review round 1). */}
+      <div className="ba-app" data-v2-bounds="">
       {onboardingWelcome ? (
         sessionMode === 'moneymaker' ? (
           <window.MoneyMaker.MoneyMakerWelcome onSignIn={handleMoneyMakerSignIn} />
@@ -904,7 +894,8 @@ function App() {
         onOpenCredits={() => { setHistoryOpen(false); setProfileOpen(false); setCreditsOpen(true); }}
         onOpenHistory={openHistory}
         onOpenProfile={openProfile}
-        onLogout={() => setLogoutOpen(true)} />
+        onSignOut={() => setLogoutOpen(true)}
+        onReportIssue={() => setReportOpen(true)} />
 
       {profileOpen ? (
         <ProfileScreen onSignOut={() => setLogoutOpen(true)} />
@@ -945,7 +936,8 @@ function App() {
       <LogoutModal
         isOpen={logoutOpen}
         onCancel={() => setLogoutOpen(false)}
-        onConfirm={() => { setLogoutOpen(false); setProfileOpen(false); setActiveTab('chat'); }} />
+        onConfirm={signOut} />
+      <window.Help.ReportIssueDialog isOpen={reportOpen} onClose={() => setReportOpen(false)} />
 
       {/* The mode sheet, and the "Run jobs automatically?" confirm that opens over it. One
          instance of each here, inside .ba-app, so both are scoped to the product window whichever
@@ -1089,7 +1081,7 @@ function App() {
               if (v !== 'worker') { switchSession('moneymaker'); setTermsMode('firstrun'); return; }
               setSessionMode('moneymaker'); setIsLoggedIn(true); setTermsMode('off'); setShowLoginModal(false); setBrowserOpen(false); setOnbPhase('welcome');
               setSeed(null); setActiveTab('chat'); setCreditsOpen(false); setHistoryOpen(false); setProfileOpen(false);
-              setWorkerDay('day1'); window.WorkerFlow.setOnboarded(false); window.AgentPermissions.reset();
+              setWorkerDay('day1'); window.WorkerFlow.setOnboarded(false); window.AgentPermissions.reset(); window.WorkerDayDone.setToday(null);
               setSessionKey((k) => k + 1);
             };
             const rows = [
@@ -1138,7 +1130,7 @@ function App() {
                 set={(v) => window.AgentPermissions.setMode('youtube', v)} />);
               rows.push(<PreviewRow key="workerday" label="Worker" opts={[['Day 1', 'day1'], ['Returning', 'returning'], ['Next day', 'next']]} val={workerDay}
                 set={(v) => {
-                  setWorkerDay(v); setSeed(null); setToast(null);
+                  setWorkerDay(v); setSeed(null); setToast(null); window.WorkerDayDone.setToday(null);
                   if (v === 'day1') { window.WorkerFlow.setOnboarded(false); window.AgentPermissions.reset(); }
                   else { window.WorkerFlow.setOnboarded(true); if (v === 'next') setDailyRunKey((k) => k + 1); }
                   setSessionKey((k) => k + 1);

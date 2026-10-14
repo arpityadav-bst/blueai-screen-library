@@ -4,6 +4,10 @@
 //   on, no key → "No API key configured" notice + "Add a provider" dropdown
 //   on, provider picked → API key input + hint + Cancel / Validate & Save
 //   on, key saved → provider + masked key + Remove + AI Model dropdown
+//   off, key saved → paused: provider + masked key + Remove, and a note that credits are in use
+// Review round 1 (U12, the kit's ByokPanel, design-md 49 and 52): the switch only pauses the key,
+// it never deletes it; Remove asks first, inline ("Remove your Anthropic key? ...", Keep key /
+// Remove key, the commit the solid primary named for what is lost).
 // Saved key state lives in App (shared with the credits screen + out-of-credits popup);
 // the in-progress provider/key entry is local. Exposes window.Byok.ByokSettings.
 //
@@ -29,12 +33,17 @@
     const [savedModel, setSavedModel] = useState((keyInfo && keyInfo.model) || 'claude-haiku-4-5');
     const rootRef = useRef(null);
     const [glow, setGlow] = useState(false);
+    const [confirmRemove, setConfirmRemove] = useState(false);
+    // Remove and its confirm swap in place, so focus follows to the first button now showing (Keep
+    // key, or Remove again): the kit's in-place swap (V2Kit.useSwapFocus, design-md 09).
+    const keyRow = useRef(null);
+    window.V2Kit.useSwapFocus(() => keyRow.current && keyRow.current.querySelector('button'), confirmRemove);
 
     // Routed here from the out-of-credits popup / credits screen → scroll into view + pulse.
     useEffect(() => {
       if (!highlight) return;
       const el = rootRef.current;
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      if (el) el.scrollIntoView({ behavior: window.V2Kit.reducedMotion() ? 'auto' : 'smooth', block: 'center' });
       setGlow(true);
       const t = setTimeout(() => setGlow(false), 1900);
       return () => clearTimeout(t);
@@ -53,28 +62,37 @@
             <h2 className="v2-text-title v3-set-title">Bring Your Own Key</h2>
             <p className="v2-text-body-sm v3-set-desc">Use your own API key from OpenAI, Anthropic, or another provider. Usage is billed directly to your provider account, with no BlueAI credits consumed.</p>
           </div>
-          <Toggle enabled={on} label="Toggle Bring Your Own Key" onToggle={() => { if (on) { setOn(false); onRemove(); setPicked(null); setKeyVal(''); } else { setOn(true); } }} />
+          <Toggle enabled={on} label="Toggle Bring Your Own Key" onToggle={() => { if (on) { setOn(false); setPicked(null); setKeyVal(''); } else { setOn(true); } }} />
         </div>
 
-        {on && keyAdded && (
+        {keyAdded && (
           <div className="v3-set-rows">
-            <div className="v3-set-row">
+            <div ref={keyRow} className="v3-set-row">
               <div className="v3-set-line">
                 <div style={{ minWidth: 0 }}>
                   <p className="v3-set-label">{provider}</p>
                   <p className="v2-text-meta v3-set-hint v3-mono">{masked}</p>
                 </div>
-                <button type="button" onClick={onRemove} className="v2-button v2-button--danger">Remove</button>
+                {!confirmRemove && <button type="button" onClick={() => setConfirmRemove(true)} className="v2-button v2-button--danger">Remove</button>}
               </div>
+              {!on && !confirmRemove && <p className="v2-text-meta v3-set-hint">Your key is saved but not in use, so AI credits are used.</p>}
+              {confirmRemove &&
+                <div className="v2-card v2-card--inset v3-set-confirm" role="group" aria-labelledby="byok-remove-q">
+                  <p id="byok-remove-q" className="v2-text-body-sm">Remove your {provider} key? BlueAI goes back to using your AI credits.</p>
+                  <div className="v3-set-actions">
+                    <button type="button" onClick={() => setConfirmRemove(false)} className="v2-button v2-button--secondary">Keep key</button>
+                    <button type="button" onClick={() => { setConfirmRemove(false); onRemove(); }} className="v2-button v2-button--primary">Remove key</button>
+                  </div>
+                </div>}
             </div>
-            <div className="v3-set-row">
+            {on && <div className="v3-set-row">
               <div className="v3-set-line">
                 <p className="v3-set-label">AI Model</p>
                 <SelectField aria-label="AI Model" className="v3-field--md" value={savedModel} onChange={(e) => setSavedModel(e.target.value)}>
                   {(PROVIDERS[provider] ? PROVIDERS[provider].models : [savedModel]).map((m) => <option key={m} value={m}>{m}</option>)}
                 </SelectField>
               </div>
-            </div>
+            </div>}
           </div>
         )}
 

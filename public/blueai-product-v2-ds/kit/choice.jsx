@@ -5,7 +5,8 @@
 
    Switch     {checked, onChange(next), label (visible, or the accessible name with hideLabel),
               hideLabel, description, disabled, busy}  role=switch. Applies at once and never
-              destroys anything; busy holds it while a consent or check is pending.
+              destroys anything; busy holds it while a consent or check is pending. A bare switch
+              keeps a caller's aria-describedby (a row's state line, kit/permissions.jsx).
    Checkbox   {checked | defaultChecked, onChange(next, event), label, description, disabled,
               disabledReason, indeterminate, required, error, name, value}  a native checkbox
               under a drawn box.
@@ -57,7 +58,7 @@
     const Spinner = kit().Spinner;
     const control = (
       <button {...rest} id={sid} type="button" role="switch" aria-checked={!!checked}
-        aria-label={bare ? label : undefined} aria-describedby={description ? sid + '-d' : undefined}
+        aria-label={bare ? label : undefined} aria-describedby={description ? sid + '-d' : rest['aria-describedby']}
         aria-busy={busy ? 'true' : undefined} aria-disabled={blocked ? 'true' : undefined}
         className={cx('v2-switch', checked && 'is-on', busy && 'is-busy', bare && className)}
         onClick={function () { if (!blocked && onChange) onChange(!checked); }}>

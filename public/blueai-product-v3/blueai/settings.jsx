@@ -8,23 +8,40 @@
 // every section is an in-flow card (1px line, no shadow) with
 // the same head (title, one muted line) and the same row: label left in ink, control right, one
 // muted hint under, rows split by the hairline. An outside service (BlueStacks, Telegram) keeps its
-// mark in a sunken tile; BlueAI's own sections carry no icon. Form submits are the primary
-// button; routine actions (connect, unlink) are secondary.
+// mark in a sunken tile; BlueAI's own sections carry no icon. One solid action per open form (review
+// round 1): an always-shown card's save and routine actions (connect, unlink) are secondary.
 
 const { useState } = React;
 
 /* Worker (Arpit, 2026-10-14): the permanent home of the per-app mode outside chat. Its Apps
    group is the mode sheet's own list (agent_permissions.jsx's AppSwitchList), so a switch
-   flipped here and one flipped in chat are the same setting, and turning one on asks for consent. */
+   flipped here and one flipped in chat are the same setting, and turning one on asks for consent.
+   Review round 1 (U9): the daily run time onboarding asked for is shown and changed here too, the
+   Daily run row (the kit's Run time block, design-md 62, at its smallest: one select of the
+   onboarding's three answers); the home greeting reads the same value (worker_flow.jsx). */
 function WorkerCard() {
   const AppSwitchList = window.AgentPermissions.AppSwitchList;
+  const WF = window.WorkerFlow;
+  const [runTime, setRunTime] = useState(WF.getRunTime().id);
+  const pick = (e) => { setRunTime(e.target.value); WF.setRunTime(e.target.value); };
   return (
     <section data-section="worker-settings" className="v2-card v3-set-card">
       <h2 className="v2-text-title v3-set-title">Worker</h2>
       <div className="v3-set-rows">
-        <h3 className="v3-set-label">Apps</h3>
-        <p className="v2-text-body-sm v3-set-desc">Apps BlueAI can run on its own. New apps always start on Always ask.</p>
-        <AppSwitchList />
+        <div className="v3-set-row">
+          <div className="v3-set-line">
+            <label htmlFor="worker-run" className="v3-set-label">Daily run</label>
+            <SelectField id="worker-run" className="v3-field--md" value={runTime} onChange={pick} aria-describedby="worker-run-hint">
+              {WF.RUN_TIMES.map((t) => <option key={t.id} value={t.id}>{t.label}</option>)}
+            </SelectField>
+          </div>
+          <p id="worker-run-hint" className="v2-text-meta v3-set-hint">When BlueAI runs each day. A change starts with the next run.</p>
+        </div>
+        <div className="v3-set-row">
+          <h3 className="v3-set-label">Apps</h3>
+          <p className="v2-text-body-sm v3-set-desc">Apps BlueAI can run on its own. New apps always start on Always ask.</p>
+          <AppSwitchList />
+        </div>
       </div>
     </section>
   );
@@ -145,7 +162,7 @@ function AISettingsCard() {
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12" /></svg>
             Settings saved successfully.
           </span>}
-        <button type="button" onClick={save} className="v2-button v2-button--primary">Save settings</button>
+        <button type="button" onClick={save} className="v2-button v2-button--secondary">Save settings</button>
       </div>
     </section>
   );

@@ -9,7 +9,8 @@
             open, defaultOpen, onOpenChange, className}
             trigger is a render prop (receives {aria-haspopup, aria-expanded, aria-controls, onClick}
             to spread on a button) or an element (the props are cloned on). items:
-            [{icon, label, onSelect, href, external, danger, disabled, hint, className} | {separator}]
+            [{icon (a kit icon name, or an element), label, onSelect, href, external, danger, disabled, hint,
+            className} | {separator}]
             Keyboard: Enter, Space or Down opens on the first item, Up on the last; arrows move,
             Home / End jump, Esc closes and returns focus to the trigger, Tab closes.
    Popover  {trigger, placement, align, header, footnote, label, open, defaultOpen, onOpenChange,
@@ -151,7 +152,7 @@
       if (it.separator) return <div key={'sep' + i} role="separator" className="v2-menu-sep" />;
       const body = (
         <>
-          {it.icon ? <span className="v2-menu-icon"><Ic name={it.icon} /></span> : null}
+          {it.icon ? <span className="v2-menu-icon">{typeof it.icon === 'string' ? <Ic name={it.icon} /> : it.icon}</span> : null}
           <span className="v2-menu-label">{it.label}</span>
           {it.hint ? <span className="v2-menu-hint">{it.hint}</span> : null}
           {it.external ? <span className="v2-menu-ext"><Ic name="external" /><span className="v2-sr-only"> (opens in a new tab)</span></span> : null}

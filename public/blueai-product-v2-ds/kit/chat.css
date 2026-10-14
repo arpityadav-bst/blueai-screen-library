@@ -64,7 +64,7 @@
 .v2-notice-title { margin: 0; color: var(--v2-ink); font-weight: var(--v2-weight-semibold); }
 .v2-notice-text { margin: 0; }
 /* The edge takes the tone only when the run stopped: waiting on you, or failed (V3 restyle, 2026-10-14). */
-.v2-notice--fill { background: var(--v2-waiting-fill); border-color: var(--v2-attention-line); }
+.v2-notice--fill { background: var(--v2-waiting-fill); border-color: var(--v2-waiting-line); }
 .v2-notice--danger { border-color: var(--v2-danger-line); }
 .v2-notice-action { display: flex; flex-direction: column; gap: var(--v2-space-2); }
 .v2-dep > .v2-notice { width: var(--v2-bubble-max); max-width: 100%; }
@@ -117,8 +117,8 @@
 .v2-run-tick { display: inline-flex; flex-shrink: 0; }
 .v2-run-actions { display: flex; align-items: center; flex-wrap: wrap; gap: var(--v2-space-3); }
 
-/* Ask card (37): yellow only while it waits for you */
-.v2-ask-card { display: flex; flex-direction: column; gap: var(--v2-space-15); background: var(--v2-waiting-fill); border-color: var(--v2-attention-line); }
+/* Ask card (37): the attention fill and edge only while it waits for you (V3 review round 1) */
+.v2-ask-card { display: flex; flex-direction: column; gap: var(--v2-space-15); background: var(--v2-waiting-fill); border-color: var(--v2-waiting-line); }
 .v2-ask--neutral .v2-ask-card, .v2-ask.is-answered .v2-ask-card, .v2-ask.is-stopped .v2-ask-card, .v2-ask.is-expired .v2-ask-card { background: var(--v2-surface); border-color: var(--v2-line); }
 .v2-ask-title { margin: 0; color: var(--v2-ink); font-weight: var(--v2-weight-semibold); }
 .v2-ask-text { margin: 0; }
@@ -129,6 +129,8 @@
 .v2-ask-consequence { color: var(--v2-attention-ink); }
 .v2-ask-consequence strong { font-weight: var(--v2-weight-semibold); }
 .v2-ask-hint { color: var(--v2-ink-3); }
+/* Answered: the chosen chip stays as a selected pill, the answer's echo; it is a record, not a control. */
+.v2-ask-answer { pointer-events: none; }
 
 /* Feedback (39) */
 .v2-fb { display: flex; flex-direction: column; gap: var(--v2-space-2); }
@@ -161,10 +163,13 @@
   color: var(--v2-ink); font: inherit; font-size: var(--v2-text-14); line-height: var(--v2-leading-body);
 }
 .v2-composer-input::placeholder { color: var(--v2-ink-4); opacity: 1; }
-/* Read-only (running, waiting, locked), the placeholder is the instruction ('Answer with the buttons
-   above', the lock reason) on the sunken fill, where ink-4 is 4.42:1: it takes ink-3 (5.59:1). */
+/* Read-only (running, waiting, locked), the placeholder (the lock reason, when locked) sits on the
+   sunken fill, where ink-4 is 4.42:1: it takes ink-3 (5.59:1). */
 .v2-composer-box.is-readonly .v2-composer-input::placeholder { color: var(--v2-ink-3); }
 .v2-composer-input[aria-disabled="true"] { cursor: not-allowed; }
+/* What the run is doing while the field is read-only ('BlueAI is working…', 'Answer with the buttons
+   above.'): a muted line above the field, so the placeholder never carries status (V3 review round 1). */
+.v2-composer-status { margin: 0; padding: 0 var(--v2-space-1); color: var(--v2-ink-3); font-size: var(--v2-text-12); line-height: var(--v2-leading-snug); }
 .v2-sendstop {
   flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center;
   width: var(--v2-control-md); height: var(--v2-control-md); padding: 0;

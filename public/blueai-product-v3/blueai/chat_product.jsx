@@ -1,8 +1,7 @@
 /* BlueAI: Product chat screen: the conversation, the composer, and the send rules.
    Home = the greeting (ProductHomeScreen.IntroCard) over the category home. Conversation =
-   the task-progress + feedback engine ported from "ChatView Feedback.html".
-   V3: the composer is the kit's (kit/chat.css, design-md 38, review round 1): a radius-10 box, a
-   1.5px blue focus edge, the round 36px send (sunken with an ink-4 glyph while there is nothing to send), Stop the ghost.
+   the task-progress + feedback engine ported from "ChatView Feedback.html". The composer is drawn
+   by chat_composer.jsx (review round 1); the draft and the send / stop rules stay here.
 
    Bubbles, the step scripts, the feedback control and the category home were split into
    chat_bubbles.jsx / chat_feedback.jsx / product_home.jsx (2026-08-10) when this file hit 648
@@ -29,6 +28,7 @@
   const AskBubble = (p) => React.createElement(window.WorkerCards.AskBubble, p);
   const DayDoneCard = (p) => React.createElement(window.WorkerDayDone.DayDoneCard, p);   // the card that closes a daily run (sheet row 2)
   const DayDoneOverlay = (p) => React.createElement(window.WorkerDayDone.DayDoneOverlay, p);   // the centre "run complete" moment over the whole window
+  const Composer = (p) => React.createElement(window.ChatComposer.Composer, p);   // the composer (chat_composer.jsx)
 
   /* ───────── Merged chat screen: ProductHome (empty) → task-progress + feedback (active) ───────── */
   function ChatScreen({ sessionKey, seed, loading, zeroCredits, onNoCredits, isOnboarding, sessionMode = 'default', onNeedLogin, showStates, bsInstalled = true, onBsInstalled, scheduledOoc = false, dailyRunKey = 0, onJobWaiting, permUi = 'ribbon', onDayDone }) {
@@ -99,10 +99,13 @@
       return () => clearTimeout(t);
     }, [jobWaiting]);
     useEffect(() => () => { if (onJobWaiting) onJobWaiting(false); }, []);
-    // A scheduled run's day-done card tells the desktop, which raises the Windows notification.
+    // A daily run's day-done step records how today closed (the 20-day strip on the worker home and
+    // the Jobs tab reads it); a scheduled run's also tells the desktop, which raises the notification.
     useEffect(() => {
       const s = convo[visible - 1];
-      if (s && s.scheduled && (s.role === 'daydone' || s.card === 'daydone') && onDayDone) onDayDone(s.end);
+      if (!s || (s.role !== 'daydone' && s.card !== 'daydone')) return;
+      window.WorkerDayDone.setToday(s.end);
+      if (s.scheduled && onDayDone) onDayDone(s.end);
     }, [visible]);
 
     // Append steps and schedule their reveal. Shared by run() and the post-install resume.
@@ -138,14 +141,23 @@
     };
 
     // Stop a running task at any time: cancel pending steps, drop a trailing "working"
-    // indicator, keep the partial output, and re-enable the composer to recalibrate.
+    // indicator, keep the partial output, and re-enable the composer to recalibrate. Stopped while
+    // a question waits, the thread says what that cost (review round 1, U10): the job ask's day goes
+    // untaken, so today doesn't count.
     const stop = () => {
-      if (awaiting) setAnswers((p) => ({ ...p, ['k' + awaitingIdx]: 'stopped' }));
+      const asked = awaiting ? convo[awaitingIdx] : null;
+      if (asked) setAnswers((p) => ({ ...p, ['k' + awaitingIdx]: 'stopped' }));
       timers.current.forEach(clearTimeout); timers.current = [];
       let end = visible;
       while (end > 0 && convo[end - 1] && convo[end - 1].role === 'thinking') end--;
-      setConvo(convo.slice(0, end));
-      setVisible(end);
+      const kept = convo.slice(0, end);
+      if (asked) {
+        const job = asked.id === 'job' || asked.id === 'retry';
+        if (asked.id === 'job') window.WorkerDayDone.setToday('declined');
+        kept.push({ role: 'status', content: job ? 'Run stopped. Today’s job wasn’t taken.' : 'The run stopped before you answered.', d: 0 });
+      }
+      setConvo(kept);
+      setVisible(kept.length);
     };
     const feedbackFor = (idx, step) => {
       if (step.tone !== 'success') return null; // PM config: success only (onFailed = false)
@@ -160,7 +172,7 @@
     const renderStep = (step, i) => {
       if (step.role === 'user') return <UserBubble key={i} content={step.content} />;
       if (step.role === 'status') return <StatusBubble key={i} content={step.content} />;
-      if (step.role === 'warning') return <WarningBubble key={i} title={step.title} content={step.content} />;
+      if (step.role === 'warning') return <WarningBubble key={i} title={step.title} content={step.content} refill={step.refill} />;
       /* "Needs BlueStacks" → click Get BlueStacks → an inline progress card, no modal (designer,
          2026-08-10). Clicking pushes the NEXT step into this same conversation rather than
          opening anything outside it; when that step's own timer finishes, it tells the parent to
@@ -180,18 +192,6 @@
       return <FinalBubble key={i} msg={step} feedback={feedbackFor(i, step)} />;
     };
 
-    /* ROB-21350 Version 1: the Mode chip sits in the composer's bottom bar in every signed-in chat
-       (product level), with Send moving down beside it. Version 2 keeps the one-row composer. */
-    const modeChip = permUi === 'chatbox' && !isOnboarding;
-    const sendBtn = (
-      <button type="button" onClick={() => (running ? stop() : run())} disabled={!running && !draft.trim()} aria-disabled={!running && !draft.trim()}
-        aria-label={running ? 'Stop task' : 'Send message'} title={running ? 'Stop' : 'Send'}
-        className={'v2-sendstop ' + (running ? 'v2-sendstop--stop' : 'v2-sendstop--send')}>
-        {running
-          ? <svg className="v2-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2" fill="currentColor" /></svg>
-          : <svg className="v2-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><line x1="12" y1="19" x2="12" y2="5" /><polyline points="5 12 12 5 19 12" /></svg>}
-      </button>);
-
     return (
       <>
         <div style={{ flex: 1, overflow: 'hidden' }}>
@@ -209,7 +209,7 @@
                        "skill" -> "worker" 2026-09-09: the Skills tab is hidden now and this is the
                        one worker in the product, so "skill" framing no longer matches anything
                        else the product says. */
-                    ? (WF().isOnboarded() ? 'Welcome back. Your next run is at 11 am.' : "You're all set. The BlueAI worker is all it takes to start earning.")   // returning person: the time onboarding set (draft copy, sheet row 24)
+                    ? (WF().isOnboarded() ? 'Welcome back. ' + WF().getRunTime().next : "You're all set. The BlueAI worker is all it takes to start earning.")   // returning person: the run time onboarding set, or Settings > Worker's Daily run (draft copy, sheet row 24)
                     : isOnboarding
                     ? 'Just send your message whenever you are ready and see me do your work for you!'
                     : 'Your AI worker for BlueStacks. Pick a task below or just type what you need.'} />}
@@ -246,48 +246,9 @@
         </div>
 
         {/* Composer: hidden while the "Chat states" dev preview is on (nothing to type/send) */}
-        {!showStates && <div className={'v2-composer v3-composer' + (isOnboarding && !started ? ' is-focus' : '')}>
-          {/* Onboarding nudge: a pulsing "Send a message to watch BlueAI work" pill sits just
-             above the composer until a message is attempted (matches the design's OnboardingChat).
-             It floats, so it is the one thing here with a shadow; the blue dot is the live mark. */}
-          {isOnboarding && !started &&
-            <div className="v3-nudge">
-              <span className="v3-nudge-dot" aria-hidden="true" />
-              Send a message to watch BlueAI work
-            </div>}
-          {/* ROB-21350 Version 2: the Automatic ribbon, only once the worker has started in this chat. */}
-          {permUi === 'ribbon' && workerStarted && <window.AgentPermissions.AutoRibbon />}
-          {/* Focus shows as the blue edge + ring (:focus-within). The onboarding "type here" moment
-             borrows the same look (.is-focus on the composer) until the first message is attempted. */}
-          <div className={'v2-composer-box' + (modeChip ? ' v3-composer-box--stack' : '') + (running || scheduledOoc ? ' is-readonly' : '')}>
-            <textarea ref={taRef} className="v2-composer-input" value={draft} disabled={running || scheduledOoc} rows={1}
-              aria-label="Message BlueAI"
-              onChange={(e) => setDraft(e.target.value)}
-              onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); run(); } }}
-              placeholder={running ? (awaiting ? 'Please respond using the buttons above...' : 'BlueAI is working…')
-                /* Ordered AFTER the running check on purpose: while the scheduled run is still
-                   playing, "BlueAI is working…" is the honest label, and it only flips to the
-                   credits line at the moment the run actually dies.
-
-                   The field is DISABLED here, reversing the earlier call to keep it typeable
-                   (designer's spec, 2026-09-09). It is coherent because the two zero-balance
-                   moments live in different chats: this is the scheduled run's own chat, where
-                   nobody was typing and there is nothing to buy, so an input that accepts text
-                   would only invite a message the product cannot act on. Typing in the MAIN chat
-                   still routes to the out-of-credits popup through run()'s zeroCredits guard,
-                   which is where that dismiss-only card belongs. */
-                : scheduledOoc ? 'BlueAI is out of credits until tomorrow...'
-                /* MoneyMaker home is one card + a lot of air, the placeholder points back up at
-                   it so the composer reads as connected to the screen, not an orphan input.
-                   Copy renamed 2026-09-09 (MoneyMaker -> "BlueAI worker"); sessionMode value
-                   stays 'moneymaker' internally, this is a display-string-only change. */
-                : (sessionMode === 'moneymaker' && !started ? 'Ask anything, or run the BlueAI worker above' : 'Type your message...')}
-              />
-            {modeChip
-              ? <div className="v3-composer-bar"><window.AgentPermissions.ModeChip />{sendBtn}</div>
-              : sendBtn}
-          </div>
-        </div>}
+        {!showStates && <Composer taRef={taRef} draft={draft} setDraft={setDraft} running={running} awaiting={awaiting}
+          onSend={() => run()} onStop={stop} isOnboarding={isOnboarding} started={started} sessionMode={sessionMode}
+          permUi={permUi} workerStarted={workerStarted} scheduledOoc={scheduledOoc} />}
         {doneIdx > seenDone && <DayDoneOverlay step={convo[doneIdx]} onClose={() => setSeenDone(doneIdx)} />}
       </>);
   }

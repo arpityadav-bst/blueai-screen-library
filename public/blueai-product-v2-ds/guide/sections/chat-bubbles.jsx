@@ -108,7 +108,7 @@
             { part: 'Heads-up', token: '--v2-attention-ink', value: 'alert icon #8a6116 on white (was an orange bubble)', ref: ['chat.status.warning', 'chat.status.warning-icon'] },
             { part: 'Success', token: '--v2-success-ink', value: 'check icon #15803d (was a green bubble)', ref: 'chat.status.final-success' },
             { part: 'Fail', token: '--v2-danger-ink', value: 'x-circle icon #c03a40 (was a red bubble)', ref: 'chat.status.final-fail' },
-            { part: 'Needs input', token: '--v2-waiting-fill, --v2-attention-line', value: 'the surface, the attention ink at 32% as the edge, help icon #8a6116', ref: 'chat.status.final-needs-input' },
+            { part: 'Needs input', token: '--v2-waiting-fill, --v2-waiting-line', value: 'the attention tint, the attention ink as the edge, help icon #8a6116', ref: 'chat.status.final-needs-input' },
             { part: 'Title', token: '--v2-text-14, --v2-weight-semibold, --v2-ink', value: '14/600 ink, optional', ref: 'chat.status.ooc-title' },
             { part: 'Body', token: '--v2-text-14, --v2-ink-2', value: '14/1.5; one line per item when given lines' },
             { part: 'Copy', token: null, value: 'V2 preview examples, quoted', ref: ['chat.status.example-success', 'chat.status.example-warning', 'chat.status.example-needs-input', 'chat.status.example-fail'] },

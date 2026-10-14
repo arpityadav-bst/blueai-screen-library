@@ -77,7 +77,7 @@
             { part: 'Field', token: '--v2-text-14, --v2-leading-body, --v2-ink', value: '14/1.5 ink, placeholder ink-4 (4.77:1)', ref: 'chat.composer.textarea' },
             { part: 'Growth', token: null, value: '1 to 6 lines, then overflow-y auto', ref: ['chat.composer.autosize', 'chat.composer.clip'] },
             { part: 'Keys', token: null, value: 'Enter sends, Shift+Enter new line', ref: 'chat.composer.enter' },
-            { part: 'Placeholders', token: null, value: '"Type your message" / "BlueAI is working…" / "Answer with the buttons above" / the disabled reason, neutral ("You can’t send messages right now")', ref: ['chat.composer.placeholder-idle', 'chat.composer.placeholder-busy', 'chat.composer.placeholder-ooc'] },
+            { part: 'Placeholders', token: null, value: '"Type your message" / the disabled reason, neutral ("You can’t send messages right now"); while busy the status sits in a line above the field (.v2-composer-status 12 ink-3: "BlueAI is working…" / "Answer with the buttons above."), never the placeholder (V2 puts it there)', ref: ['chat.composer.placeholder-idle', 'chat.composer.placeholder-busy', 'chat.composer.placeholder-ooc'] },
             { part: 'Read-only', token: '--v2-surface-sunken, --v2-line', value: 'sunken fill, 10% edge (TextField read-only); running or awaiting: read-only (still focusable), Stop shown' },
           ]} />
         </G.Part>

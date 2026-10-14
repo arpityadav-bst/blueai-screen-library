@@ -9,8 +9,8 @@
 //   App Player signed in with another account      → silent sign-in, then the in-app gate
 //                                                     (account_gate.jsx). The browser never opens.
 //   App Player signed out                          → the browser, and these pages:
-//     bluestacks.ai holds a session → the continue page: "Sign in as <name>", ENROLLED or
-//       NOT ENROLLED, "Not you? Continue with a different ID".
+//     bluestacks.ai holds a session → the continue page: "Sign in as <name>", the program
+//       pill (In the program / Not in the program), "Not you? Continue with a different ID".
 //     no session → the site's own sign-in (site_signin.jsx) with Google's chooser forced
 //       (prompt=select_account), then straight back to the app. No continue page after an
 //       explicit pick; a wrong pick lands on the in-app gate.
@@ -26,10 +26,14 @@
     primary: { id: 'primary', name: 'Alex Rivera', first: 'Alex', email: 'alex.rivera@gmail.com', hue: '#156efe', enrolled: true },
     other:   { id: 'other',   name: 'Alex Rivera', first: 'Alex', email: 'alex@riveramedia.co',   hue: '#0b0b0d', enrolled: false }
   };
-  const PILL = { display: 'inline-block', marginTop: 12, fontSize: 11, fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', borderRadius: 999, padding: '5px 10px' };
-  const Chip = ({ enrolled }) => (enrolled
-    ? <span style={{ ...PILL, color: '#156efe', background: 'rgba(21,110,254,0.09)' }}>Enrolled</span>
-    : <span style={{ ...PILL, color: '#5f636b', background: 'rgba(0,0,0,0.055)' }}>Not enrolled</span>);
+  /* The program pill, the kit's badge (review round 1, family words): "In the program" on the
+     verified green with its dot, "Not in the program" neutral. Never blue: blue is focus,
+     selection and progress, not a status. */
+  const Chip = ({ enrolled }) => (
+    <span className={'v2-badge' + (enrolled ? ' v2-badge--success' : '')} style={{ marginTop: 'var(--v2-space-3)' }}>
+      {enrolled && <span className="v2-badge-dot" aria-hidden="true" />}
+      <span className="v2-badge-label">{enrolled ? 'In the program' : 'Not in the program'}</span>
+    </span>);
 
   /* The one control: Google's "Sign in as <name> / <email>" button, in the site's skin. */
   function SignInAs({ account, onClick, verb = 'Sign in as' }) {

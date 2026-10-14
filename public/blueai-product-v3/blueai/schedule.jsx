@@ -4,13 +4,14 @@
    danger trigger (red on hover only), its confirm the destructive commit; the one committing action
    per view is the primary (Create, and Create schedule on the empty state), so the header's New is
    secondary. Kit fields: label above, 1px line, blue edge and soft ring on focus. The title sits in
-   the one screen header, 24px. */
+   the one screen header, 24px. Review round 1 (U16): Edit opens the same form filled in with the
+   task, saved in place; the form's first field takes focus. */
 
-const { useState } = React;
+const { useState, useEffect } = React;
 
 const SCHED_TASKS_INIT = [
-  { id: 'st1', name: 'Daily Coin Master Rewards', schedule: { type: 'daily' }, next_run: new Date(Date.now() + 86400000).toISOString() },
-  { id: 'st2', name: 'Weekly Social Media Posts', schedule: { type: 'weekly', weekdays: ['Mon', 'Wed', 'Fri'] }, next_run: new Date(Date.now() + 86400000 * 3).toISOString() },
+  { id: 'st1', name: 'Daily Coin Master Rewards', prompt: 'Open Coin Master and collect the daily rewards.', schedule: { type: 'daily' }, next_run: new Date(Date.now() + 86400000).toISOString() },
+  { id: 'st2', name: 'Weekly Social Media Posts', prompt: 'Post this week’s updates to my social media accounts.', schedule: { type: 'weekly', weekdays: ['Mon', 'Wed', 'Fri'] }, next_run: new Date(Date.now() + 86400000 * 3).toISOString() },
 ];
 
 function repeatLabel(sch) {
@@ -53,14 +54,25 @@ function ScheduleCard({ task, onEdit, onDelete }) {
   );
 }
 
-function CreateScheduleModal({ isOpen, onClose, onSave }) {
+/* One form for a new task and an edited one: `task` fills it in, and saving keeps its id, so the
+   list replaces it in place. */
+function ScheduleTaskModal({ isOpen, task, onClose, onSave }) {
   const [name, setName] = useState('');
   const [prompt, setPrompt] = useState('');
   const [repeat, setRepeat] = useState('daily');
+  useEffect(() => {
+    if (!isOpen) return;
+    setName(task ? task.name : ''); setPrompt(task ? task.prompt || '' : '');
+    setRepeat(task && task.schedule && ['once', 'daily', 'weekly', 'monthly'].includes(task.schedule.type) ? task.schedule.type : 'daily');
+  }, [isOpen, task]);
   const canSave = name.trim() && prompt.trim();
-  const submit = e => { e.preventDefault(); if (!canSave) return; onSave({ id: 'st' + Date.now(), name: name.trim(), schedule: { type: repeat }, next_run: new Date(Date.now() + 86400000).toISOString() }); setName(''); setPrompt(''); setRepeat('daily'); onClose(); };
+  const submit = e => {
+    e.preventDefault(); if (!canSave) return;
+    onSave({ ...(task || { id: 'st' + Date.now(), next_run: new Date(Date.now() + 86400000).toISOString() }), name: name.trim(), prompt: prompt.trim(), schedule: { ...(task && task.schedule), type: repeat } });
+    onClose();
+  };
   return (
-    <ModalOverlay isOpen={isOpen} onClose={onClose} title="Schedule task">
+    <ModalOverlay isOpen={isOpen} onClose={onClose} title={task ? 'Edit task' : 'Schedule task'} initialFocus="#sched-name">
       <form onSubmit={submit} className="v3-form">
         <Field id="sched-name" label="Task name" required>
           <input id="sched-name" className="v2-field-input" value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Daily rewards collection" />
@@ -76,7 +88,7 @@ function CreateScheduleModal({ isOpen, onClose, onSave }) {
         </SelectField>
         <div className="v3-btn-row">
           <button type="button" onClick={onClose} className="v2-button v2-button--secondary v2-button--lg">Cancel</button>
-          <button type="submit" disabled={!canSave} aria-disabled={!canSave} className="v2-button v2-button--primary v2-button--lg">Create</button>
+          <button type="submit" disabled={!canSave} aria-disabled={!canSave} className="v2-button v2-button--primary v2-button--lg">{task ? 'Save' : 'Create'}</button>
         </div>
       </form>
     </ModalOverlay>
@@ -86,7 +98,9 @@ function CreateScheduleModal({ isOpen, onClose, onSave }) {
 function ScheduleScreen({ isLoading }) {
   const [tasks, setTasks] = useState(SCHED_TASKS_INIT);
   const [showCreate, setShowCreate] = useState(false);
+  const [editing, setEditing] = useState(null);   // the task the form is editing, null for a new one
   const [confirmId, setConfirmId] = useState(null);
+  const openForm = (t) => { setEditing(t || null); setShowCreate(true); };
 
   if (isLoading) return (
     <div>
@@ -113,7 +127,7 @@ function ScheduleScreen({ isLoading }) {
   return (
     <div>
       <ScreenHead title="Scheduled tasks">
-        <button type="button" onClick={() => setShowCreate(true)} className="v2-button v2-button--secondary">
+        <button type="button" onClick={() => openForm()} className="v2-button v2-button--secondary">
           <IcoPlusSmall /> New
         </button>
       </ScreenHead>
@@ -123,17 +137,18 @@ function ScheduleScreen({ isLoading }) {
           <div className="v2-empty-icon"><IcoCalendar size={24} /></div>
           <p className="v2-text-title-lg v2-empty-title">No scheduled tasks</p>
           <p className="v2-text-body v2-empty-body">Schedule jobs to run automatically at specific times.</p>
-          <div className="v2-empty-actions"><button type="button" onClick={() => setShowCreate(true)} className="v2-button v2-button--primary">Create schedule</button></div>
+          <div className="v2-empty-actions"><button type="button" onClick={() => openForm()} className="v2-button v2-button--primary">Create schedule</button></div>
         </div>
       ) : (
         <ul className="v3-list">
           {tasks.map(t => (
-            <ScheduleCard key={t.id} task={t} onEdit={() => {}} onDelete={() => setConfirmId(t.id)} />
+            <ScheduleCard key={t.id} task={t} onEdit={() => openForm(t)} onDelete={() => setConfirmId(t.id)} />
           ))}
         </ul>
       )}
 
-      <CreateScheduleModal isOpen={showCreate} onClose={() => setShowCreate(false)} onSave={t => setTasks(prev => [...prev, t])} />
+      <ScheduleTaskModal isOpen={showCreate} task={editing} onClose={() => setShowCreate(false)}
+        onSave={t => setTasks(prev => (prev.some(p => p.id === t.id) ? prev.map(p => (p.id === t.id ? t : p)) : [...prev, t]))} />
 
       <ModalOverlay isOpen={!!confirmId} onClose={() => setConfirmId(null)} title="Confirm delete">
         <div className="v3-form">

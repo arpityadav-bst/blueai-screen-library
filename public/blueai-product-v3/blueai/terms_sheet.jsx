@@ -6,6 +6,7 @@
 //   'firstrun' : first cold start: "Before you start" + "Agree and continue".
 //   'update'   : the terms changed: same sheet, update wording.
 // BOTH modes are blocking, no close, no scrim dismiss, no Esc; the only way forward is the CTA.
+// Focus moves into the sheet and stays there (the kit's focus hook, shared.jsx DialogPanel).
 // A dismissible notice-only variant (the X.com "Got it" pattern) existed and was REMOVED
 // (Abhisht, 2026-09-24): every update re-collects acceptance, which is one click either way for
 // the user, deletes the per-release "is this change material?" judgment call, and produces a
@@ -95,7 +96,7 @@
     return (
       <div className={'v2-overlay v2-overlay--bottom v2-overlay--gate' + (leaving ? ' is-closing' : '')}>
         <div className="v2-scrim" aria-hidden="true" />
-        <div role="dialog" aria-modal="true" aria-label={cfg.title} className="v2-sheet">
+        <DialogPanel label={cfg.title} className="v2-sheet">
           <div className="v2-dialog-head">
             <h2 className="v2-dialog-title v2-text-title-dialog">{cfg.title}</h2>
           </div>
@@ -107,7 +108,7 @@
               {cfg.cta}
             </button>
           </div>
-        </div>
+        </DialogPanel>
       </div>);
   }
 

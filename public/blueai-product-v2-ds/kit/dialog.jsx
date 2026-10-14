@@ -22,8 +22,8 @@
            preview, className, children}  bottom sheet, full window width. blocking: no close,
            no Esc, no scrim dismiss (the Program Terms).
    useFocusTrap(ref, active, {initialFocus, returnFocus, onEscape})  makes the window under the
-           overlay inert (every sibling of the overlay and of its ancestors up to the AppFrame:
-           top bar, content, nav), moves focus in, keeps Tab inside, and returns focus to the
+           overlay inert (every sibling of the overlay and of its ancestors up to the AppFrame, or
+           up to a product window that marks itself [data-v2-bounds]: top bar, content, nav), moves focus in, keeps Tab inside, and returns focus to the
            opener. Tab, Esc and stray focus are handled at the document, so a click on a scrim
            that does not close cannot strand focus on the page; with two overlays only the top
            one acts. initialFocus is a ref or a selector; without one the panel itself takes
@@ -72,7 +72,7 @@
   // Inert everything beside the overlay, level by level up to the AppFrame (or only the overlay's
   // own siblings outside a frame). Returns the undo; nodes already inert are left as they were.
   function inertAround(node) {
-    const frame = node.closest('.v2-frame');
+    const frame = node.closest('.v2-frame, [data-v2-bounds]');
     const set = [];
     let el = node;
     while (el && el.parentElement && el !== frame && el !== document.body) {

@@ -5,7 +5,9 @@
                   className}
                   One field. Grows from 1 to maxRows (6) lines, then scrolls (V2 clipped at 120px).
                   Enter sends, Shift+Enter is a new line. While a run plays or waits on an answer
-                  the field is read-only and Send becomes Stop; with costsDay (today is not counted
+                  the field is read-only, a muted status line above it says which ('BlueAI is
+                  working…', 'Answer with the buttons above.'; the placeholder never carries status),
+                  and Send becomes Stop; with costsDay (today is not counted
                   yet), Stop asks first and says what stopping costs (V2Kit.DAY_COPY.stopAsk, the
                   deadline the stopped RunCard and WorkerCard then state with DAY_COPY.stopped).
                   paidJob also asks first, for a paid job already under way, and adds that the job
@@ -113,8 +115,9 @@
       if (ta.current) ta.current.focus();
     }
 
-    const ph = placeholder || (awaiting ? 'Answer with the buttons above'
-      : (running ? 'BlueAI is working…' : (disabledReason || 'Type your message')));
+    // What the run is doing is a status line above the field, never the placeholder (V3 review round 1).
+    const status = busy ? (awaiting ? 'Answer with the buttons above.' : 'BlueAI is working…') : null;
+    const ph = placeholder || (locked ? disabledReason : 'Type your message');
     const D = P.DAY_COPY;
     let noticeNode = null;
     // Wrapped, so the field's aria-describedby reaches any notice: an object or an element.
@@ -133,6 +136,7 @@
             </div>
           </div>
         ) : null}
+        {status ? <p className="v2-composer-status" role="status">{status}</p> : null}
         <div ref={box} className={cx('v2-composer-box', (busy || locked) && 'is-readonly')}>
           <textarea ref={ta} className="v2-composer-input v2-scroll" rows={1} value={text} placeholder={ph}
             readOnly={busy || locked} aria-disabled={locked ? 'true' : undefined} aria-label="Message BlueAI"

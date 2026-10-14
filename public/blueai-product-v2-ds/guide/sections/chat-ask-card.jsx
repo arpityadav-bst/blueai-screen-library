@@ -20,11 +20,9 @@
   function Playable() {
     const K = window.V2Kit;
     const [answer, setAnswer] = useState(null);
-    const picked = JOB.options.find(function (o) { return o.id === answer; });
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'flex-start' }}>
         <K.AskCard step={JOB} answer={answer} onAnswer={function (id) { setAnswer(id); }} />
-        {picked ? <K.MessageBubble from="user" time="11:05 am">{picked.label}</K.MessageBubble> : null}
         {answer ? <button type="button" className="g-btn" onClick={function () { setAnswer(null); }}>Ask again</button> : null}
       </div>
     );
@@ -35,25 +33,25 @@
     const V2 = function () { return window.WorkerCards && window.WorkerCards.AskBubble; };
     return (
       <G.Section id="ask-card">
-        <G.Note>V3 restyle (2026-10-14): the card sits on the surface (--v2-waiting-fill) with the attention edge at 32%; the yellow fill stays only in the V2 today look.</G.Note>
-        <G.Part name="AskCard" status="changed" role="The worker's question, answered with chips, with what each answer costs visible before you tap. Yellow only while it waits for you.">
+        <G.Note>V3 review round 1 (2026-10-14): pending, the card takes the attention fill and edge (--v2-waiting-fill, --v2-waiting-line); answered, it settles and the chosen chip stays as a selected pill, the answer's echo, with no user bubble.</G.Note>
+        <G.Part name="AskCard" status="changed" role="The worker's question, answered with chips, with what each answer costs visible before you tap. The attention fill only while it waits for you.">
           <G.StateGrid wide states={[
             { label: 'Pending: title, lead, bullets, question', note: 'Onboarding pitch, V2 copy.', node: <K.AskCard step={PITCH} onAnswer={noop} /> },
             { label: 'Pending: the daily job ask', note: 'Consent chip carries the zap; the consequence is proposed copy (R06).', node: <K.AskCard step={JOB} onAnswer={noop} /> },
-            { label: 'Answered (echo as your bubble)', node: <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'flex-start' }}><K.AskCard step={JOB} answer="once" /><K.MessageBubble from="user" time="11:05 am">Just this job</K.MessageBubble></div> },
+            { label: 'Answered (the chosen chip stays as its pill)', node: <K.AskCard step={JOB} answer="once" /> },
             { label: 'Stopped (Stop pressed while waiting)', node: <K.AskCard step={JOB} state="stopped" /> },
             { label: 'Expired (no answer by the end of the window)', note: 'Proposed with R08.', node: <K.AskCard step={Object.assign({ expiresAt: '9 pm' }, JOB)} state="expired" /> },
             { label: 'Failed-day ask', note: 'PM copy kept; "Retry" is flagged, not changed.', node: <K.AskCard step={FAILED} onAnswer={noop} /> },
             { label: 'Neutral tone (decision D13, option B)', note: 'Asks while the partner is watching, in onboarding.', node: <K.AskCard step={PITCH} tone="neutral" onAnswer={noop} /> },
           ]} />
-          <G.Note>Try it: answer the job ask. The chips go, the card settles to white, and your answer shows as your own bubble.</G.Note>
+          <G.Note>Try it: answer the job ask. The other chips go, the card settles to white, and your answer stays under it as a selected pill.</G.Note>
           <Playable />
           <G.CompareRow
             v2={<G.Live get={V2} props={{ step: { lead: 'Want to set this up?', options: [{ id: 'yes', label: 'Yes' }, { id: 'no', label: 'Not now' }] }, answer: null, onAnswer: noop }} label="WorkerCards.AskBubble" />}
             system={<K.AskCard step={{ lead: 'Want to set this up?', options: [{ id: 'yes', label: 'Yes' }, { id: 'no', label: 'Not now' }] }} onAnswer={noop} />}
             changed="Keeps V2's one-shape-for-every-question idea and its copy. The chips become the shared Chip (one look, a visible hover, 3.24:1 blue text gone); bullet markers come back (the Tailwind preflight hid them); text moves to ink on the yellow; the card settles to white once answered so yellow keeps meaning 'needs you' (decision D13); a consequence line shows before the choice." />
           <G.SpecDrawer rows={[
-            { part: 'Fill and line (pending)', token: '--v2-waiting-fill, --v2-attention-line', value: 'the surface, 1px attention ink at 32%', ref: 'chat.ask.input-colours' },
+            { part: 'Fill and line (pending)', token: '--v2-waiting-fill, --v2-waiting-line', value: 'the attention tint, 1px attention ink', ref: 'chat.ask.input-colours' },
             { part: 'Fill and line (settled)', token: '--v2-surface, --v2-line', value: 'white, 1px line' },
             { part: 'Shape', token: '--v2-radius-lg, --v2-bubble-max', value: 'radius 16, max 300, padding 12 16, no shadow', ref: ['chat.ask.bubble', 'chat.ask.shadow'] },
             { part: 'Title', token: '--v2-text-14, --v2-weight-semibold, --v2-ink', value: '14/600 ink (was 13.5/800 #8a6116)', ref: 'chat.ask.title' },

@@ -27,9 +27,11 @@
   color: var(--v2-bubble-user-ink); box-shadow: var(--v2-bubble-user-shadow);
 }
 /* The run stopped: it failed, or it is waiting on you. Only then does the edge take the tone, in
-   the strong edge (review round 1: the 32% tints were too faint). */
+   the strong edge (review round 1: the 32% tints were too faint). Waiting on you also takes the
+   attention fill (the kit's waiting tokens, as the AskCard); an answered question settles. */
 .v3-bubble--fail { border-color: var(--v2-danger-edge); }
-.v3-bubble--input { border-color: var(--v2-attention-ink); }
+.v3-bubble--input { background: var(--v2-waiting-fill); border-color: var(--v2-waiting-line); }
+.v3-ask--answered .v3-toned-icon { color: var(--v2-ink-3); }
 .v3-bubble-stamp { margin-top: var(--v2-space-1); color: var(--v2-ink-3); font-size: var(--v2-text-11); letter-spacing: 0; }
 .v3-bubble .v3-bubble-title { margin: 0 0 var(--v2-space-05); color: var(--v2-ink); font-weight: var(--v2-weight-semibold); }
 .v3-bubble-list { margin: var(--v2-space-15) 0 0; padding-left: var(--v2-space-5); color: var(--v2-ink-2); font-size: var(--v2-text-13); }
@@ -39,6 +41,9 @@ ul.v3-bubble-list { list-style: disc; }
 .v3-bubble-list li + li { margin-top: var(--v2-space-05); }
 .v3-bubble-lines span { display: block; }
 .v3-ask-hint { max-width: var(--v2-bubble-max); margin: var(--v2-space-15) 0 0; }
+/* The cost of an answer, above the chips (the kit's .v2-ask-consequence), and the chip row. */
+.v3-ask-cost { margin-top: var(--v2-space-15); }
+.v3-ask-chips { margin-top: var(--v2-space-2); }
 
 /* Toned bubble: icon, then the text column. The icon (.v2-icon, 16) centres on the first 21px line. */
 .v3-toned { display: flex; align-items: flex-start; gap: var(--v2-space-2); }

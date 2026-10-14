@@ -35,7 +35,10 @@
 .v3-app { display: flex; align-items: center; gap: var(--v2-space-3); padding: var(--v2-space-3) 0; }
 .v3-app + .v3-app { border-top: var(--v2-stroke) solid var(--v2-line-hair); }
 .v3-sheet-sub { margin: var(--v2-space-1) 0 0; } /* type: .v2-text-body-sm, under the sheet title */
-.v3-app-name { flex: 1; min-width: 0; color: var(--v2-ink); font-size: var(--v2-text-14); font-weight: var(--v2-weight-medium); letter-spacing: var(--v2-tracking-label); }
+.v3-app-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: var(--v2-space-05); }
+.v3-app-name { color: var(--v2-ink); font-size: var(--v2-text-14); font-weight: var(--v2-weight-medium); letter-spacing: var(--v2-tracking-label); }
+/* The mode in words under the name (review round 1): the switch alone does not say what off is. */
+.v3-app-state { color: var(--v2-ink-3); font-size: var(--v2-text-12); line-height: var(--v2-leading-snug); }
 
 /* ---- Run complete (the centre moment, a kit celebration dialog) -------------------------------- */
 .v3-dd .v2-dialog-body { padding: var(--v2-space-6) var(--v2-space-6) var(--v2-space-5); }
@@ -80,7 +83,11 @@
 .v3-wk-home { padding: var(--v2-space-4); border-radius: var(--v2-radius-lg); animation: v2-fade-up var(--v2-dur-4) var(--v2-ease-out) both; }
 /* Lit by the coach, the card sits above the veil, so for that moment it floats. */
 .v3-wk-home.is-lit { border-color: var(--v2-line-strong); box-shadow: var(--v2-shadow-2); }
-.v3-wk-home .v2-button { flex: none; }
+.v3-wk-home > .v2-button { flex: none; }
+/* The mode line (the kit WorkerCard's, design-md 42): how paid jobs run, and a quiet Change. */
+.v3-wk-mode { display: flex; align-items: center; gap: var(--v2-space-15); margin: var(--v2-space-1) 0 0; color: var(--v2-ink-3); }
+.v3-wk-mode-text { color: var(--v2-ink-2); font-size: var(--v2-text-12); font-weight: var(--v2-weight-medium); }
+.v3-wk-mode-change { margin-left: calc(-1 * var(--v2-space-1)); }
 .v3-coach {
   display: flex; justify-content: flex-end; padding-right: var(--v2-space-2); margin-top: var(--v2-space-3);
   animation: v2-fade-up var(--v2-dur-4) var(--v2-ease-out) var(--v2-dur-1) both;

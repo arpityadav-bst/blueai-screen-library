@@ -7,13 +7,13 @@
 
 ### Composer (Changed from V2)
 - **Purpose:** One field to talk to the worker, with Send that becomes Stop.
-- **Anatomy:** Block padding 4 16 12; optional notice and stop-confirm above; box radius 10, 1px `--v2-line-strong`, white, padding 4 4 4 12; textarea 14/1.5 ink, placeholder ink-4; SendStop 36 round on the right, bottom-aligned.
+- **Anatomy:** Block padding 4 16 12; optional notice and stop-confirm above; while busy, a status line 12/1.35 ink-3 above the box (`.v2-composer-status`, role status: 'BlueAI is working…', 'Answer with the buttons above.'), so the placeholder never carries status (V3 review round 1, 2026-10-14); box radius 10, 1px `--v2-line-strong`, white, padding 4 4 4 12; textarea 14/1.5 ink, placeholder ink-4; SendStop 36 round on the right, bottom-aligned.
 - **Variants:** Default; with a notice.
 - **Sizes:** Field grows from 1 to 6 lines (`maxRows`), then scrolls.
-- **States:** Rest; hover (line 20%); focus (1.5px blue + 3px 16% ring); typing; running (read-only, "BlueAI is working…", Stop); awaiting a choice (read-only, "Answer with the buttons above", Stop); disabled with a reason (a neutral placeholder, "You can’t send messages right now", paired with the notice that says why and until when); max height then scroll. Forced with `.is-hover`, `.is-focus`. V2: `?start=worker` (rest, typing), Run (running, awaiting), Preview Scheduled job Out of credits (disabled).
+- **States:** Rest; hover (line 20%); focus (1.5px blue + 3px 16% ring); typing; running (read-only, the status line "BlueAI is working…", Stop); awaiting a choice (read-only, the status line "Answer with the buttons above.", Stop); disabled with a reason (a neutral placeholder, "You can’t send messages right now", paired with the notice that says why and until when); max height then scroll. Forced with `.is-hover`, `.is-focus`. V2: `?start=worker` (rest, typing), Run (running, awaiting), Preview Scheduled job Out of credits (disabled).
 - **Props:** `Composer {value, defaultValue, onChange(text), onSend(text), onStop, running, awaiting, costsDay, paidJob, confirming, disabledReason, placeholder, notice, maxRows, className}`; `notice` is a ComposerNotice props object or an element.
 - **Motion:** Border and ring 120ms.
-- **Accessibility:** Labelled "Message BlueAI"; described by the notice; read-only (not disabled) while busy, so it stays reachable; Enter sends, Shift+Enter is a new line; placeholder 4.77:1 because it carries state.
+- **Accessibility:** Labelled "Message BlueAI"; described by the notice; read-only (not disabled) while busy, so it stays reachable; Enter sends, Shift+Enter is a new line; the status line is a live region, so a change of state is announced; placeholder 4.77:1 on the read-only fill.
 - **Responsive:** Full width of the window; pinned above the nav at the compact height.
 - **Do / Don't:** Do show standing conditions before typing. Do use "…" only for work in progress. Don't clip text. Don't use a blue border at rest.
 

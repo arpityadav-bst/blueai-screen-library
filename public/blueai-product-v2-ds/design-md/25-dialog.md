@@ -24,7 +24,7 @@
 
 **Accessibility.** role dialog, `aria-modal`, named by its title, described by `description`. Where focus lands on open, one rule (section 09): the panel itself for dialogs read before acting (task, consent, celebration), with no ring until Tab; the first field, through `initialFocus`, for a dialog that is a form; Cancel, the first action, for an AlertDialog. Tab cycles inside; Esc, Close and Cancel return focus to the opener. `aria-busy` while busy. Close is named. Every label at least 4.5:1.
 
-**Responsive.** Scoped to the window (absolute inside AppFrame's overlay plane), never the page. On the compact window the body scrolls; header and actions stay.
+**Responsive.** Scoped to the window (absolute inside AppFrame's overlay plane), never the page. A product window that is not the kit's AppFrame marks itself `data-v2-bounds` (V3's `.ba-app`), and `useFocusTrap` makes everything in it inert under the overlay, as it does inside AppFrame (`kit/dialog.jsx` inertAround; V3 review round 1, 2026-10-14). On the compact window the body scrolls; header and actions stay.
 
 **Do / Don't.** Do write the title as the question and the body as what changes and how to undo it. Do set `busy` while an answer is recorded. Don't confirm something cheap to reverse; act and offer Undo (section 24). Don't stack a dialog on a dialog. Don't use a dialog for a long form; that is a Sheet.
 

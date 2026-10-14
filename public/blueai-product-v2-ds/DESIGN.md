@@ -1091,7 +1091,7 @@ A new screen picks the first unless it is a settings-style list of sections that
 
 **States.** Off; on; hover (off: edge to `--v2-line-hover`; on: unchanged); focus-visible; disabled (0.45, `aria-disabled`, description says why); busy (`aria-busy`, held where it is, the knob holds a 12px spinner while a consent or a key check answers). In V2 today: the shared Toggle 32x18 with a spring (shared.jsx:49-51, only on the hidden Skills screen); Settings, Bring Your Own Key: 46x26, `aria-pressed`, and switching it off removes the saved key (byok_settings.jsx:25-26, 64).
 
-**Props.** `checked`, `onChange(next)`, `label`, `hideLabel`, `description`, `disabled`, `busy`, `id`, `className`.
+**Props.** `checked`, `onChange(next)`, `label`, `hideLabel`, `description`, `disabled`, `busy`, `id`, `className`. A bare switch keeps a caller's `aria-describedby`, so a list row's state line can describe it (ModeRows `control="switch"`, section 46; V3 review round 1, 2026-10-14).
 
 **Motion.** Thumb slides over `--v2-dur-2` (180ms) `--v2-ease-out`, no overshoot; colour over the same. Reduced motion: no transition.
 
@@ -1642,7 +1642,7 @@ Any icon can replace the default (Automatic uses `zap`).
 
 **Accessibility.** role dialog, `aria-modal`, named by its title, described by `description`. Where focus lands on open, one rule (section 09): the panel itself for dialogs read before acting (task, consent, celebration), with no ring until Tab; the first field, through `initialFocus`, for a dialog that is a form; Cancel, the first action, for an AlertDialog. Tab cycles inside; Esc, Close and Cancel return focus to the opener. `aria-busy` while busy. Close is named. Every label at least 4.5:1.
 
-**Responsive.** Scoped to the window (absolute inside AppFrame's overlay plane), never the page. On the compact window the body scrolls; header and actions stay.
+**Responsive.** Scoped to the window (absolute inside AppFrame's overlay plane), never the page. A product window that is not the kit's AppFrame marks itself `data-v2-bounds` (V3's `.ba-app`), and `useFocusTrap` makes everything in it inert under the overlay, as it does inside AppFrame (`kit/dialog.jsx` inertAround; V3 review round 1, 2026-10-14). On the compact window the body scrolls; header and actions stay.
 
 **Do / Don't.** Do write the title as the question and the body as what changes and how to undo it. Do set `busy` while an answer is recorded. Don't confirm something cheap to reverse; act and offer Undo (section 24). Don't stack a dialog on a dialog. Don't use a dialog for a long form; that is a Sheet.
 
@@ -1716,7 +1716,7 @@ Any icon can replace the default (Automatic uses `zap`).
 
 **States.** Closed; open; row hover (`--v2-wash-hover`, label to ink); row focus-visible (2px blue ring inside the row plus the wash); row active (`--v2-wash-press`); row disabled; danger row; external row. Placement down or up, aligned to the button's end or start; it flips and swaps to stay in the window. In V2 today: `?start=worker`, then the ? (FAQ, Report Issue) or the three dots (Chat History, Profile, Earnings, Logout) (index.html:364-378).
 
-**Props.** `trigger` (render prop receiving `aria-haspopup`, `aria-expanded`, `aria-controls`, `onClick`, or an element to clone them onto), `items` ([{icon, label, onSelect, href, external, danger, disabled, hint} | {separator: true}]), `placement` ('down' | 'up'), `align` ('end' | 'start'), `header`, `footer`, `label`, `open` / `defaultOpen` / `onOpenChange`, `className`.
+**Props.** `trigger` (render prop receiving `aria-haspopup`, `aria-expanded`, `aria-controls`, `onClick`, or an element to clone them onto), `items` ([{icon, label, onSelect, href, external, danger, disabled, hint} | {separator: true}]; `icon` is a kit icon name or an element, so a product with its own glyphs keeps them in the kit's menu, V3 review round 1), `placement` ('down' | 'up'), `align` ('end' | 'start'), `header`, `footer`, `label`, `open` / `defaultOpen` / `onOpenChange`, `className`.
 
 **Motion.** Fade-up `--v2-dur-3` on `--v2-ease-out`. Rows change colour over `--v2-dur-1`.
 
@@ -2169,7 +2169,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 **Status:** Changed from V2 (all three parts).
 **Why:** V2 has six bubble looks in five colours, each with a shadow, and the loudest is the partner's own message (an indigo gradient with a 30% glow, chat_bubbles.jsx:30). The system is quiet by default (P5): white with a 1px line, colour carried by an icon, one attention fill for "needs you".
 
-**V3 restyle (2026-10-14).** The user bubble is the grey surface (`--v2-surface-sunken`) with a hairline (`--v2-line-hair`), not a blue tint. Tone rides on one 16px icon; the edge takes the tone only when the run stopped (`needsInput` on `--v2-attention-line`, `danger` on `--v2-danger-line`), on the surface: V2's fill-based message colours are retired (`--v2-waiting-fill` keeps the yellow in the V2 today look only). The progress note is a pattern: a 4px ink-4 dot and a muted 13px line, no bubble.
+**V3 restyle (2026-10-14).** The user bubble is the grey surface (`--v2-surface-sunken`) with a hairline (`--v2-line-hair`), not a blue tint. Tone rides on one 16px icon; the edge takes the tone only when the run stopped (`needsInput` on `--v2-waiting-line`, `danger` on `--v2-danger-line`), on the surface: V2's fill-based message colours are retired except one, waiting on you (V3 review round 1, 2026-10-14: a needs-input notice and a pending AskCard take `--v2-waiting-fill`, the attention tint, with the attention ink as the edge, so a question that holds the run reads before its words). The progress note is a pattern: a 4px ink-4 dot and a muted 13px line, no bubble.
 
 ### MessageBubble, user (Changed from V2)
 - **Purpose:** What the partner said, or the answer chip they tapped (echoed).
@@ -2233,19 +2233,21 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 
 **V3 restyle (2026-10-14).** The card sits on the surface (`--v2-waiting-fill`) with the attention edge at 32%: waiting on you is said by the edge and the icon, not a yellow fill.
 
+**V3 review round 1 (2026-10-14).** Pending, the card takes the attention fill and edge (`--v2-waiting-fill` is the attention tint, `--v2-waiting-line` the attention ink): the surface alone did not say the run was holding for an answer. Answered, the waiting state drops and the chosen chip stays under the card as a selected pill, the answer's echo, so no user bubble repeats it.
+
 ### AskCard (Changed from V2)
 - **Purpose:** The worker's question, answered with chips, with what each answer costs visible before tapping.
-- **Anatomy:** Card: the surface (`--v2-waiting-fill`), 1px `--v2-attention-line` (the attention ink at 32%), radius 16, padding 12 16, max 300, no shadow. Inside: optional title 14/600 ink, lead 14 ink-2, bullets (disc markers on, indent 20), question 14. Under the card: the consequence lines 13 attention-ink ("Not now: today won’t count toward your 20 days."), above the chip row so the cost is read before the tap; then the Chip row (shared Chip, gap 8; a consent option carries the zap icon), each chip's `aria-describedby` pointing at its consequence line (`kit/ask.jsx:56-68`); optional hint 13 ink-3.
+- **Anatomy:** Card: `--v2-waiting-fill` (the attention tint), 1px `--v2-waiting-line` (the attention ink), radius 16, padding 12 16, max 300, no shadow. Inside: optional title 14/600 ink, lead 14 ink-2, bullets (disc markers on, indent 20), question 14. Under the card: the consequence lines 13 attention-ink ("Not now: today won’t count toward your 20 days."), above the chip row so the cost is read before the tap; then the Chip row (shared Chip, gap 8; a consent option carries the zap icon), each chip's `aria-describedby` pointing at its consequence line (`kit/ask.jsx:56-68`); optional hint 13 ink-3.
 - **Variants:** Plain (lead + chips), titled (job ask, failed day), with bullets (onboarding pitch). Tone `attention` (default) or `neutral` (decision D13 option B: onboarding asks while the partner watches).
 - **Sizes:** Card max 300; chip row wraps at 300.
-- **States:** Pending (chips shown, composer read-only with "Answer with the buttons above"); answered (chips go, card settles to white, the label echoes as a user bubble); stopped (Stop pressed while waiting: "The run stopped before you answered."); expired (proposed: "No answer by 9 pm, so I skipped this job. Today doesn’t count."). V2: `?start=worker` then Run for onboarding asks; `?day=next` for the job ask; `?day=next&end=failed` for the failed-day ask.
+- **States:** Pending (chips shown, composer read-only with "Answer with the buttons above"); answered (the other chips go, the card settles to the surface, and the chosen chip stays as a selected, non-interactive pill with a check and a hidden "You answered:"; no user bubble repeats it); stopped (Stop pressed while waiting: "The run stopped before you answered."); expired (proposed: "No answer by 9 pm, so I skipped this job. Today doesn’t count."). V2: `?start=worker` then Run for onboarding asks; `?day=next` for the job ask; `?day=next&end=failed` for the failed-day ask.
 - **Props:** `AskCard {step: {title, lead, bullets, question, options[{id, label, consent, consequence}], hint, expiresAt}, answer, onAnswer(id, option), state, tone, className}`.
 - **Motion:** Chips leave without animation; the card's fill change is instant.
 - **Accessibility:** A hidden "BlueAI needs your answer." leads the pending card; chips are a group labelled by the question; text on yellow is ink / ink-2 (above 9:1); consequence 13 attention-ink (5.07:1).
 - **Responsive:** Chips wrap to new lines inside 300.
 - **Consent:** An option with `consent: true` turns on Automatic for that app. The caller opens ConsentDialog (section 46) and calls back only after "I agree, turn on"; Cancel leaves the question waiting (as V2, worker_cards.jsx:39).
 - **Copy:** In V2 strings quoted exactly: the pitch (worker_flow.jsx:66-69), "Paid job available", "Watch the video and provide feedback.", "Want me to take this one?", "Yes, switch to Automatic" / "Just this job" / "Not now" (worker_flow.jsx:50, 120-121), "Today’s job didn’t finish." / "Retry to count the day." / "Retry" (worker_day_done.jsx:94, worker_flow.jsx:127), kept in the failed-day AskCard specimen as the V2 reference. The screens do not draw that ask: a failed day is the RunCard's and the WorkerCard's 'Try again' (`kit/run-card.jsx:47, 61`, `kit/worker-card.jsx:77-78`, `screens/chat.jsx:38, 151`), a proposed change to the PM's words listed in section 73 (V2 strings changed as proposals) under the glossary's one retry word (section 70). Proposed: the consequence line (R06), the stopped and expired lines (R08), Try again.
-- **Do / Don't:** Do say the consequence before the choice and settle the card once answered. Don't bundle a mode switch into "Yes" silently (R07, R11). Don't leave yellow on an answered question.
+- **Do / Don't:** Do say the consequence before the choice and settle the card once answered, keeping the chosen answer as its pill. Don't bundle a mode switch into "Yes" silently (R07, R11). Don't leave yellow on an answered question.
 
 ## 38 Composer
 
@@ -2256,13 +2258,13 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 
 ### Composer (Changed from V2)
 - **Purpose:** One field to talk to the worker, with Send that becomes Stop.
-- **Anatomy:** Block padding 4 16 12; optional notice and stop-confirm above; box radius 10, 1px `--v2-line-strong`, white, padding 4 4 4 12; textarea 14/1.5 ink, placeholder ink-4; SendStop 36 round on the right, bottom-aligned.
+- **Anatomy:** Block padding 4 16 12; optional notice and stop-confirm above; while busy, a status line 12/1.35 ink-3 above the box (`.v2-composer-status`, role status: 'BlueAI is working…', 'Answer with the buttons above.'), so the placeholder never carries status (V3 review round 1, 2026-10-14); box radius 10, 1px `--v2-line-strong`, white, padding 4 4 4 12; textarea 14/1.5 ink, placeholder ink-4; SendStop 36 round on the right, bottom-aligned.
 - **Variants:** Default; with a notice.
 - **Sizes:** Field grows from 1 to 6 lines (`maxRows`), then scrolls.
-- **States:** Rest; hover (line 20%); focus (1.5px blue + 3px 16% ring); typing; running (read-only, "BlueAI is working…", Stop); awaiting a choice (read-only, "Answer with the buttons above", Stop); disabled with a reason (a neutral placeholder, "You can’t send messages right now", paired with the notice that says why and until when); max height then scroll. Forced with `.is-hover`, `.is-focus`. V2: `?start=worker` (rest, typing), Run (running, awaiting), Preview Scheduled job Out of credits (disabled).
+- **States:** Rest; hover (line 20%); focus (1.5px blue + 3px 16% ring); typing; running (read-only, the status line "BlueAI is working…", Stop); awaiting a choice (read-only, the status line "Answer with the buttons above.", Stop); disabled with a reason (a neutral placeholder, "You can’t send messages right now", paired with the notice that says why and until when); max height then scroll. Forced with `.is-hover`, `.is-focus`. V2: `?start=worker` (rest, typing), Run (running, awaiting), Preview Scheduled job Out of credits (disabled).
 - **Props:** `Composer {value, defaultValue, onChange(text), onSend(text), onStop, running, awaiting, costsDay, paidJob, confirming, disabledReason, placeholder, notice, maxRows, className}`; `notice` is a ComposerNotice props object or an element.
 - **Motion:** Border and ring 120ms.
-- **Accessibility:** Labelled "Message BlueAI"; described by the notice; read-only (not disabled) while busy, so it stays reachable; Enter sends, Shift+Enter is a new line; placeholder 4.77:1 because it carries state.
+- **Accessibility:** Labelled "Message BlueAI"; described by the notice; read-only (not disabled) while busy, so it stays reachable; Enter sends, Shift+Enter is a new line; the status line is a live region, so a change of state is announced; placeholder 4.77:1 on the read-only fill.
 - **Responsive:** Full width of the window; pinned above the nav at the compact height.
 - **Do / Don't:** Do show standing conditions before typing. Do use "…" only for work in progress. Don't clip text. Don't use a blue border at rest.
 
@@ -2514,10 +2516,10 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 
 - **Purpose:** the per-app mode, with one home in Settings > Worker (section 62). The ribbon's Change opens that screen (Chat's `onChangeMode`), so the consent dialog never stacks over a float.
 - **Anatomy:** one kit ListRow per app: mark 20 ink-3, name 14/500, account as the description, kit Segmented md (32) 'Always ask' (shield-check) / 'Automatic' (zap), the icons the consent table and the worker card use (`kit/permissions.jsx` OPTIONS). Note under the rows 12 ink-3: 'Automatic starts and finishes that app’s jobs without asking. Each app has its own setting, and a new app starts on Always ask.' (V2's former menu footnote; V2's sheet now says 'New apps always start on Always ask.'). 'Mode, per app' is not carried (Mode is not a partner word).
-- **Variants:** connected (switch); coming soon ('Instagram jobs aren’t available yet.' + Badge 'Coming soon', no switch); not connected ('Not connected' + Connect).
+- **Variants:** connected (switch); coming soon ('Instagram jobs aren’t available yet.' + Badge 'Coming soon', no switch); not connected ('Not connected' + Connect). Control: `segmented` (default) or `switch`, V2's shape (one switch per app, on = Automatic). A switch alone does not say which mode off is, so in the switch shape the row's description is the mode in words, 'Always ask' or 'Automatic' (then the account), a muted state line the switch is described by (`aria-describedby`; V3 review round 1, 2026-10-14).
 - **Sizes:** full width.
 - **States:** Always ask (default); Automatic (only after the consent: `beforeChange` opens it and commits on agree); coming soon; not connected. In V2: `?v=2&mode=auto` (ribbon, Change) or `?v=1` (chip) open the mode sheet, one switch per app (agent_permissions.jsx:98-157); Settings > Worker > Apps lists the same switches.
-- **Props:** `worker` or `apps` + `modes`, `onChange(appId, mode)`, `beforeChange(appId, mode)` (return a promise of true to commit), `onConnect(appId)`, `note` (false hides).
+- **Props:** `worker` or `apps` + `modes`, `onChange(appId, mode)`, `beforeChange(appId, mode)` (return a promise of true to commit), `onConnect(appId)`, `note` (false hides), `control` ('segmented' | 'switch').
 - **Motion:** the Segmented's own (180ms).
 - **Accessibility:** each Segmented is a radiogroup named 'YouTube paid jobs' with arrow keys; segments 32 tall; aria-busy while the consent is open.
 - **Responsive:** the description truncates before the switch shrinks.
@@ -4161,6 +4163,12 @@ About 3,000 of V2’s lines never render. They are listed here and never specime
 **Status:** Meta (no parts).
 
 **Why:** Dated, newest first, so anyone building from the system can see what changed since they last looked. Add an entry for every change to tokens, a kit part’s API or a screen, here and in guide/sections/meta-changelog.jsx.
+
+### 2026-10-14: Review round 1 of V3, pass B: waiting state, focus, composer status, switch rows
+
+- New token: --v2-waiting-line (the edge of a message waiting on you: the attention ink in Target, V2's pale yellow in V2 today). Re-valued: --v2-waiting-fill is the attention tint in Target too (it was the surface), so a pending AskCard and a needs-input notice take the attention fill and edge.
+- Kit: AskCard keeps the chosen chip as a selected pill once answered (no user bubble echo); Composer says what the run is doing in a muted status line above the field (.v2-composer-status), never in the placeholder; ModeRows gains control 'switch' (V2's one switch per app) with the mode in words as the row's state line, and a bare Switch keeps a caller's aria-describedby; Menu items take an element as their icon; useFocusTrap treats a product window marked data-v2-bounds as the frame it makes inert.
+- Why: review round 1 of BlueAI Product V3, pass B (UX and interaction); V3 now uses the kit's focus hook and Menu. Sections 14, 25, 27, 35, 37, 38 and 46 updated.
 
 ### 2026-10-14: Review round 1 of V3: switch, destructive confirm, look hooks, titles
 

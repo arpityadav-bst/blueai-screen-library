@@ -4,6 +4,12 @@
 
 **Why:** Dated, newest first, so anyone building from the system can see what changed since they last looked. Add an entry for every change to tokens, a kit part’s API or a screen, here and in guide/sections/meta-changelog.jsx.
 
+### 2026-10-14: Review round 1 of V3, pass B: waiting state, focus, composer status, switch rows
+
+- New token: --v2-waiting-line (the edge of a message waiting on you: the attention ink in Target, V2's pale yellow in V2 today). Re-valued: --v2-waiting-fill is the attention tint in Target too (it was the surface), so a pending AskCard and a needs-input notice take the attention fill and edge.
+- Kit: AskCard keeps the chosen chip as a selected pill once answered (no user bubble echo); Composer says what the run is doing in a muted status line above the field (.v2-composer-status), never in the placeholder; ModeRows gains control 'switch' (V2's one switch per app) with the mode in words as the row's state line, and a bare Switch keeps a caller's aria-describedby; Menu items take an element as their icon; useFocusTrap treats a product window marked data-v2-bounds as the frame it makes inert.
+- Why: review round 1 of BlueAI Product V3, pass B (UX and interaction); V3 now uses the kit's focus hook and Menu. Sections 14, 25, 27, 35, 37, 38 and 46 updated.
+
 ### 2026-10-14: Review round 1 of V3: switch, destructive confirm, look hooks, titles
 
 - New tokens: --v2-tracking-hero -0.04em (titles 24 and up, at weight 500: .v2-text-greeting and the welcome title), --v2-em-glow (the serif em's glow), and look hooks so V2 today keeps V2's own secondary, danger, destructive confirm, switch, empty state and chips (--v2-button-secondary-*, --v2-button-danger-*, --v2-button-destructive-fill and -hover, --v2-switch-off-fill, --v2-switch-knob-shadow, --v2-empty-*, --v2-chip-*).

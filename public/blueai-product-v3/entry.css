@@ -64,3 +64,6 @@
 .v3-account:hover { background: var(--v2-surface-sunken); border-color: var(--v2-line-hover); }
 .v3-account-name { display: block; color: var(--v2-ink); font-size: var(--v2-text-14); font-weight: var(--v2-weight-medium); line-height: var(--v2-leading-snug); }
 .v3-account-email { display: block; color: var(--v2-ink-3); font-size: var(--v2-text-13); line-height: var(--v2-leading-snug); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* The sign-in modal's panel (login.jsx): it fills the gate overlay and holds the close button and
+   the centred card, so the kit's focus hook has one panel to trap (review round 1). */
+.v3-login-panel { position: relative; flex: 1; min-height: 0; display: flex; flex-direction: column; }
