@@ -1,14 +1,12 @@
-/* BlueAI Product V3: the worker (mode chip, the mode sheet's app rows, the run-complete moment's
-   contents, the home progress card, the BlueAI worker home card and its coach, the BlueStacks
-   bubbles, the Schedule tab), drawn in the onBlue Agentic site's language on the Target tokens
-   (--v2-*). Phase 4.
-   Kit parts (review rounds 1 and 2, 2026-10-14): every dialog and sheet is the kit overlay
-   (.v2-overlay, .v2-scrim, .v2-dialog, .v2-sheet: one radius, one edge, one entry), the switch,
-   buttons, fields, the empty state, the spinner and the skeleton card are kit classes; the
-   Automatic ribbon is the kit's compact Banner, the 20-day bar the kit's DayBar (kit/worker.css),
-   the install bar the kit's ProgressBar, the worker card the kit's card with its WorkerCard tile.
-   In-flow surfaces take a 1px line and no shadow; blue is progress, selection and focus; green is a
-   verified day; money is ink. */
+/* BlueAI Product V3: the worker (the mode chip and its popover rows, the run-complete moment's
+   contents, the BlueAI worker home card and its coach, the BlueStacks bubbles, the Schedule tab),
+   drawn in the onBlue Agentic site's language on the Target tokens (--v2-*). Phase 4.
+   Kit parts (review rounds 1 and 2, 2026-10-14): every dialog is the kit overlay (.v2-overlay,
+   .v2-scrim, .v2-dialog: one radius, one edge, one entry), the mode popover the kit's Popover with
+   kit menu rows, the Day 20 confetti the kit's; buttons, fields, the empty state, the spinner and
+   the skeleton card are kit classes; the install bar the kit's ProgressBar, the worker card the
+   kit's card with its WorkerCard tile. In-flow surfaces take a 1px line and no shadow; blue is
+   progress, selection and focus; money is ink. */
 
 /* ---- Button row and dialog text spacing (inside a kit dialog body) ---------------------------- */
 .v3-btn-row { display: flex; gap: var(--v2-space-2); }
@@ -23,49 +21,34 @@
 .v3-dlg-actions { margin-top: var(--v2-space-5); }
 .v3-form > .v3-dlg-actions { margin-top: var(--v2-space-1); }
 
-/* ---- Mode chip ---------------------------------------------------------------------------------- */
+/* ---- Mode chip and its popover (agent_permissions.jsx) ------------------------------------------ */
 .v3-mode-chev { color: var(--v2-ink-4); }
-
-/* ---- App rows (the mode sheet's body and Settings > Worker > Apps) ----------------------------- */
-.v3-apps { margin: 0; padding: 0; list-style: none; }
-.v3-app { display: flex; align-items: center; gap: var(--v2-space-3); padding: var(--v2-space-3) 0; }
-.v3-app + .v3-app { border-top: var(--v2-stroke) solid var(--v2-line-hair); }
-.v3-sheet-sub { margin: var(--v2-space-1) 0 0; } /* type: .v2-text-body-sm, under the sheet title */
-.v3-app-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: var(--v2-space-05); }
-.v3-app-name { color: var(--v2-ink); font-size: var(--v2-text-14); font-weight: var(--v2-weight-medium); letter-spacing: var(--v2-tracking-label); }
-/* The mode in words under the name (review round 1): the switch alone does not say what off is. */
-.v3-app-state { color: var(--v2-ink-3); font-size: var(--v2-text-12); line-height: var(--v2-leading-snug); }
+/* The popover's header: YouTube's mark beside "Mode for YouTube jobs". */
+.v3-mode-head { display: inline-flex; align-items: center; gap: var(--v2-space-15); }
+/* A mode row is a kit menu row with two lines (title, description), a check and its shortcut. */
+.v3-mode-row { min-height: var(--v2-control-lg); padding-top: var(--v2-space-2); padding-bottom: var(--v2-space-2); }
+.v3-mode-row.is-current { background: var(--v2-select); }
+.v3-mode-title { display: block; color: var(--v2-ink); font-size: var(--v2-text-14); font-weight: var(--v2-weight-medium); }
+.v3-mode-sub { display: block; margin-top: var(--v2-space-05); color: var(--v2-ink-3); font-size: var(--v2-text-12); font-weight: var(--v2-weight-regular); }
+.v3-mode-check { display: inline-flex; flex: none; width: var(--v2-icon-md); color: var(--v2-action); }
 
 /* ---- Run complete (the centre moment, a kit celebration dialog) -------------------------------- */
-.v3-dd .v2-dialog-body { padding: var(--v2-space-6) var(--v2-space-6) var(--v2-space-5); }
-/* The day is PENDING, so the badge is the site's step disc (progress blue), with one ink tick. */
+/* Positioned: the Day 20 confetti (kit .v2-confetti) bursts from inside it. */
+.v3-dd .v2-dialog-body { position: relative; padding: var(--v2-space-6) var(--v2-space-6) var(--v2-space-5); }
+/* The PM's badge (2026-10-14): an OUTLINED green circle with ONE green tick, the run done and
+   pending verification. */
 .v3-dd-badge {
-  display: grid; place-items: center; width: var(--v2-control-lg); height: var(--v2-control-lg); margin: 0 auto;
-  border-radius: var(--v2-radius-round); background: var(--v2-select); border: var(--v2-stroke) solid var(--v2-select-line); color: var(--v2-ink);
+  display: grid; place-items: center; width: var(--v2-mark-xl); height: var(--v2-mark-xl); margin: 0 auto;
+  border-radius: var(--v2-radius-round); background: var(--v2-surface); border: calc(var(--v2-stroke) * 2) solid var(--v2-success); color: var(--v2-success);
+  animation: v2-scale-in var(--v2-dur-celebrate) var(--v2-ease-out) both;
 }
 .v3-dd-title { margin: var(--v2-space-4) 0 0; } /* type: .v2-text-title-dialog */
-.v3-dd-sub { margin: var(--v2-space-1) 0 0; text-wrap: pretty; } /* type: .v2-text-body-sm */
 .v3-dd-status { margin: var(--v2-space-15) 0 0; font-variant-numeric: tabular-nums; } /* type: .v2-text-body-sm */
-.v3-dd-note { margin: var(--v2-space-2) 0 0; text-wrap: pretty; } /* type: .v2-text-meta */
 .v3-dd-cta { margin-top: var(--v2-space-5); }
 /* Day 20's Open Earnings, the secondary under Got it (review round 2, R13). */
 .v3-dd-cta2 { margin-top: var(--v2-space-2); }
 /* One bold ink figure in a muted line (brief section 9): money is ink 600, never green. */
 .v3-figure { color: var(--v2-ink); font-weight: var(--v2-weight-semibold); }
-
-/* ---- Home progress card: the kit's DayBar (its column spaces the head, the bar, the note) ----- */
-.v3-progress { margin-bottom: var(--v2-space-3); padding: var(--v2-space-3) var(--v2-space-4); }
-.v3-progress-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--v2-space-3); }
-.v3-progress-title {
-  color: var(--v2-ink); font-size: var(--v2-text-14); font-weight: var(--v2-weight-semibold);
-  letter-spacing: var(--v2-tracking-label); font-variant-numeric: tabular-nums;
-}
-.v3-progress-title > span { color: var(--v2-ink-3); font-weight: var(--v2-weight-regular); }
-.v3-progress-link { font-size: var(--v2-text-12); white-space: nowrap; }
-.v3-progress-note { display: flex; align-items: center; gap: var(--v2-space-15); margin: 0; }
-.v3-verified { display: flex; color: var(--v2-success); }
-/* A failed day (review round 2, R4): the receipt in the danger ink, Retry the quiet button after it. */
-.v3-progress-note--danger { color: var(--v2-danger-ink); }
 
 /* ---- BlueAI worker home card + the first-run coach -------------------------------------------- */
 /* The coach's veil covers the top bar (--v2-z-header) and stays under every dialog (--v2-z-dialog). */
@@ -81,12 +64,10 @@
 .v3-wk-home.is-lit { border-color: var(--v2-line-strong); box-shadow: var(--v2-shadow-2); }
 .v3-wk-home > .v2-button { flex: none; }
 .v3-wk-desc { margin: var(--v2-space-05) 0 0; } /* type: .v2-text-caption */
-/* The mode line (the kit WorkerCard's, design-md 42): how paid jobs run, and a quiet Change. */
-.v3-wk-mode { display: flex; align-items: center; gap: var(--v2-space-15); margin: var(--v2-space-1) 0 0; color: var(--v2-ink-3); }
-.v3-wk-mode-text { color: var(--v2-ink-2); font-size: var(--v2-text-12); font-weight: var(--v2-weight-medium); }
-.v3-wk-mode-change { margin-left: calc(-1 * var(--v2-space-1)); }
-/* Why Run waits (review round 2, R3, R10): a caption under the mode line, Run described by it. */
+/* Why Run waits (review round 2, R3, R10): a caption under the description, Run described by it. */
 .v3-wk-reason { margin: var(--v2-space-1) 0 0; } /* type: .v2-text-caption */
+/* A failed day (review round 2, R4): the line in the danger ink, Retry the quiet button after it. */
+.v3-wk-reason--danger { display: flex; align-items: center; gap: var(--v2-space-15); color: var(--v2-danger-ink); }
 .v3-coach {
   display: flex; justify-content: flex-end; padding-right: var(--v2-space-2); margin-top: var(--v2-space-3);
   animation: v2-fade-up var(--v2-dur-4) var(--v2-ease-out) var(--v2-dur-1) both;

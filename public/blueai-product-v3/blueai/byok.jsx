@@ -39,8 +39,6 @@
     // are. The countdown, the (i) and its tooltip come from credits_popup_parts.jsx, shared with
     // the comparison page (credits-popup-options.html). The refill lands at 00:00 UTC.
     const P = window.CreditsPopupParts;
-    const now = P.useNow();
-    const left = P.formatLeft(P.nextUtcMidnight(now) - now);
     return (
       <div className="v3-dlg-center">
         <div className="v3-cr-figure">
@@ -59,7 +57,7 @@
            available width happens to put it. */}
         <p className="v2-text-body">
           <span>You&rsquo;ve used all of today&rsquo;s AI credits.</span>
-          <span>Credits will be refreshed in <strong className="v3-figure" style={{ whiteSpace: 'nowrap' }}>{left}</strong>.</span>
+          <span><P.RefillIn /></span>
         </p>
         <button type="button" onClick={onDismiss} className="v2-button v2-button--primary v2-button--lg v2-button--full v3-dlg-actions">Got it</button>
       </div>

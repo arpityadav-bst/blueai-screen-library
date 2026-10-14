@@ -35,11 +35,11 @@
      screen so a run keeps going while another tab or screen is up, and shows where it is on return.
      App starts every new conversation and plays the runs that start themselves (the scheduled daily
      run, the scheduled run that dies on zero credits). */
-  function ChatScreen({ sessionKey, seed, loading, zeroCredits, onNoCredits, isOnboarding, sessionMode = 'default', onNeedLogin, showStates, bsInstalled = true, onBsInstalled, permUi = 'ribbon', onRetryToday }) {
+  function ChatScreen({ sessionKey, seed, loading, zeroCredits, onNoCredits, isOnboarding, sessionMode = 'default', onNeedLogin, showStates, bsInstalled = true, onBsInstalled, modeChip = true, onRetryToday }) {
     const CS = window.ChatStore;
     const st = CS.useChat();
-    const { convo, visible, draft, votes, reasons, answers, seenDone } = st;
-    const { started, awaiting, running, workerStarted, doneIdx, readOnly } = CS.derive(st);
+    const { convo, visible, draft, votes, reasons, answers, typed, seenDone } = st;
+    const { started, awaiting, running, doneIdx, readOnly } = CS.derive(st);
     const scrollRef = useRef(null);
     const taRef = useRef(null);
 
@@ -103,8 +103,8 @@
       if (step.role === 'installing-bs') return <window.NeedsBluestacks.ProgressBubble key={i} app={step.app}
         onDone={() => { onBsInstalled && onBsInstalled(step.app, step.text); CS.push(makeResumeSteps(step.text, step.app)); }} />;
       if (step.role === 'plan') return <PlanCard key={i} />;
-      if (step.role === 'daydone' || step.card === 'daydone') return <DayDoneCard key={i} step={step} answer={answers['k' + i]} onAnswer={(a) => CS.answer(i, a)} />;
-      if (step.role === 'ask') return <AskBubble key={i} step={step} answer={answers['k' + i]} onAnswer={(a) => CS.answer(i, a)} />;
+      if (step.role === 'daydone' || step.card === 'daydone') return <DayDoneCard key={i} step={step} answer={answers['k' + i]} typed={typed['k' + i]} onAnswer={(a) => CS.answer(i, a)} />;
+      if (step.role === 'ask') return <AskBubble key={i} step={step} answer={answers['k' + i]} typed={typed['k' + i]} onAnswer={(a) => CS.answer(i, a)} />;
       if (step.role === 'thinking') return i === visible - 1 ? <ThinkingBubble key={i} /> : null;
       return <FinalBubble key={i} msg={step} feedback={feedbackFor(i, step)} />;
     };
@@ -126,7 +126,7 @@
                        "skill" -> "worker" 2026-09-09: the Skills tab is hidden now and this is the
                        one worker in the product, so "skill" framing no longer matches anything
                        else the product says. */
-                    ? (WF().isOnboarded() ? 'Welcome back. ' + WF().nextRunLine() : "You're all set. The BlueAI worker is all it takes to start earning.")   // returning person: the run time onboarding set, or Settings > Worker's Daily run, tomorrow once today has run (draft copy, sheet row 24)
+                    ? (WF().isOnboarded() ? 'Welcome back. ' + WF().nextRunLine() : "You're all set. The BlueAI worker is all it takes to start earning.")   // returning person: the run time onboarding set, or Schedule's daily run, tomorrow once today has run (draft copy, sheet row 24)
                     : isOnboarding
                     ? 'Just send your message whenever you are ready and see me do your work for you!'
                     : 'Your AI worker for BlueStacks. Pick a task below or just type what you need.'} />}
@@ -135,7 +135,7 @@
                     {isOnboarding
                       ? null // pre-login chat (onboarding or moneymaker) = greeting + composer only
                       : sessionMode === 'moneymaker'
-                      ? (loading ? <window.WorkerHomeSkeleton /> : <window.MoneyMaker.MoneyMakerHome onRun={(p, cat) => run(p, cat)} zeroCredits={zeroCredits} onRetry={onRetryToday} modeInBar={permUi === 'chatbox'} />)
+                      ? (loading ? <window.WorkerHomeSkeleton /> : <window.MoneyMaker.MoneyMakerHome onRun={(p, cat) => run(p, cat)} zeroCredits={zeroCredits} onRetry={onRetryToday} />)
                       : (loading
                           ? <window.HomeSkeleton />
                           : <ProductHome onRun={(p, cat) => run(p, cat)} onOpenHistory={() => window.__openChatHistory && window.__openChatHistory()} />)}
@@ -157,10 +157,11 @@
           </div>
         </div>
 
-        {/* Composer: hidden while the "Chat states" dev preview is on (nothing to type/send) */}
+        {/* Composer: hidden while the "Chat states" dev preview is on (nothing to type/send). While a
+           worker question waits, what is sent is a typed answer (PM, 2026-10-14). */}
         {!showStates && <Composer taRef={taRef} draft={draft} setDraft={CS.setDraft} running={running} awaiting={awaiting}
-          onSend={() => run()} onStop={CS.stop} isOnboarding={isOnboarding} started={started} sessionMode={sessionMode}
-          permUi={permUi} workerStarted={workerStarted} scheduledOoc={readOnly} />}
+          onSend={() => (awaiting ? (draft.trim() && CS.answerTyped(draft.trim())) : run())} onStop={CS.stop} isOnboarding={isOnboarding} started={started} sessionMode={sessionMode}
+          modeChip={modeChip} scheduledOoc={readOnly} />}
         {doneIdx > seenDone && <DayDoneOverlay step={convo[doneIdx]} onClose={() => CS.dismissDone(doneIdx)} />}
       </>);
   }

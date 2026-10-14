@@ -60,9 +60,9 @@
     : null);
 
   function App() {
-    const now = P.useNow();
     const [preset, setPreset] = useState('live');
     const [target, setTarget] = useState(() => targetFor(PRESETS[0]));
+    const now = P.useNow(target);
     // Bumping `run` remounts every frame, so each popup reopens with its (i) closed.
     const [run, setRun] = useState(0);
     const pick = (p) => { setPreset(p.id); setTarget(targetFor(p)); setRun(run + 1); };

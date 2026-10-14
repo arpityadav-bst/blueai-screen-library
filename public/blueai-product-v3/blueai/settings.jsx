@@ -2,7 +2,7 @@
 // NO account card (Profile / Chat history / Report issue / Log Out live in the header ? and
 // kebab menus). Since review round 1 the tab carries the one screen header ("Settings"), as every
 // pushed screen and tab does. Cards, in order:
-// BlueStacks instance · Worker · Telegram · AI mode · Bring your own key · Chat AI settings.
+// BlueStacks instance · Telegram · AI mode · Bring your own key · Chat AI settings.
 //
 // V3, Phase 5, on kit parts since review rounds 1 and 2: every section is the kit's SettingsSection
 // (.v2-settings-section: an in-flow card, the head, the body whose rows run full bleed) and every
@@ -11,52 +11,10 @@
 // sunken tile (settings.css .v3-set-head); BlueAI's own sections carry none. One solid action per
 // open form (review round 1): an always-shown card's save and routine actions are secondary.
 
-const { useState, useEffect } = React;
+const { useState } = React;
 
-/* Worker (Arpit, 2026-10-14): the permanent home of the per-app mode outside chat. Its Apps
-   group is the mode sheet's own list (agent_permissions.jsx's AppSwitchList), so a switch
-   flipped here and one flipped in chat are the same setting, and turning one on asks for consent.
-   Review round 1 (U9): the daily run time onboarding asked for is shown and changed here too, the
-   Daily run row (the kit's Run time block, design-md 62, at its smallest: one select of the
-   onboarding's three answers); the home greeting reads the same value (worker_flow.jsx).
-   Review round 2 (R11): Schedule's daily-run entry edits here; arriving from it (focusKey) scrolls
-   the section in and focuses Daily run. */
-function WorkerCard({ focusKey }) {
-  const AppSwitchList = window.AgentPermissions.AppSwitchList;
-  const WF = window.WorkerFlow;
-  const [runTime, setRunTime] = useState(WF.getRunTime().id);
-  useEffect(() => {
-    if (!focusKey) return;
-    const el = document.getElementById('worker-run');
-    if (!el) return;
-    el.focus({ preventScroll: true });
-    el.scrollIntoView({ behavior: window.V2Kit.reducedMotion() ? 'auto' : 'smooth', block: 'center' });
-  }, [focusKey]);
-  const pick = (e) => { setRunTime(e.target.value); WF.setRunTime(e.target.value); };
-  return (
-    <section data-section="worker-settings" className="v2-settings-section">
-      <h2 className="v2-settings-section-title v2-text-title">Worker</h2>
-      <div className="v2-settings-section-body">
-        <div className="v2-row v2-row--divider">
-          <span className="v2-row-text">
-            <label htmlFor="worker-run" className="v2-row-label">Daily run</label>
-            <span id="worker-run-hint" className="v2-row-desc v2-text-body-sm">When BlueAI runs each day. A change starts with the next run.</span>
-          </span>
-          <span className="v2-row-trail">
-            <SelectField id="worker-run" className="v3-field--md" value={runTime} onChange={pick} aria-describedby="worker-run-hint">
-              {WF.RUN_TIMES.map((t) => <option key={t.id} value={t.id}>{t.label}</option>)}
-            </SelectField>
-          </span>
-        </div>
-        <div className="v3-set-block">
-          <h3 className="v3-set-label">Apps</h3>
-          <p className="v2-text-body-sm v3-set-desc">Apps BlueAI can run on its own. New apps always start on Always ask.</p>
-          <AppSwitchList />
-        </div>
-      </div>
-    </section>
-  );
-}
+/* No Worker card (PM, 2026-10-14): the mode is changed only from the chip next to the chat box
+   (agent_permissions.jsx), and the daily run time from Schedule's daily run entry (schedule.jsx). */
 
 function BluestacksCard() {
   return (
@@ -173,7 +131,7 @@ function AISettingsCard() {
   );
 }
 
-function SettingsScreen({ byok, aiModeConditions, focusWorker }) {
+function SettingsScreen({ byok, aiModeConditions }) {
   const ByokSettings = window.Byok && window.Byok.ByokSettings;
   const aiMode = window.AiMode.useAiMode(aiModeConditions);
   return (
@@ -181,7 +139,6 @@ function SettingsScreen({ byok, aiModeConditions, focusWorker }) {
       <ScreenHead title="Settings" />
       <div className="v3-screen-body">
       <BluestacksCard />
-      <WorkerCard focusKey={focusWorker} />
       <TelegramCard />
       <window.AiMode.AIModeCard {...aiMode} />
       {/* Bring Your Own Key, available in every geo; the canonical place to add/manage a key. */}

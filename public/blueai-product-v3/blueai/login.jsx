@@ -1,15 +1,22 @@
-// BlueAI: Login Modal. States: default → browser → signing → success | gate | confirm (ROB-21388,
-// cards in account_gate.jsx). onOpenBrowser hands 'browser' to the desktop's browser window;
-// browserResult finishes it. 'gate' / 'confirm' start from App Player's account (gateAccount).
+// BlueAI: Login Modal. States: default → browser → signing → success | gate (ROB-21388, the gate
+// card in account_gate.jsx). onOpenBrowser hands 'browser' to the desktop's browser window;
+// browserResult finishes it. 'gate' can also start from App Player's account (gateAccount).
 
 const { useState, useEffect } = React;
 
-function LoginModal({ isOpen, onClose, onSuccess, initialStep, onOpenBrowser, browserResult, onSwitchAccount, gateAccount, playerSwitch }) {
+function LoginModal({ isOpen, onClose, onSuccess, initialStep, onOpenBrowser, browserResult, onSwitchAccount, gateAccount }) {
   const [step, setStep] = useState(initialStep || 'default');
+  /* The account the gate names: the one THIS sign-in came back with, captured when it happened
+     (App Player's at open, the browser's when it hands one back), so a switch never leaves the
+     gate on an account from an earlier attempt. */
+  const [signedAs, setSignedAs] = useState(null);
 
   // Reset state when modal reopens. initialStep lets a caller skip straight past the 'default'
   // step (MoneyMaker's welcome page already IS that screen, full-page, see moneymaker.jsx).
-  useEffect(() => {if (isOpen) setStep(initialStep || 'default');}, [isOpen, initialStep]);
+  useEffect(() => {if (isOpen) {setStep(initialStep || 'default'); setSignedAs(initialStep === 'gate' ? gateAccount : null);}}, [isOpen, initialStep]);
+  // Once the account check has shown, the app is signed in: no sign-in screen behind the cards (PM).
+  const [solid, setSolid] = useState(false);
+  useEffect(() => {if (step === 'gate') setSolid(true);else if (!isOpen) setSolid(false);}, [step, isOpen]);
 
   // Opening directly at 'browser' skips the click that normally starts handleSignIn, so start
   // the browser step here instead: open the desktop's browser window when the parent drives one,
@@ -42,6 +49,7 @@ function LoginModal({ isOpen, onClose, onSuccess, initialStep, onOpenBrowser, br
   // The browser page handed back an account: finish the sign-in with that account's status.
   useEffect(() => {
     if (!isOpen || !browserResult) return;
+    setSignedAs(browserResult);
     setStep('signing');
     const t = setTimeout(() => setStep(browserResult.enrolled ? 'success' : 'gate'), 1500);
     return () => clearTimeout(t);
@@ -66,11 +74,11 @@ function LoginModal({ isOpen, onClose, onSuccess, initialStep, onOpenBrowser, br
   // like the welcome behind it. Every step's button runs the card's full width (review round 2).
   const card = (children) => <div className="v3-gate-card">{children}</div>;
   // The account check (ROB-21388) blocks the home screen: no close button and no Esc there.
-  const closable = step !== 'gate' && step !== 'confirm';
+  const closable = step !== 'gate';
 
   return (
     <div className="v2-overlay v2-overlay--gate" style={{ flexDirection: 'column' }}>
-      <div className="v2-scrim v2-scrim--frost" aria-hidden="true" />
+      <div className={'v2-scrim v2-scrim--frost' + (solid ? ' v3-scrim--solid' : '')} aria-hidden="true" />
       {/* The kit's focus hook (shared.jsx DialogPanel, review round 1): focus moves in, Tab stays
          inside, Esc closes wherever the close button shows, focus returns on close. */}
       <DialogPanel onEscape={closable ? () => onClose?.() : undefined} label="Sign in to BlueAI" className="v3-login-panel">
@@ -172,14 +180,9 @@ function LoginModal({ isOpen, onClose, onSuccess, initialStep, onOpenBrowser, br
 
         {/* ── GATE (ROB-21388): signed in, but not with the accepted account. From App Player's
              session at launch (gateAccount), or from a browser sign-in that picked the wrong one. ── */}
-        {step === 'gate' && card(
-          <window.AccountGate.GateCard account={browserResult || gateAccount} fromPlayer={!browserResult}
+        {step === 'gate' && signedAs && card(
+          <window.AccountGate.GateCard account={signedAs}
             onSwitch={() => { setStep('browser'); if (onSwitchAccount) onSwitchAccount(); }} />
-        )}
-        {/* ── CONFIRM (option B): App Player's account, confirmed before BlueAI uses it ── */}
-        {step === 'confirm' && card(
-          <window.AccountGate.ConfirmCard account={gateAccount} onContinue={() => (gateAccount.enrolled ? onSuccess?.() : setStep('gate'))}
-            onSwitch={() => { setStep('browser'); if (playerSwitch) playerSwitch(); }} />
         )}
 
       </div>

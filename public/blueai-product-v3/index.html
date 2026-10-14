@@ -51,8 +51,8 @@
   <link rel="stylesheet" href="entry.css" />
   <!-- V3, Phase 3: the chat screen (bubbles, progress notes, composer extras, home rows, history). -->
   <link rel="stylesheet" href="chat.css" />
-  <!-- V3, Phase 4: the worker (mode chip, ribbon, app rows, the run-complete moment's contents, home
-       progress and worker card, BlueStacks bubbles, the Schedule tab). -->
+  <!-- V3, Phase 4: the worker (mode chip and its popover rows, the run-complete moment's contents, the
+       worker card, BlueStacks bubbles, the Schedule tab). -->
   <link rel="stylesheet" href="worker.css" />
   <!-- V3, Phase 5: the screen header, credits, settings, profile, dialog contents and the onboarding
        entry: ledger rows and notes, one settings row. -->
@@ -142,14 +142,14 @@
 <script type="text/babel" src="blueai/chat_feedback.jsx"></script>
 <script type="text/babel" src="blueai/chat_bubbles.jsx"></script>
 <script type="text/babel" src="blueai/chat_composer.jsx"></script>
-<!-- BlueAI worker, end to end (ROB-21350): the Always ask / Automatic setting, its mode sheet and
+<!-- BlueAI worker, end to end (ROB-21350): the Always ask / Automatic setting, its mode chip and
      consent dialog (exposes window.AgentPermissions); the onboarding + daily-run scripts
      (exposes window.WorkerFlow); and their chat cards (exposes window.WorkerCards). All three
      resolve each other at render time. -->
 <script type="text/babel" src="blueai/agent_permissions.jsx"></script>
 <script type="text/babel" src="blueai/worker_flow.jsx"></script>
 <script type="text/babel" src="blueai/worker_cards.jsx"></script>
-<!-- The day-done card, the worker home's earnings strip and the notification words (exposes window.WorkerDayDone) -->
+<!-- The day-done moment, its thread card and the notification words (exposes window.WorkerDayDone) -->
 <script type="text/babel" src="blueai/worker_day_done.jsx"></script>
 <script type="text/babel" src="blueai/product_home.jsx"></script>
 <!-- The conversation above the chat screen, so a run survives leaving Chat (exposes window.ChatStore) -->
@@ -201,32 +201,23 @@ const { useState, useRef, useEffect } = React;
 // alone on the desktop, no BlueStacks, so BlueStacks is now opt-IN via ?bs=1, inverted from
 // the old "both installed" default.
 const QS = new URLSearchParams(location.search);
-// ?cases=signin (ROB-21388): the five sign-in cases as a bar across the top and NOTHING else to
-// set. No Preview panel. Each case resets the desktop to its starting point; the flow is then
-// clicked through. ?case=1|2|3a|3b|3c picks the one to open on.
+// ?cases=signin (ROB-21388): ONE case (PM, 2026-10-13): BlueAI signs in with an account that
+// isn't enrolled. The bar across the top only picks where that sign-in came from, and NOTHING else
+// is set. No Preview panel. Each start resets the desktop; the flow is then clicked through.
+// ?case=player|browser picks the one to open on.
 const CASES_MODE = QS.get('cases') === 'signin';
 const SIGNIN_CASES = [
-  { id: '1',  label: '1 App Player: accepted', note: 'App Player is signed in with the accepted account.' },
-  { id: '2',  label: '2 App Player: other',    note: 'App Player is signed in with a different account.' },
-  { id: '3a', label: '3a Browser: accepted',   note: 'App Player is signed out. The browser is signed in with the accepted account.' },
-  { id: '3b', label: '3b Browser: other',      note: 'App Player is signed out. The browser is signed in with a different account.' },
-  { id: '3c', label: '3c Browser: signed out', note: 'App Player is signed out. So is the browser.' }
+  { id: 'player',  label: 'App Player', note: 'App Player is signed in with an account that isn’t enrolled.' },
+  { id: 'browser', label: 'Browser',    note: 'The website is signed in with an account that isn’t enrolled.' }
 ];
-// Two options (Abhisht, 2026-10-07). A: interrupt only when the account is the wrong one.
-// B: whenever an account is already signed in (App Player, or the website), ask "Continue as".
-const SIGNIN_OPTS = [{ id: 'a', label: 'A: Check account' }, { id: 'b', label: 'B: Continue as' }];
 // ROB-21350 shareable BlueAI-worker setups, so a link opens straight on the case being discussed.
 // The Preview panel's "Copy link" builds one from whatever is on screen:
 //   ?start=worker   land signed in on the BlueAI worker home (no terms sheet, no sign-in)
-//   ?v=1 | ?v=2     change mode from the composer chip | the ribbon above the composer
-//   ?setup=off      onboarding without the "take it on my own?" setup question (default: on)
 //   ?day=next       play the next day's scheduled worker run as soon as the app opens (implies start=worker)
-//   ?day=returning  a returning person on the worker home, before today's run (implies start=worker)
-//   ?end=job | nojob | day20 | failed   how today's run ends: the day-done card and the notification
+//                   (an old ?day=returning link lands signed in on the worker home, as Day 1)
+//   ?end=job | nojob | day20 | failed   how today's run ends: the day-done moment and the notification
 //                   (worker sheet row 2). Implies day=next. Default: job
-//   ?card=days | money | plain   which day-done option draws it: the days-led message (ships), the
-//                   money-led one, or no message and a longer closing line. Default: days
-//   ?mode=auto      start with Automatic on for YouTube (default: Always ask on every app). Skips
+//   ?mode=auto      start with Automatic on for YouTube (default: Always ask). Skips
 //                   the consent dialog: the link stands in for a person who already agreed. The
 //                   Preview panel's Mode row sets the same thing.
 // ROB-21388 sign-in handoff (the browser window beside the app):
@@ -236,25 +227,29 @@ const SIGNIN_OPTS = [{ id: 'a', label: 'A: Check account' }, { id: 'b', label: '
 //                   another account (silent sign-in, then the in-app gate). Default: out
 //   ?browser=accepted | other | out   what bluestacks.ai holds when the browser opens: a session
 //                   as the accepted account, as another account, or none. Default: accepted
+// Preview states (Copy link writes them too):
+//   ?terms=firstrun | update | off   the terms sheet (default: first run, off once signed in)
+//   ?tab=jobs | schedule | settings   the tab to open on, signed in
+//   ?key=1          an own key added and on        ?hw=0   the PC fails Hybrid's hardware check
+//   ?conflict=1     another local model detected   ?ooc=1  the scheduled run that dies on zero credits
 const LINK = {
   start: ['next', 'returning'].includes(QS.get('day')) || QS.has('end') || QS.get('start') === 'worker' ? 'worker' : (QS.get('start') === 'signin' ? 'signin' : null),
-  version: QS.get('v') === '1' ? 'chatbox' : (QS.get('v') === '2' ? 'ribbon' : null),
-  setup: QS.get('setup') === 'off' ? 'jobcard' : 'onboarding',
-  day: QS.get('day') === 'returning' ? 'returning' : (QS.get('day') === 'next' || QS.has('end') ? 'next' : 'day1'),
+  day: QS.get('day') === 'next' || QS.has('end') ? 'next' : 'day1',
   end: ['job', 'nojob', 'day20', 'failed'].includes(QS.get('end')) ? QS.get('end') : 'job',
-  card: ['money', 'plain'].includes(QS.get('card')) ? QS.get('card') : 'days',
   mode: QS.get('mode') === 'auto' ? 'auto' : 'always',
+  terms: ['firstrun', 'update', 'off'].includes(QS.get('terms')) ? QS.get('terms') : null,
+  tab: ['jobs', 'schedule', 'settings'].includes(QS.get('tab')) ? QS.get('tab') : 'chat',
+  key: QS.get('key') === '1', hw: QS.get('hw') !== '0', conflict: QS.get('conflict') === '1', ooc: QS.get('ooc') === '1',
   signin: QS.get('signin') === 'browser' || CASES_MODE ? 'browser' : null,
   browser: ['other', 'out'].includes(QS.get('browser')) ? QS.get('browser') : 'accepted',
   player: ['accepted', 'other'].includes(QS.get('player')) ? QS.get('player') : 'out'
 };
 // Local-testing rows remembered in THIS browser only; a link's own settings win over them.
 //   bai_proto_start    'signin' (the real cold start) | 'worker' (land signed in on the worker home)
-//   bai_proto_version  'chatbox' (Composer chip) | 'ribbon' (Ribbon)
 const PROTO = (() => {
   let saved = {};
-  try { saved = { start: localStorage.getItem('bai_proto_start'), version: localStorage.getItem('bai_proto_version') }; } catch (e) { /* private window */ }
-  return { start: LINK.start || (LINK.signin ? 'signin' : saved.start) || 'signin', version: LINK.version || saved.version || 'ribbon' };
+  try { saved = { start: localStorage.getItem('bai_proto_start') }; } catch (e) { /* private window */ }
+  return { start: LINK.start || (LINK.signin ? 'signin' : saved.start) || 'signin' };
 })();
 const remember = (k, v) => { try { localStorage.setItem(k, v); } catch (e) { /* private window: this session only */ } };
 
@@ -300,8 +295,8 @@ function ProductTopBar({ credits, lowDot, isLoggedIn, onNewChat, onOpenRun, onOp
      mark, the one dollar glyph, the same as the BlueAI worker card's tile. Not a wallet: "Wallet"
      is the crypto concept the product is dropping. Sits after Profile (account things together),
      before Sign out (which stays last). Destination: the one dashboard link (shared.jsx
-     BlueAILinks, review round 1), the deployed Vesper page as a stand-in for the real dashboard
-     URL, which the product team owns. */
+     BlueAILinks): the partner dashboard in this repo, where the 20 days live (PM, 2026-10-14), a
+     stand-in for the real dashboard URL, which the product team owns. */
 
   /* The Target top bar (design-md 30, Appy 2026-10-14): 52 tall, surface, one hairline, no shadow
      (.v2-topbar); no logo (the title bar carries it). Left: the credits as plain text (the kit's
@@ -405,8 +400,6 @@ function AICreditsScreen({ credits, keyAdded, byokOn, keyInfo, onManageByok }) {
   // that explains them; the healthy state gets a Learn more link. Shared pieces in
   // credits_popup_parts.jsx. The refill lands at 00:00 UTC.
   const CP = window.CreditsPopupParts;
-  const nowTs = CP.useNow();
-  const refillIn = CP.formatLeft(CP.nextUtcMidnight(nowTs) - nowTs);
 
   return (
     <div className="v2-anim-fade-up v3-screen">
@@ -449,7 +442,7 @@ function AICreditsScreen({ credits, keyAdded, byokOn, keyInfo, onManageByok }) {
               <p className="v3-titled v3-cr-out-title"><span className="v3-low-dot" aria-hidden="true" />Out of credits<CP.InfoTip dir="down" /></p>
               <p className="v2-text-body-sm v3-cr-text">
                 <span>You&rsquo;ve used all of today&rsquo;s AI credits.</span>
-                <span>Credits will be refreshed in <strong>{refillIn}</strong>.</span>
+                <span><CP.RefillIn /></span>
               </p>
             </div>}
 
@@ -527,12 +520,15 @@ const INSTALLERS = {
   }
 };
 
+// The own key the preview (and a ?key=1 link) adds.
+const DEFAULT_KEY = { provider: 'Anthropic', model: 'claude-haiku-4-5', key: 'sk-ant-9Xsjhdw1qAAA' };
+
 function App() {
   const ProductChatScreen = window.ProductChat.ChatScreen;
   const HistoryScreen = window.ChatHistory.ChatHistoryScreen;
   const ProfileScreen = window.Profile.ProfileScreen;
   const LogoutModal = window.Profile.LogoutModal;
-  const [activeTab, setActiveTab] = useState('chat');
+  const [activeTab, setActiveTab] = useState(LINK.tab);
   const [sessionKey, setSessionKey] = useState(0);   // bump to reset the chat (New chat)
   /* Every new conversation starts here (review round 2, R1): the conversation lives in
      window.ChatStore, above the chat screen, so it is reset here and never by the screen remounting. */
@@ -552,38 +548,32 @@ function App() {
   const [reportOpen, setReportOpen] = useState(false);   // Help > Report issue dialog
   const [booting, setBooting] = useState(true);           // cold-start boot splash
   const [homeReady, setHomeReady] = useState(false);      // skeleton → real content
-  const [keyAdded, setKeyAdded] = useState(false);         // has the user configured their own key (any geo)
-  const [keyInfo, setKeyInfo] = useState(null);            // { provider, model, key }
-  const [byokOn, setByokOn] = useState(false);             // BYOK toggle in Settings
+  const [keyAdded, setKeyAdded] = useState(LINK.key);      // has the user configured their own key (any geo)
+  const [keyInfo, setKeyInfo] = useState(LINK.key ? DEFAULT_KEY : null);   // { provider, model, key }
+  const [byokOn, setByokOn] = useState(LINK.key);          // BYOK toggle in Settings
   const [highlightByok, setHighlightByok] = useState(false); // pulse the Settings BYOK card when routed there
-  const [zeroCredits, setZeroCredits] = useState(QS.get('credits') === '0');   // preview "out of credits" (drives the on-send popup); ?credits=0 starts there
-  const [scheduledOoc, setScheduledOoc] = useState(false); // preview: a SCHEDULED worker run that dies mid-job on zero credits (its own chat, no user message)
+  const [zeroCredits, setZeroCredits] = useState(QS.get('credits') === '0' || LINK.ooc);   // preview "out of credits" (drives the on-send popup); ?credits=0 starts there
+  const [scheduledOoc, setScheduledOoc] = useState(LINK.ooc); // preview: a SCHEDULED worker run that dies mid-job on zero credits (its own chat, no user message)
   const [showChatStates, setShowChatStates] = useState(false); // preview: show one example bubble per chat message state (success/warning/error) instead of the live scripted task
-  const [aiHwSupported, setAiHwSupported] = useState(true);    // preview: does this PC meet Hybrid AI Mode's hardware requirements
-  const [aiConflict, setAiConflict] = useState(false);         // preview: another local model (e.g. LM Studio) already running
+  const [aiHwSupported, setAiHwSupported] = useState(LINK.hw);    // preview: does this PC meet Hybrid AI Mode's hardware requirements
+  const [aiConflict, setAiConflict] = useState(LINK.conflict);     // preview: another local model (e.g. LM Studio) already running
   const [oocOpen, setOocOpen] = useState(false);           // out-of-credits popup
   const [pendingMessage, setPendingMessage] = useState(null); // onboarding: message that opened the sign-in gate, auto-sent after login
   const [previewOpen, setPreviewOpen] = useState(true);    // dev preview panel collapse
   // BlueAI worker end to end (ROB-21350). workerDay: 'day1' = a new user (Run plays onboarding),
-  // 'next' = the following day's scheduled run, replayed per click (playDailyRun). jobChoice:
-  // whether onboarding asks the setup question. permUi: which control opens the mode sheet later
-  // (composer chip or ribbon). protoStart: skip sign-in on load. jobWaiting: an unanswered job
-  // ask, which lights BlueAI's taskbar button. permModes: the per-app modes, for the Mode row.
+  // 'next' = the following day's scheduled run, replayed per click (playDailyRun). protoStart: skip
+  // sign-in on load. jobWaiting: an unanswered job ask, which lights BlueAI's taskbar button.
+  // permModes: YouTube's mode, for the Mode row.
   const [protoStart, setProtoStart] = useState(PROTO.start);
-  const [permUi, setPermUi] = useState(PROTO.version);
   const { modes: permModes } = window.AgentPermissions.usePermissionMode();
   const [workerDay, setWorkerDay] = useState(LINK.day);
-  const [jobChoice, setJobChoice] = useState(LINK.setup);
   const [dayEnd, setDayEnd] = useState(LINK.end);        // how today's run ends (worker_day_done.jsx)
-  const [cardStyle, setCardStyle] = useState(LINK.card); // which day-done option draws it: money | days | plain
-  const [toast, setToast] = useState(null);              // the Windows notification a scheduled run raises when its day is done
+  const [toast, setToast] = useState(null);              // the Windows notification a scheduled run raises while the person is away
   const [linkCopied, setLinkCopied] = useState(false);
-  const linkDayPlayed = useRef(false);   // ?day=next plays its run once, after the first boot
+  const linkRunPlayed = useRef(false);   // a link's run (?day=next, ?ooc=1) plays once, after the first boot
   // A shared link's worker setup lives in module-level stores outside React; apply it once.
   useEffect(() => {
-    window.WorkerFlow.setChoicePoint(LINK.setup);
     window.WorkerDayDone.setEnd(LINK.end);
-    window.WorkerDayDone.setStyle(LINK.card);
     if (LINK.day !== 'day1') window.WorkerFlow.setOnboarded(true);
     seedDays(LINK.day, LINK.end);
     if (LINK.mode === 'auto') window.AgentPermissions.setMode('youtube', 'auto');
@@ -592,7 +582,8 @@ function App() {
   /* The conversation's state, read here because it outlives the chat screen (review round 2, R1):
      an unanswered job or retry question lights BlueAI's taskbar button after 4s (the prototype's
      stand-in for "nobody answered", Abhisht, 2026-10-05) whichever screen is up, and a step that
-     notifies raises the Windows notification. App redraws only when the waiting question or today's
+     notifies raises the Windows notification, only while the person is away: with BlueAI's window
+     open they are in the app, where the run already shows itself. App redraws only when the waiting question or today's
      state changes (the Jobs and Schedule tabs read today's state), not on every step or keystroke. */
   const askWaiting = window.ChatStore.useChatWhere((st) => window.ChatStore.derive(st).jobWaiting);
   window.ChatStore.useChatWhere(() => window.WorkerDayDone.getToday());
@@ -601,13 +592,13 @@ function App() {
     const t = setTimeout(() => setJobWaiting(true), 4000);
     return () => clearTimeout(t);
   }, [askWaiting]);
-  useEffect(() => { window.ChatStore.setHooks({ onNotify: (end) => setToast({ end, key: Date.now() }) }); }, []);
+  const presentRef = useRef(false);   // BlueAI's window is open: the person is in the app (set below)
+  useEffect(() => { window.ChatStore.setHooks({ onNotify: (end) => { if (!presentRef.current) setToast({ end, key: Date.now() }); } }); }, []);
   // The scheduled daily run plays itself in a new conversation, nobody typing.
   const playDailyRun = () => { bumpSession(); window.ChatStore.push(window.WorkerFlow.makeDailyRun({ scheduled: true })); };
-  // The strip's Retry (R4): answer the failed run's question if it still waits, else run the job again.
+  // Retry (R4), from the worker card or the top bar: answer the failed run's question if it still waits, else run the job again.
   const retryToday = () => { handleTabChange('chat'); if (!window.ChatStore.retry()) { bumpSession(); window.ChatStore.push(window.WorkerFlow.makeRetryRun()); } };
   const [stopAsk, setStopAsk] = useState(false);       // New chat's "Stop today's run?" confirm
-  const [focusWorker, setFocusWorker] = useState(0);   // Schedule's daily-run Edit lands on Settings > Worker
   // The BlueAI-worker welcome IS the starting experience (Abhisht, 2026-09-24): logged out, on
   // the worker session, with the first-run terms sheet up. These three defaults move together,
   // 'moneymaker' must start logged OUT (switchSession derives isLoggedIn the same way).
@@ -616,7 +607,7 @@ function App() {
   // Terms sheet preview: 'firstrun' (blocking first-start acceptance, the default) | 'update'
   // (blocking re-acceptance after a terms change) | 'off'. Its own row rather than a Session
   // option because it overlays ANY session.
-  const [termsMode, setTermsMode] = useState(PROTO.start === 'worker' || LINK.signin ? 'off' : 'firstrun');
+  const [termsMode, setTermsMode] = useState(LINK.terms || (PROTO.start === 'worker' || LINK.signin ? 'off' : 'firstrun'));
   const [loginFlow, setLoginFlow] = useState('onboarding');  // which flow opened LoginModal: 'onboarding' (composer-gated) or 'moneymaker' (welcome CTA, opens straight past the default step)
   /* ROB-21388: the browser window the app's Sign in opens, and what it finds there. playerAcct
      and browserSession are the Preview rows (App Player on this PC; what bluestacks.ai holds);
@@ -627,33 +618,23 @@ function App() {
   const [playerAcct, setPlayerAcct] = useState(LINK.player);           // 'out' | 'accepted' | 'other'
   const [browserResult, setBrowserResult] = useState(null);
   const openBrowser = () => { setBrowserResult(null); setBrowserKey((k) => k + 1); setBrowserOpen(true); };
-  const [caseId, setCaseId] = useState(SIGNIN_CASES.some((c) => c.id === QS.get('case')) ? QS.get('case') : '1');
-  /* Every case is a cold start (Abhisht, 2026-10-07: "BlueAI should always start with the
-     launching/splash screen"). What happens after the splash depends only on the shared session:
-     App Player signed in = BlueAI signs in silently (home, or the check for another account);
-     signed out = BlueAI's sign-in page, and the person clicks Sign in. */
-  const playerRef = useRef(playerAcct); playerRef.current = playerAcct;
-  const loggedRef = useRef(false); loggedRef.current = isLoggedIn;
-  const [opt, setOpt] = useState(QS.get('opt') === 'b' ? 'b' : 'a');
-  const optRef = useRef(opt); optRef.current = opt;
-  const pickOpt = (v) => { setOpt(v); optRef.current = v; playCase(caseId); };
+  const [caseId, setCaseId] = useState(SIGNIN_CASES.some((c) => c.id === QS.get('case')) ? QS.get('case') : 'player');
+  /* Every start is a cold start (Abhisht, 2026-10-07: "BlueAI should always start with the
+     launching/splash screen"). App Player: it holds the not-enrolled account, so BlueAI signs in
+     silently with it and the check is already there, under the splash, when it fades. Browser: App
+     Player is signed out, so BlueAI's sign-in page shows; the person clicks Sign in and the website
+     hands back the not-enrolled account it holds. Either way the same message follows. */
   const playCase = (id) => {
     setCaseId(id);
     setBrowserOpen(false); setBrowserResult(null); setShowLoginModal(false); setTermsMode('off');
     setCreditsOpen(false); setHistoryOpen(false); setProfileOpen(false); setLogoutOpen(false); setActiveTab('chat'); setSeed(null);
-    setSessionMode('moneymaker'); setOnbPhase('welcome'); setLoginFlow('moneymaker');
-    const player = id === '1' ? 'accepted' : (id === '2' ? 'other' : 'out');
-    setPlayerAcct(player); playerRef.current = player;
-    setBrowserSession(id === '3b' ? 'other' : (id === '3c' ? 'out' : 'accepted'));
-    setIsLoggedIn(id === '1' && optRef.current === 'a');   // option B confirms App Player's account first
+    setSessionMode('moneymaker'); setOnbPhase('welcome');
+    const player = id === 'player' ? 'other' : 'out';
+    setPlayerAcct(player);
+    setBrowserSession('other');   // the website holds the same not-enrolled account
+    setIsLoggedIn(false);
+    setLoginFlow(player === 'other' ? 'gate' : 'moneymaker'); setShowLoginModal(player === 'other');
     setWinOpen(true); setBooting(true); setHomeReady(false); bumpSession();
-  };
-  // After the splash: App Player on another account means a silent sign-in with it, then the check.
-  // Option B: any App Player account gets "Continue as" first.
-  const afterBoot = () => {
-    if (loggedRef.current || playerRef.current === 'out') return;
-    if (optRef.current === 'b') { setLoginFlow('confirm'); setShowLoginModal(true); return; }
-    if (playerRef.current === 'other') { setLoginFlow('gate'); setShowLoginModal(true); }
   };
   useEffect(() => { if (CASES_MODE) playCase(caseId); }, []);
   // The browser's "You're signed in" page stays up just long enough to read, then the window goes.
@@ -673,7 +654,6 @@ function App() {
   const [winJustIn, setWinJustIn] = useState(false);        // play the window's open animation once
   const [onbPhase, setOnbPhase] = useState('welcome');      // onboarding sub-flow: 'welcome' (chrome-free picker) → 'chat'
   const isLoading = !homeReady;
-  const DEFAULT_KEY = { provider: 'Anthropic', model: 'claude-haiku-4-5', key: 'sk-ant-9Xsjhdw1qAAA' };
   // V2 grants every member 2000 credits a day, automatically (Appy, 2026-09-09). No tiers and
   // no geo split, so this is a flat constant rather than the old member/geo lookup.
   const DAILY_GRANT = 2000;
@@ -692,13 +672,18 @@ function App() {
   // After the splash fades, let the skeleton linger briefly, then settle the content in.
   const handleBootDone = () => {
     setBooting(false); setTimeout(() => setHomeReady(true), 850);
-    if (LINK.day === 'next' && !linkDayPlayed.current) { linkDayPlayed.current = true; playDailyRun(); }
-    if (CASES_MODE) afterBoot();
-    else if (LINK.signin === 'browser' && !isLoggedIn) { setLoginFlow(LINK.player === 'other' ? 'gate' : 'moneymaker'); setShowLoginModal(true); }   // ROB-21388 link: the handoff, or the gate when App Player is on another account
+    if (!linkRunPlayed.current) {
+      linkRunPlayed.current = true;
+      if (LINK.day === 'next') playDailyRun();
+      else if (LINK.ooc && isLoggedIn && !LINK.key) window.ChatStore.push(window.ChatBubbles.makeScheduledOocSteps());
+    }
+    if (!CASES_MODE && LINK.signin === 'browser' && !isLoggedIn) { setLoginFlow(LINK.player === 'other' ? 'gate' : 'moneymaker'); setShowLoginModal(true); }   // ROB-21388 link: the handoff, or the gate when App Player is on another account
   };
   /* Preview panel "Copy link" (ROB-21350): today's setup as a ?query link (see LINK above). It is
      built on this page's own address, so it opens on localhost here and on the real host once the
-     prototype is deployed. Worker settings ride along only when the worker home is what's showing. */
+     prototype is deployed. Worker settings ride along only when the worker home is what's showing;
+     the preview states (credits, the scheduled out-of-credits run, terms, tab, own key, hardware,
+     AI conflict) always do. */
   const copyLink = () => {
     const p = new URLSearchParams();
     if (bsInstalled) p.set('bs', '1');
@@ -708,15 +693,19 @@ function App() {
       if (playerAcct !== 'out') p.set('player', playerAcct);
       if (browserSession !== 'accepted') p.set('browser', browserSession);
     }
-    if (isLoggedIn && sessionMode === 'moneymaker' && playerAcct === 'out') {
+    if (isLoggedIn && sessionMode === 'moneymaker') {
       p.set('start', 'worker');
-      p.set('v', permUi === 'chatbox' ? '1' : '2');
-      if (jobChoice === 'jobcard') p.set('setup', 'off');
       if (workerDay !== 'day1') p.set('day', workerDay);
       if (workerDay === 'next' && dayEnd !== 'job') p.set('end', dayEnd);
-      if (cardStyle !== 'days') p.set('card', cardStyle);
       if (window.AgentPermissions.getMode('youtube') === 'auto') p.set('mode', 'auto');
     }
+    if (scheduledOoc) p.set('ooc', '1');
+    else if (zeroCredits) p.set('credits', '0');
+    if (termsMode !== (p.has('start') || p.has('signin') ? 'off' : 'firstrun')) p.set('terms', termsMode);
+    if (isLoggedIn && activeTab !== 'chat') p.set('tab', activeTab);
+    if (byokActive) p.set('key', '1');
+    if (!aiHwSupported) p.set('hw', '0');
+    if (aiConflict) p.set('conflict', '1');
     const url = location.origin + location.pathname + (p.toString() ? '?' + p.toString() : '');
     const done = () => { setLinkCopied(true); setTimeout(() => setLinkCopied(false), 1600); };
     if (navigator.clipboard) navigator.clipboard.writeText(url).then(done, () => window.prompt('Copy this link', url));
@@ -737,6 +726,7 @@ function App() {
     setActiveTab('chat'); setSeed(null);
   };
   const winPresent = baiInstalled && winOpen;
+  presentRef.current = winPresent;
   // The BlueStacks window is only clickable when the click DOES something: install BlueAI, or
   // reopen a BlueAI window that was closed with ✕. Otherwise it is scenery.
   // …and never while its own dialog is up, so a click on the dimmed player can't re-fire it.
@@ -820,8 +810,7 @@ function App() {
   const switchSession = (mode) => { setSessionMode(mode); setIsLoggedIn(mode === 'default'); setOnbPhase('welcome'); setSeed(null); setPendingMessage(null); bumpSession(); setActiveTab('chat'); setCreditsOpen(false); setHistoryOpen(false); setProfileOpen(false); };
   // Onboarding picker → chat: prefill the composer with the picked task (empty for "Just type it").
   const startOnboardingChat = (prompt) => { setSeed(prompt ? { text: prompt, n: Date.now() } : null); bumpSession(); setActiveTab('chat'); setOnbPhase('chat'); };
-  const handleTabChange = (tab) => { setActiveTab(tab); setCreditsOpen(false); setHistoryOpen(false); setProfileOpen(false); setFocusWorker(0); if (tab !== 'chat') setSeed(null); };
-  const goToWorkerSettings = () => { handleTabChange('settings'); setFocusWorker(Date.now()); };
+  const handleTabChange = (tab) => { setActiveTab(tab); setCreditsOpen(false); setHistoryOpen(false); setProfileOpen(false); if (tab !== 'chat') setSeed(null); };
   // MoneyMaker's welcome page IS the "please sign in" screen, so its CTA opens LoginModal
   // straight past the 'default' step (see login.jsx's initialStep).
   const handleMoneyMakerSignIn = () => { setLoginFlow('moneymaker'); setShowLoginModal(true); };
@@ -932,15 +921,15 @@ function App() {
       ) : isChat ? (
         <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
           <ProductChatScreen sessionKey={sessionKey} seed={seed} loading={!homeReady} zeroCredits={zeroCredits && !byokActive} onNoCredits={() => setOocOpen(true)} isOnboarding={!isLoggedIn} sessionMode={sessionMode} onNeedLogin={(text) => { setLoginFlow('onboarding'); setPendingMessage(text); setShowLoginModal(true); }} showStates={showChatStates}
-            permUi={CASES_MODE ? 'none' : permUi} onRetryToday={retryToday}
+            modeChip={!CASES_MODE} onRetryToday={retryToday}
             bsInstalled={bsInstalled} onBsInstalled={completeBluestacksInstall} />
         </div>
       ) : (
         <div key={activeTab} className="v2-anim-fade-up"
           style={{ flex: 1, overflowY: 'auto', paddingBottom: 'var(--v2-space-5)' }}>
-          {activeTab === 'jobs' && <JobsScreen isLoading={isLoading} onGoChat={() => handleTabChange('chat')} onRetry={retryToday} />}
-          {activeTab === 'schedule' && <ScheduleScreen isLoading={isLoading} onEditWorker={goToWorkerSettings} />}
-          {activeTab === 'settings' && <SettingsScreen byok={{ on: byokOn, setOn: setByokOn, keyAdded, keyInfo, onSave: addKey, onRemove: removeKey, highlight: highlightByok }} aiModeConditions={{ hwSupported: aiHwSupported, conflict: aiConflict }} focusWorker={focusWorker} />}
+          {activeTab === 'jobs' && <JobsScreen isLoading={isLoading} onGoChat={() => handleTabChange('chat')} />}
+          {activeTab === 'schedule' && <ScheduleScreen isLoading={isLoading} />}
+          {activeTab === 'settings' && <SettingsScreen byok={{ on: byokOn, setOn: setByokOn, keyAdded, keyInfo, onSave: addKey, onRemove: removeKey, highlight: highlightByok }} aiModeConditions={{ hwSupported: aiHwSupported, conflict: aiConflict }} />}
         </div>
       )}
 
@@ -949,14 +938,13 @@ function App() {
       )}
       <LoginModal
         isOpen={showLoginModal}
-        initialStep={loginFlow === 'gate' || loginFlow === 'confirm' ? loginFlow : (loginFlow === 'moneymaker' ? 'browser' : 'default')}
+        initialStep={loginFlow === 'gate' ? 'gate' : (loginFlow === 'moneymaker' ? 'browser' : 'default')}
         gateAccount={playerAcct === 'accepted' ? window.SignInPage.ACCOUNTS.primary : window.SignInPage.ACCOUNTS.other}
-        playerSwitch={() => { setPlayerAcct('out'); openBrowser(); }}
         onClose={() => { setShowLoginModal(false); setPendingMessage(null); setBrowserOpen(false); }}
         onSuccess={handleLoginSuccess}
         onOpenBrowser={openBrowser}
         browserResult={browserResult}
-        onSwitchAccount={() => { setPlayerAcct('out'); if (browserResult) setBrowserSession('out'); openBrowser(); }} />
+        onSwitchAccount={() => { setPlayerAcct('out'); setBrowserSession('other'); openBrowser(); }} />{/* the website still holds the account that just failed */}
 
       <LogoutModal
         isOpen={logoutOpen}
@@ -965,10 +953,9 @@ function App() {
       <window.Help.ReportIssueDialog isOpen={reportOpen} onClose={() => setReportOpen(false)} />
       <window.ChatStore.StopRunDialog isOpen={stopAsk} onCancel={() => setStopAsk(false)} onConfirm={stopAndNewChat} />
 
-      {/* The mode sheet, and the "Run jobs automatically?" confirm that opens over it. One
-         instance of each here, inside .ba-app, so both are scoped to the product window whichever
-         control opened them (the composer chip, the ribbon's Change, Settings, the job ask). */}
-      <window.AgentPermissions.ModeSheet />
+      {/* The "Run YouTube jobs automatically?" confirm. One instance here, inside .ba-app, so it is
+         scoped to the product window. The one control that asks for it is the composer chip's
+         mode popover. */}
       <window.AgentPermissions.AutoConfirm />
 
       {/* Out-of-credits popup on message-send: prime geo → Prime upsell (image 1); non-prime geo → BYOK (image 2). */}
@@ -1004,7 +991,7 @@ function App() {
         sideWindow={browserOpen && winPresent ? (
           /* ROB-21388: the browser the app's Sign in opened. Keyed on its setup, so a Preview row
              change restarts it on the matching first page. */
-          <window.SignInPage.SignInBrowser key={browserKey + '-' + browserSession + '-' + opt} start={browserSession} always={CASES_MODE && opt === 'b'}
+          <window.SignInPage.SignInBrowser key={browserKey + '-' + browserSession} start={browserSession}
             onContinue={handleBrowserContinue} onClose={() => setBrowserOpen(false)} />
         ) : null}
         aiInstalled={baiInstalled} aiOpen={winPresent} aiAttention={jobWaiting}
@@ -1027,11 +1014,7 @@ function App() {
         <>
           <style>{'.pscene { top: 56px; }'}</style>
           <div style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 300, height: 56, display: 'flex', alignItems: 'center', gap: 8, padding: '0 18px', background: 'rgba(17,21,36,0.94)', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}>
-            {SIGNIN_OPTS.map((o) => (
-              <button key={o.id} onClick={() => pickOpt(o.id)}
-                style={{ height: 32, padding: '0 14px', borderRadius: 8, border: '1px solid ' + (o.id === opt ? '#c3cade' : '#2a3048'), background: o.id === opt ? '#c3cade' : 'transparent', color: o.id === opt ? '#111524' : '#8790a8', fontSize: 12.5, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap' }}>{o.label}</button>
-            ))}
-            <span style={{ width: 1, height: 24, background: '#2a3048', margin: '0 6px' }} />
+            <span style={{ fontSize: 12.5, fontWeight: 700, color: '#c3cade', marginRight: 4, whiteSpace: 'nowrap' }}>Not-enrolled account, signed in from</span>
             {SIGNIN_CASES.map((c) => (
               <button key={c.id} onClick={() => playCase(c.id)}
                 style={{ height: 32, padding: '0 14px', borderRadius: 999, border: '1px solid ' + (c.id === caseId ? '#1a6fc4' : '#2a3048'), background: c.id === caseId ? '#1a6fc4' : 'transparent', color: c.id === caseId ? '#fff' : '#8790a8', fontSize: 12.5, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap' }}>{c.label}</button>
@@ -1145,19 +1128,15 @@ function App() {
                that chat is read-only, and New chat sets this row back to Off (review round 2, R5). */
             if (isChat) rows.push(<PreviewRow key="schedooc" label="Scheduled job" opts={[['Off', false], ['Out of credits', true]]} val={scheduledOoc}
               set={(v) => { setScheduledOoc(v); if (v) setZeroCredits(true); bumpSession(); if (v && isLoggedIn && !byokActive) window.ChatStore.push(window.ChatBubbles.makeScheduledOocSteps()); }} />);
-            /* BlueAI worker end to end (ROB-21350). Change mode from: the control that opens the
-               mode sheet, the two shapes going to the seniors (the composer chip, or a ribbon
-               above the composer once the worker runs on Automatic). Mode: YouTube's mode, set
-               directly with no consent dialog, exactly like ?mode=auto. Worker: Day 1 resets to a
-               brand-new user (Run plays onboarding, mode back to Always ask); Next day plays the
-               following day's scheduled run in its own chat, again on every click. Setup question:
-               whether onboarding asks "take paid jobs on my own, or check with me first?". */
+            /* BlueAI worker end to end (ROB-21350). Mode: YouTube's mode, set directly with no consent
+               dialog, exactly like ?mode=auto. Worker: Day 1 resets to a brand-new user (Run plays
+               onboarding, mode back to Always ask); Next day plays the following day's scheduled
+               run in its own chat, again on every click. Removed 2026-10-14 with the PM's panel
+               clean-up: Change mode from, Returning, Card, Setup question and Own key. */
             if (isChat && sessionMode === 'moneymaker' && isLoggedIn) {
-              rows.push(<PreviewRow key="permui" label="Change mode from" opts={[['Composer chip', 'chatbox'], ['Ribbon', 'ribbon']]} val={permUi}
-                set={(v) => { setPermUi(v); remember('bai_proto_version', v); }} />);
               rows.push(<PreviewRow key="permmode" label="Mode" opts={[['Always ask', 'always'], ['Automatic', 'auto']]} val={permModes.youtube}
                 set={(v) => window.AgentPermissions.setMode('youtube', v)} />);
-              rows.push(<PreviewRow key="workerday" label="Worker" opts={[['Day 1', 'day1'], ['Returning', 'returning'], ['Next day', 'next']]} val={workerDay}
+              rows.push(<PreviewRow key="workerday" label="Worker" opts={[['Day 1', 'day1'], ['Next day', 'next']]} val={workerDay}
                 set={(v) => {
                   setWorkerDay(v); setSeed(null); setToast(null); window.WorkerDayDone.setToday(null); seedDays(v, dayEnd);
                   if (v === 'day1') { window.WorkerFlow.setOnboarded(false); window.AgentPermissions.reset(); }
@@ -1171,26 +1150,14 @@ function App() {
                   setDayEnd(v); window.WorkerDayDone.setEnd(v); seedDays('next', v); setToast(null); setSeed(null);
                   setWorkerDay('next'); window.WorkerFlow.setOnboarded(true); playDailyRun();
                 }} />);
-              /* Card (Abhisht, 2026-10-12): the three options for the moment. Money leads with the
-                 dollar; Days shows the count and no money; Plain is no card, only a longer closing
-                 line. Replays whatever is on screen so the change shows at once. */
-              rows.push(<PreviewRow key="cardstyle" label="Card" opts={window.WorkerDayDone.STYLES} val={cardStyle}
-                set={(v) => {
-                  setCardStyle(v); window.WorkerDayDone.setStyle(v); setToast(null); setSeed(null);
-                  if (workerDay === 'next') playDailyRun(); else bumpSession();
-                }} />);
-              rows.push(<PreviewRow key="jobchoice" label="Setup question" opts={[['On', 'onboarding'], ['Off', 'jobcard']]} val={jobChoice}
-                set={(v) => { setJobChoice(v); window.WorkerFlow.setChoicePoint(v); }} />);
             }
             if (activeTab === 'settings') {
               rows.push(<PreviewRow key="aihw" label="Hardware" opts={[['Yes', true], ['No', false]]} val={aiHwSupported} set={setAiHwSupported} />);
               rows.push(<PreviewRow key="aiconflict" label="AI conflict" opts={[['None', false], ['Detected', true]]} val={aiConflict} set={setAiConflict} />);
             }
             if (isLoggedIn) {
-              // Geo and Membership rows removed 2026-09-09: with one member type and one geo they
-              // selected states the screens no longer distinguish. Own key stays, because BYOK still
-              // lives in Settings and still changes what the credits screen reports.
-              rows.push(<PreviewRow key="key" label="Own key" opts={[['Off', false], ['On', true]]} val={byokActive} set={(v) => { setKeyAdded(v); setByokOn(v); setKeyInfo(v ? DEFAULT_KEY : null); }} />);
+              // Geo and Membership rows removed 2026-09-09; the Own key row removed 2026-10-14 (PM).
+              // An own key can still be added in Settings (or with ?key=1), which hides this row.
               if (!byokActive) rows.push(<PreviewRow key="credits" label="Credits" opts={[['Full', false], ['Empty', true]]} val={zeroCredits} set={setZeroCredits} />);
             }
             return rows.map((row, i) => (

@@ -78,8 +78,6 @@
 .v3-set-note { margin: var(--v2-space-1) 0 0; }
 .v3-set-brand { flex: none; display: grid; place-items: center; width: var(--v2-control-md); height: var(--v2-control-md); border-radius: var(--v2-radius-sm); background: var(--v2-surface-sunken); color: var(--v2-ink-2); }
 .v3-set-brand img { width: var(--v2-icon-md); height: var(--v2-icon-md); object-fit: contain; border-radius: var(--v2-radius-xs); }
-/* A block in a section body that is not a row (Worker's Apps): a row's 12 above it. */
-.v3-set-block { padding-top: var(--v2-space-3); }
 .v3-set-label { margin: 0; color: var(--v2-ink); font-size: var(--v2-text-14); font-weight: var(--v2-weight-medium); letter-spacing: var(--v2-tracking-label); }
 .v3-set-line { display: flex; align-items: center; justify-content: space-between; gap: var(--v2-space-3); min-height: var(--v2-control-md); }
 /* An action row: 4 over the gap or the row padding above it, so 16 in all. */

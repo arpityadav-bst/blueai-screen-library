@@ -20,7 +20,7 @@
   const BLUE = '#1990FF';
   // Deep link to the article's "AI credits" section (its <section id="ai-credits">), not the page top.
   const FAQ_URL = 'https://bluestacks.ai/getting-started#ai-credits';
-  const DAILY = 2500;
+  const DAILY = 2000;   // V2's one daily grant (index.html DAILY_GRANT)
   const GRAD = 'linear-gradient(270deg,#7B4CFF 0%,#0EA4C5 99.48%)';
 
   // ---- time
@@ -45,11 +45,30 @@
     if (at.toDateString() === tmr.toDateString()) return time + ' tomorrow';
     return time + ' ' + at.toLocaleDateString([], { weekday: 'long' });
   }
-  // One clock for the whole page, so every card counts down in step.
-  function useNow() {
+  /* The clock a countdown reads. It ticks only as often as formatLeft can change: once a minute
+     (just after the minute turns over, when the shown minute drops), every second in the last
+     minute before the moment it counts to (`due`, default the next refill), where formatLeft shows
+     seconds. */
+  function useNow(due) {
     const [now, setNow] = useState(() => new Date());
-    useEffect(() => { const id = setInterval(() => setNow(new Date()), 1000); return () => clearInterval(id); }, []);
+    useEffect(() => {
+      const t = Date.now();
+      const left = (due || nextUtcMidnight(new Date(t))) - t;
+      const every = left > 0 && left <= 61000 ? 1000 : 60000;
+      const off = every === 1000 ? 20 : 1020;   // just past the instant the shown value changes
+      const id = setTimeout(() => setNow(new Date()), every - (((t - off) % every) + every) % every);
+      return () => clearTimeout(id);
+    }, [now, due]);
     return now;
+  }
+  /* "Credits will be refreshed in 6h 42m." The refill it counts to is fixed when the line first
+     shows (the next 00:00 UTC), so at midnight it says the credits are back instead of rolling
+     over to the next day's "24h". */
+  function RefillIn() {
+    const [due] = useState(() => nextUtcMidnight(new Date()));
+    const now = useNow(due);
+    if (due - now <= 0) return <>Credits have been refreshed.</>;
+    return <>Credits will be refreshed in <strong className="v3-figure" style={{ whiteSpace: 'nowrap' }}>{formatLeft(due - now)}</strong>.</>;
   }
 
   // ---- card pieces (live CreditsOverlay values)
@@ -94,8 +113,10 @@
   // Approved 2026-10-06. The explainer copy, one paragraph, no number: the daily amount is set
   // per program, so naming it here would need a copy change (in 17 languages) whenever it moves.
   // "Limited credits each day" is also what the AI Credits page already says.
-  const EXPLAIN_CREDITS = 'BlueAI runs on credits. Every job and chat uses some. You get limited credits each day, enough for 4 to 5 jobs.';
-  const EXPLAIN_LIMIT = 'BlueAI has a daily limit. Every job and chat uses some of it. It’s enough for 4 to 5 jobs.';
+  // No job count: "enough for 4 to 5 jobs" was written beside a 2,500 grant and holds at 2,000
+  // only while a job costs 400 or less, so it is not a promise the copy can make.
+  const EXPLAIN_CREDITS = 'BlueAI runs on credits. Every job and chat uses some. You get limited credits each day.';
+  const EXPLAIN_LIMIT = 'BlueAI has a daily limit. Every job and chat uses some of it.';
 
   // The "Learn more" text link. Opens the website FAQ. The kit's link: ink, underlined at 32%.
   const LearnLink = ({ style }) => (
@@ -137,7 +158,7 @@
   );
 
   window.CreditsPopupParts = {
-    BLUE, DAILY, nextUtcMidnight, formatLeft, formatClock, useNow,
+    BLUE, DAILY, nextUtcMidnight, formatLeft, formatClock, useNow, RefillIn,
     CreditsIcon, ClockIcon, Hero, Rule, Title, Body, Strong, GotIt, InfoTip, TextLink, Explainer, LearnLink, Card, gradText,
     EXPLAIN_CREDITS,
   };

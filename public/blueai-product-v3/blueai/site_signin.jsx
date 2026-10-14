@@ -39,7 +39,7 @@
           <K.Opt icon={K.GoogleG} onClick={onGoogle}>Continue with Google</K.Opt>
         </K.Opts>
         <K.Alt>First time here? <K.Link onClick={() => setHint(true)}>See how it works</K.Link>{hint && <span style={{ marginLeft: 8, color: K.T.dim }}>(not in this mock)</span>}</K.Alt>
-        <K.Legal>By signing up, you agree to the <K.U>Program Terms</K.U> and <K.U>Privacy Policy</K.U>, including <K.U>Cookie Use</K.U>.</K.Legal>
+        <K.Legal>By signing up, you agree to the <K.U>Program Terms</K.U> and acknowledge the <K.U>Privacy Policy</K.U> and <K.U>Cookie Policy</K.U>.</K.Legal>
       </K.Shell>
     );
   }

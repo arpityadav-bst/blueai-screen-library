@@ -2,23 +2,19 @@
 // state machine that walks the browser window through them.
 // Exports: window.SignInPage = { SignInBrowser, ACCOUNTS }
 //
-// The cases (Abhisht, 2026-10-07). The download link only goes to accepted people, so everyone
-// with the app has an accepted account somewhere; the only failure is the app running on a
-// different one. BlueAI and App Player share one sign-in on the PC, so:
-//   App Player signed in with the accepted account → silent sign-in, home. Unchanged.
-//   App Player signed in with another account      → silent sign-in, then the in-app gate
-//                                                     (account_gate.jsx). The browser never opens.
-//   App Player signed out                          → the browser, and these pages:
-//     bluestacks.ai holds a session → the continue page: "Sign in as <name>", the program
-//       pill (In the program / Not in the program), "Not you? Continue with a different ID".
-//     no session → the site's own sign-in (site_signin.jsx) with Google's chooser forced
-//       (prompt=select_account), then straight back to the app. No continue page after an
-//       explicit pick; a wrong pick lands on the in-app gate.
+// One case (PM, 2026-10-13): the account BlueAI signed in with isn't enrolled. The download link
+// only goes to accepted people, so that always means the wrong account. BlueAI and App Player
+// share one sign-in on the PC, and BlueAI checks enrolment after EVERY sign-in, wherever it came
+// from (App Player silently, or this browser). A wrong account gets the in-app message
+// (account_gate.jsx); its Switch account opens this browser. The site keeps its own session, so
+// it shows the account it holds first ("Continue as" / "Not you? Continue with a different ID");
+// a different ID goes to the site's own sign-in (site_signin.jsx) with Google's chooser forced
+// (prompt=select_account). The browser checks nothing: no enrolment pill.
 // Whatever account BlueAI ends up with, App Player ends up on it too.
 // Drawn in the site's own language (site_kit.jsx), because these ARE bluestacks.ai pages.
 
 (function () {
-  const { useState, useEffect } = React;
+  const { useState } = React;
   const K = window.SiteKit;
 
   // Two Google accounts in one browser: the accepted one, and a workspace account. hue names the
@@ -27,45 +23,36 @@
     primary: { id: 'primary', name: 'Alex Rivera', first: 'Alex', email: 'alex.rivera@gmail.com', hue: 0, enrolled: true },
     other:   { id: 'other',   name: 'Alex Rivera', first: 'Alex', email: 'alex@riveramedia.co',   hue: 1, enrolled: false }
   };
-  /* The program pill, the kit's badge (review round 1, family words): "In the program" on the
-     verified green with its dot, "Not in the program" neutral. Never blue: blue is focus,
-     selection and progress, not a status. */
-  const Chip = ({ enrolled }) => (
-    <span className={'v2-badge' + (enrolled ? ' v2-badge--success' : '')} style={{ marginTop: 'var(--v2-space-3)' }}>
-      {enrolled && <span className="v2-badge-dot" aria-hidden="true" />}
-      <span className="v2-badge-label">{enrolled ? 'In the program' : 'Not in the program'}</span>
-    </span>);
-
-  /* The one control: Google's "Sign in as <name> / <email>" button, in the site's skin. */
-  function SignInAs({ account, onClick, verb = 'Sign in as' }) {
+  /* The one control: Google's "Sign in as <name> / <email>" button shape, in the site's skin. Just
+     the account the site holds: no Google G (PM, 2026-10-13), so it reads the same for an email
+     account. */
+  function SignInAs({ account, onClick, verb }) {
     const hov = {
       onMouseEnter: (e) => { e.currentTarget.style.borderColor = K.T.borderHover; e.currentTarget.style.background = K.T.hover; },
       onMouseLeave: (e) => { e.currentTarget.style.borderColor = K.T.border; e.currentTarget.style.background = K.T.card; }
     };
     return (
       <button type="button" onClick={onClick} {...hov}
-        style={{ display: 'inline-flex', alignItems: 'center', gap: 14, height: 54, padding: '0 16px 0 12px', border: '1px solid ' + K.T.border, borderRadius: 6, background: K.T.card, color: K.T.ink, fontFamily: 'inherit', cursor: 'pointer', textAlign: 'left', transition: 'background 0.35s ease, border-color 0.35s ease' }}>
+        style={{ display: 'inline-flex', alignItems: 'center', gap: 14, height: 54, padding: '0 20px 0 12px', border: '1px solid ' + K.T.border, borderRadius: 6, background: K.T.card, color: K.T.ink, fontFamily: 'inherit', cursor: 'pointer', textAlign: 'left', transition: 'background 0.35s ease, border-color 0.35s ease' }}>
         <K.Avatar account={account} size={30} />
         <span style={{ display: 'flex', flexDirection: 'column', gap: 2, lineHeight: 1.2 }}>
           <span style={{ fontSize: 14.5, fontWeight: 600, letterSpacing: '-0.015em' }}>{verb} {account.first}</span>
           <span style={{ fontSize: 12.5, color: K.T.muted, letterSpacing: '-0.01em' }}>{account.email}</span>
         </span>
-        <span style={{ marginLeft: 6, display: 'flex' }}>{K.GoogleG}</span>
       </button>
     );
   }
 
-  /* The page the app opens when the browser already holds a session: the button, the pill, the
-     "Not you?" line. Nothing else (Abhisht, 2026-10-07). */
-  function ContinueAs({ account, onContinue, onSwitch, always }) {
+  /* The page the app opens when the browser already holds a session: the button and the "Not you?"
+     line. Nothing else (Abhisht, 2026-10-07). */
+  function ContinueAs({ account, onContinue, onSwitch }) {
     return (
       <K.Shell>
         <K.Mark />
         <K.Eyebrow>Almost there</K.Eyebrow>
         <K.Title>Continue to <K.Em>BlueAI</K.Em>.</K.Title>
         <K.Lede>Sign in to continue to the app.</K.Lede>
-        <div style={{ marginTop: 30 }}><SignInAs account={account} onClick={onContinue} verb={always ? 'Continue as' : 'Sign in as'} /></div>
-        {!always && <Chip enrolled={account.enrolled} />}
+        <div style={{ marginTop: 30 }}><SignInAs account={account} onClick={onContinue} verb="Continue as" /></div>
         <K.Alt>Not you? <K.Link onClick={onSwitch}>Continue with a different ID</K.Link></K.Alt>
       </K.Shell>
     );
@@ -104,21 +91,18 @@
 
   /* start: what bluestacks.ai holds when the browser opens. 'accepted' | 'other' (a session as
      that account: the continue page) | 'out' (none: the site's sign-in). onContinue gets the
-     account the app will use; the app decides what its enrolment means. */
-  /* always (option B): the continue page shows for ANY account the site already holds, the
-     accepted one included, and without the enrolled pill. */
-  function SignInBrowser({ start = 'accepted', always = false, onContinue, onClose }) {
-    const [page, setPage] = useState(start === 'out' ? 'signin' : (start === 'accepted' && !always ? 'done' : 'continue'));
+     account the app will use; the app decides what its enrolment means. The site keeps its own
+     session, and BlueAI signing out does not end it, so whenever it holds an account it shows that
+     account first (PM, 2026-10-13). */
+  function SignInBrowser({ start = 'accepted', onContinue, onClose }) {
+    const [page, setPage] = useState(start === 'out' ? 'signin' : 'continue');
     const [acctId, setAcctId] = useState(start === 'other' ? 'other' : 'primary');
     const account = ACCOUNTS[acctId];
     const m = PAGE[page];
     const finish = (id) => { setAcctId(id); setPage('done'); if (onContinue) onContinue({ ...ACCOUNTS[id] }); };
-    // Case 3a: the site already holds the accepted account, so there is nothing to ask. The
-    // browser hands it straight back, as today; the window stays up just long enough to see.
-    useEffect(() => { if (start !== 'accepted' || always) return; const t = setTimeout(() => finish('primary'), 700); return () => clearTimeout(t); }, []);
     return (
       <window.BrowserWindow url={m} title={m.title} favicon={ICON[m.icon]} onClose={onClose}>
-        {page === 'continue' && <ContinueAs account={account} always={always} onContinue={() => finish(acctId)} onSwitch={() => setPage('signin')} />}
+        {page === 'continue' && <ContinueAs account={account} onContinue={() => finish(acctId)} onSwitch={() => setPage('signin')} />}
         {page === 'done' && <Done />}
         {page === 'signin' && <window.SiteSignIn.Gate onGoogle={() => setPage('chooser')} onEmail={() => finish('primary')} />}
         {page === 'chooser' && <window.SiteSignIn.GoogleChooser accounts={[ACCOUNTS.primary, ACCOUNTS.other]} onPick={finish} />}

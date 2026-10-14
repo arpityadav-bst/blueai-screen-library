@@ -9,8 +9,10 @@
    focus. Every glyph is the kit's Icon; the empty state sits on the ground (no card), and both
    dialogs end on the dialogs' one button row (review round 2).
    Review round 2, pass B (R11): once the worker is set up, its daily run is a fixed entry at the top,
-   "BlueAI worker, daily run", read from the Daily run time; it has no Delete, and its Edit goes to
-   Settings > Worker, where that time is set. */
+   "BlueAI worker, daily run", read from the Daily run time; it has no Delete. Its Edit opens the
+   Daily run dialog, the one place that time is changed since Settings lost its Worker card (PM,
+   2026-10-14): one select of the onboarding's three answers (the kit's Run time block, design-md 62,
+   at its smallest). */
 
 const { useState, useEffect } = React;
 
@@ -83,6 +85,28 @@ function WorkerRunCard({ onEdit }) {
   );
 }
 
+/* The worker's daily run time, the schedule ask's answer (WorkerFlow.getRunTime), changed here. */
+function WorkerRunModal({ isOpen, onClose }) {
+  const WF = window.WorkerFlow;
+  const [runTime, setRunTime] = useState(WF.getRunTime().id);
+  useEffect(() => { if (isOpen) setRunTime(WF.getRunTime().id); }, [isOpen]);
+  const submit = e => { e.preventDefault(); WF.setRunTime(runTime); onClose(); };
+  return (
+    <ModalOverlay isOpen={isOpen} onClose={onClose} title="Edit daily run" initialFocus="#worker-run">
+      <form onSubmit={submit} className="v3-form">
+        <SelectField id="worker-run" label="Daily run" value={runTime} onChange={e => setRunTime(e.target.value)} aria-describedby="worker-run-hint">
+          {WF.RUN_TIMES.map((t) => <option key={t.id} value={t.id}>{t.label}</option>)}
+        </SelectField>
+        <p id="worker-run-hint" className="v2-text-body-sm">When BlueAI runs each day. A change starts with the next run.</p>
+        <div className="v3-btn-row v3-dlg-actions">
+          <button type="button" onClick={onClose} className="v2-button v2-button--secondary v2-button--lg">Cancel</button>
+          <button type="submit" className="v2-button v2-button--primary v2-button--lg">Save</button>
+        </div>
+      </form>
+    </ModalOverlay>
+  );
+}
+
 /* One form for a new task and an edited one: `task` fills it in, and saving keeps its id, so the
    list replaces it in place. */
 function ScheduleTaskModal({ isOpen, task, onClose, onSave }) {
@@ -124,8 +148,9 @@ function ScheduleTaskModal({ isOpen, task, onClose, onSave }) {
   );
 }
 
-function ScheduleScreen({ isLoading, onEditWorker }) {
+function ScheduleScreen({ isLoading }) {
   const [tasks, setTasks] = useState(SCHED_TASKS_INIT);
+  const [runOpen, setRunOpen] = useState(false);   // the worker's Daily run dialog
   const [showCreate, setShowCreate] = useState(false);
   const [editing, setEditing] = useState(null);   // the task the form is editing, null for a new one
   const [confirmId, setConfirmId] = useState(null);
@@ -162,7 +187,7 @@ function ScheduleScreen({ isLoading, onEditWorker }) {
       </ScreenHead>
 
       <div className="v3-screen-body">
-      {window.WorkerFlow.isOnboarded() && <ul className="v3-list v3-sched-fixed"><WorkerRunCard onEdit={onEditWorker} /></ul>}
+      {window.WorkerFlow.isOnboarded() && <ul className="v3-list v3-sched-fixed"><WorkerRunCard onEdit={() => setRunOpen(true)} /></ul>}
       {tasks.length === 0 ? (
         <div className="v2-empty v3-fill">
           <div className="v2-empty-icon"><IcoCalendar size={24} /></div>
@@ -178,6 +203,8 @@ function ScheduleScreen({ isLoading, onEditWorker }) {
         </ul>
       )}
       </div>
+
+      <WorkerRunModal isOpen={runOpen} onClose={() => setRunOpen(false)} />
 
       <ScheduleTaskModal isOpen={showCreate} task={editing} onClose={() => setShowCreate(false)}
         onSave={t => setTasks(prev => (prev.some(p => p.id === t.id) ? prev.map(p => (p.id === t.id ? t : p)) : [...prev, t]))} />

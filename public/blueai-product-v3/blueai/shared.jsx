@@ -156,11 +156,12 @@ function BottomNavbar({ activeTab, onTabChange }) {
 }
 
 /* ─── DESTINATIONS ───────────────────────────────────────────── */
-/* One of each (review round 1): Earnings (the top bar's menu and the 20-day strip) and the FAQ, on
-   the kit's stand-in host (kit/worker-data.jsx EARNINGS_URL, SITE_FAQ_URL) until the product team
-   names the real pages. */
+/* One of each (review round 1): Earnings (the top bar's menu, Jobs and the Day 20 moment) and the
+   FAQ, until the product team names the real pages. Earnings (PM, 2026-10-14) is the partner
+   dashboard in this repo, where the 20 days live, opened on the approved dashboard with one
+   program; a deploy that ships only this folder must ship experiments/onblue-vesper/ too. */
 const BlueAILinks = {
-  dashboard: 'https://blueai-screen-library.vercel.app/experiments/onblue-vesper/apply.html',
+  dashboard: '../experiments/onblue-vesper/apply.html?creator=in&account=one',
   faq: 'https://blueai-screen-library.vercel.app/experiments/onblue-vesper/index.html#faqs'
 };
 

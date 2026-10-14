@@ -4,13 +4,12 @@
    AskBubble  a worker question: the live app's "needs your input" bubble (optional bold
               title), then quick-reply chips under it. Onboarding's questions AND the daily
               paid-job ask use it, so every question reads as one, and the job ask is as light as
-              the rest (Abhisht, 2026-10-05). An option flagged `consent` turns
-              on Automatic for YouTube (the mode is per app), so it opens the consent dialog first
-              and only answers once the person agrees; Cancel leaves the question waiting.
+              the rest (Abhisht, 2026-10-05). No option offers Automatic (PM, 2026-10-14). The
+              composer stays open while the question waits, so a typed answer works too; then the
+              person's own bubble is the echo (`typed`) and no chip is left selected.
 
    Exposes window.WorkerCards = { PlanCard, AskBubble }. */
 (function () {
-  const AP = () => window.AgentPermissions;
   const WF = () => window.WorkerFlow;
   /* V3: both cards are the kit's (review round 2, kit/chat.css): the plan a worker MessageBubble
      (.v2-bubble with its title, paragraph and numbered list), the question the AskCard (.v2-ask).
@@ -36,17 +35,12 @@
      above the chips as that chip's description; answered, it settles to the surface and the chosen
      chip stays as a selected pill, the answer's echo. Answering removes the chips, so focus moves
      to the settled card (the kit's in-place swap, V2Kit.useSwapFocus). */
-  function AskBubble({ step, answer, onAnswer }) {
+  function AskBubble({ step, answer, typed, onAnswer }) {
     const pending = !answer;
     const qid = React.useId();
     const card = React.useRef(null);
     window.V2Kit.useSwapFocus(card, pending);
-    const chosen = pending ? null : step.options.find((o) => o.id === answer);
-    const choose = (o) => {
-      if (o.consent) { AP().requestMode('youtube', 'auto', () => onAnswer(o.id)); return; }
-      if (o.mode) AP().setMode('youtube', o.mode);
-      onAnswer(o.id);
-    };
+    const chosen = pending || typed ? null : step.options.find((o) => o.id === answer);
     return (
       <div className={'v2-anim-pop-in v2-msg v2-msg--worker v2-ask ' + (pending ? 'is-pending' : 'is-answered')}>
         <div ref={card} className="v2-ask-card v2-text-body" tabIndex={pending ? undefined : -1} data-v2-anchor={pending ? undefined : ''}>
@@ -63,7 +57,7 @@
           {step.options.map((o) => o.consequence && <p key={o.id} id={qid + '-' + o.id} className="v2-ask-consequence">{o.consequence}</p>)}
           <div className="v2-ask-chips" role="group" aria-labelledby={step.question ? qid : undefined} aria-label={step.question ? undefined : (step.title || 'Answers')}>
             {step.options.map((o) =>
-              <button key={o.id} type="button" className="v2-chip" aria-describedby={o.consequence ? qid + '-' + o.id : undefined} onClick={() => choose(o)}>
+              <button key={o.id} type="button" className="v2-chip" aria-describedby={o.consequence ? qid + '-' + o.id : undefined} onClick={() => onAnswer(o.id)}>
                 {o.label}
               </button>)}
           </div>

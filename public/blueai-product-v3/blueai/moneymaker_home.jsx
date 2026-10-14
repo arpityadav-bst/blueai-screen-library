@@ -51,9 +51,8 @@
 
      Card anatomy is the old Skills screen's row (skills.jsx, deleted 2026-10-14) (tile · name+description · compact action pill), because the
      button only needs the verb: the tile and the title already say MoneyMaker. Run is the card's
-     one control (review round 1: the card itself is no longer a button). Under the description,
-     the mode line says how paid jobs run ("Always ask", or "Automatic on YouTube") with a quiet
-     Change that opens the mode sheet (the kit's WorkerCard mode line, design-md 42).
+     one control (review round 1: the card itself is no longer a button). The mode is not on the
+     card: the chip next to the chat box is the one place it shows and changes (PM, 2026-10-14).
      V3: the kit's card (review round 2: .v2-card, not a row, so no pointer and no hover: Run is its
      one target), a 1px line and no cast, the kit's earnings glyph (the one dollar mark, as the top
      bar's Earnings row) on the kit WorkerCard's sunken tile in ink, and Run as the solid ink button
@@ -79,27 +78,22 @@
      nothing to sit above, so the column drops back to auto. Dismiss = Okay, clicking the scrim, or
      just running the skill, the conversation replaces this component entirely.
 
-     ONCE A DAY (review round 2, R3, R10): once today has counted, or today was the setup, Run stays
-     on the card with its label but is disabled (aria-disabled, so it keeps focus and its reason),
-     and a reason line under the mode line says why and when the next run is (WorkerFlow.runLock).
-     With no credits it is disabled too, the reason the live countdown to the refill. A skipped or
-     failed day offers Run again; the strip's Retry answers a failed day (R4). */
-  function MoneyMakerHome({ onRun, zeroCredits, onRetry, modeInBar }) {
-    // A returning person (the worker already set up): no coach spotlight, and the earnings strip
-    // above the card says where they are this month (sheet row 2, 2026-10-12).
+     ONCE A DAY (review round 2, R3, R10): once today has counted, Run stays on the card with its
+     label but is disabled (aria-disabled, so it keeps focus and its reason), and a reason line under
+     the description says why and when the next run is (WorkerFlow.runLock). With no credits it is
+     disabled too, the reason the countdown to the refill. A skipped or failed day offers Run again;
+     a failed day also says so in the danger ink with Retry (R4), which answers that day's retry.
+     The 20-day progress is not here: it lives on the partner dashboard (Earnings, PM 2026-10-14). */
+  function MoneyMakerHome({ onRun, zeroCredits, onRetry }) {
+    // A returning person (the worker already set up): no coach spotlight.
     const back = window.WorkerFlow.isOnboarded();
     const [coaching, setCoaching] = useState(!back);
-    const AP = window.AgentPermissions;
-    const { autoApps } = AP.usePermissionMode();
-    const auto = autoApps();
     const Icon = window.V2Kit.Icon;
     const reasonId = React.useId();
     const CP = window.CreditsPopupParts;
-    const now = CP.useNow();
+    const failed = back && window.WorkerDayDone.getToday() === 'failed';
     const lock = window.WorkerFlow.runLock();
-    const reason = lock || (zeroCredits
-      ? <>Out of credits. Credits will be refreshed in <strong className="v3-figure">{CP.formatLeft(CP.nextUtcMidnight(now) - now)}</strong>.</>
-      : null);
+    const reason = lock || (zeroCredits ? <>Out of credits. <CP.RefillIn /></> : null);
     const run = () => { if (!reason) onRun(PROMPT, 'MoneyMaker'); };
 
     return (
@@ -107,21 +101,15 @@
         {coaching && <div className="v3-coach-scrim" onClick={() => setCoaching(false)} aria-hidden="true" />}
 
         <div className={'v3-wk-stack' + (coaching ? ' is-coaching' : '')}>
-          {back && <window.WorkerDayDone.EarningsStrip onRetry={onRetry} />}
           <div className={'v2-card v3-wk-home' + (coaching ? ' is-lit' : '')}>
             <span className="v2-wcard-tile"><Icon name="earnings" size={24} /></span>
             <div className="v2-grow">
               {/* Renamed 2026-09-09 (designer directive: MoneyMaker -> "BlueAI worker"). */}
               <p className="v2-text-title-sm">BlueAI worker</p>
               <p className="v2-text-caption v3-wk-desc">Finds jobs that fit you and runs them on your account.</p>
-              {/* Only when it matters (Appy, 2026-10-14): the worker is set up, Automatic is on (Always
-                 ask is the safe default and needs no line), and the composer's Mode chip is not already
-                 saying it below. */}
-              {back && auto.length > 0 && !modeInBar && <p className="v3-wk-mode">
-                <Icon name="zap" /><span className="v3-wk-mode-text">{AP.summary(auto)}</span>
-                <button type="button" onClick={AP.openSheet} aria-haspopup="dialog" className="v2-button v2-button--quiet v2-button--sm v3-wk-mode-change">Change</button>
-              </p>}
               {reason && <p id={reasonId} className="v2-text-caption v3-wk-reason">{reason}</p>}
+              {failed && !reason && <p className="v2-text-caption v3-wk-reason v3-wk-reason--danger">Today’s job didn’t finish.
+                <button type="button" onClick={onRetry} className="v2-button v2-button--quiet v2-button--sm">Retry</button></p>}
             </div>
             <button type="button" onClick={run} aria-disabled={reason ? 'true' : undefined} aria-describedby={reason ? reasonId : undefined} className="v2-button v2-button--primary">
               <Icon name="play" />

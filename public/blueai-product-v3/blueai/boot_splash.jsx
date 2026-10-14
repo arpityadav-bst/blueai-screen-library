@@ -67,25 +67,14 @@
     );
   }
 
-  /* The BlueAI worker home (MoneyMakerHome, the default session; review round 2): the 20-day strip
-     for a returning person, then the worker card (its tile, three lines, the Run button). */
+  /* The BlueAI worker home (MoneyMakerHome, the default session; review round 2): the worker card
+     (its tile, three lines, the Run button). */
   function WorkerHomeSkeleton() {
-    const back = window.WorkerFlow.isOnboarded() && window.WorkerDayDone.getStyle() !== 'plain';
     return (
-      <div>
-        {back &&
-          <div className="v2-card v3-progress">
-            <div className="v2-daybar">
-              <Skel width="40%" />
-              <Skel shape="rect" height="var(--v2-rail)" />
-              <Skel width="60%" />
-            </div>
-          </div>}
-        <div className="v2-card v3-wk-home" aria-busy="true">
-          <Skel shape="rect" width="var(--v2-mark-lg)" height="var(--v2-mark-lg)" />
-          <span className="v2-skel-lines v2-grow"><Skel width="40%" /><Skel width="85%" /><Skel width="50%" /></span>
-          <Skel shape="rect" width="calc(var(--v2-control-md) * 2)" height="var(--v2-control-md)" />
-        </div>
+      <div className="v2-card v3-wk-home" aria-busy="true">
+        <Skel shape="rect" width="var(--v2-mark-lg)" height="var(--v2-mark-lg)" />
+        <span className="v2-skel-lines v2-grow"><Skel width="40%" /><Skel width="85%" /><Skel width="50%" /></span>
+        <Skel shape="rect" width="calc(var(--v2-control-md) * 2)" height="var(--v2-control-md)" />
       </div>
     );
   }

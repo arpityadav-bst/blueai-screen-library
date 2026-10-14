@@ -17,11 +17,13 @@
    StopRunDialog is New chat's confirm while today's run is under way: stopping costs the day.
    useChat() re-renders on every change (the chat screen); useChatWhere(select) only when the
    selected value changes (App, so a keystroke in the composer does not redraw the desktop).
+   answerTyped() answers the waiting question with what the person typed (PM, 2026-10-14): their own
+   bubble echoes it, WorkerFlow.interpret() reads it, and an unclear one is asked again.
    Exposes window.ChatStore = { useChat, useChatWhere, get, derive, reset, push, setDraft, mark, answer,
-   retry, stop, dismissDone, claimSeed, setHooks, StopRunDialog }. */
+   answerTyped, retry, stop, dismissDone, claimSeed, setHooks, StopRunDialog }. */
 (function () {
   const { useState, useEffect, useRef } = React;
-  const fresh = () => ({ convo: [], visible: 0, draft: '', votes: {}, reasons: {}, answers: {}, seenDone: -1 });
+  const fresh = () => ({ convo: [], visible: 0, draft: '', votes: {}, reasons: {}, answers: {}, typed: {}, seenDone: -1 });
   let s = fresh();
   let timers = [];
   let hooks = {};
@@ -87,14 +89,25 @@
   }
 
   const setDraft = (draft) => set({ draft });
-  // votes / reasons / answers, keyed 'k' + step index.
+  // votes / reasons / answers / typed, keyed 'k' + step index.
   const mark = (field, key, v) => set({ [field]: { ...s[field], [key]: v } });
   function answer(i, a) {
     const step = s.convo[i];
     mark('answers', 'k' + i, a);
     push(window.WorkerFlow.next(step, a));
   }
-  // The strip's Retry (R4): answers the retry question still waiting in this chat, if there is one.
+  function answerTyped(text) {
+    const d = derive();
+    if (!d.awaiting) return;
+    const i = d.awaitingIdx, step = s.convo[i], WF = window.WorkerFlow;
+    const a = WF.interpret(step, text);
+    const said = { role: 'user', content: text, d: 250 };
+    set({ draft: '' });
+    if (!a) { push([said, { role: 'status', content: WF.UNCLEAR, d: 700 }]); return; }
+    set({ answers: { ...s.answers, ['k' + i]: a }, typed: { ...s.typed, ['k' + i]: true } });
+    push([said, ...WF.next(step, a)]);
+  }
+  // Retry from the worker card or the top bar (R4): answers the retry question still waiting in this chat, if there is one.
   function retry() {
     const d = derive();
     if (!d.awaiting || s.convo[d.awaitingIdx].id !== 'retry') return false;
@@ -143,5 +156,5 @@
       </ModalOverlay>);
   }
 
-  window.ChatStore = { useChat, useChatWhere, get, derive, reset, push, setDraft, mark, answer, retry, stop, dismissDone, claimSeed, setHooks, StopRunDialog };
+  window.ChatStore = { useChat, useChatWhere, get, derive, reset, push, setDraft, mark, answer, answerTyped, retry, stop, dismissDone, claimSeed, setHooks, StopRunDialog };
 })();

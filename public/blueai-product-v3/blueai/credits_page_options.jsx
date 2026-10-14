@@ -182,7 +182,7 @@
   window.CreditsHealthyOptions = [
     { id: 'hnow', label: 'Now', note: 'Live today. Says credits are limited, not how many or until when.', render: (t) => <HealthyNow t={t} /> },
     { id: 'h1', label: 'Option 1', note: 'The explainer gets the real numbers, plus one line with the refresh time.', render: (t) => <Healthy1 t={t} /> },
-    { id: 'h2', label: 'Option 2', note: 'A "today" meter under the balance: how much of the 2,500 is left and when it refills.', render: (t) => <Healthy2 t={t} /> },
+    { id: 'h2', label: 'Option 2', note: 'A "today" meter under the balance: how much of the daily ' + DAILY.toLocaleString('en-US') + ' is left and when it refills.', render: (t) => <Healthy2 t={t} /> },
     { id: 'h3', label: 'Option 3', note: 'The live copy as is, plus Learn more.', render: (t) => <Healthy3 t={t} /> },
   ];
 

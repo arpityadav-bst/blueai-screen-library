@@ -75,11 +75,6 @@
      `refill` adds the line that says WHEN credits come back, as the live countdown to the 00:00 UTC
      refill (CreditsPopupParts), the way the credits screen and the popup say it, never "tomorrow"
      (review round 1, U6). */
-  function RefillLine() {
-    const CP = window.CreditsPopupParts;
-    const now = CP.useNow();
-    return <span>Credits will be refreshed in <strong className="v3-figure">{CP.formatLeft(CP.nextUtcMidnight(now) - now)}</strong>.</span>;
-  }
   function WarningBubble({ title, content, refill }) {
     const body = Array.isArray(content) ? content : [content];
     return (
@@ -90,7 +85,7 @@
             <div className="v2-notice-body">
               {title && <p className="v2-notice-title">{title}</p>}
               {body.map((line, k) => <p key={k} className="v2-notice-text">{line}</p>)}
-              {refill && <p className="v2-notice-text"><RefillLine /></p>}
+              {refill && <p className="v2-notice-text"><window.CreditsPopupParts.RefillIn /></p>}
             </div>
           </div>
         </div>

@@ -52,20 +52,16 @@
 .v3-gate-mark--success { background: var(--v2-success-tint); color: var(--v2-success-ink); }
 /* Type: .v2-text-body-sm; the line sits 6 under its title. */
 .v3-gate-body { margin: var(--v2-space-15) 0 0; }
-.v3-gate-email {
-  margin: var(--v2-space-05) 0 0; color: var(--v2-ink); font-size: var(--v2-text-16); font-weight: var(--v2-weight-semibold);
-  line-height: var(--v2-leading-snug); letter-spacing: var(--v2-tracking-label); overflow-wrap: anywhere;
-}
-/* Option B: the account to continue as, one pressable row with a line edge. */
+/* The gate's signed-in account: one lined row on the sunken fill (avatar, name, email), not a control. */
 .v3-account {
   display: flex; align-items: center; gap: var(--v2-space-3); width: 100%;
-  padding: var(--v2-space-3) var(--v2-space-4); text-align: left; cursor: pointer; font: inherit;
-  background: var(--v2-surface); border: var(--v2-stroke) solid var(--v2-line-strong); border-radius: var(--v2-radius-md);
-  transition: background var(--v2-dur-1) var(--v2-ease-standard), border-color var(--v2-dur-1) var(--v2-ease-standard);
+  padding: var(--v2-space-3) var(--v2-space-4); text-align: left;
+  background: var(--v2-surface-sunken); border: var(--v2-stroke) solid var(--v2-line); border-radius: var(--v2-radius-md);
 }
-.v3-account:hover { background: var(--v2-surface-sunken); border-color: var(--v2-line-hover); }
 .v3-account-name { display: block; color: var(--v2-ink); font-size: var(--v2-text-14); font-weight: var(--v2-weight-medium); line-height: var(--v2-leading-snug); }
 .v3-account-email { display: block; color: var(--v2-ink-3); font-size: var(--v2-text-13); line-height: var(--v2-leading-snug); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 /* The sign-in modal's panel (login.jsx): it fills the gate overlay and holds the close button and
    the centred card, so the kit's focus hook has one panel to trap (review round 1). */
 .v3-login-panel { position: relative; flex: 1; min-height: 0; display: flex; flex-direction: column; }
+/* Once the account check has shown, the app is signed in: no sign-in screen behind the cards. */
+.v3-scrim--solid { background: var(--v2-canvas); -webkit-backdrop-filter: none; backdrop-filter: none; }
