@@ -7,7 +7,14 @@ For Abhisht. Short on purpose.
 1. **Your worker work is in V2.** Your branch `worker-day-done-and-modes` (a1108a8) was copied into V2 file for file. The only change: em dashes removed.
 2. **V1 is gone.** V2 is the one product, at `/blueai-product-v2`.
 3. **Your cash-out spec is in.** The $10 minimum is on the onBlue Agentic partner dashboard and in the Program Terms (marked as not legal's wording yet).
-4. **We made a design system for V2.** It sits next to V2. V2's own files were not touched.
+4. **We made a design system for V2.** It sits next to V2.
+5. **Then Appy simplified a few V2 screens** (14 Oct). Please copy these files into your branch so your next update keeps them:
+   - `blueai/worker_day_done.jsx`: the run-complete popup is minimal (one tick, title, "Day 7 of 20 · Pending verification", Got it). The 20-day bar stays on Home.
+   - `blueai/agent_permissions.jsx`: the consent dialog is one paragraph and two buttons; the ribbon is one line; the mode menu is a bottom sheet with one switch per app.
+   - `blueai/settings.jsx`: a Worker section with the same app switches.
+   - `index.html`: the Preview rows "Change mode from" and "Mode".
+   - The new consent wording needs your (or legal's) OK.
+   - On the partner site, Cash out keeps its name and one line under the balance says why it is closed.
 
 ## How the system was made
 
